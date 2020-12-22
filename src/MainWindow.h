@@ -20,7 +20,12 @@ private:
     Ui::MainWindow *ui;
     SkyConnect m_skyConnect;
 
+    void frenchConnection();
+
 private slots:
     void on_connectionPushButton_clicked();
+    void on_recordPushButton_clicked(bool isChecked = false);
+
+    void updateUi();
 };
 #endif // MAINWINDOW_H

@@ -35,6 +35,8 @@ set(PROJECT_SOURCES
     src/SkyConnect.cpp
     src/SkyConnect.h
     src/MainWindow.ui
+    src/Aircraft.cpp
+    src/Aircraft.h
     ${TS_FILES}
 )
 
