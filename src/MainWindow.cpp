@@ -1,3 +1,5 @@
+#include <QByteArray>
+
 #include "Aircraft.h"
 #include "SkyConnect.h"
 #include "MainWindow.h"
@@ -61,7 +63,10 @@ void MainWindow::on_recordPushButton_clicked(bool checked) {
 void MainWindow::updateUi()
 {
     const Aircraft &aircraft = m_skyConnect.getAircraft();
+    const QByteArray &name = aircraft.getName();
     const Position &position = aircraft.getPosition();
+
+    ui->nameLineEdit->setText(name);
     ui->latitudeLineEdit->setText(QString::number(position.latitude));
     ui->longitudeLineEdit->setText(QString::number(position.longitude));
     ui->altitudeLineEdit->setText(QString::number(position.altitude));

@@ -2,6 +2,7 @@
 #include <strsafe.h>
 #include <SimConnect.h>
 
+#include <QByteArray>
 #include <QObject>
 
 #include "SimConnectDataDefinition.h"
@@ -118,6 +119,7 @@ void CALLBACK SkyConnect::MyDispatchProcRD(SIMCONNECT_RECV* pData, DWORD cbData,
     DWORD objectID;
     SIMCONNECT_RECV_SIMOBJECT_DATA *objectData;
     AircraftInfo *aircraftInfo;
+    QByteArray name;
     Position *position;
 
     switch(pData->dwID)
@@ -157,6 +159,9 @@ void CALLBACK SkyConnect::MyDispatchProcRD(SIMCONNECT_RECV* pData, DWORD cbData,
                     if (SUCCEEDED(StringCbLengthA(&aircraftInfo->title[0], sizeof(aircraftInfo->title), nullptr)))
                     {
                         qDebug("\nObjectID=%lx  title=\"%s\"", objectID, aircraftInfo->title );
+                        name = aircraftInfo->title;
+                        skyConnect->d->m_aircraft.setName(name);
+                        skyConnect->aircraftChanged();
                     }
                     break;
 

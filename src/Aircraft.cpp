@@ -1,3 +1,5 @@
+#include <QByteArray>
+
 #include "Position.h"
 #include "Aircraft.h"
 
@@ -8,6 +10,7 @@ public:
     {}
 
     Position m_position;
+    QByteArray m_name;
 };
 
 // PUBLIC
@@ -21,6 +24,16 @@ Aircraft::Aircraft()
 Aircraft::~Aircraft()
 {
     delete d;
+}
+
+void Aircraft::setName(QByteArray name)
+{
+    d->m_name = name;
+}
+
+const QByteArray &Aircraft::getName() const
+{
+    return d->m_name;
 }
 
 void Aircraft::setPosition(Position position)
