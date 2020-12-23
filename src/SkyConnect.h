@@ -22,8 +22,6 @@ public:
     bool close();
     bool isConnected() const;
 
-    void testDataRequest();
-
     void startDataSample();
     void stopDataSample();
 

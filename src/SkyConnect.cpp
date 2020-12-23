@@ -9,31 +9,37 @@
 
 namespace {
   const char *ConnectionName = "SkyConnect";
-  const int WM_USER_SIMCONNECT = 0x0402;
 
   const DWORD UserAirplaneRadiusMeters = 0;
-  const int IntervalMilliseconds = 200;
+  // Sample the position data at 60 Hz
+  const int IntervalMilliseconds = int(1.0 / 60.0 * 1000.0);
 }
 
-struct Struct1
+struct AircraftInfo
 {
-    char    title[256];
-    double  kohlsmann;
-    double  altitude;
-    double  latitude;
-    double  longitude;
+    char title[256];
 };
 
-enum EVENT_ID{
-    EVENT_SIM_START
+struct AircraftPosition
+{
+    double kohlsmann;
+    double altitude;
+    double latitude;
+    double longitude;
 };
 
-enum DATA_DEFINE_ID {
-    DEFINITION_1
+enum EventID{
+    SimStartEvent
 };
 
-enum DATA_REQUEST_ID {
-    REQUEST_1
+enum DataDefinitionID {
+    AircraftInfoDefinition,
+    AircraftPositionDefinition
+};
+
+enum DataRequestID {
+    AircraftInfoRequest,
+    AircraftPositionRequest
 };
 
 class SimConnectPrivate
@@ -69,12 +75,7 @@ SkyConnect::~SkyConnect()
 
 bool SkyConnect::open()
 {
-    HRESULT result;
-    HANDLE hEventHandle = nullptr;
-    HWND hWnd = nullptr;
-
-    result = SimConnect_Open(&(d->m_simConnectHandler), ::ConnectionName, hWnd, ::WM_USER_SIMCONNECT, hEventHandle, SIMCONNECT_OPEN_CONFIGINDEX_LOCAL);
-    qDebug("OPEN: m_simConnectHandler: %x", d->m_simConnectHandler);
+    HRESULT result = ::SimConnect_Open(&(d->m_simConnectHandler), ::ConnectionName, nullptr, 0, nullptr, SIMCONNECT_OPEN_CONFIGINDEX_LOCAL);
     this->setupRequestData();
     return result == S_OK;
 }
@@ -85,7 +86,7 @@ bool SkyConnect::close()
 
     this->stopDataSample();
     if (d->m_simConnectHandler != nullptr) {
-        result = SimConnect_Close(d->m_simConnectHandler);
+        result = ::SimConnect_Close(d->m_simConnectHandler);
         d->m_simConnectHandler = nullptr;
     } else {
         result = S_OK;
@@ -98,40 +99,15 @@ bool SkyConnect::isConnected() const
     return d->m_simConnectHandler != nullptr;
 }
 
-void SkyConnect::testDataRequest()
-{
-    HRESULT hr;
-
-    if (isConnected())
-    {
-        qDebug("\nConnected to Flight Simulator!");
-
-
-
-        int i = 0;
-        while (i < 100)
-        {
-            qDebug("Calling dispatcher on m_simConnectHandler: %x", d->m_simConnectHandler);
-            SimConnect_CallDispatch(d->m_simConnectHandler, SkyConnect::MyDispatchProcRD, this);
-            Sleep(1000);
-            ++i;
-        }
-    }
-}
-
 void SkyConnect::startDataSample()
 {
-    qDebug("startDataSample: check wheter connected...");
     if (isConnected()) {
-        qDebug("Started sampling.");
         d->m_timer.start();
     }
-
 }
 
 void SkyConnect::stopDataSample()
 {
-    qDebug("Stopped sampling.");
     d->m_timer.stop();
 }
 
@@ -147,22 +123,26 @@ void CALLBACK SkyConnect::MyDispatchProcRD(SIMCONNECT_RECV* pData, DWORD cbData,
     Q_UNUSED(cbData);
 
     SkyConnect *skyConnect = static_cast<SkyConnect *>(pContext);
-    HRESULT hr;
+    HRESULT res;
+    DWORD objectID;
+    SIMCONNECT_RECV_SIMOBJECT_DATA *objectData;
+    AircraftInfo *aircraftInfo;
+    AircraftPosition *aircraftPosition;
 
-    qDebug("Callback called...");
     switch(pData->dwID)
     {
         case SIMCONNECT_RECV_ID_EVENT:
         {
             SIMCONNECT_RECV_EVENT *evt = (SIMCONNECT_RECV_EVENT*)pData;
 
+            qDebug("SIMCONNECT_RECV_ID_EVENT");
             switch(evt->uEventID)
             {
-                case EVENT_SIM_START:
+                case SimStartEvent:
 
                     // Now the sim is running, request information on the user aircraft
-                    hr = SimConnect_RequestDataOnSimObjectType(skyConnect->d->m_simConnectHandler, REQUEST_1, DEFINITION_1, 0, SIMCONNECT_SIMOBJECT_TYPE_USER);
-                    qDebug("\nSkyConnect::MyDispatchProcRD: Simulation started, request sim object: m_simConnectHandler: %lx ", skyConnect->d->m_simConnectHandler);
+                    res = ::SimConnect_RequestDataOnSimObjectType(skyConnect->d->m_simConnectHandler, AircraftInfoRequest, AircraftInfoDefinition, UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
+                    qDebug("SimStartEvent");
 
                     break;
 
@@ -173,48 +153,61 @@ void CALLBACK SkyConnect::MyDispatchProcRD(SIMCONNECT_RECV* pData, DWORD cbData,
         }
 
         case SIMCONNECT_RECV_ID_SIMOBJECT_DATA_BYTYPE:
-        {
-            SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE *pObjData = (SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE*)pData;
+            objectData = reinterpret_cast<SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE *>(pData);
 
-            switch(pObjData->dwRequestID)
+            qDebug("SIMCONNECT_RECV_ID_SIMOBJECT_DATA_BYTYPE");
+            switch(objectData->dwRequestID)
             {
-                case REQUEST_1:
-                {
-                    DWORD ObjectID = pObjData->dwObjectID;
-                    Struct1 *pS = (Struct1*)&pObjData->dwData;
-                    if (SUCCEEDED(StringCbLengthA(&pS->title[0], sizeof(pS->title), NULL))) // security check
+                case AircraftInfoRequest:
+
+                    objectID = objectData->dwObjectID;
+                    aircraftInfo = reinterpret_cast<AircraftInfo *>(&objectData->dwData);
+                    // security check
+                    if (SUCCEEDED(StringCbLengthA(&aircraftInfo->title[0], sizeof(aircraftInfo->title), nullptr)))
                     {
-                        skyConnect->d->m_aircraft.setLatitude(pS->latitude);
-                        skyConnect->d->m_aircraft.setLongitude(pS->longitude);
-                        skyConnect->d->m_aircraft.setAltitude(pS->altitude);
-                        skyConnect->aircraftChanged();
-                        qDebug("\nObjectID=%lx  title=\"%s\"\nLat=%f  Lon=%f  Alt=%f  Kohlsman=%.2f", ObjectID, pS->title, pS->latitude, pS->longitude, pS->altitude, pS->kohlsmann );
+                        qDebug("\nObjectID=%lx  title=\"%s\"", objectID, aircraftInfo->title );
                     }
-                   break;
-                }
+                    break;
+
 
                 default:
                    break;
             }
             break;
-        }
 
+        case SIMCONNECT_RECV_ID_SIMOBJECT_DATA:
+            objectData = reinterpret_cast<SIMCONNECT_RECV_SIMOBJECT_DATA *>(pData);
+
+            switch(objectData->dwRequestID)
+            {
+                case AircraftPositionRequest:
+                    aircraftPosition = reinterpret_cast<AircraftPosition *>(&objectData->dwData);
+                    skyConnect->d->m_aircraft.setLatitude(aircraftPosition->latitude);
+                    skyConnect->d->m_aircraft.setLongitude(aircraftPosition->longitude);
+                    skyConnect->d->m_aircraft.setAltitude(aircraftPosition->altitude);
+                    skyConnect->aircraftChanged();
+                    break;
+
+                default:
+                    break;
+            }
+            break;
 
         case SIMCONNECT_RECV_ID_QUIT:
-        {
+            qDebug("SIMCONNECT_RECV_ID_QUIT");
             skyConnect->stopDataSample();
             break;
-        }
 
         case SIMCONNECT_RECV_ID_OPEN:
-        {
-            hr = SimConnect_RequestDataOnSimObjectType(skyConnect->d->m_simConnectHandler, REQUEST_1, DEFINITION_1, 0, SIMCONNECT_SIMOBJECT_TYPE_USER);
-            qDebug("\nSkyConnect::MyDispatchProcRD: Simulation already open, request sim object: m_simConnectHandler: %lx ", skyConnect->d->m_simConnectHandler);
+            qDebug("SIMCONNECT_RECV_ID_OPEN");
             break;
-        }
+
+        case SIMCONNECT_RECV_ID_NULL:
+            qDebug("SIMCONNECT_RECV_ID_NULL");
+            break;
 
         default:
-            qDebug("\nReceived:%lx", pData->dwID);
+            qDebug("Default: Received: %lx", pData->dwID);
             break;
     }
 }
@@ -227,25 +220,28 @@ void SkyConnect::frenchConnection()
 
 void SkyConnect::setupRequestData()
 {
-    HRESULT hr;
+    HRESULT res;
 
     // Set up the data definition, but do not yet do anything with it
-    hr = SimConnect_AddToDataDefinition(d->m_simConnectHandler, DEFINITION_1, "title", NULL, SIMCONNECT_DATATYPE_STRING256);
-    hr = SimConnect_AddToDataDefinition(d->m_simConnectHandler, DEFINITION_1, "Kohlsman setting hg", "inHg");
-    hr = SimConnect_AddToDataDefinition(d->m_simConnectHandler, DEFINITION_1, "Plane Altitude", "feet");
-    hr = SimConnect_AddToDataDefinition(d->m_simConnectHandler, DEFINITION_1, "Plane Latitude", "degrees");
-    hr = SimConnect_AddToDataDefinition(d->m_simConnectHandler, DEFINITION_1, "Plane Longitude", "degrees");
+    res = ::SimConnect_AddToDataDefinition(d->m_simConnectHandler, AircraftInfoDefinition, "title", NULL, SIMCONNECT_DATATYPE_STRING256);
+
+    res = ::SimConnect_AddToDataDefinition(d->m_simConnectHandler, AircraftPositionDefinition, "Kohlsman setting hg", "inHg");
+    res = ::SimConnect_AddToDataDefinition(d->m_simConnectHandler, AircraftPositionDefinition, "Plane Altitude", "feet");
+    res = ::SimConnect_AddToDataDefinition(d->m_simConnectHandler, AircraftPositionDefinition, "Plane Latitude", "degrees");
+    res = ::SimConnect_AddToDataDefinition(d->m_simConnectHandler, AircraftPositionDefinition, "Plane Longitude", "degrees");
 
     // Request an event when the simulation starts
-    hr = SimConnect_SubscribeToSystemEvent(d->m_simConnectHandler, EVENT_SIM_START, "SimStart");
+    res = ::SimConnect_SubscribeToSystemEvent(d->m_simConnectHandler, SimStartEvent, "SimStart");
+
+    // Get aircraft position every simulated frame
+    res = ::SimConnect_RequestDataOnSimObject(d->m_simConnectHandler, AircraftPositionRequest, AircraftPositionDefinition, SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD_SIM_FRAME);
+
 }
 
 // PRIVATE SLOTS
 
 void SkyConnect::sampleData()
 {
-  HRESULT hr;
-  hr = SimConnect_RequestDataOnSimObjectType(d->m_simConnectHandler, REQUEST_1, DEFINITION_1, UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
-  SimConnect_CallDispatch(d->m_simConnectHandler, SkyConnect::MyDispatchProcRD, this);
+    ::SimConnect_CallDispatch(d->m_simConnectHandler, SkyConnect::MyDispatchProcRD, this);
 }
 
