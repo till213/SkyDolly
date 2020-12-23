@@ -61,8 +61,9 @@ void MainWindow::on_recordPushButton_clicked(bool checked) {
 void MainWindow::updateUi()
 {
     const Aircraft &aircraft = m_skyConnect.getAircraft();
-    ui->latitudeLineEdit->setText(QString::number(aircraft.getLatitude()));
-    ui->longitudeLineEdit->setText(QString::number(aircraft.getLongitude()));
-    ui->altitudeLineEdit->setText(QString::number(aircraft.getAltitude()));
+    const Position &position = aircraft.getPosition();
+    ui->latitudeLineEdit->setText(QString::number(position.latitude));
+    ui->longitudeLineEdit->setText(QString::number(position.longitude));
+    ui->altitudeLineEdit->setText(QString::number(position.altitude));
 }
 

@@ -37,6 +37,10 @@ set(PROJECT_SOURCES
     src/MainWindow.ui
     src/Aircraft.cpp
     src/Aircraft.h
+    src/Position.h
+    src/SimConnectPosition.cpp
+    src/SimConnectPosition.h
+    src/SimConnectDataDefinition.h
     ${TS_FILES}
 )
 

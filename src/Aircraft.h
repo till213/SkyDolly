@@ -1,6 +1,8 @@
 #ifndef AIRCRAFT_H
 #define AIRCRAFT_H
 
+#include "Position.h"
+
 class AircraftPrivate;
 
 class Aircraft
@@ -9,14 +11,8 @@ public:
     Aircraft();
     virtual ~Aircraft();
 
-    void setLongitude(float longitude);
-    float getLongitude() const;
-
-    void setLatitude(float latitude);
-    float getLatitude() const;
-
-    void setAltitude(float altitude);
-    float getAltitude() const;
+    void setPosition(Position position);
+    const Position &getPosition() const;
 
 private:
     AircraftPrivate *d;

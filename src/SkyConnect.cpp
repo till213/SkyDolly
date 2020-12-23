@@ -4,6 +4,8 @@
 
 #include <QObject>
 
+#include "SimConnectDataDefinition.h"
+#include "SimConnectPosition.h"
 #include "Aircraft.h"
 #include "SkyConnect.h"
 
@@ -13,34 +15,23 @@ namespace {
   const DWORD UserAirplaneRadiusMeters = 0;
   // Sample the position data at 60 Hz
   const int IntervalMilliseconds = int(1.0 / 60.0 * 1000.0);
+
+
+    struct AircraftInfo
+    {
+        char title[256];
+    };
+
+    enum EventID{
+        SimStartEvent
+    };
+
+    enum DataRequestID {
+        AircraftInfoRequest,
+        AircraftPositionRequest
+    };
+
 }
-
-struct AircraftInfo
-{
-    char title[256];
-};
-
-struct AircraftPosition
-{
-    double kohlsmann;
-    double altitude;
-    double latitude;
-    double longitude;
-};
-
-enum EventID{
-    SimStartEvent
-};
-
-enum DataDefinitionID {
-    AircraftInfoDefinition,
-    AircraftPositionDefinition
-};
-
-enum DataRequestID {
-    AircraftInfoRequest,
-    AircraftPositionRequest
-};
 
 class SimConnectPrivate
 {
@@ -127,7 +118,7 @@ void CALLBACK SkyConnect::MyDispatchProcRD(SIMCONNECT_RECV* pData, DWORD cbData,
     DWORD objectID;
     SIMCONNECT_RECV_SIMOBJECT_DATA *objectData;
     AircraftInfo *aircraftInfo;
-    AircraftPosition *aircraftPosition;
+    Position *position;
 
     switch(pData->dwID)
     {
@@ -181,10 +172,8 @@ void CALLBACK SkyConnect::MyDispatchProcRD(SIMCONNECT_RECV* pData, DWORD cbData,
             switch(objectData->dwRequestID)
             {
                 case AircraftPositionRequest:
-                    aircraftPosition = reinterpret_cast<AircraftPosition *>(&objectData->dwData);
-                    skyConnect->d->m_aircraft.setLatitude(aircraftPosition->latitude);
-                    skyConnect->d->m_aircraft.setLongitude(aircraftPosition->longitude);
-                    skyConnect->d->m_aircraft.setAltitude(aircraftPosition->altitude);
+                    position = reinterpret_cast<Position *>(&objectData->dwData);
+                    skyConnect->d->m_aircraft.setPosition(*position);
                     skyConnect->aircraftChanged();
                     break;
 
@@ -225,10 +214,7 @@ void SkyConnect::setupRequestData()
     // Set up the data definition, but do not yet do anything with it
     res = ::SimConnect_AddToDataDefinition(d->m_simConnectHandler, AircraftInfoDefinition, "title", NULL, SIMCONNECT_DATATYPE_STRING256);
 
-    res = ::SimConnect_AddToDataDefinition(d->m_simConnectHandler, AircraftPositionDefinition, "Kohlsman setting hg", "inHg");
-    res = ::SimConnect_AddToDataDefinition(d->m_simConnectHandler, AircraftPositionDefinition, "Plane Altitude", "feet");
-    res = ::SimConnect_AddToDataDefinition(d->m_simConnectHandler, AircraftPositionDefinition, "Plane Latitude", "degrees");
-    res = ::SimConnect_AddToDataDefinition(d->m_simConnectHandler, AircraftPositionDefinition, "Plane Longitude", "degrees");
+    SimConnectPosition::addDataDefintion(d->m_simConnectHandler);
 
     // Request an event when the simulation starts
     res = ::SimConnect_SubscribeToSystemEvent(d->m_simConnectHandler, SimStartEvent, "SimStart");
