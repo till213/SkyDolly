@@ -33,7 +33,6 @@ void MainWindow::frenchConnection()
             this, &MainWindow::updatePositionUi);
 }
 
-
 // PRIVATE SLOTS
 
 void MainWindow::on_connectionPushButton_clicked()
@@ -71,6 +70,17 @@ void MainWindow::on_clearPushButton_clicked()
     Aircraft &aircraft = m_skyConnect.getAircraft();
 
     aircraft.clear();
+}
+
+void MainWindow::on_replayPushButton_clicked(bool checked)
+{
+    qDebug("on_replayPushButton_clicked");
+
+    if (checked) {
+        m_skyConnect.startReplay();
+    } else {
+        m_skyConnect.stopReplay()   ;
+    }
 }
 
 void MainWindow::updateUi()

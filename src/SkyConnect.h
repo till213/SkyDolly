@@ -25,18 +25,22 @@ public:
     void startDataSample();
     void stopDataSample();
 
+    void startReplay();
+    void stopReplay();
+
     Aircraft &getAircraft();
     const Aircraft &getAircraft() const;
 
 private:
     SimConnectPrivate *d;
 
-    static void CALLBACK MyDispatchProcRD(SIMCONNECT_RECV *pData, DWORD cbData, void *pContext);
+    static void CALLBACK sampleDataCallback(SIMCONNECT_RECV *pData, DWORD cbData, void *pContext);
     void frenchConnection();
     void setupRequestData();
 
 private slots:
     void sampleData();
+    void replay();
 };
 
 #endif // SKYCONNECT_H

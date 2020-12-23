@@ -24,8 +24,9 @@ private:
 
 private slots:
     void on_connectionPushButton_clicked();
-    void on_recordPushButton_clicked(bool isChecked = false);
+    void on_recordPushButton_clicked(bool checked = false);
     void on_clearPushButton_clicked();
+    void on_replayPushButton_clicked(bool checked = false);
 
     void updateUi();
     void updateInfoUi();
