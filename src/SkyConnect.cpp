@@ -103,6 +103,11 @@ void SkyConnect::stopDataSample()
     d->m_timer.stop();
 }
 
+Aircraft &SkyConnect::getAircraft()
+{
+    return d->m_aircraft;
+}
+
 const Aircraft &SkyConnect::getAircraft() const
 {
     return d->m_aircraft;
@@ -161,7 +166,6 @@ void CALLBACK SkyConnect::MyDispatchProcRD(SIMCONNECT_RECV* pData, DWORD cbData,
                         qDebug("\nObjectID=%lx  title=\"%s\"", objectID, aircraftInfo->title );
                         name = aircraftInfo->title;
                         skyConnect->d->m_aircraft.setName(name);
-                        skyConnect->aircraftChanged();
                     }
                     break;
 
@@ -178,8 +182,7 @@ void CALLBACK SkyConnect::MyDispatchProcRD(SIMCONNECT_RECV* pData, DWORD cbData,
             {
                 case AircraftPositionRequest:
                     position = reinterpret_cast<Position *>(&objectData->dwData);
-                    skyConnect->d->m_aircraft.setPosition(*position);
-                    skyConnect->aircraftChanged();
+                    skyConnect->d->m_aircraft.appendPosition(*position);
                     break;
 
                 default:

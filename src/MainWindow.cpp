@@ -1,4 +1,5 @@
 #include <QByteArray>
+#include <QString>
 
 #include "Aircraft.h"
 #include "SkyConnect.h"
@@ -25,14 +26,18 @@ MainWindow::~MainWindow()
 
 void MainWindow::frenchConnection()
 {
-    connect(&m_skyConnect, &SkyConnect::aircraftChanged,
-            this, &MainWindow::updateUi);
+    const Aircraft &aircraft = m_skyConnect.getAircraft();
+    connect(&aircraft, &Aircraft::infoChanged,
+            this, &MainWindow::updateInfoUi);
+    connect(&aircraft, &Aircraft::positionChanged,
+            this, &MainWindow::updatePositionUi);
 }
 
 
 // PRIVATE SLOTS
 
-void MainWindow::on_connectionPushButton_clicked() {
+void MainWindow::on_connectionPushButton_clicked()
+{
     qDebug("on_connnectionPushButton_clicked");
 
     if (m_skyConnect.isConnected()) {
@@ -50,7 +55,8 @@ void MainWindow::on_connectionPushButton_clicked() {
     }
 }
 
-void MainWindow::on_recordPushButton_clicked(bool checked) {
+void MainWindow::on_recordPushButton_clicked(bool checked)
+{
     qDebug("on_recordPushButton_clicked");
 
     if (checked) {
@@ -60,15 +66,36 @@ void MainWindow::on_recordPushButton_clicked(bool checked) {
     }
 }
 
+void MainWindow::on_clearPushButton_clicked()
+{
+    Aircraft &aircraft = m_skyConnect.getAircraft();
+
+    aircraft.clear();
+}
+
 void MainWindow::updateUi()
+{
+    updateInfoUi();
+    updatePositionUi();
+}
+
+void MainWindow::updateInfoUi()
 {
     const Aircraft &aircraft = m_skyConnect.getAircraft();
     const QByteArray &name = aircraft.getName();
-    const Position &position = aircraft.getPosition();
 
     ui->nameLineEdit->setText(name);
+}
+
+void MainWindow::updatePositionUi()
+{
+    const Aircraft &aircraft = m_skyConnect.getAircraft();
+    const Position &position = aircraft.getLastPosition();
+
+    ui->nofPositionsLineEdit->setText(QString::number(aircraft.getPositions().length()));
     ui->latitudeLineEdit->setText(QString::number(position.latitude));
     ui->longitudeLineEdit->setText(QString::number(position.longitude));
     ui->altitudeLineEdit->setText(QString::number(position.altitude));
 }
+
 

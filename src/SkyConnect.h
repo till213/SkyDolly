@@ -25,10 +25,8 @@ public:
     void startDataSample();
     void stopDataSample();
 
+    Aircraft &getAircraft();
     const Aircraft &getAircraft() const;
-
-signals:
-    void aircraftChanged();
 
 private:
     SimConnectPrivate *d;

@@ -25,7 +25,10 @@ private:
 private slots:
     void on_connectionPushButton_clicked();
     void on_recordPushButton_clicked(bool isChecked = false);
+    void on_clearPushButton_clicked();
 
     void updateUi();
+    void updateInfoUi();
+    void updatePositionUi();
 };
 #endif // MAINWINDOW_H

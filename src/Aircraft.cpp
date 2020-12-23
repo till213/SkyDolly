@@ -1,4 +1,6 @@
+#include <QObject>
 #include <QByteArray>
+#include <QVector>
 
 #include "Position.h"
 #include "Aircraft.h"
@@ -9,14 +11,15 @@ public:
     AircraftPrivate()
     {}
 
-    Position m_position;
+    QVector<Position> m_positions;
     QByteArray m_name;
 };
 
 // PUBLIC
 
-Aircraft::Aircraft()
-    : d(new AircraftPrivate())
+Aircraft::Aircraft(QObject *parent)
+    : QObject(parent),
+      d(new AircraftPrivate())
 {
 
 }
@@ -29,6 +32,7 @@ Aircraft::~Aircraft()
 void Aircraft::setName(QByteArray name)
 {
     d->m_name = name;
+    emit infoChanged();
 }
 
 const QByteArray &Aircraft::getName() const
@@ -36,12 +40,28 @@ const QByteArray &Aircraft::getName() const
     return d->m_name;
 }
 
-void Aircraft::setPosition(Position position)
+void Aircraft::appendPosition(Position position)
 {
-    d->m_position = position;
+    d->m_positions.append(position);
+    emit positionChanged();
 }
 
-const Position &Aircraft::getPosition() const {
-    return d->m_position;
+const Position &Aircraft::getLastPosition() const {
+    if (!d->m_positions.isEmpty()) {
+        return d->m_positions.last();
+    } else {
+        return Position::NullPosition;
+    }
+}
+
+const QVector<Position> Aircraft::getPositions() const
+{
+    return d->m_positions;
+}
+
+void Aircraft::clear()
+{
+    d->m_positions.clear();
+    emit positionChanged();
 }
 

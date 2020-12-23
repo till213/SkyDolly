@@ -1,23 +1,33 @@
 #ifndef AIRCRAFT_H
 #define AIRCRAFT_H
 
+#include <QObject>
 #include <QByteArray>
+#include <QVector>
 
 #include "Position.h"
 
 class AircraftPrivate;
 
-class Aircraft
+class Aircraft : public QObject
 {
-public:
-    Aircraft();
+    Q_OBJECT
+public:    
+    Aircraft(QObject *parent = nullptr);
     virtual ~Aircraft();
 
     void setName(QByteArray name);
     const QByteArray &getName() const;
 
-    void setPosition(Position position);
-    const Position &getPosition() const;
+    void appendPosition(Position position);
+    const Position &getLastPosition() const;
+    const QVector<Position> getPositions() const;
+
+    void clear();
+
+signals:
+    void infoChanged();
+    void positionChanged();
 
 private:
     AircraftPrivate *d;
