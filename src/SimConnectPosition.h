@@ -7,7 +7,7 @@
 
 struct SimConnectPosition : public Position
 {
-    static void addDataDefintion(HANDLE simConnectHandler);
+    static HRESULT addDataDefintion(HANDLE simConnectHandler);
 };
 
 #endif // SIMCONNECTPOSITION_H

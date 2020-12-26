@@ -5,18 +5,18 @@
 #include <QByteArray>
 #include <QObject>
 
+#include "Aircraft.h"
 #include "SimConnectDataDefinition.h"
 #include "SimConnectPosition.h"
-#include "Aircraft.h"
 #include "SkyConnect.h"
 
 namespace {
-  const char *ConnectionName = "SkyConnect";
 
-  const DWORD UserAirplaneRadiusMeters = 0;
-  // Sample the position data at 60 Hz
-  const int IntervalMilliseconds = int(1.0 / 60.0 * 1000.0);
+    const char *ConnectionName = "SkyConnect";
 
+    const DWORD UserAirplaneRadiusMeters = 0;
+    // Sample the position data at 60 Hz
+    const int IntervalMilliseconds = int(1.0 / 60.0 * 1000.0);
 
     struct AircraftInfo
     {
@@ -30,6 +30,11 @@ namespace {
     enum DataRequestID {
         AircraftInfoRequest,
         AircraftPositionRequest
+    };
+
+    enum SimConnectOnGround {
+        SimConnectAirborne = 0,
+        SimConnectOnGround = 1
     };
 
 }
@@ -144,7 +149,7 @@ void CALLBACK SkyConnect::sampleDataCallback(SIMCONNECT_RECV* pData, DWORD cbDat
     SIMCONNECT_RECV_SIMOBJECT_DATA *objectData;
     AircraftInfo *aircraftInfo;
     QByteArray name;
-    Position *position;
+    Position position;
 
     switch(pData->dwID)
     {
@@ -197,8 +202,8 @@ void CALLBACK SkyConnect::sampleDataCallback(SIMCONNECT_RECV* pData, DWORD cbDat
             switch(objectData->dwRequestID)
             {
                 case AircraftPositionRequest:
-                    position = reinterpret_cast<Position *>(&objectData->dwData);
-                    skyConnect->d->m_aircraft.appendPosition(*position);
+                    position = *(reinterpret_cast<Position *>(&objectData->dwData));
+                    skyConnect->d->m_aircraft.appendPosition(position);
                     break;
 
                 default:
@@ -237,8 +242,8 @@ void SkyConnect::setupRequestData()
     HRESULT res;
 
     // Set up the data definition, but do not yet do anything with it
-    res = ::SimConnect_AddToDataDefinition(d->m_simConnectHandler, AircraftInfoDefinition, "title", NULL, SIMCONNECT_DATATYPE_STRING256);
-    SimConnectPosition::addDataDefintion(d->m_simConnectHandler);
+    res = ::SimConnect_AddToDataDefinition(d->m_simConnectHandler, AircraftInfoDefinition, "title", nullptr, SIMCONNECT_DATATYPE_STRING256);
+    res = SimConnectPosition::addDataDefintion(d->m_simConnectHandler);
 
     // Request an event when the simulation starts
     res = ::SimConnect_SubscribeToSystemEvent(d->m_simConnectHandler, SimStartEvent, "SimStart");
@@ -262,7 +267,6 @@ void SkyConnect::sampleData()
 void SkyConnect::replay()
 {
     const QVector<Position> positions = d->m_aircraft.getPositions();
-    //::SimConnect_CallDispatch(d->m_simConnectHandler, SkyConnect::sampleDataCallback, this);
     Position position;
     if (d->m_playHead < positions.length()) {
         position = positions.at(d->m_playHead);
@@ -271,6 +275,5 @@ void SkyConnect::replay()
     } else {
         this->stopReplay();
     }
-
 }
 

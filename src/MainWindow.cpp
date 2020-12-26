@@ -106,6 +106,9 @@ void MainWindow::updatePositionUi()
     ui->latitudeLineEdit->setText(QString::number(position.latitude));
     ui->longitudeLineEdit->setText(QString::number(position.longitude));
     ui->altitudeLineEdit->setText(QString::number(position.altitude));
+    ui->pitchLineEdit->setText(QString::number(position.pitch));
+    ui->bankLineEdit->setText(QString::number(position.bank));
+    ui->headingLineEdit->setText(QString::number(position.heading));
 }
 
 
