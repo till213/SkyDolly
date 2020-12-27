@@ -1,5 +1,6 @@
 #include <QByteArray>
 #include <QString>
+#include <QTime>
 
 #include "Aircraft.h"
 #include "SkyConnect.h"
@@ -109,6 +110,8 @@ void MainWindow::updatePositionUi()
     ui->pitchLineEdit->setText(QString::number(position.pitch));
     ui->bankLineEdit->setText(QString::number(position.bank));
     ui->headingLineEdit->setText(QString::number(position.heading));
+    QTime time = QTime::fromMSecsSinceStartOfDay(position.timestamp);
+    ui->timestampTimeEdit->setTime(time);
 }
 
 

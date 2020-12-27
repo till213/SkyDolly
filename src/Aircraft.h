@@ -21,7 +21,8 @@ public:
 
     void appendPosition(Position position);
     const Position &getLastPosition() const;
-    const QVector<Position> getPositions() const;
+    const QVector<Position> getPositions() const;    
+    const Position *getPosition(qint64 timestamp) const;
 
     void clear();
 

@@ -34,7 +34,7 @@ public:
 private:
     SimConnectPrivate *d;
 
-    static void CALLBACK sampleDataCallback(SIMCONNECT_RECV *pData, DWORD cbData, void *pContext);
+    static void CALLBACK sampleDataCallback(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context);
     void frenchConnection();
     void setupRequestData();
 
