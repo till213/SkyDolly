@@ -13,7 +13,7 @@ struct Position
     double bank;      // degrees
     double heading;   // degrees
 
-    qint64 timestamp;   // in milliseconds since the start of recording
+    qint64 timestamp; // in milliseconds since the start of recording
 
     Position(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0);
 

@@ -80,7 +80,7 @@ void MainWindow::on_replayPushButton_clicked(bool checked)
     if (checked) {
         m_skyConnect.startReplay();
     } else {
-        m_skyConnect.stopReplay()   ;
+        m_skyConnect.stopReplay();
     }
 }
 
@@ -88,6 +88,7 @@ void MainWindow::updateUi()
 {
     updateInfoUi();
     updatePositionUi();
+    ui->timestampTimeEdit->setDisplayFormat("hh:mm:ss");
 }
 
 void MainWindow::updateInfoUi()
@@ -110,7 +111,8 @@ void MainWindow::updatePositionUi()
     ui->pitchLineEdit->setText(QString::number(position.pitch));
     ui->bankLineEdit->setText(QString::number(position.bank));
     ui->headingLineEdit->setText(QString::number(position.heading));
-    QTime time = QTime::fromMSecsSinceStartOfDay(position.timestamp);
+    QTime time(0, 0, 0, 0);
+    time = time.addMSecs(position.timestamp);
     ui->timestampTimeEdit->setTime(time);
 }
 
