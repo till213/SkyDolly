@@ -20,15 +20,14 @@ find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools REQUIRED)
 
 # Application libraries
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/Kernel)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/SkyConnect)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
 
 set(TS_FILES i18n/SkyDolly_de_DE.ts)
 
 set(PROJECT_SOURCES
     src/main.cpp
-    src/MainWindow.cpp
-    src/MainWindow.h
-    src/MainWindow.ui
     ${TS_FILES}
 )
 
@@ -50,4 +49,4 @@ target_include_directories(SkyDolly PUBLIC
                           "${PROJECT_SOURCE_DIR}/src/SkyConnect/src"
                           )
 
-target_link_libraries(SkyDolly PRIVATE Qt${QT_VERSION_MAJOR}::Widgets SkyConnect)
+target_link_libraries(SkyDolly PRIVATE Qt${QT_VERSION_MAJOR}::Widgets UserInterface)

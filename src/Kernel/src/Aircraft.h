@@ -5,12 +5,12 @@
 #include <QByteArray>
 #include <QVector>
 
-#include "SkyConnectLib.h"
+#include "KernelLib.h"
 #include "Position.h"
 
 class AircraftPrivate;
 
-class SKYCONNECT_API Aircraft : public QObject
+class KERNEL_API Aircraft : public QObject
 {
     Q_OBJECT
 public:    

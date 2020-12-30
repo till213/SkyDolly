@@ -2,8 +2,8 @@
 #include <strsafe.h>
 #include <SimConnect.h>
 
-#include "Aircraft.h"
-#include "Position.h"
+#include "../../Kernel/src/Aircraft.h"
+#include "../../Kernel/src/Position.h"
 #include "SimConnectAircraftInfo.h"
 #include "SimConnectPosition.h"
 #include "SkyConnectImpl.h"

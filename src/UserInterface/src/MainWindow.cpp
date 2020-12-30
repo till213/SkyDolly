@@ -2,8 +2,8 @@
 #include <QString>
 #include <QTime>
 
-#include "Aircraft.h"
-#include "SkyConnect.h"
+#include "../../Kernel/src/Aircraft.h"
+#include "../../SkyConnect/src/SkyConnect.h"
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
 
