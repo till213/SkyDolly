@@ -4,6 +4,8 @@
 struct SimConnectAircraftInfo
 {
     char title[256];
+
+    static void addToDataDefinition(HANDLE simConnectHandle);
 };
 
 #endif // SIMCONNECTAIRCRAFTINFO_H

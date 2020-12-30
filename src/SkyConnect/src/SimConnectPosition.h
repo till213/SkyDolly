@@ -1,6 +1,8 @@
 #ifndef SIMCONNECTPOSITION_H
 #define SIMCONNECTPOSITION_H
 
+#include <windows.h>
+
 #include "../../Kernel/src/Position.h"
 
 struct SimConnectPosition
@@ -34,6 +36,8 @@ struct SimConnectPosition
         bank = position.bank;
         heading = position.heading;
     }
+
+    static void addToDataDefinition(HANDLE simConnectHandle);
 };
 
 #endif // SIMCONNECTPOSITION_H

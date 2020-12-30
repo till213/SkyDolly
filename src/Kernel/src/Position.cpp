@@ -15,4 +15,9 @@ Position::Position(double latitude, double longitude, double altitude)
     this->altitude = altitude;
 }
 
+bool Position::isValid() const {
+    return !(latitude == 0.0 && longitude == 0.0 && altitude == 0.0 &&
+             pitch == 0.0 && bank == 0.0 && heading == 0.0 && timestamp == 0);
+}
+
 

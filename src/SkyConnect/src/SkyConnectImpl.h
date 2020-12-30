@@ -10,6 +10,8 @@
 
 #include "../../Kernel/src/Aircraft.h"
 
+class SkyConnectPrivate;
+
 class SkyConnectImpl : public QObject
 {
     Q_OBJECT
@@ -31,12 +33,7 @@ public:
     const Aircraft &getAircraft() const;
 
 private:
-    HANDLE m_simConnectHandler;
-    QTimer m_timer;
-    qint64 m_currentTimestamp;
-    QElapsedTimer m_elapsedTimer;
-    Aircraft m_aircraft;
-    static const int IntervalMilliseconds;
+    SkyConnectPrivate *d;
 
     void frenchConnection();
     void setupRequestData();
