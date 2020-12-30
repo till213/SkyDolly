@@ -1,11 +1,10 @@
 #ifndef SKYCONNECT_H
 #define SKYCONNECT_H
 
-#include "Aircraft.h"
+#include "../../Kernel/src/Aircraft.h"
 #include "SkyConnectLib.h"
 
 class SkyConnectImpl;
-
 
 class SKYCONNECT_API SkyConnect
 {

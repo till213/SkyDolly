@@ -3,7 +3,9 @@
 
 #include <QtGlobal>
 
-struct Position
+#include "KernelLib.h"
+
+struct KERNEL_API Position
 {
     double latitude;  // degrees
     double longitude; // degrees

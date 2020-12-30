@@ -8,7 +8,7 @@
 #include <windows.h>
 #include <SimConnect.h>
 
-#include "Aircraft.h"
+#include "../../Kernel/src/Aircraft.h"
 
 class SkyConnectImpl : public QObject
 {
