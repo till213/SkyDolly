@@ -214,12 +214,7 @@ void CALLBACK SkyConnectImpl::sampleDataCallback(SIMCONNECT_RECV* receivedData, 
             {
                 case AircraftPositionRequest:
                     simConnectPosition = reinterpret_cast<::SimConnectPosition *>(&objectData->dwData);
-                    position.latitude = simConnectPosition->latitude;
-                    position.longitude = simConnectPosition->longitude;
-                    position.altitude = simConnectPosition->altitude;
-                    position.pitch = simConnectPosition->pitch;
-                    position.bank = simConnectPosition->bank;
-                    position.heading = simConnectPosition->heading;
+                    position = simConnectPosition->toPosition();
                     position.timestamp = skyConnect->m_elapsedTimer.elapsed();
                     skyConnect->m_aircraft.appendPosition(std::move(position));
                     break;
@@ -257,12 +252,7 @@ void SkyConnectImpl::replay()
 
     if (position != nullptr) {
         SimConnectPosition simConnectPosition;
-        simConnectPosition.latitude = position->latitude;
-        simConnectPosition.longitude = position->longitude;
-        simConnectPosition.altitude = position->altitude;
-        simConnectPosition.pitch = position->pitch;
-        simConnectPosition.bank = position->bank;
-        simConnectPosition.heading = position->heading;
+        simConnectPosition.fromPosition(*position);
         ::SimConnect_SetDataOnSimObject(m_simConnectHandler, AircraftPositionDefinition, SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0, sizeof(SimConnectPosition), &simConnectPosition);
     } else {
         this->stopReplay();

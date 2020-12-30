@@ -1,11 +1,3 @@
-cmake_minimum_required(VERSION 3.5)
-
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-# Qt
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
-
 add_definitions(-DUSERINTERFACE_EXPORT)
 
 set(PROJECT_SOURCES
@@ -28,5 +20,4 @@ endif()
 target_link_libraries(UserInterface PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Kernel SkyConnect)
 set_target_properties(UserInterface PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(UserInterface PROPERTIES SOVERSION 1)
-
 
