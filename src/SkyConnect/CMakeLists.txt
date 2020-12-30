@@ -1,14 +1,3 @@
-cmake_minimum_required(VERSION 3.5)
-
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-
-# Qt
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
-
 # SimConnect
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/3rdParty/cmake")
 find_package(SimConnect REQUIRED)
@@ -40,4 +29,10 @@ endif()
 target_link_libraries(SkyConnect PRIVATE Qt${QT_VERSION_MAJOR}::Core SimConnect Kernel)
 set_target_properties(SkyConnect PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(SkyConnect PROPERTIES SOVERSION 1)
+
+# Copy SimConnect.dll to bin directory (for development)
+add_custom_command(TARGET SkyConnect POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:SimConnect>
+        $<TARGET_FILE_DIR:SkyConnect>)
 
