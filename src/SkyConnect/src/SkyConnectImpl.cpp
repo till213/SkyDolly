@@ -34,7 +34,8 @@ class SkyConnectPrivate
 public:
     SkyConnectPrivate()
         : simConnectHandle(nullptr),
-          currentTimestamp(0)
+          currentTimestamp(0),
+          firstSample(true)
     {
     }
 
@@ -43,6 +44,7 @@ public:
     qint64 currentTimestamp;
     QElapsedTimer elapsedTimer;
     Aircraft aircraft;
+    bool firstSample;
 
     static const int SampleIntervalMSec;
     static const int ReplayIntervalMSec;
@@ -50,7 +52,7 @@ public:
 };
 
 // Sample the position data at 60 Hz
-const int SkyConnectPrivate::SampleIntervalMSec = int(1.0 / 60.0 * 1000.0);
+const int SkyConnectPrivate::SampleIntervalMSec = int(1.0 / 15.0 * 1000.0);
 const int SkyConnectPrivate::ReplayIntervalMSec = int(1.0 / 60.0 * 1000.0);
 
 // PUBLIC
@@ -105,8 +107,8 @@ void SkyConnectImpl::startDataSample()
 
         // Get aircraft position every simulated frame
         res = ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, ::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_SIM_FRAME, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
-        this->sampleData();
-        d->elapsedTimer.start();
+        d->elapsedTimer.invalidate();
+        d->firstSample = true;
         d->timer.start();
     }
 }
@@ -228,6 +230,10 @@ void CALLBACK SkyConnectImpl::sampleDataCallback(SIMCONNECT_RECV* receivedData, 
                     position = simConnectPosition->toPosition();
                     position.timestamp = skyConnect->d->currentTimestamp;
                     skyConnect->d->aircraft.appendPosition(std::move(position));
+                    if (skyConnect->d->firstSample) {
+                        skyConnect->d->elapsedTimer.start();
+                        skyConnect->d->firstSample = false;
+                    }
                     break;
 
                 default:
@@ -264,6 +270,10 @@ void SkyConnectImpl::replay()
     if (position.isValid()) {
         SimConnectPosition simConnectPosition;
         simConnectPosition.fromPosition(position);
+        qDebug("Replay: lon: %f lat: %f alt: %f pitch: %f bank: %f head: %f time: %lli",
+               simConnectPosition.longitude, simConnectPosition.latitude, simConnectPosition.altitude,
+               simConnectPosition.pitch, simConnectPosition.bank, simConnectPosition.heading,
+               d->currentTimestamp);
         ::SimConnect_SetDataOnSimObject(d->simConnectHandle, AircraftPositionDefinition, SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0, sizeof(SimConnectPosition), &simConnectPosition);
     } else {
         this->stopReplay();
@@ -279,7 +289,7 @@ void SkyConnectImpl::stopAll()
 void SkyConnectImpl::sampleData()
 {
     HRESULT res;
-    if (d->timer.isActive()) {
+    if (d->elapsedTimer.isValid()) {
         d->currentTimestamp = d->elapsedTimer.elapsed();
     } else {
         d->currentTimestamp = 0;

@@ -84,31 +84,25 @@ const Position &Aircraft::getPosition(qint64 timestamp) const
 {
     const Position *p0, *p1, *p2, *p3;
 
-    this->getInterpolationPositions(timestamp, &p0, &p1, &p2, &p3);
-    if (p0 != nullptr) {
+    if (this->getInterpolationPositions(timestamp, &p0, &p1, &p2, &p3)) {
+
+        double tn = this->normaliseTimestamp(*p1, *p2, timestamp);
+
         // Linear interpolation - @todo Implement "boundary" cases, specifically the dateline "switch" from latitude -180 to 180
         double l = static_cast<double>(timestamp - p1->timestamp) / static_cast<double>(p2->timestamp - p1->timestamp);
         d->position.latitude = p1->latitude + l * (p2->latitude - p1->latitude);
         d->position.longitude = p1->longitude + l * (p2->longitude - p1->longitude);
         d->position.altitude = p1->altitude + l * (p2->altitude - p1->altitude);
 
-        // Interpolate on the smaller arc
-        // Pitch: [-180, 180[
-        double diff = p2->pitch - p1->pitch;
-        if (qAbs(diff) < 180.0f) {
-            d->position.pitch = p1->pitch + l * diff;
-        } else {
-            diff = -(360.0 - qAbs(diff)) * SkyMath::sgn(diff);
-            d->position.pitch = p1->pitch + l * diff;
-            if (d->position.pitch < -180.0) {
-                d->position.pitch += 360.0;
-            } else if (d->position.pitch > 180.0) {
-               d->position.pitch -= 360.0;
-           }
-        }
+        d->position.latitude  = SkyMath::interpolateHermite180(p0->latitude, p1->latitude, p2->latitude, p3->latitude, tn);
+        d->position.longitude = SkyMath::interpolateHermite180(p0->longitude, p1->longitude, p2->longitude, p3->longitude, tn);
+        d->position.altitude  = SkyMath::interpolateHermite180(p0->altitude, p1->altitude, p2->altitude, p3->altitude, tn);
+
+        d->position.pitch = SkyMath::interpolateHermite180(p0->pitch, p1->pitch, p2->pitch, p3->pitch, tn);
+        d->position.bank  = SkyMath::interpolateHermite180(p0->bank, p1->bank, p2->bank, p3->bank, tn);
 
         // Bank: [-180, 180[
-        diff = p2->bank - p1->bank;
+        double diff = p2->bank - p1->bank;
         if (qAbs(diff) < 180.0f) {
             d->position.bank = p1->bank + l * diff;
         } else {
@@ -189,7 +183,7 @@ bool Aircraft::updateCurrentIndex(qint64 timestamp) const
     return d->currentIndex != ::InvalidIndex;
 }
 
-void Aircraft::getInterpolationPositions(qint64 timestamp, const Position **p0, const Position **p1, const Position **p2, const Position **p3) const
+bool Aircraft::getInterpolationPositions(qint64 timestamp, const Position **p0, const Position **p1, const Position **p2, const Position **p3) const
 {
     if (this->updateCurrentIndex(timestamp)) {
 
@@ -217,5 +211,13 @@ void Aircraft::getInterpolationPositions(qint64 timestamp, const Position **p0, 
         *p0 = *p1 = *p2 = *p3 = nullptr;
     }
 
+    return *p0 != nullptr;
+}
+
+double Aircraft::normaliseTimestamp(const Position &p1, const Position &p2, quint64 timestamp)
+{
+    double t1 = timestamp - p1.timestamp;
+    double t2 = p2.timestamp - p1.timestamp;
+    return static_cast<float>(t1) / static_cast<float>(t2);
 }
 
