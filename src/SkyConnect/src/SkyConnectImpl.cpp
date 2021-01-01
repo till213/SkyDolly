@@ -34,8 +34,7 @@ class SkyConnectPrivate
 public:
     SkyConnectPrivate()
         : simConnectHandle(nullptr),
-          currentTimestamp(0),
-          expectMessage(false)
+          currentTimestamp(0)
     {
     }
 
@@ -44,7 +43,6 @@ public:
     qint64 currentTimestamp;
     QElapsedTimer elapsedTimer;
     Aircraft aircraft;
-    bool expectMessage;
 
     static const int SampleIntervalMSec;
     static const int ReplayIntervalMSec;
@@ -52,7 +50,6 @@ public:
 };
 
 // Sample the position data at 60 Hz
-// @todo FIXME Reset to proper sampling rate
 const int SkyConnectPrivate::SampleIntervalMSec = int(1.0 / 60.0 * 1000.0);
 const int SkyConnectPrivate::ReplayIntervalMSec = int(1.0 / 60.0 * 1000.0);
 
@@ -108,7 +105,7 @@ void SkyConnectImpl::startDataSample()
 
         // Get aircraft position every simulated frame
         res = ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, ::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_SIM_FRAME, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
-
+        this->sampleData();
         d->elapsedTimer.start();
         d->timer.start();
     }
@@ -282,10 +279,12 @@ void SkyConnectImpl::stopAll()
 void SkyConnectImpl::sampleData()
 {
     HRESULT res;
-    if (d->currentTimestamp == 0) {
+    if (d->timer.isActive()) {
+        d->currentTimestamp = d->elapsedTimer.elapsed();
+    } else {
+        d->currentTimestamp = 0;
+        // First sample: request aircraft information
         res = ::SimConnect_RequestDataOnSimObjectType(d->simConnectHandle, AircraftInfoRequest, AircraftInfoDefinition, ::UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
     }
-    d->currentTimestamp = d->elapsedTimer.elapsed();
-    d->expectMessage = true;
     ::SimConnect_CallDispatch(d->simConnectHandle, SkyConnectImpl::sampleDataCallback, this);
 }
