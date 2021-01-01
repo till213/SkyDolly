@@ -35,7 +35,8 @@ private:
     AircraftPrivate *d;
 
     bool updateCurrentIndex(qint64 timestamp) const;
-    void getInterpolationPositions(qint64 timestamp, const Position **p0, const Position **p1, const Position **p2, const Position **p3) const;
+    bool getInterpolationPositions(qint64 timestamp, const Position **p0, const Position **p1, const Position **p2, const Position **p3) const;
+    static double normaliseTimestamp(const Position &p1, const Position &p2, quint64 timestamp);
 };
 
 #endif // AIRCRAFT_H
