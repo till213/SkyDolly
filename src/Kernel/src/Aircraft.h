@@ -33,6 +33,9 @@ signals:
 
 private:
     AircraftPrivate *d;
+
+    bool updateCurrentIndex(qint64 timestamp) const;
+    void getInterpolationPositions(qint64 timestamp, const Position **p0, const Position **p1, const Position **p2, const Position **p3) const;
 };
 
 #endif // AIRCRAFT_H

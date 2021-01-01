@@ -8,6 +8,7 @@ set(PROJECT_SOURCES
     src/Aircraft.h
     src/Position.cpp
     src/Position.h
+    src/SkyMath.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

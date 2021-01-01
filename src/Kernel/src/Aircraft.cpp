@@ -2,12 +2,9 @@
 #include <QByteArray>
 #include <QVector>
 
+#include "SkyMath.h"
 #include "Position.h"
 #include "Aircraft.h"
-
-template <typename T> int sgn(T val) {
-    return (T(0) < val) - (val < T(0));
-}
 
 namespace {
     const int InvalidIndex = -1;
@@ -17,13 +14,13 @@ class AircraftPrivate
 {
 public:
     AircraftPrivate()
-        : previousIndex(::InvalidIndex)
+        : currentIndex(::InvalidIndex)
     {}
 
     QVector<Position> positions;
     Position position;
     QByteArray name;
-    int previousIndex;
+    mutable int currentIndex;
 };
 
 // PUBLIC
@@ -79,102 +76,66 @@ const QVector<Position> Aircraft::getPositions() const
 void Aircraft::clear()
 {
     d->positions.clear();
-    d->previousIndex = ::InvalidIndex;
+    d->currentIndex = ::InvalidIndex;
     emit positionChanged();
 }
 
 const Position &Aircraft::getPosition(qint64 timestamp) const
 {
-    const Position *previousPosition;
-    const Position *nextPosition;
-    int index;
+    const Position *p0, *p1, *p2, *p3;
 
-    if (d->positions.length() > 0 && timestamp <= d->positions.last().timestamp) {
+    this->getInterpolationPositions(timestamp, &p0, &p1, &p2, &p3);
+    if (p0 != nullptr) {
+        // Linear interpolation - @todo Implement "boundary" cases, specifically the dateline "switch" from latitude -180 to 180
+        double l = static_cast<double>(timestamp - p1->timestamp) / static_cast<double>(p2->timestamp - p1->timestamp);
+        d->position.latitude = p1->latitude + l * (p2->latitude - p1->latitude);
+        d->position.longitude = p1->longitude + l * (p2->longitude - p1->longitude);
+        d->position.altitude = p1->altitude + l * (p2->altitude - p1->altitude);
 
-        if (d->previousIndex != ::InvalidIndex) {
-
-            index = d->previousIndex + 1;
-            if (index < d->positions.length() && d->positions.at(index).timestamp >= timestamp) {
-                 previousPosition = &(d->positions.at(d->previousIndex));
-            } else {
-                // The timestamp was moved to front ("rewind"), so start searching from beginning
-                // @todo binary search (O(log n)
-                previousPosition = &(d->positions.at(0));
-                index = 1;
-            }
+        // Interpolate on the smaller arc
+        // Pitch: [-180, 180[
+        double diff = p2->pitch - p1->pitch;
+        if (qAbs(diff) < 180.0f) {
+            d->position.pitch = p1->pitch + l * diff;
         } else {
-            // Start from beginning (O(n))
-            // @todo binary search (O(log n)
-            previousPosition = &(d->positions.at(0));
-            index = 1;
+            diff = -(360.0 - qAbs(diff)) * SkyMath::sgn(diff);
+            d->position.pitch = p1->pitch + l * diff;
+            if (d->position.pitch < -180.0) {
+                d->position.pitch += 360.0;
+            } else if (d->position.pitch > 180.0) {
+               d->position.pitch -= 360.0;
+           }
         }
 
-        nextPosition = nullptr;
-        while (nextPosition == nullptr && index < d->positions.length()) {
-            if (d->positions.at(index).timestamp >= timestamp) {
-                nextPosition = &(d->positions.at(index));
-                previousPosition = &(d->positions.at(index - 1));
-            } else {
-                ++index;
-            }
-        }
-        if (nextPosition != nullptr) {
-            // Linear interpolation - @todo Implement "boundary" cases, specifically the dateline "switch" from latitude -180 to 180
-            double l = static_cast<double>(timestamp - previousPosition->timestamp) / static_cast<double>(nextPosition->timestamp - previousPosition->timestamp);
-            d->position.latitude = previousPosition->latitude + l * (nextPosition->latitude - previousPosition->latitude);
-            d->position.longitude = previousPosition->longitude + l * (nextPosition->longitude - previousPosition->longitude);
-            d->position.altitude = previousPosition->altitude + l * (nextPosition->altitude - previousPosition->altitude);
-
-            // Interpolate on the smaller arc
-            // Pitch: [-180, 180[
-            double diff = nextPosition->pitch - previousPosition->pitch;
-            if (qAbs(diff) < 180.0f) {
-                d->position.pitch = previousPosition->pitch + l * diff;
-            } else {
-                diff = -(360.0 - qAbs(diff)) * sgn(diff);
-                d->position.pitch = previousPosition->pitch + l * diff;
-                if (d->position.pitch < -180.0) {
-                    d->position.pitch += 360.0;
-                } else if (d->position.pitch > 180.0) {
-                   d->position.pitch -= 360.0;
-               }
-            }
-
-            // Bank: [-180, 180[
-            diff = nextPosition->bank - previousPosition->bank;
-            if (qAbs(diff) < 180.0f) {
-                d->position.bank = previousPosition->bank + l * diff;
-            } else {
-                diff = -(360.0 - qAbs(diff)) * sgn(diff);
-                d->position.bank = previousPosition->bank + l * diff;
-                if (d->position.bank < -180.0) {
-                    d->position.bank += 360.0;
-                } else if (d->position.bank > 180.0) {
-                    d->position.bank -= 360.0;
-                }
-            }
-
-            // Heading: [0, 360[
-            diff = nextPosition->heading - previousPosition->heading;
-            if (qAbs(diff) < 180.0f) {
-                d->position.heading = previousPosition->heading + l * diff;
-            } else {
-                diff = -(360.0 - qAbs(diff)) * sgn(diff);
-                d->position.heading = previousPosition->heading + l * diff;
-                if (d->position.heading < 0.0) {
-                    d->position.heading += 360.0;
-                } else if (d->position.heading > 360.0) {
-                    d->position.heading -= 360.0;
-                }
-            }
-
-            d->position.timestamp = timestamp;
-
+        // Bank: [-180, 180[
+        diff = p2->bank - p1->bank;
+        if (qAbs(diff) < 180.0f) {
+            d->position.bank = p1->bank + l * diff;
         } else {
-            // previousPosition is the only position
-            d->position = *previousPosition;
+            diff = -(360.0 - qAbs(diff)) * SkyMath::sgn(diff);
+            d->position.bank = p1->bank + l * diff;
+            if (d->position.bank < -180.0) {
+                d->position.bank += 360.0;
+            } else if (d->position.bank > 180.0) {
+                d->position.bank -= 360.0;
+            }
         }
 
+        // Heading: [0, 360[
+        diff = p2->heading - p1->heading;
+        if (qAbs(diff) < 180.0f) {
+            d->position.heading = p1->heading + l * diff;
+        } else {
+            diff = -(360.0 - qAbs(diff)) * SkyMath:: sgn(diff);
+            d->position.heading = p1->heading + l * diff;
+            if (d->position.heading < 0.0) {
+                d->position.heading += 360.0;
+            } else if (d->position.heading > 360.0) {
+                d->position.heading -= 360.0;
+            }
+        }
+
+        d->position.timestamp = timestamp;
 
     } else {
         // No recorded positions, or the timestamp exceeds the timestamp of the last recorded position
@@ -182,5 +143,79 @@ const Position &Aircraft::getPosition(qint64 timestamp) const
     }
 
     return d->position;
+}
+
+// PRIVATE
+
+// Updates the current index with the last index having a timestamp <= the given timestamp
+bool Aircraft::updateCurrentIndex(qint64 timestamp) const
+{
+    int length = d->positions.length();
+    if (length > 0 && timestamp <= d->positions.last().timestamp) {
+
+        if (d->currentIndex != ::InvalidIndex) {
+            if (d->positions.at(d->currentIndex).timestamp > timestamp) {
+                // The timestamp was moved to front ("rewind"), so start searching from beginning
+                // @todo binary search (O(log n)
+                d->currentIndex = 0;
+            }
+        } else {
+            // Start from beginning (O(n))
+            // @todo binary search (O(log n)
+            d->currentIndex = 0;
+        }
+    } else {
+        // No positions yet, or timestamp not between given range
+        d->currentIndex = ::InvalidIndex;
+    }
+
+    if (d->currentIndex != ::InvalidIndex) {
+        // Increment the current index, until we find a position having a timestamp > the given timestamp
+        bool found = false;
+        while (!found && d->currentIndex < length) {
+            if (d->currentIndex < (length - 1)) {
+                if (d->positions.at(d->currentIndex + 1).timestamp > timestamp) {
+                    // The next index has a larger timestamp, so this index is the one we are looking for
+                    found = true;
+                } else {
+                    ++d->currentIndex;
+                }
+            } else {
+                // Reached the last index
+                found = true;
+            }
+        }
+    }
+    return d->currentIndex != ::InvalidIndex;
+}
+
+void Aircraft::getInterpolationPositions(qint64 timestamp, const Position **p0, const Position **p1, const Position **p2, const Position **p3) const
+{
+    if (this->updateCurrentIndex(timestamp)) {
+
+        *p1 = &d->positions.at(d->currentIndex);
+        if (d->currentIndex > 0) {
+           *p0 = &d->positions.at(d->currentIndex - 1);
+        } else {
+           *p0 = *p1;
+        }
+        if (d->currentIndex < d->positions.length() - 1) {
+           if (d->currentIndex < d->positions.length() - 2) {
+               *p2 = &d->positions.at(d->currentIndex + 1);
+               *p3 = &d->positions.at(d->currentIndex + 2);
+           } else {
+               // p1 is the second to last position
+               *p2 = &d->positions.at(d->currentIndex + 1);
+               *p3 = *p2;
+           }
+        } else {
+           // p1 is the last position
+           *p2 = *p3 = *p1;
+        }
+
+    } else {
+        *p0 = *p1 = *p2 = *p3 = nullptr;
+    }
+
 }
 
