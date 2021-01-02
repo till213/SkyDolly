@@ -19,6 +19,8 @@ private slots:
     void interpolateHermite180_data();
     void interpolateHermite180();
 
+    void interpolateHermite360_data();
+    void interpolateHermite360();
 };
 
 #endif // SKYMATHTEST_H

@@ -52,8 +52,8 @@ public:
 };
 
 // Sample the position data at 60 Hz
-const int SkyConnectPrivate::SampleIntervalMSec = int(1.0 / 15.0 * 1000.0);
-const int SkyConnectPrivate::ReplayIntervalMSec = int(1.0 / 60.0 * 1000.0);
+const int SkyConnectPrivate::SampleIntervalMSec = 1000.0; // static_cast<int>(1.0 / 15.0 * 1000.0);
+const int SkyConnectPrivate::ReplayIntervalMSec = static_cast<int>(1.0 / 60.0 * 1000.0);
 
 // PUBLIC
 
