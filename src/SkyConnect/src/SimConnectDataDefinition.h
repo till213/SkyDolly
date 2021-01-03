@@ -1,9 +1,13 @@
 #ifndef SIMCONNECTDATADEFINITION_H
 #define SIMCONNECTDATADEFINITION_H
 
-enum DataDefinitionID {
-    AircraftInfoDefinition,
-    AircraftPositionDefinition
-};
+namespace SkyConnectDataDefinition
+{
+    enum DataDefinitionID {
+        AircraftInfoDefinition,
+        AircraftPositionDefinition,
+        AircraftInitialPosition
+    };
+}
 
 #endif // SIMCONNECTDATADEFINITION_H

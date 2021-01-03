@@ -3,6 +3,7 @@
 #include <QTime>
 
 #include "../../Kernel/src/Aircraft.h"
+#include "../../Kernel/src/AircraftInfo.h"
 #include "../../SkyConnect/src/SkyConnect.h"
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
@@ -94,9 +95,11 @@ void MainWindow::updateUi()
 void MainWindow::updateInfoUi()
 {
     const Aircraft &aircraft = m_skyConnect.getAircraft();
-    const QByteArray &name = aircraft.getName();
+    const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
 
-    ui->nameLineEdit->setText(name);
+    ui->nameLineEdit->setText(aircraftInfo.name);
+    ui->startOnGroundCheckBox->setChecked(aircraftInfo.startOnGround);
+    ui->initialAirspeedLineEdit->setText(QString::number(aircraftInfo.initialAirspeed));
 }
 
 void MainWindow::updatePositionUi()

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>330</width>
-    <height>548</height>
+    <height>574</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -61,15 +61,18 @@
        <string>Aircraft</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="2" column="1">
-        <widget class="QLineEdit" name="nofPositionsLineEdit"/>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_5">
+       <item row="4" column="0">
+        <widget class="QPushButton" name="replayPushButton">
          <property name="text">
-          <string>Number of Positions</string>
+          <string>&amp;Replay</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
          </property>
         </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="nofPositionsLineEdit"/>
        </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label_4">
@@ -78,7 +81,14 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0" colspan="2">
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Number of Positions</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0" colspan="2">
         <widget class="QGroupBox" name="groupBox_3">
          <property name="title">
           <string>Last Position</string>
@@ -185,7 +195,7 @@
          </layout>
         </widget>
        </item>
-       <item row="4" column="0">
+       <item row="5" column="0">
         <widget class="QPushButton" name="clearPushButton">
          <property name="text">
           <string>&amp;Clear</string>
@@ -199,15 +209,22 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="QPushButton" name="replayPushButton">
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="startOnGroundCheckBox">
          <property name="text">
-          <string>&amp;Replay</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
+          <string>Start on ground</string>
          </property>
         </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_10">
+         <property name="text">
+          <string>Initial airspeed [knots]</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="initialAirspeedLineEdit"/>
        </item>
       </layout>
      </widget>
