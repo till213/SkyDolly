@@ -15,7 +15,7 @@ set(PROJECT_SOURCES
     src/SkyConnectImpl.cpp
     src/SkyConnectImpl.h
     src/SimConnectDataDefinition.h
-
+    src/Frequency.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

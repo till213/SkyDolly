@@ -7,6 +7,7 @@
 #include "SimConnectDataDefinition.h"
 #include "SimConnectAircraftInfo.h"
 #include "SimConnectPosition.h"
+#include "Frequency.h"
 #include "SkyConnectImpl.h"
 
 namespace {
@@ -32,6 +33,7 @@ namespace {
         SimConnectAirborne = 0,
         SimConnectOnGround = 1
     };
+
 }
 
 class SkyConnectPrivate
@@ -40,7 +42,12 @@ public:
     SkyConnectPrivate()
         : simConnectHandle(nullptr),
           currentTimestamp(0),
-          firstSample(true)
+          firstSample(true),
+          sampleFrequency(10.0),
+          sampleIntervalMSec(static_cast<int>(1.0 / sampleFrequency * 1000.0)),
+          replayFrequency(30.0),
+          replayIntervalMSec(static_cast<int>(1.0 / replayFrequency * 1000.0)),
+          timeScale(1.0)
     {
     }
 
@@ -50,15 +57,12 @@ public:
     QElapsedTimer elapsedTimer;
     Aircraft aircraft;
     bool firstSample;
-
-    static const int SampleIntervalMSec;
-    static const int ReplayIntervalMSec;
-
+    double sampleFrequency;
+    int    sampleIntervalMSec;
+    double replayFrequency;
+    int    replayIntervalMSec;
+    double timeScale;
 };
-
-// Sample the position data at 60 Hz
-const int SkyConnectPrivate::SampleIntervalMSec = static_cast<int>(1.0 / 30.0 * 1000.0);
-const int SkyConnectPrivate::ReplayIntervalMSec = static_cast<int>(1.0 / 60.0 * 1000.0);
 
 // PUBLIC
 
@@ -104,11 +108,15 @@ bool SkyConnectImpl::isConnected() const
 void SkyConnectImpl::startDataSample()
 {
     HRESULT res;
+    if (!isConnected()) {
+        this->open();
+    }
+
     if (isConnected()) {
         d->timer.disconnect();
         connect(&(d->timer), &QTimer::timeout,
                 this, &SkyConnectImpl::sampleData);
-        d->timer.setInterval(SkyConnectPrivate::SampleIntervalMSec);
+        d->timer.setInterval(d->sampleIntervalMSec);
 
         // Get aircraft position every simulated frame
         res = ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_SIM_FRAME, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
@@ -128,11 +136,14 @@ void SkyConnectImpl::stopDataSample()
 
 void SkyConnectImpl::startReplay()
 {
+    if (!isConnected()) {
+        this->open();
+    }
     if (isConnected()) {
         d->timer.disconnect();
         connect(&(d->timer), &QTimer::timeout,
                 this, &SkyConnectImpl::replay);
-        d->timer.setInterval(SkyConnectPrivate::ReplayIntervalMSec);
+        d->timer.setInterval(d->replayIntervalMSec);
         this->setupInitialPosition();
         d->elapsedTimer.start();
         d->timer.start();
@@ -152,6 +163,38 @@ Aircraft &SkyConnectImpl::getAircraft()
 const Aircraft &SkyConnectImpl::getAircraft() const
 {
     return d->aircraft;
+}
+
+void SkyConnectImpl::setSampleFrequency(Frequency::Frequency frequency)
+{
+    d->sampleFrequency = Frequency::toValue(frequency);
+    d->sampleIntervalMSec = static_cast<int>(1.0 / d->sampleFrequency * 1000.0);
+}
+
+Frequency::Frequency SkyConnectImpl::getSampleFrequency() const
+{
+    return Frequency::fromValue(d->sampleFrequency);
+}
+
+void SkyConnectImpl::setReplayFrequency(Frequency::Frequency frequency)
+{
+    d->sampleFrequency = Frequency::toValue(frequency);
+    d->sampleIntervalMSec = static_cast<int>(1.0 / d->sampleFrequency * 1000.0);
+}
+
+Frequency::Frequency SkyConnectImpl::getReplayFrequency() const
+{
+    return Frequency::fromValue(d->replayFrequency);
+}
+
+void SkyConnectImpl::setTimeScale(double timeScale)
+{
+    d->timeScale = timeScale;
+}
+
+double SkyConnectImpl::getTimeScale() const
+{
+    return d->timeScale;
 }
 
 // PRIVATE
@@ -294,7 +337,7 @@ void CALLBACK SkyConnectImpl::sampleDataCallback(SIMCONNECT_RECV* receivedData, 
 
 void SkyConnectImpl::replay()
 {
-    d->currentTimestamp = d->elapsedTimer.elapsed(); // / 8; // @todo FIXME REMOVE Hardcoded time factor
+    d->currentTimestamp = static_cast<qint64>(d->elapsedTimer.elapsed() * d->timeScale);
     const Position &position = d->aircraft.getPosition(d->currentTimestamp);
 
     if (position.isValid()) {
