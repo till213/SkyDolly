@@ -37,6 +37,7 @@ private:
 
     void frenchConnection();
     void setupRequestData();
+    void setupInitialPosition();
     static void CALLBACK sampleDataCallback(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context);
 
 private slots:

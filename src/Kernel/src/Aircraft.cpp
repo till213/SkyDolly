@@ -3,6 +3,7 @@
 #include <QVector>
 
 #include "SkyMath.h"
+#include "AircraftInfo.h"
 #include "Position.h"
 #include "Aircraft.h"
 
@@ -14,12 +15,15 @@ class AircraftPrivate
 {
 public:
     AircraftPrivate()
-        : currentIndex(::InvalidIndex)
+        : startOnGround(false),
+          currentIndex(::InvalidIndex)
     {}
 
+    AircraftInfo aircraftInfo;
     QVector<Position> positions;
     Position position;
     QByteArray name;
+    bool startOnGround;
     mutable int currentIndex;
 };
 
@@ -29,7 +33,6 @@ Aircraft::Aircraft(QObject *parent)
     : QObject(parent),
       d(new AircraftPrivate())
 {
-
 }
 
 Aircraft::~Aircraft()
@@ -37,15 +40,15 @@ Aircraft::~Aircraft()
     delete d;
 }
 
-void Aircraft::setName(QByteArray name)
+void Aircraft::setAircraftInfo(AircraftInfo aircraftInfo)
 {
-    d->name = name;
+    d->aircraftInfo = aircraftInfo;
     emit infoChanged();
 }
 
-const QByteArray &Aircraft::getName() const
+const AircraftInfo &Aircraft::getAircraftInfo() const
 {
-    return d->name;
+    return d->aircraftInfo;
 }
 
 void Aircraft::appendPosition(Position position)

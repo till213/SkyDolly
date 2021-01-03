@@ -6,6 +6,7 @@
 #include <QVector>
 
 #include "KernelLib.h"
+#include "AircraftInfo.h"
 #include "Position.h"
 
 class AircraftPrivate;
@@ -17,8 +18,8 @@ public:
     Aircraft(QObject *parent = nullptr);
     virtual ~Aircraft();
 
-    void setName(QByteArray name);
-    const QByteArray &getName() const;
+    void setAircraftInfo(AircraftInfo aircraftInfo);
+    const AircraftInfo &getAircraftInfo() const;
 
     void appendPosition(Position position);
     const Position &getLastPosition() const;
