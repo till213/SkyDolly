@@ -9,6 +9,7 @@
 #include <SimConnect.h>
 
 #include "../../Kernel/src/Aircraft.h"
+#include "Frequency.h"
 
 class SkyConnectPrivate;
 
@@ -31,6 +32,15 @@ public:
 
     Aircraft &getAircraft();
     const Aircraft &getAircraft() const;
+
+    void setSampleFrequency(Frequency::Frequency frequency);
+    Frequency::Frequency getSampleFrequency() const;
+
+    void setReplayFrequency(Frequency::Frequency frequency);
+    Frequency::Frequency getReplayFrequency() const;
+
+    void setTimeScale(double timeScale);
+    double getTimeScale() const;
 
 private:
     SkyConnectPrivate *d;

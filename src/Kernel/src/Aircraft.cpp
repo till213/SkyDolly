@@ -111,7 +111,6 @@ const Position &Aircraft::getPosition(qint64 timestamp) const
         // No recorded positions, or the timestamp exceeds the timestamp of the last recorded position
         d->position = Position::NullPosition;
     }
-
     return d->position;
 }
 
@@ -120,41 +119,46 @@ const Position &Aircraft::getPosition(qint64 timestamp) const
 // Updates the current index with the last index having a timestamp <= the given timestamp
 bool Aircraft::updateCurrentIndex(qint64 timestamp) const
 {
+    int index = d->currentIndex;
     int length = d->positions.length();
     if (length > 0 && timestamp <= d->positions.last().timestamp) {
-
-        if (d->currentIndex != ::InvalidIndex) {
+        if (index != ::InvalidIndex) {
             if (d->positions.at(d->currentIndex).timestamp > timestamp) {
                 // The timestamp was moved to front ("rewind"), so start searching from beginning
                 // @todo binary search (O(log n)
-                d->currentIndex = 0;
+                index = 0;
             }
         } else {
             // Start from beginning (O(n))
             // @todo binary search (O(log n)
-            d->currentIndex = 0;
-        }
+            index = 0;
+        }        
     } else {
         // No positions yet, or timestamp not between given range
-        d->currentIndex = ::InvalidIndex;
+        index = ::InvalidIndex;
     }
 
-    if (d->currentIndex != ::InvalidIndex) {
+    if (index != ::InvalidIndex) {
         // Increment the current index, until we find a position having a timestamp > the given timestamp
         bool found = false;
-        while (!found && d->currentIndex < length) {
-            if (d->currentIndex < (length - 1)) {
-                if (d->positions.at(d->currentIndex + 1).timestamp > timestamp) {
+        while (!found && index < length) {
+            if (index < (length - 1)) {
+                if (d->positions.at(index + 1).timestamp > timestamp) {
                     // The next index has a larger timestamp, so this index is the one we are looking for
                     found = true;
                 } else {
-                    ++d->currentIndex;
+                    ++index;
                 }
             } else {
                 // Reached the last index
                 found = true;
             }
         }
+    }
+
+    if (d->currentIndex != index) {
+        d->currentIndex = index;
+        emit positionIndexChanged(d->currentIndex);
     }
     return d->currentIndex != ::InvalidIndex;
 }

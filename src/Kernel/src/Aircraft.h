@@ -30,6 +30,7 @@ public:
 
 signals:
     void infoChanged();
+    void positionIndexChanged(int index) const;
     void positionChanged();
 
 private:
