@@ -21,7 +21,7 @@ public:
     void setAircraftInfo(AircraftInfo aircraftInfo);
     const AircraftInfo &getAircraftInfo() const;
 
-    void appendPosition(Position position);
+    void upsertPosition(Position position);
     const Position &getLastPosition() const;
     const QVector<Position> getPositions() const;    
     const Position &getPosition(qint64 timestamp) const;

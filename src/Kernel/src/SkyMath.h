@@ -49,15 +49,15 @@ template <typename T> T interpolateHermite(
 
     mu2 = mu * mu;
     mu3 = mu2 * mu;
-    m0  = (y1 - y0) * (1 + bias) * (1 - tension) / 2;
-    m0 += (y2 - y1) * (1 - bias) * (1 - tension) / 2;
-    m1  = (y2 - y1) * (1 + bias) * (1 - tension) / 2;
-    m1 += (y3 - y2) * (1 - bias) * (1 - tension) / 2;
+    m0  = (y1 - y0) * (T(1) + bias) * (T(1) - tension) / T(2);
+    m0 += (y2 - y1) * (T(1) - bias) * (T(1) - tension) / T(2);
+    m1  = (y2 - y1) * (T(1) + bias) * (T(1) - tension) / T(2);
+    m1 += (y3 - y2) * (T(1) - bias) * (T(1) - tension) / T(2);
 
-    a0 =  2 * mu3 - 3 * mu2 + 1;
-    a1 =      mu3 - 2 * mu2 + mu;
-    a2 =      mu3 -     mu2;
-    a3 = -2 * mu3 + 3 * mu2;
+    a0 =  T(2) * mu3 - T(3) * mu2 + T(1);
+    a1 =         mu3 - T(2) * mu2 + mu;
+    a2 =         mu3 -        mu2;
+    a3 = -T(2) * mu3 + T(3) * mu2;
 
     return (a0 * y1 + a1 * m0 + a2 * m1 + a3 * y2);
 }

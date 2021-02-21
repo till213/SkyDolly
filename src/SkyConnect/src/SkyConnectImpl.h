@@ -48,6 +48,8 @@ private:
     void frenchConnection();
     void setupRequestData();
     void setupInitialPosition();
+    void setSimulationFrozen(bool enable);
+    bool isSimulationFrozen() const;
     static void CALLBACK sampleDataCallback(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context);
 
 private slots:
