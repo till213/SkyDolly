@@ -33,6 +33,24 @@
                <height>0</height>
               </size>
              </property>
+             <property name="maximum">
+              <number>100</number>
+             </property>
+             <property name="singleStep">
+              <number>1</number>
+             </property>
+             <property name="pageStep">
+              <number>10</number>
+             </property>
+             <property name="value">
+              <number>0</number>
+             </property>
+             <property name="sliderPosition">
+              <number>0</number>
+             </property>
+             <property name="tracking">
+              <bool>true</bool>
+             </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -358,7 +376,7 @@
             </size>
            </property>
            <property name="text">
-            <string> </string>
+            <string/>
            </property>
           </widget>
          </item>

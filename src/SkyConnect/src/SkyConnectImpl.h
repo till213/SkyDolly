@@ -42,6 +42,9 @@ public:
     void setTimeScale(double timeScale);
     double getTimeScale() const;
 
+signals:
+    void playPositionChanged(qint64 timeStamp);
+
 private:
     SkyConnectPrivate *d;
 

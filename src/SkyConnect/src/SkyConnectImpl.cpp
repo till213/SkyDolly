@@ -405,6 +405,7 @@ void SkyConnectImpl::replay()
     } else {
         this->stopReplay();
     }
+    emit playPositionChanged(d->currentTimestamp);
 }
 
 void SkyConnectImpl::stopAll()

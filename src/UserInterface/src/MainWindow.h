@@ -38,8 +38,6 @@ private slots:
     void initSettingsUi();
 
     void updateUi();
-    void updateRecordUi();
-    void updatePlaybackUi(int positionIndex);
     void updateInfoUi();
     void updatePositionUi();
     void updateSettingsUi();
@@ -47,5 +45,7 @@ private slots:
     // Actions
     void on_quitAction_triggered();
     void on_aboutQtAction_triggered();
+
+    void handlePlayPositionChanged(qint64 timestamp);
 };
 #endif // MAINWINDOW_H
