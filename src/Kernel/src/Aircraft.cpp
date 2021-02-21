@@ -51,7 +51,7 @@ const AircraftInfo &Aircraft::getAircraftInfo() const
     return d->aircraftInfo;
 }
 
-void Aircraft::appendPosition(Position position)
+void Aircraft::upsertPosition(Position position)
 {
     if (d->positions.length() > 0 && d->positions.last().timestamp == position.timestamp)  {
         // Same timestamp -> replace
@@ -86,24 +86,25 @@ void Aircraft::clear()
 const Position &Aircraft::getPosition(qint64 timestamp) const
 {
     const Position *p0, *p1, *p2, *p3;
+    const double Tension = 0.0;
 
     if (this->getSupportPositions(timestamp, &p0, &p1, &p2, &p3)) {
 
         double tn = this->normaliseTimestamp(*p1, *p2, timestamp);
 
         // Latitude: [-90, 90]
-        d->position.latitude  = SkyMath::interpolateHermite180(p0->latitude, p1->latitude, p2->latitude, p3->latitude, tn);
+        d->position.latitude  = SkyMath::interpolateHermite180(p0->latitude, p1->latitude, p2->latitude, p3->latitude, tn, Tension);
         // Longitude: [-180, 180]
-        d->position.longitude = SkyMath::interpolateHermite180(p0->longitude, p1->longitude, p2->longitude, p3->longitude, tn);
+        d->position.longitude = SkyMath::interpolateHermite180(p0->longitude, p1->longitude, p2->longitude, p3->longitude, tn, Tension);
         // Altitude [open range]
-        d->position.altitude  = SkyMath::interpolateHermite(p0->altitude, p1->altitude, p2->altitude, p3->altitude, tn);
+        d->position.altitude  = SkyMath::interpolateHermite(p0->altitude, p1->altitude, p2->altitude, p3->altitude, tn, Tension);
 
         // Pitch: [-90, 90]
-        d->position.pitch = SkyMath::interpolateHermite180(p0->pitch, p1->pitch, p2->pitch, p3->pitch, tn);
+        d->position.pitch = SkyMath::interpolateHermite180(p0->pitch, p1->pitch, p2->pitch, p3->pitch, tn, Tension);
         // Bank: [-180, 180]
-        d->position.bank  = SkyMath::interpolateHermite180(p0->bank, p1->bank, p2->bank, p3->bank, tn);
+        d->position.bank  = SkyMath::interpolateHermite180(p0->bank, p1->bank, p2->bank, p3->bank, tn, Tension);
         // Heading: [0, 360]
-        d->position.heading = SkyMath::interpolateHermite360(p0->heading, p1->heading, p2->heading, p3->heading, tn);
+        d->position.heading = SkyMath::interpolateHermite360(p0->heading, p1->heading, p2->heading, p3->heading, tn, Tension);
 
         d->position.timestamp = timestamp;
 
