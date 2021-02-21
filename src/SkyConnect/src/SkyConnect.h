@@ -7,8 +7,9 @@
 
 class SkyConnectImpl;
 
-class SKYCONNECT_API SkyConnect
+class SKYCONNECT_API SkyConnect : public QObject
 {
+    Q_OBJECT
 public:
     SkyConnect();
     ~SkyConnect();
@@ -35,8 +36,14 @@ public:
     void setTimeScale(double timeScale);
     double getTimeScale() const;
 
+signals:
+    void playPositionChanged(qint64 timeStamp);
+
 private:
     SkyConnectImpl *d;
+
+private slots:
+    void frenchConnection();
 };
 
 #endif // SKYCONNECT_H

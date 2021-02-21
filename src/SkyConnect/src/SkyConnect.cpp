@@ -6,6 +6,7 @@
 SkyConnect::SkyConnect()
     : d(new SkyConnectImpl())
 {
+    this->frenchConnection();
 }
 
 SkyConnect::~SkyConnect()
@@ -86,5 +87,12 @@ void SkyConnect::setTimeScale(double timeScale)
 double SkyConnect::getTimeScale() const
 {
     return d->getTimeScale();
+}
+
+// Private slots
+
+void SkyConnect::frenchConnection() {
+    connect(d, &SkyConnectImpl::playPositionChanged,
+            this, &SkyConnect::playPositionChanged);
 }
 

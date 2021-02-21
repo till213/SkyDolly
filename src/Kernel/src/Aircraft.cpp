@@ -159,7 +159,6 @@ bool Aircraft::updateCurrentIndex(qint64 timestamp) const
 
     if (d->currentIndex != index) {
         d->currentIndex = index;
-        emit positionIndexChanged(d->currentIndex);
     }
     return d->currentIndex != ::InvalidIndex;
 }

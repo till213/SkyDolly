@@ -38,8 +38,8 @@ void MainWindow::frenchConnection()
             this, &MainWindow::updateInfoUi);
     connect(&aircraft, &Aircraft::positionChanged,
             this, &MainWindow::updatePositionUi);
-    connect(&aircraft, &Aircraft::positionIndexChanged,
-            this, &MainWindow::updatePlaybackUi);
+    connect(&m_skyConnect, &SkyConnect::playPositionChanged,
+            this, &MainWindow::handlePlayPositionChanged);
 }
 
 // PRIVATE SLOTS
@@ -144,28 +144,8 @@ void MainWindow::initSettingsUi()
 
 void MainWindow::updateUi()
 {
-    updateRecordUi();
     updateInfoUi();
     updatePositionUi();
-}
-
-void MainWindow::updateRecordUi()
-{
-    int length = m_skyConnect.getAircraft().getPositions().length();
-    ui->positionSlider->setMaximum(length);
-}
-
-void MainWindow::updatePlaybackUi(int positionIndex)
-{
-    const Aircraft &aircraft = m_skyConnect.getAircraft();
-    int index = ui->positionSlider->value();
-    const Position &position = aircraft.getPositions().at(index);
-
-    QTime time(0, 0, 0, 0);
-    time = time.addMSecs(position.timestamp);
-    ui->timestampTimeEdit->setTime(time);
-
-    ui->positionSlider->setValue(positionIndex);
 }
 
 void MainWindow::updateInfoUi()
@@ -210,3 +190,20 @@ void MainWindow::on_aboutQtAction_triggered()
     QMessageBox::aboutQt(this);
 }
 
+void MainWindow::handlePlayPositionChanged(qint64 timestamp) {
+    qDebug("Play position timestamp: %lld", timestamp);
+    qint64 endTimeStamp = m_skyConnect.getAircraft().getLastPosition().timestamp;
+    qint64 ts = qMin(timestamp, endTimeStamp);
+
+    int percent;
+    if (endTimeStamp > 0) {
+        percent = qRound(100.0 * (static_cast<float>(ts) / static_cast<float>(endTimeStamp)));
+    } else {
+        percent = 0;
+    }
+    ui->positionSlider->setValue(percent);
+
+    QTime time(0, 0, 0, 0);
+    time = time.addMSecs(timestamp);
+    ui->timestampTimeEdit->setTime(time);
+}
