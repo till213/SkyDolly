@@ -16,7 +16,8 @@ set(PROJECT_SOURCES
     src/SkyConnectImpl.h
     src/SimConnectDataDefinition.h
     src/Frequency.h
-)
+    src/Connect.h
+    )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_library(SkyDolly SHARED

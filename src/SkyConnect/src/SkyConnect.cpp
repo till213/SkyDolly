@@ -49,6 +49,16 @@ void SkyConnect::stopReplay()
     d->stopReplay();
 }
 
+void SkyConnect::setPaused(bool enabled)
+{
+    d->setPaused(enabled);
+}
+
+bool SkyConnect::isPaused() const
+{
+    return d->isPaused();
+}
+
 Aircraft &SkyConnect::getAircraft()
 {
     return d->getAircraft();
@@ -89,10 +99,17 @@ double SkyConnect::getTimeScale() const
     return d->getTimeScale();
 }
 
+Connect::State SkyConnect::getState() const
+{
+    return d->getState();
+}
+
 // Private slots
 
 void SkyConnect::frenchConnection() {
     connect(d, &SkyConnectImpl::playPositionChanged,
             this, &SkyConnect::playPositionChanged);
+    connect(d, &SkyConnectImpl::stateChanged,
+            this, &SkyConnect::stateChanged);
 }
 

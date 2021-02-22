@@ -13,15 +13,15 @@
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
 
-// PUBLIC
+// Public
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
       ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->initUi();
-    this->frenchConnection();
+    initUi();
+    frenchConnection();
 }
 
 MainWindow::~MainWindow()
@@ -29,7 +29,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-// PRIVATE
+// Private
 
 void MainWindow::frenchConnection()
 {
@@ -38,25 +38,30 @@ void MainWindow::frenchConnection()
             this, &MainWindow::updateInfoUi);
     connect(&aircraft, &Aircraft::positionChanged,
             this, &MainWindow::updatePositionUi);
+    connect(&aircraft, &Aircraft::positionChanged,
+            this, &MainWindow::updateTimeSliderUi);
     connect(&m_skyConnect, &SkyConnect::playPositionChanged,
             this, &MainWindow::handlePlayPositionChanged);
+    connect(&m_skyConnect, &SkyConnect::stateChanged,
+            this, &MainWindow::updateUi);
 }
 
-// PRIVATE SLOTS
+// Private slots
 
 void MainWindow::on_recordPushButton_clicked(bool checked)
 {
+    this->blockSignals(true);
     if (checked) {
         m_skyConnect.startDataSample();
     } else {
         m_skyConnect.stopDataSample();
     }
+    this->blockSignals(false);
 }
 
-void MainWindow::on_deletePushButton_clicked()
+void MainWindow::on_pausePushButton_clicked(bool checked)
 {
-    Aircraft &aircraft = m_skyConnect.getAircraft();
-    aircraft.clear();
+    m_skyConnect.setPaused(checked);
 }
 
 void MainWindow::on_playPushButton_clicked(bool checked)
@@ -144,8 +149,64 @@ void MainWindow::initSettingsUi()
 
 void MainWindow::updateUi()
 {
+    updateControlUi();
     updateInfoUi();
     updatePositionUi();
+}
+
+void MainWindow::updateControlUi()
+{
+    bool hasRecording = m_skyConnect.getAircraft().getPositions().count() > 0;
+    switch (m_skyConnect.getState()) {
+    case Connect::Idle:
+        ui->recordPushButton->setEnabled(true);
+        ui->recordPushButton->setChecked(false);
+        ui->pausePushButton->setEnabled(false);
+        ui->pausePushButton->setChecked(false);
+        ui->playPushButton->setEnabled(hasRecording);
+        ui->playPushButton->setChecked(false);
+        ui->positionSlider->setEnabled(hasRecording);
+        break;
+    case Connect::Recording:
+        ui->recordPushButton->setEnabled(true);
+        ui->recordPushButton->setChecked(true);
+        ui->pausePushButton->setEnabled(true);
+        ui->pausePushButton->setChecked(false);
+        ui->playPushButton->setEnabled(false);
+        ui->playPushButton->setChecked(false);
+        ui->positionSlider->setEnabled(false);
+        ui->positionSlider->setValue(0);
+        break;
+    case Connect::RecordingPaused:
+        ui->recordPushButton->setEnabled(true);
+        ui->recordPushButton->setChecked(false);
+        ui->pausePushButton->setEnabled(true);
+        ui->pausePushButton->setChecked(true);
+        ui->playPushButton->setEnabled(false);
+        ui->playPushButton->setChecked(false);
+        ui->positionSlider->setEnabled(true);
+        break;
+    case Connect::Playback:
+        ui->recordPushButton->setEnabled(false);
+        ui->recordPushButton->setChecked(false);
+        ui->pausePushButton->setEnabled(true);
+        ui->pausePushButton->setChecked(false);
+        ui->playPushButton->setEnabled(true);
+        ui->playPushButton->setChecked(true);
+        ui->positionSlider->setEnabled(true);
+        break;
+    case Connect::PlaybackPaused:
+        ui->recordPushButton->setEnabled(false);
+        ui->recordPushButton->setChecked(false);
+        ui->pausePushButton->setEnabled(true);
+        ui->pausePushButton->setChecked(true);
+        ui->playPushButton->setEnabled(true);
+        ui->playPushButton->setChecked(true);
+        ui->positionSlider->setEnabled(true);
+        break;
+    default:
+        break;
+    }
 }
 
 void MainWindow::updateInfoUi()
@@ -169,15 +230,25 @@ void MainWindow::updatePositionUi()
     ui->pitchLineEdit->setText(QString::number(position.pitch));
     ui->bankLineEdit->setText(QString::number(position.bank));
     ui->headingLineEdit->setText(QString::number(position.heading));
-    QTime time(0, 0, 0, 0);
-    time = time.addMSecs(position.timestamp);
-    ui->timestampTimeEdit->setTime(time);
 }
 
 void MainWindow::updateSettingsUi()
 {
     int percent = ui->timeScaleSlider->value();
     ui->timeScalePercentLabel->setText(QString::number(percent));
+}
+
+void MainWindow::updateTimeSliderUi()
+{
+    const Aircraft &aircraft = m_skyConnect.getAircraft();
+    const Position &position = aircraft.getLastPosition();
+    QTime time(0, 0, 0, 0);
+    if (position.isValid()) {
+        time = time.addMSecs(position.timestamp);
+        ui->timestampTimeEdit->setTime(time);
+    } else {
+        ui->timestampTimeEdit->setTime(time);
+    }
 }
 
 void MainWindow::on_quitAction_triggered()
