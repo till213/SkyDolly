@@ -3,6 +3,7 @@
 
 #include "../../Kernel/src/Aircraft.h"
 #include "Frequency.h"
+#include "Connect.h"
 #include "SkyConnectLib.h"
 
 class SkyConnectImpl;
@@ -24,6 +25,9 @@ public:
     void startReplay();
     void stopReplay();
 
+    void setPaused(bool enabled);
+    bool isPaused() const;
+
     Aircraft &getAircraft();
     const Aircraft &getAircraft() const;
 
@@ -36,8 +40,11 @@ public:
     void setTimeScale(double timeScale);
     double getTimeScale() const;
 
+    Connect::State getState() const;
+
 signals:
     void playPositionChanged(qint64 timeStamp);
+    void stateChanged(Connect::State state);
 
 private:
     SkyConnectImpl *d;

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 #include "../../SkyConnect/src/SkyConnect.h"
+#include "../../SkyConnect/src/Connect.h"
 #include "UserInterfaceLib.h"
 
 QT_BEGIN_NAMESPACE
@@ -26,7 +27,7 @@ private:
 
 private slots:
     void on_recordPushButton_clicked(bool checked = false);
-    void on_deletePushButton_clicked();
+    void on_pausePushButton_clicked(bool checked = false);
     void on_playPushButton_clicked(bool checked = false);
     void on_recordFrequencyComboBox_activated(int index);
     void on_playbackFrequencyComboBox_activated(int index);
@@ -38,9 +39,11 @@ private slots:
     void initSettingsUi();
 
     void updateUi();
+    void updateControlUi();
     void updateInfoUi();
     void updatePositionUi();
     void updateSettingsUi();
+    void updateTimeSliderUi();
 
     // Actions
     void on_quitAction_triggered();
