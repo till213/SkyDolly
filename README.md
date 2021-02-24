@@ -11,7 +11,7 @@ Sky Dolly connects to a running Flight Simulator 2020 instance and records vario
 * Pause / Resume
 * Play
 * Variable sample rates (for both recording and playback)
-* Addustable time scale ("slow motion", "timelapse")
+* Adjustable replay speed ("slow motion", "timelapse")
 
 ## Related Projects
 
