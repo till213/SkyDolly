@@ -11,7 +11,9 @@
     <message>
         <location filename="../src/UserInterface/src/AboutDialog.cpp" line="26"/>
         <source>%1
-Version %2</source>
+Version %2
+
+MIT License</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -158,74 +160,74 @@ Version %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="178"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="192"/>
-        <source>1 Hz</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="179"/>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="193"/>
-        <source>2 Hz</source>
+        <source>1 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="180"/>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="194"/>
-        <source>5 Hz</source>
+        <source>2 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="181"/>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="195"/>
-        <source>10 Hz</source>
+        <source>5 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="182"/>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="196"/>
-        <source>15 Hz</source>
+        <source>10 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="183"/>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="197"/>
-        <source>20 Hz</source>
+        <source>15 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="184"/>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="198"/>
-        <source>24 Hz</source>
+        <source>20 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="185"/>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="199"/>
-        <source>25 Hz</source>
+        <source>24 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="186"/>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="200"/>
-        <source>30 Hz</source>
+        <source>25 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="187"/>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="201"/>
-        <source>45 Hz</source>
+        <source>30 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="188"/>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="202"/>
-        <source>50 Hz</source>
+        <source>45 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="189"/>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="203"/>
+        <source>50 Hz</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="190"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="204"/>
         <source>60 Hz</source>
         <translation type="unfinished"></translation>
     </message>

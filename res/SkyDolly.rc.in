@@ -23,8 +23,8 @@ BEGIN
             VALUE "ProductVersion", VER_PRODUCTVERSION_STR
             VALUE "OriginalFilename", "SkyDolly.exe"
             VALUE "InternalName", "Sky Dolly"
-            VALUE "FileDescription", "The black sheep for flight simulators"
-            VALUE "CompanyName", "Delta Design"
+            VALUE "FileDescription", "Sky Dolly"
+            VALUE "CompanyName", "till-art.net"
             VALUE "LegalCopyright", "(c) 2021"
             VALUE "ProductName", "Sky Dolly"
         END
