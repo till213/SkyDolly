@@ -5,7 +5,12 @@ set(PROJECT_SOURCES
     src/MainWindow.cpp
     src/MainWindow.h
     src/MainWindow.ui
+    src/AboutDialog.cpp
+    src/AboutDialog.h
+    src/AboutDialog.ui
 )
+
+qt5_add_resources(PROJECT_SOURCES res/SkyDolly.qrc)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_library(UserInterface SHARED

@@ -53,7 +53,7 @@ public:
           replayFrequency(30.0),
           replayIntervalMSec(static_cast<int>(1.0 / replayFrequency * 1000.0)),
           timeScale(1.0),
-          elapsedScaled(0),
+          elapsedTime(0),
           frozen(false)
     {
     }
@@ -69,11 +69,11 @@ public:
     double replayFrequency;
     int    replayIntervalMSec;
     double timeScale;
-    qint64 elapsedScaled;
+    qint64 elapsedTime;
     bool frozen;
 };
 
-// Public
+// PUBLIC
 
 SkyConnectImpl::SkyConnectImpl(QObject *parent)
     : QObject(parent),
@@ -152,7 +152,7 @@ void SkyConnectImpl::stopDataSample()
     setState(Connect::State::Idle);
 }
 
-void SkyConnectImpl::startReplay()
+void SkyConnectImpl::startReplay(bool fromStart)
 {
     if (!isConnected()) {
         open();
@@ -166,6 +166,10 @@ void SkyConnectImpl::startReplay()
                 this, &SkyConnectImpl::replay);
         d->timer.setInterval(d->replayIntervalMSec);
         setupInitialPosition();
+        if (fromStart) {
+            d->elapsedTime = 0;
+            d->currentTimestamp = 0;
+        }
         d->elapsedTimer.invalidate();
         d->timer.start();
         setState(Connect::State::Playback);
@@ -181,11 +185,16 @@ void SkyConnectImpl::setPaused(bool enabled)
         switch (d->state) {
         case Connect::Recording:
             newState = Connect::RecordingPaused;
+            // Store the elapsed recording time...
+            d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed();
+            // ... and stop the timer
+            d->timer.stop();
+            d->elapsedTimer.invalidate();
             break;
         case Connect::Playback:
             newState = Connect::PlaybackPaused;
-            // Store the elapsed time measured with the previous scale...
-            d->elapsedScaled = d->elapsedScaled + d->elapsedTimer.elapsed() * d->timeScale;
+            // Store the elapsed playback time measured with the current time scale...
+            d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed() * d->timeScale;
             // ... and stop the timer
             d->timer.stop();
             d->elapsedTimer.invalidate();
@@ -198,11 +207,13 @@ void SkyConnectImpl::setPaused(bool enabled)
         switch (d->state) {
         case Connect::RecordingPaused:
             newState = Connect::Recording;
+            d->elapsedTimer.start();
+            d->timer.start();
             break;
         case Connect::PlaybackPaused:
             newState = Connect::Playback;
-            d->timer.start();
             d->elapsedTimer.start();
+            d->timer.start();            
             break;
          default:
             // No state change
@@ -219,6 +230,9 @@ bool SkyConnectImpl::isPaused() const {
 void SkyConnectImpl::stopReplay()
 {
     d->timer.stop();
+    // Remember elapsed time since last replay start, in order to continue from
+    // current timestamp
+    d->elapsedTime = d->currentTimestamp;
     setSimulationFrozen(false);
     setState(Connect::State::Idle);
 }
@@ -262,7 +276,7 @@ void SkyConnectImpl::setTimeScale(double timeScale)
     d->timeScale = timeScale;
     if (d->elapsedTimer.isValid()) {
         // Store the elapsed time measured with the previous scale...
-        d->elapsedScaled = d->elapsedScaled + d->elapsedTimer.elapsed() * d->timeScale;
+        d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed() * d->timeScale;
         // ... and restart timer
         d->elapsedTimer.start();
     }
@@ -276,6 +290,26 @@ double SkyConnectImpl::getTimeScale() const
 Connect::State SkyConnectImpl::getState() const
 {
     return d->state;
+}
+
+void SkyConnectImpl::setPlayPosition(qint64 timestamp)
+{
+    d->currentTimestamp = timestamp;
+    d->elapsedTime = d->currentTimestamp;
+    emit playPositionChanged(d->currentTimestamp);
+    if (sendAircraftPosition() && d->elapsedTimer.isValid()) {
+        d->elapsedTimer.start();
+    }
+}
+
+qint64 SkyConnectImpl::getPlayPosition() const
+{
+    return d->currentTimestamp;
+}
+
+bool SkyConnectImpl::isPlayPositionAtEnd() const
+{
+    return d->currentTimestamp >= d->aircraft.getLastPosition().timestamp;
 }
 
 // PRIVATE
@@ -348,7 +382,29 @@ bool SkyConnectImpl::isSimulationFrozen() const {
     return d->frozen;
 }
 
-void CALLBACK SkyConnectImpl::sampleDataCallback(SIMCONNECT_RECV* receivedData, DWORD cbData, void *context)
+bool SkyConnectImpl::sendAircraftPosition() const
+{
+    bool success;
+    const Position &position = d->aircraft.getPosition(d->currentTimestamp);
+
+    if (position.isValid()) {
+        SimConnectPosition simConnectPosition;
+        simConnectPosition.fromPosition(position);
+        //qDebug("Replay: lon: %f lat: %f alt: %f pitch: %f bank: %f head: %f time: %lli",
+        qDebug("%f, %f, %f, %f, %f, %f, %lli",
+               simConnectPosition.longitude, simConnectPosition.latitude, simConnectPosition.altitude,
+               simConnectPosition.pitch, simConnectPosition.bank, simConnectPosition.heading,
+               d->currentTimestamp);
+        HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0, sizeof(SimConnectPosition), &simConnectPosition);
+        success = res == S_OK;
+
+    } else {
+        success = false;
+    }
+    return success;
+}
+
+void CALLBACK SkyConnectImpl::sampleDataCallback(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context)
 {
     Q_UNUSED(cbData);
 
@@ -406,6 +462,7 @@ void CALLBACK SkyConnectImpl::sampleDataCallback(SIMCONNECT_RECV* receivedData, 
                         // Start the elapsed timer with the arrival of the first sample data
                         qDebug("DATA CALLBACK: Elapsed timer started...");
                         skyConnect->d->currentTimestamp = 0;
+                        skyConnect->d->elapsedTime = 0;
                         skyConnect->d->elapsedTimer.start();
                     }
                     simConnectPosition = reinterpret_cast<::SimConnectPosition *>(&objectData->dwData);
@@ -441,7 +498,7 @@ void CALLBACK SkyConnectImpl::sampleDataCallback(SIMCONNECT_RECV* receivedData, 
     }
 }
 
-// Private slots
+// PRIVATE SLOTS
 
 void SkyConnectImpl::setState(Connect::State state)
 {
@@ -454,27 +511,17 @@ void SkyConnectImpl::setState(Connect::State state)
 void SkyConnectImpl::replay()
 {
     if (d->elapsedTimer.isValid()) {
-        d->currentTimestamp = d->elapsedScaled + static_cast<qint64>(d->elapsedTimer.elapsed() * d->timeScale);
+        d->currentTimestamp = d->elapsedTime + static_cast<qint64>(d->elapsedTimer.elapsed() * d->timeScale);
     } else {
-        d->elapsedScaled = 0;
-        d->currentTimestamp = 0;
+        // Elapsed timer starts once we play the first sample
         d->elapsedTimer.start();
     }
-    const Position &position = d->aircraft.getPosition(d->currentTimestamp);
 
-    if (position.isValid()) {
-        SimConnectPosition simConnectPosition;
-        simConnectPosition.fromPosition(position);
-        //qDebug("Replay: lon: %f lat: %f alt: %f pitch: %f bank: %f head: %f time: %lli",
-        qDebug("%f, %f, %f, %f, %f, %f, %lli",
-               simConnectPosition.longitude, simConnectPosition.latitude, simConnectPosition.altitude,
-               simConnectPosition.pitch, simConnectPosition.bank, simConnectPosition.heading,
-               d->currentTimestamp);
-        ::SimConnect_SetDataOnSimObject(d->simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0, sizeof(SimConnectPosition), &simConnectPosition);
+    if (sendAircraftPosition()) {
+        emit playPositionChanged(d->currentTimestamp);
     } else {
         stopReplay();
     }
-    emit playPositionChanged(d->currentTimestamp);
 }
 
 void SkyConnectImpl::stopAll()
@@ -487,10 +534,10 @@ void SkyConnectImpl::sampleData()
 {
     HRESULT res;
     if (d->elapsedTimer.isValid()) {
-        d->currentTimestamp = d->elapsedTimer.elapsed();
-        qDebug("SAMPLE DATA: elapsed timer: %lli", d->currentTimestamp);
+        d->currentTimestamp = d->elapsedTime + d->elapsedTimer.elapsed();
     } else {
-        // First sample: request aircraft information...
+        // First sample: request aircraft information
+        // Note: the elapsed timer only starts with the arrival of the first sample (in the sampleDataCallback)
         res = ::SimConnect_RequestDataOnSimObjectType(d->simConnectHandle, AircraftInfoRequest, SkyConnectDataDefinition::AircraftInfoDefinition, ::UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
     }
 

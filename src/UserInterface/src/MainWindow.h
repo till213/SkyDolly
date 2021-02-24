@@ -11,6 +11,9 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
+class QTime;
+class AboutDialog;
+
 class USERINTERFACE_API MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -21,7 +24,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    AboutDialog *m_aboutDialog;
     SkyConnect m_skyConnect;
+    Connect::State m_previousState;
 
     void frenchConnection();
 
@@ -32,7 +37,10 @@ private slots:
     void on_recordFrequencyComboBox_activated(int index);
     void on_playbackFrequencyComboBox_activated(int index);
     void on_timeScaleSlider_valueChanged();
+    void on_positionSlider_sliderPressed();
     void on_positionSlider_sliderMoved(int value);
+    void on_positionSlider_sliderReleased();
+    void on_timestampTimeEdit_timeChanged(const QTime &time);
 
     void initUi();
     void initRecordUi();
@@ -43,10 +51,11 @@ private slots:
     void updateInfoUi();
     void updatePositionUi();
     void updateSettingsUi();
-    void updateTimeSliderUi();
+    void updateRecordingTimeEdit();
 
     // Actions
     void on_quitAction_triggered();
+    void on_aboutAction_triggered();
     void on_aboutQtAction_triggered();
 
     void handlePlayPositionChanged(qint64 timestamp);

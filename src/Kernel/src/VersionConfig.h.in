@@ -1,0 +1,8 @@
+/*!
+ * Application version numbers.
+ */
+namespace VersionConfig {
+    constexpr int Major = @PROJECT_VERSION_MAJOR@;
+    constexpr int Minor = @PROJECT_VERSION_MINOR@;
+    constexpr int Patch = @PROJECT_VERSION_PATCH@;
+}

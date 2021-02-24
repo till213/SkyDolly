@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(SkyDolly LANGUAGES CXX VERSION 0.1 DESCRIPTION "SkyDolly records flight simulator flights")
+project(SkyDolly LANGUAGES CXX VERSION 0.1.0 DESCRIPTION "Sky Dolly - The black sheep for your flight simulator")
 
 set(CMAKE_SHARED_LIBRARY_PREFIX )
 
@@ -32,16 +32,31 @@ set(PROJECT_SOURCES
     ${TS_FILES}
 )
 
+set(OTHER_SOURCES
+    README.md
+    CHANGELOG.md
+)
+
+if (WIN32)
+  configure_file(${PROJECT_SOURCE_DIR}/res/SkyDolly.rc.in
+                 ${PROJECT_SOURCE_DIR}/res/SkyDolly.rc @ONLY)
+  add_library(resources OBJECT ${PROJECT_SOURCE_DIR}/res/SkyDolly.rc)
+  target_include_directories(resources PRIVATE ${PROJECT_SOURCE_DIR}/res/)
+  set(RESOURCES $<TARGET_OBJECTS:resources>)
+endif()
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(SkyDolly
         WIN32
         ${PROJECT_SOURCES}
+        ${RESOURCES}
     )
     qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR}/src ${TS_FILES})
 else()
     add_executable(SkyDolly
         WIN32
         ${PROJECT_SOURCES}
+        ${RESOURCES}
     )
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR}/src ${TS_FILES})
 endif()
@@ -51,3 +66,7 @@ target_include_directories(SkyDolly PUBLIC
                           )
 
 target_link_libraries(SkyDolly PRIVATE Qt${QT_VERSION_MAJOR}::Widgets UserInterface)
+
+message(STATUS OUTPUT_NAME=${PROJECT_NAME})
+
+
