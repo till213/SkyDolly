@@ -2,6 +2,7 @@
 #include <QByteArray>
 #include <QString>
 #include <QTime>
+#include <QTimeEdit>
 #include <QComboBox>
 #include <QSlider>
 #include <QMessageBox>
@@ -10,14 +11,24 @@
 #include "../../Kernel/src/AircraftInfo.h"
 #include "../../SkyConnect/src/Frequency.h"
 #include "../../SkyConnect/src/SkyConnect.h"
+#include "AboutDialog.h"
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
 
-// Public
+namespace {
+    constexpr int PositionSliderMin = 0;
+    constexpr int PositionSliderMax = 100;
+    constexpr qint64 MilliSecondsPerSecond = 1000;
+    constexpr qint64 MilliSecondsPerMinute = 60 * MilliSecondsPerSecond;
+    constexpr qint64 MilliSecondsPerHour = 60 * MilliSecondsPerMinute;
+}
+
+// PUBLIC
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
-      ui(new Ui::MainWindow)
+      ui(new Ui::MainWindow),
+      m_previousState(m_skyConnect.getState())
 {
     ui->setupUi(this);
     initUi();
@@ -26,10 +37,17 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    // SkyConnect might still be recording, and hence a state changed
+    // signal would be emitted upon destruction, upon which an attempt to
+    // update the UI - which is deleted at this point in time already - would
+    // be made, and fail with invalid address access
+    m_skyConnect.disconnect();
+    // And while we're at it we also disconnect all signals from the aircraft
+    m_skyConnect.getAircraft().disconnect();
     delete ui;
 }
 
-// Private
+// PRIVATE
 
 void MainWindow::frenchConnection()
 {
@@ -39,20 +57,23 @@ void MainWindow::frenchConnection()
     connect(&aircraft, &Aircraft::positionChanged,
             this, &MainWindow::updatePositionUi);
     connect(&aircraft, &Aircraft::positionChanged,
-            this, &MainWindow::updateTimeSliderUi);
+            this, &MainWindow::updateRecordingTimeEdit);
     connect(&m_skyConnect, &SkyConnect::playPositionChanged,
             this, &MainWindow::handlePlayPositionChanged);
     connect(&m_skyConnect, &SkyConnect::stateChanged,
             this, &MainWindow::updateUi);
 }
 
-// Private slots
+// PRIVATE SLOTS
 
 void MainWindow::on_recordPushButton_clicked(bool checked)
 {
     this->blockSignals(true);
     if (checked) {
         m_skyConnect.startDataSample();
+    } else if (m_skyConnect.isPaused()) {
+        // The record button also unpauses a paused recording
+        m_skyConnect.setPaused(false);
     } else {
         m_skyConnect.stopDataSample();
     }
@@ -67,7 +88,14 @@ void MainWindow::on_pausePushButton_clicked(bool checked)
 void MainWindow::on_playPushButton_clicked(bool checked)
 {
     if (checked) {
-        m_skyConnect.startReplay();
+        if (m_skyConnect.isPlayPositionAtEnd()) {
+            // Jump back to start
+            m_skyConnect.setPlayPosition(0);
+        }
+        m_skyConnect.startReplay(false);
+    } else if (m_skyConnect.isPaused()) {
+        // The play button also unpauses a paused replay
+        m_skyConnect.setPaused(false);
     } else {
         m_skyConnect.stopReplay();
     }
@@ -90,14 +118,49 @@ void MainWindow::on_timeScaleSlider_valueChanged()
     this->updateSettingsUi();
 }
 
+void MainWindow::on_positionSlider_sliderPressed()
+{
+    m_previousState = m_skyConnect.getState();
+    if (m_previousState == Connect::State::Playback) {
+        // Pause the playback while sliding the position slider
+        m_skyConnect.setPaused(true);
+    }
+}
+
 void MainWindow::on_positionSlider_sliderMoved(int value)
 {
-    // @todo IMPLEMENT ME Set current position for playback
-    // m_skyConnect.getAircraft().set ...
+    double scale = static_cast<double>(value) / 100.0f;
+    qint64 timestamp = static_cast<qint64>(qRound(scale * static_cast<double>(m_skyConnect.getAircraft().getLastPosition().timestamp)));
+
+    // Prevent the timestampTimeEdit field to set the play position as well
+    ui->timestampTimeEdit->blockSignals(true);
+    m_skyConnect.setPlayPosition(timestamp);
+    ui->timestampTimeEdit->blockSignals(false);
+}
+
+void MainWindow::on_positionSlider_sliderReleased()
+{
+    if (m_previousState == Connect::State::Playback) {
+        m_skyConnect.setPaused(false);
+    }
+}
+
+void MainWindow::on_timestampTimeEdit_timeChanged(const QTime &time)
+{
+    Connect::State state = m_skyConnect.getState();
+    if (state == Connect::State::Idle || state == Connect::State::PlaybackPaused) {
+        qint64 timestamp = time.hour() * MilliSecondsPerHour + time.minute() * MilliSecondsPerMinute + time.second() * MilliSecondsPerSecond;
+        m_skyConnect.setPlayPosition(timestamp);
+    }
 }
 
 void MainWindow::initUi()
 {
+    setWindowIcon(QIcon(":/img/SkyDolly.png"));
+    m_aboutDialog = new AboutDialog(this);
+    Qt::WindowFlags flags;
+    flags = Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
+    m_aboutDialog->setWindowFlags(flags);
     this->initSettingsUi();
     this->initRecordUi();
     this->updateUi();
@@ -105,6 +168,8 @@ void MainWindow::initUi()
 
 void MainWindow::initRecordUi()
 {
+    ui->positionSlider->setMinimum(PositionSliderMin);
+    ui->positionSlider->setMaximum(PositionSliderMax);
     ui->timestampTimeEdit->setDisplayFormat("hh:mm:ss");
 }
 
@@ -141,10 +206,9 @@ void MainWindow::initSettingsUi()
     // Initial values
     ui->recordFrequencyComboBox->setCurrentIndex(m_skyConnect.getSampleFrequency());
     ui->playbackFrequencyComboBox->setCurrentIndex(m_skyConnect.getReplayFrequency());
-    int percent = static_cast<int>(m_skyConnect.getTimeScale() * 100);
+    int percent = static_cast<int>(m_skyConnect.getTimeScale() * PositionSliderMax);
     ui->timeScaleSlider->setValue(percent);
     this->updateSettingsUi();
-
 }
 
 void MainWindow::updateUi()
@@ -166,6 +230,7 @@ void MainWindow::updateControlUi()
         ui->playPushButton->setEnabled(hasRecording);
         ui->playPushButton->setChecked(false);
         ui->positionSlider->setEnabled(hasRecording);
+        ui->timestampTimeEdit->setEnabled(hasRecording);
         break;
     case Connect::Recording:
         ui->recordPushButton->setEnabled(true);
@@ -175,16 +240,18 @@ void MainWindow::updateControlUi()
         ui->playPushButton->setEnabled(false);
         ui->playPushButton->setChecked(false);
         ui->positionSlider->setEnabled(false);
-        ui->positionSlider->setValue(0);
+        ui->positionSlider->setValue(PositionSliderMax);
+        ui->timestampTimeEdit->setEnabled(false);
         break;
     case Connect::RecordingPaused:
         ui->recordPushButton->setEnabled(true);
-        ui->recordPushButton->setChecked(false);
+        ui->recordPushButton->setChecked(true);
         ui->pausePushButton->setEnabled(true);
         ui->pausePushButton->setChecked(true);
         ui->playPushButton->setEnabled(false);
         ui->playPushButton->setChecked(false);
         ui->positionSlider->setEnabled(true);
+        ui->timestampTimeEdit->setEnabled(false);
         break;
     case Connect::Playback:
         ui->recordPushButton->setEnabled(false);
@@ -194,6 +261,7 @@ void MainWindow::updateControlUi()
         ui->playPushButton->setEnabled(true);
         ui->playPushButton->setChecked(true);
         ui->positionSlider->setEnabled(true);
+        ui->timestampTimeEdit->setEnabled(false);
         break;
     case Connect::PlaybackPaused:
         ui->recordPushButton->setEnabled(false);
@@ -203,6 +271,7 @@ void MainWindow::updateControlUi()
         ui->playPushButton->setEnabled(true);
         ui->playPushButton->setChecked(true);
         ui->positionSlider->setEnabled(true);
+        ui->timestampTimeEdit->setEnabled(true);
         break;
     default:
         break;
@@ -238,7 +307,7 @@ void MainWindow::updateSettingsUi()
     ui->timeScalePercentLabel->setText(QString::number(percent));
 }
 
-void MainWindow::updateTimeSliderUi()
+void MainWindow::updateRecordingTimeEdit()
 {
     const Aircraft &aircraft = m_skyConnect.getAircraft();
     const Position &position = aircraft.getLastPosition();
@@ -249,11 +318,17 @@ void MainWindow::updateTimeSliderUi()
     } else {
         ui->timestampTimeEdit->setTime(time);
     }
+    ui->timestampTimeEdit->setMaximumTime(time);
 }
 
 void MainWindow::on_quitAction_triggered()
 {
     QApplication::quit();
+}
+
+void MainWindow::on_aboutAction_triggered()
+{
+    m_aboutDialog->exec();
 }
 
 void MainWindow::on_aboutQtAction_triggered()
@@ -262,17 +337,18 @@ void MainWindow::on_aboutQtAction_triggered()
 }
 
 void MainWindow::handlePlayPositionChanged(qint64 timestamp) {
-    qDebug("Play position timestamp: %lld", timestamp);
     qint64 endTimeStamp = m_skyConnect.getAircraft().getLastPosition().timestamp;
     qint64 ts = qMin(timestamp, endTimeStamp);
 
     int percent;
     if (endTimeStamp > 0) {
-        percent = qRound(100.0 * (static_cast<float>(ts) / static_cast<float>(endTimeStamp)));
+        percent = qRound(PositionSliderMax * (static_cast<double>(ts) / static_cast<double>(endTimeStamp)));
     } else {
         percent = 0;
     }
+    ui->positionSlider->blockSignals(true);
     ui->positionSlider->setValue(percent);
+    ui->positionSlider->blockSignals(false);
 
     QTime time(0, 0, 0, 0);
     time = time.addMSecs(timestamp);

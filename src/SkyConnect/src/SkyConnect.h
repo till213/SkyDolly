@@ -22,7 +22,7 @@ public:
     void startDataSample();
     void stopDataSample();
 
-    void startReplay();
+    void startReplay(bool fromStart);
     void stopReplay();
 
     void setPaused(bool enabled);
@@ -42,8 +42,12 @@ public:
 
     Connect::State getState() const;
 
+    void setPlayPosition(qint64 timestamp);
+    qint64 getPlayPosition() const;
+    bool isPlayPositionAtEnd() const;
+
 signals:
-    void playPositionChanged(qint64 timeStamp);
+    void playPositionChanged(qint64 timestamp);
     void stateChanged(Connect::State state);
 
 private:

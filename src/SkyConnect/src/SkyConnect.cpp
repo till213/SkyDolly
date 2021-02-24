@@ -39,9 +39,9 @@ void SkyConnect::stopDataSample()
     d->stopDataSample();
 }
 
-void SkyConnect::startReplay()
+void SkyConnect::startReplay(bool fromStart)
 {
-    d->startReplay();
+    d->startReplay(fromStart);
 }
 
 void SkyConnect::stopReplay()
@@ -104,7 +104,22 @@ Connect::State SkyConnect::getState() const
     return d->getState();
 }
 
-// Private slots
+void SkyConnect::setPlayPosition(qint64 timestamp)
+{
+    d->setPlayPosition(timestamp);
+}
+
+qint64 SkyConnect::getPlayPosition() const
+{
+    return d->getPlayPosition();
+}
+
+bool SkyConnect::isPlayPositionAtEnd() const
+{
+    return d->isPlayPositionAtEnd();
+}
+
+// PRIVATE SLOTS
 
 void SkyConnect::frenchConnection() {
     connect(d, &SkyConnectImpl::playPositionChanged,
