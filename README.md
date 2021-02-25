@@ -1,5 +1,5 @@
 # Sky Dolly
-Sky Dolly - The black sheep for flight simulators.
+Sky Dolly - The black sheep for your flights.
 
 ## About
 Sky Dolly connects to a running Flight Simulator 2020 instance and records various simulation variables, for replay.
@@ -11,7 +11,7 @@ Sky Dolly connects to a running Flight Simulator 2020 instance and records vario
 * Pause / Resume
 * Play
 * Variable sample rates (for both recording and playback)
-* Addustable time scale ("slow motion", "timelapse")
+* Adjustable replay speed ("slow motion", "timelapse")
 
 ## Related Projects
 
