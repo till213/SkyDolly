@@ -65,13 +65,14 @@ private:
     void setSimulationFrozen(bool enable);
     bool isSimulationFrozen() const;
     bool sendAircraftPosition() const;
+    void replay();
+    void stopAll();
+    void updateCurrentTimestamp();
+    void setState(Connect::State state);
     static void CALLBACK sampleDataCallback(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context);
 
 private slots:
-    void setState(Connect::State state);
-    void replay();
-    void stopAll();
-    void sampleData();
+    void processEvents();
 };
 
 #endif // SKYCONNECTIMPL_H
