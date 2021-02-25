@@ -15,15 +15,12 @@ class AircraftPrivate
 {
 public:
     AircraftPrivate()
-        : startOnGround(false),
-          currentIndex(::InvalidIndex)
+        : currentIndex(::InvalidIndex)
     {}
 
     AircraftInfo aircraftInfo;
     QVector<Position> positions;
-    Position position;
-    QByteArray name;
-    bool startOnGround;
+    Position currentPosition;
     mutable int currentIndex;
 };
 
@@ -93,26 +90,26 @@ const Position &Aircraft::getPosition(qint64 timestamp) const
         double tn = this->normaliseTimestamp(*p1, *p2, timestamp);
 
         // Latitude: [-90, 90]
-        d->position.latitude  = SkyMath::interpolateHermite180(p0->latitude, p1->latitude, p2->latitude, p3->latitude, tn, Tension);
+        d->currentPosition.latitude  = SkyMath::interpolateHermite180(p0->latitude, p1->latitude, p2->latitude, p3->latitude, tn, Tension);
         // Longitude: [-180, 180]
-        d->position.longitude = SkyMath::interpolateHermite180(p0->longitude, p1->longitude, p2->longitude, p3->longitude, tn, Tension);
+        d->currentPosition.longitude = SkyMath::interpolateHermite180(p0->longitude, p1->longitude, p2->longitude, p3->longitude, tn, Tension);
         // Altitude [open range]
-        d->position.altitude  = SkyMath::interpolateHermite(p0->altitude, p1->altitude, p2->altitude, p3->altitude, tn, Tension);
+        d->currentPosition.altitude  = SkyMath::interpolateHermite(p0->altitude, p1->altitude, p2->altitude, p3->altitude, tn, Tension);
 
         // Pitch: [-90, 90]
-        d->position.pitch = SkyMath::interpolateHermite180(p0->pitch, p1->pitch, p2->pitch, p3->pitch, tn, Tension);
+        d->currentPosition.pitch = SkyMath::interpolateHermite180(p0->pitch, p1->pitch, p2->pitch, p3->pitch, tn, Tension);
         // Bank: [-180, 180]
-        d->position.bank  = SkyMath::interpolateHermite180(p0->bank, p1->bank, p2->bank, p3->bank, tn, Tension);
+        d->currentPosition.bank  = SkyMath::interpolateHermite180(p0->bank, p1->bank, p2->bank, p3->bank, tn, Tension);
         // Heading: [0, 360]
-        d->position.heading = SkyMath::interpolateHermite360(p0->heading, p1->heading, p2->heading, p3->heading, tn, Tension);
+        d->currentPosition.heading = SkyMath::interpolateHermite360(p0->heading, p1->heading, p2->heading, p3->heading, tn, Tension);
 
-        d->position.timestamp = timestamp;
+        d->currentPosition.timestamp = timestamp;
 
     } else {
         // No recorded positions, or the timestamp exceeds the timestamp of the last recorded position
-        d->position = Position::NullPosition;
+        d->currentPosition = Position::NullPosition;
     }
-    return d->position;
+    return d->currentPosition;
 }
 
 // PRIVATE
@@ -157,9 +154,7 @@ bool Aircraft::updateCurrentIndex(qint64 timestamp) const
         }
     }
 
-    if (d->currentIndex != index) {
-        d->currentIndex = index;
-    }
+    d->currentIndex = index;
     return d->currentIndex != ::InvalidIndex;
 }
 
