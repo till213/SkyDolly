@@ -15,3 +15,13 @@
 ### Bug Fixes
 
 - n/a
+
+## 0.2.0
+
+### New Features
+
+- Recording & playback of basic flight controls (rudder, ailerons, flaps, ...)
+
+### Bug Fixes
+
+- n/a

@@ -324,7 +324,7 @@ void MainWindow::updateRecordingTimeEdit()
     const Aircraft &aircraft = m_skyConnect.getAircraft();
     const AircraftData &aircraftData = aircraft.getLastAircraftData();
     QTime time(0, 0, 0, 0);
-    if (aircraftData.isValid()) {
+    if (!aircraftData.isNull()) {
         time = time.addMSecs(aircraftData.timestamp);
         ui->timestampTimeEdit->setTime(time);
     } else {

@@ -38,6 +38,7 @@ private:
     bool updateCurrentIndex(qint64 timestamp) const;
     bool getSupportData(qint64 timestamp, const AircraftData **p0, const AircraftData **p1, const AircraftData **p2, const AircraftData **p3) const;
     static double normaliseTimestamp(const AircraftData &p1, const AircraftData &p2, quint64 timestamp);
+    static bool isValid(const AircraftData &aircraftData);
 };
 
 #endif // AIRCRAFT_H
