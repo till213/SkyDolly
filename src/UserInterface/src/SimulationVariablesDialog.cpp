@@ -1,8 +1,9 @@
-#include <QObject>
+#include <QMetaObject>
 
 #include "../../Kernel/src/Aircraft.h"
 #include "../../Kernel/src/AircraftInfo.h"
 #include "../../SkyConnect/src/SkyConnect.h"
+#include "../../SkyConnect/src/Connect.h"
 #include "SimulationVariablesDialog.h"
 #include "ui_SimulationVariablesDialog.h"
 
@@ -14,6 +15,8 @@ public:
     {}
 
     SkyConnect &skyConnect;
+    QMetaObject::Connection dataChangedConnection;
+    QMetaObject::Connection dataSentConnection;
 };
 
 // PUBLIC
@@ -24,6 +27,7 @@ SimulationVariablesDialog::SimulationVariablesDialog(SkyConnect &skyConnect, QWi
     ui(new Ui::SimulationVariablesDialog)
 {
     ui->setupUi(this);
+    frenchConnection();
 }
 
 SimulationVariablesDialog::~SimulationVariablesDialog()
@@ -37,13 +41,21 @@ SimulationVariablesDialog::~SimulationVariablesDialog()
 void SimulationVariablesDialog::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event);
-    frenchConnection();
+
+    const Aircraft &aircraft = d->skyConnect.getAircraft();
+    // Signal sent while recording
+    d->dataChangedConnection = connect(&aircraft, &Aircraft::dataChanged,
+                                       this, &SimulationVariablesDialog::updateAircraftDataUi);
+    // Signal sent while playing
+    d->dataSentConnection = connect(&d->skyConnect, &SkyConnect::aircraftDataSent,
+                                       this, &SimulationVariablesDialog::updateAircraftDataUi);
 }
 
 void SimulationVariablesDialog::hideEvent(QHideEvent *event)
 {
     Q_UNUSED(event);
-    d->skyConnect.getAircraft().disconnect(this);
+    this->disconnect(d->dataChangedConnection);
+    this->disconnect(d->dataSentConnection);
 }
 
 // PRIVATE
@@ -53,8 +65,6 @@ void SimulationVariablesDialog::frenchConnection()
     const Aircraft &aircraft = d->skyConnect.getAircraft();
     connect(&aircraft, &Aircraft::infoChanged,
             this, &SimulationVariablesDialog::updateInfoUi);
-    connect(&aircraft, &Aircraft::dataChanged,
-            this, &SimulationVariablesDialog::updateAircraftDataUi);
 }
 
 // PRIVATE SLOTS
@@ -71,8 +81,7 @@ void SimulationVariablesDialog::updateInfoUi()
 
 void SimulationVariablesDialog::updateAircraftDataUi()
 {
-    const Aircraft &aircraft = d->skyConnect.getAircraft();
-    const AircraftData &aircraftData = aircraft.getLastAircraftData();
+    const AircraftData &aircraftData = getAircraftData();
 
     ui->latitudeLineEdit->setText(QString::number(aircraftData.latitude));
     ui->longitudeLineEdit->setText(QString::number(aircraftData.longitude));
@@ -92,4 +101,23 @@ void SimulationVariablesDialog::updateAircraftDataUi()
     ui->throttle4LineEdit->setText(QString::number(aircraftData.throttleLeverPosition4));
     ui->spoilerLineEdit->setText(QString::number(aircraftData.spoilersHandlePosition));
     ui->flapsPositionLineEdit->setText(QString::number(aircraftData.flapsHandleIndex));
+}
+
+// PRIVATE
+
+const AircraftData &SimulationVariablesDialog::getAircraftData() const
+{
+    const AircraftData aircraftData;
+    const Aircraft &aircraft = d->skyConnect.getAircraft();
+
+    switch (d->skyConnect.getState()) {
+    case  Connect::State::Recording:
+        return aircraft.getLastAircraftData();
+        break;
+    case Connect::State::Playback:
+        return d->skyConnect.getCurrentAircraftData();
+        break;
+    default:
+        return AircraftData::NullAircraftData;
+    };
 }

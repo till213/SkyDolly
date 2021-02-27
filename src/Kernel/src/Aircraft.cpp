@@ -283,5 +283,3 @@ bool Aircraft::isValid(const AircraftData &aircraftData) {
            Validation::inRange(aircraftData.bank, -180.0, 180.0) &&
            Validation::inRange(aircraftData.heading, 0.0, 360.0);
 }
-
-

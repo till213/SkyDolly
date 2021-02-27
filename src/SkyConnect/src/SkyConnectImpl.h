@@ -12,6 +12,7 @@
 #include "Frequency.h"
 #include "Connect.h"
 
+struct AircraftData;
 class SkyConnectPrivate;
 
 class SkyConnectImpl : public QObject
@@ -48,12 +49,14 @@ public:
 
     Connect::State getState() const;
 
-    void setPlayPosition(qint64 timestamp);
-    qint64 getPlayPosition() const;
-    bool isPlayPositionAtEnd() const;
+    void setCurrentTimestamp(qint64 timestamp);
+    qint64 getCurrentTimestamp() const;
+    bool isAtEnd() const;
+
+    const AircraftData &getCurrentAircraftData() const;
 
 signals:
-    void playPositionChanged(qint64 timestamp);
+    void aircraftDataSent(qint64 timestamp);
     void stateChanged(Connect::State state);
 
 private:

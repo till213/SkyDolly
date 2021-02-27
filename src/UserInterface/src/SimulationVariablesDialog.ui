@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1566</width>
-    <height>404</height>
+    <width>683</width>
+    <height>416</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <widget class="QGroupBox" name="groupBox_7">
      <property name="minimumSize">
       <size>
-       <width>512</width>
+       <width>0</width>
        <height>0</height>
       </size>
      </property>
@@ -37,9 +37,12 @@
        <widget class="QLineEdit" name="yokeXLineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>80</width>
           <height>0</height>
          </size>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -58,6 +61,9 @@
           <height>0</height>
          </size>
         </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item row="2" column="0">
@@ -74,6 +80,9 @@
           <width>120</width>
           <height>0</height>
          </size>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -92,6 +101,9 @@
           <height>0</height>
          </size>
         </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item row="4" column="0">
@@ -109,16 +121,39 @@
           <height>0</height>
          </size>
         </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item row="5" column="0">
+       <widget class="QLabel" name="label_38">
+        <property name="text">
+         <string>Flaps Position</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLineEdit" name="flapsPositionLineEdit">
+        <property name="minimumSize">
+         <size>
+          <width>120</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
        <widget class="QLabel" name="label_37">
         <property name="text">
          <string>Spoiler</string>
         </property>
        </widget>
       </item>
-      <item row="5" column="1">
+      <item row="6" column="1">
        <widget class="QLineEdit" name="spoilerLineEdit">
         <property name="minimumSize">
          <size>
@@ -126,22 +161,8 @@
           <height>0</height>
          </size>
         </property>
-       </widget>
-      </item>
-      <item row="6" column="0">
-       <widget class="QLabel" name="label_38">
-        <property name="text">
-         <string>Flaps Position</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="1">
-       <widget class="QLineEdit" name="flapsPositionLineEdit">
-        <property name="minimumSize">
-         <size>
-          <width>120</width>
-          <height>0</height>
-         </size>
+        <property name="readOnly">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -152,7 +173,7 @@
     <widget class="QGroupBox" name="groupBox">
      <property name="minimumSize">
       <size>
-       <width>512</width>
+       <width>0</width>
        <height>0</height>
       </size>
      </property>
@@ -171,9 +192,12 @@
        <widget class="QLineEdit" name="throttle1LineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>80</width>
           <height>0</height>
          </size>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -192,6 +216,9 @@
           <height>0</height>
          </size>
         </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item row="2" column="0">
@@ -209,6 +236,9 @@
           <height>0</height>
          </size>
         </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item row="3" column="0">
@@ -225,6 +255,9 @@
           <width>120</width>
           <height>0</height>
          </size>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -248,6 +281,9 @@
         <property name="text">
          <string>Start On Ground</string>
         </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
        </widget>
       </item>
       <item row="1" column="1">
@@ -264,7 +300,11 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QLineEdit" name="initialAirspeedLineEdit"/>
+       <widget class="QLineEdit" name="initialAirspeedLineEdit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_5">
@@ -287,7 +327,7 @@
     <widget class="QGroupBox" name="groupBox_5">
      <property name="minimumSize">
       <size>
-       <width>512</width>
+       <width>0</width>
        <height>0</height>
       </size>
      </property>
@@ -306,7 +346,7 @@
        <widget class="QLineEdit" name="latitudeLineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>

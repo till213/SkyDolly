@@ -11,6 +11,7 @@
 #include "../../Kernel/src/AircraftInfo.h"
 #include "../../SkyConnect/src/Frequency.h"
 #include "../../SkyConnect/src/SkyConnect.h"
+#include "../../SkyConnect/src/Connect.h"
 #include "AboutDialog.h"
 #include "SimulationVariablesDialog.h"
 #include "MainWindow.h"
@@ -55,7 +56,7 @@ void MainWindow::frenchConnection()
     const Aircraft &aircraft = m_skyConnect.getAircraft();
     connect(&aircraft, &Aircraft::dataChanged,
             this, &MainWindow::updateRecordingTimeEdit);
-    connect(&m_skyConnect, &SkyConnect::playPositionChanged,
+    connect(&m_skyConnect, &SkyConnect::aircraftDataSent,
             this, &MainWindow::handlePlayPositionChanged);
     connect(&m_skyConnect, &SkyConnect::stateChanged,
             this, &MainWindow::updateUi);
@@ -85,9 +86,9 @@ void MainWindow::on_pausePushButton_clicked(bool checked)
 void MainWindow::on_playPushButton_clicked(bool checked)
 {
     if (checked) {
-        if (m_skyConnect.isPlayPositionAtEnd()) {
+        if (m_skyConnect.isAtEnd()) {
             // Jump back to start
-            m_skyConnect.setPlayPosition(0);
+            m_skyConnect.setCurrentTimestamp(0);
         }
         m_skyConnect.startReplay(false);
     } else if (m_skyConnect.isPaused()) {
@@ -131,7 +132,7 @@ void MainWindow::on_positionSlider_sliderMoved(int value)
 
     // Prevent the timestampTimeEdit field to set the play position as well
     ui->timestampTimeEdit->blockSignals(true);
-    m_skyConnect.setPlayPosition(timestamp);
+    m_skyConnect.setCurrentTimestamp(timestamp);
     ui->timestampTimeEdit->blockSignals(false);
 }
 
@@ -147,7 +148,7 @@ void MainWindow::on_timestampTimeEdit_timeChanged(const QTime &time)
     Connect::State state = m_skyConnect.getState();
     if (state == Connect::State::Idle || state == Connect::State::PlaybackPaused) {
         qint64 timestamp = time.hour() * MilliSecondsPerHour + time.minute() * MilliSecondsPerMinute + time.second() * MilliSecondsPerSecond;
-        m_skyConnect.setPlayPosition(timestamp);
+        m_skyConnect.setCurrentTimestamp(timestamp);
     }
 }
 

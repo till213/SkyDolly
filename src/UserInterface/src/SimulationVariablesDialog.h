@@ -34,6 +34,9 @@ protected:
 private slots:
     void updateInfoUi();
     void updateAircraftDataUi();
+
+private:
+    const AircraftData &getAircraftData() const;
 };
 
 #endif // SIMULATIONVARIABLESDIALOG_H
