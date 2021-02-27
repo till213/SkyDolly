@@ -20,10 +20,11 @@
 
 ### New Features
 
-- Recording & playback of basic flight controls (rudder, ailerons, flaps, ...)
+- Recording & playback of basic flight controls (rudder, ailerons, flaps, gear, ...)
 - Updated user interface
 - Separate simulation variables dialog
 - Simulation variables are now also shown during replay (in the new simulation variables dialog)
+- Add record/play/pause actions, with keyboard shortcuts (r = record, space = play, p = pause)
 
 ### Bug Fixes
 
