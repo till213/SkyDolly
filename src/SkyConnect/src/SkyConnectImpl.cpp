@@ -1,6 +1,8 @@
 #include <windows.h>
 #include <SimConnect.h>
 
+#include <QtGlobal>
+
 #include "../../Kernel/src/Aircraft.h"
 #include "../../Kernel/src/AircraftInfo.h"
 #include "../../Kernel/src/AircraftData.h"
@@ -259,12 +261,15 @@ Frequency::Frequency SkyConnectImpl::getReplayFrequency() const
 
 void SkyConnectImpl::setTimeScale(double timeScale)
 {
-    d->timeScale = timeScale;
-    if (d->elapsedTimer.isValid()) {
-        // Store the elapsed time measured with the previous scale...
-        d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed() * d->timeScale;
-        // ... and restart timer
-        d->elapsedTimer.start();
+    if (!qFuzzyCompare(d->timeScale, timeScale)) {
+        // If the elapsed timer is running...
+        if (d->elapsedTimer.isValid()) {
+            // ... then store the elapsed time measured with the previous scale...
+            d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed() * d->timeScale;
+            // ... and restart timer
+            d->elapsedTimer.start();
+        }
+        d->timeScale = timeScale;
     }
 }
 
