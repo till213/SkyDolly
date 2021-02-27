@@ -299,7 +299,16 @@
     </property>
     <addaction name="showSimulationVariablesAction"/>
    </widget>
+   <widget class="QMenu" name="menu_Flight">
+    <property name="title">
+     <string>F&amp;light</string>
+    </property>
+    <addaction name="recordAction"/>
+    <addaction name="playAction"/>
+    <addaction name="pauseAction"/>
+   </widget>
    <addaction name="menu_File"/>
+   <addaction name="menu_Flight"/>
    <addaction name="menu_View"/>
    <addaction name="menu_Info"/>
   </widget>
@@ -325,6 +334,39 @@
   <action name="showSimulationVariablesAction">
    <property name="text">
     <string>&amp;Simulation Variables</string>
+   </property>
+  </action>
+  <action name="recordAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Record</string>
+   </property>
+   <property name="shortcut">
+    <string>R</string>
+   </property>
+  </action>
+  <action name="playAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Play</string>
+   </property>
+   <property name="shortcut">
+    <string>Space</string>
+   </property>
+  </action>
+  <action name="pauseAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>P&amp;ause</string>
+   </property>
+   <property name="shortcut">
+    <string>P</string>
    </property>
   </action>
  </widget>
