@@ -4,7 +4,7 @@
 
 #include "SkyMath.h"
 #include "AircraftInfo.h"
-#include "Position.h"
+#include "AircraftData.h"
 #include "Aircraft.h"
 
 namespace {
@@ -19,8 +19,8 @@ public:
     {}
 
     AircraftInfo aircraftInfo;
-    QVector<Position> positions;
-    Position currentPosition;
+    QVector<AircraftData> aircraftData;
+    AircraftData currentAircraftData;
     mutable int currentIndex;
 };
 
@@ -48,68 +48,129 @@ const AircraftInfo &Aircraft::getAircraftInfo() const
     return d->aircraftInfo;
 }
 
-void Aircraft::upsertPosition(Position position)
+void Aircraft::upsertAircraftData(AircraftData aircraftData)
 {
-    if (d->positions.length() > 0 && d->positions.last().timestamp == position.timestamp)  {
+    if (d->aircraftData.length() > 0 && d->aircraftData.last().timestamp == aircraftData.timestamp)  {
         // Same timestamp -> replace
-        d->positions[d->positions.length() - 1] = position;
+        d->aircraftData[d->aircraftData.length() - 1] = aircraftData;
     } else {
-        d->positions.append(position);
+        d->aircraftData.append(aircraftData);
     }
-    emit positionChanged();
+    emit dataChanged();
 }
 
-const Position &Aircraft::getLastPosition() const
+const AircraftData &Aircraft::getLastAircraftData() const
 {
-    if (!d->positions.isEmpty()) {
-        return d->positions.last();
+    if (!d->aircraftData.isEmpty()) {
+        return d->aircraftData.last();
     } else {
-        return Position::NullPosition;
+        return AircraftData::NullAircraftData;
     }
 }
 
-const QVector<Position> Aircraft::getPositions() const
+const QVector<AircraftData> Aircraft::getAircraftData() const
 {
-    return d->positions;
+    return d->aircraftData;
 }
 
 void Aircraft::clear()
 {
-    d->positions.clear();
+    d->aircraftData.clear();
     d->currentIndex = ::InvalidIndex;
-    emit positionChanged();
+    emit dataChanged();
 }
 
-const Position &Aircraft::getPosition(qint64 timestamp) const
+const AircraftData &Aircraft::getAircraftData(qint64 timestamp) const
 {
-    const Position *p0, *p1, *p2, *p3;
+    const AircraftData *p0, *p1, *p2, *p3;
     const double Tension = 0.0;
 
-    if (this->getSupportPositions(timestamp, &p0, &p1, &p2, &p3)) {
+    if (this->getSupportData(timestamp, &p0, &p1, &p2, &p3)) {
 
         double tn = this->normaliseTimestamp(*p1, *p2, timestamp);
 
+        // Aircraft position
+
         // Latitude: [-90, 90]
-        d->currentPosition.latitude  = SkyMath::interpolateHermite180(p0->latitude, p1->latitude, p2->latitude, p3->latitude, tn, Tension);
+        d->currentAircraftData.latitude  = SkyMath::interpolateHermite180(p0->latitude, p1->latitude, p2->latitude, p3->latitude, tn, Tension);
         // Longitude: [-180, 180]
-        d->currentPosition.longitude = SkyMath::interpolateHermite180(p0->longitude, p1->longitude, p2->longitude, p3->longitude, tn, Tension);
+        d->currentAircraftData.longitude = SkyMath::interpolateHermite180(p0->longitude, p1->longitude, p2->longitude, p3->longitude, tn, Tension);
         // Altitude [open range]
-        d->currentPosition.altitude  = SkyMath::interpolateHermite(p0->altitude, p1->altitude, p2->altitude, p3->altitude, tn, Tension);
+        d->currentAircraftData.altitude  = SkyMath::interpolateHermite(p0->altitude, p1->altitude, p2->altitude, p3->altitude, tn, Tension);
 
         // Pitch: [-90, 90]
-        d->currentPosition.pitch = SkyMath::interpolateHermite180(p0->pitch, p1->pitch, p2->pitch, p3->pitch, tn, Tension);
+        d->currentAircraftData.pitch = SkyMath::interpolateHermite180(p0->pitch, p1->pitch, p2->pitch, p3->pitch, tn, Tension);
         // Bank: [-180, 180]
-        d->currentPosition.bank  = SkyMath::interpolateHermite180(p0->bank, p1->bank, p2->bank, p3->bank, tn, Tension);
+        d->currentAircraftData.bank  = SkyMath::interpolateHermite180(p0->bank, p1->bank, p2->bank, p3->bank, tn, Tension);
         // Heading: [0, 360]
-        d->currentPosition.heading = SkyMath::interpolateHermite360(p0->heading, p1->heading, p2->heading, p3->heading, tn, Tension);
+        d->currentAircraftData.heading = SkyMath::interpolateHermite360(p0->heading, p1->heading, p2->heading, p3->heading, tn, Tension);
 
-        d->currentPosition.timestamp = timestamp;
+        // Aircraft controls
+
+        d->currentAircraftData.yokeXPosition = static_cast<qint16>(qRound(SkyMath::interpolateHermite(
+          static_cast<double>(p0->yokeXPosition),
+          static_cast<double>(p1->yokeXPosition),
+          static_cast<double>(p2->yokeXPosition),
+          static_cast<double>(p3->yokeXPosition), tn, Tension)));
+        d->currentAircraftData.yokeYPosition = static_cast<qint16>(qRound(SkyMath::interpolateHermite(
+          static_cast<double>(p0->yokeYPosition),
+          static_cast<double>(p1->yokeYPosition),
+          static_cast<double>(p2->yokeYPosition),
+          static_cast<double>(p3->yokeYPosition), tn, Tension)));
+        d->currentAircraftData.rudderPosition = static_cast<qint16>(qRound(SkyMath::interpolateHermite(
+          static_cast<double>(p0->rudderPosition),
+          static_cast<double>(p1->rudderPosition),
+          static_cast<double>(p2->rudderPosition),
+          static_cast<double>(p3->rudderPosition), tn, Tension)));
+        d->currentAircraftData.elevatorPosition = static_cast<qint16>(qRound(SkyMath::interpolateHermite(
+          static_cast<double>(p0->elevatorPosition),
+          static_cast<double>(p1->elevatorPosition),
+          static_cast<double>(p2->elevatorPosition),
+          static_cast<double>(p3->elevatorPosition), tn, Tension)));
+        d->currentAircraftData.aileronPosition = static_cast<qint16>(qRound(SkyMath::interpolateHermite(
+          static_cast<double>(p0->aileronPosition),
+          static_cast<double>(p1->aileronPosition),
+          static_cast<double>(p2->aileronPosition),
+          static_cast<double>(p3->aileronPosition), tn, Tension)));
+
+        // Engine
+        d->currentAircraftData.throttleLeverPosition1 = static_cast<qint16>(qRound(SkyMath::interpolateHermite(
+          static_cast<double>(p0->throttleLeverPosition1),
+          static_cast<double>(p1->throttleLeverPosition1),
+          static_cast<double>(p2->throttleLeverPosition1),
+          static_cast<double>(p3->throttleLeverPosition1), tn, Tension)));
+        d->currentAircraftData.throttleLeverPosition2 = static_cast<qint16>(qRound(SkyMath::interpolateHermite(
+          static_cast<double>(p0->throttleLeverPosition2),
+          static_cast<double>(p1->throttleLeverPosition2),
+          static_cast<double>(p2->throttleLeverPosition2),
+          static_cast<double>(p3->throttleLeverPosition2), tn, Tension)));
+        d->currentAircraftData.throttleLeverPosition3 = static_cast<qint16>(qRound(SkyMath::interpolateHermite(
+          static_cast<double>(p0->throttleLeverPosition3),
+          static_cast<double>(p1->throttleLeverPosition3),
+          static_cast<double>(p2->throttleLeverPosition3),
+          static_cast<double>(p3->throttleLeverPosition3), tn, Tension)));
+        d->currentAircraftData.throttleLeverPosition4 = static_cast<qint16>(qRound(SkyMath::interpolateHermite(
+          static_cast<double>(p0->throttleLeverPosition4),
+          static_cast<double>(p1->throttleLeverPosition4),
+          static_cast<double>(p2->throttleLeverPosition4),
+          static_cast<double>(p3->throttleLeverPosition4), tn, Tension)));
+
+        d->currentAircraftData.spoilersHandlePosition = static_cast<qint16>(qRound(SkyMath::interpolateHermite(
+          static_cast<double>(p0->spoilersHandlePosition),
+          static_cast<double>(p1->spoilersHandlePosition),
+          static_cast<double>(p2->spoilersHandlePosition),
+          static_cast<double>(p3->spoilersHandlePosition), tn, Tension)));
+
+        // No interpolation for flaps position
+        d->currentAircraftData.flapsHandleIndex = p1->flapsHandleIndex;
+
+        d->currentAircraftData.timestamp = timestamp;
 
     } else {
-        // No recorded positions, or the timestamp exceeds the timestamp of the last recorded position
-        d->currentPosition = Position::NullPosition;
+        // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
+        d->currentAircraftData = AircraftData::NullAircraftData;
     }
-    return d->currentPosition;
+    return d->currentAircraftData;
 }
 
 // PRIVATE
@@ -118,10 +179,10 @@ const Position &Aircraft::getPosition(qint64 timestamp) const
 bool Aircraft::updateCurrentIndex(qint64 timestamp) const
 {
     int index = d->currentIndex;
-    int length = d->positions.length();
-    if (length > 0 && timestamp <= d->positions.last().timestamp) {
+    int length = d->aircraftData.length();
+    if (length > 0 && timestamp <= d->aircraftData.last().timestamp) {
         if (index != ::InvalidIndex) {
-            if (d->positions.at(d->currentIndex).timestamp > timestamp) {
+            if (d->aircraftData.at(d->currentIndex).timestamp > timestamp) {
                 // The timestamp was moved to front ("rewind"), so start searching from beginning
                 // @todo binary search (O(log n)
                 index = 0;
@@ -132,7 +193,7 @@ bool Aircraft::updateCurrentIndex(qint64 timestamp) const
             index = 0;
         }        
     } else {
-        // No positions yet, or timestamp not between given range
+        // No data yet, or timestamp not between given range
         index = ::InvalidIndex;
     }
 
@@ -141,7 +202,7 @@ bool Aircraft::updateCurrentIndex(qint64 timestamp) const
         bool found = false;
         while (!found && index < length) {
             if (index < (length - 1)) {
-                if (d->positions.at(index + 1).timestamp > timestamp) {
+                if (d->aircraftData.at(index + 1).timestamp > timestamp) {
                     // The next index has a larger timestamp, so this index is the one we are looking for
                     found = true;
                 } else {
@@ -158,27 +219,27 @@ bool Aircraft::updateCurrentIndex(qint64 timestamp) const
     return d->currentIndex != ::InvalidIndex;
 }
 
-bool Aircraft::getSupportPositions(qint64 timestamp, const Position **p0, const Position **p1, const Position **p2, const Position **p3) const
+bool Aircraft::getSupportData(qint64 timestamp, const AircraftData **p0, const AircraftData **p1, const AircraftData **p2, const AircraftData **p3) const
 {
     if (this->updateCurrentIndex(timestamp)) {
 
-        *p1 = &d->positions.at(d->currentIndex);
+        *p1 = &d->aircraftData.at(d->currentIndex);
         if (d->currentIndex > 0) {
-           *p0 = &d->positions.at(d->currentIndex - 1);
+           *p0 = &d->aircraftData.at(d->currentIndex - 1);
         } else {
            *p0 = *p1;
         }
-        if (d->currentIndex < d->positions.length() - 1) {
-           if (d->currentIndex < d->positions.length() - 2) {
-               *p2 = &d->positions.at(d->currentIndex + 1);
-               *p3 = &d->positions.at(d->currentIndex + 2);
+        if (d->currentIndex < d->aircraftData.length() - 1) {
+           if (d->currentIndex < d->aircraftData.length() - 2) {
+               *p2 = &d->aircraftData.at(d->currentIndex + 1);
+               *p3 = &d->aircraftData.at(d->currentIndex + 2);
            } else {
-               // p1 is the second to last position
-               *p2 = &d->positions.at(d->currentIndex + 1);
+               // p1 is the second to last data
+               *p2 = &d->aircraftData.at(d->currentIndex + 1);
                *p3 = *p2;
            }
         } else {
-           // p1 is the last position
+           // p1 is the last data
            *p2 = *p3 = *p1;
         }
 
@@ -189,7 +250,7 @@ bool Aircraft::getSupportPositions(qint64 timestamp, const Position **p0, const 
     return *p0 != nullptr;
 }
 
-double Aircraft::normaliseTimestamp(const Position &p1, const Position &p2, quint64 timestamp)
+double Aircraft::normaliseTimestamp(const AircraftData &p1, const AircraftData &p2, quint64 timestamp)
 {
     double t1 = timestamp - p1.timestamp;
     double t2 = p2.timestamp - p1.timestamp;

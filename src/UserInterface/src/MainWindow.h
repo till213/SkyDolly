@@ -49,7 +49,7 @@ private slots:
     void updateUi();
     void updateControlUi();
     void updateInfoUi();
-    void updatePositionUi();
+    void updateAircraftDataUi();
     void updateSettingsUi();
     void updateRecordingTimeEdit();
 

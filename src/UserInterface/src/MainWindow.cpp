@@ -54,9 +54,9 @@ void MainWindow::frenchConnection()
     const Aircraft &aircraft = m_skyConnect.getAircraft();
     connect(&aircraft, &Aircraft::infoChanged,
             this, &MainWindow::updateInfoUi);
-    connect(&aircraft, &Aircraft::positionChanged,
-            this, &MainWindow::updatePositionUi);
-    connect(&aircraft, &Aircraft::positionChanged,
+    connect(&aircraft, &Aircraft::dataChanged,
+            this, &MainWindow::updateAircraftDataUi);
+    connect(&aircraft, &Aircraft::dataChanged,
             this, &MainWindow::updateRecordingTimeEdit);
     connect(&m_skyConnect, &SkyConnect::playPositionChanged,
             this, &MainWindow::handlePlayPositionChanged);
@@ -130,7 +130,7 @@ void MainWindow::on_positionSlider_sliderPressed()
 void MainWindow::on_positionSlider_sliderMoved(int value)
 {
     double scale = static_cast<double>(value) / 100.0f;
-    qint64 timestamp = static_cast<qint64>(qRound(scale * static_cast<double>(m_skyConnect.getAircraft().getLastPosition().timestamp)));
+    qint64 timestamp = static_cast<qint64>(qRound(scale * static_cast<double>(m_skyConnect.getAircraft().getLastAircraftData().timestamp)));
 
     // Prevent the timestampTimeEdit field to set the play position as well
     ui->timestampTimeEdit->blockSignals(true);
@@ -215,12 +215,12 @@ void MainWindow::updateUi()
 {
     updateControlUi();
     updateInfoUi();
-    updatePositionUi();
+    updateAircraftDataUi();
 }
 
 void MainWindow::updateControlUi()
 {
-    bool hasRecording = m_skyConnect.getAircraft().getPositions().count() > 0;
+    bool hasRecording = m_skyConnect.getAircraft().getAircraftData().count() > 0;
     switch (m_skyConnect.getState()) {
     case Connect::Idle:
         ui->recordPushButton->setEnabled(true);
@@ -288,17 +288,29 @@ void MainWindow::updateInfoUi()
     ui->initialAirspeedLineEdit->setText(QString::number(aircraftInfo.initialAirspeed));
 }
 
-void MainWindow::updatePositionUi()
+void MainWindow::updateAircraftDataUi()
 {
     const Aircraft &aircraft = m_skyConnect.getAircraft();
-    const Position &position = aircraft.getLastPosition();
+    const AircraftData &aircraftData = aircraft.getLastAircraftData();
 
-    ui->latitudeLineEdit->setText(QString::number(position.latitude));
-    ui->longitudeLineEdit->setText(QString::number(position.longitude));
-    ui->altitudeLineEdit->setText(QString::number(position.altitude));
-    ui->pitchLineEdit->setText(QString::number(position.pitch));
-    ui->bankLineEdit->setText(QString::number(position.bank));
-    ui->headingLineEdit->setText(QString::number(position.heading));
+    ui->latitudeLineEdit->setText(QString::number(aircraftData.latitude));
+    ui->longitudeLineEdit->setText(QString::number(aircraftData.longitude));
+    ui->altitudeLineEdit->setText(QString::number(aircraftData.altitude));
+    ui->pitchLineEdit->setText(QString::number(aircraftData.pitch));
+    ui->bankLineEdit->setText(QString::number(aircraftData.bank));
+    ui->headingLineEdit->setText(QString::number(aircraftData.heading));
+
+    ui->yokeXLineEdit->setText(QString::number(aircraftData.yokeXPosition));
+    ui->yokeYLineEdit->setText(QString::number(aircraftData.yokeYPosition));
+    ui->rudderLineEdit->setText(QString::number(aircraftData.rudderPosition));
+    ui->elevatorLineEdit->setText(QString::number(aircraftData.elevatorPosition));
+    ui->aileronLineEdit->setText(QString::number(aircraftData.aileronPosition));
+    ui->throttle1LineEdit->setText(QString::number(aircraftData.throttleLeverPosition1));
+    ui->throttle2LineEdit->setText(QString::number(aircraftData.throttleLeverPosition2));
+    ui->throttle3LineEdit->setText(QString::number(aircraftData.throttleLeverPosition3));
+    ui->throttle4LineEdit->setText(QString::number(aircraftData.throttleLeverPosition4));
+    ui->spoilerLineEdit->setText(QString::number(aircraftData.spoilersHandlePosition));
+    ui->flapsPositionLineEdit->setText(QString::number(aircraftData.flapsHandleIndex));
 }
 
 void MainWindow::updateSettingsUi()
@@ -310,10 +322,10 @@ void MainWindow::updateSettingsUi()
 void MainWindow::updateRecordingTimeEdit()
 {
     const Aircraft &aircraft = m_skyConnect.getAircraft();
-    const Position &position = aircraft.getLastPosition();
+    const AircraftData &aircraftData = aircraft.getLastAircraftData();
     QTime time(0, 0, 0, 0);
-    if (position.isValid()) {
-        time = time.addMSecs(position.timestamp);
+    if (aircraftData.isValid()) {
+        time = time.addMSecs(aircraftData.timestamp);
         ui->timestampTimeEdit->setTime(time);
     } else {
         ui->timestampTimeEdit->setTime(time);
@@ -337,7 +349,7 @@ void MainWindow::on_aboutQtAction_triggered()
 }
 
 void MainWindow::handlePlayPositionChanged(qint64 timestamp) {
-    qint64 endTimeStamp = m_skyConnect.getAircraft().getLastPosition().timestamp;
+    qint64 endTimeStamp = m_skyConnect.getAircraft().getLastAircraftData().timestamp;
     qint64 ts = qMin(timestamp, endTimeStamp);
 
     int percent;
