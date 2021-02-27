@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(SkyDolly LANGUAGES CXX VERSION 0.1.0 DESCRIPTION "Sky Dolly - The black sheep for your flight simulator")
+project(SkyDolly LANGUAGES CXX VERSION 0.2.0 DESCRIPTION "Sky Dolly - The black sheep for your flight recordings")
 
 set(CMAKE_SHARED_LIBRARY_PREFIX )
 
@@ -43,11 +43,11 @@ set(OTHER_SOURCES
 )
 
 if (WIN32)
-  configure_file(${PROJECT_SOURCE_DIR}/res/SkyDolly.rc.in
-                 ${PROJECT_SOURCE_DIR}/res/SkyDolly.rc @ONLY)
-  add_library(resources OBJECT ${PROJECT_SOURCE_DIR}/res/SkyDolly.rc)
-  target_include_directories(resources PRIVATE ${PROJECT_SOURCE_DIR}/res/)
-  set(RESOURCES $<TARGET_OBJECTS:resources>)
+    configure_file(${PROJECT_SOURCE_DIR}/res/SkyDolly.rc.in
+                   ${PROJECT_SOURCE_DIR}/res/SkyDolly.rc @ONLY)
+    add_library(resources OBJECT ${PROJECT_SOURCE_DIR}/res/SkyDolly.rc)
+    target_include_directories(resources PRIVATE ${PROJECT_SOURCE_DIR}/res/)
+    set(RESOURCES $<TARGET_OBJECTS:resources>)
 endif()
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
