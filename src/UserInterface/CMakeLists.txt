@@ -8,6 +8,9 @@ set(PROJECT_SOURCES
     src/AboutDialog.cpp
     src/AboutDialog.h
     src/AboutDialog.ui
+    src/SimulationVariablesDialog.cpp
+    src/SimulationVariablesDialog.h
+    src/SimulationVariablesDialog.ui
 )
 
 qt5_add_resources(PROJECT_SOURCES res/SkyDolly.qrc)
