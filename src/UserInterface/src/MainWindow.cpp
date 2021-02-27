@@ -5,7 +5,11 @@
 #include <QTimeEdit>
 #include <QComboBox>
 #include <QSlider>
+#include <QLineEdit>
+#include <QButtonGroup>
+#include <QRadioButton>
 #include <QMessageBox>
+#include <QDoubleValidator>
 
 #include "../../Kernel/src/Aircraft.h"
 #include "../../Kernel/src/AircraftInfo.h"
@@ -20,9 +24,24 @@
 namespace {
     constexpr int PositionSliderMin = 0;
     constexpr int PositionSliderMax = 100;
+    constexpr double PlaybackSpeedMin = 0.01;
+    // A playback speed with factor 200 should be fast enough
+    constexpr double PlaybackSpeedMax = 20000.0;
     constexpr qint64 MilliSecondsPerSecond = 1000;
     constexpr qint64 MilliSecondsPerMinute = 60 * MilliSecondsPerSecond;
     constexpr qint64 MilliSecondsPerHour = 60 * MilliSecondsPerMinute;
+
+    enum PlaybackSpeed {
+        PlaybackSpeed10,
+        PlaybackSpeed25,
+        PlaybackSpeed50,
+        PlaybackSpeed75,
+        PlaybackSpeed100,
+        PlaybackSpeed200,
+        PlaybackSpeed400,
+        PlaybackSpeed800,
+        PlaybackSpeedCustom
+    };
 }
 
 // PUBLIC
@@ -55,11 +74,16 @@ void MainWindow::frenchConnection()
 {
     const Aircraft &aircraft = m_skyConnect.getAircraft();
     connect(&aircraft, &Aircraft::dataChanged,
-            this, &MainWindow::updateRecordingTimeEdit);
+            this, &MainWindow::updateRecordingTime);
     connect(&m_skyConnect, &SkyConnect::aircraftDataSent,
             this, &MainWindow::handlePlayPositionChanged);
     connect(&m_skyConnect, &SkyConnect::stateChanged,
             this, &MainWindow::updateUi);
+
+    connect(m_playbackSpeedButtonGroup, &QButtonGroup::idClicked,
+            this, &MainWindow::updateControlUi);
+    connect(m_playbackSpeedButtonGroup, &QButtonGroup::idClicked,
+            this, &MainWindow::handlePlaybackSpeedSelected);
 }
 
 // PRIVATE SLOTS
@@ -109,13 +133,6 @@ void MainWindow::on_playbackFrequencyComboBox_activated(int index)
     m_skyConnect.setReplayFrequency(static_cast<Frequency::Frequency>(index));
 }
 
-void MainWindow::on_timeScaleSlider_valueChanged()
-{
-    double timeScale = static_cast<double>(ui->timeScaleSlider->value() / 100.0);
-    m_skyConnect.setTimeScale(timeScale);
-    this->updateSettingsUi();
-}
-
 void MainWindow::on_positionSlider_sliderPressed()
 {
     m_previousState = m_skyConnect.getState();
@@ -152,6 +169,14 @@ void MainWindow::on_timestampTimeEdit_timeChanged(const QTime &time)
     }
 }
 
+void MainWindow::on_customPlaybackSpeedLineEdit_editingFinished() {
+    QString text = ui->customPlaybackSpeedLineEdit->text();
+    if (!text.isEmpty()) {
+        m_lastCustomPlaybackSpeed = text.toDouble() / 100.0;
+        m_skyConnect.setTimeScale(m_lastCustomPlaybackSpeed);
+    }
+}
+
 void MainWindow::initUi()
 {
     setWindowIcon(QIcon(":/img/SkyDolly.png"));
@@ -165,15 +190,42 @@ void MainWindow::initUi()
     m_aboutDialog->setWindowFlags(flags);
 
     this->initSettingsUi();
-    this->initRecordUi();
+    this->initControlUi();
     this->updateUi();
 }
 
-void MainWindow::initRecordUi()
+void MainWindow::initControlUi()
 {
+    m_playbackSpeedButtonGroup = new QButtonGroup(this);
+    m_playbackSpeedButtonGroup->addButton(ui->playbackSpeed10RadioButton, PlaybackSpeed10);
+    m_playbackSpeedButtonGroup->addButton(ui->playbackSpeed25RadioButton, PlaybackSpeed25);
+    m_playbackSpeedButtonGroup->addButton(ui->playbackSpeed50RadioButton, PlaybackSpeed50);
+    m_playbackSpeedButtonGroup->addButton(ui->playbackSpeed75RadioButton, PlaybackSpeed75);
+    m_playbackSpeedButtonGroup->addButton(ui->playbackSpeed100RadioButton, PlaybackSpeed100);
+    m_playbackSpeedButtonGroup->addButton(ui->playbackSpeed200RadioButton, PlaybackSpeed200);
+    m_playbackSpeedButtonGroup->addButton(ui->playbackSpeed400RadioButton, PlaybackSpeed400);
+    m_playbackSpeedButtonGroup->addButton(ui->playbackSpeed800RadioButton, PlaybackSpeed800);
+    m_playbackSpeedButtonGroup->addButton(ui->customPlaybackSpeedRadioButton, PlaybackSpeedCustom);
+
     ui->positionSlider->setMinimum(PositionSliderMin);
     ui->positionSlider->setMaximum(PositionSliderMax);
     ui->timestampTimeEdit->setDisplayFormat("hh:mm:ss");
+
+    QDoubleValidator *customPlaybackSpeedValidator = new QDoubleValidator(ui->customPlaybackSpeedLineEdit);
+    ui->customPlaybackSpeedLineEdit->setValidator(customPlaybackSpeedValidator);
+    customPlaybackSpeedValidator->setBottom(PlaybackSpeedMin);
+    customPlaybackSpeedValidator->setTop(PlaybackSpeedMax);
+
+    double playbackSpeed = m_skyConnect.getTimeScale();
+    m_lastCustomPlaybackSpeed = playbackSpeed;
+    if (qFuzzyCompare(m_skyConnect.getTimeScale(), 1.0)) {
+        ui->playbackSpeed100RadioButton->setChecked(true);
+    } else {
+        ui->customPlaybackSpeedRadioButton->setChecked(true);
+        ui->customPlaybackSpeedLineEdit->setText(QString::number(playbackSpeed * 100.0));
+    }
+
+    updateControlUi();
 }
 
 void MainWindow::initSettingsUi()
@@ -209,9 +261,6 @@ void MainWindow::initSettingsUi()
     // Initial values
     ui->recordFrequencyComboBox->setCurrentIndex(m_skyConnect.getSampleFrequency());
     ui->playbackFrequencyComboBox->setCurrentIndex(m_skyConnect.getReplayFrequency());
-    int percent = static_cast<int>(m_skyConnect.getTimeScale() * PositionSliderMax);
-    ui->timeScaleSlider->setValue(percent);
-    this->updateSettingsUi();
 }
 
 void MainWindow::updateUi()
@@ -277,15 +326,17 @@ void MainWindow::updateControlUi()
     default:
         break;
     }
+
+    if (ui->customPlaybackSpeedRadioButton->isChecked()) {
+        ui->customPlaybackSpeedLineEdit->setEnabled(true);
+        ui->customPlaybackSpeedLineEdit->setText(QString::number(m_lastCustomPlaybackSpeed * 100.0));
+    } else {
+        ui->customPlaybackSpeedLineEdit->setEnabled(false);
+        ui->customPlaybackSpeedLineEdit->clear();
+    }
 }
 
-void MainWindow::updateSettingsUi()
-{
-    int percent = ui->timeScaleSlider->value();
-    ui->timeScalePercentLabel->setText(QString::number(percent));
-}
-
-void MainWindow::updateRecordingTimeEdit()
+void MainWindow::updateRecordingTime()
 {
     const Aircraft &aircraft = m_skyConnect.getAircraft();
     const AircraftData &aircraftData = aircraft.getLastAircraftData();
@@ -336,4 +387,43 @@ void MainWindow::handlePlayPositionChanged(qint64 timestamp) {
     QTime time(0, 0, 0, 0);
     time = time.addMSecs(timestamp);
     ui->timestampTimeEdit->setTime(time);
+}
+
+void MainWindow::handlePlaybackSpeedSelected(int selection) {
+
+    double timeScale;
+    switch (selection) {
+    case PlaybackSpeed10:
+        timeScale = 0.1;
+        break;
+    case PlaybackSpeed25:
+        timeScale = 0.25;
+        break;
+    case PlaybackSpeed50:
+        timeScale = 0.5;
+        break;
+    case PlaybackSpeed75:
+        timeScale = 0.75;
+        break;
+    case PlaybackSpeed100:
+        timeScale = 1.0;
+        break;
+    case PlaybackSpeed200:
+        timeScale = 2.0;
+        break;
+    case PlaybackSpeed400:
+        timeScale = 4.0;
+        break;
+    case PlaybackSpeed800:
+        timeScale = 8.0;
+        break;
+    case PlaybackSpeedCustom:
+        timeScale = ui->customPlaybackSpeedLineEdit->text().toDouble() / 100.0;
+        break;
+    default:
+        timeScale = 1.0;
+        break;
+    }
+
+    m_skyConnect.setTimeScale(timeScale);
 }

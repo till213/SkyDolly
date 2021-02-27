@@ -21,7 +21,11 @@
 ### New Features
 
 - Recording & playback of basic flight controls (rudder, ailerons, flaps, ...)
+- Updated user interface
+- Separate simulation variables dialog
+- Simulation variables are now also shown during replay (in the new simulation variables dialog)
 
 ### Bug Fixes
 
-- n/a
+- Validate the recorded simulation variables, specifically the position (sending invalid values back freezes or even crashes FS 2020)
+- Properly store the already elapsed time when changing the playback speed, for a smooth continuation of the replay
