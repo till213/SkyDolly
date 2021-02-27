@@ -52,6 +52,7 @@ public:
     Connect::State state;
     QTimer timer;
     qint64 currentTimestamp;
+    AircraftData currentAircraftData;
     QElapsedTimer elapsedTimer;
     Aircraft aircraft;
     double sampleFrequency;
@@ -277,24 +278,29 @@ Connect::State SkyConnectImpl::getState() const
     return d->state;
 }
 
-void SkyConnectImpl::setPlayPosition(qint64 timestamp)
+void SkyConnectImpl::setCurrentTimestamp(qint64 timestamp)
 {
     d->currentTimestamp = timestamp;
     d->elapsedTime = d->currentTimestamp;
-    emit playPositionChanged(d->currentTimestamp);
+    emit aircraftDataSent(d->currentTimestamp);
     if (sendAircraftPosition() && d->elapsedTimer.isValid()) {
         d->elapsedTimer.start();
     }
 }
 
-qint64 SkyConnectImpl::getPlayPosition() const
+qint64 SkyConnectImpl::getCurrentTimestamp() const
 {
     return d->currentTimestamp;
 }
 
-bool SkyConnectImpl::isPlayPositionAtEnd() const
+bool SkyConnectImpl::isAtEnd() const
 {
     return d->currentTimestamp >= d->aircraft.getLastAircraftData().timestamp;
+}
+
+const AircraftData &SkyConnectImpl::getCurrentAircraftData() const
+{
+    return d->currentAircraftData;
 }
 
 // PRIVATE
@@ -367,11 +373,11 @@ bool SkyConnectImpl::isSimulationFrozen() const {
 bool SkyConnectImpl::sendAircraftPosition() const
 {
     bool success;
-    const AircraftData &aircraftData = d->aircraft.getAircraftData(d->currentTimestamp);
+    d->currentAircraftData = std::move(d->aircraft.getAircraftData(d->currentTimestamp));
 
-    if (!aircraftData.isNull()) {
+    if (!d->currentAircraftData.isNull()) {
         SimConnectAircraftData simConnectAircraftData;
-        simConnectAircraftData.fromAircraftData(aircraftData);
+        simConnectAircraftData.fromAircraftData(d->currentAircraftData);
 #ifdef DEBUG
         qDebug("%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %d, %lli",
                simConnectAircraftData.longitude, simConnectAircraftData.latitude, simConnectAircraftData.altitude,
@@ -403,7 +409,7 @@ void SkyConnectImpl::replay()
     }
 
     if (sendAircraftPosition()) {
-        emit playPositionChanged(d->currentTimestamp);
+        emit aircraftDataSent(d->currentTimestamp);
     } else {
         stopReplay();
     }

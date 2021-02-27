@@ -104,26 +104,31 @@ Connect::State SkyConnect::getState() const
     return d->getState();
 }
 
-void SkyConnect::setPlayPosition(qint64 timestamp)
+void SkyConnect::setCurrentTimestamp(qint64 timestamp)
 {
-    d->setPlayPosition(timestamp);
+    d->setCurrentTimestamp(timestamp);
 }
 
-qint64 SkyConnect::getPlayPosition() const
+qint64 SkyConnect::getCurrentTimestamp() const
 {
-    return d->getPlayPosition();
+    return d->getCurrentTimestamp();
 }
 
-bool SkyConnect::isPlayPositionAtEnd() const
+bool SkyConnect::isAtEnd() const
 {
-    return d->isPlayPositionAtEnd();
+    return d->isAtEnd();
+}
+
+const AircraftData &SkyConnect::getCurrentAircraftData() const
+{
+    return d->getCurrentAircraftData();
 }
 
 // PRIVATE SLOTS
 
 void SkyConnect::frenchConnection() {
-    connect(d, &SkyConnectImpl::playPositionChanged,
-            this, &SkyConnect::playPositionChanged);
+    connect(d, &SkyConnectImpl::aircraftDataSent,
+            this, &SkyConnect::aircraftDataSent);
     connect(d, &SkyConnectImpl::stateChanged,
             this, &SkyConnect::stateChanged);
 }
