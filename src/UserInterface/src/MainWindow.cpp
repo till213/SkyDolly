@@ -12,6 +12,7 @@
 #include "../../SkyConnect/src/Frequency.h"
 #include "../../SkyConnect/src/SkyConnect.h"
 #include "AboutDialog.h"
+#include "SimulationVariablesDialog.h"
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
 
@@ -52,10 +53,6 @@ MainWindow::~MainWindow()
 void MainWindow::frenchConnection()
 {
     const Aircraft &aircraft = m_skyConnect.getAircraft();
-    connect(&aircraft, &Aircraft::infoChanged,
-            this, &MainWindow::updateInfoUi);
-    connect(&aircraft, &Aircraft::dataChanged,
-            this, &MainWindow::updateAircraftDataUi);
     connect(&aircraft, &Aircraft::dataChanged,
             this, &MainWindow::updateRecordingTimeEdit);
     connect(&m_skyConnect, &SkyConnect::playPositionChanged,
@@ -157,10 +154,15 @@ void MainWindow::on_timestampTimeEdit_timeChanged(const QTime &time)
 void MainWindow::initUi()
 {
     setWindowIcon(QIcon(":/img/SkyDolly.png"));
-    m_aboutDialog = new AboutDialog(this);
+
+    // Dialogs
     Qt::WindowFlags flags;
     flags = Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
+    m_simulationVariablesDialog = new SimulationVariablesDialog(m_skyConnect, this);
+    m_simulationVariablesDialog->setWindowFlags(flags);
+    m_aboutDialog = new AboutDialog(this);
     m_aboutDialog->setWindowFlags(flags);
+
     this->initSettingsUi();
     this->initRecordUi();
     this->updateUi();
@@ -214,8 +216,6 @@ void MainWindow::initSettingsUi()
 void MainWindow::updateUi()
 {
     updateControlUi();
-    updateInfoUi();
-    updateAircraftDataUi();
 }
 
 void MainWindow::updateControlUi()
@@ -278,41 +278,6 @@ void MainWindow::updateControlUi()
     }
 }
 
-void MainWindow::updateInfoUi()
-{
-    const Aircraft &aircraft = m_skyConnect.getAircraft();
-    const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
-
-    ui->nameLineEdit->setText(aircraftInfo.name);
-    ui->startOnGroundCheckBox->setChecked(aircraftInfo.startOnGround);
-    ui->initialAirspeedLineEdit->setText(QString::number(aircraftInfo.initialAirspeed));
-}
-
-void MainWindow::updateAircraftDataUi()
-{
-    const Aircraft &aircraft = m_skyConnect.getAircraft();
-    const AircraftData &aircraftData = aircraft.getLastAircraftData();
-
-    ui->latitudeLineEdit->setText(QString::number(aircraftData.latitude));
-    ui->longitudeLineEdit->setText(QString::number(aircraftData.longitude));
-    ui->altitudeLineEdit->setText(QString::number(aircraftData.altitude));
-    ui->pitchLineEdit->setText(QString::number(aircraftData.pitch));
-    ui->bankLineEdit->setText(QString::number(aircraftData.bank));
-    ui->headingLineEdit->setText(QString::number(aircraftData.heading));
-
-    ui->yokeXLineEdit->setText(QString::number(aircraftData.yokeXPosition));
-    ui->yokeYLineEdit->setText(QString::number(aircraftData.yokeYPosition));
-    ui->rudderLineEdit->setText(QString::number(aircraftData.rudderPosition));
-    ui->elevatorLineEdit->setText(QString::number(aircraftData.elevatorPosition));
-    ui->aileronLineEdit->setText(QString::number(aircraftData.aileronPosition));
-    ui->throttle1LineEdit->setText(QString::number(aircraftData.throttleLeverPosition1));
-    ui->throttle2LineEdit->setText(QString::number(aircraftData.throttleLeverPosition2));
-    ui->throttle3LineEdit->setText(QString::number(aircraftData.throttleLeverPosition3));
-    ui->throttle4LineEdit->setText(QString::number(aircraftData.throttleLeverPosition4));
-    ui->spoilerLineEdit->setText(QString::number(aircraftData.spoilersHandlePosition));
-    ui->flapsPositionLineEdit->setText(QString::number(aircraftData.flapsHandleIndex));
-}
-
 void MainWindow::updateSettingsUi()
 {
     int percent = ui->timeScaleSlider->value();
@@ -336,6 +301,11 @@ void MainWindow::updateRecordingTimeEdit()
 void MainWindow::on_quitAction_triggered()
 {
     QApplication::quit();
+}
+
+void MainWindow::on_showSimulationVariablesAction_triggered()
+{
+    m_simulationVariablesDialog->show();
 }
 
 void MainWindow::on_aboutAction_triggered()

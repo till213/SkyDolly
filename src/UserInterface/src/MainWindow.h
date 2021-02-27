@@ -13,6 +13,7 @@ QT_END_NAMESPACE
 
 class QTime;
 class AboutDialog;
+class SimulationVariablesDialog;
 
 class USERINTERFACE_API MainWindow : public QMainWindow
 {
@@ -25,6 +26,7 @@ public:
 private:
     Ui::MainWindow *ui;
     AboutDialog *m_aboutDialog;
+    SimulationVariablesDialog *m_simulationVariablesDialog;
     SkyConnect m_skyConnect;
     Connect::State m_previousState;
 
@@ -48,13 +50,14 @@ private slots:
 
     void updateUi();
     void updateControlUi();
-    void updateInfoUi();
-    void updateAircraftDataUi();
     void updateSettingsUi();
     void updateRecordingTimeEdit();
 
-    // Actions
+    // File menu
     void on_quitAction_triggered();
+    // View menu
+    void on_showSimulationVariablesAction_triggered();
+    // About menu
     void on_aboutAction_triggered();
     void on_aboutQtAction_triggered();
 
