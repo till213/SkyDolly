@@ -30,7 +30,8 @@ struct SimConnectAircraftData
     double throttleLeverPosition3;
     double throttleLeverPosition4;
     double spoilersHandlePosition;
-    int flapsHandleIndex;
+    qint32 flapsHandleIndex;
+    qint32 gearHandlePosition;
 
     inline AircraftData toAircraftData() const {
         AircraftData aircraftData;
@@ -47,12 +48,15 @@ struct SimConnectAircraftData
         aircraftData.rudderPosition = rudderPosition;
         aircraftData.elevatorPosition = elevatorPosition;
         aircraftData.aileronPosition = aileronPosition;
+
         aircraftData.throttleLeverPosition1 = throttleLeverPosition1;
         aircraftData.throttleLeverPosition2 = throttleLeverPosition2;
         aircraftData.throttleLeverPosition3 = throttleLeverPosition3;
         aircraftData.throttleLeverPosition4 = throttleLeverPosition4;
+
         aircraftData.spoilersHandlePosition = spoilersHandlePosition;
         aircraftData.flapsHandleIndex = flapsHandleIndex;
+        aircraftData.gearHandlePosition = gearHandlePosition != 0;
 
         return aircraftData;
     }
@@ -70,12 +74,19 @@ struct SimConnectAircraftData
         rudderPosition = aircraftData.rudderPosition;
         elevatorPosition = aircraftData.elevatorPosition;
         aileronPosition = aircraftData.aileronPosition;
+
         throttleLeverPosition1 = aircraftData.throttleLeverPosition1;
         throttleLeverPosition2 = aircraftData.throttleLeverPosition2;
         throttleLeverPosition3 = aircraftData.throttleLeverPosition3;
         throttleLeverPosition4 = aircraftData.throttleLeverPosition4;
+
         spoilersHandlePosition = aircraftData.spoilersHandlePosition;
         flapsHandleIndex = aircraftData.flapsHandleIndex;
+        if (aircraftData.gearHandlePosition) {
+            gearHandlePosition = 1;
+        } else {
+            gearHandlePosition = 0;
+        }
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle);

@@ -33,6 +33,7 @@ struct KERNEL_API AircraftData
 
     double spoilersHandlePosition;
     int flapsHandleIndex;
+    bool gearHandlePosition;
 
     // In milliseconds since the start of recording
     qint64 timestamp;

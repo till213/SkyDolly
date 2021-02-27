@@ -169,8 +169,9 @@ const AircraftData &Aircraft::getAircraftData(qint64 timestamp) const
           static_cast<double>(p2->spoilersHandlePosition),
           static_cast<double>(p3->spoilersHandlePosition), tn, Tension)));
 
-        // No interpolation for flaps position
+        // No interpolation for flaps position and gear
         d->currentAircraftData.flapsHandleIndex = p1->flapsHandleIndex;
+        d->currentAircraftData.gearHandlePosition = p1->gearHandlePosition;
 
         d->currentAircraftData.timestamp = timestamp;
 
