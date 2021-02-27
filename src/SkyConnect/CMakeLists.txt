@@ -6,8 +6,8 @@ add_definitions(-DSKYCONNECT_EXPORT)
 
 set(PROJECT_SOURCES
     src/SkyConnectLib.h
-    src/SimConnectPosition.cpp
-    src/SimConnectPosition.h
+    src/SimConnectAircraftData.cpp
+    src/SimConnectAircraftData.h
     src/SimConnectAircraftInfo.cpp
     src/SimConnectAircraftInfo.h
     src/SkyConnect.cpp

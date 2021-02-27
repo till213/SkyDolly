@@ -7,7 +7,7 @@
 
 #include "KernelLib.h"
 #include "AircraftInfo.h"
-#include "Position.h"
+#include "AircraftData.h"
 
 class AircraftPrivate;
 
@@ -21,23 +21,23 @@ public:
     void setAircraftInfo(AircraftInfo aircraftInfo);
     const AircraftInfo &getAircraftInfo() const;
 
-    void upsertPosition(Position position);
-    const Position &getLastPosition() const;
-    const QVector<Position> getPositions() const;    
-    const Position &getPosition(qint64 timestamp) const;
+    void upsertAircraftData(AircraftData aircraftData);
+    const AircraftData &getLastAircraftData() const;
+    const QVector<AircraftData> getAircraftData() const;
+    const AircraftData &getAircraftData(qint64 timestamp) const;
 
     void clear();
 
 signals:
     void infoChanged();
-    void positionChanged();
+    void dataChanged();
 
 private:
     AircraftPrivate *d;
 
     bool updateCurrentIndex(qint64 timestamp) const;
-    bool getSupportPositions(qint64 timestamp, const Position **p0, const Position **p1, const Position **p2, const Position **p3) const;
-    static double normaliseTimestamp(const Position &p1, const Position &p2, quint64 timestamp);
+    bool getSupportData(qint64 timestamp, const AircraftData **p0, const AircraftData **p1, const AircraftData **p2, const AircraftData **p3) const;
+    static double normaliseTimestamp(const AircraftData &p1, const AircraftData &p2, quint64 timestamp);
 };
 
 #endif // AIRCRAFT_H

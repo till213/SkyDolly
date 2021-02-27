@@ -69,7 +69,7 @@ private:
     void stopAll();
     void updateCurrentTimestamp();
     void setState(Connect::State state);
-    static void CALLBACK sampleDataCallback(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context);
+    static void CALLBACK dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context);
 
 private slots:
     void processEvents();

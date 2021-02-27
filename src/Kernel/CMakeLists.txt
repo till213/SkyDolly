@@ -4,8 +4,8 @@ set(PROJECT_SOURCES
     src/KernelLib.h
     src/Aircraft.cpp
     src/Aircraft.h
-    src/Position.cpp
-    src/Position.h
+    src/AircraftData.cpp
+    src/AircraftData.h
     src/SkyMath.h
     src/AircraftInfo.cpp
     src/AircraftInfo.h

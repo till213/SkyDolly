@@ -3,10 +3,10 @@
 
 #include "../../Kernel/src/Aircraft.h"
 #include "../../Kernel/src/AircraftInfo.h"
-#include "../../Kernel/src/Position.h"
+#include "../../Kernel/src/AircraftData.h"
 #include "SimConnectDataDefinition.h"
 #include "SimConnectAircraftInfo.h"
-#include "SimConnectPosition.h"
+#include "SimConnectAircraftData.h"
 #include "Frequency.h"
 #include "Connect.h"
 #include "SkyConnectImpl.h"
@@ -146,11 +146,13 @@ void SkyConnectImpl::startReplay(bool fromStart)
         // sample points
         setSimulationFrozen(true);
         d->timer.setInterval(d->replayIntervalMSec);
-        setupInitialPosition();
+
         if (fromStart) {
+            setupInitialPosition();
             d->elapsedTime = 0;
             d->currentTimestamp = 0;
         }
+
         d->elapsedTimer.invalidate();
         d->timer.start();
 
@@ -292,7 +294,7 @@ qint64 SkyConnectImpl::getPlayPosition() const
 
 bool SkyConnectImpl::isPlayPositionAtEnd() const
 {
-    return d->currentTimestamp >= d->aircraft.getLastPosition().timestamp;
+    return d->currentTimestamp >= d->aircraft.getLastAircraftData().timestamp;
 }
 
 // PRIVATE
@@ -307,7 +309,7 @@ void SkyConnectImpl::setupRequestData()
 {
     // Set up the data definition, but do not yet do anything with it
     SimConnectAircraftInfo::addToDataDefinition(d->simConnectHandle);
-    SimConnectPosition::addToDataDefinition(d->simConnectHandle);
+    SimConnectAircraftData::addToDataDefinition(d->simConnectHandle);
 
     ::SimConnect_AddToDataDefinition(d->simConnectHandle, SkyConnectDataDefinition::AircraftInitialPosition, "Initial Position", nullptr, ::SIMCONNECT_DATATYPE_INITPOSITION);
 
@@ -324,17 +326,17 @@ void SkyConnectImpl::setupRequestData()
 
 void SkyConnectImpl::setupInitialPosition()
 {
-    const Position &position = d->aircraft.getPosition(0);
-    if (position.isValid()) {
+    const AircraftData &aircraftData = d->aircraft.getAircraftData(0);
+    if (aircraftData.isValid()) {
         // Set initial position
         SIMCONNECT_DATA_INITPOSITION initialPosition;
 
-        initialPosition.Latitude = position.latitude;
-        initialPosition.Longitude = position.longitude;
-        initialPosition.Altitude = position.altitude;
-        initialPosition.Pitch = position.pitch;
-        initialPosition.Bank = position.bank;
-        initialPosition.Heading = position.heading;
+        initialPosition.Latitude = aircraftData.latitude;
+        initialPosition.Longitude = aircraftData.longitude;
+        initialPosition.Altitude = aircraftData.altitude;
+        initialPosition.Pitch = aircraftData.pitch;
+        initialPosition.Bank = aircraftData.bank;
+        initialPosition.Heading = aircraftData.heading;
         initialPosition.OnGround = d->aircraft.getAircraftInfo().startOnGround ? 1 : 0;
         initialPosition.Airspeed = d->aircraft.getAircraftInfo().initialAirspeed;
 
@@ -365,18 +367,24 @@ bool SkyConnectImpl::isSimulationFrozen() const {
 bool SkyConnectImpl::sendAircraftPosition() const
 {
     bool success;
-    const Position &position = d->aircraft.getPosition(d->currentTimestamp);
+    const AircraftData &aircraftData = d->aircraft.getAircraftData(d->currentTimestamp);
 
-    if (position.isValid()) {
-        SimConnectPosition simConnectPosition;
-        simConnectPosition.fromPosition(position);
+    if (aircraftData.isValid()) {
+        SimConnectAircraftData simConnectAircraftData;
+        simConnectAircraftData.fromAircraftData(aircraftData);
 #ifdef DEBUG
-        qDebug("%f, %f, %f, %f, %f, %f, %lli",
-               simConnectPosition.longitude, simConnectPosition.latitude, simConnectPosition.altitude,
-               simConnectPosition.pitch, simConnectPosition.bank, simConnectPosition.heading,
+        qDebug("%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %d, %lli",
+               simConnectAircraftData.longitude, simConnectAircraftData.latitude, simConnectAircraftData.altitude,
+               simConnectAircraftData.pitch, simConnectAircraftData.bank, simConnectAircraftData.heading,
+               simConnectAircraftData.yokeXPosition,
+               simConnectAircraftData.yokeYPosition,
+               simConnectAircraftData.rudderPosition,
+               simConnectAircraftData.elevatorPosition,
+               simConnectAircraftData.aileronPosition,
+               simConnectAircraftData.flapsHandleIndex,
                d->currentTimestamp);
 #endif
-        HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0, sizeof(SimConnectPosition), &simConnectPosition);
+        HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0, sizeof(SimConnectAircraftData), &simConnectAircraftData);
         success = res == S_OK;
 
     } else {
@@ -422,31 +430,31 @@ void SkyConnectImpl::setState(Connect::State state)
     }
 }
 
-void CALLBACK SkyConnectImpl::sampleDataCallback(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context)
+void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context)
 {
     Q_UNUSED(cbData);
 
     SkyConnectImpl *skyConnect = static_cast<SkyConnectImpl *>(context);
     SIMCONNECT_RECV_SIMOBJECT_DATA *objectData;
     SimConnectAircraftInfo *simConnectAircraftInfo;
-    SimConnectPosition *simConnectPosition;
+    SimConnectAircraftData *simConnectAircraftData;
 
-    switch(receivedData->dwID)
+    switch (receivedData->dwID)
     {
         case SIMCONNECT_RECV_ID_EVENT:
         {
             SIMCONNECT_RECV_EVENT *evt = reinterpret_cast<SIMCONNECT_RECV_EVENT *>(receivedData);
-            switch(evt->uEventID)
+            switch (evt->uEventID)
             {
                 case SimStartEvent:
 #ifdef DEBUG
-                    qDebug("sampleDataCallback: SIMCONNECT_RECV_ID_EVENT: SIMSTART event");
+                    qDebug("SIMCONNECT_RECV_ID_EVENT: SIMSTART event");
 #endif
                     break;
 
                 case PauseEvent:
 #ifdef DEBUG
-                    qDebug("sampleDataCallback: SIMCONNECT_RECV_ID_EVENT: PAUSE event: %lu", evt->dwData);
+                    qDebug("SIMCONNECT_RECV_ID_EVENT: PAUSE event: %lu", evt->dwData);
 #endif
                     // It seems that the pause event is currently only triggered by selecting "Pause Simulation"
                     // in the developer mode (FS 2020), but neither when "active pause" is selected nor when ESC
@@ -456,7 +464,7 @@ void CALLBACK SkyConnectImpl::sampleDataCallback(SIMCONNECT_RECV *receivedData, 
 
                 case CrashedEvent:
 #ifdef DEBUG
-                qDebug("sampleDataCallback: SIMCONNECT_RECV_ID_EVENT: CRASHED event");
+                qDebug("SIMCONNECT_RECV_ID_EVENT: CRASHED event");
 #endif
                 switch (skyConnect->d->state) {
                 case Connect::State::Recording:
@@ -478,7 +486,7 @@ void CALLBACK SkyConnectImpl::sampleDataCallback(SIMCONNECT_RECV *receivedData, 
 
         case SIMCONNECT_RECV_ID_SIMOBJECT_DATA_BYTYPE:
             objectData = reinterpret_cast<SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE *>(receivedData);
-            switch(objectData->dwRequestID)
+            switch (objectData->dwRequestID)
             {
                 case AircraftInfoRequest:
                 {
@@ -497,7 +505,7 @@ void CALLBACK SkyConnectImpl::sampleDataCallback(SIMCONNECT_RECV *receivedData, 
         case SIMCONNECT_RECV_ID_SIMOBJECT_DATA:
             objectData = reinterpret_cast<SIMCONNECT_RECV_SIMOBJECT_DATA *>(receivedData);
 
-            switch(objectData->dwRequestID)
+            switch (objectData->dwRequestID)
             {
                 case AircraftPositionRequest:
                 {
@@ -508,10 +516,10 @@ void CALLBACK SkyConnectImpl::sampleDataCallback(SIMCONNECT_RECV *receivedData, 
                             skyConnect->d->elapsedTime = 0;
                             skyConnect->d->elapsedTimer.start();
                         }
-                        simConnectPosition = reinterpret_cast<::SimConnectPosition *>(&objectData->dwData);
-                        Position position = simConnectPosition->toPosition();
-                        position.timestamp = skyConnect->d->currentTimestamp;
-                        skyConnect->d->aircraft.upsertPosition(std::move(position));
+                        simConnectAircraftData = reinterpret_cast<::SimConnectAircraftData *>(&objectData->dwData);
+                        AircraftData aircraftData = simConnectAircraftData->toAircraftData();
+                        aircraftData.timestamp = skyConnect->d->currentTimestamp;
+                        skyConnect->d->aircraft.upsertAircraftData(std::move(aircraftData));
                     }
 
                     break;
@@ -562,5 +570,5 @@ void SkyConnectImpl::processEvents()
     }
 
     // Process system events
-    ::SimConnect_CallDispatch(d->simConnectHandle, SkyConnectImpl::sampleDataCallback, this);
+    ::SimConnect_CallDispatch(d->simConnectHandle, SkyConnectImpl::dispatch, this);
 }
