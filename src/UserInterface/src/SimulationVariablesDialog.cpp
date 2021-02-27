@@ -101,6 +101,11 @@ void SimulationVariablesDialog::updateAircraftDataUi()
     ui->throttle4LineEdit->setText(QString::number(aircraftData.throttleLeverPosition4));
     ui->spoilerLineEdit->setText(QString::number(aircraftData.spoilersHandlePosition));
     ui->flapsPositionLineEdit->setText(QString::number(aircraftData.flapsHandleIndex));
+    if (aircraftData.gearHandlePosition) {
+        ui->gearLineEdit->setText(tr("Down"));
+    } else {
+        ui->gearLineEdit->setText(tr("Up"));
+    }
 }
 
 // PRIVATE
