@@ -5,6 +5,7 @@
 #include "SkyMath.h"
 #include "AircraftInfo.h"
 #include "AircraftData.h"
+#include "Validation.h"
 #include "Aircraft.h"
 
 namespace {
@@ -50,13 +51,20 @@ const AircraftInfo &Aircraft::getAircraftInfo() const
 
 void Aircraft::upsertAircraftData(AircraftData aircraftData)
 {
-    if (d->aircraftData.length() > 0 && d->aircraftData.last().timestamp == aircraftData.timestamp)  {
-        // Same timestamp -> replace
-        d->aircraftData[d->aircraftData.length() - 1] = aircraftData;
-    } else {
-        d->aircraftData.append(aircraftData);
+    if (isValid(aircraftData)) {
+        if (d->aircraftData.length() > 0 && d->aircraftData.last().timestamp == aircraftData.timestamp)  {
+            // Same timestamp -> replace
+            d->aircraftData[d->aircraftData.length() - 1] = aircraftData;
+        } else {
+            d->aircraftData.append(aircraftData);
+        }
+        emit dataChanged();
     }
-    emit dataChanged();
+#ifdef DEBUG
+    else {
+        qDebug("Invalid aircraft data received: %s", qPrintable(aircraftData.toString()));
+    }
+#endif
 }
 
 const AircraftData &Aircraft::getLastAircraftData() const
@@ -261,4 +269,19 @@ double Aircraft::normaliseTimestamp(const AircraftData &p1, const AircraftData &
         return 0.0;
     }
 }
+
+bool Aircraft::isValid(const AircraftData &aircraftData) {
+    return !(aircraftData.isNull()) &&
+           Validation::inRange(aircraftData.latitude, -90.0, 90.0) &&
+           Validation::inRange(aircraftData.longitude, -180.0, 180.0) &&
+           // For as long as we do not do deep space exploration with the flight simulator
+           // a maximum altitude (and minimum, because why not ;)) of 5'000'000 feet should
+           // be enough; after all we simply want to prevent that *ridiculously* large
+           // (or small) values are sent to the flight simulator
+           Validation::inRange(aircraftData.altitude, -5000000.0, 5000000.0) &&
+           Validation::inRange(aircraftData.pitch, -90.0, 90.0) &&
+           Validation::inRange(aircraftData.bank, -180.0, 180.0) &&
+           Validation::inRange(aircraftData.heading, 0.0, 360.0);
+}
+
 

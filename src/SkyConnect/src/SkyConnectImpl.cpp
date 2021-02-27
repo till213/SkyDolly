@@ -327,7 +327,7 @@ void SkyConnectImpl::setupRequestData()
 void SkyConnectImpl::setupInitialPosition()
 {
     const AircraftData &aircraftData = d->aircraft.getAircraftData(0);
-    if (aircraftData.isValid()) {
+    if (!aircraftData.isNull()) {
         // Set initial position
         SIMCONNECT_DATA_INITPOSITION initialPosition;
 
@@ -369,7 +369,7 @@ bool SkyConnectImpl::sendAircraftPosition() const
     bool success;
     const AircraftData &aircraftData = d->aircraft.getAircraftData(d->currentTimestamp);
 
-    if (aircraftData.isValid()) {
+    if (!aircraftData.isNull()) {
         SimConnectAircraftData simConnectAircraftData;
         simConnectAircraftData.fromAircraftData(aircraftData);
 #ifdef DEBUG

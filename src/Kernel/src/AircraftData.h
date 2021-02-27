@@ -38,11 +38,16 @@ struct KERNEL_API AircraftData
     qint64 timestamp;
 
     AircraftData(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0);
-    bool isValid() const;
+    inline bool isNull() const {
+        return (latitude == 0.0 && longitude == 0.0 && altitude == 0.0 &&
+                pitch == 0.0 && bank == 0.0 && heading == 0.0 && timestamp == 0);
+    }
 
     AircraftData (AircraftData &&) = default;
     AircraftData (const AircraftData &) = default;
     AircraftData &operator= (const AircraftData &) = default;
+
+    QString toString() const;
 
     static const AircraftData NullAircraftData;
 };
