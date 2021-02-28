@@ -27,7 +27,12 @@ endif()
 
 configure_file(src/VersionConfig.h.in VersionConfig.h)
 
-target_link_libraries(Kernel PRIVATE Qt${QT_VERSION_MAJOR}::Core)
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+    target_link_libraries(Kernel PRIVATE Qt${QT_VERSION_MAJOR}::Core -lc++)
+else ()
+    target_link_libraries(Kernel PRIVATE Qt${QT_VERSION_MAJOR}::Core)
+endif ()
+
 set_target_properties(Kernel PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(Kernel PROPERTIES SOVERSION 1)
 
