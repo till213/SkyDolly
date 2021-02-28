@@ -76,37 +76,7 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QPushButton" name="recordPushButton">
-             <property name="text">
-              <string>R&amp;ecord</string>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pausePushButton">
-             <property name="text">
-              <string>P&amp;ause</string>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="playPushButton">
-             <property name="text">
-              <string>&amp;Play</string>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
+          <layout class="QHBoxLayout" name="controlButtonLayout">
            <item>
             <spacer name="horizontalSpacer">
              <property name="orientation">
