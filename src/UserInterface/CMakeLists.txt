@@ -1,6 +1,8 @@
 add_definitions(-DUSERINTERFACE_EXPORT)
 
 set(PROJECT_SOURCES
+    src/Widgets/ActionButton.cpp
+    src/Widgets/ActionButton.h
     src/UserInterfaceLib.h
     src/MainWindow.cpp
     src/MainWindow.h

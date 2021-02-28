@@ -16,6 +16,7 @@
 #include "../../SkyConnect/src/Frequency.h"
 #include "../../SkyConnect/src/SkyConnect.h"
 #include "../../SkyConnect/src/Connect.h"
+#include "Widgets/ActionButton.h"
 #include "AboutDialog.h"
 #include "SimulationVariablesDialog.h"
 #include "MainWindow.h"
@@ -233,6 +234,19 @@ void MainWindow::initControlUi()
         ui->customPlaybackSpeedLineEdit->setText(QString::number(playbackSpeed * 100.0));
     }
 
+    // Record/playback control buttons
+    ActionButton *recordButton = new ActionButton(this);
+    recordButton->setAction(ui->recordAction);
+    ui->controlButtonLayout->insertWidget(0, recordButton);
+
+    ActionButton *pauseButton = new ActionButton(this);
+    pauseButton->setAction(ui->pauseAction);
+    ui->controlButtonLayout->insertWidget(1, pauseButton);
+
+    ActionButton *playButton = new ActionButton(this);
+    playButton->setAction(ui->playAction);
+    ui->controlButtonLayout->insertWidget(2, playButton);
+
     updateControlUi();
 }
 
@@ -281,108 +295,70 @@ void MainWindow::updateControlUi()
     bool hasRecording = m_skyConnect.getAircraft().getAircraftData().count() > 0;
     switch (m_skyConnect.getState()) {
     case Connect::Idle:
-        // Buttons
-        ui->recordPushButton->setEnabled(true);
-        ui->recordPushButton->setChecked(false);
-        ui->pausePushButton->setEnabled(false);
-        ui->pausePushButton->setChecked(false);
-        ui->playPushButton->setEnabled(hasRecording);
-        ui->playPushButton->setChecked(false);
         // Actions
-        ui->recordAction->setText(tr("Record"));
-        ui->recordAction->setEnabled(ui->recordPushButton->isEnabled());
-        ui->recordAction->setChecked(ui->recordPushButton->isChecked());
+        ui->recordAction->setEnabled(true);
+        ui->recordAction->setChecked(false);
         ui->pauseAction->setText(tr("Pause"));
-        ui->pauseAction->setEnabled(ui->pausePushButton->isEnabled());
-        ui->pauseAction->setChecked(ui->pausePushButton->isChecked());
+        ui->pauseAction->setEnabled(false);
+        ui->pauseAction->setChecked(false);
         ui->playAction->setText(tr("Play"));
-        ui->playAction->setEnabled(ui->playPushButton->isEnabled());
-        ui->playAction->setChecked(ui->playPushButton->isChecked());
+        ui->playAction->setEnabled(hasRecording);
+        ui->playAction->setChecked(false);
         // Position
         ui->positionSlider->setEnabled(hasRecording);
         ui->timestampTimeEdit->setEnabled(hasRecording);
         break;
     case Connect::Recording:
-        ui->recordPushButton->setEnabled(true);
-        ui->recordPushButton->setChecked(true);
-        ui->pausePushButton->setEnabled(true);
-        ui->pausePushButton->setChecked(false);
-        ui->playPushButton->setEnabled(false);
-        ui->playPushButton->setChecked(false);
         // Actions
-        ui->recordAction->setText(tr("Stop Recording"));
-        ui->recordAction->setEnabled(ui->recordPushButton->isEnabled());
-        ui->recordAction->setChecked(ui->recordPushButton->isChecked());
+        ui->recordAction->setEnabled(true);
+        ui->recordAction->setChecked(true);
         ui->pauseAction->setText(tr("Pause"));
-        ui->pauseAction->setEnabled(ui->pausePushButton->isEnabled());
-        ui->pauseAction->setChecked(ui->pausePushButton->isChecked());
+        ui->pauseAction->setEnabled(true);
+        ui->pauseAction->setChecked(false);
         ui->playAction->setText(tr("Play"));
-        ui->playAction->setEnabled(ui->playPushButton->isEnabled());
-        ui->playAction->setChecked(ui->playPushButton->isChecked());
+        ui->playAction->setEnabled(false);
+        ui->playAction->setChecked(false);
         // Position
         ui->positionSlider->setEnabled(false);
         ui->positionSlider->setValue(PositionSliderMax);
         ui->timestampTimeEdit->setEnabled(false);
         break;
     case Connect::RecordingPaused:
-        ui->recordPushButton->setEnabled(true);
-        ui->recordPushButton->setChecked(true);
-        ui->pausePushButton->setEnabled(true);
-        ui->pausePushButton->setChecked(true);
-        ui->playPushButton->setEnabled(false);
-        ui->playPushButton->setChecked(false);
         // Actions
-        ui->recordAction->setText(tr("Resume Recording"));
-        ui->recordAction->setEnabled(ui->recordPushButton->isEnabled());
-        ui->recordAction->setChecked(ui->recordPushButton->isChecked());
-        ui->pauseAction->setText(tr("Unpause"));
-        ui->pauseAction->setEnabled(ui->pausePushButton->isEnabled());
-        ui->pauseAction->setChecked(ui->pausePushButton->isChecked());
+        ui->recordAction->setEnabled(true);
+        ui->recordAction->setChecked(true);
+        ui->pauseAction->setEnabled(true);
+        ui->pauseAction->setChecked(true);
         ui->playAction->setText(tr("Play"));
-        ui->playAction->setEnabled(ui->playPushButton->isEnabled());
-        ui->playAction->setChecked(ui->playPushButton->isChecked());
+        ui->playAction->setEnabled(false);
+        ui->playAction->setChecked(false);
         // Position
         ui->positionSlider->setEnabled(true);
         ui->timestampTimeEdit->setEnabled(false);
         break;
     case Connect::Playback:
-        ui->recordPushButton->setEnabled(false);
-        ui->recordPushButton->setChecked(false);
-        ui->pausePushButton->setEnabled(true);
-        ui->pausePushButton->setChecked(false);
-        ui->playPushButton->setEnabled(true);
-        ui->playPushButton->setChecked(true);
         // Actions
         ui->recordAction->setText(tr("Record"));
-        ui->recordAction->setEnabled(ui->recordPushButton->isEnabled());
-        ui->recordAction->setChecked(ui->recordPushButton->isChecked());
+        ui->recordAction->setEnabled(false);
+        ui->recordAction->setChecked(false);
         ui->pauseAction->setText(tr("Pause"));
-        ui->pauseAction->setEnabled(ui->pausePushButton->isEnabled());
-        ui->pauseAction->setChecked(ui->pausePushButton->isChecked());
-        ui->playAction->setText(tr("Stop Playback"));
-        ui->playAction->setEnabled(ui->playPushButton->isEnabled());
-        ui->playAction->setChecked(ui->playPushButton->isChecked());
+        ui->pauseAction->setEnabled(true);
+        ui->pauseAction->setChecked(false);
+        ui->playAction->setEnabled(true);
+        ui->playAction->setChecked(true);
         // Position
         ui->positionSlider->setEnabled(true);
         ui->timestampTimeEdit->setEnabled(false);
         break;
     case Connect::PlaybackPaused:
-        ui->recordPushButton->setEnabled(false);
-        ui->recordPushButton->setChecked(false);
-        ui->pausePushButton->setEnabled(true);
-        ui->pausePushButton->setChecked(true);
-        ui->playPushButton->setEnabled(true);
-        ui->playPushButton->setChecked(true);
         // Actions
         ui->recordAction->setText(tr("Record"));
-        ui->recordAction->setEnabled(ui->recordPushButton->isEnabled());
-        ui->recordAction->setChecked(ui->recordPushButton->isChecked());
-        ui->pauseAction->setText(tr("Unpause"));
-        ui->pauseAction->setEnabled(ui->pausePushButton->isEnabled());
-        ui->pauseAction->setChecked(ui->pausePushButton->isChecked());
-        ui->playAction->setText(tr("Resume Playback"));
-        ui->playAction->setEnabled(ui->playPushButton->isEnabled());
-        ui->playAction->setChecked(ui->playPushButton->isChecked());
+        ui->recordAction->setEnabled(false);
+        ui->recordAction->setChecked(false);
+        ui->pauseAction->setEnabled(true);
+        ui->pauseAction->setChecked(true);
+        ui->playAction->setEnabled(true);
+        ui->playAction->setChecked(true);
         // Position
         ui->positionSlider->setEnabled(true);
         ui->timestampTimeEdit->setEnabled(true);
