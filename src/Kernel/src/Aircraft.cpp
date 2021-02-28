@@ -115,59 +115,59 @@ const AircraftData &Aircraft::getAircraftData(qint64 timestamp) const
 
         // Aircraft controls
 
-        d->currentAircraftData.yokeXPosition = static_cast<qint16>(qRound(SkyMath::interpolateHermite(
+        d->currentAircraftData.yokeXPosition = SkyMath::interpolateHermite(
           static_cast<double>(p0->yokeXPosition),
           static_cast<double>(p1->yokeXPosition),
           static_cast<double>(p2->yokeXPosition),
-          static_cast<double>(p3->yokeXPosition), tn, Tension)));
-        d->currentAircraftData.yokeYPosition = static_cast<qint16>(qRound(SkyMath::interpolateHermite(
+          static_cast<double>(p3->yokeXPosition), tn, Tension);
+        d->currentAircraftData.yokeYPosition = SkyMath::interpolateHermite(
           static_cast<double>(p0->yokeYPosition),
           static_cast<double>(p1->yokeYPosition),
           static_cast<double>(p2->yokeYPosition),
-          static_cast<double>(p3->yokeYPosition), tn, Tension)));
-        d->currentAircraftData.rudderPosition = static_cast<qint16>(qRound(SkyMath::interpolateHermite(
+          static_cast<double>(p3->yokeYPosition), tn, Tension);
+        d->currentAircraftData.rudderPosition = SkyMath::interpolateHermite(
           static_cast<double>(p0->rudderPosition),
           static_cast<double>(p1->rudderPosition),
           static_cast<double>(p2->rudderPosition),
-          static_cast<double>(p3->rudderPosition), tn, Tension)));
-        d->currentAircraftData.elevatorPosition = static_cast<qint16>(qRound(SkyMath::interpolateHermite(
+          static_cast<double>(p3->rudderPosition), tn, Tension);
+        d->currentAircraftData.elevatorPosition = SkyMath::interpolateHermite(
           static_cast<double>(p0->elevatorPosition),
           static_cast<double>(p1->elevatorPosition),
           static_cast<double>(p2->elevatorPosition),
-          static_cast<double>(p3->elevatorPosition), tn, Tension)));
-        d->currentAircraftData.aileronPosition = static_cast<qint16>(qRound(SkyMath::interpolateHermite(
+          static_cast<double>(p3->elevatorPosition), tn, Tension);
+        d->currentAircraftData.aileronPosition = SkyMath::interpolateHermite(
           static_cast<double>(p0->aileronPosition),
           static_cast<double>(p1->aileronPosition),
           static_cast<double>(p2->aileronPosition),
-          static_cast<double>(p3->aileronPosition), tn, Tension)));
+          static_cast<double>(p3->aileronPosition), tn, Tension);
 
         // Engine
-        d->currentAircraftData.throttleLeverPosition1 = static_cast<qint16>(qRound(SkyMath::interpolateHermite(
+        d->currentAircraftData.throttleLeverPosition1 = SkyMath::interpolateHermite(
           static_cast<double>(p0->throttleLeverPosition1),
           static_cast<double>(p1->throttleLeverPosition1),
           static_cast<double>(p2->throttleLeverPosition1),
-          static_cast<double>(p3->throttleLeverPosition1), tn, Tension)));
-        d->currentAircraftData.throttleLeverPosition2 = static_cast<qint16>(qRound(SkyMath::interpolateHermite(
+          static_cast<double>(p3->throttleLeverPosition1), tn, Tension);
+        d->currentAircraftData.throttleLeverPosition2 = SkyMath::interpolateHermite(
           static_cast<double>(p0->throttleLeverPosition2),
           static_cast<double>(p1->throttleLeverPosition2),
           static_cast<double>(p2->throttleLeverPosition2),
-          static_cast<double>(p3->throttleLeverPosition2), tn, Tension)));
-        d->currentAircraftData.throttleLeverPosition3 = static_cast<qint16>(qRound(SkyMath::interpolateHermite(
+          static_cast<double>(p3->throttleLeverPosition2), tn, Tension);
+        d->currentAircraftData.throttleLeverPosition3 = SkyMath::interpolateHermite(
           static_cast<double>(p0->throttleLeverPosition3),
           static_cast<double>(p1->throttleLeverPosition3),
           static_cast<double>(p2->throttleLeverPosition3),
-          static_cast<double>(p3->throttleLeverPosition3), tn, Tension)));
-        d->currentAircraftData.throttleLeverPosition4 = static_cast<qint16>(qRound(SkyMath::interpolateHermite(
+          static_cast<double>(p3->throttleLeverPosition3), tn, Tension);
+        d->currentAircraftData.throttleLeverPosition4 = SkyMath::interpolateHermite(
           static_cast<double>(p0->throttleLeverPosition4),
           static_cast<double>(p1->throttleLeverPosition4),
           static_cast<double>(p2->throttleLeverPosition4),
-          static_cast<double>(p3->throttleLeverPosition4), tn, Tension)));
+          static_cast<double>(p3->throttleLeverPosition4), tn, Tension);
 
-        d->currentAircraftData.spoilersHandlePosition = static_cast<qint16>(qRound(SkyMath::interpolateHermite(
+        d->currentAircraftData.spoilersHandlePosition = SkyMath::interpolateHermite(
           static_cast<double>(p0->spoilersHandlePosition),
           static_cast<double>(p1->spoilersHandlePosition),
           static_cast<double>(p2->spoilersHandlePosition),
-          static_cast<double>(p3->spoilersHandlePosition), tn, Tension)));
+          static_cast<double>(p3->spoilersHandlePosition), tn, Tension);
 
         // No interpolation for flaps position and gear
         d->currentAircraftData.flapsHandleIndex = p1->flapsHandleIndex;
