@@ -41,7 +41,7 @@ private slots:
     void on_recordFrequencyComboBox_activated(int index);
     void on_playbackFrequencyComboBox_activated(int index);
     void on_positionSlider_sliderPressed();
-    void on_positionSlider_sliderMoved(int value);
+    void on_positionSlider_valueChanged(int value);
     void on_positionSlider_sliderReleased();
     void on_timestampTimeEdit_timeChanged(const QTime &time);
     void on_customPlaybackSpeedLineEdit_editingFinished();
@@ -57,7 +57,7 @@ private slots:
     // File menu
     void on_quitAction_triggered();
     // View menu
-    void on_showSimulationVariablesAction_triggered();
+    void on_showSimulationVariablesAction_triggered(bool enabled);
     // About menu
     void on_aboutAction_triggered();
     void on_aboutQtAction_triggered();

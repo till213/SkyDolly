@@ -34,6 +34,7 @@ protected:
 private slots:
     void updateInfoUi();
     void updateAircraftDataUi();
+    void updateTitle();
 
 private:
     const AircraftData &getAircraftData() const;

@@ -24,9 +24,9 @@
 
 namespace {
     constexpr int PositionSliderMin = 0;
-    constexpr int PositionSliderMax = 100;
+    constexpr int PositionSliderMax = 1000;
     constexpr double PlaybackSpeedMin = 0.01;
-    // A playback speed with factor 200 should be fast enough
+    // A playback speed with 20'000 % (factor 200) should be fast enough
     constexpr double PlaybackSpeedMax = 20000.0;
     constexpr qint64 MilliSecondsPerSecond = 1000;
     constexpr qint64 MilliSecondsPerMinute = 60 * MilliSecondsPerSecond;
@@ -116,9 +116,9 @@ void MainWindow::on_positionSlider_sliderPressed()
     }
 }
 
-void MainWindow::on_positionSlider_sliderMoved(int value)
+void MainWindow::on_positionSlider_valueChanged(int value)
 {
-    double scale = static_cast<double>(value) / 100.0f;
+    double scale = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
     qint64 timestamp = static_cast<qint64>(qRound(scale * static_cast<double>(m_skyConnect.getAircraft().getLastAircraftData().timestamp)));
 
     // Prevent the timestampTimeEdit field to set the play position as well
@@ -360,9 +360,13 @@ void MainWindow::on_quitAction_triggered()
     QApplication::quit();
 }
 
-void MainWindow::on_showSimulationVariablesAction_triggered()
+void MainWindow::on_showSimulationVariablesAction_triggered(bool enabled)
 {
-    m_simulationVariablesDialog->show();
+    if (enabled) {
+        m_simulationVariablesDialog->show();
+    } else {
+        m_simulationVariablesDialog->close();
+    }
 }
 
 void MainWindow::on_aboutAction_triggered()
