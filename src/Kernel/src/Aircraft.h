@@ -35,7 +35,6 @@ signals:
 private:
     AircraftPrivate *d;
 
-    int binarySearch(qint64 timestamp, int lowIndex, int highIndex) const;
     bool updateCurrentIndex(qint64 timestamp) const;
     bool getSupportData(qint64 timestamp, const AircraftData **p0, const AircraftData **p1, const AircraftData **p2, const AircraftData **p3) const;
     static double normaliseTimestamp(const AircraftData &p1, const AircraftData &p2, quint64 timestamp);
