@@ -288,9 +288,13 @@ void SkyConnectImpl::setCurrentTimestamp(qint64 timestamp)
 {
     d->currentTimestamp = timestamp;
     d->elapsedTime = d->currentTimestamp;
-    emit aircraftDataSent(d->currentTimestamp);
-    if (sendAircraftPosition() && d->elapsedTimer.isValid()) {
-        d->elapsedTimer.start();
+    if (sendAircraftPosition()) {
+        emit aircraftDataSent(d->currentTimestamp);
+        if (d->elapsedTimer.isValid()) {
+            // Restart the elapsed timer, counting onwards from the newly
+            // set timestamp
+            d->elapsedTimer.start();
+        }
     }
 }
 

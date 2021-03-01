@@ -302,8 +302,14 @@
    </property>
   </action>
   <action name="showSimulationVariablesAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>&amp;Simulation Variables</string>
+   </property>
+   <property name="shortcut">
+    <string>V</string>
    </property>
   </action>
   <action name="recordAction">

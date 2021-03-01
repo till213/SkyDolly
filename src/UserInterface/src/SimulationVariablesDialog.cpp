@@ -1,4 +1,5 @@
 #include <QMetaObject>
+#include <QDialog>
 
 #include "../../Kernel/src/Aircraft.h"
 #include "../../Kernel/src/AircraftInfo.h"
@@ -17,7 +18,12 @@ public:
     SkyConnect &skyConnect;
     QMetaObject::Connection dataChangedConnection;
     QMetaObject::Connection dataSentConnection;
+    QMetaObject::Connection stateChangedConnection;
+
+    static const QString WindowTitle;
 };
+
+const QString SimulationVariablesDialogPrivate::WindowTitle = QT_TRANSLATE_NOOP("SimulationVariablesDialog", "Simulation Variables");
 
 // PUBLIC
 
@@ -42,13 +48,19 @@ void SimulationVariablesDialog::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event);
 
+    updateAircraftDataUi();
+    updateTitle();
+
     const Aircraft &aircraft = d->skyConnect.getAircraft();
     // Signal sent while recording
     d->dataChangedConnection = connect(&aircraft, &Aircraft::dataChanged,
                                        this, &SimulationVariablesDialog::updateAircraftDataUi);
     // Signal sent while playing
     d->dataSentConnection = connect(&d->skyConnect, &SkyConnect::aircraftDataSent,
-                                       this, &SimulationVariablesDialog::updateAircraftDataUi);
+                                    this, &SimulationVariablesDialog::updateAircraftDataUi);
+
+    d->stateChangedConnection = connect(&d->skyConnect, &SkyConnect::stateChanged,
+                                        this, &SimulationVariablesDialog::updateTitle);
 }
 
 void SimulationVariablesDialog::hideEvent(QHideEvent *event)
@@ -56,6 +68,7 @@ void SimulationVariablesDialog::hideEvent(QHideEvent *event)
     Q_UNUSED(event);
     this->disconnect(d->dataChangedConnection);
     this->disconnect(d->dataSentConnection);
+    this->disconnect(d->stateChangedConnection);
 }
 
 // PRIVATE
@@ -108,6 +121,28 @@ void SimulationVariablesDialog::updateAircraftDataUi()
     }
 }
 
+void SimulationVariablesDialog::updateTitle()
+{
+    QString windowTitle = SimulationVariablesDialogPrivate::WindowTitle;
+    switch (d->skyConnect.getState()) {
+    case Connect::State::Recording:
+        windowTitle.append(" - " + tr("RECORDING"));
+        break;
+    case Connect::State::RecordingPaused:
+        windowTitle.append(" - " + tr("RECORDING PAUSED"));
+        break;
+    case Connect::State::Playback:
+        windowTitle.append(" - " + tr("PLAYBACK"));
+        break;
+    case Connect::State::PlaybackPaused:
+        windowTitle.append(" - " + tr("PLAYPACK PAUSED"));
+        break;
+    default:
+        break;
+    }
+    setWindowTitle(windowTitle);
+}
+
 // PRIVATE
 
 const AircraftData &SimulationVariablesDialog::getAircraftData() const
@@ -115,14 +150,9 @@ const AircraftData &SimulationVariablesDialog::getAircraftData() const
     const AircraftData aircraftData;
     const Aircraft &aircraft = d->skyConnect.getAircraft();
 
-    switch (d->skyConnect.getState()) {
-    case  Connect::State::Recording:
+    if (d->skyConnect.getState() == Connect::State::Recording) {
         return aircraft.getLastAircraftData();
-        break;
-    case Connect::State::Playback:
+    } else {
         return d->skyConnect.getCurrentAircraftData();
-        break;
-    default:
-        return AircraftData::NullAircraftData;
     };
 }
