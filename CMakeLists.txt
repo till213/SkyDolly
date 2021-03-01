@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(SkyDolly LANGUAGES CXX VERSION 0.2.0 DESCRIPTION "Sky Dolly - The black sheep for your flight recordings")
+project(SkyDolly LANGUAGES CXX VERSION 0.2.1 DESCRIPTION "Sky Dolly - The black sheep for your flight recordings")
 
 set(CMAKE_SHARED_LIBRARY_PREFIX )
 
