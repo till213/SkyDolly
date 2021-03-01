@@ -5,7 +5,6 @@
 #include "SkyMath.h"
 #include "AircraftInfo.h"
 #include "AircraftData.h"
-#include "Validation.h"
 #include "Aircraft.h"
 
 namespace {
@@ -51,20 +50,13 @@ const AircraftInfo &Aircraft::getAircraftInfo() const
 
 void Aircraft::upsertAircraftData(AircraftData aircraftData)
 {
-    if (isValid(aircraftData)) {
-        if (d->aircraftData.length() > 0 && d->aircraftData.last().timestamp == aircraftData.timestamp)  {
-            // Same timestamp -> replace
-            d->aircraftData[d->aircraftData.length() - 1] = aircraftData;
-        } else {
-            d->aircraftData.append(aircraftData);
-        }
-        emit dataChanged();
+    if (d->aircraftData.length() > 0 && d->aircraftData.last().timestamp == aircraftData.timestamp)  {
+        // Same timestamp -> replace
+        d->aircraftData[d->aircraftData.length() - 1] = aircraftData;
+    } else {
+        d->aircraftData.append(aircraftData);
     }
-#ifdef DEBUG
-    else {
-        qDebug("Invalid aircraft data received: %s", qPrintable(aircraftData.toString()));
-    }
-#endif
+    emit dataChanged();
 }
 
 const AircraftData &Aircraft::getLastAircraftData() const
@@ -76,7 +68,7 @@ const AircraftData &Aircraft::getLastAircraftData() const
     }
 }
 
-const QVector<AircraftData> Aircraft::getAircraftData() const
+const QVector<AircraftData> Aircraft::getAllAircraftData() const
 {
     return d->aircraftData;
 }
@@ -88,7 +80,7 @@ void Aircraft::clear()
     emit dataChanged();
 }
 
-const AircraftData &Aircraft::getAircraftData(qint64 timestamp) const
+const AircraftData &Aircraft::getAllAircraftData(qint64 timestamp) const
 {
     const AircraftData *p0, *p1, *p2, *p3;
     const double Tension = 0.0;
@@ -269,18 +261,4 @@ double Aircraft::normaliseTimestamp(const AircraftData &p1, const AircraftData &
         // p1 and p2 are the same (last sampled) point
         return 0.0;
     }
-}
-
-bool Aircraft::isValid(const AircraftData &aircraftData) {
-    return !(aircraftData.isNull()) &&
-           Validation::inRange(aircraftData.latitude, -90.0, 90.0) &&
-           Validation::inRange(aircraftData.longitude, -180.0, 180.0) &&
-           // For as long as we do not do deep space exploration with the flight simulator
-           // a maximum altitude (and minimum, because why not ;)) of 5'000'000 feet should
-           // be enough; after all we simply want to prevent that *ridiculously* large
-           // (or small) values are sent to the flight simulator
-           Validation::inRange(aircraftData.altitude, -5000000.0, 5000000.0) &&
-           Validation::inRange(aircraftData.pitch, -90.0, 90.0) &&
-           Validation::inRange(aircraftData.bank, -180.0, 180.0) &&
-           Validation::inRange(aircraftData.heading, 0.0, 360.0);
 }

@@ -12,7 +12,6 @@ set(PROJECT_SOURCES
     src/VersionConfig.h.in
     src/Version.cpp
     src/Version.h
-    src/Validation.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

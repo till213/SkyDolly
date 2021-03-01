@@ -40,6 +40,8 @@ set(PROJECT_SOURCES
 set(OTHER_SOURCES
     README.md
     CHANGELOG.md
+    BUILD.md
+    CODE_OF_CONDUCT.md
 )
 
 if (WIN32)

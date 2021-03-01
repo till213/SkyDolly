@@ -88,49 +88,14 @@ void MainWindow::frenchConnection()
 
     // Actions
     connect(ui->recordAction, &QAction::triggered,
-            this, &MainWindow::on_recordPushButton_clicked);
+            this, &MainWindow::toggleRecord);
     connect(ui->playAction, &QAction::triggered,
-            this, &MainWindow::on_playPushButton_clicked);
+            this, &MainWindow::togglePlay);
     connect(ui->pauseAction, &QAction::triggered,
-            this, &MainWindow::on_pausePushButton_clicked);
+            this, &MainWindow::togglePause);
 }
 
 // PRIVATE SLOTS
-
-void MainWindow::on_recordPushButton_clicked(bool checked)
-{
-    this->blockSignals(true);
-    if (checked) {
-        m_skyConnect.startDataSample();
-    } else if (m_skyConnect.isPaused()) {
-        // The record button also unpauses a paused recording
-        m_skyConnect.setPaused(false);
-    } else {
-        m_skyConnect.stopDataSample();
-    }
-    this->blockSignals(false);
-}
-
-void MainWindow::on_pausePushButton_clicked(bool checked)
-{
-    m_skyConnect.setPaused(checked);
-}
-
-void MainWindow::on_playPushButton_clicked(bool checked)
-{
-    if (checked) {
-        if (m_skyConnect.isAtEnd()) {
-            // Jump back to start
-            m_skyConnect.setCurrentTimestamp(0);
-        }
-        m_skyConnect.startReplay(false);
-    } else if (m_skyConnect.isPaused()) {
-        // The play button also unpauses a paused replay
-        m_skyConnect.setPaused(false);
-    } else {
-        m_skyConnect.stopReplay();
-    }
-}
 
 void MainWindow::on_recordFrequencyComboBox_activated(int index)
 {
@@ -292,7 +257,7 @@ void MainWindow::updateUi()
 
 void MainWindow::updateControlUi()
 {
-    bool hasRecording = m_skyConnect.getAircraft().getAircraftData().count() > 0;
+    bool hasRecording = m_skyConnect.getAircraft().getAllAircraftData().count() > 0;
     switch (m_skyConnect.getState()) {
     case Connect::Idle:
         // Actions
@@ -466,4 +431,39 @@ void MainWindow::handlePlaybackSpeedSelected(int selection) {
     }
 
     m_skyConnect.setTimeScale(timeScale);
+}
+
+void MainWindow::toggleRecord(bool enable)
+{
+    this->blockSignals(true);
+    if (enable) {
+        m_skyConnect.startDataSample();
+    } else if (m_skyConnect.isPaused()) {
+        // The record button also unpauses a paused recording
+        m_skyConnect.setPaused(false);
+    } else {
+        m_skyConnect.stopDataSample();
+    }
+    this->blockSignals(false);
+}
+
+void MainWindow::togglePause(bool enable)
+{
+    m_skyConnect.setPaused(enable);
+}
+
+void MainWindow::togglePlay(bool enable)
+{
+    if (enable) {
+        if (m_skyConnect.isAtEnd()) {
+            // Jump back to start
+            m_skyConnect.setCurrentTimestamp(0);
+        }
+        m_skyConnect.startReplay(false);
+    } else if (m_skyConnect.isPaused()) {
+        // The play button also unpauses a paused replay
+        m_skyConnect.setPaused(false);
+    } else {
+        m_skyConnect.stopReplay();
+    }
 }
