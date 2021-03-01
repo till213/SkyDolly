@@ -5,9 +5,9 @@
 
 namespace
 {
-    const double Middle = 0.5;
-    const double P1     = 0.0;
-    const double P2     = 1.0;
+    constexpr double Middle = 0.5;
+    constexpr double P1     = 0.0;
+    constexpr double P2     = 1.0;
 }
 
 // PRIVATE SLOTS
@@ -97,9 +97,9 @@ void SkyMathTest::interpolateHermite360_data()
     QTest::newRow("Quadrant 4 values P2") << 350.0 << 340.0 << 330.0 << 320.0 << ::P2 << 330.0;
 
     // Quadrant 1/4 switch (crossing 0/360 degrees)
-    QTest::newRow("Quadrant 1/4 switch (from Q1) middle") << 20. << 10.0 << 350.0 << 340.0 << ::Middle << 0.0;
-    QTest::newRow("Quadrant 1/4 switch (from Q1) P1") << 20. << 10.0 << 350.0 << 340.0 << ::P1 << 10.0;
-    QTest::newRow("Quadrant 1/4 switch (from Q1) P2") << 20. << 10.0 << 350.0 << 340.0 << ::P2 << 350.0;
+    QTest::newRow("Quadrant 1/4 switch (from Q1) middle") << 20.0 << 10.0 << 350.0 << 340.0 << ::Middle << 0.0;
+    QTest::newRow("Quadrant 1/4 switch (from Q1) P1") << 20.0 << 10.0 << 350.0 << 340.0 << ::P1 << 10.0;
+    QTest::newRow("Quadrant 1/4 switch (from Q1) P2") << 20.0 << 10.0 << 350.0 << 340.0 << ::P2 << 350.0;
 
     QTest::newRow("Quadrant 4/1 switch (from Q4) middle") << 340.0 << 350.0 << 10.0 << 20.0 << ::Middle << 0.0;
     QTest::newRow("Quadrant 4/1 switch (from Q4) P1") << 340.0 << 350.0 << 10.0 << 20.0 << ::P1 << 350.0;

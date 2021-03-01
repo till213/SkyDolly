@@ -3,20 +3,16 @@
 #include <QVector>
 
 #include "SkyMath.h"
+#include "SkySearch.h"
 #include "AircraftInfo.h"
 #include "AircraftData.h"
 #include "Aircraft.h"
-
-namespace {
-    constexpr int InvalidIndex = -1;
-    constexpr int BinarySearch = -2;
-}
 
 class AircraftPrivate
 {
 public:
     AircraftPrivate()
-        : currentIndex(::InvalidIndex)
+        : currentIndex(SkySearch::InvalidIndex)
     {}
 
     AircraftInfo aircraftInfo;
@@ -77,7 +73,7 @@ const QVector<AircraftData> Aircraft::getAllAircraftData() const
 void Aircraft::clear()
 {
     d->aircraftData.clear();
-    d->currentIndex = ::InvalidIndex;
+    d->currentIndex = SkySearch::InvalidIndex;
     emit dataChanged();
 }
 
@@ -177,89 +173,47 @@ const AircraftData &Aircraft::getAllAircraftData(qint64 timestamp) const
 
 // PRIVATE
 
-int Aircraft::binarySearch(qint64 timestamp, int lowIndex, int highIndex) const
-{
-    int low = lowIndex, high = highIndex;
-    while (low <= high)
-    {
-        int mid = (low + high) / 2;
-        // The mid == high check takes into account that the timestamp could be
-        // referring to the very last sample point
-        if (d->aircraftData.at(mid).timestamp <= timestamp && (mid == high || timestamp < d->aircraftData.at(mid + 1).timestamp)) {
-            return mid;
-        }
-        else if (timestamp < d->aircraftData.at(mid).timestamp) {
-            // Modified binary search: we are actually looking for two indices [mid, mid + 1]
-            // which encompass the timestamp: that solution could still include index mid,
-            // so the high value becomes mid (and not high = mid -1, as in the original
-            // binary search
-            high = mid;
-        }
-        else {
-            // See comment above: mid could still part of the encompassing solution
-            // [mid, mid + 1], so low becomes mid (and not low = mid + 1)
-            low = mid;
-        }
-    }
-    return ::InvalidIndex;
-}
-
-
 // Updates the current index with the last index having a timestamp <= the given timestamp
 bool Aircraft::updateCurrentIndex(qint64 timestamp) const
 {
     int index = d->currentIndex;
     int size = d->aircraftData.size();
     if (size > 0 && timestamp <= d->aircraftData.last().timestamp) {
-        if (index != ::InvalidIndex) {
+        if (index != SkySearch::InvalidIndex) {
             if (d->aircraftData.at(index).timestamp > timestamp) {
                 // The timestamp was moved to front ("rewind"), so search the
                 // array until and including the current index
-                index = ::BinarySearch;
+                index = SkySearch::BinaryIntervalSearch;
             }
         } else {
             // Current index not yet initialised, so search the entire array
-            index = ::BinarySearch;
+            index = SkySearch::BinaryIntervalSearch;
         }        
     } else {
         // No data yet, or timestamp not between given range
-        index = ::InvalidIndex;
+        index = SkySearch::InvalidIndex;
     }
 
-    if (index != ::InvalidIndex) {
+    if (index != SkySearch::InvalidIndex) {
 
         // If the given timestamp lies "in the future" (as seen from the timetamp of the current index
         // the we assume that time has progressed "only a little" (normal replay) and we simply do
         // a linear search from the current index onwards
-
-        if (index != BinarySearch) {
+        if (index != SkySearch::BinaryIntervalSearch) {
             // Linear search: increment the current index, until we find a position having a
             // timestamp > the given timestamp
-            bool found = false;
-            while (!found && index < size) {
-                if (index < (size - 1)) {
-                    if (d->aircraftData.at(index + 1).timestamp > timestamp) {
-                        // The next index has a larger timestamp, so this index is the one we are looking for
-                        found = true;
-                    } else {
-                        ++index;
-                    }
-                } else {
-                    // Reached the last index
-                    found = true;
-                }
-            }
+            index = SkySearch::linearIntervalSearch(d->aircraftData, timestamp, index);
         } else {
             // The given timestamp lies "in the past" and could really be anywwhere
             // -> binary search in the past
-            int high = d->currentIndex != ::InvalidIndex ? d->currentIndex : d->aircraftData.size() - 1;
-            index = binarySearch(timestamp, 0, high);
+            int high = d->currentIndex != SkySearch::InvalidIndex ? d->currentIndex : d->aircraftData.size() - 1;
+            index = SkySearch::binaryIntervalSearch(d->aircraftData, timestamp, 0, high);
         }
 
     }
 
     d->currentIndex = index;
-    return d->currentIndex != ::InvalidIndex;
+    return d->currentIndex != SkySearch::InvalidIndex;
 }
 
 bool Aircraft::getSupportData(qint64 timestamp, const AircraftData **p0, const AircraftData **p1, const AircraftData **p2, const AircraftData **p3) const

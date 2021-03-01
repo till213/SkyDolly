@@ -1,22 +1,35 @@
-set(PROJECT_SOURCES
+set(SKYMATH_SOURCES
     src/SkyMathTest.cpp
     src/SkyMathTest.h
+)
+
+set(SKYSEARCH_SOURCES
+    src/SkySearchTest.cpp
+    src/SkySearchTest.h
 )
 
 find_package(Qt5Test REQUIRED)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(SkyMathTest
-        ${PROJECT_SOURCES}
+        ${SKYMATH_SOURCES}
+    )
+    qt_add_executable(SkySearchTest
+        ${SKYSEARCH_SOURCES}
     )
 else()
     add_executable(SkyMathTest
-        ${PROJECT_SOURCES}
+        ${SKYMATH_SOURCES}
+    )
+    add_executable(SkySearchTest
+        ${SKYSEARCH_SOURCES}
     )
 endif()
 
 enable_testing(true)
 add_test(NAME SkyMathTest COMMAND SkyMathTest)
+add_test(NAME SkySearchTest COMMAND SkySearchTest)
 
 target_link_libraries(SkyMathTest PRIVATE Qt${QT_VERSION_MAJOR}::Test Kernel)
+target_link_libraries(SkySearchTest PRIVATE Qt${QT_VERSION_MAJOR}::Test Kernel)
 
