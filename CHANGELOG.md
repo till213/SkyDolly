@@ -36,13 +36,3 @@
 ### Bug Fixes
 
 - Properly store aircraft control simulation variables, such as ailerons, yoke position, throttle, elevators and rudder
-
-## 0.3.0
-
-### New Features
-
-- 
-
-### Bug Fixes
-
-- Engine and flight controls (yoke, rudder, elevators andailerons) are now properly set during replay
