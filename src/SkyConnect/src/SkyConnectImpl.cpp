@@ -16,7 +16,9 @@
 namespace {
 
     const char *ConnectionName = "SkyConnect";
-    const DWORD UserAirplaneRadiusMeters = 0;
+    constexpr DWORD UserAirplaneRadiusMeters = 0;
+    constexpr double DefaultSampleFrequency = 10.0;
+    constexpr double DefaultReplayFrequency = 60.0;
 
     enum Event {
         SimStartEvent,
@@ -40,9 +42,9 @@ public:
         : simConnectHandle(nullptr),
           state(Connect::State::Idle),
           currentTimestamp(0),
-          sampleFrequency(10.0),
+          sampleFrequency(DefaultSampleFrequency),
           sampleIntervalMSec(static_cast<int>(1.0 / sampleFrequency * 1000.0)),
-          replayFrequency(30.0),
+          replayFrequency(DefaultReplayFrequency),
           replayIntervalMSec(static_cast<int>(1.0 / replayFrequency * 1000.0)),
           timeScale(1.0),
           elapsedTime(0),
@@ -173,8 +175,7 @@ void SkyConnectImpl::setPaused(bool enabled)
             newState = Connect::RecordingPaused;
             // Store the elapsed recording time...
             d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed();
-            // ... and stop the timer
-            //d->timer.stop();
+            // ... and stop the elapsed timer
             ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_NEVER);
             d->elapsedTimer.invalidate();
             break;
@@ -182,8 +183,7 @@ void SkyConnectImpl::setPaused(bool enabled)
             newState = Connect::PlaybackPaused;
             // Store the elapsed playback time measured with the current time scale...
             d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed() * d->timeScale;
-            // ... and stop the timer
-            //d->timer.stop();
+            // ... and stop the elapsed timer
             d->elapsedTimer.invalidate();
             break;
          default:
@@ -194,14 +194,15 @@ void SkyConnectImpl::setPaused(bool enabled)
         switch (d->state) {
         case Connect::RecordingPaused:
             newState = Connect::Recording;
-            d->elapsedTimer.start();
-            //d->timer.start();
+            if (hasRecordingStarted()) {
+                // Resume recording (but only if it has already recorded samples before)
+                d->elapsedTimer.start();
+            }
             ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_SIM_FRAME, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
             break;
         case Connect::PlaybackPaused:
             newState = Connect::Playback;
             d->elapsedTimer.start();
-            //d->timer.start();
             break;
          default:
             // No state change
@@ -337,7 +338,7 @@ void SkyConnectImpl::setupRequestData()
 
 void SkyConnectImpl::setupInitialPosition()
 {
-    const AircraftData &aircraftData = d->aircraft.getAircraftData(0);
+    const AircraftData &aircraftData = d->aircraft.getAllAircraftData(0);
     if (!aircraftData.isNull()) {
         // Set initial position
         SIMCONNECT_DATA_INITPOSITION initialPosition;
@@ -378,7 +379,7 @@ bool SkyConnectImpl::isSimulationFrozen() const {
 bool SkyConnectImpl::sendAircraftPosition() const
 {
     bool success;
-    d->currentAircraftData = std::move(d->aircraft.getAircraftData(d->currentTimestamp));
+    d->currentAircraftData = std::move(d->aircraft.getAllAircraftData(d->currentTimestamp));
 
     if (!d->currentAircraftData.isNull()) {
         SimConnectAircraftData simConnectAircraftData;
@@ -398,6 +399,10 @@ bool SkyConnectImpl::sendAircraftPosition() const
         HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0, sizeof(SimConnectAircraftData), &simConnectAircraftData);
         success = res == S_OK;
 
+        // Start the elapsed timer after sending the first sample data
+        if (!d->elapsedTimer.isValid()) {
+            d->elapsedTimer.start();
+        }
     } else {
         success = false;
     }
@@ -408,9 +413,6 @@ void SkyConnectImpl::replay()
 {
     if (d->elapsedTimer.isValid()) {
         d->currentTimestamp = d->elapsedTime + static_cast<qint64>(d->elapsedTimer.elapsed() * d->timeScale);
-    } else {
-        // Elapsed timer starts once we play the first sample
-        d->elapsedTimer.start();
     }
 
     if (sendAircraftPosition()) {
@@ -439,6 +441,11 @@ void SkyConnectImpl::setState(Connect::State state)
         d->state = state;
         emit stateChanged(state);
     }
+}
+
+bool SkyConnectImpl::hasRecordingStarted() const
+{
+    return d->aircraft.getAllAircraftData().count();
 }
 
 void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context)

@@ -72,6 +72,7 @@ private:
     void stopAll();
     void updateCurrentTimestamp();
     void setState(Connect::State state);
+    bool hasRecordingStarted() const;
     static void CALLBACK dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context);
 
 private slots:

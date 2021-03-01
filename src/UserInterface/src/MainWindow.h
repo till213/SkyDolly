@@ -37,9 +37,7 @@ private:
     void frenchConnection();
 
 private slots:
-    void on_recordPushButton_clicked(bool checked = false);
-    void on_pausePushButton_clicked(bool checked = false);
-    void on_playPushButton_clicked(bool checked = false);
+
     void on_recordFrequencyComboBox_activated(int index);
     void on_playbackFrequencyComboBox_activated(int index);
     void on_positionSlider_sliderPressed();
@@ -66,5 +64,10 @@ private slots:
 
     void handlePlayPositionChanged(qint64 timestamp);
     void handlePlaybackSpeedSelected(int selection);
+
+    void toggleRecord(bool checked);
+    void togglePause(bool checked);
+    void togglePlay(bool checked);
+
 };
 #endif // MAINWINDOW_H

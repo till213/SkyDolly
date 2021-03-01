@@ -31,6 +31,12 @@
 - Validate the recorded simulation variables, specifically the position (sending invalid values back freezes or even crashes FS 2020)
 - Properly store the already elapsed time when changing the playback speed, for a smooth continuation of the replay
 
+## 0.2.1
+
+### Bug Fixes
+
+- Properly store aircraft control simulation variables, such as ailerons, yoke position, throttle, elevators and rudder
+
 ## 0.3.0
 
 ### New Features
@@ -39,4 +45,4 @@
 
 ### Bug Fixes
 
-- Engine and flight controls (yoke, rudder, elevators andailerons) are now properly set during replay
+- Make sure that the first sampled data properly starst with a timestamp of 0, in order to properly interpolate the requested values
