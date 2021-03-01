@@ -7,6 +7,7 @@ set(PROJECT_SOURCES
     src/AircraftData.cpp
     src/AircraftData.h
     src/SkyMath.h
+    src/SkySearch.h
     src/AircraftInfo.cpp
     src/AircraftInfo.h
     src/VersionConfig.h.in

@@ -8,7 +8,8 @@
 #include "Aircraft.h"
 
 namespace {
-    const int InvalidIndex = -1;
+    constexpr int InvalidIndex = -1;
+    constexpr int BinarySearch = -2;
 }
 
 class AircraftPrivate
@@ -176,22 +177,49 @@ const AircraftData &Aircraft::getAllAircraftData(qint64 timestamp) const
 
 // PRIVATE
 
+int Aircraft::binarySearch(qint64 timestamp, int lowIndex, int highIndex) const
+{
+    int low = lowIndex, high = highIndex;
+    while (low <= high)
+    {
+        int mid = (low + high) / 2;
+        // The mid == high check takes into account that the timestamp could be
+        // referring to the very last sample point
+        if (d->aircraftData.at(mid).timestamp <= timestamp && (mid == high || timestamp < d->aircraftData.at(mid + 1).timestamp)) {
+            return mid;
+        }
+        else if (timestamp < d->aircraftData.at(mid).timestamp) {
+            // Modified binary search: we are actually looking for two indices [mid, mid + 1]
+            // which encompass the timestamp: that solution could still include index mid,
+            // so the high value becomes mid (and not high = mid -1, as in the original
+            // binary search
+            high = mid;
+        }
+        else {
+            // See comment above: mid could still part of the encompassing solution
+            // [mid, mid + 1], so low becomes mid (and not low = mid + 1)
+            low = mid;
+        }
+    }
+    return ::InvalidIndex;
+}
+
+
 // Updates the current index with the last index having a timestamp <= the given timestamp
 bool Aircraft::updateCurrentIndex(qint64 timestamp) const
 {
     int index = d->currentIndex;
-    int length = d->aircraftData.length();
-    if (length > 0 && timestamp <= d->aircraftData.last().timestamp) {
+    int size = d->aircraftData.size();
+    if (size > 0 && timestamp <= d->aircraftData.last().timestamp) {
         if (index != ::InvalidIndex) {
-            if (d->aircraftData.at(d->currentIndex).timestamp > timestamp) {
-                // The timestamp was moved to front ("rewind"), so start searching from beginning
-                // @todo binary search (O(log n)
-                index = 0;
+            if (d->aircraftData.at(index).timestamp > timestamp) {
+                // The timestamp was moved to front ("rewind"), so search the
+                // array until and including the current index
+                index = ::BinarySearch;
             }
         } else {
-            // Start from beginning (O(n))
-            // @todo binary search (O(log n)
-            index = 0;
+            // Current index not yet initialised, so search the entire array
+            index = ::BinarySearch;
         }        
     } else {
         // No data yet, or timestamp not between given range
@@ -199,21 +227,35 @@ bool Aircraft::updateCurrentIndex(qint64 timestamp) const
     }
 
     if (index != ::InvalidIndex) {
-        // Increment the current index, until we find a position having a timestamp > the given timestamp
-        bool found = false;
-        while (!found && index < length) {
-            if (index < (length - 1)) {
-                if (d->aircraftData.at(index + 1).timestamp > timestamp) {
-                    // The next index has a larger timestamp, so this index is the one we are looking for
-                    found = true;
+
+        // If the given timestamp lies "in the future" (as seen from the timetamp of the current index
+        // the we assume that time has progressed "only a little" (normal replay) and we simply do
+        // a linear search from the current index onwards
+
+        if (index != BinarySearch) {
+            // Linear search: increment the current index, until we find a position having a
+            // timestamp > the given timestamp
+            bool found = false;
+            while (!found && index < size) {
+                if (index < (size - 1)) {
+                    if (d->aircraftData.at(index + 1).timestamp > timestamp) {
+                        // The next index has a larger timestamp, so this index is the one we are looking for
+                        found = true;
+                    } else {
+                        ++index;
+                    }
                 } else {
-                    ++index;
+                    // Reached the last index
+                    found = true;
                 }
-            } else {
-                // Reached the last index
-                found = true;
             }
+        } else {
+            // The given timestamp lies "in the past" and could really be anywwhere
+            // -> binary search in the past
+            int high = d->currentIndex != ::InvalidIndex ? d->currentIndex : d->aircraftData.size() - 1;
+            index = binarySearch(timestamp, 0, high);
         }
+
     }
 
     d->currentIndex = index;
