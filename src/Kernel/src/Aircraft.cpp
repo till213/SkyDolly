@@ -19,6 +19,11 @@ public:
     QVector<AircraftData> aircraftData;
     AircraftData currentAircraftData;
     mutable int currentIndex;
+
+    // In case we seek 3 seconds "into the future" we use binary search
+    // to find the next position (otherwise linear search, assuming that
+    // the next position is "nearby" (within the 3 seconds threshold)
+    static constexpr qint64 BinaryIntervalSearchThreshold = 3000;
 };
 
 // PUBLIC
@@ -180,9 +185,11 @@ bool Aircraft::updateCurrentIndex(qint64 timestamp) const
     int size = d->aircraftData.size();
     if (size > 0 && timestamp <= d->aircraftData.last().timestamp) {
         if (index != SkySearch::InvalidIndex) {
-            if (d->aircraftData.at(index).timestamp > timestamp) {
+            if (timestamp < d->aircraftData.at(index).timestamp) {
                 // The timestamp was moved to front ("rewind"), so search the
                 // array until and including the current index
+                index = SkySearch::BinaryIntervalSearch;
+            } else if (timestamp - AircraftPrivate::BinaryIntervalSearchThreshold > d->aircraftData.at(index).timestamp) {
                 index = SkySearch::BinaryIntervalSearch;
             }
         } else {
@@ -206,8 +213,24 @@ bool Aircraft::updateCurrentIndex(qint64 timestamp) const
         } else {
             // The given timestamp lies "in the past" and could really be anywwhere
             // -> binary search in the past
-            int high = d->currentIndex != SkySearch::InvalidIndex ? d->currentIndex : d->aircraftData.size() - 1;
-            index = SkySearch::binaryIntervalSearch(d->aircraftData, timestamp, 0, high);
+            int low;
+            int high;
+            if (d->currentIndex != SkySearch::InvalidIndex) {
+                if (timestamp < d->aircraftData.at(d->currentIndex).timestamp) {
+                    // Search in "the past"
+                    low = 0;
+                    high = d->currentIndex;
+                } else {
+                    // Search in "the future"
+                    low = d->currentIndex;
+                    high = d->aircraftData.size() - 1;
+                }
+            } else {
+                // index not yet initialised -> search entire timeline
+                low = 0;
+                high = d->aircraftData.size() - 1;
+            }
+            index = SkySearch::binaryIntervalSearch(d->aircraftData, timestamp, low, high);
         }
 
     }
