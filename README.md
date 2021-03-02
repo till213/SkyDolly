@@ -26,7 +26,7 @@ The connection is made via SimConnect, a standard API introduced with Flight Sim
 
 Go to [Releases](https://github.com/till213/SkyDolly/releases) and download the latest release.
 
-Latest (pre-)release: **Sky Dolly 0.2.0**
+Latest (pre-)release: **Sky Dolly 0.2.1**
 
 ## Related Projects
 
