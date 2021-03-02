@@ -13,8 +13,8 @@
 #include "Connect.h"
 #include "SkyConnectImpl.h"
 
-namespace {
-
+namespace
+{
     const char *ConnectionName = "SkyConnect";
     constexpr DWORD UserAirplaneRadiusMeters = 0;
     constexpr double DefaultSampleFrequency = 10.0;
@@ -95,7 +95,7 @@ bool SkyConnectImpl::close()
 {
     HRESULT result;
 
-    stopDataSample();
+    stopAll();
     if (d->simConnectHandle != nullptr) {
         result = ::SimConnect_Close(d->simConnectHandle);
         d->simConnectHandle = nullptr;
@@ -556,7 +556,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
 #ifdef DEBUG
             qDebug("SIMCONNECT_RECV_ID_QUIT");
 #endif
-            skyConnect->stopAll();
+            skyConnect->close();
             break;
 
         case SIMCONNECT_RECV_ID_OPEN:
