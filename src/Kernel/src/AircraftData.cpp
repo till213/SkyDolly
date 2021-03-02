@@ -19,8 +19,16 @@ AircraftData::AircraftData(double latitude, double longitude, double altitude)
       throttleLeverPosition2(0.0),
       throttleLeverPosition3(0.0),
       throttleLeverPosition4(0.0),
+      leadingEdgeFlapsLeftPercent(0.0),
+      leadingEdgeFlapsRightPercent(0.0),
+      trailingEdgeFlapsLeftPercent(0.0),
+      trailingEdgeFlapsRightPercent(0.0),
       spoilersHandlePosition(0.0),
       flapsHandleIndex(0),
+      gearHandlePosition(false),
+      waterRudderHandlePosition(0.0),
+      brakeLeftPosition(0.0),
+      brakeRightPosition(0.0),
       timestamp(0)
 {
     this->latitude = latitude;

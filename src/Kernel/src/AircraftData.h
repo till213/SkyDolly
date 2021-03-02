@@ -25,15 +25,25 @@ struct KERNEL_API AircraftData
     double elevatorPosition;
     double aileronPosition;
 
-    // General engine (percent)
+    // General engine
     double throttleLeverPosition1;
     double throttleLeverPosition2;
     double throttleLeverPosition3;
     double throttleLeverPosition4;
 
+    // Flaps & speed brakes
+    double leadingEdgeFlapsLeftPercent;
+    double leadingEdgeFlapsRightPercent;
+    double trailingEdgeFlapsLeftPercent;
+    double trailingEdgeFlapsRightPercent;
     double spoilersHandlePosition;
     int flapsHandleIndex;
+
+    // Gears & brakes
     bool gearHandlePosition;
+    double waterRudderHandlePosition;
+    double brakeLeftPosition;
+    double brakeRightPosition;
 
     // In milliseconds since the start of recording
     qint64 timestamp;

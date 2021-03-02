@@ -41,8 +41,9 @@
 
 ### New Features
 
-- 
+- Additional simulation variables: flap positions, water ruder and brakes
 
 ### Bug Fixes
 
 - Make sure that the first sampled data properly starst with a timestamp of 0, in order to properly interpolate the requested values
+- Properly close the connection when the server (flight simulator) quits    

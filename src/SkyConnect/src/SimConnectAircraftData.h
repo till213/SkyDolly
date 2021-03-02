@@ -18,20 +18,31 @@ struct SimConnectAircraftData
     double heading;   // degrees
 
     // Aircraft controls
-
     double yokeXPosition;
     double yokeYPosition;
     double rudderPosition;
     double elevatorPosition;
     double aileronPosition;
+
     // General engine
     double throttleLeverPosition1;
     double throttleLeverPosition2;
     double throttleLeverPosition3;
     double throttleLeverPosition4;
+
+    // Flaps & speed brakes
+    double leadingEdgeFlapsLeftPercent;
+    double leadingEdgeFlapsRightPercent;
+    double trailingEdgeFlapsLeftPercent;
+    double trailingEdgeFlapsRightPercent;
     double spoilersHandlePosition;
     qint32 flapsHandleIndex;
+
+    // Gear & brakes
     qint32 gearHandlePosition;
+    double waterRudderHandlePosition;
+    double brakeLeftPosition;
+    double brakeRightPosition;
 
     inline AircraftData toAircraftData() const {
         AircraftData aircraftData;
@@ -54,9 +65,17 @@ struct SimConnectAircraftData
         aircraftData.throttleLeverPosition3 = throttleLeverPosition3;
         aircraftData.throttleLeverPosition4 = throttleLeverPosition4;
 
+        aircraftData.leadingEdgeFlapsLeftPercent = leadingEdgeFlapsLeftPercent;
+        aircraftData.leadingEdgeFlapsRightPercent = leadingEdgeFlapsRightPercent;
+        aircraftData.trailingEdgeFlapsLeftPercent = trailingEdgeFlapsLeftPercent;
+        aircraftData.trailingEdgeFlapsRightPercent = trailingEdgeFlapsRightPercent;
         aircraftData.spoilersHandlePosition = spoilersHandlePosition;
         aircraftData.flapsHandleIndex = flapsHandleIndex;
+
         aircraftData.gearHandlePosition = gearHandlePosition != 0;
+        aircraftData.waterRudderHandlePosition = waterRudderHandlePosition;
+        aircraftData.brakeLeftPosition= brakeLeftPosition;
+        aircraftData.brakeRightPosition = brakeRightPosition;
 
         return aircraftData;
     }
@@ -80,13 +99,22 @@ struct SimConnectAircraftData
         throttleLeverPosition3 = aircraftData.throttleLeverPosition3;
         throttleLeverPosition4 = aircraftData.throttleLeverPosition4;
 
+        leadingEdgeFlapsLeftPercent = aircraftData.leadingEdgeFlapsLeftPercent;
+        leadingEdgeFlapsRightPercent = aircraftData.leadingEdgeFlapsRightPercent;
+        trailingEdgeFlapsLeftPercent = aircraftData.trailingEdgeFlapsLeftPercent;
+        trailingEdgeFlapsRightPercent = aircraftData.trailingEdgeFlapsRightPercent;
+
         spoilersHandlePosition = aircraftData.spoilersHandlePosition;
         flapsHandleIndex = aircraftData.flapsHandleIndex;
+
         if (aircraftData.gearHandlePosition) {
             gearHandlePosition = 1;
         } else {
             gearHandlePosition = 0;
         }
+        waterRudderHandlePosition = aircraftData.waterRudderHandlePosition;
+        brakeLeftPosition = aircraftData.brakeLeftPosition;
+        brakeRightPosition = aircraftData.brakeRightPosition;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle);

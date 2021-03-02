@@ -8,29 +8,39 @@
 void SimConnectAircraftData::addToDataDefinition(HANDLE simConnectHandle)
 {
     // Aircraft position
-
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Plane Latitude", "degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Plane Longitude", "degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Plane Latitude", "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Plane Longitude", "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Plane Altitude", "feet", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Plane Pitch Degrees", "degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Plane Bank Degrees", "degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Plane Heading Degrees True", "degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Plane Pitch Degrees", "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Plane Bank Degrees", "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Plane Heading Degrees True", "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
 
     // Aircraft controls
-    // Note: while the documentation declares those variables to be of type "Position" (TYPE_SINT16 with a range of -16K to 0)
-    //       at least setting those values only seem to work when defined as "degrees" (FLOAT64)
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Yoke Y Position", "position", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Yoke X Position", "position", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Rudder Position", "position", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Elevator Position", "position", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Aileron Position", "position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Yoke Y Position", "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Yoke X Position", "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Rudder Position", "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Elevator Position", "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Aileron Position", "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
 
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "General Eng Throttle Lever Position:1", "position", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "General Eng Throttle Lever Position:2", "position", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "General Eng Throttle Lever Position:3", "position", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "General Eng Throttle Lever Position:4", "position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    // Engine
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "General Eng Throttle Lever Position:1", "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "General Eng Throttle Lever Position:2", "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "General Eng Throttle Lever Position:3", "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "General Eng Throttle Lever Position:4", "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+
+    // Flaps & speed brake
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Leading Edge Flaps Left Percent", "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Leading Edge Flaps Right Percent", "Position",::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Trailing Edge Flaps Left Percent", "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Trailing Edge Flaps Right Percent", "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
     // Spoilers, also known as "speed brake"
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Spoilers Handle Position", "percent", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Flaps Handle Index", "number", ::SIMCONNECT_DATATYPE_INT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "GEAR HANDLE POSITION", "bool", ::SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Spoilers Handle Position", "Percent", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Flaps Handle Index", "Number", ::SIMCONNECT_DATATYPE_INT32);
+
+    // Gear & Brakes
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Gear Handle Position", "Bool", ::SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Water Rudder Handle Position", "Percent Over 100", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Brake Left Position", "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Brake Right Position", "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, "Brake Parking Position", "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
 }
