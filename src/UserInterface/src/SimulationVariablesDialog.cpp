@@ -108,17 +108,23 @@ void SimulationVariablesDialog::updateAircraftDataUi()
     ui->rudderLineEdit->setText(QString::number(aircraftData.rudderPosition));
     ui->elevatorLineEdit->setText(QString::number(aircraftData.elevatorPosition));
     ui->aileronLineEdit->setText(QString::number(aircraftData.aileronPosition));
+
+    ui->leadingEdgeFlapsLeftLineEdit->setText(QString::number(aircraftData.leadingEdgeFlapsLeftPercent));
+    ui->leadingEdgeFlapsRightLineEdit->setText(QString::number(aircraftData.leadingEdgeFlapsRightPercent));
+    ui->trailingEdgeFlapsLeftLineEdit->setText(QString::number(aircraftData.trailingEdgeFlapsLeftPercent));
+    ui->trailingEdgeFlapsRightLinEdit->setText(QString::number(aircraftData.trailingEdgeFlapsRightPercent));
+
     ui->throttle1LineEdit->setText(QString::number(aircraftData.throttleLeverPosition1));
     ui->throttle2LineEdit->setText(QString::number(aircraftData.throttleLeverPosition2));
     ui->throttle3LineEdit->setText(QString::number(aircraftData.throttleLeverPosition3));
     ui->throttle4LineEdit->setText(QString::number(aircraftData.throttleLeverPosition4));
     ui->spoilerLineEdit->setText(QString::number(aircraftData.spoilersHandlePosition));
     ui->flapsPositionLineEdit->setText(QString::number(aircraftData.flapsHandleIndex));
-    if (aircraftData.gearHandlePosition) {
-        ui->gearLineEdit->setText(tr("Down"));
-    } else {
-        ui->gearLineEdit->setText(tr("Up"));
-    }
+
+    aircraftData.gearHandlePosition ? ui->gearLineEdit->setText(tr("Down")) : ui->gearLineEdit->setText(tr("Up"));
+    ui->waterRudderLineEdit->setText(QString::number(aircraftData.waterRudderHandlePosition));
+    ui->brakeLeftLineEdit->setText(QString::number(aircraftData.brakeLeftPosition));
+    ui->brakeRightLineEdit->setText(QString::number(aircraftData.brakeRightPosition));
 }
 
 void SimulationVariablesDialog::updateTitle()

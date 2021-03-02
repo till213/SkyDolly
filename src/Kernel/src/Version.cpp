@@ -26,7 +26,7 @@ public:
 
 // Application version
 const QString VersionPrivate::CodeName = QString("Anarchic Amoeba");
-const QString VersionPrivate::UserVersion = QString("21.02");
+const QString VersionPrivate::UserVersion = QString("21.03");
 // note: no translation here (i18n)
 const QString VersionPrivate::ApplicationTitle = QString("Sky Dolly");
 
