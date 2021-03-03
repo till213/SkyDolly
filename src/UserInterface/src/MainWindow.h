@@ -37,6 +37,8 @@ private:
     double m_lastCustomPlaybackSpeed;
 
     void frenchConnection();
+    void initUi();
+    void initControlUi();
 
 private slots:
     void on_positionSlider_sliderPressed();
@@ -44,9 +46,6 @@ private slots:
     void on_positionSlider_sliderReleased();
     void on_timestampTimeEdit_timeChanged(const QTime &time);
     void on_customPlaybackSpeedLineEdit_editingFinished();
-
-    void initUi();
-    void initControlUi();
 
     void updateUi();
     void updateControlUi();
@@ -67,6 +66,9 @@ private slots:
     void toggleRecord(bool checked);
     void togglePause(bool checked);
     void togglePlay(bool checked);
+
+    // Application
+    void handleLastWindowClosed();
 
 };
 #endif // MAINWINDOW_H

@@ -95,52 +95,10 @@ void MainWindow::frenchConnection()
             this, &MainWindow::togglePlay);
     connect(ui->pauseAction, &QAction::triggered,
             this, &MainWindow::togglePause);
-}
 
-// PRIVATE SLOTS
-
-void MainWindow::on_positionSlider_sliderPressed()
-{
-    m_previousState = m_skyConnect.getState();
-    if (m_previousState == Connect::State::Playback) {
-        // Pause the playback while sliding the position slider
-        m_skyConnect.setPaused(true);
-    }
-}
-
-void MainWindow::on_positionSlider_valueChanged(int value)
-{
-    double scale = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
-    qint64 timestamp = static_cast<qint64>(qRound(scale * static_cast<double>(m_skyConnect.getAircraft().getLastAircraftData().timestamp)));
-
-    // Prevent the timestampTimeEdit field to set the play position as well
-    ui->timestampTimeEdit->blockSignals(true);
-    m_skyConnect.setCurrentTimestamp(timestamp);
-    ui->timestampTimeEdit->blockSignals(false);
-}
-
-void MainWindow::on_positionSlider_sliderReleased()
-{
-    if (m_previousState == Connect::State::Playback) {
-        m_skyConnect.setPaused(false);
-    }
-}
-
-void MainWindow::on_timestampTimeEdit_timeChanged(const QTime &time)
-{
-    Connect::State state = m_skyConnect.getState();
-    if (state == Connect::State::Idle || state == Connect::State::PlaybackPaused) {
-        qint64 timestamp = time.hour() * MilliSecondsPerHour + time.minute() * MilliSecondsPerMinute + time.second() * MilliSecondsPerSecond;
-        m_skyConnect.setCurrentTimestamp(timestamp);
-    }
-}
-
-void MainWindow::on_customPlaybackSpeedLineEdit_editingFinished() {
-    QString text = ui->customPlaybackSpeedLineEdit->text();
-    if (!text.isEmpty()) {
-        m_lastCustomPlaybackSpeed = text.toDouble() / 100.0;
-        m_skyConnect.setTimeScale(m_lastCustomPlaybackSpeed);
-    }
+    // Application
+    connect(dynamic_cast<QGuiApplication *>(QGuiApplication::instance()), &QGuiApplication::lastWindowClosed,
+            this, &MainWindow::handleLastWindowClosed);
 }
 
 void MainWindow::initUi()
@@ -202,6 +160,53 @@ void MainWindow::initControlUi()
     ui->controlButtonLayout->insertWidget(2, playButton);
 
     updateControlUi();
+}
+
+
+// PRIVATE SLOTS
+
+void MainWindow::on_positionSlider_sliderPressed()
+{
+    m_previousState = m_skyConnect.getState();
+    if (m_previousState == Connect::State::Playback) {
+        // Pause the playback while sliding the position slider
+        m_skyConnect.setPaused(true);
+    }
+}
+
+void MainWindow::on_positionSlider_valueChanged(int value)
+{
+    double scale = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
+    qint64 timestamp = static_cast<qint64>(qRound(scale * static_cast<double>(m_skyConnect.getAircraft().getLastAircraftData().timestamp)));
+
+    // Prevent the timestampTimeEdit field to set the play position as well
+    ui->timestampTimeEdit->blockSignals(true);
+    m_skyConnect.setCurrentTimestamp(timestamp);
+    ui->timestampTimeEdit->blockSignals(false);
+}
+
+void MainWindow::on_positionSlider_sliderReleased()
+{
+    if (m_previousState == Connect::State::Playback) {
+        m_skyConnect.setPaused(false);
+    }
+}
+
+void MainWindow::on_timestampTimeEdit_timeChanged(const QTime &time)
+{
+    Connect::State state = m_skyConnect.getState();
+    if (state == Connect::State::Idle || state == Connect::State::PlaybackPaused) {
+        qint64 timestamp = time.hour() * MilliSecondsPerHour + time.minute() * MilliSecondsPerMinute + time.second() * MilliSecondsPerSecond;
+        m_skyConnect.setCurrentTimestamp(timestamp);
+    }
+}
+
+void MainWindow::on_customPlaybackSpeedLineEdit_editingFinished() {
+    QString text = ui->customPlaybackSpeedLineEdit->text();
+    if (!text.isEmpty()) {
+        m_lastCustomPlaybackSpeed = text.toDouble() / 100.0;
+        m_skyConnect.setTimeScale(m_lastCustomPlaybackSpeed);
+    }
 }
 
 void MainWindow::updateUi()
@@ -429,4 +434,10 @@ void MainWindow::togglePlay(bool enable)
     } else {
         m_skyConnect.stopReplay();
     }
+}
+
+void MainWindow::handleLastWindowClosed()
+{
+    // Destroying the settings singleton also persists the settings
+    Settings::destroyInstance();
 }
