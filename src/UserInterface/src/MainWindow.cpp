@@ -95,6 +95,14 @@ void MainWindow::frenchConnection()
             this, &MainWindow::togglePlay);
     connect(ui->pauseAction, &QAction::triggered,
             this, &MainWindow::togglePause);
+    connect(ui->skipToBeginAction, &QAction::triggered,
+            this, &MainWindow::skipToBegin);
+    connect(ui->backwardAction, &QAction::triggered,
+            this, &MainWindow::skipBackward);
+    connect(ui->forwardAction, &QAction::triggered,
+            this, &MainWindow::skipForward);
+    connect(ui->skipToEndAction, &QAction::triggered,
+            this, &MainWindow::skipToEnd);
 
     // Application
     connect(dynamic_cast<QGuiApplication *>(QGuiApplication::instance()), &QGuiApplication::lastWindowClosed,
@@ -151,13 +159,29 @@ void MainWindow::initControlUi()
     recordButton->setAction(ui->recordAction);
     ui->controlButtonLayout->insertWidget(0, recordButton);
 
+    ActionButton *skipToStartButton = new ActionButton(this);
+    skipToStartButton->setAction(ui->skipToBeginAction);
+    ui->controlButtonLayout->insertWidget(1, skipToStartButton);
+
+    ActionButton *skipBackwardButton = new ActionButton(this);
+    skipBackwardButton->setAction(ui->backwardAction);
+    ui->controlButtonLayout->insertWidget(2, skipBackwardButton);
+
     ActionButton *pauseButton = new ActionButton(this);
     pauseButton->setAction(ui->pauseAction);
-    ui->controlButtonLayout->insertWidget(1, pauseButton);
+    ui->controlButtonLayout->insertWidget(3, pauseButton);
 
     ActionButton *playButton = new ActionButton(this);
     playButton->setAction(ui->playAction);
-    ui->controlButtonLayout->insertWidget(2, playButton);
+    ui->controlButtonLayout->insertWidget(4, playButton);
+
+    ActionButton *skipForwardButton = new ActionButton(this);
+    skipForwardButton->setAction(ui->forwardAction);
+    ui->controlButtonLayout->insertWidget(5, skipForwardButton);
+
+    ActionButton *skipToEndButton = new ActionButton(this);
+    skipToEndButton->setAction(ui->skipToEndAction);
+    ui->controlButtonLayout->insertWidget(6, skipToEndButton);
 
     updateControlUi();
 }
@@ -222,12 +246,15 @@ void MainWindow::updateControlUi()
         // Actions
         ui->recordAction->setEnabled(true);
         ui->recordAction->setChecked(false);
-        ui->pauseAction->setText(tr("Pause"));
         ui->pauseAction->setEnabled(false);
         ui->pauseAction->setChecked(false);
-        ui->playAction->setText(tr("Play"));
         ui->playAction->setEnabled(hasRecording);
         ui->playAction->setChecked(false);
+        // Transport
+        ui->skipToBeginAction->setEnabled(hasRecording);
+        ui->backwardAction->setEnabled(hasRecording);
+        ui->forwardAction->setEnabled(hasRecording);
+        ui->skipToEndAction->setEnabled(hasRecording);
         // Position
         ui->positionSlider->setEnabled(hasRecording);
         ui->timestampTimeEdit->setEnabled(hasRecording);
@@ -236,12 +263,15 @@ void MainWindow::updateControlUi()
         // Actions
         ui->recordAction->setEnabled(true);
         ui->recordAction->setChecked(true);
-        ui->pauseAction->setText(tr("Pause"));
         ui->pauseAction->setEnabled(true);
         ui->pauseAction->setChecked(false);
-        ui->playAction->setText(tr("Play"));
         ui->playAction->setEnabled(false);
         ui->playAction->setChecked(false);
+        // Transport
+        ui->skipToBeginAction->setEnabled(false);
+        ui->backwardAction->setEnabled(false);
+        ui->forwardAction->setEnabled(false);
+        ui->skipToEndAction->setEnabled(false);
         // Position
         ui->positionSlider->setEnabled(false);
         ui->positionSlider->setValue(PositionSliderMax);
@@ -249,42 +279,29 @@ void MainWindow::updateControlUi()
         break;
     case Connect::RecordingPaused:
         // Actions
-        ui->recordAction->setEnabled(true);
-        ui->recordAction->setChecked(true);
-        ui->pauseAction->setEnabled(true);
         ui->pauseAction->setChecked(true);
-        ui->playAction->setText(tr("Play"));
-        ui->playAction->setEnabled(false);
-        ui->playAction->setChecked(false);
-        // Position
-        ui->positionSlider->setEnabled(true);
-        ui->timestampTimeEdit->setEnabled(false);
         break;
     case Connect::Playback:
         // Actions
-        ui->recordAction->setText(tr("Record"));
         ui->recordAction->setEnabled(false);
         ui->recordAction->setChecked(false);
-        ui->pauseAction->setText(tr("Pause"));
         ui->pauseAction->setEnabled(true);
         ui->pauseAction->setChecked(false);
         ui->playAction->setEnabled(true);
         ui->playAction->setChecked(true);
+        // Transport
+        ui->skipToBeginAction->setEnabled(true);
+        ui->backwardAction->setEnabled(true);
+        ui->forwardAction->setEnabled(true);
+        ui->skipToEndAction->setEnabled(true);
         // Position
         ui->positionSlider->setEnabled(true);
         ui->timestampTimeEdit->setEnabled(false);
         break;
     case Connect::PlaybackPaused:
         // Actions
-        ui->recordAction->setText(tr("Record"));
-        ui->recordAction->setEnabled(false);
-        ui->recordAction->setChecked(false);
-        ui->pauseAction->setEnabled(true);
         ui->pauseAction->setChecked(true);
-        ui->playAction->setEnabled(true);
-        ui->playAction->setChecked(true);
         // Position
-        ui->positionSlider->setEnabled(true);
         ui->timestampTimeEdit->setEnabled(true);
         break;
     default:
@@ -359,7 +376,9 @@ void MainWindow::handlePlayPositionChanged(qint64 timestamp) {
 
     QTime time(0, 0, 0, 0);
     time = time.addMSecs(timestamp);
+    ui->timestampTimeEdit->blockSignals(true);
     ui->timestampTimeEdit->setTime(time);
+    ui->timestampTimeEdit->blockSignals(false);
 }
 
 void MainWindow::handlePlaybackSpeedSelected(int selection) {
@@ -434,6 +453,26 @@ void MainWindow::togglePlay(bool enable)
     } else {
         m_skyConnect.stopReplay();
     }
+}
+
+void MainWindow::skipToBegin()
+{
+    m_skyConnect.skipToBegin();
+}
+
+void MainWindow::skipBackward()
+{
+    m_skyConnect.skipBackward();
+}
+
+void MainWindow::skipForward()
+{
+    m_skyConnect.skipForward();
+}
+
+void MainWindow::skipToEnd()
+{
+    m_skyConnect.skipToEnd();
 }
 
 void MainWindow::handleLastWindowClosed()

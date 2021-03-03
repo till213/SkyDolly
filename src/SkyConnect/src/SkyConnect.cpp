@@ -59,6 +59,26 @@ bool SkyConnect::isPaused() const
     return d->isPaused();
 }
 
+void SkyConnect::skipToBegin()
+{
+    d->skipToBegin();
+}
+
+void SkyConnect::skipBackward()
+{
+    d->skipBackward();
+}
+
+void SkyConnect::skipForward()
+{
+    d->skipForward();
+}
+
+void SkyConnect::skipToEnd()
+{
+    d->skipToEnd();
+}
+
 Aircraft &SkyConnect::getAircraft()
 {
     return d->getAircraft();
