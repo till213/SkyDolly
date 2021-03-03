@@ -175,22 +175,22 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="220"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="234"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="263"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="225"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="239"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="268"/>
         <source>Pause</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="223"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="237"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="251"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="228"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="242"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="256"/>
         <source>Play</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="260"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="274"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="265"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="279"/>
         <source>Record</source>
         <translation type="unfinished"></translation>
     </message>
