@@ -42,7 +42,7 @@
 ### New Features
 
 - Additional simulation variables: flap positions, water ruder and brakes
-- Improved position seek alorithm ("binary search")
+- Improved position seek algorithm ("binary search")
 - Skip to begin, end, forward and backward buttons
 - Settings dialog with sample rate settings
 - Basic CSV export
