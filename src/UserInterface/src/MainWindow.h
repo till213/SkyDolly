@@ -52,8 +52,9 @@ private slots:
     void updateRecordingTime();
 
     // File menu
-    void on_quitAction_triggered();
+    void on_exportCSVAction_triggered();
     void on_showSettingsAction_triggered();
+    void on_quitAction_triggered();
     // View menu
     void on_showSimulationVariablesAction_triggered(bool enabled);
     // About menu

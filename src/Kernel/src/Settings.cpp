@@ -24,10 +24,6 @@ public:
 
     ~SettingsPrivate()
     {}
-
-    const Version &getVersion() const {
-        return version;
-    }
 };
 
 Settings *SettingsPrivate::instance = nullptr;
