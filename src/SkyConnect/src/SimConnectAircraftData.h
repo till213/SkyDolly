@@ -103,15 +103,10 @@ struct SimConnectAircraftData
         leadingEdgeFlapsRightPercent = aircraftData.leadingEdgeFlapsRightPercent;
         trailingEdgeFlapsLeftPercent = aircraftData.trailingEdgeFlapsLeftPercent;
         trailingEdgeFlapsRightPercent = aircraftData.trailingEdgeFlapsRightPercent;
-
         spoilersHandlePosition = aircraftData.spoilersHandlePosition;
         flapsHandleIndex = aircraftData.flapsHandleIndex;
 
-        if (aircraftData.gearHandlePosition) {
-            gearHandlePosition = 1;
-        } else {
-            gearHandlePosition = 0;
-        }
+        gearHandlePosition = aircraftData.gearHandlePosition ? 1 : 0;
         waterRudderHandlePosition = aircraftData.waterRudderHandlePosition;
         brakeLeftPosition = aircraftData.brakeLeftPosition;
         brakeRightPosition = aircraftData.brakeRightPosition;
