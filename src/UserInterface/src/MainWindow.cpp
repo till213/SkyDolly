@@ -11,14 +11,16 @@
 #include <QMessageBox>
 #include <QDoubleValidator>
 
+#include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/Aircraft.h"
 #include "../../Kernel/src/AircraftInfo.h"
-#include "../../SkyConnect/src/Frequency.h"
+#include "../../Kernel/src/SampleRate.h"
 #include "../../SkyConnect/src/SkyConnect.h"
 #include "../../SkyConnect/src/Connect.h"
+#include "Dialogs/AboutDialog.h"
+#include "Dialogs/SettingsDialog.h"
+#include "Dialogs/SimulationVariablesDialog.h"
 #include "Widgets/ActionButton.h"
-#include "AboutDialog.h"
-#include "SimulationVariablesDialog.h"
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
 
@@ -97,16 +99,6 @@ void MainWindow::frenchConnection()
 
 // PRIVATE SLOTS
 
-void MainWindow::on_recordFrequencyComboBox_activated(int index)
-{
-    m_skyConnect.setSampleFrequency(static_cast<Frequency::Frequency>(index));
-}
-
-void MainWindow::on_playbackFrequencyComboBox_activated(int index)
-{
-    m_skyConnect.setReplayFrequency(static_cast<Frequency::Frequency>(index));
-}
-
 void MainWindow::on_positionSlider_sliderPressed()
 {
     m_previousState = m_skyConnect.getState();
@@ -156,14 +148,11 @@ void MainWindow::initUi()
     setWindowIcon(QIcon(":/img/SkyDolly.png"));
 
     // Dialogs
-    Qt::WindowFlags flags;
-    flags = Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
-    m_simulationVariablesDialog = new SimulationVariablesDialog(m_skyConnect, this);
-    m_simulationVariablesDialog->setWindowFlags(flags);
-    m_aboutDialog = new AboutDialog(this);
-    m_aboutDialog->setWindowFlags(flags);
 
-    this->initSettingsUi();
+    m_simulationVariablesDialog = new SimulationVariablesDialog(m_skyConnect, this);
+    m_aboutDialog = new AboutDialog(this);
+    m_settingsDialog = new SettingsDialog(this);
+
     this->initControlUi();
     this->updateUi();
 }
@@ -213,41 +202,6 @@ void MainWindow::initControlUi()
     ui->controlButtonLayout->insertWidget(2, playButton);
 
     updateControlUi();
-}
-
-void MainWindow::initSettingsUi()
-{
-    // Record
-    ui->recordFrequencyComboBox->insertItem(Frequency::Hz1, tr("1 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Frequency::Hz2, tr("2 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Frequency::Hz5, tr("5 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Frequency::Hz10, tr("10 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Frequency::Hz15, tr("15 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Frequency::Hz20, tr("20 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Frequency::Hz24, tr("24 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Frequency::Hz25, tr("25 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Frequency::Hz30, tr("30 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Frequency::Hz45, tr("45 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Frequency::Hz50, tr("50 Hz"));
-    ui->recordFrequencyComboBox->insertItem(Frequency::Hz60, tr("60 Hz"));
-
-    // Playback
-    ui->playbackFrequencyComboBox->insertItem(Frequency::Hz1, tr("1 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(Frequency::Hz2, tr("2 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(Frequency::Hz5, tr("5 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(Frequency::Hz10, tr("10 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(Frequency::Hz15, tr("15 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(Frequency::Hz20, tr("20 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(Frequency::Hz24, tr("24 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(Frequency::Hz25, tr("25 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(Frequency::Hz30, tr("30 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(Frequency::Hz45, tr("45 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(Frequency::Hz50, tr("50 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(Frequency::Hz60, tr("60 Hz"));
-
-    // Initial values
-    ui->recordFrequencyComboBox->setCurrentIndex(m_skyConnect.getSampleFrequency());
-    ui->playbackFrequencyComboBox->setCurrentIndex(m_skyConnect.getReplayFrequency());
 }
 
 void MainWindow::updateUi()
@@ -358,6 +312,11 @@ void MainWindow::updateRecordingTime()
 void MainWindow::on_quitAction_triggered()
 {
     QApplication::quit();
+}
+
+void MainWindow::on_showSettingsAction_triggered()
+{
+    m_settingsDialog->exec();
 }
 
 void MainWindow::on_showSimulationVariablesAction_triggered(bool enabled)

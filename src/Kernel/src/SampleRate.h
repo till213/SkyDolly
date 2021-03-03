@@ -1,9 +1,9 @@
-#ifndef FREQUENCY_H
-#define FREQUENCY_H
+#ifndef SAMPLERATE_H
+#define SAMPLERATE_H
 
-namespace Frequency
+namespace SampleRate
 {
-    enum Frequency {
+    enum SampleRate {
         Hz1,
         Hz2,
         Hz5,
@@ -18,8 +18,8 @@ namespace Frequency
         Hz60
     };
 
-    inline double toValue(Frequency frequency) {
-        switch (frequency) {
+    inline constexpr double toValue(SampleRate SampleRate) {
+        switch (SampleRate) {
         case Hz1:
             return 1.0;
         case Hz2:
@@ -49,34 +49,34 @@ namespace Frequency
         }
     }
 
-    inline Frequency fromValue(double frequency) {
-        if (frequency <= 1.0)
+    inline constexpr SampleRate fromValue(double SampleRate) {
+        if (SampleRate <= 1.0)
             return Hz1;
-        else if (frequency <= 1.0)
+        else if (SampleRate <= 1.0)
             return Hz2;
-        else if (frequency <= 5.0)
+        else if (SampleRate <= 5.0)
             return Hz5;
-        else if (frequency <= 10.0)
+        else if (SampleRate <= 10.0)
             return Hz10;
-        else if (frequency <= 15.0)
+        else if (SampleRate <= 15.0)
             return Hz15;
-        else if (frequency <= 20.0)
+        else if (SampleRate <= 20.0)
             return Hz20;
-        else if (frequency <= 24.0)
+        else if (SampleRate <= 24.0)
             return Hz24;
-        else if (frequency <= 25.0)
+        else if (SampleRate <= 25.0)
             return Hz25;
-        else if (frequency <= 30.0)
+        else if (SampleRate <= 30.0)
             return Hz30;
-        else if (frequency <= 45.0)
+        else if (SampleRate <= 45.0)
             return Hz45;
-        else if (frequency <= 50.0)
+        else if (SampleRate <= 50.0)
             return Hz50;
-        else if (frequency <= 60.0)
+        else if (SampleRate <= 60.0)
             return Hz60;
         else
             return Hz30;
     }
 }
 
-#endif // FREQUENCY_H
+#endif // SAMPLERATE_H

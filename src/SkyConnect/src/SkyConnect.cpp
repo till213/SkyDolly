@@ -69,26 +69,6 @@ const Aircraft &SkyConnect::getAircraft() const
     return d->getAircraft();
 }
 
-void SkyConnect::setSampleFrequency(Frequency::Frequency frequency)
-{
-    d->setSampleFrequency(frequency);
-}
-
-Frequency::Frequency SkyConnect::getSampleFrequency() const
-{
-    return d->getSampleFrequency();
-}
-
-void SkyConnect::setReplayFrequency(Frequency::Frequency frequency)
-{
-    d->setReplayFrequency(frequency);
-}
-
-Frequency::Frequency SkyConnect::getReplayFrequency() const
-{
-    return d->getReplayFrequency();
-}
-
 void SkyConnect::setTimeScale(double timeScale)
 {
     d->setTimeScale(timeScale);

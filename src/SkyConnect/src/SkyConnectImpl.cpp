@@ -3,13 +3,14 @@
 
 #include <QtGlobal>
 
+#include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/Aircraft.h"
 #include "../../Kernel/src/AircraftInfo.h"
 #include "../../Kernel/src/AircraftData.h"
+#include "../../Kernel/src/SampleRate.h"
 #include "SimConnectDataDefinition.h"
 #include "SimConnectAircraftInfo.h"
 #include "SimConnectAircraftData.h"
-#include "Frequency.h"
 #include "Connect.h"
 #include "SkyConnectImpl.h"
 
@@ -17,8 +18,6 @@ namespace
 {
     const char *ConnectionName = "SkyConnect";
     constexpr DWORD UserAirplaneRadiusMeters = 0;
-    constexpr double DefaultSampleFrequency = 10.0;
-    constexpr double DefaultReplayFrequency = 60.0;
 
     enum Event {
         SimStartEvent,
@@ -42,10 +41,10 @@ public:
         : simConnectHandle(nullptr),
           state(Connect::State::Idle),
           currentTimestamp(0),
-          sampleFrequency(DefaultSampleFrequency),
-          sampleIntervalMSec(static_cast<int>(1.0 / sampleFrequency * 1000.0)),
-          replayFrequency(DefaultReplayFrequency),
-          replayIntervalMSec(static_cast<int>(1.0 / replayFrequency * 1000.0)),
+          recordSampleRate(Settings::getInstance().getRecordSampleRate()),
+          recordIntervalMSec(static_cast<int>(1.0 / recordSampleRate * 1000.0)),
+          playbackSampleRate(Settings::getInstance().getPlaybackSampleRate()),
+          playbackIntervalMSec(static_cast<int>(1.0 / playbackSampleRate * 1000.0)),
           timeScale(1.0),
           elapsedTime(0),
           frozen(false)
@@ -59,10 +58,10 @@ public:
     AircraftData currentAircraftData;
     QElapsedTimer elapsedTimer;
     Aircraft aircraft;
-    double sampleFrequency;
-    int    sampleIntervalMSec;
-    double replayFrequency;
-    int    replayIntervalMSec;
+    double recordSampleRate;
+    int    recordIntervalMSec;
+    double playbackSampleRate;
+    int    playbackIntervalMSec;
     double timeScale;
     qint64 elapsedTime;
     bool frozen;
@@ -119,7 +118,7 @@ void SkyConnectImpl::startDataSample()
     if (isConnected()) {
         setState(Connect::State::Recording);
         d->aircraft.clear();
-        d->timer.setInterval(d->sampleIntervalMSec);
+        d->timer.setInterval(d->recordIntervalMSec);
 
         // Get aircraft position every simulated frame
         ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_SIM_FRAME, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
@@ -150,7 +149,7 @@ void SkyConnectImpl::startReplay(bool fromStart)
         // "Freeze" the simulation: position and attitude only set by (interpolated)
         // sample points
         setSimulationFrozen(true);
-        d->timer.setInterval(d->replayIntervalMSec);
+        d->timer.setInterval(d->playbackIntervalMSec);
 
         if (fromStart) {
             setupInitialPosition();
@@ -236,30 +235,6 @@ const Aircraft &SkyConnectImpl::getAircraft() const
     return d->aircraft;
 }
 
-void SkyConnectImpl::setSampleFrequency(Frequency::Frequency frequency)
-{
-    d->sampleFrequency = Frequency::toValue(frequency);
-    d->sampleIntervalMSec = static_cast<int>(1.0 / d->sampleFrequency * 1000.0);
-    d->timer.setInterval(d->sampleIntervalMSec);
-}
-
-Frequency::Frequency SkyConnectImpl::getSampleFrequency() const
-{
-    return Frequency::fromValue(d->sampleFrequency);
-}
-
-void SkyConnectImpl::setReplayFrequency(Frequency::Frequency frequency)
-{
-    d->replayFrequency = Frequency::toValue(frequency);
-    d->replayIntervalMSec = static_cast<int>(1.0 / d->replayFrequency * 1000.0);
-    d->timer.setInterval(d->replayIntervalMSec);
-}
-
-Frequency::Frequency SkyConnectImpl::getReplayFrequency() const
-{
-    return Frequency::fromValue(d->replayFrequency);
-}
-
 void SkyConnectImpl::setTimeScale(double timeScale)
 {
     if (!qFuzzyCompare(d->timeScale, timeScale)) {
@@ -319,6 +294,10 @@ void SkyConnectImpl::frenchConnection()
 {
     connect(&(d->timer), &QTimer::timeout,
             this, &SkyConnectImpl::processEvents);
+    connect(&Settings::getInstance(), &Settings::recordSampleRateChanged,
+            this, &SkyConnectImpl::handleRecordSampleRateChanged);
+    connect(&Settings::getInstance(), &Settings::playbackSampleRateChanged,
+            this, &SkyConnectImpl::handlePlaybackSampleRateChanged);
 }
 
 void SkyConnectImpl::setupRequestData()
@@ -452,12 +431,27 @@ bool SkyConnectImpl::hasRecordingStarted() const
     return d->aircraft.getAllAircraftData().count();
 }
 
+void SkyConnectImpl::handleRecordSampleRateChanged(double sampleRateValue)
+{
+    d->recordSampleRate = sampleRateValue;
+    d->recordIntervalMSec = static_cast<int>(1.0 / d->recordSampleRate * 1000.0);
+    d->timer.setInterval(d->recordIntervalMSec);
+}
+
+void SkyConnectImpl::handlePlaybackSampleRateChanged(double sampleRateValue)
+{
+    d->playbackSampleRate = sampleRateValue;
+    d->playbackIntervalMSec = static_cast<int>(1.0 / d->playbackSampleRate * 1000.0);
+    d->timer.setInterval(d->playbackIntervalMSec);
+}
+
 void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context)
 {
     Q_UNUSED(cbData);
 
     SkyConnectImpl *skyConnect = static_cast<SkyConnectImpl *>(context);
     SIMCONNECT_RECV_SIMOBJECT_DATA *objectData;
+    SIMCONNECT_RECV_EXCEPTION *exception;
     SimConnectAircraftInfo *simConnectAircraftInfo;
     SimConnectAircraftData *simConnectAircraftData;
 
@@ -564,6 +558,14 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
             qDebug("SIMCONNECT_RECV_ID_OPEN");
 #endif
             break;
+
+        case SIMCONNECT_RECV_ID_EXCEPTION:
+#ifdef DEBUG
+        exception = static_cast<SIMCONNECT_RECV_EXCEPTION *>(receivedData);
+
+            qDebug("SIMCONNECT_RECV_ID_EXCEPTION: A server exception %lu happened: sender ID: %lu index: %lu data: %lu",
+                   exception->dwException, exception->dwSendID, exception->dwIndex, cbData);
+#endif
 
         case SIMCONNECT_RECV_ID_NULL:
 #ifdef DEBUG

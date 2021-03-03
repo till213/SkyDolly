@@ -6,6 +6,7 @@ set(PROJECT_SOURCES
     src/Aircraft.h
     src/AircraftData.cpp
     src/AircraftData.h
+    src/SampleRate.h
     src/SkyMath.h
     src/SkySearch.h
     src/AircraftInfo.cpp
@@ -13,6 +14,8 @@ set(PROJECT_SOURCES
     src/VersionConfig.h.in
     src/Version.cpp
     src/Version.h
+    src/Settings.cpp
+    src/Settings.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

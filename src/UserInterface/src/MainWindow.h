@@ -15,6 +15,7 @@ class QButtonGroup;
 class QTime;
 
 class AboutDialog;
+class SettingsDialog;
 class SimulationVariablesDialog;
 
 class USERINTERFACE_API MainWindow : public QMainWindow
@@ -31,15 +32,13 @@ private:
     Connect::State m_previousState;
     QButtonGroup *m_playbackSpeedButtonGroup;
     AboutDialog *m_aboutDialog;
+    SettingsDialog *m_settingsDialog;
     SimulationVariablesDialog *m_simulationVariablesDialog;
     double m_lastCustomPlaybackSpeed;
 
     void frenchConnection();
 
 private slots:
-
-    void on_recordFrequencyComboBox_activated(int index);
-    void on_playbackFrequencyComboBox_activated(int index);
     void on_positionSlider_sliderPressed();
     void on_positionSlider_valueChanged(int value);
     void on_positionSlider_sliderReleased();
@@ -48,7 +47,6 @@ private slots:
 
     void initUi();
     void initControlUi();
-    void initSettingsUi();
 
     void updateUi();
     void updateControlUi();
@@ -56,6 +54,7 @@ private slots:
 
     // File menu
     void on_quitAction_triggered();
+    void on_showSettingsAction_triggered();
     // View menu
     void on_showSimulationVariablesAction_triggered(bool enabled);
     // About menu
