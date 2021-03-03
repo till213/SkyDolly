@@ -32,6 +32,9 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/KernelTest)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/SkyConnect)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
 
+# Documentation
+add_subdirectory(${CMAKE_SOURCE_DIR}/doc)
+
 set(TS_FILES i18n/SkyDolly_de_DE.ts)
 
 set(PROJECT_SOURCES
@@ -77,5 +80,4 @@ target_include_directories(SkyDolly PUBLIC
 target_link_libraries(SkyDolly PRIVATE Qt${QT_VERSION_MAJOR}::Widgets UserInterface Kernel)
 
 message(STATUS OUTPUT_NAME=${PROJECT_NAME})
-
 
