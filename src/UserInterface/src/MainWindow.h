@@ -63,9 +63,16 @@ private slots:
     void handlePlayPositionChanged(qint64 timestamp);
     void handlePlaybackSpeedSelected(int selection);
 
+    // Playback
     void toggleRecord(bool checked);
     void togglePause(bool checked);
     void togglePlay(bool checked);
+
+    // Transport
+    void skipToBegin();
+    void skipBackward();
+    void skipForward();
+    void skipToEnd();
 
     // Application
     void handleLastWindowClosed();

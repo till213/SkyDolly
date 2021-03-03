@@ -18,6 +18,7 @@ namespace
 {
     const char *ConnectionName = "SkyConnect";
     constexpr DWORD UserAirplaneRadiusMeters = 0;
+    constexpr qint64 SkipMSec = 1000;
 
     enum Event {
         SimStartEvent,
@@ -41,9 +42,9 @@ public:
         : simConnectHandle(nullptr),
           state(Connect::State::Idle),
           currentTimestamp(0),
-          recordSampleRate(Settings::getInstance().getRecordSampleRate()),
+          recordSampleRate(Settings::getInstance().getRecordSampleRateValue()),
           recordIntervalMSec(static_cast<int>(1.0 / recordSampleRate * 1000.0)),
-          playbackSampleRate(Settings::getInstance().getPlaybackSampleRate()),
+          playbackSampleRate(Settings::getInstance().getPlaybackSampleRateValue()),
           playbackIntervalMSec(static_cast<int>(1.0 / playbackSampleRate * 1000.0)),
           timeScale(1.0),
           elapsedTime(0),
@@ -165,6 +166,16 @@ void SkyConnectImpl::startReplay(bool fromStart)
     }
 }
 
+void SkyConnectImpl::stopReplay()
+{
+    setState(Connect::State::Idle);
+    d->timer.stop();
+    // Remember elapsed time since last replay start, in order to continue from
+    // current timestamp
+    d->elapsedTime = d->currentTimestamp;
+    setSimulationFrozen(false);
+}
+
 void SkyConnectImpl::setPaused(bool enabled)
 {
     Connect::State newState;
@@ -215,14 +226,28 @@ bool SkyConnectImpl::isPaused() const {
     return d->state == Connect::RecordingPaused || d->state == Connect::PlaybackPaused;
 }
 
-void SkyConnectImpl::stopReplay()
+void SkyConnectImpl::skipToBegin()
 {
-    setState(Connect::State::Idle);
-    d->timer.stop();
-    // Remember elapsed time since last replay start, in order to continue from
-    // current timestamp
-    d->elapsedTime = d->currentTimestamp;
-    setSimulationFrozen(false);
+    setCurrentTimestamp(0);
+}
+
+void SkyConnectImpl::skipBackward()
+{
+    qint64 newTimeStamp = qMax(this->getCurrentTimestamp() - SkipMSec, 0ll);
+    setCurrentTimestamp(newTimeStamp);
+}
+
+void SkyConnectImpl::skipForward()
+{
+    qint64 endTimeStamp = d->aircraft.getLastAircraftData().timestamp;
+    qint64 newTimeStamp = qMin(this->getCurrentTimestamp() + SkipMSec, endTimeStamp);
+    setCurrentTimestamp(newTimeStamp);
+}
+
+void SkyConnectImpl::skipToEnd()
+{
+    qint64 endTimeStamp  = d->aircraft.getLastAircraftData().timestamp;
+    setCurrentTimestamp(endTimeStamp);
 }
 
 Aircraft &SkyConnectImpl::getAircraft()
@@ -261,14 +286,16 @@ Connect::State SkyConnectImpl::getState() const
 
 void SkyConnectImpl::setCurrentTimestamp(qint64 timestamp)
 {
-    d->currentTimestamp = timestamp;
-    d->elapsedTime = d->currentTimestamp;
-    if (sendAircraftPosition()) {
-        emit aircraftDataSent(d->currentTimestamp);
-        if (d->elapsedTimer.isValid()) {
-            // Restart the elapsed timer, counting onwards from the newly
-            // set timestamp
-            d->elapsedTimer.start();
+    if (d->state != Connect::State::Recording) {
+        d->currentTimestamp = timestamp;
+        d->elapsedTime = d->currentTimestamp;
+        if (sendAircraftPosition()) {
+            emit aircraftDataSent(d->currentTimestamp);
+            if (d->elapsedTimer.isValid() && d->state == Connect::State::Playback) {
+                // Restart the elapsed timer, counting onwards from the newly
+                // set timestamp
+                d->elapsedTimer.start();
+            }
         }
     }
 }

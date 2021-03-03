@@ -35,6 +35,11 @@ public:
     void setPaused(bool enabled);
     bool isPaused() const;
 
+    void skipToBegin();
+    void skipBackward();
+    void skipForward();
+    void skipToEnd();
+
     Aircraft &getAircraft();
     const Aircraft &getAircraft() const;
 

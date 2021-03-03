@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>757</width>
-    <height>330</height>
+    <width>761</width>
+    <height>232</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -210,7 +210,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>757</width>
+     <width>761</width>
      <height>21</height>
     </rect>
    </property>
@@ -242,6 +242,11 @@
     <addaction name="recordAction"/>
     <addaction name="playAction"/>
     <addaction name="pauseAction"/>
+    <addaction name="separator"/>
+    <addaction name="skipToBeginAction"/>
+    <addaction name="backwardAction"/>
+    <addaction name="forwardAction"/>
+    <addaction name="skipToEndAction"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Flight"/>
@@ -314,6 +319,38 @@
   <action name="showSettingsAction">
    <property name="text">
     <string>S&amp;ettings...</string>
+   </property>
+  </action>
+  <action name="skipToBeginAction">
+   <property name="text">
+    <string>B&amp;egin</string>
+   </property>
+   <property name="shortcut">
+    <string>PgUp</string>
+   </property>
+  </action>
+  <action name="backwardAction">
+   <property name="text">
+    <string>&amp;Backward</string>
+   </property>
+   <property name="shortcut">
+    <string>Left</string>
+   </property>
+  </action>
+  <action name="forwardAction">
+   <property name="text">
+    <string>&amp;Forward</string>
+   </property>
+   <property name="shortcut">
+    <string>Right</string>
+   </property>
+  </action>
+  <action name="skipToEndAction">
+   <property name="text">
+    <string>E&amp;nd</string>
+   </property>
+   <property name="shortcut">
+    <string>PgDown</string>
    </property>
   </action>
  </widget>
