@@ -30,6 +30,10 @@ Go to [Releases](https://github.com/till213/SkyDolly/releases) and download the 
 
 Latest (pre-)release: **Sky Dolly 0.2.1**
 
+## Build
+
+Refer to the [BUILD](BUILD.md) documentation.
+
 ## Related Projects
 
 * https://github.com/nguyenquyhy/Flight-Recorder
