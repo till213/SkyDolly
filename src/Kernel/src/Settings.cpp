@@ -92,11 +92,11 @@ void Settings::setPlaybackSampleRate(SampleRate::SampleRate sampleRate)
 
 void Settings::store()
 {
-    d->settings.setValue("version", d->version.toString());
-    d->settings.beginGroup("sampling");
+    d->settings.setValue("Version", d->version.toString());
+    d->settings.beginGroup("Sampling");
     {
-        d->settings.setValue("recordSampleRate", d->recordSampleRateValue);
-        d->settings.setValue("playbackSampleRate", d->playbackSampleRateValue);
+        d->settings.setValue("RecordSampleRate", d->recordSampleRateValue);
+        d->settings.setValue("PlaybackSampleRate", d->playbackSampleRateValue);
     }
     d->settings.endGroup();
 }
@@ -104,7 +104,7 @@ void Settings::store()
 void Settings::restore()
 {
     QString version;
-    version = d->settings.value("version", getVersion().toString()).toString();
+    version = d->settings.value("Version", getVersion().toString()).toString();
     Version settingsVersion(version);
     if (settingsVersion < getVersion()) {
 #ifdef DEBUG
@@ -115,14 +115,14 @@ void Settings::restore()
     }
 
     bool ok;
-    d->settings.beginGroup("sampling");
+    d->settings.beginGroup("Sampling");
     {
-        d->recordSampleRateValue = d->settings.value("recordSampleRate", SettingsPrivate::DefaultRecordSampleRate).toDouble(&ok);
+        d->recordSampleRateValue = d->settings.value("RecordSampleRate", SettingsPrivate::DefaultRecordSampleRate).toDouble(&ok);
         if (!ok) {
             qWarning("The record sample rate in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultRecordSampleRate);
             d->recordSampleRateValue = SettingsPrivate::DefaultRecordSampleRate;
         }
-        d->playbackSampleRateValue = d->settings.value("playbackSampleRate", SettingsPrivate::DefaultPlaybackSampleRate).toDouble(&ok);
+        d->playbackSampleRateValue = d->settings.value("PlaybackSampleRate", SettingsPrivate::DefaultPlaybackSampleRate).toDouble(&ok);
         if (!ok) {
             qWarning("The playback sample rate in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultPlaybackSampleRate);
             d->playbackSampleRateValue = SettingsPrivate::DefaultPlaybackSampleRate;
