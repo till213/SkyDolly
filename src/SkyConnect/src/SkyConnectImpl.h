@@ -9,7 +9,7 @@
 #include <SimConnect.h>
 
 #include "../../Kernel/src/Aircraft.h"
-#include "Frequency.h"
+#include "../../Kernel/src/SampleRate.h"
 #include "Connect.h"
 
 struct AircraftData;
@@ -37,12 +37,6 @@ public:
 
     Aircraft &getAircraft();
     const Aircraft &getAircraft() const;
-
-    void setSampleFrequency(Frequency::Frequency frequency);
-    Frequency::Frequency getSampleFrequency() const;
-
-    void setReplayFrequency(Frequency::Frequency frequency);
-    Frequency::Frequency getReplayFrequency() const;
 
     void setTimeScale(double timeScale);
     double getTimeScale() const;
@@ -73,10 +67,14 @@ private:
     void updateCurrentTimestamp();
     void setState(Connect::State state);
     bool hasRecordingStarted() const;
+
     static void CALLBACK dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context);
 
 private slots:
     void processEvents();
+
+    void handleRecordSampleRateChanged(double sampleRateValue);
+    void handlePlaybackSampleRateChanged(double sampleRateValue);
 };
 
 #endif // SKYCONNECTIMPL_H

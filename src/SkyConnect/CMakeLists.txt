@@ -15,7 +15,6 @@ set(PROJECT_SOURCES
     src/SkyConnectImpl.cpp
     src/SkyConnectImpl.h
     src/SimConnectDataDefinition.h
-    src/Frequency.h
     src/Connect.h
     )
 

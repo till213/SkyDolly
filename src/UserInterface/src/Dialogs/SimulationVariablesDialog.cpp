@@ -1,10 +1,9 @@
-#include <QMetaObject>
 #include <QDialog>
 
-#include "../../Kernel/src/Aircraft.h"
-#include "../../Kernel/src/AircraftInfo.h"
-#include "../../SkyConnect/src/SkyConnect.h"
-#include "../../SkyConnect/src/Connect.h"
+#include "../../../Kernel/src/Aircraft.h"
+#include "../../../Kernel/src/AircraftInfo.h"
+#include "../../../SkyConnect/src/SkyConnect.h"
+#include "../../../SkyConnect/src/Connect.h"
 #include "SimulationVariablesDialog.h"
 #include "ui_SimulationVariablesDialog.h"
 
@@ -16,10 +15,6 @@ public:
     {}
 
     SkyConnect &skyConnect;
-    QMetaObject::Connection dataChangedConnection;
-    QMetaObject::Connection dataSentConnection;
-    QMetaObject::Connection stateChangedConnection;
-
     static const QString WindowTitle;
 };
 
@@ -33,6 +28,9 @@ SimulationVariablesDialog::SimulationVariablesDialog(SkyConnect &skyConnect, QWi
     ui(new Ui::SimulationVariablesDialog)
 {
     ui->setupUi(this);
+    Qt::WindowFlags flags = Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
+    setWindowFlags(flags);
+
     frenchConnection();
 }
 
@@ -53,22 +51,27 @@ void SimulationVariablesDialog::showEvent(QShowEvent *event)
 
     const Aircraft &aircraft = d->skyConnect.getAircraft();
     // Signal sent while recording
-    d->dataChangedConnection = connect(&aircraft, &Aircraft::dataChanged,
-                                       this, &SimulationVariablesDialog::updateAircraftDataUi);
+    connect(&aircraft, &Aircraft::dataChanged,
+            this, &SimulationVariablesDialog::updateAircraftDataUi);
     // Signal sent while playing
-    d->dataSentConnection = connect(&d->skyConnect, &SkyConnect::aircraftDataSent,
-                                    this, &SimulationVariablesDialog::updateAircraftDataUi);
+    connect(&d->skyConnect, &SkyConnect::aircraftDataSent,
+            this, &SimulationVariablesDialog::updateAircraftDataUi);
 
-    d->stateChangedConnection = connect(&d->skyConnect, &SkyConnect::stateChanged,
-                                        this, &SimulationVariablesDialog::updateTitle);
+    connect(&d->skyConnect, &SkyConnect::stateChanged,
+            this, &SimulationVariablesDialog::updateTitle);
 }
 
 void SimulationVariablesDialog::hideEvent(QHideEvent *event)
 {
     Q_UNUSED(event);
-    this->disconnect(d->dataChangedConnection);
-    this->disconnect(d->dataSentConnection);
-    this->disconnect(d->stateChangedConnection);
+
+    const Aircraft &aircraft = d->skyConnect.getAircraft();
+    disconnect(&aircraft, &Aircraft::dataChanged,
+               this, &SimulationVariablesDialog::updateAircraftDataUi);
+    disconnect(&d->skyConnect, &SkyConnect::aircraftDataSent,
+            this, &SimulationVariablesDialog::updateAircraftDataUi);
+    disconnect(&d->skyConnect, &SkyConnect::stateChanged,
+               this, &SimulationVariablesDialog::updateTitle);
 }
 
 // PRIVATE

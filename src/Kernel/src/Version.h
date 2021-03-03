@@ -1,23 +1,3 @@
-/* This file is part of the Screenie project.
-   Screenie is a fancy screenshot composer.
-
-   Copyright (C) 2011 Oliver Knoll <till.oliver.knoll@gmail.com>
-
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License along
-   with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- */
-
 #ifndef VERSION_H
 #define VERSION_H
 
@@ -95,7 +75,7 @@ public:
      * \return a QString containing a user-friendly version value
      * \sa Version(const QString &)
      */
-    KERNEL_API QString toString();
+    KERNEL_API QString toString() const;
 
     KERNEL_API bool operator==(const Version &other);
 
@@ -127,6 +107,13 @@ public:
      * \return a QString containing the application version.
      */
     KERNEL_API static QString getApplicationVersion();
+
+    /*!
+     * Returns the organisation name.
+     *
+     * \return a QString the name of the organisation
+     */
+    KERNEL_API static QString getOrganisationName();
 
     /*!
      * Returns the application name which can be displayed in dialog captions.

@@ -21,14 +21,15 @@ public:
 
     static const QString CodeName;
     static const QString UserVersion;
-    static const QString ApplicationTitle;
+    static const QString OrganisationName;
+    static const QString ApplicationName;
 };
 
 // Application version
 const QString VersionPrivate::CodeName = QString("Anarchic Amoeba");
 const QString VersionPrivate::UserVersion = QString("21.03");
-// note: no translation here (i18n)
-const QString VersionPrivate::ApplicationTitle = QString("Sky Dolly");
+const QString VersionPrivate::OrganisationName = QString(VersionConfig::OrganisationName);
+const QString VersionPrivate::ApplicationName = QString(VersionConfig::ApplicationName);
 
 // public
 
@@ -73,7 +74,7 @@ int Version::getPatch()
     return d->patch;
 }
 
-QString Version::toString()
+QString Version::toString() const
 {
     return QString("%1.%2.%3").arg(d->major).arg(d->minor).arg(d->patch);
 }
@@ -129,7 +130,12 @@ QString Version::getApplicationVersion()
     return version.toString();
 }
 
+QString Version::getOrganisationName()
+{
+    return VersionPrivate::OrganisationName;
+}
+
 QString Version::getApplicationName()
 {
-    return VersionPrivate::ApplicationTitle;
+    return VersionPrivate::ApplicationName;
 }

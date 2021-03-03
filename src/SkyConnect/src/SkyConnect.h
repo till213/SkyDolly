@@ -2,7 +2,7 @@
 #define SKYCONNECT_H
 
 #include "../../Kernel/src/Aircraft.h"
-#include "Frequency.h"
+#include "../../Kernel/src/SampleRate.h"
 #include "Connect.h"
 #include "SkyConnectLib.h"
 
@@ -31,12 +31,6 @@ public:
 
     Aircraft &getAircraft();
     const Aircraft &getAircraft() const;
-
-    void setSampleFrequency(Frequency::Frequency frequency);
-    Frequency::Frequency getSampleFrequency() const;
-
-    void setReplayFrequency(Frequency::Frequency frequency);
-    Frequency::Frequency getReplayFrequency() const;
 
     void setTimeScale(double timeScale);
     double getTimeScale() const;

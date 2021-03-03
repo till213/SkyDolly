@@ -8,6 +8,7 @@ class QHideEvent;
 
 class SkyConnect;
 class SimulationVariablesDialogPrivate;
+class AircraftData;
 
 namespace Ui {
 class SimulationVariablesDialog;
@@ -28,7 +29,7 @@ private:
     void frenchConnection();
 
 protected:
-    void showEvent (QShowEvent *event) override;
+    void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;
 
 private slots:

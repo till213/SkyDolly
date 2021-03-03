@@ -7,12 +7,15 @@ set(PROJECT_SOURCES
     src/MainWindow.cpp
     src/MainWindow.h
     src/MainWindow.ui
-    src/AboutDialog.cpp
-    src/AboutDialog.h
-    src/AboutDialog.ui
-    src/SimulationVariablesDialog.cpp
-    src/SimulationVariablesDialog.h
-    src/SimulationVariablesDialog.ui
+    src/Dialogs/AboutDialog.cpp
+    src/Dialogs/AboutDialog.h
+    src/Dialogs/AboutDialog.ui
+    src/Dialogs/SimulationVariablesDialog.cpp
+    src/Dialogs/SimulationVariablesDialog.h
+    src/Dialogs/SimulationVariablesDialog.ui
+    src/Dialogs/SettingsDialog.cpp
+    src/Dialogs/SettingsDialog.h
+    src/Dialogs/SettingsDialog.ui
 )
 
 qt5_add_resources(PROJECT_SOURCES res/SkyDolly.qrc)
@@ -30,4 +33,3 @@ endif()
 target_link_libraries(UserInterface PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Kernel SkyConnect)
 set_target_properties(UserInterface PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(UserInterface PROPERTIES SOVERSION 1)
-
