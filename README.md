@@ -14,6 +14,8 @@ The connection is made via SimConnect, a standard API introduced with Flight Sim
 * Adjustable replay speed ("slow motion", "timelapse")
 * Position and basic flight control simulation variables (ailerons, rudder, flaps, gears, ...) are recorded
 
+For new and upcoming features also refer to the [CHANGELOG](CHANGELOG.md).
+
 ## Basic Usage
 
 * Start a flight
