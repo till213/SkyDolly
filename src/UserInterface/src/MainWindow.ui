@@ -218,6 +218,8 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <addaction name="exportCSVAction"/>
+    <addaction name="separator"/>
     <addaction name="showSettingsAction"/>
     <addaction name="separator"/>
     <addaction name="quitAction"/>
@@ -237,7 +239,7 @@
    </widget>
    <widget class="QMenu" name="menu_Flight">
     <property name="title">
-     <string>F&amp;light</string>
+     <string>&amp;Playback</string>
     </property>
     <addaction name="recordAction"/>
     <addaction name="playAction"/>
@@ -351,6 +353,11 @@
    </property>
    <property name="shortcut">
     <string>PgDown</string>
+   </property>
+  </action>
+  <action name="exportCSVAction">
+   <property name="text">
+    <string>Export CSV</string>
    </property>
   </action>
  </widget>

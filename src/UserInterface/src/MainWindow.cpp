@@ -1,5 +1,8 @@
 #include <QApplication>
 #include <QByteArray>
+#include <QFileDialog>
+#include <QFile>
+#include <QStandardPaths>
 #include <QString>
 #include <QTime>
 #include <QTimeEdit>
@@ -11,6 +14,7 @@
 #include <QMessageBox>
 #include <QDoubleValidator>
 
+#include "../../Kernel/src/Export/CSVExport.h"
 #include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/Aircraft.h"
 #include "../../Kernel/src/AircraftInfo.h"
@@ -186,7 +190,6 @@ void MainWindow::initControlUi()
     updateControlUi();
 }
 
-
 // PRIVATE SLOTS
 
 void MainWindow::on_positionSlider_sliderPressed()
@@ -331,14 +334,25 @@ void MainWindow::updateRecordingTime()
     ui->timestampTimeEdit->setMaximumTime(time);
 }
 
-void MainWindow::on_quitAction_triggered()
+void MainWindow::on_exportCSVAction_triggered()
 {
-    QApplication::quit();
+    QString dataPath = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation).first();
+    QString filePath = QFileDialog::getSaveFileName(this, tr("Export CSV"), dataPath, QString("*.csv"));
+    if (!filePath.isEmpty()) {
+        QFile file(filePath);
+        CSVExport csvExport;
+        csvExport.exportData(m_skyConnect.getAircraft(), file);
+    }
 }
 
 void MainWindow::on_showSettingsAction_triggered()
 {
     m_settingsDialog->exec();
+}
+
+void MainWindow::on_quitAction_triggered()
+{
+    QApplication::quit();
 }
 
 void MainWindow::on_showSimulationVariablesAction_triggered(bool enabled)

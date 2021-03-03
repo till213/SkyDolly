@@ -16,6 +16,8 @@ set(PROJECT_SOURCES
     src/Version.h
     src/Settings.cpp
     src/Settings.h
+    src/Export/CSVExport.cpp
+    src/Export/CSVExport.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
