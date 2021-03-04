@@ -1,5 +1,3 @@
-#include <QStringBuilder>
-
 #include "AircraftData.h"
 
 // PUBLIC
@@ -36,14 +34,3 @@ AircraftData::AircraftData(double latitude, double longitude, double altitude)
     this->altitude = altitude;
 }
 
-QString AircraftData::toString() const
-{
-    // Implementation note: the operator % is re-implemented in the
-    // included QStringBuilder
-    return QString("Latitude: ") % QString::number(latitude) %
-           QString(" Longitude: ") % QString::number(longitude) %
-           QString(" Altitude: ") % QString::number(altitude) %
-           QString(" Pitch: ") % QString::number(pitch) %
-           QString(" Bank: ") % QString::number(bank) %
-           QString(" Heading: ") % QString::number(heading);
-}

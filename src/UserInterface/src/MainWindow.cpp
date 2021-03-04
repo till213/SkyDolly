@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QByteArray>
 #include <QFileDialog>
+#include <QMessageBox>
 #include <QFile>
 #include <QStandardPaths>
 #include <QString>
@@ -15,6 +16,8 @@
 #include <QDoubleValidator>
 
 #include "../../Kernel/src/Export/CSVExport.h"
+#include "../../Kernel/src/Import/CSVImport.h"
+#include "../../Kernel/src/Version.h"
 #include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/Aircraft.h"
 #include "../../Kernel/src/AircraftInfo.h"
@@ -282,6 +285,7 @@ void MainWindow::updateControlUi()
         break;
     case Connect::RecordingPaused:
         // Actions
+        ui->recordAction->setChecked(false);
         ui->pauseAction->setChecked(true);
         break;
     case Connect::Playback:
@@ -303,6 +307,7 @@ void MainWindow::updateControlUi()
         break;
     case Connect::PlaybackPaused:
         // Actions
+        ui->playAction->setChecked(false);
         ui->pauseAction->setChecked(true);
         // Position
         ui->timestampTimeEdit->setEnabled(true);
@@ -334,14 +339,51 @@ void MainWindow::updateRecordingTime()
     ui->timestampTimeEdit->setMaximumTime(time);
 }
 
-void MainWindow::on_exportCSVAction_triggered()
+void MainWindow::on_importCSVAction_triggered()
 {
-    QString dataPath = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation).first();
-    QString filePath = QFileDialog::getSaveFileName(this, tr("Export CSV"), dataPath, QString("*.csv"));
+    QString documentPath;
+    QStringList standardLocations = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation);
+    if (standardLocations.count() > 0) {
+        documentPath = standardLocations.first();
+    } else {
+        documentPath = ".";
+    }
+    QString filePath = QFileDialog::getOpenFileName(this, tr("Import CSV"), documentPath, QString("*.csv"));
     if (!filePath.isEmpty()) {
         QFile file(filePath);
-        CSVExport csvExport;
-        csvExport.exportData(m_skyConnect.getAircraft(), file);
+        CSVImport csvImport;
+        bool ok = csvImport.importData(file, m_skyConnect.getAircraft());
+        if (ok) {
+            skipToBegin();
+            updateUi();
+        }
+    }
+}
+
+void MainWindow::on_exportCSVAction_triggered()
+{
+    QMessageBox message;
+    Version version;
+
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Preview",
+        QString("%1 %2 is an early preview version. The format of the exported CSV values may change partially or completely, even rendering the current exported values unreadable in future versions.")
+          .arg(Version::getApplicationName(), Version::getApplicationVersion()),
+        QMessageBox::StandardButton::Ok | QMessageBox::StandardButton::Abort);
+
+    if (reply == QMessageBox::StandardButton::Ok) {
+        QString documentPath;
+        QStringList standardLocations = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation);
+        if (standardLocations.count() > 0) {
+            documentPath = standardLocations.first();
+        } else {
+            documentPath = ".";
+        }
+        QString filePath = QFileDialog::getSaveFileName(this, tr("Export CSV"), documentPath, QString("*.csv"));
+        if (!filePath.isEmpty()) {
+            QFile file(filePath);
+            CSVExport csvExport;
+            csvExport.exportData(m_skyConnect.getAircraft(), file);
+        }
     }
 }
 
@@ -437,13 +479,24 @@ void MainWindow::handlePlaybackSpeedSelected(int selection) {
 void MainWindow::toggleRecord(bool enable)
 {
     this->blockSignals(true);
-    if (enable) {
-        m_skyConnect.startDataSample();
-    } else if (m_skyConnect.isPaused()) {
-        // The record button also unpauses a paused recording
-        m_skyConnect.setPaused(false);
-    } else {
-        m_skyConnect.stopDataSample();
+
+    switch (m_skyConnect.getState()) {
+    case Connect::State::Recording:
+        if (!enable) {
+            m_skyConnect.stopDataSample();
+        }
+        break;
+    case Connect::State::RecordingPaused:
+        if (enable) {
+            // The record button also unpauses a paused recording
+            m_skyConnect.setPaused(false);
+        }
+        break;
+    default:
+        if (enable) {
+            m_skyConnect.startDataSample();
+        }
+        break;
     }
     this->blockSignals(false);
 }

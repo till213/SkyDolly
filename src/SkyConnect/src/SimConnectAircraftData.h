@@ -8,14 +8,12 @@
 struct SimConnectAircraftData
 {
     // Aircraft position
-
-    double latitude;  // degrees
-    double longitude; // degrees
-    double altitude;  // feet
-
-    double pitch;     // degrees
-    double bank;      // degrees
-    double heading;   // degrees
+    double latitude;
+    double longitude;
+    double altitude;
+    double pitch;
+    double bank;
+    double heading;
 
     // Aircraft controls
     double yokeXPosition;

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(SkyDolly LANGUAGES CXX VERSION 0.3.0 DESCRIPTION "Sky Dolly - The black sheep for your flight recordings")
 set(PROJECT_APPLICATION_NAME "Sky Dolly")
-set(PROJECT_ORGANISATION_NAME till-art.net)
+set(PROJECT_ORGANISATION_NAME till213)
 
 set(CMAKE_SHARED_LIBRARY_PREFIX )
 

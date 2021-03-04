@@ -58,8 +58,6 @@ struct KERNEL_API AircraftData
     AircraftData (const AircraftData &) = default;
     AircraftData &operator= (const AircraftData &) = default;
 
-    QString toString() const;
-
     static const AircraftData NullAircraftData;
 };
 
