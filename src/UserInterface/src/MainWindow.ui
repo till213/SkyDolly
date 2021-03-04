@@ -218,6 +218,7 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <addaction name="importCSVAction"/>
     <addaction name="exportCSVAction"/>
     <addaction name="separator"/>
     <addaction name="showSettingsAction"/>
@@ -358,6 +359,11 @@
   <action name="exportCSVAction">
    <property name="text">
     <string>Export CSV</string>
+   </property>
+  </action>
+  <action name="importCSVAction">
+   <property name="text">
+    <string>Import CSV</string>
    </property>
   </action>
  </widget>

@@ -52,6 +52,7 @@ private slots:
     void updateRecordingTime();
 
     // File menu
+    void on_importCSVAction_triggered();
     void on_exportCSVAction_triggered();
     void on_showSettingsAction_triggered();
     void on_quitAction_triggered();

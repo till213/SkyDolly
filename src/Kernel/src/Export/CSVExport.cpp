@@ -1,65 +1,114 @@
+/**
+ * Sky Dolly - The black sheep for your flight recordings
+ *
+ * Copyright (c) Oliver Knoll
+ * All rights reserved.
+ *
+ * MIT License
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this
+ * software and associated documentation files (the "Software"), to deal in the Software
+ * without restriction, including without limitation the rights to use, copy, modify, merge,
+ * publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+ * to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+ * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+ * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+ * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
 #include <QIODevice>
+// Implements the % operator for string concatenation
 #include <QStringBuilder>
 
+#include "../Const.h"
 #include "../Aircraft.h"
 #include "CSVExport.h"
 
 namespace {
-    constexpr char Separator = '\t';
-    constexpr char EndLine = '\n';
+    // Format and precision for double
+    constexpr char Format = 'g';
+    constexpr int Precision = 9;
 }
-
-class CSVExportPrivate
-{
-public:
-    CSVExportPrivate()
-    {}
-
-    ~CSVExportPrivate()
-    {}
-};
 
 // PUBLIC
 
-CSVExport::CSVExport()
-    : d(new CSVExportPrivate())
+bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io)
 {
-
-}
-
-CSVExport::~CSVExport()
-{
-    delete d;
-}
-
-bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) const
-{
-    bool ok;
-    ok = io.open(QIODevice::WriteOnly);
+    bool ok = io.open(QIODevice::WriteOnly);
     if (ok) {
-
         // Header
-        QString csv = QString("Latitude") % Separator % QString("Longitude") % Separator % QString("Altitude") % Separator %
-                      QString("Pitch") % Separator % QString("Bank") % Separator % QString("Heading") % Separator %
-                      QString("YokeXPosition") % Separator % QString("YokeYPosition") % Separator % QString("RudderPosition") % Separator % QString("ElevatorPosition") % Separator % QString("AileronPosition") % EndLine;
-        if (!io.write(csv.toLocal8Bit())) {
+        QString csv = QString(Const::Latitude) % Const::Sep %
+                      QString(Const::Longitude) % Const::Sep %
+                      QString(Const::Altitude) % Const::Sep %
+                      QString(Const::Pitch) % Const::Sep %
+                      QString(Const::Bank) % Const::Sep %
+                      QString(Const::Heading) % Const::Sep %
+                      QString(Const::YokeXPosition) % Const::Sep %
+                      QString(Const::YokeYPosition) % Const::Sep %
+                      QString(Const::RudderPosition) % Const::Sep %
+                      QString(Const::ElevatorPosition) % Const::Sep %
+                      QString(Const::AileronPosition) % Const::Sep %
+                      QString(Const::ThrottleLeverPosition1) % Const::Sep %
+                      QString(Const::ThrottleLeverPosition2) % Const::Sep %
+                      QString(Const::ThrottleLeverPosition3) % Const::Sep %
+                      QString(Const::ThrottleLeverPosition4) % Const::Sep %
+                      QString(Const::LeadingEdgeFlapsLeftPercent) % Const::Sep %
+                      QString(Const::LeadingEdgeFlapsRightPercent) % Const::Sep %
+                      QString(Const::TrailingEdgeFlapsLeftPercent) % Const::Sep %
+                      QString(Const::TrailingEdgeFlapsRightPercent) % Const::Sep %
+                      QString(Const::SpoilersHandlePosition) % Const::Sep %
+                      QString(Const::FlapsHandleIndex) % Const::Sep %
+                      QString(Const::GearHandlePosition) % Const::Sep %
+                      QString(Const::WaterRudderHandlePosition) % Const::Sep %
+                      QString(Const::BrakeLeftPosition) % Const::Sep %
+                      QString(Const::BrakeRightPosition) % Const::Sep %
+                      QString(Const::Timestamp) % Const::Ln;
+        if (!io.write(csv.toUtf8())) {
             ok = false;
         }
 
         if (ok) {
             // CSV data
             for (const AircraftData &data : aircraft.getAllAircraftData()) {
-                QString csv = QString::number(data.latitude) % Separator % QString::number(data.longitude) % Separator % QString::number(data.altitude) % Separator %
-                              QString::number(data.pitch) % Separator % QString::number(data.bank) % Separator % QString::number(data.heading) % Separator %
-                              QString::number(data.yokeXPosition) % Separator % QString::number(data.yokeYPosition) % Separator % QString::number(data.rudderPosition) % Separator % QString::number(data.elevatorPosition) % Separator % QString::number(data.aileronPosition) % EndLine;
-                if (!io.write(csv.toLocal8Bit())) {
+                QString csv = QString::number(data.latitude, Format, Precision) % Const::Sep %
+                              QString::number(data.longitude, Format, Precision) % Const::Sep %
+                              QString::number(data.altitude, Format, Precision) % Const::Sep %
+                              QString::number(data.pitch, Format, Precision) % Const::Sep %
+                              QString::number(data.bank, Format, Precision) % Const::Sep %
+                              QString::number(data.heading, Format, Precision) % Const::Sep %
+                              QString::number(data.yokeXPosition) % Const::Sep %
+                              QString::number(data.yokeYPosition) % Const::Sep %
+                              QString::number(data.rudderPosition) % Const::Sep %
+                              QString::number(data.elevatorPosition) % Const::Sep %
+                              QString::number(data.aileronPosition) % Const::Sep %
+                              QString::number(data.throttleLeverPosition1) % Const::Sep %
+                              QString::number(data.throttleLeverPosition2) % Const::Sep %
+                              QString::number(data.throttleLeverPosition3) % Const::Sep %
+                              QString::number(data.throttleLeverPosition4) % Const::Sep %
+                              QString::number(data.leadingEdgeFlapsLeftPercent) % Const::Sep %
+                              QString::number(data.leadingEdgeFlapsRightPercent) % Const::Sep %
+                              QString::number(data.trailingEdgeFlapsLeftPercent) % Const::Sep %
+                              QString::number(data.trailingEdgeFlapsRightPercent) % Const::Sep %
+                              QString::number(data.spoilersHandlePosition) % Const::Sep %
+                              QString::number(data.flapsHandleIndex) % Const::Sep %
+                              QString::number(data.gearHandlePosition) % Const::Sep %
+                              QString::number(data.waterRudderHandlePosition) % Const::Sep %
+                              QString::number(data.brakeLeftPosition) % Const::Sep %
+                              QString::number(data.brakeRightPosition) % Const::Sep %
+                              QString::number(data.timestamp) % Const::Ln;
+                if (!io.write(csv.toUtf8())) {
                     ok = false;
                     break;
                 }
             }
         }
-    } else {
-        ok = false;
+        io.close();
     }
     return ok;
 }

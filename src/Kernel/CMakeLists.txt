@@ -6,6 +6,8 @@ set(PROJECT_SOURCES
     src/Aircraft.h
     src/AircraftData.cpp
     src/AircraftData.h
+    src/Const.cpp
+    src/Const.h
     src/SampleRate.h
     src/SkyMath.h
     src/SkySearch.h
@@ -18,6 +20,8 @@ set(PROJECT_SOURCES
     src/Settings.h
     src/Export/CSVExport.cpp
     src/Export/CSVExport.h
+    src/Import/CSVImport.cpp
+    src/Import/CSVImport.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

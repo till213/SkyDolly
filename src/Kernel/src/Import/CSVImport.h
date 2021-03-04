@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVEXPORT_H
-#define CSVEXPORT_H
+#ifndef CSVIMPORT_H
+#define CSVIMPORT_H
 
 class QIODevice;
 
@@ -32,16 +32,10 @@ class CSVExportPrivate;
 
 #include "../KernelLib.h"
 
-/*!
- * Exports the Aircraft data as comma-separated values (CSV).
- */
-class CSVExport
+class CSVImport
 {
 public:
-    KERNEL_API static bool exportData(const Aircraft &aircraft, QIODevice &io);
-
-private:
-    CSVExportPrivate *d;
+    KERNEL_API static bool importData(QIODevice &io, Aircraft &aircraft);
 };
 
-#endif // CSVEXPORT_H
+#endif // CSVIMPORT_H
