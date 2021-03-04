@@ -37,10 +37,16 @@ public:
 
     double recordSampleRateValue;
     double playbackSampleRateValue;
+    bool windowStayOnTopEnabled;
+
+    int previewInfoDialogCount;
 
     static Settings *instance;
     static constexpr double DefaultRecordSampleRate = SampleRate::toValue(SampleRate::SampleRate::Hz10);
     static constexpr double DefaultPlaybackSampleRate = SampleRate::toValue(SampleRate::SampleRate::Hz60);
+    static constexpr bool DefaultWindowStayOnTopEnabled = false;
+
+    static constexpr int DefaultPreviewInfoDialogCount = 3;
 
     SettingsPrivate()
         : version(QCoreApplication::instance()->applicationVersion())
@@ -108,6 +114,32 @@ void Settings::setPlaybackSampleRate(SampleRate::SampleRate sampleRate)
     }
 }
 
+bool Settings::isWindowStaysOnTopEnabled() const
+{
+    return d->windowStayOnTopEnabled;
+}
+
+void Settings::setWindowStaysOnTopEnabled(bool enable)
+{
+    if (d->windowStayOnTopEnabled != enable) {
+        d->windowStayOnTopEnabled = enable;
+        emit changed();
+    }
+}
+
+int Settings::getPreviewInfoDialogCount() const
+{
+    return d->previewInfoDialogCount;
+}
+
+void Settings::setPreviewInfoDialogCount(int count)
+{
+    if (d->previewInfoDialogCount != count) {
+        d->previewInfoDialogCount = count;
+        emit changed();
+    }
+}
+
 // PUBLIC SLOTS
 
 void Settings::store()
@@ -117,6 +149,16 @@ void Settings::store()
     {
         d->settings.setValue("RecordSampleRate", d->recordSampleRateValue);
         d->settings.setValue("PlaybackSampleRate", d->playbackSampleRateValue);
+    }
+    d->settings.endGroup();
+    d->settings.beginGroup("Window");
+    {
+        d->settings.setValue("WindowStaysOnTopEnabled", d->windowStayOnTopEnabled);
+    }
+    d->settings.endGroup();
+    d->settings.beginGroup("_Preview");
+    {
+        d->settings.setValue("PreviewInfoDialogCount", d->previewInfoDialogCount);
     }
     d->settings.endGroup();
 }
@@ -146,6 +188,19 @@ void Settings::restore()
         if (!ok) {
             qWarning("The playback sample rate in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultPlaybackSampleRate);
             d->playbackSampleRateValue = SettingsPrivate::DefaultPlaybackSampleRate;
+        }
+    }
+    d->settings.endGroup();
+    d->settings.beginGroup("Window");
+    {
+        d->windowStayOnTopEnabled = d->settings.value("WindowStaysOnTopEnabled", SettingsPrivate::DefaultWindowStayOnTopEnabled).toBool();
+    }
+    d->settings.endGroup();
+    d->settings.beginGroup("_Preview");
+    {
+        d->previewInfoDialogCount = d->settings.value("PreviewInfoDialogCount", SettingsPrivate::DefaultPreviewInfoDialogCount).toInt(&ok);
+        if (!ok) {
+            d->previewInfoDialogCount = SettingsPrivate::DefaultPreviewInfoDialogCount;
         }
     }
     d->settings.endGroup();

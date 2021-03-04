@@ -234,9 +234,11 @@
    </widget>
    <widget class="QMenu" name="menu_View">
     <property name="title">
-     <string>&amp;View</string>
+     <string>&amp;Window</string>
     </property>
     <addaction name="showSimulationVariablesAction"/>
+    <addaction name="separator"/>
+    <addaction name="stayOnTopAction"/>
    </widget>
    <widget class="QMenu" name="menu_Flight">
     <property name="title">
@@ -364,6 +366,14 @@
   <action name="importCSVAction">
    <property name="text">
     <string>Import CSV</string>
+   </property>
+  </action>
+  <action name="stayOnTopAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Stay On &amp;Top</string>
    </property>
   </action>
  </widget>

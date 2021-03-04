@@ -60,6 +60,12 @@ public:
     double getPlaybackSampleRateValue() const;
     void setPlaybackSampleRate(SampleRate::SampleRate sampleRate);
 
+    bool isWindowStaysOnTopEnabled() const;
+    void setWindowStaysOnTopEnabled(bool enable);
+
+    int getPreviewInfoDialogCount() const;
+    void setPreviewInfoDialogCount(int count);
+
 public slots:
     /*!
      * Stores these Settings to a user configuration file.
