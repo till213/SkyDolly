@@ -9,7 +9,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/AboutDialog.cpp" line="28"/>
+        <location filename="../src/UserInterface/src/Dialogs/AboutDialog.cpp" line="52"/>
         <source>%1
 Version %2
 
@@ -95,128 +95,139 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="229"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="230"/>
         <source>&amp;Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="236"/>
-        <source>&amp;View</source>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="368"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="411"/>
+        <source>Import CSV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="242"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="376"/>
+        <source>Stay On &amp;Top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="245"/>
         <source>&amp;Playback</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="328"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="331"/>
         <source>B&amp;egin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="331"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="334"/>
         <source>PgUp</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="336"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="339"/>
         <source>&amp;Backward</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="339"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="342"/>
         <source>Left</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="344"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="347"/>
         <source>&amp;Forward</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="347"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="350"/>
         <source>Right</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="352"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="355"/>
         <source>E&amp;nd</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="355"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="358"/>
         <source>PgDown</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="360"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="357"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="363"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="450"/>
         <source>Export CSV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="261"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="264"/>
         <source>&amp;Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="264"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="237"/>
+        <source>&amp;Window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="267"/>
         <source>Ctrl+Q</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="269"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="272"/>
         <source>About &amp;Qt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="274"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="277"/>
         <source>&amp;About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="282"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="285"/>
         <source>&amp;Simulation Variables</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="285"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="288"/>
         <source>V</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="293"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="296"/>
         <source>&amp;Record</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="296"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="299"/>
         <source>R</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="304"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="307"/>
         <source>&amp;Play</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="307"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="310"/>
         <source>Space</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="315"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="318"/>
         <source>P&amp;ause</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="318"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="321"/>
         <source>P</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="323"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="326"/>
         <source>S&amp;ettings...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -240,74 +251,74 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="46"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="60"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="70"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="84"/>
         <source>1 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="47"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="61"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="71"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="85"/>
         <source>2 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="48"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="62"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="72"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="86"/>
         <source>5 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="49"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="63"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="73"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="87"/>
         <source>10 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="50"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="64"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="74"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="88"/>
         <source>15 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="51"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="65"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="75"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="89"/>
         <source>20 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="52"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="66"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="76"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="90"/>
         <source>24 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="53"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="67"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="77"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="91"/>
         <source>25 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="54"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="68"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="78"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="92"/>
         <source>30 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="55"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="69"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="79"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="93"/>
         <source>45 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="56"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="70"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="80"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="94"/>
         <source>50 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="57"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="71"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="81"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="95"/>
         <source>60 Hz</source>
         <translation type="unfinished"></translation>
     </message>
@@ -316,7 +327,7 @@ MIT License</source>
     <name>SimulationVariablesDialog</name>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.ui" line="14"/>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="21"/>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="45"/>
         <source>Simulation Variables</source>
         <translation type="unfinished"></translation>
     </message>
@@ -481,32 +492,32 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="127"/>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="151"/>
         <source>Down</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="127"/>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="151"/>
         <source>Up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="138"/>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="162"/>
         <source>RECORDING</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="141"/>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="165"/>
         <source>RECORDING PAUSED</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="144"/>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="168"/>
         <source>PLAYBACK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="147"/>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="171"/>
         <source>PLAYPACK PAUSED</source>
         <translation type="unfinished"></translation>
     </message>

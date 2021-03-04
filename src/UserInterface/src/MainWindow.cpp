@@ -389,14 +389,20 @@ void MainWindow::updateFileMenu()
 
 void MainWindow::updateMainWindow()
 {
-    Qt::WindowFlags flags = this->windowFlags();
-    if (Settings::getInstance().isWindowStaysOnTopEnabled()) {
-        this->setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
-        this->show();
-    } else {
-        this->setWindowFlags(flags ^ (Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint));
-        this->show();
+    Settings &settings = Settings::getInstance();
+    if (settings.isWindowStaysOnTopEnabled() && !(windowFlags() & Qt::WindowStaysOnTopHint)) {
+        Qt::WindowFlags flags = windowFlags();
+        if (Settings::getInstance().isWindowStaysOnTopEnabled()) {
+            this->setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
+            this->show();
+        } else {
+            this->setWindowFlags(flags ^ (Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint));
+            this->show();
+        }
     }
+
+    ui->recordAction->setToolTip(tr("Record @%1 Hz").arg(Settings::getInstance().getRecordSampleRateValue()));
+    ui->playAction->setToolTip(tr("Play @%1 Hz").arg(Settings::getInstance().getPlaybackSampleRateValue()));
 }
 
 void MainWindow::on_importCSVAction_triggered()
