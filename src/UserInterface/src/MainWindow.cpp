@@ -138,6 +138,10 @@ void MainWindow::frenchConnection()
     // Application
     connect(dynamic_cast<QGuiApplication *>(QGuiApplication::instance()), &QGuiApplication::lastWindowClosed,
             this, &MainWindow::handleLastWindowClosed);
+
+    // Settings
+    connect(&Settings::getInstance(), &Settings::changed,
+            this, &MainWindow::updateMainWindow);
 }
 
 void MainWindow::initUi()
@@ -149,6 +153,8 @@ void MainWindow::initUi()
     m_simulationVariablesDialog = new SimulationVariablesDialog(m_skyConnect, this);
     m_aboutDialog = new AboutDialog(this);
     m_settingsDialog = new SettingsDialog(this);
+
+    ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
 
     this->initControlUi();
     this->updateUi();
@@ -266,6 +272,8 @@ void MainWindow::on_customPlaybackSpeedLineEdit_editingFinished() {
 void MainWindow::updateUi()
 {
     updateControlUi();
+    updateFileMenu();
+    updateMainWindow();
 }
 
 void MainWindow::updateControlUi()
@@ -363,6 +371,34 @@ void MainWindow::updateRecordingTime()
     ui->timestampTimeEdit->setMaximumTime(time);
 }
 
+void MainWindow::updateFileMenu()
+{
+    bool hasRecording = m_skyConnect.getAircraft().getAllAircraftData().count() > 0;
+    switch (m_skyConnect.getState()) {
+    case Connect::State::Recording:
+        // Fall-thru intentional
+    case Connect::State::RecordingPaused:
+        ui->importCSVAction->setEnabled(false);
+        ui->exportCSVAction->setEnabled(false);
+        break;
+    default:
+        ui->importCSVAction->setEnabled(true);
+        ui->exportCSVAction->setEnabled(hasRecording);
+    }
+}
+
+void MainWindow::updateMainWindow()
+{
+    Qt::WindowFlags flags = this->windowFlags();
+    if (Settings::getInstance().isWindowStaysOnTopEnabled()) {
+        this->setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
+        this->show();
+    } else {
+        this->setWindowFlags(flags ^ (Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint));
+        this->show();
+    }
+}
+
 void MainWindow::on_importCSVAction_triggered()
 {
     QString documentPath;
@@ -389,10 +425,19 @@ void MainWindow::on_exportCSVAction_triggered()
     QMessageBox message;
     Version version;
 
-    QMessageBox::StandardButton reply = QMessageBox::question(this, "Preview",
-        QString("%1 %2 is an early preview version. The format of the exported CSV values may change partially or completely, even rendering the current exported values unreadable in future versions.")
-          .arg(Version::getApplicationName(), Version::getApplicationVersion()),
-        QMessageBox::StandardButton::Ok | QMessageBox::StandardButton::Abort);
+    QMessageBox::StandardButton reply;
+    int previewInfoCount = Settings::getInstance().getPreviewInfoDialogCount();
+    if (previewInfoCount > 0) {
+        --previewInfoCount;
+        reply = QMessageBox::question(this, "Preview",
+            QString("%1 %2 is an early preview version. The format of the exported CSV values may change partially or completely, "
+                    "even rendering the current exported values unreadable in future versions.\n\n"
+                    "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(previewInfoCount),
+            QMessageBox::StandardButton::Ok | QMessageBox::StandardButton::Abort);
+        Settings::getInstance().setPreviewInfoDialogCount(previewInfoCount);
+    } else {
+        reply = QMessageBox::StandardButton::Ok;
+    }
 
     if (reply == QMessageBox::StandardButton::Ok) {
         QString documentPath;
@@ -428,6 +473,11 @@ void MainWindow::on_showSimulationVariablesAction_triggered(bool enabled)
     } else {
         m_simulationVariablesDialog->close();
     }
+}
+
+void MainWindow::on_stayOnTopAction_triggered(bool enabled)
+{
+    Settings::getInstance().setWindowStaysOnTopEnabled(enabled);
 }
 
 void MainWindow::on_aboutAction_triggered()

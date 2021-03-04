@@ -74,14 +74,17 @@ private slots:
     void updateUi();
     void updateControlUi();
     void updateRecordingTime();
+    void updateFileMenu();
+    void updateMainWindow();
 
     // File menu
     void on_importCSVAction_triggered();
     void on_exportCSVAction_triggered();
     void on_showSettingsAction_triggered();
     void on_quitAction_triggered();
-    // View menu
+    // Window menu
     void on_showSimulationVariablesAction_triggered(bool enabled);
+    void on_stayOnTopAction_triggered(bool enabled);
     // About menu
     void on_aboutAction_triggered();
     void on_aboutQtAction_triggered();
