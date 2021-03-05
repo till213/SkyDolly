@@ -61,7 +61,6 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft)
 
                     double doubleValue;
                     int    intValue;
-                    bool   boolValue;
                     // Position
                     if (header == Const::Latitude) {
                         doubleValue = values.at(index).toDouble(&ok);
@@ -139,6 +138,46 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft)
                         doubleValue = values.at(index).toDouble(&ok);
                         if (ok) {
                             aircraftData.throttleLeverPosition4 = doubleValue;
+                        }
+                    } else if (header == Const::PropellerLeverPosition1) {
+                        doubleValue = values.at(index).toDouble(&ok);
+                        if (ok) {
+                            aircraftData.propellerLeverPosition1 = doubleValue;
+                        }
+                    } else if (header == Const::PropellerLeverPosition2) {
+                        doubleValue = values.at(index).toDouble(&ok);
+                        if (ok) {
+                            aircraftData.propellerLeverPosition2 = doubleValue;
+                        }
+                    } else if (header == Const::PropellerLeverPosition3) {
+                        doubleValue = values.at(index).toDouble(&ok);
+                        if (ok) {
+                            aircraftData.propellerLeverPosition3 = doubleValue;
+                        }
+                    } else if (header == Const::PropellerLeverPosition4) {
+                        doubleValue = values.at(index).toDouble(&ok);
+                        if (ok) {
+                            aircraftData.propellerLeverPosition4 = doubleValue;
+                        }
+                    } else if (header == Const::MixtureLeverPosition1) {
+                        doubleValue = values.at(index).toDouble(&ok);
+                        if (ok) {
+                            aircraftData.mixtureLeverPosition1 = doubleValue;
+                        }
+                    } else if (header == Const::MixtureLeverPosition2) {
+                        doubleValue = values.at(index).toDouble(&ok);
+                        if (ok) {
+                            aircraftData.mixtureLeverPosition2 = doubleValue;
+                        }
+                    } else if (header == Const::MixtureLeverPosition3) {
+                        doubleValue = values.at(index).toDouble(&ok);
+                        if (ok) {
+                            aircraftData.mixtureLeverPosition3 = doubleValue;
+                        }
+                    } else if (header == Const::MixtureLeverPosition4) {
+                        doubleValue = values.at(index).toDouble(&ok);
+                        if (ok) {
+                            aircraftData.mixtureLeverPosition4 = doubleValue;
                         }
                     // Flaps & speed brakes
                     } else if (header == Const::LeadingEdgeFlapsLeftPercent) {
