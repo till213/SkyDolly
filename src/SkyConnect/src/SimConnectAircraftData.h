@@ -51,6 +51,14 @@ struct SimConnectAircraftData
     double throttleLeverPosition2;
     double throttleLeverPosition3;
     double throttleLeverPosition4;
+    double propellerLeverPosition1;
+    double propellerLeverPosition2;
+    double propellerLeverPosition3;
+    double propellerLeverPosition4;
+    double mixtureLeverPosition1;
+    double mixtureLeverPosition2;
+    double mixtureLeverPosition3;
+    double mixtureLeverPosition4;
 
     // Flaps & speed brakes
     double leadingEdgeFlapsLeftPercent;
@@ -86,6 +94,14 @@ struct SimConnectAircraftData
         aircraftData.throttleLeverPosition2 = throttleLeverPosition2;
         aircraftData.throttleLeverPosition3 = throttleLeverPosition3;
         aircraftData.throttleLeverPosition4 = throttleLeverPosition4;
+        aircraftData.propellerLeverPosition1 = propellerLeverPosition1;
+        aircraftData.propellerLeverPosition2 = propellerLeverPosition2;
+        aircraftData.propellerLeverPosition3 = propellerLeverPosition3;
+        aircraftData.propellerLeverPosition4 = propellerLeverPosition4;
+        aircraftData.mixtureLeverPosition1 = mixtureLeverPosition1;
+        aircraftData.mixtureLeverPosition2 = mixtureLeverPosition2;
+        aircraftData.mixtureLeverPosition3 = mixtureLeverPosition3;
+        aircraftData.mixtureLeverPosition4 = mixtureLeverPosition4;
 
         aircraftData.leadingEdgeFlapsLeftPercent = leadingEdgeFlapsLeftPercent;
         aircraftData.leadingEdgeFlapsRightPercent = leadingEdgeFlapsRightPercent;
@@ -120,6 +136,14 @@ struct SimConnectAircraftData
         throttleLeverPosition2 = aircraftData.throttleLeverPosition2;
         throttleLeverPosition3 = aircraftData.throttleLeverPosition3;
         throttleLeverPosition4 = aircraftData.throttleLeverPosition4;
+        propellerLeverPosition1 = aircraftData.propellerLeverPosition1;
+        propellerLeverPosition2 = aircraftData.propellerLeverPosition2;
+        propellerLeverPosition3 = aircraftData.propellerLeverPosition3;
+        propellerLeverPosition4 = aircraftData.propellerLeverPosition4;
+        mixtureLeverPosition1 = aircraftData.mixtureLeverPosition1;
+        mixtureLeverPosition2 = aircraftData.mixtureLeverPosition2;
+        mixtureLeverPosition3 = aircraftData.mixtureLeverPosition3;
+        mixtureLeverPosition4 = aircraftData.mixtureLeverPosition4;
 
         leadingEdgeFlapsLeftPercent = aircraftData.leadingEdgeFlapsLeftPercent;
         leadingEdgeFlapsRightPercent = aircraftData.leadingEdgeFlapsRightPercent;

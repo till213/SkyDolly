@@ -51,4 +51,14 @@
 ### Bug Fixes
 
 - Make sure that the first sampled data properly starst with a timestamp of 0, in order to properly interpolate the requested values
-- Properly close the connection when the server (flight simulator) quits    
+- Properly close the connection when the server (flight simulator) quits
+
+## 0.4.0
+
+### New Features
+
+- Additional simulation variables: propeller RPM and mixture lever positions
+
+### Bug Fixes
+
+- 

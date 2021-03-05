@@ -41,6 +41,14 @@ const char *Const::ThrottleLeverPosition1 = "General Eng Throttle Lever Position
 const char *Const::ThrottleLeverPosition2 = "General Eng Throttle Lever Position:2";
 const char *Const::ThrottleLeverPosition3 = "General Eng Throttle Lever Position:3";
 const char *Const::ThrottleLeverPosition4 = "General Eng Throttle Lever Position:4";
+const char *Const::PropellerLeverPosition1 = "General Eng Propeller Lever Position:1";
+const char *Const::PropellerLeverPosition2 = "General Eng Propeller Lever Position:2";
+const char *Const::PropellerLeverPosition3 = "General Eng Propeller Lever Position:3";
+const char *Const::PropellerLeverPosition4 = "General Eng Propeller Lever Position:4";
+const char *Const::MixtureLeverPosition1 = "General Eng Mixture Lever Position:1";
+const char *Const::MixtureLeverPosition2 = "General Eng Mixture Lever Position:2";
+const char *Const::MixtureLeverPosition3 = "General Eng Mixture Lever Position:3";
+const char *Const::MixtureLeverPosition4 = "General Eng Mixture Lever Position:4";
 
 const char *Const::LeadingEdgeFlapsLeftPercent = "Leading Edge Flaps Left Percent";
 const char *Const::LeadingEdgeFlapsRightPercent = "Leading Edge Flaps Right Percent";

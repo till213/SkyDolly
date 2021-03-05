@@ -123,6 +123,7 @@ void SimulationVariablesDialog::updateAircraftDataUi()
 {
     const AircraftData &aircraftData = getAircraftData();
 
+    // Aircraft position
     ui->latitudeLineEdit->setText(QString::number(aircraftData.latitude));
     ui->longitudeLineEdit->setText(QString::number(aircraftData.longitude));
     ui->altitudeLineEdit->setText(QString::number(aircraftData.altitude));
@@ -130,24 +131,36 @@ void SimulationVariablesDialog::updateAircraftDataUi()
     ui->bankLineEdit->setText(QString::number(aircraftData.bank));
     ui->headingLineEdit->setText(QString::number(aircraftData.heading));
 
+    // Aircraft controls
     ui->yokeXLineEdit->setText(QString::number(aircraftData.yokeXPosition));
     ui->yokeYLineEdit->setText(QString::number(aircraftData.yokeYPosition));
     ui->rudderLineEdit->setText(QString::number(aircraftData.rudderPosition));
     ui->elevatorLineEdit->setText(QString::number(aircraftData.elevatorPosition));
     ui->aileronLineEdit->setText(QString::number(aircraftData.aileronPosition));
 
-    ui->leadingEdgeFlapsLeftLineEdit->setText(QString::number(aircraftData.leadingEdgeFlapsLeftPercent));
-    ui->leadingEdgeFlapsRightLineEdit->setText(QString::number(aircraftData.leadingEdgeFlapsRightPercent));
-    ui->trailingEdgeFlapsLeftLineEdit->setText(QString::number(aircraftData.trailingEdgeFlapsLeftPercent));
-    ui->trailingEdgeFlapsRightLinEdit->setText(QString::number(aircraftData.trailingEdgeFlapsRightPercent));
-
+    // General engine
     ui->throttle1LineEdit->setText(QString::number(aircraftData.throttleLeverPosition1));
     ui->throttle2LineEdit->setText(QString::number(aircraftData.throttleLeverPosition2));
     ui->throttle3LineEdit->setText(QString::number(aircraftData.throttleLeverPosition3));
     ui->throttle4LineEdit->setText(QString::number(aircraftData.throttleLeverPosition4));
+    ui->propeller1LineEdit->setText(QString::number(aircraftData.propellerLeverPosition1));
+    ui->propeller2LineEdit->setText(QString::number(aircraftData.propellerLeverPosition2));
+    ui->propeller3LineEdit->setText(QString::number(aircraftData.propellerLeverPosition3));
+    ui->propeller4LineEdit->setText(QString::number(aircraftData.propellerLeverPosition4));
+    ui->mixture1LineEdit->setText(QString::number(aircraftData.mixtureLeverPosition1));
+    ui->mixture2LineEdit->setText(QString::number(aircraftData.mixtureLeverPosition2));
+    ui->mixture3LineEdit->setText(QString::number(aircraftData.mixtureLeverPosition3));
+    ui->mixture4LineEdit->setText(QString::number(aircraftData.mixtureLeverPosition4));
+
+    // Flaps & speed brakes
+    ui->leadingEdgeFlapsLeftLineEdit->setText(QString::number(aircraftData.leadingEdgeFlapsLeftPercent));
+    ui->leadingEdgeFlapsRightLineEdit->setText(QString::number(aircraftData.leadingEdgeFlapsRightPercent));
+    ui->trailingEdgeFlapsLeftLineEdit->setText(QString::number(aircraftData.trailingEdgeFlapsLeftPercent));
+    ui->trailingEdgeFlapsRightLinEdit->setText(QString::number(aircraftData.trailingEdgeFlapsRightPercent));    
     ui->spoilerLineEdit->setText(QString::number(aircraftData.spoilersHandlePosition));
     ui->flapsPositionLineEdit->setText(QString::number(aircraftData.flapsHandleIndex));
 
+    // Gear & brakes
     aircraftData.gearHandlePosition ? ui->gearLineEdit->setText(tr("Down")) : ui->gearLineEdit->setText(tr("Up"));
     ui->waterRudderLineEdit->setText(QString::number(aircraftData.waterRudderHandlePosition));
     ui->brakeLeftLineEdit->setText(QString::number(aircraftData.brakeLeftPosition));

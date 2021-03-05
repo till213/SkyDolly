@@ -50,6 +50,15 @@ namespace Const
     KERNEL_API extern const char *ThrottleLeverPosition2;
     KERNEL_API extern const char *ThrottleLeverPosition3;
     KERNEL_API extern const char *ThrottleLeverPosition4;
+    KERNEL_API extern const char *ThrottleLeverPosition4;
+    KERNEL_API extern const char *PropellerLeverPosition1;
+    KERNEL_API extern const char *PropellerLeverPosition2;
+    KERNEL_API extern const char *PropellerLeverPosition3;
+    KERNEL_API extern const char *PropellerLeverPosition4;
+    KERNEL_API extern const char *MixtureLeverPosition1;
+    KERNEL_API extern const char *MixtureLeverPosition2;
+    KERNEL_API extern const char *MixtureLeverPosition3;
+    KERNEL_API extern const char *MixtureLeverPosition4;
 
     KERNEL_API extern const char *LeadingEdgeFlapsLeftPercent;
     KERNEL_API extern const char *LeadingEdgeFlapsRightPercent;

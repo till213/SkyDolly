@@ -58,6 +58,14 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io)
                       QString(Const::ThrottleLeverPosition2) % Const::Sep %
                       QString(Const::ThrottleLeverPosition3) % Const::Sep %
                       QString(Const::ThrottleLeverPosition4) % Const::Sep %
+                      QString(Const::PropellerLeverPosition1) % Const::Sep %
+                      QString(Const::PropellerLeverPosition2) % Const::Sep %
+                      QString(Const::PropellerLeverPosition3) % Const::Sep %
+                      QString(Const::PropellerLeverPosition4) % Const::Sep %
+                      QString(Const::MixtureLeverPosition1) % Const::Sep %
+                      QString(Const::MixtureLeverPosition2) % Const::Sep %
+                      QString(Const::MixtureLeverPosition3) % Const::Sep %
+                      QString(Const::MixtureLeverPosition4) % Const::Sep %
                       QString(Const::LeadingEdgeFlapsLeftPercent) % Const::Sep %
                       QString(Const::LeadingEdgeFlapsRightPercent) % Const::Sep %
                       QString(Const::TrailingEdgeFlapsLeftPercent) % Const::Sep %
@@ -91,6 +99,14 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io)
                               QString::number(data.throttleLeverPosition2) % Const::Sep %
                               QString::number(data.throttleLeverPosition3) % Const::Sep %
                               QString::number(data.throttleLeverPosition4) % Const::Sep %
+                              QString::number(data.propellerLeverPosition1) % Const::Sep %
+                              QString::number(data.propellerLeverPosition2) % Const::Sep %
+                              QString::number(data.propellerLeverPosition3) % Const::Sep %
+                              QString::number(data.propellerLeverPosition4) % Const::Sep %
+                              QString::number(data.mixtureLeverPosition1) % Const::Sep %
+                              QString::number(data.mixtureLeverPosition2) % Const::Sep %
+                              QString::number(data.mixtureLeverPosition3) % Const::Sep %
+                              QString::number(data.mixtureLeverPosition4) % Const::Sep %
                               QString::number(data.leadingEdgeFlapsLeftPercent) % Const::Sep %
                               QString::number(data.leadingEdgeFlapsRightPercent) % Const::Sep %
                               QString::number(data.trailingEdgeFlapsLeftPercent) % Const::Sep %

@@ -179,6 +179,46 @@ const AircraftData &Aircraft::getAllAircraftData(qint64 timestamp) const
           p1->throttleLeverPosition4,
           p2->throttleLeverPosition4,
           p3->throttleLeverPosition4, tn, Tension);
+        d->currentAircraftData.propellerLeverPosition1 = SkyMath::interpolateHermite(
+          p0->propellerLeverPosition1,
+          p1->propellerLeverPosition1,
+          p2->propellerLeverPosition1,
+          p3->propellerLeverPosition1, tn, Tension);
+        d->currentAircraftData.propellerLeverPosition2 = SkyMath::interpolateHermite(
+          p0->propellerLeverPosition2,
+          p1->propellerLeverPosition2,
+          p2->propellerLeverPosition2,
+          p3->propellerLeverPosition2, tn, Tension);
+        d->currentAircraftData.propellerLeverPosition3 = SkyMath::interpolateHermite(
+          p0->propellerLeverPosition3,
+          p1->propellerLeverPosition3,
+          p2->propellerLeverPosition3,
+          p3->propellerLeverPosition3, tn, Tension);
+        d->currentAircraftData.propellerLeverPosition4 = SkyMath::interpolateHermite(
+          p0->propellerLeverPosition4,
+          p1->propellerLeverPosition4,
+          p2->propellerLeverPosition4,
+          p3->propellerLeverPosition4, tn, Tension);
+        d->currentAircraftData.mixtureLeverPosition1 = SkyMath::interpolateHermite(
+          p0->mixtureLeverPosition1,
+          p1->mixtureLeverPosition1,
+          p2->mixtureLeverPosition1,
+          p3->mixtureLeverPosition1, tn, Tension);
+        d->currentAircraftData.mixtureLeverPosition2 = SkyMath::interpolateHermite(
+          p0->mixtureLeverPosition2,
+          p1->mixtureLeverPosition2,
+          p2->mixtureLeverPosition2,
+          p3->mixtureLeverPosition2, tn, Tension);
+        d->currentAircraftData.mixtureLeverPosition3 = SkyMath::interpolateHermite(
+          p0->mixtureLeverPosition3,
+          p1->mixtureLeverPosition3,
+          p2->mixtureLeverPosition3,
+          p3->mixtureLeverPosition3, tn, Tension);
+        d->currentAircraftData.mixtureLeverPosition4 = SkyMath::interpolateHermite(
+          p0->mixtureLeverPosition4,
+          p1->mixtureLeverPosition4,
+          p2->mixtureLeverPosition4,
+          p3->mixtureLeverPosition4, tn, Tension);
 
         // Flaps & spoilers
         d->currentAircraftData.leadingEdgeFlapsLeftPercent = SkyMath::interpolateHermite(
