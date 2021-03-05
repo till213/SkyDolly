@@ -39,4 +39,4 @@ Refer to the [BUILD](BUILD.md) documentation.
 
 * https://github.com/nguyenquyhy/Flight-Recorder
 * https://github.com/saltysimulations/saltyreplay/
-
+* https://github.com/SAHorowitz/MSFS2020-PilotPathRecorder
