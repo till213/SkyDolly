@@ -13,6 +13,7 @@ The connection is made via SimConnect, a standard API introduced with Flight Sim
 * Variable sample rates, for both recording and playback
 * Adjustable replay speed ("slow motion", "timelapse")
 * Position and basic flight control simulation variables (ailerons, rudder, flaps, gears, ...) are recorded
+* Basic CSV import & export
 
 For new and upcoming features also refer to the [CHANGELOG](CHANGELOG.md).
 
@@ -38,4 +39,4 @@ Refer to the [BUILD](BUILD.md) documentation.
 
 * https://github.com/nguyenquyhy/Flight-Recorder
 * https://github.com/saltysimulations/saltyreplay/
-
+* https://github.com/SAHorowitz/MSFS2020-PilotPathRecorder
