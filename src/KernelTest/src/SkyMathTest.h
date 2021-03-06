@@ -43,6 +43,18 @@ private slots:
 
     void interpolateHermite360_data();
     void interpolateHermite360();
+
+    void fromPosition_data();
+    void fromPosition();
+
+    void toPosition_data();
+    void toPosition();
+
+    void fromPercent_data();
+    void fromPercent();
+
+    void toPercent_data();
+    void toPercent();
 };
 
 #endif // SKYMATHTEST_H

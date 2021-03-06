@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <limits>
+
 #include <QtTest/QtTest>
 
 #include "../../Kernel/src/SkyMath.h"
@@ -90,7 +92,10 @@ void SkyMathTest::interpolateHermite180()
     QFETCH(double, mu);
     QFETCH(double, expected);
 
+    // Exercise
     double result = SkyMath::interpolateHermite180(p0, p1, p2, p3, mu);
+
+    // Verify
     QCOMPARE(result, expected);
 }
 
@@ -149,7 +154,91 @@ void SkyMathTest::interpolateHermite360()
     QFETCH(double, mu);
     QFETCH(double, expected);
 
+    // Exercise
     double result = SkyMath::interpolateHermite360(p0, p1, p2, p3, mu);
+
+    // Verify
+    QCOMPARE(result, expected);
+}
+
+void SkyMathTest::fromPosition_data()
+{
+    QTest::addColumn<double>("p");
+    QTest::addColumn<qint16>("expected");
+
+    QTest::newRow("Minimum") << -1.0 << static_cast<qint16>(SkyMath::PositionMin16);
+    QTest::newRow("Maximum") <<  1.0 << static_cast<qint16>(SkyMath::PositionMax16);
+    QTest::newRow("Zero") << 0.0 << static_cast<qint16>(0);
+    QTest::newRow("Negative value") << -0.5 << static_cast<qint16>(-16383);
+    QTest::newRow("Positive value") <<  0.5 << static_cast<qint16>( 16384);
+}
+
+void SkyMathTest::fromPosition()
+{
+    // Setup
+    QFETCH(double, p);
+    QFETCH(qint16, expected);
+
+    qint16 result = SkyMath::fromPosition(p);
+    QCOMPARE(result, expected);
+}
+
+void SkyMathTest::toPosition_data()
+{
+    QTest::addColumn<qint16>("p16");
+    QTest::addColumn<double>("expected");
+
+    QTest::newRow("Minimum") << static_cast<qint16>(SkyMath::PositionMin16) << -1.0;
+    QTest::newRow("Maximum") << static_cast<qint16>(SkyMath::PositionMax16) <<  1.0;
+    QTest::newRow("Zero") << static_cast<qint16>(0) << 0.0;
+}
+
+void SkyMathTest::toPosition()
+{
+    // Setup
+    QFETCH(qint16, p16);
+    QFETCH(double, expected);
+
+    double result = SkyMath::toPosition(p16);
+    QCOMPARE(result, expected);
+}
+
+void SkyMathTest::fromPercent_data()
+{
+    QTest::addColumn<double>("p");
+    QTest::addColumn<quint8>("expected");
+
+    QTest::newRow("Minimum") <<   0.0 << static_cast<quint8>(SkyMath::PercentMin8);
+    QTest::newRow("Maximum") << 100.0 << static_cast<quint8>(SkyMath::PercentMax8);
+    QTest::newRow("Half") << 50.0 << static_cast<quint8>(128);
+}
+
+void SkyMathTest::fromPercent()
+{
+    // Setup
+    QFETCH(double, p8);
+    QFETCH(quint8, expected);
+
+    quint8 result = SkyMath::fromPercent(p8);
+    QCOMPARE(result, expected);
+}
+
+void SkyMathTest::toPercent_data()
+{
+    QTest::addColumn<quint8>("p8");
+    QTest::addColumn<double>("expected");
+
+    QTest::newRow("Minimum") << static_cast<quint8>(SkyMath::PercentMin8) << 0.0;
+    QTest::newRow("Maximum") << static_cast<quint8>(SkyMath::PercentMax8) << 100.0;
+}
+
+void SkyMathTest::toPercent()
+{
+    // Setup
+    QFETCH(quint8, p8);
+    QFETCH(double, expected);
+
+    double result = SkyMath::toPercent(p8);
     QCOMPARE(result, expected);
 }
 

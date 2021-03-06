@@ -372,7 +372,7 @@ void SkyConnectImpl::setupRequestData()
 
 void SkyConnectImpl::setupInitialPosition()
 {
-    const AircraftData &aircraftData = d->aircraft.getAllAircraftData(0);
+    const AircraftData &aircraftData = d->aircraft.getAircraftData(0);
     if (!aircraftData.isNull()) {
         // Set initial position
         SIMCONNECT_DATA_INITPOSITION initialPosition;
@@ -413,7 +413,7 @@ bool SkyConnectImpl::isSimulationFrozen() const {
 bool SkyConnectImpl::sendAircraftPosition() const
 {
     bool success;
-    d->currentAircraftData = std::move(d->aircraft.getAllAircraftData(d->currentTimestamp));
+    d->currentAircraftData = std::move(d->aircraft.getAircraftData(d->currentTimestamp));
 
     if (!d->currentAircraftData.isNull()) {
         SimConnectAircraftData simConnectAircraftData;
