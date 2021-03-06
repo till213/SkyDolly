@@ -6,12 +6,13 @@ add_definitions(-DSKYCONNECT_EXPORT)
 
 set(PROJECT_SOURCES
     src/SkyConnectLib.h
+    src/SkyManager.cpp
+    src/SkyManager.h
     src/SimConnectAircraftData.cpp
     src/SimConnectAircraftData.h
     src/SimConnectAircraftInfo.cpp
     src/SimConnectAircraftInfo.h
-    src/SkyConnect.cpp
-    src/SkyConnect.h
+    src/SkyConnectIntf.h
     src/SkyConnectImpl.cpp
     src/SkyConnectImpl.h
     src/SimConnectDataDefinition.h

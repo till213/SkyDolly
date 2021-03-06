@@ -27,7 +27,7 @@
 
 #include <QMainWindow>
 
-#include "../../SkyConnect/src/SkyConnect.h"
+#include "../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../SkyConnect/src/Connect.h"
 #include "UserInterfaceLib.h"
 
@@ -52,7 +52,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    SkyConnect m_skyConnect;
+    SkyConnectIntf *m_skyConnect;
     Connect::State m_previousState;
     QButtonGroup *m_playbackSpeedButtonGroup;
     AboutDialog *m_aboutDialog;

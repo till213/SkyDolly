@@ -95,7 +95,7 @@ public:
 // PUBLIC
 
 SkyConnectImpl::SkyConnectImpl(QObject *parent)
-    : QObject(parent),
+    : SkyConnectIntf(parent),
       d(new SkyConnectPrivate())
 {
     frenchConnection();
@@ -106,32 +106,6 @@ SkyConnectImpl::~SkyConnectImpl()
     setSimulationFrozen(false);
     close();
     delete d;
-}
-
-bool SkyConnectImpl::open()
-{
-    HRESULT result = ::SimConnect_Open(&(d->simConnectHandle), ::ConnectionName, nullptr, 0, nullptr, SIMCONNECT_OPEN_CONFIGINDEX_LOCAL);
-    setupRequestData();
-    return result == S_OK;
-}
-
-bool SkyConnectImpl::close()
-{
-    HRESULT result;
-
-    stopAll();
-    if (d->simConnectHandle != nullptr) {
-        result = ::SimConnect_Close(d->simConnectHandle);
-        d->simConnectHandle = nullptr;
-    } else {
-        result = S_OK;
-    }
-    return result == S_OK;
-}
-
-bool SkyConnectImpl::isConnected() const
-{
-    return d->simConnectHandle != nullptr;
 }
 
 void SkyConnectImpl::startDataSample()
@@ -158,10 +132,7 @@ void SkyConnectImpl::startDataSample()
 
 void SkyConnectImpl::stopDataSample()
 {
-    // Get aircraft position every simulated frame
-    ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_NEVER);
-    d->timer.stop();
-    setState(Connect::State::Idle);
+    stopRecording();
 }
 
 void SkyConnectImpl::startReplay(bool fromStart)
@@ -192,12 +163,7 @@ void SkyConnectImpl::startReplay(bool fromStart)
 
 void SkyConnectImpl::stopReplay()
 {
-    setState(Connect::State::Idle);
-    d->timer.stop();
-    // Remember elapsed time since last replay start, in order to continue from
-    // current timestamp
-    d->elapsedTime = d->currentTimestamp;
-    setSimulationFrozen(false);
+    stopPlayback();
 }
 
 void SkyConnectImpl::setPaused(bool enabled)
@@ -344,6 +310,32 @@ const AircraftData &SkyConnectImpl::getCurrentAircraftData() const
 
 // PRIVATE
 
+bool SkyConnectImpl::open()
+{
+    HRESULT result = ::SimConnect_Open(&(d->simConnectHandle), ::ConnectionName, nullptr, 0, nullptr, SIMCONNECT_OPEN_CONFIGINDEX_LOCAL);
+    setupRequestData();
+    return result == S_OK;
+}
+
+bool SkyConnectImpl::close()
+{
+    HRESULT result;
+
+    stopAll();
+    if (d->simConnectHandle != nullptr) {
+        result = ::SimConnect_Close(d->simConnectHandle);
+        d->simConnectHandle = nullptr;
+    } else {
+        result = S_OK;
+    }
+    return result == S_OK;
+}
+
+bool SkyConnectImpl::isConnected() const
+{
+    return d->simConnectHandle != nullptr;
+}
+
 void SkyConnectImpl::frenchConnection()
 {
     connect(&(d->timer), &QTimer::timeout,
@@ -462,8 +454,8 @@ void SkyConnectImpl::replay()
 
 void SkyConnectImpl::stopAll()
 {
-    stopDataSample();
-    stopReplay();
+    stopRecording();
+    stopPlayback();
 }
 
 void SkyConnectImpl::updateCurrentTimestamp()
@@ -479,6 +471,24 @@ void SkyConnectImpl::setState(Connect::State state)
         d->state = state;
         emit stateChanged(state);
     }
+}
+
+void SkyConnectImpl::stopRecording()
+{
+    // Get aircraft position every simulated frame
+    ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_NEVER);
+    d->timer.stop();
+    setState(Connect::State::Idle);
+}
+
+void SkyConnectImpl::stopPlayback()
+{
+    setState(Connect::State::Idle);
+    d->timer.stop();
+    // Remember elapsed time since last replay start, in order to continue from
+    // current timestamp
+    d->elapsedTime = d->currentTimestamp;
+    setSimulationFrozen(false);
 }
 
 bool SkyConnectImpl::hasRecordingStarted() const

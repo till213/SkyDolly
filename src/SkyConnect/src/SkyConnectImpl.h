@@ -34,56 +34,53 @@
 
 #include "../../Kernel/src/Aircraft.h"
 #include "../../Kernel/src/SampleRate.h"
+#include "SkyConnectIntf.h"
 #include "Connect.h"
 
 struct AircraftData;
 class SkyConnectPrivate;
 
-class SkyConnectImpl : public QObject
+class SkyConnectImpl : public SkyConnectIntf
 {
     Q_OBJECT
 public:
     SkyConnectImpl(QObject *parent = nullptr);
     virtual ~SkyConnectImpl();
 
-    bool open();
-    bool close();
-    bool isConnected() const;
+    virtual void startDataSample() override;
+    virtual void stopDataSample() override;
 
-    void startDataSample();
-    void stopDataSample();
+    virtual void startReplay(bool fromStart) override;
+    virtual void stopReplay() override;
 
-    void startReplay(bool fromStart);
-    void stopReplay();
+    virtual void setPaused(bool enabled) override;
+    virtual bool isPaused() const override;
 
-    void setPaused(bool enabled);
-    bool isPaused() const;
+    virtual void skipToBegin() override;
+    virtual void skipBackward() override;
+    virtual void skipForward() override;
+    virtual void skipToEnd() override;
 
-    void skipToBegin();
-    void skipBackward();
-    void skipForward();
-    void skipToEnd();
+    virtual Aircraft &getAircraft()override;
+    virtual const Aircraft &getAircraft() const override;
 
-    Aircraft &getAircraft();
-    const Aircraft &getAircraft() const;
+    virtual void setTimeScale(double timeScale) override;
+    virtual double getTimeScale() const override;
 
-    void setTimeScale(double timeScale);
-    double getTimeScale() const;
+    virtual Connect::State getState() const override;
 
-    Connect::State getState() const;
+    virtual void setCurrentTimestamp(qint64 timestamp) override;
+    virtual qint64 getCurrentTimestamp() const override;
+    virtual bool isAtEnd() const override;
 
-    void setCurrentTimestamp(qint64 timestamp);
-    qint64 getCurrentTimestamp() const;
-    bool isAtEnd() const;
-
-    const AircraftData &getCurrentAircraftData() const;
-
-signals:
-    void aircraftDataSent(qint64 timestamp);
-    void stateChanged(Connect::State state);
+    virtual const AircraftData &getCurrentAircraftData() const override;
 
 private:
     SkyConnectPrivate *d;
+
+    bool open();
+    bool close();
+    bool isConnected() const;
 
     void frenchConnection();
     void setupRequestData();
@@ -95,6 +92,8 @@ private:
     void stopAll();
     void updateCurrentTimestamp();
     void setState(Connect::State state);
+    void stopRecording();
+    void stopPlayback();
     bool hasRecordingStarted() const;
 
     static void CALLBACK dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context);

@@ -26,7 +26,7 @@
 
 #include "../../../Kernel/src/Aircraft.h"
 #include "../../../Kernel/src/AircraftInfo.h"
-#include "../../../SkyConnect/src/SkyConnect.h"
+#include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "SimulationVariablesDialog.h"
 #include "ui_SimulationVariablesDialog.h"
@@ -34,11 +34,11 @@
 class SimulationVariablesDialogPrivate
 {
 public:
-    SimulationVariablesDialogPrivate(SkyConnect &theSkyConnect)
+    SimulationVariablesDialogPrivate(SkyConnectIntf &theSkyConnect)
         : skyConnect(theSkyConnect)
     {}
 
-    SkyConnect &skyConnect;
+    SkyConnectIntf &skyConnect;
     static const QString WindowTitle;
 };
 
@@ -46,7 +46,7 @@ const QString SimulationVariablesDialogPrivate::WindowTitle = QT_TRANSLATE_NOOP(
 
 // PUBLIC
 
-SimulationVariablesDialog::SimulationVariablesDialog(SkyConnect &skyConnect, QWidget *parent) :
+SimulationVariablesDialog::SimulationVariablesDialog(SkyConnectIntf &skyConnect, QWidget *parent) :
     QDialog(parent),
     d(new SimulationVariablesDialogPrivate(skyConnect)),
     ui(new Ui::SimulationVariablesDialog)
@@ -78,10 +78,10 @@ void SimulationVariablesDialog::showEvent(QShowEvent *event)
     connect(&aircraft, &Aircraft::dataChanged,
             this, &SimulationVariablesDialog::updateAircraftDataUi);
     // Signal sent while playing
-    connect(&d->skyConnect, &SkyConnect::aircraftDataSent,
+    connect(&d->skyConnect, &SkyConnectIntf::aircraftDataSent,
             this, &SimulationVariablesDialog::updateAircraftDataUi);
 
-    connect(&d->skyConnect, &SkyConnect::stateChanged,
+    connect(&d->skyConnect, &SkyConnectIntf::stateChanged,
             this, &SimulationVariablesDialog::updateTitle);
 }
 
@@ -92,9 +92,9 @@ void SimulationVariablesDialog::hideEvent(QHideEvent *event)
     const Aircraft &aircraft = d->skyConnect.getAircraft();
     disconnect(&aircraft, &Aircraft::dataChanged,
                this, &SimulationVariablesDialog::updateAircraftDataUi);
-    disconnect(&d->skyConnect, &SkyConnect::aircraftDataSent,
+    disconnect(&d->skyConnect, &SkyConnectIntf::aircraftDataSent,
             this, &SimulationVariablesDialog::updateAircraftDataUi);
-    disconnect(&d->skyConnect, &SkyConnect::stateChanged,
+    disconnect(&d->skyConnect, &SkyConnectIntf::stateChanged,
                this, &SimulationVariablesDialog::updateTitle);
 }
 

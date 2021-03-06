@@ -22,47 +22,41 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMULATIONVARIABLESDIALOG_H
-#define SIMULATIONVARIABLESDIALOG_H
+#ifndef SKYMANAGER_H
+#define SKYMANAGER_H
 
-#include <QDialog>
+#include <QtGlobal>
+#include <QObject>
 
-class QShowEvent;
-class QHideEvent;
+#include "SkyConnectLib.h"
 
 class SkyConnectIntf;
-class SimulationVariablesDialogPrivate;
-class AircraftData;
+class SkyManagerPrivate;
 
-namespace Ui {
-class SimulationVariablesDialog;
-}
-
-class SimulationVariablesDialog : public QDialog
+class SKYCONNECT_API SkyManager : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit SimulationVariablesDialog(SkyConnectIntf &skyConnect, QWidget *parent = nullptr);
-    virtual ~SimulationVariablesDialog();
 
-private:
-    SimulationVariablesDialogPrivate *d;
-    Ui::SimulationVariablesDialog *ui;
+    static SkyManager &getInstance();
+    static void destroyInstance();
 
-    void frenchConnection();
+    SkyConnectIntf *currentSkyConnect() const;
+
+signals:
+    void connectionChanged(SkyConnectIntf *skyConnect);
 
 protected:
-    void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
-
-private slots:
-    void updateInfoUi();
-    void updateAircraftDataUi();
-    void updateTitle();
+    virtual ~SkyManager();
 
 private:
-    const AircraftData &getAircraftData() const;
+    Q_DISABLE_COPY(SkyManager)
+    SkyManagerPrivate *d;
+
+    SkyManager();
+
+    void frenchConnection();
 };
 
-#endif // SIMULATIONVARIABLESDIALOG_H
+#endif // SKYMANAGER_H
