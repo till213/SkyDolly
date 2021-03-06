@@ -72,7 +72,7 @@ void SimConnectAircraftData::addToDataDefinition(HANDLE simConnectHandle)
 
     // Gear & Brakes
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::GearHandlePosition, "Bool", ::SIMCONNECT_DATATYPE_INT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::WaterRudderHandlePosition, "Percent Over 100", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::WaterRudderHandlePosition, "Percent", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::BrakeLeftPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::BrakeRightPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
 }
