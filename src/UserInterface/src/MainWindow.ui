@@ -336,7 +336,7 @@
   </action>
   <action name="backwardAction">
    <property name="text">
-    <string>&amp;Backward</string>
+    <string>Re&amp;wind</string>
    </property>
    <property name="shortcut">
     <string>Left</string>
@@ -344,7 +344,7 @@
   </action>
   <action name="forwardAction">
    <property name="text">
-    <string>&amp;Forward</string>
+    <string>&amp;Fast Forward</string>
    </property>
    <property name="shortcut">
     <string>Right</string>

@@ -58,7 +58,7 @@
 ### New Features
 
 - Additional simulation variables: propeller RPM and mixture lever positions
-- Reduce required memory for sample points, by introducing integer data types
+- Reduce required memory for sample points by over 100% (96 bytes vs previous 200 bytes per sampled data point), by using integer data types instead of double values for selected simulation variables
 
 ### Bug Fixes
 
