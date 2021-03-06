@@ -36,6 +36,7 @@
 
 bool CSVImport::importData(QIODevice &io, Aircraft &aircraft)
 {
+
     bool ok = io.open(QIODevice::ReadOnly);
     if (ok) {
         // Headers
@@ -46,6 +47,7 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft)
             QList<QByteArray> headers = data.split(Const::Sep);
 
             // Clear existing data
+            aircraft.blockSignals(true);
             aircraft.clear();
 
             // CSV data
@@ -255,6 +257,9 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft)
                 data = io.readLine();
 
             }
+
+            aircraft.blockSignals(false);
+            emit aircraft.dataChanged();
         }
         io.close();
     }

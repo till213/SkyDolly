@@ -87,6 +87,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     initUi();
+    updateUi();
     frenchConnection();
 }
 
@@ -157,7 +158,6 @@ void MainWindow::initUi()
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
 
     this->initControlUi();
-    this->updateUi();
 }
 
 void MainWindow::initControlUi()
@@ -219,8 +219,6 @@ void MainWindow::initControlUi()
     ActionButton *skipToEndButton = new ActionButton(this);
     skipToEndButton->setAction(ui->skipToEndAction);
     ui->controlButtonLayout->insertWidget(6, skipToEndButton);
-
-    updateControlUi();
 }
 
 // PRIVATE SLOTS
@@ -339,10 +337,8 @@ void MainWindow::updateControlUi()
         break;
     case Connect::PlaybackPaused:
         // Actions
-        ui->playAction->setChecked(false);
         ui->pauseAction->setChecked(true);
-        // Position
-        ui->timestampTimeEdit->setEnabled(true);
+        ui->playAction->setChecked(false);
         break;
     default:
         break;
@@ -361,6 +357,7 @@ void MainWindow::updateRecordingTime()
 {
     const Aircraft &aircraft = m_skyConnect.getAircraft();
     const AircraftData &aircraftData = aircraft.getLastAircraftData();
+    ui->timestampTimeEdit->blockSignals(true);
     QTime time(0, 0, 0, 0);
     if (!aircraftData.isNull()) {
         time = time.addMSecs(aircraftData.timestamp);
@@ -369,6 +366,7 @@ void MainWindow::updateRecordingTime()
         ui->timestampTimeEdit->setTime(time);
     }
     ui->timestampTimeEdit->setMaximumTime(time);
+    ui->timestampTimeEdit->blockSignals(false);
 }
 
 void MainWindow::updateFileMenu()
@@ -420,8 +418,9 @@ void MainWindow::on_importCSVAction_triggered()
         CSVImport csvImport;
         bool ok = csvImport.importData(file, m_skyConnect.getAircraft());
         if (ok) {
-            skipToBegin();
             updateUi();
+            m_skyConnect.startReplay(true);
+            m_skyConnect.setPaused(true);
         }
     }
 }
@@ -500,14 +499,14 @@ void MainWindow::handlePlayPositionChanged(qint64 timestamp) {
     qint64 endTimeStamp = m_skyConnect.getAircraft().getLastAircraftData().timestamp;
     qint64 ts = qMin(timestamp, endTimeStamp);
 
-    int percent;
+    int sliderPosition;
     if (endTimeStamp > 0) {
-        percent = qRound(PositionSliderMax * (static_cast<double>(ts) / static_cast<double>(endTimeStamp)));
+        sliderPosition = qRound(PositionSliderMax * (static_cast<double>(ts) / static_cast<double>(endTimeStamp)));
     } else {
-        percent = 0;
+        sliderPosition = 0;
     }
     ui->positionSlider->blockSignals(true);
-    ui->positionSlider->setValue(percent);
+    ui->positionSlider->setValue(sliderPosition);
     ui->positionSlider->blockSignals(false);
 
     QTime time(0, 0, 0, 0);

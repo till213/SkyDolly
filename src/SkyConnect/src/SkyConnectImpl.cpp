@@ -177,9 +177,9 @@ void SkyConnectImpl::startReplay(bool fromStart)
         d->timer.setInterval(d->playbackIntervalMSec);
 
         if (fromStart) {
-            setupInitialPosition();
             d->elapsedTime = 0;
             d->currentTimestamp = 0;
+            setupInitialPosition();
         }
 
         d->elapsedTimer.invalidate();
@@ -214,11 +214,14 @@ void SkyConnectImpl::setPaused(bool enabled)
             d->elapsedTimer.invalidate();
             break;
         case Connect::Playback:
-            newState = Connect::PlaybackPaused;
-            // Store the elapsed playback time measured with the current time scale...
-            d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed() * d->timeScale;
-            // ... and stop the elapsed timer
-            d->elapsedTimer.invalidate();
+            newState = Connect::PlaybackPaused;            
+            // In case the elapsed time has started (is valid)...
+            if (d->elapsedTimer.isValid()) {
+                // ... store the elapsed playback time measured with the current time scale...
+                d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed() * d->timeScale;
+                // ... and stop the elapsed timer
+                d->elapsedTimer.invalidate();
+            }
             break;
          default:
             // No state change
@@ -387,6 +390,7 @@ void SkyConnectImpl::setupInitialPosition()
         initialPosition.Airspeed = d->aircraft.getAircraftInfo().initialAirspeed;
 
         ::SimConnect_SetDataOnSimObject(d->simConnectHandle, SkyConnectDataDefinition::AircraftInitialPosition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0, sizeof(::SIMCONNECT_DATA_INITPOSITION), &initialPosition);
+        emit aircraftDataSent(d->currentTimestamp);
     } else {
         stopReplay();
     }
