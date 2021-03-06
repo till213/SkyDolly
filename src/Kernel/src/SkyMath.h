@@ -25,9 +25,20 @@
 #ifndef SKYMATH_H
 #define SKYMATH_H
 
+#include <limits>
+
 #include <QtGlobal>
 
 namespace SkyMath {
+
+    // Make the position range symmetric, such that 0 is exactly the middle value
+    constexpr double PositionMin16 = static_cast<double>(-std::numeric_limits<qint16>::max());
+    constexpr double PositionMax16 = static_cast<double>( std::numeric_limits<qint16>::max());
+    constexpr double PositionRange16 = PositionMax16 - PositionMin16;
+
+    constexpr double PercentMin8 = static_cast<double>(std::numeric_limits<quint8>::min());
+    constexpr double PercentMax8 = static_cast<double>(std::numeric_limits<quint8>::max());
+    constexpr double PercentRange8 = PercentMax8;
 
     template <typename T> int sgn(T val) {
         return (T(0) < val) - (val < T(0));
@@ -122,6 +133,55 @@ namespace SkyMath {
         T bias = T(0))
     {
         return interpolateHermite180(y0 - T(180), y1 - T(180), y2 - T(180), y3 - T(180), mu, tension, bias) + T(180);
+    }
+
+    template <typename V, typename T> qint16 interpolateLinear(V p1, V p2, T mu)
+    {
+        return p1 + qRound(mu * (T(p2) - T(p1)));
+    }
+
+    /*!
+     * Maps the \c position value to a discrete, signed 16bit value.
+     *
+     * \param position
+     *        the position value in the range [-1.0, 1.0]
+     * \return the mapped discrete, signed 16bit value [PositionMin16, PositionMax16] (note: symmetric range)
+     */
+    inline qint16 fromPosition(double position) {
+        return static_cast<qint16>(qRound(PositionMin16 + ((position + 1.0) * PositionRange16) / 2.0));
+    }
+
+    /*!
+     * Maps the \c position16 value to a double value.
+     *
+     * \param position16
+     *        the discrete signed 16bit position value in the range [PositionMin16, PositionMax16] (note: symmetric range)
+     * \return the position mapped onto a double value [-1.0, 1.0]
+     */
+    inline double toPosition(qint16 position16) {
+        return 2.0 * (static_cast<double>(position16) - PositionMin16) / PositionRange16 - 1.0;
+    }
+
+    /*!
+     * Maps the \c percent value to a discrete, unsigned 8bit value.
+     *
+     * \param percent
+     *        the percent value in the range [0.0, 100.0]
+     * \return the mapped discrete, unsigned 8bit value [0, PercentMax8]
+     */
+    inline quint8 fromPercent(double percent) {
+        return static_cast<quint8>(qRound(percent * PercentRange8 / 100.0));
+    }
+
+    /*!
+     * Maps the \c percent8 value to a double value.
+     *
+     * \param percent8
+     *        the discrete unsigned 8bit percent value in the range [0, PercentMax8]
+     * \return the percent mapped onto a double value [0, 100.0]
+     */
+    inline double toPercent(quint8 percent8) {
+        return static_cast<double>(100.0 * percent8 / PercentRange8);
     }
 
 } // namespace

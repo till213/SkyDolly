@@ -27,6 +27,7 @@
  */
 #include <windows.h>
 
+#include "../../Kernel/src/SkyMath.h"
 #include "../../Kernel/src/AircraftData.h"
 
 struct SimConnectAircraftData
@@ -84,36 +85,38 @@ struct SimConnectAircraftData
         aircraftData.bank = bank;
         aircraftData.heading = heading;
 
-        aircraftData.yokeXPosition = yokeXPosition;
-        aircraftData.yokeYPosition = yokeYPosition;
-        aircraftData.rudderPosition = rudderPosition;
-        aircraftData.elevatorPosition = elevatorPosition;
-        aircraftData.aileronPosition = aileronPosition;
+        aircraftData.yokeXPosition = SkyMath::fromPosition(yokeXPosition);
+        aircraftData.yokeYPosition = SkyMath::fromPosition(yokeYPosition);
+        aircraftData.rudderPosition = SkyMath::fromPosition(rudderPosition);
+        aircraftData.elevatorPosition = SkyMath::fromPosition(elevatorPosition);
+        aircraftData.aileronPosition = SkyMath::fromPosition(aileronPosition);
 
-        aircraftData.throttleLeverPosition1 = throttleLeverPosition1;
-        aircraftData.throttleLeverPosition2 = throttleLeverPosition2;
-        aircraftData.throttleLeverPosition3 = throttleLeverPosition3;
-        aircraftData.throttleLeverPosition4 = throttleLeverPosition4;
-        aircraftData.propellerLeverPosition1 = propellerLeverPosition1;
-        aircraftData.propellerLeverPosition2 = propellerLeverPosition2;
-        aircraftData.propellerLeverPosition3 = propellerLeverPosition3;
-        aircraftData.propellerLeverPosition4 = propellerLeverPosition4;
-        aircraftData.mixtureLeverPosition1 = mixtureLeverPosition1;
-        aircraftData.mixtureLeverPosition2 = mixtureLeverPosition2;
-        aircraftData.mixtureLeverPosition3 = mixtureLeverPosition3;
-        aircraftData.mixtureLeverPosition4 = mixtureLeverPosition4;
+        // Note: the throttle can also yield negative thrust, hence the Sky Dolly internal type
+        //       position (qint16) which supports negative values as well
+        aircraftData.throttleLeverPosition1 = SkyMath::fromPosition(throttleLeverPosition1);
+        aircraftData.throttleLeverPosition2 = SkyMath::fromPosition(throttleLeverPosition2);
+        aircraftData.throttleLeverPosition3 = SkyMath::fromPosition(throttleLeverPosition3);
+        aircraftData.throttleLeverPosition4 = SkyMath::fromPosition(throttleLeverPosition4);
+        aircraftData.propellerLeverPosition1 = SkyMath::fromPercent(propellerLeverPosition1);
+        aircraftData.propellerLeverPosition2 = SkyMath::fromPercent(propellerLeverPosition2);
+        aircraftData.propellerLeverPosition3 = SkyMath::fromPercent(propellerLeverPosition3);
+        aircraftData.propellerLeverPosition4 = SkyMath::fromPercent(propellerLeverPosition4);
+        aircraftData.mixtureLeverPosition1 = SkyMath::fromPercent(mixtureLeverPosition1);
+        aircraftData.mixtureLeverPosition2 = SkyMath::fromPercent(mixtureLeverPosition2);
+        aircraftData.mixtureLeverPosition3 = SkyMath::fromPercent(mixtureLeverPosition3);
+        aircraftData.mixtureLeverPosition4 = SkyMath::fromPercent(mixtureLeverPosition4);
 
-        aircraftData.leadingEdgeFlapsLeftPercent = leadingEdgeFlapsLeftPercent;
-        aircraftData.leadingEdgeFlapsRightPercent = leadingEdgeFlapsRightPercent;
-        aircraftData.trailingEdgeFlapsLeftPercent = trailingEdgeFlapsLeftPercent;
-        aircraftData.trailingEdgeFlapsRightPercent = trailingEdgeFlapsRightPercent;
-        aircraftData.spoilersHandlePosition = spoilersHandlePosition;
+        aircraftData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(leadingEdgeFlapsLeftPercent);
+        aircraftData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(leadingEdgeFlapsRightPercent);
+        aircraftData.trailingEdgeFlapsLeftPercent = SkyMath::fromPercent(trailingEdgeFlapsLeftPercent);
+        aircraftData.trailingEdgeFlapsRightPercent = SkyMath::fromPercent(trailingEdgeFlapsRightPercent);
+        aircraftData.spoilersHandlePosition = SkyMath::fromPercent(spoilersHandlePosition);
         aircraftData.flapsHandleIndex = flapsHandleIndex;
 
         aircraftData.gearHandlePosition = gearHandlePosition != 0;
-        aircraftData.waterRudderHandlePosition = waterRudderHandlePosition;
-        aircraftData.brakeLeftPosition= brakeLeftPosition;
-        aircraftData.brakeRightPosition = brakeRightPosition;
+        aircraftData.waterRudderHandlePosition = SkyMath::fromPercent(waterRudderHandlePosition);
+        aircraftData.brakeLeftPosition= SkyMath::fromPosition(brakeLeftPosition);
+        aircraftData.brakeRightPosition = SkyMath::fromPosition(brakeRightPosition);
 
         return aircraftData;
     }
@@ -126,36 +129,36 @@ struct SimConnectAircraftData
         bank = aircraftData.bank;
         heading = aircraftData.heading;
 
-        yokeXPosition = aircraftData.yokeXPosition;
-        yokeYPosition = aircraftData.yokeYPosition;
-        rudderPosition = aircraftData.rudderPosition;
-        elevatorPosition = aircraftData.elevatorPosition;
-        aileronPosition = aircraftData.aileronPosition;
+        yokeXPosition = SkyMath::toPosition(aircraftData.yokeXPosition);
+        yokeYPosition = SkyMath::toPosition(aircraftData.yokeYPosition);
+        rudderPosition = SkyMath::toPosition(aircraftData.rudderPosition);
+        elevatorPosition = SkyMath::toPosition(aircraftData.elevatorPosition);
+        aileronPosition = SkyMath::toPosition(aircraftData.aileronPosition);
 
-        throttleLeverPosition1 = aircraftData.throttleLeverPosition1;
-        throttleLeverPosition2 = aircraftData.throttleLeverPosition2;
-        throttleLeverPosition3 = aircraftData.throttleLeverPosition3;
-        throttleLeverPosition4 = aircraftData.throttleLeverPosition4;
-        propellerLeverPosition1 = aircraftData.propellerLeverPosition1;
-        propellerLeverPosition2 = aircraftData.propellerLeverPosition2;
-        propellerLeverPosition3 = aircraftData.propellerLeverPosition3;
-        propellerLeverPosition4 = aircraftData.propellerLeverPosition4;
-        mixtureLeverPosition1 = aircraftData.mixtureLeverPosition1;
-        mixtureLeverPosition2 = aircraftData.mixtureLeverPosition2;
-        mixtureLeverPosition3 = aircraftData.mixtureLeverPosition3;
-        mixtureLeverPosition4 = aircraftData.mixtureLeverPosition4;
+        throttleLeverPosition1 = SkyMath::toPosition(aircraftData.throttleLeverPosition1);
+        throttleLeverPosition2 = SkyMath::toPosition(aircraftData.throttleLeverPosition2);
+        throttleLeverPosition3 = SkyMath::toPosition(aircraftData.throttleLeverPosition3);
+        throttleLeverPosition4 = SkyMath::toPosition(aircraftData.throttleLeverPosition4);
+        propellerLeverPosition1 = SkyMath::toPercent(aircraftData.propellerLeverPosition1);
+        propellerLeverPosition2 = SkyMath::toPercent(aircraftData.propellerLeverPosition2);
+        propellerLeverPosition3 = SkyMath::toPercent(aircraftData.propellerLeverPosition3);
+        propellerLeverPosition4 = SkyMath::toPercent(aircraftData.propellerLeverPosition4);
+        mixtureLeverPosition1 = SkyMath::toPercent(aircraftData.mixtureLeverPosition1);
+        mixtureLeverPosition2 = SkyMath::toPercent(aircraftData.mixtureLeverPosition2);
+        mixtureLeverPosition3 = SkyMath::toPercent(aircraftData.mixtureLeverPosition3);
+        mixtureLeverPosition4 = SkyMath::toPercent(aircraftData.mixtureLeverPosition4);
 
-        leadingEdgeFlapsLeftPercent = aircraftData.leadingEdgeFlapsLeftPercent;
-        leadingEdgeFlapsRightPercent = aircraftData.leadingEdgeFlapsRightPercent;
-        trailingEdgeFlapsLeftPercent = aircraftData.trailingEdgeFlapsLeftPercent;
-        trailingEdgeFlapsRightPercent = aircraftData.trailingEdgeFlapsRightPercent;
-        spoilersHandlePosition = aircraftData.spoilersHandlePosition;
+        leadingEdgeFlapsLeftPercent = SkyMath::toPercent(aircraftData.leadingEdgeFlapsLeftPercent);
+        leadingEdgeFlapsRightPercent = SkyMath::toPercent(aircraftData.leadingEdgeFlapsRightPercent);
+        trailingEdgeFlapsLeftPercent = SkyMath::toPercent(aircraftData.trailingEdgeFlapsLeftPercent);
+        trailingEdgeFlapsRightPercent = SkyMath::toPercent(aircraftData.trailingEdgeFlapsRightPercent);
+        spoilersHandlePosition = SkyMath::toPercent(aircraftData.spoilersHandlePosition);
         flapsHandleIndex = aircraftData.flapsHandleIndex;
 
         gearHandlePosition = aircraftData.gearHandlePosition ? 1 : 0;
-        waterRudderHandlePosition = aircraftData.waterRudderHandlePosition;
-        brakeLeftPosition = aircraftData.brakeLeftPosition;
-        brakeRightPosition = aircraftData.brakeRightPosition;
+        waterRudderHandlePosition = SkyMath::toPercent(aircraftData.waterRudderHandlePosition);
+        brakeLeftPosition = SkyMath::toPosition(aircraftData.brakeLeftPosition);
+        brakeRightPosition = SkyMath::toPosition(aircraftData.brakeRightPosition);
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle);

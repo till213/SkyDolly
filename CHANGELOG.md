@@ -58,6 +58,7 @@
 ### New Features
 
 - Additional simulation variables: propeller RPM and mixture lever positions
+- Reduce required memory for sample points, by introducing integer data types
 
 ### Bug Fixes
 

@@ -48,7 +48,7 @@ public:
     void upsertAircraftData(AircraftData aircraftData);
     const AircraftData &getLastAircraftData() const;
     const QVector<AircraftData> getAllAircraftData() const;
-    const AircraftData &getAllAircraftData(qint64 timestamp) const;
+    const AircraftData &getAircraftData(qint64 timestamp) const;
 
     void clear();
 

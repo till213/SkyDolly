@@ -43,39 +43,41 @@ struct KERNEL_API AircraftData
     double heading;
 
     // Aircraft controls
-    double yokeXPosition;
-    double yokeYPosition;
-    double rudderPosition;
-    double elevatorPosition;
-    double aileronPosition;
+    qint16 yokeXPosition;
+    qint16 yokeYPosition;
+    qint16 rudderPosition;
+    qint16 elevatorPosition;
+    qint16 aileronPosition;
 
     // General engine
-    double throttleLeverPosition1;
-    double throttleLeverPosition2;
-    double throttleLeverPosition3;
-    double throttleLeverPosition4;
-    double propellerLeverPosition1;
-    double propellerLeverPosition2;
-    double propellerLeverPosition3;
-    double propellerLeverPosition4;
-    double mixtureLeverPosition1;
-    double mixtureLeverPosition2;
-    double mixtureLeverPosition3;
-    double mixtureLeverPosition4;
+    // Implementation note: the throttle can also yield negative thrust, hence the
+    // type qint16 (position) which also supports negative values
+    qint16 throttleLeverPosition1;
+    qint16 throttleLeverPosition2;
+    qint16 throttleLeverPosition3;
+    qint16 throttleLeverPosition4;
+    quint8 propellerLeverPosition1;
+    quint8 propellerLeverPosition2;
+    quint8 propellerLeverPosition3;
+    quint8 propellerLeverPosition4;
+    quint8 mixtureLeverPosition1;
+    quint8 mixtureLeverPosition2;
+    quint8 mixtureLeverPosition3;
+    quint8 mixtureLeverPosition4;
 
     // Flaps & speed brakes
-    double leadingEdgeFlapsLeftPercent;
-    double leadingEdgeFlapsRightPercent;
-    double trailingEdgeFlapsLeftPercent;
-    double trailingEdgeFlapsRightPercent;
-    double spoilersHandlePosition;
-    int flapsHandleIndex;
+    quint8 leadingEdgeFlapsLeftPercent;
+    quint8 leadingEdgeFlapsRightPercent;
+    quint8 trailingEdgeFlapsLeftPercent;
+    quint8 trailingEdgeFlapsRightPercent;
+    quint8 spoilersHandlePosition;
+    qint8 flapsHandleIndex;
 
     // Gears & brakes
     bool gearHandlePosition;
-    double waterRudderHandlePosition;
-    double brakeLeftPosition;
-    double brakeRightPosition;
+    quint8 waterRudderHandlePosition;
+    qint16 brakeLeftPosition;
+    qint16 brakeRightPosition;
 
     // In milliseconds since the start of recording
     qint64 timestamp;

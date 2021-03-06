@@ -106,7 +106,7 @@ void Aircraft::clear()
     emit dataChanged();
 }
 
-const AircraftData &Aircraft::getAllAircraftData(qint64 timestamp) const
+const AircraftData &Aircraft::getAircraftData(qint64 timestamp) const
 {
     const AircraftData *p0, *p1, *p2, *p3;
     const double Tension = 0.0;
@@ -132,140 +132,39 @@ const AircraftData &Aircraft::getAllAircraftData(qint64 timestamp) const
         d->currentAircraftData.heading = SkyMath::interpolateHermite360(p0->heading, p1->heading, p2->heading, p3->heading, tn, Tension);
 
         // Aircraft controls
-        d->currentAircraftData.yokeXPosition = SkyMath::interpolateHermite(
-          p0->yokeXPosition,
-          p1->yokeXPosition,
-          p2->yokeXPosition,
-          p3->yokeXPosition, tn, Tension);
-        d->currentAircraftData.yokeYPosition = SkyMath::interpolateHermite(
-          p0->yokeYPosition,
-          p1->yokeYPosition,
-          p2->yokeYPosition,
-          p3->yokeYPosition, tn, Tension);
-        d->currentAircraftData.rudderPosition = SkyMath::interpolateHermite(
-          p0->rudderPosition,
-          p1->rudderPosition,
-          p2->rudderPosition,
-          p3->rudderPosition, tn, Tension);
-        d->currentAircraftData.elevatorPosition = SkyMath::interpolateHermite(
-          p0->elevatorPosition,
-          p1->elevatorPosition,
-          p2->elevatorPosition,
-          p3->elevatorPosition, tn, Tension);
-        d->currentAircraftData.aileronPosition = SkyMath::interpolateHermite(
-          p0->aileronPosition,
-          p1->aileronPosition,
-          p2->aileronPosition,
-          p3->aileronPosition, tn, Tension);
+        d->currentAircraftData.yokeXPosition = SkyMath::interpolateLinear(p1->yokeXPosition, p2->yokeXPosition, tn);
+        d->currentAircraftData.yokeYPosition = SkyMath::interpolateLinear(p1->yokeYPosition, p2->yokeYPosition, tn);
+        d->currentAircraftData.rudderPosition = SkyMath::interpolateLinear(p1->rudderPosition, p2->rudderPosition, tn);
+        d->currentAircraftData.elevatorPosition = SkyMath::interpolateLinear(p1->elevatorPosition, p2->elevatorPosition, tn);
+        d->currentAircraftData.aileronPosition = SkyMath::interpolateLinear(p1->aileronPosition, p2->aileronPosition, tn);
 
         // Engine
-        d->currentAircraftData.throttleLeverPosition1 = SkyMath::interpolateHermite(
-          p0->throttleLeverPosition1,
-          p1->throttleLeverPosition1,
-          p2->throttleLeverPosition1,
-          p3->throttleLeverPosition1, tn, Tension);
-        d->currentAircraftData.throttleLeverPosition2 = SkyMath::interpolateHermite(
-          p0->throttleLeverPosition2,
-          p1->throttleLeverPosition2,
-          p2->throttleLeverPosition2,
-          p3->throttleLeverPosition2, tn, Tension);
-        d->currentAircraftData.throttleLeverPosition3 = SkyMath::interpolateHermite(
-          p0->throttleLeverPosition3,
-          p1->throttleLeverPosition3,
-          p2->throttleLeverPosition3,
-          p3->throttleLeverPosition3, tn, Tension);
-        d->currentAircraftData.throttleLeverPosition4 = SkyMath::interpolateHermite(
-          p0->throttleLeverPosition4,
-          p1->throttleLeverPosition4,
-          p2->throttleLeverPosition4,
-          p3->throttleLeverPosition4, tn, Tension);
-        d->currentAircraftData.propellerLeverPosition1 = SkyMath::interpolateHermite(
-          p0->propellerLeverPosition1,
-          p1->propellerLeverPosition1,
-          p2->propellerLeverPosition1,
-          p3->propellerLeverPosition1, tn, Tension);
-        d->currentAircraftData.propellerLeverPosition2 = SkyMath::interpolateHermite(
-          p0->propellerLeverPosition2,
-          p1->propellerLeverPosition2,
-          p2->propellerLeverPosition2,
-          p3->propellerLeverPosition2, tn, Tension);
-        d->currentAircraftData.propellerLeverPosition3 = SkyMath::interpolateHermite(
-          p0->propellerLeverPosition3,
-          p1->propellerLeverPosition3,
-          p2->propellerLeverPosition3,
-          p3->propellerLeverPosition3, tn, Tension);
-        d->currentAircraftData.propellerLeverPosition4 = SkyMath::interpolateHermite(
-          p0->propellerLeverPosition4,
-          p1->propellerLeverPosition4,
-          p2->propellerLeverPosition4,
-          p3->propellerLeverPosition4, tn, Tension);
-        d->currentAircraftData.mixtureLeverPosition1 = SkyMath::interpolateHermite(
-          p0->mixtureLeverPosition1,
-          p1->mixtureLeverPosition1,
-          p2->mixtureLeverPosition1,
-          p3->mixtureLeverPosition1, tn, Tension);
-        d->currentAircraftData.mixtureLeverPosition2 = SkyMath::interpolateHermite(
-          p0->mixtureLeverPosition2,
-          p1->mixtureLeverPosition2,
-          p2->mixtureLeverPosition2,
-          p3->mixtureLeverPosition2, tn, Tension);
-        d->currentAircraftData.mixtureLeverPosition3 = SkyMath::interpolateHermite(
-          p0->mixtureLeverPosition3,
-          p1->mixtureLeverPosition3,
-          p2->mixtureLeverPosition3,
-          p3->mixtureLeverPosition3, tn, Tension);
-        d->currentAircraftData.mixtureLeverPosition4 = SkyMath::interpolateHermite(
-          p0->mixtureLeverPosition4,
-          p1->mixtureLeverPosition4,
-          p2->mixtureLeverPosition4,
-          p3->mixtureLeverPosition4, tn, Tension);
+        d->currentAircraftData.throttleLeverPosition1 = SkyMath::interpolateLinear(p1->throttleLeverPosition1, p2->throttleLeverPosition1, tn);
+        d->currentAircraftData.throttleLeverPosition2 = SkyMath::interpolateLinear(p1->throttleLeverPosition2, p2->throttleLeverPosition2, tn);
+        d->currentAircraftData.throttleLeverPosition3 = SkyMath::interpolateLinear(p1->throttleLeverPosition3, p2->throttleLeverPosition3, tn);
+        d->currentAircraftData.throttleLeverPosition4 = SkyMath::interpolateLinear(p1->throttleLeverPosition4, p2->throttleLeverPosition4, tn);
+        d->currentAircraftData.propellerLeverPosition1 = SkyMath::interpolateLinear(p1->propellerLeverPosition1, p2->propellerLeverPosition1, tn);
+        d->currentAircraftData.propellerLeverPosition2 = SkyMath::interpolateLinear(p1->propellerLeverPosition2, p2->propellerLeverPosition2, tn);
+        d->currentAircraftData.propellerLeverPosition3 = SkyMath::interpolateLinear(p1->propellerLeverPosition3, p2->propellerLeverPosition3, tn);
+        d->currentAircraftData.propellerLeverPosition4 = SkyMath::interpolateLinear(p1->propellerLeverPosition4, p2->propellerLeverPosition4, tn);
+        d->currentAircraftData.mixtureLeverPosition1 = SkyMath::interpolateLinear(p1->mixtureLeverPosition1, p2->mixtureLeverPosition1, tn);
+        d->currentAircraftData.mixtureLeverPosition2 = SkyMath::interpolateLinear(p1->mixtureLeverPosition2, p2->mixtureLeverPosition2, tn);
+        d->currentAircraftData.mixtureLeverPosition3 = SkyMath::interpolateLinear(p1->mixtureLeverPosition3, p2->mixtureLeverPosition3, tn);
+        d->currentAircraftData.mixtureLeverPosition4 = SkyMath::interpolateLinear(p1->mixtureLeverPosition4, p2->mixtureLeverPosition4, tn);
 
         // Flaps & spoilers
-        d->currentAircraftData.leadingEdgeFlapsLeftPercent = SkyMath::interpolateHermite(
-          p0->leadingEdgeFlapsLeftPercent,
-          p1->leadingEdgeFlapsLeftPercent,
-          p2->leadingEdgeFlapsLeftPercent,
-          p3->leadingEdgeFlapsLeftPercent, tn, Tension);
-        d->currentAircraftData.leadingEdgeFlapsRightPercent = SkyMath::interpolateHermite(
-          p0->leadingEdgeFlapsRightPercent,
-          p1->leadingEdgeFlapsRightPercent,
-          p2->leadingEdgeFlapsRightPercent,
-          p3->leadingEdgeFlapsRightPercent, tn, Tension);
-        d->currentAircraftData.trailingEdgeFlapsLeftPercent = SkyMath::interpolateHermite(
-          p0->trailingEdgeFlapsLeftPercent,
-          p1->trailingEdgeFlapsLeftPercent,
-          p2->trailingEdgeFlapsLeftPercent,
-          p3->trailingEdgeFlapsLeftPercent, tn, Tension);
-        d->currentAircraftData.trailingEdgeFlapsRightPercent = SkyMath::interpolateHermite(
-          p0->trailingEdgeFlapsRightPercent,
-          p1->trailingEdgeFlapsRightPercent,
-          p2->trailingEdgeFlapsRightPercent,
-          p3->trailingEdgeFlapsRightPercent, tn, Tension);
-        d->currentAircraftData.spoilersHandlePosition = SkyMath::interpolateHermite(
-          p0->spoilersHandlePosition,
-          p1->spoilersHandlePosition,
-          p2->spoilersHandlePosition,
-          p3->spoilersHandlePosition, tn, Tension);
+        d->currentAircraftData.leadingEdgeFlapsLeftPercent = SkyMath::interpolateLinear(p1->leadingEdgeFlapsLeftPercent, p2->leadingEdgeFlapsLeftPercent, tn);
+        d->currentAircraftData.leadingEdgeFlapsRightPercent = SkyMath::interpolateLinear(p1->leadingEdgeFlapsRightPercent, p2->leadingEdgeFlapsRightPercent, tn);
+        d->currentAircraftData.trailingEdgeFlapsLeftPercent = SkyMath::interpolateLinear(p1->trailingEdgeFlapsLeftPercent, p2->trailingEdgeFlapsLeftPercent, tn);
+        d->currentAircraftData.trailingEdgeFlapsRightPercent = SkyMath::interpolateLinear(p1->trailingEdgeFlapsRightPercent, p2->trailingEdgeFlapsRightPercent, tn);
+        d->currentAircraftData.spoilersHandlePosition = SkyMath::interpolateLinear(p1->spoilersHandlePosition, p2->spoilersHandlePosition, tn);
 
         // No interpolation for flaps position and gear
         d->currentAircraftData.flapsHandleIndex = p1->flapsHandleIndex;
         d->currentAircraftData.gearHandlePosition = p1->gearHandlePosition;
-
-        d->currentAircraftData.waterRudderHandlePosition = SkyMath::interpolateHermite(
-          p0->waterRudderHandlePosition,
-          p1->waterRudderHandlePosition,
-          p2->waterRudderHandlePosition,
-          p3->waterRudderHandlePosition, tn, Tension);
-        d->currentAircraftData.brakeLeftPosition = SkyMath::interpolateHermite(
-          p0->brakeLeftPosition,
-          p1->brakeLeftPosition,
-          p2->brakeLeftPosition,
-          p3->brakeLeftPosition, tn, Tension);
-        d->currentAircraftData.brakeRightPosition = SkyMath::interpolateHermite(
-          p0->brakeRightPosition,
-          p1->brakeRightPosition,
-          p2->brakeRightPosition,
-          p3->brakeRightPosition, tn, Tension);
+        d->currentAircraftData.waterRudderHandlePosition = SkyMath::interpolateLinear(p1->waterRudderHandlePosition, p2->waterRudderHandlePosition, tn);
+        d->currentAircraftData.brakeLeftPosition = SkyMath::interpolateLinear(p1->brakeLeftPosition, p2->brakeLeftPosition, tn);
+        d->currentAircraftData.brakeRightPosition = SkyMath::interpolateLinear(p1->brakeRightPosition, p2->brakeRightPosition, tn);
 
         d->currentAircraftData.timestamp = timestamp;
 

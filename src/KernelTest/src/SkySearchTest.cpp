@@ -91,7 +91,10 @@ void SkySearchTest::binaryIntervalSearch()
     QFETCH(int, high);
     QFETCH(int, expected);
 
+    // Exercise
     int result = SkySearch::binaryIntervalSearch(m_aircraftData, timestamp, low, high);
+
+    // Verify
     QCOMPARE(result, expected);
 }
 
@@ -124,7 +127,10 @@ void SkySearchTest::linearIntervalSearch()
     QFETCH(int, start);
     QFETCH(int, expected);
 
+    // Exercise
     int result = SkySearch::linearIntervalSearch(m_aircraftData, timestamp, start);
+
+    // Verify
     QCOMPARE(result, expected);
 }
 
