@@ -13,11 +13,15 @@ set(PROJECT_SOURCES
     src/SimConnectAircraftInfo.cpp
     src/SimConnectAircraftInfo.h
     src/SkyConnectIntf.h
-    src/SkyConnectImpl.cpp
-    src/SkyConnectImpl.h
     src/SimConnectDataDefinition.h
     src/Connect.h
-    )
+   )
+
+if (WIN32)
+    list(APPEND PROJECT_SOURCES
+        src/SkyConnectImpl.cpp
+        src/SkyConnectImpl.h)
+endif()
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_library(SkyDolly SHARED
