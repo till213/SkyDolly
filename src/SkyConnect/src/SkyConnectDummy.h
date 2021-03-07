@@ -22,28 +22,24 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SKYCONNECTIMPL_H
-#define SKYCONNECTIMPL_H
+#ifndef SKYCONNECTDUMMY_H
+#define SKYCONNECTDUMMY_H
 
 #include <QObject>
 
-#include <windows.h>
-#include <SimConnect.h>
-
-#include "../../Kernel/src/SampleRate.h"
 #include "SkyConnectIntf.h"
 #include "Connect.h"
 
 struct AircraftData;
 class Aircraft;
-class SkyConnectPrivate;
+class SkyConnectDummyPrivate;
 
-class SkyConnectImpl : public SkyConnectIntf
+class SkyConnectDummy : public SkyConnectIntf
 {
     Q_OBJECT
 public:
-    SkyConnectImpl(QObject *parent = nullptr);
-    virtual ~SkyConnectImpl();
+    SkyConnectDummy(QObject *parent = nullptr);
+    virtual ~SkyConnectDummy();
 
     virtual void startDataSample() override;
     virtual void stopDataSample() override;
@@ -74,33 +70,8 @@ public:
     virtual const AircraftData &getCurrentAircraftData() const override;
 
 private:
-    SkyConnectPrivate *d;
+    SkyConnectDummyPrivate *d;
 
-    bool open();
-    bool close();
-    bool isConnected() const;
-
-    void frenchConnection();
-    void setupRequestData();
-    void setupInitialPosition();
-    void setSimulationFrozen(bool enable);
-    bool isSimulationFrozen() const;
-    bool sendAircraftPosition() const;
-    void replay();
-    void stopAll();
-    void updateCurrentTimestamp();
-    void setState(Connect::State state);
-    void stopRecording();
-    void stopPlayback();
-    bool hasRecordingStarted() const;
-
-    static void CALLBACK dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context);
-
-private slots:
-    void processEvents();
-
-    void handleRecordSampleRateChanged(double sampleRateValue);
-    void handlePlaybackSampleRateChanged(double sampleRateValue);
 };
 
-#endif // SKYCONNECTIMPL_H
+#endif // SKYCONNECTDUMMY_H

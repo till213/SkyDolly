@@ -22,17 +22,28 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#ifdef WIN32
 #include "SkyConnectImpl.h"
+#else
+#include "SkyConnectDummy.h"
+#endif
 #include "SkyManager.h"
 
 class SkyManagerPrivate
 {
 public:
 
+#ifdef WIN32
     SkyManagerPrivate()
         : currentSkyConnect(new SkyConnectImpl())
     {
     }
+#else
+    SkyManagerPrivate()
+        : currentSkyConnect(new SkyConnectDummy())
+    {
+    }
+#endif
 
     ~SkyManagerPrivate()
     {}

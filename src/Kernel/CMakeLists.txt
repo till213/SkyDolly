@@ -1,6 +1,6 @@
 add_definitions(-DKERNEL_EXPORT)
 
-set(PROJECT_SOURCES
+set(KERNEL_SOURCES
     src/KernelLib.h
     src/Aircraft.cpp
     src/Aircraft.h
@@ -26,11 +26,11 @@ set(PROJECT_SOURCES
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_library(Kernel SHARED
-        ${PROJECT_SOURCES}
+        ${KERNEL_SOURCES}
     )
 else()
     add_library(Kernel SHARED
-        ${PROJECT_SOURCES}
+        ${KERNEL_SOURCES}
     )
 endif()
 
