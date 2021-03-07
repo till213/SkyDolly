@@ -25,6 +25,8 @@
 #include <windows.h>
 #include <SimConnect.h>
 
+#include <QTimer>
+#include <QElapsedTimer>
 #include <QtGlobal>
 
 #include "../../Kernel/src/Settings.h"
