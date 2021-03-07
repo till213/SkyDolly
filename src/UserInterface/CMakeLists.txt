@@ -1,6 +1,6 @@
 add_definitions(-DUSERINTERFACE_EXPORT)
 
-set(PROJECT_SOURCES
+set(USERINTERFACE_SOURCES
     src/Widgets/ActionButton.cpp
     src/Widgets/ActionButton.h
     src/UserInterfaceLib.h
@@ -22,14 +22,20 @@ qt5_add_resources(PROJECT_SOURCES res/SkyDolly.qrc)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_library(UserInterface SHARED
-        ${PROJECT_SOURCES}
+        ${USERINTERFACE_SOURCES}
     )
 else()
     add_library(UserInterface SHARED
-        ${PROJECT_SOURCES}
+        ${USERINTERFACE_SOURCES}
     )
 endif()
 
-target_link_libraries(UserInterface PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Kernel SkyConnect)
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+    target_link_libraries(UserInterface PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Kernel SkyConnect -lc++)
+else()
+    target_link_libraries(UserInterface PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Kernel SkyConnect)
+endif()
+
+
 set_target_properties(UserInterface PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(UserInterface PROPERTIES SOVERSION 1)

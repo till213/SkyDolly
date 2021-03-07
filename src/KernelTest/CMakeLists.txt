@@ -33,3 +33,11 @@ add_test(NAME SkySearchTest COMMAND SkySearchTest)
 target_link_libraries(SkyMathTest PRIVATE Qt${QT_VERSION_MAJOR}::Test Kernel)
 target_link_libraries(SkySearchTest PRIVATE Qt${QT_VERSION_MAJOR}::Test Kernel)
 
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+    target_link_libraries(SkyMathTest PRIVATE Qt${QT_VERSION_MAJOR}::Test Kernel -lc++)
+    target_link_libraries(SkySearchTest PRIVATE Qt${QT_VERSION_MAJOR}::Test Kernel -lc++)
+else()
+    target_link_libraries(SkyMathTest PRIVATE Qt${QT_VERSION_MAJOR}::Test Kernel)
+    target_link_libraries(SkySearchTest PRIVATE Qt${QT_VERSION_MAJOR}::Test Kernel)
+endif()
+

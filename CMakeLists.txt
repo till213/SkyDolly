@@ -37,7 +37,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/doc)
 
 set(TS_FILES i18n/SkyDolly_de_DE.ts)
 
-set(PROJECT_SOURCES
+set(SKYDOLLY_SOURCES
     src/main.cpp
     ${TS_FILES}
 )
@@ -60,14 +60,14 @@ endif()
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(SkyDolly
         WIN32
-        ${PROJECT_SOURCES}
+        ${SKYDOLLY_SOURCES}
         ${RESOURCES}
     )
     qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR}/src ${TS_FILES})
 else()
     add_executable(SkyDolly
         WIN32
-        ${PROJECT_SOURCES}
+        ${SKYDOLLY_SOURCES}
         ${RESOURCES}
     )
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR}/src ${TS_FILES})
@@ -77,7 +77,11 @@ target_include_directories(SkyDolly PUBLIC
                           "${PROJECT_SOURCE_DIR}/src/SkyConnect/src"
                           )
 
-target_link_libraries(SkyDolly PRIVATE Qt${QT_VERSION_MAJOR}::Widgets UserInterface Kernel)
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+    target_link_libraries(SkyDolly PRIVATE Qt${QT_VERSION_MAJOR}::Widgets UserInterface Kernel -lc++)
+else()
+    target_link_libraries(SkyDolly PRIVATE Qt${QT_VERSION_MAJOR}::Widgets UserInterface Kernel)
+endif()
 
 message(STATUS OUTPUT_NAME=${PROJECT_NAME})
 
