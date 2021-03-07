@@ -116,11 +116,17 @@ void MainWindow::frenchConnection()
             this, &MainWindow::handlePlayPositionChanged);
     connect(m_skyConnect, &SkyConnectIntf::stateChanged,
             this, &MainWindow::updateUi);
-
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+    connect(m_playbackSpeedButtonGroup, QOverload<int>::of(&QButtonGroup::buttonClicked),
+            this, &MainWindow::updateControlUi);
+    connect(m_playbackSpeedButtonGroup, QOverload<int>::of(&QButtonGroup::buttonClicked),
+            this, &MainWindow::handlePlaybackSpeedSelected);
+#else
     connect(m_playbackSpeedButtonGroup, &QButtonGroup::idClicked,
             this, &MainWindow::updateControlUi);
     connect(m_playbackSpeedButtonGroup, &QButtonGroup::idClicked,
             this, &MainWindow::handlePlaybackSpeedSelected);
+#endif
 
     // Actions
     connect(ui->recordAction, &QAction::triggered,
