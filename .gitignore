@@ -27,7 +27,6 @@ qrc_*.cpp
 ui_*.h
 *.qmlc
 *.jsc
-Makefile*
 *build-*
 *.qm
 *.prl
@@ -55,3 +54,4 @@ compile_commands.json
 
 # Generated files
 res/SkyDolly.rc
+

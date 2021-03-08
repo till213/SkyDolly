@@ -18,7 +18,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Debug output
-if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     add_definitions(-DDEBUG)
 endif()
 
@@ -36,12 +36,6 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
 add_subdirectory(${CMAKE_SOURCE_DIR}/doc)
 
 set(TS_FILES i18n/SkyDolly_de_DE.ts)
-
-set(SKYDOLLY_SOURCES
-    src/main.cpp
-    ${TS_FILES}
-)
-
 set(OTHER_SOURCES
     README.md
     CHANGELOG.md
@@ -49,6 +43,13 @@ set(OTHER_SOURCES
     CODE_OF_CONDUCT.md
 )
 
+set(SKYDOLLY_SOURCES
+    src/main.cpp
+    ${TS_FILES}
+    ${OTHER_SOURCES}
+)
+
+# Resource file (*.rc)
 if (WIN32)
     configure_file(${PROJECT_SOURCE_DIR}/res/SkyDolly.rc.in
                    ${PROJECT_SOURCE_DIR}/res/SkyDolly.rc @ONLY)
