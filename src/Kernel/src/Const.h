@@ -27,9 +27,14 @@
 
 #include "KernelLib.h"
 
+/*!
+ * Constants, mostly related to simulation variable names.
+ */
 namespace Const
 {
+    /*! Separator character for CSV import & export */
     constexpr char Sep = '\t';
+    /*! Newline character for CSV import & export */
     constexpr char Ln = '\n';
 
     // Simulation variables (SimConnect)
