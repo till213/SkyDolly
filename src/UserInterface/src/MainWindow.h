@@ -41,6 +41,7 @@ class QTime;
 class AboutDialog;
 class SettingsDialog;
 class SimulationVariablesDialog;
+class MainWindowPrivate;
 
 class USERINTERFACE_API MainWindow : public QMainWindow
 {
@@ -52,13 +53,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    SkyConnectIntf *m_skyConnect;
-    Connect::State m_previousState;
-    QButtonGroup *m_playbackSpeedButtonGroup;
-    AboutDialog *m_aboutDialog;
-    SettingsDialog *m_settingsDialog;
-    SimulationVariablesDialog *m_simulationVariablesDialog;
-    double m_lastCustomPlaybackSpeed;
+    MainWindowPrivate *d;
 
     void frenchConnection();
     void initUi();
