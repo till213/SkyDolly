@@ -50,6 +50,7 @@ public:
 
     virtual void startReplay(bool fromStart) override;
     virtual void stopReplay() override;
+    virtual void stop() override;
 
     virtual void setPaused(bool enabled) override;
     virtual bool isPaused() const override;

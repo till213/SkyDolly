@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>761</width>
-    <height>232</height>
+    <width>891</width>
+    <height>244</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -210,8 +210,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>761</width>
-     <height>21</height>
+     <width>891</width>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -245,6 +245,7 @@
      <string>&amp;Playback</string>
     </property>
     <addaction name="recordAction"/>
+    <addaction name="stopAction"/>
     <addaction name="playAction"/>
     <addaction name="pauseAction"/>
     <addaction name="separator"/>
@@ -374,6 +375,14 @@
    </property>
    <property name="text">
     <string>Stay On &amp;Top</string>
+   </property>
+  </action>
+  <action name="stopAction">
+   <property name="text">
+    <string>&amp;Stop</string>
+   </property>
+   <property name="shortcut">
+    <string>Esc</string>
    </property>
   </action>
  </widget>

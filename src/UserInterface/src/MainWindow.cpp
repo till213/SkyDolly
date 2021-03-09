@@ -131,6 +131,8 @@ void MainWindow::frenchConnection()
     // Actions
     connect(ui->recordAction, &QAction::triggered,
             this, &MainWindow::toggleRecord);
+    connect(ui->stopAction, &QAction::triggered,
+            this, &MainWindow::stop);
     connect(ui->playAction, &QAction::triggered,
             this, &MainWindow::togglePlay);
     connect(ui->pauseAction, &QAction::triggered,
@@ -210,21 +212,25 @@ void MainWindow::initControlUi()
     skipBackwardButton->setAction(ui->backwardAction);
     ui->controlButtonLayout->insertWidget(2, skipBackwardButton);
 
+    ActionButton *stopButton = new ActionButton(this);
+    stopButton->setAction(ui->stopAction);
+    ui->controlButtonLayout->insertWidget(3, stopButton);
+
     ActionButton *pauseButton = new ActionButton(this);
     pauseButton->setAction(ui->pauseAction);
-    ui->controlButtonLayout->insertWidget(3, pauseButton);
+    ui->controlButtonLayout->insertWidget(4, pauseButton);
 
     ActionButton *playButton = new ActionButton(this);
     playButton->setAction(ui->playAction);
-    ui->controlButtonLayout->insertWidget(4, playButton);
+    ui->controlButtonLayout->insertWidget(5, playButton);
 
     ActionButton *skipForwardButton = new ActionButton(this);
     skipForwardButton->setAction(ui->forwardAction);
-    ui->controlButtonLayout->insertWidget(5, skipForwardButton);
+    ui->controlButtonLayout->insertWidget(6, skipForwardButton);
 
     ActionButton *skipToEndButton = new ActionButton(this);
     skipToEndButton->setAction(ui->skipToEndAction);
-    ui->controlButtonLayout->insertWidget(6, skipToEndButton);
+    ui->controlButtonLayout->insertWidget(7, skipToEndButton);
 }
 
 // PRIVATE SLOTS
@@ -288,6 +294,7 @@ void MainWindow::updateControlUi()
         // Actions
         ui->recordAction->setEnabled(true);
         ui->recordAction->setChecked(false);
+        ui->stopAction->setEnabled(false);
         ui->pauseAction->setEnabled(false);
         ui->pauseAction->setChecked(false);
         ui->playAction->setEnabled(hasRecording);
@@ -305,6 +312,7 @@ void MainWindow::updateControlUi()
         // Actions
         ui->recordAction->setEnabled(true);
         ui->recordAction->setChecked(true);
+        ui->stopAction->setEnabled(true);
         ui->pauseAction->setEnabled(true);
         ui->pauseAction->setChecked(false);
         ui->playAction->setEnabled(false);
@@ -328,6 +336,7 @@ void MainWindow::updateControlUi()
         // Actions
         ui->recordAction->setEnabled(false);
         ui->recordAction->setChecked(false);
+        ui->stopAction->setEnabled(true);
         ui->pauseAction->setEnabled(true);
         ui->pauseAction->setChecked(false);
         ui->playAction->setEnabled(true);
@@ -605,6 +614,11 @@ void MainWindow::togglePlay(bool enable)
     } else {
         m_skyConnect->stopReplay();
     }
+}
+
+void MainWindow::stop()
+{
+    m_skyConnect->stop();
 }
 
 void MainWindow::skipToBegin()

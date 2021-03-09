@@ -69,6 +69,11 @@ void SkyConnectDummy::stopReplay()
 
 }
 
+void SkyConnectDummy::stop()
+{
+
+}
+
 void SkyConnectDummy::setPaused(bool enabled)
 {
 
