@@ -52,6 +52,9 @@ compile_commands.json
 
 *_qmlcache.qrc
 
+# Cmake build directory
+build
+
 # Generated files
 res/SkyDolly.rc
 
