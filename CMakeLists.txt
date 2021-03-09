@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(SkyDolly LANGUAGES CXX VERSION 0.4.0 DESCRIPTION "Sky Dolly - The black sheep for your flight recordings")
+set(SKYDOLLY_DESCRIPTION "Sky Dolly - The black sheep for your flight recordings")
+project(SkyDolly LANGUAGES CXX VERSION 0.4.0 DESCRIPTION ${SKYDOLLY_DESCRIPTION})
 set(PROJECT_APPLICATION_NAME "Sky Dolly")
 set(PROJECT_ORGANISATION_NAME till213)
 
@@ -44,12 +45,7 @@ set(OTHER_SOURCES
     CHANGELOG.md
     BUILD.md
     CODE_OF_CONDUCT.md
-)
-
-set(SKYDOLLY_SOURCES
-    src/main.cpp
-    ${TS_FILES}
-    ${OTHER_SOURCES}
+    ${CMAKE_SOURCE_DIR}/res/Info.plist.in
 )
 
 # Resource file (*.rc)
@@ -61,30 +57,44 @@ if (WIN32)
     set(RESOURCES $<TARGET_OBJECTS:resources>)
 endif()
 
+if(WIN32)
+    set(SKYDOLLY_PLATFORM WIN32)
+elseif(APPLE)
+    set(SKYDOLLY_PLATFORM MACOSX_BUNDLE)
+endif()
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(SkyDolly
-        WIN32
-        ${SKYDOLLY_SOURCES}
+        ${SKYDOLLY_PLATFORM}
         ${RESOURCES}
     )
     qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR}/src ${TS_FILES})
 else()
     add_executable(SkyDolly
-        WIN32
-        ${SKYDOLLY_SOURCES}
+        ${SKYDOLLY_PLATFORM}
         ${RESOURCES}
     )
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR}/src ${TS_FILES})
 endif()
 
+set(SKYDOLLY_LIBS
+    Qt${QT_VERSION_MAJOR}::Widgets UserInterface Kernel
+)
+if (APPLE)
+    list(APPEND SKYDOLLY_LIBS -lc++)
+    set_target_properties(SkyDolly PROPERTIES
+                          MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/res/Info.plist.in")
+endif()
+
+target_sources(SkyDolly
+    PRIVATE
+        src/main.cpp
+        ${TS_FILES}
+        ${OTHER_SOURCES}
+)
+
 target_include_directories(SkyDolly PUBLIC
                           "${PROJECT_SOURCE_DIR}/src/SkyConnect/src"
                           )
-
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-    target_link_libraries(SkyDolly PRIVATE Qt${QT_VERSION_MAJOR}::Widgets UserInterface Kernel -lc++)
-else()
-    target_link_libraries(SkyDolly PRIVATE Qt${QT_VERSION_MAJOR}::Widgets UserInterface Kernel)
-endif()
-
+target_link_libraries(SkyDolly PRIVATE ${SKYDOLLY_LIBS})
 message(STATUS OUTPUT_NAME=${PROJECT_NAME})
