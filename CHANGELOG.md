@@ -59,7 +59,8 @@
 
 - Additional simulation variables: propeller RPM and mixture lever positions
 - Reduce required memory for sample points by over 100% (96 bytes vs previous 200 bytes per sampled data point), by using integer data types instead of double values for selected simulation variables
+- Pause is enabled after CSV data import
 
 ### Bug Fixes
 
-- 
+- Properly reset play position to begin after importing CSV data
