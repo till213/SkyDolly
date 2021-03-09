@@ -42,6 +42,7 @@ public:
 
     virtual void startReplay(bool fromStart) = 0;
     virtual void stopReplay() = 0;
+    virtual void stop() = 0;
 
     virtual void setPaused(bool enabled) = 0;
     virtual bool isPaused() const = 0;

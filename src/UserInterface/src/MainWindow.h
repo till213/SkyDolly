@@ -96,6 +96,7 @@ private slots:
     void toggleRecord(bool checked);
     void togglePause(bool checked);
     void togglePlay(bool checked);
+    void stop();
 
     // Transport
     void skipToBegin();

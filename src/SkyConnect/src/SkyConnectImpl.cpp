@@ -168,6 +168,11 @@ void SkyConnectImpl::stopReplay()
     stopPlayback();
 }
 
+void SkyConnectImpl::stop()
+{
+    stopAll();
+}
+
 void SkyConnectImpl::setPaused(bool enabled)
 {
     Connect::State newState;
