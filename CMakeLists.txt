@@ -4,6 +4,9 @@ project(SkyDolly LANGUAGES CXX VERSION 0.4.0 DESCRIPTION "Sky Dolly - The black 
 set(PROJECT_APPLICATION_NAME "Sky Dolly")
 set(PROJECT_ORGANISATION_NAME till213)
 
+# Enables testing: 'ctest' needs to be run in the "build" directory
+include(CTest)
+
 set(CMAKE_SHARED_LIBRARY_PREFIX )
 
 set(CMAKE_CXX_STANDARD 17)
@@ -85,4 +88,3 @@ else()
 endif()
 
 message(STATUS OUTPUT_NAME=${PROJECT_NAME})
-

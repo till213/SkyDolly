@@ -26,10 +26,6 @@ else()
     )
 endif()
 
-enable_testing(true)
-add_test(NAME SkyMathTest COMMAND SkyMathTest)
-add_test(NAME SkySearchTest COMMAND SkySearchTest)
-
 target_link_libraries(SkyMathTest PRIVATE Qt${QT_VERSION_MAJOR}::Test Kernel)
 target_link_libraries(SkySearchTest PRIVATE Qt${QT_VERSION_MAJOR}::Test Kernel)
 
@@ -40,4 +36,8 @@ else()
     target_link_libraries(SkyMathTest PRIVATE Qt${QT_VERSION_MAJOR}::Test Kernel)
     target_link_libraries(SkySearchTest PRIVATE Qt${QT_VERSION_MAJOR}::Test Kernel)
 endif()
+
+add_test(NAME SkyMathTest COMMAND SkyMathTest)
+add_test(NAME SkySearchTest COMMAND SkySearchTest)
+
 

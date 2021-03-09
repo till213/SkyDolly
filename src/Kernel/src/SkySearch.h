@@ -58,13 +58,19 @@ namespace SkySearch {
         int index;
         if (aircraftData.size() == 0) {
             index = InvalidIndex;
-        } else if (aircraftData.at(0).timestamp >= timestamp) {
+        } else if (aircraftData.at(lowIndex).timestamp > timestamp) {
+            index = InvalidIndex;
+        } else if (aircraftData.at(highIndex).timestamp < timestamp) {
+            index = InvalidIndex;
+        } else if (aircraftData.at(0).timestamp == timestamp) {
             index = 0;
-        } else if (aircraftData.constLast().timestamp <= timestamp) {
+        } else if (aircraftData.constLast().timestamp == timestamp) {
             index = aircraftData.size() - 1;
         } else {
 
-            int low = lowIndex, high = highIndex;
+            index = InvalidIndex;
+            int low = lowIndex;
+            int high = highIndex;
             while (low <= high)
             {
                 int mid = (low + high) / 2;
@@ -93,22 +99,31 @@ namespace SkySearch {
 
     inline int linearIntervalSearch(const QVector<AircraftData> &aircraftData, qint64 timestamp, int startIndex)
     {
-        int index = startIndex;
-        int size = aircraftData.size();
-        // Linear search: increment the current index, until we find a position having a
-        // timestamp > the given timestamp
-        bool found = false;
-        while (!found && index < size) {
-            if (index < (size - 1)) {
-                if (aircraftData.at(index + 1).timestamp > timestamp) {
-                    // The next index has a larger timestamp, so this index is the one we are looking for
-                    found = true;
+        int index;
+        if (aircraftData.size() == 0) {
+            index = InvalidIndex;
+        } else if (aircraftData.at(startIndex).timestamp > timestamp) {
+            index = InvalidIndex;
+        } else if (aircraftData.constLast().timestamp < timestamp) {
+            index = InvalidIndex;
+        } else {
+            index = startIndex;
+            int size = aircraftData.size();
+            // Linear search: increment the current index, until we find a position having a
+            // timestamp > the given timestamp
+            bool found = false;
+            while (!found && index < size) {
+                if (index < (size - 1)) {
+                    if (aircraftData.at(index + 1).timestamp > timestamp) {
+                        // The next index has a larger timestamp, so this index is the one we are looking for
+                        found = true;
+                    } else {
+                        ++index;
+                    }
                 } else {
-                    ++index;
+                    // Reached the last index
+                    found = true;
                 }
-            } else {
-                // Reached the last index
-                found = true;
             }
         }
 
