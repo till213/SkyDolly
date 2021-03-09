@@ -1,49 +1,48 @@
 add_definitions(-DKERNEL_EXPORT)
 
-set(KERNEL_SOURCES
-    src/KernelLib.h
-    src/Aircraft.cpp
-    src/Aircraft.h
-    src/AircraftData.cpp
-    src/AircraftData.h
-    src/Const.cpp
-    src/Const.h
-    src/SampleRate.h
-    src/SkyMath.h
-    src/SkySearch.h
-    src/AircraftInfo.cpp
-    src/AircraftInfo.h
-    src/VersionConfig.h.in
-    src/Version.cpp
-    src/Version.h
-    src/Settings.cpp
-    src/Settings.h
-    src/Export/CSVExport.cpp
-    src/Export/CSVExport.h
-    src/Import/CSVImport.cpp
-    src/Import/CSVImport.h
-)
-
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(Kernel SHARED
-        ${KERNEL_SOURCES}
-    )
+    qt_add_library(Kernel SHARED "")
 else()
-    add_library(Kernel SHARED
-        ${KERNEL_SOURCES}
-    )
+    add_library(Kernel SHARED "")
 endif()
 
 configure_file(src/VersionConfig.h.in VersionConfig.h)
 
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-    target_link_libraries(Kernel PRIVATE Qt${QT_VERSION_MAJOR}::Core -lc++)
-else ()
-    target_link_libraries(Kernel PRIVATE Qt${QT_VERSION_MAJOR}::Core)
-endif ()
+target_sources(Kernel
+    PRIVATE
+        src/KernelLib.h
+        src/Aircraft.cpp
+        src/Aircraft.h
+        src/AircraftData.cpp
+        src/AircraftData.h
+        src/Const.cpp
+        src/Const.h
+        src/SampleRate.h
+        src/SkyMath.h
+        src/SkySearch.h
+        src/AircraftInfo.cpp
+        src/AircraftInfo.h
+        src/VersionConfig.h.in
+        src/Version.cpp
+        src/Version.h
+        src/Settings.cpp
+        src/Settings.h
+        src/Export/CSVExport.cpp
+        src/Export/CSVExport.h
+        src/Import/CSVImport.cpp
+        src/Import/CSVImport.h
+)
 
+set(KERNEL_LIBS
+    Qt${QT_VERSION_MAJOR}::Core
+)
+if (APPLE)
+    list(APPEND KERNEL_LIBS -lc++)
+endif()
+
+target_link_libraries(Kernel PRIVATE ${KERNEL_LIBS})
 set_target_properties(Kernel PROPERTIES VERSION ${PROJECT_VERSION})
-set_target_properties(Kernel PROPERTIES SOVERSION 1)
+set_target_properties(Kernel PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
 
 target_include_directories(Kernel PUBLIC
     "${CMAKE_CURRENT_BINARY_DIR}"

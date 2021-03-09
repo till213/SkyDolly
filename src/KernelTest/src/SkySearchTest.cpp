@@ -74,11 +74,11 @@ void SkySearchTest::binaryIntervalSearch_data()
     QTest::newRow("Index for t4") << t3 << 0 << m_aircraftData.size() - 1 << 3;
 
     QTest::newRow("Middle")       << (t3 - t0) / 2 << 0 << m_aircraftData.size() - 1 << 1;
-    QTest::newRow("After end")    << t3 + 1        << 0 << m_aircraftData.size() - 1 << 3;
-    QTest::newRow("Before start") << t0 - 1        << 0 << m_aircraftData.size() - 1 << 0;
+    QTest::newRow("After end")    << t3 + 1        << 0 << m_aircraftData.size() - 1 << SkySearch::InvalidIndex;
+    QTest::newRow("Before start") << t0 - 1        << 0 << m_aircraftData.size() - 1 << SkySearch::InvalidIndex;
 
     QTest::newRow("Start interval 1")   << t1 << 0 << 2 << 1;
-    QTest::newRow("Start interval 2")   << t3 << m_aircraftData.size() - 1 << 2 << 3;
+    QTest::newRow("Start interval 2")   << t3 << m_aircraftData.size() - 2 << m_aircraftData.size() -1 << 3;
     QTest::newRow("Outside interval 1") << t1 << 2 << 3 << SkySearch::InvalidIndex;
     QTest::newRow("Outside interval 2") << t3 << 0 << 1 << SkySearch::InvalidIndex;
 }
@@ -111,13 +111,13 @@ void SkySearchTest::linearIntervalSearch_data()
     QTest::newRow("Index for t4") << t3 << 0 << 3;
 
     QTest::newRow("Middle")       << (t3 - t0) / 2 << 0 << 1;
-    QTest::newRow("After end")    << t3 + 1        << 0 << 3;
-    QTest::newRow("Before start") << t0 - 1        << 0 << 0;
+    QTest::newRow("After end")    << t3 + 1        << 0 << SkySearch::InvalidIndex;
+    QTest::newRow("Before start") << t0 - 1        << 0 << SkySearch::InvalidIndex;
 
-    QTest::newRow("Start interval 1")   << t1  << 1 << 1;
-    QTest::newRow("Start interval 2")   << t3  << 2 << 3;
-    QTest::newRow("Outside interval 1") << t1  << 2 << SkySearch::InvalidIndex;
-    QTest::newRow("Outside interval 2") << t3  << 3 << SkySearch::InvalidIndex;
+    QTest::newRow("Start interval 1")   << t1 << 1 << 1;
+    QTest::newRow("Start interval 2")   << t3 << 2 << 3;
+    QTest::newRow("Outside interval 1") << t1 << 2 << SkySearch::InvalidIndex;
+    QTest::newRow("Start interval 3")   << t3 << 3 << 3;
 }
 
 void SkySearchTest::linearIntervalSearch()
