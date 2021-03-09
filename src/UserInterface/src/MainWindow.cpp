@@ -631,4 +631,5 @@ void MainWindow::handleLastWindowClosed()
 {
     // Destroying the settings singleton also persists the settings
     Settings::destroyInstance();
+    SkyManager::destroyInstance();
 }
