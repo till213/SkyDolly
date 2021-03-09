@@ -1,43 +1,33 @@
-set(SKYMATH_SOURCES
+find_package(Qt5Test REQUIRED)
+
+if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    qt_add_executable(SkyMathTest "")
+    qt_add_executable(SkySearchTest "")
+else()
+    add_executable(SkyMathTest "")
+    add_executable(SkySearchTest "")
+endif()
+
+target_sources(SkyMathTest
+    PRIVATE
     src/SkyMathTest.cpp
     src/SkyMathTest.h
 )
-
-set(SKYSEARCH_SOURCES
+target_sources(SkySearchTest
+    PRIVATE
     src/SkySearchTest.cpp
     src/SkySearchTest.h
 )
 
-find_package(Qt5Test REQUIRED)
-
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(SkyMathTest
-        ${SKYMATH_SOURCES}
-    )
-    qt_add_executable(SkySearchTest
-        ${SKYSEARCH_SOURCES}
-    )
-else()
-    add_executable(SkyMathTest
-        ${SKYMATH_SOURCES}
-    )
-    add_executable(SkySearchTest
-        ${SKYSEARCH_SOURCES}
-    )
+set(KERNELTEST_LIBS
+    Qt${QT_VERSION_MAJOR}::Test Kernel
+)
+if (APPLE)
+    list(APPEND KERNELTEST_LIBS -lc++)
 endif()
 
-enable_testing(true)
+target_link_libraries(SkyMathTest PRIVATE ${KERNELTEST_LIBS})
+target_link_libraries(SkySearchTest PRIVATE ${KERNELTEST_LIBS})
+
 add_test(NAME SkyMathTest COMMAND SkyMathTest)
 add_test(NAME SkySearchTest COMMAND SkySearchTest)
-
-target_link_libraries(SkyMathTest PRIVATE Qt${QT_VERSION_MAJOR}::Test Kernel)
-target_link_libraries(SkySearchTest PRIVATE Qt${QT_VERSION_MAJOR}::Test Kernel)
-
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-    target_link_libraries(SkyMathTest PRIVATE Qt${QT_VERSION_MAJOR}::Test Kernel -lc++)
-    target_link_libraries(SkySearchTest PRIVATE Qt${QT_VERSION_MAJOR}::Test Kernel -lc++)
-else()
-    target_link_libraries(SkyMathTest PRIVATE Qt${QT_VERSION_MAJOR}::Test Kernel)
-    target_link_libraries(SkySearchTest PRIVATE Qt${QT_VERSION_MAJOR}::Test Kernel)
-endif()
-

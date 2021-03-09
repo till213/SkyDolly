@@ -36,26 +36,26 @@ if (WIN32)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             $<TARGET_FILE:SimConnect>
             $<TARGET_FILE_DIR:SkyConnect>)
-    set(SKYCONNNECT_LIBS SimConnect)
 else()
     target_sources(SkyConnect
         PRIVATE
             src/SkyConnectDummy.cpp
             src/SkyConnectDummy.h
         )
-
-    set(SKYCONNNECT_LIBS)
-
 endif()
 
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-    list(APPEND SKYCONNNECT_LIBS -lc++)
+set(SKYCONNECT_LIBS
+    Qt${QT_VERSION_MAJOR}::Core Kernel
+)
+if (APPLE)
+    list(APPEND SKYCONNECT_LIBS -lc++)
+elseif (WIN32)
+    list(APPEND SKYCONNECT_LIBS SimConnect)
 endif()
 
-target_link_libraries(SkyConnect PRIVATE Qt${QT_VERSION_MAJOR}::Core ${SKYCONNNECT_LIBS} Kernel)
-
+target_link_libraries(SkyConnect PRIVATE ${SKYCONNECT_LIBS})
 set_target_properties(SkyConnect PROPERTIES VERSION ${PROJECT_VERSION})
-set_target_properties(SkyConnect PROPERTIES SOVERSION 1)
+set_target_properties(SkyConnect PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
 
 
 

@@ -216,10 +216,10 @@ void SkyMathTest::fromPercent_data()
 void SkyMathTest::fromPercent()
 {
     // Setup
-    QFETCH(double, p8);
+    QFETCH(double, p);
     QFETCH(quint8, expected);
 
-    quint8 result = SkyMath::fromPercent(p8);
+    quint8 result = SkyMath::fromPercent(p);
     QCOMPARE(result, expected);
 }
 
