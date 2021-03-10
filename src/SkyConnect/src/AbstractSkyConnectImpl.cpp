@@ -31,7 +31,6 @@ class AbstractSkyConnectImplPrivate
 public:
     AbstractSkyConnectImplPrivate()
         : state(Connect::State::Idle)
-
     {
     }
 
