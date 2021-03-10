@@ -53,6 +53,12 @@
 - Make sure that the first sampled data properly starst with a timestamp of 0, in order to properly interpolate the requested values
 - Properly close the connection when the server (flight simulator) quits
 
+## 0.3.1
+
+### Bug Fixes
+
+- CSV import: Properly handle platform-specific line endings 
+
 ## 0.4.0
 
 ### New Features
