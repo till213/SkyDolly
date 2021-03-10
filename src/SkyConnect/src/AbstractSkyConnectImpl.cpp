@@ -22,76 +22,47 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifdef WIN32
-#include "SkyConnectImpl.h"
-#else
-#include "SkyConnectDummy.h"
-#endif
-#include "SkyManager.h"
+#include "Connect.h"
+#include "SkyConnectIntf.h"
+#include "AbstractSkyConnectImpl.h"
 
-class SkyManagerPrivate
+class AbstractSkyConnectImplPrivate
 {
 public:
+    AbstractSkyConnectImplPrivate()
+        : state(Connect::State::Idle)
 
-#ifdef WIN32
-    SkyManagerPrivate()
-        : currentSkyConnect(new SkyConnectImpl())
     {
     }
-#else
-    SkyManagerPrivate()
-        : currentSkyConnect(new SkyConnectDummy())
-    {
-    }
-#endif
 
-    ~SkyManagerPrivate()
-    {
-        delete currentSkyConnect;
-    }
-
-    SkyConnectIntf *currentSkyConnect;
-
-    static SkyManager *instance;
+    Connect::State state;
 };
-
-SkyManager *SkyManagerPrivate::instance = nullptr;
 
 // PUBLIC
 
-SkyManager &SkyManager::getInstance()
+AbstractSkyConnectImpl::AbstractSkyConnectImpl(QObject *parent)
+    : SkyConnectIntf(parent),
+      d(new AbstractSkyConnectImplPrivate())
 {
-    if (SkyManagerPrivate::instance == nullptr) {
-        SkyManagerPrivate::instance = new SkyManager();
-    }
-    return *SkyManagerPrivate::instance;
 }
 
-void SkyManager::destroyInstance()
-{
-    if (SkyManagerPrivate::instance != nullptr) {
-        delete SkyManagerPrivate::instance;
-        SkyManagerPrivate::instance = nullptr;
-    }
-}
 
-SkyConnectIntf *SkyManager::currentSkyConnect() const
-{
-    return d->currentSkyConnect;
-}
-
-// PROTECTED
-
-SkyManager::~SkyManager()
+AbstractSkyConnectImpl::~AbstractSkyConnectImpl()
 {
     delete d;
 }
 
-// PRIVATE
-
-SkyManager::SkyManager()
-    : d(new SkyManagerPrivate())
+Connect::State AbstractSkyConnectImpl::getState() const
 {
+    return d->state;
 }
 
+// PROTECTED
 
+void AbstractSkyConnectImpl::setState(Connect::State state)
+{
+    if (d->state != state) {
+        d->state = state;
+        emit stateChanged(state);
+    }
+}

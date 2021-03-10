@@ -22,76 +22,31 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifdef WIN32
-#include "SkyConnectImpl.h"
-#else
-#include "SkyConnectDummy.h"
-#endif
-#include "SkyManager.h"
+#ifndef ABSTRACTSKYCONNECTIMPL_H
+#define ABSTRACTSKYCONNECTIMPL_H
 
-class SkyManagerPrivate
+#include <QObject>
+
+#include "SkyConnectIntf.h"
+#include "Connect.h"
+
+class AbstractSkyConnectImplPrivate;
+
+class AbstractSkyConnectImpl : public SkyConnectIntf
 {
+    Q_OBJECT
+
 public:
+    AbstractSkyConnectImpl(QObject *parent = nullptr);
+    virtual ~AbstractSkyConnectImpl();
 
-#ifdef WIN32
-    SkyManagerPrivate()
-        : currentSkyConnect(new SkyConnectImpl())
-    {
-    }
-#else
-    SkyManagerPrivate()
-        : currentSkyConnect(new SkyConnectDummy())
-    {
-    }
-#endif
+    virtual Connect::State getState() const override;
 
-    ~SkyManagerPrivate()
-    {
-        delete currentSkyConnect;
-    }
+protected:
+    void setState(Connect::State state);
 
-    SkyConnectIntf *currentSkyConnect;
-
-    static SkyManager *instance;
+private:
+    AbstractSkyConnectImplPrivate *d;
 };
 
-SkyManager *SkyManagerPrivate::instance = nullptr;
-
-// PUBLIC
-
-SkyManager &SkyManager::getInstance()
-{
-    if (SkyManagerPrivate::instance == nullptr) {
-        SkyManagerPrivate::instance = new SkyManager();
-    }
-    return *SkyManagerPrivate::instance;
-}
-
-void SkyManager::destroyInstance()
-{
-    if (SkyManagerPrivate::instance != nullptr) {
-        delete SkyManagerPrivate::instance;
-        SkyManagerPrivate::instance = nullptr;
-    }
-}
-
-SkyConnectIntf *SkyManager::currentSkyConnect() const
-{
-    return d->currentSkyConnect;
-}
-
-// PROTECTED
-
-SkyManager::~SkyManager()
-{
-    delete d;
-}
-
-// PRIVATE
-
-SkyManager::SkyManager()
-    : d(new SkyManagerPrivate())
-{
-}
-
-
+#endif // ABSTRACTSKYCONNECTIMPL_H

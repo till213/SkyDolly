@@ -13,6 +13,8 @@ target_sources(SkyConnect
         src/SkyManager.h
         src/SkyConnectIntf.h
         src/Connect.h
+        src/AbstractSkyConnectImpl.cpp
+        src/AbstractSkyConnectImpl.h
 )
 
 if (WIN32)
