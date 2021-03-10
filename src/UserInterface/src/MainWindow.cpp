@@ -110,13 +110,9 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    // SkyConnect might still be recording, and hence a state changed
-    // signal would be emitted upon destruction, upon which an attempt to
-    // update the UI - which is deleted at this point in time already - would
-    // be made, and fail with invalid address access
-    d->skyConnect->disconnect();
-    // And while we're at it we also disconnect all signals from the aircraft
-    d->skyConnect->getAircraft().disconnect();
+    // The SkyConnect instances have been deleted by the SkyManager (singleton)
+    // already at this point; no need to disconnect from their "stateChanged"
+    // signal
     delete d;
     delete ui;
 }
