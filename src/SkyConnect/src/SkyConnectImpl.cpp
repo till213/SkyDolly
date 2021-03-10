@@ -66,7 +66,6 @@ class SkyConnectPrivate
 public:
     SkyConnectPrivate()
         : simConnectHandle(nullptr),
-          state(Connect::State::Idle),
           currentTimestamp(0),
           recordSampleRate(Settings::getInstance().getRecordSampleRateValue()),
           recordIntervalMSec(static_cast<int>(1.0 / recordSampleRate * 1000.0)),
@@ -79,7 +78,6 @@ public:
     }
 
     HANDLE simConnectHandle;
-    Connect::State state;
     QTimer timer;
     qint64 currentTimestamp;
     AircraftData currentAircraftData;
@@ -97,7 +95,7 @@ public:
 // PUBLIC
 
 SkyConnectImpl::SkyConnectImpl(QObject *parent)
-    : SkyConnectIntf(parent),
+    : AbstractSkyConnectImpl(parent),
       d(new SkyConnectPrivate())
 {
     frenchConnection();
@@ -177,7 +175,7 @@ void SkyConnectImpl::setPaused(bool enabled)
 {
     Connect::State newState;
     if (enabled) {
-        switch (d->state) {
+        switch (getState()) {
         case Connect::Recording:
             newState = Connect::RecordingPaused;
             // Store the elapsed recording time...
@@ -198,10 +196,10 @@ void SkyConnectImpl::setPaused(bool enabled)
             break;
          default:
             // No state change
-            newState = d->state;
+            newState = getState();
         }
     } else {
-        switch (d->state) {
+        switch (getState()) {
         case Connect::RecordingPaused:
             newState = Connect::Recording;
             if (hasRecordingStarted()) {
@@ -216,14 +214,14 @@ void SkyConnectImpl::setPaused(bool enabled)
             break;
          default:
             // No state change
-            newState = d->state;
+            newState = getState();
         }
     }
     setState(newState);
 }
 
 bool SkyConnectImpl::isPaused() const {
-    return d->state == Connect::RecordingPaused || d->state == Connect::PlaybackPaused;
+    return getState() == Connect::RecordingPaused || getState() == Connect::PlaybackPaused;
 }
 
 void SkyConnectImpl::skipToBegin()
@@ -279,19 +277,14 @@ double SkyConnectImpl::getTimeScale() const
     return d->timeScale;
 }
 
-Connect::State SkyConnectImpl::getState() const
-{
-    return d->state;
-}
-
 void SkyConnectImpl::setCurrentTimestamp(qint64 timestamp)
 {
-    if (d->state != Connect::State::Recording) {
+    if (getState() != Connect::State::Recording) {
         d->currentTimestamp = timestamp;
         d->elapsedTime = d->currentTimestamp;
         if (sendAircraftPosition()) {
             emit aircraftDataSent(d->currentTimestamp);
-            if (d->elapsedTimer.isValid() && d->state == Connect::State::Playback) {
+            if (d->elapsedTimer.isValid() && getState() == Connect::State::Playback) {
                 // Restart the elapsed timer, counting onwards from the newly
                 // set timestamp
                 d->elapsedTimer.start();
@@ -472,14 +465,6 @@ void SkyConnectImpl::updateCurrentTimestamp()
     }
 }
 
-void SkyConnectImpl::setState(Connect::State state)
-{
-    if (d->state != state) {
-        d->state = state;
-        emit stateChanged(state);
-    }
-}
-
 void SkyConnectImpl::stopRecording()
 {
     // Get aircraft position every simulated frame
@@ -540,7 +525,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
 #ifdef DEBUG
                 qDebug("SIMCONNECT_RECV_ID_EVENT: CRASHED event");
 #endif
-                switch (skyConnect->d->state) {
+                switch (skyConnect->getState()) {
                 case Connect::State::Recording:
                     skyConnect->stopDataSample();
                     break;
@@ -583,7 +568,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
             {
                 case AircraftPositionRequest:
                 {
-                    if (skyConnect->d->state == Connect::State::Recording) {
+                    if (skyConnect->getState() == Connect::State::Recording) {
                         if (!skyConnect->d->elapsedTimer.isValid()) {
                             // Start the elapsed timer with the arrival of the first sample data
                             skyConnect->d->currentTimestamp = 0;
@@ -640,7 +625,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
 
 void SkyConnectImpl::processEvents()
 {
-    switch (d->state) {
+    switch (getState()) {
     case Connect::State::Recording:
         updateCurrentTimestamp();
         break;

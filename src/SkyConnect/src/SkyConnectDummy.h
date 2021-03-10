@@ -28,7 +28,6 @@
 #include <QObject>
 
 #include "AbstractSkyConnectImpl.h"
-#include "Connect.h"
 
 struct AircraftData;
 class Aircraft;

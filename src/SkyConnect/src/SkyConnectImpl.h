@@ -31,14 +31,13 @@
 #include <SimConnect.h>
 
 #include "../../Kernel/src/SampleRate.h"
-#include "SkyConnectIntf.h"
-#include "Connect.h"
+#include "AbstractSkyConnectImpl.h"
 
 struct AircraftData;
 class Aircraft;
 class SkyConnectPrivate;
 
-class SkyConnectImpl : public SkyConnectIntf
+class SkyConnectImpl : public AbstractSkyConnectImpl
 {
     Q_OBJECT
 public:
@@ -66,8 +65,6 @@ public:
     virtual void setTimeScale(double timeScale) override;
     virtual double getTimeScale() const override;
 
-    virtual Connect::State getState() const override;
-
     virtual void setCurrentTimestamp(qint64 timestamp) override;
     virtual qint64 getCurrentTimestamp() const override;
     virtual bool isAtEnd() const override;
@@ -90,7 +87,6 @@ private:
     void replay();
     void stopAll();
     void updateCurrentTimestamp();
-    void setState(Connect::State state);
     void stopRecording();
     void stopPlayback();
     bool hasRecordingStarted() const;
