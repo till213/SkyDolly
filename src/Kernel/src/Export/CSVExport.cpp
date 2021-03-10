@@ -42,6 +42,7 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io)
 {
     bool ok = io.open(QIODevice::WriteOnly);
     if (ok) {
+        io.setTextModeEnabled(true);
         // Header
         QString csv = QString(Const::Latitude) % Const::Sep %
                       QString(Const::Longitude) % Const::Sep %
