@@ -503,20 +503,6 @@ bool SkyConnectImpl::hasRecordingStarted() const
     return d->aircraft.getAllAircraftData().count();
 }
 
-void SkyConnectImpl::handleRecordSampleRateChanged(double sampleRateValue)
-{
-    d->recordSampleRate = sampleRateValue;
-    d->recordIntervalMSec = static_cast<int>(1.0 / d->recordSampleRate * 1000.0);
-    d->timer.setInterval(d->recordIntervalMSec);
-}
-
-void SkyConnectImpl::handlePlaybackSampleRateChanged(double sampleRateValue)
-{
-    d->playbackSampleRate = sampleRateValue;
-    d->playbackIntervalMSec = static_cast<int>(1.0 / d->playbackSampleRate * 1000.0);
-    d->timer.setInterval(d->playbackIntervalMSec);
-}
-
 void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context)
 {
     Q_UNUSED(cbData);
@@ -667,4 +653,18 @@ void SkyConnectImpl::processEvents()
 
     // Process system events
     ::SimConnect_CallDispatch(d->simConnectHandle, SkyConnectImpl::dispatch, this);
+}
+
+void SkyConnectImpl::handleRecordSampleRateChanged(double sampleRateValue)
+{
+    d->recordSampleRate = sampleRateValue;
+    d->recordIntervalMSec = static_cast<int>(1.0 / d->recordSampleRate * 1000.0);
+    d->timer.setInterval(d->recordIntervalMSec);
+}
+
+void SkyConnectImpl::handlePlaybackSampleRateChanged(double sampleRateValue)
+{
+    d->playbackSampleRate = sampleRateValue;
+    d->playbackIntervalMSec = static_cast<int>(1.0 / d->playbackSampleRate * 1000.0);
+    d->timer.setInterval(d->playbackIntervalMSec);
 }

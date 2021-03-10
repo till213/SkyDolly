@@ -99,7 +99,6 @@ private:
 
 private slots:
     void processEvents();
-
     void handleRecordSampleRateChanged(double sampleRateValue);
     void handlePlaybackSampleRateChanged(double sampleRateValue);
 };

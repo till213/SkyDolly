@@ -55,8 +55,6 @@ private:
     SkyManagerPrivate *d;
 
     SkyManager();
-
-    void frenchConnection();
 };
 
 #endif // SKYMANAGER_H

@@ -27,14 +27,14 @@
 
 #include <QObject>
 
-#include "SkyConnectIntf.h"
+#include "AbstractSkyConnectImpl.h"
 #include "Connect.h"
 
 struct AircraftData;
 class Aircraft;
 class SkyConnectDummyPrivate;
 
-class SkyConnectDummy : public SkyConnectIntf
+class SkyConnectDummy : public AbstractSkyConnectImpl
 {
     Q_OBJECT
 public:
@@ -62,8 +62,6 @@ public:
     virtual void setTimeScale(double timeScale) override;
     virtual double getTimeScale() const override;
 
-    virtual Connect::State getState() const override;
-
     virtual void setCurrentTimestamp(qint64 timestamp) override;
     virtual qint64 getCurrentTimestamp() const override;
     virtual bool isAtEnd() const override;
@@ -73,6 +71,16 @@ public:
 private:
     SkyConnectDummyPrivate *d;
 
+    void frenchConnection();
+    bool hasRecordingStarted() const;
+    bool sendAircraftPosition() const;
+    void recordData();
+    void replay();
+
+private slots:
+    void processEvents();
+    void handleRecordSampleRateChanged(double sampleRateValue);
+    void handlePlaybackSampleRateChanged(double sampleRateValue);
 };
 
 #endif // SKYCONNECTDUMMY_H

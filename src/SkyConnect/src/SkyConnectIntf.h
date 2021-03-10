@@ -37,6 +37,9 @@ class SKYCONNECT_API SkyConnectIntf : public QObject
 {
     Q_OBJECT
 public:
+
+    virtual ~SkyConnectIntf() = default;
+
     virtual void startDataSample() = 0;
     virtual void stopDataSample() = 0;
 
@@ -72,8 +75,8 @@ protected:
     {}
 
 signals:
-    void aircraftDataSent(qint64 timestamp);
-    void stateChanged(Connect::State state);
+    void aircraftDataSent(qint64 timestamp) const;
+    void stateChanged(Connect::State state) const;
 };
 
 #endif // SKYCONNECT_H
