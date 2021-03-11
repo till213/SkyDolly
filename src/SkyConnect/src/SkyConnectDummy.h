@@ -27,7 +27,7 @@
 
 #include <QObject>
 
-#include "AbstractSkyConnectImpl.h"
+#include "AbstractSkyConnect.h"
 
 struct AircraftData;
 class Aircraft;
@@ -40,36 +40,27 @@ public:
     SkyConnectDummy(QObject *parent = nullptr);
     virtual ~SkyConnectDummy();
 
-    virtual void startDataSample() override;
-    virtual void stopDataSample() override;
-
-    virtual void startReplay(bool fromStart) override;
-    virtual void stopReplay() override;
-    virtual void stop() override;
-
-    virtual void setPaused(bool enabled) override;
-
-    virtual void setTimeScale(double timeScale) override;
-    virtual double getTimeScale() const override;
-
-    virtual const AircraftData &getCurrentAircraftData() const override;
-
 protected:
-    virtual void onSeek(qint64 currentTimestamp) override;
+    virtual bool sendAircraftData(qint64 currentTimestamp) override;
+    virtual void onStartDataSample() override;
+    virtual void onStopDataSample() override;
+    virtual void onStartReplay(bool fromStart) override;
+    virtual void onStopReplay() override;
+    virtual void onRecordingPaused(bool paused) override;
+    virtual void onReplayPaused() override;
+    virtual bool isConnectedWithSim() const override;
+    virtual bool connectWithSim() override;
+
+protected slots:
+    virtual void processEvents() override;
 
 private:
     SkyConnectDummyPrivate *d;
 
-    void frenchConnection();
-    bool hasRecordingStarted() const;
-    bool sendAircraftPosition() const;
+    bool sendAircraftData();
     void recordData();
     void replay();
 
-private slots:
-    void processEvents();
-    void handleRecordSampleRateChanged(double sampleRateValue);
-    void handlePlaybackSampleRateChanged(double sampleRateValue);
 };
 
 #endif // SKYCONNECTDUMMY_H

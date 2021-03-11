@@ -170,6 +170,8 @@ void MainWindow::frenchConnection()
 void MainWindow::initUi()
 {
     setWindowIcon(QIcon(":/img/SkyDolly.png"));
+    statusBar()->setVisible(false);
+    resize(minimumSize());
 
     // Dialogs
     d->simulationVariablesDialog = new SimulationVariablesDialog(*d->skyConnect, this);
@@ -177,7 +179,7 @@ void MainWindow::initUi()
     d->settingsDialog = new SettingsDialog(this);
 
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
-    this->initControlUi();
+    initControlUi();
 }
 
 void MainWindow::initControlUi()
