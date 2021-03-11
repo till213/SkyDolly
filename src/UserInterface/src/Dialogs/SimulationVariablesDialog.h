@@ -46,23 +46,24 @@ public:
     explicit SimulationVariablesDialog(SkyConnectIntf &skyConnect, QWidget *parent = nullptr);
     virtual ~SimulationVariablesDialog();
 
-private:
-    SimulationVariablesDialogPrivate *d;
-    Ui::SimulationVariablesDialog *ui;
-
-    void frenchConnection();
+signals:
+    void visibilityChanged(bool visible);
 
 protected:
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;
 
+private:
+    SimulationVariablesDialogPrivate *d;
+    Ui::SimulationVariablesDialog *ui;
+
+    void frenchConnection();
+    const AircraftData &getCurrentAircraftData() const;
+
 private slots:
     void updateInfoUi();
     void updateAircraftDataUi();
     void updateTitle();
-
-private:
-    const AircraftData &getCurrentAircraftData() const;
 };
 
 #endif // SIMULATIONVARIABLESDIALOG_H

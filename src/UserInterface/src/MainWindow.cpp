@@ -158,6 +158,10 @@ void MainWindow::frenchConnection()
     connect(ui->skipToEndAction, &QAction::triggered,
             this, &MainWindow::skipToEnd);
 
+    // Dialogs
+    connect(d->simulationVariablesDialog, &SimulationVariablesDialog::visibilityChanged,
+            this, &MainWindow::updateWindowMenu);
+
     // Settings
     connect(&Settings::getInstance(), &Settings::changed,
             this, &MainWindow::updateMainWindow);
@@ -291,6 +295,7 @@ void MainWindow::updateUi()
 {
     updateControlUi();
     updateFileMenu();
+    updateWindowMenu();
     updateMainWindow();
 }
 
@@ -406,6 +411,11 @@ void MainWindow::updateFileMenu()
         ui->importCSVAction->setEnabled(true);
         ui->exportCSVAction->setEnabled(hasRecording);
     }
+}
+
+void MainWindow::updateWindowMenu()
+{
+    ui->showSimulationVariablesAction->setChecked(d->simulationVariablesDialog->isVisible());
 }
 
 void MainWindow::updateMainWindow()

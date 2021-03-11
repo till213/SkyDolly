@@ -70,6 +70,7 @@ private slots:
     void updateControlUi();
     void updateRecordingTime();
     void updateFileMenu();
+    void updateWindowMenu();
     void updateMainWindow();
 
     // File menu

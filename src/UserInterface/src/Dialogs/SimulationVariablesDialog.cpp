@@ -83,6 +83,8 @@ void SimulationVariablesDialog::showEvent(QShowEvent *event)
 
     connect(&d->skyConnect, &SkyConnectIntf::stateChanged,
             this, &SimulationVariablesDialog::updateTitle);
+
+    emit visibilityChanged(true);
 }
 
 void SimulationVariablesDialog::hideEvent(QHideEvent *event)
@@ -96,6 +98,8 @@ void SimulationVariablesDialog::hideEvent(QHideEvent *event)
             this, &SimulationVariablesDialog::updateAircraftDataUi);
     disconnect(&d->skyConnect, &SkyConnectIntf::stateChanged,
                this, &SimulationVariablesDialog::updateTitle);
+
+    emit visibilityChanged(false);
 }
 
 // PRIVATE
@@ -105,6 +109,18 @@ void SimulationVariablesDialog::frenchConnection()
     const Aircraft &aircraft = d->skyConnect.getAircraft();
     connect(&aircraft, &Aircraft::infoChanged,
             this, &SimulationVariablesDialog::updateInfoUi);
+}
+
+const AircraftData &SimulationVariablesDialog::getCurrentAircraftData() const
+{
+    const AircraftData aircraftData;
+    const Aircraft &aircraft = d->skyConnect.getAircraft();
+
+    if (d->skyConnect.getState() == Connect::State::Recording) {
+        return aircraft.getLastAircraftData();
+    } else {
+        return d->skyConnect.getCurrentAircraftData();
+    };
 }
 
 // PRIVATE SLOTS
@@ -197,16 +213,4 @@ void SimulationVariablesDialog::updateTitle()
     setWindowTitle(windowTitle);
 }
 
-// PRIVATE
 
-const AircraftData &SimulationVariablesDialog::getCurrentAircraftData() const
-{
-    const AircraftData aircraftData;
-    const Aircraft &aircraft = d->skyConnect.getAircraft();
-
-    if (d->skyConnect.getState() == Connect::State::Recording) {
-        return aircraft.getLastAircraftData();
-    } else {
-        return d->skyConnect.getCurrentAircraftData();
-    };
-}
