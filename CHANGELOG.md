@@ -70,3 +70,4 @@
 ### Bug Fixes
 
 - Properly reset play position to begin after importing CSV data
+- Validate the CSV data upon import: specifically the first timestamp must be 0 (timestamps are shifted accordingly)
