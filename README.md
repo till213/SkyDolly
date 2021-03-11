@@ -29,7 +29,7 @@ For new and upcoming features also refer to the [CHANGELOG](CHANGELOG.md).
 
 Go to [Releases](https://github.com/till213/SkyDolly/releases) and download the latest release.
 
-Latest (pre-)release: **Sky Dolly 0.3.0**
+Latest (pre-)release: **Sky Dolly 0.3.1**
 
 ## Build
 
