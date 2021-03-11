@@ -70,7 +70,6 @@ public:
     }
 
     HANDLE simConnectHandle;
-    AircraftData currentAircraftData;
     bool frozen;
 };
 
@@ -87,11 +86,6 @@ SkyConnectImpl::~SkyConnectImpl()
     setSimulationFrozen(false);
     close();
     delete d;
-}
-
-const AircraftData &SkyConnectImpl::getCurrentAircraftData() const
-{
-    return d->currentAircraftData;
 }
 
 // PROTECTED
@@ -145,7 +139,6 @@ void SkyConnectImpl::onRecordingPaused(bool paused)
 
 void SkyConnectImpl::onReplayPaused()
 {
-
 }
 
 bool SkyConnectImpl::connectWithSim()
@@ -256,14 +249,14 @@ bool SkyConnectImpl::isSimulationFrozen() const {
     return d->frozen;
 }
 
-bool SkyConnectImpl::sendAircraftData() const
+bool SkyConnectImpl::sendAircraftData()
 {
     bool success;
-    d->currentAircraftData = std::move(getAircraft().getAircraftData(getCurrentTimestamp()));
+    updateCurrentAircraftData();
 
-    if (!d->currentAircraftData.isNull()) {
+    if (!getCurrentAircraftData().isNull()) {
         SimConnectAircraftData simConnectAircraftData;
-        simConnectAircraftData.fromAircraftData(d->currentAircraftData);
+        simConnectAircraftData.fromAircraftData(getCurrentAircraftData());
 #ifdef DEBUG
         qDebug("%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %d, %lli",
                simConnectAircraftData.longitude, simConnectAircraftData.latitude, simConnectAircraftData.altitude,
