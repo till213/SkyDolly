@@ -76,11 +76,17 @@ const AircraftInfo &Aircraft::getAircraftInfo() const
 
 void Aircraft::upsertAircraftData(AircraftData aircraftData)
 {
-    if (d->aircraftData.length() > 0 && d->aircraftData.last().timestamp == aircraftData.timestamp)  {
+    if (d->aircraftData.count() > 0 && d->aircraftData.last().timestamp == aircraftData.timestamp)  {
         // Same timestamp -> replace
-        d->aircraftData[d->aircraftData.length() - 1] = aircraftData;
+        d->aircraftData[d->aircraftData.count() - 1] = aircraftData;
+#ifdef DEBUG
+        qDebug("Aircraft::upsertAircraftData: UPDATE sample, timestamp: %llu count: %d", aircraftData.timestamp, d->aircraftData.count());
+#endif
     } else {
         d->aircraftData.append(aircraftData);
+#ifdef DEBUG
+        qDebug("Aircraft::upsertAircraftData: INSERT sample, timestamp: %llu count: %d", aircraftData.timestamp, d->aircraftData.count());
+#endif
     }
     emit dataChanged();
 }
@@ -248,8 +254,8 @@ bool Aircraft::getSupportData(qint64 timestamp, const AircraftData **p0, const A
         } else {
            *p0 = *p1;
         }
-        if (d->currentIndex < d->aircraftData.length() - 1) {
-           if (d->currentIndex < d->aircraftData.length() - 2) {
+        if (d->currentIndex < d->aircraftData.count() - 1) {
+           if (d->currentIndex < d->aircraftData.count() - 2) {
                *p2 = &d->aircraftData.at(d->currentIndex + 1);
                *p3 = &d->aircraftData.at(d->currentIndex + 2);
            } else {

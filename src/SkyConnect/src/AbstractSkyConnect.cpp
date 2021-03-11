@@ -35,9 +35,9 @@
 namespace
 {
     // Period [ms] over which we count the recorded samples per second
-    constexpr qint64 SamplesPerSecondPeriodMilliSec = 5000;
-    constexpr double SamplesPerSecondPeriodSec = SamplesPerSecondPeriodMilliSec / 1000.0;
+    constexpr qint64 SamplesPerSecondPeriodMilliSec = 10000;
 
+    // The amount of milliseconds to skip either forward or backward
     constexpr qint64 SkipMSec = 1000;
 }
 
@@ -55,6 +55,7 @@ public:
           elapsedTime(0),
           lastSamplesPerSecondIndex(0)
     {
+        timer.setTimerType(Qt::TimerType::PreciseTimer);
     }
 
     Connect::State state;
@@ -307,7 +308,12 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const
         int lastIndex = d->aircraft.getAllAircraftData().count() - 1;
 
         int nofSamples = lastIndex - index + 1;
-        samplesPerSecond = static_cast<double>(nofSamples) / SamplesPerSecondPeriodSec;
+        qint64 period = d->aircraft.getAllAircraftData().at(lastIndex).timestamp - d->aircraft.getAllAircraftData().at(index).timestamp;
+        if (period > 0) {
+            samplesPerSecond = static_cast<double>(nofSamples) / (static_cast<double>(period) / 1000.0);
+        } else {
+            samplesPerSecond = 0.0;
+        }
     } else {
         samplesPerSecond = 0.0;
     }
@@ -395,4 +401,3 @@ void AbstractSkyConnect::handlePlaybackSampleRateChanged(double sampleRateValue)
     d->playbackIntervalMSec = static_cast<int>(1.0 / d->playbackSampleRate * 1000.0);
     d->timer.setInterval(d->playbackIntervalMSec);
 }
-

@@ -62,7 +62,7 @@ private slots:
     void updateTitle();
 
 private:
-    const AircraftData &getAircraftData() const;
+    const AircraftData &getCurrentAircraftData() const;
 };
 
 #endif // SIMULATIONVARIABLESDIALOG_H

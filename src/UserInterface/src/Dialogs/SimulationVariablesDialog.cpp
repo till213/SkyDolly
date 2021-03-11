@@ -121,7 +121,7 @@ void SimulationVariablesDialog::updateInfoUi()
 
 void SimulationVariablesDialog::updateAircraftDataUi()
 {
-    const AircraftData &aircraftData = getAircraftData();
+    const AircraftData &aircraftData = getCurrentAircraftData();
 
     // Aircraft position
     ui->latitudeLineEdit->setText(QString::number(aircraftData.latitude));
@@ -167,7 +167,12 @@ void SimulationVariablesDialog::updateAircraftDataUi()
     ui->brakeRightLineEdit->setText(QString::number(aircraftData.brakeRightPosition));
 
     // Samples per Second
-    ui->samplesPerSecondLineEdit->setText(QString::number(d->skyConnect.calculateRecordedSamplesPerSecond()));
+    if (d->skyConnect.getState() == Connect::State::Recording) {
+        ui->samplesPerSecondLineEdit->setText(QString::number(d->skyConnect.calculateRecordedSamplesPerSecond()));
+    } else {
+        ui->samplesPerSecondLineEdit->clear();
+    }
+    ui->sampleCountLineEdit->setText(QString::number(d->skyConnect.getAircraft().getAllAircraftData().count()));
 }
 
 void SimulationVariablesDialog::updateTitle()
@@ -194,7 +199,7 @@ void SimulationVariablesDialog::updateTitle()
 
 // PRIVATE
 
-const AircraftData &SimulationVariablesDialog::getAircraftData() const
+const AircraftData &SimulationVariablesDialog::getCurrentAircraftData() const
 {
     const AircraftData aircraftData;
     const Aircraft &aircraft = d->skyConnect.getAircraft();
