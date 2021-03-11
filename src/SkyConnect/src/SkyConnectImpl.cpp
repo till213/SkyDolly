@@ -423,6 +423,3 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
             break;
     }
 }
-
-
-
