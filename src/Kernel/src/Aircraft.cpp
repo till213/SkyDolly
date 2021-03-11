@@ -117,18 +117,18 @@ const AircraftData &Aircraft::getAircraftData(qint64 timestamp) const
 
         // Aircraft position
 
-        // Latitude: [-90, 90]
-        d->currentAircraftData.latitude  = SkyMath::interpolateHermite180(p0->latitude, p1->latitude, p2->latitude, p3->latitude, tn, Tension);
-        // Longitude: [-180, 180]
+        // Latitude: [-90, 90] - no discontinuity at +/- 90
+        d->currentAircraftData.latitude  = SkyMath::interpolateHermite(p0->latitude, p1->latitude, p2->latitude, p3->latitude, tn, Tension);
+        // Longitude: [-180, 180] - discontinuity at the +/- 180 meridian
         d->currentAircraftData.longitude = SkyMath::interpolateHermite180(p0->longitude, p1->longitude, p2->longitude, p3->longitude, tn, Tension);
         // Altitude [open range]
         d->currentAircraftData.altitude  = SkyMath::interpolateHermite(p0->altitude, p1->altitude, p2->altitude, p3->altitude, tn, Tension);
 
-        // Pitch: [-90, 90]
-        d->currentAircraftData.pitch = SkyMath::interpolateHermite180(p0->pitch, p1->pitch, p2->pitch, p3->pitch, tn, Tension);
-        // Bank: [-180, 180]
+        // Pitch: [-90, 90] - no discontinuity at +/- 90
+        d->currentAircraftData.pitch = SkyMath::interpolateHermite(p0->pitch, p1->pitch, p2->pitch, p3->pitch, tn, Tension);
+        // Bank: [-180, 180] - discontinuity at +/- 180
         d->currentAircraftData.bank  = SkyMath::interpolateHermite180(p0->bank, p1->bank, p2->bank, p3->bank, tn, Tension);
-        // Heading: [0, 360]
+        // Heading: [0, 360] - discontinuity at 0/360
         d->currentAircraftData.heading = SkyMath::interpolateHermite360(p0->heading, p1->heading, p2->heading, p3->heading, tn, Tension);
 
         // Aircraft controls
