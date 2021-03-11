@@ -78,7 +78,7 @@ else()
 endif()
 
 set(SKYDOLLY_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets UserInterface Kernel
+    Qt${QT_VERSION_MAJOR}::Widgets UserInterface Kernel SkyConnect
 )
 if (APPLE)
     list(APPEND SKYDOLLY_LIBS -lc++)
@@ -89,6 +89,8 @@ endif()
 target_sources(SkyDolly
     PRIVATE
         src/main.cpp
+        src/SkyDollyApplication.cpp
+        src/SkyDollyApplication.h
         ${TS_FILES}
         ${OTHER_SOURCES}
 )

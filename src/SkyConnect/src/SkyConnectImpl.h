@@ -31,72 +31,49 @@
 #include <SimConnect.h>
 
 #include "../../Kernel/src/SampleRate.h"
-#include "AbstractSkyConnectImpl.h"
+#include "AbstractSkyConnect.h"
 
 struct AircraftData;
 class Aircraft;
 class SkyConnectPrivate;
 
-class SkyConnectImpl : public AbstractSkyConnectImpl
+class SkyConnectImpl : public AbstractSkyConnect
 {
     Q_OBJECT
 public:
     SkyConnectImpl(QObject *parent = nullptr);
     virtual ~SkyConnectImpl();
 
-    virtual void startDataSample() override;
-    virtual void stopDataSample() override;
-
-    virtual void startReplay(bool fromStart) override;
-    virtual void stopReplay() override;
-    virtual void stop() override;
-
-    virtual void setPaused(bool enabled) override;
-    virtual bool isPaused() const override;
-
-    virtual void skipToBegin() override;
-    virtual void skipBackward() override;
-    virtual void skipForward() override;
-    virtual void skipToEnd() override;
-
-    virtual Aircraft &getAircraft()override;
-    virtual const Aircraft &getAircraft() const override;
-
-    virtual void setTimeScale(double timeScale) override;
-    virtual double getTimeScale() const override;
-
-    virtual void setCurrentTimestamp(qint64 timestamp) override;
-    virtual qint64 getCurrentTimestamp() const override;
-    virtual bool isAtEnd() const override;
-
     virtual const AircraftData &getCurrentAircraftData() const override;
+
+protected:
+    virtual bool sendAircraftData(qint64 currentTimestamp) override;
+    virtual void onStartDataSample() override;
+    virtual void onStopDataSample() override;
+    virtual void onStartReplay(bool fromStart) override;
+    virtual void onStopReplay() override;
+    virtual void onRecordingPaused(bool paused) override;
+    virtual void onReplayPaused() override;
+
+    virtual bool connectWithSim() override;
+    virtual bool isConnectedWithSim() const override;
+
+protected slots:
+    void processEvents() override;
 
 private:
     SkyConnectPrivate *d;
 
-    bool open();
     bool close();
-    bool isConnected() const;
 
-    void frenchConnection();
     void setupRequestData();
     void setupInitialPosition();
     void setSimulationFrozen(bool enable);
     bool isSimulationFrozen() const;
-    bool sendAircraftPosition() const;
+    bool sendAircraftData() const;
     void replay();
-    void stopAll();
-    void updateCurrentTimestamp();
-    void stopRecording();
-    void stopPlayback();
-    bool hasRecordingStarted() const;
 
     static void CALLBACK dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context);
-
-private slots:
-    void processEvents();
-    void handleRecordSampleRateChanged(double sampleRateValue);
-    void handlePlaybackSampleRateChanged(double sampleRateValue);
 };
 
 #endif // SKYCONNECTIMPL_H

@@ -27,8 +27,9 @@
 #include <QtGlobal>
 #include <QRandomGenerator>
 
+#include "../../Kernel/src/AircraftData.h"
 #include "../../Kernel/src/Settings.h"
-#include "AbstractSkyConnectImpl.h"
+#include "AbstractSkyConnect.h"
 #include "SkyConnectDummy.h"
 
 namespace {
@@ -39,8 +40,7 @@ class SkyConnectDummyPrivate
 {
 public:
     SkyConnectDummyPrivate()
-        : currentTimestamp(0),
-          elapsedTime(0),
+        : elapsedTime(0),
           recordSampleRate(Settings::getInstance().getRecordSampleRateValue()),
           recordIntervalMSec(static_cast<int>(1.0 / recordSampleRate * 1000.0)),
           playbackSampleRate(Settings::getInstance().getPlaybackSampleRateValue()),
@@ -50,10 +50,8 @@ public:
     }
 
     QTimer timer;
-    qint64 currentTimestamp;
     QElapsedTimer elapsedTimer;
     qint64 elapsedTime;
-    Aircraft aircraft;
     AircraftData currentAircraftData;
     double recordSampleRate;
     int    recordIntervalMSec;
@@ -65,12 +63,11 @@ public:
 // PUBLIC
 
 SkyConnectDummy::SkyConnectDummy(QObject *parent)
-    : AbstractSkyConnectImpl(parent),
+    : AbstractSkyConnect(parent),
       d(new SkyConnectDummyPrivate())
 {
     frenchConnection();
 }
-
 
 SkyConnectDummy::~SkyConnectDummy()
 {
@@ -80,7 +77,7 @@ SkyConnectDummy::~SkyConnectDummy()
 void SkyConnectDummy::startDataSample()
 {
     setState(Connect::State::Recording);
-    d->aircraft.clear();
+    getAircraft().clear();
     d->timer.setInterval(d->recordIntervalMSec);
 
     d->timer.start();
@@ -100,7 +97,7 @@ void SkyConnectDummy::startReplay(bool fromStart)
 
     if (fromStart) {
         d->elapsedTime = 0;
-        d->currentTimestamp = 0;
+        setCurrentTimestamp(0);
     }
 
     d->timer.start();
@@ -113,7 +110,7 @@ void SkyConnectDummy::stopReplay()
     d->timer.stop();
     // Remember elapsed time since last replay start, in order to continue from
     // current timestamp
-    d->elapsedTime = d->currentTimestamp;
+    d->elapsedTime = getCurrentTimestamp();
 }
 
 void SkyConnectDummy::stop()
@@ -173,36 +170,36 @@ bool SkyConnectDummy::isPaused() const {
 
 void SkyConnectDummy::skipToBegin()
 {
-    setCurrentTimestamp(0);
+    seek(0);
 }
 
 void SkyConnectDummy::skipBackward()
 {
     qint64 newTimeStamp = qMax(this->getCurrentTimestamp() - SkipMSec, 0ll);
-    setCurrentTimestamp(newTimeStamp);
+    seek(newTimeStamp);
 }
 
 void SkyConnectDummy::skipForward()
 {
-    qint64 endTimeStamp = d->aircraft.getLastAircraftData().timestamp;
+    qint64 endTimeStamp = getAircraft().getLastAircraftData().timestamp;
     qint64 newTimeStamp = qMin(this->getCurrentTimestamp() + SkipMSec, endTimeStamp);
-    setCurrentTimestamp(newTimeStamp);
+    seek(newTimeStamp);
 }
 
 void SkyConnectDummy::skipToEnd()
 {
-    qint64 endTimeStamp  = d->aircraft.getLastAircraftData().timestamp;
-    setCurrentTimestamp(endTimeStamp);
+    qint64 endTimeStamp  = getAircraft().getLastAircraftData().timestamp;
+    seek(endTimeStamp);
 }
 
 Aircraft &SkyConnectDummy::getAircraft()
 {
-    return d->aircraft;
+    return getAircraft();
 }
 
 const Aircraft &SkyConnectDummy::getAircraft() const
 {
-    return d->aircraft;
+    return getAircraft();
 }
 
 void SkyConnectDummy::setTimeScale(double timeScale)
@@ -224,82 +221,71 @@ double SkyConnectDummy::getTimeScale() const
     return d->timeScale;
 }
 
-void SkyConnectDummy::setCurrentTimestamp(qint64 timestamp)
-{
-    if (getState() != Connect::State::Recording) {
-        d->currentTimestamp = timestamp;
-        d->elapsedTime = d->currentTimestamp;
-        if (sendAircraftPosition()) {
-            emit aircraftDataSent(d->currentTimestamp);
-            if (d->elapsedTimer.isValid() && getState() == Connect::State::Playback) {
-                // Restart the elapsed timer, counting onwards from the newly
-                // set timestamp
-                d->elapsedTimer.start();
-            }
-        }
-    }
-}
-
-qint64 SkyConnectDummy::getCurrentTimestamp() const
-{
-    return d->currentTimestamp;
-}
-
-bool SkyConnectDummy::isAtEnd() const
-{
-    return d->currentTimestamp >= d->aircraft.getLastAircraftData().timestamp;
-}
-
 const AircraftData &SkyConnectDummy::getCurrentAircraftData() const
 {
     return d->currentAircraftData;
+}
+
+// PROTECTED
+
+void SkyConnectDummy::onSeek(qint64 currentTimestamp)
+{
+    d->elapsedTime = currentTimestamp;
+    if (sendAircraftPosition()) {
+        emit aircraftDataSent(currentTimestamp);
+        if (d->elapsedTimer.isValid() && getState() == Connect::State::Playback) {
+            // Restart the elapsed timer, counting onwards from the newly
+            // set timestamp
+            d->elapsedTimer.start();
+        }
+    }
 }
 
 // PRIVATE
 
 void SkyConnectDummy::frenchConnection()
 {
-    connect(&(d->timer), &QTimer::timeout,
+    connectWithSim(&(d->timer), &QTimer::timeout,
             this, &SkyConnectDummy::processEvents);
-    connect(&Settings::getInstance(), &Settings::recordSampleRateChanged,
+    connectWithSim(&Settings::getInstance(), &Settings::recordSampleRateChanged,
             this, &SkyConnectDummy::handleRecordSampleRateChanged);
-    connect(&Settings::getInstance(), &Settings::playbackSampleRateChanged,
+    connectWithSim(&Settings::getInstance(), &Settings::playbackSampleRateChanged,
             this, &SkyConnectDummy::handlePlaybackSampleRateChanged);
 }
 
 bool SkyConnectDummy::hasRecordingStarted() const
 {
-    return d->aircraft.getAllAircraftData().count();
+    return getAircraft().getAllAircraftData().count();
 }
 
 bool SkyConnectDummy::sendAircraftPosition() const
 {
-    d->currentAircraftData = std::move(d->aircraft.getAircraftData(d->currentTimestamp));
+    d->currentAircraftData = std::move(getAircraft().getAircraftData(getCurrentTimestamp()));
     return true;
 }
 
 void SkyConnectDummy::recordData()
 {
     if (d->elapsedTimer.isValid()) {
-        d->currentTimestamp = d->elapsedTime + static_cast<qint64>(d->elapsedTimer.elapsed());
+        setCurrentTimestamp(d->elapsedTime + static_cast<qint64>(d->elapsedTimer.elapsed()));
     }
 
     AircraftData aircraftData;
     aircraftData.latitude = QRandomGenerator::global()->bounded(180.0);
     aircraftData.longitude = QRandomGenerator::global()->bounded(90.0);
     aircraftData.altitude = QRandomGenerator::global()->bounded(20000.0);
-    aircraftData.timestamp = d->currentTimestamp;
-    d->aircraft.upsertAircraftData(std::move(aircraftData));
+    aircraftData.timestamp = getCurrentTimestamp();
+    getAircraft().upsertAircraftData(std::move(aircraftData));
 }
 
 void SkyConnectDummy::replay()
 {
     if (d->elapsedTimer.isValid()) {
-        d->currentTimestamp = d->elapsedTime + static_cast<qint64>(d->elapsedTimer.elapsed() * d->timeScale);
+        setCurrentTimestamp(d->elapsedTime + static_cast<qint64>(d->elapsedTimer.elapsed() * d->timeScale));
     }
 
     if (sendAircraftPosition()) {
-        emit aircraftDataSent(d->currentTimestamp);
+        emit aircraftDataSent(getCurrentTimestamp());
     } else {
         stopReplay();
     }

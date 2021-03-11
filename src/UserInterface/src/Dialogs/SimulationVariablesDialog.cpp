@@ -165,6 +165,9 @@ void SimulationVariablesDialog::updateAircraftDataUi()
     ui->waterRudderLineEdit->setText(QString::number(aircraftData.waterRudderHandlePosition));
     ui->brakeLeftLineEdit->setText(QString::number(aircraftData.brakeLeftPosition));
     ui->brakeRightLineEdit->setText(QString::number(aircraftData.brakeRightPosition));
+
+    // Samples per Second
+    ui->samplesPerSecondLineEdit->setText(QString::number(d->skyConnect.calculateRecordedSamplesPerSecond()));
 }
 
 void SimulationVariablesDialog::updateTitle()

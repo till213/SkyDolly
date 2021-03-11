@@ -158,10 +158,6 @@ void MainWindow::frenchConnection()
     connect(ui->skipToEndAction, &QAction::triggered,
             this, &MainWindow::skipToEnd);
 
-    // Application
-    connect(dynamic_cast<QGuiApplication *>(QGuiApplication::instance()), &QGuiApplication::lastWindowClosed,
-            this, &MainWindow::handleLastWindowClosed);
-
     // Settings
     connect(&Settings::getInstance(), &Settings::changed,
             this, &MainWindow::updateMainWindow);
@@ -263,7 +259,7 @@ void MainWindow::on_positionSlider_valueChanged(int value)
 
     // Prevent the timestampTimeEdit field to set the play position as well
     ui->timestampTimeEdit->blockSignals(true);
-    d->skyConnect->setCurrentTimestamp(timestamp);
+    d->skyConnect->seek(timestamp);
     ui->timestampTimeEdit->blockSignals(false);
 }
 
@@ -279,7 +275,7 @@ void MainWindow::on_timestampTimeEdit_timeChanged(const QTime &time)
     Connect::State state = d->skyConnect->getState();
     if (state == Connect::State::Idle || state == Connect::State::PlaybackPaused) {
         qint64 timestamp = time.hour() * MilliSecondsPerHour + time.minute() * MilliSecondsPerMinute + time.second() * MilliSecondsPerSecond;
-        d->skyConnect->setCurrentTimestamp(timestamp);
+        d->skyConnect->seek(timestamp);
     }
 }
 
@@ -615,11 +611,7 @@ void MainWindow::togglePause(bool enable)
 void MainWindow::togglePlay(bool enable)
 {
     if (enable) {
-        if (d->skyConnect->isAtEnd()) {
-            // Jump back to start
-            d->skyConnect->setCurrentTimestamp(0);
-        }
-        d->skyConnect->startReplay(false);
+        d->skyConnect->startReplay(d->skyConnect->isAtEnd());
     } else if (d->skyConnect->isPaused()) {
         // The play button also unpauses a paused replay
         d->skyConnect->setPaused(false);
@@ -651,11 +643,4 @@ void MainWindow::skipForward()
 void MainWindow::skipToEnd()
 {
     d->skyConnect->skipToEnd();
-}
-
-void MainWindow::handleLastWindowClosed()
-{
-    // Destroying the settings singleton also persists the settings
-    Settings::destroyInstance();
-    SkyManager::destroyInstance();
 }
