@@ -54,20 +54,20 @@ public:
     virtual void skipBackward() = 0;
     virtual void skipForward() = 0;
     virtual void skipToEnd() = 0;
-
-    virtual Aircraft &getAircraft() = 0;
-    virtual const Aircraft &getAircraft() const = 0;
+    virtual void seek(qint64 timestamp) = 0;
+    virtual qint64 getCurrentTimestamp() const = 0;
+    virtual bool isAtEnd() const = 0;
 
     virtual void setTimeScale(double timeScale) = 0;
     virtual double getTimeScale() const = 0;
 
     virtual Connect::State getState() const = 0;
 
-    virtual void setCurrentTimestamp(qint64 timestamp) = 0;
-    virtual qint64 getCurrentTimestamp() const = 0;
-    virtual bool isAtEnd() const = 0;
-
+    virtual Aircraft &getAircraft() = 0;
+    virtual const Aircraft &getAircraft() const = 0;
     virtual const AircraftData &getCurrentAircraftData() const = 0;
+
+    virtual double calculateRecordedSamplesPerSecond() const = 0;
 
 protected:
     SkyConnectIntf(QObject *parent = nullptr)

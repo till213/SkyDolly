@@ -22,23 +22,28 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SKYCONNECTDUMMY_H
-#define SKYCONNECTDUMMY_H
+#ifndef ABSTRACTSKYCONNECTIMPL_H
+#define ABSTRACTSKYCONNECTIMPL_H
 
 #include <QObject>
 
-#include "AbstractSkyConnectImpl.h"
+#include "SkyConnectIntf.h"
+#include "Connect.h"
 
-struct AircraftData;
-class Aircraft;
-class SkyConnectDummyPrivate;
+class AbstractSkyConnectPrivate;
 
-class SkyConnectDummy : public AbstractSkyConnect
+class AbstractSkyConnect : public SkyConnectIntf
 {
     Q_OBJECT
+
 public:
-    SkyConnectDummy(QObject *parent = nullptr);
-    virtual ~SkyConnectDummy();
+    AbstractSkyConnect(QObject *parent = nullptr);
+    virtual ~AbstractSkyConnect();
+
+    virtual Connect::State getState() const override;
+
+    virtual void setTimeScale(double timeScale) override;
+    virtual double getTimeScale() const override;
 
     virtual void startDataSample() override;
     virtual void stopDataSample() override;
@@ -48,28 +53,53 @@ public:
     virtual void stop() override;
 
     virtual void setPaused(bool enabled) override;
+    virtual bool isPaused() const override;
 
-    virtual void setTimeScale(double timeScale) override;
-    virtual double getTimeScale() const override;
+    virtual void skipToBegin() override;
+    virtual void skipBackward() override;
+    virtual void skipForward() override;
+    virtual void skipToEnd() override;
+    virtual void seek(qint64 timestamp) override;
 
-    virtual const AircraftData &getCurrentAircraftData() const override;
+    virtual qint64 getCurrentTimestamp() const override;
+    virtual bool isAtEnd() const override;
+
+    virtual Aircraft &getAircraft()override;
+    virtual const Aircraft &getAircraft() const override;
+
+    virtual double calculateRecordedSamplesPerSecond() const override;
 
 protected:
-    virtual void onSeek(qint64 currentTimestamp) override;
+    void setState(Connect::State state);
+
+    void setCurrentTimestamp(qint64 timestamp);
+    bool isElapsedTimerRunning() const;
+    void startElapsedTimer() const;
+    void resetElapsedTime(bool restart);
+    void updateCurrentTimestamp();
+
+    virtual bool sendAircraftData(qint64 currentTimestamp) = 0;
+    virtual void onStartDataSample() = 0;
+    virtual void onStopDataSample() = 0;
+    virtual void onStartReplay(bool fromStart) = 0;
+    virtual void onStopReplay() = 0;
+    virtual void onRecordingPaused(bool paused) = 0;
+    virtual void onReplayPaused() = 0;
+    virtual bool isConnectedWithSim() const = 0;
+    virtual bool connectWithSim() = 0;
+
+protected slots:
+    virtual void processEvents() = 0;
 
 private:
-    SkyConnectDummyPrivate *d;
+    AbstractSkyConnectPrivate *d;
 
     void frenchConnection();
     bool hasRecordingStarted() const;
-    bool sendAircraftPosition() const;
-    void recordData();
-    void replay();
 
 private slots:
-    void processEvents();
     void handleRecordSampleRateChanged(double sampleRateValue);
     void handlePlaybackSampleRateChanged(double sampleRateValue);
 };
 
-#endif // SKYCONNECTDUMMY_H
+#endif // ABSTRACTSKYCONNECTIMPL_H

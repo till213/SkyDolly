@@ -98,9 +98,5 @@ private slots:
     void skipBackward();
     void skipForward();
     void skipToEnd();
-
-    // Application
-    void handleLastWindowClosed();
-
 };
 #endif // MAINWINDOW_H

@@ -22,46 +22,31 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "Connect.h"
-#include "SkyConnectIntf.h"
-#include "AbstractSkyConnectImpl.h"
-
-class AbstractSkyConnectImplPrivate
-{
-public:
-    AbstractSkyConnectImplPrivate()
-        : state(Connect::State::Idle)
-    {
-    }
-
-    Connect::State state;
-};
+#include "../../Kernel/src/Settings.h"
+#include "../../SkyConnect/src/SkyManager.h"
+#include "SkyDollyApplication.h"
 
 // PUBLIC
 
-AbstractSkyConnectImpl::AbstractSkyConnectImpl(QObject *parent)
-    : SkyConnectIntf(parent),
-      d(new AbstractSkyConnectImplPrivate())
+SkyDollyApplication::SkyDollyApplication(int &argc, char **argv)
+    : QApplication(argc, argv)
 {
+    frenchConnection();
 }
 
+// PRIVATE
 
-AbstractSkyConnectImpl::~AbstractSkyConnectImpl()
+void SkyDollyApplication::frenchConnection()
 {
-    delete d;
+    connect(this, &QApplication::aboutToQuit,
+            this, &SkyDollyApplication::handleAboutToQuit);
 }
 
-Connect::State AbstractSkyConnectImpl::getState() const
-{
-    return d->state;
-}
+// PRIVATE SLOTS
 
-// PROTECTED
-
-void AbstractSkyConnectImpl::setState(Connect::State state)
+void SkyDollyApplication::handleAboutToQuit()
 {
-    if (d->state != state) {
-        d->state = state;
-        emit stateChanged(state);
-    }
+    // Destroying the settings singleton also persists the settings
+    Settings::destroyInstance();
+    SkyManager::destroyInstance();
 }

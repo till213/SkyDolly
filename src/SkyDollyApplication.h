@@ -22,31 +22,24 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef ABSTRACTSKYCONNECTIMPL_H
-#define ABSTRACTSKYCONNECTIMPL_H
+#ifndef SKYDOLLYAPPLICATION_H
+#define SKYDOLLYAPPLICATION_H
 
-#include <QObject>
+#include <QApplication>
 
-#include "SkyConnectIntf.h"
-#include "Connect.h"
-
-class AbstractSkyConnectImplPrivate;
-
-class AbstractSkyConnectImpl : public SkyConnectIntf
+class SkyDollyApplication : public QApplication
 {
     Q_OBJECT
 
 public:
-    AbstractSkyConnectImpl(QObject *parent = nullptr);
-    virtual ~AbstractSkyConnectImpl();
-
-    virtual Connect::State getState() const override;
-
-protected:
-    void setState(Connect::State state);
+    SkyDollyApplication(int &argc, char **argv);
+    virtual ~SkyDollyApplication() = default;
 
 private:
-    AbstractSkyConnectImplPrivate *d;
+    void frenchConnection();
+
+private slots:
+    void handleAboutToQuit();
 };
 
-#endif // ABSTRACTSKYCONNECTIMPL_H
+#endif // SKYDOLLYAPPLICATION_H

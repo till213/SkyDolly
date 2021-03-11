@@ -14,65 +14,6 @@
    <string>Simulation Variables</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" colspan="2">
-    <widget class="QGroupBox" name="groupBox_4">
-     <property name="minimumSize">
-      <size>
-       <width>512</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="title">
-      <string>Aircraft</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_4">
-      <item row="3" column="0">
-       <widget class="QCheckBox" name="startOnGroundCheckBox">
-        <property name="text">
-         <string>Start On Ground</string>
-        </property>
-        <property name="checkable">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="nameLineEdit">
-        <property name="minimumSize">
-         <size>
-          <width>120</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QLineEdit" name="initialAirspeedLineEdit">
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_5">
-        <property name="text">
-         <string>Name</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_24">
-        <property name="text">
-         <string>Initial Speed [Knots]</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
    <item row="1" column="1">
     <spacer name="verticalSpacer">
      <property name="orientation">
@@ -191,7 +132,7 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="2" column="1" rowspan="2">
     <widget class="QGroupBox" name="groupBox_7">
      <property name="minimumSize">
       <size>
@@ -506,7 +447,7 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="2">
+   <item row="2" column="2" rowspan="2">
     <widget class="QGroupBox" name="groupBox">
      <property name="minimumSize">
       <size>
@@ -761,7 +702,30 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="2">
+   <item row="3" column="0">
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Info</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_3">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_55">
+        <property name="text">
+         <string>Samples per Second</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="samplesPerSecondLineEdit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="4" column="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -769,6 +733,65 @@
      <property name="standardButtons">
       <set>QDialogButtonBox::Close</set>
      </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="3">
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="minimumSize">
+      <size>
+       <width>512</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Aircraft</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="3" column="0">
+       <widget class="QCheckBox" name="startOnGroundCheckBox">
+        <property name="text">
+         <string>Start On Ground</string>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="nameLineEdit">
+        <property name="minimumSize">
+         <size>
+          <width>120</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="initialAirspeedLineEdit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Name</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_24">
+        <property name="text">
+         <string>Initial Speed [Knots]</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
