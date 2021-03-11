@@ -44,8 +44,6 @@ public:
     SkyConnectImpl(QObject *parent = nullptr);
     virtual ~SkyConnectImpl();
 
-    virtual const AircraftData &getCurrentAircraftData() const override;
-
 protected:
     virtual bool sendAircraftData(qint64 currentTimestamp) override;
     virtual void onStartDataSample() override;
@@ -70,7 +68,7 @@ private:
     void setupInitialPosition();
     void setSimulationFrozen(bool enable);
     bool isSimulationFrozen() const;
-    bool sendAircraftData() const;
+    bool sendAircraftData();
     void replay();
 
     static void CALLBACK dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context);

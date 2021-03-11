@@ -27,6 +27,7 @@
 
 #include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/Aircraft.h"
+#include "../../Kernel/src/AircraftData.h"
 #include "Connect.h"
 #include "SkyConnectIntf.h"
 #include "AbstractSkyConnect.h"
@@ -58,6 +59,7 @@ public:
 
     Connect::State state;
     Aircraft aircraft;
+    AircraftData currentAircraftData;
     QTimer timer;
     qint64 currentTimestamp;
     double recordSampleRate;
@@ -286,6 +288,11 @@ const Aircraft &AbstractSkyConnect::getAircraft() const
     return d->aircraft;
 }
 
+const AircraftData &AbstractSkyConnect::getCurrentAircraftData() const
+{
+    return d->currentAircraftData;
+}
+
 double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const
 {
     double samplesPerSecond;
@@ -348,6 +355,11 @@ void AbstractSkyConnect::updateCurrentTimestamp()
             d->currentTimestamp = d->elapsedTime + d->elapsedTimer.elapsed();
         }
     }
+}
+
+void AbstractSkyConnect::updateCurrentAircraftData()
+{
+    d->currentAircraftData = std::move(d->aircraft.getAircraftData(getCurrentTimestamp()));
 }
 
 // PRIVATE

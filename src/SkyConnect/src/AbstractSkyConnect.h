@@ -66,6 +66,7 @@ public:
 
     virtual Aircraft &getAircraft()override;
     virtual const Aircraft &getAircraft() const override;
+    virtual const AircraftData &getCurrentAircraftData() const override;
 
     virtual double calculateRecordedSamplesPerSecond() const override;
 
@@ -77,6 +78,7 @@ protected:
     void startElapsedTimer() const;
     void resetElapsedTime(bool restart);
     void updateCurrentTimestamp();
+    void updateCurrentAircraftData();
 
     virtual bool sendAircraftData(qint64 currentTimestamp) = 0;
     virtual void onStartDataSample() = 0;
