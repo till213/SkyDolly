@@ -41,7 +41,6 @@ public:
     virtual ~SkyConnectDummy();
 
 protected:
-    virtual bool sendAircraftData(qint64 currentTimestamp) override;
     virtual void onStartDataSample() override;
     virtual void onStopDataSample() override;
     virtual void onStartReplay(bool fromStart) override;
@@ -51,6 +50,7 @@ protected:
     virtual void onRecordSampleRateChaged(SampleRate::SampleRate sampleRate) override;
     virtual void onPlaybackSampleRateChanged(SampleRate::SampleRate sampleRate) override;
 
+    virtual bool sendAircraftData(qint64 currentTimestamp) override;
     virtual bool isConnectedWithSim() const override;
     virtual bool connectWithSim() override;
 

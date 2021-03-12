@@ -78,7 +78,7 @@ protected:
     void startElapsedTimer() const;
     void resetElapsedTime(bool restart);
     void updateCurrentTimestamp();
-    void updateCurrentAircraftData();
+    const AircraftData &updateCurrentAircraftData();
 
     virtual bool sendAircraftData(qint64 currentTimestamp) = 0;
     virtual void onStartDataSample() = 0;

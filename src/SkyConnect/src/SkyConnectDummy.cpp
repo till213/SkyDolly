@@ -55,14 +55,6 @@ SkyConnectDummy::~SkyConnectDummy()
 
 // PROTECTED
 
-bool SkyConnectDummy::sendAircraftData(qint64 currentTimestamp) {
-    bool res = sendAircraftData();
-    if (res) {
-        emit aircraftDataSent(currentTimestamp);
-    }
-    return res;
-}
-
 void SkyConnectDummy::onStartDataSample() {
 
 }
@@ -89,6 +81,10 @@ void SkyConnectDummy::onRecordSampleRateChaged(SampleRate::SampleRate sampleRate
 void SkyConnectDummy::onPlaybackSampleRateChanged(SampleRate::SampleRate sampleRate)
 {
     Q_UNUSED(sampleRate)
+}
+
+bool SkyConnectDummy::sendAircraftData(qint64 currentTimestamp) {
+    return sendAircraftData();
 }
 
 bool SkyConnectDummy::isConnectedWithSim() const {
@@ -121,8 +117,8 @@ void SkyConnectDummy::processEvents()
 bool SkyConnectDummy::sendAircraftData()
 {
     bool success;
-    updateCurrentAircraftData();
-    if (!getCurrentAircraftData().isNull()) {
+
+    if (!updateCurrentAircraftData().isNull()) {
         // Start the elapsed timer after sending the first sample data
         if (!isElapsedTimerRunning()) {
             startElapsedTimer();
