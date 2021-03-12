@@ -25,6 +25,8 @@
 #ifndef SAMPLERATE_H
 #define SAMPLERATE_H
 
+#include <QtGlobal>
+
 namespace SampleRate
 {
     enum SampleRate {
@@ -42,8 +44,8 @@ namespace SampleRate
         Hz60
     };
 
-    inline constexpr double toValue(SampleRate SampleRate) {
-        switch (SampleRate) {
+    inline constexpr double toValue(SampleRate sampleRate) {
+        switch (sampleRate) {
         case Hz1:
             return 1.0;
         case Hz2:
@@ -73,33 +75,55 @@ namespace SampleRate
         }
     }
 
-    inline constexpr SampleRate fromValue(double SampleRate) {
-        if (SampleRate <= 1.0)
+    inline constexpr SampleRate fromValue(double sampleRate) {
+        if (sampleRate <= 1.0)
             return Hz1;
-        else if (SampleRate <= 1.0)
+        else if (sampleRate <= 1.0)
             return Hz2;
-        else if (SampleRate <= 5.0)
+        else if (sampleRate <= 5.0)
             return Hz5;
-        else if (SampleRate <= 10.0)
+        else if (sampleRate <= 10.0)
             return Hz10;
-        else if (SampleRate <= 15.0)
+        else if (sampleRate <= 15.0)
             return Hz15;
-        else if (SampleRate <= 20.0)
+        else if (sampleRate <= 20.0)
             return Hz20;
-        else if (SampleRate <= 24.0)
+        else if (sampleRate <= 24.0)
             return Hz24;
-        else if (SampleRate <= 25.0)
+        else if (sampleRate <= 25.0)
             return Hz25;
-        else if (SampleRate <= 30.0)
+        else if (sampleRate <= 30.0)
             return Hz30;
-        else if (SampleRate <= 45.0)
+        else if (sampleRate <= 45.0)
             return Hz45;
-        else if (SampleRate <= 50.0)
+        else if (sampleRate <= 50.0)
             return Hz50;
-        else if (SampleRate <= 60.0)
+        else if (sampleRate <= 60.0)
             return Hz60;
         else
             return Hz30;
+    }
+
+    /*!
+     * Returns the interval [msec], suitable for a QTimer, corresponding to the given \c sampleRate [Hz]
+     * \param sampleRate
+     *        the sample rate to convert to the corresponding interval
+     * \return the interval in milliseconds
+     */
+    inline int toInterval(double sampleRate) {
+        Q_ASSERT(sampleRate != 0.0);
+        return static_cast<int>(1000.0 / sampleRate);
+    }
+
+    /*!
+     * Returns the interval [msec], suitable for a QTimer, corresponding to the given \c sampleRate [Hz]
+     * \param sampleRate
+     *        the sample rate to convert to the corresponding interval
+     * \return the interval in milliseconds
+     */
+    inline int toInterval(SampleRate sampleRate) {
+        Q_ASSERT(sampleRate != 0.0);
+        return static_cast<int>(1000.0 / toValue(sampleRate));
     }
 }
 

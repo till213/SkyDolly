@@ -141,6 +141,16 @@ void SkyConnectImpl::onReplayPaused()
 {
 }
 
+void SkyConnectImpl::onRecordSampleRateChaged(SampleRate::SampleRate sampleRate)
+{
+    Q_UNUSED(sampleRate)
+}
+
+void SkyConnectImpl::onPlaybackSampleRateChanged(SampleRate::SampleRate sampleRate)
+{
+    Q_UNUSED(sampleRate)
+}
+
 bool SkyConnectImpl::connectWithSim()
 {
     HRESULT result = ::SimConnect_Open(&(d->simConnectHandle), ::ConnectionName, nullptr, 0, nullptr, SIMCONNECT_OPEN_CONFIGINDEX_LOCAL);

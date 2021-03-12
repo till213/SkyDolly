@@ -86,14 +86,14 @@ signals:
      *
      * \sa changed()
      */
-    void recordSampleRateChanged(double sampleRateValue);
+    void recordSampleRateChanged(SampleRate::SampleRate sampleRate);
 
     /*!
      * Emitted when the playback sample rate has changed.
      *
      * \sa changed()
      */
-    void playbackSampleRateChanged(double sampleRateValue);
+    void playbackSampleRateChanged(SampleRate::SampleRate sampleRate);
 
     /*!
      * Emitted when any setting has changed.

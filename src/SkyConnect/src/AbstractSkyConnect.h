@@ -87,6 +87,9 @@ protected:
     virtual void onStopReplay() = 0;
     virtual void onRecordingPaused(bool paused) = 0;
     virtual void onReplayPaused() = 0;
+    virtual void onRecordSampleRateChaged(SampleRate::SampleRate sampleRate) = 0;
+    virtual void onPlaybackSampleRateChanged(SampleRate::SampleRate sampleRate) = 0;
+
     virtual bool isConnectedWithSim() const = 0;
     virtual bool connectWithSim() = 0;
 
@@ -100,8 +103,8 @@ private:
     bool hasRecordingStarted() const;
 
 private slots:
-    void handleRecordSampleRateChanged(double sampleRateValue);
-    void handlePlaybackSampleRateChanged(double sampleRateValue);
+    void handleRecordSampleRateChanged(SampleRate::SampleRate sampleRate);
+    void handlePlaybackSampleRateChanged(SampleRate::SampleRate sampleRate);
 };
 
 #endif // ABSTRACTSKYCONNECTIMPL_H

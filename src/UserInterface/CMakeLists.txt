@@ -36,6 +36,9 @@ target_sources(UserInterface
         src/Dialogs/SettingsDialog.cpp
         src/Dialogs/SettingsDialog.h
         src/Dialogs/SettingsDialog.ui
+        src/Dialogs/StatisticsDialog.cpp
+        src/Dialogs/StatisticsDialog.h
+        src/Dialogs/StatisticsDialog.ui
 )
 
 target_link_libraries(UserInterface PRIVATE ${USERINTERFACE_LIBS})

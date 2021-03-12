@@ -68,7 +68,7 @@ SimulationVariablesDialog::~SimulationVariablesDialog()
 
 void SimulationVariablesDialog::showEvent(QShowEvent *event)
 {
-    Q_UNUSED(event);
+    Q_UNUSED(event)
 
     updateAircraftDataUi();
     updateTitle();
@@ -89,7 +89,7 @@ void SimulationVariablesDialog::showEvent(QShowEvent *event)
 
 void SimulationVariablesDialog::hideEvent(QHideEvent *event)
 {
-    Q_UNUSED(event);
+    Q_UNUSED(event)
 
     const Aircraft &aircraft = d->skyConnect.getAircraft();
     disconnect(&aircraft, &Aircraft::dataChanged,
@@ -181,14 +181,6 @@ void SimulationVariablesDialog::updateAircraftDataUi()
     ui->waterRudderLineEdit->setText(QString::number(aircraftData.waterRudderHandlePosition));
     ui->brakeLeftLineEdit->setText(QString::number(aircraftData.brakeLeftPosition));
     ui->brakeRightLineEdit->setText(QString::number(aircraftData.brakeRightPosition));
-
-    // Samples per Second
-    if (d->skyConnect.getState() == Connect::State::Recording) {
-        ui->samplesPerSecondLineEdit->setText(QString::number(d->skyConnect.calculateRecordedSamplesPerSecond()));
-    } else {
-        ui->samplesPerSecondLineEdit->clear();
-    }
-    ui->sampleCountLineEdit->setText(QString::number(d->skyConnect.getAircraft().getAllAircraftData().count()));
 }
 
 void SimulationVariablesDialog::updateTitle()

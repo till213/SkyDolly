@@ -52,6 +52,7 @@
 #include "Dialogs/AboutDialog.h"
 #include "Dialogs/SettingsDialog.h"
 #include "Dialogs/SimulationVariablesDialog.h"
+#include "Dialogs/StatisticsDialog.h"
 #include "Widgets/ActionButton.h"
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
@@ -83,7 +84,12 @@ class MainWindowPrivate {
 public:
     MainWindowPrivate()
         : skyConnect(SkyManager::getInstance().currentSkyConnect()),
-          previousState(Connect::State::Idle)
+          previousState(Connect::State::Idle),
+          playbackSpeedButtonGroup(nullptr),
+          aboutDialog(nullptr),
+          settingsDialog(nullptr),
+          simulationVariablesDialog(nullptr),
+          statisticsDialog(nullptr)
     {}
 
     SkyConnectIntf *skyConnect;
@@ -92,6 +98,7 @@ public:
     AboutDialog *aboutDialog;
     SettingsDialog *settingsDialog;
     SimulationVariablesDialog *simulationVariablesDialog;
+    StatisticsDialog *statisticsDialog;
     double lastCustomPlaybackSpeed;
 };
 
@@ -161,6 +168,9 @@ void MainWindow::frenchConnection()
     // Dialogs
     connect(d->simulationVariablesDialog, &SimulationVariablesDialog::visibilityChanged,
             this, &MainWindow::updateWindowMenu);
+    connect(d->statisticsDialog, &StatisticsDialog::visibilityChanged,
+            this, &MainWindow::updateWindowMenu);
+
 
     // Settings
     connect(&Settings::getInstance(), &Settings::changed,
@@ -175,6 +185,7 @@ void MainWindow::initUi()
 
     // Dialogs
     d->simulationVariablesDialog = new SimulationVariablesDialog(*d->skyConnect, this);
+    d->statisticsDialog = new StatisticsDialog(*d->skyConnect, this);
     d->aboutDialog = new AboutDialog(this);
     d->settingsDialog = new SettingsDialog(this);
 
@@ -418,6 +429,7 @@ void MainWindow::updateFileMenu()
 void MainWindow::updateWindowMenu()
 {
     ui->showSimulationVariablesAction->setChecked(d->simulationVariablesDialog->isVisible());
+    ui->showStatisticsAction->setChecked(d->statisticsDialog->isVisible());
 }
 
 void MainWindow::updateMainWindow()
@@ -512,6 +524,15 @@ void MainWindow::on_showSimulationVariablesAction_triggered(bool enabled)
         d->simulationVariablesDialog->show();
     } else {
         d->simulationVariablesDialog->close();
+    }
+}
+
+void MainWindow::on_showStatisticsAction_triggered(bool enabled)
+{
+    if (enabled) {
+        d->statisticsDialog->show();
+    } else {
+        d->statisticsDialog->close();
     }
 }
 
