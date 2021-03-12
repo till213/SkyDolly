@@ -70,21 +70,26 @@ void SkyConnectDummy::onStartDataSample() {
 void SkyConnectDummy::onStopDataSample() {}
 
 void SkyConnectDummy::onStartReplay(bool fromStart) {
-    if (fromStart) {
-        const AircraftData &aircraftData = getAircraft().getAircraftData(0);
-        if (!aircraftData.isNull()) {
-            emit aircraftDataSent(getCurrentTimestamp());
-        }
-    }
+    Q_UNUSED(fromStart)
 }
 
 void SkyConnectDummy::onStopReplay() {}
 
 void SkyConnectDummy::onRecordingPaused(bool paused) {
-    Q_UNUSED(paused);
+    Q_UNUSED(paused)
 }
 
 void SkyConnectDummy::onReplayPaused() {}
+
+void SkyConnectDummy::onRecordSampleRateChaged(SampleRate::SampleRate sampleRate)
+{
+    Q_UNUSED(sampleRate)
+}
+
+void SkyConnectDummy::onPlaybackSampleRateChanged(SampleRate::SampleRate sampleRate)
+{
+    Q_UNUSED(sampleRate)
+}
 
 bool SkyConnectDummy::isConnectedWithSim() const {
     return true;

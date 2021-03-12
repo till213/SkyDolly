@@ -45,7 +45,7 @@ SettingsDialog::~SettingsDialog()
 
 void SettingsDialog::showEvent(QShowEvent *event)
 {
-    Q_UNUSED(event);
+    Q_UNUSED(event)
 
     updateUi();
     connect(&Settings::getInstance(), &Settings::changed,
@@ -54,7 +54,7 @@ void SettingsDialog::showEvent(QShowEvent *event)
 
 void SettingsDialog::hideEvent(QHideEvent *event)
 {
-    Q_UNUSED(event);
+    Q_UNUSED(event)
     disconnect(&Settings::getInstance(), &Settings::changed,
                this, &SettingsDialog::updateUi);
 }

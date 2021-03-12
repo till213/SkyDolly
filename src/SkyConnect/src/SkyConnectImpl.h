@@ -52,6 +52,8 @@ protected:
     virtual void onStopReplay() override;
     virtual void onRecordingPaused(bool paused) override;
     virtual void onReplayPaused() override;
+    virtual void onRecordSampleRateChaged(SampleRate::SampleRate sampleRate) override;
+    virtual void onPlaybackSampleRateChanged(SampleRate::SampleRate sampleRate) override;
 
     virtual bool connectWithSim() override;
     virtual bool isConnectedWithSim() const override;

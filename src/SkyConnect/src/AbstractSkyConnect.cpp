@@ -22,12 +22,14 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <QtGlobal>
 #include <QTimer>
 #include <QElapsedTimer>
 
 #include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/Aircraft.h"
 #include "../../Kernel/src/AircraftData.h"
+#include "../../Kernel/src/SampleRate.h"
 #include "Connect.h"
 #include "SkyConnectIntf.h"
 #include "AbstractSkyConnect.h"
@@ -48,9 +50,9 @@ public:
         : state(Connect::State::Idle),
           currentTimestamp(0),
           recordSampleRate(Settings::getInstance().getRecordSampleRateValue()),
-          recordIntervalMSec(static_cast<int>(1.0 / recordSampleRate * 1000.0)),
+          recordIntervalMSec(SampleRate::toInterval(recordSampleRate)),
           playbackSampleRate(Settings::getInstance().getPlaybackSampleRateValue()),
-          playbackIntervalMSec(static_cast<int>(1.0 / playbackSampleRate * 1000.0)),
+          playbackIntervalMSec(SampleRate::toInterval(playbackSampleRate)),
           timeScale(1.0),
           elapsedTime(0),
           lastSamplesPerSecondIndex(0)
@@ -121,8 +123,9 @@ void AbstractSkyConnect::startDataSample()
         setState(Connect::State::Recording);
         getAircraft().clear();
         d->lastSamplesPerSecondIndex = 0;
-        d->timer.setInterval(d->recordIntervalMSec);
+        d->currentTimestamp = 0;
         d->elapsedTimer.invalidate();
+        d->timer.setInterval(d->recordIntervalMSec);
         d->timer.start();
         onStartDataSample();
     } else {
@@ -298,7 +301,7 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const
 {
     double samplesPerSecond;
     if (d->aircraft.getAllAircraftData().count() > 0) {
-        qint64 startTimestamp = d->currentTimestamp - SamplesPerSecondPeriodMilliSec;
+        qint64 startTimestamp = qMax(d->currentTimestamp - SamplesPerSecondPeriodMilliSec, 0ll);
         int index = d->lastSamplesPerSecondIndex;
         while (d->aircraft.getAllAircraftData().at(index).timestamp < startTimestamp) {
             ++index;
@@ -310,7 +313,7 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const
         int nofSamples = lastIndex - index + 1;
         qint64 period = d->aircraft.getAllAircraftData().at(lastIndex).timestamp - d->aircraft.getAllAircraftData().at(index).timestamp;
         if (period > 0) {
-            samplesPerSecond = static_cast<double>(nofSamples) / (static_cast<double>(period) / 1000.0);
+            samplesPerSecond = static_cast<double>(nofSamples) * 1000.0 / (static_cast<double>(period));
         } else {
             samplesPerSecond = 0.0;
         }
@@ -380,7 +383,6 @@ void AbstractSkyConnect::frenchConnection()
             this, &AbstractSkyConnect::handlePlaybackSampleRateChanged);
 }
 
-
 bool AbstractSkyConnect::hasRecordingStarted() const
 {
     return d->aircraft.getAllAircraftData().count();
@@ -388,16 +390,16 @@ bool AbstractSkyConnect::hasRecordingStarted() const
 
 // PRIVATE SLOTS
 
-void AbstractSkyConnect::handleRecordSampleRateChanged(double sampleRateValue)
+void AbstractSkyConnect::handleRecordSampleRateChanged(SampleRate::SampleRate sampleRate)
 {
-    d->recordSampleRate = sampleRateValue;
-    d->recordIntervalMSec = static_cast<int>(1.0 / d->recordSampleRate * 1000.0);
+    d->recordSampleRate = SampleRate::toValue(sampleRate);
+    d->recordIntervalMSec = SampleRate::toInterval(d->recordSampleRate);
     d->timer.setInterval(d->recordIntervalMSec);
 }
 
-void AbstractSkyConnect::handlePlaybackSampleRateChanged(double sampleRateValue)
+void AbstractSkyConnect::handlePlaybackSampleRateChanged(SampleRate::SampleRate sampleRate)
 {
-    d->playbackSampleRate = sampleRateValue;
-    d->playbackIntervalMSec = static_cast<int>(1.0 / d->playbackSampleRate * 1000.0);
+    d->playbackSampleRate = SampleRate::toValue(sampleRate);
+    d->playbackIntervalMSec = SampleRate::toInterval(d->playbackSampleRate);
     d->timer.setInterval(d->playbackIntervalMSec);
 }
