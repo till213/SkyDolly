@@ -366,9 +366,10 @@ void AbstractSkyConnect::updateCurrentTimestamp()
     }
 }
 
-void AbstractSkyConnect::updateCurrentAircraftData()
+const AircraftData &AbstractSkyConnect::updateCurrentAircraftData()
 {
     d->currentAircraftData = std::move(d->aircraft.getAircraftData(getCurrentTimestamp()));
+    return d->currentAircraftData;
 }
 
 // PRIVATE

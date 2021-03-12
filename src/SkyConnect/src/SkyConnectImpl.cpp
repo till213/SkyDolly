@@ -90,15 +90,6 @@ SkyConnectImpl::~SkyConnectImpl()
 
 // PROTECTED
 
-bool SkyConnectImpl::sendAircraftData(qint64 currentTimestamp)
-{
-    bool res = sendAircraftData();
-    if (res) {
-        emit aircraftDataSent(currentTimestamp);
-    }
-    return res;
-}
-
 void SkyConnectImpl::onStartDataSample()
 {
     // Get aircraft position every simulated frame
@@ -149,6 +140,11 @@ void SkyConnectImpl::onRecordSampleRateChaged(SampleRate::SampleRate sampleRate)
 void SkyConnectImpl::onPlaybackSampleRateChanged(SampleRate::SampleRate sampleRate)
 {
     Q_UNUSED(sampleRate)
+}
+
+bool SkyConnectImpl::sendAircraftData(qint64 currentTimestamp)
+{
+    return sendAircraftData();
 }
 
 bool SkyConnectImpl::connectWithSim()
@@ -262,11 +258,11 @@ bool SkyConnectImpl::isSimulationFrozen() const {
 bool SkyConnectImpl::sendAircraftData()
 {
     bool success;
-    updateCurrentAircraftData();
 
-    if (!getCurrentAircraftData().isNull()) {
+    const AircraftData &currentAircraftData = updateCurrentAircraftData();
+    if (!currentAircraftData.isNull()) {
         SimConnectAircraftData simConnectAircraftData;
-        simConnectAircraftData.fromAircraftData(getCurrentAircraftData());
+        simConnectAircraftData.fromAircraftData(currentAircraftData);
 #ifdef DEBUG
         qDebug("%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %d, %lli",
                simConnectAircraftData.longitude, simConnectAircraftData.latitude, simConnectAircraftData.altitude,
