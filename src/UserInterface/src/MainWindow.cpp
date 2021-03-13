@@ -38,6 +38,7 @@
 #include <QRadioButton>
 #include <QMessageBox>
 #include <QDoubleValidator>
+#include <QIcon>
 
 #include "../../Kernel/src/Export/CSVExport.h"
 #include "../../Kernel/src/Import/CSVImport.h"
@@ -52,6 +53,7 @@
 #include "Dialogs/AboutDialog.h"
 #include "Dialogs/SettingsDialog.h"
 #include "Dialogs/SimulationVariablesDialog.h"
+#include "Dialogs/StatisticsDialog.h"
 #include "Widgets/ActionButton.h"
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
@@ -83,7 +85,12 @@ class MainWindowPrivate {
 public:
     MainWindowPrivate()
         : skyConnect(SkyManager::getInstance().currentSkyConnect()),
-          previousState(Connect::State::Idle)
+          previousState(Connect::State::Idle),
+          playbackSpeedButtonGroup(nullptr),
+          aboutDialog(nullptr),
+          settingsDialog(nullptr),
+          simulationVariablesDialog(nullptr),
+          statisticsDialog(nullptr)
     {}
 
     SkyConnectIntf *skyConnect;
@@ -92,6 +99,7 @@ public:
     AboutDialog *aboutDialog;
     SettingsDialog *settingsDialog;
     SimulationVariablesDialog *simulationVariablesDialog;
+    StatisticsDialog *statisticsDialog;
     double lastCustomPlaybackSpeed;
 };
 
@@ -161,6 +169,9 @@ void MainWindow::frenchConnection()
     // Dialogs
     connect(d->simulationVariablesDialog, &SimulationVariablesDialog::visibilityChanged,
             this, &MainWindow::updateWindowMenu);
+    connect(d->statisticsDialog, &StatisticsDialog::visibilityChanged,
+            this, &MainWindow::updateWindowMenu);
+
 
     // Settings
     connect(&Settings::getInstance(), &Settings::changed,
@@ -170,14 +181,17 @@ void MainWindow::frenchConnection()
 void MainWindow::initUi()
 {
     setWindowIcon(QIcon(":/img/SkyDolly.png"));
+    statusBar()->setVisible(false);
+    resize(minimumSize());
 
     // Dialogs
     d->simulationVariablesDialog = new SimulationVariablesDialog(*d->skyConnect, this);
+    d->statisticsDialog = new StatisticsDialog(*d->skyConnect, this);
     d->aboutDialog = new AboutDialog(this);
     d->settingsDialog = new SettingsDialog(this);
 
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
-    this->initControlUi();
+    initControlUi();
 }
 
 void MainWindow::initControlUi()
@@ -214,34 +228,42 @@ void MainWindow::initControlUi()
     // Record/playback control buttons
     ActionButton *recordButton = new ActionButton(this);
     recordButton->setAction(ui->recordAction);
+    recordButton->setFlat(true);
     ui->controlButtonLayout->insertWidget(0, recordButton);
 
     ActionButton *skipToStartButton = new ActionButton(this);
     skipToStartButton->setAction(ui->skipToBeginAction);
+    skipToStartButton->setFlat(true);
     ui->controlButtonLayout->insertWidget(1, skipToStartButton);
 
     ActionButton *skipBackwardButton = new ActionButton(this);
     skipBackwardButton->setAction(ui->backwardAction);
+    skipBackwardButton->setFlat(true);
     ui->controlButtonLayout->insertWidget(2, skipBackwardButton);
 
     ActionButton *stopButton = new ActionButton(this);
     stopButton->setAction(ui->stopAction);
+    stopButton->setFlat(true);
     ui->controlButtonLayout->insertWidget(3, stopButton);
 
     ActionButton *pauseButton = new ActionButton(this);
     pauseButton->setAction(ui->pauseAction);
+    pauseButton->setFlat(true);
     ui->controlButtonLayout->insertWidget(4, pauseButton);
 
     ActionButton *playButton = new ActionButton(this);
     playButton->setAction(ui->playAction);
+    playButton->setFlat(true);
     ui->controlButtonLayout->insertWidget(5, playButton);
 
     ActionButton *skipForwardButton = new ActionButton(this);
     skipForwardButton->setAction(ui->forwardAction);
+    skipForwardButton->setFlat(true);
     ui->controlButtonLayout->insertWidget(6, skipForwardButton);
 
     ActionButton *skipToEndButton = new ActionButton(this);
     skipToEndButton->setAction(ui->skipToEndAction);
+    skipToEndButton->setFlat(true);
     ui->controlButtonLayout->insertWidget(7, skipToEndButton);
 }
 
@@ -416,6 +438,7 @@ void MainWindow::updateFileMenu()
 void MainWindow::updateWindowMenu()
 {
     ui->showSimulationVariablesAction->setChecked(d->simulationVariablesDialog->isVisible());
+    ui->showStatisticsAction->setChecked(d->statisticsDialog->isVisible());
 }
 
 void MainWindow::updateMainWindow()
@@ -510,6 +533,15 @@ void MainWindow::on_showSimulationVariablesAction_triggered(bool enabled)
         d->simulationVariablesDialog->show();
     } else {
         d->simulationVariablesDialog->close();
+    }
+}
+
+void MainWindow::on_showStatisticsAction_triggered(bool enabled)
+{
+    if (enabled) {
+        d->statisticsDialog->show();
+    } else {
+        d->statisticsDialog->close();
     }
 }
 

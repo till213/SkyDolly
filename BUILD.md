@@ -1,6 +1,6 @@
 # Build Instructions
 
-Sky Dolly is built against Qt 5.15, but also compiles fine with Qt 5.12 (which comes with Ubuntu 20.04).
+Sky Dolly is developed against Qt 5.15, but also compiles fine with Qt 5.12 (which comes with Ubuntu 20.04).
 
 ## Windows
 
