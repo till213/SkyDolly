@@ -27,6 +27,7 @@
 
 #include <QObject>
 
+#include "../../Kernel/src/SampleRate.h"
 #include "SkyConnectIntf.h"
 #include "Connect.h"
 

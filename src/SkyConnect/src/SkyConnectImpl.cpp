@@ -92,10 +92,9 @@ SkyConnectImpl::~SkyConnectImpl()
 
 void SkyConnectImpl::onStartDataSample()
 {
-    // Get aircraft position every simulated frame
-    ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_SIM_FRAME, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
     // Get aircraft information
     ::SimConnect_RequestDataOnSimObjectType(d->simConnectHandle, AircraftInfoRequest, SkyConnectDataDefinition::AircraftInfoDefinition, ::UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
+    updateRecordFrequency(Settings::getInstance().getRecordSampleRate());
 }
 
 void SkyConnectImpl::onStopDataSample()
@@ -121,11 +120,8 @@ void SkyConnectImpl::onStopReplay()
 
 void SkyConnectImpl::onRecordingPaused(bool paused)
 {
-    if (paused) {
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_NEVER);
-    } else {
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_SIM_FRAME, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
-    }
+    Q_UNUSED(paused)
+    updateRecordFrequency(Settings::getInstance().getRecordSampleRate());
 }
 
 void SkyConnectImpl::onReplayPaused()
@@ -134,7 +130,7 @@ void SkyConnectImpl::onReplayPaused()
 
 void SkyConnectImpl::onRecordSampleRateChaged(SampleRate::SampleRate sampleRate)
 {
-    Q_UNUSED(sampleRate)
+     updateRecordFrequency(sampleRate);
 }
 
 void SkyConnectImpl::onPlaybackSampleRateChanged(SampleRate::SampleRate sampleRate)
@@ -144,6 +140,7 @@ void SkyConnectImpl::onPlaybackSampleRateChanged(SampleRate::SampleRate sampleRa
 
 bool SkyConnectImpl::sendAircraftData(qint64 currentTimestamp)
 {
+    Q_UNUSED(currentTimestamp)
     return sendAircraftData();
 }
 
@@ -295,6 +292,24 @@ void SkyConnectImpl::replay()
         emit aircraftDataSent(getCurrentTimestamp());
     } else {
         stopReplay();
+    }
+}
+
+void SkyConnectImpl::updateRecordFrequency(SampleRate::SampleRate sampleRate)
+{
+    if (getState() == Connect::State::Recording) {
+        switch (sampleRate) {
+        case SampleRate::Hz1:
+            // Get aircraft position @1Hz
+            ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_SECOND, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+            break;
+        default:
+            // Get aircraft position every simulated frame
+            ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_SIM_FRAME, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+            break;
+        }
+    } else {
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_NEVER);
     }
 }
 

@@ -72,6 +72,7 @@ private:
     bool isSimulationFrozen() const;
     bool sendAircraftData();
     void replay();
+    void updateRecordFrequency(SampleRate::SampleRate sampleRate);
 
     static void CALLBACK dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context);
 };
