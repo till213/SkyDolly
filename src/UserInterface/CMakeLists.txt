@@ -1,6 +1,6 @@
 add_definitions(-DUSERINTERFACE_EXPORT)
 
-qt5_add_resources(PROJECT_SOURCES res/SkyDolly.qrc)
+qt5_add_resources(USERINTERFACE_SOURCES res/SkyDolly.qrc)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_library(UserInterface SHARED

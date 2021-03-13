@@ -298,6 +298,11 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="../res/SkyDolly.qrc">
+     <normaloff>:/img/icons/record-normal.png</normaloff>
+     <normalon>:/img/icons/record-active.png</normalon>:/img/icons/record-normal.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Record</string>
    </property>
@@ -309,6 +314,11 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="../res/SkyDolly.qrc">
+     <normaloff>:/img/icons/play-normal.png</normaloff>
+     <normalon>:/img/icons/play-active.png</normalon>:/img/icons/play-normal.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Play</string>
    </property>
@@ -319,6 +329,11 @@
   <action name="pauseAction">
    <property name="checkable">
     <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/SkyDolly.qrc">
+     <normaloff>:/img/icons/pause-normal.png</normaloff>
+     <normalon>:/img/icons/pause-active.png</normalon>:/img/icons/pause-normal.png</iconset>
    </property>
    <property name="text">
     <string>P&amp;ause</string>
@@ -333,6 +348,10 @@
    </property>
   </action>
   <action name="skipToBeginAction">
+   <property name="icon">
+    <iconset resource="../res/SkyDolly.qrc">
+     <normaloff>:/img/icons/begin-normal.png</normaloff>:/img/icons/begin-normal.png</iconset>
+   </property>
    <property name="text">
     <string>B&amp;egin</string>
    </property>
@@ -341,6 +360,11 @@
    </property>
   </action>
   <action name="backwardAction">
+   <property name="icon">
+    <iconset resource="../res/SkyDolly.qrc">
+     <normaloff>:/img/icons/backward-normal.png</normaloff>
+     <selectedoff>:/img/icons/backward-active.png</selectedoff>:/img/icons/backward-normal.png</iconset>
+   </property>
    <property name="text">
     <string>Re&amp;wind</string>
    </property>
@@ -349,6 +373,10 @@
    </property>
   </action>
   <action name="forwardAction">
+   <property name="icon">
+    <iconset resource="../res/SkyDolly.qrc">
+     <normaloff>:/img/icons/forward-normal.png</normaloff>:/img/icons/forward-normal.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Fast Forward</string>
    </property>
@@ -357,6 +385,10 @@
    </property>
   </action>
   <action name="skipToEndAction">
+   <property name="icon">
+    <iconset resource="../res/SkyDolly.qrc">
+     <normaloff>:/img/icons/end-normal.png</normaloff>:/img/icons/end-normal.png</iconset>
+   </property>
    <property name="text">
     <string>E&amp;nd</string>
    </property>
@@ -383,6 +415,10 @@
    </property>
   </action>
   <action name="stopAction">
+   <property name="icon">
+    <iconset resource="../res/SkyDolly.qrc">
+     <normaloff>:/img/icons/stop-normal.png</normaloff>:/img/icons/stop-normal.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Stop</string>
    </property>
@@ -402,6 +438,8 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../res/SkyDolly.qrc"/>
+ </resources>
  <connections/>
 </ui>
