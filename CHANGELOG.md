@@ -68,6 +68,7 @@
 - Pause is enabled after CSV data import
 - A high precision timer is used to increase the sample accuracy
 - A new recording statistics dialog has been added, also showing a recorded samples per second counter
+- New icons for record/play control actions
 
 ### Bug Fixes
 
