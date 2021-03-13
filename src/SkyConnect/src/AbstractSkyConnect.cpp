@@ -190,6 +190,7 @@ void AbstractSkyConnect::setPaused(bool enabled)
             // Store the elapsed recording time...
             d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed();
             d->elapsedTimer.invalidate();
+            setState(newState);
             onRecordingPaused(true);
             break;
         case Connect::Playback:
@@ -201,10 +202,11 @@ void AbstractSkyConnect::setPaused(bool enabled)
                 // ... and stop the elapsed timer
                 d->elapsedTimer.invalidate();
             }
+            setState(newState);
             break;
          default:
             // No state change
-            newState = getState();
+            break;
         }
     } else {
         switch (getState()) {
@@ -214,18 +216,19 @@ void AbstractSkyConnect::setPaused(bool enabled)
                 // Resume recording (but only if it has already recorded samples before)
                 d->elapsedTimer.start();
             }
+            setState(newState);
             onRecordingPaused(false);
             break;
         case Connect::PlaybackPaused:
             newState = Connect::Playback;
             d->elapsedTimer.start();
+            setState(newState);
             break;
          default:
             // No state change
-            newState = getState();
+            break;
         }
-    }
-    setState(newState);
+    }    
 }
 
 bool AbstractSkyConnect::isPaused() const {

@@ -22,6 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <QSettings>
+#include <QStyleFactory>
+
 #include "../../Kernel/src/Version.h"
 #include "../../UserInterface/src/MainWindow.h"
 

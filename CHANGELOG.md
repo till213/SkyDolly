@@ -69,6 +69,7 @@
 - A high precision timer is used to increase the sample accuracy
 - A new recording statistics dialog has been added, also showing a recorded samples per second counter
 - New icons for record/play control actions
+- When recording sample rate is set to 1 Hz ("one sample per second") then the SimConnect request period is now also set to 1 Hz
 
 ### Bug Fixes
 

@@ -135,12 +135,12 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="403"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="434"/>
         <source>&amp;Statistics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="406"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="437"/>
         <source>S</source>
         <translation type="unfinished"></translation>
     </message>
@@ -150,104 +150,104 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="302"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="307"/>
         <source>&amp;Record</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="305"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="310"/>
         <source>R</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="318"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="323"/>
         <source>&amp;Play</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="321"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="326"/>
         <source>Space</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="329"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="339"/>
         <source>P&amp;ause</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="332"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="342"/>
         <source>P</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="337"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="347"/>
         <source>S&amp;ettings...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="342"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="356"/>
         <source>B&amp;egin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="345"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="359"/>
         <source>PgUp</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="350"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="369"/>
         <source>Re&amp;wind</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="353"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="372"/>
         <source>Left</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="358"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="381"/>
         <source>&amp;Fast Forward</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="361"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="384"/>
         <source>Right</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="366"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="393"/>
         <source>E&amp;nd</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="369"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="396"/>
         <source>PgDown</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="374"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="401"/>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="511"/>
         <source>Export CSV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="379"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="406"/>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="471"/>
         <source>Import CSV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="387"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="414"/>
         <source>Stay On &amp;Top</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="392"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="423"/>
         <source>&amp;Stop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="395"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="426"/>
         <source>Esc</source>
         <translation type="unfinished"></translation>
     </message>
