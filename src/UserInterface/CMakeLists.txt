@@ -1,6 +1,6 @@
 add_definitions(-DUSERINTERFACE_EXPORT)
 
-qt5_add_resources(PROJECT_SOURCES res/SkyDolly.qrc)
+qt5_add_resources(USERINTERFACE_SOURCES res/SkyDolly.qrc)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_library(UserInterface SHARED
@@ -36,6 +36,9 @@ target_sources(UserInterface
         src/Dialogs/SettingsDialog.cpp
         src/Dialogs/SettingsDialog.h
         src/Dialogs/SettingsDialog.ui
+        src/Dialogs/StatisticsDialog.cpp
+        src/Dialogs/StatisticsDialog.h
+        src/Dialogs/StatisticsDialog.ui
 )
 
 target_link_libraries(UserInterface PRIVATE ${USERINTERFACE_LIBS})

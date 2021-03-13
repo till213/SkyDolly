@@ -22,48 +22,44 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SKYCONNECTDUMMY_H
-#define SKYCONNECTDUMMY_H
+#ifndef STATISTICSDIALOG_H
+#define STATISTICSDIALOG_H
 
-#include <QObject>
+#include <QDialog>
 
-#include "AbstractSkyConnect.h"
+class QShowEvent;
+class QHideEvent;
 
-struct AircraftData;
-class Aircraft;
-class SkyConnectDummyPrivate;
+class SkyConnectIntf;
+class StatisticsDialogPrivate;
 
-class SkyConnectDummy : public AbstractSkyConnect
+namespace Ui {
+class StatisticsDialog;
+}
+
+class StatisticsDialog : public QDialog
 {
     Q_OBJECT
+
 public:
-    SkyConnectDummy(QObject *parent = nullptr);
-    virtual ~SkyConnectDummy();
+    explicit StatisticsDialog(SkyConnectIntf &skyConnect, QWidget *parent = nullptr);
+    virtual ~StatisticsDialog();
+
+signals:
+    void visibilityChanged(bool visible);
 
 protected:
-    virtual void onStartDataSample() override;
-    virtual void onStopDataSample() override;
-    virtual void onStartReplay(bool fromStart) override;
-    virtual void onStopReplay() override;
-    virtual void onRecordingPaused(bool paused) override;
-    virtual void onReplayPaused() override;
-    virtual void onRecordSampleRateChaged(SampleRate::SampleRate sampleRate) override;
-    virtual void onPlaybackSampleRateChanged(SampleRate::SampleRate sampleRate) override;
-
-    virtual bool sendAircraftData(qint64 currentTimestamp) override;
-    virtual bool isConnectedWithSim() const override;
-    virtual bool connectWithSim() override;
-
-protected slots:
-    virtual void processEvents() override;
+    void showEvent(QShowEvent *event) override;
+    void hideEvent(QHideEvent *event) override;
 
 private:
-    SkyConnectDummyPrivate *d;
+    StatisticsDialogPrivate *d;
+    Ui::StatisticsDialog *ui;    
 
-    bool sendAircraftData();
-    void recordData();
-    void replay();
+    void frenchConnection();
 
+private slots:
+    void updateRecordUi();
 };
 
-#endif // SKYCONNECTDUMMY_H
+#endif // STATISTICSDIALOG_H

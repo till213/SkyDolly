@@ -90,7 +90,7 @@ void Settings::setRecordSampleRate(SampleRate::SampleRate sampleRate)
     double sampleRateValue = SampleRate::toValue(sampleRate);
     if (d->recordSampleRateValue != sampleRateValue) {
         d->recordSampleRateValue = sampleRateValue;
-        emit recordSampleRateChanged(d->recordSampleRateValue);
+        emit recordSampleRateChanged(sampleRate);
     }
 }
 
@@ -109,7 +109,7 @@ void Settings::setPlaybackSampleRate(SampleRate::SampleRate sampleRate)
     double sampleRateValue = SampleRate::toValue(sampleRate);
     if (d->playbackSampleRateValue != sampleRateValue) {
         d->playbackSampleRateValue = SampleRate::toValue(sampleRate);
-        emit playbackSampleRateChanged(d->playbackSampleRateValue);
+        emit playbackSampleRateChanged(sampleRate);
     }
 }
 

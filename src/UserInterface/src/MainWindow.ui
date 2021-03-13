@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>891</width>
-    <height>244</height>
+    <width>832</width>
+    <height>259</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,19 +15,6 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_3">
-    <item row="1" column="0">
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
     <item row="0" column="0">
      <widget class="QGroupBox" name="groupBox_4">
       <property name="title">
@@ -107,98 +94,111 @@
          </item>
         </layout>
        </item>
-       <item row="1" column="0">
-        <widget class="QGroupBox" name="groupBox">
-         <property name="title">
-          <string>Playback Speed</string>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="2" column="0">
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string>Playback Speed</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QRadioButton" name="playbackSpeed10RadioButton">
+         <property name="text">
+          <string>10 %</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="0">
-           <widget class="QRadioButton" name="playbackSpeed10RadioButton">
-            <property name="text">
-             <string>10 %</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QRadioButton" name="playbackSpeed25RadioButton">
-            <property name="text">
-             <string>25 %</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QRadioButton" name="playbackSpeed50RadioButton">
-            <property name="text">
-             <string>50 %</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <widget class="QRadioButton" name="playbackSpeed75RadioButton">
-            <property name="text">
-             <string>75 %</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="4">
-           <widget class="QRadioButton" name="playbackSpeed100RadioButton">
-            <property name="text">
-             <string>100 %</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="5">
-           <widget class="QRadioButton" name="playbackSpeed200RadioButton">
-            <property name="text">
-             <string>200 %</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="6">
-           <widget class="QRadioButton" name="playbackSpeed400RadioButton">
-            <property name="text">
-             <string>400 %</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="7">
-           <widget class="QRadioButton" name="playbackSpeed800RadioButton">
-            <property name="text">
-             <string>800 %</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="8">
-           <widget class="QRadioButton" name="customPlaybackSpeedRadioButton">
-            <property name="text">
-             <string>Custom</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="9">
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <item>
-             <widget class="QLineEdit" name="customPlaybackSpeedLineEdit">
-              <property name="minimumSize">
-               <size>
-                <width>120</width>
-                <height>0</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label">
-              <property name="text">
-               <string>%</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
         </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QRadioButton" name="playbackSpeed25RadioButton">
+         <property name="text">
+          <string>25 %</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QRadioButton" name="playbackSpeed50RadioButton">
+         <property name="text">
+          <string>50 %</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QRadioButton" name="playbackSpeed75RadioButton">
+         <property name="text">
+          <string>75 %</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QRadioButton" name="playbackSpeed100RadioButton">
+         <property name="text">
+          <string>100 %</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="QRadioButton" name="playbackSpeed200RadioButton">
+         <property name="text">
+          <string>200 %</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="6">
+        <widget class="QRadioButton" name="playbackSpeed400RadioButton">
+         <property name="text">
+          <string>400 %</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="7">
+        <widget class="QRadioButton" name="playbackSpeed800RadioButton">
+         <property name="text">
+          <string>800 %</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="8">
+        <widget class="QRadioButton" name="customPlaybackSpeedRadioButton">
+         <property name="text">
+          <string>Custom</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="9">
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QLineEdit" name="customPlaybackSpeedLineEdit">
+           <property name="minimumSize">
+            <size>
+             <width>120</width>
+             <height>0</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>%</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -210,8 +210,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>891</width>
-     <height>25</height>
+     <width>832</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -237,6 +237,7 @@
      <string>&amp;Window</string>
     </property>
     <addaction name="showSimulationVariablesAction"/>
+    <addaction name="showStatisticsAction"/>
     <addaction name="separator"/>
     <addaction name="stayOnTopAction"/>
    </widget>
@@ -259,7 +260,11 @@
    <addaction name="menu_View"/>
    <addaction name="menu_Info"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QStatusBar" name="statusbar">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+  </widget>
   <action name="quitAction">
    <property name="text">
     <string>&amp;Quit</string>
@@ -283,7 +288,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Simulation Variables</string>
+    <string>Simulation &amp;Variables</string>
    </property>
    <property name="shortcut">
     <string>V</string>
@@ -292,6 +297,11 @@
   <action name="recordAction">
    <property name="checkable">
     <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/SkyDolly.qrc">
+     <normaloff>:/img/icons/record-normal.png</normaloff>
+     <normalon>:/img/icons/record-active.png</normalon>:/img/icons/record-normal.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Record</string>
@@ -304,6 +314,11 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="../res/SkyDolly.qrc">
+     <normaloff>:/img/icons/play-normal.png</normaloff>
+     <normalon>:/img/icons/play-active.png</normalon>:/img/icons/play-normal.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Play</string>
    </property>
@@ -314,6 +329,11 @@
   <action name="pauseAction">
    <property name="checkable">
     <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/SkyDolly.qrc">
+     <normaloff>:/img/icons/pause-normal.png</normaloff>
+     <normalon>:/img/icons/pause-active.png</normalon>:/img/icons/pause-normal.png</iconset>
    </property>
    <property name="text">
     <string>P&amp;ause</string>
@@ -328,6 +348,10 @@
    </property>
   </action>
   <action name="skipToBeginAction">
+   <property name="icon">
+    <iconset resource="../res/SkyDolly.qrc">
+     <normaloff>:/img/icons/begin-normal.png</normaloff>:/img/icons/begin-normal.png</iconset>
+   </property>
    <property name="text">
     <string>B&amp;egin</string>
    </property>
@@ -336,6 +360,11 @@
    </property>
   </action>
   <action name="backwardAction">
+   <property name="icon">
+    <iconset resource="../res/SkyDolly.qrc">
+     <normaloff>:/img/icons/backward-normal.png</normaloff>
+     <selectedoff>:/img/icons/backward-active.png</selectedoff>:/img/icons/backward-normal.png</iconset>
+   </property>
    <property name="text">
     <string>Re&amp;wind</string>
    </property>
@@ -344,6 +373,10 @@
    </property>
   </action>
   <action name="forwardAction">
+   <property name="icon">
+    <iconset resource="../res/SkyDolly.qrc">
+     <normaloff>:/img/icons/forward-normal.png</normaloff>:/img/icons/forward-normal.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Fast Forward</string>
    </property>
@@ -352,6 +385,10 @@
    </property>
   </action>
   <action name="skipToEndAction">
+   <property name="icon">
+    <iconset resource="../res/SkyDolly.qrc">
+     <normaloff>:/img/icons/end-normal.png</normaloff>:/img/icons/end-normal.png</iconset>
+   </property>
    <property name="text">
     <string>E&amp;nd</string>
    </property>
@@ -378,6 +415,10 @@
    </property>
   </action>
   <action name="stopAction">
+   <property name="icon">
+    <iconset resource="../res/SkyDolly.qrc">
+     <normaloff>:/img/icons/stop-normal.png</normaloff>:/img/icons/stop-normal.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Stop</string>
    </property>
@@ -385,7 +426,20 @@
     <string>Esc</string>
    </property>
   </action>
+  <action name="showStatisticsAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Statistics</string>
+   </property>
+   <property name="shortcut">
+    <string>S</string>
+   </property>
+  </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../res/SkyDolly.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -80,6 +80,7 @@ private slots:
     void on_quitAction_triggered();
     // Window menu
     void on_showSimulationVariablesAction_triggered(bool enabled);
+    void on_showStatisticsAction_triggered(bool enabled);
     void on_stayOnTopAction_triggered(bool enabled);
     // About menu
     void on_aboutAction_triggered();
