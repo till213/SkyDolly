@@ -38,6 +38,7 @@
 #include <QRadioButton>
 #include <QMessageBox>
 #include <QDoubleValidator>
+#include <QIcon>
 
 #include "../../Kernel/src/Export/CSVExport.h"
 #include "../../Kernel/src/Import/CSVImport.h"
@@ -227,34 +228,42 @@ void MainWindow::initControlUi()
     // Record/playback control buttons
     ActionButton *recordButton = new ActionButton(this);
     recordButton->setAction(ui->recordAction);
+    recordButton->setFlat(true);
     ui->controlButtonLayout->insertWidget(0, recordButton);
 
     ActionButton *skipToStartButton = new ActionButton(this);
     skipToStartButton->setAction(ui->skipToBeginAction);
+    skipToStartButton->setFlat(true);
     ui->controlButtonLayout->insertWidget(1, skipToStartButton);
 
     ActionButton *skipBackwardButton = new ActionButton(this);
     skipBackwardButton->setAction(ui->backwardAction);
+    skipBackwardButton->setFlat(true);
     ui->controlButtonLayout->insertWidget(2, skipBackwardButton);
 
     ActionButton *stopButton = new ActionButton(this);
     stopButton->setAction(ui->stopAction);
+    stopButton->setFlat(true);
     ui->controlButtonLayout->insertWidget(3, stopButton);
 
     ActionButton *pauseButton = new ActionButton(this);
     pauseButton->setAction(ui->pauseAction);
+    pauseButton->setFlat(true);
     ui->controlButtonLayout->insertWidget(4, pauseButton);
 
     ActionButton *playButton = new ActionButton(this);
     playButton->setAction(ui->playAction);
+    playButton->setFlat(true);
     ui->controlButtonLayout->insertWidget(5, playButton);
 
     ActionButton *skipForwardButton = new ActionButton(this);
     skipForwardButton->setAction(ui->forwardAction);
+    skipForwardButton->setFlat(true);
     ui->controlButtonLayout->insertWidget(6, skipForwardButton);
 
     ActionButton *skipToEndButton = new ActionButton(this);
     skipToEndButton->setAction(ui->skipToEndAction);
+    skipToEndButton->setFlat(true);
     ui->controlButtonLayout->insertWidget(7, skipToEndButton);
 }
 

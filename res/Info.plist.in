@@ -4,6 +4,7 @@
 <dict>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+        <key>NSHighResolutionCapable</key>
 	<key>CFBundleIconFile</key>
         <string>@PROJECT_NAME@.icns</string>
 	<key>CFBundlePackageType</key>

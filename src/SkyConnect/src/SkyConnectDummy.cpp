@@ -84,6 +84,7 @@ void SkyConnectDummy::onPlaybackSampleRateChanged(SampleRate::SampleRate sampleR
 }
 
 bool SkyConnectDummy::sendAircraftData(qint64 currentTimestamp) {
+    Q_UNUSED(currentTimestamp)
     return sendAircraftData();
 }
 

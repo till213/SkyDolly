@@ -33,6 +33,9 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName(Version::getApplicationName());
 
     SkyDollyApplication a(argc, argv);
+    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
+
     MainWindow w;
     w.show();
     return a.exec();
