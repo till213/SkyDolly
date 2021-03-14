@@ -31,6 +31,8 @@ if (WIN32)
             src/SimConnectAircraftData.h
             src/SimConnectAircraftInfo.cpp
             src/SimConnectAircraftInfo.h
+            src/EventWidget.cpp
+            src/EventWidget.h
         )
 
      # Copy SimConnect.dll to bin directory (for development)
@@ -47,7 +49,7 @@ else()
 endif()
 
 set(SKYCONNECT_LIBS
-    Qt${QT_VERSION_MAJOR}::Core Kernel
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel
 )
 if (APPLE)
     list(APPEND SKYCONNECT_LIBS -lc++)

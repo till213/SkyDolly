@@ -42,7 +42,7 @@ public:
     int previewInfoDialogCount;
 
     static Settings *instance;
-    static constexpr double DefaultRecordSampleRate = SampleRate::toValue(SampleRate::SampleRate::Hz10);
+    static constexpr double DefaultRecordSampleRate = SampleRate::toValue(SampleRate::SampleRate::Auto);
     static constexpr double DefaultPlaybackSampleRate = SampleRate::toValue(SampleRate::SampleRate::Hz60);
     static constexpr bool DefaultWindowStayOnTopEnabled = false;
     static constexpr int DefaultPreviewInfoDialogCount = 3;

@@ -29,8 +29,10 @@
 
 namespace SampleRate
 {
+    constexpr int AutoValue = 999.0;
+
     enum SampleRate {
-        Hz1,
+        Hz1 = 0,
         Hz2,
         Hz5,
         Hz10,
@@ -41,7 +43,8 @@ namespace SampleRate
         Hz30,
         Hz45,
         Hz50,
-        Hz60
+        Hz60,
+        Auto
     };
 
     inline constexpr double toValue(SampleRate sampleRate) {
@@ -70,8 +73,10 @@ namespace SampleRate
             return 50.0;
         case Hz60:
             return 60.0;
+        case Auto:
+            return AutoValue;
         default:
-            return 30.0;
+            return AutoValue;
         }
     }
 
@@ -100,19 +105,24 @@ namespace SampleRate
             return Hz50;
         else if (sampleRate <= 60.0)
             return Hz60;
+        else if (sampleRate <= AutoValue)
+            return Auto;
         else
-            return Hz30;
+            return Auto;
     }
 
     /*!
-     * Returns the interval [msec], suitable for a QTimer, corresponding to the given \c sampleRate [Hz]
-     * \param sampleRate
-     *        the sample rate to convert to the corresponding interval
+     * Returns the interval [msec], suitable for a QTimer, corresponding to the given \c sampleRateValue [Hz]
+     * \param sampleRateValue
+     *        the sample rate value to convert to the corresponding interval
      * \return the interval in milliseconds
      */
-    inline int toInterval(double sampleRate) {
-        Q_ASSERT(sampleRate != 0.0);
-        return static_cast<int>(1000.0 / sampleRate);
+    inline int toInterval(double sampleRateValue) {
+        if (sampleRateValue != AutoValue) {
+            return static_cast<int>(1000.0 / sampleRateValue);
+        } else {
+            return 0;
+        }
     }
 
     /*!
@@ -122,8 +132,11 @@ namespace SampleRate
      * \return the interval in milliseconds
      */
     inline int toInterval(SampleRate sampleRate) {
-        Q_ASSERT(sampleRate != 0.0);
-        return static_cast<int>(1000.0 / toValue(sampleRate));
+        if (sampleRate != Auto) {
+            return static_cast<int>(1000.0 / toValue(sampleRate));
+        } else {
+            return 0;
+        }
     }
 }
 

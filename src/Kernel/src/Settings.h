@@ -37,12 +37,6 @@ class Version;
 /*!
  * The application settings. These settings are persisted to user configuration
  * files.
- *
- * Implementation note:
- *
- * - \b Windows: INI format
- * - \b Mac: Native format (CFPreferences API)
- * - \b Linux: INI format
  */
 class KERNEL_API Settings : public QObject
 {
