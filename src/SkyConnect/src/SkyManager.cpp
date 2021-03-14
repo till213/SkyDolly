@@ -33,6 +33,7 @@ class SkyManagerPrivate
 {
 public:
 
+    // TODO Plugin system
 #ifdef WIN32
     SkyManagerPrivate()
         : currentSkyConnect(new SkyConnectImpl())
@@ -93,5 +94,3 @@ SkyManager::SkyManager()
     : d(new SkyManagerPrivate())
 {
 }
-
-

@@ -46,6 +46,7 @@ public:
     static constexpr double DefaultPlaybackSampleRate = SampleRate::toValue(SampleRate::SampleRate::Hz60);
     static constexpr bool DefaultWindowStayOnTopEnabled = false;
     static constexpr int DefaultPreviewInfoDialogCount = 3;
+    static constexpr int PreviewInfoDialogBase = 10;
 
     SettingsPrivate()
         : version(QCoreApplication::instance()->applicationVersion())
@@ -128,13 +129,13 @@ void Settings::setWindowStaysOnTopEnabled(bool enable)
 
 int Settings::getPreviewInfoDialogCount() const
 {
-    return d->previewInfoDialogCount;
+    return d->previewInfoDialogCount - SettingsPrivate::PreviewInfoDialogBase;
 }
 
 void Settings::setPreviewInfoDialogCount(int count)
 {
     if (d->previewInfoDialogCount != count) {
-        d->previewInfoDialogCount = count;
+        d->previewInfoDialogCount = count + SettingsPrivate::PreviewInfoDialogBase;
         emit changed();
     }
 }
@@ -197,9 +198,12 @@ void Settings::restore()
     d->settings.endGroup();
     d->settings.beginGroup("_Preview");
     {
-        d->previewInfoDialogCount = d->settings.value("PreviewInfoDialogCount", SettingsPrivate::DefaultPreviewInfoDialogCount).toInt(&ok);
+        d->previewInfoDialogCount = d->settings.value("PreviewInfoDialogCount", SettingsPrivate::DefaultPreviewInfoDialogCount + SettingsPrivate::PreviewInfoDialogBase).toInt(&ok);
         if (!ok) {
-            d->previewInfoDialogCount = SettingsPrivate::DefaultPreviewInfoDialogCount;
+            d->previewInfoDialogCount = SettingsPrivate::DefaultPreviewInfoDialogCount + SettingsPrivate::PreviewInfoDialogBase;
+        }
+        if (d->previewInfoDialogCount < SettingsPrivate::PreviewInfoDialogBase) {
+            d->previewInfoDialogCount = SettingsPrivate::DefaultPreviewInfoDialogCount + SettingsPrivate::PreviewInfoDialogBase;
         }
     }
     d->settings.endGroup();
