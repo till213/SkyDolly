@@ -73,7 +73,7 @@ void SkyConnectDummy::onRecordingPaused(bool paused) {
 
 void SkyConnectDummy::onReplayPaused() {}
 
-void SkyConnectDummy::onRecordSampleRateChaged(SampleRate::SampleRate sampleRate)
+void SkyConnectDummy::onRecordSampleRateChanged(SampleRate::SampleRate sampleRate)
 {
     Q_UNUSED(sampleRate)
 }

@@ -88,7 +88,7 @@ protected:
     virtual void onStopReplay() = 0;
     virtual void onRecordingPaused(bool paused) = 0;
     virtual void onReplayPaused() = 0;
-    virtual void onRecordSampleRateChaged(SampleRate::SampleRate sampleRate) = 0;
+    virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) = 0;
     virtual void onPlaybackSampleRateChanged(SampleRate::SampleRate sampleRate) = 0;
 
     virtual bool isConnectedWithSim() const = 0;
