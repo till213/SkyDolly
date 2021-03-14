@@ -125,9 +125,8 @@ void AbstractSkyConnect::startDataSample()
         d->lastSamplesPerSecondIndex = 0;
         d->currentTimestamp = 0;
         d->elapsedTimer.invalidate();
-        d->timer.setInterval(d->recordIntervalMSec);
         if (d->recordSampleRate != SampleRate::AutoValue) {
-            d->timer.start();
+            d->timer.start(d->recordIntervalMSec);
         }
         onStartDataSample();
     } else {
@@ -401,14 +400,25 @@ void AbstractSkyConnect::handleRecordSampleRateChanged(SampleRate::SampleRate sa
 {
     d->recordSampleRate = SampleRate::toValue(sampleRate);
     d->recordIntervalMSec = SampleRate::toInterval(d->recordSampleRate);
-    d->timer.setInterval(d->recordIntervalMSec);
-    onRecordSampleRateChanged(sampleRate);
+    if (d->state == Connect::State::Recording || d->state == Connect::State::RecordingPaused) {
+        if (sampleRate != SampleRate::Auto) {
+            d->timer.setInterval(d->recordIntervalMSec);
+            if (!d->timer.isActive()) {
+                d->timer.start();
+            }
+        } else {
+            d->timer.stop();
+        }
+        onRecordSampleRateChanged(sampleRate);
+    }
 }
 
 void AbstractSkyConnect::handlePlaybackSampleRateChanged(SampleRate::SampleRate sampleRate)
 {
     d->playbackSampleRate = SampleRate::toValue(sampleRate);
     d->playbackIntervalMSec = SampleRate::toInterval(d->playbackSampleRate);
-    d->timer.setInterval(d->playbackIntervalMSec);
-    onPlaybackSampleRateChanged(sampleRate);
+    if (d->state == Connect::State::Playback || d->state == Connect::State::PlaybackPaused) {
+        d->timer.setInterval(d->playbackIntervalMSec);
+        onPlaybackSampleRateChanged(sampleRate);
+    }
 }
