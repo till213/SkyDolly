@@ -83,7 +83,7 @@ namespace SampleRate
     inline constexpr SampleRate fromValue(double sampleRate) {
         if (sampleRate <= 1.0)
             return Hz1;
-        else if (sampleRate <= 1.0)
+        else if (sampleRate <= 2.0)
             return Hz2;
         else if (sampleRate <= 5.0)
             return Hz5;
