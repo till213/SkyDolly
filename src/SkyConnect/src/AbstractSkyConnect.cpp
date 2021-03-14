@@ -305,8 +305,9 @@ const AircraftData &AbstractSkyConnect::getCurrentAircraftData() const
 double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const
 {
     double samplesPerSecond;
-    if (d->aircraft.getAllAircraftData().count() > 0) {
-        qint64 startTimestamp = qMax(d->currentTimestamp - SamplesPerSecondPeriodMilliSec, 0ll);
+    const QVector<AircraftData> aircraftData = d->aircraft.getAllAircraftData();
+    if (aircraftData.count() > 0) {
+        qint64 startTimestamp = qMin(qMax(d->currentTimestamp - SamplesPerSecondPeriodMilliSec, 0ll), aircraftData.last().timestamp);
         int index = d->lastSamplesPerSecondIndex;
         while (d->aircraft.getAllAircraftData().at(index).timestamp < startTimestamp) {
             ++index;
