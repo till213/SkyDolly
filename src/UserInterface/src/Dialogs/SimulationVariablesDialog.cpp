@@ -247,5 +247,3 @@ void SimulationVariablesDialog::updateTitle()
     }
     setWindowTitle(windowTitle);
 }
-
-
