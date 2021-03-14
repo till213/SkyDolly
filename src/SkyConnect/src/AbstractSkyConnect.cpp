@@ -402,6 +402,7 @@ void AbstractSkyConnect::handleRecordSampleRateChanged(SampleRate::SampleRate sa
     d->recordSampleRate = SampleRate::toValue(sampleRate);
     d->recordIntervalMSec = SampleRate::toInterval(d->recordSampleRate);
     d->timer.setInterval(d->recordIntervalMSec);
+    onRecordSampleRateChanged(sampleRate);
 }
 
 void AbstractSkyConnect::handlePlaybackSampleRateChanged(SampleRate::SampleRate sampleRate)
@@ -409,4 +410,5 @@ void AbstractSkyConnect::handlePlaybackSampleRateChanged(SampleRate::SampleRate 
     d->playbackSampleRate = SampleRate::toValue(sampleRate);
     d->playbackIntervalMSec = SampleRate::toInterval(d->playbackSampleRate);
     d->timer.setInterval(d->playbackIntervalMSec);
+    onPlaybackSampleRateChanged(sampleRate);
 }

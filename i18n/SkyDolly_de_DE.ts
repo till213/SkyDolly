@@ -226,13 +226,13 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.ui" line="401"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="511"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="518"/>
         <source>Export CSV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.ui" line="406"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="471"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="478"/>
         <source>Import CSV</source>
         <translation type="unfinished"></translation>
     </message>
@@ -252,13 +252,18 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="458"/>
-        <source>Record @%1 Hz</source>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="462"/>
+        <source>Record [@%1 Hz]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="459"/>
-        <source>Play @%1 Hz</source>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="464"/>
+        <source>Record [auto sample rate]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="466"/>
+        <source>Play [@%1 Hz]</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -282,73 +287,78 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="70"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="84"/>
-        <source>1 Hz</source>
+        <source>Auto</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="71"/>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="85"/>
-        <source>2 Hz</source>
+        <source>1 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="72"/>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="86"/>
-        <source>5 Hz</source>
+        <source>2 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="73"/>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="87"/>
-        <source>10 Hz</source>
+        <source>5 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="74"/>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="88"/>
-        <source>15 Hz</source>
+        <source>10 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="75"/>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="89"/>
-        <source>20 Hz</source>
+        <source>15 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="76"/>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="90"/>
-        <source>24 Hz</source>
+        <source>20 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="77"/>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="91"/>
-        <source>25 Hz</source>
+        <source>24 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="78"/>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="92"/>
-        <source>30 Hz</source>
+        <source>25 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="79"/>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="93"/>
-        <source>45 Hz</source>
+        <source>30 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="80"/>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="94"/>
-        <source>50 Hz</source>
+        <source>45 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="81"/>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="95"/>
+        <source>50 Hz</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="82"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="96"/>
         <source>60 Hz</source>
         <translation type="unfinished"></translation>
     </message>
@@ -627,6 +637,11 @@ MIT License</source>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/StatisticsDialog.ui" line="109"/>
         <source>Sample Size [KiB]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/StatisticsDialog.cpp" line="103"/>
+        <source>Auto</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

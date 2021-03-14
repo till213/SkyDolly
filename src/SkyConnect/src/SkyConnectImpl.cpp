@@ -134,7 +134,7 @@ void SkyConnectImpl::onReplayPaused()
 {
 }
 
-void SkyConnectImpl::onRecordSampleRateChaged(SampleRate::SampleRate sampleRate)
+void SkyConnectImpl::onRecordSampleRateChanged(SampleRate::SampleRate sampleRate)
 {
      updateRecordFrequency(sampleRate);
 }
