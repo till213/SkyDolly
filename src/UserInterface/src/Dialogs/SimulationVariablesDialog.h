@@ -57,6 +57,7 @@ private:
     SimulationVariablesDialogPrivate *d;
     Ui::SimulationVariablesDialog *ui;
 
+    void initUi();
     void frenchConnection();
     const AircraftData &getCurrentAircraftData() const;
 

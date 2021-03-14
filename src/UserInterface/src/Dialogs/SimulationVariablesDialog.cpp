@@ -24,6 +24,7 @@
  */
 #include <QDialog>
 
+#include "../../../Kernel/src/Const.h"
 #include "../../../Kernel/src/Aircraft.h"
 #include "../../../Kernel/src/AircraftInfo.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
@@ -55,6 +56,7 @@ SimulationVariablesDialog::SimulationVariablesDialog(SkyConnectIntf &skyConnect,
     Qt::WindowFlags flags = Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
     setWindowFlags(flags);
 
+    initUi();
     frenchConnection();
 }
 
@@ -103,6 +105,47 @@ void SimulationVariablesDialog::hideEvent(QHideEvent *event)
 }
 
 // PRIVATE
+
+void SimulationVariablesDialog::initUi()
+{
+    ui->latitudeLineEdit->setToolTip(Const::Latitude);
+    ui->longitudeLineEdit->setToolTip(Const::Longitude);
+    ui->altitudeLineEdit->setToolTip(Const::Altitude);
+    ui->pitchLineEdit->setToolTip(Const::Pitch);
+    ui->bankLineEdit->setToolTip(Const::Bank);
+    ui->headingLineEdit->setToolTip(Const::Heading);
+
+    ui->yokeXLineEdit->setToolTip(Const::YokeXPosition);
+    ui->yokeYLineEdit->setToolTip(Const::YokeYPosition);
+    ui->rudderLineEdit->setToolTip(Const::RudderPosition);
+    ui->elevatorLineEdit->setToolTip(Const::ElevatorPosition);
+    ui->aileronLineEdit->setToolTip(Const::AileronPosition);
+
+    ui->throttle1LineEdit->setToolTip(Const::ThrottleLeverPosition1);
+    ui->throttle2LineEdit->setToolTip(Const::ThrottleLeverPosition2);
+    ui->throttle3LineEdit->setToolTip(Const::ThrottleLeverPosition3);
+    ui->throttle4LineEdit->setToolTip(Const::ThrottleLeverPosition4);
+    ui->propeller1LineEdit->setToolTip(Const::PropellerLeverPosition1);
+    ui->propeller2LineEdit->setToolTip(Const::PropellerLeverPosition2);
+    ui->propeller3LineEdit->setToolTip(Const::PropellerLeverPosition3);
+    ui->propeller4LineEdit->setToolTip(Const::PropellerLeverPosition4);
+    ui->mixture1LineEdit->setToolTip(Const::MixtureLeverPosition1);
+    ui->mixture2LineEdit->setToolTip(Const::MixtureLeverPosition2);
+    ui->mixture3LineEdit->setToolTip(Const::MixtureLeverPosition3);
+    ui->mixture4LineEdit->setToolTip(Const::MixtureLeverPosition4);
+
+    ui->leadingEdgeFlapsLeftLineEdit->setToolTip(Const::LeadingEdgeFlapsLeftPercent);
+    ui->leadingEdgeFlapsRightLineEdit->setToolTip(Const::LeadingEdgeFlapsRightPercent);
+    ui->trailingEdgeFlapsLeftLineEdit->setToolTip(Const::TrailingEdgeFlapsLeftPercent);
+    ui->trailingEdgeFlapsRightLineEdit->setToolTip(Const::TrailingEdgeFlapsRightPercent);
+    ui->flapsPositionLineEdit->setToolTip(Const::FlapsHandleIndex);
+    ui->spoilerLineEdit->setToolTip(Const::SpoilersHandlePosition);
+
+    ui->gearLineEdit->setToolTip(Const::GearHandlePosition);
+    ui->waterRudderLineEdit->setToolTip(Const::WaterRudderHandlePosition);
+    ui->brakeLeftLineEdit->setToolTip(Const::BrakeLeftPosition);
+    ui->brakeRightLineEdit->setToolTip(Const::BrakeRightPosition);
+}
 
 void SimulationVariablesDialog::frenchConnection()
 {
@@ -172,7 +215,7 @@ void SimulationVariablesDialog::updateAircraftDataUi()
     ui->leadingEdgeFlapsLeftLineEdit->setText(QString::number(aircraftData.leadingEdgeFlapsLeftPercent));
     ui->leadingEdgeFlapsRightLineEdit->setText(QString::number(aircraftData.leadingEdgeFlapsRightPercent));
     ui->trailingEdgeFlapsLeftLineEdit->setText(QString::number(aircraftData.trailingEdgeFlapsLeftPercent));
-    ui->trailingEdgeFlapsRightLinEdit->setText(QString::number(aircraftData.trailingEdgeFlapsRightPercent));    
+    ui->trailingEdgeFlapsRightLineEdit->setText(QString::number(aircraftData.trailingEdgeFlapsRightPercent));
     ui->spoilerLineEdit->setText(QString::number(aircraftData.spoilersHandlePosition));
     ui->flapsPositionLineEdit->setText(QString::number(aircraftData.flapsHandleIndex));
 
