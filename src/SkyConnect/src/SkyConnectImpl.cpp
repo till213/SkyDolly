@@ -322,13 +322,13 @@ void SkyConnectImpl::updateRecordFrequency(SampleRate::SampleRate sampleRate)
     if (getState() == Connect::State::Recording) {
         switch (sampleRate) {
         case SampleRate::Hz1:
-            // Get aircraft position @1Hz
-            ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_SECOND, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
             if (d->eventWidget != nullptr) {
                 d->eventWidget.reset();
                 d->eventWidget = nullptr;
                 reconnect();
             }
+            // Get aircraft position @1Hz
+            ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_SECOND, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
             break;
         case SampleRate::Auto:
             // Fall-thru intented
