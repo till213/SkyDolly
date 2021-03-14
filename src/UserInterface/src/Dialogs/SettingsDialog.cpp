@@ -67,6 +67,7 @@ void SettingsDialog::initUi()
     setWindowFlags(flags);
 
     // Record
+    ui->recordFrequencyComboBox->insertItem(SampleRate::Auto, tr("Auto"));
     ui->recordFrequencyComboBox->insertItem(SampleRate::Hz1, tr("1 Hz"));
     ui->recordFrequencyComboBox->insertItem(SampleRate::Hz2, tr("2 Hz"));
     ui->recordFrequencyComboBox->insertItem(SampleRate::Hz5, tr("5 Hz"));

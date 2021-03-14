@@ -70,6 +70,7 @@
 - A new recording statistics dialog has been added, also showing a recorded samples per second counter
 - New icons for record/play control actions
 - When recording sample rate is set to 1 Hz ("one sample per second") then the SimConnect request period is now also set to 1 Hz
+- A new "auto" recording sample rate has been added which collects samples "as they arrive" (variable sample rate)
 
 ### Bug Fixes
 

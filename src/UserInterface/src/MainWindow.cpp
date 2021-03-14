@@ -22,6 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+
+#include <windows.h>
+
 #include <QApplication>
 #include <QByteArray>
 #include <QFileDialog>
@@ -455,8 +458,12 @@ void MainWindow::updateMainWindow()
         }
     }
 
-    ui->recordAction->setToolTip(tr("Record @%1 Hz").arg(Settings::getInstance().getRecordSampleRateValue()));
-    ui->playAction->setToolTip(tr("Play @%1 Hz").arg(Settings::getInstance().getPlaybackSampleRateValue()));
+    if (Settings::getInstance().getRecordSampleRate() != SampleRate::Auto) {
+        ui->recordAction->setToolTip(tr("Record [@%1 Hz]").arg(Settings::getInstance().getRecordSampleRateValue()));
+    } else {
+        ui->recordAction->setToolTip(tr("Record [auto sample rate]"));
+    }
+    ui->playAction->setToolTip(tr("Play [@%1 Hz]").arg(Settings::getInstance().getPlaybackSampleRateValue()));
 }
 
 void MainWindow::on_importCSVAction_triggered()

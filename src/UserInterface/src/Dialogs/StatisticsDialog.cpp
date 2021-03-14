@@ -97,7 +97,11 @@ void StatisticsDialog::frenchConnection()
 void StatisticsDialog::updateRecordUi()
 {
     const QVector<AircraftData> aircraftData = d->skyConnect.getAircraft().getAllAircraftData();
-    ui->recordSampleRateLineEdit->setText(QString::number(Settings::getInstance().getRecordSampleRateValue()));
+    if (Settings::getInstance().getRecordSampleRate() != SampleRate::Auto) {
+        ui->recordSampleRateLineEdit->setText(QString::number(Settings::getInstance().getRecordSampleRateValue()));
+    } else {
+        ui->recordSampleRateLineEdit->setText(tr("Auto"));
+    }
 
     // Samples per Second
     if (d->skyConnect.getState() == Connect::State::Recording) {

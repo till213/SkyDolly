@@ -22,12 +22,16 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+
 #include <windows.h>
 #include <SimConnect.h>
 
 #include <QTimer>
 #include <QElapsedTimer>
 #include <QtGlobal>
+#include <QApplication>
+#include <QWidget>
 
 #include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/Aircraft.h"
@@ -38,6 +42,7 @@
 #include "SimConnectAircraftInfo.h"
 #include "SimConnectAircraftData.h"
 #include "Connect.h"
+#include "EventWidget.h"
 #include "SkyConnectImpl.h"
 
 namespace
@@ -65,19 +70,21 @@ class SkyConnectPrivate
 public:
     SkyConnectPrivate()
         : simConnectHandle(nullptr),
-          frozen(false)
+          frozen(false),
+          eventWidget(nullptr)
     {
     }
 
     HANDLE simConnectHandle;
     bool frozen;
+    std::unique_ptr<EventWidget> eventWidget;
 };
 
 // PUBLIC
 
 SkyConnectImpl::SkyConnectImpl(QObject *parent)
     : AbstractSkyConnect(parent),
-      d(new SkyConnectPrivate())
+      d(std::make_unique<SkyConnectPrivate>())
 {
 }
 
@@ -85,7 +92,6 @@ SkyConnectImpl::~SkyConnectImpl()
 {
     setSimulationFrozen(false);
     close();
-    delete d;
 }
 
 // PROTECTED
@@ -146,7 +152,16 @@ bool SkyConnectImpl::sendAircraftData(qint64 currentTimestamp)
 
 bool SkyConnectImpl::connectWithSim()
 {
-    HRESULT result = ::SimConnect_Open(&(d->simConnectHandle), ::ConnectionName, nullptr, 0, nullptr, SIMCONNECT_OPEN_CONFIGINDEX_LOCAL);
+    HWND hWnd;
+    DWORD userEvent;
+    if (d->eventWidget != nullptr) {
+        hWnd = reinterpret_cast<HWND>(d->eventWidget->winId());
+        userEvent = EventWidget::SimConnnectUserMessage;
+    } else {
+        hWnd = nullptr;
+        userEvent = 0;
+    }
+    HRESULT result = ::SimConnect_Open(&(d->simConnectHandle), ::ConnectionName, hWnd, userEvent, nullptr, SIMCONNECT_OPEN_CONFIGINDEX_LOCAL);
     if (result == S_OK) {
         setupRequestData();
     }
@@ -178,6 +193,17 @@ void SkyConnectImpl::processEvents()
 }
 
 // PRIVATE
+
+bool SkyConnectImpl::reconnect()
+{
+    bool res;
+    if (close()) {
+        res = connectWithSim();
+    } else {
+        res = false;
+    }
+    return res;
+}
 
 bool SkyConnectImpl::close()
 {
@@ -238,11 +264,7 @@ void SkyConnectImpl::setSimulationFrozen(bool enable) {
     DWORD data;
 
     d->frozen = enable;
-    if (enable) {
-        data = 1;
-    } else {
-        data = 0;
-    }
+    data = enable ? 1 : 0;
     ::SimConnect_TransmitClientEvent(d->simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, ::FreezeLatituteLongitude, data, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
     ::SimConnect_TransmitClientEvent(d->simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, ::FreezeAltitude, data, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
     ::SimConnect_TransmitClientEvent(d->simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, ::FreezeAttitude, data, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
@@ -302,8 +324,29 @@ void SkyConnectImpl::updateRecordFrequency(SampleRate::SampleRate sampleRate)
         case SampleRate::Hz1:
             // Get aircraft position @1Hz
             ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_SECOND, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+            if (d->eventWidget != nullptr) {
+                d->eventWidget.reset();
+                d->eventWidget = nullptr;
+                reconnect();
+            }
             break;
+        case SampleRate::Auto:
+            // Fall-thru intented
         default:
+            if (sampleRate == SampleRate::Auto) {
+                // Samples are picked up upon availability, using an event-based notification (variable frequency)
+                if (d->eventWidget == nullptr) {
+                    d->eventWidget = std::make_unique<EventWidget>();
+                    connect(d->eventWidget.get(), &EventWidget::simConnectEvent,
+                            this, &SkyConnectImpl::processEvents);
+                    reconnect();
+                }
+            } else if (d->eventWidget != nullptr) {
+                // Samples are picked up using timer-based polling, with a fixed frequency
+                d->eventWidget.reset();
+                d->eventWidget = nullptr;
+                reconnect();
+            }
             // Get aircraft position every simulated frame
             ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_SIM_FRAME, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
             break;

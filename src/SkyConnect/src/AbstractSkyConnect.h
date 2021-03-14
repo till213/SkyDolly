@@ -33,7 +33,7 @@
 
 class AbstractSkyConnectPrivate;
 
-class AbstractSkyConnect : public SkyConnectIntf
+class  AbstractSkyConnect : public SkyConnectIntf
 {
     Q_OBJECT
 

@@ -126,7 +126,9 @@ void AbstractSkyConnect::startDataSample()
         d->currentTimestamp = 0;
         d->elapsedTimer.invalidate();
         d->timer.setInterval(d->recordIntervalMSec);
-        d->timer.start();
+        if (d->recordSampleRate != SampleRate::AutoValue) {
+            d->timer.start();
+        }
         onStartDataSample();
     } else {
         setState(Connect::State::NoConnection);

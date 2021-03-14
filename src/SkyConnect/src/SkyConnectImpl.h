@@ -24,6 +24,7 @@
  */
 #ifndef SKYCONNECTIMPL_H
 #define SKYCONNECTIMPL_H
+#include <memory>
 
 #include <QObject>
 
@@ -62,10 +63,10 @@ protected slots:
     void processEvents() override;
 
 private:
-    SkyConnectPrivate *d;
+    std::unique_ptr<SkyConnectPrivate> d;
 
+    bool reconnect();
     bool close();
-
     void setupRequestData();
     void setupInitialPosition();
     void setSimulationFrozen(bool enable);
