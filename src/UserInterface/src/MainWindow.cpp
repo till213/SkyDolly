@@ -465,28 +465,6 @@ void MainWindow::updateMainWindow()
 
 void MainWindow::on_importCSVAction_triggered()
 {
-    QString documentPath;
-    QStringList standardLocations = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation);
-    if (standardLocations.count() > 0) {
-        documentPath = standardLocations.first();
-    } else {
-        documentPath = ".";
-    }
-    QString filePath = QFileDialog::getOpenFileName(this, tr("Import CSV"), documentPath, QString("*.csv"));
-    if (!filePath.isEmpty()) {
-        QFile file(filePath);
-        CSVImport csvImport;
-        bool ok = csvImport.importData(file, d->skyConnect->getAircraft());
-        if (ok) {
-            updateUi();
-            d->skyConnect->startReplay(true);
-            d->skyConnect->setPaused(true);
-        }
-    }
-}
-
-void MainWindow::on_exportCSVAction_triggered()
-{
     QMessageBox message;
     Version version;
 
@@ -495,8 +473,8 @@ void MainWindow::on_exportCSVAction_triggered()
     if (previewInfoCount > 0) {
         --previewInfoCount;
         reply = QMessageBox::question(this, "Preview",
-            QString("%1 %2 is an early preview version. The format of the exported CSV values may change partially or completely, "
-                    "even rendering the current exported values unreadable in future versions.\n\n"
+            QString("%1 %2 is an early preview version. The format of the exported CSV values in this version has changed compared with the previous version 0.3.0, "
+                    "making the data partially invalid. Upcoming preview versions may still change the format in an incompatible way yet again.\n\n"
                     "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(previewInfoCount),
             QMessageBox::StandardButton::Ok | QMessageBox::StandardButton::Abort);
         Settings::getInstance().setPreviewInfoDialogCount(previewInfoCount);
@@ -512,12 +490,35 @@ void MainWindow::on_exportCSVAction_triggered()
         } else {
             documentPath = ".";
         }
-        QString filePath = QFileDialog::getSaveFileName(this, tr("Export CSV"), documentPath, QString("*.csv"));
+        QString filePath = QFileDialog::getOpenFileName(this, tr("Import CSV"), documentPath, QString("*.csv"));
         if (!filePath.isEmpty()) {
             QFile file(filePath);
-            CSVExport csvExport;
-            csvExport.exportData(d->skyConnect->getAircraft(), file);
+            CSVImport csvImport;
+            bool ok = csvImport.importData(file, d->skyConnect->getAircraft());
+            if (ok) {
+                updateUi();
+                d->skyConnect->startReplay(true);
+                d->skyConnect->setPaused(true);
+            }
         }
+    }
+}
+
+void MainWindow::on_exportCSVAction_triggered()
+{
+
+    QString documentPath;
+    QStringList standardLocations = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation);
+    if (standardLocations.count() > 0) {
+        documentPath = standardLocations.first();
+    } else {
+        documentPath = ".";
+    }
+    QString filePath = QFileDialog::getSaveFileName(this, tr("Export CSV"), documentPath, QString("*.csv"));
+    if (!filePath.isEmpty()) {
+        QFile file(filePath);
+        CSVExport csvExport;
+        csvExport.exportData(d->skyConnect->getAircraft(), file);
     }
 }
 
