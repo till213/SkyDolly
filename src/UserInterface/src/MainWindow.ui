@@ -301,7 +301,7 @@
    <property name="icon">
     <iconset resource="../res/SkyDolly.qrc">
      <normaloff>:/img/icons/record-normal.png</normaloff>
-     <normalon>:/img/icons/record-active.png</normalon>:/img/icons/record-normal.png</iconset>
+     <normalon>:/img/icons/record-normal-on.png</normalon>:/img/icons/record-normal.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Record</string>
@@ -317,7 +317,7 @@
    <property name="icon">
     <iconset resource="../res/SkyDolly.qrc">
      <normaloff>:/img/icons/play-normal.png</normaloff>
-     <normalon>:/img/icons/play-active.png</normalon>:/img/icons/play-normal.png</iconset>
+     <normalon>:/img/icons/play-normal-on.png</normalon>:/img/icons/play-normal.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Play</string>
@@ -333,7 +333,7 @@
    <property name="icon">
     <iconset resource="../res/SkyDolly.qrc">
      <normaloff>:/img/icons/pause-normal.png</normaloff>
-     <normalon>:/img/icons/pause-active.png</normalon>:/img/icons/pause-normal.png</iconset>
+     <normalon>:/img/icons/pause-normal-on.png</normalon>:/img/icons/pause-normal.png</iconset>
    </property>
    <property name="text">
     <string>P&amp;ause</string>
