@@ -39,6 +39,12 @@ target_sources(UserInterface
         src/Dialogs/StatisticsDialog.cpp
         src/Dialogs/StatisticsDialog.h
         src/Dialogs/StatisticsDialog.ui
+        src/Widgets/SimulationVariablesWidget.cpp
+        src/Widgets/SimulationVariablesWidget.h
+        src/Widgets/SimulationVariablesWidget.ui
+        src/Widgets/FlightInformationWidget.cpp
+        src/Widgets/FlightInformationWidget.h
+        src/Widgets/FlightInformationWidget.ui
 )
 
 target_link_libraries(UserInterface PRIVATE ${USERINTERFACE_LIBS})
