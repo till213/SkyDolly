@@ -68,7 +68,6 @@ private:
     bool reconnectWithSim();
     bool close();
     void setupRequestData();
-    void setupInitialPosition();
     void setSimulationFrozen(bool enable);
     bool isSimulationFrozen() const;
     bool sendAircraftData();
