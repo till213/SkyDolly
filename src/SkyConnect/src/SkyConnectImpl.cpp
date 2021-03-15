@@ -194,7 +194,7 @@ void SkyConnectImpl::processEvents()
 
 // PRIVATE
 
-bool SkyConnectImpl::reconnect()
+bool SkyConnectImpl::reconnectWithSim()
 {
     bool res;
     if (close()) {
@@ -325,7 +325,7 @@ void SkyConnectImpl::updateRecordFrequency(SampleRate::SampleRate sampleRate)
             if (d->eventWidget != nullptr) {
                 d->eventWidget.reset();
                 d->eventWidget = nullptr;
-                reconnect();
+                reconnectWithSim();
             }
             // Get aircraft position @1Hz
             ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_SECOND, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
@@ -339,13 +339,13 @@ void SkyConnectImpl::updateRecordFrequency(SampleRate::SampleRate sampleRate)
                     d->eventWidget = std::make_unique<EventWidget>();
                     connect(d->eventWidget.get(), &EventWidget::simConnectEvent,
                             this, &SkyConnectImpl::processEvents);
-                    reconnect();
+                    reconnectWithSim();
                 }
             } else if (d->eventWidget != nullptr) {
                 // Samples are picked up using timer-based polling, with a fixed frequency
                 d->eventWidget.reset();
                 d->eventWidget = nullptr;
-                reconnect();
+                reconnectWithSim();
             }
             // Get aircraft position every simulated frame
             ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_SIM_FRAME, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
@@ -363,8 +363,8 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
     SkyConnectImpl *skyConnect = static_cast<SkyConnectImpl *>(context);
     SIMCONNECT_RECV_SIMOBJECT_DATA *objectData;
     SIMCONNECT_RECV_EXCEPTION *exception;
-    SimConnectAircraftInfo *simConnectAircraftInfo;
-    SimConnectAircraftData *simConnectAircraftData;
+    const SimConnectAircraftInfo *simConnectAircraftInfo;
+    const SimConnectAircraftData *simConnectAircraftData;
 
     switch (receivedData->dwID)
     {
@@ -417,7 +417,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
             {
                 case AircraftInfoRequest:
                 {
-                    simConnectAircraftInfo = reinterpret_cast<SimConnectAircraftInfo *>(&objectData->dwData);
+                    simConnectAircraftInfo = reinterpret_cast<const SimConnectAircraftInfo *>(&objectData->dwData);
                     AircraftInfo aircraftInfo;
                     aircraftInfo = std::move(simConnectAircraftInfo->toAircraftInfo());
                     skyConnect->getAircraft().setAircraftInfo(std::move(aircraftInfo));
@@ -442,7 +442,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
                             skyConnect->setCurrentTimestamp(0);
                             skyConnect->resetElapsedTime(true);
                         }
-                        simConnectAircraftData = reinterpret_cast<::SimConnectAircraftData *>(&objectData->dwData);
+                        simConnectAircraftData = reinterpret_cast<const SimConnectAircraftData *>(&objectData->dwData);
                         AircraftData aircraftData = simConnectAircraftData->toAircraftData();
                         aircraftData.timestamp = skyConnect->getCurrentTimestamp();
                         skyConnect->getAircraft().upsertAircraftData(std::move(aircraftData));
@@ -450,7 +450,6 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
 
                     break;
                 }
-
                 default:
                     break;
             }

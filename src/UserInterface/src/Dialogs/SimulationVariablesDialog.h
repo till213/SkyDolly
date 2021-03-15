@@ -25,6 +25,8 @@
 #ifndef SIMULATIONVARIABLESDIALOG_H
 #define SIMULATIONVARIABLESDIALOG_H
 
+#include <memory>
+
 #include <QDialog>
 
 class QShowEvent;
@@ -54,11 +56,11 @@ protected:
     void hideEvent(QHideEvent *event) override;
 
 private:
-    SimulationVariablesDialogPrivate *d;
+    std::unique_ptr<SimulationVariablesDialogPrivate> d;
     Ui::SimulationVariablesDialog *ui;
 
     void initUi();
-    void frenchConnection();
+    void updateUi();
     const AircraftData &getCurrentAircraftData() const;
 
 private slots:

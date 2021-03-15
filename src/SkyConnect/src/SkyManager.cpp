@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+
 #ifdef WIN32
 #include "SkyConnectImpl.h"
 #else
@@ -85,12 +87,11 @@ SkyConnectIntf *SkyManager::currentSkyConnect() const
 
 SkyManager::~SkyManager()
 {
-    delete d;
 }
 
 // PRIVATE
 
 SkyManager::SkyManager()
-    : d(new SkyManagerPrivate())
+    : d(std::make_unique<SkyManagerPrivate>())
 {
 }

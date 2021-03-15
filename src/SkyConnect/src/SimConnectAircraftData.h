@@ -1,6 +1,3 @@
-#ifndef SIMCONNECTAIRCRAFTDATA_H
-#define SIMCONNECTAIRCRAFTDATA_H
-
 /**
  * Sky Dolly - The black sheep for your flight recordings
  *
@@ -25,6 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#ifndef SIMCONNECTAIRCRAFTDATA_H
+#define SIMCONNECTAIRCRAFTDATA_H
+
 #include <windows.h>
 
 #include "../../Kernel/src/SkyMath.h"

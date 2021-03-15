@@ -65,7 +65,7 @@ protected slots:
 private:
     std::unique_ptr<SkyConnectPrivate> d;
 
-    bool reconnect();
+    bool reconnectWithSim();
     bool close();
     void setupRequestData();
     void setupInitialPosition();
