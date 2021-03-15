@@ -63,7 +63,9 @@
 
 ### New Features
 
-- Additional simulation variables: propeller RPM and mixture lever positions
+- Additional simulation variables: 
+  * Propeller RPM
+  * Mixture lever positions
 - Reduce required memory for sample points by over 100% (96 bytes vs previous 200 bytes per sampled data point), by using integer data types instead of double values for selected simulation variables
 - Pause is enabled after CSV data import
 - A high precision timer is used to increase the sample accuracy
@@ -71,6 +73,7 @@
 - New icons for record/play control actions
 - When recording sample rate is set to 1 Hz ("one sample per second") then the SimConnect request period is now also set to 1 Hz
 - A new "auto" recording sample rate has been added which collects samples "as they arrive" (variable sample rate)
+- Reorganise simulation variables in tabbed widget
 
 ### Bug Fixes
 
