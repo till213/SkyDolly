@@ -180,7 +180,7 @@ void MainWindow::frenchConnection()
 
 void MainWindow::initUi()
 {
-    setWindowIcon(QIcon(":/img/SkyDolly.png"));
+    setWindowIcon(QIcon(":/img/icons/application-icon.png"));
     statusBar()->setVisible(false);
     resize(minimumSize());
 

@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>img/SkyDolly.png</file>
         <file>img/icons/play-active.png</file>
         <file>img/icons/play-active@2x.png</file>
         <file>img/icons/play-normal.png</file>
@@ -23,5 +22,6 @@
         <file>img/icons/record-normal@2x.png</file>
         <file>img/icons/stop-normal.png</file>
         <file>img/icons/stop-normal@2x.png</file>
+        <file>img/icons/application-icon.png</file>
     </qresource>
 </RCC>
