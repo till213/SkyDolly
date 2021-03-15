@@ -221,8 +221,6 @@ void SkyConnectImpl::setupRequestData()
     SimConnectAircraftInfo::addToDataDefinition(d->simConnectHandle);
     SimConnectAircraftData::addToDataDefinition(d->simConnectHandle);
 
-    ::SimConnect_AddToDataDefinition(d->simConnectHandle, SkyConnectDataDefinition::AircraftInitialPosition, "Initial Position", nullptr, ::SIMCONNECT_DATATYPE_INITPOSITION);
-
     // System event subscription
     ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, SimStartEvent, "SimStart");
     ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, PauseEvent, "Pause");

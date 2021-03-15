@@ -31,6 +31,7 @@ target_sources(Kernel
         src/Export/CSVExport.h
         src/Import/CSVImport.cpp
         src/Import/CSVImport.h
+        src/SimTypes.h
 )
 
 set(KERNEL_LIBS

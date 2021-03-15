@@ -74,6 +74,12 @@
 - When recording sample rate is set to 1 Hz ("one sample per second") then the SimConnect request period is now also set to 1 Hz
 - A new "auto" recording sample rate has been added which collects samples "as they arrive" (variable sample rate)
 - Reorganise simulation variables in tabbed widget
+- Add additional flight information variables
+  * Airline (Callsign)
+  * Flight number
+  * Tail number
+  * Wing span
+  * And more
 
 ### Bug Fixes
 
