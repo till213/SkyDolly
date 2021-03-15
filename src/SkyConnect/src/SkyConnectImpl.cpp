@@ -114,9 +114,6 @@ void SkyConnectImpl::onStartReplay(bool fromStart)
     // "Freeze" the simulation: position and attitude only set by (interpolated)
     // sample points
     setSimulationFrozen(true);
-    if (fromStart) {
-        setupInitialPosition();
-    }
 }
 
 void SkyConnectImpl::onStopReplay()
@@ -235,29 +232,6 @@ void SkyConnectImpl::setupRequestData()
     ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, FreezeLatituteLongitude, "FREEZE_LATITUDE_LONGITUDE_SET");
     ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, FreezeAltitude, "FREEZE_ALTITUDE_SET");
     ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, FreezeAttitude, "FREEZE_ATTITUDE_SET");
-}
-
-void SkyConnectImpl::setupInitialPosition()
-{
-    const AircraftData &aircraftData = getAircraft().getAircraftData(0);
-    if (!aircraftData.isNull()) {
-        // Set initial position
-        SIMCONNECT_DATA_INITPOSITION initialPosition;
-
-        initialPosition.Latitude = aircraftData.latitude;
-        initialPosition.Longitude = aircraftData.longitude;
-        initialPosition.Altitude = aircraftData.altitude;
-        initialPosition.Pitch = aircraftData.pitch;
-        initialPosition.Bank = aircraftData.bank;
-        initialPosition.Heading = aircraftData.heading;
-        initialPosition.OnGround = getAircraft().getAircraftInfo().startOnGround ? 1 : 0;
-        initialPosition.Airspeed = getAircraft().getAircraftInfo().initialAirspeed;
-
-        ::SimConnect_SetDataOnSimObject(d->simConnectHandle, SkyConnectDataDefinition::AircraftInitialPosition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0, sizeof(::SIMCONNECT_DATA_INITPOSITION), &initialPosition);
-        emit aircraftDataSent(getCurrentTimestamp());
-    } else {
-        stopReplay();
-    }
 }
 
 void SkyConnectImpl::setSimulationFrozen(bool enable) {

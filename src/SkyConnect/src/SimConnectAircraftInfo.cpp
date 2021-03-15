@@ -34,5 +34,9 @@ void SimConnectAircraftInfo::addToDataDefinition(HANDLE simConnectHandle)
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Title", nullptr, ::SIMCONNECT_DATATYPE_STRING256);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Sim On Ground", "bool", ::SIMCONNECT_DATATYPE_INT32);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Airspeed True", "knots", ::SIMCONNECT_DATATYPE_INT32);
+
+    // TODO: WING SPAN, ATC RUNWAY SELECTED (and related), GROUND ALTITUDE, ON ANY RUNWAY,  SURFACE TYPE
+    //       ATC AIRLINE, ATC FLIGHT NUMBER, ATC MODEL, ATC TYPE, GPS APPROACH AIRPORT ID (?)
+    //       ENGINE TYPE
 }
 
