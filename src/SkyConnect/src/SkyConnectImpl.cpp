@@ -98,9 +98,9 @@ SkyConnectImpl::~SkyConnectImpl()
 
 void SkyConnectImpl::onStartDataSample()
 {
+    updateRecordFrequency(Settings::getInstance().getRecordSampleRate());
     // Get aircraft information
     ::SimConnect_RequestDataOnSimObjectType(d->simConnectHandle, AircraftInfoRequest, SkyConnectDataDefinition::AircraftInfoDefinition, ::UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
-    updateRecordFrequency(Settings::getInstance().getRecordSampleRate());
 }
 
 void SkyConnectImpl::onStopDataSample()

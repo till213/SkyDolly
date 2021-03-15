@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMULATIONVARIABLESDIALOG_H
-#define SIMULATIONVARIABLESDIALOG_H
+#ifndef FLIGHTINFORMATIONWIDGET_H
+#define FLIGHTINFORMATIONWIDGET_H
 
 #include <memory>
 
@@ -33,36 +33,34 @@ class QShowEvent;
 class QHideEvent;
 
 class SkyConnectIntf;
-class SimulationVariablesDialogPrivate;
+class FlightInformationWidgetPrivate;
+class AircraftData;
 
 namespace Ui {
-class SimulationVariablesDialog;
+class FlightInformationWidget;
 }
 
-class SimulationVariablesDialog : public QDialog
+class FlightInformationWidget : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit SimulationVariablesDialog(SkyConnectIntf &skyConnect, QWidget *parent = nullptr);
-    virtual ~SimulationVariablesDialog();
-
-signals:
-    void visibilityChanged(bool visible);
+    explicit FlightInformationWidget(SkyConnectIntf &skyConnect, QWidget *parent = nullptr);
+    virtual ~FlightInformationWidget();
 
 protected:
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;
 
 private:
-    std::unique_ptr<SimulationVariablesDialogPrivate> d;
-    Ui::SimulationVariablesDialog *ui;
+    std::unique_ptr<FlightInformationWidgetPrivate> d;
+    Ui::FlightInformationWidget *ui;
 
     void initUi();
     void updateUi();
 
 private slots:
-    void updateTitle();
+    void updateInfoUi();
 };
 
-#endif // SIMULATIONVARIABLESDIALOG_H
+#endif // FLIGHTINFORMATIONWIDGET_H

@@ -22,47 +22,44 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMULATIONVARIABLESDIALOG_H
-#define SIMULATIONVARIABLESDIALOG_H
+#ifndef SIMULATIONVARIABLESWIDGET_H
+#define SIMULATIONVARIABLESWIDGET_H
 
-#include <memory>
-
-#include <QDialog>
+#include <QWidget>
 
 class QShowEvent;
 class QHideEvent;
 
 class SkyConnectIntf;
-class SimulationVariablesDialogPrivate;
+class AircraftData;
+class SimulationVariablesWidgetPrivate;
 
 namespace Ui {
-class SimulationVariablesDialog;
+class SimulationVariablesWidget;
 }
 
-class SimulationVariablesDialog : public QDialog
+class SimulationVariablesWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit SimulationVariablesDialog(SkyConnectIntf &skyConnect, QWidget *parent = nullptr);
-    virtual ~SimulationVariablesDialog();
-
-signals:
-    void visibilityChanged(bool visible);
+    explicit SimulationVariablesWidget(SkyConnectIntf &skyConnect, QWidget *parent);
+    virtual ~SimulationVariablesWidget();
 
 protected:
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;
 
 private:
-    std::unique_ptr<SimulationVariablesDialogPrivate> d;
-    Ui::SimulationVariablesDialog *ui;
+    std::unique_ptr<SimulationVariablesWidgetPrivate> d;
+    Ui::SimulationVariablesWidget *ui;
 
     void initUi();
     void updateUi();
+    const AircraftData &getCurrentAircraftData() const;
 
 private slots:
-    void updateTitle();
+    void updateAircraftDataUi();
 };
 
-#endif // SIMULATIONVARIABLESDIALOG_H
+#endif // SIMULATIONVARIABLESWIDGET_H
