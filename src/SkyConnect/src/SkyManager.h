@@ -25,6 +25,8 @@
 #ifndef SKYMANAGER_H
 #define SKYMANAGER_H
 
+#include <memory>
+
 #include <QtGlobal>
 #include <QObject>
 
@@ -52,7 +54,7 @@ protected:
 
 private:
     Q_DISABLE_COPY(SkyManager)
-    SkyManagerPrivate *d;
+    std::unique_ptr<SkyManagerPrivate> d;
 
     SkyManager();
 };

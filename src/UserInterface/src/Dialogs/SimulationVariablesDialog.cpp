@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+
 #include <QDialog>
 
 #include "../../../Kernel/src/Const.h"
@@ -49,7 +51,7 @@ const QString SimulationVariablesDialogPrivate::WindowTitle = QT_TRANSLATE_NOOP(
 
 SimulationVariablesDialog::SimulationVariablesDialog(SkyConnectIntf &skyConnect, QWidget *parent) :
     QDialog(parent),
-    d(new SimulationVariablesDialogPrivate(skyConnect)),
+    d(std::make_unique<SimulationVariablesDialogPrivate>(skyConnect)),
     ui(new Ui::SimulationVariablesDialog)
 {
     ui->setupUi(this);
@@ -57,13 +59,11 @@ SimulationVariablesDialog::SimulationVariablesDialog(SkyConnectIntf &skyConnect,
     setWindowFlags(flags);
 
     initUi();
-    frenchConnection();
 }
 
 SimulationVariablesDialog::~SimulationVariablesDialog()
 {
     delete ui;
-    delete d;
 }
 
 // PROTECTED
@@ -72,13 +72,14 @@ void SimulationVariablesDialog::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event)
 
-    updateAircraftDataUi();
-    updateTitle();
+    updateUi();
 
     const Aircraft &aircraft = d->skyConnect.getAircraft();
     // Signal sent while recording
     connect(&aircraft, &Aircraft::dataChanged,
             this, &SimulationVariablesDialog::updateAircraftDataUi);
+    connect(&aircraft, &Aircraft::infoChanged,
+            this, &SimulationVariablesDialog::updateInfoUi);
     // Signal sent while playing
     connect(&d->skyConnect, &SkyConnectIntf::aircraftDataSent,
             this, &SimulationVariablesDialog::updateAircraftDataUi);
@@ -96,6 +97,8 @@ void SimulationVariablesDialog::hideEvent(QHideEvent *event)
     const Aircraft &aircraft = d->skyConnect.getAircraft();
     disconnect(&aircraft, &Aircraft::dataChanged,
                this, &SimulationVariablesDialog::updateAircraftDataUi);
+    disconnect(&aircraft, &Aircraft::infoChanged,
+            this, &SimulationVariablesDialog::updateInfoUi);
     disconnect(&d->skyConnect, &SkyConnectIntf::aircraftDataSent,
             this, &SimulationVariablesDialog::updateAircraftDataUi);
     disconnect(&d->skyConnect, &SkyConnectIntf::stateChanged,
@@ -145,13 +148,17 @@ void SimulationVariablesDialog::initUi()
     ui->waterRudderLineEdit->setToolTip(Const::WaterRudderHandlePosition);
     ui->brakeLeftLineEdit->setToolTip(Const::BrakeLeftPosition);
     ui->brakeRightLineEdit->setToolTip(Const::BrakeRightPosition);
+
+    // Make the "on ground" checkbox checkable, but not for the user
+    ui->startOnGroundCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->startOnGroundCheckBox->setFocusPolicy(Qt::NoFocus);
 }
 
-void SimulationVariablesDialog::frenchConnection()
+void SimulationVariablesDialog::updateUi()
 {
-    const Aircraft &aircraft = d->skyConnect.getAircraft();
-    connect(&aircraft, &Aircraft::infoChanged,
-            this, &SimulationVariablesDialog::updateInfoUi);
+    updateTitle();
+    updateInfoUi();
+    updateAircraftDataUi();
 }
 
 const AircraftData &SimulationVariablesDialog::getCurrentAircraftData() const

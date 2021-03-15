@@ -726,10 +726,22 @@
      <layout class="QGridLayout" name="gridLayout_4">
       <item row="3" column="0">
        <widget class="QCheckBox" name="startOnGroundCheckBox">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="mouseTracking">
+         <bool>false</bool>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
         <property name="text">
          <string>Start On Ground</string>
         </property>
         <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
          <bool>false</bool>
         </property>
        </widget>
