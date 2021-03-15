@@ -22,15 +22,28 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTDATADEFINITION_H
-#define SIMCONNECTDATADEFINITION_H
+#ifndef SIMTYPES_H
+#define SIMTYPES_H
 
-namespace SkyConnectDataDefinition
-{
-    enum DataDefinitionID {
-        AircraftInfoDefinition,
-        AircraftPositionDefinition
+namespace SimTypes {
+
+    enum SurfaceType {
+        Concrete,
+        Grass,
+        Water,
+        BumpyGrass,
+        Asphalt
+        // TODO ALL TYPES
+    };
+
+    enum EngineType {
+        Piston,
+        Jet,
+        None,
+        HeloBellTurbine,
+        Unsupported,
+        Turboprop,
     };
 }
 
-#endif // SIMCONNECTDATADEFINITION_H
+#endif // SIMTYPES_H

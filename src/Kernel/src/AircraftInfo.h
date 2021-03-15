@@ -27,13 +27,25 @@
 
 #include <QByteArray>
 
+#include "SimTypes.h"
 #include "KernelLib.h"
 
 struct KERNEL_API AircraftInfo
 {
     QByteArray name;
+    QByteArray atcId;
+    QByteArray atcAirline;
+    QByteArray atcFlightNumber;
+    QByteArray category;
+
     bool startOnGround;
-    int initialAirspeed; // [knots]
+    SimTypes::SurfaceType surfaceType;
+    // Feet
+    int wingSpan;
+    // Knots
+    int initialAirspeed;
+    int numberOfEngines;
+    SimTypes::EngineType engineType;
 
     AircraftInfo();
 

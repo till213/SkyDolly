@@ -111,6 +111,15 @@ void FlightInformationWidget::updateInfoUi()
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
 
     ui->nameLineEdit->setText(aircraftInfo.name);
-    ui->startOnGroundCheckBox->setChecked(aircraftInfo.startOnGround);
+    ui->tailNumberLineEdit->setText(aircraftInfo.atcId);
+    ui->airlineLineEdit->setText(aircraftInfo.atcAirline);
+    ui->flightLineEdit->setText(aircraftInfo.atcFlightNumber);
+    ui->categoryLineEdit->setText(aircraftInfo.category);
+
     ui->initialAirspeedLineEdit->setText(QString::number(aircraftInfo.initialAirspeed));
+    ui->surfaceTypeLineEdit->setText(QString::number(aircraftInfo.surfaceType));
+    ui->wingSpanLineEdit->setText(QString::number(aircraftInfo.wingSpan));
+    ui->engineTypeLineEdit->setText(QString::number(aircraftInfo.engineType));
+    ui->numberOfEnginesLineEdit->setText(QString::number(aircraftInfo.numberOfEngines));
+    ui->startOnGroundCheckBox->setChecked(aircraftInfo.startOnGround);
 }

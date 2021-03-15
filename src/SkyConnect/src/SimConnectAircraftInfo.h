@@ -35,28 +35,70 @@
 struct SimConnectAircraftInfo
 {
     char title[256];
+    char atcId[256];
+    char atcAirline[256];
+    char atcFlightNumber[256];
+    char category[256];
+
     qint32 simOnGround;
     qint32 airspeedTrue;
+    qint32 surfaceType;
+    qint32 wingSpan;
+    qint32 numberOfEngines;
+    qint32 engineType;
 
     SimConnectAircraftInfo()
         : simOnGround(false),
-          airspeedTrue(0)
+          airspeedTrue(0),
+          surfaceType(0),
+          wingSpan(0),
+          numberOfEngines(0),
+          engineType(0)
     {}
 
     inline AircraftInfo toAircraftInfo() const {
         AircraftInfo aircraftInfo;
 
-        // security check
+        // Length check
         if (SUCCEEDED(StringCbLengthA(&title[0], sizeof(title), nullptr))) {
             aircraftInfo.name = title;
         }
+        if (SUCCEEDED(StringCbLengthA(&atcId[0], sizeof(atcId), nullptr))) {
+            aircraftInfo.atcId = atcId;
+        }
+        if (SUCCEEDED(StringCbLengthA(&atcAirline[0], sizeof(atcAirline), nullptr))) {
+            aircraftInfo.atcAirline = atcAirline;
+        }
+        if (SUCCEEDED(StringCbLengthA(&atcFlightNumber[0], sizeof(atcFlightNumber), nullptr))) {
+            aircraftInfo.atcFlightNumber = atcFlightNumber;
+        }
+        if (SUCCEEDED(StringCbLengthA(&category[0], sizeof(category), nullptr))) {
+            aircraftInfo.category = category;
+        }
+
         aircraftInfo.startOnGround = (simOnGround != 0);
         aircraftInfo.initialAirspeed = airspeedTrue;
+        aircraftInfo.surfaceType = toSurfaceType(surfaceType);
+        aircraftInfo.wingSpan = wingSpan;
+        aircraftInfo.numberOfEngines = numberOfEngines;
+        aircraftInfo.engineType = toEngineType(engineType);
 
         return aircraftInfo;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle);
+
+private:
+    static inline SimTypes::SurfaceType toSurfaceType(qint32 surfaceType)
+    {
+        // TODO IMPLEMENT ME
+        return SimTypes::SurfaceType::Asphalt;
+    }
+    static inline SimTypes::EngineType toEngineType(qint32 engineType)
+    {
+        // TODO IMPLEMENT ME
+        return SimTypes::EngineType::Jet;
+    }
 };
 
 #endif // SIMCONNECTAIRCRAFTINFO_H
