@@ -71,12 +71,41 @@ namespace Const
     KERNEL_API extern const char *SpoilersHandlePosition;
     KERNEL_API extern const char *FlapsHandleIndex;
 
-    KERNEL_API extern const char *GearHandlePosition;
-    KERNEL_API extern const char *WaterRudderHandlePosition;
+    KERNEL_API extern const char *GearHandlePosition;    
     KERNEL_API extern const char *BrakeLeftPosition;
     KERNEL_API extern const char *BrakeRightPosition;
+    KERNEL_API extern const char *WaterRudderHandlePosition;
+    KERNEL_API extern const char *TailhookPosition;
+    KERNEL_API extern const char *CanopyOpen;
 
-    extern const char *Timestamp;
+    // Information simulation variables (SimConnect)
+    KERNEL_API extern const char *Title;
+    KERNEL_API extern const char *ATCId;
+    KERNEL_API extern const char *ATCAirline;
+    KERNEL_API extern const char *ATCFlightNumber;
+    KERNEL_API extern const char *Category;
+
+    KERNEL_API extern const char *SimOnGround;
+    KERNEL_API extern const char *PlaneAltAboveGround;
+    KERNEL_API extern const char *AirspeedTrue;
+    KERNEL_API extern const char *SurfaceType;
+    KERNEL_API extern const char *WingSpan;
+    KERNEL_API extern const char *NumberOfEngines;
+    KERNEL_API extern const char *EngineType;
+
+    KERNEL_API extern const char *GroundAltitude;
+    KERNEL_API extern const char *AmbientTemperature;
+    KERNEL_API extern const char *TotalAirTemperature;
+    KERNEL_API extern const char *AmbientWindVelocity;
+    KERNEL_API extern const char *AmbientWindDirection;
+    KERNEL_API extern const char *AmbientPrecipState;
+    KERNEL_API extern const char *AmbientInCloud;
+    KERNEL_API extern const char *AmbientVisibility;
+    KERNEL_API extern const char *SeaLevelPressure;
+    KERNEL_API extern const char *PitotIcePct;
+    KERNEL_API extern const char *StructuralIcePct;
+
+    KERNEL_API extern const char *Timestamp;
 }
 
 #endif // CONST_H

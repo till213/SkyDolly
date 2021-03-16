@@ -70,11 +70,11 @@ void SimConnectAircraftData::addToDataDefinition(HANDLE simConnectHandle)
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::SpoilersHandlePosition, "Percent", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::FlapsHandleIndex, "Number", ::SIMCONNECT_DATATYPE_INT32);
 
-    // Gear & Brakes
+    // // Gear, brakes & handles
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::GearHandlePosition, "Bool", ::SIMCONNECT_DATATYPE_INT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::WaterRudderHandlePosition, "Percent", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::BrakeLeftPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::BrakeRightPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
-
-    // TODO: TAILHOOK POSITION
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::WaterRudderHandlePosition, "Percent", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::TailhookPosition, "Percent", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::CanopyOpen, "Percent", ::SIMCONNECT_DATATYPE_FLOAT64);
 }

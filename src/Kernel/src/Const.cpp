@@ -58,8 +58,36 @@ const char *Const::SpoilersHandlePosition = "Spoilers Handle Position";
 const char *Const::FlapsHandleIndex = "Flaps Handle Index";
 
 const char *Const::GearHandlePosition = "Gear Handle Position";
-const char *Const::WaterRudderHandlePosition = "Water Rudder Handle Position";
 const char *Const::BrakeLeftPosition = "Brake Left Position";
 const char *Const::BrakeRightPosition = "Brake Right Position";
+const char *Const::WaterRudderHandlePosition = "Water Rudder Handle Position";
+const char *Const::TailhookPosition = "Tailhook Position";
+const char *Const::CanopyOpen = "Canopy Open";
+
+const char *Const::Title= "Title";
+const char *Const::ATCId= "ATC Id";
+const char *Const::ATCAirline= "ATC Airline";
+const char *Const::ATCFlightNumber= "ATC Flight Number";
+const char *Const::Category= "Category";
+
+const char *Const::SimOnGround= "Sim On Ground";
+const char *Const::PlaneAltAboveGround= "Plane Alt Above Ground";
+const char *Const::AirspeedTrue= "Airspeed True";
+const char *Const::SurfaceType= "Surface Type";
+const char *Const::WingSpan= "Wing Span";
+const char *Const::NumberOfEngines= "Number Of Engines";
+const char *Const::EngineType= "Engine Type";
+
+const char *Const::GroundAltitude= "Ground Altitude";
+const char *Const::AmbientTemperature= "Ambient Temperature";
+const char *Const::TotalAirTemperature= "Total Air Temperature";
+const char *Const::AmbientWindVelocity= "Ambient Wind Velocity";
+const char *Const::AmbientWindDirection= "Ambient Wind Direction";
+const char *Const::AmbientPrecipState= "Ambient Precip State";
+const char *Const::AmbientInCloud= "Ambient In Cloud";
+const char *Const::AmbientVisibility= "Ambient Visibility";
+const char *Const::SeaLevelPressure= "Sea Level Pressure";
+const char *Const::PitotIcePct= "Pitot Ice Pct";
+const char *Const::StructuralIcePct= "Structural Ice Pct";
 
 const char *Const::Timestamp = "Timestamp";

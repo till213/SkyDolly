@@ -168,9 +168,11 @@ const AircraftData &Aircraft::getAircraftData(qint64 timestamp) const
         // No interpolation for flaps position and gear
         d->currentAircraftData.flapsHandleIndex = p1->flapsHandleIndex;
         d->currentAircraftData.gearHandlePosition = p1->gearHandlePosition;
-        d->currentAircraftData.waterRudderHandlePosition = SkyMath::interpolateLinear(p1->waterRudderHandlePosition, p2->waterRudderHandlePosition, tn);
         d->currentAircraftData.brakeLeftPosition = SkyMath::interpolateLinear(p1->brakeLeftPosition, p2->brakeLeftPosition, tn);
         d->currentAircraftData.brakeRightPosition = SkyMath::interpolateLinear(p1->brakeRightPosition, p2->brakeRightPosition, tn);
+        d->currentAircraftData.waterRudderHandlePosition = SkyMath::interpolateLinear(p1->waterRudderHandlePosition, p2->waterRudderHandlePosition, tn);
+        d->currentAircraftData.tailhookPosition = SkyMath::interpolateLinear(p1->tailhookPosition, p2->tailhookPosition, tn);
+        d->currentAircraftData.canopyOpen = SkyMath::interpolateLinear(p1->canopyOpen, p2->canopyOpen, tn);
 
         d->currentAircraftData.timestamp = timestamp;
 

@@ -73,11 +73,13 @@ struct KERNEL_API AircraftData
     quint8 spoilersHandlePosition;
     qint8 flapsHandleIndex;
 
-    // Gears & brakes
+    // Gears, brakes and handles
     bool gearHandlePosition;
-    quint8 waterRudderHandlePosition;
     qint16 brakeLeftPosition;
     qint16 brakeRightPosition;
+    quint8 waterRudderHandlePosition;
+    qint8 tailhookPosition;
+    qint8 canopyOpen;
 
     // In milliseconds since the start of recording
     qint64 timestamp;
