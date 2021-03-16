@@ -74,9 +74,11 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io)
                       QString(Const::SpoilersHandlePosition) % Const::Sep %
                       QString(Const::FlapsHandleIndex) % Const::Sep %
                       QString(Const::GearHandlePosition) % Const::Sep %
-                      QString(Const::WaterRudderHandlePosition) % Const::Sep %
                       QString(Const::BrakeLeftPosition) % Const::Sep %
                       QString(Const::BrakeRightPosition) % Const::Sep %
+                      QString(Const::WaterRudderHandlePosition) % Const::Sep %
+                      QString(Const::TailhookPosition) % Const::Sep %
+                      QString(Const::CanopyOpen) % Const::Sep %
                       QString(Const::Timestamp) % Const::Ln;
         if (!io.write(csv.toUtf8())) {
             ok = false;
@@ -114,10 +116,12 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io)
                               QString::number(data.trailingEdgeFlapsRightPercent) % Const::Sep %
                               QString::number(data.spoilersHandlePosition) % Const::Sep %
                               QString::number(data.flapsHandleIndex) % Const::Sep %
-                              QString::number(data.gearHandlePosition) % Const::Sep %
-                              QString::number(data.waterRudderHandlePosition) % Const::Sep %
+                              QString::number(data.gearHandlePosition) % Const::Sep %                              
                               QString::number(data.brakeLeftPosition) % Const::Sep %
                               QString::number(data.brakeRightPosition) % Const::Sep %
+                              QString::number(data.waterRudderHandlePosition) % Const::Sep %
+                              QString::number(data.tailhookPosition) % Const::Sep %
+                              QString::number(data.canopyOpen) % Const::Sep %
                               QString::number(data.timestamp) % Const::Ln;
                 if (!io.write(csv.toUtf8())) {
                     ok = false;

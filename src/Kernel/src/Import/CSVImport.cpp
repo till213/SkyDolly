@@ -215,16 +215,11 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft)
                         if (ok) {
                             aircraftData.flapsHandleIndex = intValue;
                         }
-                    // Gear & brakes
+                    // Gear, brakes & handles
                     } else if (header == Const::GearHandlePosition) {
                         intValue = values.at(columnIndex).toInt(&ok);
                         if (ok) {
                             aircraftData.gearHandlePosition = intValue == 1 ? true : false;
-                        }
-                    } else if (header == Const::WaterRudderHandlePosition) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.waterRudderHandlePosition = doubleValue;
                         }
                     } else if (header == Const::BrakeLeftPosition) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
@@ -235,6 +230,21 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft)
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.brakeRightPosition = doubleValue;
+                        }
+                    } else if (header == Const::WaterRudderHandlePosition) {
+                        doubleValue = values.at(columnIndex).toDouble(&ok);
+                        if (ok) {
+                            aircraftData.waterRudderHandlePosition = doubleValue;
+                        }
+                    } else if (header == Const::TailhookPosition) {
+                        doubleValue = values.at(columnIndex).toDouble(&ok);
+                        if (ok) {
+                            aircraftData.tailhookPosition = doubleValue;
+                        }
+                    } else if (header == Const::CanopyOpen) {
+                        doubleValue = values.at(columnIndex).toDouble(&ok);
+                        if (ok) {
+                            aircraftData.canopyOpen = doubleValue;
                         }
                     // Timestamp
                     } else if (header == Const::Timestamp) {

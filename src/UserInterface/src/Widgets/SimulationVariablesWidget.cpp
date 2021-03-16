@@ -123,10 +123,12 @@ void SimulationVariablesWidget::initUi()
     ui->flapsPositionLineEdit->setToolTip(Const::FlapsHandleIndex);
     ui->spoilerLineEdit->setToolTip(Const::SpoilersHandlePosition);
 
-    ui->gearLineEdit->setToolTip(Const::GearHandlePosition);
-    ui->waterRudderLineEdit->setToolTip(Const::WaterRudderHandlePosition);
+    ui->gearLineEdit->setToolTip(Const::GearHandlePosition);    
     ui->brakeLeftLineEdit->setToolTip(Const::BrakeLeftPosition);
     ui->brakeRightLineEdit->setToolTip(Const::BrakeRightPosition);
+    ui->waterRudderLineEdit->setToolTip(Const::WaterRudderHandlePosition);
+    ui->tailhookLineEdit->setToolTip(Const::TailhookPosition);
+    ui->canopyOpenLineEdit->setToolTip(Const::CanopyOpen);
 }
 
 void SimulationVariablesWidget::updateUi()
@@ -189,10 +191,12 @@ void SimulationVariablesWidget::updateAircraftDataUi()
     ui->spoilerLineEdit->setText(QString::number(aircraftData.spoilersHandlePosition));
     ui->flapsPositionLineEdit->setText(QString::number(aircraftData.flapsHandleIndex));
 
-    // Gear & brakes
-    aircraftData.gearHandlePosition ? ui->gearLineEdit->setText(tr("Down")) : ui->gearLineEdit->setText(tr("Up"));
-    ui->waterRudderLineEdit->setText(QString::number(aircraftData.waterRudderHandlePosition));
+    // // Gear, brakes & handles
+    aircraftData.gearHandlePosition ? ui->gearLineEdit->setText(tr("Down")) : ui->gearLineEdit->setText(tr("Up"));    
     ui->brakeLeftLineEdit->setText(QString::number(aircraftData.brakeLeftPosition));
     ui->brakeRightLineEdit->setText(QString::number(aircraftData.brakeRightPosition));
+    ui->waterRudderLineEdit->setText(QString::number(aircraftData.waterRudderHandlePosition));
+    ui->tailhookLineEdit->setText(QString::number(aircraftData.tailhookPosition));
+    ui->canopyOpenLineEdit->setText(QString::number(aircraftData.canopyOpen));
 }
 

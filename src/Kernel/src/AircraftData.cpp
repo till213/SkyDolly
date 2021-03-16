@@ -56,13 +56,14 @@ AircraftData::AircraftData(double latitude, double longitude, double altitude)
       spoilersHandlePosition(0.0),
       flapsHandleIndex(0),
       gearHandlePosition(false),
-      waterRudderHandlePosition(0),
       brakeLeftPosition(0),
       brakeRightPosition(0),
+      waterRudderHandlePosition(0),
+      tailhookPosition(0),
+      canopyOpen(0),
       timestamp(0)
 {
     this->latitude = latitude;
     this->longitude = longitude;
     this->altitude = altitude;
 }
-

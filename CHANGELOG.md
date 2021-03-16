@@ -66,6 +66,8 @@
 - Additional simulation variables: 
   * Propeller RPM
   * Mixture lever positions
+  * Tailhook
+  * Canopy
 - Reduce required memory for sample points by over 100% (96 bytes vs previous 200 bytes per sampled data point), by using integer data types instead of double values for selected simulation variables
 - Pause is enabled after CSV data import
 - A high precision timer is used to increase the sample accuracy

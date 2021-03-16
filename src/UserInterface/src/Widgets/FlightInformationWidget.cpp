@@ -95,6 +95,33 @@ void FlightInformationWidget::hideEvent(QHideEvent *event)
 
 void FlightInformationWidget::initUi()
 {
+    ui->nameLineEdit->setToolTip(Const::Title);
+    ui->tailNumberLineEdit->setToolTip(Const::ATCFlightNumber);
+    ui->airlineLineEdit->setToolTip(Const::ATCAirline);
+    ui->flightLineEdit->setToolTip(Const::ATCId);
+
+    ui->categoryLineEdit->setToolTip(Const::Category);
+    ui->startOnGroundCheckBox->setToolTip(Const::SimOnGround);
+    ui->initialAirspeedLineEdit->setToolTip(Const::AirspeedTrue);
+    ui->surfaceTypeLineEdit->setToolTip(Const::SurfaceType);
+    ui->wingSpanLineEdit->setToolTip(Const::WingSpan);
+    ui->engineTypeLineEdit->setToolTip(Const::EngineType);
+    ui->numberOfEnginesLineEdit->setToolTip(Const::NumberOfEngines);
+    ui->aircraftAltitudeAboveGroundLineEdit->setToolTip(Const::PlaneAltAboveGround);
+
+    ui->groundAltitudeLineEdit->setToolTip(Const::GroundAltitude);
+    ui->temperatureLineEdit->setToolTip(Const::AmbientTemperature);
+    ui->totalAirTemperatureLineEdit->setToolTip(Const::TotalAirTemperature);
+    ui->windVelocityLineEdit->setToolTip(Const::AmbientWindVelocity);
+    ui->windDirectionLineEdit->setToolTip(Const::AmbientWindDirection);
+    ui->precipitationStateLineEdit->setToolTip(Const::AmbientPrecipState);
+
+    ui->inCloudsCheckBox->setToolTip(Const::AmbientInCloud);
+    ui->visibilityLineEdit->setToolTip(Const::AmbientVisibility);
+    ui->seaLevelPressure->setToolTip(Const::SeaLevelPressure);
+    ui->pitotIcingLineEdit->setToolTip(Const::PitotIcePct);
+    ui->structuralIcingLineEdit->setToolTip(Const::StructuralIcePct);
+
     // Make the flight information checkboxes checkable, but not for the user
     ui->startOnGroundCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->startOnGroundCheckBox->setFocusPolicy(Qt::NoFocus);
