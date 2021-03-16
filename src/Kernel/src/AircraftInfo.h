@@ -37,15 +37,29 @@ struct KERNEL_API AircraftInfo
     QByteArray atcAirline;
     QByteArray atcFlightNumber;
     QByteArray category;
-
     bool startOnGround;
+    // Feet
+    float aircraftAltitudeAboveGround;
+
+    // Knots
+    int initialAirspeed;
     SimTypes::SurfaceType surfaceType;
     // Feet
     int wingSpan;
-    // Knots
-    int initialAirspeed;
     int numberOfEngines;
     SimTypes::EngineType engineType;
+
+    float groundAltitude;
+    float ambientTemperature;
+    float totalAirTemperature;
+    float windVelocity;
+    float windDirection;
+    SimTypes::PrecipitationState precipitationState;
+    bool inClouds;
+    float visibility;
+    float seaLevelPressure;
+    quint8 pitotIcingPercent;
+    quint8 structuralIcingPercent;
 
     AircraftInfo();
 

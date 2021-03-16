@@ -30,6 +30,8 @@
 
 #include <QtGlobal>
 
+#include "../../Kernel/src/SkyMath.h"
+#include "../../Kernel/src/SimTypes.h"
 #include "../../Kernel/src/AircraftInfo.h"
 
 struct SimConnectAircraftInfo
@@ -41,19 +43,48 @@ struct SimConnectAircraftInfo
     char category[256];
 
     qint32 simOnGround;
+    // Feet
+    float planeAltAboveGround;
+    // Knots
     qint32 airspeedTrue;
     qint32 surfaceType;
+    // Feet
     qint32 wingSpan;
     qint32 numberOfEngines;
     qint32 engineType;
 
+    float groundAltitude;
+    // Celcius
+    float ambientTemperature;
+    float totalAirTemperature;
+    float ambientWindVelocity;
+    float ambientWindDirection;
+    qint32 ambientPrecipState;
+    qint32 ambientInCloud;
+    float ambientVisibility;
+    float seaLevelPressure;
+    float pitotIcePct;
+    float structuralIcePct;
+
     SimConnectAircraftInfo()
         : simOnGround(false),
+          planeAltAboveGround(0.0f),
           airspeedTrue(0),
           surfaceType(0),
           wingSpan(0),
           numberOfEngines(0),
-          engineType(0)
+          engineType(0),
+          groundAltitude(0.0f),
+          ambientTemperature(0.0f),
+          totalAirTemperature(0.0f),
+          ambientWindVelocity(0.0f),
+          ambientWindDirection(0.0f),
+          ambientPrecipState(0),
+          ambientInCloud(0),
+          ambientVisibility(0.0f),
+          seaLevelPressure(0.0f),
+          pitotIcePct(0.0f),
+          structuralIcePct(0.0f)
     {}
 
     inline AircraftInfo toAircraftInfo() const {
@@ -75,13 +106,26 @@ struct SimConnectAircraftInfo
         if (SUCCEEDED(StringCbLengthA(&category[0], sizeof(category), nullptr))) {
             aircraftInfo.category = category;
         }
-
         aircraftInfo.startOnGround = (simOnGround != 0);
+        aircraftInfo.aircraftAltitudeAboveGround = planeAltAboveGround;
+
         aircraftInfo.initialAirspeed = airspeedTrue;
         aircraftInfo.surfaceType = toSurfaceType(surfaceType);
         aircraftInfo.wingSpan = wingSpan;
         aircraftInfo.numberOfEngines = numberOfEngines;
         aircraftInfo.engineType = toEngineType(engineType);
+
+        aircraftInfo.groundAltitude = groundAltitude;
+        aircraftInfo.ambientTemperature = ambientTemperature;
+        aircraftInfo.totalAirTemperature = totalAirTemperature;
+        aircraftInfo.windVelocity = ambientWindVelocity;
+        aircraftInfo.windDirection = ambientWindDirection;
+        aircraftInfo.precipitationState = toPrecipitationState(ambientPrecipState);
+        aircraftInfo.inClouds = (ambientInCloud != 0);
+        aircraftInfo.visibility = ambientVisibility;
+        aircraftInfo.seaLevelPressure = seaLevelPressure;
+        aircraftInfo.pitotIcingPercent = SkyMath::fromPercent(pitotIcePct);
+        aircraftInfo.structuralIcingPercent = SkyMath::fromPercent(structuralIcePct);
 
         return aircraftInfo;
     }
@@ -196,6 +240,27 @@ private:
             break;
         default:
             return SimTypes::EngineType::Unknown;
+            break;
+        }
+    }
+
+    static inline SimTypes::PrecipitationState toPrecipitationState(qint32 precipitationState)
+    {
+        switch (precipitationState) {
+        case 0:
+            return SimTypes::PrecipitationState::Unknown;
+            break;
+        case 2:
+            return SimTypes::PrecipitationState::None;
+            break;
+        case 4:
+            return SimTypes::PrecipitationState::Rain;
+            break;
+        case 8:
+            return SimTypes::PrecipitationState::Snow;
+            break;
+        default:
+            return SimTypes::PrecipitationState::Unknown;
             break;
         }
     }

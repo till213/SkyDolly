@@ -257,15 +257,9 @@ bool SkyConnectImpl::sendAircraftData()
         SimConnectAircraftData simConnectAircraftData;
         simConnectAircraftData.fromAircraftData(currentAircraftData);
 #ifdef DEBUG
-        qDebug("%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %d, %lli",
+        qDebug("%f, %f, %f, %f, %f, %f, %lli",
                simConnectAircraftData.longitude, simConnectAircraftData.latitude, simConnectAircraftData.altitude,
                simConnectAircraftData.pitch, simConnectAircraftData.bank, simConnectAircraftData.heading,
-               simConnectAircraftData.yokeXPosition,
-               simConnectAircraftData.yokeYPosition,
-               simConnectAircraftData.rudderPosition,
-               simConnectAircraftData.elevatorPosition,
-               simConnectAircraftData.aileronPosition,
-               simConnectAircraftData.flapsHandleIndex,
                getCurrentTimestamp());
 #endif
         HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0, sizeof(SimConnectAircraftData), &simConnectAircraftData);

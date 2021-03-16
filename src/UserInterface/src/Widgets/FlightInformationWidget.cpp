@@ -26,11 +26,13 @@
 
 #include <QDialog>
 
+
 #include "../../../Kernel/src/Const.h"
 #include "../../../Kernel/src/Aircraft.h"
 #include "../../../Kernel/src/AircraftInfo.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
+#include "../../../Kernel/src/SkyMath.h"
 #include "FlightInformationWidget.h"
 #include "ui_FlightInformationWidget.h"
 
@@ -93,9 +95,12 @@ void FlightInformationWidget::hideEvent(QHideEvent *event)
 
 void FlightInformationWidget::initUi()
 {
-    // Make the "on ground" checkbox checkable, but not for the user
+    // Make the flight information checkboxes checkable, but not for the user
     ui->startOnGroundCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->startOnGroundCheckBox->setFocusPolicy(Qt::NoFocus);
+
+    ui->inCloudsCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->inCloudsCheckBox->setFocusPolicy(Qt::NoFocus);
 }
 
 void FlightInformationWidget::updateUi()
@@ -115,11 +120,26 @@ void FlightInformationWidget::updateInfoUi()
     ui->airlineLineEdit->setText(aircraftInfo.atcAirline);
     ui->flightLineEdit->setText(aircraftInfo.atcFlightNumber);
     ui->categoryLineEdit->setText(aircraftInfo.category);
+    ui->startOnGroundCheckBox->setChecked(aircraftInfo.startOnGround);
 
     ui->initialAirspeedLineEdit->setText(QString::number(aircraftInfo.initialAirspeed));
     ui->surfaceTypeLineEdit->setText(SimTypes::surfaceTypeToString(aircraftInfo.surfaceType));
     ui->wingSpanLineEdit->setText(QString::number(aircraftInfo.wingSpan));
     ui->engineTypeLineEdit->setText(SimTypes::engineTypeToString(aircraftInfo.engineType));
     ui->numberOfEnginesLineEdit->setText(QString::number(aircraftInfo.numberOfEngines));
+    ui->aircraftAltitudeAboveGroundLineEdit->setText(QString::number(aircraftInfo.aircraftAltitudeAboveGround));
     ui->startOnGroundCheckBox->setChecked(aircraftInfo.startOnGround);
+
+    ui->groundAltitudeLineEdit->setText(QString::number(aircraftInfo.groundAltitude));
+    ui->temperatureLineEdit->setText(QString::number(aircraftInfo.ambientTemperature));
+    ui->totalAirTemperatureLineEdit->setText(QString::number(aircraftInfo.totalAirTemperature));
+    ui->windVelocityLineEdit->setText(QString::number(aircraftInfo.windVelocity));
+    ui->windDirectionLineEdit->setText(QString::number(aircraftInfo.windDirection));
+    ui->precipitationStateLineEdit->setText(SimTypes::precipitationStateToString(aircraftInfo.precipitationState));
+
+    ui->inCloudsCheckBox->setChecked(aircraftInfo.inClouds);
+    ui->visibilityLineEdit->setText(QString::number(aircraftInfo.visibility));
+    ui->seaLevelPressure->setText(QString::number(aircraftInfo.seaLevelPressure));
+    ui->pitotIcingLineEdit->setText(QString::number(SkyMath::toPercent(aircraftInfo.pitotIcingPercent)));
+    ui->structuralIcingLineEdit->setText(QString::number(SkyMath::toPercent(aircraftInfo.structuralIcingPercent)));
 }
