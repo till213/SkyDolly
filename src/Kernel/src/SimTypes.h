@@ -68,6 +68,13 @@ namespace SimTypes {
         Turboprop,
     };
 
+    enum class PrecipitationState {
+        Unknown,
+        None,
+        Rain,
+        Snow
+    };
+
     inline QString surfaceTypeToString(SurfaceType surfaceType) {
         QString unknown = QT_TR_NOOP("Unknown");
         switch (surfaceType) {
@@ -178,6 +185,27 @@ namespace SimTypes {
             break;
         case EngineType::Turboprop:
             return QT_TR_NOOP("Turboprop");
+            break;
+        default:
+            return unknown;
+            break;
+        }
+    }
+
+    inline QString precipitationStateToString(PrecipitationState precipitationState) {
+        QString unknown = QT_TR_NOOP("Unknown");
+        switch (precipitationState) {
+        case PrecipitationState::Unknown:
+            return unknown;
+            break;
+        case PrecipitationState::None:
+            return QT_TR_NOOP("None");
+            break;
+        case PrecipitationState::Rain:
+            return QT_TR_NOOP("Rain");
+            break;
+        case PrecipitationState::Snow:
+            return QT_TR_NOOP("Snow");
             break;
         default:
             return unknown;

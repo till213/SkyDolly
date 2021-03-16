@@ -26,10 +26,22 @@
 
 AircraftInfo::AircraftInfo()
     : startOnGround(false),
-      surfaceType(SimTypes::SurfaceType::Unknown),
-      wingSpan(0),
+      aircraftAltitudeAboveGround(0),
       initialAirspeed(0),
+      surfaceType(SimTypes::SurfaceType::Unknown),
+      wingSpan(0),      
       numberOfEngines(0),
-      engineType(SimTypes::EngineType::Unknown)
+      engineType(SimTypes::EngineType::Unknown),
+      groundAltitude(0.0f),
+      ambientTemperature(0.0f),
+      totalAirTemperature(0.0f),
+      windVelocity(0.0f),
+      windDirection(0.0f),
+      precipitationState(SimTypes::PrecipitationState::Unknown),
+      inClouds(false),
+      visibility((0.0f)),
+      seaLevelPressure(0.0f),
+      pitotIcingPercent(0),
+      structuralIcingPercent(0)
 {
 }

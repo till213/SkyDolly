@@ -38,14 +38,26 @@ void SimConnectAircraftInfo::addToDataDefinition(HANDLE simConnectHandle)
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Category", NULL, SIMCONNECT_DATATYPE_STRING256);
 
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Sim On Ground", "Bool", ::SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Plane Alt Above Ground", "Feet", SIMCONNECT_DATATYPE_FLOAT32);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Airspeed True", "knots", ::SIMCONNECT_DATATYPE_INT32);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Surface Type", "Number", ::SIMCONNECT_DATATYPE_INT32);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Wing Span", "Feet", SIMCONNECT_DATATYPE_INT32);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Number of Engines", "Number", SIMCONNECT_DATATYPE_INT32);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Engine Type", "Number", SIMCONNECT_DATATYPE_INT32);
 
-    // TODO: WING SPAN, ATC RUNWAY SELECTED (and related), GROUND ALTITUDE, ON ANY RUNWAY,  SURFACE TYPE
-    //       ATC AIRLINE, ATC FLIGHT NUMBER, ATC MODEL, ATC TYPE, GPS APPROACH AIRPORT ID (?)
-    //       ENGINE TYPE
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Ground Altitude", "Feet", SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Ambient Temperature", "Celsius", SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Total Air Temperature", "Celsius", SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Ambient Wind Velocity", "Knots", SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Ambient Wind Direction", "Degrees", SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Ambient Precip State", "Mask", SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Ambient In Cloud", "Bool", SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Ambient Visibility", "Meters", SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Sea Level Pressure", "Millibars", SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Pitot Ice Pct", "Percent", SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Structural Ice Pct", "Percent", SIMCONNECT_DATATYPE_FLOAT32);
+
+    // TODO: ATC RUNWAY SELECTED (and related), ON ANY RUNWAY,
+    //       AGPS APPROACH AIRPORT ID (?)
 }
 
