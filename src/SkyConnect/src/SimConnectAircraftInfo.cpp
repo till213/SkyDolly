@@ -32,9 +32,9 @@
 void SimConnectAircraftInfo::addToDataDefinition(HANDLE simConnectHandle)
 {
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Title", nullptr, ::SIMCONNECT_DATATYPE_STRING256);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "ATC Id", NULL, SIMCONNECT_DATATYPE_STRING256);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "ATC Airline", NULL, SIMCONNECT_DATATYPE_STRING256);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "ATC Flight Number", NULL, SIMCONNECT_DATATYPE_STRING256);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "ATC Id", NULL, SIMCONNECT_DATATYPE_STRING32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "ATC Airline", NULL, SIMCONNECT_DATATYPE_STRING64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "ATC Flight Number", NULL, SIMCONNECT_DATATYPE_STRING8);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Category", NULL, SIMCONNECT_DATATYPE_STRING256);
 
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Sim On Ground", "Bool", ::SIMCONNECT_DATATYPE_INT32);
@@ -56,8 +56,5 @@ void SimConnectAircraftInfo::addToDataDefinition(HANDLE simConnectHandle)
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Sea Level Pressure", "Millibars", SIMCONNECT_DATATYPE_FLOAT32);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Pitot Ice Pct", "Percent", SIMCONNECT_DATATYPE_FLOAT32);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, "Structural Ice Pct", "Percent", SIMCONNECT_DATATYPE_FLOAT32);
-
-    // TODO: ATC RUNWAY SELECTED (and related), ON ANY RUNWAY,
-    //       AGPS APPROACH AIRPORT ID (?)
 }
 

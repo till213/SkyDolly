@@ -37,9 +37,9 @@
 struct SimConnectAircraftInfo
 {
     char title[256];
-    char atcId[256];
-    char atcAirline[256];
-    char atcFlightNumber[256];
+    char atcId[32];
+    char atcAirline[64];
+    char atcFlightNumber[8];
     char category[256];
 
     qint32 simOnGround;
