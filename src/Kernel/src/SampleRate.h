@@ -31,7 +31,7 @@ namespace SampleRate
 {
     constexpr int AutoValue = 999.0;
 
-    enum SampleRate {
+    enum class SampleRate: int {
         Hz1 = 0,
         Hz2,
         Hz5,
@@ -49,31 +49,31 @@ namespace SampleRate
 
     inline constexpr double toValue(SampleRate sampleRate) {
         switch (sampleRate) {
-        case Hz1:
+        case SampleRate::Hz1:
             return 1.0;
-        case Hz2:
+        case SampleRate::Hz2:
             return 2.0;
-        case Hz5:
+        case SampleRate::Hz5:
             return 5.0;
-        case Hz10:
+        case SampleRate::Hz10:
             return 10.0;
-        case Hz15:
+        case SampleRate::Hz15:
             return 15.0;
-        case Hz20:
+        case SampleRate::Hz20:
             return 20.0;
-        case Hz24:
+        case SampleRate::Hz24:
             return 24.0;
-        case Hz25:
+        case SampleRate::Hz25:
             return 25.0;
-        case Hz30:
+        case SampleRate::Hz30:
             return 30.0;
-        case Hz45:
+        case SampleRate::Hz45:
             return 45.0;
-        case Hz50:
+        case SampleRate::Hz50:
             return 50.0;
-        case Hz60:
+        case SampleRate::Hz60:
             return 60.0;
-        case Auto:
+        case SampleRate::Auto:
             return AutoValue;
         default:
             return AutoValue;
@@ -82,33 +82,33 @@ namespace SampleRate
 
     inline constexpr SampleRate fromValue(double sampleRate) {
         if (sampleRate <= 1.0)
-            return Hz1;
+            return SampleRate::Hz1;
         else if (sampleRate <= 2.0)
-            return Hz2;
+            return SampleRate::Hz2;
         else if (sampleRate <= 5.0)
-            return Hz5;
+            return SampleRate::Hz5;
         else if (sampleRate <= 10.0)
-            return Hz10;
+            return SampleRate::Hz10;
         else if (sampleRate <= 15.0)
-            return Hz15;
+            return SampleRate::Hz15;
         else if (sampleRate <= 20.0)
-            return Hz20;
+            return SampleRate::Hz20;
         else if (sampleRate <= 24.0)
-            return Hz24;
+            return SampleRate::Hz24;
         else if (sampleRate <= 25.0)
-            return Hz25;
+            return SampleRate::Hz25;
         else if (sampleRate <= 30.0)
-            return Hz30;
+            return SampleRate::Hz30;
         else if (sampleRate <= 45.0)
-            return Hz45;
+            return SampleRate::Hz45;
         else if (sampleRate <= 50.0)
-            return Hz50;
+            return SampleRate::Hz50;
         else if (sampleRate <= 60.0)
-            return Hz60;
+            return SampleRate::Hz60;
         else if (sampleRate <= AutoValue)
-            return Auto;
+            return SampleRate::Auto;
         else
-            return Auto;
+            return SampleRate::Auto;
     }
 
     /*!
@@ -132,7 +132,7 @@ namespace SampleRate
      * \return the interval in milliseconds
      */
     inline int toInterval(SampleRate sampleRate) {
-        if (sampleRate != Auto) {
+        if (sampleRate != SampleRate::Auto) {
             return static_cast<int>(1000.0 / toValue(sampleRate));
         } else {
             return 0;

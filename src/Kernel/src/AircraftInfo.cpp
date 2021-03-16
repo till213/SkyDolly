@@ -26,10 +26,10 @@
 
 AircraftInfo::AircraftInfo()
     : startOnGround(false),
-      surfaceType(SimTypes::SurfaceType::Asphalt),
+      surfaceType(SimTypes::SurfaceType::Unknown),
       wingSpan(0),
       initialAirspeed(0),
       numberOfEngines(0),
-      engineType(SimTypes::EngineType::None)
+      engineType(SimTypes::EngineType::Unknown)
 {
 }

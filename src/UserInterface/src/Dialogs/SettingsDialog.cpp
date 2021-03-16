@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include "../../../Kernel/src/SampleRate.h"
+#include "../../../Kernel/src/Enum.h"
 #include "../../../Kernel/src/Settings.h"
 #include "SettingsDialog.h"
 #include "ui_SettingsDialog.h"
@@ -67,33 +68,33 @@ void SettingsDialog::initUi()
     setWindowFlags(flags);
 
     // Record
-    ui->recordFrequencyComboBox->insertItem(SampleRate::Hz1, tr("1 Hz"));
-    ui->recordFrequencyComboBox->insertItem(SampleRate::Hz2, tr("2 Hz"));
-    ui->recordFrequencyComboBox->insertItem(SampleRate::Hz5, tr("5 Hz"));
-    ui->recordFrequencyComboBox->insertItem(SampleRate::Hz10, tr("10 Hz"));
-    ui->recordFrequencyComboBox->insertItem(SampleRate::Hz15, tr("15 Hz"));
-    ui->recordFrequencyComboBox->insertItem(SampleRate::Hz20, tr("20 Hz"));
-    ui->recordFrequencyComboBox->insertItem(SampleRate::Hz24, tr("24 Hz"));
-    ui->recordFrequencyComboBox->insertItem(SampleRate::Hz25, tr("25 Hz"));
-    ui->recordFrequencyComboBox->insertItem(SampleRate::Hz30, tr("30 Hz"));
-    ui->recordFrequencyComboBox->insertItem(SampleRate::Hz45, tr("45 Hz"));
-    ui->recordFrequencyComboBox->insertItem(SampleRate::Hz50, tr("50 Hz"));
-    ui->recordFrequencyComboBox->insertItem(SampleRate::Hz60, tr("60 Hz"));
-    ui->recordFrequencyComboBox->insertItem(SampleRate::Auto, tr("Auto"));
+    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz1), tr("1 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz2), tr("2 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz5), tr("5 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz10), tr("10 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz15), tr("15 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz20), tr("20 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz24), tr("24 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz25), tr("25 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz30), tr("30 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz45), tr("45 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz50), tr("50 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz60), tr("60 Hz"));
+    ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Auto), tr("Auto"));
 
     // Playback
-    ui->playbackFrequencyComboBox->insertItem(SampleRate::Hz1, tr("1 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(SampleRate::Hz2, tr("2 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(SampleRate::Hz5, tr("5 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(SampleRate::Hz10, tr("10 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(SampleRate::Hz15, tr("15 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(SampleRate::Hz20, tr("20 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(SampleRate::Hz24, tr("24 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(SampleRate::Hz25, tr("25 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(SampleRate::Hz30, tr("30 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(SampleRate::Hz45, tr("45 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(SampleRate::Hz50, tr("50 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(SampleRate::Hz60, tr("60 Hz"));
+    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz1), tr("1 Hz"));
+    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz2), tr("2 Hz"));
+    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz5), tr("5 Hz"));
+    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz10), tr("10 Hz"));
+    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz15), tr("15 Hz"));
+    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz20), tr("20 Hz"));
+    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz24), tr("24 Hz"));
+    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz25), tr("25 Hz"));
+    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz30), tr("30 Hz"));
+    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz45), tr("45 Hz"));
+    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz50), tr("50 Hz"));
+    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz60), tr("60 Hz"));
 }
 
 void SettingsDialog::frenchConnection()
@@ -106,8 +107,8 @@ void SettingsDialog::frenchConnection()
 
 void SettingsDialog::updateUi()
 {
-    ui->recordFrequencyComboBox->setCurrentIndex(Settings::getInstance().getRecordSampleRate());
-    ui->playbackFrequencyComboBox->setCurrentIndex(Settings::getInstance().getPlaybackSampleRate());
+    ui->recordFrequencyComboBox->setCurrentIndex(Enum::toUnderlyingType(Settings::getInstance().getRecordSampleRate()));
+    ui->playbackFrequencyComboBox->setCurrentIndex(Enum::toUnderlyingType(Settings::getInstance().getPlaybackSampleRate()));
 }
 
 void SettingsDialog::handleAccepted()
