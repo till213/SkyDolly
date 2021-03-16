@@ -47,6 +47,7 @@
 #include "../../Kernel/src/Aircraft.h"
 #include "../../Kernel/src/AircraftInfo.h"
 #include "../../Kernel/src/SampleRate.h"
+#include "../../Kernel/src/Enum.h"
 #include "../../SkyConnect/src/SkyManager.h"
 #include "../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../SkyConnect/src/Connect.h"
@@ -68,16 +69,16 @@ namespace {
     constexpr qint64 MilliSecondsPerMinute = 60 * MilliSecondsPerSecond;
     constexpr qint64 MilliSecondsPerHour = 60 * MilliSecondsPerMinute;
 
-    enum PlaybackSpeed {
-        PlaybackSpeed10,
-        PlaybackSpeed25,
-        PlaybackSpeed50,
-        PlaybackSpeed75,
-        PlaybackSpeed100,
-        PlaybackSpeed200,
-        PlaybackSpeed400,
-        PlaybackSpeed800,
-        PlaybackSpeedCustom
+    enum class PlaybackSpeed {
+        Speed10,
+        Speed25,
+        Speed50,
+        Speed75,
+        Speed100,
+        Speed200,
+        Speed400,
+        Speed800,
+        CustomSpeed
     };
 }
 
@@ -197,15 +198,15 @@ void MainWindow::initUi()
 void MainWindow::initControlUi()
 {
     d->playbackSpeedButtonGroup = new QButtonGroup(this);
-    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed10RadioButton, PlaybackSpeed10);
-    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed25RadioButton, PlaybackSpeed25);
-    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed50RadioButton, PlaybackSpeed50);
-    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed75RadioButton, PlaybackSpeed75);
-    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed100RadioButton, PlaybackSpeed100);
-    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed200RadioButton, PlaybackSpeed200);
-    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed400RadioButton, PlaybackSpeed400);
-    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed800RadioButton, PlaybackSpeed800);
-    d->playbackSpeedButtonGroup->addButton(ui->customPlaybackSpeedRadioButton, PlaybackSpeedCustom);
+    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed10RadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed10));
+    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed25RadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed25));
+    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed50RadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed50));
+    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed75RadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed75));
+    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed100RadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed100));
+    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed200RadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed200));
+    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed400RadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed400));
+    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed800RadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed800));
+    d->playbackSpeedButtonGroup->addButton(ui->customPlaybackSpeedRadioButton, Enum::toUnderlyingType(PlaybackSpeed::CustomSpeed));
 
     ui->positionSlider->setMinimum(PositionSliderMin);
     ui->positionSlider->setMaximum(PositionSliderMax);
@@ -325,7 +326,7 @@ void MainWindow::updateControlUi()
 {
     bool hasRecording = d->skyConnect->getAircraft().getAllAircraftData().count() > 0;
     switch (d->skyConnect->getState()) {
-    case Connect::Idle:
+    case Connect::State::Idle:
         // Actions
         ui->recordAction->setEnabled(true);
         ui->recordAction->setChecked(false);
@@ -343,7 +344,7 @@ void MainWindow::updateControlUi()
         ui->positionSlider->setEnabled(hasRecording);
         ui->timestampTimeEdit->setEnabled(hasRecording);
         break;
-    case Connect::Recording:
+    case Connect::State::Recording:
         // Actions
         ui->recordAction->setEnabled(true);
         ui->recordAction->setChecked(true);
@@ -362,12 +363,12 @@ void MainWindow::updateControlUi()
         ui->positionSlider->setValue(PositionSliderMax);
         ui->timestampTimeEdit->setEnabled(false);
         break;
-    case Connect::RecordingPaused:
+    case Connect::State::RecordingPaused:
         // Actions
         ui->recordAction->setChecked(false);
         ui->pauseAction->setChecked(true);
         break;
-    case Connect::Playback:
+    case Connect::State::Playback:
         // Actions
         ui->recordAction->setEnabled(false);
         ui->recordAction->setChecked(false);
@@ -385,7 +386,7 @@ void MainWindow::updateControlUi()
         ui->positionSlider->setEnabled(true);
         ui->timestampTimeEdit->setEnabled(false);
         break;
-    case Connect::PlaybackPaused:
+    case Connect::State::PlaybackPaused:
         // Actions
         ui->pauseAction->setChecked(true);
         ui->playAction->setChecked(false);
@@ -455,7 +456,7 @@ void MainWindow::updateMainWindow()
         }
     }
 
-    if (Settings::getInstance().getRecordSampleRate() != SampleRate::Auto) {
+    if (Settings::getInstance().getRecordSampleRate() != SampleRate::SampleRate::Auto) {
         ui->recordAction->setToolTip(tr("Record [@%1 Hz]").arg(Settings::getInstance().getRecordSampleRateValue()));
     } else {
         ui->recordAction->setToolTip(tr("Record [auto sample rate]"));
@@ -589,32 +590,32 @@ void MainWindow::handlePlayPositionChanged(qint64 timestamp) {
 void MainWindow::handlePlaybackSpeedSelected(int selection) {
 
     double timeScale;
-    switch (selection) {
-    case PlaybackSpeed10:
+    switch (static_cast<PlaybackSpeed>(selection)) {
+    case PlaybackSpeed::Speed10:
         timeScale = 0.1;
         break;
-    case PlaybackSpeed25:
+    case PlaybackSpeed::Speed25:
         timeScale = 0.25;
         break;
-    case PlaybackSpeed50:
+    case PlaybackSpeed::Speed50:
         timeScale = 0.5;
         break;
-    case PlaybackSpeed75:
+    case PlaybackSpeed::Speed75:
         timeScale = 0.75;
         break;
-    case PlaybackSpeed100:
+    case PlaybackSpeed::Speed100:
         timeScale = 1.0;
         break;
-    case PlaybackSpeed200:
+    case PlaybackSpeed::Speed200:
         timeScale = 2.0;
         break;
-    case PlaybackSpeed400:
+    case PlaybackSpeed::Speed400:
         timeScale = 4.0;
         break;
-    case PlaybackSpeed800:
+    case PlaybackSpeed::Speed800:
         timeScale = 8.0;
         break;
-    case PlaybackSpeedCustom:
+    case PlaybackSpeed::CustomSpeed:
         timeScale = ui->customPlaybackSpeedLineEdit->text().toDouble() / 100.0;
         break;
     default:

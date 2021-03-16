@@ -22,18 +22,18 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CONNECT_H
-#define CONNECT_H
+#ifndef ENUM_H
+#define ENUM_H
 
-namespace Connect {
-    enum class State {
-        Idle,
-        Recording,
-        RecordingPaused,
-        Playback,
-        PlaybackPaused,
-        NoConnection
-    };
+#include <type_traits>
+
+namespace Enum
+{
+    template<typename E>
+    constexpr auto toUnderlyingType(E e)
+    {
+        return static_cast<typename std::underlying_type<E>::type>(e);
+    }
 }
 
-#endif // CONNECT_H
+#endif // ENUM_H

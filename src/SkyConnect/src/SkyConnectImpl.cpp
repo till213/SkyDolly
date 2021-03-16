@@ -38,6 +38,7 @@
 #include "../../Kernel/src/AircraftInfo.h"
 #include "../../Kernel/src/AircraftData.h"
 #include "../../Kernel/src/SampleRate.h"
+#include "../../Kernel/src/Enum.h"
 #include "SimConnectDataDefinition.h"
 #include "SimConnectAircraftInfo.h"
 #include "SimConnectAircraftData.h"
@@ -50,18 +51,18 @@ namespace
     const char *ConnectionName = "SkyConnect";
     constexpr DWORD UserAirplaneRadiusMeters = 0;
 
-    enum Event {
-        SimStartEvent,
-        PauseEvent,
-        CrashedEvent,
+    enum class Event: SIMCONNECT_CLIENT_EVENT_ID {
+        SimStart,
+        Pause,
+        Crashed,
         FreezeLatituteLongitude,
         FreezeAltitude,
         FreezeAttitude
     };
 
-    enum DataRequest {
-        AircraftInfoRequest,
-        AircraftPositionRequest
+    enum class DataRequest: SIMCONNECT_DATA_REQUEST_ID {
+        AircraftInfo,
+        AircraftPosition
     };
 }
 
@@ -100,17 +101,18 @@ void SkyConnectImpl::onStartDataSample()
 {
     updateRecordFrequency(Settings::getInstance().getRecordSampleRate());
     // Get aircraft information
-    ::SimConnect_RequestDataOnSimObjectType(d->simConnectHandle, AircraftInfoRequest, SkyConnectDataDefinition::AircraftInfoDefinition, ::UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
+    ::SimConnect_RequestDataOnSimObjectType(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::AircraftInfo), SkyConnectDataDefinition::AircraftInfoDefinition, ::UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
 }
 
 void SkyConnectImpl::onStopDataSample()
 {
     // Stop receiving aircraft position
-    ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_NEVER);
+    ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::AircraftPosition), SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_NEVER);
 }
 
 void SkyConnectImpl::onStartReplay(bool fromStart)
 {
+    Q_UNUSED(fromStart)
     // "Freeze" the simulation: position and attitude only set by (interpolated)
     // sample points
     setSimulationFrozen(true);
@@ -222,14 +224,14 @@ void SkyConnectImpl::setupRequestData()
     SimConnectAircraftData::addToDataDefinition(d->simConnectHandle);
 
     // System event subscription
-    ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, SimStartEvent, "SimStart");
-    ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, PauseEvent, "Pause");
-    ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, CrashedEvent, "Crashed");
+    ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::SimStart), "SimStart");
+    ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::Pause), "Pause");
+    ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::Crashed), "Crashed");
 
     // Client events
-    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, FreezeLatituteLongitude, "FREEZE_LATITUDE_LONGITUDE_SET");
-    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, FreezeAltitude, "FREEZE_ALTITUDE_SET");
-    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, FreezeAttitude, "FREEZE_ATTITUDE_SET");
+    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::FreezeLatituteLongitude), "FREEZE_LATITUDE_LONGITUDE_SET");
+    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::FreezeAltitude), "FREEZE_ALTITUDE_SET");
+    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::FreezeAttitude), "FREEZE_ATTITUDE_SET");
 }
 
 void SkyConnectImpl::setSimulationFrozen(bool enable) {
@@ -237,9 +239,9 @@ void SkyConnectImpl::setSimulationFrozen(bool enable) {
 
     d->frozen = enable;
     data = enable ? 1 : 0;
-    ::SimConnect_TransmitClientEvent(d->simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, ::FreezeLatituteLongitude, data, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-    ::SimConnect_TransmitClientEvent(d->simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, ::FreezeAltitude, data, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
-    ::SimConnect_TransmitClientEvent(d->simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, ::FreezeAttitude, data, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+    ::SimConnect_TransmitClientEvent(d->simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::toUnderlyingType(Event::FreezeLatituteLongitude), data, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+    ::SimConnect_TransmitClientEvent(d->simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::toUnderlyingType(Event::FreezeAltitude), data, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+    ::SimConnect_TransmitClientEvent(d->simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::toUnderlyingType(Event::FreezeAttitude), data, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
 }
 
 bool SkyConnectImpl::isSimulationFrozen() const {
@@ -293,19 +295,19 @@ void SkyConnectImpl::updateRecordFrequency(SampleRate::SampleRate sampleRate)
 {
     if (getState() == Connect::State::Recording) {
         switch (sampleRate) {
-        case SampleRate::Hz1:
+        case SampleRate::SampleRate::Hz1:
             if (d->eventWidget != nullptr) {
                 d->eventWidget.reset();
                 d->eventWidget = nullptr;
                 reconnectWithSim();
             }
             // Get aircraft position @1Hz
-            ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_SECOND, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+            ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::AircraftPosition), SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_SECOND, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
             break;
-        case SampleRate::Auto:
+        case SampleRate::SampleRate::Auto:
             // Fall-thru intented
         default:
-            if (sampleRate == SampleRate::Auto) {
+            if (sampleRate == SampleRate::SampleRate::Auto) {
                 // Samples are picked up upon availability, using an event-based notification (variable frequency)
                 if (d->eventWidget == nullptr) {
                     d->eventWidget = std::make_unique<EventWidget>();
@@ -320,11 +322,11 @@ void SkyConnectImpl::updateRecordFrequency(SampleRate::SampleRate sampleRate)
                 reconnectWithSim();
             }
             // Get aircraft position every simulated frame
-            ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_SIM_FRAME, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+            ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::AircraftPosition), SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_SIM_FRAME, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
             break;
         }
     } else {
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, ::AircraftPositionRequest, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_NEVER);
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::AircraftPosition), SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_NEVER);
     }
 }
 
@@ -343,15 +345,15 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
         case SIMCONNECT_RECV_ID_EVENT:
         {
             SIMCONNECT_RECV_EVENT *evt = reinterpret_cast<SIMCONNECT_RECV_EVENT *>(receivedData);
-            switch (evt->uEventID)
+            switch (static_cast<Event>(evt->uEventID))
             {
-                case SimStartEvent:
+                case Event::SimStart:
 #ifdef DEBUG
                     qDebug("SIMCONNECT_RECV_ID_EVENT: SIMSTART event");
 #endif
                     break;
 
-                case PauseEvent:
+                case Event::Pause:
 #ifdef DEBUG
                     qDebug("SIMCONNECT_RECV_ID_EVENT: PAUSE event: %lu", evt->dwData);
 #endif
@@ -361,7 +363,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
                     skyConnect->setPaused(evt->dwData == 1);
                     break;
 
-                case CrashedEvent:
+                case Event::Crashed:
 #ifdef DEBUG
                 qDebug("SIMCONNECT_RECV_ID_EVENT: CRASHED event");
 #endif
@@ -385,9 +387,9 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
 
         case SIMCONNECT_RECV_ID_SIMOBJECT_DATA_BYTYPE:
             objectData = reinterpret_cast<SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE *>(receivedData);
-            switch (objectData->dwRequestID)
+            switch (static_cast<DataRequest>(objectData->dwRequestID))
             {
-                case AircraftInfoRequest:
+                case DataRequest::AircraftInfo:
                 {
                     simConnectAircraftInfo = reinterpret_cast<const SimConnectAircraftInfo *>(&objectData->dwData);
                     AircraftInfo aircraftInfo;
@@ -404,9 +406,9 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
         case SIMCONNECT_RECV_ID_SIMOBJECT_DATA:
             objectData = reinterpret_cast<SIMCONNECT_RECV_SIMOBJECT_DATA *>(receivedData);
 
-            switch (objectData->dwRequestID)
+            switch (static_cast<DataRequest>(objectData->dwRequestID))
             {
-                case AircraftPositionRequest:
+                case DataRequest::AircraftPosition:
                 {
                     if (skyConnect->getState() == Connect::State::Recording) {
                         if (!skyConnect->isElapsedTimerRunning()) {

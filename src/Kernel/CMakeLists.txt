@@ -17,6 +17,7 @@ target_sources(Kernel
         src/AircraftData.h
         src/Const.cpp
         src/Const.h
+        src/Enum.h
         src/SampleRate.h
         src/SkyMath.h
         src/SkySearch.h

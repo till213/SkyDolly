@@ -186,16 +186,16 @@ void AbstractSkyConnect::setPaused(bool enabled)
     Connect::State newState;
     if (enabled) {
         switch (getState()) {
-        case Connect::Recording:
-            newState = Connect::RecordingPaused;
+        case Connect::State::Recording:
+            newState = Connect::State::RecordingPaused;
             // Store the elapsed recording time...
             d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed();
             d->elapsedTimer.invalidate();
             setState(newState);
             onRecordingPaused(true);
             break;
-        case Connect::Playback:
-            newState = Connect::PlaybackPaused;
+        case Connect::State::Playback:
+            newState = Connect::State::PlaybackPaused;
             // In case the elapsed time has started (is valid)...
             if (d->elapsedTimer.isValid()) {
                 // ... store the elapsed playback time measured with the current time scale...
@@ -211,8 +211,8 @@ void AbstractSkyConnect::setPaused(bool enabled)
         }
     } else {
         switch (getState()) {
-        case Connect::RecordingPaused:
-            newState = Connect::Recording;
+        case Connect::State::RecordingPaused:
+            newState = Connect::State::Recording;
             if (hasRecordingStarted()) {
                 // Resume recording (but only if it has already recorded samples before)
                 d->elapsedTimer.start();
@@ -220,8 +220,8 @@ void AbstractSkyConnect::setPaused(bool enabled)
             setState(newState);
             onRecordingPaused(false);
             break;
-        case Connect::PlaybackPaused:
-            newState = Connect::Playback;
+        case Connect::State::PlaybackPaused:
+            newState = Connect::State::Playback;
             d->elapsedTimer.start();
             setState(newState);
             break;
@@ -233,7 +233,7 @@ void AbstractSkyConnect::setPaused(bool enabled)
 }
 
 bool AbstractSkyConnect::isPaused() const {
-    return getState() == Connect::RecordingPaused || getState() == Connect::PlaybackPaused;
+    return getState() == Connect::State::RecordingPaused || getState() == Connect::State::PlaybackPaused;
 }
 
 void AbstractSkyConnect::skipToBegin()
@@ -402,7 +402,7 @@ void AbstractSkyConnect::handleRecordSampleRateChanged(SampleRate::SampleRate sa
     d->recordSampleRate = SampleRate::toValue(sampleRate);
     d->recordIntervalMSec = SampleRate::toInterval(d->recordSampleRate);
     if (d->state == Connect::State::Recording || d->state == Connect::State::RecordingPaused) {
-        if (sampleRate != SampleRate::Auto) {
+        if (sampleRate != SampleRate::SampleRate::Auto) {
             d->timer.setInterval(d->recordIntervalMSec);
             if (!d->timer.isActive()) {
                 d->timer.start();

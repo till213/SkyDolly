@@ -117,9 +117,9 @@ void FlightInformationWidget::updateInfoUi()
     ui->categoryLineEdit->setText(aircraftInfo.category);
 
     ui->initialAirspeedLineEdit->setText(QString::number(aircraftInfo.initialAirspeed));
-    ui->surfaceTypeLineEdit->setText(QString::number(aircraftInfo.surfaceType));
+    ui->surfaceTypeLineEdit->setText(SimTypes::surfaceTypeToString(aircraftInfo.surfaceType));
     ui->wingSpanLineEdit->setText(QString::number(aircraftInfo.wingSpan));
-    ui->engineTypeLineEdit->setText(QString::number(aircraftInfo.engineType));
+    ui->engineTypeLineEdit->setText(SimTypes::engineTypeToString(aircraftInfo.engineType));
     ui->numberOfEnginesLineEdit->setText(QString::number(aircraftInfo.numberOfEngines));
     ui->startOnGroundCheckBox->setChecked(aircraftInfo.startOnGround);
 }
