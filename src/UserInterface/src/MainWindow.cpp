@@ -240,6 +240,7 @@ void MainWindow::initControlUi()
     ActionButton *skipBackwardButton = new ActionButton(this);
     skipBackwardButton->setAction(ui->backwardAction);
     skipBackwardButton->setFlat(true);
+    skipBackwardButton->setAutoRepeat(true);
     ui->controlButtonLayout->insertWidget(2, skipBackwardButton);
 
     ActionButton *stopButton = new ActionButton(this);
@@ -260,6 +261,7 @@ void MainWindow::initControlUi()
     ActionButton *skipForwardButton = new ActionButton(this);
     skipForwardButton->setAction(ui->forwardAction);
     skipForwardButton->setFlat(true);
+    skipForwardButton->setAutoRepeat(true);
     ui->controlButtonLayout->insertWidget(6, skipForwardButton);
 
     ActionButton *skipToEndButton = new ActionButton(this);
