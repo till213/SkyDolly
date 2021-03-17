@@ -42,6 +42,14 @@ struct KERNEL_API AircraftData
     double bank;
     double heading;
 
+    // Forces
+    double velocityBodyX;
+    double velocityBodyY;
+    double velocityBodyZ;
+    double rotationVelocityBodyX;
+    double rotationVelocityBodyY;
+    double rotationVelocityBodyZ;
+
     // Aircraft controls
     qint16 yokeXPosition;
     qint16 yokeYPosition;
@@ -56,10 +64,10 @@ struct KERNEL_API AircraftData
     qint16 throttleLeverPosition2;
     qint16 throttleLeverPosition3;
     qint16 throttleLeverPosition4;
-    quint8 propellerLeverPosition1;
-    quint8 propellerLeverPosition2;
-    quint8 propellerLeverPosition3;
-    quint8 propellerLeverPosition4;
+    qint16 propellerLeverPosition1;
+    qint16 propellerLeverPosition2;
+    qint16 propellerLeverPosition3;
+    qint16 propellerLeverPosition4;
     quint8 mixtureLeverPosition1;
     quint8 mixtureLeverPosition2;
     quint8 mixtureLeverPosition3;
@@ -77,9 +85,11 @@ struct KERNEL_API AircraftData
     bool gearHandlePosition;
     qint16 brakeLeftPosition;
     qint16 brakeRightPosition;
-    quint8 waterRudderHandlePosition;
-    qint8 tailhookPosition;
-    qint8 canopyOpen;
+    // Implementation note: the water rudder can also have negative (-100.0) values,
+    // hence hence the type qint16 (position) which also supports negative values
+    qint16 waterRudderHandlePosition;
+    quint8 tailhookPosition;
+    quint8 canopyOpen;
 
     // In milliseconds since the start of recording
     qint64 timestamp;

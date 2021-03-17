@@ -31,6 +31,13 @@ const char *Const::Pitch = "Plane Pitch Degrees";
 const char *Const::Bank = "Plane Bank Degrees";
 const char *Const::Heading = "Plane Heading Degrees True";
 
+const char *Const::VelocityBodyX = "Velocity Body X";
+const char *Const::VelocityBodyY = "Velocity Body Y";
+const char *Const::VelocityBodyZ = "Velocity Body Z";
+const char *Const::RotationVelocityBodyX = "Rotation Velocity Body X";
+const char *Const::RotationVelocityBodyY = "Rotation Velocity Body Y";
+const char *Const::RotationVelocityBodyZ = "Rotation Velocity Body Z";
+
 const char *Const::YokeXPosition = "Yoke Y Position";
 const char *Const::YokeYPosition = "Yoke Y Position";
 const char *Const::RudderPosition = "Rudder Position";
