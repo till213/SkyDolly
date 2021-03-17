@@ -73,24 +73,25 @@ public:
 
 protected:
     void setState(Connect::State state);
-
     void setCurrentTimestamp(qint64 timestamp);
+
     bool isElapsedTimerRunning() const;
     void startElapsedTimer() const;
     void resetElapsedTime(bool restart);
     void updateCurrentTimestamp();
     const AircraftData &updateCurrentAircraftData();
 
-    virtual bool sendAircraftData(qint64 currentTimestamp) = 0;
     virtual void onStartDataSample() = 0;
     virtual void onStopDataSample() = 0;
-    virtual void onStartReplay(bool fromStart) = 0;
+    virtual void onStartReplay(qint64 currentTimestamp) = 0;
     virtual void onStopReplay() = 0;
+    virtual void onSeek(qint64 currentTimestamp) = 0;
     virtual void onRecordingPaused(bool paused) = 0;
     virtual void onReplayPaused() = 0;
     virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) = 0;
     virtual void onPlaybackSampleRateChanged(SampleRate::SampleRate sampleRate) = 0;
 
+    virtual bool sendAircraftData(qint64 currentTimestamp) = 0;
     virtual bool isConnectedWithSim() const = 0;
     virtual bool connectWithSim() = 0;
 

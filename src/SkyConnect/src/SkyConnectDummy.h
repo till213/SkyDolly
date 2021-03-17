@@ -43,8 +43,9 @@ public:
 protected:
     virtual void onStartDataSample() override;
     virtual void onStopDataSample() override;
-    virtual void onStartReplay(bool fromStart) override;
+    virtual void onStartReplay(qint64 currentTimestamp) override;
     virtual void onStopReplay() override;
+    virtual void onSeek(qint64 currentTimestamp) override;
     virtual void onRecordingPaused(bool paused) override;
     virtual void onReplayPaused() override;
     virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) override;

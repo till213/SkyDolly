@@ -61,9 +61,14 @@ void SkyConnectDummy::onStartDataSample() {
 
 void SkyConnectDummy::onStopDataSample() {}
 
-void SkyConnectDummy::onStartReplay(bool fromStart) {
-    Q_UNUSED(fromStart)
+void SkyConnectDummy::onStartReplay(qint64 currentTimestamp) {
+    Q_UNUSED(currentTimestamp)
 }
+
+void SkyConnectDummy::onSeek(qint64 currentTimestamp)
+{
+    Q_UNUSED(currentTimestamp)
+};
 
 void SkyConnectDummy::onStopReplay() {}
 
