@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+
 #include <QObject>
 #include <QByteArray>
 #include <QVector>
@@ -54,13 +56,12 @@ public:
 
 Aircraft::Aircraft(QObject *parent)
     : QObject(parent),
-      d(new AircraftPrivate())
+      d(std::make_unique<AircraftPrivate>())
 {
 }
 
 Aircraft::~Aircraft()
 {
-    delete d;
 }
 
 void Aircraft::setAircraftInfo(AircraftInfo aircraftInfo)

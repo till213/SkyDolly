@@ -47,7 +47,7 @@ public:
 ControlVariablesWidget::ControlVariablesWidget(SkyConnectIntf &skyConnect, QWidget *parent) :
     QWidget(parent),
     d(std::make_unique<ControlVariablesWidgetPrivate>(skyConnect)),
-    ui(new Ui::ControlVariablesWidget)
+    ui(std::make_unique<Ui::ControlVariablesWidget>())
 {
     ui->setupUi(this);
     initUi();
@@ -55,7 +55,6 @@ ControlVariablesWidget::ControlVariablesWidget(SkyConnectIntf &skyConnect, QWidg
 
 ControlVariablesWidget::~ControlVariablesWidget()
 {
-    delete ui;
 }
 
 // PROTECTED

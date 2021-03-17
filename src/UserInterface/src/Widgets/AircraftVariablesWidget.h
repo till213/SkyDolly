@@ -52,7 +52,7 @@ protected:
 
 private:
     std::unique_ptr<AircraftVariablesWidgetPrivate> d;
-    Ui::AircraftVariablesWidget *ui;
+    std::unique_ptr<Ui::AircraftVariablesWidget> ui;
 
     void initUi();
     void updateUi();

@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+
 #include "../../../Kernel/src/SampleRate.h"
 #include "../../../Kernel/src/Enum.h"
 #include "../../../Kernel/src/Settings.h"
@@ -30,7 +32,7 @@
 
 SettingsDialog::SettingsDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::SettingsDialog)
+    ui(std::make_unique<Ui::SettingsDialog>())
 {
     ui->setupUi(this);
     initUi();
@@ -39,7 +41,6 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
 SettingsDialog::~SettingsDialog()
 {
-    delete ui;
 }
 
 // PROTECTED

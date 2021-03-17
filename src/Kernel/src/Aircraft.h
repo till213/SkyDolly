@@ -25,6 +25,8 @@
 #ifndef AIRCRAFT_H
 #define AIRCRAFT_H
 
+#include <memory>
+
 #include <QObject>
 #include <QByteArray>
 #include <QVector>
@@ -57,7 +59,7 @@ signals:
     void dataChanged();
 
 private:
-    AircraftPrivate *d;
+    std::unique_ptr<AircraftPrivate> d;
 
     bool updateCurrentIndex(qint64 timestamp) const;
     bool getSupportData(qint64 timestamp, const AircraftData **p0, const AircraftData **p1, const AircraftData **p2, const AircraftData **p3) const;

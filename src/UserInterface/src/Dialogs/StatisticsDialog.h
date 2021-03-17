@@ -25,6 +25,8 @@
 #ifndef STATISTICSDIALOG_H
 #define STATISTICSDIALOG_H
 
+#include <memory>
+
 #include <QDialog>
 
 class QShowEvent;
@@ -53,8 +55,8 @@ protected:
     void hideEvent(QHideEvent *event) override;
 
 private:
-    StatisticsDialogPrivate *d;
-    Ui::StatisticsDialog *ui;    
+    std::unique_ptr<StatisticsDialogPrivate> d;
+    std::unique_ptr<Ui::StatisticsDialog> ui;
 
     void frenchConnection();
 

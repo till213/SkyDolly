@@ -79,14 +79,13 @@ public:
 
 AbstractSkyConnect::AbstractSkyConnect(QObject *parent)
     : SkyConnectIntf(parent),
-      d(new AbstractSkyConnectPrivate())
+      d(std::make_unique<AbstractSkyConnectPrivate>())
 {
     frenchConnection();
 }
 
 AbstractSkyConnect::~AbstractSkyConnect()
 {
-    delete d;
 }
 
 Connect::State AbstractSkyConnect::getState() const

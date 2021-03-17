@@ -38,22 +38,21 @@ public:
     // TODO Plugin system
 #ifdef WIN32
     SkyManagerPrivate()
-        : currentSkyConnect(new SkyConnectImpl())
+        : currentSkyConnect(std::make_unique<SkyConnectImpl>())
     {
     }
 #else
     SkyManagerPrivate()
-        : currentSkyConnect(new SkyConnectDummy())
+        : currentSkyConnect(std::make_unique<SkyConnectDummy>())
     {
     }
 #endif
 
     ~SkyManagerPrivate()
     {
-        delete currentSkyConnect;
     }
 
-    SkyConnectIntf *currentSkyConnect;
+    std::unique_ptr<SkyConnectIntf> currentSkyConnect;
 
     static SkyManager *instance;
 };
@@ -78,9 +77,9 @@ void SkyManager::destroyInstance()
     }
 }
 
-SkyConnectIntf *SkyManager::currentSkyConnect() const
+SkyConnectIntf &SkyManager::currentSkyConnect() const
 {
-    return d->currentSkyConnect;
+    return *d->currentSkyConnect;
 }
 
 // PROTECTED

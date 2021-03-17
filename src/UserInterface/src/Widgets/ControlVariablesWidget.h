@@ -52,7 +52,7 @@ protected:
 
 private:
     std::unique_ptr<ControlVariablesWidgetPrivate> d;
-    Ui::ControlVariablesWidget *ui;
+    std::unique_ptr<Ui::ControlVariablesWidget> ui;
 
     void initUi();
     void updateUi();

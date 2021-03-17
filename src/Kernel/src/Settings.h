@@ -25,6 +25,8 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+#include <memory>
+
 #include <QObject>
 #include <QSettings>
 
@@ -100,7 +102,7 @@ protected:
 
 private:
     Q_DISABLE_COPY(Settings)
-    SettingsPrivate *d;
+    std::unique_ptr<SettingsPrivate> d;
 
     Settings();
 

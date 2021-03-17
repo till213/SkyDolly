@@ -25,6 +25,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <memory>
+
 #include <QMainWindow>
 
 #include "../../SkyConnect/src/SkyConnectIntf.h"
@@ -52,8 +54,8 @@ public:
     virtual ~MainWindow();
 
 private:
-    Ui::MainWindow *ui;
-    MainWindowPrivate *d;
+    std::unique_ptr<Ui::MainWindow> ui;
+    std::unique_ptr<MainWindowPrivate> d;
 
     void frenchConnection();
     void initUi();

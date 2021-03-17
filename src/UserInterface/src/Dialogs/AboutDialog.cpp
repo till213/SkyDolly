@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+
 #include <QDialog>
 
 #include "../../../Kernel/src/Version.h"
@@ -32,7 +34,7 @@
 
 AboutDialog::AboutDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::AboutDialog)
+    ui(std::make_unique<Ui::AboutDialog>())
 {
     ui->setupUi(this);
     initUi();
@@ -40,7 +42,6 @@ AboutDialog::AboutDialog(QWidget *parent) :
 
 AboutDialog::~AboutDialog()
 {
-    delete ui;
 }
 
 // PRIVATE

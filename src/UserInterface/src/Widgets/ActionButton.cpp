@@ -41,14 +41,13 @@ public:
 
 ActionButton::ActionButton(QWidget *parent)
     : QPushButton(parent),
-      d(new ActionButtonPrivate())
+      d(std::make_unique<ActionButtonPrivate>())
 {
 
 }
 
 ActionButton::~ActionButton()
 {
-    delete d;
 }
 
 void ActionButton::setAction(const QAction *action)

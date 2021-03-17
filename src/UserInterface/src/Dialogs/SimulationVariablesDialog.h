@@ -56,7 +56,7 @@ protected:
 
 private:
     std::unique_ptr<SimulationVariablesDialogPrivate> d;
-    Ui::SimulationVariablesDialog *ui;
+    std::unique_ptr<Ui::SimulationVariablesDialog> ui;
 
     void initUi();
     void updateUi();

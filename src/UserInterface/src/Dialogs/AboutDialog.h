@@ -25,6 +25,8 @@
 #ifndef ABOUTDIALOG_H
 #define ABOUTDIALOG_H
 
+#include <memory>
+
 #include <QDialog>
 
 namespace Ui {
@@ -40,7 +42,7 @@ public:
     virtual ~AboutDialog();
 
 private:
-    Ui::AboutDialog *ui;
+    std::unique_ptr<Ui::AboutDialog> ui;
 
     void initUi();
 };
