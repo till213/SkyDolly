@@ -45,6 +45,13 @@ namespace Const
     KERNEL_API extern const char *Bank;
     KERNEL_API extern const char *Heading;
 
+    KERNEL_API extern const char *VelocityBodyX;
+    KERNEL_API extern const char *VelocityBodyY;
+    KERNEL_API extern const char *VelocityBodyZ;
+    KERNEL_API extern const char *RotationVelocityBodyX;
+    KERNEL_API extern const char *RotationVelocityBodyY;
+    KERNEL_API extern const char *RotationVelocityBodyZ;
+
     KERNEL_API extern const char *YokeXPosition;
     KERNEL_API extern const char *YokeYPosition;
     KERNEL_API extern const char *RudderPosition;

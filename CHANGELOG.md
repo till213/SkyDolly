@@ -66,8 +66,10 @@
 - Additional simulation variables: 
   * Propeller RPM
   * Mixture lever positions
+  * Body Velocity
+  * Rotation Body Velocity
   * Tailhook
-  * Canopy
+  * Canopy  
 - Reduce required memory for sample points by over 100% (96 bytes vs previous 200 bytes per sampled data point), by using integer data types instead of double values for selected simulation variables
 - Pause is enabled after CSV data import
 - A high precision timer is used to increase the sample accuracy
@@ -76,7 +78,7 @@
 - When recording sample rate is set to 1 Hz ("one sample per second") then the SimConnect request period is now also set to 1 Hz
 - A new "auto" recording sample rate has been added which collects samples "as they arrive" (variable sample rate)
 - Reorganise simulation variables in tabbed widget
-- Add additional flight information variables
+- Add additional flight information variables, captured once at start of recording
   * Airline (Callsign)
   * Flight number
   * Tail number
@@ -89,3 +91,4 @@
 - Validate the CSV data upon import: specifically the first timestamp must be 0 (timestamps are shifted accordingly)
 - "Show simulation variables" action is now deselected when the dialog is closed (via close button)
 - Set the initial start position ("on ground") when playback from (or seek to) start
+- Prevent aircrafts from "dropping out of the sky" after playback, by recording body velocities

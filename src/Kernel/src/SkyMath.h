@@ -135,9 +135,13 @@ namespace SkyMath {
         return interpolateHermite180(y0 - T(180), y1 - T(180), y2 - T(180), y3 - T(180), mu, tension, bias) + T(180);
     }
 
-    template <typename V, typename T> qint16 interpolateLinear(V p1, V p2, T mu)
+    template <typename T, typename U> T interpolateLinear(T p1, T p2, U mu)
     {
-        return p1 + qRound(mu * (T(p2) - T(p1)));
+        if (std::is_integral<T>::value) {
+            return p1 + qRound(mu * (U(p2) - U(p1)));
+        } else {
+            return p1 + mu * (U(p2) - U(p1));
+        }
     }
 
     /*!
