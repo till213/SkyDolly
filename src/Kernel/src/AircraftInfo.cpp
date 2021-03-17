@@ -24,7 +24,7 @@
  */
 #include "AircraftInfo.h"
 
-AircraftInfo::AircraftInfo()
+AircraftInfo::AircraftInfo() noexcept
     : startOnGround(false),
       aircraftAltitudeAboveGround(0),
       initialAirspeed(0),

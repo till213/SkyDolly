@@ -77,23 +77,23 @@ public:
 
 // PUBLIC
 
-AbstractSkyConnect::AbstractSkyConnect(QObject *parent)
+AbstractSkyConnect::AbstractSkyConnect(QObject *parent) noexcept
     : SkyConnectIntf(parent),
       d(std::make_unique<AbstractSkyConnectPrivate>())
 {
     frenchConnection();
 }
 
-AbstractSkyConnect::~AbstractSkyConnect()
+AbstractSkyConnect::~AbstractSkyConnect() noexcept
 {
 }
 
-Connect::State AbstractSkyConnect::getState() const
+Connect::State AbstractSkyConnect::getState() const noexcept
 {
     return d->state;
 }
 
-void AbstractSkyConnect::setTimeScale(double timeScale)
+void AbstractSkyConnect::setTimeScale(double timeScale) noexcept
 {
     if (!qFuzzyCompare(d->timeScale, timeScale)) {
         // If the elapsed timer is running...
@@ -107,12 +107,12 @@ void AbstractSkyConnect::setTimeScale(double timeScale)
     }
 }
 
-double AbstractSkyConnect::getTimeScale() const
+double AbstractSkyConnect::getTimeScale() const noexcept
 {
     return d->timeScale;
 }
 
-void AbstractSkyConnect::startDataSample()
+void AbstractSkyConnect::startDataSample() noexcept
 {
     if (!isConnectedWithSim()) {
         connectWithSim();
@@ -133,14 +133,14 @@ void AbstractSkyConnect::startDataSample()
     }
 }
 
-void AbstractSkyConnect::stopDataSample()
+void AbstractSkyConnect::stopDataSample() noexcept
 {
     onStopDataSample();
     d->timer.stop();
     setState(Connect::State::Idle);
 }
 
-void AbstractSkyConnect::startReplay(bool fromStart)
+void AbstractSkyConnect::startReplay(bool fromStart) noexcept
 {
     if (!isConnectedWithSim()) {
         connectWithSim();
@@ -164,7 +164,7 @@ void AbstractSkyConnect::startReplay(bool fromStart)
     }
 }
 
-void AbstractSkyConnect::stopReplay()
+void AbstractSkyConnect::stopReplay() noexcept
 {
     setState(Connect::State::Idle);
     d->timer.stop();
@@ -174,13 +174,13 @@ void AbstractSkyConnect::stopReplay()
     onStopReplay();
 }
 
-void AbstractSkyConnect::stop()
+void AbstractSkyConnect::stop() noexcept
 {
     stopDataSample();
     stopReplay();
 }
 
-void AbstractSkyConnect::setPaused(bool enabled)
+void AbstractSkyConnect::setPaused(bool enabled) noexcept
 {
     Connect::State newState;
     if (enabled) {
@@ -231,35 +231,35 @@ void AbstractSkyConnect::setPaused(bool enabled)
     }    
 }
 
-bool AbstractSkyConnect::isPaused() const {
+bool AbstractSkyConnect::isPaused() const noexcept {
     return getState() == Connect::State::RecordingPaused || getState() == Connect::State::PlaybackPaused;
 }
 
-void AbstractSkyConnect::skipToBegin()
+void AbstractSkyConnect::skipToBegin() noexcept
 {
     seek(0);
 }
 
-void AbstractSkyConnect::skipBackward()
+void AbstractSkyConnect::skipBackward() noexcept
 {
     qint64 newTimeStamp = qMax(this->getCurrentTimestamp() - SkipMSec, 0ll);
     seek(newTimeStamp);
 }
 
-void AbstractSkyConnect::skipForward()
+void AbstractSkyConnect::skipForward() noexcept
 {
     qint64 endTimeStamp = d->aircraft.getLastAircraftData().timestamp;
     qint64 newTimeStamp = qMin(this->getCurrentTimestamp() + SkipMSec, endTimeStamp);
     seek(newTimeStamp);
 }
 
-void AbstractSkyConnect::skipToEnd()
+void AbstractSkyConnect::skipToEnd() noexcept
 {
     qint64 endTimeStamp  = d->aircraft.getLastAircraftData().timestamp;
     seek(endTimeStamp);
 }
 
-void AbstractSkyConnect::seek(qint64 timestamp)
+void AbstractSkyConnect::seek(qint64 timestamp) noexcept
 {
     d->elapsedTime = d->currentTimestamp;
     if (getState() != Connect::State::Recording) {
@@ -277,32 +277,32 @@ void AbstractSkyConnect::seek(qint64 timestamp)
     }
 }
 
-qint64 AbstractSkyConnect::getCurrentTimestamp() const
+qint64 AbstractSkyConnect::getCurrentTimestamp() const noexcept
 {
     return d->currentTimestamp;
 }
 
-bool AbstractSkyConnect::isAtEnd() const
+bool AbstractSkyConnect::isAtEnd() const noexcept
 {
     return d->currentTimestamp >= d->aircraft.getLastAircraftData().timestamp;
 }
 
-Aircraft &AbstractSkyConnect::getAircraft()
+Aircraft &AbstractSkyConnect::getAircraft() noexcept
 {
     return d->aircraft;
 }
 
-const Aircraft &AbstractSkyConnect::getAircraft() const
+const Aircraft &AbstractSkyConnect::getAircraft() const noexcept
 {
     return d->aircraft;
 }
 
-const AircraftData &AbstractSkyConnect::getCurrentAircraftData() const
+const AircraftData &AbstractSkyConnect::getCurrentAircraftData() const noexcept
 {
     return d->currentAircraftData;
 }
 
-double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const
+double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
 {
     double samplesPerSecond;
     const QVector<AircraftData> aircraftData = d->aircraft.getAllAircraftData();
@@ -331,7 +331,7 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const
 
 // PROTECTED
 
-void AbstractSkyConnect::setState(Connect::State state)
+void AbstractSkyConnect::setState(Connect::State state) noexcept
 {
     if (d->state != state) {
         d->state = state;
@@ -339,21 +339,21 @@ void AbstractSkyConnect::setState(Connect::State state)
     }
 }
 
-void AbstractSkyConnect::setCurrentTimestamp(qint64 timestamp)
+void AbstractSkyConnect::setCurrentTimestamp(qint64 timestamp) noexcept
 {
     d->currentTimestamp = timestamp;
 }
 
-bool AbstractSkyConnect::isElapsedTimerRunning() const
+bool AbstractSkyConnect::isElapsedTimerRunning() const noexcept
 {
     return d->elapsedTimer.isValid();
 }
-void AbstractSkyConnect::startElapsedTimer() const
+void AbstractSkyConnect::startElapsedTimer() const noexcept
 {
      d->elapsedTimer.start();
 }
 
-void AbstractSkyConnect::resetElapsedTime(bool restart)
+void AbstractSkyConnect::resetElapsedTime(bool restart) noexcept
 {
     d->elapsedTime = 0;
     if (restart) {
@@ -361,7 +361,7 @@ void AbstractSkyConnect::resetElapsedTime(bool restart)
     }
 }
 
-void AbstractSkyConnect::updateCurrentTimestamp()
+void AbstractSkyConnect::updateCurrentTimestamp() noexcept
 {
     if (d->elapsedTimer.isValid()) {
         if (d->state == Connect::State::Playback) {
@@ -372,7 +372,7 @@ void AbstractSkyConnect::updateCurrentTimestamp()
     }
 }
 
-const AircraftData &AbstractSkyConnect::updateCurrentAircraftData()
+const AircraftData &AbstractSkyConnect::updateCurrentAircraftData() noexcept
 {
     d->currentAircraftData = std::move(d->aircraft.getAircraftData(getCurrentTimestamp()));
     return d->currentAircraftData;
@@ -380,7 +380,7 @@ const AircraftData &AbstractSkyConnect::updateCurrentAircraftData()
 
 // PRIVATE
 
-void AbstractSkyConnect::frenchConnection()
+void AbstractSkyConnect::frenchConnection() noexcept
 {
     connect(&(d->timer), &QTimer::timeout,
             this, &AbstractSkyConnect::processEvents);
@@ -390,14 +390,14 @@ void AbstractSkyConnect::frenchConnection()
             this, &AbstractSkyConnect::handlePlaybackSampleRateChanged);
 }
 
-bool AbstractSkyConnect::hasRecordingStarted() const
+bool AbstractSkyConnect::hasRecordingStarted() const noexcept
 {
     return d->aircraft.getAllAircraftData().count();
 }
 
 // PRIVATE SLOTS
 
-void AbstractSkyConnect::handleRecordSampleRateChanged(SampleRate::SampleRate sampleRate)
+void AbstractSkyConnect::handleRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
 {
     d->recordSampleRate = SampleRate::toValue(sampleRate);
     d->recordIntervalMSec = SampleRate::toInterval(d->recordSampleRate);
@@ -414,7 +414,7 @@ void AbstractSkyConnect::handleRecordSampleRateChanged(SampleRate::SampleRate sa
     }
 }
 
-void AbstractSkyConnect::handlePlaybackSampleRateChanged(SampleRate::SampleRate sampleRate)
+void AbstractSkyConnect::handlePlaybackSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
 {
     d->playbackSampleRate = SampleRate::toValue(sampleRate);
     d->playbackIntervalMSec = SampleRate::toInterval(d->playbackSampleRate);

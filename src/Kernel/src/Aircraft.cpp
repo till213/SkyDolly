@@ -54,28 +54,28 @@ public:
 
 // PUBLIC
 
-Aircraft::Aircraft(QObject *parent)
+Aircraft::Aircraft(QObject *parent) noexcept
     : QObject(parent),
       d(std::make_unique<AircraftPrivate>())
 {
 }
 
-Aircraft::~Aircraft()
+Aircraft::~Aircraft() noexcept
 {
 }
 
-void Aircraft::setAircraftInfo(AircraftInfo aircraftInfo)
+void Aircraft::setAircraftInfo(AircraftInfo aircraftInfo) noexcept
 {
     d->aircraftInfo = aircraftInfo;
     emit infoChanged();
 }
 
-const AircraftInfo &Aircraft::getAircraftInfo() const
+const AircraftInfo &Aircraft::getAircraftInfo() const noexcept
 {
     return d->aircraftInfo;
 }
 
-void Aircraft::upsertAircraftData(AircraftData aircraftData)
+void Aircraft::upsertAircraftData(AircraftData aircraftData) noexcept
 {
     if (d->aircraftData.count() > 0 && d->aircraftData.last().timestamp == aircraftData.timestamp)  {
         // Same timestamp -> replace
@@ -92,7 +92,7 @@ void Aircraft::upsertAircraftData(AircraftData aircraftData)
     emit dataChanged();
 }
 
-const AircraftData &Aircraft::getLastAircraftData() const
+const AircraftData &Aircraft::getLastAircraftData() const noexcept
 {
     if (!d->aircraftData.isEmpty()) {
         return d->aircraftData.last();
@@ -101,7 +101,7 @@ const AircraftData &Aircraft::getLastAircraftData() const
     }
 }
 
-const QVector<AircraftData> Aircraft::getAllAircraftData() const
+const QVector<AircraftData> Aircraft::getAllAircraftData() const noexcept
 {
     return d->aircraftData;
 }
@@ -113,7 +113,7 @@ void Aircraft::clear()
     emit dataChanged();
 }
 
-const AircraftData &Aircraft::getAircraftData(qint64 timestamp) const
+const AircraftData &Aircraft::getAircraftData(qint64 timestamp) const noexcept
 {
     const AircraftData *p0, *p1, *p2, *p3;
     const double Tension = 0.0;
@@ -195,7 +195,7 @@ const AircraftData &Aircraft::getAircraftData(qint64 timestamp) const
 // PRIVATE
 
 // Updates the current index with the last index having a timestamp <= the given timestamp
-bool Aircraft::updateCurrentIndex(qint64 timestamp) const
+bool Aircraft::updateCurrentIndex(qint64 timestamp) const noexcept
 {
     int index = d->currentIndex;
     int size = d->aircraftData.size();
@@ -255,7 +255,7 @@ bool Aircraft::updateCurrentIndex(qint64 timestamp) const
     return d->currentIndex != SkySearch::InvalidIndex;
 }
 
-bool Aircraft::getSupportData(qint64 timestamp, const AircraftData **p0, const AircraftData **p1, const AircraftData **p2, const AircraftData **p3) const
+bool Aircraft::getSupportData(qint64 timestamp, const AircraftData **p0, const AircraftData **p1, const AircraftData **p2, const AircraftData **p3) const noexcept
 {
     if (updateCurrentIndex(timestamp)) {
 
@@ -286,7 +286,7 @@ bool Aircraft::getSupportData(qint64 timestamp, const AircraftData **p0, const A
     return *p0 != nullptr;
 }
 
-double Aircraft::normaliseTimestamp(const AircraftData &p1, const AircraftData &p2, quint64 timestamp)
+double Aircraft::normaliseTimestamp(const AircraftData &p1, const AircraftData &p2, quint64 timestamp) noexcept
 {
     double t1 = timestamp - p1.timestamp;
     double t2 = p2.timestamp - p1.timestamp;

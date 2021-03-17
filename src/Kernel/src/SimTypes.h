@@ -75,86 +75,86 @@ namespace SimTypes {
         Snow
     };
 
-    inline QString surfaceTypeToString(SurfaceType surfaceType) {
-        QString unknown = QT_TR_NOOP("Unknown");
+    inline QString surfaceTypeToString(SurfaceType surfaceType) noexcept {
+        QString unknown = QT_TRANSLATE_NOOP("SimTypes", "Unknown");
         switch (surfaceType) {
         case SurfaceType::Unknown:
             return unknown;
             break;
         case SurfaceType::Concrete:
-            return QT_TR_NOOP("Concrete");
+            return QT_TRANSLATE_NOOP("SimTypes", "Concrete");
             break;
         case SurfaceType::Grass:
-            return QT_TR_NOOP("Grass");
+            return QT_TRANSLATE_NOOP("SimTypes", "Grass");
             break;
         case SurfaceType::Water:
-            return QT_TR_NOOP("Water");
+            return QT_TRANSLATE_NOOP("SimTypes", "Water");
             break;
         case SurfaceType::BumpyGrass:
-            return QT_TR_NOOP("Bumpy grass");
+            return QT_TRANSLATE_NOOP("SimTypes", "Bumpy grass");
             break;
         case SurfaceType::Asphalt:
-            return QT_TR_NOOP("Asphalt");
+            return QT_TRANSLATE_NOOP("SimTypes", "Asphalt");
             break;
         case SurfaceType::ShortGrass:
-            return QT_TR_NOOP("Short grass");
+            return QT_TRANSLATE_NOOP("SimTypes", "Short grass");
             break;
         case SurfaceType::LongGrass:
-            return QT_TR_NOOP("Long grass");
+            return QT_TRANSLATE_NOOP("SimTypes", "Long grass");
             break;
         case SurfaceType::HardTurf:
-            return QT_TR_NOOP("Hard turf");
+            return QT_TRANSLATE_NOOP("SimTypes", "Hard turf");
             break;
         case SurfaceType::Snow:
-            return QT_TR_NOOP("Snow");
+            return QT_TRANSLATE_NOOP("SimTypes", "Snow");
             break;
         case SurfaceType::Ice:
-            return QT_TR_NOOP("Ice");
+            return QT_TRANSLATE_NOOP("SimTypes", "Ice");
             break;
         case SurfaceType::Urban:
-            return QT_TR_NOOP("Urban");
+            return QT_TRANSLATE_NOOP("SimTypes", "Urban");
             break;
         case SurfaceType::Forest:
-            return QT_TR_NOOP("Forest");
+            return QT_TRANSLATE_NOOP("SimTypes", "Forest");
             break;
         case SurfaceType::Dirt:
-            return QT_TR_NOOP("Dirt");
+            return QT_TRANSLATE_NOOP("SimTypes", "Dirt");
             break;
         case SurfaceType::Coral:
-            return QT_TR_NOOP("Coral");
+            return QT_TRANSLATE_NOOP("SimTypes", "Coral");
             break;
         case SurfaceType::Gravel:
-            return QT_TR_NOOP("Gravel");
+            return QT_TRANSLATE_NOOP("SimTypes", "Gravel");
             break;
         case SurfaceType::OilTreated:
-            return QT_TR_NOOP("Oil treated");
+            return QT_TRANSLATE_NOOP("SimTypes", "Oil treated");
             break;
         case SurfaceType::SteelMats:
-            return QT_TR_NOOP("Steel mats");
+            return QT_TRANSLATE_NOOP("SimTypes", "Steel mats");
             break;
         case SurfaceType::Bituminus:
-            return QT_TR_NOOP("Bituminus");
+            return QT_TRANSLATE_NOOP("SimTypes", "Bituminus");
             break;
         case SurfaceType::Brick:
-            return QT_TR_NOOP("Brick");
+            return QT_TRANSLATE_NOOP("SimTypes", "Brick");
             break;
         case SurfaceType::Macadam:
-            return QT_TR_NOOP("Macadam");
+            return QT_TRANSLATE_NOOP("SimTypes", "Macadam");
             break;
         case SurfaceType::Planks:
-            return QT_TR_NOOP("Planks");
+            return QT_TRANSLATE_NOOP("SimTypes", "Planks");
             break;
         case SurfaceType::Sand:
-            return QT_TR_NOOP("Sand");
+            return QT_TRANSLATE_NOOP("SimTypes", "Sand");
             break;
         case SurfaceType::Shale:
-            return QT_TR_NOOP("Shale");
+            return QT_TRANSLATE_NOOP("SimTypes", "Shale");
             break;
         case SurfaceType::Tarmac:
-            return QT_TR_NOOP("Tarmac");
+            return QT_TRANSLATE_NOOP("SimTypes", "Tarmac");
             break;
         case SurfaceType::WrightFlyerTrack:
-            return QT_TR_NOOP("Wright flyer track");
+            return QT_TRANSLATE_NOOP("SimTypes", "Wright flyer track");
             break;
         default:
             return unknown;
@@ -162,29 +162,29 @@ namespace SimTypes {
         }
     }
 
-    inline QString engineTypeToString(EngineType engineType) {
-        QString unknown = QT_TR_NOOP("Unknown");
+    inline QString engineTypeToString(EngineType engineType) noexcept {
+        QString unknown = QT_TRANSLATE_NOOP("SimTypes", "Unknown");
         switch (engineType) {
         case EngineType::Unknown:
             return unknown;
             break;
         case EngineType::Piston:
-            return QT_TR_NOOP("Piston");
+            return QT_TRANSLATE_NOOP("SimTypes", "Piston");
             break;
         case EngineType::Jet:
-            return QT_TR_NOOP("Jet");
+            return QT_TRANSLATE_NOOP("SimTypes", "Jet");
             break;
         case EngineType::None:
-            return QT_TR_NOOP("None");
+            return QT_TRANSLATE_NOOP("SimTypes", "None");
             break;
         case EngineType::HeloBellTurbine:
-            return QT_TR_NOOP("Helo (Bell) turbine");
+            return QT_TRANSLATE_NOOP("SimTypes", "Helo (Bell) turbine");
             break;
         case EngineType::Unsupported:
-            return QT_TR_NOOP("Unsupported");
+            return QT_TRANSLATE_NOOP("SimTypes", "Unsupported");
             break;
         case EngineType::Turboprop:
-            return QT_TR_NOOP("Turboprop");
+            return QT_TRANSLATE_NOOP("SimTypes", "Turboprop");
             break;
         default:
             return unknown;
@@ -192,20 +192,20 @@ namespace SimTypes {
         }
     }
 
-    inline QString precipitationStateToString(PrecipitationState precipitationState) {
-        QString unknown = QT_TR_NOOP("Unknown");
+    inline QString precipitationStateToString(PrecipitationState precipitationState) noexcept {
+        QString unknown = QT_TRANSLATE_NOOP("SimTypes", "Unknown");
         switch (precipitationState) {
         case PrecipitationState::Unknown:
             return unknown;
             break;
         case PrecipitationState::None:
-            return QT_TR_NOOP("None");
+            return QT_TRANSLATE_NOOP("SimTypes", "None");
             break;
         case PrecipitationState::Rain:
-            return QT_TR_NOOP("Rain");
+            return QT_TRANSLATE_NOOP("SimTypes", "Rain");
             break;
         case PrecipitationState::Snow:
-            return QT_TR_NOOP("Snow");
+            return QT_TRANSLATE_NOOP("SimTypes", "Snow");
             break;
         default:
             return unknown;

@@ -44,24 +44,24 @@ class StatisticsDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit StatisticsDialog(SkyConnectIntf &skyConnect, QWidget *parent = nullptr);
-    virtual ~StatisticsDialog();
+    explicit StatisticsDialog(SkyConnectIntf &skyConnect, QWidget *parent = nullptr) noexcept;
+    virtual ~StatisticsDialog() noexcept;
 
 signals:
     void visibilityChanged(bool visible);
 
 protected:
-    void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
+    void showEvent(QShowEvent *event) noexcept override;
+    void hideEvent(QHideEvent *event) noexcept override;
 
 private:
     std::unique_ptr<StatisticsDialogPrivate> d;
     std::unique_ptr<Ui::StatisticsDialog> ui;
 
-    void frenchConnection();
+    void frenchConnection() noexcept;
 
 private slots:
-    void updateRecordUi();
+    void updateRecordUi() noexcept;
 };
 
 #endif // STATISTICSDIALOG_H

@@ -44,25 +44,25 @@ class SimulationVariablesDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SimulationVariablesDialog(SkyConnectIntf &skyConnect, QWidget *parent = nullptr);
-    virtual ~SimulationVariablesDialog();
+    explicit SimulationVariablesDialog(SkyConnectIntf &skyConnect, QWidget *parent = nullptr) noexcept;
+    virtual ~SimulationVariablesDialog() noexcept;
 
 signals:
     void visibilityChanged(bool visible);
 
 protected:
-    void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
+    void showEvent(QShowEvent *event) noexcept override;
+    void hideEvent(QHideEvent *event) noexcept override;
 
 private:
     std::unique_ptr<SimulationVariablesDialogPrivate> d;
     std::unique_ptr<Ui::SimulationVariablesDialog> ui;
 
-    void initUi();
-    void updateUi();
+    void initUi() noexcept;
+    void updateUi() noexcept;
 
 private slots:
-    void updateTitle();
+    void updateTitle() noexcept;
 };
 
 #endif // SIMULATIONVARIABLESDIALOG_H

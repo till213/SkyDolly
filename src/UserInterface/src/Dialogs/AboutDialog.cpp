@@ -32,7 +32,7 @@
 
 // PUBLIC
 
-AboutDialog::AboutDialog(QWidget *parent) :
+AboutDialog::AboutDialog(QWidget *parent) noexcept :
     QDialog(parent),
     ui(std::make_unique<Ui::AboutDialog>())
 {
@@ -40,13 +40,13 @@ AboutDialog::AboutDialog(QWidget *parent) :
     initUi();
 }
 
-AboutDialog::~AboutDialog()
+AboutDialog::~AboutDialog() noexcept
 {
 }
 
 // PRIVATE
 
-void AboutDialog::initUi()
+void AboutDialog::initUi() noexcept
 {
     Qt::WindowFlags flags = Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
     setWindowFlags(flags);

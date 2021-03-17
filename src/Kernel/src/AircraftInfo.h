@@ -61,7 +61,7 @@ struct KERNEL_API AircraftInfo
     quint8 pitotIcingPercent;
     quint8 structuralIcingPercent;
 
-    AircraftInfo();
+    AircraftInfo() noexcept;
 
     AircraftInfo (AircraftInfo &&) = default;
     AircraftInfo (const AircraftInfo &) = default;

@@ -47,7 +47,7 @@ namespace SampleRate
         Auto
     };
 
-    inline constexpr double toValue(SampleRate sampleRate) {
+    inline constexpr double toValue(SampleRate sampleRate) noexcept {
         switch (sampleRate) {
         case SampleRate::Hz1:
             return 1.0;
@@ -80,7 +80,7 @@ namespace SampleRate
         }
     }
 
-    inline constexpr SampleRate fromValue(double sampleRate) {
+    inline constexpr SampleRate fromValue(double sampleRate) noexcept {
         if (sampleRate <= 1.0)
             return SampleRate::Hz1;
         else if (sampleRate <= 2.0)
@@ -117,7 +117,7 @@ namespace SampleRate
      *        the sample rate value to convert to the corresponding interval
      * \return the interval in milliseconds
      */
-    inline int toInterval(double sampleRateValue) {
+    inline int toInterval(double sampleRateValue) noexcept {
         if (sampleRateValue != AutoValue) {
             return static_cast<int>(1000.0 / sampleRateValue);
         } else {
@@ -131,7 +131,7 @@ namespace SampleRate
      *        the sample rate to convert to the corresponding interval
      * \return the interval in milliseconds
      */
-    inline int toInterval(SampleRate sampleRate) {
+    inline int toInterval(SampleRate sampleRate) noexcept {
         if (sampleRate != SampleRate::Auto) {
             return static_cast<int>(1000.0 / toValue(sampleRate));
         } else {

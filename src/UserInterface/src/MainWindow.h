@@ -50,57 +50,57 @@ class USERINTERFACE_API MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
-    virtual ~MainWindow();
+    MainWindow(QWidget *parent = nullptr) noexcept;
+    virtual ~MainWindow() noexcept;
 
 private:
     std::unique_ptr<Ui::MainWindow> ui;
     std::unique_ptr<MainWindowPrivate> d;
 
-    void frenchConnection();
-    void initUi();
-    void initControlUi();
+    void frenchConnection() noexcept;
+    void initUi() noexcept;
+    void initControlUi() noexcept;
 
 private slots:
-    void on_positionSlider_sliderPressed();
-    void on_positionSlider_valueChanged(int value);
-    void on_positionSlider_sliderReleased();
-    void on_timestampTimeEdit_timeChanged(const QTime &time);
-    void on_customPlaybackSpeedLineEdit_editingFinished();
+    void on_positionSlider_sliderPressed() noexcept;
+    void on_positionSlider_valueChanged(int value) noexcept;
+    void on_positionSlider_sliderReleased() noexcept;
+    void on_timestampTimeEdit_timeChanged(const QTime &time) noexcept;
+    void on_customPlaybackSpeedLineEdit_editingFinished() noexcept;
 
-    void updateUi();
-    void updateControlUi();
-    void updateRecordingTime();
-    void updateFileMenu();
-    void updateWindowMenu();
-    void updateMainWindow();
+    void updateUi() noexcept;
+    void updateControlUi() noexcept;
+    void updateRecordingTime() noexcept;
+    void updateFileMenu() noexcept;
+    void updateWindowMenu() noexcept;
+    void updateMainWindow() noexcept;
 
     // File menu
-    void on_importCSVAction_triggered();
-    void on_exportCSVAction_triggered();
-    void on_showSettingsAction_triggered();
-    void on_quitAction_triggered();
+    void on_importCSVAction_triggered() noexcept;
+    void on_exportCSVAction_triggered() noexcept;
+    void on_showSettingsAction_triggered() noexcept;
+    void on_quitAction_triggered() noexcept;
     // Window menu
-    void on_showSimulationVariablesAction_triggered(bool enabled);
-    void on_showStatisticsAction_triggered(bool enabled);
-    void on_stayOnTopAction_triggered(bool enabled);
+    void on_showSimulationVariablesAction_triggered(bool enabled) noexcept;
+    void on_showStatisticsAction_triggered(bool enabled) noexcept;
+    void on_stayOnTopAction_triggered(bool enabled) noexcept;
     // About menu
-    void on_aboutAction_triggered();
-    void on_aboutQtAction_triggered();
+    void on_aboutAction_triggered() noexcept;
+    void on_aboutQtAction_triggered() noexcept;
 
-    void handlePlayPositionChanged(qint64 timestamp);
-    void handlePlaybackSpeedSelected(int selection);
+    void handlePlayPositionChanged(qint64 timestamp) noexcept;
+    void handlePlaybackSpeedSelected(int selection) noexcept;
 
     // Playback
-    void toggleRecord(bool checked);
-    void togglePause(bool checked);
-    void togglePlay(bool checked);
-    void stop();
+    void toggleRecord(bool checked) noexcept;
+    void togglePause(bool checked) noexcept;
+    void togglePlay(bool checked) noexcept;
+    void stop() noexcept;
 
     // Transport
-    void skipToBegin();
-    void skipBackward();
-    void skipForward();
-    void skipToEnd();
+    void skipToBegin() noexcept;
+    void skipBackward() noexcept;
+    void skipForward() noexcept;
+    void skipToEnd() noexcept;
 };
 #endif // MAINWINDOW_H

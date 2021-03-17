@@ -38,7 +38,7 @@ class CSVExportPrivate;
 class CSVExport
 {
 public:
-    KERNEL_API static bool exportData(const Aircraft &aircraft, QIODevice &io);
+    KERNEL_API static bool exportData(const Aircraft &aircraft, QIODevice &io) noexcept;
 
 private:
     CSVExportPrivate *d;

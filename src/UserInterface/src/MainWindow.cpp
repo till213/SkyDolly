@@ -107,7 +107,7 @@ public:
 
 // PUBLIC
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(QWidget *parent) noexcept
     : QMainWindow(parent),
       ui(std::make_unique<Ui::MainWindow>()),
       d(std::make_unique<MainWindowPrivate>())
@@ -118,7 +118,7 @@ MainWindow::MainWindow(QWidget *parent)
     frenchConnection();
 }
 
-MainWindow::~MainWindow()
+MainWindow::~MainWindow() noexcept
 {
     // The SkyConnect instances have been deleted by the SkyManager (singleton)
     // already at this point; no need to disconnect from their "stateChanged"
@@ -127,7 +127,7 @@ MainWindow::~MainWindow()
 
 // PRIVATE
 
-void MainWindow::frenchConnection()
+void MainWindow::frenchConnection() noexcept
 {
     const Aircraft &aircraft = d->skyConnect.getAircraft();
     connect(&aircraft, &Aircraft::dataChanged,
@@ -178,7 +178,7 @@ void MainWindow::frenchConnection()
             this, &MainWindow::updateMainWindow);
 }
 
-void MainWindow::initUi()
+void MainWindow::initUi() noexcept
 {
     setWindowIcon(QIcon(":/img/icons/application-icon.png"));
     statusBar()->setVisible(false);
@@ -194,7 +194,7 @@ void MainWindow::initUi()
     initControlUi();
 }
 
-void MainWindow::initControlUi()
+void MainWindow::initControlUi() noexcept
 {
     d->playbackSpeedButtonGroup = new QButtonGroup(this);
     d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed10RadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed10));
@@ -272,7 +272,7 @@ void MainWindow::initControlUi()
 
 // PRIVATE SLOTS
 
-void MainWindow::on_positionSlider_sliderPressed()
+void MainWindow::on_positionSlider_sliderPressed() noexcept
 {
     d->previousState = d->skyConnect.getState();
     if (d->previousState == Connect::State::Playback) {
@@ -281,7 +281,7 @@ void MainWindow::on_positionSlider_sliderPressed()
     }
 }
 
-void MainWindow::on_positionSlider_valueChanged(int value)
+void MainWindow::on_positionSlider_valueChanged(int value) noexcept
 {
     double scale = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
     qint64 timestamp = static_cast<qint64>(qRound(scale * static_cast<double>(d->skyConnect.getAircraft().getLastAircraftData().timestamp)));
@@ -292,14 +292,14 @@ void MainWindow::on_positionSlider_valueChanged(int value)
     ui->timestampTimeEdit->blockSignals(false);
 }
 
-void MainWindow::on_positionSlider_sliderReleased()
+void MainWindow::on_positionSlider_sliderReleased() noexcept
 {
     if (d->previousState == Connect::State::Playback) {
         d->skyConnect.setPaused(false);
     }
 }
 
-void MainWindow::on_timestampTimeEdit_timeChanged(const QTime &time)
+void MainWindow::on_timestampTimeEdit_timeChanged(const QTime &time) noexcept
 {
     Connect::State state = d->skyConnect.getState();
     if (state == Connect::State::Idle || state == Connect::State::PlaybackPaused) {
@@ -308,7 +308,8 @@ void MainWindow::on_timestampTimeEdit_timeChanged(const QTime &time)
     }
 }
 
-void MainWindow::on_customPlaybackSpeedLineEdit_editingFinished() {
+void MainWindow::on_customPlaybackSpeedLineEdit_editingFinished() noexcept
+{
     QString text = ui->customPlaybackSpeedLineEdit->text();
     if (!text.isEmpty()) {
         d->lastCustomPlaybackSpeed = text.toDouble() / 100.0;
@@ -316,7 +317,7 @@ void MainWindow::on_customPlaybackSpeedLineEdit_editingFinished() {
     }
 }
 
-void MainWindow::updateUi()
+void MainWindow::updateUi() noexcept
 {
     updateControlUi();
     updateFileMenu();
@@ -324,7 +325,7 @@ void MainWindow::updateUi()
     updateMainWindow();
 }
 
-void MainWindow::updateControlUi()
+void MainWindow::updateControlUi() noexcept
 {
     bool hasRecording = d->skyConnect.getAircraft().getAllAircraftData().count() > 0;
     switch (d->skyConnect.getState()) {
@@ -406,7 +407,7 @@ void MainWindow::updateControlUi()
     }
 }
 
-void MainWindow::updateRecordingTime()
+void MainWindow::updateRecordingTime() noexcept
 {
     const Aircraft &aircraft = d->skyConnect.getAircraft();
     const AircraftData &aircraftData = aircraft.getLastAircraftData();
@@ -422,7 +423,7 @@ void MainWindow::updateRecordingTime()
     ui->timestampTimeEdit->blockSignals(false);
 }
 
-void MainWindow::updateFileMenu()
+void MainWindow::updateFileMenu() noexcept
 {
     bool hasRecording = d->skyConnect.getAircraft().getAllAircraftData().count() > 0;
     switch (d->skyConnect.getState()) {
@@ -438,13 +439,13 @@ void MainWindow::updateFileMenu()
     }
 }
 
-void MainWindow::updateWindowMenu()
+void MainWindow::updateWindowMenu() noexcept
 {
     ui->showSimulationVariablesAction->setChecked(d->simulationVariablesDialog->isVisible());
     ui->showStatisticsAction->setChecked(d->statisticsDialog->isVisible());
 }
 
-void MainWindow::updateMainWindow()
+void MainWindow::updateMainWindow() noexcept
 {
     Settings &settings = Settings::getInstance();
     if (settings.isWindowStaysOnTopEnabled() && !(windowFlags() & Qt::WindowStaysOnTopHint)) {
@@ -466,7 +467,7 @@ void MainWindow::updateMainWindow()
     ui->playAction->setToolTip(tr("Play [@%1 Hz]").arg(Settings::getInstance().getPlaybackSampleRateValue()));
 }
 
-void MainWindow::on_importCSVAction_triggered()
+void MainWindow::on_importCSVAction_triggered() noexcept
 {
     QMessageBox message;
     Version version;
@@ -507,7 +508,7 @@ void MainWindow::on_importCSVAction_triggered()
     }
 }
 
-void MainWindow::on_exportCSVAction_triggered()
+void MainWindow::on_exportCSVAction_triggered() noexcept
 {
 
     QString documentPath;
@@ -525,17 +526,17 @@ void MainWindow::on_exportCSVAction_triggered()
     }
 }
 
-void MainWindow::on_showSettingsAction_triggered()
+void MainWindow::on_showSettingsAction_triggered() noexcept
 {
     d->settingsDialog->exec();
 }
 
-void MainWindow::on_quitAction_triggered()
+void MainWindow::on_quitAction_triggered() noexcept
 {
     QApplication::quit();
 }
 
-void MainWindow::on_showSimulationVariablesAction_triggered(bool enabled)
+void MainWindow::on_showSimulationVariablesAction_triggered(bool enabled) noexcept
 {
     if (enabled) {
         d->simulationVariablesDialog->show();
@@ -544,7 +545,7 @@ void MainWindow::on_showSimulationVariablesAction_triggered(bool enabled)
     }
 }
 
-void MainWindow::on_showStatisticsAction_triggered(bool enabled)
+void MainWindow::on_showStatisticsAction_triggered(bool enabled) noexcept
 {
     if (enabled) {
         d->statisticsDialog->show();
@@ -553,22 +554,22 @@ void MainWindow::on_showStatisticsAction_triggered(bool enabled)
     }
 }
 
-void MainWindow::on_stayOnTopAction_triggered(bool enabled)
+void MainWindow::on_stayOnTopAction_triggered(bool enabled) noexcept
 {
     Settings::getInstance().setWindowStaysOnTopEnabled(enabled);
 }
 
-void MainWindow::on_aboutAction_triggered()
+void MainWindow::on_aboutAction_triggered() noexcept
 {
     d->aboutDialog->exec();
 }
 
-void MainWindow::on_aboutQtAction_triggered()
+void MainWindow::on_aboutQtAction_triggered() noexcept
 {
     QMessageBox::aboutQt(this);
 }
 
-void MainWindow::handlePlayPositionChanged(qint64 timestamp) {
+void MainWindow::handlePlayPositionChanged(qint64 timestamp) noexcept {
     qint64 endTimeStamp = d->skyConnect.getAircraft().getLastAircraftData().timestamp;
     qint64 ts = qMin(timestamp, endTimeStamp);
 
@@ -589,7 +590,7 @@ void MainWindow::handlePlayPositionChanged(qint64 timestamp) {
     ui->timestampTimeEdit->blockSignals(false);
 }
 
-void MainWindow::handlePlaybackSpeedSelected(int selection) {
+void MainWindow::handlePlaybackSpeedSelected(int selection) noexcept {
 
     double timeScale;
     switch (static_cast<PlaybackSpeed>(selection)) {
@@ -631,7 +632,7 @@ void MainWindow::handlePlaybackSpeedSelected(int selection) {
     d->skyConnect.setTimeScale(timeScale);
 }
 
-void MainWindow::toggleRecord(bool enable)
+void MainWindow::toggleRecord(bool enable) noexcept
 {
     this->blockSignals(true);
 
@@ -656,12 +657,12 @@ void MainWindow::toggleRecord(bool enable)
     this->blockSignals(false);
 }
 
-void MainWindow::togglePause(bool enable)
+void MainWindow::togglePause(bool enable) noexcept
 {
     d->skyConnect.setPaused(enable);
 }
 
-void MainWindow::togglePlay(bool enable)
+void MainWindow::togglePlay(bool enable) noexcept
 {
     if (enable) {
         d->skyConnect.startReplay(d->skyConnect.isAtEnd());
@@ -673,27 +674,27 @@ void MainWindow::togglePlay(bool enable)
     }
 }
 
-void MainWindow::stop()
+void MainWindow::stop() noexcept
 {
     d->skyConnect.stop();
 }
 
-void MainWindow::skipToBegin()
+void MainWindow::skipToBegin() noexcept
 {
     d->skyConnect.skipToBegin();
 }
 
-void MainWindow::skipBackward()
+void MainWindow::skipBackward() noexcept
 {
     d->skyConnect.skipBackward();
 }
 
-void MainWindow::skipForward()
+void MainWindow::skipForward() noexcept
 {
     d->skyConnect.skipForward();
 }
 
-void MainWindow::skipToEnd()
+void MainWindow::skipToEnd() noexcept
 {
     d->skyConnect.skipToEnd();
 }

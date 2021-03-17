@@ -59,17 +59,17 @@ const QString VersionPrivate::ApplicationName = QString(VersionConfig::Applicati
 
 // public
 
-Version::Version()
+Version::Version() noexcept
     : d(new VersionPrivate())
 {
 }
 
-Version::Version(int majorNo, int minorNo, int patch)
+Version::Version(int majorNo, int minorNo, int patch) noexcept
     : d(new VersionPrivate(majorNo, minorNo, patch))
 {
 }
 
-Version::Version(const QString &version)
+Version::Version(const QString &version) noexcept
     : d(std::make_unique<VersionPrivate>())
 {
     QRegExp versionRegExp("^(\\d+)\\.(\\d+)\\.(\\d+)$");
@@ -80,38 +80,38 @@ Version::Version(const QString &version)
     }
 }
 
-Version::~Version()
+Version::~Version() noexcept
 {
 }
 
-int Version::getMajor()
+int Version::getMajor() noexcept
 {
     return d->major;
 }
 
-int Version::getMinor()
+int Version::getMinor() noexcept
 {
     return d->minor;
 }
 
-int Version::getPatch()
+int Version::getPatch() noexcept
 {
     return d->patch;
 }
 
-QString Version::toString() const
+QString Version::toString() const noexcept
 {
     return QString("%1.%2.%3").arg(d->major).arg(d->minor).arg(d->patch);
 }
 
-bool Version::operator==(const Version &other)
+bool Version::operator==(const Version &other) noexcept
 {
     bool result;
     result = d->major == other.d->major && d->minor == other.d->minor && d->patch == other.d->patch;
     return result;
 }
 
-bool Version::operator>=(const Version &other)
+bool Version::operator>=(const Version &other) noexcept
 {
     bool result;
     if (d->major > other.d->major) {
@@ -134,33 +134,33 @@ bool Version::operator>=(const Version &other)
     return result;
 }
 
-bool Version::operator<(const Version &other)
+bool Version::operator<(const Version &other) noexcept
 {
     return !(*this >= other);
 }
 
-QString Version::getCodeName()
+QString Version::getCodeName() noexcept
 {
     return VersionPrivate::CodeName;
 }
 
-QString Version::getUserVersion()
+QString Version::getUserVersion() noexcept
 {
     return VersionPrivate::UserVersion;
 }
 
-QString Version::getApplicationVersion()
+QString Version::getApplicationVersion() noexcept
 {
     Version version;
     return version.toString();
 }
 
-QString Version::getOrganisationName()
+QString Version::getOrganisationName() noexcept
 {
     return VersionPrivate::OrganisationName;
 }
 
-QString Version::getApplicationName()
+QString Version::getApplicationName() noexcept
 {
     return VersionPrivate::ApplicationName;
 }

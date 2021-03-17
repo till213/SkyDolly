@@ -40,11 +40,12 @@ namespace SkyMath {
     constexpr double PercentMax8 = static_cast<double>(std::numeric_limits<quint8>::max());
     constexpr double PercentRange8 = PercentMax8;
 
-    template <typename T> int sgn(T val) {
+    template <typename T> int sgn(T val) noexcept
+    {
         return (T(0) < val) - (val < T(0));
     }
 
-    template <typename T> T normalise180(T y0, T y1)
+    template <typename T> T normalise180(T y0, T y1) noexcept
     {
         T y1n;
         T s = sgn(y0);
@@ -77,7 +78,7 @@ namespace SkyMath {
         T y0, T y1, T y2, T y3,
         T mu,
         T tension = T(0),
-        T bias = T(0))
+        T bias = T(0)) noexcept
     {
         T m0, m1, mu2, mu3;
         T a0, a1, a2, a3;
@@ -107,7 +108,7 @@ namespace SkyMath {
         T y0, T y1, T y2, T y3,
         T mu,
         T tension = T(0),
-        T bias = T(0))
+        T bias = T(0)) noexcept
     {
         T y0n, y1n, y2n, y3n;
 
@@ -130,12 +131,12 @@ namespace SkyMath {
         T y0, T y1, T y2, T y3,
         T mu,
         T tension = T(0),
-        T bias = T(0))
+        T bias = T(0)) noexcept
     {
         return interpolateHermite180(y0 - T(180), y1 - T(180), y2 - T(180), y3 - T(180), mu, tension, bias) + T(180);
     }
 
-    template <typename T, typename U> T interpolateLinear(T p1, T p2, U mu)
+    template <typename T, typename U> T interpolateLinear(T p1, T p2, U mu) noexcept
     {
         if (std::is_integral<T>::value) {
             return p1 + qRound(mu * (U(p2) - U(p1)));
@@ -151,7 +152,8 @@ namespace SkyMath {
      *        the position value in the range [-1.0, 1.0]
      * \return the mapped discrete, signed 16bit value [PositionMin16, PositionMax16] (note: symmetric range)
      */
-    inline qint16 fromPosition(double position) {
+    inline qint16 fromPosition(double position) noexcept
+    {
         return static_cast<qint16>(qRound(PositionMin16 + ((position + 1.0) * PositionRange16) / 2.0));
     }
 
@@ -162,7 +164,8 @@ namespace SkyMath {
      *        the discrete signed 16bit position value in the range [PositionMin16, PositionMax16] (note: symmetric range)
      * \return the position mapped onto a double value [-1.0, 1.0]
      */
-    inline double toPosition(qint16 position16) {
+    inline double toPosition(qint16 position16) noexcept
+    {
         return 2.0 * (static_cast<double>(position16) - PositionMin16) / PositionRange16 - 1.0;
     }
 
@@ -173,7 +176,8 @@ namespace SkyMath {
      *        the percent value in the range [0.0, 100.0]
      * \return the mapped discrete, unsigned 8bit value [0, PercentMax8]
      */
-    inline quint8 fromPercent(double percent) {
+    inline quint8 fromPercent(double percent) noexcept
+    {
         return static_cast<quint8>(qRound(percent * PercentRange8 / 100.0));
     }
 
@@ -184,7 +188,8 @@ namespace SkyMath {
      *        the discrete unsigned 8bit percent value in the range [0, PercentMax8]
      * \return the percent mapped onto a double value [0, 100.0]
      */
-    inline double toPercent(quint8 percent8) {
+    inline double toPercent(quint8 percent8) noexcept
+    {
         return static_cast<double>(100.0 * percent8 / PercentRange8);
     }
 

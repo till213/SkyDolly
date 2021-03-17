@@ -61,7 +61,7 @@ Settings *SettingsPrivate::instance = nullptr;
 
 // PUBLIC
 
-Settings &Settings::getInstance()
+Settings &Settings::getInstance() noexcept
 {
     if (SettingsPrivate::instance == nullptr) {
         SettingsPrivate::instance = new Settings();
@@ -69,7 +69,7 @@ Settings &Settings::getInstance()
     return *SettingsPrivate::instance;
 }
 
-void Settings::destroyInstance()
+void Settings::destroyInstance() noexcept
 {
     if (SettingsPrivate::instance != nullptr) {
         delete SettingsPrivate::instance;
@@ -77,17 +77,17 @@ void Settings::destroyInstance()
     }
 }
 
-SampleRate::SampleRate Settings::getRecordSampleRate() const
+SampleRate::SampleRate Settings::getRecordSampleRate() const noexcept
 {
     return SampleRate::fromValue(d->recordSampleRateValue);
 }
 
-double Settings::getRecordSampleRateValue() const
+double Settings::getRecordSampleRateValue() const noexcept
 {
     return d->recordSampleRateValue;
 }
 
-void Settings::setRecordSampleRate(SampleRate::SampleRate sampleRate)
+void Settings::setRecordSampleRate(SampleRate::SampleRate sampleRate) noexcept
 {
     double sampleRateValue = SampleRate::toValue(sampleRate);
     if (d->recordSampleRateValue != sampleRateValue) {
@@ -96,17 +96,17 @@ void Settings::setRecordSampleRate(SampleRate::SampleRate sampleRate)
     }
 }
 
-SampleRate::SampleRate Settings::getPlaybackSampleRate() const
+SampleRate::SampleRate Settings::getPlaybackSampleRate() const noexcept
 {
     return SampleRate::fromValue(d->playbackSampleRateValue);
 }
 
-double Settings::getPlaybackSampleRateValue() const
+double Settings::getPlaybackSampleRateValue() const noexcept
 {
     return d->playbackSampleRateValue;
 }
 
-void Settings::setPlaybackSampleRate(SampleRate::SampleRate sampleRate)
+void Settings::setPlaybackSampleRate(SampleRate::SampleRate sampleRate) noexcept
 {
     double sampleRateValue = SampleRate::toValue(sampleRate);
     if (d->playbackSampleRateValue != sampleRateValue) {
@@ -115,12 +115,12 @@ void Settings::setPlaybackSampleRate(SampleRate::SampleRate sampleRate)
     }
 }
 
-bool Settings::isWindowStaysOnTopEnabled() const
+bool Settings::isWindowStaysOnTopEnabled() const noexcept
 {
     return d->windowStayOnTopEnabled;
 }
 
-void Settings::setWindowStaysOnTopEnabled(bool enable)
+void Settings::setWindowStaysOnTopEnabled(bool enable) noexcept
 {
     if (d->windowStayOnTopEnabled != enable) {
         d->windowStayOnTopEnabled = enable;
@@ -128,12 +128,12 @@ void Settings::setWindowStaysOnTopEnabled(bool enable)
     }
 }
 
-int Settings::getPreviewInfoDialogCount() const
+int Settings::getPreviewInfoDialogCount() const noexcept
 {
     return d->previewInfoDialogCount - SettingsPrivate::PreviewInfoDialogBase;
 }
 
-void Settings::setPreviewInfoDialogCount(int count)
+void Settings::setPreviewInfoDialogCount(int count) noexcept
 {
     if (d->previewInfoDialogCount != count) {
         d->previewInfoDialogCount = count + SettingsPrivate::PreviewInfoDialogBase;
@@ -143,7 +143,7 @@ void Settings::setPreviewInfoDialogCount(int count)
 
 // PUBLIC SLOTS
 
-void Settings::store()
+void Settings::store() noexcept
 {
     d->settings.setValue("Version", d->version.toString());
     d->settings.beginGroup("Sampling");
@@ -164,7 +164,7 @@ void Settings::store()
     d->settings.endGroup();
 }
 
-void Settings::restore()
+void Settings::restore() noexcept
 {
     QString version;
     version = d->settings.value("Version", getVersion().toString()).toString();
@@ -224,14 +224,14 @@ const Version &Settings::getVersion() const
 
 // PRIVATE
 
-Settings::Settings()
+Settings::Settings() noexcept
     : d(new SettingsPrivate())
 {
     restore();
     frenchConnection();
 }
 
-void Settings::frenchConnection()
+void Settings::frenchConnection() noexcept
 {
     connect(this, &Settings::recordSampleRateChanged,
             this, &Settings::changed);

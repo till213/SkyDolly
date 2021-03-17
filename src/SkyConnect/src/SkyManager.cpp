@@ -61,7 +61,7 @@ SkyManager *SkyManagerPrivate::instance = nullptr;
 
 // PUBLIC
 
-SkyManager &SkyManager::getInstance()
+SkyManager &SkyManager::getInstance() noexcept
 {
     if (SkyManagerPrivate::instance == nullptr) {
         SkyManagerPrivate::instance = new SkyManager();
@@ -69,7 +69,7 @@ SkyManager &SkyManager::getInstance()
     return *SkyManagerPrivate::instance;
 }
 
-void SkyManager::destroyInstance()
+void SkyManager::destroyInstance() noexcept
 {
     if (SkyManagerPrivate::instance != nullptr) {
         delete SkyManagerPrivate::instance;
@@ -77,20 +77,20 @@ void SkyManager::destroyInstance()
     }
 }
 
-SkyConnectIntf &SkyManager::currentSkyConnect() const
+SkyConnectIntf &SkyManager::currentSkyConnect() const noexcept
 {
     return *d->currentSkyConnect;
 }
 
 // PROTECTED
 
-SkyManager::~SkyManager()
+SkyManager::~SkyManager() noexcept
 {
 }
 
 // PRIVATE
 
-SkyManager::SkyManager()
+SkyManager::SkyManager() noexcept
     : d(std::make_unique<SkyManagerPrivate>())
 {
 }

@@ -42,7 +42,7 @@ public:
 
 // PUBLIC
 
-StatisticsDialog::StatisticsDialog(SkyConnectIntf &skyConnect, QWidget *parent) :
+StatisticsDialog::StatisticsDialog(SkyConnectIntf &skyConnect, QWidget *parent) noexcept :
     QDialog(parent),
     d(std::make_unique<StatisticsDialogPrivate>(skyConnect)),
     ui(std::make_unique<Ui::StatisticsDialog>())
@@ -54,13 +54,13 @@ StatisticsDialog::StatisticsDialog(SkyConnectIntf &skyConnect, QWidget *parent) 
     frenchConnection();
 }
 
-StatisticsDialog::~StatisticsDialog()
+StatisticsDialog::~StatisticsDialog() noexcept
 {
 }
 
 // PROTECTED
 
-void StatisticsDialog::showEvent(QShowEvent *event)
+void StatisticsDialog::showEvent(QShowEvent *event) noexcept
 {
     Q_UNUSED(event)
 
@@ -76,7 +76,7 @@ void StatisticsDialog::showEvent(QShowEvent *event)
     emit visibilityChanged(true);
 }
 
-void StatisticsDialog::hideEvent(QHideEvent *event)
+void StatisticsDialog::hideEvent(QHideEvent *event) noexcept
 {
     Q_UNUSED(event)
 
@@ -89,12 +89,12 @@ void StatisticsDialog::hideEvent(QHideEvent *event)
 
 // PRIVATE
 
-void StatisticsDialog::frenchConnection()
+void StatisticsDialog::frenchConnection() noexcept
 {}
 
 // PRIVATE SLOTS
 
-void StatisticsDialog::updateRecordUi()
+void StatisticsDialog::updateRecordUi() noexcept
 {
     const QVector<AircraftData> aircraftData = d->skyConnect.getAircraft().getAllAircraftData();
     if (Settings::getInstance().getRecordSampleRate() != SampleRate::SampleRate::Auto) {

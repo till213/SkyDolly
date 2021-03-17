@@ -30,7 +30,7 @@
 namespace Enum
 {
     template<typename E>
-    constexpr auto toUnderlyingType(E e)
+    constexpr auto toUnderlyingType(E e) noexcept
     {
         return static_cast<typename std::underlying_type<E>::type>(e);
     }

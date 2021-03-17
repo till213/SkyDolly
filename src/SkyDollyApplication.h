@@ -32,14 +32,14 @@ class SkyDollyApplication : public QApplication
     Q_OBJECT
 
 public:
-    SkyDollyApplication(int &argc, char **argv);
+    SkyDollyApplication(int &argc, char **argv) noexcept;
     virtual ~SkyDollyApplication() = default;
 
 private:
-    void frenchConnection();
+    void frenchConnection() noexcept;
 
 private slots:
-    void handleAboutToQuit();
+    void handleAboutToQuit() noexcept;
 };
 
 #endif // SKYDOLLYAPPLICATION_H

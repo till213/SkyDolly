@@ -28,7 +28,7 @@
 
 const AircraftData AircraftData::NullAircraftData = AircraftData(0.0, 0.0, 0.0);
 
-AircraftData::AircraftData(double latitude, double longitude, double altitude)
+AircraftData::AircraftData(double latitude, double longitude, double altitude) noexcept
     : pitch(0.0),
       bank(0.0),
       heading(0.0),

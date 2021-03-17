@@ -25,6 +25,8 @@
 #ifndef SKYCONNECTDUMMY_H
 #define SKYCONNECTDUMMY_H
 
+#include <memory>
+
 #include <QObject>
 
 #include "AbstractSkyConnect.h"
@@ -37,33 +39,33 @@ class SkyConnectDummy : public AbstractSkyConnect
 {
     Q_OBJECT
 public:
-    SkyConnectDummy(QObject *parent = nullptr);
-    virtual ~SkyConnectDummy();
+    SkyConnectDummy(QObject *parent = nullptr) noexcept;
+    virtual ~SkyConnectDummy() noexcept;
 
 protected:
-    virtual void onStartDataSample() override;
-    virtual void onStopDataSample() override;
-    virtual void onStartReplay(qint64 currentTimestamp) override;
-    virtual void onStopReplay() override;
-    virtual void onSeek(qint64 currentTimestamp) override;
-    virtual void onRecordingPaused(bool paused) override;
-    virtual void onReplayPaused() override;
-    virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) override;
-    virtual void onPlaybackSampleRateChanged(SampleRate::SampleRate sampleRate) override;
+    virtual void onStartDataSample() noexcept override;
+    virtual void onStopDataSample() noexcept override;
+    virtual void onStartReplay(qint64 currentTimestamp ) noexcept override;
+    virtual void onStopReplay() noexcept override;
+    virtual void onSeek(qint64 currentTimestamp ) noexcept override;
+    virtual void onRecordingPaused(bool paused ) noexcept override;
+    virtual void onReplayPaused() noexcept override;
+    virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate ) noexcept override;
+    virtual void onPlaybackSampleRateChanged(SampleRate::SampleRate sampleRate ) noexcept override;
 
-    virtual bool sendAircraftData(qint64 currentTimestamp) override;
-    virtual bool isConnectedWithSim() const override;
-    virtual bool connectWithSim() override;
+    virtual bool sendAircraftData(qint64 currentTimestamp ) noexcept override;
+    virtual bool isConnectedWithSim() const noexcept override;
+    virtual bool connectWithSim() noexcept override;
 
 protected slots:
-    virtual void processEvents() override;
+    virtual void processEvents() noexcept override;
 
 private:
-    SkyConnectDummyPrivate *d;
+    std::unique_ptr<SkyConnectDummyPrivate> d;
 
-    bool sendAircraftData();
-    void recordData();
-    void replay();
+    bool sendAircraftData() noexcept;
+    void recordData() noexcept;
+    void replay() noexcept;
 
 };
 
