@@ -28,7 +28,7 @@
 
 // PUBLIC
 
-SkyDollyApplication::SkyDollyApplication(int &argc, char **argv)
+SkyDollyApplication::SkyDollyApplication(int &argc, char **argv) noexcept
     : QApplication(argc, argv)
 {
     frenchConnection();
@@ -36,7 +36,7 @@ SkyDollyApplication::SkyDollyApplication(int &argc, char **argv)
 
 // PRIVATE
 
-void SkyDollyApplication::frenchConnection()
+void SkyDollyApplication::frenchConnection() noexcept
 {
     connect(this, &QApplication::aboutToQuit,
             this, &SkyDollyApplication::handleAboutToQuit);
@@ -44,7 +44,7 @@ void SkyDollyApplication::frenchConnection()
 
 // PRIVATE SLOTS
 
-void SkyDollyApplication::handleAboutToQuit()
+void SkyDollyApplication::handleAboutToQuit() noexcept
 {
     // Destroying the settings singleton also persists the settings
     Settings::destroyInstance();

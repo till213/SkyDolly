@@ -38,7 +38,7 @@ namespace {
 
 // PUBLIC
 
-bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io)
+bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
 {
     bool ok = io.open(QIODevice::WriteOnly);
     if (ok) {

@@ -41,16 +41,16 @@ class KERNEL_API Aircraft : public QObject
 {
     Q_OBJECT
 public:    
-    Aircraft(QObject *parent = nullptr);
-    virtual ~Aircraft();
+    Aircraft(QObject *parent = nullptr) noexcept;
+    virtual ~Aircraft() noexcept;
 
-    void setAircraftInfo(AircraftInfo aircraftInfo);
-    const AircraftInfo &getAircraftInfo() const;
+    void setAircraftInfo(AircraftInfo aircraftInfo) noexcept;
+    const AircraftInfo &getAircraftInfo() const noexcept;
 
-    void upsertAircraftData(AircraftData aircraftData);
-    const AircraftData &getLastAircraftData() const;
-    const QVector<AircraftData> getAllAircraftData() const;
-    const AircraftData &getAircraftData(qint64 timestamp) const;
+    void upsertAircraftData(AircraftData aircraftData) noexcept;
+    const AircraftData &getLastAircraftData() const noexcept;
+    const QVector<AircraftData> getAllAircraftData() const noexcept;
+    const AircraftData &getAircraftData(qint64 timestamp) const noexcept;
 
     void clear();
 
@@ -61,9 +61,9 @@ signals:
 private:
     std::unique_ptr<AircraftPrivate> d;
 
-    bool updateCurrentIndex(qint64 timestamp) const;
-    bool getSupportData(qint64 timestamp, const AircraftData **p0, const AircraftData **p1, const AircraftData **p2, const AircraftData **p3) const;
-    static double normaliseTimestamp(const AircraftData &p1, const AircraftData &p2, quint64 timestamp);
+    bool updateCurrentIndex(qint64 timestamp) const noexcept;
+    bool getSupportData(qint64 timestamp, const AircraftData **p0, const AircraftData **p1, const AircraftData **p2, const AircraftData **p3) const noexcept;
+    static double normaliseTimestamp(const AircraftData &p1, const AircraftData &p2, quint64 timestamp) noexcept;
 };
 
 #endif // AIRCRAFT_H

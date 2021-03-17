@@ -94,8 +94,8 @@ struct KERNEL_API AircraftData
     // In milliseconds since the start of recording
     qint64 timestamp;
 
-    AircraftData(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0);
-    inline bool isNull() const {
+    AircraftData(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
+    inline bool isNull() const noexcept {
         return (latitude == 0.0 && longitude == 0.0 && altitude == 0.0 &&
                 pitch == 0.0 && bank == 0.0 && heading == 0.0 && timestamp == 0);
     }

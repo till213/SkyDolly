@@ -40,48 +40,48 @@ class  AbstractSkyConnect : public SkyConnectIntf
     Q_OBJECT
 
 public:
-    AbstractSkyConnect(QObject *parent = nullptr);
-    virtual ~AbstractSkyConnect();
+    AbstractSkyConnect(QObject *parent = nullptr) noexcept;
+    virtual ~AbstractSkyConnect() noexcept;
 
-    virtual Connect::State getState() const override;
+    virtual Connect::State getState() const noexcept override;
 
-    virtual void setTimeScale(double timeScale) override;
-    virtual double getTimeScale() const override;
+    virtual void setTimeScale(double timeScale) noexcept override;
+    virtual double getTimeScale() const noexcept override;
 
-    virtual void startDataSample() override;
-    virtual void stopDataSample() override;
+    virtual void startDataSample() noexcept override;
+    virtual void stopDataSample() noexcept override;
 
-    virtual void startReplay(bool fromStart) override;
-    virtual void stopReplay() override;
-    virtual void stop() override;
+    virtual void startReplay(bool fromStart) noexcept override;
+    virtual void stopReplay() noexcept override;
+    virtual void stop() noexcept override;
 
-    virtual void setPaused(bool enabled) override;
-    virtual bool isPaused() const override;
+    virtual void setPaused(bool enabled) noexcept override;
+    virtual bool isPaused() const noexcept override;
 
-    virtual void skipToBegin() override;
-    virtual void skipBackward() override;
-    virtual void skipForward() override;
-    virtual void skipToEnd() override;
-    virtual void seek(qint64 timestamp) override;
+    virtual void skipToBegin() noexcept override;
+    virtual void skipBackward() noexcept override;
+    virtual void skipForward() noexcept override;
+    virtual void skipToEnd() noexcept override;
+    virtual void seek(qint64 timestamp) noexcept override;
 
-    virtual qint64 getCurrentTimestamp() const override;
-    virtual bool isAtEnd() const override;
+    virtual qint64 getCurrentTimestamp() const noexcept override;
+    virtual bool isAtEnd() const noexcept override;
 
-    virtual Aircraft &getAircraft()override;
-    virtual const Aircraft &getAircraft() const override;
-    virtual const AircraftData &getCurrentAircraftData() const override;
+    virtual Aircraft &getAircraft() noexcept override;
+    virtual const Aircraft &getAircraft() const noexcept override;
+    virtual const AircraftData &getCurrentAircraftData() const noexcept override;
 
-    virtual double calculateRecordedSamplesPerSecond() const override;
+    virtual double calculateRecordedSamplesPerSecond() const noexcept override;
 
 protected:
-    void setState(Connect::State state);
-    void setCurrentTimestamp(qint64 timestamp);
+    void setState(Connect::State state) noexcept;
+    void setCurrentTimestamp(qint64 timestamp) noexcept;
 
-    bool isElapsedTimerRunning() const;
-    void startElapsedTimer() const;
-    void resetElapsedTime(bool restart);
-    void updateCurrentTimestamp();
-    const AircraftData &updateCurrentAircraftData();
+    bool isElapsedTimerRunning() const noexcept;
+    void startElapsedTimer() const noexcept;
+    void resetElapsedTime(bool restart) noexcept;
+    void updateCurrentTimestamp() noexcept;
+    const AircraftData &updateCurrentAircraftData() noexcept;
 
     virtual void onStartDataSample() = 0;
     virtual void onStopDataSample() = 0;
@@ -103,12 +103,12 @@ protected slots:
 private:
     std::unique_ptr<AbstractSkyConnectPrivate> d;
 
-    void frenchConnection();
-    bool hasRecordingStarted() const;
+    void frenchConnection() noexcept;
+    bool hasRecordingStarted() const noexcept;
 
 private slots:
-    void handleRecordSampleRateChanged(SampleRate::SampleRate sampleRate);
-    void handlePlaybackSampleRateChanged(SampleRate::SampleRate sampleRate);
+    void handleRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept;
+    void handlePlaybackSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept;
 };
 
 #endif // ABSTRACTSKYCONNECTIMPL_H

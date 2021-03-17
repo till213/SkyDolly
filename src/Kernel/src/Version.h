@@ -47,7 +47,7 @@ public:
     /*!
      * Creates this Version with the current values of the application version.
      */
-    KERNEL_API Version();
+    KERNEL_API Version() noexcept;
 
     /*!
      * Creates this Version with \p majorNo, \p minorNo and \p patchNo values. This
@@ -60,7 +60,7 @@ public:
      * \param patchNo
      *        sub-minor version number
      */
-    KERNEL_API Version(int majorNo, int minorNo, int patchNo);
+    KERNEL_API Version(int majorNo, int minorNo, int patchNo) noexcept;
 
     /*!
      * Creates this Version by parsing the \p version string value. This
@@ -70,29 +70,29 @@ public:
      *        a QString containing the version of the expected [major].[minor].[patch]
      * \sa #operator<
      */
-    KERNEL_API Version(const QString &version);
-    KERNEL_API ~Version();
+    KERNEL_API Version(const QString &version) noexcept;
+    KERNEL_API ~Version() noexcept;
 
     /*!
      * Returns the major version number.
      *
      * \return the major version number
      */
-    KERNEL_API int getMajor();
+    KERNEL_API int getMajor() noexcept;
 
     /*!
      * Returns the minor version number.
      *
      * \return the minor version number
      */
-    KERNEL_API int getMinor();
+    KERNEL_API int getMinor() noexcept;
 
     /*!
      * Returns the patch version number.
      *
      * \return the patch version number
      */
-    KERNEL_API int getPatch();
+    KERNEL_API int getPatch() noexcept;
 
     /*!
      * Returns a string representation of the form "[major].[minor].[patch]" of this Version
@@ -101,20 +101,20 @@ public:
      * \return a QString containing a user-friendly version value
      * \sa Version(const QString &)
      */
-    KERNEL_API QString toString() const;
+    KERNEL_API QString toString() const noexcept;
 
-    KERNEL_API bool operator==(const Version &other);
+    KERNEL_API bool operator==(const Version &other) noexcept;
 
-    KERNEL_API bool operator>=(const Version &other);
+    KERNEL_API bool operator>=(const Version &other) noexcept;
 
-    KERNEL_API bool operator<(const Version &other);
+    KERNEL_API bool operator<(const Version &other) noexcept;
 
     /*!
      * A cool code name - every application needs this ;)
      *
      * \return a QString containing a cool code name
      */
-    KERNEL_API static QString getCodeName();
+    KERNEL_API static QString getCodeName() noexcept;
 
     /*!
      * A "fancy user readable version" which follows the pattern yy.mm.
@@ -123,7 +123,7 @@ public:
      *
      * \return a QString containing the "user readable version"
      */
-    KERNEL_API static QString getUserVersion();
+    KERNEL_API static QString getUserVersion() noexcept;
 
     /*!
      * The version number which follows the pattern version.minor.patch.
@@ -132,21 +132,21 @@ public:
      *
      * \return a QString containing the application version.
      */
-    KERNEL_API static QString getApplicationVersion();
+    KERNEL_API static QString getApplicationVersion() noexcept;
 
     /*!
      * Returns the organisation name.
      *
      * \return a QString the name of the organisation
      */
-    KERNEL_API static QString getOrganisationName();
+    KERNEL_API static QString getOrganisationName() noexcept;
 
     /*!
      * Returns the application name which can be displayed in dialog captions.
      *
      * \return a QString containing the application name
      */
-    KERNEL_API static QString getApplicationName();
+    KERNEL_API static QString getApplicationName() noexcept;
 
 private:
     Q_DISABLE_COPY(Version)

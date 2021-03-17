@@ -30,7 +30,7 @@
 #include "SettingsDialog.h"
 #include "ui_SettingsDialog.h"
 
-SettingsDialog::SettingsDialog(QWidget *parent) :
+SettingsDialog::SettingsDialog(QWidget *parent) noexcept :
     QDialog(parent),
     ui(std::make_unique<Ui::SettingsDialog>())
 {
@@ -39,13 +39,13 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     frenchConnection();
 }
 
-SettingsDialog::~SettingsDialog()
+SettingsDialog::~SettingsDialog() noexcept
 {
 }
 
 // PROTECTED
 
-void SettingsDialog::showEvent(QShowEvent *event)
+void SettingsDialog::showEvent(QShowEvent *event) noexcept
 {
     Q_UNUSED(event)
 
@@ -54,7 +54,7 @@ void SettingsDialog::showEvent(QShowEvent *event)
             this, &SettingsDialog::updateUi);
 }
 
-void SettingsDialog::hideEvent(QHideEvent *event)
+void SettingsDialog::hideEvent(QHideEvent *event) noexcept
 {
     Q_UNUSED(event)
     disconnect(&Settings::getInstance(), &Settings::changed,
@@ -63,7 +63,7 @@ void SettingsDialog::hideEvent(QHideEvent *event)
 
 // PRIVATE
 
-void SettingsDialog::initUi()
+void SettingsDialog::initUi() noexcept
 {
     Qt::WindowFlags flags = Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
     setWindowFlags(flags);
@@ -98,7 +98,7 @@ void SettingsDialog::initUi()
     ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz60), tr("60 Hz"));
 }
 
-void SettingsDialog::frenchConnection()
+void SettingsDialog::frenchConnection() noexcept
 {
     connect(this, &SettingsDialog::accepted,
             this, &SettingsDialog::handleAccepted);
@@ -106,13 +106,13 @@ void SettingsDialog::frenchConnection()
 
 // PRIVATE SLOTS
 
-void SettingsDialog::updateUi()
+void SettingsDialog::updateUi() noexcept
 {
     ui->recordFrequencyComboBox->setCurrentIndex(Enum::toUnderlyingType(Settings::getInstance().getRecordSampleRate()));
     ui->playbackFrequencyComboBox->setCurrentIndex(Enum::toUnderlyingType(Settings::getInstance().getPlaybackSampleRate()));
 }
 
-void SettingsDialog::handleAccepted()
+void SettingsDialog::handleAccepted() noexcept
 {
     Settings::getInstance().setRecordSampleRate(static_cast<SampleRate::SampleRate>(ui->recordFrequencyComboBox->currentIndex()));
     Settings::getInstance().setPlaybackSampleRate(static_cast<SampleRate::SampleRate>(ui->playbackFrequencyComboBox->currentIndex()));

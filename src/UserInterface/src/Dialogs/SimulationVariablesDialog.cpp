@@ -52,7 +52,7 @@ const QString SimulationVariablesDialogPrivate::WindowTitle = QT_TRANSLATE_NOOP(
 
 // PUBLIC
 
-SimulationVariablesDialog::SimulationVariablesDialog(SkyConnectIntf &skyConnect, QWidget *parent) :
+SimulationVariablesDialog::SimulationVariablesDialog(SkyConnectIntf &skyConnect, QWidget *parent) noexcept :
     QDialog(parent),
     d(std::make_unique<SimulationVariablesDialogPrivate>(skyConnect)),
     ui(std::make_unique<Ui::SimulationVariablesDialog>())
@@ -64,13 +64,13 @@ SimulationVariablesDialog::SimulationVariablesDialog(SkyConnectIntf &skyConnect,
     initUi();
 }
 
-SimulationVariablesDialog::~SimulationVariablesDialog()
+SimulationVariablesDialog::~SimulationVariablesDialog() noexcept
 {
 }
 
 // PROTECTED
 
-void SimulationVariablesDialog::showEvent(QShowEvent *event)
+void SimulationVariablesDialog::showEvent(QShowEvent *event) noexcept
 {
     Q_UNUSED(event)
 
@@ -81,7 +81,7 @@ void SimulationVariablesDialog::showEvent(QShowEvent *event)
     emit visibilityChanged(true);
 }
 
-void SimulationVariablesDialog::hideEvent(QHideEvent *event)
+void SimulationVariablesDialog::hideEvent(QHideEvent *event) noexcept
 {
     Q_UNUSED(event)
 
@@ -93,7 +93,7 @@ void SimulationVariablesDialog::hideEvent(QHideEvent *event)
 
 // PRIVATE
 
-void SimulationVariablesDialog::initUi()
+void SimulationVariablesDialog::initUi() noexcept
 {
     AircraftVariablesWidget *aircraftVariablesWidget = new AircraftVariablesWidget(d->skyConnect, this);
     ui->simulationVariablesTab->addTab(aircraftVariablesWidget, tr("&Aircraft"));
@@ -105,12 +105,12 @@ void SimulationVariablesDialog::initUi()
     ui->simulationVariablesTab->addTab(flightInformationWidget, tr("Flight &Information"));
 }
 
-void SimulationVariablesDialog::updateUi()
+void SimulationVariablesDialog::updateUi() noexcept
 {
     updateTitle();
 }
 
-void SimulationVariablesDialog::updateTitle()
+void SimulationVariablesDialog::updateTitle() noexcept
 {
     QString windowTitle = SimulationVariablesDialogPrivate::WindowTitle;
     switch (d->skyConnect.getState()) {

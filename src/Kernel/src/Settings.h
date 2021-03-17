@@ -45,28 +45,28 @@ class KERNEL_API Settings : public QObject
     Q_OBJECT
 public:
 
-    static Settings &getInstance();
-    static void destroyInstance();
+    static Settings &getInstance() noexcept;
+    static void destroyInstance() noexcept;
 
-    SampleRate::SampleRate getRecordSampleRate() const;
-    double getRecordSampleRateValue() const;
-    void setRecordSampleRate(SampleRate::SampleRate sampleRate);
+    SampleRate::SampleRate getRecordSampleRate() const noexcept;
+    double getRecordSampleRateValue() const noexcept;
+    void setRecordSampleRate(SampleRate::SampleRate sampleRate) noexcept;
 
-    SampleRate::SampleRate getPlaybackSampleRate() const;
-    double getPlaybackSampleRateValue() const;
-    void setPlaybackSampleRate(SampleRate::SampleRate sampleRate);
+    SampleRate::SampleRate getPlaybackSampleRate() const noexcept;
+    double getPlaybackSampleRateValue() const noexcept;
+    void setPlaybackSampleRate(SampleRate::SampleRate sampleRate) noexcept;
 
-    bool isWindowStaysOnTopEnabled() const;
-    void setWindowStaysOnTopEnabled(bool enable);
+    bool isWindowStaysOnTopEnabled() const noexcept;
+    void setWindowStaysOnTopEnabled(bool enable) noexcept;
 
-    int getPreviewInfoDialogCount() const;
-    void setPreviewInfoDialogCount(int count);
+    int getPreviewInfoDialogCount() const noexcept;
+    void setPreviewInfoDialogCount(int count) noexcept;
 
 public slots:
     /*!
      * Stores these Settings to a user configuration file.
      */
-    void store();
+    void store() noexcept;
 
     /*!
      * Restores these Settings from a user configuration file. If no user
@@ -74,7 +74,7 @@ public slots:
      *
      * \sa #changed()
      */
-    void restore();
+    void restore() noexcept;
 
 signals:
     /*!
@@ -104,9 +104,9 @@ private:
     Q_DISABLE_COPY(Settings)
     std::unique_ptr<SettingsPrivate> d;
 
-    Settings();
+    Settings() noexcept;
 
-    void frenchConnection();
+    void frenchConnection() noexcept;
 };
 
 #endif // SETTINGS_H

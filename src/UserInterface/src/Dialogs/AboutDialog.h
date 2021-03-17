@@ -38,13 +38,13 @@ class AboutDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit AboutDialog(QWidget *parent = nullptr);
-    virtual ~AboutDialog();
+    explicit AboutDialog(QWidget *parent = nullptr) noexcept;
+    virtual ~AboutDialog() noexcept;
 
 private:
     std::unique_ptr<Ui::AboutDialog> ui;
 
-    void initUi();
+    void initUi() noexcept;
 };
 
 #endif // ABOUTDIALOG_H

@@ -41,22 +41,22 @@ class SKYCONNECT_API SkyManager : public QObject
 
 public:
 
-    static SkyManager &getInstance();
-    static void destroyInstance();
+    static SkyManager &getInstance() noexcept;
+    static void destroyInstance() noexcept;
 
-    SkyConnectIntf &currentSkyConnect() const;
+    SkyConnectIntf &currentSkyConnect() const noexcept;
 
 signals:
     void connectionChanged(SkyConnectIntf *skyConnect);
 
 protected:
-    virtual ~SkyManager();
+    virtual ~SkyManager() noexcept;
 
 private:
     Q_DISABLE_COPY(SkyManager)
     std::unique_ptr<SkyManagerPrivate> d;
 
-    SkyManager();
+    SkyManager() noexcept;
 };
 
 #endif // SKYMANAGER_H

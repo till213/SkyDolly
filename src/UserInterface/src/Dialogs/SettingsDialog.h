@@ -38,22 +38,22 @@ class SettingsDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SettingsDialog(QWidget *parent = nullptr);
-    virtual ~SettingsDialog();
+    explicit SettingsDialog(QWidget *parent = nullptr) noexcept;
+    virtual ~SettingsDialog() noexcept;
 
 protected:
-    void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
+    void showEvent(QShowEvent *event) noexcept override;
+    void hideEvent(QHideEvent *event) noexcept override;
 
 private:
     std::unique_ptr<Ui::SettingsDialog> ui;
 
-    void initUi();
-    void frenchConnection();
+    void initUi() noexcept;
+    void frenchConnection() noexcept;
 
 private slots:
-    void updateUi();
-    void handleAccepted();
+    void updateUi() noexcept;
+    void handleAccepted() noexcept;
 };
 
 #endif // SETTINGSDIALOG_H

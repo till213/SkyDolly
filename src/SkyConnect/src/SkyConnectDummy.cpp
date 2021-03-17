@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+
 #include <QTimer>
 #include <QElapsedTimer>
 #include <QtGlobal>
@@ -42,68 +44,70 @@ public:
 
 // PUBLIC
 
-SkyConnectDummy::SkyConnectDummy(QObject *parent)
+SkyConnectDummy::SkyConnectDummy(QObject *parent) noexcept
     : AbstractSkyConnect(parent),
-      d(new SkyConnectDummyPrivate())
+      d(std::make_unique<SkyConnectDummyPrivate>())
 {
 }
 
-SkyConnectDummy::~SkyConnectDummy()
+SkyConnectDummy::~SkyConnectDummy() noexcept
 {
-    delete d;
 }
 
 // PROTECTED
 
-void SkyConnectDummy::onStartDataSample() {
+void SkyConnectDummy::onStartDataSample() noexcept {
 
 }
 
-void SkyConnectDummy::onStopDataSample() {}
+void SkyConnectDummy::onStopDataSample() noexcept {}
 
-void SkyConnectDummy::onStartReplay(qint64 currentTimestamp) {
+void SkyConnectDummy::onStartReplay(qint64 currentTimestamp) noexcept {
     Q_UNUSED(currentTimestamp)
 }
 
-void SkyConnectDummy::onSeek(qint64 currentTimestamp)
+void SkyConnectDummy::onSeek(qint64 currentTimestamp) noexcept
 {
     Q_UNUSED(currentTimestamp)
 };
 
-void SkyConnectDummy::onStopReplay() {}
+void SkyConnectDummy::onStopReplay() noexcept {}
 
-void SkyConnectDummy::onRecordingPaused(bool paused) {
+void SkyConnectDummy::onRecordingPaused(bool paused) noexcept {
     Q_UNUSED(paused)
 }
 
-void SkyConnectDummy::onReplayPaused() {}
+void SkyConnectDummy::onReplayPaused() noexcept {}
 
-void SkyConnectDummy::onRecordSampleRateChanged(SampleRate::SampleRate sampleRate)
+void SkyConnectDummy::onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
 {
     Q_UNUSED(sampleRate)
 }
 
-void SkyConnectDummy::onPlaybackSampleRateChanged(SampleRate::SampleRate sampleRate)
+void SkyConnectDummy::onPlaybackSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
 {
     Q_UNUSED(sampleRate)
 }
 
-bool SkyConnectDummy::sendAircraftData(qint64 currentTimestamp) {
+bool SkyConnectDummy::sendAircraftData(qint64 currentTimestamp) noexcept
+{
     Q_UNUSED(currentTimestamp)
     return sendAircraftData();
 }
 
-bool SkyConnectDummy::isConnectedWithSim() const {
+bool SkyConnectDummy::isConnectedWithSim() const noexcept
+{
     return true;
 }
 
-bool SkyConnectDummy::connectWithSim() {
+bool SkyConnectDummy::connectWithSim() noexcept
+{
     return true;
 }
 
 // PROTECTED SLOTS
 
-void SkyConnectDummy::processEvents()
+void SkyConnectDummy::processEvents() noexcept
 {
     updateCurrentTimestamp();
     switch (getState()) {
@@ -120,7 +124,7 @@ void SkyConnectDummy::processEvents()
 
 // PRIVATE
 
-bool SkyConnectDummy::sendAircraftData()
+bool SkyConnectDummy::sendAircraftData() noexcept
 {
     bool success;
 
@@ -136,7 +140,7 @@ bool SkyConnectDummy::sendAircraftData()
     return success;
 }
 
-void SkyConnectDummy::recordData()
+void SkyConnectDummy::recordData() noexcept
 {
     AircraftData aircraftData;
     aircraftData.latitude = QRandomGenerator::global()->bounded(180.0);
@@ -152,7 +156,7 @@ void SkyConnectDummy::recordData()
     }
 }
 
-void SkyConnectDummy::replay()
+void SkyConnectDummy::replay() noexcept
 {
     if (sendAircraftData()) {
         emit aircraftDataSent(getCurrentTimestamp());
