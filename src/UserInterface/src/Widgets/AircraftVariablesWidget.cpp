@@ -47,7 +47,7 @@ public:
 AircraftVariablesWidget::AircraftVariablesWidget(SkyConnectIntf &skyConnect, QWidget *parent) :
     QWidget(parent),
     d(std::make_unique<AircraftVariablesWidgetPrivate>(skyConnect)),
-    ui(new Ui::AircraftVariablesWidget)
+    ui(std::make_unique<Ui::AircraftVariablesWidget>())
 {
     ui->setupUi(this);
     initUi();
@@ -55,7 +55,6 @@ AircraftVariablesWidget::AircraftVariablesWidget(SkyConnectIntf &skyConnect, QWi
 
 AircraftVariablesWidget::~AircraftVariablesWidget()
 {
-    delete ui;
 }
 
 // PROTECTED

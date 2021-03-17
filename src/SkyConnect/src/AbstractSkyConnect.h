@@ -25,6 +25,8 @@
 #ifndef ABSTRACTSKYCONNECTIMPL_H
 #define ABSTRACTSKYCONNECTIMPL_H
 
+#include <memory>
+
 #include <QObject>
 
 #include "../../Kernel/src/SampleRate.h"
@@ -99,7 +101,7 @@ protected slots:
     virtual void processEvents() = 0;
 
 private:
-    AbstractSkyConnectPrivate *d;
+    std::unique_ptr<AbstractSkyConnectPrivate> d;
 
     void frenchConnection();
     bool hasRecordingStarted() const;

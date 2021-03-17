@@ -25,6 +25,8 @@
 #ifndef SETTINGSDIALOG_H
 #define SETTINGSDIALOG_H
 
+#include <memory>
+
 #include <QDialog>
 
 namespace Ui {
@@ -44,7 +46,7 @@ protected:
     void hideEvent(QHideEvent *event) override;
 
 private:
-    Ui::SettingsDialog *ui;
+    std::unique_ptr<Ui::SettingsDialog> ui;
 
     void initUi();
     void frenchConnection();

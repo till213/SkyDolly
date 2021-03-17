@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+
 #include "../../../Kernel/src/Settings.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
@@ -42,8 +44,8 @@ public:
 
 StatisticsDialog::StatisticsDialog(SkyConnectIntf &skyConnect, QWidget *parent) :
     QDialog(parent),
-    d(new StatisticsDialogPrivate(skyConnect)),
-    ui(new Ui::StatisticsDialog)
+    d(std::make_unique<StatisticsDialogPrivate>(skyConnect)),
+    ui(std::make_unique<Ui::StatisticsDialog>())
 {
     ui->setupUi(this);
     Qt::WindowFlags flags = Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
@@ -54,8 +56,6 @@ StatisticsDialog::StatisticsDialog(SkyConnectIntf &skyConnect, QWidget *parent) 
 
 StatisticsDialog::~StatisticsDialog()
 {
-    delete ui;
-    delete d;
 }
 
 // PROTECTED

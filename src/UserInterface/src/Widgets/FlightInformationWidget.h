@@ -54,7 +54,7 @@ protected:
 
 private:
     std::unique_ptr<FlightInformationWidgetPrivate> d;
-    Ui::FlightInformationWidget *ui;
+    std::unique_ptr<Ui::FlightInformationWidget> ui;
 
     void initUi();
     void updateUi();

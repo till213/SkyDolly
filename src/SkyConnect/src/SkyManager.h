@@ -44,7 +44,7 @@ public:
     static SkyManager &getInstance();
     static void destroyInstance();
 
-    SkyConnectIntf *currentSkyConnect() const;
+    SkyConnectIntf &currentSkyConnect() const;
 
 signals:
     void connectionChanged(SkyConnectIntf *skyConnect);

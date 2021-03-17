@@ -26,7 +26,6 @@
 
 #include <QDialog>
 
-
 #include "../../../Kernel/src/Const.h"
 #include "../../../Kernel/src/Aircraft.h"
 #include "../../../Kernel/src/AircraftInfo.h"
@@ -54,7 +53,7 @@ const QString FlightInformationWidgetPrivate::WindowTitle = QT_TRANSLATE_NOOP("F
 FlightInformationWidget::FlightInformationWidget(SkyConnectIntf &skyConnect, QWidget *parent) :
     QDialog(parent),
     d(std::make_unique<FlightInformationWidgetPrivate>(skyConnect)),
-    ui(new Ui::FlightInformationWidget)
+    ui(std::make_unique<Ui::FlightInformationWidget>())
 {
     ui->setupUi(this);
     Qt::WindowFlags flags = Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
@@ -66,7 +65,6 @@ FlightInformationWidget::FlightInformationWidget(SkyConnectIntf &skyConnect, QWi
 
 FlightInformationWidget::~FlightInformationWidget()
 {
-    delete ui;
 }
 
 // PROTECTED

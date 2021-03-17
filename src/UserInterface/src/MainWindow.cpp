@@ -95,7 +95,7 @@ public:
           statisticsDialog(nullptr)
     {}
 
-    SkyConnectIntf *skyConnect;
+    SkyConnectIntf &skyConnect;
     Connect::State previousState;
     QButtonGroup *playbackSpeedButtonGroup;
     AboutDialog *aboutDialog;
@@ -109,8 +109,8 @@ public:
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
-      ui(new Ui::MainWindow),
-      d(new MainWindowPrivate())
+      ui(std::make_unique<Ui::MainWindow>()),
+      d(std::make_unique<MainWindowPrivate>())
 {
     ui->setupUi(this);
     initUi();
@@ -123,20 +123,18 @@ MainWindow::~MainWindow()
     // The SkyConnect instances have been deleted by the SkyManager (singleton)
     // already at this point; no need to disconnect from their "stateChanged"
     // signal
-    delete d;
-    delete ui;
 }
 
 // PRIVATE
 
 void MainWindow::frenchConnection()
 {
-    const Aircraft &aircraft = d->skyConnect->getAircraft();
+    const Aircraft &aircraft = d->skyConnect.getAircraft();
     connect(&aircraft, &Aircraft::dataChanged,
             this, &MainWindow::updateRecordingTime);
-    connect(d->skyConnect, &SkyConnectIntf::aircraftDataSent,
+    connect(&d->skyConnect, &SkyConnectIntf::aircraftDataSent,
             this, &MainWindow::handlePlayPositionChanged);
-    connect(d->skyConnect, &SkyConnectIntf::stateChanged,
+    connect(&d->skyConnect, &SkyConnectIntf::stateChanged,
             this, &MainWindow::updateUi);
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
     connect(d->playbackSpeedButtonGroup, QOverload<int>::of(&QButtonGroup::buttonClicked),
@@ -187,8 +185,8 @@ void MainWindow::initUi()
     resize(minimumSize());
 
     // Dialogs
-    d->simulationVariablesDialog = new SimulationVariablesDialog(*d->skyConnect, this);
-    d->statisticsDialog = new StatisticsDialog(*d->skyConnect, this);
+    d->simulationVariablesDialog = new SimulationVariablesDialog(d->skyConnect, this);
+    d->statisticsDialog = new StatisticsDialog(d->skyConnect, this);
     d->aboutDialog = new AboutDialog(this);
     d->settingsDialog = new SettingsDialog(this);
 
@@ -219,9 +217,9 @@ void MainWindow::initControlUi()
     customPlaybackSpeedValidator->setBottom(PlaybackSpeedMin);
     customPlaybackSpeedValidator->setTop(PlaybackSpeedMax);
 
-    double playbackSpeed = d->skyConnect->getTimeScale();
+    double playbackSpeed = d->skyConnect.getTimeScale();
     d->lastCustomPlaybackSpeed = playbackSpeed;
-    if (qFuzzyCompare(d->skyConnect->getTimeScale(), 1.0)) {
+    if (qFuzzyCompare(d->skyConnect.getTimeScale(), 1.0)) {
         ui->playbackSpeed100RadioButton->setChecked(true);
     } else {
         ui->customPlaybackSpeedRadioButton->setChecked(true);
@@ -276,37 +274,37 @@ void MainWindow::initControlUi()
 
 void MainWindow::on_positionSlider_sliderPressed()
 {
-    d->previousState = d->skyConnect->getState();
+    d->previousState = d->skyConnect.getState();
     if (d->previousState == Connect::State::Playback) {
         // Pause the playback while sliding the position slider
-        d->skyConnect->setPaused(true);
+        d->skyConnect.setPaused(true);
     }
 }
 
 void MainWindow::on_positionSlider_valueChanged(int value)
 {
     double scale = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
-    qint64 timestamp = static_cast<qint64>(qRound(scale * static_cast<double>(d->skyConnect->getAircraft().getLastAircraftData().timestamp)));
+    qint64 timestamp = static_cast<qint64>(qRound(scale * static_cast<double>(d->skyConnect.getAircraft().getLastAircraftData().timestamp)));
 
     // Prevent the timestampTimeEdit field to set the play position as well
     ui->timestampTimeEdit->blockSignals(true);
-    d->skyConnect->seek(timestamp);
+    d->skyConnect.seek(timestamp);
     ui->timestampTimeEdit->blockSignals(false);
 }
 
 void MainWindow::on_positionSlider_sliderReleased()
 {
     if (d->previousState == Connect::State::Playback) {
-        d->skyConnect->setPaused(false);
+        d->skyConnect.setPaused(false);
     }
 }
 
 void MainWindow::on_timestampTimeEdit_timeChanged(const QTime &time)
 {
-    Connect::State state = d->skyConnect->getState();
+    Connect::State state = d->skyConnect.getState();
     if (state == Connect::State::Idle || state == Connect::State::PlaybackPaused) {
         qint64 timestamp = time.hour() * MilliSecondsPerHour + time.minute() * MilliSecondsPerMinute + time.second() * MilliSecondsPerSecond;
-        d->skyConnect->seek(timestamp);
+        d->skyConnect.seek(timestamp);
     }
 }
 
@@ -314,7 +312,7 @@ void MainWindow::on_customPlaybackSpeedLineEdit_editingFinished() {
     QString text = ui->customPlaybackSpeedLineEdit->text();
     if (!text.isEmpty()) {
         d->lastCustomPlaybackSpeed = text.toDouble() / 100.0;
-        d->skyConnect->setTimeScale(d->lastCustomPlaybackSpeed);
+        d->skyConnect.setTimeScale(d->lastCustomPlaybackSpeed);
     }
 }
 
@@ -328,8 +326,8 @@ void MainWindow::updateUi()
 
 void MainWindow::updateControlUi()
 {
-    bool hasRecording = d->skyConnect->getAircraft().getAllAircraftData().count() > 0;
-    switch (d->skyConnect->getState()) {
+    bool hasRecording = d->skyConnect.getAircraft().getAllAircraftData().count() > 0;
+    switch (d->skyConnect.getState()) {
     case Connect::State::Idle:
         // Actions
         ui->recordAction->setEnabled(true);
@@ -410,7 +408,7 @@ void MainWindow::updateControlUi()
 
 void MainWindow::updateRecordingTime()
 {
-    const Aircraft &aircraft = d->skyConnect->getAircraft();
+    const Aircraft &aircraft = d->skyConnect.getAircraft();
     const AircraftData &aircraftData = aircraft.getLastAircraftData();
     ui->timestampTimeEdit->blockSignals(true);
     QTime time(0, 0, 0, 0);
@@ -426,8 +424,8 @@ void MainWindow::updateRecordingTime()
 
 void MainWindow::updateFileMenu()
 {
-    bool hasRecording = d->skyConnect->getAircraft().getAllAircraftData().count() > 0;
-    switch (d->skyConnect->getState()) {
+    bool hasRecording = d->skyConnect.getAircraft().getAllAircraftData().count() > 0;
+    switch (d->skyConnect.getState()) {
     case Connect::State::Recording:
         // Fall-thru intentional
     case Connect::State::RecordingPaused:
@@ -499,11 +497,11 @@ void MainWindow::on_importCSVAction_triggered()
         if (!filePath.isEmpty()) {
             QFile file(filePath);
             CSVImport csvImport;
-            bool ok = csvImport.importData(file, d->skyConnect->getAircraft());
+            bool ok = csvImport.importData(file, d->skyConnect.getAircraft());
             if (ok) {
                 updateUi();
-                d->skyConnect->startReplay(true);
-                d->skyConnect->setPaused(true);
+                d->skyConnect.startReplay(true);
+                d->skyConnect.setPaused(true);
             }
         }
     }
@@ -523,7 +521,7 @@ void MainWindow::on_exportCSVAction_triggered()
     if (!filePath.isEmpty()) {
         QFile file(filePath);
         CSVExport csvExport;
-        csvExport.exportData(d->skyConnect->getAircraft(), file);
+        csvExport.exportData(d->skyConnect.getAircraft(), file);
     }
 }
 
@@ -571,7 +569,7 @@ void MainWindow::on_aboutQtAction_triggered()
 }
 
 void MainWindow::handlePlayPositionChanged(qint64 timestamp) {
-    qint64 endTimeStamp = d->skyConnect->getAircraft().getLastAircraftData().timestamp;
+    qint64 endTimeStamp = d->skyConnect.getAircraft().getLastAircraftData().timestamp;
     qint64 ts = qMin(timestamp, endTimeStamp);
 
     int sliderPosition;
@@ -630,28 +628,28 @@ void MainWindow::handlePlaybackSpeedSelected(int selection) {
         break;
     }
 
-    d->skyConnect->setTimeScale(timeScale);
+    d->skyConnect.setTimeScale(timeScale);
 }
 
 void MainWindow::toggleRecord(bool enable)
 {
     this->blockSignals(true);
 
-    switch (d->skyConnect->getState()) {
+    switch (d->skyConnect.getState()) {
     case Connect::State::Recording:
         if (!enable) {
-            d->skyConnect->stopDataSample();
+            d->skyConnect.stopDataSample();
         }
         break;
     case Connect::State::RecordingPaused:
         if (enable) {
             // The record button also unpauses a paused recording
-            d->skyConnect->setPaused(false);
+            d->skyConnect.setPaused(false);
         }
         break;
     default:
         if (enable) {
-            d->skyConnect->startDataSample();
+            d->skyConnect.startDataSample();
         }
         break;
     }
@@ -660,42 +658,42 @@ void MainWindow::toggleRecord(bool enable)
 
 void MainWindow::togglePause(bool enable)
 {
-    d->skyConnect->setPaused(enable);
+    d->skyConnect.setPaused(enable);
 }
 
 void MainWindow::togglePlay(bool enable)
 {
     if (enable) {
-        d->skyConnect->startReplay(d->skyConnect->isAtEnd());
-    } else if (d->skyConnect->isPaused()) {
+        d->skyConnect.startReplay(d->skyConnect.isAtEnd());
+    } else if (d->skyConnect.isPaused()) {
         // The play button also unpauses a paused replay
-        d->skyConnect->setPaused(false);
+        d->skyConnect.setPaused(false);
     } else {
-        d->skyConnect->stopReplay();
+        d->skyConnect.stopReplay();
     }
 }
 
 void MainWindow::stop()
 {
-    d->skyConnect->stop();
+    d->skyConnect.stop();
 }
 
 void MainWindow::skipToBegin()
 {
-    d->skyConnect->skipToBegin();
+    d->skyConnect.skipToBegin();
 }
 
 void MainWindow::skipBackward()
 {
-    d->skyConnect->skipBackward();
+    d->skyConnect.skipBackward();
 }
 
 void MainWindow::skipForward()
 {
-    d->skyConnect->skipForward();
+    d->skyConnect.skipForward();
 }
 
 void MainWindow::skipToEnd()
 {
-    d->skyConnect->skipToEnd();
+    d->skyConnect.skipToEnd();
 }

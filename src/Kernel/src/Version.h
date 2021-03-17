@@ -25,6 +25,8 @@
 #ifndef VERSION_H
 #define VERSION_H
 
+#include <memory>
+
 #include <QString>
 #include <QDate>
 
@@ -148,8 +150,7 @@ public:
 
 private:
     Q_DISABLE_COPY(Version)
-
-    VersionPrivate *d;
+    std::unique_ptr<VersionPrivate> d;
 };
 
 #endif // VERSION_H

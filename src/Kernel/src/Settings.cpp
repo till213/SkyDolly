@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+
 #include <QCoreApplication>
 #include <QSettings>
 
@@ -214,7 +215,6 @@ void Settings::restore()
 Settings::~Settings()
 {
     store();
-    delete d;
 }
 
 const Version &Settings::getVersion() const

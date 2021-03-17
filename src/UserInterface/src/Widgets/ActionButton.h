@@ -25,6 +25,8 @@
 #ifndef ACTIONBUTTON_H
 #define ACTIONBUTTON_H
 
+#include <memory>
+
 #include <QObject>
 #include <QPushButton>
 
@@ -60,7 +62,7 @@ public:
     void setAction(const QAction *action);
 
 private:
-    ActionButtonPrivate *d;
+    std::unique_ptr<ActionButtonPrivate> d;
 
 private slots:
 

@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+
 #include <QString>
 #include <QRegExp>
 
@@ -68,7 +70,7 @@ Version::Version(int majorNo, int minorNo, int patch)
 }
 
 Version::Version(const QString &version)
-    : d(new VersionPrivate())
+    : d(std::make_unique<VersionPrivate>())
 {
     QRegExp versionRegExp("^(\\d+)\\.(\\d+)\\.(\\d+)$");
     if (versionRegExp.indexIn(version) != -1) {
@@ -80,7 +82,6 @@ Version::Version(const QString &version)
 
 Version::~Version()
 {
-    delete d;
 }
 
 int Version::getMajor()

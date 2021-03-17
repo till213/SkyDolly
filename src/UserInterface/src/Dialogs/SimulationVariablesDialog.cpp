@@ -55,7 +55,7 @@ const QString SimulationVariablesDialogPrivate::WindowTitle = QT_TRANSLATE_NOOP(
 SimulationVariablesDialog::SimulationVariablesDialog(SkyConnectIntf &skyConnect, QWidget *parent) :
     QDialog(parent),
     d(std::make_unique<SimulationVariablesDialogPrivate>(skyConnect)),
-    ui(new Ui::SimulationVariablesDialog)
+    ui(std::make_unique<Ui::SimulationVariablesDialog>())
 {
     ui->setupUi(this);
     Qt::WindowFlags flags = Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
@@ -66,7 +66,6 @@ SimulationVariablesDialog::SimulationVariablesDialog(SkyConnectIntf &skyConnect,
 
 SimulationVariablesDialog::~SimulationVariablesDialog()
 {
-    delete ui;
 }
 
 // PROTECTED
