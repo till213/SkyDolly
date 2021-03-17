@@ -39,9 +39,12 @@ target_sources(UserInterface
         src/Dialogs/StatisticsDialog.cpp
         src/Dialogs/StatisticsDialog.h
         src/Dialogs/StatisticsDialog.ui
-        src/Widgets/SimulationVariablesWidget.cpp
-        src/Widgets/SimulationVariablesWidget.h
-        src/Widgets/SimulationVariablesWidget.ui
+        src/Widgets/AircraftVariablesWidget.cpp
+        src/Widgets/AircraftVariablesWidget.h
+        src/Widgets/AircraftVariablesWidget.ui
+        src/Widgets/ControlVariablesWidget.cpp
+        src/Widgets/ControlVariablesWidget.h
+        src/Widgets/ControlVariablesWidget.ui
         src/Widgets/FlightInformationWidget.cpp
         src/Widgets/FlightInformationWidget.h
         src/Widgets/FlightInformationWidget.ui

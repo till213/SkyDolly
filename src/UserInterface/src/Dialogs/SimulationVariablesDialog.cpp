@@ -31,7 +31,8 @@
 #include "../../../Kernel/src/AircraftInfo.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
-#include "../Widgets/SimulationVariablesWidget.h"
+#include "../Widgets/AircraftVariablesWidget.h"
+#include "../Widgets/ControlVariablesWidget.h"
 #include "../Widgets/FlightInformationWidget.h"
 #include "SimulationVariablesDialog.h"
 #include "ui_SimulationVariablesDialog.h"
@@ -95,8 +96,11 @@ void SimulationVariablesDialog::hideEvent(QHideEvent *event)
 
 void SimulationVariablesDialog::initUi()
 {
-    SimulationVariablesWidget *simulationVariablesWidget = new SimulationVariablesWidget(d->skyConnect, this);
-    ui->simulationVariablesTab->addTab(simulationVariablesWidget, tr("Simulation &Variables"));
+    AircraftVariablesWidget *aircraftVariablesWidget = new AircraftVariablesWidget(d->skyConnect, this);
+    ui->simulationVariablesTab->addTab(aircraftVariablesWidget, tr("&Aircraft"));
+
+    ControlVariablesWidget *controlVariablesWidget = new ControlVariablesWidget(d->skyConnect, this);
+    ui->simulationVariablesTab->addTab(controlVariablesWidget, tr("&Controls"));
 
     FlightInformationWidget *flightInformationWidget = new FlightInformationWidget(d->skyConnect, this);
     ui->simulationVariablesTab->addTab(flightInformationWidget, tr("Flight &Information"));

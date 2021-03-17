@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMULATIONVARIABLESWIDGET_H
-#define SIMULATIONVARIABLESWIDGET_H
+#ifndef AIRCRAFTVARIABLESWIDGET_H
+#define AIRCRAFTVARIABLESWIDGET_H
 
 #include <QWidget>
 
@@ -32,27 +32,27 @@ class QHideEvent;
 
 class SkyConnectIntf;
 class AircraftData;
-class SimulationVariablesWidgetPrivate;
+class AircraftVariablesWidgetPrivate;
 
 namespace Ui {
-class SimulationVariablesWidget;
+class AircraftVariablesWidget;
 }
 
-class SimulationVariablesWidget : public QWidget
+class AircraftVariablesWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit SimulationVariablesWidget(SkyConnectIntf &skyConnect, QWidget *parent);
-    virtual ~SimulationVariablesWidget();
+    explicit AircraftVariablesWidget(SkyConnectIntf &skyConnect, QWidget *parent);
+    virtual ~AircraftVariablesWidget();
 
 protected:
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;
 
 private:
-    std::unique_ptr<SimulationVariablesWidgetPrivate> d;
-    Ui::SimulationVariablesWidget *ui;
+    std::unique_ptr<AircraftVariablesWidgetPrivate> d;
+    Ui::AircraftVariablesWidget *ui;
 
     void initUi();
     void updateUi();
@@ -62,4 +62,4 @@ private slots:
     void updateAircraftDataUi();
 };
 
-#endif // SIMULATIONVARIABLESWIDGET_H
+#endif // AIRCRAFTVARIABLESWIDGET_H

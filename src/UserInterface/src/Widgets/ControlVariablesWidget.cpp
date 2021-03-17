@@ -31,36 +31,36 @@
 #include "../../../Kernel/src/AircraftInfo.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
-#include "SimulationVariablesWidget.h"
-#include "ui_SimulationVariablesWidget.h"
+#include "ControlVariablesWidget.h"
+#include "ui_ControlVariablesWidget.h"
 
-class SimulationVariablesWidgetPrivate
+class ControlVariablesWidgetPrivate
 {
 public:
-    SimulationVariablesWidgetPrivate(SkyConnectIntf &theSkyConnect)
+    ControlVariablesWidgetPrivate(SkyConnectIntf &theSkyConnect)
         : skyConnect(theSkyConnect)
     {}
 
     SkyConnectIntf &skyConnect;
 };
 
-SimulationVariablesWidget::SimulationVariablesWidget(SkyConnectIntf &skyConnect, QWidget *parent) :
+ControlVariablesWidget::ControlVariablesWidget(SkyConnectIntf &skyConnect, QWidget *parent) :
     QWidget(parent),
-    d(std::make_unique<SimulationVariablesWidgetPrivate>(skyConnect)),
-    ui(new Ui::SimulationVariablesWidget)
+    d(std::make_unique<ControlVariablesWidgetPrivate>(skyConnect)),
+    ui(new Ui::ControlVariablesWidget)
 {
     ui->setupUi(this);
     initUi();
 }
 
-SimulationVariablesWidget::~SimulationVariablesWidget()
+ControlVariablesWidget::~ControlVariablesWidget()
 {
     delete ui;
 }
 
 // PROTECTED
 
-void SimulationVariablesWidget::showEvent(QShowEvent *event)
+void ControlVariablesWidget::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event)
 
@@ -69,34 +69,27 @@ void SimulationVariablesWidget::showEvent(QShowEvent *event)
     const Aircraft &aircraft = d->skyConnect.getAircraft();
     // Signal sent while recording
     connect(&aircraft, &Aircraft::dataChanged,
-            this, &SimulationVariablesWidget::updateAircraftDataUi);
+            this, &ControlVariablesWidget::updateAircraftDataUi);
     // Signal sent while playing
     connect(&d->skyConnect, &SkyConnectIntf::aircraftDataSent,
-            this, &SimulationVariablesWidget::updateAircraftDataUi);
+            this, &ControlVariablesWidget::updateAircraftDataUi);
 }
 
-void SimulationVariablesWidget::hideEvent(QHideEvent *event)
+void ControlVariablesWidget::hideEvent(QHideEvent *event)
 {
     Q_UNUSED(event)
 
     const Aircraft &aircraft = d->skyConnect.getAircraft();
     disconnect(&aircraft, &Aircraft::dataChanged,
-               this, &SimulationVariablesWidget::updateAircraftDataUi);
+               this, &ControlVariablesWidget::updateAircraftDataUi);
     disconnect(&d->skyConnect, &SkyConnectIntf::aircraftDataSent,
-            this, &SimulationVariablesWidget::updateAircraftDataUi);
+            this, &ControlVariablesWidget::updateAircraftDataUi);
 }
 
 // PRIVATE
 
-void SimulationVariablesWidget::initUi()
+void ControlVariablesWidget::initUi()
 {
-    ui->latitudeLineEdit->setToolTip(Const::Latitude);
-    ui->longitudeLineEdit->setToolTip(Const::Longitude);
-    ui->altitudeLineEdit->setToolTip(Const::Altitude);
-    ui->pitchLineEdit->setToolTip(Const::Pitch);
-    ui->bankLineEdit->setToolTip(Const::Bank);
-    ui->headingLineEdit->setToolTip(Const::Heading);
-
     ui->yokeXLineEdit->setToolTip(Const::YokeXPosition);
     ui->yokeYLineEdit->setToolTip(Const::YokeYPosition);
     ui->rudderLineEdit->setToolTip(Const::RudderPosition);
@@ -123,7 +116,7 @@ void SimulationVariablesWidget::initUi()
     ui->flapsPositionLineEdit->setToolTip(Const::FlapsHandleIndex);
     ui->spoilerLineEdit->setToolTip(Const::SpoilersHandlePosition);
 
-    ui->gearLineEdit->setToolTip(Const::GearHandlePosition);    
+    ui->gearLineEdit->setToolTip(Const::GearHandlePosition);
     ui->brakeLeftLineEdit->setToolTip(Const::BrakeLeftPosition);
     ui->brakeRightLineEdit->setToolTip(Const::BrakeRightPosition);
     ui->waterRudderLineEdit->setToolTip(Const::WaterRudderHandlePosition);
@@ -131,12 +124,12 @@ void SimulationVariablesWidget::initUi()
     ui->canopyOpenLineEdit->setToolTip(Const::CanopyOpen);
 }
 
-void SimulationVariablesWidget::updateUi()
+void ControlVariablesWidget::updateUi()
 {
     updateAircraftDataUi();
 }
 
-const AircraftData &SimulationVariablesWidget::getCurrentAircraftData() const
+const AircraftData &ControlVariablesWidget::getCurrentAircraftData() const
 {
     const AircraftData aircraftData;
     const Aircraft &aircraft = d->skyConnect.getAircraft();
@@ -150,17 +143,9 @@ const AircraftData &SimulationVariablesWidget::getCurrentAircraftData() const
 
 // PRIVATE SLOTS
 
-void SimulationVariablesWidget::updateAircraftDataUi()
+void ControlVariablesWidget::updateAircraftDataUi()
 {
     const AircraftData &aircraftData = getCurrentAircraftData();
-
-    // Aircraft position
-    ui->latitudeLineEdit->setText(QString::number(aircraftData.latitude));
-    ui->longitudeLineEdit->setText(QString::number(aircraftData.longitude));
-    ui->altitudeLineEdit->setText(QString::number(aircraftData.altitude));
-    ui->pitchLineEdit->setText(QString::number(aircraftData.pitch));
-    ui->bankLineEdit->setText(QString::number(aircraftData.bank));
-    ui->headingLineEdit->setText(QString::number(aircraftData.heading));
 
     // Aircraft controls
     ui->yokeXLineEdit->setText(QString::number(aircraftData.yokeXPosition));
@@ -192,7 +177,7 @@ void SimulationVariablesWidget::updateAircraftDataUi()
     ui->flapsPositionLineEdit->setText(QString::number(aircraftData.flapsHandleIndex));
 
     // // Gear, brakes & handles
-    aircraftData.gearHandlePosition ? ui->gearLineEdit->setText(tr("Down")) : ui->gearLineEdit->setText(tr("Up"));    
+    aircraftData.gearHandlePosition ? ui->gearLineEdit->setText(tr("Down")) : ui->gearLineEdit->setText(tr("Up"));
     ui->brakeLeftLineEdit->setText(QString::number(aircraftData.brakeLeftPosition));
     ui->brakeRightLineEdit->setText(QString::number(aircraftData.brakeRightPosition));
     ui->waterRudderLineEdit->setText(QString::number(aircraftData.waterRudderHandlePosition));
