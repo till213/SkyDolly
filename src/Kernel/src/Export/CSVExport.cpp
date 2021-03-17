@@ -50,6 +50,12 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io)
                       QString(Const::Pitch) % Const::Sep %
                       QString(Const::Bank) % Const::Sep %
                       QString(Const::Heading) % Const::Sep %
+                      QString(Const::VelocityBodyX) % Const::Sep %
+                      QString(Const::VelocityBodyY) % Const::Sep %
+                      QString(Const::VelocityBodyZ) % Const::Sep %
+                      QString(Const::RotationVelocityBodyX) % Const::Sep %
+                      QString(Const::RotationVelocityBodyY) % Const::Sep %
+                      QString(Const::RotationVelocityBodyZ) % Const::Sep %
                       QString(Const::YokeXPosition) % Const::Sep %
                       QString(Const::YokeYPosition) % Const::Sep %
                       QString(Const::RudderPosition) % Const::Sep %
@@ -93,6 +99,12 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io)
                               QString::number(data.pitch, Format, Precision) % Const::Sep %
                               QString::number(data.bank, Format, Precision) % Const::Sep %
                               QString::number(data.heading, Format, Precision) % Const::Sep %
+                              QString::number(data.velocityBodyX, Format, Precision) % Const::Sep %
+                              QString::number(data.velocityBodyY, Format, Precision) % Const::Sep %
+                              QString::number(data.velocityBodyZ, Format, Precision) % Const::Sep %
+                              QString::number(data.rotationVelocityBodyX, Format, Precision) % Const::Sep %
+                              QString::number(data.rotationVelocityBodyY, Format, Precision) % Const::Sep %
+                              QString::number(data.rotationVelocityBodyZ, Format, Precision) % Const::Sep %
                               QString::number(data.yokeXPosition) % Const::Sep %
                               QString::number(data.yokeYPosition) % Const::Sep %
                               QString::number(data.rudderPosition) % Const::Sep %

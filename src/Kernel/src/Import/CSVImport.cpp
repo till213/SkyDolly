@@ -97,6 +97,37 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft)
                         if (ok) {
                             aircraftData.heading = doubleValue;
                         }
+                    // Forces
+                    } else if (header == Const::VelocityBodyX) {
+                        doubleValue = values.at(columnIndex).toDouble(&ok);
+                        if (ok) {
+                            aircraftData.velocityBodyX = doubleValue;
+                        }
+                    } else if (header == Const::VelocityBodyY) {
+                        doubleValue = values.at(columnIndex).toDouble(&ok);
+                        if (ok) {
+                            aircraftData.velocityBodyY = doubleValue;
+                        }
+                    } else if (header == Const::VelocityBodyZ) {
+                        doubleValue = values.at(columnIndex).toDouble(&ok);
+                        if (ok) {
+                            aircraftData.velocityBodyZ = doubleValue;
+                        }
+                    } else if (header == Const::RotationVelocityBodyX) {
+                        doubleValue = values.at(columnIndex).toDouble(&ok);
+                        if (ok) {
+                            aircraftData.rotationVelocityBodyX = doubleValue;
+                        }
+                    } else if (header == Const::RotationVelocityBodyY) {
+                        doubleValue = values.at(columnIndex).toDouble(&ok);
+                        if (ok) {
+                            aircraftData.rotationVelocityBodyY= doubleValue;
+                        }
+                    } else if (header == Const::RotationVelocityBodyZ) {
+                        doubleValue = values.at(columnIndex).toDouble(&ok);
+                        if (ok) {
+                            aircraftData.rotationVelocityBodyZ = doubleValue;
+                        }
                     // Aircraft controls
                     } else if (header == Const::YokeXPosition) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
