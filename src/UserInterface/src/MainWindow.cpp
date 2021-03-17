@@ -78,6 +78,7 @@ namespace {
         Speed200,
         Speed400,
         Speed800,
+        Speed1600,
         CustomSpeed
     };
 }
@@ -206,6 +207,7 @@ void MainWindow::initControlUi()
     d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed200RadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed200));
     d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed400RadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed400));
     d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed800RadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed800));
+    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed1600RadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed1600));
     d->playbackSpeedButtonGroup->addButton(ui->customPlaybackSpeedRadioButton, Enum::toUnderlyingType(PlaybackSpeed::CustomSpeed));
 
     ui->positionSlider->setMinimum(PositionSliderMin);
@@ -616,6 +618,9 @@ void MainWindow::handlePlaybackSpeedSelected(int selection) {
         break;
     case PlaybackSpeed::Speed800:
         timeScale = 8.0;
+        break;
+    case PlaybackSpeed::Speed1600:
+        timeScale = 16.0;
         break;
     case PlaybackSpeed::CustomSpeed:
         timeScale = ui->customPlaybackSpeedLineEdit->text().toDouble() / 100.0;

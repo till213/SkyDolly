@@ -118,7 +118,7 @@ void StatisticsDialog::updateRecordUi()
     } else {
         lastTimestamp = 0;
     }
-    ui->durationLineEdit->setText(QString::number(lastTimestamp));
+    ui->durationLineEdit->setText(QString::number(lastTimestamp / 1000.0));
 
     // In KiB
     double size = static_cast<double>(aircraftDataCount * sizeof(AircraftData)) / 1024.0;
