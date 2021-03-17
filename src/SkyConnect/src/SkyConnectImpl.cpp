@@ -110,18 +110,33 @@ void SkyConnectImpl::onStopDataSample()
     ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::AircraftPosition), SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_NEVER);
 }
 
-void SkyConnectImpl::onStartReplay(bool fromStart)
+void SkyConnectImpl::onStartReplay(qint64 currentTimestamp)
 {
-    Q_UNUSED(fromStart)
     // "Freeze" the simulation: position and attitude only set by (interpolated)
     // sample points
     setSimulationFrozen(true);
+    if (currentTimestamp == 0) {
+        setupInitialPosition();
+#ifdef DEBUG
+    qDebug("SkyConnectImpl::onStartReplay: current timestamp is 0, SETUP initial position");
+#endif
+    }
 }
 
 void SkyConnectImpl::onStopReplay()
 {
     setSimulationFrozen(false);
 }
+
+void SkyConnectImpl::onSeek(qint64 currentTimestamp)
+{
+    if (currentTimestamp == 0) {
+        setupInitialPosition();
+#ifdef DEBUG
+    qDebug("SkyConnectImpl::onSeek: current timestamp is 0, SETUP initial position");
+#endif
+    }
+};
 
 void SkyConnectImpl::onRecordingPaused(bool paused)
 {
@@ -223,6 +238,8 @@ void SkyConnectImpl::setupRequestData()
     SimConnectAircraftInfo::addToDataDefinition(d->simConnectHandle);
     SimConnectAircraftData::addToDataDefinition(d->simConnectHandle);
 
+    ::SimConnect_AddToDataDefinition(d->simConnectHandle, SkyConnectDataDefinition::AircraftInitialPosition, "Initial Position", nullptr, ::SIMCONNECT_DATATYPE_INITPOSITION);
+
     // System event subscription
     ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::SimStart), "SimStart");
     ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::Pause), "Pause");
@@ -232,6 +249,28 @@ void SkyConnectImpl::setupRequestData()
     ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::FreezeLatituteLongitude), "FREEZE_LATITUDE_LONGITUDE_SET");
     ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::FreezeAltitude), "FREEZE_ALTITUDE_SET");
     ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::FreezeAttitude), "FREEZE_ATTITUDE_SET");
+}
+
+void SkyConnectImpl::setupInitialPosition()
+{
+    const AircraftData &aircraftData = getAircraft().getAircraftData(0);
+    if (!aircraftData.isNull()) {
+        // Set initial position
+        SIMCONNECT_DATA_INITPOSITION initialPosition;
+
+        initialPosition.Latitude = aircraftData.latitude;
+        initialPosition.Longitude = aircraftData.longitude;
+        initialPosition.Altitude = aircraftData.altitude;
+        initialPosition.Pitch = aircraftData.pitch;
+        initialPosition.Bank = aircraftData.bank;
+        initialPosition.Heading = aircraftData.heading;
+        initialPosition.OnGround = getAircraft().getAircraftInfo().startOnGround ? 1 : 0;
+        initialPosition.Airspeed = getAircraft().getAircraftInfo().initialAirspeed;
+
+        ::SimConnect_SetDataOnSimObject(d->simConnectHandle, SkyConnectDataDefinition::AircraftInitialPosition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0, sizeof(::SIMCONNECT_DATA_INITPOSITION), &initialPosition);
+    } else {
+        stopReplay();
+    }
 }
 
 void SkyConnectImpl::setSimulationFrozen(bool enable) {

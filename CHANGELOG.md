@@ -88,3 +88,4 @@
 - Properly reset play position to begin after importing CSV data
 - Validate the CSV data upon import: specifically the first timestamp must be 0 (timestamps are shifted accordingly)
 - "Show simulation variables" action is now deselected when the dialog is closed (via close button)
+- Set the initial start position ("on ground") when playback from (or seek to) start

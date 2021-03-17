@@ -158,7 +158,7 @@ void AbstractSkyConnect::startReplay(bool fromStart)
         d->elapsedTimer.invalidate();
         d->timer.start();
 
-        onStartReplay(fromStart);
+        onStartReplay(d->currentTimestamp);
 
     } else {
         setState(Connect::State::NoConnection);
@@ -273,6 +273,7 @@ void AbstractSkyConnect::seek(qint64 timestamp)
                 // set timestamp
                 d->elapsedTimer.start();
             }
+            onSeek(d->currentTimestamp);
         }
     }
 }
