@@ -85,6 +85,8 @@ namespace Const
     KERNEL_API extern const char *TailhookPosition;
     KERNEL_API extern const char *CanopyOpen;
 
+    KERNEL_API extern const char *LightStates;
+
     // Information simulation variables (SimConnect)
     KERNEL_API extern const char *Title;
     KERNEL_API extern const char *ATCId;

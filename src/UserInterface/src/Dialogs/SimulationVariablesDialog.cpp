@@ -33,6 +33,7 @@
 #include "../../../SkyConnect/src/Connect.h"
 #include "../Widgets/AircraftVariablesWidget.h"
 #include "../Widgets/ControlVariablesWidget.h"
+#include "../Widgets/LightVariablesWidget.h"
 #include "../Widgets/FlightInformationWidget.h"
 #include "SimulationVariablesDialog.h"
 #include "ui_SimulationVariablesDialog.h"
@@ -101,8 +102,11 @@ void SimulationVariablesDialog::initUi() noexcept
     ControlVariablesWidget *controlVariablesWidget = new ControlVariablesWidget(d->skyConnect, this);
     ui->simulationVariablesTab->addTab(controlVariablesWidget, tr("&Controls"));
 
+    LightVariablesWidget *lightVariablesWidget = new LightVariablesWidget(d->skyConnect, this);
+    ui->simulationVariablesTab->addTab(lightVariablesWidget, tr("&Lights"));
+
     FlightInformationWidget *flightInformationWidget = new FlightInformationWidget(d->skyConnect, this);
-    ui->simulationVariablesTab->addTab(flightInformationWidget, tr("Flight &Information"));
+    ui->simulationVariablesTab->addTab(flightInformationWidget, tr("&Flight Information"));
 }
 
 void SimulationVariablesDialog::updateUi() noexcept

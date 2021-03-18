@@ -183,6 +183,9 @@ const AircraftData &Aircraft::interpolateAircraftData(qint64 timestamp) const no
         d->currentAircraftData.tailhookPosition = SkyMath::interpolateLinear(p1->tailhookPosition, p2->tailhookPosition, tn);
         d->currentAircraftData.canopyOpen = SkyMath::interpolateLinear(p1->canopyOpen, p2->canopyOpen, tn);
 
+        // No interpolation for light states
+        d->currentAircraftData.lightStates = p1->lightStates;
+
         d->currentAircraftData.timestamp = timestamp;
 
     } else {
