@@ -44,7 +44,6 @@ public:
 
     static Settings *instance;
     static constexpr double DefaultRecordSampleRate = SampleRate::toValue(SampleRate::SampleRate::Auto);
-    static constexpr double DefaultPlaybackSampleRate = SampleRate::toValue(SampleRate::SampleRate::Auto);
     static constexpr bool DefaultWindowStayOnTopEnabled = false;
     static constexpr int DefaultPreviewInfoDialogCount = 3;
     static constexpr int PreviewInfoDialogBase = 10;
@@ -96,25 +95,6 @@ void Settings::setRecordSampleRate(SampleRate::SampleRate sampleRate) noexcept
     }
 }
 
-SampleRate::SampleRate Settings::getPlaybackSampleRate() const noexcept
-{
-    return SampleRate::fromValue(d->playbackSampleRateValue);
-}
-
-double Settings::getPlaybackSampleRateValue() const noexcept
-{
-    return d->playbackSampleRateValue;
-}
-
-void Settings::setPlaybackSampleRate(SampleRate::SampleRate sampleRate) noexcept
-{
-    double sampleRateValue = SampleRate::toValue(sampleRate);
-    if (d->playbackSampleRateValue != sampleRateValue) {
-        d->playbackSampleRateValue = SampleRate::toValue(sampleRate);
-        emit playbackSampleRateChanged(sampleRate);
-    }
-}
-
 bool Settings::isWindowStaysOnTopEnabled() const noexcept
 {
     return d->windowStayOnTopEnabled;
@@ -149,7 +129,6 @@ void Settings::store() noexcept
     d->settings.beginGroup("Sampling");
     {
         d->settings.setValue("RecordSampleRate", d->recordSampleRateValue);
-        d->settings.setValue("PlaybackSampleRate", d->playbackSampleRateValue);
     }
     d->settings.endGroup();
     d->settings.beginGroup("Window");
@@ -184,11 +163,6 @@ void Settings::restore() noexcept
         if (!ok) {
             qWarning("The record sample rate in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultRecordSampleRate);
             d->recordSampleRateValue = SettingsPrivate::DefaultRecordSampleRate;
-        }
-        d->playbackSampleRateValue = d->settings.value("PlaybackSampleRate", SettingsPrivate::DefaultPlaybackSampleRate).toDouble(&ok);
-        if (!ok) {
-            qWarning("The playback sample rate in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultPlaybackSampleRate);
-            d->playbackSampleRateValue = SettingsPrivate::DefaultPlaybackSampleRate;
         }
     }
     d->settings.endGroup();

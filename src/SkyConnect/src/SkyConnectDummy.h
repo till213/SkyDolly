@@ -51,7 +51,6 @@ protected:
     virtual void onRecordingPaused(bool paused ) noexcept override;
     virtual void onReplayPaused(bool paused) noexcept override;
     virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate ) noexcept override;
-    virtual void onPlaybackSampleRateChanged(SampleRate::SampleRate sampleRate ) noexcept override;
 
     virtual bool sendAircraftData(qint64 currentTimestamp ) noexcept override;
     virtual bool isConnectedWithSim() const noexcept override;

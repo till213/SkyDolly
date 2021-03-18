@@ -464,11 +464,6 @@ void MainWindow::updateMainWindow() noexcept
     } else {
         ui->recordAction->setToolTip(tr("Record [auto sample rate]"));
     }
-    if (Settings::getInstance().getRecordSampleRate() != SampleRate::SampleRate::Auto) {
-        ui->playAction->setToolTip(tr("Play [@%1 Hz]").arg(Settings::getInstance().getPlaybackSampleRateValue()));
-    } else {
-        ui->playAction->setToolTip(tr("Record [auto playback rate]"));
-    }
 }
 
 void MainWindow::on_importCSVAction_triggered() noexcept

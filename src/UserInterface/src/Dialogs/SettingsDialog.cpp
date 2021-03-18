@@ -82,22 +82,6 @@ void SettingsDialog::initUi() noexcept
     ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz45), tr("45 Hz"));
     ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz50), tr("50 Hz"));
     ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz60), tr("60 Hz"));
-
-
-    // Playback
-    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Auto), tr("Auto"));
-    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz1), tr("1 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz2), tr("2 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz5), tr("5 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz10), tr("10 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz15), tr("15 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz20), tr("20 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz24), tr("24 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz25), tr("25 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz30), tr("30 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz45), tr("45 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz50), tr("50 Hz"));
-    ui->playbackFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz60), tr("60 Hz"));
 }
 
 void SettingsDialog::frenchConnection() noexcept
@@ -111,11 +95,9 @@ void SettingsDialog::frenchConnection() noexcept
 void SettingsDialog::updateUi() noexcept
 {
     ui->recordFrequencyComboBox->setCurrentIndex(Enum::toUnderlyingType(Settings::getInstance().getRecordSampleRate()));
-    ui->playbackFrequencyComboBox->setCurrentIndex(Enum::toUnderlyingType(Settings::getInstance().getPlaybackSampleRate()));
 }
 
 void SettingsDialog::handleAccepted() noexcept
 {
     Settings::getInstance().setRecordSampleRate(static_cast<SampleRate::SampleRate>(ui->recordFrequencyComboBox->currentIndex()));
-    Settings::getInstance().setPlaybackSampleRate(static_cast<SampleRate::SampleRate>(ui->playbackFrequencyComboBox->currentIndex()));
 }

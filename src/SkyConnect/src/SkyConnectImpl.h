@@ -54,7 +54,6 @@ protected:
     virtual void onRecordingPaused(bool paused) override;
     virtual void onReplayPaused(bool paused) override;
     virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) override;
-    virtual void onPlaybackSampleRateChanged(SampleRate::SampleRate sampleRate) override;
 
     virtual bool sendAircraftData(qint64 currentTimestamp) override;
     virtual bool connectWithSim() override;
@@ -75,7 +74,6 @@ private:
     bool sendAircraftData();
     void replay();
     void updateRecordFrequency(SampleRate::SampleRate sampleRate);
-    void updatePlaybackFrequency(SampleRate::SampleRate sampleRate);
 
     static void CALLBACK dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context);
 };

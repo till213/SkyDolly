@@ -341,73 +341,141 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="285"/>
-        <source>Plane Altitude Above Ground [Feet]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="297"/>
-        <source>Environment</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="308"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="430"/>
         <source>Ground Altitude [Feet]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="328"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="450"/>
         <source>Temperature [° Celcius]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="348"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="470"/>
         <source>Total Air Temperature [° Celcius]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="368"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="490"/>
         <source>Wind Velocity [Knots]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="388"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="510"/>
         <source>Wind Direction [°]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="408"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="530"/>
         <source>Precipitation State</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="441"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="397"/>
         <source>In Clouds</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="454"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="285"/>
+        <source>Altitude Above Ground [Feet]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="297"/>
+        <source>Environment (At Start)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="308"/>
         <source>Visibility [Metres]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="474"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="328"/>
         <source>Sea Level Pressure [hPa]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="494"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="348"/>
         <source>Pitot Icing [%]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="514"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.ui" line="368"/>
         <source>Structural Icing [%]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Widgets/FlightInformationWidget.cpp" line="49"/>
         <source>Simulation Variables</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>LightVariablesWidget</name>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="26"/>
+        <source>Lights</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="35"/>
+        <source>Mask</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="60"/>
+        <source>Navigation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="70"/>
+        <source>Panel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="80"/>
+        <source>Beacon</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="90"/>
+        <source>Recognition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="100"/>
+        <source>Landing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="110"/>
+        <source>Wing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="120"/>
+        <source>Taxi</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="130"/>
+        <source>Logo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="140"/>
+        <source>Strobe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="150"/>
+        <source>Cabin</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -625,13 +693,13 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.ui" line="408"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="521"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="525"/>
         <source>Export CSV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.ui" line="413"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="497"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="501"/>
         <source>Import CSV</source>
         <translation type="unfinished"></translation>
     </message>
@@ -661,8 +729,13 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="467"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="468"/>
         <source>Play [@%1 Hz]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="470"/>
+        <source>Record [auto playback rate]</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -685,79 +758,80 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="84"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="72"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="88"/>
         <source>Auto</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="72"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="87"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="73"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="89"/>
         <source>1 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="73"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="88"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="74"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="90"/>
         <source>2 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="74"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="89"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="75"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="91"/>
         <source>5 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="75"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="90"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="76"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="92"/>
         <source>10 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="76"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="91"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="77"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="93"/>
         <source>15 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="77"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="92"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="78"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="94"/>
         <source>20 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="78"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="93"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="79"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="95"/>
         <source>24 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="79"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="94"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="80"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="96"/>
         <source>25 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="80"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="95"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="81"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="97"/>
         <source>30 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="81"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="96"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="82"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="98"/>
         <source>45 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="82"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="97"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="83"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="99"/>
         <source>50 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="83"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="98"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="84"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="100"/>
         <source>60 Hz</source>
         <translation type="unfinished"></translation>
     </message>
@@ -765,171 +839,171 @@ MIT License</source>
 <context>
     <name>SimTypes</name>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="79"/>
-        <location filename="../src/Kernel/src/SimTypes.h" line="166"/>
-        <location filename="../src/Kernel/src/SimTypes.h" line="196"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="93"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="180"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="210"/>
         <source>Unknown</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="85"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="99"/>
         <source>Concrete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="88"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="102"/>
         <source>Grass</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="91"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="105"/>
         <source>Water</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="94"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="108"/>
         <source>Bumpy grass</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="97"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="111"/>
         <source>Asphalt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="100"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="114"/>
         <source>Short grass</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="103"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="117"/>
         <source>Long grass</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="106"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="120"/>
         <source>Hard turf</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="109"/>
-        <location filename="../src/Kernel/src/SimTypes.h" line="208"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="123"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="222"/>
         <source>Snow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="112"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="126"/>
         <source>Ice</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="115"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="129"/>
         <source>Urban</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="118"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="132"/>
         <source>Forest</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="121"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="135"/>
         <source>Dirt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="124"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="138"/>
         <source>Coral</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="127"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="141"/>
         <source>Gravel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="130"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="144"/>
         <source>Oil treated</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="133"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="147"/>
         <source>Steel mats</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="136"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="150"/>
         <source>Bituminus</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="139"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="153"/>
         <source>Brick</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="142"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="156"/>
         <source>Macadam</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="145"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="159"/>
         <source>Planks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="148"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="162"/>
         <source>Sand</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="151"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="165"/>
         <source>Shale</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="154"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="168"/>
         <source>Tarmac</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="157"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="171"/>
         <source>Wright flyer track</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="172"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="186"/>
         <source>Piston</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="175"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="189"/>
         <source>Jet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="178"/>
-        <location filename="../src/Kernel/src/SimTypes.h" line="202"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="192"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="216"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="181"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="195"/>
         <source>Helo (Bell) turbine</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="184"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="198"/>
         <source>Unsupported</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="187"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="201"/>
         <source>Turboprop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/SimTypes.h" line="205"/>
+        <location filename="../src/Kernel/src/SimTypes.h" line="219"/>
         <source>Rain</source>
         <translation type="unfinished"></translation>
     </message>
@@ -938,42 +1012,47 @@ MIT License</source>
     <name>SimulationVariablesDialog</name>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.ui" line="20"/>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="51"/>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="52"/>
         <source>Simulation Variables</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="99"/>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="100"/>
         <source>&amp;Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="102"/>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="103"/>
         <source>&amp;Controls</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="105"/>
-        <source>Flight &amp;Information</source>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="106"/>
+        <source>&amp;Lights</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="118"/>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="109"/>
+        <source>&amp;Flight Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="122"/>
         <source>RECORDING</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="121"/>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="125"/>
         <source>RECORDING PAUSED</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="124"/>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="128"/>
         <source>PLAYBACK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="127"/>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="131"/>
         <source>PLAYPACK PAUSED</source>
         <translation type="unfinished"></translation>
     </message>

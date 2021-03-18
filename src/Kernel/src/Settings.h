@@ -52,10 +52,6 @@ public:
     double getRecordSampleRateValue() const noexcept;
     void setRecordSampleRate(SampleRate::SampleRate sampleRate) noexcept;
 
-    SampleRate::SampleRate getPlaybackSampleRate() const noexcept;
-    double getPlaybackSampleRateValue() const noexcept;
-    void setPlaybackSampleRate(SampleRate::SampleRate sampleRate) noexcept;
-
     bool isWindowStaysOnTopEnabled() const noexcept;
     void setWindowStaysOnTopEnabled(bool enable) noexcept;
 
