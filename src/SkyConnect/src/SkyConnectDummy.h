@@ -49,7 +49,7 @@ protected:
     virtual void onStopReplay() noexcept override;
     virtual void onSeek(qint64 currentTimestamp ) noexcept override;
     virtual void onRecordingPaused(bool paused ) noexcept override;
-    virtual void onReplayPaused() noexcept override;
+    virtual void onReplayPaused(bool paused) noexcept override;
     virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate ) noexcept override;
     virtual void onPlaybackSampleRateChanged(SampleRate::SampleRate sampleRate ) noexcept override;
 

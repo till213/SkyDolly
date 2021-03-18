@@ -124,7 +124,7 @@ void AbstractSkyConnect::startDataSample() noexcept
         d->lastSamplesPerSecondIndex = 0;
         d->currentTimestamp = 0;
         d->elapsedTimer.invalidate();
-        if (d->recordSampleRate != SampleRate::AutoValue) {
+        if (!isAutoRecordSampleRate()) {
             d->timer.start(d->recordIntervalMSec);
         }
         onStartDataSample();
@@ -147,16 +147,15 @@ void AbstractSkyConnect::startReplay(bool fromStart) noexcept
     }
     if (isConnectedWithSim()) {
         setState(Connect::State::Playback);
-        d->timer.setInterval(d->playbackIntervalMSec);
-
         if (fromStart) {
             d->elapsedTime = 0;
             setCurrentTimestamp(0);
         }
 
         d->elapsedTimer.invalidate();
-        d->timer.start();
-
+        if (!isAutoPlaybackSampleRate()) {
+            d->timer.start(d->playbackIntervalMSec);
+        }
         onStartReplay(d->currentTimestamp);
 
     } else {
@@ -203,6 +202,7 @@ void AbstractSkyConnect::setPaused(bool enabled) noexcept
                 d->elapsedTimer.invalidate();
             }
             setState(newState);
+            onReplayPaused(true);
             break;
          default:
             // No state change
@@ -223,6 +223,7 @@ void AbstractSkyConnect::setPaused(bool enabled) noexcept
             newState = Connect::State::Playback;
             d->elapsedTimer.start();
             setState(newState);
+            onReplayPaused(false);
             break;
          default:
             // No state change
@@ -348,6 +349,17 @@ bool AbstractSkyConnect::isElapsedTimerRunning() const noexcept
 {
     return d->elapsedTimer.isValid();
 }
+
+bool AbstractSkyConnect::isAutoRecordSampleRate() const noexcept
+{
+    return d->recordSampleRate == SampleRate::AutoValue;
+}
+
+bool AbstractSkyConnect::isAutoPlaybackSampleRate() const noexcept
+{
+    return d->playbackSampleRate == SampleRate::AutoValue;
+}
+
 void AbstractSkyConnect::startElapsedTimer() const noexcept
 {
      d->elapsedTimer.start();
@@ -374,7 +386,7 @@ void AbstractSkyConnect::updateCurrentTimestamp() noexcept
 
 const AircraftData &AbstractSkyConnect::updateCurrentAircraftData() noexcept
 {
-    d->currentAircraftData = std::move(d->aircraft.getAircraftData(getCurrentTimestamp()));
+    d->currentAircraftData = std::move(d->aircraft.interpolateAircraftData(getCurrentTimestamp()));
     return d->currentAircraftData;
 }
 
@@ -402,7 +414,7 @@ void AbstractSkyConnect::handleRecordSampleRateChanged(SampleRate::SampleRate sa
     d->recordSampleRate = SampleRate::toValue(sampleRate);
     d->recordIntervalMSec = SampleRate::toInterval(d->recordSampleRate);
     if (d->state == Connect::State::Recording || d->state == Connect::State::RecordingPaused) {
-        if (sampleRate != SampleRate::SampleRate::Auto) {
+        if (!isAutoRecordSampleRate()) {
             d->timer.setInterval(d->recordIntervalMSec);
             if (!d->timer.isActive()) {
                 d->timer.start();
@@ -419,7 +431,14 @@ void AbstractSkyConnect::handlePlaybackSampleRateChanged(SampleRate::SampleRate 
     d->playbackSampleRate = SampleRate::toValue(sampleRate);
     d->playbackIntervalMSec = SampleRate::toInterval(d->playbackSampleRate);
     if (d->state == Connect::State::Playback || d->state == Connect::State::PlaybackPaused) {
-        d->timer.setInterval(d->playbackIntervalMSec);
+        if (!isAutoPlaybackSampleRate()) {
+            d->timer.setInterval(d->playbackIntervalMSec);
+            if (!d->timer.isActive()) {
+                d->timer.start();
+            }
+        } else {
+            d->timer.stop();
+        }
         onPlaybackSampleRateChanged(sampleRate);
     }
 }

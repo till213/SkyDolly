@@ -131,7 +131,7 @@
       </size>
      </property>
      <property name="title">
-      <string>Forces</string>
+      <string>Velocity</string>
      </property>
      <layout class="QFormLayout" name="formLayout_5">
       <item row="0" column="0">

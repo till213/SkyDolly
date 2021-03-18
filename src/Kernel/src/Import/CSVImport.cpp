@@ -97,7 +97,7 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft)
                         if (ok) {
                             aircraftData.heading = doubleValue;
                         }
-                    // Forces
+                    // Velocity
                     } else if (header == Const::VelocityBodyX) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {

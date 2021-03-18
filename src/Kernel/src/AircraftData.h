@@ -42,7 +42,7 @@ struct KERNEL_API AircraftData
     double bank;
     double heading;
 
-    // Forces
+    // Velocity
     double velocityBodyX;
     double velocityBodyY;
     double velocityBodyZ;

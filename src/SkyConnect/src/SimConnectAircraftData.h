@@ -40,7 +40,7 @@ struct SimConnectAircraftData
     double bank;
     double heading;
 
-    // Forces
+    // Velocity
     double velocityBodyX;
     double velocityBodyY;
     double velocityBodyZ;

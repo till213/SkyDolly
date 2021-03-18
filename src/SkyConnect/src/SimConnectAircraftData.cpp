@@ -40,7 +40,7 @@ void SimConnectAircraftData::addToDataDefinition(HANDLE simConnectHandle)
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::Bank, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::Heading, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
 
-    // Forces
+    // Velocity
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::VelocityBodyX, "Feet per Second", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::VelocityBodyY, "Feet per Second",::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::VelocityBodyZ, "Feet per Second",::SIMCONNECT_DATATYPE_FLOAT64);
