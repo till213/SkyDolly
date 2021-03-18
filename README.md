@@ -10,7 +10,7 @@ The connection is made via SimConnect, a standard API introduced with Flight Sim
 
 ## Features
 * Record / Pause / Play
-* Variable sample rates, for both recording and playback
+* Settable recording sample rate: fixed or variable ("auto")
 * Adjustable replay speed ("slow motion", "timelapse")
 * Position and basic flight control simulation variables (ailerons, rudder, flaps, gears, ...) are recorded
 * Basic CSV import & export
