@@ -66,6 +66,7 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft)
 
                     double doubleValue;
                     int    intValue;
+                    qint64 longLongValue;
                     // Position
                     if (header == Const::Latitude) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
@@ -276,6 +277,12 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft)
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.canopyOpen = doubleValue;
+                        }
+                    // Lights
+                    } else if (header == Const::LightStates) {
+                        longLongValue = values.at(columnIndex).toLongLong(&ok);
+                        if (ok) {
+                            aircraftData.lightStates = longLongValue;
                         }
                     // Timestamp
                     } else if (header == Const::Timestamp) {

@@ -77,13 +77,16 @@ struct SimConnectAircraftData
     double spoilersHandlePosition;
     qint32 flapsHandleIndex;
 
-    // // Gear, brakes & handles
+    // Gear, brakes & handles
     qint32 gearHandlePosition;
     double brakeLeftPosition;
     double brakeRightPosition;
     double waterRudderHandlePosition;
     double tailhookPosition;
     double canopyOpen;
+
+    // Lights
+    qint64 lightStates;
 
     inline AircraftData toAircraftData() const {
         AircraftData aircraftData;
@@ -137,6 +140,8 @@ struct SimConnectAircraftData
         aircraftData.tailhookPosition = SkyMath::fromPercent(tailhookPosition);
         aircraftData.canopyOpen = SkyMath::fromPercent(canopyOpen);
 
+        aircraftData.lightStates = lightStates;
+
         return aircraftData;
     }
 
@@ -187,6 +192,8 @@ struct SimConnectAircraftData
         waterRudderHandlePosition = SkyMath::toPosition(aircraftData.waterRudderHandlePosition);
         tailhookPosition = SkyMath::toPercent(aircraftData.tailhookPosition);
         canopyOpen = SkyMath::toPercent(aircraftData.canopyOpen);
+
+        lightStates = aircraftData.lightStates;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle);

@@ -91,6 +91,9 @@ struct KERNEL_API AircraftData
     quint8 tailhookPosition;
     quint8 canopyOpen;
 
+    // Lights
+    qint64 lightStates;
+
     // In milliseconds since the start of recording
     qint64 timestamp;
 

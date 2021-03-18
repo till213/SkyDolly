@@ -85,4 +85,7 @@ void SimConnectAircraftData::addToDataDefinition(HANDLE simConnectHandle)
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::WaterRudderHandlePosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::TailhookPosition, "Percent", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::CanopyOpen, "Percent", ::SIMCONNECT_DATATYPE_FLOAT64);
+
+    // Lights
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::LightStates, "Mask", ::SIMCONNECT_DATATYPE_INT64);
 }

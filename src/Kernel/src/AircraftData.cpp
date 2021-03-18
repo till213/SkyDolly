@@ -67,6 +67,7 @@ AircraftData::AircraftData(double latitude, double longitude, double altitude) n
       waterRudderHandlePosition(0),
       tailhookPosition(0),
       canopyOpen(0),
+      lightStates(0),
       timestamp(0)
 {
     this->latitude = latitude;

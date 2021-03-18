@@ -48,6 +48,9 @@ target_sources(UserInterface
         src/Widgets/FlightInformationWidget.cpp
         src/Widgets/FlightInformationWidget.h
         src/Widgets/FlightInformationWidget.ui
+        src/Widgets/LightVariablesWidget.cpp
+        src/Widgets/LightVariablesWidget.h
+        src/Widgets/LightVariablesWidget.ui
 )
 
 target_link_libraries(UserInterface PRIVATE ${USERINTERFACE_LIBS})

@@ -71,6 +71,8 @@ const char *Const::WaterRudderHandlePosition = "Water Rudder Handle Position";
 const char *Const::TailhookPosition = "Tailhook Position";
 const char *Const::CanopyOpen = "Canopy Open";
 
+const char *Const::LightStates = "Light States";
+
 const char *Const::Title= "Title";
 const char *Const::ATCId= "ATC Id";
 const char *Const::ATCAirline= "ATC Airline";
