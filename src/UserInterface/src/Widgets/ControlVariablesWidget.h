@@ -59,7 +59,7 @@ private:
     const AircraftData &getCurrentAircraftData() const;
 
 private slots:
-    void updateAircraftDataUi();
+    void updateControlDataUi();
 };
 
 #endif // CONTROLVARIABLESWIDGET_H

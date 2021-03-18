@@ -61,7 +61,7 @@ private:
     const AircraftData &getCurrentAircraftData() const;
 
 private slots:
-    void updateAircraftDataUi();
+    void updateLightDataUi();
 };
 
 #endif // LIGHTVARIABLESWIDGET_H

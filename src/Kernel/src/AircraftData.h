@@ -26,7 +26,9 @@
 #define AIRCRAFTDATA_H
 
 #include <QtGlobal>
+#include <QFlags>
 
+#include "SimTypes.h"
 #include "KernelLib.h"
 
 struct KERNEL_API AircraftData
@@ -92,7 +94,7 @@ struct KERNEL_API AircraftData
     quint8 canopyOpen;
 
     // Lights
-    qint64 lightStates;
+    SimTypes::LightStates lightStates;
 
     // In milliseconds since the start of recording
     qint64 timestamp;

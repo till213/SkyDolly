@@ -25,6 +25,7 @@
 #include <QIODevice>
 // Implements the % operator for string concatenation
 #include <QStringBuilder>
+#include <QFlags>
 
 #include "../Const.h"
 #include "../AircraftData.h"
@@ -66,7 +67,6 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft)
 
                     double doubleValue;
                     int    intValue;
-                    qint64 longLongValue;
                     // Position
                     if (header == Const::Latitude) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
@@ -280,9 +280,9 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft)
                         }
                     // Lights
                     } else if (header == Const::LightStates) {
-                        longLongValue = values.at(columnIndex).toLongLong(&ok);
+                        intValue = values.at(columnIndex).toInt(&ok);
                         if (ok) {
-                            aircraftData.lightStates = longLongValue;
+                            aircraftData.lightStates = SimTypes::LightStates(intValue);
                         }
                     // Timestamp
                     } else if (header == Const::Timestamp) {

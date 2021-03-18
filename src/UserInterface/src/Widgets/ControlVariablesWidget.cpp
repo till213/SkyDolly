@@ -68,10 +68,10 @@ void ControlVariablesWidget::showEvent(QShowEvent *event)
     const Aircraft &aircraft = d->skyConnect.getAircraft();
     // Signal sent while recording
     connect(&aircraft, &Aircraft::dataChanged,
-            this, &ControlVariablesWidget::updateAircraftDataUi);
+            this, &ControlVariablesWidget::updateControlDataUi);
     // Signal sent while playing
     connect(&d->skyConnect, &SkyConnectIntf::aircraftDataSent,
-            this, &ControlVariablesWidget::updateAircraftDataUi);
+            this, &ControlVariablesWidget::updateControlDataUi);
 }
 
 void ControlVariablesWidget::hideEvent(QHideEvent *event)
@@ -80,9 +80,9 @@ void ControlVariablesWidget::hideEvent(QHideEvent *event)
 
     const Aircraft &aircraft = d->skyConnect.getAircraft();
     disconnect(&aircraft, &Aircraft::dataChanged,
-               this, &ControlVariablesWidget::updateAircraftDataUi);
+               this, &ControlVariablesWidget::updateControlDataUi);
     disconnect(&d->skyConnect, &SkyConnectIntf::aircraftDataSent,
-            this, &ControlVariablesWidget::updateAircraftDataUi);
+            this, &ControlVariablesWidget::updateControlDataUi);
 }
 
 // PRIVATE
@@ -125,7 +125,7 @@ void ControlVariablesWidget::initUi()
 
 void ControlVariablesWidget::updateUi()
 {
-    updateAircraftDataUi();
+    updateControlDataUi();
 }
 
 const AircraftData &ControlVariablesWidget::getCurrentAircraftData() const
@@ -142,7 +142,7 @@ const AircraftData &ControlVariablesWidget::getCurrentAircraftData() const
 
 // PRIVATE SLOTS
 
-void ControlVariablesWidget::updateAircraftDataUi()
+void ControlVariablesWidget::updateControlDataUi()
 {
     const AircraftData &aircraftData = getCurrentAircraftData();
 

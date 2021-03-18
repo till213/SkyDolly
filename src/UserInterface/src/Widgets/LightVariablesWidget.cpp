@@ -68,10 +68,10 @@ void LightVariablesWidget::showEvent(QShowEvent *event)
     const Aircraft &aircraft = d->skyConnect.getAircraft();
     // Signal sent while recording
     connect(&aircraft, &Aircraft::dataChanged,
-            this, &LightVariablesWidget::updateAircraftDataUi);
+            this, &LightVariablesWidget::updateLightDataUi);
     // Signal sent while playing
     connect(&d->skyConnect, &SkyConnectIntf::aircraftDataSent,
-            this, &LightVariablesWidget::updateAircraftDataUi);
+            this, &LightVariablesWidget::updateLightDataUi);
 }
 
 void LightVariablesWidget::hideEvent(QHideEvent *event)
@@ -80,9 +80,9 @@ void LightVariablesWidget::hideEvent(QHideEvent *event)
 
     const Aircraft &aircraft = d->skyConnect.getAircraft();
     disconnect(&aircraft, &Aircraft::dataChanged,
-               this, &LightVariablesWidget::updateAircraftDataUi);
+               this, &LightVariablesWidget::updateLightDataUi);
     disconnect(&d->skyConnect, &SkyConnectIntf::aircraftDataSent,
-            this, &LightVariablesWidget::updateAircraftDataUi);
+            this, &LightVariablesWidget::updateLightDataUi);
 }
 
 // PRIVATE
@@ -90,11 +90,42 @@ void LightVariablesWidget::hideEvent(QHideEvent *event)
 void LightVariablesWidget::initUi()
 {
     ui->lightStateLineEdit->setToolTip(Const::LightStates);
+
+    // Make the light state checkboxes checkable, but not for the user
+    ui->navigationCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->navigationCheckBox->setFocusPolicy(Qt::NoFocus);
+
+    ui->beaconCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->beaconCheckBox->setFocusPolicy(Qt::NoFocus);
+
+    ui->landingCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->landingCheckBox->setFocusPolicy(Qt::NoFocus);
+
+    ui->taxiCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->taxiCheckBox->setFocusPolicy(Qt::NoFocus);
+
+    ui->strobeCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->strobeCheckBox->setFocusPolicy(Qt::NoFocus);
+
+    ui->panelCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->panelCheckBox->setFocusPolicy(Qt::NoFocus);
+
+    ui->recognitionCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->recognitionCheckBox->setFocusPolicy(Qt::NoFocus);
+
+    ui->wingCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->wingCheckBox->setFocusPolicy(Qt::NoFocus);
+
+    ui->logoCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->logoCheckBox->setFocusPolicy(Qt::NoFocus);
+
+    ui->cabinCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->cabinCheckBox->setFocusPolicy(Qt::NoFocus);
 }
 
 void LightVariablesWidget::updateUi()
 {
-    updateAircraftDataUi();
+    updateLightDataUi();
 }
 
 const AircraftData &LightVariablesWidget::getCurrentAircraftData() const
@@ -111,10 +142,21 @@ const AircraftData &LightVariablesWidget::getCurrentAircraftData() const
 
 // PRIVATE SLOTS
 
-void LightVariablesWidget::updateAircraftDataUi()
+void LightVariablesWidget::updateLightDataUi()
 {
     const AircraftData &aircraftData = getCurrentAircraftData();
 
     // Lights
     ui->lightStateLineEdit->setText(QString::number(aircraftData.lightStates));
+
+    ui->navigationCheckBox->setChecked(aircraftData.lightStates.testFlag(SimTypes::LightState::Navigation));
+    ui->beaconCheckBox->setChecked(aircraftData.lightStates.testFlag(SimTypes::LightState::Beacon));
+    ui->landingCheckBox->setChecked(aircraftData.lightStates.testFlag(SimTypes::LightState::Landing));
+    ui->taxiCheckBox->setChecked(aircraftData.lightStates.testFlag(SimTypes::LightState::Taxi));
+    ui->strobeCheckBox->setChecked(aircraftData.lightStates.testFlag(SimTypes::LightState::Strobe));
+    ui->panelCheckBox->setChecked(aircraftData.lightStates.testFlag(SimTypes::LightState::Panel));
+    ui->recognitionCheckBox->setChecked(aircraftData.lightStates.testFlag(SimTypes::LightState::Recognition));
+    ui->wingCheckBox->setChecked(aircraftData.lightStates.testFlag(SimTypes::LightState::Wing));
+    ui->logoCheckBox->setChecked(aircraftData.lightStates.testFlag(SimTypes::LightState::Logo));
+    ui->cabinCheckBox->setChecked(aircraftData.lightStates.testFlag(SimTypes::LightState::Cabin));
 }

@@ -69,7 +69,8 @@
   * Body Velocity
   * Rotation Body Velocity
   * Tailhook
-  * Canopy  
+  * Canopy
+  * Lights (navigation, taxi, strobe, ...)
 - Reduce required memory for sample points by using integer data types instead of double values for selected simulation variables
 - Pause is enabled after CSV data import
 - A high precision timer is used to increase the sample accuracy
