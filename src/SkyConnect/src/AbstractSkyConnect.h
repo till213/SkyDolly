@@ -79,7 +79,6 @@ protected:
 
     bool isElapsedTimerRunning() const noexcept;
     bool isAutoRecordSampleRate() const noexcept;
-    bool isAutoPlaybackSampleRate() const noexcept;
     void startElapsedTimer() const noexcept;
     void resetElapsedTime(bool restart) noexcept;
     void updateCurrentTimestamp() noexcept;
@@ -93,7 +92,6 @@ protected:
     virtual void onRecordingPaused(bool paused) = 0;
     virtual void onReplayPaused(bool paused) = 0;
     virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) = 0;
-    virtual void onPlaybackSampleRateChanged(SampleRate::SampleRate sampleRate) = 0;
 
     virtual bool sendAircraftData(qint64 currentTimestamp) = 0;
     virtual bool isConnectedWithSim() const = 0;
@@ -110,7 +108,6 @@ private:
 
 private slots:
     void handleRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept;
-    void handlePlaybackSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept;
 };
 
 #endif // ABSTRACTSKYCONNECTIMPL_H

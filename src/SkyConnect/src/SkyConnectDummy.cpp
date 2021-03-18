@@ -86,11 +86,6 @@ void SkyConnectDummy::onRecordSampleRateChanged(SampleRate::SampleRate sampleRat
     Q_UNUSED(sampleRate)
 }
 
-void SkyConnectDummy::onPlaybackSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
-{
-    Q_UNUSED(sampleRate)
-}
-
 bool SkyConnectDummy::sendAircraftData(qint64 currentTimestamp) noexcept
 {
     Q_UNUSED(currentTimestamp)

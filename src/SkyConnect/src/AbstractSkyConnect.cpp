@@ -51,8 +51,6 @@ public:
           currentTimestamp(0),
           recordSampleRate(Settings::getInstance().getRecordSampleRateValue()),
           recordIntervalMSec(SampleRate::toInterval(recordSampleRate)),
-          playbackSampleRate(Settings::getInstance().getPlaybackSampleRateValue()),
-          playbackIntervalMSec(SampleRate::toInterval(playbackSampleRate)),
           timeScale(1.0),
           elapsedTime(0),
           lastSamplesPerSecondIndex(0)
@@ -68,8 +66,6 @@ public:
     double recordSampleRate;
     int    recordIntervalMSec;
     QElapsedTimer elapsedTimer;
-    double playbackSampleRate;
-    int    playbackIntervalMSec;
     double timeScale;
     qint64 elapsedTime;
     mutable int lastSamplesPerSecondIndex;
@@ -153,9 +149,6 @@ void AbstractSkyConnect::startReplay(bool fromStart) noexcept
         }
 
         d->elapsedTimer.invalidate();
-        if (!isAutoPlaybackSampleRate()) {
-            d->timer.start(d->playbackIntervalMSec);
-        }
         onStartReplay(d->currentTimestamp);
 
     } else {
@@ -355,11 +348,6 @@ bool AbstractSkyConnect::isAutoRecordSampleRate() const noexcept
     return d->recordSampleRate == SampleRate::AutoValue;
 }
 
-bool AbstractSkyConnect::isAutoPlaybackSampleRate() const noexcept
-{
-    return d->playbackSampleRate == SampleRate::AutoValue;
-}
-
 void AbstractSkyConnect::startElapsedTimer() const noexcept
 {
      d->elapsedTimer.start();
@@ -398,8 +386,6 @@ void AbstractSkyConnect::frenchConnection() noexcept
             this, &AbstractSkyConnect::processEvents);
     connect(&Settings::getInstance(), &Settings::recordSampleRateChanged,
             this, &AbstractSkyConnect::handleRecordSampleRateChanged);
-    connect(&Settings::getInstance(), &Settings::playbackSampleRateChanged,
-            this, &AbstractSkyConnect::handlePlaybackSampleRateChanged);
 }
 
 bool AbstractSkyConnect::hasRecordingStarted() const noexcept
@@ -426,19 +412,3 @@ void AbstractSkyConnect::handleRecordSampleRateChanged(SampleRate::SampleRate sa
     }
 }
 
-void AbstractSkyConnect::handlePlaybackSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
-{
-    d->playbackSampleRate = SampleRate::toValue(sampleRate);
-    d->playbackIntervalMSec = SampleRate::toInterval(d->playbackSampleRate);
-    if (d->state == Connect::State::Playback || d->state == Connect::State::PlaybackPaused) {
-        if (!isAutoPlaybackSampleRate()) {
-            d->timer.setInterval(d->playbackIntervalMSec);
-            if (!d->timer.isActive()) {
-                d->timer.start();
-            }
-        } else {
-            d->timer.stop();
-        }
-        onPlaybackSampleRateChanged(sampleRate);
-    }
-}
