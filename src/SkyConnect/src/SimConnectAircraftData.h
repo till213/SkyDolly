@@ -27,6 +27,7 @@
 
 #include <windows.h>
 
+#include "../../Kernel/src/SimTypes.h"
 #include "../../Kernel/src/SkyMath.h"
 #include "../../Kernel/src/AircraftData.h"
 
@@ -140,7 +141,10 @@ struct SimConnectAircraftData
         aircraftData.tailhookPosition = SkyMath::fromPercent(tailhookPosition);
         aircraftData.canopyOpen = SkyMath::fromPercent(canopyOpen);
 
-        aircraftData.lightStates = lightStates;
+        // Implementation note: downcast from 64 to 32 bit (QFlags only supports 'int')
+        // This should be sufficient for now, unless there will be more than 32 distinct
+        // lights
+        aircraftData.lightStates = SimTypes::LightStates(static_cast<int>(lightStates));
 
         return aircraftData;
     }
