@@ -77,9 +77,9 @@
 - A new recording statistics dialog has been added, also showing a recorded samples per second counter
 - New icons for record/play control actions
 - When recording sample rate is set to 1 Hz ("one sample per second") then the SimConnect request period is now also set to 1 Hz
-- A new "auto" recording and playback sample rate has been added 
+- A new "auto" recording sample rate has been added 
   * Recording: samples are collected in an event-based manner ("as they arrive")
-  * Playback: samples are sent for each visual frame (also event-based)
+  * Playback: samples are always sent "per visual frame"
 - Reorganise simulation variables in tabbed widget
 - Add additional flight information variables, captured once at start of recording
   * Airline (Callsign)
