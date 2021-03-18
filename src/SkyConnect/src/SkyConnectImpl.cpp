@@ -55,6 +55,7 @@ namespace
         SimStart,
         Pause,
         Crashed,
+        Frame,
         FreezeLatituteLongitude,
         FreezeAltitude,
         FreezeAttitude
@@ -114,7 +115,8 @@ void SkyConnectImpl::onStartReplay(qint64 currentTimestamp)
 {
     // "Freeze" the simulation: position and attitude only set by (interpolated)
     // sample points
-    setSimulationFrozen(true);
+    updatePlaybackFrequency(Settings::getInstance().getPlaybackSampleRate());
+    setSimulationFrozen(true);    
     if (currentTimestamp == 0) {
         setupInitialPosition();
 #ifdef DEBUG
@@ -125,6 +127,9 @@ void SkyConnectImpl::onStartReplay(qint64 currentTimestamp)
 
 void SkyConnectImpl::onStopReplay()
 {
+    if (isAutoPlaybackSampleRate()) {
+        ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::Frame));
+    }
     setSimulationFrozen(false);
 }
 
@@ -144,8 +149,10 @@ void SkyConnectImpl::onRecordingPaused(bool paused)
     updateRecordFrequency(Settings::getInstance().getRecordSampleRate());
 }
 
-void SkyConnectImpl::onReplayPaused()
+void SkyConnectImpl::onReplayPaused(bool paused)
 {
+    Q_UNUSED(paused)
+    updatePlaybackFrequency(Settings::getInstance().getPlaybackSampleRate());
 }
 
 void SkyConnectImpl::onRecordSampleRateChanged(SampleRate::SampleRate sampleRate)
@@ -155,7 +162,7 @@ void SkyConnectImpl::onRecordSampleRateChanged(SampleRate::SampleRate sampleRate
 
 void SkyConnectImpl::onPlaybackSampleRateChanged(SampleRate::SampleRate sampleRate)
 {
-    Q_UNUSED(sampleRate)
+    updatePlaybackFrequency(sampleRate);
 }
 
 bool SkyConnectImpl::sendAircraftData(qint64 currentTimestamp)
@@ -191,15 +198,9 @@ bool SkyConnectImpl::isConnectedWithSim() const
 
 void SkyConnectImpl::processEvents()
 {
-    switch (getState()) {
-    case Connect::State::Recording:
-        updateCurrentTimestamp();
-        break;
-    case Connect::State::Playback:
+    updateCurrentTimestamp();
+    if (getState() == Connect::State::Playback && !isAutoPlaybackSampleRate()) {
         replay();
-        break;
-    default:
-        break;
     }
 
     // Process system events
@@ -253,7 +254,7 @@ void SkyConnectImpl::setupRequestData()
 
 void SkyConnectImpl::setupInitialPosition()
 {
-    const AircraftData &aircraftData = getAircraft().getAircraftData(0);
+    const AircraftData &aircraftData = getAircraft().interpolateAircraftData(0);
     if (!aircraftData.isNull()) {
         // Set initial position
         SIMCONNECT_DATA_INITPOSITION initialPosition;
@@ -316,7 +317,6 @@ bool SkyConnectImpl::sendAircraftData()
 
 void SkyConnectImpl::replay()
 {
-    updateCurrentTimestamp();
     if (sendAircraftData()) {
         emit aircraftDataSent(getCurrentTimestamp());
     } else {
@@ -363,15 +363,45 @@ void SkyConnectImpl::updateRecordFrequency(SampleRate::SampleRate sampleRate)
     }
 }
 
+void SkyConnectImpl::updatePlaybackFrequency(SampleRate::SampleRate sampleRate)
+{
+    if (getState() == Connect::State::Playback) {
+
+        if (sampleRate == SampleRate::SampleRate::Auto) {
+            // Samples are sent every frame, using an event-based notification (variable frequency)
+            if (d->eventWidget == nullptr) {
+                d->eventWidget = std::make_unique<EventWidget>();
+                connect(d->eventWidget.get(), &EventWidget::simConnectEvent,
+                        this, &SkyConnectImpl::processEvents);
+                reconnectWithSim();
+            }
+            // Send aircraft position every visual frame
+            ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::Frame), "Frame");
+        } else if (d->eventWidget != nullptr) {
+            // Samples are sent using timer-based polling, with a fixed frequency
+            d->eventWidget.reset();
+            d->eventWidget = nullptr;
+            // Reconnecting with the simulator will also implicitly unsubscribe from the "Frame" event
+            // (simply by not subscribing again)
+            reconnectWithSim();
+        }
+
+    } else {
+        ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::Frame));
+    }
+}
+
 void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context)
 {
     Q_UNUSED(cbData);
 
     SkyConnectImpl *skyConnect = static_cast<SkyConnectImpl *>(context);
     SIMCONNECT_RECV_SIMOBJECT_DATA *objectData;
-    SIMCONNECT_RECV_EXCEPTION *exception;
     const SimConnectAircraftInfo *simConnectAircraftInfo;
     const SimConnectAircraftData *simConnectAircraftData;
+#ifdef DEBUG
+            SIMCONNECT_RECV_EXCEPTION *exception;
+#endif
 
     switch (receivedData->dwID)
     {
@@ -398,19 +428,19 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
 
                 case Event::Crashed:
 #ifdef DEBUG
-                qDebug("SIMCONNECT_RECV_ID_EVENT: CRASHED event");
+                    qDebug("SIMCONNECT_RECV_ID_EVENT: CRASHED event");
 #endif
-                switch (skyConnect->getState()) {
-                case Connect::State::Recording:
-                    skyConnect->stopDataSample();
+                    switch (skyConnect->getState()) {
+                    case Connect::State::Recording:
+                        skyConnect->stopDataSample();
+                        break;
+                    case Connect::State::Playback:
+                        skyConnect->stopReplay();
+                        break;
+                    default:
+                        break;
+                    }
                     break;
-                case Connect::State::Playback:
-                    skyConnect->stopReplay();
-                    break;
-                default:
-                    break;
-                }
-                break;
 
                 default:
                    break;
@@ -462,6 +492,15 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
             }
             break;
 
+        case SIMCONNECT_RECV_ID_EVENT_FRAME:
+            if (skyConnect->getState() == Connect::State::Playback && skyConnect->isAutoPlaybackSampleRate()) {
+                skyConnect->replay();
+            }
+#ifdef DEBUG
+        qDebug("SIMCONNECT_RECV_ID_EVENT_FRAME: FRAME event");
+#endif
+            break;
+
         case SIMCONNECT_RECV_ID_QUIT:
 #ifdef DEBUG
             qDebug("SIMCONNECT_RECV_ID_QUIT");
@@ -477,12 +516,12 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
 
         case SIMCONNECT_RECV_ID_EXCEPTION:
 #ifdef DEBUG
-        exception = static_cast<SIMCONNECT_RECV_EXCEPTION *>(receivedData);
+            exception = static_cast<SIMCONNECT_RECV_EXCEPTION *>(receivedData);
 
             qDebug("SIMCONNECT_RECV_ID_EXCEPTION: A server exception %lu happened: sender ID: %lu index: %lu data: %lu",
                    exception->dwException, exception->dwSendID, exception->dwIndex, cbData);
 #endif
-
+            break;
         case SIMCONNECT_RECV_ID_NULL:
 #ifdef DEBUG
             qDebug("SIMCONNECT_RECV_ID_NULL");

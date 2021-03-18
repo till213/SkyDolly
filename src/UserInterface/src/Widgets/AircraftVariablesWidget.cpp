@@ -135,7 +135,7 @@ void AircraftVariablesWidget::updateAircraftDataUi()
     ui->bankLineEdit->setText(QString::number(aircraftData.bank));
     ui->headingLineEdit->setText(QString::number(aircraftData.heading));
 
-    // Forces
+    // Velocity
     ui->velocityXLineEdit->setText(QString::number(aircraftData.velocityBodyX));
     ui->velocityYLineEdit->setText(QString::number(aircraftData.velocityBodyY));
     ui->velocityZLineEdit->setText(QString::number(aircraftData.velocityBodyZ));

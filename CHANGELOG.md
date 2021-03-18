@@ -70,13 +70,15 @@
   * Rotation Body Velocity
   * Tailhook
   * Canopy  
-- Reduce required memory for sample points by over 100% (96 bytes vs previous 200 bytes per sampled data point), by using integer data types instead of double values for selected simulation variables
+- Reduce required memory for sample points by using integer data types instead of double values for selected simulation variables
 - Pause is enabled after CSV data import
 - A high precision timer is used to increase the sample accuracy
 - A new recording statistics dialog has been added, also showing a recorded samples per second counter
 - New icons for record/play control actions
 - When recording sample rate is set to 1 Hz ("one sample per second") then the SimConnect request period is now also set to 1 Hz
-- A new "auto" recording sample rate has been added which collects samples "as they arrive" (variable sample rate)
+- A new "auto" recording and playback sample rate has been added 
+  * Recording: samples are collected in an event-based manner ("as they arrive")
+  * Playback: samples are sent for each visual frame (also event-based)
 - Reorganise simulation variables in tabbed widget
 - Add additional flight information variables, captured once at start of recording
   * Airline (Callsign)

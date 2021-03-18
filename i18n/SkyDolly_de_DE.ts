@@ -61,7 +61,7 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="134"/>
-        <source>Forces</source>
+        <source>Velocity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -625,13 +625,13 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.ui" line="408"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="520"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="521"/>
         <source>Export CSV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.ui" line="413"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="496"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="497"/>
         <source>Import CSV</source>
         <translation type="unfinished"></translation>
     </message>
@@ -651,17 +651,17 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="462"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="463"/>
         <source>Record [@%1 Hz]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="464"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="465"/>
         <source>Record [auto sample rate]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="466"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="467"/>
         <source>Play [@%1 Hz]</source>
         <translation type="unfinished"></translation>
     </message>

@@ -32,7 +32,8 @@ namespace SampleRate
     constexpr int AutoValue = 999.0;
 
     enum class SampleRate: int {
-        Hz1 = 0,
+        Auto = 0,
+        Hz1,
         Hz2,
         Hz5,
         Hz10,
@@ -44,11 +45,13 @@ namespace SampleRate
         Hz45,
         Hz50,
         Hz60,
-        Auto
+
     };
 
     inline constexpr double toValue(SampleRate sampleRate) noexcept {
         switch (sampleRate) {
+        case SampleRate::Auto:
+            return AutoValue;
         case SampleRate::Hz1:
             return 1.0;
         case SampleRate::Hz2:
@@ -73,8 +76,6 @@ namespace SampleRate
             return 50.0;
         case SampleRate::Hz60:
             return 60.0;
-        case SampleRate::Auto:
-            return AutoValue;
         default:
             return AutoValue;
         }

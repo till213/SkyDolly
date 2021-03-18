@@ -77,7 +77,9 @@ void SkyConnectDummy::onRecordingPaused(bool paused) noexcept {
     Q_UNUSED(paused)
 }
 
-void SkyConnectDummy::onReplayPaused() noexcept {}
+void SkyConnectDummy::onReplayPaused(bool paused) noexcept {
+    Q_UNUSED(paused)
+}
 
 void SkyConnectDummy::onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
 {

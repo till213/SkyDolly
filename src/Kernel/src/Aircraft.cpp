@@ -113,7 +113,7 @@ void Aircraft::clear()
     emit dataChanged();
 }
 
-const AircraftData &Aircraft::getAircraftData(qint64 timestamp) const noexcept
+const AircraftData &Aircraft::interpolateAircraftData(qint64 timestamp) const noexcept
 {
     const AircraftData *p0, *p1, *p2, *p3;
     const double Tension = 0.0;
@@ -138,7 +138,7 @@ const AircraftData &Aircraft::getAircraftData(qint64 timestamp) const noexcept
         // Heading: [0, 360] - discontinuity at 0/360
         d->currentAircraftData.heading = SkyMath::interpolateHermite360(p0->heading, p1->heading, p2->heading, p3->heading, tn, Tension);
 
-        // Forces
+        // Velocity
         d->currentAircraftData.velocityBodyX = SkyMath::interpolateLinear(p1->velocityBodyX, p2->velocityBodyX, tn);
         d->currentAircraftData.velocityBodyY = SkyMath::interpolateLinear(p1->velocityBodyY, p2->velocityBodyY, tn);
         d->currentAircraftData.velocityBodyZ = SkyMath::interpolateLinear(p1->velocityBodyZ, p2->velocityBodyZ, tn);

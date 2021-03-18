@@ -50,7 +50,7 @@ public:
     void upsertAircraftData(AircraftData aircraftData) noexcept;
     const AircraftData &getLastAircraftData() const noexcept;
     const QVector<AircraftData> getAllAircraftData() const noexcept;
-    const AircraftData &getAircraftData(qint64 timestamp) const noexcept;
+    const AircraftData &interpolateAircraftData(qint64 timestamp) const noexcept;
 
     void clear();
 
