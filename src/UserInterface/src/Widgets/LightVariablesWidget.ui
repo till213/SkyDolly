@@ -6,14 +6,17 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>242</width>
+    <height>205</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout" name="gridLayout_3">
+   <property name="sizeConstraint">
+    <enum>QLayout::SetMinimumSize</enum>
+   </property>
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox_8">
      <property name="minimumSize">
@@ -27,7 +30,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <property name="sizeConstraint">
-       <enum>QLayout::SetMinimumSize</enum>
+       <enum>QLayout::SetDefaultConstraint</enum>
       </property>
       <item row="0" column="0">
        <widget class="QLabel" name="label_55">
@@ -40,7 +43,7 @@
        <widget class="QLineEdit" name="lightStateLineEdit">
         <property name="minimumSize">
          <size>
-          <width>80</width>
+          <width>0</width>
           <height>0</height>
          </size>
         </property>
@@ -50,7 +53,7 @@
        </widget>
       </item>
       <item row="1" column="0" colspan="2">
-       <layout class="QFormLayout" name="formLayout">
+       <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
          <widget class="QCheckBox" name="navigationCheckBox">
           <property name="focusPolicy">
