@@ -30,6 +30,7 @@
 namespace SimTypes {
 
     enum class LightState {
+        None = 0x0000,
         Navigation = 0x0001,
         Beacon = 0x0002,
         Landing = 0x0004,

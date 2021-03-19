@@ -22,6 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <QFlags>
+
+#include "SimTypes.h"
 #include "AircraftData.h"
 
 // PUBLIC
@@ -67,7 +70,7 @@ AircraftData::AircraftData(double latitude, double longitude, double altitude) n
       waterRudderHandlePosition(0),
       tailhookPosition(0),
       canopyOpen(0),
-      lightStates(0),
+      lightStates(QFlags(SimTypes::LightState::None)),
       timestamp(0)
 {
     this->latitude = latitude;
