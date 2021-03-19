@@ -35,7 +35,7 @@ class CSVExportPrivate;
 class CSVImport
 {
 public:
-    KERNEL_API static bool importData(QIODevice &io, Aircraft &aircraft);
+    KERNEL_API static bool importData(QIODevice &io, Aircraft &aircraft) noexcept;
 };
 
 #endif // CSVIMPORT_H

@@ -35,7 +35,7 @@
 
 // PUBLIC
 
-bool CSVImport::importData(QIODevice &io, Aircraft &aircraft)
+bool CSVImport::importData(QIODevice &io, Aircraft &aircraft) noexcept
 {
 
     bool ok = io.open(QIODevice::ReadOnly);

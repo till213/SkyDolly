@@ -33,11 +33,11 @@
 class VersionPrivate
 {
 public:
-    VersionPrivate()
+    VersionPrivate() noexcept
         : major(VersionConfig::Major), minor(VersionConfig::Minor), patch(VersionConfig::Patch)
     {}
 
-    VersionPrivate(int theMajor, int theMinor, int thePatch)
+    VersionPrivate(int theMajor, int theMinor, int thePatch) noexcept
         : major(theMajor), minor(theMinor), patch(thePatch)
     {}
 

@@ -40,37 +40,37 @@ public:
 
     virtual ~SkyConnectIntf() = default;
 
-    virtual void startRecording() = 0;
-    virtual void stopRecording() = 0;
+    virtual void startRecording() noexcept = 0;
+    virtual void stopRecording() noexcept = 0;
 
-    virtual void startReplay(bool fromStart) = 0;
-    virtual void stopReplay() = 0;
-    virtual void stop() = 0;
+    virtual void startReplay(bool fromStart) noexcept = 0;
+    virtual void stopReplay() noexcept = 0;
+    virtual void stop() noexcept = 0;
 
-    virtual void setPaused(bool enabled) = 0;
-    virtual bool isPaused() const = 0;
+    virtual void setPaused(bool enabled) noexcept = 0;
+    virtual bool isPaused() const noexcept = 0;
 
-    virtual void skipToBegin() = 0;
-    virtual void skipBackward() = 0;
-    virtual void skipForward() = 0;
-    virtual void skipToEnd() = 0;
-    virtual void seek(qint64 timestamp) = 0;
-    virtual qint64 getCurrentTimestamp() const = 0;
-    virtual bool isAtEnd() const = 0;
+    virtual void skipToBegin() noexcept = 0;
+    virtual void skipBackward() noexcept = 0;
+    virtual void skipForward() noexcept = 0;
+    virtual void skipToEnd() noexcept = 0;
+    virtual void seek(qint64 timestamp) noexcept = 0;
+    virtual qint64 getCurrentTimestamp() const noexcept = 0;
+    virtual bool isAtEnd() const noexcept = 0;
 
-    virtual void setTimeScale(double timeScale) = 0;
-    virtual double getTimeScale() const = 0;
+    virtual void setTimeScale(double timeScale) noexcept = 0;
+    virtual double getTimeScale() const noexcept = 0;
 
-    virtual Connect::State getState() const = 0;
+    virtual Connect::State getState() const noexcept = 0;
 
-    virtual Aircraft &getAircraft() = 0;
-    virtual const Aircraft &getAircraft() const = 0;
-    virtual const AircraftData &getCurrentAircraftData() const = 0;
+    virtual Aircraft &getAircraft() noexcept = 0;
+    virtual const Aircraft &getAircraft() const noexcept = 0;
+    virtual const AircraftData &getCurrentAircraftData() const noexcept = 0;
 
-    virtual double calculateRecordedSamplesPerSecond() const = 0;
+    virtual double calculateRecordedSamplesPerSecond() const noexcept = 0;
 
 protected:
-    SkyConnectIntf(QObject *parent = nullptr)
+    SkyConnectIntf(QObject *parent = nullptr) noexcept
         : QObject(parent)
     {}
 

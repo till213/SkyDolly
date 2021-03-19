@@ -48,11 +48,11 @@ public:
     static constexpr int DefaultPreviewInfoDialogCount = 3;
     static constexpr int PreviewInfoDialogBase = 10;
 
-    SettingsPrivate()
+    SettingsPrivate() noexcept
         : version(QCoreApplication::instance()->applicationVersion())
     {}
 
-    ~SettingsPrivate()
+    ~SettingsPrivate() noexcept
     {}
 };
 

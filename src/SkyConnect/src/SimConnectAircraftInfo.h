@@ -66,7 +66,7 @@ struct SimConnectAircraftInfo
     float pitotIcePct;
     float structuralIcePct;
 
-    SimConnectAircraftInfo()
+    SimConnectAircraftInfo() noexcept
         : simOnGround(false),
           planeAltAboveGround(0.0f),
           airspeedTrue(0),
@@ -87,7 +87,7 @@ struct SimConnectAircraftInfo
           structuralIcePct(0.0f)
     {}
 
-    inline AircraftInfo toAircraftInfo() const {
+    inline AircraftInfo toAircraftInfo() const noexcept {
         AircraftInfo aircraftInfo;
 
         // Length check
@@ -130,10 +130,10 @@ struct SimConnectAircraftInfo
         return aircraftInfo;
     }
 
-    static void addToDataDefinition(HANDLE simConnectHandle);
+    static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
 
 private:
-    static inline SimTypes::SurfaceType toSurfaceType(qint32 surfaceType)
+    static inline SimTypes::SurfaceType toSurfaceType(qint32 surfaceType) noexcept
     {
         switch (surfaceType) {
         case 0:
@@ -217,7 +217,7 @@ private:
         }
     }
 
-    static inline SimTypes::EngineType toEngineType(qint32 engineType)
+    static inline SimTypes::EngineType toEngineType(qint32 engineType) noexcept
     {
         switch (engineType) {
         case 0:
@@ -244,7 +244,7 @@ private:
         }
     }
 
-    static inline SimTypes::PrecipitationState toPrecipitationState(qint32 precipitationState)
+    static inline SimTypes::PrecipitationState toPrecipitationState(qint32 precipitationState) noexcept
     {
         switch (precipitationState) {
         case 0:

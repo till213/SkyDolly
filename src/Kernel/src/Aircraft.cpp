@@ -37,7 +37,7 @@
 class AircraftPrivate
 {
 public:
-    AircraftPrivate()
+    AircraftPrivate() noexcept
         : currentIndex(SkySearch::InvalidIndex)
     {}
 

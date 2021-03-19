@@ -28,7 +28,7 @@
 
 // PUBLIC
 
-EventWidget::EventWidget(QWidget *parent)
+EventWidget::EventWidget(QWidget *parent) noexcept
     : QWidget(parent)
 {
 #ifdef DEBUG
@@ -36,7 +36,7 @@ EventWidget::EventWidget(QWidget *parent)
 #endif
 }
 
-EventWidget::~EventWidget()
+EventWidget::~EventWidget() noexcept
 {
 #ifdef DEBUG
     qDebug("EventWidget: DESTROYED");
@@ -45,7 +45,7 @@ EventWidget::~EventWidget()
 
 // PROTECTED
 
-bool EventWidget::nativeEvent(const QByteArray &eventType, void *message, long *result)
+bool EventWidget::nativeEvent(const QByteArray &eventType, void *message, long *result) noexcept
 {
     Q_UNUSED(eventType)
     Q_UNUSED(result)

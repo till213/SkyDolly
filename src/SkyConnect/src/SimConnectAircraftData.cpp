@@ -30,7 +30,7 @@
 #include "SimConnectDataDefinition.h"
 #include "SimConnectAircraftData.h"
 
-void SimConnectAircraftData::addToDataDefinition(HANDLE simConnectHandle)
+void SimConnectAircraftData::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
     // Aircraft position
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, Const::Latitude, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);

@@ -85,7 +85,7 @@ namespace {
 
 class MainWindowPrivate {
 public:
-    MainWindowPrivate()
+    MainWindowPrivate() noexcept
         : skyConnect(SkyManager::getInstance().currentSkyConnect()),
           previousState(Connect::State::Idle),
           playbackSpeedButtonGroup(nullptr),
