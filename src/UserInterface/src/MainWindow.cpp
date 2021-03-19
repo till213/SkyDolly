@@ -638,7 +638,7 @@ void MainWindow::toggleRecord(bool enable) noexcept
     switch (d->skyConnect.getState()) {
     case Connect::State::Recording:
         if (!enable) {
-            d->skyConnect.stopDataSample();
+            d->skyConnect.stopRecording();
         }
         break;
     case Connect::State::RecordingPaused:
@@ -649,7 +649,7 @@ void MainWindow::toggleRecord(bool enable) noexcept
         break;
     default:
         if (enable) {
-            d->skyConnect.startDataSample();
+            d->skyConnect.startRecording();
         }
         break;
     }

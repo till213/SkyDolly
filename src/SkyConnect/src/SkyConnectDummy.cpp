@@ -25,7 +25,6 @@
 #include <memory>
 
 #include <QTimer>
-#include <QElapsedTimer>
 #include <QtGlobal>
 #include <QRandomGenerator>
 
@@ -34,12 +33,20 @@
 #include "AbstractSkyConnect.h"
 #include "SkyConnectDummy.h"
 
+namespace {
+    // Hz
+    constexpr int ReplayRate = 60;
+    constexpr int ReplayPeriod = qRound(1000.0 / ReplayRate);
+}
 
 class SkyConnectDummyPrivate
 {
 public:
     SkyConnectDummyPrivate()
-    {}
+    {
+    }
+
+    QTimer replayTimer;
 };
 
 // PUBLIC
@@ -48,6 +55,7 @@ SkyConnectDummy::SkyConnectDummy(QObject *parent) noexcept
     : AbstractSkyConnect(parent),
       d(std::make_unique<SkyConnectDummyPrivate>())
 {
+    frenchConnection();
 }
 
 SkyConnectDummy::~SkyConnectDummy() noexcept
@@ -56,30 +64,42 @@ SkyConnectDummy::~SkyConnectDummy() noexcept
 
 // PROTECTED
 
-void SkyConnectDummy::onStartDataSample() noexcept {
-
+void SkyConnectDummy::onStartRecording() noexcept
+{
 }
 
-void SkyConnectDummy::onStopDataSample() noexcept {}
+void SkyConnectDummy::onRecordingPaused(bool paused) noexcept
+{
+    Q_UNUSED(paused)
+}
+
+void SkyConnectDummy::onStopRecording() noexcept
+{
+}
 
 void SkyConnectDummy::onStartReplay(qint64 currentTimestamp) noexcept {
     Q_UNUSED(currentTimestamp)
+    d->replayTimer.start(ReplayPeriod);
+}
+
+void SkyConnectDummy::onReplayPaused(bool paused) noexcept
+{
+    if (paused) {
+         d->replayTimer.stop();
+    } else {
+        d->replayTimer.start(ReplayPeriod);
+    }
+}
+
+void SkyConnectDummy::onStopReplay() noexcept
+{
+    d->replayTimer.stop();
 }
 
 void SkyConnectDummy::onSeek(qint64 currentTimestamp) noexcept
 {
     Q_UNUSED(currentTimestamp)
 };
-
-void SkyConnectDummy::onStopReplay() noexcept {}
-
-void SkyConnectDummy::onRecordingPaused(bool paused) noexcept {
-    Q_UNUSED(paused)
-}
-
-void SkyConnectDummy::onReplayPaused(bool paused) noexcept {
-    Q_UNUSED(paused)
-}
 
 void SkyConnectDummy::onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
 {
@@ -121,6 +141,12 @@ void SkyConnectDummy::processEvents() noexcept
 
 // PRIVATE
 
+void SkyConnectDummy::frenchConnection() noexcept
+{
+    connect(&d->replayTimer, &QTimer::timeout,
+           this, &SkyConnectDummy::processEvents);
+}
+
 bool SkyConnectDummy::sendAircraftData() noexcept
 {
     bool success;
@@ -161,4 +187,3 @@ void SkyConnectDummy::replay() noexcept
         stopReplay();
     }
 }
-

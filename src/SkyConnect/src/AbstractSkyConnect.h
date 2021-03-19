@@ -48,8 +48,8 @@ public:
     virtual void setTimeScale(double timeScale) noexcept override;
     virtual double getTimeScale() const noexcept override;
 
-    virtual void startDataSample() noexcept override;
-    virtual void stopDataSample() noexcept override;
+    virtual void startRecording() noexcept override;
+    virtual void stopRecording() noexcept override;
 
     virtual void startReplay(bool fromStart) noexcept override;
     virtual void stopReplay() noexcept override;
@@ -84,13 +84,15 @@ protected:
     void updateCurrentTimestamp() noexcept;
     const AircraftData &updateCurrentAircraftData() noexcept;
 
-    virtual void onStartDataSample() = 0;
-    virtual void onStopDataSample() = 0;
-    virtual void onStartReplay(qint64 currentTimestamp) = 0;
-    virtual void onStopReplay() = 0;
-    virtual void onSeek(qint64 currentTimestamp) = 0;
+    virtual void onStartRecording() = 0;
     virtual void onRecordingPaused(bool paused) = 0;
+    virtual void onStopRecording() = 0;
+
+    virtual void onStartReplay(qint64 currentTimestamp) = 0;
     virtual void onReplayPaused(bool paused) = 0;
+    virtual void onStopReplay() = 0;
+
+    virtual void onSeek(qint64 currentTimestamp) = 0;
     virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) = 0;
 
     virtual bool sendAircraftData(qint64 currentTimestamp) = 0;

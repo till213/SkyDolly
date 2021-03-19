@@ -40,8 +40,8 @@ public:
 
     virtual ~SkyConnectIntf() = default;
 
-    virtual void startDataSample() = 0;
-    virtual void stopDataSample() = 0;
+    virtual void startRecording() = 0;
+    virtual void stopRecording() = 0;
 
     virtual void startReplay(bool fromStart) = 0;
     virtual void stopReplay() = 0;

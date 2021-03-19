@@ -108,7 +108,7 @@ double AbstractSkyConnect::getTimeScale() const noexcept
     return d->timeScale;
 }
 
-void AbstractSkyConnect::startDataSample() noexcept
+void AbstractSkyConnect::startRecording() noexcept
 {
     if (!isConnectedWithSim()) {
         connectWithSim();
@@ -123,15 +123,15 @@ void AbstractSkyConnect::startDataSample() noexcept
         if (!isAutoRecordSampleRate()) {
             d->timer.start(d->recordIntervalMSec);
         }
-        onStartDataSample();
+        onStartRecording();
     } else {
         setState(Connect::State::NoConnection);
     }
 }
 
-void AbstractSkyConnect::stopDataSample() noexcept
+void AbstractSkyConnect::stopRecording() noexcept
 {
-    onStopDataSample();
+    onStopRecording();
     d->timer.stop();
     setState(Connect::State::Idle);
 }
@@ -168,7 +168,7 @@ void AbstractSkyConnect::stopReplay() noexcept
 
 void AbstractSkyConnect::stop() noexcept
 {
-    stopDataSample();
+    stopRecording();
     stopReplay();
 }
 
