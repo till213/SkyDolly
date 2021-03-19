@@ -6,14 +6,17 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>696</width>
-    <height>388</height>
+    <width>920</width>
+    <height>422</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="sizeConstraint">
+    <enum>QLayout::SetDefaultConstraint</enum>
+   </property>
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox_8">
      <property name="minimumSize">
@@ -37,7 +40,7 @@
        <widget class="QLineEdit" name="yokeXLineEdit">
         <property name="minimumSize">
          <size>
-          <width>80</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -57,7 +60,7 @@
        <widget class="QLineEdit" name="yokeYLineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -77,7 +80,7 @@
        <widget class="QLineEdit" name="rudderLineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -97,7 +100,7 @@
        <widget class="QLineEdit" name="elevatorLineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -117,7 +120,7 @@
        <widget class="QLineEdit" name="aileronLineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -152,7 +155,7 @@
        <widget class="QLineEdit" name="leadingEdgeFlapsLeftLineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -172,7 +175,7 @@
        <widget class="QLineEdit" name="leadingEdgeFlapsRightLineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -192,7 +195,7 @@
        <widget class="QLineEdit" name="trailingEdgeFlapsLeftLineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -212,7 +215,7 @@
        <widget class="QLineEdit" name="trailingEdgeFlapsRightLineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -232,7 +235,7 @@
        <widget class="QLineEdit" name="flapsPositionLineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -252,7 +255,7 @@
        <widget class="QLineEdit" name="spoilerLineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -272,7 +275,7 @@
        <widget class="QLineEdit" name="gearLineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -292,7 +295,7 @@
        <widget class="QLineEdit" name="brakeLeftLineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -312,7 +315,7 @@
        <widget class="QLineEdit" name="brakeRightLineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -332,7 +335,7 @@
        <widget class="QLineEdit" name="waterRudderLineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -352,7 +355,7 @@
        <widget class="QLineEdit" name="tailhookLineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -372,7 +375,7 @@
        <widget class="QLineEdit" name="canopyOpenLineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -413,7 +416,7 @@
        <widget class="QLineEdit" name="throttle1LineEdit">
         <property name="minimumSize">
          <size>
-          <width>80</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -433,7 +436,7 @@
        <widget class="QLineEdit" name="throttle2LineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -453,7 +456,7 @@
        <widget class="QLineEdit" name="throttle3LineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -473,7 +476,7 @@
        <widget class="QLineEdit" name="throttle4LineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -493,7 +496,7 @@
        <widget class="QLineEdit" name="propeller1LineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -513,7 +516,7 @@
        <widget class="QLineEdit" name="propeller2LineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -533,7 +536,7 @@
        <widget class="QLineEdit" name="propeller3LineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -553,7 +556,7 @@
        <widget class="QLineEdit" name="propeller4LineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -573,7 +576,7 @@
        <widget class="QLineEdit" name="mixture1LineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -593,7 +596,7 @@
        <widget class="QLineEdit" name="mixture2LineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -613,7 +616,7 @@
        <widget class="QLineEdit" name="mixture3LineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
@@ -633,7 +636,7 @@
        <widget class="QLineEdit" name="mixture4LineEdit">
         <property name="minimumSize">
          <size>
-          <width>120</width>
+          <width>160</width>
           <height>0</height>
          </size>
         </property>
