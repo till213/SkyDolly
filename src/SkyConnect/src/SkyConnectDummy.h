@@ -43,13 +43,15 @@ public:
     virtual ~SkyConnectDummy() noexcept;
 
 protected:
-    virtual void onStartDataSample() noexcept override;
-    virtual void onStopDataSample() noexcept override;
-    virtual void onStartReplay(qint64 currentTimestamp ) noexcept override;
-    virtual void onStopReplay() noexcept override;
-    virtual void onSeek(qint64 currentTimestamp ) noexcept override;
+    virtual void onStartRecording() noexcept override;
     virtual void onRecordingPaused(bool paused ) noexcept override;
+    virtual void onStopRecording() noexcept override;
+
+    virtual void onStartReplay(qint64 currentTimestamp ) noexcept override;
     virtual void onReplayPaused(bool paused) noexcept override;
+    virtual void onStopReplay() noexcept override;
+
+    virtual void onSeek(qint64 currentTimestamp ) noexcept override;
     virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate ) noexcept override;
 
     virtual bool sendAircraftData(qint64 currentTimestamp ) noexcept override;
@@ -62,6 +64,7 @@ protected slots:
 private:
     std::unique_ptr<SkyConnectDummyPrivate> d;
 
+    void frenchConnection() noexcept;
     bool sendAircraftData() noexcept;
     void recordData() noexcept;
     void replay() noexcept;

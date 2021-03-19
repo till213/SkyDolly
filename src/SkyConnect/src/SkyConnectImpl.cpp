@@ -28,7 +28,6 @@
 #include <SimConnect.h>
 
 #include <QTimer>
-#include <QElapsedTimer>
 #include <QtGlobal>
 #include <QApplication>
 #include <QWidget>
@@ -98,14 +97,20 @@ SkyConnectImpl::~SkyConnectImpl()
 
 // PROTECTED
 
-void SkyConnectImpl::onStartDataSample()
+void SkyConnectImpl::onStartRecording()
 {
     updateRecordFrequency(Settings::getInstance().getRecordSampleRate());
     // Get aircraft information
     ::SimConnect_RequestDataOnSimObjectType(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::AircraftInfo), SkyConnectDataDefinition::AircraftInfoDefinition, ::UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
 }
 
-void SkyConnectImpl::onStopDataSample()
+void SkyConnectImpl::onRecordingPaused(bool paused)
+{
+    Q_UNUSED(paused)
+    updateRecordFrequency(Settings::getInstance().getRecordSampleRate());
+}
+
+void SkyConnectImpl::onStopRecording()
 {
     // Stop receiving aircraft position
     ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::AircraftPosition), SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_NEVER);
@@ -133,6 +138,15 @@ void SkyConnectImpl::onStartReplay(qint64 currentTimestamp)
     ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::Frame), "Frame");
 }
 
+void SkyConnectImpl::onReplayPaused(bool paused)
+{
+    if (paused) {
+        ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::Frame));
+    } else {
+        ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::Frame), "Frame");
+    }
+}
+
 void SkyConnectImpl::onStopReplay()
 {
     ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::Frame));
@@ -148,21 +162,6 @@ void SkyConnectImpl::onSeek(qint64 currentTimestamp)
 #endif
     }
 };
-
-void SkyConnectImpl::onRecordingPaused(bool paused)
-{
-    Q_UNUSED(paused)
-    updateRecordFrequency(Settings::getInstance().getRecordSampleRate());
-}
-
-void SkyConnectImpl::onReplayPaused(bool paused)
-{
-    if (paused) {
-        ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::Frame));
-    } else {
-        ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::Frame), "Frame");
-    }
-}
 
 void SkyConnectImpl::onRecordSampleRateChanged(SampleRate::SampleRate sampleRate)
 {
@@ -404,7 +403,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
 #endif
                     switch (skyConnect->getState()) {
                     case Connect::State::Recording:
-                        skyConnect->stopDataSample();
+                        skyConnect->stopRecording();
                         break;
                     case Connect::State::Playback:
                         skyConnect->stopReplay();

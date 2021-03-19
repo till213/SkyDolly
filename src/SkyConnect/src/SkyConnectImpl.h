@@ -46,13 +46,15 @@ public:
     virtual ~SkyConnectImpl();
 
 protected:
-    virtual void onStartDataSample() override;
-    virtual void onStopDataSample() override;
-    virtual void onStartReplay(qint64 currentTimestamp) override;
-    virtual void onStopReplay() override;
+    virtual void onStartRecording() noexcept override;
+    virtual void onRecordingPaused(bool paused ) noexcept override;
+    virtual void onStopRecording() noexcept override;
+
+    virtual void onStartReplay(qint64 currentTimestamp ) noexcept override;
+    virtual void onReplayPaused(bool paused) noexcept override;
+    virtual void onStopReplay() noexcept override;
+
     virtual void onSeek(qint64 currentTimestamp) override;
-    virtual void onRecordingPaused(bool paused) override;
-    virtual void onReplayPaused(bool paused) override;
     virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) override;
 
     virtual bool sendAircraftData(qint64 currentTimestamp) override;
