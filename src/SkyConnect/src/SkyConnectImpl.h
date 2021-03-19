@@ -42,8 +42,8 @@ class SkyConnectImpl : public AbstractSkyConnect
 {
     Q_OBJECT
 public:
-    SkyConnectImpl(QObject *parent = nullptr);
-    virtual ~SkyConnectImpl();
+    SkyConnectImpl(QObject *parent = nullptr) noexcept;
+    virtual ~SkyConnectImpl() noexcept;
 
 protected:
     virtual void onStartRecording() noexcept override;
@@ -54,30 +54,30 @@ protected:
     virtual void onReplayPaused(bool paused) noexcept override;
     virtual void onStopReplay() noexcept override;
 
-    virtual void onSeek(qint64 currentTimestamp) override;
-    virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) override;
+    virtual void onSeek(qint64 currentTimestamp) noexcept override;
+    virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
 
-    virtual bool sendAircraftData(qint64 currentTimestamp) override;
-    virtual bool connectWithSim() override;
-    virtual bool isConnectedWithSim() const override;
+    virtual bool sendAircraftData(qint64 currentTimestamp) noexcept override;
+    virtual bool connectWithSim() noexcept override;
+    virtual bool isConnectedWithSim() const noexcept override;
 
 protected slots:
-    void processEvents() override;
+    void processEvents() noexcept override;
 
 private:
     std::unique_ptr<SkyConnectPrivate> d;
 
-    bool reconnectWithSim();
-    bool close();
-    void setupRequestData();
-    void setupInitialPosition();
-    void setSimulationFrozen(bool enable);
-    bool isSimulationFrozen() const;
-    bool sendAircraftData();
-    void replay();
-    void updateRecordFrequency(SampleRate::SampleRate sampleRate);
+    bool reconnectWithSim() noexcept;
+    bool close() noexcept;
+    void setupRequestData() noexcept;
+    void setupInitialPosition() noexcept;
+    void setSimulationFrozen(bool enable) noexcept;
+    bool isSimulationFrozen() const noexcept;
+    bool sendAircraftData() noexcept;
+    void replay() noexcept;
+    void updateRecordFrequency(SampleRate::SampleRate sampleRate) noexcept;
 
-    static void CALLBACK dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context);
+    static void CALLBACK dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context) noexcept;
 };
 
 #endif // SKYCONNECTIMPL_H

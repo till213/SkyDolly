@@ -30,7 +30,7 @@
 #include "SimConnectDataDefinition.h"
 #include "SimConnectAircraftInfo.h"
 
-void SimConnectAircraftInfo::addToDataDefinition(HANDLE simConnectHandle)
+void SimConnectAircraftInfo::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, Const::Title, nullptr, ::SIMCONNECT_DATATYPE_STRING256);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftInfoDefinition, Const::ATCId, NULL, SIMCONNECT_DATATYPE_STRING32);

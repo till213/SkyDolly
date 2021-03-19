@@ -46,7 +46,7 @@ namespace
 class AbstractSkyConnectPrivate
 {
 public:
-    AbstractSkyConnectPrivate()
+    AbstractSkyConnectPrivate() noexcept
         : state(Connect::State::Idle),
           currentTimestamp(0),
           recordSampleRate(Settings::getInstance().getRecordSampleRateValue()),

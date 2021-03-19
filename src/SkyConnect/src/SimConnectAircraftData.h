@@ -89,7 +89,7 @@ struct SimConnectAircraftData
     // Lights
     qint64 lightStates;
 
-    inline AircraftData toAircraftData() const {
+    inline AircraftData toAircraftData() const noexcept {
         AircraftData aircraftData;
 
         aircraftData.latitude = latitude;
@@ -149,7 +149,7 @@ struct SimConnectAircraftData
         return aircraftData;
     }
 
-    inline void fromAircraftData(const AircraftData &aircraftData) {
+    inline void fromAircraftData(const AircraftData &aircraftData) noexcept {
         latitude = aircraftData.latitude;
         longitude = aircraftData.longitude;
         altitude = aircraftData.altitude;
@@ -200,7 +200,7 @@ struct SimConnectAircraftData
         lightStates = aircraftData.lightStates;
     }
 
-    static void addToDataDefinition(HANDLE simConnectHandle);
+    static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
 };
 
 #endif // SIMCONNECTAIRCRAFTDATA_H

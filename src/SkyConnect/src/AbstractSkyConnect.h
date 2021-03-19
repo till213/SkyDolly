@@ -100,7 +100,7 @@ protected:
     virtual bool connectWithSim() = 0;
 
 protected slots:
-    virtual void processEvents() = 0;
+    virtual void processEvents() noexcept = 0;
 
 private:
     std::unique_ptr<AbstractSkyConnectPrivate> d;

@@ -42,7 +42,7 @@ namespace {
 class SkyConnectDummyPrivate
 {
 public:
-    SkyConnectDummyPrivate()
+    SkyConnectDummyPrivate() noexcept
     {
     }
 

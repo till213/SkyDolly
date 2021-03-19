@@ -69,7 +69,7 @@ namespace
 class SkyConnectPrivate
 {
 public:
-    SkyConnectPrivate()
+    SkyConnectPrivate() noexcept
         : simConnectHandle(nullptr),
           frozen(false),
           eventWidget(nullptr)
@@ -83,13 +83,13 @@ public:
 
 // PUBLIC
 
-SkyConnectImpl::SkyConnectImpl(QObject *parent)
+SkyConnectImpl::SkyConnectImpl(QObject *parent) noexcept
     : AbstractSkyConnect(parent),
       d(std::make_unique<SkyConnectPrivate>())
 {
 }
 
-SkyConnectImpl::~SkyConnectImpl()
+SkyConnectImpl::~SkyConnectImpl() noexcept
 {
     setSimulationFrozen(false);
     close();
@@ -97,26 +97,26 @@ SkyConnectImpl::~SkyConnectImpl()
 
 // PROTECTED
 
-void SkyConnectImpl::onStartRecording()
+void SkyConnectImpl::onStartRecording() noexcept
 {
     updateRecordFrequency(Settings::getInstance().getRecordSampleRate());
     // Get aircraft information
     ::SimConnect_RequestDataOnSimObjectType(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::AircraftInfo), SkyConnectDataDefinition::AircraftInfoDefinition, ::UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
 }
 
-void SkyConnectImpl::onRecordingPaused(bool paused)
+void SkyConnectImpl::onRecordingPaused(bool paused) noexcept
 {
     Q_UNUSED(paused)
     updateRecordFrequency(Settings::getInstance().getRecordSampleRate());
 }
 
-void SkyConnectImpl::onStopRecording()
+void SkyConnectImpl::onStopRecording() noexcept
 {
     // Stop receiving aircraft position
     ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::AircraftPosition), SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_NEVER);
 }
 
-void SkyConnectImpl::onStartReplay(qint64 currentTimestamp)
+void SkyConnectImpl::onStartReplay(qint64 currentTimestamp) noexcept
 {
     // "Freeze" the simulation: position and attitude only set by (interpolated)
     // sample points
@@ -138,7 +138,7 @@ void SkyConnectImpl::onStartReplay(qint64 currentTimestamp)
     ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::Frame), "Frame");
 }
 
-void SkyConnectImpl::onReplayPaused(bool paused)
+void SkyConnectImpl::onReplayPaused(bool paused) noexcept
 {
     if (paused) {
         ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::Frame));
@@ -147,13 +147,13 @@ void SkyConnectImpl::onReplayPaused(bool paused)
     }
 }
 
-void SkyConnectImpl::onStopReplay()
+void SkyConnectImpl::onStopReplay() noexcept
 {
     ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::Frame));
     setSimulationFrozen(false);
 }
 
-void SkyConnectImpl::onSeek(qint64 currentTimestamp)
+void SkyConnectImpl::onSeek(qint64 currentTimestamp) noexcept
 {
     if (currentTimestamp == 0) {
         setupInitialPosition();
@@ -163,18 +163,18 @@ void SkyConnectImpl::onSeek(qint64 currentTimestamp)
     }
 };
 
-void SkyConnectImpl::onRecordSampleRateChanged(SampleRate::SampleRate sampleRate)
+void SkyConnectImpl::onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
 {
      updateRecordFrequency(sampleRate);
 }
 
-bool SkyConnectImpl::sendAircraftData(qint64 currentTimestamp)
+bool SkyConnectImpl::sendAircraftData(qint64 currentTimestamp) noexcept
 {
     Q_UNUSED(currentTimestamp)
     return sendAircraftData();
 }
 
-bool SkyConnectImpl::connectWithSim()
+bool SkyConnectImpl::connectWithSim() noexcept
 {
     HWND hWnd;
     DWORD userEvent;
@@ -192,14 +192,14 @@ bool SkyConnectImpl::connectWithSim()
     return result == S_OK;
 }
 
-bool SkyConnectImpl::isConnectedWithSim() const
+bool SkyConnectImpl::isConnectedWithSim() const noexcept
 {
     return d->simConnectHandle != nullptr;
 }
 
 // PROTECTED SLOTS
 
-void SkyConnectImpl::processEvents()
+void SkyConnectImpl::processEvents() noexcept
 {
     updateCurrentTimestamp();
     // Process system events
@@ -208,7 +208,7 @@ void SkyConnectImpl::processEvents()
 
 // PRIVATE
 
-bool SkyConnectImpl::reconnectWithSim()
+bool SkyConnectImpl::reconnectWithSim() noexcept
 {
     bool res;
     if (close()) {
@@ -219,7 +219,7 @@ bool SkyConnectImpl::reconnectWithSim()
     return res;
 }
 
-bool SkyConnectImpl::close()
+bool SkyConnectImpl::close() noexcept
 {
     HRESULT result;
 
@@ -232,7 +232,7 @@ bool SkyConnectImpl::close()
     return result == S_OK;
 }
 
-void SkyConnectImpl::setupRequestData()
+void SkyConnectImpl::setupRequestData() noexcept
 {
     // Set up the data definition, but do not yet do anything with it
     SimConnectAircraftInfo::addToDataDefinition(d->simConnectHandle);
@@ -251,7 +251,7 @@ void SkyConnectImpl::setupRequestData()
     ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::FreezeAttitude), "FREEZE_ATTITUDE_SET");
 }
 
-void SkyConnectImpl::setupInitialPosition()
+void SkyConnectImpl::setupInitialPosition() noexcept
 {
     const AircraftData &aircraftData = getAircraft().interpolateAircraftData(0);
     if (!aircraftData.isNull()) {
@@ -273,7 +273,8 @@ void SkyConnectImpl::setupInitialPosition()
     }
 }
 
-void SkyConnectImpl::setSimulationFrozen(bool enable) {
+void SkyConnectImpl::setSimulationFrozen(bool enable) noexcept
+{
     DWORD data;
 
     d->frozen = enable;
@@ -283,11 +284,12 @@ void SkyConnectImpl::setSimulationFrozen(bool enable) {
     ::SimConnect_TransmitClientEvent(d->simConnectHandle, ::SIMCONNECT_OBJECT_ID_USER, Enum::toUnderlyingType(Event::FreezeAttitude), data, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
 }
 
-bool SkyConnectImpl::isSimulationFrozen() const {
+bool SkyConnectImpl::isSimulationFrozen() const noexcept
+{
     return d->frozen;
 }
 
-bool SkyConnectImpl::sendAircraftData()
+bool SkyConnectImpl::sendAircraftData() noexcept
 {
     bool success;
 
@@ -314,7 +316,7 @@ bool SkyConnectImpl::sendAircraftData()
     return success;
 }
 
-void SkyConnectImpl::replay()
+void SkyConnectImpl::replay() noexcept
 {
     if (sendAircraftData()) {
         emit aircraftDataSent(getCurrentTimestamp());
@@ -323,7 +325,7 @@ void SkyConnectImpl::replay()
     }
 }
 
-void SkyConnectImpl::updateRecordFrequency(SampleRate::SampleRate sampleRate)
+void SkyConnectImpl::updateRecordFrequency(SampleRate::SampleRate sampleRate) noexcept
 {
     if (getState() == Connect::State::Recording) {
         switch (sampleRate) {
@@ -362,7 +364,7 @@ void SkyConnectImpl::updateRecordFrequency(SampleRate::SampleRate sampleRate)
     }
 }
 
-void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context)
+void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context) noexcept
 {
     Q_UNUSED(cbData);
 

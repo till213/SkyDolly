@@ -37,18 +37,18 @@ public:
 
     // TODO Plugin system
 #ifdef WIN32
-    SkyManagerPrivate()
+    SkyManagerPrivate() noexcept
         : currentSkyConnect(std::make_unique<SkyConnectImpl>())
     {
     }
 #else
-    SkyManagerPrivate()
+    SkyManagerPrivate() noexcept
         : currentSkyConnect(std::make_unique<SkyConnectDummy>())
     {
     }
 #endif
 
-    ~SkyManagerPrivate()
+    ~SkyManagerPrivate() noexcept
     {
     }
 

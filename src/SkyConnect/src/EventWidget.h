@@ -31,8 +31,8 @@ class EventWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit EventWidget(QWidget *parent = nullptr);
-    virtual ~EventWidget();
+    explicit EventWidget(QWidget *parent = nullptr) noexcept;
+    virtual ~EventWidget() noexcept;
 
     static constexpr int SimConnnectUserMessage = 0x0402;
 
@@ -40,7 +40,7 @@ signals:
     void simConnectEvent();
 
 protected:
-    bool nativeEvent(const QByteArray &eventType, void *message, long *result) override;
+    bool nativeEvent(const QByteArray &eventType, void *message, long *result) noexcept override;
 };
 
 #endif // EVENTWIDGET_H
