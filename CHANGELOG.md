@@ -17,6 +17,7 @@
 - n/a
 
 ## 0.2.0
+=======
 
 ### New Features
 
@@ -95,3 +96,7 @@
 - "Show simulation variables" action is now deselected when the dialog is closed (via close button)
 - Set the initial start position ("on ground") when playback from (or seek to) start
 - Prevent aircrafts from "dropping out of the sky" after playback, by recording body velocities
+
+## 0.4.1
+
+- The time widget is now editable when replay is paused
