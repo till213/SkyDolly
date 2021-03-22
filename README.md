@@ -15,6 +15,8 @@ The connection is made via SimConnect, a standard API introduced with Flight Sim
 * Position and basic flight control simulation variables (ailerons, rudder, flaps, gears, ...) are recorded
 * Basic CSV import & export
 
+[![Sky Dolly - Acrobatic Flying in FS2020 (Recording Sample Rate Comparison)](https://img.youtube.com/vi/bfgkY0eXL4w/0.jpg)](https://www.youtube.com/watch?v=bfgkY0eXL4w "Sky Dolly - Acrobatic Flying in FS2020 (Recording Sample Rate Comparison)")
+
 For new and upcoming features also refer to the [CHANGELOG](CHANGELOG.md).
 
 ## Basic Usage
@@ -24,6 +26,8 @@ For new and upcoming features also refer to the [CHANGELOG](CHANGELOG.md).
 * You may pause recording (key P)
 * Stop recording (key R) and click on "Play" (spacebar)
 * Adjust the replay speed and seek the play position, also during playback
+
+Why don't you try it with one of the guided ["Tell Tours"](https://github.com/till213/Tell-Tours)? :)
 
 ## Download
 
@@ -37,6 +41,10 @@ Refer to the [BUILD](BUILD.md) documentation.
 
 ## Related Projects
 
-* https://github.com/nguyenquyhy/Flight-Recorder
-* https://github.com/saltysimulations/saltyreplay/
-* https://github.com/SAHorowitz/MSFS2020-PilotPathRecorder
+* https://github.com/nguyenquyhy/Flight-Recorder - A .Net based flight recording & playback application
+* https://github.com/saltysimulations/saltyreplay/ - A recording & replay with a web user interface
+* https://github.com/SAHorowitz/MSFS2020-PilotPathRecorder - Records the flight and generates Google Earth (KML format) "replays"
+
+## Other Useful Resources
+
+* https://obsproject.com/ - Screen capture / broadcast application

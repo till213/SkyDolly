@@ -396,6 +396,7 @@ void MainWindow::updateControlUi() noexcept
         // Actions
         ui->pauseAction->setChecked(true);
         ui->playAction->setChecked(false);
+        ui->timestampTimeEdit->setEnabled(true);
         break;
     default:
         break;
