@@ -47,7 +47,7 @@ class AbstractSkyConnectPrivate
 {
 public:
     AbstractSkyConnectPrivate() noexcept
-        : state(Connect::State::Idle),
+        : state(Connect::State::Disconnected),
           currentTimestamp(0),
           recordSampleRate(Settings::getInstance().getRecordSampleRateValue()),
           recordIntervalMSec(SampleRate::toInterval(recordSampleRate)),
@@ -84,30 +84,6 @@ AbstractSkyConnect::~AbstractSkyConnect() noexcept
 {
 }
 
-Connect::State AbstractSkyConnect::getState() const noexcept
-{
-    return d->state;
-}
-
-void AbstractSkyConnect::setTimeScale(double timeScale) noexcept
-{
-    if (!qFuzzyCompare(d->timeScale, timeScale)) {
-        // If the elapsed timer is running...
-        if (d->elapsedTimer.isValid()) {
-            // ... then store the elapsed time measured with the previous scale...
-            d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed() * d->timeScale;
-            // ... and restart timer
-            d->elapsedTimer.start();
-        }
-        d->timeScale = timeScale;
-    }
-}
-
-double AbstractSkyConnect::getTimeScale() const noexcept
-{
-    return d->timeScale;
-}
-
 void AbstractSkyConnect::startRecording() noexcept
 {
     if (!isConnectedWithSim()) {
@@ -125,7 +101,7 @@ void AbstractSkyConnect::startRecording() noexcept
         }
         onStartRecording();
     } else {
-        setState(Connect::State::NoConnection);
+        setState(Connect::State::Disconnected);
     }
 }
 
@@ -133,7 +109,12 @@ void AbstractSkyConnect::stopRecording() noexcept
 {
     onStopRecording();
     d->timer.stop();
-    setState(Connect::State::Idle);
+    setState(Connect::State::Connected);
+}
+
+bool AbstractSkyConnect::isRecording() const noexcept
+{
+    return d->state == Connect::State::Recording;
 }
 
 void AbstractSkyConnect::startReplay(bool fromStart) noexcept
@@ -142,7 +123,7 @@ void AbstractSkyConnect::startReplay(bool fromStart) noexcept
         connectWithSim();
     }
     if (isConnectedWithSim()) {
-        setState(Connect::State::Playback);
+        setState(Connect::State::Replay);
         if (fromStart) {
             d->elapsedTime = 0;
             setCurrentTimestamp(0);
@@ -152,18 +133,23 @@ void AbstractSkyConnect::startReplay(bool fromStart) noexcept
         onStartReplay(d->currentTimestamp);
 
     } else {
-        setState(Connect::State::NoConnection);
+        setState(Connect::State::Disconnected);
     }
 }
 
 void AbstractSkyConnect::stopReplay() noexcept
 {
-    setState(Connect::State::Idle);
+    setState(Connect::State::Connected);
     d->timer.stop();
     // Remember elapsed time since last replay start, in order to continue from
     // current timestamp
     d->elapsedTime = d->currentTimestamp;
     onStopReplay();
+}
+
+bool AbstractSkyConnect::isReplaying() const noexcept
+{
+    return d->state == Connect::State::Replay;
 }
 
 void AbstractSkyConnect::stop() noexcept
@@ -185,8 +171,8 @@ void AbstractSkyConnect::setPaused(bool enabled) noexcept
             setState(newState);
             onRecordingPaused(true);
             break;
-        case Connect::State::Playback:
-            newState = Connect::State::PlaybackPaused;
+        case Connect::State::Replay:
+            newState = Connect::State::ReplayPaused;
             // In case the elapsed time has started (is valid)...
             if (d->elapsedTimer.isValid()) {
                 // ... store the elapsed playback time measured with the current time scale...
@@ -212,8 +198,8 @@ void AbstractSkyConnect::setPaused(bool enabled) noexcept
             setState(newState);
             onRecordingPaused(false);
             break;
-        case Connect::State::PlaybackPaused:
-            newState = Connect::State::Playback;
+        case Connect::State::ReplayPaused:
+            newState = Connect::State::Replay;
             d->elapsedTimer.start();
             setState(newState);
             onReplayPaused(false);
@@ -226,7 +212,7 @@ void AbstractSkyConnect::setPaused(bool enabled) noexcept
 }
 
 bool AbstractSkyConnect::isPaused() const noexcept {
-    return getState() == Connect::State::RecordingPaused || getState() == Connect::State::PlaybackPaused;
+    return getState() == Connect::State::RecordingPaused || getState() == Connect::State::ReplayPaused;
 }
 
 void AbstractSkyConnect::skipToBegin() noexcept
@@ -259,9 +245,9 @@ void AbstractSkyConnect::seek(qint64 timestamp) noexcept
     if (getState() != Connect::State::Recording) {
         d->currentTimestamp = timestamp;
         d->elapsedTime = timestamp;
-        if (sendAircraftData(timestamp)) {
-            emit aircraftDataSent(d->currentTimestamp);
-            if (d->elapsedTimer.isValid() && getState() == Connect::State::Playback) {
+        emit currentTimestampChanged(d->currentTimestamp);
+        if (sendAircraftData(timestamp)) {            
+            if (d->elapsedTimer.isValid() && getState() == Connect::State::Replay) {
                 // Restart the elapsed timer, counting onwards from the newly
                 // set timestamp
                 d->elapsedTimer.start();
@@ -281,16 +267,44 @@ bool AbstractSkyConnect::isAtEnd() const noexcept
     return d->currentTimestamp >= d->aircraft.getLastAircraftData().timestamp;
 }
 
+double AbstractSkyConnect::getTimeScale() const noexcept
+{
+    return d->timeScale;
+}
+
+Connect::State AbstractSkyConnect::getState() const noexcept
+{
+    return d->state;
+}
+
+bool AbstractSkyConnect::isConnected() const noexcept
+{
+    return d->state != Connect::State::Disconnected;
+}
+
 Aircraft &AbstractSkyConnect::getAircraft() noexcept
 {
     return d->aircraft;
+}
+
+void AbstractSkyConnect::setTimeScale(double timeScale) noexcept
+{
+    if (!qFuzzyCompare(d->timeScale, timeScale)) {
+        // If the elapsed timer is running...
+        if (d->elapsedTimer.isValid()) {
+            // ... then store the elapsed time measured with the previous scale...
+            d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed() * d->timeScale;
+            // ... and restart timer
+            d->elapsedTimer.start();
+        }
+        d->timeScale = timeScale;
+    }
 }
 
 const Aircraft &AbstractSkyConnect::getAircraft() const noexcept
 {
     return d->aircraft;
 }
-
 const AircraftData &AbstractSkyConnect::getCurrentAircraftData() const noexcept
 {
     return d->currentAircraftData;
@@ -364,7 +378,7 @@ void AbstractSkyConnect::resetElapsedTime(bool restart) noexcept
 void AbstractSkyConnect::updateCurrentTimestamp() noexcept
 {
     if (d->elapsedTimer.isValid()) {
-        if (d->state == Connect::State::Playback) {
+        if (d->state == Connect::State::Replay) {
             d->currentTimestamp = d->elapsedTime + static_cast<qint64>(d->elapsedTimer.elapsed() * d->timeScale);
         } else {
             d->currentTimestamp = d->elapsedTime + d->elapsedTimer.elapsed();
