@@ -42,9 +42,11 @@ public:
 
     virtual void startRecording() noexcept = 0;
     virtual void stopRecording() noexcept = 0;
+    virtual bool isRecording() const noexcept = 0;
 
     virtual void startReplay(bool fromStart) noexcept = 0;
     virtual void stopReplay() noexcept = 0;
+    virtual bool isReplaying() const noexcept = 0;
     virtual void stop() noexcept = 0;
 
     virtual void setPaused(bool enabled) noexcept = 0;
@@ -62,6 +64,7 @@ public:
     virtual double getTimeScale() const noexcept = 0;
 
     virtual Connect::State getState() const noexcept = 0;
+    virtual bool isConnected() const noexcept = 0;
 
     virtual Aircraft &getAircraft() noexcept = 0;
     virtual const Aircraft &getAircraft() const noexcept = 0;
@@ -75,7 +78,7 @@ protected:
     {}
 
 signals:
-    void aircraftDataSent(qint64 timestamp) const;
+    void currentTimestampChanged(qint64 timestamp) const;
     void stateChanged(Connect::State state) const;
 };
 

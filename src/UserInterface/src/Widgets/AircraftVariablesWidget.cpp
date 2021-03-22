@@ -70,7 +70,7 @@ void AircraftVariablesWidget::showEvent(QShowEvent *event)
     connect(&aircraft, &Aircraft::dataChanged,
             this, &AircraftVariablesWidget::updateAircraftDataUi);
     // Signal sent while playing
-    connect(&d->skyConnect, &SkyConnectIntf::aircraftDataSent,
+    connect(&d->skyConnect, &SkyConnectIntf::currentTimestampChanged,
             this, &AircraftVariablesWidget::updateAircraftDataUi);
 }
 
@@ -81,7 +81,7 @@ void AircraftVariablesWidget::hideEvent(QHideEvent *event)
     const Aircraft &aircraft = d->skyConnect.getAircraft();
     disconnect(&aircraft, &Aircraft::dataChanged,
                this, &AircraftVariablesWidget::updateAircraftDataUi);
-    disconnect(&d->skyConnect, &SkyConnectIntf::aircraftDataSent,
+    disconnect(&d->skyConnect, &SkyConnectIntf::currentTimestampChanged,
             this, &AircraftVariablesWidget::updateAircraftDataUi);
 }
 

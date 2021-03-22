@@ -124,10 +124,10 @@ void SimulationVariablesDialog::updateTitle() noexcept
     case Connect::State::RecordingPaused:
         windowTitle.append(" - " + tr("RECORDING PAUSED"));
         break;
-    case Connect::State::Playback:
+    case Connect::State::Replay:
         windowTitle.append(" - " + tr("PLAYBACK"));
         break;
-    case Connect::State::PlaybackPaused:
+    case Connect::State::ReplayPaused:
         windowTitle.append(" - " + tr("PLAYPACK PAUSED"));
         break;
     default:
