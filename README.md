@@ -15,6 +15,8 @@ The connection is made via SimConnect, a standard API introduced with Flight Sim
 * Position and basic flight control simulation variables (ailerons, rudder, flaps, gears, ...) are recorded
 * Basic CSV import & export
 
+[![Sky Dolly - Acrobatic Flying in FS2020 (Recording Sample Rate Comparison)](https://img.youtube.com/vi/bfgkY0eXL4w/0.jpg)](https://www.youtube.com/watch?v=bfgkY0eXL4w "Sky Dolly - Acrobatic Flying in FS2020 (Recording Sample Rate Comparison)")
+
 For new and upcoming features also refer to the [CHANGELOG](CHANGELOG.md).
 
 ## Basic Usage
@@ -24,6 +26,8 @@ For new and upcoming features also refer to the [CHANGELOG](CHANGELOG.md).
 * You may pause recording (key P)
 * Stop recording (key R) and click on "Play" (spacebar)
 * Adjust the replay speed and seek the play position, also during playback
+
+Why don't you try it with one of the guided ["Tell Tours"](https://github.com/till213/Tell-Tours)? :)
 
 ## Download
 
