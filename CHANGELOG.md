@@ -6,6 +6,8 @@
 
 ### Bug Fixes
 
+- The time widget is now editable when replay is paused
+
 ## 0.4.0
 
 ### New Features
