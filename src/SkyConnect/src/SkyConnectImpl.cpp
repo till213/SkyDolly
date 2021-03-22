@@ -318,7 +318,7 @@ bool SkyConnectImpl::sendAircraftData()
 void SkyConnectImpl::replay()
 {
     if (sendAircraftData()) {
-        emit aircraftDataSent(getCurrentTimestamp());
+        emit currentTimestampChanged(getCurrentTimestamp());
     } else {
         stopReplay();
     }
@@ -372,7 +372,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
     const SimConnectAircraftInfo *simConnectAircraftInfo;
     const SimConnectAircraftData *simConnectAircraftData;
 #ifdef DEBUG
-            SIMCONNECT_RECV_EXCEPTION *exception;
+    SIMCONNECT_RECV_EXCEPTION *exception;
 #endif
 
     switch (receivedData->dwID)
@@ -404,9 +404,9 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
 #endif
                     switch (skyConnect->getState()) {
                     case Connect::State::Recording:
-                        skyConnect->stopDataSample();
+                        skyConnect->stopRecording();
                         break;
-                    case Connect::State::Playback:
+                    case Connect::State::Replay:
                         skyConnect->stopReplay();
                         break;
                     default:
@@ -465,11 +465,11 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
             break;
 
         case SIMCONNECT_RECV_ID_EVENT_FRAME:
-            if (skyConnect->getState() == Connect::State::Playback) {
+            if (skyConnect->getState() == Connect::State::Replay) {
                 skyConnect->replay();
             }
 #ifdef DEBUG
-        qDebug("SIMCONNECT_RECV_ID_EVENT_FRAME: FRAME event");
+            qDebug("SIMCONNECT_RECV_ID_EVENT_FRAME: FRAME event");
 #endif
             break;
 

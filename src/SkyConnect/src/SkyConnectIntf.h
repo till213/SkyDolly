@@ -40,12 +40,14 @@ public:
 
     virtual ~SkyConnectIntf() = default;
 
-    virtual void startDataSample() = 0;
-    virtual void stopDataSample() = 0;
+    virtual void startRecording() noexcept = 0;
+    virtual void stopRecording() noexcept = 0;
+    virtual bool isRecording() const noexcept = 0;
 
-    virtual void startReplay(bool fromStart) = 0;
-    virtual void stopReplay() = 0;
-    virtual void stop() = 0;
+    virtual void startReplay(bool fromStart) noexcept = 0;
+    virtual void stopReplay() noexcept = 0;
+    virtual bool isReplaying() const noexcept = 0;
+    virtual void stop() noexcept = 0;
 
     virtual void setPaused(bool enabled) = 0;
     virtual bool isPaused() const = 0;
@@ -61,7 +63,8 @@ public:
     virtual void setTimeScale(double timeScale) = 0;
     virtual double getTimeScale() const = 0;
 
-    virtual Connect::State getState() const = 0;
+    virtual Connect::State getState() const noexcept = 0;
+    virtual bool isConnected() const noexcept = 0;
 
     virtual Aircraft &getAircraft() = 0;
     virtual const Aircraft &getAircraft() const = 0;
@@ -75,7 +78,7 @@ protected:
     {}
 
 signals:
-    void aircraftDataSent(qint64 timestamp) const;
+    void currentTimestampChanged(qint64 timestamp) const;
     void stateChanged(Connect::State state) const;
 };
 

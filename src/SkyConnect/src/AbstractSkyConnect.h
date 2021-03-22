@@ -43,16 +43,13 @@ public:
     AbstractSkyConnect(QObject *parent = nullptr) noexcept;
     virtual ~AbstractSkyConnect() noexcept;
 
-    virtual Connect::State getState() const noexcept override;
-
-    virtual void setTimeScale(double timeScale) noexcept override;
-    virtual double getTimeScale() const noexcept override;
-
-    virtual void startDataSample() noexcept override;
-    virtual void stopDataSample() noexcept override;
+    virtual void startRecording() noexcept override;
+    virtual void stopRecording() noexcept override;
+    virtual bool isRecording() const noexcept override;
 
     virtual void startReplay(bool fromStart) noexcept override;
     virtual void stopReplay() noexcept override;
+    virtual bool isReplaying() const noexcept override;
     virtual void stop() noexcept override;
 
     virtual void setPaused(bool enabled) noexcept override;
@@ -66,6 +63,12 @@ public:
 
     virtual qint64 getCurrentTimestamp() const noexcept override;
     virtual bool isAtEnd() const noexcept override;
+
+    virtual void setTimeScale(double timeScale) noexcept override;
+    virtual double getTimeScale() const noexcept override;
+
+    virtual Connect::State getState() const noexcept override;
+    virtual bool isConnected() const noexcept override;
 
     virtual Aircraft &getAircraft() noexcept override;
     virtual const Aircraft &getAircraft() const noexcept override;

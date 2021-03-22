@@ -27,12 +27,12 @@
 
 namespace Connect {
     enum class State {
-        Idle,
+        Disconnected,
+        Connected,
         Recording,
         RecordingPaused,
-        Playback,
-        PlaybackPaused,
-        NoConnection
+        Replay,
+        ReplayPaused
     };
 }
 
