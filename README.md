@@ -41,6 +41,10 @@ Refer to the [BUILD](BUILD.md) documentation.
 
 ## Related Projects
 
-* https://github.com/nguyenquyhy/Flight-Recorder
-* https://github.com/saltysimulations/saltyreplay/
-* https://github.com/SAHorowitz/MSFS2020-PilotPathRecorder
+* https://github.com/nguyenquyhy/Flight-Recorder - A .Net based flight recording & playback application
+* https://github.com/saltysimulations/saltyreplay/ - A recording & replay with a web user interface
+* https://github.com/SAHorowitz/MSFS2020-PilotPathRecorder - Records the flight and generates Google Earth (KML format) "replays"
+
+## Other Useful Resources
+
+* https://obsproject.com/ - Screen capture / broadcast application
