@@ -22,33 +22,50 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SKYSEARCHTEST_H
-#define SKYSEARCHTEST_H
+#ifndef AIRCRAFTINFO_H
+#define AIRCRAFTINFO_H
 
-#include <QObject>
-#include <QVector>
+#include <QByteArray>
 
-#include "../../Kernel/src/AircraftData.h"
+#include "SimType.h"
+#include "ModelLib.h"
 
-/*!
- * Test cases for the SkySearch module.
- */
-class SkySearchTest : public QObject
+struct MODEL_API AircraftInfo
 {
-    Q_OBJECT
+    QByteArray name;
+    QByteArray atcId;
+    QByteArray atcAirline;
+    QByteArray atcFlightNumber;
+    QByteArray category;
+    bool startOnGround;
+    // Feet
+    float aircraftAltitudeAboveGround;
 
-private slots:
-    void initTestCase();
-    void cleanupTestCase();
+    // Knots
+    int initialAirspeed;
+    SimTypes::SurfaceType surfaceType;
+    // Feet
+    int wingSpan;
+    int numberOfEngines;
+    SimTypes::EngineType engineType;
 
-    void binaryIntervalSearch_data();
-    void binaryIntervalSearch();
+    float groundAltitude;
+    float ambientTemperature;
+    float totalAirTemperature;
+    float windVelocity;
+    float windDirection;
+    SimTypes::PrecipitationState precipitationState;
+    bool inClouds;
+    float visibility;
+    float seaLevelPressure;
+    quint8 pitotIcingPercent;
+    quint8 structuralIcingPercent;
 
-    void linearIntervalSearch_data();
-    void linearIntervalSearch();
+    AircraftInfo() noexcept;
 
-private:
-     QVector<AircraftData> m_aircraftData;
+    AircraftInfo (AircraftInfo &&) = default;
+    AircraftInfo (const AircraftInfo &) = default;
+    AircraftInfo &operator= (const AircraftInfo &) = default;
 };
 
-#endif // SKYSEARCHTEST_H
+#endif // AIRCRAFTINFO_H

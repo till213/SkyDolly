@@ -32,12 +32,12 @@
 #include <QApplication>
 #include <QWidget>
 
-#include "../../Kernel/src/Settings.h"
-#include "../../Kernel/src/Aircraft.h"
-#include "../../Kernel/src/AircraftInfo.h"
-#include "../../Kernel/src/AircraftData.h"
 #include "../../Kernel/src/SampleRate.h"
 #include "../../Kernel/src/Enum.h"
+#include "../../Kernel/src/Settings.h"
+#include "../../Model/src/Aircraft.h"
+#include "../../Model/src/AircraftInfo.h"
+#include "../../Model/src/AircraftData.h"
 #include "SimConnectDataDefinition.h"
 #include "SimConnectAircraftInfo.h"
 #include "SimConnectAircraftData.h"

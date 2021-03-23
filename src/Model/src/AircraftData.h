@@ -28,10 +28,10 @@
 #include <QtGlobal>
 #include <QFlags>
 
-#include "SimTypes.h"
-#include "KernelLib.h"
+#include "SimType.h"
+#include "ModelLib.h"
 
-struct KERNEL_API AircraftData
+struct MODEL_API AircraftData
 {
     // Position
 

@@ -31,8 +31,8 @@
 #include <QtGlobal>
 
 #include "../../Kernel/src/SkyMath.h"
-#include "../../Kernel/src/SimTypes.h"
-#include "../../Kernel/src/AircraftInfo.h"
+#include "../../Model/src/SimType.h"
+#include "../../Model/src/AircraftInfo.h"
 
 struct SimConnectAircraftInfo
 {

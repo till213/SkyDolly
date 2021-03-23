@@ -22,50 +22,20 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef AIRCRAFTINFO_H
-#define AIRCRAFTINFO_H
+#ifndef CSVIMPORT_H
+#define CSVIMPORT_H
 
-#include <QByteArray>
+class QIODevice;
 
-#include "SimTypes.h"
-#include "KernelLib.h"
+class Aircraft;
+class CSVExportPrivate;
 
-struct KERNEL_API AircraftInfo
+#include "../ModelLib.h"
+
+class CSVImport
 {
-    QByteArray name;
-    QByteArray atcId;
-    QByteArray atcAirline;
-    QByteArray atcFlightNumber;
-    QByteArray category;
-    bool startOnGround;
-    // Feet
-    float aircraftAltitudeAboveGround;
-
-    // Knots
-    int initialAirspeed;
-    SimTypes::SurfaceType surfaceType;
-    // Feet
-    int wingSpan;
-    int numberOfEngines;
-    SimTypes::EngineType engineType;
-
-    float groundAltitude;
-    float ambientTemperature;
-    float totalAirTemperature;
-    float windVelocity;
-    float windDirection;
-    SimTypes::PrecipitationState precipitationState;
-    bool inClouds;
-    float visibility;
-    float seaLevelPressure;
-    quint8 pitotIcingPercent;
-    quint8 structuralIcingPercent;
-
-    AircraftInfo() noexcept;
-
-    AircraftInfo (AircraftInfo &&) = default;
-    AircraftInfo (const AircraftInfo &) = default;
-    AircraftInfo &operator= (const AircraftInfo &) = default;
+public:
+    MODEL_API static bool importData(QIODevice &io, Aircraft &aircraft) noexcept;
 };
 
-#endif // AIRCRAFTINFO_H
+#endif // CSVIMPORT_H

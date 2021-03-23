@@ -26,9 +26,9 @@
 
 #include <QDialog>
 
-#include "../../../Kernel/src/Const.h"
-#include "../../../Kernel/src/Aircraft.h"
-#include "../../../Kernel/src/AircraftInfo.h"
+#include "../../../Model/src/SimVar.h"
+#include "../../../Model/src/Aircraft.h"
+#include "../../../Model/src/AircraftInfo.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "LightVariablesWidget.h"
@@ -89,7 +89,7 @@ void LightVariablesWidget::hideEvent(QHideEvent *event)
 
 void LightVariablesWidget::initUi()
 {
-    ui->lightStateLineEdit->setToolTip(Const::LightStates);
+    ui->lightStateLineEdit->setToolTip(SimVar::LightStates);
 
     // Make the light state checkboxes checkable, but not for the user
     ui->navigationCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);

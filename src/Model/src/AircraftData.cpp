@@ -24,7 +24,7 @@
  */
 #include <QFlags>
 
-#include "SimTypes.h"
+#include "SimType.h"
 #include "AircraftData.h"
 
 // PUBLIC
