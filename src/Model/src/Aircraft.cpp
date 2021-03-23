@@ -48,11 +48,6 @@ public:
     QVector<AircraftData> aircraftData;
     AircraftData currentAircraftData;
     mutable int currentIndex;
-
-    // In case we seek 3 seconds "into the future" we use binary search
-    // to find the next position (otherwise linear search, assuming that
-    // the next position is "nearby" (within the 3 seconds threshold)
-    static constexpr qint64 BinaryIntervalSearchThreshold = 3000;
 };
 
 // PUBLIC
@@ -207,7 +202,7 @@ bool Aircraft::updateCurrentIndex(qint64 timestamp) const noexcept
                 // The timestamp was moved to front ("rewind"), so search the
                 // array until and including the current index
                 index = SkySearch::BinaryIntervalSearch;
-            } else if (timestamp - AircraftPrivate::BinaryIntervalSearchThreshold > d->aircraftData.at(index).timestamp) {
+            } else if (timestamp - SkySearch::BinaryIntervalSearchThreshold > d->aircraftData.at(index).timestamp) {
                 index = SkySearch::BinaryIntervalSearch;
             }
         } else {

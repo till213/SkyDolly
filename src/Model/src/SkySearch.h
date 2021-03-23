@@ -36,6 +36,11 @@ namespace SkySearch {
     constexpr int LinearIntervalSearch = -2;
     constexpr int BinaryIntervalSearch = -3;
 
+    // In case we seek 3 seconds "into the future" we use binary search
+    // to find the next position (otherwise linear search, assuming that
+    // the next position is "nearby" (within the 3 seconds threshold)
+    constexpr qint64 BinaryIntervalSearchThreshold = 3000;
+
     /*!
      * Returns the lower index i of the interval [i, j] where i.timestamp <= timestamp < j.timestamp.
      * A special case is the last index l in case l.timestamp =< timestamp, in which case the last index l
