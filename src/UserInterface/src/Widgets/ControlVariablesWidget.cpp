@@ -31,8 +31,6 @@
 #include "../../../Model/src/Scenario.h"
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/AircraftData.h"
-#include "../../../Model/src/EngineData.h"
-#include "../../../Model/src/AircraftInfo.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "ControlVariablesWidget.h"
@@ -99,19 +97,6 @@ void ControlVariablesWidget::initUi()
     ui->elevatorLineEdit->setToolTip(SimVar::ElevatorPosition);
     ui->aileronLineEdit->setToolTip(SimVar::AileronPosition);
 
-    ui->throttle1LineEdit->setToolTip(SimVar::ThrottleLeverPosition1);
-    ui->throttle2LineEdit->setToolTip(SimVar::ThrottleLeverPosition2);
-    ui->throttle3LineEdit->setToolTip(SimVar::ThrottleLeverPosition3);
-    ui->throttle4LineEdit->setToolTip(SimVar::ThrottleLeverPosition4);
-    ui->propeller1LineEdit->setToolTip(SimVar::PropellerLeverPosition1);
-    ui->propeller2LineEdit->setToolTip(SimVar::PropellerLeverPosition2);
-    ui->propeller3LineEdit->setToolTip(SimVar::PropellerLeverPosition3);
-    ui->propeller4LineEdit->setToolTip(SimVar::PropellerLeverPosition4);
-    ui->mixture1LineEdit->setToolTip(SimVar::MixtureLeverPosition1);
-    ui->mixture2LineEdit->setToolTip(SimVar::MixtureLeverPosition2);
-    ui->mixture3LineEdit->setToolTip(SimVar::MixtureLeverPosition3);
-    ui->mixture4LineEdit->setToolTip(SimVar::MixtureLeverPosition4);
-
     ui->leadingEdgeFlapsLeftLineEdit->setToolTip(SimVar::LeadingEdgeFlapsLeftPercent);
     ui->leadingEdgeFlapsRightLineEdit->setToolTip(SimVar::LeadingEdgeFlapsRightPercent);
     ui->trailingEdgeFlapsLeftLineEdit->setToolTip(SimVar::TrailingEdgeFlapsLeftPercent);
@@ -161,7 +146,6 @@ const EngineData &ControlVariablesWidget::getCurrentEngineData() const
 void ControlVariablesWidget::updateControlDataUi()
 {
     const AircraftData &aircraftData = getCurrentAircraftData();
-    const EngineData &engineData = getCurrentEngineData();
 
     // Aircraft controls
     ui->yokeXLineEdit->setText(QString::number(aircraftData.yokeXPosition));
@@ -169,20 +153,6 @@ void ControlVariablesWidget::updateControlDataUi()
     ui->rudderLineEdit->setText(QString::number(aircraftData.rudderPosition));
     ui->elevatorLineEdit->setText(QString::number(aircraftData.elevatorPosition));
     ui->aileronLineEdit->setText(QString::number(aircraftData.aileronPosition));
-
-    // General engine
-    ui->throttle1LineEdit->setText(QString::number(engineData.throttleLeverPosition1));
-    ui->throttle2LineEdit->setText(QString::number(engineData.throttleLeverPosition2));
-    ui->throttle3LineEdit->setText(QString::number(engineData.throttleLeverPosition3));
-    ui->throttle4LineEdit->setText(QString::number(engineData.throttleLeverPosition4));
-    ui->propeller1LineEdit->setText(QString::number(engineData.propellerLeverPosition1));
-    ui->propeller2LineEdit->setText(QString::number(engineData.propellerLeverPosition2));
-    ui->propeller3LineEdit->setText(QString::number(engineData.propellerLeverPosition3));
-    ui->propeller4LineEdit->setText(QString::number(engineData.propellerLeverPosition4));
-    ui->mixture1LineEdit->setText(QString::number(engineData.mixtureLeverPosition1));
-    ui->mixture2LineEdit->setText(QString::number(engineData.mixtureLeverPosition2));
-    ui->mixture3LineEdit->setText(QString::number(engineData.mixtureLeverPosition3));
-    ui->mixture4LineEdit->setText(QString::number(engineData.mixtureLeverPosition4));
 
     // Flaps & speed brakes
     ui->leadingEdgeFlapsLeftLineEdit->setText(QString::number(aircraftData.leadingEdgeFlapsLeftPercent));
@@ -200,4 +170,3 @@ void ControlVariablesWidget::updateControlDataUi()
     ui->tailhookLineEdit->setText(QString::number(aircraftData.tailhookPosition));
     ui->canopyOpenLineEdit->setText(QString::number(aircraftData.canopyOpen));
 }
-

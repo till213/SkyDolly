@@ -27,6 +27,7 @@
 #include "../../../Kernel/src/Settings.h"
 #include "../../../Model/src/World.h"
 #include "../../../Model/src/Scenario.h"
+#include "../../../Model/src/AircraftData.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "StatisticsDialog.h"

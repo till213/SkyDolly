@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ControlVariablesWidget</class>
- <widget class="QWidget" name="ControlVariablesWidget">
+ <class>EngineWidget</class>
+ <widget class="QWidget" name="EngineWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>567</width>
+    <width>261</width>
     <height>388</height>
    </rect>
   </property>
@@ -15,10 +15,10 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="sizeConstraint">
-    <enum>QLayout::SetDefaultConstraint</enum>
+    <enum>QLayout::SetMinimumSize</enum>
    </property>
-   <item row="0" column="1">
-    <widget class="QGroupBox" name="groupBox_7">
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="groupBox">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -26,18 +26,21 @@
       </size>
      </property>
      <property name="title">
-      <string>Secondary Controls</string>
+      <string>Engine</string>
      </property>
-     <layout class="QFormLayout" name="formLayout_2">
+     <layout class="QFormLayout" name="formLayout">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetMinimumSize</enum>
+      </property>
       <item row="0" column="0">
-       <widget class="QLabel" name="label_40">
+       <widget class="QLabel" name="label_33">
         <property name="text">
-         <string>Leading Edge Flaps Left</string>
+         <string>Throttle 1</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="leadingEdgeFlapsLeftLineEdit">
+       <widget class="QLineEdit" name="throttle1LineEdit">
         <property name="minimumSize">
          <size>
           <width>160</width>
@@ -50,14 +53,14 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="label_41">
+       <widget class="QLabel" name="label_34">
         <property name="text">
-         <string>Leading Edge Flaps Right</string>
+         <string>Throttle 2</string>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QLineEdit" name="leadingEdgeFlapsRightLineEdit">
+       <widget class="QLineEdit" name="throttle2LineEdit">
         <property name="minimumSize">
          <size>
           <width>160</width>
@@ -70,14 +73,14 @@
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="label_42">
+       <widget class="QLabel" name="label_35">
         <property name="text">
-         <string>Trailing Edge Flaps Left</string>
+         <string>Throttle 3</string>
         </property>
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QLineEdit" name="trailingEdgeFlapsLeftLineEdit">
+       <widget class="QLineEdit" name="throttle3LineEdit">
         <property name="minimumSize">
          <size>
           <width>160</width>
@@ -90,14 +93,14 @@
        </widget>
       </item>
       <item row="3" column="0">
-       <widget class="QLabel" name="label_43">
+       <widget class="QLabel" name="label_36">
         <property name="text">
-         <string>Trailing Edge Flaps Right</string>
+         <string>Throttle 4</string>
         </property>
        </widget>
       </item>
       <item row="3" column="1">
-       <widget class="QLineEdit" name="trailingEdgeFlapsRightLineEdit">
+       <widget class="QLineEdit" name="throttle4LineEdit">
         <property name="minimumSize">
          <size>
           <width>160</width>
@@ -110,14 +113,14 @@
        </widget>
       </item>
       <item row="4" column="0">
-       <widget class="QLabel" name="label_38">
+       <widget class="QLabel" name="label_47">
         <property name="text">
-         <string>Flaps Position</string>
+         <string>Propeller 1</string>
         </property>
        </widget>
       </item>
       <item row="4" column="1">
-       <widget class="QLineEdit" name="flapsPositionLineEdit">
+       <widget class="QLineEdit" name="propeller1LineEdit">
         <property name="minimumSize">
          <size>
           <width>160</width>
@@ -130,14 +133,14 @@
        </widget>
       </item>
       <item row="5" column="0">
-       <widget class="QLabel" name="label_37">
+       <widget class="QLabel" name="label_48">
         <property name="text">
-         <string>Spoiler</string>
+         <string>Propeller 2</string>
         </property>
        </widget>
       </item>
       <item row="5" column="1">
-       <widget class="QLineEdit" name="spoilerLineEdit">
+       <widget class="QLineEdit" name="propeller2LineEdit">
         <property name="minimumSize">
          <size>
           <width>160</width>
@@ -150,14 +153,14 @@
        </widget>
       </item>
       <item row="6" column="0">
-       <widget class="QLabel" name="label_39">
+       <widget class="QLabel" name="label_49">
         <property name="text">
-         <string>Gear</string>
+         <string>Propeller 3</string>
         </property>
        </widget>
       </item>
       <item row="6" column="1">
-       <widget class="QLineEdit" name="gearLineEdit">
+       <widget class="QLineEdit" name="propeller3LineEdit">
         <property name="minimumSize">
          <size>
           <width>160</width>
@@ -170,14 +173,14 @@
        </widget>
       </item>
       <item row="7" column="0">
-       <widget class="QLabel" name="label_45">
+       <widget class="QLabel" name="label_50">
         <property name="text">
-         <string>Brake Left</string>
+         <string>Propeller 4</string>
         </property>
        </widget>
       </item>
       <item row="7" column="1">
-       <widget class="QLineEdit" name="brakeLeftLineEdit">
+       <widget class="QLineEdit" name="propeller4LineEdit">
         <property name="minimumSize">
          <size>
           <width>160</width>
@@ -190,14 +193,14 @@
        </widget>
       </item>
       <item row="8" column="0">
-       <widget class="QLabel" name="label_46">
+       <widget class="QLabel" name="label_51">
         <property name="text">
-         <string>Brake Right</string>
+         <string>Mixture 1</string>
         </property>
        </widget>
       </item>
       <item row="8" column="1">
-       <widget class="QLineEdit" name="brakeRightLineEdit">
+       <widget class="QLineEdit" name="mixture1LineEdit">
         <property name="minimumSize">
          <size>
           <width>160</width>
@@ -210,14 +213,14 @@
        </widget>
       </item>
       <item row="9" column="0">
-       <widget class="QLabel" name="label_44">
+       <widget class="QLabel" name="label_52">
         <property name="text">
-         <string>Water Rudder</string>
+         <string>Mixture 2</string>
         </property>
        </widget>
       </item>
       <item row="9" column="1">
-       <widget class="QLineEdit" name="waterRudderLineEdit">
+       <widget class="QLineEdit" name="mixture2LineEdit">
         <property name="minimumSize">
          <size>
           <width>160</width>
@@ -230,14 +233,14 @@
        </widget>
       </item>
       <item row="10" column="0">
-       <widget class="QLabel" name="label_60">
+       <widget class="QLabel" name="label_53">
         <property name="text">
-         <string>Tailhook</string>
+         <string>Mixture 3</string>
         </property>
        </widget>
       </item>
       <item row="10" column="1">
-       <widget class="QLineEdit" name="tailhookLineEdit">
+       <widget class="QLineEdit" name="mixture3LineEdit">
         <property name="minimumSize">
          <size>
           <width>160</width>
@@ -250,132 +253,14 @@
        </widget>
       </item>
       <item row="11" column="0">
-       <widget class="QLabel" name="label_61">
+       <widget class="QLabel" name="label_54">
         <property name="text">
-         <string>Canopy Open</string>
+         <string>Mixture 4</string>
         </property>
        </widget>
       </item>
       <item row="11" column="1">
-       <widget class="QLineEdit" name="canopyOpenLineEdit">
-        <property name="minimumSize">
-         <size>
-          <width>160</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBox_8">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="title">
-      <string>Primary Controls</string>
-     </property>
-     <layout class="QFormLayout" name="formLayout_3">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_55">
-        <property name="text">
-         <string>Yoke X</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="yokeXLineEdit">
-        <property name="minimumSize">
-         <size>
-          <width>160</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_56">
-        <property name="text">
-         <string>Yoke Y</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="yokeYLineEdit">
-        <property name="minimumSize">
-         <size>
-          <width>160</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_57">
-        <property name="text">
-         <string>Rudder</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QLineEdit" name="rudderLineEdit">
-        <property name="minimumSize">
-         <size>
-          <width>160</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_58">
-        <property name="text">
-         <string>Elevator</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QLineEdit" name="elevatorLineEdit">
-        <property name="minimumSize">
-         <size>
-          <width>160</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="label_59">
-        <property name="text">
-         <string>Aileron</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QLineEdit" name="aileronLineEdit">
+       <widget class="QLineEdit" name="mixture4LineEdit">
         <property name="minimumSize">
          <size>
           <width>160</width>
