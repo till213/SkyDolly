@@ -31,6 +31,7 @@
 #include "../../../Model/src/Scenario.h"
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/AircraftInfo.h"
+#include "../../../Model/src/FlightConditions.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "../../../Kernel/src/SkyMath.h"
@@ -77,7 +78,10 @@ void FlightInformationWidget::showEvent(QShowEvent *event)
 
     updateUi();
 
-    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+    const Scenario &currentScenario = World::getInstance().getCurrentScenario();
+    const Aircraft &aircraft = currentScenario.getUserAircraft();
+    connect(&currentScenario, &Scenario::flightConditionsChanged,
+            this, &FlightInformationWidget::updateInfoUi);
     connect(&aircraft, &Aircraft::infoChanged,
             this, &FlightInformationWidget::updateInfoUi);
 }
@@ -86,7 +90,10 @@ void FlightInformationWidget::hideEvent(QHideEvent *event)
 {
     Q_UNUSED(event)
 
-    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+    const Scenario &currentScenario = World::getInstance().getCurrentScenario();
+    const Aircraft &aircraft = currentScenario.getUserAircraft();
+    disconnect(&currentScenario, &Scenario::flightConditionsChanged,
+            this, &FlightInformationWidget::updateInfoUi);
     disconnect(&aircraft, &Aircraft::infoChanged,
             this, &FlightInformationWidget::updateInfoUi);
 }
@@ -139,7 +146,9 @@ void FlightInformationWidget::updateUi()
 
 void FlightInformationWidget::updateInfoUi()
 {
-    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+    const Scenario &currentScenario = World::getInstance().getCurrentScenario();
+    const Aircraft &aircraft = currentScenario.getUserAircraftConst();
+    const FlightConditions &flightConditions = currentScenario.getFlightConditionsConst();
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
 
     ui->nameLineEdit->setText(aircraftInfo.name);
@@ -150,23 +159,23 @@ void FlightInformationWidget::updateInfoUi()
     ui->startOnGroundCheckBox->setChecked(aircraftInfo.startOnGround);
 
     ui->initialAirspeedLineEdit->setText(QString::number(aircraftInfo.initialAirspeed));
-    ui->surfaceTypeLineEdit->setText(SimTypes::surfaceTypeToString(aircraftInfo.surfaceType));
+    ui->surfaceTypeLineEdit->setText(SimType::surfaceTypeToString(aircraftInfo.surfaceType));
     ui->wingSpanLineEdit->setText(QString::number(aircraftInfo.wingSpan));
-    ui->engineTypeLineEdit->setText(SimTypes::engineTypeToString(aircraftInfo.engineType));
+    ui->engineTypeLineEdit->setText(SimType::engineTypeToString(aircraftInfo.engineType));
     ui->numberOfEnginesLineEdit->setText(QString::number(aircraftInfo.numberOfEngines));
     ui->aircraftAltitudeAboveGroundLineEdit->setText(QString::number(aircraftInfo.aircraftAltitudeAboveGround));
     ui->startOnGroundCheckBox->setChecked(aircraftInfo.startOnGround);
 
-    ui->groundAltitudeLineEdit->setText(QString::number(aircraftInfo.groundAltitude));
-    ui->temperatureLineEdit->setText(QString::number(aircraftInfo.ambientTemperature));
-    ui->totalAirTemperatureLineEdit->setText(QString::number(aircraftInfo.totalAirTemperature));
-    ui->windVelocityLineEdit->setText(QString::number(aircraftInfo.windVelocity));
-    ui->windDirectionLineEdit->setText(QString::number(aircraftInfo.windDirection));
-    ui->precipitationStateLineEdit->setText(SimTypes::precipitationStateToString(aircraftInfo.precipitationState));
+    ui->groundAltitudeLineEdit->setText(QString::number(flightConditions.groundAltitude));
+    ui->temperatureLineEdit->setText(QString::number(flightConditions.ambientTemperature));
+    ui->totalAirTemperatureLineEdit->setText(QString::number(flightConditions.totalAirTemperature));
+    ui->windVelocityLineEdit->setText(QString::number(flightConditions.windVelocity));
+    ui->windDirectionLineEdit->setText(QString::number(flightConditions.windDirection));
+    ui->precipitationStateLineEdit->setText(SimType::precipitationStateToString(flightConditions.precipitationState));
 
-    ui->inCloudsCheckBox->setChecked(aircraftInfo.inClouds);
-    ui->visibilityLineEdit->setText(QString::number(aircraftInfo.visibility));
-    ui->seaLevelPressure->setText(QString::number(aircraftInfo.seaLevelPressure));
-    ui->pitotIcingLineEdit->setText(QString::number(SkyMath::toPercent(aircraftInfo.pitotIcingPercent)));
-    ui->structuralIcingLineEdit->setText(QString::number(SkyMath::toPercent(aircraftInfo.structuralIcingPercent)));
+    ui->inCloudsCheckBox->setChecked(flightConditions.inClouds);
+    ui->visibilityLineEdit->setText(QString::number(flightConditions.visibility));
+    ui->seaLevelPressure->setText(QString::number(flightConditions.seaLevelPressure));
+    ui->pitotIcingLineEdit->setText(QString::number(SkyMath::toPercent(flightConditions.pitotIcingPercent)));
+    ui->structuralIcingLineEdit->setText(QString::number(SkyMath::toPercent(flightConditions.structuralIcingPercent)));
 }

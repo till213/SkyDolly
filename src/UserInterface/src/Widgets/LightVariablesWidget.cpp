@@ -151,14 +151,14 @@ void LightVariablesWidget::updateLightDataUi()
     // Lights
     ui->lightStateLineEdit->setText(QString::number(aircraftData.lightStates));
 
-    ui->navigationCheckBox->setChecked(aircraftData.lightStates.testFlag(SimTypes::LightState::Navigation));
-    ui->beaconCheckBox->setChecked(aircraftData.lightStates.testFlag(SimTypes::LightState::Beacon));
-    ui->landingCheckBox->setChecked(aircraftData.lightStates.testFlag(SimTypes::LightState::Landing));
-    ui->taxiCheckBox->setChecked(aircraftData.lightStates.testFlag(SimTypes::LightState::Taxi));
-    ui->strobeCheckBox->setChecked(aircraftData.lightStates.testFlag(SimTypes::LightState::Strobe));
-    ui->panelCheckBox->setChecked(aircraftData.lightStates.testFlag(SimTypes::LightState::Panel));
-    ui->recognitionCheckBox->setChecked(aircraftData.lightStates.testFlag(SimTypes::LightState::Recognition));
-    ui->wingCheckBox->setChecked(aircraftData.lightStates.testFlag(SimTypes::LightState::Wing));
-    ui->logoCheckBox->setChecked(aircraftData.lightStates.testFlag(SimTypes::LightState::Logo));
-    ui->cabinCheckBox->setChecked(aircraftData.lightStates.testFlag(SimTypes::LightState::Cabin));
+    ui->navigationCheckBox->setChecked(aircraftData.lightStates.testFlag(SimType::LightState::Navigation));
+    ui->beaconCheckBox->setChecked(aircraftData.lightStates.testFlag(SimType::LightState::Beacon));
+    ui->landingCheckBox->setChecked(aircraftData.lightStates.testFlag(SimType::LightState::Landing));
+    ui->taxiCheckBox->setChecked(aircraftData.lightStates.testFlag(SimType::LightState::Taxi));
+    ui->strobeCheckBox->setChecked(aircraftData.lightStates.testFlag(SimType::LightState::Strobe));
+    ui->panelCheckBox->setChecked(aircraftData.lightStates.testFlag(SimType::LightState::Panel));
+    ui->recognitionCheckBox->setChecked(aircraftData.lightStates.testFlag(SimType::LightState::Recognition));
+    ui->wingCheckBox->setChecked(aircraftData.lightStates.testFlag(SimType::LightState::Wing));
+    ui->logoCheckBox->setChecked(aircraftData.lightStates.testFlag(SimType::LightState::Logo));
+    ui->cabinCheckBox->setChecked(aircraftData.lightStates.testFlag(SimType::LightState::Cabin));
 }

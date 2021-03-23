@@ -144,7 +144,7 @@ struct SimConnectAircraftData
         // Implementation note: downcast from 64 to 32 bit (QFlags only supports 'int')
         // This should be sufficient for now, unless there will be more than 32 distinct
         // lights
-        aircraftData.lightStates = SimTypes::LightStates(static_cast<int>(lightStates));
+        aircraftData.lightStates = SimType::LightStates(static_cast<int>(lightStates));
 
         return aircraftData;
     }

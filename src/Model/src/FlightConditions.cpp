@@ -22,37 +22,20 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef AIRCRAFTINFO_H
-#define AIRCRAFTINFO_H
+#include "FlightConditions.h"
+// PUBLIC
 
-#include <QByteArray>
-
-#include "SimType.h"
-#include "ModelLib.h"
-
-struct MODEL_API AircraftInfo
+FlightConditions::FlightConditions() noexcept
+    : groundAltitude(0.0f),
+      ambientTemperature(0.0f),
+      totalAirTemperature(0.0f),
+      windVelocity(0.0f),
+      windDirection(0.0f),
+      precipitationState(SimType::PrecipitationState::None),
+      inClouds(false),
+      visibility(0.0f),
+      seaLevelPressure(0.0f),
+      pitotIcingPercent(0),
+      structuralIcingPercent(0)
 {
-    QByteArray name;
-    QByteArray atcId;
-    QByteArray atcAirline;
-    QByteArray atcFlightNumber;
-    QByteArray category;
-    bool startOnGround;
-    // Feet
-    float aircraftAltitudeAboveGround;
-
-    // Knots
-    int initialAirspeed;
-    SimType::SurfaceType surfaceType;
-    // Feet
-    int wingSpan;
-    int numberOfEngines;
-    SimType::EngineType engineType;
-
-    AircraftInfo() noexcept;
-    AircraftInfo(AircraftInfo &&) = default;
-    AircraftInfo(const AircraftInfo &) = default;
-    AircraftInfo &operator= (const AircraftInfo &) = default;
-};
-
-#endif // AIRCRAFTINFO_H
+}
