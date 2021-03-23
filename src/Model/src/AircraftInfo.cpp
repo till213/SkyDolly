@@ -28,7 +28,6 @@ AircraftInfo::AircraftInfo() noexcept
     : startOnGround(false),
       aircraftAltitudeAboveGround(0),
       initialAirspeed(0),
-      surfaceType(SimType::SurfaceType::Unknown),
       wingSpan(0),      
       numberOfEngines(0),
       engineType(SimType::EngineType::Unknown)

@@ -102,7 +102,6 @@ void AircraftTypeWidget::initUi()
     ui->categoryLineEdit->setToolTip(SimVar::Category);
     ui->startOnGroundCheckBox->setToolTip(SimVar::SimOnGround);
     ui->initialAirspeedLineEdit->setToolTip(SimVar::AirspeedTrue);
-    ui->surfaceTypeLineEdit->setToolTip(SimVar::SurfaceType);
     ui->wingSpanLineEdit->setToolTip(SimVar::WingSpan);
     ui->engineTypeLineEdit->setToolTip(SimVar::EngineType);
     ui->numberOfEnginesLineEdit->setToolTip(SimVar::NumberOfEngines);
@@ -134,7 +133,6 @@ void AircraftTypeWidget::updateInfoUi()
     ui->startOnGroundCheckBox->setChecked(aircraftInfo.startOnGround);
 
     ui->initialAirspeedLineEdit->setText(QString::number(aircraftInfo.initialAirspeed));
-    ui->surfaceTypeLineEdit->setText(SimType::surfaceTypeToString(aircraftInfo.surfaceType));
     ui->wingSpanLineEdit->setText(QString::number(aircraftInfo.wingSpan));
     ui->engineTypeLineEdit->setText(SimType::engineTypeToString(aircraftInfo.engineType));
     ui->numberOfEnginesLineEdit->setText(QString::number(aircraftInfo.numberOfEngines));

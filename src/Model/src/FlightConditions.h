@@ -31,6 +31,7 @@
 struct MODEL_API FlightConditions
 {
     float groundAltitude;
+    SimType::SurfaceType surfaceType;
     float ambientTemperature;
     float totalAirTemperature;
     float windVelocity;
