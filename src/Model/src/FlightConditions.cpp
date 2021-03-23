@@ -27,6 +27,7 @@
 
 FlightConditions::FlightConditions() noexcept
     : groundAltitude(0.0f),
+      surfaceType(SimType::SurfaceType::Unknown),
       ambientTemperature(0.0f),
       totalAirTemperature(0.0f),
       windVelocity(0.0f),

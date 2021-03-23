@@ -111,7 +111,6 @@ struct SimConnectAircraftInfo
         aircraftInfo.aircraftAltitudeAboveGround = planeAltAboveGround;
 
         aircraftInfo.initialAirspeed = airspeedTrue;
-        aircraftInfo.surfaceType = toSurfaceType(surfaceType);
         aircraftInfo.wingSpan = wingSpan;
         aircraftInfo.numberOfEngines = numberOfEngines;
         aircraftInfo.engineType = toEngineType(engineType);
@@ -123,6 +122,7 @@ struct SimConnectAircraftInfo
         FlightConditions flightConditions;
 
         flightConditions.groundAltitude = groundAltitude;
+        flightConditions.surfaceType = toSurfaceType(surfaceType);
         flightConditions.ambientTemperature = ambientTemperature;
         flightConditions.totalAirTemperature = totalAirTemperature;
         flightConditions.windVelocity = ambientWindVelocity;

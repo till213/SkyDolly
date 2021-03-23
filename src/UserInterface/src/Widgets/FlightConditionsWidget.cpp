@@ -93,6 +93,7 @@ void FlightConditionsWidget::hideEvent(QHideEvent *event)
 void FlightConditionsWidget::initUi()
 {
     ui->groundAltitudeLineEdit->setToolTip(SimVar::GroundAltitude);
+    ui->surfaceTypeLineEdit->setToolTip(SimVar::SurfaceType);
     ui->temperatureLineEdit->setToolTip(SimVar::AmbientTemperature);
     ui->totalAirTemperatureLineEdit->setToolTip(SimVar::TotalAirTemperature);
     ui->windVelocityLineEdit->setToolTip(SimVar::AmbientWindVelocity);
@@ -123,6 +124,7 @@ void FlightConditionsWidget::updateInfoUi()
     const FlightConditions &flightConditions = currentScenario.getFlightConditionsConst();
 
     ui->groundAltitudeLineEdit->setText(QString::number(flightConditions.groundAltitude));
+    ui->surfaceTypeLineEdit->setText(SimType::surfaceTypeToString(flightConditions.surfaceType));
     ui->temperatureLineEdit->setText(QString::number(flightConditions.ambientTemperature));
     ui->totalAirTemperatureLineEdit->setText(QString::number(flightConditions.totalAirTemperature));
     ui->windVelocityLineEdit->setText(QString::number(flightConditions.windVelocity));

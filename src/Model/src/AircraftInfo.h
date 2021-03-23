@@ -43,7 +43,6 @@ struct MODEL_API AircraftInfo
 
     // Knots
     int initialAirspeed;
-    SimType::SurfaceType surfaceType;
     // Feet
     int wingSpan;
     int numberOfEngines;
