@@ -28,8 +28,10 @@
 #include <QtGlobal>
 #include <QRandomGenerator>
 
-#include "../../Kernel/src/AircraftData.h"
 #include "../../Kernel/src/Settings.h"
+#include "../../Model/src/World.h"
+#include "../../Model/src/Scenario.h"
+#include "../../Model/src/AircraftData.h"
 #include "AbstractSkyConnect.h"
 #include "SkyConnectDummy.h"
 
@@ -131,7 +133,7 @@ void SkyConnectDummy::processEvents() noexcept
     case Connect::State::Recording:
         recordData();
         break;
-    case Connect::State::Playback:
+    case Connect::State::Replay:
         replay();
         break;
     default:
@@ -144,7 +146,7 @@ void SkyConnectDummy::processEvents() noexcept
 void SkyConnectDummy::frenchConnection() noexcept
 {
     connect(&d->replayTimer, &QTimer::timeout,
-           this, &SkyConnectDummy::processEvents);
+            this, &SkyConnectDummy::processEvents);
 }
 
 bool SkyConnectDummy::sendAircraftData() noexcept
@@ -170,8 +172,9 @@ void SkyConnectDummy::recordData() noexcept
     aircraftData.longitude = QRandomGenerator::global()->bounded(90.0);
     aircraftData.altitude = QRandomGenerator::global()->bounded(20000.0);
     aircraftData.timestamp = getCurrentTimestamp();
-    getAircraft().upsertAircraftData(std::move(aircraftData));
+    Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
 
+    aircraft.upsertAircraftData(std::move(aircraftData));
     if (!isElapsedTimerRunning()) {
         // Start the elapsed timer with the arrival of the first sample data
         setCurrentTimestamp(0);
@@ -182,7 +185,7 @@ void SkyConnectDummy::recordData() noexcept
 void SkyConnectDummy::replay() noexcept
 {
     if (sendAircraftData()) {
-        emit aircraftDataSent(getCurrentTimestamp());
+        emit currentTimestampChanged(getCurrentTimestamp());
     } else {
         stopReplay();
     }
