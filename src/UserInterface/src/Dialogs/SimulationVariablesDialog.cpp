@@ -36,7 +36,8 @@
 #include "../Widgets/AircraftVariablesWidget.h"
 #include "../Widgets/ControlVariablesWidget.h"
 #include "../Widgets/LightVariablesWidget.h"
-#include "../Widgets/FlightInformationWidget.h"
+#include "../Widgets/AircraftTypeWidget.h"
+#include "../Widgets/FlightConditionsWidget.h"
 #include "SimulationVariablesDialog.h"
 #include "ui_SimulationVariablesDialog.h"
 
@@ -102,13 +103,16 @@ void SimulationVariablesDialog::initUi() noexcept
     ui->simulationVariablesTab->addTab(aircraftVariablesWidget, tr("&Aircraft"));
 
     ControlVariablesWidget *controlVariablesWidget = new ControlVariablesWidget(d->skyConnect, this);
-    ui->simulationVariablesTab->addTab(controlVariablesWidget, tr("&Controls"));
+    ui->simulationVariablesTab->addTab(controlVariablesWidget, tr("&Flight Controls"));
 
     LightVariablesWidget *lightVariablesWidget = new LightVariablesWidget(d->skyConnect, this);
     ui->simulationVariablesTab->addTab(lightVariablesWidget, tr("&Lights"));
 
-    FlightInformationWidget *flightInformationWidget = new FlightInformationWidget(d->skyConnect, this);
-    ui->simulationVariablesTab->addTab(flightInformationWidget, tr("&Flight Information"));
+    AircraftTypeWidget *aircraftTypeWidget = new AircraftTypeWidget(d->skyConnect, this);
+    ui->simulationVariablesTab->addTab(aircraftTypeWidget, tr("Aircraft &Type"));
+
+    FlightConditionsWidget *flightConditionsWidget = new FlightConditionsWidget(d->skyConnect, this);
+    ui->simulationVariablesTab->addTab(flightConditionsWidget, tr("&Conditions"));
 }
 
 void SimulationVariablesDialog::updateUi() noexcept

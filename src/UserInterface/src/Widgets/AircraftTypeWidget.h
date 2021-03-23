@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTINFORMATIONWIDGET_H
-#define FLIGHTINFORMATIONWIDGET_H
+#ifndef AIRCRAFTTYPEWIDGET_H
+#define AIRCRAFTTYPEWIDGET_H
 
 #include <memory>
 
@@ -33,29 +33,29 @@ class QShowEvent;
 class QHideEvent;
 
 class SkyConnectIntf;
-class FlightInformationWidgetPrivate;
+class AircraftTypeWidgetPrivate;
 class AircraftData;
 
 namespace Ui {
-class FlightInformationWidget;
+class AircraftTypeWidget;
 }
 
-class FlightInformationWidget : public QDialog
+class AircraftTypeWidget : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit FlightInformationWidget(SkyConnectIntf &skyConnect, QWidget *parent = nullptr);
-    virtual ~FlightInformationWidget();
+    explicit AircraftTypeWidget(SkyConnectIntf &skyConnect, QWidget *parent = nullptr);
+    virtual ~AircraftTypeWidget();
 
 protected:
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;
 
 private:
-    Q_DISABLE_COPY(FlightInformationWidget)
-    std::unique_ptr<FlightInformationWidgetPrivate> d;
-    std::unique_ptr<Ui::FlightInformationWidget> ui;
+    Q_DISABLE_COPY(AircraftTypeWidget)
+    std::unique_ptr<AircraftTypeWidgetPrivate> d;
+    std::unique_ptr<Ui::AircraftTypeWidget> ui;
 
     void initUi();
     void updateUi();
@@ -64,4 +64,4 @@ private slots:
     void updateInfoUi();
 };
 
-#endif // FLIGHTINFORMATIONWIDGET_H
+#endif // AIRCRAFTTYPEWIDGET_H
