@@ -62,6 +62,7 @@ public:
     void setAction(const QAction *action);
 
 private:
+    Q_DISABLE_COPY(ActionButton)
     std::unique_ptr<ActionButtonPrivate> d;
 
 private slots:

@@ -105,8 +105,8 @@ struct MODEL_API AircraftData
                 pitch == 0.0 && bank == 0.0 && heading == 0.0 && timestamp == 0);
     }
 
-    AircraftData (AircraftData &&) = default;
-    AircraftData (const AircraftData &) = default;
+    AircraftData(AircraftData &&) = default;
+    AircraftData(const AircraftData &) = default;
     AircraftData &operator= (const AircraftData &) = default;
 
     static const AircraftData NullAircraftData;

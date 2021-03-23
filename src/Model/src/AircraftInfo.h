@@ -63,8 +63,8 @@ struct MODEL_API AircraftInfo
 
     AircraftInfo() noexcept;
 
-    AircraftInfo (AircraftInfo &&) = default;
-    AircraftInfo (const AircraftInfo &) = default;
+    AircraftInfo(AircraftInfo &&) = default;
+    AircraftInfo(const AircraftInfo &) = default;
     AircraftInfo &operator= (const AircraftInfo &) = default;
 };
 
