@@ -42,6 +42,9 @@ target_sources(UserInterface
         src/Widgets/AircraftVariablesWidget.cpp
         src/Widgets/AircraftVariablesWidget.h
         src/Widgets/AircraftVariablesWidget.ui
+        src/Widgets/EngineWidget.cpp
+        src/Widgets/EngineWidget.h
+        src/Widgets/EngineWidget.ui
         src/Widgets/ControlVariablesWidget.cpp
         src/Widgets/ControlVariablesWidget.h
         src/Widgets/ControlVariablesWidget.ui

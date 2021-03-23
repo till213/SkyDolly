@@ -33,9 +33,9 @@
 
 #include "ModelLib.h"
 #include "AircraftInfo.h"
-#include "AircraftData.h"
 #include "Engine.h"
 
+class AircraftData;
 class AircraftPrivate;
 
 class MODEL_API Aircraft : public QObject

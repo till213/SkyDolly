@@ -46,6 +46,7 @@
 #include "../../Model/src/Export/CSVExport.h"
 #include "../../Model/src/Import/CSVImport.h"
 #include "../../Model/src/Aircraft.h"
+#include "../../Model/src/AircraftData.h"
 #include "../../Model/src/AircraftInfo.h"
 #include "../../Model/src/World.h"
 #include "../../Kernel/src/SampleRate.h"

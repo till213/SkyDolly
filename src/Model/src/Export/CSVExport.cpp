@@ -28,6 +28,7 @@
 
 #include "../SimVar.h"
 #include "../Aircraft.h"
+#include "../AircraftData.h"
 #include "CSVExport.h"
 
 namespace {

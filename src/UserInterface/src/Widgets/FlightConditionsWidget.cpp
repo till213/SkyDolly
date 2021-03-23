@@ -30,7 +30,6 @@
 #include "../../../Model/src/World.h"
 #include "../../../Model/src/Scenario.h"
 #include "../../../Model/src/Aircraft.h"
-#include "../../../Model/src/AircraftInfo.h"
 #include "../../../Model/src/FlightConditions.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
