@@ -199,7 +199,7 @@ const Version &Settings::getVersion() const
 // PRIVATE
 
 Settings::Settings() noexcept
-    : d(new SettingsPrivate())
+    : d(std::make_unique<SettingsPrivate>())
 {
     restore();
     frenchConnection();
