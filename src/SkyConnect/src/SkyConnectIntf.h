@@ -66,8 +66,6 @@ public:
     virtual Connect::State getState() const noexcept = 0;
     virtual bool isConnected() const noexcept = 0;
 
-    virtual Aircraft &getAircraft() noexcept = 0;
-    virtual const Aircraft &getAircraft() const noexcept = 0;
     virtual const AircraftData &getCurrentAircraftData() const noexcept = 0;
 
     virtual double calculateRecordedSamplesPerSecond() const noexcept = 0;

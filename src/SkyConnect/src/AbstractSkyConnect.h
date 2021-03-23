@@ -33,6 +33,7 @@
 #include "SkyConnectIntf.h"
 #include "Connect.h"
 
+class Scenario;
 class AbstractSkyConnectPrivate;
 
 class  AbstractSkyConnect : public SkyConnectIntf
@@ -70,14 +71,13 @@ public:
     virtual Connect::State getState() const noexcept override;
     virtual bool isConnected() const noexcept override;
 
-    virtual Aircraft &getAircraft() noexcept override;
-    virtual const Aircraft &getAircraft() const noexcept override;
     virtual const AircraftData &getCurrentAircraftData() const noexcept override;
 
     virtual double calculateRecordedSamplesPerSecond() const noexcept override;
 
 protected:
     void setState(Connect::State state) noexcept;
+    Scenario &getCurrentScenario() const;
     void setCurrentTimestamp(qint64 timestamp) noexcept;
 
     bool isElapsedTimerRunning() const noexcept;
@@ -106,6 +106,7 @@ protected slots:
     virtual void processEvents() noexcept = 0;
 
 private:
+    Q_DISABLE_COPY(AbstractSkyConnect)
     std::unique_ptr<AbstractSkyConnectPrivate> d;
 
     void frenchConnection() noexcept;

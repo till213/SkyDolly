@@ -46,6 +46,7 @@ protected:
     void hideEvent(QHideEvent *event) noexcept override;
 
 private:
+    Q_DISABLE_COPY(SettingsDialog)
     std::unique_ptr<Ui::SettingsDialog> ui;
 
     void initUi() noexcept;

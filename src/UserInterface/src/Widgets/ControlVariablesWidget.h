@@ -51,6 +51,7 @@ protected:
     void hideEvent(QHideEvent *event) override;
 
 private:
+    Q_DISABLE_COPY(ControlVariablesWidget)
     std::unique_ptr<ControlVariablesWidgetPrivate> d;
     std::unique_ptr<Ui::ControlVariablesWidget> ui;
 

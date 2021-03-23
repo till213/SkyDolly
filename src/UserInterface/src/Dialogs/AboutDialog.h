@@ -42,6 +42,7 @@ public:
     virtual ~AboutDialog() noexcept;
 
 private:
+    Q_DISABLE_COPY(AboutDialog)
     std::unique_ptr<Ui::AboutDialog> ui;
 
     void initUi() noexcept;

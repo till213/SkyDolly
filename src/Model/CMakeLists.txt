@@ -9,6 +9,10 @@ endif()
 target_sources(Model
     PRIVATE
         src/ModelLib.h
+        src/World.cpp
+        src/World.h
+        src/Scenario.cpp
+        src/Scenario.h
         src/Aircraft.cpp
         src/Aircraft.h
         src/AircraftData.cpp
