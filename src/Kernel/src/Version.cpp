@@ -60,7 +60,7 @@ const QString VersionPrivate::ApplicationName = QString(VersionConfig::Applicati
 // public
 
 Version::Version() noexcept
-    : d(new VersionPrivate())
+    : d(std::make_unique<VersionPrivate>())
 {
 }
 
