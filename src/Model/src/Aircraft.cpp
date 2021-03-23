@@ -28,7 +28,7 @@
 #include <QByteArray>
 #include <QVector>
 
-#include "SkyMath.h"
+#include "../../Kernel/src/SkyMath.h"
 #include "SkySearch.h"
 #include "AircraftInfo.h"
 #include "AircraftData.h"

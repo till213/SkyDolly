@@ -22,20 +22,15 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVIMPORT_H
-#define CSVIMPORT_H
+#ifndef MODELLIB_H
+#define MODELLIB_H
 
-class QIODevice;
+#include <QtGlobal>
 
-class Aircraft;
-class CSVExportPrivate;
+#ifdef MODEL_EXPORT
+# define MODEL_API Q_DECL_EXPORT
+#else
+# define MODEL_API Q_DECL_IMPORT
+#endif
 
-#include "../KernelLib.h"
-
-class CSVImport
-{
-public:
-    KERNEL_API static bool importData(QIODevice &io, Aircraft &aircraft) noexcept;
-};
-
-#endif // CSVIMPORT_H
+#endif // MODELLIB_H

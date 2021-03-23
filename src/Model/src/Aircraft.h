@@ -31,13 +31,13 @@
 #include <QByteArray>
 #include <QVector>
 
-#include "KernelLib.h"
+#include "ModelLib.h"
 #include "AircraftInfo.h"
 #include "AircraftData.h"
 
 class AircraftPrivate;
 
-class KERNEL_API Aircraft : public QObject
+class MODEL_API Aircraft : public QObject
 {
     Q_OBJECT
 public:    

@@ -27,8 +27,8 @@
 #include <QElapsedTimer>
 
 #include "../../Kernel/src/Settings.h"
-#include "../../Kernel/src/Aircraft.h"
-#include "../../Kernel/src/AircraftData.h"
+#include "../../Model/src/Aircraft.h"
+#include "../../Model/src/AircraftData.h"
 #include "../../Kernel/src/SampleRate.h"
 #include "Connect.h"
 #include "SkyConnectIntf.h"

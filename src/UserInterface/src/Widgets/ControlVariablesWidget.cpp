@@ -26,9 +26,9 @@
 
 #include <QDialog>
 
-#include "../../../Kernel/src/Const.h"
-#include "../../../Kernel/src/Aircraft.h"
-#include "../../../Kernel/src/AircraftInfo.h"
+#include "../../../Model/src/SimVar.h"
+#include "../../../Model/src/Aircraft.h"
+#include "../../../Model/src/AircraftInfo.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "ControlVariablesWidget.h"
@@ -89,38 +89,38 @@ void ControlVariablesWidget::hideEvent(QHideEvent *event)
 
 void ControlVariablesWidget::initUi()
 {
-    ui->yokeXLineEdit->setToolTip(Const::YokeXPosition);
-    ui->yokeYLineEdit->setToolTip(Const::YokeYPosition);
-    ui->rudderLineEdit->setToolTip(Const::RudderPosition);
-    ui->elevatorLineEdit->setToolTip(Const::ElevatorPosition);
-    ui->aileronLineEdit->setToolTip(Const::AileronPosition);
+    ui->yokeXLineEdit->setToolTip(SimVar::YokeXPosition);
+    ui->yokeYLineEdit->setToolTip(SimVar::YokeYPosition);
+    ui->rudderLineEdit->setToolTip(SimVar::RudderPosition);
+    ui->elevatorLineEdit->setToolTip(SimVar::ElevatorPosition);
+    ui->aileronLineEdit->setToolTip(SimVar::AileronPosition);
 
-    ui->throttle1LineEdit->setToolTip(Const::ThrottleLeverPosition1);
-    ui->throttle2LineEdit->setToolTip(Const::ThrottleLeverPosition2);
-    ui->throttle3LineEdit->setToolTip(Const::ThrottleLeverPosition3);
-    ui->throttle4LineEdit->setToolTip(Const::ThrottleLeverPosition4);
-    ui->propeller1LineEdit->setToolTip(Const::PropellerLeverPosition1);
-    ui->propeller2LineEdit->setToolTip(Const::PropellerLeverPosition2);
-    ui->propeller3LineEdit->setToolTip(Const::PropellerLeverPosition3);
-    ui->propeller4LineEdit->setToolTip(Const::PropellerLeverPosition4);
-    ui->mixture1LineEdit->setToolTip(Const::MixtureLeverPosition1);
-    ui->mixture2LineEdit->setToolTip(Const::MixtureLeverPosition2);
-    ui->mixture3LineEdit->setToolTip(Const::MixtureLeverPosition3);
-    ui->mixture4LineEdit->setToolTip(Const::MixtureLeverPosition4);
+    ui->throttle1LineEdit->setToolTip(SimVar::ThrottleLeverPosition1);
+    ui->throttle2LineEdit->setToolTip(SimVar::ThrottleLeverPosition2);
+    ui->throttle3LineEdit->setToolTip(SimVar::ThrottleLeverPosition3);
+    ui->throttle4LineEdit->setToolTip(SimVar::ThrottleLeverPosition4);
+    ui->propeller1LineEdit->setToolTip(SimVar::PropellerLeverPosition1);
+    ui->propeller2LineEdit->setToolTip(SimVar::PropellerLeverPosition2);
+    ui->propeller3LineEdit->setToolTip(SimVar::PropellerLeverPosition3);
+    ui->propeller4LineEdit->setToolTip(SimVar::PropellerLeverPosition4);
+    ui->mixture1LineEdit->setToolTip(SimVar::MixtureLeverPosition1);
+    ui->mixture2LineEdit->setToolTip(SimVar::MixtureLeverPosition2);
+    ui->mixture3LineEdit->setToolTip(SimVar::MixtureLeverPosition3);
+    ui->mixture4LineEdit->setToolTip(SimVar::MixtureLeverPosition4);
 
-    ui->leadingEdgeFlapsLeftLineEdit->setToolTip(Const::LeadingEdgeFlapsLeftPercent);
-    ui->leadingEdgeFlapsRightLineEdit->setToolTip(Const::LeadingEdgeFlapsRightPercent);
-    ui->trailingEdgeFlapsLeftLineEdit->setToolTip(Const::TrailingEdgeFlapsLeftPercent);
-    ui->trailingEdgeFlapsRightLineEdit->setToolTip(Const::TrailingEdgeFlapsRightPercent);
-    ui->flapsPositionLineEdit->setToolTip(Const::FlapsHandleIndex);
-    ui->spoilerLineEdit->setToolTip(Const::SpoilersHandlePosition);
+    ui->leadingEdgeFlapsLeftLineEdit->setToolTip(SimVar::LeadingEdgeFlapsLeftPercent);
+    ui->leadingEdgeFlapsRightLineEdit->setToolTip(SimVar::LeadingEdgeFlapsRightPercent);
+    ui->trailingEdgeFlapsLeftLineEdit->setToolTip(SimVar::TrailingEdgeFlapsLeftPercent);
+    ui->trailingEdgeFlapsRightLineEdit->setToolTip(SimVar::TrailingEdgeFlapsRightPercent);
+    ui->flapsPositionLineEdit->setToolTip(SimVar::FlapsHandleIndex);
+    ui->spoilerLineEdit->setToolTip(SimVar::SpoilersHandlePosition);
 
-    ui->gearLineEdit->setToolTip(Const::GearHandlePosition);
-    ui->brakeLeftLineEdit->setToolTip(Const::BrakeLeftPosition);
-    ui->brakeRightLineEdit->setToolTip(Const::BrakeRightPosition);
-    ui->waterRudderLineEdit->setToolTip(Const::WaterRudderHandlePosition);
-    ui->tailhookLineEdit->setToolTip(Const::TailhookPosition);
-    ui->canopyOpenLineEdit->setToolTip(Const::CanopyOpen);
+    ui->gearLineEdit->setToolTip(SimVar::GearHandlePosition);
+    ui->brakeLeftLineEdit->setToolTip(SimVar::BrakeLeftPosition);
+    ui->brakeRightLineEdit->setToolTip(SimVar::BrakeRightPosition);
+    ui->waterRudderLineEdit->setToolTip(SimVar::WaterRudderHandlePosition);
+    ui->tailhookLineEdit->setToolTip(SimVar::TailhookPosition);
+    ui->canopyOpenLineEdit->setToolTip(SimVar::CanopyOpen);
 }
 
 void ControlVariablesWidget::updateUi()

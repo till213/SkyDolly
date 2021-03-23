@@ -22,11 +22,14 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMTYPES_H
-#define SIMTYPES_H
+#ifndef SIMTYPE_H
+#define SIMTYPE_H
 
 #include <QString>
 
+/*!
+ * Simulation variable types and enumerations.
+ */
 namespace SimTypes {
 
     enum class LightState {
@@ -231,4 +234,4 @@ namespace SimTypes {
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(SimTypes::LightStates)
 
-#endif // SIMTYPES_H
+#endif // SIMTYPE_H

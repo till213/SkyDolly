@@ -25,8 +25,8 @@
 #include <QtTest/QtTest>
 #include <QVector>
 
-#include "../../Kernel/src/AircraftData.h"
-#include "../../Kernel/src/SkySearch.h"
+#include "../../Model/src/AircraftData.h"
+#include "../../Model/src/SkySearch.h"
 #include "SkySearchTest.h"
 
 namespace

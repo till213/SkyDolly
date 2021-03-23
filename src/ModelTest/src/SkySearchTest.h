@@ -22,26 +22,33 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVEXPORT_H
-#define CSVEXPORT_H
+#ifndef SKYSEARCHTEST_H
+#define SKYSEARCHTEST_H
 
-class QIODevice;
+#include <QObject>
+#include <QVector>
 
-class Aircraft;
-class CSVExportPrivate;
-
-#include "../KernelLib.h"
+#include "../../Model/src/AircraftData.h"
 
 /*!
- * Exports the Aircraft data as comma-separated values (CSV).
+ * Test cases for the SkySearch module.
  */
-class CSVExport
+class SkySearchTest : public QObject
 {
-public:
-    KERNEL_API static bool exportData(const Aircraft &aircraft, QIODevice &io) noexcept;
+    Q_OBJECT
+
+private slots:
+    void initTestCase();
+    void cleanupTestCase();
+
+    void binaryIntervalSearch_data();
+    void binaryIntervalSearch();
+
+    void linearIntervalSearch_data();
+    void linearIntervalSearch();
 
 private:
-    CSVExportPrivate *d;
+     QVector<AircraftData> m_aircraftData;
 };
 
-#endif // CSVEXPORT_H
+#endif // SKYSEARCHTEST_H

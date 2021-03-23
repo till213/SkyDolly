@@ -26,9 +26,9 @@
 
 #include <QDialog>
 
-#include "../../../Kernel/src/Const.h"
-#include "../../../Kernel/src/Aircraft.h"
-#include "../../../Kernel/src/AircraftInfo.h"
+#include "../../../Model/src/SimVar.h"
+#include "../../../Model/src/Aircraft.h"
+#include "../../../Model/src/AircraftInfo.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "../Widgets/AircraftVariablesWidget.h"

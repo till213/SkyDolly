@@ -26,9 +26,9 @@
 
 #include <QDialog>
 
-#include "../../../Kernel/src/Const.h"
-#include "../../../Kernel/src/Aircraft.h"
-#include "../../../Kernel/src/AircraftInfo.h"
+#include "../../../Model/src/SimVar.h"
+#include "../../../Model/src/Aircraft.h"
+#include "../../../Model/src/AircraftInfo.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "../../../Kernel/src/SkyMath.h"
@@ -93,32 +93,32 @@ void FlightInformationWidget::hideEvent(QHideEvent *event)
 
 void FlightInformationWidget::initUi()
 {
-    ui->nameLineEdit->setToolTip(Const::Title);
-    ui->tailNumberLineEdit->setToolTip(Const::ATCFlightNumber);
-    ui->airlineLineEdit->setToolTip(Const::ATCAirline);
-    ui->flightLineEdit->setToolTip(Const::ATCId);
+    ui->nameLineEdit->setToolTip(SimVar::Title);
+    ui->tailNumberLineEdit->setToolTip(SimVar::ATCFlightNumber);
+    ui->airlineLineEdit->setToolTip(SimVar::ATCAirline);
+    ui->flightLineEdit->setToolTip(SimVar::ATCId);
 
-    ui->categoryLineEdit->setToolTip(Const::Category);
-    ui->startOnGroundCheckBox->setToolTip(Const::SimOnGround);
-    ui->initialAirspeedLineEdit->setToolTip(Const::AirspeedTrue);
-    ui->surfaceTypeLineEdit->setToolTip(Const::SurfaceType);
-    ui->wingSpanLineEdit->setToolTip(Const::WingSpan);
-    ui->engineTypeLineEdit->setToolTip(Const::EngineType);
-    ui->numberOfEnginesLineEdit->setToolTip(Const::NumberOfEngines);
-    ui->aircraftAltitudeAboveGroundLineEdit->setToolTip(Const::PlaneAltAboveGround);
+    ui->categoryLineEdit->setToolTip(SimVar::Category);
+    ui->startOnGroundCheckBox->setToolTip(SimVar::SimOnGround);
+    ui->initialAirspeedLineEdit->setToolTip(SimVar::AirspeedTrue);
+    ui->surfaceTypeLineEdit->setToolTip(SimVar::SurfaceType);
+    ui->wingSpanLineEdit->setToolTip(SimVar::WingSpan);
+    ui->engineTypeLineEdit->setToolTip(SimVar::EngineType);
+    ui->numberOfEnginesLineEdit->setToolTip(SimVar::NumberOfEngines);
+    ui->aircraftAltitudeAboveGroundLineEdit->setToolTip(SimVar::PlaneAltAboveGround);
 
-    ui->groundAltitudeLineEdit->setToolTip(Const::GroundAltitude);
-    ui->temperatureLineEdit->setToolTip(Const::AmbientTemperature);
-    ui->totalAirTemperatureLineEdit->setToolTip(Const::TotalAirTemperature);
-    ui->windVelocityLineEdit->setToolTip(Const::AmbientWindVelocity);
-    ui->windDirectionLineEdit->setToolTip(Const::AmbientWindDirection);
-    ui->precipitationStateLineEdit->setToolTip(Const::AmbientPrecipState);
+    ui->groundAltitudeLineEdit->setToolTip(SimVar::GroundAltitude);
+    ui->temperatureLineEdit->setToolTip(SimVar::AmbientTemperature);
+    ui->totalAirTemperatureLineEdit->setToolTip(SimVar::TotalAirTemperature);
+    ui->windVelocityLineEdit->setToolTip(SimVar::AmbientWindVelocity);
+    ui->windDirectionLineEdit->setToolTip(SimVar::AmbientWindDirection);
+    ui->precipitationStateLineEdit->setToolTip(SimVar::AmbientPrecipState);
 
-    ui->inCloudsCheckBox->setToolTip(Const::AmbientInCloud);
-    ui->visibilityLineEdit->setToolTip(Const::AmbientVisibility);
-    ui->seaLevelPressure->setToolTip(Const::SeaLevelPressure);
-    ui->pitotIcingLineEdit->setToolTip(Const::PitotIcePct);
-    ui->structuralIcingLineEdit->setToolTip(Const::StructuralIcePct);
+    ui->inCloudsCheckBox->setToolTip(SimVar::AmbientInCloud);
+    ui->visibilityLineEdit->setToolTip(SimVar::AmbientVisibility);
+    ui->seaLevelPressure->setToolTip(SimVar::SeaLevelPressure);
+    ui->pitotIcingLineEdit->setToolTip(SimVar::PitotIcePct);
+    ui->structuralIcingLineEdit->setToolTip(SimVar::StructuralIcePct);
 
     // Make the flight information checkboxes checkable, but not for the user
     ui->startOnGroundCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);

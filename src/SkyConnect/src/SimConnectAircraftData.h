@@ -27,9 +27,9 @@
 
 #include <windows.h>
 
-#include "../../Kernel/src/SimTypes.h"
 #include "../../Kernel/src/SkyMath.h"
-#include "../../Kernel/src/AircraftData.h"
+#include "../../Model/src/SimType.h"
+#include "../../Model/src/AircraftData.h"
 
 struct SimConnectAircraftData
 {

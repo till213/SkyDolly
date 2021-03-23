@@ -26,9 +26,9 @@
 
 #include <QDialog>
 
-#include "../../../Kernel/src/Const.h"
-#include "../../../Kernel/src/Aircraft.h"
-#include "../../../Kernel/src/AircraftInfo.h"
+#include "../../../Model/src/SimVar.h"
+#include "../../../Model/src/Aircraft.h"
+#include "../../../Model/src/AircraftInfo.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "AircraftVariablesWidget.h"
@@ -89,19 +89,19 @@ void AircraftVariablesWidget::hideEvent(QHideEvent *event)
 
 void AircraftVariablesWidget::initUi()
 {
-    ui->latitudeLineEdit->setToolTip(Const::Latitude);
-    ui->longitudeLineEdit->setToolTip(Const::Longitude);
-    ui->altitudeLineEdit->setToolTip(Const::Altitude);
-    ui->pitchLineEdit->setToolTip(Const::Pitch);
-    ui->bankLineEdit->setToolTip(Const::Bank);
-    ui->headingLineEdit->setToolTip(Const::Heading);
+    ui->latitudeLineEdit->setToolTip(SimVar::Latitude);
+    ui->longitudeLineEdit->setToolTip(SimVar::Longitude);
+    ui->altitudeLineEdit->setToolTip(SimVar::Altitude);
+    ui->pitchLineEdit->setToolTip(SimVar::Pitch);
+    ui->bankLineEdit->setToolTip(SimVar::Bank);
+    ui->headingLineEdit->setToolTip(SimVar::Heading);
 
-    ui->velocityXLineEdit->setToolTip(Const::VelocityBodyX);
-    ui->velocityYLineEdit->setToolTip(Const::VelocityBodyY);
-    ui->velocityZLineEdit->setToolTip(Const::VelocityBodyZ);
-    ui->rotationVelocityXLineEdit->setToolTip(Const::RotationVelocityBodyX);
-    ui->rotationVelocityYLineEdit->setToolTip(Const::RotationVelocityBodyY);
-    ui->rotationVelocityZLineEdit->setToolTip(Const::RotationVelocityBodyZ);
+    ui->velocityXLineEdit->setToolTip(SimVar::VelocityBodyX);
+    ui->velocityYLineEdit->setToolTip(SimVar::VelocityBodyY);
+    ui->velocityZLineEdit->setToolTip(SimVar::VelocityBodyZ);
+    ui->rotationVelocityXLineEdit->setToolTip(SimVar::RotationVelocityBodyX);
+    ui->rotationVelocityYLineEdit->setToolTip(SimVar::RotationVelocityBodyY);
+    ui->rotationVelocityZLineEdit->setToolTip(SimVar::RotationVelocityBodyZ);
 }
 
 void AircraftVariablesWidget::updateUi()

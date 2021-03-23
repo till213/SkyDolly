@@ -25,8 +25,8 @@
 #ifndef SKYCONNECT_H
 #define SKYCONNECT_H
 
-#include "../../Kernel/src/Aircraft.h"
 #include "../../Kernel/src/SampleRate.h"
+#include "../../Model/src/Aircraft.h"
 #include "Connect.h"
 #include "SkyConnectLib.h"
 

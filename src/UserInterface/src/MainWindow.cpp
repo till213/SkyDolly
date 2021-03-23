@@ -40,14 +40,14 @@
 #include <QDoubleValidator>
 #include <QIcon>
 
-#include "../../Kernel/src/Export/CSVExport.h"
-#include "../../Kernel/src/Import/CSVImport.h"
 #include "../../Kernel/src/Version.h"
 #include "../../Kernel/src/Settings.h"
-#include "../../Kernel/src/Aircraft.h"
-#include "../../Kernel/src/AircraftInfo.h"
-#include "../../Kernel/src/SampleRate.h"
 #include "../../Kernel/src/Enum.h"
+#include "../../Model/src/Export/CSVExport.h"
+#include "../../Model/src/Import/CSVImport.h"
+#include "../../Model/src/Aircraft.h"
+#include "../../Model/src/AircraftInfo.h"
+#include "../../Kernel/src/SampleRate.h"
 #include "../../SkyConnect/src/SkyManager.h"
 #include "../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../SkyConnect/src/Connect.h"

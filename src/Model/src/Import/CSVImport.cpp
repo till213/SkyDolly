@@ -28,6 +28,7 @@
 #include <QFlags>
 
 #include "../Const.h"
+#include "../SimVar.h"
 #include "../AircraftData.h"
 #include "../Aircraft.h"
 #include "CSVImport.h"
@@ -68,224 +69,224 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft) noexcept
                     double doubleValue;
                     int    intValue;
                     // Position
-                    if (header == Const::Latitude) {
+                    if (header == SimVar::Latitude) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.latitude = doubleValue;
                         }
-                    } else if (header == Const::Longitude) {
+                    } else if (header == SimVar::Longitude) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.longitude = doubleValue;
                         }
-                    } else if (header == Const::Altitude) {
+                    } else if (header == SimVar::Altitude) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.altitude = doubleValue;
                         }
-                    } else if (header == Const::Pitch) {
+                    } else if (header == SimVar::Pitch) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.pitch = doubleValue;
                         }
-                    } else if (header == Const::Bank) {
+                    } else if (header == SimVar::Bank) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.bank = doubleValue;
                         }
-                    } else if (header == Const::Heading) {
+                    } else if (header == SimVar::Heading) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.heading = doubleValue;
                         }
                     // Velocity
-                    } else if (header == Const::VelocityBodyX) {
+                    } else if (header == SimVar::VelocityBodyX) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.velocityBodyX = doubleValue;
                         }
-                    } else if (header == Const::VelocityBodyY) {
+                    } else if (header == SimVar::VelocityBodyY) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.velocityBodyY = doubleValue;
                         }
-                    } else if (header == Const::VelocityBodyZ) {
+                    } else if (header == SimVar::VelocityBodyZ) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.velocityBodyZ = doubleValue;
                         }
-                    } else if (header == Const::RotationVelocityBodyX) {
+                    } else if (header == SimVar::RotationVelocityBodyX) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.rotationVelocityBodyX = doubleValue;
                         }
-                    } else if (header == Const::RotationVelocityBodyY) {
+                    } else if (header == SimVar::RotationVelocityBodyY) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.rotationVelocityBodyY= doubleValue;
                         }
-                    } else if (header == Const::RotationVelocityBodyZ) {
+                    } else if (header == SimVar::RotationVelocityBodyZ) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.rotationVelocityBodyZ = doubleValue;
                         }
                     // Aircraft controls
-                    } else if (header == Const::YokeXPosition) {
+                    } else if (header == SimVar::YokeXPosition) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.yokeXPosition = doubleValue;
                         }
-                    } else if (header == Const::YokeYPosition) {
+                    } else if (header == SimVar::YokeYPosition) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.yokeYPosition = doubleValue;
                         }
-                    } else if (header == Const::RudderPosition) {
+                    } else if (header == SimVar::RudderPosition) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.rudderPosition = doubleValue;
                         }
-                    } else if (header == Const::ElevatorPosition) {
+                    } else if (header == SimVar::ElevatorPosition) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.elevatorPosition = doubleValue;
                         }
-                    } else if (header == Const::AileronPosition) {
+                    } else if (header == SimVar::AileronPosition) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.aileronPosition = doubleValue;
                         }
                     // Engine
-                    } else if (header == Const::ThrottleLeverPosition1) {
+                    } else if (header == SimVar::ThrottleLeverPosition1) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.throttleLeverPosition1 = doubleValue;
                         }
-                    } else if (header == Const::ThrottleLeverPosition2) {
+                    } else if (header == SimVar::ThrottleLeverPosition2) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.throttleLeverPosition2 = doubleValue;
                         }
-                    } else if (header == Const::ThrottleLeverPosition3) {
+                    } else if (header == SimVar::ThrottleLeverPosition3) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.throttleLeverPosition3 = doubleValue;
                         }
-                    } else if (header == Const::ThrottleLeverPosition4) {
+                    } else if (header == SimVar::ThrottleLeverPosition4) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.throttleLeverPosition4 = doubleValue;
                         }
-                    } else if (header == Const::PropellerLeverPosition1) {
+                    } else if (header == SimVar::PropellerLeverPosition1) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.propellerLeverPosition1 = doubleValue;
                         }
-                    } else if (header == Const::PropellerLeverPosition2) {
+                    } else if (header == SimVar::PropellerLeverPosition2) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.propellerLeverPosition2 = doubleValue;
                         }
-                    } else if (header == Const::PropellerLeverPosition3) {
+                    } else if (header == SimVar::PropellerLeverPosition3) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.propellerLeverPosition3 = doubleValue;
                         }
-                    } else if (header == Const::PropellerLeverPosition4) {
+                    } else if (header == SimVar::PropellerLeverPosition4) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.propellerLeverPosition4 = doubleValue;
                         }
-                    } else if (header == Const::MixtureLeverPosition1) {
+                    } else if (header == SimVar::MixtureLeverPosition1) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.mixtureLeverPosition1 = doubleValue;
                         }
-                    } else if (header == Const::MixtureLeverPosition2) {
+                    } else if (header == SimVar::MixtureLeverPosition2) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.mixtureLeverPosition2 = doubleValue;
                         }
-                    } else if (header == Const::MixtureLeverPosition3) {
+                    } else if (header == SimVar::MixtureLeverPosition3) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.mixtureLeverPosition3 = doubleValue;
                         }
-                    } else if (header == Const::MixtureLeverPosition4) {
+                    } else if (header == SimVar::MixtureLeverPosition4) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.mixtureLeverPosition4 = doubleValue;
                         }
                     // Flaps & speed brakes
-                    } else if (header == Const::LeadingEdgeFlapsLeftPercent) {
+                    } else if (header == SimVar::LeadingEdgeFlapsLeftPercent) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.leadingEdgeFlapsLeftPercent = doubleValue;
                         }
-                    } else if (header == Const::LeadingEdgeFlapsRightPercent) {
+                    } else if (header == SimVar::LeadingEdgeFlapsRightPercent) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.leadingEdgeFlapsRightPercent = doubleValue;
                         }
-                    } else if (header == Const::TrailingEdgeFlapsLeftPercent) {
+                    } else if (header == SimVar::TrailingEdgeFlapsLeftPercent) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.trailingEdgeFlapsLeftPercent = doubleValue;
                         }
-                    } else if (header == Const::TrailingEdgeFlapsRightPercent) {
+                    } else if (header == SimVar::TrailingEdgeFlapsRightPercent) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.trailingEdgeFlapsRightPercent = doubleValue;
                         }
-                    } else if (header == Const::SpoilersHandlePosition) {
+                    } else if (header == SimVar::SpoilersHandlePosition) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.spoilersHandlePosition = doubleValue;
                         }
-                    } else if (header == Const::FlapsHandleIndex) {
+                    } else if (header == SimVar::FlapsHandleIndex) {
                         intValue = values.at(columnIndex).toInt(&ok);
                         if (ok) {
                             aircraftData.flapsHandleIndex = intValue;
                         }
                     // Gear, brakes & handles
-                    } else if (header == Const::GearHandlePosition) {
+                    } else if (header == SimVar::GearHandlePosition) {
                         intValue = values.at(columnIndex).toInt(&ok);
                         if (ok) {
                             aircraftData.gearHandlePosition = intValue == 1 ? true : false;
                         }
-                    } else if (header == Const::BrakeLeftPosition) {
+                    } else if (header == SimVar::BrakeLeftPosition) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.brakeLeftPosition = doubleValue;
                         }
-                    } else if (header == Const::BrakeRightPosition) {
+                    } else if (header == SimVar::BrakeRightPosition) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.brakeRightPosition = doubleValue;
                         }
-                    } else if (header == Const::WaterRudderHandlePosition) {
+                    } else if (header == SimVar::WaterRudderHandlePosition) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.waterRudderHandlePosition = doubleValue;
                         }
-                    } else if (header == Const::TailhookPosition) {
+                    } else if (header == SimVar::TailhookPosition) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.tailhookPosition = doubleValue;
                         }
-                    } else if (header == Const::CanopyOpen) {
+                    } else if (header == SimVar::CanopyOpen) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             aircraftData.canopyOpen = doubleValue;
                         }
                     // Lights
-                    } else if (header == Const::LightStates) {
+                    } else if (header == SimVar::LightStates) {
                         intValue = values.at(columnIndex).toInt(&ok);
                         if (ok) {
                             aircraftData.lightStates = SimTypes::LightStates(intValue);
                         }
                     // Timestamp
-                    } else if (header == Const::Timestamp) {
+                    } else if (header == SimVar::Timestamp) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);
                         if (ok) {
                             if (rowIndex != 0) {
