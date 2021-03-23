@@ -30,6 +30,7 @@ namespace SkyConnectDataDefinition
     enum DataDefinitionID {
         AircraftInfoDefinition,
         AircraftPositionDefinition,
+        AircraftEngineDefinition,
         AircraftInitialPosition
     };
 }

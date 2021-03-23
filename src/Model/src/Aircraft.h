@@ -34,6 +34,7 @@
 #include "ModelLib.h"
 #include "AircraftInfo.h"
 #include "AircraftData.h"
+#include "Engine.h"
 
 class AircraftPrivate;
 
@@ -43,6 +44,9 @@ class MODEL_API Aircraft : public QObject
 public:    
     Aircraft(QObject *parent = nullptr) noexcept;
     virtual ~Aircraft() noexcept;
+
+    const Engine &getEngineConst() const;
+    Engine &getEngine() const;
 
     void setAircraftInfo(AircraftInfo aircraftInfo) noexcept;
     const AircraftInfo &getAircraftInfo() const noexcept;

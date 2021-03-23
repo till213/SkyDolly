@@ -30,6 +30,8 @@
 #include "../../../Model/src/World.h"
 #include "../../../Model/src/Scenario.h"
 #include "../../../Model/src/Aircraft.h"
+#include "../../../Model/src/AircraftData.h"
+#include "../../../Model/src/EngineData.h"
 #include "../../../Model/src/AircraftInfo.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
@@ -142,11 +144,24 @@ const AircraftData &ControlVariablesWidget::getCurrentAircraftData() const
     };
 }
 
+const EngineData &ControlVariablesWidget::getCurrentEngineData() const
+{
+    const AircraftData aircraftData;
+    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+
+    if (d->skyConnect.getState() == Connect::State::Recording) {
+        return aircraft.getEngineConst().getLastEngineData();
+    } else {
+        return aircraft.getEngineConst().interpolateEngineData(d->skyConnect.getCurrentTimestamp());
+    };
+}
+
 // PRIVATE SLOTS
 
 void ControlVariablesWidget::updateControlDataUi()
 {
     const AircraftData &aircraftData = getCurrentAircraftData();
+    const EngineData &engineData = getCurrentEngineData();
 
     // Aircraft controls
     ui->yokeXLineEdit->setText(QString::number(aircraftData.yokeXPosition));
@@ -156,18 +171,18 @@ void ControlVariablesWidget::updateControlDataUi()
     ui->aileronLineEdit->setText(QString::number(aircraftData.aileronPosition));
 
     // General engine
-    ui->throttle1LineEdit->setText(QString::number(aircraftData.throttleLeverPosition1));
-    ui->throttle2LineEdit->setText(QString::number(aircraftData.throttleLeverPosition2));
-    ui->throttle3LineEdit->setText(QString::number(aircraftData.throttleLeverPosition3));
-    ui->throttle4LineEdit->setText(QString::number(aircraftData.throttleLeverPosition4));
-    ui->propeller1LineEdit->setText(QString::number(aircraftData.propellerLeverPosition1));
-    ui->propeller2LineEdit->setText(QString::number(aircraftData.propellerLeverPosition2));
-    ui->propeller3LineEdit->setText(QString::number(aircraftData.propellerLeverPosition3));
-    ui->propeller4LineEdit->setText(QString::number(aircraftData.propellerLeverPosition4));
-    ui->mixture1LineEdit->setText(QString::number(aircraftData.mixtureLeverPosition1));
-    ui->mixture2LineEdit->setText(QString::number(aircraftData.mixtureLeverPosition2));
-    ui->mixture3LineEdit->setText(QString::number(aircraftData.mixtureLeverPosition3));
-    ui->mixture4LineEdit->setText(QString::number(aircraftData.mixtureLeverPosition4));
+    ui->throttle1LineEdit->setText(QString::number(engineData.throttleLeverPosition1));
+    ui->throttle2LineEdit->setText(QString::number(engineData.throttleLeverPosition2));
+    ui->throttle3LineEdit->setText(QString::number(engineData.throttleLeverPosition3));
+    ui->throttle4LineEdit->setText(QString::number(engineData.throttleLeverPosition4));
+    ui->propeller1LineEdit->setText(QString::number(engineData.propellerLeverPosition1));
+    ui->propeller2LineEdit->setText(QString::number(engineData.propellerLeverPosition2));
+    ui->propeller3LineEdit->setText(QString::number(engineData.propellerLeverPosition3));
+    ui->propeller4LineEdit->setText(QString::number(engineData.propellerLeverPosition4));
+    ui->mixture1LineEdit->setText(QString::number(engineData.mixtureLeverPosition1));
+    ui->mixture2LineEdit->setText(QString::number(engineData.mixtureLeverPosition2));
+    ui->mixture3LineEdit->setText(QString::number(engineData.mixtureLeverPosition3));
+    ui->mixture4LineEdit->setText(QString::number(engineData.mixtureLeverPosition4));
 
     // Flaps & speed brakes
     ui->leadingEdgeFlapsLeftLineEdit->setText(QString::number(aircraftData.leadingEdgeFlapsLeftPercent));

@@ -88,7 +88,8 @@ struct SimConnectAircraftInfo
           structuralIcePct(0.0f)
     {}
 
-    inline AircraftInfo toAircraftInfo() const noexcept {
+    inline AircraftInfo toAircraftInfo() const noexcept
+    {
         AircraftInfo aircraftInfo;
 
         // Length check
@@ -118,7 +119,8 @@ struct SimConnectAircraftInfo
         return aircraftInfo;
     }
 
-    inline FlightConditions toFlightConditions() const noexcept {
+    inline FlightConditions toFlightConditions() const noexcept
+    {
         FlightConditions flightConditions;
 
         flightConditions.groundAltitude = groundAltitude;

@@ -111,18 +111,19 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
                               QString::number(data.rudderPosition) % SimVar::Sep %
                               QString::number(data.elevatorPosition) % SimVar::Sep %
                               QString::number(data.aileronPosition) % SimVar::Sep %
-                              QString::number(data.throttleLeverPosition1) % SimVar::Sep %
-                              QString::number(data.throttleLeverPosition2) % SimVar::Sep %
-                              QString::number(data.throttleLeverPosition3) % SimVar::Sep %
-                              QString::number(data.throttleLeverPosition4) % SimVar::Sep %
-                              QString::number(data.propellerLeverPosition1) % SimVar::Sep %
-                              QString::number(data.propellerLeverPosition2) % SimVar::Sep %
-                              QString::number(data.propellerLeverPosition3) % SimVar::Sep %
-                              QString::number(data.propellerLeverPosition4) % SimVar::Sep %
-                              QString::number(data.mixtureLeverPosition1) % SimVar::Sep %
-                              QString::number(data.mixtureLeverPosition2) % SimVar::Sep %
-                              QString::number(data.mixtureLeverPosition3) % SimVar::Sep %
-                              QString::number(data.mixtureLeverPosition4) % SimVar::Sep %
+                        // TODO IMPLEMENT ME!!!
+//                              QString::number(data.throttleLeverPosition1) % SimVar::Sep %
+//                              QString::number(data.throttleLeverPosition2) % SimVar::Sep %
+//                              QString::number(data.throttleLeverPosition3) % SimVar::Sep %
+//                              QString::number(data.throttleLeverPosition4) % SimVar::Sep %
+//                              QString::number(data.propellerLeverPosition1) % SimVar::Sep %
+//                              QString::number(data.propellerLeverPosition2) % SimVar::Sep %
+//                              QString::number(data.propellerLeverPosition3) % SimVar::Sep %
+//                              QString::number(data.propellerLeverPosition4) % SimVar::Sep %
+//                              QString::number(data.mixtureLeverPosition1) % SimVar::Sep %
+//                              QString::number(data.mixtureLeverPosition2) % SimVar::Sep %
+//                              QString::number(data.mixtureLeverPosition3) % SimVar::Sep %
+//                              QString::number(data.mixtureLeverPosition4) % SimVar::Sep %
                               QString::number(data.leadingEdgeFlapsLeftPercent) % SimVar::Sep %
                               QString::number(data.leadingEdgeFlapsRightPercent) % SimVar::Sep %
                               QString::number(data.trailingEdgeFlapsLeftPercent) % SimVar::Sep %
