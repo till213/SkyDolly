@@ -32,6 +32,8 @@
 
 struct MODEL_API TimeVariableData
 {
+    static constexpr qint64 InvalidTimestamp = std::numeric_limits<qint64>::min();
+
     // In milliseconds since the start of recording
     qint64 timestamp;
 

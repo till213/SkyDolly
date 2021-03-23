@@ -28,6 +28,7 @@
 #include <QVector>
 
 #include "../../Kernel/src/SkyMath.h"
+#include "TimeVariableData.h"
 #include "SkySearch.h"
 #include "EngineData.h"
 #include "Engine.h"
@@ -36,18 +37,14 @@ class EnginePrivate
 {
 public:
     EnginePrivate() noexcept
-        : currentEngineDataIndex(SkySearch::InvalidIndex)
+        : currentTimestamp(TimeVariableData::InvalidTimestamp),
+          currentEngineDataIndex(SkySearch::InvalidIndex)
     {}
 
-
     QVector<EngineData> engineData;
+    qint64 currentTimestamp;
     EngineData currentEngineData;
     mutable int currentEngineDataIndex;
-
-    // In case we seek 3 seconds "into the future" we use binary search
-    // to find the next position (otherwise linear search, assuming that
-    // the next position is "nearby" (within the 3 seconds threshold)
-    static constexpr qint64 BinaryIntervalSearchThreshold = 3000;
 };
 
 // PUBLIC
@@ -96,6 +93,7 @@ const QVector<EngineData> Engine::getAllEngineData() const noexcept
 void Engine::clear()
 {
     d->engineData.clear();
+    d->currentTimestamp = TimeVariableData::InvalidTimestamp;
     d->currentEngineDataIndex = SkySearch::InvalidIndex;
     emit dataChanged();
 }
@@ -103,31 +101,35 @@ void Engine::clear()
 const EngineData &Engine::interpolateEngineData(qint64 timestamp) const noexcept
 {
     const EngineData *p0, *p1, *p2, *p3;
-    const double Tension = 0.0;
+    constexpr double Tension = 0.0;
 
-    if (getSupportData(timestamp, &p0, &p1, &p2, &p3)) {
+    if (d->currentTimestamp != timestamp) {
 
-        double tn = normaliseTimestamp(*p1, *p2, timestamp);
+        if (getSupportData(timestamp, &p0, &p1, &p2, &p3)) {
 
-        // Engine
-        d->currentEngineData.throttleLeverPosition1 = SkyMath::interpolateLinear(p1->throttleLeverPosition1, p2->throttleLeverPosition1, tn);
-        d->currentEngineData.throttleLeverPosition2 = SkyMath::interpolateLinear(p1->throttleLeverPosition2, p2->throttleLeverPosition2, tn);
-        d->currentEngineData.throttleLeverPosition3 = SkyMath::interpolateLinear(p1->throttleLeverPosition3, p2->throttleLeverPosition3, tn);
-        d->currentEngineData.throttleLeverPosition4 = SkyMath::interpolateLinear(p1->throttleLeverPosition4, p2->throttleLeverPosition4, tn);
-        d->currentEngineData.propellerLeverPosition1 = SkyMath::interpolateLinear(p1->propellerLeverPosition1, p2->propellerLeverPosition1, tn);
-        d->currentEngineData.propellerLeverPosition2 = SkyMath::interpolateLinear(p1->propellerLeverPosition2, p2->propellerLeverPosition2, tn);
-        d->currentEngineData.propellerLeverPosition3 = SkyMath::interpolateLinear(p1->propellerLeverPosition3, p2->propellerLeverPosition3, tn);
-        d->currentEngineData.propellerLeverPosition4 = SkyMath::interpolateLinear(p1->propellerLeverPosition4, p2->propellerLeverPosition4, tn);
-        d->currentEngineData.mixtureLeverPosition1 = SkyMath::interpolateLinear(p1->mixtureLeverPosition1, p2->mixtureLeverPosition1, tn);
-        d->currentEngineData.mixtureLeverPosition2 = SkyMath::interpolateLinear(p1->mixtureLeverPosition2, p2->mixtureLeverPosition2, tn);
-        d->currentEngineData.mixtureLeverPosition3 = SkyMath::interpolateLinear(p1->mixtureLeverPosition3, p2->mixtureLeverPosition3, tn);
-        d->currentEngineData.mixtureLeverPosition4 = SkyMath::interpolateLinear(p1->mixtureLeverPosition4, p2->mixtureLeverPosition4, tn);
+            double tn = normaliseTimestamp(*p1, *p2, timestamp);
 
-        d->currentEngineData.timestamp = timestamp;
+            // Engine
+            d->currentEngineData.throttleLeverPosition1 = SkyMath::interpolateLinear(p1->throttleLeverPosition1, p2->throttleLeverPosition1, tn);
+            d->currentEngineData.throttleLeverPosition2 = SkyMath::interpolateLinear(p1->throttleLeverPosition2, p2->throttleLeverPosition2, tn);
+            d->currentEngineData.throttleLeverPosition3 = SkyMath::interpolateLinear(p1->throttleLeverPosition3, p2->throttleLeverPosition3, tn);
+            d->currentEngineData.throttleLeverPosition4 = SkyMath::interpolateLinear(p1->throttleLeverPosition4, p2->throttleLeverPosition4, tn);
+            d->currentEngineData.propellerLeverPosition1 = SkyMath::interpolateLinear(p1->propellerLeverPosition1, p2->propellerLeverPosition1, tn);
+            d->currentEngineData.propellerLeverPosition2 = SkyMath::interpolateLinear(p1->propellerLeverPosition2, p2->propellerLeverPosition2, tn);
+            d->currentEngineData.propellerLeverPosition3 = SkyMath::interpolateLinear(p1->propellerLeverPosition3, p2->propellerLeverPosition3, tn);
+            d->currentEngineData.propellerLeverPosition4 = SkyMath::interpolateLinear(p1->propellerLeverPosition4, p2->propellerLeverPosition4, tn);
+            d->currentEngineData.mixtureLeverPosition1 = SkyMath::interpolateLinear(p1->mixtureLeverPosition1, p2->mixtureLeverPosition1, tn);
+            d->currentEngineData.mixtureLeverPosition2 = SkyMath::interpolateLinear(p1->mixtureLeverPosition2, p2->mixtureLeverPosition2, tn);
+            d->currentEngineData.mixtureLeverPosition3 = SkyMath::interpolateLinear(p1->mixtureLeverPosition3, p2->mixtureLeverPosition3, tn);
+            d->currentEngineData.mixtureLeverPosition4 = SkyMath::interpolateLinear(p1->mixtureLeverPosition4, p2->mixtureLeverPosition4, tn);
 
-    } else {
-        // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
-        d->currentEngineData = EngineData::NullEngineData;
+            d->currentEngineData.timestamp = timestamp;
+
+        } else {
+            // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
+            d->currentEngineData = EngineData::NullEngineData;
+        }
+        d->currentTimestamp = timestamp;
     }
     return d->currentEngineData;
 }
@@ -145,7 +147,7 @@ bool Engine::updateCurrentIndex(qint64 timestamp) const noexcept
                 // The timestamp was moved to front ("rewind"), so search the
                 // array until and including the current index
                 index = SkySearch::BinaryIntervalSearch;
-            } else if (timestamp - EnginePrivate::BinaryIntervalSearchThreshold > d->engineData.at(index).timestamp) {
+            } else if (timestamp - SkySearch::BinaryIntervalSearchThreshold > d->engineData.at(index).timestamp) {
                 index = SkySearch::BinaryIntervalSearch;
             }
         } else {

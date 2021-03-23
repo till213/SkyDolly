@@ -22,11 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <limits>
-
 #include "TimeVariableData.h"
 
 TimeVariableData::TimeVariableData() noexcept
-    : timestamp(std::numeric_limits<qint64>::min())
+    : timestamp(InvalidTimestamp)
 {
 }
