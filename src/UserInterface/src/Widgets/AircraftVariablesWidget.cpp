@@ -27,6 +27,8 @@
 #include <QDialog>
 
 #include "../../../Model/src/SimVar.h"
+#include "../../../Model/src/World.h"
+#include "../../../Model/src/Scenario.h"
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/AircraftInfo.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
@@ -65,7 +67,7 @@ void AircraftVariablesWidget::showEvent(QShowEvent *event)
 
     updateUi();
 
-    const Aircraft &aircraft = d->skyConnect.getAircraft();
+    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
     // Signal sent while recording
     connect(&aircraft, &Aircraft::dataChanged,
             this, &AircraftVariablesWidget::updateAircraftDataUi);
@@ -78,7 +80,7 @@ void AircraftVariablesWidget::hideEvent(QHideEvent *event)
 {
     Q_UNUSED(event)
 
-    const Aircraft &aircraft = d->skyConnect.getAircraft();
+    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
     disconnect(&aircraft, &Aircraft::dataChanged,
                this, &AircraftVariablesWidget::updateAircraftDataUi);
     disconnect(&d->skyConnect, &SkyConnectIntf::currentTimestampChanged,
@@ -112,7 +114,7 @@ void AircraftVariablesWidget::updateUi()
 const AircraftData &AircraftVariablesWidget::getCurrentAircraftData() const
 {
     const AircraftData aircraftData;
-    const Aircraft &aircraft = d->skyConnect.getAircraft();
+    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
 
     if (d->skyConnect.getState() == Connect::State::Recording) {
         return aircraft.getLastAircraftData();

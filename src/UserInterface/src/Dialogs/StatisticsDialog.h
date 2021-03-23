@@ -55,6 +55,7 @@ protected:
     void hideEvent(QHideEvent *event) noexcept override;
 
 private:
+    Q_DISABLE_COPY(StatisticsDialog)
     std::unique_ptr<StatisticsDialogPrivate> d;
     std::unique_ptr<Ui::StatisticsDialog> ui;
 

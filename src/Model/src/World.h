@@ -22,47 +22,32 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LIGHTVARIABLESWIDGET_H
-#define LIGHTVARIABLESWIDGET_H
+#ifndef WORLD_H
+#define WORLD_H
 
 #include <memory>
 
-#include <QWidget>
+#include "Scenario.h"
+#include "ModelLib.h"
 
-class QShowEvent;
-class QHideEvent;
+class WorldPrivate;
 
-class SkyConnectIntf;
-class AircraftData;
-class LightVariablesWidgetPrivate;
-
-namespace Ui {
-class LightVariablesWidget;
-}
-
-class LightVariablesWidget : public QWidget
+class MODEL_API World
 {
-    Q_OBJECT
-
 public:
-    explicit LightVariablesWidget(SkyConnectIntf &skyConnect, QWidget *parent);
-    virtual ~LightVariablesWidget();
+    static World &getInstance() noexcept;
+    static void destroyInstance() noexcept;
+
+    Scenario &getCurrentScenario() const;
 
 protected:
-    void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
+    ~World();
 
 private:
-    Q_DISABLE_COPY(LightVariablesWidget)
-    std::unique_ptr<LightVariablesWidgetPrivate> d;
-    std::unique_ptr<Ui::LightVariablesWidget> ui;
+    Q_DISABLE_COPY(World)
+    std::unique_ptr<WorldPrivate> d;
 
-    void initUi();
-    void updateUi();
-    const AircraftData &getCurrentAircraftData() const;
-
-private slots:
-    void updateLightDataUi();
+    World() noexcept;
 };
 
-#endif // LIGHTVARIABLESWIDGET_H
+#endif // WORLD_H

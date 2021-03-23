@@ -22,47 +22,48 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LIGHTVARIABLESWIDGET_H
-#define LIGHTVARIABLESWIDGET_H
-
 #include <memory>
+#include <vector>
 
-#include <QWidget>
+#include "Aircraft.h"
+#include "Scenario.h"
 
-class QShowEvent;
-class QHideEvent;
-
-class SkyConnectIntf;
-class AircraftData;
-class LightVariablesWidgetPrivate;
-
-namespace Ui {
-class LightVariablesWidget;
-}
-
-class LightVariablesWidget : public QWidget
+class ScenarioPrivate
 {
-    Q_OBJECT
-
 public:
-    explicit LightVariablesWidget(SkyConnectIntf &skyConnect, QWidget *parent);
-    virtual ~LightVariablesWidget();
 
-protected:
-    void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
+    ScenarioPrivate() noexcept
+    {}
 
-private:
-    Q_DISABLE_COPY(LightVariablesWidget)
-    std::unique_ptr<LightVariablesWidgetPrivate> d;
-    std::unique_ptr<Ui::LightVariablesWidget> ui;
+    ~ScenarioPrivate() noexcept
+    {}
 
-    void initUi();
-    void updateUi();
-    const AircraftData &getCurrentAircraftData() const;
+    std::vector<std::unique_ptr<Aircraft>> aircrafts;
 
-private slots:
-    void updateLightDataUi();
 };
 
-#endif // LIGHTVARIABLESWIDGET_H
+// PUBLIC
+
+Scenario::Scenario() noexcept
+    : d(std::make_unique<ScenarioPrivate>())
+{
+    // The scenario may support several aircrafts, but for now there will be always
+    // exactly one user aircraft
+    std::unique_ptr<Aircraft> userAircraft = std::make_unique<Aircraft>();
+    d->aircrafts.push_back(std::move(userAircraft));
+}
+
+Scenario::~Scenario() noexcept
+{
+}
+
+const Aircraft &Scenario::getUserAircraftConst() const
+{
+    return *(*d->aircrafts.cbegin());
+}
+
+Aircraft &Scenario::getUserAircraft() const
+{
+    return *(*d->aircrafts.cbegin());
+}
+

@@ -27,6 +27,8 @@
 #include <QDialog>
 
 #include "../../../Model/src/SimVar.h"
+#include "../../../Model/src/World.h"
+#include "../../../Model/src/Scenario.h"
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/AircraftInfo.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
@@ -75,7 +77,7 @@ void FlightInformationWidget::showEvent(QShowEvent *event)
 
     updateUi();
 
-    const Aircraft &aircraft = d->skyConnect.getAircraft();
+    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
     connect(&aircraft, &Aircraft::infoChanged,
             this, &FlightInformationWidget::updateInfoUi);
 }
@@ -84,7 +86,7 @@ void FlightInformationWidget::hideEvent(QHideEvent *event)
 {
     Q_UNUSED(event)
 
-    const Aircraft &aircraft = d->skyConnect.getAircraft();
+    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
     disconnect(&aircraft, &Aircraft::infoChanged,
             this, &FlightInformationWidget::updateInfoUi);
 }
@@ -137,7 +139,7 @@ void FlightInformationWidget::updateUi()
 
 void FlightInformationWidget::updateInfoUi()
 {
-    const Aircraft &aircraft = d->skyConnect.getAircraft();
+    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
 
     ui->nameLineEdit->setText(aircraftInfo.name);

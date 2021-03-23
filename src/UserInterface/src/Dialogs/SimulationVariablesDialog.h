@@ -55,6 +55,7 @@ protected:
     void hideEvent(QHideEvent *event) noexcept override;
 
 private:
+    Q_DISABLE_COPY(SimulationVariablesDialog)
     std::unique_ptr<SimulationVariablesDialogPrivate> d;
     std::unique_ptr<Ui::SimulationVariablesDialog> ui;
 

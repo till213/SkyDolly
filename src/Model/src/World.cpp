@@ -22,47 +22,65 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LIGHTVARIABLESWIDGET_H
-#define LIGHTVARIABLESWIDGET_H
-
 #include <memory>
+#include <iostream>
+#include <vector>
 
-#include <QWidget>
+#include "World.h"
 
-class QShowEvent;
-class QHideEvent;
-
-class SkyConnectIntf;
-class AircraftData;
-class LightVariablesWidgetPrivate;
-
-namespace Ui {
-class LightVariablesWidget;
-}
-
-class LightVariablesWidget : public QWidget
+class WorldPrivate
 {
-    Q_OBJECT
-
 public:
-    explicit LightVariablesWidget(SkyConnectIntf &skyConnect, QWidget *parent);
-    virtual ~LightVariablesWidget();
+    WorldPrivate() noexcept
+    {}
 
-protected:
-    void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
+    ~WorldPrivate() noexcept
+    {}
 
-private:
-    Q_DISABLE_COPY(LightVariablesWidget)
-    std::unique_ptr<LightVariablesWidgetPrivate> d;
-    std::unique_ptr<Ui::LightVariablesWidget> ui;
+    std::vector<std::unique_ptr<Scenario>> scenarios;
 
-    void initUi();
-    void updateUi();
-    const AircraftData &getCurrentAircraftData() const;
+    static World *instance;
 
-private slots:
-    void updateLightDataUi();
 };
 
-#endif // LIGHTVARIABLESWIDGET_H
+World *WorldPrivate::instance = nullptr;
+
+// PUBLIC
+
+World &World::getInstance() noexcept
+{
+    if (WorldPrivate::instance == nullptr) {
+        WorldPrivate::instance = new World();
+    }
+    return *WorldPrivate::instance;
+}
+
+void World::destroyInstance() noexcept
+{
+    if (WorldPrivate::instance != nullptr) {
+        delete WorldPrivate::instance;
+        WorldPrivate::instance = nullptr;
+    }
+}
+
+Scenario &World::getCurrentScenario() const
+{
+    return *(*d->scenarios.cbegin());
+}
+
+// PROTECTED
+
+World::~World()
+{
+}
+
+// PRIVATE
+
+World::World() noexcept
+    : d(std::make_unique<WorldPrivate>())
+{
+    // World may support several scenarios, but for now there will be always
+    // exactly one
+    std::unique_ptr<Scenario> defaultScenario = std::make_unique<Scenario>();
+    d->scenarios.push_back(std::move(defaultScenario));
+}

@@ -54,6 +54,7 @@ public:
     virtual ~MainWindow() noexcept;
 
 private:
+    Q_DISABLE_COPY(MainWindow)
     std::unique_ptr<Ui::MainWindow> ui;
     std::unique_ptr<MainWindowPrivate> d;
 

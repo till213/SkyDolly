@@ -27,6 +27,8 @@
 #include <QElapsedTimer>
 
 #include "../../Kernel/src/Settings.h"
+#include "../../Model/src/World.h"
+#include "../../Model/src/Scenario.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/AircraftData.h"
 #include "../../Kernel/src/SampleRate.h"
@@ -48,6 +50,7 @@ class AbstractSkyConnectPrivate
 public:
     AbstractSkyConnectPrivate() noexcept
         : state(Connect::State::Disconnected),
+          currentScenario(World::getInstance().getCurrentScenario()),
           currentTimestamp(0),
           recordSampleRate(Settings::getInstance().getRecordSampleRateValue()),
           recordIntervalMSec(SampleRate::toInterval(recordSampleRate)),
@@ -59,7 +62,7 @@ public:
     }
 
     Connect::State state;
-    Aircraft aircraft;
+    Scenario &currentScenario;
     AircraftData currentAircraftData;
     QTimer timer;
     qint64 currentTimestamp;
@@ -92,7 +95,7 @@ void AbstractSkyConnect::startRecording() noexcept
 
     if (isConnectedWithSim()) {
         setState(Connect::State::Recording);
-        getAircraft().clear();
+        d->currentScenario.getUserAircraft().clear();
         d->lastSamplesPerSecondIndex = 0;
         d->currentTimestamp = 0;
         d->elapsedTimer.invalidate();
@@ -228,14 +231,14 @@ void AbstractSkyConnect::skipBackward() noexcept
 
 void AbstractSkyConnect::skipForward() noexcept
 {
-    qint64 endTimeStamp = d->aircraft.getLastAircraftData().timestamp;
+    qint64 endTimeStamp = d->currentScenario.getUserAircraftConst().getLastAircraftData().timestamp;
     qint64 newTimeStamp = qMin(this->getCurrentTimestamp() + SkipMSec, endTimeStamp);
     seek(newTimeStamp);
 }
 
 void AbstractSkyConnect::skipToEnd() noexcept
 {
-    qint64 endTimeStamp  = d->aircraft.getLastAircraftData().timestamp;
+    qint64 endTimeStamp  = d->currentScenario.getUserAircraftConst().getLastAircraftData().timestamp;
     seek(endTimeStamp);
 }
 
@@ -257,6 +260,11 @@ void AbstractSkyConnect::seek(qint64 timestamp) noexcept
     }
 }
 
+Scenario &AbstractSkyConnect::getCurrentScenario() const
+{
+    return d->currentScenario;
+}
+
 qint64 AbstractSkyConnect::getCurrentTimestamp() const noexcept
 {
     return d->currentTimestamp;
@@ -264,7 +272,7 @@ qint64 AbstractSkyConnect::getCurrentTimestamp() const noexcept
 
 bool AbstractSkyConnect::isAtEnd() const noexcept
 {
-    return d->currentTimestamp >= d->aircraft.getLastAircraftData().timestamp;
+    return d->currentTimestamp >= d->currentScenario.getUserAircraftConst().getLastAircraftData().timestamp;
 }
 
 double AbstractSkyConnect::getTimeScale() const noexcept
@@ -282,11 +290,6 @@ bool AbstractSkyConnect::isConnected() const noexcept
     return d->state != Connect::State::Disconnected;
 }
 
-Aircraft &AbstractSkyConnect::getAircraft() noexcept
-{
-    return d->aircraft;
-}
-
 void AbstractSkyConnect::setTimeScale(double timeScale) noexcept
 {
     if (!qFuzzyCompare(d->timeScale, timeScale)) {
@@ -301,10 +304,6 @@ void AbstractSkyConnect::setTimeScale(double timeScale) noexcept
     }
 }
 
-const Aircraft &AbstractSkyConnect::getAircraft() const noexcept
-{
-    return d->aircraft;
-}
 const AircraftData &AbstractSkyConnect::getCurrentAircraftData() const noexcept
 {
     return d->currentAircraftData;
@@ -313,19 +312,19 @@ const AircraftData &AbstractSkyConnect::getCurrentAircraftData() const noexcept
 double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
 {
     double samplesPerSecond;
-    const QVector<AircraftData> aircraftData = d->aircraft.getAllAircraftData();
+    const QVector<AircraftData> aircraftData = d->currentScenario.getUserAircraftConst().getAllAircraftData();
     if (aircraftData.count() > 0) {
         qint64 startTimestamp = qMin(qMax(d->currentTimestamp - SamplesPerSecondPeriodMilliSec, 0ll), aircraftData.last().timestamp);
         int index = d->lastSamplesPerSecondIndex;
-        while (d->aircraft.getAllAircraftData().at(index).timestamp < startTimestamp) {
+        while (d->currentScenario.getUserAircraftConst().getAllAircraftData().at(index).timestamp < startTimestamp) {
             ++index;
         }
         d->lastSamplesPerSecondIndex = index;
 
-        int lastIndex = d->aircraft.getAllAircraftData().count() - 1;
+        int lastIndex = d->currentScenario.getUserAircraftConst().getAllAircraftData().count() - 1;
 
         int nofSamples = lastIndex - index + 1;
-        qint64 period = d->aircraft.getAllAircraftData().at(lastIndex).timestamp - d->aircraft.getAllAircraftData().at(index).timestamp;
+        qint64 period = d->currentScenario.getUserAircraftConst().getAllAircraftData().at(lastIndex).timestamp - d->currentScenario.getUserAircraftConst().getAllAircraftData().at(index).timestamp;
         if (period > 0) {
             samplesPerSecond = static_cast<double>(nofSamples) * 1000.0 / (static_cast<double>(period));
         } else {
@@ -388,7 +387,7 @@ void AbstractSkyConnect::updateCurrentTimestamp() noexcept
 
 const AircraftData &AbstractSkyConnect::updateCurrentAircraftData() noexcept
 {
-    d->currentAircraftData = std::move(d->aircraft.interpolateAircraftData(getCurrentTimestamp()));
+    d->currentAircraftData = std::move(d->currentScenario.getUserAircraftConst().interpolateAircraftData(getCurrentTimestamp()));
     return d->currentAircraftData;
 }
 
@@ -404,7 +403,7 @@ void AbstractSkyConnect::frenchConnection() noexcept
 
 bool AbstractSkyConnect::hasRecordingStarted() const noexcept
 {
-    return d->aircraft.getAllAircraftData().count();
+    return d->currentScenario.getUserAircraftConst().getAllAircraftData().count();
 }
 
 // PRIVATE SLOTS

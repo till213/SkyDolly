@@ -51,6 +51,7 @@ protected:
     void hideEvent(QHideEvent *event) override;
 
 private:
+    Q_DISABLE_COPY(AircraftVariablesWidget)
     std::unique_ptr<AircraftVariablesWidgetPrivate> d;
     std::unique_ptr<Ui::AircraftVariablesWidget> ui;
 

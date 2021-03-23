@@ -27,6 +27,8 @@
 #include <QDialog>
 
 #include "../../../Model/src/SimVar.h"
+#include "../../../Model/src/World.h"
+#include "../../../Model/src/Scenario.h"
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/AircraftInfo.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"

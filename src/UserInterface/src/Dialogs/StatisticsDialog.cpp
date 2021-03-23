@@ -25,6 +25,8 @@
 #include <memory>
 
 #include "../../../Kernel/src/Settings.h"
+#include "../../../Model/src/World.h"
+#include "../../../Model/src/Scenario.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "StatisticsDialog.h"
@@ -66,7 +68,7 @@ void StatisticsDialog::showEvent(QShowEvent *event) noexcept
 
     updateRecordUi();
 
-    const Aircraft &aircraft = d->skyConnect.getAircraft();
+    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
     // Signal sent while recording
     connect(&aircraft, &Aircraft::dataChanged,
             this, &StatisticsDialog::updateRecordUi);
@@ -80,7 +82,7 @@ void StatisticsDialog::hideEvent(QHideEvent *event) noexcept
 {
     Q_UNUSED(event)
 
-    const Aircraft &aircraft = d->skyConnect.getAircraft();
+    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
     disconnect(&aircraft, &Aircraft::dataChanged,
                this, &StatisticsDialog::updateRecordUi);
 
@@ -96,7 +98,8 @@ void StatisticsDialog::frenchConnection() noexcept
 
 void StatisticsDialog::updateRecordUi() noexcept
 {
-    const QVector<AircraftData> aircraftData = d->skyConnect.getAircraft().getAllAircraftData();
+    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+    const QVector<AircraftData> aircraftData = aircraft.getAllAircraftData();
     if (Settings::getInstance().getRecordSampleRate() != SampleRate::SampleRate::Auto) {
         ui->recordSampleRateLineEdit->setText(QString::number(Settings::getInstance().getRecordSampleRateValue()));
     } else {

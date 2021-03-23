@@ -35,6 +35,7 @@
 #include "../../Kernel/src/SampleRate.h"
 #include "../../Kernel/src/Enum.h"
 #include "../../Kernel/src/Settings.h"
+#include "../../Model/src/Scenario.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/AircraftInfo.h"
 #include "../../Model/src/AircraftData.h"
@@ -253,7 +254,8 @@ void SkyConnectImpl::setupRequestData() noexcept
 
 void SkyConnectImpl::setupInitialPosition() noexcept
 {
-    const AircraftData &aircraftData = getAircraft().interpolateAircraftData(0);
+    const Aircraft &userAircraft = getCurrentScenario().getUserAircraftConst();
+    const AircraftData &aircraftData = userAircraft.interpolateAircraftData(0);
     if (!aircraftData.isNull()) {
         // Set initial position
         SIMCONNECT_DATA_INITPOSITION initialPosition;
@@ -264,8 +266,8 @@ void SkyConnectImpl::setupInitialPosition() noexcept
         initialPosition.Pitch = aircraftData.pitch;
         initialPosition.Bank = aircraftData.bank;
         initialPosition.Heading = aircraftData.heading;
-        initialPosition.OnGround = getAircraft().getAircraftInfo().startOnGround ? 1 : 0;
-        initialPosition.Airspeed = getAircraft().getAircraftInfo().initialAirspeed;
+        initialPosition.OnGround = userAircraft.getAircraftInfo().startOnGround ? 1 : 0;
+        initialPosition.Airspeed = userAircraft.getAircraftInfo().initialAirspeed;
 
         ::SimConnect_SetDataOnSimObject(d->simConnectHandle, SkyConnectDataDefinition::AircraftInitialPosition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0, sizeof(::SIMCONNECT_DATA_INITPOSITION), &initialPosition);
     } else {
@@ -369,6 +371,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
     Q_UNUSED(cbData);
 
     SkyConnectImpl *skyConnect = static_cast<SkyConnectImpl *>(context);
+    Aircraft &userAircraft = skyConnect->getCurrentScenario().getUserAircraft();
     SIMCONNECT_RECV_SIMOBJECT_DATA *objectData;
     const SimConnectAircraftInfo *simConnectAircraftInfo;
     const SimConnectAircraftData *simConnectAircraftData;
@@ -430,7 +433,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
                     simConnectAircraftInfo = reinterpret_cast<const SimConnectAircraftInfo *>(&objectData->dwData);
                     AircraftInfo aircraftInfo;
                     aircraftInfo = std::move(simConnectAircraftInfo->toAircraftInfo());
-                    skyConnect->getAircraft().setAircraftInfo(std::move(aircraftInfo));
+                    userAircraft.setAircraftInfo(std::move(aircraftInfo));
                     break;
                 }
 
@@ -455,7 +458,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
                         simConnectAircraftData = reinterpret_cast<const SimConnectAircraftData *>(&objectData->dwData);
                         AircraftData aircraftData = simConnectAircraftData->toAircraftData();
                         aircraftData.timestamp = skyConnect->getCurrentTimestamp();
-                        skyConnect->getAircraft().upsertAircraftData(std::move(aircraftData));
+                        userAircraft.upsertAircraftData(std::move(aircraftData));
                     }
 
                     break;

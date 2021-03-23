@@ -47,6 +47,7 @@
 #include "../../Model/src/Import/CSVImport.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/AircraftInfo.h"
+#include "../../Model/src/World.h"
 #include "../../Kernel/src/SampleRate.h"
 #include "../../SkyConnect/src/SkyManager.h"
 #include "../../SkyConnect/src/SkyConnectIntf.h"
@@ -129,7 +130,7 @@ MainWindow::~MainWindow() noexcept
 
 void MainWindow::frenchConnection() noexcept
 {
-    const Aircraft &aircraft = d->skyConnect.getAircraft();
+    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
     connect(&aircraft, &Aircraft::dataChanged,
             this, &MainWindow::updateRecordingTime);
     connect(&d->skyConnect, &SkyConnectIntf::currentTimestampChanged,
@@ -284,7 +285,8 @@ void MainWindow::on_positionSlider_sliderPressed() noexcept
 void MainWindow::on_positionSlider_valueChanged(int value) noexcept
 {
     double scale = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
-    qint64 timestamp = static_cast<qint64>(qRound(scale * static_cast<double>(d->skyConnect.getAircraft().getLastAircraftData().timestamp)));
+    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
+    qint64 timestamp = static_cast<qint64>(qRound(scale * static_cast<double>(aircraft.getLastAircraftData().timestamp)));
 
     // Prevent the timestampTimeEdit field to set the play position as well
     ui->timestampTimeEdit->blockSignals(true);
@@ -327,7 +329,8 @@ void MainWindow::updateUi() noexcept
 
 void MainWindow::updateControlUi() noexcept
 {
-    bool hasRecording = d->skyConnect.getAircraft().getAllAircraftData().count() > 0;
+    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
+    bool hasRecording = aircraft.getAllAircraftData().count() > 0;
     switch (d->skyConnect.getState()) {
     case Connect::State::Disconnected:
         // Fall-thru intened: each time a control element is triggered a connection
@@ -413,7 +416,7 @@ void MainWindow::updateControlUi() noexcept
 
 void MainWindow::updateRecordingTime() noexcept
 {
-    const Aircraft &aircraft = d->skyConnect.getAircraft();
+    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
     const AircraftData &aircraftData = aircraft.getLastAircraftData();
     if (d->skyConnect.isRecording()) {
         ui->timestampTimeEdit->blockSignals(true);
@@ -431,7 +434,8 @@ void MainWindow::updateRecordingTime() noexcept
 
 void MainWindow::updateFileMenu() noexcept
 {
-    bool hasRecording = d->skyConnect.getAircraft().getAllAircraftData().count() > 0;
+    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
+    bool hasRecording = aircraft.getAllAircraftData().count() > 0;
     switch (d->skyConnect.getState()) {
     case Connect::State::Recording:
         // Fall-thru intentional
@@ -503,7 +507,8 @@ void MainWindow::on_importCSVAction_triggered() noexcept
         if (!filePath.isEmpty()) {
             QFile file(filePath);
             CSVImport csvImport;
-            bool ok = csvImport.importData(file, d->skyConnect.getAircraft());
+            Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+            bool ok = csvImport.importData(file, aircraft);
             if (ok) {
                 updateUi();
                 d->skyConnect.skipToBegin();
@@ -529,7 +534,8 @@ void MainWindow::on_exportCSVAction_triggered() noexcept
     if (!filePath.isEmpty()) {
         QFile file(filePath);
         CSVExport csvExport;
-        csvExport.exportData(d->skyConnect.getAircraft(), file);
+        const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
+        csvExport.exportData(aircraft, file);
     }
 }
 
@@ -577,7 +583,8 @@ void MainWindow::on_aboutQtAction_triggered() noexcept
 }
 
 void MainWindow::handlePlayPositionChanged(qint64 timestamp) noexcept {
-    qint64 endTimeStamp = d->skyConnect.getAircraft().getLastAircraftData().timestamp;
+    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
+    qint64 endTimeStamp = aircraft.getLastAircraftData().timestamp;
     qint64 ts = qMin(timestamp, endTimeStamp);
 
     int sliderPosition;
