@@ -59,6 +59,7 @@ signals:
     void dataChanged();
 
 private:
+    Q_DISABLE_COPY(Aircraft)
     std::unique_ptr<AircraftPrivate> d;
 
     bool updateCurrentIndex(qint64 timestamp) const noexcept;
