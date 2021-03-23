@@ -35,87 +35,63 @@
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "../../../Kernel/src/SkyMath.h"
-#include "FlightInformationWidget.h"
-#include "ui_FlightInformationWidget.h"
+#include "FlightConditionsWidget.h"
+#include "ui_FlightConditionsWidget.h"
 
-class FlightInformationWidgetPrivate
+class FlightConditionsWidgetPrivate
 {
 public:
-    FlightInformationWidgetPrivate(SkyConnectIntf &theSkyConnect)
+    FlightConditionsWidgetPrivate(SkyConnectIntf &theSkyConnect)
         : skyConnect(theSkyConnect)
     {}
 
     SkyConnectIntf &skyConnect;
-    static const QString WindowTitle;
 };
-
-const QString FlightInformationWidgetPrivate::WindowTitle = QT_TRANSLATE_NOOP("FlightInformationWidget", "Simulation Variables");
 
 // PUBLIC
 
-FlightInformationWidget::FlightInformationWidget(SkyConnectIntf &skyConnect, QWidget *parent) :
+FlightConditionsWidget::FlightConditionsWidget(SkyConnectIntf &skyConnect, QWidget *parent) :
     QDialog(parent),
-    d(std::make_unique<FlightInformationWidgetPrivate>(skyConnect)),
-    ui(std::make_unique<Ui::FlightInformationWidget>())
+    d(std::make_unique<FlightConditionsWidgetPrivate>(skyConnect)),
+    ui(std::make_unique<Ui::FlightConditionsWidget>())
 {
     ui->setupUi(this);
     Qt::WindowFlags flags = Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
     setWindowFlags(flags);
 
     initUi();
-
 }
 
-FlightInformationWidget::~FlightInformationWidget()
+FlightConditionsWidget::~FlightConditionsWidget()
 {
 }
 
 // PROTECTED
 
-void FlightInformationWidget::showEvent(QShowEvent *event)
+void FlightConditionsWidget::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event)
 
     updateUi();
 
     const Scenario &currentScenario = World::getInstance().getCurrentScenario();
-    const Aircraft &aircraft = currentScenario.getUserAircraft();
     connect(&currentScenario, &Scenario::flightConditionsChanged,
-            this, &FlightInformationWidget::updateInfoUi);
-    connect(&aircraft, &Aircraft::infoChanged,
-            this, &FlightInformationWidget::updateInfoUi);
+            this, &FlightConditionsWidget::updateInfoUi);
 }
 
-void FlightInformationWidget::hideEvent(QHideEvent *event)
+void FlightConditionsWidget::hideEvent(QHideEvent *event)
 {
     Q_UNUSED(event)
 
     const Scenario &currentScenario = World::getInstance().getCurrentScenario();
-    const Aircraft &aircraft = currentScenario.getUserAircraft();
     disconnect(&currentScenario, &Scenario::flightConditionsChanged,
-            this, &FlightInformationWidget::updateInfoUi);
-    disconnect(&aircraft, &Aircraft::infoChanged,
-            this, &FlightInformationWidget::updateInfoUi);
+            this, &FlightConditionsWidget::updateInfoUi);
 }
 
 // PRIVATE
 
-void FlightInformationWidget::initUi()
+void FlightConditionsWidget::initUi()
 {
-    ui->nameLineEdit->setToolTip(SimVar::Title);
-    ui->tailNumberLineEdit->setToolTip(SimVar::ATCFlightNumber);
-    ui->airlineLineEdit->setToolTip(SimVar::ATCAirline);
-    ui->flightLineEdit->setToolTip(SimVar::ATCId);
-
-    ui->categoryLineEdit->setToolTip(SimVar::Category);
-    ui->startOnGroundCheckBox->setToolTip(SimVar::SimOnGround);
-    ui->initialAirspeedLineEdit->setToolTip(SimVar::AirspeedTrue);
-    ui->surfaceTypeLineEdit->setToolTip(SimVar::SurfaceType);
-    ui->wingSpanLineEdit->setToolTip(SimVar::WingSpan);
-    ui->engineTypeLineEdit->setToolTip(SimVar::EngineType);
-    ui->numberOfEnginesLineEdit->setToolTip(SimVar::NumberOfEngines);
-    ui->aircraftAltitudeAboveGroundLineEdit->setToolTip(SimVar::PlaneAltAboveGround);
-
     ui->groundAltitudeLineEdit->setToolTip(SimVar::GroundAltitude);
     ui->temperatureLineEdit->setToolTip(SimVar::AmbientTemperature);
     ui->totalAirTemperatureLineEdit->setToolTip(SimVar::TotalAirTemperature);
@@ -130,41 +106,21 @@ void FlightInformationWidget::initUi()
     ui->structuralIcingLineEdit->setToolTip(SimVar::StructuralIcePct);
 
     // Make the flight information checkboxes checkable, but not for the user
-    ui->startOnGroundCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    ui->startOnGroundCheckBox->setFocusPolicy(Qt::NoFocus);
-
     ui->inCloudsCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->inCloudsCheckBox->setFocusPolicy(Qt::NoFocus);
 }
 
-void FlightInformationWidget::updateUi()
+void FlightConditionsWidget::updateUi()
 {
     updateInfoUi();
 }
 
 // PRIVATE SLOTS
 
-void FlightInformationWidget::updateInfoUi()
+void FlightConditionsWidget::updateInfoUi()
 {
     const Scenario &currentScenario = World::getInstance().getCurrentScenario();
-    const Aircraft &aircraft = currentScenario.getUserAircraftConst();
     const FlightConditions &flightConditions = currentScenario.getFlightConditionsConst();
-    const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
-
-    ui->nameLineEdit->setText(aircraftInfo.name);
-    ui->tailNumberLineEdit->setText(aircraftInfo.atcId);
-    ui->airlineLineEdit->setText(aircraftInfo.atcAirline);
-    ui->flightLineEdit->setText(aircraftInfo.atcFlightNumber);
-    ui->categoryLineEdit->setText(aircraftInfo.category);
-    ui->startOnGroundCheckBox->setChecked(aircraftInfo.startOnGround);
-
-    ui->initialAirspeedLineEdit->setText(QString::number(aircraftInfo.initialAirspeed));
-    ui->surfaceTypeLineEdit->setText(SimType::surfaceTypeToString(aircraftInfo.surfaceType));
-    ui->wingSpanLineEdit->setText(QString::number(aircraftInfo.wingSpan));
-    ui->engineTypeLineEdit->setText(SimType::engineTypeToString(aircraftInfo.engineType));
-    ui->numberOfEnginesLineEdit->setText(QString::number(aircraftInfo.numberOfEngines));
-    ui->aircraftAltitudeAboveGroundLineEdit->setText(QString::number(aircraftInfo.aircraftAltitudeAboveGround));
-    ui->startOnGroundCheckBox->setChecked(aircraftInfo.startOnGround);
 
     ui->groundAltitudeLineEdit->setText(QString::number(flightConditions.groundAltitude));
     ui->temperatureLineEdit->setText(QString::number(flightConditions.ambientTemperature));

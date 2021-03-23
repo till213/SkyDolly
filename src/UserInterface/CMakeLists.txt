@@ -45,9 +45,12 @@ target_sources(UserInterface
         src/Widgets/ControlVariablesWidget.cpp
         src/Widgets/ControlVariablesWidget.h
         src/Widgets/ControlVariablesWidget.ui
-        src/Widgets/FlightInformationWidget.cpp
-        src/Widgets/FlightInformationWidget.h
-        src/Widgets/FlightInformationWidget.ui
+        src/Widgets/AircraftTypeWidget.cpp
+        src/Widgets/AircraftTypeWidget.h
+        src/Widgets/AircraftTypeWidget.ui
+        src/Widgets/FlightConditionsWidget.cpp
+        src/Widgets/FlightConditionsWidget.h
+        src/Widgets/FlightConditionsWidget.ui
         src/Widgets/LightVariablesWidget.cpp
         src/Widgets/LightVariablesWidget.h
         src/Widgets/LightVariablesWidget.ui
