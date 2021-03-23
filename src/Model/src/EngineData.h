@@ -22,46 +22,40 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#ifndef ENGINEDATA_H
+#define ENGINEDATA_H
+
+#include <QtGlobal>
 #include <QFlags>
 
 #include "SimType.h"
-#include "AircraftData.h"
+#include "TimeVariableData.h"
+#include "ModelLib.h"
 
-// PUBLIC
-
-AircraftData::AircraftData(double latitude, double longitude, double altitude) noexcept
-    : TimeVariableData(),
-      pitch(0.0),
-      bank(0.0),
-      heading(0.0),
-      velocityBodyX(0.0),
-      velocityBodyY(0.0),
-      velocityBodyZ(0.0),
-      rotationVelocityBodyX(0.0),
-      rotationVelocityBodyY(0.0),
-      rotationVelocityBodyZ(0.0),
-      yokeXPosition(0),
-      yokeYPosition(0),
-      rudderPosition(0),
-      elevatorPosition(0),
-      aileronPosition(0),
-      leadingEdgeFlapsLeftPercent(0),
-      leadingEdgeFlapsRightPercent(0),
-      trailingEdgeFlapsLeftPercent(0),
-      trailingEdgeFlapsRightPercent(0),
-      spoilersHandlePosition(0.0),
-      flapsHandleIndex(0),
-      gearHandlePosition(false),
-      brakeLeftPosition(0),
-      brakeRightPosition(0),
-      waterRudderHandlePosition(0),
-      tailhookPosition(0),
-      canopyOpen(0),
-      lightStates(QFlags(SimType::LightState::None))
+struct MODEL_API EngineData : public TimeVariableData
 {
-    this->latitude = latitude;
-    this->longitude = longitude;
-    this->altitude = altitude;
-}
+    // General engine
+    // Implementation note: the throttle can also yield negative thrust, hence the
+    // type qint16 (position) which also supports negative values
+    qint16 throttleLeverPosition1;
+    qint16 throttleLeverPosition2;
+    qint16 throttleLeverPosition3;
+    qint16 throttleLeverPosition4;
+    qint16 propellerLeverPosition1;
+    qint16 propellerLeverPosition2;
+    qint16 propellerLeverPosition3;
+    qint16 propellerLeverPosition4;
+    quint8 mixtureLeverPosition1;
+    quint8 mixtureLeverPosition2;
+    quint8 mixtureLeverPosition3;
+    quint8 mixtureLeverPosition4;
 
-const AircraftData AircraftData::NullAircraftData = AircraftData(0.0, 0.0, 0.0);
+    EngineData(qint16 throttleLeverPosition1 = 0, qint16 propellerLeverPosition1 = 0, quint8 mixtureLeverPosition1 = 0) noexcept;
+    EngineData(EngineData &&) = default;
+    EngineData(const EngineData &) = default;
+    EngineData &operator= (const EngineData &) = default;
+
+    static const EngineData NullEngineData;
+};
+
+#endif // ENGINEDATA_H

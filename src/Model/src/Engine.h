@@ -22,46 +22,45 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QFlags>
+#ifndef ENGINE_H
+#define ENGINE_H
 
-#include "SimType.h"
-#include "AircraftData.h"
+#include <memory>
 
-// PUBLIC
+#include <QObject>
+#include <QByteArray>
+#include <QVector>
 
-AircraftData::AircraftData(double latitude, double longitude, double altitude) noexcept
-    : TimeVariableData(),
-      pitch(0.0),
-      bank(0.0),
-      heading(0.0),
-      velocityBodyX(0.0),
-      velocityBodyY(0.0),
-      velocityBodyZ(0.0),
-      rotationVelocityBodyX(0.0),
-      rotationVelocityBodyY(0.0),
-      rotationVelocityBodyZ(0.0),
-      yokeXPosition(0),
-      yokeYPosition(0),
-      rudderPosition(0),
-      elevatorPosition(0),
-      aileronPosition(0),
-      leadingEdgeFlapsLeftPercent(0),
-      leadingEdgeFlapsRightPercent(0),
-      trailingEdgeFlapsLeftPercent(0),
-      trailingEdgeFlapsRightPercent(0),
-      spoilersHandlePosition(0.0),
-      flapsHandleIndex(0),
-      gearHandlePosition(false),
-      brakeLeftPosition(0),
-      brakeRightPosition(0),
-      waterRudderHandlePosition(0),
-      tailhookPosition(0),
-      canopyOpen(0),
-      lightStates(QFlags(SimType::LightState::None))
+#include "ModelLib.h"
+
+class EngineData;
+class EnginePrivate;
+
+class MODEL_API Engine : public QObject
 {
-    this->latitude = latitude;
-    this->longitude = longitude;
-    this->altitude = altitude;
-}
+    Q_OBJECT
+public:
+    Engine(QObject *parent = nullptr) noexcept;
+    virtual ~Engine() noexcept;
 
-const AircraftData AircraftData::NullAircraftData = AircraftData(0.0, 0.0, 0.0);
+    void upsertEngineData(EngineData engineData) noexcept;
+    const EngineData &getLastEngineData() const noexcept;
+    const QVector<EngineData> getAllEngineData() const noexcept;
+    const EngineData &interpolateEngineData(qint64 timestamp) const noexcept;
+
+    void clear();
+
+signals:
+    void dataChanged();
+
+private:
+    Q_DISABLE_COPY(Engine)
+    std::unique_ptr<EnginePrivate> d;
+
+    bool updateCurrentIndex(qint64 timestamp) const noexcept;
+    bool getSupportData(qint64 timestamp, const EngineData **p0, const EngineData **p1, const EngineData **p2, const EngineData **p3) const noexcept;
+    static double normaliseTimestamp(const EngineData &p1, const EngineData &p2, quint64 timestamp) noexcept;
+};
+
+
+#endif // ENGINE_H

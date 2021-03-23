@@ -30,6 +30,7 @@
 
 #include "../../Kernel/src/SkyMath.h"
 #include "SkySearch.h"
+#include "Engine.h"
 #include "AircraftInfo.h"
 #include "AircraftData.h"
 #include "Aircraft.h"
@@ -41,7 +42,9 @@ public:
         : currentIndex(SkySearch::InvalidIndex)
     {}
 
+    Engine engine;
     AircraftInfo aircraftInfo;
+
     QVector<AircraftData> aircraftData;
     AircraftData currentAircraftData;
     mutable int currentIndex;
@@ -62,6 +65,16 @@ Aircraft::Aircraft(QObject *parent) noexcept
 
 Aircraft::~Aircraft() noexcept
 {
+}
+
+const Engine &Aircraft::getEngineConst() const
+{
+    return d->engine;
+}
+
+Engine &Aircraft::getEngine() const
+{
+    return d->engine;
 }
 
 void Aircraft::setAircraftInfo(AircraftInfo aircraftInfo) noexcept
@@ -152,20 +165,6 @@ const AircraftData &Aircraft::interpolateAircraftData(qint64 timestamp) const no
         d->currentAircraftData.rudderPosition = SkyMath::interpolateLinear(p1->rudderPosition, p2->rudderPosition, tn);
         d->currentAircraftData.elevatorPosition = SkyMath::interpolateLinear(p1->elevatorPosition, p2->elevatorPosition, tn);
         d->currentAircraftData.aileronPosition = SkyMath::interpolateLinear(p1->aileronPosition, p2->aileronPosition, tn);
-
-        // Engine
-        d->currentAircraftData.throttleLeverPosition1 = SkyMath::interpolateLinear(p1->throttleLeverPosition1, p2->throttleLeverPosition1, tn);
-        d->currentAircraftData.throttleLeverPosition2 = SkyMath::interpolateLinear(p1->throttleLeverPosition2, p2->throttleLeverPosition2, tn);
-        d->currentAircraftData.throttleLeverPosition3 = SkyMath::interpolateLinear(p1->throttleLeverPosition3, p2->throttleLeverPosition3, tn);
-        d->currentAircraftData.throttleLeverPosition4 = SkyMath::interpolateLinear(p1->throttleLeverPosition4, p2->throttleLeverPosition4, tn);
-        d->currentAircraftData.propellerLeverPosition1 = SkyMath::interpolateLinear(p1->propellerLeverPosition1, p2->propellerLeverPosition1, tn);
-        d->currentAircraftData.propellerLeverPosition2 = SkyMath::interpolateLinear(p1->propellerLeverPosition2, p2->propellerLeverPosition2, tn);
-        d->currentAircraftData.propellerLeverPosition3 = SkyMath::interpolateLinear(p1->propellerLeverPosition3, p2->propellerLeverPosition3, tn);
-        d->currentAircraftData.propellerLeverPosition4 = SkyMath::interpolateLinear(p1->propellerLeverPosition4, p2->propellerLeverPosition4, tn);
-        d->currentAircraftData.mixtureLeverPosition1 = SkyMath::interpolateLinear(p1->mixtureLeverPosition1, p2->mixtureLeverPosition1, tn);
-        d->currentAircraftData.mixtureLeverPosition2 = SkyMath::interpolateLinear(p1->mixtureLeverPosition2, p2->mixtureLeverPosition2, tn);
-        d->currentAircraftData.mixtureLeverPosition3 = SkyMath::interpolateLinear(p1->mixtureLeverPosition3, p2->mixtureLeverPosition3, tn);
-        d->currentAircraftData.mixtureLeverPosition4 = SkyMath::interpolateLinear(p1->mixtureLeverPosition4, p2->mixtureLeverPosition4, tn);
 
         // Flaps & spoilers
         d->currentAircraftData.leadingEdgeFlapsLeftPercent = SkyMath::interpolateLinear(p1->leadingEdgeFlapsLeftPercent, p2->leadingEdgeFlapsLeftPercent, tn);

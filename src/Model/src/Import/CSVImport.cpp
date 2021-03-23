@@ -157,66 +157,67 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft) noexcept
                             aircraftData.aileronPosition = doubleValue;
                         }
                     // Engine
-                    } else if (header == SimVar::ThrottleLeverPosition1) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.throttleLeverPosition1 = doubleValue;
-                        }
-                    } else if (header == SimVar::ThrottleLeverPosition2) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.throttleLeverPosition2 = doubleValue;
-                        }
-                    } else if (header == SimVar::ThrottleLeverPosition3) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.throttleLeverPosition3 = doubleValue;
-                        }
-                    } else if (header == SimVar::ThrottleLeverPosition4) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.throttleLeverPosition4 = doubleValue;
-                        }
-                    } else if (header == SimVar::PropellerLeverPosition1) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.propellerLeverPosition1 = doubleValue;
-                        }
-                    } else if (header == SimVar::PropellerLeverPosition2) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.propellerLeverPosition2 = doubleValue;
-                        }
-                    } else if (header == SimVar::PropellerLeverPosition3) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.propellerLeverPosition3 = doubleValue;
-                        }
-                    } else if (header == SimVar::PropellerLeverPosition4) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.propellerLeverPosition4 = doubleValue;
-                        }
-                    } else if (header == SimVar::MixtureLeverPosition1) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.mixtureLeverPosition1 = doubleValue;
-                        }
-                    } else if (header == SimVar::MixtureLeverPosition2) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.mixtureLeverPosition2 = doubleValue;
-                        }
-                    } else if (header == SimVar::MixtureLeverPosition3) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.mixtureLeverPosition3 = doubleValue;
-                        }
-                    } else if (header == SimVar::MixtureLeverPosition4) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.mixtureLeverPosition4 = doubleValue;
-                        }
+                        // TODO IMPLEMENT ME!!!
+//                    } else if (header == SimVar::ThrottleLeverPosition1) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.throttleLeverPosition1 = doubleValue;
+//                        }
+//                    } else if (header == SimVar::ThrottleLeverPosition2) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.throttleLeverPosition2 = doubleValue;
+//                        }
+//                    } else if (header == SimVar::ThrottleLeverPosition3) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.throttleLeverPosition3 = doubleValue;
+//                        }
+//                    } else if (header == SimVar::ThrottleLeverPosition4) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.throttleLeverPosition4 = doubleValue;
+//                        }
+//                    } else if (header == SimVar::PropellerLeverPosition1) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.propellerLeverPosition1 = doubleValue;
+//                        }
+//                    } else if (header == SimVar::PropellerLeverPosition2) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.propellerLeverPosition2 = doubleValue;
+//                        }
+//                    } else if (header == SimVar::PropellerLeverPosition3) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.propellerLeverPosition3 = doubleValue;
+//                        }
+//                    } else if (header == SimVar::PropellerLeverPosition4) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.propellerLeverPosition4 = doubleValue;
+//                        }
+//                    } else if (header == SimVar::MixtureLeverPosition1) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.mixtureLeverPosition1 = doubleValue;
+//                        }
+//                    } else if (header == SimVar::MixtureLeverPosition2) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.mixtureLeverPosition2 = doubleValue;
+//                        }
+//                    } else if (header == SimVar::MixtureLeverPosition3) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.mixtureLeverPosition3 = doubleValue;
+//                        }
+//                    } else if (header == SimVar::MixtureLeverPosition4) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.mixtureLeverPosition4 = doubleValue;
+//                        }
                     // Flaps & speed brakes
                     } else if (header == SimVar::LeadingEdgeFlapsLeftPercent) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);

@@ -89,7 +89,8 @@ struct SimConnectAircraftData
     // Lights
     qint64 lightStates;
 
-    inline AircraftData toAircraftData() const noexcept {
+    inline AircraftData toAircraftData() const noexcept
+    {
         AircraftData aircraftData;
 
         aircraftData.latitude = latitude;
@@ -111,21 +112,6 @@ struct SimConnectAircraftData
         aircraftData.rudderPosition = SkyMath::fromPosition(rudderPosition);
         aircraftData.elevatorPosition = SkyMath::fromPosition(elevatorPosition);
         aircraftData.aileronPosition = SkyMath::fromPosition(aileronPosition);
-
-        // Note: the throttle can also yield negative thrust, hence the Sky Dolly internal type
-        //       position (qint16) which supports negative values as well
-        aircraftData.throttleLeverPosition1 = SkyMath::fromPosition(throttleLeverPosition1);
-        aircraftData.throttleLeverPosition2 = SkyMath::fromPosition(throttleLeverPosition2);
-        aircraftData.throttleLeverPosition3 = SkyMath::fromPosition(throttleLeverPosition3);
-        aircraftData.throttleLeverPosition4 = SkyMath::fromPosition(throttleLeverPosition4);
-        aircraftData.propellerLeverPosition1 = SkyMath::fromPosition(propellerLeverPosition1);
-        aircraftData.propellerLeverPosition2 = SkyMath::fromPosition(propellerLeverPosition2);
-        aircraftData.propellerLeverPosition3 = SkyMath::fromPosition(propellerLeverPosition3);
-        aircraftData.propellerLeverPosition4 = SkyMath::fromPosition(propellerLeverPosition4);
-        aircraftData.mixtureLeverPosition1 = SkyMath::fromPercent(mixtureLeverPosition1);
-        aircraftData.mixtureLeverPosition2 = SkyMath::fromPercent(mixtureLeverPosition2);
-        aircraftData.mixtureLeverPosition3 = SkyMath::fromPercent(mixtureLeverPosition3);
-        aircraftData.mixtureLeverPosition4 = SkyMath::fromPercent(mixtureLeverPosition4);
 
         aircraftData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(leadingEdgeFlapsLeftPercent);
         aircraftData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(leadingEdgeFlapsRightPercent);
@@ -149,7 +135,8 @@ struct SimConnectAircraftData
         return aircraftData;
     }
 
-    inline void fromAircraftData(const AircraftData &aircraftData) noexcept {
+    inline void fromAircraftData(const AircraftData &aircraftData) noexcept
+    {
         latitude = aircraftData.latitude;
         longitude = aircraftData.longitude;
         altitude = aircraftData.altitude;
@@ -169,19 +156,6 @@ struct SimConnectAircraftData
         rudderPosition = SkyMath::toPosition(aircraftData.rudderPosition);
         elevatorPosition = SkyMath::toPosition(aircraftData.elevatorPosition);
         aileronPosition = SkyMath::toPosition(aircraftData.aileronPosition);
-
-        throttleLeverPosition1 = SkyMath::toPosition(aircraftData.throttleLeverPosition1);
-        throttleLeverPosition2 = SkyMath::toPosition(aircraftData.throttleLeverPosition2);
-        throttleLeverPosition3 = SkyMath::toPosition(aircraftData.throttleLeverPosition3);
-        throttleLeverPosition4 = SkyMath::toPosition(aircraftData.throttleLeverPosition4);
-        propellerLeverPosition1 = SkyMath::toPosition(aircraftData.propellerLeverPosition1);
-        propellerLeverPosition2 = SkyMath::toPosition(aircraftData.propellerLeverPosition2);
-        propellerLeverPosition3 = SkyMath::toPosition(aircraftData.propellerLeverPosition3);
-        propellerLeverPosition4 = SkyMath::toPosition(aircraftData.propellerLeverPosition4);
-        mixtureLeverPosition1 = SkyMath::toPercent(aircraftData.mixtureLeverPosition1);
-        mixtureLeverPosition2 = SkyMath::toPercent(aircraftData.mixtureLeverPosition2);
-        mixtureLeverPosition3 = SkyMath::toPercent(aircraftData.mixtureLeverPosition3);
-        mixtureLeverPosition4 = SkyMath::toPercent(aircraftData.mixtureLeverPosition4);
 
         leadingEdgeFlapsLeftPercent = SkyMath::toPercent(aircraftData.leadingEdgeFlapsLeftPercent);
         leadingEdgeFlapsRightPercent = SkyMath::toPercent(aircraftData.leadingEdgeFlapsRightPercent);

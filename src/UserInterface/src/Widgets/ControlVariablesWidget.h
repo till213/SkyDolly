@@ -32,6 +32,7 @@ class QHideEvent;
 
 class SkyConnectIntf;
 class AircraftData;
+class EngineData;
 class ControlVariablesWidgetPrivate;
 
 namespace Ui {
@@ -58,6 +59,7 @@ private:
     void initUi();
     void updateUi();
     const AircraftData &getCurrentAircraftData() const;
+    const EngineData &getCurrentEngineData() const;
 
 private slots:
     void updateControlDataUi();

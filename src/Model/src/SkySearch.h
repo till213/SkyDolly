@@ -27,6 +27,7 @@
 
 #include <QVector>
 
+#include "TimeVariableData.h"
 #include "AircraftData.h"
 
 namespace SkySearch {
@@ -53,7 +54,7 @@ namespace SkySearch {
      *        the higher starting index <= lastIndex and >= lowIndex
      * \return the lower index i of the interval [i, j], or \c InvalidIndex if not found
      */
-    inline int binaryIntervalSearch(const QVector<AircraftData> &aircraftData, qint64 timestamp, int lowIndex, int highIndex) noexcept
+    template <typename T> int binaryIntervalSearch(const QVector<T> &aircraftData, qint64 timestamp, int lowIndex, int highIndex) noexcept
     {
         int index;
         if (aircraftData.size() == 0) {
@@ -97,7 +98,7 @@ namespace SkySearch {
         return index;
     }
 
-    inline int linearIntervalSearch(const QVector<AircraftData> &aircraftData, qint64 timestamp, int startIndex) noexcept
+    template <typename T> int linearIntervalSearch(const QVector<T> &aircraftData, qint64 timestamp, int startIndex) noexcept
     {
         int index;
         if (aircraftData.size() == 0) {

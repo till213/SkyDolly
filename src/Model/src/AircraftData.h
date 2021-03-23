@@ -29,9 +29,10 @@
 #include <QFlags>
 
 #include "SimType.h"
+#include "TimeVariableData.h"
 #include "ModelLib.h"
 
-struct MODEL_API AircraftData
+struct MODEL_API AircraftData : public TimeVariableData
 {
     // Position
 
@@ -59,22 +60,6 @@ struct MODEL_API AircraftData
     qint16 elevatorPosition;
     qint16 aileronPosition;
 
-    // General engine
-    // Implementation note: the throttle can also yield negative thrust, hence the
-    // type qint16 (position) which also supports negative values
-    qint16 throttleLeverPosition1;
-    qint16 throttleLeverPosition2;
-    qint16 throttleLeverPosition3;
-    qint16 throttleLeverPosition4;
-    qint16 propellerLeverPosition1;
-    qint16 propellerLeverPosition2;
-    qint16 propellerLeverPosition3;
-    qint16 propellerLeverPosition4;
-    quint8 mixtureLeverPosition1;
-    quint8 mixtureLeverPosition2;
-    quint8 mixtureLeverPosition3;
-    quint8 mixtureLeverPosition4;
-
     // Flaps & speed brakes
     quint8 leadingEdgeFlapsLeftPercent;
     quint8 leadingEdgeFlapsRightPercent;
@@ -96,14 +81,8 @@ struct MODEL_API AircraftData
     // Lights
     SimType::LightStates lightStates;
 
-    // In milliseconds since the start of recording
-    qint64 timestamp;
 
     AircraftData(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
-    inline bool isNull() const noexcept {
-        return (latitude == 0.0 && longitude == 0.0 && altitude == 0.0 &&
-                pitch == 0.0 && bank == 0.0 && heading == 0.0 && timestamp == 0);
-    }
 
     AircraftData(AircraftData &&) = default;
     AircraftData(const AircraftData &) = default;

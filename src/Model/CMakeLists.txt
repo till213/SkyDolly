@@ -17,8 +17,14 @@ target_sources(Model
         src/FlightConditions.h
         src/Aircraft.cpp
         src/Aircraft.h
+        src/TimeVariableData.cpp
+        src/TimeVariableData.h
         src/AircraftData.cpp
         src/AircraftData.h
+        src/Engine.cpp
+        src/Engine.h
+        src/EngineData.cpp
+        src/EngineData.h
         src/AircraftInfo.cpp
         src/AircraftInfo.h
         src/SimVar.cpp
