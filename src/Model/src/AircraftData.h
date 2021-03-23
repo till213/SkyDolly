@@ -94,7 +94,7 @@ struct MODEL_API AircraftData
     quint8 canopyOpen;
 
     // Lights
-    SimTypes::LightStates lightStates;
+    SimType::LightStates lightStates;
 
     // In milliseconds since the start of recording
     qint64 timestamp;

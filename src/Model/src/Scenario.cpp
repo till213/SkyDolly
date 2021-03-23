@@ -25,6 +25,7 @@
 #include <memory>
 #include <vector>
 
+#include "FlightConditions.h"
 #include "Aircraft.h"
 #include "Scenario.h"
 
@@ -38,19 +39,23 @@ public:
     ~ScenarioPrivate() noexcept
     {}
 
+    FlightConditions flightConditions;
     std::vector<std::unique_ptr<Aircraft>> aircrafts;
 
 };
 
 // PUBLIC
 
-Scenario::Scenario() noexcept
-    : d(std::make_unique<ScenarioPrivate>())
+Scenario::Scenario(QObject *parent) noexcept
+    : QObject(parent),
+      d(std::make_unique<ScenarioPrivate>())
 {
     // The scenario may support several aircrafts, but for now there will be always
     // exactly one user aircraft
     std::unique_ptr<Aircraft> userAircraft = std::make_unique<Aircraft>();
     d->aircrafts.push_back(std::move(userAircraft));
+
+    frenchConnection();
 }
 
 Scenario::~Scenario() noexcept
@@ -65,5 +70,32 @@ const Aircraft &Scenario::getUserAircraftConst() const
 Aircraft &Scenario::getUserAircraft() const
 {
     return *(*d->aircrafts.cbegin());
+}
+
+void Scenario::setFlightConditions(FlightConditions flightConditions) noexcept
+{
+    d->flightConditions = flightConditions;
+    emit flightConditionsChanged();
+}
+
+const FlightConditions &Scenario::getFlightConditionsConst() const
+{
+    return d->flightConditions;
+}
+
+FlightConditions &Scenario::getFlightConditions() const
+{
+    return d->flightConditions;
+}
+
+// PRIVATE
+
+void Scenario::frenchConnection() noexcept
+{
+    Aircraft &userAircraft = getUserAircraft();
+    connect(&userAircraft, &Aircraft::infoChanged,
+            this, &Scenario::aircraftInfoChanged);
+    connect(&userAircraft, &Aircraft::dataChanged,
+            this, &Scenario::aircraftDataChanged);
 }
 

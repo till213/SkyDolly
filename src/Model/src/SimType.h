@@ -30,7 +30,7 @@
 /*!
  * Simulation variable types and enumerations.
  */
-namespace SimTypes {
+namespace SimType {
 
     enum class LightState {
         None = 0x0000,
@@ -45,7 +45,7 @@ namespace SimTypes {
         Logo = 0x0100,
         Cabin = 0x0200
     };
-    Q_DECLARE_FLAGS(LightStates, SimTypes::LightState)
+    Q_DECLARE_FLAGS(LightStates, LightState)
 
     enum class SurfaceType {
         Unknown,
@@ -232,6 +232,6 @@ namespace SimTypes {
     }
 }
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(SimTypes::LightStates)
+Q_DECLARE_OPERATORS_FOR_FLAGS(SimType::LightStates)
 
 #endif // SIMTYPE_H

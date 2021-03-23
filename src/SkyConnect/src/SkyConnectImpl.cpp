@@ -371,7 +371,8 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
     Q_UNUSED(cbData);
 
     SkyConnectImpl *skyConnect = static_cast<SkyConnectImpl *>(context);
-    Aircraft &userAircraft = skyConnect->getCurrentScenario().getUserAircraft();
+    Scenario &currentScenario = skyConnect->getCurrentScenario();
+    Aircraft &userAircraft = currentScenario.getUserAircraft();
     SIMCONNECT_RECV_SIMOBJECT_DATA *objectData;
     const SimConnectAircraftInfo *simConnectAircraftInfo;
     const SimConnectAircraftData *simConnectAircraftData;
@@ -431,9 +432,10 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
                 case DataRequest::AircraftInfo:
                 {
                     simConnectAircraftInfo = reinterpret_cast<const SimConnectAircraftInfo *>(&objectData->dwData);
-                    AircraftInfo aircraftInfo;
-                    aircraftInfo = std::move(simConnectAircraftInfo->toAircraftInfo());
-                    userAircraft.setAircraftInfo(std::move(aircraftInfo));
+                    AircraftInfo aircraftInfo = simConnectAircraftInfo->toAircraftInfo();
+                    userAircraft.setAircraftInfo(aircraftInfo);
+                    FlightConditions flightConditions = simConnectAircraftInfo->toFlightConditions();
+                    currentScenario.setFlightConditions(flightConditions);
                     break;
                 }
 

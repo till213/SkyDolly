@@ -70,7 +70,7 @@ AircraftData::AircraftData(double latitude, double longitude, double altitude) n
       waterRudderHandlePosition(0),
       tailhookPosition(0),
       canopyOpen(0),
-      lightStates(QFlags(SimTypes::LightState::None)),
+      lightStates(QFlags(SimType::LightState::None)),
       timestamp(0)
 {
     this->latitude = latitude;

@@ -27,26 +27,38 @@
 
 #include <memory>
 
-#include <QtGlobal>
+#include <QObject>
 
-#include "Aircraft.h"
 #include "ModelLib.h"
 
+class FlightConditions;
+class Aircraft;
 class ScenarioPrivate;
 
-class Scenario
+class MODEL_API Scenario : public QObject
 {
+    Q_OBJECT
 public:
-    Scenario() noexcept;
+    Scenario(QObject *parent = nullptr) noexcept;
     ~Scenario() noexcept;
-    Scenario(Scenario &&) noexcept = default;
 
-    MODEL_API const Aircraft &getUserAircraftConst() const;
-    MODEL_API Aircraft &getUserAircraft() const;
+    const Aircraft &getUserAircraftConst() const;
+    Aircraft &getUserAircraft() const;
+
+    void setFlightConditions(FlightConditions flightConditions) noexcept;
+    const FlightConditions &getFlightConditionsConst() const;
+    FlightConditions &getFlightConditions() const;
+
+signals:
+    void aircraftInfoChanged();
+    void aircraftDataChanged();
+    void flightConditionsChanged();
 
 private:
     Q_DISABLE_COPY(Scenario)
     std::unique_ptr<ScenarioPrivate> d;
+
+    void frenchConnection() noexcept;
 };
 
 #endif // SCENARIO_H

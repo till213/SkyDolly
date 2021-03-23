@@ -33,6 +33,7 @@
 #include "../../Kernel/src/SkyMath.h"
 #include "../../Model/src/SimType.h"
 #include "../../Model/src/AircraftInfo.h"
+#include "../../Model/src/FlightConditions.h"
 
 struct SimConnectAircraftInfo
 {
@@ -115,152 +116,158 @@ struct SimConnectAircraftInfo
         aircraftInfo.numberOfEngines = numberOfEngines;
         aircraftInfo.engineType = toEngineType(engineType);
 
-        aircraftInfo.groundAltitude = groundAltitude;
-        aircraftInfo.ambientTemperature = ambientTemperature;
-        aircraftInfo.totalAirTemperature = totalAirTemperature;
-        aircraftInfo.windVelocity = ambientWindVelocity;
-        aircraftInfo.windDirection = ambientWindDirection;
-        aircraftInfo.precipitationState = toPrecipitationState(ambientPrecipState);
-        aircraftInfo.inClouds = (ambientInCloud != 0);
-        aircraftInfo.visibility = ambientVisibility;
-        aircraftInfo.seaLevelPressure = seaLevelPressure;
-        aircraftInfo.pitotIcingPercent = SkyMath::fromPercent(pitotIcePct);
-        aircraftInfo.structuralIcingPercent = SkyMath::fromPercent(structuralIcePct);
-
         return aircraftInfo;
+    }
+
+    inline FlightConditions toFlightConditions() const noexcept {
+        FlightConditions flightConditions;
+
+        flightConditions.groundAltitude = groundAltitude;
+        flightConditions.ambientTemperature = ambientTemperature;
+        flightConditions.totalAirTemperature = totalAirTemperature;
+        flightConditions.windVelocity = ambientWindVelocity;
+        flightConditions.windDirection = ambientWindDirection;
+        flightConditions.precipitationState = toPrecipitationState(ambientPrecipState);
+        flightConditions.inClouds = (ambientInCloud != 0);
+        flightConditions.visibility = ambientVisibility;
+        flightConditions.seaLevelPressure = seaLevelPressure;
+        flightConditions.pitotIcingPercent = SkyMath::fromPercent(pitotIcePct);
+        flightConditions.structuralIcingPercent = SkyMath::fromPercent(structuralIcePct);
+
+        return flightConditions;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
 
 private:
-    static inline SimTypes::SurfaceType toSurfaceType(qint32 surfaceType) noexcept
+    static inline SimType::SurfaceType toSurfaceType(qint32 surfaceType) noexcept
     {
         switch (surfaceType) {
         case 0:
-            return SimTypes::SurfaceType::Concrete;
+            return SimType::SurfaceType::Concrete;
             break;
         case 1:
-            return SimTypes::SurfaceType::Grass;
+            return SimType::SurfaceType::Grass;
             break;
         case 2:
-            return SimTypes::SurfaceType::Water;
+            return SimType::SurfaceType::Water;
             break;
         case 3:
-            return SimTypes::SurfaceType::BumpyGrass;
+            return SimType::SurfaceType::BumpyGrass;
             break;
         case 4:
-            return SimTypes::SurfaceType::Asphalt;
+            return SimType::SurfaceType::Asphalt;
             break;
         case 5:
-            return SimTypes::SurfaceType::ShortGrass;
+            return SimType::SurfaceType::ShortGrass;
             break;
         case 6:
-            return SimTypes::SurfaceType::LongGrass;
+            return SimType::SurfaceType::LongGrass;
             break;
         case 7:
-            return SimTypes::SurfaceType::HardTurf;
+            return SimType::SurfaceType::HardTurf;
             break;
         case 8:
-            return SimTypes::SurfaceType::Snow;
+            return SimType::SurfaceType::Snow;
             break;
         case 9:
-            return SimTypes::SurfaceType::Ice;
+            return SimType::SurfaceType::Ice;
             break;
         case 10:
-            return SimTypes::SurfaceType::Urban;
+            return SimType::SurfaceType::Urban;
             break;
         case 11:
-            return SimTypes::SurfaceType::Forest;
+            return SimType::SurfaceType::Forest;
             break;
         case 12:
-            return SimTypes::SurfaceType::Dirt;
+            return SimType::SurfaceType::Dirt;
             break;
         case 13:
-            return SimTypes::SurfaceType::Coral;
+            return SimType::SurfaceType::Coral;
             break;
         case 14:
-            return SimTypes::SurfaceType::Gravel;
+            return SimType::SurfaceType::Gravel;
             break;
         case 15:
-            return SimTypes::SurfaceType::OilTreated;
+            return SimType::SurfaceType::OilTreated;
             break;
         case 16:
-            return SimTypes::SurfaceType::SteelMats;
+            return SimType::SurfaceType::SteelMats;
             break;
         case 17:
-            return SimTypes::SurfaceType::Bituminus;
+            return SimType::SurfaceType::Bituminus;
             break;
         case 18:
-            return SimTypes::SurfaceType::Brick;
+            return SimType::SurfaceType::Brick;
             break;
         case 19:
-            return SimTypes::SurfaceType::Macadam;
+            return SimType::SurfaceType::Macadam;
             break;
         case 20:
-            return SimTypes::SurfaceType::Planks;
+            return SimType::SurfaceType::Planks;
             break;
         case 21:
-            return SimTypes::SurfaceType::Sand;
+            return SimType::SurfaceType::Sand;
             break;
         case 22:
-            return SimTypes::SurfaceType::Shale;
+            return SimType::SurfaceType::Shale;
             break;
         case 23:
-            return SimTypes::SurfaceType::Tarmac;
+            return SimType::SurfaceType::Tarmac;
             break;
         case 24:
-            return SimTypes::SurfaceType::WrightFlyerTrack;
+            return SimType::SurfaceType::WrightFlyerTrack;
             break;
         default:
-            return SimTypes::SurfaceType::Unknown;
+            return SimType::SurfaceType::Unknown;
             break;
         }
     }
 
-    static inline SimTypes::EngineType toEngineType(qint32 engineType) noexcept
+    static inline SimType::EngineType toEngineType(qint32 engineType) noexcept
     {
         switch (engineType) {
         case 0:
-            return SimTypes::EngineType::Piston;
+            return SimType::EngineType::Piston;
             break;
         case 1:
-            return SimTypes::EngineType::Jet;
+            return SimType::EngineType::Jet;
             break;
         case 2:
-            return SimTypes::EngineType::None;
+            return SimType::EngineType::None;
             break;
         case 3:
-            return SimTypes::EngineType::HeloBellTurbine;
+            return SimType::EngineType::HeloBellTurbine;
             break;
         case 4:
-            return SimTypes::EngineType::Unsupported;
+            return SimType::EngineType::Unsupported;
             break;
         case 5:
-            return SimTypes::EngineType::Turboprop;
+            return SimType::EngineType::Turboprop;
             break;
         default:
-            return SimTypes::EngineType::Unknown;
+            return SimType::EngineType::Unknown;
             break;
         }
     }
 
-    static inline SimTypes::PrecipitationState toPrecipitationState(qint32 precipitationState) noexcept
+    static inline SimType::PrecipitationState toPrecipitationState(qint32 precipitationState) noexcept
     {
         switch (precipitationState) {
         case 0:
-            return SimTypes::PrecipitationState::Unknown;
+            return SimType::PrecipitationState::Unknown;
             break;
         case 2:
-            return SimTypes::PrecipitationState::None;
+            return SimType::PrecipitationState::None;
             break;
         case 4:
-            return SimTypes::PrecipitationState::Rain;
+            return SimType::PrecipitationState::Rain;
             break;
         case 8:
-            return SimTypes::PrecipitationState::Snow;
+            return SimType::PrecipitationState::Snow;
             break;
         default:
-            return SimTypes::PrecipitationState::Unknown;
+            return SimType::PrecipitationState::Unknown;
             break;
         }
     }

@@ -283,7 +283,7 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft) noexcept
                     } else if (header == SimVar::LightStates) {
                         intValue = values.at(columnIndex).toInt(&ok);
                         if (ok) {
-                            aircraftData.lightStates = SimTypes::LightStates(intValue);
+                            aircraftData.lightStates = SimType::LightStates(intValue);
                         }
                     // Timestamp
                     } else if (header == SimVar::Timestamp) {
