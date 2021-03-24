@@ -153,7 +153,8 @@ bool SkyConnectDummy::sendAircraftData() noexcept
 {
     bool success;
 
-    if (!updateCurrentAircraftData().isNull()) {
+    const AircraftData &currentAircraftData = getCurrentScenario().getUserAircraftConst().interpolateAircraftData(getCurrentTimestamp());
+    if (!currentAircraftData.isNull()) {
         // Start the elapsed timer after sending the first sample data
         if (!isElapsedTimerRunning()) {
             startElapsedTimer();
