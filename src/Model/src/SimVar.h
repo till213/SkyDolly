@@ -32,11 +32,6 @@
  */
 namespace SimVar
 {
-    /*! Separator character for CSV import & export */
-    constexpr char Sep = '\t';
-    /*! Newline character for CSV import & export */
-    constexpr char Ln = '\n';
-
     // Simulation variables (SimConnect)
     MODEL_API extern const char *Latitude;
     MODEL_API extern const char *Longitude;

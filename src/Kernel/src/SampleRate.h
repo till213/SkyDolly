@@ -29,7 +29,7 @@
 
 namespace SampleRate
 {
-    constexpr int AutoValue = 999.0;
+    inline constexpr int AutoValue = 999.0;
 
     enum class SampleRate: int {
         Auto = 0,
