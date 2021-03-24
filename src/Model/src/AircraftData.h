@@ -81,7 +81,6 @@ struct MODEL_API AircraftData : public TimeVariableData
     // Lights
     SimType::LightStates lightStates;
 
-
     AircraftData(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
 
     AircraftData(AircraftData &&) = default;
