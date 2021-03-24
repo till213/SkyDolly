@@ -39,13 +39,15 @@ class AircraftPrivate
 {
 public:
     AircraftPrivate() noexcept
-        : currentIndex(SkySearch::InvalidIndex)
+        : currentTimestamp(TimeVariableData::InvalidTimestamp),
+          currentIndex(SkySearch::InvalidIndex)
     {}
 
     Engine engine;
     AircraftInfo aircraftInfo;
 
     QVector<AircraftData> aircraftData;
+    qint64 currentTimestamp;
     AircraftData currentAircraftData;
     mutable int currentIndex;
 };
@@ -117,7 +119,9 @@ const QVector<AircraftData> Aircraft::getAllAircraftData() const noexcept
 void Aircraft::clear()
 {
     d->aircraftData.clear();
+    d->currentTimestamp = TimeVariableData::InvalidTimestamp;
     d->currentIndex = SkySearch::InvalidIndex;
+    d->engine.clear();
     emit dataChanged();
 }
 
@@ -126,65 +130,73 @@ const AircraftData &Aircraft::interpolateAircraftData(qint64 timestamp) const no
     const AircraftData *p0, *p1, *p2, *p3;
     const double Tension = 0.0;
 
-    if (getSupportData(timestamp, &p0, &p1, &p2, &p3)) {
+    if (d->currentTimestamp != timestamp) {
 
-        double tn = normaliseTimestamp(*p1, *p2, timestamp);
+        if (getSupportData(timestamp, &p0, &p1, &p2, &p3)) {
 
-        // Aircraft position
+            double tn = normaliseTimestamp(*p1, *p2, timestamp);
 
-        // Latitude: [-90, 90] - no discontinuity at +/- 90
-        d->currentAircraftData.latitude  = SkyMath::interpolateHermite(p0->latitude, p1->latitude, p2->latitude, p3->latitude, tn, Tension);
-        // Longitude: [-180, 180] - discontinuity at the +/- 180 meridian
-        d->currentAircraftData.longitude = SkyMath::interpolateHermite180(p0->longitude, p1->longitude, p2->longitude, p3->longitude, tn, Tension);
-        // Altitude [open range]
-        d->currentAircraftData.altitude  = SkyMath::interpolateHermite(p0->altitude, p1->altitude, p2->altitude, p3->altitude, tn, Tension);
+            // Aircraft position
 
-        // Pitch: [-90, 90] - no discontinuity at +/- 90
-        d->currentAircraftData.pitch = SkyMath::interpolateHermite(p0->pitch, p1->pitch, p2->pitch, p3->pitch, tn, Tension);
-        // Bank: [-180, 180] - discontinuity at +/- 180
-        d->currentAircraftData.bank  = SkyMath::interpolateHermite180(p0->bank, p1->bank, p2->bank, p3->bank, tn, Tension);
-        // Heading: [0, 360] - discontinuity at 0/360
-        d->currentAircraftData.heading = SkyMath::interpolateHermite360(p0->heading, p1->heading, p2->heading, p3->heading, tn, Tension);
+            // Latitude: [-90, 90] - no discontinuity at +/- 90
+            d->currentAircraftData.latitude  = SkyMath::interpolateHermite(p0->latitude, p1->latitude, p2->latitude, p3->latitude, tn, Tension);
+            // Longitude: [-180, 180] - discontinuity at the +/- 180 meridian
+            d->currentAircraftData.longitude = SkyMath::interpolateHermite180(p0->longitude, p1->longitude, p2->longitude, p3->longitude, tn, Tension);
+            // Altitude [open range]
+            d->currentAircraftData.altitude  = SkyMath::interpolateHermite(p0->altitude, p1->altitude, p2->altitude, p3->altitude, tn, Tension);
 
-        // Velocity
-        d->currentAircraftData.velocityBodyX = SkyMath::interpolateLinear(p1->velocityBodyX, p2->velocityBodyX, tn);
-        d->currentAircraftData.velocityBodyY = SkyMath::interpolateLinear(p1->velocityBodyY, p2->velocityBodyY, tn);
-        d->currentAircraftData.velocityBodyZ = SkyMath::interpolateLinear(p1->velocityBodyZ, p2->velocityBodyZ, tn);
-        d->currentAircraftData.rotationVelocityBodyX = SkyMath::interpolateLinear(p1->rotationVelocityBodyX, p2->rotationVelocityBodyX, tn);
-        d->currentAircraftData.rotationVelocityBodyY = SkyMath::interpolateLinear(p1->rotationVelocityBodyY, p2->rotationVelocityBodyY, tn);
-        d->currentAircraftData.rotationVelocityBodyZ = SkyMath::interpolateLinear(p1->rotationVelocityBodyZ, p2->rotationVelocityBodyZ, tn);
+            // Pitch: [-90, 90] - no discontinuity at +/- 90
+            d->currentAircraftData.pitch = SkyMath::interpolateHermite(p0->pitch, p1->pitch, p2->pitch, p3->pitch, tn, Tension);
+            // Bank: [-180, 180] - discontinuity at +/- 180
+            d->currentAircraftData.bank  = SkyMath::interpolateHermite180(p0->bank, p1->bank, p2->bank, p3->bank, tn, Tension);
+            // Heading: [0, 360] - discontinuity at 0/360
+            d->currentAircraftData.heading = SkyMath::interpolateHermite360(p0->heading, p1->heading, p2->heading, p3->heading, tn, Tension);
 
-        // Aircraft controls
-        d->currentAircraftData.yokeXPosition = SkyMath::interpolateLinear(p1->yokeXPosition, p2->yokeXPosition, tn);
-        d->currentAircraftData.yokeYPosition = SkyMath::interpolateLinear(p1->yokeYPosition, p2->yokeYPosition, tn);
-        d->currentAircraftData.rudderPosition = SkyMath::interpolateLinear(p1->rudderPosition, p2->rudderPosition, tn);
-        d->currentAircraftData.elevatorPosition = SkyMath::interpolateLinear(p1->elevatorPosition, p2->elevatorPosition, tn);
-        d->currentAircraftData.aileronPosition = SkyMath::interpolateLinear(p1->aileronPosition, p2->aileronPosition, tn);
+            // Velocity
+            d->currentAircraftData.velocityBodyX = SkyMath::interpolateLinear(p1->velocityBodyX, p2->velocityBodyX, tn);
+            d->currentAircraftData.velocityBodyY = SkyMath::interpolateLinear(p1->velocityBodyY, p2->velocityBodyY, tn);
+            d->currentAircraftData.velocityBodyZ = SkyMath::interpolateLinear(p1->velocityBodyZ, p2->velocityBodyZ, tn);
+            d->currentAircraftData.rotationVelocityBodyX = SkyMath::interpolateLinear(p1->rotationVelocityBodyX, p2->rotationVelocityBodyX, tn);
+            d->currentAircraftData.rotationVelocityBodyY = SkyMath::interpolateLinear(p1->rotationVelocityBodyY, p2->rotationVelocityBodyY, tn);
+            d->currentAircraftData.rotationVelocityBodyZ = SkyMath::interpolateLinear(p1->rotationVelocityBodyZ, p2->rotationVelocityBodyZ, tn);
 
-        // Flaps & spoilers
-        d->currentAircraftData.leadingEdgeFlapsLeftPercent = SkyMath::interpolateLinear(p1->leadingEdgeFlapsLeftPercent, p2->leadingEdgeFlapsLeftPercent, tn);
-        d->currentAircraftData.leadingEdgeFlapsRightPercent = SkyMath::interpolateLinear(p1->leadingEdgeFlapsRightPercent, p2->leadingEdgeFlapsRightPercent, tn);
-        d->currentAircraftData.trailingEdgeFlapsLeftPercent = SkyMath::interpolateLinear(p1->trailingEdgeFlapsLeftPercent, p2->trailingEdgeFlapsLeftPercent, tn);
-        d->currentAircraftData.trailingEdgeFlapsRightPercent = SkyMath::interpolateLinear(p1->trailingEdgeFlapsRightPercent, p2->trailingEdgeFlapsRightPercent, tn);
-        d->currentAircraftData.spoilersHandlePosition = SkyMath::interpolateLinear(p1->spoilersHandlePosition, p2->spoilersHandlePosition, tn);
+            // Aircraft controls
+            d->currentAircraftData.yokeXPosition = SkyMath::interpolateLinear(p1->yokeXPosition, p2->yokeXPosition, tn);
+            d->currentAircraftData.yokeYPosition = SkyMath::interpolateLinear(p1->yokeYPosition, p2->yokeYPosition, tn);
+            d->currentAircraftData.rudderPosition = SkyMath::interpolateLinear(p1->rudderPosition, p2->rudderPosition, tn);
+            d->currentAircraftData.elevatorPosition = SkyMath::interpolateLinear(p1->elevatorPosition, p2->elevatorPosition, tn);
+            d->currentAircraftData.aileronPosition = SkyMath::interpolateLinear(p1->aileronPosition, p2->aileronPosition, tn);
 
-        // No interpolation for flaps position and gear
-        d->currentAircraftData.flapsHandleIndex = p1->flapsHandleIndex;
-        d->currentAircraftData.gearHandlePosition = p1->gearHandlePosition;
-        d->currentAircraftData.brakeLeftPosition = SkyMath::interpolateLinear(p1->brakeLeftPosition, p2->brakeLeftPosition, tn);
-        d->currentAircraftData.brakeRightPosition = SkyMath::interpolateLinear(p1->brakeRightPosition, p2->brakeRightPosition, tn);
-        d->currentAircraftData.waterRudderHandlePosition = SkyMath::interpolateLinear(p1->waterRudderHandlePosition, p2->waterRudderHandlePosition, tn);
-        d->currentAircraftData.tailhookPosition = SkyMath::interpolateLinear(p1->tailhookPosition, p2->tailhookPosition, tn);
-        d->currentAircraftData.canopyOpen = SkyMath::interpolateLinear(p1->canopyOpen, p2->canopyOpen, tn);
+            // Flaps & spoilers
+            d->currentAircraftData.leadingEdgeFlapsLeftPercent = SkyMath::interpolateLinear(p1->leadingEdgeFlapsLeftPercent, p2->leadingEdgeFlapsLeftPercent, tn);
+            d->currentAircraftData.leadingEdgeFlapsRightPercent = SkyMath::interpolateLinear(p1->leadingEdgeFlapsRightPercent, p2->leadingEdgeFlapsRightPercent, tn);
+            d->currentAircraftData.trailingEdgeFlapsLeftPercent = SkyMath::interpolateLinear(p1->trailingEdgeFlapsLeftPercent, p2->trailingEdgeFlapsLeftPercent, tn);
+            d->currentAircraftData.trailingEdgeFlapsRightPercent = SkyMath::interpolateLinear(p1->trailingEdgeFlapsRightPercent, p2->trailingEdgeFlapsRightPercent, tn);
+            d->currentAircraftData.spoilersHandlePosition = SkyMath::interpolateLinear(p1->spoilersHandlePosition, p2->spoilersHandlePosition, tn);
 
-        // No interpolation for light states
-        d->currentAircraftData.lightStates = p1->lightStates;
+            // No interpolation for flaps position and gear
+            d->currentAircraftData.flapsHandleIndex = p1->flapsHandleIndex;
+            d->currentAircraftData.gearHandlePosition = p1->gearHandlePosition;
+            d->currentAircraftData.brakeLeftPosition = SkyMath::interpolateLinear(p1->brakeLeftPosition, p2->brakeLeftPosition, tn);
+            d->currentAircraftData.brakeRightPosition = SkyMath::interpolateLinear(p1->brakeRightPosition, p2->brakeRightPosition, tn);
+            d->currentAircraftData.waterRudderHandlePosition = SkyMath::interpolateLinear(p1->waterRudderHandlePosition, p2->waterRudderHandlePosition, tn);
+            d->currentAircraftData.tailhookPosition = SkyMath::interpolateLinear(p1->tailhookPosition, p2->tailhookPosition, tn);
+            d->currentAircraftData.canopyOpen = SkyMath::interpolateLinear(p1->canopyOpen, p2->canopyOpen, tn);
 
-        d->currentAircraftData.timestamp = timestamp;
+            // No interpolation for light states
+            d->currentAircraftData.lightStates = p1->lightStates;
 
+            d->currentAircraftData.timestamp = timestamp;
+
+        } else {
+            // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
+            d->currentAircraftData = AircraftData::NullAircraftData;
+        }
+        d->currentTimestamp = timestamp;
+#ifdef DEBUG
     } else {
-        // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
-        d->currentAircraftData = AircraftData::NullAircraftData;
+        qDebug("Aircraft::interpolateAircraftData: cached result for timestamp: %llu", timestamp);
+#endif
     }
     return d->currentAircraftData;
 }

@@ -101,7 +101,6 @@ void Engine::clear()
 const EngineData &Engine::interpolateEngineData(qint64 timestamp) const noexcept
 {
     const EngineData *p0, *p1, *p2, *p3;
-    constexpr double Tension = 0.0;
 
     if (d->currentTimestamp != timestamp) {
 
@@ -130,6 +129,10 @@ const EngineData &Engine::interpolateEngineData(qint64 timestamp) const noexcept
             d->currentEngineData = EngineData::NullEngineData;
         }
         d->currentTimestamp = timestamp;
+#ifdef DEBUG
+    } else {
+        qDebug("Engine::interpolateEngineData: cached result for timestamp: %llu", timestamp);
+#endif
     }
     return d->currentEngineData;
 }

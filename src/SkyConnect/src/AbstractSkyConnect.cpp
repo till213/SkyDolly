@@ -304,11 +304,6 @@ void AbstractSkyConnect::setTimeScale(double timeScale) noexcept
     }
 }
 
-const AircraftData &AbstractSkyConnect::getCurrentAircraftData() const noexcept
-{
-    return d->currentAircraftData;
-}
-
 double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
 {
     double samplesPerSecond;
@@ -383,12 +378,6 @@ void AbstractSkyConnect::updateCurrentTimestamp() noexcept
             d->currentTimestamp = d->elapsedTime + d->elapsedTimer.elapsed();
         }
     }
-}
-
-const AircraftData &AbstractSkyConnect::updateCurrentAircraftData() noexcept
-{
-    d->currentAircraftData = std::move(d->currentScenario.getUserAircraftConst().interpolateAircraftData(getCurrentTimestamp()));
-    return d->currentAircraftData;
 }
 
 // PRIVATE
