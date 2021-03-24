@@ -231,7 +231,7 @@ bool Engine::getSupportData(qint64 timestamp, const EngineData **p0, const Engin
 
             // Is p2 within the timestamp window?
             if (((*p2)->timestamp - timestamp) > EnginePrivate::TimestampWindow) {
-                *p0 = *p1 = *p2 = *p3 = nullptr;
+                *p2 = *p3 = *p1;
             }
 
         } else {
@@ -239,7 +239,12 @@ bool Engine::getSupportData(qint64 timestamp, const EngineData **p0, const Engin
         }
 
     } else {
-        *p0 = *p1 = *p2 = *p3 = nullptr;
+        // We are past the last sample point
+        if (d->engineData.count() > 0 && timestamp - d->engineData.last().timestamp <= EnginePrivate::TimestampWindow) {
+            *p0 = *p1 = *p2 = *p3 = &d->engineData.last();
+        } else {
+            *p0 = *p1 = *p2 = *p3 = nullptr;
+        }
     }
 
     return *p0 != nullptr;
