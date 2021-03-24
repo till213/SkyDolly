@@ -30,6 +30,7 @@ target_sources(Model
         src/SimVar.cpp
         src/SimVar.h
         src/SimType.h
+        src/SkySearch.cpp
         src/SkySearch.h
         src/Export/CSVExport.cpp
         src/Export/CSVExport.h

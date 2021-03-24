@@ -132,9 +132,9 @@ const AircraftData &Aircraft::interpolateAircraftData(qint64 timestamp) const no
 
     if (d->currentTimestamp != timestamp) {
 
-        if (getSupportData(timestamp, &p0, &p1, &p2, &p3)) {
+        if (SkySearch::getSupportData(d->aircraftData, timestamp, d->currentIndex, &p0, &p1, &p2, &p3)) {
 
-            double tn = normaliseTimestamp(*p1, *p2, timestamp);
+            double tn = SkySearch::normaliseTimestamp(*p1, *p2, timestamp);
 
             // Aircraft position
 
@@ -199,110 +199,4 @@ const AircraftData &Aircraft::interpolateAircraftData(qint64 timestamp) const no
 #endif
     }
     return d->currentAircraftData;
-}
-
-// PRIVATE
-
-// Updates the current index with the last index having a timestamp <= the given timestamp
-bool Aircraft::updateCurrentIndex(qint64 timestamp) const noexcept
-{
-    int index = d->currentIndex;
-    int size = d->aircraftData.size();
-    if (size > 0 && timestamp <= d->aircraftData.last().timestamp) {
-        if (index != SkySearch::InvalidIndex) {
-            if (timestamp < d->aircraftData.at(index).timestamp) {
-                // The timestamp was moved to front ("rewind"), so search the
-                // array until and including the current index
-                index = SkySearch::BinaryIntervalSearch;
-            } else if (timestamp - SkySearch::BinaryIntervalSearchThreshold > d->aircraftData.at(index).timestamp) {
-                index = SkySearch::BinaryIntervalSearch;
-            }
-        } else {
-            // Current index not yet initialised, so search the entire array
-            index = SkySearch::BinaryIntervalSearch;
-        }        
-    } else {
-        // No data yet, or timestamp not between given range
-        index = SkySearch::InvalidIndex;
-    }
-
-    if (index != SkySearch::InvalidIndex) {
-
-        // If the given timestamp lies "in the future" (as seen from the timetamp of the current index
-        // the we assume that time has progressed "only a little" (normal replay) and we simply do
-        // a linear search from the current index onwards
-        if (index != SkySearch::BinaryIntervalSearch) {
-            // Linear search: increment the current index, until we find a position having a
-            // timestamp > the given timestamp
-            index = SkySearch::linearIntervalSearch(d->aircraftData, timestamp, index);
-        } else {
-            // The given timestamp lies "in the past" and could really be anywwhere
-            // -> binary search in the past
-            int low;
-            int high;
-            if (d->currentIndex != SkySearch::InvalidIndex) {
-                if (timestamp < d->aircraftData.at(d->currentIndex).timestamp) {
-                    // Search in "the past"
-                    low = 0;
-                    high = d->currentIndex;
-                } else {
-                    // Search in "the future"
-                    low = d->currentIndex;
-                    high = d->aircraftData.size() - 1;
-                }
-            } else {
-                // index not yet initialised -> search entire timeline
-                low = 0;
-                high = d->aircraftData.size() - 1;
-            }
-            index = SkySearch::binaryIntervalSearch(d->aircraftData, timestamp, low, high);
-        }
-
-    }
-
-    d->currentIndex = index;
-    return d->currentIndex != SkySearch::InvalidIndex;
-}
-
-bool Aircraft::getSupportData(qint64 timestamp, const AircraftData **p0, const AircraftData **p1, const AircraftData **p2, const AircraftData **p3) const noexcept
-{
-    if (updateCurrentIndex(timestamp)) {
-
-        *p1 = &d->aircraftData.at(d->currentIndex);
-        if (d->currentIndex > 0) {
-           *p0 = &d->aircraftData.at(d->currentIndex - 1);
-        } else {
-           *p0 = *p1;
-        }
-        if (d->currentIndex < d->aircraftData.count() - 1) {
-           if (d->currentIndex < d->aircraftData.count() - 2) {
-               *p2 = &d->aircraftData.at(d->currentIndex + 1);
-               *p3 = &d->aircraftData.at(d->currentIndex + 2);
-           } else {
-               // p1 is the second to last data
-               *p2 = &d->aircraftData.at(d->currentIndex + 1);
-               *p3 = *p2;
-           }
-        } else {
-           // p1 is the last data
-           *p2 = *p3 = *p1;
-        }
-
-    } else {
-        *p0 = *p1 = *p2 = *p3 = nullptr;
-    }
-
-    return *p0 != nullptr;
-}
-
-double Aircraft::normaliseTimestamp(const AircraftData &p1, const AircraftData &p2, quint64 timestamp) noexcept
-{
-    double t1 = timestamp - p1.timestamp;
-    double t2 = p2.timestamp - p1.timestamp;
-    if (t2 != 0.0) {
-        return static_cast<float>(t1) / static_cast<float>(t2);
-    } else {
-        // p1 and p2 are the same (last sampled) point
-        return 0.0;
-    }
 }

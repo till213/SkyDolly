@@ -46,7 +46,7 @@ public:
     EngineData currentEngineData;
     mutable int currentIndex;
 
-    static constexpr qint64 TimestampWindow = 1000; // msec
+    static inline constexpr qint64 TimestampWindow = 1000; // msec
 };
 
 // PUBLIC
@@ -106,9 +106,9 @@ const EngineData &Engine::interpolateEngineData(qint64 timestamp) const noexcept
 
     if (d->currentTimestamp != timestamp) {
 
-        if (getSupportData(timestamp, &p0, &p1, &p2, &p3)) {
+        if (SkySearch::getSupportData(d->engineData, timestamp, d->currentIndex, &p0, &p1, &p2, &p3)) {
 
-            double tn = normaliseTimestamp(*p1, *p2, timestamp);
+            double tn = SkySearch::normaliseTimestamp(*p1, *p2, timestamp);
 
             // Engine
             d->currentEngineData.throttleLeverPosition1 = SkyMath::interpolateLinear(p1->throttleLeverPosition1, p2->throttleLeverPosition1, tn);
@@ -137,127 +137,4 @@ const EngineData &Engine::interpolateEngineData(qint64 timestamp) const noexcept
 #endif
     }
     return d->currentEngineData;
-}
-
-// PRIVATE
-
-// Updates the current index with the last index having a timestamp <= the given timestamp
-bool Engine::updateCurrentIndex(qint64 timestamp) const noexcept
-{
-    int index = d->currentIndex;
-    int size = d->engineData.size();
-    if (size > 0 && timestamp <= d->engineData.last().timestamp) {
-        if (index != SkySearch::InvalidIndex) {
-            if (timestamp < d->engineData.at(index).timestamp) {
-                // The timestamp was moved to front ("rewind"), so search the
-                // array until and including the current index
-                index = SkySearch::BinaryIntervalSearch;
-            } else if (timestamp - SkySearch::BinaryIntervalSearchThreshold > d->engineData.at(index).timestamp) {
-                index = SkySearch::BinaryIntervalSearch;
-            }
-        } else {
-            // Current index not yet initialised, so search the entire array
-            index = SkySearch::BinaryIntervalSearch;
-        }
-    } else {
-        // No data yet, or timestamp not between given range
-        index = SkySearch::InvalidIndex;
-    }
-
-    if (index != SkySearch::InvalidIndex) {
-
-        // If the given timestamp lies "in the future" (as seen from the timetamp of the current index
-        // the we assume that time has progressed "only a little" (normal replay) and we simply do
-        // a linear search from the current index onwards
-        if (index != SkySearch::BinaryIntervalSearch) {
-            // Linear search: increment the current index, until we find a position having a
-            // timestamp > the given timestamp
-            index = SkySearch::linearIntervalSearch(d->engineData, timestamp, index);
-        } else {
-            // The given timestamp lies "in the past" and could really be anywwhere
-            // -> binary search in the past
-            int low;
-            int high;
-            if (d->currentIndex != SkySearch::InvalidIndex) {
-                if (timestamp < d->engineData.at(d->currentIndex).timestamp) {
-                    // Search in "the past"
-                    low = 0;
-                    high = d->currentIndex;
-                } else {
-                    // Search in "the future"
-                    low = d->currentIndex;
-                    high = d->engineData.size() - 1;
-                }
-            } else {
-                // index not yet initialised -> search entire timeline
-                low = 0;
-                high = d->engineData.size() - 1;
-            }
-            index = SkySearch::binaryIntervalSearch(d->engineData, timestamp, low, high);
-        }
-
-    }
-
-    d->currentIndex = index;
-    return d->currentIndex != SkySearch::InvalidIndex;
-}
-
-bool Engine::getSupportData(qint64 timestamp, const EngineData **p0, const EngineData **p1, const EngineData **p2, const EngineData **p3) const noexcept
-{
-    if (updateCurrentIndex(timestamp)) {
-
-        *p1 = &d->engineData.at(d->currentIndex);
-        // Is p1 within the timestamp window?
-        if ((timestamp - (*p1)->timestamp) <= EnginePrivate::TimestampWindow) {
-
-            if (d->currentIndex > 0) {
-               *p0 = &d->engineData.at(d->currentIndex - 1);
-            } else {
-               *p0 = *p1;
-            }
-            if (d->currentIndex < d->engineData.count() - 1) {
-               if (d->currentIndex < d->engineData.count() - 2) {
-                   *p2 = &d->engineData.at(d->currentIndex + 1);
-                   *p3 = &d->engineData.at(d->currentIndex + 2);
-               } else {
-                   // p1 is the second to last data
-                   *p2 = &d->engineData.at(d->currentIndex + 1);
-                   *p3 = *p2;
-               }
-            } else {
-               // p1 is the last data
-               *p2 = *p3 = *p1;
-            }
-
-            // Is p2 within the timestamp window?
-            if (((*p2)->timestamp - timestamp) > EnginePrivate::TimestampWindow) {
-                *p2 = *p3 = *p1;
-            }
-
-        } else {
-            *p0 = *p1 = *p2 = *p3 = nullptr;
-        }
-
-    } else {
-        // We are past the last sample point
-        if (d->engineData.count() > 0 && timestamp - d->engineData.last().timestamp <= EnginePrivate::TimestampWindow) {
-            *p0 = *p1 = *p2 = *p3 = &d->engineData.last();
-        } else {
-            *p0 = *p1 = *p2 = *p3 = nullptr;
-        }
-    }
-
-    return *p0 != nullptr;
-}
-
-double Engine::normaliseTimestamp(const EngineData &p1, const EngineData &p2, quint64 timestamp) noexcept
-{
-    double t1 = timestamp - p1.timestamp;
-    double t2 = p2.timestamp - p1.timestamp;
-    if (t2 != 0.0) {
-        return static_cast<float>(t1) / static_cast<float>(t2);
-    } else {
-        // p1 and p2 are the same (last sampled) point
-        return 0.0;
-    }
 }

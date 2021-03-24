@@ -22,40 +22,18 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef ENGINE_H
-#define ENGINE_H
 
-#include <memory>
+#include "TimeVariableData.h"
+#include "SkySearch.h"
 
-#include <QObject>
-#include <QByteArray>
-#include <QVector>
-
-#include "ModelLib.h"
-
-class EngineData;
-class EnginePrivate;
-
-class MODEL_API Engine : public QObject
+double SkySearch::normaliseTimestamp(const TimeVariableData &p1, const TimeVariableData &p2, quint64 timestamp) noexcept
 {
-    Q_OBJECT
-public:
-    Engine(QObject *parent = nullptr) noexcept;
-    virtual ~Engine() noexcept;
-
-    void upsertEngineData(EngineData engineData) noexcept;
-    const EngineData &getLastEngineData() const noexcept;
-    const QVector<EngineData> getAllEngineData() const noexcept;
-    const EngineData &interpolateEngineData(qint64 timestamp) const noexcept;
-
-    void clear();
-
-signals:
-    void dataChanged();
-
-private:
-    Q_DISABLE_COPY(Engine)
-    std::unique_ptr<EnginePrivate> d;
-};
-
-#endif // ENGINE_H
+    double t1 = timestamp - p1.timestamp;
+    double t2 = p2.timestamp - p1.timestamp;
+    if (t2 != 0.0) {
+        return static_cast<double>(t1) / static_cast<double>(t2);
+    } else {
+        // p1 and p2 are the same (last sampled) point
+        return 0.0;
+    }
+}
