@@ -65,10 +65,6 @@ signals:
 private:
     Q_DISABLE_COPY(Aircraft)
     std::unique_ptr<AircraftPrivate> d;
-
-    bool updateCurrentIndex(qint64 timestamp) const noexcept;
-    bool getSupportData(qint64 timestamp, const AircraftData **p0, const AircraftData **p1, const AircraftData **p2, const AircraftData **p3) const noexcept;
-    static double normaliseTimestamp(const AircraftData &p1, const AircraftData &p2, quint64 timestamp) noexcept;
 };
 
 #endif // AIRCRAFT_H
