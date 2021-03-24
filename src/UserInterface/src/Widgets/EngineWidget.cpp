@@ -130,16 +130,18 @@ void EngineWidget::updateDataUi()
     const EngineData &engineData = getCurrentEngineData();
 
     // General engine
-    ui->throttle1LineEdit->setText(QString::number(engineData.throttleLeverPosition1));
-    ui->throttle2LineEdit->setText(QString::number(engineData.throttleLeverPosition2));
-    ui->throttle3LineEdit->setText(QString::number(engineData.throttleLeverPosition3));
-    ui->throttle4LineEdit->setText(QString::number(engineData.throttleLeverPosition4));
-    ui->propeller1LineEdit->setText(QString::number(engineData.propellerLeverPosition1));
-    ui->propeller2LineEdit->setText(QString::number(engineData.propellerLeverPosition2));
-    ui->propeller3LineEdit->setText(QString::number(engineData.propellerLeverPosition3));
-    ui->propeller4LineEdit->setText(QString::number(engineData.propellerLeverPosition4));
-    ui->mixture1LineEdit->setText(QString::number(engineData.mixtureLeverPosition1));
-    ui->mixture2LineEdit->setText(QString::number(engineData.mixtureLeverPosition2));
-    ui->mixture3LineEdit->setText(QString::number(engineData.mixtureLeverPosition3));
-    ui->mixture4LineEdit->setText(QString::number(engineData.mixtureLeverPosition4));
+    if (!engineData.isNull()) {
+        ui->throttle1LineEdit->setText(QString::number(engineData.throttleLeverPosition1));
+        ui->throttle2LineEdit->setText(QString::number(engineData.throttleLeverPosition2));
+        ui->throttle3LineEdit->setText(QString::number(engineData.throttleLeverPosition3));
+        ui->throttle4LineEdit->setText(QString::number(engineData.throttleLeverPosition4));
+        ui->propeller1LineEdit->setText(QString::number(engineData.propellerLeverPosition1));
+        ui->propeller2LineEdit->setText(QString::number(engineData.propellerLeverPosition2));
+        ui->propeller3LineEdit->setText(QString::number(engineData.propellerLeverPosition3));
+        ui->propeller4LineEdit->setText(QString::number(engineData.propellerLeverPosition4));
+        ui->mixture1LineEdit->setText(QString::number(engineData.mixtureLeverPosition1));
+        ui->mixture2LineEdit->setText(QString::number(engineData.mixtureLeverPosition2));
+        ui->mixture3LineEdit->setText(QString::number(engineData.mixtureLeverPosition3));
+        ui->mixture4LineEdit->setText(QString::number(engineData.mixtureLeverPosition4));
+    }
 }
