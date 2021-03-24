@@ -100,5 +100,6 @@
 ## 0.4.1
 
 - The time widget is now editable when replay is paused
-- Automatically pause/unpause replay only when in connected state
+- After importing a CSV file only pause when in connected state
+- Do not start the elapsed timer when skipping to begin of recording
 

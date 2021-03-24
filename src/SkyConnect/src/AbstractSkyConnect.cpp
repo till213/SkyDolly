@@ -222,14 +222,14 @@ void AbstractSkyConnect::skipToBegin() noexcept
 
 void AbstractSkyConnect::skipBackward() noexcept
 {
-    qint64 newTimeStamp = qMax(this->getCurrentTimestamp() - SkipMSec, 0ll);
+    qint64 newTimeStamp = qMax(getCurrentTimestamp() - SkipMSec, 0ll);
     seek(newTimeStamp);
 }
 
 void AbstractSkyConnect::skipForward() noexcept
 {
     qint64 endTimeStamp = d->aircraft.getLastAircraftData().timestamp;
-    qint64 newTimeStamp = qMin(this->getCurrentTimestamp() + SkipMSec, endTimeStamp);
+    qint64 newTimeStamp = qMin(getCurrentTimestamp() + SkipMSec, endTimeStamp);
     seek(newTimeStamp);
 }
 
@@ -378,9 +378,11 @@ void AbstractSkyConnect::resetElapsedTime(bool restart) noexcept
 void AbstractSkyConnect::updateCurrentTimestamp() noexcept
 {
     if (d->elapsedTimer.isValid()) {
+        // Ignore spontaneous SimConnect events: do not update
+        // the current timestamp unless we are replaying or recording
         if (d->state == Connect::State::Replay) {
             d->currentTimestamp = d->elapsedTime + static_cast<qint64>(d->elapsedTimer.elapsed() * d->timeScale);
-        } else {
+        } else if (d->state == Connect::State::Recording) {
             d->currentTimestamp = d->elapsedTime + d->elapsedTimer.elapsed();
         }
     }
