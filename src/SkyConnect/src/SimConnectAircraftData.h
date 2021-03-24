@@ -54,21 +54,7 @@ struct SimConnectAircraftData
     double yokeYPosition;
     double rudderPosition;
     double elevatorPosition;
-    double aileronPosition;    
-
-    // General engine
-    double throttleLeverPosition1;
-    double throttleLeverPosition2;
-    double throttleLeverPosition3;
-    double throttleLeverPosition4;
-    double propellerLeverPosition1;
-    double propellerLeverPosition2;
-    double propellerLeverPosition3;
-    double propellerLeverPosition4;
-    double mixtureLeverPosition1;
-    double mixtureLeverPosition2;
-    double mixtureLeverPosition3;
-    double mixtureLeverPosition4;
+    double aileronPosition;
 
     // Flaps & speed brakes
     double leadingEdgeFlapsLeftPercent;

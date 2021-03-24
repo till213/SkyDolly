@@ -318,8 +318,18 @@ bool SkyConnectImpl::sendAircraftData() noexcept
             if (!engineData.isNull()) {
                 SimConnectEngineData simConnectEngineData;
                 simConnectEngineData.fromEngineData(engineData);
+#ifdef DEBUG
+        qDebug("Engine: %f, %f, %f, %lli",
+               simConnectEngineData.throttleLeverPosition1, simConnectEngineData.propellerLeverPosition1, simConnectEngineData.mixtureLeverPosition1,
+               getCurrentTimestamp());
+#endif
                 HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, SkyConnectDataDefinition::AircraftEngineDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0, sizeof(SimConnectEngineData), &simConnectEngineData);
                 success = res == S_OK;
+#ifdef DEBUG
+            } else {
+        qDebug("Engine: NO ENGINE DATA, %lli",
+               getCurrentTimestamp());
+#endif
             }
         }
 

@@ -38,13 +38,15 @@ class EnginePrivate
 public:
     EnginePrivate() noexcept
         : currentTimestamp(TimeVariableData::InvalidTimestamp),
-          currentEngineDataIndex(SkySearch::InvalidIndex)
+          currentIndex(SkySearch::InvalidIndex)
     {}
 
     QVector<EngineData> engineData;
     qint64 currentTimestamp;
     EngineData currentEngineData;
-    mutable int currentEngineDataIndex;
+    mutable int currentIndex;
+
+    static constexpr qint64 TimestampWindow = 1000; // msec
 };
 
 // PUBLIC
@@ -94,7 +96,7 @@ void Engine::clear()
 {
     d->engineData.clear();
     d->currentTimestamp = TimeVariableData::InvalidTimestamp;
-    d->currentEngineDataIndex = SkySearch::InvalidIndex;
+    d->currentIndex = SkySearch::InvalidIndex;
     emit dataChanged();
 }
 
@@ -142,7 +144,7 @@ const EngineData &Engine::interpolateEngineData(qint64 timestamp) const noexcept
 // Updates the current index with the last index having a timestamp <= the given timestamp
 bool Engine::updateCurrentIndex(qint64 timestamp) const noexcept
 {
-    int index = d->currentEngineDataIndex;
+    int index = d->currentIndex;
     int size = d->engineData.size();
     if (size > 0 && timestamp <= d->engineData.last().timestamp) {
         if (index != SkySearch::InvalidIndex) {
@@ -176,14 +178,14 @@ bool Engine::updateCurrentIndex(qint64 timestamp) const noexcept
             // -> binary search in the past
             int low;
             int high;
-            if (d->currentEngineDataIndex != SkySearch::InvalidIndex) {
-                if (timestamp < d->engineData.at(d->currentEngineDataIndex).timestamp) {
+            if (d->currentIndex != SkySearch::InvalidIndex) {
+                if (timestamp < d->engineData.at(d->currentIndex).timestamp) {
                     // Search in "the past"
                     low = 0;
-                    high = d->currentEngineDataIndex;
+                    high = d->currentIndex;
                 } else {
                     // Search in "the future"
-                    low = d->currentEngineDataIndex;
+                    low = d->currentIndex;
                     high = d->engineData.size() - 1;
                 }
             } else {
@@ -196,32 +198,44 @@ bool Engine::updateCurrentIndex(qint64 timestamp) const noexcept
 
     }
 
-    d->currentEngineDataIndex = index;
-    return d->currentEngineDataIndex != SkySearch::InvalidIndex;
+    d->currentIndex = index;
+    return d->currentIndex != SkySearch::InvalidIndex;
 }
 
 bool Engine::getSupportData(qint64 timestamp, const EngineData **p0, const EngineData **p1, const EngineData **p2, const EngineData **p3) const noexcept
 {
     if (updateCurrentIndex(timestamp)) {
 
-        *p1 = &d->engineData.at(d->currentEngineDataIndex);
-        if (d->currentEngineDataIndex > 0) {
-           *p0 = &d->engineData.at(d->currentEngineDataIndex - 1);
+        *p1 = &d->engineData.at(d->currentIndex);
+        // Is p1 within the timestamp window?
+        if ((timestamp - (*p1)->timestamp) <= EnginePrivate::TimestampWindow) {
+
+            if (d->currentIndex > 0) {
+               *p0 = &d->engineData.at(d->currentIndex - 1);
+            } else {
+               *p0 = *p1;
+            }
+            if (d->currentIndex < d->engineData.count() - 1) {
+               if (d->currentIndex < d->engineData.count() - 2) {
+                   *p2 = &d->engineData.at(d->currentIndex + 1);
+                   *p3 = &d->engineData.at(d->currentIndex + 2);
+               } else {
+                   // p1 is the second to last data
+                   *p2 = &d->engineData.at(d->currentIndex + 1);
+                   *p3 = *p2;
+               }
+            } else {
+               // p1 is the last data
+               *p2 = *p3 = *p1;
+            }
+
+            // Is p2 within the timestamp window?
+            if (((*p2)->timestamp - timestamp) > EnginePrivate::TimestampWindow) {
+                *p0 = *p1 = *p2 = *p3 = nullptr;
+            }
+
         } else {
-           *p0 = *p1;
-        }
-        if (d->currentEngineDataIndex < d->engineData.count() - 1) {
-           if (d->currentEngineDataIndex < d->engineData.count() - 2) {
-               *p2 = &d->engineData.at(d->currentEngineDataIndex + 1);
-               *p3 = &d->engineData.at(d->currentEngineDataIndex + 2);
-           } else {
-               // p1 is the second to last data
-               *p2 = &d->engineData.at(d->currentEngineDataIndex + 1);
-               *p3 = *p2;
-           }
-        } else {
-           // p1 is the last data
-           *p2 = *p3 = *p1;
+            *p0 = *p1 = *p2 = *p3 = nullptr;
         }
 
     } else {
