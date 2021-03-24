@@ -299,7 +299,7 @@ bool SkyConnectImpl::sendAircraftData() noexcept
 {
     bool success;
 
-    const AircraftData &currentAircraftData = updateCurrentAircraftData();
+    const AircraftData &currentAircraftData = getCurrentScenario().getUserAircraftConst().interpolateAircraftData(getCurrentTimestamp());
     if (!currentAircraftData.isNull()) {
         SimConnectAircraftData simConnectAircraftData;
         simConnectAircraftData.fromAircraftData(currentAircraftData);
