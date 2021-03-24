@@ -32,14 +32,14 @@
 
 namespace SkySearch {
 
-    constexpr int InvalidIndex = -1;
-    constexpr int LinearIntervalSearch = -2;
-    constexpr int BinaryIntervalSearch = -3;
+    inline constexpr int InvalidIndex = -1;
+    inline constexpr int LinearIntervalSearch = -2;
+    inline constexpr int BinaryIntervalSearch = -3;
 
     // In case we seek 3 seconds "into the future" we use binary search
     // to find the next position (otherwise linear search, assuming that
     // the next position is "nearby" (within the 3 seconds threshold)
-    constexpr qint64 BinaryIntervalSearchThreshold = 3000;
+    static constexpr qint64 BinaryIntervalSearchThreshold = 3000;
 
     /*!
      * Returns the lower index i of the interval [i, j] where i.timestamp <= timestamp < j.timestamp.
@@ -135,6 +135,9 @@ namespace SkySearch {
 
         return index;
     }
+
+    bool getSupportData(qint64 timestamp, const TimeVariableData **p0, const TimeVariableData **p1, const TimeVariableData **p2, const TimeVariableData **p3) noexcept;
+    double normaliseTimestamp(const TimeVariableData &p1, const TimeVariableData &p2, quint64 timestamp) noexcept;
 
 } // namespace
 

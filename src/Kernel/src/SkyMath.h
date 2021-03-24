@@ -32,13 +32,13 @@
 namespace SkyMath {
 
     // Make the position range symmetric, such that 0 is exactly the middle value
-    constexpr double PositionMin16 = static_cast<double>(-std::numeric_limits<qint16>::max());
-    constexpr double PositionMax16 = static_cast<double>( std::numeric_limits<qint16>::max());
-    constexpr double PositionRange16 = PositionMax16 - PositionMin16;
+    inline constexpr double PositionMin16 = static_cast<double>(-std::numeric_limits<qint16>::max());
+    inline constexpr double PositionMax16 = static_cast<double>( std::numeric_limits<qint16>::max());
+    inline constexpr double PositionRange16 = PositionMax16 - PositionMin16;
 
-    constexpr double PercentMin8 = static_cast<double>(std::numeric_limits<quint8>::min());
-    constexpr double PercentMax8 = static_cast<double>(std::numeric_limits<quint8>::max());
-    constexpr double PercentRange8 = PercentMax8;
+    inline constexpr double PercentMin8 = static_cast<double>(std::numeric_limits<quint8>::min());
+    inline constexpr double PercentMax8 = static_cast<double>(std::numeric_limits<quint8>::max());
+    inline constexpr double PercentRange8 = PercentMax8;
 
     template <typename T> int sgn(T val) noexcept
     {
