@@ -59,12 +59,12 @@ private:
     std::unique_ptr<Ui::EngineWidget> ui;
 
     void initUi();
-    void updateUi(qint64 timestamp, bool seek);
-    const EngineData &getCurrentEngineData(qint64 timestamp, bool seek) const;
+    void updateUi(qint64 timestamp, TimeVariableData::Access access);
+    const EngineData &getCurrentEngineData(qint64 timestamp, TimeVariableData::Access access) const;
 
 private slots:
     void handleRecordedData();
-    void handleTimestampChanged(qint64 timestamp = TimeVariableData::InvalidTimestamp, bool seek = false);
+    void handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access);
 };
 
 #endif // ENGINEWIDGET_H

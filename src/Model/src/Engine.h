@@ -31,6 +31,7 @@
 #include <QByteArray>
 #include <QVector>
 
+#include "TimeVariableData.h"
 #include "ModelLib.h"
 
 class EngineData;
@@ -46,7 +47,7 @@ public:
     void upsertEngineData(EngineData engineData) noexcept;
     const EngineData &getLastEngineData() const noexcept;
     const QVector<EngineData> getAllEngineData() const noexcept;
-    const EngineData &interpolateEngineData(qint64 timestamp, bool seek) const noexcept;
+    const EngineData &interpolateEngineData(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
     void clear();
 
