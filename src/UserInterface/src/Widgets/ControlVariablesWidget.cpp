@@ -91,12 +91,6 @@ void ControlVariablesWidget::hideEvent(QHideEvent *event)
 
 void ControlVariablesWidget::initUi()
 {
-    ui->yokeXLineEdit->setToolTip(SimVar::YokeXPosition);
-    ui->yokeYLineEdit->setToolTip(SimVar::YokeYPosition);
-    ui->rudderLineEdit->setToolTip(SimVar::RudderPosition);
-    ui->elevatorLineEdit->setToolTip(SimVar::ElevatorPosition);
-    ui->aileronLineEdit->setToolTip(SimVar::AileronPosition);
-
     ui->leadingEdgeFlapsLeftLineEdit->setToolTip(SimVar::LeadingEdgeFlapsLeftPercent);
     ui->leadingEdgeFlapsRightLineEdit->setToolTip(SimVar::LeadingEdgeFlapsRightPercent);
     ui->trailingEdgeFlapsLeftLineEdit->setToolTip(SimVar::TrailingEdgeFlapsLeftPercent);
@@ -134,13 +128,6 @@ const AircraftData &ControlVariablesWidget::getCurrentAircraftData() const
 void ControlVariablesWidget::updateControlDataUi()
 {
     const AircraftData &aircraftData = getCurrentAircraftData();
-
-    // Aircraft controls
-    ui->yokeXLineEdit->setText(QString::number(aircraftData.yokeXPosition));
-    ui->yokeYLineEdit->setText(QString::number(aircraftData.yokeYPosition));
-    ui->rudderLineEdit->setText(QString::number(aircraftData.rudderPosition));
-    ui->elevatorLineEdit->setText(QString::number(aircraftData.elevatorPosition));
-    ui->aileronLineEdit->setText(QString::number(aircraftData.aileronPosition));
 
     // Flaps & speed brakes
     ui->leadingEdgeFlapsLeftLineEdit->setText(QString::number(aircraftData.leadingEdgeFlapsLeftPercent));

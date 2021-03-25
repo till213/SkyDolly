@@ -43,7 +43,6 @@ class LightVariablesWidget;
 class LightVariablesWidget : public QWidget
 {
     Q_OBJECT
-
 public:
     explicit LightVariablesWidget(SkyConnectIntf &skyConnect, QWidget *parent);
     virtual ~LightVariablesWidget();

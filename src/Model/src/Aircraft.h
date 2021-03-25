@@ -34,6 +34,7 @@
 #include "ModelLib.h"
 #include "AircraftInfo.h"
 #include "Engine.h"
+#include "PrimaryFlightControl.h"
 
 class AircraftData;
 class AircraftPrivate;
@@ -47,6 +48,9 @@ public:
 
     const Engine &getEngineConst() const;
     Engine &getEngine() const;
+
+    const PrimaryFlightControl &getPrimaryFlightControlConst() const;
+    PrimaryFlightControl &getPrimaryFlightControl() const;
 
     void setAircraftInfo(AircraftInfo aircraftInfo) noexcept;
     const AircraftInfo &getAircraftInfo() const noexcept;

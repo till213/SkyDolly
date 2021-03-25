@@ -42,7 +42,6 @@ class ControlVariablesWidget;
 class ControlVariablesWidget : public QWidget
 {
     Q_OBJECT
-
 public:
     explicit ControlVariablesWidget(SkyConnectIntf &skyConnect, QWidget *parent);
     virtual ~ControlVariablesWidget();

@@ -41,7 +41,6 @@ class AircraftVariablesWidget;
 class AircraftVariablesWidget : public QWidget
 {
     Q_OBJECT
-
 public:
     explicit AircraftVariablesWidget(SkyConnectIntf &skyConnect, QWidget *parent);
     virtual ~AircraftVariablesWidget();

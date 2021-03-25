@@ -43,7 +43,6 @@ class AircraftTypeWidget;
 class AircraftTypeWidget : public QDialog
 {
     Q_OBJECT
-
 public:
     explicit AircraftTypeWidget(SkyConnectIntf &skyConnect, QWidget *parent = nullptr);
     virtual ~AircraftTypeWidget();

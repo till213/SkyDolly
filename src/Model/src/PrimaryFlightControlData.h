@@ -22,45 +22,30 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTCONDITIONSWIDGET_H
-#define FLIGHTCONDITIONSWIDGET_H
+#ifndef PRIMARYFLIGHTCONTROLDATA_H
+#define PRIMARYFLIGHTCONTROLDATA_H
 
-#include <memory>
+#include <QtGlobal>
+#include <QFlags>
 
-#include <QDialog>
+#include "SimType.h"
+#include "TimeVariableData.h"
+#include "ModelLib.h"
 
-class QShowEvent;
-class QHideEvent;
-
-class SkyConnectIntf;
-class FlightConditionsWidgetPrivate;
-class AircraftData;
-
-namespace Ui {
-class FlightConditionsWidget;
-}
-
-class FlightConditionsWidget : public QDialog
+struct MODEL_API PrimaryFlightControlData : public TimeVariableData
 {
-    Q_OBJECT
-public:
-    explicit FlightConditionsWidget(SkyConnectIntf &skyConnect, QWidget *parent = nullptr);
-    virtual ~FlightConditionsWidget();
+    qint16 yokeXPosition;
+    qint16 yokeYPosition;
+    qint16 rudderPosition;
+    qint16 elevatorPosition;
+    qint16 aileronPosition;
 
-protected:
-    void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
+    PrimaryFlightControlData() noexcept;
+    PrimaryFlightControlData(PrimaryFlightControlData &&) = default;
+    PrimaryFlightControlData(const PrimaryFlightControlData &) = default;
+    PrimaryFlightControlData &operator= (const PrimaryFlightControlData &) = default;
 
-private:
-    Q_DISABLE_COPY(FlightConditionsWidget)
-    std::unique_ptr<FlightConditionsWidgetPrivate> d;
-    std::unique_ptr<Ui::FlightConditionsWidget> ui;
-
-    void initUi();
-    void updateUi();
-
-private slots:
-    void updateInfoUi();
+    static const PrimaryFlightControlData NullPrimaryFlightControlData;
 };
 
-#endif // FLIGHTCONDITIONSWIDGET_H
+#endif // PRIMARYFLIGHTCONTROLDATA_H

@@ -130,32 +130,33 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft) noexcept
                         if (ok) {
                             aircraftData.rotationVelocityBodyZ = doubleValue;
                         }
+                        // TODO IMPLEMENT ME!!!
                     // Aircraft controls
-                    } else if (header == SimVar::YokeXPosition) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.yokeXPosition = doubleValue;
-                        }
-                    } else if (header == SimVar::YokeYPosition) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.yokeYPosition = doubleValue;
-                        }
-                    } else if (header == SimVar::RudderPosition) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.rudderPosition = doubleValue;
-                        }
-                    } else if (header == SimVar::ElevatorPosition) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.elevatorPosition = doubleValue;
-                        }
-                    } else if (header == SimVar::AileronPosition) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.aileronPosition = doubleValue;
-                        }
+//                    } else if (header == SimVar::YokeXPosition) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.yokeXPosition = doubleValue;
+//                        }
+//                    } else if (header == SimVar::YokeYPosition) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.yokeYPosition = doubleValue;
+//                        }
+//                    } else if (header == SimVar::RudderPosition) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.rudderPosition = doubleValue;
+//                        }
+//                    } else if (header == SimVar::ElevatorPosition) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.elevatorPosition = doubleValue;
+//                        }
+//                    } else if (header == SimVar::AileronPosition) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.aileronPosition = doubleValue;
+//                        }
                     // Engine
                         // TODO IMPLEMENT ME!!!
 //                    } else if (header == SimVar::ThrottleLeverPosition1) {

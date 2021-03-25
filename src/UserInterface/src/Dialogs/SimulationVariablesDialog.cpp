@@ -30,11 +30,14 @@
 #include "../../../Model/src/World.h"
 #include "../../../Model/src/Scenario.h"
 #include "../../../Model/src/Aircraft.h"
+#include "../../../Model/src/Aircraft.h"
+#include "../../../Model/src/PrimaryFlightControl.h"
 #include "../../../Model/src/AircraftInfo.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "../Widgets/AircraftVariablesWidget.h"
 #include "../Widgets/EngineWidget.h"
+#include "../Widgets/PrimaryFlightControlWidget.h"
 #include "../Widgets/ControlVariablesWidget.h"
 #include "../Widgets/LightVariablesWidget.h"
 #include "../Widgets/AircraftTypeWidget.h"
@@ -105,6 +108,9 @@ void SimulationVariablesDialog::initUi() noexcept
 
     EngineWidget *engineWidget = new EngineWidget(d->skyConnect, this);
     ui->simulationVariablesTab->addTab(engineWidget, tr("&Engine"));
+
+    PrimaryFlightControlWidget *primaryFlightControlWidget = new PrimaryFlightControlWidget(d->skyConnect, this);
+    ui->simulationVariablesTab->addTab(primaryFlightControlWidget, tr("&Primary Flight Controls"));
 
     ControlVariablesWidget *controlVariablesWidget = new ControlVariablesWidget(d->skyConnect, this);
     ui->simulationVariablesTab->addTab(controlVariablesWidget, tr("&Flight Controls"));

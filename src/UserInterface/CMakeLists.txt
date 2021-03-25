@@ -45,6 +45,9 @@ target_sources(UserInterface
         src/Widgets/EngineWidget.cpp
         src/Widgets/EngineWidget.h
         src/Widgets/EngineWidget.ui
+        src/Widgets/PrimaryFlightControlWidget.cpp
+        src/Widgets/PrimaryFlightControlWidget.h
+        src/Widgets/PrimaryFlightControlWidget.ui
         src/Widgets/ControlVariablesWidget.cpp
         src/Widgets/ControlVariablesWidget.h
         src/Widgets/ControlVariablesWidget.ui
