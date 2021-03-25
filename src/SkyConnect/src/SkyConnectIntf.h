@@ -26,11 +26,11 @@
 #define SKYCONNECT_H
 
 #include "../../Kernel/src/SampleRate.h"
+#include "../../Model/src/TimeVariableData.h"
 #include "../../Model/src/Aircraft.h"
 #include "Connect.h"
 #include "SkyConnectLib.h"
 
-struct AircraftData;
 class SkyConnectImpl;
 
 class SKYCONNECT_API SkyConnectIntf : public QObject
@@ -74,7 +74,7 @@ protected:
     {}
 
 signals:
-    void currentTimestampChanged(qint64 timestamp, bool seek) const;
+    void currentTimestampChanged(qint64 timestamp, TimeVariableData::Access access) const;
     void stateChanged(Connect::State state) const;
 };
 

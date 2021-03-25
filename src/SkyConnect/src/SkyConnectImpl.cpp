@@ -172,10 +172,10 @@ void SkyConnectImpl::onRecordSampleRateChanged(SampleRate::SampleRate sampleRate
      updateRecordFrequency(sampleRate);
 }
 
-bool SkyConnectImpl::sendAircraftData(qint64 currentTimestamp, bool seek) noexcept
+bool SkyConnectImpl::sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept
 {
     Q_UNUSED(currentTimestamp)
-    return sendAircraftData(seek);
+    return sendAircraftData(access);
 }
 
 bool SkyConnectImpl::connectWithSim() noexcept
@@ -295,7 +295,7 @@ bool SkyConnectImpl::isSimulationFrozen() const noexcept
     return d->frozen;
 }
 
-bool SkyConnectImpl::sendAircraftData(bool seek) noexcept
+bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
 {
     bool success;
 
@@ -314,7 +314,7 @@ bool SkyConnectImpl::sendAircraftData(bool seek) noexcept
 
         if (success) {
             // For as long as there is position data also send other data
-            const EngineData &engineData = getCurrentScenario().getUserAircraftConst().getEngineConst().interpolateEngineData(getCurrentTimestamp(), seek);
+            const EngineData &engineData = getCurrentScenario().getUserAircraftConst().getEngineConst().interpolateEngineData(getCurrentTimestamp(), access);
             if (!engineData.isNull()) {
                 SimConnectEngineData simConnectEngineData;
                 simConnectEngineData.fromEngineData(engineData);
@@ -345,8 +345,8 @@ bool SkyConnectImpl::sendAircraftData(bool seek) noexcept
 
 void SkyConnectImpl::replay() noexcept
 {
-    if (sendAircraftData(false)) {
-        emit currentTimestampChanged(getCurrentTimestamp(), false);
+    if (sendAircraftData(TimeVariableData::Access::Linear)) {
+        emit currentTimestampChanged(getCurrentTimestamp(), TimeVariableData::Access::Linear);
     } else {
         stopReplay();
     }

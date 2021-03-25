@@ -24,7 +24,10 @@
  */
 #include <memory>
 
+#include <QString>
 #include <QDialog>
+#include <QColor>
+#include <QPalette>
 
 #include "../../../Model/src/SimVar.h"
 #include "../../../Model/src/World.h"
@@ -41,16 +44,22 @@
 class EngineWidgetPrivate
 {
 public:
-    EngineWidgetPrivate(SkyConnectIntf &theSkyConnect)
-        : skyConnect(theSkyConnect)
+    EngineWidgetPrivate(const QWidget &widget, SkyConnectIntf &theSkyConnect)
+        : skyConnect(theSkyConnect),
+          ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
+          DisabledTextColor(widget.palette().color(QPalette::Disabled, QPalette::WindowText))
     {}
 
     SkyConnectIntf &skyConnect;
+    const QColor ActiveTextColor;
+    const QColor DisabledTextColor;
 };
+
+// PUBLIC
 
 EngineWidget::EngineWidget(SkyConnectIntf &skyConnect, QWidget *parent) :
     QWidget(parent),
-    d(std::make_unique<EngineWidgetPrivate>(skyConnect)),
+    d(std::make_unique<EngineWidgetPrivate>(*this, skyConnect)),
     ui(std::make_unique<Ui::EngineWidget>())
 {
     ui->setupUi(this);
@@ -67,7 +76,7 @@ void EngineWidget::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event)
 
-    updateUi(d->skyConnect.getCurrentTimestamp(), true);
+    updateUi(d->skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
 
     const Engine &engine = World::getInstance().getCurrentScenario().getUserAircraft().getEngineConst();
     // Signal sent while recording
@@ -107,11 +116,11 @@ void EngineWidget::initUi()
     ui->mixture4LineEdit->setToolTip(SimVar::MixtureLeverPosition4);
 }
 
-void EngineWidget::updateUi(qint64 timestamp, bool seek)
+void EngineWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
 {
-    const EngineData &engineData = getCurrentEngineData(timestamp, seek);
+    const EngineData &engineData = getCurrentEngineData(timestamp, access);
+    QString colorName;
 
-    // General engine
     if (!engineData.isNull()) {
         ui->throttle1LineEdit->setText(QString::number(engineData.throttleLeverPosition1));
         ui->throttle2LineEdit->setText(QString::number(engineData.throttleLeverPosition2));
@@ -125,14 +134,27 @@ void EngineWidget::updateUi(qint64 timestamp, bool seek)
         ui->mixture2LineEdit->setText(QString::number(engineData.mixtureLeverPosition2));
         ui->mixture3LineEdit->setText(QString::number(engineData.mixtureLeverPosition3));
         ui->mixture4LineEdit->setText(QString::number(engineData.mixtureLeverPosition4));
+        colorName = d->ActiveTextColor.name();
 
-        ui->engineGroupBox->setEnabled(true);
     } else {
-        ui->engineGroupBox->setEnabled(false);
+        colorName = d->DisabledTextColor.name();
     }
+
+    ui->throttle1LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
+    ui->throttle2LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
+    ui->throttle3LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
+    ui->throttle4LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
+    ui->propeller1LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
+    ui->propeller2LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
+    ui->propeller3LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
+    ui->propeller4LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
+    ui->mixture1LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
+    ui->mixture2LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
+    ui->mixture3LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
+    ui->mixture4LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
 }
 
-const EngineData &EngineWidget::getCurrentEngineData(qint64 timestamp, bool seek) const
+const EngineData &EngineWidget::getCurrentEngineData(qint64 timestamp, TimeVariableData::Access access) const
 {
     const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
 
@@ -140,9 +162,9 @@ const EngineData &EngineWidget::getCurrentEngineData(qint64 timestamp, bool seek
         return aircraft.getEngineConst().getLastEngineData();
     } else {
         if (timestamp != TimeVariableData::InvalidTimestamp) {
-            return aircraft.getEngineConst().interpolateEngineData(timestamp, seek);
+            return aircraft.getEngineConst().interpolateEngineData(timestamp, access);
         } else {
-            return aircraft.getEngineConst().interpolateEngineData(d->skyConnect.getCurrentTimestamp(), seek);
+            return aircraft.getEngineConst().interpolateEngineData(d->skyConnect.getCurrentTimestamp(), access);
         }
     };
 }
@@ -151,10 +173,10 @@ const EngineData &EngineWidget::getCurrentEngineData(qint64 timestamp, bool seek
 
 void EngineWidget::handleRecordedData()
 {
-    updateUi(TimeVariableData::InvalidTimestamp, false);
+    updateUi(TimeVariableData::InvalidTimestamp, TimeVariableData::Access::Linear);
 }
 
-void EngineWidget::handleTimestampChanged(qint64 timestamp, bool seek)
+void EngineWidget::handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access)
 {
-    updateUi(timestamp, seek);
+    updateUi(timestamp, access);
 }

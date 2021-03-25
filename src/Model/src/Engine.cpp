@@ -38,13 +38,13 @@ class EnginePrivate
 public:
     EnginePrivate() noexcept
         : currentTimestamp(TimeVariableData::InvalidTimestamp),
-          currentSeek(false),
+          currentAccess(TimeVariableData::Access::Linear),
           currentIndex(SkySearch::InvalidIndex)
     {}
 
     QVector<EngineData> engineData;
     qint64 currentTimestamp;
-    bool currentSeek;
+    TimeVariableData::Access currentAccess;
     EngineData currentEngineData;
     mutable int currentIndex;
 
@@ -102,18 +102,20 @@ void Engine::clear()
     emit dataChanged();
 }
 
-const EngineData &Engine::interpolateEngineData(qint64 timestamp, bool seek) const noexcept
+const EngineData &Engine::interpolateEngineData(qint64 timestamp, TimeVariableData::Access access) const noexcept
 {
     const EngineData *p0, *p1, *p2, *p3;
 
-    if (d->currentTimestamp != timestamp || d->currentSeek != seek) {
+    if (d->currentTimestamp != timestamp || d->currentAccess != access) {
 
         double tn;
-        if (!seek) {
+        switch (access) {
+        case TimeVariableData::Access::Linear:
             if (SkySearch::getSupportData(d->engineData, timestamp, d->currentIndex, &p0, &p1, &p2, &p3)) {
                 tn = SkySearch::normaliseTimestamp(*p1, *p2, timestamp);
             }
-        } else {
+            break;
+        case TimeVariableData::Access::Seek:
             // Get the last sample data just before the seeked position
             // (that sample point may lie far outside of the "sample window")
             d->currentIndex = SkySearch::updateStartIndex(d->engineData, d->currentIndex, timestamp);
@@ -124,6 +126,10 @@ const EngineData &Engine::interpolateEngineData(qint64 timestamp, bool seek) con
             } else {
                 p1 = p2 = nullptr;
             }
+            break;
+        default:
+            p1 = p2 = nullptr;
+            break;
         }
 
         if (p1 != nullptr) {
@@ -147,7 +153,7 @@ const EngineData &Engine::interpolateEngineData(qint64 timestamp, bool seek) con
         }
 
         d->currentTimestamp = timestamp;
-        d->currentSeek = seek;
+        d->currentAccess = access;
 #ifdef DEBUG
     } else {
         qDebug("Engine::interpolateEngineData: cached result for timestamp: %llu", timestamp);
