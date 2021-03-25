@@ -22,41 +22,48 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef PRIMARYFLIGHTCONTROL_H
-#define PRIMARYFLIGHTCONTROL_H
+#ifndef SECONDARYFLIGHTCONTROLWIDGET_H
+#define SECONDARYFLIGHTCONTROLWIDGET_H
 
-#include <memory>
+#include <QWidget>
 
-#include <QObject>
-#include <QByteArray>
-#include <QVector>
+#include "../../../Model/src/TimeVariableData.h"
 
-#include "TimeVariableData.h"
-#include "ModelLib.h"
+class QShowEvent;
+class QHideEvent;
 
-struct PrimaryFlightControlData;
-class PrimaryFlightControlPrivate;
+class SkyConnectIntf;
+class AircraftData;
+class SecondaryFlightControlData;
+class SecondaryFlightControlWidgetPrivate;
 
-class MODEL_API PrimaryFlightControl : public QObject
+namespace Ui {
+class SecondaryFlightControlWidget;
+}
+
+class SecondaryFlightControlWidget : public QWidget
 {
     Q_OBJECT
 public:
-    PrimaryFlightControl(QObject *parent = nullptr) noexcept;
-    virtual ~PrimaryFlightControl() noexcept;
+    explicit SecondaryFlightControlWidget(SkyConnectIntf &skyConnect, QWidget *parent);
+    virtual ~SecondaryFlightControlWidget();
 
-    void upsertPrimaryFlightControlData(PrimaryFlightControlData primaryFlightControlData) noexcept;
-    const PrimaryFlightControlData &getLastPrimaryFlightControlData() const noexcept;
-    const QVector<PrimaryFlightControlData> getAllPrimaryFlightControlData() const noexcept;
-    const PrimaryFlightControlData &interpolatePrimaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const noexcept;
-
-    void clear();
-
-signals:
-    void dataChanged();
+protected:
+    void showEvent(QShowEvent *event) override;
+    void hideEvent(QHideEvent *event) override;
 
 private:
-    Q_DISABLE_COPY(PrimaryFlightControl)
-    std::unique_ptr<PrimaryFlightControlPrivate> d;
+    Q_DISABLE_COPY(SecondaryFlightControlWidget)
+    std::unique_ptr<SecondaryFlightControlWidgetPrivate> d;
+    std::unique_ptr<Ui::SecondaryFlightControlWidget> ui;
+
+    void initUi();
+    void updateUi(qint64 timestamp, TimeVariableData::Access access);
+    const SecondaryFlightControlData &getCurrentSecondaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const;
+
+private slots:
+    void handleRecordedData();
+    void handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access);
 };
 
-#endif // PRIMARYFLIGHTCONTROL_H
+#endif // SECONDARYFLIGHTCONTROLWIDGET_H

@@ -220,36 +220,36 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft) noexcept
 //                            aircraftData.mixtureLeverPosition4 = doubleValue;
 //                        }
                     // Flaps & speed brakes
-                    } else if (header == SimVar::LeadingEdgeFlapsLeftPercent) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.leadingEdgeFlapsLeftPercent = doubleValue;
-                        }
-                    } else if (header == SimVar::LeadingEdgeFlapsRightPercent) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.leadingEdgeFlapsRightPercent = doubleValue;
-                        }
-                    } else if (header == SimVar::TrailingEdgeFlapsLeftPercent) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.trailingEdgeFlapsLeftPercent = doubleValue;
-                        }
-                    } else if (header == SimVar::TrailingEdgeFlapsRightPercent) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.trailingEdgeFlapsRightPercent = doubleValue;
-                        }
-                    } else if (header == SimVar::SpoilersHandlePosition) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.spoilersHandlePosition = doubleValue;
-                        }
-                    } else if (header == SimVar::FlapsHandleIndex) {
-                        intValue = values.at(columnIndex).toInt(&ok);
-                        if (ok) {
-                            aircraftData.flapsHandleIndex = intValue;
-                        }
+//                    } else if (header == SimVar::LeadingEdgeFlapsLeftPercent) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.leadingEdgeFlapsLeftPercent = doubleValue;
+//                        }
+//                    } else if (header == SimVar::LeadingEdgeFlapsRightPercent) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.leadingEdgeFlapsRightPercent = doubleValue;
+//                        }
+//                    } else if (header == SimVar::TrailingEdgeFlapsLeftPercent) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.trailingEdgeFlapsLeftPercent = doubleValue;
+//                        }
+//                    } else if (header == SimVar::TrailingEdgeFlapsRightPercent) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.trailingEdgeFlapsRightPercent = doubleValue;
+//                        }
+//                    } else if (header == SimVar::SpoilersHandlePosition) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.spoilersHandlePosition = doubleValue;
+//                        }
+//                    } else if (header == SimVar::FlapsHandleIndex) {
+//                        intValue = values.at(columnIndex).toInt(&ok);
+//                        if (ok) {
+//                            aircraftData.flapsHandleIndex = intValue;
+//                        }
                     // Gear, brakes & handles
                     } else if (header == SimVar::GearHandlePosition) {
                         intValue = values.at(columnIndex).toInt(&ok);

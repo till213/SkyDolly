@@ -22,18 +22,42 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTDATADEFINITION_H
-#define SIMCONNECTDATADEFINITION_H
+#ifndef SECONDARYFLIGHTCONTROL_H
+#define SECONDARYFLIGHTCONTROL_H
 
-namespace SkyConnectDataDefinition
+#include <memory>
+
+#include <QObject>
+#include <QByteArray>
+#include <QVector>
+
+#include "TimeVariableData.h"
+#include "ModelLib.h"
+
+struct SecondaryFlightControlData;
+class SecondaryFlightControlPrivate;
+
+class MODEL_API SecondaryFlightControl : public QObject
 {
-    enum DataDefinitionID {
-        AircraftInfoDefinition,
-        AircraftPositionDefinition,
-        AircraftEngineDefinition,
-        AircraftPrimaryFlightControlDefinition,
-        AircraftInitialPosition
-    };
-}
+    Q_OBJECT
+public:
+    SecondaryFlightControl(QObject *parent = nullptr) noexcept;
+    virtual ~SecondaryFlightControl() noexcept;
 
-#endif // SIMCONNECTDATADEFINITION_H
+    void upsertSecondaryFlightControlData(SecondaryFlightControlData secondaryFlightControlData) noexcept;
+    const SecondaryFlightControlData &getLastSecondaryFlightControlData() const noexcept;
+    const QVector<SecondaryFlightControlData> getAllSecondaryFlightControlData() const noexcept;
+    const SecondaryFlightControlData &interpolateSecondaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const noexcept;
+
+    void clear();
+
+signals:
+    void dataChanged();
+
+private:
+    Q_DISABLE_COPY(SecondaryFlightControl)
+    std::unique_ptr<SecondaryFlightControlPrivate> d;
+};
+
+
+#endif // SECONDARYFLIGHTCONTROL_H

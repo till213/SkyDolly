@@ -22,35 +22,22 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QFlags>
+#ifndef SIMCONNECTTYPE_H
+#define SIMCONNECTTYPE_H
+#include <windows.h>
 
-#include "SimType.h"
-#include "AircraftData.h"
+#include <SimConnect.h>
 
-// PUBLIC
-
-AircraftData::AircraftData(double latitude, double longitude, double altitude) noexcept
-    : TimeVariableData(),
-      pitch(0.0),
-      bank(0.0),
-      heading(0.0),
-      velocityBodyX(0.0),
-      velocityBodyY(0.0),
-      velocityBodyZ(0.0),
-      rotationVelocityBodyX(0.0),
-      rotationVelocityBodyY(0.0),
-      rotationVelocityBodyZ(0.0),
-      gearHandlePosition(false),
-      brakeLeftPosition(0),
-      brakeRightPosition(0),
-      waterRudderHandlePosition(0),
-      tailhookPosition(0),
-      canopyOpen(0),
-      lightStates(QFlags(SimType::LightState::None))
+namespace SimConnectType
 {
-    this->latitude = latitude;
-    this->longitude = longitude;
-    this->altitude = altitude;
+    enum class DataDefinition: ::SIMCONNECT_DATA_DEFINITION_ID {
+        AircraftInfoDefinition,
+        AircraftPositionDefinition,
+        AircraftEngineDefinition,
+        AircraftPrimaryFlightControlDefinition,
+        AircraftSecondaryFlightControlDefinition,
+        AircraftInitialPosition
+    };
 }
 
-const AircraftData AircraftData::NullAircraftData = AircraftData(0.0, 0.0, 0.0);
+#endif // SIMCONNECTTYPE_H

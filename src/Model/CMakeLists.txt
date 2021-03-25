@@ -29,6 +29,10 @@ target_sources(Model
         src/PrimaryFlightControl.h
         src/PrimaryFlightControlData.cpp
         src/PrimaryFlightControlData.h
+        src/SecondaryFlightControl.cpp
+        src/SecondaryFlightControl.h
+        src/SecondaryFlightControlData.cpp
+        src/SecondaryFlightControlData.h
         src/AircraftInfo.cpp
         src/AircraftInfo.h
         src/SimVar.cpp

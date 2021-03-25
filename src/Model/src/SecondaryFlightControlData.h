@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef AIRCRAFTDATA_H
-#define AIRCRAFTDATA_H
+#ifndef SECONDARYFLIGHTCONTROLDATA_H
+#define SECONDARYFLIGHTCONTROLDATA_H
 
 #include <QtGlobal>
 #include <QFlags>
@@ -32,47 +32,22 @@
 #include "TimeVariableData.h"
 #include "ModelLib.h"
 
-struct MODEL_API AircraftData : public TimeVariableData
+struct MODEL_API SecondaryFlightControlData : public TimeVariableData
 {
-    // Position
+    // Flaps & speed brakes
+    quint8 leadingEdgeFlapsLeftPercent;
+    quint8 leadingEdgeFlapsRightPercent;
+    quint8 trailingEdgeFlapsLeftPercent;
+    quint8 trailingEdgeFlapsRightPercent;
+    quint8 spoilersHandlePosition;
+    qint8 flapsHandleIndex;
 
-    // Degrees
-    double latitude;
-    double longitude;
-    double altitude;
+    SecondaryFlightControlData() noexcept;
+    SecondaryFlightControlData(SecondaryFlightControlData &&) = default;
+    SecondaryFlightControlData(const SecondaryFlightControlData &) = default;
+    SecondaryFlightControlData &operator= (const SecondaryFlightControlData &) = default;
 
-    double pitch;
-    double bank;
-    double heading;
-
-    // Velocity
-    double velocityBodyX;
-    double velocityBodyY;
-    double velocityBodyZ;
-    double rotationVelocityBodyX;
-    double rotationVelocityBodyY;
-    double rotationVelocityBodyZ;
-
-    // Gears, brakes and handles
-    bool gearHandlePosition;
-    qint16 brakeLeftPosition;
-    qint16 brakeRightPosition;
-    // Implementation note: the water rudder can also have negative (-100.0) values,
-    // hence hence the type qint16 (position) which also supports negative values
-    qint16 waterRudderHandlePosition;
-    quint8 tailhookPosition;
-    quint8 canopyOpen;
-
-    // Lights
-    SimType::LightStates lightStates;
-
-    AircraftData(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
-
-    AircraftData(AircraftData &&) = default;
-    AircraftData(const AircraftData &) = default;
-    AircraftData &operator= (const AircraftData &) = default;
-
-    static const AircraftData NullAircraftData;
+    static const SecondaryFlightControlData NullSecondaryFlightControlData;
 };
 
-#endif // AIRCRAFTDATA_H
+#endif // SECONDARYFLIGHTCONTROLDATA_H

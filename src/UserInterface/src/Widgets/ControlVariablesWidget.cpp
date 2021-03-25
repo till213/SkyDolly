@@ -91,13 +91,6 @@ void ControlVariablesWidget::hideEvent(QHideEvent *event)
 
 void ControlVariablesWidget::initUi()
 {
-    ui->leadingEdgeFlapsLeftLineEdit->setToolTip(SimVar::LeadingEdgeFlapsLeftPercent);
-    ui->leadingEdgeFlapsRightLineEdit->setToolTip(SimVar::LeadingEdgeFlapsRightPercent);
-    ui->trailingEdgeFlapsLeftLineEdit->setToolTip(SimVar::TrailingEdgeFlapsLeftPercent);
-    ui->trailingEdgeFlapsRightLineEdit->setToolTip(SimVar::TrailingEdgeFlapsRightPercent);
-    ui->flapsPositionLineEdit->setToolTip(SimVar::FlapsHandleIndex);
-    ui->spoilerLineEdit->setToolTip(SimVar::SpoilersHandlePosition);
-
     ui->gearLineEdit->setToolTip(SimVar::GearHandlePosition);
     ui->brakeLeftLineEdit->setToolTip(SimVar::BrakeLeftPosition);
     ui->brakeRightLineEdit->setToolTip(SimVar::BrakeRightPosition);
@@ -128,14 +121,6 @@ const AircraftData &ControlVariablesWidget::getCurrentAircraftData() const
 void ControlVariablesWidget::updateControlDataUi()
 {
     const AircraftData &aircraftData = getCurrentAircraftData();
-
-    // Flaps & speed brakes
-    ui->leadingEdgeFlapsLeftLineEdit->setText(QString::number(aircraftData.leadingEdgeFlapsLeftPercent));
-    ui->leadingEdgeFlapsRightLineEdit->setText(QString::number(aircraftData.leadingEdgeFlapsRightPercent));
-    ui->trailingEdgeFlapsLeftLineEdit->setText(QString::number(aircraftData.trailingEdgeFlapsLeftPercent));
-    ui->trailingEdgeFlapsRightLineEdit->setText(QString::number(aircraftData.trailingEdgeFlapsRightPercent));
-    ui->spoilerLineEdit->setText(QString::number(aircraftData.spoilersHandlePosition));
-    ui->flapsPositionLineEdit->setText(QString::number(aircraftData.flapsHandleIndex));
 
     // // Gear, brakes & handles
     aircraftData.gearHandlePosition ? ui->gearLineEdit->setText(tr("Down")) : ui->gearLineEdit->setText(tr("Up"));

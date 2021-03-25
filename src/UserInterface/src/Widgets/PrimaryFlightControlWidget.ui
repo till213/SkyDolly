@@ -14,6 +14,9 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="sizeConstraint">
+    <enum>QLayout::SetMinimumSize</enum>
+   </property>
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox_8">
      <property name="minimumSize">
@@ -23,7 +26,7 @@
       </size>
      </property>
      <property name="title">
-      <string>Primary Controls</string>
+      <string>Primary Flight Controls</string>
      </property>
      <layout class="QFormLayout" name="formLayout_3">
       <item row="0" column="0">

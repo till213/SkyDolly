@@ -127,12 +127,12 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
 //                              QString::number(data.mixtureLeverPosition2) % Const::Sep %
 //                              QString::number(data.mixtureLeverPosition3) % Const::Sep %
 //                              QString::number(data.mixtureLeverPosition4) % Const::Sep %
-                              QString::number(data.leadingEdgeFlapsLeftPercent) % Const::Sep %
-                              QString::number(data.leadingEdgeFlapsRightPercent) % Const::Sep %
-                              QString::number(data.trailingEdgeFlapsLeftPercent) % Const::Sep %
-                              QString::number(data.trailingEdgeFlapsRightPercent) % Const::Sep %
-                              QString::number(data.spoilersHandlePosition) % Const::Sep %
-                              QString::number(data.flapsHandleIndex) % Const::Sep %
+//                              QString::number(data.leadingEdgeFlapsLeftPercent) % Const::Sep %
+//                              QString::number(data.leadingEdgeFlapsRightPercent) % Const::Sep %
+//                              QString::number(data.trailingEdgeFlapsLeftPercent) % Const::Sep %
+//                              QString::number(data.trailingEdgeFlapsRightPercent) % Const::Sep %
+//                              QString::number(data.spoilersHandlePosition) % Const::Sep %
+//                              QString::number(data.flapsHandleIndex) % Const::Sep %
                               QString::number(data.gearHandlePosition) % Const::Sep %
                               QString::number(data.brakeLeftPosition) % Const::Sep %
                               QString::number(data.brakeRightPosition) % Const::Sep %
