@@ -26,15 +26,16 @@
 
 #include <SimConnect.h>
 
+#include "../../Kernel/src/Enum.h"
 #include "../../Model/src/SimVar.h"
-#include "SimConnectDataDefinition.h"
+#include "SimConnectType.h"
 #include "SimConnectPrimaryFlightControlData.h"
 
 void SimConnectPrimaryFlightControlData::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPrimaryFlightControlDefinition, SimVar::YokeXPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPrimaryFlightControlDefinition, SimVar::YokeYPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPrimaryFlightControlDefinition, SimVar::RudderPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPrimaryFlightControlDefinition, SimVar::ElevatorPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPrimaryFlightControlDefinition, SimVar::AileronPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPrimaryFlightControlDefinition), SimVar::YokeXPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPrimaryFlightControlDefinition), SimVar::YokeYPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPrimaryFlightControlDefinition), SimVar::RudderPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPrimaryFlightControlDefinition), SimVar::ElevatorPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPrimaryFlightControlDefinition), SimVar::AileronPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
 }

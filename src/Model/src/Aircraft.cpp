@@ -33,6 +33,8 @@
 #include "Engine.h"
 #include "AircraftInfo.h"
 #include "AircraftData.h"
+#include "PrimaryFlightControl.h"
+#include "SecondaryFlightControl.h"
 #include "Aircraft.h"
 
 class AircraftPrivate
@@ -45,6 +47,7 @@ public:
 
     Engine engine;
     PrimaryFlightControl primaryFlightControl;
+    SecondaryFlightControl secondaryFlightControl;
     AircraftInfo aircraftInfo;
 
     QVector<AircraftData> aircraftData;
@@ -83,6 +86,16 @@ const PrimaryFlightControl &Aircraft::getPrimaryFlightControlConst() const
 PrimaryFlightControl &Aircraft::getPrimaryFlightControl() const
 {
     return d->primaryFlightControl;
+}
+
+const SecondaryFlightControl &Aircraft::getSecondaryFlightControlConst() const
+{
+    return d->secondaryFlightControl;
+}
+
+SecondaryFlightControl &Aircraft::getSecondaryFlightControl() const
+{
+    return d->secondaryFlightControl;
 }
 
 void Aircraft::setAircraftInfo(AircraftInfo aircraftInfo) noexcept
@@ -171,15 +184,6 @@ const AircraftData &Aircraft::interpolateAircraftData(qint64 timestamp) const no
             d->currentAircraftData.rotationVelocityBodyY = SkyMath::interpolateLinear(p1->rotationVelocityBodyY, p2->rotationVelocityBodyY, tn);
             d->currentAircraftData.rotationVelocityBodyZ = SkyMath::interpolateLinear(p1->rotationVelocityBodyZ, p2->rotationVelocityBodyZ, tn);
 
-            // Flaps & spoilers
-            d->currentAircraftData.leadingEdgeFlapsLeftPercent = SkyMath::interpolateLinear(p1->leadingEdgeFlapsLeftPercent, p2->leadingEdgeFlapsLeftPercent, tn);
-            d->currentAircraftData.leadingEdgeFlapsRightPercent = SkyMath::interpolateLinear(p1->leadingEdgeFlapsRightPercent, p2->leadingEdgeFlapsRightPercent, tn);
-            d->currentAircraftData.trailingEdgeFlapsLeftPercent = SkyMath::interpolateLinear(p1->trailingEdgeFlapsLeftPercent, p2->trailingEdgeFlapsLeftPercent, tn);
-            d->currentAircraftData.trailingEdgeFlapsRightPercent = SkyMath::interpolateLinear(p1->trailingEdgeFlapsRightPercent, p2->trailingEdgeFlapsRightPercent, tn);
-            d->currentAircraftData.spoilersHandlePosition = SkyMath::interpolateLinear(p1->spoilersHandlePosition, p2->spoilersHandlePosition, tn);
-
-            // No interpolation for flaps position and gear
-            d->currentAircraftData.flapsHandleIndex = p1->flapsHandleIndex;
             d->currentAircraftData.gearHandlePosition = p1->gearHandlePosition;
             d->currentAircraftData.brakeLeftPosition = SkyMath::interpolateLinear(p1->brakeLeftPosition, p2->brakeLeftPosition, tn);
             d->currentAircraftData.brakeRightPosition = SkyMath::interpolateLinear(p1->brakeRightPosition, p2->brakeRightPosition, tn);

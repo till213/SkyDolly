@@ -34,9 +34,10 @@
 #include "ModelLib.h"
 #include "AircraftInfo.h"
 #include "Engine.h"
-#include "PrimaryFlightControl.h"
 
-class AircraftData;
+struct AircraftData;
+struct PrimaryFlightControl;
+struct SecondaryFlightControl;
 class AircraftPrivate;
 
 class MODEL_API Aircraft : public QObject
@@ -51,6 +52,9 @@ public:
 
     const PrimaryFlightControl &getPrimaryFlightControlConst() const;
     PrimaryFlightControl &getPrimaryFlightControl() const;
+
+    const SecondaryFlightControl &getSecondaryFlightControlConst() const;
+    SecondaryFlightControl &getSecondaryFlightControl() const;
 
     void setAircraftInfo(AircraftInfo aircraftInfo) noexcept;
     const AircraftInfo &getAircraftInfo() const noexcept;

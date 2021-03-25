@@ -49,16 +49,8 @@ struct SimConnectAircraftData
     double rotationVelocityBodyY;
     double rotationVelocityBodyZ;
 
-    // Flaps & speed brakes
-    double leadingEdgeFlapsLeftPercent;
-    double leadingEdgeFlapsRightPercent;
-    double trailingEdgeFlapsLeftPercent;
-    double trailingEdgeFlapsRightPercent;
-    double spoilersHandlePosition;
-    qint32 flapsHandleIndex;
-
     // Gear, brakes & handles
-    qint32 gearHandlePosition;
+    qint64 gearHandlePosition;
     double brakeLeftPosition;
     double brakeRightPosition;
     double waterRudderHandlePosition;
@@ -85,13 +77,6 @@ struct SimConnectAircraftData
         aircraftData.rotationVelocityBodyX = rotationVelocityBodyX;
         aircraftData.rotationVelocityBodyY = rotationVelocityBodyY;
         aircraftData.rotationVelocityBodyZ = rotationVelocityBodyZ;
-
-        aircraftData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(leadingEdgeFlapsLeftPercent);
-        aircraftData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(leadingEdgeFlapsRightPercent);
-        aircraftData.trailingEdgeFlapsLeftPercent = SkyMath::fromPercent(trailingEdgeFlapsLeftPercent);
-        aircraftData.trailingEdgeFlapsRightPercent = SkyMath::fromPercent(trailingEdgeFlapsRightPercent);
-        aircraftData.spoilersHandlePosition = SkyMath::fromPercent(spoilersHandlePosition);
-        aircraftData.flapsHandleIndex = flapsHandleIndex;
 
         aircraftData.gearHandlePosition = gearHandlePosition != 0;
         aircraftData.brakeLeftPosition= SkyMath::fromPosition(brakeLeftPosition);
@@ -123,13 +108,6 @@ struct SimConnectAircraftData
         rotationVelocityBodyX = aircraftData.rotationVelocityBodyX;
         rotationVelocityBodyY = aircraftData.rotationVelocityBodyY;
         rotationVelocityBodyZ = aircraftData.rotationVelocityBodyZ;
-
-        leadingEdgeFlapsLeftPercent = SkyMath::toPercent(aircraftData.leadingEdgeFlapsLeftPercent);
-        leadingEdgeFlapsRightPercent = SkyMath::toPercent(aircraftData.leadingEdgeFlapsRightPercent);
-        trailingEdgeFlapsLeftPercent = SkyMath::toPercent(aircraftData.trailingEdgeFlapsLeftPercent);
-        trailingEdgeFlapsRightPercent = SkyMath::toPercent(aircraftData.trailingEdgeFlapsRightPercent);
-        spoilersHandlePosition = SkyMath::toPercent(aircraftData.spoilersHandlePosition);
-        flapsHandleIndex = aircraftData.flapsHandleIndex;
 
         gearHandlePosition = aircraftData.gearHandlePosition ? 1 : 0;
         brakeLeftPosition = SkyMath::toPosition(aircraftData.brakeLeftPosition);
