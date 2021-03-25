@@ -48,13 +48,6 @@ void SimConnectAircraftData::addToDataDefinition(HANDLE simConnectHandle) noexce
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, SimVar::RotationVelocityBodyY, "Radians per Second", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, SimVar::RotationVelocityBodyZ, "Radians per Second", ::SIMCONNECT_DATATYPE_FLOAT64);
 
-    // Aircraft controls
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, SimVar::YokeXPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, SimVar::YokeYPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, SimVar::RudderPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, SimVar::ElevatorPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, SimVar::AileronPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
-
     // Flaps & speed brake
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, SimVar::LeadingEdgeFlapsLeftPercent, "Percent", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, SimVar::LeadingEdgeFlapsRightPercent, "Percent",::SIMCONNECT_DATATYPE_FLOAT64);

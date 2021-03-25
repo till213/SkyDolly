@@ -32,7 +32,6 @@
 
 void SimConnectEngineData::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
-    // Engine
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftEngineDefinition, SimVar::ThrottleLeverPosition1, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftEngineDefinition, SimVar::ThrottleLeverPosition2, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftEngineDefinition, SimVar::ThrottleLeverPosition3, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);

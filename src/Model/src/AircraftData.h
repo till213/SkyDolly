@@ -53,13 +53,6 @@ struct MODEL_API AircraftData : public TimeVariableData
     double rotationVelocityBodyY;
     double rotationVelocityBodyZ;
 
-    // Aircraft controls
-    qint16 yokeXPosition;
-    qint16 yokeYPosition;
-    qint16 rudderPosition;
-    qint16 elevatorPosition;
-    qint16 aileronPosition;
-
     // Flaps & speed brakes
     quint8 leadingEdgeFlapsLeftPercent;
     quint8 leadingEdgeFlapsRightPercent;

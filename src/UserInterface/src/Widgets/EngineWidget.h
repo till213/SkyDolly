@@ -44,7 +44,6 @@ class EngineWidget;
 class EngineWidget : public QWidget
 {
     Q_OBJECT
-
 public:
     explicit EngineWidget(SkyConnectIntf &skyConnect, QWidget *parent);
     virtual ~EngineWidget();

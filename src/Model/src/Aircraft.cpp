@@ -44,6 +44,7 @@ public:
     {}
 
     Engine engine;
+    PrimaryFlightControl primaryFlightControl;
     AircraftInfo aircraftInfo;
 
     QVector<AircraftData> aircraftData;
@@ -72,6 +73,16 @@ const Engine &Aircraft::getEngineConst() const
 Engine &Aircraft::getEngine() const
 {
     return d->engine;
+}
+
+const PrimaryFlightControl &Aircraft::getPrimaryFlightControlConst() const
+{
+    return d->primaryFlightControl;
+}
+
+PrimaryFlightControl &Aircraft::getPrimaryFlightControl() const
+{
+    return d->primaryFlightControl;
 }
 
 void Aircraft::setAircraftInfo(AircraftInfo aircraftInfo) noexcept
@@ -159,13 +170,6 @@ const AircraftData &Aircraft::interpolateAircraftData(qint64 timestamp) const no
             d->currentAircraftData.rotationVelocityBodyX = SkyMath::interpolateLinear(p1->rotationVelocityBodyX, p2->rotationVelocityBodyX, tn);
             d->currentAircraftData.rotationVelocityBodyY = SkyMath::interpolateLinear(p1->rotationVelocityBodyY, p2->rotationVelocityBodyY, tn);
             d->currentAircraftData.rotationVelocityBodyZ = SkyMath::interpolateLinear(p1->rotationVelocityBodyZ, p2->rotationVelocityBodyZ, tn);
-
-            // Aircraft controls
-            d->currentAircraftData.yokeXPosition = SkyMath::interpolateLinear(p1->yokeXPosition, p2->yokeXPosition, tn);
-            d->currentAircraftData.yokeYPosition = SkyMath::interpolateLinear(p1->yokeYPosition, p2->yokeYPosition, tn);
-            d->currentAircraftData.rudderPosition = SkyMath::interpolateLinear(p1->rudderPosition, p2->rudderPosition, tn);
-            d->currentAircraftData.elevatorPosition = SkyMath::interpolateLinear(p1->elevatorPosition, p2->elevatorPosition, tn);
-            d->currentAircraftData.aileronPosition = SkyMath::interpolateLinear(p1->aileronPosition, p2->aileronPosition, tn);
 
             // Flaps & spoilers
             d->currentAircraftData.leadingEdgeFlapsLeftPercent = SkyMath::interpolateLinear(p1->leadingEdgeFlapsLeftPercent, p2->leadingEdgeFlapsLeftPercent, tn);

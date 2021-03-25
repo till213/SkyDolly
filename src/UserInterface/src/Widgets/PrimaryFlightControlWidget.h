@@ -22,45 +22,48 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTCONDITIONSWIDGET_H
-#define FLIGHTCONDITIONSWIDGET_H
+#ifndef PRIMARYFLIGHTCONTROLWIDGET_H
+#define PRIMARYFLIGHTCONTROLWIDGET_H
 
-#include <memory>
+#include <QWidget>
 
-#include <QDialog>
+#include "../../../Model/src/TimeVariableData.h"
 
 class QShowEvent;
 class QHideEvent;
 
 class SkyConnectIntf;
-class FlightConditionsWidgetPrivate;
 class AircraftData;
+class PrimaryFlightControlData;
+class PrimaryFlightControlWidgetPrivate;
 
 namespace Ui {
-class FlightConditionsWidget;
+class PrimaryFlightControlWidget;
 }
 
-class FlightConditionsWidget : public QDialog
+class PrimaryFlightControlWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit FlightConditionsWidget(SkyConnectIntf &skyConnect, QWidget *parent = nullptr);
-    virtual ~FlightConditionsWidget();
+    explicit PrimaryFlightControlWidget(SkyConnectIntf &skyConnect, QWidget *parent);
+    virtual ~PrimaryFlightControlWidget();
 
 protected:
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;
 
 private:
-    Q_DISABLE_COPY(FlightConditionsWidget)
-    std::unique_ptr<FlightConditionsWidgetPrivate> d;
-    std::unique_ptr<Ui::FlightConditionsWidget> ui;
+    Q_DISABLE_COPY(PrimaryFlightControlWidget)
+    std::unique_ptr<PrimaryFlightControlWidgetPrivate> d;
+    std::unique_ptr<Ui::PrimaryFlightControlWidget> ui;
 
     void initUi();
-    void updateUi();
+    void updateUi(qint64 timestamp, TimeVariableData::Access access);
+    const PrimaryFlightControlData &getCurrentPrimaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const;
 
 private slots:
-    void updateInfoUi();
+    void handleRecordedData();
+    void handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access);
 };
 
-#endif // FLIGHTCONDITIONSWIDGET_H
+#endif // PRIMARYFLIGHTCONTROLWIDGET_H

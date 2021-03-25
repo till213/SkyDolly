@@ -22,45 +22,41 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTCONDITIONSWIDGET_H
-#define FLIGHTCONDITIONSWIDGET_H
+#ifndef PRIMARYFLIGHTCONTROL_H
+#define PRIMARYFLIGHTCONTROL_H
 
 #include <memory>
 
-#include <QDialog>
+#include <QObject>
+#include <QByteArray>
+#include <QVector>
 
-class QShowEvent;
-class QHideEvent;
+#include "TimeVariableData.h"
+#include "ModelLib.h"
 
-class SkyConnectIntf;
-class FlightConditionsWidgetPrivate;
-class AircraftData;
+class PrimaryFlightControlData;
+class PrimaryFlightControlPrivate;
 
-namespace Ui {
-class FlightConditionsWidget;
-}
-
-class FlightConditionsWidget : public QDialog
+class MODEL_API PrimaryFlightControl : public QObject
 {
     Q_OBJECT
 public:
-    explicit FlightConditionsWidget(SkyConnectIntf &skyConnect, QWidget *parent = nullptr);
-    virtual ~FlightConditionsWidget();
+    PrimaryFlightControl(QObject *parent = nullptr) noexcept;
+    virtual ~PrimaryFlightControl() noexcept;
 
-protected:
-    void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
+    void upsertPrimaryFlightControlData(PrimaryFlightControlData primaryFlightControlData) noexcept;
+    const PrimaryFlightControlData &getLastPrimaryFlightControlData() const noexcept;
+    const QVector<PrimaryFlightControlData> getAllPrimaryFlightControlData() const noexcept;
+    const PrimaryFlightControlData &interpolatePrimaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const noexcept;
+
+    void clear();
+
+signals:
+    void dataChanged();
 
 private:
-    Q_DISABLE_COPY(FlightConditionsWidget)
-    std::unique_ptr<FlightConditionsWidgetPrivate> d;
-    std::unique_ptr<Ui::FlightConditionsWidget> ui;
-
-    void initUi();
-    void updateUi();
-
-private slots:
-    void updateInfoUi();
+    Q_DISABLE_COPY(PrimaryFlightControl)
+    std::unique_ptr<PrimaryFlightControlPrivate> d;
 };
 
-#endif // FLIGHTCONDITIONSWIDGET_H
+#endif // PRIMARYFLIGHTCONTROL_H

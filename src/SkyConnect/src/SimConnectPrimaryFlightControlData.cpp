@@ -22,45 +22,19 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTCONDITIONSWIDGET_H
-#define FLIGHTCONDITIONSWIDGET_H
+#include <windows.h>
 
-#include <memory>
+#include <SimConnect.h>
 
-#include <QDialog>
+#include "../../Model/src/SimVar.h"
+#include "SimConnectDataDefinition.h"
+#include "SimConnectPrimaryFlightControlData.h"
 
-class QShowEvent;
-class QHideEvent;
-
-class SkyConnectIntf;
-class FlightConditionsWidgetPrivate;
-class AircraftData;
-
-namespace Ui {
-class FlightConditionsWidget;
-}
-
-class FlightConditionsWidget : public QDialog
+void SimConnectPrimaryFlightControlData::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
-    Q_OBJECT
-public:
-    explicit FlightConditionsWidget(SkyConnectIntf &skyConnect, QWidget *parent = nullptr);
-    virtual ~FlightConditionsWidget();
-
-protected:
-    void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
-
-private:
-    Q_DISABLE_COPY(FlightConditionsWidget)
-    std::unique_ptr<FlightConditionsWidgetPrivate> d;
-    std::unique_ptr<Ui::FlightConditionsWidget> ui;
-
-    void initUi();
-    void updateUi();
-
-private slots:
-    void updateInfoUi();
-};
-
-#endif // FLIGHTCONDITIONSWIDGET_H
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPrimaryFlightControlDefinition, SimVar::YokeXPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPrimaryFlightControlDefinition, SimVar::YokeYPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPrimaryFlightControlDefinition, SimVar::RudderPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPrimaryFlightControlDefinition, SimVar::ElevatorPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, SkyConnectDataDefinition::AircraftPrimaryFlightControlDefinition, SimVar::AileronPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+}

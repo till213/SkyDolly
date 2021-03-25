@@ -108,11 +108,12 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
                               QString::number(data.rotationVelocityBodyX, Format, Precision) % Const::Sep %
                               QString::number(data.rotationVelocityBodyY, Format, Precision) % Const::Sep %
                               QString::number(data.rotationVelocityBodyZ, Format, Precision) % Const::Sep %
-                              QString::number(data.yokeXPosition) % Const::Sep %
-                              QString::number(data.yokeYPosition) % Const::Sep %
-                              QString::number(data.rudderPosition) % Const::Sep %
-                              QString::number(data.elevatorPosition) % Const::Sep %
-                              QString::number(data.aileronPosition) % Const::Sep %
+                        // TODO IMPLEMENT ME!!!
+//                              QString::number(data.yokeXPosition) % Const::Sep %
+//                              QString::number(data.yokeYPosition) % Const::Sep %
+//                              QString::number(data.rudderPosition) % Const::Sep %
+//                              QString::number(data.elevatorPosition) % Const::Sep %
+//                              QString::number(data.aileronPosition) % Const::Sep %
                         // TODO IMPLEMENT ME!!!
 //                              QString::number(data.throttleLeverPosition1) % Const::Sep %
 //                              QString::number(data.throttleLeverPosition2) % Const::Sep %

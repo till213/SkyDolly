@@ -34,7 +34,6 @@
 
 struct MODEL_API EngineData : public TimeVariableData
 {
-    // General engine
     // Implementation note: the throttle can also yield negative thrust, hence the
     // type qint16 (position) which also supports negative values
     qint16 throttleLeverPosition1;

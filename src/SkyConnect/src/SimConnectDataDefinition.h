@@ -31,6 +31,7 @@ namespace SkyConnectDataDefinition
         AircraftInfoDefinition,
         AircraftPositionDefinition,
         AircraftEngineDefinition,
+        AircraftPrimaryFlightControlDefinition,
         AircraftInitialPosition
     };
 }

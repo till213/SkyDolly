@@ -49,13 +49,6 @@ struct SimConnectAircraftData
     double rotationVelocityBodyY;
     double rotationVelocityBodyZ;
 
-    // Aircraft controls
-    double yokeXPosition;
-    double yokeYPosition;
-    double rudderPosition;
-    double elevatorPosition;
-    double aileronPosition;
-
     // Flaps & speed brakes
     double leadingEdgeFlapsLeftPercent;
     double leadingEdgeFlapsRightPercent;
@@ -92,12 +85,6 @@ struct SimConnectAircraftData
         aircraftData.rotationVelocityBodyX = rotationVelocityBodyX;
         aircraftData.rotationVelocityBodyY = rotationVelocityBodyY;
         aircraftData.rotationVelocityBodyZ = rotationVelocityBodyZ;
-
-        aircraftData.yokeXPosition = SkyMath::fromPosition(yokeXPosition);
-        aircraftData.yokeYPosition = SkyMath::fromPosition(yokeYPosition);
-        aircraftData.rudderPosition = SkyMath::fromPosition(rudderPosition);
-        aircraftData.elevatorPosition = SkyMath::fromPosition(elevatorPosition);
-        aircraftData.aileronPosition = SkyMath::fromPosition(aileronPosition);
 
         aircraftData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(leadingEdgeFlapsLeftPercent);
         aircraftData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(leadingEdgeFlapsRightPercent);
@@ -136,12 +123,6 @@ struct SimConnectAircraftData
         rotationVelocityBodyX = aircraftData.rotationVelocityBodyX;
         rotationVelocityBodyY = aircraftData.rotationVelocityBodyY;
         rotationVelocityBodyZ = aircraftData.rotationVelocityBodyZ;
-
-        yokeXPosition = SkyMath::toPosition(aircraftData.yokeXPosition);
-        yokeYPosition = SkyMath::toPosition(aircraftData.yokeYPosition);
-        rudderPosition = SkyMath::toPosition(aircraftData.rudderPosition);
-        elevatorPosition = SkyMath::toPosition(aircraftData.elevatorPosition);
-        aileronPosition = SkyMath::toPosition(aircraftData.aileronPosition);
 
         leadingEdgeFlapsLeftPercent = SkyMath::toPercent(aircraftData.leadingEdgeFlapsLeftPercent);
         leadingEdgeFlapsRightPercent = SkyMath::toPercent(aircraftData.leadingEdgeFlapsRightPercent);
