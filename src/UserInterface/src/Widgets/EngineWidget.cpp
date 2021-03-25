@@ -32,6 +32,7 @@
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/AircraftData.h"
 #include "../../../Model/src/EngineData.h"
+#include "../../../Model/src/TimeVariableData.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "EngineWidget.h"
@@ -66,15 +67,15 @@ void EngineWidget::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event)
 
-    updateUi();
+    updateUi(d->skyConnect.getCurrentTimestamp(), true);
 
     const Engine &engine = World::getInstance().getCurrentScenario().getUserAircraft().getEngineConst();
     // Signal sent while recording
     connect(&engine, &Engine::dataChanged,
-            this, &EngineWidget::updateDataUi);
+            this, &EngineWidget::handleRecordedData);
     // Signal sent while playing
     connect(&d->skyConnect, &SkyConnectIntf::currentTimestampChanged,
-            this, &EngineWidget::updateDataUi);
+            this, &EngineWidget::handleTimestampChanged);
 }
 
 void EngineWidget::hideEvent(QHideEvent *event)
@@ -83,9 +84,9 @@ void EngineWidget::hideEvent(QHideEvent *event)
 
     const Engine &engine = World::getInstance().getCurrentScenario().getUserAircraft().getEngineConst();
     disconnect(&engine, &Engine::dataChanged,
-               this, &EngineWidget::updateDataUi);
+               this, &EngineWidget::handleRecordedData);
     disconnect(&d->skyConnect, &SkyConnectIntf::currentTimestampChanged,
-            this, &EngineWidget::updateDataUi);
+            this, &EngineWidget::handleTimestampChanged);
 }
 
 // PRIVATE
@@ -106,28 +107,9 @@ void EngineWidget::initUi()
     ui->mixture4LineEdit->setToolTip(SimVar::MixtureLeverPosition4);
 }
 
-void EngineWidget::updateUi()
+void EngineWidget::updateUi(qint64 timestamp, bool seek)
 {
-    updateDataUi();
-}
-
-const EngineData &EngineWidget::getCurrentEngineData() const
-{
-    const AircraftData aircraftData;
-    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
-
-    if (d->skyConnect.getState() == Connect::State::Recording) {
-        return aircraft.getEngineConst().getLastEngineData();
-    } else {
-        return aircraft.getEngineConst().interpolateEngineData(d->skyConnect.getCurrentTimestamp());
-    };
-}
-
-// PRIVATE SLOTS
-
-void EngineWidget::updateDataUi()
-{
-    const EngineData &engineData = getCurrentEngineData();
+    const EngineData &engineData = getCurrentEngineData(timestamp, seek);
 
     // General engine
     if (!engineData.isNull()) {
@@ -143,5 +125,36 @@ void EngineWidget::updateDataUi()
         ui->mixture2LineEdit->setText(QString::number(engineData.mixtureLeverPosition2));
         ui->mixture3LineEdit->setText(QString::number(engineData.mixtureLeverPosition3));
         ui->mixture4LineEdit->setText(QString::number(engineData.mixtureLeverPosition4));
+
+        ui->engineGroupBox->setEnabled(true);
+    } else {
+        ui->engineGroupBox->setEnabled(false);
     }
+}
+
+const EngineData &EngineWidget::getCurrentEngineData(qint64 timestamp, bool seek) const
+{
+    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+
+    if (d->skyConnect.getState() == Connect::State::Recording) {
+        return aircraft.getEngineConst().getLastEngineData();
+    } else {
+        if (timestamp != TimeVariableData::InvalidTimestamp) {
+            return aircraft.getEngineConst().interpolateEngineData(timestamp, seek);
+        } else {
+            return aircraft.getEngineConst().interpolateEngineData(d->skyConnect.getCurrentTimestamp(), seek);
+        }
+    };
+}
+
+// PRIVATE SLOTS
+
+void EngineWidget::handleRecordedData()
+{
+    updateUi(TimeVariableData::InvalidTimestamp, false);
+}
+
+void EngineWidget::handleTimestampChanged(qint64 timestamp, bool seek)
+{
+    updateUi(timestamp, seek);
 }

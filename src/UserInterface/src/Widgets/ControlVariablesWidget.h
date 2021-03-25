@@ -59,7 +59,6 @@ private:
     void initUi();
     void updateUi();
     const AircraftData &getCurrentAircraftData() const;
-    const EngineData &getCurrentEngineData() const;
 
 private slots:
     void updateControlDataUi();

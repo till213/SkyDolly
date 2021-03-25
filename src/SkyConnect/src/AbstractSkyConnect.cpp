@@ -247,8 +247,8 @@ void AbstractSkyConnect::seek(qint64 timestamp) noexcept
     if (getState() != Connect::State::Recording) {
         d->currentTimestamp = timestamp;
         d->elapsedTime = timestamp;
-        emit currentTimestampChanged(d->currentTimestamp);
-        if (sendAircraftData(timestamp)) {            
+        emit currentTimestampChanged(d->currentTimestamp, true);
+        if (sendAircraftData(timestamp, true)) {
             if (d->elapsedTimer.isValid() && getState() == Connect::State::Replay) {
                 // Restart the elapsed timer, counting onwards from the newly
                 // set timestamp

@@ -74,7 +74,7 @@ protected:
     {}
 
 signals:
-    void currentTimestampChanged(qint64 timestamp) const;
+    void currentTimestampChanged(qint64 timestamp, bool seek) const;
     void stateChanged(Connect::State state) const;
 };
 

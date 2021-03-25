@@ -129,18 +129,6 @@ const AircraftData &ControlVariablesWidget::getCurrentAircraftData() const
     };
 }
 
-const EngineData &ControlVariablesWidget::getCurrentEngineData() const
-{
-    const AircraftData aircraftData;
-    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
-
-    if (d->skyConnect.getState() == Connect::State::Recording) {
-        return aircraft.getEngineConst().getLastEngineData();
-    } else {
-        return aircraft.getEngineConst().interpolateEngineData(d->skyConnect.getCurrentTimestamp());
-    };
-}
-
 // PRIVATE SLOTS
 
 void ControlVariablesWidget::updateControlDataUi()
