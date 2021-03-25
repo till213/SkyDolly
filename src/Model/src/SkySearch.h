@@ -147,6 +147,9 @@ namespace SkySearch {
         return index;
     }
 
+    /*!
+     *  Updates the \c startIndex with the last index having a timestamp <= the given \c timestamp.
+     */
     template <typename T>
     int updateStartIndex(QVector<T> data, int startIndex, qint64 timestamp) noexcept
     {

@@ -95,7 +95,7 @@ protected:
     virtual void onSeek(qint64 currentTimestamp) = 0;
     virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) = 0;
 
-    virtual bool sendAircraftData(qint64 currentTimestamp) = 0;
+    virtual bool sendAircraftData(qint64 currentTimestamp, bool seek) = 0;
     virtual bool isConnectedWithSim() const = 0;
     virtual bool connectWithSim() = 0;
 

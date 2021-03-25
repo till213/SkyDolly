@@ -46,7 +46,7 @@ public:
     void upsertEngineData(EngineData engineData) noexcept;
     const EngineData &getLastEngineData() const noexcept;
     const QVector<EngineData> getAllEngineData() const noexcept;
-    const EngineData &interpolateEngineData(qint64 timestamp) const noexcept;
+    const EngineData &interpolateEngineData(qint64 timestamp, bool seek) const noexcept;
 
     void clear();
 

@@ -27,6 +27,8 @@
 
 #include <QWidget>
 
+#include "../../../Model/src/TimeVariableData.h"
+
 class QShowEvent;
 class QHideEvent;
 
@@ -57,11 +59,12 @@ private:
     std::unique_ptr<Ui::EngineWidget> ui;
 
     void initUi();
-    void updateUi();
-    const EngineData &getCurrentEngineData() const;
+    void updateUi(qint64 timestamp, bool seek);
+    const EngineData &getCurrentEngineData(qint64 timestamp, bool seek) const;
 
 private slots:
-    void updateDataUi();
+    void handleRecordedData();
+    void handleTimestampChanged(qint64 timestamp = TimeVariableData::InvalidTimestamp, bool seek = false);
 };
 
 #endif // ENGINEWIDGET_H

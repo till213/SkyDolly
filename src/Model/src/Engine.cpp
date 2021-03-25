@@ -38,11 +38,13 @@ class EnginePrivate
 public:
     EnginePrivate() noexcept
         : currentTimestamp(TimeVariableData::InvalidTimestamp),
+          currentSeek(false),
           currentIndex(SkySearch::InvalidIndex)
     {}
 
     QVector<EngineData> engineData;
     qint64 currentTimestamp;
+    bool currentSeek;
     EngineData currentEngineData;
     mutable int currentIndex;
 
@@ -100,17 +102,31 @@ void Engine::clear()
     emit dataChanged();
 }
 
-const EngineData &Engine::interpolateEngineData(qint64 timestamp) const noexcept
+const EngineData &Engine::interpolateEngineData(qint64 timestamp, bool seek) const noexcept
 {
     const EngineData *p0, *p1, *p2, *p3;
 
-    if (d->currentTimestamp != timestamp) {
+    if (d->currentTimestamp != timestamp || d->currentSeek != seek) {
 
-        if (SkySearch::getSupportData(d->engineData, timestamp, d->currentIndex, &p0, &p1, &p2, &p3)) {
+        double tn;
+        if (!seek) {
+            if (SkySearch::getSupportData(d->engineData, timestamp, d->currentIndex, &p0, &p1, &p2, &p3)) {
+                tn = SkySearch::normaliseTimestamp(*p1, *p2, timestamp);
+            }
+        } else {
+            // Get the last sample data just before the seeked position
+            // (that sample point may lie far outside of the "sample window")
+            d->currentIndex = SkySearch::updateStartIndex(d->engineData, d->currentIndex, timestamp);
+            if (d->currentIndex != SkySearch::InvalidIndex) {
+                p1 = &d->engineData.at(d->currentIndex);
+                p2 = p1;
+                tn = 0.0;
+            } else {
+                p1 = p2 = nullptr;
+            }
+        }
 
-            double tn = SkySearch::normaliseTimestamp(*p1, *p2, timestamp);
-
-            // Engine
+        if (p1 != nullptr) {
             d->currentEngineData.throttleLeverPosition1 = SkyMath::interpolateLinear(p1->throttleLeverPosition1, p2->throttleLeverPosition1, tn);
             d->currentEngineData.throttleLeverPosition2 = SkyMath::interpolateLinear(p1->throttleLeverPosition2, p2->throttleLeverPosition2, tn);
             d->currentEngineData.throttleLeverPosition3 = SkyMath::interpolateLinear(p1->throttleLeverPosition3, p2->throttleLeverPosition3, tn);
@@ -125,12 +141,13 @@ const EngineData &Engine::interpolateEngineData(qint64 timestamp) const noexcept
             d->currentEngineData.mixtureLeverPosition4 = SkyMath::interpolateLinear(p1->mixtureLeverPosition4, p2->mixtureLeverPosition4, tn);
 
             d->currentEngineData.timestamp = timestamp;
-
         } else {
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
             d->currentEngineData = EngineData::NullEngineData;
         }
+
         d->currentTimestamp = timestamp;
+        d->currentSeek = seek;
 #ifdef DEBUG
     } else {
         qDebug("Engine::interpolateEngineData: cached result for timestamp: %llu", timestamp);

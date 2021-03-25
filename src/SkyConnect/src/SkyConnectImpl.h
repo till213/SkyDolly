@@ -57,7 +57,7 @@ protected:
     virtual void onSeek(qint64 currentTimestamp) noexcept override;
     virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
 
-    virtual bool sendAircraftData(qint64 currentTimestamp) noexcept override;
+    virtual bool sendAircraftData(qint64 currentTimestamp, bool seek) noexcept override;
     virtual bool connectWithSim() noexcept override;
     virtual bool isConnectedWithSim() const noexcept override;
 
@@ -73,7 +73,7 @@ private:
     void setupInitialPosition() noexcept;
     void setSimulationFrozen(bool enable) noexcept;
     bool isSimulationFrozen() const noexcept;
-    bool sendAircraftData() noexcept;
+    bool sendAircraftData(bool seek) noexcept;
     void replay() noexcept;
     void updateRecordFrequency(SampleRate::SampleRate sampleRate) noexcept;
     void updateRequestPeriod(::SIMCONNECT_PERIOD period);

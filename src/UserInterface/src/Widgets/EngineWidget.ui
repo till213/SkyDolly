@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>577</width>
+    <width>705</width>
     <height>444</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
     <enum>QLayout::SetMinimumSize</enum>
    </property>
    <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="engineGroupBox">
      <property name="minimumSize">
       <size>
        <width>0</width>
