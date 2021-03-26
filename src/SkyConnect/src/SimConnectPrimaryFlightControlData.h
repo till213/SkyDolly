@@ -31,6 +31,12 @@
 #include "../../Model/src/SimType.h"
 #include "../../Model/src/PrimaryFlightControlData.h"
 
+/*!
+ * Simulation variables which represent the primary flight controls: rudder, elevators and ailerons.
+ *
+ * Implementation note: this struct needs to be packed.
+ */
+#pragma pack(1)
 struct SimConnectPrimaryFlightControlData
 {
     double yokeXPosition;
@@ -62,6 +68,6 @@ struct SimConnectPrimaryFlightControlData
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
-};
+} __attribute__ ((packed));
 
 #endif // SIMCONNECTPRIMARYFLIGHTCONTROLDATA_H

@@ -31,6 +31,12 @@
 #include "../../Model/src/SimType.h"
 #include "../../Model/src/SecondaryFlightControlData.h"
 
+/*!
+ * Simulation variables which represent the secondary flight controls: flaps and spoilers.
+ *
+ * Implementation note: this struct needs to be packed.
+ */
+#pragma pack(1)
 struct SimConnectSecondaryFlightControlData
 {
     double leadingEdgeFlapsLeftPercent;
@@ -38,7 +44,7 @@ struct SimConnectSecondaryFlightControlData
     double trailingEdgeFlapsLeftPercent;
     double trailingEdgeFlapsRightPercent;
     double spoilersHandlePosition;
-    qint64 flapsHandleIndex;
+    qint32 flapsHandleIndex;
 
     inline SecondaryFlightControlData toSecondaryFlightControlData() const noexcept
     {
@@ -65,6 +71,6 @@ struct SimConnectSecondaryFlightControlData
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
-};
+} __attribute__ ((packed));
 
 #endif // SIMCONNECTSECONDARYFLIGHTCONTROL_H

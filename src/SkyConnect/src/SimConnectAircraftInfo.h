@@ -35,6 +35,12 @@
 #include "../../Model/src/AircraftInfo.h"
 #include "../../Model/src/FlightConditions.h"
 
+/*!
+ * Information simulation variables about the aircraft and environment at start.
+ *
+ * Implementation note: this struct needs to be packed.
+ */
+#pragma pack(1)
 struct SimConnectAircraftInfo
 {
     char title[256];
@@ -273,6 +279,6 @@ private:
             break;
         }
     }
-};
+} __attribute__ ((packed));;
 
 #endif // SIMCONNECTAIRCRAFTINFO_H

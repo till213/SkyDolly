@@ -31,6 +31,12 @@
 #include "../../Model/src/SimType.h"
 #include "../../Model/src/EngineData.h"
 
+/*!
+ * Simulation variables which represent the engine.
+ *
+ * Implementation note: this struct needs to be packed.
+ */
+#pragma pack(1)
 struct SimConnectEngineData
 {
     // General engine
@@ -86,6 +92,6 @@ struct SimConnectEngineData
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
-};
+} __attribute__ ((packed));
 
 #endif // SIMCONNECTENGINEDATA_H

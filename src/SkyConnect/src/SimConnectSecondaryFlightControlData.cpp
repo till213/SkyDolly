@@ -39,5 +39,5 @@ void SimConnectSecondaryFlightControlData::addToDataDefinition(HANDLE simConnect
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftSecondaryFlightControlDefinition), SimVar::TrailingEdgeFlapsRightPercent, "Percent", ::SIMCONNECT_DATATYPE_FLOAT64);
     // Spoilers, also known as "speed brakes"
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftSecondaryFlightControlDefinition), SimVar::SpoilersHandlePosition, "Percent", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftSecondaryFlightControlDefinition), SimVar::FlapsHandleIndex, "Number", ::SIMCONNECT_DATATYPE_INT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftSecondaryFlightControlDefinition), SimVar::FlapsHandleIndex, "Number", ::SIMCONNECT_DATATYPE_INT32);
 }
