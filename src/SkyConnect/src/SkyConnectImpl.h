@@ -51,7 +51,7 @@ protected:
     virtual void onRecordingPaused(bool paused ) noexcept override;
     virtual void onStopRecording() noexcept override;
 
-    virtual void onStartReplay(qint64 currentTimestamp ) noexcept override;
+    virtual void onStartReplay(qint64 currentTimestamp) noexcept override;
     virtual void onReplayPaused(bool paused) noexcept override;
     virtual void onStopReplay() noexcept override;
 
