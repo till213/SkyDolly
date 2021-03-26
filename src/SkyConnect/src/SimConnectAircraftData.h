@@ -36,7 +36,7 @@
  *
  * Implementation note: this struct needs to be packed.
  */
-#pragma pack(1)
+#pragma pack(push, 1)
 struct SimConnectAircraftData
 {
     // Aircraft position
@@ -54,14 +54,6 @@ struct SimConnectAircraftData
     double rotationVelocityBodyX;
     double rotationVelocityBodyY;
     double rotationVelocityBodyZ;
-
-    // Gear, brakes & handles
-    double brakeLeftPosition;
-    double brakeRightPosition;
-    double waterRudderHandlePosition;
-    double tailhookPosition;
-    double canopyOpen;
-    qint32 gearHandlePosition;
 
     // Lights
     qint32 lightStates;
@@ -84,13 +76,6 @@ struct SimConnectAircraftData
         aircraftData.rotationVelocityBodyY = rotationVelocityBodyY;
         aircraftData.rotationVelocityBodyZ = rotationVelocityBodyZ;
 
-        aircraftData.brakeLeftPosition= SkyMath::fromPosition(brakeLeftPosition);
-        aircraftData.brakeRightPosition = SkyMath::fromPosition(brakeRightPosition);
-        aircraftData.waterRudderHandlePosition = SkyMath::fromPosition(waterRudderHandlePosition);
-        aircraftData.tailhookPosition = SkyMath::fromPercent(tailhookPosition);
-        aircraftData.canopyOpen = SkyMath::fromPercent(canopyOpen);
-        aircraftData.gearHandlePosition = gearHandlePosition != 0;
-
         aircraftData.lightStates = SimType::LightStates(lightStates);
 
         return aircraftData;
@@ -112,17 +97,11 @@ struct SimConnectAircraftData
         rotationVelocityBodyY = aircraftData.rotationVelocityBodyY;
         rotationVelocityBodyZ = aircraftData.rotationVelocityBodyZ;
 
-        brakeLeftPosition = SkyMath::toPosition(aircraftData.brakeLeftPosition);
-        brakeRightPosition = SkyMath::toPosition(aircraftData.brakeRightPosition);
-        waterRudderHandlePosition = SkyMath::toPosition(aircraftData.waterRudderHandlePosition);
-        tailhookPosition = SkyMath::toPercent(aircraftData.tailhookPosition);
-        canopyOpen = SkyMath::toPercent(aircraftData.canopyOpen);
-        gearHandlePosition = aircraftData.gearHandlePosition ? 1 : 0;
-
         lightStates = aircraftData.lightStates;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
-} __attribute__ ((packed));
+};
+#pragma pack(pop)
 
 #endif // SIMCONNECTAIRCRAFTDATA_H

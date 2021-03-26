@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef AIRCRAFT_H
-#define AIRCRAFT_H
+#ifndef AIRCRAFTHANDLE_H
+#define AIRCRAFTHANDLE_H
 
 #include <memory>
 
@@ -31,52 +31,32 @@
 #include <QByteArray>
 #include <QVector>
 
+#include "TimeVariableData.h"
 #include "ModelLib.h"
-#include "AircraftInfo.h"
-#include "Engine.h"
 
-struct AircraftData;
-struct PrimaryFlightControl;
-struct SecondaryFlightControl;
-struct AircraftHandle;
-class AircraftPrivate;
+class AircraftHandleData;
+class AircraftHandlePrivate;
 
-class MODEL_API Aircraft : public QObject
+class MODEL_API AircraftHandle : public QObject
 {
     Q_OBJECT
-public:    
-    Aircraft(QObject *parent = nullptr) noexcept;
-    virtual ~Aircraft() noexcept;
+public:
+    AircraftHandle(QObject *parent = nullptr) noexcept;
+    virtual ~AircraftHandle() noexcept;
 
-    const Engine &getEngineConst() const;
-    Engine &getEngine() const;
-
-    const PrimaryFlightControl &getPrimaryFlightControlConst() const;
-    PrimaryFlightControl &getPrimaryFlightControl() const;
-
-    const SecondaryFlightControl &getSecondaryFlightControlConst() const;
-    SecondaryFlightControl &getSecondaryFlightControl() const;
-
-    const AircraftHandle &getAircraftHandleConst() const;
-    AircraftHandle &getAircraftHandle() const;
-
-    void setAircraftInfo(AircraftInfo aircraftInfo) noexcept;
-    const AircraftInfo &getAircraftInfo() const noexcept;
-
-    void upsertAircraftData(AircraftData aircraftData) noexcept;
-    const AircraftData &getLastAircraftData() const noexcept;
-    const QVector<AircraftData> getAllAircraftData() const noexcept;
-    const AircraftData &interpolateAircraftData(qint64 timestamp) const noexcept;
+    void upsertAircraftHandleData(AircraftHandleData aircraftHandleData) noexcept;
+    const AircraftHandleData &getLastAircraftHandleData() const noexcept;
+    const QVector<AircraftHandleData> getAllAircraftHandleData() const noexcept;
+    const AircraftHandleData &interpolateAircraftHandleData(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
     void clear();
 
 signals:
-    void infoChanged();
     void dataChanged();
 
 private:
-    Q_DISABLE_COPY(Aircraft)
-    std::unique_ptr<AircraftPrivate> d;
+    Q_DISABLE_COPY(AircraftHandle)
+    std::unique_ptr<AircraftHandlePrivate> d;
 };
 
-#endif // AIRCRAFT_H
+#endif // AIRCRAFTHANDLE_H

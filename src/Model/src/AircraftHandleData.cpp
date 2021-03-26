@@ -22,45 +22,21 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CONTROLVARIABLESWIDGET_H
-#define CONTROLVARIABLESWIDGET_H
 
-#include <QWidget>
+#include "TimeVariableData.h"
+#include "AircraftHandleData.h"
 
-class QShowEvent;
-class QHideEvent;
+// PUBLIC
 
-class SkyConnectIntf;
-class AircraftData;
-class EngineData;
-class ControlVariablesWidgetPrivate;
-
-namespace Ui {
-class ControlVariablesWidget;
+AircraftHandleData::AircraftHandleData() noexcept
+    : TimeVariableData(),
+      gearHandlePosition(false),
+      brakeLeftPosition(0),
+      brakeRightPosition(0),
+      waterRudderHandlePosition(0),
+      tailhookPosition(0),
+      canopyOpen(0)
+{
 }
 
-class ControlVariablesWidget : public QWidget
-{
-    Q_OBJECT
-public:
-    explicit ControlVariablesWidget(SkyConnectIntf &skyConnect, QWidget *parent);
-    virtual ~ControlVariablesWidget();
-
-protected:
-    void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
-
-private:
-    Q_DISABLE_COPY(ControlVariablesWidget)
-    std::unique_ptr<ControlVariablesWidgetPrivate> d;
-    std::unique_ptr<Ui::ControlVariablesWidget> ui;
-
-    void initUi();
-    void updateUi();
-    const AircraftData &getCurrentAircraftData() const;
-
-private slots:
-    void updateControlDataUi();
-};
-
-#endif // CONTROLVARIABLESWIDGET_H
+const AircraftHandleData AircraftHandleData::NullAircraftHandleData = AircraftHandleData();

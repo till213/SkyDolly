@@ -36,6 +36,7 @@ namespace SimConnectType
         AircraftEngineDefinition,
         AircraftPrimaryFlightControlDefinition,
         AircraftSecondaryFlightControlDefinition,
+        AircraftHandleDefinition,
         AircraftInitialPosition
     };
 }

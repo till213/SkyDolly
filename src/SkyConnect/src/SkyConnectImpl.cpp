@@ -44,12 +44,15 @@
 #include "../../Model/src/PrimaryFlightControlData.h"
 #include "../../Model/src/SecondaryFlightControl.h"
 #include "../../Model/src/SecondaryFlightControlData.h"
+#include "../../Model/src/AircraftHandle.h"
+#include "../../Model/src/AircraftHandleData.h"
 #include "SimConnectType.h"
 #include "SimConnectAircraftInfo.h"
 #include "SimConnectAircraftData.h"
 #include "SimConnectEngineData.h"
 #include "SimConnectPrimaryFlightControlData.h"
 #include "SimConnectSecondaryFlightControlData.h"
+#include "SimConnectAircraftHandleData.h"
 #include "Connect.h"
 #include "EventWidget.h"
 #include "SkyConnectImpl.h"
@@ -74,7 +77,8 @@ namespace
         AircraftPosition,
         Engine,
         PrimaryFlightControl,
-        SecondaryFlightControl
+        SecondaryFlightControl,
+        AircraftHandle
     };
 }
 
@@ -252,6 +256,7 @@ void SkyConnectImpl::setupRequestData() noexcept
     SimConnectEngineData::addToDataDefinition(d->simConnectHandle);
     SimConnectPrimaryFlightControlData::addToDataDefinition(d->simConnectHandle);
     SimConnectSecondaryFlightControlData::addToDataDefinition(d->simConnectHandle);
+    SimConnectAircraftHandleData::addToDataDefinition(d->simConnectHandle);
 
     ::SimConnect_AddToDataDefinition(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInitialPosition), "Initial Position", nullptr, ::SIMCONNECT_DATATYPE_INITPOSITION);
 
@@ -370,6 +375,19 @@ bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
             }
         }
 
+        // Aircraft handles & brakes
+        if (success) {
+            const AircraftHandleData &aircraftHandleData = userAircraft.getAircraftHandleConst().interpolateAircraftHandleData(getCurrentTimestamp(), access);
+            if (!aircraftHandleData.isNull()) {
+                SimConnectAircraftHandleData simConnectAircraftHandleData;
+                simConnectAircraftHandleData.fromAircraftHandleData(aircraftHandleData);
+                HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftHandleDefinition),
+                                                              ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
+                                                              sizeof(SimConnectAircraftHandleData), &simConnectAircraftHandleData);
+                success = res == S_OK;
+            }
+        }
+
         // Start the elapsed timer after sending the first sample data
         if (!isElapsedTimerRunning()) {
             startElapsedTimer();
@@ -438,6 +456,8 @@ void SkyConnectImpl::updateRequestPeriod(::SIMCONNECT_PERIOD period)
                                         ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
     ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::SecondaryFlightControl), Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftSecondaryFlightControlDefinition),
                                         ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+    ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::AircraftHandle), Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftHandleDefinition),
+                                        ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
 }
 
 void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context) noexcept
@@ -454,6 +474,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
     const SimConnectEngineData *simConnectEngineData;
     const SimConnectPrimaryFlightControlData *simConnectPrimaryFlightControlData;
     const SimConnectSecondaryFlightControlData *simConnectSecondaryFlightControlData;
+    const SimConnectAircraftHandleData *simConnectAircraftHandleData;
 #ifdef DEBUG
     SIMCONNECT_RECV_EXCEPTION *exception;
 #endif
@@ -561,7 +582,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
                     }
                     break;
                 }
-            case DataRequest::SecondaryFlightControl:
+                case DataRequest::SecondaryFlightControl:
                 {
                     if (skyConnect->getState() == Connect::State::Recording) {
                         simConnectSecondaryFlightControlData = reinterpret_cast<const SimConnectSecondaryFlightControlData *>(&objectData->dwData);
@@ -572,8 +593,19 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
                     }
                     break;
                 }
-                default:
+                case DataRequest::AircraftHandle:
+                {
+                    if (skyConnect->getState() == Connect::State::Recording) {
+                        simConnectAircraftHandleData = reinterpret_cast<const SimConnectAircraftHandleData *>(&objectData->dwData);
+                        AircraftHandleData aircraftHandleData = simConnectAircraftHandleData->toAircraftHandleData();
+                        aircraftHandleData.timestamp = skyConnect->getCurrentTimestamp();
+                        userAircraft.getAircraftHandle().upsertAircraftHandleData(std::move(aircraftHandleData));
+                        dataReceived = true;
+                    }
                     break;
+                }
+            default:
+                break;
             }
             break;
 

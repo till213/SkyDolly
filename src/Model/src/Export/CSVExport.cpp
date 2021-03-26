@@ -133,12 +133,12 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
 //                              QString::number(data.trailingEdgeFlapsRightPercent) % Const::Sep %
 //                              QString::number(data.spoilersHandlePosition) % Const::Sep %
 //                              QString::number(data.flapsHandleIndex) % Const::Sep %
-                              QString::number(data.gearHandlePosition) % Const::Sep %
-                              QString::number(data.brakeLeftPosition) % Const::Sep %
-                              QString::number(data.brakeRightPosition) % Const::Sep %
-                              QString::number(data.waterRudderHandlePosition) % Const::Sep %
-                              QString::number(data.tailhookPosition) % Const::Sep %
-                              QString::number(data.canopyOpen) % Const::Sep %
+//                              QString::number(data.gearHandlePosition) % Const::Sep %
+//                              QString::number(data.brakeLeftPosition) % Const::Sep %
+//                              QString::number(data.brakeRightPosition) % Const::Sep %
+//                              QString::number(data.waterRudderHandlePosition) % Const::Sep %
+//                              QString::number(data.tailhookPosition) % Const::Sep %
+//                              QString::number(data.canopyOpen) % Const::Sep %
                               QString::number(data.lightStates) % Const::Sep %
                               QString::number(data.timestamp) % Const::Ln;
                 if (!io.write(csv.toUtf8())) {

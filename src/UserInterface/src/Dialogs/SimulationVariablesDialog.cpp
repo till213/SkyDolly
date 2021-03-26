@@ -39,7 +39,7 @@
 #include "../Widgets/EngineWidget.h"
 #include "../Widgets/PrimaryFlightControlWidget.h"
 #include "../Widgets/SecondaryFlightControlWidget.h"
-#include "../Widgets/ControlVariablesWidget.h"
+#include "../Widgets/AircraftHandleWidget.h"
 #include "../Widgets/LightVariablesWidget.h"
 #include "../Widgets/AircraftTypeWidget.h"
 #include "../Widgets/FlightConditionsWidget.h"
@@ -116,8 +116,8 @@ void SimulationVariablesDialog::initUi() noexcept
     SecondaryFlightControlWidget *secondaryFlightControlWidget = new SecondaryFlightControlWidget(d->skyConnect, this);
     ui->simulationVariablesTab->addTab(secondaryFlightControlWidget, tr("&Secondary Controls"));
 
-    ControlVariablesWidget *controlVariablesWidget = new ControlVariablesWidget(d->skyConnect, this);
-    ui->simulationVariablesTab->addTab(controlVariablesWidget, tr("&Flight Controls"));
+    AircraftHandleWidget *aircraftHandleWidget = new AircraftHandleWidget(d->skyConnect, this);
+    ui->simulationVariablesTab->addTab(aircraftHandleWidget, tr("&Handles && Brakes"));
 
     LightVariablesWidget *lightVariablesWidget = new LightVariablesWidget(d->skyConnect, this);
     ui->simulationVariablesTab->addTab(lightVariablesWidget, tr("&Lights"));
