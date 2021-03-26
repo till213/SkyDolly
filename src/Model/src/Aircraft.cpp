@@ -35,6 +35,7 @@
 #include "AircraftData.h"
 #include "PrimaryFlightControl.h"
 #include "SecondaryFlightControl.h"
+#include "AircraftHandle.h"
 #include "Aircraft.h"
 
 class AircraftPrivate
@@ -48,6 +49,7 @@ public:
     Engine engine;
     PrimaryFlightControl primaryFlightControl;
     SecondaryFlightControl secondaryFlightControl;
+    AircraftHandle aircraftHandle;
     AircraftInfo aircraftInfo;
 
     QVector<AircraftData> aircraftData;
@@ -96,6 +98,16 @@ const SecondaryFlightControl &Aircraft::getSecondaryFlightControlConst() const
 SecondaryFlightControl &Aircraft::getSecondaryFlightControl() const
 {
     return d->secondaryFlightControl;
+}
+
+const AircraftHandle &Aircraft::getAircraftHandleConst() const
+{
+    return d->aircraftHandle;
+}
+
+AircraftHandle &Aircraft::getAircraftHandle() const
+{
+    return d->aircraftHandle;
 }
 
 void Aircraft::setAircraftInfo(AircraftInfo aircraftInfo) noexcept
@@ -183,13 +195,6 @@ const AircraftData &Aircraft::interpolateAircraftData(qint64 timestamp) const no
             d->currentAircraftData.rotationVelocityBodyX = SkyMath::interpolateLinear(p1->rotationVelocityBodyX, p2->rotationVelocityBodyX, tn);
             d->currentAircraftData.rotationVelocityBodyY = SkyMath::interpolateLinear(p1->rotationVelocityBodyY, p2->rotationVelocityBodyY, tn);
             d->currentAircraftData.rotationVelocityBodyZ = SkyMath::interpolateLinear(p1->rotationVelocityBodyZ, p2->rotationVelocityBodyZ, tn);
-
-            d->currentAircraftData.gearHandlePosition = p1->gearHandlePosition;
-            d->currentAircraftData.brakeLeftPosition = SkyMath::interpolateLinear(p1->brakeLeftPosition, p2->brakeLeftPosition, tn);
-            d->currentAircraftData.brakeRightPosition = SkyMath::interpolateLinear(p1->brakeRightPosition, p2->brakeRightPosition, tn);
-            d->currentAircraftData.waterRudderHandlePosition = SkyMath::interpolateLinear(p1->waterRudderHandlePosition, p2->waterRudderHandlePosition, tn);
-            d->currentAircraftData.tailhookPosition = SkyMath::interpolateLinear(p1->tailhookPosition, p2->tailhookPosition, tn);
-            d->currentAircraftData.canopyOpen = SkyMath::interpolateLinear(p1->canopyOpen, p2->canopyOpen, tn);
 
             // No interpolation for light states
             d->currentAircraftData.lightStates = p1->lightStates;

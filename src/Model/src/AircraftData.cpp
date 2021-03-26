@@ -40,12 +40,6 @@ AircraftData::AircraftData(double latitude, double longitude, double altitude) n
       rotationVelocityBodyX(0.0),
       rotationVelocityBodyY(0.0),
       rotationVelocityBodyZ(0.0),
-      gearHandlePosition(false),
-      brakeLeftPosition(0),
-      brakeRightPosition(0),
-      waterRudderHandlePosition(0),
-      tailhookPosition(0),
-      canopyOpen(0),
       lightStates(QFlags(SimType::LightState::None))
 {
     this->latitude = latitude;

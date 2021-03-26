@@ -51,9 +51,9 @@ target_sources(UserInterface
         src/Widgets/SecondaryFlightControlWidget.cpp
         src/Widgets/SecondaryFlightControlWidget.h
         src/Widgets/SecondaryFlightControlWidget.ui
-        src/Widgets/ControlVariablesWidget.cpp
-        src/Widgets/ControlVariablesWidget.h
-        src/Widgets/ControlVariablesWidget.ui
+        src/Widgets/AircraftHandleWidget.cpp
+        src/Widgets/AircraftHandleWidget.h
+        src/Widgets/AircraftHandleWidget.ui
         src/Widgets/AircraftTypeWidget.cpp
         src/Widgets/AircraftTypeWidget.h
         src/Widgets/AircraftTypeWidget.ui

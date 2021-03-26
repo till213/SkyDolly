@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ControlVariablesWidget</class>
- <widget class="QWidget" name="ControlVariablesWidget">
+ <class>AircraftHandleWidget</class>
+ <widget class="QWidget" name="AircraftHandleWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -23,7 +23,7 @@
       </size>
      </property>
      <property name="title">
-      <string>Secondary Controls</string>
+      <string>Handles &amp;&amp; Brakes</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">

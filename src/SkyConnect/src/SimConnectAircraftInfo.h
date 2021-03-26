@@ -40,7 +40,7 @@
  *
  * Implementation note: this struct needs to be packed.
  */
-#pragma pack(1)
+#pragma pack(push, 1)
 struct SimConnectAircraftInfo
 {
     char title[256];
@@ -279,6 +279,7 @@ private:
             break;
         }
     }
-} __attribute__ ((packed));;
+};
+#pragma pack(pop)
 
 #endif // SIMCONNECTAIRCRAFTINFO_H

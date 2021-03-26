@@ -36,7 +36,7 @@
  *
  * Implementation note: this struct needs to be packed.
  */
-#pragma pack(1)
+#pragma pack(push, 1)
 struct SimConnectSecondaryFlightControlData
 {
     double leadingEdgeFlapsLeftPercent;
@@ -71,6 +71,7 @@ struct SimConnectSecondaryFlightControlData
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
-} __attribute__ ((packed));
+};
+#pragma pack(pop)
 
 #endif // SIMCONNECTSECONDARYFLIGHTCONTROL_H

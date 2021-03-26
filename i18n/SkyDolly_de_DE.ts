@@ -18,6 +18,59 @@ MIT License</source>
     </message>
 </context>
 <context>
+    <name>AircraftHandleWidget</name>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="26"/>
+        <source>Handles &amp;&amp; Brakes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="34"/>
+        <source>Gear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="54"/>
+        <source>Brake Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="74"/>
+        <source>Brake Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="94"/>
+        <source>Water Rudder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="114"/>
+        <source>Tailhook</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="134"/>
+        <source>Canopy Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="119"/>
+        <source>Down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="119"/>
+        <source>Up</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AircraftTypeWidget</name>
     <message>
         <location filename="../src/UserInterface/src/Widgets/AircraftTypeWidget.ui" line="14"/>
@@ -160,59 +213,6 @@ MIT License</source>
     <message>
         <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="279"/>
         <source>Rotation Velocity Z</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ControlVariablesWidget</name>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="14"/>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="26"/>
-        <source>Secondary Controls</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="34"/>
-        <source>Gear</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="54"/>
-        <source>Brake Left</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="74"/>
-        <source>Brake Right</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="94"/>
-        <source>Water Rudder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="114"/>
-        <source>Tailhook</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="134"/>
-        <source>Canopy Open</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.cpp" line="126"/>
-        <source>Down</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.cpp" line="126"/>
-        <source>Up</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1042,7 +1042,7 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="120"/>
-        <source>&amp;Flight Controls</source>
+        <source>&amp;Handles &amp;&amp; Brakes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

@@ -22,44 +22,33 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTCONDITIONSWIDGET_H
-#define FLIGHTCONDITIONSWIDGET_H
+#ifndef AIRCRAFTHANDLEDATA_H
+#define AIRCRAFTHANDLEDATA_H
 
-#include <memory>
+#include <QtGlobal>
+#include <QFlags>
 
-#include <QDialog>
+#include "SimType.h"
+#include "TimeVariableData.h"
+#include "ModelLib.h"
 
-class QShowEvent;
-class QHideEvent;
-
-class SkyConnectIntf;
-class FlightConditionsWidgetPrivate;
-
-namespace Ui {
-class FlightConditionsWidget;
-}
-
-class FlightConditionsWidget : public QDialog
+struct MODEL_API AircraftHandleData : public TimeVariableData
 {
-    Q_OBJECT
-public:
-    explicit FlightConditionsWidget(SkyConnectIntf &skyConnect, QWidget *parent = nullptr);
-    virtual ~FlightConditionsWidget();
+    bool gearHandlePosition;
+    qint16 brakeLeftPosition;
+    qint16 brakeRightPosition;
+    // Implementation note: the water rudder can also have negative (-100.0) values,
+    // hence hence the type qint16 (position) which also supports negative values
+    qint16 waterRudderHandlePosition;
+    quint8 tailhookPosition;
+    quint8 canopyOpen;
 
-protected:
-    void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
+    AircraftHandleData() noexcept;
+    AircraftHandleData(AircraftHandleData &&) = default;
+    AircraftHandleData(const AircraftHandleData &) = default;
+    AircraftHandleData &operator= (const AircraftHandleData &) = default;
 
-private:
-    Q_DISABLE_COPY(FlightConditionsWidget)
-    std::unique_ptr<FlightConditionsWidgetPrivate> d;
-    std::unique_ptr<Ui::FlightConditionsWidget> ui;
-
-    void initUi();
-    void updateUi();
-
-private slots:
-    void updateInfoUi();
+    static const AircraftHandleData NullAircraftHandleData;
 };
 
-#endif // FLIGHTCONDITIONSWIDGET_H
+#endif // AIRCRAFTHANDLEDATA_H

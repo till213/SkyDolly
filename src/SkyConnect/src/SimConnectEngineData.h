@@ -36,10 +36,9 @@
  *
  * Implementation note: this struct needs to be packed.
  */
-#pragma pack(1)
+#pragma pack(push, 1)
 struct SimConnectEngineData
 {
-    // General engine
     double throttleLeverPosition1;
     double throttleLeverPosition2;
     double throttleLeverPosition3;
@@ -92,6 +91,7 @@ struct SimConnectEngineData
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
-} __attribute__ ((packed));
+};
+#pragma pack(pop)
 
 #endif // SIMCONNECTENGINEDATA_H

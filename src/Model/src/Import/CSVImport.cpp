@@ -251,36 +251,36 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft) noexcept
 //                            aircraftData.flapsHandleIndex = intValue;
 //                        }
                     // Gear, brakes & handles
-                    } else if (header == SimVar::GearHandlePosition) {
-                        intValue = values.at(columnIndex).toInt(&ok);
-                        if (ok) {
-                            aircraftData.gearHandlePosition = intValue == 1 ? true : false;
-                        }
-                    } else if (header == SimVar::BrakeLeftPosition) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.brakeLeftPosition = doubleValue;
-                        }
-                    } else if (header == SimVar::BrakeRightPosition) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.brakeRightPosition = doubleValue;
-                        }
-                    } else if (header == SimVar::WaterRudderHandlePosition) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.waterRudderHandlePosition = doubleValue;
-                        }
-                    } else if (header == SimVar::TailhookPosition) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.tailhookPosition = doubleValue;
-                        }
-                    } else if (header == SimVar::CanopyOpen) {
-                        doubleValue = values.at(columnIndex).toDouble(&ok);
-                        if (ok) {
-                            aircraftData.canopyOpen = doubleValue;
-                        }
+//                    } else if (header == SimVar::GearHandlePosition) {
+//                        intValue = values.at(columnIndex).toInt(&ok);
+//                        if (ok) {
+//                            aircraftData.gearHandlePosition = intValue == 1 ? true : false;
+//                        }
+//                    } else if (header == SimVar::BrakeLeftPosition) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.brakeLeftPosition = doubleValue;
+//                        }
+//                    } else if (header == SimVar::BrakeRightPosition) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.brakeRightPosition = doubleValue;
+//                        }
+//                    } else if (header == SimVar::WaterRudderHandlePosition) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.waterRudderHandlePosition = doubleValue;
+//                        }
+//                    } else if (header == SimVar::TailhookPosition) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.tailhookPosition = doubleValue;
+//                        }
+//                    } else if (header == SimVar::CanopyOpen) {
+//                        doubleValue = values.at(columnIndex).toDouble(&ok);
+//                        if (ok) {
+//                            aircraftData.canopyOpen = doubleValue;
+//                        }
                     // Lights
                     } else if (header == SimVar::LightStates) {
                         intValue = values.at(columnIndex).toInt(&ok);
