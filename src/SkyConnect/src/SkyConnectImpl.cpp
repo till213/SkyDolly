@@ -315,6 +315,9 @@ bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
     if (!currentAircraftData.isNull()) {
         SimConnectAircraftData simConnectAircraftData;
         simConnectAircraftData.fromAircraftData(currentAircraftData);
+
+        qDebug("sizeof(SimConnectAircraftData): %llu", sizeof(SimConnectAircraftData));
+
 #ifdef DEBUG
         qDebug("%f, %f, %f, %f, %f, %f, %lli",
                simConnectAircraftData.longitude, simConnectAircraftData.latitude, simConnectAircraftData.altitude,
