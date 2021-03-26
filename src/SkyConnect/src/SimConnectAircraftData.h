@@ -31,6 +31,12 @@
 #include "../../Kernel/src/SkyMath.h"
 #include "../../Kernel/src/AircraftData.h"
 
+/*!
+ * Simulation variables which represent the aircraft's position, attitude and velocities.
+ *
+ * Implementation note: this struct needs to be packed.
+ */
+#pragma pack(push, 1)
 struct SimConnectAircraftData
 {
     // Aircraft position
@@ -87,7 +93,7 @@ struct SimConnectAircraftData
     double canopyOpen;
 
     // Lights
-    qint64 lightStates;
+    qint32 lightStates;
 
     inline AircraftData toAircraftData() const {
         AircraftData aircraftData;
@@ -141,10 +147,7 @@ struct SimConnectAircraftData
         aircraftData.tailhookPosition = SkyMath::fromPercent(tailhookPosition);
         aircraftData.canopyOpen = SkyMath::fromPercent(canopyOpen);
 
-        // Implementation note: downcast from 64 to 32 bit (QFlags only supports 'int')
-        // This should be sufficient for now, unless there will be more than 32 distinct
-        // lights
-        aircraftData.lightStates = SimTypes::LightStates(static_cast<int>(lightStates));
+        aircraftData.lightStates = SimTypes::LightStates(lightStates);
 
         return aircraftData;
     }
@@ -202,5 +205,6 @@ struct SimConnectAircraftData
 
     static void addToDataDefinition(HANDLE simConnectHandle);
 };
+#pragma pack(pop)
 
 #endif // SIMCONNECTAIRCRAFTDATA_H
