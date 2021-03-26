@@ -29,6 +29,7 @@
 #include <QRandomGenerator>
 
 #include "../../Kernel/src/Settings.h"
+#include "../../Model/src/TimeVariableData.h"
 #include "../../Model/src/World.h"
 #include "../../Model/src/Scenario.h"
 #include "../../Model/src/AircraftData.h"
@@ -108,10 +109,10 @@ void SkyConnectDummy::onRecordSampleRateChanged(SampleRate::SampleRate sampleRat
     Q_UNUSED(sampleRate)
 }
 
-bool SkyConnectDummy::sendAircraftData(qint64 currentTimestamp) noexcept
+bool SkyConnectDummy::sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept
 {
     Q_UNUSED(currentTimestamp)
-    return sendAircraftData();
+    return sendAircraftData(access);
 }
 
 bool SkyConnectDummy::isConnectedWithSim() const noexcept
@@ -149,7 +150,7 @@ void SkyConnectDummy::frenchConnection() noexcept
             this, &SkyConnectDummy::processEvents);
 }
 
-bool SkyConnectDummy::sendAircraftData() noexcept
+bool SkyConnectDummy::sendAircraftData(TimeVariableData::Access access) noexcept
 {
     bool success;
 
@@ -185,8 +186,8 @@ void SkyConnectDummy::recordData() noexcept
 
 void SkyConnectDummy::replay() noexcept
 {
-    if (sendAircraftData()) {
-        emit currentTimestampChanged(getCurrentTimestamp());
+    if (sendAircraftData(TimeVariableData::Access::Linear)) {
+        emit currentTimestampChanged(getCurrentTimestamp(), TimeVariableData::Access::Linear);
     } else {
         stopReplay();
     }

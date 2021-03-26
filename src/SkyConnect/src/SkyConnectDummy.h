@@ -29,6 +29,7 @@
 
 #include <QObject>
 
+#include "../../Model/src/TimeVariableData.h"
 #include "AbstractSkyConnect.h"
 
 struct AircraftData;
@@ -44,17 +45,17 @@ public:
 
 protected:
     virtual void onStartRecording() noexcept override;
-    virtual void onRecordingPaused(bool paused ) noexcept override;
+    virtual void onRecordingPaused(bool paused) noexcept override;
     virtual void onStopRecording() noexcept override;
 
-    virtual void onStartReplay(qint64 currentTimestamp ) noexcept override;
+    virtual void onStartReplay(qint64 currentTimestamp) noexcept override;
     virtual void onReplayPaused(bool paused) noexcept override;
     virtual void onStopReplay() noexcept override;
 
-    virtual void onSeek(qint64 currentTimestamp ) noexcept override;
-    virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate ) noexcept override;
+    virtual void onSeek(qint64 currentTimestamp) noexcept override;
+    virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
 
-    virtual bool sendAircraftData(qint64 currentTimestamp ) noexcept override;
+    virtual bool sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept override;
     virtual bool isConnectedWithSim() const noexcept override;
     virtual bool connectWithSim() noexcept override;
 
@@ -65,7 +66,7 @@ private:
     std::unique_ptr<SkyConnectDummyPrivate> d;
 
     void frenchConnection() noexcept;
-    bool sendAircraftData() noexcept;
+    bool sendAircraftData(TimeVariableData::Access access) noexcept;
     void recordData() noexcept;
     void replay() noexcept;
 
