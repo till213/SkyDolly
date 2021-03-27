@@ -37,6 +37,8 @@ if (WIN32)
             src/SimConnectSecondaryFlightControlData.h
             src/SimConnectAircraftHandleData.cpp
             src/SimConnectAircraftHandleData.h
+            src/SimConnectLightData.cpp
+            src/SimConnectLightData.h
             src/SimConnectAircraftInfo.cpp
             src/SimConnectAircraftInfo.h
             src/EventWidget.cpp

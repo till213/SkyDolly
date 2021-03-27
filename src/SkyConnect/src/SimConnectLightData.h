@@ -22,28 +22,42 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QFlags>
+#ifndef SIMCONNECTLIGHTDATA_H
+#define SIMCONNECTLIGHTDATA_H
 
-#include "SimType.h"
-#include "AircraftData.h"
+#include <windows.h>
 
-// PUBLIC
+#include "../../Kernel/src/SkyMath.h"
+#include "../../Model/src/SimType.h"
+#include "../../Model/src/LightData.h"
 
-AircraftData::AircraftData(double latitude, double longitude, double altitude) noexcept
-    : TimeVariableData(),
-      pitch(0.0),
-      bank(0.0),
-      heading(0.0),
-      velocityBodyX(0.0),
-      velocityBodyY(0.0),
-      velocityBodyZ(0.0),
-      rotationVelocityBodyX(0.0),
-      rotationVelocityBodyY(0.0),
-      rotationVelocityBodyZ(0.0)
+/*!
+ * Simulation variables which represent aircraft lights, e.g. navigation light
+ * and taxi light.
+ *
+ * Implementation note: this struct needs to be packed.
+ */
+#pragma pack(push, 1)
+struct SimConnectLightData
 {
-    this->latitude = latitude;
-    this->longitude = longitude;
-    this->altitude = altitude;
-}
+    qint32 lightStates;
 
-const AircraftData AircraftData::NullAircraftData = AircraftData(0.0, 0.0, 0.0);
+    inline LightData toLightData() const noexcept
+    {
+        LightData lightData;
+
+        lightData.lightStates = SimType::LightStates(lightStates);
+
+        return lightData;
+    }
+
+    inline void fromLightData(const LightData &lightData) noexcept
+    {
+        lightStates = lightData.lightStates;
+    }
+
+    static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
+};
+#pragma pack(pop)
+
+#endif // SIMCONNECTLIGHTDATA_H

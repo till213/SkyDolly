@@ -60,9 +60,9 @@ target_sources(UserInterface
         src/Widgets/FlightConditionsWidget.cpp
         src/Widgets/FlightConditionsWidget.h
         src/Widgets/FlightConditionsWidget.ui
-        src/Widgets/LightVariablesWidget.cpp
-        src/Widgets/LightVariablesWidget.h
-        src/Widgets/LightVariablesWidget.ui
+        src/Widgets/LightWidget.cpp
+        src/Widgets/LightWidget.h
+        src/Widgets/LightWidget.ui
 )
 
 target_link_libraries(UserInterface PRIVATE ${USERINTERFACE_LIBS})

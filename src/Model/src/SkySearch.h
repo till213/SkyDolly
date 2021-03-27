@@ -155,25 +155,31 @@ namespace SkySearch {
     {
         int index = startIndex;
         int size = data.size();
-        if (size > 0 && timestamp <= data.last().timestamp) {
-            if (index != InvalidIndex) {
-                if (timestamp < data.at(index).timestamp) {
-                    // The timestamp was moved to front ("rewind"), so search the
-                    // array until and including the current index
-                    index = BinaryIntervalSearch;
-                } else if (timestamp - BinaryIntervalSearchThreshold > data.at(index).timestamp) {
+        if (size > 0) {
+            if (timestamp < data.last().timestamp) {
+                if (index != InvalidIndex) {
+                    if (timestamp < data.at(index).timestamp) {
+                        // The timestamp was moved to front ("rewind"), so search the
+                        // array until and including the current index
+                        index = BinaryIntervalSearch;
+                    } else if (timestamp - BinaryIntervalSearchThreshold > data.at(index).timestamp) {
+                        index = BinaryIntervalSearch;
+                    }
+                } else {
+                    // Current index not yet initialised, so search the entire array
                     index = BinaryIntervalSearch;
                 }
             } else {
-                // Current index not yet initialised, so search the entire array
-                index = BinaryIntervalSearch;
+                // The given timestamp lies past the last sample data
+                // -> return the last sample data
+                index = data.count() - 1;
             }
         } else {
             // No data yet, or timestamp not between given range
             index = InvalidIndex;
         }
 
-        if (index != InvalidIndex) {
+        if (index != InvalidIndex && index != (data.count() - 1)) {
 
             // If the given timestamp lies "in the future" (as seen from the timetamp of the current index
             // the we assume that time has progressed "only a little" (normal replay) and we simply do
@@ -206,7 +212,6 @@ namespace SkySearch {
             }
 
         }
-
         return index;
     }
 

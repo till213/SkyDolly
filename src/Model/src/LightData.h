@@ -22,28 +22,26 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#ifndef LIGHTDATA_H
+#define LIGHTDATA_H
+
+#include <QtGlobal>
 #include <QFlags>
 
 #include "SimType.h"
-#include "AircraftData.h"
+#include "TimeVariableData.h"
+#include "ModelLib.h"
 
-// PUBLIC
-
-AircraftData::AircraftData(double latitude, double longitude, double altitude) noexcept
-    : TimeVariableData(),
-      pitch(0.0),
-      bank(0.0),
-      heading(0.0),
-      velocityBodyX(0.0),
-      velocityBodyY(0.0),
-      velocityBodyZ(0.0),
-      rotationVelocityBodyX(0.0),
-      rotationVelocityBodyY(0.0),
-      rotationVelocityBodyZ(0.0)
+struct MODEL_API LightData : public TimeVariableData
 {
-    this->latitude = latitude;
-    this->longitude = longitude;
-    this->altitude = altitude;
-}
+    SimType::LightStates lightStates;
 
-const AircraftData AircraftData::NullAircraftData = AircraftData(0.0, 0.0, 0.0);
+    LightData(SimType::LightStates lightStates = SimType::LightState::None) noexcept;
+    LightData(LightData &&) = default;
+    LightData(const LightData &) = default;
+    LightData &operator= (const LightData &) = default;
+
+    static const LightData NullLightData;
+};
+
+#endif // LIGHTDATA_H

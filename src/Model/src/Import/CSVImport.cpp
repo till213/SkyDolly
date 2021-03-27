@@ -282,11 +282,11 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft) noexcept
 //                            aircraftData.canopyOpen = doubleValue;
 //                        }
                     // Lights
-                    } else if (header == SimVar::LightStates) {
-                        intValue = values.at(columnIndex).toInt(&ok);
-                        if (ok) {
-                            aircraftData.lightStates = SimType::LightStates(intValue);
-                        }
+//                    } else if (header == SimVar::LightStates) {
+//                        intValue = values.at(columnIndex).toInt(&ok);
+//                        if (ok) {
+//                            aircraftData.lightStates = SimType::LightStates(intValue);
+//                        }
                     // Timestamp
                     } else if (header == SimVar::Timestamp) {
                         doubleValue = values.at(columnIndex).toDouble(&ok);

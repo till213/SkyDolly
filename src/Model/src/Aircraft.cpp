@@ -36,6 +36,7 @@
 #include "PrimaryFlightControl.h"
 #include "SecondaryFlightControl.h"
 #include "AircraftHandle.h"
+#include "Light.h"
 #include "Aircraft.h"
 
 class AircraftPrivate
@@ -50,6 +51,7 @@ public:
     PrimaryFlightControl primaryFlightControl;
     SecondaryFlightControl secondaryFlightControl;
     AircraftHandle aircraftHandle;
+    Light light;
     AircraftInfo aircraftInfo;
 
     QVector<AircraftData> aircraftData;
@@ -108,6 +110,16 @@ const AircraftHandle &Aircraft::getAircraftHandleConst() const
 AircraftHandle &Aircraft::getAircraftHandle() const
 {
     return d->aircraftHandle;
+}
+
+const Light &Aircraft::getLightConst() const
+{
+    return d->light;
+}
+
+Light &Aircraft::getLight() const
+{
+    return d->light;
 }
 
 void Aircraft::setAircraftInfo(AircraftInfo aircraftInfo) noexcept
@@ -172,7 +184,7 @@ const AircraftData &Aircraft::interpolateAircraftData(qint64 timestamp) const no
 
             double tn = SkySearch::normaliseTimestamp(*p1, *p2, timestamp);
 
-            // Aircraft position
+            // Aircraft position & attitude
 
             // Latitude: [-90, 90] - no discontinuity at +/- 90
             d->currentAircraftData.latitude  = SkyMath::interpolateHermite(p0->latitude, p1->latitude, p2->latitude, p3->latitude, tn, Tension);
@@ -180,7 +192,6 @@ const AircraftData &Aircraft::interpolateAircraftData(qint64 timestamp) const no
             d->currentAircraftData.longitude = SkyMath::interpolateHermite180(p0->longitude, p1->longitude, p2->longitude, p3->longitude, tn, Tension);
             // Altitude [open range]
             d->currentAircraftData.altitude  = SkyMath::interpolateHermite(p0->altitude, p1->altitude, p2->altitude, p3->altitude, tn, Tension);
-
             // Pitch: [-90, 90] - no discontinuity at +/- 90
             d->currentAircraftData.pitch = SkyMath::interpolateHermite(p0->pitch, p1->pitch, p2->pitch, p3->pitch, tn, Tension);
             // Bank: [-180, 180] - discontinuity at +/- 180
@@ -195,9 +206,6 @@ const AircraftData &Aircraft::interpolateAircraftData(qint64 timestamp) const no
             d->currentAircraftData.rotationVelocityBodyX = SkyMath::interpolateLinear(p1->rotationVelocityBodyX, p2->rotationVelocityBodyX, tn);
             d->currentAircraftData.rotationVelocityBodyY = SkyMath::interpolateLinear(p1->rotationVelocityBodyY, p2->rotationVelocityBodyY, tn);
             d->currentAircraftData.rotationVelocityBodyZ = SkyMath::interpolateLinear(p1->rotationVelocityBodyZ, p2->rotationVelocityBodyZ, tn);
-
-            // No interpolation for light states
-            d->currentAircraftData.lightStates = p1->lightStates;
 
             d->currentAircraftData.timestamp = timestamp;
 

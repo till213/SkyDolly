@@ -39,6 +39,7 @@ struct AircraftData;
 struct PrimaryFlightControl;
 struct SecondaryFlightControl;
 struct AircraftHandle;
+struct Light;
 class AircraftPrivate;
 
 class MODEL_API Aircraft : public QObject
@@ -59,6 +60,9 @@ public:
 
     const AircraftHandle &getAircraftHandleConst() const;
     AircraftHandle &getAircraftHandle() const;
+
+    const Light &getLightConst() const;
+    Light &getLight() const;
 
     void setAircraftInfo(AircraftInfo aircraftInfo) noexcept;
     const AircraftInfo &getAircraftInfo() const noexcept;

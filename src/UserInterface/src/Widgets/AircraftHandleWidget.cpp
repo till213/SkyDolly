@@ -128,12 +128,13 @@ void AircraftHandleWidget::updateUi(qint64 timestamp, TimeVariableData::Access a
         colorName = d->DisabledTextColor.name();
     }
 
-    ui->gearLineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->brakeLeftLineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->brakeRightLineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->waterRudderLineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->tailhookLineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->canopyOpenLineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
+    const QString css{QString("color: %1;").arg(colorName)};
+    ui->gearLineEdit->setStyleSheet(css);
+    ui->brakeLeftLineEdit->setStyleSheet(css);
+    ui->brakeRightLineEdit->setStyleSheet(css);
+    ui->waterRudderLineEdit->setStyleSheet(css);
+    ui->tailhookLineEdit->setStyleSheet(css);
+    ui->canopyOpenLineEdit->setStyleSheet(css);
 }
 
 const AircraftHandleData &AircraftHandleWidget::getCurrentAircraftHandleData(qint64 timestamp, TimeVariableData::Access access) const

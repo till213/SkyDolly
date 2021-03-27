@@ -37,6 +37,10 @@ target_sources(Model
         src/AircraftHandle.h
         src/AircraftHandleData.cpp
         src/AircraftHandleData.h
+        src/Light.cpp
+        src/Light.h
+        src/LightData.cpp
+        src/LightData.h
         src/AircraftInfo.cpp
         src/AircraftInfo.h
         src/SimVar.cpp
