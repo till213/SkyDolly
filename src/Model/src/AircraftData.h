@@ -28,7 +28,6 @@
 #include <QtGlobal>
 #include <QFlags>
 
-#include "SimType.h"
 #include "TimeVariableData.h"
 #include "ModelLib.h"
 
@@ -40,7 +39,6 @@ struct MODEL_API AircraftData : public TimeVariableData
     double latitude;
     double longitude;
     double altitude;
-
     double pitch;
     double bank;
     double heading;
@@ -52,9 +50,6 @@ struct MODEL_API AircraftData : public TimeVariableData
     double rotationVelocityBodyX;
     double rotationVelocityBodyY;
     double rotationVelocityBodyZ;
-
-    // Lights
-    SimType::LightStates lightStates;
 
     AircraftData(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
 

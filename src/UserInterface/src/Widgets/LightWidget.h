@@ -22,28 +22,48 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QFlags>
+#ifndef LIGHTWIDGET_H
+#define LIGHTWIDGET_H
 
-#include "SimType.h"
-#include "AircraftData.h"
+#include <QWidget>
 
-// PUBLIC
+#include "../../../Model/src/TimeVariableData.h"
 
-AircraftData::AircraftData(double latitude, double longitude, double altitude) noexcept
-    : TimeVariableData(),
-      pitch(0.0),
-      bank(0.0),
-      heading(0.0),
-      velocityBodyX(0.0),
-      velocityBodyY(0.0),
-      velocityBodyZ(0.0),
-      rotationVelocityBodyX(0.0),
-      rotationVelocityBodyY(0.0),
-      rotationVelocityBodyZ(0.0)
-{
-    this->latitude = latitude;
-    this->longitude = longitude;
-    this->altitude = altitude;
+class QShowEvent;
+class QHideEvent;
+
+class SkyConnectIntf;
+class AircraftData;
+class LightData;
+class LightWidgetPrivate;
+
+namespace Ui {
+class LightWidget;
 }
 
-const AircraftData AircraftData::NullAircraftData = AircraftData(0.0, 0.0, 0.0);
+class LightWidget : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit LightWidget(SkyConnectIntf &skyConnect, QWidget *parent);
+    virtual ~LightWidget();
+
+protected:
+    void showEvent(QShowEvent *event) override;
+    void hideEvent(QHideEvent *event) override;
+
+private:
+    Q_DISABLE_COPY(LightWidget)
+    std::unique_ptr<LightWidgetPrivate> d;
+    std::unique_ptr<Ui::LightWidget> ui;
+
+    void initUi();
+    void updateUi(qint64 timestamp, TimeVariableData::Access access);
+    const LightData &getCurrentLightData(qint64 timestamp, TimeVariableData::Access access) const;
+
+private slots:
+    void handleRecordedData();
+    void handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access);
+};
+
+#endif // LIGHTWIDGET_H

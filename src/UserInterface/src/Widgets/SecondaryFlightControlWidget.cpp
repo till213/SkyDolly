@@ -129,12 +129,13 @@ void SecondaryFlightControlWidget::updateUi(qint64 timestamp, TimeVariableData::
         colorName = d->DisabledTextColor.name();
     }
 
-    ui->leadingEdgeFlapsLeftLineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->leadingEdgeFlapsRightLineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->trailingEdgeFlapsLeftLineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->trailingEdgeFlapsRightLineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->spoilerLineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->flapsPositionLineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
+    const QString css{QString("color: %1;").arg(colorName)};
+    ui->leadingEdgeFlapsLeftLineEdit->setStyleSheet(css);
+    ui->leadingEdgeFlapsRightLineEdit->setStyleSheet(css);
+    ui->trailingEdgeFlapsLeftLineEdit->setStyleSheet(css);
+    ui->trailingEdgeFlapsRightLineEdit->setStyleSheet(css);
+    ui->spoilerLineEdit->setStyleSheet(css);
+    ui->flapsPositionLineEdit->setStyleSheet(css);
 }
 
 const SecondaryFlightControlData &SecondaryFlightControlWidget::getCurrentSecondaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const

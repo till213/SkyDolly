@@ -140,18 +140,19 @@ void EngineWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
         colorName = d->DisabledTextColor.name();
     }
 
-    ui->throttle1LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->throttle2LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->throttle3LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->throttle4LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->propeller1LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->propeller2LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->propeller3LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->propeller4LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->mixture1LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->mixture2LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->mixture3LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->mixture4LineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
+    const QString css{QString("color: %1;").arg(colorName)};
+    ui->throttle1LineEdit->setStyleSheet(css);
+    ui->throttle2LineEdit->setStyleSheet(css);
+    ui->throttle3LineEdit->setStyleSheet(css);
+    ui->throttle4LineEdit->setStyleSheet(css);
+    ui->propeller1LineEdit->setStyleSheet(css);
+    ui->propeller2LineEdit->setStyleSheet(css);
+    ui->propeller3LineEdit->setStyleSheet(css);
+    ui->propeller4LineEdit->setStyleSheet(css);
+    ui->mixture1LineEdit->setStyleSheet(css);
+    ui->mixture2LineEdit->setStyleSheet(css);
+    ui->mixture3LineEdit->setStyleSheet(css);
+    ui->mixture4LineEdit->setStyleSheet(css);
 }
 
 const EngineData &EngineWidget::getCurrentEngineData(qint64 timestamp, TimeVariableData::Access access) const

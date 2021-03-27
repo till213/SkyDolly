@@ -55,9 +55,6 @@ struct SimConnectAircraftData
     double rotationVelocityBodyY;
     double rotationVelocityBodyZ;
 
-    // Lights
-    qint32 lightStates;
-
     inline AircraftData toAircraftData() const noexcept
     {
         AircraftData aircraftData;
@@ -75,8 +72,6 @@ struct SimConnectAircraftData
         aircraftData.rotationVelocityBodyX = rotationVelocityBodyX;
         aircraftData.rotationVelocityBodyY = rotationVelocityBodyY;
         aircraftData.rotationVelocityBodyZ = rotationVelocityBodyZ;
-
-        aircraftData.lightStates = SimType::LightStates(lightStates);
 
         return aircraftData;
     }
@@ -96,8 +91,6 @@ struct SimConnectAircraftData
         rotationVelocityBodyX = aircraftData.rotationVelocityBodyX;
         rotationVelocityBodyY = aircraftData.rotationVelocityBodyY;
         rotationVelocityBodyZ = aircraftData.rotationVelocityBodyZ;
-
-        lightStates = aircraftData.lightStates;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;

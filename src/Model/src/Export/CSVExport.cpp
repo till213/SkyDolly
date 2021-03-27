@@ -139,7 +139,7 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
 //                              QString::number(data.waterRudderHandlePosition) % Const::Sep %
 //                              QString::number(data.tailhookPosition) % Const::Sep %
 //                              QString::number(data.canopyOpen) % Const::Sep %
-                              QString::number(data.lightStates) % Const::Sep %
+//                              QString::number(data.lightStates) % Const::Sep %
                               QString::number(data.timestamp) % Const::Ln;
                 if (!io.write(csv.toUtf8())) {
                     ok = false;

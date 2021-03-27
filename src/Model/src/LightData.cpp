@@ -22,46 +22,14 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LIGHTVARIABLESWIDGET_H
-#define LIGHTVARIABLESWIDGET_H
+#include "LightData.h"
 
-#include <memory>
+// PUBLIC
 
-#include <QWidget>
-
-class QShowEvent;
-class QHideEvent;
-
-class SkyConnectIntf;
-class AircraftData;
-class LightVariablesWidgetPrivate;
-
-namespace Ui {
-class LightVariablesWidget;
+LightData::LightData(SimType::LightStates theLightStates) noexcept
+    : TimeVariableData(),
+      lightStates(theLightStates)
+{
 }
 
-class LightVariablesWidget : public QWidget
-{
-    Q_OBJECT
-public:
-    explicit LightVariablesWidget(SkyConnectIntf &skyConnect, QWidget *parent);
-    virtual ~LightVariablesWidget();
-
-protected:
-    void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
-
-private:
-    Q_DISABLE_COPY(LightVariablesWidget)
-    std::unique_ptr<LightVariablesWidgetPrivate> d;
-    std::unique_ptr<Ui::LightVariablesWidget> ui;
-
-    void initUi();
-    void updateUi();
-    const AircraftData &getCurrentAircraftData() const;
-
-private slots:
-    void updateLightDataUi();
-};
-
-#endif // LIGHTVARIABLESWIDGET_H
+const LightData LightData::NullLightData = LightData();

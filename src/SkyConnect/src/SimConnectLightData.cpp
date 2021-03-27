@@ -22,28 +22,17 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QFlags>
+#include <windows.h>
 
-#include "SimType.h"
-#include "AircraftData.h"
+#include <SimConnect.h>
 
-// PUBLIC
+#include "../../Kernel/src/Enum.h"
+#include "../../Model/src/SimVar.h"
+#include "SimConnectType.h"
+#include "SimConnectLightData.h"
 
-AircraftData::AircraftData(double latitude, double longitude, double altitude) noexcept
-    : TimeVariableData(),
-      pitch(0.0),
-      bank(0.0),
-      heading(0.0),
-      velocityBodyX(0.0),
-      velocityBodyY(0.0),
-      velocityBodyZ(0.0),
-      rotationVelocityBodyX(0.0),
-      rotationVelocityBodyY(0.0),
-      rotationVelocityBodyZ(0.0)
+void SimConnectLightData::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
-    this->latitude = latitude;
-    this->longitude = longitude;
-    this->altitude = altitude;
+    // Lights
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftLightDefinition), SimVar::LightStates, "Mask", ::SIMCONNECT_DATATYPE_INT32);
 }
-
-const AircraftData AircraftData::NullAircraftData = AircraftData(0.0, 0.0, 0.0);

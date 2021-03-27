@@ -126,11 +126,12 @@ void PrimaryFlightControlWidget::updateUi(qint64 timestamp, TimeVariableData::Ac
         colorName = d->DisabledTextColor.name();
     }
 
-    ui->yokeXLineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->yokeYLineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->rudderLineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->elevatorLineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
-    ui->aileronLineEdit->setStyleSheet(QString("color: %1;").arg(colorName));
+    const QString css{QString("color: %1;").arg(colorName)};
+    ui->yokeXLineEdit->setStyleSheet(css);
+    ui->yokeYLineEdit->setStyleSheet(css);
+    ui->rudderLineEdit->setStyleSheet(css);
+    ui->elevatorLineEdit->setStyleSheet(css);
+    ui->aileronLineEdit->setStyleSheet(css);
 }
 
 const PrimaryFlightControlData &PrimaryFlightControlWidget::getCurrentPrimaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const
