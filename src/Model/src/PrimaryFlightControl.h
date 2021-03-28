@@ -49,7 +49,7 @@ public:
     const QVector<PrimaryFlightControlData> getAll() const noexcept;
     const PrimaryFlightControlData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
-    void clear();
+    void clear() noexcept;
 
 signals:
     void dataChanged();

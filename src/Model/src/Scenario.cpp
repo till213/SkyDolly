@@ -62,12 +62,12 @@ Scenario::~Scenario() noexcept
 {
 }
 
-const Aircraft &Scenario::getUserAircraftConst() const
+const Aircraft &Scenario::getUserAircraftConst() const noexcept
 {
     return *(*d->aircrafts.cbegin());
 }
 
-Aircraft &Scenario::getUserAircraft() const
+Aircraft &Scenario::getUserAircraft() const noexcept
 {
     return *(*d->aircrafts.cbegin());
 }
@@ -78,14 +78,21 @@ void Scenario::setFlightCondition(FlightCondition flightCondition) noexcept
     emit flightConditionChanged();
 }
 
-const FlightCondition &Scenario::getFlightConditionConst() const
+const FlightCondition &Scenario::getFlightConditionConst() const noexcept
 {
     return d->flightCondition;
 }
 
-FlightCondition &Scenario::getFlightCondition() const
+FlightCondition &Scenario::getFlightCondition() const noexcept
 {
     return d->flightCondition;
+}
+
+qint64 Scenario::getTotalDuration() const noexcept
+{
+    // For now the total duration is the duration of the
+    // (one and only) user aircraft
+    return d->aircrafts.at(0)->getDuration();
 }
 
 // PRIVATE
@@ -98,4 +105,3 @@ void Scenario::frenchConnection() noexcept
     connect(&userAircraft, &Aircraft::dataChanged,
             this, &Scenario::aircraftDataChanged);
 }
-

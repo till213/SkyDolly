@@ -37,7 +37,7 @@ class AircraftHandlePrivate
 {
 public:
     AircraftHandlePrivate() noexcept
-        : currentTimestamp(TimeVariableData::InvalidTimestamp),
+        : currentTimestamp(TimeVariableData::InvalidTime),
           currentAccess(TimeVariableData::Access::Linear),
           currentIndex(SkySearch::InvalidIndex)
     {}
@@ -94,10 +94,10 @@ const QVector<AircraftHandleData> AircraftHandle::getAll() const noexcept
     return d->aircraftHandleData;
 }
 
-void AircraftHandle::clear()
+void AircraftHandle::clear() noexcept
 {
     d->aircraftHandleData.clear();
-    d->currentTimestamp = TimeVariableData::InvalidTimestamp;
+    d->currentTimestamp = TimeVariableData::InvalidTime;
     d->currentIndex = SkySearch::InvalidIndex;
     emit dataChanged();
 }

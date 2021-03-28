@@ -25,6 +25,6 @@
 #include "TimeVariableData.h"
 
 TimeVariableData::TimeVariableData() noexcept
-    : timestamp(InvalidTimestamp)
+    : timestamp(InvalidTime)
 {
 }

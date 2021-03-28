@@ -180,7 +180,7 @@ const LightData &LightWidget::getCurrentLightData(qint64 timestamp, TimeVariable
     if (d->skyConnect.getState() == Connect::State::Recording) {
         return aircraft.getLightConst().getLast();
     } else {
-        if (timestamp != TimeVariableData::InvalidTimestamp) {
+        if (timestamp != TimeVariableData::InvalidTime) {
             return aircraft.getLightConst().interpolate(timestamp, access);
         } else {
             return aircraft.getLightConst().interpolate(d->skyConnect.getCurrentTimestamp(), access);
@@ -192,7 +192,7 @@ const LightData &LightWidget::getCurrentLightData(qint64 timestamp, TimeVariable
 
 void LightWidget::handleRecordedData()
 {
-    updateUi(TimeVariableData::InvalidTimestamp, TimeVariableData::Access::Linear);
+    updateUi(TimeVariableData::InvalidTime, TimeVariableData::Access::Linear);
 }
 
 void LightWidget::handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access)

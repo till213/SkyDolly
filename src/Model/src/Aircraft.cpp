@@ -32,21 +32,27 @@
 #include "TimeVariableData.h"
 #include "SkySearch.h"
 #include "Engine.h"
+#include "EngineData.h"
 #include "AircraftInfo.h"
 #include "AircraftData.h"
 #include "PrimaryFlightControl.h"
+#include "PrimaryFlightControlData.h"
 #include "SecondaryFlightControl.h"
+#include "SecondaryFlightControlData.h"
 #include "AircraftHandle.h"
+#include "AircraftHandleData.h"
 #include "Light.h"
+#include "LightData.h"
 #include "Aircraft.h"
 
 class AircraftPrivate
 {
 public:
     AircraftPrivate() noexcept
-        : currentTimestamp(TimeVariableData::InvalidTimestamp),
+        : currentTimestamp(TimeVariableData::InvalidTime),
           currentAccess(TimeVariableData::Access::Linear),
-          currentIndex(SkySearch::InvalidIndex)
+          currentIndex(SkySearch::InvalidIndex),
+          duration(TimeVariableData::InvalidTime)
     {}
 
     Engine engine;
@@ -61,6 +67,7 @@ public:
     TimeVariableData::Access currentAccess;
     AircraftData currentAircraftData;
     mutable int currentIndex;
+    mutable qint64 duration;
 };
 
 // PUBLIC
@@ -75,52 +82,52 @@ Aircraft::~Aircraft() noexcept
 {
 }
 
-const Engine &Aircraft::getEngineConst() const
+const Engine &Aircraft::getEngineConst() const noexcept
 {
     return d->engine;
 }
 
-Engine &Aircraft::getEngine() const
+Engine &Aircraft::getEngine() const noexcept
 {
     return d->engine;
 }
 
-const PrimaryFlightControl &Aircraft::getPrimaryFlightControlConst() const
+const PrimaryFlightControl &Aircraft::getPrimaryFlightControlConst() const noexcept
 {
     return d->primaryFlightControl;
 }
 
-PrimaryFlightControl &Aircraft::getPrimaryFlightControl() const
+PrimaryFlightControl &Aircraft::getPrimaryFlightControl() const noexcept
 {
     return d->primaryFlightControl;
 }
 
-const SecondaryFlightControl &Aircraft::getSecondaryFlightControlConst() const
+const SecondaryFlightControl &Aircraft::getSecondaryFlightControlConst() const noexcept
 {
     return d->secondaryFlightControl;
 }
 
-SecondaryFlightControl &Aircraft::getSecondaryFlightControl() const
+SecondaryFlightControl &Aircraft::getSecondaryFlightControl() const noexcept
 {
     return d->secondaryFlightControl;
 }
 
-const AircraftHandle &Aircraft::getAircraftHandleConst() const
+const AircraftHandle &Aircraft::getAircraftHandleConst() const noexcept
 {
     return d->aircraftHandle;
 }
 
-AircraftHandle &Aircraft::getAircraftHandle() const
+AircraftHandle &Aircraft::getAircraftHandle() const noexcept
 {
     return d->aircraftHandle;
 }
 
-const Light &Aircraft::getLightConst() const
+const Light &Aircraft::getLightConst() const noexcept
 {
     return d->light;
 }
 
-Light &Aircraft::getLight() const
+Light &Aircraft::getLight() const noexcept
 {
     return d->light;
 }
@@ -167,7 +174,7 @@ const QVector<AircraftData> Aircraft::getAll() const noexcept
     return d->aircraftData;
 }
 
-void Aircraft::clear()
+void Aircraft::clear() noexcept
 {
     d->aircraftData.clear();
     d->engine.clear();
@@ -176,7 +183,7 @@ void Aircraft::clear()
     d->aircraftHandle.clear();
     d->light.clear();
     d->aircraftInfo.clear();
-    d->currentTimestamp = TimeVariableData::InvalidTimestamp;
+    d->currentTimestamp = TimeVariableData::InvalidTime;
     d->currentIndex = SkySearch::InvalidIndex;
 
     emit dataChanged();
@@ -202,14 +209,14 @@ const AircraftData &Aircraft::interpolate(qint64 timestamp, TimeVariableData::Ac
             d->currentIndex = SkySearch::updateStartIndex(d->aircraftData, d->currentIndex, timestamp);
             if (d->currentIndex != SkySearch::InvalidIndex) {
                 p1 = &d->aircraftData.at(d->currentIndex);
-                p2 = p1;
+                p0 = p2 = p3 = p1;
                 tn = 0.0;
             } else {
-                p1 = p2 = nullptr;
+                p0 = p1 = p2 = p3 = nullptr;
             }
             break;
         default:
-            p1 = p2 = nullptr;
+            p0 = p1 = p2 = p3 = nullptr;
             break;
         }
 
@@ -250,4 +257,30 @@ const AircraftData &Aircraft::interpolate(qint64 timestamp, TimeVariableData::Ac
 #endif
     }
     return d->currentAircraftData;
+}
+
+qint64 Aircraft::getDuration() const noexcept
+{
+    if (d->duration == TimeVariableData::InvalidTime) {
+        d->duration = 0;
+        if (d->aircraftData.count() > 0) {
+            d->duration = d->aircraftData.last().timestamp;
+        }
+        if (d->engine.getAll().count() > 0) {
+            d->duration = qMax(d->engine.getLast().timestamp, d->duration);
+        }
+        if (d->primaryFlightControl.getAll().count() > 0) {
+            d->duration = qMax(d->primaryFlightControl.getLast().timestamp, d->duration);
+        }
+        if (d->secondaryFlightControl.getAll().count() > 0) {
+            d->duration = qMax(d->secondaryFlightControl.getLast().timestamp, d->duration);
+        }
+        if (d->aircraftHandle.getAll().count() > 0) {
+            d->duration = qMax(d->aircraftHandle.getLast().timestamp, d->duration);
+        }
+        if (d->light.getAll().count() > 0) {
+            d->duration = qMax(d->light.getLast().timestamp, d->duration);
+        }
+    }
+    return d->duration;
 }

@@ -37,7 +37,7 @@ class SecondaryFlightControlPrivate
 {
 public:
     SecondaryFlightControlPrivate() noexcept
-        : currentTimestamp(TimeVariableData::InvalidTimestamp),
+        : currentTimestamp(TimeVariableData::InvalidTime),
           currentAccess(TimeVariableData::Access::Linear),
           currentIndex(SkySearch::InvalidIndex)
     {}
@@ -94,10 +94,10 @@ const QVector<SecondaryFlightControlData> SecondaryFlightControl::getAll() const
     return d->secondaryFlightControlData;
 }
 
-void SecondaryFlightControl::clear()
+void SecondaryFlightControl::clear() noexcept
 {
     d->secondaryFlightControlData.clear();
-    d->currentTimestamp = TimeVariableData::InvalidTimestamp;
+    d->currentTimestamp = TimeVariableData::InvalidTime;
     d->currentIndex = SkySearch::InvalidIndex;
     emit dataChanged();
 }

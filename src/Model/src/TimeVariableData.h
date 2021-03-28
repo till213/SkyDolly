@@ -32,7 +32,7 @@
 
 struct MODEL_API TimeVariableData
 {
-    static inline constexpr qint64 InvalidTimestamp = std::numeric_limits<qint64>::min();
+    static inline constexpr qint64 InvalidTime = std::numeric_limits<qint64>::min();
 
     enum class Access {
         Linear,

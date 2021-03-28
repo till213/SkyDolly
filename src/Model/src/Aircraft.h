@@ -49,20 +49,20 @@ public:
     Aircraft(QObject *parent = nullptr) noexcept;
     virtual ~Aircraft() noexcept;
 
-    const Engine &getEngineConst() const;
-    Engine &getEngine() const;
+    const Engine &getEngineConst() const noexcept;
+    Engine &getEngine() const noexcept;
 
-    const PrimaryFlightControl &getPrimaryFlightControlConst() const;
-    PrimaryFlightControl &getPrimaryFlightControl() const;
+    const PrimaryFlightControl &getPrimaryFlightControlConst() const noexcept;
+    PrimaryFlightControl &getPrimaryFlightControl() const noexcept;
 
-    const SecondaryFlightControl &getSecondaryFlightControlConst() const;
-    SecondaryFlightControl &getSecondaryFlightControl() const;
+    const SecondaryFlightControl &getSecondaryFlightControlConst() const noexcept;
+    SecondaryFlightControl &getSecondaryFlightControl() const noexcept;
 
-    const AircraftHandle &getAircraftHandleConst() const;
-    AircraftHandle &getAircraftHandle() const;
+    const AircraftHandle &getAircraftHandleConst() const noexcept;
+    AircraftHandle &getAircraftHandle() const noexcept;
 
-    const Light &getLightConst() const;
-    Light &getLight() const;
+    const Light &getLightConst() const noexcept;
+    Light &getLight() const noexcept;
 
     void setAircraftInfo(AircraftInfo aircraftInfo) noexcept;
     const AircraftInfo &getAircraftInfo() const noexcept;
@@ -72,7 +72,9 @@ public:
     const QVector<AircraftData> getAll() const noexcept;
     const AircraftData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
-    void clear();
+    qint64 getDuration() const noexcept;
+
+    void clear() noexcept;
 
 signals:
     void infoChanged();
