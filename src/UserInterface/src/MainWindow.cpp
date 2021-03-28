@@ -454,8 +454,8 @@ void MainWindow::updateWindowMenu() noexcept
 void MainWindow::updateMainWindow() noexcept
 {
     Settings &settings = Settings::getInstance();
-    if (settings.isWindowStaysOnTopEnabled() && !(windowFlags() & Qt::WindowStaysOnTopHint)) {
-        Qt::WindowFlags flags = windowFlags();
+    Qt::WindowFlags flags = windowFlags();
+    if (settings.isWindowStaysOnTopEnabled() != (flags & Qt::WindowStaysOnTopHint)) {
         if (Settings::getInstance().isWindowStaysOnTopEnabled()) {
             this->setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
             this->show();
