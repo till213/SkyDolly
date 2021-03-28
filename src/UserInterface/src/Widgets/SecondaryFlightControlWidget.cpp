@@ -145,7 +145,7 @@ const SecondaryFlightControlData &SecondaryFlightControlWidget::getCurrentSecond
     if (d->skyConnect.getState() == Connect::State::Recording) {
         return aircraft.getSecondaryFlightControlConst().getLast();
     } else {
-        if (timestamp != TimeVariableData::InvalidTimestamp) {
+        if (timestamp != TimeVariableData::InvalidTime) {
             return aircraft.getSecondaryFlightControlConst().interpolate(timestamp, access);
         } else {
             return aircraft.getSecondaryFlightControlConst().interpolate(d->skyConnect.getCurrentTimestamp(), access);
@@ -157,7 +157,7 @@ const SecondaryFlightControlData &SecondaryFlightControlWidget::getCurrentSecond
 
 void SecondaryFlightControlWidget::handleRecordedData()
 {
-    updateUi(TimeVariableData::InvalidTimestamp, TimeVariableData::Access::Linear);
+    updateUi(TimeVariableData::InvalidTime, TimeVariableData::Access::Linear);
 }
 
 void SecondaryFlightControlWidget::handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access)

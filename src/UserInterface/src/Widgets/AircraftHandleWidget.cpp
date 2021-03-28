@@ -144,7 +144,7 @@ const AircraftHandleData &AircraftHandleWidget::getCurrentAircraftHandleData(qin
     if (d->skyConnect.getState() == Connect::State::Recording) {
         return aircraft.getAircraftHandleConst().getLast();
     } else {
-        if (timestamp != TimeVariableData::InvalidTimestamp) {
+        if (timestamp != TimeVariableData::InvalidTime) {
             return aircraft.getAircraftHandleConst().interpolate(timestamp, access);
         } else {
             return aircraft.getAircraftHandleConst().interpolate(d->skyConnect.getCurrentTimestamp(), access);
@@ -156,7 +156,7 @@ const AircraftHandleData &AircraftHandleWidget::getCurrentAircraftHandleData(qin
 
 void AircraftHandleWidget::handleRecordedData()
 {
-    updateUi(TimeVariableData::InvalidTimestamp, TimeVariableData::Access::Linear);
+    updateUi(TimeVariableData::InvalidTime, TimeVariableData::Access::Linear);
 }
 
 void AircraftHandleWidget::handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access)

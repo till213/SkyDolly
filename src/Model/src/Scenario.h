@@ -42,12 +42,14 @@ public:
     Scenario(QObject *parent = nullptr) noexcept;
     ~Scenario() noexcept;
 
-    const Aircraft &getUserAircraftConst() const;
-    Aircraft &getUserAircraft() const;
+    const Aircraft &getUserAircraftConst() const noexcept;
+    Aircraft &getUserAircraft() const noexcept;
 
     void setFlightCondition(FlightCondition flightCondition) noexcept;
-    const FlightCondition &getFlightConditionConst() const;
-    FlightCondition &getFlightCondition() const;
+    const FlightCondition &getFlightConditionConst() const noexcept;
+    FlightCondition &getFlightCondition() const noexcept;
+
+    qint64 getTotalDuration() const noexcept;
 
 signals:
     void aircraftInfoChanged();

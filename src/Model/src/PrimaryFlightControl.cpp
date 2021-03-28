@@ -63,7 +63,7 @@ class PrimaryFlightControlPrivate
 {
 public:
     PrimaryFlightControlPrivate() noexcept
-        : currentTimestamp(TimeVariableData::InvalidTimestamp),
+        : currentTimestamp(TimeVariableData::InvalidTime),
           currentAccess(TimeVariableData::Access::Linear),
           currentIndex(SkySearch::InvalidIndex)
     {}
@@ -120,10 +120,10 @@ const QVector<PrimaryFlightControlData> PrimaryFlightControl::getAll() const noe
     return d->primaryFlightControlData;
 }
 
-void PrimaryFlightControl::clear()
+void PrimaryFlightControl::clear() noexcept
 {
     d->primaryFlightControlData.clear();
-    d->currentTimestamp = TimeVariableData::InvalidTimestamp;
+    d->currentTimestamp = TimeVariableData::InvalidTime;
     d->currentIndex = SkySearch::InvalidIndex;
     emit dataChanged();
 }

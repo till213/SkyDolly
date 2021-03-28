@@ -37,7 +37,7 @@ class LightPrivate
 {
 public:
     LightPrivate() noexcept
-        : currentTimestamp(TimeVariableData::InvalidTimestamp),
+        : currentTimestamp(TimeVariableData::InvalidTime),
           currentAccess(TimeVariableData::Access::Linear),
           currentIndex(SkySearch::InvalidIndex)
     {}
@@ -88,10 +88,10 @@ const QVector<LightData> Light::getAll() const noexcept
     return d->lightData;
 }
 
-void Light::clear()
+void Light::clear() noexcept
 {
     d->lightData.clear();
-    d->currentTimestamp = TimeVariableData::InvalidTimestamp;
+    d->currentTimestamp = TimeVariableData::InvalidTime;
     d->currentIndex = SkySearch::InvalidIndex;
     emit dataChanged();
 }

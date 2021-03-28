@@ -37,7 +37,7 @@ class EnginePrivate
 {
 public:
     EnginePrivate() noexcept
-        : currentTimestamp(TimeVariableData::InvalidTimestamp),
+        : currentTimestamp(TimeVariableData::InvalidTime),
           currentAccess(TimeVariableData::Access::Linear),
           currentIndex(SkySearch::InvalidIndex)
     {}
@@ -94,10 +94,10 @@ const QVector<EngineData> Engine::getAll() const noexcept
     return d->engineData;
 }
 
-void Engine::clear()
+void Engine::clear() noexcept
 {
     d->engineData.clear();
-    d->currentTimestamp = TimeVariableData::InvalidTimestamp;
+    d->currentTimestamp = TimeVariableData::InvalidTime;
     d->currentIndex = SkySearch::InvalidIndex;
     emit dataChanged();
 }

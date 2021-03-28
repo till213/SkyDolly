@@ -321,26 +321,30 @@ bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
     bool success;
     const Aircraft &userAircraft = getCurrentScenario().getUserAircraftConst();
 
-    const AircraftData &currentAircraftData = userAircraft.interpolate(getCurrentTimestamp(), access);
-    if (!currentAircraftData.isNull()) {
-        SimConnectAircraftData simConnectAircraftData;
-        simConnectAircraftData.fromAircraftData(currentAircraftData);
-#ifdef DEBUG
-        qDebug("%f, %f, %f, %f, %f, %f, %lli",
-               simConnectAircraftData.longitude, simConnectAircraftData.latitude, simConnectAircraftData.altitude,
-               simConnectAircraftData.pitch, simConnectAircraftData.bank, simConnectAircraftData.heading,
-               getCurrentTimestamp());
-#endif
-        HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionDefinition),
-                                                      ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
-                                                      sizeof(SimConnectAircraftData), &simConnectAircraftData);
-        success = res == S_OK;
+    qint64 currentTimestamp = getCurrentTimestamp();
 
-        // For as long as there is position data also send other data
+    if (currentTimestamp <= getCurrentScenario().getTotalDuration()) {
+
+        success = true;
+        const AircraftData &currentAircraftData = userAircraft.interpolate(currentTimestamp, access);
+        if (!currentAircraftData.isNull()) {
+            SimConnectAircraftData simConnectAircraftData;
+            simConnectAircraftData.fromAircraftData(currentAircraftData);
+#ifdef DEBUG
+            qDebug("%f, %f, %f, %f, %f, %f, %lli",
+                   simConnectAircraftData.longitude, simConnectAircraftData.latitude, simConnectAircraftData.altitude,
+                   simConnectAircraftData.pitch, simConnectAircraftData.bank, simConnectAircraftData.heading,
+                   currentTimestamp);
+#endif
+            HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionDefinition),
+                                                          ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
+                                                          sizeof(SimConnectAircraftData), &simConnectAircraftData);
+            success = res == S_OK;
+        }
 
         // Engine
         if (success) {
-            const EngineData &engineData = userAircraft.getEngineConst().interpolate(getCurrentTimestamp(), access);
+            const EngineData &engineData = userAircraft.getEngineConst().interpolate(currentTimestamp, access);
             if (!engineData.isNull()) {
                 SimConnectEngineData simConnectEngineData;
                 simConnectEngineData.fromEngineData(engineData);
@@ -353,7 +357,7 @@ bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
 
         // Primary flight controls
         if (success) {
-            const PrimaryFlightControlData &primaryFlightControlData = userAircraft.getPrimaryFlightControlConst().interpolate(getCurrentTimestamp(), access);
+            const PrimaryFlightControlData &primaryFlightControlData = userAircraft.getPrimaryFlightControlConst().interpolate(currentTimestamp, access);
             if (!primaryFlightControlData.isNull()) {
                 SimConnectPrimaryFlightControlData simConnectPrimaryFlightControlData;
                 simConnectPrimaryFlightControlData.fromPrimaryFlightControlData(primaryFlightControlData);
@@ -366,7 +370,7 @@ bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
 
         // Secondary flight controls
         if (success) {
-            const SecondaryFlightControlData &secondaryFlightControlData = userAircraft.getSecondaryFlightControlConst().interpolate(getCurrentTimestamp(), access);
+            const SecondaryFlightControlData &secondaryFlightControlData = userAircraft.getSecondaryFlightControlConst().interpolate(currentTimestamp, access);
             if (!secondaryFlightControlData.isNull()) {
                 SimConnectSecondaryFlightControlData simConnectSecondaryFlightControlData;
                 simConnectSecondaryFlightControlData.fromSecondaryFlightControlData(secondaryFlightControlData);
@@ -379,7 +383,7 @@ bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
 
         // Aircraft handles & brakes
         if (success) {
-            const AircraftHandleData &aircraftHandleData = userAircraft.getAircraftHandleConst().interpolate(getCurrentTimestamp(), access);
+            const AircraftHandleData &aircraftHandleData = userAircraft.getAircraftHandleConst().interpolate(currentTimestamp, access);
             if (!aircraftHandleData.isNull()) {
                 SimConnectAircraftHandleData simConnectAircraftHandleData;
                 simConnectAircraftHandleData.fromAircraftHandleData(aircraftHandleData);
@@ -392,7 +396,7 @@ bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
 
         // Lights
         if (success) {
-            const LightData &lightData = userAircraft.getLightConst().interpolate(getCurrentTimestamp(), access);
+            const LightData &lightData = userAircraft.getLightConst().interpolate(currentTimestamp, access);
             if (!lightData.isNull()) {
                 SimConnectLightData simConnectLightData;
                 simConnectLightData.fromLightData(lightData);
@@ -407,7 +411,9 @@ bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
         if (!isElapsedTimerRunning()) {
             startElapsedTimer();
         }
+
     } else {
+        // At end of recording
         success = false;
     }
     return success;
