@@ -27,39 +27,42 @@
 
 #include <QWidget>
 
+#include "../../../Model/src/TimeVariableData.h"
+
 class QShowEvent;
 class QHideEvent;
 
 class SkyConnectIntf;
 class AircraftData;
-class AircraftVariablesWidgetPrivate;
+class AircraftWidgetPrivate;
 
 namespace Ui {
-class AircraftVariablesWidget;
+class AircraftWidget;
 }
 
-class AircraftVariablesWidget : public QWidget
+class AircraftWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit AircraftVariablesWidget(SkyConnectIntf &skyConnect, QWidget *parent);
-    virtual ~AircraftVariablesWidget();
+    explicit AircraftWidget(SkyConnectIntf &skyConnect, QWidget *parent);
+    virtual ~AircraftWidget();
 
 protected:
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;
 
 private:
-    Q_DISABLE_COPY(AircraftVariablesWidget)
-    std::unique_ptr<AircraftVariablesWidgetPrivate> d;
-    std::unique_ptr<Ui::AircraftVariablesWidget> ui;
+    Q_DISABLE_COPY(AircraftWidget)
+    std::unique_ptr<AircraftWidgetPrivate> d;
+    std::unique_ptr<Ui::AircraftWidget> ui;
 
     void initUi();
-    void updateUi();
-    const AircraftData &getCurrentAircraftData() const;
+    void updateUi(qint64 timestamp, TimeVariableData::Access access);
+    const AircraftData &getCurrentAircraftData(qint64 timestamp, TimeVariableData::Access access) const;
 
 private slots:
-    void updateAircraftDataUi();
+    void handleRecordedData();
+    void handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access);
 };
 
 #endif // AIRCRAFTVARIABLESWIDGET_H

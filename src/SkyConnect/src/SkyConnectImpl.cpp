@@ -279,7 +279,7 @@ void SkyConnectImpl::setupRequestData() noexcept
 void SkyConnectImpl::setupInitialPosition() noexcept
 {
     const Aircraft &userAircraft = getCurrentScenario().getUserAircraftConst();
-    const AircraftData &aircraftData = userAircraft.interpolate(0);
+    const AircraftData &aircraftData = userAircraft.interpolate(0, TimeVariableData::Access::Seek);
     if (!aircraftData.isNull()) {
         // Set initial position
         SIMCONNECT_DATA_INITPOSITION initialPosition;
@@ -321,7 +321,7 @@ bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
     bool success;
     const Aircraft &userAircraft = getCurrentScenario().getUserAircraftConst();
 
-    const AircraftData &currentAircraftData = userAircraft.interpolate(getCurrentTimestamp());
+    const AircraftData &currentAircraftData = userAircraft.interpolate(getCurrentTimestamp(), access);
     if (!currentAircraftData.isNull()) {
         SimConnectAircraftData simConnectAircraftData;
         simConnectAircraftData.fromAircraftData(currentAircraftData);

@@ -33,7 +33,6 @@ class QShowEvent;
 class QHideEvent;
 
 class SkyConnectIntf;
-class AircraftData;
 class EngineData;
 class EngineWidgetPrivate;
 

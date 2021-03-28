@@ -29,6 +29,7 @@
 #include <QVector>
 
 #include "../../Kernel/src/SkyMath.h"
+#include "TimeVariableData.h"
 #include "SkySearch.h"
 #include "Engine.h"
 #include "AircraftInfo.h"
@@ -44,6 +45,7 @@ class AircraftPrivate
 public:
     AircraftPrivate() noexcept
         : currentTimestamp(TimeVariableData::InvalidTimestamp),
+          currentAccess(TimeVariableData::Access::Linear),
           currentIndex(SkySearch::InvalidIndex)
     {}
 
@@ -56,6 +58,7 @@ public:
 
     QVector<AircraftData> aircraftData;
     qint64 currentTimestamp;
+    TimeVariableData::Access currentAccess;
     AircraftData currentAircraftData;
     mutable int currentIndex;
 };
@@ -179,17 +182,38 @@ void Aircraft::clear()
     emit dataChanged();
 }
 
-const AircraftData &Aircraft::interpolate(qint64 timestamp) const noexcept
+const AircraftData &Aircraft::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
 {
     const AircraftData *p0, *p1, *p2, *p3;
     const double Tension = 0.0;
 
-    if (d->currentTimestamp != timestamp) {
+    if (d->currentTimestamp != timestamp || d->currentAccess != access) {
 
-        if (SkySearch::getSupportData(d->aircraftData, timestamp, d->currentIndex, &p0, &p1, &p2, &p3)) {
+        double tn;
+        switch (access) {
+        case TimeVariableData::Access::Linear:
+            if (SkySearch::getSupportData(d->aircraftData, timestamp, d->currentIndex, &p0, &p1, &p2, &p3)) {
+                tn = SkySearch::normaliseTimestamp(*p1, *p2, timestamp);
+            }
+            break;
+        case TimeVariableData::Access::Seek:
+            // Get the last sample data just before the seeked position
+            // (that sample point may lie far outside of the "sample window")
+            d->currentIndex = SkySearch::updateStartIndex(d->aircraftData, d->currentIndex, timestamp);
+            if (d->currentIndex != SkySearch::InvalidIndex) {
+                p1 = &d->aircraftData.at(d->currentIndex);
+                p2 = p1;
+                tn = 0.0;
+            } else {
+                p1 = p2 = nullptr;
+            }
+            break;
+        default:
+            p1 = p2 = nullptr;
+            break;
+        }
 
-            double tn = SkySearch::normaliseTimestamp(*p1, *p2, timestamp);
-
+        if (p1 != nullptr) {
             // Aircraft position & attitude
 
             // Latitude: [-90, 90] - no discontinuity at +/- 90
