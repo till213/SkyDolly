@@ -154,7 +154,7 @@ bool SkyConnectDummy::sendAircraftData(TimeVariableData::Access access) noexcept
 {
     bool success;
 
-    const AircraftData &currentAircraftData = getCurrentScenario().getUserAircraftConst().interpolateAircraftData(getCurrentTimestamp());
+    const AircraftData &currentAircraftData = getCurrentScenario().getUserAircraftConst().interpolate(getCurrentTimestamp(), access);
     if (!currentAircraftData.isNull()) {
         // Start the elapsed timer after sending the first sample data
         if (!isElapsedTimerRunning()) {
@@ -176,7 +176,7 @@ void SkyConnectDummy::recordData() noexcept
     aircraftData.timestamp = getCurrentTimestamp();
     Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
 
-    aircraft.upsertAircraftData(std::move(aircraftData));
+    aircraft.upsert(std::move(aircraftData));
     if (!isElapsedTimerRunning()) {
         // Start the elapsed timer with the arrival of the first sample data
         setCurrentTimestamp(0);
