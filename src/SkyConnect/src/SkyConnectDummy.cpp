@@ -111,7 +111,7 @@ void SkyConnectDummy::processEvents() noexcept
     case Connect::State::Recording:
         recordData();
         break;
-    case Connect::State::Playback:
+    case Connect::State::Replay:
         replay();
         break;
     default:
@@ -156,7 +156,7 @@ void SkyConnectDummy::recordData() noexcept
 void SkyConnectDummy::replay() noexcept
 {
     if (sendAircraftData()) {
-        emit aircraftDataSent(getCurrentTimestamp());
+        emit currentTimestampChanged(getCurrentTimestamp());
     } else {
         stopReplay();
     }
