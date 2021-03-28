@@ -44,10 +44,10 @@ public:
     Light(QObject *parent = nullptr) noexcept;
     virtual ~Light() noexcept;
 
-    void upsertLightData(LightData LightData) noexcept;
-    const LightData &getLastLightData() const noexcept;
-    const QVector<LightData> getAllLightData() const noexcept;
-    const LightData &interpolateLightData(qint64 timestamp, TimeVariableData::Access access) const noexcept;
+    void upsert(LightData LightData) noexcept;
+    const LightData &getLast() const noexcept;
+    const QVector<LightData> getAll() const noexcept;
+    const LightData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
     void clear();
 

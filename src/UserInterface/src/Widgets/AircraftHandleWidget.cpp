@@ -142,12 +142,12 @@ const AircraftHandleData &AircraftHandleWidget::getCurrentAircraftHandleData(qin
     const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
 
     if (d->skyConnect.getState() == Connect::State::Recording) {
-        return aircraft.getAircraftHandleConst().getLastAircraftHandleData();
+        return aircraft.getAircraftHandleConst().getLast();
     } else {
         if (timestamp != TimeVariableData::InvalidTimestamp) {
-            return aircraft.getAircraftHandleConst().interpolateAircraftHandleData(timestamp, access);
+            return aircraft.getAircraftHandleConst().interpolate(timestamp, access);
         } else {
-            return aircraft.getAircraftHandleConst().interpolateAircraftHandleData(d->skyConnect.getCurrentTimestamp(), access);
+            return aircraft.getAircraftHandleConst().interpolate(d->skyConnect.getCurrentTimestamp(), access);
         }
     };
 }

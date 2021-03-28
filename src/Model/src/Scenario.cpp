@@ -25,7 +25,7 @@
 #include <memory>
 #include <vector>
 
-#include "FlightConditions.h"
+#include "FlightCondition.h"
 #include "Aircraft.h"
 #include "Scenario.h"
 
@@ -39,7 +39,7 @@ public:
     ~ScenarioPrivate() noexcept
     {}
 
-    FlightConditions flightConditions;
+    FlightCondition flightCondition;
     std::vector<std::unique_ptr<Aircraft>> aircrafts;
 
 };
@@ -72,20 +72,20 @@ Aircraft &Scenario::getUserAircraft() const
     return *(*d->aircrafts.cbegin());
 }
 
-void Scenario::setFlightConditions(FlightConditions flightConditions) noexcept
+void Scenario::setFlightCondition(FlightCondition flightCondition) noexcept
 {
-    d->flightConditions = flightConditions;
-    emit flightConditionsChanged();
+    d->flightCondition = flightCondition;
+    emit flightConditionChanged();
 }
 
-const FlightConditions &Scenario::getFlightConditionsConst() const
+const FlightCondition &Scenario::getFlightConditionConst() const
 {
-    return d->flightConditions;
+    return d->flightCondition;
 }
 
-FlightConditions &Scenario::getFlightConditions() const
+FlightCondition &Scenario::getFlightCondition() const
 {
-    return d->flightConditions;
+    return d->flightCondition;
 }
 
 // PRIVATE

@@ -31,7 +31,7 @@
 
 #include "ModelLib.h"
 
-class FlightConditions;
+class FlightCondition;
 class Aircraft;
 class ScenarioPrivate;
 
@@ -45,14 +45,14 @@ public:
     const Aircraft &getUserAircraftConst() const;
     Aircraft &getUserAircraft() const;
 
-    void setFlightConditions(FlightConditions flightConditions) noexcept;
-    const FlightConditions &getFlightConditionsConst() const;
-    FlightConditions &getFlightConditions() const;
+    void setFlightCondition(FlightCondition flightCondition) noexcept;
+    const FlightCondition &getFlightConditionConst() const;
+    FlightCondition &getFlightCondition() const;
 
 signals:
     void aircraftInfoChanged();
     void aircraftDataChanged();
-    void flightConditionsChanged();
+    void flightConditionChanged();
 
 private:
     Q_DISABLE_COPY(Scenario)

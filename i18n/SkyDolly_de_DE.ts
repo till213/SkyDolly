@@ -290,142 +290,142 @@ MIT License</source>
     </message>
 </context>
 <context>
-    <name>FlightConditionsWidget</name>
+    <name>FlightConditionWidget</name>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="14"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="14"/>
         <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="20"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="20"/>
         <source>Flight Conditions (At Start)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="28"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="28"/>
         <source>Ground Altitude [Feet]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="48"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="48"/>
         <source>Surface Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="71"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="71"/>
         <source>Temperature [° Celcius]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="91"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="91"/>
         <source>Total Air Temperature [° Celcius]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="111"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="111"/>
         <source>Wind Velocity [Knots]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="131"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="131"/>
         <source>Wind Direction [°]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="155"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="155"/>
         <source>Precipitation State</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="175"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="175"/>
         <source>Visibility [Metres]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="195"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="195"/>
         <source>Sea Level Pressure [hPa]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="215"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="215"/>
         <source>Pitot Icing [%]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="235"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="235"/>
         <source>Structural Icing [%]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="264"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="264"/>
         <source>In Clouds</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>LightVariablesWidget</name>
+    <name>LightWidget</name>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="14"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="14"/>
         <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="29"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="29"/>
         <source>Lights</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="38"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="38"/>
         <source>Mask</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="63"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="63"/>
         <source>Navigation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="73"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="73"/>
         <source>Panel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="83"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="83"/>
         <source>Beacon</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="93"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="93"/>
         <source>Recognition</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="103"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="103"/>
         <source>Landing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="113"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="113"/>
         <source>Wing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="123"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="123"/>
         <source>Taxi</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="133"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="133"/>
         <source>Logo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="143"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="143"/>
         <source>Strobe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="153"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="153"/>
         <source>Cabin</source>
         <translation type="unfinished"></translation>
     </message>

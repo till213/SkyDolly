@@ -95,7 +95,7 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
 
         if (ok) {
             // CSV data
-            for (const AircraftData &data : aircraft.getAllAircraftData()) {
+            for (const AircraftData &data : aircraft.getAll()) {
                 QString csv = QString::number(data.latitude, Format, Precision) % Const::Sep %
                               QString::number(data.longitude, Format, Precision) % Const::Sep %
                               QString::number(data.altitude, Format, Precision) % Const::Sep %

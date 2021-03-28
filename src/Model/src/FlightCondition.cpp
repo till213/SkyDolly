@@ -22,10 +22,10 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "FlightConditions.h"
+#include "FlightCondition.h"
 // PUBLIC
 
-FlightConditions::FlightConditions() noexcept
+FlightCondition::FlightCondition() noexcept
     : groundAltitude(0.0f),
       surfaceType(SimType::SurfaceType::Unknown),
       ambientTemperature(0.0f),

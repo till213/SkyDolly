@@ -313,7 +313,7 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft) noexcept
 
                 }
 
-                aircraft.upsertAircraftData(std::move(aircraftData));
+                aircraft.upsert(std::move(aircraftData));
 
                 // Read next line
                 data = io.readLine();

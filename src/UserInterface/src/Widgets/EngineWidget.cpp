@@ -160,12 +160,12 @@ const EngineData &EngineWidget::getCurrentEngineData(qint64 timestamp, TimeVaria
     const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
 
     if (d->skyConnect.getState() == Connect::State::Recording) {
-        return aircraft.getEngineConst().getLastEngineData();
+        return aircraft.getEngineConst().getLast();
     } else {
         if (timestamp != TimeVariableData::InvalidTimestamp) {
-            return aircraft.getEngineConst().interpolateEngineData(timestamp, access);
+            return aircraft.getEngineConst().interpolate(timestamp, access);
         } else {
-            return aircraft.getEngineConst().interpolateEngineData(d->skyConnect.getCurrentTimestamp(), access);
+            return aircraft.getEngineConst().interpolate(d->skyConnect.getCurrentTimestamp(), access);
         }
     };
 }

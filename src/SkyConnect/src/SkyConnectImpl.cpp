@@ -279,7 +279,7 @@ void SkyConnectImpl::setupRequestData() noexcept
 void SkyConnectImpl::setupInitialPosition() noexcept
 {
     const Aircraft &userAircraft = getCurrentScenario().getUserAircraftConst();
-    const AircraftData &aircraftData = userAircraft.interpolateAircraftData(0);
+    const AircraftData &aircraftData = userAircraft.interpolate(0);
     if (!aircraftData.isNull()) {
         // Set initial position
         SIMCONNECT_DATA_INITPOSITION initialPosition;
@@ -321,13 +321,10 @@ bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
     bool success;
     const Aircraft &userAircraft = getCurrentScenario().getUserAircraftConst();
 
-    const AircraftData &currentAircraftData = userAircraft.interpolateAircraftData(getCurrentTimestamp());
+    const AircraftData &currentAircraftData = userAircraft.interpolate(getCurrentTimestamp());
     if (!currentAircraftData.isNull()) {
         SimConnectAircraftData simConnectAircraftData;
         simConnectAircraftData.fromAircraftData(currentAircraftData);
-
-        qDebug("sizeof(SimConnectAircraftData): %llu", sizeof(SimConnectAircraftData));
-
 #ifdef DEBUG
         qDebug("%f, %f, %f, %f, %f, %f, %lli",
                simConnectAircraftData.longitude, simConnectAircraftData.latitude, simConnectAircraftData.altitude,
@@ -343,7 +340,7 @@ bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
 
         // Engine
         if (success) {
-            const EngineData &engineData = userAircraft.getEngineConst().interpolateEngineData(getCurrentTimestamp(), access);
+            const EngineData &engineData = userAircraft.getEngineConst().interpolate(getCurrentTimestamp(), access);
             if (!engineData.isNull()) {
                 SimConnectEngineData simConnectEngineData;
                 simConnectEngineData.fromEngineData(engineData);
@@ -356,7 +353,7 @@ bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
 
         // Primary flight controls
         if (success) {
-            const PrimaryFlightControlData &primaryFlightControlData = userAircraft.getPrimaryFlightControlConst().interpolatePrimaryFlightControlData(getCurrentTimestamp(), access);
+            const PrimaryFlightControlData &primaryFlightControlData = userAircraft.getPrimaryFlightControlConst().interpolate(getCurrentTimestamp(), access);
             if (!primaryFlightControlData.isNull()) {
                 SimConnectPrimaryFlightControlData simConnectPrimaryFlightControlData;
                 simConnectPrimaryFlightControlData.fromPrimaryFlightControlData(primaryFlightControlData);
@@ -369,7 +366,7 @@ bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
 
         // Secondary flight controls
         if (success) {
-            const SecondaryFlightControlData &secondaryFlightControlData = userAircraft.getSecondaryFlightControlConst().interpolateSecondaryFlightControlData(getCurrentTimestamp(), access);
+            const SecondaryFlightControlData &secondaryFlightControlData = userAircraft.getSecondaryFlightControlConst().interpolate(getCurrentTimestamp(), access);
             if (!secondaryFlightControlData.isNull()) {
                 SimConnectSecondaryFlightControlData simConnectSecondaryFlightControlData;
                 simConnectSecondaryFlightControlData.fromSecondaryFlightControlData(secondaryFlightControlData);
@@ -382,7 +379,7 @@ bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
 
         // Aircraft handles & brakes
         if (success) {
-            const AircraftHandleData &aircraftHandleData = userAircraft.getAircraftHandleConst().interpolateAircraftHandleData(getCurrentTimestamp(), access);
+            const AircraftHandleData &aircraftHandleData = userAircraft.getAircraftHandleConst().interpolate(getCurrentTimestamp(), access);
             if (!aircraftHandleData.isNull()) {
                 SimConnectAircraftHandleData simConnectAircraftHandleData;
                 simConnectAircraftHandleData.fromAircraftHandleData(aircraftHandleData);
@@ -395,7 +392,7 @@ bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
 
         // Lights
         if (success) {
-            const LightData &lightData = userAircraft.getLightConst().interpolateLightData(getCurrentTimestamp(), access);
+            const LightData &lightData = userAircraft.getLightConst().interpolate(getCurrentTimestamp(), access);
             if (!lightData.isNull()) {
                 SimConnectLightData simConnectLightData;
                 simConnectLightData.fromLightData(lightData);
@@ -541,8 +538,8 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
             const SimConnectAircraftInfo *simConnectAircraftInfo = reinterpret_cast<const SimConnectAircraftInfo *>(&objectData->dwData);
             AircraftInfo aircraftInfo = simConnectAircraftInfo->toAircraftInfo();
             userAircraft.setAircraftInfo(aircraftInfo);
-            FlightConditions flightConditions = simConnectAircraftInfo->toFlightConditions();
-            currentScenario.setFlightConditions(flightConditions);
+            FlightCondition flightCondition = simConnectAircraftInfo->toFlightCondition();
+            currentScenario.setFlightCondition(flightCondition);
             break;
         }
         default:
@@ -561,7 +558,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
                 simConnectAircraftData = reinterpret_cast<const SimConnectAircraftData *>(&objectData->dwData);
                 AircraftData aircraftData = simConnectAircraftData->toAircraftData();
                 aircraftData.timestamp = skyConnect->getCurrentTimestamp();
-                userAircraft.upsertAircraftData(std::move(aircraftData));
+                userAircraft.upsert(std::move(aircraftData));
                 dataReceived = true;
             }
             break;
@@ -573,7 +570,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
                 simConnectEngineData = reinterpret_cast<const SimConnectEngineData *>(&objectData->dwData);
                 EngineData engineData = simConnectEngineData->toEngineData();
                 engineData.timestamp = skyConnect->getCurrentTimestamp();
-                userAircraft.getEngine().upsertEngineData(std::move(engineData));
+                userAircraft.getEngine().upsert(std::move(engineData));
                 dataReceived = true;
             }
             break;
@@ -585,7 +582,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
                 simConnectPrimaryFlightControlData = reinterpret_cast<const SimConnectPrimaryFlightControlData *>(&objectData->dwData);
                 PrimaryFlightControlData primaryFlightControlData = simConnectPrimaryFlightControlData->toPrimaryFlightControlData();
                 primaryFlightControlData.timestamp = skyConnect->getCurrentTimestamp();
-                userAircraft.getPrimaryFlightControl().upsertPrimaryFlightControlData(std::move(primaryFlightControlData));
+                userAircraft.getPrimaryFlightControl().upsert(std::move(primaryFlightControlData));
                 dataReceived = true;
             }
             break;
@@ -597,7 +594,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
                 simConnectSecondaryFlightControlData = reinterpret_cast<const SimConnectSecondaryFlightControlData *>(&objectData->dwData);
                 SecondaryFlightControlData secondaryFlightControlData = simConnectSecondaryFlightControlData->toSecondaryFlightControlData();
                 secondaryFlightControlData.timestamp = skyConnect->getCurrentTimestamp();
-                userAircraft.getSecondaryFlightControl().upsertSecondaryFlightControlData(std::move(secondaryFlightControlData));
+                userAircraft.getSecondaryFlightControl().upsert(std::move(secondaryFlightControlData));
                 dataReceived = true;
             }
             break;
@@ -609,7 +606,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
                 simConnectAircraftHandleData = reinterpret_cast<const SimConnectAircraftHandleData *>(&objectData->dwData);
                 AircraftHandleData aircraftHandleData = simConnectAircraftHandleData->toAircraftHandleData();
                 aircraftHandleData.timestamp = skyConnect->getCurrentTimestamp();
-                userAircraft.getAircraftHandle().upsertAircraftHandleData(std::move(aircraftHandleData));
+                userAircraft.getAircraftHandle().upsert(std::move(aircraftHandleData));
                 dataReceived = true;
             }
             break;
@@ -621,7 +618,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
                 simConnectLightData = reinterpret_cast<const SimConnectLightData *>(&objectData->dwData);
                 LightData lightData = simConnectLightData->toLightData();
                 lightData.timestamp = skyConnect->getCurrentTimestamp();
-                userAircraft.getLight().upsertLightData(std::move(lightData));
+                userAircraft.getLight().upsert(std::move(lightData));
                 dataReceived = true;
             }
             break;

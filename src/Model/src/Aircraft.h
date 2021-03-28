@@ -67,10 +67,10 @@ public:
     void setAircraftInfo(AircraftInfo aircraftInfo) noexcept;
     const AircraftInfo &getAircraftInfo() const noexcept;
 
-    void upsertAircraftData(AircraftData aircraftData) noexcept;
-    const AircraftData &getLastAircraftData() const noexcept;
-    const QVector<AircraftData> getAllAircraftData() const noexcept;
-    const AircraftData &interpolateAircraftData(qint64 timestamp) const noexcept;
+    void upsert(AircraftData aircraftData) noexcept;
+    const AircraftData &getLast() const noexcept;
+    const QVector<AircraftData> getAll() const noexcept;
+    const AircraftData &interpolate(qint64 timestamp) const noexcept;
 
     void clear();
 

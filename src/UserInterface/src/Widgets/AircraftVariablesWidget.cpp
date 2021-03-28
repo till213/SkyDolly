@@ -117,9 +117,9 @@ const AircraftData &AircraftVariablesWidget::getCurrentAircraftData() const
     const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
 
     if (d->skyConnect.getState() == Connect::State::Recording) {
-        return aircraft.getLastAircraftData();
+        return aircraft.getLast();
     } else {
-        return aircraft.interpolateAircraftData(d->skyConnect.getCurrentTimestamp());
+        return aircraft.interpolate(d->skyConnect.getCurrentTimestamp());
     };
 }
 

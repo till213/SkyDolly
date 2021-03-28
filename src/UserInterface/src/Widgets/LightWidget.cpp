@@ -178,12 +178,12 @@ const LightData &LightWidget::getCurrentLightData(qint64 timestamp, TimeVariable
     const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
 
     if (d->skyConnect.getState() == Connect::State::Recording) {
-        return aircraft.getLightConst().getLastLightData();
+        return aircraft.getLightConst().getLast();
     } else {
         if (timestamp != TimeVariableData::InvalidTimestamp) {
-            return aircraft.getLightConst().interpolateLightData(timestamp, access);
+            return aircraft.getLightConst().interpolate(timestamp, access);
         } else {
-            return aircraft.getLightConst().interpolateLightData(d->skyConnect.getCurrentTimestamp(), access);
+            return aircraft.getLightConst().interpolate(d->skyConnect.getCurrentTimestamp(), access);
         }
     };
 }

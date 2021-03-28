@@ -42,7 +42,7 @@
 #include "../Widgets/AircraftHandleWidget.h"
 #include "../Widgets/LightWidget.h"
 #include "../Widgets/AircraftTypeWidget.h"
-#include "../Widgets/FlightConditionsWidget.h"
+#include "../Widgets/FlightConditionWidget.h"
 #include "SimulationVariablesDialog.h"
 #include "ui_SimulationVariablesDialog.h"
 
@@ -125,7 +125,7 @@ void SimulationVariablesDialog::initUi() noexcept
     AircraftTypeWidget *aircraftTypeWidget = new AircraftTypeWidget(d->skyConnect, this);
     ui->simulationVariablesTab->addTab(aircraftTypeWidget, tr("Aircraft &Type"));
 
-    FlightConditionsWidget *flightConditionsWidget = new FlightConditionsWidget(d->skyConnect, this);
+    FlightConditionWidget *flightConditionsWidget = new FlightConditionWidget(d->skyConnect, this);
     ui->simulationVariablesTab->addTab(flightConditionsWidget, tr("&Conditions"));
 }
 

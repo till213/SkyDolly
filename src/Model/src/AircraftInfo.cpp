@@ -24,12 +24,29 @@
  */
 #include "AircraftInfo.h"
 
+// PUBLIC
+
 AircraftInfo::AircraftInfo() noexcept
     : startOnGround(false),
-      aircraftAltitudeAboveGround(0),
+      aircraftAltitudeAboveGround(0.0f),
       initialAirspeed(0),
       wingSpan(0),      
       numberOfEngines(0),
       engineType(SimType::EngineType::Unknown)
 {
+}
+
+void AircraftInfo::clear()
+{
+    name.clear();
+    atcId.clear();
+    atcAirline.clear();
+    atcFlightNumber.clear();
+    category.clear();
+    startOnGround = false;
+    aircraftAltitudeAboveGround = 0.0f;
+    initialAirspeed = 0;
+    wingSpan = 0;
+    numberOfEngines = 0;
+    engineType = SimType::EngineType::Unknown;
 }
