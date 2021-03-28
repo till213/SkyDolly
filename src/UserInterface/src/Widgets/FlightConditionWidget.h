@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTCONDITIONSWIDGET_H
-#define FLIGHTCONDITIONSWIDGET_H
+#ifndef FLIGHTCONDITIONWIDGET_H
+#define FLIGHTCONDITIONWIDGET_H
 
 #include <memory>
 
@@ -33,27 +33,27 @@ class QShowEvent;
 class QHideEvent;
 
 class SkyConnectIntf;
-class FlightConditionsWidgetPrivate;
+class FlightConditionWidgetPrivate;
 
 namespace Ui {
-class FlightConditionsWidget;
+class FlightConditionWidget;
 }
 
-class FlightConditionsWidget : public QDialog
+class FlightConditionWidget : public QDialog
 {
     Q_OBJECT
 public:
-    explicit FlightConditionsWidget(SkyConnectIntf &skyConnect, QWidget *parent = nullptr);
-    virtual ~FlightConditionsWidget();
+    explicit FlightConditionWidget(SkyConnectIntf &skyConnect, QWidget *parent = nullptr);
+    virtual ~FlightConditionWidget();
 
 protected:
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;
 
 private:
-    Q_DISABLE_COPY(FlightConditionsWidget)
-    std::unique_ptr<FlightConditionsWidgetPrivate> d;
-    std::unique_ptr<Ui::FlightConditionsWidget> ui;
+    Q_DISABLE_COPY(FlightConditionWidget)
+    std::unique_ptr<FlightConditionWidgetPrivate> d;
+    std::unique_ptr<Ui::FlightConditionWidget> ui;
 
     void initUi();
     void updateUi();
@@ -62,4 +62,4 @@ private slots:
     void updateInfoUi();
 };
 
-#endif // FLIGHTCONDITIONSWIDGET_H
+#endif // FLIGHTCONDITIONWIDGET_H

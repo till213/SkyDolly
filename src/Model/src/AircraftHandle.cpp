@@ -63,7 +63,7 @@ AircraftHandle::~AircraftHandle() noexcept
 {
 }
 
-void AircraftHandle::upsertAircraftHandleData(AircraftHandleData AircraftHandleData) noexcept
+void AircraftHandle::upsert(AircraftHandleData AircraftHandleData) noexcept
 {
     if (d->aircraftHandleData.count() > 0 && d->aircraftHandleData.last().timestamp == AircraftHandleData.timestamp)  {
         // Same timestamp -> replace
@@ -80,7 +80,7 @@ void AircraftHandle::upsertAircraftHandleData(AircraftHandleData AircraftHandleD
     emit dataChanged();
 }
 
-const AircraftHandleData &AircraftHandle::getLastAircraftHandleData() const noexcept
+const AircraftHandleData &AircraftHandle::getLast() const noexcept
 {
     if (!d->aircraftHandleData.isEmpty()) {
         return d->aircraftHandleData.last();
@@ -89,7 +89,7 @@ const AircraftHandleData &AircraftHandle::getLastAircraftHandleData() const noex
     }
 }
 
-const QVector<AircraftHandleData> AircraftHandle::getAllAircraftHandleData() const noexcept
+const QVector<AircraftHandleData> AircraftHandle::getAll() const noexcept
 {
     return d->aircraftHandleData;
 }
@@ -102,7 +102,7 @@ void AircraftHandle::clear()
     emit dataChanged();
 }
 
-const AircraftHandleData &AircraftHandle::interpolateAircraftHandleData(qint64 timestamp, TimeVariableData::Access access) const noexcept
+const AircraftHandleData &AircraftHandle::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
 {
     const AircraftHandleData *p0, *p1, *p2, *p3;
 

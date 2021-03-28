@@ -89,7 +89,7 @@ PrimaryFlightControl::~PrimaryFlightControl() noexcept
 {
 }
 
-void PrimaryFlightControl::upsertPrimaryFlightControlData(PrimaryFlightControlData primaryFlightControlData) noexcept
+void PrimaryFlightControl::upsert(PrimaryFlightControlData primaryFlightControlData) noexcept
 {
     if (d->primaryFlightControlData.count() > 0 && d->primaryFlightControlData.last().timestamp == primaryFlightControlData.timestamp)  {
         // Same timestamp -> replace
@@ -106,7 +106,7 @@ void PrimaryFlightControl::upsertPrimaryFlightControlData(PrimaryFlightControlDa
     emit dataChanged();
 }
 
-const PrimaryFlightControlData &PrimaryFlightControl::getLastPrimaryFlightControlData() const noexcept
+const PrimaryFlightControlData &PrimaryFlightControl::getLast() const noexcept
 {
     if (!d->primaryFlightControlData.isEmpty()) {
         return d->primaryFlightControlData.last();
@@ -115,7 +115,7 @@ const PrimaryFlightControlData &PrimaryFlightControl::getLastPrimaryFlightContro
     }
 }
 
-const QVector<PrimaryFlightControlData> PrimaryFlightControl::getAllPrimaryFlightControlData() const noexcept
+const QVector<PrimaryFlightControlData> PrimaryFlightControl::getAll() const noexcept
 {
     return d->primaryFlightControlData;
 }
@@ -128,7 +128,7 @@ void PrimaryFlightControl::clear()
     emit dataChanged();
 }
 
-const PrimaryFlightControlData &PrimaryFlightControl::interpolatePrimaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const noexcept
+const PrimaryFlightControlData &PrimaryFlightControl::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
 {
     const PrimaryFlightControlData *p0, *p1, *p2, *p3;
 

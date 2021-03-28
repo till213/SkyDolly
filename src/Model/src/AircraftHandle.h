@@ -44,10 +44,10 @@ public:
     AircraftHandle(QObject *parent = nullptr) noexcept;
     virtual ~AircraftHandle() noexcept;
 
-    void upsertAircraftHandleData(AircraftHandleData aircraftHandleData) noexcept;
-    const AircraftHandleData &getLastAircraftHandleData() const noexcept;
-    const QVector<AircraftHandleData> getAllAircraftHandleData() const noexcept;
-    const AircraftHandleData &interpolateAircraftHandleData(qint64 timestamp, TimeVariableData::Access access) const noexcept;
+    void upsert(AircraftHandleData aircraftHandleData) noexcept;
+    const AircraftHandleData &getLast() const noexcept;
+    const QVector<AircraftHandleData> getAll() const noexcept;
+    const AircraftHandleData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
     void clear();
 

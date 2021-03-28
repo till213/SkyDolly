@@ -63,7 +63,7 @@ Light::~Light() noexcept
 {
 }
 
-void Light::upsertLightData(LightData LightData) noexcept
+void Light::upsert(LightData LightData) noexcept
 {
     if (d->lightData.count() > 0 && d->lightData.last().timestamp == LightData.timestamp)  {
         // Same timestamp -> replace
@@ -74,7 +74,7 @@ void Light::upsertLightData(LightData LightData) noexcept
     emit dataChanged();
 }
 
-const LightData &Light::getLastLightData() const noexcept
+const LightData &Light::getLast() const noexcept
 {
     if (!d->lightData.isEmpty()) {
         return d->lightData.last();
@@ -83,7 +83,7 @@ const LightData &Light::getLastLightData() const noexcept
     }
 }
 
-const QVector<LightData> Light::getAllLightData() const noexcept
+const QVector<LightData> Light::getAll() const noexcept
 {
     return d->lightData;
 }
@@ -96,7 +96,7 @@ void Light::clear()
     emit dataChanged();
 }
 
-const LightData &Light::interpolateLightData(qint64 timestamp, TimeVariableData::Access access) const noexcept
+const LightData &Light::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
 {
     const LightData *p0, *p1, *p2, *p3;
 

@@ -133,7 +133,7 @@ const AircraftInfo &Aircraft::getAircraftInfo() const noexcept
     return d->aircraftInfo;
 }
 
-void Aircraft::upsertAircraftData(AircraftData aircraftData) noexcept
+void Aircraft::upsert(AircraftData aircraftData) noexcept
 {
     if (d->aircraftData.count() > 0 && d->aircraftData.last().timestamp == aircraftData.timestamp)  {
         // Same timestamp -> replace
@@ -150,7 +150,7 @@ void Aircraft::upsertAircraftData(AircraftData aircraftData) noexcept
     emit dataChanged();
 }
 
-const AircraftData &Aircraft::getLastAircraftData() const noexcept
+const AircraftData &Aircraft::getLast() const noexcept
 {
     if (!d->aircraftData.isEmpty()) {
         return d->aircraftData.last();
@@ -159,7 +159,7 @@ const AircraftData &Aircraft::getLastAircraftData() const noexcept
     }
 }
 
-const QVector<AircraftData> Aircraft::getAllAircraftData() const noexcept
+const QVector<AircraftData> Aircraft::getAll() const noexcept
 {
     return d->aircraftData;
 }
@@ -167,13 +167,19 @@ const QVector<AircraftData> Aircraft::getAllAircraftData() const noexcept
 void Aircraft::clear()
 {
     d->aircraftData.clear();
+    d->engine.clear();
+    d->primaryFlightControl.clear();
+    d->secondaryFlightControl.clear();
+    d->aircraftHandle.clear();
+    d->light.clear();
+    d->aircraftInfo.clear();
     d->currentTimestamp = TimeVariableData::InvalidTimestamp;
     d->currentIndex = SkySearch::InvalidIndex;
-    d->engine.clear();
+
     emit dataChanged();
 }
 
-const AircraftData &Aircraft::interpolateAircraftData(qint64 timestamp) const noexcept
+const AircraftData &Aircraft::interpolate(qint64 timestamp) const noexcept
 {
     const AircraftData *p0, *p1, *p2, *p3;
     const double Tension = 0.0;

@@ -44,10 +44,10 @@ public:
     SecondaryFlightControl(QObject *parent = nullptr) noexcept;
     virtual ~SecondaryFlightControl() noexcept;
 
-    void upsertSecondaryFlightControlData(SecondaryFlightControlData secondaryFlightControlData) noexcept;
-    const SecondaryFlightControlData &getLastSecondaryFlightControlData() const noexcept;
-    const QVector<SecondaryFlightControlData> getAllSecondaryFlightControlData() const noexcept;
-    const SecondaryFlightControlData &interpolateSecondaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const noexcept;
+    void upsert(SecondaryFlightControlData secondaryFlightControlData) noexcept;
+    const SecondaryFlightControlData &getLast() const noexcept;
+    const QVector<SecondaryFlightControlData> getAll() const noexcept;
+    const SecondaryFlightControlData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
     void clear();
 

@@ -63,7 +63,7 @@ SecondaryFlightControl::~SecondaryFlightControl() noexcept
 {
 }
 
-void SecondaryFlightControl::upsertSecondaryFlightControlData(SecondaryFlightControlData secondaryFlightControlData) noexcept
+void SecondaryFlightControl::upsert(SecondaryFlightControlData secondaryFlightControlData) noexcept
 {
     if (d->secondaryFlightControlData.count() > 0 && d->secondaryFlightControlData.last().timestamp == secondaryFlightControlData.timestamp)  {
         // Same timestamp -> replace
@@ -80,7 +80,7 @@ void SecondaryFlightControl::upsertSecondaryFlightControlData(SecondaryFlightCon
     emit dataChanged();
 }
 
-const SecondaryFlightControlData &SecondaryFlightControl::getLastSecondaryFlightControlData() const noexcept
+const SecondaryFlightControlData &SecondaryFlightControl::getLast() const noexcept
 {
     if (!d->secondaryFlightControlData.isEmpty()) {
         return d->secondaryFlightControlData.last();
@@ -89,7 +89,7 @@ const SecondaryFlightControlData &SecondaryFlightControl::getLastSecondaryFlight
     }
 }
 
-const QVector<SecondaryFlightControlData> SecondaryFlightControl::getAllSecondaryFlightControlData() const noexcept
+const QVector<SecondaryFlightControlData> SecondaryFlightControl::getAll() const noexcept
 {
     return d->secondaryFlightControlData;
 }
@@ -102,7 +102,7 @@ void SecondaryFlightControl::clear()
     emit dataChanged();
 }
 
-const SecondaryFlightControlData &SecondaryFlightControl::interpolateSecondaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const noexcept
+const SecondaryFlightControlData &SecondaryFlightControl::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
 {
     const SecondaryFlightControlData *p0, *p1, *p2, *p3;
 

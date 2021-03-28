@@ -22,13 +22,14 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTCONDITIONS_H
-#define FLIGHTCONDITIONS_H
+#ifndef FLIGHTCONDITION_H
+#define FLIGHTCONDITION_H
 
 #include "SimType.h"
 #include "ModelLib.h"
 
-struct MODEL_API FlightConditions
+struct MODEL_API FlightCondition
+
 {
     float groundAltitude;
     SimType::SurfaceType surfaceType;
@@ -43,10 +44,10 @@ struct MODEL_API FlightConditions
     quint8 pitotIcingPercent;
     quint8 structuralIcingPercent;
 
-    FlightConditions() noexcept;
-    FlightConditions(FlightConditions &&) = default;
-    FlightConditions(const FlightConditions &) = default;
-    FlightConditions &operator= (const FlightConditions &) = default;
+    FlightCondition() noexcept;
+    FlightCondition(FlightCondition &&) = default;
+    FlightCondition(const FlightCondition &) = default;
+    FlightCondition &operator= (const FlightCondition &) = default;
 };
 
-#endif // FLIGHTCONDITIONS_H
+#endif // FLIGHTCONDITION_H

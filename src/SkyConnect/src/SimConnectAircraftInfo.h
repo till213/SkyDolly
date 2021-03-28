@@ -33,7 +33,7 @@
 #include "../../Kernel/src/SkyMath.h"
 #include "../../Model/src/SimType.h"
 #include "../../Model/src/AircraftInfo.h"
-#include "../../Model/src/FlightConditions.h"
+#include "../../Model/src/FlightCondition.h"
 
 /*!
  * Information simulation variables about the aircraft and environment at start.
@@ -125,24 +125,24 @@ struct SimConnectAircraftInfo
         return aircraftInfo;
     }
 
-    inline FlightConditions toFlightConditions() const noexcept
+    inline FlightCondition toFlightCondition() const noexcept
     {
-        FlightConditions flightConditions;
+        FlightCondition flightCondition;
 
-        flightConditions.groundAltitude = groundAltitude;
-        flightConditions.surfaceType = toSurfaceType(surfaceType);
-        flightConditions.ambientTemperature = ambientTemperature;
-        flightConditions.totalAirTemperature = totalAirTemperature;
-        flightConditions.windVelocity = ambientWindVelocity;
-        flightConditions.windDirection = ambientWindDirection;
-        flightConditions.precipitationState = toPrecipitationState(ambientPrecipState);
-        flightConditions.inClouds = (ambientInCloud != 0);
-        flightConditions.visibility = ambientVisibility;
-        flightConditions.seaLevelPressure = seaLevelPressure;
-        flightConditions.pitotIcingPercent = SkyMath::fromPercent(pitotIcePct);
-        flightConditions.structuralIcingPercent = SkyMath::fromPercent(structuralIcePct);
+        flightCondition.groundAltitude = groundAltitude;
+        flightCondition.surfaceType = toSurfaceType(surfaceType);
+        flightCondition.ambientTemperature = ambientTemperature;
+        flightCondition.totalAirTemperature = totalAirTemperature;
+        flightCondition.windVelocity = ambientWindVelocity;
+        flightCondition.windDirection = ambientWindDirection;
+        flightCondition.precipitationState = toPrecipitationState(ambientPrecipState);
+        flightCondition.inClouds = (ambientInCloud != 0);
+        flightCondition.visibility = ambientVisibility;
+        flightCondition.seaLevelPressure = seaLevelPressure;
+        flightCondition.pitotIcingPercent = SkyMath::fromPercent(pitotIcePct);
+        flightCondition.structuralIcingPercent = SkyMath::fromPercent(structuralIcePct);
 
-        return flightConditions;
+        return flightCondition;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;

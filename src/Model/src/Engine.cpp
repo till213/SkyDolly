@@ -63,7 +63,7 @@ Engine::~Engine() noexcept
 {
 }
 
-void Engine::upsertEngineData(EngineData engineData) noexcept
+void Engine::upsert(EngineData engineData) noexcept
 {
     if (d->engineData.count() > 0 && d->engineData.last().timestamp == engineData.timestamp)  {
         // Same timestamp -> replace
@@ -80,7 +80,7 @@ void Engine::upsertEngineData(EngineData engineData) noexcept
     emit dataChanged();
 }
 
-const EngineData &Engine::getLastEngineData() const noexcept
+const EngineData &Engine::getLast() const noexcept
 {
     if (!d->engineData.isEmpty()) {
         return d->engineData.last();
@@ -89,7 +89,7 @@ const EngineData &Engine::getLastEngineData() const noexcept
     }
 }
 
-const QVector<EngineData> Engine::getAllEngineData() const noexcept
+const QVector<EngineData> Engine::getAll() const noexcept
 {
     return d->engineData;
 }
@@ -102,7 +102,7 @@ void Engine::clear()
     emit dataChanged();
 }
 
-const EngineData &Engine::interpolateEngineData(qint64 timestamp, TimeVariableData::Access access) const noexcept
+const EngineData &Engine::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
 {
     const EngineData *p0, *p1, *p2, *p3;
 

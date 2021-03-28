@@ -287,7 +287,7 @@ void MainWindow::on_positionSlider_valueChanged(int value) noexcept
 {
     double scale = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
     const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
-    qint64 timestamp = static_cast<qint64>(qRound(scale * static_cast<double>(aircraft.getLastAircraftData().timestamp)));
+    qint64 timestamp = static_cast<qint64>(qRound(scale * static_cast<double>(aircraft.getLast().timestamp)));
 
     // Prevent the timestampTimeEdit field to set the play position as well
     ui->timestampTimeEdit->blockSignals(true);
@@ -331,7 +331,7 @@ void MainWindow::updateUi() noexcept
 void MainWindow::updateControlUi() noexcept
 {
     const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
-    bool hasRecording = aircraft.getAllAircraftData().count() > 0;
+    bool hasRecording = aircraft.getAll().count() > 0;
     switch (d->skyConnect.getState()) {
     case Connect::State::Disconnected:
         // Fall-thru intened: each time a control element is triggered a connection
@@ -418,7 +418,7 @@ void MainWindow::updateControlUi() noexcept
 void MainWindow::updateRecordingTime() noexcept
 {
     const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
-    const AircraftData &aircraftData = aircraft.getLastAircraftData();
+    const AircraftData &aircraftData = aircraft.getLast();
     if (d->skyConnect.isRecording()) {
         ui->timestampTimeEdit->blockSignals(true);
         QTime time(0, 0, 0, 0);
@@ -436,7 +436,7 @@ void MainWindow::updateRecordingTime() noexcept
 void MainWindow::updateFileMenu() noexcept
 {
     const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
-    bool hasRecording = aircraft.getAllAircraftData().count() > 0;
+    bool hasRecording = aircraft.getAll().count() > 0;
     switch (d->skyConnect.getState()) {
     case Connect::State::Recording:
         // Fall-thru intentional
@@ -585,7 +585,7 @@ void MainWindow::on_aboutQtAction_triggered() noexcept
 
 void MainWindow::handlePlayPositionChanged(qint64 timestamp) noexcept {
     const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
-    qint64 endTimeStamp = aircraft.getLastAircraftData().timestamp;
+    qint64 endTimeStamp = aircraft.getLast().timestamp;
     qint64 ts = qMin(timestamp, endTimeStamp);
 
     int sliderPosition;

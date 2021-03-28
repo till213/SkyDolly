@@ -52,6 +52,8 @@ struct MODEL_API AircraftInfo
     AircraftInfo(AircraftInfo &&) = default;
     AircraftInfo(const AircraftInfo &) = default;
     AircraftInfo &operator= (const AircraftInfo &) = default;
+
+    void clear();
 };
 
 #endif // AIRCRAFTINFO_H
