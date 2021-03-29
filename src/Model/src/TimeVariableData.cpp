@@ -22,21 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "FlightConditions.h"
-// PUBLIC
+#include "TimeVariableData.h"
 
-FlightConditions::FlightConditions() noexcept
-    : groundAltitude(0.0f),
-      surfaceType(SimType::SurfaceType::Unknown),
-      ambientTemperature(0.0f),
-      totalAirTemperature(0.0f),
-      windVelocity(0.0f),
-      windDirection(0.0f),
-      precipitationState(SimType::PrecipitationState::None),
-      inClouds(false),
-      visibility(0.0f),
-      seaLevelPressure(0.0f),
-      pitotIcingPercent(0),
-      structuralIcingPercent(0)
+TimeVariableData::TimeVariableData() noexcept
+    : timestamp(InvalidTime)
 {
 }

@@ -31,7 +31,7 @@
 
 #include "ModelLib.h"
 
-class FlightConditions;
+class FlightCondition;
 class Aircraft;
 class ScenarioPrivate;
 
@@ -42,17 +42,19 @@ public:
     Scenario(QObject *parent = nullptr) noexcept;
     ~Scenario() noexcept;
 
-    const Aircraft &getUserAircraftConst() const;
-    Aircraft &getUserAircraft() const;
+    const Aircraft &getUserAircraftConst() const noexcept;
+    Aircraft &getUserAircraft() const noexcept;
 
-    void setFlightConditions(FlightConditions flightConditions) noexcept;
-    const FlightConditions &getFlightConditionsConst() const;
-    FlightConditions &getFlightConditions() const;
+    void setFlightCondition(FlightCondition flightCondition) noexcept;
+    const FlightCondition &getFlightConditionConst() const noexcept;
+    FlightCondition &getFlightCondition() const noexcept;
+
+    qint64 getTotalDuration() const noexcept;
 
 signals:
     void aircraftInfoChanged();
     void aircraftDataChanged();
-    void flightConditionsChanged();
+    void flightConditionChanged();
 
 private:
     Q_DISABLE_COPY(Scenario)

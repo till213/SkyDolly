@@ -22,31 +22,18 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTCONDITIONS_H
-#define FLIGHTCONDITIONS_H
 
-#include "SimType.h"
-#include "ModelLib.h"
+#include "TimeVariableData.h"
+#include "SkySearch.h"
 
-struct MODEL_API FlightConditions
+double SkySearch::normaliseTimestamp(const TimeVariableData &p1, const TimeVariableData &p2, quint64 timestamp) noexcept
 {
-    float groundAltitude;
-    SimType::SurfaceType surfaceType;
-    float ambientTemperature;
-    float totalAirTemperature;
-    float windVelocity;
-    float windDirection;
-    SimType::PrecipitationState precipitationState;
-    bool inClouds;
-    float visibility;
-    float seaLevelPressure;
-    quint8 pitotIcingPercent;
-    quint8 structuralIcingPercent;
-
-    FlightConditions() noexcept;
-    FlightConditions(FlightConditions &&) = default;
-    FlightConditions(const FlightConditions &) = default;
-    FlightConditions &operator= (const FlightConditions &) = default;
-};
-
-#endif // FLIGHTCONDITIONS_H
+    double t1 = timestamp - p1.timestamp;
+    double t2 = p2.timestamp - p1.timestamp;
+    if (t2 != 0.0) {
+        return static_cast<double>(t1) / static_cast<double>(t2);
+    } else {
+        // p1 and p2 are the same (last sampled) point
+        return 0.0;
+    }
+}

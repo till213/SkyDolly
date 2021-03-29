@@ -30,14 +30,19 @@
 #include "../../../Model/src/World.h"
 #include "../../../Model/src/Scenario.h"
 #include "../../../Model/src/Aircraft.h"
+#include "../../../Model/src/Aircraft.h"
+#include "../../../Model/src/PrimaryFlightControl.h"
 #include "../../../Model/src/AircraftInfo.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
-#include "../Widgets/AircraftVariablesWidget.h"
-#include "../Widgets/ControlVariablesWidget.h"
-#include "../Widgets/LightVariablesWidget.h"
+#include "../Widgets/AircraftWidget.h"
+#include "../Widgets/EngineWidget.h"
+#include "../Widgets/PrimaryFlightControlWidget.h"
+#include "../Widgets/SecondaryFlightControlWidget.h"
+#include "../Widgets/AircraftHandleWidget.h"
+#include "../Widgets/LightWidget.h"
 #include "../Widgets/AircraftTypeWidget.h"
-#include "../Widgets/FlightConditionsWidget.h"
+#include "../Widgets/FlightConditionWidget.h"
 #include "SimulationVariablesDialog.h"
 #include "ui_SimulationVariablesDialog.h"
 
@@ -99,19 +104,28 @@ void SimulationVariablesDialog::hideEvent(QHideEvent *event) noexcept
 
 void SimulationVariablesDialog::initUi() noexcept
 {
-    AircraftVariablesWidget *aircraftVariablesWidget = new AircraftVariablesWidget(d->skyConnect, this);
-    ui->simulationVariablesTab->addTab(aircraftVariablesWidget, tr("&Aircraft"));
+    AircraftWidget *aircraftWidget = new AircraftWidget(d->skyConnect, this);
+    ui->simulationVariablesTab->addTab(aircraftWidget, tr("&Aircraft"));
 
-    ControlVariablesWidget *controlVariablesWidget = new ControlVariablesWidget(d->skyConnect, this);
-    ui->simulationVariablesTab->addTab(controlVariablesWidget, tr("&Flight Controls"));
+    EngineWidget *engineWidget = new EngineWidget(d->skyConnect, this);
+    ui->simulationVariablesTab->addTab(engineWidget, tr("&Engine"));
 
-    LightVariablesWidget *lightVariablesWidget = new LightVariablesWidget(d->skyConnect, this);
-    ui->simulationVariablesTab->addTab(lightVariablesWidget, tr("&Lights"));
+    PrimaryFlightControlWidget *primaryFlightControlWidget = new PrimaryFlightControlWidget(d->skyConnect, this);
+    ui->simulationVariablesTab->addTab(primaryFlightControlWidget, tr("&Primary Controls"));
+
+    SecondaryFlightControlWidget *secondaryFlightControlWidget = new SecondaryFlightControlWidget(d->skyConnect, this);
+    ui->simulationVariablesTab->addTab(secondaryFlightControlWidget, tr("&Secondary Controls"));
+
+    AircraftHandleWidget *aircraftHandleWidget = new AircraftHandleWidget(d->skyConnect, this);
+    ui->simulationVariablesTab->addTab(aircraftHandleWidget, tr("&Handles && Brakes"));
+
+    LightWidget *lightWidget = new LightWidget(d->skyConnect, this);
+    ui->simulationVariablesTab->addTab(lightWidget, tr("&Lights"));
 
     AircraftTypeWidget *aircraftTypeWidget = new AircraftTypeWidget(d->skyConnect, this);
     ui->simulationVariablesTab->addTab(aircraftTypeWidget, tr("Aircraft &Type"));
 
-    FlightConditionsWidget *flightConditionsWidget = new FlightConditionsWidget(d->skyConnect, this);
+    FlightConditionWidget *flightConditionsWidget = new FlightConditionWidget(d->skyConnect, this);
     ui->simulationVariablesTab->addTab(flightConditionsWidget, tr("&Conditions"));
 }
 

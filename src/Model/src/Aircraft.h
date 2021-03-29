@@ -33,8 +33,13 @@
 
 #include "ModelLib.h"
 #include "AircraftInfo.h"
-#include "AircraftData.h"
+#include "Engine.h"
 
+struct AircraftData;
+struct PrimaryFlightControl;
+struct SecondaryFlightControl;
+struct AircraftHandle;
+struct Light;
 class AircraftPrivate;
 
 class MODEL_API Aircraft : public QObject
@@ -44,15 +49,32 @@ public:
     Aircraft(QObject *parent = nullptr) noexcept;
     virtual ~Aircraft() noexcept;
 
+    const Engine &getEngineConst() const noexcept;
+    Engine &getEngine() const noexcept;
+
+    const PrimaryFlightControl &getPrimaryFlightControlConst() const noexcept;
+    PrimaryFlightControl &getPrimaryFlightControl() const noexcept;
+
+    const SecondaryFlightControl &getSecondaryFlightControlConst() const noexcept;
+    SecondaryFlightControl &getSecondaryFlightControl() const noexcept;
+
+    const AircraftHandle &getAircraftHandleConst() const noexcept;
+    AircraftHandle &getAircraftHandle() const noexcept;
+
+    const Light &getLightConst() const noexcept;
+    Light &getLight() const noexcept;
+
     void setAircraftInfo(AircraftInfo aircraftInfo) noexcept;
     const AircraftInfo &getAircraftInfo() const noexcept;
 
-    void upsertAircraftData(AircraftData aircraftData) noexcept;
-    const AircraftData &getLastAircraftData() const noexcept;
-    const QVector<AircraftData> getAllAircraftData() const noexcept;
-    const AircraftData &interpolateAircraftData(qint64 timestamp) const noexcept;
+    void upsert(AircraftData aircraftData) noexcept;
+    const AircraftData &getLast() const noexcept;
+    const QVector<AircraftData> getAll() const noexcept;
+    const AircraftData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
-    void clear();
+    qint64 getDuration() const noexcept;
+
+    void clear() noexcept;
 
 signals:
     void infoChanged();
@@ -61,10 +83,6 @@ signals:
 private:
     Q_DISABLE_COPY(Aircraft)
     std::unique_ptr<AircraftPrivate> d;
-
-    bool updateCurrentIndex(qint64 timestamp) const noexcept;
-    bool getSupportData(qint64 timestamp, const AircraftData **p0, const AircraftData **p1, const AircraftData **p2, const AircraftData **p3) const noexcept;
-    static double normaliseTimestamp(const AircraftData &p1, const AircraftData &p2, quint64 timestamp) noexcept;
 };
 
 #endif // AIRCRAFT_H

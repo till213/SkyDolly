@@ -28,6 +28,11 @@
 class QIODevice;
 
 class Aircraft;
+class Engine;
+class PrimaryFlightControl;
+class SecondaryFlightControl;
+class AircraftHandle;
+class Light;
 class CSVExportPrivate;
 
 #include "../ModelLib.h"
@@ -36,6 +41,14 @@ class CSVImport
 {
 public:
     MODEL_API static bool importData(QIODevice &io, Aircraft &aircraft) noexcept;
+
+private:
+    static bool importAircraftData(const QList<QByteArray> &headers, const QList<QByteArray> values, bool firstRow, Aircraft &aircraft) noexcept;
+    static bool importEngineData(const QList<QByteArray> &headers, const QList<QByteArray> values, bool firstRow, Engine &engine) noexcept;
+    static bool importPrimaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> values, bool firstRow, PrimaryFlightControl &primaryFlightControl) noexcept;
+    static bool importSecondaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> values, bool firstRow, SecondaryFlightControl &secondaryFlightControl) noexcept;
+    static bool importAircraftHandleData(const QList<QByteArray> &headers, const QList<QByteArray> values, bool firstRow, AircraftHandle &aircraftHandle) noexcept;
+    static bool importLightData(const QList<QByteArray> &headers, const QList<QByteArray> values, bool firstRow, Light &light) noexcept;
 };
 
 #endif // CSVIMPORT_H

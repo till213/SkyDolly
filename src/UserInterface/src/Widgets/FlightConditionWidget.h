@@ -22,45 +22,44 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CONTROLVARIABLESWIDGET_H
-#define CONTROLVARIABLESWIDGET_H
+#ifndef FLIGHTCONDITIONWIDGET_H
+#define FLIGHTCONDITIONWIDGET_H
 
-#include <QWidget>
+#include <memory>
+
+#include <QDialog>
 
 class QShowEvent;
 class QHideEvent;
 
 class SkyConnectIntf;
-class AircraftData;
-class ControlVariablesWidgetPrivate;
+class FlightConditionWidgetPrivate;
 
 namespace Ui {
-class ControlVariablesWidget;
+class FlightConditionWidget;
 }
 
-class ControlVariablesWidget : public QWidget
+class FlightConditionWidget : public QDialog
 {
     Q_OBJECT
-
 public:
-    explicit ControlVariablesWidget(SkyConnectIntf &skyConnect, QWidget *parent);
-    virtual ~ControlVariablesWidget();
+    explicit FlightConditionWidget(SkyConnectIntf &skyConnect, QWidget *parent = nullptr);
+    virtual ~FlightConditionWidget();
 
 protected:
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;
 
 private:
-    Q_DISABLE_COPY(ControlVariablesWidget)
-    std::unique_ptr<ControlVariablesWidgetPrivate> d;
-    std::unique_ptr<Ui::ControlVariablesWidget> ui;
+    Q_DISABLE_COPY(FlightConditionWidget)
+    std::unique_ptr<FlightConditionWidgetPrivate> d;
+    std::unique_ptr<Ui::FlightConditionWidget> ui;
 
     void initUi();
     void updateUi();
-    const AircraftData &getCurrentAircraftData() const;
 
 private slots:
-    void updateControlDataUi();
+    void updateInfoUi();
 };
 
-#endif // CONTROLVARIABLESWIDGET_H
+#endif // FLIGHTCONDITIONWIDGET_H

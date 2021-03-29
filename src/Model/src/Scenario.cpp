@@ -25,7 +25,7 @@
 #include <memory>
 #include <vector>
 
-#include "FlightConditions.h"
+#include "FlightCondition.h"
 #include "Aircraft.h"
 #include "Scenario.h"
 
@@ -39,7 +39,7 @@ public:
     ~ScenarioPrivate() noexcept
     {}
 
-    FlightConditions flightConditions;
+    FlightCondition flightCondition;
     std::vector<std::unique_ptr<Aircraft>> aircrafts;
 
 };
@@ -62,30 +62,37 @@ Scenario::~Scenario() noexcept
 {
 }
 
-const Aircraft &Scenario::getUserAircraftConst() const
+const Aircraft &Scenario::getUserAircraftConst() const noexcept
 {
     return *(*d->aircrafts.cbegin());
 }
 
-Aircraft &Scenario::getUserAircraft() const
+Aircraft &Scenario::getUserAircraft() const noexcept
 {
     return *(*d->aircrafts.cbegin());
 }
 
-void Scenario::setFlightConditions(FlightConditions flightConditions) noexcept
+void Scenario::setFlightCondition(FlightCondition flightCondition) noexcept
 {
-    d->flightConditions = flightConditions;
-    emit flightConditionsChanged();
+    d->flightCondition = flightCondition;
+    emit flightConditionChanged();
 }
 
-const FlightConditions &Scenario::getFlightConditionsConst() const
+const FlightCondition &Scenario::getFlightConditionConst() const noexcept
 {
-    return d->flightConditions;
+    return d->flightCondition;
 }
 
-FlightConditions &Scenario::getFlightConditions() const
+FlightCondition &Scenario::getFlightCondition() const noexcept
 {
-    return d->flightConditions;
+    return d->flightCondition;
+}
+
+qint64 Scenario::getTotalDuration() const noexcept
+{
+    // For now the total duration is the duration of the
+    // (one and only) user aircraft
+    return d->aircrafts.at(0)->getDuration();
 }
 
 // PRIVATE
@@ -98,4 +105,3 @@ void Scenario::frenchConnection() noexcept
     connect(&userAircraft, &Aircraft::dataChanged,
             this, &Scenario::aircraftDataChanged);
 }
-

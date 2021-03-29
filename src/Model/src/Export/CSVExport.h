@@ -25,9 +25,16 @@
 #ifndef CSVEXPORT_H
 #define CSVEXPORT_H
 
+class QString;
 class QIODevice;
 
 class Aircraft;
+class AircraftData;
+class EngineData;
+class PrimaryFlightControlData;
+class SecondaryFlightControlData;
+class AircraftHandleData;
+class LightData;
 class CSVExportPrivate;
 
 #include "../ModelLib.h"
@@ -42,6 +49,24 @@ public:
 
 private:
     CSVExportPrivate *d;
+
+    static void appendAircraftHeader(QString &header) noexcept;
+    static void appendAircraftData(const AircraftData &data, QString &csv) noexcept;
+
+    static void appendEngineHeader(QString &header) noexcept;
+    static void appendEngineData(const EngineData &data, QString &csv) noexcept;
+
+    static void appendPrimaryFlightControlHeader(QString &header) noexcept;
+    static void appendPrimaryFlightControlData(const PrimaryFlightControlData &data, QString &csv) noexcept;
+
+    static void appendSecondaryFlightControlHeader(QString &header) noexcept;
+    static void appendSecondaryFlightControlData(const SecondaryFlightControlData &data, QString &csv) noexcept;
+
+    static void appendAircraftHandleHeader(QString &header) noexcept;
+    static void appendAircraftHandleData(const AircraftHandleData &data, QString &csv) noexcept;
+
+    static void appendLighteHeader(QString &header) noexcept;
+    static void appendLightData(const LightData &data, QString &csv) noexcept;
 };
 
 #endif // CSVEXPORT_H

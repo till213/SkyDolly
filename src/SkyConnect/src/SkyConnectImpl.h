@@ -31,6 +31,7 @@
 #include <windows.h>
 #include <SimConnect.h>
 
+#include "../../Model/src/TimeVariableData.h"
 #include "../../Kernel/src/SampleRate.h"
 #include "AbstractSkyConnect.h"
 
@@ -50,14 +51,14 @@ protected:
     virtual void onRecordingPaused(bool paused ) noexcept override;
     virtual void onStopRecording() noexcept override;
 
-    virtual void onStartReplay(qint64 currentTimestamp ) noexcept override;
+    virtual void onStartReplay(qint64 currentTimestamp) noexcept override;
     virtual void onReplayPaused(bool paused) noexcept override;
     virtual void onStopReplay() noexcept override;
 
     virtual void onSeek(qint64 currentTimestamp) noexcept override;
     virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
 
-    virtual bool sendAircraftData(qint64 currentTimestamp) noexcept override;
+    virtual bool sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept override;
     virtual bool connectWithSim() noexcept override;
     virtual bool isConnectedWithSim() const noexcept override;
 
@@ -73,9 +74,10 @@ private:
     void setupInitialPosition() noexcept;
     void setSimulationFrozen(bool enable) noexcept;
     bool isSimulationFrozen() const noexcept;
-    bool sendAircraftData() noexcept;
+    bool sendAircraftData(TimeVariableData::Access access) noexcept;
     void replay() noexcept;
     void updateRecordFrequency(SampleRate::SampleRate sampleRate) noexcept;
+    void updateRequestPeriod(::SIMCONNECT_PERIOD period);
 
     static void CALLBACK dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context) noexcept;
 };

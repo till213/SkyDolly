@@ -30,18 +30,17 @@
 #include "../../../Model/src/World.h"
 #include "../../../Model/src/Scenario.h"
 #include "../../../Model/src/Aircraft.h"
-#include "../../../Model/src/AircraftInfo.h"
-#include "../../../Model/src/FlightConditions.h"
+#include "../../../Model/src/FlightCondition.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "../../../Kernel/src/SkyMath.h"
-#include "FlightConditionsWidget.h"
-#include "ui_FlightConditionsWidget.h"
+#include "FlightConditionWidget.h"
+#include "ui_FlightConditionWidget.h"
 
-class FlightConditionsWidgetPrivate
+class FlightConditionWidgetPrivate
 {
 public:
-    FlightConditionsWidgetPrivate(SkyConnectIntf &theSkyConnect)
+    FlightConditionWidgetPrivate(SkyConnectIntf &theSkyConnect)
         : skyConnect(theSkyConnect)
     {}
 
@@ -50,10 +49,10 @@ public:
 
 // PUBLIC
 
-FlightConditionsWidget::FlightConditionsWidget(SkyConnectIntf &skyConnect, QWidget *parent) :
+FlightConditionWidget::FlightConditionWidget(SkyConnectIntf &skyConnect, QWidget *parent) :
     QDialog(parent),
-    d(std::make_unique<FlightConditionsWidgetPrivate>(skyConnect)),
-    ui(std::make_unique<Ui::FlightConditionsWidget>())
+    d(std::make_unique<FlightConditionWidgetPrivate>(skyConnect)),
+    ui(std::make_unique<Ui::FlightConditionWidget>())
 {
     ui->setupUi(this);
     Qt::WindowFlags flags = Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
@@ -62,35 +61,35 @@ FlightConditionsWidget::FlightConditionsWidget(SkyConnectIntf &skyConnect, QWidg
     initUi();
 }
 
-FlightConditionsWidget::~FlightConditionsWidget()
+FlightConditionWidget::~FlightConditionWidget()
 {
 }
 
 // PROTECTED
 
-void FlightConditionsWidget::showEvent(QShowEvent *event)
+void FlightConditionWidget::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event)
 
     updateUi();
 
     const Scenario &currentScenario = World::getInstance().getCurrentScenario();
-    connect(&currentScenario, &Scenario::flightConditionsChanged,
-            this, &FlightConditionsWidget::updateInfoUi);
+    connect(&currentScenario, &Scenario::flightConditionChanged,
+            this, &FlightConditionWidget::updateInfoUi);
 }
 
-void FlightConditionsWidget::hideEvent(QHideEvent *event)
+void FlightConditionWidget::hideEvent(QHideEvent *event)
 {
     Q_UNUSED(event)
 
     const Scenario &currentScenario = World::getInstance().getCurrentScenario();
-    disconnect(&currentScenario, &Scenario::flightConditionsChanged,
-            this, &FlightConditionsWidget::updateInfoUi);
+    disconnect(&currentScenario, &Scenario::flightConditionChanged,
+            this, &FlightConditionWidget::updateInfoUi);
 }
 
 // PRIVATE
 
-void FlightConditionsWidget::initUi()
+void FlightConditionWidget::initUi()
 {
     ui->groundAltitudeLineEdit->setToolTip(SimVar::GroundAltitude);
     ui->surfaceTypeLineEdit->setToolTip(SimVar::SurfaceType);
@@ -111,29 +110,29 @@ void FlightConditionsWidget::initUi()
     ui->inCloudsCheckBox->setFocusPolicy(Qt::NoFocus);
 }
 
-void FlightConditionsWidget::updateUi()
+void FlightConditionWidget::updateUi()
 {
     updateInfoUi();
 }
 
 // PRIVATE SLOTS
 
-void FlightConditionsWidget::updateInfoUi()
+void FlightConditionWidget::updateInfoUi()
 {
     const Scenario &currentScenario = World::getInstance().getCurrentScenario();
-    const FlightConditions &flightConditions = currentScenario.getFlightConditionsConst();
+    const FlightCondition &flightCondition = currentScenario.getFlightConditionConst();
 
-    ui->groundAltitudeLineEdit->setText(QString::number(flightConditions.groundAltitude));
-    ui->surfaceTypeLineEdit->setText(SimType::surfaceTypeToString(flightConditions.surfaceType));
-    ui->temperatureLineEdit->setText(QString::number(flightConditions.ambientTemperature));
-    ui->totalAirTemperatureLineEdit->setText(QString::number(flightConditions.totalAirTemperature));
-    ui->windVelocityLineEdit->setText(QString::number(flightConditions.windVelocity));
-    ui->windDirectionLineEdit->setText(QString::number(flightConditions.windDirection));
-    ui->precipitationStateLineEdit->setText(SimType::precipitationStateToString(flightConditions.precipitationState));
+    ui->groundAltitudeLineEdit->setText(QString::number(flightCondition.groundAltitude));
+    ui->surfaceTypeLineEdit->setText(SimType::surfaceTypeToString(flightCondition.surfaceType));
+    ui->temperatureLineEdit->setText(QString::number(flightCondition.ambientTemperature));
+    ui->totalAirTemperatureLineEdit->setText(QString::number(flightCondition.totalAirTemperature));
+    ui->windVelocityLineEdit->setText(QString::number(flightCondition.windVelocity));
+    ui->windDirectionLineEdit->setText(QString::number(flightCondition.windDirection));
+    ui->precipitationStateLineEdit->setText(SimType::precipitationStateToString(flightCondition.precipitationState));
 
-    ui->inCloudsCheckBox->setChecked(flightConditions.inClouds);
-    ui->visibilityLineEdit->setText(QString::number(flightConditions.visibility));
-    ui->seaLevelPressure->setText(QString::number(flightConditions.seaLevelPressure));
-    ui->pitotIcingLineEdit->setText(QString::number(SkyMath::toPercent(flightConditions.pitotIcingPercent)));
-    ui->structuralIcingLineEdit->setText(QString::number(SkyMath::toPercent(flightConditions.structuralIcingPercent)));
+    ui->inCloudsCheckBox->setChecked(flightCondition.inClouds);
+    ui->visibilityLineEdit->setText(QString::number(flightCondition.visibility));
+    ui->seaLevelPressure->setText(QString::number(flightCondition.seaLevelPressure));
+    ui->pitotIcingLineEdit->setText(QString::number(SkyMath::toPercent(flightCondition.pitotIcingPercent)));
+    ui->structuralIcingLineEdit->setText(QString::number(SkyMath::toPercent(flightCondition.structuralIcingPercent)));
 }

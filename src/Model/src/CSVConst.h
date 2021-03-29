@@ -22,46 +22,22 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTCONDITIONSWIDGET_H
-#define FLIGHTCONDITIONSWIDGET_H
+#ifndef CSVCONST_H
+#define CSVCONST_H
 
-#include <memory>
+namespace CSVConst {
+    // Format and precision for double
+    constexpr char Format = 'g';
+    constexpr int Precision = 9;
 
-#include <QDialog>
-
-class QShowEvent;
-class QHideEvent;
-
-class SkyConnectIntf;
-class FlightConditionsWidgetPrivate;
-class AircraftData;
-
-namespace Ui {
-class FlightConditionsWidget;
+    enum class DataType {
+        Aircraft = 0,
+        Engine = 1,
+        PrimaryFlightControl = 2,
+        SecondaryFlightControl = 3,
+        AircraftHandle = 4,
+        Light = 5
+    };
 }
 
-class FlightConditionsWidget : public QDialog
-{
-    Q_OBJECT
-
-public:
-    explicit FlightConditionsWidget(SkyConnectIntf &skyConnect, QWidget *parent = nullptr);
-    virtual ~FlightConditionsWidget();
-
-protected:
-    void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
-
-private:
-    Q_DISABLE_COPY(FlightConditionsWidget)
-    std::unique_ptr<FlightConditionsWidgetPrivate> d;
-    std::unique_ptr<Ui::FlightConditionsWidget> ui;
-
-    void initUi();
-    void updateUi();
-
-private slots:
-    void updateInfoUi();
-};
-
-#endif // FLIGHTCONDITIONSWIDGET_H
+#endif // CSVCONST_H
