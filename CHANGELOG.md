@@ -3,10 +3,7 @@
 ## 0.5.0
 
 ### New Features
-
-### Bug Fixes
-
-- The time widget is now editable when replay is paused
+- Simulation variables have been split into distinct requests, saving both on required space and CPU usage
 
 ## 0.4.1
 
