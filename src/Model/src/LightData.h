@@ -22,16 +22,26 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTDATADEFINITION_H
-#define SIMCONNECTDATADEFINITION_H
+#ifndef LIGHTDATA_H
+#define LIGHTDATA_H
 
-namespace SkyConnectDataDefinition
+#include <QtGlobal>
+#include <QFlags>
+
+#include "SimType.h"
+#include "TimeVariableData.h"
+#include "ModelLib.h"
+
+struct MODEL_API LightData : public TimeVariableData
 {
-    enum DataDefinitionID {
-        AircraftInfoDefinition,
-        AircraftPositionDefinition,
-        AircraftInitialPosition
-    };
-}
+    SimType::LightStates lightStates;
 
-#endif // SIMCONNECTDATADEFINITION_H
+    LightData(SimType::LightStates lightStates = SimType::LightState::None) noexcept;
+    LightData(LightData &&) = default;
+    LightData(const LightData &) = default;
+    LightData &operator= (const LightData &) = default;
+
+    static const LightData NullLightData;
+};
+
+#endif // LIGHTDATA_H

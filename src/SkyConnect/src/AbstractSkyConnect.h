@@ -71,8 +71,6 @@ public:
     virtual Connect::State getState() const noexcept override;
     virtual bool isConnected() const noexcept override;
 
-    virtual const AircraftData &getCurrentAircraftData() const noexcept override;
-
     virtual double calculateRecordedSamplesPerSecond() const noexcept override;
 
 protected:
@@ -85,7 +83,6 @@ protected:
     void startElapsedTimer() const noexcept;
     void resetElapsedTime(bool restart) noexcept;
     void updateCurrentTimestamp() noexcept;
-    const AircraftData &updateCurrentAircraftData() noexcept;
 
     virtual void onStartRecording() = 0;
     virtual void onRecordingPaused(bool paused) = 0;
@@ -98,7 +95,7 @@ protected:
     virtual void onSeek(qint64 currentTimestamp) = 0;
     virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) = 0;
 
-    virtual bool sendAircraftData(qint64 currentTimestamp) = 0;
+    virtual bool sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) = 0;
     virtual bool isConnectedWithSim() const = 0;
     virtual bool connectWithSim() = 0;
 

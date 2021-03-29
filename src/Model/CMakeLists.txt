@@ -13,18 +13,42 @@ target_sources(Model
         src/World.h
         src/Scenario.cpp
         src/Scenario.h
-        src/FlightConditions.cpp
-        src/FlightConditions.h
+        src/FlightCondition.cpp
+        src/FlightCondition.h
         src/Aircraft.cpp
         src/Aircraft.h
+        src/TimeVariableData.cpp
+        src/TimeVariableData.h
         src/AircraftData.cpp
         src/AircraftData.h
+        src/Engine.cpp
+        src/Engine.h
+        src/EngineData.cpp
+        src/EngineData.h
+        src/PrimaryFlightControl.cpp
+        src/PrimaryFlightControl.h
+        src/PrimaryFlightControlData.cpp
+        src/PrimaryFlightControlData.h
+        src/SecondaryFlightControl.cpp
+        src/SecondaryFlightControl.h
+        src/SecondaryFlightControlData.cpp
+        src/SecondaryFlightControlData.h
+        src/AircraftHandle.cpp
+        src/AircraftHandle.h
+        src/AircraftHandleData.cpp
+        src/AircraftHandleData.h
+        src/Light.cpp
+        src/Light.h
+        src/LightData.cpp
+        src/LightData.h
         src/AircraftInfo.cpp
         src/AircraftInfo.h
         src/SimVar.cpp
         src/SimVar.h
         src/SimType.h
+        src/SkySearch.cpp
         src/SkySearch.h
+        src/CSVConst.h
         src/Export/CSVExport.cpp
         src/Export/CSVExport.h
         src/Import/CSVImport.cpp

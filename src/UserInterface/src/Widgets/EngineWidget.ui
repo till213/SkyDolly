@@ -1,36 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FlightConditionsWidget</class>
- <widget class="QWidget" name="FlightConditionsWidget">
+ <class>EngineWidget</class>
+ <widget class="QWidget" name="EngineWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>666</width>
-    <height>226</height>
+    <width>705</width>
+    <height>444</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="sizeConstraint">
+    <enum>QLayout::SetMinimumSize</enum>
+   </property>
    <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBox">
-     <property name="title">
-      <string>Flight Conditions (At Start)</string>
+    <widget class="QGroupBox" name="engineGroupBox">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <property name="title">
+      <string>Engine</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
        <layout class="QFormLayout" name="formLayout">
         <item row="0" column="0">
-         <widget class="QLabel" name="label_14">
+         <widget class="QLabel" name="label_33">
           <property name="text">
-           <string>Ground Altitude [Feet]</string>
+           <string>Throttle 1</string>
           </property>
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QLineEdit" name="groundAltitudeLineEdit">
+         <widget class="QLineEdit" name="throttle1LineEdit">
           <property name="minimumSize">
            <size>
             <width>160</width>
@@ -43,22 +52,19 @@
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="label_9">
+         <widget class="QLabel" name="label_34">
           <property name="text">
-           <string>Surface Type</string>
+           <string>Throttle 2</string>
           </property>
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QLineEdit" name="surfaceTypeLineEdit">
+         <widget class="QLineEdit" name="throttle2LineEdit">
           <property name="minimumSize">
            <size>
             <width>160</width>
             <height>0</height>
            </size>
-          </property>
-          <property name="text">
-           <string/>
           </property>
           <property name="readOnly">
            <bool>true</bool>
@@ -66,14 +72,14 @@
          </widget>
         </item>
         <item row="2" column="0">
-         <widget class="QLabel" name="label_15">
+         <widget class="QLabel" name="label_35">
           <property name="text">
-           <string>Temperature [° Celcius]</string>
+           <string>Throttle 3</string>
           </property>
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="QLineEdit" name="temperatureLineEdit">
+         <widget class="QLineEdit" name="throttle3LineEdit">
           <property name="minimumSize">
            <size>
             <width>160</width>
@@ -86,54 +92,14 @@
          </widget>
         </item>
         <item row="3" column="0">
-         <widget class="QLabel" name="label_16">
+         <widget class="QLabel" name="label_36">
           <property name="text">
-           <string>Total Air Temperature [° Celcius]</string>
+           <string>Throttle 4</string>
           </property>
          </widget>
         </item>
         <item row="3" column="1">
-         <widget class="QLineEdit" name="totalAirTemperatureLineEdit">
-          <property name="minimumSize">
-           <size>
-            <width>160</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="label_17">
-          <property name="text">
-           <string>Wind Velocity [Knots]</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <widget class="QLineEdit" name="windVelocityLineEdit">
-          <property name="minimumSize">
-           <size>
-            <width>160</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0">
-         <widget class="QLabel" name="label_18">
-          <property name="text">
-           <string>Wind Direction [°]</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="1">
-         <widget class="QLineEdit" name="windDirectionLineEdit">
+         <widget class="QLineEdit" name="throttle4LineEdit">
           <property name="minimumSize">
            <size>
             <width>160</width>
@@ -150,14 +116,14 @@
       <item row="0" column="1">
        <layout class="QFormLayout" name="formLayout_2">
         <item row="0" column="0">
-         <widget class="QLabel" name="label_19">
+         <widget class="QLabel" name="label_47">
           <property name="text">
-           <string>Precipitation State</string>
+           <string>Propeller 1</string>
           </property>
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QLineEdit" name="precipitationStateLineEdit">
+         <widget class="QLineEdit" name="propeller1LineEdit">
           <property name="minimumSize">
            <size>
             <width>160</width>
@@ -170,14 +136,14 @@
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="label_21">
+         <widget class="QLabel" name="label_48">
           <property name="text">
-           <string>Visibility [Metres]</string>
+           <string>Propeller 2</string>
           </property>
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QLineEdit" name="visibilityLineEdit">
+         <widget class="QLineEdit" name="propeller2LineEdit">
           <property name="minimumSize">
            <size>
             <width>160</width>
@@ -190,14 +156,14 @@
          </widget>
         </item>
         <item row="2" column="0">
-         <widget class="QLabel" name="label_22">
+         <widget class="QLabel" name="label_49">
           <property name="text">
-           <string>Sea Level Pressure [hPa]</string>
+           <string>Propeller 3</string>
           </property>
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="QLineEdit" name="seaLevelPressure">
+         <widget class="QLineEdit" name="propeller3LineEdit">
           <property name="minimumSize">
            <size>
             <width>160</width>
@@ -210,14 +176,14 @@
          </widget>
         </item>
         <item row="3" column="0">
-         <widget class="QLabel" name="label_23">
+         <widget class="QLabel" name="label_50">
           <property name="text">
-           <string>Pitot Icing [%]</string>
+           <string>Propeller 4</string>
           </property>
          </widget>
         </item>
         <item row="3" column="1">
-         <widget class="QLineEdit" name="pitotIcingLineEdit">
+         <widget class="QLineEdit" name="propeller4LineEdit">
           <property name="minimumSize">
            <size>
             <width>160</width>
@@ -229,15 +195,19 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="label_25">
+       </layout>
+      </item>
+      <item row="0" column="2">
+       <layout class="QFormLayout" name="formLayout_3">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_51">
           <property name="text">
-           <string>Structural Icing [%]</string>
+           <string>Mixture 1</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="1">
-         <widget class="QLineEdit" name="structuralIcingLineEdit">
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="mixture1LineEdit">
           <property name="minimumSize">
            <size>
             <width>160</width>
@@ -249,40 +219,65 @@
           </property>
          </widget>
         </item>
-        <item row="5" column="1">
-         <widget class="QCheckBox" name="inCloudsCheckBox">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="mouseTracking">
-           <bool>false</bool>
-          </property>
-          <property name="focusPolicy">
-           <enum>Qt::NoFocus</enum>
-          </property>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_52">
           <property name="text">
-           <string>In Clouds</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
+           <string>Mixture 2</string>
           </property>
          </widget>
         </item>
-        <item row="6" column="1">
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="mixture2LineEdit">
+          <property name="minimumSize">
            <size>
-            <width>20</width>
-            <height>40</height>
+            <width>160</width>
+            <height>0</height>
            </size>
           </property>
-         </spacer>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_53">
+          <property name="text">
+           <string>Mixture 3</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="mixture3LineEdit">
+          <property name="minimumSize">
+           <size>
+            <width>160</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_54">
+          <property name="text">
+           <string>Mixture 4</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="mixture4LineEdit">
+          <property name="minimumSize">
+           <size>
+            <width>160</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>

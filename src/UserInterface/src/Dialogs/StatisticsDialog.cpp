@@ -27,6 +27,7 @@
 #include "../../../Kernel/src/Settings.h"
 #include "../../../Model/src/World.h"
 #include "../../../Model/src/Scenario.h"
+#include "../../../Model/src/AircraftData.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "StatisticsDialog.h"
@@ -99,7 +100,7 @@ void StatisticsDialog::frenchConnection() noexcept
 void StatisticsDialog::updateRecordUi() noexcept
 {
     const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
-    const QVector<AircraftData> aircraftData = aircraft.getAllAircraftData();
+    const QVector<AircraftData> aircraftData = aircraft.getAll();
     if (Settings::getInstance().getRecordSampleRate() != SampleRate::SampleRate::Auto) {
         ui->recordSampleRateLineEdit->setText(QString::number(Settings::getInstance().getRecordSampleRateValue()));
     } else {

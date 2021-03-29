@@ -22,47 +22,47 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LIGHTVARIABLESWIDGET_H
-#define LIGHTVARIABLESWIDGET_H
-
-#include <memory>
+#ifndef LIGHTWIDGET_H
+#define LIGHTWIDGET_H
 
 #include <QWidget>
+
+#include "../../../Model/src/TimeVariableData.h"
 
 class QShowEvent;
 class QHideEvent;
 
 class SkyConnectIntf;
-class AircraftData;
-class LightVariablesWidgetPrivate;
+class LightData;
+class LightWidgetPrivate;
 
 namespace Ui {
-class LightVariablesWidget;
+class LightWidget;
 }
 
-class LightVariablesWidget : public QWidget
+class LightWidget : public QWidget
 {
     Q_OBJECT
-
 public:
-    explicit LightVariablesWidget(SkyConnectIntf &skyConnect, QWidget *parent);
-    virtual ~LightVariablesWidget();
+    explicit LightWidget(SkyConnectIntf &skyConnect, QWidget *parent);
+    virtual ~LightWidget();
 
 protected:
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;
 
 private:
-    Q_DISABLE_COPY(LightVariablesWidget)
-    std::unique_ptr<LightVariablesWidgetPrivate> d;
-    std::unique_ptr<Ui::LightVariablesWidget> ui;
+    Q_DISABLE_COPY(LightWidget)
+    std::unique_ptr<LightWidgetPrivate> d;
+    std::unique_ptr<Ui::LightWidget> ui;
 
     void initUi();
-    void updateUi();
-    const AircraftData &getCurrentAircraftData() const;
+    void updateUi(qint64 timestamp, TimeVariableData::Access access);
+    const LightData &getCurrentLightData(qint64 timestamp, TimeVariableData::Access access) const;
 
 private slots:
-    void updateLightDataUi();
+    void handleRecordedData();
+    void handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access);
 };
 
-#endif // LIGHTVARIABLESWIDGET_H
+#endif // LIGHTWIDGET_H

@@ -18,6 +18,59 @@ MIT License</source>
     </message>
 </context>
 <context>
+    <name>AircraftHandleWidget</name>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="26"/>
+        <source>Handles &amp;&amp; Brakes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="34"/>
+        <source>Gear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="54"/>
+        <source>Brake Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="74"/>
+        <source>Brake Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="94"/>
+        <source>Water Rudder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="114"/>
+        <source>Tailhook</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="134"/>
+        <source>Canopy Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="119"/>
+        <source>Down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="119"/>
+        <source>Up</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AircraftTypeWidget</name>
     <message>
         <location filename="../src/UserInterface/src/Widgets/AircraftTypeWidget.ui" line="14"/>
@@ -86,398 +139,293 @@ MIT License</source>
     </message>
 </context>
 <context>
-    <name>AircraftVariablesWidget</name>
+    <name>AircraftWidget</name>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="20"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="20"/>
         <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="35"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="35"/>
         <source>Position &amp;&amp; Attitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="44"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="44"/>
         <source>Latitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="64"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="64"/>
         <source>Longitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="84"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="84"/>
         <source>Altitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="104"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="104"/>
         <source>Pitch</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="124"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="124"/>
         <source>Bank</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="144"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="144"/>
         <source>Heading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="173"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="173"/>
         <source>Velocity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="179"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="179"/>
         <source>Velocity X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="199"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="199"/>
         <source>Velocity Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="219"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="219"/>
         <source>Velocity Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="239"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="239"/>
         <source>Rotation Velocity X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="259"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="259"/>
         <source>Rotation Velocity Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="279"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="279"/>
         <source>Rotation Velocity Z</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>ControlVariablesWidget</name>
+    <name>EngineWidget</name>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="14"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="14"/>
         <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="29"/>
-        <source>Primary Controls</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="35"/>
-        <source>Yoke X</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="55"/>
-        <source>Yoke Y</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="75"/>
-        <source>Rudder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="95"/>
-        <source>Elevator</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="115"/>
-        <source>Aileron</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="144"/>
-        <source>Secondary Controls</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="150"/>
-        <source>Leading Edge Flaps Left</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="170"/>
-        <source>Leading Edge Flaps Right</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="190"/>
-        <source>Trailing Edge Flaps Left</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="210"/>
-        <source>Trailing Edge Flaps Right</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="230"/>
-        <source>Flaps Position</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="250"/>
-        <source>Spoiler</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="270"/>
-        <source>Gear</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="290"/>
-        <source>Brake Left</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="310"/>
-        <source>Brake Right</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="330"/>
-        <source>Water Rudder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="350"/>
-        <source>Tailhook</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="370"/>
-        <source>Canopy Open</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="402"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="29"/>
         <source>Engine</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="411"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="37"/>
         <source>Throttle 1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="431"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="57"/>
         <source>Throttle 2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="451"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="77"/>
         <source>Throttle 3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="471"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="97"/>
         <source>Throttle 4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="491"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="121"/>
         <source>Propeller 1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="511"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="141"/>
         <source>Propeller 2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="531"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="161"/>
         <source>Propeller 3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="551"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="181"/>
         <source>Propeller 4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="571"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="205"/>
         <source>Mixture 1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="591"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="225"/>
         <source>Mixture 2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="611"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="245"/>
         <source>Mixture 3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.ui" line="631"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="265"/>
         <source>Mixture 4</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.cpp" line="181"/>
-        <source>Down</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ControlVariablesWidget.cpp" line="181"/>
-        <source>Up</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>FlightConditionsWidget</name>
+    <name>FlightConditionWidget</name>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="14"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="14"/>
         <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="20"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="20"/>
         <source>Flight Conditions (At Start)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="28"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="28"/>
         <source>Ground Altitude [Feet]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="48"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="48"/>
         <source>Surface Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="71"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="71"/>
         <source>Temperature [° Celcius]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="91"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="91"/>
         <source>Total Air Temperature [° Celcius]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="111"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="111"/>
         <source>Wind Velocity [Knots]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="131"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="131"/>
         <source>Wind Direction [°]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="155"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="155"/>
         <source>Precipitation State</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="175"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="175"/>
         <source>Visibility [Metres]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="195"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="195"/>
         <source>Sea Level Pressure [hPa]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="215"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="215"/>
         <source>Pitot Icing [%]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="235"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="235"/>
         <source>Structural Icing [%]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionsWidget.ui" line="264"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="264"/>
         <source>In Clouds</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>LightVariablesWidget</name>
+    <name>LightWidget</name>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="14"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="14"/>
         <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="29"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="29"/>
         <source>Lights</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="38"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="38"/>
         <source>Mask</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="63"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="63"/>
         <source>Navigation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="73"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="73"/>
         <source>Panel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="83"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="83"/>
         <source>Beacon</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="93"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="93"/>
         <source>Recognition</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="103"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="103"/>
         <source>Landing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="113"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="113"/>
         <source>Wing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="123"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="123"/>
         <source>Taxi</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="133"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="133"/>
         <source>Logo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="143"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="143"/>
         <source>Strobe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LightVariablesWidget.ui" line="153"/>
+        <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="153"/>
         <source>Cabin</source>
         <translation type="unfinished"></translation>
     </message>
@@ -686,13 +634,13 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.ui" line="408"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="533"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="534"/>
         <source>Export CSV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.ui" line="413"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="506"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="507"/>
         <source>Import CSV</source>
         <translation type="unfinished"></translation>
     </message>
@@ -722,13 +670,94 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="473"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="474"/>
         <source>Record [@%1 Hz]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="475"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="476"/>
         <source>Record [auto sample rate]</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PrimaryFlightControlWidget</name>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/PrimaryFlightControlWidget.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/PrimaryFlightControlWidget.ui" line="29"/>
+        <source>Primary Flight Controls</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/PrimaryFlightControlWidget.ui" line="35"/>
+        <source>Yoke X</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/PrimaryFlightControlWidget.ui" line="55"/>
+        <source>Yoke Y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/PrimaryFlightControlWidget.ui" line="75"/>
+        <source>Rudder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/PrimaryFlightControlWidget.ui" line="95"/>
+        <source>Elevator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/PrimaryFlightControlWidget.ui" line="115"/>
+        <source>Aileron</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SecondaryFlightControlWidget</name>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/SecondaryFlightControlWidget.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/SecondaryFlightControlWidget.ui" line="23"/>
+        <source>Secondary Flight Controls</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/SecondaryFlightControlWidget.ui" line="31"/>
+        <source>Leading Edge Flaps Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/SecondaryFlightControlWidget.ui" line="51"/>
+        <source>Leading Edge Flaps Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/SecondaryFlightControlWidget.ui" line="71"/>
+        <source>Trailing Edge Flaps Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/SecondaryFlightControlWidget.ui" line="91"/>
+        <source>Trailing Edge Flaps Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/SecondaryFlightControlWidget.ui" line="111"/>
+        <source>Flaps Position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/SecondaryFlightControlWidget.ui" line="131"/>
+        <source>Spoiler</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -987,52 +1016,67 @@ MIT License</source>
     <name>SimulationVariablesDialog</name>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.ui" line="20"/>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="55"/>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="60"/>
         <source>Simulation Variables</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="103"/>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="108"/>
         <source>&amp;Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="109"/>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="111"/>
+        <source>&amp;Engine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="114"/>
+        <source>&amp;Primary Controls</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="117"/>
+        <source>&amp;Secondary Controls</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="120"/>
+        <source>&amp;Handles &amp;&amp; Brakes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="123"/>
         <source>&amp;Lights</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="106"/>
-        <source>&amp;Flight Controls</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="112"/>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="126"/>
         <source>Aircraft &amp;Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="115"/>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="129"/>
         <source>&amp;Conditions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="128"/>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="142"/>
         <source>RECORDING</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="131"/>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="145"/>
         <source>RECORDING PAUSED</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="134"/>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="148"/>
         <source>PLAYBACK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="137"/>
+        <location filename="../src/UserInterface/src/Dialogs/SimulationVariablesDialog.cpp" line="151"/>
         <source>PLAYPACK PAUSED</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1075,7 +1119,7 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/StatisticsDialog.cpp" line="106"/>
+        <location filename="../src/UserInterface/src/Dialogs/StatisticsDialog.cpp" line="107"/>
         <source>Auto</source>
         <translation type="unfinished"></translation>
     </message>

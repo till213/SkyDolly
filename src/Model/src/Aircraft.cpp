@@ -29,27 +29,45 @@
 #include <QVector>
 
 #include "../../Kernel/src/SkyMath.h"
+#include "TimeVariableData.h"
 #include "SkySearch.h"
+#include "Engine.h"
+#include "EngineData.h"
 #include "AircraftInfo.h"
 #include "AircraftData.h"
+#include "PrimaryFlightControl.h"
+#include "PrimaryFlightControlData.h"
+#include "SecondaryFlightControl.h"
+#include "SecondaryFlightControlData.h"
+#include "AircraftHandle.h"
+#include "AircraftHandleData.h"
+#include "Light.h"
+#include "LightData.h"
 #include "Aircraft.h"
 
 class AircraftPrivate
 {
 public:
     AircraftPrivate() noexcept
-        : currentIndex(SkySearch::InvalidIndex)
+        : currentTimestamp(TimeVariableData::InvalidTime),
+          currentAccess(TimeVariableData::Access::Linear),
+          currentIndex(SkySearch::InvalidIndex),
+          duration(TimeVariableData::InvalidTime)
     {}
 
+    Engine engine;
+    PrimaryFlightControl primaryFlightControl;
+    SecondaryFlightControl secondaryFlightControl;
+    AircraftHandle aircraftHandle;
+    Light light;
     AircraftInfo aircraftInfo;
+
     QVector<AircraftData> aircraftData;
+    qint64 currentTimestamp;
+    TimeVariableData::Access currentAccess;
     AircraftData currentAircraftData;
     mutable int currentIndex;
-
-    // In case we seek 3 seconds "into the future" we use binary search
-    // to find the next position (otherwise linear search, assuming that
-    // the next position is "nearby" (within the 3 seconds threshold)
-    static constexpr qint64 BinaryIntervalSearchThreshold = 3000;
+    mutable qint64 duration;
 };
 
 // PUBLIC
@@ -64,6 +82,56 @@ Aircraft::~Aircraft() noexcept
 {
 }
 
+const Engine &Aircraft::getEngineConst() const noexcept
+{
+    return d->engine;
+}
+
+Engine &Aircraft::getEngine() const noexcept
+{
+    return d->engine;
+}
+
+const PrimaryFlightControl &Aircraft::getPrimaryFlightControlConst() const noexcept
+{
+    return d->primaryFlightControl;
+}
+
+PrimaryFlightControl &Aircraft::getPrimaryFlightControl() const noexcept
+{
+    return d->primaryFlightControl;
+}
+
+const SecondaryFlightControl &Aircraft::getSecondaryFlightControlConst() const noexcept
+{
+    return d->secondaryFlightControl;
+}
+
+SecondaryFlightControl &Aircraft::getSecondaryFlightControl() const noexcept
+{
+    return d->secondaryFlightControl;
+}
+
+const AircraftHandle &Aircraft::getAircraftHandleConst() const noexcept
+{
+    return d->aircraftHandle;
+}
+
+AircraftHandle &Aircraft::getAircraftHandle() const noexcept
+{
+    return d->aircraftHandle;
+}
+
+const Light &Aircraft::getLightConst() const noexcept
+{
+    return d->light;
+}
+
+Light &Aircraft::getLight() const noexcept
+{
+    return d->light;
+}
+
 void Aircraft::setAircraftInfo(AircraftInfo aircraftInfo) noexcept
 {
     d->aircraftInfo = aircraftInfo;
@@ -75,7 +143,7 @@ const AircraftInfo &Aircraft::getAircraftInfo() const noexcept
     return d->aircraftInfo;
 }
 
-void Aircraft::upsertAircraftData(AircraftData aircraftData) noexcept
+void Aircraft::upsert(AircraftData aircraftData) noexcept
 {
     if (d->aircraftData.count() > 0 && d->aircraftData.last().timestamp == aircraftData.timestamp)  {
         // Same timestamp -> replace
@@ -92,7 +160,7 @@ void Aircraft::upsertAircraftData(AircraftData aircraftData) noexcept
     emit dataChanged();
 }
 
-const AircraftData &Aircraft::getLastAircraftData() const noexcept
+const AircraftData &Aircraft::getLast() const noexcept
 {
     if (!d->aircraftData.isEmpty()) {
         return d->aircraftData.last();
@@ -101,202 +169,118 @@ const AircraftData &Aircraft::getLastAircraftData() const noexcept
     }
 }
 
-const QVector<AircraftData> Aircraft::getAllAircraftData() const noexcept
+const QVector<AircraftData> Aircraft::getAll() const noexcept
 {
     return d->aircraftData;
 }
 
-void Aircraft::clear()
+void Aircraft::clear() noexcept
 {
     d->aircraftData.clear();
+    d->engine.clear();
+    d->primaryFlightControl.clear();
+    d->secondaryFlightControl.clear();
+    d->aircraftHandle.clear();
+    d->light.clear();
+    d->aircraftInfo.clear();
+    d->currentTimestamp = TimeVariableData::InvalidTime;
     d->currentIndex = SkySearch::InvalidIndex;
+
     emit dataChanged();
 }
 
-const AircraftData &Aircraft::interpolateAircraftData(qint64 timestamp) const noexcept
+const AircraftData &Aircraft::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
 {
     const AircraftData *p0, *p1, *p2, *p3;
     const double Tension = 0.0;
 
-    if (getSupportData(timestamp, &p0, &p1, &p2, &p3)) {
+    if (d->currentTimestamp != timestamp || d->currentAccess != access) {
 
-        double tn = normaliseTimestamp(*p1, *p2, timestamp);
+        double tn;
+        switch (access) {
+        case TimeVariableData::Access::Linear:
+            if (SkySearch::getSupportData(d->aircraftData, timestamp, d->currentIndex, &p0, &p1, &p2, &p3)) {
+                tn = SkySearch::normaliseTimestamp(*p1, *p2, timestamp);
+            }
+            break;
+        case TimeVariableData::Access::Seek:
+            // Get the last sample data just before the seeked position
+            // (that sample point may lie far outside of the "sample window")
+            d->currentIndex = SkySearch::updateStartIndex(d->aircraftData, d->currentIndex, timestamp);
+            if (d->currentIndex != SkySearch::InvalidIndex) {
+                p1 = &d->aircraftData.at(d->currentIndex);
+                p0 = p2 = p3 = p1;
+                tn = 0.0;
+            } else {
+                p0 = p1 = p2 = p3 = nullptr;
+            }
+            break;
+        default:
+            p0 = p1 = p2 = p3 = nullptr;
+            break;
+        }
 
-        // Aircraft position
+        if (p1 != nullptr) {
+            // Aircraft position & attitude
 
-        // Latitude: [-90, 90] - no discontinuity at +/- 90
-        d->currentAircraftData.latitude  = SkyMath::interpolateHermite(p0->latitude, p1->latitude, p2->latitude, p3->latitude, tn, Tension);
-        // Longitude: [-180, 180] - discontinuity at the +/- 180 meridian
-        d->currentAircraftData.longitude = SkyMath::interpolateHermite180(p0->longitude, p1->longitude, p2->longitude, p3->longitude, tn, Tension);
-        // Altitude [open range]
-        d->currentAircraftData.altitude  = SkyMath::interpolateHermite(p0->altitude, p1->altitude, p2->altitude, p3->altitude, tn, Tension);
+            // Latitude: [-90, 90] - no discontinuity at +/- 90
+            d->currentAircraftData.latitude  = SkyMath::interpolateHermite(p0->latitude, p1->latitude, p2->latitude, p3->latitude, tn, Tension);
+            // Longitude: [-180, 180] - discontinuity at the +/- 180 meridian
+            d->currentAircraftData.longitude = SkyMath::interpolateHermite180(p0->longitude, p1->longitude, p2->longitude, p3->longitude, tn, Tension);
+            // Altitude [open range]
+            d->currentAircraftData.altitude  = SkyMath::interpolateHermite(p0->altitude, p1->altitude, p2->altitude, p3->altitude, tn, Tension);
+            // Pitch: [-90, 90] - no discontinuity at +/- 90
+            d->currentAircraftData.pitch = SkyMath::interpolateHermite(p0->pitch, p1->pitch, p2->pitch, p3->pitch, tn, Tension);
+            // Bank: [-180, 180] - discontinuity at +/- 180
+            d->currentAircraftData.bank  = SkyMath::interpolateHermite180(p0->bank, p1->bank, p2->bank, p3->bank, tn, Tension);
+            // Heading: [0, 360] - discontinuity at 0/360
+            d->currentAircraftData.heading = SkyMath::interpolateHermite360(p0->heading, p1->heading, p2->heading, p3->heading, tn, Tension);
 
-        // Pitch: [-90, 90] - no discontinuity at +/- 90
-        d->currentAircraftData.pitch = SkyMath::interpolateHermite(p0->pitch, p1->pitch, p2->pitch, p3->pitch, tn, Tension);
-        // Bank: [-180, 180] - discontinuity at +/- 180
-        d->currentAircraftData.bank  = SkyMath::interpolateHermite180(p0->bank, p1->bank, p2->bank, p3->bank, tn, Tension);
-        // Heading: [0, 360] - discontinuity at 0/360
-        d->currentAircraftData.heading = SkyMath::interpolateHermite360(p0->heading, p1->heading, p2->heading, p3->heading, tn, Tension);
+            // Velocity
+            d->currentAircraftData.velocityBodyX = SkyMath::interpolateLinear(p1->velocityBodyX, p2->velocityBodyX, tn);
+            d->currentAircraftData.velocityBodyY = SkyMath::interpolateLinear(p1->velocityBodyY, p2->velocityBodyY, tn);
+            d->currentAircraftData.velocityBodyZ = SkyMath::interpolateLinear(p1->velocityBodyZ, p2->velocityBodyZ, tn);
+            d->currentAircraftData.rotationVelocityBodyX = SkyMath::interpolateLinear(p1->rotationVelocityBodyX, p2->rotationVelocityBodyX, tn);
+            d->currentAircraftData.rotationVelocityBodyY = SkyMath::interpolateLinear(p1->rotationVelocityBodyY, p2->rotationVelocityBodyY, tn);
+            d->currentAircraftData.rotationVelocityBodyZ = SkyMath::interpolateLinear(p1->rotationVelocityBodyZ, p2->rotationVelocityBodyZ, tn);
 
-        // Velocity
-        d->currentAircraftData.velocityBodyX = SkyMath::interpolateLinear(p1->velocityBodyX, p2->velocityBodyX, tn);
-        d->currentAircraftData.velocityBodyY = SkyMath::interpolateLinear(p1->velocityBodyY, p2->velocityBodyY, tn);
-        d->currentAircraftData.velocityBodyZ = SkyMath::interpolateLinear(p1->velocityBodyZ, p2->velocityBodyZ, tn);
-        d->currentAircraftData.rotationVelocityBodyX = SkyMath::interpolateLinear(p1->rotationVelocityBodyX, p2->rotationVelocityBodyX, tn);
-        d->currentAircraftData.rotationVelocityBodyY = SkyMath::interpolateLinear(p1->rotationVelocityBodyY, p2->rotationVelocityBodyY, tn);
-        d->currentAircraftData.rotationVelocityBodyZ = SkyMath::interpolateLinear(p1->rotationVelocityBodyZ, p2->rotationVelocityBodyZ, tn);
+            d->currentAircraftData.timestamp = timestamp;
 
-        // Aircraft controls
-        d->currentAircraftData.yokeXPosition = SkyMath::interpolateLinear(p1->yokeXPosition, p2->yokeXPosition, tn);
-        d->currentAircraftData.yokeYPosition = SkyMath::interpolateLinear(p1->yokeYPosition, p2->yokeYPosition, tn);
-        d->currentAircraftData.rudderPosition = SkyMath::interpolateLinear(p1->rudderPosition, p2->rudderPosition, tn);
-        d->currentAircraftData.elevatorPosition = SkyMath::interpolateLinear(p1->elevatorPosition, p2->elevatorPosition, tn);
-        d->currentAircraftData.aileronPosition = SkyMath::interpolateLinear(p1->aileronPosition, p2->aileronPosition, tn);
-
-        // Engine
-        d->currentAircraftData.throttleLeverPosition1 = SkyMath::interpolateLinear(p1->throttleLeverPosition1, p2->throttleLeverPosition1, tn);
-        d->currentAircraftData.throttleLeverPosition2 = SkyMath::interpolateLinear(p1->throttleLeverPosition2, p2->throttleLeverPosition2, tn);
-        d->currentAircraftData.throttleLeverPosition3 = SkyMath::interpolateLinear(p1->throttleLeverPosition3, p2->throttleLeverPosition3, tn);
-        d->currentAircraftData.throttleLeverPosition4 = SkyMath::interpolateLinear(p1->throttleLeverPosition4, p2->throttleLeverPosition4, tn);
-        d->currentAircraftData.propellerLeverPosition1 = SkyMath::interpolateLinear(p1->propellerLeverPosition1, p2->propellerLeverPosition1, tn);
-        d->currentAircraftData.propellerLeverPosition2 = SkyMath::interpolateLinear(p1->propellerLeverPosition2, p2->propellerLeverPosition2, tn);
-        d->currentAircraftData.propellerLeverPosition3 = SkyMath::interpolateLinear(p1->propellerLeverPosition3, p2->propellerLeverPosition3, tn);
-        d->currentAircraftData.propellerLeverPosition4 = SkyMath::interpolateLinear(p1->propellerLeverPosition4, p2->propellerLeverPosition4, tn);
-        d->currentAircraftData.mixtureLeverPosition1 = SkyMath::interpolateLinear(p1->mixtureLeverPosition1, p2->mixtureLeverPosition1, tn);
-        d->currentAircraftData.mixtureLeverPosition2 = SkyMath::interpolateLinear(p1->mixtureLeverPosition2, p2->mixtureLeverPosition2, tn);
-        d->currentAircraftData.mixtureLeverPosition3 = SkyMath::interpolateLinear(p1->mixtureLeverPosition3, p2->mixtureLeverPosition3, tn);
-        d->currentAircraftData.mixtureLeverPosition4 = SkyMath::interpolateLinear(p1->mixtureLeverPosition4, p2->mixtureLeverPosition4, tn);
-
-        // Flaps & spoilers
-        d->currentAircraftData.leadingEdgeFlapsLeftPercent = SkyMath::interpolateLinear(p1->leadingEdgeFlapsLeftPercent, p2->leadingEdgeFlapsLeftPercent, tn);
-        d->currentAircraftData.leadingEdgeFlapsRightPercent = SkyMath::interpolateLinear(p1->leadingEdgeFlapsRightPercent, p2->leadingEdgeFlapsRightPercent, tn);
-        d->currentAircraftData.trailingEdgeFlapsLeftPercent = SkyMath::interpolateLinear(p1->trailingEdgeFlapsLeftPercent, p2->trailingEdgeFlapsLeftPercent, tn);
-        d->currentAircraftData.trailingEdgeFlapsRightPercent = SkyMath::interpolateLinear(p1->trailingEdgeFlapsRightPercent, p2->trailingEdgeFlapsRightPercent, tn);
-        d->currentAircraftData.spoilersHandlePosition = SkyMath::interpolateLinear(p1->spoilersHandlePosition, p2->spoilersHandlePosition, tn);
-
-        // No interpolation for flaps position and gear
-        d->currentAircraftData.flapsHandleIndex = p1->flapsHandleIndex;
-        d->currentAircraftData.gearHandlePosition = p1->gearHandlePosition;
-        d->currentAircraftData.brakeLeftPosition = SkyMath::interpolateLinear(p1->brakeLeftPosition, p2->brakeLeftPosition, tn);
-        d->currentAircraftData.brakeRightPosition = SkyMath::interpolateLinear(p1->brakeRightPosition, p2->brakeRightPosition, tn);
-        d->currentAircraftData.waterRudderHandlePosition = SkyMath::interpolateLinear(p1->waterRudderHandlePosition, p2->waterRudderHandlePosition, tn);
-        d->currentAircraftData.tailhookPosition = SkyMath::interpolateLinear(p1->tailhookPosition, p2->tailhookPosition, tn);
-        d->currentAircraftData.canopyOpen = SkyMath::interpolateLinear(p1->canopyOpen, p2->canopyOpen, tn);
-
-        // No interpolation for light states
-        d->currentAircraftData.lightStates = p1->lightStates;
-
-        d->currentAircraftData.timestamp = timestamp;
-
+        } else {
+            // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
+            d->currentAircraftData = AircraftData::NullAircraftData;
+        }
+        d->currentTimestamp = timestamp;
+#ifdef DEBUG
     } else {
-        // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
-        d->currentAircraftData = AircraftData::NullAircraftData;
+        qDebug("Aircraft::interpolateAircraftData: cached result for timestamp: %llu", timestamp);
+#endif
     }
     return d->currentAircraftData;
 }
 
-// PRIVATE
-
-// Updates the current index with the last index having a timestamp <= the given timestamp
-bool Aircraft::updateCurrentIndex(qint64 timestamp) const noexcept
+qint64 Aircraft::getDuration() const noexcept
 {
-    int index = d->currentIndex;
-    int size = d->aircraftData.size();
-    if (size > 0 && timestamp <= d->aircraftData.last().timestamp) {
-        if (index != SkySearch::InvalidIndex) {
-            if (timestamp < d->aircraftData.at(index).timestamp) {
-                // The timestamp was moved to front ("rewind"), so search the
-                // array until and including the current index
-                index = SkySearch::BinaryIntervalSearch;
-            } else if (timestamp - AircraftPrivate::BinaryIntervalSearchThreshold > d->aircraftData.at(index).timestamp) {
-                index = SkySearch::BinaryIntervalSearch;
-            }
-        } else {
-            // Current index not yet initialised, so search the entire array
-            index = SkySearch::BinaryIntervalSearch;
-        }        
-    } else {
-        // No data yet, or timestamp not between given range
-        index = SkySearch::InvalidIndex;
-    }
-
-    if (index != SkySearch::InvalidIndex) {
-
-        // If the given timestamp lies "in the future" (as seen from the timetamp of the current index
-        // the we assume that time has progressed "only a little" (normal replay) and we simply do
-        // a linear search from the current index onwards
-        if (index != SkySearch::BinaryIntervalSearch) {
-            // Linear search: increment the current index, until we find a position having a
-            // timestamp > the given timestamp
-            index = SkySearch::linearIntervalSearch(d->aircraftData, timestamp, index);
-        } else {
-            // The given timestamp lies "in the past" and could really be anywwhere
-            // -> binary search in the past
-            int low;
-            int high;
-            if (d->currentIndex != SkySearch::InvalidIndex) {
-                if (timestamp < d->aircraftData.at(d->currentIndex).timestamp) {
-                    // Search in "the past"
-                    low = 0;
-                    high = d->currentIndex;
-                } else {
-                    // Search in "the future"
-                    low = d->currentIndex;
-                    high = d->aircraftData.size() - 1;
-                }
-            } else {
-                // index not yet initialised -> search entire timeline
-                low = 0;
-                high = d->aircraftData.size() - 1;
-            }
-            index = SkySearch::binaryIntervalSearch(d->aircraftData, timestamp, low, high);
+    if (d->duration == TimeVariableData::InvalidTime) {
+        d->duration = 0;
+        if (d->aircraftData.count() > 0) {
+            d->duration = d->aircraftData.last().timestamp;
         }
-
-    }
-
-    d->currentIndex = index;
-    return d->currentIndex != SkySearch::InvalidIndex;
-}
-
-bool Aircraft::getSupportData(qint64 timestamp, const AircraftData **p0, const AircraftData **p1, const AircraftData **p2, const AircraftData **p3) const noexcept
-{
-    if (updateCurrentIndex(timestamp)) {
-
-        *p1 = &d->aircraftData.at(d->currentIndex);
-        if (d->currentIndex > 0) {
-           *p0 = &d->aircraftData.at(d->currentIndex - 1);
-        } else {
-           *p0 = *p1;
+        if (d->engine.getAll().count() > 0) {
+            d->duration = qMax(d->engine.getLast().timestamp, d->duration);
         }
-        if (d->currentIndex < d->aircraftData.count() - 1) {
-           if (d->currentIndex < d->aircraftData.count() - 2) {
-               *p2 = &d->aircraftData.at(d->currentIndex + 1);
-               *p3 = &d->aircraftData.at(d->currentIndex + 2);
-           } else {
-               // p1 is the second to last data
-               *p2 = &d->aircraftData.at(d->currentIndex + 1);
-               *p3 = *p2;
-           }
-        } else {
-           // p1 is the last data
-           *p2 = *p3 = *p1;
+        if (d->primaryFlightControl.getAll().count() > 0) {
+            d->duration = qMax(d->primaryFlightControl.getLast().timestamp, d->duration);
         }
-
-    } else {
-        *p0 = *p1 = *p2 = *p3 = nullptr;
+        if (d->secondaryFlightControl.getAll().count() > 0) {
+            d->duration = qMax(d->secondaryFlightControl.getLast().timestamp, d->duration);
+        }
+        if (d->aircraftHandle.getAll().count() > 0) {
+            d->duration = qMax(d->aircraftHandle.getLast().timestamp, d->duration);
+        }
+        if (d->light.getAll().count() > 0) {
+            d->duration = qMax(d->light.getLast().timestamp, d->duration);
+        }
     }
-
-    return *p0 != nullptr;
-}
-
-double Aircraft::normaliseTimestamp(const AircraftData &p1, const AircraftData &p2, quint64 timestamp) noexcept
-{
-    double t1 = timestamp - p1.timestamp;
-    double t2 = p2.timestamp - p1.timestamp;
-    if (t2 != 0.0) {
-        return static_cast<float>(t1) / static_cast<float>(t2);
-    } else {
-        // p1 and p2 are the same (last sampled) point
-        return 0.0;
-    }
+    return d->duration;
 }

@@ -26,9 +26,19 @@ if (WIN32)
         PRIVATE
             src/SkyConnectImpl.cpp
             src/SkyConnectImpl.h
-            src/SimConnectDataDefinition.h
+            src/SimConnectType.h
             src/SimConnectAircraftData.cpp
             src/SimConnectAircraftData.h
+            src/SimConnectEngineData.cpp
+            src/SimConnectEngineData.h
+            src/SimConnectPrimaryFlightControlData.cpp
+            src/SimConnectPrimaryFlightControlData.h
+            src/SimConnectSecondaryFlightControlData.cpp
+            src/SimConnectSecondaryFlightControlData.h
+            src/SimConnectAircraftHandleData.cpp
+            src/SimConnectAircraftHandleData.h
+            src/SimConnectLightData.cpp
+            src/SimConnectLightData.h
             src/SimConnectAircraftInfo.cpp
             src/SimConnectAircraftInfo.h
             src/EventWidget.cpp

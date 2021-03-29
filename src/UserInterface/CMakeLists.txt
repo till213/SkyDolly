@@ -39,21 +39,30 @@ target_sources(UserInterface
         src/Dialogs/StatisticsDialog.cpp
         src/Dialogs/StatisticsDialog.h
         src/Dialogs/StatisticsDialog.ui
-        src/Widgets/AircraftVariablesWidget.cpp
-        src/Widgets/AircraftVariablesWidget.h
-        src/Widgets/AircraftVariablesWidget.ui
-        src/Widgets/ControlVariablesWidget.cpp
-        src/Widgets/ControlVariablesWidget.h
-        src/Widgets/ControlVariablesWidget.ui
+        src/Widgets/AircraftWidget.cpp
+        src/Widgets/AircraftWidget.h
+        src/Widgets/AircraftWidget.ui
+        src/Widgets/EngineWidget.cpp
+        src/Widgets/EngineWidget.h
+        src/Widgets/EngineWidget.ui
+        src/Widgets/PrimaryFlightControlWidget.cpp
+        src/Widgets/PrimaryFlightControlWidget.h
+        src/Widgets/PrimaryFlightControlWidget.ui
+        src/Widgets/SecondaryFlightControlWidget.cpp
+        src/Widgets/SecondaryFlightControlWidget.h
+        src/Widgets/SecondaryFlightControlWidget.ui
+        src/Widgets/AircraftHandleWidget.cpp
+        src/Widgets/AircraftHandleWidget.h
+        src/Widgets/AircraftHandleWidget.ui
         src/Widgets/AircraftTypeWidget.cpp
         src/Widgets/AircraftTypeWidget.h
         src/Widgets/AircraftTypeWidget.ui
-        src/Widgets/FlightConditionsWidget.cpp
-        src/Widgets/FlightConditionsWidget.h
-        src/Widgets/FlightConditionsWidget.ui
-        src/Widgets/LightVariablesWidget.cpp
-        src/Widgets/LightVariablesWidget.h
-        src/Widgets/LightVariablesWidget.ui
+        src/Widgets/FlightConditionWidget.cpp
+        src/Widgets/FlightConditionWidget.h
+        src/Widgets/FlightConditionWidget.ui
+        src/Widgets/LightWidget.cpp
+        src/Widgets/LightWidget.h
+        src/Widgets/LightWidget.ui
 )
 
 target_link_libraries(UserInterface PRIVATE ${USERINTERFACE_LIBS})

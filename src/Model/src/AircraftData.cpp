@@ -29,10 +29,9 @@
 
 // PUBLIC
 
-const AircraftData AircraftData::NullAircraftData = AircraftData(0.0, 0.0, 0.0);
-
 AircraftData::AircraftData(double latitude, double longitude, double altitude) noexcept
-    : pitch(0.0),
+    : TimeVariableData(),
+      pitch(0.0),
       bank(0.0),
       heading(0.0),
       velocityBodyX(0.0),
@@ -40,40 +39,11 @@ AircraftData::AircraftData(double latitude, double longitude, double altitude) n
       velocityBodyZ(0.0),
       rotationVelocityBodyX(0.0),
       rotationVelocityBodyY(0.0),
-      rotationVelocityBodyZ(0.0),
-      yokeXPosition(0),
-      yokeYPosition(0),
-      rudderPosition(0),
-      elevatorPosition(0),
-      aileronPosition(0),
-      throttleLeverPosition1(0),
-      throttleLeverPosition2(0),
-      throttleLeverPosition3(0),
-      throttleLeverPosition4(0),
-      propellerLeverPosition1(0),
-      propellerLeverPosition2(0),
-      propellerLeverPosition3(0),
-      propellerLeverPosition4(0),
-      mixtureLeverPosition1(0),
-      mixtureLeverPosition2(0),
-      mixtureLeverPosition3(0),
-      mixtureLeverPosition4(0),
-      leadingEdgeFlapsLeftPercent(0),
-      leadingEdgeFlapsRightPercent(0),
-      trailingEdgeFlapsLeftPercent(0),
-      trailingEdgeFlapsRightPercent(0),
-      spoilersHandlePosition(0.0),
-      flapsHandleIndex(0),
-      gearHandlePosition(false),
-      brakeLeftPosition(0),
-      brakeRightPosition(0),
-      waterRudderHandlePosition(0),
-      tailhookPosition(0),
-      canopyOpen(0),
-      lightStates(QFlags(SimType::LightState::None)),
-      timestamp(0)
+      rotationVelocityBodyZ(0.0)
 {
     this->latitude = latitude;
     this->longitude = longitude;
     this->altitude = altitude;
 }
+
+const AircraftData AircraftData::NullAircraftData = AircraftData(0.0, 0.0, 0.0);

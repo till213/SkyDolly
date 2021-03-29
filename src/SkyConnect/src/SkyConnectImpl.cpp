@@ -39,9 +39,23 @@
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/AircraftInfo.h"
 #include "../../Model/src/AircraftData.h"
-#include "SimConnectDataDefinition.h"
+#include "../../Model/src/EngineData.h"
+#include "../../Model/src/PrimaryFlightControl.h"
+#include "../../Model/src/PrimaryFlightControlData.h"
+#include "../../Model/src/SecondaryFlightControl.h"
+#include "../../Model/src/SecondaryFlightControlData.h"
+#include "../../Model/src/AircraftHandle.h"
+#include "../../Model/src/AircraftHandleData.h"
+#include "../../Model/src/Light.h"
+#include "../../Model/src/LightData.h"
+#include "SimConnectType.h"
 #include "SimConnectAircraftInfo.h"
 #include "SimConnectAircraftData.h"
+#include "SimConnectEngineData.h"
+#include "SimConnectPrimaryFlightControlData.h"
+#include "SimConnectSecondaryFlightControlData.h"
+#include "SimConnectAircraftHandleData.h"
+#include "SimConnectLightData.h"
 #include "Connect.h"
 #include "EventWidget.h"
 #include "SkyConnectImpl.h"
@@ -51,7 +65,7 @@ namespace
     const char *ConnectionName = "SkyConnect";
     constexpr DWORD UserAirplaneRadiusMeters = 0;
 
-    enum class Event: SIMCONNECT_CLIENT_EVENT_ID {
+    enum class Event: ::SIMCONNECT_CLIENT_EVENT_ID {
         SimStart,
         Pause,
         Crashed,
@@ -61,9 +75,14 @@ namespace
         FreezeAttitude
     };
 
-    enum class DataRequest: SIMCONNECT_DATA_REQUEST_ID {
+    enum class DataRequest: ::SIMCONNECT_DATA_REQUEST_ID {
         AircraftInfo,
-        AircraftPosition
+        AircraftPosition,
+        Engine,
+        PrimaryFlightControl,
+        SecondaryFlightControl,
+        AircraftHandle,
+        Light
     };
 }
 
@@ -102,7 +121,7 @@ void SkyConnectImpl::onStartRecording() noexcept
 {
     updateRecordFrequency(Settings::getInstance().getRecordSampleRate());
     // Get aircraft information
-    ::SimConnect_RequestDataOnSimObjectType(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::AircraftInfo), SkyConnectDataDefinition::AircraftInfoDefinition, ::UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
+    ::SimConnect_RequestDataOnSimObjectType(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::AircraftInfo), Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), ::UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
 }
 
 void SkyConnectImpl::onRecordingPaused(bool paused) noexcept
@@ -114,7 +133,7 @@ void SkyConnectImpl::onRecordingPaused(bool paused) noexcept
 void SkyConnectImpl::onStopRecording() noexcept
 {
     // Stop receiving aircraft position
-    ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::AircraftPosition), SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_NEVER);
+    updateRequestPeriod(::SIMCONNECT_PERIOD_NEVER);
 }
 
 void SkyConnectImpl::onStartReplay(qint64 currentTimestamp) noexcept
@@ -169,10 +188,10 @@ void SkyConnectImpl::onRecordSampleRateChanged(SampleRate::SampleRate sampleRate
      updateRecordFrequency(sampleRate);
 }
 
-bool SkyConnectImpl::sendAircraftData(qint64 currentTimestamp) noexcept
+bool SkyConnectImpl::sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept
 {
     Q_UNUSED(currentTimestamp)
-    return sendAircraftData();
+    return sendAircraftData(access);
 }
 
 bool SkyConnectImpl::connectWithSim() noexcept
@@ -235,11 +254,16 @@ bool SkyConnectImpl::close() noexcept
 
 void SkyConnectImpl::setupRequestData() noexcept
 {
-    // Set up the data definition, but do not yet do anything with it
+    // Request data
     SimConnectAircraftInfo::addToDataDefinition(d->simConnectHandle);
     SimConnectAircraftData::addToDataDefinition(d->simConnectHandle);
+    SimConnectEngineData::addToDataDefinition(d->simConnectHandle);
+    SimConnectPrimaryFlightControlData::addToDataDefinition(d->simConnectHandle);
+    SimConnectSecondaryFlightControlData::addToDataDefinition(d->simConnectHandle);
+    SimConnectAircraftHandleData::addToDataDefinition(d->simConnectHandle);
+    SimConnectLightData::addToDataDefinition(d->simConnectHandle);
 
-    ::SimConnect_AddToDataDefinition(d->simConnectHandle, SkyConnectDataDefinition::AircraftInitialPosition, "Initial Position", nullptr, ::SIMCONNECT_DATATYPE_INITPOSITION);
+    ::SimConnect_AddToDataDefinition(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInitialPosition), "Initial Position", nullptr, ::SIMCONNECT_DATATYPE_INITPOSITION);
 
     // System event subscription
     ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::SimStart), "SimStart");
@@ -255,7 +279,7 @@ void SkyConnectImpl::setupRequestData() noexcept
 void SkyConnectImpl::setupInitialPosition() noexcept
 {
     const Aircraft &userAircraft = getCurrentScenario().getUserAircraftConst();
-    const AircraftData &aircraftData = userAircraft.interpolateAircraftData(0);
+    const AircraftData &aircraftData = userAircraft.interpolate(0, TimeVariableData::Access::Seek);
     if (!aircraftData.isNull()) {
         // Set initial position
         SIMCONNECT_DATA_INITPOSITION initialPosition;
@@ -269,7 +293,8 @@ void SkyConnectImpl::setupInitialPosition() noexcept
         initialPosition.OnGround = userAircraft.getAircraftInfo().startOnGround ? 1 : 0;
         initialPosition.Airspeed = userAircraft.getAircraftInfo().initialAirspeed;
 
-        ::SimConnect_SetDataOnSimObject(d->simConnectHandle, SkyConnectDataDefinition::AircraftInitialPosition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0, sizeof(::SIMCONNECT_DATA_INITPOSITION), &initialPosition);
+        ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInitialPosition),
+                                        ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0, sizeof(::SIMCONNECT_DATA_INITPOSITION), &initialPosition);
     } else {
         stopReplay();
     }
@@ -291,28 +316,104 @@ bool SkyConnectImpl::isSimulationFrozen() const noexcept
     return d->frozen;
 }
 
-bool SkyConnectImpl::sendAircraftData() noexcept
+bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
 {
     bool success;
+    const Aircraft &userAircraft = getCurrentScenario().getUserAircraftConst();
 
-    const AircraftData &currentAircraftData = updateCurrentAircraftData();
-    if (!currentAircraftData.isNull()) {
-        SimConnectAircraftData simConnectAircraftData;
-        simConnectAircraftData.fromAircraftData(currentAircraftData);
+    qint64 currentTimestamp = getCurrentTimestamp();
+
+    if (currentTimestamp <= getCurrentScenario().getTotalDuration()) {
+
+        success = true;
+        const AircraftData &currentAircraftData = userAircraft.interpolate(currentTimestamp, access);
+        if (!currentAircraftData.isNull()) {
+            SimConnectAircraftData simConnectAircraftData;
+            simConnectAircraftData.fromAircraftData(currentAircraftData);
 #ifdef DEBUG
-        qDebug("%f, %f, %f, %f, %f, %f, %lli",
-               simConnectAircraftData.longitude, simConnectAircraftData.latitude, simConnectAircraftData.altitude,
-               simConnectAircraftData.pitch, simConnectAircraftData.bank, simConnectAircraftData.heading,
-               getCurrentTimestamp());
+            qDebug("%f, %f, %f, %f, %f, %f, %lli",
+                   simConnectAircraftData.longitude, simConnectAircraftData.latitude, simConnectAircraftData.altitude,
+                   simConnectAircraftData.pitch, simConnectAircraftData.bank, simConnectAircraftData.heading,
+                   currentTimestamp);
 #endif
-        HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0, sizeof(SimConnectAircraftData), &simConnectAircraftData);
-        success = res == S_OK;
+            HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionDefinition),
+                                                          ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
+                                                          sizeof(SimConnectAircraftData), &simConnectAircraftData);
+            success = res == S_OK;
+        }
+
+        // Engine
+        if (success) {
+            const EngineData &engineData = userAircraft.getEngineConst().interpolate(currentTimestamp, access);
+            if (!engineData.isNull()) {
+                SimConnectEngineData simConnectEngineData;
+                simConnectEngineData.fromEngineData(engineData);
+                HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftEngineDefinition),
+                                                              ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
+                                                              sizeof(SimConnectEngineData), &simConnectEngineData);
+                success = res == S_OK;
+            }
+        }
+
+        // Primary flight controls
+        if (success) {
+            const PrimaryFlightControlData &primaryFlightControlData = userAircraft.getPrimaryFlightControlConst().interpolate(currentTimestamp, access);
+            if (!primaryFlightControlData.isNull()) {
+                SimConnectPrimaryFlightControlData simConnectPrimaryFlightControlData;
+                simConnectPrimaryFlightControlData.fromPrimaryFlightControlData(primaryFlightControlData);
+                HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPrimaryFlightControlDefinition),
+                                                              ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
+                                                              sizeof(SimConnectPrimaryFlightControlData), &simConnectPrimaryFlightControlData);
+                success = res == S_OK;
+            }
+        }
+
+        // Secondary flight controls
+        if (success) {
+            const SecondaryFlightControlData &secondaryFlightControlData = userAircraft.getSecondaryFlightControlConst().interpolate(currentTimestamp, access);
+            if (!secondaryFlightControlData.isNull()) {
+                SimConnectSecondaryFlightControlData simConnectSecondaryFlightControlData;
+                simConnectSecondaryFlightControlData.fromSecondaryFlightControlData(secondaryFlightControlData);
+                HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftSecondaryFlightControlDefinition),
+                                                              ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
+                                                              sizeof(SimConnectSecondaryFlightControlData), &simConnectSecondaryFlightControlData);
+                success = res == S_OK;
+            }
+        }
+
+        // Aircraft handles & brakes
+        if (success) {
+            const AircraftHandleData &aircraftHandleData = userAircraft.getAircraftHandleConst().interpolate(currentTimestamp, access);
+            if (!aircraftHandleData.isNull()) {
+                SimConnectAircraftHandleData simConnectAircraftHandleData;
+                simConnectAircraftHandleData.fromAircraftHandleData(aircraftHandleData);
+                HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftHandleDefinition),
+                                                              ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
+                                                              sizeof(SimConnectAircraftHandleData), &simConnectAircraftHandleData);
+                success = res == S_OK;
+            }
+        }
+
+        // Lights
+        if (success) {
+            const LightData &lightData = userAircraft.getLightConst().interpolate(currentTimestamp, access);
+            if (!lightData.isNull()) {
+                SimConnectLightData simConnectLightData;
+                simConnectLightData.fromLightData(lightData);
+                HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftLightDefinition ),
+                                                              ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
+                                                              sizeof(SimConnectLightData), &simConnectLightData);
+                success = res == S_OK;
+            }
+        }
 
         // Start the elapsed timer after sending the first sample data
         if (!isElapsedTimerRunning()) {
             startElapsedTimer();
         }
+
     } else {
+        // At end of recording
         success = false;
     }
     return success;
@@ -320,8 +421,8 @@ bool SkyConnectImpl::sendAircraftData() noexcept
 
 void SkyConnectImpl::replay() noexcept
 {
-    if (sendAircraftData()) {
-        emit currentTimestampChanged(getCurrentTimestamp());
+    if (sendAircraftData(TimeVariableData::Access::Linear)) {
+        emit currentTimestampChanged(getCurrentTimestamp(), TimeVariableData::Access::Linear);
     } else {
         stopReplay();
     }
@@ -337,8 +438,8 @@ void SkyConnectImpl::updateRecordFrequency(SampleRate::SampleRate sampleRate) no
                 d->eventWidget = nullptr;
                 reconnectWithSim();
             }
-            // Get aircraft position @1Hz
-            ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::AircraftPosition), SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_SECOND, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+            // Get aircraft data @1Hz
+            updateRequestPeriod(::SIMCONNECT_PERIOD_SECOND);
             break;
         case SampleRate::SampleRate::Auto:
             // Fall-thru intented
@@ -357,13 +458,29 @@ void SkyConnectImpl::updateRecordFrequency(SampleRate::SampleRate sampleRate) no
                 d->eventWidget = nullptr;
                 reconnectWithSim();
             }
-            // Get aircraft position every simulated frame
-            ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::AircraftPosition), SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_SIM_FRAME, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+            // Get aircraft data every simulated frame
+            updateRequestPeriod(::SIMCONNECT_PERIOD_SIM_FRAME);
             break;
         }
     } else {
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::AircraftPosition), SkyConnectDataDefinition::AircraftPositionDefinition, ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_PERIOD_NEVER);
+        updateRequestPeriod(::SIMCONNECT_PERIOD_NEVER);
     }
+}
+
+void SkyConnectImpl::updateRequestPeriod(::SIMCONNECT_PERIOD period)
+{
+    ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::AircraftPosition), Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionDefinition),
+                                        ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+    ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::Engine), Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftEngineDefinition),
+                                        ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+    ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::PrimaryFlightControl), Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPrimaryFlightControlDefinition),
+                                        ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+    ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::SecondaryFlightControl), Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftSecondaryFlightControlDefinition),
+                                        ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+    ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::AircraftHandle), Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftHandleDefinition),
+                                        ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+    ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::Light), Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftLightDefinition),
+                                        ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
 }
 
 void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context) noexcept
@@ -374,139 +491,195 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
     Scenario &currentScenario = skyConnect->getCurrentScenario();
     Aircraft &userAircraft = currentScenario.getUserAircraft();
     SIMCONNECT_RECV_SIMOBJECT_DATA *objectData;
-    const SimConnectAircraftInfo *simConnectAircraftInfo;
-    const SimConnectAircraftData *simConnectAircraftData;
-#ifdef DEBUG
-    SIMCONNECT_RECV_EXCEPTION *exception;
-#endif
 
-    switch (receivedData->dwID)
+    bool dataReceived = false;
+    switch (receivedData->dwID) {
+    case SIMCONNECT_RECV_ID_EVENT:
     {
-        case SIMCONNECT_RECV_ID_EVENT:
-        {
-            SIMCONNECT_RECV_EVENT *evt = reinterpret_cast<SIMCONNECT_RECV_EVENT *>(receivedData);
-            switch (static_cast<Event>(evt->uEventID))
-            {
-                case Event::SimStart:
+        SIMCONNECT_RECV_EVENT *evt = reinterpret_cast<SIMCONNECT_RECV_EVENT *>(receivedData);
+        switch (static_cast<Event>(evt->uEventID)) {
+        case Event::SimStart:
 #ifdef DEBUG
-                    qDebug("SIMCONNECT_RECV_ID_EVENT: SIMSTART event");
+            qDebug("SIMCONNECT_RECV_ID_EVENT: SIMSTART event");
 #endif
-                    break;
+            break;
 
-                case Event::Pause:
+        case Event::Pause:
 #ifdef DEBUG
-                    qDebug("SIMCONNECT_RECV_ID_EVENT: PAUSE event: %lu", evt->dwData);
+            qDebug("SIMCONNECT_RECV_ID_EVENT: PAUSE event: %lu", evt->dwData);
 #endif
-                    // It seems that the pause event is currently only triggered by selecting "Pause Simulation"
-                    // in the developer mode (FS 2020), but neither when "active pause" is selected nor when ESC
-                    // (in-game meu") is entered
-                    skyConnect->setPaused(evt->dwData == 1);
-                    break;
+            // It seems that the pause event is currently only triggered by selecting "Pause Simulation"
+            // in the developer mode (FS 2020), but neither when "active pause" is selected nor when ESC
+            // (in-game meu") is entered
+            skyConnect->setPaused(evt->dwData == 1);
+            break;
 
-                case Event::Crashed:
+        case Event::Crashed:
 #ifdef DEBUG
-                    qDebug("SIMCONNECT_RECV_ID_EVENT: CRASHED event");
+            qDebug("SIMCONNECT_RECV_ID_EVENT: CRASHED event");
 #endif
-                    switch (skyConnect->getState()) {
-                    case Connect::State::Recording:
-                        skyConnect->stopRecording();
-                        break;
-                    case Connect::State::Replay:
-                        skyConnect->stopReplay();
-                        break;
-                    default:
-                        break;
-                    }
-                    break;
-
-                default:
-                   break;
+            switch (skyConnect->getState()) {
+            case Connect::State::Recording:
+                skyConnect->stopRecording();
+                break;
+            case Connect::State::Replay:
+                skyConnect->stopReplay();
+                break;
+            default:
+                break;
             }
-            break;
-        }
-
-        case SIMCONNECT_RECV_ID_SIMOBJECT_DATA_BYTYPE:
-            objectData = reinterpret_cast<SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE *>(receivedData);
-            switch (static_cast<DataRequest>(objectData->dwRequestID))
-            {
-                case DataRequest::AircraftInfo:
-                {
-                    simConnectAircraftInfo = reinterpret_cast<const SimConnectAircraftInfo *>(&objectData->dwData);
-                    AircraftInfo aircraftInfo = simConnectAircraftInfo->toAircraftInfo();
-                    userAircraft.setAircraftInfo(aircraftInfo);
-                    FlightConditions flightConditions = simConnectAircraftInfo->toFlightConditions();
-                    currentScenario.setFlightConditions(flightConditions);
-                    break;
-                }
-
-                default:
-                   break;
-            }
-            break;
-
-        case SIMCONNECT_RECV_ID_SIMOBJECT_DATA:
-            objectData = reinterpret_cast<SIMCONNECT_RECV_SIMOBJECT_DATA *>(receivedData);
-
-            switch (static_cast<DataRequest>(objectData->dwRequestID))
-            {
-                case DataRequest::AircraftPosition:
-                {
-                    if (skyConnect->getState() == Connect::State::Recording) {
-                        if (!skyConnect->isElapsedTimerRunning()) {
-                            // Start the elapsed timer with the arrival of the first sample data
-                            skyConnect->setCurrentTimestamp(0);
-                            skyConnect->resetElapsedTime(true);
-                        }
-                        simConnectAircraftData = reinterpret_cast<const SimConnectAircraftData *>(&objectData->dwData);
-                        AircraftData aircraftData = simConnectAircraftData->toAircraftData();
-                        aircraftData.timestamp = skyConnect->getCurrentTimestamp();
-                        userAircraft.upsertAircraftData(std::move(aircraftData));
-                    }
-
-                    break;
-                }
-                default:
-                    break;
-            }
-            break;
-
-        case SIMCONNECT_RECV_ID_EVENT_FRAME:
-            if (skyConnect->getState() == Connect::State::Replay) {
-                skyConnect->replay();
-            }
-#ifdef DEBUG
-            qDebug("SIMCONNECT_RECV_ID_EVENT_FRAME: FRAME event");
-#endif
-            break;
-
-        case SIMCONNECT_RECV_ID_QUIT:
-#ifdef DEBUG
-            qDebug("SIMCONNECT_RECV_ID_QUIT");
-#endif
-            skyConnect->close();
-            break;
-
-        case SIMCONNECT_RECV_ID_OPEN:
-#ifdef DEBUG
-            qDebug("SIMCONNECT_RECV_ID_OPEN");
-#endif
-            break;
-
-        case SIMCONNECT_RECV_ID_EXCEPTION:
-#ifdef DEBUG
-            exception = static_cast<SIMCONNECT_RECV_EXCEPTION *>(receivedData);
-
-            qDebug("SIMCONNECT_RECV_ID_EXCEPTION: A server exception %lu happened: sender ID: %lu index: %lu data: %lu",
-                   exception->dwException, exception->dwSendID, exception->dwIndex, cbData);
-#endif
-            break;
-        case SIMCONNECT_RECV_ID_NULL:
-#ifdef DEBUG
-            qDebug("SIMCONNECT_RECV_ID_NULL");
-#endif
             break;
 
         default:
             break;
+        }
+        break;
+    }
+
+    case SIMCONNECT_RECV_ID_SIMOBJECT_DATA_BYTYPE:
+        objectData = reinterpret_cast<SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE *>(receivedData);
+        switch (static_cast<DataRequest>(objectData->dwRequestID)) {
+        case DataRequest::AircraftInfo:
+        {
+            const SimConnectAircraftInfo *simConnectAircraftInfo = reinterpret_cast<const SimConnectAircraftInfo *>(&objectData->dwData);
+            AircraftInfo aircraftInfo = simConnectAircraftInfo->toAircraftInfo();
+            userAircraft.setAircraftInfo(aircraftInfo);
+            FlightCondition flightCondition = simConnectAircraftInfo->toFlightCondition();
+            currentScenario.setFlightCondition(flightCondition);
+            break;
+        }
+        default:
+            break;
+        }
+        break;
+
+    case SIMCONNECT_RECV_ID_SIMOBJECT_DATA:
+        objectData = reinterpret_cast<SIMCONNECT_RECV_SIMOBJECT_DATA *>(receivedData);
+
+        switch (static_cast<DataRequest>(objectData->dwRequestID)) {
+        case DataRequest::AircraftPosition:
+        {
+            const SimConnectAircraftData *simConnectAircraftData;
+            if (skyConnect->getState() == Connect::State::Recording) {
+                simConnectAircraftData = reinterpret_cast<const SimConnectAircraftData *>(&objectData->dwData);
+                AircraftData aircraftData = simConnectAircraftData->toAircraftData();
+                aircraftData.timestamp = skyConnect->getCurrentTimestamp();
+                userAircraft.upsert(std::move(aircraftData));
+                dataReceived = true;
+            }
+            break;
+        }
+        case DataRequest::Engine:
+        {
+            const SimConnectEngineData *simConnectEngineData;
+            if (skyConnect->getState() == Connect::State::Recording) {
+                simConnectEngineData = reinterpret_cast<const SimConnectEngineData *>(&objectData->dwData);
+                EngineData engineData = simConnectEngineData->toEngineData();
+                engineData.timestamp = skyConnect->getCurrentTimestamp();
+                userAircraft.getEngine().upsert(std::move(engineData));
+                dataReceived = true;
+            }
+            break;
+        }
+        case DataRequest::PrimaryFlightControl:
+        {
+            const SimConnectPrimaryFlightControlData *simConnectPrimaryFlightControlData;
+            if (skyConnect->getState() == Connect::State::Recording) {
+                simConnectPrimaryFlightControlData = reinterpret_cast<const SimConnectPrimaryFlightControlData *>(&objectData->dwData);
+                PrimaryFlightControlData primaryFlightControlData = simConnectPrimaryFlightControlData->toPrimaryFlightControlData();
+                primaryFlightControlData.timestamp = skyConnect->getCurrentTimestamp();
+                userAircraft.getPrimaryFlightControl().upsert(std::move(primaryFlightControlData));
+                dataReceived = true;
+            }
+            break;
+        }
+        case DataRequest::SecondaryFlightControl:
+        {
+            const SimConnectSecondaryFlightControlData *simConnectSecondaryFlightControlData;
+            if (skyConnect->getState() == Connect::State::Recording) {
+                simConnectSecondaryFlightControlData = reinterpret_cast<const SimConnectSecondaryFlightControlData *>(&objectData->dwData);
+                SecondaryFlightControlData secondaryFlightControlData = simConnectSecondaryFlightControlData->toSecondaryFlightControlData();
+                secondaryFlightControlData.timestamp = skyConnect->getCurrentTimestamp();
+                userAircraft.getSecondaryFlightControl().upsert(std::move(secondaryFlightControlData));
+                dataReceived = true;
+            }
+            break;
+        }
+        case DataRequest::AircraftHandle:
+        {
+            const SimConnectAircraftHandleData *simConnectAircraftHandleData;
+            if (skyConnect->getState() == Connect::State::Recording) {
+                simConnectAircraftHandleData = reinterpret_cast<const SimConnectAircraftHandleData *>(&objectData->dwData);
+                AircraftHandleData aircraftHandleData = simConnectAircraftHandleData->toAircraftHandleData();
+                aircraftHandleData.timestamp = skyConnect->getCurrentTimestamp();
+                userAircraft.getAircraftHandle().upsert(std::move(aircraftHandleData));
+                dataReceived = true;
+            }
+            break;
+        }
+        case DataRequest::Light:
+        {
+            const SimConnectLightData *simConnectLightData;
+            if (skyConnect->getState() == Connect::State::Recording) {
+                simConnectLightData = reinterpret_cast<const SimConnectLightData *>(&objectData->dwData);
+                LightData lightData = simConnectLightData->toLightData();
+                lightData.timestamp = skyConnect->getCurrentTimestamp();
+                userAircraft.getLight().upsert(std::move(lightData));
+                dataReceived = true;
+            }
+            break;
+        }
+        default:
+            break;
+        }
+        break;
+
+    case SIMCONNECT_RECV_ID_EVENT_FRAME:
+        if (skyConnect->getState() == Connect::State::Replay) {
+            skyConnect->replay();
+        }
+#ifdef DEBUG
+        qDebug("SIMCONNECT_RECV_ID_EVENT_FRAME: FRAME event");
+#endif
+        break;
+
+    case SIMCONNECT_RECV_ID_QUIT:
+#ifdef DEBUG
+        qDebug("SIMCONNECT_RECV_ID_QUIT");
+#endif
+        skyConnect->close();
+        break;
+
+    case SIMCONNECT_RECV_ID_OPEN:
+#ifdef DEBUG
+        qDebug("SIMCONNECT_RECV_ID_OPEN");
+#endif
+        break;
+
+    case SIMCONNECT_RECV_ID_EXCEPTION:
+#ifdef DEBUG
+    {
+        SIMCONNECT_RECV_EXCEPTION *exception = static_cast<SIMCONNECT_RECV_EXCEPTION *>(receivedData);
+        qDebug("SIMCONNECT_RECV_ID_EXCEPTION: A server exception %lu happened: sender ID: %lu index: %lu data: %lu",
+               exception->dwException, exception->dwSendID, exception->dwIndex, cbData);
+    }
+#endif
+        break;
+    case SIMCONNECT_RECV_ID_NULL:
+#ifdef DEBUG
+        qDebug("SIMCONNECT_RECV_ID_NULL");
+#endif
+        break;
+
+    default:
+        break;
+    }
+
+    if (dataReceived) {
+        if (!skyConnect->isElapsedTimerRunning()) {
+            // Start the elapsed timer with the arrival of the first sample data
+            skyConnect->setCurrentTimestamp(0);
+            skyConnect->resetElapsedTime(true);
+        }
     }
 }

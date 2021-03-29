@@ -31,9 +31,9 @@
 namespace Const
 {
     /*! Separator character for CSV import & export */
-    constexpr char Sep = '\t';
+    inline constexpr char Sep = '\t';
     /*! Newline character for CSV import & export */
-    constexpr char Ln = '\n';
+    inline constexpr char Ln = '\n';
 }
 
 #endif // CONST_H
