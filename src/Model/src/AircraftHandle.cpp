@@ -63,18 +63,18 @@ AircraftHandle::~AircraftHandle() noexcept
 {
 }
 
-void AircraftHandle::upsert(AircraftHandleData AircraftHandleData) noexcept
+void AircraftHandle::upsert(AircraftHandleData aircraftHandleData) noexcept
 {
-    if (d->aircraftHandleData.count() > 0 && d->aircraftHandleData.last().timestamp == AircraftHandleData.timestamp)  {
+    if (d->aircraftHandleData.count() > 0 && d->aircraftHandleData.last().timestamp == aircraftHandleData.timestamp)  {
         // Same timestamp -> replace
-        d->aircraftHandleData[d->aircraftHandleData.count() - 1] = AircraftHandleData;
+        d->aircraftHandleData[d->aircraftHandleData.count() - 1] = aircraftHandleData;
 #ifdef DEBUG
-        qDebug("AircraftHandle::upsertAircraftHandleData: UPDATE sample, timestamp: %llu count: %d", AircraftHandleData.timestamp, d->aircraftHandleData.count());
+        qDebug("AircraftHandle::upsertAircraftHandleData: UPDATE sample, timestamp: %llu count: %d", aircraftHandleData.timestamp, d->aircraftHandleData.count());
 #endif
     } else {
-        d->aircraftHandleData.append(AircraftHandleData);
+        d->aircraftHandleData.append(aircraftHandleData);
 #ifdef DEBUG
-        qDebug("AircraftHandle::upsertAircraftHandleData: INSERT sample, timestamp: %llu count: %d", AircraftHandleData.timestamp, d->aircraftHandleData.count());
+        qDebug("AircraftHandle::upsertAircraftHandleData: INSERT sample, timestamp: %llu count: %d", aircraftHandleData.timestamp, d->aircraftHandleData.count());
 #endif
     }
     emit dataChanged();
