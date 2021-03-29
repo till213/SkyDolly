@@ -48,6 +48,7 @@ target_sources(Model
         src/SimType.h
         src/SkySearch.cpp
         src/SkySearch.h
+        src/CSVConst.h
         src/Export/CSVExport.cpp
         src/Export/CSVExport.h
         src/Import/CSVImport.cpp

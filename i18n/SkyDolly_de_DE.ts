@@ -139,79 +139,79 @@ MIT License</source>
     </message>
 </context>
 <context>
-    <name>AircraftVariablesWidget</name>
+    <name>AircraftWidget</name>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="20"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="20"/>
         <source>Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="35"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="35"/>
         <source>Position &amp;&amp; Attitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="44"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="44"/>
         <source>Latitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="64"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="64"/>
         <source>Longitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="84"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="84"/>
         <source>Altitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="104"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="104"/>
         <source>Pitch</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="124"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="124"/>
         <source>Bank</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="144"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="144"/>
         <source>Heading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="173"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="173"/>
         <source>Velocity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="179"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="179"/>
         <source>Velocity X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="199"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="199"/>
         <source>Velocity Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="219"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="219"/>
         <source>Velocity Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="239"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="239"/>
         <source>Rotation Velocity X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="259"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="259"/>
         <source>Rotation Velocity Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftVariablesWidget.ui" line="279"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="279"/>
         <source>Rotation Velocity Z</source>
         <translation type="unfinished"></translation>
     </message>

@@ -22,32 +22,22 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef AIRCRAFTHANDLEDATA_H
-#define AIRCRAFTHANDLEDATA_H
+#ifndef CSVCONST_H
+#define CSVCONST_H
 
-#include <QtGlobal>
-#include <QFlags>
-#include "TimeVariableData.h"
-#include "ModelLib.h"
+namespace CSVConst {
+    // Format and precision for double
+    constexpr char Format = 'g';
+    constexpr int Precision = 9;
 
-struct MODEL_API AircraftHandleData : public TimeVariableData
-{
-    bool gearHandlePosition;
-    qint16 brakeLeftPosition;
-    qint16 brakeRightPosition;
-    // Implementation note: the water rudder can also have negative (-100.0) values,
-    // hence hence the type qint16 (position) which also supports negative values
-    qint16 waterRudderHandlePosition;
-    quint8 tailhookPosition;
-    quint8 canopyOpen;
+    enum class DataType {
+        Aircraft = 0,
+        Engine = 1,
+        PrimaryFlightControl = 2,
+        SecondaryFlightControl = 3,
+        AircraftHandle = 4,
+        Light = 5
+    };
+}
 
-    AircraftHandleData() noexcept;
-    AircraftHandleData(AircraftHandleData &&) = default;
-    AircraftHandleData(const AircraftHandleData &) = default;
-    AircraftHandleData &operator= (const AircraftHandleData &) = default;
-
-    static const AircraftHandleData NullAircraftHandleData;
-};
-
-#endif // AIRCRAFTHANDLEDATA_H
-
+#endif // CSVCONST_H
