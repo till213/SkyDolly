@@ -82,7 +82,7 @@ void LightWidget::showEvent(QShowEvent *event)
     connect(&light, &Light::dataChanged,
             this, &LightWidget::handleRecordedData);
     // Signal sent while playing
-    connect(&d->skyConnect, &SkyConnectIntf::currentTimestampChanged,
+    connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &LightWidget::handleTimestampChanged);
 }
 
@@ -93,7 +93,7 @@ void LightWidget::hideEvent(QHideEvent *event)
     const Light &light = World::getInstance().getCurrentScenario().getUserAircraft().getLightConst();
     disconnect(&light, &Light::dataChanged,
                this, &LightWidget::handleRecordedData);
-    disconnect(&d->skyConnect, &SkyConnectIntf::currentTimestampChanged,
+    disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &LightWidget::handleTimestampChanged);
 }
 

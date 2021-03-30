@@ -83,7 +83,7 @@ void PrimaryFlightControlWidget::showEvent(QShowEvent *event)
     connect(&primaryFlightControl, &PrimaryFlightControl::dataChanged,
             this, &PrimaryFlightControlWidget::handleRecordedData);
     // Signal sent while playing
-    connect(&d->skyConnect, &SkyConnectIntf::currentTimestampChanged,
+    connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &PrimaryFlightControlWidget::handleTimestampChanged);
 }
 
@@ -94,7 +94,7 @@ void PrimaryFlightControlWidget::hideEvent(QHideEvent *event)
     const PrimaryFlightControl &primaryFlightControl = World::getInstance().getCurrentScenario().getUserAircraft().getPrimaryFlightControlConst();
     disconnect(&primaryFlightControl, &PrimaryFlightControl::dataChanged,
                this, &PrimaryFlightControlWidget::handleRecordedData);
-    disconnect(&d->skyConnect, &SkyConnectIntf::currentTimestampChanged,
+    disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &PrimaryFlightControlWidget::handleTimestampChanged);
 }
 

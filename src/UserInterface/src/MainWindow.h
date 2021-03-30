@@ -71,7 +71,6 @@ private slots:
 
     void updateUi() noexcept;
     void updateControlUi() noexcept;
-    void updateRecordingTime() noexcept;
     void updateFileMenu() noexcept;
     void updateWindowMenu() noexcept;
     void updateMainWindow() noexcept;
@@ -89,7 +88,7 @@ private slots:
     void on_aboutAction_triggered() noexcept;
     void on_aboutQtAction_triggered() noexcept;
 
-    void handlePlayPositionChanged(qint64 timestamp) noexcept;
+    void handleTimestampChanged(qint64 timestamp) noexcept;
     void handlePlaybackSpeedSelected(int selection) noexcept;
 
     // Playback

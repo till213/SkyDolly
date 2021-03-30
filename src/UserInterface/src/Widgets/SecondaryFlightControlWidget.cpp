@@ -83,7 +83,7 @@ void SecondaryFlightControlWidget::showEvent(QShowEvent *event)
     connect(&SecondaryFlightControl, &SecondaryFlightControl::dataChanged,
             this, &SecondaryFlightControlWidget::handleRecordedData);
     // Signal sent while playing
-    connect(&d->skyConnect, &SkyConnectIntf::currentTimestampChanged,
+    connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &SecondaryFlightControlWidget::handleTimestampChanged);
 }
 
@@ -94,7 +94,7 @@ void SecondaryFlightControlWidget::hideEvent(QHideEvent *event)
     const SecondaryFlightControl &SecondaryFlightControl = World::getInstance().getCurrentScenario().getUserAircraft().getSecondaryFlightControlConst();
     disconnect(&SecondaryFlightControl, &SecondaryFlightControl::dataChanged,
                this, &SecondaryFlightControlWidget::handleRecordedData);
-    disconnect(&d->skyConnect, &SkyConnectIntf::currentTimestampChanged,
+    disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &SecondaryFlightControlWidget::handleTimestampChanged);
 }
 

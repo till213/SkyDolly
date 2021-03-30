@@ -230,15 +230,15 @@ void AbstractSkyConnect::skipBackward() noexcept
 
 void AbstractSkyConnect::skipForward() noexcept
 {
-    qint64 endTimeStamp = d->currentScenario.getUserAircraftConst().getLast().timestamp;
-    qint64 newTimeStamp = qMin(getCurrentTimestamp() + SkipMSec, endTimeStamp);
+    qint64 totalDuration = d->currentScenario.getTotalDuration();
+    qint64 newTimeStamp = qMin(getCurrentTimestamp() + SkipMSec, totalDuration);
     seek(newTimeStamp);
 }
 
 void AbstractSkyConnect::skipToEnd() noexcept
 {
-    qint64 endTimeStamp  = d->currentScenario.getUserAircraftConst().getLast().timestamp;
-    seek(endTimeStamp);
+    qint64 totalDuration  = d->currentScenario.getTotalDuration();
+    seek(totalDuration);
 }
 
 void AbstractSkyConnect::seek(qint64 timestamp) noexcept
@@ -247,7 +247,7 @@ void AbstractSkyConnect::seek(qint64 timestamp) noexcept
     if (getState() != Connect::State::Recording) {
         d->currentTimestamp = timestamp;
         d->elapsedTime = timestamp;
-        emit currentTimestampChanged(d->currentTimestamp, TimeVariableData::Access::Seek);
+        emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Seek);
         if (sendAircraftData(timestamp, TimeVariableData::Access::Seek)) {
             if (d->elapsedTimer.isValid() && getState() == Connect::State::Replay) {
                 // Restart the elapsed timer, counting onwards from the newly
@@ -271,7 +271,7 @@ qint64 AbstractSkyConnect::getCurrentTimestamp() const noexcept
 
 bool AbstractSkyConnect::isAtEnd() const noexcept
 {
-    return d->currentTimestamp >= d->currentScenario.getUserAircraftConst().getLast().timestamp;
+    return d->currentTimestamp >= d->currentScenario.getTotalDuration();
 }
 
 double AbstractSkyConnect::getTimeScale() const noexcept
@@ -375,9 +375,11 @@ void AbstractSkyConnect::updateCurrentTimestamp() noexcept
         // the current timestamp unless we are replaying or recording
         if (d->state == Connect::State::Replay) {
             d->currentTimestamp = d->elapsedTime + static_cast<qint64>(d->elapsedTimer.elapsed() * d->timeScale);
+            emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Linear);
         } else if (d->state == Connect::State::Recording) {
             d->currentTimestamp = d->elapsedTime + d->elapsedTimer.elapsed();
-        }
+            emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Linear);
+        }        
     }
 }
 

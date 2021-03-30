@@ -322,7 +322,6 @@ bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
     const Aircraft &userAircraft = getCurrentScenario().getUserAircraftConst();
 
     qint64 currentTimestamp = getCurrentTimestamp();
-
     if (currentTimestamp <= getCurrentScenario().getTotalDuration()) {
 
         success = true;
@@ -421,9 +420,7 @@ bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
 
 void SkyConnectImpl::replay() noexcept
 {
-    if (sendAircraftData(TimeVariableData::Access::Linear)) {
-        emit currentTimestampChanged(getCurrentTimestamp(), TimeVariableData::Access::Linear);
-    } else {
+    if (!sendAircraftData(TimeVariableData::Access::Linear)) {
         stopReplay();
     }
 }

@@ -74,7 +74,7 @@ protected:
     {}
 
 signals:
-    void currentTimestampChanged(qint64 timestamp, TimeVariableData::Access access) const;
+    void timestampChanged(qint64 timestamp, TimeVariableData::Access access) const;
     void stateChanged(Connect::State state) const;
 };
 
