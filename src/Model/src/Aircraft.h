@@ -36,10 +36,10 @@
 #include "Engine.h"
 
 struct AircraftData;
-struct PrimaryFlightControl;
-struct SecondaryFlightControl;
-struct AircraftHandle;
-struct Light;
+class PrimaryFlightControl;
+class SecondaryFlightControl;
+class AircraftHandle;
+class Light;
 class AircraftPrivate;
 
 class MODEL_API Aircraft : public QObject
@@ -83,6 +83,11 @@ signals:
 private:
     Q_DISABLE_COPY(Aircraft)
     std::unique_ptr<AircraftPrivate> d;
+
+    void frenchConnection();
+
+private slots:
+    void handleDataChanged();
 };
 
 #endif // AIRCRAFT_H

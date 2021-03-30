@@ -417,17 +417,12 @@ void MainWindow::updateControlUi() noexcept
 
 void MainWindow::updateRecordingTime() noexcept
 {
-    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
-    const AircraftData &aircraftData = aircraft.getLast();
     if (d->skyConnect.isRecording()) {
+        qint64 totalDuration = World::getInstance().getCurrentScenario().getTotalDuration();
         ui->timestampTimeEdit->blockSignals(true);
-        QTime time(0, 0, 0, 0);
-        if (!aircraftData.isNull()) {
-            time = time.addMSecs(aircraftData.timestamp);
-            ui->timestampTimeEdit->setTime(time);
-        } else {
-            ui->timestampTimeEdit->setTime(time);
-        }
+        QTime time(0, 0, 0, 0);        
+        time = time.addMSecs(totalDuration);
+        ui->timestampTimeEdit->setTime(time);
         ui->timestampTimeEdit->setMaximumTime(time);
         ui->timestampTimeEdit->blockSignals(false);
     }

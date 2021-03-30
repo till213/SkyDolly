@@ -133,7 +133,7 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft) noexcept
     return ok;
 }
 
-bool CSVImport::importAircraftData(const QList<QByteArray> &headers, const QList<QByteArray> values, bool firstRow, Aircraft &aircraft) noexcept
+inline bool CSVImport::importAircraftData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Aircraft &aircraft) noexcept
 {
     AircraftData data;
     int columnIndex = 0;
@@ -142,8 +142,8 @@ bool CSVImport::importAircraftData(const QList<QByteArray> &headers, const QList
     bool ok = false;
     for (const QByteArray &header : headers) {
 
-        double doubleValue;
         // Position
+        double doubleValue;
         if (header == SimVar::Latitude) {
             doubleValue = values.at(columnIndex).toDouble(&ok);
             if (ok) {
@@ -174,7 +174,7 @@ bool CSVImport::importAircraftData(const QList<QByteArray> &headers, const QList
             if (ok) {
                 data.heading = doubleValue;
             }
-            // Velocity
+        // Velocity
         } else if (header == SimVar::VelocityBodyX) {
             doubleValue = values.at(columnIndex).toDouble(&ok);
             if (ok) {
@@ -238,7 +238,7 @@ bool CSVImport::importAircraftData(const QList<QByteArray> &headers, const QList
     return ok;
 }
 
-bool CSVImport::importEngineData(const QList<QByteArray> &headers, const QList<QByteArray> values, bool firstRow, Engine &engine) noexcept
+inline bool CSVImport::importEngineData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Engine &engine) noexcept
 {
     EngineData data;
     int columnIndex = 0;
@@ -248,7 +248,6 @@ bool CSVImport::importEngineData(const QList<QByteArray> &headers, const QList<Q
     for (const QByteArray &header : headers) {
 
         double doubleValue;
-        // Position
         if (header == SimVar::ThrottleLeverPosition1) {
             doubleValue = values.at(columnIndex).toDouble(&ok);
             if (ok) {
@@ -342,7 +341,7 @@ bool CSVImport::importEngineData(const QList<QByteArray> &headers, const QList<Q
     return ok;
 }
 
-bool CSVImport::importPrimaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> values, bool firstRow, PrimaryFlightControl &primaryFlightControl) noexcept
+inline bool CSVImport::importPrimaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, PrimaryFlightControl &primaryFlightControl) noexcept
 {
     PrimaryFlightControlData data;
     int columnIndex = 0;
@@ -411,7 +410,7 @@ bool CSVImport::importPrimaryFlightControlData(const QList<QByteArray> &headers,
     return ok;
 }
 
-bool CSVImport::importSecondaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> values, bool firstRow, SecondaryFlightControl &secondaryFlightControl) noexcept
+inline bool CSVImport::importSecondaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, SecondaryFlightControl &secondaryFlightControl) noexcept
 {
     SecondaryFlightControlData data;
     int columnIndex = 0;
@@ -422,7 +421,6 @@ bool CSVImport::importSecondaryFlightControlData(const QList<QByteArray> &header
 
         double doubleValue;
         int intValue;
-        // Position
         if (header == SimVar::LeadingEdgeFlapsLeftPercent) {
             doubleValue = values.at(columnIndex).toDouble(&ok);
             if (ok) {
@@ -486,7 +484,7 @@ bool CSVImport::importSecondaryFlightControlData(const QList<QByteArray> &header
     return ok;
 }
 
-bool CSVImport::importAircraftHandleData(const QList<QByteArray> &headers, const QList<QByteArray> values, bool firstRow, AircraftHandle &aircraftHandle) noexcept
+inline bool CSVImport::importAircraftHandleData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, AircraftHandle &aircraftHandle) noexcept
 {
     AircraftHandleData data;
     int columnIndex = 0;
@@ -497,7 +495,6 @@ bool CSVImport::importAircraftHandleData(const QList<QByteArray> &headers, const
 
         double doubleValue;
         int intValue;
-        // Position
         if (header == SimVar::GearHandlePosition) {
             intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
@@ -561,7 +558,7 @@ bool CSVImport::importAircraftHandleData(const QList<QByteArray> &headers, const
     return ok;
 }
 
-bool CSVImport::importLightData(const QList<QByteArray> &headers, const QList<QByteArray> values, bool firstRow, Light &light) noexcept
+inline bool CSVImport::importLightData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Light &light) noexcept
 {
     LightData data;
     int columnIndex = 0;
@@ -571,7 +568,6 @@ bool CSVImport::importLightData(const QList<QByteArray> &headers, const QList<QB
     for (const QByteArray &header : headers) {
 
         int intValue;
-        // Position
         if (header == SimVar::LightStates) {
             intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
