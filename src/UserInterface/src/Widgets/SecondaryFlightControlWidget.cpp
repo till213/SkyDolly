@@ -77,12 +77,6 @@ void SecondaryFlightControlWidget::showEvent(QShowEvent *event)
     Q_UNUSED(event)
 
     updateUi(d->skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
-
-    const SecondaryFlightControl &SecondaryFlightControl = World::getInstance().getCurrentScenario().getUserAircraft().getSecondaryFlightControlConst();
-    // Signal sent while recording
-    connect(&SecondaryFlightControl, &SecondaryFlightControl::dataChanged,
-            this, &SecondaryFlightControlWidget::handleRecordedData);
-    // Signal sent while playing
     connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &SecondaryFlightControlWidget::handleTimestampChanged);
 }
@@ -91,9 +85,6 @@ void SecondaryFlightControlWidget::hideEvent(QHideEvent *event)
 {
     Q_UNUSED(event)
 
-    const SecondaryFlightControl &SecondaryFlightControl = World::getInstance().getCurrentScenario().getUserAircraft().getSecondaryFlightControlConst();
-    disconnect(&SecondaryFlightControl, &SecondaryFlightControl::dataChanged,
-               this, &SecondaryFlightControlWidget::handleRecordedData);
     disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &SecondaryFlightControlWidget::handleTimestampChanged);
 }
@@ -154,11 +145,6 @@ const SecondaryFlightControlData &SecondaryFlightControlWidget::getCurrentSecond
 }
 
 // PRIVATE SLOTS
-
-void SecondaryFlightControlWidget::handleRecordedData()
-{
-    updateUi(TimeVariableData::InvalidTime, TimeVariableData::Access::Linear);
-}
 
 void SecondaryFlightControlWidget::handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access)
 {

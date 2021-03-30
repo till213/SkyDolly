@@ -61,7 +61,6 @@ private:
     const PrimaryFlightControlData &getCurrentPrimaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const;
 
 private slots:
-    void handleRecordedData();
     void handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access);
 };
 
