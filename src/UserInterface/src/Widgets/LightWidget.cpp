@@ -76,12 +76,6 @@ void LightWidget::showEvent(QShowEvent *event)
     Q_UNUSED(event)
 
     updateUi(d->skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
-
-    const Light &light = World::getInstance().getCurrentScenario().getUserAircraft().getLightConst();
-    // Signal sent while recording
-    connect(&light, &Light::dataChanged,
-            this, &LightWidget::handleRecordedData);
-    // Signal sent while playing
     connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &LightWidget::handleTimestampChanged);
 }
@@ -90,9 +84,6 @@ void LightWidget::hideEvent(QHideEvent *event)
 {
     Q_UNUSED(event)
 
-    const Light &light = World::getInstance().getCurrentScenario().getUserAircraft().getLightConst();
-    disconnect(&light, &Light::dataChanged,
-               this, &LightWidget::handleRecordedData);
     disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &LightWidget::handleTimestampChanged);
 }
@@ -189,11 +180,6 @@ const LightData &LightWidget::getCurrentLightData(qint64 timestamp, TimeVariable
 }
 
 // PRIVATE SLOTS
-
-void LightWidget::handleRecordedData()
-{
-    updateUi(TimeVariableData::InvalidTime, TimeVariableData::Access::Linear);
-}
 
 void LightWidget::handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access)
 {

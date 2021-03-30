@@ -72,10 +72,6 @@ void AircraftWidget::showEvent(QShowEvent *event)
     updateUi(d->skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
 
     const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
-    // Signal sent while recording
-    connect(&aircraft, &Aircraft::dataChanged,
-            this, &AircraftWidget::handleRecordedData);
-    // Signal sent while playing
     connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &AircraftWidget::handleTimestampChanged);
 }
@@ -85,8 +81,6 @@ void AircraftWidget::hideEvent(QHideEvent *event)
     Q_UNUSED(event)
 
     const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
-    disconnect(&aircraft, &Aircraft::dataChanged,
-               this, &AircraftWidget::handleRecordedData);
     disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &AircraftWidget::handleTimestampChanged);
 }
@@ -168,11 +162,6 @@ const AircraftData &AircraftWidget::getCurrentAircraftData(qint64 timestamp, Tim
 }
 
 // PRIVATE SLOTS
-
-void AircraftWidget::handleRecordedData()
-{
-    updateUi(TimeVariableData::InvalidTime, TimeVariableData::Access::Linear);
-}
 
 void AircraftWidget::handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access)
 {

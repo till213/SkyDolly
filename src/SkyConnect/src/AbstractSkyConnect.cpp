@@ -378,7 +378,10 @@ void AbstractSkyConnect::updateCurrentTimestamp() noexcept
             emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Linear);
         } else if (d->state == Connect::State::Recording) {
             d->currentTimestamp = d->elapsedTime + d->elapsedTimer.elapsed();
-            emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Linear);
+            // The signal is delayed until after the latest data has been recorded,
+            // by using a singleshot timer with 0 ms delay (but which is only
+            // executed once execution returns to the Qt event queue)
+            QTimer::singleShot(0, this, [this]() {emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Linear);});
         }        
     }
 }
