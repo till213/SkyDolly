@@ -48,12 +48,10 @@
 #include "../LightData.h"
 #include "CSVImport.h"
 
-
 // PUBLIC
 
 bool CSVImport::importData(QIODevice &io, Aircraft &aircraft) noexcept
 {
-
     bool ok = io.open(QIODevice::ReadOnly);
     if (ok) {
         // Headers
@@ -64,69 +62,73 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft) noexcept
         ok = !data.isNull();
         if (ok) {
             QList<QByteArray> headers = data.split(Const::Sep);
-            headers.removeFirst();
+            if (headers.first() == QString(CSVConst::TypeColumnName)) {
+                headers.removeFirst();
 
-            // Clear existing data
-            aircraft.blockSignals(true);
-            aircraft.clear();
+                // Clear existing data
+                aircraft.blockSignals(true);
+                aircraft.clear();
 
-            // CSV data
-            data = io.readLine();
-            bool firstAircraftData = true;
-            bool firstEngineData = true;
-            bool firstPrimaryFlightControlData = true;
-            bool firstSecondaryFlightControlData = true;
-            bool firstAircraftHandleData = true;
-            bool firstLightData = true;
-            while (!data.isNull()) {
+                // CSV data
+                data = io.readLine();
+                bool firstAircraftData = true;
+                bool firstEngineData = true;
+                bool firstPrimaryFlightControlData = true;
+                bool firstSecondaryFlightControlData = true;
+                bool firstAircraftHandleData = true;
+                bool firstLightData = true;
+                while (!data.isNull()) {
 
-                AircraftData aircraftData;
-                QList<QByteArray> values = data.split(Const::Sep);
+                    AircraftData aircraftData;
+                    QList<QByteArray> values = data.split(Const::Sep);
 
-                // Type
-                CSVConst::DataType dataType = static_cast<CSVConst::DataType>(values.at(0).toInt(&ok));
-                if (ok) {
-                    values.removeFirst();
-                    switch (dataType) {
-                    case CSVConst::DataType::Aircraft:
-                        ok = importAircraftData(headers, values, firstAircraftData, aircraft);
-                        firstAircraftData = false;
-                        break;
-                    case CSVConst::DataType::Engine:
-                        ok = importEngineData(headers, values, firstEngineData, aircraft.getEngine());
-                        firstEngineData = false;
-                        break;
-                    case CSVConst::DataType::PrimaryFlightControl:
-                        ok = importPrimaryFlightControlData(headers, values, firstPrimaryFlightControlData, aircraft.getPrimaryFlightControl());
-                        firstPrimaryFlightControlData = false;
-                        break;
-                    case CSVConst::DataType::SecondaryFlightControl:
-                        ok = importSecondaryFlightControlData(headers, values, firstSecondaryFlightControlData, aircraft.getSecondaryFlightControl());
-                        firstSecondaryFlightControlData = false;
-                        break;
-                    case CSVConst::DataType::AircraftHandle:
-                        ok = importAircraftHandleData(headers, values, firstAircraftHandleData, aircraft.getAircraftHandle());
-                        firstAircraftHandleData = false;
-                        break;
-                    case CSVConst::DataType::Light:
-                        ok = importLightData(headers, values, firstLightData, aircraft.getLight());
-                        firstLightData = false;
-                        break;
-                    default:
-                        // Ignore unknown data types
+                    // Type
+                    CSVConst::DataType dataType = static_cast<CSVConst::DataType>(values.at(0).toInt(&ok));
+                    if (ok) {
+                        values.removeFirst();
+                        switch (dataType) {
+                        case CSVConst::DataType::Aircraft:
+                            ok = importAircraftData(headers, values, firstAircraftData, aircraft);
+                            firstAircraftData = false;
+                            break;
+                        case CSVConst::DataType::Engine:
+                            ok = importEngineData(headers, values, firstEngineData, aircraft.getEngine());
+                            firstEngineData = false;
+                            break;
+                        case CSVConst::DataType::PrimaryFlightControl:
+                            ok = importPrimaryFlightControlData(headers, values, firstPrimaryFlightControlData, aircraft.getPrimaryFlightControl());
+                            firstPrimaryFlightControlData = false;
+                            break;
+                        case CSVConst::DataType::SecondaryFlightControl:
+                            ok = importSecondaryFlightControlData(headers, values, firstSecondaryFlightControlData, aircraft.getSecondaryFlightControl());
+                            firstSecondaryFlightControlData = false;
+                            break;
+                        case CSVConst::DataType::AircraftHandle:
+                            ok = importAircraftHandleData(headers, values, firstAircraftHandleData, aircraft.getAircraftHandle());
+                            firstAircraftHandleData = false;
+                            break;
+                        case CSVConst::DataType::Light:
+                            ok = importLightData(headers, values, firstLightData, aircraft.getLight());
+                            firstLightData = false;
+                            break;
+                        default:
+                            // Ignore unknown data types
+                            break;
+                        }
+                    }
+
+                    // Read next line
+                    if (ok) {
+                        data = io.readLine();
+                    } else {
                         break;
                     }
                 }
-
-                // Read next line
-                if (ok) {
-                    data = io.readLine();
-                } else {
-                    break;
-                }
+                aircraft.blockSignals(false);
+                emit aircraft.dataChanged();
+            } else {
+                ok = false;
             }
-            aircraft.blockSignals(false);
-            emit aircraft.dataChanged();
         }
         io.close();
     }

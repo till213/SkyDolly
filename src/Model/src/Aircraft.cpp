@@ -240,7 +240,7 @@ const AircraftData &Aircraft::interpolate(qint64 timestamp, TimeVariableData::Ac
         d->currentTimestamp = timestamp;
 #ifdef DEBUG
     } else {
-        qDebug("Aircraft::interpolateAircraftData: cached result for timestamp: %llu", timestamp);
+        qDebug("Aircraft::interpolate: cached result for timestamp: %llu", timestamp);
 #endif
     }
     return d->currentAircraftData;
