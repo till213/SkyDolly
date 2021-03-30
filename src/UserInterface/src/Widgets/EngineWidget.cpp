@@ -83,7 +83,7 @@ void EngineWidget::showEvent(QShowEvent *event)
     connect(&engine, &Engine::dataChanged,
             this, &EngineWidget::handleRecordedData);
     // Signal sent while playing
-    connect(&d->skyConnect, &SkyConnectIntf::currentTimestampChanged,
+    connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &EngineWidget::handleTimestampChanged);
 }
 
@@ -94,7 +94,7 @@ void EngineWidget::hideEvent(QHideEvent *event)
     const Engine &engine = World::getInstance().getCurrentScenario().getUserAircraft().getEngineConst();
     disconnect(&engine, &Engine::dataChanged,
                this, &EngineWidget::handleRecordedData);
-    disconnect(&d->skyConnect, &SkyConnectIntf::currentTimestampChanged,
+    disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &EngineWidget::handleTimestampChanged);
 }
 

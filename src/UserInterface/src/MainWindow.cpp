@@ -61,7 +61,8 @@
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
 
-namespace {
+namespace
+{
     constexpr int PositionSliderMin = 0;
     constexpr int PositionSliderMax = 1000;
     constexpr double PlaybackSpeedMin = 0.01;
@@ -85,7 +86,8 @@ namespace {
     };
 }
 
-class MainWindowPrivate {
+class MainWindowPrivate
+{
 public:
     MainWindowPrivate() noexcept
         : skyConnect(SkyManager::getInstance().currentSkyConnect()),
@@ -131,11 +133,8 @@ MainWindow::~MainWindow() noexcept
 
 void MainWindow::frenchConnection() noexcept
 {
-    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
-    connect(&aircraft, &Aircraft::dataChanged,
-            this, &MainWindow::updateRecordingTime);
-    connect(&d->skyConnect, &SkyConnectIntf::currentTimestampChanged,
-            this, &MainWindow::handlePlayPositionChanged);
+    connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
+            this, &MainWindow::handleTimestampChanged);
     connect(&d->skyConnect, &SkyConnectIntf::stateChanged,
             this, &MainWindow::updateUi);
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
@@ -219,7 +218,7 @@ void MainWindow::initControlUi() noexcept
     customPlaybackSpeedValidator->setBottom(PlaybackSpeedMin);
     customPlaybackSpeedValidator->setTop(PlaybackSpeedMax);
 
-    double playbackSpeed = d->skyConnect.getTimeScale();
+    const double playbackSpeed = d->skyConnect.getTimeScale();
     d->lastCustomPlaybackSpeed = playbackSpeed;
     if (qFuzzyCompare(d->skyConnect.getTimeScale(), 1.0)) {
         ui->playbackSpeed1xRadioButton->setChecked(true);
@@ -285,9 +284,9 @@ void MainWindow::on_positionSlider_sliderPressed() noexcept
 
 void MainWindow::on_positionSlider_valueChanged(int value) noexcept
 {
-    double scale = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
-    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
-    qint64 timestamp = static_cast<qint64>(qRound(scale * static_cast<double>(aircraft.getLast().timestamp)));
+    const double scale = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
+    const qint64 totalDuration = World::getInstance().getCurrentScenario().getTotalDuration();
+    const qint64 timestamp = static_cast<qint64>(qRound(scale * static_cast<double>(totalDuration)));
 
     // Prevent the timestampTimeEdit field to set the play position as well
     ui->timestampTimeEdit->blockSignals(true);
@@ -304,7 +303,7 @@ void MainWindow::on_positionSlider_sliderReleased() noexcept
 
 void MainWindow::on_timestampTimeEdit_timeChanged(const QTime &time) noexcept
 {
-    Connect::State state = d->skyConnect.getState();
+    const Connect::State state = d->skyConnect.getState();
     if (state == Connect::State::Connected || state == Connect::State::ReplayPaused) {
         qint64 timestamp = time.hour() * MilliSecondsPerHour + time.minute() * MilliSecondsPerMinute + time.second() * MilliSecondsPerSecond;
         d->skyConnect.seek(timestamp);
@@ -313,7 +312,7 @@ void MainWindow::on_timestampTimeEdit_timeChanged(const QTime &time) noexcept
 
 void MainWindow::on_customPlaybackSpeedLineEdit_editingFinished() noexcept
 {
-    QString text = ui->customPlaybackSpeedLineEdit->text();
+    const QString text = ui->customPlaybackSpeedLineEdit->text();
     if (!text.isEmpty()) {
         d->lastCustomPlaybackSpeed = text.toDouble();
         d->skyConnect.setTimeScale(d->lastCustomPlaybackSpeed);
@@ -331,7 +330,7 @@ void MainWindow::updateUi() noexcept
 void MainWindow::updateControlUi() noexcept
 {
     const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
-    bool hasRecording = aircraft.getAll().count() > 0;
+    const bool hasRecording = aircraft.getAll().count() > 0;
     switch (d->skyConnect.getState()) {
     case Connect::State::Disconnected:
         // Fall-thru intened: each time a control element is triggered a connection
@@ -415,23 +414,10 @@ void MainWindow::updateControlUi() noexcept
     }
 }
 
-void MainWindow::updateRecordingTime() noexcept
-{
-    if (d->skyConnect.isRecording()) {
-        qint64 totalDuration = World::getInstance().getCurrentScenario().getTotalDuration();
-        ui->timestampTimeEdit->blockSignals(true);
-        QTime time(0, 0, 0, 0);        
-        time = time.addMSecs(totalDuration);
-        ui->timestampTimeEdit->setTime(time);
-        ui->timestampTimeEdit->setMaximumTime(time);
-        ui->timestampTimeEdit->blockSignals(false);
-    }
-}
-
 void MainWindow::updateFileMenu() noexcept
 {
     const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
-    bool hasRecording = aircraft.getAll().count() > 0;
+    const bool hasRecording = aircraft.getAll().count() > 0;
     switch (d->skyConnect.getState()) {
     case Connect::State::Recording:
         // Fall-thru intentional
@@ -453,8 +439,8 @@ void MainWindow::updateWindowMenu() noexcept
 
 void MainWindow::updateMainWindow() noexcept
 {
-    Settings &settings = Settings::getInstance();
-    Qt::WindowFlags flags = windowFlags();
+    const Settings &settings = Settings::getInstance();
+    const Qt::WindowFlags flags = windowFlags();
     if (settings.isWindowStaysOnTopEnabled() != (flags & Qt::WindowStaysOnTopHint)) {
         if (Settings::getInstance().isWindowStaysOnTopEnabled()) {
             this->setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
@@ -474,8 +460,8 @@ void MainWindow::updateMainWindow() noexcept
 
 void MainWindow::on_importCSVAction_triggered() noexcept
 {
-    QMessageBox message;
-    Version version;
+    const QMessageBox message;
+    const Version version;
 
     QMessageBox::StandardButton reply;
     int previewInfoCount = Settings::getInstance().getPreviewInfoDialogCount();
@@ -499,10 +485,10 @@ void MainWindow::on_importCSVAction_triggered() noexcept
         } else {
             documentPath = ".";
         }
-        QString filePath = QFileDialog::getOpenFileName(this, tr("Import CSV"), documentPath, QString("*.csv"));
+        const QString filePath = QFileDialog::getOpenFileName(this, tr("Import CSV"), documentPath, QString("*.csv"));
         if (!filePath.isEmpty()) {
             QFile file(filePath);
-            CSVImport csvImport;
+            const CSVImport csvImport;
             Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
             bool ok = csvImport.importData(file, aircraft);
             if (ok) {
@@ -520,13 +506,13 @@ void MainWindow::on_importCSVAction_triggered() noexcept
 void MainWindow::on_exportCSVAction_triggered() noexcept
 {
     QString documentPath;
-    QStringList standardLocations = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation);
+    const QStringList standardLocations = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation);
     if (standardLocations.count() > 0) {
         documentPath = standardLocations.first();
     } else {
         documentPath = ".";
     }
-    QString filePath = QFileDialog::getSaveFileName(this, tr("Export CSV"), documentPath, QString("*.csv"));
+    const QString filePath = QFileDialog::getSaveFileName(this, tr("Export CSV"), documentPath, QString("*.csv"));
     if (!filePath.isEmpty()) {
         QFile file(filePath);
         CSVExport csvExport;
@@ -578,30 +564,40 @@ void MainWindow::on_aboutQtAction_triggered() noexcept
     QMessageBox::aboutQt(this);
 }
 
-void MainWindow::handlePlayPositionChanged(qint64 timestamp) noexcept {
-    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
-    qint64 endTimeStamp = aircraft.getLast().timestamp;
-    qint64 ts = qMin(timestamp, endTimeStamp);
-
-    int sliderPosition;
-    if (endTimeStamp > 0) {
-        sliderPosition = qRound(PositionSliderMax * (static_cast<double>(ts) / static_cast<double>(endTimeStamp)));
+void MainWindow::handleTimestampChanged(qint64 timestamp) noexcept
+{
+    if (d->skyConnect.isRecording()) {
+        const qint64 totalDuration = World::getInstance().getCurrentScenario().getTotalDuration();
+        ui->timestampTimeEdit->blockSignals(true);
+        QTime time(0, 0, 0, 0);
+        time = time.addMSecs(totalDuration);
+        ui->timestampTimeEdit->setTime(time);
+        ui->timestampTimeEdit->setMaximumTime(time);
+        ui->timestampTimeEdit->blockSignals(false);
     } else {
-        sliderPosition = 0;
-    }
-    ui->positionSlider->blockSignals(true);
-    ui->positionSlider->setValue(sliderPosition);
-    ui->positionSlider->blockSignals(false);
+        const qint64 totalDuration = World::getInstance().getCurrentScenario().getTotalDuration();
+        const qint64 ts = qMin(timestamp, totalDuration);
 
-    QTime time(0, 0, 0, 0);
-    time = time.addMSecs(timestamp);
-    ui->timestampTimeEdit->blockSignals(true);
-    ui->timestampTimeEdit->setTime(time);
-    ui->timestampTimeEdit->blockSignals(false);
+        int sliderPosition;
+        if (totalDuration > 0) {
+            sliderPosition = qRound(PositionSliderMax * (static_cast<double>(ts) / static_cast<double>(totalDuration)));
+        } else {
+            sliderPosition = 0;
+        }
+        ui->positionSlider->blockSignals(true);
+        ui->positionSlider->setValue(sliderPosition);
+        ui->positionSlider->blockSignals(false);
+
+        QTime time(0, 0, 0, 0);
+        time = time.addMSecs(timestamp);
+        ui->timestampTimeEdit->blockSignals(true);
+        ui->timestampTimeEdit->setTime(time);
+        ui->timestampTimeEdit->blockSignals(false);
+    };
 }
 
-void MainWindow::handlePlaybackSpeedSelected(int selection) noexcept {
-
+void MainWindow::handlePlaybackSpeedSelected(int selection) noexcept
+{
     double timeScale;
     switch (static_cast<PlaybackSpeed>(selection)) {
     case PlaybackSpeed::Speed01x:
@@ -645,7 +641,6 @@ void MainWindow::handlePlaybackSpeedSelected(int selection) noexcept {
 void MainWindow::toggleRecord(bool enable) noexcept
 {
     this->blockSignals(true);
-
     switch (d->skyConnect.getState()) {
     case Connect::State::Recording:
         if (!enable) {

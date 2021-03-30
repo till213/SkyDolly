@@ -83,7 +83,7 @@ void AircraftHandleWidget::showEvent(QShowEvent *event)
     connect(&aircraftHandle, &AircraftHandle::dataChanged,
             this, &AircraftHandleWidget::handleRecordedData);
     // Signal sent while playing
-    connect(&d->skyConnect, &SkyConnectIntf::currentTimestampChanged,
+    connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &AircraftHandleWidget::handleTimestampChanged);
 }
 
@@ -94,7 +94,7 @@ void AircraftHandleWidget::hideEvent(QHideEvent *event)
     const AircraftHandle &aircraftHandle = World::getInstance().getCurrentScenario().getUserAircraft().getAircraftHandleConst();
     disconnect(&aircraftHandle, &AircraftHandle::dataChanged,
                this, &AircraftHandleWidget::handleRecordedData);
-    disconnect(&d->skyConnect, &SkyConnectIntf::currentTimestampChanged,
+    disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &AircraftHandleWidget::handleTimestampChanged);
 }
 
