@@ -76,6 +76,7 @@ Aircraft::Aircraft(QObject *parent) noexcept
     : QObject(parent),
       d(std::make_unique<AircraftPrivate>())
 {
+    frenchConnection();
 }
 
 Aircraft::~Aircraft() noexcept
@@ -157,6 +158,7 @@ void Aircraft::upsert(AircraftData aircraftData) noexcept
         qDebug("Aircraft::upsertAircraftData: INSERT sample, timestamp: %llu count: %d", aircraftData.timestamp, d->aircraftData.count());
 #endif
     }
+    d->duration = TimeVariableData::InvalidTime;
     emit dataChanged();
 }
 
@@ -172,21 +174,6 @@ const AircraftData &Aircraft::getLast() const noexcept
 const QVector<AircraftData> Aircraft::getAll() const noexcept
 {
     return d->aircraftData;
-}
-
-void Aircraft::clear() noexcept
-{
-    d->aircraftData.clear();
-    d->engine.clear();
-    d->primaryFlightControl.clear();
-    d->secondaryFlightControl.clear();
-    d->aircraftHandle.clear();
-    d->light.clear();
-    d->aircraftInfo.clear();
-    d->currentTimestamp = TimeVariableData::InvalidTime;
-    d->currentIndex = SkySearch::InvalidIndex;
-
-    emit dataChanged();
 }
 
 const AircraftData &Aircraft::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
@@ -283,4 +270,44 @@ qint64 Aircraft::getDuration() const noexcept
         }
     }
     return d->duration;
+}
+
+void Aircraft::clear() noexcept
+{
+    d->aircraftData.clear();
+    d->engine.clear();
+    d->primaryFlightControl.clear();
+    d->secondaryFlightControl.clear();
+    d->aircraftHandle.clear();
+    d->light.clear();
+    d->aircraftInfo.clear();
+    d->currentTimestamp = TimeVariableData::InvalidTime;
+    d->currentIndex = SkySearch::InvalidIndex;
+    d->duration = 0;
+
+    emit dataChanged();
+}
+
+// PRIVATE
+
+void Aircraft::frenchConnection()
+{
+    connect(&d->engine, &Engine::dataChanged,
+            this, &Aircraft::handleDataChanged);
+    connect(&d->primaryFlightControl, &PrimaryFlightControl::dataChanged,
+            this, &Aircraft::handleDataChanged);
+    connect(&d->secondaryFlightControl, &SecondaryFlightControl::dataChanged,
+            this, &Aircraft::handleDataChanged);
+    connect(&d->aircraftHandle, &AircraftHandle::dataChanged,
+            this, &Aircraft::handleDataChanged);
+    connect(&d->light, &Light::dataChanged,
+            this, &Aircraft::handleDataChanged);
+}
+
+// PRIVATE SLOTS
+
+void Aircraft::handleDataChanged()
+{
+    d->duration = TimeVariableData::InvalidTime;
+    emit dataChanged();
 }
