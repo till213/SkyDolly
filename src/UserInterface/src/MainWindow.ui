@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>807</width>
-    <height>232</height>
+    <width>718</width>
+    <height>230</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -115,97 +115,86 @@
       <property name="title">
        <string>Playback Speed</string>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QRadioButton" name="playbackSpeed10RadioButton">
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QRadioButton" name="playbackSpeed01xRadioButton">
          <property name="text">
-          <string>10 %</string>
+          <string>0.1x</string>
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QRadioButton" name="playbackSpeed25RadioButton">
+       <item row="0" column="1">
+        <widget class="QRadioButton" name="playbackSpeed025xRadioButton">
          <property name="text">
-          <string>25 %</string>
+          <string>0.25x</string>
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QRadioButton" name="playbackSpeed50RadioButton">
+       <item row="0" column="2">
+        <widget class="QRadioButton" name="playbackSpeed05xRadioButton">
          <property name="text">
-          <string>50 %</string>
+          <string>0.5x</string>
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QRadioButton" name="playbackSpeed75RadioButton">
+       <item row="0" column="3">
+        <widget class="QRadioButton" name="playbackSpeed075xRadioButton">
          <property name="text">
-          <string>75 %</string>
+          <string>0.75x</string>
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QRadioButton" name="playbackSpeed100RadioButton">
+       <item row="0" column="4">
+        <widget class="QRadioButton" name="playbackSpeed1xRadioButton">
          <property name="text">
-          <string>100 %</string>
+          <string>1x (Normal)</string>
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QRadioButton" name="playbackSpeed200RadioButton">
+       <item row="0" column="5">
+        <widget class="QRadioButton" name="playbackSpeed2xRadioButton">
          <property name="text">
-          <string>200 %</string>
+          <string>2x</string>
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QRadioButton" name="playbackSpeed400RadioButton">
+       <item row="0" column="6">
+        <widget class="QRadioButton" name="playbackSpeed4xRadioButton">
          <property name="text">
-          <string>400 %</string>
+          <string>4x</string>
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QRadioButton" name="playbackSpeed800RadioButton">
+       <item row="0" column="7">
+        <widget class="QRadioButton" name="playbackSpeed8xRadioButton">
          <property name="text">
-          <string>800 %</string>
+          <string>8x</string>
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QRadioButton" name="playbackSpeed1600RadioButton">
+       <item row="0" column="8">
+        <widget class="QRadioButton" name="playbackSpeed16xRadioButton">
          <property name="text">
-          <string>1600 %</string>
+          <string>16x</string>
          </property>
         </widget>
        </item>
-       <item>
+       <item row="0" column="9">
         <widget class="QRadioButton" name="customPlaybackSpeedRadioButton">
          <property name="text">
           <string>Custom</string>
          </property>
         </widget>
        </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
-         <item>
-          <widget class="QLineEdit" name="customPlaybackSpeedLineEdit">
-           <property name="minimumSize">
-            <size>
-             <width>120</width>
-             <height>0</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>%</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
+       <item row="0" column="10">
+        <widget class="QLineEdit" name="customPlaybackSpeedLineEdit">
+         <property name="minimumSize">
+          <size>
+           <width>120</width>
+           <height>0</height>
+          </size>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -217,7 +206,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>807</width>
+     <width>718</width>
      <height>21</height>
     </rect>
    </property>
