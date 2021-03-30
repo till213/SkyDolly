@@ -43,6 +43,7 @@
 #include "../AircraftHandleData.h"
 #include "../Light.h"
 #include "../LightData.h"
+#include "../CSVConst.h"
 #include "CSVExport.h"
 
 // PUBLIC
@@ -53,9 +54,8 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
     if (ok) {
         io.setTextModeEnabled(true);
 
-        QString csv = QString("Type") % Const::Sep;
-        appendAircraftHeader(csv);
-        csv.append(Const::Sep);
+        QString csv = QString(CSVConst::TypeColumnName) % Const::Sep %
+        getAircraftHeader() % Const::Sep;
         appendEngineHeader(csv);
         csv.append(Const::Sep);
         appendPrimaryFlightControlHeader(csv);
@@ -215,20 +215,20 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
 
 // PRIVATE
 
-void CSVExport::appendAircraftHeader(QString &header) noexcept
+QString inline CSVExport::getAircraftHeader() noexcept
 {
-    header.append(QString(SimVar::Latitude) % Const::Sep %
-                  QString(SimVar::Longitude) % Const::Sep %
-                  QString(SimVar::Altitude) % Const::Sep %
-                  QString(SimVar::Pitch) % Const::Sep %
-                  QString(SimVar::Bank) % Const::Sep %
-                  QString(SimVar::Heading) % Const::Sep %
-                  QString(SimVar::VelocityBodyX) % Const::Sep %
-                  QString(SimVar::VelocityBodyY) % Const::Sep %
-                  QString(SimVar::VelocityBodyZ) % Const::Sep %
-                  QString(SimVar::RotationVelocityBodyX) % Const::Sep %
-                  QString(SimVar::RotationVelocityBodyY) % Const::Sep %
-                  QString(SimVar::RotationVelocityBodyZ));
+    return QString(SimVar::Latitude) % Const::Sep %
+           QString(SimVar::Longitude) % Const::Sep %
+           QString(SimVar::Altitude) % Const::Sep %
+           QString(SimVar::Pitch) % Const::Sep %
+           QString(SimVar::Bank) % Const::Sep %
+           QString(SimVar::Heading) % Const::Sep %
+           QString(SimVar::VelocityBodyX) % Const::Sep %
+           QString(SimVar::VelocityBodyY) % Const::Sep %
+           QString(SimVar::VelocityBodyZ) % Const::Sep %
+           QString(SimVar::RotationVelocityBodyX) % Const::Sep %
+           QString(SimVar::RotationVelocityBodyY) % Const::Sep %
+           QString(SimVar::RotationVelocityBodyZ);
 }
 
 void CSVExport::appendAircraftData(const AircraftData &data, QString &csv) noexcept

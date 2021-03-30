@@ -22,24 +22,6 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVCONST_H
-#define CSVCONST_H
+#include "CSVConst.h"
 
-namespace CSVConst {
-    // Format and precision for double
-    constexpr char Format = 'g';
-    constexpr int Precision = 9;
-
-    enum class DataType {
-        Aircraft = 0,
-        Engine = 1,
-        PrimaryFlightControl = 2,
-        SecondaryFlightControl = 3,
-        AircraftHandle = 4,
-        Light = 5
-    };
-
-    extern const char *TypeColumnName;
-}
-
-#endif // CSVCONST_H
+const char *CSVConst::TypeColumnName = "Type";

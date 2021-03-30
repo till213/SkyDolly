@@ -50,7 +50,7 @@ public:
 private:
     CSVExportPrivate *d;
 
-    static void appendAircraftHeader(QString &header) noexcept;
+    static QString getAircraftHeader() noexcept;
     static void appendAircraftData(const AircraftData &data, QString &csv) noexcept;
 
     static void appendEngineHeader(QString &header) noexcept;

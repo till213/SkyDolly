@@ -186,9 +186,7 @@ void SkyConnectDummy::recordData() noexcept
 
 void SkyConnectDummy::replay() noexcept
 {
-    if (sendAircraftData(TimeVariableData::Access::Linear)) {
-        emit currentTimestampChanged(getCurrentTimestamp(), TimeVariableData::Access::Linear);
-    } else {
+    if (!sendAircraftData(TimeVariableData::Access::Linear)) {
         stopReplay();
     }
 }
