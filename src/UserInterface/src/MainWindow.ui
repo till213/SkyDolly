@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>718</width>
-    <height>230</height>
+    <width>823</width>
+    <height>257</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -117,37 +117,37 @@
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
-        <widget class="QRadioButton" name="playbackSpeed01xRadioButton">
+        <widget class="QRadioButton" name="playbackSpeed1Div8xRadioButton">
          <property name="text">
-          <string>0.1x</string>
+          <string>⅛x</string>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QRadioButton" name="playbackSpeed025xRadioButton">
+        <widget class="QRadioButton" name="playbackSpeed1Div4xRadioButton">
          <property name="text">
-          <string>0.25x</string>
+          <string>¼x</string>
          </property>
         </widget>
        </item>
        <item row="0" column="2">
-        <widget class="QRadioButton" name="playbackSpeed05xRadioButton">
+        <widget class="QRadioButton" name="playbackSpeed1Div2xRadioButton">
          <property name="text">
-          <string>0.5x</string>
+          <string>½x</string>
          </property>
         </widget>
        </item>
        <item row="0" column="3">
-        <widget class="QRadioButton" name="playbackSpeed075xRadioButton">
+        <widget class="QRadioButton" name="playbackSpeed3Div4xRadioButton">
          <property name="text">
-          <string>0.75x</string>
+          <string>¾x</string>
          </property>
         </widget>
        </item>
        <item row="0" column="4">
         <widget class="QRadioButton" name="playbackSpeed1xRadioButton">
          <property name="text">
-          <string>1x (Normal)</string>
+          <string>1x</string>
          </property>
         </widget>
        </item>
@@ -206,8 +206,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>718</width>
-     <height>21</height>
+     <width>823</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
