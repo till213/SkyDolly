@@ -482,12 +482,12 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
 {
     Q_UNUSED(cbData);
 
-    const SkyConnectImpl *skyConnect = static_cast<SkyConnectImpl *>(context);
-    const Scenario &currentScenario = skyConnect->getCurrentScenario();
-    const Aircraft &userAircraft = currentScenario.getUserAircraft();
+    SkyConnectImpl *skyConnect = static_cast<SkyConnectImpl *>(context);
+    Scenario &currentScenario = skyConnect->getCurrentScenario();
+    Aircraft &userAircraft = currentScenario.getUserAircraft();
     SIMCONNECT_RECV_SIMOBJECT_DATA *objectData;
 
-    const bool dataReceived = false;
+    bool dataReceived = false;
     switch (receivedData->dwID) {
     case SIMCONNECT_RECV_ID_EVENT:
     {
