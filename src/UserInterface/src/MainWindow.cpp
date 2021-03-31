@@ -322,6 +322,7 @@ void MainWindow::on_customPlaybackSpeedLineEdit_editingFinished() noexcept
 void MainWindow::updateUi() noexcept
 {
     updateControlUi();
+    updateTimestamp();
     updateFileMenu();
     updateWindowMenu();
     updateMainWindow();
@@ -412,6 +413,17 @@ void MainWindow::updateControlUi() noexcept
         ui->customPlaybackSpeedLineEdit->setEnabled(false);
         ui->customPlaybackSpeedLineEdit->clear();
     }
+}
+
+void MainWindow::updateTimestamp() noexcept
+{
+    const qint64 totalDuration = World::getInstance().getCurrentScenario().getTotalDuration();
+    ui->timestampTimeEdit->blockSignals(true);
+    QTime time(0, 0, 0, 0);
+    time = time.addMSecs(totalDuration);
+    ui->timestampTimeEdit->setTime(time);
+    ui->timestampTimeEdit->setMaximumTime(time);
+    ui->timestampTimeEdit->blockSignals(false);
 }
 
 void MainWindow::updateFileMenu() noexcept
@@ -567,13 +579,7 @@ void MainWindow::on_aboutQtAction_triggered() noexcept
 void MainWindow::handleTimestampChanged(qint64 timestamp) noexcept
 {
     if (d->skyConnect.isRecording()) {
-        const qint64 totalDuration = World::getInstance().getCurrentScenario().getTotalDuration();
-        ui->timestampTimeEdit->blockSignals(true);
-        QTime time(0, 0, 0, 0);
-        time = time.addMSecs(totalDuration);
-        ui->timestampTimeEdit->setTime(time);
-        ui->timestampTimeEdit->setMaximumTime(time);
-        ui->timestampTimeEdit->blockSignals(false);
+        updateTimestamp();
     } else {
         const qint64 totalDuration = World::getInstance().getCurrentScenario().getTotalDuration();
         const qint64 ts = qMin(timestamp, totalDuration);
