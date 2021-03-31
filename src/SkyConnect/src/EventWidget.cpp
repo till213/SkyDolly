@@ -51,7 +51,7 @@ bool EventWidget::nativeEvent(const QByteArray &eventType, void *message, long *
     Q_UNUSED(result)
 
     bool handled;
-    MSG *msg = static_cast<MSG *>(message);
+    const MSG *msg = static_cast<MSG *>(message);
     switch(msg->message) {
     case SimConnnectUserMessage:
 #ifdef DEBUG

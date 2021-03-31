@@ -220,20 +220,20 @@ void AbstractSkyConnect::skipToBegin() noexcept
 
 void AbstractSkyConnect::skipBackward() noexcept
 {
-    qint64 newTimeStamp = qMax(getCurrentTimestamp() - SkipMSec, 0ll);
+    const qint64 newTimeStamp = qMax(getCurrentTimestamp() - SkipMSec, 0ll);
     seek(newTimeStamp);
 }
 
 void AbstractSkyConnect::skipForward() noexcept
 {
-    qint64 totalDuration = d->currentScenario.getTotalDuration();
-    qint64 newTimeStamp = qMin(getCurrentTimestamp() + SkipMSec, totalDuration);
+    const qint64 totalDuration = d->currentScenario.getTotalDuration();
+    const qint64 newTimeStamp = qMin(getCurrentTimestamp() + SkipMSec, totalDuration);
     seek(newTimeStamp);
 }
 
 void AbstractSkyConnect::skipToEnd() noexcept
 {
-    qint64 totalDuration  = d->currentScenario.getTotalDuration();
+    const qint64 totalDuration  = d->currentScenario.getTotalDuration();
     seek(totalDuration);
 }
 
@@ -304,17 +304,16 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
     double samplesPerSecond;
     const QVector<AircraftData> aircraftData = d->currentScenario.getUserAircraftConst().getAll();
     if (aircraftData.count() > 0) {
-        qint64 startTimestamp = qMin(qMax(d->currentTimestamp - SamplesPerSecondPeriodMilliSec, 0ll), aircraftData.last().timestamp);
+        const qint64 startTimestamp = qMin(qMax(d->currentTimestamp - SamplesPerSecondPeriodMilliSec, 0ll), aircraftData.last().timestamp);
         int index = d->lastSamplesPerSecondIndex;
         while (d->currentScenario.getUserAircraftConst().getAll().at(index).timestamp < startTimestamp) {
             ++index;
         }
         d->lastSamplesPerSecondIndex = index;
 
-        int lastIndex = d->currentScenario.getUserAircraftConst().getAll().count() - 1;
-
-        int nofSamples = lastIndex - index + 1;
-        qint64 period = d->currentScenario.getUserAircraftConst().getAll().at(lastIndex).timestamp - d->currentScenario.getUserAircraftConst().getAll().at(index).timestamp;
+        const int lastIndex = d->currentScenario.getUserAircraftConst().getAll().count() - 1;
+        const int nofSamples = lastIndex - index + 1;
+        const qint64 period = d->currentScenario.getUserAircraftConst().getAll().at(lastIndex).timestamp - d->currentScenario.getUserAircraftConst().getAll().at(index).timestamp;
         if (period > 0) {
             samplesPerSecond = static_cast<double>(nofSamples) * 1000.0 / (static_cast<double>(period));
         } else {
