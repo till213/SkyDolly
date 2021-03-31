@@ -26,6 +26,7 @@
 #include <QCoreApplication>
 #include <QStandardPaths>
 #include <QSettings>
+#include <QString>
 
 #include "SampleRate.h"
 #include "Version.h"
@@ -45,6 +46,7 @@ public:
     bool absoluteSeek;
     double seekIntervalSeconds;
     double seekIntervalPercent;
+    QString dbPath;
 
     int previewInfoDialogCount;
 
@@ -174,6 +176,19 @@ void Settings::setSeekIntervalPercent(double percent) noexcept
     if (d->seekIntervalPercent!= percent) {
         d->seekIntervalPercent = percent;
         emit seekIntervalPercentChanged(d->seekIntervalPercent);
+    }
+}
+
+QString Settings::getDbPath() const noexcept
+{
+    return d->dbPath;
+}
+
+void Settings::setDbPath(const QString &dbPath) noexcept
+{
+    if (d->dbPath != dbPath) {
+        d->dbPath = dbPath;
+        emit changed();
     }
 }
 

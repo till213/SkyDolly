@@ -32,7 +32,7 @@ add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x000000)
 
 # Qt
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools Sql REQUIRED)
 
 # Application libraries
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Kernel)
