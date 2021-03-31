@@ -232,6 +232,7 @@
     <property name="title">
      <string>&amp;Window</string>
     </property>
+    <addaction name="showScenarioAction"/>
     <addaction name="showSimulationVariablesAction"/>
     <addaction name="showStatisticsAction"/>
     <addaction name="separator"/>
@@ -428,6 +429,17 @@
    </property>
    <property name="text">
     <string>&amp;Statistics</string>
+   </property>
+   <property name="shortcut">
+    <string>T</string>
+   </property>
+  </action>
+  <action name="showScenarioAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>S&amp;cenario</string>
    </property>
    <property name="shortcut">
     <string>S</string>
