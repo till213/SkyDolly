@@ -146,6 +146,7 @@ void AbstractSkyConnect::stopReplay() noexcept
     // Remember elapsed time since last replay start, in order to continue from
     // current timestamp
     d->elapsedTime = d->currentTimestamp;
+    d->elapsedTimer.invalidate();
     onStopReplay();
 }
 
@@ -162,19 +163,16 @@ void AbstractSkyConnect::stop() noexcept
 
 void AbstractSkyConnect::setPaused(bool enabled) noexcept
 {
-    Connect::State newState;
     if (enabled) {
         switch (getState()) {
         case Connect::State::Recording:
-            newState = Connect::State::RecordingPaused;
             // Store the elapsed recording time...
             d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed();
             d->elapsedTimer.invalidate();
-            setState(newState);
+            setState(Connect::State::RecordingPaused);
             onRecordingPaused(true);
             break;
         case Connect::State::Replay:
-            newState = Connect::State::ReplayPaused;
             // In case the elapsed time has started (is valid)...
             if (d->elapsedTimer.isValid()) {
                 // ... store the elapsed playback time measured with the current time scale...
@@ -182,7 +180,7 @@ void AbstractSkyConnect::setPaused(bool enabled) noexcept
                 // ... and stop the elapsed timer
                 d->elapsedTimer.invalidate();
             }
-            setState(newState);
+            setState(Connect::State::ReplayPaused);
             onReplayPaused(true);
             break;
          default:
@@ -192,18 +190,16 @@ void AbstractSkyConnect::setPaused(bool enabled) noexcept
     } else {
         switch (getState()) {
         case Connect::State::RecordingPaused:
-            newState = Connect::State::Recording;
             if (hasRecordingStarted()) {
                 // Resume recording (but only if it has already recorded samples before)
-                d->elapsedTimer.start();
+                startElapsedTimer();
             }
-            setState(newState);
+            setState(Connect::State::Recording);
             onRecordingPaused(false);
             break;
         case Connect::State::ReplayPaused:
-            newState = Connect::State::Replay;
-            d->elapsedTimer.start();
-            setState(newState);
+            startElapsedTimer();
+            setState(Connect::State::Replay);
             onReplayPaused(false);
             break;
          default:
@@ -249,10 +245,10 @@ void AbstractSkyConnect::seek(qint64 timestamp) noexcept
         d->elapsedTime = timestamp;
         emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Seek);
         if (sendAircraftData(timestamp, TimeVariableData::Access::Seek)) {
-            if (d->elapsedTimer.isValid() && getState() == Connect::State::Replay) {
+            if (d->elapsedTimer.isValid()) {
                 // Restart the elapsed timer, counting onwards from the newly
                 // set timestamp
-                d->elapsedTimer.start();
+                startElapsedTimer();
             }
             onSeek(d->currentTimestamp);
         }
@@ -297,7 +293,7 @@ void AbstractSkyConnect::setTimeScale(double timeScale) noexcept
             // ... then store the elapsed time measured with the previous scale...
             d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed() * d->timeScale;
             // ... and restart timer
-            d->elapsedTimer.start();
+            startElapsedTimer();
         }
         d->timeScale = timeScale;
     }
@@ -357,14 +353,16 @@ bool AbstractSkyConnect::isAutoRecordSampleRate() const noexcept
 
 void AbstractSkyConnect::startElapsedTimer() const noexcept
 {
-     d->elapsedTimer.start();
+    if (d->state == Connect::State::Replay || d->state == Connect::State::Recording) {
+        d->elapsedTimer.start();
+    }
 }
 
 void AbstractSkyConnect::resetElapsedTime(bool restart) noexcept
 {
     d->elapsedTime = 0;
     if (restart) {
-         d->elapsedTimer.start();
+         startElapsedTimer();
     }
 }
 
