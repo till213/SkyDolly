@@ -104,14 +104,14 @@ void AircraftHandle::clear() noexcept
 
 const AircraftHandleData &AircraftHandle::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
 {
-    const AircraftHandleData *p0, *p1, *p2, *p3;
+    const AircraftHandleData *p1, *p2;
 
     if (d->currentTimestamp != timestamp || d->currentAccess != access) {
 
         double tn;
         switch (access) {
         case TimeVariableData::Access::Linear:
-            if (SkySearch::getSupportData(d->aircraftHandleData, timestamp, d->currentIndex, &p0, &p1, &p2, &p3)) {
+            if (SkySearch::getLinearInterpolationSupportData(d->aircraftHandleData, timestamp, d->currentIndex, &p1, &p2)) {
                 tn = SkySearch::normaliseTimestamp(*p1, *p2, timestamp);
             }
             break;

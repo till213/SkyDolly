@@ -48,7 +48,7 @@ namespace SkySearch {
     /*!
      * The size of the interpolation window [-TimestampWindows, TimestampWindow] [milliseconds].
      */
-    inline constexpr qint64 TimestampWindow = 1000;
+    inline constexpr qint64 InterpolationWindow = 1000;
 
     /*!
      * Returns the lower index i of the interval [i, j] where i.timestamp <= timestamp < j.timestamp.
@@ -216,7 +216,7 @@ namespace SkySearch {
     }
 
     template <typename T>
-    bool getSupportData(const QVector<T> data, qint64 timestamp, int &startIndex, const T **p0, const T **p1, const T **p2, const T **p3) noexcept
+    bool getCubicInterpolationSupportData(const QVector<T> data, qint64 timestamp, int &startIndex, const T **p0, const T **p1, const T **p2, const T **p3) noexcept
     {
         static_assert(std::is_base_of<TimeVariableData, T>::value, "T not derived from TimeVariableData");
 
@@ -224,8 +224,8 @@ namespace SkySearch {
         if (startIndex != InvalidIndex) {
 
             *p1 = &data.at(startIndex);
-            // Is p1 within the timestamp window?
-            if ((timestamp - (*p1)->timestamp) <= TimestampWindow) {
+            // Is p1 within the interpolation window?
+            if ((timestamp - (*p1)->timestamp) <= InterpolationWindow) {
 
                 if (startIndex > 0) {
                    *p0 = &data.at(startIndex - 1);
@@ -242,12 +242,12 @@ namespace SkySearch {
                        *p3 = *p2;
                    }
                 } else {
-                   // p1 is the last data
-                   *p2 = *p3 = *p1;
+                    // p1 is the last data
+                    *p2 = *p3 = *p1;
                 }
 
-                // Is p2 within the timestamp window?
-                if (((*p2)->timestamp - timestamp) > TimestampWindow) {
+                // Is p2 within the interpolation window?
+                if (((*p2)->timestamp - timestamp) > InterpolationWindow) {
                     *p2 = *p3 = *p1;
                 }
 
@@ -257,7 +257,7 @@ namespace SkySearch {
 
         } else {
             // We are past the last sample point
-            if (data.count() > 0 && timestamp - data.last().timestamp <= TimestampWindow) {
+            if (data.count() > 0 && timestamp - data.last().timestamp <= InterpolationWindow) {
                 *p0 = *p1 = *p2 = *p3 = &data.last();
             } else {
                 *p0 = *p1 = *p2 = *p3 = nullptr;
@@ -265,6 +265,46 @@ namespace SkySearch {
         }
 
         return *p0 != nullptr;
+    }
+
+    template <typename T>
+    bool getLinearInterpolationSupportData(const QVector<T> data, qint64 timestamp, int &startIndex, const T **p1, const T **p2) noexcept
+    {
+        static_assert(std::is_base_of<TimeVariableData, T>::value, "T not derived from TimeVariableData");
+
+        startIndex = updateStartIndex(data, startIndex, timestamp);
+        if (startIndex != InvalidIndex) {
+
+            *p1 = &data.at(startIndex);
+            // Is p1 within the interpolation window?
+            if ((timestamp - (*p1)->timestamp) <= InterpolationWindow) {
+
+                if (startIndex < data.count() - 1) {
+                    *p2 = &data.at(startIndex + 1);
+                } else {
+                    // p1 is the last data
+                    *p2 = *p1;
+                }
+
+                // Is p2 within the interpolation window?
+                if (((*p2)->timestamp - timestamp) > InterpolationWindow) {
+                    *p2 = *p1;
+                }
+
+            } else {
+                *p1 = *p2 = nullptr;
+            }
+
+        } else {
+            // We are past the last sample point
+            if (data.count() > 0 && timestamp - data.last().timestamp <= InterpolationWindow) {
+                *p1 = *p2 = &data.last();
+            } else {
+                *p1 = *p2 = nullptr;
+            }
+        }
+
+        return *p1 != nullptr;
     }
 
     double normaliseTimestamp(const TimeVariableData &p1, const TimeVariableData &p2, quint64 timestamp) noexcept;
