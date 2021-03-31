@@ -71,6 +71,7 @@ private slots:
 
     void updateUi() noexcept;
     void updateControlUi() noexcept;
+    void updateTimestamp() noexcept;
     void updateFileMenu() noexcept;
     void updateWindowMenu() noexcept;
     void updateMainWindow() noexcept;
