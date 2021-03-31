@@ -55,6 +55,7 @@
 #include "../../SkyConnect/src/Connect.h"
 #include "Dialogs/AboutDialog.h"
 #include "Dialogs/SettingsDialog.h"
+#include "Dialogs/ScenarioDialog.h"
 #include "Dialogs/SimulationVariablesDialog.h"
 #include "Dialogs/StatisticsDialog.h"
 #include "Widgets/ActionButton.h"
@@ -95,6 +96,7 @@ public:
           playbackSpeedButtonGroup(nullptr),
           aboutDialog(nullptr),
           settingsDialog(nullptr),
+          scenarioDialog(nullptr),
           simulationVariablesDialog(nullptr),
           statisticsDialog(nullptr)
     {}
@@ -104,6 +106,7 @@ public:
     QButtonGroup *playbackSpeedButtonGroup;
     AboutDialog *aboutDialog;
     SettingsDialog *settingsDialog;
+    ScenarioDialog *scenarioDialog;
     SimulationVariablesDialog *simulationVariablesDialog;
     StatisticsDialog *statisticsDialog;
     double lastCustomPlaybackSpeed;
@@ -168,6 +171,8 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::skipToEnd);
 
     // Dialogs
+    connect(d->scenarioDialog, &ScenarioDialog::visibilityChanged,
+            this, &MainWindow::updateWindowMenu);
     connect(d->simulationVariablesDialog, &SimulationVariablesDialog::visibilityChanged,
             this, &MainWindow::updateWindowMenu);
     connect(d->statisticsDialog, &StatisticsDialog::visibilityChanged,
@@ -186,6 +191,7 @@ void MainWindow::initUi() noexcept
     resize(minimumSize());
 
     // Dialogs
+    d->scenarioDialog = new ScenarioDialog(d->skyConnect, this);
     d->simulationVariablesDialog = new SimulationVariablesDialog(d->skyConnect, this);
     d->statisticsDialog = new StatisticsDialog(d->skyConnect, this);
     d->aboutDialog = new AboutDialog(this);
@@ -445,6 +451,7 @@ void MainWindow::updateFileMenu() noexcept
 
 void MainWindow::updateWindowMenu() noexcept
 {
+    ui->showScenarioAction->setChecked(d->scenarioDialog->isVisible());
     ui->showSimulationVariablesAction->setChecked(d->simulationVariablesDialog->isVisible());
     ui->showStatisticsAction->setChecked(d->statisticsDialog->isVisible());
 }
@@ -541,6 +548,15 @@ void MainWindow::on_showSettingsAction_triggered() noexcept
 void MainWindow::on_quitAction_triggered() noexcept
 {
     QApplication::quit();
+}
+
+void MainWindow::on_showScenarioAction_triggered(bool enabled) noexcept
+{
+    if (enabled) {
+        d->scenarioDialog->show();
+    } else {
+        d->scenarioDialog->close();
+    }
 }
 
 void MainWindow::on_showSimulationVariablesAction_triggered(bool enabled) noexcept
