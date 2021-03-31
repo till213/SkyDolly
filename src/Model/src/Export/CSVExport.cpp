@@ -55,17 +55,13 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
         io.setTextModeEnabled(true);
 
         QString csv = QString(CSVConst::TypeColumnName) % Const::Sep %
-        getAircraftHeader() % Const::Sep;
-        appendEngineHeader(csv);
-        csv.append(Const::Sep);
-        appendPrimaryFlightControlHeader(csv);
-        csv.append(Const::Sep);
-        appendSecondaryFlightControlHeader(csv);
-        csv.append(Const::Sep);
-        appendAircraftHandleHeader(csv);
-        csv.append(Const::Sep);
-        appendLighteHeader(csv);
-        csv.append(Const::Sep % QString(SimVar::Timestamp) % Const::Ln);
+                      getAircraftHeader() % Const::Sep %
+                      getEngineHeader() % Const::Sep %
+                      getPrimaryFlightControlHeader()  % Const::Sep %
+                      getSecondaryFlightControlHeader() % Const::Sep %
+                      getAircraftHandleHeader() % Const::Sep %
+                      getLighteHeader() % Const::Sep %
+                      QString(SimVar::Timestamp) % Const::Ln;
 
         ok = io.write(csv.toUtf8());
         if (ok) {
@@ -78,20 +74,14 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
 
             // Aircraft data
             for (const AircraftData &data : aircraft.getAll()) {
-                csv.clear();
-                csv.append(QString::number(Enum::toUnderlyingType(CSVConst::DataType::Aircraft)) % Const::Sep);
-                appendAircraftData(data, csv);
-                csv.append(Const::Sep);
-                appendEngineData(engineData, csv);
-                csv.append(Const::Sep);
-                appendPrimaryFlightControlData(primaryFlightControlData, csv);
-                csv.append(Const::Sep);
-                appendSecondaryFlightControlData(secondaryFlightControlData, csv);
-                csv.append(Const::Sep);
-                appendAircraftHandleData(aircraftHandleData, csv);
-                csv.append(Const::Sep);
-                appendLightData(lightData, csv);
-                csv.append(Const::Sep % QString::number(data.timestamp) % Const::Ln);
+                csv = QString::number(Enum::toUnderlyingType(CSVConst::DataType::Aircraft)) % Const::Sep %
+                      getAircraftData(data) % Const::Sep %
+                      getEngineData(engineData) % Const::Sep %
+                      getPrimaryFlightControlData(primaryFlightControlData) % Const::Sep %
+                      getSecondaryFlightControlData(secondaryFlightControlData) % Const::Sep %
+                      getAircraftHandleData(aircraftHandleData) % Const::Sep %
+                      getLightData(lightData) % Const::Sep %
+                      QString::number(data.timestamp) % Const::Ln;
                 if (!io.write(csv.toUtf8())) {
                     ok = false;
                     break;
@@ -100,20 +90,14 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
 
             // Engine data
             for (const EngineData &data : aircraft.getEngineConst().getAll()) {
-                csv.clear();
-                csv.append(QString::number(Enum::toUnderlyingType(CSVConst::DataType::Engine)) % Const::Sep);
-                appendAircraftData(aircraftData, csv);
-                csv.append(Const::Sep);
-                appendEngineData(data, csv);
-                csv.append(Const::Sep);
-                appendPrimaryFlightControlData(primaryFlightControlData, csv);
-                csv.append(Const::Sep);
-                appendSecondaryFlightControlData(secondaryFlightControlData, csv);
-                csv.append(Const::Sep);
-                appendAircraftHandleData(aircraftHandleData, csv);
-                csv.append(Const::Sep);
-                appendLightData(lightData, csv);
-                csv.append(Const::Sep % QString::number(data.timestamp) % Const::Ln);
+                csv = QString::number(Enum::toUnderlyingType(CSVConst::DataType::Engine)) % Const::Sep %
+                      getAircraftData(aircraftData) % Const::Sep %
+                      getEngineData(data) % Const::Sep %
+                      getPrimaryFlightControlData(primaryFlightControlData) % Const::Sep %
+                      getSecondaryFlightControlData(secondaryFlightControlData) % Const::Sep %
+                      getAircraftHandleData(aircraftHandleData) % Const::Sep %
+                      getLightData(lightData) % Const::Sep %
+                      QString::number(data.timestamp) % Const::Ln;
                 if (!io.write(csv.toUtf8())) {
                     ok = false;
                     break;
@@ -122,20 +106,14 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
 
             // Primary flight controls
             for (const PrimaryFlightControlData &data : aircraft.getPrimaryFlightControlConst().getAll()) {
-                csv.clear();
-                csv.append(QString::number(Enum::toUnderlyingType(CSVConst::DataType::PrimaryFlightControl)) % Const::Sep);
-                appendAircraftData(aircraftData, csv);
-                csv.append(Const::Sep);
-                appendEngineData(engineData, csv);
-                csv.append(Const::Sep);
-                appendPrimaryFlightControlData(data, csv);
-                csv.append(Const::Sep);
-                appendSecondaryFlightControlData(secondaryFlightControlData, csv);
-                csv.append(Const::Sep);
-                appendAircraftHandleData(aircraftHandleData, csv);
-                csv.append(Const::Sep);
-                appendLightData(lightData, csv);
-                csv.append(Const::Sep % QString::number(data.timestamp) % Const::Ln);
+                csv = QString::number(Enum::toUnderlyingType(CSVConst::DataType::PrimaryFlightControl)) % Const::Sep %
+                      getAircraftData(aircraftData) % Const::Sep %
+                      getEngineData(engineData) % Const::Sep %
+                      getPrimaryFlightControlData(data) % Const::Sep %
+                      getSecondaryFlightControlData(secondaryFlightControlData) % Const::Sep %
+                      getAircraftHandleData(aircraftHandleData) % Const::Sep %
+                      getLightData(lightData) % Const::Sep %
+                      QString::number(data.timestamp) % Const::Ln;
                 if (!io.write(csv.toUtf8())) {
                     ok = false;
                     break;
@@ -144,20 +122,14 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
 
             // Secondary flight controls
             for (const SecondaryFlightControlData &data : aircraft.getSecondaryFlightControlConst().getAll()) {
-                csv.clear();
-                csv.append(QString::number(Enum::toUnderlyingType(CSVConst::DataType::SecondaryFlightControl)) % Const::Sep);
-                appendAircraftData(aircraftData, csv);
-                csv.append(Const::Sep);
-                appendEngineData(engineData, csv);
-                csv.append(Const::Sep);
-                appendPrimaryFlightControlData(primaryFlightControlData, csv);
-                csv.append(Const::Sep);
-                appendSecondaryFlightControlData(data, csv);
-                csv.append(Const::Sep);
-                appendAircraftHandleData(aircraftHandleData, csv);
-                csv.append(Const::Sep);
-                appendLightData(lightData, csv);
-                csv.append(Const::Sep % QString::number(data.timestamp) % Const::Ln);
+                csv = QString::number(Enum::toUnderlyingType(CSVConst::DataType::SecondaryFlightControl)) % Const::Sep %
+                      getAircraftData(aircraftData) % Const::Sep %
+                      getEngineData(engineData) % Const::Sep %
+                      getPrimaryFlightControlData(primaryFlightControlData) % Const::Sep %
+                      getSecondaryFlightControlData(data) % Const::Sep %
+                      getAircraftHandleData(aircraftHandleData) % Const::Sep %
+                      getLightData(lightData) % Const::Sep %
+                      QString::number(data.timestamp) % Const::Ln;
                 if (!io.write(csv.toUtf8())) {
                     ok = false;
                     break;
@@ -166,20 +138,14 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
 
             // Aircraft handles
             for (const AircraftHandleData &data : aircraft.getAircraftHandleConst().getAll()) {
-                csv.clear();
-                csv.append(QString::number(Enum::toUnderlyingType(CSVConst::DataType::AircraftHandle)) % Const::Sep);
-                appendAircraftData(aircraftData, csv);
-                csv.append(Const::Sep);
-                appendEngineData(engineData, csv);
-                csv.append(Const::Sep);
-                appendPrimaryFlightControlData(primaryFlightControlData, csv);
-                csv.append(Const::Sep);
-                appendSecondaryFlightControlData(secondaryFlightControlData, csv);
-                csv.append(Const::Sep);
-                appendAircraftHandleData(data, csv);
-                csv.append(Const::Sep);
-                appendLightData(lightData, csv);
-                csv.append(Const::Sep % QString::number(data.timestamp) % Const::Ln);
+                csv = QString::number(Enum::toUnderlyingType(CSVConst::DataType::AircraftHandle)) % Const::Sep %
+                      getAircraftData(aircraftData) % Const::Sep %
+                      getEngineData(engineData) % Const::Sep %
+                      getPrimaryFlightControlData(primaryFlightControlData) % Const::Sep %
+                      getSecondaryFlightControlData(secondaryFlightControlData) % Const::Sep %
+                      getAircraftHandleData(data) % Const::Sep %
+                      getLightData(lightData) % Const::Sep %
+                      QString::number(data.timestamp) % Const::Ln;
                 if (!io.write(csv.toUtf8())) {
                     ok = false;
                     break;
@@ -188,20 +154,14 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
 
             // Lights
             for (const LightData &data : aircraft.getLightConst().getAll()) {
-                csv.clear();
-                csv.append(QString::number(Enum::toUnderlyingType(CSVConst::DataType::Light)) % Const::Sep);
-                appendAircraftData(aircraftData, csv);
-                csv.append(Const::Sep);
-                appendEngineData(engineData, csv);
-                csv.append(Const::Sep);
-                appendPrimaryFlightControlData(primaryFlightControlData, csv);
-                csv.append(Const::Sep);
-                appendSecondaryFlightControlData(secondaryFlightControlData, csv);
-                csv.append(Const::Sep);
-                appendAircraftHandleData(aircraftHandleData, csv);
-                csv.append(Const::Sep);
-                appendLightData(data, csv);
-                csv.append(Const::Sep % QString::number(data.timestamp) % Const::Ln);
+                csv = QString::number(Enum::toUnderlyingType(CSVConst::DataType::Light)) % Const::Sep %
+                      getAircraftData(aircraftData) % Const::Sep %
+                      getEngineData(engineData) % Const::Sep %
+                      getPrimaryFlightControlData(primaryFlightControlData) % Const::Sep %
+                      getSecondaryFlightControlData(secondaryFlightControlData) % Const::Sep %
+                      getAircraftHandleData(aircraftHandleData) % Const::Sep %
+                      getLightData(data) % Const::Sep %
+                      QString::number(data.timestamp) % Const::Ln;
                 if (!io.write(csv.toUtf8())) {
                     ok = false;
                     break;
@@ -215,7 +175,7 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
 
 // PRIVATE
 
-QString inline CSVExport::getAircraftHeader() noexcept
+inline QString CSVExport::getAircraftHeader() noexcept
 {
     return QString(SimVar::Latitude) % Const::Sep %
            QString(SimVar::Longitude) % Const::Sep %
@@ -231,183 +191,195 @@ QString inline CSVExport::getAircraftHeader() noexcept
            QString(SimVar::RotationVelocityBodyZ);
 }
 
-void CSVExport::appendAircraftData(const AircraftData &data, QString &csv) noexcept
+inline QString CSVExport::getAircraftData(const AircraftData &data) noexcept
 {
+    QString csv;
     if (!data.isNull()) {
-        csv.append(QString::number(data.latitude, CSVConst::Format, CSVConst::Precision) % Const::Sep %
-                   QString::number(data.longitude, CSVConst::Format, CSVConst::Precision) % Const::Sep %
-                   QString::number(data.altitude, CSVConst::Format, CSVConst::Precision) % Const::Sep %
-                   QString::number(data.pitch, CSVConst::Format, CSVConst::Precision) % Const::Sep %
-                   QString::number(data.bank, CSVConst::Format, CSVConst::Precision) % Const::Sep %
-                   QString::number(data.heading, CSVConst::Format, CSVConst::Precision) % Const::Sep %
-                   QString::number(data.velocityBodyX, CSVConst::Format, CSVConst::Precision) % Const::Sep %
-                   QString::number(data.velocityBodyY, CSVConst::Format, CSVConst::Precision) % Const::Sep %
-                   QString::number(data.velocityBodyZ, CSVConst::Format, CSVConst::Precision) % Const::Sep %
-                   QString::number(data.rotationVelocityBodyX, CSVConst::Format, CSVConst::Precision) % Const::Sep %
-                   QString::number(data.rotationVelocityBodyY, CSVConst::Format, CSVConst::Precision) % Const::Sep %
-                   QString::number(data.rotationVelocityBodyZ, CSVConst::Format, CSVConst::Precision));
+        csv = QString::number(data.latitude, CSVConst::Format, CSVConst::Precision) % Const::Sep %
+              QString::number(data.longitude, CSVConst::Format, CSVConst::Precision) % Const::Sep %
+              QString::number(data.altitude, CSVConst::Format, CSVConst::Precision) % Const::Sep %
+              QString::number(data.pitch, CSVConst::Format, CSVConst::Precision) % Const::Sep %
+              QString::number(data.bank, CSVConst::Format, CSVConst::Precision) % Const::Sep %
+              QString::number(data.heading, CSVConst::Format, CSVConst::Precision) % Const::Sep %
+              QString::number(data.velocityBodyX, CSVConst::Format, CSVConst::Precision) % Const::Sep %
+              QString::number(data.velocityBodyY, CSVConst::Format, CSVConst::Precision) % Const::Sep %
+              QString::number(data.velocityBodyZ, CSVConst::Format, CSVConst::Precision) % Const::Sep %
+              QString::number(data.rotationVelocityBodyX, CSVConst::Format, CSVConst::Precision) % Const::Sep %
+              QString::number(data.rotationVelocityBodyY, CSVConst::Format, CSVConst::Precision) % Const::Sep %
+              QString::number(data.rotationVelocityBodyZ, CSVConst::Format, CSVConst::Precision);
     } else {
         const QString EmptyString;
-        csv.append(EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString);
+        csv = EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString;
     }
+    return csv;
 }
 
-void CSVExport::appendEngineHeader(QString &header) noexcept
+inline QString CSVExport::getEngineHeader() noexcept
 {
-    header.append(QString(SimVar::ThrottleLeverPosition1) % Const::Sep %
-                  QString(SimVar::ThrottleLeverPosition2) % Const::Sep %
-                  QString(SimVar::ThrottleLeverPosition3) % Const::Sep %
-                  QString(SimVar::ThrottleLeverPosition4) % Const::Sep %
-                  QString(SimVar::PropellerLeverPosition1) % Const::Sep %
-                  QString(SimVar::PropellerLeverPosition2) % Const::Sep %
-                  QString(SimVar::PropellerLeverPosition3) % Const::Sep %
-                  QString(SimVar::PropellerLeverPosition4) % Const::Sep %
-                  QString(SimVar::MixtureLeverPosition1) % Const::Sep %
-                  QString(SimVar::MixtureLeverPosition2) % Const::Sep %
-                  QString(SimVar::MixtureLeverPosition3) % Const::Sep %
-                  QString(SimVar::MixtureLeverPosition4));
+    return QString(SimVar::ThrottleLeverPosition1) % Const::Sep %
+           QString(SimVar::ThrottleLeverPosition2) % Const::Sep %
+           QString(SimVar::ThrottleLeverPosition3) % Const::Sep %
+           QString(SimVar::ThrottleLeverPosition4) % Const::Sep %
+           QString(SimVar::PropellerLeverPosition1) % Const::Sep %
+           QString(SimVar::PropellerLeverPosition2) % Const::Sep %
+           QString(SimVar::PropellerLeverPosition3) % Const::Sep %
+           QString(SimVar::PropellerLeverPosition4) % Const::Sep %
+           QString(SimVar::MixtureLeverPosition1) % Const::Sep %
+           QString(SimVar::MixtureLeverPosition2) % Const::Sep %
+           QString(SimVar::MixtureLeverPosition3) % Const::Sep %
+           QString(SimVar::MixtureLeverPosition4);
 }
 
-void CSVExport::appendEngineData(const EngineData &data, QString &csv) noexcept
+inline QString CSVExport::getEngineData(const EngineData &data) noexcept
 {
+    QString csv;
     if (!data.isNull()) {
-        csv.append(QString::number(data.throttleLeverPosition1) % Const::Sep %
-                   QString::number(data.throttleLeverPosition2) % Const::Sep %
-                   QString::number(data.throttleLeverPosition3) % Const::Sep %
-                   QString::number(data.throttleLeverPosition4) % Const::Sep %
-                   QString::number(data.propellerLeverPosition1) % Const::Sep %
-                   QString::number(data.propellerLeverPosition2) % Const::Sep %
-                   QString::number(data.propellerLeverPosition3) % Const::Sep %
-                   QString::number(data.propellerLeverPosition4) % Const::Sep %
-                   QString::number(data.mixtureLeverPosition1) % Const::Sep %
-                   QString::number(data.mixtureLeverPosition2) % Const::Sep %
-                   QString::number(data.mixtureLeverPosition3) % Const::Sep %
-                   QString::number(data.mixtureLeverPosition4));
+        csv = QString::number(data.throttleLeverPosition1) % Const::Sep %
+              QString::number(data.throttleLeverPosition2) % Const::Sep %
+              QString::number(data.throttleLeverPosition3) % Const::Sep %
+              QString::number(data.throttleLeverPosition4) % Const::Sep %
+              QString::number(data.propellerLeverPosition1) % Const::Sep %
+              QString::number(data.propellerLeverPosition2) % Const::Sep %
+              QString::number(data.propellerLeverPosition3) % Const::Sep %
+              QString::number(data.propellerLeverPosition4) % Const::Sep %
+              QString::number(data.mixtureLeverPosition1) % Const::Sep %
+              QString::number(data.mixtureLeverPosition2) % Const::Sep %
+              QString::number(data.mixtureLeverPosition3) % Const::Sep %
+              QString::number(data.mixtureLeverPosition4);
     } else {
         const QString EmptyString;
-        csv.append(EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString);
+        csv = EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString;
     }
+    return csv;
 }
 
-void CSVExport::appendPrimaryFlightControlHeader(QString &header) noexcept
+inline QString CSVExport::getPrimaryFlightControlHeader() noexcept
 {
-    header.append(QString(SimVar::YokeXPosition) % Const::Sep %
-                  QString(SimVar::YokeYPosition) % Const::Sep %
-                  QString(SimVar::RudderPosition) % Const::Sep %
-                  QString(SimVar::ElevatorPosition) % Const::Sep %
-                  QString(SimVar::AileronPosition));
+    return QString(SimVar::YokeXPosition) % Const::Sep %
+           QString(SimVar::YokeYPosition) % Const::Sep %
+           QString(SimVar::RudderPosition) % Const::Sep %
+           QString(SimVar::ElevatorPosition) % Const::Sep %
+           QString(SimVar::AileronPosition);
 }
 
-void CSVExport::appendPrimaryFlightControlData(const PrimaryFlightControlData &data, QString &csv) noexcept
+inline QString CSVExport::getPrimaryFlightControlData(const PrimaryFlightControlData &data) noexcept
 {
+    QString csv;
     if (!data.isNull()) {
-        csv.append(QString::number(data.yokeXPosition) % Const::Sep %
-                   QString::number(data.yokeYPosition) % Const::Sep %
-                   QString::number(data.rudderPosition) % Const::Sep %
-                   QString::number(data.elevatorPosition) % Const::Sep %
-                   QString::number(data.aileronPosition));
+        csv = QString::number(data.yokeXPosition) % Const::Sep %
+              QString::number(data.yokeYPosition) % Const::Sep %
+              QString::number(data.rudderPosition) % Const::Sep %
+              QString::number(data.elevatorPosition) % Const::Sep %
+              QString::number(data.aileronPosition);
     } else {
         const QString EmptyString;
-        csv.append(EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString);
+        csv = EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString;
     }
+    return csv;
 }
 
-void CSVExport::appendSecondaryFlightControlHeader(QString &header) noexcept
+inline QString CSVExport::getSecondaryFlightControlHeader() noexcept
 {
-    header.append(QString(SimVar::LeadingEdgeFlapsLeftPercent) % Const::Sep %
-                  QString(SimVar::LeadingEdgeFlapsRightPercent) % Const::Sep %
-                  QString(SimVar::TrailingEdgeFlapsLeftPercent) % Const::Sep %
-                  QString(SimVar::TrailingEdgeFlapsRightPercent) % Const::Sep %
-                  QString(SimVar::SpoilersHandlePosition) % Const::Sep %
-                  QString(SimVar::FlapsHandleIndex));
+    return QString(SimVar::LeadingEdgeFlapsLeftPercent) % Const::Sep %
+           QString(SimVar::LeadingEdgeFlapsRightPercent) % Const::Sep %
+           QString(SimVar::TrailingEdgeFlapsLeftPercent) % Const::Sep %
+           QString(SimVar::TrailingEdgeFlapsRightPercent) % Const::Sep %
+           QString(SimVar::SpoilersHandlePosition) % Const::Sep %
+           QString(SimVar::FlapsHandleIndex);
 }
 
-void CSVExport::appendSecondaryFlightControlData(const SecondaryFlightControlData &data, QString &csv) noexcept
+inline QString CSVExport::getSecondaryFlightControlData(const SecondaryFlightControlData &data) noexcept
 {
+    QString csv;
     if (!data.isNull()) {
-        csv.append(QString::number(data.leadingEdgeFlapsLeftPercent) % Const::Sep %
-                   QString::number(data.leadingEdgeFlapsRightPercent) % Const::Sep %
-                   QString::number(data.trailingEdgeFlapsLeftPercent) % Const::Sep %
-                   QString::number(data.trailingEdgeFlapsRightPercent) % Const::Sep %
-                   QString::number(data.spoilersHandlePosition) % Const::Sep %
-                   QString::number(data.flapsHandleIndex));
+        csv = QString::number(data.leadingEdgeFlapsLeftPercent) % Const::Sep %
+              QString::number(data.leadingEdgeFlapsRightPercent) % Const::Sep %
+              QString::number(data.trailingEdgeFlapsLeftPercent) % Const::Sep %
+              QString::number(data.trailingEdgeFlapsRightPercent) % Const::Sep %
+              QString::number(data.spoilersHandlePosition) % Const::Sep %
+              QString::number(data.flapsHandleIndex);
     } else {
         const QString EmptyString;
-        csv.append(EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString);
+        csv = EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString;
     }
+    return csv;
 }
 
-void CSVExport::appendAircraftHandleHeader(QString &header) noexcept
+inline QString CSVExport::getAircraftHandleHeader() noexcept
 {
-    header.append(QString(SimVar::GearHandlePosition) % Const::Sep %
-                  QString(SimVar::BrakeLeftPosition) % Const::Sep %
-                  QString(SimVar::BrakeRightPosition) % Const::Sep %
-                  QString(SimVar::WaterRudderHandlePosition) % Const::Sep %
-                  QString(SimVar::TailhookPosition) % Const::Sep %
-                  QString(SimVar::CanopyOpen));
+    return QString(SimVar::GearHandlePosition) % Const::Sep %
+           QString(SimVar::BrakeLeftPosition) % Const::Sep %
+           QString(SimVar::BrakeRightPosition) % Const::Sep %
+           QString(SimVar::WaterRudderHandlePosition) % Const::Sep %
+           QString(SimVar::TailhookPosition) % Const::Sep %
+           QString(SimVar::CanopyOpen);
 }
 
-void CSVExport::appendAircraftHandleData(const AircraftHandleData &data, QString &csv) noexcept
+inline QString CSVExport::getAircraftHandleData(const AircraftHandleData &data) noexcept
 {
+    QString csv;
     if (!data.isNull()) {
-        csv.append(QString::number(data.gearHandlePosition) % Const::Sep %
-                   QString::number(data.brakeLeftPosition) % Const::Sep %
-                   QString::number(data.brakeRightPosition) % Const::Sep %
-                   QString::number(data.waterRudderHandlePosition) % Const::Sep %
-                   QString::number(data.tailhookPosition) % Const::Sep %
-                   QString::number(data.canopyOpen));
+        csv = QString::number(data.gearHandlePosition) % Const::Sep %
+              QString::number(data.brakeLeftPosition) % Const::Sep %
+              QString::number(data.brakeRightPosition) % Const::Sep %
+              QString::number(data.waterRudderHandlePosition) % Const::Sep %
+              QString::number(data.tailhookPosition) % Const::Sep %
+              QString::number(data.canopyOpen);
     } else {
         const QString EmptyString;
-        csv.append(EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString % Const::Sep %
-                   EmptyString);
+        csv = EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString;
     }
+    return csv;
 }
 
-void CSVExport::appendLighteHeader(QString &header) noexcept
+inline QString CSVExport::getLighteHeader() noexcept
 {
-    header.append(QString(SimVar::LightStates));
+    return QString(SimVar::LightStates);
 }
 
-void CSVExport::appendLightData(const LightData &data, QString &csv) noexcept
+inline QString CSVExport::getLightData(const LightData &data) noexcept
 {
+    QString csv;
     if (!data.isNull()) {
-        csv.append(QString::number(data.lightStates));
+        csv = QString::number(data.lightStates);
     } else {
-        csv.append(QString());
+        csv = QString();
     }
+    return csv;
 }

@@ -51,22 +51,22 @@ private:
     CSVExportPrivate *d;
 
     static QString getAircraftHeader() noexcept;
-    static void appendAircraftData(const AircraftData &data, QString &csv) noexcept;
+    static QString getAircraftData(const AircraftData &data) noexcept;
 
-    static void appendEngineHeader(QString &header) noexcept;
-    static void appendEngineData(const EngineData &data, QString &csv) noexcept;
+    static QString getEngineHeader() noexcept;
+    static QString getEngineData(const EngineData &data) noexcept;
 
-    static void appendPrimaryFlightControlHeader(QString &header) noexcept;
-    static void appendPrimaryFlightControlData(const PrimaryFlightControlData &data, QString &csv) noexcept;
+    static QString getPrimaryFlightControlHeader() noexcept;
+    static QString getPrimaryFlightControlData(const PrimaryFlightControlData &data) noexcept;
 
-    static void appendSecondaryFlightControlHeader(QString &header) noexcept;
-    static void appendSecondaryFlightControlData(const SecondaryFlightControlData &data, QString &csv) noexcept;
+    static QString getSecondaryFlightControlHeader() noexcept;
+    static QString getSecondaryFlightControlData(const SecondaryFlightControlData &data) noexcept;
 
-    static void appendAircraftHandleHeader(QString &header) noexcept;
-    static void appendAircraftHandleData(const AircraftHandleData &data, QString &csv) noexcept;
+    static QString getAircraftHandleHeader() noexcept;
+    static QString getAircraftHandleData(const AircraftHandleData &data) noexcept;
 
-    static void appendLighteHeader(QString &header) noexcept;
-    static void appendLightData(const LightData &data, QString &csv) noexcept;
+    static QString getLighteHeader() noexcept;
+    static QString getLightData(const LightData &data) noexcept;
 };
 
 #endif // CSVEXPORT_H
