@@ -29,10 +29,14 @@
 #include <QRandomGenerator>
 
 #include "../../Kernel/src/Settings.h"
+#include "../../Kernel/src/SkyMath.h"
 #include "../../Model/src/TimeVariableData.h"
 #include "../../Model/src/World.h"
 #include "../../Model/src/Scenario.h"
+#include "../../Model/src/Aircraft.h"
 #include "../../Model/src/AircraftData.h"
+#include "../../Model/src/Engine.h"
+#include "../../Model/src/EngineData.h"
 #include "AbstractSkyConnect.h"
 #include "SkyConnectDummy.h"
 
@@ -169,14 +173,44 @@ bool SkyConnectDummy::sendAircraftData(TimeVariableData::Access access) noexcept
 
 void SkyConnectDummy::recordData() noexcept
 {
-    AircraftData aircraftData;
-    aircraftData.latitude = QRandomGenerator::global()->bounded(180.0);
-    aircraftData.longitude = QRandomGenerator::global()->bounded(90.0);
-    aircraftData.altitude = QRandomGenerator::global()->bounded(20000.0);
-    aircraftData.timestamp = getCurrentTimestamp();
+    const qint64 timestamp = getCurrentTimestamp();
     Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+    QRandomGenerator *randomGenerator = QRandomGenerator::global();
 
+    AircraftData aircraftData;
+    aircraftData.latitude = -180.0 + randomGenerator->bounded(360.0);
+    aircraftData.longitude = -90.0 + randomGenerator->bounded(180.0);
+    aircraftData.altitude = randomGenerator->bounded(20000.0);
+    aircraftData.pitch = -90.0 + randomGenerator->bounded(180.0);
+    aircraftData.bank = -180.0 + randomGenerator->bounded(360.0);
+    aircraftData.heading = -180.0 + randomGenerator->bounded(360.0);
+
+    aircraftData.rotationVelocityBodyX = randomGenerator->bounded(1.0);
+    aircraftData.rotationVelocityBodyY = randomGenerator->bounded(1.0);
+    aircraftData.rotationVelocityBodyZ = randomGenerator->bounded(1.0);
+    aircraftData.velocityBodyX = randomGenerator->bounded(1.0);
+    aircraftData.velocityBodyY = randomGenerator->bounded(1.0);
+    aircraftData.velocityBodyZ = randomGenerator->bounded(1.0);
+
+    aircraftData.timestamp = timestamp;
     aircraft.upsert(std::move(aircraftData));
+
+    EngineData engineData;
+    engineData.throttleLeverPosition1 = SkyMath::fromPosition(-1.0 + randomGenerator->bounded(2.0));
+    engineData.throttleLeverPosition2 = SkyMath::fromPosition(-1.0 + randomGenerator->bounded(2.0));
+    engineData.throttleLeverPosition3 = SkyMath::fromPosition(-1.0 + randomGenerator->bounded(2.0));
+    engineData.throttleLeverPosition4 = SkyMath::fromPosition(-1.0 + randomGenerator->bounded(2.0));
+    engineData.propellerLeverPosition1 = SkyMath::fromPosition(randomGenerator->bounded(1.0));
+    engineData.propellerLeverPosition2 = SkyMath::fromPosition(randomGenerator->bounded(1.0));
+    engineData.propellerLeverPosition3 = SkyMath::fromPosition(randomGenerator->bounded(1.0));
+    engineData.propellerLeverPosition4 = SkyMath::fromPosition(randomGenerator->bounded(1.0));
+    engineData.mixtureLeverPosition1 = SkyMath::fromPercent(randomGenerator->bounded(100.0));
+    engineData.mixtureLeverPosition2 = SkyMath::fromPercent(randomGenerator->bounded(100.0));
+    engineData.mixtureLeverPosition3 = SkyMath::fromPercent(randomGenerator->bounded(100.0));
+    engineData.mixtureLeverPosition4 = SkyMath::fromPercent(randomGenerator->bounded(100.0));
+    engineData.timestamp = timestamp;
+    aircraft.getEngine().upsert(std::move(engineData));
+
     if (!isElapsedTimerRunning()) {
         // Start the elapsed timer with the arrival of the first sample data
         setCurrentTimestamp(0);
