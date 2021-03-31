@@ -130,14 +130,14 @@ void PrimaryFlightControl::clear() noexcept
 
 const PrimaryFlightControlData &PrimaryFlightControl::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
 {
-    const PrimaryFlightControlData *p0, *p1, *p2, *p3;
+    const PrimaryFlightControlData *p1, *p2;
 
     if (d->currentTimestamp != timestamp || d->currentAccess != access) {
 
         double tn;
         switch (access) {
         case TimeVariableData::Access::Linear:
-            if (SkySearch::getSupportData(d->primaryFlightControlData, timestamp, d->currentIndex, &p0, &p1, &p2, &p3)) {
+            if (SkySearch::getLinearInterpolationSupportData(d->primaryFlightControlData, timestamp, d->currentIndex, &p1, &p2)) {
                 tn = SkySearch::normaliseTimestamp(*p1, *p2, timestamp);
             }
             break;

@@ -98,13 +98,13 @@ void Light::clear() noexcept
 
 const LightData &Light::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
 {
-    const LightData *p0, *p1, *p2, *p3;
+    const LightData *p1, *p2;
 
     if (d->currentTimestamp != timestamp || d->currentAccess != access) {
 
         switch (access) {
         case TimeVariableData::Access::Linear:
-            SkySearch::getSupportData(d->lightData, timestamp, d->currentIndex, &p0, &p1, &p2, &p3);
+            SkySearch::getLinearInterpolationSupportData(d->lightData, timestamp, d->currentIndex, &p1, &p2);
             break;
         case TimeVariableData::Access::Seek:
             // Get the last sample data just before the seeked position

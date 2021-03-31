@@ -186,7 +186,7 @@ const AircraftData &Aircraft::interpolate(qint64 timestamp, TimeVariableData::Ac
         double tn;
         switch (access) {
         case TimeVariableData::Access::Linear:
-            if (SkySearch::getSupportData(d->aircraftData, timestamp, d->currentIndex, &p0, &p1, &p2, &p3)) {
+            if (SkySearch::getCubicInterpolationSupportData(d->aircraftData, timestamp, d->currentIndex, &p0, &p1, &p2, &p3)) {
                 tn = SkySearch::normaliseTimestamp(*p1, *p2, timestamp);
             }
             break;

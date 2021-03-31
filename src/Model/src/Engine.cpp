@@ -104,14 +104,14 @@ void Engine::clear() noexcept
 
 const EngineData &Engine::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
 {
-    const EngineData *p0, *p1, *p2, *p3;
+    const EngineData *p1, *p2;
 
     if (d->currentTimestamp != timestamp || d->currentAccess != access) {
 
         double tn;
         switch (access) {
         case TimeVariableData::Access::Linear:
-            if (SkySearch::getSupportData(d->engineData, timestamp, d->currentIndex, &p0, &p1, &p2, &p3)) {
+            if (SkySearch::getLinearInterpolationSupportData(d->engineData, timestamp, d->currentIndex, &p1, &p2)) {
                 tn = SkySearch::normaliseTimestamp(*p1, *p2, timestamp);
             }
             break;
