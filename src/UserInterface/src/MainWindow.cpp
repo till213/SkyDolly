@@ -73,10 +73,10 @@ namespace
     constexpr qint64 MilliSecondsPerHour = 60 * MilliSecondsPerMinute;
 
     enum class PlaybackSpeed {
-        Speed01x,
-        Speed025x,
-        Speed05x,
-        Speed075x,
+        Speed1Div8x,
+        Speed1Div4x,
+        Speed1Div2x,
+        Speed3Div4x,
         Speed1x,
         Speed2x,
         Speed4x,
@@ -198,10 +198,10 @@ void MainWindow::initUi() noexcept
 void MainWindow::initControlUi() noexcept
 {
     d->playbackSpeedButtonGroup = new QButtonGroup(this);
-    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed01xRadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed01x));
-    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed025xRadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed025x));
-    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed05xRadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed05x));
-    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed075xRadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed075x));
+    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed1Div8xRadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed1Div8x));
+    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed1Div4xRadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed1Div4x));
+    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed1Div2xRadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed1Div2x));
+    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed3Div4xRadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed3Div4x));
     d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed1xRadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed1x));
     d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed2xRadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed2x));
     d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed4xRadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed4x));
@@ -600,16 +600,16 @@ void MainWindow::handlePlaybackSpeedSelected(int selection) noexcept
 {
     double timeScale;
     switch (static_cast<PlaybackSpeed>(selection)) {
-    case PlaybackSpeed::Speed01x:
-        timeScale = 0.1;
+    case PlaybackSpeed::Speed1Div8x:
+        timeScale = 0.125;
         break;
-    case PlaybackSpeed::Speed025x:
+    case PlaybackSpeed::Speed1Div4x:
         timeScale = 0.25;
         break;
-    case PlaybackSpeed::Speed05x:
+    case PlaybackSpeed::Speed1Div2x:
         timeScale = 0.5;
         break;
-    case PlaybackSpeed::Speed075x:
+    case PlaybackSpeed::Speed3Div4x:
         timeScale = 0.75;
         break;
     case PlaybackSpeed::Speed1x:
