@@ -89,7 +89,7 @@ const AircraftHandleData &AircraftHandle::getLast() const noexcept
     }
 }
 
-const QVector<AircraftHandleData> AircraftHandle::getAll() const noexcept
+const QVector<AircraftHandleData> &AircraftHandle::getAll() const noexcept
 {
     return d->aircraftHandleData;
 }

@@ -171,7 +171,7 @@ const AircraftData &Aircraft::getLast() const noexcept
     }
 }
 
-const QVector<AircraftData> Aircraft::getAll() const noexcept
+const QVector<AircraftData> &Aircraft::getAll() const noexcept
 {
     return d->aircraftData;
 }
@@ -270,6 +270,11 @@ qint64 Aircraft::getDuration() const noexcept
         }
     }
     return d->duration;
+}
+
+bool Aircraft::hasRecording() const noexcept
+{
+    return d->aircraftData.count() > 0;
 }
 
 void Aircraft::clear() noexcept

@@ -89,7 +89,7 @@ const EngineData &Engine::getLast() const noexcept
     }
 }
 
-const QVector<EngineData> Engine::getAll() const noexcept
+const QVector<EngineData> &Engine::getAll() const noexcept
 {
     return d->engineData;
 }
