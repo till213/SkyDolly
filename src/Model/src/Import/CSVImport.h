@@ -49,6 +49,7 @@ private:
     static bool importSecondaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, SecondaryFlightControl &secondaryFlightControl) noexcept;
     static bool importAircraftHandleData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, AircraftHandle &aircraftHandle) noexcept;
     static bool importLightData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Light &light) noexcept;
+    static bool importTimestamp(const QList<QByteArray> &values, int columnIndex, bool firstRow, qint64 &timestamp, qint64 &timestampDelta);
 };
 
 #endif // CSVIMPORT_H

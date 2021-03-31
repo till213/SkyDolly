@@ -353,7 +353,6 @@ inline bool CSVImport::importPrimaryFlightControlData(const QList<QByteArray> &h
     for (const QByteArray &header : headers) {
 
         double doubleValue;
-        // Position
         if (header == SimVar::YokeXPosition) {
             doubleValue = values.at(columnIndex).toDouble(&ok);
             if (ok) {
@@ -490,7 +489,6 @@ inline bool CSVImport::importAircraftHandleData(const QList<QByteArray> &headers
 {
     AircraftHandleData data;
     int columnIndex = 0;
-    qint64 timestamp;
     qint64 timestampDelta = 0;
     bool ok = false;
     for (const QByteArray &header : headers) {
@@ -529,18 +527,7 @@ inline bool CSVImport::importAircraftHandleData(const QList<QByteArray> &headers
             }
         // Timestamp
         } else if (header == SimVar::Timestamp) {
-            timestamp = values.at(columnIndex).toLongLong(&ok);
-            if (ok) {
-                if (!firstRow) {
-                    data.timestamp = timestamp + timestampDelta;
-                } else {
-                    // The first timestamp must be 0, so shift all timestamps by
-                    // the timestamp delta, derived from the first timestamp
-                    // (which is usually 0 already)
-                    timestampDelta = -timestamp;
-                    data.timestamp = 0.0;
-                }
-            }
+            ok = importTimestamp(values, columnIndex, firstRow, data.timestamp, timestampDelta);
         } else {
             ok = true;
         }
@@ -604,6 +591,24 @@ inline bool CSVImport::importLightData(const QList<QByteArray> &headers, const Q
     }
     if (ok) {
         light.upsert(std::move(data));
+    }
+    return ok;
+}
+
+inline bool CSVImport::importTimestamp(const QList<QByteArray> &values, int columnIndex, bool firstRow, qint64 &timestamp, qint64 &timestampDelta)
+{
+    bool ok;
+    timestamp = values.at(columnIndex).toLongLong(&ok);
+    if (ok) {
+        if (!firstRow) {
+            timestamp += timestampDelta;
+        } else {
+            // The first timestamp must be 0, so shift all timestamps by
+            // the timestamp delta, derived from the first timestamp
+            // (which is usually 0 already)
+            timestampDelta = -timestamp;
+            timestamp = 0.0;
+        }
     }
     return ok;
 }
