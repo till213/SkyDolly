@@ -5,6 +5,10 @@
 ### New Features
 - Simulation variables have been split into distinct requests, saving both on required space and CPU usage
 
+### Bug Fixes
+
+- The elapsed timer is now only (re-)started when required: only for playback and recording (but e.g. not when seeking to a position while playback is stopped)
+
 ## 0.4.1
 
 ### Bug Fixes
