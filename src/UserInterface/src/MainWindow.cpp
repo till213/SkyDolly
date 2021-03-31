@@ -337,7 +337,7 @@ void MainWindow::updateUi() noexcept
 void MainWindow::updateControlUi() noexcept
 {
     const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
-    const bool hasRecording = aircraft.getAll().count() > 0;
+    const bool hasRecording = aircraft.hasRecording();
     switch (d->skyConnect.getState()) {
     case Connect::State::Disconnected:
         // Fall-thru intened: each time a control element is triggered a connection
@@ -435,7 +435,7 @@ void MainWindow::updateTimestamp() noexcept
 void MainWindow::updateFileMenu() noexcept
 {
     const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
-    const bool hasRecording = aircraft.getAll().count() > 0;
+    const bool hasRecording = aircraft.hasRecording();
     switch (d->skyConnect.getState()) {
     case Connect::State::Recording:
         // Fall-thru intentional

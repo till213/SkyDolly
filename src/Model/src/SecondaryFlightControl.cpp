@@ -89,7 +89,7 @@ const SecondaryFlightControlData &SecondaryFlightControl::getLast() const noexce
     }
 }
 
-const QVector<SecondaryFlightControlData> SecondaryFlightControl::getAll() const noexcept
+const QVector<SecondaryFlightControlData> &SecondaryFlightControl::getAll() const noexcept
 {
     return d->secondaryFlightControlData;
 }

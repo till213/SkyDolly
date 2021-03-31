@@ -46,7 +46,7 @@ public:
 
     void upsert(LightData LightData) noexcept;
     const LightData &getLast() const noexcept;
-    const QVector<LightData> getAll() const noexcept;
+    const QVector<LightData> &getAll() const noexcept;
     const LightData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
     void clear() noexcept;

@@ -302,7 +302,7 @@ void AbstractSkyConnect::setTimeScale(double timeScale) noexcept
 double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
 {
     double samplesPerSecond;
-    const QVector<AircraftData> aircraftData = d->currentScenario.getUserAircraftConst().getAll();
+    const QVector<AircraftData> &aircraftData = d->currentScenario.getUserAircraftConst().getAll();
     if (aircraftData.count() > 0) {
         const qint64 startTimestamp = qMin(qMax(d->currentTimestamp - SamplesPerSecondPeriodMilliSec, 0ll), aircraftData.last().timestamp);
         int index = d->lastSamplesPerSecondIndex;
