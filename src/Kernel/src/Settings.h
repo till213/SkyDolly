@@ -67,6 +67,9 @@ public:
     double getSeekIntervalPercent() const noexcept;
     void setSeekIntervalPercent(double percent) noexcept;
 
+    QString getDbPath() const noexcept;
+    void setDbPath(const QString &dbPath) noexcept;
+
     int getPreviewInfoDialogCount() const noexcept;
     void setPreviewInfoDialogCount(int count) noexcept;
 

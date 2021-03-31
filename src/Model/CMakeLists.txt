@@ -54,10 +54,13 @@ target_sources(Model
         src/Export/CSVExport.h
         src/Import/CSVImport.cpp
         src/Import/CSVImport.h
+        src/Dao/WorldDaoIntf.h
+        src/Dao/SQLite/SQLiteWorldDao.cpp
+        src/Dao/SQLite/SQLiteWorldDao.h
 )
 
 set(Model_LIBS
-    Qt${QT_VERSION_MAJOR}::Core Kernel
+    Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Sql Kernel
 )
 if (APPLE)
     list(APPEND Model_LIBS -lc++)
