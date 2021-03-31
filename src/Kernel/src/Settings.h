@@ -58,6 +58,9 @@ public:
     int getPreviewInfoDialogCount() const noexcept;
     void setPreviewInfoDialogCount(int count) noexcept;
 
+    QString getDbPath() const noexcept;
+    void setDbPath(const QString &dbPath) noexcept;
+
 public slots:
     /*!
      * Stores these Settings to a user configuration file.

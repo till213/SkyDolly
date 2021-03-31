@@ -25,6 +25,7 @@
 
 #include <QCoreApplication>
 #include <QSettings>
+#include <QString>
 
 #include "SampleRate.h"
 #include "Version.h"
@@ -39,6 +40,7 @@ public:
     double recordSampleRateValue;
     double playbackSampleRateValue;
     bool windowStayOnTopEnabled;
+    QString dbPath;
 
     int previewInfoDialogCount;
 
@@ -117,6 +119,18 @@ void Settings::setPreviewInfoDialogCount(int count) noexcept
 {
     if (d->previewInfoDialogCount != count) {
         d->previewInfoDialogCount = count + SettingsPrivate::PreviewInfoDialogBase;
+        emit changed();
+    }
+}
+
+QString Settings::getDbPath() const noexcept
+{
+    return d->dbPath;
+}
+void Settings::setDbPath(const QString &dbPath) noexcept
+{
+    if (d->dbPath != dbPath) {
+        d->dbPath = dbPath;
         emit changed();
     }
 }
