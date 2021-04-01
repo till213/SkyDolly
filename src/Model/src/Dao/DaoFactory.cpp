@@ -22,18 +22,40 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef WORLDDAOINTF_H
-#define WORLDDAOINTF_H
+#include <memory>
 
-class WorldDaoIntf
+#include "SQLite/SQLiteWorldDao.h"
+#include "DaoFactory.h"
+
+class DaoFactoryPrivate
 {
 public:
-    virtual ~WorldDaoIntf() = default;
+    DaoFactoryPrivate(DaoFactory::DbType theDbType)
+        : dbType(theDbType)
+    {}
 
-    virtual bool connectDb() = 0;
-    virtual void disconnectDb() = 0;
-
-    virtual bool migrate() = 0;
+    DaoFactory::DbType dbType;
 };
 
-#endif // WORLDDAOINTF_H
+// PUBLIC
+
+DaoFactory::DaoFactory(DbType dbType)
+    : d(std::make_unique<DaoFactoryPrivate>(dbType))
+{
+
+};
+
+DaoFactory::~DaoFactory()
+{}
+
+std::unique_ptr<WorldDaoIntf> DaoFactory::createWorldDao() noexcept
+{
+    switch (d->dbType) {
+    case DbType::SQLite:
+        return std::make_unique<SQLiteWorldDao>();
+        break;
+    default:
+        return nullptr;
+        break;
+    }
+};
