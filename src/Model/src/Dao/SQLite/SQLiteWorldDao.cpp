@@ -28,7 +28,7 @@
 #include <QSqlQuery>
 
 #include "../../../../Kernel/src/Settings.h"
-#include "DbMigration.h"
+#include "SqlMigration.h"
 #include "SQLiteWorldDao.h"
 
 constexpr char DbName[] = "QSQLITE";
@@ -74,13 +74,13 @@ bool SQLiteWorldDao::migrate() noexcept
 {
     bool ok = createPatchTable();
     if (ok) {
-        DbMigration dbMigration;
-        ok = dbMigration.migrateExAnte();
+        SqlMigration sqlMigration;
+        ok = sqlMigration.migrateExAnte();
         if (ok) {
-            ok = dbMigration.migrateDdl();
+            ok = sqlMigration.migrateDdl();
         }
         if (ok) {
-            ok = dbMigration.migrateExPost();
+            ok = sqlMigration.migrateExPost();
         }
     }
     return ok;
