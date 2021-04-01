@@ -693,13 +693,13 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.ui" line="408"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="521"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="528"/>
         <source>Export CSV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.ui" line="413"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="497"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="502"/>
         <source>Import CSV</source>
         <translation type="unfinished"></translation>
     </message>
@@ -719,12 +719,12 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="464"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="469"/>
         <source>Record [@%1 Hz]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="466"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="471"/>
         <source>Record [auto sample rate]</source>
         <translation type="unfinished"></translation>
     </message>
