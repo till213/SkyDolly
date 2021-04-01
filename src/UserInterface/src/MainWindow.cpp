@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+
 #include <QApplication>
 #include <QByteArray>
 #include <QFileDialog>
@@ -49,6 +51,8 @@
 #include "../../Model/src/AircraftData.h"
 #include "../../Model/src/AircraftInfo.h"
 #include "../../Model/src/World.h"
+#include "../../Model/src/Dao/DaoFactory.h"
+#include "../../Model/src/Dao/WorldDaoIntf.h"
 #include "../../Kernel/src/SampleRate.h"
 #include "../../SkyConnect/src/SkyManager.h"
 #include "../../SkyConnect/src/SkyConnectIntf.h"
@@ -98,7 +102,9 @@ public:
           settingsDialog(nullptr),
           scenarioDialog(nullptr),
           simulationVariablesDialog(nullptr),
-          statisticsDialog(nullptr)
+          statisticsDialog(nullptr),
+          daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
+          worldDao(nullptr)
     {}
 
     SkyConnectIntf &skyConnect;
@@ -110,6 +116,8 @@ public:
     SimulationVariablesDialog *simulationVariablesDialog;
     StatisticsDialog *statisticsDialog;
     double lastCustomPlaybackSpeed;
+    std::unique_ptr<DaoFactory> daoFactory;
+    std::unique_ptr<WorldDaoIntf> worldDao;
 };
 
 // PUBLIC
@@ -123,6 +131,7 @@ MainWindow::MainWindow(QWidget *parent) noexcept
     initUi();
     updateUi();
     frenchConnection();
+    connectWithDb();
 }
 
 MainWindow::~MainWindow() noexcept
@@ -130,6 +139,7 @@ MainWindow::~MainWindow() noexcept
     // The SkyConnect instances have been deleted by the SkyManager (singleton)
     // already at this point; no need to disconnect from their "stateChanged"
     // signal
+    d->worldDao->disconnectDb();
 }
 
 // PRIVATE
@@ -275,6 +285,26 @@ void MainWindow::initControlUi() noexcept
     skipToEndButton->setAction(ui->skipToEndAction);
     skipToEndButton->setFlat(true);
     ui->controlButtonLayout->insertWidget(7, skipToEndButton);
+}
+
+bool MainWindow::connectWithDb() noexcept
+{
+    QString filePath = Settings::getInstance().getDbPath();
+    bool ok;
+    if (filePath.isNull()) {
+        filePath = QFileDialog::getSaveFileName(this, tr("Library"), ".", "*.db");
+        Settings::getInstance().setDbPath(filePath);
+    }
+    if (!filePath.isNull()) {
+        d->worldDao = d->daoFactory->createWorldDao();
+        ok = d->worldDao->connectDb();
+        if (ok) {
+            ok = d->worldDao->migrate();
+        }
+    } else {
+        ok = false;
+    }
+    return ok;
 }
 
 // PRIVATE SLOTS

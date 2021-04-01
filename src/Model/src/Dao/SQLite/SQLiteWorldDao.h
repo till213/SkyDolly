@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef WORLDDAO_H
-#define WORLDDAO_H
+#ifndef SQLITEWORLDDAO_H
+#define SQLITEWORLDDAO_H
 
 #include <memory>
 
@@ -33,17 +33,23 @@
 
 class WorldDaoPrivate;
 
-class WorldDao : public WorldDaoIntf
+class SQLiteWorldDao : public WorldDaoIntf
 {
 public:
-    WorldDao() noexcept;
-    virtual ~WorldDao() noexcept;
+    SQLiteWorldDao() noexcept;
+    virtual ~SQLiteWorldDao() noexcept;
 
-    bool connectDb() override;
+    virtual bool connectDb() noexcept override;
+    virtual void disconnectDb() noexcept override;
+
+    virtual bool migrate() noexcept override;
 
 private:
-    Q_DISABLE_COPY(WorldDao)
+    Q_DISABLE_COPY(SQLiteWorldDao)
     std::unique_ptr<WorldDaoPrivate> d;
+
+    void disconnectSQLite() noexcept;
+    bool createPatchTable() noexcept;
 };
 
-#endif // WORLDDAO_H
+#endif // SQLITEWORLDDAO_H
