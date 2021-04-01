@@ -22,18 +22,32 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef WORLDDAOINTF_H
-#define WORLDDAOINTF_H
+#ifndef DAOFACTORY_H
+#define DAOFACTORY_H
 
-class WorldDaoIntf
+#include <memory>
+
+#include "../ModelLib.h"
+#include "WorldDaoIntf.h"
+
+class DaoFactoryPrivate;
+
+class MODEL_API DaoFactory
 {
 public:
-    virtual ~WorldDaoIntf() = default;
 
-    virtual bool connectDb() = 0;
-    virtual void disconnectDb() = 0;
+    enum class DbType
+    {
+        SQLite = 0
+    };
 
-    virtual bool migrate() = 0;
+    DaoFactory(DbType dbType);
+    ~DaoFactory();
+
+    std::unique_ptr<WorldDaoIntf> createWorldDao() noexcept;
+
+private:
+    std::unique_ptr<DaoFactoryPrivate> d;
 };
 
-#endif // WORLDDAOINTF_H
+#endif // DAOFACTORY_H
