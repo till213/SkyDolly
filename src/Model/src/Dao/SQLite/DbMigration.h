@@ -22,18 +22,27 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef WORLDDAOINTF_H
-#define WORLDDAOINTF_H
+#ifndef DBMIGRATION_H
+#define DBMIGRATION_H
 
-class WorldDaoIntf
+#include <memory>
+
+#include <QString>
+
+class DbMigrationPrivate;
+
+class DbMigration
 {
 public:
-    virtual ~WorldDaoIntf() = default;
+    DbMigration();
+    ~DbMigration();
 
-    virtual bool connectDb() = 0;
-    virtual void disconnectDb() = 0;
+    bool migrateExAnte() noexcept;
+    bool migrateDdl() noexcept;
+    bool migrateExPost() noexcept;
 
-    virtual bool migrate() = 0;
+private:
+    std::unique_ptr<DbMigrationPrivate> d;
 };
 
-#endif // WORLDDAOINTF_H
+#endif // DBMIGRATION_H

@@ -55,8 +55,16 @@ target_sources(Model
         src/Import/CSVImport.cpp
         src/Import/CSVImport.h
         src/Dao/WorldDaoIntf.h
+        src/Dao/DaoFactory.cpp
+        src/Dao/DaoFactory.h
         src/Dao/SQLite/SQLiteWorldDao.cpp
         src/Dao/SQLite/SQLiteWorldDao.h
+        src/Dao/SQLite/DbMigration.cpp
+        src/Dao/SQLite/DbMigration.h
+        src/Dao/SQLite/Migration/migr-ex-ante.sql
+        src/Dao/SQLite/Migration/migr-ddl.sql
+        src/Dao/SQLite/Migration/migr-ex-post.sql
+        src/Dao/SQLite/Migration/Migration.qrc
 )
 
 set(Model_LIBS

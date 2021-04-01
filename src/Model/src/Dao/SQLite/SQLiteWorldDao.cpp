@@ -25,9 +25,13 @@
 #include <memory>
 
 #include <QSqlDatabase>
+#include <QSqlQuery>
 
 #include "../../../../Kernel/src/Settings.h"
+#include "DbMigration.h"
 #include "SQLiteWorldDao.h"
+
+constexpr char DbName[] = "QSQLITE";
 
 class WorldDaoPrivate
 {
@@ -40,21 +44,64 @@ public:
 
 // PUBLIC
 
-WorldDao::WorldDao() noexcept
+SQLiteWorldDao::SQLiteWorldDao() noexcept
     : d(std::make_unique<WorldDaoPrivate>())
 {
 
 }
 
-WorldDao::~WorldDao() noexcept
-{}
+SQLiteWorldDao::~SQLiteWorldDao() noexcept
+{
+    disconnectSQLite();
+}
 
-bool WorldDao::connectDb()
+bool SQLiteWorldDao::connectDb() noexcept
 {
     const QString &dbPath = Settings::getInstance().getDbPath();
 
-    d->db = QSqlDatabase::addDatabase("QSQLITE");
+    d->db = QSqlDatabase::addDatabase(DbName);
     d->db.setDatabaseName(dbPath);
 
-    return true;
+    return d->db.open();
+}
+
+void SQLiteWorldDao::disconnectDb() noexcept
+{
+    disconnectSQLite();
+}
+
+bool SQLiteWorldDao::migrate() noexcept
+{
+    bool ok = createPatchTable();
+    if (ok) {
+        DbMigration dbMigration;
+        ok = dbMigration.migrateExAnte();
+        if (ok) {
+            ok = dbMigration.migrateDdl();
+        }
+        if (ok) {
+            ok = dbMigration.migrateExPost();
+        }
+    }
+    return ok;
+}
+
+// PRIVATE
+
+void SQLiteWorldDao::disconnectSQLite() noexcept
+{
+    d->db.close();
+}
+
+bool SQLiteWorldDao::createPatchTable() noexcept
+{
+    QSqlQuery query;
+    query.prepare("create table if not exists patch("
+    "id	integer integer primary key,"
+    "patch_id text not null unique,"
+    "success integer not null,"
+    "timestamp text not null,"
+    "msg text)");
+    bool ok = query.exec();
+    return ok;
 }

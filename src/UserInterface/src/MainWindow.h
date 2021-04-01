@@ -62,6 +62,8 @@ private:
     void initUi() noexcept;
     void initControlUi() noexcept;
 
+    bool connectWithDb() noexcept;
+
 private slots:
     void on_positionSlider_sliderPressed() noexcept;
     void on_positionSlider_valueChanged(int value) noexcept;
