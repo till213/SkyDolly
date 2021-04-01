@@ -59,8 +59,10 @@ target_sources(Model
         src/Dao/DaoFactory.h
         src/Dao/SQLite/SQLiteWorldDao.cpp
         src/Dao/SQLite/SQLiteWorldDao.h
-        src/Dao/SQLite/DbMigration.cpp
-        src/Dao/SQLite/DbMigration.h
+        src/Dao/SQLite/SqlMigration.cpp
+        src/Dao/SQLite/SqlMigration.h
+        src/Dao/SQLite/SqlMigrationStep.cpp
+        src/Dao/SQLite/SqlMigrationStep.h
         src/Dao/SQLite/Migration/migr-ex-ante.sql
         src/Dao/SQLite/Migration/migr-ddl.sql
         src/Dao/SQLite/Migration/migr-ex-post.sql

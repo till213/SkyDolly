@@ -29,20 +29,20 @@
 
 #include <QString>
 
-class DbMigrationPrivate;
+class SqlMigrationPrivate;
 
-class DbMigration
+class SqlMigration
 {
 public:
-    DbMigration();
-    ~DbMigration();
+    SqlMigration();
+    ~SqlMigration();
 
     bool migrateExAnte() noexcept;
     bool migrateDdl() noexcept;
     bool migrateExPost() noexcept;
 
 private:
-    std::unique_ptr<DbMigrationPrivate> d;
+    std::unique_ptr<SqlMigrationPrivate> d;
 };
 
 #endif // DBMIGRATION_H
