@@ -99,7 +99,15 @@
 
 ## 0.4.1
 
+### Bug Fixes
+
 - The time widget is now editable when replay is paused
 - After importing a CSV file only pause when in connected state
 - Do not start the elapsed timer when skipping to begin of recording
 - Properly hide window when stay on top is deselected
+
+## 0.4.2
+
+### Bug Fixes
+
+- Do not start the elapsed timer when seeking a play position and not in replay mode (replay does not "skip ahead" when started)
