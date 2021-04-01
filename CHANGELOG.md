@@ -5,9 +5,11 @@
 ### New Features
 - Simulation variables have been split into distinct requests, saving both on required space and CPU usage
 
+## 0.4.2
+
 ### Bug Fixes
 
-- The elapsed timer is now only (re-)started when required: only for playback and recording (but e.g. not when seeking to a position while playback is stopped)
+- Do not start the elapsed timer when seeking a play position and not in replay mode (replay does not "skip ahead" when started)
 
 ## 0.4.1
 
@@ -113,3 +115,9 @@
 ### Bug Fixes
 
 - n/a
+=======
+- The time widget is now editable when replay is paused
+- After importing a CSV file only pause when in connected state
+- Do not start the elapsed timer when skipping to begin of recording
+- Properly hide window when stay on top is deselected
+
