@@ -26,31 +26,32 @@
 #include <QTextStream>
 #include <QRegularExpression>
 
-#include "DbMigration.h"
+#include "SqlMigrationStep.h"
+#include "SqlMigration.h"
 
-class DbMigrationPrivate
+class SqlMigrationPrivate
 {
 public:
-    DbMigrationPrivate()
+    SqlMigrationPrivate()
     {}
 };
 
 // PUBLIC
 
-DbMigration::DbMigration()
-    : d(std::make_unique<DbMigrationPrivate>())
+SqlMigration::SqlMigration()
+    : d(std::make_unique<SqlMigrationPrivate>())
 {
 }
 
-DbMigration::~DbMigration()
+SqlMigration::~SqlMigration()
 {}
 
-bool DbMigration::migrateExAnte() noexcept
+bool SqlMigration::migrateExAnte() noexcept
 {
     return true;
 }
 
-bool DbMigration::migrateDdl() noexcept
+bool SqlMigration::migrateDdl() noexcept
 {
 
     Q_INIT_RESOURCE(Migration);
@@ -70,8 +71,13 @@ bool DbMigration::migrateDdl() noexcept
             const QRegularExpression regexp("@migr\\(([\\w=\"\\-,.\\s]+)\\)");
             QRegularExpressionMatch match = regexp.match(line);
             if (match.hasMatch()) {
-                QString migrTag = match.captured();
-                qDebug("migration: %s", qPrintable(migrTag));
+                QString tag = match.captured(1);
+                qDebug("migration: %s", qPrintable(tag));
+
+                SqlMigrationStep step;
+                step.parseTag(tag);
+
+
             }
         }
     }
@@ -81,7 +87,7 @@ bool DbMigration::migrateDdl() noexcept
     return true;
 }
 
-bool DbMigration::migrateExPost() noexcept
+bool SqlMigration::migrateExPost() noexcept
 {
     return true;
 }
