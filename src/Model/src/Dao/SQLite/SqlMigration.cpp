@@ -25,6 +25,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QRegularExpression>
+#include <QStringRef>
 
 #include "SqlMigrationStep.h"
 #include "SqlMigration.h"
@@ -53,33 +54,41 @@ bool SqlMigration::migrateExAnte() noexcept
 
 bool SqlMigration::migrateDdl() noexcept
 {
-
     Q_INIT_RESOURCE(Migration);
 
     QFile migr(":/dao/sqlite/migr/migr-ddl.sql");
     migr.open(QFile::OpenModeFlag::ReadOnly | QFile::OpenModeFlag::Text);
 
     QTextStream textStream(&migr);
-    QStringList lines;
-    while (!textStream.atEnd()) {
-        lines += textStream.readLine();
-    }
+    const QString migration = textStream.readAll();
 
-    for (const QString &line : std::as_const(lines)) {
-        if (line.trimmed().startsWith("@migr")) {
-            // https://regex101.com/
-            const QRegularExpression regexp("@migr\\(([\\w=\"\\-,.\\s]+)\\)");
-            QRegularExpressionMatch match = regexp.match(line);
-            if (match.hasMatch()) {
-                QString tag = match.captured(1);
-                qDebug("migration: %s", qPrintable(tag));
+    // https://regex101.com/
+    // @migr(...)
+    const QRegularExpression migrRegExp("@migr\\(([\\w=\"\\-,.\\s]+)\\)");
 
-                SqlMigrationStep step;
-                step.parseTag(tag);
+    QStringList sqlStatements = migration.split(migrRegExp);
 
+    bool ok = true;
+    QRegularExpressionMatchIterator it = migrRegExp.globalMatch(migration);
+    // The first migration SQL statements start at index 1
+    int i = 1;
+    while (ok && it.hasNext()) {
+        const QRegularExpressionMatch tagMatch = it.next();
+        QString tag = tagMatch.captured(1);
+        qDebug("migration: %s", qPrintable(tag));
 
-            }
+        SqlMigrationStep step;
+        ok = step.parseTag(tagMatch);
+        if (ok && !step.isApplied()) {
+
+            ok = step.execute(sqlStatements.at(i));
         }
+        ++i;
+
+
+        // SQL : ([\w\s\(\),\*=:$@#|\/\<\>\~!\^\-'\+\.]+);
+
+        //previousStep = step;
     }
 
     migr.close();
