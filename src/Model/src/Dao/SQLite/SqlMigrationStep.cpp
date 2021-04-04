@@ -60,7 +60,6 @@ public:
     QSqlQuery checkAppliedQuery;
     QSqlQuery insertMigrQuery;
     QSqlQuery updateMigrQuery;
-
 };
 
 // PUBLIC
@@ -92,6 +91,7 @@ bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) noexcep
     ok = true;
     while (ok && it.hasNext()) {
         QRegularExpressionMatch match = it.next();
+
         if (match.captured(1) == "id") {
             d->migrationId = match.captured(2);
         } else if (match.captured(1) == "descn") {
@@ -101,6 +101,9 @@ bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) noexcep
             d->step = 1;
         } else if (match.captured(1) == "step") {
             d->step = match.captured(2).toInt(&ok);
+        }
+        if (!ok) {
+            break;
         }
     }
 
