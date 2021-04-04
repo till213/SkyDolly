@@ -27,7 +27,11 @@
 
 #include <memory>
 
+#include <QStringList>
 #include <QString>
+
+class QRegularExpressionMatch;
+class QStringRef;
 
 class SqlMigrationStepPrivate;
 
@@ -38,17 +42,15 @@ public:
     ~SqlMigrationStep();
 
     bool isValid() const noexcept;
-    bool parseTag(const QString &tag) noexcept;
-    bool parseSql(QStringList &sql) noexcept;
+    bool parseTag(const QRegularExpressionMatch &tagMatch) noexcept;
 
-    bool execute() noexcept;
+    bool isApplied() const noexcept;
+    bool execute(const QString &sql) noexcept;
 
     const QString &getMigrationId() const noexcept;
     const QString &getDescription() const noexcept;
     int getStep() const noexcept;
     int getStepCount() const noexcept;
-
-    const QString &getSqlStatement() const noexcept;
 
 private:
     std::unique_ptr<SqlMigrationStepPrivate> d;

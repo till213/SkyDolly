@@ -24,6 +24,13 @@
  */
 #include <QString>
 #include <QStringList>
+#include <QStringBuilder>
+#include <QRegularExpression>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlResult>
+#include <QSqlError>
+#include <QDateTime>
 
 #include "SqlMigrationStep.h"
 
@@ -49,7 +56,6 @@ SqlMigrationStep::SqlMigrationStep()
 
 SqlMigrationStep::~SqlMigrationStep()
 {
-
 }
 
 bool SqlMigrationStep::isValid() const noexcept
@@ -57,50 +63,112 @@ bool SqlMigrationStep::isValid() const noexcept
     return !d->migrationId.isNull();
 }
 
-bool SqlMigrationStep::parseTag(const QString &tag) noexcept
+bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) noexcept
 {
-    const QStringList elements = tag.split(",");
-    for (const QString &element : elements) {
+    QString tag = tagMatch.captured(1);
+    qDebug("parseTag: tag: %s", qPrintable(tag));
+    // Match the tag's content, e.g. id = 42, descn = "The description", step = 1
+    // https://regex101.com/
+    const QRegularExpression tagRegExp("([\\w]+)\\s*=\\s*[\"]*([\\w\\s\\-]+)[\"]*");
 
-        // TODO Use [\w]+\s*=["]*([\w]+)["]
-        const QStringList values = element.split("=");
-        qDebug("parseTag: values: %s %s", qPrintable(values.at(0)), qPrintable(values.at(1)));
 
+    QRegularExpressionMatchIterator it = tagRegExp.globalMatch(tag);
+    while (it.hasNext()) {
+
+        QRegularExpressionMatch match = it.next();
+        qDebug("parseTag: values: %s %s", qPrintable(match.captured(1)), qPrintable(match.captured(2)));
+
+
+        // TODO Set tag values
     }
+
     return true;
 }
 
-bool SqlMigrationStep::parseSql(QStringList &sql) noexcept
+bool SqlMigrationStep::isApplied() const noexcept
 {
-return true;
+    bool applied;
+    // TODO Store common queries in private data
+    QSqlQuery query;
+    query.prepare("select count(1) from migr where id = :id and success = 1;");
+    query.bindValue("id", d->migrationId);
+    query.exec();
+    if (query.next()) {
+        applied = query.value(0).toInt() > 0;
+    } else {
+        applied = false;
+    }
+    return applied;
 }
 
-bool SqlMigrationStep::execute() noexcept
+bool SqlMigrationStep::execute(const QString &sql) noexcept
 {
-return true;
+    QString errorMessage;
+    // Match SQL statements terminated with a semicolon
+    const QRegularExpression sqlRegExp("([\\w\\s\\(\\),\\*=:$@#|\\/\\<\\>\\~!\\^\\-'\\+\\.]+);");
+
+    // Note that DDL statements do not require transactions; but for
+    // now we execute all queries within a transaction
+    QSqlDatabase::database().transaction();
+
+    QRegularExpressionMatchIterator it = sqlRegExp.globalMatch(sql);
+    bool ok = true;
+    while (ok && it.hasNext()) {
+
+        QRegularExpressionMatch match = it.next();
+        qDebug("execute: sql: %s", qPrintable(match.captured(1)));
+
+        QSqlQuery query;
+        query.prepare(match.captured(1).trimmed() % ";");
+        ok = query.exec();
+        if (!ok) {
+            errorMessage = query.lastError().databaseText();
+        }
+
+    }
+    if (ok) {
+
+        QSqlQuery query;
+        query.prepare("insert into migr values(:id, 1, :timestamp);");
+        query.bindValue("id", d->migrationId);
+        query.bindValue("timestamp", QDateTime::currentDateTime().toString());
+        ok = query.exec();
+
+        QSqlDatabase::database().commit();
+    } else {
+        QSqlDatabase::database().rollback();
+        QSqlDatabase::database().transaction();
+        QSqlQuery query;
+        query.prepare("insert into migr values(:id, 0, :timestamp, :msg);");
+        query.bindValue("id", d->migrationId);
+        query.bindValue("timestamp", QDateTime::currentDateTime().toString());
+        query.bindValue("msg", errorMessage);
+        ok = query.exec();
+    }
+    return ok;
 }
 
 const QString &SqlMigrationStep::getMigrationId() const noexcept
 {
-return std::move(QString());
+    // TODO IMPLEMENT ME
+    return std::move(QString());
 }
 
 const QString &SqlMigrationStep::getDescription() const noexcept
 {
-return std::move(QString());
+    // TODO IMPLEMENT ME
+    return std::move(QString());
 }
 
 int SqlMigrationStep::getStep() const noexcept
 {
-return 0;
+    // TODO IMPLEMENT ME
+    return 0;
 }
 
 int SqlMigrationStep::getStepCount() const noexcept
 {
-return 0;
+    // TODO IMPLEMENT ME
+    return 0;
 }
 
-const QString &SqlMigrationStep::getSqlStatement() const noexcept
-{
-return QString();
-}
