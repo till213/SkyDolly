@@ -52,6 +52,7 @@ public:
     QString description;
     int step;
     int stepCount;
+
     bool applied;
     QString errorMessage;
 
