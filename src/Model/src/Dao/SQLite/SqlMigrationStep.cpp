@@ -44,7 +44,6 @@ public:
     QString description;
     int step;
     int stepCount;
-    QString sqlStatement;
 };
 
 // PUBLIC
@@ -65,12 +64,12 @@ bool SqlMigrationStep::isValid() const noexcept
 
 bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) noexcept
 {
+    bool ok;
     QString tag = tagMatch.captured(1);
     qDebug("parseTag: tag: %s", qPrintable(tag));
     // Match the tag's content, e.g. id = 42, descn = "The description", step = 1
     // https://regex101.com/
     const QRegularExpression tagRegExp("([\\w]+)\\s*=\\s*[\"]*([\\w\\s\\-]+)[\"]*");
-
 
     QRegularExpressionMatchIterator it = tagRegExp.globalMatch(tag);
     while (it.hasNext()) {
@@ -78,11 +77,22 @@ bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) noexcep
         QRegularExpressionMatch match = it.next();
         qDebug("parseTag: values: %s %s", qPrintable(match.captured(1)), qPrintable(match.captured(2)));
 
-
-        // TODO Set tag values
+        if (match.captured(1) == "id") {
+            d->migrationId = match.captured(2);
+        } else if (match.captured(1) == "descn") {
+            d->description = match.captured(2);
+        } else if (match.captured(1) == "step_cnt") {
+            d->stepCount = match.captured(2).toInt(&ok);
+            d->step = 1;
+        } else if (match.captured(1) == "step") {
+            d->step = match.captured(2).toInt(&ok);
+        }
+        if (!ok) {
+            break;
+        }
     }
 
-    return true;
+    return ok;
 }
 
 bool SqlMigrationStep::isApplied() const noexcept
