@@ -49,7 +49,7 @@ private:
     std::unique_ptr<WorldDaoPrivate> d;
 
     void disconnectSQLite() noexcept;
-    bool createPatchTable() noexcept;
+    bool createMigrationTable() noexcept;
 };
 
 #endif // SQLITEWORLDDAO_H
