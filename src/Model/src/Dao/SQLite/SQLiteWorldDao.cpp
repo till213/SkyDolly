@@ -72,7 +72,7 @@ void SQLiteWorldDao::disconnectDb() noexcept
 
 bool SQLiteWorldDao::migrate() noexcept
 {
-    bool ok = createPatchTable();
+    bool ok = createMigrationTable();
     if (ok) {
         SqlMigration sqlMigration;
         ok = sqlMigration.migrateExAnte();
@@ -93,12 +93,11 @@ void SQLiteWorldDao::disconnectSQLite() noexcept
     d->db.close();
 }
 
-bool SQLiteWorldDao::createPatchTable() noexcept
+bool SQLiteWorldDao::createMigrationTable() noexcept
 {
     QSqlQuery query;
-    query.prepare("create table if not exists patch("
-    "id	integer integer primary key,"
-    "patch_id text not null unique,"
+    query.prepare("create table if not exists migr("
+    "id text primary key,"
     "success integer not null,"
     "timestamp text not null,"
     "msg text)");
