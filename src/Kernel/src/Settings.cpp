@@ -48,6 +48,7 @@ public:
     static constexpr double DefaultRecordSampleRate = SampleRate::toValue(SampleRate::SampleRate::Auto);
     static constexpr bool DefaultWindowStayOnTopEnabled = false;
     static constexpr int DefaultPreviewInfoDialogCount = 3;
+    static const QString DefaultDbPath;
     static constexpr int PreviewInfoDialogBase = 10;
 
     SettingsPrivate() noexcept
@@ -58,7 +59,10 @@ public:
     {}
 };
 
+const QString SettingsPrivate::DefaultDbPath = QString();
+
 Settings *SettingsPrivate::instance = nullptr;
+
 
 // PUBLIC
 
@@ -127,6 +131,7 @@ QString Settings::getDbPath() const noexcept
 {
     return d->dbPath;
 }
+
 void Settings::setDbPath(const QString &dbPath) noexcept
 {
     if (d->dbPath != dbPath) {
@@ -143,6 +148,11 @@ void Settings::store() noexcept
     d->settings.beginGroup("Sampling");
     {
         d->settings.setValue("RecordSampleRate", d->recordSampleRateValue);
+    }
+    d->settings.endGroup();
+    d->settings.beginGroup("Library");
+    {
+        d->settings.setValue("DbPath", d->dbPath);
     }
     d->settings.endGroup();
     d->settings.beginGroup("Window");
@@ -178,6 +188,10 @@ void Settings::restore() noexcept
             qWarning("The record sample rate in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultRecordSampleRate);
             d->recordSampleRateValue = SettingsPrivate::DefaultRecordSampleRate;
         }
+    }
+    d->settings.beginGroup("Library");
+    {
+        d->dbPath = d->settings.value("DbPath", SettingsPrivate::DefaultDbPath).toString();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Window");

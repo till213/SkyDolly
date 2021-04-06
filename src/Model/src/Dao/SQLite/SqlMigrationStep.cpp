@@ -44,6 +44,8 @@ public:
     QString description;
     int step;
     int stepCount;
+    bool applied;
+    QString errorMessage;
 };
 
 // PUBLIC
@@ -72,8 +74,8 @@ bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) noexcep
     const QRegularExpression tagRegExp("([\\w]+)\\s*=\\s*[\"]*([\\w\\s\\-]+)[\"]*");
 
     QRegularExpressionMatchIterator it = tagRegExp.globalMatch(tag);
-    while (it.hasNext()) {
-
+    ok = true;
+    while (ok && it.hasNext()) {
         QRegularExpressionMatch match = it.next();
         qDebug("parseTag: values: %s %s", qPrintable(match.captured(1)), qPrintable(match.captured(2)));
 
@@ -87,28 +89,29 @@ bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) noexcep
         } else if (match.captured(1) == "step") {
             d->step = match.captured(2).toInt(&ok);
         }
-        if (!ok) {
-            break;
-        }
     }
 
     return ok;
 }
 
-bool SqlMigrationStep::isApplied() const noexcept
+bool SqlMigrationStep::checkApplied() noexcept
 {
-    bool applied;
     // TODO Store common queries in private data
     QSqlQuery query;
-    query.prepare("select count(1) from migr where id = :id and success = 1;");
+    query.prepare("select m.success, m.msg from migr m where m.id = :id;");
     query.bindValue("id", d->migrationId);
     query.exec();
     if (query.next()) {
-        applied = query.value(0).toInt() > 0;
+        d->applied = query.value(0).toInt() > 0;
+        d->errorMessage = query.value(1).toString();
+        if (!d->applied && d->errorMessage.isNull()) {
+            // Make sure an error message exists
+            d->errorMessage = QString("Migration %s failed.").arg(d->migrationId);
+        }
     } else {
-        applied = false;
+        d->applied = false;
     }
-    return applied;
+    return d->applied;
 }
 
 bool SqlMigrationStep::execute(const QString &sql) noexcept
@@ -134,25 +137,36 @@ bool SqlMigrationStep::execute(const QString &sql) noexcept
         if (!ok) {
             errorMessage = query.lastError().databaseText();
         }
-
     }
     if (ok) {
-
         QSqlQuery query;
-        query.prepare("insert into migr values(:id, 1, :timestamp);");
+        if (!hasPreviousAttempt()) {
+            query.prepare("insert into migr values(:id, 1, :timestamp);");
+
+        } else {
+            query.prepare("update migr m set m.success = 1, m.timestamp = :timestamp, m.msg = null where m.id = :id;");
+        }
         query.bindValue("id", d->migrationId);
         query.bindValue("timestamp", QDateTime::currentDateTime().toString());
         ok = query.exec();
-
         QSqlDatabase::database().commit();
+        d->applied = true;
+        d->errorMessage.clear();
     } else {
         QSqlDatabase::database().rollback();
+        d->applied = false;
+        d->errorMessage = errorMessage;
         QSqlDatabase::database().transaction();
         QSqlQuery query;
-        query.prepare("insert into migr values(:id, 0, :timestamp, :msg);");
+        if (!hasPreviousAttempt()) {
+            query.prepare("insert into migr values(:id, 0, :timestamp, :msg);");
+        } else {
+            query.prepare("update migr m set m.success = 0, m.timestamp = :timestamp , m.msg = :msg where m.id = :id;");
+        }
         query.bindValue("id", d->migrationId);
-        query.bindValue("timestamp", QDateTime::currentDateTime().toString());
-        query.bindValue("msg", errorMessage);
+        QString timestamp = QDateTime::currentDateTime().toString();
+        query.bindValue("timestamp", timestamp);
+        query.bindValue("msg", d->errorMessage);
         ok = query.exec();
     }
     return ok;
@@ -160,25 +174,27 @@ bool SqlMigrationStep::execute(const QString &sql) noexcept
 
 const QString &SqlMigrationStep::getMigrationId() const noexcept
 {
-    // TODO IMPLEMENT ME
-    return std::move(QString());
+    return d->migrationId;
 }
 
 const QString &SqlMigrationStep::getDescription() const noexcept
 {
-    // TODO IMPLEMENT ME
-    return std::move(QString());
+    return d->description;
 }
 
 int SqlMigrationStep::getStep() const noexcept
 {
-    // TODO IMPLEMENT ME
-    return 0;
+    return d->step;
 }
 
 int SqlMigrationStep::getStepCount() const noexcept
 {
-    // TODO IMPLEMENT ME
-    return 0;
+    return d->stepCount;
 }
 
+// PRIVATE
+
+bool SqlMigrationStep::hasPreviousAttempt() const noexcept
+{
+    return !d->errorMessage.isNull();
+}

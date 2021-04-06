@@ -79,21 +79,15 @@ bool SqlMigration::migrateDdl() noexcept
 
         SqlMigrationStep step;
         ok = step.parseTag(tagMatch);
-        if (ok && !step.isApplied()) {
-
+        if (ok && !step.checkApplied()) {
             ok = step.execute(sqlStatements.at(i));
         }
         ++i;
-
-
-        // SQL : ([\w\s\(\),\*=:$@#|\/\<\>\~!\^\-'\+\.]+);
-
-        //previousStep = step;
     }
 
     migr.close();
 
-    return true;
+    return ok;
 }
 
 bool SqlMigration::migrateExPost() noexcept
