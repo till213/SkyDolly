@@ -60,6 +60,7 @@ public:
     static const QString DefaultDbPath;
 
     static constexpr int PreviewInfoDialogBase = 20;
+    static const QString DefaultDbPath;
 
     SettingsPrivate() noexcept
         : version(QCoreApplication::instance()->applicationVersion())
