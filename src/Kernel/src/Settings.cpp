@@ -60,6 +60,7 @@ public:
 
     static constexpr int DefaultPreviewInfoDialogCount = 3;
     static constexpr int PreviewInfoDialogBase = 20;
+    static const QString DefaultDbPath;
 
     SettingsPrivate() noexcept
         : version(QCoreApplication::instance()->applicationVersion())
