@@ -44,7 +44,7 @@ public:
     bool isValid() const noexcept;
     bool parseTag(const QRegularExpressionMatch &tagMatch) noexcept;
 
-    bool isApplied() const noexcept;
+    bool checkApplied() noexcept;
     bool execute(const QString &sql) noexcept;
 
     const QString &getMigrationId() const noexcept;
@@ -54,6 +54,8 @@ public:
 
 private:
     std::unique_ptr<SqlMigrationStepPrivate> d;
+
+    bool hasPreviousAttempt() const noexcept;
 };
 
 #endif // SQLMIGRATIONSTEP_H
