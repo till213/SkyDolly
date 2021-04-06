@@ -48,6 +48,9 @@ public:
     static Settings &getInstance() noexcept;
     static void destroyInstance() noexcept;
 
+    QString getDbPath() const noexcept;
+    void setDbPath(const QString &dbPath) noexcept;
+
     SampleRate::SampleRate getRecordSampleRate() const noexcept;
     double getRecordSampleRateValue() const noexcept;
     void setRecordSampleRate(SampleRate::SampleRate sampleRate) noexcept;
@@ -66,9 +69,6 @@ public:
 
     double getSeekIntervalPercent() const noexcept;
     void setSeekIntervalPercent(double percent) noexcept;
-
-    QString getDbPath() const noexcept;
-    void setDbPath(const QString &dbPath) noexcept;
 
     int getPreviewInfoDialogCount() const noexcept;
     void setPreviewInfoDialogCount(int count) noexcept;

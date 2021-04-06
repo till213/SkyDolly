@@ -38,6 +38,7 @@ public:
     QSettings settings;
     Version version;
 
+    QString dbPath;
     double recordSampleRateValue;
     double replaySampleRateValue;
     bool windowStayOnTopEnabled;
@@ -46,7 +47,6 @@ public:
     bool absoluteSeek;
     double seekIntervalSeconds;
     double seekIntervalPercent;
-    QString dbPath;
 
     int previewInfoDialogCount;
 
@@ -56,6 +56,7 @@ public:
     static constexpr bool DefaultAbsoluteSeek = true;
     static constexpr double DefaultSeekIntervalSeconds = 1.0;
     static constexpr double DefaultSeekIntervalPercent = 0.5;
+    static const QString DefaultDbPath;
 
     static constexpr int DefaultPreviewInfoDialogCount = 3;
     static constexpr int PreviewInfoDialogBase = 20;
@@ -75,6 +76,8 @@ public:
     {}
 };
 
+const QString SettingsPrivate::DefaultDbPath = QString();
+
 Settings *SettingsPrivate::instance = nullptr;
 
 // PUBLIC
@@ -92,6 +95,19 @@ void Settings::destroyInstance() noexcept
     if (SettingsPrivate::instance != nullptr) {
         delete SettingsPrivate::instance;
         SettingsPrivate::instance = nullptr;
+    }
+}
+
+QString Settings::getExportPath() const noexcept
+{
+    return d->exportPath;
+}
+
+void Settings::setExportPath(QString exportPath)
+{
+    if (d->exportPath != exportPath) {
+        d->exportPath = exportPath;
+        emit exportPathChanged(d->exportPath);
     }
 }
 
@@ -124,19 +140,6 @@ void Settings::setWindowStaysOnTopEnabled(bool enable) noexcept
     if (d->windowStayOnTopEnabled != enable) {
         d->windowStayOnTopEnabled = enable;
         emit changed();
-    }
-}
-
-QString Settings::getExportPath() const noexcept
-{
-    return d->exportPath;
-}
-
-void Settings::setExportPath(QString exportPath)
-{
-    if (d->exportPath != exportPath) {
-        d->exportPath = exportPath;
-        emit exportPathChanged(d->exportPath);
     }
 }
 
@@ -215,6 +218,11 @@ void Settings::store() noexcept
         d->settings.setValue("RecordSampleRate", d->recordSampleRateValue);
     }
     d->settings.endGroup();
+    d->settings.beginGroup("Library");
+    {
+        d->settings.setValue("DbPath", d->dbPath);
+    }
+    d->settings.endGroup();
     d->settings.beginGroup("Replay");
     {
         d->settings.setValue("AbsoluteSeek", d->absoluteSeek);
@@ -260,6 +268,10 @@ void Settings::restore() noexcept
             qWarning("The record sample rate in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultRecordSampleRate);
             d->recordSampleRateValue = SettingsPrivate::DefaultRecordSampleRate;
         }
+    }
+    d->settings.beginGroup("Library");
+    {
+        d->dbPath = d->settings.value("DbPath", SettingsPrivate::DefaultDbPath).toString();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Replay");
