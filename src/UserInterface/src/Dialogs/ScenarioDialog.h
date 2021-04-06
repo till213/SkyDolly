@@ -25,6 +25,8 @@
 #ifndef SCENARIODIALOG_H
 #define SCENARIODIALOG_H
 
+#include <memory>
+
 #include <QDialog>
 
 class QShowEvent;
