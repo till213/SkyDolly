@@ -40,12 +40,14 @@ namespace SkyMath {
     inline constexpr double PercentMax8 = static_cast<double>(std::numeric_limits<quint8>::max());
     inline constexpr double PercentRange8 = PercentMax8;
 
-    template <typename T> int sgn(T val) noexcept
+    template <typename T>
+    int sgn(T val) noexcept
     {
         return (T(0) < val) - (val < T(0));
     }
 
-    template <typename T> T normalise180(T y0, T y1) noexcept
+    template <typename T>
+    T normalise180(T y0, T y1) noexcept
     {
         T y1n;
         T s = sgn(y0);
@@ -74,7 +76,8 @@ namespace SkyMath {
      *
      * Also refer to: http://paulbourke.net/miscellaneous/interpolation/
      */
-    template <typename T> T interpolateHermite(
+    template <typename T>
+    T interpolateHermite(
         T y0, T y1, T y2, T y3,
         T mu,
         T tension = T(0),
@@ -104,7 +107,8 @@ namespace SkyMath {
      *
      * Also refer to \c interpolateHermite180.
      */
-    template <typename T> T interpolateHermite180(
+    template <typename T>
+    T interpolateHermite180(
         T y0, T y1, T y2, T y3,
         T mu,
         T tension = T(0),
@@ -127,7 +131,8 @@ namespace SkyMath {
         return v;
     }
 
-    template <typename T> T interpolateHermite360(
+    template <typename T>
+    T interpolateHermite360(
         T y0, T y1, T y2, T y3,
         T mu,
         T tension = T(0),
@@ -136,7 +141,8 @@ namespace SkyMath {
         return interpolateHermite180(y0 - T(180), y1 - T(180), y2 - T(180), y3 - T(180), mu, tension, bias) + T(180);
     }
 
-    template <typename T, typename U> T interpolateLinear(T p1, T p2, U mu) noexcept
+    template <typename T, typename U>
+    T interpolateLinear(T p1, T p2, U mu) noexcept
     {
         if (std::is_integral<T>::value) {
             return p1 + qRound(mu * (U(p2) - U(p1)));
