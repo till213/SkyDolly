@@ -22,34 +22,26 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef DAOFACTORY_H
-#define DAOFACTORY_H
+#ifndef SQLITESCENARIODAO_H
+#define SQLITESCENARIODAO_H
 
 #include <memory>
 
-#include "../ModelLib.h"
-#include "ScenarioDaoIntf.h"
-#include "WorldDaoIntf.h"
+#include "../ScenarioDaoIntf.h"
 
-class DaoFactoryPrivate;
+class SQLiteScenarioDaoPrivate;
 
-class MODEL_API DaoFactory
+class SQLiteScenarioDao : public ScenarioDaoIntf
 {
 public:
+    SQLiteScenarioDao() noexcept;
+    virtual ~SQLiteScenarioDao() noexcept;
 
-    enum class DbType
-    {
-        SQLite = 0
-    };
-
-    DaoFactory(DbType dbType);
-    ~DaoFactory();
-
-    std::unique_ptr<WorldDaoIntf> createWorldDao() noexcept;
-    std::unique_ptr<ScenarioDaoIntf> createScenarioDao() noexcept;
+    virtual bool addScenario(Scenario &scenario)  noexcept override;
+    virtual Scenario getScenario() const noexcept override;
 
 private:
-    std::unique_ptr<DaoFactoryPrivate> d;
+    std::unique_ptr<SQLiteScenarioDaoPrivate> d;
 };
 
-#endif // DAOFACTORY_H
+#endif // SQLITESCENARIODAO_H

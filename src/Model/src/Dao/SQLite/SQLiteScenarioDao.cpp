@@ -22,34 +22,50 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef DAOFACTORY_H
-#define DAOFACTORY_H
-
 #include <memory>
 
-#include "../ModelLib.h"
-#include "ScenarioDaoIntf.h"
-#include "WorldDaoIntf.h"
+#include <QString>
+#include <QSqlQuery>
+#include <QVariant>
 
-class DaoFactoryPrivate;
+#include "../../Scenario.h"
+#include "SQLiteScenarioDao.h"
 
-class MODEL_API DaoFactory
+class SQLiteScenarioDaoPrivate
 {
 public:
-
-    enum class DbType
+    SQLiteScenarioDaoPrivate() noexcept
     {
-        SQLite = 0
-    };
+        insertQuery.prepare("insert into scenario (id, descn) values(null, :descn);");
+        selectQuery.prepare("select s.descn from scenario s where s.id = :id;");
+    }
 
-    DaoFactory(DbType dbType);
-    ~DaoFactory();
-
-    std::unique_ptr<WorldDaoIntf> createWorldDao() noexcept;
-    std::unique_ptr<ScenarioDaoIntf> createScenarioDao() noexcept;
-
-private:
-    std::unique_ptr<DaoFactoryPrivate> d;
+    QSqlQuery insertQuery;
+    QSqlQuery selectQuery;
 };
 
-#endif // DAOFACTORY_H
+// PUBLIC
+
+SQLiteScenarioDao::SQLiteScenarioDao() noexcept
+    : d(std::make_unique<SQLiteScenarioDaoPrivate>())
+{
+}
+
+SQLiteScenarioDao::~SQLiteScenarioDao() noexcept
+{}
+
+bool SQLiteScenarioDao::addScenario(Scenario &scenario)  noexcept
+{
+    d->insertQuery.bindValue(":descn", scenario.getDescription(), QSql::In);
+    bool ok = d->insertQuery.exec();
+    if (ok) {
+        qint64 id = d->insertQuery.lastInsertId().toLongLong(&ok);
+        scenario.setId(id);
+    }
+    return ok;
+}
+
+Scenario SQLiteScenarioDao::getScenario() const noexcept
+{
+    return Scenario();
+}
