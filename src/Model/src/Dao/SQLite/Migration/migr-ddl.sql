@@ -1,6 +1,6 @@
 @migr(id = "123-4567", descn = "Create scenario table", step_cnt = 1)
 create table scenario (
-    id primary key,
+    id integer primary key,
     descn text
 );
 

@@ -34,14 +34,13 @@ class ScenarioPrivate
 public:
 
     ScenarioPrivate() noexcept
+        : id(0)
     {}
 
-    ~ScenarioPrivate() noexcept
-    {}
-
+    qint64 id;
+    QString description;
     FlightCondition flightCondition;
     std::vector<std::unique_ptr<Aircraft>> aircrafts;
-
 };
 
 // PUBLIC
@@ -60,6 +59,26 @@ Scenario::Scenario(QObject *parent) noexcept
 
 Scenario::~Scenario() noexcept
 {
+}
+
+void Scenario::setId(qint64 id) noexcept
+{
+    d->id = id;
+}
+
+qint64 Scenario::getId() const noexcept
+{
+    return d->id;
+}
+
+void Scenario::setDescription(const QString &description) noexcept
+{
+    d->description = description;
+}
+
+const QString &Scenario::getDescription() const noexcept
+{
+    return d->description;
 }
 
 const Aircraft &Scenario::getUserAircraftConst() const noexcept
@@ -105,3 +124,4 @@ void Scenario::frenchConnection() noexcept
     connect(&userAircraft, &Aircraft::dataChanged,
             this, &Scenario::aircraftDataChanged);
 }
+

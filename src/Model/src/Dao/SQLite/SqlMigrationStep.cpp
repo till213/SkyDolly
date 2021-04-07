@@ -26,6 +26,7 @@
 #include <QStringList>
 #include <QStringBuilder>
 #include <QRegularExpression>
+#include <QVariant>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlResult>
@@ -82,7 +83,7 @@ bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) noexcep
 {
     bool ok;
     QString tag = tagMatch.captured(1);
-    qDebug("parseTag: tag: %s", qPrintable(tag));
+
     // Match the tag's content, e.g. id = 42, descn = "The description", step = 1
     // https://regex101.com/
     const QRegularExpression tagRegExp("([\\w]+)\\s*=\\s*[\"]*([\\w\\s\\-]+)[\"]*");
@@ -141,7 +142,7 @@ bool SqlMigrationStep::execute(const QString &sql) noexcept
 
         QRegularExpressionMatch match = it.next();
 #ifdef DEBUG
-        qDebug("execute: sql: %s", qPrintable(match.captured(1)));
+        qDebug("SqlMigrationStep::execute: sql: %s", qPrintable(match.captured(1)));
 #endif
 
         QSqlQuery query;
