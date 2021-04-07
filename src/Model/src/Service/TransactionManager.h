@@ -22,34 +22,33 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef DAOFACTORY_H
-#define DAOFACTORY_H
+#ifndef TRANSACTIONMANAGER_H
+#define TRANSACTIONMANAGER_H
 
-#include <memory>
+#include <utility>
 
-#include "../ModelLib.h"
-#include "ScenarioDaoIntf.h"
-#include "WorldDaoIntf.h"
+#include <QSqlDatabase>
 
-class DaoFactoryPrivate;
+#include "TransactionCallableIntf.h"
 
-class MODEL_API DaoFactory
+class TransactionManager
 {
 public:
+    TransactionManager();
 
-    enum class DbType
-    {
-        SQLite = 0
-    };
+    template <typename T>
+    static T doInTransaction(TransactionCallableIntf<T> callable) {
 
-    DaoFactory(DbType dbType);
-    ~DaoFactory();
+        QSqlDatabase::database().transaction();
+        std::pair<T, bool> result = callable.execute();
+        if (result.second) {
+            QSqlDatabase::database().commit();
+        } else {
+            QSqlDatabase::database().rollback();
+        }
+        return result.first;
 
-    std::unique_ptr<WorldDaoIntf> createWorldDao() noexcept;
-    std::unique_ptr<ScenarioDaoIntf> createScenarioDao() noexcept;
-
-private:
-    std::unique_ptr<DaoFactoryPrivate> d;
+    }
 };
 
-#endif // DAOFACTORY_H
+#endif // TRANSACTIONMANAGER_H

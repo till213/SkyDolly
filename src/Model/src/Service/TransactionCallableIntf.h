@@ -22,34 +22,24 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef DAOFACTORY_H
-#define DAOFACTORY_H
+#ifndef TRANSACTIONCALLABLEINTF_H
+#define TRANSACTIONCALLABLEINTF_H
 
-#include <memory>
+#include <utility>
 
-#include "../ModelLib.h"
-#include "ScenarioDaoIntf.h"
-#include "WorldDaoIntf.h"
-
-class DaoFactoryPrivate;
-
-class MODEL_API DaoFactory
+namespace TransactionCallable
 {
-public:
-
-    enum class DbType
-    {
-        SQLite = 0
-    };
-
-    DaoFactory(DbType dbType);
-    ~DaoFactory();
-
-    std::unique_ptr<WorldDaoIntf> createWorldDao() noexcept;
-    std::unique_ptr<ScenarioDaoIntf> createScenarioDao() noexcept;
-
-private:
-    std::unique_ptr<DaoFactoryPrivate> d;
+    typedef void *Void;
 };
 
-#endif // DAOFACTORY_H
+template <typename T>
+class TransactionCallableIntf
+{
+
+public:
+    virtual ~TransactionCallableIntf() = default;
+
+    virtual std::pair<T, bool> execute() noexcept = 0;
+};
+
+#endif // TRANSACTIONCALLABLEINTF_H
