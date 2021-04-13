@@ -34,7 +34,8 @@ class ScenarioServicePrivate;
 class ScenarioService
 {
 public:
-    ScenarioService();
+    ScenarioService() noexcept;
+    ~ScenarioService() noexcept;
 
     bool store(Scenario &scenario) noexcept;
     Scenario restore(qint64 id) noexcept;
