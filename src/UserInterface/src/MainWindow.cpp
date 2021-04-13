@@ -53,6 +53,7 @@
 #include "../../Model/src/World.h"
 #include "../../Model/src/Dao/DaoFactory.h"
 #include "../../Model/src/Dao/WorldDaoIntf.h"
+#include "../../Model/src/Service/ScenarioService.h"
 #include "../../Kernel/src/SampleRate.h"
 #include "../../SkyConnect/src/SkyManager.h"
 #include "../../SkyConnect/src/SkyConnectIntf.h"
@@ -104,7 +105,8 @@ public:
           simulationVariablesDialog(nullptr),
           statisticsDialog(nullptr),
           daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
-          worldDao(nullptr)
+          worldDao(nullptr),
+          scenarioService(std::make_unique<ScenarioService>())
     {}
 
     SkyConnectIntf &skyConnect;
@@ -118,6 +120,7 @@ public:
     double lastCustomReplaySpeed;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<WorldDaoIntf> worldDao;
+    std::unique_ptr<ScenarioService> scenarioService;
 };
 
 // PUBLIC
@@ -708,6 +711,7 @@ void MainWindow::toggleRecord(bool enable) noexcept
     case Connect::State::Recording:
         if (!enable) {
             d->skyConnect.stopRecording();
+            d->scenarioService->store(World::getInstance().getCurrentScenario());
         }
         break;
     case Connect::State::RecordingPaused:
