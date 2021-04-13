@@ -34,11 +34,8 @@ class ScenarioServicePrivate
 {
 public:
     ScenarioServicePrivate() noexcept
-
     {
     }
-
-
 };
 
 class ScenarioStore : public TransactionCallableIntf<TransactionCallable::Void>
@@ -65,11 +62,12 @@ private:
 
 // PUBLIC
 
-ScenarioService::ScenarioService()
+ScenarioService::ScenarioService() noexcept
     : d(std::make_unique<ScenarioServicePrivate>())
-{
+{}
 
-}
+ScenarioService::~ScenarioService() noexcept
+{}
 
 bool ScenarioService::store(Scenario &scenario) noexcept
 {
