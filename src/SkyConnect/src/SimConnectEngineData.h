@@ -64,7 +64,6 @@ struct SimConnectEngineData
     qint32 generalEngineStarter3;
     qint32 generalEngineStarter4;
 
-
     inline EngineData toEngineData() const noexcept
     {
         EngineData engineData;
