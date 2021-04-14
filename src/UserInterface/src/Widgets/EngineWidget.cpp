@@ -109,6 +109,25 @@ void EngineWidget::initUi()
     ui->cowlFlaps2LineEdit->setToolTip(SimVar::RecipEngineCowlFlapPosition2);
     ui->cowlFlaps3LineEdit->setToolTip(SimVar::RecipEngineCowlFlapPosition3);
     ui->cowlFlaps4LineEdit->setToolTip(SimVar::RecipEngineCowlFlapPosition4);
+
+    // Make the master battery and starter checkboxes checkable, but not for the user
+    ui->masterBattery1CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->masterBattery1CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->masterBattery2CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->masterBattery2CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->masterBattery3CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->masterBattery3CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->masterBattery4CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->masterBattery4CheckBox->setFocusPolicy(Qt::NoFocus);
+
+    ui->generalEngineStarter1CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->generalEngineStarter1CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->generalEngineStarter2CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->generalEngineStarter2CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->generalEngineStarter3CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->generalEngineStarter3CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->generalEngineStarter4CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->generalEngineStarter4CheckBox->setFocusPolicy(Qt::NoFocus);
 }
 
 void EngineWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
@@ -133,6 +152,16 @@ void EngineWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
         ui->cowlFlaps2LineEdit->setText(QString::number(engineData.cowlFlapPosition2));
         ui->cowlFlaps3LineEdit->setText(QString::number(engineData.cowlFlapPosition3));
         ui->cowlFlaps4LineEdit->setText(QString::number(engineData.cowlFlapPosition4));
+
+        ui->masterBattery1CheckBox->setChecked(engineData.electricalMasterBattery1);
+        ui->masterBattery2CheckBox->setChecked(engineData.electricalMasterBattery2);
+        ui->masterBattery3CheckBox->setChecked(engineData.electricalMasterBattery3);
+        ui->masterBattery4CheckBox->setChecked(engineData.electricalMasterBattery4);
+        ui->generalEngineStarter1CheckBox->setChecked(engineData.generalEngineStarter1);
+        ui->generalEngineStarter2CheckBox->setChecked(engineData.generalEngineStarter2);
+        ui->generalEngineStarter3CheckBox->setChecked(engineData.generalEngineStarter3);
+        ui->generalEngineStarter4CheckBox->setChecked(engineData.generalEngineStarter4);
+
         colorName = d->ActiveTextColor.name();
 
     } else {
@@ -156,6 +185,15 @@ void EngineWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
     ui->cowlFlaps2LineEdit->setStyleSheet(css);
     ui->cowlFlaps3LineEdit->setStyleSheet(css);
     ui->cowlFlaps4LineEdit->setStyleSheet(css);
+
+    ui->masterBattery1CheckBox->setStyleSheet(css);
+    ui->masterBattery2CheckBox->setStyleSheet(css);
+    ui->masterBattery3CheckBox->setStyleSheet(css);
+    ui->masterBattery4CheckBox->setStyleSheet(css);
+    ui->generalEngineStarter1CheckBox->setStyleSheet(css);
+    ui->generalEngineStarter2CheckBox->setStyleSheet(css);
+    ui->generalEngineStarter3CheckBox->setStyleSheet(css);
+    ui->generalEngineStarter4CheckBox->setStyleSheet(css);
 }
 
 const EngineData &EngineWidget::getCurrentEngineData(qint64 timestamp, TimeVariableData::Access access) const
