@@ -55,6 +55,14 @@ struct SimConnectAircraftData
     double rotationVelocityBodyY;
     double rotationVelocityBodyZ;
 
+    // Acceleration
+    double accelerationBodyX;
+    double accelerationBodyY;
+    double accelerationBodyZ;
+    double rotationAccelerationBodyX;
+    double rotationAccelerationBodyY;
+    double rotationAccelerationBodyZ;
+
     inline AircraftData toAircraftData() const noexcept
     {
         AircraftData aircraftData;
@@ -72,6 +80,13 @@ struct SimConnectAircraftData
         aircraftData.rotationVelocityBodyX = rotationVelocityBodyX;
         aircraftData.rotationVelocityBodyY = rotationVelocityBodyY;
         aircraftData.rotationVelocityBodyZ = rotationVelocityBodyZ;
+
+        aircraftData.accelerationBodyX = accelerationBodyX;
+        aircraftData.accelerationBodyY = accelerationBodyY;
+        aircraftData.accelerationBodyZ = accelerationBodyZ;
+        aircraftData.rotationAccelerationBodyX = rotationAccelerationBodyX;
+        aircraftData.rotationAccelerationBodyY = rotationAccelerationBodyY;
+        aircraftData.rotationAccelerationBodyZ = rotationAccelerationBodyZ;
 
         return aircraftData;
     }
@@ -91,6 +106,13 @@ struct SimConnectAircraftData
         rotationVelocityBodyX = aircraftData.rotationVelocityBodyX;
         rotationVelocityBodyY = aircraftData.rotationVelocityBodyY;
         rotationVelocityBodyZ = aircraftData.rotationVelocityBodyZ;
+
+        accelerationBodyX = aircraftData.accelerationBodyX;
+        accelerationBodyY = aircraftData.accelerationBodyY;
+        accelerationBodyZ = aircraftData.accelerationBodyZ;
+        rotationAccelerationBodyX = aircraftData.rotationAccelerationBodyX;
+        rotationAccelerationBodyY = aircraftData.rotationAccelerationBodyY;
+        rotationAccelerationBodyZ = aircraftData.rotationAccelerationBodyZ;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;

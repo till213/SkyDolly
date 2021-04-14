@@ -188,7 +188,13 @@ inline QString CSVExport::getAircraftHeader() noexcept
            QString(SimVar::VelocityBodyZ) % Const::Sep %
            QString(SimVar::RotationVelocityBodyX) % Const::Sep %
            QString(SimVar::RotationVelocityBodyY) % Const::Sep %
-           QString(SimVar::RotationVelocityBodyZ);
+           QString(SimVar::RotationVelocityBodyZ) % Const::Sep %
+           QString(SimVar::AccelerationBodyX) % Const::Sep %
+           QString(SimVar::AccelerationBodyY) % Const::Sep %
+           QString(SimVar::AccelerationBodyZ) % Const::Sep %
+           QString(SimVar::RotationAccelerationBodyX) % Const::Sep %
+           QString(SimVar::RotationAccelerationBodyY) % Const::Sep %
+           QString(SimVar::RotationAccelerationBodyZ);
 }
 
 inline QString CSVExport::getAircraftData(const AircraftData &data) noexcept
@@ -206,10 +212,22 @@ inline QString CSVExport::getAircraftData(const AircraftData &data) noexcept
               QString::number(data.velocityBodyZ, CSVConst::Format, CSVConst::Precision) % Const::Sep %
               QString::number(data.rotationVelocityBodyX, CSVConst::Format, CSVConst::Precision) % Const::Sep %
               QString::number(data.rotationVelocityBodyY, CSVConst::Format, CSVConst::Precision) % Const::Sep %
-              QString::number(data.rotationVelocityBodyZ, CSVConst::Format, CSVConst::Precision);
+              QString::number(data.rotationVelocityBodyZ, CSVConst::Format, CSVConst::Precision) % Const::Sep %
+              QString::number(data.accelerationBodyX, CSVConst::Format, CSVConst::Precision) % Const::Sep %
+              QString::number(data.accelerationBodyY, CSVConst::Format, CSVConst::Precision) % Const::Sep %
+              QString::number(data.accelerationBodyZ, CSVConst::Format, CSVConst::Precision) % Const::Sep %
+              QString::number(data.rotationAccelerationBodyX, CSVConst::Format, CSVConst::Precision) % Const::Sep %
+              QString::number(data.rotationAccelerationBodyY, CSVConst::Format, CSVConst::Precision) % Const::Sep %
+              QString::number(data.rotationAccelerationBodyZ, CSVConst::Format, CSVConst::Precision);
     } else {
         const QString EmptyString;
         csv = EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
               EmptyString % Const::Sep %
               EmptyString % Const::Sep %
               EmptyString % Const::Sep %
@@ -238,7 +256,11 @@ inline QString CSVExport::getEngineHeader() noexcept
            QString(SimVar::MixtureLeverPosition1) % Const::Sep %
            QString(SimVar::MixtureLeverPosition2) % Const::Sep %
            QString(SimVar::MixtureLeverPosition3) % Const::Sep %
-           QString(SimVar::MixtureLeverPosition4);
+           QString(SimVar::MixtureLeverPosition4) % Const::Sep %
+           QString(SimVar::RecipEngineCowlFlapPosition1) % Const::Sep %
+           QString(SimVar::RecipEngineCowlFlapPosition2) % Const::Sep %
+           QString(SimVar::RecipEngineCowlFlapPosition3) % Const::Sep %
+           QString(SimVar::RecipEngineCowlFlapPosition4);
 }
 
 inline QString CSVExport::getEngineData(const EngineData &data) noexcept
@@ -256,10 +278,18 @@ inline QString CSVExport::getEngineData(const EngineData &data) noexcept
               QString::number(data.mixtureLeverPosition1) % Const::Sep %
               QString::number(data.mixtureLeverPosition2) % Const::Sep %
               QString::number(data.mixtureLeverPosition3) % Const::Sep %
-              QString::number(data.mixtureLeverPosition4);
+              QString::number(data.mixtureLeverPosition4) % Const::Sep %
+              QString::number(data.cowlFlapPosition1) % Const::Sep %
+              QString::number(data.cowlFlapPosition2) % Const::Sep %
+              QString::number(data.cowlFlapPosition3) % Const::Sep %
+              QString::number(data.cowlFlapPosition4);
     } else {
         const QString EmptyString;
         csv = EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
               EmptyString % Const::Sep %
               EmptyString % Const::Sep %
               EmptyString % Const::Sep %

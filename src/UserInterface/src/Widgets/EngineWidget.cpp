@@ -77,8 +77,6 @@ void EngineWidget::showEvent(QShowEvent *event)
     Q_UNUSED(event)
 
     updateUi(d->skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
-
-    const Engine &engine = World::getInstance().getCurrentScenario().getUserAircraft().getEngineConst();
     connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &EngineWidget::handleTimestampChanged);
 }
@@ -87,7 +85,6 @@ void EngineWidget::hideEvent(QHideEvent *event)
 {
     Q_UNUSED(event)
 
-    const Engine &engine = World::getInstance().getCurrentScenario().getUserAircraft().getEngineConst();
     disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &EngineWidget::handleTimestampChanged);
 }
@@ -108,6 +105,10 @@ void EngineWidget::initUi()
     ui->mixture2LineEdit->setToolTip(SimVar::MixtureLeverPosition2);
     ui->mixture3LineEdit->setToolTip(SimVar::MixtureLeverPosition3);
     ui->mixture4LineEdit->setToolTip(SimVar::MixtureLeverPosition4);
+    ui->cowlFlaps1LineEdit->setToolTip(SimVar::RecipEngineCowlFlapPosition1);
+    ui->cowlFlaps2LineEdit->setToolTip(SimVar::RecipEngineCowlFlapPosition2);
+    ui->cowlFlaps3LineEdit->setToolTip(SimVar::RecipEngineCowlFlapPosition3);
+    ui->cowlFlaps4LineEdit->setToolTip(SimVar::RecipEngineCowlFlapPosition4);
 }
 
 void EngineWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
@@ -128,6 +129,10 @@ void EngineWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
         ui->mixture2LineEdit->setText(QString::number(engineData.mixtureLeverPosition2));
         ui->mixture3LineEdit->setText(QString::number(engineData.mixtureLeverPosition3));
         ui->mixture4LineEdit->setText(QString::number(engineData.mixtureLeverPosition4));
+        ui->cowlFlaps1LineEdit->setText(QString::number(engineData.cowlFlapPosition1));
+        ui->cowlFlaps2LineEdit->setText(QString::number(engineData.cowlFlapPosition2));
+        ui->cowlFlaps3LineEdit->setText(QString::number(engineData.cowlFlapPosition3));
+        ui->cowlFlaps4LineEdit->setText(QString::number(engineData.cowlFlapPosition4));
         colorName = d->ActiveTextColor.name();
 
     } else {
@@ -147,6 +152,10 @@ void EngineWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
     ui->mixture2LineEdit->setStyleSheet(css);
     ui->mixture3LineEdit->setStyleSheet(css);
     ui->mixture4LineEdit->setStyleSheet(css);
+    ui->cowlFlaps1LineEdit->setStyleSheet(css);
+    ui->cowlFlaps2LineEdit->setStyleSheet(css);
+    ui->cowlFlaps3LineEdit->setStyleSheet(css);
+    ui->cowlFlaps4LineEdit->setStyleSheet(css);
 }
 
 const EngineData &EngineWidget::getCurrentEngineData(qint64 timestamp, TimeVariableData::Access access) const

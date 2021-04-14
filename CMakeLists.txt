@@ -51,6 +51,7 @@ set(OTHER_SOURCES
     CHANGELOG.md
     BUILD.md
     CODE_OF_CONDUCT.md
+    doc/SkyDolly.simvars
     ${CMAKE_SOURCE_DIR}/res/Info.plist.in
 )
 
