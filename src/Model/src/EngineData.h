@@ -52,6 +52,14 @@ struct MODEL_API EngineData : public TimeVariableData
     quint8 cowlFlapPosition2;
     quint8 cowlFlapPosition3;
     quint8 cowlFlapPosition4;
+    bool electricalMasterBattery1;
+    bool electricalMasterBattery2;
+    bool electricalMasterBattery3;
+    bool electricalMasterBattery4;
+    bool generalEngineStarter1;
+    bool generalEngineStarter2;
+    bool generalEngineStarter3;
+    bool generalEngineStarter4;
 
     EngineData(qint16 throttleLeverPosition1 = 0, qint16 propellerLeverPosition1 = 0, quint8 mixtureLeverPosition1 = 0, quint8 cowlFlapPosition1 = 0) noexcept;
     EngineData(EngineData &&) = default;

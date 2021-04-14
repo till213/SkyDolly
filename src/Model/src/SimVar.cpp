@@ -67,6 +67,14 @@ const char *SimVar::RecipEngineCowlFlapPosition1 = "Recip Eng Cowl Flap Position
 const char *SimVar::RecipEngineCowlFlapPosition2 = "Recip Eng Cowl Flap Position:2";
 const char *SimVar::RecipEngineCowlFlapPosition3 = "Recip Eng Cowl Flap Position:3";
 const char *SimVar::RecipEngineCowlFlapPosition4 = "Recip Eng Cowl Flap Position:4";
+const char *SimVar::ElectricalMasterBattery1 = "Electrical Master Battery:1";
+const char *SimVar::ElectricalMasterBattery2 = "Electrical Master Battery:2";
+const char *SimVar::ElectricalMasterBattery3 = "Electrical Master Battery:3";
+const char *SimVar::ElectricalMasterBattery4 = "Electrical Master Battery:4";
+const char *SimVar::GeneralEngineStarter1 = "General Eng Starter:1";
+const char *SimVar::GeneralEngineStarter2 = "General Eng Starter:2";
+const char *SimVar::GeneralEngineStarter3 = "General Eng Starter:3";
+const char *SimVar::GeneralEngineStarter4 = "General Eng Starter:4";
 
 const char *SimVar::LeadingEdgeFlapsLeftPercent = "Leading Edge Flaps Left Percent";
 const char *SimVar::LeadingEdgeFlapsRightPercent = "Leading Edge Flaps Right Percent";

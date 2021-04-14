@@ -4,8 +4,11 @@
 
 ### New Features
 - Simulation variables have been split into distinct requests, saving both on required space and CPU usage
+- The replay speed is now a factor instead of percentage value (1 = normal speed, 2 = double speed etc.)
 - Additional simulation variables: 
   * Cowl flaps
+  * Electrical master battery
+  * General engine starter
 
 ## 0.4.2
 
