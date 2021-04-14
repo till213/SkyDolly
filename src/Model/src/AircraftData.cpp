@@ -39,7 +39,13 @@ AircraftData::AircraftData(double latitude, double longitude, double altitude) n
       velocityBodyZ(0.0),
       rotationVelocityBodyX(0.0),
       rotationVelocityBodyY(0.0),
-      rotationVelocityBodyZ(0.0)
+      rotationVelocityBodyZ(0.0),
+      accelerationBodyX(0.0),
+      accelerationBodyY(0.0),
+      accelerationBodyZ(0.0),
+      rotationAccelerationBodyX(0.0),
+      rotationAccelerationBodyY(0.0),
+      rotationAccelerationBodyZ(0.0)
 {
     this->latitude = latitude;
     this->longitude = longitude;
