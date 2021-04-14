@@ -55,6 +55,15 @@ struct SimConnectEngineData
     double recipEngineCowlFlapPosition2;
     double recipEngineCowlFlapPosition3;
     double recipEngineCowlFlapPosition4;
+    qint32 electricalMasterBattery1;
+    qint32 electricalMasterBattery2;
+    qint32 electricalMasterBattery3;
+    qint32 electricalMasterBattery4;
+    qint32 generalEngineStarter1;
+    qint32 generalEngineStarter2;
+    qint32 generalEngineStarter3;
+    qint32 generalEngineStarter4;
+
 
     inline EngineData toEngineData() const noexcept
     {
@@ -78,6 +87,14 @@ struct SimConnectEngineData
         engineData.cowlFlapPosition2 = SkyMath::fromPercent(recipEngineCowlFlapPosition2);
         engineData.cowlFlapPosition3 = SkyMath::fromPercent(recipEngineCowlFlapPosition3);
         engineData.cowlFlapPosition4 = SkyMath::fromPercent(recipEngineCowlFlapPosition4);
+        engineData.electricalMasterBattery1 = (electricalMasterBattery1 != 0);
+        engineData.electricalMasterBattery2 = (electricalMasterBattery2 != 0);
+        engineData.electricalMasterBattery3 = (electricalMasterBattery3 != 0);
+        engineData.electricalMasterBattery4 = (electricalMasterBattery4 != 0);
+        engineData.generalEngineStarter1 = (generalEngineStarter1 != 0);
+        engineData.generalEngineStarter2 = (generalEngineStarter2 != 0);
+        engineData.generalEngineStarter3 = (generalEngineStarter3 != 0);
+        engineData.generalEngineStarter4 = (generalEngineStarter4 != 0);
 
         return engineData;
     }
@@ -100,6 +117,14 @@ struct SimConnectEngineData
         recipEngineCowlFlapPosition2 = SkyMath::toPercent(engineData.cowlFlapPosition2);
         recipEngineCowlFlapPosition3 = SkyMath::toPercent(engineData.cowlFlapPosition3);
         recipEngineCowlFlapPosition4 = SkyMath::toPercent(engineData.cowlFlapPosition4);
+        electricalMasterBattery1 = engineData.electricalMasterBattery1 ? 1 : 0;
+        electricalMasterBattery2 = engineData.electricalMasterBattery2 ? 1 : 0;
+        electricalMasterBattery3 = engineData.electricalMasterBattery3 ? 1 : 0;
+        electricalMasterBattery4 = engineData.electricalMasterBattery4 ? 1 : 0;
+        generalEngineStarter1 = engineData.generalEngineStarter1 ? 1 : 0;
+        generalEngineStarter2 = engineData.generalEngineStarter2 ? 1 : 0;
+        generalEngineStarter3 = engineData.generalEngineStarter3 ? 1 : 0;
+        generalEngineStarter4 = engineData.generalEngineStarter4 ? 1 : 0;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;

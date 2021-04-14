@@ -260,7 +260,15 @@ inline QString CSVExport::getEngineHeader() noexcept
            QString(SimVar::RecipEngineCowlFlapPosition1) % Const::Sep %
            QString(SimVar::RecipEngineCowlFlapPosition2) % Const::Sep %
            QString(SimVar::RecipEngineCowlFlapPosition3) % Const::Sep %
-           QString(SimVar::RecipEngineCowlFlapPosition4);
+           QString(SimVar::RecipEngineCowlFlapPosition4) % Const::Sep %
+           QString(SimVar::ElectricalMasterBattery1) % Const::Sep %
+           QString(SimVar::ElectricalMasterBattery2) % Const::Sep %
+           QString(SimVar::ElectricalMasterBattery3) % Const::Sep %
+           QString(SimVar::ElectricalMasterBattery4) % Const::Sep %
+           QString(SimVar::GeneralEngineStarter1) % Const::Sep %
+           QString(SimVar::GeneralEngineStarter2) % Const::Sep %
+           QString(SimVar::GeneralEngineStarter3) % Const::Sep %
+           QString(SimVar::GeneralEngineStarter4);
 }
 
 inline QString CSVExport::getEngineData(const EngineData &data) noexcept
@@ -282,10 +290,26 @@ inline QString CSVExport::getEngineData(const EngineData &data) noexcept
               QString::number(data.cowlFlapPosition1) % Const::Sep %
               QString::number(data.cowlFlapPosition2) % Const::Sep %
               QString::number(data.cowlFlapPosition3) % Const::Sep %
-              QString::number(data.cowlFlapPosition4);
+              QString::number(data.cowlFlapPosition4) % Const::Sep %
+              QString::number(data.electricalMasterBattery1) % Const::Sep %
+              QString::number(data.electricalMasterBattery2) % Const::Sep %
+              QString::number(data.electricalMasterBattery3) % Const::Sep %
+              QString::number(data.electricalMasterBattery4) % Const::Sep %
+              QString::number(data.generalEngineStarter1) % Const::Sep %
+              QString::number(data.generalEngineStarter2) % Const::Sep %
+              QString::number(data.generalEngineStarter3) % Const::Sep %
+              QString::number(data.generalEngineStarter4);
     } else {
         const QString EmptyString;
         csv = EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
               EmptyString % Const::Sep %
               EmptyString % Const::Sep %
               EmptyString % Const::Sep %

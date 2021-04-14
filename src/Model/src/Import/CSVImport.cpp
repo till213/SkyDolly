@@ -144,6 +144,12 @@ inline bool CSVImport::importAircraftData(const QList<QByteArray> &headers, cons
     bool ok = false;
     for (const QByteArray &header : headers) {
 
+        if (columnIndex >= values.count()) {
+            // Less values than headers
+            ok = false;
+            break;
+        }
+
         // Position
         double doubleValue;
         if (header == SimVar::Latitude) {
@@ -280,7 +286,14 @@ inline bool CSVImport::importEngineData(const QList<QByteArray> &headers, const 
     bool ok = false;
     for (const QByteArray &header : headers) {
 
+        if (columnIndex >= values.count()) {
+            // Less values than headers
+            ok = false;
+            break;
+        }
+
         double doubleValue;
+        int intValue;
         if (header == SimVar::ThrottleLeverPosition1) {
             doubleValue = values.at(columnIndex).toDouble(&ok);
             if (ok) {
@@ -361,6 +374,46 @@ inline bool CSVImport::importEngineData(const QList<QByteArray> &headers, const 
             if (ok) {
                 data.cowlFlapPosition4 = doubleValue;
             }
+        } else if (header == SimVar::ElectricalMasterBattery1) {
+            intValue = values.at(columnIndex).toInt(&ok);
+            if (ok) {
+                data.electricalMasterBattery1 = intValue != 0;
+            }
+        } else if (header == SimVar::ElectricalMasterBattery2) {
+            intValue = values.at(columnIndex).toInt(&ok);
+            if (ok) {
+                data.electricalMasterBattery2 = intValue != 0;
+            }
+        } else if (header == SimVar::ElectricalMasterBattery3) {
+            intValue = values.at(columnIndex).toInt(&ok);
+            if (ok) {
+                data.electricalMasterBattery3 = intValue != 0;
+            }
+        } else if (header == SimVar::ElectricalMasterBattery4) {
+            intValue = values.at(columnIndex).toInt(&ok);
+            if (ok) {
+                data.electricalMasterBattery4 = intValue != 0;
+            }
+        } else if (header == SimVar::GeneralEngineStarter1) {
+            intValue = values.at(columnIndex).toInt(&ok);
+            if (ok) {
+                data.generalEngineStarter1 = intValue != 0;
+            }
+        } else if (header == SimVar::GeneralEngineStarter2) {
+            intValue = values.at(columnIndex).toInt(&ok);
+            if (ok) {
+                data.generalEngineStarter2 = intValue != 0;
+            }
+        } else if (header == SimVar::GeneralEngineStarter3) {
+            intValue = values.at(columnIndex).toInt(&ok);
+            if (ok) {
+                data.generalEngineStarter3 = intValue != 0;
+            }
+        } else if (header == SimVar::GeneralEngineStarter4) {
+            intValue = values.at(columnIndex).toInt(&ok);
+            if (ok) {
+                data.generalEngineStarter4 = intValue != 0;
+            }
         // Timestamp
         } else if (header == SimVar::Timestamp) {
             timestamp = values.at(columnIndex).toLongLong(&ok);
@@ -402,6 +455,12 @@ inline bool CSVImport::importPrimaryFlightControlData(const QList<QByteArray> &h
     qint64 timestampDelta = 0;
     bool ok = false;
     for (const QByteArray &header : headers) {
+
+        if (columnIndex >= values.count()) {
+            // Less values than headers
+            ok = false;
+            break;
+        }
 
         double doubleValue;
         if (header == SimVar::YokeXPosition) {
@@ -470,6 +529,12 @@ inline bool CSVImport::importSecondaryFlightControlData(const QList<QByteArray> 
     qint64 timestampDelta = 0;
     bool ok = false;
     for (const QByteArray &header : headers) {
+
+        if (columnIndex >= values.count()) {
+            // Less values than headers
+            ok = false;
+            break;
+        }
 
         double doubleValue;
         int intValue;
@@ -544,6 +609,12 @@ inline bool CSVImport::importAircraftHandleData(const QList<QByteArray> &headers
     bool ok = false;
     for (const QByteArray &header : headers) {
 
+        if (columnIndex >= values.count()) {
+            // Less values than headers
+            ok = false;
+            break;
+        }
+
         double doubleValue;
         int intValue;
         if (header == SimVar::GearHandlePosition) {
@@ -606,6 +677,12 @@ inline bool CSVImport::importLightData(const QList<QByteArray> &headers, const Q
     qint64 timestampDelta = 0;
     bool ok = false;
     for (const QByteArray &header : headers) {
+
+        if (columnIndex >= values.count()) {
+            // Less values than headers
+            ok = false;
+            break;
+        }
 
         int intValue;
         if (header == SimVar::LightStates) {

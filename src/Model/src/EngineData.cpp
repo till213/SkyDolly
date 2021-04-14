@@ -44,7 +44,15 @@ EngineData::EngineData(qint16 theThrottleLeverPosition1, qint16 thePropellerLeve
       cowlFlapPosition1(theCowlFlapPosition1),
       cowlFlapPosition2(0),
       cowlFlapPosition3(0),
-      cowlFlapPosition4(0)
+      cowlFlapPosition4(0),
+      electricalMasterBattery1(false),
+      electricalMasterBattery2(false),
+      electricalMasterBattery3(false),
+      electricalMasterBattery4(false),
+      generalEngineStarter1(false),
+      generalEngineStarter2(false),
+      generalEngineStarter3(false),
+      generalEngineStarter4(false)
 {
 }
 
