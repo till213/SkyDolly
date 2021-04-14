@@ -27,7 +27,7 @@
 
 // PUBLIC
 
-EngineData::EngineData(qint16 theThrottleLeverPosition1, qint16 thePropellerLeverPosition1, quint8 theMixtureLeverPosition1) noexcept
+EngineData::EngineData(qint16 theThrottleLeverPosition1, qint16 thePropellerLeverPosition1, quint8 theMixtureLeverPosition1, quint8 theCowlFlapPosition1) noexcept
     : TimeVariableData(),
       throttleLeverPosition1(theThrottleLeverPosition1),
       throttleLeverPosition2(0),
@@ -40,7 +40,11 @@ EngineData::EngineData(qint16 theThrottleLeverPosition1, qint16 thePropellerLeve
       mixtureLeverPosition1(theMixtureLeverPosition1),
       mixtureLeverPosition2(0),
       mixtureLeverPosition3(0),
-      mixtureLeverPosition4(0)
+      mixtureLeverPosition4(0),
+      cowlFlapPosition1(theCowlFlapPosition1),
+      cowlFlapPosition2(0),
+      cowlFlapPosition3(0),
+      cowlFlapPosition4(0)
 {
 }
 
