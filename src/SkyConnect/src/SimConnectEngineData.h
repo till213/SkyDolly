@@ -51,6 +51,10 @@ struct SimConnectEngineData
     double mixtureLeverPosition2;
     double mixtureLeverPosition3;
     double mixtureLeverPosition4;
+    double recipEngineCowlFlapPosition1;
+    double recipEngineCowlFlapPosition2;
+    double recipEngineCowlFlapPosition3;
+    double recipEngineCowlFlapPosition4;
 
     inline EngineData toEngineData() const noexcept
     {
@@ -70,6 +74,10 @@ struct SimConnectEngineData
         engineData.mixtureLeverPosition2 = SkyMath::fromPercent(mixtureLeverPosition2);
         engineData.mixtureLeverPosition3 = SkyMath::fromPercent(mixtureLeverPosition3);
         engineData.mixtureLeverPosition4 = SkyMath::fromPercent(mixtureLeverPosition4);
+        engineData.cowlFlapPosition1 = SkyMath::fromPercent(recipEngineCowlFlapPosition1);
+        engineData.cowlFlapPosition2 = SkyMath::fromPercent(recipEngineCowlFlapPosition2);
+        engineData.cowlFlapPosition3 = SkyMath::fromPercent(recipEngineCowlFlapPosition3);
+        engineData.cowlFlapPosition4 = SkyMath::fromPercent(recipEngineCowlFlapPosition4);
 
         return engineData;
     }
@@ -88,6 +96,10 @@ struct SimConnectEngineData
         mixtureLeverPosition2 = SkyMath::toPercent(engineData.mixtureLeverPosition2);
         mixtureLeverPosition3 = SkyMath::toPercent(engineData.mixtureLeverPosition3);
         mixtureLeverPosition4 = SkyMath::toPercent(engineData.mixtureLeverPosition4);
+        recipEngineCowlFlapPosition1 = SkyMath::toPercent(engineData.cowlFlapPosition1);
+        recipEngineCowlFlapPosition2 = SkyMath::toPercent(engineData.cowlFlapPosition2);
+        recipEngineCowlFlapPosition3 = SkyMath::toPercent(engineData.cowlFlapPosition3);
+        recipEngineCowlFlapPosition4 = SkyMath::toPercent(engineData.cowlFlapPosition4);
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;

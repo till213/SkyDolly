@@ -4,6 +4,8 @@
 
 ### New Features
 - Simulation variables have been split into distinct requests, saving both on required space and CPU usage
+- Additional simulation variables: 
+  * Cowl flaps
 
 ## 0.4.2
 
