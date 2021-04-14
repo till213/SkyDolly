@@ -38,6 +38,13 @@ const char *SimVar::RotationVelocityBodyX = "Rotation Velocity Body X";
 const char *SimVar::RotationVelocityBodyY = "Rotation Velocity Body Y";
 const char *SimVar::RotationVelocityBodyZ = "Rotation Velocity Body Z";
 
+const char *SimVar::AccelerationBodyX = "Acceleration Body X";
+const char *SimVar::AccelerationBodyY = "Acceleration Body Y";
+const char *SimVar::AccelerationBodyZ = "Acceleration Body Z";
+const char *SimVar::RotationAccelerationBodyX = "Rotation Acceleration Body X";
+const char *SimVar::RotationAccelerationBodyY = "Rotation Acceleration Body Y";
+const char *SimVar::RotationAccelerationBodyZ = "Rotation Acceleration Body Z";
+
 const char *SimVar::YokeXPosition = "Yoke Y Position";
 const char *SimVar::YokeYPosition = "Yoke Y Position";
 const char *SimVar::RudderPosition = "Rudder Position";
@@ -56,6 +63,10 @@ const char *SimVar::MixtureLeverPosition1 = "General Eng Mixture Lever Position:
 const char *SimVar::MixtureLeverPosition2 = "General Eng Mixture Lever Position:2";
 const char *SimVar::MixtureLeverPosition3 = "General Eng Mixture Lever Position:3";
 const char *SimVar::MixtureLeverPosition4 = "General Eng Mixture Lever Position:4";
+const char *SimVar::RecipEngineCowlFlapPosition1 = "Recip Eng Cowl Flap Position:1";
+const char *SimVar::RecipEngineCowlFlapPosition2 = "Recip Eng Cowl Flap Position:2";
+const char *SimVar::RecipEngineCowlFlapPosition3 = "Recip Eng Cowl Flap Position:3";
+const char *SimVar::RecipEngineCowlFlapPosition4 = "Recip Eng Cowl Flap Position:4";
 
 const char *SimVar::LeadingEdgeFlapsLeftPercent = "Leading Edge Flaps Left Percent";
 const char *SimVar::LeadingEdgeFlapsRightPercent = "Leading Edge Flaps Right Percent";
