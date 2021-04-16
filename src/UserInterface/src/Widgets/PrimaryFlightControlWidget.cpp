@@ -38,6 +38,7 @@
 #include "../../../Model/src/TimeVariableData.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
+#include "../Unit.h"
 #include "PrimaryFlightControlWidget.h"
 #include "ui_PrimaryFlightControlWidget.h"
 
@@ -106,11 +107,11 @@ void PrimaryFlightControlWidget::updateUi(qint64 timestamp, TimeVariableData::Ac
     QString colorName;
 
     if (!primaryFlightControlData.isNull()) {
-        ui->yokeXLineEdit->setText(QString::number(primaryFlightControlData.yokeXPosition));
-        ui->yokeYLineEdit->setText(QString::number(primaryFlightControlData.yokeYPosition));
-        ui->rudderLineEdit->setText(QString::number(primaryFlightControlData.rudderPosition));
-        ui->elevatorLineEdit->setText(QString::number(primaryFlightControlData.elevatorPosition));
-        ui->aileronLineEdit->setText(QString::number(primaryFlightControlData.aileronPosition));
+        ui->yokeXLineEdit->setText(Unit::formatPosition(primaryFlightControlData.yokeXPosition));
+        ui->yokeYLineEdit->setText(Unit::formatPosition(primaryFlightControlData.yokeYPosition));
+        ui->rudderLineEdit->setText(Unit::formatPosition(primaryFlightControlData.rudderPosition));
+        ui->elevatorLineEdit->setText(Unit::formatPosition(primaryFlightControlData.elevatorPosition));
+        ui->aileronLineEdit->setText(Unit::formatPosition(primaryFlightControlData.aileronPosition));
 
         colorName = d->ActiveTextColor.name();
     } else {

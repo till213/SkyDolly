@@ -35,6 +35,7 @@
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "../../../Kernel/src/SkyMath.h"
+#include "../Unit.h"
 #include "AircraftTypeWidget.h"
 #include "ui_AircraftTypeWidget.h"
 
@@ -132,10 +133,10 @@ void AircraftTypeWidget::updateInfoUi()
     ui->categoryLineEdit->setText(aircraftInfo.category);
     ui->startOnGroundCheckBox->setChecked(aircraftInfo.startOnGround);
 
-    ui->initialAirspeedLineEdit->setText(QString::number(aircraftInfo.initialAirspeed));
-    ui->wingSpanLineEdit->setText(QString::number(aircraftInfo.wingSpan));
+    ui->initialAirspeedLineEdit->setText(Unit::formatKnots(aircraftInfo.initialAirspeed));
+    ui->wingSpanLineEdit->setText(Unit::formatFeet(aircraftInfo.wingSpan));
     ui->engineTypeLineEdit->setText(SimType::engineTypeToString(aircraftInfo.engineType));
     ui->numberOfEnginesLineEdit->setText(QString::number(aircraftInfo.numberOfEngines));
-    ui->aircraftAltitudeAboveGroundLineEdit->setText(QString::number(aircraftInfo.aircraftAltitudeAboveGround));
+    ui->aircraftAltitudeAboveGroundLineEdit->setText(Unit::formatFeet(aircraftInfo.aircraftAltitudeAboveGround));
     ui->startOnGroundCheckBox->setChecked(aircraftInfo.startOnGround);
 }

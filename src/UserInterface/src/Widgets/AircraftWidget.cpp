@@ -33,6 +33,7 @@
 #include "../../../Model/src/AircraftData.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
+#include "../Unit.h"
 #include "AircraftWidget.h"
 #include "ui_AircraftWidget.h"
 
@@ -118,28 +119,28 @@ void AircraftWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
 
     if (!aircraftData.isNull()) {
         // Position
-        ui->latitudeLineEdit->setText(QString::number(aircraftData.latitude));
-        ui->longitudeLineEdit->setText(QString::number(aircraftData.longitude));
-        ui->altitudeLineEdit->setText(QString::number(aircraftData.altitude));
-        ui->pitchLineEdit->setText(QString::number(aircraftData.pitch));
-        ui->bankLineEdit->setText(QString::number(aircraftData.bank));
-        ui->headingLineEdit->setText(QString::number(aircraftData.heading));
+        ui->latitudeLineEdit->setText(Unit::formatLatitude(aircraftData.latitude));
+        ui->longitudeLineEdit->setText(Unit::formatLongitude(aircraftData.longitude));
+        ui->altitudeLineEdit->setText(Unit::formatFeet(aircraftData.altitude));
+        ui->pitchLineEdit->setText(Unit::formatDegrees(aircraftData.pitch));
+        ui->bankLineEdit->setText(Unit::formatDegrees(aircraftData.bank));
+        ui->headingLineEdit->setText(Unit::formatDegrees(aircraftData.heading));
 
         // Velocity
-        ui->velocityXLineEdit->setText(QString::number(aircraftData.velocityBodyX));
-        ui->velocityYLineEdit->setText(QString::number(aircraftData.velocityBodyY));
-        ui->velocityZLineEdit->setText(QString::number(aircraftData.velocityBodyZ));
-        ui->rotationVelocityXLineEdit->setText(QString::number(aircraftData.rotationVelocityBodyX));
-        ui->rotationVelocityYLineEdit->setText(QString::number(aircraftData.rotationVelocityBodyY));
-        ui->rotationVelocityZLineEdit->setText(QString::number(aircraftData.rotationVelocityBodyZ));
+        ui->velocityXLineEdit->setText(Unit::formatVelocityInFeet(aircraftData.velocityBodyX));
+        ui->velocityYLineEdit->setText(Unit::formatVelocityInFeet(aircraftData.velocityBodyY));
+        ui->velocityZLineEdit->setText(Unit::formatVelocityInFeet(aircraftData.velocityBodyZ));
+        ui->rotationVelocityXLineEdit->setText(Unit::formatVelocityInRadians(aircraftData.rotationVelocityBodyX));
+        ui->rotationVelocityYLineEdit->setText(Unit::formatVelocityInRadians(aircraftData.rotationVelocityBodyY));
+        ui->rotationVelocityZLineEdit->setText(Unit::formatVelocityInRadians(aircraftData.rotationVelocityBodyZ));
 
         // Acceleration
-        ui->accelerationXLineEdit->setText(QString::number(aircraftData.accelerationBodyX));
-        ui->accelerationYLineEdit->setText(QString::number(aircraftData.accelerationBodyY));
-        ui->accelerationZLineEdit->setText(QString::number(aircraftData.accelerationBodyZ));
-        ui->rotationAccelerationXLineEdit->setText(QString::number(aircraftData.rotationAccelerationBodyX));
-        ui->rotationAccelerationYLineEdit->setText(QString::number(aircraftData.rotationAccelerationBodyY));
-        ui->rotationAccelerationZLineEdit->setText(QString::number(aircraftData.rotationAccelerationBodyZ));
+        ui->accelerationXLineEdit->setText(Unit::formatAccelerationInFeet(aircraftData.accelerationBodyX));
+        ui->accelerationYLineEdit->setText(Unit::formatAccelerationInFeet(aircraftData.accelerationBodyY));
+        ui->accelerationZLineEdit->setText(Unit::formatAccelerationInFeet(aircraftData.accelerationBodyZ));
+        ui->rotationAccelerationXLineEdit->setText(Unit::formatAccelerationInRadians(aircraftData.rotationAccelerationBodyX));
+        ui->rotationAccelerationYLineEdit->setText(Unit::formatAccelerationInRadians(aircraftData.rotationAccelerationBodyY));
+        ui->rotationAccelerationZLineEdit->setText(Unit::formatAccelerationInRadians(aircraftData.rotationAccelerationBodyZ));
 
         colorName = d->ActiveTextColor.name();
     } else {
