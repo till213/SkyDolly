@@ -38,6 +38,7 @@
 #include "../../../Model/src/TimeVariableData.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
+#include "../Unit.h"
 #include "AircraftHandleWidget.h"
 #include "ui_AircraftHandleWidget.h"
 
@@ -108,11 +109,11 @@ void AircraftHandleWidget::updateUi(qint64 timestamp, TimeVariableData::Access a
 
     if (!aircraftHandleData.isNull()) {
         aircraftHandleData.gearHandlePosition ? ui->gearLineEdit->setText(tr("Down")) : ui->gearLineEdit->setText(tr("Up"));
-        ui->brakeLeftLineEdit->setText(QString::number(aircraftHandleData.brakeLeftPosition));
-        ui->brakeRightLineEdit->setText(QString::number(aircraftHandleData.brakeRightPosition));
-        ui->waterRudderLineEdit->setText(QString::number(aircraftHandleData.waterRudderHandlePosition));
-        ui->tailhookLineEdit->setText(QString::number(aircraftHandleData.tailhookPosition));
-        ui->canopyOpenLineEdit->setText(QString::number(aircraftHandleData.canopyOpen));
+        ui->brakeLeftLineEdit->setText(Unit::formatPosition(aircraftHandleData.brakeLeftPosition));
+        ui->brakeRightLineEdit->setText(Unit::formatPosition(aircraftHandleData.brakeRightPosition));
+        ui->waterRudderLineEdit->setText(Unit::formatPosition(aircraftHandleData.waterRudderHandlePosition));
+        ui->tailhookLineEdit->setText(Unit::formatPercent(aircraftHandleData.tailhookPosition));
+        ui->canopyOpenLineEdit->setText(Unit::formatPercent(aircraftHandleData.canopyOpen));
 
         colorName = d->ActiveTextColor.name();
     } else {

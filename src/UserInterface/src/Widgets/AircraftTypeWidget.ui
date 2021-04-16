@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>596</width>
-    <height>228</height>
+    <width>653</width>
+    <height>226</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -55,7 +55,7 @@
          <widget class="QLineEdit" name="nameLineEdit">
           <property name="minimumSize">
            <size>
-            <width>160</width>
+            <width>250</width>
             <height>0</height>
            </size>
           </property>
@@ -176,7 +176,7 @@
         <item row="0" column="0">
          <widget class="QLabel" name="label_24">
           <property name="text">
-           <string>Initial Speed [Knots]</string>
+           <string>Initial Speed</string>
           </property>
          </widget>
         </item>
@@ -196,7 +196,7 @@
         <item row="1" column="0">
          <widget class="QLabel" name="label_10">
           <property name="text">
-           <string>Wing Span [Feet]</string>
+           <string>Wing Span</string>
           </property>
          </widget>
         </item>
@@ -265,7 +265,7 @@
         <item row="4" column="0">
          <widget class="QLabel" name="label_26">
           <property name="text">
-           <string>Altitude Above Ground [Feet]</string>
+           <string>Altitude Above Ground</string>
           </property>
          </widget>
         </item>
