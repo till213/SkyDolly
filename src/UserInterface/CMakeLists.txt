@@ -27,6 +27,8 @@ target_sources(UserInterface
         src/MainWindow.cpp
         src/MainWindow.h
         src/MainWindow.ui
+        src/Unit.cpp
+        src/Unit.h
         src/Dialogs/AboutDialog.cpp
         src/Dialogs/AboutDialog.h
         src/Dialogs/AboutDialog.ui

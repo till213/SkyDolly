@@ -34,6 +34,7 @@
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "../../../Kernel/src/SkyMath.h"
+#include "../Unit.h"
 #include "FlightConditionWidget.h"
 #include "ui_FlightConditionWidget.h"
 
@@ -122,17 +123,17 @@ void FlightConditionWidget::updateInfoUi()
     const Scenario &currentScenario = World::getInstance().getCurrentScenario();
     const FlightCondition &flightCondition = currentScenario.getFlightConditionConst();
 
-    ui->groundAltitudeLineEdit->setText(QString::number(flightCondition.groundAltitude));
+    ui->groundAltitudeLineEdit->setText(Unit::formatFeet(flightCondition.groundAltitude));
     ui->surfaceTypeLineEdit->setText(SimType::surfaceTypeToString(flightCondition.surfaceType));
-    ui->temperatureLineEdit->setText(QString::number(flightCondition.ambientTemperature));
-    ui->totalAirTemperatureLineEdit->setText(QString::number(flightCondition.totalAirTemperature));
-    ui->windVelocityLineEdit->setText(QString::number(flightCondition.windVelocity));
-    ui->windDirectionLineEdit->setText(QString::number(flightCondition.windDirection));
+    ui->temperatureLineEdit->setText(Unit::formatCelcius(flightCondition.ambientTemperature));
+    ui->totalAirTemperatureLineEdit->setText(Unit::formatCelcius(flightCondition.totalAirTemperature));
+    ui->windVelocityLineEdit->setText(Unit::formatKnots(flightCondition.windVelocity));
+    ui->windDirectionLineEdit->setText(Unit::formatDegrees(flightCondition.windDirection));
     ui->precipitationStateLineEdit->setText(SimType::precipitationStateToString(flightCondition.precipitationState));
 
     ui->inCloudsCheckBox->setChecked(flightCondition.inClouds);
-    ui->visibilityLineEdit->setText(QString::number(flightCondition.visibility));
-    ui->seaLevelPressure->setText(QString::number(flightCondition.seaLevelPressure));
-    ui->pitotIcingLineEdit->setText(QString::number(SkyMath::toPercent(flightCondition.pitotIcingPercent)));
-    ui->structuralIcingLineEdit->setText(QString::number(SkyMath::toPercent(flightCondition.structuralIcingPercent)));
+    ui->visibilityLineEdit->setText(Unit::formatVisibility(flightCondition.visibility));
+    ui->seaLevelPressure->setText(Unit::formatPressureInHPa(flightCondition.seaLevelPressure));
+    ui->pitotIcingLineEdit->setText(Unit::formatPercent(SkyMath::toPercent(flightCondition.pitotIcingPercent)));
+    ui->structuralIcingLineEdit->setText(Unit::formatPercent(SkyMath::toPercent(flightCondition.structuralIcingPercent)));
 }

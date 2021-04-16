@@ -38,6 +38,7 @@
 #include "../../../Model/src/TimeVariableData.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
+#include "../Unit.h"
 #include "EngineWidget.h"
 #include "ui_EngineWidget.h"
 
@@ -136,22 +137,22 @@ void EngineWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
     QString colorName;
 
     if (!engineData.isNull()) {
-        ui->throttle1LineEdit->setText(QString::number(engineData.throttleLeverPosition1));
-        ui->throttle2LineEdit->setText(QString::number(engineData.throttleLeverPosition2));
-        ui->throttle3LineEdit->setText(QString::number(engineData.throttleLeverPosition3));
-        ui->throttle4LineEdit->setText(QString::number(engineData.throttleLeverPosition4));
-        ui->propeller1LineEdit->setText(QString::number(engineData.propellerLeverPosition1));
-        ui->propeller2LineEdit->setText(QString::number(engineData.propellerLeverPosition2));
-        ui->propeller3LineEdit->setText(QString::number(engineData.propellerLeverPosition3));
-        ui->propeller4LineEdit->setText(QString::number(engineData.propellerLeverPosition4));
-        ui->mixture1LineEdit->setText(QString::number(engineData.mixtureLeverPosition1));
-        ui->mixture2LineEdit->setText(QString::number(engineData.mixtureLeverPosition2));
-        ui->mixture3LineEdit->setText(QString::number(engineData.mixtureLeverPosition3));
-        ui->mixture4LineEdit->setText(QString::number(engineData.mixtureLeverPosition4));
-        ui->cowlFlaps1LineEdit->setText(QString::number(engineData.cowlFlapPosition1));
-        ui->cowlFlaps2LineEdit->setText(QString::number(engineData.cowlFlapPosition2));
-        ui->cowlFlaps3LineEdit->setText(QString::number(engineData.cowlFlapPosition3));
-        ui->cowlFlaps4LineEdit->setText(QString::number(engineData.cowlFlapPosition4));
+        ui->throttle1LineEdit->setText(Unit::formatPosition(engineData.throttleLeverPosition1));
+        ui->throttle2LineEdit->setText(Unit::formatPosition(engineData.throttleLeverPosition2));
+        ui->throttle3LineEdit->setText(Unit::formatPosition(engineData.throttleLeverPosition3));
+        ui->throttle4LineEdit->setText(Unit::formatPosition(engineData.throttleLeverPosition4));
+        ui->propeller1LineEdit->setText(Unit::formatPosition(engineData.propellerLeverPosition1));
+        ui->propeller2LineEdit->setText(Unit::formatPosition(engineData.propellerLeverPosition2));
+        ui->propeller3LineEdit->setText(Unit::formatPosition(engineData.propellerLeverPosition3));
+        ui->propeller4LineEdit->setText(Unit::formatPosition(engineData.propellerLeverPosition4));
+        ui->mixture1LineEdit->setText(Unit::formatPercent(engineData.mixtureLeverPosition1));
+        ui->mixture2LineEdit->setText(Unit::formatPercent(engineData.mixtureLeverPosition2));
+        ui->mixture3LineEdit->setText(Unit::formatPercent(engineData.mixtureLeverPosition3));
+        ui->mixture4LineEdit->setText(Unit::formatPercent(engineData.mixtureLeverPosition4));
+        ui->cowlFlaps1LineEdit->setText(Unit::formatPercent(engineData.cowlFlapPosition1));
+        ui->cowlFlaps2LineEdit->setText(Unit::formatPercent(engineData.cowlFlapPosition2));
+        ui->cowlFlaps3LineEdit->setText(Unit::formatPercent(engineData.cowlFlapPosition3));
+        ui->cowlFlaps4LineEdit->setText(Unit::formatPercent(engineData.cowlFlapPosition4));
 
         ui->masterBattery1CheckBox->setChecked(engineData.electricalMasterBattery1);
         ui->masterBattery2CheckBox->setChecked(engineData.electricalMasterBattery2);
