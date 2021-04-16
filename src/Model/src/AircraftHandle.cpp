@@ -45,6 +45,7 @@ public:
     QVector<AircraftHandleData> aircraftHandleData;
     qint64 currentTimestamp;
     TimeVariableData::Access currentAccess;
+    AircraftHandleData previousAircraftHandleData;
     AircraftHandleData currentAircraftHandleData;
     mutable int currentIndex;
 
@@ -138,8 +139,21 @@ const AircraftHandleData &AircraftHandle::interpolate(qint64 timestamp, TimeVari
             d->currentAircraftHandleData.brakeRightPosition = SkyMath::interpolateLinear(p1->brakeRightPosition, p2->brakeRightPosition, tn);
             d->currentAircraftHandleData.waterRudderHandlePosition = SkyMath::interpolateLinear(p1->waterRudderHandlePosition, p2->waterRudderHandlePosition, tn);
             d->currentAircraftHandleData.tailhookPosition = SkyMath::interpolateLinear(p1->tailhookPosition, p2->tailhookPosition, tn);
+            // The CANOPY OPEN variable "automatically closes" (decreases its value), so values > 0 need
+            // to be repeatedly set
             d->currentAircraftHandleData.canopyOpen = SkyMath::interpolateLinear(p1->canopyOpen, p2->canopyOpen, tn);
+            if (d->currentAircraftHandleData.canopyOpen > 0) {
+                // We do that my storing the previous values (when the canopy is "open")...
+                d->previousAircraftHandleData = d->currentAircraftHandleData;
+            } else {
+                // Canopy closed
+                d->previousAircraftHandleData = AircraftHandleData::NullAircraftHandleData;
+            }
 
+            d->currentAircraftHandleData.timestamp = timestamp;
+        } else if (!d->previousAircraftHandleData.isNull()) {
+            // ... and send the previous values again (for as long as the canopy remains "open")
+            d->currentAircraftHandleData = d->previousAircraftHandleData;
             d->currentAircraftHandleData.timestamp = timestamp;
         } else {
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
