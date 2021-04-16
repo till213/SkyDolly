@@ -38,6 +38,7 @@
 #include "../../../Model/src/TimeVariableData.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
+#include "../Unit.h"
 #include "SecondaryFlightControlWidget.h"
 #include "ui_SecondaryFlightControlWidget.h"
 
@@ -108,10 +109,10 @@ void SecondaryFlightControlWidget::updateUi(qint64 timestamp, TimeVariableData::
 
     if (!secondaryFlightControlData.isNull()) {
         // Flaps & speed brakes
-        ui->leadingEdgeFlapsLeftLineEdit->setText(QString::number(secondaryFlightControlData.leadingEdgeFlapsLeftPercent));
-        ui->leadingEdgeFlapsRightLineEdit->setText(QString::number(secondaryFlightControlData.leadingEdgeFlapsRightPercent));
-        ui->trailingEdgeFlapsLeftLineEdit->setText(QString::number(secondaryFlightControlData.trailingEdgeFlapsLeftPercent));
-        ui->trailingEdgeFlapsRightLineEdit->setText(QString::number(secondaryFlightControlData.trailingEdgeFlapsRightPercent));
+        ui->leadingEdgeFlapsLeftLineEdit->setText(Unit::formatPercent(secondaryFlightControlData.leadingEdgeFlapsLeftPercent));
+        ui->leadingEdgeFlapsRightLineEdit->setText(Unit::formatPercent(secondaryFlightControlData.leadingEdgeFlapsRightPercent));
+        ui->trailingEdgeFlapsLeftLineEdit->setText(Unit::formatPercent(secondaryFlightControlData.trailingEdgeFlapsLeftPercent));
+        ui->trailingEdgeFlapsRightLineEdit->setText(Unit::formatPercent(secondaryFlightControlData.trailingEdgeFlapsRightPercent));
         ui->spoilerLineEdit->setText(QString::number(secondaryFlightControlData.spoilersHandlePosition));
         ui->flapsPositionLineEdit->setText(QString::number(secondaryFlightControlData.flapsHandleIndex));
 

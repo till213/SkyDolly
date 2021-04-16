@@ -62,7 +62,7 @@ StatisticsDialog::StatisticsDialog(SkyConnectIntf &skyConnect, QWidget *parent) 
     ui(std::make_unique<Ui::StatisticsDialog>())
 {
     ui->setupUi(this);
-    Qt::WindowFlags flags = Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
+    Qt::WindowFlags flags = Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
     setWindowFlags(flags);
 
     frenchConnection();

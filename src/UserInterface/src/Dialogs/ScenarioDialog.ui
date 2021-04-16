@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Scenario</string>
   </property>
+  <property name="sizeGripEnabled">
+   <bool>true</bool>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="sizeConstraint">
     <enum>QLayout::SetMinimumSize</enum>
