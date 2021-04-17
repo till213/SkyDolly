@@ -38,7 +38,7 @@ public:
     Version version;
 
     double recordSampleRateValue;
-    double playbackSampleRateValue;
+    double replaySampleRateValue;
     bool windowStayOnTopEnabled;
     QString exportPath;
     QString defaultExportPath;
@@ -243,7 +243,7 @@ void Settings::frenchConnection() noexcept
 {
     connect(this, &Settings::recordSampleRateChanged,
             this, &Settings::changed);
-    connect(this, &Settings::playbackSampleRateChanged,
+    connect(this, &Settings::replaySampleRateChanged,
             this, &Settings::changed);
     connect(this, &Settings::exportPathChanged,
             this, &Settings::changed);
