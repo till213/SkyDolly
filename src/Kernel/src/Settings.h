@@ -84,11 +84,11 @@ signals:
     void recordSampleRateChanged(SampleRate::SampleRate sampleRate);
 
     /*!
-     * Emitted when the playback sample rate has changed.
+     * Emitted when the replay sample rate has changed.
      *
      * \sa changed()
      */
-    void playbackSampleRateChanged(SampleRate::SampleRate sampleRate);
+    void replaySampleRateChanged(SampleRate::SampleRate sampleRate);
 
     /*!
      * Emitted when the export path has changed.
