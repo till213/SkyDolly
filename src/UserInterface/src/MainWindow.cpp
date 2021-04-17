@@ -497,8 +497,8 @@ void MainWindow::on_importCSVAction_triggered() noexcept
     if (previewInfoCount > 0) {
         --previewInfoCount;
         reply = QMessageBox::question(this, "Preview",
-            QString("%1 %2 is an early preview version. The format of the exported CSV values in this version has changed compared with the previous version 0.3.0, "
-                    "making the data partially invalid. Upcoming preview versions may still change the format in an incompatible way yet again.\n\n"
+            QString("%1 %2 is an early preview version. The format of the exported CSV values in this version has changed compared with the previous version 0.4.2, "
+                    "making the data invalid. Upcoming preview versions may still change the format in an incompatible way yet again.\n\n"
                     "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(previewInfoCount),
             QMessageBox::StandardButton::Ok | QMessageBox::StandardButton::Abort);
         Settings::getInstance().setPreviewInfoDialogCount(previewInfoCount);
