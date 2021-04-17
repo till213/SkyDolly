@@ -213,37 +213,6 @@ inline bool CSVImport::importAircraftData(const QList<QByteArray> &headers, cons
             if (ok) {
                 data.rotationVelocityBodyZ = doubleValue;
             }
-        // Acceleration
-        } else if (header == SimVar::AccelerationBodyX) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
-            if (ok) {
-                data.accelerationBodyX = doubleValue;
-            }
-        } else if (header == SimVar::AccelerationBodyY) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
-            if (ok) {
-                data.accelerationBodyY = doubleValue;
-            }
-        } else if (header == SimVar::AccelerationBodyZ) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
-            if (ok) {
-                data.accelerationBodyZ = doubleValue;
-            }
-        } else if (header == SimVar::RotationAccelerationBodyX) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
-            if (ok) {
-                data.rotationAccelerationBodyX = doubleValue;
-            }
-        } else if (header == SimVar::RotationAccelerationBodyY) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
-            if (ok) {
-                data.rotationAccelerationBodyY= doubleValue;
-            }
-        } else if (header == SimVar::RotationAccelerationBodyZ) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
-            if (ok) {
-                data.rotationAccelerationBodyZ = doubleValue;
-            }
         // Timestamp
         } else if (header == SimVar::Timestamp) {
             timestamp = values.at(columnIndex).toLongLong(&ok);

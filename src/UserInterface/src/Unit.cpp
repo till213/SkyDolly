@@ -109,16 +109,6 @@ QString Unit::formatVelocityInRadians(double velocity) noexcept
     return QString::number(velocity, 'f', Precision) % " rad/s";
 }
 
-QString Unit::formatAccelerationInFeet(double acceleration) noexcept
-{
-    return QString::number(acceleration, 'f', Precision) % " ft/s²";
-}
-
-QString Unit::formatAccelerationInRadians(double acceleration) noexcept
-{
-    return QString::number(acceleration, 'f', Precision) % " rad/s²";
-}
-
 QString Unit::formatPosition(qint16 position) noexcept
 {
     return QString::number(position / static_cast<double>(std::numeric_limits<qint16>::max()) * 100.0, 'f', Precision) % " %";
