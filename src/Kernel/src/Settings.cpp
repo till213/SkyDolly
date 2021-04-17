@@ -53,6 +53,7 @@ public:
     static Settings *instance;
     static constexpr double DefaultRecordSampleRate = SampleRate::toValue(SampleRate::SampleRate::Auto);
     static constexpr bool DefaultWindowStayOnTopEnabled = false;
+
     static constexpr bool DefaultAbsoluteSeek = true;
     static constexpr double DefaultSeekIntervalSeconds = 1.0;
     static constexpr double DefaultSeekIntervalPercent = 0.5;
@@ -95,6 +96,19 @@ void Settings::destroyInstance() noexcept
     if (SettingsPrivate::instance != nullptr) {
         delete SettingsPrivate::instance;
         SettingsPrivate::instance = nullptr;
+    }
+}
+
+QString Settings::getDbPath() const noexcept
+{
+    return d->dbPath;
+}
+
+void Settings::setDbPath(const QString &dbPath) noexcept
+{
+    if (d->dbPath != dbPath) {
+        d->dbPath = dbPath;
+        emit changed();
     }
 }
 
@@ -179,19 +193,6 @@ void Settings::setSeekIntervalPercent(double percent) noexcept
     if (d->seekIntervalPercent!= percent) {
         d->seekIntervalPercent = percent;
         emit seekIntervalPercentChanged(d->seekIntervalPercent);
-    }
-}
-
-QString Settings::getDbPath() const noexcept
-{
-    return d->dbPath;
-}
-
-void Settings::setDbPath(const QString &dbPath) noexcept
-{
-    if (d->dbPath != dbPath) {
-        d->dbPath = dbPath;
-        emit changed();
     }
 }
 
@@ -346,5 +347,7 @@ void Settings::frenchConnection() noexcept
     connect(this, &Settings::seekIntervalSecondsChanged,
             this, &Settings::changed);
     connect(this, &Settings::seekIntervalPercentChanged,
+            this, &Settings::changed);
+    connect(this, &Settings::exportPathChanged,
             this, &Settings::changed);
 }
