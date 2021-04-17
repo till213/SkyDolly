@@ -71,14 +71,14 @@ namespace
 {
     constexpr int PositionSliderMin = 0;
     constexpr int PositionSliderMax = 1000;
-    constexpr double PlaybackSpeedMin = 0.01;
-    // A playback speed with factor 200 should be fast enough
-    constexpr double PlaybackSpeedMax = 200;
+    constexpr double ReplaySpeedMin = 0.01;
+    // A replay speed with factor 200 should be fast enough
+    constexpr double ReplaySpeedMax = 200;
     constexpr qint64 MilliSecondsPerSecond = 1000;
     constexpr qint64 MilliSecondsPerMinute = 60 * MilliSecondsPerSecond;
     constexpr qint64 MilliSecondsPerHour = 60 * MilliSecondsPerMinute;
 
-    enum class PlaybackSpeed {
+    enum class ReplaySpeed {
         Speed1Div8x,
         Speed1Div4x,
         Speed1Div2x,
@@ -98,7 +98,7 @@ public:
     MainWindowPrivate() noexcept
         : skyConnect(SkyManager::getInstance().currentSkyConnect()),
           previousState(Connect::State::Connected),
-          playbackSpeedButtonGroup(nullptr),
+          replaySpeedButtonGroup(nullptr),
           aboutDialog(nullptr),
           settingsDialog(nullptr),
           scenarioDialog(nullptr),
@@ -111,13 +111,13 @@ public:
 
     SkyConnectIntf &skyConnect;
     Connect::State previousState;
-    QButtonGroup *playbackSpeedButtonGroup;
+    QButtonGroup *replaySpeedButtonGroup;
     AboutDialog *aboutDialog;
     SettingsDialog *settingsDialog;
     ScenarioDialog *scenarioDialog;
     SimulationVariablesDialog *simulationVariablesDialog;
     StatisticsDialog *statisticsDialog;
-    double lastCustomPlaybackSpeed;
+    double lastCustomReplaySpeed;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<WorldDaoIntf> worldDao;
     std::unique_ptr<ScenarioService> scenarioService;
@@ -154,15 +154,15 @@ void MainWindow::frenchConnection() noexcept
     connect(&d->skyConnect, &SkyConnectIntf::stateChanged,
             this, &MainWindow::updateUi);
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    connect(d->playbackSpeedButtonGroup, QOverload<int>::of(&QButtonGroup::buttonClicked),
+    connect(d->replaySpeedButtonGroup, QOverload<int>::of(&QButtonGroup::buttonClicked),
             this, &MainWindow::updateControlUi);
-    connect(d->playbackSpeedButtonGroup, QOverload<int>::of(&QButtonGroup::buttonClicked),
-            this, &MainWindow::handlePlaybackSpeedSelected);
+    connect(d->replaySpeedButtonGroup, QOverload<int>::of(&QButtonGroup::buttonClicked),
+            this, &MainWindow::handleReplaySpeedSelected);
 #else
-    connect(d->playbackSpeedButtonGroup, &QButtonGroup::idClicked,
+    connect(d->replaySpeedButtonGroup, &QButtonGroup::idClicked,
             this, &MainWindow::updateControlUi);
-    connect(d->playbackSpeedButtonGroup, &QButtonGroup::idClicked,
-            this, &MainWindow::handlePlaybackSpeedSelected);
+    connect(d->replaySpeedButtonGroup, &QButtonGroup::idClicked,
+            this, &MainWindow::handleReplaySpeedSelected);
 #endif
 
     // Actions
@@ -216,37 +216,37 @@ void MainWindow::initUi() noexcept
 
 void MainWindow::initControlUi() noexcept
 {
-    d->playbackSpeedButtonGroup = new QButtonGroup(this);
-    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed1Div8xRadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed1Div8x));
-    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed1Div4xRadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed1Div4x));
-    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed1Div2xRadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed1Div2x));
-    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed3Div4xRadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed3Div4x));
-    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed1xRadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed1x));
-    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed2xRadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed2x));
-    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed4xRadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed4x));
-    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed8xRadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed8x));
-    d->playbackSpeedButtonGroup->addButton(ui->playbackSpeed16xRadioButton, Enum::toUnderlyingType(PlaybackSpeed::Speed16x));
-    d->playbackSpeedButtonGroup->addButton(ui->customPlaybackSpeedRadioButton, Enum::toUnderlyingType(PlaybackSpeed::CustomSpeed));
+    d->replaySpeedButtonGroup = new QButtonGroup(this);
+    d->replaySpeedButtonGroup->addButton(ui->replaySpeed1Div8xRadioButton, Enum::toUnderlyingType(ReplaySpeed::Speed1Div8x));
+    d->replaySpeedButtonGroup->addButton(ui->replaySpeed1Div4xRadioButton, Enum::toUnderlyingType(ReplaySpeed::Speed1Div4x));
+    d->replaySpeedButtonGroup->addButton(ui->replaySpeed1Div2xRadioButton, Enum::toUnderlyingType(ReplaySpeed::Speed1Div2x));
+    d->replaySpeedButtonGroup->addButton(ui->replaySpeed3Div4xRadioButton, Enum::toUnderlyingType(ReplaySpeed::Speed3Div4x));
+    d->replaySpeedButtonGroup->addButton(ui->replaySpeed1xRadioButton, Enum::toUnderlyingType(ReplaySpeed::Speed1x));
+    d->replaySpeedButtonGroup->addButton(ui->replaySpeed2xRadioButton, Enum::toUnderlyingType(ReplaySpeed::Speed2x));
+    d->replaySpeedButtonGroup->addButton(ui->replaySpeed4xRadioButton, Enum::toUnderlyingType(ReplaySpeed::Speed4x));
+    d->replaySpeedButtonGroup->addButton(ui->replaySpeed8xRadioButton, Enum::toUnderlyingType(ReplaySpeed::Speed8x));
+    d->replaySpeedButtonGroup->addButton(ui->replaySpeed16xRadioButton, Enum::toUnderlyingType(ReplaySpeed::Speed16x));
+    d->replaySpeedButtonGroup->addButton(ui->customReplaySpeedRadioButton, Enum::toUnderlyingType(ReplaySpeed::CustomSpeed));
 
     ui->positionSlider->setMinimum(PositionSliderMin);
     ui->positionSlider->setMaximum(PositionSliderMax);
     ui->timestampTimeEdit->setDisplayFormat("hh:mm:ss");
 
-    QDoubleValidator *customPlaybackSpeedValidator = new QDoubleValidator(ui->customPlaybackSpeedLineEdit);
-    ui->customPlaybackSpeedLineEdit->setValidator(customPlaybackSpeedValidator);
-    customPlaybackSpeedValidator->setBottom(PlaybackSpeedMin);
-    customPlaybackSpeedValidator->setTop(PlaybackSpeedMax);
+    QDoubleValidator *customReplaySpeedValidator = new QDoubleValidator(ui->customReplaySpeedLineEdit);
+    ui->customReplaySpeedLineEdit->setValidator(customReplaySpeedValidator);
+    customReplaySpeedValidator->setBottom(ReplaySpeedMin);
+    customReplaySpeedValidator->setTop(ReplaySpeedMax);
 
-    const double playbackSpeed = d->skyConnect.getTimeScale();
-    d->lastCustomPlaybackSpeed = playbackSpeed;
+    const double replaySpeed = d->skyConnect.getTimeScale();
+    d->lastCustomReplaySpeed = replaySpeed;
     if (qFuzzyCompare(d->skyConnect.getTimeScale(), 1.0)) {
-        ui->playbackSpeed1xRadioButton->setChecked(true);
+        ui->replaySpeed1xRadioButton->setChecked(true);
     } else {
-        ui->customPlaybackSpeedRadioButton->setChecked(true);
-        ui->customPlaybackSpeedLineEdit->setText(QString::number(playbackSpeed));
+        ui->customReplaySpeedRadioButton->setChecked(true);
+        ui->customReplaySpeedLineEdit->setText(QString::number(replaySpeed));
     }
 
-    // Record/playback control buttons
+    // Record/replay control buttons
     ActionButton *recordButton = new ActionButton(this);
     recordButton->setAction(ui->recordAction);
     recordButton->setFlat(true);
@@ -316,7 +316,7 @@ void MainWindow::on_positionSlider_sliderPressed() noexcept
 {
     d->previousState = d->skyConnect.getState();
     if (d->previousState == Connect::State::Replay) {
-        // Pause the playback while sliding the position slider
+        // Pause the replay while sliding the position slider
         d->skyConnect.setPaused(true);
     }
 }
@@ -349,12 +349,12 @@ void MainWindow::on_timestampTimeEdit_timeChanged(const QTime &time) noexcept
     }
 }
 
-void MainWindow::on_customPlaybackSpeedLineEdit_editingFinished() noexcept
+void MainWindow::on_customReplaySpeedLineEdit_editingFinished() noexcept
 {
-    const QString text = ui->customPlaybackSpeedLineEdit->text();
+    const QString text = ui->customReplaySpeedLineEdit->text();
     if (!text.isEmpty()) {
-        d->lastCustomPlaybackSpeed = text.toDouble();
-        d->skyConnect.setTimeScale(d->lastCustomPlaybackSpeed);
+        d->lastCustomReplaySpeed = text.toDouble();
+        d->skyConnect.setTimeScale(d->lastCustomReplaySpeed);
     }
 }
 
@@ -445,12 +445,12 @@ void MainWindow::updateControlUi() noexcept
         break;
     }
 
-    if (ui->customPlaybackSpeedRadioButton->isChecked()) {
-        ui->customPlaybackSpeedLineEdit->setEnabled(true);
-        ui->customPlaybackSpeedLineEdit->setText(QString::number(d->lastCustomPlaybackSpeed));
+    if (ui->customReplaySpeedRadioButton->isChecked()) {
+        ui->customReplaySpeedLineEdit->setEnabled(true);
+        ui->customReplaySpeedLineEdit->setText(QString::number(d->lastCustomReplaySpeed));
     } else {
-        ui->customPlaybackSpeedLineEdit->setEnabled(false);
-        ui->customPlaybackSpeedLineEdit->clear();
+        ui->customReplaySpeedLineEdit->setEnabled(false);
+        ui->customReplaySpeedLineEdit->clear();
     }
 }
 
@@ -649,39 +649,39 @@ void MainWindow::handleTimestampChanged(qint64 timestamp) noexcept
     };
 }
 
-void MainWindow::handlePlaybackSpeedSelected(int selection) noexcept
+void MainWindow::handleReplaySpeedSelected(int selection) noexcept
 {
     double timeScale;
-    switch (static_cast<PlaybackSpeed>(selection)) {
-    case PlaybackSpeed::Speed1Div8x:
+    switch (static_cast<ReplaySpeed>(selection)) {
+    case ReplaySpeed::Speed1Div8x:
         timeScale = 0.125;
         break;
-    case PlaybackSpeed::Speed1Div4x:
+    case ReplaySpeed::Speed1Div4x:
         timeScale = 0.25;
         break;
-    case PlaybackSpeed::Speed1Div2x:
+    case ReplaySpeed::Speed1Div2x:
         timeScale = 0.5;
         break;
-    case PlaybackSpeed::Speed3Div4x:
+    case ReplaySpeed::Speed3Div4x:
         timeScale = 0.75;
         break;
-    case PlaybackSpeed::Speed1x:
+    case ReplaySpeed::Speed1x:
         timeScale = 1.0;
         break;
-    case PlaybackSpeed::Speed2x:
+    case ReplaySpeed::Speed2x:
         timeScale = 2.0;
         break;
-    case PlaybackSpeed::Speed4x:
+    case ReplaySpeed::Speed4x:
         timeScale = 4.0;
         break;
-    case PlaybackSpeed::Speed8x:
+    case ReplaySpeed::Speed8x:
         timeScale = 8.0;
         break;
-    case PlaybackSpeed::Speed16x:
+    case ReplaySpeed::Speed16x:
         timeScale = 16.0;
         break;
-    case PlaybackSpeed::CustomSpeed:
-        timeScale = ui->customPlaybackSpeedLineEdit->text().toDouble();
+    case ReplaySpeed::CustomSpeed:
+        timeScale = ui->customReplaySpeedLineEdit->text().toDouble();
         break;
     default:
         timeScale = 1.0;

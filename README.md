@@ -25,7 +25,7 @@ For new and upcoming features also refer to the [CHANGELOG](CHANGELOG.md).
 * Click on "Record" (key R)
 * You may pause recording (key P)
 * Stop recording (key R) and click on "Play" (spacebar)
-* Adjust the replay speed and seek the play position, also during playback
+* Adjust the replay speed and seek the play position, also during replay
 
 Why don't you try it with one of the guided ["Tell Tours"](https://github.com/till213/Tell-Tours)? :)
 
@@ -41,7 +41,7 @@ Refer to the [BUILD](BUILD.md) documentation.
 
 ## Related Projects
 
-* https://github.com/nguyenquyhy/Flight-Recorder - A .Net based flight recording & playback application
+* https://github.com/nguyenquyhy/Flight-Recorder - A .Net based flight recording & replay application
 * https://github.com/saltysimulations/saltyreplay/ - A recording & replay with a web user interface
 * https://github.com/SAHorowitz/MSFS2020-PilotPathRecorder - Records the flight and generates Google Earth (KML format) "replays"
 

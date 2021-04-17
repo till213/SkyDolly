@@ -49,7 +49,7 @@
 - When recording sample rate is set to 1 Hz ("one sample per second") then the SimConnect request period is now also set to 1 Hz
 - A new "auto" recording sample rate has been added 
   * Recording: samples are collected in an event-based manner ("as they arrive")
-  * Playback: samples are always sent "per visual frame"
+  * Replay: samples are always sent "per visual frame"
 - Reorganise simulation variables in tabbed widget
 - Add additional flight information variables, captured once at start of recording
   * Airline (Callsign)
@@ -63,8 +63,8 @@
 - Properly reset play position to begin after importing CSV data
 - Validate the CSV data upon import: specifically the first timestamp must be 0 (timestamps are shifted accordingly)
 - "Show simulation variables" action is now deselected when the dialog is closed (via close button)
-- Set the initial start position ("on ground") when playback from (or seek to) start
-- Prevent aircrafts from "dropping out of the sky" after playback, by recording body velocities
+- Set the initial start position ("on ground") when replay from (or seek to) start
+- Prevent aircrafts from "dropping out of the sky" after replay, by recording body velocities
 
 ## 0.3.1
 
@@ -98,7 +98,7 @@
 
 ### New Features
 
-- Recording & playback of basic flight controls (rudder, ailerons, flaps, gear, ...)
+- Recording & replay of basic flight controls (rudder, ailerons, flaps, gear, ...)
 - Updated user interface
 - Separate simulation variables dialog
 - Simulation variables are now also shown during replay (in the new simulation variables dialog)
@@ -107,7 +107,7 @@
 ### Bug Fixes
 
 - Validate the recorded simulation variables, specifically the position (sending invalid values back freezes or even crashes FS 2020)
-- Properly store the already elapsed time when changing the playback speed, for a smooth continuation of the replay
+- Properly store the already elapsed time when changing the replay speed, for a smooth continuation of the replay
 
 ## 0.1.0
 
@@ -118,8 +118,8 @@
   * Latitude, longitude, altitude
   * Pitch, bank, heading
   * Aircraft info: on ground, model name
-- Basic playback functionality: play, pause, select playback position
-- Selectable playback speed
+- Basic replay functionality: play, pause, select replay position
+- Selectable replay speed
 
 ### Bug Fixes
 
