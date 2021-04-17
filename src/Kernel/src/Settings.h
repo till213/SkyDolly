@@ -58,6 +58,15 @@ public:
     QString getExportPath() const noexcept;
     void setExportPath(QString exportPath);
 
+    bool isAbsoluteSeekEnabled() const noexcept;
+    void setAbsoluteSeekEnabled(bool enable) noexcept;
+
+    double getSeekIntervalSeconds() const noexcept;
+    void setSeekIntervalSeconds(double seconds) noexcept;
+
+    double getSeekIntervalPercent() const noexcept;
+    void setSeekIntervalPercent(double percent) noexcept;
+
     int getPreviewInfoDialogCount() const noexcept;
     void setPreviewInfoDialogCount(int count) noexcept;
 
@@ -99,6 +108,27 @@ signals:
      * \sa changed()
      */
     void exportPathChanged(const QString &exportPath);
+
+    /*!
+     * Emitted when the absolute/relative seek setting has changed.
+     *
+     * \sa changed()
+     */
+    void absoluteSeekEnabledChanged(bool enabled);
+
+    /*!
+     * Emitted when the seek interval in secondshas changed.
+     *
+     * \sa changed()
+     */
+    void seekIntervalSecondsChanged(double seconds);
+
+    /*!
+     * Emitted when the seek interval in percent has changed.
+     *
+     * \sa changed()
+     */
+    void seekIntervalPercentChanged(double percent);
 
     /*!
      * Emitted when any setting has changed.

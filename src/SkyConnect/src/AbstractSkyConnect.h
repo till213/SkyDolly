@@ -108,6 +108,7 @@ private:
 
     void frenchConnection() noexcept;
     bool hasRecordingStarted() const noexcept;
+    inline qint64 getSkipInterval() const noexcept;
 
 private slots:
     void handleRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept;
