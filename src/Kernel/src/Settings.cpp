@@ -42,12 +42,18 @@ public:
     bool windowStayOnTopEnabled;
     QString exportPath;
     QString defaultExportPath;
+    bool absoluteSeek;
+    double seekIntervalSeconds;
+    double seekIntervalPercent;
 
     int previewInfoDialogCount;
 
     static Settings *instance;
     static constexpr double DefaultRecordSampleRate = SampleRate::toValue(SampleRate::SampleRate::Auto);
     static constexpr bool DefaultWindowStayOnTopEnabled = false;
+    static constexpr bool DefaultAbsoluteSeek = true;
+    static constexpr double DefaultSeekIntervalSeconds = 1.0;
+    static constexpr double DefaultSeekIntervalPercent = 0.5;
 
     static constexpr int DefaultPreviewInfoDialogCount = 3;
     static constexpr int PreviewInfoDialogBase = 10;
@@ -132,6 +138,45 @@ void Settings::setExportPath(QString exportPath)
     }
 }
 
+bool Settings::isAbsoluteSeekEnabled() const noexcept
+{
+    return d->absoluteSeek;
+}
+
+void Settings::setAbsoluteSeekEnabled(bool enable) noexcept
+{
+    if (d->absoluteSeek != enable) {
+        d->absoluteSeek = enable;
+        emit absoluteSeekEnabledChanged(d->absoluteSeek);
+    }
+}
+
+double Settings::getSeekIntervalSeconds() const noexcept
+{
+    return d->seekIntervalSeconds;
+}
+
+void Settings::setSeekIntervalSeconds(double seconds) noexcept
+{
+    if (d->seekIntervalSeconds != seconds) {
+        d->seekIntervalSeconds = seconds;
+        emit seekIntervalSecondsChanged(d->seekIntervalSeconds);
+    }
+}
+
+double Settings::getSeekIntervalPercent() const noexcept
+{
+    return d->seekIntervalPercent;
+}
+
+void Settings::setSeekIntervalPercent(double percent) noexcept
+{
+    if (d->seekIntervalPercent!= percent) {
+        d->seekIntervalPercent = percent;
+        emit seekIntervalPercentChanged(d->seekIntervalPercent);
+    }
+}
+
 int Settings::getPreviewInfoDialogCount() const noexcept
 {
     return d->previewInfoDialogCount - SettingsPrivate::PreviewInfoDialogBase;
@@ -150,9 +195,16 @@ void Settings::setPreviewInfoDialogCount(int count) noexcept
 void Settings::store() noexcept
 {
     d->settings.setValue("Version", d->version.toString());
-    d->settings.beginGroup("Sampling");
+    d->settings.beginGroup("Recording");
     {
         d->settings.setValue("RecordSampleRate", d->recordSampleRateValue);
+    }
+    d->settings.endGroup();
+    d->settings.beginGroup("Replay");
+    {
+        d->settings.setValue("AbsoluteSeek", d->absoluteSeek);
+        d->settings.setValue("SeekIntervalSeconds", d->seekIntervalSeconds);
+        d->settings.setValue("SeekIntervalPercent", d->seekIntervalPercent);
     }
     d->settings.endGroup();
     d->settings.beginGroup("Window");
@@ -186,12 +238,27 @@ void Settings::restore() noexcept
     }
 
     bool ok;
-    d->settings.beginGroup("Sampling");
+    d->settings.beginGroup("Recording");
     {
         d->recordSampleRateValue = d->settings.value("RecordSampleRate", SettingsPrivate::DefaultRecordSampleRate).toDouble(&ok);
         if (!ok) {
             qWarning("The record sample rate in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultRecordSampleRate);
             d->recordSampleRateValue = SettingsPrivate::DefaultRecordSampleRate;
+        }
+    }
+    d->settings.endGroup();
+    d->settings.beginGroup("Replay");
+    {
+        d->absoluteSeek = d->settings.value("AbsoluteSeek", SettingsPrivate::DefaultAbsoluteSeek).toBool();
+        d->seekIntervalSeconds = d->settings.value("SeekIntervalSeconds", SettingsPrivate::DefaultSeekIntervalSeconds).toDouble(&ok);
+        if (!ok) {
+            qWarning("The seek interval [seconds] in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultSeekIntervalSeconds);
+            d->seekIntervalSeconds = SettingsPrivate::DefaultSeekIntervalSeconds;
+        }
+        d->seekIntervalPercent = d->settings.value("SeekIntervalPercent", SettingsPrivate::DefaultSeekIntervalPercent).toDouble(&ok);
+        if (!ok) {
+            qWarning("The seek interval [percent] in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultSeekIntervalPercent);
+            d->seekIntervalPercent = SettingsPrivate::DefaultSeekIntervalPercent;
         }
     }
     d->settings.endGroup();
@@ -246,5 +313,11 @@ void Settings::frenchConnection() noexcept
     connect(this, &Settings::replaySampleRateChanged,
             this, &Settings::changed);
     connect(this, &Settings::exportPathChanged,
+            this, &Settings::changed);
+    connect(this, &Settings::absoluteSeekEnabledChanged,
+            this, &Settings::changed);
+    connect(this, &Settings::seekIntervalSecondsChanged,
+            this, &Settings::changed);
+    connect(this, &Settings::seekIntervalPercentChanged,
             this, &Settings::changed);
 }

@@ -88,11 +88,11 @@ FlightCondition &Scenario::getFlightCondition() const noexcept
     return d->flightCondition;
 }
 
-qint64 Scenario::getTotalDuration() const noexcept
+qint64 Scenario::getTotalDurationMSec() const noexcept
 {
     // For now the total duration is the duration of the
     // (one and only) user aircraft
-    return d->aircrafts.at(0)->getDuration();
+    return d->aircrafts.at(0)->getDurationMSec();
 }
 
 // PRIVATE

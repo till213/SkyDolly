@@ -320,7 +320,7 @@ bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
     const Aircraft &userAircraft = getCurrentScenario().getUserAircraftConst();
 
     const qint64 currentTimestamp = getCurrentTimestamp();
-    if (currentTimestamp <= getCurrentScenario().getTotalDuration()) {
+    if (currentTimestamp <= getCurrentScenario().getTotalDurationMSec()) {
 
         success = true;
         const AircraftData &currentAircraftData = userAircraft.interpolate(currentTimestamp, access);
