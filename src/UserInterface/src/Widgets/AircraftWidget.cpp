@@ -102,14 +102,6 @@ void AircraftWidget::initUi()
     ui->rotationVelocityXLineEdit->setToolTip(SimVar::RotationVelocityBodyX);
     ui->rotationVelocityYLineEdit->setToolTip(SimVar::RotationVelocityBodyY);
     ui->rotationVelocityZLineEdit->setToolTip(SimVar::RotationVelocityBodyZ);
-
-    // Acceleration
-    ui->accelerationXLineEdit->setToolTip(SimVar::AccelerationBodyX);
-    ui->accelerationYLineEdit->setToolTip(SimVar::AccelerationBodyY);
-    ui->accelerationZLineEdit->setToolTip(SimVar::AccelerationBodyZ);
-    ui->rotationAccelerationXLineEdit->setToolTip(SimVar::RotationAccelerationBodyX);
-    ui->rotationAccelerationYLineEdit->setToolTip(SimVar::RotationAccelerationBodyY);
-    ui->rotationAccelerationZLineEdit->setToolTip(SimVar::RotationAccelerationBodyZ);
 }
 
 void AircraftWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
@@ -134,14 +126,6 @@ void AircraftWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
         ui->rotationVelocityYLineEdit->setText(Unit::formatVelocityInRadians(aircraftData.rotationVelocityBodyY));
         ui->rotationVelocityZLineEdit->setText(Unit::formatVelocityInRadians(aircraftData.rotationVelocityBodyZ));
 
-        // Acceleration
-        ui->accelerationXLineEdit->setText(Unit::formatAccelerationInFeet(aircraftData.accelerationBodyX));
-        ui->accelerationYLineEdit->setText(Unit::formatAccelerationInFeet(aircraftData.accelerationBodyY));
-        ui->accelerationZLineEdit->setText(Unit::formatAccelerationInFeet(aircraftData.accelerationBodyZ));
-        ui->rotationAccelerationXLineEdit->setText(Unit::formatAccelerationInRadians(aircraftData.rotationAccelerationBodyX));
-        ui->rotationAccelerationYLineEdit->setText(Unit::formatAccelerationInRadians(aircraftData.rotationAccelerationBodyY));
-        ui->rotationAccelerationZLineEdit->setText(Unit::formatAccelerationInRadians(aircraftData.rotationAccelerationBodyZ));
-
         colorName = d->ActiveTextColor.name();
     } else {
         colorName = d->DisabledTextColor.name();
@@ -161,12 +145,6 @@ void AircraftWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
     ui->rotationVelocityXLineEdit->setStyleSheet(css);
     ui->rotationVelocityYLineEdit->setStyleSheet(css);
     ui->rotationVelocityZLineEdit->setStyleSheet(css);
-    ui->accelerationXLineEdit->setStyleSheet(css);
-    ui->accelerationYLineEdit->setStyleSheet(css);
-    ui->accelerationZLineEdit->setStyleSheet(css);
-    ui->rotationAccelerationXLineEdit->setStyleSheet(css);
-    ui->rotationAccelerationYLineEdit->setStyleSheet(css);
-    ui->rotationAccelerationZLineEdit->setStyleSheet(css);
 }
 
 const AircraftData &AircraftWidget::getCurrentAircraftData(qint64 timestamp, TimeVariableData::Access access) const
