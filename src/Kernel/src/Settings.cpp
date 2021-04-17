@@ -53,7 +53,6 @@ public:
     static Settings *instance;
     static constexpr double DefaultRecordSampleRate = SampleRate::toValue(SampleRate::SampleRate::Auto);
     static constexpr bool DefaultWindowStayOnTopEnabled = false;
-
     static constexpr bool DefaultAbsoluteSeek = true;
     static constexpr double DefaultSeekIntervalSeconds = 1.0;
     static constexpr double DefaultSeekIntervalPercent = 0.5;
@@ -198,7 +197,7 @@ void Settings::setSeekIntervalPercent(double percent) noexcept
 
 int Settings::getPreviewInfoDialogCount() const noexcept
 {
-    return d->previewInfoDialogCount - SettingsPrivate::PreviewInfoDialogBase;
+    return d->seekIntervalSeconds;
 }
 
 void Settings::setPreviewInfoDialogCount(int count) noexcept
@@ -217,6 +216,13 @@ void Settings::store() noexcept
     d->settings.beginGroup("Recording");
     {
         d->settings.setValue("RecordSampleRate", d->recordSampleRateValue);
+    }
+    d->settings.endGroup();
+    d->settings.beginGroup("Replay");
+    {
+        d->settings.setValue("AbsoluteSeek", d->absoluteSeek);
+        d->settings.setValue("SeekIntervalSeconds", d->seekIntervalSeconds);
+        d->settings.setValue("SeekIntervalPercent", d->seekIntervalPercent);
     }
     d->settings.endGroup();
     d->settings.beginGroup("Library");
@@ -347,7 +353,5 @@ void Settings::frenchConnection() noexcept
     connect(this, &Settings::seekIntervalSecondsChanged,
             this, &Settings::changed);
     connect(this, &Settings::seekIntervalPercentChanged,
-            this, &Settings::changed);
-    connect(this, &Settings::exportPathChanged,
             this, &Settings::changed);
 }
