@@ -56,10 +56,10 @@ public:
     static constexpr bool DefaultAbsoluteSeek = true;
     static constexpr double DefaultSeekIntervalSeconds = 1.0;
     static constexpr double DefaultSeekIntervalPercent = 0.5;
-
     static constexpr int DefaultPreviewInfoDialogCount = 3;
     static const QString DefaultDbPath;
-    static constexpr int PreviewInfoDialogBase = 10;
+
+    static constexpr int PreviewInfoDialogBase = 20;
 
     SettingsPrivate() noexcept
         : version(QCoreApplication::instance()->applicationVersion())
