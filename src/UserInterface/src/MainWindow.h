@@ -69,7 +69,7 @@ private slots:
     void on_positionSlider_valueChanged(int value) noexcept;
     void on_positionSlider_sliderReleased() noexcept;
     void on_timestampTimeEdit_timeChanged(const QTime &time) noexcept;
-    void on_customPlaybackSpeedLineEdit_editingFinished() noexcept;
+    void on_customReplaySpeedLineEdit_editingFinished() noexcept;
 
     void updateUi() noexcept;
     void updateControlUi() noexcept;
@@ -93,9 +93,9 @@ private slots:
     void on_aboutQtAction_triggered() noexcept;
 
     void handleTimestampChanged(qint64 timestamp) noexcept;
-    void handlePlaybackSpeedSelected(int selection) noexcept;
+    void handleReplaySpeedSelected(int selection) noexcept;
 
-    // Playback
+    // Replay
     void toggleRecord(bool checked) noexcept;
     void togglePause(bool checked) noexcept;
     void togglePlay(bool checked) noexcept;
