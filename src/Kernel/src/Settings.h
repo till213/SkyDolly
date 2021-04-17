@@ -55,6 +55,9 @@ public:
     bool isWindowStaysOnTopEnabled() const noexcept;
     void setWindowStaysOnTopEnabled(bool enable) noexcept;
 
+    QString getExportPath() const noexcept;
+    void setExportPath(QString exportPath);
+
     int getPreviewInfoDialogCount() const noexcept;
     void setPreviewInfoDialogCount(int count) noexcept;
 
@@ -89,6 +92,13 @@ signals:
      * \sa changed()
      */
     void playbackSampleRateChanged(SampleRate::SampleRate sampleRate);
+
+    /*!
+     * Emitted when the export path has changed.
+     *
+     * \sa changed()
+     */
+    void exportPathChanged(const QString &exportPath);
 
     /*!
      * Emitted when any setting has changed.

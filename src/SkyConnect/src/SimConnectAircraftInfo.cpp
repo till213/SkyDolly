@@ -33,6 +33,7 @@
 
 void SimConnectAircraftInfo::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
+    // TODO Maybe support GPS WP PREV/NEXT ID
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::Title, nullptr, ::SIMCONNECT_DATATYPE_STRING256);
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::ATCId, NULL, SIMCONNECT_DATATYPE_STRING32);
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::ATCAirline, NULL, SIMCONNECT_DATATYPE_STRING64);
