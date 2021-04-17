@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>624</width>
+    <width>824</width>
     <height>220</height>
    </rect>
   </property>
@@ -43,7 +43,7 @@
        <widget class="QLineEdit" name="velocityXLineEdit">
         <property name="minimumSize">
          <size>
-          <width>200</width>
+          <width>300</width>
           <height>0</height>
          </size>
         </property>
@@ -63,7 +63,7 @@
        <widget class="QLineEdit" name="velocityYLineEdit">
         <property name="minimumSize">
          <size>
-          <width>200</width>
+          <width>300</width>
           <height>0</height>
          </size>
         </property>
@@ -83,7 +83,7 @@
        <widget class="QLineEdit" name="velocityZLineEdit">
         <property name="minimumSize">
          <size>
-          <width>200</width>
+          <width>300</width>
           <height>0</height>
          </size>
         </property>
@@ -103,7 +103,7 @@
        <widget class="QLineEdit" name="rotationVelocityXLineEdit">
         <property name="minimumSize">
          <size>
-          <width>200</width>
+          <width>300</width>
           <height>0</height>
          </size>
         </property>
@@ -123,7 +123,7 @@
        <widget class="QLineEdit" name="rotationVelocityYLineEdit">
         <property name="minimumSize">
          <size>
-          <width>200</width>
+          <width>300</width>
           <height>0</height>
          </size>
         </property>
@@ -143,7 +143,7 @@
        <widget class="QLineEdit" name="rotationVelocityZLineEdit">
         <property name="minimumSize">
          <size>
-          <width>200</width>
+          <width>300</width>
           <height>0</height>
          </size>
         </property>
@@ -181,7 +181,7 @@
        <widget class="QLineEdit" name="latitudeLineEdit">
         <property name="minimumSize">
          <size>
-          <width>200</width>
+          <width>300</width>
           <height>0</height>
          </size>
         </property>
@@ -201,7 +201,7 @@
        <widget class="QLineEdit" name="longitudeLineEdit">
         <property name="minimumSize">
          <size>
-          <width>200</width>
+          <width>300</width>
           <height>0</height>
          </size>
         </property>
@@ -221,7 +221,7 @@
        <widget class="QLineEdit" name="altitudeLineEdit">
         <property name="minimumSize">
          <size>
-          <width>200</width>
+          <width>300</width>
           <height>0</height>
          </size>
         </property>
@@ -241,7 +241,7 @@
        <widget class="QLineEdit" name="pitchLineEdit">
         <property name="minimumSize">
          <size>
-          <width>200</width>
+          <width>300</width>
           <height>0</height>
          </size>
         </property>
@@ -261,7 +261,7 @@
        <widget class="QLineEdit" name="bankLineEdit">
         <property name="minimumSize">
          <size>
-          <width>200</width>
+          <width>300</width>
           <height>0</height>
          </size>
         </property>
@@ -281,7 +281,7 @@
        <widget class="QLineEdit" name="headingLineEdit">
         <property name="minimumSize">
          <size>
-          <width>200</width>
+          <width>300</width>
           <height>0</height>
          </size>
         </property>
