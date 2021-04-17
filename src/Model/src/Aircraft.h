@@ -72,7 +72,7 @@ public:
     const QVector<AircraftData> &getAll() const noexcept;
     const AircraftData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
-    qint64 getDuration() const noexcept;
+    qint64 getDurationMSec() const noexcept;
     bool hasRecording() const noexcept;
 
     void clear() noexcept;

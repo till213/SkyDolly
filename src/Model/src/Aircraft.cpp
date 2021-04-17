@@ -246,7 +246,7 @@ const AircraftData &Aircraft::interpolate(qint64 timestamp, TimeVariableData::Ac
     return d->currentAircraftData;
 }
 
-qint64 Aircraft::getDuration() const noexcept
+qint64 Aircraft::getDurationMSec() const noexcept
 {
     if (d->duration == TimeVariableData::InvalidTime) {
         d->duration = 0;

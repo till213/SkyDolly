@@ -134,7 +134,7 @@ void StatisticsDialog::updateRecordUi() noexcept
     const int totalCount = aircraftData.count() + engineData.count() + primaryFlightControlData.count() + secondaryFlightControlData.count() + aircraftHandleData.count() + lightData.count();
     ui->sampleCountLineEdit->setText(QString::number(totalCount));
 
-    ui->durationLineEdit->setText(QString::number(scenario.getTotalDuration() / 1000.0, 'f', 1));
+    ui->durationLineEdit->setText(QString::number(scenario.getTotalDurationMSec() / 1000.0, 'f', 1));
 
     // In KiB
     const double aircraftDataSize = static_cast<double>(aircraftData.count()  * sizeof(AircraftData)) / 1024.0;
