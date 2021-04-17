@@ -9,6 +9,10 @@
   * Cowl flaps
   * Electrical master battery
   * General engine starter
+- Simulation variables now shown with units (feet, hPa, ...)
+- Added a new "Scenario" dialog, showing information about the aircraft and flight conditions
+- The last CSV export/import directory is stored
+- A basic error dialog shows when an import/export error occurs
 
 ## 0.4.2
 

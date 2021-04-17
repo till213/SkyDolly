@@ -27,7 +27,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QFile>
-#include <QStandardPaths>
+#include <QFileInfo>
 #include <QString>
 #include <QTime>
 #include <QTimeEdit>
@@ -497,14 +497,8 @@ void MainWindow::on_importCSVAction_triggered() noexcept
     }
 
     if (reply == QMessageBox::StandardButton::Ok) {
-        QString documentPath;
-        QStringList standardLocations = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation);
-        if (standardLocations.count() > 0) {
-            documentPath = standardLocations.first();
-        } else {
-            documentPath = ".";
-        }
-        const QString filePath = QFileDialog::getOpenFileName(this, tr("Import CSV"), documentPath, QString("*.csv"));
+        QString exportPath = Settings::getInstance().getExportPath();
+        const QString filePath = QFileDialog::getOpenFileName(this, tr("Import CSV"), exportPath, QString("*.csv"));
         if (!filePath.isEmpty()) {
             QFile file(filePath);
             const CSVImport csvImport;
@@ -517,6 +511,10 @@ void MainWindow::on_importCSVAction_triggered() noexcept
                     d->skyConnect.startReplay(true);
                     d->skyConnect.setPaused(true);
                 }
+                exportPath = QFileInfo(filePath).absolutePath();
+                Settings::getInstance().setExportPath(exportPath);
+            } else {
+                QMessageBox::critical(this, tr("Import error"), tr("The CSV file %1 could not be read.").arg(filePath));
             }
         }
     }
@@ -524,19 +522,19 @@ void MainWindow::on_importCSVAction_triggered() noexcept
 
 void MainWindow::on_exportCSVAction_triggered() noexcept
 {
-    QString documentPath;
-    const QStringList standardLocations = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation);
-    if (standardLocations.count() > 0) {
-        documentPath = standardLocations.first();
-    } else {
-        documentPath = ".";
-    }
-    const QString filePath = QFileDialog::getSaveFileName(this, tr("Export CSV"), documentPath, QString("*.csv"));
+    QString exportPath = Settings::getInstance().getExportPath();
+    const QString filePath = QFileDialog::getSaveFileName(this, tr("Export CSV"), exportPath, QString("*.csv"));
     if (!filePath.isEmpty()) {
         QFile file(filePath);
         CSVExport csvExport;
         const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
-        csvExport.exportData(aircraft, file);
+        bool ok = csvExport.exportData(aircraft, file);
+        if (ok) {
+            exportPath = QFileInfo(filePath).absolutePath();
+            Settings::getInstance().setExportPath(exportPath);
+        } else {
+            QMessageBox::critical(this, tr("Export error"), tr("The CSV file %1 could not be written.").arg(filePath));
+        }
     }
 }
 
