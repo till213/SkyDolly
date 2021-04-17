@@ -146,17 +146,25 @@ const AircraftInfo &Aircraft::getAircraftInfo() const noexcept
 
 void Aircraft::upsert(AircraftData aircraftData) noexcept
 {
-    if (d->aircraftData.count() > 0 && d->aircraftData.last().timestamp == aircraftData.timestamp)  {
-        // Same timestamp -> replace
-        d->aircraftData[d->aircraftData.count() - 1] = aircraftData;
+    if (d->aircraftData.count() > 0) {
+
+        if (d->aircraftData.last().timestamp == aircraftData.timestamp)  {
+            // Same timestamp -> replace
+            d->aircraftData[d->aircraftData.count() - 1] = aircraftData;
 #ifdef DEBUG
         qDebug("Aircraft::upsertAircraftData: UPDATE sample, timestamp: %llu count: %d", aircraftData.timestamp, d->aircraftData.count());
 #endif
-    } else {
-        d->aircraftData.append(aircraftData);
+        } else {
+            d->aircraftData.append(aircraftData);
 #ifdef DEBUG
         qDebug("Aircraft::upsertAircraftData: INSERT sample, timestamp: %llu count: %d", aircraftData.timestamp, d->aircraftData.count());
 #endif
+        }
+    } else {
+        // The first position sample *must* have a timestamp of 0, as this
+        // is the timestamp where we setup the initial aircraft position
+        aircraftData.timestamp = 0;
+        d->aircraftData.append(aircraftData);
     }
     d->duration = TimeVariableData::InvalidTime;
     emit dataChanged();
