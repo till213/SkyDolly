@@ -60,12 +60,12 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="110"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="111"/>
         <source>Down</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="110"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="111"/>
         <source>Up</source>
         <translation type="unfinished"></translation>
     </message>
@@ -114,12 +114,17 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Widgets/AircraftTypeWidget.ui" line="179"/>
-        <source>Initial Speed [Knots]</source>
+        <source>Initial Speed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Widgets/AircraftTypeWidget.ui" line="199"/>
-        <source>Wing Span [Feet]</source>
+        <source>Wing Span</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftTypeWidget.ui" line="268"/>
+        <source>Altitude Above Ground</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -132,11 +137,6 @@ MIT License</source>
         <source>Number of Engines</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftTypeWidget.ui" line="268"/>
-        <source>Altitude Above Ground [Feet]</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>AircraftWidget</name>
@@ -146,108 +146,73 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="32"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="167"/>
         <source>Position &amp;&amp; Attitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="41"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="176"/>
         <source>Latitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="61"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="196"/>
         <source>Longitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="81"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="216"/>
         <source>Altitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="101"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="236"/>
         <source>Pitch</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="121"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="256"/>
         <source>Bank</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="141"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="276"/>
         <source>Heading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="170"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="32"/>
         <source>Velocity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="176"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="38"/>
         <source>Velocity X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="196"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="58"/>
         <source>Velocity Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="216"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="78"/>
         <source>Velocity Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="236"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="98"/>
         <source>Rotation Velocity X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="256"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="118"/>
         <source>Rotation Velocity Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="276"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="138"/>
         <source>Rotation Velocity Z</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="305"/>
-        <source>Acceleration</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="311"/>
-        <source>Acceleration X</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="331"/>
-        <source>Acceleration Y</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="351"/>
-        <source>Acceleration Z</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="371"/>
-        <source>Rotation Acceleration X</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="391"/>
-        <source>Rotation Acceleration Y</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftWidget.ui" line="411"/>
-        <source>Rotation Acceleration Z</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -259,68 +224,71 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="29"/>
-        <source>Engine</source>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="24"/>
+        <source>Engine 1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="37"/>
-        <source>Throttle 1</source>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="35"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="147"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="259"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="371"/>
+        <source>Throttle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="57"/>
-        <source>Throttle 2</source>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="55"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="167"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="279"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="391"/>
+        <source>Propeller</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="77"/>
-        <source>Throttle 3</source>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="75"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="187"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="299"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="411"/>
+        <source>Master Battery</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="97"/>
-        <source>Throttle 4</source>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="86"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="198"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="310"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="422"/>
+        <source>Mixture</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="121"/>
-        <source>Propeller 1</source>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="106"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="218"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="330"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="442"/>
+        <source>Cowl Flaps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="141"/>
-        <source>Propeller 2</source>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="126"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="238"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="350"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="462"/>
+        <source>General Engine Starter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="161"/>
-        <source>Propeller 3</source>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="136"/>
+        <source>Engine 2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="181"/>
-        <source>Propeller 4</source>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="248"/>
+        <source>Engine 3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="205"/>
-        <source>Mixture 1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="225"/>
-        <source>Mixture 2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="245"/>
-        <source>Mixture 3</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="265"/>
-        <source>Mixture 4</source>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="360"/>
+        <source>Engine 4</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -338,7 +306,47 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="28"/>
-        <source>Ground Altitude [Feet]</source>
+        <source>Ground Altitude</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="71"/>
+        <source>Temperature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="91"/>
+        <source>Total Air Temperature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="111"/>
+        <source>Wind Velocity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="131"/>
+        <source>Wind Direction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="175"/>
+        <source>Visibility</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="195"/>
+        <source>Sea Level Pressure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="215"/>
+        <source>Pitot Icing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="235"/>
+        <source>Structural Icing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -347,48 +355,8 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="71"/>
-        <source>Temperature [° Celcius]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="91"/>
-        <source>Total Air Temperature [° Celcius]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="111"/>
-        <source>Wind Velocity [Knots]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="131"/>
-        <source>Wind Direction [°]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="155"/>
         <source>Precipitation State</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="175"/>
-        <source>Visibility [Metres]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="195"/>
-        <source>Sea Level Pressure [hPa]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="215"/>
-        <source>Pitot Icing [%]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/FlightConditionWidget.ui" line="235"/>
-        <source>Structural Icing [%]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -473,18 +441,8 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="21"/>
-        <source>Record &amp;&amp; Playback</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/UserInterface/src/MainWindow.ui" line="65"/>
         <source>Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="116"/>
-        <source>Playback Speed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -553,8 +511,18 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="21"/>
+        <source>Record &amp;&amp; Replay</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="116"/>
+        <source>Replay Speed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../src/UserInterface/src/MainWindow.ui" line="243"/>
-        <source>&amp;Playback</source>
+        <source>&amp;Replay</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -664,13 +632,13 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.ui" line="398"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="534"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="526"/>
         <source>Export CSV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.ui" line="403"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="507"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="501"/>
         <source>Import CSV</source>
         <translation type="unfinished"></translation>
     </message>
@@ -717,6 +685,26 @@ MIT License</source>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="476"/>
         <source>Record [auto sample rate]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="517"/>
+        <source>Import error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="517"/>
+        <source>The CSV file %1 could not be read.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="536"/>
+        <source>Export error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="536"/>
+        <source>The CSV file %1 could not be written.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1137,38 +1125,81 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/StatisticsDialog.ui" line="20"/>
+        <location filename="../src/UserInterface/src/Dialogs/StatisticsDialog.ui" line="23"/>
         <source>Recording</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/StatisticsDialog.ui" line="26"/>
+        <location filename="../src/UserInterface/src/Dialogs/StatisticsDialog.ui" line="29"/>
         <source>Sample Rate [Hz]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/StatisticsDialog.ui" line="46"/>
+        <location filename="../src/UserInterface/src/Dialogs/StatisticsDialog.ui" line="49"/>
         <source>Actual Sample Rate [Hz]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/StatisticsDialog.ui" line="66"/>
+        <location filename="../src/UserInterface/src/Dialogs/StatisticsDialog.ui" line="69"/>
         <source>Sample Count</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/StatisticsDialog.ui" line="86"/>
+        <location filename="../src/UserInterface/src/Dialogs/StatisticsDialog.ui" line="89"/>
         <source>Duration [sec]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/StatisticsDialog.ui" line="109"/>
+        <location filename="../src/UserInterface/src/Dialogs/StatisticsDialog.ui" line="112"/>
         <source>Sample Size [KiB]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/StatisticsDialog.cpp" line="119"/>
         <source>Auto</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Unit</name>
+    <message>
+        <location filename="../src/UserInterface/src/Unit.cpp" line="51"/>
+        <source>N</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Unit.cpp" line="51"/>
+        <source>S</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Unit.cpp" line="63"/>
+        <source>E</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Unit.cpp" line="63"/>
+        <source>W</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Unit.cpp" line="86"/>
+        <source>Fog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Unit.cpp" line="88"/>
+        <source>Mist</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Unit.cpp" line="90"/>
+        <source>Haze</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Unit.cpp" line="92"/>
+        <source>Clear</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

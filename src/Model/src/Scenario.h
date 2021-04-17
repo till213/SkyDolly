@@ -55,7 +55,7 @@ public:
     const FlightCondition &getFlightConditionConst() const noexcept;
     FlightCondition &getFlightCondition() const noexcept;
 
-    qint64 getTotalDuration() const noexcept;
+    qint64 getTotalDurationMSec() const noexcept;
 
 signals:
     void aircraftInfoChanged();

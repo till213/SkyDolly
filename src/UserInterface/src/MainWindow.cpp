@@ -324,7 +324,7 @@ void MainWindow::on_positionSlider_sliderPressed() noexcept
 void MainWindow::on_positionSlider_valueChanged(int value) noexcept
 {
     const double scale = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
-    const qint64 totalDuration = World::getInstance().getCurrentScenario().getTotalDuration();
+    const qint64 totalDuration = World::getInstance().getCurrentScenario().getTotalDurationMSec();
     const qint64 timestamp = static_cast<qint64>(qRound(scale * static_cast<double>(totalDuration)));
 
     // Prevent the timestampTimeEdit field to set the play position as well
@@ -456,7 +456,7 @@ void MainWindow::updateControlUi() noexcept
 
 void MainWindow::updateTimestamp() noexcept
 {
-    const qint64 totalDuration = World::getInstance().getCurrentScenario().getTotalDuration();
+    const qint64 totalDuration = World::getInstance().getCurrentScenario().getTotalDurationMSec();
     ui->timestampTimeEdit->blockSignals(true);
     QTime time(0, 0, 0, 0);
     time = time.addMSecs(totalDuration);
@@ -503,10 +503,20 @@ void MainWindow::updateMainWindow() noexcept
         }
     }
 
-    if (Settings::getInstance().getRecordSampleRate() != SampleRate::SampleRate::Auto) {
+    if (settings.getRecordSampleRate() != SampleRate::SampleRate::Auto) {
         ui->recordAction->setToolTip(tr("Record [@%1 Hz]").arg(Settings::getInstance().getRecordSampleRateValue()));
     } else {
         ui->recordAction->setToolTip(tr("Record [auto sample rate]"));
+    }
+
+    if (settings.isAbsoluteSeekEnabled()) {
+        double seekIntervalSeconds = settings.getSeekIntervalSeconds();
+        ui->forwardAction->setToolTip(tr("Fast forward [%1 sec]").arg(seekIntervalSeconds));
+        ui->backwardAction->setToolTip(tr("Rewind [%1 sec]").arg(seekIntervalSeconds));
+    } else {
+        double seekIntervalPercent = settings.getSeekIntervalPercent();
+        ui->forwardAction->setToolTip(tr("Fast forward [%1 %]").arg(seekIntervalPercent));
+        ui->backwardAction->setToolTip(tr("Rewind [%1 %]").arg(seekIntervalPercent));
     }
 }
 
@@ -628,7 +638,7 @@ void MainWindow::handleTimestampChanged(qint64 timestamp) noexcept
     if (d->skyConnect.isRecording()) {
         updateTimestamp();
     } else {
-        const qint64 totalDuration = World::getInstance().getCurrentScenario().getTotalDuration();
+        const qint64 totalDuration = World::getInstance().getCurrentScenario().getTotalDurationMSec();
         const qint64 ts = qMin(timestamp, totalDuration);
 
         int sliderPosition;

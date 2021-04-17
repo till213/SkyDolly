@@ -24,11 +24,24 @@
  */
 #include <memory>
 
+#include <QDoubleValidator>
+#include <QDialog>
+#include <QWidget>
+
 #include "../../../Kernel/src/SampleRate.h"
 #include "../../../Kernel/src/Enum.h"
 #include "../../../Kernel/src/Settings.h"
 #include "SettingsDialog.h"
 #include "ui_SettingsDialog.h"
+
+namespace
+{
+    constexpr double MinSeekSeconds = 0.001;
+    constexpr double MaxSeekSeconds = 999.0;
+
+    constexpr double MinSeekPercent = 0.001;
+    constexpr double MaxSeekPercent = 100.0;
+}
 
 SettingsDialog::SettingsDialog(QWidget *parent) noexcept :
     QDialog(parent),
@@ -82,6 +95,16 @@ void SettingsDialog::initUi() noexcept
     ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz45), tr("45 Hz"));
     ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz50), tr("50 Hz"));
     ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz60), tr("60 Hz"));
+
+    QDoubleValidator *secondsValidator = new QDoubleValidator(ui->seekInSecondsLineEdit);
+    ui->seekInSecondsLineEdit->setValidator(secondsValidator);
+    secondsValidator->setBottom(MinSeekSeconds);
+    secondsValidator->setTop(MaxSeekSeconds);
+
+    QDoubleValidator *percentValidator = new QDoubleValidator(ui->seekInPercentLineEdit);
+    ui->seekInPercentLineEdit->setValidator(percentValidator);
+    percentValidator->setBottom(MinSeekPercent);
+    percentValidator->setTop(MaxSeekPercent);
 }
 
 void SettingsDialog::frenchConnection() noexcept
@@ -94,10 +117,25 @@ void SettingsDialog::frenchConnection() noexcept
 
 void SettingsDialog::updateUi() noexcept
 {
-    ui->recordFrequencyComboBox->setCurrentIndex(Enum::toUnderlyingType(Settings::getInstance().getRecordSampleRate()));
+    Settings &settings = Settings::getInstance();
+    // Recording
+    ui->recordFrequencyComboBox->setCurrentIndex(Enum::toUnderlyingType(settings.getRecordSampleRate()));
+
+    // Seek
+    ui->absoluteSeekEnabledCheckBox->setChecked(settings.isAbsoluteSeekEnabled());
+    ui->seekInSecondsLineEdit->setText(QString::number(settings.getSeekIntervalSeconds()));
+    ui->seekInPercentLineEdit->setText(QString::number(settings.getSeekIntervalPercent()));
 }
 
 void SettingsDialog::handleAccepted() noexcept
 {
-    Settings::getInstance().setRecordSampleRate(static_cast<SampleRate::SampleRate>(ui->recordFrequencyComboBox->currentIndex()));
+    Settings &settings = Settings::getInstance();
+
+    // Recording
+    settings.setRecordSampleRate(static_cast<SampleRate::SampleRate>(ui->recordFrequencyComboBox->currentIndex()));
+
+    // Seek
+    settings.setAbsoluteSeekEnabled(ui->absoluteSeekEnabledCheckBox->isChecked());
+    settings.setSeekIntervalSeconds(ui->seekInSecondsLineEdit->text().toDouble());
+    settings.setSeekIntervalPercent(ui->seekInPercentLineEdit->text().toDouble());
 }
