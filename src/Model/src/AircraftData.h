@@ -34,8 +34,6 @@
 struct MODEL_API AircraftData : public TimeVariableData
 {
     // Position
-
-    // Degrees
     double latitude;
     double longitude;
     double altitude;
@@ -50,14 +48,6 @@ struct MODEL_API AircraftData : public TimeVariableData
     double rotationVelocityBodyX;
     double rotationVelocityBodyY;
     double rotationVelocityBodyZ;
-
-    // Acceleration
-    double accelerationBodyX;
-    double accelerationBodyY;
-    double accelerationBodyZ;
-    double rotationAccelerationBodyX;
-    double rotationAccelerationBodyY;
-    double rotationAccelerationBodyZ;
 
     AircraftData(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
 

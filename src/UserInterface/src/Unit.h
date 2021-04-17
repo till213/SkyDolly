@@ -49,8 +49,6 @@ public:
 
     static QString formatVelocityInFeet(double velocity) noexcept;
     static QString formatVelocityInRadians(double velocity) noexcept;
-    static QString formatAccelerationInFeet(double acceleration) noexcept;
-    static QString formatAccelerationInRadians(double acceleration) noexcept;
 
     static QString formatPosition(qint16 position) noexcept;
     static QString formatPercent(quint8 percent) noexcept;

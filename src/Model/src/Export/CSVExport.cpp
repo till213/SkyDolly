@@ -188,13 +188,7 @@ inline QString CSVExport::getAircraftHeader() noexcept
            QString(SimVar::VelocityBodyZ) % Const::Sep %
            QString(SimVar::RotationVelocityBodyX) % Const::Sep %
            QString(SimVar::RotationVelocityBodyY) % Const::Sep %
-           QString(SimVar::RotationVelocityBodyZ) % Const::Sep %
-           QString(SimVar::AccelerationBodyX) % Const::Sep %
-           QString(SimVar::AccelerationBodyY) % Const::Sep %
-           QString(SimVar::AccelerationBodyZ) % Const::Sep %
-           QString(SimVar::RotationAccelerationBodyX) % Const::Sep %
-           QString(SimVar::RotationAccelerationBodyY) % Const::Sep %
-           QString(SimVar::RotationAccelerationBodyZ);
+           QString(SimVar::RotationVelocityBodyZ);
 }
 
 inline QString CSVExport::getAircraftData(const AircraftData &data) noexcept
@@ -212,22 +206,10 @@ inline QString CSVExport::getAircraftData(const AircraftData &data) noexcept
               QString::number(data.velocityBodyZ, CSVConst::Format, CSVConst::Precision) % Const::Sep %
               QString::number(data.rotationVelocityBodyX, CSVConst::Format, CSVConst::Precision) % Const::Sep %
               QString::number(data.rotationVelocityBodyY, CSVConst::Format, CSVConst::Precision) % Const::Sep %
-              QString::number(data.rotationVelocityBodyZ, CSVConst::Format, CSVConst::Precision) % Const::Sep %
-              QString::number(data.accelerationBodyX, CSVConst::Format, CSVConst::Precision) % Const::Sep %
-              QString::number(data.accelerationBodyY, CSVConst::Format, CSVConst::Precision) % Const::Sep %
-              QString::number(data.accelerationBodyZ, CSVConst::Format, CSVConst::Precision) % Const::Sep %
-              QString::number(data.rotationAccelerationBodyX, CSVConst::Format, CSVConst::Precision) % Const::Sep %
-              QString::number(data.rotationAccelerationBodyY, CSVConst::Format, CSVConst::Precision) % Const::Sep %
-              QString::number(data.rotationAccelerationBodyZ, CSVConst::Format, CSVConst::Precision);
+              QString::number(data.rotationVelocityBodyZ, CSVConst::Format, CSVConst::Precision);
     } else {
         const QString EmptyString;
         csv = EmptyString % Const::Sep %
-              EmptyString % Const::Sep %
-              EmptyString % Const::Sep %
-              EmptyString % Const::Sep %
-              EmptyString % Const::Sep %
-              EmptyString % Const::Sep %
-              EmptyString % Const::Sep %
               EmptyString % Const::Sep %
               EmptyString % Const::Sep %
               EmptyString % Const::Sep %

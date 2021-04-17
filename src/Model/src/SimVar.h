@@ -47,13 +47,6 @@ namespace SimVar
     MODEL_API extern const char *RotationVelocityBodyY;
     MODEL_API extern const char *RotationVelocityBodyZ;
 
-    MODEL_API extern const char *AccelerationBodyX;
-    MODEL_API extern const char *AccelerationBodyY;
-    MODEL_API extern const char *AccelerationBodyZ;
-    MODEL_API extern const char *RotationAccelerationBodyX;
-    MODEL_API extern const char *RotationAccelerationBodyY;
-    MODEL_API extern const char *RotationAccelerationBodyZ;
-
     MODEL_API extern const char *YokeXPosition;
     MODEL_API extern const char *YokeYPosition;
     MODEL_API extern const char *RudderPosition;
