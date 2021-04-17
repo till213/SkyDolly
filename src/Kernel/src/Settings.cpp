@@ -24,6 +24,7 @@
  */
 
 #include <QCoreApplication>
+#include <QStandardPaths>
 #include <QSettings>
 
 #include "SampleRate.h"
@@ -39,18 +40,28 @@ public:
     double recordSampleRateValue;
     double playbackSampleRateValue;
     bool windowStayOnTopEnabled;
+    QString exportPath;
+    QString defaultExportPath;
 
     int previewInfoDialogCount;
 
     static Settings *instance;
     static constexpr double DefaultRecordSampleRate = SampleRate::toValue(SampleRate::SampleRate::Auto);
     static constexpr bool DefaultWindowStayOnTopEnabled = false;
+
     static constexpr int DefaultPreviewInfoDialogCount = 3;
     static constexpr int PreviewInfoDialogBase = 10;
 
     SettingsPrivate() noexcept
         : version(QCoreApplication::instance()->applicationVersion())
-    {}
+    {
+        QStringList standardLocations = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation);
+        if (standardLocations.count() > 0) {
+            defaultExportPath = standardLocations.first();
+        } else {
+            defaultExportPath = ".";
+        }
+    }
 
     ~SettingsPrivate() noexcept
     {}
@@ -108,6 +119,19 @@ void Settings::setWindowStaysOnTopEnabled(bool enable) noexcept
     }
 }
 
+QString Settings::getExportPath() const noexcept
+{
+    return d->exportPath;
+}
+
+void Settings::setExportPath(QString exportPath)
+{
+    if (d->exportPath != exportPath) {
+        d->exportPath = exportPath;
+        emit exportPathChanged(d->exportPath);
+    }
+}
+
 int Settings::getPreviewInfoDialogCount() const noexcept
 {
     return d->previewInfoDialogCount - SettingsPrivate::PreviewInfoDialogBase;
@@ -134,6 +158,11 @@ void Settings::store() noexcept
     d->settings.beginGroup("Window");
     {
         d->settings.setValue("WindowStaysOnTopEnabled", d->windowStayOnTopEnabled);
+    }
+    d->settings.endGroup();
+    d->settings.beginGroup("Paths");
+    {
+        d->settings.setValue("ExportPath", d->exportPath);
     }
     d->settings.endGroup();
     d->settings.beginGroup("_Preview");
@@ -169,6 +198,11 @@ void Settings::restore() noexcept
     d->settings.beginGroup("Window");
     {
         d->windowStayOnTopEnabled = d->settings.value("WindowStaysOnTopEnabled", SettingsPrivate::DefaultWindowStayOnTopEnabled).toBool();
+    }
+    d->settings.endGroup();
+    d->settings.beginGroup("Paths");
+    {
+        d->exportPath = d->settings.value("ExportPath", d->defaultExportPath).toString();
     }
     d->settings.endGroup();
     d->settings.beginGroup("_Preview");
@@ -210,5 +244,7 @@ void Settings::frenchConnection() noexcept
     connect(this, &Settings::recordSampleRateChanged,
             this, &Settings::changed);
     connect(this, &Settings::playbackSampleRateChanged,
+            this, &Settings::changed);
+    connect(this, &Settings::exportPathChanged,
             this, &Settings::changed);
 }
