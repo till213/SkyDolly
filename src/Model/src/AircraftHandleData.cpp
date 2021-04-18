@@ -30,12 +30,13 @@
 
 AircraftHandleData::AircraftHandleData() noexcept
     : TimeVariableData(),
-      gearHandlePosition(false),
       brakeLeftPosition(0),
       brakeRightPosition(0),
       waterRudderHandlePosition(0),
       tailhookPosition(0),
-      canopyOpen(0)
+      canopyOpen(0),
+      gearHandlePosition(false),
+      foldingWingHandlePosition(false)
 {
 }
 

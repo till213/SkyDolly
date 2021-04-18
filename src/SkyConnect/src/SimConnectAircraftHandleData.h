@@ -46,6 +46,7 @@ struct SimConnectAircraftHandleData
     double tailhookPosition;
     double canopyOpen;
     qint32 gearHandlePosition;
+    qint32 foldingWingHandlePosition;
 
     inline AircraftHandleData toAircraftHandleData() const noexcept
     {
@@ -57,6 +58,7 @@ struct SimConnectAircraftHandleData
         aircraftHandleData.tailhookPosition = SkyMath::fromPercent(tailhookPosition);
         aircraftHandleData.canopyOpen = SkyMath::fromPercent(canopyOpen);
         aircraftHandleData.gearHandlePosition = gearHandlePosition != 0;
+        aircraftHandleData.foldingWingHandlePosition = foldingWingHandlePosition != 0;
 
         return aircraftHandleData;
     }
@@ -69,6 +71,7 @@ struct SimConnectAircraftHandleData
         tailhookPosition = SkyMath::toPercent(aircraftHandleData.tailhookPosition);
         canopyOpen = SkyMath::toPercent(aircraftHandleData.canopyOpen);
         gearHandlePosition = aircraftHandleData.gearHandlePosition ? 1 : 0;
+        foldingWingHandlePosition = aircraftHandleData.foldingWingHandlePosition ? 1 : 0;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
