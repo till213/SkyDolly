@@ -69,6 +69,10 @@ namespace SimVar
     MODEL_API extern const char *RecipEngineCowlFlapPosition2;
     MODEL_API extern const char *RecipEngineCowlFlapPosition3;
     MODEL_API extern const char *RecipEngineCowlFlapPosition4;
+    MODEL_API extern const char *GeneralEngineFuelPressure1;
+    MODEL_API extern const char *GeneralEngineFuelPressure2;
+    MODEL_API extern const char *GeneralEngineFuelPressure3;
+    MODEL_API extern const char *GeneralEngineFuelPressure4;
     MODEL_API extern const char *ElectricalMasterBattery1;
     MODEL_API extern const char *ElectricalMasterBattery2;
     MODEL_API extern const char *ElectricalMasterBattery3;
@@ -77,6 +81,10 @@ namespace SimVar
     MODEL_API extern const char *GeneralEngineStarter2;
     MODEL_API extern const char *GeneralEngineStarter3;
     MODEL_API extern const char *GeneralEngineStarter4;
+    MODEL_API extern const char *GeneralEngineCombustion1;
+    MODEL_API extern const char *GeneralEngineCombustion2;
+    MODEL_API extern const char *GeneralEngineCombustion3;
+    MODEL_API extern const char *GeneralEngineCombustion4;
 
     MODEL_API extern const char *LeadingEdgeFlapsLeftPercent;
     MODEL_API extern const char *LeadingEdgeFlapsRightPercent;
