@@ -55,6 +55,10 @@ struct SimConnectEngine
     float recipEngineCowlFlapPosition2;
     float recipEngineCowlFlapPosition3;
     float recipEngineCowlFlapPosition4;
+    float generalEngineFuelPressure1;
+    float generalEngineFuelPressure2;
+    float generalEngineFuelPressure3;
+    float generalEngineFuelPressure4;
     qint32 electricalMasterBattery1;
     qint32 electricalMasterBattery2;
     qint32 electricalMasterBattery3;
@@ -63,6 +67,10 @@ struct SimConnectEngine
     qint32 generalEngineStarter2;
     qint32 generalEngineStarter3;
     qint32 generalEngineStarter4;
+    qint32 generalEngineCombustion1;
+    qint32 generalEngineCombustion2;
+    qint32 generalEngineCombustion3;
+    qint32 generalEngineCombustion4;
 
     inline EngineData toEngineData() const noexcept
     {
@@ -86,6 +94,10 @@ struct SimConnectEngine
         engineData.cowlFlapPosition2 = SkyMath::fromPercent(recipEngineCowlFlapPosition2);
         engineData.cowlFlapPosition3 = SkyMath::fromPercent(recipEngineCowlFlapPosition3);
         engineData.cowlFlapPosition4 = SkyMath::fromPercent(recipEngineCowlFlapPosition4);
+        engineData.generalEngineFuelPressure1 = SkyMath::fromPercent(generalEngineFuelPressure1);
+        engineData.generalEngineFuelPressure2 = SkyMath::fromPercent(generalEngineFuelPressure2);
+        engineData.generalEngineFuelPressure3 = SkyMath::fromPercent(generalEngineFuelPressure3);
+        engineData.generalEngineFuelPressure4 = SkyMath::fromPercent(generalEngineFuelPressure4);
         engineData.electricalMasterBattery1 = (electricalMasterBattery1 != 0);
         engineData.electricalMasterBattery2 = (electricalMasterBattery2 != 0);
         engineData.electricalMasterBattery3 = (electricalMasterBattery3 != 0);
@@ -94,6 +106,10 @@ struct SimConnectEngine
         engineData.generalEngineStarter2 = (generalEngineStarter2 != 0);
         engineData.generalEngineStarter3 = (generalEngineStarter3 != 0);
         engineData.generalEngineStarter4 = (generalEngineStarter4 != 0);
+        engineData.generalEngineCombustion1 = (generalEngineCombustion1 != 0);
+        engineData.generalEngineCombustion2 = (generalEngineCombustion2 != 0);
+        engineData.generalEngineCombustion3 = (generalEngineCombustion3 != 0);
+        engineData.generalEngineCombustion4 = (generalEngineCombustion4 != 0);
 
         return engineData;
     }
@@ -116,6 +132,10 @@ struct SimConnectEngine
         recipEngineCowlFlapPosition2 = SkyMath::toPercent(engineData.cowlFlapPosition2);
         recipEngineCowlFlapPosition3 = SkyMath::toPercent(engineData.cowlFlapPosition3);
         recipEngineCowlFlapPosition4 = SkyMath::toPercent(engineData.cowlFlapPosition4);
+        generalEngineFuelPressure1 = SkyMath::toPercent(engineData.generalEngineFuelPressure1);
+        generalEngineFuelPressure2 = SkyMath::toPercent(engineData.generalEngineFuelPressure2);
+        generalEngineFuelPressure3 = SkyMath::toPercent(engineData.generalEngineFuelPressure3);
+        generalEngineFuelPressure4 = SkyMath::toPercent(engineData.generalEngineFuelPressure4);
         electricalMasterBattery1 = engineData.electricalMasterBattery1 ? 1 : 0;
         electricalMasterBattery2 = engineData.electricalMasterBattery2 ? 1 : 0;
         electricalMasterBattery3 = engineData.electricalMasterBattery3 ? 1 : 0;
@@ -124,6 +144,10 @@ struct SimConnectEngine
         generalEngineStarter2 = engineData.generalEngineStarter2 ? 1 : 0;
         generalEngineStarter3 = engineData.generalEngineStarter3 ? 1 : 0;
         generalEngineStarter4 = engineData.generalEngineStarter4 ? 1 : 0;
+        generalEngineCombustion1 = engineData.generalEngineCombustion1 ? 1 : 0;
+        generalEngineCombustion2 = engineData.generalEngineCombustion2 ? 1 : 0;
+        generalEngineCombustion3 = engineData.generalEngineCombustion3 ? 1 : 0;
+        generalEngineCombustion4 = engineData.generalEngineCombustion4 ? 1 : 0;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
