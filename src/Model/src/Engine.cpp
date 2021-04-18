@@ -130,6 +130,10 @@ const EngineData &Engine::interpolate(qint64 timestamp, TimeVariableData::Access
         }
 
         if (p1 != nullptr) {
+            d->currentEngineData.generalEngineFuelPressure1 = SkyMath::interpolateLinear(p1->generalEngineFuelPressure1, p2->generalEngineFuelPressure1, tn);
+            d->currentEngineData.generalEngineFuelPressure2 = SkyMath::interpolateLinear(p1->generalEngineFuelPressure2, p2->generalEngineFuelPressure2, tn);
+            d->currentEngineData.generalEngineFuelPressure3 = SkyMath::interpolateLinear(p1->generalEngineFuelPressure3, p2->generalEngineFuelPressure3, tn);
+            d->currentEngineData.generalEngineFuelPressure4 = SkyMath::interpolateLinear(p1->generalEngineFuelPressure4, p2->generalEngineFuelPressure4, tn);
             d->currentEngineData.throttleLeverPosition1 = SkyMath::interpolateLinear(p1->throttleLeverPosition1, p2->throttleLeverPosition1, tn);
             d->currentEngineData.throttleLeverPosition2 = SkyMath::interpolateLinear(p1->throttleLeverPosition2, p2->throttleLeverPosition2, tn);
             d->currentEngineData.throttleLeverPosition3 = SkyMath::interpolateLinear(p1->throttleLeverPosition3, p2->throttleLeverPosition3, tn);
@@ -156,6 +160,10 @@ const EngineData &Engine::interpolate(qint64 timestamp, TimeVariableData::Access
             d->currentEngineData.generalEngineStarter2 = p1->generalEngineStarter2;
             d->currentEngineData.generalEngineStarter3 = p1->generalEngineStarter3;
             d->currentEngineData.generalEngineStarter4 = p1->generalEngineStarter4;
+            d->currentEngineData.generalEngineCombustion1 = p1->generalEngineCombustion1;
+            d->currentEngineData.generalEngineCombustion2 = p1->generalEngineCombustion2;
+            d->currentEngineData.generalEngineCombustion3 = p1->generalEngineCombustion3;
+            d->currentEngineData.generalEngineCombustion4 = p1->generalEngineCombustion4;
 
             d->currentEngineData.timestamp = timestamp;
         } else {

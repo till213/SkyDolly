@@ -67,6 +67,10 @@ namespace SimVar
     inline constexpr char RecipEngineCowlFlapPosition2[] = "Recip Eng Cowl Flap Position:2";
     inline constexpr char RecipEngineCowlFlapPosition3[] = "Recip Eng Cowl Flap Position:3";
     inline constexpr char RecipEngineCowlFlapPosition4[] = "Recip Eng Cowl Flap Position:4";
+    inline constexpr char GeneralEngineFuelPressure1 [] = "General Eng Fuel Pressure:1";
+    inline constexpr char GeneralEngineFuelPressure2 [] = "General Eng Fuel Pressure:2";
+    inline constexpr char GeneralEngineFuelPressure3 [] = "General Eng Fuel Pressure:3";
+    inline constexpr char GeneralEngineFuelPressure4 [] = "General Eng Fuel Pressure:4";
     inline constexpr char ElectricalMasterBattery1[] = "Electrical Master Battery:1";
     inline constexpr char ElectricalMasterBattery2[] = "Electrical Master Battery:2";
     inline constexpr char ElectricalMasterBattery3[] = "Electrical Master Battery:3";
@@ -75,6 +79,10 @@ namespace SimVar
     inline constexpr char GeneralEngineStarter2[] = "General Eng Starter:2";
     inline constexpr char GeneralEngineStarter3[] = "General Eng Starter:3";
     inline constexpr char GeneralEngineStarter4[] = "General Eng Starter:4";
+    inline constexpr char GeneralEngineCombustion1[] = "General Eng Combustion:1";
+    inline constexpr char GeneralEngineCombustion2[] = "General Eng Combustion:2";
+    inline constexpr char GeneralEngineCombustion3[] = "General Eng Combustion:3";
+    inline constexpr char GeneralEngineCombustion4[] = "General Eng Combustion:4";
 
     inline constexpr char LeadingEdgeFlapsLeftPercent[] = "Leading Edge Flaps Left Percent";
     inline constexpr char LeadingEdgeFlapsRightPercent[] = "Leading Edge Flaps Right Percent";
