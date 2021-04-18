@@ -85,12 +85,13 @@ namespace SimVar
     MODEL_API extern const char *SpoilersHandlePosition;
     MODEL_API extern const char *FlapsHandleIndex;
 
-    MODEL_API extern const char *GearHandlePosition;
     MODEL_API extern const char *BrakeLeftPosition;
     MODEL_API extern const char *BrakeRightPosition;
     MODEL_API extern const char *WaterRudderHandlePosition;
     MODEL_API extern const char *TailhookPosition;
     MODEL_API extern const char *CanopyOpen;
+    MODEL_API extern const char *GearHandlePosition;
+    MODEL_API extern const char *FoldingWingHandlePosition;
 
     MODEL_API extern const char *LightStates;
 

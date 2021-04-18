@@ -134,7 +134,6 @@ const AircraftHandleData &AircraftHandle::interpolate(qint64 timestamp, TimeVari
         }
 
         if (p1 != nullptr) {
-            d->currentAircraftHandleData.gearHandlePosition = p1->gearHandlePosition;
             d->currentAircraftHandleData.brakeLeftPosition = SkyMath::interpolateLinear(p1->brakeLeftPosition, p2->brakeLeftPosition, tn);
             d->currentAircraftHandleData.brakeRightPosition = SkyMath::interpolateLinear(p1->brakeRightPosition, p2->brakeRightPosition, tn);
             d->currentAircraftHandleData.waterRudderHandlePosition = SkyMath::interpolateLinear(p1->waterRudderHandlePosition, p2->waterRudderHandlePosition, tn);
@@ -149,6 +148,8 @@ const AircraftHandleData &AircraftHandle::interpolate(qint64 timestamp, TimeVari
                 // Canopy closed
                 d->previousAircraftHandleData = AircraftHandleData::NullAircraftHandleData;
             }
+            d->currentAircraftHandleData.gearHandlePosition = p1->gearHandlePosition;
+            d->currentAircraftHandleData.foldingWingHandlePosition = p1->foldingWingHandlePosition;
 
             d->currentAircraftHandleData.timestamp = timestamp;
         } else if (!d->previousAircraftHandleData.isNull()) {
