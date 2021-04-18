@@ -9,6 +9,7 @@
   * Cowl flaps
   * Electrical master battery
   * General engine starter
+  * Folding wing handle
 - Simulation variables now shown with units (feet, hPa, ...)
 - Added a new "Scenario" dialog, showing information about the aircraft and flight conditions
 - The last CSV export/import directory is stored

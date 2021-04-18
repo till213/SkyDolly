@@ -379,7 +379,8 @@ inline QString CSVExport::getAircraftHandleHeader() noexcept
            QString(SimVar::BrakeRightPosition) % Const::Sep %
            QString(SimVar::WaterRudderHandlePosition) % Const::Sep %
            QString(SimVar::TailhookPosition) % Const::Sep %
-           QString(SimVar::CanopyOpen);
+           QString(SimVar::CanopyOpen) % Const::Sep %
+           QString(SimVar::FoldingWingHandlePosition);
 }
 
 inline QString CSVExport::getAircraftHandleData(const AircraftHandleData &data) noexcept
@@ -391,10 +392,12 @@ inline QString CSVExport::getAircraftHandleData(const AircraftHandleData &data) 
               QString::number(data.brakeRightPosition) % Const::Sep %
               QString::number(data.waterRudderHandlePosition) % Const::Sep %
               QString::number(data.tailhookPosition) % Const::Sep %
-              QString::number(data.canopyOpen);
+              QString::number(data.canopyOpen) % Const::Sep %
+              QString::number(data.foldingWingHandlePosition);
     } else {
         const QString EmptyString;
         csv = EmptyString % Const::Sep %
+              EmptyString % Const::Sep %
               EmptyString % Const::Sep %
               EmptyString % Const::Sep %
               EmptyString % Const::Sep %

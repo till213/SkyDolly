@@ -76,12 +76,13 @@ const char *SimVar::TrailingEdgeFlapsRightPercent = "Trailing Edge Flaps Right P
 const char *SimVar::SpoilersHandlePosition = "Spoilers Handle Position";
 const char *SimVar::FlapsHandleIndex = "Flaps Handle Index";
 
-const char *SimVar::GearHandlePosition = "Gear Handle Position";
 const char *SimVar::BrakeLeftPosition = "Brake Left Position";
 const char *SimVar::BrakeRightPosition = "Brake Right Position";
 const char *SimVar::WaterRudderHandlePosition = "Water Rudder Handle Position";
 const char *SimVar::TailhookPosition = "Tailhook Position";
 const char *SimVar::CanopyOpen = "Canopy Open";
+const char *SimVar::GearHandlePosition = "Gear Handle Position";
+const char *SimVar::FoldingWingHandlePosition = "Folding Wing Handle Position";
 
 const char *SimVar::LightStates = "Light States";
 

@@ -40,4 +40,5 @@ void SimConnectAircraftHandleData::addToDataDefinition(HANDLE simConnectHandle) 
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftHandleDefinition), SimVar::TailhookPosition, "Percent", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftHandleDefinition), SimVar::CanopyOpen, "Percent", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftHandleDefinition), SimVar::GearHandlePosition, "Bool", ::SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftHandleDefinition), SimVar::FoldingWingHandlePosition, "Bool", ::SIMCONNECT_DATATYPE_INT32);
 }

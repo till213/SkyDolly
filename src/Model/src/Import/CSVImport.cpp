@@ -616,6 +616,11 @@ inline bool CSVImport::importAircraftHandleData(const QList<QByteArray> &headers
             if (ok) {
                 data.canopyOpen = doubleValue;
             }
+        } else if (header == SimVar::FoldingWingHandlePosition) {
+            intValue = values.at(columnIndex).toInt(&ok);
+            if (ok) {
+                data.foldingWingHandlePosition = intValue == 1 ? true : false;
+            }
         // Timestamp
         } else if (header == SimVar::Timestamp) {
             ok = importTimestamp(values, columnIndex, firstRow, data.timestamp, timestampDelta);

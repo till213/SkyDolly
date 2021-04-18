@@ -32,7 +32,6 @@
 
 struct MODEL_API AircraftHandleData : public TimeVariableData
 {
-    bool gearHandlePosition;
     qint16 brakeLeftPosition;
     qint16 brakeRightPosition;
     // Implementation note: the water rudder can also have negative (-100.0) values,
@@ -40,6 +39,8 @@ struct MODEL_API AircraftHandleData : public TimeVariableData
     qint16 waterRudderHandlePosition;
     quint8 tailhookPosition;
     quint8 canopyOpen;
+    bool gearHandlePosition;
+    bool foldingWingHandlePosition;
 
     AircraftHandleData() noexcept;
     AircraftHandleData(AircraftHandleData &&) = default;
