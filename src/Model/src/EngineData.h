@@ -36,6 +36,10 @@ struct MODEL_API EngineData : public TimeVariableData
 {
     // Implementation note: the throttle and propeller levers can also yield
     // negative thrust, hence the type qint16 (position) which also supports negative values
+    double generalEngineFuelPressure1;
+    double generalEngineFuelPressure2;
+    double generalEngineFuelPressure3;
+    double generalEngineFuelPressure4;
     qint16 throttleLeverPosition1;
     qint16 throttleLeverPosition2;
     qint16 throttleLeverPosition3;
@@ -52,6 +56,7 @@ struct MODEL_API EngineData : public TimeVariableData
     quint8 cowlFlapPosition2;
     quint8 cowlFlapPosition3;
     quint8 cowlFlapPosition4;
+
     bool electricalMasterBattery1;
     bool electricalMasterBattery2;
     bool electricalMasterBattery3;
@@ -60,6 +65,10 @@ struct MODEL_API EngineData : public TimeVariableData
     bool generalEngineStarter2;
     bool generalEngineStarter3;
     bool generalEngineStarter4;
+    bool generalEngineCombustion1;
+    bool generalEngineCombustion2;
+    bool generalEngineCombustion3;
+    bool generalEngineCombustion4;
 
     EngineData(qint16 throttleLeverPosition1 = 0, qint16 propellerLeverPosition1 = 0, quint8 mixtureLeverPosition1 = 0, quint8 cowlFlapPosition1 = 0) noexcept;
     EngineData(EngineData &&) = default;
