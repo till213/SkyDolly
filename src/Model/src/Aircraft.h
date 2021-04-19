@@ -49,6 +49,9 @@ public:
     Aircraft(QObject *parent = nullptr) noexcept;
     virtual ~Aircraft() noexcept;
 
+    void setId(qint64 id) noexcept;
+    qint64 getId() const noexcept;
+
     const Engine &getEngineConst() const noexcept;
     Engine &getEngine() const noexcept;
 

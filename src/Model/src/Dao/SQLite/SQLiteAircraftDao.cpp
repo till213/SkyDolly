@@ -29,13 +29,13 @@
 #include <QVariant>
 #include <QSqlError>
 
-#include "../../FlightCondition.h"
-#include "SQLiteFlightConditionDao.h"
+#include "../../Aircraft.h"
+#include "SQLiteAircraftDao.h"
 
-class SQLiteFlightConditionDaoPrivate
+class SQLiteAircraftDaoPrivate
 {
 public:
-    SQLiteFlightConditionDaoPrivate() noexcept
+    SQLiteAircraftDaoPrivate() noexcept
         : insertQuery(nullptr),
           selectQuery(nullptr)
     {
@@ -48,7 +48,7 @@ public:
     {
         if (insertQuery == nullptr) {
             insertQuery = std::make_unique<QSqlQuery>();
-            insertQuery->prepare("insert into flight_condition (id, scenario_id, ground_alt) values(null, :scenario_id, :ground_alt);");
+            insertQuery->prepare("insert into aircraft (id, scenario_id, name) values(null, :scenario_id, :name);");
         }
         if (selectQuery == nullptr) {
             selectQuery = std::make_unique<QSqlQuery>();
@@ -59,33 +59,33 @@ public:
 
 // PUBLIC
 
-SQLiteFlightConditionDao::SQLiteFlightConditionDao() noexcept
-    : d(std::make_unique<SQLiteFlightConditionDaoPrivate>())
+SQLiteAircraftDao::SQLiteAircraftDao() noexcept
+    : d(std::make_unique<SQLiteAircraftDaoPrivate>())
 {
 }
 
-SQLiteFlightConditionDao::~SQLiteFlightConditionDao() noexcept
+SQLiteAircraftDao::~SQLiteAircraftDao() noexcept
 {}
 
-bool SQLiteFlightConditionDao::addFlightCondition(qint64 scenarioId, FlightCondition &flightCondition)  noexcept
+bool SQLiteAircraftDao::addAircraft(qint64 scenarioId, Aircraft &aircraft)  noexcept
 {
     d->initQueries();
     d->insertQuery->bindValue(":scenario_id", scenarioId, QSql::In);
-    d->insertQuery->bindValue(":ground_alt", flightCondition.groundAltitude, QSql::In);
+
     bool ok = d->insertQuery->exec();
     if (ok) {
         qint64 id = d->insertQuery->lastInsertId().toLongLong(&ok);
-        flightCondition.id = id;
+        aircraft.setId(id);
 #ifdef DEBUG
     } else {
-        qDebug("addFlightCondition: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
+        qDebug("addAircraft: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
 #endif
     }
 
     return ok;
 }
 
-FlightCondition SQLiteFlightConditionDao::getFlightCondition(qint64 id) const noexcept
+Aircraft SQLiteAircraftDao::getAircraft(qint64 id) const noexcept
 {
-    return FlightCondition();
+    return Aircraft();
 }
