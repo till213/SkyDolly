@@ -11,3 +11,11 @@ create table aircraft (
     descn text,
     foreign key(scenario_id) references scenario(id)
 );
+
+@migr(id = "3", descn = "Create table flight_condition", step_cnt = 1)
+create table flight_condition (
+    id integer primary key,
+    scenario_id integer,
+    ground_alt real,
+    foreign key(scenario_id) references scenario(id)
+);

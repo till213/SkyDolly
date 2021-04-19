@@ -22,42 +22,31 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <QSqlDatabase>
+
 #include <memory>
 #include <utility>
 
 #include "../Dao/DaoFactory.h"
 #include "../Dao/ScenarioDaoIntf.h"
-#include "TransactionCallableIntf.h"
+#include "../Dao/FlightConditionDaoIntf.h"
+#include "../Scenario.h"
+#include "../FlightCondition.h"
 #include "ScenarioService.h"
 
 class ScenarioServicePrivate
 {
 public:
     ScenarioServicePrivate() noexcept
+        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
+          scenarioDao(daoFactory->createScenarioDao()),
+          flightConditionDao(daoFactory->createFlightConditionDao())
     {
     }
-};
 
-class ScenarioStore : public TransactionCallableIntf<TransactionCallable::Void>
-{
-public:
-
-    ScenarioStore(Scenario &theScenario)
-        : scenario(theScenario),
-          daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
-          scenarioDao(daoFactory->createScenarioDao())
-    {}
-
-    virtual std::pair<TransactionCallable::Void, bool> execute() noexcept override
-    {
-        bool ok = scenarioDao->addScenario(scenario);
-        return std::pair{nullptr, ok};
-    }
-
-private:
-    Scenario &scenario;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<ScenarioDaoIntf> scenarioDao;
+    std::unique_ptr<FlightConditionDaoIntf> flightConditionDao;
 };
 
 // PUBLIC
@@ -71,9 +60,19 @@ ScenarioService::~ScenarioService() noexcept
 
 bool ScenarioService::store(Scenario &scenario) noexcept
 {
-    ScenarioStore scenarioStore(scenario);
-    std::pair<TransactionCallable::Void, bool> result = scenarioStore.execute();
-    return result.second;
+    QSqlDatabase::database().transaction();
+    bool ok = d->scenarioDao->addScenario(scenario);
+    if (ok) {
+        FlightCondition flightCondition;
+        ok = d->flightConditionDao->addFlightCondition(scenario.getId(), flightCondition);
+        scenario.setFlightCondition(flightCondition);
+    }
+    if (ok) {
+        QSqlDatabase::database().commit();
+    } else {
+        QSqlDatabase::database().rollback();
+    }
+    return ok;
 }
 
 Scenario ScenarioService::restore(qint64 id) noexcept

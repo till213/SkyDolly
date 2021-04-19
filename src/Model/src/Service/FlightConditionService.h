@@ -22,34 +22,28 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTCONDITION_H
-#define FLIGHTCONDITION_H
+#ifndef FLIGHTCONDITIONSERVICE_H
+#define FLIGHTCONDITIONSERVICE_H
+
+#include <memory>
 
 #include <QtGlobal>
 
-#include "SimType.h"
-#include "ModelLib.h"
+#include "../FlightCondition.h"
 
-struct MODEL_API FlightCondition
+class FlightConditionServicePrivate;
+
+class FlightConditionService
 {
-    qint64 id;
-    float groundAltitude;
-    SimType::SurfaceType surfaceType;
-    float ambientTemperature;
-    float totalAirTemperature;
-    float windVelocity;
-    float windDirection;
-    SimType::PrecipitationState precipitationState;
-    bool inClouds;
-    float visibility;
-    float seaLevelPressure;
-    quint8 pitotIcingPercent;
-    quint8 structuralIcingPercent;
+public:
+    FlightConditionService() noexcept;
+    ~FlightConditionService() noexcept;
 
-    FlightCondition() noexcept;
-    FlightCondition(FlightCondition &&) = default;
-    FlightCondition(const FlightCondition &) = default;
-    FlightCondition &operator= (const FlightCondition &) = default;
+    bool store(qint64 scenarioId, FlightCondition &flightCondition) noexcept;
+    FlightCondition restore(qint64 id) noexcept;
+
+private:
+    std::unique_ptr<FlightConditionServicePrivate> d;
 };
 
-#endif // FLIGHTCONDITION_H
+#endif // FLIGHTCONDITIONSERVICE_H

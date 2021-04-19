@@ -22,33 +22,52 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef TRANSACTIONMANAGER_H
-#define TRANSACTIONMANAGER_H
-
-#include <utility>
-
 #include <QSqlDatabase>
 
-#include "TransactionCallableIntf.h"
+#include <memory>
+#include <utility>
 
-class TransactionManager
+#include "../Dao/DaoFactory.h"
+#include "../Dao/FlightConditionDaoIntf.h"
+#include "../FlightCondition.h"
+#include "FlightConditionService.h"
+
+class FlightConditionServicePrivate
 {
 public:
-    TransactionManager();
-
-    template <typename T>
-    static T doInTransaction(TransactionCallableIntf<T> callable) {
-
-        QSqlDatabase::database().transaction();
-        std::pair<T, bool> result = callable.execute();
-        if (result.second) {
-            QSqlDatabase::database().commit();
-        } else {
-            QSqlDatabase::database().rollback();
-        }
-        return result.first;
-
+    FlightConditionServicePrivate() noexcept
+        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
+          flightConditionDao(daoFactory->createFlightConditionDao())
+    {
     }
+
+    std::unique_ptr<DaoFactory> daoFactory;
+    std::unique_ptr<FlightConditionDaoIntf> flightConditionDao;
 };
 
-#endif // TRANSACTIONMANAGER_H
+// PUBLIC
+
+FlightConditionService::FlightConditionService() noexcept
+    : d(std::make_unique<FlightConditionServicePrivate>())
+{}
+
+FlightConditionService::~FlightConditionService() noexcept
+{}
+
+bool FlightConditionService::store(qint64 scenarioId, FlightCondition &flightCondition) noexcept
+{
+    QSqlDatabase::database().transaction();
+    bool ok = d->flightConditionDao->addFlightCondition(scenarioId, flightCondition);
+    if (ok) {
+        QSqlDatabase::database().commit();
+    } else {
+        QSqlDatabase::database().rollback();
+    }
+    return ok;
+}
+
+FlightCondition FlightConditionService::restore(qint64 id) noexcept
+{
+    // TODO IMPLEMENT ME!!!
+    return FlightCondition();
+}

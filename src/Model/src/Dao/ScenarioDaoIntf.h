@@ -25,6 +25,8 @@
 #ifndef SCENARIODAOINTF_H
 #define SCENARIODAOINTF_H
 
+#include <QtGlobal>
+
 class Scenario;
 
 class ScenarioDaoIntf
@@ -39,7 +41,7 @@ public:
      * \return \c true on success; \c false else
      */
     virtual bool addScenario(Scenario &scenario) = 0;
-    virtual Scenario getScenario() const = 0;
+    virtual Scenario getScenario(qint64 id) const = 0;
 };
 
 #endif // SCENARIODAOINTF_H
