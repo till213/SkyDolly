@@ -68,7 +68,6 @@ public:
     Light &getLight() const noexcept;
 
     void setAircraftInfo(AircraftInfo aircraftInfo) noexcept;
-    AircraftInfo &getAircraftInfo() const noexcept;
     const AircraftInfo &getAircraftInfoConst() const noexcept;
 
     void upsert(AircraftData aircraftData) noexcept;
