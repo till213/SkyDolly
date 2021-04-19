@@ -30,13 +30,13 @@ namespace CSVConst {
     constexpr char Format = 'g';
     constexpr int Precision = 9;
 
-    enum class DataType {
-        Aircraft = 0,
-        Engine = 1,
-        PrimaryFlightControl = 2,
-        SecondaryFlightControl = 3,
-        AircraftHandle = 4,
-        Light = 5
+    enum class DataType : char {
+        Aircraft = 'a',
+        Engine = 'e',
+        PrimaryFlightControl = 'p',
+        SecondaryFlightControl = 's',
+        AircraftHandle = 'h',
+        Light = 'l'
     };
 
     extern const char *TypeColumnName;
