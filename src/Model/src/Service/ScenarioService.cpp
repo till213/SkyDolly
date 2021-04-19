@@ -29,9 +29,9 @@
 
 #include "../Dao/DaoFactory.h"
 #include "../Dao/ScenarioDaoIntf.h"
-#include "../Dao/FlightConditionDaoIntf.h"
+#include "../Dao/AircraftDaoIntf.h"
 #include "../Scenario.h"
-#include "../FlightCondition.h"
+#include "../Aircraft.h"
 #include "ScenarioService.h"
 
 class ScenarioServicePrivate
@@ -40,13 +40,13 @@ public:
     ScenarioServicePrivate() noexcept
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           scenarioDao(daoFactory->createScenarioDao()),
-          flightConditionDao(daoFactory->createFlightConditionDao())
+          aircraftDao(daoFactory->createAircraftDao())
     {
     }
 
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<ScenarioDaoIntf> scenarioDao;
-    std::unique_ptr<FlightConditionDaoIntf> flightConditionDao;
+    std::unique_ptr<AircraftDaoIntf> aircraftDao;
 };
 
 // PUBLIC
@@ -63,9 +63,9 @@ bool ScenarioService::store(Scenario &scenario) noexcept
     QSqlDatabase::database().transaction();
     bool ok = d->scenarioDao->addScenario(scenario);
     if (ok) {
-        FlightCondition flightCondition;
-        ok = d->flightConditionDao->addFlightCondition(scenario.getId(), flightCondition);
-        scenario.setFlightCondition(flightCondition);
+        Aircraft aircraft;
+        ok = d->aircraftDao->addAircraft(scenario.getId(), aircraft);
+        // TODO IMPLEMENT ME!!!
     }
     if (ok) {
         QSqlDatabase::database().commit();

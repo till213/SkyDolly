@@ -49,12 +49,14 @@ class AircraftPrivate
 {
 public:
     AircraftPrivate() noexcept
-        : currentTimestamp(TimeVariableData::InvalidTime),
+        : id(0),
+          currentTimestamp(TimeVariableData::InvalidTime),
           currentAccess(TimeVariableData::Access::Linear),
           currentIndex(SkySearch::InvalidIndex),
           duration(TimeVariableData::InvalidTime)
     {}
 
+    qint64 id;
     Engine engine;
     PrimaryFlightControl primaryFlightControl;
     SecondaryFlightControl secondaryFlightControl;
@@ -81,6 +83,16 @@ Aircraft::Aircraft(QObject *parent) noexcept
 
 Aircraft::~Aircraft() noexcept
 {
+}
+
+void Aircraft::setId(qint64 id) noexcept
+{
+    d->id = id;
+}
+
+qint64 Aircraft::getId() const noexcept
+{
+    return d->id;
 }
 
 const Engine &Aircraft::getEngineConst() const noexcept
