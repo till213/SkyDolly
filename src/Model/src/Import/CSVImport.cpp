@@ -83,8 +83,9 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft) noexcept
                     QList<QByteArray> values = data.split(Const::Sep);
 
                     // Type
-                    CSVConst::DataType dataType = static_cast<CSVConst::DataType>(values.at(0).toInt(&ok));
+                    ok = values.at(0).size() > 0;
                     if (ok) {
+                        CSVConst::DataType dataType = static_cast<CSVConst::DataType>(values.at(0).at(0));
                         values.removeFirst();
                         switch (dataType) {
                         case CSVConst::DataType::Aircraft:
