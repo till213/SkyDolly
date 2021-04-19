@@ -56,12 +56,15 @@ target_sources(Model
         src/Import/CSVImport.h
         src/Dao/WorldDaoIntf.h
         src/Dao/ScenarioDaoIntf.h
+        src/Dao/FlightConditionDaoIntf.h
         src/Dao/DaoFactory.cpp
         src/Dao/DaoFactory.h
         src/Dao/SQLite/SQLiteWorldDao.cpp
         src/Dao/SQLite/SQLiteWorldDao.h
         src/Dao/SQLite/SQLiteScenarioDao.cpp
         src/Dao/SQLite/SQLiteScenarioDao.h
+        src/Dao/SQLite/SQLiteFlightConditionDao.cpp
+        src/Dao/SQLite/SQLiteFlightConditionDao.h
         src/Dao/SQLite/SqlMigration.cpp
         src/Dao/SQLite/SqlMigration.h
         src/Dao/SQLite/SqlMigrationStep.cpp
@@ -70,11 +73,10 @@ target_sources(Model
         src/Dao/SQLite/Migration/migr-ddl.sql
         src/Dao/SQLite/Migration/migr-ex-post.sql
         src/Dao/SQLite/Migration/Migration.qrc
-        src/Service/TransactionCallableIntf.h
-        src/Service/TransactionManager.cpp
-        src/Service/TransactionManager.h
         src/Service/ScenarioService.cpp
         src/Service/ScenarioService.h
+        src/Service/FlightConditionService.cpp
+        src/Service/FlightConditionService.h
 )
 
 set(Model_LIBS

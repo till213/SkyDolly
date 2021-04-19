@@ -22,9 +22,26 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "TransactionManager.h"
+#ifndef FLIGHTCONDITIONDAOINTF_H
+#define FLIGHTCONDITIONDAOINTF_H
 
-TransactionManager::TransactionManager()
+#include <QtGlobal>
+
+class FlightCondition;
+
+class FlightConditionDaoIntf
 {
+public:
+    virtual ~FlightConditionDaoIntf() = default;
 
-}
+    /*!
+     * Persists the \c flightCondition. The \c id in \c flightCondition is updated.
+     * \param flightCondition
+     *        the FlightCondition to be persisted
+     * \return \c true on success; \c false else
+     */
+    virtual bool addFlightCondition(qint64 scenarioId, FlightCondition &flightCondition) = 0;
+    virtual FlightCondition getFlightCondition(qint64 id) const = 0;
+};
+
+#endif // FLIGHTCONDITIONDAOINTF_H
