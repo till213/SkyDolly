@@ -31,7 +31,9 @@
 
 #include "../../../../Kernel/src/Enum.h"
 #include "../../Aircraft.h"
-#include "../../AircraftInfo.h"
+#include "../../AircraftData.h"
+#include "../../Dao/PositionDaoIntf.h"
+#include "../../Dao/DaoFactory.h"
 #include "SQLiteAircraftDao.h"
 
 class SQLiteAircraftDaoPrivate
@@ -39,12 +41,16 @@ class SQLiteAircraftDaoPrivate
 public:
     SQLiteAircraftDaoPrivate() noexcept
         : insertQuery(nullptr),
-          selectQuery(nullptr)
+          selectQuery(nullptr),
+          daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
+          positionDao(daoFactory->createPositionDao())
     {
     }
 
     std::unique_ptr<QSqlQuery> insertQuery;
     std::unique_ptr<QSqlQuery> selectQuery;
+    std::unique_ptr<DaoFactory> daoFactory;
+    std::unique_ptr<PositionDaoIntf> positionDao;
 
     void initQueries()
     {
@@ -120,6 +126,14 @@ bool SQLiteAircraftDao::addAircraft(qint64 scenarioId, Aircraft &aircraft)  noex
     } else {
         qDebug("addAircraft: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
 #endif
+    }
+    if (ok) {
+        for (const AircraftData &data : aircraft.getAll()) {
+            ok = d->positionDao->addPosition(aircraft.getId(), data);
+            if (!ok) {
+                break;
+            }
+        }
     }
     return ok;
 }

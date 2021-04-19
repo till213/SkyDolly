@@ -22,29 +22,28 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SQLITEFLIGHTCONDITIONDAO_H
-#define SQLITEFLIGHTCONDITIONDAO_H
-
-#include <memory>
+#ifndef POSITIONDAOINTF_H
+#define POSITIONDAOINTF_H
 
 #include <QtGlobal>
 
-#include "../../Aircraft.h"
-#include "../AircraftDaoIntf.h"
+class AircraftData;
 
-class SQLiteAircraftDaoPrivate;
-
-class SQLiteAircraftDao : public AircraftDaoIntf
+class PositionDaoIntf
 {
 public:
-    SQLiteAircraftDao() noexcept;
-    virtual ~SQLiteAircraftDao() noexcept;
+    virtual ~PositionDaoIntf() = default;
 
-    virtual  bool addAircraft(qint64 scenarioId, Aircraft &aircraft)   noexcept override;
-    virtual Aircraft getAircraft(qint64 id) const noexcept override;
-
-private:
-    std::unique_ptr<SQLiteAircraftDaoPrivate> d;
+    /*!
+     * Persists the \c position. The \c id in \c position is updated.
+     * \param position
+     *        the position to be persisted
+     * \param aircraftId
+     *        the aircraft the \c position belongs to
+     * \return \c true on success; \c false else
+     */
+    virtual bool addPosition(qint64 aircraftId, const AircraftData &position) = 0;
+    virtual AircraftData getPosition(qint64 id) const = 0;
 };
 
-#endif // SQLITEFLIGHTCONDITIONDAO_H
+#endif // POSITIONDAOINTF_H
