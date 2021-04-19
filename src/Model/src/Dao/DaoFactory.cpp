@@ -27,6 +27,10 @@
 #include "SQLite/SQLiteWorldDao.h"
 #include "SQLite/SQLiteScenarioDao.h"
 #include "SQLite/SQLiteAircraftDao.h"
+#include "SQLite/SQLitePositionDao.h"
+#include "ScenarioDaoIntf.h"
+#include "AircraftDaoIntf.h"
+#include "PositionDaoIntf.h"
 #include "DaoFactory.h"
 
 class DaoFactoryPrivate
@@ -79,6 +83,18 @@ std::unique_ptr<AircraftDaoIntf> DaoFactory::createAircraftDao() noexcept
     switch (d->dbType) {
     case DbType::SQLite:
         return std::make_unique<SQLiteAircraftDao>();
+        break;
+    default:
+        return nullptr;
+        break;
+    }
+};
+
+std::unique_ptr<PositionDaoIntf> DaoFactory::createPositionDao() noexcept
+{
+    switch (d->dbType) {
+    case DbType::SQLite:
+        return std::make_unique<SQLitePositionDao>();
         break;
     default:
         return nullptr;

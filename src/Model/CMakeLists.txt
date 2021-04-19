@@ -57,6 +57,7 @@ target_sources(Model
         src/Dao/WorldDaoIntf.h
         src/Dao/ScenarioDaoIntf.h
         src/Dao/AircraftDaoIntf.h
+        src/Dao/PositionDaoIntf.h
         src/Dao/DaoFactory.cpp
         src/Dao/DaoFactory.h
         src/Dao/SQLite/SQLiteWorldDao.cpp
@@ -65,6 +66,8 @@ target_sources(Model
         src/Dao/SQLite/SQLiteScenarioDao.h
         src/Dao/SQLite/SQLiteAircraftDao.cpp
         src/Dao/SQLite/SQLiteAircraftDao.h
+        src/Dao/SQLite/SQLitePositionDao.cpp
+        src/Dao/SQLite/SQLitePositionDao.h
         src/Dao/SQLite/SqlMigration.cpp
         src/Dao/SQLite/SqlMigration.h
         src/Dao/SQLite/SqlMigrationStep.cpp
