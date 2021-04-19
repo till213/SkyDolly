@@ -16,6 +16,7 @@ The connection is made via SimConnect, a standard API introduced with Flight Sim
 * Basic CSV import & export
 
 Watch a comparison of the various sample rates on [YouTube](https://www.youtube.com/watch?v=bfgkY0eXL4w):
+
 [![Sky Dolly - Acrobatic Flying in FS2020 (Recording Sample Rate Comparison)](https://img.youtube.com/vi/bfgkY0eXL4w/0.jpg)](https://www.youtube.com/watch?v=bfgkY0eXL4w "Sky Dolly - Acrobatic Flying in FS2020 (Recording Sample Rate Comparison)")
 
 For new and upcoming features also refer to the [CHANGELOG](CHANGELOG.md).
