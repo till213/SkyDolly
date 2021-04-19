@@ -68,6 +68,7 @@ private:
     void frenchConnection() noexcept;
     bool sendAircraftData(TimeVariableData::Access access) noexcept;
     void recordData() noexcept;
+    void recordFlightCondition() noexcept;
     void replay() noexcept;
 
 };
