@@ -226,7 +226,7 @@ void SkyConnectDummy::recordFlightCondition() noexcept
 {
     QRandomGenerator *randomGenerator = QRandomGenerator::global();
     Scenario &scenario = World::getInstance().getCurrentScenario();
-    FlightCondition &flightCondition = scenario.getFlightCondition();
+    FlightCondition flightCondition;
 
     flightCondition.groundAltitude = randomGenerator->bounded(4000);
     flightCondition.surfaceType = static_cast<SimType::SurfaceType>(randomGenerator->bounded(26));
@@ -240,13 +240,15 @@ void SkyConnectDummy::recordFlightCondition() noexcept
     flightCondition.seaLevelPressure = 950.0 + randomGenerator->bounded(100.0);
     flightCondition.pitotIcingPercent = randomGenerator->bounded(101);
     flightCondition.structuralIcingPercent = randomGenerator->bounded(101);
+
+    scenario.setFlightCondition(flightCondition);
 }
 
 void SkyConnectDummy::recordAircraftInfo() noexcept
 {
     QRandomGenerator *randomGenerator = QRandomGenerator::global();
     Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
-    AircraftInfo &info = aircraft.getAircraftInfo();
+    AircraftInfo info;
 
     switch (randomGenerator->bounded(5)) {
     case 0:
@@ -296,6 +298,8 @@ void SkyConnectDummy::recordAircraftInfo() noexcept
     info.wingSpan = randomGenerator->bounded(200);
     info.numberOfEngines = randomGenerator->bounded(5);
     info.engineType = static_cast<SimType::EngineType>(randomGenerator->bounded(7));
+
+    aircraft.setAircraftInfo(info);
 }
 
 void SkyConnectDummy::replay() noexcept

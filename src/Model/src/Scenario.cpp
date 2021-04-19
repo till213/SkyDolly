@@ -102,11 +102,6 @@ const FlightCondition &Scenario::getFlightConditionConst() const noexcept
     return d->flightCondition;
 }
 
-FlightCondition &Scenario::getFlightCondition() const noexcept
-{
-    return d->flightCondition;
-}
-
 qint64 Scenario::getTotalDurationMSec() const noexcept
 {
     // For now the total duration is the duration of the
