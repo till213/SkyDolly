@@ -22,27 +22,52 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SQLITEFLIGHTCONDITIONDAO_H
-#define SQLITEFLIGHTCONDITIONDAO_H
+#include <QSqlDatabase>
 
 #include <memory>
+#include <utility>
 
-#include <QtGlobal>
+#include "../Dao/DaoFactory.h"
+#include "../Dao/AircraftDaoIntf.h"
+#include "../Aircraft.h"
+#include "AircraftService.h"
 
-#include "../FlightConditionDaoIntf.h"
-
-class SQLiteFlightConditionDaoPrivate;
-
-class SQLiteFlightConditionDao : public FlightConditionDaoIntf
+class AircraftServicePrivate
 {
 public:
-    SQLiteFlightConditionDao() noexcept;
-    virtual ~SQLiteFlightConditionDao() noexcept;
+    AircraftServicePrivate() noexcept
+        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
+          aircraftDao(daoFactory->createAircraftDao())
+    {
+    }
 
-    virtual  bool addFlightCondition(qint64 scenarioId, FlightCondition &flightCondition)   noexcept override;
-    virtual FlightCondition getFlightCondition(qint64 id) const noexcept override;
-
-private:
-    std::unique_ptr<SQLiteFlightConditionDaoPrivate> d;
+    std::unique_ptr<DaoFactory> daoFactory;
+    std::unique_ptr<AircraftDaoIntf> aircraftDao;
 };
-#endif // SQLITEFLIGHTCONDITIONDAO_H
+
+// PUBLIC
+
+AircraftService::AircraftService() noexcept
+    : d(std::make_unique<AircraftServicePrivate>())
+{}
+
+AircraftService::~AircraftService() noexcept
+{}
+
+bool AircraftService::store(qint64 scenarioId, Aircraft &flightCondition) noexcept
+{
+    QSqlDatabase::database().transaction();
+    bool ok = d->aircraftDao->addAircraft(scenarioId, flightCondition);
+    if (ok) {
+        QSqlDatabase::database().commit();
+    } else {
+        QSqlDatabase::database().rollback();
+    }
+    return ok;
+}
+
+Aircraft AircraftService::restore(qint64 id) noexcept
+{
+    // TODO IMPLEMENT ME!!!
+    return Aircraft();
+}

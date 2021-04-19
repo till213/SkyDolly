@@ -29,7 +29,9 @@
 #include <QVariant>
 #include <QSqlError>
 
+#include "../../../../Kernel/src/Enum.h"
 #include "../../Scenario.h"
+#include "../../FlightCondition.h"
 #include "SQLiteScenarioDao.h"
 
 class SQLiteScenarioDaoPrivate
@@ -48,7 +50,38 @@ public:
     {
         if (insertQuery == nullptr) {
             insertQuery = std::make_unique<QSqlQuery>();
-            insertQuery->prepare("insert into scenario (id, descn) values(null, :descn);");
+            insertQuery->prepare(
+"insert into scenario ("
+"  id,"
+"  descn,"
+"  ground_altitude,"
+"  surface_type,"
+"  ambient_temperature,"
+"  total_air_temperature,"
+"  wind_velocity,"
+"  wind_direction,"
+"  precipitation_state,"
+"  visibility,"
+"  sea_level_pressure,"
+"  pitot_icing,"
+"  structural_icing,"
+"  in_clouds"
+") values ("
+"  null,"
+" :descn,"
+" :ground_altitude,"
+" :surface_type,"
+" :ambient_temperature,"
+" :total_air_temperature,"
+" :wind_velocity,"
+" :wind_direction,"
+" :precipitation_state,"
+" :visibility,"
+" :sea_level_pressure,"
+" :pitot_icing,"
+" :structural_icing,"
+" :in_clouds"
+");");
         }
         if (selectQuery == nullptr) {
             selectQuery = std::make_unique<QSqlQuery>();
@@ -70,7 +103,20 @@ SQLiteScenarioDao::~SQLiteScenarioDao() noexcept
 bool SQLiteScenarioDao::addScenario(Scenario &scenario)  noexcept
 {
     d->initQueries();
+    const FlightCondition &flightCondition = scenario.getFlightConditionConst();
     d->insertQuery->bindValue(":descn", scenario.getDescription(), QSql::In);
+    d->insertQuery->bindValue(":ground_altitude", flightCondition.groundAltitude, QSql::In);
+    d->insertQuery->bindValue(":surface_type", Enum::toUnderlyingType(flightCondition.surfaceType), QSql::In);
+    d->insertQuery->bindValue(":ambient_temperature", flightCondition.ambientTemperature, QSql::In);
+    d->insertQuery->bindValue(":total_air_temperature", flightCondition.totalAirTemperature, QSql::In);
+    d->insertQuery->bindValue(":wind_velocity", flightCondition.windVelocity, QSql::In);
+    d->insertQuery->bindValue(":wind_direction", flightCondition.windDirection, QSql::In);
+    d->insertQuery->bindValue(":precipitation_state", Enum::toUnderlyingType(flightCondition.precipitationState), QSql::In);
+    d->insertQuery->bindValue(":visibility", flightCondition.visibility, QSql::In);
+    d->insertQuery->bindValue(":sea_level_pressure", flightCondition.seaLevelPressure, QSql::In);
+    d->insertQuery->bindValue(":pitot_icing", flightCondition.pitotIcingPercent, QSql::In);
+    d->insertQuery->bindValue(":structural_icing", flightCondition.structuralIcingPercent, QSql::In);
+    d->insertQuery->bindValue(":in_clouds", flightCondition.inClouds ? 1 : 0, QSql::In);
     bool ok = d->insertQuery->exec();
     if (ok) {
         qint64 id = d->insertQuery->lastInsertId().toLongLong(&ok);

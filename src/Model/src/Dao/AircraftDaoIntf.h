@@ -22,26 +22,28 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTCONDITIONDAOINTF_H
-#define FLIGHTCONDITIONDAOINTF_H
+#ifndef AIRCRAFTDAOINTF_H
+#define AIRCRAFTDAOINTF_H
 
 #include <QtGlobal>
 
-class FlightCondition;
+class Aircraft;
 
-class FlightConditionDaoIntf
+class AircraftDaoIntf
 {
 public:
-    virtual ~FlightConditionDaoIntf() = default;
+    virtual ~AircraftDaoIntf() = default;
 
     /*!
-     * Persists the \c flightCondition. The \c id in \c flightCondition is updated.
-     * \param flightCondition
-     *        the FlightCondition to be persisted
+     * Persists the \c aircraft. The \c id in \c aircraft is updated.
+     * \param aircraft
+     *        the aircraft to be persisted
+     * \param scenarioId
+     *        the scenario the \c aircraft belongs to
      * \return \c true on success; \c false else
      */
-    virtual bool addFlightCondition(qint64 scenarioId, FlightCondition &flightCondition) = 0;
-    virtual FlightCondition getFlightCondition(qint64 id) const = 0;
+    virtual bool addAircraft(qint64 scenarioId, Aircraft &aircraft) = 0;
+    virtual Aircraft getAircraft(qint64 id) const = 0;
 };
 
-#endif // FLIGHTCONDITIONDAOINTF_H
+#endif // AIRCRAFTDAOINTF_H
