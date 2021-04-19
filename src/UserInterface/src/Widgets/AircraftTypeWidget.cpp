@@ -124,7 +124,7 @@ void AircraftTypeWidget::updateInfoUi()
 {
     const Scenario &currentScenario = World::getInstance().getCurrentScenario();
     const Aircraft &aircraft = currentScenario.getUserAircraftConst();
-    const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
+    const AircraftInfo &aircraftInfo = aircraft.getAircraftInfoConst();
 
     ui->nameLineEdit->setText(aircraftInfo.name);
     ui->tailNumberLineEdit->setText(aircraftInfo.atcId);

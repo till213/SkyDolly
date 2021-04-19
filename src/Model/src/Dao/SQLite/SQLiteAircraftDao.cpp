@@ -29,7 +29,9 @@
 #include <QVariant>
 #include <QSqlError>
 
+#include "../../../../Kernel/src/Enum.h"
 #include "../../Aircraft.h"
+#include "../../AircraftInfo.h"
 #include "SQLiteAircraftDao.h"
 
 class SQLiteAircraftDaoPrivate
@@ -48,11 +50,38 @@ public:
     {
         if (insertQuery == nullptr) {
             insertQuery = std::make_unique<QSqlQuery>();
-            insertQuery->prepare("insert into aircraft (id, scenario_id, name) values(null, :scenario_id, :name);");
+            insertQuery->prepare(
+"insert into aircraft ("
+"  id,"
+"  scenario_id,"
+"  name,"
+"  tail_number,"
+"  airline,"
+"  flight_number,"
+"  category,"
+"  initial_airspeed,"
+"  wing_span,"
+"  engine_type,"
+"  nof_engines,"
+"  altitude_above_ground"
+") values ("
+"  null,"
+" :scenario_id,"
+" :name,"
+" :tail_number,"
+" :airline,"
+" :flight_number,"
+" :category,"
+" :initial_airspeed,"
+" :wing_span,"
+" :engine_type,"
+" :nof_engines,"
+" :altitude_above_ground"
+");");
         }
         if (selectQuery == nullptr) {
             selectQuery = std::make_unique<QSqlQuery>();
-            selectQuery->prepare("select fc.ground_alt from flight_condition fc where fc.id = :id;");
+            selectQuery->prepare("select a.name from aircraft a where a.id = :id;");
         }
     }
 };
@@ -70,7 +99,18 @@ SQLiteAircraftDao::~SQLiteAircraftDao() noexcept
 bool SQLiteAircraftDao::addAircraft(qint64 scenarioId, Aircraft &aircraft)  noexcept
 {
     d->initQueries();
+    const AircraftInfo &info = aircraft.getAircraftInfoConst();
     d->insertQuery->bindValue(":scenario_id", scenarioId, QSql::In);
+    d->insertQuery->bindValue(":name", info.name, QSql::In);
+    d->insertQuery->bindValue(":tail_number", info.atcId, QSql::In);
+    d->insertQuery->bindValue(":airline", info.atcAirline, QSql::In);
+    d->insertQuery->bindValue(":flight_number", info.atcFlightNumber, QSql::In);
+    d->insertQuery->bindValue(":category", info.category, QSql::In);
+    d->insertQuery->bindValue(":initial_airspeed", info.initialAirspeed, QSql::In);
+    d->insertQuery->bindValue(":wing_span", info.wingSpan, QSql::In);
+    d->insertQuery->bindValue(":engine_type", Enum::toUnderlyingType(info.engineType), QSql::In);
+    d->insertQuery->bindValue(":nof_engines", info.numberOfEngines, QSql::In);
+    d->insertQuery->bindValue(":altitude_above_ground", info.aircraftAltitudeAboveGround, QSql::In);
 
     bool ok = d->insertQuery->exec();
     if (ok) {
@@ -81,7 +121,6 @@ bool SQLiteAircraftDao::addAircraft(qint64 scenarioId, Aircraft &aircraft)  noex
         qDebug("addAircraft: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
 #endif
     }
-
     return ok;
 }
 

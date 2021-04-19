@@ -25,7 +25,7 @@ create table aircraft (
     airline text,
     flight_number text,
     category integer,
-    initial_speed real,
+    initial_airspeed real,
     wing_span real,
     engine_type integer,
     nof_engines integer,
