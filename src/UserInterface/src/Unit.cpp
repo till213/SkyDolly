@@ -85,7 +85,7 @@ QString Unit::formatVisibility(double metres) noexcept
     if (metres < Fog) {
         visibility = QT_TR_NOOP("Fog (< 3,300 ft)");
     } else if (metres < Mist) {
-        visibility = QT_TR_NOOP("Mist (< 1.2 mi");
+        visibility = QT_TR_NOOP("Mist (< 1.2 mi)");
     } else if (metres < Haze) {
         visibility = QT_TR_NOOP("Haze (< 3.1 mi)");
     } else {
