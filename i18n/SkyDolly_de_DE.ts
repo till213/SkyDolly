@@ -50,23 +50,38 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="114"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="118"/>
         <source>Tailhook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="134"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="138"/>
         <source>Canopy Open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="111"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="161"/>
+        <source>Wings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="112"/>
         <source>Down</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="111"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="112"/>
         <source>Up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="118"/>
+        <source>Folded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="118"/>
+        <source>Unfolded</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -632,13 +647,13 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.ui" line="398"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="526"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="536"/>
         <source>Export CSV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.ui" line="403"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="501"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="511"/>
         <source>Import CSV</source>
         <translation type="unfinished"></translation>
     </message>
@@ -688,22 +703,42 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="517"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="481"/>
+        <source>Fast forward [%1 sec]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="482"/>
+        <source>Rewind [%1 sec]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="485"/>
+        <source>Fast forward [%1 %]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="486"/>
+        <source>Rewind [%1 %]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="527"/>
         <source>Import error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="517"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="527"/>
         <source>The CSV file %1 could not be read.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="536"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="546"/>
         <source>Export error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="536"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="546"/>
         <source>The CSV file %1 could not be written.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -811,77 +846,101 @@ MIT License</source>
     <name>SettingsDialog</name>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="14"/>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="20"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="26"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="23"/>
+        <source>Recording</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="29"/>
         <source>Record Frequency</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="72"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="62"/>
+        <source>Seek</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="68"/>
+        <source>Absolute [Seconds]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="75"/>
+        <source>Seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="85"/>
+        <source>Percent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="85"/>
         <source>Auto</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="73"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="86"/>
         <source>1 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="74"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="87"/>
         <source>2 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="75"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="88"/>
         <source>5 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="76"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="89"/>
         <source>10 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="77"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="90"/>
         <source>15 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="78"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="91"/>
         <source>20 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="79"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="92"/>
         <source>24 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="80"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="93"/>
         <source>25 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="81"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="94"/>
         <source>30 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="82"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="95"/>
         <source>45 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="83"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="96"/>
         <source>50 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="84"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="97"/>
         <source>60 Hz</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1184,22 +1243,22 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Unit.cpp" line="86"/>
-        <source>Fog</source>
+        <source>Fog (&lt; 3,300 ft)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Unit.cpp" line="88"/>
-        <source>Mist</source>
+        <source>Mist (&lt; 1.2 mi</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Unit.cpp" line="90"/>
-        <source>Haze</source>
+        <source>Haze (&lt; 3.1 mi)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Unit.cpp" line="92"/>
-        <source>Clear</source>
+        <source>Clear (&gt;= 3.1 mi)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
