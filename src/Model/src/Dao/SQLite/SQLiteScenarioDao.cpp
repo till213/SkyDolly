@@ -32,6 +32,9 @@
 #include "../../../../Kernel/src/Enum.h"
 #include "../../Scenario.h"
 #include "../../FlightCondition.h"
+#include "../../Dao/AircraftDaoIntf.h"
+#include "../../Dao/DaoFactory.h"
+#include "SQLiteScenarioDao.h"
 #include "SQLiteScenarioDao.h"
 
 class SQLiteScenarioDaoPrivate
@@ -39,12 +42,16 @@ class SQLiteScenarioDaoPrivate
 public:
     SQLiteScenarioDaoPrivate() noexcept
         : insertQuery(nullptr),
-          selectQuery(nullptr)
+          selectQuery(nullptr),
+          daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
+          aircraftDao(daoFactory->createAircraftDao())
     {
     }
 
     std::unique_ptr<QSqlQuery> insertQuery;
     std::unique_ptr<QSqlQuery> selectQuery;
+    std::unique_ptr<DaoFactory> daoFactory;
+    std::unique_ptr<AircraftDaoIntf> aircraftDao;
 
     void initQueries()
     {
@@ -127,8 +134,7 @@ bool SQLiteScenarioDao::addScenario(Scenario &scenario)  noexcept
 #endif
     }
     if (ok) {
-        // TODO IMPLEMENT ME!!
-        //scenario.getFlightCondition()
+        ok = d->aircraftDao->addAircraft(scenario.getId(), scenario.getUserAircraft());
     }
     return ok;
 }
