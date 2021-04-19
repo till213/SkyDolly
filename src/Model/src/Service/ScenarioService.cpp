@@ -39,14 +39,12 @@ class ScenarioServicePrivate
 public:
     ScenarioServicePrivate() noexcept
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
-          scenarioDao(daoFactory->createScenarioDao()),
-          aircraftDao(daoFactory->createAircraftDao())
+          scenarioDao(daoFactory->createScenarioDao())
     {
     }
 
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<ScenarioDaoIntf> scenarioDao;
-    std::unique_ptr<AircraftDaoIntf> aircraftDao;
 };
 
 // PUBLIC
@@ -62,11 +60,6 @@ bool ScenarioService::store(Scenario &scenario) noexcept
 {
     QSqlDatabase::database().transaction();
     bool ok = d->scenarioDao->addScenario(scenario);
-    if (ok) {
-        Aircraft aircraft;
-        ok = d->aircraftDao->addAircraft(scenario.getId(), aircraft);
-        // TODO IMPLEMENT ME!!!
-    }
     if (ok) {
         QSqlDatabase::database().commit();
     } else {

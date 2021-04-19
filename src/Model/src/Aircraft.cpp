@@ -151,7 +151,12 @@ void Aircraft::setAircraftInfo(AircraftInfo aircraftInfo) noexcept
     emit infoChanged();
 }
 
-const AircraftInfo &Aircraft::getAircraftInfo() const noexcept
+AircraftInfo &Aircraft::getAircraftInfo() const noexcept
+{
+    return d->aircraftInfo;
+}
+
+const AircraftInfo &Aircraft::getAircraftInfoConst() const noexcept
 {
     return d->aircraftInfo;
 }
