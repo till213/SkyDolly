@@ -29,13 +29,13 @@
 #include <QVariant>
 #include <QSqlError>
 
-#include "../../Scenario.h"
-#include "SQLiteScenarioDao.h"
+#include "../../FlightCondition.h"
+#include "SQLiteFlightConditionDao.h"
 
-class SQLiteScenarioDaoPrivate
+class SQLiteFlightConditionDaoPrivate
 {
 public:
-    SQLiteScenarioDaoPrivate() noexcept
+    SQLiteFlightConditionDaoPrivate() noexcept
         : insertQuery(nullptr),
           selectQuery(nullptr)
     {
@@ -48,46 +48,44 @@ public:
     {
         if (insertQuery == nullptr) {
             insertQuery = std::make_unique<QSqlQuery>();
-            insertQuery->prepare("insert into scenario (id, descn) values(null, :descn);");
+            insertQuery->prepare("insert into flight_condition (id, scenario_id, ground_alt) values(null, :scenario_id, :ground_alt);");
         }
         if (selectQuery == nullptr) {
             selectQuery = std::make_unique<QSqlQuery>();
-            selectQuery->prepare("select s.descn from scenario s where s.id = :id;");
+            selectQuery->prepare("select fc.ground_alt from flight_condition fc where fc.id = :id;");
         }
     }
 };
 
 // PUBLIC
 
-SQLiteScenarioDao::SQLiteScenarioDao() noexcept
-    : d(std::make_unique<SQLiteScenarioDaoPrivate>())
+SQLiteFlightConditionDao::SQLiteFlightConditionDao() noexcept
+    : d(std::make_unique<SQLiteFlightConditionDaoPrivate>())
 {
 }
 
-SQLiteScenarioDao::~SQLiteScenarioDao() noexcept
+SQLiteFlightConditionDao::~SQLiteFlightConditionDao() noexcept
 {}
 
-bool SQLiteScenarioDao::addScenario(Scenario &scenario)  noexcept
+bool SQLiteFlightConditionDao::addFlightCondition(qint64 scenarioId, FlightCondition &flightCondition)  noexcept
 {
     d->initQueries();
-    d->insertQuery->bindValue(":descn", scenario.getDescription(), QSql::In);
+    d->insertQuery->bindValue(":scenario_id", scenarioId, QSql::In);
+    d->insertQuery->bindValue(":ground_alt", flightCondition.groundAltitude, QSql::In);
     bool ok = d->insertQuery->exec();
     if (ok) {
         qint64 id = d->insertQuery->lastInsertId().toLongLong(&ok);
-        scenario.setId(id);
+        flightCondition.id = id;
 #ifdef DEBUG
     } else {
-        qDebug("addScenario: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
+        qDebug("addFlightCondition: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
 #endif
     }
-    if (ok) {
-        // TODO IMPLEMENT ME!!
-        //scenario.getFlightCondition()
-    }
+
     return ok;
 }
 
-Scenario SQLiteScenarioDao::getScenario(qint64 id) const noexcept
+FlightCondition SQLiteFlightConditionDao::getFlightCondition(qint64 id) const noexcept
 {
-    return Scenario();
+    return FlightCondition();
 }

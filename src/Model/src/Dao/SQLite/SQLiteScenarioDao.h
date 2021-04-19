@@ -27,6 +27,8 @@
 
 #include <memory>
 
+#include <QtGlobal>
+
 #include "../ScenarioDaoIntf.h"
 
 class SQLiteScenarioDaoPrivate;
@@ -38,7 +40,7 @@ public:
     virtual ~SQLiteScenarioDao() noexcept;
 
     virtual bool addScenario(Scenario &scenario)  noexcept override;
-    virtual Scenario getScenario() const noexcept override;
+    virtual Scenario getScenario(qint64 id) const noexcept override;
 
 private:
     std::unique_ptr<SQLiteScenarioDaoPrivate> d;

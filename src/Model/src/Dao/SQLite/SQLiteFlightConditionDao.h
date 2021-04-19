@@ -22,24 +22,27 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef TRANSACTIONCALLABLEINTF_H
-#define TRANSACTIONCALLABLEINTF_H
+#ifndef SQLITEFLIGHTCONDITIONDAO_H
+#define SQLITEFLIGHTCONDITIONDAO_H
 
-#include <utility>
+#include <memory>
 
-namespace TransactionCallable
+#include <QtGlobal>
+
+#include "../FlightConditionDaoIntf.h"
+
+class SQLiteFlightConditionDaoPrivate;
+
+class SQLiteFlightConditionDao : public FlightConditionDaoIntf
 {
-    typedef void *Void;
-};
-
-template <typename T>
-class TransactionCallableIntf
-{
-
 public:
-    virtual ~TransactionCallableIntf() = default;
+    SQLiteFlightConditionDao() noexcept;
+    virtual ~SQLiteFlightConditionDao() noexcept;
 
-    virtual std::pair<T, bool> execute() noexcept = 0;
+    virtual  bool addFlightCondition(qint64 scenarioId, FlightCondition &flightCondition)   noexcept override;
+    virtual FlightCondition getFlightCondition(qint64 id) const noexcept override;
+
+private:
+    std::unique_ptr<SQLiteFlightConditionDaoPrivate> d;
 };
-
-#endif // TRANSACTIONCALLABLEINTF_H
+#endif // SQLITEFLIGHTCONDITIONDAO_H
