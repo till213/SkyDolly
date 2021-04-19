@@ -29,7 +29,7 @@
 
 #include "../ModelLib.h"
 #include "ScenarioDaoIntf.h"
-#include "FlightConditionDaoIntf.h"
+#include "AircraftDaoIntf.h"
 #include "WorldDaoIntf.h"
 
 class DaoFactoryPrivate;
@@ -48,7 +48,7 @@ public:
 
     std::unique_ptr<WorldDaoIntf> createWorldDao() noexcept;
     std::unique_ptr<ScenarioDaoIntf> createScenarioDao() noexcept;
-    std::unique_ptr<FlightConditionDaoIntf> createFlightConditionDao() noexcept;
+    std::unique_ptr<AircraftDaoIntf> createAircraftDao() noexcept;
 
 private:
     std::unique_ptr<DaoFactoryPrivate> d;
