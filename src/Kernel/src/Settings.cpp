@@ -276,6 +276,7 @@ void Settings::restore() noexcept
             d->recordSampleRateValue = SettingsPrivate::DefaultRecordSampleRate;
         }
     }
+    d->settings.endGroup();
     d->settings.beginGroup("Library");
     {
         d->dbPath = d->settings.value("DbPath", SettingsPrivate::DefaultDbPath).toString();
