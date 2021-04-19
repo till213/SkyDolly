@@ -37,6 +37,8 @@
 #include "../../Model/src/AircraftData.h"
 #include "../../Model/src/Engine.h"
 #include "../../Model/src/EngineData.h"
+#include "../../Model/src/FlightCondition.h"
+#include "../../Model/src/SimType.h"
 #include "AbstractSkyConnect.h"
 #include "SkyConnectDummy.h"
 
@@ -73,6 +75,7 @@ SkyConnectDummy::~SkyConnectDummy() noexcept
 
 void SkyConnectDummy::onStartRecording() noexcept
 {
+    this->recordFlightCondition();
 }
 
 void SkyConnectDummy::onRecordingPaused(bool paused) noexcept
@@ -216,6 +219,26 @@ void SkyConnectDummy::recordData() noexcept
         setCurrentTimestamp(0);
         resetElapsedTime(true);
     }
+}
+
+void SkyConnectDummy::recordFlightCondition() noexcept
+{
+    QRandomGenerator *randomGenerator = QRandomGenerator::global();
+    Scenario &scenario = World::getInstance().getCurrentScenario();
+    FlightCondition &flightCondition = scenario.getFlightCondition();
+
+    flightCondition.groundAltitude = randomGenerator->bounded(4000);
+    flightCondition.surfaceType = static_cast<SimType::SurfaceType>(randomGenerator->bounded(26));
+    flightCondition.ambientTemperature = randomGenerator->bounded(80.0) - 40.0;
+    flightCondition.totalAirTemperature = randomGenerator->bounded(80.0) - 40.0;
+    flightCondition.windVelocity = randomGenerator->bounded(30.0);
+    flightCondition.windDirection = randomGenerator->bounded(360);
+    flightCondition.precipitationState = static_cast<SimType::PrecipitationState>(randomGenerator->bounded(4));
+    flightCondition.inClouds = randomGenerator->bounded(2) < 0 ? true : false;
+    flightCondition.visibility = randomGenerator->bounded(10000.0);
+    flightCondition.seaLevelPressure = 950.0 + randomGenerator->bounded(100.0);
+    flightCondition.pitotIcingPercent = randomGenerator->bounded(101);
+    flightCondition.structuralIcingPercent = randomGenerator->bounded(101);
 }
 
 void SkyConnectDummy::replay() noexcept
