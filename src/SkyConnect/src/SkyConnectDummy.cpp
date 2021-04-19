@@ -75,7 +75,8 @@ SkyConnectDummy::~SkyConnectDummy() noexcept
 
 void SkyConnectDummy::onStartRecording() noexcept
 {
-    this->recordFlightCondition();
+    recordFlightCondition();
+    recordAircraftInfo();
 }
 
 void SkyConnectDummy::onRecordingPaused(bool paused) noexcept
@@ -239,6 +240,62 @@ void SkyConnectDummy::recordFlightCondition() noexcept
     flightCondition.seaLevelPressure = 950.0 + randomGenerator->bounded(100.0);
     flightCondition.pitotIcingPercent = randomGenerator->bounded(101);
     flightCondition.structuralIcingPercent = randomGenerator->bounded(101);
+}
+
+void SkyConnectDummy::recordAircraftInfo() noexcept
+{
+    QRandomGenerator *randomGenerator = QRandomGenerator::global();
+    Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+    AircraftInfo &info = aircraft.getAircraftInfo();
+
+    switch (randomGenerator->bounded(5)) {
+    case 0:
+        info.name = "Boeing 787";
+        break;
+    case 1:
+        info.name = "Cirrus SR22";
+        break;
+    case 2:
+        info.name = "Douglas DC-3";
+        break;
+    case 3:
+        info.name = "Cessna 172";
+        break;
+    case 4:
+        info.name = "Airbus A320";
+        break;
+    default:
+        info.name = "Unknown";
+    }
+
+    info.atcId = QString::number(randomGenerator->bounded(1000)).toAscii();
+    info.atcAirline = QString::number(randomGenerator->bounded(1000)).toAscii();
+    info.atcFlightNumber = QString::number(randomGenerator->bounded(100)).toAscii();
+    switch (randomGenerator->bounded(5)) {
+    case 0:
+        info.category = "Piston";
+        break;
+    case 1:
+        info.category = "Glider";
+        break;
+    case 2:
+        info.category = "Rocket";
+        break;
+    case 3:
+        info.category = "Jet";
+        break;
+    case 4:
+        info.category = "Turbo";
+        break;
+    default:
+        info.category = "Unknown";
+    }
+    info.startOnGround = randomGenerator->bounded(2) > 0 ? true : false;
+    info.aircraftAltitudeAboveGround = randomGenerator->bounded(40000);
+    info.initialAirspeed = randomGenerator->bounded(600);
+    info.wingSpan = randomGenerator->bounded(200);
+    info.numberOfEngines = randomGenerator->bounded(5);
+    info.engineType = static_cast<SimType::EngineType>(randomGenerator->bounded(7));
 }
 
 void SkyConnectDummy::replay() noexcept
