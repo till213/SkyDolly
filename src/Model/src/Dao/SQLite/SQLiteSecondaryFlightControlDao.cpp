@@ -30,13 +30,13 @@
 #include <QSqlError>
 
 #include "../../../../Kernel/src/Enum.h"
-#include "../../AircraftData.h"
-#include "SQLitePositionDao.h"
+#include "../../SecondaryFlightControlData.h"
+#include "SQLiteSecondaryFlightControlDao.h"
 
-class SQLitePositionDaoPrivate
+class SQLiteSecondaryFlightControlDaoPrivate
 {
 public:
-    SQLitePositionDaoPrivate() noexcept
+    SQLiteSecondaryFlightControlDaoPrivate() noexcept
         : insertQuery(nullptr),
           selectQuery(nullptr)
     {
@@ -50,36 +50,24 @@ public:
         if (insertQuery == nullptr) {
             insertQuery = std::make_unique<QSqlQuery>();
             insertQuery->prepare(
-"insert into position ("
+"insert into engine ("
 "  aircraft_id,"
 "  timestamp,"
-"  latitude,"
-"  longitude,"
-"  altitude,"
-"  pitch,"
-"  bank,"
-"  heading,"
-"  velocity_x,"
-"  velocity_y,"
-"  velocity_z,"
-"  rotation_velocity_x,"
-"  rotation_velocity_y,"
-"  rotation_velocity_z"
+"  leading_edge_flaps_left_percent,"
+"  leading_edge_flaps_right_percent,"
+"  trailing_edge_flaps_left_percent,"
+"  trailing_edge_flaps_right_percent,"
+"  spoilers_handle_position,"
+"  flaps_handle_index"
 ") values ("
 " :aircraft_id,"
 " :timestamp,"
-" :latitude,"
-" :longitude,"
-" :altitude,"
-" :pitch,"
-" :bank,"
-" :heading,"
-" :velocity_x,"
-" :velocity_y,"
-" :velocity_z,"
-" :rotation_velocity_x,"
-" :rotation_velocity_y,"
-" :rotation_velocity_z"
+" :leading_edge_flaps_left_percent,"
+" :leading_edge_flaps_right_percent,"
+" :trailing_edge_flaps_left_percent,"
+" :trailing_edge_flaps_right_percent,"
+" :spoilers_handle_position,"
+" :flaps_handle_index"
 ");");
         }
         if (selectQuery == nullptr) {
@@ -91,43 +79,37 @@ public:
 
 // PUBLIC
 
-SQLitePositionDao::SQLitePositionDao() noexcept
-    : d(std::make_unique<SQLitePositionDaoPrivate>())
+SQLiteSecondaryFlightControlDao::SQLiteSecondaryFlightControlDao() noexcept
+    : d(std::make_unique<SQLiteSecondaryFlightControlDaoPrivate>())
 {
 }
 
-SQLitePositionDao::~SQLitePositionDao() noexcept
+SQLiteSecondaryFlightControlDao::~SQLiteSecondaryFlightControlDao() noexcept
 {}
 
-bool SQLitePositionDao::addPosition(qint64 aircraftId, const AircraftData &position)  noexcept
+bool SQLiteSecondaryFlightControlDao::addSecondaryFlightControl(qint64 aircraftId, const SecondaryFlightControlData &engine)  noexcept
 {
     d->initQueries();
     d->insertQuery->bindValue(":aircraft_id", aircraftId, QSql::In);
-    d->insertQuery->bindValue(":timestamp", position.timestamp, QSql::In);
-    d->insertQuery->bindValue(":latitude", position.latitude, QSql::In);
-    d->insertQuery->bindValue(":longitude", position.longitude, QSql::In);
-    d->insertQuery->bindValue(":altitude", position.altitude, QSql::In);
-    d->insertQuery->bindValue(":pitch", position.pitch, QSql::In);
-    d->insertQuery->bindValue(":bank", position.bank, QSql::In);
-    d->insertQuery->bindValue(":heading", position.heading, QSql::In);
-    d->insertQuery->bindValue(":velocity_x", position.velocityBodyX, QSql::In);
-    d->insertQuery->bindValue(":velocity_y", position.velocityBodyY, QSql::In);
-    d->insertQuery->bindValue(":velocity_z", position.velocityBodyZ, QSql::In);
-    d->insertQuery->bindValue(":rotation_velocity_x", position.rotationVelocityBodyX, QSql::In);
-    d->insertQuery->bindValue(":rotation_velocity_y", position.rotationVelocityBodyY, QSql::In);
-    d->insertQuery->bindValue(":rotation_velocity_z", position.rotationVelocityBodyZ, QSql::In);
+    d->insertQuery->bindValue(":timestamp", engine.timestamp, QSql::In);
+    d->insertQuery->bindValue(":leading_edge_flaps_left_percent", engine.leadingEdgeFlapsLeftPercent, QSql::In);
+    d->insertQuery->bindValue(":leading_edge_flaps_right_percent", engine.leadingEdgeFlapsRightPercent, QSql::In);
+    d->insertQuery->bindValue(":trailing_edge_flaps_left_percent", engine.trailingEdgeFlapsLeftPercent, QSql::In);
+    d->insertQuery->bindValue(":trailing_edge_flaps_right_percent", engine.trailingEdgeFlapsRightPercent, QSql::In);
+    d->insertQuery->bindValue(":spoilers_handle_position", engine.spoilersHandlePosition, QSql::In);
+    d->insertQuery->bindValue(":flaps_handle_index", engine.flapsHandleIndex, QSql::In);
 
     bool ok = d->insertQuery->exec();
 
 #ifdef DEBUG
     if (!ok) {
-        qDebug("addPosition: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
+        qDebug("addSecondaryFlightControl: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
     }
 #endif
     return ok;
 }
 
-AircraftData SQLitePositionDao::getPosition(qint64 aircraftId, qint64 timestamp) const noexcept
+SecondaryFlightControlData SQLiteSecondaryFlightControlDao::getSecondaryFlightControl(qint64 aircraftId, qint64 timestamp) const noexcept
 {
-    return AircraftData();
+    return SecondaryFlightControlData();
 }

@@ -40,8 +40,8 @@ public:
     SQLitePositionDao() noexcept;
     virtual ~SQLitePositionDao() noexcept;
 
-    virtual  bool addPosition(qint64 aircraftId, const AircraftData &position)   noexcept override;
-    virtual AircraftData getPosition(qint64 id) const noexcept override;
+    virtual bool addPosition(qint64 aircraftId, const AircraftData &position) noexcept override;
+    virtual AircraftData getPosition(qint64 aircraftId, qint64 timestamp) const noexcept override;
 
 private:
     std::unique_ptr<SQLitePositionDaoPrivate> d;

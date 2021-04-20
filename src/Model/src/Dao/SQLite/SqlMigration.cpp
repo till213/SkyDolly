@@ -94,4 +94,3 @@ bool SqlMigration::migrateExPost() noexcept
 {
     return true;
 }
-
