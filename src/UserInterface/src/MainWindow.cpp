@@ -209,7 +209,7 @@ void MainWindow::initUi() noexcept
     d->scenarioDialog = new ScenarioDialog(d->skyConnect, this);
     d->simulationVariablesDialog = new SimulationVariablesDialog(d->skyConnect, this);
     d->statisticsDialog = new StatisticsDialog(d->skyConnect, this);
-    d->scenarioSelectionDialog = new ScenarioSelectionDialog(this);
+    d->scenarioSelectionDialog = new ScenarioSelectionDialog(*d->scenarioService, this);
     d->aboutDialog = new AboutDialog(this);
     d->settingsDialog = new SettingsDialog(this);
 

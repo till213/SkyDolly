@@ -22,32 +22,20 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SCENARIOSERVICE_H
-#define SCENARIOSERVICE_H
+#ifndef SCENARIODESCRIPTION_H
+#define SCENARIODESCRIPTION_H
 
-#include <memory>
+#include <QString>
 
-#include <QVector>
+#include "ModelLib.h"
 
-#include "../Scenario.h"
-#include "../ScenarioDescription.h"
-#include "../ModelLib.h"
-
-class ScenarioServicePrivate;
-
-class MODEL_API ScenarioService
+struct MODEL_API ScenarioDescription
 {
-public:
-    ScenarioService() noexcept;
-    ~ScenarioService() noexcept;
+    ScenarioDescription();
+    ~ScenarioDescription();
 
-    bool store(Scenario &scenario) noexcept;
-    Scenario restore(qint64 id) noexcept;
-
-    QVector<ScenarioDescription> getScenarioDescriptions() const noexcept;
-
-private:
-    std::unique_ptr<ScenarioServicePrivate> d;
+    qint64 id;
+    QString name;
 };
 
-#endif // SCENARIOSERVICE_H
+#endif // SCENARIODESCRIPTION_H
