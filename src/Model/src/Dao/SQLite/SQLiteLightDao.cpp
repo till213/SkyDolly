@@ -76,15 +76,14 @@ SQLiteLightDao::SQLiteLightDao() noexcept
 SQLiteLightDao::~SQLiteLightDao() noexcept
 {}
 
-bool SQLiteLightDao::addLight(qint64 aircraftId, const LightData &engine)  noexcept
+bool SQLiteLightDao::addLight(qint64 aircraftId, const LightData &lightData)  noexcept
 {
     d->initQueries();
     d->insertQuery->bindValue(":aircraft_id", aircraftId, QSql::In);
-    d->insertQuery->bindValue(":timestamp", engine.timestamp, QSql::In);
-    d->insertQuery->bindValue(":light_states", static_cast<int>(engine.lightStates), QSql::In);
+    d->insertQuery->bindValue(":timestamp", lightData.timestamp, QSql::In);
+    d->insertQuery->bindValue(":light_states", static_cast<int>(lightData.lightStates), QSql::In);
 
     bool ok = d->insertQuery->exec();
-
 #ifdef DEBUG
     if (!ok) {
         qDebug("addLight: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
