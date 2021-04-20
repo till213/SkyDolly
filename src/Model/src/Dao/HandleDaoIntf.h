@@ -22,29 +22,26 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SQLITEFLIGHTCONDITIONDAO_H
-#define SQLITEFLIGHTCONDITIONDAO_H
+#ifndef HANDLEDAOINTF_H
+#define HANDLEDAOINTF_H
 
-#include <memory>
+class AircraftHandleData;
 
-#include <QtGlobal>
-
-#include "../../Aircraft.h"
-#include "../AircraftDaoIntf.h"
-
-class SQLiteAircraftDaoPrivate;
-
-class SQLiteAircraftDao : public AircraftDaoIntf
+class HandleDaoIntf
 {
 public:
-    SQLiteAircraftDao() noexcept;
-    virtual ~SQLiteAircraftDao() noexcept;
+    virtual ~HandleDaoIntf() = default;
 
-    virtual  bool addAircraft(qint64 scenarioId, Aircraft &aircraft) noexcept override;
-    virtual Aircraft getAircraft(qint64 id) const noexcept override;
-
-private:
-    std::unique_ptr<SQLiteAircraftDaoPrivate> d;
+    /*!
+     * Persists the \c handleData (aircraft handles and levers).
+     * \param handleData
+     *        the handles to be persisted
+     * \param aircraftId
+     *        the aircraft the \c handleData belongs to
+     * \return \c true on success; \c false else
+     */
+    virtual bool addHandle(qint64 aircraftId, const AircraftHandleData &handleData) = 0;
+    virtual AircraftHandleData getHandle(qint64 aircraftId, qint64 timestamp) const = 0;
 };
 
-#endif // SQLITEFLIGHTCONDITIONDAO_H
+#endif // HANDLEDAOINTF_H

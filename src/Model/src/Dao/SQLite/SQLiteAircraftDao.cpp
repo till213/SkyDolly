@@ -32,6 +32,16 @@
 #include "../../../../Kernel/src/Enum.h"
 #include "../../Aircraft.h"
 #include "../../AircraftData.h"
+#include "../../Engine.h"
+#include "../../EngineData.h"
+#include "../../PrimaryFlightControl.h"
+#include "../../PrimaryFlightControlData.h"
+#include "../../SecondaryFlightControl.h"
+#include "../../SecondaryFlightControlData.h"
+#include "../../AircraftHandle.h"
+#include "../../AircraftHandleData.h"
+#include "../../Light.h"
+#include "../../LightData.h"
 #include "../../Dao/PositionDaoIntf.h"
 #include "../../Dao/DaoFactory.h"
 #include "SQLiteAircraftDao.h"
@@ -43,7 +53,12 @@ public:
         : insertQuery(nullptr),
           selectQuery(nullptr),
           daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
-          positionDao(daoFactory->createPositionDao())
+          positionDao(daoFactory->createPositionDao()),
+          engineDao(daoFactory->createEngineDao()),
+          primaryFlightControlDao(daoFactory->createPrimaryFlightControlDao()),
+          secondaryFlightControlDao(daoFactory->createSecondaryFlightControlDao()),
+          handleDao(daoFactory->createHandleDao()),
+          lightDao(daoFactory->createLightDao())
     {
     }
 
@@ -51,6 +66,11 @@ public:
     std::unique_ptr<QSqlQuery> selectQuery;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<PositionDaoIntf> positionDao;
+    std::unique_ptr<EngineDaoIntf> engineDao;
+    std::unique_ptr<PrimaryFlightControlDaoIntf> primaryFlightControlDao;
+    std::unique_ptr<SecondaryFlightControlDaoIntf> secondaryFlightControlDao;
+    std::unique_ptr<HandleDaoIntf> handleDao;
+    std::unique_ptr<LightDaoIntf> lightDao;
 
     void initQueries()
     {
@@ -130,6 +150,46 @@ bool SQLiteAircraftDao::addAircraft(qint64 scenarioId, Aircraft &aircraft)  noex
     if (ok) {
         for (const AircraftData &data : aircraft.getAll()) {
             ok = d->positionDao->addPosition(aircraft.getId(), data);
+            if (!ok) {
+                break;
+            }
+        }
+    }
+    if (ok) {
+        for (const EngineData &data : aircraft.getEngineConst().getAll()) {
+            ok = d->engineDao->addEngine(aircraft.getId(), data);
+            if (!ok) {
+                break;
+            }
+        }
+    }
+    if (ok) {
+        for (const PrimaryFlightControlData &data : aircraft.getPrimaryFlightControlConst().getAll()) {
+            ok = d->primaryFlightControlDao->addPrimaryFlightControl(aircraft.getId(), data);
+            if (!ok) {
+                break;
+            }
+        }
+    }
+    if (ok) {
+        for (const SecondaryFlightControlData &data : aircraft.getSecondaryFlightControlConst().getAll()) {
+            ok = d->secondaryFlightControlDao->addSecondaryFlightControl(aircraft.getId(), data);
+            if (!ok) {
+                break;
+            }
+        }
+    }
+    if (ok) {
+        for (const AircraftHandleData &data : aircraft.getAircraftHandleConst().getAll()) {
+            ok = d->handleDao->addHandle(aircraft.getId(), data);
+            if (!ok) {
+                break;
+            }
+        }
+    }
+    if (ok) {
+        for (const LightData &data : aircraft.getLightConst().getAll()) {
+            ok = d->lightDao->addLight(aircraft.getId(), data);
             if (!ok) {
                 break;
             }

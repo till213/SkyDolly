@@ -58,6 +58,11 @@ target_sources(Model
         src/Dao/ScenarioDaoIntf.h
         src/Dao/AircraftDaoIntf.h
         src/Dao/PositionDaoIntf.h
+        src/Dao/EngineDaoIntf.h
+        src/Dao/PrimaryFlightControlDaoIntf.h
+        src/Dao/SecondaryFlightControlDaoIntf.h
+        src/Dao/HandleDaoIntf.h
+        src/Dao/LightDaoIntf.h
         src/Dao/DaoFactory.cpp
         src/Dao/DaoFactory.h
         src/Dao/SQLite/SQLiteWorldDao.cpp
@@ -68,6 +73,16 @@ target_sources(Model
         src/Dao/SQLite/SQLiteAircraftDao.h
         src/Dao/SQLite/SQLitePositionDao.cpp
         src/Dao/SQLite/SQLitePositionDao.h
+        src/Dao/SQLite/SQLiteEngineDao.cpp
+        src/Dao/SQLite/SQLiteEngineDao.h
+        src/Dao/SQLite/SQLitePrimaryFlightControlDao.cpp
+        src/Dao/SQLite/SQLitePrimaryFlightControlDao.h
+        src/Dao/SQLite/SQLiteSecondaryFlightControlDao.cpp
+        src/Dao/SQLite/SQLiteSecondaryFlightControlDao.h
+        src/Dao/SQLite/SQLiteHandleDao.cpp
+        src/Dao/SQLite/SQLiteHandleDao.h
+        src/Dao/SQLite/SQLiteLightDao.cpp
+        src/Dao/SQLite/SQLiteLightDao.h
         src/Dao/SQLite/SqlMigration.cpp
         src/Dao/SQLite/SqlMigration.h
         src/Dao/SQLite/SqlMigrationStep.cpp

@@ -35,7 +35,7 @@ public:
     virtual ~PositionDaoIntf() = default;
 
     /*!
-     * Persists the \c position. The \c id in \c position is updated.
+     * Persists the \c position.
      * \param position
      *        the position to be persisted
      * \param aircraftId
@@ -43,7 +43,7 @@ public:
      * \return \c true on success; \c false else
      */
     virtual bool addPosition(qint64 aircraftId, const AircraftData &position) = 0;
-    virtual AircraftData getPosition(qint64 id) const = 0;
+    virtual AircraftData getPosition(qint64 aircraftId, qint64 timestamp)  const = 0;
 };
 
 #endif // POSITIONDAOINTF_H
