@@ -63,6 +63,7 @@
 #include "Dialogs/ScenarioDialog.h"
 #include "Dialogs/SimulationVariablesDialog.h"
 #include "Dialogs/StatisticsDialog.h"
+#include "Dialogs/ScenarioSelectionDialog.h"
 #include "Widgets/ActionButton.h"
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
@@ -104,6 +105,7 @@ public:
           scenarioDialog(nullptr),
           simulationVariablesDialog(nullptr),
           statisticsDialog(nullptr),
+          scenarioSelectionDialog(nullptr),
           daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           worldDao(nullptr),
           scenarioService(std::make_unique<ScenarioService>())
@@ -117,6 +119,7 @@ public:
     ScenarioDialog *scenarioDialog;
     SimulationVariablesDialog *simulationVariablesDialog;
     StatisticsDialog *statisticsDialog;
+    ScenarioSelectionDialog *scenarioSelectionDialog;
     double lastCustomReplaySpeed;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<WorldDaoIntf> worldDao;
@@ -191,7 +194,6 @@ void MainWindow::frenchConnection() noexcept
     connect(d->statisticsDialog, &StatisticsDialog::visibilityChanged,
             this, &MainWindow::updateWindowMenu);
 
-
     // Settings
     connect(&Settings::getInstance(), &Settings::changed,
             this, &MainWindow::updateMainWindow);
@@ -207,6 +209,7 @@ void MainWindow::initUi() noexcept
     d->scenarioDialog = new ScenarioDialog(d->skyConnect, this);
     d->simulationVariablesDialog = new SimulationVariablesDialog(d->skyConnect, this);
     d->statisticsDialog = new StatisticsDialog(d->skyConnect, this);
+    d->scenarioSelectionDialog = new ScenarioSelectionDialog(this);
     d->aboutDialog = new AboutDialog(this);
     d->settingsDialog = new SettingsDialog(this);
 
@@ -520,6 +523,15 @@ void MainWindow::updateMainWindow() noexcept
         double seekIntervalPercent = settings.getSeekIntervalPercent();
         ui->forwardAction->setToolTip(tr("Fast forward [%1 %]").arg(seekIntervalPercent));
         ui->backwardAction->setToolTip(tr("Rewind [%1 %]").arg(seekIntervalPercent));
+    }
+}
+
+void MainWindow::on_openAction_triggered() noexcept
+{
+    // TODO FIXME Should call open() here, but this dialog is of temporary nature anyway
+    int reply = d->scenarioSelectionDialog->exec();
+    if (reply = QDialog::Accepted) {
+
     }
 }
 

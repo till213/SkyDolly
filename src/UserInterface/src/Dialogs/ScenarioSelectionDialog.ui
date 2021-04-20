@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ScenarioDialog</class>
- <widget class="QDialog" name="ScenarioDialog">
+ <class>ScenarioSelectionDialog</class>
+ <widget class="QDialog" name="ScenarioSelectionDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,31 +11,21 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Scenario</string>
-  </property>
-  <property name="sizeGripEnabled">
-   <bool>false</bool>
+   <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="sizeConstraint">
-    <enum>QLayout::SetMinimumSize</enum>
-   </property>
-   <item row="0" column="0">
-    <widget class="QTabWidget" name="scenarioTab">
-     <property name="currentIndex">
-      <number>-1</number>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Close</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QTableWidget" name="scenarioTableWidget"/>
    </item>
   </layout>
  </widget>
@@ -44,7 +34,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>ScenarioDialog</receiver>
+   <receiver>ScenarioSelectionDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -60,7 +50,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>ScenarioDialog</receiver>
+   <receiver>ScenarioSelectionDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
