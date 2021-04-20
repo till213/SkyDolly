@@ -122,38 +122,37 @@ SQLiteEngineDao::SQLiteEngineDao() noexcept
 SQLiteEngineDao::~SQLiteEngineDao() noexcept
 {}
 
-bool SQLiteEngineDao::addEngine(qint64 aircraftId, const EngineData &engine)  noexcept
+bool SQLiteEngineDao::addEngine(qint64 aircraftId, const EngineData &engineData)  noexcept
 {
     d->initQueries();
     d->insertQuery->bindValue(":aircraft_id", aircraftId, QSql::In);
-    d->insertQuery->bindValue(":timestamp", engine.timestamp, QSql::In);
-    d->insertQuery->bindValue(":throttle_level_position1", engine.throttleLeverPosition1, QSql::In);
-    d->insertQuery->bindValue(":throttle_level_position2", engine.throttleLeverPosition2, QSql::In);
-    d->insertQuery->bindValue(":throttle_level_position3", engine.throttleLeverPosition3, QSql::In);
-    d->insertQuery->bindValue(":throttle_level_position4", engine.throttleLeverPosition4, QSql::In);
-    d->insertQuery->bindValue(":propeller_lever_position1", engine.propellerLeverPosition1, QSql::In);
-    d->insertQuery->bindValue(":propeller_lever_position2", engine.propellerLeverPosition2, QSql::In);
-    d->insertQuery->bindValue(":propeller_lever_position3", engine.propellerLeverPosition3, QSql::In);
-    d->insertQuery->bindValue(":propeller_lever_position4", engine.propellerLeverPosition4, QSql::In);
-    d->insertQuery->bindValue(":mixture_lever_position1", engine.mixtureLeverPosition1, QSql::In);
-    d->insertQuery->bindValue(":mixture_lever_position2", engine.mixtureLeverPosition2, QSql::In);
-    d->insertQuery->bindValue(":mixture_lever_position3", engine.mixtureLeverPosition3, QSql::In);
-    d->insertQuery->bindValue(":mixture_lever_position4", engine.mixtureLeverPosition4, QSql::In);
-    d->insertQuery->bindValue(":cowl_flap_position1", engine.cowlFlapPosition1, QSql::In);
-    d->insertQuery->bindValue(":cowl_flap_position2", engine.cowlFlapPosition2, QSql::In);
-    d->insertQuery->bindValue(":cowl_flap_position3", engine.cowlFlapPosition3, QSql::In);
-    d->insertQuery->bindValue(":cowl_flap_position4", engine.cowlFlapPosition4, QSql::In);
-    d->insertQuery->bindValue(":electrical_master_battery1", engine.electricalMasterBattery1, QSql::In);
-    d->insertQuery->bindValue(":electrical_master_battery2", engine.electricalMasterBattery2, QSql::In);
-    d->insertQuery->bindValue(":electrical_master_battery3", engine.electricalMasterBattery3, QSql::In);
-    d->insertQuery->bindValue(":electrical_master_battery4", engine.electricalMasterBattery4, QSql::In);
-    d->insertQuery->bindValue(":general_engine_starter1", engine.generalEngineStarter1, QSql::In);
-    d->insertQuery->bindValue(":general_engine_starter2", engine.generalEngineStarter2, QSql::In);
-    d->insertQuery->bindValue(":general_engine_starter3", engine.generalEngineStarter3, QSql::In);
-    d->insertQuery->bindValue(":general_engine_starter4", engine.generalEngineStarter4, QSql::In);
+    d->insertQuery->bindValue(":timestamp", engineData.timestamp, QSql::In);
+    d->insertQuery->bindValue(":throttle_level_position1", engineData.throttleLeverPosition1, QSql::In);
+    d->insertQuery->bindValue(":throttle_level_position2", engineData.throttleLeverPosition2, QSql::In);
+    d->insertQuery->bindValue(":throttle_level_position3", engineData.throttleLeverPosition3, QSql::In);
+    d->insertQuery->bindValue(":throttle_level_position4", engineData.throttleLeverPosition4, QSql::In);
+    d->insertQuery->bindValue(":propeller_lever_position1", engineData.propellerLeverPosition1, QSql::In);
+    d->insertQuery->bindValue(":propeller_lever_position2", engineData.propellerLeverPosition2, QSql::In);
+    d->insertQuery->bindValue(":propeller_lever_position3", engineData.propellerLeverPosition3, QSql::In);
+    d->insertQuery->bindValue(":propeller_lever_position4", engineData.propellerLeverPosition4, QSql::In);
+    d->insertQuery->bindValue(":mixture_lever_position1", engineData.mixtureLeverPosition1, QSql::In);
+    d->insertQuery->bindValue(":mixture_lever_position2", engineData.mixtureLeverPosition2, QSql::In);
+    d->insertQuery->bindValue(":mixture_lever_position3", engineData.mixtureLeverPosition3, QSql::In);
+    d->insertQuery->bindValue(":mixture_lever_position4", engineData.mixtureLeverPosition4, QSql::In);
+    d->insertQuery->bindValue(":cowl_flap_position1", engineData.cowlFlapPosition1, QSql::In);
+    d->insertQuery->bindValue(":cowl_flap_position2", engineData.cowlFlapPosition2, QSql::In);
+    d->insertQuery->bindValue(":cowl_flap_position3", engineData.cowlFlapPosition3, QSql::In);
+    d->insertQuery->bindValue(":cowl_flap_position4", engineData.cowlFlapPosition4, QSql::In);
+    d->insertQuery->bindValue(":electrical_master_battery1", engineData.electricalMasterBattery1, QSql::In);
+    d->insertQuery->bindValue(":electrical_master_battery2", engineData.electricalMasterBattery2, QSql::In);
+    d->insertQuery->bindValue(":electrical_master_battery3", engineData.electricalMasterBattery3, QSql::In);
+    d->insertQuery->bindValue(":electrical_master_battery4", engineData.electricalMasterBattery4, QSql::In);
+    d->insertQuery->bindValue(":general_engine_starter1", engineData.generalEngineStarter1, QSql::In);
+    d->insertQuery->bindValue(":general_engine_starter2", engineData.generalEngineStarter2, QSql::In);
+    d->insertQuery->bindValue(":general_engine_starter3", engineData.generalEngineStarter3, QSql::In);
+    d->insertQuery->bindValue(":general_engine_starter4", engineData.generalEngineStarter4, QSql::In);
 
     bool ok = d->insertQuery->exec();
-
 #ifdef DEBUG
     if (!ok) {
         qDebug("addEngine: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));

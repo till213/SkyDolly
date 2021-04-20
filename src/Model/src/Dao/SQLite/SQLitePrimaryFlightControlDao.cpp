@@ -50,7 +50,7 @@ public:
         if (insertQuery == nullptr) {
             insertQuery = std::make_unique<QSqlQuery>();
             insertQuery->prepare(
-"insert into engine ("
+"insert into primary_flight_control ("
 "  aircraft_id,"
 "  timestamp,"
 "  yoke_x_position,"
@@ -81,19 +81,18 @@ SQLitePrimaryFlightControlDao::SQLitePrimaryFlightControlDao() noexcept
 SQLitePrimaryFlightControlDao::~SQLitePrimaryFlightControlDao() noexcept
 {}
 
-bool SQLitePrimaryFlightControlDao::addPrimaryFlightControl(qint64 aircraftId, const PrimaryFlightControlData &engine)  noexcept
+bool SQLitePrimaryFlightControlDao::addPrimaryFlightControl(qint64 aircraftId, const PrimaryFlightControlData &primaryFlightControlData)  noexcept
 {
     d->initQueries();
     d->insertQuery->bindValue(":aircraft_id", aircraftId, QSql::In);
-    d->insertQuery->bindValue(":timestamp", engine.timestamp, QSql::In);
-    d->insertQuery->bindValue(":yoke_x_position", engine.yokeXPosition, QSql::In);
-    d->insertQuery->bindValue(":yoke_y_position", engine.yokeYPosition, QSql::In);
-    d->insertQuery->bindValue(":rudder_position", engine.rudderPosition, QSql::In);
-    d->insertQuery->bindValue(":elevator_position", engine.elevatorPosition, QSql::In);
-    d->insertQuery->bindValue(":aileron_position", engine.aileronPosition, QSql::In);
+    d->insertQuery->bindValue(":timestamp", primaryFlightControlData.timestamp, QSql::In);
+    d->insertQuery->bindValue(":yoke_x_position", primaryFlightControlData.yokeXPosition, QSql::In);
+    d->insertQuery->bindValue(":yoke_y_position", primaryFlightControlData.yokeYPosition, QSql::In);
+    d->insertQuery->bindValue(":rudder_position", primaryFlightControlData.rudderPosition, QSql::In);
+    d->insertQuery->bindValue(":elevator_position", primaryFlightControlData.elevatorPosition, QSql::In);
+    d->insertQuery->bindValue(":aileron_position", primaryFlightControlData.aileronPosition, QSql::In);
 
     bool ok = d->insertQuery->exec();
-
 #ifdef DEBUG
     if (!ok) {
         qDebug("addPrimaryFlightControl: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));

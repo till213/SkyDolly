@@ -290,8 +290,8 @@ void SkyConnectImpl::setupInitialPosition() noexcept
         initialPosition.Pitch = aircraftData.pitch;
         initialPosition.Bank = aircraftData.bank;
         initialPosition.Heading = aircraftData.heading;
-        initialPosition.OnGround = userAircraft.getAircraftInfo().startOnGround ? 1 : 0;
-        initialPosition.Airspeed = userAircraft.getAircraftInfo().initialAirspeed;
+        initialPosition.OnGround = userAircraft.getAircraftInfoConst().startOnGround ? 1 : 0;
+        initialPosition.Airspeed = userAircraft.getAircraftInfoConst().initialAirspeed;
 
         ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInitialPosition),
                                         ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0, sizeof(::SIMCONNECT_DATA_INITPOSITION), &initialPosition);

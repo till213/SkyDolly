@@ -50,7 +50,7 @@ public:
         if (insertQuery == nullptr) {
             insertQuery = std::make_unique<QSqlQuery>();
             insertQuery->prepare(
-"insert into engine ("
+"insert into secondary_flight_control ("
 "  aircraft_id,"
 "  timestamp,"
 "  leading_edge_flaps_left_percent,"
@@ -87,20 +87,19 @@ SQLiteSecondaryFlightControlDao::SQLiteSecondaryFlightControlDao() noexcept
 SQLiteSecondaryFlightControlDao::~SQLiteSecondaryFlightControlDao() noexcept
 {}
 
-bool SQLiteSecondaryFlightControlDao::addSecondaryFlightControl(qint64 aircraftId, const SecondaryFlightControlData &engine)  noexcept
+bool SQLiteSecondaryFlightControlDao::addSecondaryFlightControl(qint64 aircraftId, const SecondaryFlightControlData &secondaryFlightControlData)  noexcept
 {
     d->initQueries();
     d->insertQuery->bindValue(":aircraft_id", aircraftId, QSql::In);
-    d->insertQuery->bindValue(":timestamp", engine.timestamp, QSql::In);
-    d->insertQuery->bindValue(":leading_edge_flaps_left_percent", engine.leadingEdgeFlapsLeftPercent, QSql::In);
-    d->insertQuery->bindValue(":leading_edge_flaps_right_percent", engine.leadingEdgeFlapsRightPercent, QSql::In);
-    d->insertQuery->bindValue(":trailing_edge_flaps_left_percent", engine.trailingEdgeFlapsLeftPercent, QSql::In);
-    d->insertQuery->bindValue(":trailing_edge_flaps_right_percent", engine.trailingEdgeFlapsRightPercent, QSql::In);
-    d->insertQuery->bindValue(":spoilers_handle_position", engine.spoilersHandlePosition, QSql::In);
-    d->insertQuery->bindValue(":flaps_handle_index", engine.flapsHandleIndex, QSql::In);
+    d->insertQuery->bindValue(":timestamp", secondaryFlightControlData.timestamp, QSql::In);
+    d->insertQuery->bindValue(":leading_edge_flaps_left_percent", secondaryFlightControlData.leadingEdgeFlapsLeftPercent, QSql::In);
+    d->insertQuery->bindValue(":leading_edge_flaps_right_percent", secondaryFlightControlData.leadingEdgeFlapsRightPercent, QSql::In);
+    d->insertQuery->bindValue(":trailing_edge_flaps_left_percent", secondaryFlightControlData.trailingEdgeFlapsLeftPercent, QSql::In);
+    d->insertQuery->bindValue(":trailing_edge_flaps_right_percent", secondaryFlightControlData.trailingEdgeFlapsRightPercent, QSql::In);
+    d->insertQuery->bindValue(":spoilers_handle_position", secondaryFlightControlData.spoilersHandlePosition, QSql::In);
+    d->insertQuery->bindValue(":flaps_handle_index", secondaryFlightControlData.flapsHandleIndex, QSql::In);
 
     bool ok = d->insertQuery->exec();
-
 #ifdef DEBUG
     if (!ok) {
         qDebug("addSecondaryFlightControl: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
