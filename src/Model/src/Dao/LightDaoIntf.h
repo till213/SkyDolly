@@ -22,29 +22,26 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SQLITEFLIGHTCONDITIONDAO_H
-#define SQLITEFLIGHTCONDITIONDAO_H
+#ifndef LIGHTDAOINTF_H
+#define LIGHTDAOINTF_H
 
-#include <memory>
+class LightData;
 
-#include <QtGlobal>
-
-#include "../../Aircraft.h"
-#include "../AircraftDaoIntf.h"
-
-class SQLiteAircraftDaoPrivate;
-
-class SQLiteAircraftDao : public AircraftDaoIntf
+class LightDaoIntf
 {
 public:
-    SQLiteAircraftDao() noexcept;
-    virtual ~SQLiteAircraftDao() noexcept;
+    virtual ~LightDaoIntf() = default;
 
-    virtual  bool addAircraft(qint64 scenarioId, Aircraft &aircraft) noexcept override;
-    virtual Aircraft getAircraft(qint64 id) const noexcept override;
-
-private:
-    std::unique_ptr<SQLiteAircraftDaoPrivate> d;
+    /*!
+     * Persists the \c lightData (aircraft light switch states).
+     * \param lightData
+     *        the light data to be persisted
+     * \param aircraftId
+     *        the aircraft the \c lightData belongs to
+     * \return \c true on success; \c false else
+     */
+    virtual bool addLight(qint64 aircraftId, const LightData &lightData) = 0;
+    virtual LightData getLight(qint64 aircraftId, qint64 timestamp) const = 0;
 };
 
-#endif // SQLITEFLIGHTCONDITIONDAO_H
+#endif // LIGHTDAOINTF_H

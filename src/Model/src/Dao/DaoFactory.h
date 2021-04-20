@@ -31,6 +31,11 @@
 #include "ScenarioDaoIntf.h"
 #include "AircraftDaoIntf.h"
 #include "PositionDaoIntf.h"
+#include "EngineDaoIntf.h"
+#include "PrimaryFlightControlDaoIntf.h"
+#include "SecondaryFlightControlDaoIntf.h"
+#include "HandleDaoIntf.h"
+#include "LightDaoIntf.h"
 #include "WorldDaoIntf.h"
 
 class DaoFactoryPrivate;
@@ -51,6 +56,11 @@ public:
     std::unique_ptr<ScenarioDaoIntf> createScenarioDao() noexcept;
     std::unique_ptr<AircraftDaoIntf> createAircraftDao() noexcept;
     std::unique_ptr<PositionDaoIntf> createPositionDao() noexcept;
+    std::unique_ptr<EngineDaoIntf> createEngineDao() noexcept;
+    std::unique_ptr<PrimaryFlightControlDaoIntf> createPrimaryFlightControlDao() noexcept;
+    std::unique_ptr<SecondaryFlightControlDaoIntf> createSecondaryFlightControlDao() noexcept;
+    std::unique_ptr<HandleDaoIntf> createHandleDao() noexcept;
+    std::unique_ptr<LightDaoIntf> createLightDao() noexcept;
 
 private:
     std::unique_ptr<DaoFactoryPrivate> d;

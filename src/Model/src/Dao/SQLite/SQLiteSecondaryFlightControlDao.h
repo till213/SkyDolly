@@ -22,29 +22,29 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SQLITEFLIGHTCONDITIONDAO_H
-#define SQLITEFLIGHTCONDITIONDAO_H
+#ifndef SQLITESECONDARYFLIGHTCONTROLDAO_H
+#define SQLITESECONDARYFLIGHTCONTROLDAO_H
 
 #include <memory>
 
 #include <QtGlobal>
 
-#include "../../Aircraft.h"
-#include "../AircraftDaoIntf.h"
+#include "../../SecondaryFlightControlData.h"
+#include "../SecondaryFlightControlDaoIntf.h"
 
-class SQLiteAircraftDaoPrivate;
+class SQLiteSecondaryFlightControlDaoPrivate;
 
-class SQLiteAircraftDao : public AircraftDaoIntf
+class SQLiteSecondaryFlightControlDao : public SecondaryFlightControlDaoIntf
 {
 public:
-    SQLiteAircraftDao() noexcept;
-    virtual ~SQLiteAircraftDao() noexcept;
+    SQLiteSecondaryFlightControlDao() noexcept;
+    virtual ~SQLiteSecondaryFlightControlDao() noexcept;
 
-    virtual  bool addAircraft(qint64 scenarioId, Aircraft &aircraft) noexcept override;
-    virtual Aircraft getAircraft(qint64 id) const noexcept override;
+    virtual bool addSecondaryFlightControl(qint64 aircraftId, const SecondaryFlightControlData &secondaryFlightControlData) noexcept override;
+    virtual SecondaryFlightControlData getSecondaryFlightControl(qint64 aircraftId, qint64 timestamp) const noexcept override;
 
 private:
-    std::unique_ptr<SQLiteAircraftDaoPrivate> d;
+    std::unique_ptr<SQLiteSecondaryFlightControlDaoPrivate> d;
 };
 
-#endif // SQLITEFLIGHTCONDITIONDAO_H
+#endif // SQLITESECONDARYFLIGHTCONTROLDAO_H
