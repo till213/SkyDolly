@@ -67,7 +67,8 @@ public:
 " :water_rudder_handle_position,"
 " :tail_hook_position,"
 " :canopy_open,"
-" :gear_handle_position"
+" :gear_handle_position,"
+" :folding_wing_handle_position"
 ");");           
         }
         if (selectQuery == nullptr) {
@@ -87,21 +88,20 @@ SQLiteHandleDao::SQLiteHandleDao() noexcept
 SQLiteHandleDao::~SQLiteHandleDao() noexcept
 {}
 
-bool SQLiteHandleDao::addHandle(qint64 aircraftId, const AircraftHandleData &engine)  noexcept
+bool SQLiteHandleDao::addHandle(qint64 aircraftId, const AircraftHandleData &aircraftHandleData)  noexcept
 {
     d->initQueries();
     d->insertQuery->bindValue(":aircraft_id", aircraftId, QSql::In);
-    d->insertQuery->bindValue(":timestamp", engine.timestamp, QSql::In);
-    d->insertQuery->bindValue(":brake_left_position", engine.brakeLeftPosition, QSql::In);
-    d->insertQuery->bindValue(":brake_right_position", engine.brakeRightPosition, QSql::In);
-    d->insertQuery->bindValue(":water_rudder_handle_position", engine.waterRudderHandlePosition, QSql::In);
-    d->insertQuery->bindValue(":tail_hook_position", engine.tailhookPosition, QSql::In);
-    d->insertQuery->bindValue(":canopy_open", engine.canopyOpen, QSql::In);
-    d->insertQuery->bindValue(":gear_handle_position", engine.gearHandlePosition, QSql::In);
-    d->insertQuery->bindValue(":folding_wing_handle_position", engine.foldingWingHandlePosition, QSql::In);
+    d->insertQuery->bindValue(":timestamp", aircraftHandleData.timestamp, QSql::In);
+    d->insertQuery->bindValue(":brake_left_position", aircraftHandleData.brakeLeftPosition, QSql::In);
+    d->insertQuery->bindValue(":brake_right_position", aircraftHandleData.brakeRightPosition, QSql::In);
+    d->insertQuery->bindValue(":water_rudder_handle_position", aircraftHandleData.waterRudderHandlePosition, QSql::In);
+    d->insertQuery->bindValue(":tail_hook_position", aircraftHandleData.tailhookPosition, QSql::In);
+    d->insertQuery->bindValue(":canopy_open", aircraftHandleData.canopyOpen, QSql::In);
+    d->insertQuery->bindValue(":gear_handle_position", aircraftHandleData.gearHandlePosition ? 1 : 0, QSql::In);
+    d->insertQuery->bindValue(":folding_wing_handle_position", aircraftHandleData.foldingWingHandlePosition, QSql::In);
 
     bool ok = d->insertQuery->exec();
-
 #ifdef DEBUG
     if (!ok) {
         qDebug("addHandle: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));

@@ -46,9 +46,7 @@ public:
 
 SQLiteWorldDao::SQLiteWorldDao() noexcept
     : d(std::make_unique<WorldDaoPrivate>())
-{
-
-}
+{}
 
 SQLiteWorldDao::~SQLiteWorldDao() noexcept
 {
