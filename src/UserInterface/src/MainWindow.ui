@@ -207,13 +207,15 @@
      <x>0</x>
      <y>0</y>
      <width>823</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <addaction name="openAction"/>
+    <addaction name="separator"/>
     <addaction name="importCSVAction"/>
     <addaction name="exportCSVAction"/>
     <addaction name="separator"/>
@@ -443,6 +445,14 @@
    </property>
    <property name="shortcut">
     <string>S</string>
+   </property>
+  </action>
+  <action name="openAction">
+   <property name="text">
+    <string>&amp;Open</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
  </widget>

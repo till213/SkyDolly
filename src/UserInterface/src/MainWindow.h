@@ -79,6 +79,7 @@ private slots:
     void updateMainWindow() noexcept;
 
     // File menu
+    void on_openAction_triggered() noexcept;
     void on_importCSVAction_triggered() noexcept;
     void on_exportCSVAction_triggered() noexcept;
     void on_showSettingsAction_triggered() noexcept;
