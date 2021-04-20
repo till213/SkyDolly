@@ -44,6 +44,9 @@ target_sources(UserInterface
         src/Dialogs/ScenarioDialog.cpp
         src/Dialogs/ScenarioDialog.h
         src/Dialogs/ScenarioDialog.ui
+        src/Dialogs/ScenarioSelectionDialog.cpp
+        src/Dialogs/ScenarioSelectionDialog.h
+        src/Dialogs/ScenarioSelectionDialog.ui
         src/Widgets/AircraftWidget.cpp
         src/Widgets/AircraftWidget.h
         src/Widgets/AircraftWidget.ui
