@@ -219,6 +219,9 @@ void MainWindow::initControlUi() noexcept
     ui->positionSlider->setMaximum(PositionSliderMax);
     ui->timestampTimeEdit->setDisplayFormat("hh:mm:ss");
 
+    // TODO: Take regional settings into account
+    // https://stackoverflow.com/questions/42534378/c-qt-creator-how-to-have-dot-and-comma-as-decimal-separator-on-a-qdoubles
+    // https://doc.qt.io/qt-5/qlocale.html
     QDoubleValidator *customReplaySpeedValidator = new QDoubleValidator(ui->customReplaySpeedLineEdit);
     ui->customReplaySpeedLineEdit->setValidator(customReplaySpeedValidator);
     customReplaySpeedValidator->setBottom(ReplaySpeedMin);
@@ -230,7 +233,7 @@ void MainWindow::initControlUi() noexcept
         ui->replaySpeed1xRadioButton->setChecked(true);
     } else {
         ui->customReplaySpeedRadioButton->setChecked(true);
-        ui->customReplaySpeedLineEdit->setText(QString::number(replaySpeed));
+        ui->customReplaySpeedLineEdit->setText(QString::number(replaySpeed, 'f', 2));
     }
 
     // Record/replay control buttons
@@ -414,7 +417,7 @@ void MainWindow::updateControlUi() noexcept
 
     if (ui->customReplaySpeedRadioButton->isChecked()) {
         ui->customReplaySpeedLineEdit->setEnabled(true);
-        ui->customReplaySpeedLineEdit->setText(QString::number(d->lastCustomReplaySpeed));
+        ui->customReplaySpeedLineEdit->setText(QString::number(d->lastCustomReplaySpeed, 'f', 2));
     } else {
         ui->customReplaySpeedLineEdit->setEnabled(false);
         ui->customReplaySpeedLineEdit->clear();
