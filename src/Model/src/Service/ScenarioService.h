@@ -28,10 +28,11 @@
 #include <memory>
 
 #include "../Scenario.h"
+#include "../ModelLib.h"
 
 class ScenarioServicePrivate;
 
-class ScenarioService
+class MODEL_API ScenarioService
 {
 public:
     ScenarioService() noexcept;
