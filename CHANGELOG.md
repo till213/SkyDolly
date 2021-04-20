@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.0
+
+### New Features
+
+## 0.5.1
+
+### Bug Fixes
+
+- The custom replay speed factor is now shown with two decimal places (e.g. 1.00)
+
 ## 0.5.0
 
 ### New Features
