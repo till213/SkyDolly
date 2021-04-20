@@ -29,6 +29,7 @@
 
 #include <QtGlobal>
 
+#include "../../Scenario.h"
 #include "../ScenarioDaoIntf.h"
 
 class SQLiteScenarioDaoPrivate;
@@ -41,6 +42,8 @@ public:
 
     virtual bool addScenario(Scenario &scenario)  noexcept override;
     virtual Scenario getScenario(qint64 id) const noexcept override;
+
+    virtual QVector<ScenarioDescription> getScenarioDescriptions() const noexcept override;
 
 private:
     std::unique_ptr<SQLiteScenarioDaoPrivate> d;

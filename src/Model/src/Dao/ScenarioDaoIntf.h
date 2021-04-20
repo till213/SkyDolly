@@ -26,8 +26,10 @@
 #define SCENARIODAOINTF_H
 
 #include <QtGlobal>
+#include <QVector>
 
 class Scenario;
+class ScenarioDescription;
 
 class ScenarioDaoIntf
 {
@@ -42,6 +44,7 @@ public:
      */
     virtual bool addScenario(Scenario &scenario) = 0;
     virtual Scenario getScenario(qint64 id) const = 0;
+    virtual QVector<ScenarioDescription> getScenarioDescriptions() const = 0;
 };
 
 #endif // SCENARIODAOINTF_H
