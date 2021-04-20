@@ -22,29 +22,30 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SQLITEFLIGHTCONDITIONDAO_H
-#define SQLITEFLIGHTCONDITIONDAO_H
+#ifndef SQLITEENGINEDAO_H
+#define SQLITEENGINEDAO_H
 
 #include <memory>
 
 #include <QtGlobal>
 
-#include "../../Aircraft.h"
-#include "../AircraftDaoIntf.h"
+#include "../../EngineData.h"
+#include "../EngineDaoIntf.h"
 
-class SQLiteAircraftDaoPrivate;
+class SQLiteEngineDaoPrivate;
 
-class SQLiteAircraftDao : public AircraftDaoIntf
+class SQLiteEngineDao : public EngineDaoIntf
 {
 public:
-    SQLiteAircraftDao() noexcept;
-    virtual ~SQLiteAircraftDao() noexcept;
+    SQLiteEngineDao() noexcept;
+    virtual ~SQLiteEngineDao() noexcept;
 
-    virtual  bool addAircraft(qint64 scenarioId, Aircraft &aircraft) noexcept override;
-    virtual Aircraft getAircraft(qint64 id) const noexcept override;
+    virtual bool addEngine(qint64 aircraftId, const EngineData &engineData) noexcept override;
+    virtual EngineData getEngine(qint64 aircraftId, qint64 timestamp) const noexcept override;
 
 private:
-    std::unique_ptr<SQLiteAircraftDaoPrivate> d;
+    std::unique_ptr<SQLiteEngineDaoPrivate> d;
 };
 
-#endif // SQLITEFLIGHTCONDITIONDAO_H
+
+#endif // SQLITEENGINEDAO_H
