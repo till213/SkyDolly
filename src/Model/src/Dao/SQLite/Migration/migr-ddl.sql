@@ -35,8 +35,8 @@ create table aircraft (
 
 @migr(id = "9b831594-f6c2-489c-906d-2de31bb9788b", descn = "Create table position", step_cnt = 1)
 create table position (
-    timestamp integer primary key,
-    aircraft_id integer,
+    aircraft_id integer not null,
+    timestamp integer not null,
     latitude real,
     longitude real,
     altitude real,
@@ -49,5 +49,6 @@ create table position (
     rotation_velocity_x real,
     rotation_velocity_y real,
     rotation_velocity_z real,
+    primary key(aircraft_id, timestamp),
     foreign key(aircraft_id) references aircraft(id)
 );
