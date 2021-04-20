@@ -24,25 +24,31 @@
  */
 #include <memory>
 
+#include <QVector>
 #include <QTableWidget>
 #include <QTableWidgetItem>
 
+#include "../../../Model/src/Service/ScenarioService.h"
+#include "../../../Model/src/ScenarioDescription.h"
 #include "ScenarioSelectionDialog.h"
 #include "ui_ScenarioSelectionDialog.h"
 
 class ScenarioSelectionDialogPrivate
 {
 public:
-    ScenarioSelectionDialogPrivate()
+    ScenarioSelectionDialogPrivate(ScenarioService &theScenarioService)
+        : scenarioService(theScenarioService)
     {}
+
+    ScenarioService &scenarioService;
 };
 
 // PUBLIC
 
-ScenarioSelectionDialog::ScenarioSelectionDialog(QWidget *parent) :
+ScenarioSelectionDialog::ScenarioSelectionDialog(ScenarioService &scenarioService, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ScenarioSelectionDialog),
-    d(std::make_unique<ScenarioSelectionDialogPrivate>())
+    d(std::make_unique<ScenarioSelectionDialogPrivate>(scenarioService))
 {
     ui->setupUi(this);
     initUi();
@@ -68,19 +74,17 @@ void ScenarioSelectionDialog::initUi()
 
 void ScenarioSelectionDialog::updateUi()
 {
-    ui->scenarioTableWidget->insertRow(0);
-    QTableWidgetItem *newItem = new QTableWidgetItem("Item 1");
-    ui->scenarioTableWidget->setItem(0, 0, newItem);
-    newItem = new QTableWidgetItem("Item 2");
-    ui->scenarioTableWidget->setItem(0, 1, newItem);
-    newItem = new QTableWidgetItem("Item 3");
-    ui->scenarioTableWidget->setItem(0, 2, newItem);
+    QVector<ScenarioDescription> descriptions = d->scenarioService.getScenarioDescriptions();
 
-    ui->scenarioTableWidget->insertRow(1);
-    newItem = new QTableWidgetItem("Item 1");
-    ui->scenarioTableWidget->setItem(1, 0, newItem);
-    newItem = new QTableWidgetItem("Item 2");
-    ui->scenarioTableWidget->setItem(1, 1, newItem);
-    newItem = new QTableWidgetItem("Item 3");
-    ui->scenarioTableWidget->setItem(1, 2, newItem);
+    ui->scenarioTableWidget->clear();
+    int rowCount = 0;
+    for (ScenarioDescription desc : descriptions) {
+        ui->scenarioTableWidget->insertRow(rowCount);
+        QTableWidgetItem *newItem = new QTableWidgetItem(QString::number(desc.id));
+        ui->scenarioTableWidget->setItem(0, 0, newItem);
+        newItem = new QTableWidgetItem(desc.name);
+        ui->scenarioTableWidget->setItem(0, 1, newItem);
+        newItem = new QTableWidgetItem("Item 3");
+        ui->scenarioTableWidget->setItem(0, 2, newItem);
+    }
 }

@@ -13,6 +13,8 @@ target_sources(Model
         src/World.h
         src/Scenario.cpp
         src/Scenario.h
+        src/ScenarioDescription.cpp
+        src/ScenarioDescription.h
         src/FlightCondition.cpp
         src/FlightCondition.h
         src/Aircraft.cpp
