@@ -51,8 +51,8 @@ public:
             insertQuery = std::make_unique<QSqlQuery>();
             insertQuery->prepare(
 "insert into position ("
-"  timestamp,"
 "  aircraft_id,"
+"  timestamp,"
 "  latitude,"
 "  longitude,"
 "  altitude,"
@@ -66,8 +66,8 @@ public:
 "  rotation_velocity_y,"
 "  rotation_velocity_z"
 ") values ("
-" :timestamp,"
 " :aircraft_id,"
+" :timestamp,"
 " :latitude,"
 " :longitude,"
 " :altitude,"
@@ -102,8 +102,8 @@ SQLitePositionDao::~SQLitePositionDao() noexcept
 bool SQLitePositionDao::addPosition(qint64 aircraftId, const AircraftData &position)  noexcept
 {
     d->initQueries();
-    d->insertQuery->bindValue(":timestamp", position.timestamp, QSql::In);
     d->insertQuery->bindValue(":aircraft_id", aircraftId, QSql::In);
+    d->insertQuery->bindValue(":timestamp", position.timestamp, QSql::In);
     d->insertQuery->bindValue(":latitude", position.latitude, QSql::In);
     d->insertQuery->bindValue(":longitude", position.longitude, QSql::In);
     d->insertQuery->bindValue(":altitude", position.altitude, QSql::In);
@@ -118,11 +118,12 @@ bool SQLitePositionDao::addPosition(qint64 aircraftId, const AircraftData &posit
     d->insertQuery->bindValue(":rotation_velocity_z", position.rotationVelocityBodyZ, QSql::In);
 
     bool ok = d->insertQuery->exec();
+
 #ifdef DEBUG
     if (!ok) {
         qDebug("addPosition: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
-#endif
     }
+#endif
     return ok;
 }
 
