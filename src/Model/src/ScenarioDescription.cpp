@@ -22,29 +22,12 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SCENARIODAOINTF_H
-#define SCENARIODAOINTF_H
+#include "ScenarioDescription.h"
 
-#include <QtGlobal>
-#include <QVector>
+// PUBLIC
 
-class Scenario;
-class ScenarioDescription;
+ScenarioDescription::ScenarioDescription()
+{}
 
-class ScenarioDaoIntf
-{
-public:
-    virtual ~ScenarioDaoIntf() = default;
-
-    /*!
-     * Persists the \c scenario. The \c id in \c scenario is updated.
-     * \param scenario
-     *        the Scenario to be persisted
-     * \return \c true on success; \c false else
-     */
-    virtual bool addScenario(Scenario &scenario) = 0;
-    virtual Scenario getScenario(qint64 id) const = 0;
-    virtual QVector<ScenarioDescription> getScenarioDescriptions() const = 0;
-};
-
-#endif // SCENARIODAOINTF_H
+ScenarioDescription::~ScenarioDescription()
+{}

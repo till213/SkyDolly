@@ -40,7 +40,6 @@ public:
 
     QString dbPath;
     double recordSampleRateValue;
-    double replaySampleRateValue;
     bool windowStayOnTopEnabled;
     QString exportPath;
     QString defaultExportPath;
@@ -51,12 +50,12 @@ public:
     int previewInfoDialogCount;
 
     static Settings *instance;
+    static const QString DefaultDbPath;
     static constexpr double DefaultRecordSampleRate = SampleRate::toValue(SampleRate::SampleRate::Auto);
     static constexpr bool DefaultWindowStayOnTopEnabled = false;
     static constexpr bool DefaultAbsoluteSeek = true;
     static constexpr double DefaultSeekIntervalSeconds = 1.0;
     static constexpr double DefaultSeekIntervalPercent = 0.5;
-    static const QString DefaultDbPath;
 
     static constexpr int DefaultPreviewInfoDialogCount = 3;
     static constexpr int PreviewInfoDialogBase = 20;
@@ -79,6 +78,7 @@ public:
 const QString SettingsPrivate::DefaultDbPath = QString();
 
 Settings *SettingsPrivate::instance = nullptr;
+
 
 // PUBLIC
 
@@ -213,30 +213,23 @@ void Settings::setPreviewInfoDialogCount(int count) noexcept
 void Settings::store() noexcept
 {
     d->settings.setValue("Version", d->version.toString());
-    d->settings.beginGroup("Recording");
-    {
-        d->settings.setValue("RecordSampleRate", d->recordSampleRateValue);
-    }
-    d->settings.endGroup();
-    d->settings.beginGroup("Replay");
-    {
-        d->settings.setValue("AbsoluteSeek", d->absoluteSeek);
-        d->settings.setValue("SeekIntervalSeconds", d->seekIntervalSeconds);
-        d->settings.setValue("SeekIntervalPercent", d->seekIntervalPercent);
-    }
-    d->settings.endGroup();
     d->settings.beginGroup("Library");
     {
         d->settings.setValue("DbPath", d->dbPath);
     }
     d->settings.endGroup();
+    d->settings.beginGroup("Recording");
+    {
+        d->settings.setValue("RecordSampleRate", d->recordSampleRateValue);
+    }
+    d->settings.endGroup();    
     d->settings.beginGroup("Replay");
     {
         d->settings.setValue("AbsoluteSeek", d->absoluteSeek);
         d->settings.setValue("SeekIntervalSeconds", d->seekIntervalSeconds);
         d->settings.setValue("SeekIntervalPercent", d->seekIntervalPercent);
     }
-    d->settings.endGroup();
+    d->settings.endGroup();    
     d->settings.beginGroup("Window");
     {
         d->settings.setValue("WindowStaysOnTopEnabled", d->windowStayOnTopEnabled);
@@ -268,6 +261,11 @@ void Settings::restore() noexcept
     }
 
     bool ok;
+    d->settings.beginGroup("Library");
+    {
+        d->dbPath = d->settings.value("DbPath", SettingsPrivate::DefaultDbPath).toString();
+    }
+    d->settings.endGroup();
     d->settings.beginGroup("Recording");
     {
         d->recordSampleRateValue = d->settings.value("RecordSampleRate", SettingsPrivate::DefaultRecordSampleRate).toDouble(&ok);
@@ -276,12 +274,7 @@ void Settings::restore() noexcept
             d->recordSampleRateValue = SettingsPrivate::DefaultRecordSampleRate;
         }
     }
-    d->settings.endGroup();
-    d->settings.beginGroup("Library");
-    {
-        d->dbPath = d->settings.value("DbPath", SettingsPrivate::DefaultDbPath).toString();
-    }
-    d->settings.endGroup();
+    d->settings.endGroup();    
     d->settings.beginGroup("Replay");
     {
         d->absoluteSeek = d->settings.value("AbsoluteSeek", SettingsPrivate::DefaultAbsoluteSeek).toBool();

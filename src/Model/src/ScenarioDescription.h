@@ -22,29 +22,20 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SCENARIODAOINTF_H
-#define SCENARIODAOINTF_H
+#ifndef SCENARIODESCRIPTION_H
+#define SCENARIODESCRIPTION_H
 
-#include <QtGlobal>
-#include <QVector>
+#include <QString>
 
-class Scenario;
-class ScenarioDescription;
+#include "ModelLib.h"
 
-class ScenarioDaoIntf
+struct MODEL_API ScenarioDescription
 {
-public:
-    virtual ~ScenarioDaoIntf() = default;
+    ScenarioDescription();
+    ~ScenarioDescription();
 
-    /*!
-     * Persists the \c scenario. The \c id in \c scenario is updated.
-     * \param scenario
-     *        the Scenario to be persisted
-     * \return \c true on success; \c false else
-     */
-    virtual bool addScenario(Scenario &scenario) = 0;
-    virtual Scenario getScenario(qint64 id) const = 0;
-    virtual QVector<ScenarioDescription> getScenarioDescriptions() const = 0;
+    qint64 id;
+    QString name;
 };
 
-#endif // SCENARIODAOINTF_H
+#endif // SCENARIODESCRIPTION_H
