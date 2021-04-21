@@ -53,16 +53,12 @@ public:
 "insert into primary_flight_control ("
 "  aircraft_id,"
 "  timestamp,"
-"  yoke_x_position,"
-"  yoke_y_position,"
 "  rudder_position,"
 "  elevator_position,"
 "  aileron_position"
 ") values ("
 " :aircraft_id,"
 " :timestamp,"
-" :yoke_x_position,"
-" :yoke_y_position,"
 " :rudder_position,"
 " :elevator_position,"
 " :aileron_position"
@@ -86,8 +82,6 @@ bool SQLitePrimaryFlightControlDao::addPrimaryFlightControl(qint64 aircraftId, c
     d->initQueries();
     d->insertQuery->bindValue(":aircraft_id", aircraftId, QSql::In);
     d->insertQuery->bindValue(":timestamp", primaryFlightControlData.timestamp, QSql::In);
-    d->insertQuery->bindValue(":yoke_x_position", primaryFlightControlData.yokeXPosition, QSql::In);
-    d->insertQuery->bindValue(":yoke_y_position", primaryFlightControlData.yokeYPosition, QSql::In);
     d->insertQuery->bindValue(":rudder_position", primaryFlightControlData.rudderPosition, QSql::In);
     d->insertQuery->bindValue(":elevator_position", primaryFlightControlData.elevatorPosition, QSql::In);
     d->insertQuery->bindValue(":aileron_position", primaryFlightControlData.aileronPosition, QSql::In);
