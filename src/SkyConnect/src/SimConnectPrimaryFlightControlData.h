@@ -39,8 +39,6 @@
 #pragma pack(push, 1)
 struct SimConnectPrimaryFlightControlData
 {
-    double yokeXPosition;
-    double yokeYPosition;
     double rudderPosition;
     double elevatorPosition;
     double aileronPosition;
@@ -49,8 +47,6 @@ struct SimConnectPrimaryFlightControlData
     {
         PrimaryFlightControlData primaryFlightControlData;
 
-        primaryFlightControlData.yokeXPosition = SkyMath::fromPosition(yokeXPosition);
-        primaryFlightControlData.yokeYPosition = SkyMath::fromPosition(yokeYPosition);
         primaryFlightControlData.rudderPosition = SkyMath::fromPosition(rudderPosition);
         primaryFlightControlData.elevatorPosition = SkyMath::fromPosition(elevatorPosition);
         primaryFlightControlData.aileronPosition = SkyMath::fromPosition(aileronPosition);
@@ -60,8 +56,6 @@ struct SimConnectPrimaryFlightControlData
 
     inline void fromPrimaryFlightControlData(const PrimaryFlightControlData &primaryFlightControlData) noexcept
     {
-        yokeXPosition = SkyMath::toPosition(primaryFlightControlData.yokeXPosition);
-        yokeYPosition = SkyMath::toPosition(primaryFlightControlData.yokeYPosition);
         rudderPosition = SkyMath::toPosition(primaryFlightControlData.rudderPosition);
         elevatorPosition = SkyMath::toPosition(primaryFlightControlData.elevatorPosition);
         aileronPosition = SkyMath::toPosition(primaryFlightControlData.aileronPosition);

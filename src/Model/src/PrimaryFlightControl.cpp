@@ -159,8 +159,6 @@ const PrimaryFlightControlData &PrimaryFlightControl::interpolate(qint64 timesta
         }
 
         if (p1 != nullptr) {
-            d->currentPrimaryFlightControlData.yokeXPosition = SkyMath::interpolateLinear(p1->yokeXPosition, p2->yokeXPosition, tn);
-            d->currentPrimaryFlightControlData.yokeYPosition = SkyMath::interpolateLinear(p1->yokeYPosition, p2->yokeYPosition, tn);
             d->currentPrimaryFlightControlData.rudderPosition = SkyMath::interpolateLinear(p1->rudderPosition, p2->rudderPosition, tn);
             d->currentPrimaryFlightControlData.elevatorPosition = SkyMath::interpolateLinear(p1->elevatorPosition, p2->elevatorPosition, tn);
             d->currentPrimaryFlightControlData.aileronPosition = SkyMath::interpolateLinear(p1->aileronPosition, p2->aileronPosition, tn);

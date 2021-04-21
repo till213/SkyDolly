@@ -33,8 +33,6 @@
 
 void SimConnectPrimaryFlightControlData::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPrimaryFlightControlDefinition), SimVar::YokeXPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPrimaryFlightControlDefinition), SimVar::YokeYPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPrimaryFlightControlDefinition), SimVar::RudderPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPrimaryFlightControlDefinition), SimVar::ElevatorPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPrimaryFlightControlDefinition), SimVar::AileronPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
