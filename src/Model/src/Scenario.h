@@ -56,6 +56,8 @@ public:
 
     qint64 getTotalDurationMSec() const noexcept;
 
+    void clear() noexcept;
+
 signals:
     void aircraftInfoChanged();
     void aircraftDataChanged();

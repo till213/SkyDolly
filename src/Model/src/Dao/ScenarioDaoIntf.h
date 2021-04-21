@@ -43,7 +43,7 @@ public:
      * \return \c true on success; \c false else
      */
     virtual bool addScenario(Scenario &scenario) = 0;
-    virtual Scenario getScenario(qint64 id) const = 0;
+    virtual bool getScenario(qint64 id, Scenario &scenario) const = 0;
     virtual QVector<ScenarioDescription> getScenarioDescriptions() const = 0;
 };
 

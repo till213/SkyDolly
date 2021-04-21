@@ -32,7 +32,6 @@
 
 struct MODEL_API FlightCondition
 {
-    qint64 id;
     float groundAltitude;
     SimType::SurfaceType surfaceType;
     float ambientTemperature;
@@ -50,6 +49,11 @@ struct MODEL_API FlightCondition
     FlightCondition(FlightCondition &&) = default;
     FlightCondition(const FlightCondition &) = default;
     FlightCondition &operator= (const FlightCondition &) = default;
+
+    void clear() noexcept;
+
+private:
+    inline void init() noexcept;
 };
 
 #endif // FLIGHTCONDITION_H

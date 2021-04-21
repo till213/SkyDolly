@@ -533,8 +533,11 @@ void MainWindow::on_openAction_triggered() noexcept
 {
     // TODO FIXME Should call open() here, but this dialog is of temporary nature anyway
     int reply = d->scenarioSelectionDialog->exec();
-    if (reply = QDialog::Accepted) {
-
+    if (reply == QDialog::Accepted) {
+        qint64 selectedScenarioId = d->scenarioSelectionDialog->getSelectedScenarioId();
+        if (selectedScenarioId != 0) {
+            bool ok = d->scenarioService->restore(selectedScenarioId, World::getInstance().getCurrentScenario());
+        }
     }
 }
 

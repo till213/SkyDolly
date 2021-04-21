@@ -34,13 +34,19 @@ class ScenarioPrivate
 public:
 
     ScenarioPrivate() noexcept
-        : id(0)
-    {}
+    {
+        clear();
+    }
 
     qint64 id;
     QString description;
     FlightCondition flightCondition;
     std::vector<std::unique_ptr<Aircraft>> aircrafts;
+
+    inline void clear() noexcept {
+        id = 0;
+        description.clear();
+    }
 };
 
 // PUBLIC
@@ -107,6 +113,13 @@ qint64 Scenario::getTotalDurationMSec() const noexcept
     // For now the total duration is the duration of the
     // (one and only) user aircraft
     return d->aircrafts.at(0)->getDurationMSec();
+}
+
+void Scenario::clear() noexcept
+{
+    d->clear();
+    getUserAircraft().clear();
+    d->flightCondition.clear();
 }
 
 // PRIVATE

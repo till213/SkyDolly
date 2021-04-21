@@ -43,7 +43,7 @@ public:
     ~ScenarioService() noexcept;
 
     bool store(Scenario &scenario) noexcept;
-    Scenario restore(qint64 id) noexcept;
+    bool restore(qint64 id, Scenario &scenario) noexcept;
 
     QVector<ScenarioDescription> getScenarioDescriptions() const noexcept;
 

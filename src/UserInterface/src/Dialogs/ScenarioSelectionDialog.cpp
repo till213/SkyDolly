@@ -29,6 +29,8 @@
 #include <QVector>
 #include <QTableWidget>
 #include <QTableWidgetItem>
+#include <QItemSelectionModel>
+#include <QModelIndex>
 
 #include "../../../Model/src/Service/ScenarioService.h"
 #include "../../../Model/src/ScenarioDescription.h"
@@ -39,26 +41,34 @@ class ScenarioSelectionDialogPrivate
 {
 public:
     ScenarioSelectionDialogPrivate(ScenarioService &theScenarioService)
-        : scenarioService(theScenarioService)
+        : scenarioService(theScenarioService),
+          selectedScenarioId(0)
     {}
 
     ScenarioService &scenarioService;
+    qint64 selectedScenarioId;
 };
 
 // PUBLIC
 
-ScenarioSelectionDialog::ScenarioSelectionDialog(ScenarioService &scenarioService, QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::ScenarioSelectionDialog),
-    d(std::make_unique<ScenarioSelectionDialogPrivate>(scenarioService))
+ScenarioSelectionDialog::ScenarioSelectionDialog(ScenarioService &scenarioService, QWidget *parent) noexcept
+    : QDialog(parent),
+      ui(new Ui::ScenarioSelectionDialog),
+      d(std::make_unique<ScenarioSelectionDialogPrivate>(scenarioService))
 {
     ui->setupUi(this);
     initUi();
+    frenchConnection();
 }
 
-ScenarioSelectionDialog::~ScenarioSelectionDialog()
+ScenarioSelectionDialog::~ScenarioSelectionDialog() noexcept
 {
     delete ui;
+}
+
+qint64 ScenarioSelectionDialog::getSelectedScenarioId() const noexcept
+{
+    return d->selectedScenarioId;
 }
 
 // PROTECTED
@@ -72,7 +82,7 @@ void ScenarioSelectionDialog::showEvent(QShowEvent *event) noexcept
 
 // PRIVATE
 
-void ScenarioSelectionDialog::initUi()
+void ScenarioSelectionDialog::initUi() noexcept
 {
     ui->scenarioTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
@@ -80,22 +90,45 @@ void ScenarioSelectionDialog::initUi()
     QStringList headers {tr("ID"), tr("Description"), tr("Aircraft")};
     ui->scenarioTableWidget->setHorizontalHeaderLabels(headers);
     ui->scenarioTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->scenarioTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
 }
 
-void ScenarioSelectionDialog::updateUi()
+void ScenarioSelectionDialog::updateUi() noexcept
 {
     QVector<ScenarioDescription> descriptions = d->scenarioService.getScenarioDescriptions();
 
+    ui->scenarioTableWidget->setSortingEnabled(false);
     ui->scenarioTableWidget->clearContents();
     ui->scenarioTableWidget->setRowCount(descriptions.count());
     int rowIndex = 0;
     for (const ScenarioDescription &desc : descriptions) {
-        QTableWidgetItem *newItem = new QTableWidgetItem(QString::number(desc.id));
+        QTableWidgetItem *newItem = new QTableWidgetItem();
+        newItem->setData(Qt::DisplayRole, desc.id);
         ui->scenarioTableWidget->setItem(rowIndex, 0, newItem);
         newItem = new QTableWidgetItem(desc.description);
         ui->scenarioTableWidget->setItem(rowIndex, 1, newItem);
         newItem = new QTableWidgetItem(desc.aircraftName);
         ui->scenarioTableWidget->setItem(rowIndex, 2, newItem);
         ++rowIndex;
+    }
+    ui->scenarioTableWidget->setSortingEnabled(true);
+}
+
+void ScenarioSelectionDialog::frenchConnection() noexcept
+{
+    connect(ui->scenarioTableWidget, &QTableWidget::itemSelectionChanged,
+            this, &ScenarioSelectionDialog::handleSelectionChanged);
+}
+
+// PRIVATE SLOTS
+
+void ScenarioSelectionDialog::handleSelectionChanged() noexcept
+{
+    QList<QTableWidgetItem *> selectedItems = ui->scenarioTableWidget->selectedItems();
+    QItemSelectionModel *select = ui->scenarioTableWidget->selectionModel();
+    QModelIndexList selectedRows = select->selectedRows(0);
+    if (selectedRows.count() > 0) {
+        QModelIndex modelIndex = selectedRows.at(0);
+        d->selectedScenarioId = ui->scenarioTableWidget->model()->data(modelIndex).toLongLong();
     }
 }
