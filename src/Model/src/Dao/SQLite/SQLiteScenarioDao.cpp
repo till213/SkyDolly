@@ -28,6 +28,7 @@
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
+#include <QSqlRecord>
 #include <QVector>
 
 #include "../../../../Kernel/src/Enum.h"
@@ -95,10 +96,12 @@ public:
         }
         if (selectQuery == nullptr) {
             selectQuery = std::make_unique<QSqlQuery>();
+            selectQuery->setForwardOnly(true);
             selectQuery->prepare("select s.descn from scenario s where s.id = :id;");
         }
         if (selectDescriptionsQuery == nullptr) {
             selectDescriptionsQuery = std::make_unique<QSqlQuery>();
+            selectDescriptionsQuery->setForwardOnly(true);
             selectDescriptionsQuery->prepare(
 "select s.id, s.descn, a.name "
 "from   scenario s "
@@ -162,5 +165,15 @@ QVector<ScenarioDescription> SQLiteScenarioDao::getScenarioDescriptions() const 
 
     d->initQueries();
     bool ok = d->selectDescriptionsQuery->exec();
+    if (ok) {
+        int idField = d->selectDescriptionsQuery->record().indexOf("id");
+        while (d->selectDescriptionsQuery->next()) {
+            ScenarioDescription description;
+            qint64 id = d->selectDescriptionsQuery->value(idField).toLongLong();
+            description.id = id;
+            descriptions.append(description);
+        }
+    }
+
     return descriptions;
 }
