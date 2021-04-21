@@ -134,10 +134,10 @@ MainWindow::MainWindow(QWidget *parent) noexcept
       d(std::make_unique<MainWindowPrivate>())
 {
     ui->setupUi(this);
+    connectWithDb();
     initUi();
     updateUi();
     frenchConnection();
-    connectWithDb();
 }
 
 MainWindow::~MainWindow() noexcept
@@ -305,6 +305,9 @@ bool MainWindow::connectWithDb() noexcept
         Settings::getInstance().setDbPath(filePath);
     }
     if (!filePath.isNull()) {
+        // TODO FIXME Use a "connection manager" (singleton) which sends signals
+        // whenver the connection has changed: existing prepared SQL statements
+        // need to be re-created in this case!
         d->worldDao = d->daoFactory->createWorldDao();
         ok = d->worldDao->connectDb();
         if (ok) {
