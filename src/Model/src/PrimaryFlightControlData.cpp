@@ -28,8 +28,6 @@
 
 PrimaryFlightControlData::PrimaryFlightControlData() noexcept
     : TimeVariableData(),
-      yokeXPosition(0),
-      yokeYPosition(0),
       rudderPosition(0),
       elevatorPosition(0),
       aileronPosition(0)

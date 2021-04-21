@@ -313,9 +313,7 @@ inline QString CSVExport::getEngineData(const EngineData &data) noexcept
 
 inline QString CSVExport::getPrimaryFlightControlHeader() noexcept
 {
-    return QString(SimVar::YokeXPosition) % Const::Sep %
-           QString(SimVar::YokeYPosition) % Const::Sep %
-           QString(SimVar::RudderPosition) % Const::Sep %
+    return QString(SimVar::RudderPosition) % Const::Sep %
            QString(SimVar::ElevatorPosition) % Const::Sep %
            QString(SimVar::AileronPosition);
 }
@@ -324,16 +322,12 @@ inline QString CSVExport::getPrimaryFlightControlData(const PrimaryFlightControl
 {
     QString csv;
     if (!data.isNull()) {
-        csv = QString::number(data.yokeXPosition) % Const::Sep %
-              QString::number(data.yokeYPosition) % Const::Sep %
-              QString::number(data.rudderPosition) % Const::Sep %
+        csv = QString::number(data.rudderPosition) % Const::Sep %
               QString::number(data.elevatorPosition) % Const::Sep %
               QString::number(data.aileronPosition);
     } else {
         const QString EmptyString;
         csv = EmptyString % Const::Sep %
-              EmptyString % Const::Sep %
-              EmptyString % Const::Sep %
               EmptyString % Const::Sep %
               EmptyString;
     }

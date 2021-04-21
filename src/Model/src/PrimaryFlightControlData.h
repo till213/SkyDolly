@@ -34,8 +34,6 @@
 
 struct MODEL_API PrimaryFlightControlData : public TimeVariableData
 {
-    qint16 yokeXPosition;
-    qint16 yokeYPosition;
     qint16 rudderPosition;
     qint16 elevatorPosition;
     qint16 aileronPosition;

@@ -4,6 +4,8 @@
 
 ### New Features
 
+- Remove "Yoke X|Y Position" simulation variables (not needed: yokes are still properly animated)
+
 ## 0.5.1
 
 ### Bug Fixes

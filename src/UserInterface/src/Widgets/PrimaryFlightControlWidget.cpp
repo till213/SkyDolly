@@ -94,8 +94,6 @@ void PrimaryFlightControlWidget::hideEvent(QHideEvent *event)
 
 void PrimaryFlightControlWidget::initUi()
 {
-    ui->yokeXLineEdit->setToolTip(SimVar::YokeXPosition);
-    ui->yokeYLineEdit->setToolTip(SimVar::YokeYPosition);
     ui->rudderLineEdit->setToolTip(SimVar::RudderPosition);
     ui->elevatorLineEdit->setToolTip(SimVar::ElevatorPosition);
     ui->aileronLineEdit->setToolTip(SimVar::AileronPosition);
@@ -107,8 +105,6 @@ void PrimaryFlightControlWidget::updateUi(qint64 timestamp, TimeVariableData::Ac
     QString colorName;
 
     if (!primaryFlightControlData.isNull()) {
-        ui->yokeXLineEdit->setText(Unit::formatPosition(primaryFlightControlData.yokeXPosition));
-        ui->yokeYLineEdit->setText(Unit::formatPosition(primaryFlightControlData.yokeYPosition));
         ui->rudderLineEdit->setText(Unit::formatPosition(primaryFlightControlData.rudderPosition));
         ui->elevatorLineEdit->setText(Unit::formatPosition(primaryFlightControlData.elevatorPosition));
         ui->aileronLineEdit->setText(Unit::formatPosition(primaryFlightControlData.aileronPosition));
@@ -119,8 +115,6 @@ void PrimaryFlightControlWidget::updateUi(qint64 timestamp, TimeVariableData::Ac
     }
 
     const QString css{QString("color: %1;").arg(colorName)};
-    ui->yokeXLineEdit->setStyleSheet(css);
-    ui->yokeYLineEdit->setStyleSheet(css);
     ui->rudderLineEdit->setStyleSheet(css);
     ui->elevatorLineEdit->setStyleSheet(css);
     ui->aileronLineEdit->setStyleSheet(css);

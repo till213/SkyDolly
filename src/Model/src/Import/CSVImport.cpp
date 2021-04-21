@@ -433,17 +433,7 @@ inline bool CSVImport::importPrimaryFlightControlData(const QList<QByteArray> &h
         }
 
         double doubleValue;
-        if (header == SimVar::YokeXPosition) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
-            if (ok) {
-                data.yokeXPosition = doubleValue;
-            }
-        } else if (header == SimVar::YokeYPosition) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
-            if (ok) {
-                data.yokeYPosition = doubleValue;
-            }
-        } else if (header == SimVar::RudderPosition) {
+        if (header == SimVar::RudderPosition) {
             doubleValue = values.at(columnIndex).toDouble(&ok);
             if (ok) {
                 data.rudderPosition = doubleValue;
