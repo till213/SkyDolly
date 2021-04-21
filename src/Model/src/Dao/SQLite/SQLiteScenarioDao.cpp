@@ -116,7 +116,8 @@ SQLiteScenarioDao::SQLiteScenarioDao() noexcept
 }
 
 SQLiteScenarioDao::~SQLiteScenarioDao() noexcept
-{}
+{
+}
 
 bool SQLiteScenarioDao::addScenario(Scenario &scenario)  noexcept
 {

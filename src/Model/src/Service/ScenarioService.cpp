@@ -76,11 +76,5 @@ Scenario ScenarioService::restore(qint64 id) noexcept
 
 QVector<ScenarioDescription> ScenarioService::getScenarioDescriptions() const noexcept
 {
-    QVector<ScenarioDescription> descriptions;
-    ScenarioDescription description;
-    description.id = 42;
-    description.name = "Test";
-    descriptions.append(std::move(description));
-
-    return descriptions;
+    return d->scenarioDao->getScenarioDescriptions();
 }
