@@ -168,4 +168,3 @@ void AircraftWidget::handleTimestampChanged(qint64 timestamp, TimeVariableData::
 {
     updateUi(timestamp, access);
 }
-
