@@ -44,8 +44,10 @@ class ScenarioSelectionDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ScenarioSelectionDialog(ScenarioService &scenarioService, QWidget *parent = nullptr);
-    ~ScenarioSelectionDialog();
+    explicit ScenarioSelectionDialog(ScenarioService &scenarioService, QWidget *parent = nullptr) noexcept;
+    ~ScenarioSelectionDialog() noexcept;
+
+    qint64 getSelectedScenarioId() const noexcept;
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;
@@ -54,8 +56,12 @@ private:
     Ui::ScenarioSelectionDialog *ui;
     std::unique_ptr<ScenarioSelectionDialogPrivate> d;
 
-    void initUi();
-    void updateUi();
+    void initUi() noexcept;
+    void updateUi() noexcept;
+    void frenchConnection() noexcept;
+
+private slots:
+    void handleSelectionChanged() noexcept;
 };
 
 #endif // SCENARIOSELECTIONDIALOG_H

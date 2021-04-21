@@ -22,21 +22,35 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include "SimType.h"
 #include "FlightCondition.h"
+
 // PUBLIC
 
 FlightCondition::FlightCondition() noexcept
-    : groundAltitude(0.0f),
-      surfaceType(SimType::SurfaceType::Unknown),
-      ambientTemperature(0.0f),
-      totalAirTemperature(0.0f),
-      windVelocity(0.0f),
-      windDirection(0.0f),
-      precipitationState(SimType::PrecipitationState::None),
-      inClouds(false),
-      visibility(0.0f),
-      seaLevelPressure(0.0f),
-      pitotIcingPercent(0),
-      structuralIcingPercent(0)
 {
+    init();
+}
+
+void FlightCondition::clear() noexcept
+{
+    init();
+}
+
+// PRIVATE
+
+void FlightCondition::init() noexcept
+{
+    groundAltitude = 0.0;
+    surfaceType = SimType::SurfaceType::Unknown;
+    ambientTemperature = 0.0;
+    totalAirTemperature = 0.0;
+    windVelocity = 0.0;
+    windDirection = 0.0;
+    precipitationState = SimType::PrecipitationState::None;
+    inClouds = false;
+    visibility = 0.0;
+    seaLevelPressure = 0.0;
+    pitotIcingPercent = 0.0;
+    structuralIcingPercent = 0.0;
 }

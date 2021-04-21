@@ -58,23 +58,34 @@ ScenarioService::~ScenarioService() noexcept
 
 bool ScenarioService::store(Scenario &scenario) noexcept
 {
-    QSqlDatabase::database().transaction();
-    bool ok = d->scenarioDao->addScenario(scenario);
+    bool ok = QSqlDatabase::database().transaction();
     if (ok) {
-        QSqlDatabase::database().commit();
-    } else {
-        QSqlDatabase::database().rollback();
+        d->scenarioDao->addScenario(scenario);
+        if (ok) {
+            QSqlDatabase::database().commit();
+        } else {
+            QSqlDatabase::database().rollback();
+        }
     }
     return ok;
 }
 
-Scenario ScenarioService::restore(qint64 id) noexcept
+bool ScenarioService::restore(qint64 id, Scenario &scenario) noexcept
 {
-    // TODO IMPLEMENT ME!!!
-    return Scenario();
+    bool ok = QSqlDatabase::database().transaction();
+    if (ok) {
+        ok = d->scenarioDao->getScenario(id, scenario);
+    }
+    QSqlDatabase::database().rollback();
+    return ok;
 }
 
 QVector<ScenarioDescription> ScenarioService::getScenarioDescriptions() const noexcept
 {
-    return d->scenarioDao->getScenarioDescriptions();
+    QVector<ScenarioDescription> descriptions;
+    if (QSqlDatabase::database().transaction()) {
+        descriptions = d->scenarioDao->getScenarioDescriptions();
+        QSqlDatabase::database().rollback();
+    }
+    return descriptions;
 }
