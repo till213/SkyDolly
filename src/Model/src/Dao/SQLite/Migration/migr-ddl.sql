@@ -89,6 +89,11 @@ create table engine (
 create table primary_flight_control (
     aircraft_id integer not null,
     timestamp integer not null,
+<<<<<<< HEAD
+=======
+    yoke_x_position integer,
+    yoke_y_position integer,
+>>>>>>> aa79a510c06c2b235466bd6e6767e3e4dc227861
     rudder_position integer,
     elevator_position integer,
     aileron_position integer,

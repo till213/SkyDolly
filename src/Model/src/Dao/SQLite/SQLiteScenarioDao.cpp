@@ -28,9 +28,11 @@
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
+#include <QVector>
 
 #include "../../../../Kernel/src/Enum.h"
 #include "../../Scenario.h"
+#include "../../ScenarioDescription.h"
 #include "../../FlightCondition.h"
 #include "../../Dao/AircraftDaoIntf.h"
 #include "../../Dao/DaoFactory.h"
@@ -50,6 +52,7 @@ public:
 
     std::unique_ptr<QSqlQuery> insertQuery;
     std::unique_ptr<QSqlQuery> selectQuery;
+    std::unique_ptr<QSqlQuery> selectDescriptionsQuery;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<AircraftDaoIntf> aircraftDao;
 
@@ -93,6 +96,14 @@ public:
         if (selectQuery == nullptr) {
             selectQuery = std::make_unique<QSqlQuery>();
             selectQuery->prepare("select s.descn from scenario s where s.id = :id;");
+        }
+        if (selectDescriptionsQuery == nullptr) {
+            selectDescriptionsQuery = std::make_unique<QSqlQuery>();
+            selectDescriptionsQuery->prepare(
+"select s.id, s.descn, a.name "
+"from   scenario s "
+"join   aircraft a "
+"where a.scenario_id = s.id;");
         }
     }
 };
@@ -142,4 +153,13 @@ bool SQLiteScenarioDao::addScenario(Scenario &scenario)  noexcept
 Scenario SQLiteScenarioDao::getScenario(qint64 id) const noexcept
 {
     return Scenario();
+}
+
+QVector<ScenarioDescription> SQLiteScenarioDao::getScenarioDescriptions() const noexcept
+{
+    QVector<ScenarioDescription> descriptions;
+
+    d->initQueries();
+    bool ok = d->selectDescriptionsQuery->exec();
+    return descriptions;
 }

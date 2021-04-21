@@ -28,6 +28,10 @@
 #include <memory>
 
 #include "../Scenario.h"
+#include <QVector>
+
+#include "../Scenario.h"
+#include "../ScenarioDescription.h"
 #include "../ModelLib.h"
 
 class ScenarioServicePrivate;
@@ -40,6 +44,8 @@ public:
 
     bool store(Scenario &scenario) noexcept;
     Scenario restore(qint64 id) noexcept;
+
+    QVector<ScenarioDescription> getScenarioDescriptions() const noexcept;
 
 private:
     std::unique_ptr<ScenarioServicePrivate> d;

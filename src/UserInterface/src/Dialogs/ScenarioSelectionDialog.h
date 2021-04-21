@@ -29,6 +29,8 @@
 
 #include <QDialog>
 
+#include "../../../Model/src/Service/ScenarioService.h"
+
 class ScenarioSelectionDialogPrivate;
 
 namespace Ui {
@@ -40,7 +42,7 @@ class ScenarioSelectionDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ScenarioSelectionDialog(QWidget *parent = nullptr);
+    explicit ScenarioSelectionDialog(ScenarioService &scenarioService, QWidget *parent = nullptr);
     ~ScenarioSelectionDialog();
 
 private:
