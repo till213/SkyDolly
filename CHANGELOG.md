@@ -8,7 +8,8 @@
 
 ### Bug Fixes
 
-- The custom replay speed factor is now shown with two decimal places (e.g. 1.00)
+- The custom replay speed factor is now displayed with to decimal places (e.g. 1.00 - in order to show the proper decimal delimiter)
+- Properly name simulation variable "Yoke X Position" (instead of Y)
 
 ## 0.5.0
 
