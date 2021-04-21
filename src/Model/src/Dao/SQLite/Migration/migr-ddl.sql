@@ -1,7 +1,7 @@
 @migr(id = "da30cf74-c698-4a73-bad1-c1cf3f380f32", descn = "Create scenario table", step_cnt = 1)
 create table scenario (
     id integer primary key,
-    descn text,
+    description text,
     ground_altitude real,
     surface_type integer,
     ambient_temperature real,

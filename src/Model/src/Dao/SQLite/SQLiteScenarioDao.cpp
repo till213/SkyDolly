@@ -64,7 +64,7 @@ public:
             insertQuery->prepare(
 "insert into scenario ("
 "  id,"
-"  descn,"
+"  description,"
 "  ground_altitude,"
 "  surface_type,"
 "  ambient_temperature,"
@@ -79,7 +79,7 @@ public:
 "  in_clouds"
 ") values ("
 "  null,"
-" :descn,"
+" :description,"
 " :ground_altitude,"
 " :surface_type,"
 " :ambient_temperature,"
@@ -97,13 +97,13 @@ public:
         if (selectQuery == nullptr) {
             selectQuery = std::make_unique<QSqlQuery>();
             selectQuery->setForwardOnly(true);
-            selectQuery->prepare("select s.descn from scenario s where s.id = :id;");
+            selectQuery->prepare("select s.description from scenario s where s.id = :id;");
         }
         if (selectDescriptionsQuery == nullptr) {
             selectDescriptionsQuery = std::make_unique<QSqlQuery>();
             selectDescriptionsQuery->setForwardOnly(true);
             selectDescriptionsQuery->prepare(
-"select s.id, s.descn, a.name "
+"select s.id, s.description, a.name "
 "from   scenario s "
 "join   aircraft a "
 "where a.scenario_id = s.id;");
@@ -126,7 +126,7 @@ bool SQLiteScenarioDao::addScenario(Scenario &scenario)  noexcept
 {
     d->initQueries();
     const FlightCondition &flightCondition = scenario.getFlightConditionConst();
-    d->insertQuery->bindValue(":descn", scenario.getDescription(), QSql::In);
+    d->insertQuery->bindValue(":description", scenario.getDescription(), QSql::In);
     d->insertQuery->bindValue(":ground_altitude", flightCondition.groundAltitude, QSql::In);
     d->insertQuery->bindValue(":surface_type", Enum::toUnderlyingType(flightCondition.surfaceType), QSql::In);
     d->insertQuery->bindValue(":ambient_temperature", flightCondition.ambientTemperature, QSql::In);
@@ -166,11 +166,14 @@ QVector<ScenarioDescription> SQLiteScenarioDao::getScenarioDescriptions() const 
     d->initQueries();
     bool ok = d->selectDescriptionsQuery->exec();
     if (ok) {
-        int idField = d->selectDescriptionsQuery->record().indexOf("id");
+        int idFieldIndex = d->selectDescriptionsQuery->record().indexOf("id");
+        int descriptionFieldIndex = d->selectDescriptionsQuery->record().indexOf("description");
+        int aircraftNameFieldIndex = d->selectDescriptionsQuery->record().indexOf("name");
         while (d->selectDescriptionsQuery->next()) {
             ScenarioDescription description;
-            qint64 id = d->selectDescriptionsQuery->value(idField).toLongLong();
-            description.id = id;
+            description.id = d->selectDescriptionsQuery->value(idFieldIndex).toLongLong();
+            description.description = d->selectDescriptionsQuery->value(descriptionFieldIndex).toString();
+            description.aircraftName = d->selectDescriptionsQuery->value(aircraftNameFieldIndex).toString();
             descriptions.append(description);
         }
     }
