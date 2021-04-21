@@ -38,7 +38,7 @@ const char *SimVar::RotationVelocityBodyX = "Rotation Velocity Body X";
 const char *SimVar::RotationVelocityBodyY = "Rotation Velocity Body Y";
 const char *SimVar::RotationVelocityBodyZ = "Rotation Velocity Body Z";
 
-const char *SimVar::YokeXPosition = "Yoke Y Position";
+const char *SimVar::YokeXPosition = "Yoke X Position";
 const char *SimVar::YokeYPosition = "Yoke Y Position";
 const char *SimVar::RudderPosition = "Rudder Position";
 const char *SimVar::ElevatorPosition = "Elevator Position";
