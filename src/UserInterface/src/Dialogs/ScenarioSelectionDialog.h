@@ -29,6 +29,8 @@
 
 #include <QDialog>
 
+class QShowEvent;
+
 #include "../../../Model/src/Service/ScenarioService.h"
 
 class ScenarioSelectionDialogPrivate;
@@ -44,6 +46,9 @@ class ScenarioSelectionDialog : public QDialog
 public:
     explicit ScenarioSelectionDialog(ScenarioService &scenarioService, QWidget *parent = nullptr);
     ~ScenarioSelectionDialog();
+
+protected:
+    void showEvent(QShowEvent *event) noexcept override;
 
 private:
     Ui::ScenarioSelectionDialog *ui;

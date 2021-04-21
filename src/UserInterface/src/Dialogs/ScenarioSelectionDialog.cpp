@@ -54,12 +54,20 @@ ScenarioSelectionDialog::ScenarioSelectionDialog(ScenarioService &scenarioServic
 {
     ui->setupUi(this);
     initUi();
-    updateUi();
 }
 
 ScenarioSelectionDialog::~ScenarioSelectionDialog()
 {
     delete ui;
+}
+
+// PROTECTED
+
+void ScenarioSelectionDialog::showEvent(QShowEvent *event) noexcept
+{
+    Q_UNUSED(event)
+
+    updateUi();
 }
 
 // PRIVATE
@@ -69,7 +77,7 @@ void ScenarioSelectionDialog::initUi()
     ui->scenarioTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     ui->scenarioTableWidget->setColumnCount(3);
-    QStringList headers {tr("Header 1"), tr("Header 2"), tr("Header 3")};
+    QStringList headers {tr("ID"), tr("Description"), tr("Aircraft")};
     ui->scenarioTableWidget->setHorizontalHeaderLabels(headers);
     ui->scenarioTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 }
@@ -78,15 +86,16 @@ void ScenarioSelectionDialog::updateUi()
 {
     QVector<ScenarioDescription> descriptions = d->scenarioService.getScenarioDescriptions();
 
-    ui->scenarioTableWidget->clear();
-    int rowCount = 0;
-    for (ScenarioDescription desc : descriptions) {
-        ui->scenarioTableWidget->insertRow(rowCount);
+    ui->scenarioTableWidget->clearContents();
+    ui->scenarioTableWidget->setRowCount(descriptions.count());
+    int rowIndex = 0;
+    for (const ScenarioDescription &desc : descriptions) {
         QTableWidgetItem *newItem = new QTableWidgetItem(QString::number(desc.id));
-        ui->scenarioTableWidget->setItem(0, 0, newItem);
-        newItem = new QTableWidgetItem(desc.name);
-        ui->scenarioTableWidget->setItem(0, 1, newItem);
-        newItem = new QTableWidgetItem("Item 3");
-        ui->scenarioTableWidget->setItem(0, 2, newItem);
+        ui->scenarioTableWidget->setItem(rowIndex, 0, newItem);
+        newItem = new QTableWidgetItem(desc.description);
+        ui->scenarioTableWidget->setItem(rowIndex, 1, newItem);
+        newItem = new QTableWidgetItem(desc.aircraftName);
+        ui->scenarioTableWidget->setItem(rowIndex, 2, newItem);
+        ++rowIndex;
     }
 }

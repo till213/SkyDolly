@@ -35,7 +35,8 @@ struct MODEL_API ScenarioDescription
     ~ScenarioDescription();
 
     qint64 id;
-    QString name;
+    QString description;
+    QString aircraftName;
 };
 
 #endif // SCENARIODESCRIPTION_H
