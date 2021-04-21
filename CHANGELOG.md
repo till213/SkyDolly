@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.1
+
+### Bug Fixes
+
+- The replay speed factor is now displayed with to decimal places (in order to show the proper decimal delimiter)
+- Properly name simulation variable "Yoke X Position" (instead of Y)
+
 ## 0.5.0
 
 ### New Features
