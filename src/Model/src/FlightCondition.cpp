@@ -48,9 +48,9 @@ void FlightCondition::init() noexcept
     windVelocity = 0.0;
     windDirection = 0.0;
     precipitationState = SimType::PrecipitationState::None;
-    inClouds = false;
     visibility = 0.0;
     seaLevelPressure = 0.0;
     pitotIcingPercent = 0.0;
     structuralIcingPercent = 0.0;
+    inClouds = false;
 }

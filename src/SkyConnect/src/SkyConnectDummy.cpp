@@ -234,12 +234,12 @@ void SkyConnectDummy::recordFlightCondition() noexcept
     flightCondition.totalAirTemperature = randomGenerator->bounded(80.0) - 40.0;
     flightCondition.windVelocity = randomGenerator->bounded(30.0);
     flightCondition.windDirection = randomGenerator->bounded(360);
-    flightCondition.precipitationState = static_cast<SimType::PrecipitationState>(randomGenerator->bounded(4));
-    flightCondition.inClouds = randomGenerator->bounded(2) < 0 ? true : false;
+    flightCondition.precipitationState = static_cast<SimType::PrecipitationState>(randomGenerator->bounded(4)); 
     flightCondition.visibility = randomGenerator->bounded(10000.0);
     flightCondition.seaLevelPressure = 950.0 + randomGenerator->bounded(100.0);
     flightCondition.pitotIcingPercent = randomGenerator->bounded(101);
     flightCondition.structuralIcingPercent = randomGenerator->bounded(101);
+    flightCondition.inClouds = randomGenerator->bounded(2) < 1 ? false : true;
 
     scenario.setFlightCondition(flightCondition);
 }
