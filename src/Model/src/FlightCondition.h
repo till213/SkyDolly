@@ -39,11 +39,11 @@ struct MODEL_API FlightCondition
     float windVelocity;
     float windDirection;
     SimType::PrecipitationState precipitationState;
-    bool inClouds;
     float visibility;
     float seaLevelPressure;
     quint8 pitotIcingPercent;
     quint8 structuralIcingPercent;
+    bool inClouds;
 
     FlightCondition() noexcept;
     FlightCondition(FlightCondition &&) = default;
