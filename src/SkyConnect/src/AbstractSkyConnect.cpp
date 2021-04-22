@@ -50,7 +50,7 @@ public:
           currentScenario(World::getInstance().getCurrentScenario()),
           currentTimestamp(0),
           recordSampleRate(Settings::getInstance().getRecordSampleRateValue()),
-          recordIntervalMSec(SampleRate::toInterval(recordSampleRate)),
+          recordIntervalMSec(SampleRate::toIntervalMSec(recordSampleRate)),
           timeScale(1.0),
           elapsedTime(0),
           lastSamplesPerSecondIndex(0)
@@ -410,7 +410,7 @@ qint64 AbstractSkyConnect::getSkipInterval() const noexcept
 void AbstractSkyConnect::handleRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
 {
     d->recordSampleRate = SampleRate::toValue(sampleRate);
-    d->recordIntervalMSec = SampleRate::toInterval(d->recordSampleRate);
+    d->recordIntervalMSec = SampleRate::toIntervalMSec(d->recordSampleRate);
     if (d->state == Connect::State::Recording || d->state == Connect::State::RecordingPaused) {
         if (!isAutoRecordSampleRate()) {
             d->timer.setInterval(d->recordIntervalMSec);

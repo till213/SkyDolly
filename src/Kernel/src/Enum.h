@@ -27,8 +27,14 @@
 
 #include <type_traits>
 
+/*!
+ * Enumeration support functionality.
+ */
 namespace Enum
 {
+    /*!
+     * Returns the underlying type for the given enumeration \c e.
+     */
     template<typename E>
     constexpr auto toUnderlyingType(E e) noexcept
     {
