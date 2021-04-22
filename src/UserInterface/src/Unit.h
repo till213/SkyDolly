@@ -25,37 +25,42 @@
 #ifndef UNIT_H
 #define UNIT_H
 
+#include <memory>
+
 #include <QString>
+
+class UnitPrivate;
 
 class Unit
 {
 public:
-    Unit() = default;
-    ~Unit() = default;
+    Unit();
+    ~Unit();
 
-    static QString formatLatitude(double latitude) noexcept;
-    static QString formatLongitude(double longitude) noexcept;
-    static QString formatFeet(double feet) noexcept;
-    static QString formatCelcius(double temperature) noexcept;
-    static QString formatPressureInHPa(double pressure) noexcept;
-    static QString formatVisibility(double metres) noexcept;
+    QString formatLatitude(double latitude) noexcept;
+    QString formatLongitude(double longitude) noexcept;
+    QString formatFeet(double feet) noexcept;
+    QString formatCelcius(double temperature) noexcept;
+    QString formatPressureInHPa(double pressure) noexcept;
+    QString formatVisibility(double metres) noexcept;
 
     /*!
      * Returns a formatted string for \c degrees [0, 360].
      *
      * @return a formatted string for \c degrees, including unit (°)
      */
-    static QString formatDegrees(double degrees) noexcept;
+    QString formatDegrees(double degrees) noexcept;
 
-    static QString formatVelocityInFeet(double velocity) noexcept;
-    static QString formatVelocityInRadians(double velocity) noexcept;
+    QString formatVelocityInFeet(double velocity) noexcept;
+    QString formatVelocityInRadians(double velocity) noexcept;
 
-    static QString formatPosition(qint16 position) noexcept;
-    static QString formatPercent(quint8 percent) noexcept;
+    QString formatPosition(qint16 position) noexcept;
+    QString formatPercent(quint8 percent) noexcept;
 
-    static QString formatKnots(double velocity) noexcept;
+    QString formatKnots(double velocity) noexcept;
 
 private:
+    std::unique_ptr<UnitPrivate> d;
     static inline void dd2dms(double dd, int &degrees, int &minutes, double &seconds) noexcept;
 };
 
