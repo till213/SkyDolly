@@ -27,10 +27,20 @@
 
 #include <QtGlobal>
 
+/*!
+ * Recording sample rates.
+ */
 namespace SampleRate
 {
+    /*!
+     * Setting the recording sample rate to \e auto will enable
+     * "event-based sampling" ("as fast as data arrives").
+     */
     inline constexpr int AutoValue = 999.0;
 
+    /*!
+     * The SampleRate defines various recording sample rates.
+     */
     enum class SampleRate: int {
         Auto = 0,
         Hz1,
@@ -48,6 +58,13 @@ namespace SampleRate
 
     };
 
+    /*!
+     * Converts the given \c sampleRate enumeration value to the corresponding value in Hz.
+     *
+     * \param sampleRate
+     *        the sample rate enumeration to convert
+     * \return the sample rate in Hz
+     */
     inline constexpr double toValue(SampleRate sampleRate) noexcept {
         switch (sampleRate) {
         case SampleRate::Auto:
@@ -81,6 +98,13 @@ namespace SampleRate
         }
     }
 
+    /*!
+     * Converts the given \c sampleRate in Hz to the corresponding enumeration value.
+     *
+     * \param sampleRate
+     *        the sample rate in Hz to convert
+     * \return the sample rate enumeration value; default: \c Auto
+     */
     inline constexpr SampleRate fromValue(double sampleRate) noexcept {
         if (sampleRate <= 1.0)
             return SampleRate::Hz1;
@@ -113,12 +137,13 @@ namespace SampleRate
     }
 
     /*!
-     * Returns the interval [msec], suitable for a QTimer, corresponding to the given \c sampleRateValue [Hz]
+     * Returns the interval [msec], suitable for a QTimer, corresponding to the given \c sampleRateValue [Hz].
+     *
      * \param sampleRateValue
      *        the sample rate value to convert to the corresponding interval
      * \return the interval in milliseconds
      */
-    inline int toInterval(double sampleRateValue) noexcept {
+    inline int toIntervalMSec(double sampleRateValue) noexcept {
         if (sampleRateValue != AutoValue) {
             return static_cast<int>(1000.0 / sampleRateValue);
         } else {
@@ -127,12 +152,12 @@ namespace SampleRate
     }
 
     /*!
-     * Returns the interval [msec], suitable for a QTimer, corresponding to the given \c sampleRate [Hz]
+     * Returns the interval [msec], suitable for a QTimer, corresponding to the given \c sampleRate [Hz].
      * \param sampleRate
      *        the sample rate to convert to the corresponding interval
      * \return the interval in milliseconds
      */
-    inline int toInterval(SampleRate sampleRate) noexcept {
+    inline int toIntervalMSec(SampleRate sampleRate) noexcept {
         if (sampleRate != SampleRate::Auto) {
             return static_cast<int>(1000.0 / toValue(sampleRate));
         } else {

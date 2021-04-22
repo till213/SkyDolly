@@ -310,8 +310,6 @@ void Settings::frenchConnection() noexcept
 {
     connect(this, &Settings::recordSampleRateChanged,
             this, &Settings::changed);
-    connect(this, &Settings::replaySampleRateChanged,
-            this, &Settings::changed);
     connect(this, &Settings::exportPathChanged,
             this, &Settings::changed);
     connect(this, &Settings::absoluteSeekEnabledChanged,

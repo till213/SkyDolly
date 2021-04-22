@@ -45,29 +45,139 @@ class KERNEL_API Settings : public QObject
     Q_OBJECT
 public:
 
+    /*!
+     * Returns the singleton Settings instance.
+     *
+     * \return a reference to the singleton
+     */
     static Settings &getInstance() noexcept;
+
+    /*!
+     * Destroys the singleton instance. To be called when the application is just
+     * about to terminate. The settings are persisted just before destruction
+     * as well, in configuration files (or the registry).
+     */
     static void destroyInstance() noexcept;
 
+    /*!
+     * Returns the recording sample rate enumeration value.
+     *
+     * \return the SampleRate#SampleRate enumeration value.
+     */
     SampleRate::SampleRate getRecordSampleRate() const noexcept;
+
+    /*!
+     * Returns the recording sample rate in Hz.
+     *
+     * \return the recording sample rate in Hz
+     */
     double getRecordSampleRateValue() const noexcept;
+
+    /*!
+     * Sets the recording sample rate.
+     *
+     * \param sampleRate
+     *        the SampleRate#SampleRate enumeration value
+     * \sa recordSampleRateChanged()
+     */
     void setRecordSampleRate(SampleRate::SampleRate sampleRate) noexcept;
 
+    /*!
+     * Returns whether the \e stay \e on \e top option is enabled.
+     *
+     * \return \c true if the application window is kept in the foreground;
+     *         \c false else
+     */
     bool isWindowStaysOnTopEnabled() const noexcept;
+
+    /*!
+     * Sets the \e stay \e on \e top option.
+     *
+     * \param enable
+     *        \c true in order to keep the application windoww in the foreground;
+     *        \c false to enable default window behaviour
+     */
     void setWindowStaysOnTopEnabled(bool enable) noexcept;
 
+    /*!
+     * Returns the path of the directory which was last accessed during export or import.
+     *
+     * \return the path of the last export / import directory
+     */
     QString getExportPath() const noexcept;
+
+    /*!
+     * Sets the path of the directory which was last accessed during export or import.
+     *
+     * \param exportPath
+     *        the path of the last export / import directory
+     * \sa exportPathChanged()
+     */
     void setExportPath(QString exportPath);
 
+    /*!
+     * Returns whether the fast-forward / backward interval is an absolute value (in milliseconds).
+     * \return \c true if the seek interval is an absolute value; \c false if the interval is
+     *         relative (in percent of the duration)
+     */
     bool isAbsoluteSeekEnabled() const noexcept;
+
+    /*!
+     * Sets whether the fast-forward / backward interval is an absolute value (in milliseconds).
+     *
+     * \param enable
+     *        set to \c true in order to set the seek interval as an absolute value; \c false to
+     *        set the seek interval as relative value (in percent of the duration)
+     * \sa absoluteSeekEnabledChanged()
+     */
     void setAbsoluteSeekEnabled(bool enable) noexcept;
 
+    /*!
+     * Returns the absolute seek interval.
+     *
+     * \return the absolute seek interval in seconds
+     */
     double getSeekIntervalSeconds() const noexcept;
+
+    /*!
+     * \Sets the absolute seek interval.
+     *
+     * \param seconds
+     *        the absolute seek interval in seconds
+     * \sa seekIntervalSecondsChanged()
+     */
     void setSeekIntervalSeconds(double seconds) noexcept;
 
+    /*!
+     * Returns the relative seek interval.
+     *
+     * \return the relative seek interval in percent of the duration
+     */
     double getSeekIntervalPercent() const noexcept;
+
+    /*!
+     * Sets the relative seek interval in percent.
+     *
+     * \param percent
+     *        the seek interval in percent of the duration
+     * \sa seekIntervalPercentChanged
+     */
     void setSeekIntervalPercent(double percent) noexcept;
 
+    /*!
+     * Returns the count of how many times the "preview" dialog is still
+     * to be shown.
+     *
+     * \obsolete
+     */
     int getPreviewInfoDialogCount() const noexcept;
+
+    /*!
+     * Sets the count of how many times the "preview" dialog is still
+     * to be shown.
+     *
+     * \obsolete
+     */
     void setPreviewInfoDialogCount(int count) noexcept;
 
 public slots:
@@ -91,13 +201,6 @@ signals:
      * \sa changed()
      */
     void recordSampleRateChanged(SampleRate::SampleRate sampleRate);
-
-    /*!
-     * Emitted when the replay sample rate has changed.
-     *
-     * \sa changed()
-     */
-    void replaySampleRateChanged(SampleRate::SampleRate sampleRate);
 
     /*!
      * Emitted when the export path has changed.

@@ -29,11 +29,17 @@
 
 #include <QtGlobal>
 
+/*!
+ * Mathematical functions for interpolation.
+ */
 namespace SkyMath {
 
     // Make the position range symmetric, such that 0 is exactly the middle value
+    /*! The minimal position value, such that value 0 is exaclty in the middle of the entire range */
     inline constexpr double PositionMin16 = static_cast<double>(-std::numeric_limits<qint16>::max());
+    /*! The maximum position value, such that value 0 is exaclty in the middle of the entire range */
     inline constexpr double PositionMax16 = static_cast<double>( std::numeric_limits<qint16>::max());
+    /*! The range (number of values) for position values */
     inline constexpr double PositionRange16 = PositionMax16 - PositionMin16;
 
     inline constexpr double PercentMin8 = static_cast<double>(std::numeric_limits<quint8>::min());
