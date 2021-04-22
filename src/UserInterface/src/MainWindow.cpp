@@ -222,6 +222,9 @@ void MainWindow::initControlUi() noexcept
     ui->positionSlider->setRange(PositionSliderMin, PositionSliderMax);
     ui->timestampTimeEdit->setDisplayFormat(TimestampFormat);
 
+    // TODO: Take regional settings into account
+    // https://stackoverflow.com/questions/42534378/c-qt-creator-how-to-have-dot-and-comma-as-decimal-separator-on-a-qdoubles
+    // https://doc.qt.io/qt-5/qlocale.html
     QDoubleValidator *customReplaySpeedValidator = new QDoubleValidator(ui->customReplaySpeedLineEdit);
     ui->customReplaySpeedLineEdit->setValidator(customReplaySpeedValidator);
     customReplaySpeedValidator->setRange(ReplaySpeedMin, ReplaySpeedMax, ReplaySpeedDecimalPlaces);
