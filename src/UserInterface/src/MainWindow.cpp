@@ -39,6 +39,7 @@
 #include <QMessageBox>
 #include <QDoubleValidator>
 #include <QIcon>
+#include <QLocale>
 
 #include "../../Kernel/src/Version.h"
 #include "../../Kernel/src/Settings.h"
@@ -68,7 +69,9 @@ namespace
     constexpr int PositionSliderMax = 1000;
     constexpr double ReplaySpeedMin = 0.01;
     // A replay speed with factor 200 should be fast enough
-    constexpr double ReplaySpeedMax = 200;
+    constexpr double ReplaySpeedMax = 200.0;
+    constexpr double ReplaySpeedDecimalPlaces = 2;
+    constexpr char TimestampFormat[] = "hh:mm:ss";
     constexpr qint64 MilliSecondsPerSecond = 1000;
     constexpr qint64 MilliSecondsPerMinute = 60 * MilliSecondsPerSecond;
     constexpr qint64 MilliSecondsPerHour = 60 * MilliSecondsPerMinute;
@@ -110,6 +113,7 @@ public:
     SimulationVariablesDialog *simulationVariablesDialog;
     StatisticsDialog *statisticsDialog;
     double lastCustomReplaySpeed;
+    QLocale locale;
 };
 
 // PUBLIC
@@ -215,14 +219,12 @@ void MainWindow::initControlUi() noexcept
     d->replaySpeedButtonGroup->addButton(ui->replaySpeed16xRadioButton, Enum::toUnderlyingType(ReplaySpeed::Speed16x));
     d->replaySpeedButtonGroup->addButton(ui->customReplaySpeedRadioButton, Enum::toUnderlyingType(ReplaySpeed::CustomSpeed));
 
-    ui->positionSlider->setMinimum(PositionSliderMin);
-    ui->positionSlider->setMaximum(PositionSliderMax);
-    ui->timestampTimeEdit->setDisplayFormat("hh:mm:ss");
+    ui->positionSlider->setRange(PositionSliderMin, PositionSliderMax);
+    ui->timestampTimeEdit->setDisplayFormat(TimestampFormat);
 
     QDoubleValidator *customReplaySpeedValidator = new QDoubleValidator(ui->customReplaySpeedLineEdit);
     ui->customReplaySpeedLineEdit->setValidator(customReplaySpeedValidator);
-    customReplaySpeedValidator->setBottom(ReplaySpeedMin);
-    customReplaySpeedValidator->setTop(ReplaySpeedMax);
+    customReplaySpeedValidator->setRange(ReplaySpeedMin, ReplaySpeedMax, ReplaySpeedDecimalPlaces);
 
     const double replaySpeed = d->skyConnect.getTimeScale();
     d->lastCustomReplaySpeed = replaySpeed;
@@ -230,8 +232,9 @@ void MainWindow::initControlUi() noexcept
         ui->replaySpeed1xRadioButton->setChecked(true);
     } else {
         ui->customReplaySpeedRadioButton->setChecked(true);
-        ui->customReplaySpeedLineEdit->setText(QString::number(replaySpeed));
+        ui->customReplaySpeedLineEdit->setText(d->locale.toString(replaySpeed, 'f', ReplaySpeedDecimalPlaces));
     }
+    ui->customReplaySpeedLineEdit->setToolTip(tr("Custom replay factor in [%L1, %L2]").arg(ReplaySpeedMin).arg(ReplaySpeedMax));
 
     // Record/replay control buttons
     ActionButton *recordButton = new ActionButton(this);
@@ -320,7 +323,7 @@ void MainWindow::on_customReplaySpeedLineEdit_editingFinished() noexcept
 {
     const QString text = ui->customReplaySpeedLineEdit->text();
     if (!text.isEmpty()) {
-        d->lastCustomReplaySpeed = text.toDouble();
+        d->lastCustomReplaySpeed = d->locale.toDouble(text);
         d->skyConnect.setTimeScale(d->lastCustomReplaySpeed);
     }
 }
@@ -414,7 +417,7 @@ void MainWindow::updateControlUi() noexcept
 
     if (ui->customReplaySpeedRadioButton->isChecked()) {
         ui->customReplaySpeedLineEdit->setEnabled(true);
-        ui->customReplaySpeedLineEdit->setText(QString::number(d->lastCustomReplaySpeed));
+        ui->customReplaySpeedLineEdit->setText(d->locale.toString(d->lastCustomReplaySpeed, 'f', ReplaySpeedDecimalPlaces));
     } else {
         ui->customReplaySpeedLineEdit->setEnabled(false);
         ui->customReplaySpeedLineEdit->clear();
@@ -658,7 +661,7 @@ void MainWindow::handleReplaySpeedSelected(int selection) noexcept
         timeScale = 16.0;
         break;
     case ReplaySpeed::CustomSpeed:
-        timeScale = ui->customReplaySpeedLineEdit->text().toDouble();
+        timeScale = d->locale.toDouble(ui->customReplaySpeedLineEdit->text());
         break;
     default:
         timeScale = 1.0;

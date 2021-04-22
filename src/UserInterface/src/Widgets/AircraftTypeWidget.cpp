@@ -47,6 +47,7 @@ public:
     {}
 
     SkyConnectIntf &skyConnect;
+    Unit unit;
 };
 
 // PUBLIC
@@ -133,10 +134,10 @@ void AircraftTypeWidget::updateInfoUi()
     ui->categoryLineEdit->setText(aircraftInfo.category);
     ui->startOnGroundCheckBox->setChecked(aircraftInfo.startOnGround);
 
-    ui->initialAirspeedLineEdit->setText(Unit::formatKnots(aircraftInfo.initialAirspeed));
-    ui->wingSpanLineEdit->setText(Unit::formatFeet(aircraftInfo.wingSpan));
+    ui->initialAirspeedLineEdit->setText(d->unit.formatKnots(aircraftInfo.initialAirspeed));
+    ui->wingSpanLineEdit->setText(d->unit.formatFeet(aircraftInfo.wingSpan));
     ui->engineTypeLineEdit->setText(SimType::engineTypeToString(aircraftInfo.engineType));
     ui->numberOfEnginesLineEdit->setText(QString::number(aircraftInfo.numberOfEngines));
-    ui->aircraftAltitudeAboveGroundLineEdit->setText(Unit::formatFeet(aircraftInfo.aircraftAltitudeAboveGround));
+    ui->aircraftAltitudeAboveGroundLineEdit->setText(d->unit.formatFeet(aircraftInfo.aircraftAltitudeAboveGround));
     ui->startOnGroundCheckBox->setChecked(aircraftInfo.startOnGround);
 }

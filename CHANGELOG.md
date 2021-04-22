@@ -4,8 +4,11 @@
 
 ### Bug Fixes
 
-- The custom replay speed factor is now displayed with to decimal places (in order to show the proper decimal delimiter)
+- Properly parse the custom speed factor according to the current system locale (decimal delimiter may be , or .)
+- The initial custom replay speed factor is now displayed with decimal places (e.g. 1.00 or 1,00 - to illustrate the expected decimal delimiter according to the system locale)
+- Custom speed factor tooltip shows the valid value range
 - Properly name simulation variable "Yoke X Position" (instead of Y)
+- Simulation variables are now formatted according to the system locale
 
 ## 0.5.0
 
@@ -18,7 +21,7 @@
   * General engine starter
   * Folding wing handle
 - Simulation variables now shown with units (feet, hPa, ...)
-- Added a new "Scenario" dialog, showing information about the aircraft and flight conditions
+- Added a new "Scenario" dialog, showing information about the aircraft and initial flight conditions
 - The last CSV export/import directory is stored
 - A basic error dialog shows when an import/export error occurs
 - The seek interval can now be defined in the settings (either absolute in seconds, or in percent of the record duration)

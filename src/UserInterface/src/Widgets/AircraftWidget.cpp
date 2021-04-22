@@ -47,6 +47,7 @@ public:
     {}
 
     SkyConnectIntf &skyConnect;
+    Unit unit;
     const QColor ActiveTextColor;
     const QColor DisabledTextColor;
 };
@@ -111,20 +112,20 @@ void AircraftWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
 
     if (!aircraftData.isNull()) {
         // Position
-        ui->latitudeLineEdit->setText(Unit::formatLatitude(aircraftData.latitude));
-        ui->longitudeLineEdit->setText(Unit::formatLongitude(aircraftData.longitude));
-        ui->altitudeLineEdit->setText(Unit::formatFeet(aircraftData.altitude));
-        ui->pitchLineEdit->setText(Unit::formatDegrees(aircraftData.pitch));
-        ui->bankLineEdit->setText(Unit::formatDegrees(aircraftData.bank));
-        ui->headingLineEdit->setText(Unit::formatDegrees(aircraftData.heading));
+        ui->latitudeLineEdit->setText(d->unit.formatLatitude(aircraftData.latitude));
+        ui->longitudeLineEdit->setText(d->unit.formatLongitude(aircraftData.longitude));
+        ui->altitudeLineEdit->setText(d->unit.formatFeet(aircraftData.altitude));
+        ui->pitchLineEdit->setText(d->unit.formatDegrees(aircraftData.pitch));
+        ui->bankLineEdit->setText(d->unit.formatDegrees(aircraftData.bank));
+        ui->headingLineEdit->setText(d->unit.formatDegrees(aircraftData.heading));
 
         // Velocity
-        ui->velocityXLineEdit->setText(Unit::formatVelocityInFeet(aircraftData.velocityBodyX));
-        ui->velocityYLineEdit->setText(Unit::formatVelocityInFeet(aircraftData.velocityBodyY));
-        ui->velocityZLineEdit->setText(Unit::formatVelocityInFeet(aircraftData.velocityBodyZ));
-        ui->rotationVelocityXLineEdit->setText(Unit::formatVelocityInRadians(aircraftData.rotationVelocityBodyX));
-        ui->rotationVelocityYLineEdit->setText(Unit::formatVelocityInRadians(aircraftData.rotationVelocityBodyY));
-        ui->rotationVelocityZLineEdit->setText(Unit::formatVelocityInRadians(aircraftData.rotationVelocityBodyZ));
+        ui->velocityXLineEdit->setText(d->unit.formatVelocityInFeet(aircraftData.velocityBodyX));
+        ui->velocityYLineEdit->setText(d->unit.formatVelocityInFeet(aircraftData.velocityBodyY));
+        ui->velocityZLineEdit->setText(d->unit.formatVelocityInFeet(aircraftData.velocityBodyZ));
+        ui->rotationVelocityXLineEdit->setText(d->unit.formatVelocityInRadians(aircraftData.rotationVelocityBodyX));
+        ui->rotationVelocityYLineEdit->setText(d->unit.formatVelocityInRadians(aircraftData.rotationVelocityBodyY));
+        ui->rotationVelocityZLineEdit->setText(d->unit.formatVelocityInRadians(aircraftData.rotationVelocityBodyZ));
 
         colorName = d->ActiveTextColor.name();
     } else {
