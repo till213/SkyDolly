@@ -52,6 +52,7 @@ public:
     {}
 
     SkyConnectIntf &skyConnect;
+    Unit unit;
     const QColor ActiveTextColor;
     const QColor DisabledTextColor;
 };
@@ -109,10 +110,10 @@ void SecondaryFlightControlWidget::updateUi(qint64 timestamp, TimeVariableData::
 
     if (!secondaryFlightControlData.isNull()) {
         // Flaps & speed brakes
-        ui->leadingEdgeFlapsLeftLineEdit->setText(Unit::formatPercent(secondaryFlightControlData.leadingEdgeFlapsLeftPercent));
-        ui->leadingEdgeFlapsRightLineEdit->setText(Unit::formatPercent(secondaryFlightControlData.leadingEdgeFlapsRightPercent));
-        ui->trailingEdgeFlapsLeftLineEdit->setText(Unit::formatPercent(secondaryFlightControlData.trailingEdgeFlapsLeftPercent));
-        ui->trailingEdgeFlapsRightLineEdit->setText(Unit::formatPercent(secondaryFlightControlData.trailingEdgeFlapsRightPercent));
+        ui->leadingEdgeFlapsLeftLineEdit->setText(d->unit.formatPercent(secondaryFlightControlData.leadingEdgeFlapsLeftPercent));
+        ui->leadingEdgeFlapsRightLineEdit->setText(d->unit.formatPercent(secondaryFlightControlData.leadingEdgeFlapsRightPercent));
+        ui->trailingEdgeFlapsLeftLineEdit->setText(d->unit.formatPercent(secondaryFlightControlData.trailingEdgeFlapsLeftPercent));
+        ui->trailingEdgeFlapsRightLineEdit->setText(d->unit.formatPercent(secondaryFlightControlData.trailingEdgeFlapsRightPercent));
         ui->spoilerLineEdit->setText(QString::number(secondaryFlightControlData.spoilersHandlePosition));
         ui->flapsPositionLineEdit->setText(QString::number(secondaryFlightControlData.flapsHandleIndex));
 

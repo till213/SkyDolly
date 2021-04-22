@@ -22,11 +22,13 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
 #include <cmath>
 #include <limits>
 
 #include <QString>
 #include <QStringBuilder>
+#include <QLocale>
 
 #include "Unit.h"
 
@@ -38,7 +40,24 @@ namespace {
     constexpr int Haze = 5000; // In metres
 }
 
+class UnitPrivate {
+public:
+    UnitPrivate()
+    {}
+
+    QLocale locale;
+};
+
 // PUBLIC
+
+Unit::Unit()
+    : d(std::make_unique<UnitPrivate>())
+{
+}
+
+Unit::~Unit()
+{
+}
 
 QString Unit::formatLatitude(double latitude) noexcept
 {
@@ -51,7 +70,6 @@ QString Unit::formatLatitude(double latitude) noexcept
     QString hemisphere = latitude >= 0.0 ? QT_TR_NOOP("N") : QT_TR_NOOP("S");
     return QString::number(degrees) % "° " % QString::number(minutes) % "' " % QString::number(seconds, 'f', Precision) % "'' " % " " % hemisphere;
 }
-
 
 QString Unit::formatLongitude(double longitude) noexcept
 {
@@ -66,17 +84,17 @@ QString Unit::formatLongitude(double longitude) noexcept
 
 QString Unit::formatFeet(double feet) noexcept
 {
-    return QString::number(feet, 'f', Precision) % " ft";
+    return d->locale.toString(feet, 'f', Precision);
 }
 
 QString Unit::formatCelcius(double temperature) noexcept
 {
-    return QString::number(temperature, 'f', Precision) % " °C";
+    return d->locale.toString(temperature, 'f', Precision) % " °C";
 }
 
 QString Unit::formatPressureInHPa(double pressure) noexcept
 {
-    return QString::number(pressure, 'f', Precision) % " hPa";
+    return d->locale.toString(pressure, 'f', Precision) % " hPa";
 }
 
 QString Unit::formatVisibility(double metres) noexcept
@@ -96,32 +114,32 @@ QString Unit::formatVisibility(double metres) noexcept
 
 QString Unit::formatDegrees(double velocity) noexcept
 {
-    return QString::number(velocity, 'f', Precision) % " °";
+    return d->locale.toString(velocity, 'f', Precision) % " °";
 }
 
 QString Unit::formatVelocityInFeet(double velocity) noexcept
 {
-    return QString::number(velocity, 'f', Precision) % " ft/s";
+    return d->locale.toString(velocity, 'f', Precision) % " ft/s";
 }
 
 QString Unit::formatVelocityInRadians(double velocity) noexcept
 {
-    return QString::number(velocity, 'f', Precision) % " rad/s";
+    return d->locale.toString(velocity, 'f', Precision) % " rad/s";
 }
 
 QString Unit::formatPosition(qint16 position) noexcept
 {
-    return QString::number(position / static_cast<double>(std::numeric_limits<qint16>::max()) * 100.0, 'f', Precision) % " %";
+    return d->locale.toString(position / static_cast<double>(std::numeric_limits<qint16>::max()) * 100.0, 'f', Precision) % " %";
 }
 
 QString Unit::formatPercent(quint8 percent) noexcept
 {
-    return QString::number(percent / static_cast<double>(std::numeric_limits<quint8>::max()) * 100.0, 'f', Precision) % " %";
+    return d->locale.toString(percent / static_cast<double>(std::numeric_limits<quint8>::max()) * 100.0, 'f', Precision) % " %";
 }
 
 QString Unit::formatKnots(double velocity) noexcept
 {
-    return QString::number(velocity, 'f', Precision) % " knots";
+    return d->locale.toString(velocity, 'f', Precision) % " knots";
 }
 
 // PRIVATE

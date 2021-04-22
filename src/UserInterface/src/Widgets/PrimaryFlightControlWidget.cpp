@@ -52,6 +52,7 @@ public:
     {}
 
     SkyConnectIntf &skyConnect;
+    Unit unit;
     const QColor ActiveTextColor;
     const QColor DisabledTextColor;
 };
@@ -105,9 +106,9 @@ void PrimaryFlightControlWidget::updateUi(qint64 timestamp, TimeVariableData::Ac
     QString colorName;
 
     if (!primaryFlightControlData.isNull()) {
-        ui->rudderLineEdit->setText(Unit::formatPosition(primaryFlightControlData.rudderPosition));
-        ui->elevatorLineEdit->setText(Unit::formatPosition(primaryFlightControlData.elevatorPosition));
-        ui->aileronLineEdit->setText(Unit::formatPosition(primaryFlightControlData.aileronPosition));
+        ui->rudderLineEdit->setText(d->unit.formatPosition(primaryFlightControlData.rudderPosition));
+        ui->elevatorLineEdit->setText(d->unit.formatPosition(primaryFlightControlData.elevatorPosition));
+        ui->aileronLineEdit->setText(d->unit.formatPosition(primaryFlightControlData.aileronPosition));
 
         colorName = d->ActiveTextColor.name();
     } else {

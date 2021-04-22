@@ -52,6 +52,7 @@ public:
     {}
 
     SkyConnectIntf &skyConnect;
+    Unit unit;
     const QColor ActiveTextColor;
     const QColor DisabledTextColor;
 };
@@ -110,11 +111,11 @@ void AircraftHandleWidget::updateUi(qint64 timestamp, TimeVariableData::Access a
 
     if (!aircraftHandleData.isNull()) {
         aircraftHandleData.gearHandlePosition ? ui->gearLineEdit->setText(tr("Down")) : ui->gearLineEdit->setText(tr("Up"));
-        ui->brakeLeftLineEdit->setText(Unit::formatPosition(aircraftHandleData.brakeLeftPosition));
-        ui->brakeRightLineEdit->setText(Unit::formatPosition(aircraftHandleData.brakeRightPosition));
-        ui->waterRudderLineEdit->setText(Unit::formatPosition(aircraftHandleData.waterRudderHandlePosition));
-        ui->tailhookLineEdit->setText(Unit::formatPercent(aircraftHandleData.tailhookPosition));
-        ui->canopyOpenLineEdit->setText(Unit::formatPercent(aircraftHandleData.canopyOpen));
+        ui->brakeLeftLineEdit->setText(d->unit.formatPosition(aircraftHandleData.brakeLeftPosition));
+        ui->brakeRightLineEdit->setText(d->unit.formatPosition(aircraftHandleData.brakeRightPosition));
+        ui->waterRudderLineEdit->setText(d->unit.formatPosition(aircraftHandleData.waterRudderHandlePosition));
+        ui->tailhookLineEdit->setText(d->unit.formatPercent(aircraftHandleData.tailhookPosition));
+        ui->canopyOpenLineEdit->setText(d->unit.formatPercent(aircraftHandleData.canopyOpen));
         aircraftHandleData.foldingWingHandlePosition ? ui->foldableWingsLineEdit->setText(tr("Folded")) : ui->foldableWingsLineEdit->setText(tr("Unfolded"));
 
         colorName = d->ActiveTextColor.name();
