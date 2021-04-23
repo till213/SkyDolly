@@ -2,17 +2,17 @@
 create table scenario (
     id integer primary key,
     description text,
-    ground_altitude real,
     surface_type integer,
+    ground_altitude real,    
     ambient_temperature real,
     total_air_temperature real,
     wind_velocity real,
-    wind_direction real,
-    precipitation_state integer,
+    wind_direction real,   
     visibility real,
     sea_level_pressure real,
     pitot_icing real,
     structural_icing real,
+    precipitation_state integer,
     in_clouds integer
 );
 
@@ -20,18 +20,21 @@ create table scenario (
 create table aircraft (
     id integer primary key,
     scenario_id integer,
-    name text,
+    seq_nr integer,
+    type text,
     tail_number text,
     airline text,
     flight_number text,
     category integer,
-    initial_airspeed real,
-    wing_span real,
+    initial_airspeed integer,
+    wing_span integer,
     engine_type integer,
     nof_engines integer,
     altitude_above_ground real,
+    start_on_ground integer,
     foreign key(scenario_id) references scenario(id)
 );
+create unique index aircraft_idx1 on aircraft (scenario_id, seq_nr);
 
 @migr(id = "9b831594-f6c2-489c-906d-2de31bb9788b", descn = "Create position table", step_cnt = 1)
 create table position (

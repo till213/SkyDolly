@@ -25,22 +25,22 @@
 #ifndef AIRCRAFTINFO_H
 #define AIRCRAFTINFO_H
 
-#include <QByteArray>
+#include <QString>
 
 #include "SimType.h"
 #include "ModelLib.h"
 
 struct MODEL_API AircraftInfo
 {
-    QByteArray name;
-    QByteArray atcId;
-    QByteArray atcAirline;
-    QByteArray atcFlightNumber;
-    QByteArray category;
-    bool startOnGround;
-    // Feet
-    float aircraftAltitudeAboveGround;
+    QString type;
+    QString tailNumber;
+    QString airline;
+    QString flightNumber;
+    QString category;
 
+    // Feet
+    float altitudeAboveGround;
+    bool startOnGround;
     // Knots
     int initialAirspeed;
     // Feet

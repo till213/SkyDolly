@@ -42,17 +42,17 @@ public:
     Scenario(QObject *parent = nullptr) noexcept;
     ~Scenario() noexcept;
 
-    void setId(qint64 id) noexcept;
     qint64 getId() const noexcept;
+    void setId(qint64 id) noexcept;
 
-    void setDescription(const QString &description) noexcept;
     const QString &getDescription() const noexcept;
+    void setDescription(const QString &description) noexcept;
 
     const Aircraft &getUserAircraftConst() const noexcept;
     Aircraft &getUserAircraft() const noexcept;
 
-    void setFlightCondition(FlightCondition flightCondition) noexcept;
     const FlightCondition &getFlightConditionConst() const noexcept;
+    void setFlightCondition(FlightCondition flightCondition) noexcept;
 
     qint64 getTotalDurationMSec() const noexcept;
 

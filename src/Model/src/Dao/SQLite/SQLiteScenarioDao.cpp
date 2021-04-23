@@ -40,19 +40,23 @@
 #include "SQLiteScenarioDao.h"
 #include "SQLiteScenarioDao.h"
 
+namespace  {
+    constexpr int UserAircraftSequenceNumber = 1;
+}
+
 class SQLiteScenarioDaoPrivate
 {
 public:
     SQLiteScenarioDaoPrivate() noexcept
         : insertQuery(nullptr),
-          selectQuery(nullptr),
+          selectByIdQuery(nullptr),
           daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           aircraftDao(daoFactory->createAircraftDao())
     {
     }
 
     std::unique_ptr<QSqlQuery> insertQuery;
-    std::unique_ptr<QSqlQuery> selectQuery;
+    std::unique_ptr<QSqlQuery> selectByIdQuery;
     std::unique_ptr<QSqlQuery> selectDescriptionsQuery;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<AircraftDaoIntf> aircraftDao;
@@ -65,39 +69,39 @@ public:
 "insert into scenario ("
 "  id,"
 "  description,"
-"  ground_altitude,"
 "  surface_type,"
+"  ground_altitude,"
 "  ambient_temperature,"
 "  total_air_temperature,"
 "  wind_velocity,"
 "  wind_direction,"
-"  precipitation_state,"
 "  visibility,"
 "  sea_level_pressure,"
 "  pitot_icing,"
 "  structural_icing,"
+"  precipitation_state,"
 "  in_clouds"
 ") values ("
 "  null,"
 " :description,"
-" :ground_altitude,"
 " :surface_type,"
+" :ground_altitude,"
 " :ambient_temperature,"
 " :total_air_temperature,"
 " :wind_velocity,"
 " :wind_direction,"
-" :precipitation_state,"
 " :visibility,"
 " :sea_level_pressure,"
 " :pitot_icing,"
 " :structural_icing,"
+" :precipitation_state,"
 " :in_clouds"
 ");");
         }
-        if (selectQuery == nullptr) {
-            selectQuery = std::make_unique<QSqlQuery>();
-            selectQuery->setForwardOnly(true);
-            selectQuery->prepare(
+        if (selectByIdQuery == nullptr) {
+            selectByIdQuery = std::make_unique<QSqlQuery>();
+            selectByIdQuery->setForwardOnly(true);
+            selectByIdQuery->prepare(
 "select * "
 "from scenario s "
 "where s.id = :id;");
@@ -106,7 +110,7 @@ public:
             selectDescriptionsQuery = std::make_unique<QSqlQuery>();
             selectDescriptionsQuery->setForwardOnly(true);
             selectDescriptionsQuery->prepare(
-"select s.id, s.description, a.name "
+"select s.id, s.description, a.type "
 "from   scenario s "
 "join   aircraft a "
 "where a.scenario_id = s.id;");
@@ -130,17 +134,17 @@ bool SQLiteScenarioDao::addScenario(Scenario &scenario)  noexcept
     d->initQueries();
     const FlightCondition &flightCondition = scenario.getFlightConditionConst();
     d->insertQuery->bindValue(":description", scenario.getDescription(), QSql::In);
-    d->insertQuery->bindValue(":ground_altitude", flightCondition.groundAltitude, QSql::In);
     d->insertQuery->bindValue(":surface_type", Enum::toUnderlyingType(flightCondition.surfaceType), QSql::In);
+    d->insertQuery->bindValue(":ground_altitude", flightCondition.groundAltitude, QSql::In);
     d->insertQuery->bindValue(":ambient_temperature", flightCondition.ambientTemperature, QSql::In);
     d->insertQuery->bindValue(":total_air_temperature", flightCondition.totalAirTemperature, QSql::In);
     d->insertQuery->bindValue(":wind_velocity", flightCondition.windVelocity, QSql::In);
     d->insertQuery->bindValue(":wind_direction", flightCondition.windDirection, QSql::In);
-    d->insertQuery->bindValue(":precipitation_state", Enum::toUnderlyingType(flightCondition.precipitationState), QSql::In);
     d->insertQuery->bindValue(":visibility", flightCondition.visibility, QSql::In);
     d->insertQuery->bindValue(":sea_level_pressure", flightCondition.seaLevelPressure, QSql::In);
     d->insertQuery->bindValue(":pitot_icing", flightCondition.pitotIcingPercent, QSql::In);
     d->insertQuery->bindValue(":structural_icing", flightCondition.structuralIcingPercent, QSql::In);
+    d->insertQuery->bindValue(":precipitation_state", Enum::toUnderlyingType(flightCondition.precipitationState), QSql::In);
     d->insertQuery->bindValue(":in_clouds", flightCondition.inClouds, QSql::In);
     bool ok = d->insertQuery->exec();
     if (ok) {
@@ -152,53 +156,59 @@ bool SQLiteScenarioDao::addScenario(Scenario &scenario)  noexcept
 #endif
     }
     if (ok) {
-        ok = d->aircraftDao->addAircraft(scenario.getId(), scenario.getUserAircraft());
+        ok = d->aircraftDao->addAircraft(scenario.getId(), UserAircraftSequenceNumber, scenario.getUserAircraft());
     }
     return ok;
 }
 
-bool SQLiteScenarioDao::getScenario(qint64 id, Scenario &scenario) const noexcept
+bool SQLiteScenarioDao::getScenarioById(qint64 id, Scenario &scenario) const noexcept
 {
     d->initQueries();
-    d->selectQuery->bindValue(":id", id);
-    bool ok = d->selectQuery->exec();
+    d->selectByIdQuery->bindValue(":id", id);
+    bool ok = d->selectByIdQuery->exec();
     if (ok) {
         scenario.clear();
-        int idFieldIndex = d->selectQuery->record().indexOf("id");
-        int descriptionFieldIndex = d->selectQuery->record().indexOf("description");
-        int groundAltitudeFieldIndex = d->selectQuery->record().indexOf("ground_altitude");
-        int surfaceTypeFieldIndex = d->selectQuery->record().indexOf("surface_type");
-        int ambientTemperatureFieldIndex = d->selectQuery->record().indexOf("ambient_temperature");
-        int totalAirTemperatureFieldIndex = d->selectQuery->record().indexOf("total_air_temperature");
-        int windVelocityFieldIndex = d->selectQuery->record().indexOf("wind_velocity");
-        int windDirectionFieldIndex = d->selectQuery->record().indexOf("wind_direction");
-        int precipitationStateFieldIndex = d->selectQuery->record().indexOf("precipitation_state");
-        int visibilityFieldIndex = d->selectQuery->record().indexOf("visibility");
-        int seaLevelPressureFieldIndex = d->selectQuery->record().indexOf("sea_level_pressure");
-        int pitotIcingFieldIndex = d->selectQuery->record().indexOf("pitot_icing");
-        int structuralIcingFieldIndex = d->selectQuery->record().indexOf("structural_icing");
-        int inCloudsFieldIndex = d->selectQuery->record().indexOf("in_clouds");
-        if (d->selectQuery->next()) {
-            scenario.setId(d->selectQuery->value(idFieldIndex).toLongLong());
-            scenario.setDescription(d->selectQuery->value(descriptionFieldIndex).toString());
+        int idFieldIndex = d->selectByIdQuery->record().indexOf("id");
+        int descriptionFieldIndex = d->selectByIdQuery->record().indexOf("description");
+        int surfaceTypeFieldIndex = d->selectByIdQuery->record().indexOf("surface_type");
+        int groundAltitudeFieldIndex = d->selectByIdQuery->record().indexOf("ground_altitude");
+        int ambientTemperatureFieldIndex = d->selectByIdQuery->record().indexOf("ambient_temperature");
+        int totalAirTemperatureFieldIndex = d->selectByIdQuery->record().indexOf("total_air_temperature");
+        int windVelocityFieldIndex = d->selectByIdQuery->record().indexOf("wind_velocity");
+        int windDirectionFieldIndex = d->selectByIdQuery->record().indexOf("wind_direction");
+        int visibilityFieldIndex = d->selectByIdQuery->record().indexOf("visibility");
+        int seaLevelPressureFieldIndex = d->selectByIdQuery->record().indexOf("sea_level_pressure");
+        int pitotIcingFieldIndex = d->selectByIdQuery->record().indexOf("pitot_icing");
+        int structuralIcingFieldIndex = d->selectByIdQuery->record().indexOf("structural_icing");
+        int precipitationStateFieldIndex = d->selectByIdQuery->record().indexOf("precipitation_state");
+        int inCloudsFieldIndex = d->selectByIdQuery->record().indexOf("in_clouds");
+        if (d->selectByIdQuery->next()) {
+            scenario.setId(d->selectByIdQuery->value(idFieldIndex).toLongLong());
+            scenario.setDescription(d->selectByIdQuery->value(descriptionFieldIndex).toString());
             FlightCondition flightCondition;
-            flightCondition.groundAltitude = d->selectQuery->value(groundAltitudeFieldIndex).toFloat();
-            flightCondition.surfaceType = static_cast<SimType::SurfaceType>(d->selectQuery->value(surfaceTypeFieldIndex).toInt());
-            flightCondition.ambientTemperature = d->selectQuery->value(ambientTemperatureFieldIndex).toFloat();
-            flightCondition.totalAirTemperature = d->selectQuery->value(totalAirTemperatureFieldIndex).toFloat();
-            flightCondition.windVelocity = d->selectQuery->value(windVelocityFieldIndex).toFloat();
-            flightCondition.windDirection = d->selectQuery->value(windDirectionFieldIndex).toFloat();
-            flightCondition.precipitationState = static_cast<SimType::PrecipitationState>(d->selectQuery->value(precipitationStateFieldIndex).toInt());
-            flightCondition.visibility = d->selectQuery->value(visibilityFieldIndex).toFloat();
-            flightCondition.seaLevelPressure = d->selectQuery->value(seaLevelPressureFieldIndex).toFloat();
-            flightCondition.pitotIcingPercent = d->selectQuery->value(pitotIcingFieldIndex).toInt();
-            flightCondition.structuralIcingPercent = d->selectQuery->value(structuralIcingFieldIndex).toInt();
-            flightCondition.inClouds = d->selectQuery->value(inCloudsFieldIndex).toBool();
+            flightCondition.surfaceType = static_cast<SimType::SurfaceType>(d->selectByIdQuery->value(surfaceTypeFieldIndex).toInt());
+            flightCondition.groundAltitude = d->selectByIdQuery->value(groundAltitudeFieldIndex).toFloat();
+            flightCondition.ambientTemperature = d->selectByIdQuery->value(ambientTemperatureFieldIndex).toFloat();
+            flightCondition.totalAirTemperature = d->selectByIdQuery->value(totalAirTemperatureFieldIndex).toFloat();
+            flightCondition.windVelocity = d->selectByIdQuery->value(windVelocityFieldIndex).toFloat();
+            flightCondition.windDirection = d->selectByIdQuery->value(windDirectionFieldIndex).toFloat();
+            flightCondition.visibility = d->selectByIdQuery->value(visibilityFieldIndex).toFloat();
+            flightCondition.seaLevelPressure = d->selectByIdQuery->value(seaLevelPressureFieldIndex).toFloat();
+            flightCondition.pitotIcingPercent = d->selectByIdQuery->value(pitotIcingFieldIndex).toInt();
+            flightCondition.structuralIcingPercent = d->selectByIdQuery->value(structuralIcingFieldIndex).toInt();
+            flightCondition.precipitationState = static_cast<SimType::PrecipitationState>(d->selectByIdQuery->value(precipitationStateFieldIndex).toInt());
+            flightCondition.inClouds = d->selectByIdQuery->value(inCloudsFieldIndex).toBool();
 
             scenario.setFlightCondition(flightCondition);
         }
+        Aircraft &userAircraft = scenario.getUserAircraft();
+        ok = d->aircraftDao->getAircraftByScenarioId(id, UserAircraftSequenceNumber, userAircraft);
+#ifdef DEBUG
+    } else {
+        qDebug("getScenarioById: SQL error: %s", qPrintable(d->selectByIdQuery->lastError().databaseText() + " - error code: " + d->selectByIdQuery->lastError().nativeErrorCode()));
+#endif
     }
-    return true;
+    return ok;
 }
 
 QVector<ScenarioDescription> SQLiteScenarioDao::getScenarioDescriptions() const noexcept
@@ -210,14 +220,18 @@ QVector<ScenarioDescription> SQLiteScenarioDao::getScenarioDescriptions() const 
     if (ok) {
         int idFieldIndex = d->selectDescriptionsQuery->record().indexOf("id");
         int descriptionFieldIndex = d->selectDescriptionsQuery->record().indexOf("description");
-        int aircraftNameFieldIndex = d->selectDescriptionsQuery->record().indexOf("name");
+        int aircraftTypeFieldIndex = d->selectDescriptionsQuery->record().indexOf("type");
         while (d->selectDescriptionsQuery->next()) {
             ScenarioDescription description;
             description.id = d->selectDescriptionsQuery->value(idFieldIndex).toLongLong();
             description.description = d->selectDescriptionsQuery->value(descriptionFieldIndex).toString();
-            description.aircraftName = d->selectDescriptionsQuery->value(aircraftNameFieldIndex).toString();
+            description.aircraftType = d->selectDescriptionsQuery->value(aircraftTypeFieldIndex).toString();
             descriptions.append(description);
         }
+#ifdef DEBUG
+    } else {
+        qDebug("getScenarioDescriptions: SQL error: %s", qPrintable(d->selectDescriptionsQuery->lastError().databaseText() + " - error code: " + d->selectDescriptionsQuery->lastError().nativeErrorCode()));
+#endif
     }
 
     return descriptions;
