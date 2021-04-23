@@ -27,7 +27,7 @@
 
 #include <memory>
 
-#include <QtGlobal>
+#include <QVector>
 
 #include "../../PrimaryFlightControlData.h"
 #include "../PrimaryFlightControlDaoIntf.h"
@@ -40,8 +40,8 @@ public:
     SQLitePrimaryFlightControlDao() noexcept;
     virtual ~SQLitePrimaryFlightControlDao() noexcept;
 
-    virtual bool addPrimaryFlightControl(qint64 aircraftId, const PrimaryFlightControlData &primaryFlightControlData) noexcept override;
-    virtual PrimaryFlightControlData getPrimaryFlightControl(qint64 aircraftId, qint64 timestamp) const noexcept override;
+    virtual bool add(qint64 aircraftId, const PrimaryFlightControlData &data) noexcept override;
+    virtual bool getByAircraftId(qint64 aircraftId, QVector<PrimaryFlightControlData> &data) const noexcept override;
 
 private:
     std::unique_ptr<SQLitePrimaryFlightControlDaoPrivate> d;

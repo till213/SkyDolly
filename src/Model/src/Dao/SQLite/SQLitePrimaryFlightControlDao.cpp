@@ -28,6 +28,7 @@
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
+#include <QSqlRecord>
 
 #include "../../../../Kernel/src/Enum.h"
 #include "../../PrimaryFlightControlData.h"
@@ -38,12 +39,12 @@ class SQLitePrimaryFlightControlDaoPrivate
 public:
     SQLitePrimaryFlightControlDaoPrivate() noexcept
         : insertQuery(nullptr),
-          selectQuery(nullptr)
+          selectByAircraftIdQuery(nullptr)
     {
     }
 
     std::unique_ptr<QSqlQuery> insertQuery;
-    std::unique_ptr<QSqlQuery> selectQuery;
+    std::unique_ptr<QSqlQuery> selectByAircraftIdQuery;
 
     void initQueries()
     {
@@ -64,6 +65,14 @@ public:
 " :aileron_position"
 ");");
         }
+        if (selectByAircraftIdQuery == nullptr) {
+            selectByAircraftIdQuery = std::make_unique<QSqlQuery>();
+            selectByAircraftIdQuery->prepare(
+"select * "
+"from   primary_flight_control pfc "
+"where  pfc.aircraft_id = :aircraft_id "
+"order by pfc.timestamp asc;");
+        }
     }
 };
 
@@ -77,7 +86,7 @@ SQLitePrimaryFlightControlDao::SQLitePrimaryFlightControlDao() noexcept
 SQLitePrimaryFlightControlDao::~SQLitePrimaryFlightControlDao() noexcept
 {}
 
-bool SQLitePrimaryFlightControlDao::addPrimaryFlightControl(qint64 aircraftId, const PrimaryFlightControlData &primaryFlightControlData)  noexcept
+bool SQLitePrimaryFlightControlDao::add(qint64 aircraftId, const PrimaryFlightControlData &primaryFlightControlData)  noexcept
 {
     d->initQueries();
     d->insertQuery->bindValue(":aircraft_id", aircraftId, QSql::In);
@@ -89,13 +98,40 @@ bool SQLitePrimaryFlightControlDao::addPrimaryFlightControl(qint64 aircraftId, c
     bool ok = d->insertQuery->exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("addPrimaryFlightControl: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
+        qDebug("SQLitePrimaryFlightControlDao::add: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
     }
 #endif
     return ok;
 }
 
-PrimaryFlightControlData SQLitePrimaryFlightControlDao::getPrimaryFlightControl(qint64 aircraftId, qint64 timestamp) const noexcept
+bool SQLitePrimaryFlightControlDao::getByAircraftId(qint64 aircraftId, QVector<PrimaryFlightControlData> &primaryFlightControlData) const noexcept
 {
-    return PrimaryFlightControlData();
+    d->initQueries();
+    d->selectByAircraftIdQuery->bindValue(":aircraft_id", aircraftId);
+    bool ok = d->selectByAircraftIdQuery->exec();
+    if (ok) {
+        primaryFlightControlData.clear();
+        int timestampIdx = d->selectByAircraftIdQuery->record().indexOf("timestamp");
+        int rudderPositionIdx = d->selectByAircraftIdQuery->record().indexOf("rudder_position");
+        int elevatorPositionIdx = d->selectByAircraftIdQuery->record().indexOf("elevator_position");
+        int aileronPositionIdx = d->selectByAircraftIdQuery->record().indexOf("aileron_position");
+        while (d->selectByAircraftIdQuery->next()) {
+
+            PrimaryFlightControlData data;
+
+            data.timestamp = d->selectByAircraftIdQuery->value(timestampIdx).toLongLong();
+            data.rudderPosition = d->selectByAircraftIdQuery->value(rudderPositionIdx).toDouble();
+            data.elevatorPosition = d->selectByAircraftIdQuery->value(elevatorPositionIdx).toDouble();
+            data.aileronPosition = d->selectByAircraftIdQuery->value(aileronPositionIdx).toDouble();
+
+            primaryFlightControlData.append(data);
+        }
+#ifdef DEBUG
+    } else {
+        qDebug("SQLitePrimaryFlightControlDao::getByAircraftId: SQL error: %s", qPrintable(d->selectByAircraftIdQuery->lastError().databaseText() + " - error code: " + d->selectByAircraftIdQuery->lastError().nativeErrorCode()));
+#endif
+    }
+
+    return ok;
 }
+

@@ -46,7 +46,8 @@ public:
 
     void upsert(AircraftHandleData aircraftHandleData) noexcept;
     const AircraftHandleData &getLast() const noexcept;
-    const QVector<AircraftHandleData> &getAll() const noexcept;
+    QVector<AircraftHandleData> &getAll() const noexcept;
+    const QVector<AircraftHandleData> &getAllConst() const noexcept;
     const AircraftHandleData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
     void clear() noexcept;

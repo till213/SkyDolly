@@ -143,7 +143,7 @@ SQLiteAircraftDao::SQLiteAircraftDao() noexcept
 SQLiteAircraftDao::~SQLiteAircraftDao() noexcept
 {}
 
-bool SQLiteAircraftDao::addAircraft(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft)  noexcept
+bool SQLiteAircraftDao::add(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft)  noexcept
 {
     d->initQueries();
     const AircraftInfo &info = aircraft.getAircraftInfoConst();
@@ -172,47 +172,47 @@ bool SQLiteAircraftDao::addAircraft(qint64 scenarioId, int sequenceNumber, Aircr
     }
     if (ok) {
         for (const AircraftData &data : aircraft.getAllConst()) {
-            ok = d->positionDao->addPosition(aircraft.getId(), data);
+            ok = d->positionDao->add(aircraft.getId(), data);
             if (!ok) {
                 break;
             }
         }
     }
     if (ok) {
-        for (const EngineData &data : aircraft.getEngineConst().getAll()) {
-            ok = d->engineDao->addEngine(aircraft.getId(), data);
+        for (const EngineData &data : aircraft.getEngineConst().getAllConst()) {
+            ok = d->engineDao->add(aircraft.getId(), data);
             if (!ok) {
                 break;
             }
         }
     }
     if (ok) {
-        for (const PrimaryFlightControlData &data : aircraft.getPrimaryFlightControlConst().getAll()) {
-            ok = d->primaryFlightControlDao->addPrimaryFlightControl(aircraft.getId(), data);
+        for (const PrimaryFlightControlData &data : aircraft.getPrimaryFlightControlConst().getAllConst()) {
+            ok = d->primaryFlightControlDao->add(aircraft.getId(), data);
             if (!ok) {
                 break;
             }
         }
     }
     if (ok) {
-        for (const SecondaryFlightControlData &data : aircraft.getSecondaryFlightControlConst().getAll()) {
-            ok = d->secondaryFlightControlDao->addSecondaryFlightControl(aircraft.getId(), data);
+        for (const SecondaryFlightControlData &data : aircraft.getSecondaryFlightControlConst().getAllConst()) {
+            ok = d->secondaryFlightControlDao->add(aircraft.getId(), data);
             if (!ok) {
                 break;
             }
         }
     }
     if (ok) {
-        for (const AircraftHandleData &data : aircraft.getAircraftHandleConst().getAll()) {
-            ok = d->handleDao->addHandle(aircraft.getId(), data);
+        for (const AircraftHandleData &data : aircraft.getAircraftHandleConst().getAllConst()) {
+            ok = d->handleDao->add(aircraft.getId(), data);
             if (!ok) {
                 break;
             }
         }
     }
     if (ok) {
-        for (const LightData &data : aircraft.getLightConst().getAll()) {
-            ok = d->lightDao->addLight(aircraft.getId(), data);
+        for (const LightData &data : aircraft.getLightConst().getAllConst()) {
+            ok = d->lightDao->add(aircraft.getId(), data);
             if (!ok) {
                 break;
             }
@@ -221,13 +221,13 @@ bool SQLiteAircraftDao::addAircraft(qint64 scenarioId, int sequenceNumber, Aircr
     return ok;
 }
 
-bool SQLiteAircraftDao::getAircraftById(qint64 id, Aircraft &aircraft) const noexcept
+bool SQLiteAircraftDao::getById(qint64 id, Aircraft &aircraft) const noexcept
 {
     // TODO IMPLEMENT ME!!!
     return true;
 }
 
-bool SQLiteAircraftDao::getAircraftByScenarioId(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) const noexcept
+bool SQLiteAircraftDao::getByScenarioId(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) const noexcept
 {
     d->initQueries();
     d->selectByScenarioIdQuery->bindValue(":scenario_id", scenarioId);
@@ -235,34 +235,34 @@ bool SQLiteAircraftDao::getAircraftByScenarioId(qint64 scenarioId, int sequenceN
     bool ok = d->selectByScenarioIdQuery->exec();
     if (ok) {
         aircraft.clear();
-        int idFieldIndex = d->selectByScenarioIdQuery->record().indexOf("id");
-        int typeFieldIndex = d->selectByScenarioIdQuery->record().indexOf("type");
-        int tailNumberFieldIndex = d->selectByScenarioIdQuery->record().indexOf("tail_number");
-        int airlineFieldIndex = d->selectByScenarioIdQuery->record().indexOf("airline");
-        int flightNumberFieldIndex = d->selectByScenarioIdQuery->record().indexOf("flight_number");
-        int categoryFieldIndex = d->selectByScenarioIdQuery->record().indexOf("category");
-        int initialAirspeedFieldIndex = d->selectByScenarioIdQuery->record().indexOf("initial_airspeed");
-        int wingSpanFieldIndex = d->selectByScenarioIdQuery->record().indexOf("wing_span");
-        int engineTypeFieldIndex = d->selectByScenarioIdQuery->record().indexOf("engine_type");
-        int nofEnginesFieldIndex = d->selectByScenarioIdQuery->record().indexOf("nof_engines");
-        int airCraftAltitudeAboveGroundFieldIndex = d->selectByScenarioIdQuery->record().indexOf("altitude_above_ground");
-        int startOnGroundFieldIndex = d->selectByScenarioIdQuery->record().indexOf("start_on_ground");
+        int idIdx = d->selectByScenarioIdQuery->record().indexOf("id");
+        int typeIdx = d->selectByScenarioIdQuery->record().indexOf("type");
+        int tailNumberIdx = d->selectByScenarioIdQuery->record().indexOf("tail_number");
+        int airlineIdx = d->selectByScenarioIdQuery->record().indexOf("airline");
+        int flightNumberIdx = d->selectByScenarioIdQuery->record().indexOf("flight_number");
+        int categoryIdx = d->selectByScenarioIdQuery->record().indexOf("category");
+        int initialAirspeedIdx = d->selectByScenarioIdQuery->record().indexOf("initial_airspeed");
+        int wingSpanIdx = d->selectByScenarioIdQuery->record().indexOf("wing_span");
+        int engineTypeIdx = d->selectByScenarioIdQuery->record().indexOf("engine_type");
+        int nofEnginesIdx = d->selectByScenarioIdQuery->record().indexOf("nof_engines");
+        int airCraftAltitudeAboveGroundIdx = d->selectByScenarioIdQuery->record().indexOf("altitude_above_ground");
+        int startOnGroundIdx = d->selectByScenarioIdQuery->record().indexOf("start_on_ground");
         if (d->selectByScenarioIdQuery->next()) {
-            aircraft.setId(d->selectByScenarioIdQuery->value(idFieldIndex).toLongLong());
+            aircraft.setId(d->selectByScenarioIdQuery->value(idIdx).toLongLong());
 
             AircraftInfo info;
 
-            info.type = d->selectByScenarioIdQuery->value(typeFieldIndex).toString();
-            info.tailNumber = d->selectByScenarioIdQuery->value(tailNumberFieldIndex).toString();
-            info.airline = d->selectByScenarioIdQuery->value(airlineFieldIndex).toString();
-            info.flightNumber = d->selectByScenarioIdQuery->value(flightNumberFieldIndex).toString();
-            info.category = d->selectByScenarioIdQuery->value(categoryFieldIndex).toString();
-            info.initialAirspeed = d->selectByScenarioIdQuery->value(initialAirspeedFieldIndex).toInt();
-            info.wingSpan = d->selectByScenarioIdQuery->value(wingSpanFieldIndex).toInt();
-            info.engineType = static_cast<SimType::EngineType>(d->selectByScenarioIdQuery->value(engineTypeFieldIndex).toInt());
-            info.numberOfEngines = d->selectByScenarioIdQuery->value(nofEnginesFieldIndex).toInt();
-            info.altitudeAboveGround = d->selectByScenarioIdQuery->value(airCraftAltitudeAboveGroundFieldIndex).toInt();
-            info.startOnGround = d->selectByScenarioIdQuery->value(startOnGroundFieldIndex).toBool();
+            info.type = d->selectByScenarioIdQuery->value(typeIdx).toString();
+            info.tailNumber = d->selectByScenarioIdQuery->value(tailNumberIdx).toString();
+            info.airline = d->selectByScenarioIdQuery->value(airlineIdx).toString();
+            info.flightNumber = d->selectByScenarioIdQuery->value(flightNumberIdx).toString();
+            info.category = d->selectByScenarioIdQuery->value(categoryIdx).toString();
+            info.initialAirspeed = d->selectByScenarioIdQuery->value(initialAirspeedIdx).toInt();
+            info.wingSpan = d->selectByScenarioIdQuery->value(wingSpanIdx).toInt();
+            info.engineType = static_cast<SimType::EngineType>(d->selectByScenarioIdQuery->value(engineTypeIdx).toInt());
+            info.numberOfEngines = d->selectByScenarioIdQuery->value(nofEnginesIdx).toInt();
+            info.altitudeAboveGround = d->selectByScenarioIdQuery->value(airCraftAltitudeAboveGroundIdx).toInt();
+            info.startOnGround = d->selectByScenarioIdQuery->value(startOnGroundIdx).toBool();
 
             aircraft.setAircraftInfo(info);
         }
@@ -273,8 +273,24 @@ bool SQLiteAircraftDao::getAircraftByScenarioId(qint64 scenarioId, int sequenceN
     }
 
     if (ok) {
-        ok = d->positionDao->getPositionsByAircraftId(aircraft.getId(), aircraft.getAll());
+        ok = d->positionDao->getByAircraftId(aircraft.getId(), aircraft.getAll());
     }
+    if (ok) {
+        ok = d->engineDao->getByAircraftId(aircraft.getId(), aircraft.getEngine().getAll());
+    }
+    if (ok) {
+        ok = d->primaryFlightControlDao->getByAircraftId(aircraft.getId(), aircraft.getPrimaryFlightControl().getAll());
+    }
+    if (ok) {
+        ok = d->secondaryFlightControlDao->getByAircraftId(aircraft.getId(), aircraft.getSecondaryFlightControl().getAll());
+    }
+    if (ok) {
+        ok = d->handleDao->getByAircraftId(aircraft.getId(), aircraft.getAircraftHandle().getAll());
+    }
+    if (ok) {
+        ok = d->lightDao->getByAircraftId(aircraft.getId(), aircraft.getLight().getAll());
+    }
+
 
     return ok;
 }

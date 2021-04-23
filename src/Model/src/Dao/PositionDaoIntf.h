@@ -25,7 +25,7 @@
 #ifndef POSITIONDAOINTF_H
 #define POSITIONDAOINTF_H
 
-#include <QtGlobal>
+#include <QVector>
 
 class AircraftData;
 
@@ -35,15 +35,16 @@ public:
     virtual ~PositionDaoIntf() = default;
 
     /*!
-     * Persists the \c position.
-     * \param position
-     *        the position to be persisted
+     * Persists the \c data.
+     *
      * \param aircraftId
-     *        the aircraft the \c position belongs to
+     *        the aircraft the \c data belongs to
+     * \param data
+     *        the AircraftData to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool addPosition(qint64 aircraftId, const AircraftData &position) = 0;
-    virtual bool getPositionsByAircraftId(qint64 aircraftId, QVector<AircraftData> &position) const = 0;
+    virtual bool add(qint64 aircraftId, const AircraftData &data) = 0;
+    virtual bool getByAircraftId(qint64 aircraftId, QVector<AircraftData> &data) const = 0;
 };
 
 #endif // POSITIONDAOINTF_H

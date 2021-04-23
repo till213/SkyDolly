@@ -27,7 +27,7 @@
 
 #include <memory>
 
-#include <QtGlobal>
+#include <QVector>
 
 #include "../../LightData.h"
 #include "../LightDaoIntf.h"
@@ -40,8 +40,8 @@ public:
     SQLiteLightDao() noexcept;
     virtual ~SQLiteLightDao() noexcept;
 
-    virtual bool addLight(qint64 aircraftId, const LightData &lightData) noexcept override;
-    virtual LightData getLight(qint64 aircraftId, qint64 timestamp) const noexcept override;
+    virtual bool add(qint64 aircraftId, const LightData &data) noexcept override;
+    virtual bool getByAircraftId(qint64 aircraftId, QVector<LightData> &data) const noexcept override;
 
 private:
     std::unique_ptr<SQLiteLightDaoPrivate> d;

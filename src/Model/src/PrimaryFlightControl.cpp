@@ -115,7 +115,12 @@ const PrimaryFlightControlData &PrimaryFlightControl::getLast() const noexcept
     }
 }
 
-const QVector<PrimaryFlightControlData> &PrimaryFlightControl::getAll() const noexcept
+QVector<PrimaryFlightControlData> &PrimaryFlightControl::getAll() const noexcept
+{
+    return d->primaryFlightControlData;
+}
+
+const QVector<PrimaryFlightControlData> &PrimaryFlightControl::getAllConst() const noexcept
 {
     return d->primaryFlightControlData;
 }

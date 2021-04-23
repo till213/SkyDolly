@@ -83,7 +83,12 @@ const LightData &Light::getLast() const noexcept
     }
 }
 
-const QVector<LightData> &Light::getAll() const noexcept
+QVector<LightData> &Light::getAll() const noexcept
+{
+    return d->lightData;
+}
+
+const QVector<LightData> &Light::getAllConst() const noexcept
 {
     return d->lightData;
 }

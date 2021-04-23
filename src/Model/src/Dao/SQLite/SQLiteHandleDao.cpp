@@ -28,6 +28,7 @@
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
+#include <QSqlRecord>
 
 #include "../../AircraftHandleData.h"
 #include "SQLiteHandleDao.h"
@@ -37,12 +38,12 @@ class SQLiteHandleDaoPrivate
 public:
     SQLiteHandleDaoPrivate() noexcept
         : insertQuery(nullptr),
-          selectQuery(nullptr)
+          selectByAircraftIdQuery(nullptr)
     {
     }
 
     std::unique_ptr<QSqlQuery> insertQuery;
-    std::unique_ptr<QSqlQuery> selectQuery;
+    std::unique_ptr<QSqlQuery> selectByAircraftIdQuery;
 
     void initQueries()
     {
@@ -71,9 +72,13 @@ public:
 " :folding_wing_handle_position"
 ");");           
         }
-        if (selectQuery == nullptr) {
-            selectQuery = std::make_unique<QSqlQuery>();
-            selectQuery->prepare("select a.name from handle a where a.id = :id;");
+        if (selectByAircraftIdQuery == nullptr) {
+            selectByAircraftIdQuery = std::make_unique<QSqlQuery>();
+            selectByAircraftIdQuery->prepare(
+"select * "
+"from   handle h "
+"where  h.aircraft_id = :aircraft_id "
+"order by h.timestamp asc;");
         }
     }
 };
@@ -88,7 +93,7 @@ SQLiteHandleDao::SQLiteHandleDao() noexcept
 SQLiteHandleDao::~SQLiteHandleDao() noexcept
 {}
 
-bool SQLiteHandleDao::addHandle(qint64 aircraftId, const AircraftHandleData &aircraftHandleData)  noexcept
+bool SQLiteHandleDao::add(qint64 aircraftId, const AircraftHandleData &aircraftHandleData)  noexcept
 {
     d->initQueries();
     d->insertQuery->bindValue(":aircraft_id", aircraftId, QSql::In);
@@ -104,13 +109,47 @@ bool SQLiteHandleDao::addHandle(qint64 aircraftId, const AircraftHandleData &air
     bool ok = d->insertQuery->exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("addHandle: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteHandleDao::add: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
     }
 #endif
     return ok;
 }
 
-AircraftHandleData SQLiteHandleDao::getHandle(qint64 aircraftId, qint64 timestamp) const noexcept
+bool SQLiteHandleDao::getByAircraftId(qint64 aircraftId, QVector<AircraftHandleData> &aircraftHandleData) const noexcept
 {
-    return AircraftHandleData();
+    d->initQueries();
+    d->selectByAircraftIdQuery->bindValue(":aircraft_id", aircraftId);
+    bool ok = d->selectByAircraftIdQuery->exec();
+    if (ok) {
+        aircraftHandleData.clear();
+        int timestampIdx = d->selectByAircraftIdQuery->record().indexOf("timestamp");
+        int brakeLeftPositionIdx = d->selectByAircraftIdQuery->record().indexOf("brake_left_position");
+        int brakeRightPositionIdx = d->selectByAircraftIdQuery->record().indexOf("brake_right_position");
+        int waterRudderHandlePositionIdx = d->selectByAircraftIdQuery->record().indexOf("water_rudder_handle_position");
+        int tailHookPositionIdx = d->selectByAircraftIdQuery->record().indexOf("tail_hook_position");
+        int canopyOpenIdx = d->selectByAircraftIdQuery->record().indexOf("canopy_open");
+        int gearHandlePositionIdx = d->selectByAircraftIdQuery->record().indexOf("gear_handle_position");
+        int foldingWingHandlePositionIdx = d->selectByAircraftIdQuery->record().indexOf("folding_wing_handle_position");
+        while (d->selectByAircraftIdQuery->next()) {
+
+            AircraftHandleData data;
+
+            data.timestamp = d->selectByAircraftIdQuery->value(timestampIdx).toLongLong();
+            data.brakeLeftPosition = d->selectByAircraftIdQuery->value(brakeLeftPositionIdx).toInt();
+            data.brakeRightPosition = d->selectByAircraftIdQuery->value(brakeRightPositionIdx).toInt();
+            data.waterRudderHandlePosition = d->selectByAircraftIdQuery->value(waterRudderHandlePositionIdx).toInt();
+            data.tailhookPosition = d->selectByAircraftIdQuery->value(tailHookPositionIdx).toInt();
+            data.canopyOpen = d->selectByAircraftIdQuery->value(canopyOpenIdx).toInt();
+            data.gearHandlePosition = d->selectByAircraftIdQuery->value(gearHandlePositionIdx).toBool();
+            data.foldingWingHandlePosition = d->selectByAircraftIdQuery->value(foldingWingHandlePositionIdx).toBool();
+
+            aircraftHandleData.append(data);
+        }
+#ifdef DEBUG
+    } else {
+        qDebug("SQLiteHandleDao::getByAircraftId: SQL error: %s", qPrintable(d->selectByAircraftIdQuery->lastError().databaseText() + " - error code: " + d->selectByAircraftIdQuery->lastError().nativeErrorCode()));
+#endif
+    }
+
+    return ok;
 }

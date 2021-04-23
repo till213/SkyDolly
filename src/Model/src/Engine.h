@@ -46,7 +46,8 @@ public:
 
     void upsert(EngineData engineData) noexcept;
     const EngineData &getLast() const noexcept;
-    const QVector<EngineData> &getAll() const noexcept;
+    QVector<EngineData> &getAll() const noexcept;
+    const QVector<EngineData> &getAllConst() const noexcept;
     const EngineData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
     void clear() noexcept;

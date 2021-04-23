@@ -25,6 +25,8 @@
 #ifndef HANDLEDAOINTF_H
 #define HANDLEDAOINTF_H
 
+#include <QVector>
+
 class AircraftHandleData;
 
 class HandleDaoIntf
@@ -33,15 +35,16 @@ public:
     virtual ~HandleDaoIntf() = default;
 
     /*!
-     * Persists the \c handleData (aircraft handles and levers).
-     * \param handleData
-     *        the handles to be persisted
+     * Persists the \c data.
+     *
      * \param aircraftId
-     *        the aircraft the \c handleData belongs to
+     *        the aircraft the \c data belongs to
+     * \param data
+     *        the AircraftHandleData to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool addHandle(qint64 aircraftId, const AircraftHandleData &handleData) = 0;
-    virtual AircraftHandleData getHandle(qint64 aircraftId, qint64 timestamp) const = 0;
+    virtual bool add(qint64 aircraftId, const AircraftHandleData &data) = 0;
+    virtual bool getByAircraftId(qint64 aircraftId, QVector<AircraftHandleData> &data) const = 0;
 };
 
 #endif // HANDLEDAOINTF_H

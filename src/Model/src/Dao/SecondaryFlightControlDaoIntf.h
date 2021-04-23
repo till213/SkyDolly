@@ -25,7 +25,7 @@
 #ifndef SECONDARYFLIGHTCONTROLDAOINTF_H
 #define SECONDARYFLIGHTCONTROLDAOINTF_H
 
-#include <QtGlobal>
+#include <QVector>
 
 class SecondaryFlightControlData;
 
@@ -35,15 +35,16 @@ public:
     virtual ~SecondaryFlightControlDaoIntf() = default;
 
     /*!
-     * Persists the \c secondaryFlightControlData.
-     * \param secondaryFlightControlData
-     *        the secondary flight controls to be persisted
+     * Persists the \c data.
+     *
      * \param aircraftId
-     *        the aircraft the \c secondaryFlightControlData belongs to
+     *        the aircraft the \c data belongs to
+     * \param data
+     *        the SecondaryFlightControlData to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool addSecondaryFlightControl(qint64 aircraftId, const SecondaryFlightControlData &secondaryFlightControlData) = 0;
-    virtual SecondaryFlightControlData getSecondaryFlightControl(qint64 aircraftId, qint64 timestamp) const = 0;
+    virtual bool add(qint64 aircraftId, const SecondaryFlightControlData &data) = 0;
+    virtual bool getByAircraftId(qint64 aircraftId, QVector<SecondaryFlightControlData> &data) const = 0;
 };
 
 #endif // SECONDARYFLIGHTCONTROLDAOINTF_H

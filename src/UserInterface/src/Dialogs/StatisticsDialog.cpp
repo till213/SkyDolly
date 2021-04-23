@@ -126,11 +126,11 @@ void StatisticsDialog::updateRecordUi() noexcept
         ui->samplesPerSecondLineEdit->clear();
     }
     const QVector<AircraftData> &aircraftData = aircraft.getAllConst();
-    const QVector<EngineData> &engineData = aircraft.getEngine().getAll();
-    const QVector<PrimaryFlightControlData> &primaryFlightControlData = aircraft.getPrimaryFlightControl().getAll();
-    const QVector<SecondaryFlightControlData> &secondaryFlightControlData = aircraft.getSecondaryFlightControl().getAll();
-    const QVector<AircraftHandleData> &aircraftHandleData = aircraft.getAircraftHandle().getAll();
-    const QVector<LightData> &lightData = aircraft.getLight().getAll();
+    const QVector<EngineData> &engineData = aircraft.getEngine().getAllConst();
+    const QVector<PrimaryFlightControlData> &primaryFlightControlData = aircraft.getPrimaryFlightControl().getAllConst();
+    const QVector<SecondaryFlightControlData> &secondaryFlightControlData = aircraft.getSecondaryFlightControl().getAllConst();
+    const QVector<AircraftHandleData> &aircraftHandleData = aircraft.getAircraftHandle().getAllConst();
+    const QVector<LightData> &lightData = aircraft.getLight().getAllConst();
     const int totalCount = aircraftData.count() + engineData.count() + primaryFlightControlData.count() + secondaryFlightControlData.count() + aircraftHandleData.count() + lightData.count();
     ui->sampleCountLineEdit->setText(QString::number(totalCount));
 

@@ -45,9 +45,9 @@ public:
      *        the aircraft to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool addAircraft(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) = 0;
-    virtual bool getAircraftById(qint64 id, Aircraft &aircraft) const = 0;
-    virtual bool getAircraftByScenarioId(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) const = 0;
+    virtual bool add(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) = 0;
+    virtual bool getById(qint64 id, Aircraft &aircraft) const = 0;
+    virtual bool getByScenarioId(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) const = 0;
 };
 
 #endif // AIRCRAFTDAOINTF_H

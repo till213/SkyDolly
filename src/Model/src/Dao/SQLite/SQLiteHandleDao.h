@@ -27,7 +27,7 @@
 
 #include <memory>
 
-#include <QtGlobal>
+#include <QVector>
 
 #include "../../AircraftHandleData.h"
 #include "../HandleDaoIntf.h"
@@ -40,8 +40,8 @@ public:
     SQLiteHandleDao() noexcept;
     virtual ~SQLiteHandleDao() noexcept;
 
-    virtual bool addHandle(qint64 aircraftId, const AircraftHandleData &handleData) noexcept override;
-    virtual AircraftHandleData getHandle(qint64 aircraftId, qint64 timestamp) const noexcept override;
+    virtual bool add(qint64 aircraftId, const AircraftHandleData &data) noexcept override;
+    virtual bool getByAircraftId(qint64 aircraftId, QVector<AircraftHandleData> &data) const noexcept override;
 
 private:
     std::unique_ptr<SQLiteHandleDaoPrivate> d;
