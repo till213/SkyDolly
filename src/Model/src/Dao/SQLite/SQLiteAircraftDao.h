@@ -40,9 +40,9 @@ public:
     SQLiteAircraftDao() noexcept;
     virtual ~SQLiteAircraftDao() noexcept;
 
-    virtual bool addAircraft(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) noexcept override;
-    virtual bool getAircraftById(qint64 id, Aircraft &aircraft) const noexcept override;
-    virtual bool getAircraftByScenarioId(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) const noexcept;
+    virtual bool add(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) noexcept override;
+    virtual bool getById(qint64 id, Aircraft &aircraft) const noexcept override;
+    virtual bool getByScenarioId(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) const noexcept override;
 
 private:
     std::unique_ptr<SQLiteAircraftDaoPrivate> d;

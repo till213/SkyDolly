@@ -25,7 +25,6 @@
 #ifndef SCENARIODAOINTF_H
 #define SCENARIODAOINTF_H
 
-#include <QtGlobal>
 #include <QVector>
 
 class Scenario;

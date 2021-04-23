@@ -653,7 +653,7 @@ inline bool CSVImport::importLightData(const QList<QByteArray> &headers, const Q
         if (header == SimVar::LightStates) {
             intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.lightStates = SimType::LightStates(intValue);
+                data.lightStates = static_cast<SimType::LightStates>(intValue);
             }
         // Timestamp
         } else if (header == SimVar::Timestamp) {

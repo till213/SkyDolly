@@ -28,6 +28,7 @@
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
+#include <QSqlRecord>
 
 #include "../../../../Kernel/src/Enum.h"
 #include "../../SecondaryFlightControlData.h"
@@ -38,12 +39,12 @@ class SQLiteSecondaryFlightControlDaoPrivate
 public:
     SQLiteSecondaryFlightControlDaoPrivate() noexcept
         : insertQuery(nullptr),
-          selectQuery(nullptr)
+          selectByAircraftIdQuery(nullptr)
     {
     }
 
     std::unique_ptr<QSqlQuery> insertQuery;
-    std::unique_ptr<QSqlQuery> selectQuery;
+    std::unique_ptr<QSqlQuery> selectByAircraftIdQuery;
 
     void initQueries()
     {
@@ -70,9 +71,13 @@ public:
 " :flaps_handle_index"
 ");");
         }
-        if (selectQuery == nullptr) {
-            selectQuery = std::make_unique<QSqlQuery>();
-            selectQuery->prepare("select a.name from aircraft a where a.id = :id;");
+        if (selectByAircraftIdQuery == nullptr) {
+            selectByAircraftIdQuery = std::make_unique<QSqlQuery>();
+            selectByAircraftIdQuery->prepare(
+"select * "
+"from   secondary_flight_control sfc "
+"where  sfc.aircraft_id = :aircraft_id "
+"order by sfc.timestamp asc;");
         }
     }
 };
@@ -87,7 +92,7 @@ SQLiteSecondaryFlightControlDao::SQLiteSecondaryFlightControlDao() noexcept
 SQLiteSecondaryFlightControlDao::~SQLiteSecondaryFlightControlDao() noexcept
 {}
 
-bool SQLiteSecondaryFlightControlDao::addSecondaryFlightControl(qint64 aircraftId, const SecondaryFlightControlData &secondaryFlightControlData)  noexcept
+bool SQLiteSecondaryFlightControlDao::add(qint64 aircraftId, const SecondaryFlightControlData &secondaryFlightControlData)  noexcept
 {
     d->initQueries();
     d->insertQuery->bindValue(":aircraft_id", aircraftId, QSql::In);
@@ -102,13 +107,45 @@ bool SQLiteSecondaryFlightControlDao::addSecondaryFlightControl(qint64 aircraftI
     bool ok = d->insertQuery->exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("addSecondaryFlightControl: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteSecondaryFlightControlDao::add: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
     }
 #endif
     return ok;
 }
 
-SecondaryFlightControlData SQLiteSecondaryFlightControlDao::getSecondaryFlightControl(qint64 aircraftId, qint64 timestamp) const noexcept
+bool SQLiteSecondaryFlightControlDao::getByAircraftId(qint64 aircraftId, QVector<SecondaryFlightControlData> &secondaryFlightControlData) const noexcept
 {
-    return SecondaryFlightControlData();
+    d->initQueries();
+    d->selectByAircraftIdQuery->bindValue(":aircraft_id", aircraftId);
+    bool ok = d->selectByAircraftIdQuery->exec();
+    if (ok) {
+        secondaryFlightControlData.clear();
+        int timestampIdx = d->selectByAircraftIdQuery->record().indexOf("timestamp");
+        int leadingEdgeFlapsLeftPercentIdx = d->selectByAircraftIdQuery->record().indexOf("leading_edge_flaps_left_percent");
+        int leadingEdgeFlapsRightPercentIdx = d->selectByAircraftIdQuery->record().indexOf("leading_edge_flaps_right_percent");
+        int trailingEdgeFlapsLeftPercentIdx = d->selectByAircraftIdQuery->record().indexOf("trailing_edge_flaps_left_percent");
+        int trailingEdgeFlapsRightPercentIdx = d->selectByAircraftIdQuery->record().indexOf("trailing_edge_flaps_right_percent");
+        int spoilersHandlePositionIdx = d->selectByAircraftIdQuery->record().indexOf("spoilers_handle_position");
+        int flapsHandleIndexIdx = d->selectByAircraftIdQuery->record().indexOf("flaps_handle_index");
+        while (d->selectByAircraftIdQuery->next()) {
+
+            SecondaryFlightControlData data;
+
+            data.timestamp = d->selectByAircraftIdQuery->value(timestampIdx).toLongLong();
+            data.leadingEdgeFlapsLeftPercent = d->selectByAircraftIdQuery->value(leadingEdgeFlapsLeftPercentIdx).toInt();
+            data.leadingEdgeFlapsRightPercent = d->selectByAircraftIdQuery->value(leadingEdgeFlapsRightPercentIdx).toInt();
+            data.trailingEdgeFlapsLeftPercent = d->selectByAircraftIdQuery->value(trailingEdgeFlapsLeftPercentIdx).toInt();
+            data.trailingEdgeFlapsRightPercent = d->selectByAircraftIdQuery->value(trailingEdgeFlapsRightPercentIdx).toInt();
+            data.spoilersHandlePosition = d->selectByAircraftIdQuery->value(spoilersHandlePositionIdx).toInt();
+            data.flapsHandleIndex = d->selectByAircraftIdQuery->value(flapsHandleIndexIdx).toInt();
+
+            secondaryFlightControlData.append(data);
+        }
+#ifdef DEBUG
+    } else {
+        qDebug("SQLiteSecondaryFlightControlDao::getByAircraftId: SQL error: %s", qPrintable(d->selectByAircraftIdQuery->lastError().databaseText() + " - error code: " + d->selectByAircraftIdQuery->lastError().nativeErrorCode()));
+#endif
+    }
+
+    return ok;
 }

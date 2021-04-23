@@ -57,7 +57,7 @@ AircraftService::~AircraftService() noexcept
 bool AircraftService::store(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) noexcept
 {
     QSqlDatabase::database().transaction();
-    bool ok = d->aircraftDao->addAircraft(scenarioId, sequenceNumber, aircraft);
+    bool ok = d->aircraftDao->add(scenarioId, sequenceNumber, aircraft);
     if (ok) {
         QSqlDatabase::database().commit();
     } else {
@@ -69,7 +69,7 @@ bool AircraftService::store(qint64 scenarioId, int sequenceNumber, Aircraft &air
 bool AircraftService::restore(qint64 id, Aircraft &aircraft) noexcept
 {
     QSqlDatabase::database().transaction();
-    bool ok = d->aircraftDao->getAircraftById(id, aircraft);
+    bool ok = d->aircraftDao->getById(id, aircraft);
     QSqlDatabase::database().rollback();
     return ok;
 }

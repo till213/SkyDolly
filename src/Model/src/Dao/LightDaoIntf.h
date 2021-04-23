@@ -33,15 +33,16 @@ public:
     virtual ~LightDaoIntf() = default;
 
     /*!
-     * Persists the \c lightData (aircraft light switch states).
-     * \param lightData
-     *        the light data to be persisted
+     * Persists the \c data.
+     *
      * \param aircraftId
-     *        the aircraft the \c lightData belongs to
+     *        the aircraft the \c data belongs to
+     * \param data
+     *        the LightData to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool addLight(qint64 aircraftId, const LightData &lightData) = 0;
-    virtual LightData getLight(qint64 aircraftId, qint64 timestamp) const = 0;
+    virtual bool add(qint64 aircraftId, const LightData &lightData) = 0;
+    virtual bool getByAircraftId(qint64 aircraftId, QVector<LightData> &data) const = 0;
 };
 
 #endif // LIGHTDAOINTF_H

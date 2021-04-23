@@ -89,7 +89,7 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
             }
 
             // Engine data
-            for (const EngineData &data : aircraft.getEngineConst().getAll()) {
+            for (const EngineData &data : aircraft.getEngineConst().getAllConst()) {
                 csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::Engine)) % Const::Sep %
                       getAircraftData(aircraftData) % Const::Sep %
                       getEngineData(data) % Const::Sep %
@@ -105,7 +105,7 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
             }
 
             // Primary flight controls
-            for (const PrimaryFlightControlData &data : aircraft.getPrimaryFlightControlConst().getAll()) {
+            for (const PrimaryFlightControlData &data : aircraft.getPrimaryFlightControlConst().getAllConst()) {
                 csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::PrimaryFlightControl)) % Const::Sep %
                       getAircraftData(aircraftData) % Const::Sep %
                       getEngineData(engineData) % Const::Sep %
@@ -121,7 +121,7 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
             }
 
             // Secondary flight controls
-            for (const SecondaryFlightControlData &data : aircraft.getSecondaryFlightControlConst().getAll()) {
+            for (const SecondaryFlightControlData &data : aircraft.getSecondaryFlightControlConst().getAllConst()) {
                 csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::SecondaryFlightControl)) % Const::Sep %
                       getAircraftData(aircraftData) % Const::Sep %
                       getEngineData(engineData) % Const::Sep %
@@ -137,7 +137,7 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
             }
 
             // Aircraft handles
-            for (const AircraftHandleData &data : aircraft.getAircraftHandleConst().getAll()) {
+            for (const AircraftHandleData &data : aircraft.getAircraftHandleConst().getAllConst()) {
                 csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::AircraftHandle)) % Const::Sep %
                       getAircraftData(aircraftData) % Const::Sep %
                       getEngineData(engineData) % Const::Sep %
@@ -153,7 +153,7 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
             }
 
             // Lights
-            for (const LightData &data : aircraft.getLightConst().getAll()) {
+            for (const LightData &data : aircraft.getLightConst().getAllConst()) {
                 csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::Light)) % Const::Sep %
                       getAircraftData(aircraftData) % Const::Sep %
                       getEngineData(engineData) % Const::Sep %

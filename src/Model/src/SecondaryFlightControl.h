@@ -46,7 +46,8 @@ public:
 
     void upsert(SecondaryFlightControlData secondaryFlightControlData) noexcept;
     const SecondaryFlightControlData &getLast() const noexcept;
-    const QVector<SecondaryFlightControlData> &getAll() const noexcept;
+    QVector<SecondaryFlightControlData> &getAll() const noexcept;
+    const QVector<SecondaryFlightControlData> &getAllConst() const noexcept;
     const SecondaryFlightControlData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
     void clear() noexcept;

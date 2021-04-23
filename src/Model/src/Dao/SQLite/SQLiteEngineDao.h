@@ -27,7 +27,7 @@
 
 #include <memory>
 
-#include <QtGlobal>
+#include <QVector>
 
 #include "../../EngineData.h"
 #include "../EngineDaoIntf.h"
@@ -40,8 +40,8 @@ public:
     SQLiteEngineDao() noexcept;
     virtual ~SQLiteEngineDao() noexcept;
 
-    virtual bool addEngine(qint64 aircraftId, const EngineData &engineData) noexcept override;
-    virtual EngineData getEngine(qint64 aircraftId, qint64 timestamp) const noexcept override;
+    virtual bool add(qint64 aircraftId, const EngineData &data) noexcept override;
+    virtual bool getByAircraftId(qint64 aircraftId, QVector<EngineData> &data) const noexcept override;
 
 private:
     std::unique_ptr<SQLiteEngineDaoPrivate> d;

@@ -27,7 +27,7 @@
 
 #include <memory>
 
-#include <QtGlobal>
+#include <QVector>
 
 #include "../../AircraftData.h"
 #include "../PositionDaoIntf.h"
@@ -40,8 +40,8 @@ public:
     SQLitePositionDao() noexcept;
     virtual ~SQLitePositionDao() noexcept;
 
-    virtual bool addPosition(qint64 aircraftId, const AircraftData &position) noexcept override;
-    virtual bool getPositionsByAircraftId(qint64 aircraftId, QVector<AircraftData> &aircraftData) const noexcept override;
+    virtual bool add(qint64 aircraftId, const AircraftData &data) noexcept override;
+    virtual bool getByAircraftId(qint64 aircraftId, QVector<AircraftData> &data) const noexcept override;
 
 private:
     std::unique_ptr<SQLitePositionDaoPrivate> d;

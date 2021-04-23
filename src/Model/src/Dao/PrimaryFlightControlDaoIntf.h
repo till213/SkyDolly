@@ -25,7 +25,7 @@
 #ifndef PRIMARYFLIGHTCONTROLDAOINTF_H
 #define PRIMARYFLIGHTCONTROLDAOINTF_H
 
-#include <QtGlobal>
+#include <QVector>
 
 class PrimaryFlightControlData;
 
@@ -35,15 +35,16 @@ public:
     virtual ~PrimaryFlightControlDaoIntf() = default;
 
     /*!
-     * Persists the \c primaryFlightControlData.
-     * \param primaryFlightControlData
-     *        the primary flight controls to be persisted
+     * Persists the \c data.
+     *
      * \param aircraftId
-     *        the aircraft the \c primaryFlightControlData belongs to
+     *        the aircraft the \c data belongs to
+     * \param data
+     *        the SecondaryFlightControlData to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool addPrimaryFlightControl(qint64 aircraftId, const PrimaryFlightControlData &primaryFlightControlData) = 0;
-    virtual PrimaryFlightControlData getPrimaryFlightControl(qint64 aircraftId, qint64 timestamp) const = 0;
+    virtual bool add(qint64 aircraftId, const PrimaryFlightControlData &primaryFlightControlData) = 0;
+    virtual bool getByAircraftId(qint64 aircraftId, QVector<PrimaryFlightControlData> &data) const = 0;
 };
 
 #endif // PRIMARYFLIGHTCONTROLDAOINTF_H

@@ -25,7 +25,7 @@
 #ifndef ENGINEDAOINTF_H
 #define ENGINEDAOINTF_H
 
-#include <QtGlobal>
+#include <QVector>
 
 class EngineData;
 
@@ -35,15 +35,16 @@ public:
     virtual ~EngineDaoIntf() = default;
 
     /*!
-     * Persists the \c engineData.
-     * \param engineData
-     *        the engine data to be persisted
+     * Persists the \c data.
+     *
      * \param aircraftId
-     *        the aircraft the \c engineData belongs to
+     *        the aircraft the \c data belongs to
+     * \param data
+     *        the EngineData to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool addEngine(qint64 aircraftId, const EngineData &engineData) = 0;
-    virtual EngineData getEngine(qint64 aircraftId, qint64 timestamp) const = 0;
+    virtual bool add(qint64 aircraftId, const EngineData &data) = 0;
+    virtual bool getByAircraftId(qint64 aircraftId, QVector<EngineData> &data) const = 0;
 };
 
 

@@ -278,19 +278,19 @@ qint64 Aircraft::getDurationMSec() const noexcept
         if (d->aircraftData.count() > 0) {
             d->duration = d->aircraftData.last().timestamp;
         }
-        if (d->engine.getAll().count() > 0) {
+        if (d->engine.getAllConst().count() > 0) {
             d->duration = qMax(d->engine.getLast().timestamp, d->duration);
         }
-        if (d->primaryFlightControl.getAll().count() > 0) {
+        if (d->primaryFlightControl.getAllConst().count() > 0) {
             d->duration = qMax(d->primaryFlightControl.getLast().timestamp, d->duration);
         }
-        if (d->secondaryFlightControl.getAll().count() > 0) {
+        if (d->secondaryFlightControl.getAllConst().count() > 0) {
             d->duration = qMax(d->secondaryFlightControl.getLast().timestamp, d->duration);
         }
-        if (d->aircraftHandle.getAll().count() > 0) {
+        if (d->aircraftHandle.getAllConst().count() > 0) {
             d->duration = qMax(d->aircraftHandle.getLast().timestamp, d->duration);
         }
-        if (d->light.getAll().count() > 0) {
+        if (d->light.getAllConst().count() > 0) {
             d->duration = qMax(d->light.getLast().timestamp, d->duration);
         }
     }
