@@ -107,7 +107,7 @@ void ScenarioSelectionDialog::updateUi() noexcept
         ui->scenarioTableWidget->setItem(rowIndex, 0, newItem);
         newItem = new QTableWidgetItem(desc.description);
         ui->scenarioTableWidget->setItem(rowIndex, 1, newItem);
-        newItem = new QTableWidgetItem(desc.aircraftName);
+        newItem = new QTableWidgetItem(desc.aircraftType);
         ui->scenarioTableWidget->setItem(rowIndex, 2, newItem);
         ++rowIndex;
     }

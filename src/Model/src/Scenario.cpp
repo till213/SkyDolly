@@ -77,14 +77,14 @@ qint64 Scenario::getId() const noexcept
     return d->id;
 }
 
-void Scenario::setDescription(const QString &description) noexcept
-{
-    d->description = description;
-}
-
 const QString &Scenario::getDescription() const noexcept
 {
     return d->description;
+}
+
+void Scenario::setDescription(const QString &description) noexcept
+{
+    d->description = description;
 }
 
 const Aircraft &Scenario::getUserAircraftConst() const noexcept
@@ -97,15 +97,15 @@ Aircraft &Scenario::getUserAircraft() const noexcept
     return *(*d->aircrafts.cbegin());
 }
 
+const FlightCondition &Scenario::getFlightConditionConst() const noexcept
+{
+    return d->flightCondition;
+}
+
 void Scenario::setFlightCondition(FlightCondition flightCondition) noexcept
 {
     d->flightCondition = flightCondition;
     emit flightConditionChanged();
-}
-
-const FlightCondition &Scenario::getFlightConditionConst() const noexcept
-{
-    return d->flightCondition;
 }
 
 qint64 Scenario::getTotalDurationMSec() const noexcept
@@ -132,4 +132,3 @@ void Scenario::frenchConnection() noexcept
     connect(&userAircraft, &Aircraft::dataChanged,
             this, &Scenario::aircraftDataChanged);
 }
-

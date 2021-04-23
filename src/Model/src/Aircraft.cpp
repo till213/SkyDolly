@@ -145,15 +145,15 @@ Light &Aircraft::getLight() const noexcept
     return d->light;
 }
 
+const AircraftInfo &Aircraft::getAircraftInfoConst() const noexcept
+{
+    return d->aircraftInfo;
+}
+
 void Aircraft::setAircraftInfo(AircraftInfo aircraftInfo) noexcept
 {
     d->aircraftInfo = aircraftInfo;
     emit infoChanged();
-}
-
-const AircraftInfo &Aircraft::getAircraftInfoConst() const noexcept
-{
-    return d->aircraftInfo;
 }
 
 void Aircraft::upsert(AircraftData aircraftData) noexcept
@@ -250,14 +250,6 @@ const AircraftData &Aircraft::interpolate(qint64 timestamp, TimeVariableData::Ac
             d->currentAircraftData.rotationVelocityBodyX = SkyMath::interpolateLinear(p1->rotationVelocityBodyX, p2->rotationVelocityBodyX, tn);
             d->currentAircraftData.rotationVelocityBodyY = SkyMath::interpolateLinear(p1->rotationVelocityBodyY, p2->rotationVelocityBodyY, tn);
             d->currentAircraftData.rotationVelocityBodyZ = SkyMath::interpolateLinear(p1->rotationVelocityBodyZ, p2->rotationVelocityBodyZ, tn);
-
-            // Acceleration
-            d->currentAircraftData.accelerationBodyX = SkyMath::interpolateLinear(p1->accelerationBodyX, p2->accelerationBodyX, tn);
-            d->currentAircraftData.accelerationBodyY = SkyMath::interpolateLinear(p1->accelerationBodyY, p2->accelerationBodyY, tn);
-            d->currentAircraftData.accelerationBodyZ = SkyMath::interpolateLinear(p1->accelerationBodyZ, p2->accelerationBodyZ, tn);
-            d->currentAircraftData.rotationAccelerationBodyX = SkyMath::interpolateLinear(p1->rotationAccelerationBodyX, p2->rotationAccelerationBodyX, tn);
-            d->currentAircraftData.rotationAccelerationBodyY = SkyMath::interpolateLinear(p1->rotationAccelerationBodyY, p2->rotationAccelerationBodyY, tn);
-            d->currentAircraftData.rotationAccelerationBodyZ = SkyMath::interpolateLinear(p1->rotationAccelerationBodyZ, p2->rotationAccelerationBodyZ, tn);
 
             d->currentAircraftData.timestamp = timestamp;
 

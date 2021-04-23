@@ -28,9 +28,11 @@
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
+#include <QSqlRecord>
 
 #include "../../../../Kernel/src/Enum.h"
 #include "../../Aircraft.h"
+#include "../../AircraftInfo.h"
 #include "../../AircraftData.h"
 #include "../../Engine.h"
 #include "../../EngineData.h"
@@ -51,7 +53,8 @@ class SQLiteAircraftDaoPrivate
 public:
     SQLiteAircraftDaoPrivate() noexcept
         : insertQuery(nullptr),
-          selectQuery(nullptr),
+          selectByIdQuery(nullptr),
+          selectByScenarioIdQuery(nullptr),
           daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           positionDao(daoFactory->createPositionDao()),
           engineDao(daoFactory->createEngineDao()),
@@ -63,7 +66,8 @@ public:
     }
 
     std::unique_ptr<QSqlQuery> insertQuery;
-    std::unique_ptr<QSqlQuery> selectQuery;
+    std::unique_ptr<QSqlQuery> selectByIdQuery;
+    std::unique_ptr<QSqlQuery> selectByScenarioIdQuery;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<PositionDaoIntf> positionDao;
     std::unique_ptr<EngineDaoIntf> engineDao;
@@ -80,7 +84,8 @@ public:
 "insert into aircraft ("
 "  id,"
 "  scenario_id,"
-"  name,"
+"  seq_nr,"
+"  type,"
 "  tail_number,"
 "  airline,"
 "  flight_number,"
@@ -89,11 +94,13 @@ public:
 "  wing_span,"
 "  engine_type,"
 "  nof_engines,"
-"  altitude_above_ground"
+"  altitude_above_ground,"
+"  start_on_ground"
 ") values ("
 "  null,"
 " :scenario_id,"
-" :name,"
+" :seq_nr,"
+" :type,"
 " :tail_number,"
 " :airline,"
 " :flight_number,"
@@ -102,12 +109,26 @@ public:
 " :wing_span,"
 " :engine_type,"
 " :nof_engines,"
-" :altitude_above_ground"
+" :altitude_above_ground,"
+" :start_on_ground"
 ");");
         }
-        if (selectQuery == nullptr) {
-            selectQuery = std::make_unique<QSqlQuery>();
-            selectQuery->prepare("select a.name from aircraft a where a.id = :id;");
+        if (selectByIdQuery == nullptr) {
+            selectByIdQuery = std::make_unique<QSqlQuery>();
+            selectByIdQuery->setForwardOnly(true);
+            selectByIdQuery->prepare(
+"select * "
+"from aircraft a "
+"where a.id = :id;");
+        }
+        if (selectByScenarioIdQuery == nullptr) {
+            selectByScenarioIdQuery = std::make_unique<QSqlQuery>();
+            selectByScenarioIdQuery->setForwardOnly(true);
+            selectByScenarioIdQuery->prepare(
+"select * "
+"from aircraft a "
+"where a.scenario_id = :scenario_id"
+"  and a.seq_nr = :seq_nr;");
         }
     }
 };
@@ -122,21 +143,23 @@ SQLiteAircraftDao::SQLiteAircraftDao() noexcept
 SQLiteAircraftDao::~SQLiteAircraftDao() noexcept
 {}
 
-bool SQLiteAircraftDao::addAircraft(qint64 scenarioId, Aircraft &aircraft)  noexcept
+bool SQLiteAircraftDao::addAircraft(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft)  noexcept
 {
     d->initQueries();
     const AircraftInfo &info = aircraft.getAircraftInfoConst();
     d->insertQuery->bindValue(":scenario_id", scenarioId, QSql::In);
-    d->insertQuery->bindValue(":name", info.name, QSql::In);
-    d->insertQuery->bindValue(":tail_number", info.atcId, QSql::In);
-    d->insertQuery->bindValue(":airline", info.atcAirline, QSql::In);
-    d->insertQuery->bindValue(":flight_number", info.atcFlightNumber, QSql::In);
+    d->insertQuery->bindValue(":seq_nr", sequenceNumber, QSql::In);
+    d->insertQuery->bindValue(":type", info.type, QSql::In);
+    d->insertQuery->bindValue(":tail_number", info.tailNumber, QSql::In);
+    d->insertQuery->bindValue(":airline", info.airline, QSql::In);
+    d->insertQuery->bindValue(":flight_number", info.flightNumber, QSql::In);
     d->insertQuery->bindValue(":category", info.category, QSql::In);
     d->insertQuery->bindValue(":initial_airspeed", info.initialAirspeed, QSql::In);
     d->insertQuery->bindValue(":wing_span", info.wingSpan, QSql::In);
     d->insertQuery->bindValue(":engine_type", Enum::toUnderlyingType(info.engineType), QSql::In);
     d->insertQuery->bindValue(":nof_engines", info.numberOfEngines, QSql::In);
-    d->insertQuery->bindValue(":altitude_above_ground", info.aircraftAltitudeAboveGround, QSql::In);
+    d->insertQuery->bindValue(":altitude_above_ground", info.altitudeAboveGround, QSql::In);
+    d->insertQuery->bindValue(":start_on_ground", info.startOnGround, QSql::In);
 
     bool ok = d->insertQuery->exec();
     if (ok) {
@@ -198,7 +221,55 @@ bool SQLiteAircraftDao::addAircraft(qint64 scenarioId, Aircraft &aircraft)  noex
     return ok;
 }
 
-Aircraft SQLiteAircraftDao::getAircraft(qint64 id) const noexcept
+bool SQLiteAircraftDao::getAircraftById(qint64 id, Aircraft &aircraft) const noexcept
 {
-    return Aircraft();
+    // TODO IMPLEMENT ME!!!
+    return true;
+}
+
+bool SQLiteAircraftDao::getAircraftByScenarioId(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) const noexcept
+{
+    d->initQueries();
+    d->selectByScenarioIdQuery->bindValue(":scenario_id", scenarioId);
+    d->selectByScenarioIdQuery->bindValue(":seq_nr", sequenceNumber);
+    bool ok = d->selectByScenarioIdQuery->exec();
+    if (ok) {
+        aircraft.clear();
+        int idFieldIndex = d->selectByScenarioIdQuery->record().indexOf("id");
+        int typeFieldIndex = d->selectByScenarioIdQuery->record().indexOf("type");
+        int tailNumberFieldIndex = d->selectByScenarioIdQuery->record().indexOf("tail_number");
+        int airlineFieldIndex = d->selectByScenarioIdQuery->record().indexOf("airline");
+        int flightNumberFieldIndex = d->selectByScenarioIdQuery->record().indexOf("flight_number");
+        int categoryFieldIndex = d->selectByScenarioIdQuery->record().indexOf("category");
+        int initialAirspeedFieldIndex = d->selectByScenarioIdQuery->record().indexOf("initial_airspeed");
+        int wingSpanFieldIndex = d->selectByScenarioIdQuery->record().indexOf("wing_span");
+        int engineTypeFieldIndex = d->selectByScenarioIdQuery->record().indexOf("engine_type");
+        int nofEnginesFieldIndex = d->selectByScenarioIdQuery->record().indexOf("nof_engines");
+        int airCraftAltitudeAboveGroundFieldIndex = d->selectByScenarioIdQuery->record().indexOf("altitude_above_ground");
+        int startOnGroundFieldIndex = d->selectByScenarioIdQuery->record().indexOf("start_on_ground");
+        if (d->selectByScenarioIdQuery->next()) {
+            aircraft.setId(d->selectByScenarioIdQuery->value(idFieldIndex).toLongLong());
+
+            AircraftInfo info;
+
+            info.type = d->selectByScenarioIdQuery->value(typeFieldIndex).toString();
+            info.tailNumber = d->selectByScenarioIdQuery->value(tailNumberFieldIndex).toString();
+            info.airline = d->selectByScenarioIdQuery->value(airlineFieldIndex).toString();
+            info.flightNumber = d->selectByScenarioIdQuery->value(flightNumberFieldIndex).toString();
+            info.category = d->selectByScenarioIdQuery->value(categoryFieldIndex).toString();
+            info.initialAirspeed = d->selectByScenarioIdQuery->value(initialAirspeedFieldIndex).toInt();
+            info.wingSpan = d->selectByScenarioIdQuery->value(wingSpanFieldIndex).toInt();
+            info.engineType = static_cast<SimType::EngineType>(d->selectByScenarioIdQuery->value(engineTypeFieldIndex).toInt());
+            info.numberOfEngines = d->selectByScenarioIdQuery->value(nofEnginesFieldIndex).toInt();
+            info.altitudeAboveGround = d->selectByScenarioIdQuery->value(airCraftAltitudeAboveGroundFieldIndex).toInt();
+            info.startOnGround = d->selectByScenarioIdQuery->value(startOnGroundFieldIndex).toBool();
+
+            aircraft.setAircraftInfo(info);
+        }
+#ifdef DEBUG
+    } else {
+        qDebug("getAircraftByScenarioId: SQL error: %s", qPrintable(d->selectByScenarioIdQuery->lastError().databaseText() + " - error code: " + d->selectByScenarioIdQuery->lastError().nativeErrorCode()));
+#endif
+    }
+    return ok;
 }

@@ -74,7 +74,7 @@ bool ScenarioService::restore(qint64 id, Scenario &scenario) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
-        ok = d->scenarioDao->getScenario(id, scenario);
+        ok = d->scenarioDao->getScenarioById(id, scenario);
     }
     QSqlDatabase::database().rollback();
     return ok;
