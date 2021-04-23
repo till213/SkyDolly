@@ -28,6 +28,7 @@
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
+#include <QSqlRecord>
 
 #include "../../../../Kernel/src/Enum.h"
 #include "../../AircraftData.h"
@@ -38,12 +39,12 @@ class SQLitePositionDaoPrivate
 public:
     SQLitePositionDaoPrivate() noexcept
         : insertQuery(nullptr),
-          selectQuery(nullptr)
+          selectByAircraftIdQuery(nullptr)
     {
     }
 
     std::unique_ptr<QSqlQuery> insertQuery;
-    std::unique_ptr<QSqlQuery> selectQuery;
+    std::unique_ptr<QSqlQuery> selectByAircraftIdQuery;
 
     void initQueries()
     {
@@ -82,9 +83,13 @@ public:
 " :rotation_velocity_z"
 ");");
         }
-        if (selectQuery == nullptr) {
-            selectQuery = std::make_unique<QSqlQuery>();
-            selectQuery->prepare("select a.name from aircraft a where a.id = :id;");
+        if (selectByAircraftIdQuery == nullptr) {
+            selectByAircraftIdQuery = std::make_unique<QSqlQuery>();
+            selectByAircraftIdQuery->prepare(
+"select * "
+"from   position p "
+"where  p.aircraft_id = :aircraft_id "
+"order by p.timestamp asc;");
         }
     }
 };
@@ -127,7 +132,51 @@ bool SQLitePositionDao::addPosition(qint64 aircraftId, const AircraftData &posit
     return ok;
 }
 
-AircraftData SQLitePositionDao::getPosition(qint64 aircraftId, qint64 timestamp) const noexcept
+bool SQLitePositionDao::getPositionsByAircraftId(qint64 aircraftId, QVector<AircraftData> &aircraftData) const noexcept
 {
-    return AircraftData();
+    d->initQueries();
+    d->selectByAircraftIdQuery->bindValue(":aircraft_id", aircraftId);
+    bool ok = d->selectByAircraftIdQuery->exec();
+    if (ok) {
+        aircraftData.clear();
+        int timestampFieldIndex = d->selectByAircraftIdQuery->record().indexOf("timestamp");
+        int latitudeFieldIndex = d->selectByAircraftIdQuery->record().indexOf("latitude");
+        int longitudeFieldIndex = d->selectByAircraftIdQuery->record().indexOf("longitude");
+        int altitudeFieldIndex = d->selectByAircraftIdQuery->record().indexOf("altitude");
+        int pitchFieldIndex = d->selectByAircraftIdQuery->record().indexOf("pitch");
+        int bankFieldIndex = d->selectByAircraftIdQuery->record().indexOf("bank");
+        int headingFieldIndex = d->selectByAircraftIdQuery->record().indexOf("heading");
+        int velocitXFieldIndex = d->selectByAircraftIdQuery->record().indexOf("velocity_x");
+        int velocitYFieldIndex = d->selectByAircraftIdQuery->record().indexOf("velocity_y");
+        int velocitZFieldIndex = d->selectByAircraftIdQuery->record().indexOf("velocity_z");
+        int rotationVelocityXFieldIndex = d->selectByAircraftIdQuery->record().indexOf("rotation_velocity_x");
+        int rotationVelocityYFieldIndex = d->selectByAircraftIdQuery->record().indexOf("rotation_velocity_y");
+        int rotationVelocityZFieldIndex = d->selectByAircraftIdQuery->record().indexOf("rotation_velocity_z");
+        while (d->selectByAircraftIdQuery->next()) {
+
+            AircraftData data;
+
+            data.timestamp = d->selectByAircraftIdQuery->value(timestampFieldIndex).toDouble();
+            data.latitude = d->selectByAircraftIdQuery->value(latitudeFieldIndex).toDouble();
+            data.longitude = d->selectByAircraftIdQuery->value(longitudeFieldIndex).toDouble();
+            data.altitude = d->selectByAircraftIdQuery->value(altitudeFieldIndex).toDouble();
+            data.pitch = d->selectByAircraftIdQuery->value(pitchFieldIndex).toDouble();
+            data.bank = d->selectByAircraftIdQuery->value(bankFieldIndex).toDouble();
+            data.heading = d->selectByAircraftIdQuery->value(headingFieldIndex).toDouble();
+            data.velocityBodyX = d->selectByAircraftIdQuery->value(velocitXFieldIndex).toDouble();
+            data.velocityBodyY = d->selectByAircraftIdQuery->value(velocitYFieldIndex).toDouble();
+            data.velocityBodyZ = d->selectByAircraftIdQuery->value(velocitZFieldIndex).toDouble();
+            data.rotationVelocityBodyX = d->selectByAircraftIdQuery->value(rotationVelocityXFieldIndex).toDouble();
+            data.rotationVelocityBodyY = d->selectByAircraftIdQuery->value(rotationVelocityYFieldIndex).toDouble();
+            data.rotationVelocityBodyZ = d->selectByAircraftIdQuery->value(rotationVelocityZFieldIndex).toDouble();
+
+            aircraftData.append(data);
+        }
+#ifdef DEBUG
+    } else {
+        qDebug("getPositionsByAircraftId: SQL error: %s", qPrintable(d->selectByAircraftIdQuery->lastError().databaseText() + " - error code: " + d->selectByAircraftIdQuery->lastError().nativeErrorCode()));
+#endif
+    }
+
+    return ok;
 }

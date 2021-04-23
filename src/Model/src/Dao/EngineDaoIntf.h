@@ -43,7 +43,7 @@ public:
      * \return \c true on success; \c false else
      */
     virtual bool addEngine(qint64 aircraftId, const EngineData &engineData) = 0;
-    virtual EngineData getEngine(qint64 aircraftId, qint64 timestamp)  const = 0;
+    virtual EngineData getEngine(qint64 aircraftId, qint64 timestamp) const = 0;
 };
 
 

@@ -126,9 +126,9 @@ public:
             selectByScenarioIdQuery->setForwardOnly(true);
             selectByScenarioIdQuery->prepare(
 "select * "
-"from aircraft a "
-"where a.scenario_id = :scenario_id"
-"  and a.seq_nr = :seq_nr;");
+"from   aircraft a "
+"where  a.scenario_id = :scenario_id"
+"  and  a.seq_nr      = :seq_nr;");
         }
     }
 };
@@ -171,7 +171,7 @@ bool SQLiteAircraftDao::addAircraft(qint64 scenarioId, int sequenceNumber, Aircr
 #endif
     }
     if (ok) {
-        for (const AircraftData &data : aircraft.getAll()) {
+        for (const AircraftData &data : aircraft.getAllConst()) {
             ok = d->positionDao->addPosition(aircraft.getId(), data);
             if (!ok) {
                 break;
@@ -271,5 +271,10 @@ bool SQLiteAircraftDao::getAircraftByScenarioId(qint64 scenarioId, int sequenceN
         qDebug("getAircraftByScenarioId: SQL error: %s", qPrintable(d->selectByScenarioIdQuery->lastError().databaseText() + " - error code: " + d->selectByScenarioIdQuery->lastError().nativeErrorCode()));
 #endif
     }
+
+    if (ok) {
+        ok = d->positionDao->getPositionsByAircraftId(aircraft.getId(), aircraft.getAll());
+    }
+
     return ok;
 }

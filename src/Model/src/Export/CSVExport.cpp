@@ -73,7 +73,7 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
             const LightData lightData;
 
             // Aircraft data
-            for (const AircraftData &data : aircraft.getAll()) {
+            for (const AircraftData &data : aircraft.getAllConst()) {
                 csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::Aircraft)) % Const::Sep %
                       getAircraftData(data) % Const::Sep %
                       getEngineData(engineData) % Const::Sep %

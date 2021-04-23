@@ -191,7 +191,12 @@ const AircraftData &Aircraft::getLast() const noexcept
     }
 }
 
-const QVector<AircraftData> &Aircraft::getAll() const noexcept
+const QVector<AircraftData> &Aircraft::getAllConst() const noexcept
+{
+    return d->aircraftData;
+}
+
+QVector<AircraftData> &Aircraft::getAll() const noexcept
 {
     return d->aircraftData;
 }
@@ -308,7 +313,7 @@ void Aircraft::clear() noexcept
     d->aircraftInfo.clear();
     d->currentTimestamp = TimeVariableData::InvalidTime;
     d->currentIndex = SkySearch::InvalidIndex;
-    d->duration = 0;
+    d->duration = TimeVariableData::InvalidTime;
 
     emit dataChanged();
 }
