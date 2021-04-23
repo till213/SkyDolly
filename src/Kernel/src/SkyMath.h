@@ -34,31 +34,60 @@
  */
 namespace SkyMath {
 
-    // Make the position range symmetric, such that 0 is exactly the middle value
-    /*! The minimal position value, such that value 0 is exaclty in the middle of the entire range */
+    /*! The minimal position value, such that value 0 is exaclty in the middle of the entire range. */
     inline constexpr double PositionMin16 = static_cast<double>(-std::numeric_limits<qint16>::max());
-    /*! The maximum position value, such that value 0 is exaclty in the middle of the entire range */
+    /*! The maximum position value, such that value 0 is exaclty in the middle of the entire range. */
     inline constexpr double PositionMax16 = static_cast<double>( std::numeric_limits<qint16>::max());
-    /*! The range (number of values) for position values */
+    /*! The range (number of values) for position values. */
     inline constexpr double PositionRange16 = PositionMax16 - PositionMin16;
 
+    /*! The minimal percent value. */
     inline constexpr double PercentMin8 = static_cast<double>(std::numeric_limits<quint8>::min());
+    /*! The maximum percent value. */
     inline constexpr double PercentMax8 = static_cast<double>(std::numeric_limits<quint8>::max());
+    /*! The range (number of values) for percent values. */
     inline constexpr double PercentRange8 = PercentMax8;
 
+    /*!
+     * Returns the sign of \c val.
+     *
+     * \return -1 if \c val is a negative value; 0 for \c val
+     *         0; +1 else
+     */
     template <typename T> int sgn(T val) noexcept
     {
         return (T(0) < val) - (val < T(0));
     }
 
+    /*!
+     * Normalises the value \c y1 by comparing its sign with
+     * the \em previous value \c y0, which come from a
+     * "+/- modulo 180" domain (value in [-180, 180[).
+     *
+     * - if \c y0 and \c y1 have the same sign then the normalised
+     *   value is simply \c y1
+     * - if the sign is different then the difference between \c y1 and \c y0
+     *   is taken into account:
+     *     - if the difference is smaller or equal to 180 the the normalised
+     *       value is still \c y1
+     *     - if the difference is larger than 180 then \c y1 is "wrapped across
+     *       the module boundary", by subtracting it from 360 and assigning
+     *       the same sign as \c y0
+     * Examples:
+     * y0 | 10 | 160 | 170 | -20 | -170
+     * --------------------------------
+     * y1 | 20 | 170 | -20 | -10 |   20
+     * --------------------------------
+     * yn | 20 | 170 | 340 | -10 |  340
+     */
     template <typename T> T normalise180(T y0, T y1) noexcept
     {
         T y1n;
-        T s = sgn(y0);
-        if (sgn(y1) != s) {
+        T s0 = sgn(y0);
+        if (sgn(y1) != s0) {
             T diff = qAbs(y1 - y0);
             if (diff > T(180)) {
-                y1n = s * (T(360) - qAbs(y1));
+                y1n = s0 * (T(360) - qAbs(y1));
             } else {
                 y1n = y1;
             }
