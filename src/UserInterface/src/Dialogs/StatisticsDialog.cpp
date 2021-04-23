@@ -125,7 +125,7 @@ void StatisticsDialog::updateRecordUi() noexcept
     } else {
         ui->samplesPerSecondLineEdit->clear();
     }
-    const QVector<AircraftData> &aircraftData = aircraft.getAll();
+    const QVector<AircraftData> &aircraftData = aircraft.getAllConst();
     const QVector<EngineData> &engineData = aircraft.getEngine().getAll();
     const QVector<PrimaryFlightControlData> &primaryFlightControlData = aircraft.getPrimaryFlightControl().getAll();
     const QVector<SecondaryFlightControlData> &secondaryFlightControlData = aircraft.getSecondaryFlightControl().getAll();

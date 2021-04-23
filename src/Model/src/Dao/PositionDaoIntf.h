@@ -43,7 +43,7 @@ public:
      * \return \c true on success; \c false else
      */
     virtual bool addPosition(qint64 aircraftId, const AircraftData &position) = 0;
-    virtual AircraftData getPosition(qint64 aircraftId, qint64 timestamp)  const = 0;
+    virtual bool getPositionsByAircraftId(qint64 aircraftId, QVector<AircraftData> &position) const = 0;
 };
 
 #endif // POSITIONDAOINTF_H

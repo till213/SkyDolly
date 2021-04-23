@@ -537,6 +537,16 @@ void MainWindow::on_openAction_triggered() noexcept
         qint64 selectedScenarioId = d->scenarioSelectionDialog->getSelectedScenarioId();
         if (selectedScenarioId != 0) {
             bool ok = d->scenarioService->restore(selectedScenarioId, World::getInstance().getCurrentScenario());
+            if (ok) {
+                updateUi();
+                d->skyConnect.skipToBegin();
+                if (d->skyConnect.isConnected()) {
+                    d->skyConnect.startReplay(true);
+                    d->skyConnect.setPaused(true);
+                }
+            } else {
+                QMessageBox::critical(this, tr("Database error"), tr("The scenario %1 could not be read from the database.").arg(selectedScenarioId));
+            }
         }
     }
 }
