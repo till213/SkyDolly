@@ -68,7 +68,7 @@ public:
      *
      * \param version
      *        a QString containing the version of the expected [major].[minor].[patch]
-     * \sa #operator<
+     * \sa #operator<()
      */
     KERNEL_API Version(const QString &version) noexcept;
     KERNEL_API ~Version() noexcept;
@@ -103,10 +103,34 @@ public:
      */
     KERNEL_API QString toString() const noexcept;
 
+    /*!
+     * Compares this Version against \c other for equality.
+     *
+     * \param other
+     *        the other Version to compare with
+     * \return \c true if this Version is equal with the \c other version;
+     *         \c false else
+     */
     KERNEL_API bool operator==(const Version &other) noexcept;
 
+    /*!
+     * Compares this Version against \c other for greater or equal.
+     *
+     * \param other
+     *        the other Version to compare with
+     * \return \c true if this Version is equal or greater than the \c other version;
+     *         \c false else
+     */
     KERNEL_API bool operator>=(const Version &other) noexcept;
 
+    /*!
+     * Compares this Version against \c other for smaller.
+     *
+     * \param other
+     *        the other Version to compare with
+     * \return \c true if this Version is smaller than the \c other version;
+     *         \c false else
+     */
     KERNEL_API bool operator<(const Version &other) noexcept;
 
     /*!

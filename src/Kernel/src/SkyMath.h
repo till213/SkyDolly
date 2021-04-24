@@ -71,14 +71,20 @@ namespace SkyMath {
      *     - if the difference is smaller or equal to 180 the the normalised
      *       value is still \c y1
      *     - if the difference is larger than 180 then \c y1 is "wrapped across
-     *       the module boundary", by subtracting it from 360 and assigning
+     *       the modulo boundary", by subtracting it from 360 and assigning
      *       the same sign as \c y0
+     *
      * Examples:
+     * y  | a) | b)  | c)  | d)  | e)
+     * ---|----|-----|-----|-----|-----
      * y0 | 10 | 160 | 170 | -20 | -170
-     * --------------------------------
      * y1 | 20 | 170 | -20 | -10 |   20
-     * --------------------------------
-     * yn | 20 | 170 | 340 | -10 |  340
+     * yn | 20 | 170 | 340 | -10 | -340
+     *
+     * Or in other words: the normalisation basically removes the "modulo operation"
+     * and the domain is extended beyond the -180 and +180 boundaries. So a series
+     * or samples values like 165, 175, -175, -165 becomes 165, 175, 185, 195, and
+     * the normalised values are then suitable for interpolation.
      */
     template <typename T> T normalise180(T y0, T y1) noexcept
     {
@@ -99,15 +105,26 @@ namespace SkyMath {
     }
 
     /*!
-     * Interpolates between \c y1 and \c y2 and the support values y0 and
-     * y3 using Hermite (cubic) interpolation.
-     *
-     *  Tension: 1 is high, 0 normal, -1 is low
-     *  Bias: 0 is even,
-     *        positive is towards first segment,
-     *        negative towards the other
+     * Interpolates between \c y1 and \c y2 and the support values \c y0 and
+     * \c y3 using Hermite (cubic) interpolation.
      *
      * Also refer to: http://paulbourke.net/miscellaneous/interpolation/
+     *
+     * \param y0
+     *        first support value
+     * \param y1
+     *        first interpolation value
+     * \param y2
+     *        second interpolation value
+     * \param y3
+     *        second support value
+     * \param mu
+     *        interpolation factor in [0.0, 1.0]
+     * \param tension
+     *        1 is high, 0 normal, -1 is low
+     * \param bias
+     *        0 is even; positive values create a bias towards the first segment;
+     *        negative values create a bias towards the second segment
      */
     template <typename T> T interpolateHermite(
         T y0, T y1, T y2, T y3,
@@ -137,7 +154,7 @@ namespace SkyMath {
      * Interpolates circular values in a range of [-180, 180[ using Hermite
      * (cubic) interpolation.
      *
-     * Also refer to \c interpolateHermite180.
+     * Also refer to \c #interpolateHermite().
      */
     template <typename T> T interpolateHermite180(
         T y0, T y1, T y2, T y3,
@@ -162,6 +179,12 @@ namespace SkyMath {
         return v;
     }
 
+    /*!
+     * Interpolates circular values in a range of [0, 360[ using Hermite
+     * (cubic) interpolation.
+     *
+     * Also refer to \c #interpolateHermite().
+     */
     template <typename T> T interpolateHermite360(
         T y0, T y1, T y2, T y3,
         T mu,
@@ -171,6 +194,16 @@ namespace SkyMath {
         return interpolateHermite180(y0 - T(180), y1 - T(180), y2 - T(180), y3 - T(180), mu, tension, bias) + T(180);
     }
 
+    /*!
+     * Interpolates between \c p1 and \c p2 and using linear interpolation.
+     *
+     * \param p1
+     *        the first interpolation point
+     * \param p2
+     *        the second interpolation point
+     * \param mu
+     *        the interpolation factor in [0.0, 1.0]
+     */
     template <typename T, typename U> T interpolateLinear(T p1, T p2, U mu) noexcept
     {
         if (std::is_integral<T>::value) {
