@@ -24,6 +24,7 @@
  */
 #include <memory>
 
+#include <QObject>
 #include <QString>
 #include <QSqlQuery>
 #include <QVariant>
@@ -37,6 +38,7 @@
 #include "../../../../Model/src/FlightCondition.h"
 #include "../../Dao/AircraftDaoIntf.h"
 #include "../../Dao/DaoFactory.h"
+#include "../../ConnectionManager.h"
 #include "SQLiteScenarioDao.h"
 #include "SQLiteScenarioDao.h"
 
@@ -116,13 +118,28 @@ public:
 "where a.scenario_id = s.id;");
         }
     }
+
+    void resetQueries() noexcept
+    {
+        if (insertQuery != nullptr) {
+            insertQuery = nullptr;
+        }
+        if (selectByIdQuery != nullptr) {
+            selectByIdQuery = nullptr;
+        }
+        if (selectDescriptionsQuery != nullptr) {
+            selectDescriptionsQuery = nullptr;
+        }
+    }
 };
 
 // PUBLIC
 
-SQLiteScenarioDao::SQLiteScenarioDao() noexcept
-    : d(std::make_unique<SQLiteScenarioDaoPrivate>())
+SQLiteScenarioDao::SQLiteScenarioDao(QObject *parent) noexcept
+    : QObject(parent),
+      d(std::make_unique<SQLiteScenarioDaoPrivate>())
 {
+    frenchConnection();
 }
 
 SQLiteScenarioDao::~SQLiteScenarioDao() noexcept
@@ -230,9 +247,24 @@ QVector<ScenarioDescription> SQLiteScenarioDao::getScenarioDescriptions() const 
         }
 #ifdef DEBUG
     } else {
-        qDebug("getScenarioDescriptions: SQL error: %s", qPrintable(d->selectDescriptionsQuery->lastError().databaseText() + " - error code: " + d->selectDescriptionsQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteScenarioDao::getScenarioDescriptions: SQL error: %s", qPrintable(d->selectDescriptionsQuery->lastError().databaseText() + " - error code: " + d->selectDescriptionsQuery->lastError().nativeErrorCode()));
 #endif
     }
 
     return descriptions;
+}
+
+// PRIVATE
+
+void SQLiteScenarioDao::frenchConnection() noexcept
+{
+    connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
+            this, &SQLiteScenarioDao::handleConnectionChanged);
+}
+
+// PRIVATE SLOTS
+
+void SQLiteScenarioDao::handleConnectionChanged() noexcept
+{
+    d->resetQueries();
 }

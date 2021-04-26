@@ -24,6 +24,7 @@
  */
 #include <memory>
 
+#include <QObject>
 #include <QString>
 #include <QSqlQuery>
 #include <QVariant>
@@ -46,6 +47,7 @@
 #include "../../../../Model/src/LightData.h"
 #include "../../Dao/PositionDaoIntf.h"
 #include "../../Dao/DaoFactory.h"
+#include "../../ConnectionManager.h"
 #include "SQLiteAircraftDao.h"
 
 class SQLiteAircraftDaoPrivate
@@ -131,13 +133,25 @@ public:
 "  and  a.seq_nr      = :seq_nr;");
         }
     }
+
+    void resetQueries() noexcept
+    {
+        if (selectByIdQuery != nullptr) {
+            selectByIdQuery = nullptr;
+        }
+        if (selectByScenarioIdQuery != nullptr) {
+            selectByScenarioIdQuery = nullptr;
+        }
+    }
 };
 
 // PUBLIC
 
-SQLiteAircraftDao::SQLiteAircraftDao() noexcept
-    : d(std::make_unique<SQLiteAircraftDaoPrivate>())
+SQLiteAircraftDao::SQLiteAircraftDao(QObject *parent) noexcept
+    : QObject(parent),
+      d(std::make_unique<SQLiteAircraftDaoPrivate>())
 {
+    frenchConnection();
 }
 
 SQLiteAircraftDao::~SQLiteAircraftDao() noexcept
@@ -293,4 +307,19 @@ bool SQLiteAircraftDao::getByScenarioId(qint64 scenarioId, int sequenceNumber, A
 
 
     return ok;
+}
+
+// PRIVATE
+
+void SQLiteAircraftDao::frenchConnection() noexcept
+{
+    connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
+            this, &SQLiteAircraftDao::handleConnectionChanged);
+}
+
+// PRIVATE SLOTS
+
+void SQLiteAircraftDao::handleConnectionChanged() noexcept
+{
+    d->resetQueries();
 }

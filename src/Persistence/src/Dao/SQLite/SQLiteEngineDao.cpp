@@ -24,6 +24,7 @@
  */
 #include <memory>
 
+#include <QObject>
 #include <QString>
 #include <QSqlQuery>
 #include <QVariant>
@@ -31,6 +32,7 @@
 #include <QSqlRecord>
 
 #include "../../../../Model/src/EngineData.h"
+#include "../../ConnectionManager.h"
 #include "SQLiteEngineDao.h"
 
 class SQLiteEngineDaoPrivate
@@ -115,13 +117,25 @@ public:
 "order by e.timestamp asc;");
         }
     }
+
+    void resetQueries() noexcept
+    {
+        if (insertQuery != nullptr) {
+            insertQuery = nullptr;
+        }
+        if (selectByAircraftIdQuery != nullptr) {
+            selectByAircraftIdQuery = nullptr;
+        }
+    }
 };
 
 // PUBLIC
 
-SQLiteEngineDao::SQLiteEngineDao() noexcept
-    : d(std::make_unique<SQLiteEngineDaoPrivate>())
+SQLiteEngineDao::SQLiteEngineDao(QObject *parent) noexcept
+    : QObject(parent),
+      d(std::make_unique<SQLiteEngineDaoPrivate>())
 {
+    frenchConnection();
 }
 
 SQLiteEngineDao::~SQLiteEngineDao() noexcept
@@ -239,3 +253,19 @@ bool SQLiteEngineDao::getByAircraftId(qint64 aircraftId, QVector<EngineData> &en
 
     return ok;
 }
+
+// PRIVATE
+
+void SQLiteEngineDao::frenchConnection() noexcept
+{
+    connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
+            this, &SQLiteEngineDao::handleConnectionChanged);
+}
+
+// PRIVATE SLOTS
+
+void SQLiteEngineDao::handleConnectionChanged() noexcept
+{
+    d->resetQueries();
+}
+

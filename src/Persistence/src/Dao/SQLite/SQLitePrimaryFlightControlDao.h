@@ -27,6 +27,7 @@
 
 #include <memory>
 
+#include <QObject>
 #include <QVector>
 
 #include "../../../../Model/src/PrimaryFlightControlData.h"
@@ -34,10 +35,10 @@
 
 class SQLitePrimaryFlightControlDaoPrivate;
 
-class SQLitePrimaryFlightControlDao : public PrimaryFlightControlDaoIntf
+class SQLitePrimaryFlightControlDao : public QObject, public PrimaryFlightControlDaoIntf
 {
 public:
-    SQLitePrimaryFlightControlDao() noexcept;
+    explicit SQLitePrimaryFlightControlDao(QObject *parent = nullptr) noexcept;
     virtual ~SQLitePrimaryFlightControlDao() noexcept;
 
     virtual bool add(qint64 aircraftId, const PrimaryFlightControlData &data) noexcept override;
@@ -45,6 +46,10 @@ public:
 
 private:
     std::unique_ptr<SQLitePrimaryFlightControlDaoPrivate> d;
+    void frenchConnection() noexcept;
+
+private slots:
+    void handleConnectionChanged() noexcept;
 };
 
 #endif // SQLITEPRIMARYFLIGHTCONTROLDAO_H

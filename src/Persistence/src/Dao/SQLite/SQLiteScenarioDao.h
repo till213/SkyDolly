@@ -27,6 +27,7 @@
 
 #include <memory>
 
+#include <QObject>
 #include <QtGlobal>
 
 #include "../../../../Model/src/Scenario.h"
@@ -34,10 +35,10 @@
 
 class SQLiteScenarioDaoPrivate;
 
-class SQLiteScenarioDao : public ScenarioDaoIntf
+class SQLiteScenarioDao : public QObject, public ScenarioDaoIntf
 {
 public:
-    SQLiteScenarioDao() noexcept;
+    explicit SQLiteScenarioDao(QObject *parent = nullptr) noexcept;
     virtual ~SQLiteScenarioDao() noexcept;
 
     virtual bool addScenario(Scenario &scenario)  noexcept override;
@@ -47,6 +48,11 @@ public:
 
 private:
     std::unique_ptr<SQLiteScenarioDaoPrivate> d;
+
+    void frenchConnection() noexcept;
+
+private slots:
+    void handleConnectionChanged() noexcept;
 };
 
 #endif // SQLITESCENARIODAO_H

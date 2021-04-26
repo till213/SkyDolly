@@ -24,6 +24,7 @@
  */
 #include <memory>
 
+#include <QObject>
 #include <QString>
 #include <QSqlQuery>
 #include <QVariant>
@@ -31,6 +32,7 @@
 #include <QSqlRecord>
 
 #include "../../../../Model/src/AircraftHandleData.h"
+#include "../../ConnectionManager.h"
 #include "SQLiteHandleDao.h"
 
 class SQLiteHandleDaoPrivate
@@ -81,17 +83,30 @@ public:
 "order by h.timestamp asc;");
         }
     }
+
+    void resetQueries() noexcept
+    {
+        if (insertQuery != nullptr) {
+            insertQuery = nullptr;
+        }
+        if (selectByAircraftIdQuery != nullptr) {
+            selectByAircraftIdQuery = nullptr;
+        }
+    }
 };
 
 // PUBLIC
 
-SQLiteHandleDao::SQLiteHandleDao() noexcept
-    : d(std::make_unique<SQLiteHandleDaoPrivate>())
+SQLiteHandleDao::SQLiteHandleDao(QObject *parent) noexcept
+    : QObject(parent),
+      d(std::make_unique<SQLiteHandleDaoPrivate>())
 {
+    frenchConnection();
 }
 
 SQLiteHandleDao::~SQLiteHandleDao() noexcept
-{}
+{
+}
 
 bool SQLiteHandleDao::add(qint64 aircraftId, const AircraftHandleData &aircraftHandleData)  noexcept
 {
@@ -153,3 +168,19 @@ bool SQLiteHandleDao::getByAircraftId(qint64 aircraftId, QVector<AircraftHandleD
 
     return ok;
 }
+
+// PRIVATE
+
+void SQLiteHandleDao::frenchConnection() noexcept
+{
+    connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
+            this, &SQLiteHandleDao::handleConnectionChanged);
+}
+
+// PRIVATE SLOTS
+
+void SQLiteHandleDao::handleConnectionChanged() noexcept
+{
+    d->resetQueries();
+}
+

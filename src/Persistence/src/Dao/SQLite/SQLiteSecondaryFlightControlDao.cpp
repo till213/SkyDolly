@@ -24,6 +24,7 @@
  */
 #include <memory>
 
+#include <QObject>
 #include <QString>
 #include <QSqlQuery>
 #include <QVariant>
@@ -32,6 +33,7 @@
 
 #include "../../../../Kernel/src/Enum.h"
 #include "../../../../Model/src/SecondaryFlightControlData.h"
+#include "../../ConnectionManager.h"
 #include "SQLiteSecondaryFlightControlDao.h"
 
 class SQLiteSecondaryFlightControlDaoPrivate
@@ -80,17 +82,30 @@ public:
 "order by sfc.timestamp asc;");
         }
     }
+
+    void resetQueries() noexcept
+    {
+        if (insertQuery != nullptr) {
+            insertQuery = nullptr;
+        }
+        if (selectByAircraftIdQuery != nullptr) {
+            selectByAircraftIdQuery = nullptr;
+        }
+    }
 };
 
 // PUBLIC
 
-SQLiteSecondaryFlightControlDao::SQLiteSecondaryFlightControlDao() noexcept
-    : d(std::make_unique<SQLiteSecondaryFlightControlDaoPrivate>())
+SQLiteSecondaryFlightControlDao::SQLiteSecondaryFlightControlDao(QObject *parent) noexcept
+    : QObject(parent),
+      d(std::make_unique<SQLiteSecondaryFlightControlDaoPrivate>())
 {
+    frenchConnection();
 }
 
 SQLiteSecondaryFlightControlDao::~SQLiteSecondaryFlightControlDao() noexcept
-{}
+{
+}
 
 bool SQLiteSecondaryFlightControlDao::add(qint64 aircraftId, const SecondaryFlightControlData &secondaryFlightControlData)  noexcept
 {
@@ -148,4 +163,19 @@ bool SQLiteSecondaryFlightControlDao::getByAircraftId(qint64 aircraftId, QVector
     }
 
     return ok;
+}
+
+// PRIVATE
+
+void SQLiteSecondaryFlightControlDao::frenchConnection() noexcept
+{
+    connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
+            this, &SQLiteSecondaryFlightControlDao::handleConnectionChanged);
+}
+
+// PRIVATE SLOTS
+
+void SQLiteSecondaryFlightControlDao::handleConnectionChanged() noexcept
+{
+    d->resetQueries();
 }

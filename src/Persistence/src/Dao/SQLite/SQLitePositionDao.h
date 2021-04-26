@@ -27,6 +27,7 @@
 
 #include <memory>
 
+#include <QObject>
 #include <QVector>
 
 #include "../../../../Model/src/AircraftData.h"
@@ -34,10 +35,10 @@
 
 class SQLitePositionDaoPrivate;
 
-class SQLitePositionDao : public PositionDaoIntf
+class SQLitePositionDao : public QObject, public PositionDaoIntf
 {
 public:
-    SQLitePositionDao() noexcept;
+    explicit SQLitePositionDao(QObject *parent = nullptr) noexcept;
     virtual ~SQLitePositionDao() noexcept;
 
     virtual bool add(qint64 aircraftId, const AircraftData &data) noexcept override;
@@ -45,6 +46,11 @@ public:
 
 private:
     std::unique_ptr<SQLitePositionDaoPrivate> d;
+
+    void frenchConnection() noexcept;
+
+private slots:
+    void handleConnectionChanged() noexcept;
 };
 
 #endif // SQLITEPOSITIONDAO_H
