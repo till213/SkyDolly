@@ -27,6 +27,7 @@
 
 #include <memory>
 
+#include <QObject>
 #include <QVector>
 
 #include "../../../../Model/src/SecondaryFlightControlData.h"
@@ -34,10 +35,10 @@
 
 class SQLiteSecondaryFlightControlDaoPrivate;
 
-class SQLiteSecondaryFlightControlDao : public SecondaryFlightControlDaoIntf
+class SQLiteSecondaryFlightControlDao : public QObject, public SecondaryFlightControlDaoIntf
 {
 public:
-    SQLiteSecondaryFlightControlDao() noexcept;
+    explicit SQLiteSecondaryFlightControlDao(QObject *parent = nullptr) noexcept;
     virtual ~SQLiteSecondaryFlightControlDao() noexcept;
 
     virtual bool add(qint64 aircraftId, const SecondaryFlightControlData &data) noexcept override;
@@ -45,6 +46,11 @@ public:
 
 private:
     std::unique_ptr<SQLiteSecondaryFlightControlDaoPrivate> d;
+
+    void frenchConnection() noexcept;
+
+private slots:
+    void handleConnectionChanged() noexcept;
 };
 
 #endif // SQLITESECONDARYFLIGHTCONTROLDAO_H

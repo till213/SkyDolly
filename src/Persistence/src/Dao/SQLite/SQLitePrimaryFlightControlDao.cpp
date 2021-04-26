@@ -24,6 +24,7 @@
  */
 #include <memory>
 
+#include <QObject>
 #include <QString>
 #include <QSqlQuery>
 #include <QVariant>
@@ -32,6 +33,7 @@
 
 #include "../../../../Kernel/src/Enum.h"
 #include "../../../../Model/src/PrimaryFlightControlData.h"
+#include "../../ConnectionManager.h"
 #include "SQLitePrimaryFlightControlDao.h"
 
 class SQLitePrimaryFlightControlDaoPrivate
@@ -74,17 +76,30 @@ public:
 "order by pfc.timestamp asc;");
         }
     }
+
+    void resetQueries() noexcept
+    {
+        if (insertQuery != nullptr) {
+            insertQuery = nullptr;
+        }
+        if (selectByAircraftIdQuery != nullptr) {
+            selectByAircraftIdQuery = nullptr;
+        }
+    }
 };
 
 // PUBLIC
 
-SQLitePrimaryFlightControlDao::SQLitePrimaryFlightControlDao() noexcept
-    : d(std::make_unique<SQLitePrimaryFlightControlDaoPrivate>())
+SQLitePrimaryFlightControlDao::SQLitePrimaryFlightControlDao(QObject *parent) noexcept
+    : QObject(parent),
+      d(std::make_unique<SQLitePrimaryFlightControlDaoPrivate>())
 {
+    frenchConnection();
 }
 
 SQLitePrimaryFlightControlDao::~SQLitePrimaryFlightControlDao() noexcept
-{}
+{
+}
 
 bool SQLitePrimaryFlightControlDao::add(qint64 aircraftId, const PrimaryFlightControlData &primaryFlightControlData)  noexcept
 {
@@ -135,3 +150,17 @@ bool SQLitePrimaryFlightControlDao::getByAircraftId(qint64 aircraftId, QVector<P
     return ok;
 }
 
+// PRIVATE
+
+void SQLitePrimaryFlightControlDao::frenchConnection() noexcept
+{
+    connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
+            this, &SQLitePrimaryFlightControlDao::handleConnectionChanged);
+}
+
+// PRIVATE SLOTS
+
+void SQLitePrimaryFlightControlDao::handleConnectionChanged() noexcept
+{
+    d->resetQueries();
+}

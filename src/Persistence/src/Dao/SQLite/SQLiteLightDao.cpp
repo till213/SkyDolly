@@ -24,6 +24,7 @@
  */
 #include <memory>
 
+#include <QObject>
 #include <QString>
 #include <QSqlQuery>
 #include <QVariant>
@@ -31,6 +32,7 @@
 #include <QSqlRecord>
 
 #include "../../../../Model/src/LightData.h"
+#include "../../ConnectionManager.h"
 #include "SQLiteLightDao.h"
 
 class SQLiteLightDaoPrivate
@@ -69,17 +71,30 @@ public:
 "order by l.timestamp asc;");
         }
     }
+
+    void resetQueries() noexcept
+    {
+        if (insertQuery != nullptr) {
+            insertQuery = nullptr;
+        }
+        if (selectByAircraftIdQuery != nullptr) {
+            selectByAircraftIdQuery = nullptr;
+        }
+    }
 };
 
 // PUBLIC
 
-SQLiteLightDao::SQLiteLightDao() noexcept
-    : d(std::make_unique<SQLiteLightDaoPrivate>())
+SQLiteLightDao::SQLiteLightDao(QObject *parent) noexcept
+    : QObject(parent),
+      d(std::make_unique<SQLiteLightDaoPrivate>())
 {
+    frenchConnection();
 }
 
 SQLiteLightDao::~SQLiteLightDao() noexcept
-{}
+{
+}
 
 bool SQLiteLightDao::add(qint64 aircraftId, const LightData &lightData)  noexcept
 {
@@ -121,4 +136,20 @@ bool SQLiteLightDao::getByAircraftId(qint64 aircraftId, QVector<LightData> &ligh
 
     return ok;
 }
+
+// PRIVATE
+
+void SQLiteLightDao::frenchConnection() noexcept
+{
+    connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
+            this, &SQLiteLightDao::handleConnectionChanged);
+}
+
+// PRIVATE SLOTS
+
+void SQLiteLightDao::handleConnectionChanged() noexcept
+{
+    d->resetQueries();
+}
+
 

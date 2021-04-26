@@ -27,6 +27,7 @@
 
 #include <memory>
 
+#include <QObject>
 #include <QVector>
 
 #include "../../../../Model/src/AircraftHandleData.h"
@@ -34,10 +35,10 @@
 
 class SQLiteHandleDaoPrivate;
 
-class SQLiteHandleDao : public HandleDaoIntf
+class SQLiteHandleDao : public QObject, public HandleDaoIntf
 {
 public:
-    SQLiteHandleDao() noexcept;
+    explicit SQLiteHandleDao(QObject *parent = nullptr) noexcept;
     virtual ~SQLiteHandleDao() noexcept;
 
     virtual bool add(qint64 aircraftId, const AircraftHandleData &data) noexcept override;
@@ -45,6 +46,12 @@ public:
 
 private:
     std::unique_ptr<SQLiteHandleDaoPrivate> d;
+
+    void frenchConnection() noexcept;
+
+private slots:
+    void handleConnectionChanged() noexcept;
 };
+
 
 #endif // SQLITEHANDLEDAO_H

@@ -103,5 +103,6 @@ ConnectionManager::~ConnectionManager() noexcept
 // PRIVATE
 
 ConnectionManager::ConnectionManager() noexcept
+    : d(std::make_unique<ConnectionManagerPrivate>())
 {
 }

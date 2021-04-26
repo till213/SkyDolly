@@ -27,17 +27,18 @@
 
 #include <memory>
 
-#include <QtGlobal>
+#include <QObject>
 
 #include "../../../../Model/src/Aircraft.h"
 #include "../AircraftDaoIntf.h"
 
 class SQLiteAircraftDaoPrivate;
 
-class SQLiteAircraftDao : public AircraftDaoIntf
+class SQLiteAircraftDao : public QObject, public AircraftDaoIntf
 {
+    Q_OBJECT
 public:
-    SQLiteAircraftDao() noexcept;
+    explicit SQLiteAircraftDao(QObject *parent = nullptr) noexcept;
     virtual ~SQLiteAircraftDao() noexcept;
 
     virtual bool add(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) noexcept override;
@@ -46,6 +47,11 @@ public:
 
 private:
     std::unique_ptr<SQLiteAircraftDaoPrivate> d;
+
+    void frenchConnection() noexcept;
+
+private slots:
+    void handleConnectionChanged() noexcept;
 };
 
 #endif // SQLITEFLIGHTCONDITIONDAO_H

@@ -27,6 +27,7 @@
 
 #include <memory>
 
+#include <QObject>
 #include <QVector>
 
 #include "../../../../Model/src/LightData.h"
@@ -34,10 +35,10 @@
 
 class SQLiteLightDaoPrivate;
 
-class SQLiteLightDao : public LightDaoIntf
+class SQLiteLightDao : public QObject, public LightDaoIntf
 {
 public:
-    SQLiteLightDao() noexcept;
+    explicit SQLiteLightDao(QObject *parent = nullptr) noexcept;
     virtual ~SQLiteLightDao() noexcept;
 
     virtual bool add(qint64 aircraftId, const LightData &data) noexcept override;
@@ -45,6 +46,11 @@ public:
 
 private:
     std::unique_ptr<SQLiteLightDaoPrivate> d;
+
+    void frenchConnection() noexcept;
+
+private slots:
+    void handleConnectionChanged() noexcept;
 };
 
 #endif // SQLITELIGHTDAO_H

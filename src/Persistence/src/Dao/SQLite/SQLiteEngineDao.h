@@ -27,6 +27,7 @@
 
 #include <memory>
 
+#include <QObject>
 #include <QVector>
 
 #include "../../../../Model/src/EngineData.h"
@@ -34,10 +35,11 @@
 
 class SQLiteEngineDaoPrivate;
 
-class SQLiteEngineDao : public EngineDaoIntf
+class SQLiteEngineDao : public QObject, public EngineDaoIntf
 {
+    Q_OBJECT
 public:
-    SQLiteEngineDao() noexcept;
+    explicit SQLiteEngineDao(QObject *parent = nullptr) noexcept;
     virtual ~SQLiteEngineDao() noexcept;
 
     virtual bool add(qint64 aircraftId, const EngineData &data) noexcept override;
@@ -45,6 +47,11 @@ public:
 
 private:
     std::unique_ptr<SQLiteEngineDaoPrivate> d;
+
+    void frenchConnection() noexcept;
+
+private slots:
+    void handleConnectionChanged() noexcept;
 };
 
 
