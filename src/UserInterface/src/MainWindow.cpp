@@ -53,8 +53,8 @@
 #include "../../Model/src/AircraftInfo.h"
 #include "../../Model/src/World.h"
 #include "../../Persistence/src/Dao/DaoFactory.h"
-#include "../../Persistence/src/Dao/WorldDaoIntf.h"
 #include "../../Persistence/src/Service/ScenarioService.h"
+#include "../../Persistence/src/ConnectionManager.h"
 #include "../../SkyConnect/src/SkyManager.h"
 #include "../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../SkyConnect/src/Connect.h"
@@ -106,8 +106,6 @@ public:
           simulationVariablesDialog(nullptr),
           statisticsDialog(nullptr),
           scenarioSelectionDialog(nullptr),
-          daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
-          worldDao(nullptr),
           scenarioService(std::make_unique<ScenarioService>())
     {}
 
@@ -121,8 +119,6 @@ public:
     StatisticsDialog *statisticsDialog;
     ScenarioSelectionDialog *scenarioSelectionDialog;
     double lastCustomReplaySpeed;
-    std::unique_ptr<DaoFactory> daoFactory;
-    std::unique_ptr<WorldDaoIntf> worldDao;
     std::unique_ptr<ScenarioService> scenarioService;
 };
 
@@ -145,7 +141,6 @@ MainWindow::~MainWindow() noexcept
     // The SkyConnect instances have been deleted by the SkyManager (singleton)
     // already at this point; no need to disconnect from their "stateChanged"
     // signal
-    d->worldDao->disconnectDb();
 }
 
 // PRIVATE
@@ -305,13 +300,10 @@ bool MainWindow::connectWithDb() noexcept
         Settings::getInstance().setDbPath(filePath);
     }
     if (!filePath.isNull()) {
-        // TODO FIXME Use a "connection manager" (singleton) which sends signals
-        // whenver the connection has changed: existing prepared SQL statements
-        // need to be re-created in this case!
-        d->worldDao = d->daoFactory->createWorldDao();
-        ok = d->worldDao->connectDb();
+        ConnectionManager &connectionManager = ConnectionManager::getInstance();
+        ok = connectionManager.connectDb();
         if (ok) {
-            ok = d->worldDao->migrate();
+            ok = connectionManager.migrate();
         }
     } else {
         ok = false;

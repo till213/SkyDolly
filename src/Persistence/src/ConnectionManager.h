@@ -22,18 +22,39 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef WORLDDAOINTF_H
-#define WORLDDAOINTF_H
+#ifndef CONNECTIONMANAGER_H
+#define CONNECTIONMANAGER_H
 
-class WorldDaoIntf
+#include <QObject>
+
+#include "PersistenceLib.h"
+
+class ConnectionManagerPrivate;
+
+class PERSISTENCE_API ConnectionManager : public QObject
 {
+    Q_OBJECT
 public:
-    virtual ~WorldDaoIntf() = default;
+    static ConnectionManager &getInstance() noexcept;
+    static void destroyInstance() noexcept;
 
-    virtual bool connectDb() = 0;
-    virtual void disconnectDb() = 0;
+    bool connectDb() noexcept;
+    void disconnectDb() noexcept;
+    bool isConnected() const noexcept;
 
-    virtual bool migrate() = 0;
+    bool migrate() noexcept;
+
+signals:
+    void connectionChanged(bool connected);
+
+protected:
+    virtual ~ConnectionManager() noexcept;
+
+private:
+    Q_DISABLE_COPY(ConnectionManager)
+    std::unique_ptr<ConnectionManagerPrivate> d;
+
+    ConnectionManager() noexcept;
 };
 
-#endif // WORLDDAOINTF_H
+#endif // CONNECTIONMANAGER_H

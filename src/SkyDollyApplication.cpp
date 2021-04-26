@@ -25,6 +25,7 @@
 #include "../../Kernel/src/Settings.h"
 #include "../../Model/src/World.h"
 #include "../../SkyConnect/src/SkyManager.h"
+#include "../../Persistence/src/ConnectionManager.h"
 #include "SkyDollyApplication.h"
 
 // PUBLIC
@@ -51,4 +52,5 @@ void SkyDollyApplication::handleAboutToQuit() noexcept
     Settings::destroyInstance();
     SkyManager::destroyInstance();
     World::destroyInstance();
+    ConnectionManager::destroyInstance();
 }

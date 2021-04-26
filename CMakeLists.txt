@@ -86,7 +86,7 @@ else()
 endif()
 
 set(SKYDOLLY_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets UserInterface Kernel Model SkyConnect
+    Qt${QT_VERSION_MAJOR}::Widgets UserInterface Kernel Model Persistence SkyConnect
 )
 if (APPLE)
     list(APPEND SKYDOLLY_LIBS -lc++)

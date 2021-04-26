@@ -22,47 +22,18 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef DAOFACTORY_H
-#define DAOFACTORY_H
+#ifndef DATABASEDAOINTF_H
+#define DATABASEDAOINTF_H
 
-#include <memory>
-
-#include "ScenarioDaoIntf.h"
-#include "AircraftDaoIntf.h"
-#include "PositionDaoIntf.h"
-#include "EngineDaoIntf.h"
-#include "PrimaryFlightControlDaoIntf.h"
-#include "SecondaryFlightControlDaoIntf.h"
-#include "HandleDaoIntf.h"
-#include "LightDaoIntf.h"
-#include "DatabaseDaoIntf.h"
-
-class DaoFactoryPrivate;
-
-class DaoFactory
+class DatabaseDaoIntf
 {
 public:
+    virtual ~DatabaseDaoIntf() = default;
 
-    enum class DbType
-    {
-        SQLite = 0
-    };
+    virtual bool connectDb() = 0;
+    virtual void disconnectDb() = 0;
 
-    DaoFactory(DbType dbType);
-    ~DaoFactory();
-
-    std::unique_ptr<DatabaseDaoIntf> createDatabaseDao() noexcept;
-    std::unique_ptr<ScenarioDaoIntf> createScenarioDao() noexcept;
-    std::unique_ptr<AircraftDaoIntf> createAircraftDao() noexcept;
-    std::unique_ptr<PositionDaoIntf> createPositionDao() noexcept;
-    std::unique_ptr<EngineDaoIntf> createEngineDao() noexcept;
-    std::unique_ptr<PrimaryFlightControlDaoIntf> createPrimaryFlightControlDao() noexcept;
-    std::unique_ptr<SecondaryFlightControlDaoIntf> createSecondaryFlightControlDao() noexcept;
-    std::unique_ptr<HandleDaoIntf> createHandleDao() noexcept;
-    std::unique_ptr<LightDaoIntf> createLightDao() noexcept;
-
-private:
-    std::unique_ptr<DaoFactoryPrivate> d;
+    virtual bool migrate() = 0;
 };
 
-#endif // DAOFACTORY_H
+#endif // DATABASEDAOINTF_H
