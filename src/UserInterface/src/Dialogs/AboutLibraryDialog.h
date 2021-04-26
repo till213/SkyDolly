@@ -22,44 +22,37 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SCENARIODIALOG_H
-#define SCENARIODIALOG_H
+#ifndef ABOUTLIBRARYDIALOG_H
+#define ABOUTLIBRARYDIALOG_H
 
 #include <memory>
 
 #include <QDialog>
 
 class QShowEvent;
-class QHideEvent;
-
-class SkyConnectIntf;
-class ScenarioDialogPrivate;
 
 namespace Ui {
-    class ScenarioDialog;
+    class AboutLibraryDialog;
 }
 
-class ScenarioDialog : public QDialog
+class AboutLibraryDialogPrivate;
+
+class AboutLibraryDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit ScenarioDialog(SkyConnectIntf &skyConnect, QWidget *parent = nullptr) noexcept;
-    virtual ~ScenarioDialog() noexcept;
-
-signals:
-    void visibilityChanged(bool visible);
+    explicit AboutLibraryDialog(QWidget *parent = nullptr);
+    virtual ~AboutLibraryDialog();
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;
-    void hideEvent(QHideEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(ScenarioDialog)
-    std::unique_ptr<ScenarioDialogPrivate> d;
-    std::unique_ptr<Ui::ScenarioDialog> ui;
+    Q_DISABLE_COPY(AboutLibraryDialog)
+    std::unique_ptr<AboutLibraryDialogPrivate> d;
+    Ui::AboutLibraryDialog *ui;
 
-    void initUi() noexcept;
     void updateUi() noexcept;
 };
 
-#endif // SCENARIODIALOG_H
+#endif // ABOUTLIBRARYDIALOG_H

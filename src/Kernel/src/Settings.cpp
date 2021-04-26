@@ -38,7 +38,7 @@ public:
     QSettings settings;
     Version version;
 
-    QString dbPath;
+    QString libraryPath;
     double recordSampleRateValue;
     bool windowStayOnTopEnabled;
     QString exportPath;
@@ -98,16 +98,16 @@ void Settings::destroyInstance() noexcept
     }
 }
 
-QString Settings::getDbPath() const noexcept
+QString Settings::getLibraryPath() const noexcept
 {
-    return d->dbPath;
+    return d->libraryPath;
 }
 
-void Settings::setDbPath(const QString &dbPath) noexcept
+void Settings::setLibraryPath(const QString &libraryPath) noexcept
 {
-    if (d->dbPath != dbPath) {
-        d->dbPath = dbPath;
-        emit changed();
+    if (d->libraryPath != libraryPath) {
+        d->libraryPath = libraryPath;
+        emit libraryPathChanged(d->libraryPath);
     }
 }
 
@@ -215,7 +215,7 @@ void Settings::store() noexcept
     d->settings.setValue("Version", d->version.toString());
     d->settings.beginGroup("Library");
     {
-        d->settings.setValue("DbPath", d->dbPath);
+        d->settings.setValue("DbPath", d->libraryPath);
     }
     d->settings.endGroup();
     d->settings.beginGroup("Recording");
@@ -263,7 +263,7 @@ void Settings::restore() noexcept
     bool ok;
     d->settings.beginGroup("Library");
     {
-        d->dbPath = d->settings.value("DbPath", SettingsPrivate::DefaultDbPath).toString();
+        d->libraryPath = d->settings.value("DbPath", SettingsPrivate::DefaultDbPath).toString();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Recording");
@@ -336,6 +336,8 @@ Settings::Settings() noexcept
 
 void Settings::frenchConnection() noexcept
 {
+    connect(this, &Settings::libraryPathChanged,
+            this, &Settings::changed);
     connect(this, &Settings::recordSampleRateChanged,
             this, &Settings::changed);
     connect(this, &Settings::replaySampleRateChanged,

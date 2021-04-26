@@ -59,6 +59,7 @@
 #include "../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../SkyConnect/src/Connect.h"
 #include "Dialogs/AboutDialog.h"
+#include "Dialogs/AboutLibraryDialog.h"
 #include "Dialogs/SettingsDialog.h"
 #include "Dialogs/ScenarioDialog.h"
 #include "Dialogs/SimulationVariablesDialog.h"
@@ -101,6 +102,7 @@ public:
           previousState(Connect::State::Connected),
           replaySpeedButtonGroup(nullptr),
           aboutDialog(nullptr),
+          aboutLibraryDialog(nullptr),
           settingsDialog(nullptr),
           scenarioDialog(nullptr),
           simulationVariablesDialog(nullptr),
@@ -113,6 +115,7 @@ public:
     Connect::State previousState;
     QButtonGroup *replaySpeedButtonGroup;
     AboutDialog *aboutDialog;
+    AboutLibraryDialog *aboutLibraryDialog;
     SettingsDialog *settingsDialog;
     ScenarioDialog *scenarioDialog;
     SimulationVariablesDialog *simulationVariablesDialog;
@@ -206,6 +209,7 @@ void MainWindow::initUi() noexcept
     d->statisticsDialog = new StatisticsDialog(d->skyConnect, this);
     d->scenarioSelectionDialog = new ScenarioSelectionDialog(*d->scenarioService, this);
     d->aboutDialog = new AboutDialog(this);
+    d->aboutLibraryDialog = new AboutLibraryDialog(this);
     d->settingsDialog = new SettingsDialog(this);
 
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
@@ -293,13 +297,13 @@ void MainWindow::initControlUi() noexcept
 
 bool MainWindow::connectWithDb() noexcept
 {
-    QString filePath = Settings::getInstance().getDbPath();
+    QString filePath = Settings::getInstance().getLibraryPath();
     bool ok;
-    if (filePath.isNull()) {
+    if (filePath.isEmpty()) {
         filePath = QFileDialog::getSaveFileName(this, tr("Library"), ".", "*.db");
-        Settings::getInstance().setDbPath(filePath);
+        Settings::getInstance().setLibraryPath(filePath);
     }
-    if (!filePath.isNull()) {
+    if (!filePath.isEmpty()) {
         ConnectionManager &connectionManager = ConnectionManager::getInstance();
         ok = connectionManager.connectDb();
         if (ok) {
@@ -521,7 +525,53 @@ void MainWindow::updateMainWindow() noexcept
     }
 }
 
-void MainWindow::on_openAction_triggered() noexcept
+void MainWindow::on_newLibraryAction_triggered() noexcept
+{
+    Settings &settings = Settings::getInstance();
+    QString existingLibraryPath = QFileInfo(settings.getLibraryPath()).absolutePath();
+    bool retry = true;
+    while (retry) {
+        QString libraryPath = QFileDialog::getSaveFileName(this, tr("New library"), existingLibraryPath, "*.db");
+        if (!libraryPath.isEmpty()) {
+            if (!QFileInfo::exists(libraryPath)) {
+                settings.setLibraryPath(libraryPath);
+                ConnectionManager &connectionManager = ConnectionManager::getInstance();
+                bool ok = connectionManager.connectDb();
+                if (ok) {
+                    ok = connectionManager.migrate();
+                }
+                if (!ok) {
+                    QMessageBox::critical(this, tr("Database error"), tr("The library %1 could not be created.").arg(libraryPath));
+                }
+                retry = false;
+            } else {
+                QMessageBox::information(this, tr("Database exists"), tr("The library %1 already exists. Please choose another path.").arg(libraryPath));
+            }
+        } else {
+            retry = false;
+        }
+    }
+}
+
+void MainWindow::on_openLibraryAction_triggered() noexcept
+{
+    Settings &settings = Settings::getInstance();
+    QString existingLibraryPath = QFileInfo(settings.getLibraryPath()).absolutePath();
+    QString libraryPath = QFileDialog::getOpenFileName(this, tr("Open library"), existingLibraryPath, "*.db");
+    if (!libraryPath.isEmpty()) {
+        settings.setLibraryPath(libraryPath);
+        ConnectionManager &connectionManager = ConnectionManager::getInstance();
+        bool ok = connectionManager.connectDb();
+        if (ok) {
+            ok = connectionManager.migrate();
+        }
+        if (!ok) {
+            QMessageBox::critical(this, tr("Database error"), tr("The library %1 could not be opened.").arg(libraryPath));
+        }
+    }
+}
+
+void MainWindow::on_openScenarioAction_triggered() noexcept
 {
     // TODO FIXME Should call open() here, but this dialog is of temporary nature anyway
     int reply = d->scenarioSelectionDialog->exec();
@@ -644,6 +694,11 @@ void MainWindow::on_showStatisticsAction_triggered(bool enabled) noexcept
 void MainWindow::on_stayOnTopAction_triggered(bool enabled) noexcept
 {
     Settings::getInstance().setWindowStaysOnTopEnabled(enabled);
+}
+
+void MainWindow::on_aboutLibraryAction_triggered() noexcept
+{
+    d->aboutLibraryDialog->exec();
 }
 
 void MainWindow::on_aboutAction_triggered() noexcept

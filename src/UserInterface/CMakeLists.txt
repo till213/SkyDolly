@@ -32,6 +32,9 @@ target_sources(UserInterface
         src/Dialogs/AboutDialog.cpp
         src/Dialogs/AboutDialog.h
         src/Dialogs/AboutDialog.ui
+        src/Dialogs/AboutLibraryDialog.cpp
+        src/Dialogs/AboutLibraryDialog.h
+        src/Dialogs/AboutLibraryDialog.ui
         src/Dialogs/SimulationVariablesDialog.cpp
         src/Dialogs/SimulationVariablesDialog.h
         src/Dialogs/SimulationVariablesDialog.ui

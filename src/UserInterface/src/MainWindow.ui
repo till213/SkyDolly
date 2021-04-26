@@ -207,14 +207,16 @@
      <x>0</x>
      <y>0</y>
      <width>823</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <addaction name="openAction"/>
+    <addaction name="newLibraryAction"/>
+    <addaction name="openLibraryAction"/>
+    <addaction name="openScenarioAction"/>
     <addaction name="separator"/>
     <addaction name="importCSVAction"/>
     <addaction name="exportCSVAction"/>
@@ -227,6 +229,8 @@
     <property name="title">
      <string>&amp;Info</string>
     </property>
+    <addaction name="aboutLibraryAction"/>
+    <addaction name="separator"/>
     <addaction name="aboutAction"/>
     <addaction name="aboutQtAction"/>
    </widget>
@@ -397,12 +401,12 @@
   </action>
   <action name="exportCSVAction">
    <property name="text">
-    <string>Export CSV</string>
+    <string>Export CSV...</string>
    </property>
   </action>
   <action name="importCSVAction">
    <property name="text">
-    <string>Import CSV</string>
+    <string>Import CSV...</string>
    </property>
   </action>
   <action name="stayOnTopAction">
@@ -447,12 +451,33 @@
     <string>S</string>
    </property>
   </action>
-  <action name="openAction">
+  <action name="openScenarioAction">
    <property name="text">
-    <string>&amp;Open</string>
+    <string>O&amp;pen Scenario...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+O</string>
+   </property>
+  </action>
+  <action name="newLibraryAction">
+   <property name="text">
+    <string>&amp;New Library...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="openLibraryAction">
+   <property name="text">
+    <string>&amp;Open Library...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="aboutLibraryAction">
+   <property name="text">
+    <string>&amp;Library...</string>
    </property>
   </action>
  </widget>
