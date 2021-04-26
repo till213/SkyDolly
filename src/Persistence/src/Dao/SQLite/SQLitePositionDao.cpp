@@ -31,7 +31,7 @@
 #include <QSqlRecord>
 
 #include "../../../../Kernel/src/Enum.h"
-#include "../../AircraftData.h"
+#include "../../../../Model/src/AircraftData.h"
 #include "SQLitePositionDao.h"
 
 class SQLitePositionDaoPrivate

@@ -30,7 +30,7 @@
 #include <QSqlError>
 #include <QSqlRecord>
 
-#include "../../AircraftHandleData.h"
+#include "../../../../Model/src/AircraftHandleData.h"
 #include "SQLiteHandleDao.h"
 
 class SQLiteHandleDaoPrivate

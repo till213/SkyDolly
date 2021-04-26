@@ -22,33 +22,29 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SCENARIOSERVICE_H
-#define SCENARIOSERVICE_H
+#ifndef SQLITEPOSITIONDAO_H
+#define SQLITEPOSITIONDAO_H
 
 #include <memory>
 
-#include "../Scenario.h"
 #include <QVector>
 
-#include "../Scenario.h"
-#include "../ScenarioDescription.h"
-#include "../ModelLib.h"
+#include "../../../../Model/src/AircraftData.h"
+#include "../PositionDaoIntf.h"
 
-class ScenarioServicePrivate;
+class SQLitePositionDaoPrivate;
 
-class MODEL_API ScenarioService
+class SQLitePositionDao : public PositionDaoIntf
 {
 public:
-    ScenarioService() noexcept;
-    ~ScenarioService() noexcept;
+    SQLitePositionDao() noexcept;
+    virtual ~SQLitePositionDao() noexcept;
 
-    bool store(Scenario &scenario) noexcept;
-    bool restore(qint64 id, Scenario &scenario) noexcept;
-
-    QVector<ScenarioDescription> getScenarioDescriptions() const noexcept;
+    virtual bool add(qint64 aircraftId, const AircraftData &data) noexcept override;
+    virtual bool getByAircraftId(qint64 aircraftId, QVector<AircraftData> &data) const noexcept override;
 
 private:
-    std::unique_ptr<ScenarioServicePrivate> d;
+    std::unique_ptr<SQLitePositionDaoPrivate> d;
 };
 
-#endif // SCENARIOSERVICE_H
+#endif // SQLITEPOSITIONDAO_H

@@ -22,54 +22,28 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QSqlDatabase>
+#ifndef AIRCRAFTSERVICE_H
+#define AIRCRAFTSERVICE_H
 
 #include <memory>
-#include <utility>
 
-#include "../Dao/DaoFactory.h"
-#include "../Dao/AircraftDaoIntf.h"
-#include "../Aircraft.h"
-#include "AircraftService.h"
+#include <QtGlobal>
 
-class AircraftServicePrivate
+#include "../../../Model/src/Aircraft.h"
+
+class AircraftServicePrivate;
+
+class AircraftService
 {
 public:
-    AircraftServicePrivate() noexcept
-        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
-          aircraftDao(daoFactory->createAircraftDao())
-    {
-    }
+    AircraftService() noexcept;
+    ~AircraftService() noexcept;
 
-    std::unique_ptr<DaoFactory> daoFactory;
-    std::unique_ptr<AircraftDaoIntf> aircraftDao;
+    bool store(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) noexcept;
+    bool restore(qint64 id, Aircraft &aircraft) noexcept;
+
+private:
+    std::unique_ptr<AircraftServicePrivate> d;
 };
 
-// PUBLIC
-
-AircraftService::AircraftService() noexcept
-    : d(std::make_unique<AircraftServicePrivate>())
-{}
-
-AircraftService::~AircraftService() noexcept
-{}
-
-bool AircraftService::store(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) noexcept
-{
-    QSqlDatabase::database().transaction();
-    bool ok = d->aircraftDao->add(scenarioId, sequenceNumber, aircraft);
-    if (ok) {
-        QSqlDatabase::database().commit();
-    } else {
-        QSqlDatabase::database().rollback();
-    }
-    return ok;
-}
-
-bool AircraftService::restore(qint64 id, Aircraft &aircraft) noexcept
-{
-    QSqlDatabase::database().transaction();
-    bool ok = d->aircraftDao->getById(id, aircraft);
-    QSqlDatabase::database().rollback();
-    return ok;
-}
+#endif // AIRCRAFTSERVICE_H

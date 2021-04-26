@@ -22,29 +22,29 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SQLITEPOSITIONDAO_H
-#define SQLITEPOSITIONDAO_H
+#ifndef SQLITEPRIMARYFLIGHTCONTROLDAO_H
+#define SQLITEPRIMARYFLIGHTCONTROLDAO_H
 
 #include <memory>
 
 #include <QVector>
 
-#include "../../AircraftData.h"
-#include "../PositionDaoIntf.h"
+#include "../../../../Model/src/PrimaryFlightControlData.h"
+#include "../PrimaryFlightControlDaoIntf.h"
 
-class SQLitePositionDaoPrivate;
+class SQLitePrimaryFlightControlDaoPrivate;
 
-class SQLitePositionDao : public PositionDaoIntf
+class SQLitePrimaryFlightControlDao : public PrimaryFlightControlDaoIntf
 {
 public:
-    SQLitePositionDao() noexcept;
-    virtual ~SQLitePositionDao() noexcept;
+    SQLitePrimaryFlightControlDao() noexcept;
+    virtual ~SQLitePrimaryFlightControlDao() noexcept;
 
-    virtual bool add(qint64 aircraftId, const AircraftData &data) noexcept override;
-    virtual bool getByAircraftId(qint64 aircraftId, QVector<AircraftData> &data) const noexcept override;
+    virtual bool add(qint64 aircraftId, const PrimaryFlightControlData &data) noexcept override;
+    virtual bool getByAircraftId(qint64 aircraftId, QVector<PrimaryFlightControlData> &data) const noexcept override;
 
 private:
-    std::unique_ptr<SQLitePositionDaoPrivate> d;
+    std::unique_ptr<SQLitePrimaryFlightControlDaoPrivate> d;
 };
 
-#endif // SQLITEPOSITIONDAO_H
+#endif // SQLITEPRIMARYFLIGHTCONTROLDAO_H

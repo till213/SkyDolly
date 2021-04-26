@@ -56,57 +56,16 @@ target_sources(Model
         src/Export/CSVExport.h
         src/Import/CSVImport.cpp
         src/Import/CSVImport.h
-        src/Dao/WorldDaoIntf.h
-        src/Dao/ScenarioDaoIntf.h
-        src/Dao/AircraftDaoIntf.h
-        src/Dao/PositionDaoIntf.h
-        src/Dao/EngineDaoIntf.h
-        src/Dao/PrimaryFlightControlDaoIntf.h
-        src/Dao/SecondaryFlightControlDaoIntf.h
-        src/Dao/HandleDaoIntf.h
-        src/Dao/LightDaoIntf.h
-        src/Dao/DaoFactory.cpp
-        src/Dao/DaoFactory.h
-        src/Dao/SQLite/SQLiteWorldDao.cpp
-        src/Dao/SQLite/SQLiteWorldDao.h
-        src/Dao/SQLite/SQLiteScenarioDao.cpp
-        src/Dao/SQLite/SQLiteScenarioDao.h
-        src/Dao/SQLite/SQLiteAircraftDao.cpp
-        src/Dao/SQLite/SQLiteAircraftDao.h
-        src/Dao/SQLite/SQLitePositionDao.cpp
-        src/Dao/SQLite/SQLitePositionDao.h
-        src/Dao/SQLite/SQLiteEngineDao.cpp
-        src/Dao/SQLite/SQLiteEngineDao.h
-        src/Dao/SQLite/SQLitePrimaryFlightControlDao.cpp
-        src/Dao/SQLite/SQLitePrimaryFlightControlDao.h
-        src/Dao/SQLite/SQLiteSecondaryFlightControlDao.cpp
-        src/Dao/SQLite/SQLiteSecondaryFlightControlDao.h
-        src/Dao/SQLite/SQLiteHandleDao.cpp
-        src/Dao/SQLite/SQLiteHandleDao.h
-        src/Dao/SQLite/SQLiteLightDao.cpp
-        src/Dao/SQLite/SQLiteLightDao.h
-        src/Dao/SQLite/SqlMigration.cpp
-        src/Dao/SQLite/SqlMigration.h
-        src/Dao/SQLite/SqlMigrationStep.cpp
-        src/Dao/SQLite/SqlMigrationStep.h
-        src/Dao/SQLite/Migration/migr-ex-ante.sql
-        src/Dao/SQLite/Migration/migr-ddl.sql
-        src/Dao/SQLite/Migration/migr-ex-post.sql
-        src/Dao/SQLite/Migration/Migration.qrc
-        src/Service/ScenarioService.cpp
-        src/Service/ScenarioService.h
-        src/Service/AircraftService.cpp
-        src/Service/AircraftService.h
 )
 
-set(Model_LIBS
+set(MODEL_LIBS
     Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Sql Kernel
 )
 if (APPLE)
-    list(APPEND Model_LIBS -lc++)
+    list(APPEND MODEL_LIBS -lc++)
 endif()
 
-target_link_libraries(Model PRIVATE ${Model_LIBS})
+target_link_libraries(Model PRIVATE ${MODEL_LIBS})
 set_target_properties(Model PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(Model PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
 

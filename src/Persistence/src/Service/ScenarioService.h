@@ -22,46 +22,32 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SCENARIOSELECTIONDIALOG_H
-#define SCENARIOSELECTIONDIALOG_H
+#ifndef SCENARIOSERVICE_H
+#define SCENARIOSERVICE_H
 
 #include <memory>
 
-#include <QDialog>
+#include <QVector>
 
-class QShowEvent;
+#include "../../../Model/src/Scenario.h"
+#include "../../../Model/src/ScenarioDescription.h"
+#include "../PersistenceLib.h"
 
-#include "../../../Persistence/src/Service/ScenarioService.h"
+class ScenarioServicePrivate;
 
-class ScenarioSelectionDialogPrivate;
-
-namespace Ui {
-class ScenarioSelectionDialog;
-}
-
-class ScenarioSelectionDialog : public QDialog
+class PERSISTENCE_API ScenarioService
 {
-    Q_OBJECT
-
 public:
-    explicit ScenarioSelectionDialog(ScenarioService &scenarioService, QWidget *parent = nullptr) noexcept;
-    ~ScenarioSelectionDialog() noexcept;
+    ScenarioService() noexcept;
+    ~ScenarioService() noexcept;
 
-    qint64 getSelectedScenarioId() const noexcept;
+    bool store(Scenario &scenario) noexcept;
+    bool restore(qint64 id, Scenario &scenario) noexcept;
 
-protected:
-    void showEvent(QShowEvent *event) noexcept override;
+    QVector<ScenarioDescription> getScenarioDescriptions() const noexcept;
 
 private:
-    Ui::ScenarioSelectionDialog *ui;
-    std::unique_ptr<ScenarioSelectionDialogPrivate> d;
-
-    void initUi() noexcept;
-    void updateUi() noexcept;
-    void frenchConnection() noexcept;
-
-private slots:
-    void handleSelectionChanged() noexcept;
+    std::unique_ptr<ScenarioServicePrivate> d;
 };
 
-#endif // SCENARIOSELECTIONDIALOG_H
+#endif // SCENARIOSERVICE_H

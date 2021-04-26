@@ -32,8 +32,8 @@
 #include <QItemSelectionModel>
 #include <QModelIndex>
 
-#include "../../../Model/src/Service/ScenarioService.h"
 #include "../../../Model/src/ScenarioDescription.h"
+#include "../../../Persistence/src/Service/ScenarioService.h"
 #include "ScenarioSelectionDialog.h"
 #include "ui_ScenarioSelectionDialog.h"
 

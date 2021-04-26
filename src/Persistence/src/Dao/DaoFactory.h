@@ -22,28 +22,48 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef AIRCRAFTSERVICE_H
-#define AIRCRAFTSERVICE_H
+#ifndef DAOFACTORY_H
+#define DAOFACTORY_H
 
 #include <memory>
 
-#include <QtGlobal>
+#include "../PersistenceLib.h"
+#include "ScenarioDaoIntf.h"
+#include "AircraftDaoIntf.h"
+#include "PositionDaoIntf.h"
+#include "EngineDaoIntf.h"
+#include "PrimaryFlightControlDaoIntf.h"
+#include "SecondaryFlightControlDaoIntf.h"
+#include "HandleDaoIntf.h"
+#include "LightDaoIntf.h"
+#include "WorldDaoIntf.h"
 
-#include "../Aircraft.h"
+class DaoFactoryPrivate;
 
-class AircraftServicePrivate;
-
-class AircraftService
+class PERSISTENCE_API DaoFactory
 {
 public:
-    AircraftService() noexcept;
-    ~AircraftService() noexcept;
 
-    bool store(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) noexcept;
-    bool restore(qint64 id, Aircraft &aircraft) noexcept;
+    enum class DbType
+    {
+        SQLite = 0
+    };
+
+    DaoFactory(DbType dbType);
+    ~DaoFactory();
+
+    std::unique_ptr<WorldDaoIntf> createWorldDao() noexcept;
+    std::unique_ptr<ScenarioDaoIntf> createScenarioDao() noexcept;
+    std::unique_ptr<AircraftDaoIntf> createAircraftDao() noexcept;
+    std::unique_ptr<PositionDaoIntf> createPositionDao() noexcept;
+    std::unique_ptr<EngineDaoIntf> createEngineDao() noexcept;
+    std::unique_ptr<PrimaryFlightControlDaoIntf> createPrimaryFlightControlDao() noexcept;
+    std::unique_ptr<SecondaryFlightControlDaoIntf> createSecondaryFlightControlDao() noexcept;
+    std::unique_ptr<HandleDaoIntf> createHandleDao() noexcept;
+    std::unique_ptr<LightDaoIntf> createLightDao() noexcept;
 
 private:
-    std::unique_ptr<AircraftServicePrivate> d;
+    std::unique_ptr<DaoFactoryPrivate> d;
 };
 
-#endif // AIRCRAFTSERVICE_H
+#endif // DAOFACTORY_H

@@ -22,29 +22,30 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SQLITEHANDLEDAO_H
-#define SQLITEHANDLEDAO_H
+#ifndef SQLITEFLIGHTCONDITIONDAO_H
+#define SQLITEFLIGHTCONDITIONDAO_H
 
 #include <memory>
 
-#include <QVector>
+#include <QtGlobal>
 
-#include "../../AircraftHandleData.h"
-#include "../HandleDaoIntf.h"
+#include "../../../../Model/src/Aircraft.h"
+#include "../AircraftDaoIntf.h"
 
-class SQLiteHandleDaoPrivate;
+class SQLiteAircraftDaoPrivate;
 
-class SQLiteHandleDao : public HandleDaoIntf
+class SQLiteAircraftDao : public AircraftDaoIntf
 {
 public:
-    SQLiteHandleDao() noexcept;
-    virtual ~SQLiteHandleDao() noexcept;
+    SQLiteAircraftDao() noexcept;
+    virtual ~SQLiteAircraftDao() noexcept;
 
-    virtual bool add(qint64 aircraftId, const AircraftHandleData &data) noexcept override;
-    virtual bool getByAircraftId(qint64 aircraftId, QVector<AircraftHandleData> &data) const noexcept override;
+    virtual bool add(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) noexcept override;
+    virtual bool getById(qint64 id, Aircraft &aircraft) const noexcept override;
+    virtual bool getByScenarioId(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) const noexcept override;
 
 private:
-    std::unique_ptr<SQLiteHandleDaoPrivate> d;
+    std::unique_ptr<SQLiteAircraftDaoPrivate> d;
 };
 
-#endif // SQLITEHANDLEDAO_H
+#endif // SQLITEFLIGHTCONDITIONDAO_H
