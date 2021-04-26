@@ -55,7 +55,7 @@ SQLiteDatabaseDao::~SQLiteDatabaseDao() noexcept
 
 bool SQLiteDatabaseDao::connectDb() noexcept
 {
-    const QString &dbPath = Settings::getInstance().getDbPath();
+    const QString &dbPath = Settings::getInstance().getLibraryPath();
 
     d->db = QSqlDatabase::addDatabase(DbName);
     d->db.setDatabaseName(dbPath);

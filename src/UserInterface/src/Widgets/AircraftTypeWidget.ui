@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>653</width>
-    <height>226</height>
+    <width>807</width>
+    <height>246</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -75,7 +75,7 @@
          <widget class="QLineEdit" name="tailNumberLineEdit">
           <property name="minimumSize">
            <size>
-            <width>160</width>
+            <width>250</width>
             <height>0</height>
            </size>
           </property>
@@ -98,7 +98,7 @@
          <widget class="QLineEdit" name="airlineLineEdit">
           <property name="minimumSize">
            <size>
-            <width>160</width>
+            <width>250</width>
             <height>0</height>
            </size>
           </property>
@@ -118,7 +118,7 @@
          <widget class="QLineEdit" name="flightLineEdit">
           <property name="minimumSize">
            <size>
-            <width>160</width>
+            <width>250</width>
             <height>0</height>
            </size>
           </property>
@@ -138,7 +138,7 @@
          <widget class="QLineEdit" name="categoryLineEdit">
           <property name="minimumSize">
            <size>
-            <width>160</width>
+            <width>250</width>
             <height>0</height>
            </size>
           </property>
@@ -184,7 +184,7 @@
          <widget class="QLineEdit" name="initialAirspeedLineEdit">
           <property name="minimumSize">
            <size>
-            <width>160</width>
+            <width>250</width>
             <height>0</height>
            </size>
           </property>
@@ -204,7 +204,7 @@
          <widget class="QLineEdit" name="wingSpanLineEdit">
           <property name="minimumSize">
            <size>
-            <width>160</width>
+            <width>250</width>
             <height>0</height>
            </size>
           </property>
@@ -227,7 +227,7 @@
          <widget class="QLineEdit" name="engineTypeLineEdit">
           <property name="minimumSize">
            <size>
-            <width>160</width>
+            <width>250</width>
             <height>0</height>
            </size>
           </property>
@@ -250,7 +250,7 @@
          <widget class="QLineEdit" name="numberOfEnginesLineEdit">
           <property name="minimumSize">
            <size>
-            <width>160</width>
+            <width>250</width>
             <height>0</height>
            </size>
           </property>
@@ -273,7 +273,7 @@
          <widget class="QLineEdit" name="aircraftAltitudeAboveGroundLineEdit">
           <property name="minimumSize">
            <size>
-            <width>160</width>
+            <width>250</width>
             <height>0</height>
            </size>
           </property>

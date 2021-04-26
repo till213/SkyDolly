@@ -36,16 +36,15 @@ class QShowEvent;
 class ScenarioSelectionDialogPrivate;
 
 namespace Ui {
-class ScenarioSelectionDialog;
+    class ScenarioSelectionDialog;
 }
 
 class ScenarioSelectionDialog : public QDialog
 {
     Q_OBJECT
-
 public:
     explicit ScenarioSelectionDialog(ScenarioService &scenarioService, QWidget *parent = nullptr) noexcept;
-    ~ScenarioSelectionDialog() noexcept;
+    virtual ~ScenarioSelectionDialog() noexcept;
 
     qint64 getSelectedScenarioId() const noexcept;
 
@@ -53,6 +52,7 @@ protected:
     void showEvent(QShowEvent *event) noexcept override;
 
 private:
+    Q_DISABLE_COPY(ScenarioSelectionDialog)
     Ui::ScenarioSelectionDialog *ui;
     std::unique_ptr<ScenarioSelectionDialogPrivate> d;
 

@@ -22,44 +22,62 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SCENARIODIALOG_H
-#define SCENARIODIALOG_H
-
 #include <memory>
 
-#include <QDialog>
+#include <QFileInfo>
+#include <QLineEdit>
 
-class QShowEvent;
-class QHideEvent;
+#include "../../../Kernel/src/Settings.h"
+#include "../Unit.h"
+#include "AboutLibraryDialog.h"
+#include "ui_AboutLibraryDialog.h"
 
-class SkyConnectIntf;
-class ScenarioDialogPrivate;
-
-namespace Ui {
-    class ScenarioDialog;
-}
-
-class ScenarioDialog : public QDialog
+class AboutLibraryDialogPrivate
 {
-    Q_OBJECT
 public:
-    explicit ScenarioDialog(SkyConnectIntf &skyConnect, QWidget *parent = nullptr) noexcept;
-    virtual ~ScenarioDialog() noexcept;
+    AboutLibraryDialogPrivate()
+    {}
 
-signals:
-    void visibilityChanged(bool visible);
-
-protected:
-    void showEvent(QShowEvent *event) noexcept override;
-    void hideEvent(QHideEvent *event) noexcept override;
-
-private:
-    Q_DISABLE_COPY(ScenarioDialog)
-    std::unique_ptr<ScenarioDialogPrivate> d;
-    std::unique_ptr<Ui::ScenarioDialog> ui;
-
-    void initUi() noexcept;
-    void updateUi() noexcept;
 };
 
-#endif // SCENARIODIALOG_H
+// PUBLIC
+
+AboutLibraryDialog::AboutLibraryDialog(QWidget *parent) :
+    QDialog(parent),
+    d(std::make_unique<AboutLibraryDialogPrivate>()),
+    ui(new Ui::AboutLibraryDialog)
+{
+    ui->setupUi(this);
+}
+
+AboutLibraryDialog::~AboutLibraryDialog()
+{
+    delete ui;
+}
+
+// PROTECTED
+
+void AboutLibraryDialog::showEvent(QShowEvent *event) noexcept
+{
+    Q_UNUSED(event)
+    updateUi();
+}
+
+// PRIVATE
+
+void AboutLibraryDialog::updateUi() noexcept
+{
+    Settings &settings = Settings::getInstance();
+
+    QString libraryPath = settings.getLibraryPath();
+    QFileInfo fileInfo = QFileInfo(libraryPath);
+
+    QString libraryDirectory = fileInfo.absolutePath();
+    ui->directoryPathLineEdit->setText(libraryDirectory);
+
+    QString libraryName = fileInfo.fileName();
+    ui->libraryNameLineEdit->setText(libraryName);
+
+    qint64 fileSize = fileInfo.size();
+    ui->librarySizeLineEdit->setText(Unit::formatMemory(fileSize));
+}

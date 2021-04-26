@@ -79,7 +79,9 @@ private slots:
     void updateMainWindow() noexcept;
 
     // File menu
-    void on_openAction_triggered() noexcept;
+    void on_newLibraryAction_triggered() noexcept;
+    void on_openLibraryAction_triggered() noexcept;
+    void on_openScenarioAction_triggered() noexcept;
     void on_importCSVAction_triggered() noexcept;
     void on_exportCSVAction_triggered() noexcept;
     void on_showSettingsAction_triggered() noexcept;
@@ -90,6 +92,7 @@ private slots:
     void on_showStatisticsAction_triggered(bool enabled) noexcept;
     void on_stayOnTopAction_triggered(bool enabled) noexcept;
     // About menu
+    void on_aboutLibraryAction_triggered() noexcept;
     void on_aboutAction_triggered() noexcept;
     void on_aboutQtAction_triggered() noexcept;
 

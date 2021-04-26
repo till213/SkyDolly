@@ -124,6 +124,23 @@ QString Unit::formatKnots(double velocity) noexcept
     return QString::number(velocity, 'f', Precision) % " knots";
 }
 
+QString Unit::formatMemory(qint64 memory) noexcept
+{
+    QString size;
+    if (memory < 1024) {
+        size = QString("%1 bytes").arg(memory);
+    } else if (memory < 1024 * 1024) {
+        size = QString("%1 KiB").arg(QString::number(static_cast<double>(memory) / 1024.0, 'f', 1));
+    } else if (memory < 1024 * 1024 * 1024) {
+        size = QString("%1 MiB").arg(QString::number(static_cast<double>(memory) / (1024.0 * 1024.0), 'f', 2));
+    } else if (memory < 1024ll * 1024ll * 1024ll * 1024ll) {
+        size = QString("%1 GiB").arg(QString::number(static_cast<double>(memory) / (1024.0 * 1024.0 * 1024.0), 'f', 2));
+    } else {
+        size = QString("%1 TiB").arg(QString::number(static_cast<double>(memory) / (1024.0 * 1024.0 * 1024.0 * 1024.0), 'f', 2));
+    }
+    return size;
+}
+
 // PRIVATE
 
 // https://www.omnicalculator.com/conversion/coordinates-converter#how-to-convert-latitude-and-longitude-coordinates

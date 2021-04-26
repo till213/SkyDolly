@@ -55,6 +55,8 @@ public:
 
     static QString formatKnots(double velocity) noexcept;
 
+    static QString formatMemory(qint64 memory) noexcept;
+
 private:
     static inline void dd2dms(double dd, int &degrees, int &minutes, double &seconds) noexcept;
 };

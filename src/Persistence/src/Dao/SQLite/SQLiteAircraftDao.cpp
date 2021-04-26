@@ -136,6 +136,9 @@ public:
 
     void resetQueries() noexcept
     {
+        if (insertQuery != nullptr) {
+            insertQuery = nullptr;
+        }
         if (selectByIdQuery != nullptr) {
             selectByIdQuery = nullptr;
         }

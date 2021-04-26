@@ -48,8 +48,8 @@ public:
     static Settings &getInstance() noexcept;
     static void destroyInstance() noexcept;
 
-    QString getDbPath() const noexcept;
-    void setDbPath(const QString &dbPath) noexcept;
+    QString getLibraryPath() const noexcept;
+    void setLibraryPath(const QString &libraryPath) noexcept;
 
     SampleRate::SampleRate getRecordSampleRate() const noexcept;
     double getRecordSampleRateValue() const noexcept;
@@ -88,6 +88,13 @@ public slots:
     void restore() noexcept;
 
 signals:
+    /*!
+     * Emitted when the library path has changed.
+     *
+     * \sa changed()
+     */
+    void libraryPathChanged(const QString &libraryPath);
+
     /*!
      * Emitted when the record sample rate has changed.
      *
