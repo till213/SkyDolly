@@ -22,29 +22,28 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef AIRCRAFTSERVICE_H
-#define AIRCRAFTSERVICE_H
+#ifndef DATABASESERVICE_H
+#define DATABASESERVICE_H
 
-#include <memory>
-
-#include <QtGlobal>
-
-#include "../../../Model/src/Aircraft.h"
 #include "../PersistenceLib.h"
 
-class PERSISTENCE_API AircraftServicePrivate;
+class DatabaseServicePrivate;
 
-class AircraftService
+class PERSISTENCE_API DatabaseService
 {
 public:
-    AircraftService() noexcept;
-    ~AircraftService() noexcept;
+    DatabaseService() noexcept;
+    ~DatabaseService() noexcept;
 
-    bool store(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) noexcept;
-    bool restore(qint64 id, Aircraft &aircraft) noexcept;
-
-private:
-    std::unique_ptr<AircraftServicePrivate> d;
+    /*!
+     * Connects with the database given by Settings#getLibraryPath
+     * and initialises the database by applying the required migrations.
+     *
+     * \return \c true if the connection succeeded; \c false else
+     */
+    bool connectDb() noexcept;
+    void disconnectDb() noexcept;
+    bool isConnected() const noexcept;
 };
 
-#endif // AIRCRAFTSERVICE_H
+#endif // DATABASESERVICE_H

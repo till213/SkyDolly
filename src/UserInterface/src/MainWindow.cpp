@@ -54,7 +54,7 @@
 #include "../../Model/src/World.h"
 #include "../../Persistence/src/Dao/DaoFactory.h"
 #include "../../Persistence/src/Service/ScenarioService.h"
-#include "../../Persistence/src/ConnectionManager.h"
+#include "../../Persistence/src/Service/DatabaseService.h"
 #include "../../SkyConnect/src/SkyManager.h"
 #include "../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../SkyConnect/src/Connect.h"
@@ -108,7 +108,8 @@ public:
           simulationVariablesDialog(nullptr),
           statisticsDialog(nullptr),
           scenarioSelectionDialog(nullptr),
-          scenarioService(std::make_unique<ScenarioService>())
+          scenarioService(std::make_unique<ScenarioService>()),
+          databaseService(std::make_unique<DatabaseService>())
     {}
 
     SkyConnectIntf &skyConnect;
@@ -123,6 +124,7 @@ public:
     ScenarioSelectionDialog *scenarioSelectionDialog;
     double lastCustomReplaySpeed;
     std::unique_ptr<ScenarioService> scenarioService;
+    std::unique_ptr<DatabaseService> databaseService;
 };
 
 // PUBLIC
@@ -304,11 +306,7 @@ bool MainWindow::connectWithDb() noexcept
         Settings::getInstance().setLibraryPath(filePath);
     }
     if (!filePath.isEmpty()) {
-        ConnectionManager &connectionManager = ConnectionManager::getInstance();
-        ok = connectionManager.connectDb();
-        if (ok) {
-            ok = connectionManager.migrate();
-        }
+        ok = d->databaseService->connectDb();
     } else {
         ok = false;
     }
@@ -535,11 +533,7 @@ void MainWindow::on_newLibraryAction_triggered() noexcept
         if (!libraryPath.isEmpty()) {
             if (!QFileInfo::exists(libraryPath)) {
                 settings.setLibraryPath(libraryPath);
-                ConnectionManager &connectionManager = ConnectionManager::getInstance();
-                bool ok = connectionManager.connectDb();
-                if (ok) {
-                    ok = connectionManager.migrate();
-                }
+                bool ok = d->databaseService->connectDb();
                 if (!ok) {
                     QMessageBox::critical(this, tr("Database error"), tr("The library %1 could not be created.").arg(libraryPath));
                 }
@@ -560,11 +554,7 @@ void MainWindow::on_openLibraryAction_triggered() noexcept
     QString libraryPath = QFileDialog::getOpenFileName(this, tr("Open library"), existingLibraryPath, "*.db");
     if (!libraryPath.isEmpty()) {
         settings.setLibraryPath(libraryPath);
-        ConnectionManager &connectionManager = ConnectionManager::getInstance();
-        bool ok = connectionManager.connectDb();
-        if (ok) {
-            ok = connectionManager.migrate();
-        }
+        bool ok = d->databaseService->connectDb();
         if (!ok) {
             QMessageBox::critical(this, tr("Database error"), tr("The library %1 could not be opened.").arg(libraryPath));
         }
