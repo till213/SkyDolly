@@ -30,7 +30,7 @@
 #include <QSqlError>
 #include <QSqlRecord>
 
-#include "../../LightData.h"
+#include "../../../../Model/src/LightData.h"
 #include "SQLiteLightDao.h"
 
 class SQLiteLightDaoPrivate

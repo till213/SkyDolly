@@ -39,6 +39,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/Kernel)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/KernelTest)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Model)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/ModelTest)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/Persistence)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/SkyConnect)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
 

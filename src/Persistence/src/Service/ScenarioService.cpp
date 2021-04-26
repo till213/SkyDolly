@@ -27,11 +27,11 @@
 #include <memory>
 #include <utility>
 
+#include "../../../Model/src/Scenario.h"
+#include "../../../Model/src/Aircraft.h"
 #include "../Dao/DaoFactory.h"
 #include "../Dao/ScenarioDaoIntf.h"
 #include "../Dao/AircraftDaoIntf.h"
-#include "../Scenario.h"
-#include "../Aircraft.h"
 #include "ScenarioService.h"
 
 class ScenarioServicePrivate

@@ -30,7 +30,7 @@
 #include <QSqlError>
 #include <QSqlRecord>
 
-#include "../../EngineData.h"
+#include "../../../../Model/src/EngineData.h"
 #include "SQLiteEngineDao.h"
 
 class SQLiteEngineDaoPrivate

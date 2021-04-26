@@ -22,30 +22,29 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SQLITEENGINEDAO_H
-#define SQLITEENGINEDAO_H
+#ifndef SQLITELIGHTDAO_H
+#define SQLITELIGHTDAO_H
 
 #include <memory>
 
 #include <QVector>
 
-#include "../../EngineData.h"
-#include "../EngineDaoIntf.h"
+#include "../../../../Model/src/LightData.h"
+#include "../LightDaoIntf.h"
 
-class SQLiteEngineDaoPrivate;
+class SQLiteLightDaoPrivate;
 
-class SQLiteEngineDao : public EngineDaoIntf
+class SQLiteLightDao : public LightDaoIntf
 {
 public:
-    SQLiteEngineDao() noexcept;
-    virtual ~SQLiteEngineDao() noexcept;
+    SQLiteLightDao() noexcept;
+    virtual ~SQLiteLightDao() noexcept;
 
-    virtual bool add(qint64 aircraftId, const EngineData &data) noexcept override;
-    virtual bool getByAircraftId(qint64 aircraftId, QVector<EngineData> &data) const noexcept override;
+    virtual bool add(qint64 aircraftId, const LightData &data) noexcept override;
+    virtual bool getByAircraftId(qint64 aircraftId, QVector<LightData> &data) const noexcept override;
 
 private:
-    std::unique_ptr<SQLiteEngineDaoPrivate> d;
+    std::unique_ptr<SQLiteLightDaoPrivate> d;
 };
 
-
-#endif // SQLITEENGINEDAO_H
+#endif // SQLITELIGHTDAO_H

@@ -29,7 +29,7 @@
 
 #include <QtGlobal>
 
-#include "../../Scenario.h"
+#include "../../../../Model/src/Scenario.h"
 #include "../ScenarioDaoIntf.h"
 
 class SQLiteScenarioDaoPrivate;

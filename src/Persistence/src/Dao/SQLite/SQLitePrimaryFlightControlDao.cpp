@@ -31,7 +31,7 @@
 #include <QSqlRecord>
 
 #include "../../../../Kernel/src/Enum.h"
-#include "../../PrimaryFlightControlData.h"
+#include "../../../../Model/src/PrimaryFlightControlData.h"
 #include "SQLitePrimaryFlightControlDao.h"
 
 class SQLitePrimaryFlightControlDaoPrivate

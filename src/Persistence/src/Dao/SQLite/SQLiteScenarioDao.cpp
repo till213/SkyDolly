@@ -32,9 +32,9 @@
 #include <QVector>
 
 #include "../../../../Kernel/src/Enum.h"
-#include "../../Scenario.h"
-#include "../../ScenarioDescription.h"
-#include "../../FlightCondition.h"
+#include "../../../../Model/src/Scenario.h"
+#include "../../../../Model/src/ScenarioDescription.h"
+#include "../../../../Model/src/FlightCondition.h"
 #include "../../Dao/AircraftDaoIntf.h"
 #include "../../Dao/DaoFactory.h"
 #include "SQLiteScenarioDao.h"

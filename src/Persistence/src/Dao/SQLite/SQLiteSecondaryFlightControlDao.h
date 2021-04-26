@@ -29,7 +29,7 @@
 
 #include <QVector>
 
-#include "../../SecondaryFlightControlData.h"
+#include "../../../../Model/src/SecondaryFlightControlData.h"
 #include "../SecondaryFlightControlDaoIntf.h"
 
 class SQLiteSecondaryFlightControlDaoPrivate;

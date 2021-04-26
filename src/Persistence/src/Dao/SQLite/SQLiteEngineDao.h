@@ -22,29 +22,30 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SQLITEPRIMARYFLIGHTCONTROLDAO_H
-#define SQLITEPRIMARYFLIGHTCONTROLDAO_H
+#ifndef SQLITEENGINEDAO_H
+#define SQLITEENGINEDAO_H
 
 #include <memory>
 
 #include <QVector>
 
-#include "../../PrimaryFlightControlData.h"
-#include "../PrimaryFlightControlDaoIntf.h"
+#include "../../../../Model/src/EngineData.h"
+#include "../EngineDaoIntf.h"
 
-class SQLitePrimaryFlightControlDaoPrivate;
+class SQLiteEngineDaoPrivate;
 
-class SQLitePrimaryFlightControlDao : public PrimaryFlightControlDaoIntf
+class SQLiteEngineDao : public EngineDaoIntf
 {
 public:
-    SQLitePrimaryFlightControlDao() noexcept;
-    virtual ~SQLitePrimaryFlightControlDao() noexcept;
+    SQLiteEngineDao() noexcept;
+    virtual ~SQLiteEngineDao() noexcept;
 
-    virtual bool add(qint64 aircraftId, const PrimaryFlightControlData &data) noexcept override;
-    virtual bool getByAircraftId(qint64 aircraftId, QVector<PrimaryFlightControlData> &data) const noexcept override;
+    virtual bool add(qint64 aircraftId, const EngineData &data) noexcept override;
+    virtual bool getByAircraftId(qint64 aircraftId, QVector<EngineData> &data) const noexcept override;
 
 private:
-    std::unique_ptr<SQLitePrimaryFlightControlDaoPrivate> d;
+    std::unique_ptr<SQLiteEngineDaoPrivate> d;
 };
 
-#endif // SQLITEPRIMARYFLIGHTCONTROLDAO_H
+
+#endif // SQLITEENGINEDAO_H

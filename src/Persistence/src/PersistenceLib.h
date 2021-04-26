@@ -22,30 +22,15 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SQLITEFLIGHTCONDITIONDAO_H
-#define SQLITEFLIGHTCONDITIONDAO_H
-
-#include <memory>
+#ifndef PERSISTENCELIB_H
+#define PERSISTENCELIB_H
 
 #include <QtGlobal>
 
-#include "../../Aircraft.h"
-#include "../AircraftDaoIntf.h"
+#ifdef PERSISTENCE_EXPORT
+# define PERSISTENCE_API Q_DECL_EXPORT
+#else
+# define PERSISTENCE_API Q_DECL_IMPORT
+#endif
 
-class SQLiteAircraftDaoPrivate;
-
-class SQLiteAircraftDao : public AircraftDaoIntf
-{
-public:
-    SQLiteAircraftDao() noexcept;
-    virtual ~SQLiteAircraftDao() noexcept;
-
-    virtual bool add(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) noexcept override;
-    virtual bool getById(qint64 id, Aircraft &aircraft) const noexcept override;
-    virtual bool getByScenarioId(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) const noexcept override;
-
-private:
-    std::unique_ptr<SQLiteAircraftDaoPrivate> d;
-};
-
-#endif // SQLITEFLIGHTCONDITIONDAO_H
+#endif // PERSISTENCELIB_H
