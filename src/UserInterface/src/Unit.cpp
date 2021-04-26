@@ -99,6 +99,19 @@ QString Unit::formatDegrees(double velocity) noexcept
     return QString::number(velocity, 'f', Precision) % " °";
 }
 
+QString Unit::formatHz(double hz) noexcept
+{
+    QString hzString;
+    if (hz < 1000) {
+        hzString = QString("%1 Hz").arg(QString::number(hz, 'f', 1));
+    }  else if (hz < 1000 * 1000) {
+        hzString = QString("%1 kHz").arg(QString::number(hz / 1000.0, 'f', 1));
+    }  else {
+        hzString = QString("%1 MHz").arg(QString::number(hz / (1000.0 * 1000), 'f', 2));
+    }
+    return hzString;
+}
+
 QString Unit::formatVelocityInFeet(double velocity) noexcept
 {
     return QString::number(velocity, 'f', Precision) % " ft/s";
@@ -122,6 +135,22 @@ QString Unit::formatPercent(quint8 percent) noexcept
 QString Unit::formatKnots(double velocity) noexcept
 {
     return QString::number(velocity, 'f', Precision) % " knots";
+}
+
+QString Unit::formatElapsedTime(qint64 milliSeconds) noexcept
+{
+    QString elapsedTime;
+    if (milliSeconds < 1000) {
+        elapsedTime = QString("%1 ms").arg(elapsedTime);
+    } else if (milliSeconds < 1000 * 60) {
+        elapsedTime = QString("%1 s").arg(QString::number(static_cast<double>(milliSeconds) / 1000.0, 'f', 1));
+    } else if (milliSeconds < 1000 * 60 * 60) {
+        elapsedTime = QString("%1 min").arg(QString::number(static_cast<double>(milliSeconds) / (1000.0 * 60.0), 'f', 1));
+    } else {
+        elapsedTime = QString("%1 hours").arg(QString::number(static_cast<double>(milliSeconds) / (1000.0 * 60.0 * 60), 'f', 1));
+    }
+
+    return elapsedTime;
 }
 
 QString Unit::formatMemory(qint64 memory) noexcept
