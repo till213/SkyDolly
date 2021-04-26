@@ -22,29 +22,34 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef AIRCRAFTSERVICE_H
-#define AIRCRAFTSERVICE_H
+#include "../ConnectionManager.h"
+#include "DatabaseService.h"
 
-#include <memory>
+// PUBLIC
 
-#include <QtGlobal>
+DatabaseService::DatabaseService() noexcept
+{}
 
-#include "../../../Model/src/Aircraft.h"
-#include "../PersistenceLib.h"
+DatabaseService::~DatabaseService() noexcept
+{}
 
-class PERSISTENCE_API AircraftServicePrivate;
-
-class AircraftService
+bool DatabaseService::connectDb() noexcept
 {
-public:
-    AircraftService() noexcept;
-    ~AircraftService() noexcept;
+    ConnectionManager &connectionManager = ConnectionManager::getInstance();
+    bool ok = connectionManager.connectDb();
+    if (ok) {
+        ok = connectionManager.migrate();
+    }
+    return ok;
+}
 
-    bool store(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) noexcept;
-    bool restore(qint64 id, Aircraft &aircraft) noexcept;
+void DatabaseService::disconnectDb() noexcept
+{
+    return ConnectionManager::getInstance().disconnectDb();
+}
 
-private:
-    std::unique_ptr<AircraftServicePrivate> d;
-};
+bool DatabaseService::isConnected() const noexcept
+{
+    return ConnectionManager::getInstance().isConnected();
+}
 
-#endif // AIRCRAFTSERVICE_H

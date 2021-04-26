@@ -52,6 +52,8 @@ target_sources(Persistence
         src/Service/ScenarioService.h
         src/Service/AircraftService.cpp
         src/Service/AircraftService.h
+        src/Service/DatabaseService.cpp
+        src/Service/DatabaseService.h
 )
 
 set(PERSISTENCE_LIBS

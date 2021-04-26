@@ -27,11 +27,9 @@
 
 #include <QObject>
 
-#include "PersistenceLib.h"
-
 class ConnectionManagerPrivate;
 
-class PERSISTENCE_API ConnectionManager : public QObject
+class ConnectionManager : public QObject
 {
     Q_OBJECT
 public:
