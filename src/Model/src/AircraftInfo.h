@@ -45,8 +45,8 @@ struct MODEL_API AircraftInfo
     int initialAirspeed;
     // Feet
     int wingSpan;
-    int numberOfEngines;
     SimType::EngineType engineType;
+    int numberOfEngines;
 
     AircraftInfo() noexcept;
     AircraftInfo(AircraftInfo &&) = default;

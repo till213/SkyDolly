@@ -42,6 +42,6 @@ void AircraftInfo::clear()
     altitudeAboveGround = 0.0f;
     initialAirspeed = 0;
     wingSpan = 0;
-    numberOfEngines = 0;
     engineType = SimType::EngineType::Unknown;
+    numberOfEngines = 0;    
 }
