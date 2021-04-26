@@ -26,6 +26,7 @@
 
 #include <QFileInfo>
 #include <QLineEdit>
+#include <QDateTimeEdit>
 
 #include "../../../Kernel/src/Settings.h"
 #include "../Unit.h"
@@ -77,6 +78,9 @@ void AboutLibraryDialog::updateUi() noexcept
 
     QString libraryName = fileInfo.fileName();
     ui->libraryNameLineEdit->setText(libraryName);
+
+    QString created = fileInfo.birthTime().toString();
+    ui->createdLineEdit->setText(created);
 
     qint64 fileSize = fileInfo.size();
     ui->librarySizeLineEdit->setText(Unit::formatMemory(fileSize));
