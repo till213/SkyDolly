@@ -252,27 +252,27 @@ void SkyConnectDummy::recordAircraftInfo() noexcept
 
     switch (randomGenerator->bounded(5)) {
     case 0:
-        info.name = "Boeing 787";
+        info.type = "Boeing 787";
         break;
     case 1:
-        info.name = "Cirrus SR22";
+        info.type = "Cirrus SR22";
         break;
     case 2:
-        info.name = "Douglas DC-3";
+        info.type = "Douglas DC-3";
         break;
     case 3:
-        info.name = "Cessna 172";
+        info.type = "Cessna 172";
         break;
     case 4:
-        info.name = "Airbus A320";
+        info.type = "Airbus A320";
         break;
     default:
-        info.name = "Unknown";
+        info.type = "Unknown";
     }
 
-    info.atcId = QString::number(randomGenerator->bounded(1000)).toAscii();
-    info.atcAirline = QString::number(randomGenerator->bounded(1000)).toAscii();
-    info.atcFlightNumber = QString::number(randomGenerator->bounded(100)).toAscii();
+    info.tailNumber = QString::number(randomGenerator->bounded(1000)).toAscii();
+    info.airline = QString::number(randomGenerator->bounded(1000)).toAscii();
+    info.flightNumber = QString::number(randomGenerator->bounded(100)).toAscii();
     switch (randomGenerator->bounded(5)) {
     case 0:
         info.category = "Piston";
@@ -292,12 +292,12 @@ void SkyConnectDummy::recordAircraftInfo() noexcept
     default:
         info.category = "Unknown";
     }
+    info.altitudeAboveGround = randomGenerator->bounded(40000);
     info.startOnGround = randomGenerator->bounded(2) > 0 ? true : false;
-    info.aircraftAltitudeAboveGround = randomGenerator->bounded(40000);
     info.initialAirspeed = randomGenerator->bounded(600);
     info.wingSpan = randomGenerator->bounded(200);
-    info.numberOfEngines = randomGenerator->bounded(5);
     info.engineType = static_cast<SimType::EngineType>(randomGenerator->bounded(7));
+    info.numberOfEngines = randomGenerator->bounded(5);
 
     aircraft.setAircraftInfo(info);
 }
