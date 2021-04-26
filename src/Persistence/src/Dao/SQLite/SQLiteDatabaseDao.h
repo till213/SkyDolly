@@ -22,22 +22,22 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SQLITEWORLDDAO_H
-#define SQLITEWORLDDAO_H
+#ifndef SQLITEDATABASEDAO_H
+#define SQLITEDATABASEDAO_H
 
 #include <memory>
 
 #include <QtGlobal>
 
-#include "../WorldDaoIntf.h"
+#include "../DatabaseDaoIntf.h"
 
-class WorldDaoPrivate;
+class DatabaseDaoPrivate;
 
-class SQLiteWorldDao : public WorldDaoIntf
+class SQLiteDatabaseDao : public DatabaseDaoIntf
 {
 public:
-    SQLiteWorldDao() noexcept;
-    virtual ~SQLiteWorldDao() noexcept;
+    SQLiteDatabaseDao() noexcept;
+    virtual ~SQLiteDatabaseDao() noexcept;
 
     virtual bool connectDb() noexcept override;
     virtual void disconnectDb() noexcept override;
@@ -45,11 +45,11 @@ public:
     virtual bool migrate() noexcept override;
 
 private:
-    Q_DISABLE_COPY(SQLiteWorldDao)
-    std::unique_ptr<WorldDaoPrivate> d;
+    Q_DISABLE_COPY(SQLiteDatabaseDao)
+    std::unique_ptr<DatabaseDaoPrivate> d;
 
     void disconnectSQLite() noexcept;
     bool createMigrationTable() noexcept;
 };
 
-#endif // SQLITEWORLDDAO_H
+#endif // SQLITEDATABASEDAO_H

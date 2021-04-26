@@ -9,7 +9,9 @@ endif()
 target_sources(Persistence
     PRIVATE
         src/PersistenceLib.h
-        src/Dao/WorldDaoIntf.h
+        src/ConnectionManager.cpp
+        src/ConnectionManager.h
+        src/Dao/DatabaseDaoIntf.h
         src/Dao/ScenarioDaoIntf.h
         src/Dao/AircraftDaoIntf.h
         src/Dao/PositionDaoIntf.h
@@ -20,8 +22,8 @@ target_sources(Persistence
         src/Dao/LightDaoIntf.h
         src/Dao/DaoFactory.cpp
         src/Dao/DaoFactory.h
-        src/Dao/SQLite/SQLiteWorldDao.cpp
-        src/Dao/SQLite/SQLiteWorldDao.h
+        src/Dao/SQLite/SQLiteDatabaseDao.cpp
+        src/Dao/SQLite/SQLiteDatabaseDao.h
         src/Dao/SQLite/SQLiteScenarioDao.cpp
         src/Dao/SQLite/SQLiteScenarioDao.h
         src/Dao/SQLite/SQLiteAircraftDao.cpp
