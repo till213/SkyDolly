@@ -46,6 +46,7 @@ public:
      * @return a formatted string for \c degrees, including unit (°)
      */
     static QString formatDegrees(double degrees) noexcept;
+    static QString formatHz(double hz) noexcept;
 
     static QString formatVelocityInFeet(double velocity) noexcept;
     static QString formatVelocityInRadians(double velocity) noexcept;
@@ -55,6 +56,7 @@ public:
 
     static QString formatKnots(double velocity) noexcept;
 
+    static QString formatElapsedTime(qint64 milliseconds) noexcept;
     static QString formatMemory(qint64 memory) noexcept;
 
 private:

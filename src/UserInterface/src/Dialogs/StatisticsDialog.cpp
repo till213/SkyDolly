@@ -41,6 +41,7 @@
 #include "../../../Model/src/LightData.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
+#include "../Unit.h"
 #include "StatisticsDialog.h"
 #include "ui_StatisticsDialog.h"
 
@@ -114,14 +115,14 @@ void StatisticsDialog::updateRecordUi() noexcept
     const Aircraft &aircraft = scenario.getUserAircraft();
 
     if (Settings::getInstance().getRecordSampleRate() != SampleRate::SampleRate::Auto) {
-        ui->recordSampleRateLineEdit->setText(QString::number(Settings::getInstance().getRecordSampleRateValue()));
+        ui->recordSampleRateLineEdit->setText(Unit::formatHz(Settings::getInstance().getRecordSampleRateValue()));
     } else {
         ui->recordSampleRateLineEdit->setText(tr("Auto"));
     }
 
     // Samples per second
     if (d->skyConnect.getState() == Connect::State::Recording) {
-        ui->samplesPerSecondLineEdit->setText(QString::number(d->skyConnect.calculateRecordedSamplesPerSecond(), 'f', 1));
+        ui->samplesPerSecondLineEdit->setText(Unit::formatHz(d->skyConnect.calculateRecordedSamplesPerSecond()));
     } else {
         ui->samplesPerSecondLineEdit->clear();
     }
@@ -134,16 +135,15 @@ void StatisticsDialog::updateRecordUi() noexcept
     const int totalCount = aircraftData.count() + engineData.count() + primaryFlightControlData.count() + secondaryFlightControlData.count() + aircraftHandleData.count() + lightData.count();
     ui->sampleCountLineEdit->setText(QString::number(totalCount));
 
-    ui->durationLineEdit->setText(QString::number(scenario.getTotalDurationMSec() / 1000.0, 'f', 1));
+    ui->durationLineEdit->setText(Unit::formatElapsedTime(scenario.getTotalDurationMSec()));
 
-    // In KiB
-    const double aircraftDataSize = static_cast<double>(aircraftData.count()  * sizeof(AircraftData)) / 1024.0;
-    const double engineDataSize = static_cast<double>(engineData.count()  * sizeof(EngineData)) / 1024.0;
-    const double primaryFlightControlDataSize = static_cast<double>(primaryFlightControlData.count()  * sizeof(PrimaryFlightControlData)) / 1024.0;
-    const double secondaryFlightControlDataSize = static_cast<double>(secondaryFlightControlData.count()  * sizeof(SecondaryFlightControlData)) / 1024.0;
-    const double aircraftHandleDataSize = static_cast<double>(aircraftHandleData.count()  * sizeof(AircraftHandleData)) / 1024.0;
-    const double lightDataSize = static_cast<double>(lightData.count()  * sizeof(LightData)) / 1024.0;
+    const qint64 aircraftDataSize = aircraftData.count()  * sizeof(AircraftData);
+    const qint64 engineDataSize = engineData.count()  * sizeof(EngineData);
+    const qint64 primaryFlightControlDataSize = primaryFlightControlData.count()  * sizeof(PrimaryFlightControlData);
+    const qint64 secondaryFlightControlDataSize = secondaryFlightControlData.count()  * sizeof(SecondaryFlightControlData);
+    const qint64 aircraftHandleDataSize = aircraftHandleData.count()  * sizeof(AircraftHandleData);
+    const qint64 lightDataSize = lightData.count()  * sizeof(LightData);
 
-    const double totalSize = aircraftDataSize + engineDataSize + primaryFlightControlDataSize + secondaryFlightControlDataSize + aircraftHandleDataSize + lightDataSize;
-    ui->sampleSizeLineEdit->setText(QString::number(totalSize, 'f', 1));
+    const qint64 totalSize = aircraftDataSize + engineDataSize + primaryFlightControlDataSize + secondaryFlightControlDataSize + aircraftHandleDataSize + lightDataSize;
+    ui->sampleSizeLineEdit->setText(Unit::formatMemory(totalSize));
 }
