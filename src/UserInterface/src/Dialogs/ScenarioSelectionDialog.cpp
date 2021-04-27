@@ -32,7 +32,9 @@
 #include <QItemSelectionModel>
 #include <QModelIndex>
 #include <QLocale>
+#include <QPushButton>
 
+#include "../../../Model/src/Scenario.h"
 #include "../../../Model/src/ScenarioDescription.h"
 #include "../../../Persistence/src/Service/ScenarioService.h"
 #include "ScenarioSelectionDialog.h"
@@ -41,6 +43,7 @@
 namespace
 {
     constexpr int MinimumTableWidth = 600;
+    constexpr int InvalidSelection = -1;
 }
 
 class ScenarioSelectionDialogPrivate
@@ -48,10 +51,13 @@ class ScenarioSelectionDialogPrivate
 public:
     ScenarioSelectionDialogPrivate(ScenarioService &theScenarioService)
         : scenarioService(theScenarioService),
-          selectedScenarioId(0)
+          selectedRow(InvalidSelection),
+          selectedScenarioId(Scenario::InvalidId)
+
     {}
 
     ScenarioService &scenarioService;
+    int selectedRow;
     qint64 selectedScenarioId;
 };
 
@@ -82,7 +88,6 @@ qint64 ScenarioSelectionDialog::getSelectedScenarioId() const noexcept
 void ScenarioSelectionDialog::showEvent(QShowEvent *event) noexcept
 {
     Q_UNUSED(event)
-
     updateUi();
 }
 
@@ -92,7 +97,7 @@ void ScenarioSelectionDialog::initUi() noexcept
 {
     ui->scenarioTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    QStringList headers {tr("ID"), tr("Creation"), tr("Description"), tr("Aircraft")};
+    const QStringList headers {tr("ID"), tr("Creation"), tr("Description"), tr("Aircraft")};
     ui->scenarioTableWidget->setColumnCount(headers.count());
     ui->scenarioTableWidget->setHorizontalHeaderLabels(headers);
     ui->scenarioTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -122,23 +127,47 @@ void ScenarioSelectionDialog::updateUi() noexcept
     }
     ui->scenarioTableWidget->resizeColumnsToContents();
     ui->scenarioTableWidget->setSortingEnabled(true);
+
+    updateEditUi();
+}
+
+void ScenarioSelectionDialog::updateEditUi() noexcept
+{
+    ui->deletePushButton->setEnabled(d->selectedScenarioId != Scenario::InvalidId);
 }
 
 void ScenarioSelectionDialog::frenchConnection() noexcept
 {
     connect(ui->scenarioTableWidget, &QTableWidget::itemSelectionChanged,
             this, &ScenarioSelectionDialog::handleSelectionChanged);
+    connect(ui->deletePushButton, &QPushButton::clicked,
+            this, &ScenarioSelectionDialog::handleDelete);
 }
 
 // PRIVATE SLOTS
 
 void ScenarioSelectionDialog::handleSelectionChanged() noexcept
 {
-    QList<QTableWidgetItem *> selectedItems = ui->scenarioTableWidget->selectedItems();
     QItemSelectionModel *select = ui->scenarioTableWidget->selectionModel();
     QModelIndexList selectedRows = select->selectedRows(0);
     if (selectedRows.count() > 0) {
         QModelIndex modelIndex = selectedRows.at(0);
+        d->selectedRow = modelIndex.row();
         d->selectedScenarioId = ui->scenarioTableWidget->model()->data(modelIndex).toLongLong();
+    } else {
+        d->selectedRow = InvalidSelection;
+        d->selectedScenarioId = Scenario::InvalidId;
+    }
+    updateEditUi();
+}
+
+void ScenarioSelectionDialog::handleDelete() noexcept
+{
+    if (d->selectedScenarioId != Scenario::InvalidId) {
+        d->scenarioService.deleteById(d->selectedScenarioId);
+        int lastSelectedRow = d->selectedRow;
+        updateUi();
+        int selectedRow = qMin(lastSelectedRow, ui->scenarioTableWidget->rowCount() - 1);
+        ui->scenarioTableWidget->selectRow(selectedRow);
     }
 }

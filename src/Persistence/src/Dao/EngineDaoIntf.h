@@ -45,6 +45,7 @@ public:
      */
     virtual bool add(qint64 aircraftId, const EngineData &data) = 0;
     virtual bool getByAircraftId(qint64 aircraftId, QVector<EngineData> &data) const = 0;
+    virtual bool deleteByScenarioId(qint64 scenarioId) = 0;
 };
 
 

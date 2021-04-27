@@ -48,6 +48,7 @@ public:
     virtual bool add(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) = 0;
     virtual bool getById(qint64 id, Aircraft &aircraft) const = 0;
     virtual bool getByScenarioId(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) const = 0;
+    virtual bool deleteByScenarioId(qint64 scenarioId) = 0;
 };
 
 #endif // AIRCRAFTDAOINTF_H

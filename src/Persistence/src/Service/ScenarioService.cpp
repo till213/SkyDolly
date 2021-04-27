@@ -40,8 +40,7 @@ public:
     ScenarioServicePrivate() noexcept
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           scenarioDao(daoFactory->createScenarioDao())
-    {
-    }
+    {}
 
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<ScenarioDaoIntf> scenarioDao;
@@ -77,6 +76,20 @@ bool ScenarioService::restore(qint64 id, Scenario &scenario) noexcept
         ok = d->scenarioDao->getScenarioById(id, scenario);
     }
     QSqlDatabase::database().rollback();
+    return ok;
+}
+
+bool ScenarioService::deleteById(qint64 id)  noexcept
+{
+    bool ok = QSqlDatabase::database().transaction();
+    if (ok) {
+        ok = d->scenarioDao->deleteById(id);
+        if (ok) {
+            QSqlDatabase::database().commit();
+        } else {
+            QSqlDatabase::database().rollback();
+        }
+    }
     return ok;
 }
 

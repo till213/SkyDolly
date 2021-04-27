@@ -45,6 +45,7 @@ public:
      */
     virtual bool add(qint64 aircraftId, const SecondaryFlightControlData &data) = 0;
     virtual bool getByAircraftId(qint64 aircraftId, QVector<SecondaryFlightControlData> &data) const = 0;
+    virtual bool deleteByScenarioId(qint64 scenarioId) = 0;
 };
 
 #endif // SECONDARYFLIGHTCONTROLDAOINTF_H

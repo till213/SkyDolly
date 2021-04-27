@@ -58,10 +58,12 @@ private:
 
     void initUi() noexcept;
     void updateUi() noexcept;
+    void updateEditUi() noexcept;
     void frenchConnection() noexcept;
 
 private slots:
     void handleSelectionChanged() noexcept;
+    void handleDelete() noexcept;
 };
 
 #endif // SCENARIOSELECTIONDIALOG_H

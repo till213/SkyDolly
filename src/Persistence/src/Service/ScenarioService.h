@@ -43,6 +43,7 @@ public:
 
     bool store(Scenario &scenario) noexcept;
     bool restore(qint64 id, Scenario &scenario) noexcept;
+    bool deleteById(qint64 id) noexcept;
 
     QVector<ScenarioDescription> getScenarioDescriptions() const noexcept;
 

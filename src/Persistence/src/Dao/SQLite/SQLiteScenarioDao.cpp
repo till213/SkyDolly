@@ -52,15 +52,13 @@ class SQLiteScenarioDaoPrivate
 {
 public:
     SQLiteScenarioDaoPrivate() noexcept
-        : insertQuery(nullptr),
-          selectByIdQuery(nullptr),
-          daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
+        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           aircraftDao(daoFactory->createAircraftDao())
-    {
-    }
+    {}
 
     std::unique_ptr<QSqlQuery> insertQuery;
     std::unique_ptr<QSqlQuery> selectByIdQuery;
+    std::unique_ptr<QSqlQuery> deleteByIdQuery;
     std::unique_ptr<QSqlQuery> selectDescriptionsQuery;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<AircraftDaoIntf> aircraftDao;
@@ -110,6 +108,13 @@ public:
 "from scenario s "
 "where s.id = :id;");
         }
+        if (deleteByIdQuery == nullptr) {
+            deleteByIdQuery = std::make_unique<QSqlQuery>();
+            deleteByIdQuery->prepare(
+"delete "
+"from scenario "
+"where id = :id;");
+        }
         if (selectDescriptionsQuery == nullptr) {
             selectDescriptionsQuery = std::make_unique<QSqlQuery>();
             selectDescriptionsQuery->setForwardOnly(true);
@@ -123,15 +128,10 @@ public:
 
     void resetQueries() noexcept
     {
-        if (insertQuery != nullptr) {
-            insertQuery = nullptr;
-        }
-        if (selectByIdQuery != nullptr) {
-            selectByIdQuery = nullptr;
-        }
-        if (selectDescriptionsQuery != nullptr) {
-            selectDescriptionsQuery = nullptr;
-        }
+        insertQuery = nullptr;
+        selectByIdQuery = nullptr;
+        deleteByIdQuery = nullptr;
+        selectDescriptionsQuery = nullptr;
     }
 };
 
@@ -145,8 +145,7 @@ SQLiteScenarioDao::SQLiteScenarioDao(QObject *parent) noexcept
 }
 
 SQLiteScenarioDao::~SQLiteScenarioDao() noexcept
-{
-}
+{}
 
 bool SQLiteScenarioDao::addScenario(Scenario &scenario)  noexcept
 {
@@ -171,7 +170,7 @@ bool SQLiteScenarioDao::addScenario(Scenario &scenario)  noexcept
         scenario.setId(id);
 #ifdef DEBUG
     } else {
-        qDebug("addScenario: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteScenarioDao::addScenario: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
 #endif
     }
     if (ok) {
@@ -228,7 +227,24 @@ bool SQLiteScenarioDao::getScenarioById(qint64 id, Scenario &scenario) const noe
         ok = d->aircraftDao->getByScenarioId(id, UserAircraftSequenceNumber, userAircraft);
 #ifdef DEBUG
     } else {
-        qDebug("getScenarioById: SQL error: %s", qPrintable(d->selectByIdQuery->lastError().databaseText() + " - error code: " + d->selectByIdQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteScenarioDao::getScenarioById: SQL error: %s", qPrintable(d->selectByIdQuery->lastError().databaseText() + " - error code: " + d->selectByIdQuery->lastError().nativeErrorCode()));
+#endif
+    }
+    return ok;
+}
+
+bool SQLiteScenarioDao::deleteById(qint64 id) noexcept
+{
+    d->initQueries();
+
+    bool ok = d->aircraftDao->deleteByScenarioId(id);
+    if (ok) {
+        d->deleteByIdQuery->bindValue(":id", id);
+        ok = d->deleteByIdQuery->exec();
+#ifdef DEBUG
+        if (!ok) {
+            qDebug("SQLiteScenarioDao::deleteById: SQL error: %s", qPrintable(d->deleteByIdQuery->lastError().databaseText() + " - error code: " + d->deleteByIdQuery->lastError().nativeErrorCode()));
+        }
 #endif
     }
     return ok;
