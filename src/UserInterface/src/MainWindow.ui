@@ -218,6 +218,8 @@
     <addaction name="openLibraryAction"/>
     <addaction name="openScenarioAction"/>
     <addaction name="separator"/>
+    <addaction name="optimiseLibraryAction"/>
+    <addaction name="separator"/>
     <addaction name="importCSVAction"/>
     <addaction name="exportCSVAction"/>
     <addaction name="separator"/>
@@ -478,6 +480,11 @@
   <action name="aboutLibraryAction">
    <property name="text">
     <string>&amp;Library...</string>
+   </property>
+  </action>
+  <action name="optimiseLibraryAction">
+   <property name="text">
+    <string>Optimise Library</string>
    </property>
   </action>
  </widget>

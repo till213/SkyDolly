@@ -29,6 +29,7 @@
 #include <QDateTimeEdit>
 
 #include "../../../Kernel/src/Settings.h"
+#include "../../../Persistence/src/Service/DatabaseService.h"
 #include "../Unit.h"
 #include "AboutLibraryDialog.h"
 #include "ui_AboutLibraryDialog.h"
@@ -36,16 +37,19 @@
 class AboutLibraryDialogPrivate
 {
 public:
-    AboutLibraryDialogPrivate()
+    AboutLibraryDialogPrivate(DatabaseService &theDatabaseService)
+        : databaseService(theDatabaseService)
     {}
+
+    DatabaseService &databaseService;
 
 };
 
 // PUBLIC
 
-AboutLibraryDialog::AboutLibraryDialog(QWidget *parent) :
+AboutLibraryDialog::AboutLibraryDialog(DatabaseService &databaseService, QWidget *parent) :
     QDialog(parent),
-    d(std::make_unique<AboutLibraryDialogPrivate>()),
+    d(std::make_unique<AboutLibraryDialogPrivate>(databaseService)),
     ui(new Ui::AboutLibraryDialog)
 {
     ui->setupUi(this);
@@ -69,6 +73,8 @@ void AboutLibraryDialog::showEvent(QShowEvent *event) noexcept
 void AboutLibraryDialog::updateUi() noexcept
 {
     Settings &settings = Settings::getInstance();
+    Metadata metadata;
+    d->databaseService.getMetadata(metadata);
 
     QString libraryPath = settings.getLibraryPath();
     QFileInfo fileInfo = QFileInfo(libraryPath);
@@ -79,8 +85,14 @@ void AboutLibraryDialog::updateUi() noexcept
     QString libraryName = fileInfo.fileName();
     ui->libraryNameLineEdit->setText(libraryName);
 
-    QString created = fileInfo.birthTime().toString();
-    ui->createdLineEdit->setText(created);
+    QString createdDate = metadata.creationDate.toLocalTime().toString();
+    ui->createdDateLineEdit->setText(createdDate);
+
+    QString lastOptimisationDate = metadata.lastOptimisationDate.toLocalTime().toString();
+    ui->lastOptimisationDateLineEdit->setText(lastOptimisationDate);
+
+    QString lastBackupDate = metadata.lastBackupDate.toLocalTime().toString();
+    ui->lastBackupDateLineEdit->setText(lastBackupDate);
 
     qint64 fileSize = fileInfo.size();
     ui->librarySizeLineEdit->setText(Unit::formatMemory(fileSize));

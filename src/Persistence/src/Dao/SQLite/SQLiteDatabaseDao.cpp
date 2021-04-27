@@ -26,8 +26,13 @@
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
+#include <QSqlError>
+#include <QVariant>
+#include <QDateTime>
+#include <QTimeZone>
 
 #include "../../../../Kernel/src/Settings.h"
+#include "../../Metadata.h"
 #include "SqlMigration.h"
 #include "SQLiteDatabaseDao.h"
 
@@ -84,6 +89,35 @@ bool SQLiteDatabaseDao::migrate() noexcept
     return ok;
 }
 
+bool SQLiteDatabaseDao::optimise() noexcept
+{
+    QSqlQuery query;
+    bool ok = query.exec("vacuum;");
+    if (ok) {
+        ok = query.exec("update meta set last_optim_date = datetime('now') where rowid = 1;");
+#ifdef DEBUG
+    } else {
+        qDebug("SQLiteDatabaseDao::optimise(: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+#endif
+    }
+    return ok;
+}
+
+bool SQLiteDatabaseDao::getMetadata(Metadata &metadata) const noexcept
+{
+    QSqlQuery query;
+    bool ok = query.exec("select creation_date, last_optim_date, last_backup_date from meta;");
+    if (query.next()) {
+        metadata.creationDate = query.value(0).toDateTime();
+        metadata.creationDate.setTimeZone(QTimeZone::utc());
+        metadata.lastOptimisationDate = query.value(1).toDateTime();
+        metadata.lastOptimisationDate.setTimeZone(QTimeZone::utc());
+        metadata.lastBackupDate = query.value(2).toDateTime();
+        metadata.lastBackupDate.setTimeZone(QTimeZone::utc());
+    }
+    return ok;
+};
+
 // PRIVATE
 
 void SQLiteDatabaseDao::disconnectSQLite() noexcept
@@ -98,7 +132,7 @@ bool SQLiteDatabaseDao::createMigrationTable() noexcept
     "id text not null,"
     "step integer not null,"
     "success integer not null,"
-    "timestamp timestamp default current_timestamp,"
+    "timestamp datetime default current_timestamp,"
     "msg text,"
     "primary key (id, step));");
     return query.exec();

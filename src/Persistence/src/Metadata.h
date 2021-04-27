@@ -22,38 +22,16 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SQLITEDATABASEDAO_H
-#define SQLITEDATABASEDAO_H
+#ifndef METADATA_H
+#define METADATA_H
 
-#include <memory>
+#include <QDateTime>
 
-#include <QtGlobal>
-
-#include "../../Metadata.h"
-#include "../DatabaseDaoIntf.h"
-
-class DatabaseDaoPrivate;
-
-class SQLiteDatabaseDao : public DatabaseDaoIntf
+struct Metadata
 {
-public:
-    SQLiteDatabaseDao() noexcept;
-    virtual ~SQLiteDatabaseDao() noexcept;
-
-    virtual bool connectDb() noexcept override;
-    virtual void disconnectDb() noexcept override;
-
-    virtual bool migrate() noexcept override;
-    virtual bool optimise() noexcept override;
-
-    virtual bool getMetadata(Metadata &metadata) const noexcept override;
-
-private:
-    Q_DISABLE_COPY(SQLiteDatabaseDao)
-    std::unique_ptr<DatabaseDaoPrivate> d;
-
-    void disconnectSQLite() noexcept;
-    bool createMigrationTable() noexcept;
+    QDateTime creationDate;
+    QDateTime lastOptimisationDate;
+    QDateTime lastBackupDate;
 };
 
-#endif // SQLITEDATABASEDAO_H
+#endif // METADATA_H

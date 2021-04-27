@@ -25,6 +25,8 @@
 #ifndef DATABASEDAOINTF_H
 #define DATABASEDAOINTF_H
 
+#include "../Metadata.h"
+
 class DatabaseDaoIntf
 {
 public:
@@ -34,6 +36,9 @@ public:
     virtual void disconnectDb() = 0;
 
     virtual bool migrate() = 0;
+    virtual bool optimise() = 0;
+
+    virtual bool getMetadata(Metadata &metadata) const = 0;
 };
 
 #endif // DATABASEDAOINTF_H
