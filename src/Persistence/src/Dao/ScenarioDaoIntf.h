@@ -43,6 +43,7 @@ public:
      */
     virtual bool addScenario(Scenario &scenario) = 0;
     virtual bool getScenarioById(qint64 id, Scenario &scenario) const = 0;
+    virtual bool deleteById(qint64 id) = 0;
     virtual QVector<ScenarioDescription> getScenarioDescriptions() const = 0;
 };
 

@@ -54,22 +54,19 @@ class SQLiteAircraftDaoPrivate
 {
 public:
     SQLiteAircraftDaoPrivate() noexcept
-        : insertQuery(nullptr),
-          selectByIdQuery(nullptr),
-          selectByScenarioIdQuery(nullptr),
-          daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
+        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           positionDao(daoFactory->createPositionDao()),
           engineDao(daoFactory->createEngineDao()),
           primaryFlightControlDao(daoFactory->createPrimaryFlightControlDao()),
           secondaryFlightControlDao(daoFactory->createSecondaryFlightControlDao()),
           handleDao(daoFactory->createHandleDao()),
           lightDao(daoFactory->createLightDao())
-    {
-    }
+    {}
 
     std::unique_ptr<QSqlQuery> insertQuery;
     std::unique_ptr<QSqlQuery> selectByIdQuery;
     std::unique_ptr<QSqlQuery> selectByScenarioIdQuery;
+    std::unique_ptr<QSqlQuery> deleteByScenarioIdQuery;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<PositionDaoIntf> positionDao;
     std::unique_ptr<EngineDaoIntf> engineDao;
@@ -132,19 +129,21 @@ public:
 "where  a.scenario_id = :scenario_id"
 "  and  a.seq_nr      = :seq_nr;");
         }
+        if (deleteByScenarioIdQuery == nullptr) {
+            deleteByScenarioIdQuery = std::make_unique<QSqlQuery>();
+            deleteByScenarioIdQuery->prepare(
+"delete "
+"from   aircraft "
+"where  scenario_id = :scenario_id;");
+        }
     }
 
     void resetQueries() noexcept
     {
-        if (insertQuery != nullptr) {
-            insertQuery = nullptr;
-        }
-        if (selectByIdQuery != nullptr) {
-            selectByIdQuery = nullptr;
-        }
-        if (selectByScenarioIdQuery != nullptr) {
-            selectByScenarioIdQuery = nullptr;
-        }
+        insertQuery = nullptr;
+        selectByIdQuery = nullptr;
+        selectByScenarioIdQuery = nullptr;
+        deleteByScenarioIdQuery = nullptr;
     }
 };
 
@@ -308,6 +307,40 @@ bool SQLiteAircraftDao::getByScenarioId(qint64 scenarioId, int sequenceNumber, A
         ok = d->lightDao->getByAircraftId(aircraft.getId(), aircraft.getLight().getAll());
     }
 
+
+    return ok;
+}
+
+bool SQLiteAircraftDao::deleteByScenarioId(qint64 scenarioId) noexcept
+{
+    d->initQueries();
+    // Delete "bottom-up" in order not to violate foreign key constraints
+    bool ok = d->positionDao->deleteByScenarioId(scenarioId);
+    if (ok) {
+        ok = d->engineDao->deleteByScenarioId(scenarioId);
+    }
+    if (ok) {
+        ok = d->primaryFlightControlDao->deleteByScenarioId(scenarioId);
+    }
+    if (ok) {
+        ok = d->secondaryFlightControlDao->deleteByScenarioId(scenarioId);
+    }
+    if (ok) {
+        ok = d->handleDao->deleteByScenarioId(scenarioId);
+    }
+    if (ok) {
+        ok = d->lightDao->deleteByScenarioId(scenarioId);
+    }
+    if (ok) {
+
+        d->deleteByScenarioIdQuery->bindValue(":id", scenarioId);
+        ok = d->deleteByScenarioIdQuery->exec();
+#ifdef DEBUG
+        if (!ok) {
+            qDebug("SQLiteAircraftDao::deleteByScenarioId: SQL error: %s", qPrintable(d->deleteByScenarioIdQuery->lastError().databaseText() + " - error code: " + d->deleteByScenarioIdQuery->lastError().nativeErrorCode()));
+        }
+#endif
+    }
 
     return ok;
 }

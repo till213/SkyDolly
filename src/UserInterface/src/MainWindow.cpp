@@ -567,7 +567,7 @@ void MainWindow::on_openScenarioAction_triggered() noexcept
     int reply = d->scenarioSelectionDialog->exec();
     if (reply == QDialog::Accepted) {
         qint64 selectedScenarioId = d->scenarioSelectionDialog->getSelectedScenarioId();
-        if (selectedScenarioId != 0) {
+        if (selectedScenarioId != Scenario::InvalidId) {
             bool ok = d->scenarioService->restore(selectedScenarioId, World::getInstance().getCurrentScenario());
             if (ok) {
                 updateUi();

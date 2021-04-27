@@ -39,13 +39,11 @@ class SQLiteLightDaoPrivate
 {
 public:
     SQLiteLightDaoPrivate() noexcept
-        : insertQuery(nullptr),
-          selectByAircraftIdQuery(nullptr)
-    {
-    }
+    {}
 
     std::unique_ptr<QSqlQuery> insertQuery;
     std::unique_ptr<QSqlQuery> selectByAircraftIdQuery;
+    std::unique_ptr<QSqlQuery> deleteByScenarioIdQuery;
 
     void initQueries()
     {
@@ -70,16 +68,23 @@ public:
 "where  l.aircraft_id = :aircraft_id "
 "order by l.timestamp asc;");
         }
+        if (deleteByScenarioIdQuery == nullptr) {
+            deleteByScenarioIdQuery = std::make_unique<QSqlQuery>();
+            deleteByScenarioIdQuery->prepare(
+"delete "
+"from   position "
+"where  aircraft_id in (select a.id "
+"                       from aircraft a"
+"                       where a.scenario_id = :scenario_id"
+"                      );");
+        }
     }
 
     void resetQueries() noexcept
     {
-        if (insertQuery != nullptr) {
-            insertQuery = nullptr;
-        }
-        if (selectByAircraftIdQuery != nullptr) {
-            selectByAircraftIdQuery = nullptr;
-        }
+        insertQuery = nullptr;
+        selectByAircraftIdQuery = nullptr;
+        deleteByScenarioIdQuery = nullptr;
     }
 };
 
@@ -93,8 +98,7 @@ SQLiteLightDao::SQLiteLightDao(QObject *parent) noexcept
 }
 
 SQLiteLightDao::~SQLiteLightDao() noexcept
-{
-}
+{}
 
 bool SQLiteLightDao::add(qint64 aircraftId, const LightData &lightData)  noexcept
 {
@@ -134,6 +138,19 @@ bool SQLiteLightDao::getByAircraftId(qint64 aircraftId, QVector<LightData> &ligh
 #endif
     }
 
+    return ok;
+}
+
+bool SQLiteLightDao::deleteByScenarioId(qint64 scenarioId) noexcept
+{
+    d->initQueries();
+    d->deleteByScenarioIdQuery->bindValue(":id", scenarioId);
+    bool ok = d->deleteByScenarioIdQuery->exec();
+#ifdef DEBUG
+    if (!ok) {
+        qDebug("SQLiteLightDao::deleteByScenarioId: SQL error: %s", qPrintable(d->deleteByScenarioIdQuery->lastError().databaseText() + " - error code: " + d->deleteByScenarioIdQuery->lastError().nativeErrorCode()));
+    }
+#endif
     return ok;
 }
 

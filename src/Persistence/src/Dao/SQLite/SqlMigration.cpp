@@ -41,8 +41,7 @@ public:
 
 SqlMigration::SqlMigration()
     : d(std::make_unique<SqlMigrationPrivate>())
-{
-}
+{}
 
 SqlMigration::~SqlMigration()
 {}

@@ -43,6 +43,7 @@ public:
 
     virtual bool addScenario(Scenario &scenario)  noexcept override;
     virtual bool getScenarioById(qint64 id, Scenario &scenario) const noexcept override;
+    virtual bool deleteById(qint64 id) noexcept override;
 
     virtual QVector<ScenarioDescription> getScenarioDescriptions() const noexcept override;
 

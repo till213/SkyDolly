@@ -65,12 +65,10 @@ public:
 
 SqlMigrationStep::SqlMigrationStep()
     : d(std::make_unique<SqlMigrationStepPrivate>())
-{
-}
+{}
 
 SqlMigrationStep::~SqlMigrationStep()
-{
-}
+{}
 
 bool SqlMigrationStep::isValid() const noexcept
 {

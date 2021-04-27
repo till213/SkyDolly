@@ -43,6 +43,7 @@ public:
      */
     virtual bool add(qint64 aircraftId, const LightData &lightData) = 0;
     virtual bool getByAircraftId(qint64 aircraftId, QVector<LightData> &data) const = 0;
+    virtual bool deleteByScenarioId(qint64 scenarioId) = 0;
 };
 
 #endif // LIGHTDAOINTF_H

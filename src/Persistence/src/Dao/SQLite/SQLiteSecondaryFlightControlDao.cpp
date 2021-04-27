@@ -40,13 +40,11 @@ class SQLiteSecondaryFlightControlDaoPrivate
 {
 public:
     SQLiteSecondaryFlightControlDaoPrivate() noexcept
-        : insertQuery(nullptr),
-          selectByAircraftIdQuery(nullptr)
-    {
-    }
+    {}
 
     std::unique_ptr<QSqlQuery> insertQuery;
     std::unique_ptr<QSqlQuery> selectByAircraftIdQuery;
+    std::unique_ptr<QSqlQuery> deleteByScenarioIdQuery;
 
     void initQueries()
     {
@@ -81,16 +79,23 @@ public:
 "where  sfc.aircraft_id = :aircraft_id "
 "order by sfc.timestamp asc;");
         }
+        if (deleteByScenarioIdQuery == nullptr) {
+            deleteByScenarioIdQuery = std::make_unique<QSqlQuery>();
+            deleteByScenarioIdQuery->prepare(
+"delete "
+"from   position "
+"where  aircraft_id in (select a.id "
+"                       from   aircraft a"
+"                       where  a.scenario_id = :scenario_id"
+"                      );");
+        }
     }
 
     void resetQueries() noexcept
     {
-        if (insertQuery != nullptr) {
-            insertQuery = nullptr;
-        }
-        if (selectByAircraftIdQuery != nullptr) {
-            selectByAircraftIdQuery = nullptr;
-        }
+        insertQuery = nullptr;
+        selectByAircraftIdQuery = nullptr;
+        deleteByScenarioIdQuery = nullptr;
     }
 };
 
@@ -104,8 +109,7 @@ SQLiteSecondaryFlightControlDao::SQLiteSecondaryFlightControlDao(QObject *parent
 }
 
 SQLiteSecondaryFlightControlDao::~SQLiteSecondaryFlightControlDao() noexcept
-{
-}
+{}
 
 bool SQLiteSecondaryFlightControlDao::add(qint64 aircraftId, const SecondaryFlightControlData &secondaryFlightControlData)  noexcept
 {
@@ -162,6 +166,19 @@ bool SQLiteSecondaryFlightControlDao::getByAircraftId(qint64 aircraftId, QVector
 #endif
     }
 
+    return ok;
+}
+
+bool SQLiteSecondaryFlightControlDao::deleteByScenarioId(qint64 scenarioId) noexcept
+{
+    d->initQueries();
+    d->deleteByScenarioIdQuery->bindValue(":id", scenarioId);
+    bool ok = d->deleteByScenarioIdQuery->exec();
+#ifdef DEBUG
+    if (!ok) {
+        qDebug("SQLiteSecondaryFlightControlDao::deleteByScenarioId: SQL error: %s", qPrintable(d->deleteByScenarioIdQuery->lastError().databaseText() + " - error code: " + d->deleteByScenarioIdQuery->lastError().nativeErrorCode()));
+    }
+#endif
     return ok;
 }
 

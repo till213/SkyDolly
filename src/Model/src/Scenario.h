@@ -64,6 +64,8 @@ public:
 
     void clear() noexcept;
 
+     static constexpr int InvalidId = -1;
+
 signals:
     void aircraftInfoChanged();
     void aircraftDataChanged();
