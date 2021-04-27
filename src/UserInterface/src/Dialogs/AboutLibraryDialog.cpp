@@ -28,7 +28,6 @@
 #include <QLineEdit>
 #include <QDateTimeEdit>
 
-#include "../../../Kernel/src/Settings.h"
 #include "../../../Persistence/src/Service/DatabaseService.h"
 #include "../Unit.h"
 #include "AboutLibraryDialog.h"
@@ -72,11 +71,10 @@ void AboutLibraryDialog::showEvent(QShowEvent *event) noexcept
 
 void AboutLibraryDialog::updateUi() noexcept
 {
-    Settings &settings = Settings::getInstance();
     Metadata metadata;
     d->databaseService.getMetadata(metadata);
 
-    QString libraryPath = settings.getLibraryPath();
+    QString libraryPath = d->databaseService.getLibraryPath();
     QFileInfo fileInfo = QFileInfo(libraryPath);
 
     QString libraryDirectory = fileInfo.absolutePath();

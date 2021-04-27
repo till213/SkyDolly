@@ -302,7 +302,7 @@ bool MainWindow::connectWithDb() noexcept
     QString filePath = Settings::getInstance().getLibraryPath();
     bool ok;
     if (filePath.isEmpty()) {
-        filePath = QFileDialog::getSaveFileName(this, tr("Library"), ".", "*.db");
+        filePath = QFileDialog::getSaveFileName(this, tr("Library"), ".", QString("*") + DatabaseService::LibraryExtension);
         Settings::getInstance().setLibraryPath(filePath);
     }
     if (!filePath.isEmpty()) {
@@ -529,7 +529,7 @@ void MainWindow::on_newLibraryAction_triggered() noexcept
     QString existingLibraryPath = QFileInfo(settings.getLibraryPath()).absolutePath();
     bool retry = true;
     while (retry) {
-        QString libraryPath = QFileDialog::getSaveFileName(this, tr("New library"), existingLibraryPath, "*.db");
+        QString libraryPath = QFileDialog::getSaveFileName(this, tr("New library"), existingLibraryPath, QString("*") + DatabaseService::LibraryExtension);
         if (!libraryPath.isEmpty()) {
             if (!QFileInfo::exists(libraryPath)) {
                 settings.setLibraryPath(libraryPath);
@@ -551,7 +551,7 @@ void MainWindow::on_openLibraryAction_triggered() noexcept
 {
     Settings &settings = Settings::getInstance();
     QString existingLibraryPath = QFileInfo(settings.getLibraryPath()).absolutePath();
-    QString libraryPath = QFileDialog::getOpenFileName(this, tr("Open library"), existingLibraryPath, "*.db");
+    QString libraryPath = QFileDialog::getOpenFileName(this, tr("Open library"), existingLibraryPath, QString("*") + DatabaseService::LibraryExtension);
     if (!libraryPath.isEmpty()) {
         settings.setLibraryPath(libraryPath);
         bool ok = d->databaseService->connectDb();
@@ -580,6 +580,14 @@ void MainWindow::on_openScenarioAction_triggered() noexcept
                 QMessageBox::critical(this, tr("Database error"), tr("The scenario %1 could not be read from the library.").arg(selectedScenarioId));
             }
         }
+    }
+}
+
+void MainWindow::on_backupLibraryAction_triggered() noexcept
+{
+    bool ok = d->databaseService->backup();
+    if (!ok) {
+        QMessageBox::critical(this, tr("Database error"), tr("The library backup could not be created."));
     }
 }
 

@@ -22,8 +22,17 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <QFileInfo>
+#include <QDir>
+
+#include "../../../Kernel/src/Settings.h"
 #include "../ConnectionManager.h"
 #include "DatabaseService.h"
+
+namespace
+{
+    constexpr int MaxIndex = 1024;
+}
 
 // PUBLIC
 
@@ -36,7 +45,8 @@ DatabaseService::~DatabaseService() noexcept
 bool DatabaseService::connectDb() noexcept
 {
     ConnectionManager &connectionManager = ConnectionManager::getInstance();
-    bool ok = connectionManager.connectDb();
+    const QString &libraryPath = Settings::getInstance().getLibraryPath();
+    bool ok = connectionManager.connectDb(libraryPath);
     if (ok) {
         ok = connectionManager.migrate();
     }
@@ -53,9 +63,48 @@ bool DatabaseService::isConnected() const noexcept
     return ConnectionManager::getInstance().isConnected();
 }
 
+const QString &DatabaseService::getLibraryPath() const noexcept
+{
+    return ConnectionManager::getInstance().getLibraryPath();
+}
+
 bool DatabaseService::optimise() noexcept
 {
     return ConnectionManager::getInstance().optimise();
+}
+
+bool DatabaseService::backup() noexcept
+{
+    const QString &libraryPath = Settings::getInstance().getLibraryPath();
+    QFileInfo libraryInfo = QFileInfo(libraryPath);
+
+    const QString libraryDirectoryPath = libraryInfo.absolutePath();
+    const QString baseName = libraryInfo.baseName();
+    const QString backupDirectoryName = baseName + " Backups";
+    QDir libraryDir(libraryDirectoryPath);
+    bool ok;
+    if (!libraryDir.exists(backupDirectoryName)) {
+        ok = libraryDir.mkdir(backupDirectoryName);
+    } else {
+        ok = true;
+    }
+    if (ok) {
+        const QString backupLibraryDirectoryPath = libraryDirectoryPath + "/" + backupDirectoryName;
+        const QString baseBackupLibraryName = baseName + "-" + QDateTime::currentDateTime().toString("yyyy-MM-dd hhmm");
+        QString backupLibraryName = baseBackupLibraryName + LibraryExtension;
+        QDir backupLibraryDir(backupLibraryDirectoryPath);
+        int index = 1;
+        while (backupLibraryDir.exists(backupLibraryName) && index <= MaxIndex) {
+            backupLibraryName = baseBackupLibraryName + QString("-%1").arg(index) + LibraryExtension;
+            ++index;
+        }
+        ok = index <= MaxIndex;
+        if (ok) {
+            const QString backupLibraryPath = backupLibraryDirectoryPath + "/" + backupLibraryName;
+            ok = ConnectionManager::getInstance().backup(backupLibraryPath);
+        }
+    }
+    return ok;
 }
 
 bool DatabaseService::getMetadata(Metadata &metadata) noexcept

@@ -58,12 +58,10 @@ SQLiteDatabaseDao::~SQLiteDatabaseDao() noexcept
     disconnectSQLite();
 }
 
-bool SQLiteDatabaseDao::connectDb() noexcept
+bool SQLiteDatabaseDao::connectDb(const QString &libraryPath) noexcept
 {
-    const QString &dbPath = Settings::getInstance().getLibraryPath();
-
     d->db = QSqlDatabase::addDatabase(DbName);
-    d->db.setDatabaseName(dbPath);
+    d->db.setDatabaseName(libraryPath);
 
     return d->db.open();
 }
@@ -98,6 +96,20 @@ bool SQLiteDatabaseDao::optimise() noexcept
 #ifdef DEBUG
     } else {
         qDebug("SQLiteDatabaseDao::optimise(: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+#endif
+    }
+    return ok;
+}
+
+bool SQLiteDatabaseDao::backup(const QString &backupPath) noexcept
+{
+    QSqlQuery query;
+    bool ok = query.exec(QString("vacuum into '%1';").arg(backupPath));
+    if (ok) {
+        ok = query.exec("update meta set last_backup_date = datetime('now') where rowid = 1;");
+#ifdef DEBUG
+    } else {
+        qDebug("SQLiteDatabaseDao::backup(: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
 #endif
     }
     return ok;

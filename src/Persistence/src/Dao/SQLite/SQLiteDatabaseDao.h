@@ -29,6 +29,8 @@
 
 #include <QtGlobal>
 
+class QString;
+
 #include "../../Metadata.h"
 #include "../DatabaseDaoIntf.h"
 
@@ -40,11 +42,12 @@ public:
     SQLiteDatabaseDao() noexcept;
     virtual ~SQLiteDatabaseDao() noexcept;
 
-    virtual bool connectDb() noexcept override;
+    virtual bool connectDb(const QString &libraryPath) noexcept override;
     virtual void disconnectDb() noexcept override;
 
     virtual bool migrate() noexcept override;
     virtual bool optimise() noexcept override;
+    virtual bool backup(const QString &backupPath) noexcept override;
 
     virtual bool getMetadata(Metadata &metadata) const noexcept override;
 

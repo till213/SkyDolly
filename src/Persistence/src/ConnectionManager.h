@@ -29,6 +29,8 @@
 
 #include <QObject>
 
+class QString;
+
 class Metadata;
 
 class ConnectionManagerPrivate;
@@ -40,11 +42,14 @@ public:
     static ConnectionManager &getInstance() noexcept;
     static void destroyInstance() noexcept;
 
-    bool connectDb() noexcept;
+    bool connectDb(const QString &libraryPath) noexcept;
     void disconnectDb() noexcept;
     bool isConnected() const noexcept;
+    const QString &getLibraryPath() const noexcept;
+
     bool migrate() noexcept;
     bool optimise() noexcept;
+    bool backup(const QString &backupLibraryPath) noexcept;
     bool getMetadata(Metadata &metadata) noexcept;
 
 signals:

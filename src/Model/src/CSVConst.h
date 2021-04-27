@@ -27,8 +27,8 @@
 
 namespace CSVConst {
     // Format and precision for double
-    constexpr char Format = 'g';
-    constexpr int Precision = 9;
+    inline constexpr char Format = 'g';
+    inline constexpr int Precision = 9;
 
     enum class DataType : char {
         Aircraft = 'a',

@@ -25,6 +25,8 @@
 #ifndef DATABASEDAOINTF_H
 #define DATABASEDAOINTF_H
 
+class QString;
+
 #include "../Metadata.h"
 
 class DatabaseDaoIntf
@@ -32,11 +34,12 @@ class DatabaseDaoIntf
 public:
     virtual ~DatabaseDaoIntf() = default;
 
-    virtual bool connectDb() = 0;
+    virtual bool connectDb(const QString &libraryPath) = 0;
     virtual void disconnectDb() = 0;
 
     virtual bool migrate() = 0;
     virtual bool optimise() = 0;
+    virtual bool backup(const QString &backupPath) = 0;
 
     virtual bool getMetadata(Metadata &metadata) const = 0;
 };
