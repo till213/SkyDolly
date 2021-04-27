@@ -792,7 +792,6 @@ void MainWindow::toggleRecord(bool enable) noexcept
     case Connect::State::Recording:
         if (!enable) {
             d->skyConnect.stopRecording();
-            d->scenarioService->store(World::getInstance().getCurrentScenario());
         }
         break;
     case Connect::State::RecordingPaused:
