@@ -1,3 +1,10 @@
+@migr(id = "4a66fae6-d70a-4230-ad1e-0db27c9b1466", descn = "Create meta info table", step_cnt = 2)
+create table meta (
+    creation_date text,
+    last_optim_date text,
+    last_backup_date text
+);
+
 @migr(id = "da30cf74-c698-4a73-bad1-c1cf3f380f32", descn = "Create scenario table", step_cnt = 1)
 create table scenario (
     id integer primary key,

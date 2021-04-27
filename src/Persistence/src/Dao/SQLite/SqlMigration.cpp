@@ -49,48 +49,58 @@ SqlMigration::~SqlMigration()
 
 bool SqlMigration::migrateExAnte() noexcept
 {
-    return true;
+    Q_INIT_RESOURCE(Migration);
+
+    return migrate(":/dao/sqlite/migr/migr-ex-ante.sql");
 }
 
 bool SqlMigration::migrateDdl() noexcept
 {
-    Q_INIT_RESOURCE(Migration);
-
-    QFile migr(":/dao/sqlite/migr/migr-ddl.sql");
-    migr.open(QFile::OpenModeFlag::ReadOnly | QFile::OpenModeFlag::Text);
-
-    QTextStream textStream(&migr);
-    const QString migration = textStream.readAll();
-
-    // https://regex101.com/
-    // @migr(...)
-    const QRegularExpression migrRegExp("@migr\\(([\\w=\"\\-,.\\s]+)\\)");
-
-    QStringList sqlStatements = migration.split(migrRegExp);
-
-    bool ok = true;
-    QRegularExpressionMatchIterator it = migrRegExp.globalMatch(migration);
-    // The first migration SQL statements start at index 1
-    int i = 1;
-    while (ok && it.hasNext()) {
-        const QRegularExpressionMatch tagMatch = it.next();
-        QString tag = tagMatch.captured(1);
-        qDebug("migration: %s", qPrintable(tag));
-
-        SqlMigrationStep step;
-        ok = step.parseTag(tagMatch);
-        if (ok && !step.checkApplied()) {
-            ok = step.execute(sqlStatements.at(i));
-        }
-        ++i;
-    }
-
-    migr.close();
-
-    return ok;
+    return migrate(":/dao/sqlite/migr/migr-ddl.sql");
 }
 
 bool SqlMigration::migrateExPost() noexcept
 {
-    return true;
+    return migrate(":/dao/sqlite/migr/migr-ex-post.sql");
+}
+
+// PRIVATE
+
+bool SqlMigration::migrate(const QString &migrationFilePath) noexcept
+{
+    QFile migr(migrationFilePath);
+    bool ok = migr.open(QFile::OpenModeFlag::ReadOnly | QFile::OpenModeFlag::Text);
+
+    if (ok) {
+        QTextStream textStream(&migr);
+        const QString migration = textStream.readAll();
+
+        // https://regex101.com/
+        // @migr(...)
+        const QRegularExpression migrRegExp("@migr\\(([\\w=\"\\-,.\\s]+)\\)");
+
+        QStringList sqlStatements = migration.split(migrRegExp);
+        QRegularExpressionMatchIterator it = migrRegExp.globalMatch(migration);
+
+        // The first migration SQL statements start at index 1
+        int i = 1;
+        bool ok = true;
+        while (ok && it.hasNext()) {
+            const QRegularExpressionMatch tagMatch = it.next();
+            QString tag = tagMatch.captured(1);
+#ifdef DEBUG
+            qDebug("SqlMigration::migrate: %s", qPrintable(tag));
+#endif
+
+            SqlMigrationStep step;
+            ok = step.parseTag(tagMatch);
+            if (ok && !step.checkApplied()) {
+                ok = step.execute(sqlStatements.at(i));
+            }
+            ++i;
+        }
+
+        migr.close();
+    }
+    return ok;
 }
