@@ -45,9 +45,13 @@ public:
     bool connectDb() noexcept;
     void disconnectDb() noexcept;
     bool isConnected() const noexcept;
+    const QString &getLibraryPath() const noexcept;
 
     bool optimise() noexcept;
+    bool backup() noexcept;
     bool getMetadata(Metadata &metadata) noexcept;
+
+    static constexpr char LibraryExtension[] = ".db";
 };
 
 #endif // DATABASESERVICE_H

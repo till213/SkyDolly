@@ -24,6 +24,9 @@
  */
 #include <memory>
 
+#include <QString>
+
+#include "../../Kernel/src/Settings.h"
 #include "Metadata.h"
 #include "Dao/DaoFactory.h"
 #include "Dao/DatabaseDaoIntf.h"
@@ -35,6 +38,7 @@ public:
 
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<DatabaseDaoIntf> databaseDao;
+    QString libraryPath;
     bool connected;
 
     static ConnectionManager *instance;
@@ -43,12 +47,7 @@ public:
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           databaseDao(daoFactory->createDatabaseDao()),
           connected(false)
-    {
-    }
-
-    ~ConnectionManagerPrivate() noexcept
-    {
-    }
+    {}
 };
 
 ConnectionManager *ConnectionManagerPrivate::instance = nullptr;
@@ -71,10 +70,13 @@ void ConnectionManager::destroyInstance() noexcept
     }
 }
 
-bool ConnectionManager::connectDb() noexcept
+bool ConnectionManager::connectDb(const QString &libraryPath) noexcept
 {
-    d->connected = d->databaseDao->connectDb();
-    emit connectionChanged(d->connected);
+    if (d->libraryPath != libraryPath) {
+        d->connected = d->databaseDao->connectDb(libraryPath);
+        d->libraryPath = libraryPath;
+        emit connectionChanged(d->connected);
+    }
     return d->connected;
 }
 
@@ -90,15 +92,24 @@ bool ConnectionManager::isConnected() const noexcept
     return d->connected;
 }
 
+const QString &ConnectionManager::getLibraryPath() const noexcept
+{
+    return d->libraryPath;
+}
+
 bool ConnectionManager::migrate() noexcept
 {
     return d->databaseDao->migrate();
 }
 
-
 bool ConnectionManager::optimise() noexcept
 {
     return d->databaseDao->optimise();
+}
+
+bool ConnectionManager::backup(const QString &backupLibraryPath) noexcept
+{
+    return d->databaseDao->backup(backupLibraryPath);
 }
 
 bool ConnectionManager::getMetadata(Metadata &metadata) noexcept
