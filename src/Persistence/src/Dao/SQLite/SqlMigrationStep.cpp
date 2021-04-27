@@ -43,9 +43,9 @@ public:
           stepCount(0),
           applied(false)
     {
-        checkAppliedQuery.prepare("select m.success, m.msg from migr m where m.id = :id;");
-        insertMigrQuery.prepare("insert into migr values(:id, :success, :timestamp, :msg);");
-        updateMigrQuery.prepare("update migr set success = :success, timestamp = :timestamp, msg = :msg where id = :id;");
+        checkAppliedQuery.prepare("select m.success, m.step, m.msg from migr m where m.id = :id and m.step = :step;");
+        insertMigrQuery.prepare("insert into migr (id, step, success, msg) values(:id, :step, :success, :msg);");
+        updateMigrQuery.prepare("update migr set success = :success, step = :step, msg = :msg where id = :id;");
     }
 
     QString migrationId;
@@ -55,8 +55,6 @@ public:
 
     bool applied;
     QString errorMessage;
-
-    static constexpr char TimestampFormat[] = "yyyy-MM-dd hh:mm:ss.sss";
 
     QSqlQuery checkAppliedQuery;
     QSqlQuery insertMigrQuery;
@@ -107,13 +105,13 @@ bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) noexcep
             break;
         }
     }
-
     return ok;
 }
 
 bool SqlMigrationStep::checkApplied() noexcept
 {
     d->checkAppliedQuery.bindValue(":id", d->migrationId);
+    d->checkAppliedQuery.bindValue(":step", d->step);
     d->checkAppliedQuery.exec();
 
     if (d->checkAppliedQuery.next()) {
@@ -156,7 +154,6 @@ bool SqlMigrationStep::execute(const QString &sql) noexcept
             errorMessage = query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode();
         }
     }
-    QString timestamp = QDateTime::currentDateTime().toString(SqlMigrationStepPrivate::TimestampFormat);
     if (ok) {
         QSqlQuery query;
         if (!hasPreviousAttempt()) {
@@ -166,8 +163,8 @@ bool SqlMigrationStep::execute(const QString &sql) noexcept
             query = d->updateMigrQuery;
         }
         query.bindValue(":id", d->migrationId);
+        query.bindValue(":step", d->step);
         query.bindValue(":success", 1);
-        query.bindValue(":timestamp", timestamp);
         query.bindValue(":msg", QString());
         ok = query.exec();
         QSqlDatabase::database().commit();
@@ -186,8 +183,8 @@ bool SqlMigrationStep::execute(const QString &sql) noexcept
         d->errorMessage = errorMessage;
 
         query.bindValue(":id", d->migrationId);
+        query.bindValue(":step", d->step);
         query.bindValue(":success", 0);
-        query.bindValue(":timestamp", timestamp);
         query.bindValue(":msg", d->errorMessage);
         query.exec();
         QSqlDatabase::database().commit();

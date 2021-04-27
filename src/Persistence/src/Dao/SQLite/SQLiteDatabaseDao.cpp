@@ -95,10 +95,11 @@ bool SQLiteDatabaseDao::createMigrationTable() noexcept
 {
     QSqlQuery query;
     query.prepare("create table if not exists migr("
-    "id text primary key,"
+    "id text not null,"
+    "step integer not null,"
     "success integer not null,"
-    "timestamp text not null,"
-    "msg text)");
-    bool ok = query.exec();
-    return ok;
+    "timestamp timestamp default current_timestamp,"
+    "msg text,"
+    "primary key (id, step));");
+    return query.exec();
 }

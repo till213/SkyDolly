@@ -43,6 +43,8 @@ public:
 
 private:
     std::unique_ptr<SqlMigrationPrivate> d;
+
+    bool migrate(const QString &migration) noexcept;
 };
 
 #endif // DBMIGRATION_H
