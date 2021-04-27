@@ -24,6 +24,7 @@
  */
 #include <memory>
 
+#include "Metadata.h"
 #include "Dao/DaoFactory.h"
 #include "Dao/DatabaseDaoIntf.h"
 #include "ConnectionManager.h"
@@ -94,6 +95,17 @@ bool ConnectionManager::migrate() noexcept
     return d->databaseDao->migrate();
 }
 
+
+bool ConnectionManager::optimise() noexcept
+{
+    return d->databaseDao->optimise();
+}
+
+bool ConnectionManager::getMetadata(Metadata &metadata) noexcept
+{
+    return d->databaseDao->getMetadata(metadata);
+}
+
 // PROTECTED
 
 ConnectionManager::~ConnectionManager() noexcept
@@ -106,3 +118,4 @@ ConnectionManager::ConnectionManager() noexcept
     : d(std::make_unique<ConnectionManagerPrivate>())
 {
 }
+

@@ -25,6 +25,7 @@
 #ifndef DATABASESERVICE_H
 #define DATABASESERVICE_H
 
+#include "../Metadata.h"
 #include "../PersistenceLib.h"
 
 class DatabaseServicePrivate;
@@ -44,6 +45,9 @@ public:
     bool connectDb() noexcept;
     void disconnectDb() noexcept;
     bool isConnected() const noexcept;
+
+    bool optimise() noexcept;
+    bool getMetadata(Metadata &metadata) noexcept;
 };
 
 #endif // DATABASESERVICE_H

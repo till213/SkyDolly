@@ -184,7 +184,7 @@ bool SQLiteAircraftDao::add(qint64 scenarioId, int sequenceNumber, Aircraft &air
         aircraft.setId(id);
 #ifdef DEBUG
     } else {
-        qDebug("addAircraft: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteAircraftDao::add: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
 #endif
     }
     if (ok) {
@@ -285,7 +285,7 @@ bool SQLiteAircraftDao::getByScenarioId(qint64 scenarioId, int sequenceNumber, A
         }
 #ifdef DEBUG
     } else {
-        qDebug("getAircraftByScenarioId: SQL error: %s", qPrintable(d->selectByScenarioIdQuery->lastError().databaseText() + " - error code: " + d->selectByScenarioIdQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteAircraftDao::getByScenarioId: SQL error: %s", qPrintable(d->selectByScenarioIdQuery->lastError().databaseText() + " - error code: " + d->selectByScenarioIdQuery->lastError().nativeErrorCode()));
 #endif
     }
 

@@ -31,6 +31,8 @@
 
 class QShowEvent;
 
+class DatabaseService;
+
 namespace Ui {
     class AboutLibraryDialog;
 }
@@ -41,7 +43,7 @@ class AboutLibraryDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit AboutLibraryDialog(QWidget *parent = nullptr);
+    explicit AboutLibraryDialog(DatabaseService &databaseService, QWidget *parent = nullptr);
     virtual ~AboutLibraryDialog();
 
 protected:

@@ -53,3 +53,12 @@ bool DatabaseService::isConnected() const noexcept
     return ConnectionManager::getInstance().isConnected();
 }
 
+bool DatabaseService::optimise() noexcept
+{
+    return ConnectionManager::getInstance().optimise();
+}
+
+bool DatabaseService::getMetadata(Metadata &metadata) noexcept
+{
+    return ConnectionManager::getInstance().getMetadata(metadata);
+}

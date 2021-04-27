@@ -29,6 +29,8 @@
 
 #include <QObject>
 
+class Metadata;
+
 class ConnectionManagerPrivate;
 
 class ConnectionManager : public QObject
@@ -41,8 +43,9 @@ public:
     bool connectDb() noexcept;
     void disconnectDb() noexcept;
     bool isConnected() const noexcept;
-
     bool migrate() noexcept;
+    bool optimise() noexcept;
+    bool getMetadata(Metadata &metadata) noexcept;
 
 signals:
     void connectionChanged(bool connected);

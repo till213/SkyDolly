@@ -247,7 +247,7 @@ bool SQLiteEngineDao::getByAircraftId(qint64 aircraftId, QVector<EngineData> &en
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteEngineDao::add: SQL error: %s", qPrintable(d->selectByAircraftIdQuery->lastError().databaseText() + " - error code: " + d->selectByAircraftIdQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteEngineDao::getByAircraftId: SQL error: %s", qPrintable(d->selectByAircraftIdQuery->lastError().databaseText() + " - error code: " + d->selectByAircraftIdQuery->lastError().nativeErrorCode()));
 #endif
     }
 

@@ -11,6 +11,7 @@ target_sources(Persistence
         src/PersistenceLib.h
         src/ConnectionManager.cpp
         src/ConnectionManager.h
+        src/Metadata.h
         src/Dao/DatabaseDaoIntf.h
         src/Dao/ScenarioDaoIntf.h
         src/Dao/AircraftDaoIntf.h

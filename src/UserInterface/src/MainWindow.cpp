@@ -211,7 +211,7 @@ void MainWindow::initUi() noexcept
     d->statisticsDialog = new StatisticsDialog(d->skyConnect, this);
     d->scenarioSelectionDialog = new ScenarioSelectionDialog(*d->scenarioService, this);
     d->aboutDialog = new AboutDialog(this);
-    d->aboutLibraryDialog = new AboutLibraryDialog(this);
+    d->aboutLibraryDialog = new AboutLibraryDialog(*d->databaseService, this);
     d->settingsDialog = new SettingsDialog(this);
 
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
@@ -577,9 +577,17 @@ void MainWindow::on_openScenarioAction_triggered() noexcept
                     d->skyConnect.setPaused(true);
                 }
             } else {
-                QMessageBox::critical(this, tr("Database error"), tr("The scenario %1 could not be read from the database.").arg(selectedScenarioId));
+                QMessageBox::critical(this, tr("Database error"), tr("The scenario %1 could not be read from the library.").arg(selectedScenarioId));
             }
         }
+    }
+}
+
+void MainWindow::on_optimiseLibraryAction_triggered() noexcept
+{
+    bool ok = d->databaseService->optimise();
+    if (!ok) {
+        QMessageBox::critical(this, tr("Database error"), tr("The library could not be optimised."));
     }
 }
 
