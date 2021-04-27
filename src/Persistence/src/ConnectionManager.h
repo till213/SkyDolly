@@ -25,6 +25,8 @@
 #ifndef CONNECTIONMANAGER_H
 #define CONNECTIONMANAGER_H
 
+#include <memory>
+
 #include <QObject>
 
 class ConnectionManagerPrivate;
