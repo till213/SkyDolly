@@ -26,12 +26,13 @@
 #include <QTimer>
 #include <QElapsedTimer>
 
+#include "../../Kernel/src/SampleRate.h"
 #include "../../Kernel/src/Settings.h"
 #include "../../Model/src/World.h"
 #include "../../Model/src/Scenario.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/AircraftData.h"
-#include "../../Kernel/src/SampleRate.h"
+#include "../../Persistence/src/Service/ScenarioService.h"
 #include "Connect.h"
 #include "SkyConnectIntf.h"
 #include "AbstractSkyConnect.h"
@@ -53,7 +54,8 @@ public:
           recordIntervalMSec(SampleRate::toInterval(recordSampleRate)),
           timeScale(1.0),
           elapsedTime(0),
-          lastSamplesPerSecondIndex(0)
+          lastSamplesPerSecondIndex(0),
+          scenarioService(std::make_unique<ScenarioService>())
     {
         timer.setTimerType(Qt::TimerType::PreciseTimer);
     }
@@ -68,6 +70,7 @@ public:
     double timeScale;
     qint64 elapsedTime;
     mutable int lastSamplesPerSecondIndex;
+    std::unique_ptr<ScenarioService> scenarioService;
 };
 
 // PUBLIC
@@ -109,6 +112,7 @@ void AbstractSkyConnect::stopRecording() noexcept
     onStopRecording();
     d->timer.stop();
     setState(Connect::State::Connected);
+    d->scenarioService->store(d->currentScenario);
 }
 
 bool AbstractSkyConnect::isRecording() const noexcept

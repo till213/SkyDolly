@@ -33,6 +33,8 @@ class QString;
 
 class Metadata;
 
+#include "PersistenceLib.h"
+
 class ConnectionManagerPrivate;
 
 class ConnectionManager : public QObject
@@ -40,7 +42,7 @@ class ConnectionManager : public QObject
     Q_OBJECT
 public:
     static ConnectionManager &getInstance() noexcept;
-    static void destroyInstance() noexcept;
+    PERSISTENCE_API static void destroyInstance() noexcept;
 
     bool connectDb(const QString &libraryPath) noexcept;
     void disconnectDb() noexcept;

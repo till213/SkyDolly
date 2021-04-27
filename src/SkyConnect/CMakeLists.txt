@@ -59,7 +59,7 @@ else()
 endif()
 
 set(SKYCONNECT_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence
 )
 if (APPLE)
     list(APPEND SKYCONNECT_LIBS -lc++)
