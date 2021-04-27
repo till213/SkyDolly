@@ -31,11 +31,17 @@
 #include <QTableWidgetItem>
 #include <QItemSelectionModel>
 #include <QModelIndex>
+#include <QLocale>
 
 #include "../../../Model/src/ScenarioDescription.h"
 #include "../../../Persistence/src/Service/ScenarioService.h"
 #include "ScenarioSelectionDialog.h"
 #include "ui_ScenarioSelectionDialog.h"
+
+namespace
+{
+    constexpr int MinimumTableWidth = 600;
+}
 
 class ScenarioSelectionDialogPrivate
 {
@@ -86,11 +92,12 @@ void ScenarioSelectionDialog::initUi() noexcept
 {
     ui->scenarioTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    ui->scenarioTableWidget->setColumnCount(3);
-    QStringList headers {tr("ID"), tr("Description"), tr("Aircraft")};
+    QStringList headers {tr("ID"), tr("Creation"), tr("Description"), tr("Aircraft")};
+    ui->scenarioTableWidget->setColumnCount(headers.count());
     ui->scenarioTableWidget->setHorizontalHeaderLabels(headers);
     ui->scenarioTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->scenarioTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->scenarioTableWidget->setMinimumWidth(MinimumTableWidth);
 }
 
 void ScenarioSelectionDialog::updateUi() noexcept
@@ -105,12 +112,15 @@ void ScenarioSelectionDialog::updateUi() noexcept
         QTableWidgetItem *newItem = new QTableWidgetItem();
         newItem->setData(Qt::DisplayRole, desc.id);
         ui->scenarioTableWidget->setItem(rowIndex, 0, newItem);
-        newItem = new QTableWidgetItem(desc.description);
+        newItem = new QTableWidgetItem(QLocale::system().toString(desc.creationDate));
         ui->scenarioTableWidget->setItem(rowIndex, 1, newItem);
-        newItem = new QTableWidgetItem(desc.aircraftType);
+        newItem = new QTableWidgetItem(desc.description);
         ui->scenarioTableWidget->setItem(rowIndex, 2, newItem);
+        newItem = new QTableWidgetItem(desc.aircraftType);
+        ui->scenarioTableWidget->setItem(rowIndex, 3, newItem);
         ++rowIndex;
     }
+    ui->scenarioTableWidget->resizeColumnsToContents();
     ui->scenarioTableWidget->setSortingEnabled(true);
 }
 

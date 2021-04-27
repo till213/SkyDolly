@@ -31,6 +31,8 @@
 #include <QSqlError>
 #include <QSqlRecord>
 #include <QVector>
+#include <QDateTime>
+#include <QTimeZone>
 
 #include "../../../../Kernel/src/Enum.h"
 #include "../../../../Model/src/Scenario.h"
@@ -112,7 +114,7 @@ public:
             selectDescriptionsQuery = std::make_unique<QSqlQuery>();
             selectDescriptionsQuery->setForwardOnly(true);
             selectDescriptionsQuery->prepare(
-"select s.id, s.description, a.type "
+"select s.id, s.creation_date, s.description, a.type "
 "from   scenario s "
 "join   aircraft a "
 "where a.scenario_id = s.id;");
@@ -186,6 +188,7 @@ bool SQLiteScenarioDao::getScenarioById(qint64 id, Scenario &scenario) const noe
     if (ok) {
         scenario.clear();
         int idIdx = d->selectByIdQuery->record().indexOf("id");
+        int creationDateIdx = d->selectByIdQuery->record().indexOf("creation_date");
         int descriptionIdx = d->selectByIdQuery->record().indexOf("description");
         int surfaceTypeIdx = d->selectByIdQuery->record().indexOf("surface_type");
         int groundAltitudeIdx = d->selectByIdQuery->record().indexOf("ground_altitude");
@@ -201,6 +204,9 @@ bool SQLiteScenarioDao::getScenarioById(qint64 id, Scenario &scenario) const noe
         int inCloudsIdx = d->selectByIdQuery->record().indexOf("in_clouds");
         if (d->selectByIdQuery->next()) {
             scenario.setId(d->selectByIdQuery->value(idIdx).toLongLong());
+            QDateTime creationDate = d->selectByIdQuery->value(creationDateIdx).toDateTime();
+            creationDate.setTimeZone(QTimeZone::utc());
+            scenario.setCreationDate(creationDate.toLocalTime());
             scenario.setDescription(d->selectByIdQuery->value(descriptionIdx).toString());
             FlightCondition flightCondition;
             flightCondition.surfaceType = static_cast<SimType::SurfaceType>(d->selectByIdQuery->value(surfaceTypeIdx).toInt());
@@ -236,11 +242,15 @@ QVector<ScenarioDescription> SQLiteScenarioDao::getScenarioDescriptions() const 
     bool ok = d->selectDescriptionsQuery->exec();
     if (ok) {
         int idIdx = d->selectDescriptionsQuery->record().indexOf("id");
+        int creationDateIdx = d->selectDescriptionsQuery->record().indexOf("creation_date");
         int descriptionIdx = d->selectDescriptionsQuery->record().indexOf("description");
         int aircraftTypeIdx = d->selectDescriptionsQuery->record().indexOf("type");
         while (d->selectDescriptionsQuery->next()) {
             ScenarioDescription description;
             description.id = d->selectDescriptionsQuery->value(idIdx).toLongLong();
+            QDateTime creationDate = d->selectDescriptionsQuery->value(creationDateIdx).toDateTime();
+            creationDate.setTimeZone(QTimeZone::utc());
+            description.creationDate = creationDate.toLocalTime();
             description.description = d->selectDescriptionsQuery->value(descriptionIdx).toString();
             description.aircraftType = d->selectDescriptionsQuery->value(aircraftTypeIdx).toString();
             descriptions.append(description);

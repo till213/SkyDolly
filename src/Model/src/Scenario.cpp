@@ -25,6 +25,9 @@
 #include <memory>
 #include <vector>
 
+#include <QDateTime>
+#include <QString>
+
 #include "FlightCondition.h"
 #include "Aircraft.h"
 #include "Scenario.h"
@@ -39,6 +42,7 @@ public:
     }
 
     qint64 id;
+    QDateTime creationDate;
     QString description;
     FlightCondition flightCondition;
     std::vector<std::unique_ptr<Aircraft>> aircrafts;
@@ -75,6 +79,16 @@ void Scenario::setId(qint64 id) noexcept
 qint64 Scenario::getId() const noexcept
 {
     return d->id;
+}
+
+const QDateTime &Scenario::getCreationDate() const noexcept
+{
+    return d->creationDate;
+}
+
+void Scenario::setCreationDate(const QDateTime &creationDate) noexcept
+{
+    d->creationDate = creationDate;
 }
 
 const QString &Scenario::getDescription() const noexcept
