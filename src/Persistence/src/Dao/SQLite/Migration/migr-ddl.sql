@@ -8,6 +8,7 @@ create table meta (
 @migr(id = "da30cf74-c698-4a73-bad1-c1cf3f380f32", descn = "Create scenario table", step_cnt = 1)
 create table scenario (
     id integer primary key,
+    creation_date datetime default current_timestamp,
     description text,
     surface_type integer,
     ground_altitude real,    

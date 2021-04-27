@@ -29,6 +29,9 @@
 
 #include <QObject>
 
+class QDateTime;
+class QString;
+
 #include "ModelLib.h"
 
 class FlightCondition;
@@ -44,6 +47,9 @@ public:
 
     qint64 getId() const noexcept;
     void setId(qint64 id) noexcept;
+
+    const QDateTime &getCreationDate() const noexcept;
+    void setCreationDate(const QDateTime &creationDate) noexcept;
 
     const QString &getDescription() const noexcept;
     void setDescription(const QString &description) noexcept;

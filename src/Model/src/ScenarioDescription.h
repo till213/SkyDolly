@@ -26,6 +26,7 @@
 #define SCENARIODESCRIPTION_H
 
 #include <QString>
+#include <QDateTime>
 
 #include "ModelLib.h"
 
@@ -35,6 +36,7 @@ struct MODEL_API ScenarioDescription
     ~ScenarioDescription();
 
     qint64 id;
+    QDateTime creationDate;
     QString description;
     QString aircraftType;
 };
