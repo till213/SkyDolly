@@ -34,6 +34,7 @@
 void SimConnectAircraftInfo::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
     // TODO Maybe support GPS WP PREV/NEXT ID
+    // ZULU TIME, LOCAL TIME
     // Aircraft info
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::Title, nullptr, ::SIMCONNECT_DATATYPE_STRING256);
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::ATCId, NULL, SIMCONNECT_DATATYPE_STRING32);

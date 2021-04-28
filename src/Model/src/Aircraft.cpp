@@ -51,7 +51,8 @@ public:
         : id(0),
           currentTimestamp(TimeVariableData::InvalidTime),
           currentAccess(TimeVariableData::Access::Linear),
-          currentIndex(SkySearch::InvalidIndex)
+          currentIndex(SkySearch::InvalidIndex),
+          duration(TimeVariableData::InvalidTime)
     {}
 
     qint64 id;
@@ -67,6 +68,7 @@ public:
     TimeVariableData::Access currentAccess;
     AircraftData currentAircraftData;
     mutable int currentIndex;
+    mutable qint64 duration;
 };
 
 // PUBLIC
@@ -269,7 +271,30 @@ const AircraftData &Aircraft::interpolate(qint64 timestamp, TimeVariableData::Ac
 
 qint64 Aircraft::getDurationMSec() const noexcept
 {
-    return d->aircraftInfo.startDate.msecsTo(d->aircraftInfo.endDate);
+    if (d->duration == TimeVariableData::InvalidTime) {
+        d->duration = 0;
+        if (d->aircraftData.count() > 0) {
+            d->duration = d->aircraftData.last().timestamp;
+        }
+        if (d->engine.getAllConst().count() > 0) {
+            d->duration = qMax(d->engine.getLast().timestamp, d->duration);
+        }
+        if (d->primaryFlightControl.getAllConst().count() > 0) {
+            d->duration = qMax(d->primaryFlightControl.getLast().timestamp, d->duration);
+        }
+        if (d->secondaryFlightControl.getAllConst().count() > 0) {
+            d->duration = qMax(d->secondaryFlightControl.getLast().timestamp, d->duration);
+        }
+        if (d->aircraftHandle.getAllConst().count() > 0) {
+            d->duration = qMax(d->aircraftHandle.getLast().timestamp, d->duration);
+        }
+        if (d->light.getAllConst().count() > 0) {
+            d->duration = qMax(d->light.getLast().timestamp, d->duration);
+        }
+        // Update end time
+        d->aircraftInfo.endDate = d->aircraftInfo.startDate.addMSecs(d->duration);
+    }
+    return d->duration;
 }
 
 bool Aircraft::hasRecording() const noexcept
@@ -288,7 +313,6 @@ void Aircraft::clear() noexcept
     d->aircraftInfo.clear();
     d->currentTimestamp = TimeVariableData::InvalidTime;
     d->currentIndex = SkySearch::InvalidIndex;
-
     emit dataChanged();
 }
 
@@ -306,6 +330,8 @@ void Aircraft::frenchConnection()
             this, &Aircraft::handleDataChanged);
     connect(&d->light, &Light::dataChanged,
             this, &Aircraft::handleDataChanged);
+    connect(this, &Aircraft::dataChanged,
+            this, &Aircraft::invalidateDuration);
 }
 
 // PRIVATE SLOTS
@@ -313,4 +339,10 @@ void Aircraft::frenchConnection()
 void Aircraft::handleDataChanged()
 {
     emit dataChanged();
+}
+
+void Aircraft::invalidateDuration()
+{
+    d->duration = TimeVariableData::InvalidTime;
+    d->aircraftInfo.endDate = QDateTime();
 }

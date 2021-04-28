@@ -94,6 +94,7 @@ private:
 
 private slots:
     void handleDataChanged();
+    void invalidateDuration();
 };
 
 #endif // AIRCRAFT_H
