@@ -28,8 +28,9 @@
 #include <memory>
 
 #include <QObject>
-#include <QByteArray>
 #include <QVector>
+
+class QDateTime;
 
 #include "ModelLib.h"
 #include "AircraftInfo.h"

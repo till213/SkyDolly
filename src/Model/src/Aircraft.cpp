@@ -25,7 +25,6 @@
 #include <memory>
 
 #include <QObject>
-#include <QByteArray>
 #include <QVector>
 
 #include "../../Kernel/src/SkyMath.h"
@@ -52,8 +51,7 @@ public:
         : id(0),
           currentTimestamp(TimeVariableData::InvalidTime),
           currentAccess(TimeVariableData::Access::Linear),
-          currentIndex(SkySearch::InvalidIndex),
-          duration(TimeVariableData::InvalidTime)
+          currentIndex(SkySearch::InvalidIndex)
     {}
 
     qint64 id;
@@ -69,7 +67,6 @@ public:
     TimeVariableData::Access currentAccess;
     AircraftData currentAircraftData;
     mutable int currentIndex;
-    mutable qint64 duration;
 };
 
 // PUBLIC
@@ -178,7 +175,6 @@ void Aircraft::upsert(AircraftData aircraftData) noexcept
         aircraftData.timestamp = 0;
         d->aircraftData.append(aircraftData);
     }
-    d->duration = TimeVariableData::InvalidTime;
     emit dataChanged();
 }
 
@@ -273,28 +269,7 @@ const AircraftData &Aircraft::interpolate(qint64 timestamp, TimeVariableData::Ac
 
 qint64 Aircraft::getDurationMSec() const noexcept
 {
-    if (d->duration == TimeVariableData::InvalidTime) {
-        d->duration = 0;
-        if (d->aircraftData.count() > 0) {
-            d->duration = d->aircraftData.last().timestamp;
-        }
-        if (d->engine.getAllConst().count() > 0) {
-            d->duration = qMax(d->engine.getLast().timestamp, d->duration);
-        }
-        if (d->primaryFlightControl.getAllConst().count() > 0) {
-            d->duration = qMax(d->primaryFlightControl.getLast().timestamp, d->duration);
-        }
-        if (d->secondaryFlightControl.getAllConst().count() > 0) {
-            d->duration = qMax(d->secondaryFlightControl.getLast().timestamp, d->duration);
-        }
-        if (d->aircraftHandle.getAllConst().count() > 0) {
-            d->duration = qMax(d->aircraftHandle.getLast().timestamp, d->duration);
-        }
-        if (d->light.getAllConst().count() > 0) {
-            d->duration = qMax(d->light.getLast().timestamp, d->duration);
-        }
-    }
-    return d->duration;
+    return d->aircraftInfo.startDate.msecsTo(d->aircraftInfo.endDate);
 }
 
 bool Aircraft::hasRecording() const noexcept
@@ -313,7 +288,6 @@ void Aircraft::clear() noexcept
     d->aircraftInfo.clear();
     d->currentTimestamp = TimeVariableData::InvalidTime;
     d->currentIndex = SkySearch::InvalidIndex;
-    d->duration = TimeVariableData::InvalidTime;
 
     emit dataChanged();
 }
@@ -338,6 +312,5 @@ void Aircraft::frenchConnection()
 
 void Aircraft::handleDataChanged()
 {
-    d->duration = TimeVariableData::InvalidTime;
     emit dataChanged();
 }

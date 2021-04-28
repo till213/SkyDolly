@@ -37,8 +37,12 @@ struct MODEL_API ScenarioDescription
 
     qint64 id;
     QDateTime creationDate;
-    QString description;
     QString aircraftType;
+    QDateTime startDate;
+    QDateTime endDate;
+    QString departureLocation;
+    QString arrivalLocation;
+    QString description;    
 };
 
 #endif // SCENARIODESCRIPTION_H

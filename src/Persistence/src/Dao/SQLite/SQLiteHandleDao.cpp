@@ -115,15 +115,15 @@ SQLiteHandleDao::~SQLiteHandleDao() noexcept
 bool SQLiteHandleDao::add(qint64 aircraftId, const AircraftHandleData &aircraftHandleData)  noexcept
 {
     d->initQueries();
-    d->insertQuery->bindValue(":aircraft_id", aircraftId, QSql::In);
-    d->insertQuery->bindValue(":timestamp", aircraftHandleData.timestamp, QSql::In);
-    d->insertQuery->bindValue(":brake_left_position", aircraftHandleData.brakeLeftPosition, QSql::In);
-    d->insertQuery->bindValue(":brake_right_position", aircraftHandleData.brakeRightPosition, QSql::In);
-    d->insertQuery->bindValue(":water_rudder_handle_position", aircraftHandleData.waterRudderHandlePosition, QSql::In);
-    d->insertQuery->bindValue(":tail_hook_position", aircraftHandleData.tailhookPosition, QSql::In);
-    d->insertQuery->bindValue(":canopy_open", aircraftHandleData.canopyOpen, QSql::In);
-    d->insertQuery->bindValue(":gear_handle_position", aircraftHandleData.gearHandlePosition ? 1 : 0, QSql::In);
-    d->insertQuery->bindValue(":folding_wing_handle_position", aircraftHandleData.foldingWingHandlePosition, QSql::In);
+    d->insertQuery->bindValue(":aircraft_id", aircraftId);
+    d->insertQuery->bindValue(":timestamp", aircraftHandleData.timestamp);
+    d->insertQuery->bindValue(":brake_left_position", aircraftHandleData.brakeLeftPosition);
+    d->insertQuery->bindValue(":brake_right_position", aircraftHandleData.brakeRightPosition);
+    d->insertQuery->bindValue(":water_rudder_handle_position", aircraftHandleData.waterRudderHandlePosition);
+    d->insertQuery->bindValue(":tail_hook_position", aircraftHandleData.tailhookPosition);
+    d->insertQuery->bindValue(":canopy_open", aircraftHandleData.canopyOpen);
+    d->insertQuery->bindValue(":gear_handle_position", aircraftHandleData.gearHandlePosition ? 1 : 0);
+    d->insertQuery->bindValue(":folding_wing_handle_position", aircraftHandleData.foldingWingHandlePosition);
 
     bool ok = d->insertQuery->exec();
 #ifdef DEBUG

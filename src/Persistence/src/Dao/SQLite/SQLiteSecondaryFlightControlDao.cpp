@@ -114,14 +114,14 @@ SQLiteSecondaryFlightControlDao::~SQLiteSecondaryFlightControlDao() noexcept
 bool SQLiteSecondaryFlightControlDao::add(qint64 aircraftId, const SecondaryFlightControlData &secondaryFlightControlData)  noexcept
 {
     d->initQueries();
-    d->insertQuery->bindValue(":aircraft_id", aircraftId, QSql::In);
-    d->insertQuery->bindValue(":timestamp", secondaryFlightControlData.timestamp, QSql::In);
-    d->insertQuery->bindValue(":leading_edge_flaps_left_percent", secondaryFlightControlData.leadingEdgeFlapsLeftPercent, QSql::In);
-    d->insertQuery->bindValue(":leading_edge_flaps_right_percent", secondaryFlightControlData.leadingEdgeFlapsRightPercent, QSql::In);
-    d->insertQuery->bindValue(":trailing_edge_flaps_left_percent", secondaryFlightControlData.trailingEdgeFlapsLeftPercent, QSql::In);
-    d->insertQuery->bindValue(":trailing_edge_flaps_right_percent", secondaryFlightControlData.trailingEdgeFlapsRightPercent, QSql::In);
-    d->insertQuery->bindValue(":spoilers_handle_position", secondaryFlightControlData.spoilersHandlePosition, QSql::In);
-    d->insertQuery->bindValue(":flaps_handle_index", secondaryFlightControlData.flapsHandleIndex, QSql::In);
+    d->insertQuery->bindValue(":aircraft_id", aircraftId);
+    d->insertQuery->bindValue(":timestamp", secondaryFlightControlData.timestamp);
+    d->insertQuery->bindValue(":leading_edge_flaps_left_percent", secondaryFlightControlData.leadingEdgeFlapsLeftPercent);
+    d->insertQuery->bindValue(":leading_edge_flaps_right_percent", secondaryFlightControlData.leadingEdgeFlapsRightPercent);
+    d->insertQuery->bindValue(":trailing_edge_flaps_left_percent", secondaryFlightControlData.trailingEdgeFlapsLeftPercent);
+    d->insertQuery->bindValue(":trailing_edge_flaps_right_percent", secondaryFlightControlData.trailingEdgeFlapsRightPercent);
+    d->insertQuery->bindValue(":spoilers_handle_position", secondaryFlightControlData.spoilersHandlePosition);
+    d->insertQuery->bindValue(":flaps_handle_index", secondaryFlightControlData.flapsHandleIndex);
 
     bool ok = d->insertQuery->exec();
 #ifdef DEBUG

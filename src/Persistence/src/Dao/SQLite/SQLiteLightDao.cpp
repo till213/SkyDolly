@@ -103,9 +103,9 @@ SQLiteLightDao::~SQLiteLightDao() noexcept
 bool SQLiteLightDao::add(qint64 aircraftId, const LightData &lightData)  noexcept
 {
     d->initQueries();
-    d->insertQuery->bindValue(":aircraft_id", aircraftId, QSql::In);
-    d->insertQuery->bindValue(":timestamp", lightData.timestamp, QSql::In);
-    d->insertQuery->bindValue(":light_states", static_cast<int>(lightData.lightStates), QSql::In);
+    d->insertQuery->bindValue(":aircraft_id", aircraftId);
+    d->insertQuery->bindValue(":timestamp", lightData.timestamp);
+    d->insertQuery->bindValue(":light_states", static_cast<int>(lightData.lightStates));
 
     bool ok = d->insertQuery->exec();
 #ifdef DEBUG

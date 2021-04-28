@@ -26,12 +26,15 @@
 #define AIRCRAFTINFO_H
 
 #include <QString>
+#include <QDateTime>
 
 #include "SimType.h"
 #include "ModelLib.h"
 
 struct MODEL_API AircraftInfo
 {
+    QDateTime startDate;
+    QDateTime endDate;
     QString type;
     QString tailNumber;
     QString airline;

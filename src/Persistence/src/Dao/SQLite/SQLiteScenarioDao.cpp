@@ -119,7 +119,7 @@ public:
             selectDescriptionsQuery = std::make_unique<QSqlQuery>();
             selectDescriptionsQuery->setForwardOnly(true);
             selectDescriptionsQuery->prepare(
-"select s.id, s.creation_date, s.description, a.type "
+"select s.id, s.creation_date, s.description, a.type, a.start_date, a.end_date "
 "from   scenario s "
 "join   aircraft a "
 "where a.scenario_id = s.id;");
@@ -151,19 +151,19 @@ bool SQLiteScenarioDao::addScenario(Scenario &scenario)  noexcept
 {
     d->initQueries();
     const FlightCondition &flightCondition = scenario.getFlightConditionConst();
-    d->insertQuery->bindValue(":description", scenario.getDescription(), QSql::In);
-    d->insertQuery->bindValue(":surface_type", Enum::toUnderlyingType(flightCondition.surfaceType), QSql::In);
-    d->insertQuery->bindValue(":ground_altitude", flightCondition.groundAltitude, QSql::In);
-    d->insertQuery->bindValue(":ambient_temperature", flightCondition.ambientTemperature, QSql::In);
-    d->insertQuery->bindValue(":total_air_temperature", flightCondition.totalAirTemperature, QSql::In);
-    d->insertQuery->bindValue(":wind_velocity", flightCondition.windVelocity, QSql::In);
-    d->insertQuery->bindValue(":wind_direction", flightCondition.windDirection, QSql::In);
-    d->insertQuery->bindValue(":visibility", flightCondition.visibility, QSql::In);
-    d->insertQuery->bindValue(":sea_level_pressure", flightCondition.seaLevelPressure, QSql::In);
-    d->insertQuery->bindValue(":pitot_icing", flightCondition.pitotIcingPercent, QSql::In);
-    d->insertQuery->bindValue(":structural_icing", flightCondition.structuralIcingPercent, QSql::In);
-    d->insertQuery->bindValue(":precipitation_state", Enum::toUnderlyingType(flightCondition.precipitationState), QSql::In);
-    d->insertQuery->bindValue(":in_clouds", flightCondition.inClouds, QSql::In);
+    d->insertQuery->bindValue(":description", scenario.getDescription());
+    d->insertQuery->bindValue(":surface_type", Enum::toUnderlyingType(flightCondition.surfaceType));
+    d->insertQuery->bindValue(":ground_altitude", flightCondition.groundAltitude);
+    d->insertQuery->bindValue(":ambient_temperature", flightCondition.ambientTemperature);
+    d->insertQuery->bindValue(":total_air_temperature", flightCondition.totalAirTemperature);
+    d->insertQuery->bindValue(":wind_velocity", flightCondition.windVelocity);
+    d->insertQuery->bindValue(":wind_direction", flightCondition.windDirection);
+    d->insertQuery->bindValue(":visibility", flightCondition.visibility);
+    d->insertQuery->bindValue(":sea_level_pressure", flightCondition.seaLevelPressure);
+    d->insertQuery->bindValue(":pitot_icing", flightCondition.pitotIcingPercent);
+    d->insertQuery->bindValue(":structural_icing", flightCondition.structuralIcingPercent);
+    d->insertQuery->bindValue(":precipitation_state", Enum::toUnderlyingType(flightCondition.precipitationState));
+    d->insertQuery->bindValue(":in_clouds", flightCondition.inClouds);
     bool ok = d->insertQuery->exec();
     if (ok) {
         qint64 id = d->insertQuery->lastInsertId().toLongLong(&ok);
@@ -259,16 +259,27 @@ QVector<ScenarioDescription> SQLiteScenarioDao::getScenarioDescriptions() const 
     if (ok) {
         int idIdx = d->selectDescriptionsQuery->record().indexOf("id");
         int creationDateIdx = d->selectDescriptionsQuery->record().indexOf("creation_date");
-        int descriptionIdx = d->selectDescriptionsQuery->record().indexOf("description");
         int aircraftTypeIdx = d->selectDescriptionsQuery->record().indexOf("type");
-        while (d->selectDescriptionsQuery->next()) {
+        int startDateIdx = d->selectDescriptionsQuery->record().indexOf("start_date");
+        int endDateIdx = d->selectDescriptionsQuery->record().indexOf("end_date");
+        int descriptionIdx = d->selectDescriptionsQuery->record().indexOf("description");
+        while (d->selectDescriptionsQuery->next()) {            
+
             ScenarioDescription description;
             description.id = d->selectDescriptionsQuery->value(idIdx).toLongLong();
-            QDateTime creationDate = d->selectDescriptionsQuery->value(creationDateIdx).toDateTime();
-            creationDate.setTimeZone(QTimeZone::utc());
-            description.creationDate = creationDate.toLocalTime();
-            description.description = d->selectDescriptionsQuery->value(descriptionIdx).toString();
+
+            QDateTime dateTime = d->selectDescriptionsQuery->value(creationDateIdx).toDateTime();
+            dateTime.setTimeZone(QTimeZone::utc());
+            description.creationDate = dateTime.toLocalTime();
             description.aircraftType = d->selectDescriptionsQuery->value(aircraftTypeIdx).toString();
+            dateTime = d->selectDescriptionsQuery->value(startDateIdx).toDateTime();
+            dateTime.setTimeZone(QTimeZone::utc());
+            description.startDate = dateTime.toLocalTime();
+            dateTime = d->selectDescriptionsQuery->value(endDateIdx).toDateTime();
+            dateTime.setTimeZone(QTimeZone::utc());
+            description.endDate = dateTime.toLocalTime();
+            description.description = d->selectDescriptionsQuery->value(descriptionIdx).toString();
+
             descriptions.append(description);
         }
 #ifdef DEBUG

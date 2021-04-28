@@ -136,20 +136,20 @@ SQLitePositionDao::~SQLitePositionDao() noexcept
 bool SQLitePositionDao::add(qint64 aircraftId, const AircraftData &position)  noexcept
 {
     d->initQueries();
-    d->insertQuery->bindValue(":aircraft_id", aircraftId, QSql::In);
-    d->insertQuery->bindValue(":timestamp", position.timestamp, QSql::In);
-    d->insertQuery->bindValue(":latitude", position.latitude, QSql::In);
-    d->insertQuery->bindValue(":longitude", position.longitude, QSql::In);
-    d->insertQuery->bindValue(":altitude", position.altitude, QSql::In);
-    d->insertQuery->bindValue(":pitch", position.pitch, QSql::In);
-    d->insertQuery->bindValue(":bank", position.bank, QSql::In);
-    d->insertQuery->bindValue(":heading", position.heading, QSql::In);
-    d->insertQuery->bindValue(":velocity_x", position.velocityBodyX, QSql::In);
-    d->insertQuery->bindValue(":velocity_y", position.velocityBodyY, QSql::In);
-    d->insertQuery->bindValue(":velocity_z", position.velocityBodyZ, QSql::In);
-    d->insertQuery->bindValue(":rotation_velocity_x", position.rotationVelocityBodyX, QSql::In);
-    d->insertQuery->bindValue(":rotation_velocity_y", position.rotationVelocityBodyY, QSql::In);
-    d->insertQuery->bindValue(":rotation_velocity_z", position.rotationVelocityBodyZ, QSql::In);
+    d->insertQuery->bindValue(":aircraft_id", aircraftId);
+    d->insertQuery->bindValue(":timestamp", position.timestamp);
+    d->insertQuery->bindValue(":latitude", position.latitude);
+    d->insertQuery->bindValue(":longitude", position.longitude);
+    d->insertQuery->bindValue(":altitude", position.altitude);
+    d->insertQuery->bindValue(":pitch", position.pitch);
+    d->insertQuery->bindValue(":bank", position.bank);
+    d->insertQuery->bindValue(":heading", position.heading);
+    d->insertQuery->bindValue(":velocity_x", position.velocityBodyX);
+    d->insertQuery->bindValue(":velocity_y", position.velocityBodyY);
+    d->insertQuery->bindValue(":velocity_z", position.velocityBodyZ);
+    d->insertQuery->bindValue(":rotation_velocity_x", position.rotationVelocityBodyX);
+    d->insertQuery->bindValue(":rotation_velocity_y", position.rotationVelocityBodyY);
+    d->insertQuery->bindValue(":rotation_velocity_z", position.rotationVelocityBodyZ);
 
     bool ok = d->insertQuery->exec();
 

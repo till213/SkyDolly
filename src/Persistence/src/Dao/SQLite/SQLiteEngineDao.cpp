@@ -149,32 +149,32 @@ SQLiteEngineDao::~SQLiteEngineDao() noexcept
 bool SQLiteEngineDao::add(qint64 aircraftId, const EngineData &data)  noexcept
 {
     d->initQueries();
-    d->insertQuery->bindValue(":aircraft_id", aircraftId, QSql::In);
-    d->insertQuery->bindValue(":timestamp", data.timestamp, QSql::In);
-    d->insertQuery->bindValue(":throttle_lever_position1", data.throttleLeverPosition1, QSql::In);
-    d->insertQuery->bindValue(":throttle_lever_position2", data.throttleLeverPosition2, QSql::In);
-    d->insertQuery->bindValue(":throttle_lever_position3", data.throttleLeverPosition3, QSql::In);
-    d->insertQuery->bindValue(":throttle_lever_position4", data.throttleLeverPosition4, QSql::In);
-    d->insertQuery->bindValue(":propeller_lever_position1", data.propellerLeverPosition1, QSql::In);
-    d->insertQuery->bindValue(":propeller_lever_position2", data.propellerLeverPosition2, QSql::In);
-    d->insertQuery->bindValue(":propeller_lever_position3", data.propellerLeverPosition3, QSql::In);
-    d->insertQuery->bindValue(":propeller_lever_position4", data.propellerLeverPosition4, QSql::In);
-    d->insertQuery->bindValue(":mixture_lever_position1", data.mixtureLeverPosition1, QSql::In);
-    d->insertQuery->bindValue(":mixture_lever_position2", data.mixtureLeverPosition2, QSql::In);
-    d->insertQuery->bindValue(":mixture_lever_position3", data.mixtureLeverPosition3, QSql::In);
-    d->insertQuery->bindValue(":mixture_lever_position4", data.mixtureLeverPosition4, QSql::In);
-    d->insertQuery->bindValue(":cowl_flap_position1", data.cowlFlapPosition1, QSql::In);
-    d->insertQuery->bindValue(":cowl_flap_position2", data.cowlFlapPosition2, QSql::In);
-    d->insertQuery->bindValue(":cowl_flap_position3", data.cowlFlapPosition3, QSql::In);
-    d->insertQuery->bindValue(":cowl_flap_position4", data.cowlFlapPosition4, QSql::In);
-    d->insertQuery->bindValue(":electrical_master_battery1", data.electricalMasterBattery1, QSql::In);
-    d->insertQuery->bindValue(":electrical_master_battery2", data.electricalMasterBattery2, QSql::In);
-    d->insertQuery->bindValue(":electrical_master_battery3", data.electricalMasterBattery3, QSql::In);
-    d->insertQuery->bindValue(":electrical_master_battery4", data.electricalMasterBattery4, QSql::In);
-    d->insertQuery->bindValue(":general_engine_starter1", data.generalEngineStarter1, QSql::In);
-    d->insertQuery->bindValue(":general_engine_starter2", data.generalEngineStarter2, QSql::In);
-    d->insertQuery->bindValue(":general_engine_starter3", data.generalEngineStarter3, QSql::In);
-    d->insertQuery->bindValue(":general_engine_starter4", data.generalEngineStarter4, QSql::In);
+    d->insertQuery->bindValue(":aircraft_id", aircraftId);
+    d->insertQuery->bindValue(":timestamp", data.timestamp);
+    d->insertQuery->bindValue(":throttle_lever_position1", data.throttleLeverPosition1);
+    d->insertQuery->bindValue(":throttle_lever_position2", data.throttleLeverPosition2);
+    d->insertQuery->bindValue(":throttle_lever_position3", data.throttleLeverPosition3);
+    d->insertQuery->bindValue(":throttle_lever_position4", data.throttleLeverPosition4);
+    d->insertQuery->bindValue(":propeller_lever_position1", data.propellerLeverPosition1);
+    d->insertQuery->bindValue(":propeller_lever_position2", data.propellerLeverPosition2);
+    d->insertQuery->bindValue(":propeller_lever_position3", data.propellerLeverPosition3);
+    d->insertQuery->bindValue(":propeller_lever_position4", data.propellerLeverPosition4);
+    d->insertQuery->bindValue(":mixture_lever_position1", data.mixtureLeverPosition1);
+    d->insertQuery->bindValue(":mixture_lever_position2", data.mixtureLeverPosition2);
+    d->insertQuery->bindValue(":mixture_lever_position3", data.mixtureLeverPosition3);
+    d->insertQuery->bindValue(":mixture_lever_position4", data.mixtureLeverPosition4);
+    d->insertQuery->bindValue(":cowl_flap_position1", data.cowlFlapPosition1);
+    d->insertQuery->bindValue(":cowl_flap_position2", data.cowlFlapPosition2);
+    d->insertQuery->bindValue(":cowl_flap_position3", data.cowlFlapPosition3);
+    d->insertQuery->bindValue(":cowl_flap_position4", data.cowlFlapPosition4);
+    d->insertQuery->bindValue(":electrical_master_battery1", data.electricalMasterBattery1);
+    d->insertQuery->bindValue(":electrical_master_battery2", data.electricalMasterBattery2);
+    d->insertQuery->bindValue(":electrical_master_battery3", data.electricalMasterBattery3);
+    d->insertQuery->bindValue(":electrical_master_battery4", data.electricalMasterBattery4);
+    d->insertQuery->bindValue(":general_engine_starter1", data.generalEngineStarter1);
+    d->insertQuery->bindValue(":general_engine_starter2", data.generalEngineStarter2);
+    d->insertQuery->bindValue(":general_engine_starter3", data.generalEngineStarter3);
+    d->insertQuery->bindValue(":general_engine_starter4", data.generalEngineStarter4);
 
     bool ok = d->insertQuery->exec();
 #ifdef DEBUG

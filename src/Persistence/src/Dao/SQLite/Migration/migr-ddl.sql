@@ -27,8 +27,10 @@ create table scenario (
 @migr(id = "1fb17949-6c94-4bbf-98a2-ff54fe3a749f", descn = "Create aircraft table", step_cnt = 1)
 create table aircraft (
     id integer primary key,
-    scenario_id integer,
-    seq_nr integer,
+    scenario_id integer not null,
+    seq_nr integer not null,
+    start_date datetime,
+    end_date datetime,
     type text,
     tail_number text,
     airline text,

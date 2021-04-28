@@ -31,6 +31,7 @@
 #include <QtGlobal>
 #include <QApplication>
 #include <QWidget>
+#include <QDateTime>
 
 #include "../../Kernel/src/SampleRate.h"
 #include "../../Kernel/src/Enum.h"
@@ -138,8 +139,7 @@ void SkyConnectImpl::onStopRecording() noexcept
 
 void SkyConnectImpl::onStartReplay(qint64 currentTimestamp) noexcept
 {
-    // "Freeze" the simulation: position and attitude only set by (interpolated)
-    // sample points
+    // "Freeze" the simulation: position and attitude only set by (interpolated) sample points
     setSimulationFrozen(true);    
     if (currentTimestamp == 0) {
         setupInitialPosition();
@@ -538,6 +538,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
         {
             const SimConnectAircraftInfo *simConnectAircraftInfo = reinterpret_cast<const SimConnectAircraftInfo *>(&objectData->dwData);
             AircraftInfo aircraftInfo = simConnectAircraftInfo->toAircraftInfo();
+            aircraftInfo.startDate = QDateTime::currentDateTime();
             userAircraft.setAircraftInfo(aircraftInfo);
             FlightCondition flightCondition = simConnectAircraftInfo->toFlightCondition();
             currentScenario.setFlightCondition(flightCondition);
