@@ -25,7 +25,10 @@
 #ifndef UNIT_H
 #define UNIT_H
 
-#include <QString>
+#include <QtGlobal>
+
+class QString;
+class QDateTime;
 
 class Unit
 {
@@ -58,6 +61,9 @@ public:
 
     static QString formatElapsedTime(qint64 milliseconds) noexcept;
     static QString formatMemory(qint64 memory) noexcept;
+
+    static QString formatDate(const QDateTime &date) noexcept;
+    static QString formatTime(const QDateTime &time) noexcept;
 
 private:
     static inline void dd2dms(double dd, int &degrees, int &minutes, double &seconds) noexcept;

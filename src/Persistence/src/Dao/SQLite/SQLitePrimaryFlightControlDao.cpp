@@ -108,11 +108,11 @@ SQLitePrimaryFlightControlDao::~SQLitePrimaryFlightControlDao() noexcept
 bool SQLitePrimaryFlightControlDao::add(qint64 aircraftId, const PrimaryFlightControlData &primaryFlightControlData)  noexcept
 {
     d->initQueries();
-    d->insertQuery->bindValue(":aircraft_id", aircraftId, QSql::In);
-    d->insertQuery->bindValue(":timestamp", primaryFlightControlData.timestamp, QSql::In);
-    d->insertQuery->bindValue(":rudder_position", primaryFlightControlData.rudderPosition, QSql::In);
-    d->insertQuery->bindValue(":elevator_position", primaryFlightControlData.elevatorPosition, QSql::In);
-    d->insertQuery->bindValue(":aileron_position", primaryFlightControlData.aileronPosition, QSql::In);
+    d->insertQuery->bindValue(":aircraft_id", aircraftId);
+    d->insertQuery->bindValue(":timestamp", primaryFlightControlData.timestamp);
+    d->insertQuery->bindValue(":rudder_position", primaryFlightControlData.rudderPosition);
+    d->insertQuery->bindValue(":elevator_position", primaryFlightControlData.elevatorPosition);
+    d->insertQuery->bindValue(":aileron_position", primaryFlightControlData.aileronPosition);
 
     bool ok = d->insertQuery->exec();
 #ifdef DEBUG

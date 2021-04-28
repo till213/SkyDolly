@@ -30,6 +30,7 @@
 #include <QVariant>
 #include <QSqlError>
 #include <QSqlRecord>
+#include <QTimeZone>
 
 #include "../../../../Kernel/src/Enum.h"
 #include "../../../../Model/src/Aircraft.h"
@@ -84,6 +85,8 @@ public:
 "  id,"
 "  scenario_id,"
 "  seq_nr,"
+"  start_date,"
+"  end_date,"
 "  type,"
 "  tail_number,"
 "  airline,"
@@ -99,6 +102,8 @@ public:
 "  null,"
 " :scenario_id,"
 " :seq_nr,"
+" :start_date,"
+" :end_date,"
 " :type,"
 " :tail_number,"
 " :airline,"
@@ -163,19 +168,21 @@ bool SQLiteAircraftDao::add(qint64 scenarioId, int sequenceNumber, Aircraft &air
 {
     d->initQueries();
     const AircraftInfo &info = aircraft.getAircraftInfoConst();
-    d->insertQuery->bindValue(":scenario_id", scenarioId, QSql::In);
-    d->insertQuery->bindValue(":seq_nr", sequenceNumber, QSql::In);
-    d->insertQuery->bindValue(":type", info.type, QSql::In);
-    d->insertQuery->bindValue(":tail_number", info.tailNumber, QSql::In);
-    d->insertQuery->bindValue(":airline", info.airline, QSql::In);
-    d->insertQuery->bindValue(":flight_number", info.flightNumber, QSql::In);
-    d->insertQuery->bindValue(":category", info.category, QSql::In);
-    d->insertQuery->bindValue(":initial_airspeed", info.initialAirspeed, QSql::In);
-    d->insertQuery->bindValue(":wing_span", info.wingSpan, QSql::In);
-    d->insertQuery->bindValue(":engine_type", Enum::toUnderlyingType(info.engineType), QSql::In);
-    d->insertQuery->bindValue(":nof_engines", info.numberOfEngines, QSql::In);
-    d->insertQuery->bindValue(":altitude_above_ground", info.altitudeAboveGround, QSql::In);
-    d->insertQuery->bindValue(":start_on_ground", info.startOnGround, QSql::In);
+    d->insertQuery->bindValue(":scenario_id", scenarioId);
+    d->insertQuery->bindValue(":seq_nr", sequenceNumber);
+    d->insertQuery->bindValue(":start_date", info.startDate.toUTC());
+    d->insertQuery->bindValue(":end_date", info.endDate.toUTC());
+    d->insertQuery->bindValue(":type", info.type);
+    d->insertQuery->bindValue(":tail_number", info.tailNumber);
+    d->insertQuery->bindValue(":airline", info.airline);
+    d->insertQuery->bindValue(":flight_number", info.flightNumber);
+    d->insertQuery->bindValue(":category", info.category);
+    d->insertQuery->bindValue(":initial_airspeed", info.initialAirspeed);
+    d->insertQuery->bindValue(":wing_span", info.wingSpan);
+    d->insertQuery->bindValue(":engine_type", Enum::toUnderlyingType(info.engineType));
+    d->insertQuery->bindValue(":nof_engines", info.numberOfEngines);
+    d->insertQuery->bindValue(":altitude_above_ground", info.altitudeAboveGround);
+    d->insertQuery->bindValue(":start_on_ground", info.startOnGround);
 
     bool ok = d->insertQuery->exec();
     if (ok) {
@@ -252,6 +259,8 @@ bool SQLiteAircraftDao::getByScenarioId(qint64 scenarioId, int sequenceNumber, A
     if (ok) {
         aircraft.clear();
         int idIdx = d->selectByScenarioIdQuery->record().indexOf("id");
+        int startDateIdx = d->selectByScenarioIdQuery->record().indexOf("start_date");
+        int endDateIdx = d->selectByScenarioIdQuery->record().indexOf("end_date");
         int typeIdx = d->selectByScenarioIdQuery->record().indexOf("type");
         int tailNumberIdx = d->selectByScenarioIdQuery->record().indexOf("tail_number");
         int airlineIdx = d->selectByScenarioIdQuery->record().indexOf("airline");
@@ -267,7 +276,12 @@ bool SQLiteAircraftDao::getByScenarioId(qint64 scenarioId, int sequenceNumber, A
             aircraft.setId(d->selectByScenarioIdQuery->value(idIdx).toLongLong());
 
             AircraftInfo info;
-
+            QDateTime dateTime = d->selectByScenarioIdQuery->value(startDateIdx).toDateTime();
+            dateTime.setTimeZone(QTimeZone::utc());
+            info.startDate = dateTime.toLocalTime();
+            dateTime = d->selectByScenarioIdQuery->value(endDateIdx).toDateTime();
+            dateTime.setTimeZone(QTimeZone::utc());
+            info.endDate = dateTime.toLocalTime();
             info.type = d->selectByScenarioIdQuery->value(typeIdx).toString();
             info.tailNumber = d->selectByScenarioIdQuery->value(tailNumberIdx).toString();
             info.airline = d->selectByScenarioIdQuery->value(airlineIdx).toString();

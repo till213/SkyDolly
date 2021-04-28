@@ -27,6 +27,8 @@
 
 #include <QString>
 #include <QStringBuilder>
+#include <QLocale>
+#include <QDateTime>
 
 #include "Unit.h"
 
@@ -168,6 +170,16 @@ QString Unit::formatMemory(qint64 memory) noexcept
         size = QString("%1 TiB").arg(QString::number(static_cast<double>(memory) / (1024.0 * 1024.0 * 1024.0 * 1024.0), 'f', 2));
     }
     return size;
+}
+
+QString Unit::formatDate(const QDateTime &date) noexcept
+{
+    return QLocale::system().toString(date, "dd.MM.yyyy");
+}
+
+QString Unit::formatTime(const QDateTime &time) noexcept
+{
+    return QLocale::system().toString(time, "hh:mm:s");
 }
 
 // PRIVATE

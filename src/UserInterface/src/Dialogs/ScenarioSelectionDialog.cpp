@@ -32,11 +32,14 @@
 #include <QItemSelectionModel>
 #include <QModelIndex>
 #include <QLocale>
+#include <QDateTime>
+#include <QTime>
 #include <QPushButton>
 
 #include "../../../Model/src/Scenario.h"
 #include "../../../Model/src/ScenarioDescription.h"
 #include "../../../Persistence/src/Service/ScenarioService.h"
+#include "../Unit.h"
 #include "ScenarioSelectionDialog.h"
 #include "ui_ScenarioSelectionDialog.h"
 
@@ -97,7 +100,7 @@ void ScenarioSelectionDialog::initUi() noexcept
 {
     ui->scenarioTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    const QStringList headers {tr("ID"), tr("Creation"), tr("Description"), tr("Aircraft")};
+    const QStringList headers {tr("Scenario"), tr("Date"), tr("Aircraft"), tr("Departure Time"), tr("Departure Place"), tr("Arrival Time"), tr("Arrival Place"), tr("Total Time of Flight"), tr("Description")};
     ui->scenarioTableWidget->setColumnCount(headers.count());
     ui->scenarioTableWidget->setHorizontalHeaderLabels(headers);
     ui->scenarioTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -108,21 +111,37 @@ void ScenarioSelectionDialog::initUi() noexcept
 void ScenarioSelectionDialog::updateUi() noexcept
 {
     QVector<ScenarioDescription> descriptions = d->scenarioService.getScenarioDescriptions();
-
+    QLocale systemLocale = QLocale::system();
     ui->scenarioTableWidget->setSortingEnabled(false);
     ui->scenarioTableWidget->clearContents();
     ui->scenarioTableWidget->setRowCount(descriptions.count());
     int rowIndex = 0;
     for (const ScenarioDescription &desc : descriptions) {
         QTableWidgetItem *newItem = new QTableWidgetItem();
+
         newItem->setData(Qt::DisplayRole, desc.id);
         ui->scenarioTableWidget->setItem(rowIndex, 0, newItem);
-        newItem = new QTableWidgetItem(QLocale::system().toString(desc.creationDate));
+
+        newItem = new QTableWidgetItem(Unit::formatDate(desc.creationDate));
         ui->scenarioTableWidget->setItem(rowIndex, 1, newItem);
-        newItem = new QTableWidgetItem(desc.description);
-        ui->scenarioTableWidget->setItem(rowIndex, 2, newItem);
+
         newItem = new QTableWidgetItem(desc.aircraftType);
+        ui->scenarioTableWidget->setItem(rowIndex, 2, newItem);
+
+        newItem = new QTableWidgetItem(Unit::formatTime(desc.startDate));
         ui->scenarioTableWidget->setItem(rowIndex, 3, newItem);
+
+        newItem = new QTableWidgetItem(Unit::formatTime(desc.endDate));
+        ui->scenarioTableWidget->setItem(rowIndex, 5, newItem);
+
+        const qint64 durationMSec = desc.startDate.msecsTo(desc.endDate);
+        const QTime time = QTime(0, 0).addMSecs(durationMSec);
+        newItem = new QTableWidgetItem(systemLocale.toString(time));
+        ui->scenarioTableWidget->setItem(rowIndex, 7, newItem);
+
+        newItem = new QTableWidgetItem(desc.description);
+        ui->scenarioTableWidget->setItem(rowIndex, 8, newItem);
+
         ++rowIndex;
     }
     ui->scenarioTableWidget->resizeColumnsToContents();
