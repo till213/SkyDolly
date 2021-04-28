@@ -27,6 +27,7 @@
 #include <QFileInfo>
 #include <QLineEdit>
 #include <QDateTimeEdit>
+#include <QLocale>
 
 #include "../../../Persistence/src/Service/DatabaseService.h"
 #include "../Unit.h"
@@ -83,13 +84,12 @@ void AboutLibraryDialog::updateUi() noexcept
     QString libraryName = fileInfo.fileName();
     ui->libraryNameLineEdit->setText(libraryName);
 
-    QString createdDate = metadata.creationDate.toLocalTime().toString();
+    QLocale systemLocale = QLocale::system();
+    QString createdDate = systemLocale.toString(metadata.creationDate);
     ui->createdDateLineEdit->setText(createdDate);
-
-    QString lastOptimisationDate = metadata.lastOptimisationDate.toLocalTime().toString();
+    QString lastOptimisationDate = systemLocale.toString(metadata.lastOptimisationDate);
     ui->lastOptimisationDateLineEdit->setText(lastOptimisationDate);
-
-    QString lastBackupDate = metadata.lastBackupDate.toLocalTime().toString();
+    QString lastBackupDate = systemLocale.toString(metadata.lastBackupDate);
     ui->lastBackupDateLineEdit->setText(lastBackupDate);
 
     qint64 fileSize = fileInfo.size();

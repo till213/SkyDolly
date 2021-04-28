@@ -120,12 +120,17 @@ bool SQLiteDatabaseDao::getMetadata(Metadata &metadata) const noexcept
     QSqlQuery query;
     bool ok = query.exec("select creation_date, last_optim_date, last_backup_date from meta;");
     if (query.next()) {
-        metadata.creationDate = query.value(0).toDateTime();
-        metadata.creationDate.setTimeZone(QTimeZone::utc());
-        metadata.lastOptimisationDate = query.value(1).toDateTime();
-        metadata.lastOptimisationDate.setTimeZone(QTimeZone::utc());
-        metadata.lastBackupDate = query.value(2).toDateTime();
-        metadata.lastBackupDate.setTimeZone(QTimeZone::utc());
+        QDateTime dateTime = query.value(0).toDateTime();
+        dateTime.setTimeZone(QTimeZone::utc());
+        metadata.creationDate = dateTime.toLocalTime();
+
+        dateTime = query.value(1).toDateTime();
+        dateTime.setTimeZone(QTimeZone::utc());
+        metadata.lastOptimisationDate = dateTime.toLocalTime();
+
+        dateTime = query.value(2).toDateTime();
+        dateTime.setTimeZone(QTimeZone::utc());
+        metadata.lastBackupDate = dateTime.toLocalTime();
     }
     return ok;
 };
