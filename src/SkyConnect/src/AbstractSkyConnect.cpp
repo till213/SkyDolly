@@ -112,14 +112,6 @@ void AbstractSkyConnect::stopRecording() noexcept
 {
     onStopRecording();
     d->timer.stop();
-
-    // Update end time
-    Aircraft &userAircraft = d->currentScenario.getUserAircraft();
-    AircraftInfo aircraftInfo = userAircraft.getAircraftInfoConst();
-    const qint64 elapsed = d->elapsedTimer.elapsed();
-    aircraftInfo.endDate = aircraftInfo.startDate.addMSecs(elapsed);
-    userAircraft.setAircraftInfo(aircraftInfo);
-
     d->elapsedTimer.invalidate();
     setState(Connect::State::Connected);
     d->scenarioService->store(d->currentScenario);
