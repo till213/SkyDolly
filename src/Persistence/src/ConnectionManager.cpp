@@ -104,11 +104,13 @@ bool ConnectionManager::migrate() noexcept
 
 bool ConnectionManager::optimise() noexcept
 {
+    emit connectionChanged(d->connected);
     return d->databaseDao->optimise();
 }
 
 bool ConnectionManager::backup(const QString &backupLibraryPath) noexcept
 {
+    emit connectionChanged(d->connected);
     return d->databaseDao->backup(backupLibraryPath);
 }
 
@@ -120,13 +122,11 @@ bool ConnectionManager::getMetadata(Metadata &metadata) noexcept
 // PROTECTED
 
 ConnectionManager::~ConnectionManager() noexcept
-{
-}
+{}
 
 // PRIVATE
 
 ConnectionManager::ConnectionManager() noexcept
     : d(std::make_unique<ConnectionManagerPrivate>())
-{
-}
+{}
 
