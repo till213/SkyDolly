@@ -63,13 +63,13 @@ Light::~Light() noexcept
 {
 }
 
-void Light::upsert(LightData LightData) noexcept
+void Light::upsert(const LightData &lightData) noexcept
 {
-    if (d->lightData.count() > 0 && d->lightData.last().timestamp == LightData.timestamp)  {
+    if (d->lightData.count() > 0 && d->lightData.last().timestamp == lightData.timestamp)  {
         // Same timestamp -> replace
-        d->lightData[d->lightData.count() - 1] = LightData;
+        d->lightData[d->lightData.count() - 1] = lightData;
     } else {
-        d->lightData.append(LightData);
+        d->lightData.append(lightData);
     }
     emit dataChanged();
 }

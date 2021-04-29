@@ -131,8 +131,14 @@ void ScenarioSelectionDialog::updateUi() noexcept
         newItem = new QTableWidgetItem(Unit::formatTime(desc.startDate));
         ui->scenarioTableWidget->setItem(rowIndex, 3, newItem);
 
+        newItem = new QTableWidgetItem(desc.startLocation);
+        ui->scenarioTableWidget->setItem(rowIndex, 4, newItem);
+
         newItem = new QTableWidgetItem(Unit::formatTime(desc.endDate));
         ui->scenarioTableWidget->setItem(rowIndex, 5, newItem);
+
+        newItem = new QTableWidgetItem(desc.endLocation);
+        ui->scenarioTableWidget->setItem(rowIndex, 6, newItem);
 
         const qint64 durationMSec = desc.startDate.msecsTo(desc.endDate);
         const QTime time = QTime(0, 0).addMSecs(durationMSec);

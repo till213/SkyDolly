@@ -89,19 +89,13 @@ PrimaryFlightControl::~PrimaryFlightControl() noexcept
 {
 }
 
-void PrimaryFlightControl::upsert(PrimaryFlightControlData primaryFlightControlData) noexcept
+void PrimaryFlightControl::upsert(const PrimaryFlightControlData &primaryFlightControlData) noexcept
 {
     if (d->primaryFlightControlData.count() > 0 && d->primaryFlightControlData.last().timestamp == primaryFlightControlData.timestamp)  {
         // Same timestamp -> replace
         d->primaryFlightControlData[d->primaryFlightControlData.count() - 1] = primaryFlightControlData;
-#ifdef DEBUG
-        qDebug("PrimaryFlightControl::upsertPrimaryFlightControlData: UPDATE sample, timestamp: %llu count: %d", primaryFlightControlData.timestamp, d->primaryFlightControlData.count());
-#endif
     } else {
         d->primaryFlightControlData.append(primaryFlightControlData);
-#ifdef DEBUG
-        qDebug("PrimaryFlightControl::upsertPrimaryFlightControlData: INSERT sample, timestamp: %llu count: %d", primaryFlightControlData.timestamp, d->primaryFlightControlData.count());
-#endif
     }
     emit dataChanged();
 }

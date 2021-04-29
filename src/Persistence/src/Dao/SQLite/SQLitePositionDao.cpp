@@ -213,7 +213,7 @@ bool SQLitePositionDao::getByAircraftId(qint64 aircraftId, QVector<AircraftData>
 bool SQLitePositionDao::deleteByScenarioId(qint64 scenarioId) noexcept
 {
     d->initQueries();
-    d->deleteByScenarioIdQuery->bindValue(":id", scenarioId);
+    d->deleteByScenarioIdQuery->bindValue(":scenario_id", scenarioId);
     bool ok = d->deleteByScenarioIdQuery->exec();
 #ifdef DEBUG
     if (!ok) {

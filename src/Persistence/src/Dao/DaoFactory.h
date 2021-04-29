@@ -35,6 +35,7 @@
 #include "SecondaryFlightControlDaoIntf.h"
 #include "HandleDaoIntf.h"
 #include "LightDaoIntf.h"
+#include "FlightPlanDaoIntf.h"
 #include "DatabaseDaoIntf.h"
 
 class DaoFactoryPrivate;
@@ -60,6 +61,7 @@ public:
     std::unique_ptr<SecondaryFlightControlDaoIntf> createSecondaryFlightControlDao() noexcept;
     std::unique_ptr<HandleDaoIntf> createHandleDao() noexcept;
     std::unique_ptr<LightDaoIntf> createLightDao() noexcept;
+    std::unique_ptr<FlightPlanDaoIntf> createFlightPlanDao() noexcept;
 
 private:
     std::unique_ptr<DaoFactoryPrivate> d;

@@ -44,7 +44,7 @@ public:
     AircraftHandle(QObject *parent = nullptr) noexcept;
     virtual ~AircraftHandle() noexcept;
 
-    void upsert(AircraftHandleData aircraftHandleData) noexcept;
+    void upsert(const AircraftHandleData &aircraftHandleData) noexcept;
     const AircraftHandleData &getLast() const noexcept;
     QVector<AircraftHandleData> &getAll() const noexcept;
     const QVector<AircraftHandleData> &getAllConst() const noexcept;

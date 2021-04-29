@@ -63,19 +63,13 @@ Engine::~Engine() noexcept
 {
 }
 
-void Engine::upsert(EngineData engineData) noexcept
+void Engine::upsert(const EngineData &engineData) noexcept
 {
     if (d->engineData.count() > 0 && d->engineData.last().timestamp == engineData.timestamp)  {
         // Same timestamp -> replace
         d->engineData[d->engineData.count() - 1] = engineData;
-#ifdef DEBUG
-        qDebug("Engine::upsertEngineData: UPDATE sample, timestamp: %llu count: %d", engineData.timestamp, d->engineData.count());
-#endif
     } else {
         d->engineData.append(engineData);
-#ifdef DEBUG
-        qDebug("Engine::upsertEngineData: INSERT sample, timestamp: %llu count: %d", engineData.timestamp, d->engineData.count());
-#endif
     }
     emit dataChanged();
 }

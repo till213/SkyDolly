@@ -22,26 +22,28 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "AircraftInfo.h"
+#ifndef FLIGHTPLANDAOINTF_H
+#define FLIGHTPLANDAOINTF_H
 
-// PUBLIC
+class FlightPlanData;
 
-AircraftInfo::AircraftInfo() noexcept
+class FlightPlanDaoIntf
 {
-    clear();
-}
+public:
+    virtual ~FlightPlanDaoIntf() = default;
 
-void AircraftInfo::clear() noexcept
-{
-    type.clear();
-    tailNumber.clear();
-    airline.clear();
-    flightNumber.clear();
-    category.clear();
-    startOnGround = false;
-    altitudeAboveGround = 0.0f;
-    initialAirspeed = 0;
-    wingSpan = 0;
-    engineType = SimType::EngineType::Unknown;
-    numberOfEngines = 0;    
-}
+    /*!
+     * Persists the \c data.
+     *
+     * \param aircraftId
+     *        the aircraft the \c data belongs to
+     * \param data
+     *        the FlightPlanData to be persisted
+     * \return \c true on success; \c false else
+     */
+    virtual bool add(qint64 aircraftId, const QVector<FlightPlanData> &data) = 0;
+    virtual bool getByAircraftId(qint64 aircraftId, QVector<FlightPlanData> &data) const = 0;
+    virtual bool deleteByScenarioId(qint64 scenarioId) = 0;
+};
+
+#endif // FLIGHTPLANDAOINTF_H

@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The black sheep for your flight recordings
+ * Sky Dolly - The black sheep for your fFlightPlan recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,26 +22,36 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "AircraftInfo.h"
+#ifndef SQLITEFFLIGHTPLANDAO_H
+#define SQLITEFFLIGHTPLANDAO_H
 
-// PUBLIC
+#include <memory>
 
-AircraftInfo::AircraftInfo() noexcept
+#include <QObject>
+#include <QVector>
+
+#include "../../../../Model/src/FlightPlanData.h"
+#include "../FlightPlanDaoIntf.h"
+
+class SQLiteFlightPlanDaoPrivate;
+
+class SQLiteFlightPlanDao : public QObject, public FlightPlanDaoIntf
 {
-    clear();
-}
+public:
+    explicit SQLiteFlightPlanDao(QObject *parent = nullptr) noexcept;
+    virtual ~SQLiteFlightPlanDao() noexcept;
 
-void AircraftInfo::clear() noexcept
-{
-    type.clear();
-    tailNumber.clear();
-    airline.clear();
-    flightNumber.clear();
-    category.clear();
-    startOnGround = false;
-    altitudeAboveGround = 0.0f;
-    initialAirspeed = 0;
-    wingSpan = 0;
-    engineType = SimType::EngineType::Unknown;
-    numberOfEngines = 0;    
-}
+    virtual bool add(qint64 aircraftId, const QVector<FlightPlanData> &data) noexcept override;
+    virtual bool getByAircraftId(qint64 aircraftId, QVector<FlightPlanData> &data) const noexcept override;
+    virtual bool deleteByScenarioId(qint64 scenarioId) noexcept override;
+
+private:
+    std::unique_ptr<SQLiteFlightPlanDaoPrivate> d;
+
+    void frenchConnection() noexcept;
+
+private slots:
+    void handleConnectionChanged() noexcept;
+};
+
+#endif // SQLITEFFLIGHTPLANDAO_H

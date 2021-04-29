@@ -110,9 +110,9 @@ void AbstractSkyConnect::startRecording() noexcept
 
 void AbstractSkyConnect::stopRecording() noexcept
 {
+    // TODO Wait for pending requests (e.g. destination airport)!!! Use e.g. a "pendingRequestsFinished" signal
     onStopRecording();
     d->timer.stop();
-    d->elapsedTimer.invalidate();
     setState(Connect::State::Connected);
     d->scenarioService->store(d->currentScenario);
 }
@@ -429,4 +429,3 @@ void AbstractSkyConnect::handleRecordSampleRateChanged(SampleRate::SampleRate sa
         onRecordSampleRateChanged(sampleRate);
     }
 }
-

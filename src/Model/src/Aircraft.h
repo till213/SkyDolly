@@ -41,6 +41,7 @@ class PrimaryFlightControl;
 class SecondaryFlightControl;
 class AircraftHandle;
 class Light;
+class FlightPlan;
 class AircraftPrivate;
 
 class MODEL_API Aircraft : public QObject
@@ -69,9 +70,12 @@ public:
     Light &getLight() const noexcept;
 
     const AircraftInfo &getAircraftInfoConst() const noexcept;
-    void setAircraftInfo(AircraftInfo aircraftInfo) noexcept;    
+    void setAircraftInfo(const AircraftInfo &aircraftInfo) noexcept;
 
-    void upsert(AircraftData aircraftData) noexcept;
+    const FlightPlan &getFlightPlanConst() const noexcept;
+    FlightPlan &getFlightPlan() const noexcept;
+
+    void upsert(AircraftData &aircraftData) noexcept;
     const AircraftData &getLast() const noexcept;
     const QVector<AircraftData> &getAllConst() const noexcept;
     QVector<AircraftData> &getAll() const noexcept;

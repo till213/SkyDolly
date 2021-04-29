@@ -118,7 +118,7 @@ public:
             deleteByScenarioIdQuery = std::make_unique<QSqlQuery>();
             deleteByScenarioIdQuery->prepare(
 "delete "
-"from   position "
+"from   engine "
 "where  aircraft_id in (select a.id "
 "                       from aircraft a"
 "                       where a.scenario_id = :scenario_id"
@@ -262,7 +262,7 @@ bool SQLiteEngineDao::getByAircraftId(qint64 aircraftId, QVector<EngineData> &en
 bool SQLiteEngineDao::deleteByScenarioId(qint64 scenarioId) noexcept
 {
     d->initQueries();
-    d->deleteByScenarioIdQuery->bindValue(":id", scenarioId);
+    d->deleteByScenarioIdQuery->bindValue(":scenario_id", scenarioId);
     bool ok = d->deleteByScenarioIdQuery->exec();
 #ifdef DEBUG
     if (!ok) {

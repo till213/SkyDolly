@@ -22,26 +22,53 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "AircraftInfo.h"
+#include <memory>
+
+#include <QObject>
+#include <QVector>
+
+#include "FlightPlanData.h"
+#include "FlightPlan.h"
+
+class FlightPlanPrivate
+{
+public:
+    FlightPlanPrivate() noexcept
+    {}
+
+    QVector<FlightPlanData> flightPlanData;
+};
 
 // PUBLIC
 
-AircraftInfo::AircraftInfo() noexcept
+FlightPlan::FlightPlan(QObject *parent) noexcept
+    : QObject(parent),
+      d(std::make_unique<FlightPlanPrivate>())
 {
-    clear();
 }
 
-void AircraftInfo::clear() noexcept
+FlightPlan::~FlightPlan() noexcept
 {
-    type.clear();
-    tailNumber.clear();
-    airline.clear();
-    flightNumber.clear();
-    category.clear();
-    startOnGround = false;
-    altitudeAboveGround = 0.0f;
-    initialAirspeed = 0;
-    wingSpan = 0;
-    engineType = SimType::EngineType::Unknown;
-    numberOfEngines = 0;    
+}
+
+void FlightPlan::add(const FlightPlanData &flightPlanData) noexcept
+{
+    d->flightPlanData.append(flightPlanData);
+    emit dataChanged();
+}
+
+QVector<FlightPlanData> &FlightPlan::getAll() const noexcept
+{
+    return d->flightPlanData;
+}
+
+const QVector<FlightPlanData> &FlightPlan::getAllConst() const noexcept
+{
+    return d->flightPlanData;
+}
+
+void FlightPlan::clear() noexcept
+{
+    d->flightPlanData.clear();
+    emit dataChanged();
 }
