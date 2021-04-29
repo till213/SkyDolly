@@ -54,9 +54,6 @@ bool EventWidget::nativeEvent(const QByteArray &eventType, void *message, long *
     const MSG *msg = static_cast<MSG *>(message);
     switch(msg->message) {
     case SimConnnectUserMessage:
-#ifdef DEBUG
-        qDebug("EventWidget::nativeEvent: SimConnnectUserMessage received.");
-#endif
         emit simConnectEvent();
         handled = true;
         break;
