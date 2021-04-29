@@ -346,12 +346,6 @@ bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
         if (!currentAircraftData.isNull()) {
             SimConnectAircraftData simConnectAircraftData;
             simConnectAircraftData.fromAircraftData(currentAircraftData);
-#ifdef DEBUG
-            qDebug("%f, %f, %f, %f, %f, %f, %lli",
-                   simConnectAircraftData.longitude, simConnectAircraftData.latitude, simConnectAircraftData.altitude,
-                   simConnectAircraftData.pitch, simConnectAircraftData.bank, simConnectAircraftData.heading,
-                   currentTimestamp);
-#endif
             const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionDefinition),
                                                                ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
                                                                sizeof(SimConnectAircraftData), &simConnectAircraftData);
