@@ -31,14 +31,14 @@
 #include <QSqlError>
 #include <QSqlRecord>
 
-#include "../../../../Model/src/LightData.h"
+#include "../../../../Model/src/FlightPlanData.h"
 #include "../../ConnectionManager.h"
-#include "SQLiteLightDao.h"
+#include "SQLiteFlightPlanDao.h"
 
-class SQLiteLightDaoPrivate
+class SQLiteFlightPlanDaoPrivate
 {
 public:
-    SQLiteLightDaoPrivate() noexcept
+    SQLiteFlightPlanDaoPrivate() noexcept
     {}
 
     std::unique_ptr<QSqlQuery> insertQuery;
@@ -50,29 +50,35 @@ public:
         if (insertQuery == nullptr) {
             insertQuery = std::make_unique<QSqlQuery>();
             insertQuery->prepare(
-"insert into light ("
+"insert into flight_plan ("
 "  aircraft_id,"
-"  timestamp,"
-"  light_states"
+"  seq_nr,"
+"  ident,"
+"  latitude,"
+"  longitude,"
+"  altitude"
 ") values ("
 " :aircraft_id,"
-" :timestamp,"
-" :light_states"
+" :seq_nr,"
+" :ident,"
+" :latitude,"
+" :longitude,"
+" :altitude"
 ");");
         }
         if (selectByAircraftIdQuery == nullptr) {
             selectByAircraftIdQuery = std::make_unique<QSqlQuery>();
             selectByAircraftIdQuery->prepare(
 "select * "
-"from   light l "
-"where  l.aircraft_id = :aircraft_id "
-"order by l.timestamp asc;");
+"from   flight_plan fp "
+"where  fp.aircraft_id = :aircraft_id "
+"order by fp.seq_nr asc;");
         }
         if (deleteByScenarioIdQuery == nullptr) {
             deleteByScenarioIdQuery = std::make_unique<QSqlQuery>();
             deleteByScenarioIdQuery->prepare(
 "delete "
-"from   light "
+"from   flight_plan "
 "where  aircraft_id in (select a.id "
 "                       from aircraft a"
 "                       where a.scenario_id = :scenario_id"
@@ -90,65 +96,78 @@ public:
 
 // PUBLIC
 
-SQLiteLightDao::SQLiteLightDao(QObject *parent) noexcept
+SQLiteFlightPlanDao::SQLiteFlightPlanDao(QObject *parent) noexcept
     : QObject(parent),
-      d(std::make_unique<SQLiteLightDaoPrivate>())
+      d(std::make_unique<SQLiteFlightPlanDaoPrivate>())
 {
     frenchConnection();
 }
 
-SQLiteLightDao::~SQLiteLightDao() noexcept
+SQLiteFlightPlanDao::~SQLiteFlightPlanDao() noexcept
 {}
 
-bool SQLiteLightDao::add(qint64 aircraftId, const LightData &lightData)  noexcept
+bool SQLiteFlightPlanDao::add(qint64 aircraftId, const QVector<FlightPlanData> &flightPlanData)  noexcept
 {
     d->initQueries();
     d->insertQuery->bindValue(":aircraft_id", aircraftId);
-    d->insertQuery->bindValue(":timestamp", lightData.timestamp);
-    d->insertQuery->bindValue(":light_states", static_cast<int>(lightData.lightStates));
+    int sequenceNumber = 1;
+    bool ok = true;
+    for (const FlightPlanData &data : flightPlanData) {
+        d->insertQuery->bindValue(":seq_nr", sequenceNumber);
+        d->insertQuery->bindValue(":ident", data.waypointIdentifier);
+        d->insertQuery->bindValue(":latitude", data.waypointLatitude);
+        d->insertQuery->bindValue(":longitude", data.waypointLongitude);
+        d->insertQuery->bindValue(":altitude", data.waypointAltitude);
 
-    bool ok = d->insertQuery->exec();
+        ok = d->insertQuery->exec();
+        if (!ok) {
 #ifdef DEBUG
-    if (!ok) {
-        qDebug("SQLiteLightDao::add: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
-    }
+            qDebug("SQLiteFlightPlanDao::add: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
 #endif
+            break;
+        }
+        ++sequenceNumber;
+    }
     return ok;
 }
 
-bool SQLiteLightDao::getByAircraftId(qint64 aircraftId, QVector<LightData> &lightData) const noexcept
+bool SQLiteFlightPlanDao::getByAircraftId(qint64 aircraftId, QVector<FlightPlanData> &flightPlanData) const noexcept
 {
     d->initQueries();
     d->selectByAircraftIdQuery->bindValue(":aircraft_id", aircraftId);
     bool ok = d->selectByAircraftIdQuery->exec();
     if (ok) {
-        lightData.clear();
-        int timestampIdx = d->selectByAircraftIdQuery->record().indexOf("timestamp");
-        int lightStatesIdx = d->selectByAircraftIdQuery->record().indexOf("light_states");
+        flightPlanData.clear();
+        int identifierIdx = d->selectByAircraftIdQuery->record().indexOf("ident");
+        int latitudeIdx = d->selectByAircraftIdQuery->record().indexOf("latitude");
+        int longitudeIdx = d->selectByAircraftIdQuery->record().indexOf("longitude");
+        int altitudeIdx = d->selectByAircraftIdQuery->record().indexOf("altitude");
         while (d->selectByAircraftIdQuery->next()) {
 
-            LightData data;
-            data.timestamp = d->selectByAircraftIdQuery->value(timestampIdx).toLongLong();
-            data.lightStates = static_cast<SimType::LightStates>(d->selectByAircraftIdQuery->value(lightStatesIdx).toInt());
-            lightData.append(data);
+            FlightPlanData data;
+            data.waypointIdentifier = d->selectByAircraftIdQuery->value(identifierIdx).toString();
+            data.waypointLatitude = d->selectByAircraftIdQuery->value(latitudeIdx).toFloat();
+            data.waypointLongitude = d->selectByAircraftIdQuery->value(longitudeIdx).toFloat();
+            data.waypointAltitude = d->selectByAircraftIdQuery->value(altitudeIdx).toFloat();
+            flightPlanData.append(data);
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteLightDao::getByAircraftId: SQL error: %s", qPrintable(d->selectByAircraftIdQuery->lastError().databaseText() + " - error code: " + d->selectByAircraftIdQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteFlightPlanDao::getByAircraftId: SQL error: %s", qPrintable(d->selectByAircraftIdQuery->lastError().databaseText() + " - error code: " + d->selectByAircraftIdQuery->lastError().nativeErrorCode()));
 #endif
     }
 
     return ok;
 }
 
-bool SQLiteLightDao::deleteByScenarioId(qint64 scenarioId) noexcept
+bool SQLiteFlightPlanDao::deleteByScenarioId(qint64 scenarioId) noexcept
 {
     d->initQueries();
     d->deleteByScenarioIdQuery->bindValue(":scenario_id", scenarioId);
     bool ok = d->deleteByScenarioIdQuery->exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteLightDao::deleteByScenarioId: SQL error: %s", qPrintable(d->deleteByScenarioIdQuery->lastError().databaseText() + " - error code: " + d->deleteByScenarioIdQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteFlightPlanDao::deleteByScenarioId: SQL error: %s", qPrintable(d->deleteByScenarioIdQuery->lastError().databaseText() + " - error code: " + d->deleteByScenarioIdQuery->lastError().nativeErrorCode()));
     }
 #endif
     return ok;
@@ -156,17 +175,15 @@ bool SQLiteLightDao::deleteByScenarioId(qint64 scenarioId) noexcept
 
 // PRIVATE
 
-void SQLiteLightDao::frenchConnection() noexcept
+void SQLiteFlightPlanDao::frenchConnection() noexcept
 {
     connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
-            this, &SQLiteLightDao::handleConnectionChanged);
+            this, &SQLiteFlightPlanDao::handleConnectionChanged);
 }
 
 // PRIVATE SLOTS
 
-void SQLiteLightDao::handleConnectionChanged() noexcept
+void SQLiteFlightPlanDao::handleConnectionChanged() noexcept
 {
     d->resetQueries();
 }
-
-

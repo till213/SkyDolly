@@ -43,6 +43,10 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/Persistence)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/SkyConnect)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
 
+# 3rd Party
+# ordered-map (Tessil)
+add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/ordered-map)
+
 # Documentation
 add_subdirectory(${CMAKE_SOURCE_DIR}/doc)
 
@@ -52,6 +56,7 @@ set(OTHER_SOURCES
     CHANGELOG.md
     BUILD.md
     CODE_OF_CONDUCT.md
+    THIRD_PARTY.md
     doc/SkyDolly.simvars
     ${CMAKE_SOURCE_DIR}/res/Info.plist.in
 )

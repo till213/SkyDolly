@@ -40,8 +40,8 @@ struct MODEL_API ScenarioDescription
     QString aircraftType;
     QDateTime startDate;
     QDateTime endDate;
-    QString departureLocation;
-    QString arrivalLocation;
+    QString startLocation;
+    QString endLocation;
     QString description;    
 };
 

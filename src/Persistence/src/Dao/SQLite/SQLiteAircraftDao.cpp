@@ -46,7 +46,17 @@
 #include "../../../../Model/src/AircraftHandleData.h"
 #include "../../../../Model/src/Light.h"
 #include "../../../../Model/src/LightData.h"
+#include "../../../../Model/src/FlightPlan.h"
+#include "../../../../Model/src/FlightPlanData.h"
+#include "../../Dao/ScenarioDaoIntf.h"
+#include "../../Dao/AircraftDaoIntf.h"
 #include "../../Dao/PositionDaoIntf.h"
+#include "../../Dao/EngineDaoIntf.h"
+#include "../../Dao/PrimaryFlightControlDaoIntf.h"
+#include "../../Dao/SecondaryFlightControlDaoIntf.h"
+#include "../../Dao/HandleDaoIntf.h"
+#include "../../Dao/LightDaoIntf.h"
+#include "../../Dao/FlightPlanDaoIntf.h"
 #include "../../Dao/DaoFactory.h"
 #include "../../ConnectionManager.h"
 #include "SQLiteAircraftDao.h"
@@ -61,7 +71,8 @@ public:
           primaryFlightControlDao(daoFactory->createPrimaryFlightControlDao()),
           secondaryFlightControlDao(daoFactory->createSecondaryFlightControlDao()),
           handleDao(daoFactory->createHandleDao()),
-          lightDao(daoFactory->createLightDao())
+          lightDao(daoFactory->createLightDao()),
+          flightPlanDao(daoFactory->createFlightPlanDao())
     {}
 
     std::unique_ptr<QSqlQuery> insertQuery;
@@ -75,6 +86,7 @@ public:
     std::unique_ptr<SecondaryFlightControlDaoIntf> secondaryFlightControlDao;
     std::unique_ptr<HandleDaoIntf> handleDao;
     std::unique_ptr<LightDaoIntf> lightDao;
+    std::unique_ptr<FlightPlanDaoIntf> flightPlanDao;
 
     void initQueries()
     {
@@ -241,6 +253,9 @@ bool SQLiteAircraftDao::add(qint64 scenarioId, int sequenceNumber, Aircraft &air
             }
         }
     }
+    if (ok) {
+        ok = d->flightPlanDao->add(aircraft.getId(), aircraft.getFlightPlanConst().getAllConst());
+    }
     return ok;
 }
 
@@ -320,7 +335,9 @@ bool SQLiteAircraftDao::getByScenarioId(qint64 scenarioId, int sequenceNumber, A
     if (ok) {
         ok = d->lightDao->getByAircraftId(aircraft.getId(), aircraft.getLight().getAll());
     }
-
+    if (ok) {
+        ok = d->flightPlanDao->getByAircraftId(aircraft.getId(), aircraft.getFlightPlan().getAll());
+    }
 
     return ok;
 }
@@ -346,8 +363,11 @@ bool SQLiteAircraftDao::deleteByScenarioId(qint64 scenarioId) noexcept
         ok = d->lightDao->deleteByScenarioId(scenarioId);
     }
     if (ok) {
+        ok = d->flightPlanDao->deleteByScenarioId(scenarioId);
+    }
+    if (ok) {
 
-        d->deleteByScenarioIdQuery->bindValue(":id", scenarioId);
+        d->deleteByScenarioIdQuery->bindValue(":scenario_id", scenarioId);
         ok = d->deleteByScenarioIdQuery->exec();
 #ifdef DEBUG
         if (!ok) {

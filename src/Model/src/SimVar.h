@@ -120,6 +120,15 @@ namespace SimVar
     MODEL_API extern const char *PitotIcePct;
     MODEL_API extern const char *StructuralIcePct;
 
+    MODEL_API extern const char *GpsWPNextId;
+    MODEL_API extern const char *GpsWPNextLat;
+    MODEL_API extern const char *GpsWPNextLon;
+    MODEL_API extern const char *GpsWPNextAlt;
+    MODEL_API extern const char *GpsWPPrevId;
+    MODEL_API extern const char *GpsWPPrevLat;
+    MODEL_API extern const char *GpsWPPrevLon;
+    MODEL_API extern const char *GpsWPPrevAlt;
+
     MODEL_API extern const char *Timestamp;
 }
 

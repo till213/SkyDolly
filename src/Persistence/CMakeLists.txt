@@ -21,6 +21,7 @@ target_sources(Persistence
         src/Dao/SecondaryFlightControlDaoIntf.h
         src/Dao/HandleDaoIntf.h
         src/Dao/LightDaoIntf.h
+        src/Dao/FlightPlanDaoIntf.h
         src/Dao/DaoFactory.cpp
         src/Dao/DaoFactory.h
         src/Dao/SQLite/SQLiteDatabaseDao.cpp
@@ -41,6 +42,8 @@ target_sources(Persistence
         src/Dao/SQLite/SQLiteHandleDao.h
         src/Dao/SQLite/SQLiteLightDao.cpp
         src/Dao/SQLite/SQLiteLightDao.h
+        src/Dao/SQLite/SQLiteFlightPlanDao.cpp
+        src/Dao/SQLite/SQLiteFlightPlanDao.h
         src/Dao/SQLite/SqlMigration.cpp
         src/Dao/SQLite/SqlMigration.h
         src/Dao/SQLite/SqlMigrationStep.cpp

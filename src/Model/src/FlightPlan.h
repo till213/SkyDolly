@@ -22,26 +22,40 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "AircraftInfo.h"
+#ifndef FLIGHTPLAN_H
+#define FLIGHTPLAN_H
 
-// PUBLIC
 
-AircraftInfo::AircraftInfo() noexcept
+#include <memory>
+
+#include <QObject>
+#include <QByteArray>
+#include <QVector>
+
+#include "ModelLib.h"
+
+class FlightPlanData;
+class FlightPlanPrivate;
+
+class MODEL_API FlightPlan : public QObject
 {
-    clear();
-}
+    Q_OBJECT
+public:
+    FlightPlan(QObject *parent = nullptr) noexcept;
+    virtual ~FlightPlan() noexcept;
 
-void AircraftInfo::clear() noexcept
-{
-    type.clear();
-    tailNumber.clear();
-    airline.clear();
-    flightNumber.clear();
-    category.clear();
-    startOnGround = false;
-    altitudeAboveGround = 0.0f;
-    initialAirspeed = 0;
-    wingSpan = 0;
-    engineType = SimType::EngineType::Unknown;
-    numberOfEngines = 0;    
-}
+    void add(const FlightPlanData &flightPlanData) noexcept;
+    QVector<FlightPlanData> &getAll() const noexcept;
+    const QVector<FlightPlanData> &getAllConst() const noexcept;
+
+    void clear() noexcept;
+
+signals:
+    void dataChanged();
+
+private:
+    Q_DISABLE_COPY(FlightPlan)
+    std::unique_ptr<FlightPlanPrivate> d;
+};
+
+#endif // FLIGHTPLAN_H

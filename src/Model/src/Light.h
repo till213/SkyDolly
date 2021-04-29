@@ -44,7 +44,7 @@ public:
     Light(QObject *parent = nullptr) noexcept;
     virtual ~Light() noexcept;
 
-    void upsert(LightData LightData) noexcept;
+    void upsert(const LightData &lightData) noexcept;
     const LightData &getLast() const noexcept;
     QVector<LightData> &getAll() const noexcept;
     const QVector<LightData> &getAllConst() const noexcept;

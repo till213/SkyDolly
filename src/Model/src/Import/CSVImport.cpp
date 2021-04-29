@@ -242,7 +242,7 @@ inline bool CSVImport::importAircraftData(const QList<QByteArray> &headers, cons
 
     }
     if (ok) {
-        aircraft.upsert(std::move(data));
+        aircraft.upsert(data);
     }
     return ok;
 }

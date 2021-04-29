@@ -22,13 +22,15 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTLIGHTDATA_H
-#define SIMCONNECTLIGHTDATA_H
+#ifndef SIMCONNECTFLIGHTPLAN_H
+#define SIMCONNECTFLIGHTPLAN_H
 
 #include <windows.h>
+#include <strsafe.h>
 
-#include "../../Model/src/SimType.h"
-#include "../../Model/src/LightData.h"
+#include <SimConnect.h>
+
+#include "../../Model/src/FlightPlanData.h"
 
 /*!
  * Simulation variables which represent aircraft lights, e.g. navigation light
@@ -37,26 +39,47 @@
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectLightData
+struct SimConnectFlightPlan
 {
-    qint32 lightStates;
+    char gpsWpNextId[8];
+    char gpsWpPrevId[8];
+    float gpsWpNextLat;
+    float gpsWpNextLon;
+    float gpsWpNextAlt;
+    float gpsWpPrevLat;
+    float gpsWpPrevLon;
+    float gpsWpPrevAlt;
 
-    inline LightData toLightData() const noexcept
+    inline FlightPlanData toNextFlightPlanData() const noexcept
     {
-        LightData lightData;
+        FlightPlanData flightPlanData;
 
-        lightData.lightStates = SimType::LightStates(lightStates);
-
-        return lightData;
+        // Length check
+        if (SUCCEEDED(StringCbLengthA(&gpsWpNextId[0], sizeof(gpsWpNextId), nullptr))) {
+            flightPlanData.waypointIdentifier = QString(gpsWpNextId);
+        }
+        flightPlanData.waypointLatitude = gpsWpNextLat;
+        flightPlanData.waypointLongitude = gpsWpNextLon;
+        flightPlanData.waypointAltitude = gpsWpNextAlt;
+        return flightPlanData;
     }
 
-    inline void fromLightData(const LightData &lightData) noexcept
+    inline FlightPlanData toPreviousFlightPlanData() const noexcept
     {
-        lightStates = lightData.lightStates;
+        FlightPlanData flightPlanData;
+
+        // Length check
+        if (SUCCEEDED(StringCbLengthA(&gpsWpPrevId[0], sizeof(gpsWpPrevId), nullptr))) {
+            flightPlanData.waypointIdentifier = QString(gpsWpPrevId);
+        }
+        flightPlanData.waypointLatitude = gpsWpPrevLat;
+        flightPlanData.waypointLongitude = gpsWpPrevLon;
+        flightPlanData.waypointAltitude = gpsWpPrevAlt;
+        return flightPlanData;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTLIGHTDATA_H
+#endif // SIMCONNECTFLIGHTPLAN_H

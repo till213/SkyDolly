@@ -22,26 +22,13 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "AircraftInfo.h"
+#include "FlightPlanData.h"
 
 // PUBLIC
 
-AircraftInfo::AircraftInfo() noexcept
+FlightPlanData::FlightPlanData() noexcept
+    : waypointLatitude(0.0f),
+      waypointLongitude(0.0f),
+      waypointAltitude(0.0f)
 {
-    clear();
-}
-
-void AircraftInfo::clear() noexcept
-{
-    type.clear();
-    tailNumber.clear();
-    airline.clear();
-    flightNumber.clear();
-    category.clear();
-    startOnGround = false;
-    altitudeAboveGround = 0.0f;
-    initialAirspeed = 0;
-    wingSpan = 0;
-    engineType = SimType::EngineType::Unknown;
-    numberOfEngines = 0;    
 }

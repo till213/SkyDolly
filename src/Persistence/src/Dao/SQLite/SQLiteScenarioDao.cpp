@@ -119,10 +119,14 @@ public:
             selectDescriptionsQuery = std::make_unique<QSqlQuery>();
             selectDescriptionsQuery->setForwardOnly(true);
             selectDescriptionsQuery->prepare(
-"select s.id, s.creation_date, s.description, a.type, a.start_date, a.end_date "
+"select s.id, s.creation_date, s.description, a.type, a.start_date, fp1.ident as start_waypoint, a.end_date, fp2.ident as end_waypoint "
 "from   scenario s "
 "join   aircraft a "
-"where a.scenario_id = s.id;");
+"on     a.scenario_id = s.id "
+"left join (select ident, aircraft_id from flight_plan where seq_nr = 1) fp1 "
+"on    fp1.aircraft_id = a.id "
+"left join (select ident, aircraft_id from flight_plan fpo where seq_nr = (select max(seq_nr) from flight_plan fpi where fpi.aircraft_id = fpo.aircraft_id)) fp2 "
+"on fp2.aircraft_id = a.id");
         }
     }
 
@@ -261,7 +265,9 @@ QVector<ScenarioDescription> SQLiteScenarioDao::getScenarioDescriptions() const 
         int creationDateIdx = d->selectDescriptionsQuery->record().indexOf("creation_date");
         int aircraftTypeIdx = d->selectDescriptionsQuery->record().indexOf("type");
         int startDateIdx = d->selectDescriptionsQuery->record().indexOf("start_date");
+        int startWaypointIdx = d->selectDescriptionsQuery->record().indexOf("start_waypoint");
         int endDateIdx = d->selectDescriptionsQuery->record().indexOf("end_date");
+        int endWaypointIdx = d->selectDescriptionsQuery->record().indexOf("end_waypoint");
         int descriptionIdx = d->selectDescriptionsQuery->record().indexOf("description");
         while (d->selectDescriptionsQuery->next()) {            
 
@@ -275,9 +281,11 @@ QVector<ScenarioDescription> SQLiteScenarioDao::getScenarioDescriptions() const 
             dateTime = d->selectDescriptionsQuery->value(startDateIdx).toDateTime();
             dateTime.setTimeZone(QTimeZone::utc());
             description.startDate = dateTime.toLocalTime();
+            description.startLocation = d->selectDescriptionsQuery->value(startWaypointIdx).toString();
             dateTime = d->selectDescriptionsQuery->value(endDateIdx).toDateTime();
             dateTime.setTimeZone(QTimeZone::utc());
             description.endDate = dateTime.toLocalTime();
+            description.endLocation = d->selectDescriptionsQuery->value(endWaypointIdx).toString();
             description.description = d->selectDescriptionsQuery->value(descriptionIdx).toString();
 
             descriptions.append(description);

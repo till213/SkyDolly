@@ -42,6 +42,7 @@
 #include "AircraftHandleData.h"
 #include "Light.h"
 #include "LightData.h"
+#include "FlightPlan.h"
 #include "Aircraft.h"
 
 class AircraftPrivate
@@ -56,12 +57,13 @@ public:
     {}
 
     qint64 id;
+    AircraftInfo aircraftInfo;
     Engine engine;
     PrimaryFlightControl primaryFlightControl;
     SecondaryFlightControl secondaryFlightControl;
     AircraftHandle aircraftHandle;
     Light light;
-    AircraftInfo aircraftInfo;
+    FlightPlan flightPlan;
 
     QVector<AircraftData> aircraftData;
     qint64 currentTimestamp;
@@ -149,27 +151,30 @@ const AircraftInfo &Aircraft::getAircraftInfoConst() const noexcept
     return d->aircraftInfo;
 }
 
-void Aircraft::setAircraftInfo(AircraftInfo aircraftInfo) noexcept
+void Aircraft::setAircraftInfo(const AircraftInfo &aircraftInfo) noexcept
 {
     d->aircraftInfo = aircraftInfo;
     emit infoChanged();
 }
 
-void Aircraft::upsert(AircraftData aircraftData) noexcept
+const FlightPlan &Aircraft::getFlightPlanConst() const noexcept
+{
+    return d->flightPlan;
+}
+
+FlightPlan &Aircraft::getFlightPlan() const noexcept
+{
+    return d->flightPlan;
+}
+
+void Aircraft::upsert(AircraftData &aircraftData) noexcept
 {
     if (d->aircraftData.count() > 0) {
-
         if (d->aircraftData.last().timestamp == aircraftData.timestamp)  {
             // Same timestamp -> replace
             d->aircraftData[d->aircraftData.count() - 1] = aircraftData;
-#ifdef DEBUG
-        qDebug("Aircraft::upsertAircraftData: UPDATE sample, timestamp: %llu count: %d", aircraftData.timestamp, d->aircraftData.count());
-#endif
         } else {
             d->aircraftData.append(aircraftData);
-#ifdef DEBUG
-        qDebug("Aircraft::upsertAircraftData: INSERT sample, timestamp: %llu count: %d", aircraftData.timestamp, d->aircraftData.count());
-#endif
         }
     } else {
         // The first position sample *must* have a timestamp of 0, as this
@@ -310,6 +315,7 @@ void Aircraft::clear() noexcept
     d->secondaryFlightControl.clear();
     d->aircraftHandle.clear();
     d->light.clear();
+    d->flightPlan.clear();
     d->aircraftInfo.clear();
     d->currentTimestamp = TimeVariableData::InvalidTime;
     d->currentIndex = SkySearch::InvalidIndex;

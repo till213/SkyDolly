@@ -22,26 +22,27 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "AircraftInfo.h"
+#ifndef FLIGHTPLANDATA_H
+#define FLIGHTPLANDATA_H
 
-// PUBLIC
+#include <QtGlobal>
+#include <QString>
 
-AircraftInfo::AircraftInfo() noexcept
+#include "SimType.h"
+#include "TimeVariableData.h"
+#include "ModelLib.h"
+
+struct MODEL_API FlightPlanData
 {
-    clear();
-}
+    QString waypointIdentifier;
+    float waypointLatitude;
+    float waypointLongitude;
+    float waypointAltitude;
 
-void AircraftInfo::clear() noexcept
-{
-    type.clear();
-    tailNumber.clear();
-    airline.clear();
-    flightNumber.clear();
-    category.clear();
-    startOnGround = false;
-    altitudeAboveGround = 0.0f;
-    initialAirspeed = 0;
-    wingSpan = 0;
-    engineType = SimType::EngineType::Unknown;
-    numberOfEngines = 0;    
-}
+    FlightPlanData() noexcept;
+    FlightPlanData(FlightPlanData &&) = default;
+    FlightPlanData(const FlightPlanData &) = default;
+    FlightPlanData &operator= (const FlightPlanData &) = default;
+};
+
+#endif // FLIGHTPLANDATA_H

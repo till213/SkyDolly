@@ -35,7 +35,27 @@ void SimConnectAircraftInfo::addToDataDefinition(HANDLE simConnectHandle) noexce
 {
     // TODO Maybe support GPS WP PREV/NEXT ID
     // ZULU TIME, LOCAL TIME
-    // Aircraft info
+
+
+//    api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Local Time",
+//                              "seconds", SIMCONNECT_DATATYPE_INT32);
+//      api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Local Year",
+//                              "number", SIMCONNECT_DATATYPE_INT32);
+//      api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Local Month of Year",
+//                              "number", SIMCONNECT_DATATYPE_INT32);
+//      api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Local Day of Month",
+//                              "number", SIMCONNECT_DATATYPE_INT32);
+
+//      api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Zulu Time",
+//                              "seconds", SIMCONNECT_DATATYPE_INT32);
+//      api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Zulu Year",
+//                              "number", SIMCONNECT_DATATYPE_INT32);
+//      api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Zulu Month of Year",
+//                              "number", SIMCONNECT_DATATYPE_INT32);
+//      api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Zulu Day of Month",
+//                              "number", SIMCONNECT_DATATYPE_INT32);
+
+      // Aircraft info
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::Title, nullptr, ::SIMCONNECT_DATATYPE_STRING256);
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::ATCId, NULL, SIMCONNECT_DATATYPE_STRING32);
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::ATCAirline, NULL, SIMCONNECT_DATATYPE_STRING64);
