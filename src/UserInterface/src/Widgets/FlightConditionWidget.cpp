@@ -105,6 +105,8 @@ void FlightConditionWidget::initUi()
     ui->seaLevelPressure->setToolTip(SimVar::SeaLevelPressure);
     ui->pitotIcingLineEdit->setToolTip(SimVar::PitotIcePct);
     ui->structuralIcingLineEdit->setToolTip(SimVar::StructuralIcePct);
+    ui->localSimulationTimeLineEdit->setToolTip(SimVar::LocalTime);
+    ui->zuluSimulationTimeLineEdit->setToolTip(SimVar::ZuluTime);
 
     // Make the flight information checkboxes checkable, but not for the user
     ui->inCloudsCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
@@ -136,4 +138,6 @@ void FlightConditionWidget::updateInfoUi()
     ui->seaLevelPressure->setText(Unit::formatPressureInHPa(flightCondition.seaLevelPressure));
     ui->pitotIcingLineEdit->setText(Unit::formatPercent(SkyMath::toPercent(flightCondition.pitotIcingPercent)));
     ui->structuralIcingLineEdit->setText(Unit::formatPercent(SkyMath::toPercent(flightCondition.structuralIcingPercent)));
+    ui->localSimulationTimeLineEdit->setText(Unit::formatDate(flightCondition.localTime));
+    ui->zuluSimulationTimeLineEdit->setText(Unit::formatDate(flightCondition.zuluTime));
 }

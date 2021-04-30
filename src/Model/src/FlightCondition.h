@@ -26,6 +26,7 @@
 #define FLIGHTCONDITION_H
 
 #include <QtGlobal>
+#include <QDateTime>
 
 #include "SimType.h"
 #include "ModelLib.h"
@@ -44,6 +45,8 @@ struct MODEL_API FlightCondition
     quint8 pitotIcingPercent;
     quint8 structuralIcingPercent;
     bool inClouds;
+    QDateTime localTime;
+    QDateTime zuluTime;
 
     FlightCondition() noexcept;
     FlightCondition(FlightCondition &&) = default;

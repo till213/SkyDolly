@@ -31,7 +31,7 @@
 namespace SimConnectType
 {
     enum class DataDefinition: ::SIMCONNECT_DATA_DEFINITION_ID {
-        AircraftInfoDefinition,
+        FlightInformationDefinition,
         AircraftFlightPlanDefinition,
         AircraftPositionDefinition,
         AircraftEngineDefinition,

@@ -131,7 +131,7 @@ void SkyConnectImpl::onStartRecording() noexcept
 {
     updateRecordFrequency(Settings::getInstance().getRecordSampleRate());
     // Get aircraft information
-    ::SimConnect_RequestDataOnSimObjectType(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::AircraftInfo), Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), ::UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
+    ::SimConnect_RequestDataOnSimObjectType(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::AircraftInfo), Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), ::UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
     // Initialise flight plan
     d->flightPlan.clear();
 }
@@ -664,9 +664,6 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
         if (skyConnect->getState() == Connect::State::Replay) {
             skyConnect->replay();
         }
-#ifdef DEBUG
-        qDebug("SIMCONNECT_RECV_ID_EVENT_FRAME: FRAME event");
-#endif
         break;
 
     case SIMCONNECT_RECV_ID_QUIT:

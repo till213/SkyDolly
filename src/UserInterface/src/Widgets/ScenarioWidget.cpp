@@ -114,14 +114,13 @@ void ScenarioWidget::initUi() noexcept
 {
     ui->scenarioTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    const QStringList headers {tr("Scenario"), tr("Date"), tr("Aircraft"), tr("Departure Time"), tr("Departure Place"), tr("Arrival Time"), tr("Arrival Place"), tr("Total Time of Flight"), tr("Description")};
+    const QStringList headers {tr("Scenario"), tr("Date"), tr("Aircraft"), tr("Departure Time"), tr("Departure"), tr("Arrival Time"), tr("Arrival"), tr("Total Time of Flight"), tr("Description")};
     ui->scenarioTableWidget->setColumnCount(headers.count());
     ui->scenarioTableWidget->setHorizontalHeaderLabels(headers);
     ui->scenarioTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->scenarioTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->scenarioTableWidget->setMinimumWidth(MinimumTableWidth);
 }
-
 
 void ScenarioWidget::updateEditUi() noexcept
 {
@@ -226,5 +225,3 @@ void ScenarioWidget::handleDelete() noexcept
         ui->scenarioTableWidget->selectRow(selectedRow);
     }
 }
-
-

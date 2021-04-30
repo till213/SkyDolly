@@ -21,7 +21,9 @@ create table scenario (
     pitot_icing real,
     structural_icing real,
     precipitation_state integer,
-    in_clouds integer
+    in_clouds integer,
+    local_sim_time datetime,
+    zulu_sim_time datetime
 );
 
 @migr(id = "1fb17949-6c94-4bbf-98a2-ff54fe3a749f", descn = "Create aircraft table", step_cnt = 1)

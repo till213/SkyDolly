@@ -29,6 +29,9 @@
 #include <strsafe.h>
 
 #include <QtGlobal>
+#include <QDateTime>
+#include <QDate>
+#include <QTime>
 
 #include "../../Kernel/src/SkyMath.h"
 #include "../../Model/src/SimType.h"
@@ -74,6 +77,16 @@ struct SimConnectAircraftInfo
     qint32 ambientPrecipState;
     qint32 ambientInCloud;
 
+    // Simulation time
+    qint32 localTime;
+    qint32 localYear;
+    qint32 localMonth;
+    qint32 localDay;
+    qint32 zuluTime;
+    qint32 zuluYear;
+    qint32 zuluMonth;
+    qint32 zuluDay;
+
     SimConnectAircraftInfo() noexcept
         : planeAltAboveGround(0.0f),
           simOnGround(false),
@@ -92,7 +105,15 @@ struct SimConnectAircraftInfo
           pitotIcePct(0.0f),
           structuralIcePct(0.0f),
           ambientPrecipState(0),
-          ambientInCloud(0)
+          ambientInCloud(0),
+          localTime(0),
+          localYear(0),
+          localMonth(0),
+          localDay(0),
+          zuluTime(0),
+          zuluYear(0),
+          zuluMonth(0),
+          zuluDay(0)
     {}
 
     inline AircraftInfo toAircraftInfo() const noexcept
@@ -142,6 +163,16 @@ struct SimConnectAircraftInfo
         flightCondition.structuralIcingPercent = SkyMath::fromPercent(structuralIcePct);
         flightCondition.precipitationState = toPrecipitationState(ambientPrecipState);
         flightCondition.inClouds = (ambientInCloud != 0);
+
+        QTime time = QTime(0, 0).addSecs(localTime);
+        flightCondition.localTime.setTime(time);
+        QDate date = QDate(localYear, localMonth, localDay);
+        flightCondition.localTime.setDate(date);
+
+        time = QTime(0, 0).addSecs(zuluTime);
+        flightCondition.zuluTime.setTime(time);
+        date = QDate(zuluYear, zuluMonth, zuluDay);
+        flightCondition.zuluTime.setDate(date);
 
         return flightCondition;
     }
