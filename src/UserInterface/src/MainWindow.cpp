@@ -145,6 +145,11 @@ MainWindow::~MainWindow() noexcept
     // The SkyConnect instances have been deleted by the SkyManager (singleton)
     // already at this point; no need to disconnect from their "stateChanged"
     // signal
+
+    // Make sure that all widgets having a reference to the scenario service
+    // are deleted before this MainWindow instance (which owns the scenario
+    // service); we make sure by simply deleting their parent moduleStackWidget
+    delete ui->moduleStackWidget;
 }
 
 // PRIVATE
@@ -218,12 +223,16 @@ void MainWindow::initUi() noexcept
     d->settingsDialog = new SettingsDialog(this);
 
     // Widgets
+    ui->moduleGroupBox->setTitle(tr("Scenarios"));
     ScenarioWidget *scenarioWidget = new ScenarioWidget(*d->scenarioService, ui->moduleStackWidget);
     ui->moduleStackWidget->addWidget(scenarioWidget);
     ui->moduleStackWidget->setCurrentWidget(scenarioWidget);
 
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
+    ui->showMinimalAction->setChecked(ui->moduleGroupBox->isVisible());
     initControlUi();
+
+    on_showMinimalAction_triggered(ui->showMinimalAction->isChecked());
 }
 
 void MainWindow::initControlUi() noexcept
@@ -244,9 +253,6 @@ void MainWindow::initControlUi() noexcept
     ui->positionSlider->setMaximum(PositionSliderMax);
     ui->timestampTimeEdit->setDisplayFormat("hh:mm:ss");
 
-    // TODO: Take regional settings into account
-    // https://stackoverflow.com/questions/42534378/c-qt-creator-how-to-have-dot-and-comma-as-decimal-separator-on-a-qdoubles
-    // https://doc.qt.io/qt-5/qlocale.html
     QDoubleValidator *customReplaySpeedValidator = new QDoubleValidator(ui->customReplaySpeedLineEdit);
     ui->customReplaySpeedLineEdit->setValidator(customReplaySpeedValidator);
     customReplaySpeedValidator->setBottom(ReplaySpeedMin);
@@ -686,6 +692,19 @@ void MainWindow::on_showStatisticsAction_triggered(bool enabled) noexcept
 void MainWindow::on_stayOnTopAction_triggered(bool enabled) noexcept
 {
     Settings::getInstance().setWindowStaysOnTopEnabled(enabled);
+}
+
+void MainWindow::on_showMinimalAction_triggered(bool enabled) noexcept
+{
+    ui->moduleGroupBox->setHidden(enabled);
+
+    resize(1, 1);
+    adjustSize();
+    if (enabled) {
+        setMaximumHeight(height());
+    } else {
+        setMaximumHeight(32767);
+    }
 }
 
 void MainWindow::on_aboutLibraryAction_triggered() noexcept

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>726</width>
-    <height>455</height>
+    <height>279</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -262,6 +262,7 @@
     <addaction name="showStatisticsAction"/>
     <addaction name="separator"/>
     <addaction name="stayOnTopAction"/>
+    <addaction name="showMinimalAction"/>
    </widget>
    <widget class="QMenu" name="menu_Flight">
     <property name="title">
@@ -502,6 +503,17 @@
   <action name="backupLibraryAction">
    <property name="text">
     <string>Backup Library</string>
+   </property>
+  </action>
+  <action name="showMinimalAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Minimal</string>
+   </property>
+   <property name="shortcut">
+    <string>M</string>
    </property>
   </action>
  </widget>
