@@ -5,6 +5,13 @@
 ### New Features
 
 - Remove "Yoke X|Y Position" simulation variables (not needed: yokes are still properly animated)
+- Add SQLite database support for persistence
+  * Each recording is persisted
+  * Simple load / delete functionality
+  * DB backup and optimisation functionality
+- Additional simulation variables support
+  * Waypoints (ICAO, latitude/longitude/altitude)
+  * Local and zulu simulation time
 
 ## 0.5.1
 

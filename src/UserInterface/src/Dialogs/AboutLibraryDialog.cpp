@@ -84,6 +84,7 @@ void AboutLibraryDialog::updateUi() noexcept
     QString libraryName = fileInfo.fileName();
     ui->libraryNameLineEdit->setText(libraryName);
 
+    Unit unit;
     QLocale systemLocale = QLocale::system();
     QString createdDate = systemLocale.toString(metadata.creationDate);
     ui->createdDateLineEdit->setText(createdDate);
@@ -93,5 +94,5 @@ void AboutLibraryDialog::updateUi() noexcept
     ui->lastBackupDateLineEdit->setText(lastBackupDate);
 
     qint64 fileSize = fileInfo.size();
-    ui->librarySizeLineEdit->setText(Unit::formatMemory(fileSize));
+    ui->librarySizeLineEdit->setText(unit.formatMemory(fileSize));
 }

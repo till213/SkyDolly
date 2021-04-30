@@ -64,6 +64,7 @@ public:
     ScenarioService &scenarioService;
     int selectedRow;
     qint64 selectedScenarioId;
+    Unit unit;
 };
 
 // PUBLIC
@@ -153,19 +154,19 @@ void ScenarioWidget::updateUi() noexcept
         newItem->setData(Qt::DisplayRole, desc.id);
         ui->scenarioTableWidget->setItem(rowIndex, 0, newItem);
 
-        newItem = new QTableWidgetItem(Unit::formatDate(desc.creationDate));
+        newItem = new QTableWidgetItem(d->unit.formatDate(desc.creationDate));
         ui->scenarioTableWidget->setItem(rowIndex, 1, newItem);
 
         newItem = new QTableWidgetItem(desc.aircraftType);
         ui->scenarioTableWidget->setItem(rowIndex, 2, newItem);
 
-        newItem = new QTableWidgetItem(Unit::formatTime(desc.startDate));
+        newItem = new QTableWidgetItem(d->unit.formatTime(desc.startDate));
         ui->scenarioTableWidget->setItem(rowIndex, 3, newItem);
 
         newItem = new QTableWidgetItem(desc.startLocation);
         ui->scenarioTableWidget->setItem(rowIndex, 4, newItem);
 
-        newItem = new QTableWidgetItem(Unit::formatTime(desc.endDate));
+        newItem = new QTableWidgetItem(d->unit.formatTime(desc.endDate));
         ui->scenarioTableWidget->setItem(rowIndex, 5, newItem);
 
         newItem = new QTableWidgetItem(desc.endLocation);
@@ -173,7 +174,7 @@ void ScenarioWidget::updateUi() noexcept
 
         const qint64 durationMSec = desc.startDate.msecsTo(desc.endDate);
         const QTime time = QTime(0, 0).addMSecs(durationMSec);
-        newItem = new QTableWidgetItem(Unit::formatDuration(time));
+        newItem = new QTableWidgetItem(d->unit.formatDuration(time));
         ui->scenarioTableWidget->setItem(rowIndex, 7, newItem);
 
         newItem = new QTableWidgetItem(desc.description);

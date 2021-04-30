@@ -53,6 +53,7 @@ public:
     {}
 
     SkyConnectIntf &skyConnect;
+    Unit unit;
 };
 
 // PUBLIC
@@ -115,14 +116,14 @@ void StatisticsDialog::updateRecordUi() noexcept
     const Aircraft &aircraft = scenario.getUserAircraft();
 
     if (Settings::getInstance().getRecordSampleRate() != SampleRate::SampleRate::Auto) {
-        ui->recordSampleRateLineEdit->setText(Unit::formatHz(Settings::getInstance().getRecordSampleRateValue()));
+        ui->recordSampleRateLineEdit->setText(d->unit.formatHz(Settings::getInstance().getRecordSampleRateValue()));
     } else {
         ui->recordSampleRateLineEdit->setText(tr("Auto"));
     }
 
     // Samples per second
     if (d->skyConnect.getState() == Connect::State::Recording) {
-        ui->samplesPerSecondLineEdit->setText(Unit::formatHz(d->skyConnect.calculateRecordedSamplesPerSecond()));
+        ui->samplesPerSecondLineEdit->setText(d->unit.formatHz(d->skyConnect.calculateRecordedSamplesPerSecond()));
     } else {
         ui->samplesPerSecondLineEdit->clear();
     }
@@ -135,7 +136,7 @@ void StatisticsDialog::updateRecordUi() noexcept
     const int totalCount = aircraftData.count() + engineData.count() + primaryFlightControlData.count() + secondaryFlightControlData.count() + aircraftHandleData.count() + lightData.count();
     ui->sampleCountLineEdit->setText(QString::number(totalCount));
 
-    ui->durationLineEdit->setText(Unit::formatElapsedTime(scenario.getTotalDurationMSec()));
+    ui->durationLineEdit->setText(d->unit.formatElapsedTime(scenario.getTotalDurationMSec()));
 
     const qint64 aircraftDataSize = aircraftData.count()  * sizeof(AircraftData);
     const qint64 engineDataSize = engineData.count()  * sizeof(EngineData);
@@ -145,5 +146,5 @@ void StatisticsDialog::updateRecordUi() noexcept
     const qint64 lightDataSize = lightData.count()  * sizeof(LightData);
 
     const qint64 totalSize = aircraftDataSize + engineDataSize + primaryFlightControlDataSize + secondaryFlightControlDataSize + aircraftHandleDataSize + lightDataSize;
-    ui->sampleSizeLineEdit->setText(Unit::formatMemory(totalSize));
+    ui->sampleSizeLineEdit->setText(d->unit.formatMemory(totalSize));
 }
