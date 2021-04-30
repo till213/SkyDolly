@@ -27,6 +27,7 @@
 #include <QTimer>
 #include <QtGlobal>
 #include <QRandomGenerator>
+#include <QStringList>
 
 #include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/SkyMath.h"
@@ -37,6 +38,16 @@
 #include "../../Model/src/AircraftData.h"
 #include "../../Model/src/Engine.h"
 #include "../../Model/src/EngineData.h"
+#include "../../Model/src/PrimaryFlightControl.h"
+#include "../../Model/src/PrimaryFlightControlData.h"
+#include "../../Model/src/SecondaryFlightControl.h"
+#include "../../Model/src/SecondaryFlightControlData.h"
+#include "../../Model/src/AircraftHandle.h"
+#include "../../Model/src/AircraftHandleData.h"
+#include "../../Model/src/Light.h"
+#include "../../Model/src/LightData.h"
+#include "../../Model/src/FlightPlan.h"
+#include "../../Model/src/FlightPlanData.h"
 #include "../../Model/src/FlightCondition.h"
 #include "../../Model/src/SimType.h"
 #include "AbstractSkyConnect.h"
@@ -52,11 +63,17 @@ class SkyConnectDummyPrivate
 {
 public:
     SkyConnectDummyPrivate() noexcept
+        : randomGenerator(QRandomGenerator::global())
     {
     }
 
     QTimer replayTimer;
+    QRandomGenerator *randomGenerator;
+
+    static const QStringList IcaoList;
 };
+
+const QStringList SkyConnectDummyPrivate::IcaoList {"LSZH", "LSGG", "LSME", "LSZW", "LSTZ", "LSZB", "LSMA", "LSZJ", "LSPD", "LSHG", "LSZG", "LSZN", "LSGL", "LSEY", "LSPF"};
 
 // PUBLIC
 
@@ -178,42 +195,14 @@ bool SkyConnectDummy::sendAircraftData(TimeVariableData::Access access) noexcept
 void SkyConnectDummy::recordData() noexcept
 {
     const qint64 timestamp = getCurrentTimestamp();
-    Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
-    QRandomGenerator *randomGenerator = QRandomGenerator::global();
 
-    AircraftData aircraftData;
-    aircraftData.latitude = -180.0 + randomGenerator->bounded(360.0);
-    aircraftData.longitude = -90.0 + randomGenerator->bounded(180.0);
-    aircraftData.altitude = randomGenerator->bounded(20000.0);
-    aircraftData.pitch = -90.0 + randomGenerator->bounded(180.0);
-    aircraftData.bank = -180.0 + randomGenerator->bounded(360.0);
-    aircraftData.heading = -180.0 + randomGenerator->bounded(360.0);
-
-    aircraftData.rotationVelocityBodyX = randomGenerator->bounded(1.0);
-    aircraftData.rotationVelocityBodyY = randomGenerator->bounded(1.0);
-    aircraftData.rotationVelocityBodyZ = randomGenerator->bounded(1.0);
-    aircraftData.velocityBodyX = randomGenerator->bounded(1.0);
-    aircraftData.velocityBodyY = randomGenerator->bounded(1.0);
-    aircraftData.velocityBodyZ = randomGenerator->bounded(1.0);
-
-    aircraftData.timestamp = timestamp;
-    aircraft.upsert(aircraftData);
-
-    EngineData engineData;
-    engineData.throttleLeverPosition1 = SkyMath::fromPosition(-1.0 + randomGenerator->bounded(2.0));
-    engineData.throttleLeverPosition2 = SkyMath::fromPosition(-1.0 + randomGenerator->bounded(2.0));
-    engineData.throttleLeverPosition3 = SkyMath::fromPosition(-1.0 + randomGenerator->bounded(2.0));
-    engineData.throttleLeverPosition4 = SkyMath::fromPosition(-1.0 + randomGenerator->bounded(2.0));
-    engineData.propellerLeverPosition1 = SkyMath::fromPosition(randomGenerator->bounded(1.0));
-    engineData.propellerLeverPosition2 = SkyMath::fromPosition(randomGenerator->bounded(1.0));
-    engineData.propellerLeverPosition3 = SkyMath::fromPosition(randomGenerator->bounded(1.0));
-    engineData.propellerLeverPosition4 = SkyMath::fromPosition(randomGenerator->bounded(1.0));
-    engineData.mixtureLeverPosition1 = SkyMath::fromPercent(randomGenerator->bounded(100.0));
-    engineData.mixtureLeverPosition2 = SkyMath::fromPercent(randomGenerator->bounded(100.0));
-    engineData.mixtureLeverPosition3 = SkyMath::fromPercent(randomGenerator->bounded(100.0));
-    engineData.mixtureLeverPosition4 = SkyMath::fromPercent(randomGenerator->bounded(100.0));
-    engineData.timestamp = timestamp;
-    aircraft.getEngine().upsert(std::move(engineData));
+    recordPositionData(timestamp);
+    recordEngineData(timestamp);
+    recordPrimaryControls(timestamp);
+    recordSecondaryControls(timestamp);
+    recordAircraftHandle(timestamp);
+    recordLights(timestamp);
+    recordFlightPlanData();
 
     if (!isElapsedTimerRunning()) {
         // Start the elapsed timer with the arrival of the first sample data
@@ -222,35 +211,163 @@ void SkyConnectDummy::recordData() noexcept
     }
 }
 
+void SkyConnectDummy::recordPositionData(qint64 timestamp) noexcept
+{
+    Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+
+    AircraftData aircraftData;
+    aircraftData.latitude = -180.0 + d->randomGenerator->bounded(360.0);
+    aircraftData.longitude = -90.0 + d->randomGenerator->bounded(180.0);
+    aircraftData.altitude = d->randomGenerator->bounded(20000.0);
+    aircraftData.pitch = -90.0 + d->randomGenerator->bounded(180.0);
+    aircraftData.bank = -180.0 + d->randomGenerator->bounded(360.0);
+    aircraftData.heading = -180.0 + d->randomGenerator->bounded(360.0);
+
+    aircraftData.rotationVelocityBodyX = d->randomGenerator->bounded(1.0);
+    aircraftData.rotationVelocityBodyY = d->randomGenerator->bounded(1.0);
+    aircraftData.rotationVelocityBodyZ = d->randomGenerator->bounded(1.0);
+    aircraftData.velocityBodyX = d->randomGenerator->bounded(1.0);
+    aircraftData.velocityBodyY = d->randomGenerator->bounded(1.0);
+    aircraftData.velocityBodyZ = d->randomGenerator->bounded(1.0);
+
+    aircraftData.timestamp = timestamp;
+    aircraft.upsert(aircraftData);
+}
+
+void SkyConnectDummy::recordEngineData(qint64 timestamp) noexcept
+{
+    Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+
+    EngineData engineData;
+    engineData.throttleLeverPosition1 = SkyMath::fromPosition(-1.0 + d->randomGenerator->bounded(2.0));
+    engineData.throttleLeverPosition2 = SkyMath::fromPosition(-1.0 + d->randomGenerator->bounded(2.0));
+    engineData.throttleLeverPosition3 = SkyMath::fromPosition(-1.0 + d->randomGenerator->bounded(2.0));
+    engineData.throttleLeverPosition4 = SkyMath::fromPosition(-1.0 + d->randomGenerator->bounded(2.0));
+    engineData.propellerLeverPosition1 = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
+    engineData.propellerLeverPosition2 = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
+    engineData.propellerLeverPosition3 = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
+    engineData.propellerLeverPosition4 = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
+    engineData.mixtureLeverPosition1 = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
+    engineData.mixtureLeverPosition2 = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
+    engineData.mixtureLeverPosition3 = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
+    engineData.mixtureLeverPosition4 = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
+    engineData.cowlFlapPosition1 = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
+    engineData.cowlFlapPosition2 = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
+    engineData.cowlFlapPosition3 = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
+    engineData.cowlFlapPosition4 = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
+    engineData.electricalMasterBattery1 = d->randomGenerator->bounded(2) < 1 ? false : true;
+    engineData.electricalMasterBattery2 = d->randomGenerator->bounded(2) < 1 ? false : true;
+    engineData.electricalMasterBattery3 = d->randomGenerator->bounded(2) < 1 ? false : true;
+    engineData.electricalMasterBattery4 = d->randomGenerator->bounded(2) < 1 ? false : true;
+    engineData.generalEngineStarter1 = d->randomGenerator->bounded(2) < 1 ? false : true;
+    engineData.generalEngineStarter2 = d->randomGenerator->bounded(2) < 1 ? false : true;
+    engineData.generalEngineStarter3 = d->randomGenerator->bounded(2) < 1 ? false : true;
+    engineData.generalEngineStarter4 = d->randomGenerator->bounded(2) < 1 ? false : true;
+
+    engineData.timestamp = timestamp;
+    aircraft.getEngine().upsert(std::move(engineData));
+}
+
+void SkyConnectDummy::recordPrimaryControls(qint64 timestamp) noexcept
+{
+    Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+
+    PrimaryFlightControlData primaryFlightControlData;
+    primaryFlightControlData.rudderPosition = SkyMath::fromPosition(-1.0 + d->randomGenerator->bounded(2.0));
+    primaryFlightControlData.elevatorPosition = SkyMath::fromPosition(-1.0 + d->randomGenerator->bounded(2.0));
+    primaryFlightControlData.aileronPosition = SkyMath::fromPosition(-1.0 + d->randomGenerator->bounded(2.0));
+
+    primaryFlightControlData.timestamp = timestamp;
+    aircraft.getPrimaryFlightControl().upsert(std::move(primaryFlightControlData));
+}
+
+void SkyConnectDummy::recordSecondaryControls(qint64 timestamp) noexcept
+{
+    Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+
+    SecondaryFlightControlData secondaryFlightControlData;
+    secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
+    secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
+    secondaryFlightControlData.trailingEdgeFlapsLeftPercent = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
+    secondaryFlightControlData.trailingEdgeFlapsRightPercent = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
+    secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
+    secondaryFlightControlData.flapsHandleIndex = d->randomGenerator->bounded(5);
+
+    secondaryFlightControlData.timestamp = timestamp;
+    aircraft.getSecondaryFlightControl().upsert(std::move(secondaryFlightControlData));
+}
+
+void SkyConnectDummy::recordAircraftHandle(qint64 timestamp) noexcept
+{
+    Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+
+    AircraftHandleData aircraftHandleData;
+    aircraftHandleData.brakeLeftPosition = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
+    aircraftHandleData.brakeRightPosition = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
+    aircraftHandleData.waterRudderHandlePosition = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
+    aircraftHandleData.tailhookPosition = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
+    aircraftHandleData.canopyOpen = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
+    aircraftHandleData.gearHandlePosition = d->randomGenerator->bounded(2) < 1 ? false : true;
+    aircraftHandleData.foldingWingHandlePosition = d->randomGenerator->bounded(2) < 1 ? false : true;
+
+    aircraftHandleData.timestamp = timestamp;
+    aircraft.getAircraftHandle().upsert(std::move(aircraftHandleData));
+}
+
+void SkyConnectDummy::recordLights(qint64 timestamp) noexcept
+{
+    Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+
+    LightData lightData;
+    lightData.lightStates = static_cast<SimType::LightStates>(d->randomGenerator->bounded(4097));
+
+    lightData.timestamp = timestamp;
+    aircraft.getLight().upsert(std::move(lightData));
+}
+
+void SkyConnectDummy::recordFlightPlanData() noexcept
+{
+    Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+
+    FlightPlanData flightPlanData;
+    if (d->randomGenerator->bounded(100.0) < 0.5) {
+        int i = d->randomGenerator->bounded(SkyConnectDummyPrivate::IcaoList.size());
+        flightPlanData.waypointIdentifier = SkyConnectDummyPrivate::IcaoList.at(i);
+        flightPlanData.waypointLatitude = -180.0 + d->randomGenerator->bounded(360.0);
+        flightPlanData.waypointLongitude = -90.0 + d->randomGenerator->bounded(180.0);
+        flightPlanData.waypointAltitude = d->randomGenerator->bounded(3000.0);
+
+        aircraft.getFlightPlan().add(flightPlanData);
+    }
+}
+
 void SkyConnectDummy::recordFlightCondition() noexcept
 {
-    QRandomGenerator *randomGenerator = QRandomGenerator::global();
     Scenario &scenario = World::getInstance().getCurrentScenario();
     FlightCondition flightCondition;
 
-    flightCondition.groundAltitude = randomGenerator->bounded(4000);
-    flightCondition.surfaceType = static_cast<SimType::SurfaceType>(randomGenerator->bounded(26));
-    flightCondition.ambientTemperature = randomGenerator->bounded(80.0) - 40.0;
-    flightCondition.totalAirTemperature = randomGenerator->bounded(80.0) - 40.0;
-    flightCondition.windVelocity = randomGenerator->bounded(30.0);
-    flightCondition.windDirection = randomGenerator->bounded(360);
-    flightCondition.precipitationState = static_cast<SimType::PrecipitationState>(randomGenerator->bounded(4)); 
-    flightCondition.visibility = randomGenerator->bounded(10000.0);
-    flightCondition.seaLevelPressure = 950.0 + randomGenerator->bounded(100.0);
-    flightCondition.pitotIcingPercent = randomGenerator->bounded(101);
-    flightCondition.structuralIcingPercent = randomGenerator->bounded(101);
-    flightCondition.inClouds = randomGenerator->bounded(2) < 1 ? false : true;
+    flightCondition.groundAltitude = d->randomGenerator->bounded(4000);
+    flightCondition.surfaceType = static_cast<SimType::SurfaceType>(d->randomGenerator->bounded(26));
+    flightCondition.ambientTemperature = d->randomGenerator->bounded(80.0) - 40.0;
+    flightCondition.totalAirTemperature = d->randomGenerator->bounded(80.0) - 40.0;
+    flightCondition.windVelocity = d->randomGenerator->bounded(30.0);
+    flightCondition.windDirection = d->randomGenerator->bounded(360);
+    flightCondition.precipitationState = static_cast<SimType::PrecipitationState>(d->randomGenerator->bounded(4));
+    flightCondition.visibility = d->randomGenerator->bounded(10000.0);
+    flightCondition.seaLevelPressure = 950.0 + d->randomGenerator->bounded(100.0);
+    flightCondition.pitotIcingPercent = d->randomGenerator->bounded(101);
+    flightCondition.structuralIcingPercent = d->randomGenerator->bounded(101);
+    flightCondition.inClouds = d->randomGenerator->bounded(2) < 1 ? false : true;
 
     scenario.setFlightCondition(flightCondition);
 }
 
 void SkyConnectDummy::recordAircraftInfo() noexcept
 {
-    QRandomGenerator *randomGenerator = QRandomGenerator::global();
     Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
     AircraftInfo info;
 
-    switch (randomGenerator->bounded(5)) {
+    switch (d->randomGenerator->bounded(5)) {
     case 0:
         info.type = "Boeing 787";
         break;
@@ -270,10 +387,13 @@ void SkyConnectDummy::recordAircraftInfo() noexcept
         info.type = "Unknown";
     }
 
-    info.tailNumber = QString::number(randomGenerator->bounded(1000)).toAscii();
-    info.airline = QString::number(randomGenerator->bounded(1000)).toAscii();
-    info.flightNumber = QString::number(randomGenerator->bounded(100)).toAscii();
-    switch (randomGenerator->bounded(5)) {
+    if (info.startDate.isNull()) {
+        info.startDate = QDateTime::currentDateTime();
+    }
+    info.tailNumber = QString::number(d->randomGenerator->bounded(1000)).toAscii();
+    info.airline = QString::number(d->randomGenerator->bounded(1000)).toAscii();
+    info.flightNumber = QString::number(d->randomGenerator->bounded(100)).toAscii();
+    switch (d->randomGenerator->bounded(5)) {
     case 0:
         info.category = "Piston";
         break;
@@ -292,12 +412,12 @@ void SkyConnectDummy::recordAircraftInfo() noexcept
     default:
         info.category = "Unknown";
     }
-    info.altitudeAboveGround = randomGenerator->bounded(40000);
-    info.startOnGround = randomGenerator->bounded(2) > 0 ? true : false;
-    info.initialAirspeed = randomGenerator->bounded(600);
-    info.wingSpan = randomGenerator->bounded(200);
-    info.engineType = static_cast<SimType::EngineType>(randomGenerator->bounded(7));
-    info.numberOfEngines = randomGenerator->bounded(5);
+    info.altitudeAboveGround = d->randomGenerator->bounded(40000);
+    info.startOnGround = d->randomGenerator->bounded(2) > 0 ? true : false;
+    info.initialAirspeed = d->randomGenerator->bounded(600);
+    info.wingSpan = d->randomGenerator->bounded(200);
+    info.engineType = static_cast<SimType::EngineType>(d->randomGenerator->bounded(7));
+    info.numberOfEngines = d->randomGenerator->bounded(5);
 
     aircraft.setAircraftInfo(info);
 }

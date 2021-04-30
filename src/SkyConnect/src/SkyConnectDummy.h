@@ -67,11 +67,19 @@ private:
 
     void frenchConnection() noexcept;
     bool sendAircraftData(TimeVariableData::Access access) noexcept;
+
     void recordData() noexcept;
+    void recordPositionData(qint64 timestamp) noexcept;
+    void recordEngineData(qint64 timestamp) noexcept;
+    void recordPrimaryControls(qint64 timestamp) noexcept;
+    void recordSecondaryControls(qint64 timestamp) noexcept;
+    void recordAircraftHandle(qint64 timestamp) noexcept;
+    void recordLights(qint64 timestamp) noexcept;
+    void recordFlightPlanData() noexcept;
     void recordFlightCondition() noexcept;
     void recordAircraftInfo() noexcept;
-    void replay() noexcept;
 
+    void replay() noexcept;
 };
 
 #endif // SKYCONNECTDUMMY_H
