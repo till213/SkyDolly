@@ -33,53 +33,40 @@
 
 void SimConnectAircraftInfo::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
-    // TODO Maybe support GPS WP PREV/NEXT ID
-    // ZULU TIME, LOCAL TIME
-
-
-//    api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Local Time",
-//                              "seconds", SIMCONNECT_DATATYPE_INT32);
-//      api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Local Year",
-//                              "number", SIMCONNECT_DATATYPE_INT32);
-//      api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Local Month of Year",
-//                              "number", SIMCONNECT_DATATYPE_INT32);
-//      api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Local Day of Month",
-//                              "number", SIMCONNECT_DATATYPE_INT32);
-
-//      api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Zulu Time",
-//                              "seconds", SIMCONNECT_DATATYPE_INT32);
-//      api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Zulu Year",
-//                              "number", SIMCONNECT_DATATYPE_INT32);
-//      api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Zulu Month of Year",
-//                              "number", SIMCONNECT_DATATYPE_INT32);
-//      api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Zulu Day of Month",
-//                              "number", SIMCONNECT_DATATYPE_INT32);
-
-      // Aircraft info
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::Title, nullptr, ::SIMCONNECT_DATATYPE_STRING256);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::ATCId, NULL, SIMCONNECT_DATATYPE_STRING32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::ATCAirline, NULL, SIMCONNECT_DATATYPE_STRING64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::ATCFlightNumber, NULL, SIMCONNECT_DATATYPE_STRING8);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::Category, NULL, SIMCONNECT_DATATYPE_STRING256);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::PlaneAltAboveGround, "Feet", SIMCONNECT_DATATYPE_FLOAT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::SimOnGround, "Bool", ::SIMCONNECT_DATATYPE_INT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::AirspeedTrue, "knots", ::SIMCONNECT_DATATYPE_INT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::WingSpan, "Feet", SIMCONNECT_DATATYPE_INT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::EngineType, "Number", SIMCONNECT_DATATYPE_INT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::NumberOfEngines, "Number", SIMCONNECT_DATATYPE_INT32);
+    // Aircraft info
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::Title, nullptr, ::SIMCONNECT_DATATYPE_STRING256);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::ATCId, NULL, SIMCONNECT_DATATYPE_STRING32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::ATCAirline, NULL, SIMCONNECT_DATATYPE_STRING64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::ATCFlightNumber, NULL, SIMCONNECT_DATATYPE_STRING8);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::Category, NULL, SIMCONNECT_DATATYPE_STRING256);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::PlaneAltAboveGround, "Feet", SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::SimOnGround, "Bool", ::SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::AirspeedTrue, "knots", ::SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::WingSpan, "Feet", SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::EngineType, "Number", SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::NumberOfEngines, "Number", SIMCONNECT_DATATYPE_INT32);
 
     // Flight conditions
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::SurfaceType, "Number", ::SIMCONNECT_DATATYPE_INT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::GroundAltitude, "Feet", SIMCONNECT_DATATYPE_FLOAT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::AmbientTemperature, "Celsius", SIMCONNECT_DATATYPE_FLOAT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::TotalAirTemperature, "Celsius", SIMCONNECT_DATATYPE_FLOAT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::AmbientWindVelocity, "Knots", SIMCONNECT_DATATYPE_FLOAT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::AmbientWindDirection, "Degrees", SIMCONNECT_DATATYPE_FLOAT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::AmbientVisibility, "Meters", SIMCONNECT_DATATYPE_FLOAT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::SeaLevelPressure, "Millibars", SIMCONNECT_DATATYPE_FLOAT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::PitotIcePct, "Percent", SIMCONNECT_DATATYPE_FLOAT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::StructuralIcePct, "Percent", SIMCONNECT_DATATYPE_FLOAT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::AmbientPrecipState, "Mask", SIMCONNECT_DATATYPE_INT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInfoDefinition), SimVar::AmbientInCloud, "Bool", SIMCONNECT_DATATYPE_INT32);
-}
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::SurfaceType, "Number", ::SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::GroundAltitude, "Feet", SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::AmbientTemperature, "Celsius", SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::TotalAirTemperature, "Celsius", SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::AmbientWindVelocity, "Knots", SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::AmbientWindDirection, "Degrees", SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::AmbientVisibility, "Meters", SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::SeaLevelPressure, "Millibars", SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::PitotIcePct, "Percent", SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::StructuralIcePct, "Percent", SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::AmbientPrecipState, "Mask", SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::AmbientInCloud, "Bool", SIMCONNECT_DATATYPE_INT32);
 
+    // Simulation time
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::LocalTime, "seconds", SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::LocalYear, "number", SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::LocalMonthOfYear, "number", SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::LocalDayOfMonth, "number", SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::ZuluTime, "seconds", SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::ZuluYear, "number", SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::ZuluMonthOfYear, "number", SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::ZuluDayOfMonth, "number", SIMCONNECT_DATATYPE_INT32);
+}

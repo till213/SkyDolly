@@ -82,7 +82,9 @@ public:
 "  pitot_icing,"
 "  structural_icing,"
 "  precipitation_state,"
-"  in_clouds"
+"  in_clouds,"
+"  local_sim_time,"
+"  zulu_sim_time"
 ") values ("
 "  null,"
 " :description,"
@@ -97,7 +99,9 @@ public:
 " :pitot_icing,"
 " :structural_icing,"
 " :precipitation_state,"
-" :in_clouds"
+" :in_clouds,"
+" :local_sim_time,"
+" :zulu_sim_time"
 ");");
         }
         if (selectByIdQuery == nullptr) {
@@ -168,6 +172,9 @@ bool SQLiteScenarioDao::addScenario(Scenario &scenario)  noexcept
     d->insertQuery->bindValue(":structural_icing", flightCondition.structuralIcingPercent);
     d->insertQuery->bindValue(":precipitation_state", Enum::toUnderlyingType(flightCondition.precipitationState));
     d->insertQuery->bindValue(":in_clouds", flightCondition.inClouds);
+    d->insertQuery->bindValue(":local_sim_time", flightCondition.localTime.toUTC());
+    // Zulu time equals to UTC time
+    d->insertQuery->bindValue(":zulu_sim_time", flightCondition.zuluTime);
     bool ok = d->insertQuery->exec();
     if (ok) {
         qint64 id = d->insertQuery->lastInsertId().toLongLong(&ok);
@@ -205,11 +212,13 @@ bool SQLiteScenarioDao::getScenarioById(qint64 id, Scenario &scenario) const noe
         int structuralIcingIdx = d->selectByIdQuery->record().indexOf("structural_icing");
         int precipitationStateIdx = d->selectByIdQuery->record().indexOf("precipitation_state");
         int inCloudsIdx = d->selectByIdQuery->record().indexOf("in_clouds");
+        int localSimulationTimeIdx = d->selectByIdQuery->record().indexOf("local_sim_time");
+        int zuluSimulationTimeIdx = d->selectByIdQuery->record().indexOf("zulu_sim_time");
         if (d->selectByIdQuery->next()) {
             scenario.setId(d->selectByIdQuery->value(idIdx).toLongLong());
-            QDateTime creationDate = d->selectByIdQuery->value(creationDateIdx).toDateTime();
-            creationDate.setTimeZone(QTimeZone::utc());
-            scenario.setCreationDate(creationDate.toLocalTime());
+            QDateTime date = d->selectByIdQuery->value(creationDateIdx).toDateTime();
+            date.setTimeZone(QTimeZone::utc());
+            scenario.setCreationDate(date.toLocalTime());
             scenario.setDescription(d->selectByIdQuery->value(descriptionIdx).toString());
             FlightCondition flightCondition;
             flightCondition.surfaceType = static_cast<SimType::SurfaceType>(d->selectByIdQuery->value(surfaceTypeIdx).toInt());
@@ -224,6 +233,11 @@ bool SQLiteScenarioDao::getScenarioById(qint64 id, Scenario &scenario) const noe
             flightCondition.structuralIcingPercent = d->selectByIdQuery->value(structuralIcingIdx).toInt();
             flightCondition.precipitationState = static_cast<SimType::PrecipitationState>(d->selectByIdQuery->value(precipitationStateIdx).toInt());
             flightCondition.inClouds = d->selectByIdQuery->value(inCloudsIdx).toBool();
+            date = d->selectByIdQuery->value(localSimulationTimeIdx).toDateTime();
+            date.setTimeZone(QTimeZone::utc());
+            flightCondition.localTime = date.toLocalTime();
+            // UTC equals zulu time, so no conversion necessary
+            flightCondition.zuluTime = d->selectByIdQuery->value(zuluSimulationTimeIdx).toDateTime();
 
             scenario.setFlightCondition(flightCondition);
         }

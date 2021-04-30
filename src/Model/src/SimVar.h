@@ -129,6 +129,16 @@ namespace SimVar
     MODEL_API extern const char *GpsWPPrevLon;
     MODEL_API extern const char *GpsWPPrevAlt;
 
+    inline constexpr char LocalTime[] = "Local Time";
+    inline constexpr char LocalYear[] = "Local Year";
+    inline constexpr char LocalMonthOfYear[] = "Local Month of Year";
+    inline constexpr char LocalDayOfMonth[] = "Local Day of Month";
+
+    inline constexpr char ZuluTime[] = "Zulu Time";
+    inline constexpr char ZuluYear[] = "Zulu Year";
+    inline constexpr char ZuluMonthOfYear[] = "Zulu Month of Year";
+    inline constexpr char ZuluDayOfMonth[] = "Zulu Day of Month";
+
     MODEL_API extern const char *Timestamp;
 }
 
