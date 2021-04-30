@@ -316,10 +316,12 @@ void SkyConnectDummy::recordAircraftHandle(qint64 timestamp) noexcept
 
 void SkyConnectDummy::recordLights(qint64 timestamp) noexcept
 {
+    static int lights = 0;
     Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
 
     LightData lightData;
-    lightData.lightStates = static_cast<SimType::LightStates>(d->randomGenerator->bounded(4097));
+    lightData.lightStates = static_cast<SimType::LightStates>(lights);
+    lights = ++lights % 0b1111111111;
 
     lightData.timestamp = timestamp;
     aircraft.getLight().upsert(std::move(lightData));

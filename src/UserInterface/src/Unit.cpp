@@ -29,6 +29,7 @@
 #include <QStringBuilder>
 #include <QLocale>
 #include <QDateTime>
+#include <QTime>
 
 #include "Unit.h"
 
@@ -178,6 +179,11 @@ QString Unit::formatDate(const QDateTime &date) noexcept
 }
 
 QString Unit::formatTime(const QDateTime &time) noexcept
+{
+    return QLocale::system().toString(time, "hh:mm:s");
+}
+
+QString Unit::formatDuration(const QTime &time) noexcept
 {
     return QLocale::system().toString(time, "hh:mm:s");
 }

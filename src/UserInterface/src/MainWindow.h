@@ -81,7 +81,6 @@ private slots:
     // File menu
     void on_newLibraryAction_triggered() noexcept;
     void on_openLibraryAction_triggered() noexcept;
-    void on_openScenarioAction_triggered() noexcept;
     void on_backupLibraryAction_triggered() noexcept;
     void on_optimiseLibraryAction_triggered() noexcept;
     void on_importCSVAction_triggered() noexcept;
@@ -112,5 +111,9 @@ private slots:
     void skipBackward() noexcept;
     void skipForward() noexcept;
     void skipToEnd() noexcept;
+
+    // Service
+    void handleScenarioRestored() noexcept;
+    void handleRecordingStopped() noexcept;
 };
 #endif // MAINWINDOW_H

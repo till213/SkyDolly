@@ -29,6 +29,7 @@
 
 class QString;
 class QDateTime;
+class QTime;
 
 class Unit
 {
@@ -64,6 +65,7 @@ public:
 
     static QString formatDate(const QDateTime &date) noexcept;
     static QString formatTime(const QDateTime &time) noexcept;
+    static QString formatDuration(const QTime &time) noexcept;
 
 private:
     static inline void dd2dms(double dd, int &degrees, int &minutes, double &seconds) noexcept;

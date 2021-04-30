@@ -31,17 +31,19 @@
 #include <QTableWidgetItem>
 #include <QItemSelectionModel>
 #include <QModelIndex>
-#include <QLocale>
 #include <QDateTime>
 #include <QTime>
 #include <QPushButton>
+#include <QMessageBox>
 
 #include "../../../Model/src/Scenario.h"
 #include "../../../Model/src/ScenarioDescription.h"
+#include "../../../Model/src/World.h"
 #include "../../../Persistence/src/Service/ScenarioService.h"
 #include "../Unit.h"
-#include "ScenarioSelectionDialog.h"
-#include "ui_ScenarioSelectionDialog.h"
+
+#include "ScenarioWidget.h"
+#include "ui_ScenarioWidget.h"
 
 namespace
 {
@@ -49,10 +51,10 @@ namespace
     constexpr int InvalidSelection = -1;
 }
 
-class ScenarioSelectionDialogPrivate
+class ScenarioWidgetPrivate
 {
 public:
-    ScenarioSelectionDialogPrivate(ScenarioService &theScenarioService)
+    ScenarioWidgetPrivate(ScenarioService &theScenarioService)
         : scenarioService(theScenarioService),
           selectedRow(InvalidSelection),
           selectedScenarioId(Scenario::InvalidId)
@@ -66,37 +68,49 @@ public:
 
 // PUBLIC
 
-ScenarioSelectionDialog::ScenarioSelectionDialog(ScenarioService &scenarioService, QWidget *parent) noexcept
-    : QDialog(parent),
-      ui(new Ui::ScenarioSelectionDialog),
-      d(std::make_unique<ScenarioSelectionDialogPrivate>(scenarioService))
+ScenarioWidget::ScenarioWidget(ScenarioService &scenarioService, QWidget *parent) noexcept
+    : QWidget(parent),
+      ui(new Ui::ScenarioWidget),
+      d(std::make_unique<ScenarioWidgetPrivate>(scenarioService))
 {
     ui->setupUi(this);
     initUi();
     frenchConnection();
 }
 
-ScenarioSelectionDialog::~ScenarioSelectionDialog() noexcept
+ScenarioWidget::~ScenarioWidget() noexcept
 {
     delete ui;
 }
 
-qint64 ScenarioSelectionDialog::getSelectedScenarioId() const noexcept
+qint64 ScenarioWidget::getSelectedScenarioId() const noexcept
 {
     return d->selectedScenarioId;
 }
 
 // PROTECTED
 
-void ScenarioSelectionDialog::showEvent(QShowEvent *event) noexcept
+void ScenarioWidget::showEvent(QShowEvent *event) noexcept
 {
     Q_UNUSED(event)
     updateUi();
+
+    // Service
+    connect(&d->scenarioService, &ScenarioService::scenarioStored,
+            this, &ScenarioWidget::updateUi);
+}
+
+void ScenarioWidget::hideEvent(QHideEvent *event) noexcept
+{
+    Q_UNUSED(event)
+
+    disconnect(&d->scenarioService, &ScenarioService::scenarioStored,
+               this, &ScenarioWidget::updateUi);
 }
 
 // PRIVATE
 
-void ScenarioSelectionDialog::initUi() noexcept
+void ScenarioWidget::initUi() noexcept
 {
     ui->scenarioTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
@@ -108,10 +122,28 @@ void ScenarioSelectionDialog::initUi() noexcept
     ui->scenarioTableWidget->setMinimumWidth(MinimumTableWidth);
 }
 
-void ScenarioSelectionDialog::updateUi() noexcept
+
+void ScenarioWidget::updateEditUi() noexcept
+{
+    ui->loadPushButton->setEnabled(d->selectedScenarioId != Scenario::InvalidId);
+    ui->deletePushButton->setEnabled(d->selectedScenarioId != Scenario::InvalidId);
+}
+
+void ScenarioWidget::frenchConnection() noexcept
+{
+    connect(ui->scenarioTableWidget, &QTableWidget::itemSelectionChanged,
+            this, &ScenarioWidget::handleSelectionChanged);
+    connect(ui->loadPushButton, &QPushButton::clicked,
+            this, &ScenarioWidget::handleLoad);
+    connect(ui->deletePushButton, &QPushButton::clicked,
+            this, &ScenarioWidget::handleDelete);
+}
+
+// PRIVATE SLOTS
+
+void ScenarioWidget::updateUi() noexcept
 {
     QVector<ScenarioDescription> descriptions = d->scenarioService.getScenarioDescriptions();
-    QLocale systemLocale = QLocale::system();
     ui->scenarioTableWidget->setSortingEnabled(false);
     ui->scenarioTableWidget->clearContents();
     ui->scenarioTableWidget->setRowCount(descriptions.count());
@@ -142,7 +174,7 @@ void ScenarioSelectionDialog::updateUi() noexcept
 
         const qint64 durationMSec = desc.startDate.msecsTo(desc.endDate);
         const QTime time = QTime(0, 0).addMSecs(durationMSec);
-        newItem = new QTableWidgetItem(systemLocale.toString(time));
+        newItem = new QTableWidgetItem(Unit::formatDuration(time));
         ui->scenarioTableWidget->setItem(rowIndex, 7, newItem);
 
         newItem = new QTableWidgetItem(desc.description);
@@ -156,22 +188,8 @@ void ScenarioSelectionDialog::updateUi() noexcept
     updateEditUi();
 }
 
-void ScenarioSelectionDialog::updateEditUi() noexcept
-{
-    ui->deletePushButton->setEnabled(d->selectedScenarioId != Scenario::InvalidId);
-}
 
-void ScenarioSelectionDialog::frenchConnection() noexcept
-{
-    connect(ui->scenarioTableWidget, &QTableWidget::itemSelectionChanged,
-            this, &ScenarioSelectionDialog::handleSelectionChanged);
-    connect(ui->deletePushButton, &QPushButton::clicked,
-            this, &ScenarioSelectionDialog::handleDelete);
-}
-
-// PRIVATE SLOTS
-
-void ScenarioSelectionDialog::handleSelectionChanged() noexcept
+void ScenarioWidget::handleSelectionChanged() noexcept
 {
     QItemSelectionModel *select = ui->scenarioTableWidget->selectionModel();
     QModelIndexList selectedRows = select->selectedRows(0);
@@ -186,7 +204,19 @@ void ScenarioSelectionDialog::handleSelectionChanged() noexcept
     updateEditUi();
 }
 
-void ScenarioSelectionDialog::handleDelete() noexcept
+void ScenarioWidget::handleLoad() noexcept
+{
+
+    qint64 selectedScenarioId = d->selectedScenarioId;
+    if (selectedScenarioId != Scenario::InvalidId) {
+        bool ok = d->scenarioService.restore(selectedScenarioId, World::getInstance().getCurrentScenario());
+        if (!ok) {
+            QMessageBox::critical(this, tr("Database error"), tr("The scenario %1 could not be read from the library.").arg(selectedScenarioId));
+        }
+    }
+}
+
+void ScenarioWidget::handleDelete() noexcept
 {
     if (d->selectedScenarioId != Scenario::InvalidId) {
         d->scenarioService.deleteById(d->selectedScenarioId);
@@ -196,3 +226,5 @@ void ScenarioSelectionDialog::handleDelete() noexcept
         ui->scenarioTableWidget->selectRow(selectedRow);
     }
 }
+
+

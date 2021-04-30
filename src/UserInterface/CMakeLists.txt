@@ -47,9 +47,6 @@ target_sources(UserInterface
         src/Dialogs/ScenarioDialog.cpp
         src/Dialogs/ScenarioDialog.h
         src/Dialogs/ScenarioDialog.ui
-        src/Dialogs/ScenarioSelectionDialog.cpp
-        src/Dialogs/ScenarioSelectionDialog.h
-        src/Dialogs/ScenarioSelectionDialog.ui
         src/Widgets/AircraftWidget.cpp
         src/Widgets/AircraftWidget.h
         src/Widgets/AircraftWidget.ui
@@ -74,6 +71,9 @@ target_sources(UserInterface
         src/Widgets/LightWidget.cpp
         src/Widgets/LightWidget.h
         src/Widgets/LightWidget.ui
+        src/Widgets/ScenarioWidget.cpp
+        src/Widgets/ScenarioWidget.h
+        src/Widgets/ScenarioWidget.ui
 )
 
 target_link_libraries(UserInterface PRIVATE ${USERINTERFACE_LIBS})

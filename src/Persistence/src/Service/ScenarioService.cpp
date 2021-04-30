@@ -62,6 +62,7 @@ bool ScenarioService::store(Scenario &scenario) noexcept
         d->scenarioDao->addScenario(scenario);
         if (ok) {
             QSqlDatabase::database().commit();
+            emit scenarioStored(scenario.getId());
         } else {
             QSqlDatabase::database().rollback();
         }
@@ -74,6 +75,9 @@ bool ScenarioService::restore(qint64 id, Scenario &scenario) noexcept
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
         ok = d->scenarioDao->getScenarioById(id, scenario);
+        if (ok) {
+            emit scenarioRestored(scenario.getId());
+        }
     }
     QSqlDatabase::database().rollback();
     return ok;

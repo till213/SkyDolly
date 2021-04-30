@@ -74,8 +74,9 @@ protected:
     {}
 
 signals:
-    void timestampChanged(qint64 timestamp, TimeVariableData::Access access) const;
-    void stateChanged(Connect::State state) const;
+    void timestampChanged(qint64 timestamp, TimeVariableData::Access access);
+    void stateChanged(Connect::State state);
+    void recordingStopped();
 };
 
 #endif // SKYCONNECT_H

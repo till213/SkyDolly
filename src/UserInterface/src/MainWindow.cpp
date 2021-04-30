@@ -41,6 +41,7 @@
 #include <QMessageBox>
 #include <QDoubleValidator>
 #include <QIcon>
+#include <QStackedWidget>
 
 #include "../../Kernel/src/Version.h"
 #include "../../Kernel/src/Settings.h"
@@ -64,8 +65,8 @@
 #include "Dialogs/ScenarioDialog.h"
 #include "Dialogs/SimulationVariablesDialog.h"
 #include "Dialogs/StatisticsDialog.h"
-#include "Dialogs/ScenarioSelectionDialog.h"
 #include "Widgets/ActionButton.h"
+#include "Widgets/ScenarioWidget.h"
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
 
@@ -107,7 +108,6 @@ public:
           scenarioDialog(nullptr),
           simulationVariablesDialog(nullptr),
           statisticsDialog(nullptr),
-          scenarioSelectionDialog(nullptr),
           scenarioService(std::make_unique<ScenarioService>()),
           databaseService(std::make_unique<DatabaseService>())
     {}
@@ -121,7 +121,6 @@ public:
     ScenarioDialog *scenarioDialog;
     SimulationVariablesDialog *simulationVariablesDialog;
     StatisticsDialog *statisticsDialog;
-    ScenarioSelectionDialog *scenarioSelectionDialog;
     double lastCustomReplaySpeed;
     std::unique_ptr<ScenarioService> scenarioService;
     std::unique_ptr<DatabaseService> databaseService;
@@ -197,22 +196,31 @@ void MainWindow::frenchConnection() noexcept
     // Settings
     connect(&Settings::getInstance(), &Settings::changed,
             this, &MainWindow::updateMainWindow);
+
+    // Service
+    connect(d->scenarioService.get(), &ScenarioService::scenarioRestored,
+            this, &MainWindow::handleScenarioRestored);
+    connect(&d->skyConnect, &SkyConnectIntf::recordingStopped,
+            this, &MainWindow::handleRecordingStopped);
 }
 
 void MainWindow::initUi() noexcept
 {
     setWindowIcon(QIcon(":/img/icons/application-icon.png"));
-    statusBar()->setVisible(false);
     resize(minimumSize());
 
     // Dialogs
     d->scenarioDialog = new ScenarioDialog(d->skyConnect, this);
     d->simulationVariablesDialog = new SimulationVariablesDialog(d->skyConnect, this);
     d->statisticsDialog = new StatisticsDialog(d->skyConnect, this);
-    d->scenarioSelectionDialog = new ScenarioSelectionDialog(*d->scenarioService, this);
     d->aboutDialog = new AboutDialog(this);
     d->aboutLibraryDialog = new AboutLibraryDialog(*d->databaseService, this);
     d->settingsDialog = new SettingsDialog(this);
+
+    // Widgets
+    ScenarioWidget *scenarioWidget = new ScenarioWidget(*d->scenarioService, ui->moduleStackWidget);
+    ui->moduleStackWidget->addWidget(scenarioWidget);
+    ui->moduleStackWidget->setCurrentWidget(scenarioWidget);
 
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
     initControlUi();
@@ -561,28 +569,6 @@ void MainWindow::on_openLibraryAction_triggered() noexcept
     }
 }
 
-void MainWindow::on_openScenarioAction_triggered() noexcept
-{
-    // TODO FIXME Should call open() here, but this dialog is of temporary nature anyway
-    int reply = d->scenarioSelectionDialog->exec();
-    if (reply == QDialog::Accepted) {
-        qint64 selectedScenarioId = d->scenarioSelectionDialog->getSelectedScenarioId();
-        if (selectedScenarioId != Scenario::InvalidId) {
-            bool ok = d->scenarioService->restore(selectedScenarioId, World::getInstance().getCurrentScenario());
-            if (ok) {
-                updateUi();
-                d->skyConnect.skipToBegin();
-                if (d->skyConnect.isConnected()) {
-                    d->skyConnect.startReplay(true);
-                    d->skyConnect.setPaused(true);
-                }
-            } else {
-                QMessageBox::critical(this, tr("Database error"), tr("The scenario %1 could not be read from the library.").arg(selectedScenarioId));
-            }
-        }
-    }
-}
-
 void MainWindow::on_backupLibraryAction_triggered() noexcept
 {
     bool ok = d->databaseService->backup();
@@ -849,4 +835,19 @@ void MainWindow::skipForward() noexcept
 void MainWindow::skipToEnd() noexcept
 {
     d->skyConnect.skipToEnd();
+}
+
+void MainWindow::handleScenarioRestored() noexcept
+{
+    updateUi();
+    d->skyConnect.skipToBegin();
+    if (d->skyConnect.isConnected()) {
+        d->skyConnect.startReplay(true);
+        d->skyConnect.setPaused(true);
+    }
+}
+
+void MainWindow::handleRecordingStopped() noexcept
+{
+    d->scenarioService->store(World::getInstance().getCurrentScenario());
 }

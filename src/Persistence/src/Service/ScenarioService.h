@@ -27,6 +27,7 @@
 
 #include <memory>
 
+#include <QObject>
 #include <QVector>
 
 #include "../../../Model/src/Scenario.h"
@@ -35,8 +36,9 @@
 
 class ScenarioServicePrivate;
 
-class PERSISTENCE_API ScenarioService
+class PERSISTENCE_API ScenarioService : public QObject
 {
+    Q_OBJECT
 public:
     ScenarioService() noexcept;
     ~ScenarioService() noexcept;
@@ -46,6 +48,10 @@ public:
     bool deleteById(qint64 id) noexcept;
 
     QVector<ScenarioDescription> getScenarioDescriptions() const noexcept;
+
+signals:
+    void scenarioStored(qint64 scenarioId);
+    void scenarioRestored(qint64 scenarioId);
 
 private:
     std::unique_ptr<ScenarioServicePrivate> d;

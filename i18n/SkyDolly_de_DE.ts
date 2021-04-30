@@ -779,121 +779,121 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="305"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="310"/>
         <source>Library</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="510"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="515"/>
         <source>Record [@%1 Hz]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="512"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="517"/>
         <source>Record [auto sample rate]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="517"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="522"/>
         <source>Fast forward [%1 sec]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="518"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="523"/>
         <source>Rewind [%1 sec]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="521"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="526"/>
         <source>Fast forward [%1 %]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="522"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="527"/>
         <source>Rewind [%1 %]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="532"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="537"/>
         <source>New library</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="538"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="559"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="580"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="590"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="598"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="543"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="564"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="585"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="595"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="603"/>
         <source>Database error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="538"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="543"/>
         <source>The library %1 could not be created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="542"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="547"/>
         <source>Database exists</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="542"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="547"/>
         <source>The library %1 already exists. Please choose another path.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="554"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="559"/>
         <source>Open library</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="559"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="564"/>
         <source>The library %1 could not be opened.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="580"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="585"/>
         <source>The scenario %1 could not be read from the library.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="590"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="595"/>
         <source>The library backup could not be created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="598"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="603"/>
         <source>The library could not be optimised.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="623"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="628"/>
         <source>Import CSV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="639"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="644"/>
         <source>Import error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="639"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="644"/>
         <source>The CSV file %1 could not be read.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="648"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="653"/>
         <source>Export CSV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="658"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="663"/>
         <source>Export error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="658"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="663"/>
         <source>The CSV file %1 could not be written.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -999,6 +999,19 @@ MIT License</source>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/ScenarioSelectionDialog.cpp" line="103"/>
         <source>Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ScenarioWidget</name>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/ScenarioWidget.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/ScenarioWidget.ui" line="20"/>
+        <source>Scenario</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
