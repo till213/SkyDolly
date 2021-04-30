@@ -63,19 +63,13 @@ SecondaryFlightControl::~SecondaryFlightControl() noexcept
 {
 }
 
-void SecondaryFlightControl::upsert(SecondaryFlightControlData secondaryFlightControlData) noexcept
+void SecondaryFlightControl::upsert(const SecondaryFlightControlData &secondaryFlightControlData) noexcept
 {
     if (d->secondaryFlightControlData.count() > 0 && d->secondaryFlightControlData.last().timestamp == secondaryFlightControlData.timestamp)  {
         // Same timestamp -> replace
         d->secondaryFlightControlData[d->secondaryFlightControlData.count() - 1] = secondaryFlightControlData;
-#ifdef DEBUG
-        qDebug("SecondaryFlightControl::upsertSecondaryFlightControlData: UPDATE sample, timestamp: %llu count: %d", secondaryFlightControlData.timestamp, d->secondaryFlightControlData.count());
-#endif
     } else {
         d->secondaryFlightControlData.append(secondaryFlightControlData);
-#ifdef DEBUG
-        qDebug("SecondaryFlightControl::upsertSecondaryFlightControlData: INSERT sample, timestamp: %llu count: %d", secondaryFlightControlData.timestamp, d->secondaryFlightControlData.count());
-#endif
     }
     emit dataChanged();
 }
@@ -89,7 +83,12 @@ const SecondaryFlightControlData &SecondaryFlightControl::getLast() const noexce
     }
 }
 
-const QVector<SecondaryFlightControlData> &SecondaryFlightControl::getAll() const noexcept
+QVector<SecondaryFlightControlData> &SecondaryFlightControl::getAll() const noexcept
+{
+    return d->secondaryFlightControlData;
+}
+
+const QVector<SecondaryFlightControlData> &SecondaryFlightControl::getAllConst() const noexcept
 {
     return d->secondaryFlightControlData;
 }

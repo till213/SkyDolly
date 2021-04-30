@@ -32,15 +32,20 @@ add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x000000)
 
 # Qt
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools Sql REQUIRED)
 
 # Application libraries
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Kernel)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/KernelTest)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Model)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/ModelTest)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/Persistence)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/SkyConnect)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
+
+# 3rd Party
+# ordered-map (Tessil)
+add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/ordered-map)
 
 # Documentation
 add_subdirectory(${CMAKE_SOURCE_DIR}/doc)
@@ -51,6 +56,7 @@ set(OTHER_SOURCES
     CHANGELOG.md
     BUILD.md
     CODE_OF_CONDUCT.md
+    THIRD_PARTY.md
     doc/SkyDolly.simvars
     ${CMAKE_SOURCE_DIR}/res/Info.plist.in
 )
@@ -85,7 +91,7 @@ else()
 endif()
 
 set(SKYDOLLY_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets UserInterface Kernel Model SkyConnect
+    Qt${QT_VERSION_MAJOR}::Widgets UserInterface Kernel Model Persistence SkyConnect
 )
 if (APPLE)
     list(APPEND SKYDOLLY_LIBS -lc++)

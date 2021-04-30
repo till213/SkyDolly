@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+
 #include <QApplication>
 #include <QByteArray>
 #include <QFileDialog>
@@ -40,26 +42,31 @@
 #include <QDoubleValidator>
 #include <QIcon>
 #include <QLocale>
+#include <QStackedWidget>
 
 #include "../../Kernel/src/Version.h"
 #include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/Enum.h"
-#include "../../Model/src/Export/CSVExport.h"
-#include "../../Model/src/Import/CSVImport.h"
+#include "../../Kernel/src/SampleRate.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/AircraftData.h"
 #include "../../Model/src/AircraftInfo.h"
 #include "../../Model/src/World.h"
-#include "../../Kernel/src/SampleRate.h"
+#include "../../Persistence/src/Dao/DaoFactory.h"
+#include "../../Persistence/src/Service/ScenarioService.h"
+#include "../../Persistence/src/Service/DatabaseService.h"
+#include "../../Persistence/src/Service/CSVService.h"
 #include "../../SkyConnect/src/SkyManager.h"
 #include "../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../SkyConnect/src/Connect.h"
 #include "Dialogs/AboutDialog.h"
+#include "Dialogs/AboutLibraryDialog.h"
 #include "Dialogs/SettingsDialog.h"
 #include "Dialogs/ScenarioDialog.h"
 #include "Dialogs/SimulationVariablesDialog.h"
 #include "Dialogs/StatisticsDialog.h"
 #include "Widgets/ActionButton.h"
+#include "Widgets/ScenarioWidget.h"
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
 
@@ -98,22 +105,30 @@ public:
           previousState(Connect::State::Connected),
           replaySpeedButtonGroup(nullptr),
           aboutDialog(nullptr),
+          aboutLibraryDialog(nullptr),
           settingsDialog(nullptr),
           scenarioDialog(nullptr),
           simulationVariablesDialog(nullptr),
-          statisticsDialog(nullptr)
+          statisticsDialog(nullptr),
+          scenarioService(std::make_unique<ScenarioService>()),
+          databaseService(std::make_unique<DatabaseService>()),
+          csvService(std::make_unique<CSVService>(*scenarioService))
     {}
 
     SkyConnectIntf &skyConnect;
     Connect::State previousState;
     QButtonGroup *replaySpeedButtonGroup;
     AboutDialog *aboutDialog;
+    AboutLibraryDialog *aboutLibraryDialog;
     SettingsDialog *settingsDialog;
     ScenarioDialog *scenarioDialog;
     SimulationVariablesDialog *simulationVariablesDialog;
     StatisticsDialog *statisticsDialog;
     double lastCustomReplaySpeed;
     QLocale locale;
+    std::unique_ptr<ScenarioService> scenarioService;
+    std::unique_ptr<DatabaseService> databaseService;
+    std::unique_ptr<CSVService> csvService;
 };
 
 // PUBLIC
@@ -124,6 +139,7 @@ MainWindow::MainWindow(QWidget *parent) noexcept
       d(std::make_unique<MainWindowPrivate>())
 {
     ui->setupUi(this);
+    connectWithDb();
     initUi();
     updateUi();
     frenchConnection();
@@ -134,6 +150,11 @@ MainWindow::~MainWindow() noexcept
     // The SkyConnect instances have been deleted by the SkyManager (singleton)
     // already at this point; no need to disconnect from their "stateChanged"
     // signal
+
+    // Make sure that all widgets having a reference to the scenario service
+    // are deleted before this MainWindow instance (which owns the scenario
+    // service); we make sure by simply deleting their parent moduleStackWidget
+    delete ui->moduleStackWidget;
 }
 
 // PRIVATE
@@ -182,16 +203,20 @@ void MainWindow::frenchConnection() noexcept
     connect(d->statisticsDialog, &StatisticsDialog::visibilityChanged,
             this, &MainWindow::updateWindowMenu);
 
-
     // Settings
     connect(&Settings::getInstance(), &Settings::changed,
             this, &MainWindow::updateMainWindow);
+
+    // Service
+    connect(d->scenarioService.get(), &ScenarioService::scenarioRestored,
+            this, &MainWindow::handleScenarioRestored);
+    connect(&d->skyConnect, &SkyConnectIntf::recordingStopped,
+            this, &MainWindow::handleRecordingStopped);
 }
 
 void MainWindow::initUi() noexcept
 {
     setWindowIcon(QIcon(":/img/icons/application-icon.png"));
-    statusBar()->setVisible(false);
     resize(minimumSize());
 
     // Dialogs
@@ -199,10 +224,20 @@ void MainWindow::initUi() noexcept
     d->simulationVariablesDialog = new SimulationVariablesDialog(d->skyConnect, this);
     d->statisticsDialog = new StatisticsDialog(d->skyConnect, this);
     d->aboutDialog = new AboutDialog(this);
+    d->aboutLibraryDialog = new AboutLibraryDialog(*d->databaseService, this);
     d->settingsDialog = new SettingsDialog(this);
 
+    // Widgets
+    ui->moduleGroupBox->setTitle(tr("Scenarios"));
+    ScenarioWidget *scenarioWidget = new ScenarioWidget(*d->scenarioService, ui->moduleStackWidget);
+    ui->moduleStackWidget->addWidget(scenarioWidget);
+    ui->moduleStackWidget->setCurrentWidget(scenarioWidget);
+
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
+    ui->showMinimalAction->setChecked(ui->moduleGroupBox->isVisible());
     initControlUi();
+
+    on_showMinimalAction_triggered(ui->showMinimalAction->isChecked());
 }
 
 void MainWindow::initControlUi() noexcept
@@ -222,9 +257,6 @@ void MainWindow::initControlUi() noexcept
     ui->positionSlider->setRange(PositionSliderMin, PositionSliderMax);
     ui->timestampTimeEdit->setDisplayFormat(TimestampFormat);
 
-    // TODO: Take regional settings into account
-    // https://stackoverflow.com/questions/42534378/c-qt-creator-how-to-have-dot-and-comma-as-decimal-separator-on-a-qdoubles
-    // https://doc.qt.io/qt-5/qlocale.html
     QDoubleValidator *customReplaySpeedValidator = new QDoubleValidator(ui->customReplaySpeedLineEdit);
     ui->customReplaySpeedLineEdit->setValidator(customReplaySpeedValidator);
     customReplaySpeedValidator->setRange(ReplaySpeedMin, ReplaySpeedMax, ReplaySpeedDecimalPlaces);
@@ -281,6 +313,22 @@ void MainWindow::initControlUi() noexcept
     skipToEndButton->setAction(ui->skipToEndAction);
     skipToEndButton->setFlat(true);
     ui->controlButtonLayout->insertWidget(7, skipToEndButton);
+}
+
+bool MainWindow::connectWithDb() noexcept
+{
+    QString filePath = Settings::getInstance().getLibraryPath();
+    bool ok;
+    if (filePath.isEmpty()) {
+        filePath = QFileDialog::getSaveFileName(this, tr("Library"), ".", QString("*") + DatabaseService::LibraryExtension);
+        Settings::getInstance().setLibraryPath(filePath);
+    }
+    if (!filePath.isEmpty()) {
+        ok = d->databaseService->connectDb();
+    } else {
+        ok = false;
+    }
+    return ok;
 }
 
 // PRIVATE SLOTS
@@ -493,6 +541,60 @@ void MainWindow::updateMainWindow() noexcept
     }
 }
 
+void MainWindow::on_newLibraryAction_triggered() noexcept
+{
+    Settings &settings = Settings::getInstance();
+    QString existingLibraryPath = QFileInfo(settings.getLibraryPath()).absolutePath();
+    bool retry = true;
+    while (retry) {
+        QString libraryPath = QFileDialog::getSaveFileName(this, tr("New library"), existingLibraryPath, QString("*") + DatabaseService::LibraryExtension);
+        if (!libraryPath.isEmpty()) {
+            if (!QFileInfo::exists(libraryPath)) {
+                settings.setLibraryPath(libraryPath);
+                bool ok = d->databaseService->connectDb();
+                if (!ok) {
+                    QMessageBox::critical(this, tr("Database error"), tr("The library %1 could not be created.").arg(libraryPath));
+                }
+                retry = false;
+            } else {
+                QMessageBox::information(this, tr("Database exists"), tr("The library %1 already exists. Please choose another path.").arg(libraryPath));
+            }
+        } else {
+            retry = false;
+        }
+    }
+}
+
+void MainWindow::on_openLibraryAction_triggered() noexcept
+{
+    Settings &settings = Settings::getInstance();
+    QString existingLibraryPath = QFileInfo(settings.getLibraryPath()).absolutePath();
+    QString libraryPath = QFileDialog::getOpenFileName(this, tr("Open library"), existingLibraryPath, QString("*") + DatabaseService::LibraryExtension);
+    if (!libraryPath.isEmpty()) {
+        settings.setLibraryPath(libraryPath);
+        bool ok = d->databaseService->connectDb();
+        if (!ok) {
+            QMessageBox::critical(this, tr("Database error"), tr("The library %1 could not be opened.").arg(libraryPath));
+        }
+    }
+}
+
+void MainWindow::on_backupLibraryAction_triggered() noexcept
+{
+    bool ok = d->databaseService->backup();
+    if (!ok) {
+        QMessageBox::critical(this, tr("Database error"), tr("The library backup could not be created."));
+    }
+}
+
+void MainWindow::on_optimiseLibraryAction_triggered() noexcept
+{
+    bool ok = d->databaseService->optimise();
+    if (!ok) {
+        QMessageBox::critical(this, tr("Database error"), tr("The library could not be optimised."));
+    }
+}
+
 void MainWindow::on_importCSVAction_triggered() noexcept
 {
     const QMessageBox message;
@@ -516,10 +618,8 @@ void MainWindow::on_importCSVAction_triggered() noexcept
         QString exportPath = Settings::getInstance().getExportPath();
         const QString filePath = QFileDialog::getOpenFileName(this, tr("Import CSV"), exportPath, QString("*.csv"));
         if (!filePath.isEmpty()) {
-            QFile file(filePath);
-            const CSVImport csvImport;
-            Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
-            bool ok = csvImport.importData(file, aircraft);
+
+            bool ok = d->csvService->importAircraft(filePath);
             if (ok) {
                 updateUi();
                 d->skyConnect.skipToBegin();
@@ -541,10 +641,8 @@ void MainWindow::on_exportCSVAction_triggered() noexcept
     QString exportPath = Settings::getInstance().getExportPath();
     const QString filePath = QFileDialog::getSaveFileName(this, tr("Export CSV"), exportPath, QString("*.csv"));
     if (!filePath.isEmpty()) {
-        QFile file(filePath);
-        CSVExport csvExport;
         const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
-        bool ok = csvExport.exportData(aircraft, file);
+        bool ok = d->csvService->exportAircraft(aircraft, filePath);
         if (ok) {
             exportPath = QFileInfo(filePath).absolutePath();
             Settings::getInstance().setExportPath(exportPath);
@@ -594,6 +692,24 @@ void MainWindow::on_showStatisticsAction_triggered(bool enabled) noexcept
 void MainWindow::on_stayOnTopAction_triggered(bool enabled) noexcept
 {
     Settings::getInstance().setWindowStaysOnTopEnabled(enabled);
+}
+
+void MainWindow::on_showMinimalAction_triggered(bool enabled) noexcept
+{
+    ui->moduleGroupBox->setHidden(enabled);
+
+    resize(1, 1);
+    adjustSize();
+    if (enabled) {
+        setMaximumHeight(height());
+    } else {
+        setMaximumHeight(32767);
+    }
+}
+
+void MainWindow::on_aboutLibraryAction_triggered() noexcept
+{
+    d->aboutLibraryDialog->exec();
 }
 
 void MainWindow::on_aboutAction_triggered() noexcept
@@ -738,4 +854,19 @@ void MainWindow::skipForward() noexcept
 void MainWindow::skipToEnd() noexcept
 {
     d->skyConnect.skipToEnd();
+}
+
+void MainWindow::handleScenarioRestored() noexcept
+{
+    updateUi();
+    d->skyConnect.skipToBegin();
+    if (d->skyConnect.isConnected()) {
+        d->skyConnect.startReplay(true);
+        d->skyConnect.setPaused(true);
+    }
+}
+
+void MainWindow::handleRecordingStopped() noexcept
+{
+    d->scenarioService->store(World::getInstance().getCurrentScenario());
 }

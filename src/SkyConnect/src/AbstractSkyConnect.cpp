@@ -25,13 +25,14 @@
 #include <QtGlobal>
 #include <QTimer>
 #include <QElapsedTimer>
+#include <QDateTime>
 
+#include "../../Kernel/src/SampleRate.h"
 #include "../../Kernel/src/Settings.h"
 #include "../../Model/src/World.h"
 #include "../../Model/src/Scenario.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/AircraftData.h"
-#include "../../Kernel/src/SampleRate.h"
 #include "Connect.h"
 #include "SkyConnectIntf.h"
 #include "AbstractSkyConnect.h"
@@ -109,6 +110,7 @@ void AbstractSkyConnect::stopRecording() noexcept
     onStopRecording();
     d->timer.stop();
     setState(Connect::State::Connected);
+    emit recordingStopped();
 }
 
 bool AbstractSkyConnect::isRecording() const noexcept
@@ -154,7 +156,9 @@ bool AbstractSkyConnect::isReplaying() const noexcept
 
 void AbstractSkyConnect::stop() noexcept
 {
-    stopRecording();
+    if (isRecording()) {
+        stopRecording();
+    }
     stopReplay();
 }
 
@@ -301,18 +305,18 @@ void AbstractSkyConnect::setTimeScale(double timeScale) noexcept
 double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
 {
     double samplesPerSecond;
-    const QVector<AircraftData> &aircraftData = d->currentScenario.getUserAircraftConst().getAll();
+    const QVector<AircraftData> &aircraftData = d->currentScenario.getUserAircraftConst().getAllConst();
     if (aircraftData.count() > 0) {
         const qint64 startTimestamp = qMin(qMax(d->currentTimestamp - SamplesPerSecondPeriodMSec, 0ll), aircraftData.last().timestamp);
         int index = d->lastSamplesPerSecondIndex;
-        while (d->currentScenario.getUserAircraftConst().getAll().at(index).timestamp < startTimestamp) {
+        while (d->currentScenario.getUserAircraftConst().getAllConst().at(index).timestamp < startTimestamp) {
             ++index;
         }
         d->lastSamplesPerSecondIndex = index;
 
-        const int lastIndex = d->currentScenario.getUserAircraftConst().getAll().count() - 1;
+        const int lastIndex = d->currentScenario.getUserAircraftConst().getAllConst().count() - 1;
         const int nofSamples = lastIndex - index + 1;
-        const qint64 period = d->currentScenario.getUserAircraftConst().getAll().at(lastIndex).timestamp - d->currentScenario.getUserAircraftConst().getAll().at(index).timestamp;
+        const qint64 period = d->currentScenario.getUserAircraftConst().getAllConst().at(lastIndex).timestamp - d->currentScenario.getUserAircraftConst().getAllConst().at(index).timestamp;
         if (period > 0) {
             samplesPerSecond = static_cast<double>(nofSamples) * 1000.0 / (static_cast<double>(period));
         } else {
@@ -394,7 +398,7 @@ void AbstractSkyConnect::frenchConnection() noexcept
 
 bool AbstractSkyConnect::hasRecordingStarted() const noexcept
 {
-    return d->currentScenario.getUserAircraftConst().getAll().count();
+    return d->currentScenario.getUserAircraftConst().getAllConst().count();
 }
 
 qint64 AbstractSkyConnect::getSkipInterval() const noexcept
@@ -423,4 +427,3 @@ void AbstractSkyConnect::handleRecordSampleRateChanged(SampleRate::SampleRate sa
         onRecordSampleRateChanged(sampleRate);
     }
 }
-

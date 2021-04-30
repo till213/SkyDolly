@@ -62,6 +62,8 @@ private:
     void initUi() noexcept;
     void initControlUi() noexcept;
 
+    bool connectWithDb() noexcept;
+
 private slots:
     void on_positionSlider_sliderPressed() noexcept;
     void on_positionSlider_valueChanged(int value) noexcept;
@@ -77,6 +79,10 @@ private slots:
     void updateMainWindow() noexcept;
 
     // File menu
+    void on_newLibraryAction_triggered() noexcept;
+    void on_openLibraryAction_triggered() noexcept;
+    void on_backupLibraryAction_triggered() noexcept;
+    void on_optimiseLibraryAction_triggered() noexcept;
     void on_importCSVAction_triggered() noexcept;
     void on_exportCSVAction_triggered() noexcept;
     void on_showSettingsAction_triggered() noexcept;
@@ -86,7 +92,9 @@ private slots:
     void on_showSimulationVariablesAction_triggered(bool enabled) noexcept;
     void on_showStatisticsAction_triggered(bool enabled) noexcept;
     void on_stayOnTopAction_triggered(bool enabled) noexcept;
+    void on_showMinimalAction_triggered(bool enabled) noexcept;
     // About menu
+    void on_aboutLibraryAction_triggered() noexcept;
     void on_aboutAction_triggered() noexcept;
     void on_aboutQtAction_triggered() noexcept;
 
@@ -104,5 +112,9 @@ private slots:
     void skipBackward() noexcept;
     void skipForward() noexcept;
     void skipToEnd() noexcept;
+
+    // Service
+    void handleScenarioRestored() noexcept;
+    void handleRecordingStopped() noexcept;
 };
 #endif // MAINWINDOW_H

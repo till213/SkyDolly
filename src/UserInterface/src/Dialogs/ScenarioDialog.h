@@ -36,13 +36,12 @@ class SkyConnectIntf;
 class ScenarioDialogPrivate;
 
 namespace Ui {
-class ScenarioDialog;
+    class ScenarioDialog;
 }
 
 class ScenarioDialog : public QDialog
 {
     Q_OBJECT
-
 public:
     explicit ScenarioDialog(SkyConnectIntf &skyConnect, QWidget *parent = nullptr) noexcept;
     virtual ~ScenarioDialog() noexcept;

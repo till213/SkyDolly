@@ -59,6 +59,9 @@ public:
      */
     static void destroyInstance() noexcept;
 
+    QString getLibraryPath() const noexcept;
+    void setLibraryPath(const QString &libraryPath) noexcept;
+
     /*!
      * Returns the recording sample rate enumeration value.
      *
@@ -195,6 +198,13 @@ public slots:
     void restore() noexcept;
 
 signals:
+    /*!
+     * Emitted when the library path has changed.
+     *
+     * \sa changed()
+     */
+    void libraryPathChanged(const QString &libraryPath);
+
     /*!
      * Emitted when the record sample rate has changed.
      *

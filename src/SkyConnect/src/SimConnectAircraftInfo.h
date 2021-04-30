@@ -29,6 +29,9 @@
 #include <strsafe.h>
 
 #include <QtGlobal>
+#include <QDateTime>
+#include <QDate>
+#include <QTime>
 
 #include "../../Kernel/src/SkyMath.h"
 #include "../../Model/src/SimType.h"
@@ -43,55 +46,74 @@
 #pragma pack(push, 1)
 struct SimConnectAircraftInfo
 {
+    // Aircraft info
     char title[256];
     char atcId[32];
     char atcAirline[64];
     char atcFlightNumber[8];
     char category[256];
-
-    qint32 simOnGround;
     // Feet
     float planeAltAboveGround;
+    qint32 simOnGround;    
     // Knots
     qint32 airspeedTrue;
-    qint32 surfaceType;
     // Feet
     qint32 wingSpan;
-    qint32 numberOfEngines;
     qint32 engineType;
+    qint32 numberOfEngines;
 
+    // Flight conditions
+    qint32 surfaceType;
     float groundAltitude;
     // Celcius
     float ambientTemperature;
     float totalAirTemperature;
     float ambientWindVelocity;
-    float ambientWindDirection;
-    qint32 ambientPrecipState;
-    qint32 ambientInCloud;
+    float ambientWindDirection;    
     float ambientVisibility;
     float seaLevelPressure;
     float pitotIcePct;
     float structuralIcePct;
+    qint32 ambientPrecipState;
+    qint32 ambientInCloud;
+
+    // Simulation time
+    qint32 localTime;
+    qint32 localYear;
+    qint32 localMonth;
+    qint32 localDay;
+    qint32 zuluTime;
+    qint32 zuluYear;
+    qint32 zuluMonth;
+    qint32 zuluDay;
 
     SimConnectAircraftInfo() noexcept
-        : simOnGround(false),
-          planeAltAboveGround(0.0f),
+        : planeAltAboveGround(0.0f),
+          simOnGround(false),
           airspeedTrue(0),
-          surfaceType(0),
           wingSpan(0),
-          numberOfEngines(0),
           engineType(0),
+          numberOfEngines(0),
+          surfaceType(0),
           groundAltitude(0.0f),
           ambientTemperature(0.0f),
           totalAirTemperature(0.0f),
           ambientWindVelocity(0.0f),
           ambientWindDirection(0.0f),
-          ambientPrecipState(0),
-          ambientInCloud(0),
           ambientVisibility(0.0f),
           seaLevelPressure(0.0f),
           pitotIcePct(0.0f),
-          structuralIcePct(0.0f)
+          structuralIcePct(0.0f),
+          ambientPrecipState(0),
+          ambientInCloud(0),
+          localTime(0),
+          localYear(0),
+          localMonth(0),
+          localDay(0),
+          zuluTime(0),
+          zuluYear(0),
+          zuluMonth(0),
+          zuluDay(0)
     {}
 
     inline AircraftInfo toAircraftInfo() const noexcept
@@ -100,27 +122,27 @@ struct SimConnectAircraftInfo
 
         // Length check
         if (SUCCEEDED(StringCbLengthA(&title[0], sizeof(title), nullptr))) {
-            aircraftInfo.name = title;
+            aircraftInfo.type = QString(title);
         }
         if (SUCCEEDED(StringCbLengthA(&atcId[0], sizeof(atcId), nullptr))) {
-            aircraftInfo.atcId = atcId;
+            aircraftInfo.tailNumber = QString(atcId);
         }
         if (SUCCEEDED(StringCbLengthA(&atcAirline[0], sizeof(atcAirline), nullptr))) {
-            aircraftInfo.atcAirline = atcAirline;
+            aircraftInfo.airline = QString(atcAirline);
         }
         if (SUCCEEDED(StringCbLengthA(&atcFlightNumber[0], sizeof(atcFlightNumber), nullptr))) {
-            aircraftInfo.atcFlightNumber = atcFlightNumber;
+            aircraftInfo.flightNumber = QString(atcFlightNumber);
         }
         if (SUCCEEDED(StringCbLengthA(&category[0], sizeof(category), nullptr))) {
-            aircraftInfo.category = category;
+            aircraftInfo.category = QString(category);
         }
-        aircraftInfo.startOnGround = (simOnGround != 0);
-        aircraftInfo.aircraftAltitudeAboveGround = planeAltAboveGround;
 
         aircraftInfo.initialAirspeed = airspeedTrue;
         aircraftInfo.wingSpan = wingSpan;
-        aircraftInfo.numberOfEngines = numberOfEngines;
         aircraftInfo.engineType = toEngineType(engineType);
+        aircraftInfo.numberOfEngines = numberOfEngines;
+        aircraftInfo.altitudeAboveGround = planeAltAboveGround;
+        aircraftInfo.startOnGround = (simOnGround != 0);
 
         return aircraftInfo;
     }
@@ -129,18 +151,28 @@ struct SimConnectAircraftInfo
     {
         FlightCondition flightCondition;
 
-        flightCondition.groundAltitude = groundAltitude;
         flightCondition.surfaceType = toSurfaceType(surfaceType);
+        flightCondition.groundAltitude = groundAltitude;
         flightCondition.ambientTemperature = ambientTemperature;
         flightCondition.totalAirTemperature = totalAirTemperature;
         flightCondition.windVelocity = ambientWindVelocity;
-        flightCondition.windDirection = ambientWindDirection;
-        flightCondition.precipitationState = toPrecipitationState(ambientPrecipState);
-        flightCondition.inClouds = (ambientInCloud != 0);
+        flightCondition.windDirection = ambientWindDirection;          
         flightCondition.visibility = ambientVisibility;
         flightCondition.seaLevelPressure = seaLevelPressure;
         flightCondition.pitotIcingPercent = SkyMath::fromPercent(pitotIcePct);
         flightCondition.structuralIcingPercent = SkyMath::fromPercent(structuralIcePct);
+        flightCondition.precipitationState = toPrecipitationState(ambientPrecipState);
+        flightCondition.inClouds = (ambientInCloud != 0);
+
+        QTime time = QTime(0, 0).addSecs(localTime);
+        flightCondition.localTime.setTime(time);
+        QDate date = QDate(localYear, localMonth, localDay);
+        flightCondition.localTime.setDate(date);
+
+        time = QTime(0, 0).addSecs(zuluTime);
+        flightCondition.zuluTime.setTime(time);
+        date = QDate(zuluYear, zuluMonth, zuluDay);
+        flightCondition.zuluTime.setDate(date);
 
         return flightCondition;
     }

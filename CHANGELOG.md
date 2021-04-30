@@ -142,9 +142,3 @@
 ### Bug Fixes
 
 - n/a
-=======
-- The time widget is now editable when replay is paused
-- After importing a CSV file only pause when in connected state
-- Do not start the elapsed timer when skipping to begin of recording
-- Properly hide window when stay on top is deselected
-

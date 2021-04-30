@@ -27,7 +27,6 @@
 
 #include <windows.h>
 
-#include "../../Kernel/src/SkyMath.h"
 #include "../../Model/src/SimType.h"
 #include "../../Model/src/LightData.h"
 

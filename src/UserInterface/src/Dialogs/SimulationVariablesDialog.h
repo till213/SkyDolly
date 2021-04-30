@@ -36,13 +36,12 @@ class SkyConnectIntf;
 class SimulationVariablesDialogPrivate;
 
 namespace Ui {
-class SimulationVariablesDialog;
+    class SimulationVariablesDialog;
 }
 
 class SimulationVariablesDialog : public QDialog
 {
     Q_OBJECT
-
 public:
     explicit SimulationVariablesDialog(SkyConnectIntf &skyConnect, QWidget *parent = nullptr) noexcept;
     virtual ~SimulationVariablesDialog() noexcept;

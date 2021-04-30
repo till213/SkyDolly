@@ -25,11 +25,13 @@
 #ifndef FLIGHTCONDITION_H
 #define FLIGHTCONDITION_H
 
+#include <QtGlobal>
+#include <QDateTime>
+
 #include "SimType.h"
 #include "ModelLib.h"
 
 struct MODEL_API FlightCondition
-
 {
     float groundAltitude;
     SimType::SurfaceType surfaceType;
@@ -38,16 +40,23 @@ struct MODEL_API FlightCondition
     float windVelocity;
     float windDirection;
     SimType::PrecipitationState precipitationState;
-    bool inClouds;
     float visibility;
     float seaLevelPressure;
     quint8 pitotIcingPercent;
     quint8 structuralIcingPercent;
+    bool inClouds;
+    QDateTime localTime;
+    QDateTime zuluTime;
 
     FlightCondition() noexcept;
     FlightCondition(FlightCondition &&) = default;
     FlightCondition(const FlightCondition &) = default;
     FlightCondition &operator= (const FlightCondition &) = default;
+
+    void clear() noexcept;
+
+private:
+    inline void init() noexcept;
 };
 
 #endif // FLIGHTCONDITION_H

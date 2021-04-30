@@ -26,6 +26,7 @@
 #include <QCoreApplication>
 #include <QStandardPaths>
 #include <QSettings>
+#include <QString>
 
 #include "SampleRate.h"
 #include "Version.h"
@@ -37,8 +38,8 @@ public:
     QSettings settings;
     Version version;
 
+    QString libraryPath;
     double recordSampleRateValue;
-    double replaySampleRateValue;
     bool windowStayOnTopEnabled;
     QString exportPath;
     QString defaultExportPath;
@@ -49,6 +50,7 @@ public:
     int previewInfoDialogCount;
 
     static Settings *instance;
+    static const QString DefaultDbPath;
     static constexpr double DefaultRecordSampleRate = SampleRate::toValue(SampleRate::SampleRate::Auto);
     static constexpr bool DefaultWindowStayOnTopEnabled = false;
     static constexpr bool DefaultAbsoluteSeek = true;
@@ -73,7 +75,10 @@ public:
     {}
 };
 
+const QString SettingsPrivate::DefaultDbPath = QString();
+
 Settings *SettingsPrivate::instance = nullptr;
+
 
 // PUBLIC
 
@@ -90,6 +95,32 @@ void Settings::destroyInstance() noexcept
     if (SettingsPrivate::instance != nullptr) {
         delete SettingsPrivate::instance;
         SettingsPrivate::instance = nullptr;
+    }
+}
+
+QString Settings::getLibraryPath() const noexcept
+{
+    return d->libraryPath;
+}
+
+void Settings::setLibraryPath(const QString &libraryPath) noexcept
+{
+    if (d->libraryPath != libraryPath) {
+        d->libraryPath = libraryPath;
+        emit libraryPathChanged(d->libraryPath);
+    }
+}
+
+QString Settings::getExportPath() const noexcept
+{
+    return d->exportPath;
+}
+
+void Settings::setExportPath(QString exportPath)
+{
+    if (d->exportPath != exportPath) {
+        d->exportPath = exportPath;
+        emit exportPathChanged(d->exportPath);
     }
 }
 
@@ -122,19 +153,6 @@ void Settings::setWindowStaysOnTopEnabled(bool enable) noexcept
     if (d->windowStayOnTopEnabled != enable) {
         d->windowStayOnTopEnabled = enable;
         emit changed();
-    }
-}
-
-QString Settings::getExportPath() const noexcept
-{
-    return d->exportPath;
-}
-
-void Settings::setExportPath(QString exportPath)
-{
-    if (d->exportPath != exportPath) {
-        d->exportPath = exportPath;
-        emit exportPathChanged(d->exportPath);
     }
 }
 
@@ -179,7 +197,7 @@ void Settings::setSeekIntervalPercent(double percent) noexcept
 
 int Settings::getPreviewInfoDialogCount() const noexcept
 {
-    return d->previewInfoDialogCount - SettingsPrivate::PreviewInfoDialogBase;
+    return d->seekIntervalSeconds;
 }
 
 void Settings::setPreviewInfoDialogCount(int count) noexcept
@@ -195,18 +213,23 @@ void Settings::setPreviewInfoDialogCount(int count) noexcept
 void Settings::store() noexcept
 {
     d->settings.setValue("Version", d->version.toString());
+    d->settings.beginGroup("Library");
+    {
+        d->settings.setValue("DbPath", d->libraryPath);
+    }
+    d->settings.endGroup();
     d->settings.beginGroup("Recording");
     {
         d->settings.setValue("RecordSampleRate", d->recordSampleRateValue);
     }
-    d->settings.endGroup();
+    d->settings.endGroup();    
     d->settings.beginGroup("Replay");
     {
         d->settings.setValue("AbsoluteSeek", d->absoluteSeek);
         d->settings.setValue("SeekIntervalSeconds", d->seekIntervalSeconds);
         d->settings.setValue("SeekIntervalPercent", d->seekIntervalPercent);
     }
-    d->settings.endGroup();
+    d->settings.endGroup();    
     d->settings.beginGroup("Window");
     {
         d->settings.setValue("WindowStaysOnTopEnabled", d->windowStayOnTopEnabled);
@@ -238,6 +261,11 @@ void Settings::restore() noexcept
     }
 
     bool ok;
+    d->settings.beginGroup("Library");
+    {
+        d->libraryPath = d->settings.value("DbPath", SettingsPrivate::DefaultDbPath).toString();
+    }
+    d->settings.endGroup();
     d->settings.beginGroup("Recording");
     {
         d->recordSampleRateValue = d->settings.value("RecordSampleRate", SettingsPrivate::DefaultRecordSampleRate).toDouble(&ok);
@@ -246,7 +274,7 @@ void Settings::restore() noexcept
             d->recordSampleRateValue = SettingsPrivate::DefaultRecordSampleRate;
         }
     }
-    d->settings.endGroup();
+    d->settings.endGroup();    
     d->settings.beginGroup("Replay");
     {
         d->absoluteSeek = d->settings.value("AbsoluteSeek", SettingsPrivate::DefaultAbsoluteSeek).toBool();
@@ -308,6 +336,8 @@ Settings::Settings() noexcept
 
 void Settings::frenchConnection() noexcept
 {
+    connect(this, &Settings::libraryPathChanged,
+            this, &Settings::changed);
     connect(this, &Settings::recordSampleRateChanged,
             this, &Settings::changed);
     connect(this, &Settings::exportPathChanged,

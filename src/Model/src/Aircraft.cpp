@@ -25,7 +25,6 @@
 #include <memory>
 
 #include <QObject>
-#include <QByteArray>
 #include <QVector>
 
 #include "../../Kernel/src/SkyMath.h"
@@ -43,24 +42,28 @@
 #include "AircraftHandleData.h"
 #include "Light.h"
 #include "LightData.h"
+#include "FlightPlan.h"
 #include "Aircraft.h"
 
 class AircraftPrivate
 {
 public:
     AircraftPrivate() noexcept
-        : currentTimestamp(TimeVariableData::InvalidTime),
+        : id(0),
+          currentTimestamp(TimeVariableData::InvalidTime),
           currentAccess(TimeVariableData::Access::Linear),
           currentIndex(SkySearch::InvalidIndex),
           duration(TimeVariableData::InvalidTime)
     {}
 
+    qint64 id;
+    AircraftInfo aircraftInfo;
     Engine engine;
     PrimaryFlightControl primaryFlightControl;
     SecondaryFlightControl secondaryFlightControl;
     AircraftHandle aircraftHandle;
     Light light;
-    AircraftInfo aircraftInfo;
+    FlightPlan flightPlan;
 
     QVector<AircraftData> aircraftData;
     qint64 currentTimestamp;
@@ -81,6 +84,16 @@ Aircraft::Aircraft(QObject *parent) noexcept
 
 Aircraft::~Aircraft() noexcept
 {
+}
+
+void Aircraft::setId(qint64 id) noexcept
+{
+    d->id = id;
+}
+
+qint64 Aircraft::getId() const noexcept
+{
+    return d->id;
 }
 
 const Engine &Aircraft::getEngineConst() const noexcept
@@ -133,32 +146,35 @@ Light &Aircraft::getLight() const noexcept
     return d->light;
 }
 
-void Aircraft::setAircraftInfo(AircraftInfo aircraftInfo) noexcept
+const AircraftInfo &Aircraft::getAircraftInfoConst() const noexcept
+{
+    return d->aircraftInfo;
+}
+
+void Aircraft::setAircraftInfo(const AircraftInfo &aircraftInfo) noexcept
 {
     d->aircraftInfo = aircraftInfo;
     emit infoChanged();
 }
 
-const AircraftInfo &Aircraft::getAircraftInfo() const noexcept
+const FlightPlan &Aircraft::getFlightPlanConst() const noexcept
 {
-    return d->aircraftInfo;
+    return d->flightPlan;
 }
 
-void Aircraft::upsert(AircraftData aircraftData) noexcept
+FlightPlan &Aircraft::getFlightPlan() const noexcept
+{
+    return d->flightPlan;
+}
+
+void Aircraft::upsert(AircraftData &aircraftData) noexcept
 {
     if (d->aircraftData.count() > 0) {
-
         if (d->aircraftData.last().timestamp == aircraftData.timestamp)  {
             // Same timestamp -> replace
             d->aircraftData[d->aircraftData.count() - 1] = aircraftData;
-#ifdef DEBUG
-        qDebug("Aircraft::upsertAircraftData: UPDATE sample, timestamp: %llu count: %d", aircraftData.timestamp, d->aircraftData.count());
-#endif
         } else {
             d->aircraftData.append(aircraftData);
-#ifdef DEBUG
-        qDebug("Aircraft::upsertAircraftData: INSERT sample, timestamp: %llu count: %d", aircraftData.timestamp, d->aircraftData.count());
-#endif
         }
     } else {
         // The first position sample *must* have a timestamp of 0, as this
@@ -166,7 +182,6 @@ void Aircraft::upsert(AircraftData aircraftData) noexcept
         aircraftData.timestamp = 0;
         d->aircraftData.append(aircraftData);
     }
-    d->duration = TimeVariableData::InvalidTime;
     emit dataChanged();
 }
 
@@ -179,7 +194,12 @@ const AircraftData &Aircraft::getLast() const noexcept
     }
 }
 
-const QVector<AircraftData> &Aircraft::getAll() const noexcept
+const QVector<AircraftData> &Aircraft::getAllConst() const noexcept
+{
+    return d->aircraftData;
+}
+
+QVector<AircraftData> &Aircraft::getAll() const noexcept
 {
     return d->aircraftData;
 }
@@ -261,21 +281,23 @@ qint64 Aircraft::getDurationMSec() const noexcept
         if (d->aircraftData.count() > 0) {
             d->duration = d->aircraftData.last().timestamp;
         }
-        if (d->engine.getAll().count() > 0) {
+        if (d->engine.getAllConst().count() > 0) {
             d->duration = qMax(d->engine.getLast().timestamp, d->duration);
         }
-        if (d->primaryFlightControl.getAll().count() > 0) {
+        if (d->primaryFlightControl.getAllConst().count() > 0) {
             d->duration = qMax(d->primaryFlightControl.getLast().timestamp, d->duration);
         }
-        if (d->secondaryFlightControl.getAll().count() > 0) {
+        if (d->secondaryFlightControl.getAllConst().count() > 0) {
             d->duration = qMax(d->secondaryFlightControl.getLast().timestamp, d->duration);
         }
-        if (d->aircraftHandle.getAll().count() > 0) {
+        if (d->aircraftHandle.getAllConst().count() > 0) {
             d->duration = qMax(d->aircraftHandle.getLast().timestamp, d->duration);
         }
-        if (d->light.getAll().count() > 0) {
+        if (d->light.getAllConst().count() > 0) {
             d->duration = qMax(d->light.getLast().timestamp, d->duration);
         }
+        // Update end time
+        d->aircraftInfo.endDate = d->aircraftInfo.startDate.addMSecs(d->duration);
     }
     return d->duration;
 }
@@ -293,11 +315,10 @@ void Aircraft::clear() noexcept
     d->secondaryFlightControl.clear();
     d->aircraftHandle.clear();
     d->light.clear();
+    d->flightPlan.clear();
     d->aircraftInfo.clear();
     d->currentTimestamp = TimeVariableData::InvalidTime;
     d->currentIndex = SkySearch::InvalidIndex;
-    d->duration = 0;
-
     emit dataChanged();
 }
 
@@ -315,12 +336,19 @@ void Aircraft::frenchConnection()
             this, &Aircraft::handleDataChanged);
     connect(&d->light, &Light::dataChanged,
             this, &Aircraft::handleDataChanged);
+    connect(this, &Aircraft::dataChanged,
+            this, &Aircraft::invalidateDuration);
 }
 
 // PRIVATE SLOTS
 
 void Aircraft::handleDataChanged()
 {
-    d->duration = TimeVariableData::InvalidTime;
     emit dataChanged();
+}
+
+void Aircraft::invalidateDuration()
+{
+    d->duration = TimeVariableData::InvalidTime;
+    d->aircraftInfo.endDate = QDateTime();
 }

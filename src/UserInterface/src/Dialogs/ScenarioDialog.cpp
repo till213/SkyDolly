@@ -91,7 +91,7 @@ void ScenarioDialog::hideEvent(QHideEvent *event) noexcept
 void ScenarioDialog::initUi() noexcept
 {
     AircraftTypeWidget *aircraftTypeWidget = new AircraftTypeWidget(d->skyConnect, this);
-    ui->scenarioTab->addTab(aircraftTypeWidget, tr("Aircraft &Type"));
+    ui->scenarioTab->addTab(aircraftTypeWidget, tr("&Aircraft"));
 
     FlightConditionWidget *flightConditionsWidget = new FlightConditionWidget(d->skyConnect, this);
     ui->scenarioTab->addTab(flightConditionsWidget, tr("&Conditions"));

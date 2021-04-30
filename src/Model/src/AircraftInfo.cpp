@@ -27,26 +27,21 @@
 // PUBLIC
 
 AircraftInfo::AircraftInfo() noexcept
-    : startOnGround(false),
-      aircraftAltitudeAboveGround(0.0f),
-      initialAirspeed(0),
-      wingSpan(0),      
-      numberOfEngines(0),
-      engineType(SimType::EngineType::Unknown)
 {
+    clear();
 }
 
-void AircraftInfo::clear()
+void AircraftInfo::clear() noexcept
 {
-    name.clear();
-    atcId.clear();
-    atcAirline.clear();
-    atcFlightNumber.clear();
+    type.clear();
+    tailNumber.clear();
+    airline.clear();
+    flightNumber.clear();
     category.clear();
     startOnGround = false;
-    aircraftAltitudeAboveGround = 0.0f;
+    altitudeAboveGround = 0.0f;
     initialAirspeed = 0;
     wingSpan = 0;
-    numberOfEngines = 0;
     engineType = SimType::EngineType::Unknown;
+    numberOfEngines = 0;    
 }

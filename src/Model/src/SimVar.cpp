@@ -84,30 +84,39 @@ const char *SimVar::FoldingWingHandlePosition = "Folding Wing Handle Position";
 
 const char *SimVar::LightStates = "Light States";
 
-const char *SimVar::Title= "Title";
-const char *SimVar::ATCId= "ATC Id";
-const char *SimVar::ATCAirline= "ATC Airline";
-const char *SimVar::ATCFlightNumber= "ATC Flight Number";
-const char *SimVar::Category= "Category";
+const char *SimVar::Title = "Title";
+const char *SimVar::ATCId = "ATC Id";
+const char *SimVar::ATCAirline = "ATC Airline";
+const char *SimVar::ATCFlightNumber = "ATC Flight Number";
+const char *SimVar::Category = "Category";
 
-const char *SimVar::SimOnGround= "Sim On Ground";
-const char *SimVar::PlaneAltAboveGround= "Plane Alt Above Ground";
-const char *SimVar::AirspeedTrue= "Airspeed True";
-const char *SimVar::SurfaceType= "Surface Type";
-const char *SimVar::WingSpan= "Wing Span";
-const char *SimVar::NumberOfEngines= "Number Of Engines";
-const char *SimVar::EngineType= "Engine Type";
+const char *SimVar::SimOnGround = "Sim On Ground";
+const char *SimVar::PlaneAltAboveGround = "Plane Alt Above Ground";
+const char *SimVar::AirspeedTrue = "Airspeed True";
+const char *SimVar::SurfaceType = "Surface Type";
+const char *SimVar::WingSpan = "Wing Span";
+const char *SimVar::NumberOfEngines = "Number Of Engines";
+const char *SimVar::EngineType = "Engine Type";
 
-const char *SimVar::GroundAltitude= "Ground Altitude";
-const char *SimVar::AmbientTemperature= "Ambient Temperature";
-const char *SimVar::TotalAirTemperature= "Total Air Temperature";
-const char *SimVar::AmbientWindVelocity= "Ambient Wind Velocity";
-const char *SimVar::AmbientWindDirection= "Ambient Wind Direction";
-const char *SimVar::AmbientPrecipState= "Ambient Precip State";
-const char *SimVar::AmbientInCloud= "Ambient In Cloud";
-const char *SimVar::AmbientVisibility= "Ambient Visibility";
-const char *SimVar::SeaLevelPressure= "Sea Level Pressure";
-const char *SimVar::PitotIcePct= "Pitot Ice Pct";
-const char *SimVar::StructuralIcePct= "Structural Ice Pct";
+const char *SimVar::GroundAltitude = "Ground Altitude";
+const char *SimVar::AmbientTemperature = "Ambient Temperature";
+const char *SimVar::TotalAirTemperature = "Total Air Temperature";
+const char *SimVar::AmbientWindVelocity = "Ambient Wind Velocity";
+const char *SimVar::AmbientWindDirection = "Ambient Wind Direction";
+const char *SimVar::AmbientPrecipState = "Ambient Precip State";
+const char *SimVar::AmbientInCloud = "Ambient In Cloud";
+const char *SimVar::AmbientVisibility = "Ambient Visibility";
+const char *SimVar::SeaLevelPressure = "Sea Level Pressure";
+const char *SimVar::PitotIcePct = "Pitot Ice Pct";
+const char *SimVar::StructuralIcePct = "Structural Ice Pct";
+
+const char *SimVar::GpsWPNextId = "GPS WP Next Id";
+const char *SimVar::GpsWPNextLat = "GPS WP Next Lat";
+const char *SimVar::GpsWPNextLon = "GPS WP Next Lon";
+const char *SimVar::GpsWPNextAlt = "GPS WP Next Alt";
+const char *SimVar::GpsWPPrevId = "GPS WP Prev Id";
+const char *SimVar::GpsWPPrevLat = "GPS WP Prev Lat";
+const char *SimVar::GpsWPPrevLon = "GPS WP Prev Lon";
+const char *SimVar::GpsWPPrevAlt = "GPS WP Prev Alt";
 
 const char *SimVar::Timestamp = "Timestamp";

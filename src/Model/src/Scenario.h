@@ -29,6 +29,9 @@
 
 #include <QObject>
 
+class QDateTime;
+class QString;
+
 #include "ModelLib.h"
 
 class FlightCondition;
@@ -42,14 +45,26 @@ public:
     Scenario(QObject *parent = nullptr) noexcept;
     ~Scenario() noexcept;
 
+    qint64 getId() const noexcept;
+    void setId(qint64 id) noexcept;
+
+    const QDateTime &getCreationDate() const noexcept;
+    void setCreationDate(const QDateTime &creationDate) noexcept;
+
+    const QString &getDescription() const noexcept;
+    void setDescription(const QString &description) noexcept;
+
     const Aircraft &getUserAircraftConst() const noexcept;
     Aircraft &getUserAircraft() const noexcept;
 
-    void setFlightCondition(FlightCondition flightCondition) noexcept;
     const FlightCondition &getFlightConditionConst() const noexcept;
-    FlightCondition &getFlightCondition() const noexcept;
+    void setFlightCondition(FlightCondition flightCondition) noexcept;
 
     qint64 getTotalDurationMSec() const noexcept;
+
+    void clear() noexcept;
+
+     static constexpr int InvalidId = -1;
 
 signals:
     void aircraftInfoChanged();

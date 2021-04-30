@@ -29,23 +29,23 @@
 #include <QByteArray>
 #include <QList>
 
+
+#include "../../../Model/src/SimVar.h"
+#include "../../../Model/src/Aircraft.h"
+#include "../../../Model/src/AircraftData.h"
+#include "../../../Model/src/Engine.h"
+#include "../../../Model/src/EngineData.h"
+#include "../../../Model/src/Engine.h"
+#include "../../../Model/src/EngineData.h"
+#include "../../../Model/src/PrimaryFlightControl.h"
+#include "../../../Model/src/PrimaryFlightControlData.h"
+#include "../../../Model/src/SecondaryFlightControl.h"
+#include "../../../Model/src/SecondaryFlightControlData.h"
+#include "../../../Model/src/AircraftHandle.h"
+#include "../../../Model/src/AircraftHandleData.h"
+#include "../../../Model/src/Light.h"
+#include "../../../Model/src/LightData.h"
 #include "../CSVConst.h"
-#include "../Const.h"
-#include "../SimVar.h"
-#include "../Aircraft.h"
-#include "../AircraftData.h"
-#include "../Engine.h"
-#include "../EngineData.h"
-#include "../Engine.h"
-#include "../EngineData.h"
-#include "../PrimaryFlightControl.h"
-#include "../PrimaryFlightControlData.h"
-#include "../SecondaryFlightControl.h"
-#include "../SecondaryFlightControlData.h"
-#include "../AircraftHandle.h"
-#include "../AircraftHandleData.h"
-#include "../Light.h"
-#include "../LightData.h"
 #include "CSVImport.h"
 
 // PUBLIC
@@ -61,7 +61,7 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft) noexcept
 
         ok = !data.isNull();
         if (ok) {
-            QList<QByteArray> headers = data.split(Const::Sep);
+            QList<QByteArray> headers = data.split(CSVConst::Sep);
             if (headers.first() == QString(CSVConst::TypeColumnName)) {
                 headers.removeFirst();
 
@@ -80,7 +80,7 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft) noexcept
                 while (!data.isNull()) {
 
                     AircraftData aircraftData;
-                    QList<QByteArray> values = data.split(Const::Sep);
+                    QList<QByteArray> values = data.split(CSVConst::Sep);
 
                     // Type
                     ok = values.at(0).size() > 0;
@@ -242,7 +242,7 @@ inline bool CSVImport::importAircraftData(const QList<QByteArray> &headers, cons
 
     }
     if (ok) {
-        aircraft.upsert(std::move(data));
+        aircraft.upsert(data);
     }
     return ok;
 }
@@ -653,7 +653,7 @@ inline bool CSVImport::importLightData(const QList<QByteArray> &headers, const Q
         if (header == SimVar::LightStates) {
             intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.lightStates = SimType::LightStates(intValue);
+                data.lightStates = static_cast<SimType::LightStates>(intValue);
             }
         // Timestamp
         } else if (header == SimVar::Timestamp) {

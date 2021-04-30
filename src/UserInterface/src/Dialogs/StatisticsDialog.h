@@ -36,13 +36,12 @@ class SkyConnectIntf;
 class StatisticsDialogPrivate;
 
 namespace Ui {
-class StatisticsDialog;
+    class StatisticsDialog;
 }
 
 class StatisticsDialog : public QDialog
 {
     Q_OBJECT
-
 public:
     explicit StatisticsDialog(SkyConnectIntf &skyConnect, QWidget *parent = nullptr) noexcept;
     virtual ~StatisticsDialog() noexcept;

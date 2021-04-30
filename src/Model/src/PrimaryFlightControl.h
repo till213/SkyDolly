@@ -44,9 +44,10 @@ public:
     PrimaryFlightControl(QObject *parent = nullptr) noexcept;
     virtual ~PrimaryFlightControl() noexcept;
 
-    void upsert(PrimaryFlightControlData primaryFlightControlData) noexcept;
+    void upsert(const PrimaryFlightControlData &primaryFlightControlData) noexcept;
     const PrimaryFlightControlData &getLast() const noexcept;
-    const QVector<PrimaryFlightControlData> &getAll() const noexcept;
+    QVector<PrimaryFlightControlData> &getAll() const noexcept;
+    const QVector<PrimaryFlightControlData> &getAllConst() const noexcept;
     const PrimaryFlightControlData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
     void clear() noexcept;

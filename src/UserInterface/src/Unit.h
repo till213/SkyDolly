@@ -27,7 +27,11 @@
 
 #include <memory>
 
-#include <QString>
+#include <QtGlobal>
+
+class QString;
+class QDateTime;
+class QTime;
 
 class UnitPrivate;
 
@@ -50,6 +54,7 @@ public:
      * @return a formatted string for \c degrees, including unit (°)
      */
     QString formatDegrees(double degrees) noexcept;
+    QString formatHz(double hz) noexcept;
 
     QString formatVelocityInFeet(double velocity) noexcept;
     QString formatVelocityInRadians(double velocity) noexcept;
@@ -58,6 +63,13 @@ public:
     QString formatPercent(quint8 percent) noexcept;
 
     QString formatKnots(double velocity) noexcept;
+
+    QString formatElapsedTime(qint64 milliseconds) noexcept;
+    QString formatMemory(qint64 memory) noexcept;
+
+    QString formatDate(const QDateTime &date) noexcept;
+    QString formatTime(const QDateTime &time) noexcept;
+    QString formatDuration(const QTime &time) noexcept;
 
 private:
     std::unique_ptr<UnitPrivate> d;

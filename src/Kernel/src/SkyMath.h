@@ -54,7 +54,8 @@ namespace SkyMath {
      * \return -1 if \c val is a negative value; 0 for \c val
      *         0; +1 else
      */
-    template <typename T> int sgn(T val) noexcept
+    template <typename T>
+    int sgn(T val) noexcept
     {
         return (T(0) < val) - (val < T(0));
     }
@@ -86,7 +87,8 @@ namespace SkyMath {
      * or samples values like 165, 175, -175, -165 becomes 165, 175, 185, 195, and
      * the normalised values are then suitable for interpolation.
      */
-    template <typename T> T normalise180(T y0, T y1) noexcept
+    template <typename T>
+    T normalise180(T y0, T y1) noexcept
     {
         T y1n;
         T s0 = sgn(y0);
@@ -126,7 +128,8 @@ namespace SkyMath {
      *        0 is even; positive values create a bias towards the first segment;
      *        negative values create a bias towards the second segment
      */
-    template <typename T> T interpolateHermite(
+    template <typename T>
+    T interpolateHermite(
         T y0, T y1, T y2, T y3,
         T mu,
         T tension = T(0),
@@ -156,7 +159,8 @@ namespace SkyMath {
      *
      * Also refer to \c #interpolateHermite().
      */
-    template <typename T> T interpolateHermite180(
+    template <typename T>
+    T interpolateHermite180(
         T y0, T y1, T y2, T y3,
         T mu,
         T tension = T(0),
@@ -185,7 +189,8 @@ namespace SkyMath {
      *
      * Also refer to \c #interpolateHermite().
      */
-    template <typename T> T interpolateHermite360(
+    template <typename T>
+    T interpolateHermite360(
         T y0, T y1, T y2, T y3,
         T mu,
         T tension = T(0),
@@ -204,7 +209,8 @@ namespace SkyMath {
      * \param mu
      *        the interpolation factor in [0.0, 1.0]
      */
-    template <typename T, typename U> T interpolateLinear(T p1, T p2, U mu) noexcept
+    template <typename T, typename U>
+    T interpolateLinear(T p1, T p2, U mu) noexcept
     {
         if (std::is_integral<T>::value) {
             return p1 + qRound(mu * (U(p2) - U(p1)));

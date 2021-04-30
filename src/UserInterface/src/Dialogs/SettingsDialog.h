@@ -30,13 +30,12 @@
 #include <QDialog>
 
 namespace Ui {
-class SettingsDialog;
+    class SettingsDialog;
 }
 
 class SettingsDialog : public QDialog
 {
     Q_OBJECT
-
 public:
     explicit SettingsDialog(QWidget *parent = nullptr) noexcept;
     virtual ~SettingsDialog() noexcept;
