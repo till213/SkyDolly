@@ -33,7 +33,6 @@
 #include "../../Model/src/Scenario.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/AircraftData.h"
-#include "../../Persistence/src/Service/ScenarioService.h"
 #include "Connect.h"
 #include "SkyConnectIntf.h"
 #include "AbstractSkyConnect.h"
@@ -55,8 +54,7 @@ public:
           recordIntervalMSec(SampleRate::toInterval(recordSampleRate)),
           timeScale(1.0),
           elapsedTime(0),
-          lastSamplesPerSecondIndex(0),
-          scenarioService(std::make_unique<ScenarioService>())
+          lastSamplesPerSecondIndex(0)
     {
         timer.setTimerType(Qt::TimerType::PreciseTimer);
     }
@@ -71,7 +69,6 @@ public:
     double timeScale;
     qint64 elapsedTime;
     mutable int lastSamplesPerSecondIndex;
-    std::unique_ptr<ScenarioService> scenarioService;
 };
 
 // PUBLIC
@@ -110,11 +107,10 @@ void AbstractSkyConnect::startRecording() noexcept
 
 void AbstractSkyConnect::stopRecording() noexcept
 {
-    // TODO Wait for pending requests (e.g. destination airport)!!! Use e.g. a "pendingRequestsFinished" signal
     onStopRecording();
     d->timer.stop();
     setState(Connect::State::Connected);
-    d->scenarioService->store(d->currentScenario);
+    emit recordingStopped();
 }
 
 bool AbstractSkyConnect::isRecording() const noexcept
@@ -160,7 +156,9 @@ bool AbstractSkyConnect::isReplaying() const noexcept
 
 void AbstractSkyConnect::stop() noexcept
 {
-    stopRecording();
+    if (isRecording()) {
+        stopRecording();
+    }
     stopReplay();
 }
 

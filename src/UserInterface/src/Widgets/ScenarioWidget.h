@@ -22,48 +22,53 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SCENARIOSELECTIONDIALOG_H
-#define SCENARIOSELECTIONDIALOG_H
+#ifndef SCENARIOWIDGET_H
+#define SCENARIOWIDGET_H
 
 #include <memory>
 
-#include <QDialog>
+#include <QWidget>
 
 class QShowEvent;
+class QHideEvent;
+
+class SkyConnectIntf;
+class ScenarioWidgetPrivate;
 
 #include "../../../Persistence/src/Service/ScenarioService.h"
 
-class ScenarioSelectionDialogPrivate;
-
 namespace Ui {
-    class ScenarioSelectionDialog;
+class ScenarioWidget;
 }
 
-class ScenarioSelectionDialog : public QDialog
+class ScenarioWidget : public QWidget
 {
     Q_OBJECT
+
 public:
-    explicit ScenarioSelectionDialog(ScenarioService &scenarioService, QWidget *parent = nullptr) noexcept;
-    virtual ~ScenarioSelectionDialog() noexcept;
+    explicit ScenarioWidget(ScenarioService &scenarioService, QWidget *parent = nullptr) noexcept;
+    virtual ~ScenarioWidget() noexcept;
 
     qint64 getSelectedScenarioId() const noexcept;
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;
+    void hideEvent(QHideEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(ScenarioSelectionDialog)
-    Ui::ScenarioSelectionDialog *ui;
-    std::unique_ptr<ScenarioSelectionDialogPrivate> d;
+    Q_DISABLE_COPY(ScenarioWidget)
+    Ui::ScenarioWidget *ui;
+    std::unique_ptr<ScenarioWidgetPrivate> d;
 
     void initUi() noexcept;
-    void updateUi() noexcept;
     void updateEditUi() noexcept;
     void frenchConnection() noexcept;
 
 private slots:
+    void updateUi() noexcept;
     void handleSelectionChanged() noexcept;
+    void handleLoad() noexcept;
     void handleDelete() noexcept;
 };
 
-#endif // SCENARIOSELECTIONDIALOG_H
+#endif // SCENARIOWIDGET_H
