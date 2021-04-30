@@ -35,12 +35,10 @@ class AircraftHandle;
 class Light;
 class CSVExportPrivate;
 
-#include "../PersistenceLib.h"
-
 class CSVImport
 {
 public:
-    PERSISTENCE_API static bool importData(QIODevice &io, Aircraft &aircraft) noexcept;
+    static bool importData(QIODevice &io, Aircraft &aircraft) noexcept;
 
 private:
     static bool importAircraftData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Aircraft &aircraft) noexcept;
