@@ -58,6 +58,8 @@ target_sources(Persistence
         src/Service/AircraftService.h
         src/Service/DatabaseService.cpp
         src/Service/DatabaseService.h
+        src/Service/CSVService.cpp
+        src/Service/CSVService.h
         src/CSVConst.cpp
         src/CSVConst.h
         src/Export/CSVExport.cpp

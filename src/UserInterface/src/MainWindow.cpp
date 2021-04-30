@@ -51,11 +51,10 @@
 #include "../../Model/src/AircraftData.h"
 #include "../../Model/src/AircraftInfo.h"
 #include "../../Model/src/World.h"
-#include "../../Persistence/src/Export/CSVExport.h"
-#include "../../Persistence/src/Import/CSVImport.h"
 #include "../../Persistence/src/Dao/DaoFactory.h"
 #include "../../Persistence/src/Service/ScenarioService.h"
 #include "../../Persistence/src/Service/DatabaseService.h"
+#include "../../Persistence/src/Service/CSVService.h"
 #include "../../SkyConnect/src/SkyManager.h"
 #include "../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../SkyConnect/src/Connect.h"
@@ -109,7 +108,8 @@ public:
           simulationVariablesDialog(nullptr),
           statisticsDialog(nullptr),
           scenarioService(std::make_unique<ScenarioService>()),
-          databaseService(std::make_unique<DatabaseService>())
+          databaseService(std::make_unique<DatabaseService>()),
+          csvService(std::make_unique<CSVService>(*scenarioService))
     {}
 
     SkyConnectIntf &skyConnect;
@@ -124,6 +124,7 @@ public:
     double lastCustomReplaySpeed;
     std::unique_ptr<ScenarioService> scenarioService;
     std::unique_ptr<DatabaseService> databaseService;
+    std::unique_ptr<CSVService> csvService;
 };
 
 // PUBLIC
@@ -614,10 +615,8 @@ void MainWindow::on_importCSVAction_triggered() noexcept
         QString exportPath = Settings::getInstance().getExportPath();
         const QString filePath = QFileDialog::getOpenFileName(this, tr("Import CSV"), exportPath, QString("*.csv"));
         if (!filePath.isEmpty()) {
-            QFile file(filePath);
-            const CSVImport csvImport;
-            Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
-            bool ok = csvImport.importData(file, aircraft);
+
+            bool ok = d->csvService->importAircraft(filePath);
             if (ok) {
                 updateUi();
                 d->skyConnect.skipToBegin();
@@ -639,10 +638,8 @@ void MainWindow::on_exportCSVAction_triggered() noexcept
     QString exportPath = Settings::getInstance().getExportPath();
     const QString filePath = QFileDialog::getSaveFileName(this, tr("Export CSV"), exportPath, QString("*.csv"));
     if (!filePath.isEmpty()) {
-        QFile file(filePath);
-        CSVExport csvExport;
         const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
-        bool ok = csvExport.exportData(aircraft, file);
+        bool ok = d->csvService->exportAircraft(aircraft, filePath);
         if (ok) {
             exportPath = QFileInfo(filePath).absolutePath();
             Settings::getInstance().setExportPath(exportPath);
