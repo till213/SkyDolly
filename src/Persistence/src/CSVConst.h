@@ -26,6 +26,12 @@
 #define CSVCONST_H
 
 namespace CSVConst {
+
+    /*! Separator character for CSV import & export */
+    inline constexpr char Sep = '\t';
+    /*! Newline character for CSV import & export */
+    inline constexpr char Ln = '\n';
+
     // Format and precision for double
     inline constexpr char Format = 'g';
     inline constexpr int Precision = 9;
