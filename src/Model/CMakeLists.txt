@@ -54,12 +54,6 @@ target_sources(Model
         src/SimType.h
         src/SkySearch.cpp
         src/SkySearch.h
-        src/CSVConst.cpp
-        src/CSVConst.h
-        src/Export/CSVExport.cpp
-        src/Export/CSVExport.h
-        src/Import/CSVImport.cpp
-        src/Import/CSVImport.h
 )
 
 set(MODEL_LIBS
