@@ -53,7 +53,11 @@ ScenarioService::ScenarioService() noexcept
 {}
 
 ScenarioService::~ScenarioService() noexcept
-{}
+{
+#ifdef DEBUG
+    qDebug("ScenarioService::~ScenarioService: DESTROYED.");
+#endif
+}
 
 bool ScenarioService::store(Scenario &scenario) noexcept
 {

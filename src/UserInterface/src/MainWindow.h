@@ -92,6 +92,7 @@ private slots:
     void on_showSimulationVariablesAction_triggered(bool enabled) noexcept;
     void on_showStatisticsAction_triggered(bool enabled) noexcept;
     void on_stayOnTopAction_triggered(bool enabled) noexcept;
+    void on_showMinimalAction_triggered(bool enabled) noexcept;
     // About menu
     void on_aboutLibraryAction_triggered() noexcept;
     void on_aboutAction_triggered() noexcept;
