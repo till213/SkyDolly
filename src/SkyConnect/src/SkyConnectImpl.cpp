@@ -150,7 +150,7 @@ void SkyConnectImpl::onStopRecording() noexcept
     // Update flight plan
     const Aircraft &userAircraft = getCurrentScenario().getUserAircraftConst();
     FlightPlan &flightPlan = userAircraft.getFlightPlan();
-    for(const auto &it : d->flightPlan) {
+    for (const auto &it : d->flightPlan) {
         flightPlan.add(it.second);
     }
 }
