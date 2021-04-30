@@ -197,7 +197,7 @@ void SkyConnectDummy::recordData() noexcept
     aircraftData.velocityBodyZ = randomGenerator->bounded(1.0);
 
     aircraftData.timestamp = timestamp;
-    aircraft.upsert(std::move(aircraftData));
+    aircraft.upsert(aircraftData);
 
     EngineData engineData;
     engineData.throttleLeverPosition1 = SkyMath::fromPosition(-1.0 + randomGenerator->bounded(2.0));
