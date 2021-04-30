@@ -32,7 +32,8 @@ Optionally also install QtCreator:
 
 ## All Platforms
 
-* Clone (or download) this project: `git clone https://github.com/till213/SkyDolly.git`
+* Clone (or download) this project, including submodules: `git clone https://github.com/till213/SkyDolly.git --recurse-submodules`
+* For existing cloned repositories initialise and update the submodules with: `git submodule update --init --recursive`
 
 ## Qt Creator (All Platforms)
 

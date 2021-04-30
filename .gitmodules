@@ -1,0 +1,3 @@
+[submodule "3rdParty/ordered-map"]
+	path = 3rdParty/ordered-map
+	url = https://github.com/Tessil/ordered-map

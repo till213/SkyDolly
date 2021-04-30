@@ -165,7 +165,6 @@ void EngineWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
         ui->generalEngineStarter4CheckBox->setChecked(engineData.generalEngineStarter4);
 
         colorName = d->ActiveTextColor.name();
-
     } else {
         colorName = d->DisabledTextColor.name();
     }
@@ -187,7 +186,6 @@ void EngineWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
     ui->cowlFlaps2LineEdit->setStyleSheet(css);
     ui->cowlFlaps3LineEdit->setStyleSheet(css);
     ui->cowlFlaps4LineEdit->setStyleSheet(css);
-
     ui->masterBattery1CheckBox->setStyleSheet(css);
     ui->masterBattery2CheckBox->setStyleSheet(css);
     ui->masterBattery3CheckBox->setStyleSheet(css);

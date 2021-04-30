@@ -22,24 +22,30 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVCONST_H
-#define CSVCONST_H
+#ifndef POSITIONDAOINTF_H
+#define POSITIONDAOINTF_H
 
-namespace CSVConst {
-    // Format and precision for double
-    constexpr char Format = 'g';
-    constexpr int Precision = 9;
+#include <QVector>
 
-    enum class DataType : char {
-        Aircraft = 'a',
-        Engine = 'e',
-        PrimaryFlightControl = 'p',
-        SecondaryFlightControl = 's',
-        AircraftHandle = 'h',
-        Light = 'l'
-    };
+class AircraftData;
 
-    extern const char *TypeColumnName;
-}
+class PositionDaoIntf
+{
+public:
+    virtual ~PositionDaoIntf() = default;
 
-#endif // CSVCONST_H
+    /*!
+     * Persists the \c data.
+     *
+     * \param aircraftId
+     *        the aircraft the \c data belongs to
+     * \param data
+     *        the AircraftData to be persisted
+     * \return \c true on success; \c false else
+     */
+    virtual bool add(qint64 aircraftId, const AircraftData &data) = 0;
+    virtual bool getByAircraftId(qint64 aircraftId, QVector<AircraftData> &data) const = 0;
+    virtual bool deleteByScenarioId(qint64 scenarioId) = 0;
+};
+
+#endif // POSITIONDAOINTF_H

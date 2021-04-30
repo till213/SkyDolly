@@ -125,12 +125,12 @@ void AircraftTypeWidget::updateInfoUi()
 {
     const Scenario &currentScenario = World::getInstance().getCurrentScenario();
     const Aircraft &aircraft = currentScenario.getUserAircraftConst();
-    const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
+    const AircraftInfo &aircraftInfo = aircraft.getAircraftInfoConst();
 
-    ui->nameLineEdit->setText(aircraftInfo.name);
-    ui->tailNumberLineEdit->setText(aircraftInfo.atcId);
-    ui->airlineLineEdit->setText(aircraftInfo.atcAirline);
-    ui->flightLineEdit->setText(aircraftInfo.atcFlightNumber);
+    ui->nameLineEdit->setText(aircraftInfo.type);
+    ui->tailNumberLineEdit->setText(aircraftInfo.tailNumber);
+    ui->airlineLineEdit->setText(aircraftInfo.airline);
+    ui->flightLineEdit->setText(aircraftInfo.flightNumber);
     ui->categoryLineEdit->setText(aircraftInfo.category);
     ui->startOnGroundCheckBox->setChecked(aircraftInfo.startOnGround);
 
@@ -138,6 +138,6 @@ void AircraftTypeWidget::updateInfoUi()
     ui->wingSpanLineEdit->setText(d->unit.formatFeet(aircraftInfo.wingSpan));
     ui->engineTypeLineEdit->setText(SimType::engineTypeToString(aircraftInfo.engineType));
     ui->numberOfEnginesLineEdit->setText(QString::number(aircraftInfo.numberOfEngines));
-    ui->aircraftAltitudeAboveGroundLineEdit->setText(d->unit.formatFeet(aircraftInfo.aircraftAltitudeAboveGround));
+    ui->aircraftAltitudeAboveGroundLineEdit->setText(d->unit.formatFeet(aircraftInfo.altitudeAboveGround));
     ui->startOnGroundCheckBox->setChecked(aircraftInfo.startOnGround);
 }

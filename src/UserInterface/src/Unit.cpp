@@ -29,6 +29,8 @@
 #include <QString>
 #include <QStringBuilder>
 #include <QLocale>
+#include <QDateTime>
+#include <QTime>
 
 #include "Unit.h"
 
@@ -67,7 +69,7 @@ QString Unit::formatLatitude(double latitude) noexcept
 
     dd2dms(latitude, degrees, minutes, seconds);
 
-    QString hemisphere = latitude >= 0.0 ? QT_TR_NOOP("N") : QT_TR_NOOP("S");
+    QString hemisphere = latitude >= 0.0 ? QT_TRANSLATE_NOOP("Unit", "N") : QT_TRANSLATE_NOOP("Unit", "S");
     return QString::number(degrees) % "° " % QString::number(minutes) % "' " % QString::number(seconds, 'f', Precision) % "'' " % " " % hemisphere;
 }
 
@@ -78,7 +80,7 @@ QString Unit::formatLongitude(double longitude) noexcept
     double seconds = 0;
 
     dd2dms(longitude, degrees, minutes, seconds);
-    QString hemisphere = longitude >= 0.0 ? QT_TR_NOOP("E") : QT_TR_NOOP("W");
+    QString hemisphere = longitude >= 0.0 ? QT_TRANSLATE_NOOP("Unit", "E") : QT_TRANSLATE_NOOP("Unit", "W");
     return QString::number(degrees) % "° " % QString::number(minutes) % "' " % QString::number(seconds, 'f', Precision) % "'' " % " " % hemisphere;
 }
 
@@ -101,13 +103,13 @@ QString Unit::formatVisibility(double metres) noexcept
 {
     QString visibility;
     if (metres < Fog) {
-        visibility = QT_TR_NOOP("Fog (< 3,300 ft)");
+        visibility = QT_TRANSLATE_NOOP("Unit", "Fog (< 3,300 ft)");
     } else if (metres < Mist) {
-        visibility = QT_TR_NOOP("Mist (< 1.2 mi)");
+        visibility = QT_TRANSLATE_NOOP("Unit", "Mist (< 1.2 mi)");
     } else if (metres < Haze) {
-        visibility = QT_TR_NOOP("Haze (< 3.1 mi)");
+        visibility = QT_TRANSLATE_NOOP("Unit", "Haze (< 3.1 mi)");
     } else {
-        visibility = QT_TR_NOOP("Clear (>= 3.1 mi)");
+        visibility = QT_TRANSLATE_NOOP("Unit", "Clear (>= 3.1 mi)");
     }
     return visibility;
 }
@@ -115,6 +117,19 @@ QString Unit::formatVisibility(double metres) noexcept
 QString Unit::formatDegrees(double velocity) noexcept
 {
     return d->locale.toString(velocity, 'f', Precision) % " °";
+}
+
+QString Unit::formatHz(double hz) noexcept
+{
+    QString hzString;
+    if (hz < 1000) {
+        hzString = QString("%1 Hz").arg(QString::number(hz, 'f', 1));
+    }  else if (hz < 1000 * 1000) {
+        hzString = QString("%1 kHz").arg(QString::number(hz / 1000.0, 'f', 1));
+    }  else {
+        hzString = QString("%1 MHz").arg(QString::number(hz / (1000.0 * 1000), 'f', 2));
+    }
+    return hzString;
 }
 
 QString Unit::formatVelocityInFeet(double velocity) noexcept
@@ -140,6 +155,54 @@ QString Unit::formatPercent(quint8 percent) noexcept
 QString Unit::formatKnots(double velocity) noexcept
 {
     return d->locale.toString(velocity, 'f', Precision) % " knots";
+}
+
+QString Unit::formatElapsedTime(qint64 milliSeconds) noexcept
+{
+    QString elapsedTime;
+    if (milliSeconds < 1000) {
+        elapsedTime = QString("%1 ms").arg(elapsedTime);
+    } else if (milliSeconds < 1000 * 60) {
+        elapsedTime = QString("%1 s").arg(QString::number(static_cast<double>(milliSeconds) / 1000.0, 'f', 1));
+    } else if (milliSeconds < 1000 * 60 * 60) {
+        elapsedTime = QString("%1 min").arg(QString::number(static_cast<double>(milliSeconds) / (1000.0 * 60.0), 'f', 1));
+    } else {
+        elapsedTime = QString("%1 hours").arg(QString::number(static_cast<double>(milliSeconds) / (1000.0 * 60.0 * 60), 'f', 1));
+    }
+
+    return elapsedTime;
+}
+
+QString Unit::formatMemory(qint64 memory) noexcept
+{
+    QString size;
+    if (memory < 1024) {
+        size = QString("%1 bytes").arg(memory);
+    } else if (memory < 1024 * 1024) {
+        size = QString("%1 KiB").arg(QString::number(static_cast<double>(memory) / 1024.0, 'f', 1));
+    } else if (memory < 1024 * 1024 * 1024) {
+        size = QString("%1 MiB").arg(QString::number(static_cast<double>(memory) / (1024.0 * 1024.0), 'f', 2));
+    } else if (memory < 1024ll * 1024ll * 1024ll * 1024ll) {
+        size = QString("%1 GiB").arg(QString::number(static_cast<double>(memory) / (1024.0 * 1024.0 * 1024.0), 'f', 2));
+    } else {
+        size = QString("%1 TiB").arg(QString::number(static_cast<double>(memory) / (1024.0 * 1024.0 * 1024.0 * 1024.0), 'f', 2));
+    }
+    return size;
+}
+
+QString Unit::formatDate(const QDateTime &date) noexcept
+{
+    return d->locale.toString(date, "dd.MM.yyyy");
+}
+
+QString Unit::formatTime(const QDateTime &time) noexcept
+{
+    return d->locale.toString(time, "hh:mm:s");
+}
+
+QString Unit::formatDuration(const QTime &time) noexcept
+{
+    return d->locale.toString(time, "hh:mm:s");
 }
 
 // PRIVATE

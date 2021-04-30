@@ -63,19 +63,13 @@ Engine::~Engine() noexcept
 {
 }
 
-void Engine::upsert(EngineData engineData) noexcept
+void Engine::upsert(const EngineData &engineData) noexcept
 {
     if (d->engineData.count() > 0 && d->engineData.last().timestamp == engineData.timestamp)  {
         // Same timestamp -> replace
         d->engineData[d->engineData.count() - 1] = engineData;
-#ifdef DEBUG
-        qDebug("Engine::upsertEngineData: UPDATE sample, timestamp: %llu count: %d", engineData.timestamp, d->engineData.count());
-#endif
     } else {
         d->engineData.append(engineData);
-#ifdef DEBUG
-        qDebug("Engine::upsertEngineData: INSERT sample, timestamp: %llu count: %d", engineData.timestamp, d->engineData.count());
-#endif
     }
     emit dataChanged();
 }
@@ -89,7 +83,12 @@ const EngineData &Engine::getLast() const noexcept
     }
 }
 
-const QVector<EngineData> &Engine::getAll() const noexcept
+QVector<EngineData> &Engine::getAll() const noexcept
+{
+    return d->engineData;
+}
+
+const QVector<EngineData> &Engine::getAllConst() const noexcept
 {
     return d->engineData;
 }
@@ -149,6 +148,7 @@ const EngineData &Engine::interpolate(qint64 timestamp, TimeVariableData::Access
             d->currentEngineData.cowlFlapPosition2 = SkyMath::interpolateLinear(p1->cowlFlapPosition2, p2->cowlFlapPosition2, tn);
             d->currentEngineData.cowlFlapPosition3 = SkyMath::interpolateLinear(p1->cowlFlapPosition3, p2->cowlFlapPosition3, tn);
             d->currentEngineData.cowlFlapPosition4 = SkyMath::interpolateLinear(p1->cowlFlapPosition4, p2->cowlFlapPosition4, tn);
+
             // No interpolation for battery and starter states (boolean)
             d->currentEngineData.electricalMasterBattery1 = p1->electricalMasterBattery1;
             d->currentEngineData.electricalMasterBattery2 = p1->electricalMasterBattery2;
@@ -158,6 +158,7 @@ const EngineData &Engine::interpolate(qint64 timestamp, TimeVariableData::Access
             d->currentEngineData.generalEngineStarter2 = p1->generalEngineStarter2;
             d->currentEngineData.generalEngineStarter3 = p1->generalEngineStarter3;
             d->currentEngineData.generalEngineStarter4 = p1->generalEngineStarter4;
+
             d->currentEngineData.timestamp = timestamp;
         } else {
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded position

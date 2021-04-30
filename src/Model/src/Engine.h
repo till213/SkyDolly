@@ -44,9 +44,10 @@ public:
     Engine(QObject *parent = nullptr) noexcept;
     virtual ~Engine() noexcept;
 
-    void upsert(EngineData engineData) noexcept;
+    void upsert(const EngineData &engineData) noexcept;
     const EngineData &getLast() const noexcept;
-    const QVector<EngineData> &getAll() const noexcept;
+    QVector<EngineData> &getAll() const noexcept;
+    const QVector<EngineData> &getAllConst() const noexcept;
     const EngineData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
     void clear() noexcept;

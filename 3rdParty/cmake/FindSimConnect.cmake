@@ -7,3 +7,4 @@ set_property(TARGET SimConnect PROPERTY
 include_directories(
     "c:/MSFS SDK/SimConnect SDK/include"
 )
+

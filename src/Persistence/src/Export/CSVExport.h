@@ -37,15 +37,13 @@ class AircraftHandleData;
 class LightData;
 class CSVExportPrivate;
 
-#include "../ModelLib.h"
-
 /*!
  * Exports the Aircraft data as comma-separated values (CSV).
  */
 class CSVExport
 {
 public:
-    MODEL_API static bool exportData(const Aircraft &aircraft, QIODevice &io) noexcept;
+    static bool exportData(const Aircraft &aircraft, QIODevice &io) noexcept;
 
 private:
     CSVExportPrivate *d;

@@ -41,6 +41,8 @@ if (WIN32)
             src/SimConnectLightData.h
             src/SimConnectAircraftInfo.cpp
             src/SimConnectAircraftInfo.h
+            src/SimConnectFlightPlan.cpp
+            src/SimConnectFlightPlan.h
             src/EventWidget.cpp
             src/EventWidget.h
         )
@@ -59,7 +61,7 @@ else()
 endif()
 
 set(SKYCONNECT_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence tsl::ordered_map
 )
 if (APPLE)
     list(APPEND SKYCONNECT_LIBS -lc++)

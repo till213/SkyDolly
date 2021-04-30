@@ -28,8 +28,9 @@
 #include <memory>
 
 #include <QObject>
-#include <QByteArray>
 #include <QVector>
+
+class QDateTime;
 
 #include "ModelLib.h"
 #include "AircraftInfo.h"
@@ -40,6 +41,7 @@ class PrimaryFlightControl;
 class SecondaryFlightControl;
 class AircraftHandle;
 class Light;
+class FlightPlan;
 class AircraftPrivate;
 
 class MODEL_API Aircraft : public QObject
@@ -48,6 +50,9 @@ class MODEL_API Aircraft : public QObject
 public:    
     Aircraft(QObject *parent = nullptr) noexcept;
     virtual ~Aircraft() noexcept;
+
+    void setId(qint64 id) noexcept;
+    qint64 getId() const noexcept;
 
     const Engine &getEngineConst() const noexcept;
     Engine &getEngine() const noexcept;
@@ -64,12 +69,16 @@ public:
     const Light &getLightConst() const noexcept;
     Light &getLight() const noexcept;
 
-    void setAircraftInfo(AircraftInfo aircraftInfo) noexcept;
-    const AircraftInfo &getAircraftInfo() const noexcept;
+    const AircraftInfo &getAircraftInfoConst() const noexcept;
+    void setAircraftInfo(const AircraftInfo &aircraftInfo) noexcept;
 
-    void upsert(AircraftData aircraftData) noexcept;
+    const FlightPlan &getFlightPlanConst() const noexcept;
+    FlightPlan &getFlightPlan() const noexcept;
+
+    void upsert(AircraftData &aircraftData) noexcept;
     const AircraftData &getLast() const noexcept;
-    const QVector<AircraftData> &getAll() const noexcept;
+    const QVector<AircraftData> &getAllConst() const noexcept;
+    QVector<AircraftData> &getAll() const noexcept;
     const AircraftData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
     qint64 getDurationMSec() const noexcept;
@@ -89,6 +98,7 @@ private:
 
 private slots:
     void handleDataChanged();
+    void invalidateDuration();
 };
 
 #endif // AIRCRAFT_H

@@ -13,7 +13,7 @@ else()
 endif()
 
 set(USERINTERFACE_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model SkyConnect
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence SkyConnect
 )
 if (APPLE)
     list(APPEND USERINTERFACE_LIBS -lc++)
@@ -32,6 +32,9 @@ target_sources(UserInterface
         src/Dialogs/AboutDialog.cpp
         src/Dialogs/AboutDialog.h
         src/Dialogs/AboutDialog.ui
+        src/Dialogs/AboutLibraryDialog.cpp
+        src/Dialogs/AboutLibraryDialog.h
+        src/Dialogs/AboutLibraryDialog.ui
         src/Dialogs/SimulationVariablesDialog.cpp
         src/Dialogs/SimulationVariablesDialog.h
         src/Dialogs/SimulationVariablesDialog.ui
@@ -68,6 +71,9 @@ target_sources(UserInterface
         src/Widgets/LightWidget.cpp
         src/Widgets/LightWidget.h
         src/Widgets/LightWidget.ui
+        src/Widgets/ScenarioWidget.cpp
+        src/Widgets/ScenarioWidget.h
+        src/Widgets/ScenarioWidget.ui
 )
 
 target_link_libraries(UserInterface PRIVATE ${USERINTERFACE_LIBS})

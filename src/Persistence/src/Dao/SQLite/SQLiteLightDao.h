@@ -22,18 +22,36 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CONST_H
-#define CONST_H
+#ifndef SQLITELIGHTDAO_H
+#define SQLITELIGHTDAO_H
 
-/*!
- * General constants.
- */
-namespace Const
+#include <memory>
+
+#include <QObject>
+#include <QVector>
+
+#include "../../../../Model/src/LightData.h"
+#include "../LightDaoIntf.h"
+
+class SQLiteLightDaoPrivate;
+
+class SQLiteLightDao : public QObject, public LightDaoIntf
 {
-    /*! Separator character for CSV import & export */
-    inline constexpr char Sep = '\t';
-    /*! Newline character for CSV import & export */
-    inline constexpr char Ln = '\n';
-}
+public:
+    explicit SQLiteLightDao(QObject *parent = nullptr) noexcept;
+    virtual ~SQLiteLightDao() noexcept;
 
-#endif // CONST_H
+    virtual bool add(qint64 aircraftId, const LightData &data) noexcept override;
+    virtual bool getByAircraftId(qint64 aircraftId, QVector<LightData> &data) const noexcept override;
+    virtual bool deleteByScenarioId(qint64 scenarioId) noexcept override;
+
+private:
+    std::unique_ptr<SQLiteLightDaoPrivate> d;
+
+    void frenchConnection() noexcept;
+
+private slots:
+    void handleConnectionChanged() noexcept;
+};
+
+#endif // SQLITELIGHTDAO_H
