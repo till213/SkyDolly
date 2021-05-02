@@ -22,39 +22,12 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SCENARIOSERVICE_H
-#define SCENARIOSERVICE_H
+#include "FlightDescription.h"
 
-#include <memory>
+// PUBLIC
 
-#include <QObject>
-#include <QVector>
+FlightDescription::FlightDescription()
+{}
 
-#include "../../../Model/src/Scenario.h"
-#include "../../../Model/src/ScenarioDescription.h"
-#include "../PersistenceLib.h"
-
-class ScenarioServicePrivate;
-
-class PERSISTENCE_API ScenarioService : public QObject
-{
-    Q_OBJECT
-public:
-    ScenarioService() noexcept;
-    ~ScenarioService() noexcept;
-
-    bool store(Scenario &scenario) noexcept;
-    bool restore(qint64 id, Scenario &scenario) noexcept;
-    bool deleteById(qint64 id) noexcept;
-
-    QVector<ScenarioDescription> getScenarioDescriptions() const noexcept;
-
-signals:
-    void scenarioStored(qint64 scenarioId);
-    void scenarioRestored(qint64 scenarioId);
-
-private:
-    std::unique_ptr<ScenarioServicePrivate> d;
-};
-
-#endif // SCENARIOSERVICE_H
+FlightDescription::~FlightDescription()
+{}

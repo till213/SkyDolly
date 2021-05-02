@@ -43,7 +43,7 @@ public:
 
     std::unique_ptr<QSqlQuery> insertQuery;
     std::unique_ptr<QSqlQuery> selectByAircraftIdQuery;
-    std::unique_ptr<QSqlQuery> deleteByScenarioIdQuery;
+    std::unique_ptr<QSqlQuery> deleteByFlightIdQuery;
 
     void initQueries()
     {
@@ -80,14 +80,14 @@ public:
 "where  h.aircraft_id = :aircraft_id "
 "order by h.timestamp asc;");
         }
-        if (deleteByScenarioIdQuery == nullptr) {
-            deleteByScenarioIdQuery = std::make_unique<QSqlQuery>();
-            deleteByScenarioIdQuery->prepare(
+        if (deleteByFlightIdQuery == nullptr) {
+            deleteByFlightIdQuery = std::make_unique<QSqlQuery>();
+            deleteByFlightIdQuery->prepare(
 "delete "
 "from   handle "
 "where  aircraft_id in (select a.id "
 "                       from aircraft a"
-"                       where a.scenario_id = :scenario_id"
+"                       where a.flight_id = :flight_id"
 "                      );");
         }
     }
@@ -96,7 +96,7 @@ public:
     {
         insertQuery = nullptr;
         selectByAircraftIdQuery = nullptr;
-        deleteByScenarioIdQuery = nullptr;
+        deleteByFlightIdQuery = nullptr;
     }
 };
 
@@ -173,14 +173,14 @@ bool SQLiteHandleDao::getByAircraftId(qint64 aircraftId, QVector<AircraftHandleD
     return ok;
 }
 
-bool SQLiteHandleDao::deleteByScenarioId(qint64 scenarioId) noexcept
+bool SQLiteHandleDao::deleteByFlightId(qint64 flightId) noexcept
 {
     d->initQueries();
-    d->deleteByScenarioIdQuery->bindValue(":scenario_id", scenarioId);
-    bool ok = d->deleteByScenarioIdQuery->exec();
+    d->deleteByFlightIdQuery->bindValue(":flight_id", flightId);
+    bool ok = d->deleteByFlightIdQuery->exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteHandleDao::deleteByScenarioId: SQL error: %s", qPrintable(d->deleteByScenarioIdQuery->lastError().databaseText() + " - error code: " + d->deleteByScenarioIdQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteHandleDao::deleteByFlightId: SQL error: %s", qPrintable(d->deleteByFlightIdQuery->lastError().databaseText() + " - error code: " + d->deleteByFlightIdQuery->lastError().nativeErrorCode()));
     }
 #endif
     return ok;

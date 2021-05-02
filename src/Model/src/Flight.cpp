@@ -30,13 +30,13 @@
 
 #include "FlightCondition.h"
 #include "Aircraft.h"
-#include "Scenario.h"
+#include "Flight.h"
 
-class ScenarioPrivate
+class FlightPrivate
 {
 public:
 
-    ScenarioPrivate() noexcept
+    FlightPrivate() noexcept
     {
         clear();
     }
@@ -55,11 +55,11 @@ public:
 
 // PUBLIC
 
-Scenario::Scenario(QObject *parent) noexcept
+Flight::Flight(QObject *parent) noexcept
     : QObject(parent),
-      d(std::make_unique<ScenarioPrivate>())
+      d(std::make_unique<FlightPrivate>())
 {
-    // The scenario may support several aircrafts, but for now there will be always
+    // The flight may support several aircrafts, but for now there will be always
     // exactly one user aircraft
     std::unique_ptr<Aircraft> userAircraft = std::make_unique<Aircraft>();
     d->aircrafts.push_back(std::move(userAircraft));
@@ -67,69 +67,69 @@ Scenario::Scenario(QObject *parent) noexcept
     frenchConnection();
 }
 
-Scenario::~Scenario() noexcept
+Flight::~Flight() noexcept
 {
 }
 
-void Scenario::setId(qint64 id) noexcept
+void Flight::setId(qint64 id) noexcept
 {
     d->id = id;
 }
 
-qint64 Scenario::getId() const noexcept
+qint64 Flight::getId() const noexcept
 {
     return d->id;
 }
 
-const QDateTime &Scenario::getCreationDate() const noexcept
+const QDateTime &Flight::getCreationDate() const noexcept
 {
     return d->creationDate;
 }
 
-void Scenario::setCreationDate(const QDateTime &creationDate) noexcept
+void Flight::setCreationDate(const QDateTime &creationDate) noexcept
 {
     d->creationDate = creationDate;
 }
 
-const QString &Scenario::getDescription() const noexcept
+const QString &Flight::getDescription() const noexcept
 {
     return d->description;
 }
 
-void Scenario::setDescription(const QString &description) noexcept
+void Flight::setDescription(const QString &description) noexcept
 {
     d->description = description;
 }
 
-const Aircraft &Scenario::getUserAircraftConst() const noexcept
+const Aircraft &Flight::getUserAircraftConst() const noexcept
 {
     return *(*d->aircrafts.cbegin());
 }
 
-Aircraft &Scenario::getUserAircraft() const noexcept
+Aircraft &Flight::getUserAircraft() const noexcept
 {
     return *(*d->aircrafts.cbegin());
 }
 
-const FlightCondition &Scenario::getFlightConditionConst() const noexcept
+const FlightCondition &Flight::getFlightConditionConst() const noexcept
 {
     return d->flightCondition;
 }
 
-void Scenario::setFlightCondition(FlightCondition flightCondition) noexcept
+void Flight::setFlightCondition(FlightCondition flightCondition) noexcept
 {
     d->flightCondition = flightCondition;
     emit flightConditionChanged();
 }
 
-qint64 Scenario::getTotalDurationMSec() const noexcept
+qint64 Flight::getTotalDurationMSec() const noexcept
 {
     // For now the total duration is the duration of the
     // (one and only) user aircraft
     return d->aircrafts.at(0)->getDurationMSec();
 }
 
-void Scenario::clear() noexcept
+void Flight::clear() noexcept
 {
     d->clear();
     getUserAircraft().clear();
@@ -138,11 +138,11 @@ void Scenario::clear() noexcept
 
 // PRIVATE
 
-void Scenario::frenchConnection() noexcept
+void Flight::frenchConnection() noexcept
 {
     Aircraft &userAircraft = getUserAircraft();
     connect(&userAircraft, &Aircraft::infoChanged,
-            this, &Scenario::aircraftInfoChanged);
+            this, &Flight::aircraftInfoChanged);
     connect(&userAircraft, &Aircraft::dataChanged,
-            this, &Scenario::aircraftDataChanged);
+            this, &Flight::aircraftDataChanged);
 }

@@ -22,16 +22,16 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "ScenarioDialog.h"
-#include "ui_ScenarioDialog.h"
+#include "FlightDialog.h"
+#include "ui_FlightDialog.h"
 
 #include <memory>
 
 #include <QDialog>
 
 #include "../../../Model/src/SimVar.h"
-#include "../../../Model/src/World.h"
-#include "../../../Model/src/Scenario.h"
+#include "../../../Model/src/Logbook.h"
+#include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/PrimaryFlightControl.h"
@@ -40,13 +40,13 @@
 #include "../../../SkyConnect/src/Connect.h"
 #include "../Widgets/AircraftTypeWidget.h"
 #include "../Widgets/FlightConditionWidget.h"
-#include "ScenarioDialog.h"
-#include "ui_ScenarioDialog.h"
+#include "FlightDialog.h"
+#include "ui_FlightDialog.h"
 
-class ScenarioDialogPrivate
+class FlightDialogPrivate
 {
 public:
-    ScenarioDialogPrivate(SkyConnectIntf &theSkyConnect)
+    FlightDialogPrivate(SkyConnectIntf &theSkyConnect)
         : skyConnect(theSkyConnect)
     {}
 
@@ -55,10 +55,10 @@ public:
 
 // PUBLIC
 
-ScenarioDialog::ScenarioDialog(SkyConnectIntf &skyConnect, QWidget *parent) noexcept :
+FlightDialog::FlightDialog(SkyConnectIntf &skyConnect, QWidget *parent) noexcept :
     QDialog(parent),
-    d(std::make_unique<ScenarioDialogPrivate>(skyConnect)),
-    ui(std::make_unique<Ui::ScenarioDialog>())
+    d(std::make_unique<FlightDialogPrivate>(skyConnect)),
+    ui(std::make_unique<Ui::FlightDialog>())
 {
     ui->setupUi(this);
     Qt::WindowFlags flags = Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
@@ -67,20 +67,20 @@ ScenarioDialog::ScenarioDialog(SkyConnectIntf &skyConnect, QWidget *parent) noex
     initUi();
 }
 
-ScenarioDialog::~ScenarioDialog() noexcept
+FlightDialog::~FlightDialog() noexcept
 {
 }
 
 // PROTECTED
 
-void ScenarioDialog::showEvent(QShowEvent *event) noexcept
+void FlightDialog::showEvent(QShowEvent *event) noexcept
 {
     Q_UNUSED(event)
     updateUi();
     emit visibilityChanged(true);
 }
 
-void ScenarioDialog::hideEvent(QHideEvent *event) noexcept
+void FlightDialog::hideEvent(QHideEvent *event) noexcept
 {
     Q_UNUSED(event)
     emit visibilityChanged(false);
@@ -88,15 +88,15 @@ void ScenarioDialog::hideEvent(QHideEvent *event) noexcept
 
 // PRIVATE
 
-void ScenarioDialog::initUi() noexcept
+void FlightDialog::initUi() noexcept
 {
     AircraftTypeWidget *aircraftTypeWidget = new AircraftTypeWidget(d->skyConnect, this);
-    ui->scenarioTab->addTab(aircraftTypeWidget, tr("&Aircraft"));
+    ui->flightTab->addTab(aircraftTypeWidget, tr("&Aircraft"));
 
     FlightConditionWidget *flightConditionsWidget = new FlightConditionWidget(d->skyConnect, this);
-    ui->scenarioTab->addTab(flightConditionsWidget, tr("&Conditions"));
+    ui->flightTab->addTab(flightConditionsWidget, tr("&Conditions"));
 }
 
-void ScenarioDialog::updateUi() noexcept
+void FlightDialog::updateUi() noexcept
 {
 }

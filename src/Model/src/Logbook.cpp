@@ -22,12 +22,65 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "ScenarioDescription.h"
+#include <memory>
+#include <iostream>
+#include <vector>
+
+#include "Logbook.h"
+
+class LogbookPrivate
+{
+public:
+    LogbookPrivate() noexcept
+    {}
+
+    ~LogbookPrivate() noexcept
+    {}
+
+    std::vector<std::unique_ptr<Flight>> flights;
+
+    static Logbook *instance;
+
+};
+
+Logbook *LogbookPrivate::instance = nullptr;
 
 // PUBLIC
 
-ScenarioDescription::ScenarioDescription()
-{}
+Logbook &Logbook::getInstance() noexcept
+{
+    if (LogbookPrivate::instance == nullptr) {
+        LogbookPrivate::instance = new Logbook();
+    }
+    return *LogbookPrivate::instance;
+}
 
-ScenarioDescription::~ScenarioDescription()
-{}
+void Logbook::destroyInstance() noexcept
+{
+    if (LogbookPrivate::instance != nullptr) {
+        delete LogbookPrivate::instance;
+        LogbookPrivate::instance = nullptr;
+    }
+}
+
+Flight &Logbook::getCurrentFlight() const
+{
+    return *(*d->flights.cbegin());
+}
+
+// PROTECTED
+
+Logbook::~Logbook()
+{
+}
+
+// PRIVATE
+
+Logbook::Logbook() noexcept
+    : d(std::make_unique<LogbookPrivate>())
+{
+    // Logbook may support several flights, but for now there will be always
+    // exactly one
+    std::unique_ptr<Flight> defaultFlight = std::make_unique<Flight>();
+    d->flights.push_back(std::move(defaultFlight));
+}

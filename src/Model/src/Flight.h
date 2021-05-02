@@ -22,32 +22,60 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef WORLD_H
-#define WORLD_H
+#ifndef FLIGHT_H
+#define FLIGHT_H
 
 #include <memory>
 
-#include "Scenario.h"
+#include <QObject>
+
+class QDateTime;
+class QString;
+
 #include "ModelLib.h"
 
-class WorldPrivate;
+class FlightCondition;
+class Aircraft;
+class FlightPrivate;
 
-class MODEL_API World
+class MODEL_API Flight : public QObject
 {
+    Q_OBJECT
 public:
-    static World &getInstance() noexcept;
-    static void destroyInstance() noexcept;
+    Flight(QObject *parent = nullptr) noexcept;
+    ~Flight() noexcept;
 
-    Scenario &getCurrentScenario() const;
+    qint64 getId() const noexcept;
+    void setId(qint64 id) noexcept;
 
-protected:
-    ~World();
+    const QDateTime &getCreationDate() const noexcept;
+    void setCreationDate(const QDateTime &creationDate) noexcept;
+
+    const QString &getDescription() const noexcept;
+    void setDescription(const QString &description) noexcept;
+
+    const Aircraft &getUserAircraftConst() const noexcept;
+    Aircraft &getUserAircraft() const noexcept;
+
+    const FlightCondition &getFlightConditionConst() const noexcept;
+    void setFlightCondition(FlightCondition flightCondition) noexcept;
+
+    qint64 getTotalDurationMSec() const noexcept;
+
+    void clear() noexcept;
+
+     static constexpr int InvalidId = -1;
+
+signals:
+    void aircraftInfoChanged();
+    void aircraftDataChanged();
+    void flightConditionChanged();
 
 private:
-    Q_DISABLE_COPY(World)
-    std::unique_ptr<WorldPrivate> d;
+    Q_DISABLE_COPY(Flight)
+    std::unique_ptr<FlightPrivate> d;
 
-    World() noexcept;
+    void frenchConnection() noexcept;
 };
 
-#endif // WORLD_H
+#endif // FLIGHT_H

@@ -27,8 +27,8 @@
 #include <QDialog>
 
 #include "../../../Model/src/SimVar.h"
-#include "../../../Model/src/World.h"
-#include "../../../Model/src/Scenario.h"
+#include "../../../Model/src/Logbook.h"
+#include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/PrimaryFlightControl.h"

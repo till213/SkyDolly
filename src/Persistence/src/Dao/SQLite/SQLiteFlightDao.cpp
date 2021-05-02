@@ -35,23 +35,23 @@
 #include <QTimeZone>
 
 #include "../../../../Kernel/src/Enum.h"
-#include "../../../../Model/src/Scenario.h"
-#include "../../../../Model/src/ScenarioDescription.h"
+#include "../../../../Model/src/Flight.h"
+#include "../../../../Model/src/FlightDescription.h"
 #include "../../../../Model/src/FlightCondition.h"
 #include "../../Dao/AircraftDaoIntf.h"
 #include "../../Dao/DaoFactory.h"
 #include "../../ConnectionManager.h"
-#include "SQLiteScenarioDao.h"
-#include "SQLiteScenarioDao.h"
+#include "SQLiteFlightDao.h"
+#include "SQLiteFlightDao.h"
 
 namespace  {
     constexpr int UserAircraftSequenceNumber = 1;
 }
 
-class SQLiteScenarioDaoPrivate
+class SQLiteFlightDaoPrivate
 {
 public:
-    SQLiteScenarioDaoPrivate() noexcept
+    SQLiteFlightDaoPrivate() noexcept
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           aircraftDao(daoFactory->createAircraftDao())
     {}
@@ -68,7 +68,7 @@ public:
         if (insertQuery == nullptr) {
             insertQuery = std::make_unique<QSqlQuery>();
             insertQuery->prepare(
-"insert into scenario ("
+"insert into flight ("
 "  id,"
 "  description,"
 "  surface_type,"
@@ -109,24 +109,24 @@ public:
             selectByIdQuery->setForwardOnly(true);
             selectByIdQuery->prepare(
 "select * "
-"from scenario s "
-"where s.id = :id;");
+"from flight f "
+"where f.id = :id;");
         }
         if (deleteByIdQuery == nullptr) {
             deleteByIdQuery = std::make_unique<QSqlQuery>();
             deleteByIdQuery->prepare(
 "delete "
-"from scenario "
+"from flight "
 "where id = :id;");
         }
         if (selectDescriptionsQuery == nullptr) {
             selectDescriptionsQuery = std::make_unique<QSqlQuery>();
             selectDescriptionsQuery->setForwardOnly(true);
             selectDescriptionsQuery->prepare(
-"select s.id, s.creation_date, s.description, a.type, a.start_date, fp1.ident as start_waypoint, a.end_date, fp2.ident as end_waypoint "
-"from   scenario s "
+"select f.id, f.creation_date, f.description, a.type, a.start_date, fp1.ident as start_waypoint, a.end_date, fp2.ident as end_waypoint "
+"from   flight f "
 "join   aircraft a "
-"on     a.scenario_id = s.id "
+"on     a.flight_id = f.id "
 "left join (select ident, aircraft_id from flight_plan where seq_nr = 1) fp1 "
 "on    fp1.aircraft_id = a.id "
 "left join (select ident, aircraft_id from flight_plan fpo where seq_nr = (select max(seq_nr) from flight_plan fpi where fpi.aircraft_id = fpo.aircraft_id)) fp2 "
@@ -145,21 +145,21 @@ public:
 
 // PUBLIC
 
-SQLiteScenarioDao::SQLiteScenarioDao(QObject *parent) noexcept
+SQLiteFlightDao::SQLiteFlightDao(QObject *parent) noexcept
     : QObject(parent),
-      d(std::make_unique<SQLiteScenarioDaoPrivate>())
+      d(std::make_unique<SQLiteFlightDaoPrivate>())
 {
     frenchConnection();
 }
 
-SQLiteScenarioDao::~SQLiteScenarioDao() noexcept
+SQLiteFlightDao::~SQLiteFlightDao() noexcept
 {}
 
-bool SQLiteScenarioDao::addScenario(Scenario &scenario)  noexcept
+bool SQLiteFlightDao::addFlight(Flight &flight)  noexcept
 {
     d->initQueries();
-    const FlightCondition &flightCondition = scenario.getFlightConditionConst();
-    d->insertQuery->bindValue(":description", scenario.getDescription());
+    const FlightCondition &flightCondition = flight.getFlightConditionConst();
+    d->insertQuery->bindValue(":description", flight.getDescription());
     d->insertQuery->bindValue(":surface_type", Enum::toUnderlyingType(flightCondition.surfaceType));
     d->insertQuery->bindValue(":ground_altitude", flightCondition.groundAltitude);
     d->insertQuery->bindValue(":ambient_temperature", flightCondition.ambientTemperature);
@@ -178,25 +178,25 @@ bool SQLiteScenarioDao::addScenario(Scenario &scenario)  noexcept
     bool ok = d->insertQuery->exec();
     if (ok) {
         qint64 id = d->insertQuery->lastInsertId().toLongLong(&ok);
-        scenario.setId(id);
+        flight.setId(id);
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteScenarioDao::addScenario: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteFlightDao::addFlight: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
 #endif
     }
     if (ok) {
-        ok = d->aircraftDao->add(scenario.getId(), UserAircraftSequenceNumber, scenario.getUserAircraft());
+        ok = d->aircraftDao->add(flight.getId(), UserAircraftSequenceNumber, flight.getUserAircraft());
     }
     return ok;
 }
 
-bool SQLiteScenarioDao::getScenarioById(qint64 id, Scenario &scenario) const noexcept
+bool SQLiteFlightDao::getFlightById(qint64 id, Flight &flight) const noexcept
 {
     d->initQueries();
     d->selectByIdQuery->bindValue(":id", id);
     bool ok = d->selectByIdQuery->exec();
     if (ok) {
-        scenario.clear();
+        flight.clear();
         int idIdx = d->selectByIdQuery->record().indexOf("id");
         int creationDateIdx = d->selectByIdQuery->record().indexOf("creation_date");
         int descriptionIdx = d->selectByIdQuery->record().indexOf("description");
@@ -215,11 +215,11 @@ bool SQLiteScenarioDao::getScenarioById(qint64 id, Scenario &scenario) const noe
         int localSimulationTimeIdx = d->selectByIdQuery->record().indexOf("local_sim_time");
         int zuluSimulationTimeIdx = d->selectByIdQuery->record().indexOf("zulu_sim_time");
         if (d->selectByIdQuery->next()) {
-            scenario.setId(d->selectByIdQuery->value(idIdx).toLongLong());
+            flight.setId(d->selectByIdQuery->value(idIdx).toLongLong());
             QDateTime date = d->selectByIdQuery->value(creationDateIdx).toDateTime();
             date.setTimeZone(QTimeZone::utc());
-            scenario.setCreationDate(date.toLocalTime());
-            scenario.setDescription(d->selectByIdQuery->value(descriptionIdx).toString());
+            flight.setCreationDate(date.toLocalTime());
+            flight.setDescription(d->selectByIdQuery->value(descriptionIdx).toString());
             FlightCondition flightCondition;
             flightCondition.surfaceType = static_cast<SimType::SurfaceType>(d->selectByIdQuery->value(surfaceTypeIdx).toInt());
             flightCondition.groundAltitude = d->selectByIdQuery->value(groundAltitudeIdx).toFloat();
@@ -239,38 +239,38 @@ bool SQLiteScenarioDao::getScenarioById(qint64 id, Scenario &scenario) const noe
             // UTC equals zulu time, so no conversion necessary
             flightCondition.zuluTime = d->selectByIdQuery->value(zuluSimulationTimeIdx).toDateTime();
 
-            scenario.setFlightCondition(flightCondition);
+            flight.setFlightCondition(flightCondition);
         }
-        Aircraft &userAircraft = scenario.getUserAircraft();
-        ok = d->aircraftDao->getByScenarioId(id, UserAircraftSequenceNumber, userAircraft);
+        Aircraft &userAircraft = flight.getUserAircraft();
+        ok = d->aircraftDao->getByFlightId(id, UserAircraftSequenceNumber, userAircraft);
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteScenarioDao::getScenarioById: SQL error: %s", qPrintable(d->selectByIdQuery->lastError().databaseText() + " - error code: " + d->selectByIdQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteFlightDao::getFlightById: SQL error: %s", qPrintable(d->selectByIdQuery->lastError().databaseText() + " - error code: " + d->selectByIdQuery->lastError().nativeErrorCode()));
 #endif
     }
     return ok;
 }
 
-bool SQLiteScenarioDao::deleteById(qint64 id) noexcept
+bool SQLiteFlightDao::deleteById(qint64 id) noexcept
 {
     d->initQueries();
 
-    bool ok = d->aircraftDao->deleteByScenarioId(id);
+    bool ok = d->aircraftDao->deleteByFlightId(id);
     if (ok) {
         d->deleteByIdQuery->bindValue(":id", id);
         ok = d->deleteByIdQuery->exec();
 #ifdef DEBUG
         if (!ok) {
-            qDebug("SQLiteScenarioDao::deleteById: SQL error: %s", qPrintable(d->deleteByIdQuery->lastError().databaseText() + " - error code: " + d->deleteByIdQuery->lastError().nativeErrorCode()));
+            qDebug("SQLiteFlightDao::deleteById: SQL error: %s", qPrintable(d->deleteByIdQuery->lastError().databaseText() + " - error code: " + d->deleteByIdQuery->lastError().nativeErrorCode()));
         }
 #endif
     }
     return ok;
 }
 
-QVector<ScenarioDescription> SQLiteScenarioDao::getScenarioDescriptions() const noexcept
+QVector<FlightDescription> SQLiteFlightDao::getFlightDescriptions() const noexcept
 {
-    QVector<ScenarioDescription> descriptions;
+    QVector<FlightDescription> descriptions;
 
     d->initQueries();
     bool ok = d->selectDescriptionsQuery->exec();
@@ -285,7 +285,7 @@ QVector<ScenarioDescription> SQLiteScenarioDao::getScenarioDescriptions() const 
         int descriptionIdx = d->selectDescriptionsQuery->record().indexOf("description");
         while (d->selectDescriptionsQuery->next()) {            
 
-            ScenarioDescription description;
+            FlightDescription description;
             description.id = d->selectDescriptionsQuery->value(idIdx).toLongLong();
 
             QDateTime dateTime = d->selectDescriptionsQuery->value(creationDateIdx).toDateTime();
@@ -306,7 +306,7 @@ QVector<ScenarioDescription> SQLiteScenarioDao::getScenarioDescriptions() const 
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteScenarioDao::getScenarioDescriptions: SQL error: %s", qPrintable(d->selectDescriptionsQuery->lastError().databaseText() + " - error code: " + d->selectDescriptionsQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteFlightDao::getFlightDescriptions: SQL error: %s", qPrintable(d->selectDescriptionsQuery->lastError().databaseText() + " - error code: " + d->selectDescriptionsQuery->lastError().nativeErrorCode()));
 #endif
     }
 
@@ -315,15 +315,15 @@ QVector<ScenarioDescription> SQLiteScenarioDao::getScenarioDescriptions() const 
 
 // PRIVATE
 
-void SQLiteScenarioDao::frenchConnection() noexcept
+void SQLiteFlightDao::frenchConnection() noexcept
 {
     connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
-            this, &SQLiteScenarioDao::handleConnectionChanged);
+            this, &SQLiteFlightDao::handleConnectionChanged);
 }
 
 // PRIVATE SLOTS
 
-void SQLiteScenarioDao::handleConnectionChanged() noexcept
+void SQLiteFlightDao::handleConnectionChanged() noexcept
 {
     d->resetQueries();
 }

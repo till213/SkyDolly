@@ -32,8 +32,8 @@
 #include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/SkyMath.h"
 #include "../../Model/src/TimeVariableData.h"
-#include "../../Model/src/World.h"
-#include "../../Model/src/Scenario.h"
+#include "../../Model/src/Logbook.h"
+#include "../../Model/src/Flight.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/AircraftData.h"
 #include "../../Model/src/Engine.h"
@@ -179,7 +179,7 @@ bool SkyConnectDummy::sendAircraftData(TimeVariableData::Access access) noexcept
 {
     bool success;
 
-    const AircraftData &currentAircraftData = getCurrentScenario().getUserAircraftConst().interpolate(getCurrentTimestamp(), access);
+    const AircraftData &currentAircraftData = getCurrentFlight().getUserAircraftConst().interpolate(getCurrentTimestamp(), access);
     if (!currentAircraftData.isNull()) {
         // Start the elapsed timer after sending the first sample data
         if (!isElapsedTimerRunning()) {
@@ -213,7 +213,7 @@ void SkyConnectDummy::recordData() noexcept
 
 void SkyConnectDummy::recordPositionData(qint64 timestamp) noexcept
 {
-    Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+    Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
     AircraftData aircraftData;
     aircraftData.latitude = -180.0 + d->randomGenerator->bounded(360.0);
@@ -236,7 +236,7 @@ void SkyConnectDummy::recordPositionData(qint64 timestamp) noexcept
 
 void SkyConnectDummy::recordEngineData(qint64 timestamp) noexcept
 {
-    Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+    Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
     EngineData engineData;
     engineData.throttleLeverPosition1 = SkyMath::fromPosition(-1.0 + d->randomGenerator->bounded(2.0));
@@ -270,7 +270,7 @@ void SkyConnectDummy::recordEngineData(qint64 timestamp) noexcept
 
 void SkyConnectDummy::recordPrimaryControls(qint64 timestamp) noexcept
 {
-    Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+    Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
     PrimaryFlightControlData primaryFlightControlData;
     primaryFlightControlData.rudderPosition = SkyMath::fromPosition(-1.0 + d->randomGenerator->bounded(2.0));
@@ -283,7 +283,7 @@ void SkyConnectDummy::recordPrimaryControls(qint64 timestamp) noexcept
 
 void SkyConnectDummy::recordSecondaryControls(qint64 timestamp) noexcept
 {
-    Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+    Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
     SecondaryFlightControlData secondaryFlightControlData;
     secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
@@ -299,7 +299,7 @@ void SkyConnectDummy::recordSecondaryControls(qint64 timestamp) noexcept
 
 void SkyConnectDummy::recordAircraftHandle(qint64 timestamp) noexcept
 {
-    Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+    Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
     AircraftHandleData aircraftHandleData;
     aircraftHandleData.brakeLeftPosition = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
@@ -317,7 +317,7 @@ void SkyConnectDummy::recordAircraftHandle(qint64 timestamp) noexcept
 void SkyConnectDummy::recordLights(qint64 timestamp) noexcept
 {
     static int lights = 0;
-    Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+    Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
     LightData lightData;
     lightData.lightStates = static_cast<SimType::LightStates>(lights);
@@ -329,7 +329,7 @@ void SkyConnectDummy::recordLights(qint64 timestamp) noexcept
 
 void SkyConnectDummy::recordFlightPlanData() noexcept
 {
-    Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+    Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
     FlightPlanData flightPlanData;
     if (d->randomGenerator->bounded(100.0) < 0.5) {
@@ -345,7 +345,7 @@ void SkyConnectDummy::recordFlightPlanData() noexcept
 
 void SkyConnectDummy::recordFlightCondition() noexcept
 {
-    Scenario &scenario = World::getInstance().getCurrentScenario();
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
     FlightCondition flightCondition;
 
     flightCondition.groundAltitude = d->randomGenerator->bounded(4000);
@@ -361,12 +361,12 @@ void SkyConnectDummy::recordFlightCondition() noexcept
     flightCondition.structuralIcingPercent = d->randomGenerator->bounded(101);
     flightCondition.inClouds = d->randomGenerator->bounded(2) < 1 ? false : true;
 
-    scenario.setFlightCondition(flightCondition);
+    flight.setFlightCondition(flightCondition);
 }
 
 void SkyConnectDummy::recordAircraftInfo() noexcept
 {
-    Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+    Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
     AircraftInfo info;
 
     switch (d->randomGenerator->bounded(5)) {

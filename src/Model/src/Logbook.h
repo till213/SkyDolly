@@ -22,29 +22,32 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SCENARIODAOINTF_H
-#define SCENARIODAOINTF_H
+#ifndef LOGBOOK_H
+#define LOGBOOK_H
 
-#include <QVector>
+#include <memory>
 
-class Scenario;
-class ScenarioDescription;
+#include "Flight.h"
+#include "ModelLib.h"
 
-class ScenarioDaoIntf
+class LogbookPrivate;
+
+class MODEL_API Logbook
 {
 public:
-    virtual ~ScenarioDaoIntf() = default;
+    static Logbook &getInstance() noexcept;
+    static void destroyInstance() noexcept;
 
-    /*!
-     * Persists the \c scenario. The \c id in \c scenario is updated.
-     * \param scenario
-     *        the Scenario to be persisted
-     * \return \c true on success; \c false else
-     */
-    virtual bool addScenario(Scenario &scenario) = 0;
-    virtual bool getScenarioById(qint64 id, Scenario &scenario) const = 0;
-    virtual bool deleteById(qint64 id) = 0;
-    virtual QVector<ScenarioDescription> getScenarioDescriptions() const = 0;
+    Flight &getCurrentFlight() const;
+
+protected:
+    ~Logbook();
+
+private:
+    Q_DISABLE_COPY(Logbook)
+    std::unique_ptr<LogbookPrivate> d;
+
+    Logbook() noexcept;
 };
 
-#endif // SCENARIODAOINTF_H
+#endif // LOGBOOK_H

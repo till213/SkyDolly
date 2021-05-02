@@ -34,7 +34,7 @@
   * General engine starter
   * Folding wing handle
 - Simulation variables now shown with units (feet, hPa, ...)
-- Added a new "Scenario" dialog, showing information about the aircraft and initial flight conditions
+- Added a new "Flight" dialog, showing information about the aircraft and initial flight conditions
 - The last CSV export/import directory is stored
 - A basic error dialog shows when an import/export error occurs
 - The seek interval can now be defined in the settings (either absolute in seconds, or in percent of the record duration)

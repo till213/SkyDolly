@@ -25,7 +25,7 @@
 #include <memory>
 
 #include "SQLite/SQLiteDatabaseDao.h"
-#include "SQLite/SQLiteScenarioDao.h"
+#include "SQLite/SQLiteFlightDao.h"
 #include "SQLite/SQLiteAircraftDao.h"
 #include "SQLite/SQLitePositionDao.h"
 #include "SQLite/SQLiteEngineDao.h"
@@ -34,7 +34,7 @@
 #include "SQLite/SQLiteHandleDao.h"
 #include "SQLite/SQLiteLightDao.h"
 #include "SQLite/SQLiteFlightPlanDao.h"
-#include "ScenarioDaoIntf.h"
+#include "FlightDaoIntf.h"
 #include "AircraftDaoIntf.h"
 #include "PositionDaoIntf.h"
 #include "EngineDaoIntf.h"
@@ -76,11 +76,11 @@ std::unique_ptr<DatabaseDaoIntf> DaoFactory::createDatabaseDao() noexcept
     }
 }
 
-std::unique_ptr<ScenarioDaoIntf> DaoFactory::createScenarioDao() noexcept
+std::unique_ptr<FlightDaoIntf> DaoFactory::createFlightDao() noexcept
 {
     switch (d->dbType) {
     case DbType::SQLite:
-        return std::make_unique<SQLiteScenarioDao>();
+        return std::make_unique<SQLiteFlightDao>();
         break;
     default:
         return nullptr;

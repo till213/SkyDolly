@@ -22,60 +22,53 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SCENARIO_H
-#define SCENARIO_H
+#ifndef SCENARIOWIDGET_H
+#define SCENARIOWIDGET_H
 
 #include <memory>
 
-#include <QObject>
+#include <QWidget>
 
-class QDateTime;
-class QString;
+class QShowEvent;
+class QHideEvent;
 
-#include "ModelLib.h"
+class SkyConnectIntf;
+class FlightWidgetPrivate;
 
-class FlightCondition;
-class Aircraft;
-class ScenarioPrivate;
+#include "../../../Persistence/src/Service/FlightService.h"
 
-class MODEL_API Scenario : public QObject
+namespace Ui {
+class FlightWidget;
+}
+
+class FlightWidget : public QWidget
 {
     Q_OBJECT
+
 public:
-    Scenario(QObject *parent = nullptr) noexcept;
-    ~Scenario() noexcept;
+    explicit FlightWidget(FlightService &flightService, QWidget *parent = nullptr) noexcept;
+    virtual ~FlightWidget() noexcept;
 
-    qint64 getId() const noexcept;
-    void setId(qint64 id) noexcept;
+    qint64 getSelectedFlightId() const noexcept;
 
-    const QDateTime &getCreationDate() const noexcept;
-    void setCreationDate(const QDateTime &creationDate) noexcept;
-
-    const QString &getDescription() const noexcept;
-    void setDescription(const QString &description) noexcept;
-
-    const Aircraft &getUserAircraftConst() const noexcept;
-    Aircraft &getUserAircraft() const noexcept;
-
-    const FlightCondition &getFlightConditionConst() const noexcept;
-    void setFlightCondition(FlightCondition flightCondition) noexcept;
-
-    qint64 getTotalDurationMSec() const noexcept;
-
-    void clear() noexcept;
-
-     static constexpr int InvalidId = -1;
-
-signals:
-    void aircraftInfoChanged();
-    void aircraftDataChanged();
-    void flightConditionChanged();
+protected:
+    void showEvent(QShowEvent *event) noexcept override;
+    void hideEvent(QHideEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(Scenario)
-    std::unique_ptr<ScenarioPrivate> d;
+    Q_DISABLE_COPY(FlightWidget)
+    Ui::FlightWidget *ui;
+    std::unique_ptr<FlightWidgetPrivate> d;
 
+    void initUi() noexcept;
+    void updateEditUi() noexcept;
     void frenchConnection() noexcept;
+
+private slots:
+    void updateUi() noexcept;
+    void handleSelectionChanged() noexcept;
+    void handleLoad() noexcept;
+    void handleDelete() noexcept;
 };
 
-#endif // SCENARIO_H
+#endif // SCENARIOWIDGET_H
