@@ -58,7 +58,7 @@ set(OTHER_SOURCES
     CODE_OF_CONDUCT.md
     THIRD_PARTY.md
     doc/SkyDolly.simvars
-    ${CMAKE_SOURCE_DIR}/res/Info.plist.in
+    res/Info.plist.in
 )
 
 # Resource file (*.rc)

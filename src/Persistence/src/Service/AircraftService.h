@@ -40,7 +40,7 @@ public:
     AircraftService() noexcept;
     ~AircraftService() noexcept;
 
-    bool store(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) noexcept;
+    bool store(qint64 flightId, int sequenceNumber, Aircraft &aircraft) noexcept;
     bool restore(qint64 id, Aircraft &aircraft) noexcept;
 
 private:

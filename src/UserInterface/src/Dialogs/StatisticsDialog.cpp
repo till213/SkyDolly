@@ -25,8 +25,8 @@
 #include <memory>
 
 #include "../../../Kernel/src/Settings.h"
-#include "../../../Model/src/World.h"
-#include "../../../Model/src/Scenario.h"
+#include "../../../Model/src/Logbook.h"
+#include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/AircraftData.h"
 #include "../../../Model/src/Engine.h"
@@ -82,7 +82,7 @@ void StatisticsDialog::showEvent(QShowEvent *event) noexcept
 
     updateRecordUi();
 
-    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
     // Signal sent while recording
     connect(&aircraft, &Aircraft::dataChanged,
             this, &StatisticsDialog::updateRecordUi);
@@ -96,7 +96,7 @@ void StatisticsDialog::hideEvent(QHideEvent *event) noexcept
 {
     Q_UNUSED(event)
 
-    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
     disconnect(&aircraft, &Aircraft::dataChanged,
                this, &StatisticsDialog::updateRecordUi);
 
@@ -112,8 +112,8 @@ void StatisticsDialog::frenchConnection() noexcept
 
 void StatisticsDialog::updateRecordUi() noexcept
 {
-    const Scenario &scenario = World::getInstance().getCurrentScenario();
-    const Aircraft &aircraft = scenario.getUserAircraft();
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const Aircraft &aircraft = flight.getUserAircraft();
 
     if (Settings::getInstance().getRecordSampleRate() != SampleRate::SampleRate::Auto) {
         ui->recordSampleRateLineEdit->setText(d->unit.formatHz(Settings::getInstance().getRecordSampleRateValue()));
@@ -136,7 +136,7 @@ void StatisticsDialog::updateRecordUi() noexcept
     const int totalCount = aircraftData.count() + engineData.count() + primaryFlightControlData.count() + secondaryFlightControlData.count() + aircraftHandleData.count() + lightData.count();
     ui->sampleCountLineEdit->setText(QString::number(totalCount));
 
-    ui->durationLineEdit->setText(d->unit.formatElapsedTime(scenario.getTotalDurationMSec()));
+    ui->durationLineEdit->setText(d->unit.formatElapsedTime(flight.getTotalDurationMSec()));
 
     const qint64 aircraftDataSize = aircraftData.count()  * sizeof(AircraftData);
     const qint64 engineDataSize = engineData.count()  * sizeof(EngineData);

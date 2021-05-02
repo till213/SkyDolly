@@ -27,8 +27,8 @@
 #include <QDialog>
 
 #include "../../../Model/src/SimVar.h"
-#include "../../../Model/src/World.h"
-#include "../../../Model/src/Scenario.h"
+#include "../../../Model/src/Logbook.h"
+#include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/AircraftInfo.h"
 #include "../../../Model/src/FlightCondition.h"
@@ -76,8 +76,8 @@ void AircraftTypeWidget::showEvent(QShowEvent *event)
 
     updateUi();
 
-    const Scenario &currentScenario = World::getInstance().getCurrentScenario();
-    const Aircraft &aircraft = currentScenario.getUserAircraft();
+    const Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
+    const Aircraft &aircraft = currentFlight.getUserAircraft();
     connect(&aircraft, &Aircraft::infoChanged,
             this, &AircraftTypeWidget::updateInfoUi);
 }
@@ -86,8 +86,8 @@ void AircraftTypeWidget::hideEvent(QHideEvent *event)
 {
     Q_UNUSED(event)
 
-    const Scenario &currentScenario = World::getInstance().getCurrentScenario();
-    const Aircraft &aircraft = currentScenario.getUserAircraft();
+    const Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
+    const Aircraft &aircraft = currentFlight.getUserAircraft();
     disconnect(&aircraft, &Aircraft::infoChanged,
             this, &AircraftTypeWidget::updateInfoUi);
 }
@@ -123,8 +123,8 @@ void AircraftTypeWidget::updateUi()
 
 void AircraftTypeWidget::updateInfoUi()
 {
-    const Scenario &currentScenario = World::getInstance().getCurrentScenario();
-    const Aircraft &aircraft = currentScenario.getUserAircraftConst();
+    const Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
+    const Aircraft &aircraft = currentFlight.getUserAircraftConst();
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfoConst();
 
     ui->nameLineEdit->setText(aircraftInfo.type);

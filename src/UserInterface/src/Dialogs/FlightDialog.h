@@ -22,53 +22,44 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SCENARIOWIDGET_H
-#define SCENARIOWIDGET_H
+#ifndef SCENARIODIALOG_H
+#define SCENARIODIALOG_H
 
 #include <memory>
 
-#include <QWidget>
+#include <QDialog>
 
 class QShowEvent;
 class QHideEvent;
 
 class SkyConnectIntf;
-class ScenarioWidgetPrivate;
-
-#include "../../../Persistence/src/Service/ScenarioService.h"
+class FlightDialogPrivate;
 
 namespace Ui {
-class ScenarioWidget;
+    class FlightDialog;
 }
 
-class ScenarioWidget : public QWidget
+class FlightDialog : public QDialog
 {
     Q_OBJECT
-
 public:
-    explicit ScenarioWidget(ScenarioService &scenarioService, QWidget *parent = nullptr) noexcept;
-    virtual ~ScenarioWidget() noexcept;
+    explicit FlightDialog(SkyConnectIntf &skyConnect, QWidget *parent = nullptr) noexcept;
+    virtual ~FlightDialog() noexcept;
 
-    qint64 getSelectedScenarioId() const noexcept;
+signals:
+    void visibilityChanged(bool visible);
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;
     void hideEvent(QHideEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(ScenarioWidget)
-    Ui::ScenarioWidget *ui;
-    std::unique_ptr<ScenarioWidgetPrivate> d;
+    Q_DISABLE_COPY(FlightDialog)
+    std::unique_ptr<FlightDialogPrivate> d;
+    std::unique_ptr<Ui::FlightDialog> ui;
 
     void initUi() noexcept;
-    void updateEditUi() noexcept;
-    void frenchConnection() noexcept;
-
-private slots:
     void updateUi() noexcept;
-    void handleSelectionChanged() noexcept;
-    void handleLoad() noexcept;
-    void handleDelete() noexcept;
 };
 
-#endif // SCENARIOWIDGET_H
+#endif // SCENARIODIALOG_H

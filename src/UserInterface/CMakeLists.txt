@@ -44,9 +44,9 @@ target_sources(UserInterface
         src/Dialogs/StatisticsDialog.cpp
         src/Dialogs/StatisticsDialog.h
         src/Dialogs/StatisticsDialog.ui
-        src/Dialogs/ScenarioDialog.cpp
-        src/Dialogs/ScenarioDialog.h
-        src/Dialogs/ScenarioDialog.ui
+        src/Dialogs/FlightDialog.cpp
+        src/Dialogs/FlightDialog.h
+        src/Dialogs/FlightDialog.ui
         src/Widgets/AircraftWidget.cpp
         src/Widgets/AircraftWidget.h
         src/Widgets/AircraftWidget.ui
@@ -71,9 +71,9 @@ target_sources(UserInterface
         src/Widgets/LightWidget.cpp
         src/Widgets/LightWidget.h
         src/Widgets/LightWidget.ui
-        src/Widgets/ScenarioWidget.cpp
-        src/Widgets/ScenarioWidget.h
-        src/Widgets/ScenarioWidget.ui
+        src/Widgets/FlightWidget.cpp
+        src/Widgets/FlightWidget.h
+        src/Widgets/FlightWidget.ui
 )
 
 target_link_libraries(UserInterface PRIVATE ${USERINTERFACE_LIBS})

@@ -13,7 +13,7 @@ target_sources(Persistence
         src/ConnectionManager.h
         src/Metadata.h
         src/Dao/DatabaseDaoIntf.h
-        src/Dao/ScenarioDaoIntf.h
+        src/Dao/FlightDaoIntf.h
         src/Dao/AircraftDaoIntf.h
         src/Dao/PositionDaoIntf.h
         src/Dao/EngineDaoIntf.h
@@ -26,8 +26,8 @@ target_sources(Persistence
         src/Dao/DaoFactory.h
         src/Dao/SQLite/SQLiteDatabaseDao.cpp
         src/Dao/SQLite/SQLiteDatabaseDao.h
-        src/Dao/SQLite/SQLiteScenarioDao.cpp
-        src/Dao/SQLite/SQLiteScenarioDao.h
+        src/Dao/SQLite/SQLiteFlightDao.cpp
+        src/Dao/SQLite/SQLiteFlightDao.h
         src/Dao/SQLite/SQLiteAircraftDao.cpp
         src/Dao/SQLite/SQLiteAircraftDao.h
         src/Dao/SQLite/SQLitePositionDao.cpp
@@ -52,8 +52,8 @@ target_sources(Persistence
         src/Dao/SQLite/Migration/migr-ddl.sql
         src/Dao/SQLite/Migration/migr-ex-post.sql
         src/Dao/SQLite/Migration/Migration.qrc
-        src/Service/ScenarioService.cpp
-        src/Service/ScenarioService.h
+        src/Service/FlightService.cpp
+        src/Service/FlightService.h
         src/Service/AircraftService.cpp
         src/Service/AircraftService.h
         src/Service/DatabaseService.cpp

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ScenarioDialog</class>
- <widget class="QDialog" name="ScenarioDialog">
+ <class>FlightDialog</class>
+ <widget class="QDialog" name="FlightDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Scenario</string>
+   <string>Flight</string>
   </property>
   <property name="sizeGripEnabled">
    <bool>false</bool>
@@ -21,7 +21,7 @@
     <enum>QLayout::SetMinimumSize</enum>
    </property>
    <item row="0" column="0">
-    <widget class="QTabWidget" name="scenarioTab">
+    <widget class="QTabWidget" name="flightTab">
      <property name="currentIndex">
       <number>-1</number>
      </property>
@@ -44,7 +44,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>ScenarioDialog</receiver>
+   <receiver>FlightDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -60,7 +60,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>ScenarioDialog</receiver>
+   <receiver>FlightDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

@@ -27,7 +27,7 @@
 
 #include <memory>
 
-#include "ScenarioDaoIntf.h"
+#include "FlightDaoIntf.h"
 #include "AircraftDaoIntf.h"
 #include "PositionDaoIntf.h"
 #include "EngineDaoIntf.h"
@@ -53,7 +53,7 @@ public:
     ~DaoFactory();
 
     std::unique_ptr<DatabaseDaoIntf> createDatabaseDao() noexcept;
-    std::unique_ptr<ScenarioDaoIntf> createScenarioDao() noexcept;
+    std::unique_ptr<FlightDaoIntf> createFlightDao() noexcept;
     std::unique_ptr<AircraftDaoIntf> createAircraftDao() noexcept;
     std::unique_ptr<PositionDaoIntf> createPositionDao() noexcept;
     std::unique_ptr<EngineDaoIntf> createEngineDao() noexcept;

@@ -45,7 +45,7 @@ public:
      */
     virtual bool add(qint64 aircraftId, const AircraftHandleData &data) = 0;
     virtual bool getByAircraftId(qint64 aircraftId, QVector<AircraftHandleData> &data) const = 0;
-    virtual bool deleteByScenarioId(qint64 scenarioId) = 0;
+    virtual bool deleteByFlightId(qint64 flightId) = 0;
 };
 
 #endif // HANDLEDAOINTF_H

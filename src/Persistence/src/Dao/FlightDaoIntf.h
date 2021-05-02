@@ -22,65 +22,29 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory>
-#include <iostream>
-#include <vector>
+#ifndef SCENARIODAOINTF_H
+#define SCENARIODAOINTF_H
 
-#include "World.h"
+#include <QVector>
 
-class WorldPrivate
+class Flight;
+class FlightDescription;
+
+class FlightDaoIntf
 {
 public:
-    WorldPrivate() noexcept
-    {}
+    virtual ~FlightDaoIntf() = default;
 
-    ~WorldPrivate() noexcept
-    {}
-
-    std::vector<std::unique_ptr<Scenario>> scenarios;
-
-    static World *instance;
-
+    /*!
+     * Persists the \c flight. The \c id in \c flight is updated.
+     * \param flight
+     *        the Flight to be persisted
+     * \return \c true on success; \c false else
+     */
+    virtual bool addFlight(Flight &flight) = 0;
+    virtual bool getFlightById(qint64 id, Flight &flight) const = 0;
+    virtual bool deleteById(qint64 id) = 0;
+    virtual QVector<FlightDescription> getFlightDescriptions() const = 0;
 };
 
-World *WorldPrivate::instance = nullptr;
-
-// PUBLIC
-
-World &World::getInstance() noexcept
-{
-    if (WorldPrivate::instance == nullptr) {
-        WorldPrivate::instance = new World();
-    }
-    return *WorldPrivate::instance;
-}
-
-void World::destroyInstance() noexcept
-{
-    if (WorldPrivate::instance != nullptr) {
-        delete WorldPrivate::instance;
-        WorldPrivate::instance = nullptr;
-    }
-}
-
-Scenario &World::getCurrentScenario() const
-{
-    return *(*d->scenarios.cbegin());
-}
-
-// PROTECTED
-
-World::~World()
-{
-}
-
-// PRIVATE
-
-World::World() noexcept
-    : d(std::make_unique<WorldPrivate>())
-{
-    // World may support several scenarios, but for now there will be always
-    // exactly one
-    std::unique_ptr<Scenario> defaultScenario = std::make_unique<Scenario>();
-    d->scenarios.push_back(std::move(defaultScenario));
-}
+#endif // SCENARIODAOINTF_H

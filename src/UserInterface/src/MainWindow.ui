@@ -257,7 +257,7 @@
     <property name="title">
      <string>&amp;Window</string>
     </property>
-    <addaction name="showScenarioAction"/>
+    <addaction name="showFlightAction"/>
     <addaction name="showSimulationVariablesAction"/>
     <addaction name="showStatisticsAction"/>
     <addaction name="separator"/>
@@ -452,23 +452,23 @@
     <string>&amp;Statistics...</string>
    </property>
    <property name="shortcut">
-    <string>T</string>
+    <string>S</string>
    </property>
   </action>
-  <action name="showScenarioAction">
+  <action name="showFlightAction">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>S&amp;cenario...</string>
+    <string>&amp;Flight...</string>
    </property>
    <property name="shortcut">
-    <string>S</string>
+    <string>F</string>
    </property>
   </action>
-  <action name="openScenarioAction">
+  <action name="openFlightAction">
    <property name="text">
-    <string>O&amp;pen Scenario...</string>
+    <string>O&amp;pen Flight...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+O</string>

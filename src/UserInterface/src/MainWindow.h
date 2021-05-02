@@ -88,7 +88,7 @@ private slots:
     void on_showSettingsAction_triggered() noexcept;
     void on_quitAction_triggered() noexcept;
     // Window menu
-    void on_showScenarioAction_triggered(bool enabled) noexcept;
+    void on_showFlightAction_triggered(bool enabled) noexcept;
     void on_showSimulationVariablesAction_triggered(bool enabled) noexcept;
     void on_showStatisticsAction_triggered(bool enabled) noexcept;
     void on_stayOnTopAction_triggered(bool enabled) noexcept;
@@ -114,7 +114,7 @@ private slots:
     void skipToEnd() noexcept;
 
     // Service
-    void handleScenarioRestored() noexcept;
+    void handleFlightRestored() noexcept;
     void handleRecordingStopped() noexcept;
 };
 #endif // MAINWINDOW_H

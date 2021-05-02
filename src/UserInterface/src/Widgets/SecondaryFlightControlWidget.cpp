@@ -30,8 +30,8 @@
 #include <QPalette>
 
 #include "../../../Model/src/SimVar.h"
-#include "../../../Model/src/World.h"
-#include "../../../Model/src/Scenario.h"
+#include "../../../Model/src/Logbook.h"
+#include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/SecondaryFlightControl.h"
 #include "../../../Model/src/SecondaryFlightControlData.h"
@@ -133,7 +133,7 @@ void SecondaryFlightControlWidget::updateUi(qint64 timestamp, TimeVariableData::
 
 const SecondaryFlightControlData &SecondaryFlightControlWidget::getCurrentSecondaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const
 {
-    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
     if (d->skyConnect.getState() == Connect::State::Recording) {
         return aircraft.getSecondaryFlightControlConst().getLast();

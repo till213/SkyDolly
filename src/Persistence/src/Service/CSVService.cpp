@@ -28,29 +28,29 @@
 #include <QFileInfo>
 #include <QDateTime>
 
-#include "../../../Model/src/World.h"
-#include "../../../Model/src/Scenario.h"
+#include "../../../Model/src/Logbook.h"
+#include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/AircraftInfo.h"
 #include "../Import/CSVImport.h"
 #include "../Export/CSVExport.h"
-#include "ScenarioService.h"
+#include "FlightService.h"
 #include "CSVService.h"
 
 class CSVServicePrivate
 {
 public:
-    CSVServicePrivate(ScenarioService &theScenarioService) noexcept
-        : scenarioService(theScenarioService)
+    CSVServicePrivate(FlightService &theFlightService) noexcept
+        : flightService(theFlightService)
     {}
 
-    ScenarioService &scenarioService;
+    FlightService &flightService;
 };
 
 // PUBLIC
 
-CSVService::CSVService(ScenarioService &scenarioService) noexcept
-    : d(std::make_unique<CSVServicePrivate>(scenarioService))
+CSVService::CSVService(FlightService &flightService) noexcept
+    : d(std::make_unique<CSVServicePrivate>(flightService))
 {}
 
 CSVService::~CSVService() noexcept
@@ -59,16 +59,16 @@ CSVService::~CSVService() noexcept
 bool CSVService::importAircraft(const QString &filePath) noexcept
 {
     QFile file(filePath);
-    Scenario &scenario = World::getInstance().getCurrentScenario();
-    scenario.clear();
-    Aircraft &aircraft = scenario.getUserAircraft();
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    flight.clear();
+    Aircraft &aircraft = flight.getUserAircraft();
     bool ok = CSVImport::importData(file, aircraft);
     if (ok) {
         AircraftInfo info;
         info.startDate = QFileInfo(filePath).birthTime();
         info.endDate = info.startDate.addMSecs(aircraft.getDurationMSec());
         aircraft.setAircraftInfo(info);
-        d->scenarioService.store(World::getInstance().getCurrentScenario());
+        d->flightService.store(Logbook::getInstance().getCurrentFlight());
     }
     return ok;
 }

@@ -23,7 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include "../../Kernel/src/Settings.h"
-#include "../../Model/src/World.h"
+#include "../../Model/src/Logbook.h"
 #include "../../SkyConnect/src/SkyManager.h"
 #include "../../Persistence/src/ConnectionManager.h"
 #include "SkyDollyApplication.h"
@@ -51,6 +51,6 @@ void SkyDollyApplication::handleAboutToQuit() noexcept
     // Destroying the settings singleton also persists the settings
     Settings::destroyInstance();
     SkyManager::destroyInstance();
-    World::destroyInstance();
+    Logbook::destroyInstance();
     ConnectionManager::destroyInstance();
 }

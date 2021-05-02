@@ -30,8 +30,8 @@
 #include <QPalette>
 
 #include "../../../Model/src/SimVar.h"
-#include "../../../Model/src/World.h"
-#include "../../../Model/src/Scenario.h"
+#include "../../../Model/src/Logbook.h"
+#include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/AircraftData.h"
 #include "../../../Model/src/EngineData.h"
@@ -198,7 +198,7 @@ void EngineWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
 
 const EngineData &EngineWidget::getCurrentEngineData(qint64 timestamp, TimeVariableData::Access access) const
 {
-    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraft();
+    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
     if (d->skyConnect.getState() == Connect::State::Recording) {
         return aircraft.getEngineConst().getLast();

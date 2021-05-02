@@ -434,6 +434,93 @@ MIT License</source>
     </message>
 </context>
 <context>
+    <name>FlightDialog</name>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/FlightDialog.ui" line="14"/>
+        <source>Flight</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/FlightDialog.cpp" line="94"/>
+        <source>&amp;Aircraft</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/FlightDialog.cpp" line="97"/>
+        <source>&amp;Conditions</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FlightWidget</name>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/FlightWidget.ui" line="12"/>
+        <location filename="../src/UserInterface/src/Widgets/FlightWidget.cpp" line="118"/>
+        <source>Flight</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/FlightWidget.ui" line="23"/>
+        <source>&amp;Load</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/FlightWidget.ui" line="30"/>
+        <source>&amp;Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/FlightWidget.cpp" line="118"/>
+        <source>Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/FlightWidget.cpp" line="118"/>
+        <source>Aircraft</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/FlightWidget.cpp" line="118"/>
+        <source>Departure Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/FlightWidget.cpp" line="118"/>
+        <source>Departure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/FlightWidget.cpp" line="118"/>
+        <source>Arrival Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/FlightWidget.cpp" line="118"/>
+        <source>Arrival</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/FlightWidget.cpp" line="118"/>
+        <source>Total Time of Flight</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/FlightWidget.cpp" line="118"/>
+        <source>Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/FlightWidget.cpp" line="214"/>
+        <source>Database error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/FlightWidget.cpp" line="214"/>
+        <source>The flight %1 could not be read from the library.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>LightWidget</name>
     <message>
         <location filename="../src/UserInterface/src/Widgets/LightWidget.ui" line="14"/>
@@ -750,7 +837,7 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.ui" line="471"/>
-        <source>O&amp;pen Scenario...</source>
+        <source>O&amp;pen Flight...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -805,7 +892,7 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.cpp" line="231"/>
-        <source>Scenarios</source>
+        <source>Flights</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -952,93 +1039,6 @@ MIT License</source>
     <message>
         <location filename="../src/UserInterface/src/Widgets/PrimaryFlightControlWidget.ui" line="75"/>
         <source>Aileron</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ScenarioDialog</name>
-    <message>
-        <location filename="../src/UserInterface/src/Dialogs/ScenarioDialog.ui" line="14"/>
-        <source>Scenario</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Dialogs/ScenarioDialog.cpp" line="94"/>
-        <source>&amp;Aircraft</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Dialogs/ScenarioDialog.cpp" line="97"/>
-        <source>&amp;Conditions</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>ScenarioWidget</name>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ScenarioWidget.ui" line="12"/>
-        <location filename="../src/UserInterface/src/Widgets/ScenarioWidget.cpp" line="118"/>
-        <source>Scenario</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ScenarioWidget.ui" line="23"/>
-        <source>&amp;Load</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ScenarioWidget.ui" line="30"/>
-        <source>&amp;Delete</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ScenarioWidget.cpp" line="118"/>
-        <source>Date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ScenarioWidget.cpp" line="118"/>
-        <source>Aircraft</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ScenarioWidget.cpp" line="118"/>
-        <source>Departure Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ScenarioWidget.cpp" line="118"/>
-        <source>Departure</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ScenarioWidget.cpp" line="118"/>
-        <source>Arrival Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ScenarioWidget.cpp" line="118"/>
-        <source>Arrival</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ScenarioWidget.cpp" line="118"/>
-        <source>Total Time of Flight</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ScenarioWidget.cpp" line="118"/>
-        <source>Description</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ScenarioWidget.cpp" line="214"/>
-        <source>Database error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/ScenarioWidget.cpp" line="214"/>
-        <source>The scenario %1 could not be read from the library.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -51,9 +51,9 @@
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/AircraftData.h"
 #include "../../Model/src/AircraftInfo.h"
-#include "../../Model/src/World.h"
+#include "../../Model/src/Logbook.h"
 #include "../../Persistence/src/Dao/DaoFactory.h"
-#include "../../Persistence/src/Service/ScenarioService.h"
+#include "../../Persistence/src/Service/FlightService.h"
 #include "../../Persistence/src/Service/DatabaseService.h"
 #include "../../Persistence/src/Service/CSVService.h"
 #include "../../SkyConnect/src/SkyManager.h"
@@ -62,11 +62,11 @@
 #include "Dialogs/AboutDialog.h"
 #include "Dialogs/AboutLibraryDialog.h"
 #include "Dialogs/SettingsDialog.h"
-#include "Dialogs/ScenarioDialog.h"
+#include "Dialogs/FlightDialog.h"
 #include "Dialogs/SimulationVariablesDialog.h"
 #include "Dialogs/StatisticsDialog.h"
 #include "Widgets/ActionButton.h"
-#include "Widgets/ScenarioWidget.h"
+#include "Widgets/FlightWidget.h"
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
 
@@ -107,12 +107,12 @@ public:
           aboutDialog(nullptr),
           aboutLibraryDialog(nullptr),
           settingsDialog(nullptr),
-          scenarioDialog(nullptr),
+          flightDialog(nullptr),
           simulationVariablesDialog(nullptr),
           statisticsDialog(nullptr),
-          scenarioService(std::make_unique<ScenarioService>()),
+          flightService(std::make_unique<FlightService>()),
           databaseService(std::make_unique<DatabaseService>()),
-          csvService(std::make_unique<CSVService>(*scenarioService))
+          csvService(std::make_unique<CSVService>(*flightService))
     {}
 
     SkyConnectIntf &skyConnect;
@@ -121,12 +121,12 @@ public:
     AboutDialog *aboutDialog;
     AboutLibraryDialog *aboutLibraryDialog;
     SettingsDialog *settingsDialog;
-    ScenarioDialog *scenarioDialog;
+    FlightDialog *flightDialog;
     SimulationVariablesDialog *simulationVariablesDialog;
     StatisticsDialog *statisticsDialog;
     double lastCustomReplaySpeed;
     QLocale locale;
-    std::unique_ptr<ScenarioService> scenarioService;
+    std::unique_ptr<FlightService> flightService;
     std::unique_ptr<DatabaseService> databaseService;
     std::unique_ptr<CSVService> csvService;
 };
@@ -151,8 +151,8 @@ MainWindow::~MainWindow() noexcept
     // already at this point; no need to disconnect from their "stateChanged"
     // signal
 
-    // Make sure that all widgets having a reference to the scenario service
-    // are deleted before this MainWindow instance (which owns the scenario
+    // Make sure that all widgets having a reference to the flight service
+    // are deleted before this MainWindow instance (which owns the flight
     // service); we make sure by simply deleting their parent moduleStackWidget
     delete ui->moduleStackWidget;
 }
@@ -196,7 +196,7 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::skipToEnd);
 
     // Dialogs
-    connect(d->scenarioDialog, &ScenarioDialog::visibilityChanged,
+    connect(d->flightDialog, &FlightDialog::visibilityChanged,
             this, &MainWindow::updateWindowMenu);
     connect(d->simulationVariablesDialog, &SimulationVariablesDialog::visibilityChanged,
             this, &MainWindow::updateWindowMenu);
@@ -208,8 +208,8 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::updateMainWindow);
 
     // Service
-    connect(d->scenarioService.get(), &ScenarioService::scenarioRestored,
-            this, &MainWindow::handleScenarioRestored);
+    connect(d->flightService.get(), &FlightService::flightRestored,
+            this, &MainWindow::handleFlightRestored);
     connect(&d->skyConnect, &SkyConnectIntf::recordingStopped,
             this, &MainWindow::handleRecordingStopped);
 }
@@ -220,7 +220,7 @@ void MainWindow::initUi() noexcept
     resize(minimumSize());
 
     // Dialogs
-    d->scenarioDialog = new ScenarioDialog(d->skyConnect, this);
+    d->flightDialog = new FlightDialog(d->skyConnect, this);
     d->simulationVariablesDialog = new SimulationVariablesDialog(d->skyConnect, this);
     d->statisticsDialog = new StatisticsDialog(d->skyConnect, this);
     d->aboutDialog = new AboutDialog(this);
@@ -228,10 +228,10 @@ void MainWindow::initUi() noexcept
     d->settingsDialog = new SettingsDialog(this);
 
     // Widgets
-    ui->moduleGroupBox->setTitle(tr("Scenarios"));
-    ScenarioWidget *scenarioWidget = new ScenarioWidget(*d->scenarioService, ui->moduleStackWidget);
-    ui->moduleStackWidget->addWidget(scenarioWidget);
-    ui->moduleStackWidget->setCurrentWidget(scenarioWidget);
+    ui->moduleGroupBox->setTitle(tr("Flights"));
+    FlightWidget *flightWidget = new FlightWidget(*d->flightService, ui->moduleStackWidget);
+    ui->moduleStackWidget->addWidget(flightWidget);
+    ui->moduleStackWidget->setCurrentWidget(flightWidget);
 
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
     ui->showMinimalAction->setChecked(ui->moduleGroupBox->isVisible());
@@ -345,7 +345,7 @@ void MainWindow::on_positionSlider_sliderPressed() noexcept
 void MainWindow::on_positionSlider_valueChanged(int value) noexcept
 {
     const double scale = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
-    const qint64 totalDuration = World::getInstance().getCurrentScenario().getTotalDurationMSec();
+    const qint64 totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
     const qint64 timestamp = static_cast<qint64>(qRound(scale * static_cast<double>(totalDuration)));
 
     // Prevent the timestampTimeEdit field to set the play position as well
@@ -390,7 +390,7 @@ void MainWindow::updateUi() noexcept
 
 void MainWindow::updateControlUi() noexcept
 {
-    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
+    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();
     const bool hasRecording = aircraft.hasRecording();
     switch (d->skyConnect.getState()) {
     case Connect::State::Disconnected:
@@ -477,7 +477,7 @@ void MainWindow::updateControlUi() noexcept
 
 void MainWindow::updateTimestamp() noexcept
 {
-    const qint64 totalDuration = World::getInstance().getCurrentScenario().getTotalDurationMSec();
+    const qint64 totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
     ui->timestampTimeEdit->blockSignals(true);
     QTime time(0, 0, 0, 0);
     time = time.addMSecs(totalDuration);
@@ -488,7 +488,7 @@ void MainWindow::updateTimestamp() noexcept
 
 void MainWindow::updateFileMenu() noexcept
 {
-    const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
+    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();
     const bool hasRecording = aircraft.hasRecording();
     switch (d->skyConnect.getState()) {
     case Connect::State::Recording:
@@ -505,7 +505,7 @@ void MainWindow::updateFileMenu() noexcept
 
 void MainWindow::updateWindowMenu() noexcept
 {
-    ui->showScenarioAction->setChecked(d->scenarioDialog->isVisible());
+    ui->showFlightAction->setChecked(d->flightDialog->isVisible());
     ui->showSimulationVariablesAction->setChecked(d->simulationVariablesDialog->isVisible());
     ui->showStatisticsAction->setChecked(d->statisticsDialog->isVisible());
 }
@@ -641,7 +641,7 @@ void MainWindow::on_exportCSVAction_triggered() noexcept
     QString exportPath = Settings::getInstance().getExportPath();
     const QString filePath = QFileDialog::getSaveFileName(this, tr("Export CSV"), exportPath, QString("*.csv"));
     if (!filePath.isEmpty()) {
-        const Aircraft &aircraft = World::getInstance().getCurrentScenario().getUserAircraftConst();
+        const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();
         bool ok = d->csvService->exportAircraft(aircraft, filePath);
         if (ok) {
             exportPath = QFileInfo(filePath).absolutePath();
@@ -662,12 +662,12 @@ void MainWindow::on_quitAction_triggered() noexcept
     QApplication::quit();
 }
 
-void MainWindow::on_showScenarioAction_triggered(bool enabled) noexcept
+void MainWindow::on_showFlightAction_triggered(bool enabled) noexcept
 {
     if (enabled) {
-        d->scenarioDialog->show();
+        d->flightDialog->show();
     } else {
-        d->scenarioDialog->close();
+        d->flightDialog->close();
     }
 }
 
@@ -727,7 +727,7 @@ void MainWindow::handleTimestampChanged(qint64 timestamp) noexcept
     if (d->skyConnect.isRecording()) {
         updateTimestamp();
     } else {
-        const qint64 totalDuration = World::getInstance().getCurrentScenario().getTotalDurationMSec();
+        const qint64 totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
         const qint64 ts = qMin(timestamp, totalDuration);
 
         int sliderPosition;
@@ -856,7 +856,7 @@ void MainWindow::skipToEnd() noexcept
     d->skyConnect.skipToEnd();
 }
 
-void MainWindow::handleScenarioRestored() noexcept
+void MainWindow::handleFlightRestored() noexcept
 {
     updateUi();
     d->skyConnect.skipToBegin();
@@ -868,5 +868,5 @@ void MainWindow::handleScenarioRestored() noexcept
 
 void MainWindow::handleRecordingStopped() noexcept
 {
-    d->scenarioService->store(World::getInstance().getCurrentScenario());
+    d->flightService->store(Logbook::getInstance().getCurrentFlight());
 }

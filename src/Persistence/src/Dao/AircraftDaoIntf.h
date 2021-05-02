@@ -37,18 +37,18 @@ public:
     /*!
      * Persists the \c aircraft. The \c id in \c aircraft is updated.
      *
-     * \param scenarioId
-     *        the scenario the \c aircraft belongs to
+     * \param flightId
+     *        the flight the \c aircraft belongs to
      * \param sequenceNumber
      *        the sequence number of the aircraft
      * \param aircraft
      *        the aircraft to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool add(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) = 0;
+    virtual bool add(qint64 flightId, int sequenceNumber, Aircraft &aircraft) = 0;
     virtual bool getById(qint64 id, Aircraft &aircraft) const = 0;
-    virtual bool getByScenarioId(qint64 scenarioId, int sequenceNumber, Aircraft &aircraft) const = 0;
-    virtual bool deleteByScenarioId(qint64 scenarioId) = 0;
+    virtual bool getByFlightId(qint64 flightId, int sequenceNumber, Aircraft &aircraft) const = 0;
+    virtual bool deleteByFlightId(qint64 flightId) = 0;
 };
 
 #endif // AIRCRAFTDAOINTF_H

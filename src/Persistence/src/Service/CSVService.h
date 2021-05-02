@@ -29,14 +29,14 @@
 
 #include "../PersistenceLib.h"
 
-class ScenarioService;
+class FlightService;
 class Aircraft;
 class CSVServicePrivate;
 
 class PERSISTENCE_API CSVService
 {
 public:
-    explicit CSVService(ScenarioService &scenarioService) noexcept;
+    explicit CSVService(FlightService &flightService) noexcept;
     ~CSVService() noexcept;
 
     bool importAircraft(const QString &filePath) noexcept;

@@ -27,8 +27,8 @@
 #include <QDialog>
 
 #include "../../../Model/src/SimVar.h"
-#include "../../../Model/src/World.h"
-#include "../../../Model/src/Scenario.h"
+#include "../../../Model/src/Logbook.h"
+#include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/FlightCondition.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
@@ -75,8 +75,8 @@ void FlightConditionWidget::showEvent(QShowEvent *event)
 
     updateUi();
 
-    const Scenario &currentScenario = World::getInstance().getCurrentScenario();
-    connect(&currentScenario, &Scenario::flightConditionChanged,
+    const Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
+    connect(&currentFlight, &Flight::flightConditionChanged,
             this, &FlightConditionWidget::updateInfoUi);
 }
 
@@ -84,8 +84,8 @@ void FlightConditionWidget::hideEvent(QHideEvent *event)
 {
     Q_UNUSED(event)
 
-    const Scenario &currentScenario = World::getInstance().getCurrentScenario();
-    disconnect(&currentScenario, &Scenario::flightConditionChanged,
+    const Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
+    disconnect(&currentFlight, &Flight::flightConditionChanged,
             this, &FlightConditionWidget::updateInfoUi);
 }
 
@@ -123,8 +123,8 @@ void FlightConditionWidget::updateUi()
 
 void FlightConditionWidget::updateInfoUi()
 {
-    const Scenario &currentScenario = World::getInstance().getCurrentScenario();
-    const FlightCondition &flightCondition = currentScenario.getFlightConditionConst();
+    const Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
+    const FlightCondition &flightCondition = currentFlight.getFlightConditionConst();
 
     ui->groundAltitudeLineEdit->setText(d->unit.formatFeet(flightCondition.groundAltitude));
     ui->surfaceTypeLineEdit->setText(SimType::surfaceTypeToString(flightCondition.surfaceType));

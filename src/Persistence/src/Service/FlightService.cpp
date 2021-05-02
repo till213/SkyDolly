@@ -27,46 +27,46 @@
 #include <memory>
 #include <utility>
 
-#include "../../../Model/src/Scenario.h"
+#include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"
 #include "../Dao/DaoFactory.h"
-#include "../Dao/ScenarioDaoIntf.h"
+#include "../Dao/FlightDaoIntf.h"
 #include "../Dao/AircraftDaoIntf.h"
-#include "ScenarioService.h"
+#include "FlightService.h"
 
-class ScenarioServicePrivate
+class FlightServicePrivate
 {
 public:
-    ScenarioServicePrivate() noexcept
+    FlightServicePrivate() noexcept
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
-          scenarioDao(daoFactory->createScenarioDao())
+          flightDao(daoFactory->createFlightDao())
     {}
 
     std::unique_ptr<DaoFactory> daoFactory;
-    std::unique_ptr<ScenarioDaoIntf> scenarioDao;
+    std::unique_ptr<FlightDaoIntf> flightDao;
 };
 
 // PUBLIC
 
-ScenarioService::ScenarioService() noexcept
-    : d(std::make_unique<ScenarioServicePrivate>())
+FlightService::FlightService() noexcept
+    : d(std::make_unique<FlightServicePrivate>())
 {}
 
-ScenarioService::~ScenarioService() noexcept
+FlightService::~FlightService() noexcept
 {
 #ifdef DEBUG
-    qDebug("ScenarioService::~ScenarioService: DESTROYED.");
+    qDebug("FlightService::~FlightService: DESTROYED.");
 #endif
 }
 
-bool ScenarioService::store(Scenario &scenario) noexcept
+bool FlightService::store(Flight &flight) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
-        d->scenarioDao->addScenario(scenario);
+        d->flightDao->addFlight(flight);
         if (ok) {
             QSqlDatabase::database().commit();
-            emit scenarioStored(scenario.getId());
+            emit flightStored(flight.getId());
         } else {
             QSqlDatabase::database().rollback();
         }
@@ -74,24 +74,24 @@ bool ScenarioService::store(Scenario &scenario) noexcept
     return ok;
 }
 
-bool ScenarioService::restore(qint64 id, Scenario &scenario) noexcept
+bool FlightService::restore(qint64 id, Flight &flight) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
-        ok = d->scenarioDao->getScenarioById(id, scenario);
+        ok = d->flightDao->getFlightById(id, flight);
         if (ok) {
-            emit scenarioRestored(scenario.getId());
+            emit flightRestored(flight.getId());
         }
     }
     QSqlDatabase::database().rollback();
     return ok;
 }
 
-bool ScenarioService::deleteById(qint64 id)  noexcept
+bool FlightService::deleteById(qint64 id)  noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
-        ok = d->scenarioDao->deleteById(id);
+        ok = d->flightDao->deleteById(id);
         if (ok) {
             QSqlDatabase::database().commit();
         } else {
@@ -101,11 +101,11 @@ bool ScenarioService::deleteById(qint64 id)  noexcept
     return ok;
 }
 
-QVector<ScenarioDescription> ScenarioService::getScenarioDescriptions() const noexcept
+QVector<FlightDescription> FlightService::getFlightDescriptions() const noexcept
 {
-    QVector<ScenarioDescription> descriptions;
+    QVector<FlightDescription> descriptions;
     if (QSqlDatabase::database().transaction()) {
-        descriptions = d->scenarioDao->getScenarioDescriptions();
+        descriptions = d->flightDao->getFlightDescriptions();
         QSqlDatabase::database().rollback();
     }
     return descriptions;

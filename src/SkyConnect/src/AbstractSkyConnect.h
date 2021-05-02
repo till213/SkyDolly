@@ -33,7 +33,7 @@
 #include "SkyConnectIntf.h"
 #include "Connect.h"
 
-class Scenario;
+class Flight;
 class AbstractSkyConnectPrivate;
 
 class  AbstractSkyConnect : public SkyConnectIntf
@@ -75,7 +75,7 @@ public:
 
 protected:
     void setState(Connect::State state) noexcept;
-    Scenario &getCurrentScenario() const;
+    Flight &getCurrentFlight() const;
     void setCurrentTimestamp(qint64 timestamp) noexcept;
 
     bool isElapsedTimerRunning() const noexcept;

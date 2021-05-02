@@ -5,8 +5,8 @@ create table meta (
     last_backup_date datetime
 );
 
-@migr(id = "da30cf74-c698-4a73-bad1-c1cf3f380f32", descn = "Create scenario table", step_cnt = 1)
-create table scenario (
+@migr(id = "da30cf74-c698-4a73-bad1-c1cf3f380f32", descn = "Create flight table", step_cnt = 1)
+create table flight (
     id integer primary key,
     creation_date datetime default current_timestamp,
     description text,
@@ -29,7 +29,7 @@ create table scenario (
 @migr(id = "1fb17949-6c94-4bbf-98a2-ff54fe3a749f", descn = "Create aircraft table", step_cnt = 1)
 create table aircraft (
     id integer primary key,
-    scenario_id integer not null,
+    flight_id integer not null,
     seq_nr integer not null,
     start_date datetime,
     end_date datetime,
@@ -44,9 +44,9 @@ create table aircraft (
     nof_engines integer,
     altitude_above_ground real,
     start_on_ground integer,
-    foreign key(scenario_id) references scenario(id)
+    foreign key(flight_id) references flight(id)
 );
-create unique index aircraft_idx1 on aircraft (scenario_id, seq_nr);
+create unique index aircraft_idx1 on aircraft (flight_id, seq_nr);
 
 @migr(id = "9b831594-f6c2-489c-906d-2de31bb9788b", descn = "Create position table", step_cnt = 1)
 create table position (

@@ -22,44 +22,38 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SCENARIODIALOG_H
-#define SCENARIODIALOG_H
+#ifndef SQLITESCENARIODAO_H
+#define SQLITESCENARIODAO_H
 
 #include <memory>
 
-#include <QDialog>
+#include <QObject>
+#include <QtGlobal>
 
-class QShowEvent;
-class QHideEvent;
+#include "../../../../Model/src/Flight.h"
+#include "../FlightDaoIntf.h"
 
-class SkyConnectIntf;
-class ScenarioDialogPrivate;
+class SQLiteFlightDaoPrivate;
 
-namespace Ui {
-    class ScenarioDialog;
-}
-
-class ScenarioDialog : public QDialog
+class SQLiteFlightDao : public QObject, public FlightDaoIntf
 {
-    Q_OBJECT
 public:
-    explicit ScenarioDialog(SkyConnectIntf &skyConnect, QWidget *parent = nullptr) noexcept;
-    virtual ~ScenarioDialog() noexcept;
+    explicit SQLiteFlightDao(QObject *parent = nullptr) noexcept;
+    virtual ~SQLiteFlightDao() noexcept;
 
-signals:
-    void visibilityChanged(bool visible);
+    virtual bool addFlight(Flight &flight)  noexcept override;
+    virtual bool getFlightById(qint64 id, Flight &flight) const noexcept override;
+    virtual bool deleteById(qint64 id) noexcept override;
 
-protected:
-    void showEvent(QShowEvent *event) noexcept override;
-    void hideEvent(QHideEvent *event) noexcept override;
+    virtual QVector<FlightDescription> getFlightDescriptions() const noexcept override;
 
 private:
-    Q_DISABLE_COPY(ScenarioDialog)
-    std::unique_ptr<ScenarioDialogPrivate> d;
-    std::unique_ptr<Ui::ScenarioDialog> ui;
+    std::unique_ptr<SQLiteFlightDaoPrivate> d;
 
-    void initUi() noexcept;
-    void updateUi() noexcept;
+    void frenchConnection() noexcept;
+
+private slots:
+    void handleConnectionChanged() noexcept;
 };
 
-#endif // SCENARIODIALOG_H
+#endif // SQLITESCENARIODAO_H

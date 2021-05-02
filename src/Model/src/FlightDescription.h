@@ -22,38 +22,27 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SQLITESCENARIODAO_H
-#define SQLITESCENARIODAO_H
+#ifndef FLIGHTDESCRIPTION_H
+#define FLIGHTDESCRIPTION_H
 
-#include <memory>
+#include <QString>
+#include <QDateTime>
 
-#include <QObject>
-#include <QtGlobal>
+#include "ModelLib.h"
 
-#include "../../../../Model/src/Scenario.h"
-#include "../ScenarioDaoIntf.h"
-
-class SQLiteScenarioDaoPrivate;
-
-class SQLiteScenarioDao : public QObject, public ScenarioDaoIntf
+struct MODEL_API FlightDescription
 {
-public:
-    explicit SQLiteScenarioDao(QObject *parent = nullptr) noexcept;
-    virtual ~SQLiteScenarioDao() noexcept;
+    FlightDescription();
+    ~FlightDescription();
 
-    virtual bool addScenario(Scenario &scenario)  noexcept override;
-    virtual bool getScenarioById(qint64 id, Scenario &scenario) const noexcept override;
-    virtual bool deleteById(qint64 id) noexcept override;
-
-    virtual QVector<ScenarioDescription> getScenarioDescriptions() const noexcept override;
-
-private:
-    std::unique_ptr<SQLiteScenarioDaoPrivate> d;
-
-    void frenchConnection() noexcept;
-
-private slots:
-    void handleConnectionChanged() noexcept;
+    qint64 id;
+    QDateTime creationDate;
+    QString aircraftType;
+    QDateTime startDate;
+    QDateTime endDate;
+    QString startLocation;
+    QString endLocation;
+    QString description;    
 };
 
-#endif // SQLITESCENARIODAO_H
+#endif // FLIGHTDESCRIPTION_H
