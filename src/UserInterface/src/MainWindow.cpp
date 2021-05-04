@@ -157,6 +157,17 @@ MainWindow::~MainWindow() noexcept
     delete ui->moduleStackWidget;
 }
 
+// PROTECTED
+
+bool MainWindow::event(QEvent *e)
+{
+    bool ret = QMainWindow::event(e);
+    if (e->type() == QEvent::LayoutRequest) {
+        adjustSize();
+    }
+    return ret;
+}
+
 // PRIVATE
 
 void MainWindow::frenchConnection() noexcept
@@ -217,7 +228,6 @@ void MainWindow::frenchConnection() noexcept
 void MainWindow::initUi() noexcept
 {
     setWindowIcon(QIcon(":/img/icons/application-icon.png"));
-    resize(minimumSize());
 
     // Dialogs
     d->flightDialog = new FlightDialog(d->skyConnect, this);
@@ -236,7 +246,6 @@ void MainWindow::initUi() noexcept
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
     ui->showMinimalAction->setChecked(ui->moduleGroupBox->isVisible());
     initControlUi();
-
     on_showMinimalAction_triggered(ui->showMinimalAction->isChecked());
 }
 
@@ -698,13 +707,11 @@ void MainWindow::on_showMinimalAction_triggered(bool enabled) noexcept
 {
     ui->moduleGroupBox->setHidden(enabled);
 
-    resize(1, 1);
-    adjustSize();
-    if (enabled) {
-        setMaximumHeight(height());
-    } else {
-        setMaximumHeight(32767);
-    }
+//    if (enabled) {
+//        setMaximumHeight(height());
+//    } else {
+//        setMaximumHeight(32767);
+//    }
 }
 
 void MainWindow::on_aboutLibraryAction_triggered() noexcept

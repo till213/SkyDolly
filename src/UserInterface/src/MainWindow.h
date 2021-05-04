@@ -29,6 +29,8 @@
 
 #include <QMainWindow>
 
+class QEvent;
+
 #include "../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../SkyConnect/src/Connect.h"
 #include "UserInterfaceLib.h"
@@ -52,6 +54,9 @@ class USERINTERFACE_API MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr) noexcept;
     virtual ~MainWindow() noexcept;
+
+protected:
+    bool event(QEvent *event) override;
 
 private:
     Q_DISABLE_COPY(MainWindow)
