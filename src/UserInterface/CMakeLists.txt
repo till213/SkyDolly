@@ -47,6 +47,7 @@ target_sources(UserInterface
         src/Dialogs/FlightDialog.cpp
         src/Dialogs/FlightDialog.h
         src/Dialogs/FlightDialog.ui
+        src/Widgets/ModuleIntf.h
         src/Widgets/AircraftWidget.cpp
         src/Widgets/AircraftWidget.h
         src/Widgets/AircraftWidget.ui
@@ -71,9 +72,9 @@ target_sources(UserInterface
         src/Widgets/LightWidget.cpp
         src/Widgets/LightWidget.h
         src/Widgets/LightWidget.ui
-        src/Widgets/FlightWidget.cpp
-        src/Widgets/FlightWidget.h
-        src/Widgets/FlightWidget.ui
+        src/Widgets/LogbookWidget.cpp
+        src/Widgets/LogbookWidget.h
+        src/Widgets/LogbookWidget.ui
 )
 
 target_link_libraries(UserInterface PRIVATE ${USERINTERFACE_LIBS})

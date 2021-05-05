@@ -22,53 +22,14 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SCENARIOWIDGET_H
-#define SCENARIOWIDGET_H
+#ifndef MODULEINTF_H
+#define MODULEINTF_H
 
-#include <memory>
+#include <QString>
 
-#include <QWidget>
-
-class QShowEvent;
-class QHideEvent;
-
-class SkyConnectIntf;
-class FlightWidgetPrivate;
-
-#include "../../../Persistence/src/Service/FlightService.h"
-
-namespace Ui {
-class FlightWidget;
-}
-
-class FlightWidget : public QWidget
+class ModuleIntf
 {
-    Q_OBJECT
-
-public:
-    explicit FlightWidget(FlightService &flightService, QWidget *parent = nullptr) noexcept;
-    virtual ~FlightWidget() noexcept;
-
-    qint64 getSelectedFlightId() const noexcept;
-
-protected:
-    void showEvent(QShowEvent *event) noexcept override;
-    void hideEvent(QHideEvent *event) noexcept override;
-
-private:
-    Q_DISABLE_COPY(FlightWidget)
-    Ui::FlightWidget *ui;
-    std::unique_ptr<FlightWidgetPrivate> d;
-
-    void initUi() noexcept;
-    void updateEditUi() noexcept;
-    void frenchConnection() noexcept;
-
-private slots:
-    void updateUi() noexcept;
-    void handleSelectionChanged() noexcept;
-    void handleLoad() noexcept;
-    void handleDelete() noexcept;
+    virtual QString getTitle() const = 0;
 };
 
-#endif // SCENARIOWIDGET_H
+#endif // MODULEINTF_H
