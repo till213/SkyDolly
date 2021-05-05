@@ -47,8 +47,8 @@ class ActionButton : public QPushButton
 {
     Q_OBJECT
 public:
-    explicit ActionButton(QWidget *parent = nullptr);
-    virtual ~ActionButton();
+    explicit ActionButton(QWidget *parent = nullptr) noexcept;
+    virtual ~ActionButton() noexcept;
 
     /*!
      * Sets the action to be associated with this button. This button is
@@ -59,7 +59,7 @@ public:
      * \p action
      *    the action to be associated with this button
      */
-    void setAction(const QAction *action);
+    void setAction(const QAction *action) noexcept;
 
 private:
     Q_DISABLE_COPY(ActionButton)
@@ -72,15 +72,15 @@ private slots:
     * on the action status. This slot is invoked each time the action
     * "changed" signal is emitted.
     */
-   void updateButtonStatusFromAction();
+   void updateButtonStatusFromAction() noexcept;
 
-   void connectToAction();
+   void connectToAction() noexcept;
 
    /*!
     * Disassociates this button from the action, typically when the
     * action is deleted.
     */
-   void disconnectFromAction();
+   void disconnectFromAction() noexcept;
 
 };
 

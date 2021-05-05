@@ -43,7 +43,7 @@
 class LightWidgetPrivate
 {
 public:
-    LightWidgetPrivate(const QWidget &widget, SkyConnectIntf &theSkyConnect)
+    LightWidgetPrivate(const QWidget &widget, SkyConnectIntf &theSkyConnect) noexcept
         : skyConnect(theSkyConnect),
           ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
           DisabledTextColor(widget.palette().color(QPalette::Disabled, QPalette::WindowText))
@@ -56,7 +56,7 @@ public:
 
 // PUBLIC
 
-LightWidget::LightWidget(SkyConnectIntf &skyConnect, QWidget *parent) :
+LightWidget::LightWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept :
     QWidget(parent),
     d(std::make_unique<LightWidgetPrivate>(*this, skyConnect)),
     ui(std::make_unique<Ui::LightWidget>())
@@ -65,32 +65,31 @@ LightWidget::LightWidget(SkyConnectIntf &skyConnect, QWidget *parent) :
     initUi();
 }
 
-LightWidget::~LightWidget()
-{
-}
+LightWidget::~LightWidget() noexcept
+{}
 
 // PROTECTED
 
-void LightWidget::showEvent(QShowEvent *event)
+void LightWidget::showEvent(QShowEvent *event) noexcept
 {
     Q_UNUSED(event)
 
     updateUi(d->skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
     connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
-            this, &LightWidget::handleTimestampChanged);
+            this, &LightWidget::updateUi);
 }
 
-void LightWidget::hideEvent(QHideEvent *event)
+void LightWidget::hideEvent(QHideEvent *event) noexcept
 {
     Q_UNUSED(event)
 
     disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
-            this, &LightWidget::handleTimestampChanged);
+            this, &LightWidget::updateUi);
 }
 
 // PRIVATE
 
-void LightWidget::initUi()
+void LightWidget::initUi() noexcept
 {
     ui->lightStateLineEdit->setToolTip(SimVar::LightStates);
 
@@ -126,7 +125,24 @@ void LightWidget::initUi()
     ui->cabinCheckBox->setFocusPolicy(Qt::NoFocus);
 }
 
-void LightWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
+const LightData &LightWidget::getCurrentLightData(qint64 timestamp, TimeVariableData::Access access) const noexcept
+{
+    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+
+    if (d->skyConnect.getState() == Connect::State::Recording) {
+        return aircraft.getLightConst().getLast();
+    } else {
+        if (timestamp != TimeVariableData::InvalidTime) {
+            return aircraft.getLightConst().interpolate(timestamp, access);
+        } else {
+            return aircraft.getLightConst().interpolate(d->skyConnect.getCurrentTimestamp(), access);
+        }
+    };
+}
+
+// PRIVATE SLOTS
+
+void LightWidget::updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept
 {
     const LightData &lightData = getCurrentLightData(timestamp, access);
     QString colorName;
@@ -162,26 +178,4 @@ void LightWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
     ui->wingCheckBox->setStyleSheet(css);
     ui->logoCheckBox->setStyleSheet(css);
     ui->cabinCheckBox->setStyleSheet(css);
-}
-
-const LightData &LightWidget::getCurrentLightData(qint64 timestamp, TimeVariableData::Access access) const
-{
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-
-    if (d->skyConnect.getState() == Connect::State::Recording) {
-        return aircraft.getLightConst().getLast();
-    } else {
-        if (timestamp != TimeVariableData::InvalidTime) {
-            return aircraft.getLightConst().interpolate(timestamp, access);
-        } else {
-            return aircraft.getLightConst().interpolate(d->skyConnect.getCurrentTimestamp(), access);
-        }
-    };
-}
-
-// PRIVATE SLOTS
-
-void LightWidget::handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access)
-{
-    updateUi(timestamp, access);
 }

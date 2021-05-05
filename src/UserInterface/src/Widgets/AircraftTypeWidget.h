@@ -37,30 +37,29 @@ class AircraftTypeWidgetPrivate;
 class AircraftData;
 
 namespace Ui {
-class AircraftTypeWidget;
+    class AircraftTypeWidget;
 }
 
 class AircraftTypeWidget : public QDialog
 {
     Q_OBJECT
 public:
-    explicit AircraftTypeWidget(SkyConnectIntf &skyConnect, QWidget *parent = nullptr);
-    virtual ~AircraftTypeWidget();
+    explicit AircraftTypeWidget(SkyConnectIntf &skyConnect, QWidget *parent = nullptr) noexcept;
+    virtual ~AircraftTypeWidget() noexcept;
 
 protected:
-    void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
+    void showEvent(QShowEvent *event) noexcept override;
+    void hideEvent(QHideEvent *event) noexcept override;
 
 private:
     Q_DISABLE_COPY(AircraftTypeWidget)
     std::unique_ptr<AircraftTypeWidgetPrivate> d;
     std::unique_ptr<Ui::AircraftTypeWidget> ui;
 
-    void initUi();
-    void updateUi();
+    void initUi() noexcept;
 
 private slots:
-    void updateInfoUi();
+    void updateUi() noexcept;
 };
 
 #endif // AIRCRAFTTYPEWIDGET_H

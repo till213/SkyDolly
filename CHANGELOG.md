@@ -6,12 +6,17 @@
 
 - Remove "Yoke X|Y Position" simulation variables (not needed: yokes are still properly animated)
 - Add SQLite database support for persistence
-  * Each recording is persisted
+  * Each flight is automatically persisted
   * Simple load / delete functionality
   * DB backup and optimisation functionality
+- Simple log book (table) which lists the recorded flights
 - Additional simulation variables support
-  * Waypoints (ICAO, latitude/longitude/altitude)
+  * Waypoints (ICAO, latitude/longitude/altitude) are shown in the order of approach; each waypoint is only counted once
   * Local and zulu simulation time
+  
+### Bug Fixes
+
+- Values in feet now have the unit "ft" appended
 
 ## 0.5.1
 

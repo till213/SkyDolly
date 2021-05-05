@@ -69,6 +69,7 @@ public:
 
     QString formatDate(const QDateTime &date) noexcept;
     QString formatTime(const QDateTime &time) noexcept;
+    QString formatDateTime(const QDateTime &dateTime) noexcept;
     QString formatDuration(const QTime &time) noexcept;
 
 private:

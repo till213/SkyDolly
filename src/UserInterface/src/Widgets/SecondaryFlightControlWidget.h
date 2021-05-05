@@ -37,31 +37,30 @@ class SecondaryFlightControlData;
 class SecondaryFlightControlWidgetPrivate;
 
 namespace Ui {
-class SecondaryFlightControlWidget;
+    class SecondaryFlightControlWidget;
 }
 
 class SecondaryFlightControlWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit SecondaryFlightControlWidget(SkyConnectIntf &skyConnect, QWidget *parent);
-    virtual ~SecondaryFlightControlWidget();
+    explicit SecondaryFlightControlWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept;
+    virtual ~SecondaryFlightControlWidget() noexcept;
 
 protected:
-    void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
+    void showEvent(QShowEvent *event) noexcept override;
+    void hideEvent(QHideEvent *event) noexcept override;
 
 private:
     Q_DISABLE_COPY(SecondaryFlightControlWidget)
     std::unique_ptr<SecondaryFlightControlWidgetPrivate> d;
     std::unique_ptr<Ui::SecondaryFlightControlWidget> ui;
 
-    void initUi();
-    void updateUi(qint64 timestamp, TimeVariableData::Access access);
-    const SecondaryFlightControlData &getCurrentSecondaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const;
+    void initUi() noexcept;    
+    const SecondaryFlightControlData &getCurrentSecondaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
 private slots:
-    void handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access);
+    void updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept;
 };
 
 #endif // SECONDARYFLIGHTCONTROLWIDGET_H

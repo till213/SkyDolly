@@ -45,7 +45,7 @@
 class PrimaryFlightControlWidgetPrivate
 {
 public:
-    PrimaryFlightControlWidgetPrivate(const QWidget &widget, SkyConnectIntf &theSkyConnect)
+    PrimaryFlightControlWidgetPrivate(const QWidget &widget, SkyConnectIntf &theSkyConnect) noexcept
         : skyConnect(theSkyConnect),
           ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
           DisabledTextColor(widget.palette().color(QPalette::Disabled, QPalette::WindowText))
@@ -59,7 +59,7 @@ public:
 
 // PUBLIC
 
-PrimaryFlightControlWidget::PrimaryFlightControlWidget(SkyConnectIntf &skyConnect, QWidget *parent) :
+PrimaryFlightControlWidget::PrimaryFlightControlWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept :
     QWidget(parent),
     d(std::make_unique<PrimaryFlightControlWidgetPrivate>(*this, skyConnect)),
     ui(std::make_unique<Ui::PrimaryFlightControlWidget>())
@@ -68,27 +68,26 @@ PrimaryFlightControlWidget::PrimaryFlightControlWidget(SkyConnectIntf &skyConnec
     initUi();
 }
 
-PrimaryFlightControlWidget::~PrimaryFlightControlWidget()
-{
-}
+PrimaryFlightControlWidget::~PrimaryFlightControlWidget() noexcept
+{}
 
 // PROTECTED
 
-void PrimaryFlightControlWidget::showEvent(QShowEvent *event)
+void PrimaryFlightControlWidget::showEvent(QShowEvent *event) noexcept
 {
     Q_UNUSED(event)
 
     updateUi(d->skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
     connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
-            this, &PrimaryFlightControlWidget::handleTimestampChanged);
+            this, &PrimaryFlightControlWidget::updateUi);
 }
 
-void PrimaryFlightControlWidget::hideEvent(QHideEvent *event)
+void PrimaryFlightControlWidget::hideEvent(QHideEvent *event) noexcept
 {
     Q_UNUSED(event)
 
     disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
-            this, &PrimaryFlightControlWidget::handleTimestampChanged);
+            this, &PrimaryFlightControlWidget::updateUi);
 }
 
 // PRIVATE
@@ -100,7 +99,24 @@ void PrimaryFlightControlWidget::initUi()
     ui->aileronLineEdit->setToolTip(SimVar::AileronPosition);
 }
 
-void PrimaryFlightControlWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
+const PrimaryFlightControlData &PrimaryFlightControlWidget::getCurrentPrimaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const noexcept
+{
+    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+
+    if (d->skyConnect.getState() == Connect::State::Recording) {
+        return aircraft.getPrimaryFlightControlConst().getLast();
+    } else {
+        if (timestamp != TimeVariableData::InvalidTime) {
+            return aircraft.getPrimaryFlightControlConst().interpolate(timestamp, access);
+        } else {
+            return aircraft.getPrimaryFlightControlConst().interpolate(d->skyConnect.getCurrentTimestamp(), access);
+        }
+    };
+}
+
+// PRIVATE SLOTS
+
+void PrimaryFlightControlWidget::updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept
 {
     const PrimaryFlightControlData &primaryFlightControlData = getCurrentPrimaryFlightControlData(timestamp, access);
     QString colorName;
@@ -119,26 +135,4 @@ void PrimaryFlightControlWidget::updateUi(qint64 timestamp, TimeVariableData::Ac
     ui->rudderLineEdit->setStyleSheet(css);
     ui->elevatorLineEdit->setStyleSheet(css);
     ui->aileronLineEdit->setStyleSheet(css);
-}
-
-const PrimaryFlightControlData &PrimaryFlightControlWidget::getCurrentPrimaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const
-{
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-
-    if (d->skyConnect.getState() == Connect::State::Recording) {
-        return aircraft.getPrimaryFlightControlConst().getLast();
-    } else {
-        if (timestamp != TimeVariableData::InvalidTime) {
-            return aircraft.getPrimaryFlightControlConst().interpolate(timestamp, access);
-        } else {
-            return aircraft.getPrimaryFlightControlConst().interpolate(d->skyConnect.getCurrentTimestamp(), access);
-        }
-    };
-}
-
-// PRIVATE SLOTS
-
-void PrimaryFlightControlWidget::handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access)
-{
-    updateUi(timestamp, access);
 }

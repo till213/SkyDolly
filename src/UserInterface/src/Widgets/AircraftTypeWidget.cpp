@@ -42,7 +42,7 @@
 class AircraftTypeWidgetPrivate
 {
 public:
-    AircraftTypeWidgetPrivate(SkyConnectIntf &theSkyConnect)
+    AircraftTypeWidgetPrivate(SkyConnectIntf &theSkyConnect) noexcept
         : skyConnect(theSkyConnect)
     {}
 
@@ -52,7 +52,7 @@ public:
 
 // PUBLIC
 
-AircraftTypeWidget::AircraftTypeWidget(SkyConnectIntf &skyConnect, QWidget *parent) :
+AircraftTypeWidget::AircraftTypeWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept :
     QDialog(parent),
     d(std::make_unique<AircraftTypeWidgetPrivate>(skyConnect)),
     ui(std::make_unique<Ui::AircraftTypeWidget>())
@@ -64,13 +64,12 @@ AircraftTypeWidget::AircraftTypeWidget(SkyConnectIntf &skyConnect, QWidget *pare
     initUi();
 }
 
-AircraftTypeWidget::~AircraftTypeWidget()
-{
-}
+AircraftTypeWidget::~AircraftTypeWidget() noexcept
+{}
 
 // PROTECTED
 
-void AircraftTypeWidget::showEvent(QShowEvent *event)
+void AircraftTypeWidget::showEvent(QShowEvent *event) noexcept
 {
     Q_UNUSED(event)
 
@@ -79,22 +78,22 @@ void AircraftTypeWidget::showEvent(QShowEvent *event)
     const Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
     const Aircraft &aircraft = currentFlight.getUserAircraft();
     connect(&aircraft, &Aircraft::infoChanged,
-            this, &AircraftTypeWidget::updateInfoUi);
+            this, &AircraftTypeWidget::updateUi);
 }
 
-void AircraftTypeWidget::hideEvent(QHideEvent *event)
+void AircraftTypeWidget::hideEvent(QHideEvent *event) noexcept
 {
     Q_UNUSED(event)
 
     const Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
     const Aircraft &aircraft = currentFlight.getUserAircraft();
     disconnect(&aircraft, &Aircraft::infoChanged,
-            this, &AircraftTypeWidget::updateInfoUi);
+            this, &AircraftTypeWidget::updateUi);
 }
 
 // PRIVATE
 
-void AircraftTypeWidget::initUi()
+void AircraftTypeWidget::initUi() noexcept
 {
     ui->nameLineEdit->setToolTip(SimVar::Title);
     ui->tailNumberLineEdit->setToolTip(SimVar::ATCFlightNumber);
@@ -114,14 +113,9 @@ void AircraftTypeWidget::initUi()
     ui->startOnGroundCheckBox->setFocusPolicy(Qt::NoFocus);
 }
 
-void AircraftTypeWidget::updateUi()
-{
-    updateInfoUi();
-}
-
 // PRIVATE SLOTS
 
-void AircraftTypeWidget::updateInfoUi()
+void AircraftTypeWidget::updateUi() noexcept
 {
     const Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
     const Aircraft &aircraft = currentFlight.getUserAircraftConst();

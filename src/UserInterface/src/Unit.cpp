@@ -86,7 +86,7 @@ QString Unit::formatLongitude(double longitude) noexcept
 
 QString Unit::formatFeet(double feet) noexcept
 {
-    return d->locale.toString(feet, 'f', Precision);
+    return d->locale.toString(feet, 'f', Precision) % " ft";
 }
 
 QString Unit::formatCelcius(double temperature) noexcept
@@ -198,6 +198,11 @@ QString Unit::formatDate(const QDateTime &date) noexcept
 QString Unit::formatTime(const QDateTime &time) noexcept
 {
     return d->locale.toString(time, "hh:mm:s");
+}
+
+QString Unit::formatDateTime(const QDateTime &dateTime) noexcept
+{
+    return d->locale.toString(dateTime, "yyyy.MM.dd hh:mm:s");
 }
 
 QString Unit::formatDuration(const QTime &time) noexcept

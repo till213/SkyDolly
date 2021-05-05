@@ -47,7 +47,7 @@
 class SimulationVariablesDialogPrivate
 {
 public:
-    SimulationVariablesDialogPrivate(SkyConnectIntf &theSkyConnect)
+    SimulationVariablesDialogPrivate(SkyConnectIntf &theSkyConnect) noexcept
         : skyConnect(theSkyConnect)
     {}
 
@@ -67,7 +67,6 @@ SimulationVariablesDialog::SimulationVariablesDialog(SkyConnectIntf &skyConnect,
     ui->setupUi(this);
     Qt::WindowFlags flags = Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
     setWindowFlags(flags);
-
     initUi();
 }
 

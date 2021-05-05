@@ -40,13 +40,14 @@
 #include "../../../SkyConnect/src/Connect.h"
 #include "../Widgets/AircraftTypeWidget.h"
 #include "../Widgets/FlightConditionWidget.h"
+#include "../Widgets/FlightPlanWidget.h"
 #include "FlightDialog.h"
 #include "ui_FlightDialog.h"
 
 class FlightDialogPrivate
 {
 public:
-    FlightDialogPrivate(SkyConnectIntf &theSkyConnect)
+    FlightDialogPrivate(SkyConnectIntf &theSkyConnect) noexcept
         : skyConnect(theSkyConnect)
     {}
 
@@ -61,9 +62,8 @@ FlightDialog::FlightDialog(SkyConnectIntf &skyConnect, QWidget *parent) noexcept
     ui(std::make_unique<Ui::FlightDialog>())
 {
     ui->setupUi(this);
-    Qt::WindowFlags flags = Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
+    Qt::WindowFlags flags = Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
     setWindowFlags(flags);
-
     initUi();
 }
 
@@ -95,6 +95,9 @@ void FlightDialog::initUi() noexcept
 
     FlightConditionWidget *flightConditionsWidget = new FlightConditionWidget(d->skyConnect, this);
     ui->flightTab->addTab(flightConditionsWidget, tr("&Conditions"));
+
+    FlightPlanWidget *flightPlanWidget = new FlightPlanWidget(d->skyConnect, this);
+    ui->flightTab->addTab(flightPlanWidget, tr("&Flight Plan"));
 }
 
 void FlightDialog::updateUi() noexcept
