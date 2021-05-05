@@ -28,8 +28,6 @@
 #include <windows.h>
 #include <strsafe.h>
 
-#include <QDateTime>
-
 #include <SimConnect.h>
 
 #include "../../Model/src/FlightPlanData.h"
@@ -51,16 +49,6 @@ struct SimConnectFlightPlan
     float gpsWpPrevLat;
     float gpsWpPrevLon;
     float gpsWpPrevAlt;
-
-    // Simulation time
-    qint32 localTime;
-    qint32 localYear;
-    qint32 localMonth;
-    qint32 localDay;
-    qint32 zuluTime;
-    qint32 zuluYear;
-    qint32 zuluMonth;
-    qint32 zuluDay;
 
     inline FlightPlanData toNextFlightPlanData() const noexcept
     {
@@ -88,16 +76,6 @@ struct SimConnectFlightPlan
         flightPlanData.latitude = gpsWpPrevLat;
         flightPlanData.longitude = gpsWpPrevLon;
         flightPlanData.altitude = gpsWpPrevAlt;
-
-        QTime time = QTime(0, 0).addSecs(localTime);
-        flightPlanData.localTime.setTime(time);
-        QDate date = QDate(localYear, localMonth, localDay);
-        flightPlanData.localTime.setDate(date);
-
-        time = QTime(0, 0).addSecs(zuluTime);
-        flightPlanData.zuluTime.setTime(time);
-        date = QDate(zuluYear, zuluMonth, zuluDay);
-        flightPlanData.zuluTime.setDate(date);
 
         return flightPlanData;
     }

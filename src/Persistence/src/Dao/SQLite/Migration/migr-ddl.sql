@@ -152,13 +152,13 @@ create table light (
 @migr(id = "fb2a21ad-5b8d-4be0-ae94-33e63be2ef3a", descn = "Create flight plan table", step_cnt = 1)
 create table flight_plan (
     aircraft_id integer not null,
-    seq_nr integer,
+    timestamp integer not null,
     ident text,
     latitude real,
     longitude real,
     altitude real,
     local_sim_time datetime,
     zulu_sim_time datetime,
-    primary key(aircraft_id, seq_nr),
+    primary key(aircraft_id, timestamp),
     foreign key(aircraft_id) references aircraft(id)
 );

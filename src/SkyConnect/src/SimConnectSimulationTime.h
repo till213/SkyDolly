@@ -22,26 +22,58 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTTYPE_H
-#define SIMCONNECTTYPE_H
-#include <windows.h>
+#ifndef SIMCONNECTSIMULATIONTIME_H
+#define SIMCONNECTSIMULATIONTIME_H
 
+#include <windows.h>
 #include <SimConnect.h>
 
-namespace SimConnectType
-{
-    enum class DataDefinition: ::SIMCONNECT_DATA_DEFINITION_ID {
-        FlightInformationDefinition,
-        FlightPlanDefinition,
-        SimulationTimeDefinition,
-        AircraftPositionDefinition,
-        AircraftEngineDefinition,
-        AircraftPrimaryFlightControlDefinition,
-        AircraftSecondaryFlightControlDefinition,
-        AircraftHandleDefinition,
-        AircraftLightDefinition,
-        AircraftInitialPosition
-    };
-}
+#include <QtGlobal>
+#include <QDateTime>
+#include <QDate>
+#include <QTime>
 
-#endif // SIMCONNECTTYPE_H
+/*!
+ * Simulation date and time (local and zulu).
+ *
+ * Implementation note: this struct needs to be packed.
+ */
+#pragma pack(push, 1)
+struct SimConnectSimulationTime
+{
+    qint32 localTime;
+    qint32 localYear;
+    qint32 localMonth;
+    qint32 localDay;
+    qint32 zuluTime;
+    qint32 zuluYear;
+    qint32 zuluMonth;
+    qint32 zuluDay;
+
+    inline QDateTime toLocalDateTime() const noexcept
+    {
+        QDateTime dateTime;
+        QTime time = QTime(0, 0).addSecs(localTime);
+        dateTime.setTime(time);
+        QDate date = QDate(localYear, localMonth, localDay);
+        dateTime.setDate(date);
+
+        return dateTime;
+    }
+
+    inline QDateTime toZuluDateTime() const noexcept
+    {
+        QDateTime dateTime;
+        QTime time = QTime(0, 0).addSecs(zuluTime);
+        dateTime.setTime(time);
+        QDate date = QDate(zuluYear, zuluMonth, zuluDay);
+        dateTime.setDate(date);
+
+        return dateTime;
+    }
+
+    static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
+};
+#pragma pack(pop)
+
+#endif // SIMCONNECTSIMULATIONTIME_H
