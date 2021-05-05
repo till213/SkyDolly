@@ -103,6 +103,11 @@ void SkyConnectDummy::onRecordingPaused(bool paused) noexcept
 
 void SkyConnectDummy::onStopRecording() noexcept
 {
+    Flight &flight = getCurrentFlight();
+    FlightCondition flightCondition = flight.getFlightConditionConst();
+    flightCondition.endLocalTime = QDateTime::currentDateTime();
+    flightCondition.endZuluTime = QDateTime::currentDateTimeUtc();
+    flight.setFlightCondition(flightCondition);
 }
 
 void SkyConnectDummy::onStartReplay(qint64 currentTimestamp) noexcept {
@@ -335,9 +340,12 @@ void SkyConnectDummy::recordFlightPlanData() noexcept
     if (d->randomGenerator->bounded(100.0) < 0.5) {
         int i = d->randomGenerator->bounded(SkyConnectDummyPrivate::IcaoList.size());
         flightPlanData.waypointIdentifier = SkyConnectDummyPrivate::IcaoList.at(i);
-        flightPlanData.waypointLatitude = -180.0 + d->randomGenerator->bounded(360.0);
-        flightPlanData.waypointLongitude = -90.0 + d->randomGenerator->bounded(180.0);
-        flightPlanData.waypointAltitude = d->randomGenerator->bounded(3000.0);
+        flightPlanData.latitude = -180.0 + d->randomGenerator->bounded(360.0);
+        flightPlanData.longitude = -90.0 + d->randomGenerator->bounded(180.0);
+        flightPlanData.altitude = d->randomGenerator->bounded(3000.0);
+        flightPlanData.localTime = QDateTime::currentDateTime();
+        flightPlanData.zuluTime = QDateTime::currentDateTimeUtc();
+        flightPlanData.timestamp = getCurrentTimestamp();
 
         aircraft.getFlightPlan().add(flightPlanData);
     }
@@ -360,6 +368,8 @@ void SkyConnectDummy::recordFlightCondition() noexcept
     flightCondition.pitotIcingPercent = d->randomGenerator->bounded(101);
     flightCondition.structuralIcingPercent = d->randomGenerator->bounded(101);
     flightCondition.inClouds = d->randomGenerator->bounded(2) < 1 ? false : true;
+    flightCondition.startLocalTime = QDateTime::currentDateTime();
+    flightCondition.startZuluTime = QDateTime::currentDateTimeUtc();
 
     flight.setFlightCondition(flightCondition);
 }
