@@ -139,13 +139,13 @@ bool SQLiteSecondaryFlightControlDao::getByAircraftId(qint64 aircraftId, QVector
     bool ok = d->selectByAircraftIdQuery->exec();
     if (ok) {
         secondaryFlightControlData.clear();
-        int timestampIdx = d->selectByAircraftIdQuery->record().indexOf("timestamp");
-        int leadingEdgeFlapsLeftPercentIdx = d->selectByAircraftIdQuery->record().indexOf("leading_edge_flaps_left_percent");
-        int leadingEdgeFlapsRightPercentIdx = d->selectByAircraftIdQuery->record().indexOf("leading_edge_flaps_right_percent");
-        int trailingEdgeFlapsLeftPercentIdx = d->selectByAircraftIdQuery->record().indexOf("trailing_edge_flaps_left_percent");
-        int trailingEdgeFlapsRightPercentIdx = d->selectByAircraftIdQuery->record().indexOf("trailing_edge_flaps_right_percent");
-        int spoilersHandlePositionIdx = d->selectByAircraftIdQuery->record().indexOf("spoilers_handle_position");
-        int flapsHandleIndexIdx = d->selectByAircraftIdQuery->record().indexOf("flaps_handle_index");
+        const int timestampIdx = d->selectByAircraftIdQuery->record().indexOf("timestamp");
+        const int leadingEdgeFlapsLeftPercentIdx = d->selectByAircraftIdQuery->record().indexOf("leading_edge_flaps_left_percent");
+        const int leadingEdgeFlapsRightPercentIdx = d->selectByAircraftIdQuery->record().indexOf("leading_edge_flaps_right_percent");
+        const int trailingEdgeFlapsLeftPercentIdx = d->selectByAircraftIdQuery->record().indexOf("trailing_edge_flaps_left_percent");
+        const int trailingEdgeFlapsRightPercentIdx = d->selectByAircraftIdQuery->record().indexOf("trailing_edge_flaps_right_percent");
+        const int spoilersHandlePositionIdx = d->selectByAircraftIdQuery->record().indexOf("spoilers_handle_position");
+        const int flapsHandleIndexIdx = d->selectByAircraftIdQuery->record().indexOf("flaps_handle_index");
         while (d->selectByAircraftIdQuery->next()) {
 
             SecondaryFlightControlData data;

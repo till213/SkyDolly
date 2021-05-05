@@ -146,12 +146,12 @@ bool SQLiteFlightPlanDao::getByAircraftId(qint64 aircraftId, QVector<FlightPlanD
     bool ok = d->selectByAircraftIdQuery->exec();
     if (ok) {
         flightPlanData.clear();
-        int identifierIdx = d->selectByAircraftIdQuery->record().indexOf("ident");
-        int latitudeIdx = d->selectByAircraftIdQuery->record().indexOf("latitude");
-        int longitudeIdx = d->selectByAircraftIdQuery->record().indexOf("longitude");
-        int altitudeIdx = d->selectByAircraftIdQuery->record().indexOf("altitude");
-        int localSimulationTimeIdx = d->selectByAircraftIdQuery->record().indexOf("local_sim_time");
-        int zuluSimulationTimeIdx = d->selectByAircraftIdQuery->record().indexOf("zulu_sim_time");
+        const int identifierIdx = d->selectByAircraftIdQuery->record().indexOf("ident");
+        const int latitudeIdx = d->selectByAircraftIdQuery->record().indexOf("latitude");
+        const int longitudeIdx = d->selectByAircraftIdQuery->record().indexOf("longitude");
+        const int altitudeIdx = d->selectByAircraftIdQuery->record().indexOf("altitude");
+        const int localSimulationTimeIdx = d->selectByAircraftIdQuery->record().indexOf("local_sim_time");
+        const int zuluSimulationTimeIdx = d->selectByAircraftIdQuery->record().indexOf("zulu_sim_time");
         while (d->selectByAircraftIdQuery->next()) {
             FlightPlanData data;
             data.waypointIdentifier = d->selectByAircraftIdQuery->value(identifierIdx).toString();
