@@ -39,7 +39,7 @@
 #include "../../Kernel/src/SampleRate.h"
 #include "../../Kernel/src/Enum.h"
 #include "../../Kernel/src/Settings.h"
-#include "../../Model/src/Scenario.h"
+#include "../../Model/src/Flight.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/AircraftInfo.h"
 #include "../../Model/src/AircraftData.h"
@@ -148,7 +148,7 @@ void SkyConnectImpl::onStopRecording() noexcept
     updateRequestPeriod(::SIMCONNECT_PERIOD_NEVER);
 
     // Update flight plan
-    const Aircraft &userAircraft = getCurrentScenario().getUserAircraftConst();
+    const Aircraft &userAircraft = getCurrentFlight().getUserAircraftConst();
     FlightPlan &flightPlan = userAircraft.getFlightPlan();
     for (const auto &it : d->flightPlan) {
         flightPlan.add(it.second);
@@ -297,7 +297,7 @@ void SkyConnectImpl::setupRequestData() noexcept
 
 void SkyConnectImpl::setupInitialPosition() noexcept
 {
-    const Aircraft &userAircraft = getCurrentScenario().getUserAircraftConst();
+    const Aircraft &userAircraft = getCurrentFlight().getUserAircraftConst();
     const AircraftData &aircraftData = userAircraft.interpolate(0, TimeVariableData::Access::Seek);
     if (!aircraftData.isNull()) {
         // Set initial position
@@ -336,10 +336,10 @@ bool SkyConnectImpl::isSimulationFrozen() const noexcept
 bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
 {
     bool success;
-    const Aircraft &userAircraft = getCurrentScenario().getUserAircraftConst();
+    const Aircraft &userAircraft = getCurrentFlight().getUserAircraftConst();
 
     const qint64 currentTimestamp = getCurrentTimestamp();
-    if (currentTimestamp <= getCurrentScenario().getTotalDurationMSec()) {
+    if (currentTimestamp <= getCurrentFlight().getTotalDurationMSec()) {
 
         success = true;
         const AircraftData &currentAircraftData = userAircraft.interpolate(currentTimestamp, access);
@@ -500,8 +500,8 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
     Q_UNUSED(cbData);
 
     SkyConnectImpl *skyConnect = static_cast<SkyConnectImpl *>(context);
-    Scenario &currentScenario = skyConnect->getCurrentScenario();
-    Aircraft &userAircraft = currentScenario.getUserAircraft();
+    Flight &currentFlight = skyConnect->getCurrentFlight();
+    Aircraft &userAircraft = currentFlight.getUserAircraft();
     SIMCONNECT_RECV_SIMOBJECT_DATA *objectData;
 
     bool dataReceived = false;
@@ -558,7 +558,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
             aircraftInfo.startDate = QDateTime::currentDateTime();
             userAircraft.setAircraftInfo(aircraftInfo);
             FlightCondition flightCondition = simConnectAircraftInfo->toFlightCondition();
-            currentScenario.setFlightCondition(flightCondition);
+            currentFlight.setFlightCondition(flightCondition);
             break;
         }
         default:
