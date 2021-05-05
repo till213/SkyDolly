@@ -54,7 +54,7 @@ namespace
 class LogbookWidgetPrivate
 {
 public:
-    LogbookWidgetPrivate(FlightService &theFlightService)
+    LogbookWidgetPrivate(FlightService &theFlightService) noexcept
         : flightService(theFlightService),
           selectedRow(InvalidSelection),
           selectedFlightId(Flight::InvalidId)
@@ -71,7 +71,7 @@ public:
 
 LogbookWidget::LogbookWidget(FlightService &flightService, QWidget *parent) noexcept
     : QWidget(parent),
-      ui(new Ui::LogbookWidget),
+      ui(std::make_unique<Ui::LogbookWidget>()),
       d(std::make_unique<LogbookWidgetPrivate>(flightService))
 {
     ui->setupUi(this);
@@ -80,9 +80,7 @@ LogbookWidget::LogbookWidget(FlightService &flightService, QWidget *parent) noex
 }
 
 LogbookWidget::~LogbookWidget() noexcept
-{
-    delete ui;
-}
+{}
 
 qint64 LogbookWidget::getSelectedFlightId() const noexcept
 {

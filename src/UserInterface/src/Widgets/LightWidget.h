@@ -37,31 +37,30 @@ class LightData;
 class LightWidgetPrivate;
 
 namespace Ui {
-class LightWidget;
+    class LightWidget;
 }
 
 class LightWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit LightWidget(SkyConnectIntf &skyConnect, QWidget *parent);
-    virtual ~LightWidget();
+    explicit LightWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept;
+    virtual ~LightWidget() noexcept;
 
 protected:
-    void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
+    void showEvent(QShowEvent *event) noexcept override;
+    void hideEvent(QHideEvent *event) noexcept override;
 
 private:
     Q_DISABLE_COPY(LightWidget)
     std::unique_ptr<LightWidgetPrivate> d;
     std::unique_ptr<Ui::LightWidget> ui;
 
-    void initUi();
-    void updateUi(qint64 timestamp, TimeVariableData::Access access);
-    const LightData &getCurrentLightData(qint64 timestamp, TimeVariableData::Access access) const;
+    void initUi() noexcept;    
+    const LightData &getCurrentLightData(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
 private slots:
-    void handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access);
+    void updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept;
 };
 
 #endif // LIGHTWIDGET_H

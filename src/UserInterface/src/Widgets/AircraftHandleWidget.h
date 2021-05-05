@@ -37,31 +37,30 @@ class AircraftHandleData;
 class AircraftHandleWidgetPrivate;
 
 namespace Ui {
-class AircraftHandleWidget;
+    class AircraftHandleWidget;
 }
 
 class AircraftHandleWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit AircraftHandleWidget(SkyConnectIntf &skyConnect, QWidget *parent);
-    virtual ~AircraftHandleWidget();
+    explicit AircraftHandleWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept;
+    virtual ~AircraftHandleWidget() noexcept;
 
 protected:
-    void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
+    void showEvent(QShowEvent *event) noexcept override;
+    void hideEvent(QHideEvent *event) noexcept override;
 
 private:
     Q_DISABLE_COPY(AircraftHandleWidget)
     std::unique_ptr<AircraftHandleWidgetPrivate> d;
     std::unique_ptr<Ui::AircraftHandleWidget> ui;
 
-    void initUi();
-    void updateUi(qint64 timestamp, TimeVariableData::Access access);
-    const AircraftHandleData &getCurrentAircraftHandleData(qint64 timestamp, TimeVariableData::Access access) const;
+    void initUi() noexcept;
+    const AircraftHandleData &getCurrentAircraftHandleData(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
 private slots:
-    void handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access);
+    void updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept;
 };
 
 #endif // AIRCRAFTHANDLEWIDGET_H

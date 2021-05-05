@@ -172,7 +172,8 @@ bool SQLiteFlightDao::addFlight(Flight &flight)  noexcept
     d->insertQuery->bindValue(":structural_icing", flightCondition.structuralIcingPercent);
     d->insertQuery->bindValue(":precipitation_state", Enum::toUnderlyingType(flightCondition.precipitationState));
     d->insertQuery->bindValue(":in_clouds", flightCondition.inClouds);
-    d->insertQuery->bindValue(":local_sim_time", flightCondition.localTime.toUTC());
+    // No conversion to UTC
+    d->insertQuery->bindValue(":local_sim_time", flightCondition.localTime);
     // Zulu time equals to UTC time
     d->insertQuery->bindValue(":zulu_sim_time", flightCondition.zuluTime);
     bool ok = d->insertQuery->exec();
@@ -233,9 +234,8 @@ bool SQLiteFlightDao::getFlightById(qint64 id, Flight &flight) const noexcept
             flightCondition.structuralIcingPercent = d->selectByIdQuery->value(structuralIcingIdx).toInt();
             flightCondition.precipitationState = static_cast<SimType::PrecipitationState>(d->selectByIdQuery->value(precipitationStateIdx).toInt());
             flightCondition.inClouds = d->selectByIdQuery->value(inCloudsIdx).toBool();
-            date = d->selectByIdQuery->value(localSimulationTimeIdx).toDateTime();
-            date.setTimeZone(QTimeZone::utc());
-            flightCondition.localTime = date.toLocalTime();
+            // Persisted time is already local simulation time
+            flightCondition.localTime = d->selectByIdQuery->value(localSimulationTimeIdx).toDateTime();
             // UTC equals zulu time, so no conversion necessary
             flightCondition.zuluTime = d->selectByIdQuery->value(zuluSimulationTimeIdx).toDateTime();
 

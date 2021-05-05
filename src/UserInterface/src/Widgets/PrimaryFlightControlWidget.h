@@ -37,31 +37,30 @@ class PrimaryFlightControlData;
 class PrimaryFlightControlWidgetPrivate;
 
 namespace Ui {
-class PrimaryFlightControlWidget;
+    class PrimaryFlightControlWidget;
 }
 
 class PrimaryFlightControlWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit PrimaryFlightControlWidget(SkyConnectIntf &skyConnect, QWidget *parent);
-    virtual ~PrimaryFlightControlWidget();
+    explicit PrimaryFlightControlWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept;
+    virtual ~PrimaryFlightControlWidget() noexcept;
 
 protected:
-    void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
+    void showEvent(QShowEvent *event) noexcept override;
+    void hideEvent(QHideEvent *event) noexcept override;
 
 private:
     Q_DISABLE_COPY(PrimaryFlightControlWidget)
     std::unique_ptr<PrimaryFlightControlWidgetPrivate> d;
     std::unique_ptr<Ui::PrimaryFlightControlWidget> ui;
 
-    void initUi();
-    void updateUi(qint64 timestamp, TimeVariableData::Access access);
-    const PrimaryFlightControlData &getCurrentPrimaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const;
+    void initUi();    
+    const PrimaryFlightControlData &getCurrentPrimaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
 private slots:
-    void handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access);
+    void updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept;
 };
 
 #endif // PRIMARYFLIGHTCONTROLWIDGET_H

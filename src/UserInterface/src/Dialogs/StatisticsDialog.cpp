@@ -48,7 +48,7 @@
 class StatisticsDialogPrivate
 {
 public:
-    StatisticsDialogPrivate(SkyConnectIntf &theSkyConnect)
+    StatisticsDialogPrivate(SkyConnectIntf &theSkyConnect) noexcept
         : skyConnect(theSkyConnect)
     {}
 
@@ -66,7 +66,6 @@ StatisticsDialog::StatisticsDialog(SkyConnectIntf &skyConnect, QWidget *parent) 
     ui->setupUi(this);
     Qt::WindowFlags flags = Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
     setWindowFlags(flags);
-
     frenchConnection();
 }
 

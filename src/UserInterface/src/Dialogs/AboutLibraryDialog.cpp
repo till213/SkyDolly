@@ -37,7 +37,7 @@
 class AboutLibraryDialogPrivate
 {
 public:
-    AboutLibraryDialogPrivate(DatabaseService &theDatabaseService)
+    AboutLibraryDialogPrivate(DatabaseService &theDatabaseService) noexcept
         : databaseService(theDatabaseService)
     {}
 
@@ -47,7 +47,7 @@ public:
 
 // PUBLIC
 
-AboutLibraryDialog::AboutLibraryDialog(DatabaseService &databaseService, QWidget *parent) :
+AboutLibraryDialog::AboutLibraryDialog(DatabaseService &databaseService, QWidget *parent) noexcept :
     QDialog(parent),
     d(std::make_unique<AboutLibraryDialogPrivate>(databaseService)),
     ui(new Ui::AboutLibraryDialog)
@@ -55,7 +55,7 @@ AboutLibraryDialog::AboutLibraryDialog(DatabaseService &databaseService, QWidget
     ui->setupUi(this);
 }
 
-AboutLibraryDialog::~AboutLibraryDialog()
+AboutLibraryDialog::~AboutLibraryDialog() noexcept
 {
     delete ui;
 }

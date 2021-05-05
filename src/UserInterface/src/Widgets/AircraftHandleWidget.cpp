@@ -45,7 +45,7 @@
 class AircraftHandleWidgetPrivate
 {
 public:
-    AircraftHandleWidgetPrivate(const QWidget &widget, SkyConnectIntf &theSkyConnect)
+    AircraftHandleWidgetPrivate(const QWidget &widget, SkyConnectIntf &theSkyConnect) noexcept
         : skyConnect(theSkyConnect),
           ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
           DisabledTextColor(widget.palette().color(QPalette::Disabled, QPalette::WindowText))
@@ -59,7 +59,7 @@ public:
 
 // PUBLIC
 
-AircraftHandleWidget::AircraftHandleWidget(SkyConnectIntf &skyConnect, QWidget *parent) :
+AircraftHandleWidget::AircraftHandleWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept :
     QWidget(parent),
     d(std::make_unique<AircraftHandleWidgetPrivate>(*this, skyConnect)),
     ui(std::make_unique<Ui::AircraftHandleWidget>())
@@ -68,32 +68,31 @@ AircraftHandleWidget::AircraftHandleWidget(SkyConnectIntf &skyConnect, QWidget *
     initUi();
 }
 
-AircraftHandleWidget::~AircraftHandleWidget()
-{
-}
+AircraftHandleWidget::~AircraftHandleWidget() noexcept
+{}
 
 // PROTECTED
 
-void AircraftHandleWidget::showEvent(QShowEvent *event)
+void AircraftHandleWidget::showEvent(QShowEvent *event) noexcept
 {
     Q_UNUSED(event)
 
     updateUi(d->skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
     connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
-            this, &AircraftHandleWidget::handleTimestampChanged);
+            this, &AircraftHandleWidget::updateUi);
 }
 
-void AircraftHandleWidget::hideEvent(QHideEvent *event)
+void AircraftHandleWidget::hideEvent(QHideEvent *event) noexcept
 {
     Q_UNUSED(event)
 
     disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
-            this, &AircraftHandleWidget::handleTimestampChanged);
+            this, &AircraftHandleWidget::updateUi);
 }
 
 // PRIVATE
 
-void AircraftHandleWidget::initUi()
+void AircraftHandleWidget::initUi() noexcept
 {
     ui->gearLineEdit->setToolTip(SimVar::GearHandlePosition);
     ui->brakeLeftLineEdit->setToolTip(SimVar::BrakeLeftPosition);
@@ -104,7 +103,24 @@ void AircraftHandleWidget::initUi()
     ui->foldableWingsLineEdit->setToolTip(SimVar::FoldingWingHandlePosition);
 }
 
-void AircraftHandleWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
+const AircraftHandleData &AircraftHandleWidget::getCurrentAircraftHandleData(qint64 timestamp, TimeVariableData::Access access) const noexcept
+{
+    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+
+    if (d->skyConnect.getState() == Connect::State::Recording) {
+        return aircraft.getAircraftHandleConst().getLast();
+    } else {
+        if (timestamp != TimeVariableData::InvalidTime) {
+            return aircraft.getAircraftHandleConst().interpolate(timestamp, access);
+        } else {
+            return aircraft.getAircraftHandleConst().interpolate(d->skyConnect.getCurrentTimestamp(), access);
+        }
+    };
+}
+
+// PRIVATE SLOTS
+
+void AircraftHandleWidget::updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept
 {
     const AircraftHandleData &aircraftHandleData = getCurrentAircraftHandleData(timestamp, access);
     QString colorName;
@@ -131,26 +147,4 @@ void AircraftHandleWidget::updateUi(qint64 timestamp, TimeVariableData::Access a
     ui->tailhookLineEdit->setStyleSheet(css);
     ui->canopyOpenLineEdit->setStyleSheet(css);
     ui->foldableWingsLineEdit->setStyleSheet(css);
-}
-
-const AircraftHandleData &AircraftHandleWidget::getCurrentAircraftHandleData(qint64 timestamp, TimeVariableData::Access access) const
-{
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-
-    if (d->skyConnect.getState() == Connect::State::Recording) {
-        return aircraft.getAircraftHandleConst().getLast();
-    } else {
-        if (timestamp != TimeVariableData::InvalidTime) {
-            return aircraft.getAircraftHandleConst().interpolate(timestamp, access);
-        } else {
-            return aircraft.getAircraftHandleConst().interpolate(d->skyConnect.getCurrentTimestamp(), access);
-        }
-    };
-}
-
-// PRIVATE SLOTS
-
-void AircraftHandleWidget::handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access)
-{
-    updateUi(timestamp, access);
 }

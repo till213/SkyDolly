@@ -41,7 +41,7 @@
 class FlightConditionWidgetPrivate
 {
 public:
-    FlightConditionWidgetPrivate(SkyConnectIntf &theSkyConnect)
+    FlightConditionWidgetPrivate(SkyConnectIntf &theSkyConnect) noexcept
         : skyConnect(theSkyConnect)
     {}
 
@@ -51,7 +51,7 @@ public:
 
 // PUBLIC
 
-FlightConditionWidget::FlightConditionWidget(SkyConnectIntf &skyConnect, QWidget *parent) :
+FlightConditionWidget::FlightConditionWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept :
     QDialog(parent),
     d(std::make_unique<FlightConditionWidgetPrivate>(skyConnect)),
     ui(std::make_unique<Ui::FlightConditionWidget>())
@@ -63,13 +63,12 @@ FlightConditionWidget::FlightConditionWidget(SkyConnectIntf &skyConnect, QWidget
     initUi();
 }
 
-FlightConditionWidget::~FlightConditionWidget()
-{
-}
+FlightConditionWidget::~FlightConditionWidget() noexcept
+{}
 
 // PROTECTED
 
-void FlightConditionWidget::showEvent(QShowEvent *event)
+void FlightConditionWidget::showEvent(QShowEvent *event) noexcept
 {
     Q_UNUSED(event)
 
@@ -77,21 +76,21 @@ void FlightConditionWidget::showEvent(QShowEvent *event)
 
     const Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
     connect(&currentFlight, &Flight::flightConditionChanged,
-            this, &FlightConditionWidget::updateInfoUi);
+            this, &FlightConditionWidget::updateUi);
 }
 
-void FlightConditionWidget::hideEvent(QHideEvent *event)
+void FlightConditionWidget::hideEvent(QHideEvent *event) noexcept
 {
     Q_UNUSED(event)
 
     const Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
     disconnect(&currentFlight, &Flight::flightConditionChanged,
-            this, &FlightConditionWidget::updateInfoUi);
+            this, &FlightConditionWidget::updateUi);
 }
 
 // PRIVATE
 
-void FlightConditionWidget::initUi()
+void FlightConditionWidget::initUi() noexcept
 {
     ui->groundAltitudeLineEdit->setToolTip(SimVar::GroundAltitude);
     ui->surfaceTypeLineEdit->setToolTip(SimVar::SurfaceType);
@@ -114,14 +113,9 @@ void FlightConditionWidget::initUi()
     ui->inCloudsCheckBox->setFocusPolicy(Qt::NoFocus);
 }
 
-void FlightConditionWidget::updateUi()
-{
-    updateInfoUi();
-}
-
 // PRIVATE SLOTS
 
-void FlightConditionWidget::updateInfoUi()
+void FlightConditionWidget::updateUi() noexcept
 {
     const Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
     const FlightCondition &flightCondition = currentFlight.getFlightConditionConst();
@@ -139,6 +133,6 @@ void FlightConditionWidget::updateInfoUi()
     ui->seaLevelPressure->setText(d->unit.formatPressureInHPa(flightCondition.seaLevelPressure));
     ui->pitotIcingLineEdit->setText(d->unit.formatPercent(SkyMath::toPercent(flightCondition.pitotIcingPercent)));
     ui->structuralIcingLineEdit->setText(d->unit.formatPercent(SkyMath::toPercent(flightCondition.structuralIcingPercent)));
-    ui->localSimulationTimeLineEdit->setText(d->unit.formatDate(flightCondition.localTime));
-    ui->zuluSimulationTimeLineEdit->setText(d->unit.formatDate(flightCondition.zuluTime));
+    ui->localSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.localTime));
+    ui->zuluSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.zuluTime));
 }

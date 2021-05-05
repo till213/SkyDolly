@@ -43,8 +43,8 @@ class AboutLibraryDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit AboutLibraryDialog(DatabaseService &databaseService, QWidget *parent = nullptr);
-    virtual ~AboutLibraryDialog();
+    explicit AboutLibraryDialog(DatabaseService &databaseService, QWidget *parent = nullptr) noexcept;
+    virtual ~AboutLibraryDialog() noexcept;
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;

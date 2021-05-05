@@ -124,7 +124,8 @@ bool SQLiteFlightPlanDao::add(qint64 aircraftId, const QVector<FlightPlanData> &
         d->insertQuery->bindValue(":latitude", data.latitude);
         d->insertQuery->bindValue(":longitude", data.longitude);
         d->insertQuery->bindValue(":altitude", data.altitude);
-        d->insertQuery->bindValue(":local_sim_time", data.localTime.toUTC());
+        // No conversion to UTC
+        d->insertQuery->bindValue(":local_sim_time", data.localTime);
         // Zulu time equals to UTC time
         d->insertQuery->bindValue(":zulu_sim_time", data.zuluTime);
 
@@ -159,9 +160,8 @@ bool SQLiteFlightPlanDao::getByAircraftId(qint64 aircraftId, QVector<FlightPlanD
             data.latitude = d->selectByAircraftIdQuery->value(latitudeIdx).toFloat();
             data.longitude = d->selectByAircraftIdQuery->value(longitudeIdx).toFloat();
             data.altitude = d->selectByAircraftIdQuery->value(altitudeIdx).toFloat();
-            QDateTime date = d->selectByAircraftIdQuery->value(localSimulationTimeIdx).toDateTime();
-            date.setTimeZone(QTimeZone::utc());
-            data.localTime = date.toLocalTime();
+            // Persisted time is already local simulation time
+            data.localTime = d->selectByAircraftIdQuery->value(localSimulationTimeIdx).toDateTime();
             // UTC equals zulu time, so no conversion necessary
             data.zuluTime = d->selectByAircraftIdQuery->value(zuluSimulationTimeIdx).toDateTime();
             flightPlanData.append(data);

@@ -63,15 +63,21 @@ target_sources(UserInterface
         src/Widgets/AircraftHandleWidget.cpp
         src/Widgets/AircraftHandleWidget.h
         src/Widgets/AircraftHandleWidget.ui
+        src/Widgets/LightWidget.cpp
+        src/Widgets/LightWidget.h
+        src/Widgets/LightWidget.ui
         src/Widgets/AircraftTypeWidget.cpp
         src/Widgets/AircraftTypeWidget.h
         src/Widgets/AircraftTypeWidget.ui
         src/Widgets/FlightConditionWidget.cpp
         src/Widgets/FlightConditionWidget.h
         src/Widgets/FlightConditionWidget.ui
-        src/Widgets/LightWidget.cpp
-        src/Widgets/LightWidget.h
-        src/Widgets/LightWidget.ui
+        src/Widgets/FlightPlanWidget.cpp
+        src/Widgets/FlightPlanWidget.h
+        src/Widgets/FlightPlanWidget.ui
+        src/Widgets/WaypointWidget.cpp
+        src/Widgets/WaypointWidget.h
+        src/Widgets/WaypointWidget.ui
         src/Widgets/LogbookWidget.cpp
         src/Widgets/LogbookWidget.h
         src/Widgets/LogbookWidget.ui

@@ -30,7 +30,7 @@
 class ActionButtonPrivate
 {
 public:
-    ActionButtonPrivate()
+    ActionButtonPrivate()  noexcept
         : action(nullptr)
     {}
 
@@ -39,18 +39,18 @@ public:
 
 // PUBLIC
 
-ActionButton::ActionButton(QWidget *parent)
+ActionButton::ActionButton(QWidget *parent) noexcept
     : QPushButton(parent),
       d(std::make_unique<ActionButtonPrivate>())
 {
 
 }
 
-ActionButton::~ActionButton()
+ActionButton::~ActionButton() noexcept
 {
 }
 
-void ActionButton::setAction(const QAction *action)
+void ActionButton::setAction(const QAction *action) noexcept
 {
    // If an action is already associated with the button then
    // remove all previous connections
@@ -65,7 +65,7 @@ void ActionButton::setAction(const QAction *action)
    }
 }
 
-void ActionButton::updateButtonStatusFromAction()
+void ActionButton::updateButtonStatusFromAction() noexcept
 {
    if (d->action != nullptr) {
        setText(d->action->text());
@@ -78,7 +78,7 @@ void ActionButton::updateButtonStatusFromAction()
    }
 }
 
-void ActionButton::connectToAction()
+void ActionButton::connectToAction() noexcept
 {
    if (d->action != nullptr) {
        // React to the action state changes
@@ -91,7 +91,7 @@ void ActionButton::connectToAction()
    }
 }
 
-void ActionButton::disconnectFromAction()
+void ActionButton::disconnectFromAction() noexcept
 {
    if (d->action != nullptr) {
        disconnect(d->action, &QAction::changed,

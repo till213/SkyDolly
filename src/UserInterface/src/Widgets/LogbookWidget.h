@@ -39,7 +39,7 @@ class LogbookWidgetPrivate;
 #include "ModuleIntf.h"
 
 namespace Ui {
-class LogbookWidget;
+    class LogbookWidget;
 }
 
 class LogbookWidget : public QWidget, public ModuleIntf
@@ -60,7 +60,7 @@ protected:
 
 private:
     Q_DISABLE_COPY(LogbookWidget)
-    Ui::LogbookWidget *ui;
+    std::unique_ptr<Ui::LogbookWidget> ui;
     std::unique_ptr<LogbookWidgetPrivate> d;
 
     void initUi() noexcept;

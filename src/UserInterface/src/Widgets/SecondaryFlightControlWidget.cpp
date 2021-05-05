@@ -45,7 +45,7 @@
 class SecondaryFlightControlWidgetPrivate
 {
 public:
-    SecondaryFlightControlWidgetPrivate(const QWidget &widget, SkyConnectIntf &theSkyConnect)
+    SecondaryFlightControlWidgetPrivate(const QWidget &widget, SkyConnectIntf &theSkyConnect) noexcept
         : skyConnect(theSkyConnect),
           ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
           DisabledTextColor(widget.palette().color(QPalette::Disabled, QPalette::WindowText))
@@ -59,7 +59,7 @@ public:
 
 // PUBLIC
 
-SecondaryFlightControlWidget::SecondaryFlightControlWidget(SkyConnectIntf &skyConnect, QWidget *parent) :
+SecondaryFlightControlWidget::SecondaryFlightControlWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept :
     QWidget(parent),
     d(std::make_unique<SecondaryFlightControlWidgetPrivate>(*this, skyConnect)),
     ui(std::make_unique<Ui::SecondaryFlightControlWidget>())
@@ -68,32 +68,31 @@ SecondaryFlightControlWidget::SecondaryFlightControlWidget(SkyConnectIntf &skyCo
     initUi();
 }
 
-SecondaryFlightControlWidget::~SecondaryFlightControlWidget()
-{
-}
+SecondaryFlightControlWidget::~SecondaryFlightControlWidget() noexcept
+{}
 
 // PROTECTED
 
-void SecondaryFlightControlWidget::showEvent(QShowEvent *event)
+void SecondaryFlightControlWidget::showEvent(QShowEvent *event) noexcept
 {
     Q_UNUSED(event)
 
     updateUi(d->skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
     connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
-            this, &SecondaryFlightControlWidget::handleTimestampChanged);
+            this, &SecondaryFlightControlWidget::updateUi);
 }
 
-void SecondaryFlightControlWidget::hideEvent(QHideEvent *event)
+void SecondaryFlightControlWidget::hideEvent(QHideEvent *event) noexcept
 {
     Q_UNUSED(event)
 
     disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
-            this, &SecondaryFlightControlWidget::handleTimestampChanged);
+            this, &SecondaryFlightControlWidget::updateUi);
 }
 
 // PRIVATE
 
-void SecondaryFlightControlWidget::initUi()
+void SecondaryFlightControlWidget::initUi() noexcept
 {
     ui->leadingEdgeFlapsLeftLineEdit->setToolTip(SimVar::LeadingEdgeFlapsLeftPercent);
     ui->leadingEdgeFlapsRightLineEdit->setToolTip(SimVar::LeadingEdgeFlapsRightPercent);
@@ -103,7 +102,24 @@ void SecondaryFlightControlWidget::initUi()
     ui->spoilerLineEdit->setToolTip(SimVar::SpoilersHandlePosition);
 }
 
-void SecondaryFlightControlWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
+const SecondaryFlightControlData &SecondaryFlightControlWidget::getCurrentSecondaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const noexcept
+{
+    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+
+    if (d->skyConnect.getState() == Connect::State::Recording) {
+        return aircraft.getSecondaryFlightControlConst().getLast();
+    } else {
+        if (timestamp != TimeVariableData::InvalidTime) {
+            return aircraft.getSecondaryFlightControlConst().interpolate(timestamp, access);
+        } else {
+            return aircraft.getSecondaryFlightControlConst().interpolate(d->skyConnect.getCurrentTimestamp(), access);
+        }
+    };
+}
+
+// PRIVATE SLOTS
+
+void SecondaryFlightControlWidget::updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept
 {
     const SecondaryFlightControlData &secondaryFlightControlData = getCurrentSecondaryFlightControlData(timestamp, access);
     QString colorName;
@@ -129,26 +145,4 @@ void SecondaryFlightControlWidget::updateUi(qint64 timestamp, TimeVariableData::
     ui->trailingEdgeFlapsRightLineEdit->setStyleSheet(css);
     ui->spoilerLineEdit->setStyleSheet(css);
     ui->flapsPositionLineEdit->setStyleSheet(css);
-}
-
-const SecondaryFlightControlData &SecondaryFlightControlWidget::getCurrentSecondaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const
-{
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-
-    if (d->skyConnect.getState() == Connect::State::Recording) {
-        return aircraft.getSecondaryFlightControlConst().getLast();
-    } else {
-        if (timestamp != TimeVariableData::InvalidTime) {
-            return aircraft.getSecondaryFlightControlConst().interpolate(timestamp, access);
-        } else {
-            return aircraft.getSecondaryFlightControlConst().interpolate(d->skyConnect.getCurrentTimestamp(), access);
-        }
-    };
-}
-
-// PRIVATE SLOTS
-
-void SecondaryFlightControlWidget::handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access)
-{
-    updateUi(timestamp, access);
 }

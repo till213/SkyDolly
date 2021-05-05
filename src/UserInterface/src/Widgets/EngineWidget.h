@@ -37,31 +37,30 @@ class EngineData;
 class EngineWidgetPrivate;
 
 namespace Ui {
-class EngineWidget;
+    class EngineWidget;
 }
 
 class EngineWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit EngineWidget(SkyConnectIntf &skyConnect, QWidget *parent);
-    virtual ~EngineWidget();
+    explicit EngineWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept;
+    virtual ~EngineWidget() noexcept;
 
 protected:
-    void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
+    void showEvent(QShowEvent *event) noexcept override;
+    void hideEvent(QHideEvent *event) noexcept override;
 
 private:
     Q_DISABLE_COPY(EngineWidget)
     std::unique_ptr<EngineWidgetPrivate> d;
     std::unique_ptr<Ui::EngineWidget> ui;
 
-    void initUi();
-    void updateUi(qint64 timestamp, TimeVariableData::Access access);
-    const EngineData &getCurrentEngineData(qint64 timestamp, TimeVariableData::Access access) const;
+    void initUi() noexcept;
+    const EngineData &getCurrentEngineData(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
 private slots:
-    void handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access);
+    void updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept;
 };
 
 #endif // ENGINEWIDGET_H

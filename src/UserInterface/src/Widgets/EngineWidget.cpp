@@ -45,7 +45,7 @@
 class EngineWidgetPrivate
 {
 public:
-    EngineWidgetPrivate(const QWidget &widget, SkyConnectIntf &theSkyConnect)
+    EngineWidgetPrivate(const QWidget &widget, SkyConnectIntf &theSkyConnect) noexcept
         : skyConnect(theSkyConnect),
           ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
           DisabledTextColor(widget.palette().color(QPalette::Disabled, QPalette::WindowText))
@@ -59,7 +59,7 @@ public:
 
 // PUBLIC
 
-EngineWidget::EngineWidget(SkyConnectIntf &skyConnect, QWidget *parent) :
+EngineWidget::EngineWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept :
     QWidget(parent),
     d(std::make_unique<EngineWidgetPrivate>(*this, skyConnect)),
     ui(std::make_unique<Ui::EngineWidget>())
@@ -68,32 +68,31 @@ EngineWidget::EngineWidget(SkyConnectIntf &skyConnect, QWidget *parent) :
     initUi();
 }
 
-EngineWidget::~EngineWidget()
-{
-}
+EngineWidget::~EngineWidget() noexcept
+{}
 
 // PROTECTED
 
-void EngineWidget::showEvent(QShowEvent *event)
+void EngineWidget::showEvent(QShowEvent *event) noexcept
 {
     Q_UNUSED(event)
 
     updateUi(d->skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
     connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
-            this, &EngineWidget::handleTimestampChanged);
+            this, &EngineWidget::updateUi);
 }
 
-void EngineWidget::hideEvent(QHideEvent *event)
+void EngineWidget::hideEvent(QHideEvent *event) noexcept
 {
     Q_UNUSED(event)
 
     disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
-            this, &EngineWidget::handleTimestampChanged);
+            this, &EngineWidget::updateUi);
 }
 
 // PRIVATE
 
-void EngineWidget::initUi()
+void EngineWidget::initUi() noexcept
 {
     ui->throttle1LineEdit->setToolTip(SimVar::ThrottleLeverPosition1);
     ui->throttle2LineEdit->setToolTip(SimVar::ThrottleLeverPosition2);
@@ -132,7 +131,24 @@ void EngineWidget::initUi()
     ui->generalEngineStarter4CheckBox->setFocusPolicy(Qt::NoFocus);
 }
 
-void EngineWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
+const EngineData &EngineWidget::getCurrentEngineData(qint64 timestamp, TimeVariableData::Access access) const noexcept
+{
+    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+
+    if (d->skyConnect.getState() == Connect::State::Recording) {
+        return aircraft.getEngineConst().getLast();
+    } else {
+        if (timestamp != TimeVariableData::InvalidTime) {
+            return aircraft.getEngineConst().interpolate(timestamp, access);
+        } else {
+            return aircraft.getEngineConst().interpolate(d->skyConnect.getCurrentTimestamp(), access);
+        }
+    };
+}
+
+// PRIVATE SLOTS
+
+void EngineWidget::updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept
 {
     const EngineData &engineData = getCurrentEngineData(timestamp, access);
     QString colorName;
@@ -194,26 +210,4 @@ void EngineWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
     ui->generalEngineStarter2CheckBox->setStyleSheet(css);
     ui->generalEngineStarter3CheckBox->setStyleSheet(css);
     ui->generalEngineStarter4CheckBox->setStyleSheet(css);
-}
-
-const EngineData &EngineWidget::getCurrentEngineData(qint64 timestamp, TimeVariableData::Access access) const
-{
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-
-    if (d->skyConnect.getState() == Connect::State::Recording) {
-        return aircraft.getEngineConst().getLast();
-    } else {
-        if (timestamp != TimeVariableData::InvalidTime) {
-            return aircraft.getEngineConst().interpolate(timestamp, access);
-        } else {
-            return aircraft.getEngineConst().interpolate(d->skyConnect.getCurrentTimestamp(), access);
-        }
-    };
-}
-
-// PRIVATE SLOTS
-
-void EngineWidget::handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access)
-{
-    updateUi(timestamp, access);
 }

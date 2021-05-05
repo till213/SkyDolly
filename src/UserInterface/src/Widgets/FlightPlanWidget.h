@@ -22,38 +22,36 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTCONDITIONWIDGET_H
-#define FLIGHTCONDITIONWIDGET_H
+#ifndef FLIGHTPLANWIDGET_H
+#define FLIGHTPLANWIDGET_H
 
 #include <memory>
 
-#include <QDialog>
-
-class QShowEvent;
-class QHideEvent;
+#include <QWidget>
 
 class SkyConnectIntf;
-class FlightConditionWidgetPrivate;
+class FlightPlanWidgetPrivate;
 
 namespace Ui {
-    class FlightConditionWidget;
+    class FlightPlanWidget;
 }
 
-class FlightConditionWidget : public QDialog
+class FlightPlanWidget : public QWidget
 {
     Q_OBJECT
+
 public:
-    explicit FlightConditionWidget(SkyConnectIntf &skyConnect, QWidget *parent = nullptr) noexcept;
-    virtual ~FlightConditionWidget() noexcept;
+    explicit FlightPlanWidget(SkyConnectIntf &skyConnect, QWidget *parent = nullptr) noexcept;
+    virtual ~FlightPlanWidget() noexcept;
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;
     void hideEvent(QHideEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(FlightConditionWidget)
-    std::unique_ptr<FlightConditionWidgetPrivate> d;
-    std::unique_ptr<Ui::FlightConditionWidget> ui;
+    Q_DISABLE_COPY(FlightPlanWidget)
+    std::unique_ptr<FlightPlanWidgetPrivate> d;
+    std::unique_ptr<Ui::FlightPlanWidget> ui;
 
     void initUi() noexcept;
 
@@ -61,4 +59,4 @@ private slots:
     void updateUi() noexcept;
 };
 
-#endif // FLIGHTCONDITIONWIDGET_H
+#endif // FLIGHTPLANWIDGET_H

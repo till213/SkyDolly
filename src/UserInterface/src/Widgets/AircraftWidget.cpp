@@ -40,7 +40,7 @@
 class AircraftWidgetPrivate
 {
 public:
-    AircraftWidgetPrivate(const QWidget &widget, SkyConnectIntf &theSkyConnect)
+    AircraftWidgetPrivate(const QWidget &widget, SkyConnectIntf &theSkyConnect) noexcept
         : skyConnect(theSkyConnect),
           ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
           DisabledTextColor(widget.palette().color(QPalette::Disabled, QPalette::WindowText))
@@ -52,7 +52,7 @@ public:
     const QColor DisabledTextColor;
 };
 
-AircraftWidget::AircraftWidget(SkyConnectIntf &skyConnect, QWidget *parent) :
+AircraftWidget::AircraftWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept :
     QWidget(parent),
     d(std::make_unique<AircraftWidgetPrivate>(*this, skyConnect)),
     ui(std::make_unique<Ui::AircraftWidget>())
@@ -61,32 +61,31 @@ AircraftWidget::AircraftWidget(SkyConnectIntf &skyConnect, QWidget *parent) :
     initUi();
 }
 
-AircraftWidget::~AircraftWidget()
-{
-}
+AircraftWidget::~AircraftWidget() noexcept
+{}
 
 // PROTECTED
 
-void AircraftWidget::showEvent(QShowEvent *event)
+void AircraftWidget::showEvent(QShowEvent *event) noexcept
 {
     Q_UNUSED(event)
 
     updateUi(d->skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
     connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
-            this, &AircraftWidget::handleTimestampChanged);
+            this, &AircraftWidget::updateUi);
 }
 
-void AircraftWidget::hideEvent(QHideEvent *event)
+void AircraftWidget::hideEvent(QHideEvent *event) noexcept
 {
     Q_UNUSED(event)
 
     disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
-            this, &AircraftWidget::handleTimestampChanged);
+            this, &AircraftWidget::updateUi);
 }
 
 // PRIVATE
 
-void AircraftWidget::initUi()
+void AircraftWidget::initUi() noexcept
 {
     // Position
     ui->latitudeLineEdit->setToolTip(SimVar::Latitude);
@@ -105,7 +104,24 @@ void AircraftWidget::initUi()
     ui->rotationVelocityZLineEdit->setToolTip(SimVar::RotationVelocityBodyZ);
 }
 
-void AircraftWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
+const AircraftData &AircraftWidget::getCurrentAircraftData(qint64 timestamp, TimeVariableData::Access access) const noexcept
+{
+    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+
+    if (d->skyConnect.getState() == Connect::State::Recording) {
+        return aircraft.getLast();
+    } else {
+        if (timestamp != TimeVariableData::InvalidTime) {
+            return aircraft.interpolate(timestamp, access);
+        } else {
+            return aircraft.interpolate(d->skyConnect.getCurrentTimestamp(), access);
+        }
+    };
+}
+
+// PRIVATE SLOTS
+
+void AircraftWidget::updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept
 {
     const AircraftData &aircraftData = getCurrentAircraftData(timestamp, access);
     QString colorName;
@@ -146,26 +162,4 @@ void AircraftWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
     ui->rotationVelocityXLineEdit->setStyleSheet(css);
     ui->rotationVelocityYLineEdit->setStyleSheet(css);
     ui->rotationVelocityZLineEdit->setStyleSheet(css);
-}
-
-const AircraftData &AircraftWidget::getCurrentAircraftData(qint64 timestamp, TimeVariableData::Access access) const
-{
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-
-    if (d->skyConnect.getState() == Connect::State::Recording) {
-        return aircraft.getLast();
-    } else {
-        if (timestamp != TimeVariableData::InvalidTime) {
-            return aircraft.interpolate(timestamp, access);
-        } else {
-            return aircraft.interpolate(d->skyConnect.getCurrentTimestamp(), access);
-        }
-    };
-}
-
-// PRIVATE SLOTS
-
-void AircraftWidget::handleTimestampChanged(qint64 timestamp, TimeVariableData::Access access)
-{
-    updateUi(timestamp, access);
 }
