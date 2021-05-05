@@ -127,9 +127,9 @@ public:
 "from   flight f "
 "join   aircraft a "
 "on     a.flight_id = f.id "
-"left join (select ident, aircraft_id from flight_plan where seq_nr = 1) fp1 "
-"on    fp1.aircraft_id = a.id "
-"left join (select ident, aircraft_id from flight_plan fpo where seq_nr = (select max(seq_nr) from flight_plan fpi where fpi.aircraft_id = fpo.aircraft_id)) fp2 "
+"left join (select ident, aircraft_id from flight_plan fpo1 where fpo1.timestamp = (select min(fpi1.timestamp) from flight_plan fpi1 where fpi1.aircraft_id = fpo1.aircraft_id)) fp1 "
+"on fp1.aircraft_id = a.id "
+"left join (select ident, aircraft_id from flight_plan fpo2 where fpo2.timestamp = (select max(fpi2.timestamp) from flight_plan fpi2 where fpi2.aircraft_id = fpo2.aircraft_id)) fp2 "
 "on fp2.aircraft_id = a.id");
         }
     }

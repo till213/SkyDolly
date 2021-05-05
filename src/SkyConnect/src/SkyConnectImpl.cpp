@@ -63,6 +63,7 @@
 #include "SimConnectAircraftHandleData.h"
 #include "SimConnectLightData.h"
 #include "SimConnectFlightPlan.h"
+#include "SimConnectSimulationTime.h"
 #include "Connect.h"
 #include "EventWidget.h"
 #include "SkyConnectImpl.h"
@@ -85,6 +86,7 @@ namespace
     enum class DataRequest: ::SIMCONNECT_DATA_REQUEST_ID {
         AircraftInfo,
         FlightPlan,
+        SimulationTime,
         AircraftPosition,
         Engine,
         PrimaryFlightControl,
@@ -98,12 +100,16 @@ class SkyConnectPrivate
 {
 public:
     SkyConnectPrivate() noexcept
-        : simConnectHandle(nullptr),
+        : pendingWaypointTime(false),
+          simConnectHandle(nullptr),
           frozen(false),
           eventWidget(nullptr)
     {
     }
 
+    QDateTime currentLocalDateTime;
+    QDateTime currentZuluDateTime;
+    bool pendingWaypointTime;
     HANDLE simConnectHandle;
     bool frozen;
     std::unique_ptr<EventWidget> eventWidget;
@@ -152,6 +158,13 @@ void SkyConnectImpl::onStopRecording() noexcept
     FlightPlan &flightPlan = userAircraft.getFlightPlan();
     for (const auto &it : d->flightPlan) {
         flightPlan.add(it.second);
+    }
+    QVector<FlightPlanData> &flightPlanData = userAircraft.getFlightPlan().getAll();
+    if (flightPlanData.count() > 0) {
+        FlightPlanData &data = flightPlanData.last();
+        data.timestamp = getCurrentTimestamp();
+        data.localTime = d->currentLocalDateTime;
+        data.zuluTime = d->currentZuluDateTime;
     }
 }
 
@@ -281,6 +294,7 @@ void SkyConnectImpl::setupRequestData() noexcept
     SimConnectAircraftHandleData::addToDataDefinition(d->simConnectHandle);
     SimConnectLightData::addToDataDefinition(d->simConnectHandle);
     SimConnectFlightPlan::addToDataDefinition(d->simConnectHandle);
+    SimConnectSimulationTime::addToDataDefinition(d->simConnectHandle);
 
     ::SimConnect_AddToDataDefinition(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInitialPosition), "Initial Position", nullptr, ::SIMCONNECT_DATATYPE_INITPOSITION);
 
@@ -489,10 +503,12 @@ void SkyConnectImpl::updateRequestPeriod(::SIMCONNECT_PERIOD period)
                                         ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
     ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::Light), Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftLightDefinition),
                                         ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
-    // Update the flight plan only every second
-    ::SIMCONNECT_PERIOD flightPlanPeriod = period != ::SIMCONNECT_PERIOD_NEVER ? ::SIMCONNECT_PERIOD_SECOND : ::SIMCONNECT_PERIOD_NEVER;
-    ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::FlightPlan), Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftFlightPlanDefinition),
-                                        ::SIMCONNECT_OBJECT_ID_USER, flightPlanPeriod, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+    // Update the flight plan and simulation time only every second
+    ::SIMCONNECT_PERIOD oneSecondPeriod = period != ::SIMCONNECT_PERIOD_NEVER ? ::SIMCONNECT_PERIOD_SECOND : ::SIMCONNECT_PERIOD_NEVER;
+    ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::FlightPlan), Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightPlanDefinition),
+                                        ::SIMCONNECT_OBJECT_ID_USER, oneSecondPeriod, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
+    ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::SimulationTime), Enum::toUnderlyingType(SimConnectType::DataDefinition::SimulationTimeDefinition),
+                                        ::SIMCONNECT_OBJECT_ID_USER, oneSecondPeriod, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
 }
 
 void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context) noexcept
@@ -648,9 +664,37 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
             if (skyConnect->getState() == Connect::State::Recording) {
                 simConnectFlightPlan = reinterpret_cast<const SimConnectFlightPlan *>(&objectData->dwData);
                 FlightPlanData flightPlanData = simConnectFlightPlan->toPreviousFlightPlanData();
+                if (skyConnect->d->currentLocalDateTime.isValid()) {
+                    flightPlanData.localTime = skyConnect->d->currentLocalDateTime;
+                    flightPlanData.zuluTime = skyConnect->d->currentZuluDateTime;
+                } else {
+                    // No simulation time received yet: set flag for pending update
+                    skyConnect->d->pendingWaypointTime = true;
+                }
+                flightPlanData.timestamp = skyConnect->getCurrentTimestamp();
                 skyConnect->d->flightPlan[flightPlanData.waypointIdentifier] = flightPlanData;
                 flightPlanData = simConnectFlightPlan->toNextFlightPlanData();
+                flightPlanData.timestamp = skyConnect->getCurrentTimestamp();
                 skyConnect->d->flightPlan[flightPlanData.waypointIdentifier] = flightPlanData;
+                dataReceived = true;
+            }
+            break;
+        }
+        case DataRequest::SimulationTime:
+        {
+            const SimConnectSimulationTime *simConnectSimulationTime;
+            if (skyConnect->getState() == Connect::State::Recording) {
+                simConnectSimulationTime = reinterpret_cast<const SimConnectSimulationTime *>(&objectData->dwData);
+                skyConnect->d->currentLocalDateTime = simConnectSimulationTime->toLocalDateTime();
+                skyConnect->d->currentZuluDateTime = simConnectSimulationTime->toZuluDateTime();
+                if (skyConnect->d->pendingWaypointTime) {
+                    for (auto it = skyConnect->d->flightPlan.begin(); it != skyConnect->d->flightPlan.end(); ++it)
+                    {
+                        it.value().localTime = skyConnect->d->currentLocalDateTime;
+                        it.value().zuluTime = skyConnect->d->currentLocalDateTime;
+                        skyConnect->d->pendingWaypointTime = false;
+                    }
+                }
                 dataReceived = true;
             }
             break;

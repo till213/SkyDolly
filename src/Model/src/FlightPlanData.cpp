@@ -22,13 +22,17 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include "LightData.h"
 #include "FlightPlanData.h"
 
 // PUBLIC
 
 FlightPlanData::FlightPlanData() noexcept
-    : latitude(0.0f),
+    : TimeVariableData(),
+      latitude(0.0f),
       longitude(0.0f),
       altitude(0.0f)
 {
 }
+
+const FlightPlanData FlightPlanData::NullFlightPlanData = FlightPlanData();

@@ -54,7 +54,7 @@ public:
             insertQuery->prepare(
 "insert into flight_plan ("
 "  aircraft_id,"
-"  seq_nr,"
+"  timestamp,"
 "  ident,"
 "  latitude,"
 "  longitude,"
@@ -63,7 +63,7 @@ public:
 "  zulu_sim_time"
 ") values ("
 " :aircraft_id,"
-" :seq_nr,"
+" :timestamp,"
 " :ident,"
 " :latitude,"
 " :longitude,"
@@ -78,7 +78,7 @@ public:
 "select * "
 "from   flight_plan fp "
 "where  fp.aircraft_id = :aircraft_id "
-"order by fp.seq_nr asc;");
+"order by fp.timestamp asc;");
         }
         if (deleteByFlightIdQuery == nullptr) {
             deleteByFlightIdQuery = std::make_unique<QSqlQuery>();
@@ -116,10 +116,9 @@ bool SQLiteFlightPlanDao::add(qint64 aircraftId, const QVector<FlightPlanData> &
 {
     d->initQueries();
     d->insertQuery->bindValue(":aircraft_id", aircraftId);
-    int sequenceNumber = 1;
     bool ok = true;
     for (const FlightPlanData &data : flightPlanData) {
-        d->insertQuery->bindValue(":seq_nr", sequenceNumber);
+        d->insertQuery->bindValue(":timestamp", data.timestamp);
         d->insertQuery->bindValue(":ident", data.waypointIdentifier);
         d->insertQuery->bindValue(":latitude", data.latitude);
         d->insertQuery->bindValue(":longitude", data.longitude);
@@ -136,7 +135,6 @@ bool SQLiteFlightPlanDao::add(qint64 aircraftId, const QVector<FlightPlanData> &
 #endif
             break;
         }
-        ++sequenceNumber;
     }
     return ok;
 }

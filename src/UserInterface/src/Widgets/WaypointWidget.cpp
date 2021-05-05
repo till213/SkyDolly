@@ -84,7 +84,7 @@ void WaypointWidget::initUi() noexcept
 void WaypointWidget::updateUi() noexcept
 {
     ui->latitudeLineEdit->setText(d->unit.formatLatitude(d->flightPlanData.latitude));
-    ui->longitudeLineEdit->setText(d->unit.formatLatitude(d->flightPlanData.longitude));
+    ui->longitudeLineEdit->setText(d->unit.formatLongitude(d->flightPlanData.longitude));
     ui->altitudeLineEdit->setText(d->unit.formatFeet(d->flightPlanData.altitude));
     ui->localSimulationTimeLineEdit->setText(d->unit.formatDateTime(d->flightPlanData.localTime));
     ui->zuluSimulationTimeLineEdit->setText(d->unit.formatDateTime(d->flightPlanData.zuluTime));

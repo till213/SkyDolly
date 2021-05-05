@@ -368,7 +368,6 @@ bool SQLiteAircraftDao::deleteByFlightId(qint64 flightId) noexcept
         ok = d->flightPlanDao->deleteByFlightId(flightId);
     }
     if (ok) {
-
         d->deleteByFlightIdQuery->bindValue(":flight_id", flightId);
         ok = d->deleteByFlightIdQuery->exec();
 #ifdef DEBUG

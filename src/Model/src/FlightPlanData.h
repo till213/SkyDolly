@@ -33,7 +33,7 @@
 #include "TimeVariableData.h"
 #include "ModelLib.h"
 
-struct MODEL_API FlightPlanData
+struct MODEL_API FlightPlanData : public TimeVariableData
 {
     QString waypointIdentifier;
     float latitude;
@@ -46,6 +46,8 @@ struct MODEL_API FlightPlanData
     FlightPlanData(FlightPlanData &&) = default;
     FlightPlanData(const FlightPlanData &) = default;
     FlightPlanData &operator= (const FlightPlanData &) = default;
+
+    static const FlightPlanData NullFlightPlanData;
 };
 
 #endif // FLIGHTPLANDATA_H
