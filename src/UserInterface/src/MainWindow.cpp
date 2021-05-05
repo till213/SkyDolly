@@ -43,6 +43,8 @@
 #include <QIcon>
 #include <QLocale>
 #include <QStackedWidget>
+#include <QEvent>
+#include <QResizeEvent>
 
 #include "../../Kernel/src/Version.h"
 #include "../../Kernel/src/Settings.h"
@@ -112,7 +114,8 @@ public:
           statisticsDialog(nullptr),
           flightService(std::make_unique<FlightService>()),
           databaseService(std::make_unique<DatabaseService>()),
-          csvService(std::make_unique<CSVService>(*flightService))
+          csvService(std::make_unique<CSVService>(*flightService)),
+          showMinimalUi(false)
     {}
 
     SkyConnectIntf &skyConnect;
@@ -129,6 +132,9 @@ public:
     std::unique_ptr<FlightService> flightService;
     std::unique_ptr<DatabaseService> databaseService;
     std::unique_ptr<CSVService> csvService;
+    bool showMinimalUi;
+    QSize minimalUiSize;
+    QSize lastNormalUiSize;
 };
 
 // PUBLIC
@@ -159,13 +165,22 @@ MainWindow::~MainWindow() noexcept
 
 // PROTECTED
 
-bool MainWindow::event(QEvent *e)
+bool MainWindow::event(QEvent *event)
 {
-    bool ret = QMainWindow::event(e);
-    if (e->type() == QEvent::LayoutRequest) {
+    bool ret = QMainWindow::event(event);
+    if (event->type() == QEvent::LayoutRequest && d->showMinimalUi && !d->minimalUiSize.isValid()) {
         adjustSize();
+        d->minimalUiSize = size();
+        setFixedSize(d->minimalUiSize);
     }
     return ret;
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    if (!d->showMinimalUi) {
+        d->lastNormalUiSize = event->size();
+    }
 }
 
 // PRIVATE
@@ -246,7 +261,8 @@ void MainWindow::initUi() noexcept
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
     ui->showMinimalAction->setChecked(ui->moduleGroupBox->isVisible());
     initControlUi();
-    on_showMinimalAction_triggered(ui->showMinimalAction->isChecked());
+    ui->showMinimalAction->setChecked(d->showMinimalUi);
+    on_showMinimalAction_triggered(d->showMinimalUi);
 }
 
 void MainWindow::initControlUi() noexcept
@@ -705,13 +721,18 @@ void MainWindow::on_stayOnTopAction_triggered(bool enabled) noexcept
 
 void MainWindow::on_showMinimalAction_triggered(bool enabled) noexcept
 {
+    d->showMinimalUi = enabled;
     ui->moduleGroupBox->setHidden(enabled);
-
-//    if (enabled) {
-//        setMaximumHeight(height());
-//    } else {
-//        setMaximumHeight(32767);
-//    }
+    if (enabled) {
+        if (d->minimalUiSize.isValid()) {
+            setFixedSize(d->minimalUiSize);
+        }
+    } else {
+        QSize size = d->lastNormalUiSize;
+        setMinimumSize(QSize(0, 0));
+        setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
+        resize(size);
+    }
 }
 
 void MainWindow::on_aboutLibraryAction_triggered() noexcept
