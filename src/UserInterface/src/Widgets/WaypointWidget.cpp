@@ -53,7 +53,11 @@ WaypointWidget::WaypointWidget(const FlightPlanData &flightPlanData, QWidget *pa
 }
 
 WaypointWidget::~WaypointWidget() noexcept
-{}
+{
+#ifdef DEBUG
+    qDebug("WaypointWidget::~WaypointWidget(): DELETED");
+#endif
+}
 
 // PROTECTED
 
@@ -75,8 +79,6 @@ void WaypointWidget::initUi() noexcept
     ui->latitudeLineEdit->setToolTip(SimVar::GpsWPPrevLat);
     ui->longitudeLineEdit->setToolTip(SimVar::GpsWPPrevLon);
     ui->altitudeLineEdit->setToolTip(SimVar::GpsWPPrevAlt);
-    ui->localSimulationTimeLineEdit->setToolTip(SimVar::LocalTime);
-    ui->zuluSimulationTimeLineEdit->setToolTip(SimVar::ZuluTime);
 }
 
 // PRIVATE SLOTS
@@ -87,5 +89,5 @@ void WaypointWidget::updateUi() noexcept
     ui->longitudeLineEdit->setText(d->unit.formatLongitude(d->flightPlanData.longitude));
     ui->altitudeLineEdit->setText(d->unit.formatFeet(d->flightPlanData.altitude));
     ui->localSimulationTimeLineEdit->setText(d->unit.formatDateTime(d->flightPlanData.localTime));
-    ui->zuluSimulationTimeLineEdit->setText(d->unit.formatDateTime(d->flightPlanData.zuluTime));
+    ui->localSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(d->flightPlanData.zuluTime) + "Z");
 }

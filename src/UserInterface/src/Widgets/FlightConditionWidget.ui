@@ -267,26 +267,26 @@
         <item row="4" column="0">
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>Local Simulation Time</string>
+           <string>Start Simulation Time</string>
           </property>
          </widget>
         </item>
         <item row="5" column="0">
          <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>Zulu Simulation Time</string>
+           <string>End Simulation Time</string>
           </property>
          </widget>
         </item>
         <item row="4" column="1">
-         <widget class="QLineEdit" name="localSimulationTimeLineEdit">
+         <widget class="QLineEdit" name="startLocalSimulationTimeLineEdit">
           <property name="readOnly">
            <bool>true</bool>
           </property>
          </widget>
         </item>
         <item row="5" column="1">
-         <widget class="QLineEdit" name="zuluSimulationTimeLineEdit">
+         <widget class="QLineEdit" name="endLocalSimulationTimeLineEdit">
           <property name="readOnly">
            <bool>true</bool>
           </property>

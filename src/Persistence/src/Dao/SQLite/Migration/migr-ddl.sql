@@ -22,8 +22,10 @@ create table flight (
     structural_icing real,
     precipitation_state integer,
     in_clouds integer,
-    local_sim_time datetime,
-    zulu_sim_time datetime
+    start_local_sim_time datetime,
+    start_zulu_sim_time datetime,
+    end_local_sim_time datetime,
+    end_zulu_sim_time datetime
 );
 
 @migr(id = "1fb17949-6c94-4bbf-98a2-ff54fe3a749f", descn = "Create aircraft table", step_cnt = 1)
