@@ -68,7 +68,7 @@
 #include "Dialogs/SimulationVariablesDialog.h"
 #include "Dialogs/StatisticsDialog.h"
 #include "Widgets/ActionButton.h"
-#include "Widgets/FlightWidget.h"
+#include "Widgets/LogbookWidget.h"
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
 
@@ -253,10 +253,10 @@ void MainWindow::initUi() noexcept
     d->settingsDialog = new SettingsDialog(this);
 
     // Widgets
-    ui->moduleGroupBox->setTitle(tr("Flights"));
-    FlightWidget *flightWidget = new FlightWidget(*d->flightService, ui->moduleStackWidget);
-    ui->moduleStackWidget->addWidget(flightWidget);
-    ui->moduleStackWidget->setCurrentWidget(flightWidget);
+    LogbookWidget *logbookWidget = new LogbookWidget(*d->flightService, ui->moduleStackWidget);
+    ui->moduleGroupBox->setTitle(logbookWidget->getTitle());
+    ui->moduleStackWidget->addWidget(logbookWidget);
+    ui->moduleStackWidget->setCurrentWidget(logbookWidget);
 
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
     ui->showMinimalAction->setChecked(ui->moduleGroupBox->isVisible());

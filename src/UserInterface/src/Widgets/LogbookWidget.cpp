@@ -42,8 +42,8 @@
 #include "../../../Persistence/src/Service/FlightService.h"
 #include "../Unit.h"
 
-#include "FlightWidget.h"
-#include "ui_FlightWidget.h"
+#include "LogbookWidget.h"
+#include "ui_LogbookWidget.h"
 
 namespace
 {
@@ -51,10 +51,10 @@ namespace
     constexpr int InvalidSelection = -1;
 }
 
-class FlightWidgetPrivate
+class LogbookWidgetPrivate
 {
 public:
-    FlightWidgetPrivate(FlightService &theFlightService)
+    LogbookWidgetPrivate(FlightService &theFlightService)
         : flightService(theFlightService),
           selectedRow(InvalidSelection),
           selectedFlightId(Flight::InvalidId)
@@ -69,133 +69,140 @@ public:
 
 // PUBLIC
 
-FlightWidget::FlightWidget(FlightService &flightService, QWidget *parent) noexcept
+LogbookWidget::LogbookWidget(FlightService &flightService, QWidget *parent) noexcept
     : QWidget(parent),
-      ui(new Ui::FlightWidget),
-      d(std::make_unique<FlightWidgetPrivate>(flightService))
+      ui(new Ui::LogbookWidget),
+      d(std::make_unique<LogbookWidgetPrivate>(flightService))
 {
     ui->setupUi(this);
     initUi();
     frenchConnection();
 }
 
-FlightWidget::~FlightWidget() noexcept
+LogbookWidget::~LogbookWidget() noexcept
 {
     delete ui;
 }
 
-qint64 FlightWidget::getSelectedFlightId() const noexcept
+qint64 LogbookWidget::getSelectedFlightId() const noexcept
 {
     return d->selectedFlightId;
 }
 
+QString LogbookWidget::getTitle() const noexcept
+{
+    return QString(tr("Logbook"));
+}
+
 // PROTECTED
 
-void FlightWidget::showEvent(QShowEvent *event) noexcept
+void LogbookWidget::showEvent(QShowEvent *event) noexcept
 {
     Q_UNUSED(event)
     updateUi();
 
     // Service
     connect(&d->flightService, &FlightService::flightStored,
-            this, &FlightWidget::updateUi);
+            this, &LogbookWidget::updateUi);
 }
 
-void FlightWidget::hideEvent(QHideEvent *event) noexcept
+void LogbookWidget::hideEvent(QHideEvent *event) noexcept
 {
     Q_UNUSED(event)
 
     disconnect(&d->flightService, &FlightService::flightStored,
-               this, &FlightWidget::updateUi);
+               this, &LogbookWidget::updateUi);
 }
 
 // PRIVATE
 
-void FlightWidget::initUi() noexcept
+void LogbookWidget::initUi() noexcept
 {
-    ui->flightTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->logTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     const QStringList headers {tr("Flight"), tr("Date"), tr("Aircraft"), tr("Departure Time"), tr("Departure"), tr("Arrival Time"), tr("Arrival"), tr("Total Time of Flight"), tr("Description")};
-    ui->flightTableWidget->setColumnCount(headers.count());
-    ui->flightTableWidget->setHorizontalHeaderLabels(headers);
-    ui->flightTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->flightTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui->flightTableWidget->setMinimumWidth(MinimumTableWidth);
+    ui->logTableWidget->setColumnCount(headers.count());
+    ui->logTableWidget->setHorizontalHeaderLabels(headers);
+    ui->logTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->logTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->logTableWidget->setMinimumWidth(MinimumTableWidth);
 }
 
-void FlightWidget::updateEditUi() noexcept
+void LogbookWidget::updateEditUi() noexcept
 {
     ui->loadPushButton->setEnabled(d->selectedFlightId != Flight::InvalidId);
     ui->deletePushButton->setEnabled(d->selectedFlightId != Flight::InvalidId);
 }
 
-void FlightWidget::frenchConnection() noexcept
+void LogbookWidget::frenchConnection() noexcept
 {
-    connect(ui->flightTableWidget, &QTableWidget::itemSelectionChanged,
-            this, &FlightWidget::handleSelectionChanged);
+    connect(ui->logTableWidget, &QTableWidget::itemSelectionChanged,
+            this, &LogbookWidget::handleSelectionChanged);
+    connect(ui->logTableWidget, &QTableWidget::cellDoubleClicked,
+            this, &LogbookWidget::handleLoad);
     connect(ui->loadPushButton, &QPushButton::clicked,
-            this, &FlightWidget::handleLoad);
+            this, &LogbookWidget::handleLoad);
     connect(ui->deletePushButton, &QPushButton::clicked,
-            this, &FlightWidget::handleDelete);
+            this, &LogbookWidget::handleDelete);
 }
 
 // PRIVATE SLOTS
 
-void FlightWidget::updateUi() noexcept
+void LogbookWidget::updateUi() noexcept
 {
     QVector<FlightDescription> descriptions = d->flightService.getFlightDescriptions();
-    ui->flightTableWidget->setSortingEnabled(false);
-    ui->flightTableWidget->clearContents();
-    ui->flightTableWidget->setRowCount(descriptions.count());
+    ui->logTableWidget->setSortingEnabled(false);
+    ui->logTableWidget->clearContents();
+    ui->logTableWidget->setRowCount(descriptions.count());
     int rowIndex = 0;
     for (const FlightDescription &desc : descriptions) {
         QTableWidgetItem *newItem = new QTableWidgetItem();
 
         newItem->setData(Qt::DisplayRole, desc.id);
-        ui->flightTableWidget->setItem(rowIndex, 0, newItem);
+        ui->logTableWidget->setItem(rowIndex, 0, newItem);
 
         newItem = new QTableWidgetItem(d->unit.formatDate(desc.creationDate));
-        ui->flightTableWidget->setItem(rowIndex, 1, newItem);
+        ui->logTableWidget->setItem(rowIndex, 1, newItem);
 
         newItem = new QTableWidgetItem(desc.aircraftType);
-        ui->flightTableWidget->setItem(rowIndex, 2, newItem);
+        ui->logTableWidget->setItem(rowIndex, 2, newItem);
 
         newItem = new QTableWidgetItem(d->unit.formatTime(desc.startDate));
-        ui->flightTableWidget->setItem(rowIndex, 3, newItem);
+        ui->logTableWidget->setItem(rowIndex, 3, newItem);
 
         newItem = new QTableWidgetItem(desc.startLocation);
-        ui->flightTableWidget->setItem(rowIndex, 4, newItem);
+        ui->logTableWidget->setItem(rowIndex, 4, newItem);
 
         newItem = new QTableWidgetItem(d->unit.formatTime(desc.endDate));
-        ui->flightTableWidget->setItem(rowIndex, 5, newItem);
+        ui->logTableWidget->setItem(rowIndex, 5, newItem);
 
         newItem = new QTableWidgetItem(desc.endLocation);
-        ui->flightTableWidget->setItem(rowIndex, 6, newItem);
+        ui->logTableWidget->setItem(rowIndex, 6, newItem);
 
         const qint64 durationMSec = desc.startDate.msecsTo(desc.endDate);
         const QTime time = QTime(0, 0).addMSecs(durationMSec);
         newItem = new QTableWidgetItem(d->unit.formatDuration(time));
-        ui->flightTableWidget->setItem(rowIndex, 7, newItem);
+        ui->logTableWidget->setItem(rowIndex, 7, newItem);
 
         newItem = new QTableWidgetItem(desc.description);
-        ui->flightTableWidget->setItem(rowIndex, 8, newItem);
+        ui->logTableWidget->setItem(rowIndex, 8, newItem);
 
         ++rowIndex;
     }
-    ui->flightTableWidget->resizeColumnsToContents();
-    ui->flightTableWidget->setSortingEnabled(true);
+    ui->logTableWidget->resizeColumnsToContents();
+    ui->logTableWidget->setSortingEnabled(true);
 
     updateEditUi();
 }
 
-void FlightWidget::handleSelectionChanged() noexcept
+void LogbookWidget::handleSelectionChanged() noexcept
 {
-    QItemSelectionModel *select = ui->flightTableWidget->selectionModel();
+    QItemSelectionModel *select = ui->logTableWidget->selectionModel();
     QModelIndexList selectedRows = select->selectedRows(0);
     if (selectedRows.count() > 0) {
         QModelIndex modelIndex = selectedRows.at(0);
         d->selectedRow = modelIndex.row();
-        d->selectedFlightId = ui->flightTableWidget->model()->data(modelIndex).toLongLong();
+        d->selectedFlightId = ui->logTableWidget->model()->data(modelIndex).toLongLong();
     } else {
         d->selectedRow = InvalidSelection;
         d->selectedFlightId = Flight::InvalidId;
@@ -203,7 +210,7 @@ void FlightWidget::handleSelectionChanged() noexcept
     updateEditUi();
 }
 
-void FlightWidget::handleLoad() noexcept
+void LogbookWidget::handleLoad() noexcept
 {
     qint64 selectedFlightId = d->selectedFlightId;
     if (selectedFlightId != Flight::InvalidId) {
@@ -214,13 +221,13 @@ void FlightWidget::handleLoad() noexcept
     }
 }
 
-void FlightWidget::handleDelete() noexcept
+void LogbookWidget::handleDelete() noexcept
 {
     if (d->selectedFlightId != Flight::InvalidId) {
         d->flightService.deleteById(d->selectedFlightId);
         int lastSelectedRow = d->selectedRow;
         updateUi();
-        int selectedRow = qMin(lastSelectedRow, ui->flightTableWidget->rowCount() - 1);
-        ui->flightTableWidget->selectRow(selectedRow);
+        int selectedRow = qMin(lastSelectedRow, ui->logTableWidget->rowCount() - 1);
+        ui->logTableWidget->selectRow(selectedRow);
     }
 }
