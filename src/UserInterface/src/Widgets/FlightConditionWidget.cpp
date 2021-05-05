@@ -105,8 +105,6 @@ void FlightConditionWidget::initUi() noexcept
     ui->seaLevelPressure->setToolTip(SimVar::SeaLevelPressure);
     ui->pitotIcingLineEdit->setToolTip(SimVar::PitotIcePct);
     ui->structuralIcingLineEdit->setToolTip(SimVar::StructuralIcePct);
-    ui->localSimulationTimeLineEdit->setToolTip(SimVar::LocalTime);
-    ui->zuluSimulationTimeLineEdit->setToolTip(SimVar::ZuluTime);
 
     // Make the flight information checkboxes checkable, but not for the user
     ui->inCloudsCheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
@@ -133,6 +131,9 @@ void FlightConditionWidget::updateUi() noexcept
     ui->seaLevelPressure->setText(d->unit.formatPressureInHPa(flightCondition.seaLevelPressure));
     ui->pitotIcingLineEdit->setText(d->unit.formatPercent(SkyMath::toPercent(flightCondition.pitotIcingPercent)));
     ui->structuralIcingLineEdit->setText(d->unit.formatPercent(SkyMath::toPercent(flightCondition.structuralIcingPercent)));
-    ui->localSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.localTime));
-    ui->zuluSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.zuluTime));
+    ui->startLocalSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.startLocalTime));
+    ui->endLocalSimulationTimeLineEdit->setText(d->unit.formatDateTime(flightCondition.endLocalTime));
+    // Zulu time
+    ui->startLocalSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(flightCondition.startZuluTime) + "Z");
+    ui->endLocalSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(flightCondition.endZuluTime) + "Z");
 }

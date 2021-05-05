@@ -45,8 +45,10 @@ struct MODEL_API FlightCondition
     quint8 pitotIcingPercent;
     quint8 structuralIcingPercent;
     bool inClouds;
-    QDateTime localTime;
-    QDateTime zuluTime;
+    QDateTime startLocalTime;
+    QDateTime startZuluTime;
+    QDateTime endLocalTime;
+    QDateTime endZuluTime;
 
     FlightCondition() noexcept;
     FlightCondition(FlightCondition &&) = default;

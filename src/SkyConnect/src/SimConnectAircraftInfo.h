@@ -165,14 +165,14 @@ struct SimConnectAircraftInfo
         flightCondition.inClouds = (ambientInCloud != 0);
 
         QTime time = QTime(0, 0).addSecs(localTime);
-        flightCondition.localTime.setTime(time);
+        flightCondition.startLocalTime.setTime(time);
         QDate date = QDate(localYear, localMonth, localDay);
-        flightCondition.localTime.setDate(date);
+        flightCondition.startLocalTime.setDate(date);
 
         time = QTime(0, 0).addSecs(zuluTime);
-        flightCondition.zuluTime.setTime(time);
+        flightCondition.startZuluTime.setTime(time);
         date = QDate(zuluYear, zuluMonth, zuluDay);
-        flightCondition.zuluTime.setDate(date);
+        flightCondition.startZuluTime.setDate(date);
 
         return flightCondition;
     }

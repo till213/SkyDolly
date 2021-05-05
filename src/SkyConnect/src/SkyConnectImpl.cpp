@@ -154,7 +154,8 @@ void SkyConnectImpl::onStopRecording() noexcept
     updateRequestPeriod(::SIMCONNECT_PERIOD_NEVER);
 
     // Update flight plan
-    const Aircraft &userAircraft = getCurrentFlight().getUserAircraftConst();
+    Flight &flight = getCurrentFlight();
+    const Aircraft &userAircraft = flight.getUserAircraftConst();
     FlightPlan &flightPlan = userAircraft.getFlightPlan();
     for (const auto &it : d->flightPlan) {
         flightPlan.add(it.second);
@@ -166,6 +167,10 @@ void SkyConnectImpl::onStopRecording() noexcept
         data.localTime = d->currentLocalDateTime;
         data.zuluTime = d->currentZuluDateTime;
     }
+    FlightCondition condition = flight.getFlightConditionConst();
+    condition.endLocalTime = d->currentLocalDateTime;
+    condition.endZuluTime = d->currentZuluDateTime;
+    flight.setFlightCondition(condition);
 }
 
 void SkyConnectImpl::onStartReplay(qint64 currentTimestamp) noexcept
