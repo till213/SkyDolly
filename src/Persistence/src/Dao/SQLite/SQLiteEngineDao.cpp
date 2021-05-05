@@ -192,31 +192,31 @@ bool SQLiteEngineDao::getByAircraftId(qint64 aircraftId, QVector<EngineData> &en
     bool ok = d->selectByAircraftIdQuery->exec();
     if (ok) {
         engineData.clear();
-        int timestampIdx = d->selectByAircraftIdQuery->record().indexOf("timestamp");
-        int throttleLeverPosition1Idx = d->selectByAircraftIdQuery->record().indexOf("throttle_lever_position1");
-        int throttleLeverPosition2Idx = d->selectByAircraftIdQuery->record().indexOf("throttle_lever_position2");
-        int throttleLeverPosition3Idx = d->selectByAircraftIdQuery->record().indexOf("throttle_lever_position3");
-        int throttleLeverPosition4Idx = d->selectByAircraftIdQuery->record().indexOf("throttle_lever_position4");
-        int propellerLeverPosition1Idx = d->selectByAircraftIdQuery->record().indexOf("propeller_lever_position1");
-        int propellerLeverPosition2Idx = d->selectByAircraftIdQuery->record().indexOf("propeller_lever_position2");
-        int propellerLeverPosition3Idx = d->selectByAircraftIdQuery->record().indexOf("propeller_lever_position3");
-        int propellerLeverPosition4Idx = d->selectByAircraftIdQuery->record().indexOf("propeller_lever_position4");
-        int mixtureLeverPosition1Idx = d->selectByAircraftIdQuery->record().indexOf("mixture_lever_position1");
-        int mixtureLeverPosition2Idx = d->selectByAircraftIdQuery->record().indexOf("mixture_lever_position2");
-        int mixtureLeverPosition3Idx = d->selectByAircraftIdQuery->record().indexOf("mixture_lever_position3");
-        int mixtureLeverPosition4Idx = d->selectByAircraftIdQuery->record().indexOf("mixture_lever_position4");
-        int cowlFlapPosition1Idx = d->selectByAircraftIdQuery->record().indexOf("cowl_flap_position1");
-        int cowlFlapPosition2Idx = d->selectByAircraftIdQuery->record().indexOf("cowl_flap_position2");
-        int cowlFlapPosition3Idx = d->selectByAircraftIdQuery->record().indexOf("cowl_flap_position3");
-        int cowlFlapPosition4Idx = d->selectByAircraftIdQuery->record().indexOf("cowl_flap_position4");
-        int electricalMasterBattery1Idx = d->selectByAircraftIdQuery->record().indexOf("electrical_master_battery1");
-        int electricalMasterBattery2Idx = d->selectByAircraftIdQuery->record().indexOf("electrical_master_battery2");
-        int electricalMasterBattery3Idx = d->selectByAircraftIdQuery->record().indexOf("electrical_master_battery3");
-        int electricalMasterBattery4Idx = d->selectByAircraftIdQuery->record().indexOf("electrical_master_battery4");
-        int generalEngineStarter1Idx = d->selectByAircraftIdQuery->record().indexOf("general_engine_starter1");
-        int generalEngineStarter2Idx = d->selectByAircraftIdQuery->record().indexOf("general_engine_starter2");
-        int generalEngineStarter3Idx = d->selectByAircraftIdQuery->record().indexOf("general_engine_starter3");
-        int generalEngineStarter4Idx = d->selectByAircraftIdQuery->record().indexOf("general_engine_starter4");
+        const int timestampIdx = d->selectByAircraftIdQuery->record().indexOf("timestamp");
+        const int throttleLeverPosition1Idx = d->selectByAircraftIdQuery->record().indexOf("throttle_lever_position1");
+        const int throttleLeverPosition2Idx = d->selectByAircraftIdQuery->record().indexOf("throttle_lever_position2");
+        const int throttleLeverPosition3Idx = d->selectByAircraftIdQuery->record().indexOf("throttle_lever_position3");
+        const int throttleLeverPosition4Idx = d->selectByAircraftIdQuery->record().indexOf("throttle_lever_position4");
+        const int propellerLeverPosition1Idx = d->selectByAircraftIdQuery->record().indexOf("propeller_lever_position1");
+        const int propellerLeverPosition2Idx = d->selectByAircraftIdQuery->record().indexOf("propeller_lever_position2");
+        const int propellerLeverPosition3Idx = d->selectByAircraftIdQuery->record().indexOf("propeller_lever_position3");
+        const int propellerLeverPosition4Idx = d->selectByAircraftIdQuery->record().indexOf("propeller_lever_position4");
+        const int mixtureLeverPosition1Idx = d->selectByAircraftIdQuery->record().indexOf("mixture_lever_position1");
+        const int mixtureLeverPosition2Idx = d->selectByAircraftIdQuery->record().indexOf("mixture_lever_position2");
+        const int mixtureLeverPosition3Idx = d->selectByAircraftIdQuery->record().indexOf("mixture_lever_position3");
+        const int mixtureLeverPosition4Idx = d->selectByAircraftIdQuery->record().indexOf("mixture_lever_position4");
+        const int cowlFlapPosition1Idx = d->selectByAircraftIdQuery->record().indexOf("cowl_flap_position1");
+        const int cowlFlapPosition2Idx = d->selectByAircraftIdQuery->record().indexOf("cowl_flap_position2");
+        const int cowlFlapPosition3Idx = d->selectByAircraftIdQuery->record().indexOf("cowl_flap_position3");
+        const int cowlFlapPosition4Idx = d->selectByAircraftIdQuery->record().indexOf("cowl_flap_position4");
+        const int electricalMasterBattery1Idx = d->selectByAircraftIdQuery->record().indexOf("electrical_master_battery1");
+        const int electricalMasterBattery2Idx = d->selectByAircraftIdQuery->record().indexOf("electrical_master_battery2");
+        const int electricalMasterBattery3Idx = d->selectByAircraftIdQuery->record().indexOf("electrical_master_battery3");
+        const int electricalMasterBattery4Idx = d->selectByAircraftIdQuery->record().indexOf("electrical_master_battery4");
+        const int generalEngineStarter1Idx = d->selectByAircraftIdQuery->record().indexOf("general_engine_starter1");
+        const int generalEngineStarter2Idx = d->selectByAircraftIdQuery->record().indexOf("general_engine_starter2");
+        const int generalEngineStarter3Idx = d->selectByAircraftIdQuery->record().indexOf("general_engine_starter3");
+        const int generalEngineStarter4Idx = d->selectByAircraftIdQuery->record().indexOf("general_engine_starter4");
 
         while (d->selectByAircraftIdQuery->next()) {
 

@@ -273,20 +273,20 @@ bool SQLiteAircraftDao::getByFlightId(qint64 flightId, int sequenceNumber, Aircr
     bool ok = d->selectByFlightIdQuery->exec();
     if (ok) {
         aircraft.clear();
-        int idIdx = d->selectByFlightIdQuery->record().indexOf("id");
-        int startDateIdx = d->selectByFlightIdQuery->record().indexOf("start_date");
-        int endDateIdx = d->selectByFlightIdQuery->record().indexOf("end_date");
-        int typeIdx = d->selectByFlightIdQuery->record().indexOf("type");
-        int tailNumberIdx = d->selectByFlightIdQuery->record().indexOf("tail_number");
-        int airlineIdx = d->selectByFlightIdQuery->record().indexOf("airline");
-        int flightNumberIdx = d->selectByFlightIdQuery->record().indexOf("flight_number");
-        int categoryIdx = d->selectByFlightIdQuery->record().indexOf("category");
-        int initialAirspeedIdx = d->selectByFlightIdQuery->record().indexOf("initial_airspeed");
-        int wingSpanIdx = d->selectByFlightIdQuery->record().indexOf("wing_span");
-        int engineTypeIdx = d->selectByFlightIdQuery->record().indexOf("engine_type");
-        int nofEnginesIdx = d->selectByFlightIdQuery->record().indexOf("nof_engines");
-        int airCraftAltitudeAboveGroundIdx = d->selectByFlightIdQuery->record().indexOf("altitude_above_ground");
-        int startOnGroundIdx = d->selectByFlightIdQuery->record().indexOf("start_on_ground");
+        const int idIdx = d->selectByFlightIdQuery->record().indexOf("id");
+        const int startDateIdx = d->selectByFlightIdQuery->record().indexOf("start_date");
+        const int endDateIdx = d->selectByFlightIdQuery->record().indexOf("end_date");
+        const int typeIdx = d->selectByFlightIdQuery->record().indexOf("type");
+        const int tailNumberIdx = d->selectByFlightIdQuery->record().indexOf("tail_number");
+        const int airlineIdx = d->selectByFlightIdQuery->record().indexOf("airline");
+        const int flightNumberIdx = d->selectByFlightIdQuery->record().indexOf("flight_number");
+        const int categoryIdx = d->selectByFlightIdQuery->record().indexOf("category");
+        const int initialAirspeedIdx = d->selectByFlightIdQuery->record().indexOf("initial_airspeed");
+        const int wingSpanIdx = d->selectByFlightIdQuery->record().indexOf("wing_span");
+        const int engineTypeIdx = d->selectByFlightIdQuery->record().indexOf("engine_type");
+        const int nofEnginesIdx = d->selectByFlightIdQuery->record().indexOf("nof_engines");
+        const int airCraftAltitudeAboveGroundIdx = d->selectByFlightIdQuery->record().indexOf("altitude_above_ground");
+        const int startOnGroundIdx = d->selectByFlightIdQuery->record().indexOf("start_on_ground");
         if (d->selectByFlightIdQuery->next()) {
             aircraft.setId(d->selectByFlightIdQuery->value(idIdx).toLongLong());
 

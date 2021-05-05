@@ -78,7 +78,7 @@ bool SqlMigrationStep::isValid() const noexcept
 bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) noexcept
 {
     bool ok;
-    QString tag = tagMatch.captured(1);
+    const QString tag = tagMatch.captured(1);
 
     // Match the tag's content, e.g. id = 42, descn = "The description", step = 1
     // https://regex101.com/
