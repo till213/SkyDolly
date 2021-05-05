@@ -30,6 +30,7 @@
 #include <QMainWindow>
 
 class QEvent;
+class QResizeEvent;
 
 #include "../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../SkyConnect/src/Connect.h"
@@ -57,6 +58,7 @@ public:
 
 protected:
     bool event(QEvent *event) override;
+    void resizeEvent(QResizeEvent *event);
 
 private:
     Q_DISABLE_COPY(MainWindow)
