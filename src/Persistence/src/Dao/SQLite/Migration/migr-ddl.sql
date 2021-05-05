@@ -157,6 +157,8 @@ create table flight_plan (
     latitude real,
     longitude real,
     altitude real,
+    local_sim_time datetime,
+    zulu_sim_time datetime
     primary key(aircraft_id, seq_nr),
     foreign key(aircraft_id) references aircraft(id)
 );

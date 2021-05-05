@@ -28,6 +28,8 @@
 #include <windows.h>
 #include <strsafe.h>
 
+#include <QDateTime>
+
 #include <SimConnect.h>
 
 #include "../../Model/src/FlightPlanData.h"
@@ -50,6 +52,16 @@ struct SimConnectFlightPlan
     float gpsWpPrevLon;
     float gpsWpPrevAlt;
 
+    // Simulation time
+    qint32 localTime;
+    qint32 localYear;
+    qint32 localMonth;
+    qint32 localDay;
+    qint32 zuluTime;
+    qint32 zuluYear;
+    qint32 zuluMonth;
+    qint32 zuluDay;
+
     inline FlightPlanData toNextFlightPlanData() const noexcept
     {
         FlightPlanData flightPlanData;
@@ -58,9 +70,10 @@ struct SimConnectFlightPlan
         if (SUCCEEDED(StringCbLengthA(&gpsWpNextId[0], sizeof(gpsWpNextId), nullptr))) {
             flightPlanData.waypointIdentifier = QString(gpsWpNextId);
         }
-        flightPlanData.waypointLatitude = gpsWpNextLat;
-        flightPlanData.waypointLongitude = gpsWpNextLon;
-        flightPlanData.waypointAltitude = gpsWpNextAlt;
+        flightPlanData.latitude = gpsWpNextLat;
+        flightPlanData.longitude = gpsWpNextLon;
+        flightPlanData.altitude = gpsWpNextAlt;
+
         return flightPlanData;
     }
 
@@ -72,9 +85,20 @@ struct SimConnectFlightPlan
         if (SUCCEEDED(StringCbLengthA(&gpsWpPrevId[0], sizeof(gpsWpPrevId), nullptr))) {
             flightPlanData.waypointIdentifier = QString(gpsWpPrevId);
         }
-        flightPlanData.waypointLatitude = gpsWpPrevLat;
-        flightPlanData.waypointLongitude = gpsWpPrevLon;
-        flightPlanData.waypointAltitude = gpsWpPrevAlt;
+        flightPlanData.latitude = gpsWpPrevLat;
+        flightPlanData.longitude = gpsWpPrevLon;
+        flightPlanData.altitude = gpsWpPrevAlt;
+
+        QTime time = QTime(0, 0).addSecs(localTime);
+        flightPlanData.localTime.setTime(time);
+        QDate date = QDate(localYear, localMonth, localDay);
+        flightPlanData.localTime.setDate(date);
+
+        time = QTime(0, 0).addSecs(zuluTime);
+        flightPlanData.zuluTime.setTime(time);
+        date = QDate(zuluYear, zuluMonth, zuluDay);
+        flightPlanData.zuluTime.setDate(date);
+
         return flightPlanData;
     }
 

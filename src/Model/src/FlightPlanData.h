@@ -27,6 +27,7 @@
 
 #include <QtGlobal>
 #include <QString>
+#include <QDateTime>
 
 #include "SimType.h"
 #include "TimeVariableData.h"
@@ -35,9 +36,11 @@
 struct MODEL_API FlightPlanData
 {
     QString waypointIdentifier;
-    float waypointLatitude;
-    float waypointLongitude;
-    float waypointAltitude;
+    float latitude;
+    float longitude;
+    float altitude;
+    QDateTime localTime;
+    QDateTime zuluTime;
 
     FlightPlanData() noexcept;
     FlightPlanData(FlightPlanData &&) = default;
