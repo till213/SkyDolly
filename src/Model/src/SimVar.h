@@ -33,101 +33,100 @@
 namespace SimVar
 {
     // Simulation variables (SimConnect)
-    MODEL_API extern const char *Latitude;
-    MODEL_API extern const char *Longitude;
-    MODEL_API extern const char *Altitude;
-    MODEL_API extern const char *Pitch;
-    MODEL_API extern const char *Bank;
-    MODEL_API extern const char *Heading;
+    inline constexpr char Latitude[] = "Plane Latitude";
+    inline constexpr char Longitude[] = "Plane Longitude";
+    inline constexpr char Altitude[] = "Plane Altitude";
+    inline constexpr char Pitch[] = "Plane Pitch Degrees";
+    inline constexpr char Bank[] = "Plane Bank Degrees";
+    inline constexpr char Heading[] = "Plane Heading Degrees True";
 
-    MODEL_API extern const char *VelocityBodyX;
-    MODEL_API extern const char *VelocityBodyY;
-    MODEL_API extern const char *VelocityBodyZ;
-    MODEL_API extern const char *RotationVelocityBodyX;
-    MODEL_API extern const char *RotationVelocityBodyY;
-    MODEL_API extern const char *RotationVelocityBodyZ;
+    inline constexpr char VelocityBodyX[] = "Velocity Body X";
+    inline constexpr char VelocityBodyY[] = "Velocity Body Y";
+    inline constexpr char VelocityBodyZ[] = "Velocity Body Z";
+    inline constexpr char RotationVelocityBodyX[] = "Rotation Velocity Body X";
+    inline constexpr char RotationVelocityBodyY[] = "Rotation Velocity Body Y";
+    inline constexpr char RotationVelocityBodyZ[] = "Rotation Velocity Body Z";
 
-    MODEL_API extern const char *RudderPosition;
-    MODEL_API extern const char *ElevatorPosition;
-    MODEL_API extern const char *AileronPosition;
+    inline constexpr char RudderPosition[] = "Rudder Position";
+    inline constexpr char ElevatorPosition[] = "Elevator Position";
+    inline constexpr char AileronPosition[] = "Aileron Position";
 
-    MODEL_API extern const char *ThrottleLeverPosition1;
-    MODEL_API extern const char *ThrottleLeverPosition2;
-    MODEL_API extern const char *ThrottleLeverPosition3;
-    MODEL_API extern const char *ThrottleLeverPosition4;
-    MODEL_API extern const char *PropellerLeverPosition1;
-    MODEL_API extern const char *PropellerLeverPosition2;
-    MODEL_API extern const char *PropellerLeverPosition3;
-    MODEL_API extern const char *PropellerLeverPosition4;
-    MODEL_API extern const char *MixtureLeverPosition1;
-    MODEL_API extern const char *MixtureLeverPosition2;
-    MODEL_API extern const char *MixtureLeverPosition3;
-    MODEL_API extern const char *MixtureLeverPosition4;
-    MODEL_API extern const char *RecipEngineCowlFlapPosition1;
-    MODEL_API extern const char *RecipEngineCowlFlapPosition2;
-    MODEL_API extern const char *RecipEngineCowlFlapPosition3;
-    MODEL_API extern const char *RecipEngineCowlFlapPosition4;
-    MODEL_API extern const char *ElectricalMasterBattery1;
-    MODEL_API extern const char *ElectricalMasterBattery2;
-    MODEL_API extern const char *ElectricalMasterBattery3;
-    MODEL_API extern const char *ElectricalMasterBattery4;
-    MODEL_API extern const char *GeneralEngineStarter1;
-    MODEL_API extern const char *GeneralEngineStarter2;
-    MODEL_API extern const char *GeneralEngineStarter3;
-    MODEL_API extern const char *GeneralEngineStarter4;
+    inline constexpr char ThrottleLeverPosition1[] = "General Eng Throttle Lever Position:1";
+    inline constexpr char ThrottleLeverPosition2[] = "General Eng Throttle Lever Position:2";
+    inline constexpr char ThrottleLeverPosition3[] = "General Eng Throttle Lever Position:3";
+    inline constexpr char ThrottleLeverPosition4[] = "General Eng Throttle Lever Position:4";
+    inline constexpr char PropellerLeverPosition1[] = "General Eng Propeller Lever Position:1";
+    inline constexpr char PropellerLeverPosition2[] = "General Eng Propeller Lever Position:2";
+    inline constexpr char PropellerLeverPosition3[] = "General Eng Propeller Lever Position:3";
+    inline constexpr char PropellerLeverPosition4[] = "General Eng Propeller Lever Position:4";
+    inline constexpr char MixtureLeverPosition1[] = "General Eng Mixture Lever Position:1";
+    inline constexpr char MixtureLeverPosition2[] = "General Eng Mixture Lever Position:2";
+    inline constexpr char MixtureLeverPosition3[] = "General Eng Mixture Lever Position:3";
+    inline constexpr char MixtureLeverPosition4[] = "General Eng Mixture Lever Position:4";
+    inline constexpr char RecipEngineCowlFlapPosition1[] = "Recip Eng Cowl Flap Position:1";
+    inline constexpr char RecipEngineCowlFlapPosition2[] = "Recip Eng Cowl Flap Position:2";
+    inline constexpr char RecipEngineCowlFlapPosition3[] = "Recip Eng Cowl Flap Position:3";
+    inline constexpr char RecipEngineCowlFlapPosition4[] = "Recip Eng Cowl Flap Position:4";
+    inline constexpr char ElectricalMasterBattery1[] = "Electrical Master Battery:1";
+    inline constexpr char ElectricalMasterBattery2[] = "Electrical Master Battery:2";
+    inline constexpr char ElectricalMasterBattery3[] = "Electrical Master Battery:3";
+    inline constexpr char ElectricalMasterBattery4[] = "Electrical Master Battery:4";
+    inline constexpr char GeneralEngineStarter1[] = "General Eng Starter:1";
+    inline constexpr char GeneralEngineStarter2[] = "General Eng Starter:2";
+    inline constexpr char GeneralEngineStarter3[] = "General Eng Starter:3";
+    inline constexpr char GeneralEngineStarter4[] = "General Eng Starter:4";
 
-    MODEL_API extern const char *LeadingEdgeFlapsLeftPercent;
-    MODEL_API extern const char *LeadingEdgeFlapsRightPercent;
-    MODEL_API extern const char *TrailingEdgeFlapsLeftPercent;
-    MODEL_API extern const char *TrailingEdgeFlapsRightPercent;
-    MODEL_API extern const char *SpoilersHandlePosition;
-    MODEL_API extern const char *FlapsHandleIndex;
+    inline constexpr char LeadingEdgeFlapsLeftPercent[] = "Leading Edge Flaps Left Percent";
+    inline constexpr char LeadingEdgeFlapsRightPercent[] = "Leading Edge Flaps Right Percent";
+    inline constexpr char TrailingEdgeFlapsLeftPercent[] = "Trailing Edge Flaps Left Percent";
+    inline constexpr char TrailingEdgeFlapsRightPercent[] = "Trailing Edge Flaps Right Percent";
+    inline constexpr char SpoilersHandlePosition[] = "Spoilers Handle Position";
+    inline constexpr char FlapsHandleIndex[] = "Flaps Handle Index";
 
-    MODEL_API extern const char *BrakeLeftPosition;
-    MODEL_API extern const char *BrakeRightPosition;
-    MODEL_API extern const char *WaterRudderHandlePosition;
-    MODEL_API extern const char *TailhookPosition;
-    MODEL_API extern const char *CanopyOpen;
-    MODEL_API extern const char *GearHandlePosition;
-    MODEL_API extern const char *FoldingWingHandlePosition;
+    inline constexpr char BrakeLeftPosition[] = "Brake Left Position";
+    inline constexpr char BrakeRightPosition[] = "Brake Right Position";
+    inline constexpr char WaterRudderHandlePosition[] = "Water Rudder Handle Position";
+    inline constexpr char TailhookPosition[] = "Tailhook Position";
+    inline constexpr char CanopyOpen[] = "Canopy Open";
+    inline constexpr char GearHandlePosition[] = "Gear Handle Position";
+    inline constexpr char FoldingWingHandlePosition[] = "Folding Wing Handle Position";
 
-    MODEL_API extern const char *LightStates;
+    inline constexpr char LightStates[] = "Light States";
 
-    // Information simulation variables (SimConnect)
-    MODEL_API extern const char *Title;
-    MODEL_API extern const char *ATCId;
-    MODEL_API extern const char *ATCAirline;
-    MODEL_API extern const char *ATCFlightNumber;
-    MODEL_API extern const char *Category;
+    inline constexpr char Title[] = "Title";
+    inline constexpr char ATCId[] = "ATC Id";
+    inline constexpr char ATCAirline[] = "ATC Airline";
+    inline constexpr char ATCFlightNumber[] = "ATC Flight Number";
+    inline constexpr char Category[] = "Category";
 
-    MODEL_API extern const char *SimOnGround;
-    MODEL_API extern const char *PlaneAltAboveGround;
-    MODEL_API extern const char *AirspeedTrue;
-    MODEL_API extern const char *SurfaceType;
-    MODEL_API extern const char *WingSpan;
-    MODEL_API extern const char *NumberOfEngines;
-    MODEL_API extern const char *EngineType;
+    inline constexpr char SimOnGround[] = "Sim On Ground";
+    inline constexpr char PlaneAltAboveGround[] = "Plane Alt Above Ground";
+    inline constexpr char AirspeedTrue[] = "Airspeed True";
+    inline constexpr char SurfaceType[] = "Surface Type";
+    inline constexpr char WingSpan[] = "Wing Span";
+    inline constexpr char NumberOfEngines[] = "Number Of Engines";
+    inline constexpr char EngineType[] = "Engine Type";
 
-    MODEL_API extern const char *GroundAltitude;
-    MODEL_API extern const char *AmbientTemperature;
-    MODEL_API extern const char *TotalAirTemperature;
-    MODEL_API extern const char *AmbientWindVelocity;
-    MODEL_API extern const char *AmbientWindDirection;
-    MODEL_API extern const char *AmbientPrecipState;
-    MODEL_API extern const char *AmbientInCloud;
-    MODEL_API extern const char *AmbientVisibility;
-    MODEL_API extern const char *SeaLevelPressure;
-    MODEL_API extern const char *PitotIcePct;
-    MODEL_API extern const char *StructuralIcePct;
+    inline constexpr char GroundAltitude[] = "Ground Altitude";
+    inline constexpr char AmbientTemperature[] = "Ambient Temperature";
+    inline constexpr char TotalAirTemperature[] = "Total Air Temperature";
+    inline constexpr char AmbientWindVelocity[] = "Ambient Wind Velocity";
+    inline constexpr char AmbientWindDirection[] = "Ambient Wind Direction";
+    inline constexpr char AmbientPrecipState[] = "Ambient Precip State";
+    inline constexpr char AmbientInCloud[] = "Ambient In Cloud";
+    inline constexpr char AmbientVisibility[] = "Ambient Visibility";
+    inline constexpr char SeaLevelPressure[] = "Sea Level Pressure";
+    inline constexpr char PitotIcePct[] = "Pitot Ice Pct";
+    inline constexpr char StructuralIcePct[] = "Structural Ice Pct";
 
-    MODEL_API extern const char *GpsWPNextId;
-    MODEL_API extern const char *GpsWPNextLat;
-    MODEL_API extern const char *GpsWPNextLon;
-    MODEL_API extern const char *GpsWPNextAlt;
-    MODEL_API extern const char *GpsWPPrevId;
-    MODEL_API extern const char *GpsWPPrevLat;
-    MODEL_API extern const char *GpsWPPrevLon;
-    MODEL_API extern const char *GpsWPPrevAlt;
+    inline constexpr char GpsWPNextId[] = "GPS WP Next Id";
+    inline constexpr char GpsWPNextLat[] = "GPS WP Next Lat";
+    inline constexpr char GpsWPNextLon[] = "GPS WP Next Lon";
+    inline constexpr char GpsWPNextAlt[] = "GPS WP Next Alt";
+    inline constexpr char GpsWPPrevId[] = "GPS WP Prev Id";
+    inline constexpr char GpsWPPrevLat[] = "GPS WP Prev Lat";
+    inline constexpr char GpsWPPrevLon[] = "GPS WP Prev Lon";
+    inline constexpr char GpsWPPrevAlt[] = "GPS WP Prev Alt";
 
     inline constexpr char LocalTime[] = "Local Time";
     inline constexpr char LocalYear[] = "Local Year";
@@ -139,7 +138,7 @@ namespace SimVar
     inline constexpr char ZuluMonthOfYear[] = "Zulu Month of Year";
     inline constexpr char ZuluDayOfMonth[] = "Zulu Day of Month";
 
-    MODEL_API extern const char *Timestamp;
+    inline constexpr char Timestamp[] = "Timestamp";
 }
 
 #endif // SIMVAR_H
