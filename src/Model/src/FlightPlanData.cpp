@@ -27,8 +27,8 @@
 // PUBLIC
 
 FlightPlanData::FlightPlanData() noexcept
-    : waypointLatitude(0.0f),
-      waypointLongitude(0.0f),
-      waypointAltitude(0.0f)
+    : latitude(0.0f),
+      longitude(0.0f),
+      altitude(0.0f)
 {
 }

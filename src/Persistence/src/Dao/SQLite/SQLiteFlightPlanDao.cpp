@@ -30,6 +30,8 @@
 #include <QVariant>
 #include <QSqlError>
 #include <QSqlRecord>
+#include <QDateTime>
+#include <QTimeZone>
 
 #include "../../../../Model/src/FlightPlanData.h"
 #include "../../ConnectionManager.h"
@@ -56,14 +58,18 @@ public:
 "  ident,"
 "  latitude,"
 "  longitude,"
-"  altitude"
+"  altitude,"
+"  local_sim_time,"
+"  zulu_sim_time"
 ") values ("
 " :aircraft_id,"
 " :seq_nr,"
 " :ident,"
 " :latitude,"
 " :longitude,"
-" :altitude"
+" :altitude,"
+" :local_sim_time,"
+" :zulu_sim_time"
 ");");
         }
         if (selectByAircraftIdQuery == nullptr) {
@@ -115,9 +121,12 @@ bool SQLiteFlightPlanDao::add(qint64 aircraftId, const QVector<FlightPlanData> &
     for (const FlightPlanData &data : flightPlanData) {
         d->insertQuery->bindValue(":seq_nr", sequenceNumber);
         d->insertQuery->bindValue(":ident", data.waypointIdentifier);
-        d->insertQuery->bindValue(":latitude", data.waypointLatitude);
-        d->insertQuery->bindValue(":longitude", data.waypointLongitude);
-        d->insertQuery->bindValue(":altitude", data.waypointAltitude);
+        d->insertQuery->bindValue(":latitude", data.latitude);
+        d->insertQuery->bindValue(":longitude", data.longitude);
+        d->insertQuery->bindValue(":altitude", data.altitude);
+        d->insertQuery->bindValue(":local_sim_time", data.localTime.toUTC());
+        // Zulu time equals to UTC time
+        d->insertQuery->bindValue(":zulu_sim_time", data.zuluTime);
 
         ok = d->insertQuery->exec();
         if (!ok) {
@@ -142,13 +151,19 @@ bool SQLiteFlightPlanDao::getByAircraftId(qint64 aircraftId, QVector<FlightPlanD
         int latitudeIdx = d->selectByAircraftIdQuery->record().indexOf("latitude");
         int longitudeIdx = d->selectByAircraftIdQuery->record().indexOf("longitude");
         int altitudeIdx = d->selectByAircraftIdQuery->record().indexOf("altitude");
+        int localSimulationTimeIdx = d->selectByAircraftIdQuery->record().indexOf("local_sim_time");
+        int zuluSimulationTimeIdx = d->selectByAircraftIdQuery->record().indexOf("zulu_sim_time");
         while (d->selectByAircraftIdQuery->next()) {
-
             FlightPlanData data;
             data.waypointIdentifier = d->selectByAircraftIdQuery->value(identifierIdx).toString();
-            data.waypointLatitude = d->selectByAircraftIdQuery->value(latitudeIdx).toFloat();
-            data.waypointLongitude = d->selectByAircraftIdQuery->value(longitudeIdx).toFloat();
-            data.waypointAltitude = d->selectByAircraftIdQuery->value(altitudeIdx).toFloat();
+            data.latitude = d->selectByAircraftIdQuery->value(latitudeIdx).toFloat();
+            data.longitude = d->selectByAircraftIdQuery->value(longitudeIdx).toFloat();
+            data.altitude = d->selectByAircraftIdQuery->value(altitudeIdx).toFloat();
+            QDateTime date = d->selectByAircraftIdQuery->value(localSimulationTimeIdx).toDateTime();
+            date.setTimeZone(QTimeZone::utc());
+            data.localTime = date.toLocalTime();
+            // UTC equals zulu time, so no conversion necessary
+            data.zuluTime = d->selectByAircraftIdQuery->value(zuluSimulationTimeIdx).toDateTime();
             flightPlanData.append(data);
         }
 #ifdef DEBUG
