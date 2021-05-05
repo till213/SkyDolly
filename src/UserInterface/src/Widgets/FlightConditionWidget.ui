@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>598</width>
-    <height>254</height>
+    <width>665</width>
+    <height>271</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -280,6 +280,12 @@
         </item>
         <item row="4" column="1">
          <widget class="QLineEdit" name="startLocalSimulationTimeLineEdit">
+          <property name="minimumSize">
+           <size>
+            <width>160</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="readOnly">
            <bool>true</bool>
           </property>
@@ -287,6 +293,12 @@
         </item>
         <item row="5" column="1">
          <widget class="QLineEdit" name="endLocalSimulationTimeLineEdit">
+          <property name="minimumSize">
+           <size>
+            <width>160</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="readOnly">
            <bool>true</bool>
           </property>
