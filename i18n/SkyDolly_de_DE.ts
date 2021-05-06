@@ -635,365 +635,370 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="344"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="372"/>
         <source>Custom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="158"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="148"/>
         <source>Module</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="186"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="176"/>
         <source>&amp;File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="203"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="193"/>
         <source>&amp;Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="212"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="202"/>
         <source>&amp;Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="223"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="213"/>
         <source>&amp;Replay</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="227"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="217"/>
         <source>Slow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="232"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="222"/>
         <source>Fast</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="255"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="245"/>
         <source>&amp;Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="258"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="248"/>
         <source>Ctrl+Q</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="263"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="253"/>
         <source>About &amp;Qt...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="268"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="258"/>
         <source>&amp;About...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="276"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="266"/>
         <source>Simulation &amp;Variables...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="279"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="269"/>
         <source>V</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="292"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="282"/>
         <source>&amp;Record</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="295"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="285"/>
         <source>R</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="308"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="298"/>
         <source>&amp;Play</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="311"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="301"/>
         <source>Space</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="324"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="314"/>
         <source>P&amp;ause</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="327"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="317"/>
         <source>P</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="332"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="322"/>
         <source>S&amp;ettings...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="341"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="331"/>
         <source>B&amp;egin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="344"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="334"/>
         <source>PgUp</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="354"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="344"/>
         <source>Re&amp;wind</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="357"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="347"/>
         <source>Left</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="366"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="356"/>
         <source>&amp;Fast Forward</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="369"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="359"/>
         <source>Right</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="378"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="368"/>
         <source>E&amp;nd</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="381"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="371"/>
         <source>PgDown</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="386"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="376"/>
         <source>Export CSV...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="391"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="381"/>
         <source>Import CSV...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="399"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="389"/>
         <source>Stay On &amp;Top</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="408"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="398"/>
         <source>&amp;Stop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="411"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="401"/>
         <source>Esc</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="419"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="409"/>
         <source>&amp;Statistics...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="422"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="412"/>
         <source>S</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="430"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="420"/>
         <source>&amp;Flight...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="433"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="423"/>
         <source>F</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="438"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="428"/>
         <source>O&amp;pen Flight...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="441"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="431"/>
         <source>Ctrl+Shift+O</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="446"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="436"/>
         <source>&amp;New Library...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="449"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="439"/>
         <source>Ctrl+N</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="454"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="444"/>
         <source>&amp;Open Library...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="457"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="447"/>
         <source>Ctrl+O</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="462"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="452"/>
         <source>&amp;Library...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="467"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="457"/>
         <source>Optimise Library</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="472"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="462"/>
         <source>Backup Library</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="480"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="470"/>
         <source>&amp;Minimal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="483"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="473"/>
         <source>M</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="432"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="352"/>
+        <source>Normal (100 %)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="454"/>
         <source>Custom replay factor in [%L1, %L2]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="441"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="463"/>
         <source>Library</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="650"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="672"/>
         <source>Record [@%1 Hz]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="652"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="674"/>
         <source>Record [auto sample rate]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="657"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="679"/>
         <source>Fast forward [%1 sec]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="658"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="680"/>
         <source>Rewind [%1 sec]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="661"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="683"/>
         <source>Fast forward [%1 %]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="662"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="684"/>
         <source>Rewind [%1 %]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="672"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="694"/>
         <source>New library</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="678"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="699"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="708"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="716"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="700"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="721"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="730"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="738"/>
         <source>Database error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="678"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="700"/>
         <source>The library %1 could not be created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="682"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="704"/>
         <source>Database exists</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="682"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="704"/>
         <source>The library %1 already exists. Please choose another path.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="694"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="716"/>
         <source>Open library</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="699"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="721"/>
         <source>The library %1 could not be opened.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="708"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="730"/>
         <source>The library backup could not be created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="716"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="738"/>
         <source>The library could not be optimised.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="741"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="763"/>
         <source>Import CSV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="755"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="777"/>
         <source>Import error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="755"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="777"/>
         <source>The CSV file %1 could not be read.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="764"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="786"/>
         <source>Export CSV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="772"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="794"/>
         <source>Export error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="772"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="794"/>
         <source>The CSV file %1 could not be written.</source>
         <translation type="unfinished"></translation>
     </message>

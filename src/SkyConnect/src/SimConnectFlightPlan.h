@@ -56,7 +56,7 @@ struct SimConnectFlightPlan
 
         // Length check
         if (SUCCEEDED(StringCbLengthA(&gpsWpNextId[0], sizeof(gpsWpNextId), nullptr))) {
-            flightPlanData.identifier = QString(gpsWpNextId);
+            waypoint.identifier = QString(gpsWpNextId);
         }
         waypoint.latitude = gpsWpNextLat;
         waypoint.longitude = gpsWpNextLon;
