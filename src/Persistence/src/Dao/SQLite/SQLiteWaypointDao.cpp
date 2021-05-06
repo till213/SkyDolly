@@ -34,9 +34,9 @@
 #include <QTimeZone>
 
 #include "../../../../Model/src/FlightPlan.h"
-#include "../../../../Model/src/FlightPlanData.h"
+#include "../../../../Model/src/Waypoint.h"
 #include "../../ConnectionManager.h"
-#include "SQLiteFlightPlanDao.h"
+#include "SQLiteWaypointDao.h"
 
 class SQLiteFlightPlanDaoPrivate
 {
@@ -53,7 +53,7 @@ public:
         if (insertQuery == nullptr) {
             insertQuery = std::make_unique<QSqlQuery>();
             insertQuery->prepare(
-"insert into flight_plan ("
+"insert into waypoint ("
 "  aircraft_id,"
 "  timestamp,"
 "  ident,"
@@ -77,15 +77,15 @@ public:
             selectByAircraftIdQuery = std::make_unique<QSqlQuery>();
             selectByAircraftIdQuery->prepare(
 "select * "
-"from   flight_plan fp "
-"where  fp.aircraft_id = :aircraft_id "
-"order by fp.timestamp asc;");
+"from   waypoint w "
+"where  w.aircraft_id = :aircraft_id "
+"order by w.timestamp asc;");
         }
         if (deleteByFlightIdQuery == nullptr) {
             deleteByFlightIdQuery = std::make_unique<QSqlQuery>();
             deleteByFlightIdQuery->prepare(
 "delete "
-"from   flight_plan "
+"from   waypoint "
 "where  aircraft_id in (select a.id "
 "                       from aircraft a"
 "                       where a.flight_id = :flight_id"
@@ -103,31 +103,31 @@ public:
 
 // PUBLIC
 
-SQLiteFlightPlanDao::SQLiteFlightPlanDao(QObject *parent) noexcept
+SQLiteWaypointDao::SQLiteWaypointDao(QObject *parent) noexcept
     : QObject(parent),
       d(std::make_unique<SQLiteFlightPlanDaoPrivate>())
 {
     frenchConnection();
 }
 
-SQLiteFlightPlanDao::~SQLiteFlightPlanDao() noexcept
+SQLiteWaypointDao::~SQLiteWaypointDao() noexcept
 {}
 
-bool SQLiteFlightPlanDao::add(qint64 aircraftId, const QVector<FlightPlanData> &flightPlanData)  noexcept
+bool SQLiteWaypointDao::add(qint64 aircraftId, const QVector<Waypoint> &waypoints)  noexcept
 {
     d->initQueries();
     d->insertQuery->bindValue(":aircraft_id", aircraftId);
     bool ok = true;
-    for (const FlightPlanData &data : flightPlanData) {
-        d->insertQuery->bindValue(":timestamp", data.timestamp);
-        d->insertQuery->bindValue(":ident", data.waypointIdentifier);
-        d->insertQuery->bindValue(":latitude", data.latitude);
-        d->insertQuery->bindValue(":longitude", data.longitude);
-        d->insertQuery->bindValue(":altitude", data.altitude);
+    for (const Waypoint &waypoint : waypoints) {
+        d->insertQuery->bindValue(":timestamp", waypoint.timestamp);
+        d->insertQuery->bindValue(":ident", waypoint.identifier);
+        d->insertQuery->bindValue(":latitude", waypoint.latitude);
+        d->insertQuery->bindValue(":longitude", waypoint.longitude);
+        d->insertQuery->bindValue(":altitude", waypoint.altitude);
         // No conversion to UTC
-        d->insertQuery->bindValue(":local_sim_time", data.localTime);
+        d->insertQuery->bindValue(":local_sim_time", waypoint.localTime);
         // Zulu time equals to UTC time
-        d->insertQuery->bindValue(":zulu_sim_time", data.zuluTime);
+        d->insertQuery->bindValue(":zulu_sim_time", waypoint.zuluTime);
 
         ok = d->insertQuery->exec();
         if (!ok) {
@@ -140,7 +140,7 @@ bool SQLiteFlightPlanDao::add(qint64 aircraftId, const QVector<FlightPlanData> &
     return ok;
 }
 
-bool SQLiteFlightPlanDao::getByAircraftId(qint64 aircraftId, FlightPlan &flightPlan) const noexcept
+bool SQLiteWaypointDao::getByAircraftId(qint64 aircraftId, FlightPlan &flightPlan) const noexcept
 {
     d->initQueries();
     d->selectByAircraftIdQuery->bindValue(":aircraft_id", aircraftId);
@@ -154,8 +154,8 @@ bool SQLiteFlightPlanDao::getByAircraftId(qint64 aircraftId, FlightPlan &flightP
         const int localSimulationTimeIdx = d->selectByAircraftIdQuery->record().indexOf("local_sim_time");
         const int zuluSimulationTimeIdx = d->selectByAircraftIdQuery->record().indexOf("zulu_sim_time");
         while (d->selectByAircraftIdQuery->next()) {
-            FlightPlanData data;
-            data.waypointIdentifier = d->selectByAircraftIdQuery->value(identifierIdx).toString();
+            Waypoint data;
+            data.identifier = d->selectByAircraftIdQuery->value(identifierIdx).toString();
             data.latitude = d->selectByAircraftIdQuery->value(latitudeIdx).toFloat();
             data.longitude = d->selectByAircraftIdQuery->value(longitudeIdx).toFloat();
             data.altitude = d->selectByAircraftIdQuery->value(altitudeIdx).toFloat();
@@ -174,7 +174,7 @@ bool SQLiteFlightPlanDao::getByAircraftId(qint64 aircraftId, FlightPlan &flightP
     return ok;
 }
 
-bool SQLiteFlightPlanDao::deleteByFlightId(qint64 flightId) noexcept
+bool SQLiteWaypointDao::deleteByFlightId(qint64 flightId) noexcept
 {
     d->initQueries();
     d->deleteByFlightIdQuery->bindValue(":flight_id", flightId);
@@ -189,15 +189,15 @@ bool SQLiteFlightPlanDao::deleteByFlightId(qint64 flightId) noexcept
 
 // PRIVATE
 
-void SQLiteFlightPlanDao::frenchConnection() noexcept
+void SQLiteWaypointDao::frenchConnection() noexcept
 {
     connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
-            this, &SQLiteFlightPlanDao::handleConnectionChanged);
+            this, &SQLiteWaypointDao::handleConnectionChanged);
 }
 
 // PRIVATE SLOTS
 
-void SQLiteFlightPlanDao::handleConnectionChanged() noexcept
+void SQLiteWaypointDao::handleConnectionChanged() noexcept
 {
     d->resetQueries();
 }

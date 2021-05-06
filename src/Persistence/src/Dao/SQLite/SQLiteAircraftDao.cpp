@@ -47,7 +47,7 @@
 #include "../../../../Model/src/Light.h"
 #include "../../../../Model/src/LightData.h"
 #include "../../../../Model/src/FlightPlan.h"
-#include "../../../../Model/src/FlightPlanData.h"
+#include "../../../../Model/src/Waypoint.h"
 #include "../../Dao/FlightDaoIntf.h"
 #include "../../Dao/AircraftDaoIntf.h"
 #include "../../Dao/PositionDaoIntf.h"
@@ -56,7 +56,7 @@
 #include "../../Dao/SecondaryFlightControlDaoIntf.h"
 #include "../../Dao/HandleDaoIntf.h"
 #include "../../Dao/LightDaoIntf.h"
-#include "../../Dao/FlightPlanDaoIntf.h"
+#include "../../Dao/WaypointDaoIntf.h"
 #include "../../Dao/DaoFactory.h"
 #include "../../ConnectionManager.h"
 #include "SQLiteAircraftDao.h"
@@ -86,7 +86,7 @@ public:
     std::unique_ptr<SecondaryFlightControlDaoIntf> secondaryFlightControlDao;
     std::unique_ptr<HandleDaoIntf> handleDao;
     std::unique_ptr<LightDaoIntf> lightDao;
-    std::unique_ptr<FlightPlanDaoIntf> flightPlanDao;
+    std::unique_ptr<WaypointDaoIntf> flightPlanDao;
 
     void initQueries()
     {

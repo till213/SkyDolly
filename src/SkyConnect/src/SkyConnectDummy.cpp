@@ -47,7 +47,7 @@
 #include "../../Model/src/Light.h"
 #include "../../Model/src/LightData.h"
 #include "../../Model/src/FlightPlan.h"
-#include "../../Model/src/FlightPlanData.h"
+#include "../../Model/src/Waypoint.h"
 #include "../../Model/src/FlightCondition.h"
 #include "../../Model/src/SimType.h"
 #include "AbstractSkyConnect.h"
@@ -112,7 +112,7 @@ void SkyConnectDummy::onStopRecording() noexcept
     FlightPlan &flightPlan = flight.getUserAircraftConst().getFlightPlan();
     int waypointCount = flightPlan.getAllConst().count();
     if (waypointCount > 0) {
-        FlightPlanData waypoint = flightPlan.getAllConst().at(waypointCount - 1);
+        Waypoint waypoint = flightPlan.getAllConst().at(waypointCount - 1);
         waypoint.localTime = QDateTime::currentDateTime();
         waypoint.zuluTime = QDateTime::currentDateTimeUtc();
         flightPlan.update(waypointCount - 1, waypoint);
@@ -216,7 +216,7 @@ void SkyConnectDummy::recordData() noexcept
     recordSecondaryControls(timestamp);
     recordAircraftHandle(timestamp);
     recordLights(timestamp);
-    recordFlightPlanData();
+    recordWaypoint();
 
     if (!isElapsedTimerRunning()) {
         // Start the elapsed timer with the arrival of the first sample data
@@ -341,22 +341,22 @@ void SkyConnectDummy::recordLights(qint64 timestamp) noexcept
     aircraft.getLight().upsert(std::move(lightData));
 }
 
-void SkyConnectDummy::recordFlightPlanData() noexcept
+void SkyConnectDummy::recordWaypoint() noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
-    FlightPlanData flightPlanData;
+    Waypoint waypoint;
     if (d->randomGenerator->bounded(100.0) < 0.5) {
         int i = d->randomGenerator->bounded(SkyConnectDummyPrivate::IcaoList.size());
-        flightPlanData.waypointIdentifier = SkyConnectDummyPrivate::IcaoList.at(i);
-        flightPlanData.latitude = -180.0 + d->randomGenerator->bounded(360.0);
-        flightPlanData.longitude = -90.0 + d->randomGenerator->bounded(180.0);
-        flightPlanData.altitude = d->randomGenerator->bounded(3000.0);
-        flightPlanData.localTime = QDateTime::currentDateTime();
-        flightPlanData.zuluTime = QDateTime::currentDateTimeUtc();
-        flightPlanData.timestamp = getCurrentTimestamp();
+        waypoint.identifier = SkyConnectDummyPrivate::IcaoList.at(i);
+        waypoint.latitude = -180.0 + d->randomGenerator->bounded(360.0);
+        waypoint.longitude = -90.0 + d->randomGenerator->bounded(180.0);
+        waypoint.altitude = d->randomGenerator->bounded(3000.0);
+        waypoint.localTime = QDateTime::currentDateTime();
+        waypoint.zuluTime = QDateTime::currentDateTimeUtc();
+        waypoint.timestamp = getCurrentTimestamp();
 
-        aircraft.getFlightPlan().add(flightPlanData);
+        aircraft.getFlightPlan().add(waypoint);
     }
 }
 

@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The black sheep for your fFlightPlan recordings
+ * Sky Dolly - The black sheep for your flight recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,37 +22,17 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SQLITEFFLIGHTPLANDAO_H
-#define SQLITEFFLIGHTPLANDAO_H
+#include "LightData.h"
+#include "Waypoint.h"
 
-#include <memory>
+// PUBLIC
 
-#include <QObject>
-#include <QVector>
-
-#include "../../../../Model/src/FlightPlanData.h"
-#include "../FlightPlanDaoIntf.h"
-
-class FlightPlan;
-class SQLiteFlightPlanDaoPrivate;
-
-class SQLiteFlightPlanDao : public QObject, public FlightPlanDaoIntf
+Waypoint::Waypoint() noexcept
+    : TimeVariableData(),
+      latitude(0.0f),
+      longitude(0.0f),
+      altitude(0.0f)
 {
-public:
-    explicit SQLiteFlightPlanDao(QObject *parent = nullptr) noexcept;
-    virtual ~SQLiteFlightPlanDao() noexcept;
+}
 
-    virtual bool add(qint64 aircraftId, const QVector<FlightPlanData> &data) noexcept override;
-    virtual bool getByAircraftId(qint64 aircraftId, FlightPlan &flightPlan) const noexcept override;
-    virtual bool deleteByFlightId(qint64 flightId) noexcept override;
-
-private:
-    std::unique_ptr<SQLiteFlightPlanDaoPrivate> d;
-
-    void frenchConnection() noexcept;
-
-private slots:
-    void handleConnectionChanged() noexcept;
-};
-
-#endif // SQLITEFFLIGHTPLANDAO_H
+const Waypoint Waypoint::NullWaypoint = Waypoint();

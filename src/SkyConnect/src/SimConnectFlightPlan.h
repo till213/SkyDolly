@@ -30,7 +30,7 @@
 
 #include <SimConnect.h>
 
-#include "../../Model/src/FlightPlanData.h"
+#include "../../Model/src/Waypoint.h"
 
 /*!
  * Simulation variables which represent aircraft lights, e.g. navigation light
@@ -50,34 +50,34 @@ struct SimConnectFlightPlan
     float gpsWpPrevLon;
     float gpsWpPrevAlt;
 
-    inline FlightPlanData toNextFlightPlanData() const noexcept
+    inline Waypoint toNextFlightPlanData() const noexcept
     {
-        FlightPlanData flightPlanData;
+        Waypoint waypoint;
 
         // Length check
         if (SUCCEEDED(StringCbLengthA(&gpsWpNextId[0], sizeof(gpsWpNextId), nullptr))) {
-            flightPlanData.waypointIdentifier = QString(gpsWpNextId);
+            flightPlanData.identifier = QString(gpsWpNextId);
         }
-        flightPlanData.latitude = gpsWpNextLat;
-        flightPlanData.longitude = gpsWpNextLon;
-        flightPlanData.altitude = gpsWpNextAlt;
+        waypoint.latitude = gpsWpNextLat;
+        waypoint.longitude = gpsWpNextLon;
+        waypoint.altitude = gpsWpNextAlt;
 
-        return flightPlanData;
+        return waypoint;
     }
 
-    inline FlightPlanData toPreviousFlightPlanData() const noexcept
+    inline Waypoint toPreviousFlightPlanData() const noexcept
     {
-        FlightPlanData flightPlanData;
+        Waypoint waypoint;
 
         // Length check
         if (SUCCEEDED(StringCbLengthA(&gpsWpPrevId[0], sizeof(gpsWpPrevId), nullptr))) {
-            flightPlanData.waypointIdentifier = QString(gpsWpPrevId);
+            waypoint.identifier = QString(gpsWpPrevId);
         }
-        flightPlanData.latitude = gpsWpPrevLat;
-        flightPlanData.longitude = gpsWpPrevLon;
-        flightPlanData.altitude = gpsWpPrevAlt;
+        waypoint.latitude = gpsWpPrevLat;
+        waypoint.longitude = gpsWpPrevLon;
+        waypoint.altitude = gpsWpPrevAlt;
 
-        return flightPlanData;
+        return waypoint;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;

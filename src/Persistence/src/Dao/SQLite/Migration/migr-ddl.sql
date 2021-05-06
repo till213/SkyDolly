@@ -151,8 +151,8 @@ create table light (
     foreign key(aircraft_id) references aircraft(id)
 );
 
-@migr(id = "fb2a21ad-5b8d-4be0-ae94-33e63be2ef3a", descn = "Create flight plan table", step_cnt = 1)
-create table flight_plan (
+@migr(id = "fb2a21ad-5b8d-4be0-ae94-33e63be2ef3a", descn = "Create waypoint table", step_cnt = 1)
+create table waypoint (
     aircraft_id integer not null,
     timestamp integer not null,
     ident text,

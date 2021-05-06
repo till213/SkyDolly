@@ -45,8 +45,8 @@ target_sources(Model
         src/LightData.h
         src/AircraftInfo.cpp
         src/AircraftInfo.h
-        src/FlightPlanData.cpp
-        src/FlightPlanData.h
+        src/Waypoint.cpp
+        src/Waypoint.h
         src/FlightPlan.cpp
         src/FlightPlan.h
         src/SimVar.h

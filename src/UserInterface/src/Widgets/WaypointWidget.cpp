@@ -24,7 +24,7 @@
  */
 #include <memory>
 
-#include "../../../Model/src/FlightPlanData.h"
+#include "../../../Model/src/Waypoint.h"
 #include "../../../Model/src/SimVar.h"
 #include "../Unit.h"
 #include "WaypointWidget.h"
@@ -33,19 +33,19 @@
 class WaypointWidgetPrivate
 {
 public:
-    WaypointWidgetPrivate(const FlightPlanData &theFlightPlanData) noexcept
-        : waypoint(theFlightPlanData)
+    WaypointWidgetPrivate(const Waypoint &theWaypoint) noexcept
+        : waypoint(theWaypoint)
     {}
 
-    FlightPlanData waypoint;
+    Waypoint waypoint;
     Unit unit;
 };
 
 // PUBLIC
 
-WaypointWidget::WaypointWidget(const FlightPlanData &flightPlanData, QWidget *parent) noexcept :
+WaypointWidget::WaypointWidget(const Waypoint &waypoint, QWidget *parent) noexcept :
     QWidget(parent),
-    d(std::make_unique<WaypointWidgetPrivate>(flightPlanData)),
+    d(std::make_unique<WaypointWidgetPrivate>(waypoint)),
     ui(std::make_unique<Ui::WaypointWidget>())
 {
     ui->setupUi(this);
@@ -59,7 +59,7 @@ WaypointWidget::~WaypointWidget() noexcept
 #endif
 }
 
-void WaypointWidget::update(const FlightPlanData &waypoint) noexcept
+void WaypointWidget::update(const Waypoint &waypoint) noexcept
 {
     d->waypoint = waypoint;
     updateUi();

@@ -22,16 +22,16 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTPLANDAOINTF_H
-#define FLIGHTPLANDAOINTF_H
+#ifndef WAYPOINTDAOINTF_H
+#define WAYPOINTDAOINTF_H
 
 class FlightPlan;
-class FlightPlanData;
+class Waypoint;
 
-class FlightPlanDaoIntf
+class WaypointDaoIntf
 {
 public:
-    virtual ~FlightPlanDaoIntf() = default;
+    virtual ~WaypointDaoIntf() = default;
 
     /*!
      * Persists the \c data.
@@ -39,12 +39,12 @@ public:
      * \param aircraftId
      *        the aircraft the \c data belongs to
      * \param data
-     *        the FlightPlanData to be persisted
+     *        the Waypoint data to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool add(qint64 aircraftId, const QVector<FlightPlanData> &data) = 0;
+    virtual bool add(qint64 aircraftId, const QVector<Waypoint> &data) = 0;
     virtual bool getByAircraftId(qint64 aircraftId, FlightPlan &flightPlan) const = 0;
     virtual bool deleteByFlightId(qint64 flightId) = 0;
 };
 
-#endif // FLIGHTPLANDAOINTF_H
+#endif // WAYPOINTDAOINTF_H

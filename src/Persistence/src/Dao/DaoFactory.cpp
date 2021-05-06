@@ -33,7 +33,7 @@
 #include "SQLite/SQLiteSecondaryFlightControlDao.h"
 #include "SQLite/SQLiteHandleDao.h"
 #include "SQLite/SQLiteLightDao.h"
-#include "SQLite/SQLiteFlightPlanDao.h"
+#include "SQLite/SQLiteWaypointDao.h"
 #include "FlightDaoIntf.h"
 #include "AircraftDaoIntf.h"
 #include "PositionDaoIntf.h"
@@ -42,7 +42,7 @@
 #include "SecondaryFlightControlDaoIntf.h"
 #include "HandleDaoIntf.h"
 #include "LightDaoIntf.h"
-#include "FlightPlanDaoIntf.h"
+#include "WaypointDaoIntf.h"
 #include "DaoFactory.h"
 
 class DaoFactoryPrivate
@@ -172,11 +172,11 @@ std::unique_ptr<LightDaoIntf> DaoFactory::createLightDao() noexcept
     }
 }
 
-std::unique_ptr<FlightPlanDaoIntf> DaoFactory::createFlightPlanDao() noexcept
+std::unique_ptr<WaypointDaoIntf> DaoFactory::createFlightPlanDao() noexcept
 {
     switch (d->dbType) {
     case DbType::SQLite:
-        return std::make_unique<SQLiteFlightPlanDao>();
+        return std::make_unique<SQLiteWaypointDao>();
         break;
     default:
         return nullptr;
