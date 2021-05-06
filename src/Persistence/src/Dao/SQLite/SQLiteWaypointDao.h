@@ -34,7 +34,7 @@
 #include "../WaypointDaoIntf.h"
 
 class FlightPlan;
-class SQLiteFlightPlanDaoPrivate;
+class SQLiteWaypointDaoPrivate;
 
 class SQLiteWaypointDao : public QObject, public WaypointDaoIntf
 {
@@ -47,7 +47,7 @@ public:
     virtual bool deleteByFlightId(qint64 flightId) noexcept override;
 
 private:
-    std::unique_ptr<SQLiteFlightPlanDaoPrivate> d;
+    std::unique_ptr<SQLiteWaypointDaoPrivate> d;
 
     void frenchConnection() noexcept;
 

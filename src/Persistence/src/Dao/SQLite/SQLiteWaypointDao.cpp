@@ -38,10 +38,10 @@
 #include "../../ConnectionManager.h"
 #include "SQLiteWaypointDao.h"
 
-class SQLiteFlightPlanDaoPrivate
+class SQLiteWaypointDaoPrivate
 {
 public:
-    SQLiteFlightPlanDaoPrivate() noexcept
+    SQLiteWaypointDaoPrivate() noexcept
     {}
 
     std::unique_ptr<QSqlQuery> insertQuery;
@@ -105,7 +105,7 @@ public:
 
 SQLiteWaypointDao::SQLiteWaypointDao(QObject *parent) noexcept
     : QObject(parent),
-      d(std::make_unique<SQLiteFlightPlanDaoPrivate>())
+      d(std::make_unique<SQLiteWaypointDaoPrivate>())
 {
     frenchConnection();
 }
@@ -132,7 +132,7 @@ bool SQLiteWaypointDao::add(qint64 aircraftId, const QVector<Waypoint> &waypoint
         ok = d->insertQuery->exec();
         if (!ok) {
 #ifdef DEBUG
-            qDebug("SQLiteFlightPlanDao::add: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
+            qDebug("SQLiteWaypointDao::add: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
 #endif
             break;
         }
@@ -167,7 +167,7 @@ bool SQLiteWaypointDao::getByAircraftId(qint64 aircraftId, FlightPlan &flightPla
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteFlightPlanDao::getByAircraftId: SQL error: %s", qPrintable(d->selectByAircraftIdQuery->lastError().databaseText() + " - error code: " + d->selectByAircraftIdQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteWaypointDao::getByAircraftId: SQL error: %s", qPrintable(d->selectByAircraftIdQuery->lastError().databaseText() + " - error code: " + d->selectByAircraftIdQuery->lastError().nativeErrorCode()));
 #endif
     }
 
@@ -181,7 +181,7 @@ bool SQLiteWaypointDao::deleteByFlightId(qint64 flightId) noexcept
     bool ok = d->deleteByFlightIdQuery->exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteFlightPlanDao::deleteByFlightId: SQL error: %s", qPrintable(d->deleteByFlightIdQuery->lastError().databaseText() + " - error code: " + d->deleteByFlightIdQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteWaypointDao::deleteByFlightId: SQL error: %s", qPrintable(d->deleteByFlightIdQuery->lastError().databaseText() + " - error code: " + d->deleteByFlightIdQuery->lastError().nativeErrorCode()));
     }
 #endif
     return ok;
