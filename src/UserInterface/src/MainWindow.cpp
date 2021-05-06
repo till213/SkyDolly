@@ -351,7 +351,7 @@ void MainWindow::initReplaySpeedUi() noexcept
 
     QAction *normalSpeedAction = new QAction(tr("Normal (100 %)"), this);
     normalSpeedAction->setCheckable(true);
-    normalSpeedAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_N));
+    normalSpeedAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_1));
     normalSpeedAction->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Normal));
 
     QList<QAction *> fastActions {
@@ -360,13 +360,13 @@ void MainWindow::initReplaySpeedUi() noexcept
         new QAction("8x", this),
         new QAction("16x", this)
     };
-    fastActions.at(0)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_1));
+    fastActions.at(0)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_2));
     fastActions.at(0)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Fast2x));
-    fastActions.at(1)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_2));
+    fastActions.at(1)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_3));
     fastActions.at(1)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Fast4x));
-    fastActions.at(2)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_3));
+    fastActions.at(2)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_4));
     fastActions.at(2)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Fast8x));
-    fastActions.at(3)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_4));
+    fastActions.at(3)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_5));
     fastActions.at(3)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Fast16x));
 
     QAction *customSpeedAction = new QAction(tr("Custom"), this);
