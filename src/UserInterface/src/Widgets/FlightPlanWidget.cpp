@@ -30,7 +30,7 @@
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/FlightPlan.h"
-#include "../../../Model/src/FlightPlanData.h"
+#include "../../../Model/src/Waypoint.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "WaypointWidget.h"
 
@@ -102,20 +102,20 @@ void FlightPlanWidget::updateUi() noexcept
     const FlightPlan &flightPlan = currentFlight.getUserAircraftConst().getFlightPlanConst();
 
     clear();
-    for (const FlightPlanData &waypoint : flightPlan.getAllConst()) {
+    for (const Waypoint &waypoint : flightPlan.getAllConst()) {
         addWaypoint(waypoint);
     }
 }
 
 // PRIVATE SLOTS
 
-void FlightPlanWidget::addWaypoint(const FlightPlanData &waypoint)
+void FlightPlanWidget::addWaypoint(const Waypoint &waypoint)
 {
     WaypointWidget *waypointWidget = new WaypointWidget(waypoint, ui->waypointTabWidget);
-    ui->waypointTabWidget->addTab(waypointWidget, waypoint.waypointIdentifier);
+    ui->waypointTabWidget->addTab(waypointWidget, waypoint.identifier);
 }
 
-void FlightPlanWidget::updateWaypoint(int index, const FlightPlanData &waypoint)
+void FlightPlanWidget::updateWaypoint(int index, const Waypoint &waypoint)
 {
     WaypointWidget *waypointWidget = static_cast<WaypointWidget *>(ui->waypointTabWidget->widget(index));
     waypointWidget->update(waypoint);

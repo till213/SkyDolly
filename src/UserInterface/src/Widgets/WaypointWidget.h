@@ -32,7 +32,7 @@
 class QShowEvent;
 class QHideEvent;
 
-class FlightPlanData;
+class Waypoint;
 class WaypointWidgetPrivate;
 
 namespace Ui {
@@ -44,10 +44,10 @@ class WaypointWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit WaypointWidget(const FlightPlanData &data, QWidget *parent = nullptr) noexcept;
+    explicit WaypointWidget(const Waypoint &data, QWidget *parent = nullptr) noexcept;
     virtual ~WaypointWidget() noexcept;
 
-    void update(const FlightPlanData &waypoint) noexcept;
+    void update(const Waypoint &waypoint) noexcept;
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;

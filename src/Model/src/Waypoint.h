@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTPLANDATA_H
-#define FLIGHTPLANDATA_H
+#ifndef WAYPOINT_H
+#define WAYPOINT_H
 
 #include <QtGlobal>
 #include <QString>
@@ -33,21 +33,21 @@
 #include "TimeVariableData.h"
 #include "ModelLib.h"
 
-struct MODEL_API FlightPlanData : public TimeVariableData
+struct MODEL_API Waypoint : public TimeVariableData
 {
-    QString waypointIdentifier;
+    QString identifier;
     float latitude;
     float longitude;
     float altitude;
     QDateTime localTime;
     QDateTime zuluTime;
 
-    FlightPlanData() noexcept;
-    FlightPlanData(FlightPlanData &&) = default;
-    FlightPlanData(const FlightPlanData &) = default;
-    FlightPlanData &operator= (const FlightPlanData &) = default;
+    Waypoint() noexcept;
+    Waypoint(Waypoint &&) = default;
+    Waypoint(const Waypoint &) = default;
+    Waypoint &operator= (const Waypoint &) = default;
 
-    static const FlightPlanData NullFlightPlanData;
+    static const Waypoint NullWaypoint;
 };
 
-#endif // FLIGHTPLANDATA_H
+#endif // WAYPOINT_H

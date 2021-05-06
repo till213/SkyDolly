@@ -29,7 +29,7 @@
 
 #include <QWidget>
 
-class FlightPlanData;
+class Waypoint;
 class SkyConnectIntf;
 class FlightPlanWidgetPrivate;
 
@@ -58,8 +58,8 @@ private:
     void updateUi() noexcept;
 
 private slots:    
-    void addWaypoint(const FlightPlanData &waypoint);
-    void updateWaypoint(int index, const FlightPlanData &waypoint);
+    void addWaypoint(const Waypoint &waypoint);
+    void updateWaypoint(int index, const Waypoint &waypoint);
     void clear();
 };
 

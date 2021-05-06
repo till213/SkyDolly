@@ -34,7 +34,7 @@
 
 #include "ModelLib.h"
 
-class FlightPlanData;
+class Waypoint;
 class FlightPlanPrivate;
 
 class MODEL_API FlightPlan : public QObject
@@ -44,15 +44,15 @@ public:
     FlightPlan(QObject *parent = nullptr) noexcept;
     virtual ~FlightPlan() noexcept;
 
-    void add(const FlightPlanData &flightPlanData) noexcept;
-    void update(int index, const FlightPlanData &flightPlanData) noexcept;
-    const QVector<FlightPlanData> &getAllConst() const noexcept;
+    void add(const Waypoint &waypoint) noexcept;
+    void update(int index, const Waypoint &waypoint) noexcept;
+    const QVector<Waypoint> &getAllConst() const noexcept;
 
     void clear() noexcept;
 
 signals:
-    void waypointAdded(const FlightPlanData &flightPlanData);
-    void waypointUpdated(int index, const FlightPlanData &flightPlanData);
+    void waypointAdded(const Waypoint &waypoint);
+    void waypointUpdated(int index, const Waypoint &waypoint);
     void waypointsCleared();
 
 private:

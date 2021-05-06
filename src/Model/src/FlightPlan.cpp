@@ -27,7 +27,7 @@
 #include <QObject>
 #include <QVector>
 
-#include "FlightPlanData.h"
+#include "Waypoint.h"
 #include "FlightPlan.h"
 
 class FlightPlanPrivate
@@ -36,7 +36,7 @@ public:
     FlightPlanPrivate() noexcept
     {}
 
-    QVector<FlightPlanData> flightPlanData;
+    QVector<Waypoint> waypoints;
 };
 
 // PUBLIC
@@ -44,62 +44,60 @@ public:
 FlightPlan::FlightPlan(QObject *parent) noexcept
     : QObject(parent),
       d(std::make_unique<FlightPlanPrivate>())
-{
-}
+{}
 
 FlightPlan::~FlightPlan() noexcept
+{}
+
+void FlightPlan::add(const Waypoint &waypoint) noexcept
 {
+    d->waypoints.append(waypoint);
+    emit waypointAdded(waypoint);
 }
 
-void FlightPlan::add(const FlightPlanData &flightPlanData) noexcept
+void FlightPlan::update(int index, const Waypoint &waypoint) noexcept
 {
-    d->flightPlanData.append(flightPlanData);
-    emit waypointAdded(flightPlanData);
-}
-
-void FlightPlan::update(int index, const FlightPlanData &flightPlanData) noexcept
-{
-    FlightPlanData data = d->flightPlanData.at(index);
+    Waypoint currentWaypoint = d->waypoints.at(index);
     bool changed = false;
-    if (index >= 0 && index < d->flightPlanData.count()) {
-        if (data.timestamp != flightPlanData.timestamp) {
-            data.timestamp = flightPlanData.timestamp;
+    if (index >= 0 && index < d->waypoints.count()) {
+        if (currentWaypoint.timestamp != waypoint.timestamp) {
+            currentWaypoint.timestamp = waypoint.timestamp;
             changed = true;
         }
-        if (data.latitude != flightPlanData.latitude) {
-            data.latitude = flightPlanData.latitude;
+        if (currentWaypoint.latitude != waypoint.latitude) {
+            currentWaypoint.latitude = waypoint.latitude;
             changed = true;
         }
-        if (data.longitude != flightPlanData.longitude) {
-            data.longitude = flightPlanData.longitude;
+        if (currentWaypoint.longitude != waypoint.longitude) {
+            currentWaypoint.longitude = waypoint.longitude;
             changed = true;
         }
-        if (data.altitude != flightPlanData.altitude) {
-            data.altitude = flightPlanData.altitude;
+        if (currentWaypoint.altitude != waypoint.altitude) {
+            currentWaypoint.altitude = waypoint.altitude;
             changed = true;
         }
-        if (data.localTime != flightPlanData.localTime) {
-            data.localTime = flightPlanData.localTime;
+        if (currentWaypoint.localTime != waypoint.localTime) {
+            currentWaypoint.localTime = waypoint.localTime;
             changed = true;
         }
-        if (data.zuluTime != flightPlanData.zuluTime) {
-            data.zuluTime = flightPlanData.zuluTime;
+        if (currentWaypoint.zuluTime != waypoint.zuluTime) {
+            currentWaypoint.zuluTime = waypoint.zuluTime;
             changed = true;
         }
     }
     if (changed) {
-        d->flightPlanData[index] = data;
-        emit waypointUpdated(index, data);
+        d->waypoints[index] = currentWaypoint;
+        emit waypointUpdated(index, currentWaypoint);
     }
 }
 
-const QVector<FlightPlanData> &FlightPlan::getAllConst() const noexcept
+const QVector<Waypoint> &FlightPlan::getAllConst() const noexcept
 {
-    return d->flightPlanData;
+    return d->waypoints;
 }
 
 void FlightPlan::clear() noexcept
 {
-    d->flightPlanData.clear();
+    d->waypoints.clear();
     emit waypointsCleared();
 }

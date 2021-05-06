@@ -75,7 +75,7 @@ private:
     void recordSecondaryControls(qint64 timestamp) noexcept;
     void recordAircraftHandle(qint64 timestamp) noexcept;
     void recordLights(qint64 timestamp) noexcept;
-    void recordFlightPlanData() noexcept;
+    void recordWaypoint() noexcept;
     void recordFlightCondition() noexcept;
     void recordAircraftInfo() noexcept;
 
