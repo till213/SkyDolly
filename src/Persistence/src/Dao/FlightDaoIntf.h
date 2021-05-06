@@ -27,6 +27,8 @@
 
 #include <QVector>
 
+class QString;
+
 class Flight;
 class FlightDescription;
 
@@ -44,6 +46,7 @@ public:
     virtual bool addFlight(Flight &flight) = 0;
     virtual bool getFlightById(qint64 id, Flight &flight) const = 0;
     virtual bool deleteById(qint64 id) = 0;
+    virtual bool updateDescription(qint64 id, const QString &description) = 0;
     virtual QVector<FlightDescription> getFlightDescriptions() const = 0;
 };
 

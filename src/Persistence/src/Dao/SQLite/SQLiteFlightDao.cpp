@@ -59,6 +59,7 @@ public:
     std::unique_ptr<QSqlQuery> insertQuery;
     std::unique_ptr<QSqlQuery> selectByIdQuery;
     std::unique_ptr<QSqlQuery> deleteByIdQuery;
+    std::unique_ptr<QSqlQuery> updateDescriptionQuery;
     std::unique_ptr<QSqlQuery> selectDescriptionsQuery;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<AircraftDaoIntf> aircraftDao;
@@ -123,6 +124,13 @@ public:
 "from flight "
 "where id = :id;");
         }
+        if (updateDescriptionQuery == nullptr) {
+            updateDescriptionQuery = std::make_unique<QSqlQuery>();
+            updateDescriptionQuery->prepare(
+"update flight "
+"set    description = :description "
+"where id = :id;");
+        }
         if (selectDescriptionsQuery == nullptr) {
             selectDescriptionsQuery = std::make_unique<QSqlQuery>();
             selectDescriptionsQuery->setForwardOnly(true);
@@ -145,6 +153,7 @@ public:
         insertQuery = nullptr;
         selectByIdQuery = nullptr;
         deleteByIdQuery = nullptr;
+        updateDescriptionQuery = nullptr;
         selectDescriptionsQuery = nullptr;
     }
 };
@@ -278,6 +287,21 @@ bool SQLiteFlightDao::deleteById(qint64 id) noexcept
         }
 #endif
     }
+    return ok;
+}
+
+bool SQLiteFlightDao::updateDescription(qint64 id, const QString &description) noexcept
+{
+    d->initQueries();
+
+    d->updateDescriptionQuery->bindValue(":description", description);
+    d->updateDescriptionQuery->bindValue(":id", id);
+    bool ok = d->updateDescriptionQuery->exec();
+#ifdef DEBUG
+    if (!ok) {
+        qDebug("SQLiteFlightDao::updateDescription: SQL error: %s", qPrintable(d->updateDescriptionQuery->lastError().databaseText() + " - error code: " + d->deleteByIdQuery->lastError().nativeErrorCode()));
+    }
+#endif
     return ok;
 }
 
