@@ -55,7 +55,7 @@ FlightService::FlightService() noexcept
 FlightService::~FlightService() noexcept
 {
 #ifdef DEBUG
-    qDebug("FlightService::~FlightService: DESTROYED.");
+    qDebug("FlightService::~FlightService: DELETED.");
 #endif
 }
 

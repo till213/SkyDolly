@@ -22,15 +22,15 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QPushButton>
+#include <QRadioButton>
 #include <QAction>
 
-#include "ActionButton.h"
+#include "ActionRadioButton.h"
 
-class ActionButtonPrivate
+class ActionRadioButtonPrivate
 {
 public:
-    ActionButtonPrivate()  noexcept
+    ActionRadioButtonPrivate()  noexcept
         : action(nullptr)
     {}
 
@@ -39,15 +39,15 @@ public:
 
 // PUBLIC
 
-ActionButton::ActionButton(QWidget *parent) noexcept
-    : QPushButton(parent),
-      d(std::make_unique<ActionButtonPrivate>())
+ActionRadioButton::ActionRadioButton(QWidget *parent) noexcept
+    : QRadioButton(parent),
+      d(std::make_unique<ActionRadioButtonPrivate>())
 {}
 
-ActionButton::~ActionButton() noexcept
+ActionRadioButton::~ActionRadioButton() noexcept
 {}
 
-void ActionButton::setAction(const QAction *action) noexcept
+void ActionRadioButton::setAction(const QAction *action) noexcept
 {
    // If an action is already associated with the button then
    // remove all previous connections
@@ -64,7 +64,7 @@ void ActionButton::setAction(const QAction *action) noexcept
 
 // PRIVATE SLOTS
 
-void ActionButton::updateButtonStatusFromAction() noexcept
+void ActionRadioButton::updateButtonStatusFromAction() noexcept
 {
    if (d->action != nullptr) {
        setText(d->action->text());
@@ -77,28 +77,29 @@ void ActionButton::updateButtonStatusFromAction() noexcept
    }
 }
 
-void ActionButton::connectToAction() noexcept
+void ActionRadioButton::connectToAction() noexcept
 {
    if (d->action != nullptr) {
        // React to the action state changes
        connect(d->action, &QAction::changed,
-               this, &ActionButton::updateButtonStatusFromAction);
+               this, &ActionRadioButton::updateButtonStatusFromAction);
        connect(d->action, &QAction::destroyed,
-               this, &ActionButton::disconnectFromAction);
-       connect(this, &ActionButton::clicked,
+               this, &ActionRadioButton::disconnectFromAction);
+       connect(this, &ActionRadioButton::clicked,
                d->action, &QAction::trigger);
    }
 }
 
-void ActionButton::disconnectFromAction() noexcept
+void ActionRadioButton::disconnectFromAction() noexcept
 {
    if (d->action != nullptr) {
        disconnect(d->action, &QAction::changed,
-                  this, &ActionButton::updateButtonStatusFromAction);
+                  this, &ActionRadioButton::updateButtonStatusFromAction);
        disconnect(d->action, &QAction::destroyed,
-                  this, &ActionButton::disconnectFromAction);
-       disconnect(this, &ActionButton::clicked,
+                  this, &ActionRadioButton::disconnectFromAction);
+       disconnect(this, &ActionRadioButton::clicked,
                   d->action, &QAction::trigger);
        d->action = nullptr;
    }
 }
+
