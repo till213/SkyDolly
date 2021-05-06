@@ -31,7 +31,7 @@
 #include <QVector>
 
 #include "../../../Model/src/Flight.h"
-#include "../../../Model/src/FlightDescription.h"
+#include "../../../Model/src/FlightSummary.h"
 #include "../PersistenceLib.h"
 
 class FlightServicePrivate;
@@ -48,7 +48,7 @@ public:
     bool deleteById(qint64 id) noexcept;
     bool updateDescription(qint64 id, const QString &description) noexcept;
 
-    QVector<FlightDescription> getFlightDescriptions() const noexcept;
+    QVector<FlightSummary> getFlightDescriptions() const noexcept;
 
 signals:
     void flightStored(qint64 flightId);

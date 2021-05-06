@@ -48,7 +48,7 @@ public:
     virtual bool deleteById(qint64 id) noexcept override;
     virtual bool updateDescription(qint64 id, const QString &description) noexcept override;
 
-    virtual QVector<FlightDescription> getFlightDescriptions() const noexcept override;
+    virtual QVector<FlightSummary> getFlightSummaries() const noexcept override;
 
 private:
     std::unique_ptr<SQLiteFlightDaoPrivate> d;

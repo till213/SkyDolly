@@ -115,11 +115,11 @@ bool FlightService::updateDescription(qint64 id, const QString &description) noe
     return ok;
 }
 
-QVector<FlightDescription> FlightService::getFlightDescriptions() const noexcept
+QVector<FlightSummary> FlightService::getFlightDescriptions() const noexcept
 {
-    QVector<FlightDescription> descriptions;
+    QVector<FlightSummary> descriptions;
     if (QSqlDatabase::database().transaction()) {
-        descriptions = d->flightDao->getFlightDescriptions();
+        descriptions = d->flightDao->getFlightSummaries();
         QSqlDatabase::database().rollback();
     }
     return descriptions;
