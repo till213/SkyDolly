@@ -82,10 +82,13 @@ namespace
     // A replay speed with factor 200 should be fast enough
     constexpr double ReplaySpeedMax = 200.0;
     constexpr double ReplaySpeedDecimalPlaces = 2;
+
     constexpr char TimestampFormat[] = "hh:mm:ss";
     constexpr qint64 MilliSecondsPerSecond = 1000;
     constexpr qint64 MilliSecondsPerMinute = 60 * MilliSecondsPerSecond;
     constexpr qint64 MilliSecondsPerHour = 60 * MilliSecondsPerMinute;
+
+    constexpr char ReplaySpeedProperty[] = "ReplaySpeed";
 
     enum class ReplaySpeed {
         Slow10,
@@ -106,8 +109,7 @@ class MainWindowPrivate
 public:
     MainWindowPrivate() noexcept
         : skyConnect(SkyManager::getInstance().currentSkyConnect()),
-          previousState(Connect::State::Connected),
-          replaySpeedButtonGroup(nullptr),
+          previousState(Connect::State::Connected),          
           aboutDialog(nullptr),
           aboutLibraryDialog(nullptr),
           settingsDialog(nullptr),
@@ -118,27 +120,33 @@ public:
           databaseService(std::make_unique<DatabaseService>()),
           csvService(std::make_unique<CSVService>(*flightService)),
           showMinimalUi(false),
+          replaySpeedActionGroup(nullptr),
           customSpeedRadioButton(nullptr)
     {}
 
     SkyConnectIntf &skyConnect;
-    Connect::State previousState;
-    QButtonGroup *replaySpeedButtonGroup;
+    Connect::State previousState;    
+
     AboutDialog *aboutDialog;
     AboutLibraryDialog *aboutLibraryDialog;
     SettingsDialog *settingsDialog;
     FlightDialog *flightDialog;
     SimulationVariablesDialog *simulationVariablesDialog;
-    StatisticsDialog *statisticsDialog;
-    double lastCustomReplaySpeed;
+    StatisticsDialog *statisticsDialog;    
+
     QLocale locale;
+
     std::unique_ptr<FlightService> flightService;
     std::unique_ptr<DatabaseService> databaseService;
     std::unique_ptr<CSVService> csvService;
+
     bool showMinimalUi;
     QSize minimalUiSize;
     QSize lastNormalUiSize;
+
+    QActionGroup *replaySpeedActionGroup ;
     ActionRadioButton *customSpeedRadioButton;
+    double lastCustomReplaySpeed;
     QLineEdit *customSpeedLineEdit;
 };
 
@@ -200,17 +208,11 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::handleTimestampChanged);
     connect(&d->skyConnect, &SkyConnectIntf::stateChanged,
             this, &MainWindow::updateUi);
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    connect(d->replaySpeedButtonGroup, QOverload<int>::of(&QButtonGroup::buttonClicked),
+
+    connect(d->replaySpeedActionGroup, &QActionGroup::triggered,
             this, &MainWindow::updateReplaySpeedUi);
-    connect(d->replaySpeedButtonGroup, QOverload<int>::of(&QButtonGroup::buttonClicked),
+    connect(d->replaySpeedActionGroup, &QActionGroup::triggered,
             this, &MainWindow::handleReplaySpeedSelected);
-#else
-    connect(d->replaySpeedButtonGroup, &QButtonGroup::idClicked,
-            this, &MainWindow::updateReplaySpeedUi);
-    connect(d->replaySpeedButtonGroup, &QButtonGroup::idClicked,
-            this, &MainWindow::handleReplaySpeedSelected);
-#endif
 
     // Ui elements
     connect(d->customSpeedLineEdit, &QLineEdit::editingFinished,
@@ -338,34 +340,58 @@ void MainWindow::initReplaySpeedUi() noexcept
         new QAction("50 %", this),
         new QAction("75 %", this)
     };
-    QAction *normalSpeedAction = new QAction("1x", this);
+    slowActions.at(0)->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_1));
+    slowActions.at(0)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Slow10));
+    slowActions.at(1)->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_2));
+    slowActions.at(1)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Slow25));
+    slowActions.at(2)->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_3));
+    slowActions.at(2)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Slow50));
+    slowActions.at(3)->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_4));
+    slowActions.at(3)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Slow75));
+
+    QAction *normalSpeedAction = new QAction(tr("Normal (100 %)"), this);
     normalSpeedAction->setCheckable(true);
+    normalSpeedAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_N));
+    normalSpeedAction->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Normal));
+
     QList<QAction *> fastActions {
         new QAction("2x", this),
         new QAction("4x", this),
         new QAction("8x", this),
         new QAction("16x", this)
     };
+    fastActions.at(0)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_1));
+    fastActions.at(0)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Fast2x));
+    fastActions.at(1)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_2));
+    fastActions.at(1)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Fast4x));
+    fastActions.at(2)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_3));
+    fastActions.at(2)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Fast8x));
+    fastActions.at(3)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_4));
+    fastActions.at(3)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Fast16x));
+
     QAction *customSpeedAction = new QAction(tr("Custom"), this);
     customSpeedAction->setCheckable(true);
+    customSpeedAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_C));
+    customSpeedAction->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Custom));
 
     // Action group
-    QActionGroup *replaySpeedGroup = new QActionGroup(this);
+    d->replaySpeedActionGroup = new QActionGroup(this);
     for (QAction *action : slowActions) {
         action->setCheckable(true);
-        replaySpeedGroup->addAction(action);
+        d->replaySpeedActionGroup->addAction(action);
     }
-    replaySpeedGroup->addAction(normalSpeedAction);
+    d->replaySpeedActionGroup->addAction(normalSpeedAction);
     for (QAction *action : fastActions) {
         action->setCheckable(true);
-        replaySpeedGroup->addAction(action);
+        d->replaySpeedActionGroup->addAction(action);
     }
-    replaySpeedGroup->addAction(customSpeedAction);
-
+    d->replaySpeedActionGroup->addAction(customSpeedAction);
 
     // Menus
     ui->slowMenu->addActions(slowActions);
     ui->fastMenu->addActions(fastActions);
+    ui->replayMenu->addAction(normalSpeedAction);
+    ui->replayMenu->addAction(customSpeedAction);
 
     // Action radio buttons
     ActionRadioButton *slow10RadioButton = new ActionRadioButton(this);
@@ -404,6 +430,7 @@ void MainWindow::initReplaySpeedUi() noexcept
     fast16xRadioButton->setAction(fastActions.at(3));
     ui->replaySpeedGroupBox->layout()->addWidget(fast16xRadioButton);
 
+    // Custom speed
     d->customSpeedRadioButton = new ActionRadioButton(this);
     d->customSpeedRadioButton->setAction(customSpeedAction);
     ui->replaySpeedGroupBox->layout()->addWidget(d->customSpeedRadioButton);
@@ -411,20 +438,6 @@ void MainWindow::initReplaySpeedUi() noexcept
     d->customSpeedLineEdit = new QLineEdit(this);
     d->customSpeedLineEdit->setMinimumWidth(160);
     ui->replaySpeedGroupBox->layout()->addWidget(d->customSpeedLineEdit);
-
-    d->replaySpeedButtonGroup = new QButtonGroup(this);
-    d->replaySpeedButtonGroup->addButton(slow10RadioButton, Enum::toUnderlyingType(ReplaySpeed::Slow10));
-    d->replaySpeedButtonGroup->addButton(slow25RadioButton, Enum::toUnderlyingType(ReplaySpeed::Slow25));
-    d->replaySpeedButtonGroup->addButton(slow25RadioButton, Enum::toUnderlyingType(ReplaySpeed::Slow25));
-    d->replaySpeedButtonGroup->addButton(slow50RadioButton, Enum::toUnderlyingType(ReplaySpeed::Slow50));
-    d->replaySpeedButtonGroup->addButton(slow75RadioButton, Enum::toUnderlyingType(ReplaySpeed::Slow75));
-    d->replaySpeedButtonGroup->addButton(normalSpeedRadioButton, Enum::toUnderlyingType(ReplaySpeed::Normal));
-    d->replaySpeedButtonGroup->addButton(fast2xRadioButton, Enum::toUnderlyingType(ReplaySpeed::Fast2x));
-    d->replaySpeedButtonGroup->addButton(fast4xRadioButton, Enum::toUnderlyingType(ReplaySpeed::Fast4x));
-    d->replaySpeedButtonGroup->addButton(fast8xRadioButton, Enum::toUnderlyingType(ReplaySpeed::Fast8x));
-    d->replaySpeedButtonGroup->addButton(fast16xRadioButton, Enum::toUnderlyingType(ReplaySpeed::Fast16x));
-    d->replaySpeedButtonGroup->addButton(d->customSpeedRadioButton , Enum::toUnderlyingType(ReplaySpeed::Custom));
-
 
     QDoubleValidator *customReplaySpeedValidator = new QDoubleValidator(d->customSpeedLineEdit);
     d->customSpeedLineEdit->setValidator(customReplaySpeedValidator);
@@ -882,10 +895,11 @@ void MainWindow::handleTimestampChanged(qint64 timestamp) noexcept
     };
 }
 
-void MainWindow::handleReplaySpeedSelected(int selection) noexcept
+void MainWindow::handleReplaySpeedSelected(QAction *action) noexcept
 {
+    ReplaySpeed replaySpeed = static_cast<ReplaySpeed>(action->property(ReplaySpeedProperty).toInt());
     double timeScale;
-    switch (static_cast<ReplaySpeed>(selection)) {
+    switch (replaySpeed) {
     case ReplaySpeed::Slow10:
         timeScale = 0.1;
         break;

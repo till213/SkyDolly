@@ -208,7 +208,7 @@
     <addaction name="stayOnTopAction"/>
     <addaction name="showMinimalAction"/>
    </widget>
-   <widget class="QMenu" name="flightMenu">
+   <widget class="QMenu" name="replayMenu">
     <property name="title">
      <string>&amp;Replay</string>
     </property>
@@ -236,7 +236,7 @@
     <addaction name="fastMenu"/>
    </widget>
    <addaction name="fileMenu"/>
-   <addaction name="flightMenu"/>
+   <addaction name="replayMenu"/>
    <addaction name="viewMenu"/>
    <addaction name="infoMenu"/>
   </widget>
