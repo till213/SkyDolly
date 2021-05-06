@@ -37,7 +37,7 @@
 #include <QMessageBox>
 
 #include "../../../Model/src/Flight.h"
-#include "../../../Model/src/FlightDescription.h"
+#include "../../../Model/src/FlightSummary.h"
 #include "../../../Model/src/Logbook.h"
 #include "../../../Persistence/src/Service/FlightService.h"
 #include "../Unit.h"
@@ -154,55 +154,55 @@ void LogbookWidget::frenchConnection() noexcept
 
 void LogbookWidget::updateUi() noexcept
 {
-    QVector<FlightDescription> descriptions = d->flightService.getFlightDescriptions();
+    QVector<FlightSummary> summaries = d->flightService.getFlightDescriptions();
     ui->logTableWidget->blockSignals(true);
     ui->logTableWidget->setSortingEnabled(false);
     ui->logTableWidget->clearContents();
-    ui->logTableWidget->setRowCount(descriptions.count());
+    ui->logTableWidget->setRowCount(summaries.count());
     int rowIndex = 0;
 
-    for (const FlightDescription &desc : descriptions) {
+    for (const FlightSummary &summary : summaries) {
 
         int columnIndex = 0;
 
         QTableWidgetItem *newItem = new QTableWidgetItem();
-        newItem->setData(Qt::DisplayRole, desc.id);
+        newItem->setData(Qt::DisplayRole, summary.id);
         ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
         ++columnIndex;
 
-        newItem = new QTableWidgetItem(d->unit.formatDate(desc.creationDate));
+        newItem = new QTableWidgetItem(d->unit.formatDate(summary.creationDate));
         ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
         ++columnIndex;
 
-        newItem = new QTableWidgetItem(desc.aircraftType);
+        newItem = new QTableWidgetItem(summary.aircraftType);
         ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
         ++columnIndex;
 
-        newItem = new QTableWidgetItem(d->unit.formatTime(desc.startDate));
+        newItem = new QTableWidgetItem(d->unit.formatTime(summary.startDate));
         ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
-        newItem->setToolTip(tr("Simulation time: %1 (%2Z)").arg(d->unit.formatTime(desc.startSimulationLocalTime), d->unit.formatTime(desc.startSimulationZuluTime)));
+        newItem->setToolTip(tr("Simulation time: %1 (%2Z)").arg(d->unit.formatTime(summary.startSimulationLocalTime), d->unit.formatTime(summary.startSimulationZuluTime)));
         ++columnIndex;
 
-        newItem = new QTableWidgetItem(desc.startLocation);
-        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
-        ++columnIndex;
-
-        newItem = new QTableWidgetItem(d->unit.formatTime(desc.endDate));
-        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
-        newItem->setToolTip(tr("Simulation time: %1 (%2Z)").arg(d->unit.formatTime(desc.endSimulationLocalTime), d->unit.formatTime(desc.endSimulationZuluTime)));
-        ++columnIndex;
-
-        newItem = new QTableWidgetItem(desc.endLocation);
+        newItem = new QTableWidgetItem(summary.startLocation);
         ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
         ++columnIndex;
 
-        const qint64 durationMSec = desc.startDate.msecsTo(desc.endDate);
+        newItem = new QTableWidgetItem(d->unit.formatTime(summary.endDate));
+        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
+        newItem->setToolTip(tr("Simulation time: %1 (%2Z)").arg(d->unit.formatTime(summary.endSimulationLocalTime), d->unit.formatTime(summary.endSimulationZuluTime)));
+        ++columnIndex;
+
+        newItem = new QTableWidgetItem(summary.endLocation);
+        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
+        ++columnIndex;
+
+        const qint64 durationMSec = summary.startDate.msecsTo(summary.endDate);
         const QTime time = QTime(0, 0).addMSecs(durationMSec);
         newItem = new QTableWidgetItem(d->unit.formatDuration(time));
         ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
         ++columnIndex;
 
-        newItem = new QTableWidgetItem(desc.description);
+        newItem = new QTableWidgetItem(summary.description);
         ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
         d->descriptionColumnIndex = columnIndex;
         ++columnIndex;

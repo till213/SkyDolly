@@ -36,7 +36,7 @@
 
 #include "../../../../Kernel/src/Enum.h"
 #include "../../../../Model/src/Flight.h"
-#include "../../../../Model/src/FlightDescription.h"
+#include "../../../../Model/src/FlightSummary.h"
 #include "../../../../Model/src/FlightCondition.h"
 #include "../../Dao/AircraftDaoIntf.h"
 #include "../../Dao/DaoFactory.h"
@@ -305,9 +305,9 @@ bool SQLiteFlightDao::updateDescription(qint64 id, const QString &description) n
     return ok;
 }
 
-QVector<FlightDescription> SQLiteFlightDao::getFlightDescriptions() const noexcept
+QVector<FlightSummary> SQLiteFlightDao::getFlightSummaries() const noexcept
 {
-    QVector<FlightDescription> descriptions;
+    QVector<FlightSummary> summaries;
 
     d->initQueries();
     bool ok = d->selectDescriptionsQuery->exec();
@@ -326,7 +326,7 @@ QVector<FlightDescription> SQLiteFlightDao::getFlightDescriptions() const noexce
         const int descriptionIdx = d->selectDescriptionsQuery->record().indexOf("description");
         while (d->selectDescriptionsQuery->next()) {            
 
-            FlightDescription description;
+            FlightSummary description;
             description.id = d->selectDescriptionsQuery->value(idIdx).toLongLong();
 
             QDateTime dateTime = d->selectDescriptionsQuery->value(creationDateIdx).toDateTime();
@@ -349,7 +349,7 @@ QVector<FlightDescription> SQLiteFlightDao::getFlightDescriptions() const noexce
             description.endLocation = d->selectDescriptionsQuery->value(endWaypointIdx).toString();
             description.description = d->selectDescriptionsQuery->value(descriptionIdx).toString();
 
-            descriptions.append(description);
+            summaries.append(description);
         }
 #ifdef DEBUG
     } else {
@@ -357,7 +357,7 @@ QVector<FlightDescription> SQLiteFlightDao::getFlightDescriptions() const noexce
 #endif
     }
 
-    return descriptions;
+    return summaries;
 }
 
 // PRIVATE

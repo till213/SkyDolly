@@ -30,7 +30,7 @@
 class QString;
 
 class Flight;
-class FlightDescription;
+class FlightSummary;
 
 class FlightDaoIntf
 {
@@ -47,7 +47,7 @@ public:
     virtual bool getFlightById(qint64 id, Flight &flight) const = 0;
     virtual bool deleteById(qint64 id) = 0;
     virtual bool updateDescription(qint64 id, const QString &description) = 0;
-    virtual QVector<FlightDescription> getFlightDescriptions() const = 0;
+    virtual QVector<FlightSummary> getFlightSummaries() const = 0;
 };
 
 #endif // SCENARIODAOINTF_H

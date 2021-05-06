@@ -22,31 +22,12 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTDESCRIPTION_H
-#define FLIGHTDESCRIPTION_H
+#include "FlightSummary.h"
 
-#include <QString>
-#include <QDateTime>
+// PUBLIC
 
-#include "ModelLib.h"
+FlightSummary::FlightSummary()
+{}
 
-struct MODEL_API FlightDescription
-{
-    FlightDescription();
-    ~FlightDescription();
-
-    qint64 id;
-    QDateTime creationDate;
-    QString aircraftType;
-    QDateTime startDate;
-    QDateTime startSimulationLocalTime;
-    QDateTime startSimulationZuluTime;
-    QDateTime endDate;
-    QDateTime endSimulationLocalTime;
-    QDateTime endSimulationZuluTime;
-    QString startLocation;
-    QString endLocation;
-    QString description;    
-};
-
-#endif // FLIGHTDESCRIPTION_H
+FlightSummary::~FlightSummary()
+{}

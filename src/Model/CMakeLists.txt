@@ -13,8 +13,8 @@ target_sources(Model
         src/Logbook.h
         src/Flight.cpp
         src/Flight.h
-        src/FlightDescription.cpp
-        src/FlightDescription.h
+        src/FlightSummary.cpp
+        src/FlightSummary.h
         src/FlightCondition.cpp
         src/FlightCondition.h
         src/Aircraft.cpp
