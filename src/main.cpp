@@ -22,9 +22,6 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QSettings>
-#include <QStyleFactory>
-
 #include "../../Kernel/src/Version.h"
 #include "../../UserInterface/src/MainWindow.h"
 
@@ -35,11 +32,11 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName(Version::getOrganisationName());
     QCoreApplication::setApplicationName(Version::getApplicationName());
 
-    SkyDollyApplication a(argc, argv);
+    SkyDollyApplication application(argc, argv);
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
 
-    MainWindow w;
-    w.show();
-    return a.exec();
+    MainWindow mainWindow;
+    mainWindow.show();
+    return application.exec();
 }
