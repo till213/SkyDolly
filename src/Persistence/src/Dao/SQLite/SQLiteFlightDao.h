@@ -30,9 +30,11 @@
 #include <QObject>
 #include <QtGlobal>
 
-#include "../../../../Model/src/Flight.h"
+class QString;
+
 #include "../FlightDaoIntf.h"
 
+class Flight;
 class SQLiteFlightDaoPrivate;
 
 class SQLiteFlightDao : public QObject, public FlightDaoIntf
@@ -44,6 +46,7 @@ public:
     virtual bool addFlight(Flight &flight)  noexcept override;
     virtual bool getFlightById(qint64 id, Flight &flight) const noexcept override;
     virtual bool deleteById(qint64 id) noexcept override;
+    virtual bool updateDescription(qint64 id, const QString &description) noexcept override;
 
     virtual QVector<FlightDescription> getFlightDescriptions() const noexcept override;
 

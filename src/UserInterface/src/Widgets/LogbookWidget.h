@@ -70,8 +70,10 @@ private:
 private slots:
     void updateUi() noexcept;
     void handleSelectionChanged() noexcept;
-    void handleLoad() noexcept;
-    void handleDelete() noexcept;
+    void loadFlight() noexcept;
+    void deleteFlight() noexcept;
+    void handleCellSelected(int row, int column) noexcept;
+    void handleCellChanged(int row, int column) noexcept;
 };
 
 #endif // LOGBOOKWIDGET_H

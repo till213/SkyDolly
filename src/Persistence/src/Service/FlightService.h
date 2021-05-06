@@ -46,6 +46,7 @@ public:
     bool store(Flight &flight) noexcept;
     bool restore(qint64 id, Flight &flight) noexcept;
     bool deleteById(qint64 id) noexcept;
+    bool updateDescription(qint64 id, const QString &description) noexcept;
 
     QVector<FlightDescription> getFlightDescriptions() const noexcept;
 

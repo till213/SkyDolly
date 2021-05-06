@@ -101,6 +101,20 @@ bool FlightService::deleteById(qint64 id)  noexcept
     return ok;
 }
 
+bool FlightService::updateDescription(qint64 id, const QString &description) noexcept
+{
+    bool ok = QSqlDatabase::database().transaction();
+    if (ok) {
+        ok = d->flightDao->updateDescription(id, description);
+        if (ok) {
+            QSqlDatabase::database().commit();
+        } else {
+            QSqlDatabase::database().rollback();
+        }
+    }
+    return ok;
+}
+
 QVector<FlightDescription> FlightService::getFlightDescriptions() const noexcept
 {
     QVector<FlightDescription> descriptions;
