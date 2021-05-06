@@ -127,7 +127,9 @@ public:
             selectDescriptionsQuery = std::make_unique<QSqlQuery>();
             selectDescriptionsQuery->setForwardOnly(true);
             selectDescriptionsQuery->prepare(
-"select f.id, f.creation_date, f.description, a.type, a.start_date, fp1.ident as start_waypoint, a.end_date, fp2.ident as end_waypoint "
+"select f.id, f.creation_date, f.description, a.type,"
+"       a.start_date, f.start_local_sim_time, f.start_zulu_sim_time, fp1.ident as start_waypoint,"
+"       a.end_date, f.end_local_sim_time, f.end_zulu_sim_time, fp2.ident as end_waypoint "
 "from   flight f "
 "join   aircraft a "
 "on     a.flight_id = f.id "
@@ -290,8 +292,12 @@ QVector<FlightDescription> SQLiteFlightDao::getFlightDescriptions() const noexce
         const int creationDateIdx = d->selectDescriptionsQuery->record().indexOf("creation_date");
         const int aircraftTypeIdx = d->selectDescriptionsQuery->record().indexOf("type");
         const int startDateIdx = d->selectDescriptionsQuery->record().indexOf("start_date");
+        const int startLocalSimulationTimeIdx = d->selectDescriptionsQuery->record().indexOf("start_local_sim_time");
+        const int startZuluSimulationTimeIdx = d->selectDescriptionsQuery->record().indexOf("start_zulu_sim_time");
         const int startWaypointIdx = d->selectDescriptionsQuery->record().indexOf("start_waypoint");
         const int endDateIdx = d->selectDescriptionsQuery->record().indexOf("end_date");
+        const int endLocalSimulationTimeIdx = d->selectDescriptionsQuery->record().indexOf("end_local_sim_time");
+        const int endZuluSimulationTimeIdx = d->selectDescriptionsQuery->record().indexOf("end_zulu_sim_time");
         const int endWaypointIdx = d->selectDescriptionsQuery->record().indexOf("end_waypoint");
         const int descriptionIdx = d->selectDescriptionsQuery->record().indexOf("description");
         while (d->selectDescriptionsQuery->next()) {            
@@ -306,10 +312,16 @@ QVector<FlightDescription> SQLiteFlightDao::getFlightDescriptions() const noexce
             dateTime = d->selectDescriptionsQuery->value(startDateIdx).toDateTime();
             dateTime.setTimeZone(QTimeZone::utc());
             description.startDate = dateTime.toLocalTime();
+            // Persisted times is are already local respectively zulu simulation times
+            description.startSimulationLocalTime = d->selectDescriptionsQuery->value(startLocalSimulationTimeIdx).toDateTime();
+            description.startSimulationZuluTime = d->selectDescriptionsQuery->value(startZuluSimulationTimeIdx).toDateTime();
             description.startLocation = d->selectDescriptionsQuery->value(startWaypointIdx).toString();
             dateTime = d->selectDescriptionsQuery->value(endDateIdx).toDateTime();
             dateTime.setTimeZone(QTimeZone::utc());
             description.endDate = dateTime.toLocalTime();
+            // Persisted times is are already local respectively zulu simulation times
+            description.endSimulationLocalTime = d->selectDescriptionsQuery->value(endLocalSimulationTimeIdx).toDateTime();
+            description.endSimulationZuluTime = d->selectDescriptionsQuery->value(endZuluSimulationTimeIdx).toDateTime();
             description.endLocation = d->selectDescriptionsQuery->value(endWaypointIdx).toString();
             description.description = d->selectDescriptionsQuery->value(descriptionIdx).toString();
 
