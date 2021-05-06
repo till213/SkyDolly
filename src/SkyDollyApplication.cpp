@@ -22,6 +22,10 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <QApplication>
+#include <QWidgetList>
+#include <QWidget>
+
 #include "../../Kernel/src/Settings.h"
 #include "../../Model/src/World.h"
 #include "../../SkyConnect/src/SkyManager.h"
@@ -47,6 +51,15 @@ void SkyDollyApplication::frenchConnection() noexcept
 
 void SkyDollyApplication::handleAboutToQuit() noexcept
 {
+    // Some widgets try to disconnect from the below singleton instances upon
+    // a "hide" event, so make sure that all windows and dialogs are closed first
+    QWidgetList widgetList = topLevelWidgets();
+    for (QWidget *widget : widgetList) {
+        if (widget->inherits("QMainWindow") || widget->inherits("QDialog")) {
+            widget->close();
+        }
+    }
+
     // Destroying the settings singleton also persists the settings
     Settings::destroyInstance();
     SkyManager::destroyInstance();
