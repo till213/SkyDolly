@@ -68,6 +68,11 @@ Flight &Logbook::getCurrentFlight() const
     return *(*d->flights.cbegin());
 }
 
+const Flight &Logbook::getCurrentFlightConst() const
+{
+    return *(*d->flights.cbegin());
+}
+
 // PROTECTED
 
 Logbook::~Logbook()

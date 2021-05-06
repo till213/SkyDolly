@@ -47,6 +47,8 @@ public:
     explicit WaypointWidget(const FlightPlanData &data, QWidget *parent = nullptr) noexcept;
     virtual ~WaypointWidget() noexcept;
 
+    void update(const FlightPlanData &waypoint) noexcept;
+
 protected:
     void showEvent(QShowEvent *event) noexcept override;
     void hideEvent(QHideEvent *event) noexcept override;

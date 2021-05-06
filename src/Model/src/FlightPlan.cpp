@@ -54,12 +54,43 @@ FlightPlan::~FlightPlan() noexcept
 void FlightPlan::add(const FlightPlanData &flightPlanData) noexcept
 {
     d->flightPlanData.append(flightPlanData);
-    emit dataChanged();
+    emit waypointAdded(flightPlanData);
 }
 
-QVector<FlightPlanData> &FlightPlan::getAll() const noexcept
+void FlightPlan::update(int index, const FlightPlanData &flightPlanData) noexcept
 {
-    return d->flightPlanData;
+    FlightPlanData data = d->flightPlanData.at(index);
+    bool changed = false;
+    if (index >= 0 && index < d->flightPlanData.count()) {
+        if (data.timestamp != flightPlanData.timestamp) {
+            data.timestamp = flightPlanData.timestamp;
+            changed = true;
+        }
+        if (data.latitude != flightPlanData.latitude) {
+            data.latitude = flightPlanData.latitude;
+            changed = true;
+        }
+        if (data.longitude != flightPlanData.longitude) {
+            data.longitude = flightPlanData.longitude;
+            changed = true;
+        }
+        if (data.altitude != flightPlanData.altitude) {
+            data.altitude = flightPlanData.altitude;
+            changed = true;
+        }
+        if (data.localTime != flightPlanData.localTime) {
+            data.localTime = flightPlanData.localTime;
+            changed = true;
+        }
+        if (data.zuluTime != flightPlanData.zuluTime) {
+            data.zuluTime = flightPlanData.zuluTime;
+            changed = true;
+        }
+    }
+    if (changed) {
+        d->flightPlanData[index] = data;
+        emit waypointUpdated(index, data);
+    }
 }
 
 const QVector<FlightPlanData> &FlightPlan::getAllConst() const noexcept
@@ -70,5 +101,5 @@ const QVector<FlightPlanData> &FlightPlan::getAllConst() const noexcept
 void FlightPlan::clear() noexcept
 {
     d->flightPlanData.clear();
-    emit dataChanged();
+    emit waypointsCleared();
 }

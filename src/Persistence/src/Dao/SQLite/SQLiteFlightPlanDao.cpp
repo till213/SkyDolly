@@ -33,6 +33,7 @@
 #include <QDateTime>
 #include <QTimeZone>
 
+#include "../../../../Model/src/FlightPlan.h"
 #include "../../../../Model/src/FlightPlanData.h"
 #include "../../ConnectionManager.h"
 #include "SQLiteFlightPlanDao.h"
@@ -139,13 +140,13 @@ bool SQLiteFlightPlanDao::add(qint64 aircraftId, const QVector<FlightPlanData> &
     return ok;
 }
 
-bool SQLiteFlightPlanDao::getByAircraftId(qint64 aircraftId, QVector<FlightPlanData> &flightPlanData) const noexcept
+bool SQLiteFlightPlanDao::getByAircraftId(qint64 aircraftId, FlightPlan &flightPlan) const noexcept
 {
     d->initQueries();
     d->selectByAircraftIdQuery->bindValue(":aircraft_id", aircraftId);
     bool ok = d->selectByAircraftIdQuery->exec();
     if (ok) {
-        flightPlanData.clear();
+        flightPlan.clear();
         const int identifierIdx = d->selectByAircraftIdQuery->record().indexOf("ident");
         const int latitudeIdx = d->selectByAircraftIdQuery->record().indexOf("latitude");
         const int longitudeIdx = d->selectByAircraftIdQuery->record().indexOf("longitude");
@@ -162,7 +163,7 @@ bool SQLiteFlightPlanDao::getByAircraftId(qint64 aircraftId, QVector<FlightPlanD
             data.localTime = d->selectByAircraftIdQuery->value(localSimulationTimeIdx).toDateTime();
             // UTC equals zulu time, so no conversion necessary
             data.zuluTime = d->selectByAircraftIdQuery->value(zuluSimulationTimeIdx).toDateTime();
-            flightPlanData.append(data);
+            flightPlan.add(data);
         }
 #ifdef DEBUG
     } else {

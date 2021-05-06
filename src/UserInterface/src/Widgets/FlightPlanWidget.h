@@ -29,6 +29,7 @@
 
 #include <QWidget>
 
+class FlightPlanData;
 class SkyConnectIntf;
 class FlightPlanWidgetPrivate;
 
@@ -54,9 +55,12 @@ private:
     std::unique_ptr<Ui::FlightPlanWidget> ui;
 
     void initUi() noexcept;
-
-private slots:
     void updateUi() noexcept;
+
+private slots:    
+    void addWaypoint(const FlightPlanData &waypoint);
+    void updateWaypoint(int index, const FlightPlanData &waypoint);
+    void clear();
 };
 
 #endif // FLIGHTPLANWIDGET_H

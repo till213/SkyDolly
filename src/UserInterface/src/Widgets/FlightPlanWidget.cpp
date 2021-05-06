@@ -69,18 +69,26 @@ void FlightPlanWidget::showEvent(QShowEvent *event) noexcept
 
     updateUi();
 
-    const Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
-    connect(&currentFlight, &Flight::aircraftDataChanged,
-            this, &FlightPlanWidget::updateUi);
+    const FlightPlan &flightPlan = Logbook::getInstance().getCurrentFlight().getUserAircraftConst().getFlightPlanConst();
+    connect(&flightPlan, &FlightPlan::waypointAdded,
+            this, &FlightPlanWidget::addWaypoint);
+    connect(&flightPlan, &FlightPlan::waypointUpdated,
+            this, &FlightPlanWidget::updateWaypoint);
+    connect(&flightPlan, &FlightPlan::waypointsCleared,
+            this, &FlightPlanWidget::clear);
 }
 
 void FlightPlanWidget::hideEvent(QHideEvent *event) noexcept
 {
     Q_UNUSED(event)
 
-    const Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
-    disconnect(&currentFlight, &Flight::aircraftDataChanged,
-            this, &FlightPlanWidget::updateUi);
+    const FlightPlan &flightPlan = Logbook::getInstance().getCurrentFlight().getUserAircraftConst().getFlightPlanConst();
+    disconnect(&flightPlan, &FlightPlan::waypointAdded,
+               this, &FlightPlanWidget::addWaypoint);
+    disconnect(&flightPlan, &FlightPlan::waypointUpdated,
+               this, &FlightPlanWidget::updateWaypoint);
+    disconnect(&flightPlan, &FlightPlan::waypointsCleared,
+               this, &FlightPlanWidget::clear);
 }
 
 // PRIVATE
@@ -88,16 +96,35 @@ void FlightPlanWidget::hideEvent(QHideEvent *event) noexcept
 void FlightPlanWidget::initUi() noexcept
 {}
 
-// PRIVATE SLOTS
-
 void FlightPlanWidget::updateUi() noexcept
 {
     const Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
     const FlightPlan &flightPlan = currentFlight.getUserAircraftConst().getFlightPlanConst();
 
-    ui->waypointTabWidget->clear();
-    for (const FlightPlanData &data : flightPlan.getAllConst()) {
-        WaypointWidget *waypointWidget = new WaypointWidget(data, ui->waypointTabWidget);
-        ui->waypointTabWidget->addTab(waypointWidget, data.waypointIdentifier);
+    clear();
+    for (const FlightPlanData &waypoint : flightPlan.getAllConst()) {
+        addWaypoint(waypoint);
+    }
+}
+
+// PRIVATE SLOTS
+
+void FlightPlanWidget::addWaypoint(const FlightPlanData &waypoint)
+{
+    WaypointWidget *waypointWidget = new WaypointWidget(waypoint, ui->waypointTabWidget);
+    ui->waypointTabWidget->addTab(waypointWidget, waypoint.waypointIdentifier);
+}
+
+void FlightPlanWidget::updateWaypoint(int index, const FlightPlanData &waypoint)
+{
+    WaypointWidget *waypointWidget = static_cast<WaypointWidget *>(ui->waypointTabWidget->widget(index));
+    waypointWidget->update(waypoint);
+}
+
+void FlightPlanWidget::clear()
+{
+    while (ui->waypointTabWidget->count() > 0) {
+        QWidget *tabWidget = ui->waypointTabWidget->currentWidget();
+        delete tabWidget;
     }
 }

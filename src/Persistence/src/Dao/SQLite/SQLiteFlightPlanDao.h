@@ -33,6 +33,7 @@
 #include "../../../../Model/src/FlightPlanData.h"
 #include "../FlightPlanDaoIntf.h"
 
+class FlightPlan;
 class SQLiteFlightPlanDaoPrivate;
 
 class SQLiteFlightPlanDao : public QObject, public FlightPlanDaoIntf
@@ -42,7 +43,7 @@ public:
     virtual ~SQLiteFlightPlanDao() noexcept;
 
     virtual bool add(qint64 aircraftId, const QVector<FlightPlanData> &data) noexcept override;
-    virtual bool getByAircraftId(qint64 aircraftId, QVector<FlightPlanData> &data) const noexcept override;
+    virtual bool getByAircraftId(qint64 aircraftId, FlightPlan &flightPlan) const noexcept override;
     virtual bool deleteByFlightId(qint64 flightId) noexcept override;
 
 private:

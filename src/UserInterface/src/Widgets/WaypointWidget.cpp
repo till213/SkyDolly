@@ -34,10 +34,10 @@ class WaypointWidgetPrivate
 {
 public:
     WaypointWidgetPrivate(const FlightPlanData &theFlightPlanData) noexcept
-        : flightPlanData(theFlightPlanData)
+        : waypoint(theFlightPlanData)
     {}
 
-    const FlightPlanData &flightPlanData;
+    FlightPlanData waypoint;
     Unit unit;
 };
 
@@ -57,6 +57,12 @@ WaypointWidget::~WaypointWidget() noexcept
 #ifdef DEBUG
     qDebug("WaypointWidget::~WaypointWidget(): DELETED");
 #endif
+}
+
+void WaypointWidget::update(const FlightPlanData &waypoint) noexcept
+{
+    d->waypoint = waypoint;
+    updateUi();
 }
 
 // PROTECTED
@@ -85,9 +91,9 @@ void WaypointWidget::initUi() noexcept
 
 void WaypointWidget::updateUi() noexcept
 {
-    ui->latitudeLineEdit->setText(d->unit.formatLatitude(d->flightPlanData.latitude));
-    ui->longitudeLineEdit->setText(d->unit.formatLongitude(d->flightPlanData.longitude));
-    ui->altitudeLineEdit->setText(d->unit.formatFeet(d->flightPlanData.altitude));
-    ui->localSimulationTimeLineEdit->setText(d->unit.formatDateTime(d->flightPlanData.localTime));
-    ui->localSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(d->flightPlanData.zuluTime) + "Z");
+    ui->latitudeLineEdit->setText(d->unit.formatLatitude(d->waypoint.latitude));
+    ui->longitudeLineEdit->setText(d->unit.formatLongitude(d->waypoint.longitude));
+    ui->altitudeLineEdit->setText(d->unit.formatFeet(d->waypoint.altitude));
+    ui->localSimulationTimeLineEdit->setText(d->unit.formatDateTime(d->waypoint.localTime));
+    ui->localSimulationTimeLineEdit->setToolTip(d->unit.formatDateTime(d->waypoint.zuluTime) + "Z");
 }

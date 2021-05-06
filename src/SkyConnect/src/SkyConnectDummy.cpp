@@ -108,6 +108,15 @@ void SkyConnectDummy::onStopRecording() noexcept
     flightCondition.endLocalTime = QDateTime::currentDateTime();
     flightCondition.endZuluTime = QDateTime::currentDateTimeUtc();
     flight.setFlightCondition(flightCondition);
+
+    FlightPlan &flightPlan = flight.getUserAircraftConst().getFlightPlan();
+    int waypointCount = flightPlan.getAllConst().count();
+    if (waypointCount > 0) {
+        FlightPlanData waypoint = flightPlan.getAllConst().at(waypointCount - 1);
+        waypoint.localTime = QDateTime::currentDateTime();
+        waypoint.zuluTime = QDateTime::currentDateTimeUtc();
+        flightPlan.update(waypointCount - 1, waypoint);
+    }
 }
 
 void SkyConnectDummy::onStartReplay(qint64 currentTimestamp) noexcept {
