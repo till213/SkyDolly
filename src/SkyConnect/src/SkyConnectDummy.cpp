@@ -86,6 +86,9 @@ SkyConnectDummy::SkyConnectDummy(QObject *parent) noexcept
 
 SkyConnectDummy::~SkyConnectDummy() noexcept
 {
+#ifdef DEBUG
+    qDebug("SkyConnectDummy::~SkyConnectDummy(): DELETED");
+#endif
 }
 
 // PROTECTED

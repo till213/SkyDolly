@@ -92,7 +92,7 @@ qint64 LogbookWidget::getSelectedFlightId() const noexcept
 
 QString LogbookWidget::getTitle() const noexcept
 {
-    return QString(tr("Logbook"));
+    return QString(QT_TRANSLATE_NOOP("LogbookWidget", "Logbook"));
 }
 
 // PROTECTED

@@ -20,9 +20,7 @@ if (APPLE)
 endif()
 
 target_sources(UserInterface
-    PRIVATE
-        src/Widgets/ActionButton.cpp
-        src/Widgets/ActionButton.h
+    PRIVATE        
         src/UserInterfaceLib.h
         src/MainWindow.cpp
         src/MainWindow.h
@@ -47,6 +45,10 @@ target_sources(UserInterface
         src/Dialogs/FlightDialog.cpp
         src/Dialogs/FlightDialog.h
         src/Dialogs/FlightDialog.ui
+        src/Widgets/ActionButton.cpp
+        src/Widgets/ActionButton.h
+        src/Widgets/ActionRadioButton.h
+        src/Widgets/ActionRadioButton.cpp
         src/Widgets/ModuleIntf.h
         src/Widgets/AircraftWidget.cpp
         src/Widgets/AircraftWidget.h

@@ -39,7 +39,7 @@ EventWidget::EventWidget(QWidget *parent) noexcept
 EventWidget::~EventWidget() noexcept
 {
 #ifdef DEBUG
-    qDebug("EventWidget: DESTROYED");
+    qDebug("EventWidget: DELETED");
 #endif
 }
 

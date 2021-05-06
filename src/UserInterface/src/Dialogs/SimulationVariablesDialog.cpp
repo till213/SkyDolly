@@ -72,6 +72,9 @@ SimulationVariablesDialog::SimulationVariablesDialog(SkyConnectIntf &skyConnect,
 
 SimulationVariablesDialog::~SimulationVariablesDialog() noexcept
 {
+#ifdef DEBUG
+    qDebug("SimulationVariablesDialog::~SimulationVariablesDialog: DELETED");
+#endif
 }
 
 // PROTECTED

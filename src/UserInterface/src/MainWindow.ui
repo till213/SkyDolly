@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>818</width>
-    <height>264</height>
+    <width>824</width>
+    <height>279</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -133,86 +133,6 @@
        <property name="sizeConstraint">
         <enum>QLayout::SetDefaultConstraint</enum>
        </property>
-       <item>
-        <widget class="QRadioButton" name="replaySpeed1Div8xRadioButton">
-         <property name="text">
-          <string>⅛x</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="replaySpeed1Div4xRadioButton">
-         <property name="text">
-          <string>¼x</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="replaySpeed1Div2xRadioButton">
-         <property name="text">
-          <string>½x</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="replaySpeed3Div4xRadioButton">
-         <property name="text">
-          <string>¾x</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="replaySpeed1xRadioButton">
-         <property name="text">
-          <string>1x</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="replaySpeed2xRadioButton">
-         <property name="text">
-          <string>2x</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="replaySpeed4xRadioButton">
-         <property name="text">
-          <string>4x</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="replaySpeed8xRadioButton">
-         <property name="text">
-          <string>8x</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="replaySpeed16xRadioButton">
-         <property name="text">
-          <string>16x</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="customReplaySpeedRadioButton">
-         <property name="text">
-          <string>Custom</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="customReplaySpeedLineEdit">
-         <property name="minimumSize">
-          <size>
-           <width>120</width>
-           <height>0</height>
-          </size>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
     </item>
@@ -247,11 +167,11 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>818</width>
-     <height>21</height>
+     <width>824</width>
+     <height>22</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu_File">
+   <widget class="QMenu" name="fileMenu">
     <property name="title">
      <string>&amp;File</string>
     </property>
@@ -268,7 +188,7 @@
     <addaction name="separator"/>
     <addaction name="quitAction"/>
    </widget>
-   <widget class="QMenu" name="menu_Info">
+   <widget class="QMenu" name="infoMenu">
     <property name="title">
      <string>&amp;Info</string>
     </property>
@@ -277,7 +197,7 @@
     <addaction name="aboutAction"/>
     <addaction name="aboutQtAction"/>
    </widget>
-   <widget class="QMenu" name="menu_View">
+   <widget class="QMenu" name="viewMenu">
     <property name="title">
      <string>&amp;Window</string>
     </property>
@@ -288,10 +208,20 @@
     <addaction name="stayOnTopAction"/>
     <addaction name="showMinimalAction"/>
    </widget>
-   <widget class="QMenu" name="menu_Flight">
+   <widget class="QMenu" name="flightMenu">
     <property name="title">
      <string>&amp;Replay</string>
     </property>
+    <widget class="QMenu" name="slowMenu">
+     <property name="title">
+      <string>Slow</string>
+     </property>
+    </widget>
+    <widget class="QMenu" name="fastMenu">
+     <property name="title">
+      <string>Fast</string>
+     </property>
+    </widget>
     <addaction name="recordAction"/>
     <addaction name="stopAction"/>
     <addaction name="playAction"/>
@@ -301,11 +231,14 @@
     <addaction name="backwardAction"/>
     <addaction name="forwardAction"/>
     <addaction name="skipToEndAction"/>
+    <addaction name="separator"/>
+    <addaction name="slowMenu"/>
+    <addaction name="fastMenu"/>
    </widget>
-   <addaction name="menu_File"/>
-   <addaction name="menu_Flight"/>
-   <addaction name="menu_View"/>
-   <addaction name="menu_Info"/>
+   <addaction name="fileMenu"/>
+   <addaction name="flightMenu"/>
+   <addaction name="viewMenu"/>
+   <addaction name="infoMenu"/>
   </widget>
   <action name="quitAction">
    <property name="text">
@@ -542,6 +475,7 @@
   </action>
  </widget>
  <resources>
+  <include location="../res/SkyDolly.qrc"/>
   <include location="../res/SkyDolly.qrc"/>
  </resources>
  <connections/>

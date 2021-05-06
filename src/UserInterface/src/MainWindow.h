@@ -68,18 +68,23 @@ private:
     void frenchConnection() noexcept;
     void initUi() noexcept;
     void initControlUi() noexcept;
+    void initReplaySpeedUi() noexcept;
 
     bool connectWithDb() noexcept;
 
 private slots:
+
+    // Ui elements
     void on_positionSlider_sliderPressed() noexcept;
     void on_positionSlider_valueChanged(int value) noexcept;
     void on_positionSlider_sliderReleased() noexcept;
     void on_timestampTimeEdit_timeChanged(const QTime &time) noexcept;
-    void on_customReplaySpeedLineEdit_editingFinished() noexcept;
+
+    void handleCustomSpeedChanged() noexcept;
 
     void updateUi() noexcept;
     void updateControlUi() noexcept;
+    void updateReplaySpeedUi() noexcept;
     void updateTimestamp() noexcept;
     void updateFileMenu() noexcept;
     void updateWindowMenu() noexcept;

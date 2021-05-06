@@ -84,7 +84,7 @@ void LightWidget::hideEvent(QHideEvent *event) noexcept
     Q_UNUSED(event)
 
     disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
-            this, &LightWidget::updateUi);
+              this, &LightWidget::updateUi);
 }
 
 // PRIVATE
