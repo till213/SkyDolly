@@ -113,6 +113,7 @@ void FlightPlanWidget::addWaypoint(const Waypoint &waypoint)
 {
     WaypointWidget *waypointWidget = new WaypointWidget(waypoint, ui->waypointTabWidget);
     ui->waypointTabWidget->addTab(waypointWidget, waypoint.identifier);
+    ui->waypointTabWidget->setCurrentWidget(waypointWidget);
 }
 
 void FlightPlanWidget::updateWaypoint(int index, const Waypoint &waypoint)
