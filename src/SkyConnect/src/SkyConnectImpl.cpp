@@ -160,13 +160,16 @@ void SkyConnectImpl::onStopRecording() noexcept
     for (const auto &it : d->flightPlan) {
         flightPlan.add(it.second);
     }
-    QVector<Waypoint> &flightPlanData = userAircraft.getFlightPlan().getAll();
-    if (flightPlanData.count() > 0) {
-        Waypoint &data = flightPlanData.last();
-        data.timestamp = getCurrentTimestamp();
-        data.localTime = d->currentLocalDateTime;
-        data.zuluTime = d->currentZuluDateTime;
+
+    // Update simulation time of last waypoint
+    int waypointCount = flightPlan.getAllConst().count();
+    if (waypointCount > 0) {
+        Waypoint waypoint = flightPlan.getAllConst().at(waypointCount - 1);
+        waypoint.localTime = QDateTime::currentDateTime();
+        waypoint.zuluTime = QDateTime::currentDateTimeUtc();
+        flightPlan.update(waypointCount - 1, waypoint);
     }
+
     FlightCondition condition = flight.getFlightConditionConst();
     condition.endLocalTime = d->currentLocalDateTime;
     condition.endZuluTime = d->currentZuluDateTime;
