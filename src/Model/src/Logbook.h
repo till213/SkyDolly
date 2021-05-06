@@ -39,6 +39,7 @@ public:
     static void destroyInstance() noexcept;
 
     Flight &getCurrentFlight() const;
+    const Flight &getCurrentFlightConst() const;
 
 protected:
     ~Logbook();

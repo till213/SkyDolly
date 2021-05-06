@@ -45,13 +45,15 @@ public:
     virtual ~FlightPlan() noexcept;
 
     void add(const FlightPlanData &flightPlanData) noexcept;
-    QVector<FlightPlanData> &getAll() const noexcept;
+    void update(int index, const FlightPlanData &flightPlanData) noexcept;
     const QVector<FlightPlanData> &getAllConst() const noexcept;
 
     void clear() noexcept;
 
 signals:
-    void dataChanged();
+    void waypointAdded(const FlightPlanData &flightPlanData);
+    void waypointUpdated(int index, const FlightPlanData &flightPlanData);
+    void waypointsCleared();
 
 private:
     Q_DISABLE_COPY(FlightPlan)

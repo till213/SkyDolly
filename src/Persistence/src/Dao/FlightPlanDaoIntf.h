@@ -25,6 +25,7 @@
 #ifndef FLIGHTPLANDAOINTF_H
 #define FLIGHTPLANDAOINTF_H
 
+class FlightPlan;
 class FlightPlanData;
 
 class FlightPlanDaoIntf
@@ -42,7 +43,7 @@ public:
      * \return \c true on success; \c false else
      */
     virtual bool add(qint64 aircraftId, const QVector<FlightPlanData> &data) = 0;
-    virtual bool getByAircraftId(qint64 aircraftId, QVector<FlightPlanData> &data) const = 0;
+    virtual bool getByAircraftId(qint64 aircraftId, FlightPlan &flightPlan) const = 0;
     virtual bool deleteByFlightId(qint64 flightId) = 0;
 };
 

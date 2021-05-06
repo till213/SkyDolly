@@ -336,7 +336,7 @@ bool SQLiteAircraftDao::getByFlightId(qint64 flightId, int sequenceNumber, Aircr
         ok = d->lightDao->getByAircraftId(aircraft.getId(), aircraft.getLight().getAll());
     }
     if (ok) {
-        ok = d->flightPlanDao->getByAircraftId(aircraft.getId(), aircraft.getFlightPlan().getAll());
+        ok = d->flightPlanDao->getByAircraftId(aircraft.getId(), aircraft.getFlightPlan());
     }
 
     emit aircraft.dataChanged();

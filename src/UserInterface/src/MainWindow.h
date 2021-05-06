@@ -57,8 +57,8 @@ public:
     virtual ~MainWindow() noexcept;
 
 protected:
-    bool event(QEvent *event) override;
-    void resizeEvent(QResizeEvent *event);
+    virtual bool event(QEvent *event) override;
+    virtual void resizeEvent(QResizeEvent *event) override;
 
 private:
     Q_DISABLE_COPY(MainWindow)
