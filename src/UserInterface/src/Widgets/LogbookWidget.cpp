@@ -123,6 +123,7 @@ void LogbookWidget::initUi() noexcept
     ui->logTableWidget->setHorizontalHeaderLabels(headers);
     ui->logTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->logTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->logTableWidget->verticalHeader()->hide();
     ui->logTableWidget->setMinimumWidth(MinimumTableWidth);
 }
 
@@ -167,12 +168,14 @@ void LogbookWidget::updateUi() noexcept
 
         newItem = new QTableWidgetItem(d->unit.formatTime(desc.startDate));
         ui->logTableWidget->setItem(rowIndex, 3, newItem);
+        newItem->setToolTip(tr("Simulation time: %1 (%2Z)").arg(d->unit.formatTime(desc.startSimulationLocalTime), d->unit.formatTime(desc.startSimulationZuluTime)));
 
         newItem = new QTableWidgetItem(desc.startLocation);
         ui->logTableWidget->setItem(rowIndex, 4, newItem);
 
         newItem = new QTableWidgetItem(d->unit.formatTime(desc.endDate));
         ui->logTableWidget->setItem(rowIndex, 5, newItem);
+        newItem->setToolTip(tr("Simulation time: %1 (%2Z)").arg(d->unit.formatTime(desc.endSimulationLocalTime), d->unit.formatTime(desc.endSimulationZuluTime)));
 
         newItem = new QTableWidgetItem(desc.endLocation);
         ui->logTableWidget->setItem(rowIndex, 6, newItem);
