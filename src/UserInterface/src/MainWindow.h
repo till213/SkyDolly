@@ -111,7 +111,7 @@ private slots:
     void on_aboutQtAction_triggered() noexcept;
 
     void handleTimestampChanged(qint64 timestamp) noexcept;
-    void handleReplaySpeedSelected(int selection) noexcept;
+    void handleReplaySpeedSelected(QAction *action) noexcept;
 
     // Replay
     void toggleRecord(bool checked) noexcept;
