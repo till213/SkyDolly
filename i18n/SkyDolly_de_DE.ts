@@ -65,22 +65,22 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="112"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="113"/>
         <source>Down</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="112"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="113"/>
         <source>Up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="118"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="119"/>
         <source>Folded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="118"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="119"/>
         <source>Unfolded</source>
         <translation type="unfinished"></translation>
     </message>
@@ -647,13 +647,13 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.ui" line="398"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="536"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="542"/>
         <source>Export CSV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.ui" line="403"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="511"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="517"/>
         <source>Import CSV</source>
         <translation type="unfinished"></translation>
     </message>
@@ -693,52 +693,57 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="474"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="240"/>
+        <source>Custom replay factor in [%L1, %L2]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="480"/>
         <source>Record [@%1 Hz]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="476"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="482"/>
         <source>Record [auto sample rate]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="481"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="487"/>
         <source>Fast forward [%1 sec]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="482"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="488"/>
         <source>Rewind [%1 sec]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="485"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="491"/>
         <source>Fast forward [%1 %]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="486"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="492"/>
         <source>Rewind [%1 %]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="527"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="533"/>
         <source>Import error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="527"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="533"/>
         <source>The CSV file %1 could not be read.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="546"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="552"/>
         <source>Export error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="546"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="552"/>
         <source>The CSV file %1 could not be written.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1222,42 +1227,42 @@ MIT License</source>
 <context>
     <name>Unit</name>
     <message>
-        <location filename="../src/UserInterface/src/Unit.cpp" line="51"/>
+        <location filename="../src/UserInterface/src/Unit.cpp" line="70"/>
         <source>N</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Unit.cpp" line="51"/>
+        <location filename="../src/UserInterface/src/Unit.cpp" line="70"/>
         <source>S</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Unit.cpp" line="63"/>
+        <location filename="../src/UserInterface/src/Unit.cpp" line="81"/>
         <source>E</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Unit.cpp" line="63"/>
+        <location filename="../src/UserInterface/src/Unit.cpp" line="81"/>
         <source>W</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Unit.cpp" line="86"/>
+        <location filename="../src/UserInterface/src/Unit.cpp" line="104"/>
         <source>Fog (&lt; 3,300 ft)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Unit.cpp" line="88"/>
-        <source>Mist (&lt; 1.2 mi</source>
+        <location filename="../src/UserInterface/src/Unit.cpp" line="106"/>
+        <source>Mist (&lt; 1.2 mi)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Unit.cpp" line="90"/>
+        <location filename="../src/UserInterface/src/Unit.cpp" line="108"/>
         <source>Haze (&lt; 3.1 mi)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Unit.cpp" line="92"/>
+        <location filename="../src/UserInterface/src/Unit.cpp" line="110"/>
         <source>Clear (&gt;= 3.1 mi)</source>
         <translation type="unfinished"></translation>
     </message>

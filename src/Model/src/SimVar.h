@@ -91,7 +91,8 @@ namespace SimVar
     MODEL_API extern const char *TailhookPosition;
     MODEL_API extern const char *CanopyOpen;
     MODEL_API extern const char *GearHandlePosition;
-    MODEL_API extern const char *FoldingWingHandlePosition;
+    MODEL_API extern const char *FoldingWingLeftPercent;
+    MODEL_API extern const char *FoldingWingRightPercent;
 
     MODEL_API extern const char *LightStates;
 

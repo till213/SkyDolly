@@ -82,7 +82,8 @@ const char *SimVar::WaterRudderHandlePosition = "Water Rudder Handle Position";
 const char *SimVar::TailhookPosition = "Tailhook Position";
 const char *SimVar::CanopyOpen = "Canopy Open";
 const char *SimVar::GearHandlePosition = "Gear Handle Position";
-const char *SimVar::FoldingWingHandlePosition = "Folding Wing Handle Position";
+const char *SimVar::FoldingWingLeftPercent = "Folding Wing Left Percent";
+const char *SimVar::FoldingWingRightPercent = "Folding Wing Right Percent";
 
 const char *SimVar::LightStates = "Light States";
 

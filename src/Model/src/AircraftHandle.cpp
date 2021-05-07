@@ -148,8 +148,9 @@ const AircraftHandleData &AircraftHandle::interpolate(qint64 timestamp, TimeVari
                 // Canopy closed
                 d->previousAircraftHandleData = AircraftHandleData::NullAircraftHandleData;
             }
+            d->currentAircraftHandleData.leftWingFolding = SkyMath::interpolateLinear(p1->leftWingFolding, p2->leftWingFolding, tn);
+            d->currentAircraftHandleData.rightWingFolding = SkyMath::interpolateLinear(p1->rightWingFolding, p2->rightWingFolding, tn);
             d->currentAircraftHandleData.gearHandlePosition = p1->gearHandlePosition;
-            d->currentAircraftHandleData.foldingWingHandlePosition = p1->foldingWingHandlePosition;
 
             d->currentAircraftHandleData.timestamp = timestamp;
         } else if (!d->previousAircraftHandleData.isNull()) {

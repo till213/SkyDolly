@@ -45,8 +45,9 @@ struct SimConnectAircraftHandleData
     double waterRudderHandlePosition;
     double tailhookPosition;
     double canopyOpen;
-    qint32 gearHandlePosition;
-    qint32 foldingWingHandlePosition;
+    double foldingWingLeftPercent;
+    double foldingWingRightPercent;
+    qint32 gearHandlePosition;    
 
     inline AircraftHandleData toAircraftHandleData() const noexcept
     {
@@ -57,8 +58,9 @@ struct SimConnectAircraftHandleData
         aircraftHandleData.waterRudderHandlePosition = SkyMath::fromPosition(waterRudderHandlePosition);
         aircraftHandleData.tailhookPosition = SkyMath::fromPercent(tailhookPosition);
         aircraftHandleData.canopyOpen = SkyMath::fromPercent(canopyOpen);
+        aircraftHandleData.leftWingFolding = SkyMath::fromPercent(foldingWingLeftPercent);
+        aircraftHandleData.rightWingFolding = SkyMath::fromPercent(foldingWingRightPercent);
         aircraftHandleData.gearHandlePosition = gearHandlePosition != 0;
-        aircraftHandleData.foldingWingHandlePosition = foldingWingHandlePosition != 0;
 
         return aircraftHandleData;
     }
@@ -70,8 +72,9 @@ struct SimConnectAircraftHandleData
         waterRudderHandlePosition = SkyMath::toPosition(aircraftHandleData.waterRudderHandlePosition);
         tailhookPosition = SkyMath::toPercent(aircraftHandleData.tailhookPosition);
         canopyOpen = SkyMath::toPercent(aircraftHandleData.canopyOpen);
-        gearHandlePosition = aircraftHandleData.gearHandlePosition ? 1 : 0;
-        foldingWingHandlePosition = aircraftHandleData.foldingWingHandlePosition ? 1 : 0;
+        foldingWingLeftPercent = SkyMath::toPercent(aircraftHandleData.leftWingFolding);
+        foldingWingRightPercent = SkyMath::toPercent(aircraftHandleData.rightWingFolding);
+        gearHandlePosition = aircraftHandleData.gearHandlePosition ? 1 : 0;        
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;

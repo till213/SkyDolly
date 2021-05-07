@@ -617,10 +617,15 @@ inline bool CSVImport::importAircraftHandleData(const QList<QByteArray> &headers
             if (ok) {
                 data.canopyOpen = doubleValue;
             }
-        } else if (header == SimVar::FoldingWingHandlePosition) {
-            intValue = values.at(columnIndex).toInt(&ok);
+        } else if (header == SimVar::FoldingWingLeftPercent) {
+            doubleValue = values.at(columnIndex).toDouble(&ok);
             if (ok) {
-                data.foldingWingHandlePosition = intValue == 1 ? true : false;
+                data.leftWingFolding = doubleValue;
+            }
+        } else if (header == SimVar::FoldingWingRightPercent) {
+            doubleValue = values.at(columnIndex).toDouble(&ok);
+            if (ok) {
+                data.rightWingFolding = doubleValue;
             }
         // Timestamp
         } else if (header == SimVar::Timestamp) {
