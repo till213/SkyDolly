@@ -31,6 +31,7 @@
 #include "../../../Kernel/src/SampleRate.h"
 #include "../../../Kernel/src/Enum.h"
 #include "../../../Kernel/src/Settings.h"
+#include "../../../Model/src/SimVar.h"
 #include "SettingsDialog.h"
 #include "ui_SettingsDialog.h"
 
@@ -53,8 +54,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) noexcept :
 }
 
 SettingsDialog::~SettingsDialog() noexcept
-{
-}
+{}
 
 // PROTECTED
 
@@ -96,6 +96,7 @@ void SettingsDialog::initUi() noexcept
     ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz50), tr("50 Hz"));
     ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz60), tr("60 Hz"));
 
+    // Replay
     QDoubleValidator *secondsValidator = new QDoubleValidator(ui->seekInSecondsLineEdit);
     ui->seekInSecondsLineEdit->setValidator(secondsValidator);
     secondsValidator->setBottom(MinSeekSeconds);
@@ -105,6 +106,9 @@ void SettingsDialog::initUi() noexcept
     ui->seekInPercentLineEdit->setValidator(percentValidator);
     percentValidator->setBottom(MinSeekPercent);
     percentValidator->setTop(MaxSeekPercent);
+
+    ui->repeatFlapsCheckBox->setToolTip(SimVar::FlapsHandleIndex);
+    ui->repeatCanopyOpenCheckBox->setToolTip(SimVar::CanopyOpen);
 }
 
 void SettingsDialog::frenchConnection() noexcept
@@ -121,10 +125,13 @@ void SettingsDialog::updateUi() noexcept
     // Recording
     ui->recordFrequencyComboBox->setCurrentIndex(Enum::toUnderlyingType(settings.getRecordSampleRate()));
 
-    // Seek
+    // Replay
     ui->absoluteSeekEnabledCheckBox->setChecked(settings.isAbsoluteSeekEnabled());
     ui->seekInSecondsLineEdit->setText(QString::number(settings.getSeekIntervalSeconds()));
     ui->seekInPercentLineEdit->setText(QString::number(settings.getSeekIntervalPercent()));
+
+    ui->repeatFlapsCheckBox->setChecked(settings.isRepeatFlapsHandleIndexEnabled());
+    ui->repeatCanopyOpenCheckBox->setChecked(settings.isRepeatCanopyOpenEnabled());
 }
 
 void SettingsDialog::handleAccepted() noexcept
@@ -134,8 +141,11 @@ void SettingsDialog::handleAccepted() noexcept
     // Recording
     settings.setRecordSampleRate(static_cast<SampleRate::SampleRate>(ui->recordFrequencyComboBox->currentIndex()));
 
-    // Seek
+    // Replay
     settings.setAbsoluteSeekEnabled(ui->absoluteSeekEnabledCheckBox->isChecked());
     settings.setSeekIntervalSeconds(ui->seekInSecondsLineEdit->text().toDouble());
     settings.setSeekIntervalPercent(ui->seekInPercentLineEdit->text().toDouble());
+
+    settings.setRepeatFlapsHandleIndexEnabled(ui->repeatFlapsCheckBox->isChecked());
+    settings.setRepeatCanopyOpenEnabled(ui->repeatCanopyOpenCheckBox->isChecked());
 }

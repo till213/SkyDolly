@@ -46,6 +46,8 @@ public:
     bool absoluteSeek;
     double seekIntervalSeconds;
     double seekIntervalPercent;
+    bool repeatFlapsHandleIndex;
+    bool repeatCanopyOpen;
 
     int previewInfoDialogCount;
 
@@ -56,6 +58,10 @@ public:
     static constexpr bool DefaultAbsoluteSeek = true;
     static constexpr double DefaultSeekIntervalSeconds = 1.0;
     static constexpr double DefaultSeekIntervalPercent = 0.5;
+    static constexpr double DefaultRepeatFlapsHandleIndex = false;
+    // For now the default value is true, as no known aircraft exists where the canopy values would not
+    // have to be repeated
+    static constexpr double DefaultRepeatCanopyOpen = true;
 
     static constexpr int DefaultPreviewInfoDialogCount = 3;
     static constexpr int PreviewInfoDialogBase = 20;
@@ -195,6 +201,32 @@ void Settings::setSeekIntervalPercent(double percent) noexcept
     }
 }
 
+bool Settings::isRepeatFlapsHandleIndexEnabled() const noexcept
+{
+    return d->repeatFlapsHandleIndex;
+}
+
+void Settings::setRepeatFlapsHandleIndexEnabled(bool enable) noexcept
+{
+    if (d->repeatFlapsHandleIndex!= enable) {
+        d->repeatFlapsHandleIndex = enable;
+        emit repeatFlapsPositionChanged(d->repeatFlapsHandleIndex);
+    }
+}
+
+bool Settings::isRepeatCanopyOpenEnabled() const noexcept
+{
+    return d->repeatCanopyOpen;
+}
+
+void Settings::setRepeatCanopyOpenEnabled(bool enable) noexcept
+{
+    if (d->repeatCanopyOpen!= enable) {
+        d->repeatCanopyOpen = enable;
+        emit repeatCanopyChanged(d->repeatCanopyOpen);
+    }
+}
+
 int Settings::getPreviewInfoDialogCount() const noexcept
 {
     return d->seekIntervalSeconds;
@@ -228,6 +260,8 @@ void Settings::store() noexcept
         d->settings.setValue("AbsoluteSeek", d->absoluteSeek);
         d->settings.setValue("SeekIntervalSeconds", d->seekIntervalSeconds);
         d->settings.setValue("SeekIntervalPercent", d->seekIntervalPercent);
+        d->settings.setValue("RepeatFlapsHandleIndex", d->repeatFlapsHandleIndex);
+        d->settings.setValue("RepeatCanopyOpen", d->repeatCanopyOpen);
     }
     d->settings.endGroup();    
     d->settings.beginGroup("Window");
@@ -288,6 +322,8 @@ void Settings::restore() noexcept
             qWarning("The seek interval [percent] in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultSeekIntervalPercent);
             d->seekIntervalPercent = SettingsPrivate::DefaultSeekIntervalPercent;
         }
+        d->repeatFlapsHandleIndex = d->settings.value("RepeatFlapsHandleIndex", SettingsPrivate::DefaultRepeatFlapsHandleIndex).toBool();
+        d->repeatCanopyOpen = d->settings.value("RepeatCanopyOpen", SettingsPrivate::DefaultRepeatCanopyOpen).toBool();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Window");
@@ -347,5 +383,9 @@ void Settings::frenchConnection() noexcept
     connect(this, &Settings::seekIntervalSecondsChanged,
             this, &Settings::changed);
     connect(this, &Settings::seekIntervalPercentChanged,
+            this, &Settings::changed);
+    connect(this, &Settings::repeatFlapsPositionChanged,
+            this, &Settings::changed);
+    connect(this, &Settings::repeatCanopyChanged,
             this, &Settings::changed);
 }
