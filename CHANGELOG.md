@@ -22,6 +22,13 @@
 
 ## 0.5.2
 
+### New Features
+
+- New "repeat values" settings for selected simulation variables have been introduced: canopy and flaps  
+  * Certain aircrafts counteract the requested simulation variables, e.g. the canopy closes or the flaps retract automatically
+  * So with the "repeat" option enabled and if the given simulation variable has a value greater zero (e.g. "canopy open") then its value is repeatedly sent to Flight Simulator
+  * The optimal settings are to disable the "repeat" options (in which case simulation variables are only sent when the value actually changes)
+
 ### Bug Fixes
 
 - Fixes a crash which would occur when quitting the application and when the simulation variables dialog was still open
