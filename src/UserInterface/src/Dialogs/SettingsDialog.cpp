@@ -109,6 +109,8 @@ void SettingsDialog::initUi() noexcept
 
     ui->repeatFlapsCheckBox->setToolTip(SimVar::FlapsHandleIndex);
     ui->repeatCanopyOpenCheckBox->setToolTip(SimVar::CanopyOpen);
+
+    ui->settingsTabWidget->setCurrentIndex(0);
 }
 
 void SettingsDialog::frenchConnection() noexcept
