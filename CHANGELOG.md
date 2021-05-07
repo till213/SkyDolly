@@ -13,12 +13,7 @@
 - Additional simulation variables support
   * Waypoints (ICAO, latitude/longitude/altitude) are shown in the order of approach; each waypoint is only counted once
   * Local and zulu simulation time
-- Replay speed now also available in replay menu
-  
-### Bug Fixes
-
-- Values in feet now have the unit "ft" appended
-- Prevent access exception when closing the application with CTRL + Q shortcut when dialogs are still open
+- Replay speed now also available in replay menu, including shortcuts: CTRL + [1 - 4] for slow motion, SHIFT + [1 - 5] for timelapse
 
 ## 0.5.2
 
