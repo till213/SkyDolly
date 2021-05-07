@@ -135,7 +135,7 @@
         <item row="1" column="0">
          <widget class="QLabel" name="label_61">
           <property name="text">
-           <string>Canopy Open</string>
+           <string>Canopy</string>
           </property>
          </widget>
         </item>

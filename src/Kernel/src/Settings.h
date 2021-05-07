@@ -168,6 +168,46 @@ public:
     void setSeekIntervalPercent(double percent) noexcept;
 
     /*!
+     * Returns whether the FLAPS HANDLE INDEX simulation variable
+     * is repeatedly sent or not.
+     *
+     * \return \c true if the FLAPS HANDLE INDEX value is repeatedly
+     *         sent when its value is greater zero; \c false if
+     *         the value is only to be sent when changed
+     */
+    bool isRepeatFlapsHandleIndexEnabled() const noexcept;
+
+    /*!
+     * Enables the value repeat for the FLAPS HANDLE INDEX simulation
+     * variable.
+     *
+     * \param enable
+     *        set to \c true in order to enable value repeat;
+     *        \c false else
+     */
+    void setRepeatFlapsHandleIndexEnabled(bool enable) noexcept;
+
+    /*!
+     * Returns whether the CANOPY OPEN simulation variable
+     * is repeatedly sent or not.
+     *
+     * \return \c true if the CANOPY OPEN value is repeatedly
+     *         sent when its value is greater zero; \c false if
+     *         the value is only to be sent when changed
+     */
+    bool isRepeatCanopyOpenEnabled() const noexcept;
+
+    /*!
+     * Enables the value repeat for the CANOPY OPEN simulation
+     * variable.
+     *
+     * \param enable
+     *        set to \c true in order to enable value repeat;
+     *        \c false else
+     */
+    void setRepeatCanopyOpenEnabled(bool enable) noexcept;
+
+    /*!
      * Returns the count of how many times the "preview" dialog is still
      * to be shown.
      *
@@ -239,6 +279,20 @@ signals:
      * \sa changed()
      */
     void seekIntervalPercentChanged(double percent);
+
+    /*!
+     * Emitted when the repeat flaps position has changed.
+     *
+     * \sa changed()
+     */
+    void repeatFlapsPositionChanged(bool enable);
+
+    /*!
+     * Emitted when the repeat canopy has changed.
+     *
+     * \sa changed()
+     */
+    void repeatCanopyChanged(bool enable);
 
     /*!
      * Emitted when any setting has changed.

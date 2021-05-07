@@ -27,6 +27,7 @@
 #include <QObject>
 #include <QVector>
 
+#include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/SkyMath.h"
 #include "TimeVariableData.h"
 #include "SkySearch.h"
@@ -136,15 +137,14 @@ const AircraftHandleData &AircraftHandle::interpolate(qint64 timestamp, TimeVari
             d->currentAircraftHandleData.brakeLeftPosition = SkyMath::interpolateLinear(p1->brakeLeftPosition, p2->brakeLeftPosition, tn);
             d->currentAircraftHandleData.brakeRightPosition = SkyMath::interpolateLinear(p1->brakeRightPosition, p2->brakeRightPosition, tn);
             d->currentAircraftHandleData.waterRudderHandlePosition = SkyMath::interpolateLinear(p1->waterRudderHandlePosition, p2->waterRudderHandlePosition, tn);
-            d->currentAircraftHandleData.tailhookPosition = SkyMath::interpolateLinear(p1->tailhookPosition, p2->tailhookPosition, tn);
-            // The CANOPY OPEN variable "automatically closes" (decreases its value), so values > 0 need
-            // to be repeatedly set
+            d->currentAircraftHandleData.tailhookPosition = SkyMath::interpolateLinear(p1->tailhookPosition, p2->tailhookPosition, tn);            
             d->currentAircraftHandleData.canopyOpen = SkyMath::interpolateLinear(p1->canopyOpen, p2->canopyOpen, tn);
-            if (d->currentAircraftHandleData.canopyOpen > 0) {
+            // Certain aircrafts automatically reset the CANOPY OPEN, so values > 0 need to be repeatedly set
+            if (d->currentAircraftHandleData.canopyOpen > 0 && Settings::getInstance().isRepeatCanopyOpenEnabled()) {
                 // We do that my storing the previous values (when the canopy is "open")...
                 d->previousAircraftHandleData = d->currentAircraftHandleData;
             } else {
-                // Canopy closed
+                // Canopy closed or simulation variable repeat disabled
                 d->previousAircraftHandleData = AircraftHandleData::NullAircraftHandleData;
             }
             d->currentAircraftHandleData.leftWingFolding = SkyMath::interpolateLinear(p1->leftWingFolding, p2->leftWingFolding, tn);
