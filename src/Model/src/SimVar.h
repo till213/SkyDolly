@@ -89,7 +89,8 @@ namespace SimVar
     inline constexpr char TailhookPosition[] = "Tailhook Position";
     inline constexpr char CanopyOpen[] = "Canopy Open";
     inline constexpr char GearHandlePosition[] = "Gear Handle Position";
-    inline constexpr char FoldingWingHandlePosition[] = "Folding Wing Handle Position";
+    inline constexpr char FoldingWingLeftPercent[] = "Folding Wing Left Percent";
+    inline constexpr char FoldingWingRightPercent[] = "Folding Wing Right Percent";
 
     inline constexpr char LightStates[] = "Light States";
 

@@ -100,7 +100,8 @@ void AircraftHandleWidget::initUi() noexcept
     ui->waterRudderLineEdit->setToolTip(SimVar::WaterRudderHandlePosition);
     ui->tailhookLineEdit->setToolTip(SimVar::TailhookPosition);
     ui->canopyOpenLineEdit->setToolTip(SimVar::CanopyOpen);
-    ui->foldableWingsLineEdit->setToolTip(SimVar::FoldingWingHandlePosition);
+    ui->leftWingFoldingLineEdit->setToolTip(SimVar::FoldingWingLeftPercent);
+    ui->rightWingFoldingLineEdit->setToolTip(SimVar::FoldingWingRightPercent);
 }
 
 const AircraftHandleData &AircraftHandleWidget::getCurrentAircraftHandleData(qint64 timestamp, TimeVariableData::Access access) const noexcept
@@ -132,7 +133,8 @@ void AircraftHandleWidget::updateUi(qint64 timestamp, TimeVariableData::Access a
         ui->waterRudderLineEdit->setText(d->unit.formatPosition(aircraftHandleData.waterRudderHandlePosition));
         ui->tailhookLineEdit->setText(d->unit.formatPercent(aircraftHandleData.tailhookPosition));
         ui->canopyOpenLineEdit->setText(d->unit.formatPercent(aircraftHandleData.canopyOpen));
-        aircraftHandleData.foldingWingHandlePosition ? ui->foldableWingsLineEdit->setText(tr("Folded")) : ui->foldableWingsLineEdit->setText(tr("Unfolded"));
+        ui->leftWingFoldingLineEdit->setText(d->unit.formatPercent(aircraftHandleData.leftWingFolding));
+        ui->rightWingFoldingLineEdit->setText(d->unit.formatPercent(aircraftHandleData.rightWingFolding));
 
         colorName = d->ActiveTextColor.name();
     } else {
@@ -146,5 +148,6 @@ void AircraftHandleWidget::updateUi(qint64 timestamp, TimeVariableData::Access a
     ui->waterRudderLineEdit->setStyleSheet(css);
     ui->tailhookLineEdit->setStyleSheet(css);
     ui->canopyOpenLineEdit->setStyleSheet(css);
-    ui->foldableWingsLineEdit->setStyleSheet(css);
+    ui->leftWingFoldingLineEdit->setStyleSheet(css);
+    ui->rightWingFoldingLineEdit->setStyleSheet(css);
 }

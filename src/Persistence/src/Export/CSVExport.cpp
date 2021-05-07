@@ -371,8 +371,9 @@ inline QString CSVExport::getAircraftHandleHeader() noexcept
            QString(SimVar::BrakeRightPosition) % CSVConst::Sep %
            QString(SimVar::WaterRudderHandlePosition) % CSVConst::Sep %
            QString(SimVar::TailhookPosition) % CSVConst::Sep %
-           QString(SimVar::CanopyOpen) % CSVConst::Sep %
-           QString(SimVar::FoldingWingHandlePosition);
+           QString(SimVar::FoldingWingLeftPercent)  % CSVConst::Sep %
+           QString(SimVar::FoldingWingRightPercent)  % CSVConst::Sep %
+           QString(SimVar::CanopyOpen);
 }
 
 inline QString CSVExport::getAircraftHandleData(const AircraftHandleData &data) noexcept
@@ -384,11 +385,14 @@ inline QString CSVExport::getAircraftHandleData(const AircraftHandleData &data) 
               QString::number(data.brakeRightPosition) % CSVConst::Sep %
               QString::number(data.waterRudderHandlePosition) % CSVConst::Sep %
               QString::number(data.tailhookPosition) % CSVConst::Sep %
-              QString::number(data.canopyOpen) % CSVConst::Sep %
-              QString::number(data.foldingWingHandlePosition);
+              QString::number(data.leftWingFolding) % CSVConst::Sep %
+              QString::number(data.rightWingFolding) % CSVConst::Sep %
+              QString::number(data.canopyOpen);
+
     } else {
         const QString EmptyString;
         csv = EmptyString % CSVConst::Sep %
+              EmptyString % CSVConst::Sep %
               EmptyString % CSVConst::Sep %
               EmptyString % CSVConst::Sep %
               EmptyString % CSVConst::Sep %
