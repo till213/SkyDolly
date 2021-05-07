@@ -29,7 +29,6 @@
 #include <QByteArray>
 #include <QList>
 
-
 #include "../../../Model/src/SimVar.h"
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/AircraftData.h"
@@ -265,84 +264,84 @@ inline bool CSVImport::importEngineData(const QList<QByteArray> &headers, const 
         double doubleValue;
         int intValue;
         if (header == SimVar::ThrottleLeverPosition1) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.throttleLeverPosition1 = doubleValue;
+                data.throttleLeverPosition1 = intValue;
             }
         } else if (header == SimVar::ThrottleLeverPosition2) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.throttleLeverPosition2 = doubleValue;
+                data.throttleLeverPosition2 = intValue;
             }
         } else if (header == SimVar::ThrottleLeverPosition3) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.throttleLeverPosition3 = doubleValue;
+                data.throttleLeverPosition3 = intValue;
             }
         } else if (header == SimVar::ThrottleLeverPosition4) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.throttleLeverPosition4 = doubleValue;
+                data.throttleLeverPosition4 = intValue;
             }
         } else if (header == SimVar::PropellerLeverPosition1) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.propellerLeverPosition1 = doubleValue;
+                data.propellerLeverPosition1 = intValue;
             }
         } else if (header == SimVar::PropellerLeverPosition2) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.propellerLeverPosition2 = doubleValue;
+                data.propellerLeverPosition2 = intValue;
             }
         } else if (header == SimVar::PropellerLeverPosition3) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.propellerLeverPosition3 = doubleValue;
+                data.propellerLeverPosition3 = intValue;
             }
         } else if (header == SimVar::PropellerLeverPosition4) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.propellerLeverPosition4 = doubleValue;
+                data.propellerLeverPosition4 = intValue;
             }
         } else if (header == SimVar::MixtureLeverPosition1) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.mixtureLeverPosition1 = doubleValue;
+                data.mixtureLeverPosition1 = intValue;
             }
         } else if (header == SimVar::MixtureLeverPosition2) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.mixtureLeverPosition2 = doubleValue;
+                data.mixtureLeverPosition2 = intValue;
             }
         } else if (header == SimVar::MixtureLeverPosition3) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.mixtureLeverPosition3 = doubleValue;
+                data.mixtureLeverPosition3 = intValue;
             }
         } else if (header == SimVar::MixtureLeverPosition4) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.mixtureLeverPosition4 = doubleValue;
+                data.mixtureLeverPosition4 = intValue;
             }
         } else if (header == SimVar::RecipEngineCowlFlapPosition1) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.cowlFlapPosition1 = doubleValue;
+                data.cowlFlapPosition1 = intValue;
             }
         } else if (header == SimVar::RecipEngineCowlFlapPosition2) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.cowlFlapPosition2 = doubleValue;
+                data.cowlFlapPosition2 = intValue;
             }
         } else if (header == SimVar::RecipEngineCowlFlapPosition3) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.cowlFlapPosition3 = doubleValue;
+                data.cowlFlapPosition3 = intValue;
             }
         } else if (header == SimVar::RecipEngineCowlFlapPosition4) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.cowlFlapPosition4 = doubleValue;
+                data.cowlFlapPosition4 = intValue;
             }
         } else if (header == SimVar::ElectricalMasterBattery1) {
             intValue = values.at(columnIndex).toInt(&ok);
@@ -432,21 +431,21 @@ inline bool CSVImport::importPrimaryFlightControlData(const QList<QByteArray> &h
             break;
         }
 
-        double doubleValue;
+        int intValue;
         if (header == SimVar::RudderPosition) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.rudderPosition = doubleValue;
+                data.rudderPosition = intValue;
             }
         } else if (header == SimVar::ElevatorPosition) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.elevatorPosition = doubleValue;
+                data.elevatorPosition = intValue;
             }
         } else if (header == SimVar::AileronPosition) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.aileronPosition = doubleValue;
+                data.aileronPosition = intValue;
             }
         // Timestamp
         } else if (header == SimVar::Timestamp) {
@@ -496,32 +495,31 @@ inline bool CSVImport::importSecondaryFlightControlData(const QList<QByteArray> 
             break;
         }
 
-        double doubleValue;
         int intValue;
         if (header == SimVar::LeadingEdgeFlapsLeftPercent) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.leadingEdgeFlapsLeftPercent = doubleValue;
+                data.leadingEdgeFlapsLeftPercent = intValue;
             }
         } else if (header == SimVar::LeadingEdgeFlapsRightPercent) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.leadingEdgeFlapsRightPercent = doubleValue;
+                data.leadingEdgeFlapsRightPercent = intValue;
             }
         } else if (header == SimVar::TrailingEdgeFlapsLeftPercent) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.trailingEdgeFlapsLeftPercent = doubleValue;
+                data.trailingEdgeFlapsLeftPercent = intValue;
             }
         } else if (header == SimVar::TrailingEdgeFlapsRightPercent) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.trailingEdgeFlapsRightPercent = doubleValue;
+                data.trailingEdgeFlapsRightPercent = intValue;
             }
         } else if (header == SimVar::SpoilersHandlePosition) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.spoilersHandlePosition = doubleValue;
+                data.spoilersHandlePosition = intValue;
             }
         } else if (header == SimVar::FlapsHandleIndex) {
             intValue = values.at(columnIndex).toInt(&ok);
@@ -575,7 +573,6 @@ inline bool CSVImport::importAircraftHandleData(const QList<QByteArray> &headers
             break;
         }
 
-        double doubleValue;
         int intValue;
         if (header == SimVar::GearHandlePosition) {
             intValue = values.at(columnIndex).toInt(&ok);
@@ -583,39 +580,39 @@ inline bool CSVImport::importAircraftHandleData(const QList<QByteArray> &headers
                 data.gearHandlePosition = intValue == 1 ? true : false;
             }
         } else if (header == SimVar::BrakeLeftPosition) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.brakeLeftPosition = doubleValue;
+                data.brakeLeftPosition = intValue;
             }
         } else if (header == SimVar::BrakeRightPosition) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.brakeRightPosition = doubleValue;
+                data.brakeRightPosition = intValue;
             }
         } else if (header == SimVar::WaterRudderHandlePosition) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.waterRudderHandlePosition = doubleValue;
+                data.waterRudderHandlePosition = intValue;
             }
         } else if (header == SimVar::TailhookPosition) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.tailhookPosition = doubleValue;
+                data.tailhookPosition = intValue;
             }
         } else if (header == SimVar::CanopyOpen) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.canopyOpen = doubleValue;
+                data.canopyOpen = intValue;
             }
         } else if (header == SimVar::FoldingWingLeftPercent) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.leftWingFolding = doubleValue;
+                data.leftWingFolding = intValue;
             }
         } else if (header == SimVar::FoldingWingRightPercent) {
-            doubleValue = values.at(columnIndex).toDouble(&ok);
+            intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.rightWingFolding = doubleValue;
+                data.rightWingFolding = intValue;
             }
         // Timestamp
         } else if (header == SimVar::Timestamp) {
