@@ -163,13 +163,34 @@ void SkyConnectImpl::onStopRecording() noexcept
 
     // Update simulation time of last waypoint
     int waypointCount = flightPlan.getAllConst().count();
-    if (waypointCount > 0) {
+    if (waypointCount > 1) {
         Waypoint waypoint = flightPlan.getAllConst().at(waypointCount - 1);
-        waypoint.localTime = QDateTime::currentDateTime();
-        waypoint.zuluTime = QDateTime::currentDateTimeUtc();
+        waypoint.localTime = d->currentLocalDateTime;
+        waypoint.zuluTime = d->currentZuluDateTime;
         flightPlan.update(waypointCount - 1, waypoint);
+    } else if (waypointCount == 0) {
+        Waypoint waypoint;
+        AircraftData position = userAircraft.getAllConst().at(0);
+        waypoint.identifier = tr("Custom Start");
+        waypoint.latitude = position.latitude;
+        waypoint.longitude = position.longitude;
+        waypoint.altitude = position.altitude;
+        waypoint.localTime = flight.getFlightConditionConst().startLocalTime;
+        waypoint.zuluTime = flight.getFlightConditionConst().startZuluTime;
+        waypoint.timestamp = 0;
+        flightPlan.add(waypoint);
+        position = userAircraft.getLast();
+        waypoint.identifier = tr("Custom End");
+        waypoint.latitude = position.latitude;
+        waypoint.longitude = position.longitude;
+        waypoint.altitude = position.altitude;
+        waypoint.localTime = d->currentLocalDateTime;
+        waypoint.zuluTime = d->currentZuluDateTime;
+        waypoint.timestamp = getCurrentTimestamp();
+        flightPlan.add(waypoint);
     }
 
+    // Update end simulation time of flight conditions
     FlightCondition condition = flight.getFlightConditionConst();
     condition.endLocalTime = d->currentLocalDateTime;
     condition.endZuluTime = d->currentZuluDateTime;
@@ -671,19 +692,23 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
             const SimConnectFlightPlan *simConnectFlightPlan;
             if (skyConnect->getState() == Connect::State::Recording) {
                 simConnectFlightPlan = reinterpret_cast<const SimConnectFlightPlan *>(&objectData->dwData);
-                Waypoint flightPlanData = simConnectFlightPlan->toPreviousFlightPlanData();
-                if (skyConnect->d->currentLocalDateTime.isValid()) {
-                    flightPlanData.localTime = skyConnect->d->currentLocalDateTime;
-                    flightPlanData.zuluTime = skyConnect->d->currentZuluDateTime;
-                } else {
-                    // No simulation time received yet: set flag for pending update
-                    skyConnect->d->pendingWaypointTime = true;
+                Waypoint waypoint = simConnectFlightPlan->toPreviousWaypoint();
+                if (waypoint.isValid()) {
+                    if (skyConnect->d->currentLocalDateTime.isValid()) {
+                        waypoint.localTime = skyConnect->d->currentLocalDateTime;
+                        waypoint.zuluTime = skyConnect->d->currentZuluDateTime;
+                    } else {
+                        // No simulation time received yet: set flag for pending update
+                        skyConnect->d->pendingWaypointTime = true;
+                    }
+                    waypoint.timestamp = skyConnect->getCurrentTimestamp();
+                    skyConnect->d->flightPlan[waypoint.identifier] = waypoint;
+                    waypoint = simConnectFlightPlan->toNextWaypoint();
+                    if (waypoint.isValid()) {
+                        waypoint.timestamp = skyConnect->getCurrentTimestamp();
+                        skyConnect->d->flightPlan[waypoint.identifier] = waypoint;
+                    }
                 }
-                flightPlanData.timestamp = skyConnect->getCurrentTimestamp();
-                skyConnect->d->flightPlan[flightPlanData.identifier] = flightPlanData;
-                flightPlanData = simConnectFlightPlan->toNextFlightPlanData();
-                flightPlanData.timestamp = skyConnect->getCurrentTimestamp();
-                skyConnect->d->flightPlan[flightPlanData.identifier] = flightPlanData;
                 dataReceived = true;
             }
             break;

@@ -35,4 +35,9 @@ Waypoint::Waypoint() noexcept
 {
 }
 
+bool Waypoint::isValid() const noexcept
+{
+    return !identifier.isEmpty();
+}
+
 const Waypoint Waypoint::NullWaypoint = Waypoint();
