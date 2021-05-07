@@ -63,7 +63,7 @@ bool FlightService::store(Flight &flight) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
-        d->flightDao->addFlight(flight);
+        ok = d->flightDao->addFlight(flight);
         if (ok) {
             QSqlDatabase::database().commit();
             emit flightStored(flight.getId());

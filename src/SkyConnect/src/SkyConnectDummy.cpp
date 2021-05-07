@@ -114,7 +114,7 @@ void SkyConnectDummy::onStopRecording() noexcept
 
     FlightPlan &flightPlan = flight.getUserAircraftConst().getFlightPlan();
     int waypointCount = flightPlan.getAllConst().count();
-    if (waypointCount > 0) {
+    if (waypointCount > 1) {
         Waypoint waypoint = flightPlan.getAllConst().at(waypointCount - 1);
         waypoint.localTime = QDateTime::currentDateTime();
         waypoint.zuluTime = QDateTime::currentDateTimeUtc();

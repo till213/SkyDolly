@@ -47,6 +47,13 @@ struct MODEL_API Waypoint : public TimeVariableData
     Waypoint(const Waypoint &) = default;
     Waypoint &operator= (const Waypoint &) = default;
 
+    /*!
+     * Returns whether this waypoint is valid or not.
+     *
+     * \return \c true if this waypoint is valid (non-empty identifier); \c false else
+     */
+    bool isValid() const noexcept;
+
     static const Waypoint NullWaypoint;
 };
 

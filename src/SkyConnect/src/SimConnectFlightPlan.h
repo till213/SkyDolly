@@ -50,7 +50,7 @@ struct SimConnectFlightPlan
     float gpsWpPrevLon;
     float gpsWpPrevAlt;
 
-    inline Waypoint toNextFlightPlanData() const noexcept
+    inline Waypoint toNextWaypoint() const noexcept
     {
         Waypoint waypoint;
 
@@ -65,7 +65,7 @@ struct SimConnectFlightPlan
         return waypoint;
     }
 
-    inline Waypoint toPreviousFlightPlanData() const noexcept
+    inline Waypoint toPreviousWaypoint() const noexcept
     {
         Waypoint waypoint;
 
