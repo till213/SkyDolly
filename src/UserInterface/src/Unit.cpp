@@ -84,7 +84,7 @@ QString Unit::formatLongitude(double longitude) noexcept
 
 QString Unit::formatFeet(double feet) noexcept
 {
-    return d->locale.toString(feet, 'f', Precision);
+    return d->locale.toString(feet, 'f', Precision) % " ft";
 }
 
 QString Unit::formatCelcius(double temperature) noexcept
