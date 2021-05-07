@@ -27,6 +27,7 @@
 #include <QObject>
 #include <QVector>
 
+#include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/SkyMath.h"
 #include "TimeVariableData.h"
 #include "SkySearch.h"
@@ -45,6 +46,7 @@ public:
     QVector<SecondaryFlightControlData> secondaryFlightControlData;
     qint64 currentTimestamp;
     TimeVariableData::Access currentAccess;
+    SecondaryFlightControlData previousSecondaryFlightControlData;
     SecondaryFlightControlData currentSecondaryFlightControlData;
     mutable int currentIndex;
 
@@ -138,8 +140,22 @@ const SecondaryFlightControlData &SecondaryFlightControl::interpolate(qint64 tim
             d->currentSecondaryFlightControlData.trailingEdgeFlapsLeftPercent = SkyMath::interpolateLinear(p1->trailingEdgeFlapsLeftPercent, p2->trailingEdgeFlapsLeftPercent, tn);
             d->currentSecondaryFlightControlData.trailingEdgeFlapsRightPercent = SkyMath::interpolateLinear(p1->trailingEdgeFlapsRightPercent, p2->trailingEdgeFlapsRightPercent, tn);
             d->currentSecondaryFlightControlData.spoilersHandlePosition = SkyMath::interpolateLinear(p1->spoilersHandlePosition, p2->spoilersHandlePosition, tn);
+
             // No interpolation for flaps handle position
             d->currentSecondaryFlightControlData.flapsHandleIndex = p1->flapsHandleIndex;
+            // Certain aircrafts automatically reset the FLAPS HANDLE INDEX, so values > 0 need to be repeatedly set
+            if (d->currentSecondaryFlightControlData.flapsHandleIndex > 0 && Settings::getInstance().isRepeatFlapsHandleIndexEnabled()) {
+                // We do that my storing the previous values (when the flaps are set)...
+                d->previousSecondaryFlightControlData = d->currentSecondaryFlightControlData;
+            } else {
+                // Flaps fully retracted or simulation variable repeat disabled
+                d->previousSecondaryFlightControlData = SecondaryFlightControlData::NullSecondaryFlightControlData;
+            }
+
+            d->currentSecondaryFlightControlData.timestamp = timestamp;
+        } else if (!d->previousSecondaryFlightControlData.isNull()) {
+            // ... and send the previous values again (for as long as the flaps are extracted)
+            d->currentSecondaryFlightControlData = d->previousSecondaryFlightControlData;
             d->currentSecondaryFlightControlData.timestamp = timestamp;
         } else {
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded position

@@ -67,6 +67,12 @@ public:
     double getSeekIntervalPercent() const noexcept;
     void setSeekIntervalPercent(double percent) noexcept;
 
+    bool isRepeatFlapsHandleIndexEnabled() const noexcept;
+    void setRepeatFlapsHandleIndexEnabled(bool enable) noexcept;
+
+    bool isRepeatCanopyOpenEnabled() const noexcept;
+    void setRepeatCanopyOpenEnabled(bool enable) noexcept;
+
     int getPreviewInfoDialogCount() const noexcept;
     void setPreviewInfoDialogCount(int count) noexcept;
 
@@ -126,6 +132,20 @@ signals:
      * \sa changed()
      */
     void seekIntervalPercentChanged(double percent);
+
+    /*!
+     * Emitted when the repeat flaps position has changed.
+     *
+     * \sa changed()
+     */
+    void repeatFlapsPositionChanged(bool enable);
+
+    /*!
+     * Emitted when the repeat canopy has changed.
+     *
+     * \sa changed()
+     */
+    void repeatCanopyChanged(bool enable);
 
     /*!
      * Emitted when any setting has changed.
