@@ -56,32 +56,27 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="138"/>
-        <source>Canopy Open</source>
+        <source>Canopy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="161"/>
-        <source>Wings</source>
+        <source>Left Wing Folding</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="113"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.ui" line="181"/>
+        <source>Right Wing Folding</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="114"/>
         <source>Down</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="113"/>
+        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="114"/>
         <source>Up</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="119"/>
-        <source>Folded</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Widgets/AircraftHandleWidget.cpp" line="119"/>
-        <source>Unfolded</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -855,32 +850,57 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="23"/>
-        <source>Recording</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="29"/>
-        <source>Record Frequency</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="62"/>
-        <source>Seek</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="68"/>
-        <source>Absolute [Seconds]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="75"/>
-        <source>Seconds</source>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="79"/>
+        <source>Repeat Values</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="85"/>
+        <source>Flaps Position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="92"/>
+        <source>Canopy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="105"/>
+        <source>The optimal settings are to disable all &quot;repeat&quot; options. But if e.g. the canopy closes automatically when it should remain open then enabling the corresponding &quot;Canopy&quot; option will keep the canopy open, by repeatedly sending the same value.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="132"/>
+        <source>Recording</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="138"/>
+        <source>Record Frequency</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="30"/>
+        <source>Seek</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="24"/>
+        <source>Replay</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="36"/>
+        <source>Absolute [Seconds]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="43"/>
+        <source>Seconds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="53"/>
         <source>Percent</source>
         <translation type="unfinished"></translation>
     </message>
