@@ -99,8 +99,27 @@ public:
      * \param enable
      *        \c true in order to keep the application windoww in the foreground;
      *        \c false to enable default window behaviour
+     * \sa stayOnTopChanged()
      */
     void setWindowStaysOnTopEnabled(bool enable) noexcept;
+
+    /*!
+     * Returns whether the \e minimal user interface option is enabled.
+     *
+     * \return \c true if the minimal UI is shown;
+     *         \c false else
+     */
+    bool isMinimalUiEnabled() const noexcept;
+
+    /*!
+     * Sets the \e minimal user interface option.
+     *
+     * \param enable
+     *        \c true in order to show the minimal UI;
+     *        \c false in order to show the normal UI;
+     * \sa minimalUiChanged()
+     */
+    void setMinimalUiEnabled(bool enable) noexcept;
 
     /*!
      * Returns the path of the directory which was last accessed during export or import.
@@ -251,6 +270,20 @@ signals:
      * \sa changed()
      */
     void recordSampleRateChanged(SampleRate::SampleRate sampleRate);
+
+    /*!
+     * Emitted when the stay on top option has changed.
+     *
+     * \sa changed()
+     */
+    void stayOnTopChanged(bool enable);
+
+    /*!
+     * Emitted when the minimal user interface option has changed.
+     *
+     * \sa changed()
+     */
+    void minimalUiChanged(bool enable);
 
     /*!
      * Emitted when the export path has changed.

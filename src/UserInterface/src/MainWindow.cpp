@@ -119,7 +119,6 @@ public:
           flightService(std::make_unique<FlightService>()),
           databaseService(std::make_unique<DatabaseService>()),
           csvService(std::make_unique<CSVService>(*flightService)),
-          showMinimalUi(false),
           replaySpeedActionGroup(nullptr),
           customSpeedRadioButton(nullptr)
     {}
@@ -140,7 +139,6 @@ public:
     std::unique_ptr<DatabaseService> databaseService;
     std::unique_ptr<CSVService> csvService;
 
-    bool showMinimalUi;
     QSize minimalUiSize;
     QSize lastNormalUiSize;
 
@@ -185,7 +183,7 @@ MainWindow::~MainWindow() noexcept
 bool MainWindow::event(QEvent *event)
 {
     bool ret = QMainWindow::event(event);
-    if (event->type() == QEvent::LayoutRequest && d->showMinimalUi && !d->minimalUiSize.isValid()) {
+    if (event->type() == QEvent::LayoutRequest && Settings::getInstance().isMinimalUiEnabled() && !d->minimalUiSize.isValid()) {
         adjustSize();
         d->minimalUiSize = size();
         setFixedSize(d->minimalUiSize);
@@ -195,7 +193,7 @@ bool MainWindow::event(QEvent *event)
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
-    if (!d->showMinimalUi) {
+    if (!Settings::getInstance().isMinimalUiEnabled()) {
         d->lastNormalUiSize = event->size();
     }
 }
@@ -277,8 +275,9 @@ void MainWindow::initUi() noexcept
     ui->showMinimalAction->setChecked(ui->moduleGroupBox->isVisible());
     initControlUi();
     initReplaySpeedUi();
-    ui->showMinimalAction->setChecked(d->showMinimalUi);
-    on_showMinimalAction_triggered(d->showMinimalUi);
+    bool minimalUi = Settings::getInstance().isMinimalUiEnabled();
+    ui->showMinimalAction->setChecked(minimalUi);
+    on_showMinimalAction_triggered(minimalUi);
 }
 
 void MainWindow::initControlUi() noexcept
@@ -840,7 +839,7 @@ void MainWindow::on_stayOnTopAction_triggered(bool enabled) noexcept
 
 void MainWindow::on_showMinimalAction_triggered(bool enabled) noexcept
 {
-    d->showMinimalUi = enabled;
+    Settings::getInstance().setMinimalUiEnabled(enabled);
     ui->moduleGroupBox->setHidden(enabled);
     if (enabled) {
         if (d->minimalUiSize.isValid()) {

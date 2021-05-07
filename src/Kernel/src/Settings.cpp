@@ -40,7 +40,8 @@ public:
 
     QString libraryPath;
     double recordSampleRateValue;
-    bool windowStayOnTopEnabled;
+    bool windowStayOnTop;
+    bool minimalUi;
     QString exportPath;
     QString defaultExportPath;
     bool absoluteSeek;
@@ -52,9 +53,10 @@ public:
     int previewInfoDialogCount;
 
     static Settings *instance;
-    static const QString DefaultDbPath;
+    static constexpr char DefaultDbPath[] = "";
     static constexpr double DefaultRecordSampleRate = SampleRate::toValue(SampleRate::SampleRate::Auto);
-    static constexpr bool DefaultWindowStayOnTopEnabled = false;
+    static constexpr bool DefaultWindowStayOnTop = false;
+    static constexpr bool DefaultMinimalUi = false;
     static constexpr bool DefaultAbsoluteSeek = true;
     static constexpr double DefaultSeekIntervalSeconds = 1.0;
     static constexpr double DefaultSeekIntervalPercent = 0.5;
@@ -64,7 +66,7 @@ public:
     static constexpr double DefaultRepeatCanopyOpen = true;
 
     static constexpr int DefaultPreviewInfoDialogCount = 3;
-    static constexpr int PreviewInfoDialogBase = 20;
+    static constexpr int PreviewInfoDialogBase = 30;
 
     SettingsPrivate() noexcept
         : version(QCoreApplication::instance()->applicationVersion())
@@ -80,8 +82,6 @@ public:
     ~SettingsPrivate() noexcept
     {}
 };
-
-const QString SettingsPrivate::DefaultDbPath = QString();
 
 Settings *SettingsPrivate::instance = nullptr;
 
@@ -151,14 +151,27 @@ void Settings::setRecordSampleRate(SampleRate::SampleRate sampleRate) noexcept
 
 bool Settings::isWindowStaysOnTopEnabled() const noexcept
 {
-    return d->windowStayOnTopEnabled;
+    return d->windowStayOnTop;
 }
 
 void Settings::setWindowStaysOnTopEnabled(bool enable) noexcept
 {
-    if (d->windowStayOnTopEnabled != enable) {
-        d->windowStayOnTopEnabled = enable;
-        emit changed();
+    if (d->windowStayOnTop != enable) {
+        d->windowStayOnTop = enable;
+        emit stayOnTopChanged(enable);
+    }
+}
+
+bool Settings::isMinimalUiEnabled() const noexcept
+{
+    return d->minimalUi;
+}
+
+void Settings::setMinimalUiEnabled(bool enable) noexcept
+{
+    if (d->minimalUi != enable) {
+        d->minimalUi = enable;
+        emit minimalUiChanged(enable);
     }
 }
 
@@ -266,7 +279,8 @@ void Settings::store() noexcept
     d->settings.endGroup();    
     d->settings.beginGroup("Window");
     {
-        d->settings.setValue("WindowStaysOnTopEnabled", d->windowStayOnTopEnabled);
+        d->settings.setValue("WindowStaysOnTop", d->windowStayOnTop);
+        d->settings.setValue("MinimalUi", d->minimalUi);
     }
     d->settings.endGroup();
     d->settings.beginGroup("Paths");
@@ -328,7 +342,8 @@ void Settings::restore() noexcept
     d->settings.endGroup();
     d->settings.beginGroup("Window");
     {
-        d->windowStayOnTopEnabled = d->settings.value("WindowStaysOnTopEnabled", SettingsPrivate::DefaultWindowStayOnTopEnabled).toBool();
+        d->windowStayOnTop = d->settings.value("WindowStaysOnTop", SettingsPrivate::DefaultWindowStayOnTop).toBool();
+        d->minimalUi = d->settings.value("MinimalUi", SettingsPrivate::DefaultMinimalUi).toBool();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Paths");
@@ -375,6 +390,10 @@ void Settings::frenchConnection() noexcept
     connect(this, &Settings::libraryPathChanged,
             this, &Settings::changed);
     connect(this, &Settings::recordSampleRateChanged,
+            this, &Settings::changed);
+    connect(this, &Settings::stayOnTopChanged,
+            this, &Settings::changed);
+    connect(this, &Settings::minimalUiChanged,
             this, &Settings::changed);
     connect(this, &Settings::exportPathChanged,
             this, &Settings::changed);
