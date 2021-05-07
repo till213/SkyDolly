@@ -20,6 +20,14 @@
 - Values in feet now have the unit "ft" appended
 - Prevent access exception when closing the application with CTRL + Q shortcut when dialogs are still open
 
+## 0.5.2
+
+### Bug Fixes
+
+- Fixes a crash which would occur when quitting the application and when the simulation variables dialog was still open
+- Altitude and other simulation variables measured in feet are now properly displayed with their unit ('ft')
+- Replaced the non-writeable FOLDING WING HANDLE POSITION simulation variable with FOLDING WING LEFT|RIGHT PERCENT
+
 ## 0.5.1
 
 ### Bug Fixes

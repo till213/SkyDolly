@@ -136,8 +136,9 @@ create table handle (
     water_rudder_handle_position integer,
     tail_hook_position integer,
     canopy_open integer,
-    gear_handle_position integer,
-    folding_wing_handle_position integer,
+    left_wing_folding integer,
+    right_wing_folding integer,
+    gear_handle_position integer,    
     primary key(aircraft_id, timestamp),
     foreign key(aircraft_id) references aircraft(id)
 );

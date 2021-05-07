@@ -35,8 +35,9 @@ AircraftHandleData::AircraftHandleData() noexcept
       waterRudderHandlePosition(0),
       tailhookPosition(0),
       canopyOpen(0),
-      gearHandlePosition(false),
-      foldingWingHandlePosition(false)
+      leftWingFolding(0),
+      rightWingFolding(0),
+      gearHandlePosition(false)
 {
 }
 

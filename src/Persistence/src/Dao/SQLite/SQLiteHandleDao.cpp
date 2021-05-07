@@ -58,8 +58,9 @@ public:
 "  water_rudder_handle_position,"
 "  tail_hook_position,"
 "  canopy_open,"
-"  gear_handle_position,"
-"  folding_wing_handle_position"
+"  left_wing_folding,"
+"  right_wing_folding,"
+"  gear_handle_position"
 ") values ("
 " :aircraft_id,"
 " :timestamp,"
@@ -68,8 +69,9 @@ public:
 " :water_rudder_handle_position,"
 " :tail_hook_position,"
 " :canopy_open,"
-" :gear_handle_position,"
-" :folding_wing_handle_position"
+" :left_wing_folding,"
+" :right_wing_folding,"
+" :gear_handle_position"
 ");");           
         }
         if (selectByAircraftIdQuery == nullptr) {
@@ -122,8 +124,9 @@ bool SQLiteHandleDao::add(qint64 aircraftId, const AircraftHandleData &aircraftH
     d->insertQuery->bindValue(":water_rudder_handle_position", aircraftHandleData.waterRudderHandlePosition);
     d->insertQuery->bindValue(":tail_hook_position", aircraftHandleData.tailhookPosition);
     d->insertQuery->bindValue(":canopy_open", aircraftHandleData.canopyOpen);
-    d->insertQuery->bindValue(":gear_handle_position", aircraftHandleData.gearHandlePosition ? 1 : 0);
-    d->insertQuery->bindValue(":folding_wing_handle_position", aircraftHandleData.foldingWingHandlePosition);
+    d->insertQuery->bindValue(":left_wing_folding", aircraftHandleData.leftWingFolding);
+    d->insertQuery->bindValue(":right_wing_folding", aircraftHandleData.rightWingFolding);
+    d->insertQuery->bindValue(":gear_handle_position", aircraftHandleData.gearHandlePosition ? 1 : 0);    
 
     bool ok = d->insertQuery->exec();
 #ifdef DEBUG
@@ -147,8 +150,9 @@ bool SQLiteHandleDao::getByAircraftId(qint64 aircraftId, QVector<AircraftHandleD
         const int waterRudderHandlePositionIdx = d->selectByAircraftIdQuery->record().indexOf("water_rudder_handle_position");
         const int tailHookPositionIdx = d->selectByAircraftIdQuery->record().indexOf("tail_hook_position");
         const int canopyOpenIdx = d->selectByAircraftIdQuery->record().indexOf("canopy_open");
+        const int leftWingFoldingIdx = d->selectByAircraftIdQuery->record().indexOf("left_wing_folding");
+        const int rightWingFoldingIdx = d->selectByAircraftIdQuery->record().indexOf("right_wing_folding");
         const int gearHandlePositionIdx = d->selectByAircraftIdQuery->record().indexOf("gear_handle_position");
-        const int foldingWingHandlePositionIdx = d->selectByAircraftIdQuery->record().indexOf("folding_wing_handle_position");
         while (d->selectByAircraftIdQuery->next()) {
 
             AircraftHandleData data;
@@ -159,8 +163,9 @@ bool SQLiteHandleDao::getByAircraftId(qint64 aircraftId, QVector<AircraftHandleD
             data.waterRudderHandlePosition = d->selectByAircraftIdQuery->value(waterRudderHandlePositionIdx).toInt();
             data.tailhookPosition = d->selectByAircraftIdQuery->value(tailHookPositionIdx).toInt();
             data.canopyOpen = d->selectByAircraftIdQuery->value(canopyOpenIdx).toInt();
-            data.gearHandlePosition = d->selectByAircraftIdQuery->value(gearHandlePositionIdx).toBool();
-            data.foldingWingHandlePosition = d->selectByAircraftIdQuery->value(foldingWingHandlePositionIdx).toBool();
+            data.leftWingFolding = d->selectByAircraftIdQuery->value(leftWingFoldingIdx).toInt();
+            data.rightWingFolding = d->selectByAircraftIdQuery->value(rightWingFoldingIdx).toInt();
+            data.gearHandlePosition = d->selectByAircraftIdQuery->value(gearHandlePositionIdx).toBool();            
 
             aircraftHandleData.append(data);
         }
@@ -200,4 +205,3 @@ void SQLiteHandleDao::handleConnectionChanged() noexcept
 {
     d->resetQueries();
 }
-
