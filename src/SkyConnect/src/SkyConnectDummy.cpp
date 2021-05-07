@@ -324,8 +324,9 @@ void SkyConnectDummy::recordAircraftHandle(qint64 timestamp) noexcept
     aircraftHandleData.waterRudderHandlePosition = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
     aircraftHandleData.tailhookPosition = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
     aircraftHandleData.canopyOpen = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
+    aircraftHandleData.leftWingFolding = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
+    aircraftHandleData.rightWingFolding = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
     aircraftHandleData.gearHandlePosition = d->randomGenerator->bounded(2) < 1 ? false : true;
-    aircraftHandleData.foldingWingHandlePosition = d->randomGenerator->bounded(2) < 1 ? false : true;
 
     aircraftHandleData.timestamp = timestamp;
     aircraft.getAircraftHandle().upsert(std::move(aircraftHandleData));
