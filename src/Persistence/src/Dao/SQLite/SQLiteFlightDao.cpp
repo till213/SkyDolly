@@ -59,7 +59,8 @@ public:
     std::unique_ptr<QSqlQuery> insertQuery;
     std::unique_ptr<QSqlQuery> selectByIdQuery;
     std::unique_ptr<QSqlQuery> deleteByIdQuery;
-    std::unique_ptr<QSqlQuery> updateDescriptionQuery;
+    std::unique_ptr<QSqlQuery> updateTitleQuery;
+    std::unique_ptr<QSqlQuery> updateTitleAndDescriptionQuery;
     std::unique_ptr<QSqlQuery> selectDescriptionsQuery;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<AircraftDaoIntf> aircraftDao;
@@ -71,6 +72,7 @@ public:
             insertQuery->prepare(
 "insert into flight ("
 "  id,"
+"  title,"
 "  description,"
 "  surface_type,"
 "  ground_altitude,"
@@ -90,6 +92,7 @@ public:
 "  end_zulu_sim_time"
 ") values ("
 "  null,"
+" :title,"
 " :description,"
 " :surface_type,"
 " :ground_altitude,"
@@ -124,18 +127,26 @@ public:
 "from flight "
 "where id = :id;");
         }
-        if (updateDescriptionQuery == nullptr) {
-            updateDescriptionQuery = std::make_unique<QSqlQuery>();
-            updateDescriptionQuery->prepare(
+        if (updateTitleQuery == nullptr) {
+            updateTitleQuery = std::make_unique<QSqlQuery>();
+            updateTitleQuery->prepare(
 "update flight "
-"set    description = :description "
+"set    title = :title "
+"where id = :id;");
+        }
+        if (updateTitleAndDescriptionQuery == nullptr) {
+            updateTitleAndDescriptionQuery = std::make_unique<QSqlQuery>();
+            updateTitleAndDescriptionQuery->prepare(
+"update flight "
+"set    title = :title,"
+"       description = :description "
 "where id = :id;");
         }
         if (selectDescriptionsQuery == nullptr) {
             selectDescriptionsQuery = std::make_unique<QSqlQuery>();
             selectDescriptionsQuery->setForwardOnly(true);
             selectDescriptionsQuery->prepare(
-"select f.id, f.creation_date, f.description, a.type,"
+"select f.id, f.creation_date, f.title, a.type,"
 "       a.start_date, f.start_local_sim_time, f.start_zulu_sim_time, fp1.ident as start_waypoint,"
 "       a.end_date, f.end_local_sim_time, f.end_zulu_sim_time, fp2.ident as end_waypoint "
 "from   flight f "
@@ -153,7 +164,8 @@ public:
         insertQuery = nullptr;
         selectByIdQuery = nullptr;
         deleteByIdQuery = nullptr;
-        updateDescriptionQuery = nullptr;
+        updateTitleQuery = nullptr;
+        updateTitleAndDescriptionQuery = nullptr;
         selectDescriptionsQuery = nullptr;
     }
 };
@@ -174,6 +186,7 @@ bool SQLiteFlightDao::addFlight(Flight &flight)  noexcept
 {
     d->initQueries();
     const FlightCondition &flightCondition = flight.getFlightConditionConst();
+    d->insertQuery->bindValue(":title", flight.getTitle());
     d->insertQuery->bindValue(":description", flight.getDescription());
     d->insertQuery->bindValue(":surface_type", Enum::toUnderlyingType(flightCondition.surfaceType));
     d->insertQuery->bindValue(":ground_altitude", flightCondition.groundAltitude);
@@ -219,6 +232,7 @@ bool SQLiteFlightDao::getFlightById(qint64 id, Flight &flight) const noexcept
         flight.clear();
         const int idIdx = d->selectByIdQuery->record().indexOf("id");
         const int creationDateIdx = d->selectByIdQuery->record().indexOf("creation_date");
+        const int titleIdx = d->selectByIdQuery->record().indexOf("title");
         const int descriptionIdx = d->selectByIdQuery->record().indexOf("description");
         const int surfaceTypeIdx = d->selectByIdQuery->record().indexOf("surface_type");
         const int groundAltitudeIdx = d->selectByIdQuery->record().indexOf("ground_altitude");
@@ -241,7 +255,9 @@ bool SQLiteFlightDao::getFlightById(qint64 id, Flight &flight) const noexcept
             QDateTime date = d->selectByIdQuery->value(creationDateIdx).toDateTime();
             date.setTimeZone(QTimeZone::utc());
             flight.setCreationDate(date.toLocalTime());
+            flight.setTitle(d->selectByIdQuery->value(titleIdx).toString());
             flight.setDescription(d->selectByIdQuery->value(descriptionIdx).toString());
+
             FlightCondition flightCondition;
             flightCondition.surfaceType = static_cast<SimType::SurfaceType>(d->selectByIdQuery->value(surfaceTypeIdx).toInt());
             flightCondition.groundAltitude = d->selectByIdQuery->value(groundAltitudeIdx).toFloat();
@@ -290,16 +306,32 @@ bool SQLiteFlightDao::deleteById(qint64 id) noexcept
     return ok;
 }
 
-bool SQLiteFlightDao::updateDescription(qint64 id, const QString &description) noexcept
+bool SQLiteFlightDao::updateTitle(qint64 id, const QString &title) noexcept
 {
     d->initQueries();
 
-    d->updateDescriptionQuery->bindValue(":description", description);
-    d->updateDescriptionQuery->bindValue(":id", id);
-    bool ok = d->updateDescriptionQuery->exec();
+    d->updateTitleQuery->bindValue(":title", title);
+    d->updateTitleQuery->bindValue(":id", id);
+    bool ok = d->updateTitleQuery->exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteFlightDao::updateDescription: SQL error: %s", qPrintable(d->updateDescriptionQuery->lastError().databaseText() + " - error code: " + d->deleteByIdQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteFlightDao::updateTitleQuery: SQL error: %s", qPrintable(d->updateTitleQuery->lastError().databaseText() + " - error code: " + d->updateTitleQuery->lastError().nativeErrorCode()));
+    }
+#endif
+    return ok;
+}
+
+bool SQLiteFlightDao::updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept
+{
+    d->initQueries();
+
+    d->updateTitleAndDescriptionQuery->bindValue(":title", title);
+    d->updateTitleAndDescriptionQuery->bindValue(":description", description);
+    d->updateTitleAndDescriptionQuery->bindValue(":id", id);
+    bool ok = d->updateTitleAndDescriptionQuery->exec();
+#ifdef DEBUG
+    if (!ok) {
+        qDebug("SQLiteFlightDao::updateTitleAndDescription: SQL error: %s", qPrintable(d->updateTitleAndDescriptionQuery->lastError().databaseText() + " - error code: " + d->updateTitleAndDescriptionQuery->lastError().nativeErrorCode()));
     }
 #endif
     return ok;
@@ -323,7 +355,7 @@ QVector<FlightSummary> SQLiteFlightDao::getFlightSummaries() const noexcept
         const int endLocalSimulationTimeIdx = d->selectDescriptionsQuery->record().indexOf("end_local_sim_time");
         const int endZuluSimulationTimeIdx = d->selectDescriptionsQuery->record().indexOf("end_zulu_sim_time");
         const int endWaypointIdx = d->selectDescriptionsQuery->record().indexOf("end_waypoint");
-        const int descriptionIdx = d->selectDescriptionsQuery->record().indexOf("description");
+        const int titleIdx = d->selectDescriptionsQuery->record().indexOf("title");
         while (d->selectDescriptionsQuery->next()) {            
 
             FlightSummary description;
@@ -347,7 +379,7 @@ QVector<FlightSummary> SQLiteFlightDao::getFlightSummaries() const noexcept
             description.endSimulationLocalTime = d->selectDescriptionsQuery->value(endLocalSimulationTimeIdx).toDateTime();
             description.endSimulationZuluTime = d->selectDescriptionsQuery->value(endZuluSimulationTimeIdx).toDateTime();
             description.endLocation = d->selectDescriptionsQuery->value(endWaypointIdx).toString();
-            description.description = d->selectDescriptionsQuery->value(descriptionIdx).toString();
+            description.title = d->selectDescriptionsQuery->value(titleIdx).toString();
 
             summaries.append(description);
         }

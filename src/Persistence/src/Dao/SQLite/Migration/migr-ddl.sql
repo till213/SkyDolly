@@ -9,6 +9,7 @@ create table meta (
 create table flight (
     id integer primary key,
     creation_date datetime default current_timestamp,
+    title text,
     description text,
     surface_type integer,
     ground_altitude real,    

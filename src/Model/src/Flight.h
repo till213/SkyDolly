@@ -51,6 +51,9 @@ public:
     const QDateTime &getCreationDate() const noexcept;
     void setCreationDate(const QDateTime &creationDate) noexcept;
 
+    const QString &getTitle() const noexcept;
+    void setTitle(const QString &title) noexcept;
+
     const QString &getDescription() const noexcept;
     void setDescription(const QString &description) noexcept;
 

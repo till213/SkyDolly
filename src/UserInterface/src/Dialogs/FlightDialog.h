@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SCENARIODIALOG_H
-#define SCENARIODIALOG_H
+#ifndef FLIGHTDIALOG_H
+#define FLIGHTDIALOG_H
 
 #include <memory>
 
@@ -62,4 +62,4 @@ private:
     void updateUi() noexcept;
 };
 
-#endif // SCENARIODIALOG_H
+#endif // FLIGHTDIALOG_H

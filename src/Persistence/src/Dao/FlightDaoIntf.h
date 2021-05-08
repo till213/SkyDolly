@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SCENARIODAOINTF_H
-#define SCENARIODAOINTF_H
+#ifndef FLIGHTDAOINTF_H
+#define FLIGHTDAOINTF_H
 
 #include <QVector>
 
@@ -46,8 +46,9 @@ public:
     virtual bool addFlight(Flight &flight) = 0;
     virtual bool getFlightById(qint64 id, Flight &flight) const = 0;
     virtual bool deleteById(qint64 id) = 0;
-    virtual bool updateDescription(qint64 id, const QString &description) = 0;
+    virtual bool updateTitle(qint64 id, const QString &title) = 0;
+    virtual bool updateTitleAndDescription(qint64 id, const QString &title, const QString &description) = 0;
     virtual QVector<FlightSummary> getFlightSummaries() const = 0;
 };
 
-#endif // SCENARIODAOINTF_H
+#endif // FLIGHTDAOINTF_H

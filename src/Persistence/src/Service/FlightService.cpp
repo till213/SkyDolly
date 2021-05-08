@@ -101,11 +101,25 @@ bool FlightService::deleteById(qint64 id)  noexcept
     return ok;
 }
 
-bool FlightService::updateDescription(qint64 id, const QString &description) noexcept
+bool FlightService::updateTitle(qint64 id, const QString &title) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
-        ok = d->flightDao->updateDescription(id, description);
+        ok = d->flightDao->updateTitle(id, title);
+        if (ok) {
+            QSqlDatabase::database().commit();
+        } else {
+            QSqlDatabase::database().rollback();
+        }
+    }
+    return ok;
+}
+
+bool FlightService::updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept
+{
+    bool ok = QSqlDatabase::database().transaction();
+    if (ok) {
+        ok = d->flightDao->updateTitleAndDescription(id, title, description);
         if (ok) {
             QSqlDatabase::database().commit();
         } else {

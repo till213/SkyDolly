@@ -56,14 +56,14 @@ class LogbookWidgetPrivate
 {
 public:
     LogbookWidgetPrivate(FlightService &theFlightService) noexcept
-        : descriptionColumnIndex(InvalidColumn),
+        : titleColumnIndex(InvalidColumn),
           flightService(theFlightService),
           selectedRow(InvalidSelection),
           selectedFlightId(Flight::InvalidId)
 
     {}
 
-    int descriptionColumnIndex;
+    int titleColumnIndex;
     FlightService &flightService;
     int selectedRow;
     qint64 selectedFlightId;
@@ -121,7 +121,7 @@ void LogbookWidget::initUi() noexcept
 {
     ui->logTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    const QStringList headers {tr("Flight"), tr("Date"), tr("Aircraft"), tr("Departure Time"), tr("Departure"), tr("Arrival Time"), tr("Arrival"), tr("Total Time of Flight"), tr("Description")};
+    const QStringList headers {tr("Flight"), tr("Date"), tr("Aircraft"), tr("Departure Time"), tr("Departure"), tr("Arrival Time"), tr("Arrival"), tr("Total Time of Flight"), tr("Title")};
     ui->logTableWidget->setColumnCount(headers.count());
     ui->logTableWidget->setHorizontalHeaderLabels(headers);
     ui->logTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -202,9 +202,9 @@ void LogbookWidget::updateUi() noexcept
         ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
         ++columnIndex;
 
-        newItem = new QTableWidgetItem(summary.description);
+        newItem = new QTableWidgetItem(summary.title);
         ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
-        d->descriptionColumnIndex = columnIndex;
+        d->titleColumnIndex = columnIndex;
         ++columnIndex;
         ++rowIndex;
 
@@ -265,8 +265,9 @@ void LogbookWidget::handleCellSelected(int row, int column) noexcept
 
 void LogbookWidget::handleCellChanged(int row, int column) noexcept
 {
-    if (column == d->descriptionColumnIndex) {
+    if (column == d->titleColumnIndex) {
         QTableWidgetItem *item = ui->logTableWidget->item(row, column);
-        d->flightService.updateDescription(d->selectedFlightId, item->data(Qt::EditRole).toString());
+        const QString title = item->data(Qt::EditRole).toString();
+        d->flightService.updateTitle(d->selectedFlightId, title);
     }
 }
