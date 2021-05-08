@@ -43,12 +43,14 @@ public:
 
     qint64 id;
     QDateTime creationDate;
+    QString title;
     QString description;
     FlightCondition flightCondition;
     std::vector<std::unique_ptr<Aircraft>> aircrafts;
 
     inline void clear() noexcept {
         id = 0;
+        title.clear();
         description.clear();
     }
 };
@@ -89,6 +91,16 @@ const QDateTime &Flight::getCreationDate() const noexcept
 void Flight::setCreationDate(const QDateTime &creationDate) noexcept
 {
     d->creationDate = creationDate;
+}
+
+const QString &Flight::getTitle() const noexcept
+{
+    return d->title;
+}
+
+void Flight::setTitle(const QString &title) noexcept
+{
+    d->title = title;
 }
 
 const QString &Flight::getDescription() const noexcept

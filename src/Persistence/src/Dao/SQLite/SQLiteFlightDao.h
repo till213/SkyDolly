@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SQLITESCENARIODAO_H
-#define SQLITESCENARIODAO_H
+#ifndef SQLITEFLIGHTDAO_H
+#define SQLITEFLIGHTDAO_H
 
 #include <memory>
 
@@ -46,7 +46,8 @@ public:
     virtual bool addFlight(Flight &flight)  noexcept override;
     virtual bool getFlightById(qint64 id, Flight &flight) const noexcept override;
     virtual bool deleteById(qint64 id) noexcept override;
-    virtual bool updateDescription(qint64 id, const QString &description) noexcept override;
+    virtual bool updateTitle(qint64 id, const QString &title) noexcept override;
+    virtual bool updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept override;
 
     virtual QVector<FlightSummary> getFlightSummaries() const noexcept override;
 
@@ -59,4 +60,4 @@ private slots:
     void handleConnectionChanged() noexcept;
 };
 
-#endif // SQLITESCENARIODAO_H
+#endif // SQLITEFLIGHTDAO_H

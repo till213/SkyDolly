@@ -46,7 +46,7 @@ struct MODEL_API FlightSummary
     QDateTime endSimulationZuluTime;
     QString startLocation;
     QString endLocation;
-    QString description;    
+    QString title;
 };
 
 #endif // FLIGHTSUMMARY_H
