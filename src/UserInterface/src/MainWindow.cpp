@@ -277,12 +277,11 @@ void MainWindow::initUi() noexcept
     initReplaySpeedUi();
     bool minimalUi = Settings::getInstance().isMinimalUiEnabled();
     ui->showMinimalAction->setChecked(minimalUi);
-    on_showMinimalAction_triggered(minimalUi);
+    updateMinimalUi(minimalUi);
 }
 
 void MainWindow::initControlUi() noexcept
 {
-
     ui->positionSlider->setRange(PositionSliderMin, PositionSliderMax);
     ui->timestampTimeEdit->setDisplayFormat(TimestampFormat);
 
@@ -348,7 +347,7 @@ void MainWindow::initReplaySpeedUi() noexcept
     slowActions.at(3)->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_4));
     slowActions.at(3)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Slow75));
 
-    QAction *normalSpeedAction = new QAction(tr("Normal (100 %)"), this);
+    QAction *normalSpeedAction = new QAction(tr("Normal"), this);
     normalSpeedAction->setCheckable(true);
     normalSpeedAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_1));
     normalSpeedAction->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Normal));
@@ -370,7 +369,7 @@ void MainWindow::initReplaySpeedUi() noexcept
 
     QAction *customSpeedAction = new QAction(tr("Custom"), this);
     customSpeedAction->setCheckable(true);
-    customSpeedAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_C));
+    customSpeedAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_6));
     customSpeedAction->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Custom));
 
     // Action group
@@ -468,6 +467,22 @@ bool MainWindow::connectWithDb() noexcept
         ok = false;
     }
     return ok;
+}
+
+void MainWindow::updateMinimalUi(bool enabled)
+{
+    Settings::getInstance().setMinimalUiEnabled(enabled);
+    ui->moduleGroupBox->setHidden(enabled);
+    if (enabled) {
+        if (d->minimalUiSize.isValid()) {
+            setFixedSize(d->minimalUiSize);
+        }
+    } else {
+        QSize size = d->lastNormalUiSize;
+        setMinimumSize(QSize(0, 0));
+        setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
+        resize(size);
+    }
 }
 
 // PRIVATE SLOTS
@@ -839,18 +854,7 @@ void MainWindow::on_stayOnTopAction_triggered(bool enabled) noexcept
 
 void MainWindow::on_showMinimalAction_triggered(bool enabled) noexcept
 {
-    Settings::getInstance().setMinimalUiEnabled(enabled);
-    ui->moduleGroupBox->setHidden(enabled);
-    if (enabled) {
-        if (d->minimalUiSize.isValid()) {
-            setFixedSize(d->minimalUiSize);
-        }
-    } else {
-        QSize size = d->lastNormalUiSize;
-        setMinimumSize(QSize(0, 0));
-        setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
-        resize(size);
-    }
+    updateMinimalUi(enabled);
 }
 
 void MainWindow::on_aboutLibraryAction_triggered() noexcept

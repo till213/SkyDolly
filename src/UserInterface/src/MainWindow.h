@@ -71,7 +71,8 @@ private:
     void initReplaySpeedUi() noexcept;
 
     bool connectWithDb() noexcept;
-
+    void updateMinimalUi(bool enable);
+    
 private slots:
 
     // Ui elements
