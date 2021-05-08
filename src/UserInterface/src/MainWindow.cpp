@@ -140,6 +140,7 @@ public:
     std::unique_ptr<CSVService> csvService;
 
     QSize minimalUiSize;
+    QSize normalMinimumSize;
     QSize lastNormalUiSize;
 
     QActionGroup *replaySpeedActionGroup ;
@@ -183,10 +184,17 @@ MainWindow::~MainWindow() noexcept
 bool MainWindow::event(QEvent *event)
 {
     bool ret = QMainWindow::event(event);
-    if (event->type() == QEvent::LayoutRequest && Settings::getInstance().isMinimalUiEnabled() && !d->minimalUiSize.isValid()) {
-        adjustSize();
-        d->minimalUiSize = size();
-        setFixedSize(d->minimalUiSize);
+    if (event->type() == QEvent::LayoutRequest) {
+        Settings &settings = Settings::getInstance();
+        if (settings.isMinimalUiEnabled() && !d->minimalUiSize.isValid()) {
+            adjustSize();
+            d->minimalUiSize = size();
+            setFixedSize(d->minimalUiSize);
+        } else if (!settings.isMinimalUiEnabled() && !d->normalMinimumSize.isValid()) {
+            adjustSize();
+            d->normalMinimumSize = size();
+            setMinimumSize(d->normalMinimumSize);
+        }
     }
     return ret;
 }
@@ -478,8 +486,13 @@ void MainWindow::updateMinimalUi(bool enabled)
             setFixedSize(d->minimalUiSize);
         }
     } else {
+        // Setting the minimum and maximum sizes causes a resize
+        // event (in which we update the lastNormalUiSize), so
+        // we store the desired lastNormalUiSize here
         QSize size = d->lastNormalUiSize;
-        setMinimumSize(QSize(0, 0));
+        if (d->normalMinimumSize.isValid()) {
+            setMinimumSize(d->normalMinimumSize);
+        }
         setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
         resize(size);
     }
