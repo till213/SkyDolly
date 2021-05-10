@@ -39,6 +39,7 @@
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/FlightSummary.h"
 #include "../../../Model/src/Logbook.h"
+#include "../../../Persistence/src/Service/DatabaseService.h"
 #include "../../../Persistence/src/Service/FlightService.h"
 #include "../Unit.h"
 
@@ -55,8 +56,9 @@ namespace
 class LogbookWidgetPrivate
 {
 public:
-    LogbookWidgetPrivate(FlightService &theFlightService) noexcept
+    LogbookWidgetPrivate(DatabaseService &theDatabaseService, FlightService &theFlightService) noexcept
         : titleColumnIndex(InvalidColumn),
+          databaseService(theDatabaseService),
           flightService(theFlightService),
           selectedRow(InvalidSelection),
           selectedFlightId(Flight::InvalidId)
@@ -64,6 +66,7 @@ public:
     {}
 
     int titleColumnIndex;
+    DatabaseService &databaseService;
     FlightService &flightService;
     int selectedRow;
     qint64 selectedFlightId;
@@ -72,10 +75,10 @@ public:
 
 // PUBLIC
 
-LogbookWidget::LogbookWidget(FlightService &flightService, QWidget *parent) noexcept
+LogbookWidget::LogbookWidget(DatabaseService &databaseService, FlightService &flightService, QWidget *parent) noexcept
     : QWidget(parent),
       ui(std::make_unique<Ui::LogbookWidget>()),
-      d(std::make_unique<LogbookWidgetPrivate>(flightService))
+      d(std::make_unique<LogbookWidgetPrivate>(databaseService, flightService))
 {
     ui->setupUi(this);
     initUi();
@@ -103,6 +106,8 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
     updateUi();
 
     // Service
+    connect(&d->databaseService, &DatabaseService::connectionStateChanged,
+            this, &LogbookWidget::updateUi);
     connect(&d->flightService, &FlightService::flightStored,
             this, &LogbookWidget::updateUi);
 }
@@ -111,6 +116,8 @@ void LogbookWidget::hideEvent(QHideEvent *event) noexcept
 {
     Q_UNUSED(event)
 
+    disconnect(&d->databaseService, &DatabaseService::connectionStateChanged,
+               this, &LogbookWidget::updateUi);
     disconnect(&d->flightService, &FlightService::flightStored,
                this, &LogbookWidget::updateUi);
 }

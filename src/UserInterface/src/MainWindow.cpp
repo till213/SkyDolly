@@ -160,7 +160,7 @@ MainWindow::MainWindow(QWidget *parent) noexcept
       d(std::make_unique<MainWindowPrivate>())
 {
     ui->setupUi(this);
-    d->connectedWithDB = connectWithDb();
+    d->connectedWithDB = d->databaseService->connectDb();
     initUi();
     updateUi();
     frenchConnection();
@@ -260,6 +260,8 @@ void MainWindow::frenchConnection() noexcept
     // Service
     connect(d->flightService.get(), &FlightService::flightRestored,
             this, &MainWindow::handleFlightRestored);
+    connect(d->databaseService.get(), &DatabaseService::connectionStateChanged,
+            this, &MainWindow::handleDbConnectionStateChanged);
     connect(&d->skyConnect, &SkyConnectIntf::recordingStopped,
             this, &MainWindow::handleRecordingStopped);
 }
@@ -277,7 +279,7 @@ void MainWindow::initUi() noexcept
     d->settingsDialog = new SettingsDialog(this);
 
     // Widgets
-    LogbookWidget *logbookWidget = new LogbookWidget(*d->flightService, ui->moduleStackWidget);
+    LogbookWidget *logbookWidget = new LogbookWidget(*d->databaseService, *d->flightService, ui->moduleStackWidget);
     ui->moduleGroupBox->setTitle(logbookWidget->getTitle());
     ui->moduleStackWidget->addWidget(logbookWidget);
     ui->moduleStackWidget->setCurrentWidget(logbookWidget);
@@ -462,22 +464,6 @@ void MainWindow::initReplaySpeedUi() noexcept
     }
     d->customSpeedLineEdit->setToolTip(tr("Custom replay factor in [%L1, %L2]").arg(ReplaySpeedMin).arg(ReplaySpeedMax));
 
-}
-
-bool MainWindow::connectWithDb() noexcept
-{
-    QString filePath = Settings::getInstance().getLogbookPath();
-    bool ok;
-    if (filePath.isEmpty()) {
-        filePath = QFileDialog::getSaveFileName(this, tr("Logbook"), ".", QString("*") + Const::LogbookExtension);
-        Settings::getInstance().setLogbookPath(filePath);
-    }
-    if (!filePath.isEmpty()) {
-        ok = d->databaseService->connectDb();
-    } else {
-        ok = false;
-    }
-    return ok;
 }
 
 void MainWindow::updateMinimalUi(bool enabled)
@@ -962,7 +948,7 @@ void MainWindow::handleReplaySpeedSelected(QAction *action) noexcept
 
 void MainWindow::toggleRecord(bool enable) noexcept
 {
-    this->blockSignals(true);
+    blockSignals(true);
     switch (d->skyConnect.getState()) {
     case Connect::State::Recording:
         if (!enable) {
@@ -981,7 +967,7 @@ void MainWindow::toggleRecord(bool enable) noexcept
         }
         break;
     }
-    this->blockSignals(false);
+    blockSignals(false);
 }
 
 void MainWindow::togglePause(bool enable) noexcept
@@ -1034,6 +1020,12 @@ void MainWindow::handleFlightRestored() noexcept
         d->skyConnect.startReplay(true);
         d->skyConnect.setPaused(true);
     }
+}
+
+void MainWindow::handleDbConnectionStateChanged(bool connected) noexcept
+{
+    d->connectedWithDB = connected;
+    updateUi();
 }
 
 void MainWindow::handleRecordingStopped() noexcept

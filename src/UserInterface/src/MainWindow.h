@@ -70,7 +70,6 @@ private:
     void initControlUi() noexcept;
     void initReplaySpeedUi() noexcept;
 
-    bool connectWithDb() noexcept;
     void updateMinimalUi(bool enable);
     
 private slots:
@@ -128,6 +127,7 @@ private slots:
 
     // Service
     void handleFlightRestored() noexcept;
+    void handleDbConnectionStateChanged(bool connected) noexcept;
     void handleRecordingStopped() noexcept;
 };
 #endif // MAINWINDOW_H
