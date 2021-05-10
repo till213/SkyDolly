@@ -271,7 +271,7 @@ void MainWindow::initUi() noexcept
     setWindowIcon(QIcon(":/img/icons/application-icon.png"));
 
     // Dialogs
-    d->flightDialog = new FlightDialog(d->skyConnect, this);
+    d->flightDialog = new FlightDialog(*d->flightService, this);
     d->simulationVariablesDialog = new SimulationVariablesDialog(d->skyConnect, this);
     d->statisticsDialog = new StatisticsDialog(d->skyConnect, this);
     d->aboutDialog = new AboutDialog(this);

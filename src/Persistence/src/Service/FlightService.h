@@ -54,6 +54,7 @@ public:
 signals:
     void flightStored(qint64 flightId);
     void flightRestored(qint64 flightId);
+    void flightUpdated(qint64 flightId);
 
 private:
     std::unique_ptr<FlightServicePrivate> d;

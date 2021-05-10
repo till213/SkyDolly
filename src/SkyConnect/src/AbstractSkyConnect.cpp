@@ -92,7 +92,7 @@ void AbstractSkyConnect::startRecording() noexcept
 
     if (isConnectedWithSim()) {
         setState(Connect::State::Recording);
-        d->currentFlight.getUserAircraft().clear();
+        d->currentFlight.clear();
         d->lastSamplesPerSecondIndex = 0;
         d->currentTimestamp = 0;
         d->elapsedTimer.invalidate();

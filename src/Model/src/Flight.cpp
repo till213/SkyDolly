@@ -49,7 +49,7 @@ public:
     std::vector<std::unique_ptr<Aircraft>> aircrafts;
 
     inline void clear() noexcept {
-        id = 0;
+        id = Flight::InvalidId;
         title.clear();
         description.clear();
     }
@@ -70,8 +70,7 @@ Flight::Flight(QObject *parent) noexcept
 }
 
 Flight::~Flight() noexcept
-{
-}
+{}
 
 void Flight::setId(qint64 id) noexcept
 {
@@ -100,7 +99,10 @@ const QString &Flight::getTitle() const noexcept
 
 void Flight::setTitle(const QString &title) noexcept
 {
-    d->title = title;
+    if (d->title != title) {
+        d->title = title;
+        emit flightChanged();
+    }
 }
 
 const QString &Flight::getDescription() const noexcept
@@ -110,7 +112,10 @@ const QString &Flight::getDescription() const noexcept
 
 void Flight::setDescription(const QString &description) noexcept
 {
-    d->description = description;
+    if (d->description != description) {
+        d->description = description;
+        emit flightChanged();
+    }
 }
 
 const Aircraft &Flight::getUserAircraftConst() const noexcept

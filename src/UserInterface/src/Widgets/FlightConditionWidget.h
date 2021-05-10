@@ -27,23 +27,22 @@
 
 #include <memory>
 
-#include <QDialog>
+#include <QWidget>
 
 class QShowEvent;
 class QHideEvent;
 
-class SkyConnectIntf;
 class FlightConditionWidgetPrivate;
 
 namespace Ui {
     class FlightConditionWidget;
 }
 
-class FlightConditionWidget : public QDialog
+class FlightConditionWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit FlightConditionWidget(SkyConnectIntf &skyConnect, QWidget *parent = nullptr) noexcept;
+    explicit FlightConditionWidget(QWidget *parent = nullptr) noexcept;
     virtual ~FlightConditionWidget() noexcept;
 
 protected:

@@ -50,6 +50,9 @@ target_sources(UserInterface
         src/Widgets/ActionRadioButton.h
         src/Widgets/ActionRadioButton.cpp
         src/Widgets/ModuleIntf.h
+        src/Widgets/FlightDescriptionWidget.cpp
+        src/Widgets/FlightDescriptionWidget.h
+        src/Widgets/FlightDescriptionWidget.ui
         src/Widgets/AircraftWidget.cpp
         src/Widgets/AircraftWidget.h
         src/Widgets/AircraftWidget.ui
