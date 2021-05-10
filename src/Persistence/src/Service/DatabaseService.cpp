@@ -26,6 +26,7 @@
 #include <QDir>
 
 #include "../../../Kernel/src/Settings.h"
+#include "../../../Kernel/src/Const.h"
 #include "../ConnectionManager.h"
 #include "DatabaseService.h"
 
@@ -45,7 +46,7 @@ DatabaseService::~DatabaseService() noexcept
 bool DatabaseService::connectDb() noexcept
 {
     ConnectionManager &connectionManager = ConnectionManager::getInstance();
-    const QString &logbookDirectoryPath = Settings::getInstance().getLogbookDirectoryPath();
+    const QString &logbookDirectoryPath = Settings::getInstance().getLogbookPath();
     QFileInfo info(logbookDirectoryPath);
     QDir dir(logbookDirectoryPath);
     bool ok = info.exists();
@@ -53,7 +54,7 @@ bool DatabaseService::connectDb() noexcept
         ok = dir.mkpath(logbookDirectoryPath);
     }
     if (ok) {
-        QString logbookPath = logbookDirectoryPath + "/" + dir.dirName() + LogbookExtension;
+        QString logbookPath = logbookDirectoryPath + "/" + dir.dirName() + Const::LogbookExtension;
         ok = connectionManager.connectDb(logbookPath);
         if (ok) {
             ok = connectionManager.migrate();
@@ -100,11 +101,11 @@ bool DatabaseService::backup() noexcept
     if (ok) {
         const QString backupLogbookDirectoryPath = logbookDirectoryPath + "/" + backupDirectoryName;
         const QString baseBackupLogbookName = baseName + "-" + QDateTime::currentDateTime().toString("yyyy-MM-dd hhmm");
-        QString backupLogbookName = baseBackupLogbookName + LogbookExtension;
+        QString backupLogbookName = baseBackupLogbookName + Const::LogbookExtension;
         QDir backupLogbookDir(backupLogbookDirectoryPath);
         int index = 1;
         while (backupLogbookDir.exists(backupLogbookName) && index <= MaxBackupIndex) {
-            backupLogbookName = baseBackupLogbookName + QString("-%1").arg(index) + LogbookExtension;
+            backupLogbookName = baseBackupLogbookName + QString("-%1").arg(index) + Const::LogbookExtension;
             ++index;
         }
         ok = index <= MaxBackupIndex;

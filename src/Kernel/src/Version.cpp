@@ -52,25 +52,28 @@ public:
 };
 
 // Application version
-const QString VersionPrivate::CodeName = QString("Anarchic Amoeba");
-const QString VersionPrivate::UserVersion = QString("21.03");
+const QString VersionPrivate::CodeName = QString("Anarchic Airbus");
+const QString VersionPrivate::UserVersion = QString("21.05");
 const QString VersionPrivate::OrganisationName = QString(VersionConfig::OrganisationName);
 const QString VersionPrivate::ApplicationName = QString(VersionConfig::ApplicationName);
 
-// public
+// PUBLIC
 
 Version::Version() noexcept
     : d(std::make_unique<VersionPrivate>())
-{
-}
+{}
 
 Version::Version(int majorNo, int minorNo, int patch) noexcept
     : d(new VersionPrivate(majorNo, minorNo, patch))
-{
-}
+{}
 
 Version::Version(const QString &version) noexcept
     : d(std::make_unique<VersionPrivate>())
+{
+    fromString(version);
+}
+
+void Version::fromString(const QString &version) noexcept
 {
     QRegExp versionRegExp("^(\\d+)\\.(\\d+)\\.(\\d+)$");
     if (versionRegExp.indexIn(version) != -1) {

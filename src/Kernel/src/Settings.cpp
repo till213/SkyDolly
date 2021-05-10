@@ -28,6 +28,7 @@
 #include <QSettings>
 #include <QString>
 
+#include "Const.h"
 #include "SampleRate.h"
 #include "Version.h"
 #include "Settings.h"
@@ -38,13 +39,13 @@ public:
     QSettings settings;
     Version version;
 
-    QString logbookDirectoryPath;
+    QString logbookPath;
     double recordSampleRateValue;
     bool windowStayOnTop;
     bool minimalUi;
     QString exportPath;
     QString defaultExportPath;
-    QString defaultLogbookDirectoryPath;
+    QString defaultLogbookPath;
     bool absoluteSeek;
     double seekIntervalSeconds;
     double seekIntervalPercent;
@@ -74,7 +75,7 @@ public:
         QStringList standardLocations = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation);
         if (standardLocations.count() > 0) {
             defaultExportPath = standardLocations.first();
-            defaultLogbookDirectoryPath = standardLocations.first() + "/SkyDolly";
+            defaultLogbookPath = standardLocations.first() + "/Sky Dolly/Sky Dolly" + Const::LogbookExtension;
         } else {
             defaultExportPath = ".";
         }
@@ -104,16 +105,16 @@ void Settings::destroyInstance() noexcept
     }
 }
 
-QString Settings::getLogbookDirectoryPath() const noexcept
+QString Settings::getLogbookPath() const noexcept
 {
-    return d->logbookDirectoryPath;
+    return d->logbookPath;
 }
 
-void Settings::setLogbookDirectoryPath(const QString &logbookDirectoryPath) noexcept
+void Settings::setLogbookPath(const QString &logbookPath) noexcept
 {
-    if (d->logbookDirectoryPath != logbookDirectoryPath) {
-        d->logbookDirectoryPath = logbookDirectoryPath;
-        emit logbookDirectoryPathChanged(d->logbookDirectoryPath);
+    if (d->logbookPath != logbookPath) {
+        d->logbookPath = logbookPath;
+        emit logbookPathChanged(d->logbookPath);
     }
 }
 
@@ -260,7 +261,7 @@ void Settings::store() noexcept
     d->settings.setValue("Version", d->version.toString());
     d->settings.beginGroup("Logbook");
     {
-        d->settings.setValue("DirectoryPath", d->logbookDirectoryPath);
+        d->settings.setValue("Path", d->logbookPath);
     }
     d->settings.endGroup();
     d->settings.beginGroup("Recording");
@@ -311,7 +312,7 @@ void Settings::restore() noexcept
     bool ok;
     d->settings.beginGroup("Logbook");
     {
-        d->logbookDirectoryPath = d->settings.value("DirectoryPath", d->defaultLogbookDirectoryPath).toString();
+        d->logbookPath = d->settings.value("Path", d->defaultLogbookPath).toString();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Recording");
@@ -387,7 +388,7 @@ Settings::Settings() noexcept
 
 void Settings::frenchConnection() noexcept
 {
-    connect(this, &Settings::logbookDirectoryPathChanged,
+    connect(this, &Settings::logbookPathChanged,
             this, &Settings::changed);
     connect(this, &Settings::recordSampleRateChanged,
             this, &Settings::changed);

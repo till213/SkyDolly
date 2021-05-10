@@ -73,6 +73,8 @@ public:
     KERNEL_API Version(const QString &version) noexcept;
     KERNEL_API ~Version() noexcept;
 
+    KERNEL_API void fromString(const QString &version) noexcept;
+
     /*!
      * Returns the major version number.
      *

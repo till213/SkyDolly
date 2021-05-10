@@ -1,8 +1,21 @@
-@migr(id = "4a66fae6-d70a-4230-ad1e-0db27c9b1466", descn = "Create meta info table", step_cnt = 2)
-create table meta (
+@migr(id = "a0209e1d-4d7b-4b29-b359-1d2dfd65126e", descn = "Create backup interval enumeration table", step_cnt = 2)
+create table enum_backup_interval (
+    id integer primary key,
+    intl_id text not null,
+    name text,
+    desc text
+);
+create unique index enum_backup_interval_idx1 on enum_backup_interval (intl_id);
+
+@migr(id = "4a66fae6-d70a-4230-ad1e-0db27c9b1466", descn = "Create metadata table", step_cnt = 2)
+create table metadata (
     creation_date datetime,
+    app_version text,
     last_optim_date datetime,
-    last_backup_date datetime
+    last_backup_date datetime,
+    backup_directory_path text,
+    backup_interval_id integer,
+    foreign key(backup_interval_id) references enum_backup_interval(id)
 );
 
 @migr(id = "da30cf74-c698-4a73-bad1-c1cf3f380f32", descn = "Create flight table", step_cnt = 1)

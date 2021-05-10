@@ -27,11 +27,16 @@
 
 #include <QDateTime>
 
+#include "../../Kernel/src/Version.h"
+
 struct Metadata
 {
     QDateTime creationDate;
+    Version appVersion;
     QDateTime lastOptimisationDate;
     QDateTime lastBackupDate;
+    QString backupDirectoryPath;
+    QString backupPeriodIntlId;
 };
 
 #endif // METADATA_H
