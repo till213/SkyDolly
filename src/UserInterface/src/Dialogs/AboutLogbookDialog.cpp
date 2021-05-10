@@ -27,6 +27,8 @@
 #include <QFileInfo>
 #include <QLineEdit>
 #include <QDateTimeEdit>
+#include <QDesktopServices>
+#include <QUrl>
 
 #include "../../../Persistence/src/Service/DatabaseService.h"
 #include "../Unit.h"
@@ -92,4 +94,14 @@ void AboutLogbookDialog::updateUi() noexcept
 
     qint64 fileSize = fileInfo.size();
     ui->logbookSizeLineEdit->setText(unit.formatMemory(fileSize));
+}
+
+// PRIVATE SLOTS
+
+void AboutLogbookDialog::on_showLogbookPathPushButton_clicked() noexcept
+{
+    QString logbookPath = d->databaseService.getLogbookPath();
+    QFileInfo fileInfo = QFileInfo(logbookPath);
+    QString logbookDirectoryPath = fileInfo.absolutePath();
+    QDesktopServices::openUrl(QUrl("file://" + logbookDirectoryPath));
 }

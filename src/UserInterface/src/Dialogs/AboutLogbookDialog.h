@@ -55,6 +55,9 @@ private:
     Ui::AboutLogbookDialog *ui;
 
     void updateUi() noexcept;
+
+private slots:
+    void on_showLogbookPathPushButton_clicked() noexcept;
 };
 
 #endif // ABOUTLOGBOOKDIALOG_H
