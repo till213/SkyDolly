@@ -84,8 +84,7 @@ void Version::fromString(const QString &version) noexcept
 }
 
 Version::~Version() noexcept
-{
-}
+{}
 
 int Version::getMajor() noexcept
 {
@@ -142,28 +141,28 @@ bool Version::operator<(const Version &other) noexcept
     return !(*this >= other);
 }
 
-QString Version::getCodeName() noexcept
+const QString Version::getCodeName() noexcept
 {
     return VersionPrivate::CodeName;
 }
 
-QString Version::getUserVersion() noexcept
+const QString Version::getUserVersion() noexcept
 {
     return VersionPrivate::UserVersion;
 }
 
-QString Version::getApplicationVersion() noexcept
+const QString Version::getApplicationVersion() noexcept
 {
     Version version;
     return version.toString();
 }
 
-QString Version::getOrganisationName() noexcept
+const QString Version::getOrganisationName() noexcept
 {
     return VersionPrivate::OrganisationName;
 }
 
-QString Version::getApplicationName() noexcept
+const QString Version::getApplicationName() noexcept
 {
     return VersionPrivate::ApplicationName;
 }

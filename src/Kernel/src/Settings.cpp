@@ -75,7 +75,7 @@ public:
         QStringList standardLocations = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation);
         if (standardLocations.count() > 0) {
             defaultExportPath = standardLocations.first();
-            defaultLogbookPath = standardLocations.first() + "/Sky Dolly/Sky Dolly" + Const::LogbookExtension;
+            defaultLogbookPath = standardLocations.first() + "/" + Version::getApplicationName() + "/" + Version::getApplicationName() + Const::LogbookExtension;
         } else {
             defaultExportPath = ".";
         }

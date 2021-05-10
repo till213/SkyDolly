@@ -46,15 +46,15 @@ DatabaseService::~DatabaseService() noexcept
 bool DatabaseService::connectDb() noexcept
 {
     ConnectionManager &connectionManager = ConnectionManager::getInstance();
-    const QString &logbookDirectoryPath = Settings::getInstance().getLogbookPath();
+    const QString &logbookPath = Settings::getInstance().getLogbookPath();
+    const QString logbookDirectoryPath = QFileInfo(logbookPath).absolutePath();
     QFileInfo info(logbookDirectoryPath);
-    QDir dir(logbookDirectoryPath);
     bool ok = info.exists();
     if (!ok) {
+        QDir dir(logbookDirectoryPath);
         ok = dir.mkpath(logbookDirectoryPath);
     }
     if (ok) {
-        QString logbookPath = logbookDirectoryPath + "/" + dir.dirName() + Const::LogbookExtension;
         ok = connectionManager.connectDb(logbookPath);
         if (ok) {
             ok = connectionManager.migrate();

@@ -110,7 +110,8 @@ class MainWindowPrivate
 public:
     MainWindowPrivate() noexcept
         : skyConnect(SkyManager::getInstance().currentSkyConnect()),
-          previousState(Connect::State::Connected),          
+          previousState(Connect::State::Connected),
+          connectedWithDB(false),
           aboutDialog(nullptr),
           aboutLogbookDialog(nullptr),
           settingsDialog(nullptr),
@@ -125,7 +126,8 @@ public:
     {}
 
     SkyConnectIntf &skyConnect;
-    Connect::State previousState;    
+    Connect::State previousState;
+    bool connectedWithDB;
 
     AboutDialog *aboutDialog;
     AboutLogbookDialog *aboutLogbookDialog;
@@ -158,7 +160,7 @@ MainWindow::MainWindow(QWidget *parent) noexcept
       d(std::make_unique<MainWindowPrivate>())
 {
     ui->setupUi(this);
-    connectWithDb();
+    d->connectedWithDB = connectWithDb();
     initUi();
     updateUi();
     frenchConnection();
@@ -716,13 +718,16 @@ void MainWindow::updateMainWindow() noexcept
 void MainWindow::on_newLogbookAction_triggered() noexcept
 {
     Settings &settings = Settings::getInstance();
-    QString existingLogbookDirectoryPath = settings.getLogbookPath();
+    QString existingLogbookPath = settings.getLogbookPath();
+    QString existingLogbookDirectoryPath = QFileInfo(existingLogbookPath).absolutePath();
     bool retry = true;
     while (retry) {
         QString logbookDirectoryPath = QFileDialog::getSaveFileName(this, tr("New logbook"), existingLogbookDirectoryPath);
         if (!logbookDirectoryPath.isEmpty()) {
-            if (!QFileInfo::exists(logbookDirectoryPath)) {
-                settings.setLogbookPath(logbookDirectoryPath);
+            QFileInfo info = QFileInfo(logbookDirectoryPath);
+            if (!info.exists()) {
+                const QString logbookPath = logbookDirectoryPath + "/" + info.baseName() + Const::LogbookExtension;
+                settings.setLogbookPath(logbookPath);
                 bool ok = d->databaseService->connectDb();
                 if (!ok) {
                     QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be created.").arg(logbookDirectoryPath));
@@ -741,7 +746,7 @@ void MainWindow::on_openLogbookAction_triggered() noexcept
 {
     Settings &settings = Settings::getInstance();
     QString existingLogbookPath = QFileInfo(settings.getLogbookPath()).absolutePath();
-    QString logbookPath = QFileDialog::getOpenFileName(this, tr("Open library"), existingLogbookPath, QString("*") + Const::LogbookExtension);
+    QString logbookPath = QFileDialog::getOpenFileName(this, tr("Open logbook"), existingLogbookPath, QString("*") + Const::LogbookExtension);
     if (!logbookPath.isEmpty()) {
         settings.setLogbookPath(logbookPath);
         bool ok = d->databaseService->connectDb();
@@ -755,7 +760,7 @@ void MainWindow::on_backupLogbookAction_triggered() noexcept
 {
     bool ok = d->databaseService->backup();
     if (!ok) {
-        QMessageBox::critical(this, tr("Database error"), tr("The library backup could not be created."));
+        QMessageBox::critical(this, tr("Database error"), tr("The logbook backup could not be created."));
     }
 }
 
@@ -763,7 +768,7 @@ void MainWindow::on_optimiseLogbookAction_triggered() noexcept
 {
     bool ok = d->databaseService->optimise();
     if (!ok) {
-        QMessageBox::critical(this, tr("Database error"), tr("The library could not be optimised."));
+        QMessageBox::critical(this, tr("Database error"), tr("The logbook could not be optimised."));
     }
 }
 

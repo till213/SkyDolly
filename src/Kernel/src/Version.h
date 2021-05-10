@@ -140,7 +140,7 @@ public:
      *
      * \return a QString containing a cool code name
      */
-    KERNEL_API static QString getCodeName() noexcept;
+    KERNEL_API static const QString getCodeName() noexcept;
 
     /*!
      * A "fancy user readable version" which follows the pattern yy.mm.
@@ -149,7 +149,7 @@ public:
      *
      * \return a QString containing the "user readable version"
      */
-    KERNEL_API static QString getUserVersion() noexcept;
+    KERNEL_API static const QString getUserVersion() noexcept;
 
     /*!
      * The version number which follows the pattern version.minor.patch.
@@ -158,21 +158,21 @@ public:
      *
      * \return a QString containing the application version.
      */
-    KERNEL_API static QString getApplicationVersion() noexcept;
+    KERNEL_API static const QString getApplicationVersion() noexcept;
 
     /*!
      * Returns the organisation name.
      *
      * \return a QString the name of the organisation
      */
-    KERNEL_API static QString getOrganisationName() noexcept;
+    KERNEL_API static const QString getOrganisationName() noexcept;
 
     /*!
      * Returns the application name which can be displayed in dialog captions.
      *
      * \return a QString containing the application name
      */
-    KERNEL_API static QString getApplicationName() noexcept;
+    KERNEL_API static const QString getApplicationName() noexcept;
 
 private:
     Q_DISABLE_COPY(Version)
