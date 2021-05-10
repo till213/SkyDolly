@@ -24,7 +24,7 @@
  */
 #include <memory>
 
-#include <QDialog>
+#include <QWidget>
 
 #include "../../../Model/src/SimVar.h"
 #include "../../../Model/src/Logbook.h"
@@ -32,8 +32,6 @@
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/AircraftInfo.h"
 #include "../../../Model/src/FlightCondition.h"
-#include "../../../SkyConnect/src/SkyConnectIntf.h"
-#include "../../../SkyConnect/src/Connect.h"
 #include "../../../Kernel/src/SkyMath.h"
 #include "../Unit.h"
 #include "AircraftTypeWidget.h"
@@ -42,19 +40,17 @@
 class AircraftTypeWidgetPrivate
 {
 public:
-    AircraftTypeWidgetPrivate(SkyConnectIntf &theSkyConnect) noexcept
-        : skyConnect(theSkyConnect)
+    AircraftTypeWidgetPrivate() noexcept
     {}
 
-    SkyConnectIntf &skyConnect;
     Unit unit;
 };
 
 // PUBLIC
 
-AircraftTypeWidget::AircraftTypeWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept :
-    QDialog(parent),
-    d(std::make_unique<AircraftTypeWidgetPrivate>(skyConnect)),
+AircraftTypeWidget::AircraftTypeWidget(QWidget *parent) noexcept :
+    QWidget(parent),
+    d(std::make_unique<AircraftTypeWidgetPrivate>()),
     ui(std::make_unique<Ui::AircraftTypeWidget>())
 {
     ui->setupUi(this);

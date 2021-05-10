@@ -110,6 +110,8 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
             this, &LogbookWidget::updateUi);
     connect(&d->flightService, &FlightService::flightStored,
             this, &LogbookWidget::updateUi);
+    connect(&d->flightService, &FlightService::flightUpdated,
+            this, &LogbookWidget::updateUi);
 }
 
 void LogbookWidget::hideEvent(QHideEvent *event) noexcept
@@ -119,6 +121,8 @@ void LogbookWidget::hideEvent(QHideEvent *event) noexcept
     disconnect(&d->databaseService, &DatabaseService::connectionStateChanged,
                this, &LogbookWidget::updateUi);
     disconnect(&d->flightService, &FlightService::flightStored,
+               this, &LogbookWidget::updateUi);
+    disconnect(&d->flightService, &FlightService::flightUpdated,
                this, &LogbookWidget::updateUi);
 }
 
@@ -186,8 +190,8 @@ void LogbookWidget::updateUi() noexcept
         ++columnIndex;
 
         newItem = new QTableWidgetItem(d->unit.formatTime(summary.startDate));
-        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
         newItem->setToolTip(tr("Simulation time: %1 (%2Z)").arg(d->unit.formatTime(summary.startSimulationLocalTime), d->unit.formatTime(summary.startSimulationZuluTime)));
+        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);        
         ++columnIndex;
 
         newItem = new QTableWidgetItem(summary.startLocation);
@@ -195,29 +199,34 @@ void LogbookWidget::updateUi() noexcept
         ++columnIndex;
 
         newItem = new QTableWidgetItem(d->unit.formatTime(summary.endDate));
-        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
         newItem->setToolTip(tr("Simulation time: %1 (%2Z)").arg(d->unit.formatTime(summary.endSimulationLocalTime), d->unit.formatTime(summary.endSimulationZuluTime)));
+        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);        
         ++columnIndex;
 
         newItem = new QTableWidgetItem(summary.endLocation);
         ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
         ++columnIndex;
 
-        const qint64 durationMSec = summary.startDate.msecsTo(summary.endDate);
-        const QTime time = QTime(0, 0).addMSecs(durationMSec);
+        qint64 durationMSec = summary.startDate.msecsTo(summary.endDate);
+        QTime time = QTime(0, 0).addMSecs(durationMSec);
         newItem = new QTableWidgetItem(d->unit.formatDuration(time));
+        durationMSec = summary.startSimulationLocalTime.msecsTo(summary.endSimulationLocalTime);
+        time = QTime(0, 0).addMSecs(durationMSec);
+        newItem->setToolTip(tr("Simulation duration: %1").arg(d->unit.formatDuration(time)));
         ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
         ++columnIndex;
 
         newItem = new QTableWidgetItem(summary.title);
-        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
+        newItem->setToolTip(tr("Left double-click to edit title"));
+        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);      
         d->titleColumnIndex = columnIndex;
         ++columnIndex;
         ++rowIndex;
-
     }
-    ui->logTableWidget->resizeColumnsToContents();
+
+    ui->logTableWidget->sortByColumn(0, Qt::SortOrder::DescendingOrder);
     ui->logTableWidget->setSortingEnabled(true);
+    ui->logTableWidget->resizeColumnsToContents();
     ui->logTableWidget->blockSignals(false);
 
     updateEditUi();
@@ -275,6 +284,13 @@ void LogbookWidget::handleCellChanged(int row, int column) noexcept
     if (column == d->titleColumnIndex) {
         QTableWidgetItem *item = ui->logTableWidget->item(row, column);
         const QString title = item->data(Qt::EditRole).toString();
+
+        // Also update the current flight, if in memory
+        Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
+        if (currentFlight.getId() == d->selectedFlightId) {
+            currentFlight.setTitle(title);
+        }
+
         d->flightService.updateTitle(d->selectedFlightId, title);
     }
 }

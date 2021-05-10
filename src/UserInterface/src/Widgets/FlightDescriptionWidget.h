@@ -22,69 +22,46 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#ifndef FLIGHTDESCRIPTIONWIDGET_H
+#define FLIGHTDESCRIPTIONWIDGET_H
+
 #include <memory>
-#include <iostream>
-#include <vector>
 
-#include "Logbook.h"
+#include <QWidget>
 
-class LogbookPrivate
+class QShowEvent;
+class QHideEvent;
+
+class FlightService;
+class FlightDescriptionWidgetPrivate;
+
+namespace Ui {
+    class FlightDescriptionWidget;
+}
+
+class FlightDescriptionWidget : public QWidget
 {
+    Q_OBJECT
 public:
-    LogbookPrivate() noexcept
-    {}
+    explicit FlightDescriptionWidget(FlightService &flightService, QWidget *parent = nullptr);
+    virtual ~FlightDescriptionWidget();
 
-    ~LogbookPrivate() noexcept
-    {}
+protected:
+    void showEvent(QShowEvent *event) noexcept override;
+    void hideEvent(QHideEvent *event) noexcept override;
 
-    std::vector<std::unique_ptr<Flight>> flights;
+private:
+    Q_DISABLE_COPY(FlightDescriptionWidget)
+    std::unique_ptr<FlightDescriptionWidgetPrivate> d;
+    std::unique_ptr<Ui::FlightDescriptionWidget> ui;
 
-    static Logbook *instance;
+    void initUi() noexcept;
+    void frenchConnection() noexcept;
 
+private slots:
+    void updateUi() noexcept;
+    void handleTitleEdited() noexcept;
+    void handleDescriptionEdited() noexcept;
 };
 
-Logbook *LogbookPrivate::instance = nullptr;
-
-// PUBLIC
-
-Logbook &Logbook::getInstance() noexcept
-{
-    if (LogbookPrivate::instance == nullptr) {
-        LogbookPrivate::instance = new Logbook();
-    }
-    return *LogbookPrivate::instance;
-}
-
-void Logbook::destroyInstance() noexcept
-{
-    if (LogbookPrivate::instance != nullptr) {
-        delete LogbookPrivate::instance;
-        LogbookPrivate::instance = nullptr;
-    }
-}
-
-Flight &Logbook::getCurrentFlight() const
-{
-    return *(*d->flights.cbegin());
-}
-
-const Flight &Logbook::getCurrentFlightConst() const
-{
-    return *(*d->flights.cbegin());
-}
-
-// PROTECTED
-
-Logbook::~Logbook()
-{}
-
-// PRIVATE
-
-Logbook::Logbook() noexcept
-    : d(std::make_unique<LogbookPrivate>())
-{
-    // Logbook may support several flights, but for now there will be always
-    // exactly one
-    std::unique_ptr<Flight> defaultFlight = std::make_unique<Flight>();
-    d->flights.push_back(std::move(defaultFlight));
-}
+#endif // FLIGHTDESCRIPTIONWIDGET_H

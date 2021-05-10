@@ -108,6 +108,7 @@ bool FlightService::updateTitle(qint64 id, const QString &title) noexcept
         ok = d->flightDao->updateTitle(id, title);
         if (ok) {
             QSqlDatabase::database().commit();
+            emit flightUpdated(id);
         } else {
             QSqlDatabase::database().rollback();
         }
@@ -122,6 +123,7 @@ bool FlightService::updateTitleAndDescription(qint64 id, const QString &title, c
         ok = d->flightDao->updateTitleAndDescription(id, title, description);
         if (ok) {
             QSqlDatabase::database().commit();
+            emit flightUpdated(id);
         } else {
             QSqlDatabase::database().rollback();
         }

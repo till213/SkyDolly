@@ -27,12 +27,11 @@
 
 #include <memory>
 
-#include <QDialog>
+#include <QWidget>
 
 class QShowEvent;
 class QHideEvent;
 
-class SkyConnectIntf;
 class AircraftTypeWidgetPrivate;
 class AircraftData;
 
@@ -40,11 +39,11 @@ namespace Ui {
     class AircraftTypeWidget;
 }
 
-class AircraftTypeWidget : public QDialog
+class AircraftTypeWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit AircraftTypeWidget(SkyConnectIntf &skyConnect, QWidget *parent = nullptr) noexcept;
+    explicit AircraftTypeWidget(QWidget *parent = nullptr) noexcept;
     virtual ~AircraftTypeWidget() noexcept;
 
 protected:

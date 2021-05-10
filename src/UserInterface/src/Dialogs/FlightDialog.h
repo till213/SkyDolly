@@ -32,7 +32,7 @@
 class QShowEvent;
 class QHideEvent;
 
-class SkyConnectIntf;
+class FlightService;
 class FlightDialogPrivate;
 
 namespace Ui {
@@ -43,7 +43,7 @@ class FlightDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit FlightDialog(SkyConnectIntf &skyConnect, QWidget *parent = nullptr) noexcept;
+    explicit FlightDialog(FlightService &flightService, QWidget *parent = nullptr) noexcept;
     virtual ~FlightDialog() noexcept;
 
 signals:

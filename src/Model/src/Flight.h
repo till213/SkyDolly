@@ -43,7 +43,7 @@ class MODEL_API Flight : public QObject
     Q_OBJECT
 public:
     Flight(QObject *parent = nullptr) noexcept;
-    ~Flight() noexcept;
+    virtual ~Flight() noexcept;
 
     qint64 getId() const noexcept;
     void setId(qint64 id) noexcept;
@@ -67,9 +67,10 @@ public:
 
     void clear() noexcept;
 
-     static constexpr int InvalidId = -1;
+    static constexpr int InvalidId = -1;
 
 signals:
+    void flightChanged();
     void aircraftInfoChanged();
     void aircraftDataChanged();
     void flightConditionChanged();

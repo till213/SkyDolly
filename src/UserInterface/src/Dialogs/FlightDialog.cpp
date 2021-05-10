@@ -36,8 +36,8 @@
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/PrimaryFlightControl.h"
 #include "../../../Model/src/AircraftInfo.h"
-#include "../../../SkyConnect/src/SkyConnectIntf.h"
-#include "../../../SkyConnect/src/Connect.h"
+#include "../../../Persistence/src/Service/FlightService.h"
+#include "../Widgets/FlightDescriptionWidget.h"
 #include "../Widgets/AircraftTypeWidget.h"
 #include "../Widgets/FlightConditionWidget.h"
 #include "../Widgets/FlightPlanWidget.h"
@@ -47,18 +47,18 @@
 class FlightDialogPrivate
 {
 public:
-    FlightDialogPrivate(SkyConnectIntf &theSkyConnect) noexcept
-        : skyConnect(theSkyConnect)
+    FlightDialogPrivate(FlightService &theFlightService) noexcept
+        : flightService(theFlightService)
     {}
 
-    SkyConnectIntf &skyConnect;
+    FlightService &flightService;
 };
 
 // PUBLIC
 
-FlightDialog::FlightDialog(SkyConnectIntf &skyConnect, QWidget *parent) noexcept :
+FlightDialog::FlightDialog(FlightService &flightService, QWidget *parent) noexcept :
     QDialog(parent),
-    d(std::make_unique<FlightDialogPrivate>(skyConnect)),
+    d(std::make_unique<FlightDialogPrivate>(flightService)),
     ui(std::make_unique<Ui::FlightDialog>())
 {
     ui->setupUi(this);
@@ -68,8 +68,7 @@ FlightDialog::FlightDialog(SkyConnectIntf &skyConnect, QWidget *parent) noexcept
 }
 
 FlightDialog::~FlightDialog() noexcept
-{
-}
+{}
 
 // PROTECTED
 
@@ -90,16 +89,20 @@ void FlightDialog::hideEvent(QHideEvent *event) noexcept
 
 void FlightDialog::initUi() noexcept
 {
-    AircraftTypeWidget *aircraftTypeWidget = new AircraftTypeWidget(d->skyConnect, this);
+    FlightDescriptionWidget *flightDescriptionWidget = new FlightDescriptionWidget(d->flightService, this);
+    ui->flightTab->addTab(flightDescriptionWidget, tr("&Description"));
+
+    AircraftTypeWidget *aircraftTypeWidget = new AircraftTypeWidget(this);
     ui->flightTab->addTab(aircraftTypeWidget, tr("&Aircraft"));
 
-    FlightConditionWidget *flightConditionsWidget = new FlightConditionWidget(d->skyConnect, this);
+    FlightConditionWidget *flightConditionsWidget = new FlightConditionWidget(this);
     ui->flightTab->addTab(flightConditionsWidget, tr("&Conditions"));
 
-    FlightPlanWidget *flightPlanWidget = new FlightPlanWidget(d->skyConnect, this);
+    FlightPlanWidget *flightPlanWidget = new FlightPlanWidget(this);
     ui->flightTab->addTab(flightPlanWidget, tr("&Flight Plan"));
+
+    ui->flightTab->setCurrentIndex(0);
 }
 
 void FlightDialog::updateUi() noexcept
-{
-}
+{}

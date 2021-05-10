@@ -30,7 +30,6 @@
 #include <QWidget>
 
 class Waypoint;
-class SkyConnectIntf;
 class FlightPlanWidgetPrivate;
 
 namespace Ui {
@@ -42,7 +41,7 @@ class FlightPlanWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit FlightPlanWidget(SkyConnectIntf &skyConnect, QWidget *parent = nullptr) noexcept;
+    explicit FlightPlanWidget(QWidget *parent = nullptr) noexcept;
     virtual ~FlightPlanWidget() noexcept;
 
 protected:

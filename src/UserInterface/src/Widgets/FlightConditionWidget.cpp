@@ -24,15 +24,13 @@
  */
 #include <memory>
 
-#include <QDialog>
+#include <QWidget>
 
 #include "../../../Model/src/SimVar.h"
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/FlightCondition.h"
-#include "../../../SkyConnect/src/SkyConnectIntf.h"
-#include "../../../SkyConnect/src/Connect.h"
 #include "../../../Kernel/src/SkyMath.h"
 #include "../Unit.h"
 #include "FlightConditionWidget.h"
@@ -41,19 +39,17 @@
 class FlightConditionWidgetPrivate
 {
 public:
-    FlightConditionWidgetPrivate(SkyConnectIntf &theSkyConnect) noexcept
-        : skyConnect(theSkyConnect)
+    FlightConditionWidgetPrivate() noexcept
     {}
 
-    SkyConnectIntf &skyConnect;
     Unit unit;
 };
 
 // PUBLIC
 
-FlightConditionWidget::FlightConditionWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept :
-    QDialog(parent),
-    d(std::make_unique<FlightConditionWidgetPrivate>(skyConnect)),
+FlightConditionWidget::FlightConditionWidget(QWidget *parent) noexcept :
+    QWidget(parent),
+    d(std::make_unique<FlightConditionWidgetPrivate>()),
     ui(std::make_unique<Ui::FlightConditionWidget>())
 {
     ui->setupUi(this);

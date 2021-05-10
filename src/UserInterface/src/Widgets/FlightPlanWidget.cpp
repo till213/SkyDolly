@@ -28,10 +28,10 @@
 
 #include "../../../Model/src/SimVar.h"
 #include "../../../Model/src/Logbook.h"
+#include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/FlightPlan.h"
 #include "../../../Model/src/Waypoint.h"
-#include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "WaypointWidget.h"
 
 #include "FlightPlanWidget.h"
@@ -40,18 +40,16 @@
 class FlightPlanWidgetPrivate
 {
 public:
-    FlightPlanWidgetPrivate(SkyConnectIntf &theSkyConnect) noexcept
-        : skyConnect(theSkyConnect)
+    FlightPlanWidgetPrivate() noexcept
     {}
 
-    SkyConnectIntf &skyConnect;
 };
 
 // PUBLIC
 
-FlightPlanWidget::FlightPlanWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept :
+FlightPlanWidget::FlightPlanWidget(QWidget *parent) noexcept :
     QWidget(parent),
-    d(std::make_unique<FlightPlanWidgetPrivate>(skyConnect)),
+    d(std::make_unique<FlightPlanWidgetPrivate>()),
     ui(new Ui::FlightPlanWidget)
 {
     ui->setupUi(this);
