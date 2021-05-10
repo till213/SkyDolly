@@ -47,6 +47,7 @@
 #include <QResizeEvent>
 #include <QActionGroup>
 
+#include "../../Kernel/src/Const.h"
 #include "../../Kernel/src/Version.h"
 #include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/Enum.h"
@@ -463,11 +464,11 @@ void MainWindow::initReplaySpeedUi() noexcept
 
 bool MainWindow::connectWithDb() noexcept
 {
-    QString filePath = Settings::getInstance().getLogbookDirectoryPath();
+    QString filePath = Settings::getInstance().getLogbookPath();
     bool ok;
     if (filePath.isEmpty()) {
-        filePath = QFileDialog::getSaveFileName(this, tr("Logbook"), ".", QString("*") + DatabaseService::LogbookExtension);
-        Settings::getInstance().setLogbookDirectoryPath(filePath);
+        filePath = QFileDialog::getSaveFileName(this, tr("Logbook"), ".", QString("*") + Const::LogbookExtension);
+        Settings::getInstance().setLogbookPath(filePath);
     }
     if (!filePath.isEmpty()) {
         ok = d->databaseService->connectDb();
@@ -715,20 +716,20 @@ void MainWindow::updateMainWindow() noexcept
 void MainWindow::on_newLogbookAction_triggered() noexcept
 {
     Settings &settings = Settings::getInstance();
-    QString existingLogbookDirectoryPath = settings.getLogbookDirectoryPath();
+    QString existingLogbookDirectoryPath = settings.getLogbookPath();
     bool retry = true;
     while (retry) {
         QString logbookDirectoryPath = QFileDialog::getSaveFileName(this, tr("New logbook"), existingLogbookDirectoryPath);
         if (!logbookDirectoryPath.isEmpty()) {
             if (!QFileInfo::exists(logbookDirectoryPath)) {
-                settings.setLogbookDirectoryPath(logbookDirectoryPath);
+                settings.setLogbookPath(logbookDirectoryPath);
                 bool ok = d->databaseService->connectDb();
                 if (!ok) {
-                    QMessageBox::critical(this, tr("Database error"), tr("The library %1 could not be created.").arg(logbookDirectoryPath));
+                    QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be created.").arg(logbookDirectoryPath));
                 }
                 retry = false;
             } else {
-                QMessageBox::information(this, tr("Database exists"), tr("The library %1 already exists. Please choose another path.").arg(logbookDirectoryPath));
+                QMessageBox::information(this, tr("Database exists"), tr("The logbook %1 already exists. Please choose another path.").arg(logbookDirectoryPath));
             }
         } else {
             retry = false;
@@ -739,13 +740,13 @@ void MainWindow::on_newLogbookAction_triggered() noexcept
 void MainWindow::on_openLogbookAction_triggered() noexcept
 {
     Settings &settings = Settings::getInstance();
-    QString existingLogbookPath = QFileInfo(settings.getLogbookDirectoryPath()).absolutePath();
-    QString libraryPath = QFileDialog::getOpenFileName(this, tr("Open library"), existingLogbookPath, QString("*") + DatabaseService::LogbookExtension);
-    if (!libraryPath.isEmpty()) {
-        settings.setLogbookDirectoryPath(libraryPath);
+    QString existingLogbookPath = QFileInfo(settings.getLogbookPath()).absolutePath();
+    QString logbookPath = QFileDialog::getOpenFileName(this, tr("Open library"), existingLogbookPath, QString("*") + Const::LogbookExtension);
+    if (!logbookPath.isEmpty()) {
+        settings.setLogbookPath(logbookPath);
         bool ok = d->databaseService->connectDb();
         if (!ok) {
-            QMessageBox::critical(this, tr("Database error"), tr("The library %1 could not be opened.").arg(libraryPath));
+            QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be opened.").arg(logbookPath));
         }
     }
 }

@@ -11,6 +11,7 @@ configure_file(src/VersionConfig.h.in VersionConfig.h)
 target_sources(Kernel
     PRIVATE
         src/KernelLib.h
+        src/Const.h
         src/Enum.h
         src/SampleRate.h
         src/SkyMath.h

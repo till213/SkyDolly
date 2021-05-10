@@ -50,8 +50,6 @@ public:
     bool optimise() noexcept;
     bool backup() noexcept;
     bool getMetadata(Metadata &metadata) noexcept;
-
-    static constexpr char LogbookExtension[] = ".sdlog";
 };
 
 #endif // DATABASESERVICE_H

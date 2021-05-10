@@ -32,6 +32,7 @@
 #include <QTimeZone>
 
 #include "../../../../Kernel/src/Settings.h"
+#include "../../../../Kernel/src/Version.h"
 #include "../../Metadata.h"
 #include "SqlMigration.h"
 #include "SQLiteDatabaseDao.h"
@@ -92,7 +93,7 @@ bool SQLiteDatabaseDao::optimise() noexcept
     QSqlQuery query;
     bool ok = query.exec("vacuum;");
     if (ok) {
-        ok = query.exec("update meta set last_optim_date = datetime('now') where rowid = 1;");
+        ok = query.exec("update metadata set last_optim_date = datetime('now') where rowid = 1;");
 #ifdef DEBUG
     } else {
         qDebug("SQLiteDatabaseDao::optimise(: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
@@ -106,7 +107,7 @@ bool SQLiteDatabaseDao::backup(const QString &backupPath) noexcept
     QSqlQuery query;
     bool ok = query.exec(QString("vacuum into '%1';").arg(backupPath));
     if (ok) {
-        ok = query.exec("update meta set last_backup_date = datetime('now') where rowid = 1;");
+        ok = query.exec("update metadata set last_backup_date = datetime('now') where rowid = 1;");
 #ifdef DEBUG
     } else {
         qDebug("SQLiteDatabaseDao::backup(: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
@@ -118,19 +119,31 @@ bool SQLiteDatabaseDao::backup(const QString &backupPath) noexcept
 bool SQLiteDatabaseDao::getMetadata(Metadata &metadata) const noexcept
 {
     QSqlQuery query;
-    bool ok = query.exec("select creation_date, last_optim_date, last_backup_date from meta;");
+    bool ok = query.exec(
+"select m.creation_date, m.app_version, m.last_optim_date, m.last_backup_date, m.backup_directory_path, e.intl_id "
+"from metadata m "
+"left join enum_backup_interval e "
+"on m.backup_interval_id = e.id;"
+
+);
     if (query.next()) {
         QDateTime dateTime = query.value(0).toDateTime();
         dateTime.setTimeZone(QTimeZone::utc());
         metadata.creationDate = dateTime.toLocalTime();
 
-        dateTime = query.value(1).toDateTime();
-        dateTime.setTimeZone(QTimeZone::utc());
-        metadata.lastOptimisationDate = dateTime.toLocalTime();
+        QString appVersion = query.value(1).toString();
+        metadata.appVersion.fromString(appVersion);
 
         dateTime = query.value(2).toDateTime();
         dateTime.setTimeZone(QTimeZone::utc());
+        metadata.lastOptimisationDate = dateTime.toLocalTime();
+
+        dateTime = query.value(3).toDateTime();
+        dateTime.setTimeZone(QTimeZone::utc());
         metadata.lastBackupDate = dateTime.toLocalTime();
+
+        metadata.backupDirectoryPath = query.value(4).toString();
+        metadata.backupPeriodIntlId = query.value(5).toString();
     }
     return ok;
 };
