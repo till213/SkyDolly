@@ -63,7 +63,7 @@
 #include "../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../SkyConnect/src/Connect.h"
 #include "Dialogs/AboutDialog.h"
-#include "Dialogs/AboutLibraryDialog.h"
+#include "Dialogs/AboutLogbookDialog.h"
 #include "Dialogs/SettingsDialog.h"
 #include "Dialogs/FlightDialog.h"
 #include "Dialogs/SimulationVariablesDialog.h"
@@ -111,7 +111,7 @@ public:
         : skyConnect(SkyManager::getInstance().currentSkyConnect()),
           previousState(Connect::State::Connected),          
           aboutDialog(nullptr),
-          aboutLibraryDialog(nullptr),
+          aboutLogbookDialog(nullptr),
           settingsDialog(nullptr),
           flightDialog(nullptr),
           simulationVariablesDialog(nullptr),
@@ -127,7 +127,7 @@ public:
     Connect::State previousState;    
 
     AboutDialog *aboutDialog;
-    AboutLibraryDialog *aboutLibraryDialog;
+    AboutLogbookDialog *aboutLogbookDialog;
     SettingsDialog *settingsDialog;
     FlightDialog *flightDialog;
     SimulationVariablesDialog *simulationVariablesDialog;
@@ -270,7 +270,7 @@ void MainWindow::initUi() noexcept
     d->simulationVariablesDialog = new SimulationVariablesDialog(d->skyConnect, this);
     d->statisticsDialog = new StatisticsDialog(d->skyConnect, this);
     d->aboutDialog = new AboutDialog(this);
-    d->aboutLibraryDialog = new AboutLibraryDialog(*d->databaseService, this);
+    d->aboutLogbookDialog = new AboutLogbookDialog(*d->databaseService, this);
     d->settingsDialog = new SettingsDialog(this);
 
     // Widgets
@@ -463,11 +463,11 @@ void MainWindow::initReplaySpeedUi() noexcept
 
 bool MainWindow::connectWithDb() noexcept
 {
-    QString filePath = Settings::getInstance().getLibraryPath();
+    QString filePath = Settings::getInstance().getLogbookDirectoryPath();
     bool ok;
     if (filePath.isEmpty()) {
-        filePath = QFileDialog::getSaveFileName(this, tr("Library"), ".", QString("*") + DatabaseService::LibraryExtension);
-        Settings::getInstance().setLibraryPath(filePath);
+        filePath = QFileDialog::getSaveFileName(this, tr("Logbook"), ".", QString("*") + DatabaseService::LogbookExtension);
+        Settings::getInstance().setLogbookDirectoryPath(filePath);
     }
     if (!filePath.isEmpty()) {
         ok = d->databaseService->connectDb();
@@ -712,23 +712,23 @@ void MainWindow::updateMainWindow() noexcept
     }
 }
 
-void MainWindow::on_newLibraryAction_triggered() noexcept
+void MainWindow::on_newLogbookAction_triggered() noexcept
 {
     Settings &settings = Settings::getInstance();
-    QString existingLibraryPath = QFileInfo(settings.getLibraryPath()).absolutePath();
+    QString existingLogbookDirectoryPath = settings.getLogbookDirectoryPath();
     bool retry = true;
     while (retry) {
-        QString libraryPath = QFileDialog::getSaveFileName(this, tr("New library"), existingLibraryPath, QString("*") + DatabaseService::LibraryExtension);
-        if (!libraryPath.isEmpty()) {
-            if (!QFileInfo::exists(libraryPath)) {
-                settings.setLibraryPath(libraryPath);
+        QString logbookDirectoryPath = QFileDialog::getSaveFileName(this, tr("New logbook"), existingLogbookDirectoryPath);
+        if (!logbookDirectoryPath.isEmpty()) {
+            if (!QFileInfo::exists(logbookDirectoryPath)) {
+                settings.setLogbookDirectoryPath(logbookDirectoryPath);
                 bool ok = d->databaseService->connectDb();
                 if (!ok) {
-                    QMessageBox::critical(this, tr("Database error"), tr("The library %1 could not be created.").arg(libraryPath));
+                    QMessageBox::critical(this, tr("Database error"), tr("The library %1 could not be created.").arg(logbookDirectoryPath));
                 }
                 retry = false;
             } else {
-                QMessageBox::information(this, tr("Database exists"), tr("The library %1 already exists. Please choose another path.").arg(libraryPath));
+                QMessageBox::information(this, tr("Database exists"), tr("The library %1 already exists. Please choose another path.").arg(logbookDirectoryPath));
             }
         } else {
             retry = false;
@@ -736,13 +736,13 @@ void MainWindow::on_newLibraryAction_triggered() noexcept
     }
 }
 
-void MainWindow::on_openLibraryAction_triggered() noexcept
+void MainWindow::on_openLogbookAction_triggered() noexcept
 {
     Settings &settings = Settings::getInstance();
-    QString existingLibraryPath = QFileInfo(settings.getLibraryPath()).absolutePath();
-    QString libraryPath = QFileDialog::getOpenFileName(this, tr("Open library"), existingLibraryPath, QString("*") + DatabaseService::LibraryExtension);
+    QString existingLogbookPath = QFileInfo(settings.getLogbookDirectoryPath()).absolutePath();
+    QString libraryPath = QFileDialog::getOpenFileName(this, tr("Open library"), existingLogbookPath, QString("*") + DatabaseService::LogbookExtension);
     if (!libraryPath.isEmpty()) {
-        settings.setLibraryPath(libraryPath);
+        settings.setLogbookDirectoryPath(libraryPath);
         bool ok = d->databaseService->connectDb();
         if (!ok) {
             QMessageBox::critical(this, tr("Database error"), tr("The library %1 could not be opened.").arg(libraryPath));
@@ -750,7 +750,7 @@ void MainWindow::on_openLibraryAction_triggered() noexcept
     }
 }
 
-void MainWindow::on_backupLibraryAction_triggered() noexcept
+void MainWindow::on_backupLogbookAction_triggered() noexcept
 {
     bool ok = d->databaseService->backup();
     if (!ok) {
@@ -758,7 +758,7 @@ void MainWindow::on_backupLibraryAction_triggered() noexcept
     }
 }
 
-void MainWindow::on_optimiseLibraryAction_triggered() noexcept
+void MainWindow::on_optimiseLogbookAction_triggered() noexcept
 {
     bool ok = d->databaseService->optimise();
     if (!ok) {
@@ -870,9 +870,9 @@ void MainWindow::on_showMinimalAction_triggered(bool enabled) noexcept
     updateMinimalUi(enabled);
 }
 
-void MainWindow::on_aboutLibraryAction_triggered() noexcept
+void MainWindow::on_aboutLogbookAction_triggered() noexcept
 {
-    d->aboutLibraryDialog->exec();
+    d->aboutLogbookDialog->exec();
 }
 
 void MainWindow::on_aboutAction_triggered() noexcept

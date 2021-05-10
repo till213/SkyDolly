@@ -37,7 +37,7 @@ public:
     ~DatabaseService() noexcept;
 
     /*!
-     * Connects with the database given by Settings#getLibraryPath
+     * Connects with the database given by Settings#getLogbookPath
      * and initialises the database by applying the required migrations.
      *
      * \return \c true if the connection succeeded; \c false else
@@ -45,13 +45,13 @@ public:
     bool connectDb() noexcept;
     void disconnectDb() noexcept;
     bool isConnected() const noexcept;
-    const QString &getLibraryPath() const noexcept;
+    const QString &getLogbookPath() const noexcept;
 
     bool optimise() noexcept;
     bool backup() noexcept;
     bool getMetadata(Metadata &metadata) noexcept;
 
-    static constexpr char LibraryExtension[] = ".db";
+    static constexpr char LogbookExtension[] = ".sdlog";
 };
 
 #endif // DATABASESERVICE_H

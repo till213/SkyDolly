@@ -92,10 +92,10 @@ private slots:
     void updateMainWindow() noexcept;
 
     // File menu
-    void on_newLibraryAction_triggered() noexcept;
-    void on_openLibraryAction_triggered() noexcept;
-    void on_backupLibraryAction_triggered() noexcept;
-    void on_optimiseLibraryAction_triggered() noexcept;
+    void on_newLogbookAction_triggered() noexcept;
+    void on_openLogbookAction_triggered() noexcept;
+    void on_backupLogbookAction_triggered() noexcept;
+    void on_optimiseLogbookAction_triggered() noexcept;
     void on_importCSVAction_triggered() noexcept;
     void on_exportCSVAction_triggered() noexcept;
     void on_showSettingsAction_triggered() noexcept;
@@ -107,7 +107,7 @@ private slots:
     void on_stayOnTopAction_triggered(bool enabled) noexcept;
     void on_showMinimalAction_triggered(bool enabled) noexcept;
     // About menu
-    void on_aboutLibraryAction_triggered() noexcept;
+    void on_aboutLogbookAction_triggered() noexcept;
     void on_aboutAction_triggered() noexcept;
     void on_aboutQtAction_triggered() noexcept;
 

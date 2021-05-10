@@ -59,8 +59,25 @@ public:
      */
     static void destroyInstance() noexcept;
 
-    QString getLibraryPath() const noexcept;
-    void setLibraryPath(const QString &libraryPath) noexcept;
+    /*!
+     * Returns the logbook directory path. The name of the database file is named
+     * like the directory, plus file extension.
+     * \p
+     * Exampe:
+     * - Directory: /user/foo/documents/skydolly/
+     * - Database file: /user/foo/documents/skydolly/skydolly.sdlog
+     *
+     * \return the path of the logbook (database) directory
+     */
+    QString getLogbookDirectoryPath() const noexcept;
+
+    /*!
+     * Sets the logbook directory path.
+     *
+     * \param logbookDirectoryPath
+     *        the path of the logbook directory
+     */
+    void setLogbookDirectoryPath(const QString &logbookDirectoryPath) noexcept;
 
     /*!
      * Returns the recording sample rate enumeration value.
@@ -258,11 +275,11 @@ public slots:
 
 signals:
     /*!
-     * Emitted when the library path has changed.
+     * Emitted when the logbook directory path has changed.
      *
      * \sa changed()
      */
-    void libraryPathChanged(const QString &libraryPath);
+    void logbookDirectoryPathChanged(const QString &logbookDirectoryPath);
 
     /*!
      * Emitted when the record sample rate has changed.

@@ -42,7 +42,7 @@ public:
     SQLiteDatabaseDao() noexcept;
     virtual ~SQLiteDatabaseDao() noexcept;
 
-    virtual bool connectDb(const QString &libraryPath) noexcept override;
+    virtual bool connectDb(const QString &logbookPath) noexcept override;
     virtual void disconnectDb() noexcept override;
 
     virtual bool migrate() noexcept override;

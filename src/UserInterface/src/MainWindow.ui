@@ -175,11 +175,11 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <addaction name="newLibraryAction"/>
-    <addaction name="openLibraryAction"/>
+    <addaction name="newLogbookAction"/>
+    <addaction name="openLogbookAction"/>
     <addaction name="separator"/>
-    <addaction name="backupLibraryAction"/>
-    <addaction name="optimiseLibraryAction"/>
+    <addaction name="backupLogbookAction"/>
+    <addaction name="optimiseLogbookAction"/>
     <addaction name="separator"/>
     <addaction name="importCSVAction"/>
     <addaction name="exportCSVAction"/>
@@ -192,7 +192,7 @@
     <property name="title">
      <string>&amp;Info</string>
     </property>
-    <addaction name="aboutLibraryAction"/>
+    <addaction name="aboutLogbookAction"/>
     <addaction name="separator"/>
     <addaction name="aboutAction"/>
     <addaction name="aboutQtAction"/>
@@ -431,35 +431,47 @@
     <string>Ctrl+Shift+O</string>
    </property>
   </action>
-  <action name="newLibraryAction">
+  <action name="newLogbookAction">
    <property name="text">
-    <string>&amp;New Library...</string>
+    <string>&amp;New Logbook...</string>
+   </property>
+   <property name="toolTip">
+    <string>New Logbook</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
    </property>
   </action>
-  <action name="openLibraryAction">
+  <action name="openLogbookAction">
    <property name="text">
-    <string>&amp;Open Library...</string>
+    <string>&amp;Open Logbook...</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Logbook</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="aboutLibraryAction">
+  <action name="aboutLogbookAction">
    <property name="text">
-    <string>&amp;Library...</string>
+    <string>&amp;Logbook...</string>
    </property>
   </action>
-  <action name="optimiseLibraryAction">
+  <action name="optimiseLogbookAction">
    <property name="text">
-    <string>Optimise Library</string>
+    <string>Optimise Logbook</string>
+   </property>
+   <property name="toolTip">
+    <string>Optimise Logbook</string>
    </property>
   </action>
-  <action name="backupLibraryAction">
+  <action name="backupLogbookAction">
    <property name="text">
-    <string>Backup Library</string>
+    <string>Backup Logbook</string>
+   </property>
+   <property name="toolTip">
+    <string>Backup Logbook</string>
    </property>
   </action>
   <action name="showMinimalAction">
@@ -475,7 +487,6 @@
   </action>
  </widget>
  <resources>
-  <include location="../res/SkyDolly.qrc"/>
   <include location="../res/SkyDolly.qrc"/>
  </resources>
  <connections/>

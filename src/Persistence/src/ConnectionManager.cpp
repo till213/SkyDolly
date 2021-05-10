@@ -38,7 +38,7 @@ public:
 
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<DatabaseDaoIntf> databaseDao;
-    QString libraryPath;
+    QString logbookPath;
     bool connected;
 
     static ConnectionManager *instance;
@@ -70,11 +70,11 @@ void ConnectionManager::destroyInstance() noexcept
     }
 }
 
-bool ConnectionManager::connectDb(const QString &libraryPath) noexcept
+bool ConnectionManager::connectDb(const QString &logbookPath) noexcept
 {
-    if (d->libraryPath != libraryPath) {
-        d->connected = d->databaseDao->connectDb(libraryPath);
-        d->libraryPath = libraryPath;
+    if (d->logbookPath != logbookPath) {
+        d->connected = d->databaseDao->connectDb(logbookPath);
+        d->logbookPath = logbookPath;
         emit connectionChanged(d->connected);
     }
     return d->connected;
@@ -92,9 +92,9 @@ bool ConnectionManager::isConnected() const noexcept
     return d->connected;
 }
 
-const QString &ConnectionManager::getLibraryPath() const noexcept
+const QString &ConnectionManager::getLogbookPath() const noexcept
 {
-    return d->libraryPath;
+    return d->logbookPath;
 }
 
 bool ConnectionManager::migrate() noexcept
@@ -108,10 +108,10 @@ bool ConnectionManager::optimise() noexcept
     return d->databaseDao->optimise();
 }
 
-bool ConnectionManager::backup(const QString &backupLibraryPath) noexcept
+bool ConnectionManager::backup(const QString &backupLogbookPath) noexcept
 {
     emit connectionChanged(d->connected);
-    return d->databaseDao->backup(backupLibraryPath);
+    return d->databaseDao->backup(backupLogbookPath);
 }
 
 bool ConnectionManager::getMetadata(Metadata &metadata) noexcept

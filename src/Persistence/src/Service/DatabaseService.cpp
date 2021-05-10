@@ -31,7 +31,7 @@
 
 namespace
 {
-    constexpr int MaxIndex = 1024;
+    constexpr int MaxBackupIndex = 1024;
 }
 
 // PUBLIC
@@ -45,10 +45,19 @@ DatabaseService::~DatabaseService() noexcept
 bool DatabaseService::connectDb() noexcept
 {
     ConnectionManager &connectionManager = ConnectionManager::getInstance();
-    const QString &libraryPath = Settings::getInstance().getLibraryPath();
-    bool ok = connectionManager.connectDb(libraryPath);
+    const QString &logbookDirectoryPath = Settings::getInstance().getLogbookDirectoryPath();
+    QFileInfo info(logbookDirectoryPath);
+    QDir dir(logbookDirectoryPath);
+    bool ok = info.exists();
+    if (!ok) {
+        ok = dir.mkpath(logbookDirectoryPath);
+    }
     if (ok) {
-        ok = connectionManager.migrate();
+        QString logbookPath = logbookDirectoryPath + "/" + dir.dirName() + LogbookExtension;
+        ok = connectionManager.connectDb(logbookPath);
+        if (ok) {
+            ok = connectionManager.migrate();
+        }
     }
     return ok;
 }
@@ -63,9 +72,9 @@ bool DatabaseService::isConnected() const noexcept
     return ConnectionManager::getInstance().isConnected();
 }
 
-const QString &DatabaseService::getLibraryPath() const noexcept
+const QString &DatabaseService::getLogbookPath() const noexcept
 {
-    return ConnectionManager::getInstance().getLibraryPath();
+    return ConnectionManager::getInstance().getLogbookPath();
 }
 
 bool DatabaseService::optimise() noexcept
@@ -75,33 +84,33 @@ bool DatabaseService::optimise() noexcept
 
 bool DatabaseService::backup() noexcept
 {
-    const QString &libraryPath = Settings::getInstance().getLibraryPath();
-    QFileInfo libraryInfo = QFileInfo(libraryPath);
+    const QString &logbookPath = getLogbookPath();
+    QFileInfo logbookInfo = QFileInfo(logbookPath);
 
-    const QString libraryDirectoryPath = libraryInfo.absolutePath();
-    const QString baseName = libraryInfo.baseName();
-    const QString backupDirectoryName = baseName + " Backups";
-    QDir libraryDir(libraryDirectoryPath);
+    const QString logbookDirectoryPath = logbookInfo.absolutePath();
+    const QString baseName = logbookInfo.baseName();
+    const QString backupDirectoryName = "Backups";
+    QDir logbookDir(logbookDirectoryPath);
     bool ok;
-    if (!libraryDir.exists(backupDirectoryName)) {
-        ok = libraryDir.mkdir(backupDirectoryName);
+    if (!logbookDir.exists(backupDirectoryName)) {
+        ok = logbookDir.mkdir(backupDirectoryName);
     } else {
         ok = true;
     }
     if (ok) {
-        const QString backupLibraryDirectoryPath = libraryDirectoryPath + "/" + backupDirectoryName;
-        const QString baseBackupLibraryName = baseName + "-" + QDateTime::currentDateTime().toString("yyyy-MM-dd hhmm");
-        QString backupLibraryName = baseBackupLibraryName + LibraryExtension;
-        QDir backupLibraryDir(backupLibraryDirectoryPath);
+        const QString backupLogbookDirectoryPath = logbookDirectoryPath + "/" + backupDirectoryName;
+        const QString baseBackupLogbookName = baseName + "-" + QDateTime::currentDateTime().toString("yyyy-MM-dd hhmm");
+        QString backupLogbookName = baseBackupLogbookName + LogbookExtension;
+        QDir backupLogbookDir(backupLogbookDirectoryPath);
         int index = 1;
-        while (backupLibraryDir.exists(backupLibraryName) && index <= MaxIndex) {
-            backupLibraryName = baseBackupLibraryName + QString("-%1").arg(index) + LibraryExtension;
+        while (backupLogbookDir.exists(backupLogbookName) && index <= MaxBackupIndex) {
+            backupLogbookName = baseBackupLogbookName + QString("-%1").arg(index) + LogbookExtension;
             ++index;
         }
-        ok = index <= MaxIndex;
+        ok = index <= MaxBackupIndex;
         if (ok) {
-            const QString backupLibraryPath = backupLibraryDirectoryPath + "/" + backupLibraryName;
-            ok = ConnectionManager::getInstance().backup(backupLibraryPath);
+            const QString backupLogbookPath = backupLogbookDirectoryPath + "/" + backupLogbookName;
+            ok = ConnectionManager::getInstance().backup(backupLogbookPath);
         }
     }
     return ok;

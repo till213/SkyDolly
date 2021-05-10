@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef ABOUTLIBRARYDIALOG_H
-#define ABOUTLIBRARYDIALOG_H
+#ifndef ABOUTLOGBOOKDIALOG_H
+#define ABOUTLOGBOOKDIALOG_H
 
 #include <memory>
 
@@ -34,27 +34,27 @@ class QShowEvent;
 class DatabaseService;
 
 namespace Ui {
-    class AboutLibraryDialog;
+    class AboutLogbookDialog;
 }
 
-class AboutLibraryDialogPrivate;
+class AboutLogbookDialogPrivate;
 
-class AboutLibraryDialog : public QDialog
+class AboutLogbookDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit AboutLibraryDialog(DatabaseService &databaseService, QWidget *parent = nullptr) noexcept;
-    virtual ~AboutLibraryDialog() noexcept;
+    explicit AboutLogbookDialog(DatabaseService &databaseService, QWidget *parent = nullptr) noexcept;
+    virtual ~AboutLogbookDialog() noexcept;
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(AboutLibraryDialog)
-    std::unique_ptr<AboutLibraryDialogPrivate> d;
-    Ui::AboutLibraryDialog *ui;
+    Q_DISABLE_COPY(AboutLogbookDialog)
+    std::unique_ptr<AboutLogbookDialogPrivate> d;
+    Ui::AboutLogbookDialog *ui;
 
     void updateUi() noexcept;
 };
 
-#endif // ABOUTLIBRARYDIALOG_H
+#endif // ABOUTLOGBOOKDIALOG_H
