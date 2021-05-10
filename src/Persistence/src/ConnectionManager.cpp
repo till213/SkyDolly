@@ -110,6 +110,8 @@ bool ConnectionManager::optimise() noexcept
 
 bool ConnectionManager::backup(const QString &backupLogbookPath) noexcept
 {
+    // In order to release all existing prepared SQL queries we pretend
+    // that the connection has changed
     emit connectionChanged(d->connected);
     return d->databaseDao->backup(backupLogbookPath);
 }
