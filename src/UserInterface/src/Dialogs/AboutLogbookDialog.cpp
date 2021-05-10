@@ -27,42 +27,40 @@
 #include <QFileInfo>
 #include <QLineEdit>
 #include <QDateTimeEdit>
-#include <QLocale>
 
 #include "../../../Persistence/src/Service/DatabaseService.h"
 #include "../Unit.h"
-#include "AboutLibraryDialog.h"
-#include "ui_AboutLibraryDialog.h"
+#include "AboutLogbookDialog.h"
+#include "ui_AboutLogbookDialog.h"
 
-class AboutLibraryDialogPrivate
+class AboutLogbookDialogPrivate
 {
 public:
-    AboutLibraryDialogPrivate(DatabaseService &theDatabaseService) noexcept
+    AboutLogbookDialogPrivate(DatabaseService &theDatabaseService) noexcept
         : databaseService(theDatabaseService)
     {}
 
     DatabaseService &databaseService;
-
 };
 
 // PUBLIC
 
-AboutLibraryDialog::AboutLibraryDialog(DatabaseService &databaseService, QWidget *parent) noexcept :
+AboutLogbookDialog::AboutLogbookDialog(DatabaseService &databaseService, QWidget *parent) noexcept :
     QDialog(parent),
-    d(std::make_unique<AboutLibraryDialogPrivate>(databaseService)),
-    ui(new Ui::AboutLibraryDialog)
+    d(std::make_unique<AboutLogbookDialogPrivate>(databaseService)),
+    ui(new Ui::AboutLogbookDialog)
 {
     ui->setupUi(this);
 }
 
-AboutLibraryDialog::~AboutLibraryDialog() noexcept
+AboutLogbookDialog::~AboutLogbookDialog() noexcept
 {
     delete ui;
 }
 
 // PROTECTED
 
-void AboutLibraryDialog::showEvent(QShowEvent *event) noexcept
+void AboutLogbookDialog::showEvent(QShowEvent *event) noexcept
 {
     Q_UNUSED(event)
     updateUi();
@@ -70,29 +68,28 @@ void AboutLibraryDialog::showEvent(QShowEvent *event) noexcept
 
 // PRIVATE
 
-void AboutLibraryDialog::updateUi() noexcept
+void AboutLogbookDialog::updateUi() noexcept
 {
     Metadata metadata;
     d->databaseService.getMetadata(metadata);
 
-    QString libraryPath = d->databaseService.getLibraryPath();
-    QFileInfo fileInfo = QFileInfo(libraryPath);
+    QString logbookPath = d->databaseService.getLogbookPath();
+    QFileInfo fileInfo = QFileInfo(logbookPath);
 
-    QString libraryDirectory = fileInfo.absolutePath();
-    ui->directoryPathLineEdit->setText(libraryDirectory);
+    QString logbookDirectoryPath = fileInfo.absolutePath();
+    ui->directoryPathLineEdit->setText(logbookDirectoryPath);
 
-    QString libraryName = fileInfo.fileName();
-    ui->libraryNameLineEdit->setText(libraryName);
+    QString logbookName = fileInfo.fileName();
+    ui->logbookNameLineEdit->setText(logbookName);
 
     Unit unit;
-    QLocale systemLocale = QLocale::system();
-    QString createdDate = systemLocale.toString(metadata.creationDate);
+    QString createdDate = unit.formatDateTime(metadata.creationDate);
     ui->createdDateLineEdit->setText(createdDate);
-    QString lastOptimisationDate = systemLocale.toString(metadata.lastOptimisationDate);
+    QString lastOptimisationDate = unit.formatDateTime(metadata.lastOptimisationDate);
     ui->lastOptimisationDateLineEdit->setText(lastOptimisationDate);
-    QString lastBackupDate = systemLocale.toString(metadata.lastBackupDate);
+    QString lastBackupDate = unit.formatDateTime(metadata.lastBackupDate);
     ui->lastBackupDateLineEdit->setText(lastBackupDate);
 
     qint64 fileSize = fileInfo.size();
-    ui->librarySizeLineEdit->setText(unit.formatMemory(fileSize));
+    ui->logbookSizeLineEdit->setText(unit.formatMemory(fileSize));
 }

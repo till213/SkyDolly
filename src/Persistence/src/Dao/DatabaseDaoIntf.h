@@ -34,7 +34,7 @@ class DatabaseDaoIntf
 public:
     virtual ~DatabaseDaoIntf() = default;
 
-    virtual bool connectDb(const QString &libraryPath) = 0;
+    virtual bool connectDb(const QString &logbookPath) = 0;
     virtual void disconnectDb() = 0;
 
     virtual bool migrate() = 0;

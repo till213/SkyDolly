@@ -58,10 +58,10 @@ SQLiteDatabaseDao::~SQLiteDatabaseDao() noexcept
     disconnectSQLite();
 }
 
-bool SQLiteDatabaseDao::connectDb(const QString &libraryPath) noexcept
+bool SQLiteDatabaseDao::connectDb(const QString &logbookPath) noexcept
 {
     d->db = QSqlDatabase::addDatabase(DbName);
-    d->db.setDatabaseName(libraryPath);
+    d->db.setDatabaseName(logbookPath);
 
     return d->db.open();
 }

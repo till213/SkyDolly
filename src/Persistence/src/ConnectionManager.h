@@ -44,14 +44,14 @@ public:
     static ConnectionManager &getInstance() noexcept;
     PERSISTENCE_API static void destroyInstance() noexcept;
 
-    bool connectDb(const QString &libraryPath) noexcept;
+    bool connectDb(const QString &logbookPath) noexcept;
     void disconnectDb() noexcept;
     bool isConnected() const noexcept;
-    const QString &getLibraryPath() const noexcept;
+    const QString &getLogbookPath() const noexcept;
 
     bool migrate() noexcept;
     bool optimise() noexcept;
-    bool backup(const QString &backupLibraryPath) noexcept;
+    bool backup(const QString &backupLogbookPath) noexcept;
     bool getMetadata(Metadata &metadata) noexcept;
 
 signals:

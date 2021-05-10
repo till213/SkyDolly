@@ -38,12 +38,13 @@ public:
     QSettings settings;
     Version version;
 
-    QString libraryPath;
+    QString logbookDirectoryPath;
     double recordSampleRateValue;
     bool windowStayOnTop;
     bool minimalUi;
     QString exportPath;
     QString defaultExportPath;
+    QString defaultLogbookDirectoryPath;
     bool absoluteSeek;
     double seekIntervalSeconds;
     double seekIntervalPercent;
@@ -53,7 +54,6 @@ public:
     int previewInfoDialogCount;
 
     static Settings *instance;
-    static constexpr char DefaultDbPath[] = "";
     static constexpr double DefaultRecordSampleRate = SampleRate::toValue(SampleRate::SampleRate::Auto);
     static constexpr bool DefaultWindowStayOnTop = false;
     static constexpr bool DefaultMinimalUi = false;
@@ -74,6 +74,7 @@ public:
         QStringList standardLocations = QStandardPaths::standardLocations(QStandardPaths::StandardLocation::DocumentsLocation);
         if (standardLocations.count() > 0) {
             defaultExportPath = standardLocations.first();
+            defaultLogbookDirectoryPath = standardLocations.first() + "/SkyDolly";
         } else {
             defaultExportPath = ".";
         }
@@ -84,7 +85,6 @@ public:
 };
 
 Settings *SettingsPrivate::instance = nullptr;
-
 
 // PUBLIC
 
@@ -104,16 +104,16 @@ void Settings::destroyInstance() noexcept
     }
 }
 
-QString Settings::getLibraryPath() const noexcept
+QString Settings::getLogbookDirectoryPath() const noexcept
 {
-    return d->libraryPath;
+    return d->logbookDirectoryPath;
 }
 
-void Settings::setLibraryPath(const QString &libraryPath) noexcept
+void Settings::setLogbookDirectoryPath(const QString &logbookDirectoryPath) noexcept
 {
-    if (d->libraryPath != libraryPath) {
-        d->libraryPath = libraryPath;
-        emit libraryPathChanged(d->libraryPath);
+    if (d->logbookDirectoryPath != logbookDirectoryPath) {
+        d->logbookDirectoryPath = logbookDirectoryPath;
+        emit logbookDirectoryPathChanged(d->logbookDirectoryPath);
     }
 }
 
@@ -258,9 +258,9 @@ void Settings::setPreviewInfoDialogCount(int count) noexcept
 void Settings::store() noexcept
 {
     d->settings.setValue("Version", d->version.toString());
-    d->settings.beginGroup("Library");
+    d->settings.beginGroup("Logbook");
     {
-        d->settings.setValue("DbPath", d->libraryPath);
+        d->settings.setValue("DirectoryPath", d->logbookDirectoryPath);
     }
     d->settings.endGroup();
     d->settings.beginGroup("Recording");
@@ -309,9 +309,9 @@ void Settings::restore() noexcept
     }
 
     bool ok;
-    d->settings.beginGroup("Library");
+    d->settings.beginGroup("Logbook");
     {
-        d->libraryPath = d->settings.value("DbPath", SettingsPrivate::DefaultDbPath).toString();
+        d->logbookDirectoryPath = d->settings.value("DirectoryPath", d->defaultLogbookDirectoryPath).toString();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Recording");
@@ -387,7 +387,7 @@ Settings::Settings() noexcept
 
 void Settings::frenchConnection() noexcept
 {
-    connect(this, &Settings::libraryPathChanged,
+    connect(this, &Settings::logbookDirectoryPathChanged,
             this, &Settings::changed);
     connect(this, &Settings::recordSampleRateChanged,
             this, &Settings::changed);
