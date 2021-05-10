@@ -41,7 +41,7 @@ class PERSISTENCE_API FlightService : public QObject
     Q_OBJECT
 public:
     FlightService() noexcept;
-    ~FlightService() noexcept;
+    virtual ~FlightService() noexcept;
 
     bool store(Flight &flight) noexcept;
     bool restore(qint64 id, Flight &flight) noexcept;

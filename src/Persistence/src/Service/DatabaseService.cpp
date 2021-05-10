@@ -60,12 +60,14 @@ bool DatabaseService::connectDb() noexcept
             ok = connectionManager.migrate();
         }
     }
+    emit connectionStateChanged(ok);
     return ok;
 }
 
 void DatabaseService::disconnectDb() noexcept
 {
-    return ConnectionManager::getInstance().disconnectDb();
+    ConnectionManager::getInstance().disconnectDb();
+    emit connectionStateChanged(false);
 }
 
 bool DatabaseService::isConnected() const noexcept

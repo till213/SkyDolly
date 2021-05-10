@@ -30,16 +30,18 @@
 
 class DatabaseServicePrivate;
 
-class PERSISTENCE_API DatabaseService
+class PERSISTENCE_API DatabaseService : public QObject
 {
+    Q_OBJECT
 public:
     DatabaseService() noexcept;
-    ~DatabaseService() noexcept;
+    virtual ~DatabaseService() noexcept;
 
     /*!
      * Connects with the database given by Settings#getLogbookPath
      * and initialises the database by applying the required migrations.
      *
+     * \sa connectionStateChanged
      * \return \c true if the connection succeeded; \c false else
      */
     bool connectDb() noexcept;
@@ -50,6 +52,9 @@ public:
     bool optimise() noexcept;
     bool backup() noexcept;
     bool getMetadata(Metadata &metadata) noexcept;
+
+signals:
+    void connectionStateChanged(bool connected);
 };
 
 #endif // DATABASESERVICE_H

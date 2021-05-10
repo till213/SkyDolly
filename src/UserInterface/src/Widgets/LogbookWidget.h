@@ -33,9 +33,10 @@ class QShowEvent;
 class QHideEvent;
 
 class SkyConnectIntf;
+class DatabaseService;
+class FlightService;
 class LogbookWidgetPrivate;
 
-#include "../../../Persistence/src/Service/FlightService.h"
 #include "ModuleIntf.h"
 
 namespace Ui {
@@ -47,7 +48,7 @@ class LogbookWidget : public QWidget, public ModuleIntf
     Q_OBJECT
 
 public:
-    explicit LogbookWidget(FlightService &flightService, QWidget *parent = nullptr) noexcept;
+    explicit LogbookWidget(DatabaseService &databaseService, FlightService &flightService, QWidget *parent = nullptr) noexcept;
     virtual ~LogbookWidget() noexcept;
 
     qint64 getSelectedFlightId() const noexcept;
