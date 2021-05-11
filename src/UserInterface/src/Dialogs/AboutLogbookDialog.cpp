@@ -28,6 +28,7 @@
 #include <QLineEdit>
 #include <QDateTimeEdit>
 #include <QDesktopServices>
+#include <QDir>
 #include <QUrl>
 
 #include "../../../Persistence/src/Service/DatabaseService.h"
@@ -78,7 +79,7 @@ void AboutLogbookDialog::updateUi() noexcept
     QString logbookPath = d->databaseService.getLogbookPath();
     QFileInfo fileInfo = QFileInfo(logbookPath);
 
-    QString logbookDirectoryPath = fileInfo.absolutePath();
+    QString logbookDirectoryPath = QDir::toNativeSeparators(fileInfo.absolutePath());
     ui->directoryPathLineEdit->setText(logbookDirectoryPath);
 
     QString logbookName = fileInfo.fileName();
@@ -102,6 +103,6 @@ void AboutLogbookDialog::on_showLogbookPathPushButton_clicked() noexcept
 {
     QString logbookPath = d->databaseService.getLogbookPath();
     QFileInfo fileInfo = QFileInfo(logbookPath);
-    QString logbookDirectoryPath = fileInfo.absolutePath();
-    QDesktopServices::openUrl(QUrl("file://" + logbookDirectoryPath));
+    QString url = QString("file://") + QDir::toNativeSeparators(fileInfo.absolutePath());
+    QDesktopServices::openUrl(QUrl(url));
 }
