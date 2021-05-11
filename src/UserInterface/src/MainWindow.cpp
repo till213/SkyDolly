@@ -193,7 +193,7 @@ bool MainWindow::event(QEvent *event)
         if (settings.isMinimalUiEnabled() && !d->minimalUiSize.isValid()) {
             setMinimumSize(QSize());
             adjustSize();
-            d->minimalUiSize = minimumSize();
+            d->minimalUiSize = size();
             setFixedSize(d->minimalUiSize);
 #ifdef DEBUG
             qDebug("MainWindow::event: MINIMAL UI SIZE (W/H): %d/%d", d->minimalUiSize.width(), d->minimalUiSize.height());
@@ -212,7 +212,7 @@ bool MainWindow::event(QEvent *event)
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
-    if (!Settings::getInstance().isMinimalUiEnabled() && !d->lastNormalUiSize.isValid()) {
+    if (!Settings::getInstance().isMinimalUiEnabled()) {
         d->lastNormalUiSize = event->size();
     }
 }
@@ -298,7 +298,14 @@ void MainWindow::initUi() noexcept
     initReplaySpeedUi();
     bool minimalUi = Settings::getInstance().isMinimalUiEnabled();
     ui->showMinimalAction->setChecked(minimalUi);
+
     updateMinimalUi(minimalUi);
+    adjustSize();
+    if (minimalUi) {
+        d->minimalUiSize = minimumSize();
+    } else {
+        d->normalMinimumSize = size();
+    }
 }
 
 void MainWindow::initControlUi() noexcept
@@ -496,6 +503,12 @@ void MainWindow::updateMinimalUi(bool enabled)
         setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
         resize(size);
     }
+#ifdef DEBUG
+    qDebug("MainWindow::updateMinimalUi: enabled: %d, minimal UI size: %d, %d, normal min. UI size: %d, %d, actual minimum size: %d, %d", enabled,
+           d->minimalUiSize.width(), d->minimalUiSize.height(),
+           d->normalMinimumSize.width(), d->normalMinimumSize.height(),
+           minimumWidth(), minimumHeight());
+#endif
 }
 
 // PRIVATE SLOTS
