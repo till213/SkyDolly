@@ -46,6 +46,7 @@
 #include <QEvent>
 #include <QResizeEvent>
 #include <QActionGroup>
+#include <QSpacerItem>
 
 #include "../../Kernel/src/Const.h"
 #include "../../Kernel/src/Version.h"
@@ -309,7 +310,7 @@ void MainWindow::initControlUi() noexcept
     ActionButton *recordButton = new ActionButton(this);
     recordButton->setAction(ui->recordAction);
     recordButton->setFlat(true);
-    ui->controlButtonLayout->insertWidget(0, recordButton);
+    ui->controlButtonLayout->addWidget(recordButton);
 
     ActionButton *skipToStartButton = new ActionButton(this);
     skipToStartButton->setAction(ui->skipToBeginAction);
@@ -347,6 +348,9 @@ void MainWindow::initControlUi() noexcept
     skipToEndButton->setAction(ui->skipToEndAction);
     skipToEndButton->setFlat(true);
     ui->controlButtonLayout->addWidget(skipToEndButton);
+
+    QSpacerItem *horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    ui->controlButtonLayout->addSpacerItem(horizontalSpacer);
 }
 
 void MainWindow::initReplaySpeedUi() noexcept

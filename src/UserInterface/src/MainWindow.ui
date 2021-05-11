@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>824</width>
-    <height>279</height>
+    <width>818</width>
+    <height>432</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -103,21 +103,7 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="controlButtonLayout">
-           <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
+          <layout class="QHBoxLayout" name="controlButtonLayout"/>
          </item>
         </layout>
        </item>
@@ -167,8 +153,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>824</width>
-     <height>22</height>
+     <width>818</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="fileMenu">
