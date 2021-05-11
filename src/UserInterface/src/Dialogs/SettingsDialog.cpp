@@ -134,6 +134,9 @@ void SettingsDialog::updateUi() noexcept
 
     ui->repeatFlapsCheckBox->setChecked(settings.isRepeatFlapsHandleIndexEnabled());
     ui->repeatCanopyOpenCheckBox->setChecked(settings.isRepeatCanopyOpenEnabled());
+
+    // User interface
+    ui->confirmDeleteFlightCheckBox->setChecked(settings.isDeleteConfirmationEnabled());
 }
 
 void SettingsDialog::handleAccepted() noexcept
@@ -150,4 +153,7 @@ void SettingsDialog::handleAccepted() noexcept
 
     settings.setRepeatFlapsHandleIndexEnabled(ui->repeatFlapsCheckBox->isChecked());
     settings.setRepeatCanopyOpenEnabled(ui->repeatCanopyOpenCheckBox->isChecked());
+
+    // User interface
+    settings.setDeleteConfirmationEnabled(ui->confirmDeleteFlightCheckBox->isChecked());
 }
