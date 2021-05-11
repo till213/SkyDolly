@@ -415,9 +415,9 @@ void SkyConnectDummy::recordAircraftInfo() noexcept
     if (info.startDate.isNull()) {
         info.startDate = QDateTime::currentDateTime();
     }
-    info.tailNumber = QString::number(d->randomGenerator->bounded(1000)).toAscii();
-    info.airline = QString::number(d->randomGenerator->bounded(1000)).toAscii();
-    info.flightNumber = QString::number(d->randomGenerator->bounded(100)).toAscii();
+    info.tailNumber = QString::number(d->randomGenerator->bounded(1000));
+    info.airline = QString::number(d->randomGenerator->bounded(1000));
+    info.flightNumber = QString::number(d->randomGenerator->bounded(100));
     switch (d->randomGenerator->bounded(5)) {
     case 0:
         info.category = "Piston";
