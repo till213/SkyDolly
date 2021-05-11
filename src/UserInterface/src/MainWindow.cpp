@@ -190,13 +190,20 @@ bool MainWindow::event(QEvent *event)
     if (event->type() == QEvent::LayoutRequest) {
         Settings &settings = Settings::getInstance();
         if (settings.isMinimalUiEnabled() && !d->minimalUiSize.isValid()) {
+            setMinimumSize(QSize());
             adjustSize();
-            d->minimalUiSize = size();
+            d->minimalUiSize = minimumSize();
             setFixedSize(d->minimalUiSize);
+#ifdef DEBUG
+            qDebug("MainWindow::event: MINIMAL UI SIZE (W/H): %d/%d", d->minimalUiSize.width(), d->minimalUiSize.height());
+#endif
         } else if (!settings.isMinimalUiEnabled() && !d->normalMinimumSize.isValid()) {
             adjustSize();
             d->normalMinimumSize = size();
             setMinimumSize(d->normalMinimumSize);
+#ifdef DEBUG
+            qDebug("MainWindow::event: NORMAL MINIMUM UI SIZE (W/H): %d/%d", d->normalMinimumSize.width(), d->normalMinimumSize.height());
+#endif
         }
     }
     return ret;
@@ -204,7 +211,7 @@ bool MainWindow::event(QEvent *event)
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
-    if (!Settings::getInstance().isMinimalUiEnabled()) {
+    if (!Settings::getInstance().isMinimalUiEnabled() && !d->lastNormalUiSize.isValid()) {
         d->lastNormalUiSize = event->size();
     }
 }
