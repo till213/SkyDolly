@@ -35,8 +35,10 @@
 #include <QTime>
 #include <QPushButton>
 #include <QMessageBox>
+#include <QCheckBox>
 
 #include "../../../Kernel/src/Unit.h"
+#include "../../../Kernel/src/Settings.h"
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/FlightSummary.h"
 #include "../../../Model/src/Logbook.h"
@@ -263,11 +265,34 @@ void LogbookWidget::loadFlight() noexcept
 void LogbookWidget::deleteFlight() noexcept
 {
     if (d->selectedFlightId != Flight::InvalidId) {
-        d->flightService.deleteById(d->selectedFlightId);
-        int lastSelectedRow = d->selectedRow;
-        updateUi();
-        int selectedRow = qMin(lastSelectedRow, ui->logTableWidget->rowCount() - 1);
-        ui->logTableWidget->selectRow(selectedRow);
+
+        Settings &settings = Settings::getInstance();
+        bool doDelete;
+        if (settings.isDeleteConfirmationEnabled()) {
+            QMessageBox messageBox;
+            QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), &messageBox);
+
+            messageBox.setText(tr("The flight %1 is about to be deleted. Deletion cannot be undone.").arg(d->selectedFlightId));
+            messageBox.setInformativeText(tr("Do you want to delete the flight?"));
+            QPushButton *deleteButton = messageBox.addButton(tr("Delete"), QMessageBox::AcceptRole);
+            QPushButton *keepButton = messageBox.addButton(tr("Keep"), QMessageBox::RejectRole);
+            messageBox.setDefaultButton(keepButton);
+            messageBox.setCheckBox(dontAskAgainCheckBox);
+            messageBox.setIcon(QMessageBox::Icon::Question);
+
+            messageBox.exec();
+            doDelete = messageBox.clickedButton() == deleteButton;
+            settings.setDeleteConfirmationEnabled(!dontAskAgainCheckBox->isChecked());
+        } else {
+            doDelete = true;
+        }
+        if (doDelete) {
+            d->flightService.deleteById(d->selectedFlightId);
+            int lastSelectedRow = d->selectedRow;
+            updateUi();
+            int selectedRow = qMin(lastSelectedRow, ui->logTableWidget->rowCount() - 1);
+            ui->logTableWidget->selectRow(selectedRow);
+        }
     }
 }
 

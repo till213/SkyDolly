@@ -231,7 +231,19 @@ public:
      */
     void setSeekIntervalPercent(double percent) noexcept;
 
+    /*!
+     * Returns the replay speed unit: absolute or percent.
+     *
+     * \return the replay speed unit
+     */
     Replay::SpeedUnit getReplaySpeeedUnit() const noexcept;
+
+    /*!
+     * Sets the replay speed unit.
+     *
+     * \param replaySpeedUnit
+     *        the replay speed unit
+     */
     void setReplaySpeedUnit(Replay::SpeedUnit replaySpeedUnit) noexcept;
 
     /*!
@@ -251,6 +263,7 @@ public:
      * \param enable
      *        set to \c true in order to enable value repeat;
      *        \c false else
+     * \sa repeatFlapsPositionChanged
      */
     void setRepeatFlapsHandleIndexEnabled(bool enable) noexcept;
 
@@ -271,8 +284,26 @@ public:
      * \param enable
      *        set to \c true in order to enable value repeat;
      *        \c false else
+     * \sa repeatCanopyChanged()
      */
     void setRepeatCanopyOpenEnabled(bool enable) noexcept;
+
+    /*!
+     * Returns whether the delete confirmation is enabled or not.
+     *
+     * \return \c true if the delete confirmation is enabled; \c false else
+     */
+    bool isDeleteConfirmationEnabled() const noexcept;
+
+    /*!
+     * Enables the delete confirmation.
+     *
+     * \param enable
+     *        set to \c true to set the delete confirmation enabled;
+     *        \c false else
+     * \sa changed
+     */
+    void setDeleteConfirmationEnabled(bool enable) noexcept;
 
     /*!
      * Returns the count of how many times the "preview" dialog is still
