@@ -5,15 +5,17 @@
 ### New Features
 
 - Remove "Yoke X|Y Position" simulation variables (not needed: yokes are still properly animated)
-- Add SQLite database support for persistence
+- The previous "scenario" is now called a "flight" (shortcut key: F)
+- Add SQLite database support ("logbook") for persistence
   * Each flight is automatically persisted
   * Simple load / delete functionality
   * DB backup and optimisation functionality
-- Simple log book (table) which lists the recorded flights
+- Simple logbook table which lists the recorded flights
 - Additional simulation variables support
   * Waypoints (ICAO, latitude/longitude/altitude) are shown in the order of approach; each waypoint is only counted once
   * Local and zulu simulation time
 - Replay speed now also available in replay menu, including shortcuts: CTRL + [1 - 4] for slow motion, SHIFT + [1 - 5] for timelapse
+- Each flight has an editable title and description
 
 ## 0.5.2
 

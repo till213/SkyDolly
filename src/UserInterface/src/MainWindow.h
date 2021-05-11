@@ -42,6 +42,9 @@ QT_END_NAMESPACE
 
 class QButtonGroup;
 class QTime;
+class QEvent;
+class QResizeEvent;
+class QCloseEvent;
 
 class AboutDialog;
 class SettingsDialog;
@@ -57,8 +60,9 @@ public:
     virtual ~MainWindow() noexcept;
 
 protected:
-    virtual bool event(QEvent *event) override;
-    virtual void resizeEvent(QResizeEvent *event) override;
+    virtual bool event(QEvent *event) noexcept override;
+    virtual void resizeEvent(QResizeEvent *event) noexcept override;
+    virtual void closeEvent(QCloseEvent *event) noexcept override;
 
 private:
     Q_DISABLE_COPY(MainWindow)

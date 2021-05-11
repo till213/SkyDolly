@@ -22,11 +22,11 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-
 #include <QCoreApplication>
 #include <QStandardPaths>
 #include <QSettings>
 #include <QString>
+#include <QByteArray>
 
 #include "Const.h"
 #include "SampleRate.h"
@@ -43,6 +43,8 @@ public:
     double recordSampleRateValue;
     bool windowStayOnTop;
     bool minimalUi;
+    QByteArray windowGeometry;
+    QByteArray windowState;
     QString exportPath;
     QString defaultExportPath;
     QString defaultLogbookPath;
@@ -176,6 +178,26 @@ void Settings::setMinimalUiEnabled(bool enable) noexcept
     }
 }
 
+QByteArray Settings::getWindowGeometry() const noexcept
+{
+    return d->windowGeometry;
+}
+
+void Settings::setWindowGeometry(const QByteArray &geometry) noexcept
+{
+    d->windowGeometry = geometry;
+}
+
+QByteArray Settings::getWindowState() const noexcept
+{
+    return d->windowState;
+}
+
+void Settings::setWindowState(const QByteArray &state) noexcept
+{
+    d->windowState = state;
+}
+
 bool Settings::isAbsoluteSeekEnabled() const noexcept
 {
     return d->absoluteSeek;
@@ -282,6 +304,8 @@ void Settings::store() noexcept
     {
         d->settings.setValue("WindowStaysOnTop", d->windowStayOnTop);
         d->settings.setValue("MinimalUi", d->minimalUi);
+        d->settings.setValue("Geometry", d->windowGeometry);
+        d->settings.setValue("State", d->windowState);
     }
     d->settings.endGroup();
     d->settings.beginGroup("Paths");
@@ -345,6 +369,8 @@ void Settings::restore() noexcept
     {
         d->windowStayOnTop = d->settings.value("WindowStaysOnTop", SettingsPrivate::DefaultWindowStayOnTop).toBool();
         d->minimalUi = d->settings.value("MinimalUi", SettingsPrivate::DefaultMinimalUi).toBool();
+        d->windowGeometry = d->settings.value("Geometry").toByteArray();
+        d->windowState = d->settings.value("State").toByteArray();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Paths");

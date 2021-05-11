@@ -45,6 +45,7 @@
 #include <QStackedWidget>
 #include <QEvent>
 #include <QResizeEvent>
+#include <QCloseEvent>
 #include <QActionGroup>
 #include <QSpacerItem>
 
@@ -185,7 +186,7 @@ MainWindow::~MainWindow() noexcept
 
 // PROTECTED
 
-bool MainWindow::event(QEvent *event)
+bool MainWindow::event(QEvent *event) noexcept
 {
     bool ret = QMainWindow::event(event);
     if (event->type() == QEvent::LayoutRequest) {
@@ -210,11 +211,19 @@ bool MainWindow::event(QEvent *event)
     return ret;
 }
 
-void MainWindow::resizeEvent(QResizeEvent *event)
+void MainWindow::resizeEvent(QResizeEvent *event) noexcept
 {
     if (!Settings::getInstance().isMinimalUiEnabled()) {
         d->lastNormalUiSize = event->size();
     }
+}
+
+void MainWindow::closeEvent(QCloseEvent *event) noexcept
+{
+    QMainWindow::closeEvent(event);
+    Settings &settings = Settings::getInstance();
+    settings.setWindowGeometry(saveGeometry());
+    settings.setWindowState(saveState());
 }
 
 // PRIVATE
@@ -296,15 +305,22 @@ void MainWindow::initUi() noexcept
     ui->showMinimalAction->setChecked(ui->moduleGroupBox->isVisible());
     initControlUi();
     initReplaySpeedUi();
+
     bool minimalUi = Settings::getInstance().isMinimalUiEnabled();
     ui->showMinimalAction->setChecked(minimalUi);
-
     updateMinimalUi(minimalUi);
     adjustSize();
     if (minimalUi) {
         d->minimalUiSize = minimumSize();
     } else {
         d->normalMinimumSize = size();
+    }
+    Settings &settings = Settings::getInstance();
+    QByteArray windowGeometry = settings.getWindowGeometry();
+    QByteArray windowState = settings.getWindowState();
+    if (!windowGeometry.isEmpty()) {
+        restoreGeometry(windowGeometry);
+        restoreState(windowState);
     }
 }
 

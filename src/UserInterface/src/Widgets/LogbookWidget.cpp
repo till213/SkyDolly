@@ -178,6 +178,7 @@ void LogbookWidget::updateUi() noexcept
 
         QTableWidgetItem *newItem = new QTableWidgetItem();
         newItem->setData(Qt::DisplayRole, summary.id);
+        newItem->setToolTip(tr("Double-click to load flight"));
         ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
         ++columnIndex;
 
@@ -217,7 +218,7 @@ void LogbookWidget::updateUi() noexcept
         ++columnIndex;
 
         newItem = new QTableWidgetItem(summary.title);
-        newItem->setToolTip(tr("Left double-click to edit title"));
+        newItem->setToolTip(tr("Double-click to edit title"));
         ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);      
         d->titleColumnIndex = columnIndex;
         ++columnIndex;

@@ -30,6 +30,8 @@
 #include <QObject>
 #include <QSettings>
 
+class QByteArray;
+
 #include "SampleRate.h"
 #include "KernelLib.h"
 
@@ -132,6 +134,13 @@ public:
      * \sa minimalUiChanged()
      */
     void setMinimalUiEnabled(bool enable) noexcept;
+
+    QByteArray getWindowGeometry() const noexcept;
+    void setWindowGeometry(const QByteArray &geometry) noexcept;
+
+    QByteArray getWindowState() const noexcept;
+    void setWindowState(const QByteArray &state) noexcept;
+
 
     /*!
      * Returns the path of the directory which was last accessed during export or import.
