@@ -103,6 +103,6 @@ void AboutLogbookDialog::on_showLogbookPathPushButton_clicked() noexcept
 {
     QString logbookPath = d->databaseService.getLogbookPath();
     QFileInfo fileInfo = QFileInfo(logbookPath);
-    QString url = QString("file://") + QDir::toNativeSeparators(fileInfo.absolutePath());
-    QDesktopServices::openUrl(QUrl(url));
+    QUrl url = QUrl::fromLocalFile(fileInfo.absolutePath());
+    QDesktopServices::openUrl(url);
 }
