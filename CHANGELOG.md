@@ -16,6 +16,7 @@
   * Local and zulu simulation time
 - Replay speed now also available in replay menu, including shortcuts: CTRL + [1 - 4] for slow motion, SHIFT + [1 - 5] for timelapse
 - Each flight has an editable title and description
+- The custom replay speed factor can now be entered either as an absolute factor (1.0 = normal speed) or as percent (100% = normal speed)
 
 ## 0.5.2
 

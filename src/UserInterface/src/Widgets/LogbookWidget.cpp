@@ -36,12 +36,12 @@
 #include <QPushButton>
 #include <QMessageBox>
 
+#include "../../../Kernel/src/Unit.h"
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/FlightSummary.h"
 #include "../../../Model/src/Logbook.h"
 #include "../../../Persistence/src/Service/DatabaseService.h"
 #include "../../../Persistence/src/Service/FlightService.h"
-#include "../Unit.h"
 
 #include "LogbookWidget.h"
 #include "ui_LogbookWidget.h"

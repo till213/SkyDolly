@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <QObject>
 #include <QSqlDatabase>
 
 #include <memory>
@@ -48,8 +49,9 @@ public:
 
 // PUBLIC
 
-FlightService::FlightService() noexcept
-    : d(std::make_unique<FlightServicePrivate>())
+FlightService::FlightService(QObject *parent) noexcept
+    : QObject(parent),
+      d(std::make_unique<FlightServicePrivate>())
 {}
 
 FlightService::~FlightService() noexcept

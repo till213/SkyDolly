@@ -22,41 +22,21 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef DATABASESERVICE_H
-#define DATABASESERVICE_H
+#ifndef REPLAY_H
+#define REPLAY_H
 
-#include <QObject>
-
-#include "../Metadata.h"
-#include "../PersistenceLib.h"
-
-class DatabaseServicePrivate;
-
-class PERSISTENCE_API DatabaseService : public QObject
+/*!
+ * Replay related constants.
+ */
+namespace Replay
 {
-    Q_OBJECT
-public:
-    DatabaseService(QObject *parent = nullptr) noexcept;
-    virtual ~DatabaseService() noexcept;
-
     /*!
-     * Connects with the database given by Settings#getLogbookPath
-     * and initialises the database by applying the required migrations.
-     *
-     * \sa connectionStateChanged
-     * \return \c true if the connection succeeded; \c false else
+     * The replay speed factor: absolute or percent.
      */
-    bool connectDb() noexcept;
-    void disconnectDb() noexcept;
-    bool isConnected() const noexcept;
-    const QString &getLogbookPath() const noexcept;
+    enum class SpeedUnit: int {
+        Absolute = 0,
+        Percent
+    };
+}
 
-    bool optimise() noexcept;
-    bool backup() noexcept;
-    bool getMetadata(Metadata &metadata) noexcept;
-
-signals:
-    void connectionStateChanged(bool connected);
-};
-
-#endif // DATABASESERVICE_H
+#endif // REPLAY_H

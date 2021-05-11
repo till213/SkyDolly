@@ -32,6 +32,7 @@
 
 class QByteArray;
 
+#include "Replay.h"
 #include "SampleRate.h"
 #include "KernelLib.h"
 
@@ -135,12 +136,35 @@ public:
      */
     void setMinimalUiEnabled(bool enable) noexcept;
 
+    /*!
+     * Returns the saved window geometry.
+     *
+     * \return the window geometry; a \e null QByteArray if not saved before
+     */
     QByteArray getWindowGeometry() const noexcept;
+
+    /*!
+     * Stores the window geometry.
+     *
+     * \param geometry
+     *        the window geometry encoded in the QByteAarray
+     */
     void setWindowGeometry(const QByteArray &geometry) noexcept;
 
+    /*!
+     * Returns the saved window state.
+     *
+     * \return the window state; a \e null QByteArray if not saved before
+     */
     QByteArray getWindowState() const noexcept;
-    void setWindowState(const QByteArray &state) noexcept;
 
+    /*!
+     * Stores the window state.
+     *
+     * \param state
+     *        the window state encoded in the QByteAarray
+     */
+    void setWindowState(const QByteArray &state) noexcept;
 
     /*!
      * Returns the path of the directory which was last accessed during export or import.
@@ -206,6 +230,9 @@ public:
      * \sa seekIntervalPercentChanged
      */
     void setSeekIntervalPercent(double percent) noexcept;
+
+    Replay::SpeedUnit getReplaySpeeedUnit() const noexcept;
+    void setReplaySpeedUnit(Replay::SpeedUnit replaySpeedUnit) noexcept;
 
     /*!
      * Returns whether the FLAPS HANDLE INDEX simulation variable
@@ -333,6 +360,13 @@ signals:
      * \sa changed()
      */
     void seekIntervalPercentChanged(double percent);
+
+    /*!
+     * Emitted when the replay speed unit has changed.
+     *
+     * \sa changed()
+     */
+    void replaySpeedUnitChanged(Replay::SpeedUnit replaySpeedUnit);
 
     /*!
      * Emitted when the repeat flaps position has changed.

@@ -40,7 +40,7 @@ class PERSISTENCE_API FlightService : public QObject
 {
     Q_OBJECT
 public:
-    FlightService() noexcept;
+    FlightService(QObject *parent = nullptr) noexcept;
     virtual ~FlightService() noexcept;
 
     bool store(Flight &flight) noexcept;

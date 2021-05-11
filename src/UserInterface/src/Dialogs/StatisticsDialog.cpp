@@ -25,6 +25,7 @@
 #include <memory>
 
 #include "../../../Kernel/src/Settings.h"
+#include "../../../Kernel/src/Unit.h"
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"
@@ -41,7 +42,6 @@
 #include "../../../Model/src/LightData.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
-#include "../Unit.h"
 #include "StatisticsDialog.h"
 #include "ui_StatisticsDialog.h"
 

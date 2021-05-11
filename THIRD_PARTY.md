@@ -14,6 +14,12 @@ Sky Dolly uses the following third-party libraries and functionality.
 * Availability: MSFS SDK (available via developer mode in Flight Simulator 2020)
 * License: MIT License
 
+## SQLite
+
+* Authors: Many
+* Website: https://sqlite.org/
+* License: Public Domain
+
 ## Ordered-Map
 
 * Author: Thibaut Goetghebuer-Planchon (Tessil)

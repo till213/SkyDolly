@@ -29,6 +29,7 @@
 #include <QColor>
 #include <QPalette>
 
+#include "../../../Kernel/src/Unit.h"
 #include "../../../Model/src/SimVar.h"
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
@@ -38,7 +39,6 @@
 #include "../../../Model/src/TimeVariableData.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
-#include "../Unit.h"
 #include "SecondaryFlightControlWidget.h"
 #include "ui_SecondaryFlightControlWidget.h"
 

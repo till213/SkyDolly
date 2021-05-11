@@ -11,6 +11,8 @@ configure_file(src/VersionConfig.h.in VersionConfig.h)
 target_sources(Kernel
     PRIVATE
         src/KernelLib.h
+        src/Unit.cpp
+        src/Unit.h
         src/Const.h
         src/Enum.h
         src/SampleRate.h
@@ -20,6 +22,7 @@ target_sources(Kernel
         src/Version.h
         src/Settings.cpp
         src/Settings.h
+        src/Replay.h
 )
 
 set(KERNEL_LIBS

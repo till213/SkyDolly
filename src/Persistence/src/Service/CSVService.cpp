@@ -24,10 +24,13 @@
  */
 #include <memory>
 
+#include <QObject>
 #include <QFile>
 #include <QFileInfo>
 #include <QDateTime>
 
+
+#include "../../../Kernel/src/Unit.h"
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"
@@ -49,8 +52,9 @@ public:
 
 // PUBLIC
 
-CSVService::CSVService(FlightService &flightService) noexcept
-    : d(std::make_unique<CSVServicePrivate>(flightService))
+CSVService::CSVService(FlightService &flightService, QObject *parent) noexcept
+    : QObject(parent),
+      d(std::make_unique<CSVServicePrivate>(flightService))
 {}
 
 CSVService::~CSVService() noexcept
@@ -58,6 +62,7 @@ CSVService::~CSVService() noexcept
 
 bool CSVService::importAircraft(const QString &filePath) noexcept
 {
+    Unit unit;
     QFile file(filePath);
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     flight.clear();
@@ -68,7 +73,9 @@ bool CSVService::importAircraft(const QString &filePath) noexcept
         info.startDate = QFileInfo(filePath).birthTime();
         info.endDate = info.startDate.addMSecs(aircraft.getDurationMSec());
         aircraft.setAircraftInfo(info);
-        d->flightService.store(Logbook::getInstance().getCurrentFlight());
+        flight.setTitle(tr("CSV import"));
+        flight.setDescription(tr("Aircraft imported on %1 from file: %2").arg(unit.formatDateTime(QDateTime::currentDateTime()), filePath));
+        d->flightService.store(flight);
     }
     return ok;
 }
