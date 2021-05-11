@@ -26,11 +26,13 @@
 
 #include <QWidget>
 #include <QLineEdit>
-#include <QTextEdit>
+#include <QPlainTextEdit>
+#include <QTextCursor>
 
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
 #include "../../../Persistence/src/Service/FlightService.h"
+#include "FocusPlainTextEdit.h"
 #include "FlightDescriptionWidget.h"
 #include "ui_FlightDescriptionWidget.h"
 
@@ -46,7 +48,6 @@ public:
 
     FlightService &flightService;
 };
-
 
 // PUBLIC
 
@@ -97,10 +98,9 @@ void FlightDescriptionWidget::frenchConnection() noexcept
 {
     connect(ui->titleLineEdit, &QLineEdit::editingFinished,
             this, &FlightDescriptionWidget::handleTitleEdited);
-    connect(ui->descriptionTextEdit, &QTextEdit::textChanged,
+    connect(ui->focusPlainTextEdit, &FocusPlainTextEdit::focusLost,
             this, &FlightDescriptionWidget::handleDescriptionEdited);
 }
-
 
 // PRIVATE SLOTS
 
@@ -110,25 +110,26 @@ void FlightDescriptionWidget::updateUi() noexcept
 
     bool enabled = currentFlight.getId() != Flight::InvalidId;
     ui->titleLineEdit->blockSignals(true);
-    ui->descriptionTextEdit->blockSignals(true);
+    ui->focusPlainTextEdit->blockSignals(true);
     ui->titleLineEdit->setText(currentFlight.getTitle());
     ui->titleLineEdit->setEnabled(enabled);
-    ui->descriptionTextEdit->setText(currentFlight.getDescription());
-    ui->descriptionTextEdit->setEnabled(enabled);
+    ui->focusPlainTextEdit->setPlainText(currentFlight.getDescription());
+    ui->focusPlainTextEdit->moveCursor(QTextCursor::MoveOperation::End);
+    ui->focusPlainTextEdit->setEnabled(enabled);
     ui->titleLineEdit->blockSignals(false);
-    ui->descriptionTextEdit->blockSignals(false);
+    ui->focusPlainTextEdit->blockSignals(false);
 }
 
 void FlightDescriptionWidget::handleTitleEdited() noexcept
 {
     Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
     currentFlight.setTitle(ui->titleLineEdit->text());
-    d->flightService.updateTitleAndDescription(currentFlight.getId(), ui->titleLineEdit->text(), ui->descriptionTextEdit->toPlainText());
+    d->flightService.updateTitleAndDescription(currentFlight.getId(), ui->titleLineEdit->text(), ui->focusPlainTextEdit->toPlainText());
 }
 
 void FlightDescriptionWidget::handleDescriptionEdited() noexcept
 {
     Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
-    currentFlight.setDescription(ui->descriptionTextEdit->toPlainText());
-    d->flightService.updateTitleAndDescription(currentFlight.getId(), ui->titleLineEdit->text(), ui->descriptionTextEdit->toPlainText());
+    currentFlight.setDescription(ui->focusPlainTextEdit->toPlainText());
+    d->flightService.updateTitleAndDescription(currentFlight.getId(), ui->titleLineEdit->text(), ui->focusPlainTextEdit->toPlainText());
 }

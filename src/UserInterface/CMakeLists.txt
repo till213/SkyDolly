@@ -49,6 +49,8 @@ target_sources(UserInterface
         src/Widgets/ActionButton.h
         src/Widgets/ActionRadioButton.h
         src/Widgets/ActionRadioButton.cpp
+        src/Widgets/FocusPlainTextEdit.h
+        src/Widgets/FocusPlainTextEdit.cpp
         src/Widgets/ModuleIntf.h
         src/Widgets/FlightDescriptionWidget.cpp
         src/Widgets/FlightDescriptionWidget.h
@@ -88,6 +90,7 @@ target_sources(UserInterface
         src/Widgets/LogbookWidget.ui
 )
 
+include_directories(UserInterface PRIVATE src/Widgets)
 target_link_libraries(UserInterface PRIVATE ${USERINTERFACE_LIBS})
 set_target_properties(UserInterface PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(UserInterface PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
