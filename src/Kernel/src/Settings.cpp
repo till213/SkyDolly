@@ -281,7 +281,7 @@ void Settings::setRepeatCanopyOpenEnabled(bool enable) noexcept
 
 int Settings::getPreviewInfoDialogCount() const noexcept
 {
-    return d->seekIntervalSeconds;
+    return d->previewInfoDialogCount - SettingsPrivate::PreviewInfoDialogBase;
 }
 
 void Settings::setPreviewInfoDialogCount(int count) noexcept
