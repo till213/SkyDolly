@@ -139,6 +139,7 @@ void LogbookWidget::initUi() noexcept
     ui->logTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->logTableWidget->verticalHeader()->hide();
     ui->logTableWidget->setMinimumWidth(MinimumTableWidth);
+    ui->logTableWidget->horizontalHeader()->setStretchLastSection(true);
 }
 
 void LogbookWidget::updateEditUi() noexcept
