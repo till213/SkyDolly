@@ -26,6 +26,7 @@
 
 #include <QDialog>
 
+#include "../../../Kernel/src/Unit.h"
 #include "../../../Model/src/SimVar.h"
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
@@ -33,7 +34,6 @@
 #include "../../../Model/src/AircraftData.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
-#include "../Unit.h"
 #include "AircraftWidget.h"
 #include "ui_AircraftWidget.h"
 

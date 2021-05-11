@@ -50,6 +50,7 @@
 #include <QSpacerItem>
 
 #include "../../Kernel/src/Const.h"
+#include "../../Kernel/src/Replay.h"
 #include "../../Kernel/src/Version.h"
 #include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/Enum.h"
@@ -81,9 +82,9 @@ namespace
 {
     constexpr int PositionSliderMin = 0;
     constexpr int PositionSliderMax = 1000;
-    constexpr double ReplaySpeedMin = 0.01;
+    constexpr double ReplaySpeedAbsoluteMin = 0.01;
     // A replay speed with factor 200 should be fast enough
-    constexpr double ReplaySpeedMax = 200.0;
+    constexpr double ReplaySpeedAbsoluteMax = 200.0;
     constexpr double ReplaySpeedDecimalPlaces = 2;
 
     constexpr char TimestampFormat[] = "hh:mm:ss";
@@ -124,7 +125,11 @@ public:
           databaseService(std::make_unique<DatabaseService>()),
           csvService(std::make_unique<CSVService>(*flightService)),
           replaySpeedActionGroup(nullptr),
-          customSpeedRadioButton(nullptr)
+          customSpeedRadioButton(nullptr),
+          customSpeedLineEdit(nullptr),
+          replaySpeedUnitComboBox(nullptr),
+          customReplaySpeedFactorValidator(nullptr),
+          customReplaySpeedPercentValidator(nullptr)
     {}
 
     SkyConnectIntf &skyConnect;
@@ -152,6 +157,10 @@ public:
     ActionRadioButton *customSpeedRadioButton;
     double lastCustomReplaySpeed;
     QLineEdit *customSpeedLineEdit;
+    QComboBox *replaySpeedUnitComboBox;
+
+    QDoubleValidator *customReplaySpeedFactorValidator;
+    QDoubleValidator *customReplaySpeedPercentValidator;
 };
 
 // PUBLIC
@@ -238,11 +247,13 @@ void MainWindow::frenchConnection() noexcept
     connect(d->replaySpeedActionGroup, &QActionGroup::triggered,
             this, &MainWindow::updateReplaySpeedUi);
     connect(d->replaySpeedActionGroup, &QActionGroup::triggered,
-            this, &MainWindow::handleReplaySpeedSelected);
+            this, &MainWindow::handleReplaySpeedSelected);    
 
     // Ui elements
     connect(d->customSpeedLineEdit, &QLineEdit::editingFinished,
             this, &MainWindow::handleCustomSpeedChanged);
+    connect(d->replaySpeedUnitComboBox, &QComboBox::currentIndexChanged,
+            this, &MainWindow::handleReplaySpeedUnitSelected);
 
     // Actions
     connect(ui->recordAction, &QAction::triggered,
@@ -438,66 +449,90 @@ void MainWindow::initReplaySpeedUi() noexcept
     ui->replayMenu->addAction(normalSpeedAction);
     ui->replayMenu->addAction(customSpeedAction);
 
+    QLayout *replaySpeedLayout = ui->replaySpeedGroupBox->layout();
+
     // Action radio buttons
     ActionRadioButton *slow10RadioButton = new ActionRadioButton(this);
     slow10RadioButton->setAction(slowActions.at(0));
-    ui->replaySpeedGroupBox->layout()->addWidget(slow10RadioButton);
+    replaySpeedLayout->addWidget(slow10RadioButton);
 
     ActionRadioButton *slow25RadioButton = new ActionRadioButton(this);
     slow25RadioButton->setAction(slowActions.at(1));
-    ui->replaySpeedGroupBox->layout()->addWidget(slow25RadioButton);
+    replaySpeedLayout->addWidget(slow25RadioButton);
 
     ActionRadioButton *slow50RadioButton = new ActionRadioButton(this);
     slow50RadioButton->setAction(slowActions.at(2));
-    ui->replaySpeedGroupBox->layout()->addWidget(slow50RadioButton);
+    replaySpeedLayout->addWidget(slow50RadioButton);
 
     ActionRadioButton *slow75RadioButton = new ActionRadioButton(this);
     slow75RadioButton->setAction(slowActions.at(3));
-    ui->replaySpeedGroupBox->layout()->addWidget(slow75RadioButton);
+    replaySpeedLayout->addWidget(slow75RadioButton);
 
     ActionRadioButton *normalSpeedRadioButton = new ActionRadioButton(this);
     normalSpeedRadioButton->setAction(normalSpeedAction);
-    ui->replaySpeedGroupBox->layout()->addWidget(normalSpeedRadioButton);
+    replaySpeedLayout->addWidget(normalSpeedRadioButton);
 
     ActionRadioButton *fast2xRadioButton = new ActionRadioButton(this);
     fast2xRadioButton->setAction(fastActions.at(0));
-    ui->replaySpeedGroupBox->layout()->addWidget(fast2xRadioButton);
+    replaySpeedLayout->addWidget(fast2xRadioButton);
 
     ActionRadioButton *fast4xRadioButton = new ActionRadioButton(this);
     fast4xRadioButton->setAction(fastActions.at(1));
-    ui->replaySpeedGroupBox->layout()->addWidget(fast4xRadioButton);
+    replaySpeedLayout->addWidget(fast4xRadioButton);
 
     ActionRadioButton *fast8xRadioButton = new ActionRadioButton(this);
     fast8xRadioButton->setAction(fastActions.at(2));
-    ui->replaySpeedGroupBox->layout()->addWidget(fast8xRadioButton);
+    replaySpeedLayout->addWidget(fast8xRadioButton);
 
     ActionRadioButton *fast16xRadioButton = new ActionRadioButton(this);
     fast16xRadioButton->setAction(fastActions.at(3));
-    ui->replaySpeedGroupBox->layout()->addWidget(fast16xRadioButton);
+    replaySpeedLayout->addWidget(fast16xRadioButton);
 
     // Custom speed
     d->customSpeedRadioButton = new ActionRadioButton(this);
     d->customSpeedRadioButton->setAction(customSpeedAction);
-    ui->replaySpeedGroupBox->layout()->addWidget(d->customSpeedRadioButton);
+    replaySpeedLayout->addWidget(d->customSpeedRadioButton);
 
     d->customSpeedLineEdit = new QLineEdit(this);
     d->customSpeedLineEdit->setMinimumWidth(160);
-    ui->replaySpeedGroupBox->layout()->addWidget(d->customSpeedLineEdit);
+    replaySpeedLayout->addWidget(d->customSpeedLineEdit);
 
-    QDoubleValidator *customReplaySpeedValidator = new QDoubleValidator(d->customSpeedLineEdit);
-    d->customSpeedLineEdit->setValidator(customReplaySpeedValidator);
-    customReplaySpeedValidator->setRange(ReplaySpeedMin, ReplaySpeedMax, ReplaySpeedDecimalPlaces);
+    d->customReplaySpeedFactorValidator = new QDoubleValidator(d->customSpeedLineEdit);
+    d->customReplaySpeedFactorValidator->setRange(ReplaySpeedAbsoluteMin, ReplaySpeedAbsoluteMax, ReplaySpeedDecimalPlaces);
+    d->customReplaySpeedPercentValidator = new QDoubleValidator(d->customSpeedLineEdit);
+    d->customReplaySpeedPercentValidator->setRange(ReplaySpeedAbsoluteMin * 100.0, ReplaySpeedAbsoluteMax * 100.0, ReplaySpeedDecimalPlaces);
 
-    const double replaySpeed = d->skyConnect.getTimeScale();
-    d->lastCustomReplaySpeed = replaySpeed;
-    if (qFuzzyCompare(d->skyConnect.getTimeScale(), 1.0)) {
+    // The replay speed factor in SkyConnect is always an absolute factor
+    const double replaySpeed = d->skyConnect.getReplaySpeedFactor();
+    Settings &settings = Settings::getInstance();
+    if (settings.getReplaySpeeedUnit() == Replay::SpeedUnit::Absolute) {
+        d->lastCustomReplaySpeed = replaySpeed;
+    } else {
+        d->lastCustomReplaySpeed = replaySpeed * 100.0;
+    }
+    if (qFuzzyCompare(d->skyConnect.getReplaySpeedFactor(), 1.0)) {
         normalSpeedRadioButton->setChecked(true);
     } else {
         d->customSpeedRadioButton ->setChecked(true);
-        d->customSpeedLineEdit->setText(d->locale.toString(replaySpeed, 'f', ReplaySpeedDecimalPlaces));
+        d->customSpeedLineEdit->setText(d->locale.toString(d->lastCustomReplaySpeed, 'f', ReplaySpeedDecimalPlaces));
     }
-    d->customSpeedLineEdit->setToolTip(tr("Custom replay factor in [%L1, %L2]").arg(ReplaySpeedMin).arg(ReplaySpeedMax));
 
+    d->replaySpeedUnitComboBox = new QComboBox(this);
+    d->replaySpeedUnitComboBox->addItem(tr("Factor [f]"), Enum::toUnderlyingType(Replay::SpeedUnit::Absolute));
+    d->replaySpeedUnitComboBox->addItem(tr("Percent [%]"), Enum::toUnderlyingType(Replay::SpeedUnit::Percent));
+    switch (Settings::getInstance().getReplaySpeeedUnit()) {
+    case Replay::SpeedUnit::Absolute:
+        d->replaySpeedUnitComboBox->setCurrentIndex(0);
+        break;
+    case Replay::SpeedUnit::Percent:
+        d->replaySpeedUnitComboBox->setCurrentIndex(1);
+        break;
+    default:
+        d->replaySpeedUnitComboBox->setCurrentIndex(0);
+        break;
+    }
+
+    replaySpeedLayout->addWidget(d->replaySpeedUnitComboBox);
 }
 
 void MainWindow::updateMinimalUi(bool enabled)
@@ -525,6 +560,28 @@ void MainWindow::updateMinimalUi(bool enabled)
            d->normalMinimumSize.width(), d->normalMinimumSize.height(),
            minimumWidth(), minimumHeight());
 #endif
+}
+
+double MainWindow::getCustomSpeedFactor() const
+{
+    double customSpeedFactor;
+    const QString text = d->customSpeedLineEdit->text();
+    if (!text.isEmpty()) {
+        switch (Settings::getInstance().getReplaySpeeedUnit()) {
+        case Replay::SpeedUnit::Absolute:
+            customSpeedFactor = d->locale.toDouble(text);
+            break;
+        case Replay::SpeedUnit::Percent:
+            customSpeedFactor = d->locale.toDouble(text) / 100.0;
+            break;
+        default:
+            customSpeedFactor = 1.0;
+            break;
+        }
+    } else {
+        customSpeedFactor = 1.0;
+    }
+    return customSpeedFactor;
 }
 
 // PRIVATE SLOTS
@@ -566,13 +623,113 @@ void MainWindow::on_timestampTimeEdit_timeChanged(const QTime &time) noexcept
     }
 }
 
+void MainWindow::handleTimestampChanged(qint64 timestamp) noexcept
+{
+    if (d->skyConnect.isRecording()) {
+        updateTimestamp();
+    } else {
+        const qint64 totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
+        const qint64 ts = qMin(timestamp, totalDuration);
+
+        int sliderPosition;
+        if (totalDuration > 0) {
+            sliderPosition = qRound(PositionSliderMax * (static_cast<double>(ts) / static_cast<double>(totalDuration)));
+        } else {
+            sliderPosition = 0;
+        }
+        ui->positionSlider->blockSignals(true);
+        ui->positionSlider->setValue(sliderPosition);
+        ui->positionSlider->blockSignals(false);
+
+        QTime time(0, 0, 0, 0);
+        time = time.addMSecs(timestamp);
+        ui->timestampTimeEdit->blockSignals(true);
+        ui->timestampTimeEdit->setTime(time);
+        ui->timestampTimeEdit->blockSignals(false);
+    };
+}
+
+void MainWindow::handleReplaySpeedSelected(QAction *action) noexcept
+{
+    ReplaySpeed replaySpeed = static_cast<ReplaySpeed>(action->property(ReplaySpeedProperty).toInt());
+    double replaySpeedFactor;
+    switch (replaySpeed) {
+    case ReplaySpeed::Slow10:
+        replaySpeedFactor = 0.1;
+        break;
+    case ReplaySpeed::Slow25:
+        replaySpeedFactor = 0.25;
+        break;
+    case ReplaySpeed::Slow50:
+        replaySpeedFactor = 0.5;
+        break;
+    case ReplaySpeed::Slow75:
+        replaySpeedFactor = 0.75;
+        break;
+    case ReplaySpeed::Normal:
+        replaySpeedFactor = 1.0;
+        break;
+    case ReplaySpeed::Fast2x:
+        replaySpeedFactor = 2.0;
+        break;
+    case ReplaySpeed::Fast4x:
+        replaySpeedFactor = 4.0;
+        break;
+    case ReplaySpeed::Fast8x:
+        replaySpeedFactor = 8.0;
+        break;
+    case ReplaySpeed::Fast16x:
+        replaySpeedFactor = 16.0;
+        break;
+    case ReplaySpeed::Custom:
+        replaySpeedFactor = getCustomSpeedFactor();
+        break;
+    default:
+        replaySpeedFactor = 1.0;
+        break;
+    }
+
+    d->skyConnect.setReplaySpeedFactor(replaySpeedFactor);
+}
+
 void MainWindow::handleCustomSpeedChanged() noexcept
 {
-    const QString text = d->customSpeedLineEdit->text();
-    if (!text.isEmpty()) {
-        d->lastCustomReplaySpeed = d->locale.toDouble(text);
-        d->skyConnect.setTimeScale(d->lastCustomReplaySpeed);
+    const double customReplaySpeedFactor = getCustomSpeedFactor();
+    d->skyConnect.setReplaySpeedFactor(customReplaySpeedFactor);
+    switch (Settings::getInstance().getReplaySpeeedUnit()) {
+    case Replay::SpeedUnit::Absolute:
+        d->lastCustomReplaySpeed = customReplaySpeedFactor;
+        break;
+    case Replay::SpeedUnit::Percent:
+        d->lastCustomReplaySpeed = customReplaySpeedFactor * 100.0;
+        break;
+    default:
+        break;
     }
+}
+
+void MainWindow::handleReplaySpeedUnitSelected(int index) noexcept
+{
+    Settings &settings = Settings::getInstance();
+    Replay::SpeedUnit replaySpeedUnit = static_cast<Replay::SpeedUnit>(d->replaySpeedUnitComboBox->itemData(index).toInt());
+    switch (replaySpeedUnit) {
+    case Replay::SpeedUnit::Absolute:
+        if (settings.getReplaySpeeedUnit() != Replay::SpeedUnit::Absolute) {
+            // Percent to absolute factor
+            d->lastCustomReplaySpeed /= 100.0;
+        }
+        break;
+    case Replay::SpeedUnit::Percent:
+        if (settings.getReplaySpeeedUnit() != Replay::SpeedUnit::Percent) {
+            // Absolute factor to percent
+            d->lastCustomReplaySpeed *= 100.0;
+        }
+        break;
+    default:
+        break;
+    }
+    settings.setReplaySpeedUnit(replaySpeedUnit);
+    updateReplaySpeedUi();
 }
 
 void MainWindow::updateUi() noexcept
@@ -669,10 +826,26 @@ void MainWindow::updateReplaySpeedUi() noexcept
     if (d->customSpeedRadioButton->isChecked()) {
         d->customSpeedLineEdit->setEnabled(true);
         d->customSpeedLineEdit->setText(d->locale.toString(d->lastCustomReplaySpeed, 'f', ReplaySpeedDecimalPlaces));
+
+        switch (Settings::getInstance().getReplaySpeeedUnit()) {
+        case Replay::SpeedUnit::Absolute:
+            d->customSpeedLineEdit->setToolTip(tr("Custom replay speed factor in [%L1, %L2]").arg(ReplaySpeedAbsoluteMin).arg(ReplaySpeedAbsoluteMax));
+            d->customSpeedLineEdit->setValidator(d->customReplaySpeedFactorValidator);
+            break;
+        case Replay::SpeedUnit::Percent:
+            d->customSpeedLineEdit->setToolTip(tr("Custom replay speed % in [%L1%, %L2%]").arg(ReplaySpeedAbsoluteMin * 100.0).arg(ReplaySpeedAbsoluteMax * 100.0));
+            d->customSpeedLineEdit->setValidator(d->customReplaySpeedPercentValidator);
+            break;
+        default:
+            d->customSpeedLineEdit->setToolTip("");
+            break;
+        }
+
     } else {
         d->customSpeedLineEdit->setEnabled(false);
         d->customSpeedLineEdit->clear();
-    }
+        d->customSpeedLineEdit->setToolTip("");
+    }    
 }
 
 void MainWindow::updateTimestamp() noexcept
@@ -915,75 +1088,6 @@ void MainWindow::on_aboutAction_triggered() noexcept
 void MainWindow::on_aboutQtAction_triggered() noexcept
 {
     QMessageBox::aboutQt(this);
-}
-
-void MainWindow::handleTimestampChanged(qint64 timestamp) noexcept
-{
-    if (d->skyConnect.isRecording()) {
-        updateTimestamp();
-    } else {
-        const qint64 totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
-        const qint64 ts = qMin(timestamp, totalDuration);
-
-        int sliderPosition;
-        if (totalDuration > 0) {
-            sliderPosition = qRound(PositionSliderMax * (static_cast<double>(ts) / static_cast<double>(totalDuration)));
-        } else {
-            sliderPosition = 0;
-        }
-        ui->positionSlider->blockSignals(true);
-        ui->positionSlider->setValue(sliderPosition);
-        ui->positionSlider->blockSignals(false);
-
-        QTime time(0, 0, 0, 0);
-        time = time.addMSecs(timestamp);
-        ui->timestampTimeEdit->blockSignals(true);
-        ui->timestampTimeEdit->setTime(time);
-        ui->timestampTimeEdit->blockSignals(false);
-    };
-}
-
-void MainWindow::handleReplaySpeedSelected(QAction *action) noexcept
-{
-    ReplaySpeed replaySpeed = static_cast<ReplaySpeed>(action->property(ReplaySpeedProperty).toInt());
-    double timeScale;
-    switch (replaySpeed) {
-    case ReplaySpeed::Slow10:
-        timeScale = 0.1;
-        break;
-    case ReplaySpeed::Slow25:
-        timeScale = 0.25;
-        break;
-    case ReplaySpeed::Slow50:
-        timeScale = 0.5;
-        break;
-    case ReplaySpeed::Slow75:
-        timeScale = 0.75;
-        break;
-    case ReplaySpeed::Normal:
-        timeScale = 1.0;
-        break;
-    case ReplaySpeed::Fast2x:
-        timeScale = 2.0;
-        break;
-    case ReplaySpeed::Fast4x:
-        timeScale = 4.0;
-        break;
-    case ReplaySpeed::Fast8x:
-        timeScale = 8.0;
-        break;
-    case ReplaySpeed::Fast16x:
-        timeScale = 16.0;
-        break;
-    case ReplaySpeed::Custom:
-        timeScale = d->locale.toDouble(d->customSpeedLineEdit->text());
-        break;
-    default:
-        timeScale = 1.0;
-        break;
-    }
-
-    d->skyConnect.setTimeScale(timeScale);
 }
 
 void MainWindow::toggleRecord(bool enable) noexcept

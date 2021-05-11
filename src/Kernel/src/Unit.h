@@ -33,9 +33,11 @@ class QString;
 class QDateTime;
 class QTime;
 
+#include "KernelLib.h"
+
 class UnitPrivate;
 
-class Unit
+class KERNEL_API Unit
 {
 public:
     Unit();

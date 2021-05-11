@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <QObject>
 #include <QFileInfo>
 #include <QDir>
 
@@ -37,7 +38,8 @@ namespace
 
 // PUBLIC
 
-DatabaseService::DatabaseService() noexcept
+DatabaseService::DatabaseService(QObject *parent) noexcept
+    : QObject(parent)
 {}
 
 DatabaseService::~DatabaseService() noexcept

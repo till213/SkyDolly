@@ -74,7 +74,8 @@ private:
     void initControlUi() noexcept;
     void initReplaySpeedUi() noexcept;
 
-    void updateMinimalUi(bool enable);
+    void updateMinimalUi(bool enable);    
+    double getCustomSpeedFactor() const;
     
 private slots:
 
@@ -84,7 +85,10 @@ private slots:
     void on_positionSlider_sliderReleased() noexcept;
     void on_timestampTimeEdit_timeChanged(const QTime &time) noexcept;
 
+    void handleTimestampChanged(qint64 timestamp) noexcept;
+    void handleReplaySpeedSelected(QAction *action) noexcept;
     void handleCustomSpeedChanged() noexcept;
+    void handleReplaySpeedUnitSelected(int index) noexcept;
 
     void updateUi() noexcept;
     void updateControlUi() noexcept;
@@ -113,9 +117,6 @@ private slots:
     void on_aboutLogbookAction_triggered() noexcept;
     void on_aboutAction_triggered() noexcept;
     void on_aboutQtAction_triggered() noexcept;
-
-    void handleTimestampChanged(qint64 timestamp) noexcept;
-    void handleReplaySpeedSelected(QAction *action) noexcept;
 
     // Replay
     void toggleRecord(bool checked) noexcept;

@@ -31,8 +31,8 @@
 #include <QDir>
 #include <QUrl>
 
+#include "../../../Kernel/src/Unit.h"
 #include "../../../Persistence/src/Service/DatabaseService.h"
-#include "../Unit.h"
 #include "AboutLogbookDialog.h"
 #include "ui_AboutLogbookDialog.h"
 

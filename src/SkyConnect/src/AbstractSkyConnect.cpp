@@ -52,7 +52,7 @@ public:
           currentTimestamp(0),
           recordSampleRate(Settings::getInstance().getRecordSampleRateValue()),
           recordIntervalMSec(SampleRate::toIntervalMSec(recordSampleRate)),
-          timeScale(1.0),
+          replaySpeedFactor(1.0),
           elapsedTime(0),
           lastSamplesPerSecondIndex(0)
     {
@@ -66,7 +66,7 @@ public:
     double recordSampleRate;
     int    recordIntervalMSec;
     QElapsedTimer elapsedTimer;
-    double timeScale;
+    double replaySpeedFactor;
     qint64 elapsedTime;
     mutable int lastSamplesPerSecondIndex;
 };
@@ -177,7 +177,7 @@ void AbstractSkyConnect::setPaused(bool enabled) noexcept
             // In case the elapsed time has started (is valid)...
             if (d->elapsedTimer.isValid()) {
                 // ... store the elapsed replay time measured with the current time scale...
-                d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed() * d->timeScale;
+                d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed() * d->replaySpeedFactor;
                 // ... and stop the elapsed timer
                 d->elapsedTimer.invalidate();
             }
@@ -273,9 +273,23 @@ bool AbstractSkyConnect::isAtEnd() const noexcept
     return d->currentTimestamp >= d->currentFlight.getTotalDurationMSec();
 }
 
-double AbstractSkyConnect::getTimeScale() const noexcept
+double AbstractSkyConnect::getReplaySpeedFactor() const noexcept
 {
-    return d->timeScale;
+    return d->replaySpeedFactor;
+}
+
+void AbstractSkyConnect::setReplaySpeedFactor(double replaySpeedFactor) noexcept
+{
+    if (!qFuzzyCompare(d->replaySpeedFactor, replaySpeedFactor)) {
+        // If the elapsed timer is running...
+        if (d->elapsedTimer.isValid()) {
+            // ... then store the elapsed time measured with the previous scale...
+            d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed() * d->replaySpeedFactor;
+            // ... and restart timer
+            startElapsedTimer();
+        }
+        d->replaySpeedFactor = replaySpeedFactor;
+    }
 }
 
 Connect::State AbstractSkyConnect::getState() const noexcept
@@ -286,20 +300,6 @@ Connect::State AbstractSkyConnect::getState() const noexcept
 bool AbstractSkyConnect::isConnected() const noexcept
 {
     return d->state != Connect::State::Disconnected;
-}
-
-void AbstractSkyConnect::setTimeScale(double timeScale) noexcept
-{
-    if (!qFuzzyCompare(d->timeScale, timeScale)) {
-        // If the elapsed timer is running...
-        if (d->elapsedTimer.isValid()) {
-            // ... then store the elapsed time measured with the previous scale...
-            d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed() * d->timeScale;
-            // ... and restart timer
-            startElapsedTimer();
-        }
-        d->timeScale = timeScale;
-    }
 }
 
 double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
@@ -374,7 +374,7 @@ void AbstractSkyConnect::updateCurrentTimestamp() noexcept
         // Ignore spontaneous SimConnect events: do not update
         // the current timestamp unless we are replaying or recording
         if (d->state == Connect::State::Replay) {
-            d->currentTimestamp = d->elapsedTime + static_cast<qint64>(d->elapsedTimer.elapsed() * d->timeScale);
+            d->currentTimestamp = d->elapsedTime + static_cast<qint64>(d->elapsedTimer.elapsed() * d->replaySpeedFactor);
             emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Linear);
         } else if (d->state == Connect::State::Recording) {
             d->currentTimestamp = d->elapsedTime + d->elapsedTimer.elapsed();

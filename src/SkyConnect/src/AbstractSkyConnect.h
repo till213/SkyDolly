@@ -65,8 +65,8 @@ public:
     virtual qint64 getCurrentTimestamp() const noexcept override;
     virtual bool isAtEnd() const noexcept override;
 
-    virtual void setTimeScale(double timeScale) noexcept override;
-    virtual double getTimeScale() const noexcept override;
+    virtual double getReplaySpeedFactor() const noexcept override;
+    virtual void setReplaySpeedFactor(double timeScale) noexcept override;
 
     virtual Connect::State getState() const noexcept override;
     virtual bool isConnected() const noexcept override;

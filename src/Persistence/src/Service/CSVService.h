@@ -27,17 +27,20 @@
 
 #include <memory>
 
+#include <QObject>
+
 #include "../PersistenceLib.h"
 
 class FlightService;
 class Aircraft;
 class CSVServicePrivate;
 
-class PERSISTENCE_API CSVService
+class PERSISTENCE_API CSVService : public QObject
 {
+    Q_OBJECT
 public:
-    explicit CSVService(FlightService &flightService) noexcept;
-    ~CSVService() noexcept;
+    explicit CSVService(FlightService &flightService, QObject *parent = nullptr) noexcept;
+    virtual ~CSVService() noexcept;
 
     bool importAircraft(const QString &filePath) noexcept;
     bool exportAircraft(const Aircraft &aircraft, const QString &filePath) noexcept;
