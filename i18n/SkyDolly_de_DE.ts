@@ -622,33 +622,33 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="181"/>
+        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="182"/>
         <source>Double-click to load flight</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="194"/>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="203"/>
+        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="195"/>
+        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="204"/>
         <source>Simulation time: %1 (%2Z)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="216"/>
+        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="217"/>
         <source>Simulation duration: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="221"/>
+        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="222"/>
         <source>Double-click to edit title</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="257"/>
+        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="258"/>
         <source>Database error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="257"/>
+        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="258"/>
         <source>The flight %1 could not be read from the library.</source>
         <translation type="unfinished"></translation>
     </message>
