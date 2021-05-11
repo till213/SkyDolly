@@ -973,9 +973,6 @@ void MainWindow::on_optimiseLogbookAction_triggered() noexcept
 
 void MainWindow::on_importCSVAction_triggered() noexcept
 {
-    const QMessageBox message;
-    const Version version;
-
     QMessageBox::StandardButton reply;
     int previewInfoCount = Settings::getInstance().getPreviewInfoDialogCount();
     if (previewInfoCount > 0) {
@@ -1174,5 +1171,19 @@ void MainWindow::handleDbConnectionStateChanged(bool connected) noexcept
 
 void MainWindow::handleRecordingStopped() noexcept
 {
+    Settings &settings = Settings::getInstance();
+    int previewInfoCount = settings.getPreviewInfoDialogCount();
+    if (previewInfoCount > 0) {
+        --previewInfoCount;
+        QMessageBox::information(this, "Preview",
+            QString("%1 %2 stores flights automatically into a database (the logbook). As new features are being added and developed the database format will change.\n\n"
+                    "During the preview phase older databases will automatically be migrated to the current data format (as \"proof of concept\").\n\n"
+                    "However take note that the first release version 1.0.0 will merge all migration steps into the final database format, making logboogs generated with preview "
+                    "versions (such as this one) unreadable!\n\n"
+                    "(From that point onwards databases will of course be migrated to the format of the next release version.)\n\n"
+                    "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(previewInfoCount),
+            QMessageBox::StandardButton::Ok);
+        settings.setPreviewInfoDialogCount(previewInfoCount);
+    }
     d->flightService->store(Logbook::getInstance().getCurrentFlight());
 }

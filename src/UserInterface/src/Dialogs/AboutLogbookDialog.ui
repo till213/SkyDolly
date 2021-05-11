@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>502</width>
-    <height>272</height>
+    <width>824</width>
+    <height>250</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,7 +46,7 @@
          <widget class="QLineEdit" name="directoryPathLineEdit">
           <property name="minimumSize">
            <size>
-            <width>250</width>
+            <width>600</width>
             <height>0</height>
            </size>
           </property>
@@ -66,7 +66,7 @@
          <widget class="QLineEdit" name="logbookNameLineEdit">
           <property name="minimumSize">
            <size>
-            <width>250</width>
+            <width>600</width>
             <height>0</height>
            </size>
           </property>
@@ -86,7 +86,7 @@
          <widget class="QLineEdit" name="createdDateLineEdit">
           <property name="minimumSize">
            <size>
-            <width>250</width>
+            <width>600</width>
             <height>0</height>
            </size>
           </property>
@@ -106,7 +106,7 @@
          <widget class="QLineEdit" name="lastBackupDateLineEdit">
           <property name="minimumSize">
            <size>
-            <width>250</width>
+            <width>600</width>
             <height>0</height>
            </size>
           </property>
@@ -126,7 +126,7 @@
          <widget class="QLineEdit" name="lastOptimisationDateLineEdit">
           <property name="minimumSize">
            <size>
-            <width>250</width>
+            <width>600</width>
             <height>0</height>
            </size>
           </property>
@@ -146,7 +146,7 @@
          <widget class="QLineEdit" name="logbookSizeLineEdit">
           <property name="minimumSize">
            <size>
-            <width>250</width>
+            <width>600</width>
             <height>0</height>
            </size>
           </property>

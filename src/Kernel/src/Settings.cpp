@@ -56,6 +56,8 @@ public:
     bool repeatFlapsHandleIndex;
     bool repeatCanopyOpen;
 
+    bool deleteConfirmation;
+
     int previewInfoDialogCount;
 
     static Settings *instance;
@@ -70,6 +72,7 @@ public:
     // For now the default value is true, as no known aircraft exists where the canopy values would not
     // have to be repeated
     static constexpr double DefaultRepeatCanopyOpen = true;
+    static constexpr bool DefaultDeleteConfirmation = true;
 
     static constexpr int DefaultPreviewInfoDialogCount = 3;
     static constexpr int PreviewInfoDialogBase = 30;
@@ -279,6 +282,19 @@ void Settings::setRepeatCanopyOpenEnabled(bool enable) noexcept
     }
 }
 
+bool Settings::isDeleteConfirmationEnabled() const noexcept
+{
+    return d->deleteConfirmation;
+}
+
+void Settings::setDeleteConfirmationEnabled(bool enable) noexcept
+{
+    if (d->deleteConfirmation!= enable) {
+        d->deleteConfirmation = enable;
+        emit changed();
+    }
+}
+
 int Settings::getPreviewInfoDialogCount() const noexcept
 {
     return d->previewInfoDialogCount - SettingsPrivate::PreviewInfoDialogBase;
@@ -306,7 +322,7 @@ void Settings::store() noexcept
     {
         d->settings.setValue("RecordSampleRate", d->recordSampleRateValue);
     }
-    d->settings.endGroup();    
+    d->settings.endGroup();
     d->settings.beginGroup("Replay");
     {
         d->settings.setValue("AbsoluteSeek", d->absoluteSeek);
@@ -316,7 +332,12 @@ void Settings::store() noexcept
         d->settings.setValue("RepeatFlapsHandleIndex", d->repeatFlapsHandleIndex);
         d->settings.setValue("RepeatCanopyOpen", d->repeatCanopyOpen);
     }
-    d->settings.endGroup();    
+    d->settings.endGroup();
+    d->settings.beginGroup("UI");
+    {
+        d->settings.setValue("DeleteConfirmation", d->deleteConfirmation);
+    }
+    d->settings.endGroup();
     d->settings.beginGroup("Window");
     {
         d->settings.setValue("WindowStaysOnTop", d->windowStayOnTop);
@@ -387,6 +408,11 @@ void Settings::restore() noexcept
         }
         d->repeatFlapsHandleIndex = d->settings.value("RepeatFlapsHandleIndex", SettingsPrivate::DefaultRepeatFlapsHandleIndex).toBool();
         d->repeatCanopyOpen = d->settings.value("RepeatCanopyOpen", SettingsPrivate::DefaultRepeatCanopyOpen).toBool();
+    }
+    d->settings.endGroup();
+    d->settings.beginGroup("UI");
+    {
+        d->deleteConfirmation = d->settings.value("DeleteConfirmation", SettingsPrivate::DefaultDeleteConfirmation).toBool();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Window");
