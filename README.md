@@ -50,3 +50,4 @@ Refer to the [BUILD](BUILD.md) documentation.
 ## Other Useful Resources
 
 * https://obsproject.com/ - Screen capture / broadcast application
+* https://sqlitebrowser.org/ - Browse the Sky Dolly logbook (*.sdlog) database files, execute your own SQL queries
