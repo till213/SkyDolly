@@ -42,7 +42,6 @@ QT_END_NAMESPACE
 
 class QButtonGroup;
 class QTime;
-class QEvent;
 class QResizeEvent;
 class QCloseEvent;
 
@@ -60,7 +59,6 @@ public:
     virtual ~MainWindow() noexcept;
 
 protected:
-    virtual bool event(QEvent *event) noexcept override;
     virtual void resizeEvent(QResizeEvent *event) noexcept override;
     virtual void closeEvent(QCloseEvent *event) noexcept override;
 
@@ -85,6 +83,7 @@ private slots:
     void on_positionSlider_sliderReleased() noexcept;
     void on_timestampTimeEdit_timeChanged(const QTime &time) noexcept;
 
+    void updateWindowSize() noexcept;
     void handleTimestampChanged(qint64 timestamp) noexcept;
     void handleReplaySpeedSelected(QAction *action) noexcept;
     void handleCustomSpeedChanged() noexcept;

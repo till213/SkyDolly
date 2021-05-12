@@ -48,6 +48,7 @@
 #include <QCloseEvent>
 #include <QActionGroup>
 #include <QSpacerItem>
+#include <QTimer>
 
 #include "../../Kernel/src/Const.h"
 #include "../../Kernel/src/Replay.h"
@@ -149,8 +150,6 @@ public:
     std::unique_ptr<DatabaseService> databaseService;
     std::unique_ptr<CSVService> csvService;
 
-    QSize minimalUiSize;
-    QSize normalMinimumSize;
     QSize lastNormalUiSize;
 
     QActionGroup *replaySpeedActionGroup ;
@@ -194,31 +193,6 @@ MainWindow::~MainWindow() noexcept
 }
 
 // PROTECTED
-
-bool MainWindow::event(QEvent *event) noexcept
-{
-    bool ret = QMainWindow::event(event);
-    if (event->type() == QEvent::LayoutRequest) {
-        Settings &settings = Settings::getInstance();
-        if (settings.isMinimalUiEnabled() && !d->minimalUiSize.isValid()) {
-            setMinimumSize(QSize());
-            adjustSize();
-            d->minimalUiSize = size();
-            setFixedSize(d->minimalUiSize);
-#ifdef DEBUG
-            qDebug("MainWindow::event: MINIMAL UI SIZE (W/H): %d/%d", d->minimalUiSize.width(), d->minimalUiSize.height());
-#endif
-        } else if (!settings.isMinimalUiEnabled() && !d->normalMinimumSize.isValid()) {
-            adjustSize();
-            d->normalMinimumSize = size();
-            setMinimumSize(d->normalMinimumSize);
-#ifdef DEBUG
-            qDebug("MainWindow::event: NORMAL MINIMUM UI SIZE (W/H): %d/%d", d->normalMinimumSize.width(), d->normalMinimumSize.height());
-#endif
-        }
-    }
-    return ret;
-}
 
 void MainWindow::resizeEvent(QResizeEvent *event) noexcept
 {
@@ -320,12 +294,7 @@ void MainWindow::initUi() noexcept
     bool minimalUi = Settings::getInstance().isMinimalUiEnabled();
     ui->showMinimalAction->setChecked(minimalUi);
     updateMinimalUi(minimalUi);
-    adjustSize();
-    if (minimalUi) {
-        d->minimalUiSize = minimumSize();
-    } else {
-        d->normalMinimumSize = size();
-    }
+
     Settings &settings = Settings::getInstance();
     QByteArray windowGeometry = settings.getWindowGeometry();
     QByteArray windowState = settings.getWindowState();
@@ -537,29 +506,11 @@ void MainWindow::initReplaySpeedUi() noexcept
 
 void MainWindow::updateMinimalUi(bool enabled)
 {
-    Settings::getInstance().setMinimalUiEnabled(enabled);
     ui->moduleGroupBox->setHidden(enabled);
-    if (enabled) {
-        if (d->minimalUiSize.isValid()) {
-            setFixedSize(d->minimalUiSize);
-        }
-    } else {
-        // Setting the minimum and maximum sizes causes a resize
-        // event (in which we update the lastNormalUiSize), so
-        // we store the desired lastNormalUiSize here
-        QSize size = d->lastNormalUiSize;
-        if (d->normalMinimumSize.isValid()) {
-            setMinimumSize(d->normalMinimumSize);
-        }
-        setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
-        resize(size);
-    }
-#ifdef DEBUG
-    qDebug("MainWindow::updateMinimalUi: enabled: %d, minimal UI size: %d, %d, normal min. UI size: %d, %d, actual minimum size: %d, %d", enabled,
-           d->minimalUiSize.width(), d->minimalUiSize.height(),
-           d->normalMinimumSize.width(), d->normalMinimumSize.height(),
-           minimumWidth(), minimumHeight());
-#endif
+    Settings::getInstance().setMinimalUiEnabled(enabled);
+    // When hiding a widget it takes some time for the layout manager to
+    // get notified, so we return to the Qt event queue first
+    QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
 }
 
 double MainWindow::getCustomSpeedFactor() const
@@ -620,6 +571,21 @@ void MainWindow::on_timestampTimeEdit_timeChanged(const QTime &time) noexcept
     if (state == Connect::State::Connected || state == Connect::State::ReplayPaused) {
         qint64 timestamp = time.hour() * MilliSecondsPerHour + time.minute() * MilliSecondsPerMinute + time.second() * MilliSecondsPerSecond;
         d->skyConnect.seek(timestamp);
+    }
+}
+
+void MainWindow::updateWindowSize() noexcept
+{
+    if (Settings::getInstance().isMinimalUiEnabled()) {
+        setMinimumSize(0, 0);
+        // Let the layout manager realise that a widget has been hidden, which is an
+        // asynchronous process
+        QApplication::processEvents();
+        resize(0, 0);
+        setFixedSize(minimumSize());
+    } else {
+        setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
+        resize(d->lastNormalUiSize);
     }
 }
 
