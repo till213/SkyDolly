@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.1
+
+### Bug Fixes
+
+- Fix "logboog" typo in preview message
+
 ## 0.6.0
 
 ### New Features
