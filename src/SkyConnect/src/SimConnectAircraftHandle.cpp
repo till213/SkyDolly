@@ -29,9 +29,9 @@
 #include "../../Kernel/src/Enum.h"
 #include "../../Model/src/SimVar.h"
 #include "SimConnectType.h"
-#include "SimConnectAircraftHandleData.h"
+#include "SimConnectAircraftHandle.h"
 
-void SimConnectAircraftHandleData::addToDataDefinition(HANDLE simConnectHandle) noexcept
+void SimConnectAircraftHandle::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
     // // Gear, brakes & handles
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftHandleDefinition), SimVar::BrakeLeftPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);

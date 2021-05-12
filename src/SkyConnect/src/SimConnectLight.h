@@ -22,17 +22,39 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#ifndef SIMCONNECTLIGHT_H
+#define SIMCONNECTLIGHT_H
+
 #include <windows.h>
 
-#include <SimConnect.h>
+#include "../../Model/src/SimType.h"
+#include "../../Model/src/LightData.h"
 
-#include "../../Kernel/src/Enum.h"
-#include "../../Model/src/SimVar.h"
-#include "SimConnectType.h"
-#include "SimConnectLightData.h"
-
-void SimConnectLightData::addToDataDefinition(HANDLE simConnectHandle) noexcept
+/*!
+ * Simulation variables which represent aircraft lights, e.g. navigation light
+ * and taxi light.
+ *
+ * Implementation note: this struct needs to be packed.
+ */
+#pragma pack(push, 1)
+struct SimConnectLight
 {
-    // Lights
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftLightDefinition), SimVar::LightStates, "Mask", ::SIMCONNECT_DATATYPE_INT32);
-}
+    qint32 lightStates;
+
+    inline LightData toLightData() const noexcept
+    {
+        LightData lightData;
+        lightData.lightStates = SimType::LightStates(lightStates);
+        return lightData;
+    }
+
+    inline void fromLightData(const LightData &lightData) noexcept
+    {
+        lightStates = lightData.lightStates;
+    }
+
+    static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
+};
+#pragma pack(pop)
+
+#endif // SIMCONNECTLIGHT_H

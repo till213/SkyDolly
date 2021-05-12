@@ -29,16 +29,16 @@ if (WIN32)
             src/SimConnectType.h
             src/SimConnectPosition.cpp
             src/SimConnectPosition.h
-            src/SimConnectEngineData.cpp
-            src/SimConnectEngineData.h
-            src/SimConnectPrimaryFlightControlData.cpp
-            src/SimConnectPrimaryFlightControlData.h
-            src/SimConnectSecondaryFlightControlData.cpp
-            src/SimConnectSecondaryFlightControlData.h
-            src/SimConnectAircraftHandleData.cpp
-            src/SimConnectAircraftHandleData.h
-            src/SimConnectLightData.cpp
-            src/SimConnectLightData.h
+            src/SimConnectEngine.cpp
+            src/SimConnectEngine.h
+            src/SimConnectPrimaryFlightControl.cpp
+            src/SimConnectPrimaryFlightControl.h
+            src/SimConnectSecondaryFlightControl.cpp
+            src/SimConnectSecondaryFlightControl.h
+            src/SimConnectAircraftHandle.cpp
+            src/SimConnectAircraftHandle.h
+            src/SimConnectLight.cpp
+            src/SimConnectLight.h
             src/SimConnectAircraftInfo.cpp
             src/SimConnectAircraftInfo.h
             src/SimConnectFlightPlan.cpp
@@ -49,7 +49,7 @@ if (WIN32)
             src/EventWidget.h
         )
 
-     # Copy SimConnect.dll to bin directory (for development)
+    # Copy SimConnect.dll to bin directory (for development)
     add_custom_command(TARGET SkyConnect POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             $<TARGET_FILE:SimConnect>
@@ -74,6 +74,3 @@ endif()
 target_link_libraries(SkyConnect PRIVATE ${SKYCONNECT_LIBS})
 set_target_properties(SkyConnect PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(SkyConnect PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
-
-
-

@@ -29,9 +29,9 @@
 #include "../../Kernel/src/Enum.h"
 #include "../../Model/src/SimVar.h"
 #include "SimConnectType.h"
-#include "SimConnectSecondaryFlightControlData.h"
+#include "SimConnectSecondaryFlightControl.h"
 
-void SimConnectSecondaryFlightControlData::addToDataDefinition(HANDLE simConnectHandle) noexcept
+void SimConnectSecondaryFlightControl::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftSecondaryFlightControlDefinition), SimVar::LeadingEdgeFlapsLeftPercent, "Percent", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftSecondaryFlightControlDefinition), SimVar::LeadingEdgeFlapsRightPercent, "Percent",::SIMCONNECT_DATATYPE_FLOAT64);
