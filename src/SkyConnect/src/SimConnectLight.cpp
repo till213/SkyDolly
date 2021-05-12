@@ -29,11 +29,10 @@
 #include "../../Kernel/src/Enum.h"
 #include "../../Model/src/SimVar.h"
 #include "SimConnectType.h"
-#include "SimConnectPrimaryFlightControlData.h"
+#include "SimConnectLight.h"
 
-void SimConnectPrimaryFlightControlData::addToDataDefinition(HANDLE simConnectHandle) noexcept
+void SimConnectLight::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPrimaryFlightControlDefinition), SimVar::RudderPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPrimaryFlightControlDefinition), SimVar::ElevatorPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPrimaryFlightControlDefinition), SimVar::AileronPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    // Lights
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftLightDefinition), SimVar::LightStates, "Mask", ::SIMCONNECT_DATATYPE_INT32);
 }

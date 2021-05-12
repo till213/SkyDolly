@@ -37,7 +37,7 @@
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectSecondaryFlightControlData
+struct SimConnectSecondaryFlightControl
 {
     double leadingEdgeFlapsLeftPercent;
     double leadingEdgeFlapsRightPercent;
