@@ -260,7 +260,7 @@ void AbstractSkyConnect::seek(qint64 timestamp) noexcept
             d->currentTimestamp = timestamp;
             d->elapsedTime = timestamp;
             emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Seek);
-            bool ok = retryWithReconnect([this, timestamp]() -> bool { return sendAircraftData(timestamp, TimeVariableData::Access::Seek); });
+            bool ok = retryWithReconnect([this, timestamp]() -> bool { return sendPositionData(timestamp, TimeVariableData::Access::Seek); });
             if (ok) {
                 if (d->elapsedTimer.isValid()) {
                     // Restart the elapsed timer, counting onwards from the newly

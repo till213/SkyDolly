@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTAIRCRAFTDATA_H
-#define SIMCONNECTAIRCRAFTDATA_H
+#ifndef SIMCONNECTPOSITION_H
+#define SIMCONNECTPOSITION_H
 
 #include <windows.h>
 
@@ -37,7 +37,7 @@
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectAircraftData
+struct SimConnectPosition
 {
     // Aircraft position
     double latitude;
@@ -55,7 +55,7 @@ struct SimConnectAircraftData
     double rotationVelocityBodyY;
     double rotationVelocityBodyZ;
 
-    inline PositionData toAircraftData() const noexcept
+    inline PositionData toPositionData() const noexcept
     {
         PositionData aircraftData;
 
@@ -76,25 +76,25 @@ struct SimConnectAircraftData
         return aircraftData;
     }
 
-    inline void fromAircraftData(const PositionData &aircraftData) noexcept
+    inline void fromPositionData(const PositionData &positionData) noexcept
     {
-        latitude = aircraftData.latitude;
-        longitude = aircraftData.longitude;
-        altitude = aircraftData.altitude;
-        pitch = aircraftData.pitch;
-        bank = aircraftData.bank;
-        heading = aircraftData.heading;
+        latitude = positionData.latitude;
+        longitude = positionData.longitude;
+        altitude = positionData.altitude;
+        pitch = positionData.pitch;
+        bank = positionData.bank;
+        heading = positionData.heading;
 
-        velocityBodyX = aircraftData.velocityBodyX;
-        velocityBodyY = aircraftData.velocityBodyY;
-        velocityBodyZ = aircraftData.velocityBodyZ;
-        rotationVelocityBodyX = aircraftData.rotationVelocityBodyX;
-        rotationVelocityBodyY = aircraftData.rotationVelocityBodyY;
-        rotationVelocityBodyZ = aircraftData.rotationVelocityBodyZ;
+        velocityBodyX = positionData.velocityBodyX;
+        velocityBodyY = positionData.velocityBodyY;
+        velocityBodyZ = positionData.velocityBodyZ;
+        rotationVelocityBodyX = positionData.rotationVelocityBodyX;
+        rotationVelocityBodyY = positionData.rotationVelocityBodyY;
+        rotationVelocityBodyZ = positionData.rotationVelocityBodyZ;
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTAIRCRAFTDATA_H
+#endif // SIMCONNECTPOSITION_H

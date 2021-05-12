@@ -27,8 +27,8 @@ if (WIN32)
             src/SkyConnectImpl.cpp
             src/SkyConnectImpl.h
             src/SimConnectType.h
-            src/SimConnectAircraftData.cpp
-            src/SimConnectAircraftData.h
+            src/SimConnectPosition.cpp
+            src/SimConnectPosition.h
             src/SimConnectEngineData.cpp
             src/SimConnectEngineData.h
             src/SimConnectPrimaryFlightControlData.cpp
