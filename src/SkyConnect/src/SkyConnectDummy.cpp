@@ -35,7 +35,8 @@
 #include "../../Model/src/Logbook.h"
 #include "../../Model/src/Flight.h"
 #include "../../Model/src/Aircraft.h"
-#include "../../Model/src/AircraftData.h"
+#include "../../Model/src/Position.h"
+#include "../../Model/src/PositionData.h"
 #include "../../Model/src/Engine.h"
 #include "../../Model/src/EngineData.h"
 #include "../../Model/src/PrimaryFlightControl.h"
@@ -200,8 +201,8 @@ bool SkyConnectDummy::sendAircraftData(TimeVariableData::Access access) noexcept
     const qint64 currentTimestamp = getCurrentTimestamp();
     if (currentTimestamp <= getCurrentFlight().getTotalDurationMSec()) {
         dataAvailable = true;
-        const AircraftData &currentAircraftData = getCurrentFlight().getUserAircraftConst().interpolate(getCurrentTimestamp(), access);
-        if (!currentAircraftData.isNull()) {
+        const PositionData &currentPositionData = getCurrentFlight().getUserAircraftConst().getPosition().interpolate(getCurrentTimestamp(), access);
+        if (!currentPositionData.isNull()) {
             // Start the elapsed timer after sending the first sample data
             if (!isElapsedTimerRunning()) {
                 startElapsedTimer();
@@ -237,7 +238,7 @@ void SkyConnectDummy::recordPositionData(qint64 timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
-    AircraftData aircraftData;
+    PositionData aircraftData;
     aircraftData.latitude = -180.0 + d->randomGenerator->bounded(360.0);
     aircraftData.longitude = -90.0 + d->randomGenerator->bounded(180.0);
     aircraftData.altitude = d->randomGenerator->bounded(20000.0);
@@ -253,7 +254,7 @@ void SkyConnectDummy::recordPositionData(qint64 timestamp) noexcept
     aircraftData.velocityBodyZ = d->randomGenerator->bounded(1.0);
 
     aircraftData.timestamp = timestamp;
-    aircraft.upsert(aircraftData);
+    aircraft.getPosition().upsert(aircraftData);
 }
 
 void SkyConnectDummy::recordEngineData(qint64 timestamp) noexcept

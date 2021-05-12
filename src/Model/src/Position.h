@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The black sheep for your flight recordings
+ * Sky Dolly - The black sheep for your fposition recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,28 +22,42 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QFlags>
+#ifndef POSITION_H
+#define POSITION_H
 
-#include "SimType.h"
-#include "AircraftData.h"
+#include <memory>
 
-// PUBLIC
+#include <QObject>
+#include <QByteArray>
+#include <QVector>
 
-AircraftData::AircraftData(double latitude, double longitude, double altitude) noexcept
-    : TimeVariableData(),
-      pitch(0.0),
-      bank(0.0),
-      heading(0.0),
-      velocityBodyX(0.0),
-      velocityBodyY(0.0),
-      velocityBodyZ(0.0),
-      rotationVelocityBodyX(0.0),
-      rotationVelocityBodyY(0.0),
-      rotationVelocityBodyZ(0.0)
+#include "TimeVariableData.h"
+#include "ModelLib.h"
+
+class PositionData;
+class PositionPrivate;
+
+class MODEL_API Position : public QObject
 {
-    this->latitude = latitude;
-    this->longitude = longitude;
-    this->altitude = altitude;
-}
+    Q_OBJECT
+public:
+    Position(QObject *parent = nullptr) noexcept;
+    virtual ~Position() noexcept;
 
-const AircraftData AircraftData::NullAircraftData = AircraftData(0.0, 0.0, 0.0);
+    void upsert(const PositionData &positionData) noexcept;
+    const PositionData &getLast() const noexcept;
+    QVector<PositionData> &getAll() const noexcept;
+    const QVector<PositionData> &getAllConst() const noexcept;
+    const PositionData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
+
+    void clear() noexcept;
+
+signals:
+    void dataChanged();
+
+private:
+    Q_DISABLE_COPY(Position)
+    std::unique_ptr<PositionPrivate> d;
+};
+
+#endif // POSITION_H

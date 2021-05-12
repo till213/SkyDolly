@@ -31,7 +31,8 @@
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"
-#include "../../../Model/src/AircraftData.h"
+#include "../../../Model/src/Position.h"
+#include "../../../Model/src/PositionData.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "AircraftWidget.h"
@@ -104,17 +105,17 @@ void AircraftWidget::initUi() noexcept
     ui->rotationVelocityZLineEdit->setToolTip(SimVar::RotationVelocityBodyZ);
 }
 
-const AircraftData &AircraftWidget::getCurrentAircraftData(qint64 timestamp, TimeVariableData::Access access) const noexcept
+const PositionData &AircraftWidget::getCurrentAircraftData(qint64 timestamp, TimeVariableData::Access access) const noexcept
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
     if (d->skyConnect.getState() == Connect::State::Recording) {
-        return aircraft.getLast();
+        return aircraft.getPositionConst().getLast();
     } else {
         if (timestamp != TimeVariableData::InvalidTime) {
-            return aircraft.interpolate(timestamp, access);
+            return aircraft.getPositionConst().interpolate(timestamp, access);
         } else {
-            return aircraft.interpolate(d->skyConnect.getCurrentTimestamp(), access);
+            return aircraft.getPositionConst().interpolate(d->skyConnect.getCurrentTimestamp(), access);
         }
     };
 }
@@ -123,7 +124,7 @@ const AircraftData &AircraftWidget::getCurrentAircraftData(qint64 timestamp, Tim
 
 void AircraftWidget::updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept
 {
-    const AircraftData &aircraftData = getCurrentAircraftData(timestamp, access);
+    const PositionData &aircraftData = getCurrentAircraftData(timestamp, access);
     QString colorName;
 
     if (!aircraftData.isNull()) {

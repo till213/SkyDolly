@@ -21,8 +21,10 @@ target_sources(Model
         src/Aircraft.h
         src/TimeVariableData.cpp
         src/TimeVariableData.h
-        src/AircraftData.cpp
-        src/AircraftData.h
+        src/Position.cpp
+        src/Position.h
+        src/PositionData.cpp
+        src/PositionData.h
         src/Engine.cpp
         src/Engine.h
         src/EngineData.cpp

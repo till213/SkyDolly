@@ -53,7 +53,6 @@ EngineData::EngineData(qint16 theThrottleLeverPosition1, qint16 thePropellerLeve
       generalEngineStarter2(false),
       generalEngineStarter3(false),
       generalEngineStarter4(false)
-{
-}
+{}
 
 const EngineData EngineData::NullEngineData = EngineData();

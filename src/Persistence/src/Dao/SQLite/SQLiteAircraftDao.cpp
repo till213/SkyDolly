@@ -35,7 +35,8 @@
 #include "../../../../Kernel/src/Enum.h"
 #include "../../../../Model/src/Aircraft.h"
 #include "../../../../Model/src/AircraftInfo.h"
-#include "../../../../Model/src/AircraftData.h"
+#include "../../../../Model/src/Position.h"
+#include "../../../../Model/src/PositionData.h"
 #include "../../../../Model/src/Engine.h"
 #include "../../../../Model/src/EngineData.h"
 #include "../../../../Model/src/PrimaryFlightControl.h"
@@ -206,7 +207,7 @@ bool SQLiteAircraftDao::add(qint64 flightId, int sequenceNumber, Aircraft &aircr
 #endif
     }
     if (ok) {
-        for (const AircraftData &data : aircraft.getAllConst()) {
+        for (const PositionData &data : aircraft.getPositionConst().getAllConst()) {
             ok = d->positionDao->add(aircraft.getId(), data);
             if (!ok) {
                 break;
@@ -318,7 +319,7 @@ bool SQLiteAircraftDao::getByFlightId(qint64 flightId, int sequenceNumber, Aircr
     }
 
     if (ok) {
-        ok = d->positionDao->getByAircraftId(aircraft.getId(), aircraft.getAll());
+        ok = d->positionDao->getByAircraftId(aircraft.getId(), aircraft.getPosition().getAll());
     }
     if (ok) {
         ok = d->engineDao->getByAircraftId(aircraft.getId(), aircraft.getEngine().getAll());

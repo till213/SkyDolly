@@ -31,7 +31,8 @@
 
 #include "../../../Model/src/SimVar.h"
 #include "../../../Model/src/Aircraft.h"
-#include "../../../Model/src/AircraftData.h"
+#include "../../../Model/src/Position.h"
+#include "../../../Model/src/PositionData.h"
 #include "../../../Model/src/Engine.h"
 #include "../../../Model/src/EngineData.h"
 #include "../../../Model/src/Engine.h"
@@ -78,7 +79,7 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft) noexcept
                 bool firstLightData = true;
                 while (!data.isNull()) {
 
-                    AircraftData aircraftData;
+                    PositionData aircraftData;
                     QList<QByteArray> values = data.split(CSVConst::Sep);
 
                     // Type
@@ -137,7 +138,7 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft) noexcept
 
 inline bool CSVImport::importAircraftData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Aircraft &aircraft) noexcept
 {
-    AircraftData data;
+    PositionData data;
     int columnIndex = 0;
     qint64 timestamp;
     qint64 timestampDelta = 0;
@@ -241,7 +242,7 @@ inline bool CSVImport::importAircraftData(const QList<QByteArray> &headers, cons
 
     }
     if (ok) {
-        aircraft.upsert(data);
+        aircraft.getPosition().upsert(data);
     }
     return ok;
 }
@@ -261,7 +262,6 @@ inline bool CSVImport::importEngineData(const QList<QByteArray> &headers, const 
             break;
         }
 
-        double doubleValue;
         int intValue;
         if (header == SimVar::ThrottleLeverPosition1) {
             intValue = values.at(columnIndex).toInt(&ok);

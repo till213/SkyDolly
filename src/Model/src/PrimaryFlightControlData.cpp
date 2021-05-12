@@ -31,7 +31,6 @@ PrimaryFlightControlData::PrimaryFlightControlData() noexcept
       rudderPosition(0),
       elevatorPosition(0),
       aileronPosition(0)
-{
-}
+{}
 
 const PrimaryFlightControlData PrimaryFlightControlData::NullPrimaryFlightControlData = PrimaryFlightControlData();

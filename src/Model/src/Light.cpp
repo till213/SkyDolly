@@ -56,12 +56,10 @@ public:
 Light::Light(QObject *parent) noexcept
     : QObject(parent),
       d(std::make_unique<LightPrivate>())
-{
-}
+{}
 
 Light::~Light() noexcept
-{
-}
+{}
 
 void Light::upsert(const LightData &lightData) noexcept
 {

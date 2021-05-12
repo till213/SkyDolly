@@ -32,7 +32,8 @@
 #include "../../Model/src/Logbook.h"
 #include "../../Model/src/Flight.h"
 #include "../../Model/src/Aircraft.h"
-#include "../../Model/src/AircraftData.h"
+#include "../../Model/src/Position.h"
+#include "../../Model/src/PositionData.h"
 #include "Connect.h"
 #include "SkyConnectIntf.h"
 #include "AbstractSkyConnect.h"
@@ -328,18 +329,19 @@ bool AbstractSkyConnect::isIdle() const noexcept
 double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
 {
     double samplesPerSecond;
-    const QVector<AircraftData> &aircraftData = d->currentFlight.getUserAircraftConst().getAllConst();
-    if (aircraftData.count() > 0) {
-        const qint64 startTimestamp = qMin(qMax(d->currentTimestamp - SamplesPerSecondPeriodMSec, 0ll), aircraftData.last().timestamp);
+    const QVector<PositionData> &positionData = d->currentFlight.getUserAircraftConst().getPosition().getAllConst();
+    if (positionData.count() > 0) {
+        const qint64 startTimestamp = qMin(qMax(d->currentTimestamp - SamplesPerSecondPeriodMSec, 0ll), positionData.last().timestamp);
         int index = d->lastSamplesPerSecondIndex;
-        while (d->currentFlight.getUserAircraftConst().getAllConst().at(index).timestamp < startTimestamp) {
+
+        while (positionData.at(index).timestamp < startTimestamp) {
             ++index;
         }
         d->lastSamplesPerSecondIndex = index;
 
-        const int lastIndex = d->currentFlight.getUserAircraftConst().getAllConst().count() - 1;
+        const int lastIndex = positionData.count() - 1;
         const int nofSamples = lastIndex - index + 1;
-        const qint64 period = d->currentFlight.getUserAircraftConst().getAllConst().at(lastIndex).timestamp - d->currentFlight.getUserAircraftConst().getAllConst().at(index).timestamp;
+        const qint64 period = positionData.at(lastIndex).timestamp - positionData.at(index).timestamp;
         if (period > 0) {
             samplesPerSecond = static_cast<double>(nofSamples) * 1000.0 / (static_cast<double>(period));
         } else {
@@ -421,7 +423,7 @@ void AbstractSkyConnect::frenchConnection() noexcept
 
 bool AbstractSkyConnect::hasRecordingStarted() const noexcept
 {
-    return d->currentFlight.getUserAircraftConst().getAllConst().count();
+    return d->currentFlight.getUserAircraftConst().getPosition().getAllConst().count() > 0;
 }
 
 qint64 AbstractSkyConnect::getSkipInterval() const noexcept

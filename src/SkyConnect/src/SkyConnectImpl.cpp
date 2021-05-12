@@ -42,7 +42,8 @@
 #include "../../Model/src/Flight.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/AircraftInfo.h"
-#include "../../Model/src/AircraftData.h"
+#include "../../Model/src/Position.h"
+#include "../../Model/src/PositionData.h"
 #include "../../Model/src/EngineData.h"
 #include "../../Model/src/PrimaryFlightControl.h"
 #include "../../Model/src/PrimaryFlightControlData.h"
@@ -173,7 +174,7 @@ void SkyConnectImpl::onStopRecording() noexcept
         flightPlan.update(waypointCount - 1, waypoint);
     } else if (waypointCount == 0) {
         Waypoint departureWaypoint;
-        AircraftData position = userAircraft.getAllConst().at(0);
+        PositionData position = userAircraft.getPositionConst().getAllConst().at(0);
         departureWaypoint.identifier = "CUSTD";
         departureWaypoint.latitude = position.latitude;
         departureWaypoint.longitude = position.longitude;
@@ -184,7 +185,7 @@ void SkyConnectImpl::onStopRecording() noexcept
         flightPlan.add(departureWaypoint);
 
         Waypoint arrivalWaypoint;
-        position = userAircraft.getLast();
+        position = userAircraft.getPositionConst().getLast();
         arrivalWaypoint.identifier = "CUSTA";
         arrivalWaypoint.latitude = position.latitude;
         arrivalWaypoint.longitude = position.longitude;
@@ -261,7 +262,7 @@ bool SkyConnectImpl::sendAircraftData(qint64 currentTimestamp, TimeVariableData:
     const Aircraft &userAircraft = getCurrentFlight().getUserAircraftConst();
 
     success = true;
-    const AircraftData &currentAircraftData = userAircraft.interpolate(currentTimestamp, access);
+    const PositionData &currentAircraftData = userAircraft.getPosition().interpolate(currentTimestamp, access);
     if (!currentAircraftData.isNull()) {
         SimConnectAircraftData simConnectAircraftData;
         simConnectAircraftData.fromAircraftData(currentAircraftData);
@@ -433,17 +434,17 @@ void SkyConnectImpl::setupRequestData() noexcept
 void SkyConnectImpl::setupInitialPosition() noexcept
 {
     const Aircraft &userAircraft = getCurrentFlight().getUserAircraftConst();
-    const AircraftData &aircraftData = userAircraft.interpolate(0, TimeVariableData::Access::Seek);
-    if (!aircraftData.isNull()) {
+    const PositionData &positionData = userAircraft.getPositionConst().interpolate(0, TimeVariableData::Access::Seek);
+    if (!positionData.isNull()) {
         // Set initial position
         SIMCONNECT_DATA_INITPOSITION initialPosition;
 
-        initialPosition.Latitude = aircraftData.latitude;
-        initialPosition.Longitude = aircraftData.longitude;
-        initialPosition.Altitude = aircraftData.altitude;
-        initialPosition.Pitch = aircraftData.pitch;
-        initialPosition.Bank = aircraftData.bank;
-        initialPosition.Heading = aircraftData.heading;
+        initialPosition.Latitude = positionData.latitude;
+        initialPosition.Longitude = positionData.longitude;
+        initialPosition.Altitude = positionData.altitude;
+        initialPosition.Pitch = positionData.pitch;
+        initialPosition.Bank = positionData.bank;
+        initialPosition.Heading = positionData.heading;
         initialPosition.OnGround = userAircraft.getAircraftInfoConst().startOnGround ? 1 : 0;
         initialPosition.Airspeed = userAircraft.getAircraftInfoConst().initialAirspeed;
 
@@ -631,9 +632,9 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
             const SimConnectAircraftData *simConnectAircraftData;
             if (skyConnect->getState() == Connect::State::Recording) {
                 simConnectAircraftData = reinterpret_cast<const SimConnectAircraftData *>(&objectData->dwData);
-                AircraftData aircraftData = simConnectAircraftData->toAircraftData();
-                aircraftData.timestamp = skyConnect->getCurrentTimestamp();
-                userAircraft.upsert(aircraftData);
+                PositionData positionData = simConnectAircraftData->toAircraftData();
+                positionData.timestamp = skyConnect->getCurrentTimestamp();
+                userAircraft.getPosition().upsert(positionData);
                 dataReceived = true;
             }
             break;

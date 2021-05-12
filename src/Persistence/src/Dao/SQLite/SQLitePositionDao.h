@@ -30,7 +30,7 @@
 #include <QObject>
 #include <QVector>
 
-#include "../../../../Model/src/AircraftData.h"
+#include "../../../../Model/src/PositionData.h"
 #include "../PositionDaoIntf.h"
 
 class SQLitePositionDaoPrivate;
@@ -41,8 +41,8 @@ public:
     explicit SQLitePositionDao(QObject *parent = nullptr) noexcept;
     virtual ~SQLitePositionDao() noexcept;
 
-    virtual bool add(qint64 aircraftId, const AircraftData &data) noexcept override;
-    virtual bool getByAircraftId(qint64 aircraftId, QVector<AircraftData> &data) const noexcept override;
+    virtual bool add(qint64 aircraftId, const PositionData &data) noexcept override;
+    virtual bool getByAircraftId(qint64 aircraftId, QVector<PositionData> &data) const noexcept override;
     virtual bool deleteByFlightId(qint64 flightId) noexcept override;
 
 private:
