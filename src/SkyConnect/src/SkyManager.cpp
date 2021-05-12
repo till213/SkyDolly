@@ -39,18 +39,15 @@ public:
 #ifdef WIN32
     SkyManagerPrivate() noexcept
         : currentSkyConnect(std::make_unique<SkyConnectImpl>())
-    {
-    }
+    {}
 #else
     SkyManagerPrivate() noexcept
         : currentSkyConnect(std::make_unique<SkyConnectDummy>())
-    {
-    }
+    {}
 #endif
 
     ~SkyManagerPrivate() noexcept
-    {
-    }
+    {}
 
     std::unique_ptr<SkyConnectIntf> currentSkyConnect;
 

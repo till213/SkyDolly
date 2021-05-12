@@ -154,10 +154,10 @@ void SkyConnectDummy::onRecordSampleRateChanged(SampleRate::SampleRate sampleRat
     Q_UNUSED(sampleRate)
 }
 
-bool SkyConnectDummy::sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept
+bool SkyConnectDummy::sendPositionData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept
 {
     Q_UNUSED(currentTimestamp)
-    return sendAircraftData(access);
+    return sendPositionData(access);
 }
 
 bool SkyConnectDummy::isConnectedWithSim() const noexcept
@@ -195,7 +195,7 @@ void SkyConnectDummy::frenchConnection() noexcept
             this, &SkyConnectDummy::processEvents);
 }
 
-bool SkyConnectDummy::sendAircraftData(TimeVariableData::Access access) noexcept
+bool SkyConnectDummy::sendPositionData(TimeVariableData::Access access) noexcept
 {
     bool dataAvailable;
     const qint64 currentTimestamp = getCurrentTimestamp();
@@ -455,7 +455,7 @@ void SkyConnectDummy::recordAircraftInfo() noexcept
 
 void SkyConnectDummy::replay() noexcept
 {
-    if (!sendAircraftData(TimeVariableData::Access::Linear)) {
+    if (!sendPositionData(TimeVariableData::Access::Linear)) {
         stopReplay();
     }
 }

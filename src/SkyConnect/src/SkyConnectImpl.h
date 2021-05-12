@@ -35,7 +35,7 @@
 #include "../../Kernel/src/SampleRate.h"
 #include "AbstractSkyConnect.h"
 
-struct AircraftData;
+struct PositionData;
 class Aircraft;
 class SkyConnectPrivate;
 
@@ -58,7 +58,7 @@ protected:
     virtual void onSeek(qint64 currentTimestamp) noexcept override;
     virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
 
-    virtual bool sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept override;
+    virtual bool sendPositionData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept override;
     virtual bool connectWithSim() noexcept override;
     virtual bool isConnectedWithSim() const noexcept override;
 
@@ -74,6 +74,7 @@ private:
     void setupInitialPosition() noexcept;
     void setSimulationFrozen(bool enable) noexcept;
     bool isSimulationFrozen() const noexcept;
+    bool sendPositionData(TimeVariableData::Access access) noexcept;
     void replay() noexcept;
     void updateRecordFrequency(SampleRate::SampleRate sampleRate) noexcept;
     void updateRequestPeriod(::SIMCONNECT_PERIOD period);
