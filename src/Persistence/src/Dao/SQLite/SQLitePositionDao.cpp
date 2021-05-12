@@ -32,7 +32,7 @@
 #include <QSqlRecord>
 
 #include "../../../../Kernel/src/Enum.h"
-#include "../../../../Model/src/AircraftData.h"
+#include "../../../../Model/src/PositionData.h"
 #include "../../ConnectionManager.h"
 #include "SQLitePositionDao.h"
 
@@ -133,7 +133,7 @@ SQLitePositionDao::SQLitePositionDao(QObject *parent) noexcept
 SQLitePositionDao::~SQLitePositionDao() noexcept
 {}
 
-bool SQLitePositionDao::add(qint64 aircraftId, const AircraftData &position)  noexcept
+bool SQLitePositionDao::add(qint64 aircraftId, const PositionData &position)  noexcept
 {
     d->initQueries();
     d->insertQuery->bindValue(":aircraft_id", aircraftId);
@@ -161,7 +161,7 @@ bool SQLitePositionDao::add(qint64 aircraftId, const AircraftData &position)  no
     return ok;
 }
 
-bool SQLitePositionDao::getByAircraftId(qint64 aircraftId, QVector<AircraftData> &aircraftData) const noexcept
+bool SQLitePositionDao::getByAircraftId(qint64 aircraftId, QVector<PositionData> &aircraftData) const noexcept
 {
     d->initQueries();
     d->selectByAircraftIdQuery->bindValue(":aircraft_id", aircraftId);
@@ -183,7 +183,7 @@ bool SQLitePositionDao::getByAircraftId(qint64 aircraftId, QVector<AircraftData>
         const int rotationVelocityZIdx = d->selectByAircraftIdQuery->record().indexOf("rotation_velocity_z");
         while (d->selectByAircraftIdQuery->next()) {
 
-            AircraftData data;
+            PositionData data;
 
             data.timestamp = d->selectByAircraftIdQuery->value(timestampIdx).toLongLong();
             data.latitude = d->selectByAircraftIdQuery->value(latitudeIdx).toDouble();

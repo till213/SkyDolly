@@ -34,7 +34,6 @@ SecondaryFlightControlData::SecondaryFlightControlData() noexcept
       trailingEdgeFlapsRightPercent(0),
       spoilersHandlePosition(0.0),
       flapsHandleIndex(0)
-{
-}
+{}
 
 const SecondaryFlightControlData SecondaryFlightControlData::NullSecondaryFlightControlData = SecondaryFlightControlData();

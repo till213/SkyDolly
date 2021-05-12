@@ -58,12 +58,10 @@ public:
 SecondaryFlightControl::SecondaryFlightControl(QObject *parent) noexcept
     : QObject(parent),
       d(std::make_unique<SecondaryFlightControlPrivate>())
-{
-}
+{}
 
 SecondaryFlightControl::~SecondaryFlightControl() noexcept
-{
-}
+{}
 
 void SecondaryFlightControl::upsert(const SecondaryFlightControlData &secondaryFlightControlData) noexcept
 {

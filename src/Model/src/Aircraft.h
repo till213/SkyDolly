@@ -36,7 +36,7 @@ class QDateTime;
 #include "AircraftInfo.h"
 #include "Engine.h"
 
-struct AircraftData;
+class Position;
 class PrimaryFlightControl;
 class SecondaryFlightControl;
 class AircraftHandle;
@@ -53,6 +53,9 @@ public:
 
     void setId(qint64 id) noexcept;
     qint64 getId() const noexcept;
+
+    const Position &getPositionConst() const noexcept;
+    Position &getPosition() const noexcept;
 
     const Engine &getEngineConst() const noexcept;
     Engine &getEngine() const noexcept;
@@ -74,12 +77,6 @@ public:
 
     const FlightPlan &getFlightPlanConst() const noexcept;
     FlightPlan &getFlightPlan() const noexcept;
-
-    void upsert(AircraftData &aircraftData) noexcept;
-    const AircraftData &getLast() const noexcept;
-    const QVector<AircraftData> &getAllConst() const noexcept;
-    QVector<AircraftData> &getAll() const noexcept;
-    const AircraftData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
     qint64 getDurationMSec() const noexcept;
     bool hasRecording() const noexcept;

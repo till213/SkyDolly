@@ -32,7 +32,7 @@
 #include "../../Model/src/TimeVariableData.h"
 #include "AbstractSkyConnect.h"
 
-struct AircraftData;
+struct PositionData;
 class Aircraft;
 class SkyConnectDummyPrivate;
 

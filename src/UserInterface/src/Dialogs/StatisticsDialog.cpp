@@ -29,7 +29,8 @@
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"
-#include "../../../Model/src/AircraftData.h"
+#include "../../../Model/src/Position.h"
+#include "../../../Model/src/PositionData.h"
 #include "../../../Model/src/Engine.h"
 #include "../../../Model/src/EngineData.h"
 #include "../../../Model/src/PrimaryFlightControl.h"
@@ -126,7 +127,7 @@ void StatisticsDialog::updateRecordUi() noexcept
     } else {
         ui->samplesPerSecondLineEdit->clear();
     }
-    const QVector<AircraftData> &aircraftData = aircraft.getAllConst();
+    const QVector<PositionData> &aircraftData = aircraft.getPosition().getAllConst();
     const QVector<EngineData> &engineData = aircraft.getEngine().getAllConst();
     const QVector<PrimaryFlightControlData> &primaryFlightControlData = aircraft.getPrimaryFlightControl().getAllConst();
     const QVector<SecondaryFlightControlData> &secondaryFlightControlData = aircraft.getSecondaryFlightControl().getAllConst();
@@ -137,7 +138,7 @@ void StatisticsDialog::updateRecordUi() noexcept
 
     ui->durationLineEdit->setText(d->unit.formatElapsedTime(flight.getTotalDurationMSec()));
 
-    const qint64 aircraftDataSize = aircraftData.count()  * sizeof(AircraftData);
+    const qint64 aircraftDataSize = aircraftData.count()  * sizeof(PositionData);
     const qint64 engineDataSize = engineData.count()  * sizeof(EngineData);
     const qint64 primaryFlightControlDataSize = primaryFlightControlData.count()  * sizeof(PrimaryFlightControlData);
     const qint64 secondaryFlightControlDataSize = secondaryFlightControlData.count()  * sizeof(SecondaryFlightControlData);

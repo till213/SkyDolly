@@ -25,7 +25,7 @@
 #include <QtTest/QtTest>
 #include <QVector>
 
-#include "../../Model/src/AircraftData.h"
+#include "../../Model/src/PositionData.h"
 #include "../../Model/src/SkySearch.h"
 #include "SkySearchTest.h"
 
@@ -41,13 +41,13 @@ namespace
 
 void SkySearchTest::initTestCase()
 {
-    AircraftData data1;
+    PositionData data1;
     data1.timestamp = t0;
-    AircraftData data2;
+    PositionData data2;
     data2.timestamp = t1;
-    AircraftData data3;
+    PositionData data3;
     data3.timestamp = t2;
-    AircraftData data4;
+    PositionData data4;
     data4.timestamp = t3;
 
     m_aircraftData.append(data1);

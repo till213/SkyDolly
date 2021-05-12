@@ -22,33 +22,40 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SKYSEARCHTEST_H
-#define SKYSEARCHTEST_H
+#ifndef POSITIONDATA_H
+#define POSITIONDATA_H
 
-#include <QObject>
-#include <QVector>
+#include <QtGlobal>
+#include <QFlags>
 
-#include "../../Model/src/PositionData.h"
+#include "TimeVariableData.h"
+#include "ModelLib.h"
 
-/*!
- * Test cases for the SkySearch module.
- */
-class SkySearchTest : public QObject
+struct MODEL_API PositionData : public TimeVariableData
 {
-    Q_OBJECT
+    // Position
+    double latitude;
+    double longitude;
+    double altitude;
+    double pitch;
+    double bank;
+    double heading;
 
-private slots:
-    void initTestCase();
-    void cleanupTestCase();
+    // Velocity
+    double velocityBodyX;
+    double velocityBodyY;
+    double velocityBodyZ;
+    double rotationVelocityBodyX;
+    double rotationVelocityBodyY;
+    double rotationVelocityBodyZ;
 
-    void binaryIntervalSearch_data();
-    void binaryIntervalSearch();
+    PositionData(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
 
-    void linearIntervalSearch_data();
-    void linearIntervalSearch();
+    PositionData(PositionData &&) = default;
+    PositionData(const PositionData &) = default;
+    PositionData &operator= (const PositionData &) = default;
 
-private:
-     QVector<PositionData> m_aircraftData;
+    static const PositionData NullPositionData;
 };
 
-#endif // SKYSEARCHTEST_H
+#endif // POSITIONDATA_H
