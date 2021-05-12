@@ -252,7 +252,7 @@ void MainWindow::frenchConnection() noexcept
     // Ui elements
     connect(d->customSpeedLineEdit, &QLineEdit::editingFinished,
             this, &MainWindow::handleCustomSpeedChanged);
-    connect(d->replaySpeedUnitComboBox, &QComboBox::currentIndexChanged,
+    connect(d->replaySpeedUnitComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &MainWindow::handleReplaySpeedUnitSelected);
 
     // Actions
