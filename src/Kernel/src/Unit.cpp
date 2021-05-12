@@ -54,12 +54,10 @@ public:
 
 Unit::Unit()
     : d(std::make_unique<UnitPrivate>())
-{
-}
+{}
 
 Unit::~Unit()
-{
-}
+{}
 
 QString Unit::formatLatitude(double latitude) noexcept
 {

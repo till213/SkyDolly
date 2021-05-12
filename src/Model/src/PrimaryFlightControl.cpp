@@ -82,12 +82,10 @@ public:
 PrimaryFlightControl::PrimaryFlightControl(QObject *parent) noexcept
     : QObject(parent),
       d(std::make_unique<PrimaryFlightControlPrivate>())
-{
-}
+{}
 
 PrimaryFlightControl::~PrimaryFlightControl() noexcept
-{
-}
+{}
 
 void PrimaryFlightControl::upsert(const PrimaryFlightControlData &primaryFlightControlData) noexcept
 {
