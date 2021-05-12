@@ -5,6 +5,7 @@
 ### Bug Fixes
 
 - Fix "logboog" typo in preview message
+- Improve minimal UI switching
 
 ## 0.6.0
 
