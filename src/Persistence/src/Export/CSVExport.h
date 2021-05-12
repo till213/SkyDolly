@@ -29,7 +29,7 @@ class QString;
 class QIODevice;
 
 class Aircraft;
-class AircraftData;
+class PositionData;
 class EngineData;
 class PrimaryFlightControlData;
 class SecondaryFlightControlData;
@@ -49,7 +49,7 @@ private:
     CSVExportPrivate *d;
 
     static QString getAircraftHeader() noexcept;
-    static QString getAircraftData(const AircraftData &data) noexcept;
+    static QString getAircraftData(const PositionData &data) noexcept;
 
     static QString getEngineHeader() noexcept;
     static QString getEngineData(const EngineData &data) noexcept;

@@ -33,7 +33,7 @@ class QShowEvent;
 class QHideEvent;
 
 class SkyConnectIntf;
-class AircraftData;
+class PositionData;
 class AircraftWidgetPrivate;
 
 namespace Ui {
@@ -57,7 +57,7 @@ private:
     std::unique_ptr<Ui::AircraftWidget> ui;
 
     void initUi() noexcept;
-    const AircraftData &getCurrentAircraftData(qint64 timestamp, TimeVariableData::Access access) const noexcept;
+    const PositionData &getCurrentAircraftData(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
 private slots:
     void updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept;

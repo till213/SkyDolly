@@ -22,40 +22,28 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef AIRCRAFTDATA_H
-#define AIRCRAFTDATA_H
-
-#include <QtGlobal>
 #include <QFlags>
 
-#include "TimeVariableData.h"
-#include "ModelLib.h"
+#include "SimType.h"
+#include "PositionData.h"
 
-struct MODEL_API AircraftData : public TimeVariableData
+// PUBLIC
+
+PositionData::PositionData(double latitude, double longitude, double altitude) noexcept
+    : TimeVariableData(),
+      pitch(0.0),
+      bank(0.0),
+      heading(0.0),
+      velocityBodyX(0.0),
+      velocityBodyY(0.0),
+      velocityBodyZ(0.0),
+      rotationVelocityBodyX(0.0),
+      rotationVelocityBodyY(0.0),
+      rotationVelocityBodyZ(0.0)
 {
-    // Position
-    double latitude;
-    double longitude;
-    double altitude;
-    double pitch;
-    double bank;
-    double heading;
+    this->latitude = latitude;
+    this->longitude = longitude;
+    this->altitude = altitude;
+}
 
-    // Velocity
-    double velocityBodyX;
-    double velocityBodyY;
-    double velocityBodyZ;
-    double rotationVelocityBodyX;
-    double rotationVelocityBodyY;
-    double rotationVelocityBodyZ;
-
-    AircraftData(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
-
-    AircraftData(AircraftData &&) = default;
-    AircraftData(const AircraftData &) = default;
-    AircraftData &operator= (const AircraftData &) = default;
-
-    static const AircraftData NullAircraftData;
-};
-
-#endif // AIRCRAFTDATA_H
+const PositionData PositionData::NullPositionData = PositionData(0.0, 0.0, 0.0);

@@ -1574,7 +1574,7 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/StatisticsDialog.cpp" line="120"/>
+        <location filename="../src/UserInterface/src/Dialogs/StatisticsDialog.cpp" line="121"/>
         <source>Auto</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1582,42 +1582,42 @@ MIT License</source>
 <context>
     <name>Unit</name>
     <message>
-        <location filename="../src/Kernel/src/Unit.cpp" line="72"/>
+        <location filename="../src/Kernel/src/Unit.cpp" line="70"/>
         <source>N</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/Unit.cpp" line="72"/>
+        <location filename="../src/Kernel/src/Unit.cpp" line="70"/>
         <source>S</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/Unit.cpp" line="83"/>
+        <location filename="../src/Kernel/src/Unit.cpp" line="81"/>
         <source>E</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/Unit.cpp" line="83"/>
+        <location filename="../src/Kernel/src/Unit.cpp" line="81"/>
         <source>W</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/Unit.cpp" line="106"/>
+        <location filename="../src/Kernel/src/Unit.cpp" line="104"/>
         <source>Fog (&lt; 3,300 ft)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/Unit.cpp" line="108"/>
+        <location filename="../src/Kernel/src/Unit.cpp" line="106"/>
         <source>Mist (&lt; 1.2 mi)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/Unit.cpp" line="110"/>
+        <location filename="../src/Kernel/src/Unit.cpp" line="108"/>
         <source>Haze (&lt; 3.1 mi)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Kernel/src/Unit.cpp" line="112"/>
+        <location filename="../src/Kernel/src/Unit.cpp" line="110"/>
         <source>Clear (&gt;= 3.1 mi)</source>
         <translation type="unfinished"></translation>
     </message>

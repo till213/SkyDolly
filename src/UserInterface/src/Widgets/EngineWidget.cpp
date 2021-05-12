@@ -34,7 +34,7 @@
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"
-#include "../../../Model/src/AircraftData.h"
+#include "../../../Model/src/PositionData.h"
 #include "../../../Model/src/EngineData.h"
 #include "../../../Model/src/TimeVariableData.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"

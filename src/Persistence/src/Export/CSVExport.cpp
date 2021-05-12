@@ -30,7 +30,8 @@
 #include "../../../Kernel/src/Enum.h"
 #include "../../../Model/src/SimVar.h"
 #include "../../../Model/src/Aircraft.h"
-#include "../../../Model/src/AircraftData.h"
+#include "../../../Model/src/Position.h"
+#include "../../../Model/src/PositionData.h"
 #include "../../../Model/src/Engine.h"
 #include "../../../Model/src/EngineData.h"
 #include "../../../Model/src/PrimaryFlightControl.h"
@@ -63,7 +64,7 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
 
         ok = io.write(csv.toUtf8());
         if (ok) {
-            const AircraftData aircraftData;
+            const PositionData aircraftData;
             const EngineData engineData;
             const PrimaryFlightControlData primaryFlightControlData;
             const SecondaryFlightControlData secondaryFlightControlData;
@@ -71,7 +72,7 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
             const LightData lightData;
 
             // Aircraft data
-            for (const AircraftData &data : aircraft.getAllConst()) {
+            for (const PositionData &data : aircraft.getPositionConst().getAllConst()) {
                 csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::Aircraft)) % CSVConst::Sep %
                       getAircraftData(data) % CSVConst::Sep %
                       getEngineData(engineData) % CSVConst::Sep %
@@ -189,7 +190,7 @@ inline QString CSVExport::getAircraftHeader() noexcept
            QString(SimVar::RotationVelocityBodyZ);
 }
 
-inline QString CSVExport::getAircraftData(const AircraftData &data) noexcept
+inline QString CSVExport::getAircraftData(const PositionData &data) noexcept
 {
     QString csv;
     if (!data.isNull()) {

@@ -29,7 +29,7 @@
 
 #include "../../Kernel/src/SkyMath.h"
 #include "../../Model/src/SimType.h"
-#include "../../Model/src/AircraftData.h"
+#include "../../Model/src/PositionData.h"
 
 /*!
  * Simulation variables which represent the aircraft's position, attitude and velocities.
@@ -55,9 +55,9 @@ struct SimConnectAircraftData
     double rotationVelocityBodyY;
     double rotationVelocityBodyZ;
 
-    inline AircraftData toAircraftData() const noexcept
+    inline PositionData toAircraftData() const noexcept
     {
-        AircraftData aircraftData;
+        PositionData aircraftData;
 
         aircraftData.latitude = latitude;
         aircraftData.longitude = longitude;
@@ -76,7 +76,7 @@ struct SimConnectAircraftData
         return aircraftData;
     }
 
-    inline void fromAircraftData(const AircraftData &aircraftData) noexcept
+    inline void fromAircraftData(const PositionData &aircraftData) noexcept
     {
         latitude = aircraftData.latitude;
         longitude = aircraftData.longitude;

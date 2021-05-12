@@ -56,12 +56,10 @@ public:
 Engine::Engine(QObject *parent) noexcept
     : QObject(parent),
       d(std::make_unique<EnginePrivate>())
-{
-}
+{}
 
 Engine::~Engine() noexcept
-{
-}
+{}
 
 void Engine::upsert(const EngineData &engineData) noexcept
 {

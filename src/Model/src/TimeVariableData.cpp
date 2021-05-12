@@ -26,5 +26,4 @@
 
 TimeVariableData::TimeVariableData() noexcept
     : timestamp(InvalidTime)
-{
-}
+{}

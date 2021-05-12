@@ -57,7 +57,7 @@
 #include "../../Kernel/src/Enum.h"
 #include "../../Kernel/src/SampleRate.h"
 #include "../../Model/src/Aircraft.h"
-#include "../../Model/src/AircraftData.h"
+#include "../../Model/src/PositionData.h"
 #include "../../Model/src/AircraftInfo.h"
 #include "../../Model/src/Logbook.h"
 #include "../../Persistence/src/Dao/DaoFactory.h"

@@ -30,7 +30,7 @@
 #include <QVector>
 
 #include "TimeVariableData.h"
-#include "AircraftData.h"
+#include "PositionData.h"
 
 namespace SkySearch {
 

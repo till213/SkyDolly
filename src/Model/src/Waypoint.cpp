@@ -32,8 +32,7 @@ Waypoint::Waypoint() noexcept
       latitude(0.0f),
       longitude(0.0f),
       altitude(0.0f)
-{
-}
+{}
 
 bool Waypoint::isValid() const noexcept
 {
