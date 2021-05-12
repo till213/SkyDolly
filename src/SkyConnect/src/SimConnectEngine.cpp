@@ -29,9 +29,9 @@
 #include "../../Kernel/src/Enum.h"
 #include "../../Model/src/SimVar.h"
 #include "SimConnectType.h"
-#include "SimConnectEngineData.h"
+#include "SimConnectEngine.h"
 
-void SimConnectEngineData::addToDataDefinition(HANDLE simConnectHandle) noexcept
+void SimConnectEngine::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftEngineDefinition), SimVar::ThrottleLeverPosition1, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftEngineDefinition), SimVar::ThrottleLeverPosition2, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);

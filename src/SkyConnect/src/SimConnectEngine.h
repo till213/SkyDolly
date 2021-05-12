@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTENGINEDATA_H
-#define SIMCONNECTENGINEDATA_H
+#ifndef SIMCONNECTENGINE_H
+#define SIMCONNECTENGINE_H
 
 #include <windows.h>
 
@@ -37,7 +37,7 @@
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectEngineData
+struct SimConnectEngine
 {
     double throttleLeverPosition1;
     double throttleLeverPosition2;
@@ -130,4 +130,4 @@ struct SimConnectEngineData
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTENGINEDATA_H
+#endif // SIMCONNECTENGINE_H
