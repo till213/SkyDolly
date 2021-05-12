@@ -37,7 +37,7 @@
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectAircraftHandleData
+struct SimConnectAircraftHandle
 {
     // Gear, brakes & handles
     double brakeLeftPosition;

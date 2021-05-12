@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTPRIMARYFLIGHTCONTROLDATA_H
-#define SIMCONNECTPRIMARYFLIGHTCONTROLDATA_H
+#ifndef SIMCONNECTPRIMARYFLIGHTCONTROL_H
+#define SIMCONNECTPRIMARYFLIGHTCONTROL_H
 
 #include <windows.h>
 
@@ -37,7 +37,7 @@
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectPrimaryFlightControlData
+struct SimConnectPrimaryFlightControl
 {
     double rudderPosition;
     double elevatorPosition;
@@ -65,4 +65,4 @@ struct SimConnectPrimaryFlightControlData
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTPRIMARYFLIGHTCONTROLDATA_H
+#endif // SIMCONNECTPRIMARYFLIGHTCONTROL_H

@@ -22,41 +22,18 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTLIGHTDATA_H
-#define SIMCONNECTLIGHTDATA_H
-
 #include <windows.h>
 
-#include "../../Model/src/SimType.h"
-#include "../../Model/src/LightData.h"
+#include <SimConnect.h>
 
-/*!
- * Simulation variables which represent aircraft lights, e.g. navigation light
- * and taxi light.
- *
- * Implementation note: this struct needs to be packed.
- */
-#pragma pack(push, 1)
-struct SimConnectLightData
+#include "../../Kernel/src/Enum.h"
+#include "../../Model/src/SimVar.h"
+#include "SimConnectType.h"
+#include "SimConnectPrimaryFlightControl.h"
+
+void SimConnectPrimaryFlightControl::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
-    qint32 lightStates;
-
-    inline LightData toLightData() const noexcept
-    {
-        LightData lightData;
-
-        lightData.lightStates = SimType::LightStates(lightStates);
-
-        return lightData;
-    }
-
-    inline void fromLightData(const LightData &lightData) noexcept
-    {
-        lightStates = lightData.lightStates;
-    }
-
-    static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
-};
-#pragma pack(pop)
-
-#endif // SIMCONNECTLIGHTDATA_H
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPrimaryFlightControlDefinition), SimVar::RudderPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPrimaryFlightControlDefinition), SimVar::ElevatorPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPrimaryFlightControlDefinition), SimVar::AileronPosition, "Position", ::SIMCONNECT_DATATYPE_FLOAT64);
+}
