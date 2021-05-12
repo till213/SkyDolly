@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0
+
+### New Features
+
+- Reduced data size of requested simulation variables
+
 ## 0.6.1
 
 ### Bug Fixes
