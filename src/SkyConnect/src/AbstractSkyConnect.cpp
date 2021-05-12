@@ -82,8 +82,7 @@ AbstractSkyConnect::AbstractSkyConnect(QObject *parent) noexcept
 }
 
 AbstractSkyConnect::~AbstractSkyConnect() noexcept
-{
-}
+{}
 
 void AbstractSkyConnect::startRecording() noexcept
 {
@@ -248,7 +247,7 @@ void AbstractSkyConnect::seek(qint64 timestamp) noexcept
         d->currentTimestamp = timestamp;
         d->elapsedTime = timestamp;
         emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Seek);
-        if (sendAircraftData(timestamp, TimeVariableData::Access::Seek)) {
+        if (sendPositionData(timestamp, TimeVariableData::Access::Seek)) {
             if (d->elapsedTimer.isValid()) {
                 // Restart the elapsed timer, counting onwards from the newly
                 // set timestamp

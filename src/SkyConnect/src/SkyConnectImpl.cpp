@@ -42,7 +42,9 @@
 #include "../../Model/src/Flight.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/AircraftInfo.h"
-#include "../../Model/src/AircraftData.h"
+#include "../../Model/src/Position.h"
+#include "../../Model/src/PositionData.h"
+#include "../../Model/src/Engine.h"
 #include "../../Model/src/EngineData.h"
 #include "../../Model/src/PrimaryFlightControl.h"
 #include "../../Model/src/PrimaryFlightControlData.h"
@@ -56,7 +58,7 @@
 #include "../../Model/src/Waypoint.h"
 #include "SimConnectType.h"
 #include "SimConnectAircraftInfo.h"
-#include "SimConnectAircraftData.h"
+#include "SimConnectPosition.h"
 #include "SimConnectEngineData.h"
 #include "SimConnectPrimaryFlightControlData.h"
 #include "SimConnectSecondaryFlightControlData.h"
@@ -104,8 +106,7 @@ public:
           simConnectHandle(nullptr),
           frozen(false),
           eventWidget(nullptr)
-    {
-    }
+    {}
 
     QDateTime currentLocalDateTime;
     QDateTime currentZuluDateTime;
@@ -171,7 +172,7 @@ void SkyConnectImpl::onStopRecording() noexcept
         flightPlan.update(waypointCount - 1, waypoint);
     } else if (waypointCount == 0) {
         Waypoint waypoint;
-        AircraftData position = userAircraft.getAllConst().at(0);
+        PositionData position = userAircraft.getPositionConst().getAllConst().at(0);
         waypoint.identifier = "CUSTD";
         waypoint.latitude = position.latitude;
         waypoint.longitude = position.longitude;
@@ -180,7 +181,7 @@ void SkyConnectImpl::onStopRecording() noexcept
         waypoint.zuluTime = flight.getFlightConditionConst().startZuluTime;
         waypoint.timestamp = 0;
         flightPlan.add(waypoint);
-        position = userAircraft.getLast();
+        position = userAircraft.getPositionConst().getLast();
         waypoint.identifier = "CUSTA";
         waypoint.latitude = position.latitude;
         waypoint.longitude = position.longitude;
@@ -249,10 +250,10 @@ void SkyConnectImpl::onRecordSampleRateChanged(SampleRate::SampleRate sampleRate
      updateRecordFrequency(sampleRate);
 }
 
-bool SkyConnectImpl::sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept
+bool SkyConnectImpl::sendPositionData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept
 {
     Q_UNUSED(currentTimestamp)
-    return sendAircraftData(access);
+    return sendPositionData(access);
 }
 
 bool SkyConnectImpl::connectWithSim() noexcept
@@ -317,7 +318,7 @@ void SkyConnectImpl::setupRequestData() noexcept
 {
     // Request data
     SimConnectAircraftInfo::addToDataDefinition(d->simConnectHandle);
-    SimConnectAircraftData::addToDataDefinition(d->simConnectHandle);
+    SimConnectPosition::addToDataDefinition(d->simConnectHandle);
     SimConnectEngineData::addToDataDefinition(d->simConnectHandle);
     SimConnectPrimaryFlightControlData::addToDataDefinition(d->simConnectHandle);
     SimConnectSecondaryFlightControlData::addToDataDefinition(d->simConnectHandle);
@@ -342,17 +343,17 @@ void SkyConnectImpl::setupRequestData() noexcept
 void SkyConnectImpl::setupInitialPosition() noexcept
 {
     const Aircraft &userAircraft = getCurrentFlight().getUserAircraftConst();
-    const AircraftData &aircraftData = userAircraft.interpolate(0, TimeVariableData::Access::Seek);
-    if (!aircraftData.isNull()) {
+    const PositionData &positionData = userAircraft.getPositionConst().interpolate(0, TimeVariableData::Access::Seek);
+    if (!positionData.isNull()) {
         // Set initial position
         SIMCONNECT_DATA_INITPOSITION initialPosition;
 
-        initialPosition.Latitude = aircraftData.latitude;
-        initialPosition.Longitude = aircraftData.longitude;
-        initialPosition.Altitude = aircraftData.altitude;
-        initialPosition.Pitch = aircraftData.pitch;
-        initialPosition.Bank = aircraftData.bank;
-        initialPosition.Heading = aircraftData.heading;
+        initialPosition.Latitude = positionData.latitude;
+        initialPosition.Longitude = positionData.longitude;
+        initialPosition.Altitude = positionData.altitude;
+        initialPosition.Pitch = positionData.pitch;
+        initialPosition.Bank = positionData.bank;
+        initialPosition.Heading = positionData.heading;
         initialPosition.OnGround = userAircraft.getAircraftInfoConst().startOnGround ? 1 : 0;
         initialPosition.Airspeed = userAircraft.getAircraftInfoConst().initialAirspeed;
 
@@ -377,7 +378,7 @@ bool SkyConnectImpl::isSimulationFrozen() const noexcept
     return d->frozen;
 }
 
-bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
+bool SkyConnectImpl::sendPositionData(TimeVariableData::Access access) noexcept
 {
     bool success;
     const Aircraft &userAircraft = getCurrentFlight().getUserAircraftConst();
@@ -386,13 +387,13 @@ bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
     if (currentTimestamp <= getCurrentFlight().getTotalDurationMSec()) {
 
         success = true;
-        const AircraftData &currentAircraftData = userAircraft.interpolate(currentTimestamp, access);
-        if (!currentAircraftData.isNull()) {
-            SimConnectAircraftData simConnectAircraftData;
-            simConnectAircraftData.fromAircraftData(currentAircraftData);
+        const PositionData &currentPositionData = userAircraft.getPositionConst().interpolate(currentTimestamp, access);
+        if (!currentPositionData.isNull()) {
+            SimConnectPosition simConnectPositionData;
+            simConnectPositionData.fromPositionData(currentPositionData);
             const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionDefinition),
                                                                ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
-                                                               sizeof(SimConnectAircraftData), &simConnectAircraftData);
+                                                               sizeof(SimConnectPosition), &simConnectPositionData);
             success = res == S_OK;
         }
 
@@ -475,7 +476,7 @@ bool SkyConnectImpl::sendAircraftData(TimeVariableData::Access access) noexcept
 
 void SkyConnectImpl::replay() noexcept
 {
-    if (!sendAircraftData(TimeVariableData::Access::Linear)) {
+    if (!sendPositionData(TimeVariableData::Access::Linear)) {
         stopReplay();
     }
 }
@@ -618,12 +619,12 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
         switch (static_cast<DataRequest>(objectData->dwRequestID)) {
         case DataRequest::AircraftPosition:
         {
-            const SimConnectAircraftData *simConnectAircraftData;
+            const SimConnectPosition *simConnectPositionData;
             if (skyConnect->getState() == Connect::State::Recording) {
-                simConnectAircraftData = reinterpret_cast<const SimConnectAircraftData *>(&objectData->dwData);
-                AircraftData aircraftData = simConnectAircraftData->toAircraftData();
-                aircraftData.timestamp = skyConnect->getCurrentTimestamp();
-                userAircraft.upsert(aircraftData);
+                simConnectPositionData = reinterpret_cast<const SimConnectPosition *>(&objectData->dwData);
+                PositionData positionData = simConnectPositionData->toPositionData();
+                positionData.timestamp = skyConnect->getCurrentTimestamp();
+                userAircraft.getPosition().upsert(positionData);
                 dataReceived = true;
             }
             break;
