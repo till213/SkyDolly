@@ -4,7 +4,7 @@ Sky Dolly - The black sheep for your flight recordings.
 ## About
 Sky Dolly connects to a running Flight Simulator 2020 instance and records various simulation variables, for replay.
 
-![Sky Dolly v0.5.0](./img/SkyDolly-v0.5.0.png)
+![Sky Dolly v0.5.0](./img/SkyDolly-v0.6.0.png)
 
 The connection is made via SimConnect, a standard API introduced with Flight Simulator X to connect with the flight simulator.
 
@@ -35,7 +35,7 @@ Why don't you try it with one of the guided ["Tell Tours"](https://github.com/ti
 
 Go to [Releases](https://github.com/till213/SkyDolly/releases) and download the latest release.
 
-Latest (pre-)release: **Sky Dolly 0.5.2**
+Latest (pre-)release: **Sky Dolly 0.6.0**
 
 ## Build
 
