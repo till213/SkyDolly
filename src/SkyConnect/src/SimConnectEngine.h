@@ -39,22 +39,22 @@
 #pragma pack(push, 1)
 struct SimConnectEngine
 {
-    double throttleLeverPosition1;
-    double throttleLeverPosition2;
-    double throttleLeverPosition3;
-    double throttleLeverPosition4;
-    double propellerLeverPosition1;
-    double propellerLeverPosition2;
-    double propellerLeverPosition3;
-    double propellerLeverPosition4;
-    double mixtureLeverPosition1;
-    double mixtureLeverPosition2;
-    double mixtureLeverPosition3;
-    double mixtureLeverPosition4;
-    double recipEngineCowlFlapPosition1;
-    double recipEngineCowlFlapPosition2;
-    double recipEngineCowlFlapPosition3;
-    double recipEngineCowlFlapPosition4;
+    float throttleLeverPosition1;
+    float throttleLeverPosition2;
+    float throttleLeverPosition3;
+    float throttleLeverPosition4;
+    float propellerLeverPosition1;
+    float propellerLeverPosition2;
+    float propellerLeverPosition3;
+    float propellerLeverPosition4;
+    float mixtureLeverPosition1;
+    float mixtureLeverPosition2;
+    float mixtureLeverPosition3;
+    float mixtureLeverPosition4;
+    float recipEngineCowlFlapPosition1;
+    float recipEngineCowlFlapPosition2;
+    float recipEngineCowlFlapPosition3;
+    float recipEngineCowlFlapPosition4;
     qint32 electricalMasterBattery1;
     qint32 electricalMasterBattery2;
     qint32 electricalMasterBattery3;
