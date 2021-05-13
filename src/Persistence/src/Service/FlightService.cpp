@@ -133,6 +133,26 @@ bool FlightService::updateTitleAndDescription(qint64 id, const QString &title, c
     return ok;
 }
 
+QVector<FlightDate> FlightService::getFlightDates() const noexcept
+{
+    QVector<FlightDate> flightDates;
+    if (QSqlDatabase::database().transaction()) {
+        // TODO IMPLEMENT ME!!!
+        flightDates.append({2010, 1, 5});
+        flightDates.append({2010, 1, 6});
+        flightDates.append({2010, 5, 6});
+        flightDates.append({2010, 6, 6});
+        flightDates.append({2015, 1, 6});
+        flightDates.append({2016, 5, 20});
+        flightDates.append({2021, 4, 1});
+        flightDates.append({2021, 4, 2});
+        flightDates.append({2021, 4, 3});
+        flightDates.append({2021, 5, 3});
+        QSqlDatabase::database().rollback();
+    }
+    return flightDates;
+}
+
 QVector<FlightSummary> FlightService::getFlightDescriptions() const noexcept
 {
     QVector<FlightSummary> descriptions;
