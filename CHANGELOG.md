@@ -6,7 +6,8 @@
 
 - Fix "logboog" typo in preview message
 - Improve minimal UI switching
-- Don't reset the elapsed time to 0 when pausing a recording
+- Don't reset the elapsed time to 0 when unpausing a recording
+- Keep displayed time when pausing a replay (don't set to total replay time)
 
 ## 0.6.0
 
