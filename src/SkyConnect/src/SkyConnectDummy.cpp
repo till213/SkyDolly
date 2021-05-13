@@ -194,19 +194,22 @@ void SkyConnectDummy::frenchConnection() noexcept
 
 bool SkyConnectDummy::sendAircraftData(TimeVariableData::Access access) noexcept
 {
-    bool success;
-
-    const AircraftData &currentAircraftData = getCurrentFlight().getUserAircraftConst().interpolate(getCurrentTimestamp(), access);
-    if (!currentAircraftData.isNull()) {
-        // Start the elapsed timer after sending the first sample data
-        if (!isElapsedTimerRunning()) {
-            startElapsedTimer();
+    bool dataAvailable;
+    const qint64 currentTimestamp = getCurrentTimestamp();
+    if (currentTimestamp <= getCurrentFlight().getTotalDurationMSec()) {
+        dataAvailable = true;
+        const AircraftData &currentAircraftData = getCurrentFlight().getUserAircraftConst().interpolate(getCurrentTimestamp(), access);
+        if (!currentAircraftData.isNull()) {
+            // Start the elapsed timer after sending the first sample data
+            if (!isElapsedTimerRunning()) {
+                startElapsedTimer();
+            }
         }
-        success = true;
     } else {
-        success = false;
+        // At end of recording
+        dataAvailable = false;
     }
-    return success;
+    return dataAvailable;
 }
 
 void SkyConnectDummy::recordData() noexcept
