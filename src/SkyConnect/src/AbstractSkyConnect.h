@@ -70,6 +70,7 @@ public:
 
     virtual Connect::State getState() const noexcept override;
     virtual bool isConnected() const noexcept override;
+    virtual bool isIdle() const noexcept override;
 
     virtual double calculateRecordedSamplesPerSecond() const noexcept override;
 

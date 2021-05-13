@@ -242,19 +242,28 @@ void AbstractSkyConnect::skipToEnd() noexcept
 
 void AbstractSkyConnect::seek(qint64 timestamp) noexcept
 {
-    d->elapsedTime = d->currentTimestamp;
-    if (getState() != Connect::State::Recording) {
-        d->currentTimestamp = timestamp;
-        d->elapsedTime = timestamp;
-        emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Seek);
-        if (sendAircraftData(timestamp, TimeVariableData::Access::Seek)) {
-            if (d->elapsedTimer.isValid()) {
-                // Restart the elapsed timer, counting onwards from the newly
-                // set timestamp
-                startElapsedTimer();
-            }
-            onSeek(d->currentTimestamp);
+    if (!isConnectedWithSim()) {
+        if (connectWithSim()) {
+            setState(Connect::State::Connected);
         }
+    }
+    if (isConnectedWithSim()) {
+        d->elapsedTime = d->currentTimestamp;
+        if (getState() != Connect::State::Recording) {
+            d->currentTimestamp = timestamp;
+            d->elapsedTime = timestamp;
+            emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Seek);
+            if (sendAircraftData(timestamp, TimeVariableData::Access::Seek)) {
+                if (d->elapsedTimer.isValid()) {
+                    // Restart the elapsed timer, counting onwards from the newly
+                    // set timestamp
+                    startElapsedTimer();
+                }
+                onSeek(d->currentTimestamp);
+            }
+        }
+    } else {
+        setState(Connect::State::Disconnected);
     }
 }
 
@@ -300,6 +309,11 @@ Connect::State AbstractSkyConnect::getState() const noexcept
 bool AbstractSkyConnect::isConnected() const noexcept
 {
     return d->state != Connect::State::Disconnected;
+}
+
+bool AbstractSkyConnect::isIdle() const noexcept
+{
+    return d->state == Connect::State::Connected || d->state == Connect::State::Disconnected;
 }
 
 double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
