@@ -81,8 +81,7 @@ AbstractSkyConnect::AbstractSkyConnect(QObject *parent) noexcept
 }
 
 AbstractSkyConnect::~AbstractSkyConnect() noexcept
-{
-}
+{}
 
 void AbstractSkyConnect::startRecording() noexcept
 {
