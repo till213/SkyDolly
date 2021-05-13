@@ -29,6 +29,8 @@
 #include <QVector>
 #include <QTableWidget>
 #include <QTableWidgetItem>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
 #include <QItemSelectionModel>
 #include <QModelIndex>
 #include <QDateTime>
@@ -40,6 +42,7 @@
 #include "../../../Kernel/src/Unit.h"
 #include "../../../Kernel/src/Settings.h"
 #include "../../../Model/src/Flight.h"
+#include "../../../Model/src/FlightDate.h"
 #include "../../../Model/src/FlightSummary.h"
 #include "../../../Model/src/Logbook.h"
 #include "../../../Persistence/src/Service/DatabaseService.h"
@@ -142,6 +145,8 @@ void LogbookWidget::initUi() noexcept
     ui->logTableWidget->verticalHeader()->hide();
     ui->logTableWidget->setMinimumWidth(MinimumTableWidth);
     ui->logTableWidget->horizontalHeader()->setStretchLastSection(true);
+
+
 }
 
 void LogbookWidget::updateEditUi() noexcept
@@ -233,7 +238,48 @@ void LogbookWidget::updateUi() noexcept
     ui->logTableWidget->resizeColumnsToContents();
     ui->logTableWidget->blockSignals(false);
 
+    updateDateSelectorUi();
     updateEditUi();
+}
+
+void LogbookWidget::updateDateSelectorUi() noexcept
+{
+    QVector<FlightDate> flightDates = d->flightService.getFlightDates();
+    ui->logTreeWidget->blockSignals(true);
+    ui->logTreeWidget->reset();
+
+
+    int currentYear = -1;
+    int i = 0;
+    while (i < flightDates.count()) {
+        const FlightDate &flightbyYear = flightDates.at(i);
+        if (flightbyYear.year != currentYear) {
+            QTreeWidgetItem *yearItem = new QTreeWidgetItem(ui->logTreeWidget, QStringList(QString::number(flightbyYear.year)));
+            QTreeWidgetItem *monthItem = new QTreeWidgetItem(yearItem, QStringList(QString::number(flightbyYear.month)));
+            QTreeWidgetItem *dayItem = new QTreeWidgetItem(monthItem, QStringList(QString::number(flightbyYear.dayOfMonth)));
+            ui->logTreeWidget->addTopLevelItem(yearItem);
+
+            int currentMonth = flightbyYear.month;
+             ++i;
+            while (i < flightDates.count()) {
+                const FlightDate &flightByMonth = flightDates.at(i);
+                if (flightByMonth.year != currentYear) {
+                    break;
+                }
+                if (flightByMonth.month != currentMonth) {
+                    QTreeWidgetItem *monthItem = new QTreeWidgetItem(yearItem, QStringList(QString::number(flightbyYear.month)));
+                    QTreeWidgetItem *dayItem = new QTreeWidgetItem(monthItem, QStringList(QString::number(flightbyYear.dayOfMonth)));
+                }
+                currentMonth = flightbyYear.month;
+                ++i;
+            }
+        }
+        currentYear = flightbyYear.year;
+        ++i;
+    }
+//    for (int i = 0; i < 10; ++i)
+//         items.append(.arg(i))));
+//    ui->logTreeWidget->insertTopLevelItems(0, items);
 }
 
 void LogbookWidget::handleSelectionChanged() noexcept

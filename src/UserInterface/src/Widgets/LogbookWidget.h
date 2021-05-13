@@ -70,6 +70,7 @@ private:
 
 private slots:
     void updateUi() noexcept;
+    void updateDateSelectorUi() noexcept;
     void handleSelectionChanged() noexcept;
     void loadFlight() noexcept;
     void deleteFlight() noexcept;
