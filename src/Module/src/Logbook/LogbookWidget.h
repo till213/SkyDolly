@@ -77,6 +77,7 @@ private slots:
     void updateUi() noexcept;
     void updateEditUi() noexcept;
     void updateAircraftIcon() noexcept;
+    void updateDateSelectorUi() noexcept;
     void handleSelectionChanged() noexcept;
     void loadFlight() noexcept;
     void deleteFlight() noexcept;

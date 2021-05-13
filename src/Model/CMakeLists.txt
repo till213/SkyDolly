@@ -15,6 +15,8 @@ target_sources(Model
         src/Flight.h
         src/FlightSummary.cpp
         src/FlightSummary.h
+        src/FlightDate.cpp
+        src/FlightDate.h
         src/FlightCondition.cpp
         src/FlightCondition.h
         src/Aircraft.cpp

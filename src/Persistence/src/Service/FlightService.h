@@ -31,6 +31,7 @@
 #include <QVector>
 
 #include "../../../Model/src/Flight.h"
+#include "../../../Model/src/FlightDate.h"
 #include "../../../Model/src/FlightSummary.h"
 #include "../PersistenceLib.h"
 
@@ -51,6 +52,7 @@ public:
     bool updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept;
     bool updateUserAircraftIndex(Flight &flight, int index) noexcept;
 
+    QVector<FlightDate> getFlightDates() const noexcept;
     QVector<FlightSummary> getFlightSummaries() const noexcept;
 
 signals:
