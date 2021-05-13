@@ -567,8 +567,7 @@ void MainWindow::on_positionSlider_sliderReleased() noexcept
 
 void MainWindow::on_timestampTimeEdit_timeChanged(const QTime &time) noexcept
 {
-    const Connect::State state = d->skyConnect.getState();
-    if (state == Connect::State::Connected || state == Connect::State::ReplayPaused) {
+    if (d->skyConnect.isIdle() || d->skyConnect.getState() == Connect::State::ReplayPaused) {
         qint64 timestamp = time.hour() * MilliSecondsPerHour + time.minute() * MilliSecondsPerMinute + time.second() * MilliSecondsPerSecond;
         d->skyConnect.seek(timestamp);
     }

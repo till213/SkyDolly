@@ -8,6 +8,8 @@
 - Improve minimal UI switching
 - Don't reset the elapsed time to 0 when unpausing a recording
 - Keep displayed time when pausing a replay (don't set to total replay time)
+- Automatically connect with simulator when seeking position
+- Also pause the initially loaded flight
 
 ## 0.6.0
 
