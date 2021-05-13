@@ -226,7 +226,7 @@ void MainWindow::frenchConnection() noexcept
     // Ui elements
     connect(d->customSpeedLineEdit, &QLineEdit::editingFinished,
             this, &MainWindow::handleCustomSpeedChanged);
-    connect(d->replaySpeedUnitComboBox, &QComboBox::currentIndexChanged,
+    connect(d->replaySpeedUnitComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &MainWindow::handleReplaySpeedUnitSelected);
 
     // Actions
@@ -820,7 +820,9 @@ void MainWindow::updateTimestamp() noexcept
     ui->timestampTimeEdit->blockSignals(true);
     QTime time(0, 0, 0, 0);
     time = time.addMSecs(totalDuration);
-    ui->timestampTimeEdit->setTime(time);
+    if (d->skyConnect.isRecording()) {
+        ui->timestampTimeEdit->setTime(time);
+    }
     ui->timestampTimeEdit->setMaximumTime(time);
     ui->timestampTimeEdit->blockSignals(false);
 }
