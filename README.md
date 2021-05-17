@@ -12,8 +12,9 @@ The connection is made via SimConnect, a standard API introduced with Flight Sim
 * Record / Pause / Play
 * Settable recording sample rate: fixed or variable ("auto")
 * Adjustable replay speed ("slow motion", "timelapse")
-* Position and basic flight control simulation variables (ailerons, rudder, flaps, gears, ...) are recorded
+* Position, velocity and basic flight control simulation variables (ailerons, rudder, flaps, gears, ...) are recorded
 * Basic CSV import & export
+* Database (SQLite) based persistence ("logbook")
 
 Watch a comparison of the various sample rates on [YouTube](https://www.youtube.com/watch?v=bfgkY0eXL4w):
 
@@ -28,6 +29,8 @@ For new and upcoming features also refer to the [CHANGELOG](CHANGELOG.md).
 * You may pause recording (key P)
 * Stop recording (key R) and click on "Play" (spacebar)
 * Adjust the replay speed and seek the play position, also during replay
+* Recorded flights are automatically persisted in the "logbook"
+* Select a flight in the logbook and press "Load" (or double-click the row) to load the persisted flight
 
 Why don't you try it with one of the guided ["Tell Tours"](https://github.com/till213/Tell-Tours)? :)
 
