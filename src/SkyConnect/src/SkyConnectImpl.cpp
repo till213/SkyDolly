@@ -172,25 +172,27 @@ void SkyConnectImpl::onStopRecording() noexcept
         waypoint.timestamp = getCurrentTimestamp();
         flightPlan.update(waypointCount - 1, waypoint);
     } else if (waypointCount == 0) {
-        Waypoint waypoint;
+        Waypoint departureWaypoint;
         AircraftData position = userAircraft.getAllConst().at(0);
-        waypoint.identifier = "CUSTD";
-        waypoint.latitude = position.latitude;
-        waypoint.longitude = position.longitude;
-        waypoint.altitude = position.altitude;
-        waypoint.localTime = flight.getFlightConditionConst().startLocalTime;
-        waypoint.zuluTime = flight.getFlightConditionConst().startZuluTime;
-        waypoint.timestamp = 0;
-        flightPlan.add(waypoint);
+        departureWaypoint.identifier = "CUSTD";
+        departureWaypoint.latitude = position.latitude;
+        departureWaypoint.longitude = position.longitude;
+        departureWaypoint.altitude = position.altitude;
+        departureWaypoint.localTime = flight.getFlightConditionConst().startLocalTime;
+        departureWaypoint.zuluTime = flight.getFlightConditionConst().startZuluTime;
+        departureWaypoint.timestamp = 0;
+        flightPlan.add(departureWaypoint);
+
+        Waypoint arrivalWaypoint;
         position = userAircraft.getLast();
-        waypoint.identifier = "CUSTA";
-        waypoint.latitude = position.latitude;
-        waypoint.longitude = position.longitude;
-        waypoint.altitude = position.altitude;
-        waypoint.localTime = d->currentLocalDateTime;
-        waypoint.zuluTime = d->currentZuluDateTime;
-        waypoint.timestamp = getCurrentTimestamp();
-        flightPlan.add(waypoint);
+        arrivalWaypoint.identifier = "CUSTA";
+        arrivalWaypoint.latitude = position.latitude;
+        arrivalWaypoint.longitude = position.longitude;
+        arrivalWaypoint.altitude = position.altitude;
+        arrivalWaypoint.localTime = d->currentLocalDateTime;
+        arrivalWaypoint.zuluTime = d->currentZuluDateTime;
+        arrivalWaypoint.timestamp = qMax(getCurrentTimestamp(), departureWaypoint.timestamp + 1);
+        flightPlan.add(arrivalWaypoint);
     }
 
     // Update end simulation time of flight conditions
@@ -710,11 +712,12 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
                         // No simulation time received yet: set flag for pending update
                         skyConnect->d->pendingWaypointTime = true;
                     }
-                    waypoint.timestamp = skyConnect->getCurrentTimestamp();
+                    const qint64 currentTimeStamp = skyConnect->getCurrentTimestamp();
+                    waypoint.timestamp = currentTimeStamp;
                     skyConnect->d->flightPlan[waypoint.identifier] = waypoint;
                     waypoint = simConnectFlightPlan->toNextWaypoint();
                     if (waypoint.isValid()) {
-                        waypoint.timestamp = skyConnect->getCurrentTimestamp();
+                        waypoint.timestamp = currentTimeStamp + 1;
                         skyConnect->d->flightPlan[waypoint.identifier] = waypoint;
                     }
                 }
