@@ -98,7 +98,11 @@ void AbstractSkyConnect::startRecording() noexcept
         if (!isAutoRecordSampleRate()) {
             d->timer.start(d->recordIntervalMSec);
         }
-        onStartRecording();
+        bool ok = retryWithReconnect([this]() -> bool { return onStartRecording(); });
+        if (!ok) {
+            setState(Connect::State::Disconnected);
+        }
+
     } else {
         setState(Connect::State::Disconnected);
     }
@@ -130,8 +134,10 @@ void AbstractSkyConnect::startReplay(bool fromStart) noexcept
         }
 
         d->elapsedTimer.invalidate();
-        onStartReplay(d->currentTimestamp);
-
+        bool ok = retryWithReconnect([this]() -> bool { return onStartReplay(d->currentTimestamp); });
+        if (!ok) {
+            setState(Connect::State::Disconnected);
+        }
     } else {
         setState(Connect::State::Disconnected);
     }
@@ -252,13 +258,16 @@ void AbstractSkyConnect::seek(qint64 timestamp) noexcept
             d->currentTimestamp = timestamp;
             d->elapsedTime = timestamp;
             emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Seek);
-            if (sendAircraftData(timestamp, TimeVariableData::Access::Seek)) {
+            bool ok = retryWithReconnect([this, timestamp]() -> bool { return sendAircraftData(timestamp, TimeVariableData::Access::Seek); });
+            if (ok) {
                 if (d->elapsedTimer.isValid()) {
                     // Restart the elapsed timer, counting onwards from the newly
                     // set timestamp
                     startElapsedTimer();
                 }
                 onSeek(d->currentTimestamp);
+            } else {
+                 setState(Connect::State::Disconnected);
             }
         }
     } else {
@@ -420,6 +429,29 @@ qint64 AbstractSkyConnect::getSkipInterval() const noexcept
     return static_cast<qint64>(qRound(settings.isAbsoluteSeekEnabled() ?
                                           settings.getSeekIntervalSeconds() * 1000.0 :
                                           settings.getSeekIntervalPercent() * d->currentFlight.getTotalDurationMSec() / 100.0));
+}
+
+bool AbstractSkyConnect::retryWithReconnect(std::function<bool()> func)
+{
+    int nofAttempts = 2;
+    bool ok = true;
+    while (nofAttempts > 0) {
+        ok = func();
+        --nofAttempts;
+        if (!ok && nofAttempts > 0) {
+#ifdef DEBUG
+            qDebug("AbstractSkyConnect::retryWithReconnect: previous connection is stale, RETRY with reconnect %d more time(s)...", nofAttempts);
+#endif
+            // Automatically reconnect in case the server crashed
+            // previously (without sending a "quit" message)
+            if (!connectWithSim()) {
+                nofAttempts = 0;
+            }
+        } else {
+            nofAttempts = 0;
+        }
+    }
+    return ok;
 }
 
 // PRIVATE SLOTS

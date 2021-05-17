@@ -93,10 +93,11 @@ SkyConnectDummy::~SkyConnectDummy() noexcept
 
 // PROTECTED
 
-void SkyConnectDummy::onStartRecording() noexcept
+bool SkyConnectDummy::onStartRecording() noexcept
 {
     recordFlightCondition();
     recordAircraftInfo();
+    return true;
 }
 
 void SkyConnectDummy::onRecordingPaused(bool paused) noexcept
@@ -122,9 +123,10 @@ void SkyConnectDummy::onStopRecording() noexcept
     }
 }
 
-void SkyConnectDummy::onStartReplay(qint64 currentTimestamp) noexcept {
+bool SkyConnectDummy::onStartReplay(qint64 currentTimestamp) noexcept {
     Q_UNUSED(currentTimestamp)
     d->replayTimer.start(ReplayPeriod);
+    return true;
 }
 
 void SkyConnectDummy::onReplayPaused(bool paused) noexcept
