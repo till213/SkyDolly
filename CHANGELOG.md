@@ -13,6 +13,7 @@
 - When "repeat values" is enabled then also repeat values with "zero value" (e.g. "canopy closed")
 - Automatically reconnect in case the SimConnect server (flight simulator) has crashed
 - Also store the flight into the logbook if a paused recording is stopped
+- Don't request SIMCONNECT_PERIOD_NEVER twice (e.g. when stopping a paused recording): prevent SIMCONNECT_EXCEPTION_UNRECOGNIZED_ID server exception
 
 ## 0.6.0
 
