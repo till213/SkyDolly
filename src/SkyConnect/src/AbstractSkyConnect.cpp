@@ -163,8 +163,9 @@ void AbstractSkyConnect::stop() noexcept
 {
     if (d->state == Connect::State::Recording || d->state == Connect::State::RecordingPaused) {
         stopRecording();
+    } else {
+        stopReplay();
     }
-    stopReplay();
 }
 
 void AbstractSkyConnect::setPaused(bool enabled) noexcept
