@@ -85,11 +85,11 @@ protected:
     void resetElapsedTime(bool restart) noexcept;
     void updateCurrentTimestamp() noexcept;
 
-    virtual void onStartRecording() = 0;
+    virtual bool onStartRecording() = 0;
     virtual void onRecordingPaused(bool paused) = 0;
     virtual void onStopRecording() = 0;
 
-    virtual void onStartReplay(qint64 currentTimestamp) = 0;
+    virtual bool onStartReplay(qint64 currentTimestamp) = 0;
     virtual void onReplayPaused(bool paused) = 0;
     virtual void onStopReplay() = 0;
 
@@ -110,6 +110,8 @@ private:
     void frenchConnection() noexcept;
     bool hasRecordingStarted() const noexcept;
     inline qint64 getSkipInterval() const noexcept;
+
+    inline bool retryWithReconnect(std::function<bool()> func);
 
 private slots:
     void handleRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept;
