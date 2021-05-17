@@ -12,6 +12,7 @@
 - Also pause the initially loaded flight
 - When "repeat values" is enabled then also repeat values with "zero value" (e.g. "canopy closed")
 - Automatically reconnect in case the SimConnect server (flight simulator) has crashed
+- Also store the flight into the logbook if a paused recording is stopped
 
 ## 0.6.0
 
