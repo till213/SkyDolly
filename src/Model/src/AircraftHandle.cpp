@@ -139,12 +139,12 @@ const AircraftHandleData &AircraftHandle::interpolate(qint64 timestamp, TimeVari
             d->currentAircraftHandleData.waterRudderHandlePosition = SkyMath::interpolateLinear(p1->waterRudderHandlePosition, p2->waterRudderHandlePosition, tn);
             d->currentAircraftHandleData.tailhookPosition = SkyMath::interpolateLinear(p1->tailhookPosition, p2->tailhookPosition, tn);            
             d->currentAircraftHandleData.canopyOpen = SkyMath::interpolateLinear(p1->canopyOpen, p2->canopyOpen, tn);
-            // Certain aircrafts automatically reset the CANOPY OPEN, so values > 0 need to be repeatedly set
-            if (d->currentAircraftHandleData.canopyOpen > 0 && Settings::getInstance().isRepeatCanopyOpenEnabled()) {
+            // Certain aircrafts override the CANOPY OPEN, so values need to be repeatedly set
+            if (Settings::getInstance().isRepeatCanopyOpenEnabled()) {
                 // We do that my storing the previous values (when the canopy is "open")...
                 d->previousAircraftHandleData = d->currentAircraftHandleData;
             } else {
-                // Canopy closed or simulation variable repeat disabled
+                // "Repeat values" setting disabled
                 d->previousAircraftHandleData = AircraftHandleData::NullAircraftHandleData;
             }
             d->currentAircraftHandleData.leftWingFolding = SkyMath::interpolateLinear(p1->leftWingFolding, p2->leftWingFolding, tn);

@@ -10,6 +10,7 @@
 - Keep displayed time when pausing a replay (don't set to total replay time)
 - Automatically connect with simulator when seeking position
 - Also pause the initially loaded flight
+- When "repeat values" is enabled then also repeat values with "zero value" (e.g. "canopy closed")
 
 ## 0.6.0
 

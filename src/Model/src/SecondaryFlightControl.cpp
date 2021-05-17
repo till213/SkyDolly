@@ -142,12 +142,12 @@ const SecondaryFlightControlData &SecondaryFlightControl::interpolate(qint64 tim
 
             // No interpolation for flaps handle position
             d->currentSecondaryFlightControlData.flapsHandleIndex = p1->flapsHandleIndex;
-            // Certain aircrafts automatically reset the FLAPS HANDLE INDEX, so values > 0 need to be repeatedly set
-            if (d->currentSecondaryFlightControlData.flapsHandleIndex > 0 && Settings::getInstance().isRepeatFlapsHandleIndexEnabled()) {
+            // Certain aircrafts automatically override the FLAPS HANDLE INDEX, so values need to be repeatedly set
+            if (Settings::getInstance().isRepeatFlapsHandleIndexEnabled()) {
                 // We do that my storing the previous values (when the flaps are set)...
                 d->previousSecondaryFlightControlData = d->currentSecondaryFlightControlData;
             } else {
-                // Flaps fully retracted or simulation variable repeat disabled
+                // "Repeat values" setting disabled
                 d->previousSecondaryFlightControlData = SecondaryFlightControlData::NullSecondaryFlightControlData;
             }
 
