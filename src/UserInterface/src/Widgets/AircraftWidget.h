@@ -57,7 +57,7 @@ private:
     std::unique_ptr<Ui::AircraftWidget> ui;
 
     void initUi() noexcept;
-    const PositionData &getCurrentAircraftData(qint64 timestamp, TimeVariableData::Access access) const noexcept;
+    const PositionData &getCurrentPositionData(qint64 timestamp, TimeVariableData::Access access) const noexcept;
 
 private slots:
     void updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept;

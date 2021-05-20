@@ -561,119 +561,119 @@ MIT License</source>
 <context>
     <name>LogbookWidget</name>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.ui" line="14"/>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="137"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.ui" line="14"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="137"/>
         <source>Flight</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.ui" line="38"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.ui" line="38"/>
         <source>&amp;Load</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.ui" line="45"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.ui" line="45"/>
         <source>&amp;Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="100"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="100"/>
         <source>Logbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="137"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="137"/>
         <source>Date</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="137"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="137"/>
         <source>Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="137"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="137"/>
         <source>Departure Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="137"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="137"/>
         <source>Departure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="137"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="137"/>
         <source>Arrival Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="137"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="137"/>
         <source>Arrival</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="137"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="137"/>
         <source>Total Time of Flight</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="137"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="137"/>
         <source>Title</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="184"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="184"/>
         <source>Double-click to load flight</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="197"/>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="206"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="197"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="206"/>
         <source>Simulation time: %1 (%2Z)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="219"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="219"/>
         <source>Simulation duration: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="224"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="224"/>
         <source>Double-click to edit title</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="260"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="260"/>
         <source>Database error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="260"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="260"/>
         <source>The flight %1 could not be read from the library.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="273"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="273"/>
         <source>Do not ask again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="275"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="275"/>
         <source>The flight %1 is about to be deleted. Deletion cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="276"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="276"/>
         <source>Do you want to delete the flight?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="277"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="277"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/LogbookWidget.cpp" line="278"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="278"/>
         <source>Keep</source>
         <translation type="unfinished"></translation>
     </message>

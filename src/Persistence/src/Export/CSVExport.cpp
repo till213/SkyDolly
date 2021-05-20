@@ -64,17 +64,17 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
 
         ok = io.write(csv.toUtf8());
         if (ok) {
-            const PositionData aircraftData;
+            const PositionData positionData;
             const EngineData engineData;
             const PrimaryFlightControlData primaryFlightControlData;
             const SecondaryFlightControlData secondaryFlightControlData;
             const AircraftHandleData aircraftHandleData;
             const LightData lightData;
 
-            // Aircraft data
+            // Position data
             for (const PositionData &data : aircraft.getPositionConst().getAllConst()) {
                 csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::Aircraft)) % CSVConst::Sep %
-                      getAircraftData(data) % CSVConst::Sep %
+                      getPositionData(data) % CSVConst::Sep %
                       getEngineData(engineData) % CSVConst::Sep %
                       getPrimaryFlightControlData(primaryFlightControlData) % CSVConst::Sep %
                       getSecondaryFlightControlData(secondaryFlightControlData) % CSVConst::Sep %
@@ -90,7 +90,7 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
             // Engine data
             for (const EngineData &data : aircraft.getEngineConst().getAllConst()) {
                 csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::Engine)) % CSVConst::Sep %
-                      getAircraftData(aircraftData) % CSVConst::Sep %
+                      getPositionData(positionData) % CSVConst::Sep %
                       getEngineData(data) % CSVConst::Sep %
                       getPrimaryFlightControlData(primaryFlightControlData) % CSVConst::Sep %
                       getSecondaryFlightControlData(secondaryFlightControlData) % CSVConst::Sep %
@@ -106,7 +106,7 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
             // Primary flight controls
             for (const PrimaryFlightControlData &data : aircraft.getPrimaryFlightControlConst().getAllConst()) {
                 csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::PrimaryFlightControl)) % CSVConst::Sep %
-                      getAircraftData(aircraftData) % CSVConst::Sep %
+                      getPositionData(positionData) % CSVConst::Sep %
                       getEngineData(engineData) % CSVConst::Sep %
                       getPrimaryFlightControlData(data) % CSVConst::Sep %
                       getSecondaryFlightControlData(secondaryFlightControlData) % CSVConst::Sep %
@@ -122,7 +122,7 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
             // Secondary flight controls
             for (const SecondaryFlightControlData &data : aircraft.getSecondaryFlightControlConst().getAllConst()) {
                 csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::SecondaryFlightControl)) % CSVConst::Sep %
-                      getAircraftData(aircraftData) % CSVConst::Sep %
+                      getPositionData(positionData) % CSVConst::Sep %
                       getEngineData(engineData) % CSVConst::Sep %
                       getPrimaryFlightControlData(primaryFlightControlData) % CSVConst::Sep %
                       getSecondaryFlightControlData(data) % CSVConst::Sep %
@@ -138,7 +138,7 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
             // Aircraft handles
             for (const AircraftHandleData &data : aircraft.getAircraftHandleConst().getAllConst()) {
                 csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::AircraftHandle)) % CSVConst::Sep %
-                      getAircraftData(aircraftData) % CSVConst::Sep %
+                      getPositionData(positionData) % CSVConst::Sep %
                       getEngineData(engineData) % CSVConst::Sep %
                       getPrimaryFlightControlData(primaryFlightControlData) % CSVConst::Sep %
                       getSecondaryFlightControlData(secondaryFlightControlData) % CSVConst::Sep %
@@ -154,7 +154,7 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
             // Lights
             for (const LightData &data : aircraft.getLightConst().getAllConst()) {
                 csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::Light)) % CSVConst::Sep %
-                      getAircraftData(aircraftData) % CSVConst::Sep %
+                      getPositionData(positionData) % CSVConst::Sep %
                       getEngineData(engineData) % CSVConst::Sep %
                       getPrimaryFlightControlData(primaryFlightControlData) % CSVConst::Sep %
                       getSecondaryFlightControlData(secondaryFlightControlData) % CSVConst::Sep %
@@ -190,7 +190,7 @@ inline QString CSVExport::getAircraftHeader() noexcept
            QString(SimVar::RotationVelocityBodyZ);
 }
 
-inline QString CSVExport::getAircraftData(const PositionData &data) noexcept
+inline QString CSVExport::getPositionData(const PositionData &data) noexcept
 {
     QString csv;
     if (!data.isNull()) {

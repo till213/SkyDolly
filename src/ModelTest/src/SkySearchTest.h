@@ -48,7 +48,7 @@ private slots:
     void linearIntervalSearch();
 
 private:
-     QVector<PositionData> m_aircraftData;
+     QVector<PositionData> m_positionData;
 };
 
 #endif // SKYSEARCHTEST_H

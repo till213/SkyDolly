@@ -40,7 +40,7 @@ public:
      * \param aircraftId
      *        the aircraft the \c data belongs to
      * \param data
-     *        the AircraftData to be persisted
+     *        the PositionData to be persisted
      * \return \c true on success; \c false else
      */
     virtual bool add(qint64 aircraftId, const PositionData &data) = 0;

@@ -72,7 +72,7 @@ public:
 signals:
     void flightChanged();
     void aircraftInfoChanged();
-    void aircraftDataChanged();
+    void positionDataChanged();
     void flightConditionChanged();
 
 private:
