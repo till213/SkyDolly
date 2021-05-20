@@ -263,10 +263,10 @@ bool SkyConnectImpl::sendPositionData(qint64 currentTimestamp, TimeVariableData:
     const Aircraft &userAircraft = getCurrentFlight().getUserAircraftConst();
 
     success = true;
-    const PositionData &currentAircraftData = userAircraft.getPosition().interpolate(currentTimestamp, access);
-    if (!currentAircraftData.isNull()) {
+    const PositionData &currentPositionData = userAircraft.getPositionConst().interpolate(currentTimestamp, access);
+    if (!currentPositionData.isNull()) {
         SimConnectPosition simConnnectPosition;
-        simConnnectPosition.fromPositionData(currentAircraftData);
+        simConnnectPosition.fromPositionData(currentPositionData);
         const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionDefinition),
                                                             ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
                                                             sizeof(SimConnectPosition), &simConnnectPosition);

@@ -161,13 +161,13 @@ bool SQLitePositionDao::add(qint64 aircraftId, const PositionData &position)  no
     return ok;
 }
 
-bool SQLitePositionDao::getByAircraftId(qint64 aircraftId, QVector<PositionData> &aircraftData) const noexcept
+bool SQLitePositionDao::getByAircraftId(qint64 aircraftId, QVector<PositionData> &positionData) const noexcept
 {
     d->initQueries();
     d->selectByAircraftIdQuery->bindValue(":aircraft_id", aircraftId);
     bool ok = d->selectByAircraftIdQuery->exec();
     if (ok) {
-        aircraftData.clear();
+        positionData.clear();
         const int timestampIdx = d->selectByAircraftIdQuery->record().indexOf("timestamp");
         const int latitudeIdx = d->selectByAircraftIdQuery->record().indexOf("latitude");
         const int longitudeIdx = d->selectByAircraftIdQuery->record().indexOf("longitude");
@@ -199,7 +199,7 @@ bool SQLitePositionDao::getByAircraftId(qint64 aircraftId, QVector<PositionData>
             data.rotationVelocityBodyY = d->selectByAircraftIdQuery->value(rotationVelocityYIdx).toDouble();
             data.rotationVelocityBodyZ = d->selectByAircraftIdQuery->value(rotationVelocityZIdx).toDouble();
 
-            aircraftData.append(data);
+            positionData.append(data);
         }
 #ifdef DEBUG
     } else {

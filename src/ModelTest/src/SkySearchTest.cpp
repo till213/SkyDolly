@@ -50,10 +50,10 @@ void SkySearchTest::initTestCase()
     PositionData data4;
     data4.timestamp = t3;
 
-    m_aircraftData.append(data1);
-    m_aircraftData.append(data2);
-    m_aircraftData.append(data3);
-    m_aircraftData.append(data4);
+    m_positionData.append(data1);
+    m_positionData.append(data2);
+    m_positionData.append(data3);
+    m_positionData.append(data4);
 }
 
 void SkySearchTest::cleanupTestCase()
@@ -68,17 +68,17 @@ void SkySearchTest::binaryIntervalSearch_data()
     QTest::addColumn<int>("high");
     QTest::addColumn<int>("expected");
 
-    QTest::newRow("Index for t1") << t0 << 0 << m_aircraftData.size() - 1 << 0;
-    QTest::newRow("Index for t2") << t1 << 0 << m_aircraftData.size() - 1 << 1;
-    QTest::newRow("Index for t3") << t2 << 0 << m_aircraftData.size() - 1 << 2;
-    QTest::newRow("Index for t4") << t3 << 0 << m_aircraftData.size() - 1 << 3;
+    QTest::newRow("Index for t1") << t0 << 0 << m_positionData.size() - 1 << 0;
+    QTest::newRow("Index for t2") << t1 << 0 << m_positionData.size() - 1 << 1;
+    QTest::newRow("Index for t3") << t2 << 0 << m_positionData.size() - 1 << 2;
+    QTest::newRow("Index for t4") << t3 << 0 << m_positionData.size() - 1 << 3;
 
-    QTest::newRow("Middle")       << (t3 - t0) / 2 << 0 << m_aircraftData.size() - 1 << 1;
-    QTest::newRow("After end")    << t3 + 1        << 0 << m_aircraftData.size() - 1 << SkySearch::InvalidIndex;
-    QTest::newRow("Before start") << t0 - 1        << 0 << m_aircraftData.size() - 1 << SkySearch::InvalidIndex;
+    QTest::newRow("Middle")       << (t3 - t0) / 2 << 0 << m_positionData.size() - 1 << 1;
+    QTest::newRow("After end")    << t3 + 1        << 0 << m_positionData.size() - 1 << SkySearch::InvalidIndex;
+    QTest::newRow("Before start") << t0 - 1        << 0 << m_positionData.size() - 1 << SkySearch::InvalidIndex;
 
     QTest::newRow("Start interval 1")   << t1 << 0 << 2 << 1;
-    QTest::newRow("Start interval 2")   << t3 << m_aircraftData.size() - 2 << m_aircraftData.size() -1 << 3;
+    QTest::newRow("Start interval 2")   << t3 << m_positionData.size() - 2 << m_positionData.size() -1 << 3;
     QTest::newRow("Outside interval 1") << t1 << 2 << 3 << SkySearch::InvalidIndex;
     QTest::newRow("Outside interval 2") << t3 << 0 << 1 << SkySearch::InvalidIndex;
 }
@@ -92,7 +92,7 @@ void SkySearchTest::binaryIntervalSearch()
     QFETCH(int, expected);
 
     // Exercise
-    int result = SkySearch::binaryIntervalSearch(m_aircraftData, timestamp, low, high);
+    int result = SkySearch::binaryIntervalSearch(m_positionData, timestamp, low, high);
 
     // Verify
     QCOMPARE(result, expected);
@@ -128,7 +128,7 @@ void SkySearchTest::linearIntervalSearch()
     QFETCH(int, expected);
 
     // Exercise
-    int result = SkySearch::linearIntervalSearch(m_aircraftData, timestamp, start);
+    int result = SkySearch::linearIntervalSearch(m_positionData, timestamp, start);
 
     // Verify
     QCOMPARE(result, expected);

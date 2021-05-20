@@ -127,24 +127,24 @@ void StatisticsDialog::updateRecordUi() noexcept
     } else {
         ui->samplesPerSecondLineEdit->clear();
     }
-    const QVector<PositionData> &aircraftData = aircraft.getPosition().getAllConst();
+    const QVector<PositionData> &positionData = aircraft.getPosition().getAllConst();
     const QVector<EngineData> &engineData = aircraft.getEngine().getAllConst();
     const QVector<PrimaryFlightControlData> &primaryFlightControlData = aircraft.getPrimaryFlightControl().getAllConst();
     const QVector<SecondaryFlightControlData> &secondaryFlightControlData = aircraft.getSecondaryFlightControl().getAllConst();
     const QVector<AircraftHandleData> &aircraftHandleData = aircraft.getAircraftHandle().getAllConst();
     const QVector<LightData> &lightData = aircraft.getLight().getAllConst();
-    const int totalCount = aircraftData.count() + engineData.count() + primaryFlightControlData.count() + secondaryFlightControlData.count() + aircraftHandleData.count() + lightData.count();
+    const int totalCount = positionData.count() + engineData.count() + primaryFlightControlData.count() + secondaryFlightControlData.count() + aircraftHandleData.count() + lightData.count();
     ui->sampleCountLineEdit->setText(QString::number(totalCount));
 
     ui->durationLineEdit->setText(d->unit.formatElapsedTime(flight.getTotalDurationMSec()));
 
-    const qint64 aircraftDataSize = aircraftData.count()  * sizeof(PositionData);
+    const qint64 positionDataSize = positionData.count()  * sizeof(PositionData);
     const qint64 engineDataSize = engineData.count()  * sizeof(EngineData);
     const qint64 primaryFlightControlDataSize = primaryFlightControlData.count()  * sizeof(PrimaryFlightControlData);
     const qint64 secondaryFlightControlDataSize = secondaryFlightControlData.count()  * sizeof(SecondaryFlightControlData);
     const qint64 aircraftHandleDataSize = aircraftHandleData.count()  * sizeof(AircraftHandleData);
     const qint64 lightDataSize = lightData.count()  * sizeof(LightData);
 
-    const qint64 totalSize = aircraftDataSize + engineDataSize + primaryFlightControlDataSize + secondaryFlightControlDataSize + aircraftHandleDataSize + lightDataSize;
+    const qint64 totalSize = positionDataSize + engineDataSize + primaryFlightControlDataSize + secondaryFlightControlDataSize + aircraftHandleDataSize + lightDataSize;
     ui->sampleSizeLineEdit->setText(d->unit.formatMemory(totalSize));
 }

@@ -57,23 +57,23 @@ struct SimConnectPosition
 
     inline PositionData toPositionData() const noexcept
     {
-        PositionData aircraftData;
+        PositionData positionData;
 
-        aircraftData.latitude = latitude;
-        aircraftData.longitude = longitude;
-        aircraftData.altitude = altitude;
-        aircraftData.pitch = pitch;
-        aircraftData.bank = bank;
-        aircraftData.heading = heading;
+        positionData.latitude = latitude;
+        positionData.longitude = longitude;
+        positionData.altitude = altitude;
+        positionData.pitch = pitch;
+        positionData.bank = bank;
+        positionData.heading = heading;
 
-        aircraftData.velocityBodyX = velocityBodyX;
-        aircraftData.velocityBodyY = velocityBodyY;
-        aircraftData.velocityBodyZ = velocityBodyZ;
-        aircraftData.rotationVelocityBodyX = rotationVelocityBodyX;
-        aircraftData.rotationVelocityBodyY = rotationVelocityBodyY;
-        aircraftData.rotationVelocityBodyZ = rotationVelocityBodyZ;
+        positionData.velocityBodyX = velocityBodyX;
+        positionData.velocityBodyY = velocityBodyY;
+        positionData.velocityBodyZ = velocityBodyZ;
+        positionData.rotationVelocityBodyX = rotationVelocityBodyX;
+        positionData.rotationVelocityBodyY = rotationVelocityBodyY;
+        positionData.rotationVelocityBodyZ = rotationVelocityBodyZ;
 
-        return aircraftData;
+        return positionData;
     }
 
     inline void fromPositionData(const PositionData &positionData) noexcept

@@ -161,5 +161,5 @@ void Flight::frenchConnection() noexcept
     connect(&userAircraft, &Aircraft::infoChanged,
             this, &Flight::aircraftInfoChanged);
     connect(&userAircraft, &Aircraft::dataChanged,
-            this, &Flight::aircraftDataChanged);
+            this, &Flight::positionDataChanged);
 }

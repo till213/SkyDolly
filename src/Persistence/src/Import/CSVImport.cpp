@@ -71,7 +71,7 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft) noexcept
 
                 // CSV data
                 data = io.readLine();
-                bool firstAircraftData = true;
+                bool firstPositionData = true;
                 bool firstEngineData = true;
                 bool firstPrimaryFlightControlData = true;
                 bool firstSecondaryFlightControlData = true;
@@ -79,7 +79,7 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft) noexcept
                 bool firstLightData = true;
                 while (!data.isNull()) {
 
-                    PositionData aircraftData;
+                    PositionData positionData;
                     QList<QByteArray> values = data.split(CSVConst::Sep);
 
                     // Type
@@ -89,8 +89,8 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft) noexcept
                         values.removeFirst();
                         switch (dataType) {
                         case CSVConst::DataType::Aircraft:
-                            ok = importAircraftData(headers, values, firstAircraftData, aircraft);
-                            firstAircraftData = false;
+                            ok = importPositionData(headers, values, firstPositionData, aircraft);
+                            firstPositionData = false;
                             break;
                         case CSVConst::DataType::Engine:
                             ok = importEngineData(headers, values, firstEngineData, aircraft.getEngine());
@@ -136,7 +136,7 @@ bool CSVImport::importData(QIODevice &io, Aircraft &aircraft) noexcept
     return ok;
 }
 
-inline bool CSVImport::importAircraftData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Aircraft &aircraft) noexcept
+inline bool CSVImport::importPositionData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Aircraft &aircraft) noexcept
 {
     PositionData data;
     int columnIndex = 0;
