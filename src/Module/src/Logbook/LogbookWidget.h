@@ -37,13 +37,14 @@ class DatabaseService;
 class FlightService;
 class LogbookWidgetPrivate;
 
-#include "ModuleIntf.h"
+#include "../ModuleIntf.h"
+#include "../ModuleLib.h"
 
 namespace Ui {
     class LogbookWidget;
 }
 
-class LogbookWidget : public QWidget, public ModuleIntf
+class MODULE_API LogbookWidget : public QWidget, public ModuleIntf
 {
     Q_OBJECT
 

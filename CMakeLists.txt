@@ -41,6 +41,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/Model)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/ModelTest)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Persistence)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/SkyConnect)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/Module)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
 
 # 3rd Party
@@ -91,7 +92,7 @@ else()
 endif()
 
 set(SKYDOLLY_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets UserInterface Kernel Model Persistence SkyConnect
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence SkyConnect UserInterface
 )
 if (APPLE)
     list(APPEND SKYDOLLY_LIBS -lc++)
