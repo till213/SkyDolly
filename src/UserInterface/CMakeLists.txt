@@ -13,7 +13,7 @@ else()
 endif()
 
 set(USERINTERFACE_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence SkyConnect
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence SkyConnect Module
 )
 if (APPLE)
     list(APPEND USERINTERFACE_LIBS -lc++)
@@ -49,7 +49,6 @@ target_sources(UserInterface
         src/Widgets/ActionRadioButton.cpp
         src/Widgets/FocusPlainTextEdit.h
         src/Widgets/FocusPlainTextEdit.cpp
-        src/Widgets/ModuleIntf.h
         src/Widgets/FlightDescriptionWidget.cpp
         src/Widgets/FlightDescriptionWidget.h
         src/Widgets/FlightDescriptionWidget.ui
@@ -83,9 +82,6 @@ target_sources(UserInterface
         src/Widgets/WaypointWidget.cpp
         src/Widgets/WaypointWidget.h
         src/Widgets/WaypointWidget.ui
-        src/Widgets/LogbookWidget.cpp
-        src/Widgets/LogbookWidget.h
-        src/Widgets/LogbookWidget.ui
 )
 
 include_directories(UserInterface PRIVATE src/Widgets)
