@@ -54,7 +54,7 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
         io.setTextModeEnabled(true);
 
         QString csv = QString(CSVConst::TypeColumnName) % CSVConst::Sep %
-                      getAircraftHeader() % CSVConst::Sep %
+                      getPositionHeader() % CSVConst::Sep %
                       getEngineHeader() % CSVConst::Sep %
                       getPrimaryFlightControlHeader()  % CSVConst::Sep %
                       getSecondaryFlightControlHeader() % CSVConst::Sep %
@@ -174,7 +174,7 @@ bool CSVExport::exportData(const Aircraft &aircraft, QIODevice &io) noexcept
 
 // PRIVATE
 
-inline QString CSVExport::getAircraftHeader() noexcept
+inline QString CSVExport::getPositionHeader() noexcept
 {
     return QString(SimVar::Latitude) % CSVConst::Sep %
            QString(SimVar::Longitude) % CSVConst::Sep %
