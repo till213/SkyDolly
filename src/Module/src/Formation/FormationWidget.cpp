@@ -22,21 +22,75 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef MODULEINTF_H
-#define MODULEINTF_H
+#include <QWidget>
 
-#include <QString>
+#include "../AbstractModuleWidget.h"
+#include "FormationWidget.h"
+#include "ui_FormationWidget.h"
 
-class QWidget;
-
-#include "Module.h"
-
-class ModuleIntf
+class FormationWidgetPrivate
 {
 public:
-    virtual Module::Module getModuleId() const = 0;
-    virtual QString getTitle() const = 0;
-    virtual QWidget &getWidget() = 0;
+    FormationWidgetPrivate() noexcept
+    {}
+
 };
 
-#endif // MODULEINTF_H
+// PUBLIC
+
+FormationWidget::FormationWidget(QWidget *parent) noexcept
+    : AbstractModuleWidget(parent),
+      ui(std::make_unique<Ui::FormationWidget>()),
+      d(std::make_unique<FormationWidgetPrivate>())
+{
+    ui->setupUi(this);
+    initUi();
+    frenchConnection();
+}
+
+FormationWidget::~FormationWidget() noexcept
+{
+#ifdef DEBUG
+    qDebug("FormationWidget::~FormationWidget: DELETED.");
+#endif
+}
+
+Module::Module FormationWidget::getModuleId() const noexcept
+{
+    return Module::Module::Formation;
+}
+
+QString FormationWidget::getTitle() const noexcept
+{
+    return QString(QT_TRANSLATE_NOOP("FormationWidget", "Formation"));
+}
+
+// PROTECTED
+
+void FormationWidget::showEvent(QShowEvent *event) noexcept
+{
+    Q_UNUSED(event)
+    updateUi();
+}
+
+void FormationWidget::hideEvent(QHideEvent *event) noexcept
+{
+    Q_UNUSED(event)
+}
+
+// PRIVATE
+
+void FormationWidget::initUi() noexcept
+{
+
+}
+
+void FormationWidget::updateUi() noexcept
+{
+
+}
+
+void FormationWidget::frenchConnection() noexcept
+{
+
+}

@@ -22,21 +22,29 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef MODULEINTF_H
-#define MODULEINTF_H
-
-#include <QString>
-
-class QWidget;
+#include <QWidget>
 
 #include "Module.h"
+#include "AbstractModuleWidget.h"
 
-class ModuleIntf
+class AbstractModuleWidgetPrivate
 {
 public:
-    virtual Module::Module getModuleId() const = 0;
-    virtual QString getTitle() const = 0;
-    virtual QWidget &getWidget() = 0;
+    AbstractModuleWidgetPrivate() noexcept
+    {}
 };
 
-#endif // MODULEINTF_H
+// PUBLIC
+
+AbstractModuleWidget::AbstractModuleWidget(QWidget *parent) noexcept
+    : QWidget(parent),
+      d(std::make_unique<AbstractModuleWidgetPrivate>())
+{}
+
+AbstractModuleWidget::~AbstractModuleWidget() noexcept
+{}
+
+QWidget &AbstractModuleWidget::getWidget() noexcept
+{
+    return *this;
+}

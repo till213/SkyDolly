@@ -22,21 +22,40 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef MODULEINTF_H
-#define MODULEINTF_H
+#ifndef MODULESWITCHER_H
+#define MODULESWITCHER_H
 
-#include <QString>
+#include <memory>
 
-class QWidget;
+#include <QObject>
+
+class QStackedWidget;
 
 #include "Module.h"
+#include "ModuleLib.h"
 
-class ModuleIntf
+class DatabaseService;
+class FlightService;
+class ModuleIntf;
+class ModuleSwitcherPrivate;
+
+class MODULE_API ModuleSwitcher : public QObject
 {
+    Q_OBJECT
 public:
-    virtual Module::Module getModuleId() const = 0;
-    virtual QString getTitle() const = 0;
-    virtual QWidget &getWidget() = 0;
+    ModuleSwitcher(QStackedWidget &moduleStackWidget, DatabaseService &theDatabaseService, FlightService &theFlightService, QObject *parent = nullptr) noexcept;
+    ~ModuleSwitcher() noexcept;
+
+    ModuleIntf &getActiveModule() const;
+    void activateModule(Module::Module moduleId) noexcept;
+
+signals:
+    void activated(const QString title, Module::Module moduleId);
+
+private:
+    std::unique_ptr<ModuleSwitcherPrivate> d;
+
+    void initModules() noexcept;
 };
 
-#endif // MODULEINTF_H
+#endif // MODULESWITCHER_H

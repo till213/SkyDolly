@@ -20,10 +20,18 @@ endif()
 target_sources(Module
     PRIVATE
         src/ModuleLib.h
+        src/Module.h
         src/ModuleIntf.h
+        src/AbstractModuleWidget.cpp
+        src/AbstractModuleWidget.h
+        src/ModuleSwitcher.cpp
+        src/ModuleSwitcher.h
         src/Logbook/LogbookWidget.cpp
         src/Logbook/LogbookWidget.h
         src/Logbook/LogbookWidget.ui
+        src/Formation/FormationWidget.cpp
+        src/Formation/FormationWidget.h
+        src/Formation/FormationWidget.ui
 )
 
 include_directories(Module PRIVATE src/Widgets)
