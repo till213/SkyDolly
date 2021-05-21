@@ -58,7 +58,6 @@ struct SimConnectPosition
     inline PositionData toPositionData() const noexcept
     {
         PositionData positionData;
-
         positionData.latitude = latitude;
         positionData.longitude = longitude;
         positionData.altitude = altitude;

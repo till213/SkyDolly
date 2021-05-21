@@ -127,17 +127,16 @@ void StatisticsDialog::updateRecordUi() noexcept
     } else {
         ui->samplesPerSecondLineEdit->clear();
     }
-    const QVector<PositionData> &positionData = aircraft.getPosition().getAllConst();
-    const QVector<EngineData> &engineData = aircraft.getEngine().getAllConst();
-    const QVector<PrimaryFlightControlData> &primaryFlightControlData = aircraft.getPrimaryFlightControl().getAllConst();
-    const QVector<SecondaryFlightControlData> &secondaryFlightControlData = aircraft.getSecondaryFlightControl().getAllConst();
-    const QVector<AircraftHandleData> &aircraftHandleData = aircraft.getAircraftHandle().getAllConst();
-    const QVector<LightData> &lightData = aircraft.getLight().getAllConst();
+    const QVector<PositionData> &positionData = aircraft.getPositionConst().getAllConst();
+    const QVector<EngineData> &engineData = aircraft.getEngineConst().getAllConst();
+    const QVector<PrimaryFlightControlData> &primaryFlightControlData = aircraft.getPrimaryFlightControlConst().getAllConst();
+    const QVector<SecondaryFlightControlData> &secondaryFlightControlData = aircraft.getSecondaryFlightControlConst().getAllConst();
+    const QVector<AircraftHandleData> &aircraftHandleData = aircraft.getAircraftHandleConst().getAllConst();
+    const QVector<LightData> &lightData = aircraft.getLightConst().getAllConst();
     const int totalCount = positionData.count() + engineData.count() + primaryFlightControlData.count() + secondaryFlightControlData.count() + aircraftHandleData.count() + lightData.count();
+
     ui->sampleCountLineEdit->setText(QString::number(totalCount));
-
     ui->durationLineEdit->setText(d->unit.formatElapsedTime(flight.getTotalDurationMSec()));
-
     const qint64 positionDataSize = positionData.count()  * sizeof(PositionData);
     const qint64 engineDataSize = engineData.count()  * sizeof(EngineData);
     const qint64 primaryFlightControlDataSize = primaryFlightControlData.count()  * sizeof(PrimaryFlightControlData);

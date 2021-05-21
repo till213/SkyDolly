@@ -48,7 +48,7 @@ public:
 private:
     CSVExportPrivate *d;
 
-    static QString getAircraftHeader() noexcept;
+    static QString getPositionHeader() noexcept;
     static QString getPositionData(const PositionData &data) noexcept;
 
     static QString getEngineHeader() noexcept;

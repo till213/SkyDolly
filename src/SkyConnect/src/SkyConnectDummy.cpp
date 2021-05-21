@@ -197,6 +197,7 @@ void SkyConnectDummy::frenchConnection() noexcept
 
 bool SkyConnectDummy::sendPositionData(TimeVariableData::Access access) noexcept
 {
+<<<<<<< HEAD
     bool dataAvailable;
     const qint64 currentTimestamp = getCurrentTimestamp();
     if (currentTimestamp <= getCurrentFlight().getTotalDurationMSec()) {
@@ -207,6 +208,15 @@ bool SkyConnectDummy::sendPositionData(TimeVariableData::Access access) noexcept
             if (!isElapsedTimerRunning()) {
                 startElapsedTimer();
             }
+=======
+    bool success;
+
+    const PositionData &currentAircraftData = getCurrentFlight().getUserAircraftConst().getPosition().interpolate(getCurrentTimestamp(), access);
+    if (!currentAircraftData.isNull()) {
+        // Start the elapsed timer after sending the first sample data
+        if (!isElapsedTimerRunning()) {
+            startElapsedTimer();
+>>>>>>> 182ecf37c463205143d2738baa9ef8ec662a3bed
         }
     } else {
         // At end of recording
