@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <vector>
 
 #include <QApplication>
 #include <QByteArray>
@@ -46,6 +47,7 @@
 #include <QEvent>
 #include <QResizeEvent>
 #include <QCloseEvent>
+#include <QAction>
 #include <QActionGroup>
 #include <QSpacerItem>
 #include <QTimer>
@@ -68,7 +70,7 @@
 #include "../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../SkyConnect/src/Connect.h"
 #include "../../Module/src/Logbook/LogbookWidget.h"
-#include "../../Module/src/ModuleSwitcher.h"
+#include "../../Module/src/ModuleManager.h"
 #include "Dialogs/AboutDialog.h"
 #include "Dialogs/AboutLogbookDialog.h"
 #include "Dialogs/SettingsDialog.h"
@@ -132,7 +134,7 @@ public:
           replaySpeedUnitComboBox(nullptr),
           customReplaySpeedFactorValidator(nullptr),
           customReplaySpeedPercentValidator(nullptr),
-          moduleSwitcher(nullptr)
+          moduleManager(nullptr)
     {}
 
     SkyConnectIntf &skyConnect;
@@ -163,7 +165,7 @@ public:
     QDoubleValidator *customReplaySpeedFactorValidator;
     QDoubleValidator *customReplaySpeedPercentValidator;
 
-    std::unique_ptr<ModuleSwitcher> moduleSwitcher;
+    std::unique_ptr<ModuleManager> moduleManager;
 };
 
 // PUBLIC
@@ -261,7 +263,7 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::updateWindowMenu);
 
     // Modules
-    connect(d->moduleSwitcher.get(), &ModuleSwitcher::activated,
+    connect(d->moduleManager.get(), &ModuleManager::activated,
             this, &MainWindow::handleModuleActivated);
 
     // Settings
@@ -290,11 +292,13 @@ void MainWindow::initUi() noexcept
     d->settingsDialog = new SettingsDialog(this);
 
     // Modules
-    d->moduleSwitcher = std::make_unique<ModuleSwitcher>(*ui->moduleStackWidget, *d->databaseService, *d->flightService);
-    ui->moduleGroupBox->setTitle(d->moduleSwitcher->getActiveModule().getTitle());
+    d->moduleManager = std::make_unique<ModuleManager>(*ui->moduleStackWidget, *d->databaseService, *d->flightService);
+    ui->moduleGroupBox->setTitle(d->moduleManager->getActiveModule().getModuleName());
 
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
     ui->showMinimalAction->setChecked(ui->moduleGroupBox->isVisible());
+
+    initModuleSelectorUi();
     initControlUi();
     initReplaySpeedUi();
 
@@ -308,6 +312,19 @@ void MainWindow::initUi() noexcept
     if (!windowGeometry.isEmpty()) {
         restoreGeometry(windowGeometry);
         restoreState(windowState);
+    }
+}
+
+void MainWindow::initModuleSelectorUi() noexcept
+{
+    for (const auto &item : d->moduleManager->getModules()) {
+        QAction &moduleAction = item->getAction();
+        ui->moduleMenu->addAction(&moduleAction);
+        ActionButton *actionButton = new ActionButton(this);
+        actionButton->setAction(&moduleAction);
+        actionButton->setFlat(true);
+        actionButton->setText(moduleAction.text().toUpper());
+        ui->moduleSelectorLayout->addWidget(actionButton);
     }
 }
 
@@ -513,6 +530,7 @@ void MainWindow::initReplaySpeedUi() noexcept
 
 void MainWindow::updateMinimalUi(bool enabled)
 {
+    ui->moduleSelectorWidget->setHidden(enabled);
     ui->moduleGroupBox->setHidden(enabled);
     Settings::getInstance().setMinimalUiEnabled(enabled);
     // When hiding a widget it takes some time for the layout manager to
