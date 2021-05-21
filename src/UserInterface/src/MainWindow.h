@@ -33,6 +33,7 @@ class QEvent;
 class QResizeEvent;
 
 #include "../../SkyConnect/src/SkyConnectIntf.h"
+#include "../../Module/src/Module.h"
 #include "../../SkyConnect/src/Connect.h"
 #include "UserInterfaceLib.h"
 
@@ -96,6 +97,9 @@ private slots:
     void updateFileMenu() noexcept;
     void updateWindowMenu() noexcept;
     void updateMainWindow() noexcept;
+
+    // Modules
+    void handleModuleActivated(const QString title, Module::Module moduleId);
 
     // File menu
     void on_newLogbookAction_triggered() noexcept;
