@@ -22,21 +22,16 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef MODULEINTF_H
-#define MODULEINTF_H
+#ifndef MODULE_H
+#define MODULE_H
 
-#include <QString>
-
-class QWidget;
-
-#include "Module.h"
-
-class ModuleIntf
+namespace Module
 {
-public:
-    virtual Module::Module getModuleId() const = 0;
-    virtual QString getTitle() const = 0;
-    virtual QWidget &getWidget() = 0;
-};
+    enum class Module {
+        None,
+        Logbook,
+        Formation
+    };
+}
 
-#endif // MODULEINTF_H
+#endif // MODULE_H
