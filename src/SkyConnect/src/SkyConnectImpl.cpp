@@ -23,7 +23,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
-#include <unordered_map>
 
 #include <windows.h>
 #include <SimConnect.h>
