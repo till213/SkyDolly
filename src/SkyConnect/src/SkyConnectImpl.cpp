@@ -257,7 +257,7 @@ void SkyConnectImpl::onRecordSampleRateChanged(SampleRate::SampleRate sampleRate
      updateRecordFrequency(sampleRate);
 }
 
-bool SkyConnectImpl::sendPositionData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept
+bool SkyConnectImpl::sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept
 {
     bool success;
     const Aircraft &userAircraft = getCurrentFlight().getUserAircraftConst();
@@ -294,7 +294,7 @@ bool SkyConnectImpl::sendPositionData(qint64 currentTimestamp, TimeVariableData:
             simConnectPrimaryFlightControl.fromPrimaryFlightControlData(primaryFlightControlData);
             const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPrimaryFlightControlDefinition),
                                                                 ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
-                                                                sizeof(PrimaryFlightControl), &simConnectPrimaryFlightControl);
+                                                                sizeof(SimConnectPrimaryFlightControl), &simConnectPrimaryFlightControl);
             success = res == S_OK;
         }
     }
@@ -474,7 +474,7 @@ void SkyConnectImpl::replay() noexcept
 {
     const qint64 currentTimestamp = getCurrentTimestamp();
     if (currentTimestamp <= getCurrentFlight().getTotalDurationMSec()) {
-        if (!sendPositionData(currentTimestamp, TimeVariableData::Access::Linear)) {
+        if (!sendAircraftData(currentTimestamp, TimeVariableData::Access::Linear)) {
             // Connection error
             stopReplay();
         }
