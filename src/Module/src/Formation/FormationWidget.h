@@ -22,38 +22,27 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LOGBOOKWIDGET_H
-#define LOGBOOKWIDGET_H
+#ifndef FORMATIONWIDGET_H
+#define FORMATIONWIDGET_H
 
 #include <memory>
 
-#include <QWidget>
-
-class QShowEvent;
-class QHideEvent;
-
 #include "../ModuleIntf.h"
-#include "../Module.h"
 #include "../AbstractModuleWidget.h"
 #include "../ModuleLib.h"
 
-class SkyConnectIntf;
-class DatabaseService;
-class FlightService;
-class LogbookWidgetPrivate;
-
 namespace Ui {
-    class LogbookWidget;
+    class FormationWidget;
 }
 
-class MODULE_API LogbookWidget : public AbstractModuleWidget
+class FormationWidgetPrivate;
+
+class FormationWidget : public AbstractModuleWidget
 {
     Q_OBJECT
 public:
-    explicit LogbookWidget(DatabaseService &databaseService, FlightService &flightService, QWidget *parent = nullptr) noexcept;
-    virtual ~LogbookWidget() noexcept;
-
-    qint64 getSelectedFlightId() const noexcept;
+    explicit FormationWidget(QWidget *parent = nullptr) noexcept;
+    virtual ~FormationWidget() noexcept;
 
     virtual Module::Module getModuleId() const noexcept override;
     virtual QString getTitle() const noexcept override;
@@ -63,21 +52,13 @@ protected:
     void hideEvent(QHideEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(LogbookWidget)
-    std::unique_ptr<Ui::LogbookWidget> ui;
-    std::unique_ptr<LogbookWidgetPrivate> d;
+    Q_DISABLE_COPY(FormationWidget)
+    std::unique_ptr<Ui::FormationWidget> ui;
+    std::unique_ptr<FormationWidgetPrivate> d;
 
     void initUi() noexcept;
-    void updateEditUi() noexcept;
-    void frenchConnection() noexcept;
-
-private slots:
     void updateUi() noexcept;
-    void handleSelectionChanged() noexcept;
-    void loadFlight() noexcept;
-    void deleteFlight() noexcept;
-    void handleCellSelected(int row, int column) noexcept;
-    void handleCellChanged(int row, int column) noexcept;
+    void frenchConnection() noexcept;
 };
 
-#endif // LOGBOOKWIDGET_H
+#endif // FORMATIONWIDGET_H

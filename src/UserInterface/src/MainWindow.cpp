@@ -68,6 +68,7 @@
 #include "../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../SkyConnect/src/Connect.h"
 #include "../../Module/src/Logbook/LogbookWidget.h"
+#include "../../Module/src/ModuleSwitcher.h"
 #include "Dialogs/AboutDialog.h"
 #include "Dialogs/AboutLogbookDialog.h"
 #include "Dialogs/SettingsDialog.h"
@@ -130,7 +131,8 @@ public:
           customSpeedLineEdit(nullptr),
           replaySpeedUnitComboBox(nullptr),
           customReplaySpeedFactorValidator(nullptr),
-          customReplaySpeedPercentValidator(nullptr)
+          customReplaySpeedPercentValidator(nullptr),
+          moduleSwitcher(nullptr)
     {}
 
     SkyConnectIntf &skyConnect;
@@ -160,6 +162,8 @@ public:
 
     QDoubleValidator *customReplaySpeedFactorValidator;
     QDoubleValidator *customReplaySpeedPercentValidator;
+
+    std::unique_ptr<ModuleSwitcher> moduleSwitcher;
 };
 
 // PUBLIC
@@ -255,6 +259,10 @@ void MainWindow::frenchConnection() noexcept
     connect(d->statisticsDialog, &StatisticsDialog::visibilityChanged,
             this, &MainWindow::updateWindowMenu);
 
+    // Modules
+    connect(d->moduleSwitcher.get(), &ModuleSwitcher::activated,
+            this, &MainWindow::handleModuleActivated);
+
     // Settings
     connect(&Settings::getInstance(), &Settings::changed,
             this, &MainWindow::updateMainWindow);
@@ -280,11 +288,9 @@ void MainWindow::initUi() noexcept
     d->aboutLogbookDialog = new AboutLogbookDialog(*d->databaseService, this);
     d->settingsDialog = new SettingsDialog(this);
 
-    // Widgets
-    LogbookWidget *logbookWidget = new LogbookWidget(*d->databaseService, *d->flightService, ui->moduleStackWidget);
-    ui->moduleGroupBox->setTitle(logbookWidget->getTitle());
-    ui->moduleStackWidget->addWidget(logbookWidget);
-    ui->moduleStackWidget->setCurrentWidget(logbookWidget);
+    // Modules
+    d->moduleSwitcher = std::make_unique<ModuleSwitcher>(*ui->moduleStackWidget, *d->databaseService, *d->flightService);
+    ui->moduleGroupBox->setTitle(d->moduleSwitcher->getActiveModule().getTitle());
 
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
     ui->showMinimalAction->setChecked(ui->moduleGroupBox->isVisible());
@@ -879,6 +885,12 @@ void MainWindow::updateMainWindow() noexcept
         ui->forwardAction->setToolTip(tr("Fast forward [%1 %]").arg(seekIntervalPercent));
         ui->backwardAction->setToolTip(tr("Rewind [%1 %]").arg(seekIntervalPercent));
     }
+}
+
+void MainWindow::handleModuleActivated(const QString title, Module::Module moduleId)
+{
+    Q_UNUSED(moduleId)
+    ui->moduleGroupBox->setTitle(title);
 }
 
 void MainWindow::on_newLogbookAction_triggered() noexcept

@@ -44,7 +44,8 @@
 #include "../../../Model/src/Logbook.h"
 #include "../../../Persistence/src/Service/DatabaseService.h"
 #include "../../../Persistence/src/Service/FlightService.h"
-
+#include "../AbstractModuleWidget.h"
+#include "../Module.h"
 #include "LogbookWidget.h"
 #include "ui_LogbookWidget.h"
 
@@ -64,7 +65,6 @@ public:
           flightService(theFlightService),
           selectedRow(InvalidSelection),
           selectedFlightId(Flight::InvalidId)
-
     {}
 
     int titleColumnIndex;
@@ -78,7 +78,7 @@ public:
 // PUBLIC
 
 LogbookWidget::LogbookWidget(DatabaseService &databaseService, FlightService &flightService, QWidget *parent) noexcept
-    : QWidget(parent),
+    : AbstractModuleWidget(parent),
       ui(std::make_unique<Ui::LogbookWidget>()),
       d(std::make_unique<LogbookWidgetPrivate>(databaseService, flightService))
 {
@@ -88,11 +88,20 @@ LogbookWidget::LogbookWidget(DatabaseService &databaseService, FlightService &fl
 }
 
 LogbookWidget::~LogbookWidget() noexcept
-{}
+{
+#ifdef DEBUG
+    qDebug("LogbookWidget::~LogbookWidget: DELETED.");
+#endif
+}
 
 qint64 LogbookWidget::getSelectedFlightId() const noexcept
 {
     return d->selectedFlightId;
+}
+
+Module::Module LogbookWidget::getModuleId() const noexcept
+{
+    return Module::Module::Logbook;
 }
 
 QString LogbookWidget::getTitle() const noexcept
