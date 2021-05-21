@@ -71,8 +71,7 @@ StatisticsDialog::StatisticsDialog(SkyConnectIntf &skyConnect, QWidget *parent) 
 }
 
 StatisticsDialog::~StatisticsDialog() noexcept
-{
-}
+{}
 
 // PROTECTED
 
@@ -137,6 +136,7 @@ void StatisticsDialog::updateRecordUi() noexcept
 
     ui->sampleCountLineEdit->setText(QString::number(totalCount));
     ui->durationLineEdit->setText(d->unit.formatElapsedTime(flight.getTotalDurationMSec()));
+
     const qint64 positionDataSize = positionData.count()  * sizeof(PositionData);
     const qint64 engineDataSize = engineData.count()  * sizeof(EngineData);
     const qint64 primaryFlightControlDataSize = primaryFlightControlData.count()  * sizeof(PrimaryFlightControlData);

@@ -154,10 +154,10 @@ void SkyConnectDummy::onRecordSampleRateChanged(SampleRate::SampleRate sampleRat
     Q_UNUSED(sampleRate)
 }
 
-bool SkyConnectDummy::sendPositionData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept
+bool SkyConnectDummy::sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept
 {
     Q_UNUSED(currentTimestamp)
-    return sendPositionData(access);
+    return sendAircraftData(access);
 }
 
 bool SkyConnectDummy::isConnectedWithSim() const noexcept
@@ -195,9 +195,8 @@ void SkyConnectDummy::frenchConnection() noexcept
             this, &SkyConnectDummy::processEvents);
 }
 
-bool SkyConnectDummy::sendPositionData(TimeVariableData::Access access) noexcept
+bool SkyConnectDummy::sendAircraftData(TimeVariableData::Access access) noexcept
 {
-<<<<<<< HEAD
     bool dataAvailable;
     const qint64 currentTimestamp = getCurrentTimestamp();
     if (currentTimestamp <= getCurrentFlight().getTotalDurationMSec()) {
@@ -208,15 +207,6 @@ bool SkyConnectDummy::sendPositionData(TimeVariableData::Access access) noexcept
             if (!isElapsedTimerRunning()) {
                 startElapsedTimer();
             }
-=======
-    bool success;
-
-    const PositionData &currentAircraftData = getCurrentFlight().getUserAircraftConst().getPosition().interpolate(getCurrentTimestamp(), access);
-    if (!currentAircraftData.isNull()) {
-        // Start the elapsed timer after sending the first sample data
-        if (!isElapsedTimerRunning()) {
-            startElapsedTimer();
->>>>>>> 182ecf37c463205143d2738baa9ef8ec662a3bed
         }
     } else {
         // At end of recording
@@ -465,7 +455,7 @@ void SkyConnectDummy::recordAircraftInfo() noexcept
 
 void SkyConnectDummy::replay() noexcept
 {
-    if (!sendPositionData(TimeVariableData::Access::Linear)) {
+    if (!sendAircraftData(TimeVariableData::Access::Linear)) {
         stopReplay();
     }
 }
