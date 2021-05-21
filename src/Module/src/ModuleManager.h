@@ -26,10 +26,12 @@
 #define MODULESWITCHER_H
 
 #include <memory>
+#include <vector>
 
 #include <QObject>
 
 class QStackedWidget;
+class QAction;
 
 #include "Module.h"
 #include "ModuleLib.h"
@@ -37,15 +39,17 @@ class QStackedWidget;
 class DatabaseService;
 class FlightService;
 class ModuleIntf;
-class ModuleSwitcherPrivate;
+class ModuleManagerPrivate;
 
-class MODULE_API ModuleSwitcher : public QObject
+class MODULE_API ModuleManager : public QObject
 {
     Q_OBJECT
 public:
-    ModuleSwitcher(QStackedWidget &moduleStackWidget, DatabaseService &theDatabaseService, FlightService &theFlightService, QObject *parent = nullptr) noexcept;
-    ~ModuleSwitcher() noexcept;
+    ModuleManager(QStackedWidget &moduleStackWidget, DatabaseService &theDatabaseService, FlightService &theFlightService, QObject *parent = nullptr) noexcept;
+    virtual ~ModuleManager() noexcept;
 
+    std::vector<ModuleIntf *> getModules() const;
+    ModuleIntf &getModule(Module::Module moduleId) const noexcept;
     ModuleIntf &getActiveModule() const;
     void activateModule(Module::Module moduleId) noexcept;
 
@@ -53,9 +57,13 @@ signals:
     void activated(const QString title, Module::Module moduleId);
 
 private:
-    std::unique_ptr<ModuleSwitcherPrivate> d;
+    std::unique_ptr<ModuleManagerPrivate> d;
 
     void initModules() noexcept;
+    void frenchConnection() noexcept;
+
+private slots:
+    void handleModuleSelected(QAction *action) noexcept;
 };
 
 #endif // MODULESWITCHER_H

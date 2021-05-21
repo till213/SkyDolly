@@ -11,7 +11,7 @@ else()
 endif()
 
 set(MODULE_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence SkyConnect
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence SkyConnect tsl::ordered_map
 )
 if (APPLE)
     list(APPEND MODULE_LIBS -lc++)
@@ -24,8 +24,8 @@ target_sources(Module
         src/ModuleIntf.h
         src/AbstractModuleWidget.cpp
         src/AbstractModuleWidget.h
-        src/ModuleSwitcher.cpp
-        src/ModuleSwitcher.h
+        src/ModuleManager.cpp
+        src/ModuleManager.h
         src/Logbook/LogbookWidget.cpp
         src/Logbook/LogbookWidget.h
         src/Logbook/LogbookWidget.ui

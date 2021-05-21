@@ -27,6 +27,10 @@
 
 #include <memory>
 
+class QShowEvent;
+class QHideEvent;
+class QAction;
+
 #include "../ModuleIntf.h"
 #include "../AbstractModuleWidget.h"
 #include "../ModuleLib.h"
@@ -45,7 +49,8 @@ public:
     virtual ~FormationWidget() noexcept;
 
     virtual Module::Module getModuleId() const noexcept override;
-    virtual QString getTitle() const noexcept override;
+    virtual const QString getModuleName() const noexcept override;
+    virtual QAction &getAction() noexcept override;
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;
@@ -59,6 +64,8 @@ private:
     void initUi() noexcept;
     void updateUi() noexcept;
     void frenchConnection() noexcept;
+
+    static const QString getName();
 };
 
 #endif // FORMATIONWIDGET_H
