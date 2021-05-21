@@ -22,7 +22,10 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+
 #include <QWidget>
+#include <QAction>
 
 #include "../AbstractModuleWidget.h"
 #include "FormationWidget.h"
@@ -32,8 +35,10 @@ class FormationWidgetPrivate
 {
 public:
     FormationWidgetPrivate() noexcept
+        : moduleAction(nullptr)
     {}
 
+    std::unique_ptr<QAction> moduleAction;
 };
 
 // PUBLIC
@@ -60,9 +65,14 @@ Module::Module FormationWidget::getModuleId() const noexcept
     return Module::Module::Formation;
 }
 
-QString FormationWidget::getTitle() const noexcept
+const QString FormationWidget::getModuleName() const noexcept
 {
-    return QString(QT_TRANSLATE_NOOP("FormationWidget", "Formation"));
+    return getName();
+}
+
+QAction &FormationWidget::getAction() noexcept
+{
+    return *d->moduleAction;
 }
 
 // PROTECTED
@@ -82,7 +92,7 @@ void FormationWidget::hideEvent(QHideEvent *event) noexcept
 
 void FormationWidget::initUi() noexcept
 {
-
+    d->moduleAction = std::make_unique<QAction>(getName());
 }
 
 void FormationWidget::updateUi() noexcept
@@ -93,4 +103,9 @@ void FormationWidget::updateUi() noexcept
 void FormationWidget::frenchConnection() noexcept
 {
 
+}
+
+const QString FormationWidget::getName()
+{
+    return QString(QT_TRANSLATE_NOOP("LogbookWidget", "Formation"));
 }

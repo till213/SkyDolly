@@ -34,6 +34,32 @@
      <enum>QLayout::SetMinimumSize</enum>
     </property>
     <item>
+     <widget class="QWidget" name="moduleSelectorWidget" native="true">
+      <layout class="QHBoxLayout" name="moduleSelectorLayout">
+       <item>
+        <widget class="QCheckBox" name="moduleSelectorVisibleCheckBox">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
      <widget class="QGroupBox" name="replayGroupBox">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -138,10 +164,7 @@
         <enum>QLayout::SetMinimumSize</enum>
        </property>
        <item>
-        <widget class="QStackedWidget" name="moduleStackWidget">
-         <widget class="QWidget" name="page"/>
-         <widget class="QWidget" name="page_2"/>
-        </widget>
+        <widget class="QStackedWidget" name="moduleStackWidget"/>
        </item>
       </layout>
      </widget>
@@ -221,9 +244,15 @@
     <addaction name="slowMenu"/>
     <addaction name="fastMenu"/>
    </widget>
+   <widget class="QMenu" name="moduleMenu">
+    <property name="title">
+     <string>&amp;Module</string>
+    </property>
+   </widget>
    <addaction name="fileMenu"/>
    <addaction name="replayMenu"/>
    <addaction name="viewMenu"/>
+   <addaction name="moduleMenu"/>
    <addaction name="infoMenu"/>
   </widget>
   <action name="quitAction">

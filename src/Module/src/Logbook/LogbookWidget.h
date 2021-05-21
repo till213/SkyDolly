@@ -31,6 +31,7 @@
 
 class QShowEvent;
 class QHideEvent;
+class QAction;
 
 #include "../ModuleIntf.h"
 #include "../Module.h"
@@ -56,7 +57,8 @@ public:
     qint64 getSelectedFlightId() const noexcept;
 
     virtual Module::Module getModuleId() const noexcept override;
-    virtual QString getTitle() const noexcept override;
+    virtual const QString getModuleName() const noexcept override;
+    virtual QAction &getAction() noexcept override;
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;
@@ -70,6 +72,8 @@ private:
     void initUi() noexcept;
     void updateEditUi() noexcept;
     void frenchConnection() noexcept;
+
+    static const QString getName();
 
 private slots:
     void updateUi() noexcept;

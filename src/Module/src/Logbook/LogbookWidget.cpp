@@ -36,6 +36,7 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <QCheckBox>
+#include <QAction>
 
 #include "../../../Kernel/src/Unit.h"
 #include "../../../Kernel/src/Settings.h"
@@ -64,7 +65,8 @@ public:
           databaseService(theDatabaseService),
           flightService(theFlightService),
           selectedRow(InvalidSelection),
-          selectedFlightId(Flight::InvalidId)
+          selectedFlightId(Flight::InvalidId),
+          moduleAction(nullptr)
     {}
 
     int titleColumnIndex;
@@ -73,6 +75,7 @@ public:
     int selectedRow;
     qint64 selectedFlightId;
     Unit unit;
+    std::unique_ptr<QAction> moduleAction;
 };
 
 // PUBLIC
@@ -104,9 +107,14 @@ Module::Module LogbookWidget::getModuleId() const noexcept
     return Module::Module::Logbook;
 }
 
-QString LogbookWidget::getTitle() const noexcept
+const QString LogbookWidget::getModuleName() const noexcept
 {
-    return QString(QT_TRANSLATE_NOOP("LogbookWidget", "Logbook"));
+    return getName();
+}
+
+QAction &LogbookWidget::getAction() noexcept
+{
+    return *d->moduleAction;
 }
 
 // PROTECTED
@@ -141,6 +149,8 @@ void LogbookWidget::hideEvent(QHideEvent *event) noexcept
 
 void LogbookWidget::initUi() noexcept
 {
+    d->moduleAction = std::make_unique<QAction>(getName());
+
     ui->logTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     const QStringList headers {tr("Flight"), tr("Date"), tr("Aircraft"), tr("Departure Time"), tr("Departure"), tr("Arrival Time"), tr("Arrival"), tr("Total Time of Flight"), tr("Title")};
@@ -171,6 +181,11 @@ void LogbookWidget::frenchConnection() noexcept
             this, &LogbookWidget::handleCellSelected);
     connect(ui->logTableWidget, &QTableWidget::cellChanged,
             this, &LogbookWidget::handleCellChanged);
+}
+
+const QString LogbookWidget::getName()
+{
+    return QString(QT_TRANSLATE_NOOP("LogbookWidget", "Logbook"));
 }
 
 // PRIVATE SLOTS
