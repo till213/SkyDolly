@@ -45,6 +45,8 @@ if (WIN32)
             src/SimConnectFlightPlan.h
             src/SimConnectSimulationTime.cpp
             src/SimConnectSimulationTime.h
+            src/SimConnectAI.cpp
+            src/SimConnectAI.h
             src/EventWidget.cpp
             src/EventWidget.h
         )
