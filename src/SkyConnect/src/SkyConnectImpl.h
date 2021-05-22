@@ -72,8 +72,7 @@ private:
     bool close() noexcept;
     void setupRequestData() noexcept;
     void setupInitialPosition() noexcept;
-    void setSimulationFrozen(bool enable) noexcept;
-    bool isSimulationFrozen() const noexcept;
+    void setAircraftFrozen(::SIMCONNECT_OBJECT_ID objectId, bool enable) noexcept;
     bool sendAircraftData(TimeVariableData::Access access) noexcept;
     void replay() noexcept;
     void updateRecordFrequency(SampleRate::SampleRate sampleRate) noexcept;

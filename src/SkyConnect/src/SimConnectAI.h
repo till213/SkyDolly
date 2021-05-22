@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The black sheep for your fposition recordings
+ * Sky Dolly - The black sheep for your flight recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,43 +22,29 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef POSITION_H
-#define POSITION_H
+#ifndef SIMCONNECTAI_H
+#define SIMCONNECTAI_H
 
 #include <memory>
+#include <vector>
 
-#include <QObject>
-#include <QByteArray>
-#include <QVector>
+#include <windows.h>
+#include <SimConnect.h>
 
-#include "TimeVariableData.h"
-#include "ModelLib.h"
+class Aircraft;
+class SimConnectAIPrivate;
 
-class PositionData;
-class PositionPrivate;
-
-class MODEL_API Position : public QObject
+class SimConnectAI
 {
-    Q_OBJECT
 public:
-    Position(QObject *parent = nullptr) noexcept;
-    virtual ~Position() noexcept;
+    SimConnectAI(::HANDLE simConnectHandle);
+    ~SimConnectAI();
 
-    void upsert(const PositionData &positionData) noexcept;
-    const PositionData &getFirst() const noexcept;
-    const PositionData &getLast() const noexcept;
-    QVector<PositionData> &getAll() const noexcept;
-    const QVector<PositionData> &getAllConst() const noexcept;
-    const PositionData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
-
-    void clear() noexcept;
-
-signals:
-    void dataChanged();
+    bool createSimulatedAircrafts(const std::vector<const Aircraft *> &aircrafts, ::SIMCONNECT_DATA_REQUEST_ID baseRequestId) noexcept;
+    void destroySimulatedAircrafts(const std::vector<::SIMCONNECT_OBJECT_ID > &objectIDs, ::SIMCONNECT_DATA_REQUEST_ID baseRequestId) noexcept;
 
 private:
-    Q_DISABLE_COPY(Position)
-    std::unique_ptr<PositionPrivate> d;
+    std::unique_ptr<SimConnectAIPrivate> d;
 };
 
-#endif // POSITION_H
+#endif // SIMCONNECTAI_H

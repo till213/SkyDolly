@@ -26,6 +26,7 @@
 #define SIMCONNECTPOSITION_H
 
 #include <windows.h>
+#include <SimConnect.h>
 
 #include "../../Kernel/src/SkyMath.h"
 #include "../../Model/src/SimType.h"
@@ -93,6 +94,22 @@ struct SimConnectPosition
     }
 
     static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
+
+    static inline SIMCONNECT_DATA_INITPOSITION toInitialPosition(const PositionData &positionData, bool onGround, int initialAirspeed)
+    {
+        SIMCONNECT_DATA_INITPOSITION initialPosition;
+
+        initialPosition.Latitude = positionData.latitude;
+        initialPosition.Longitude = positionData.longitude;
+        initialPosition.Altitude = positionData.altitude;
+        initialPosition.Pitch = positionData.pitch;
+        initialPosition.Bank = positionData.bank;
+        initialPosition.Heading = positionData.heading;
+        initialPosition.OnGround = onGround ? 1 : 0;
+        initialPosition.Airspeed = initialAirspeed;
+
+        return initialPosition;
+    }
 };
 #pragma pack(pop)
 
