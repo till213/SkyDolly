@@ -72,6 +72,15 @@ void Position::upsert(const PositionData &positionData) noexcept
     emit dataChanged();
 }
 
+const PositionData &Position::getFirst() const noexcept
+{
+    if (!d->positionData.isEmpty()) {
+        return d->positionData.first();
+    } else {
+        return PositionData::NullPositionData;
+    }
+}
+
 const PositionData &Position::getLast() const noexcept
 {
     if (!d->positionData.isEmpty()) {
