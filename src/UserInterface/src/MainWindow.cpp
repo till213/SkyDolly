@@ -134,7 +134,8 @@ public:
           replaySpeedUnitComboBox(nullptr),
           customReplaySpeedFactorValidator(nullptr),
           customReplaySpeedPercentValidator(nullptr),
-          moduleManager(nullptr)
+          moduleManager(nullptr),
+          activeModuleId(Module::Module::None)
     {}
 
     SkyConnectIntf &skyConnect;
@@ -166,6 +167,7 @@ public:
     QDoubleValidator *customReplaySpeedPercentValidator;
 
     std::unique_ptr<ModuleManager> moduleManager;
+    Module::Module activeModuleId;
 };
 
 // PUBLIC
@@ -292,7 +294,10 @@ void MainWindow::initUi() noexcept
 
     // Modules
     d->moduleManager = std::make_unique<ModuleManager>(*ui->moduleStackWidget, *d->databaseService, *d->flightService);
-    ui->moduleGroupBox->setTitle(d->moduleManager->getActiveModule().getModuleName());
+
+    const ModuleIntf &activeModule = d->moduleManager->getActiveModule();
+    ui->moduleGroupBox->setTitle(activeModule.getModuleName());
+    d->activeModuleId = activeModule.getModuleId();
 
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
     ui->showMinimalAction->setChecked(ui->moduleGroupBox->isVisible());
@@ -907,8 +912,8 @@ void MainWindow::updateMainWindow() noexcept
 
 void MainWindow::handleModuleActivated(const QString title, Module::Module moduleId)
 {
-    Q_UNUSED(moduleId)
     ui->moduleGroupBox->setTitle(title);
+    d->activeModuleId = moduleId;
 }
 
 void MainWindow::on_newLogbookAction_triggered() noexcept
@@ -1101,7 +1106,8 @@ void MainWindow::toggleRecord(bool enable) noexcept
         break;
     default:
         if (enable) {
-            d->skyConnect.startRecording();
+            const bool addFormationAircraft = d->activeModuleId == Module::Module::Formation;
+            d->skyConnect.startRecording(addFormationAircraft);
         }
         break;
     }

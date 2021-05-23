@@ -42,8 +42,6 @@ class MODEL_API Flight : public QObject
 {
     Q_OBJECT
 public:
-    struct Iterator;
-
     Flight(QObject *parent = nullptr) noexcept;
     virtual ~Flight() noexcept;
 
@@ -61,9 +59,9 @@ public:
 
     Aircraft &addUserAircraft() noexcept;
     void setUserAircraft(int index);
-    void setUserAircraft(const Aircraft &aircraft);
     const Aircraft &getUserAircraftConst() const noexcept;
     Aircraft &getUserAircraft() const noexcept;
+    std::vector<std::unique_ptr<Aircraft>> &getAircrafts() const noexcept;
     int getAircraftCount() const noexcept;
 
     const FlightCondition &getFlightConditionConst() const noexcept;
@@ -72,6 +70,44 @@ public:
     qint64 getTotalDurationMSec() const noexcept;
 
     void clear() noexcept;
+
+    template <typename T>
+    class Iterator
+    {
+    public:
+        using iterator_category = std::forward_iterator_tag;
+        using difference_type   = std::ptrdiff_t;
+        using value_type        = T;
+        using pointer           = value_type*;
+        using reference         = value_type&;
+
+        Iterator(typename std::vector<value_type>::iterator it) noexcept
+            : m_it(it)
+        {}
+
+        reference operator*() const noexcept { return m_it.operator*(); }
+        pointer operator->() noexcept { return m_it.operator->(); }
+
+        // Prefix increment
+        Iterator& operator++() noexcept { m_it++; return *this; }
+
+        // Postfix increment
+        Iterator operator++(int) noexcept { Iterator tmp = *this; ++(*this); return tmp; }
+
+        friend bool operator== (const Iterator& a, const Iterator& b) noexcept { return a.m_it == b.m_it; };
+        friend bool operator!= (const Iterator& a, const Iterator& b) noexcept { return a.m_it != b.m_it; };
+
+    private:
+        typename std::vector<value_type>::iterator m_it;
+    };
+
+    typedef Iterator<std::unique_ptr<Aircraft>> it;
+    typedef Iterator<const std::unique_ptr<Aircraft>> const_it;
+
+    it begin() noexcept;
+    it end() noexcept;
+    const const_it begin() const noexcept;
+    const const_it end() const noexcept;
 
     static constexpr int InvalidId = -1;
 
@@ -84,8 +120,6 @@ signals:
 private:
     Q_DISABLE_COPY(Flight)
     std::unique_ptr<FlightPrivate> d;
-
-    void frenchConnection() noexcept;
 };
 
 #endif // FLIGHT_H

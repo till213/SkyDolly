@@ -40,7 +40,7 @@ public:
 
     virtual ~SkyConnectIntf() = default;
 
-    virtual void startRecording() noexcept = 0;
+    virtual void startRecording(bool addFormationAircraft) noexcept = 0;
     virtual void stopRecording() noexcept = 0;
     virtual bool isRecording() const noexcept = 0;
 

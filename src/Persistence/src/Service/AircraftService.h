@@ -41,7 +41,6 @@ public:
     ~AircraftService() noexcept;
 
     bool store(qint64 flightId, int sequenceNumber, Aircraft &aircraft) noexcept;
-    bool restore(qint64 id, Aircraft &aircraft) noexcept;
 
 private:
     std::unique_ptr<AircraftServicePrivate> d;

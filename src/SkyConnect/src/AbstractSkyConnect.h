@@ -44,7 +44,7 @@ public:
     AbstractSkyConnect(QObject *parent = nullptr) noexcept;
     virtual ~AbstractSkyConnect() noexcept;
 
-    virtual void startRecording() noexcept override;
+    virtual void startRecording(bool addFormationAircraft) noexcept override;
     virtual void stopRecording() noexcept override;
     virtual bool isRecording() const noexcept override;
 
