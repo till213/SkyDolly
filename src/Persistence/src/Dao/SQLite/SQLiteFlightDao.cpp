@@ -218,7 +218,17 @@ bool SQLiteFlightDao::addFlight(Flight &flight)  noexcept
 #endif
     }
     if (ok) {
-        ok = d->aircraftDao->add(flight.getId(), UserAircraftSequenceNumber, flight.getUserAircraft());
+        // Starts at 1
+        int sequenceNumber = 1;
+        for (auto &it : flight) {
+            ok = d->aircraftDao->add(flight.getId(), sequenceNumber, *it.get());
+            if (ok) {
+                ++sequenceNumber;
+            } else {
+                break;
+            }
+        }
+
     }
     return ok;
 }
@@ -279,8 +289,7 @@ bool SQLiteFlightDao::getFlightById(qint64 id, Flight &flight) const noexcept
 
             flight.setFlightCondition(flightCondition);
         }
-        Aircraft &userAircraft = flight.getUserAircraft();
-        ok = d->aircraftDao->getByFlightId(id, UserAircraftSequenceNumber, userAircraft);
+        ok = d->aircraftDao->getByFlightId(id, flight.getAircrafts());
 #ifdef DEBUG
     } else {
         qDebug("SQLiteFlightDao::getFlightById: SQL error: %s", qPrintable(d->selectByIdQuery->lastError().databaseText() + " - error code: " + d->selectByIdQuery->lastError().nativeErrorCode()));

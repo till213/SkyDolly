@@ -156,6 +156,11 @@ void SkyConnectDummy::onRecordSampleRateChanged(SampleRate::SampleRate sampleRat
 bool SkyConnectDummy::sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept
 {
     Q_UNUSED(currentTimestamp)
+
+    const Flight &flight = getCurrentFlight();
+    for (const auto &it : flight) {
+        // Send data
+    }
     return sendAircraftData(access);
 }
 

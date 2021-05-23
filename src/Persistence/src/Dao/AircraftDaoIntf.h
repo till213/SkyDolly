@@ -25,6 +25,9 @@
 #ifndef AIRCRAFTDAOINTF_H
 #define AIRCRAFTDAOINTF_H
 
+#include <memory>
+#include <vector>
+
 #include <QtGlobal>
 
 class Aircraft;
@@ -46,8 +49,7 @@ public:
      * \return \c true on success; \c false else
      */
     virtual bool add(qint64 flightId, int sequenceNumber, Aircraft &aircraft) = 0;
-    virtual bool getById(qint64 id, Aircraft &aircraft) const = 0;
-    virtual bool getByFlightId(qint64 flightId, int sequenceNumber, Aircraft &aircraft) const = 0;
+    virtual bool getByFlightId(qint64 flightId, std::vector<std::unique_ptr<Aircraft>> &aircrafts) const = 0;
     virtual bool deleteByFlightId(qint64 flightId) = 0;
 };
 
