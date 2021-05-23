@@ -24,6 +24,8 @@
  */
 #include <memory>
 #include <vector>
+#include <iterator> // For std::forward_iterator_tag
+#include <cstddef>  // For std::ptrdiff_t
 
 #include <QDateTime>
 #include <QString>
@@ -32,11 +34,17 @@
 #include "Aircraft.h"
 #include "Flight.h"
 
+namespace
+{
+    constexpr int InvalidAircraftIndex = -1;
+}
+
 class FlightPrivate
 {
 public:
 
     FlightPrivate() noexcept
+        : userAircraftIndex(InvalidAircraftIndex)
     {
         clear();
     }
@@ -47,6 +55,7 @@ public:
     QString description;
     FlightCondition flightCondition;
     std::vector<std::unique_ptr<Aircraft>> aircrafts;
+    int userAircraftIndex;
 
     inline void clear() noexcept {
         id = Flight::InvalidId;
@@ -56,6 +65,25 @@ public:
 };
 
 // PUBLIC
+
+struct Flight::Iterator
+{
+    using iterator_category = std::forward_iterator_tag;
+    using difference_type   = std::ptrdiff_t;
+    using value_type        = Aircraft;
+    using pointer           = value_type*;
+    using reference         = value_type&;
+
+    Iterator(std::vector<std::unique_ptr<Aircraft>>::iterator it)
+        : m_it(it)
+    {}
+
+    reference operator*() const { return *(m_it.operator*()); }
+    pointer operator->() { return m_it.operator->()->get(); }
+
+private:
+    std::vector<std::unique_ptr<Aircraft>>::iterator m_it;
+};
 
 Flight::Flight(QObject *parent) noexcept
     : QObject(parent),
