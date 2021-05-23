@@ -20,11 +20,7 @@ Watch the (preview) release trailer on [YouTube](https://www.youtube.com/watch?v
 
 [![Sky Dolly - Flight Recorder & Replay for Flight Simulator 2020 (Cinematic Teaser Trailer)](https://img.youtube.com/vi/_n4qRtm78_I/0.jpg)](https://www.youtube.com/watch?v=_n4qRtm78_I "Sky Dolly - Flight Recorder & Replay for Flight Simulator 2020 (Cinematic Teaser Trailer)")
 
-For new and upcoming features also refer to the [CHANGELOG](CHANGELOG.md).
-
-## Showcase (Cinematic Trailers)
-
-Refer to [SHOWCASE](SHOWCASE.md).
+For more videos created with Sky Dolly also refer to [SHOWCASE](SHOWCASE.md). New and upcoming features are found in the [CHANGELOG](CHANGELOG.md).
 
 ## Basic Usage
 
