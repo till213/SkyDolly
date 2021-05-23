@@ -16,11 +16,19 @@ The connection is made via SimConnect, a standard API introduced with Flight Sim
 * Basic CSV import & export
 * Database (SQLite) based persistence ("logbook")
 
+Watch the (preview) release trailer on [YouTube](https://www.youtube.com/watch?v=_n4qRtm78_I):
+
+[![Sky Dolly - Flight Recorder & Replay for Flight Simulator 2020 (Cinematic Teaser Trailer)](https://img.youtube.com/vi/_n4qRtm78_I/0.jpg)](https://www.youtube.com/watch?v=_n4qRtm78_I "Sky Dolly - Flight Recorder & Replay for Flight Simulator 2020 (Cinematic Teaser Trailer)")
+
 Watch a comparison of the various sample rates on [YouTube](https://www.youtube.com/watch?v=bfgkY0eXL4w):
 
 [![Sky Dolly - Acrobatic Flying in FS2020 (Recording Sample Rate Comparison)](https://img.youtube.com/vi/bfgkY0eXL4w/0.jpg)](https://www.youtube.com/watch?v=bfgkY0eXL4w "Sky Dolly - Acrobatic Flying in FS2020 (Recording Sample Rate Comparison)")
 
 For new and upcoming features also refer to the [CHANGELOG](CHANGELOG.md).
+
+## Showcase (Cinematic Trailers)
+
+Refer to [SHOWCASE](SHOWCASE.md).
 
 ## Basic Usage
 
