@@ -46,7 +46,7 @@ Why don't you try it with one of the guided ["Tell Tours"](https://github.com/ti
 
 Go to [Releases](https://github.com/till213/SkyDolly/releases) and download the latest release.
 
-Latest (pre-)release: **Sky Dolly 0.6.0**
+Latest (pre-)release: **Sky Dolly 0.6.1**
 
 ## Build
 
