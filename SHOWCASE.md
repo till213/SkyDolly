@@ -1,6 +1,6 @@
 # Showcase
 
-Click on the images to watch the video on YouTube.
+The following "cinematic trailers" have been recorded with Sky Dolly and [OBS Studio](https://obsproject.com/). Click on the image to watch the video on YouTube.
 
 ## Flight from Zurich to Geneva (A320neo)
 
