@@ -1,6 +1,16 @@
 # Showcase
 
-The following "cinematic trailers" have been recorded with Sky Dolly and [OBS Studio](https://obsproject.com/). Click on the image to watch the video on YouTube.
+The following videos have been recorded with Sky Dolly and screen-captured with [OBS Studio](https://obsproject.com/). Click on the image to watch the video on YouTube.
+
+## Recording Sample Rate Comparison
+
+This video compares various recording sample rates from 1 Hz up to "Auto" (= simulated frames per second). Whereas for airliners a sample rate of 1 Hz may be sufficient for "acrobatic flying" at least 10 Hz (or better "auto") should be chosen:
+
+[![Sky Dolly - Acrobatic Flying in FS2020 (Recording Sample Rate Comparison)](https://img.youtube.com/vi/bfgkY0eXL4w/0.jpg)](https://www.youtube.com/watch?v=bfgkY0eXL4w "Sky Dolly - Acrobatic Flying in FS2020 (Recording Sample Rate Comparison)")
+
+## Cinematic Trailers
+
+Various "cinematic trailers" which were done during a "stress- and usability test" with Sky Dolly v0.6:
 
 ## Flight from Zurich to Geneva (A320neo)
 
