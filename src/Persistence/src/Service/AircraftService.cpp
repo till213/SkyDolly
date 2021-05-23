@@ -65,11 +65,3 @@ bool AircraftService::store(qint64 flightId, int sequenceNumber, Aircraft &aircr
     }
     return ok;
 }
-
-bool AircraftService::restore(qint64 id, Aircraft &aircraft) noexcept
-{
-    QSqlDatabase::database().transaction();
-    bool ok = d->aircraftDao->getById(id, aircraft);
-    QSqlDatabase::database().rollback();
-    return ok;
-}

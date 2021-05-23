@@ -84,7 +84,7 @@ AbstractSkyConnect::AbstractSkyConnect(QObject *parent) noexcept
 AbstractSkyConnect::~AbstractSkyConnect() noexcept
 {}
 
-void AbstractSkyConnect::startRecording() noexcept
+void AbstractSkyConnect::startRecording(bool addFormationAircraft) noexcept
 {
     if (!isConnectedWithSim()) {
         connectWithSim();
@@ -92,7 +92,16 @@ void AbstractSkyConnect::startRecording() noexcept
 
     if (isConnectedWithSim()) {
         setState(Connect::State::Recording);
-        d->currentFlight.clear();
+        if (!addFormationAircraft) {
+            // Start a new flight
+            d->currentFlight.clear();
+        } else {
+            // Check if the current user aircraft already has a recording
+            if (d->currentFlight.getUserAircraft().hasRecording()) {
+                // If yes, add a new aircraft to the current flight (formation)
+                d->currentFlight.addUserAircraft();
+            }
+        }
         d->lastSamplesPerSecondIndex = 0;
         d->currentTimestamp = 0;
         d->elapsedTimer.invalidate();
