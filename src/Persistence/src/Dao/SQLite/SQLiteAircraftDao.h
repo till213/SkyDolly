@@ -26,6 +26,7 @@
 #define SQLITEFLIGHTCONDITIONDAO_H
 
 #include <memory>
+#include <vector>
 
 #include <QObject>
 
@@ -42,8 +43,7 @@ public:
     virtual ~SQLiteAircraftDao() noexcept;
 
     virtual bool add(qint64 flightId, int sequenceNumber, Aircraft &aircraft) noexcept override;
-    virtual bool getById(qint64 id, Aircraft &aircraft) const noexcept override;
-    virtual bool getByFlightId(qint64 flightId, int sequenceNumber, Aircraft &aircraft) const noexcept override;
+    virtual bool getByFlightId(qint64 flightId, std::vector<std::unique_ptr<Aircraft>> &aircrafts) const noexcept override;
     virtual bool deleteByFlightId(qint64 flightId) noexcept override;
 
 private:

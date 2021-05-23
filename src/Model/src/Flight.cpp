@@ -61,40 +61,25 @@ public:
         id = Flight::InvalidId;
         title.clear();
         description.clear();
+        flightCondition.clear();
+        if (aircrafts.size() > 1) {
+            aircrafts.resize(1);
+            userAircraftIndex = 0;
+        }
+        if (aircrafts.size() > 0) {
+            aircrafts.at(0)->clear();
+        }
     }
 };
 
 // PUBLIC
 
-struct Flight::Iterator
-{
-    using iterator_category = std::forward_iterator_tag;
-    using difference_type   = std::ptrdiff_t;
-    using value_type        = Aircraft;
-    using pointer           = value_type*;
-    using reference         = value_type&;
-
-    Iterator(std::vector<std::unique_ptr<Aircraft>>::iterator it)
-        : m_it(it)
-    {}
-
-    reference operator*() const { return *(m_it.operator*()); }
-    pointer operator->() { return m_it.operator->()->get(); }
-
-private:
-    std::vector<std::unique_ptr<Aircraft>>::iterator m_it;
-};
-
 Flight::Flight(QObject *parent) noexcept
     : QObject(parent),
       d(std::make_unique<FlightPrivate>())
 {
-    // The flight may support several aircrafts, but for now there will be always
-    // exactly one user aircraft
-    std::unique_ptr<Aircraft> userAircraft = std::make_unique<Aircraft>();
-    d->aircrafts.push_back(std::move(userAircraft));
-
-    frenchConnection();
+    // A flight always has at least one (user) aircraft
+    addUserAircraft();
 }
 
 Flight::~Flight() noexcept
@@ -146,14 +131,43 @@ void Flight::setDescription(const QString &description) noexcept
     }
 }
 
+Aircraft &Flight::addUserAircraft() noexcept
+{
+    std::unique_ptr<Aircraft> userAircraft = std::make_unique<Aircraft>();
+    d->aircrafts.push_back(std::move(userAircraft));
+    d->userAircraftIndex = d->aircrafts.size() - 1;
+
+    connect(userAircraft.get(), &Aircraft::infoChanged,
+            this, &Flight::aircraftInfoChanged);
+    connect(userAircraft.get(), &Aircraft::dataChanged,
+            this, &Flight::positionDataChanged);
+
+    return *d->aircrafts.end()->get();
+}
+
+void Flight::setUserAircraft(int index)
+{
+    d->userAircraftIndex = index;
+}
+
 const Aircraft &Flight::getUserAircraftConst() const noexcept
 {
-    return *(*d->aircrafts.cbegin());
+    return *d->aircrafts.at(d->userAircraftIndex);
 }
 
 Aircraft &Flight::getUserAircraft() const noexcept
 {
-    return *(*d->aircrafts.cbegin());
+    return *d->aircrafts.at(d->userAircraftIndex);
+}
+
+std::vector<std::unique_ptr<Aircraft>> &Flight::getAircrafts() const noexcept
+{
+    return d->aircrafts;
+}
+
+int Flight::getAircraftCount() const noexcept
+{
+    return d->aircrafts.size();
 }
 
 const FlightCondition &Flight::getFlightConditionConst() const noexcept
@@ -177,17 +191,24 @@ qint64 Flight::getTotalDurationMSec() const noexcept
 void Flight::clear() noexcept
 {
     d->clear();
-    getUserAircraft().clear();
-    d->flightCondition.clear();
 }
 
-// PRIVATE
-
-void Flight::frenchConnection() noexcept
+Flight::it Flight::begin() noexcept
 {
-    Aircraft &userAircraft = getUserAircraft();
-    connect(&userAircraft, &Aircraft::infoChanged,
-            this, &Flight::aircraftInfoChanged);
-    connect(&userAircraft, &Aircraft::dataChanged,
-            this, &Flight::positionDataChanged);
+    return it(d->aircrafts.begin());
+}
+
+Flight::it Flight::end() noexcept
+{
+    return it(d->aircrafts.end());
+}
+
+const Flight::const_it Flight::begin() const noexcept
+{
+    return const_it(d->aircrafts.cbegin());
+}
+
+const Flight::const_it Flight::end() const noexcept
+{
+    return const_it(d->aircrafts.end());
 }
