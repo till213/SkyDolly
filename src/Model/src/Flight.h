@@ -42,6 +42,8 @@ class MODEL_API Flight : public QObject
 {
     Q_OBJECT
 public:
+    struct Iterator;
+
     Flight(QObject *parent = nullptr) noexcept;
     virtual ~Flight() noexcept;
 
@@ -57,8 +59,12 @@ public:
     const QString &getDescription() const noexcept;
     void setDescription(const QString &description) noexcept;
 
+    Aircraft &addUserAircraft() noexcept;
+    void setUserAircraft(int index);
+    void setUserAircraft(const Aircraft &aircraft);
     const Aircraft &getUserAircraftConst() const noexcept;
     Aircraft &getUserAircraft() const noexcept;
+    int getAircraftCount() const noexcept;
 
     const FlightCondition &getFlightConditionConst() const noexcept;
     void setFlightCondition(FlightCondition flightCondition) noexcept;
