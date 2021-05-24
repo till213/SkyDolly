@@ -117,6 +117,7 @@ void FormationWidget::handleRecordingStopped() noexcept
 void FormationWidget::initUi() noexcept
 {
     d->moduleAction = std::make_unique<QAction>(getName());
+    d->moduleAction->setCheckable(true);
 }
 
 void FormationWidget::frenchConnection() noexcept
