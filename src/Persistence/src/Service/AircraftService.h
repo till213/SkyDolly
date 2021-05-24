@@ -32,9 +32,9 @@
 #include "../../../Model/src/Aircraft.h"
 #include "../PersistenceLib.h"
 
-class PERSISTENCE_API AircraftServicePrivate;
+class AircraftServicePrivate;
 
-class AircraftService
+class PERSISTENCE_API AircraftService
 {
 public:
     AircraftService() noexcept;
