@@ -45,7 +45,7 @@ class MODULE_API ModuleManager : public QObject
 {
     Q_OBJECT
 public:
-    ModuleManager(QStackedWidget &moduleStackWidget, DatabaseService &theDatabaseService, FlightService &theFlightService, QObject *parent = nullptr) noexcept;
+    ModuleManager(QStackedWidget &moduleStackWidget, SkyConnectIntf &skyConnect, DatabaseService &theDatabaseService, FlightService &theFlightService, QObject *parent = nullptr) noexcept;
     virtual ~ModuleManager() noexcept;
 
     std::vector<ModuleIntf *> getModules() const;

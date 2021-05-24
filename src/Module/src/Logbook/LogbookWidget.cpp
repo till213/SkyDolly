@@ -81,8 +81,8 @@ public:
 
 // PUBLIC
 
-LogbookWidget::LogbookWidget(DatabaseService &databaseService, FlightService &flightService, QWidget *parent) noexcept
-    : AbstractModuleWidget(parent),
+LogbookWidget::LogbookWidget(SkyConnectIntf &skyConnect, DatabaseService &databaseService, FlightService &flightService, QWidget *parent) noexcept
+    : AbstractModuleWidget(skyConnect, flightService, parent),
       ui(std::make_unique<Ui::LogbookWidget>()),
       d(std::make_unique<LogbookWidgetPrivate>(databaseService, flightService))
 {
@@ -122,8 +122,7 @@ QAction &LogbookWidget::getAction() noexcept
 
 void LogbookWidget::showEvent(QShowEvent *event) noexcept
 {
-    Q_UNUSED(event)
-    updateUi();
+    AbstractModuleWidget::showEvent(event);
 
     // Service
     connect(&d->databaseService, &DatabaseService::logbookConnectionChanged,
@@ -136,7 +135,7 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
 
 void LogbookWidget::hideEvent(QHideEvent *event) noexcept
 {
-    Q_UNUSED(event)
+    AbstractModuleWidget::hideEvent(event);
 
     disconnect(&d->databaseService, &DatabaseService::logbookConnectionChanged,
                this, &LogbookWidget::updateUi);
@@ -189,11 +188,12 @@ const QString LogbookWidget::getName()
     return QString(QT_TRANSLATE_NOOP("LogbookWidget", "Logbook"));
 }
 
-// PRIVATE SLOTS
+// PROTECTED
 
 void LogbookWidget::updateUi() noexcept
 {
     if (d->databaseService.isConnected()) {
+
         QVector<FlightSummary> summaries = d->flightService.getFlightDescriptions();
         ui->logTableWidget->blockSignals(true);
         ui->logTableWidget->setSortingEnabled(false);
@@ -253,7 +253,6 @@ void LogbookWidget::updateUi() noexcept
             ++columnIndex;
             ++rowIndex;
         }
-
         ui->logTableWidget->sortByColumn(0, Qt::SortOrder::DescendingOrder);
         ui->logTableWidget->setSortingEnabled(true);
         ui->logTableWidget->resizeColumnsToContents();
@@ -265,6 +264,8 @@ void LogbookWidget::updateUi() noexcept
 
     updateEditUi();
 }
+
+// PRIVATE SLOTS
 
 void LogbookWidget::handleSelectionChanged() noexcept
 {

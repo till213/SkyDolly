@@ -152,6 +152,7 @@ public:
 "from   flight f "
 "join   aircraft a "
 "on     a.flight_id = f.id "
+"and    a.seq_nr = 1 "
 "left join (select ident, aircraft_id from waypoint wo1 where wo1.timestamp = (select min(wi1.timestamp) from waypoint wi1 where wi1.aircraft_id = wo1.aircraft_id)) fp1 "
 "on fp1.aircraft_id = a.id "
 "left join (select ident, aircraft_id from waypoint wo2 where wo2.timestamp = (select max(wi2.timestamp) from waypoint wi2 where wi2.aircraft_id = wo2.aircraft_id)) fp2 "

@@ -39,7 +39,6 @@
 #include <QLineEdit>
 #include <QButtonGroup>
 #include <QRadioButton>
-#include <QMessageBox>
 #include <QDoubleValidator>
 #include <QIcon>
 #include <QLocale>
@@ -151,6 +150,7 @@ public:
 
     QLocale locale;
 
+    // Services
     std::unique_ptr<FlightService> flightService;
     std::unique_ptr<DatabaseService> databaseService;
     std::unique_ptr<CSVService> csvService;
@@ -277,8 +277,6 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::handleFlightRestored);
     connect(d->databaseService.get(), &DatabaseService::logbookConnectionChanged,
             this, &MainWindow::handleLogbookConnectionChanged);
-    connect(&d->skyConnect, &SkyConnectIntf::recordingStopped,
-            this, &MainWindow::handleRecordingStopped);
 }
 
 void MainWindow::initUi() noexcept
@@ -294,7 +292,7 @@ void MainWindow::initUi() noexcept
     d->settingsDialog = new SettingsDialog(this);
 
     // Modules
-    d->moduleManager = std::make_unique<ModuleManager>(*ui->moduleStackWidget, *d->databaseService, *d->flightService);
+    d->moduleManager = std::make_unique<ModuleManager>(*ui->moduleStackWidget, d->skyConnect, *d->databaseService, *d->flightService);
 
     const ModuleIntf &activeModule = d->moduleManager->getActiveModule();
     ui->moduleGroupBox->setTitle(activeModule.getModuleName());
@@ -1156,23 +1154,4 @@ void MainWindow::handleLogbookConnectionChanged(bool connected) noexcept
 {
     d->connectedWithLogbook = connected;
     updateUi();
-}
-
-void MainWindow::handleRecordingStopped() noexcept
-{
-    Settings &settings = Settings::getInstance();
-    int previewInfoCount = settings.getPreviewInfoDialogCount();
-    if (previewInfoCount > 0) {
-        --previewInfoCount;
-        QMessageBox::information(this, "Preview",
-            QString("%1 %2 stores flights automatically into a database (the logbook). As new features are being added and developed the database format will change.\n\n"
-                    "During the preview phase older databases will automatically be migrated to the current data format (as \"proof of concept\").\n\n"
-                    "However take note that the first release version 1.0.0 will consolidate all migration steps into the final database format, making logbooks generated with preview "
-                    "versions (such as this one) unreadable!\n\n"
-                    "(From that point onwards databases (logbooks) will of course be migrated to the format of the next release version.)\n\n"
-                    "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(previewInfoCount),
-            QMessageBox::StandardButton::Ok);
-        settings.setPreviewInfoDialogCount(previewInfoCount);
-    }
-    d->flightService->store(Logbook::getInstance().getCurrentFlight());
 }

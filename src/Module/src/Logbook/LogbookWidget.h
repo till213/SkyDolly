@@ -51,7 +51,7 @@ class MODULE_API LogbookWidget : public AbstractModuleWidget
 {
     Q_OBJECT
 public:
-    explicit LogbookWidget(DatabaseService &databaseService, FlightService &flightService, QWidget *parent = nullptr) noexcept;
+    explicit LogbookWidget(SkyConnectIntf &skyConnect, DatabaseService &databaseService, FlightService &flightService, QWidget *parent = nullptr) noexcept;
     virtual ~LogbookWidget() noexcept;
 
     qint64 getSelectedFlightId() const noexcept;
@@ -61,8 +61,10 @@ public:
     virtual QAction &getAction() noexcept override;
 
 protected:
-    void showEvent(QShowEvent *event) noexcept override;
-    void hideEvent(QHideEvent *event) noexcept override;
+    virtual void showEvent(QShowEvent *event) noexcept override;
+    virtual void hideEvent(QHideEvent *event) noexcept override;
+
+    virtual void updateUi() noexcept override;
 
 private:
     Q_DISABLE_COPY(LogbookWidget)
@@ -76,7 +78,6 @@ private:
     static const QString getName();
 
 private slots:
-    void updateUi() noexcept;
     void handleSelectionChanged() noexcept;
     void loadFlight() noexcept;
     void deleteFlight() noexcept;
