@@ -51,10 +51,14 @@ class AircraftPrivate
 public:
     AircraftPrivate() noexcept
         : id(0),
+          simulationRequestId(Aircraft::InvalidSimulationId),
+          simulationObjectId(Aircraft::InvalidSimulationId),
           duration(TimeVariableData::InvalidTime)
     {}
 
     qint64 id;
+    qint64 simulationRequestId;
+    qint64 simulationObjectId;
     AircraftInfo aircraftInfo;
     Position position;
     Engine engine;
@@ -77,7 +81,11 @@ Aircraft::Aircraft(QObject *parent) noexcept
 }
 
 Aircraft::~Aircraft() noexcept
+{}
+
+qint64 Aircraft::getId() const noexcept
 {
+    return d->id;
 }
 
 void Aircraft::setId(qint64 id) noexcept
@@ -85,9 +93,24 @@ void Aircraft::setId(qint64 id) noexcept
     d->id = id;
 }
 
-qint64 Aircraft::getId() const noexcept
+qint64 Aircraft::getSimulationRequestId() const noexcept
 {
-    return d->id;
+    return d->simulationRequestId;
+}
+
+void Aircraft::setSimulationRequestId(qint64 id) noexcept
+{
+    d->simulationRequestId = id;
+}
+
+qint64 Aircraft::getSimulationObjectId() const noexcept
+{
+    return d->simulationObjectId;
+}
+
+void Aircraft::setSimulationObjectId(qint64 id) noexcept
+{
+    d->simulationObjectId = id;
 }
 
 const Position &Aircraft::getPositionConst() const noexcept
