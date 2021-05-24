@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>818</width>
-    <height>432</height>
+    <width>824</width>
+    <height>693</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,13 +29,32 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <layout class="QVBoxLayout" name="centralLayout">
-    <property name="sizeConstraint">
-     <enum>QLayout::SetMinimumSize</enum>
-    </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <widget class="QWidget" name="moduleSelectorWidget" native="true">
-      <layout class="QHBoxLayout" name="moduleSelectorLayout">
+     <widget class="QWidget" name="moduleVisibilityWidget" native="true">
+      <layout class="QHBoxLayout" name="moduleVisibilityLayout">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetMinimumSize</enum>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
        <item>
         <widget class="QCheckBox" name="moduleSelectorVisibleCheckBox">
          <property name="text">
@@ -43,6 +62,31 @@
          </property>
         </widget>
        </item>
+       <item>
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QWidget" name="moduleSelectorWidget" native="true">
+      <layout class="QHBoxLayout" name="moduleSelectorLayout">
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <spacer name="horizontalSpacer">
          <property name="orientation">
@@ -176,8 +220,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>818</width>
-     <height>21</height>
+     <width>824</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="fileMenu">
@@ -502,6 +546,7 @@
   </action>
  </widget>
  <resources>
+  <include location="../res/SkyDolly.qrc"/>
   <include location="../res/SkyDolly.qrc"/>
  </resources>
  <connections/>

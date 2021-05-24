@@ -100,7 +100,8 @@ private slots:
     void updateMainWindow() noexcept;
 
     // Modules
-    void handleModuleActivated(const QString title, Module::Module moduleId);
+    void handleModuleActivated(const QString title, Module::Module moduleId) noexcept;
+    void on_moduleSelectorVisibleCheckBox_clicked(bool enabled) noexcept;
 
     // File menu
     void on_newLogbookAction_triggered() noexcept;

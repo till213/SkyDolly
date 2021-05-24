@@ -134,7 +134,8 @@ public:
           customReplaySpeedFactorValidator(nullptr),
           customReplaySpeedPercentValidator(nullptr),
           moduleManager(nullptr),
-          activeModuleId(Module::Module::None)
+          activeModuleId(Module::Module::None),
+          showModuleSelector(true)
     {}
 
     SkyConnectIntf &skyConnect;
@@ -168,6 +169,7 @@ public:
 
     std::unique_ptr<ModuleManager> moduleManager;
     Module::Module activeModuleId;
+    bool showModuleSelector;
 };
 
 // PUBLIC
@@ -296,16 +298,17 @@ void MainWindow::initUi() noexcept
 
     const ModuleIntf &activeModule = d->moduleManager->getActiveModule();
     ui->moduleGroupBox->setTitle(activeModule.getModuleName());
+    ui->moduleSelectorVisibleCheckBox->setChecked(d->showModuleSelector);
     d->activeModuleId = activeModule.getModuleId();
 
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
-    ui->showMinimalAction->setChecked(ui->moduleGroupBox->isVisible());
+    ui->showMinimalAction->setChecked(d->showModuleSelector);
 
     initModuleSelectorUi();
     initControlUi();
     initReplaySpeedUi();
 
-    bool minimalUi = Settings::getInstance().isMinimalUiEnabled();
+    const bool minimalUi = Settings::getInstance().isMinimalUiEnabled();
     ui->showMinimalAction->setChecked(minimalUi);
     updateMinimalUi(minimalUi);
 
@@ -533,7 +536,13 @@ void MainWindow::initReplaySpeedUi() noexcept
 
 void MainWindow::updateMinimalUi(bool enabled)
 {
-    ui->moduleSelectorWidget->setHidden(enabled);
+    if (enabled) {
+        ui->moduleVisibilityWidget->setHidden(enabled);
+        ui->moduleSelectorWidget->setHidden(enabled);
+    } else {
+        ui->moduleVisibilityWidget->setVisible(true);
+        ui->moduleSelectorWidget->setVisible(d->showModuleSelector);
+    }
     ui->moduleGroupBox->setHidden(enabled);
     Settings::getInstance().setMinimalUiEnabled(enabled);
     // When hiding a widget it takes some time for the layout manager to
@@ -913,10 +922,20 @@ void MainWindow::updateMainWindow() noexcept
     }
 }
 
-void MainWindow::handleModuleActivated(const QString title, Module::Module moduleId)
+void MainWindow::handleModuleActivated(const QString title, Module::Module moduleId) noexcept
 {
     ui->moduleGroupBox->setTitle(title);
     d->activeModuleId = moduleId;
+    const bool minimalUi = Settings::getInstance().isMinimalUiEnabled();
+    if (minimalUi) {
+        updateMinimalUi(false);
+    }
+}
+
+void MainWindow::on_moduleSelectorVisibleCheckBox_clicked(bool enabled) noexcept
+{
+    d->showModuleSelector = enabled;
+    ui->moduleSelectorWidget->setVisible(d->showModuleSelector);
 }
 
 void MainWindow::on_newLogbookAction_triggered() noexcept
