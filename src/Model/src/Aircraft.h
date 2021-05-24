@@ -47,12 +47,21 @@ class AircraftPrivate;
 class MODEL_API Aircraft : public QObject
 {
     Q_OBJECT
-public:    
+public:
+
+    static constexpr qint64 InvalidSimulationId = -1;
+
     Aircraft(QObject *parent = nullptr) noexcept;
     virtual ~Aircraft() noexcept;
 
-    void setId(qint64 id) noexcept;
     qint64 getId() const noexcept;
+    void setId(qint64 id) noexcept;
+
+    qint64 getSimulationRequestId() const noexcept;
+    void setSimulationRequestId(qint64 id) noexcept;
+
+    qint64 getSimulationObjectId() const noexcept;
+    void setSimulationObjectId(qint64 id) noexcept;
 
     const Position &getPositionConst() const noexcept;
     Position &getPosition() const noexcept;
