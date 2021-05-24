@@ -30,6 +30,7 @@
 
 #include <QtGlobal>
 
+#include "../../Model/src/Flight.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/Position.h"
 #include "../../Model/src/PositionData.h"
@@ -63,34 +64,49 @@ SimConnectAI::~SimConnectAI()
 #endif
 }
 
-bool SimConnectAI::createSimulatedAircrafts(const std::vector<const Aircraft *> &aircrafts, ::SIMCONNECT_DATA_REQUEST_ID baseRequestId) noexcept
+bool SimConnectAI::createSimulatedAircrafts(Flight &flight, std::unordered_map<::SIMCONNECT_DATA_REQUEST_ID, Aircraft *> &aircraftByRequestId, ::SIMCONNECT_DATA_REQUEST_ID baseRequestId) noexcept
 {
     HRESULT result;
     bool ok;
     SIMCONNECT_DATA_INITPOSITION initialPosition;
     int i = 0;
     ok = true;
-    for (const Aircraft *aircraft: aircrafts) {
+    for (auto &aircraft : flight) {
 
-        const AircraftInfo aircraftInfo = aircraft->getAircraftInfoConst();
-        initialPosition = SimConnectPosition::toInitialPosition(aircraft->getPositionConst().getFirst(), aircraftInfo.startOnGround, aircraftInfo.initialAirspeed);
-        result = ::SimConnect_AICreateNonATCAircraft(d->simConnectHandle, aircraftInfo.type.toLatin1(), aircraftInfo.tailNumber.toLatin1(), initialPosition, baseRequestId + i);
-        ok = result == S_OK;
-        if (ok) {
-            ++i;
+        const SIMCONNECT_DATA_REQUEST_ID requestId = baseRequestId + i;
+        aircraftByRequestId[requestId] = aircraft.get();
+        aircraft->setSimulationRequestId(requestId);
+        // TODO Add "isUserAircraft" property to aircraft (settable by the user)
+        // For now the first aircraft is always the user aircraft
+        if (i > 0) {
+
+            const AircraftInfo aircraftInfo = aircraft->getAircraftInfoConst();
+            initialPosition = SimConnectPosition::toInitialPosition(aircraft->getPositionConst().getFirst(), aircraftInfo.startOnGround, aircraftInfo.initialAirspeed);
+            result = ::SimConnect_AICreateNonATCAircraft(d->simConnectHandle, aircraftInfo.type.toLatin1(), aircraftInfo.tailNumber.toLatin1(), initialPosition, requestId);
+            ok = result == S_OK;
+            if (ok) {
+                ++i;
+            } else {
+                break;
+            }
         } else {
-            break;
+            aircraft->setSimulationRequestId(requestId);
+            aircraft->setSimulationObjectId(::SIMCONNECT_OBJECT_ID_USER);
+            ++i;
         }
 
     }
     return ok;
 }
 
-void SimConnectAI::destroySimulatedAircrafts(const std::vector<::SIMCONNECT_OBJECT_ID> &objectIDs, ::SIMCONNECT_DATA_REQUEST_ID baseRequestId) noexcept
+void SimConnectAI::destroySimulatedAircrafts(Flight &flight) noexcept
 {
-    int i = 0;
-    for (SIMCONNECT_OBJECT_ID objectID : objectIDs) {
-        SimConnect_AIRemoveObject(d->simConnectHandle, objectID, baseRequestId + i);
-        ++i;
+    for (auto &aircraft : flight) {
+        const ::SIMCONNECT_OBJECT_ID objectId = aircraft->getSimulationObjectId();
+        if (objectId != ::SIMCONNECT_OBJECT_ID_USER) {
+            SimConnect_AIRemoveObject(d->simConnectHandle, objectId, aircraft->getSimulationRequestId());
+        }
+        aircraft->setSimulationRequestId(Aircraft::InvalidSimulationId);
+        aircraft->setSimulationObjectId(Aircraft::InvalidSimulationId);
     }
 }
