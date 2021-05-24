@@ -149,6 +149,7 @@ void LogbookWidget::hideEvent(QHideEvent *event) noexcept
 void LogbookWidget::initUi() noexcept
 {
     d->moduleAction = std::make_unique<QAction>(getName());
+    d->moduleAction->setCheckable(true);
 
     ui->logTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 

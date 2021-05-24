@@ -112,6 +112,7 @@ void ModuleManager::activateModule(Module::Module moduleId) noexcept
         d->activeModuleId = moduleId;
         ModuleIntf *module = d->moduleMap[d->activeModuleId];
         d->moduleStackWidget.setCurrentWidget(&module->getWidget());
+        module->getAction().setChecked(true);
         emit activated(module->getModuleName(), moduleId);
     }
 }
@@ -127,6 +128,7 @@ void ModuleManager::initModules() noexcept
     d->moduleStackWidget.addWidget(logbookWidget);
     QAction &logbookAction = logbookWidget->getAction();
     logbookAction.setData(Enum::toUnderlyingType(logbookWidget->getModuleId()));
+    logbookAction.setShortcut(tr("F1"));
     d->moduleActionGroup->addAction(&logbookAction);
 
     FormationWidget *formationWidget = new FormationWidget(d->skyConnect, d->flightService, &d->moduleStackWidget);
@@ -134,6 +136,7 @@ void ModuleManager::initModules() noexcept
     d->moduleStackWidget.addWidget(formationWidget);
     QAction &formationAction = formationWidget->getAction();
     formationAction.setData(Enum::toUnderlyingType(formationWidget->getModuleId()));
+    formationAction.setShortcut(tr("F2"));
     d->moduleActionGroup->addAction(&formationAction);
 }
 
