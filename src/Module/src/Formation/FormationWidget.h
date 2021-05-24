@@ -39,13 +39,16 @@ namespace Ui {
     class FormationWidget;
 }
 
+class SkyConnectIntf;
+class FlightService;
+class AircraftService;
 class FormationWidgetPrivate;
 
 class FormationWidget : public AbstractModuleWidget
 {
     Q_OBJECT
 public:
-    explicit FormationWidget(QWidget *parent = nullptr) noexcept;
+    explicit FormationWidget(SkyConnectIntf &skyConnect, FlightService &flightService, QWidget *parent = nullptr) noexcept;
     virtual ~FormationWidget() noexcept;
 
     virtual Module::Module getModuleId() const noexcept override;
@@ -53,8 +56,13 @@ public:
     virtual QAction &getAction() noexcept override;
 
 protected:
-    void showEvent(QShowEvent *event) noexcept override;
-    void hideEvent(QHideEvent *event) noexcept override;
+    virtual void showEvent(QShowEvent *event) noexcept override;
+    virtual void hideEvent(QHideEvent *event) noexcept override;
+
+    virtual void updateUi() noexcept override;
+
+protected slots:
+    virtual void handleRecordingStopped() noexcept override;
 
 private:
     Q_DISABLE_COPY(FormationWidget)
@@ -62,7 +70,6 @@ private:
     std::unique_ptr<FormationWidgetPrivate> d;
 
     void initUi() noexcept;
-    void updateUi() noexcept;
     void frenchConnection() noexcept;
 
     static const QString getName();

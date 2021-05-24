@@ -48,8 +48,9 @@ namespace
 class ModuleManagerPrivate
 {
 public:
-    ModuleManagerPrivate(QStackedWidget &theModuleStackWidget, DatabaseService &theDatabaseService, FlightService &theFlightService) noexcept
+    ModuleManagerPrivate(QStackedWidget &theModuleStackWidget, SkyConnectIntf &theSkyConnect, DatabaseService &theDatabaseService, FlightService &theFlightService) noexcept
         : moduleStackWidget(theModuleStackWidget),
+          skyConnect(theSkyConnect),
           databaseService(theDatabaseService),
           flightService(theFlightService),
           activeModuleId(Module::Module::None),
@@ -60,6 +61,7 @@ public:
     {}
 
     QStackedWidget &moduleStackWidget;
+    SkyConnectIntf &skyConnect;
     DatabaseService &databaseService;
     FlightService &flightService;
     Module::Module activeModuleId;
@@ -69,9 +71,9 @@ public:
 
 // PUBLIC
 
-ModuleManager::ModuleManager(QStackedWidget &moduleStackWidget, DatabaseService &theDatabaseService, FlightService &theFlightService, QObject *parent) noexcept
+ModuleManager::ModuleManager(QStackedWidget &moduleStackWidget, SkyConnectIntf &skyConnect, DatabaseService &databaseService, FlightService &flightService, QObject *parent) noexcept
     : QObject(parent),
-      d(std::make_unique<ModuleManagerPrivate>(moduleStackWidget, theDatabaseService, theFlightService))
+      d(std::make_unique<ModuleManagerPrivate>(moduleStackWidget, skyConnect, databaseService, flightService))
 {
     initModules();
     activateModule(DefaultModule);
@@ -120,14 +122,14 @@ void ModuleManager::initModules() noexcept
 {
     d->moduleActionGroup = new QActionGroup(this);
 
-    LogbookWidget *logbookWidget = new LogbookWidget(d->databaseService, d->flightService, &d->moduleStackWidget);
+    LogbookWidget *logbookWidget = new LogbookWidget(d->skyConnect, d->databaseService, d->flightService, &d->moduleStackWidget);
     d->moduleMap[logbookWidget->getModuleId()] = logbookWidget;
     d->moduleStackWidget.addWidget(logbookWidget);
     QAction &logbookAction = logbookWidget->getAction();
     logbookAction.setData(Enum::toUnderlyingType(logbookWidget->getModuleId()));
     d->moduleActionGroup->addAction(&logbookAction);
 
-    FormationWidget *formationWidget = new FormationWidget(&d->moduleStackWidget);
+    FormationWidget *formationWidget = new FormationWidget(d->skyConnect, d->flightService, &d->moduleStackWidget);
     d->moduleMap[formationWidget->getModuleId()] = formationWidget;
     d->moduleStackWidget.addWidget(formationWidget);
     QAction &formationAction = formationWidget->getAction();

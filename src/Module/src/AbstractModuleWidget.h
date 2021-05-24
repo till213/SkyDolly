@@ -29,19 +29,35 @@
 
 #include <QWidget>
 
+class QShowEvent;
+class QHideEvent;
+
 #include "Module.h"
 #include "ModuleIntf.h"
 
+class SkyConnectIntf;
+class FlightService;
 class AbstractModuleWidgetPrivate;
 
 class AbstractModuleWidget : public QWidget, public ModuleIntf
 {
     Q_OBJECT
 public:
-    explicit AbstractModuleWidget(QWidget *parent = nullptr) noexcept;
+    explicit AbstractModuleWidget(SkyConnectIntf &skyConnect, FlightService &flightService, QWidget *parent = nullptr) noexcept;
     virtual ~AbstractModuleWidget() noexcept;
 
     virtual QWidget &getWidget() noexcept override;
+
+protected:
+    FlightService &getFlightService() const noexcept;
+
+    virtual void showEvent(QShowEvent *event) noexcept override;
+    virtual void hideEvent(QHideEvent *event) noexcept override;
+
+    virtual void updateUi() = 0;
+
+protected slots:
+    virtual void handleRecordingStopped() noexcept override;
 
 private:
     std::unique_ptr<AbstractModuleWidgetPrivate> d;
