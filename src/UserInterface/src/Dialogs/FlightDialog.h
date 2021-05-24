@@ -50,8 +50,8 @@ signals:
     void visibilityChanged(bool visible);
 
 protected:
-    void showEvent(QShowEvent *event) noexcept override;
-    void hideEvent(QHideEvent *event) noexcept override;
+    virtual void showEvent(QShowEvent *event) noexcept override;
+    virtual void hideEvent(QHideEvent *event) noexcept override;
 
 private:
     Q_DISABLE_COPY(FlightDialog)

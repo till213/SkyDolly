@@ -75,8 +75,7 @@ SecondaryFlightControlWidget::~SecondaryFlightControlWidget() noexcept
 
 void SecondaryFlightControlWidget::showEvent(QShowEvent *event) noexcept
 {
-    Q_UNUSED(event)
-
+    QWidget::showEvent(event);
     updateUi(d->skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
     connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &SecondaryFlightControlWidget::updateUi);
@@ -84,8 +83,7 @@ void SecondaryFlightControlWidget::showEvent(QShowEvent *event) noexcept
 
 void SecondaryFlightControlWidget::hideEvent(QHideEvent *event) noexcept
 {
-    Q_UNUSED(event)
-
+    QWidget::hideEvent(event);
     disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &SecondaryFlightControlWidget::updateUi);
 }
