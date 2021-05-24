@@ -41,8 +41,7 @@ AboutDialog::AboutDialog(QWidget *parent) noexcept :
 }
 
 AboutDialog::~AboutDialog() noexcept
-{
-}
+{}
 
 // PRIVATE
 

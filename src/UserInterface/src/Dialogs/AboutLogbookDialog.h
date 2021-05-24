@@ -47,7 +47,7 @@ public:
     virtual ~AboutLogbookDialog() noexcept;
 
 protected:
-    void showEvent(QShowEvent *event) noexcept override;
+    virtual void showEvent(QShowEvent *event) noexcept override;
 
 private:
     Q_DISABLE_COPY(AboutLogbookDialog)

@@ -69,8 +69,7 @@ AircraftWidget::~AircraftWidget() noexcept
 
 void AircraftWidget::showEvent(QShowEvent *event) noexcept
 {
-    Q_UNUSED(event)
-
+    QWidget::showEvent(event);
     updateUi(d->skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
     connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &AircraftWidget::updateUi);
@@ -78,8 +77,7 @@ void AircraftWidget::showEvent(QShowEvent *event) noexcept
 
 void AircraftWidget::hideEvent(QHideEvent *event) noexcept
 {
-    Q_UNUSED(event)
-
+    QWidget::hideEvent(event);
     disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &AircraftWidget::updateUi);
 }

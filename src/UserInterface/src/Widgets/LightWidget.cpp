@@ -72,8 +72,7 @@ LightWidget::~LightWidget() noexcept
 
 void LightWidget::showEvent(QShowEvent *event) noexcept
 {
-    Q_UNUSED(event)
-
+    QWidget::showEvent(event);
     updateUi(d->skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
     connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &LightWidget::updateUi);
@@ -81,8 +80,7 @@ void LightWidget::showEvent(QShowEvent *event) noexcept
 
 void LightWidget::hideEvent(QHideEvent *event) noexcept
 {
-    Q_UNUSED(event)
-
+    QWidget::hideEvent(event);
     disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
               this, &LightWidget::updateUi);
 }
