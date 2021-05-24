@@ -60,8 +60,7 @@ SettingsDialog::~SettingsDialog() noexcept
 
 void SettingsDialog::showEvent(QShowEvent *event) noexcept
 {
-    Q_UNUSED(event)
-
+    QDialog::showEvent(event);
     updateUi();
     connect(&Settings::getInstance(), &Settings::changed,
             this, &SettingsDialog::updateUi);
@@ -69,7 +68,7 @@ void SettingsDialog::showEvent(QShowEvent *event) noexcept
 
 void SettingsDialog::hideEvent(QHideEvent *event) noexcept
 {
-    Q_UNUSED(event)
+    QDialog::hideEvent(event);
     disconnect(&Settings::getInstance(), &Settings::changed,
                this, &SettingsDialog::updateUi);
 }

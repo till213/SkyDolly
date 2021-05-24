@@ -81,8 +81,7 @@ SimulationVariablesDialog::~SimulationVariablesDialog() noexcept
 
 void SimulationVariablesDialog::showEvent(QShowEvent *event) noexcept
 {
-    Q_UNUSED(event)
-
+    QDialog::showEvent(event);
     updateUi();
     connect(&d->skyConnect, &SkyConnectIntf::stateChanged,
             this, &SimulationVariablesDialog::updateTitle);
@@ -92,8 +91,7 @@ void SimulationVariablesDialog::showEvent(QShowEvent *event) noexcept
 
 void SimulationVariablesDialog::hideEvent(QHideEvent *event) noexcept
 {
-    Q_UNUSED(event)
-
+    QDialog::hideEvent(event);
     disconnect(&d->skyConnect, &SkyConnectIntf::stateChanged,
                this, &SimulationVariablesDialog::updateTitle);
 

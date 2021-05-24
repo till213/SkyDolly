@@ -77,8 +77,7 @@ StatisticsDialog::~StatisticsDialog() noexcept
 
 void StatisticsDialog::showEvent(QShowEvent *event) noexcept
 {
-    Q_UNUSED(event)
-
+    QDialog::showEvent(event);
     updateRecordUi();
 
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
@@ -93,8 +92,7 @@ void StatisticsDialog::showEvent(QShowEvent *event) noexcept
 
 void StatisticsDialog::hideEvent(QHideEvent *event) noexcept
 {
-    Q_UNUSED(event)
-
+    QDialog::hideEvent(event);
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
     disconnect(&aircraft, &Aircraft::dataChanged,
                this, &StatisticsDialog::updateRecordUi);

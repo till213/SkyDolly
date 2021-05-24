@@ -75,8 +75,7 @@ PrimaryFlightControlWidget::~PrimaryFlightControlWidget() noexcept
 
 void PrimaryFlightControlWidget::showEvent(QShowEvent *event) noexcept
 {
-    Q_UNUSED(event)
-
+    QWidget::showEvent(event);
     updateUi(d->skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
     connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &PrimaryFlightControlWidget::updateUi);
@@ -84,8 +83,7 @@ void PrimaryFlightControlWidget::showEvent(QShowEvent *event) noexcept
 
 void PrimaryFlightControlWidget::hideEvent(QHideEvent *event) noexcept
 {
-    Q_UNUSED(event)
-
+    QWidget::hideEvent(event);
     disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
             this, &PrimaryFlightControlWidget::updateUi);
 }

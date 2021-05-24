@@ -36,6 +36,6 @@ FocusPlainTextEdit::FocusPlainTextEdit(QWidget *parent) noexcept
 
 void FocusPlainTextEdit::focusOutEvent(QFocusEvent *event) noexcept
 {
-    Q_UNUSED(event)
+    QPlainTextEdit::focusOutEvent(event);
     emit focusLost();
 }

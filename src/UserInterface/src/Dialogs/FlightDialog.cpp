@@ -74,14 +74,14 @@ FlightDialog::~FlightDialog() noexcept
 
 void FlightDialog::showEvent(QShowEvent *event) noexcept
 {
-    Q_UNUSED(event)
+    QDialog::showEvent(event);
     updateUi();
     emit visibilityChanged(true);
 }
 
 void FlightDialog::hideEvent(QHideEvent *event) noexcept
 {
-    Q_UNUSED(event)
+    QDialog::hideEvent(event);
     emit visibilityChanged(false);
 }
 

@@ -65,7 +65,7 @@ AboutLogbookDialog::~AboutLogbookDialog() noexcept
 
 void AboutLogbookDialog::showEvent(QShowEvent *event) noexcept
 {
-    Q_UNUSED(event)
+    QDialog::showEvent(event);
     updateUi();
 }
 

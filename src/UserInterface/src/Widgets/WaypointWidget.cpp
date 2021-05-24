@@ -69,13 +69,13 @@ void WaypointWidget::update(const Waypoint &waypoint) noexcept
 
 void WaypointWidget::showEvent(QShowEvent *event) noexcept
 {
-    Q_UNUSED(event)
+    QWidget::showEvent(event);
     updateUi();
 }
 
 void WaypointWidget::hideEvent(QHideEvent *event) noexcept
 {
-    Q_UNUSED(event)
+    QWidget::hideEvent(event);
 }
 
 // PRIVATE

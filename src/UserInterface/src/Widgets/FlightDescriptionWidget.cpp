@@ -68,8 +68,7 @@ FlightDescriptionWidget::~FlightDescriptionWidget()
 
 void FlightDescriptionWidget::showEvent(QShowEvent *event) noexcept
 {
-    Q_UNUSED(event)
-
+    QWidget::showEvent(event);
     updateUi();
 
     // Service
@@ -81,8 +80,7 @@ void FlightDescriptionWidget::showEvent(QShowEvent *event) noexcept
 
 void FlightDescriptionWidget::hideEvent(QHideEvent *event) noexcept
 {
-    Q_UNUSED(event)
-
+    QWidget::hideEvent(event);
     disconnect(&Logbook::getInstance().getCurrentFlight(), &Flight::flightChanged,
                this, &FlightDescriptionWidget::updateUi);
     disconnect(&d->flightService, &FlightService::flightStored,
