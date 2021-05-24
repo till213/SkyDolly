@@ -27,6 +27,10 @@
 #include <QWidget>
 #include <QAction>
 
+#include "../../../Model/src/Logbook.h"
+#include "../../../Model/src/Flight.h"
+#include "../../../Persistence/src/Service/FlightService.h"
+#include "../../../Persistence/src/Service/AircraftService.h"
 #include "../AbstractModuleWidget.h"
 #include "FormationWidget.h"
 #include "ui_FormationWidget.h"
@@ -35,16 +39,18 @@ class FormationWidgetPrivate
 {
 public:
     FormationWidgetPrivate() noexcept
-        : moduleAction(nullptr)
+        : moduleAction(nullptr),
+          aircraftService(std::make_unique<AircraftService>())
     {}
 
     std::unique_ptr<QAction> moduleAction;
+    std::unique_ptr<AircraftService> aircraftService;
 };
 
 // PUBLIC
 
-FormationWidget::FormationWidget(QWidget *parent) noexcept
-    : AbstractModuleWidget(parent),
+FormationWidget::FormationWidget(SkyConnectIntf &skyConnect, FlightService &flightService, QWidget *parent) noexcept
+    : AbstractModuleWidget(skyConnect, flightService, parent),
       ui(std::make_unique<Ui::FormationWidget>()),
       d(std::make_unique<FormationWidgetPrivate>())
 {
@@ -79,13 +85,31 @@ QAction &FormationWidget::getAction() noexcept
 
 void FormationWidget::showEvent(QShowEvent *event) noexcept
 {
-    Q_UNUSED(event)
+    AbstractModuleWidget::showEvent(event);
     updateUi();
 }
 
 void FormationWidget::hideEvent(QHideEvent *event) noexcept
 {
-    Q_UNUSED(event)
+    AbstractModuleWidget::hideEvent(event);
+}
+
+void FormationWidget::updateUi() noexcept
+{
+
+}
+
+// PROTECTED SLOTS
+
+void FormationWidget::handleRecordingStopped() noexcept
+{
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    int count = flight.getAircraftCount();
+    if (count > 1) {
+        d->aircraftService->store(flight.getId(), count, *flight.getAircrafts().at(count - 1));
+    } else {
+        AbstractModuleWidget::handleRecordingStopped();
+    }
 }
 
 // PRIVATE
@@ -93,11 +117,6 @@ void FormationWidget::hideEvent(QHideEvent *event) noexcept
 void FormationWidget::initUi() noexcept
 {
     d->moduleAction = std::make_unique<QAction>(getName());
-}
-
-void FormationWidget::updateUi() noexcept
-{
-
 }
 
 void FormationWidget::frenchConnection() noexcept

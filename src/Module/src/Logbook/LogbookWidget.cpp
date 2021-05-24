@@ -80,8 +80,8 @@ public:
 
 // PUBLIC
 
-LogbookWidget::LogbookWidget(DatabaseService &databaseService, FlightService &flightService, QWidget *parent) noexcept
-    : AbstractModuleWidget(parent),
+LogbookWidget::LogbookWidget(SkyConnectIntf &skyConnect, DatabaseService &databaseService, FlightService &flightService, QWidget *parent) noexcept
+    : AbstractModuleWidget(skyConnect, flightService, parent),
       ui(std::make_unique<Ui::LogbookWidget>()),
       d(std::make_unique<LogbookWidgetPrivate>(databaseService, flightService))
 {
@@ -121,8 +121,7 @@ QAction &LogbookWidget::getAction() noexcept
 
 void LogbookWidget::showEvent(QShowEvent *event) noexcept
 {
-    Q_UNUSED(event)
-    updateUi();
+    AbstractModuleWidget::showEvent(event);
 
     // Service
     connect(&d->databaseService, &DatabaseService::connectionStateChanged,
@@ -135,7 +134,7 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
 
 void LogbookWidget::hideEvent(QHideEvent *event) noexcept
 {
-    Q_UNUSED(event)
+    AbstractModuleWidget::hideEvent(event);
 
     disconnect(&d->databaseService, &DatabaseService::connectionStateChanged,
                this, &LogbookWidget::updateUi);
@@ -188,7 +187,7 @@ const QString LogbookWidget::getName()
     return QString(QT_TRANSLATE_NOOP("LogbookWidget", "Logbook"));
 }
 
-// PRIVATE SLOTS
+// PROTECTED
 
 void LogbookWidget::updateUi() noexcept
 {
@@ -219,7 +218,7 @@ void LogbookWidget::updateUi() noexcept
 
         newItem = new QTableWidgetItem(d->unit.formatTime(summary.startDate));
         newItem->setToolTip(tr("Simulation time: %1 (%2Z)").arg(d->unit.formatTime(summary.startSimulationLocalTime), d->unit.formatTime(summary.startSimulationZuluTime)));
-        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);        
+        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
         ++columnIndex;
 
         newItem = new QTableWidgetItem(summary.startLocation);
@@ -228,7 +227,7 @@ void LogbookWidget::updateUi() noexcept
 
         newItem = new QTableWidgetItem(d->unit.formatTime(summary.endDate));
         newItem->setToolTip(tr("Simulation time: %1 (%2Z)").arg(d->unit.formatTime(summary.endSimulationLocalTime), d->unit.formatTime(summary.endSimulationZuluTime)));
-        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);        
+        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
         ++columnIndex;
 
         newItem = new QTableWidgetItem(summary.endLocation);
@@ -246,7 +245,7 @@ void LogbookWidget::updateUi() noexcept
 
         newItem = new QTableWidgetItem(summary.title);
         newItem->setToolTip(tr("Double-click to edit title"));
-        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);      
+        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
         d->titleColumnIndex = columnIndex;
         ++columnIndex;
         ++rowIndex;
@@ -259,6 +258,8 @@ void LogbookWidget::updateUi() noexcept
 
     updateEditUi();
 }
+
+// PRIVATE SLOTS
 
 void LogbookWidget::handleSelectionChanged() noexcept
 {
