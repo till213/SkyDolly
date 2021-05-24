@@ -204,12 +204,12 @@ Flight::it Flight::end() noexcept
     return it(d->aircrafts.end());
 }
 
-const Flight::const_it Flight::begin() const noexcept
+const Flight::it Flight::begin() const noexcept
 {
-    return const_it(d->aircrafts.cbegin());
+    return it(d->aircrafts.begin());
 }
 
-const Flight::const_it Flight::end() const noexcept
+const Flight::it Flight::end() const noexcept
 {
-    return const_it(d->aircrafts.end());
+    return it(d->aircrafts.end());
 }

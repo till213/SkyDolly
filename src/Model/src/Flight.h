@@ -102,12 +102,11 @@ public:
     };
 
     typedef Iterator<std::unique_ptr<Aircraft>> it;
-    typedef Iterator<const std::unique_ptr<Aircraft>> const_it;
 
     it begin() noexcept;
     it end() noexcept;
-    const const_it begin() const noexcept;
-    const const_it end() const noexcept;
+    const it begin() const noexcept;
+    const it end() const noexcept;
 
     static constexpr int InvalidId = -1;
 
