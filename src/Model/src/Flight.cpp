@@ -134,13 +134,14 @@ void Flight::setDescription(const QString &description) noexcept
 Aircraft &Flight::addUserAircraft() noexcept
 {
     std::unique_ptr<Aircraft> userAircraft = std::make_unique<Aircraft>();
-    d->aircrafts.push_back(std::move(userAircraft));
-    d->userAircraftIndex = d->aircrafts.size() - 1;
 
     connect(userAircraft.get(), &Aircraft::infoChanged,
             this, &Flight::aircraftInfoChanged);
     connect(userAircraft.get(), &Aircraft::dataChanged,
             this, &Flight::positionDataChanged);
+
+    d->aircrafts.push_back(std::move(userAircraft));
+    d->userAircraftIndex = d->aircrafts.size() - 1;
 
     return *d->aircrafts.end()->get();
 }
