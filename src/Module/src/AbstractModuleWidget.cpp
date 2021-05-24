@@ -23,22 +23,33 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <QWidget>
+#include <QMessageBox>
 
+#include "../../Kernel/src/Version.h"
+#include "../../Kernel/src/Settings.h"
+#include "../../Model/src/Logbook.h"
+#include "../../SkyConnect/src/SkyConnectIntf.h"
+#include "../../Persistence/src/Service/FlightService.h"
 #include "Module.h"
 #include "AbstractModuleWidget.h"
 
 class AbstractModuleWidgetPrivate
 {
 public:
-    AbstractModuleWidgetPrivate() noexcept
+    AbstractModuleWidgetPrivate(SkyConnectIntf &theSkyConnect, FlightService &theFlightService) noexcept
+        : skyConnect(theSkyConnect),
+          flightService(theFlightService)
     {}
+
+    SkyConnectIntf &skyConnect;
+    FlightService &flightService;
 };
 
 // PUBLIC
 
-AbstractModuleWidget::AbstractModuleWidget(QWidget *parent) noexcept
+AbstractModuleWidget::AbstractModuleWidget(SkyConnectIntf &skyConnect, FlightService &flightService, QWidget *parent) noexcept
     : QWidget(parent),
-      d(std::make_unique<AbstractModuleWidgetPrivate>())
+      d(std::make_unique<AbstractModuleWidgetPrivate>(skyConnect, flightService))
 {}
 
 AbstractModuleWidget::~AbstractModuleWidget() noexcept
@@ -47,4 +58,49 @@ AbstractModuleWidget::~AbstractModuleWidget() noexcept
 QWidget &AbstractModuleWidget::getWidget() noexcept
 {
     return *this;
+}
+
+// PROTECTED
+
+FlightService &AbstractModuleWidget::getFlightService() const noexcept
+{
+    return d->flightService;
+}
+
+void AbstractModuleWidget::showEvent(QShowEvent *event) noexcept
+{
+    QWidget::showEvent(event);
+    updateUi();
+
+    connect(&d->skyConnect, &SkyConnectIntf::recordingStopped,
+            this, &AbstractModuleWidget::handleRecordingStopped);
+}
+
+void AbstractModuleWidget::hideEvent(QHideEvent *event) noexcept
+{
+    QWidget::hideEvent(event);
+
+    disconnect(&d->skyConnect, &SkyConnectIntf::recordingStopped,
+               this, &AbstractModuleWidget::handleRecordingStopped);
+}
+
+// PROTECTED SLOTS
+
+void AbstractModuleWidget::handleRecordingStopped() noexcept
+{
+    Settings &settings = Settings::getInstance();
+    int previewInfoCount = settings.getPreviewInfoDialogCount();
+    if (previewInfoCount > 0) {
+        --previewInfoCount;
+        QMessageBox::information(this, "Preview",
+            QString("%1 %2 stores flights automatically into a database (the logbook). As new features are being added and developed the database format will change.\n\n"
+                    "During the preview phase older databases will automatically be migrated to the current data format (as \"proof of concept\").\n\n"
+                    "However take note that the first release version 1.0.0 will consolidate all migration steps into the final database format, making logbooks generated with preview "
+                    "versions (such as this one) unreadable!\n\n"
+                    "(From that point onwards databases (logbooks) will of course be migrated to the format of the next release version.)\n\n"
+                    "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(previewInfoCount),
+            QMessageBox::StandardButton::Ok);
+        settings.setPreviewInfoDialogCount(previewInfoCount);
+    }
+    d->flightService.store(Logbook::getInstance().getCurrentFlight());
 }

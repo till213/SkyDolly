@@ -35,10 +35,14 @@ class QAction;
 class ModuleIntf
 {
 public:
+    virtual ~ModuleIntf() {};
     virtual Module::Module getModuleId() const = 0;
     virtual const QString getModuleName() const = 0;
     virtual QWidget &getWidget() = 0;
     virtual QAction &getAction() = 0;
+
+protected:
+    virtual void handleRecordingStopped() = 0;
 };
 
 #endif // MODULEINTF_H
