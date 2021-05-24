@@ -27,10 +27,12 @@
 
 #include <memory>
 #include <vector>
+#include <unordered_map>
 
 #include <windows.h>
 #include <SimConnect.h>
 
+class Flight;
 class Aircraft;
 class SimConnectAIPrivate;
 
@@ -40,8 +42,8 @@ public:
     SimConnectAI(::HANDLE simConnectHandle);
     ~SimConnectAI();
 
-    bool createSimulatedAircrafts(const std::vector<const Aircraft *> &aircrafts, ::SIMCONNECT_DATA_REQUEST_ID baseRequestId) noexcept;
-    void destroySimulatedAircrafts(const std::vector<::SIMCONNECT_OBJECT_ID > &objectIDs, ::SIMCONNECT_DATA_REQUEST_ID baseRequestId) noexcept;
+    bool createSimulatedAircrafts(Flight &flight, std::unordered_map<::SIMCONNECT_DATA_REQUEST_ID, Aircraft *> &aircraftByRequestId, ::SIMCONNECT_DATA_REQUEST_ID baseRequestId) noexcept;
+    void destroySimulatedAircrafts(Flight &flight) noexcept;
 
 private:
     std::unique_ptr<SimConnectAIPrivate> d;
