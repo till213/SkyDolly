@@ -34,6 +34,7 @@
 #include "../../../Model/src/FlightSummary.h"
 #include "../PersistenceLib.h"
 
+class SkyConnectIntf;
 class FlightServicePrivate;
 
 class PERSISTENCE_API FlightService : public QObject

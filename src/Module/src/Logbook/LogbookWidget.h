@@ -38,7 +38,6 @@ class QAction;
 #include "../AbstractModuleWidget.h"
 #include "../ModuleLib.h"
 
-class SkyConnectIntf;
 class DatabaseService;
 class FlightService;
 class LogbookWidgetPrivate;
@@ -51,7 +50,7 @@ class MODULE_API LogbookWidget : public AbstractModuleWidget
 {
     Q_OBJECT
 public:
-    explicit LogbookWidget(SkyConnectIntf &skyConnect, DatabaseService &databaseService, FlightService &flightService, QWidget *parent = nullptr) noexcept;
+    explicit LogbookWidget(DatabaseService &databaseService, FlightService &flightService, QWidget *parent = nullptr) noexcept;
     virtual ~LogbookWidget() noexcept;
 
     qint64 getSelectedFlightId() const noexcept;

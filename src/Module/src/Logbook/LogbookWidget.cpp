@@ -80,8 +80,8 @@ public:
 
 // PUBLIC
 
-LogbookWidget::LogbookWidget(SkyConnectIntf &skyConnect, DatabaseService &databaseService, FlightService &flightService, QWidget *parent) noexcept
-    : AbstractModuleWidget(skyConnect, flightService, parent),
+LogbookWidget::LogbookWidget(DatabaseService &databaseService, FlightService &flightService, QWidget *parent) noexcept
+    : AbstractModuleWidget(flightService, parent),
       ui(std::make_unique<Ui::LogbookWidget>()),
       d(std::make_unique<LogbookWidgetPrivate>(databaseService, flightService))
 {

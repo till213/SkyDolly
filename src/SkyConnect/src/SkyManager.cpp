@@ -74,7 +74,7 @@ void SkyManager::destroyInstance() noexcept
     }
 }
 
-SkyConnectIntf &SkyManager::currentSkyConnect() const noexcept
+SkyConnectIntf &SkyManager::getCurrentSkyConnect() const noexcept
 {
     return *d->currentSkyConnect;
 }
