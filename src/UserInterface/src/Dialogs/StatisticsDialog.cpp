@@ -109,8 +109,6 @@ void StatisticsDialog::frenchConnection() noexcept
 void StatisticsDialog::updateRecordUi() noexcept
 {
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
-    const Aircraft &aircraft = flight.getUserAircraft();
-
     if (Settings::getInstance().getRecordSampleRate() != SampleRate::SampleRate::Auto) {
         ui->recordSampleRateLineEdit->setText(d->unit.formatHz(Settings::getInstance().getRecordSampleRateValue()));
     } else {
@@ -124,24 +122,28 @@ void StatisticsDialog::updateRecordUi() noexcept
     } else {
         ui->samplesPerSecondLineEdit->clear();
     }
-    const QVector<PositionData> &positionData = aircraft.getPositionConst().getAllConst();
-    const QVector<EngineData> &engineData = aircraft.getEngineConst().getAllConst();
-    const QVector<PrimaryFlightControlData> &primaryFlightControlData = aircraft.getPrimaryFlightControlConst().getAllConst();
-    const QVector<SecondaryFlightControlData> &secondaryFlightControlData = aircraft.getSecondaryFlightControlConst().getAllConst();
-    const QVector<AircraftHandleData> &aircraftHandleData = aircraft.getAircraftHandleConst().getAllConst();
-    const QVector<LightData> &lightData = aircraft.getLightConst().getAllConst();
-    const int totalCount = positionData.count() + engineData.count() + primaryFlightControlData.count() + secondaryFlightControlData.count() + aircraftHandleData.count() + lightData.count();
+
+    qint64 totalCount = 0;
+    qint64 totalSize = 0;
+    for (const auto &aircraft : flight) {
+        const QVector<PositionData> &positionData = aircraft->getPositionConst().getAllConst();
+        const QVector<EngineData> &engineData = aircraft->getEngineConst().getAllConst();
+        const QVector<PrimaryFlightControlData> &primaryFlightControlData = aircraft->getPrimaryFlightControlConst().getAllConst();
+        const QVector<SecondaryFlightControlData> &secondaryFlightControlData = aircraft->getSecondaryFlightControlConst().getAllConst();
+        const QVector<AircraftHandleData> &aircraftHandleData = aircraft->getAircraftHandleConst().getAllConst();
+        const QVector<LightData> &lightData = aircraft->getLightConst().getAllConst();
+        totalCount = totalCount + positionData.count() + engineData.count() + primaryFlightControlData.count() + secondaryFlightControlData.count() + aircraftHandleData.count() + lightData.count();
+
+        const qint64 positionDataSize = positionData.count() * sizeof(PositionData);
+        const qint64 engineDataSize = engineData.count() * sizeof(EngineData);
+        const qint64 primaryFlightControlDataSize = primaryFlightControlData.count() * sizeof(PrimaryFlightControlData);
+        const qint64 secondaryFlightControlDataSize = secondaryFlightControlData.count() * sizeof(SecondaryFlightControlData);
+        const qint64 aircraftHandleDataSize = aircraftHandleData.count() * sizeof(AircraftHandleData);
+        const qint64 lightDataSize = lightData.count() * sizeof(LightData);
+        totalSize = totalSize + positionDataSize + engineDataSize + primaryFlightControlDataSize + secondaryFlightControlDataSize + aircraftHandleDataSize + lightDataSize;
+    }
 
     ui->sampleCountLineEdit->setText(QString::number(totalCount));
     ui->durationLineEdit->setText(d->unit.formatElapsedTime(flight.getTotalDurationMSec()));
-
-    const qint64 positionDataSize = positionData.count()  * sizeof(PositionData);
-    const qint64 engineDataSize = engineData.count()  * sizeof(EngineData);
-    const qint64 primaryFlightControlDataSize = primaryFlightControlData.count()  * sizeof(PrimaryFlightControlData);
-    const qint64 secondaryFlightControlDataSize = secondaryFlightControlData.count()  * sizeof(SecondaryFlightControlData);
-    const qint64 aircraftHandleDataSize = aircraftHandleData.count()  * sizeof(AircraftHandleData);
-    const qint64 lightDataSize = lightData.count()  * sizeof(LightData);
-
-    const qint64 totalSize = positionDataSize + engineDataSize + primaryFlightControlDataSize + secondaryFlightControlDataSize + aircraftHandleDataSize + lightDataSize;
     ui->sampleSizeLineEdit->setText(d->unit.formatMemory(totalSize));
 }

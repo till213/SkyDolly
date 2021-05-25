@@ -851,11 +851,13 @@ void MainWindow::updateReplaySpeedUi() noexcept
 
 void MainWindow::updateTimestamp() noexcept
 {
-    const qint64 totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
+    const bool isRecording = d->skyConnect.isRecording();
+    const bool ofUserAircraft = isRecording;
+    const qint64 totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec(ofUserAircraft);
     ui->timestampTimeEdit->blockSignals(true);
     QTime time(0, 0, 0, 0);
     time = time.addMSecs(totalDuration);
-    if (d->skyConnect.isRecording()) {
+    if (isRecording) {
         ui->timestampTimeEdit->setTime(time);
     }
     ui->timestampTimeEdit->setMaximumTime(time);

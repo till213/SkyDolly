@@ -67,7 +67,7 @@ public:
     const FlightCondition &getFlightConditionConst() const noexcept;
     void setFlightCondition(FlightCondition flightCondition) noexcept;
 
-    qint64 getTotalDurationMSec() const noexcept;
+    qint64 getTotalDurationMSec(bool ofUserAircraft = false) const noexcept;
 
     void clear() noexcept;
 
