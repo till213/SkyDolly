@@ -23,5 +23,9 @@
         <file>img/icons/record-normal-on@2x.png</file>
         <file>img/icons/stop-normal.png</file>
         <file>img/icons/stop-normal@2x.png</file>
+        <file>img/icons/checkbox-collapse-normal.png</file>
+        <file>img/icons/checkbox-collapse-normal@2x.png</file>
+        <file>img/icons/checkbox-expand-normal.png</file>
+        <file>img/icons/checkbox-expand-normal@2x.png</file>
     </qresource>
 </RCC>
