@@ -28,6 +28,7 @@
 #include "../../Kernel/src/Version.h"
 #include "../../Kernel/src/Settings.h"
 #include "../../Model/src/Logbook.h"
+#include "../../SkyConnect/src/SkyManager.h"
 #include "../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../Persistence/src/Service/FlightService.h"
 #include "Module.h"
@@ -36,20 +37,18 @@
 class AbstractModuleWidgetPrivate
 {
 public:
-    AbstractModuleWidgetPrivate(SkyConnectIntf &theSkyConnect, FlightService &theFlightService) noexcept
-        : skyConnect(theSkyConnect),
-          flightService(theFlightService)
+    AbstractModuleWidgetPrivate(FlightService &theFlightService) noexcept
+        : flightService(theFlightService)
     {}
 
-    SkyConnectIntf &skyConnect;
     FlightService &flightService;
 };
 
 // PUBLIC
 
-AbstractModuleWidget::AbstractModuleWidget(SkyConnectIntf &skyConnect, FlightService &flightService, QWidget *parent) noexcept
+AbstractModuleWidget::AbstractModuleWidget(FlightService &flightService, QWidget *parent) noexcept
     : QWidget(parent),
-      d(std::make_unique<AbstractModuleWidgetPrivate>(skyConnect, flightService))
+      d(std::make_unique<AbstractModuleWidgetPrivate>(flightService))
 {}
 
 AbstractModuleWidget::~AbstractModuleWidget() noexcept
@@ -72,7 +71,8 @@ void AbstractModuleWidget::showEvent(QShowEvent *event) noexcept
     QWidget::showEvent(event);
     updateUi();
 
-    connect(&d->skyConnect, &SkyConnectIntf::recordingStopped,
+    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    connect(&skyConnect, &SkyConnectIntf::recordingStopped,
             this, &AbstractModuleWidget::handleRecordingStopped);
 }
 
@@ -80,7 +80,8 @@ void AbstractModuleWidget::hideEvent(QHideEvent *event) noexcept
 {
     QWidget::hideEvent(event);
 
-    disconnect(&d->skyConnect, &SkyConnectIntf::recordingStopped,
+    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    disconnect(&skyConnect, &SkyConnectIntf::recordingStopped,
                this, &AbstractModuleWidget::handleRecordingStopped);
 }
 

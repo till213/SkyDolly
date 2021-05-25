@@ -362,6 +362,24 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
     return samplesPerSecond;
 }
 
+bool AbstractSkyConnect::createAIObjects() noexcept
+{
+    bool ok;
+    if (isConnectedWithSim()) {
+        ok = onCreateAIObjects();
+    } else {
+        ok = true;
+    }
+    return ok;
+}
+
+void AbstractSkyConnect::destroyAIObjects() noexcept
+{
+    if (isConnected()) {
+        onDestroyAIObjects();
+    }
+}
+
 // PROTECTED
 
 void AbstractSkyConnect::setState(Connect::State state) noexcept
