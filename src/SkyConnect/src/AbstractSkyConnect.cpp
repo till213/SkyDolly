@@ -123,6 +123,9 @@ void AbstractSkyConnect::stopRecording() noexcept
     onStopRecording();
     d->timer.stop();
     setState(Connect::State::Connected);
+    // Update AI objects by simply destroying and re-creating them
+    onDestroyAIObjects();
+    onCreateAIObjects();
     emit recordingStopped();
 }
 
@@ -252,7 +255,7 @@ void AbstractSkyConnect::skipForward() noexcept
 
 void AbstractSkyConnect::skipToEnd() noexcept
 {
-    const qint64 totalDuration  = d->currentFlight.getTotalDurationMSec();
+    const qint64 totalDuration = d->currentFlight.getTotalDurationMSec();
     seek(totalDuration);
 }
 

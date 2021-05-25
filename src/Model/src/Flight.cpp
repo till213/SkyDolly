@@ -182,11 +182,17 @@ void Flight::setFlightCondition(FlightCondition flightCondition) noexcept
     emit flightConditionChanged();
 }
 
-qint64 Flight::getTotalDurationMSec() const noexcept
+qint64 Flight::getTotalDurationMSec(bool ofUserAircraft) const noexcept
 {
-    // For now the total duration is the duration of the
-    // (one and only) user aircraft
-    return d->aircrafts.at(0)->getDurationMSec();
+    qint64 totalDuractionMSec = 0;
+    if (ofUserAircraft) {
+        totalDuractionMSec = getUserAircraftConst().getDurationMSec();
+    } else {
+        for (const auto &aircraft : d->aircrafts) {
+            totalDuractionMSec = qMax(aircraft->getDurationMSec(), totalDuractionMSec);
+        }
+    }
+    return totalDuractionMSec;
 }
 
 void Flight::clear() noexcept
