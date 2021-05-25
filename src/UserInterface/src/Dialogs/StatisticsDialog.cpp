@@ -41,6 +41,7 @@
 #include "../../../Model/src/AircraftHandleData.h"
 #include "../../../Model/src/Light.h"
 #include "../../../Model/src/LightData.h"
+#include "../../../SkyConnect/src/SkyManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "StatisticsDialog.h"
@@ -49,19 +50,17 @@
 class StatisticsDialogPrivate
 {
 public:
-    StatisticsDialogPrivate(SkyConnectIntf &theSkyConnect) noexcept
-        : skyConnect(theSkyConnect)
+    StatisticsDialogPrivate() noexcept
     {}
 
-    SkyConnectIntf &skyConnect;
     Unit unit;
 };
 
 // PUBLIC
 
-StatisticsDialog::StatisticsDialog(SkyConnectIntf &skyConnect, QWidget *parent) noexcept :
+StatisticsDialog::StatisticsDialog(QWidget *parent) noexcept :
     QDialog(parent),
-    d(std::make_unique<StatisticsDialogPrivate>(skyConnect)),
+    d(std::make_unique<StatisticsDialogPrivate>()),
     ui(std::make_unique<Ui::StatisticsDialog>())
 {
     ui->setupUi(this);
@@ -119,8 +118,9 @@ void StatisticsDialog::updateRecordUi() noexcept
     }
 
     // Samples per second
-    if (d->skyConnect.getState() == Connect::State::Recording) {
-        ui->samplesPerSecondLineEdit->setText(d->unit.formatHz(d->skyConnect.calculateRecordedSamplesPerSecond()));
+    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect.getState() == Connect::State::Recording) {
+        ui->samplesPerSecondLineEdit->setText(d->unit.formatHz(skyConnect.calculateRecordedSamplesPerSecond()));
     } else {
         ui->samplesPerSecondLineEdit->clear();
     }

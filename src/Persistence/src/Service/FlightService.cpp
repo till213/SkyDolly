@@ -30,6 +30,8 @@
 
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"
+#include "../../../SkyConnect/src/SkyManager.h"
+#include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../Dao/DaoFactory.h"
 #include "../Dao/FlightDaoIntf.h"
 #include "../Dao/AircraftDaoIntf.h"
@@ -56,6 +58,7 @@ FlightService::FlightService(QObject *parent) noexcept
 
 FlightService::~FlightService() noexcept
 {
+    SkyManager::getInstance().getCurrentSkyConnect().destroyAIObjects();
 #ifdef DEBUG
     qDebug("FlightService::~FlightService: DELETED.");
 #endif
@@ -80,8 +83,11 @@ bool FlightService::restore(qint64 id, Flight &flight) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
+        SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+        skyConnect.destroyAIObjects();
         ok = d->flightDao->getFlightById(id, flight);
         if (ok) {
+            ok = skyConnect.createAIObjects();
             emit flightRestored(flight.getId());
         }
     }

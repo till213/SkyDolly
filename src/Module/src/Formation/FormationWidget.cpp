@@ -49,8 +49,8 @@ public:
 
 // PUBLIC
 
-FormationWidget::FormationWidget(SkyConnectIntf &skyConnect, FlightService &flightService, QWidget *parent) noexcept
-    : AbstractModuleWidget(skyConnect, flightService, parent),
+FormationWidget::FormationWidget(FlightService &flightService, QWidget *parent) noexcept
+    : AbstractModuleWidget(flightService, parent),
       ui(std::make_unique<Ui::FormationWidget>()),
       d(std::make_unique<FormationWidgetPrivate>())
 {

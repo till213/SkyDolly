@@ -43,6 +43,9 @@ public:
     SkyConnectDummy(QObject *parent = nullptr) noexcept;
     virtual ~SkyConnectDummy() noexcept;
 
+    virtual bool createAIObjects() noexcept override;
+    virtual void destroyAIObjects() noexcept override;
+
 protected:
     virtual bool onStartRecording() noexcept override;
     virtual void onRecordingPaused(bool paused) noexcept override;

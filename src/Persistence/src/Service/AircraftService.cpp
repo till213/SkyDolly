@@ -38,8 +38,7 @@ public:
     AircraftServicePrivate() noexcept
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           aircraftDao(daoFactory->createAircraftDao())
-    {
-    }
+    {}
 
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<AircraftDaoIntf> aircraftDao;

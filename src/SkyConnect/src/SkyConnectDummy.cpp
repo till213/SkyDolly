@@ -87,7 +87,22 @@ SkyConnectDummy::SkyConnectDummy(QObject *parent) noexcept
 SkyConnectDummy::~SkyConnectDummy() noexcept
 {
 #ifdef DEBUG
-    qDebug("SkyConnectDummy::~SkyConnectDummy(): DELETED");
+    qDebug("SkyConnectDummy::~SkyConnectDummy: DELETED");
+#endif
+}
+
+bool SkyConnectDummy::createAIObjects() noexcept
+{
+#ifdef DEBUG
+    qDebug("SkyConnectDummy::createAIModels: CALLED");
+#endif
+    return true;
+}
+
+void SkyConnectDummy::destroyAIObjects() noexcept
+{
+#ifdef DEBUG
+    qDebug("SkyConnectDummy::destroyAIModels: CALLED");
 #endif
 }
 
