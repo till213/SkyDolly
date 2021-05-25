@@ -167,7 +167,7 @@ const EngineData &Engine::interpolate(qint64 timestamp, TimeVariableData::Access
         d->currentAccess = access;
 #ifdef DEBUG
     } else {
-        qDebug("Engine::interpolateEngineData: cached result for timestamp: %llu", timestamp);
+        qDebug("Engine::interpolateEngineData: cached result for timestamp: %lld", timestamp);
 #endif
     }
     return d->currentEngineData;

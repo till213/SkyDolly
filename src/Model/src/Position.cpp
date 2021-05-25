@@ -172,7 +172,7 @@ const PositionData &Position::interpolate(qint64 timestamp, TimeVariableData::Ac
         d->currentTimestamp = timestamp;
 #ifdef DEBUG
     } else {
-        qDebug("Aircraft::interpolate: cached result for timestamp: %llu", timestamp);
+        qDebug("Aircraft::interpolate: cached result for timestamp: %lld", timestamp);
 #endif
     }
     return d->currentPositionData;
