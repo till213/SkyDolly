@@ -56,3 +56,11 @@ WATER RUDDER HANDLE POSITION,percent,False,  0
 TAILHOOK POSITION,percent,False,  0
 CANOPY OPEN,percent,False,  0
 LIGHT STATES,mask,False,  0
+GPS WP NEXT ID,,True,  0
+GPS WP PREV ID,,True,  0
+GPS WP NEXT LAT,degree latitude,False,  0
+GPS WP NEXT LON,degree longitude,False,  0
+GPS WP NEXT ALT,feet,False,  0
+GPS WP PREV LAT,degree latitude,False,  0
+GPS WP PREV LON,degree longitude,False,  0
+GPS WP PREV ALT,feet,False,  0
