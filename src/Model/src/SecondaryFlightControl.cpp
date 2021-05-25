@@ -163,7 +163,7 @@ const SecondaryFlightControlData &SecondaryFlightControl::interpolate(qint64 tim
         d->currentAccess = access;
 #ifdef DEBUG
     } else {
-        qDebug("SecondaryFlightControl::interpolateSecondaryFlightControlData: cached result for timestamp: %llu", timestamp);
+        qDebug("SecondaryFlightControl::interpolateSecondaryFlightControlData: cached result for timestamp: %lld", timestamp);
 #endif
     }
     return d->currentSecondaryFlightControlData;

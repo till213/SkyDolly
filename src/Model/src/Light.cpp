@@ -138,7 +138,7 @@ const LightData &Light::interpolate(qint64 timestamp, TimeVariableData::Access a
         d->currentAccess = access;
 #ifdef DEBUG
     } else {
-        qDebug("Light::interpolateLightData: cached result for timestamp: %llu", timestamp);
+        qDebug("Light::interpolateLightData: cached result for timestamp: %lld", timestamp);
 #endif
     }
     return d->currentLightData;
