@@ -83,6 +83,7 @@ bool SimConnectAI::createSimulatedAircrafts(Flight &flight, std::unordered_map<:
             const AircraftInfo aircraftInfo = aircraft->getAircraftInfoConst();
             initialPosition = SimConnectPosition::toInitialPosition(aircraft->getPositionConst().getFirst(), aircraftInfo.startOnGround, aircraftInfo.initialAirspeed);
             result = ::SimConnect_AICreateNonATCAircraft(d->simConnectHandle, aircraftInfo.type.toLatin1(), aircraftInfo.tailNumber.toLatin1(), initialPosition, requestId);
+            aircraft->setSimulationObjectId(Aircraft::InvalidSimulationId);
             ok = result == S_OK;
             if (ok) {
                 ++i;
@@ -94,7 +95,10 @@ bool SimConnectAI::createSimulatedAircrafts(Flight &flight, std::unordered_map<:
             aircraft->setSimulationObjectId(::SIMCONNECT_OBJECT_ID_USER);
             ++i;
         }
-
+#ifdef DEBUG
+        qDebug("SimConnectAI::createSimulatedAircrafts: created (AI) aircraft: request ID: %lld simulation object ID: %lld aircraft ID: %lld",
+               aircraft->getSimulationRequestId(), aircraft->getSimulationObjectId(), aircraft->getId());
+#endif
     }
     return ok;
 }
@@ -104,6 +108,10 @@ void SimConnectAI::destroySimulatedAircrafts(Flight &flight) noexcept
     for (auto &aircraft : flight) {
         const ::SIMCONNECT_OBJECT_ID objectId = aircraft->getSimulationObjectId();
         if (objectId != ::SIMCONNECT_OBJECT_ID_USER) {
+#ifdef DEBUG
+        qDebug("SimConnectAI::destroySimulatedAircrafts: destroying AI aircraft: request ID: %lld simulation object ID: %lld aircraft ID: %lld",
+               aircraft->getSimulationRequestId(), aircraft->getSimulationObjectId(), aircraft->getId());
+#endif
             SimConnect_AIRemoveObject(d->simConnectHandle, objectId, aircraft->getSimulationRequestId());
         }
         aircraft->setSimulationRequestId(Aircraft::InvalidSimulationId);

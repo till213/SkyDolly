@@ -69,6 +69,9 @@ public:
 
     virtual double calculateRecordedSamplesPerSecond() const noexcept = 0;
 
+    virtual bool createAIObjects() noexcept = 0;
+    virtual void destroyAIObjects() noexcept = 0;
+
 protected:
     SkyConnectIntf(QObject *parent = nullptr) noexcept
         : QObject(parent)

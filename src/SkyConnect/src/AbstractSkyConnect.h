@@ -39,7 +39,6 @@ class AbstractSkyConnectPrivate;
 class  AbstractSkyConnect : public SkyConnectIntf
 {
     Q_OBJECT
-
 public:
     AbstractSkyConnect(QObject *parent = nullptr) noexcept;
     virtual ~AbstractSkyConnect() noexcept;
@@ -74,6 +73,9 @@ public:
 
     virtual double calculateRecordedSamplesPerSecond() const noexcept override;
 
+    virtual bool createAIObjects() noexcept override;
+    virtual void destroyAIObjects() noexcept override;
+
 protected:
     void setState(Connect::State state) noexcept;
     Flight &getCurrentFlight() const;
@@ -85,20 +87,23 @@ protected:
     void resetElapsedTime(bool restart) noexcept;
     void updateCurrentTimestamp() noexcept;
 
-    virtual bool onStartRecording() = 0;
-    virtual void onRecordingPaused(bool paused) = 0;
-    virtual void onStopRecording() = 0;
+    virtual bool onStartRecording() noexcept = 0;
+    virtual void onRecordingPaused(bool paused) noexcept = 0;
+    virtual void onStopRecording() noexcept = 0;
 
-    virtual bool onStartReplay(qint64 currentTimestamp) = 0;
-    virtual void onReplayPaused(bool paused) = 0;
-    virtual void onStopReplay() = 0;
+    virtual bool onStartReplay(qint64 currentTimestamp) noexcept = 0;
+    virtual void onReplayPaused(bool paused) noexcept = 0;
+    virtual void onStopReplay() noexcept = 0;
 
-    virtual void onSeek(qint64 currentTimestamp) = 0;
-    virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) = 0;
+    virtual void onSeek(qint64 currentTimestamp) noexcept = 0;
+    virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept = 0;
 
-    virtual bool sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) = 0;
-    virtual bool isConnectedWithSim() const = 0;
-    virtual bool connectWithSim() = 0;
+    virtual bool sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept = 0;
+    virtual bool isConnectedWithSim() const noexcept = 0;
+    virtual bool connectWithSim() noexcept = 0;
+
+    virtual bool onCreateAIObjects() noexcept = 0;
+    virtual void onDestroyAIObjects() noexcept = 0;
 
 protected slots:
     virtual void processEvents() noexcept = 0;

@@ -39,7 +39,6 @@ namespace Ui {
     class FormationWidget;
 }
 
-class SkyConnectIntf;
 class FlightService;
 class AircraftService;
 class FormationWidgetPrivate;
@@ -48,7 +47,7 @@ class FormationWidget : public AbstractModuleWidget
 {
     Q_OBJECT
 public:
-    explicit FormationWidget(SkyConnectIntf &skyConnect, FlightService &flightService, QWidget *parent = nullptr) noexcept;
+    explicit FormationWidget(FlightService &flightService, QWidget *parent = nullptr) noexcept;
     virtual ~FormationWidget() noexcept;
 
     virtual Module::Module getModuleId() const noexcept override;

@@ -115,7 +115,7 @@ class MainWindowPrivate
 {
 public:
     MainWindowPrivate() noexcept
-        : skyConnect(SkyManager::getInstance().currentSkyConnect()),
+        : skyConnect(SkyManager::getInstance().getCurrentSkyConnect()),
           previousState(Connect::State::Connected),
           connectedWithLogbook(false),
           aboutDialog(nullptr),
@@ -287,14 +287,14 @@ void MainWindow::initUi() noexcept
 
     // Dialogs
     d->flightDialog = new FlightDialog(*d->flightService, this);
-    d->simulationVariablesDialog = new SimulationVariablesDialog(d->skyConnect, this);
-    d->statisticsDialog = new StatisticsDialog(d->skyConnect, this);
+    d->simulationVariablesDialog = new SimulationVariablesDialog(this);
+    d->statisticsDialog = new StatisticsDialog(this);
     d->aboutDialog = new AboutDialog(this);
     d->aboutLogbookDialog = new AboutLogbookDialog(*d->databaseService, this);
     d->settingsDialog = new SettingsDialog(this);
 
     // Modules
-    d->moduleManager = std::make_unique<ModuleManager>(*ui->moduleStackWidget, d->skyConnect, *d->databaseService, *d->flightService);
+    d->moduleManager = std::make_unique<ModuleManager>(*ui->moduleStackWidget, *d->databaseService, *d->flightService);
 
     const ModuleIntf &activeModule = d->moduleManager->getActiveModule();
     ui->moduleGroupBox->setTitle(activeModule.getModuleName());

@@ -124,7 +124,7 @@ public:
     tsl::ordered_map<QString, Waypoint> flightPlan;
     std::unique_ptr<SimConnectAI> simConnectAI;
     // Ordered key: request ID - value: AI object ID
-    std::unordered_map<::SIMCONNECT_DATA_REQUEST_ID, Aircraft *> aircraftByRequestId;
+    std::unordered_map<::SIMCONNECT_DATA_REQUEST_ID, Aircraft *> pendingAIAircraftCreationRequests;
 };
 
 // PUBLIC
@@ -225,9 +225,6 @@ bool SkyConnectImpl::onStartReplay(qint64 currentTimestamp) noexcept
         setupInitialPosition();
     }
 
-    d->aircraftByRequestId.clear();
-    d->simConnectAI->createSimulatedAircrafts(getCurrentFlight(), d->aircraftByRequestId, Enum::toUnderlyingType(DataRequest::AIAircraftBase));
-
     // Send aircraft position every visual frame
     HRESULT result = ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::Frame), "Frame");
     return result == S_OK;
@@ -244,8 +241,6 @@ void SkyConnectImpl::onReplayPaused(bool paused) noexcept
 
 void SkyConnectImpl::onStopReplay() noexcept
 {
-    d->simConnectAI->destroySimulatedAircrafts(getCurrentFlight());
-    d->aircraftByRequestId.clear();
     ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::Frame));
     setAircraftFrozen(::SIMCONNECT_OBJECT_ID_USER, false);
 }
@@ -360,6 +355,11 @@ bool SkyConnectImpl::sendAircraftData(qint64 currentTimestamp, TimeVariableData:
     return ok;
 }
 
+bool SkyConnectImpl::isConnectedWithSim() const noexcept
+{
+    return d->simConnectHandle != nullptr;
+}
+
 bool SkyConnectImpl::connectWithSim() noexcept
 {
     HWND hWnd;
@@ -379,12 +379,22 @@ bool SkyConnectImpl::connectWithSim() noexcept
 #ifdef DEBUG
     qDebug("SkyConnectImpl::connectWithSim: CONNECT with SIM, handle: %p success: %d", d->simConnectHandle, result == S_OK);
 #endif
-    return result == S_OK;
+    const bool ok = result == S_OK;
+    if (ok) {
+        createAIObjects();
+    }
+    return ok;
 }
 
-bool SkyConnectImpl::isConnectedWithSim() const noexcept
+bool SkyConnectImpl::onCreateAIObjects() noexcept
 {
-    return d->simConnectHandle != nullptr;
+    return d->simConnectAI->createSimulatedAircrafts(getCurrentFlight(), d->pendingAIAircraftCreationRequests, Enum::toUnderlyingType(DataRequest::AIAircraftBase));
+}
+
+void SkyConnectImpl::onDestroyAIObjects() noexcept
+{
+    d->simConnectAI->destroySimulatedAircrafts(getCurrentFlight());
+    d->pendingAIAircraftCreationRequests.clear();
 }
 
 // PROTECTED SLOTS
@@ -764,12 +774,12 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
     case SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID:
     {
         SIMCONNECT_RECV_ASSIGNED_OBJECT_ID *objectData = (SIMCONNECT_RECV_ASSIGNED_OBJECT_ID*)receivedData;
-#ifdef DEBUG
-        qDebug("SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID: Request ID: %lu Assigned Object ID: %lu", objectData->dwRequestID, objectData->dwObjectID);
-#endif
-        Aircraft *aircraft = skyConnect->d->aircraftByRequestId[objectData->dwRequestID];
+        Aircraft *aircraft = skyConnect->d->pendingAIAircraftCreationRequests[objectData->dwRequestID];
         aircraft->setSimulationObjectId(objectData->dwObjectID);
 
+#ifdef DEBUG
+        qDebug("SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID: Request ID: %lu Assigned Object ID: %lu aircraft ID: %llu", objectData->dwRequestID, objectData->dwObjectID, aircraft->getId());
+#endif
         ::SimConnect_AIReleaseControl(skyConnect->d->simConnectHandle, aircraft->getSimulationObjectId(), aircraft->getSimulationRequestId());
         skyConnect->setAircraftFrozen(objectData->dwObjectID, true);
         break;

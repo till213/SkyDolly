@@ -35,7 +35,6 @@ class QHideEvent;
 #include "Module.h"
 #include "ModuleIntf.h"
 
-class SkyConnectIntf;
 class FlightService;
 class AbstractModuleWidgetPrivate;
 
@@ -43,7 +42,7 @@ class AbstractModuleWidget : public QWidget, public ModuleIntf
 {
     Q_OBJECT
 public:
-    explicit AbstractModuleWidget(SkyConnectIntf &skyConnect, FlightService &flightService, QWidget *parent = nullptr) noexcept;
+    explicit AbstractModuleWidget(FlightService &flightService, QWidget *parent = nullptr) noexcept;
     virtual ~AbstractModuleWidget() noexcept;
 
     virtual QWidget &getWidget() noexcept override;

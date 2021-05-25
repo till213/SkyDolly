@@ -32,7 +32,6 @@
 class QShowEvent;
 class QHideEvent;
 
-class SkyConnectIntf;
 class SimulationVariablesDialogPrivate;
 
 namespace Ui {
@@ -43,7 +42,7 @@ class SimulationVariablesDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit SimulationVariablesDialog(SkyConnectIntf &skyConnect, QWidget *parent = nullptr) noexcept;
+    explicit SimulationVariablesDialog(QWidget *parent = nullptr) noexcept;
     virtual ~SimulationVariablesDialog() noexcept;
 
 signals:

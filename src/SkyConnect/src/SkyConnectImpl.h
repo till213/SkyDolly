@@ -59,11 +59,14 @@ protected:
     virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
 
     virtual bool sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept override;
-    virtual bool connectWithSim() noexcept override;
     virtual bool isConnectedWithSim() const noexcept override;
+    virtual bool connectWithSim() noexcept override;
+
+    virtual bool onCreateAIObjects() noexcept override;
+    virtual void onDestroyAIObjects() noexcept override;
 
 protected slots:
-    void processEvents() noexcept override;
+    virtual void processEvents() noexcept override;
 
 private:
     std::unique_ptr<SkyConnectPrivate> d;

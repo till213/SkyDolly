@@ -33,6 +33,7 @@
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/PrimaryFlightControl.h"
 #include "../../../Model/src/AircraftInfo.h"
+#include "../../../SkyConnect/src/SkyManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "../Widgets/AircraftWidget.h"
@@ -47,11 +48,9 @@
 class SimulationVariablesDialogPrivate
 {
 public:
-    SimulationVariablesDialogPrivate(SkyConnectIntf &theSkyConnect) noexcept
-        : skyConnect(theSkyConnect)
+    SimulationVariablesDialogPrivate() noexcept
     {}
 
-    SkyConnectIntf &skyConnect;
     static const QString WindowTitle;
 };
 
@@ -59,9 +58,9 @@ const QString SimulationVariablesDialogPrivate::WindowTitle = QT_TRANSLATE_NOOP(
 
 // PUBLIC
 
-SimulationVariablesDialog::SimulationVariablesDialog(SkyConnectIntf &skyConnect, QWidget *parent) noexcept :
+SimulationVariablesDialog::SimulationVariablesDialog(QWidget *parent) noexcept :
     QDialog(parent),
-    d(std::make_unique<SimulationVariablesDialogPrivate>(skyConnect)),
+    d(std::make_unique<SimulationVariablesDialogPrivate>()),
     ui(std::make_unique<Ui::SimulationVariablesDialog>())
 {
     ui->setupUi(this);
@@ -83,7 +82,8 @@ void SimulationVariablesDialog::showEvent(QShowEvent *event) noexcept
 {
     QDialog::showEvent(event);
     updateUi();
-    connect(&d->skyConnect, &SkyConnectIntf::stateChanged,
+    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    connect(&skyConnect, &SkyConnectIntf::stateChanged,
             this, &SimulationVariablesDialog::updateTitle);
 
     emit visibilityChanged(true);
@@ -92,7 +92,8 @@ void SimulationVariablesDialog::showEvent(QShowEvent *event) noexcept
 void SimulationVariablesDialog::hideEvent(QHideEvent *event) noexcept
 {
     QDialog::hideEvent(event);
-    disconnect(&d->skyConnect, &SkyConnectIntf::stateChanged,
+    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    disconnect(&skyConnect, &SkyConnectIntf::stateChanged,
                this, &SimulationVariablesDialog::updateTitle);
 
     emit visibilityChanged(false);
@@ -102,22 +103,23 @@ void SimulationVariablesDialog::hideEvent(QHideEvent *event) noexcept
 
 void SimulationVariablesDialog::initUi() noexcept
 {
-    AircraftWidget *aircraftWidget = new AircraftWidget(d->skyConnect, this);
+    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    AircraftWidget *aircraftWidget = new AircraftWidget(skyConnect, this);
     ui->simulationVariablesTab->addTab(aircraftWidget, tr("&Aircraft"));
 
-    EngineWidget *engineWidget = new EngineWidget(d->skyConnect, this);
+    EngineWidget *engineWidget = new EngineWidget(skyConnect, this);
     ui->simulationVariablesTab->addTab(engineWidget, tr("&Engine"));
 
-    PrimaryFlightControlWidget *primaryFlightControlWidget = new PrimaryFlightControlWidget(d->skyConnect, this);
+    PrimaryFlightControlWidget *primaryFlightControlWidget = new PrimaryFlightControlWidget(skyConnect, this);
     ui->simulationVariablesTab->addTab(primaryFlightControlWidget, tr("&Primary Controls"));
 
-    SecondaryFlightControlWidget *secondaryFlightControlWidget = new SecondaryFlightControlWidget(d->skyConnect, this);
+    SecondaryFlightControlWidget *secondaryFlightControlWidget = new SecondaryFlightControlWidget(skyConnect, this);
     ui->simulationVariablesTab->addTab(secondaryFlightControlWidget, tr("&Secondary Controls"));
 
-    AircraftHandleWidget *aircraftHandleWidget = new AircraftHandleWidget(d->skyConnect, this);
+    AircraftHandleWidget *aircraftHandleWidget = new AircraftHandleWidget(skyConnect, this);
     ui->simulationVariablesTab->addTab(aircraftHandleWidget, tr("&Handles && Brakes"));
 
-    LightWidget *lightWidget = new LightWidget(d->skyConnect, this);
+    LightWidget *lightWidget = new LightWidget(skyConnect, this);
     ui->simulationVariablesTab->addTab(lightWidget, tr("&Lights"));
 }
 
@@ -129,7 +131,8 @@ void SimulationVariablesDialog::updateUi() noexcept
 void SimulationVariablesDialog::updateTitle() noexcept
 {
     QString windowTitle = SimulationVariablesDialogPrivate::WindowTitle;
-    switch (d->skyConnect.getState()) {
+    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    switch (skyConnect.getState()) {
     case Connect::State::Recording:
         windowTitle.append(" - " + tr("RECORDING"));
         break;
