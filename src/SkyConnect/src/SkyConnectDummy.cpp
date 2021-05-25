@@ -91,21 +91,6 @@ SkyConnectDummy::~SkyConnectDummy() noexcept
 #endif
 }
 
-bool SkyConnectDummy::createAIObjects() noexcept
-{
-#ifdef DEBUG
-    qDebug("SkyConnectDummy::createAIModels: CALLED");
-#endif
-    return true;
-}
-
-void SkyConnectDummy::destroyAIObjects() noexcept
-{
-#ifdef DEBUG
-    qDebug("SkyConnectDummy::destroyAIModels: CALLED");
-#endif
-}
-
 // PROTECTED
 
 bool SkyConnectDummy::onStartRecording() noexcept
@@ -187,6 +172,21 @@ bool SkyConnectDummy::isConnectedWithSim() const noexcept
 bool SkyConnectDummy::connectWithSim() noexcept
 {
     return true;
+}
+
+bool SkyConnectDummy::onCreateAIObjects() noexcept
+{
+#ifdef DEBUG
+    qDebug("SkyConnectDummy::onCreateAIObjects: CALLED");
+#endif
+    return true;
+}
+
+void SkyConnectDummy::onDestroyAIObjects() noexcept
+{
+#ifdef DEBUG
+    qDebug("SkyConnectDummy::onDestroyAIObjects: CALLED");
+#endif
 }
 
 // PROTECTED SLOTS
