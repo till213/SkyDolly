@@ -43,9 +43,6 @@ public:
     SkyConnectDummy(QObject *parent = nullptr) noexcept;
     virtual ~SkyConnectDummy() noexcept;
 
-    virtual bool createAIObjects() noexcept override;
-    virtual void destroyAIObjects() noexcept override;
-
 protected:
     virtual bool onStartRecording() noexcept override;
     virtual void onRecordingPaused(bool paused) noexcept override;
@@ -61,6 +58,9 @@ protected:
     virtual bool sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept override;
     virtual bool isConnectedWithSim() const noexcept override;
     virtual bool connectWithSim() noexcept override;
+
+    virtual bool onCreateAIObjects() noexcept override;
+    virtual void onDestroyAIObjects() noexcept override;
 
 protected slots:
     virtual void processEvents() noexcept override;
