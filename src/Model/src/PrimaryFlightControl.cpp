@@ -169,7 +169,7 @@ const PrimaryFlightControlData &PrimaryFlightControl::interpolate(qint64 timesta
         d->currentAccess = access;
 #ifdef DEBUG
     } else {
-        qDebug("PrimaryFlightControl::interpolatePrimaryFlightControlData: cached result for timestamp: %llu", timestamp);
+        qDebug("PrimaryFlightControl::interpolatePrimaryFlightControlData: cached result for timestamp: %lld", timestamp);
 #endif
     }
     return d->currentPrimaryFlightControlData;
