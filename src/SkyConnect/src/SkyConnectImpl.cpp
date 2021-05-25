@@ -778,7 +778,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
         aircraft->setSimulationObjectId(objectData->dwObjectID);
 
 #ifdef DEBUG
-        qDebug("SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID: Request ID: %lu Assigned Object ID: %lu aircraft ID: %llu", objectData->dwRequestID, objectData->dwObjectID, aircraft->getId());
+        qDebug("SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID: Request ID: %lu Assigned Object ID: %lu aircraft ID: %lld", objectData->dwRequestID, objectData->dwObjectID, aircraft->getId());
 #endif
         ::SimConnect_AIReleaseControl(skyConnect->d->simConnectHandle, aircraft->getSimulationObjectId(), aircraft->getSimulationRequestId());
         skyConnect->setAircraftFrozen(objectData->dwObjectID, true);
