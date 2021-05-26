@@ -45,6 +45,9 @@ public:
     explicit AbstractModuleWidget(FlightService &flightService, QWidget *parent = nullptr) noexcept;
     virtual ~AbstractModuleWidget() noexcept;
 
+    virtual bool isActive() const noexcept override;
+    virtual void setActive(bool enable) noexcept override;
+
     virtual QWidget &getWidget() noexcept override;
 
 protected:

@@ -69,6 +69,7 @@ bool SimConnectAI::createSimulatedAircrafts(Flight &flight, std::unordered_map<:
     HRESULT result;
     bool ok;
     SIMCONNECT_DATA_INITPOSITION initialPosition;
+    const Aircraft &userAircraft = flight.getUserAircraftConst();
     int i = 0;
     ok = true;
     for (auto &aircraft : flight) {
@@ -76,7 +77,7 @@ bool SimConnectAI::createSimulatedAircrafts(Flight &flight, std::unordered_map<:
         const SIMCONNECT_DATA_REQUEST_ID requestId = baseRequestId + i;
         aircraftByRequestId[requestId] = aircraft.get();
         aircraft->setSimulationRequestId(requestId);
-        if (aircraft->isUserAircraft()) {
+        if (*aircraft == userAircraft) {
             aircraft->setSimulationRequestId(requestId);
             aircraft->setSimulationObjectId(::SIMCONNECT_OBJECT_ID_USER);
             ++i;

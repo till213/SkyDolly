@@ -44,10 +44,6 @@
 #include "SQLiteFlightDao.h"
 #include "SQLiteFlightDao.h"
 
-namespace  {
-    constexpr int UserAircraftSequenceNumber = 1;
-}
-
 class SQLiteFlightDaoPrivate
 {
 public:
@@ -74,6 +70,7 @@ public:
 "  id,"
 "  title,"
 "  description,"
+"  user_aircraft_seq_nr,"
 "  surface_type,"
 "  ground_altitude,"
 "  ambient_temperature,"
@@ -94,6 +91,7 @@ public:
 "  null,"
 " :title,"
 " :description,"
+" :user_aircraft_seq_nr,"
 " :surface_type,"
 " :ground_altitude,"
 " :ambient_temperature,"
@@ -189,6 +187,7 @@ bool SQLiteFlightDao::addFlight(Flight &flight)  noexcept
     const FlightCondition &flightCondition = flight.getFlightConditionConst();
     d->insertQuery->bindValue(":title", flight.getTitle());
     d->insertQuery->bindValue(":description", flight.getDescription());
+    d->insertQuery->bindValue(":user_aircraft_seq_nr", flight.getUserAircraftIndex() + 1);
     d->insertQuery->bindValue(":surface_type", Enum::toUnderlyingType(flightCondition.surfaceType));
     d->insertQuery->bindValue(":ground_altitude", flightCondition.groundAltitude);
     d->insertQuery->bindValue(":ambient_temperature", flightCondition.ambientTemperature);
@@ -208,7 +207,7 @@ bool SQLiteFlightDao::addFlight(Flight &flight)  noexcept
     // No conversion to UTC
     d->insertQuery->bindValue(":end_local_sim_time", flightCondition.endLocalTime);
     // Zulu time equals to UTC time
-    d->insertQuery->bindValue(":end_zulu_sim_time", flightCondition.endZuluTime);
+    d->insertQuery->bindValue(":end_zulu_sim_time", flightCondition.endZuluTime);   
     bool ok = d->insertQuery->exec();
     if (ok) {
         qint64 id = d->insertQuery->lastInsertId().toLongLong(&ok);
@@ -261,6 +260,7 @@ bool SQLiteFlightDao::getFlightById(qint64 id, Flight &flight) const noexcept
         const int startZuluSimulationTimeIdx = d->selectByIdQuery->record().indexOf("start_zulu_sim_time");
         const int endLocalSimulationTimeIdx = d->selectByIdQuery->record().indexOf("end_local_sim_time");
         const int endZuluSimulationTimeIdx = d->selectByIdQuery->record().indexOf("end_zulu_sim_time");
+        const int userAircraftSequenceNumberIdx = d->selectByIdQuery->record().indexOf("user_aircraft_seq_nr");
         if (d->selectByIdQuery->next()) {
             flight.setId(d->selectByIdQuery->value(idIdx).toLongLong());
             QDateTime date = d->selectByIdQuery->value(creationDateIdx).toDateTime();
@@ -291,6 +291,10 @@ bool SQLiteFlightDao::getFlightById(qint64 id, Flight &flight) const noexcept
             flight.setFlightCondition(flightCondition);
         }
         ok = d->aircraftDao->getByFlightId(id, flight.getAircrafts());
+        if (ok) {
+            const int userAircraftIndex = d->selectByIdQuery->value(userAircraftSequenceNumberIdx).toInt() - 1;
+            flight.setUserAircraftIndex(userAircraftIndex);
+        }
 #ifdef DEBUG
     } else {
         qDebug("SQLiteFlightDao::getFlightById: SQL error: %s", qPrintable(d->selectByIdQuery->lastError().databaseText() + " - error code: " + d->selectByIdQuery->lastError().nativeErrorCode()));

@@ -107,10 +107,16 @@ ModuleIntf &ModuleManager::getActiveModule() const
 void ModuleManager::activateModule(Module::Module moduleId) noexcept
 {
     if (d->activeModuleId != moduleId) {
+        ;
+        if (d->activeModuleId != Module::Module::None) {
+            ModuleIntf *previousModule = d->moduleMap[d->activeModuleId];
+            previousModule->setActive(false);
+        }
         d->activeModuleId = moduleId;
         ModuleIntf *module = d->moduleMap[d->activeModuleId];
         d->moduleStackWidget.setCurrentWidget(&module->getWidget());
-        module->getAction().setChecked(true);
+        module->setActive(true);
+
         emit activated(module->getModuleName(), moduleId);
     }
 }

@@ -66,6 +66,9 @@ public:
             aircrafts.resize(1);
             userAircraftIndex = 0;
         }
+        // A flight always has at least one aircraft; unless
+        // it is newly allocated: the aircraft is only added
+        // in the constructor body
         if (aircrafts.size() > 0) {
             aircrafts.at(0)->clear();
         }
@@ -139,19 +142,11 @@ Aircraft &Flight::addUserAircraft() noexcept
             this, &Flight::aircraftInfoChanged);
     connect(aircraft.get(), &Aircraft::dataChanged,
             this, &Flight::positionDataChanged);
-    connect(aircraft.get(), &Aircraft::userAircraftChanged,
-            this, &Flight::handleUserAircraftChanged);
 
-    aircraft->setUserAircraft(true);
     d->aircrafts.push_back(std::move(aircraft));
-    d->userAircraftIndex = d->aircrafts.size() - 1;
+    setUserAircraftIndex(d->aircrafts.size() - 1);
 
     return *d->aircrafts.end()->get();
-}
-
-void Flight::setUserAircraft(int index)
-{
-    d->userAircraftIndex = index;
 }
 
 const Aircraft &Flight::getUserAircraftConst() const noexcept
@@ -162,6 +157,19 @@ const Aircraft &Flight::getUserAircraftConst() const noexcept
 Aircraft &Flight::getUserAircraft() const noexcept
 {
     return *d->aircrafts.at(d->userAircraftIndex);
+}
+
+int Flight::getUserAircraftIndex() const noexcept
+{
+    return d->userAircraftIndex;
+}
+
+void Flight::setUserAircraftIndex(int index) noexcept
+{
+    if (d->userAircraftIndex != index) {
+        d->userAircraftIndex = index;
+        emit userAircraftChanged(*d->aircrafts.at(index));
+    }
 }
 
 std::vector<std::unique_ptr<Aircraft>> &Flight::getAircrafts() const noexcept
@@ -221,19 +229,4 @@ const Flight::it Flight::begin() const noexcept
 const Flight::it Flight::end() const noexcept
 {
     return it(d->aircrafts.end());
-}
-
-// PRIVATE
-
-void Flight::handleUserAircraftChanged(qint64 id, bool enable)
-{
-    if (enable) {
-        for (const auto &aircraft : d->aircrafts) {
-            if (aircraft->getId() != id) {
-                aircraft->setUserAircraft(false);
-            } else {
-                emit userAircraftActivated(*aircraft);
-            }
-        }
-    }
 }
