@@ -24,6 +24,7 @@
  */
 #include <QWidget>
 #include <QMessageBox>
+#include <QAction>
 
 #include "../../Kernel/src/Version.h"
 #include "../../Kernel/src/Settings.h"
@@ -38,9 +39,11 @@ class AbstractModuleWidgetPrivate
 {
 public:
     AbstractModuleWidgetPrivate(FlightService &theFlightService) noexcept
-        : flightService(theFlightService)
+        : active(false),
+          flightService(theFlightService)
     {}
 
+    bool active;
     FlightService &flightService;
 };
 
@@ -53,6 +56,26 @@ AbstractModuleWidget::AbstractModuleWidget(FlightService &flightService, QWidget
 
 AbstractModuleWidget::~AbstractModuleWidget() noexcept
 {}
+
+bool AbstractModuleWidget::isActive() const noexcept
+{
+    return d->active;
+}
+
+void AbstractModuleWidget::setActive(bool enable) noexcept
+{
+    if (enable) {
+        SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+        connect(&skyConnect, &SkyConnectIntf::recordingStopped,
+                this, &AbstractModuleWidget::handleRecordingStopped);
+    } else {
+        SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+        disconnect(&skyConnect, &SkyConnectIntf::recordingStopped,
+                   this, &AbstractModuleWidget::handleRecordingStopped);
+    }
+    getAction().setChecked(enable);
+    d->active = enable;
+}
 
 QWidget &AbstractModuleWidget::getWidget() noexcept
 {
@@ -70,19 +93,11 @@ void AbstractModuleWidget::showEvent(QShowEvent *event) noexcept
 {
     QWidget::showEvent(event);
     updateUi();
-
-    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    connect(&skyConnect, &SkyConnectIntf::recordingStopped,
-            this, &AbstractModuleWidget::handleRecordingStopped);
 }
 
 void AbstractModuleWidget::hideEvent(QHideEvent *event) noexcept
 {
     QWidget::hideEvent(event);
-
-    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    disconnect(&skyConnect, &SkyConnectIntf::recordingStopped,
-               this, &AbstractModuleWidget::handleRecordingStopped);
 }
 
 // PROTECTED SLOTS

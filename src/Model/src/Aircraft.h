@@ -63,9 +63,6 @@ public:
     qint64 getSimulationObjectId() const noexcept;
     void setSimulationObjectId(qint64 id) noexcept;
 
-    bool isUserAircraft() const noexcept;
-    void setUserAircraft(bool enable) noexcept;
-
     const Position &getPositionConst() const noexcept;
     Position &getPosition() const noexcept;
 
@@ -101,7 +98,6 @@ public:
 signals:
     void infoChanged();
     void dataChanged();
-    void userAircraftChanged(qint64 id, bool enable);
 
 private:
     Q_DISABLE_COPY(Aircraft)
