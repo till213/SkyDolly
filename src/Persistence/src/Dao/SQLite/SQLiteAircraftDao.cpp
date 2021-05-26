@@ -271,9 +271,7 @@ bool SQLiteAircraftDao::getByFlightId(qint64 flightId, std::vector<std::unique_p
         const int nofEnginesIdx = d->selectByFlightIdQuery->record().indexOf("nof_engines");
         const int airCraftAltitudeAboveGroundIdx = d->selectByFlightIdQuery->record().indexOf("altitude_above_ground");
         const int startOnGroundIdx = d->selectByFlightIdQuery->record().indexOf("start_on_ground");
-        int i = 0;
         while (d->selectByFlightIdQuery->next()) {
-
             std::unique_ptr<Aircraft> aircraft = std::make_unique<Aircraft>();
             aircraft->setId(d->selectByFlightIdQuery->value(idIdx).toLongLong());
 
@@ -319,15 +317,10 @@ bool SQLiteAircraftDao::getByFlightId(qint64 flightId, std::vector<std::unique_p
             if (ok) {
                 ok = d->flightPlanDao->getByAircraftId(aircraft->getId(), aircraft->getFlightPlan());
             }
-            if (ok && i == 0) {
-                aircraft->setUserAircraft(true);
-            }
-            ++i;
             if (ok) {
                 emit aircraft->dataChanged();
                 aircrafts.push_back(std::move(aircraft));
             }
-
         }
 #ifdef DEBUG
     } else {

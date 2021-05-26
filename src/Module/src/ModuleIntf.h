@@ -36,13 +36,17 @@ class ModuleIntf
 {
 public:
     virtual ~ModuleIntf() {};
-    virtual Module::Module getModuleId() const = 0;
-    virtual const QString getModuleName() const = 0;
-    virtual QWidget &getWidget() = 0;
-    virtual QAction &getAction() = 0;
+    virtual Module::Module getModuleId() const noexcept = 0;
+    virtual const QString getModuleName() const noexcept = 0;
+
+    virtual bool isActive() const noexcept = 0;
+    virtual void setActive(bool enable) noexcept = 0;
+
+    virtual QWidget &getWidget() noexcept = 0;
+    virtual QAction &getAction() noexcept = 0;
 
 protected:
-    virtual void handleRecordingStopped() = 0;
+    virtual void handleRecordingStopped() noexcept = 0;
 };
 
 #endif // MODULEINTF_H

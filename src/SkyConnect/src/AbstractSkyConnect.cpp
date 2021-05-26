@@ -93,8 +93,12 @@ void AbstractSkyConnect::startRecording(bool addFormationAircraft) noexcept
     if (isConnectedWithSim()) {
         setState(Connect::State::Recording);
         if (!addFormationAircraft) {
+            // Single flight - destroy any previous AI aircrafts
+            onDestroyAIObjects();
             // Start a new flight
             d->currentFlight.clear();
+            // Assign user aircraft ID
+            onCreateAIObjects();
         } else {
             // Check if the current user aircraft already has a recording
             if (d->currentFlight.getUserAircraft().hasRecording()) {

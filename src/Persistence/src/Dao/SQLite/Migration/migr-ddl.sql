@@ -179,3 +179,7 @@ create table waypoint (
     primary key(aircraft_id, timestamp),
     foreign key(aircraft_id) references aircraft(id)
 );
+
+@migr(id = "6c6aac3b-1b85-4bec-9477-d300c4cbccbf", descn = "Add user aircraft column", step_cnt = 2)
+alter table flight add column user_aircraft_seq_nr integer;
+
