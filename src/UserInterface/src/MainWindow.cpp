@@ -322,6 +322,14 @@ void MainWindow::initUi() noexcept
 
 void MainWindow::initModuleSelectorUi() noexcept
 {
+    QString css =
+"QCheckBox::indicator:unchecked {"
+"    image: url(:/img/icons/checkbox-expand-normal.png);"
+"}"
+"QCheckBox::indicator:checked {"
+"    image: url(:/img/icons/checkbox-collapse-normal.png);"
+"}";
+    ui->moduleSelectorVisibleCheckBox->setStyleSheet(css);
     for (const auto &item : d->moduleManager->getModules()) {
         QAction &moduleAction = item->getAction();
         ui->moduleMenu->addAction(&moduleAction);
