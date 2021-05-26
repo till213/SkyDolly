@@ -101,6 +101,9 @@ void AbstractSkyConnect::startRecording(bool addFormationAircraft) noexcept
                 // If yes, add a new aircraft to the current flight (formation)
                 d->currentFlight.addUserAircraft();
             }
+            // Update AI objects by simply destroying and re-creating them
+            onDestroyAIObjects();
+            onCreateAIObjects();
         }
         d->lastSamplesPerSecondIndex = 0;
         d->currentTimestamp = 0;
