@@ -273,13 +273,14 @@ void SkyConnectImpl::onRecordSampleRateChanged(SampleRate::SampleRate sampleRate
 bool SkyConnectImpl::sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept
 {
     bool ok;
-    Flight &flight = getCurrentFlight();
+    const Flight &flight = getCurrentFlight();
+    const Aircraft &userAircraft = flight.getUserAircraftConst();
     ok = true;
     for (auto &aircraft : flight) {
 
         // Don't replay the user aircraft during recording (the user aircraft
         // is the one being recorded)
-        if (getState() != Connect::State::Recording || !aircraft->isUserAircraft()) {
+        if (getState() != Connect::State::Recording || *aircraft != userAircraft) {
 
             const qint64 objectId = aircraft->getSimulationObjectId();
             if (objectId != Aircraft::InvalidSimulationId) {

@@ -58,9 +58,11 @@ public:
     void setDescription(const QString &description) noexcept;
 
     Aircraft &addUserAircraft() noexcept;
-    void setUserAircraft(int index);
     const Aircraft &getUserAircraftConst() const noexcept;
     Aircraft &getUserAircraft() const noexcept;
+    int getUserAircraftIndex() const noexcept;
+    void setUserAircraftIndex(int index) noexcept;
+
     std::vector<std::unique_ptr<Aircraft>> &getAircrafts() const noexcept;
     int getAircraftCount() const noexcept;
 
@@ -115,14 +117,11 @@ signals:
     void aircraftInfoChanged();
     void positionDataChanged();
     void flightConditionChanged();
-    void userAircraftActivated(const Aircraft &aircraft);
+    void userAircraftChanged(const Aircraft &aircraft);
 
 private:
     Q_DISABLE_COPY(Flight)
     std::unique_ptr<FlightPrivate> d;
-
-private slots:
-    void handleUserAircraftChanged(qint64 id, bool enable);
 };
 
 #endif // FLIGHT_H
