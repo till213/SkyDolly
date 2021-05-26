@@ -76,10 +76,11 @@ bool SimConnectAI::createSimulatedAircrafts(Flight &flight, std::unordered_map<:
         const SIMCONNECT_DATA_REQUEST_ID requestId = baseRequestId + i;
         aircraftByRequestId[requestId] = aircraft.get();
         aircraft->setSimulationRequestId(requestId);
-        // TODO Add "isUserAircraft" property to aircraft (settable by the user)
-        // For now the first aircraft is always the user aircraft
-        if (i > 0) {
-
+        if (aircraft->isUserAircraft()) {
+            aircraft->setSimulationRequestId(requestId);
+            aircraft->setSimulationObjectId(::SIMCONNECT_OBJECT_ID_USER);
+            ++i;
+        } else {
             const AircraftInfo aircraftInfo = aircraft->getAircraftInfoConst();
             initialPosition = SimConnectPosition::toInitialPosition(aircraft->getPositionConst().getFirst(), aircraftInfo.startOnGround, aircraftInfo.initialAirspeed);
             result = ::SimConnect_AICreateNonATCAircraft(d->simConnectHandle, aircraftInfo.type.toLatin1(), aircraftInfo.tailNumber.toLatin1(), initialPosition, requestId);
@@ -90,10 +91,6 @@ bool SimConnectAI::createSimulatedAircrafts(Flight &flight, std::unordered_map<:
             } else {
                 break;
             }
-        } else {
-            aircraft->setSimulationRequestId(requestId);
-            aircraft->setSimulationObjectId(::SIMCONNECT_OBJECT_ID_USER);
-            ++i;
         }
 #ifdef DEBUG
         qDebug("SimConnectAI::createSimulatedAircrafts: created (AI) aircraft: request ID: %lld simulation object ID: %lld aircraft ID: %lld",
