@@ -133,14 +133,17 @@ void Flight::setDescription(const QString &description) noexcept
 
 Aircraft &Flight::addUserAircraft() noexcept
 {
-    std::unique_ptr<Aircraft> userAircraft = std::make_unique<Aircraft>();
+    std::unique_ptr<Aircraft> aircraft = std::make_unique<Aircraft>();
 
-    connect(userAircraft.get(), &Aircraft::infoChanged,
+    connect(aircraft.get(), &Aircraft::infoChanged,
             this, &Flight::aircraftInfoChanged);
-    connect(userAircraft.get(), &Aircraft::dataChanged,
+    connect(aircraft.get(), &Aircraft::dataChanged,
             this, &Flight::positionDataChanged);
+    connect(aircraft.get(), &Aircraft::userAircraftChanged,
+            this, &Flight::handleUserAircraftChanged);
 
-    d->aircrafts.push_back(std::move(userAircraft));
+    aircraft->setUserAircraft(true);
+    d->aircrafts.push_back(std::move(aircraft));
     d->userAircraftIndex = d->aircrafts.size() - 1;
 
     return *d->aircrafts.end()->get();
@@ -218,4 +221,19 @@ const Flight::it Flight::begin() const noexcept
 const Flight::it Flight::end() const noexcept
 {
     return it(d->aircrafts.end());
+}
+
+// PRIVATE
+
+void Flight::handleUserAircraftChanged(qint64 id, bool enable)
+{
+    if (enable) {
+        for (const auto &aircraft : d->aircrafts) {
+            if (aircraft->getId() != id) {
+                aircraft->setUserAircraft(false);
+            } else {
+                emit userAircraftActivated(*aircraft);
+            }
+        }
+    }
 }
