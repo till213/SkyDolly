@@ -115,10 +115,14 @@ signals:
     void aircraftInfoChanged();
     void positionDataChanged();
     void flightConditionChanged();
+    void userAircraftActivated(const Aircraft &aircraft);
 
 private:
     Q_DISABLE_COPY(Flight)
     std::unique_ptr<FlightPrivate> d;
+
+private slots:
+    void handleUserAircraftChanged(qint64 id, bool enable);
 };
 
 #endif // FLIGHT_H

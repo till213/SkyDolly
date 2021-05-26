@@ -53,12 +53,14 @@ public:
         : id(0),
           simulationRequestId(Aircraft::InvalidSimulationId),
           simulationObjectId(Aircraft::InvalidSimulationId),
+          userAircraft(false),
           duration(TimeVariableData::InvalidTime)
     {}
 
     qint64 id;
     qint64 simulationRequestId;
     qint64 simulationObjectId;
+    bool userAircraft;
     AircraftInfo aircraftInfo;
     Position position;
     Engine engine;
@@ -111,6 +113,19 @@ qint64 Aircraft::getSimulationObjectId() const noexcept
 void Aircraft::setSimulationObjectId(qint64 id) noexcept
 {
     d->simulationObjectId = id;
+}
+
+bool Aircraft::isUserAircraft() const noexcept
+{
+    return d->userAircraft;
+}
+
+void Aircraft::setUserAircraft(bool enable) noexcept
+{
+    if (d->userAircraft != enable) {
+        d->userAircraft = enable;
+        emit userAircraftChanged(d->id, enable);
+    }
 }
 
 const Position &Aircraft::getPositionConst() const noexcept
@@ -238,6 +253,16 @@ void Aircraft::clear() noexcept
     d->flightPlan.clear();
     d->aircraftInfo.clear();
     emit dataChanged();
+}
+
+bool Aircraft::operator == (const Aircraft &rhs) const noexcept
+{
+    return this->d->id == rhs.d->id;
+}
+
+bool Aircraft::operator != (const Aircraft &rhs) const noexcept
+{
+    return this->d->id != rhs.d->id;
 }
 
 // PRIVATE
