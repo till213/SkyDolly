@@ -63,11 +63,6 @@
          <property name="text">
           <string/>
          </property>
-         <property name="icon">
-          <iconset resource="../res/SkyDolly.qrc">
-           <normaloff>:/img/icons/checkbox-expand-normal@2x.png</normaloff>
-           <normalon>:/img/icons/checkbox-collapse-normal@2x.png</normalon>:/img/icons/checkbox-expand-normal@2x.png</iconset>
-         </property>
         </widget>
        </item>
        <item>
@@ -229,7 +224,7 @@
      <x>0</x>
      <y>0</y>
      <width>824</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="fileMenu">
@@ -554,6 +549,7 @@
   </action>
  </widget>
  <resources>
+  <include location="../res/SkyDolly.qrc"/>
   <include location="../res/SkyDolly.qrc"/>
  </resources>
  <connections/>
