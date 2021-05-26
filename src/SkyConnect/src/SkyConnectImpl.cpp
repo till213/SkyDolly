@@ -189,7 +189,7 @@ void SkyConnectImpl::onStopRecording() noexcept
         waypoint.zuluTime = d->currentZuluDateTime;
         waypoint.timestamp = getCurrentTimestamp();
         flightPlan.update(waypointCount - 1, waypoint);
-    } else if (waypointCount == 0) {
+    } else if (waypointCount == 0 && userAircraft.getPositionConst().getAllConst().size() > 0) {
         Waypoint departureWaypoint;
         PositionData position = userAircraft.getPositionConst().getAllConst().at(0);
         departureWaypoint.identifier = "CUSTD";
@@ -278,9 +278,9 @@ bool SkyConnectImpl::sendAircraftData(qint64 currentTimestamp, TimeVariableData:
     ok = true;
     for (auto &aircraft : flight) {
 
-        // Don't replay the user aircraft during recording (the user aircraft
-        // is the one being recorded)
-        if (getState() != Connect::State::Recording || *aircraft != userAircraft) {
+        // Replay AI aircrafts - if any - during recording
+        const bool isAIAircraft = *aircraft != userAircraft;
+        if (getState() != Connect::State::Recording || isAIAircraft) {
 
             const qint64 objectId = aircraft->getSimulationObjectId();
             if (objectId != Aircraft::InvalidSimulationId) {
