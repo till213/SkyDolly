@@ -192,7 +192,7 @@ QString DatabaseService::getNewLogbookPath(QWidget *parent) noexcept
         if (!logbookDirectoryPath.isEmpty()) {
             QFileInfo info = QFileInfo(logbookDirectoryPath);
             if (!info.exists()) {
-                newLogbookPath = logbookDirectoryPath + "/" + info.baseName() + Const::LogbookExtension;
+                newLogbookPath = logbookDirectoryPath + "/" + info.fileName() + Const::LogbookExtension;
                 retry = false;
             } else {
                 QMessageBox::information(parent, tr("Database exists"), tr("The logbook %1 already exists. Please choose another path.").arg(logbookDirectoryPath));
