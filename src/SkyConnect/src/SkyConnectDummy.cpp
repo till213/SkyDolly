@@ -65,8 +65,7 @@ class SkyConnectDummyPrivate
 public:
     SkyConnectDummyPrivate() noexcept
         : randomGenerator(QRandomGenerator::global())
-    {
-    }
+    {}
 
     QTimer replayTimer;
     QRandomGenerator *randomGenerator;
