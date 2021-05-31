@@ -13,11 +13,11 @@
 - The logbook (database) version is compared with the current Sky Dolly application version
   * Newer logbooks are not opened with older Sky Dolly applications
   * The user is offered the options to either create a new or open another (existing) logbook, or to cancel the operation
-- The logbook table is cleared upon logbook (database) disconnection
-- Decimal points in logbook file names are not "swallowed" anymore (e.g. "My Logbook v0.6.sdlog" is a perfectly fine filename)
 
 ### Bug Fixes
 
+- The logbook table is cleared upon logbook (database) disconnection
+- Decimal points in logbook file names are not "swallowed" anymore (e.g. "My Logbook v0.6.sdlog" is a perfectly fine filename)
 - UI elements such as Record and CSV Import/Export are now properly enabled or disabled based on the logbook (database) connection status
 
 ## 0.6.1
