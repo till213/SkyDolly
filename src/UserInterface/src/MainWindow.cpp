@@ -115,7 +115,7 @@ public:
     MainWindowPrivate() noexcept
         : skyConnect(SkyManager::getInstance().currentSkyConnect()),
           previousState(Connect::State::Connected),
-          connectedWithDB(false),
+          connectedWithLogbook(false),
           aboutDialog(nullptr),
           aboutLogbookDialog(nullptr),
           settingsDialog(nullptr),
@@ -135,7 +135,7 @@ public:
 
     SkyConnectIntf &skyConnect;
     Connect::State previousState;
-    bool connectedWithDB;
+    bool connectedWithLogbook;
 
     AboutDialog *aboutDialog;
     AboutLogbookDialog *aboutLogbookDialog;
@@ -171,7 +171,7 @@ MainWindow::MainWindow(QWidget *parent) noexcept
 {
     ui->setupUi(this);
     const QString logbookPath = Settings::getInstance().getLogbookPath();
-    d->connectedWithDB = d->databaseService->connectDb(logbookPath, this);
+    d->connectedWithLogbook = d->databaseService->connectWithLogbook(logbookPath, this);
     initUi();
     updateUi();
     frenchConnection();
@@ -263,8 +263,8 @@ void MainWindow::frenchConnection() noexcept
     // Service
     connect(d->flightService.get(), &FlightService::flightRestored,
             this, &MainWindow::handleFlightRestored);
-    connect(d->databaseService.get(), &DatabaseService::connectionChanged,
-            this, &MainWindow::handleDbConnectionStateChanged);
+    connect(d->databaseService.get(), &DatabaseService::logbookConnectionChanged,
+            this, &MainWindow::handleLogbookConnectionChanged);
     connect(&d->skyConnect, &SkyConnectIntf::recordingStopped,
             this, &MainWindow::handleRecordingStopped);
 }
@@ -718,7 +718,7 @@ void MainWindow::updateControlUi() noexcept
         // attempt is made, so we enable the same elements as in connected state
     case Connect::State::Connected:
         // Actions
-        ui->recordAction->setEnabled(d->connectedWithDB);
+        ui->recordAction->setEnabled(d->connectedWithLogbook);
         ui->recordAction->setChecked(false);
         ui->stopAction->setEnabled(false);
         ui->pauseAction->setEnabled(false);
@@ -841,10 +841,10 @@ void MainWindow::updateFileMenu() noexcept
         ui->optimiseLogbookAction->setEnabled(false);
         break;
     default:        
-        ui->importCSVAction->setEnabled(d->connectedWithDB);
+        ui->importCSVAction->setEnabled(d->connectedWithLogbook);
         ui->exportCSVAction->setEnabled(hasRecording);
-        ui->backupLogbookAction->setEnabled(d->connectedWithDB);
-        ui->optimiseLogbookAction->setEnabled(d->connectedWithDB);
+        ui->backupLogbookAction->setEnabled(d->connectedWithLogbook);
+        ui->optimiseLogbookAction->setEnabled(d->connectedWithLogbook);
     }
 }
 
@@ -890,7 +890,7 @@ void MainWindow::on_newLogbookAction_triggered() noexcept
 {
     const QString logbookPath = DatabaseService::getNewLogbookPath(this);
     if (!logbookPath.isNull()) {
-        const bool ok = d->databaseService->connectDb(logbookPath, this);
+        const bool ok = d->databaseService->connectWithLogbook(logbookPath, this);
         if (!ok) {
             QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be created.").arg(logbookPath));
         }
@@ -901,7 +901,7 @@ void MainWindow::on_openLogbookAction_triggered() noexcept
 {
     QString existingLogbookPath = DatabaseService::getExistingLogbookPath(this);
     if (!existingLogbookPath.isEmpty()) {
-        bool ok = d->databaseService->connectDb(existingLogbookPath, this);
+        bool ok = d->databaseService->connectWithLogbook(existingLogbookPath, this);
         if (!ok) {
             QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be opened.").arg(existingLogbookPath));
         }
@@ -1116,9 +1116,9 @@ void MainWindow::handleFlightRestored() noexcept
     }
 }
 
-void MainWindow::handleDbConnectionStateChanged(bool connected) noexcept
+void MainWindow::handleLogbookConnectionChanged(bool connected) noexcept
 {
-    d->connectedWithDB = connected;
+    d->connectedWithLogbook = connected;
     updateUi();
 }
 

@@ -131,7 +131,7 @@ private slots:
 
     // Service
     void handleFlightRestored() noexcept;
-    void handleDbConnectionStateChanged(bool connected) noexcept;
+    void handleLogbookConnectionChanged(bool connected) noexcept;
     void handleRecordingStopped() noexcept;
 };
 #endif // MAINWINDOW_H
