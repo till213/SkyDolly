@@ -16,11 +16,11 @@ The connection is made via SimConnect, a standard API introduced with Flight Sim
 * Basic CSV import & export
 * Database (SQLite) based persistence ("logbook")
 
-Watch a comparison of the various sample rates on [YouTube](https://www.youtube.com/watch?v=bfgkY0eXL4w):
+Watch the (preview) release trailer on [YouTube](https://www.youtube.com/watch?v=_n4qRtm78_I):
 
-[![Sky Dolly - Acrobatic Flying in FS2020 (Recording Sample Rate Comparison)](https://img.youtube.com/vi/bfgkY0eXL4w/0.jpg)](https://www.youtube.com/watch?v=bfgkY0eXL4w "Sky Dolly - Acrobatic Flying in FS2020 (Recording Sample Rate Comparison)")
+[![Sky Dolly - Flight Recorder & Replay for Flight Simulator 2020 (Cinematic Teaser Trailer)](https://img.youtube.com/vi/_n4qRtm78_I/0.jpg)](https://www.youtube.com/watch?v=_n4qRtm78_I "Sky Dolly - Flight Recorder & Replay for Flight Simulator 2020 (Cinematic Teaser Trailer)")
 
-For new and upcoming features also refer to the [CHANGELOG](CHANGELOG.md).
+For more videos created with Sky Dolly also refer to [SHOWCASE](SHOWCASE.md). New and upcoming features are found in the [CHANGELOG](CHANGELOG.md).
 
 ## Basic Usage
 
@@ -38,7 +38,7 @@ Why don't you try it with one of the guided ["Tell Tours"](https://github.com/ti
 
 Go to [Releases](https://github.com/till213/SkyDolly/releases) and download the latest release.
 
-Latest (pre-)release: **Sky Dolly 0.6.0**
+Latest (pre-)release: **Sky Dolly 0.6.2**
 
 ## Build
 
