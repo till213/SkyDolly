@@ -285,27 +285,42 @@ MIT License</source>
 <context>
     <name>DatabaseService</name>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="82"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="85"/>
         <source>The logbook %1 has been created with a newer version %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="84"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="87"/>
         <source>Create new logbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="85"/>
-        <source>Open existing logbook</source>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="88"/>
+        <source>Open another logbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="86"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="192"/>
+        <source>New logbook</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="199"/>
+        <source>Database exists</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="199"/>
+        <source>The logbook %1 already exists. Please choose another path.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="89"/>
         <source>Quit application</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="95"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="180"/>
         <source>Open logbook</source>
         <translation type="unfinished"></translation>
     </message>
@@ -981,125 +996,120 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="377"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="378"/>
         <source>Normal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="397"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="398"/>
         <source>Custom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="490"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="491"/>
         <source>Factor [f]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="491"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="492"/>
         <source>Percent [%]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="797"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="798"/>
         <source>Custom replay speed factor in [%L1, %L2]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="801"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="802"/>
         <source>Custom replay speed % in [%L1%, %L2%]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="868"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="873"/>
         <source>Record [@%1 Hz]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="870"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="875"/>
         <source>Record [auto sample rate]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="875"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="880"/>
         <source>Fast forward [%1 sec]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="876"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="881"/>
         <source>Rewind [%1 sec]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="879"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="884"/>
         <source>Fast forward [%1 %]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="880"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="885"/>
         <source>Rewind [%1 %]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="890"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="904"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="913"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="921"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="895"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="906"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="915"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="923"/>
         <source>Database error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="890"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="895"/>
         <source>The logbook %1 could not be created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="899"/>
-        <source>Open logbook</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="904"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="906"/>
         <source>The logbook %1 could not be opened.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="913"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="915"/>
         <source>The logbook backup could not be created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="921"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="923"/>
         <source>The logbook could not be optimised.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="943"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="945"/>
         <source>Import CSV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="957"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="959"/>
         <source>Import error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="957"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="959"/>
         <source>The CSV file %1 could not be read.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="966"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="968"/>
         <source>Export CSV</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="974"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="976"/>
         <source>Export error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="974"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="976"/>
         <source>The CSV file %1 could not be written.</source>
         <translation type="unfinished"></translation>
     </message>
