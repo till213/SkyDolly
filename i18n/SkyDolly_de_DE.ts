@@ -300,27 +300,27 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="192"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="89"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="191"/>
         <source>New logbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="199"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="198"/>
         <source>Database exists</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="199"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="198"/>
         <source>The logbook %1 already exists. Please choose another path.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="89"/>
-        <source>Quit application</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="180"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="179"/>
         <source>Open logbook</source>
         <translation type="unfinished"></translation>
     </message>
@@ -665,58 +665,58 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="185"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="186"/>
         <source>Double-click to load flight</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="198"/>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="207"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="199"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="208"/>
         <source>Simulation time: %1 (%2Z)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="220"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="221"/>
         <source>Simulation duration: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="225"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="226"/>
         <source>Double-click to edit title</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="261"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="266"/>
         <source>Database error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="261"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="266"/>
         <source>The flight %1 could not be read from the library.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="274"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="279"/>
         <source>Do not ask again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="276"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="281"/>
         <source>The flight %1 is about to be deleted. Deletion cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="277"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="282"/>
         <source>Do you want to delete the flight?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="278"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="283"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="279"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="284"/>
         <source>Keep</source>
         <translation type="unfinished"></translation>
     </message>
