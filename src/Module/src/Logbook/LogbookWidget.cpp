@@ -109,7 +109,7 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
     updateUi();
 
     // Service
-    connect(&d->databaseService, &DatabaseService::connectionChanged,
+    connect(&d->databaseService, &DatabaseService::logbookConnectionChanged,
             this, &LogbookWidget::updateUi);
     connect(&d->flightService, &FlightService::flightStored,
             this, &LogbookWidget::updateUi);
@@ -121,7 +121,7 @@ void LogbookWidget::hideEvent(QHideEvent *event) noexcept
 {
     Q_UNUSED(event)
 
-    disconnect(&d->databaseService, &DatabaseService::connectionChanged,
+    disconnect(&d->databaseService, &DatabaseService::logbookConnectionChanged,
                this, &LogbookWidget::updateUi);
     disconnect(&d->flightService, &FlightService::flightStored,
                this, &LogbookWidget::updateUi);
