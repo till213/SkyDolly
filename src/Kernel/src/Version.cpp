@@ -106,6 +106,11 @@ QString Version::toString() const noexcept
     return QString("%1.%2.%3").arg(d->major).arg(d->minor).arg(d->patch);
 }
 
+void Version::operator=(const Version &other) noexcept
+{
+    d = std::make_unique<VersionPrivate>(other.d->major, other.d->minor, other.d->patch);
+}
+
 bool Version::operator==(const Version &other) noexcept
 {
     bool result;

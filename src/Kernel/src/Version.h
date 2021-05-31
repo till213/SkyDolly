@@ -106,6 +106,14 @@ public:
     KERNEL_API QString toString() const noexcept;
 
     /*!
+     * Assignmnent operator.
+     *
+     * \param other
+     *        the other Version to assign from
+     */
+    KERNEL_API void operator=(const Version &other) noexcept;
+
+    /*!
      * Compares this Version against \c other for equality.
      *
      * \param other
@@ -175,7 +183,6 @@ public:
     KERNEL_API static const QString getApplicationName() noexcept;
 
 private:
-    Q_DISABLE_COPY(Version)
     std::unique_ptr<VersionPrivate> d;
 };
 
