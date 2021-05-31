@@ -69,7 +69,7 @@ target_sources(Persistence
 )
 
 set(PERSISTENCE_LIBS
-    Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Sql Kernel Model
+    Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Sql Kernel Model
 )
 if (APPLE)
     list(APPEND PERSISTENCE_LIBS -lc++)

@@ -170,7 +170,8 @@ MainWindow::MainWindow(QWidget *parent) noexcept
       d(std::make_unique<MainWindowPrivate>())
 {
     ui->setupUi(this);
-    d->connectedWithDB = d->databaseService->connectDb();
+    const QString logbookPath = Settings::getInstance().getLogbookPath();
+    d->connectedWithDB = d->databaseService->connectDb(logbookPath);
     initUi();
     updateUi();
     frenchConnection();
@@ -262,7 +263,7 @@ void MainWindow::frenchConnection() noexcept
     // Service
     connect(d->flightService.get(), &FlightService::flightRestored,
             this, &MainWindow::handleFlightRestored);
-    connect(d->databaseService.get(), &DatabaseService::connectionStateChanged,
+    connect(d->databaseService.get(), &DatabaseService::connectionChanged,
             this, &MainWindow::handleDbConnectionStateChanged);
     connect(&d->skyConnect, &SkyConnectIntf::recordingStopped,
             this, &MainWindow::handleRecordingStopped);
@@ -717,7 +718,7 @@ void MainWindow::updateControlUi() noexcept
         // attempt is made, so we enable the same elements as in connected state
     case Connect::State::Connected:
         // Actions
-        ui->recordAction->setEnabled(true);
+        ui->recordAction->setEnabled(d->connectedWithDB);
         ui->recordAction->setChecked(false);
         ui->stopAction->setEnabled(false);
         ui->pauseAction->setEnabled(false);
@@ -836,10 +837,14 @@ void MainWindow::updateFileMenu() noexcept
     case Connect::State::RecordingPaused:
         ui->importCSVAction->setEnabled(false);
         ui->exportCSVAction->setEnabled(false);
+        ui->backupLogbookAction->setEnabled(false);
+        ui->optimiseLogbookAction->setEnabled(false);
         break;
-    default:
-        ui->importCSVAction->setEnabled(true);
+    default:        
+        ui->importCSVAction->setEnabled(d->connectedWithDB);
         ui->exportCSVAction->setEnabled(hasRecording);
+        ui->backupLogbookAction->setEnabled(d->connectedWithDB);
+        ui->optimiseLogbookAction->setEnabled(d->connectedWithDB);
     }
 }
 
@@ -883,41 +888,22 @@ void MainWindow::updateMainWindow() noexcept
 
 void MainWindow::on_newLogbookAction_triggered() noexcept
 {
-    Settings &settings = Settings::getInstance();
-    QString existingLogbookPath = settings.getLogbookPath();
-    QString existingLogbookDirectoryPath = QFileInfo(existingLogbookPath).absolutePath();
-    bool retry = true;
-    while (retry) {
-        QString logbookDirectoryPath = QFileDialog::getSaveFileName(this, tr("New logbook"), existingLogbookDirectoryPath);
-        if (!logbookDirectoryPath.isEmpty()) {
-            QFileInfo info = QFileInfo(logbookDirectoryPath);
-            if (!info.exists()) {
-                const QString logbookPath = logbookDirectoryPath + "/" + info.baseName() + Const::LogbookExtension;
-                settings.setLogbookPath(logbookPath);
-                bool ok = d->databaseService->connectDb();
-                if (!ok) {
-                    QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be created.").arg(logbookDirectoryPath));
-                }
-                retry = false;
-            } else {
-                QMessageBox::information(this, tr("Database exists"), tr("The logbook %1 already exists. Please choose another path.").arg(logbookDirectoryPath));
-            }
-        } else {
-            retry = false;
+    const QString logbookPath = DatabaseService::getNewLogbookPath(this);
+    if (!logbookPath.isNull()) {
+        const bool ok = d->databaseService->connectDb(logbookPath);
+        if (!ok) {
+            QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be created.").arg(logbookPath));
         }
     }
 }
 
 void MainWindow::on_openLogbookAction_triggered() noexcept
 {
-    Settings &settings = Settings::getInstance();
-    QString existingLogbookPath = QFileInfo(settings.getLogbookPath()).absolutePath();
-    QString logbookPath = QFileDialog::getOpenFileName(this, tr("Open logbook"), existingLogbookPath, QString("*") + Const::LogbookExtension);
-    if (!logbookPath.isEmpty()) {
-        settings.setLogbookPath(logbookPath);
-        bool ok = d->databaseService->connectDb();
+    QString existingLogbookPath = DatabaseService::getExistingLogbookPath(this);
+    if (!existingLogbookPath.isEmpty()) {
+        bool ok = d->databaseService->connectDb(existingLogbookPath);
         if (!ok) {
-            QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be opened.").arg(logbookPath));
+            QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be opened.").arg(existingLogbookPath));
         }
     }
 }
