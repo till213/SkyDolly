@@ -60,7 +60,7 @@ public:
      * \sa Settings#setLogbookPath
      * \sa connectionStateChanged
      */
-    bool connectDb(const QString &logbookPath) noexcept;
+    bool connectDb(const QString &logbookPath, QWidget *parent) noexcept;
     void disconnectDb() noexcept;
     bool isConnected() const noexcept;
     const QString &getLogbookPath() const noexcept;
