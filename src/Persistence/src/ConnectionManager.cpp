@@ -83,6 +83,7 @@ bool ConnectionManager::connectDb(const QString &logbookPath) noexcept
 void ConnectionManager::disconnectDb() noexcept
 {
     d->databaseDao->disconnectDb();
+    d->logbookPath.clear();
     d->connected = false;
     emit connectionChanged(d->connected);
 }

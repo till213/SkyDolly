@@ -27,9 +27,13 @@
 
 #include <QObject>
 
+class QString;
+class QWidget;
+
 #include "../Metadata.h"
 #include "../PersistenceLib.h"
 
+class Version;
 class DatabaseServicePrivate;
 
 class PERSISTENCE_API DatabaseService : public QObject
@@ -40,23 +44,40 @@ public:
     virtual ~DatabaseService() noexcept;
 
     /*!
-     * Connects with the database given by Settings#getLogbookPath
+     * Connects with the database given by \c logbookPath
      * and initialises the database by applying the required migrations.
      *
-     * \sa connectionStateChanged
+     * If a problem with opening the database occurs (e.g. a version
+     * mismatch) then a dialog asks the user for alternative logbook
+     * paths (or to quit the application altogether).
+     *
+     * The actual logbook path (which is usually the given \c logbookPath)
+     * is stored in the Settings.
+     *
+     * \param logbookPath
+     *        the path of the logbook (database) file to connect with
      * \return \c true if the connection succeeded; \c false else
+     * \sa Settings#setLogbookPath
+     * \sa connectionStateChanged
      */
-    bool connectDb() noexcept;
+    bool connectDb(const QString &logbookPath) noexcept;
     void disconnectDb() noexcept;
     bool isConnected() const noexcept;
     const QString &getLogbookPath() const noexcept;
 
     bool optimise() noexcept;
     bool backup() noexcept;
-    bool getMetadata(Metadata &metadata) noexcept;
+    bool getMetadata(Metadata &metadata) const noexcept;
+
+    static QString getExistingLogbookPath(QWidget *parent) noexcept;
+    static QString getNewLogbookPath(QWidget *parent) noexcept;
+
+private:
+    bool checkDatabaseVersion(Version &databaseVdersion) const noexcept;
+    void frenchConnection() noexcept;
 
 signals:
-    void connectionStateChanged(bool connected);
+    void connectionChanged(bool connected);
 };
 
 #endif // DATABASESERVICE_H

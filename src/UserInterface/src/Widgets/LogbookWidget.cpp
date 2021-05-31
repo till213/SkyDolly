@@ -37,6 +37,7 @@
 #include <QMessageBox>
 #include <QCheckBox>
 
+#include "../../../Kernel/src/Version.h"
 #include "../../../Kernel/src/Unit.h"
 #include "../../../Kernel/src/Settings.h"
 #include "../../../Model/src/Flight.h"
@@ -108,7 +109,7 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
     updateUi();
 
     // Service
-    connect(&d->databaseService, &DatabaseService::connectionStateChanged,
+    connect(&d->databaseService, &DatabaseService::connectionChanged,
             this, &LogbookWidget::updateUi);
     connect(&d->flightService, &FlightService::flightStored,
             this, &LogbookWidget::updateUi);
@@ -120,7 +121,7 @@ void LogbookWidget::hideEvent(QHideEvent *event) noexcept
 {
     Q_UNUSED(event)
 
-    disconnect(&d->databaseService, &DatabaseService::connectionStateChanged,
+    disconnect(&d->databaseService, &DatabaseService::connectionChanged,
                this, &LogbookWidget::updateUi);
     disconnect(&d->flightService, &FlightService::flightStored,
                this, &LogbookWidget::updateUi);
@@ -255,7 +256,7 @@ void LogbookWidget::loadFlight() noexcept
 {
     qint64 selectedFlightId = d->selectedFlightId;
     if (selectedFlightId != Flight::InvalidId) {
-        bool ok = d->flightService.restore(selectedFlightId, Logbook::getInstance().getCurrentFlight());
+        const bool ok = d->flightService.restore(selectedFlightId, Logbook::getInstance().getCurrentFlight());
         if (!ok) {
             QMessageBox::critical(this, tr("Database error"), tr("The flight %1 could not be read from the library.").arg(selectedFlightId));
         }

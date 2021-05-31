@@ -25,6 +25,12 @@
 #include <QObject>
 #include <QFileInfo>
 #include <QDir>
+#include <QWidget>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QPushButton>
+#include <QCoreApplication>
+#include <QTimer>
 
 #include "../../../Kernel/src/Settings.h"
 #include "../../../Kernel/src/Const.h"
@@ -40,36 +46,77 @@ namespace
 
 DatabaseService::DatabaseService(QObject *parent) noexcept
     : QObject(parent)
-{}
+{
+    frenchConnection();
+}
 
 DatabaseService::~DatabaseService() noexcept
 {}
 
-bool DatabaseService::connectDb() noexcept
+bool DatabaseService::connectDb(const QString &logbookPath) noexcept
 {
     ConnectionManager &connectionManager = ConnectionManager::getInstance();
-    const QString &logbookPath = Settings::getInstance().getLogbookPath();
-    const QString logbookDirectoryPath = QFileInfo(logbookPath).absolutePath();
-    QFileInfo info(logbookDirectoryPath);
-    bool ok = info.exists();
-    if (!ok) {
-        QDir dir(logbookDirectoryPath);
-        ok = dir.mkpath(logbookDirectoryPath);
-    }
-    if (ok) {
-        ok = connectionManager.connectDb(logbookPath);
+    QString currentLogbookPath = logbookPath;
+    bool ok = true;
+    bool retry = true;
+    while (retry && ok) {
+        const QString logbookDirectoryPath = QFileInfo(currentLogbookPath).absolutePath();
+        QFileInfo info(logbookDirectoryPath);
+        ok = info.exists();
+        if (!ok) {
+            QDir dir(logbookDirectoryPath);
+            ok = dir.mkpath(logbookDirectoryPath);
+        }
         if (ok) {
-            ok = connectionManager.migrate();
+            ok = connectionManager.connectDb(currentLogbookPath);
+            if (ok) {
+                Version databaseVersion;
+                ok = checkDatabaseVersion(databaseVersion);
+                if (ok) {
+                    ok = connectionManager.migrate();
+                    if (ok) {
+                        Settings::getInstance().setLogbookPath(currentLogbookPath);
+                    }
+                    retry = false;
+                } else {
+                    disconnectDb();
+                    QMessageBox messageBox;
+                    messageBox.setWindowIcon(QIcon(":/img/icons/application-icon.png"));
+                    messageBox.setText(tr("The logbook %1 has been created with a newer version %2.").arg(currentLogbookPath, databaseVersion.toString()));
+                    messageBox.setInformativeText("Do you want to create a new logbook?");
+                    QPushButton *createNewPushButton = messageBox.addButton(tr("Create new logbook"), QMessageBox::AcceptRole);
+                    QPushButton *openExistingPushButton = messageBox.addButton(tr("Open another logbook"), QMessageBox::AcceptRole);
+                    messageBox.addButton(tr("Quit application"), QMessageBox::RejectRole);
+                    messageBox.setDefaultButton(createNewPushButton);
+                    messageBox.setIcon(QMessageBox::Icon::Question);
+
+                    messageBox.exec();
+                    const QAbstractButton *clickedButton = messageBox.clickedButton();
+                    if (clickedButton == createNewPushButton) {
+                        currentLogbookPath = getNewLogbookPath(nullptr);
+                    } else if (clickedButton == openExistingPushButton) {
+                        currentLogbookPath = getExistingLogbookPath(nullptr);
+                    } else {
+                        currentLogbookPath.clear();
+                        QTimer::singleShot(0, this, &QCoreApplication::quit);
+                    }
+                    if (!currentLogbookPath.isNull()) {
+                        retry = true;
+                        ok = true;
+                    } else {
+                        retry = false;
+                        ok = false;
+                    }
+                }
+            }
         }
     }
-    emit connectionStateChanged(ok);
     return ok;
 }
 
 void DatabaseService::disconnectDb() noexcept
 {
     ConnectionManager::getInstance().disconnectDb();
-    emit connectionStateChanged(false);
 }
 
 bool DatabaseService::isConnected() const noexcept
@@ -121,7 +168,64 @@ bool DatabaseService::backup() noexcept
     return ok;
 }
 
-bool DatabaseService::getMetadata(Metadata &metadata) noexcept
+bool DatabaseService::getMetadata(Metadata &metadata) const noexcept
 {
     return ConnectionManager::getInstance().getMetadata(metadata);
+}
+
+QString DatabaseService::getExistingLogbookPath(QWidget *parent) noexcept
+{
+    Settings &settings = Settings::getInstance();
+    QString existingLogbookPath = QFileInfo(settings.getLogbookPath()).absolutePath();
+    QString logbookPath = QFileDialog::getOpenFileName(parent, tr("Open logbook"), existingLogbookPath, QString("*") + Const::LogbookExtension);
+    return logbookPath;
+}
+
+QString DatabaseService::getNewLogbookPath(QWidget *parent) noexcept
+{
+    Settings &settings = Settings::getInstance();
+    QString existingLogbookPath = settings.getLogbookPath();
+    QString existingLogbookDirectoryPath = QFileInfo(existingLogbookPath).absolutePath();
+    QString newLogbookPath;
+    bool retry = true;
+    while (retry) {
+        QString logbookDirectoryPath = QFileDialog::getSaveFileName(parent, tr("New logbook"), existingLogbookDirectoryPath);
+        if (!logbookDirectoryPath.isEmpty()) {
+            QFileInfo info = QFileInfo(logbookDirectoryPath);
+            if (!info.exists()) {
+                newLogbookPath = logbookDirectoryPath + "/" + info.baseName() + Const::LogbookExtension;
+                retry = false;
+            } else {
+                QMessageBox::information(parent, tr("Database exists"), tr("The logbook %1 already exists. Please choose another path.").arg(logbookDirectoryPath));
+            }
+        } else {
+            retry = false;
+        }
+    }
+    return newLogbookPath;
+}
+
+// PRIVATE
+
+bool DatabaseService::checkDatabaseVersion(Version &databaseVersion) const noexcept
+{
+    Version appVersion;
+    Metadata metadata;
+    bool ok = getMetadata(metadata);
+    if (ok) {
+        ok = appVersion >= metadata.appVersion;
+        databaseVersion = metadata.appVersion;
+    } else {
+        // New database - no metadata exists yet
+        ok = true;
+        databaseVersion = Version(0, 0, 0);
+    }
+    return ok;
+}
+
+void DatabaseService::frenchConnection() noexcept
+{
+    ConnectionManager &connectionManager = ConnectionManager::getInstance();
+    connect(&connectionManager, &ConnectionManager::connectionChanged,
+            this, &DatabaseService::connectionChanged);
 }
