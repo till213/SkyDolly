@@ -6,6 +6,18 @@
 
 - Reduced data size of requested simulation variables
 
+## 0.6.2
+
+### New Features
+
+- The logbook (database) version is compared with the current Sky Dolly application version
+  * Newer logbooks are not opened with older Sky Dolly applications
+  * The user is offered the options to either create a new or open another (existing) logbook, or to quit the application
+
+### Bug Fixes
+
+- UI elements such as Record and CSV Import/Export are now properly enabled or disabled based on the logbook (database) connection status
+
 ## 0.6.1
 
 ### Bug Fixes
