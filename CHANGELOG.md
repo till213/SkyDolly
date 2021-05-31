@@ -16,7 +16,7 @@
 
 ### Bug Fixes
 
-- The logbook table is cleared upon logbook (database) disconnection
+- The logbook table (in the user interface) is cleared upon logbook (database) disconnection
 - Decimal points in logbook file names are not "swallowed" anymore (e.g. "My Logbook v0.6.sdlog" is a perfectly fine filename)
 - UI elements such as Record and CSV Import/Export are now properly enabled or disabled based on the logbook (database) connection status
 
