@@ -12,7 +12,8 @@
 
 - The logbook (database) version is compared with the current Sky Dolly application version
   * Newer logbooks are not opened with older Sky Dolly applications
-  * The user is offered the options to either create a new or open another (existing) logbook, or to quit the application
+  * The user is offered the options to either create a new or open another (existing) logbook, or to cancel the operation
+- The logbook table is cleared upon logbook (database) disconnection
 
 ### Bug Fixes
 

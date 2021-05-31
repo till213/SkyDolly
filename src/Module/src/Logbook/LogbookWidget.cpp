@@ -169,70 +169,75 @@ void LogbookWidget::frenchConnection() noexcept
 
 void LogbookWidget::updateUi() noexcept
 {
-    QVector<FlightSummary> summaries = d->flightService.getFlightDescriptions();
-    ui->logTableWidget->blockSignals(true);
-    ui->logTableWidget->setSortingEnabled(false);
-    ui->logTableWidget->clearContents();
-    ui->logTableWidget->setRowCount(summaries.count());
-    int rowIndex = 0;
+    if (d->databaseService.isConnected()) {
+        QVector<FlightSummary> summaries = d->flightService.getFlightDescriptions();
+        ui->logTableWidget->blockSignals(true);
+        ui->logTableWidget->setSortingEnabled(false);
+        ui->logTableWidget->clearContents();
+        ui->logTableWidget->setRowCount(summaries.count());
+        int rowIndex = 0;
 
-    for (const FlightSummary &summary : summaries) {
+        for (const FlightSummary &summary : summaries) {
 
-        int columnIndex = 0;
+            int columnIndex = 0;
 
-        QTableWidgetItem *newItem = new QTableWidgetItem();
-        newItem->setData(Qt::DisplayRole, summary.id);
-        newItem->setToolTip(tr("Double-click to load flight"));
-        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
-        ++columnIndex;
+            QTableWidgetItem *newItem = new QTableWidgetItem();
+            newItem->setData(Qt::DisplayRole, summary.id);
+            newItem->setToolTip(tr("Double-click to load flight"));
+            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
+            ++columnIndex;
 
-        newItem = new QTableWidgetItem(d->unit.formatDate(summary.creationDate));
-        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
-        ++columnIndex;
+            newItem = new QTableWidgetItem(d->unit.formatDate(summary.creationDate));
+            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
+            ++columnIndex;
 
-        newItem = new QTableWidgetItem(summary.aircraftType);
-        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
-        ++columnIndex;
+            newItem = new QTableWidgetItem(summary.aircraftType);
+            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
+            ++columnIndex;
 
-        newItem = new QTableWidgetItem(d->unit.formatTime(summary.startDate));
-        newItem->setToolTip(tr("Simulation time: %1 (%2Z)").arg(d->unit.formatTime(summary.startSimulationLocalTime), d->unit.formatTime(summary.startSimulationZuluTime)));
-        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);        
-        ++columnIndex;
+            newItem = new QTableWidgetItem(d->unit.formatTime(summary.startDate));
+            newItem->setToolTip(tr("Simulation time: %1 (%2Z)").arg(d->unit.formatTime(summary.startSimulationLocalTime), d->unit.formatTime(summary.startSimulationZuluTime)));
+            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
+            ++columnIndex;
 
-        newItem = new QTableWidgetItem(summary.startLocation);
-        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
-        ++columnIndex;
+            newItem = new QTableWidgetItem(summary.startLocation);
+            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
+            ++columnIndex;
 
-        newItem = new QTableWidgetItem(d->unit.formatTime(summary.endDate));
-        newItem->setToolTip(tr("Simulation time: %1 (%2Z)").arg(d->unit.formatTime(summary.endSimulationLocalTime), d->unit.formatTime(summary.endSimulationZuluTime)));
-        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);        
-        ++columnIndex;
+            newItem = new QTableWidgetItem(d->unit.formatTime(summary.endDate));
+            newItem->setToolTip(tr("Simulation time: %1 (%2Z)").arg(d->unit.formatTime(summary.endSimulationLocalTime), d->unit.formatTime(summary.endSimulationZuluTime)));
+            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
+            ++columnIndex;
 
-        newItem = new QTableWidgetItem(summary.endLocation);
-        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
-        ++columnIndex;
+            newItem = new QTableWidgetItem(summary.endLocation);
+            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
+            ++columnIndex;
 
-        qint64 durationMSec = summary.startDate.msecsTo(summary.endDate);
-        QTime time = QTime(0, 0).addMSecs(durationMSec);
-        newItem = new QTableWidgetItem(d->unit.formatDuration(time));
-        durationMSec = summary.startSimulationLocalTime.msecsTo(summary.endSimulationLocalTime);
-        time = QTime(0, 0).addMSecs(durationMSec);
-        newItem->setToolTip(tr("Simulation duration: %1").arg(d->unit.formatDuration(time)));
-        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
-        ++columnIndex;
+            qint64 durationMSec = summary.startDate.msecsTo(summary.endDate);
+            QTime time = QTime(0, 0).addMSecs(durationMSec);
+            newItem = new QTableWidgetItem(d->unit.formatDuration(time));
+            durationMSec = summary.startSimulationLocalTime.msecsTo(summary.endSimulationLocalTime);
+            time = QTime(0, 0).addMSecs(durationMSec);
+            newItem->setToolTip(tr("Simulation duration: %1").arg(d->unit.formatDuration(time)));
+            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
+            ++columnIndex;
 
-        newItem = new QTableWidgetItem(summary.title);
-        newItem->setToolTip(tr("Double-click to edit title"));
-        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);      
-        d->titleColumnIndex = columnIndex;
-        ++columnIndex;
-        ++rowIndex;
+            newItem = new QTableWidgetItem(summary.title);
+            newItem->setToolTip(tr("Double-click to edit title"));
+            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
+            d->titleColumnIndex = columnIndex;
+            ++columnIndex;
+            ++rowIndex;
+        }
+
+        ui->logTableWidget->sortByColumn(0, Qt::SortOrder::DescendingOrder);
+        ui->logTableWidget->setSortingEnabled(true);
+        ui->logTableWidget->resizeColumnsToContents();
+        ui->logTableWidget->blockSignals(false);
+    } else {
+        // Clear existing entries
+        ui->logTableWidget->setRowCount(0);
     }
-
-    ui->logTableWidget->sortByColumn(0, Qt::SortOrder::DescendingOrder);
-    ui->logTableWidget->setSortingEnabled(true);
-    ui->logTableWidget->resizeColumnsToContents();
-    ui->logTableWidget->blockSignals(false);
 
     updateEditUi();
 }

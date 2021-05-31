@@ -171,7 +171,7 @@ MainWindow::MainWindow(QWidget *parent) noexcept
 {
     ui->setupUi(this);
     const QString logbookPath = Settings::getInstance().getLogbookPath();
-    d->connectedWithDB = d->databaseService->connectDb(logbookPath);
+    d->connectedWithDB = d->databaseService->connectDb(logbookPath, this);
     initUi();
     updateUi();
     frenchConnection();
@@ -890,7 +890,7 @@ void MainWindow::on_newLogbookAction_triggered() noexcept
 {
     const QString logbookPath = DatabaseService::getNewLogbookPath(this);
     if (!logbookPath.isNull()) {
-        const bool ok = d->databaseService->connectDb(logbookPath);
+        const bool ok = d->databaseService->connectDb(logbookPath, this);
         if (!ok) {
             QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be created.").arg(logbookPath));
         }
@@ -901,7 +901,7 @@ void MainWindow::on_openLogbookAction_triggered() noexcept
 {
     QString existingLogbookPath = DatabaseService::getExistingLogbookPath(this);
     if (!existingLogbookPath.isEmpty()) {
-        bool ok = d->databaseService->connectDb(existingLogbookPath);
+        bool ok = d->databaseService->connectDb(existingLogbookPath, this);
         if (!ok) {
             QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be opened.").arg(existingLogbookPath));
         }
