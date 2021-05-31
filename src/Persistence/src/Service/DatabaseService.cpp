@@ -46,14 +46,12 @@ namespace
 
 DatabaseService::DatabaseService(QObject *parent) noexcept
     : QObject(parent)
-{
-    frenchConnection();
-}
+{}
 
 DatabaseService::~DatabaseService() noexcept
 {}
 
-bool DatabaseService::connectDb(const QString &logbookPath, QWidget *parent) noexcept
+bool DatabaseService::connectWithLogbook(const QString &logbookPath, QWidget *parent) noexcept
 {
     ConnectionManager &connectionManager = ConnectionManager::getInstance();
     QString currentLogbookPath = logbookPath;
@@ -79,7 +77,7 @@ bool DatabaseService::connectDb(const QString &logbookPath, QWidget *parent) noe
                     }
                     retry = false;
                 } else {
-                    disconnectDb();
+                    disconnectFromLogbook();
                     QMessageBox messageBox(parent);
                     messageBox.setWindowIcon(QIcon(":/img/icons/application-icon.png"));
                     messageBox.setText(tr("The logbook %1 has been created with a newer version %2.").arg(currentLogbookPath, databaseVersion.toString()));
@@ -110,12 +108,14 @@ bool DatabaseService::connectDb(const QString &logbookPath, QWidget *parent) noe
             }
         }
     }
+    emit logbookConnectionChanged(ok);
     return ok;
 }
 
-void DatabaseService::disconnectDb() noexcept
+void DatabaseService::disconnectFromLogbook() noexcept
 {
     ConnectionManager::getInstance().disconnectDb();
+    emit logbookConnectionChanged(false);
 }
 
 bool DatabaseService::isConnected() const noexcept
@@ -220,11 +220,4 @@ bool DatabaseService::checkDatabaseVersion(Version &databaseVersion) const noexc
         databaseVersion = Version(0, 0, 0);
     }
     return ok;
-}
-
-void DatabaseService::frenchConnection() noexcept
-{
-    ConnectionManager &connectionManager = ConnectionManager::getInstance();
-    connect(&connectionManager, &ConnectionManager::connectionChanged,
-            this, &DatabaseService::connectionChanged);
 }

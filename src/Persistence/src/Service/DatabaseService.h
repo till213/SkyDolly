@@ -58,10 +58,10 @@ public:
      *        the path of the logbook (database) file to connect with
      * \return \c true if the connection succeeded; \c false else
      * \sa Settings#setLogbookPath
-     * \sa connectionStateChanged
+     * \sa logbookConnectionChanged
      */
-    bool connectDb(const QString &logbookPath, QWidget *parent) noexcept;
-    void disconnectDb() noexcept;
+    bool connectWithLogbook(const QString &logbookPath, QWidget *parent) noexcept;
+    void disconnectFromLogbook() noexcept;
     bool isConnected() const noexcept;
     const QString &getLogbookPath() const noexcept;
 
@@ -74,10 +74,9 @@ public:
 
 private:
     bool checkDatabaseVersion(Version &databaseVdersion) const noexcept;
-    void frenchConnection() noexcept;
 
 signals:
-    void connectionChanged(bool connected);
+    void logbookConnectionChanged(bool connected);
 };
 
 #endif // DATABASESERVICE_H
