@@ -258,6 +258,8 @@ bool Aircraft::operator != (const Aircraft &rhs) const noexcept
 
 void Aircraft::frenchConnection()
 {
+    connect(&d->position, &Position::dataChanged,
+            this, &Aircraft::handleDataChanged);
     connect(&d->engine, &Engine::dataChanged,
             this, &Aircraft::handleDataChanged);
     connect(&d->primaryFlightControl, &PrimaryFlightControl::dataChanged,
