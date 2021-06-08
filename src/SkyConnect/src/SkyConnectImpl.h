@@ -81,7 +81,7 @@ private:
     void updateRecordFrequency(SampleRate::SampleRate sampleRate) noexcept;
     void updateRequestPeriod(::SIMCONNECT_PERIOD period);
 
-    static void CALLBACK dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context) noexcept;
+    static void CALLBACK dispatch(::SIMCONNECT_RECV *receivedData, DWORD cbData, void *context) noexcept;
 };
 
 #endif // SKYCONNECTIMPL_H
