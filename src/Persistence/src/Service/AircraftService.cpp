@@ -22,12 +22,14 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QSqlDatabase>
-
 #include <memory>
 #include <utility>
+#include <vector>
+
+#include <QSqlDatabase>
 
 #include "../../../Model/src/Aircraft.h"
+#include "../../../Model/src/Logbook.h"
 #include "../Dao/DaoFactory.h"
 #include "../Dao/AircraftDaoIntf.h"
 #include "AircraftService.h"
@@ -37,11 +39,13 @@ class AircraftServicePrivate
 public:
     AircraftServicePrivate() noexcept
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
-          aircraftDao(daoFactory->createAircraftDao())
+          aircraftDao(daoFactory->createAircraftDao()),
+          flightDao(daoFactory->createFlightDao())
     {}
 
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<AircraftDaoIntf> aircraftDao;
+    std::unique_ptr<FlightDaoIntf> flightDao;
 };
 
 // PUBLIC
@@ -58,8 +62,24 @@ bool AircraftService::store(qint64 flightId, int sequenceNumber, Aircraft &aircr
     QSqlDatabase::database().transaction();
     bool ok = d->aircraftDao->add(flightId, sequenceNumber, aircraft);
     if (ok) {
-        QSqlDatabase::database().commit();
-    } else {
+        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        ok = d->flightDao->updateUserAircraftIndex(flight.getId(), flight.getUserAircraftIndex());
+        if (ok) {
+            QSqlDatabase::database().commit();
+        } else {
+            QSqlDatabase::database().rollback();
+        }
+    }
+    return ok;
+}
+
+
+bool AircraftService::getAircraftInfos(qint64 flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept
+{
+    bool ok;
+    ok = QSqlDatabase::database().transaction();
+    if (ok) {
+        ok = d->aircraftDao->getAircraftInfosByFlightId(flightId, aircraftInfos);
         QSqlDatabase::database().rollback();
     }
     return ok;

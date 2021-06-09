@@ -43,12 +43,13 @@ public:
      *        the Flight to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool addFlight(Flight &flight) = 0;
-    virtual bool getFlightById(qint64 id, Flight &flight) const = 0;
-    virtual bool deleteById(qint64 id) = 0;
-    virtual bool updateTitle(qint64 id, const QString &title) = 0;
-    virtual bool updateTitleAndDescription(qint64 id, const QString &title, const QString &description) = 0;
-    virtual QVector<FlightSummary> getFlightSummaries() const = 0;
+    virtual bool addFlight(Flight &flight) noexcept = 0;
+    virtual bool getFlightById(qint64 id, Flight &flight) const noexcept = 0;
+    virtual bool deleteById(qint64 id) noexcept = 0;
+    virtual bool updateTitle(qint64 id, const QString &title) noexcept = 0;
+    virtual bool updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept = 0;
+    virtual bool updateUserAircraftIndex(qint64 id, int userAircraftIndex) noexcept = 0;
+    virtual QVector<FlightSummary> getFlightSummaries() const noexcept = 0;
 };
 
 #endif // FLIGHTDAOINTF_H
