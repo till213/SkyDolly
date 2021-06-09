@@ -144,7 +144,7 @@ public:
             selectDescriptionsQuery = std::make_unique<QSqlQuery>();
             selectDescriptionsQuery->setForwardOnly(true);
             selectDescriptionsQuery->prepare(
-"select f.id, f.creation_date, f.title, a.type,"
+"select f.id, f.creation_date, f.title, a.type, (select count(*) from aircraft where aircraft.flight_id = f.id) as aircraft_count, "
 "       a.start_date, f.start_local_sim_time, f.start_zulu_sim_time, fp1.ident as start_waypoint,"
 "       a.end_date, f.end_local_sim_time, f.end_zulu_sim_time, fp2.ident as end_waypoint "
 "from   flight f "
@@ -240,27 +240,28 @@ bool SQLiteFlightDao::getFlightById(qint64 id, Flight &flight) const noexcept
     bool ok = d->selectByIdQuery->exec();
     if (ok) {
         flight.clear();
-        const int idIdx = d->selectByIdQuery->record().indexOf("id");
-        const int creationDateIdx = d->selectByIdQuery->record().indexOf("creation_date");
-        const int titleIdx = d->selectByIdQuery->record().indexOf("title");
-        const int descriptionIdx = d->selectByIdQuery->record().indexOf("description");
-        const int surfaceTypeIdx = d->selectByIdQuery->record().indexOf("surface_type");
-        const int groundAltitudeIdx = d->selectByIdQuery->record().indexOf("ground_altitude");
-        const int ambientTemperatureIdx = d->selectByIdQuery->record().indexOf("ambient_temperature");
-        const int totalAirTemperatureIdx = d->selectByIdQuery->record().indexOf("total_air_temperature");
-        const int windVelocityIdx = d->selectByIdQuery->record().indexOf("wind_velocity");
-        const int windDirectionIdx = d->selectByIdQuery->record().indexOf("wind_direction");
-        const int visibilityIdx = d->selectByIdQuery->record().indexOf("visibility");
-        const int seaLevelPressureIdx = d->selectByIdQuery->record().indexOf("sea_level_pressure");
-        const int pitotIcingIdx = d->selectByIdQuery->record().indexOf("pitot_icing");
-        const int structuralIcingIdx = d->selectByIdQuery->record().indexOf("structural_icing");
-        const int precipitationStateIdx = d->selectByIdQuery->record().indexOf("precipitation_state");
-        const int inCloudsIdx = d->selectByIdQuery->record().indexOf("in_clouds");
-        const int startLocalSimulationTimeIdx = d->selectByIdQuery->record().indexOf("start_local_sim_time");
-        const int startZuluSimulationTimeIdx = d->selectByIdQuery->record().indexOf("start_zulu_sim_time");
-        const int endLocalSimulationTimeIdx = d->selectByIdQuery->record().indexOf("end_local_sim_time");
-        const int endZuluSimulationTimeIdx = d->selectByIdQuery->record().indexOf("end_zulu_sim_time");
-        const int userAircraftSequenceNumberIdx = d->selectByIdQuery->record().indexOf("user_aircraft_seq_nr");
+        QSqlRecord record = d->selectByIdQuery->record();
+        const int idIdx = record.indexOf("id");
+        const int creationDateIdx = record.indexOf("creation_date");
+        const int titleIdx = record.indexOf("title");
+        const int descriptionIdx = record.indexOf("description");
+        const int surfaceTypeIdx = record.indexOf("surface_type");
+        const int groundAltitudeIdx = record.indexOf("ground_altitude");
+        const int ambientTemperatureIdx = record.indexOf("ambient_temperature");
+        const int totalAirTemperatureIdx = record.indexOf("total_air_temperature");
+        const int windVelocityIdx = record.indexOf("wind_velocity");
+        const int windDirectionIdx = record.indexOf("wind_direction");
+        const int visibilityIdx = record.indexOf("visibility");
+        const int seaLevelPressureIdx = record.indexOf("sea_level_pressure");
+        const int pitotIcingIdx = record.indexOf("pitot_icing");
+        const int structuralIcingIdx = record.indexOf("structural_icing");
+        const int precipitationStateIdx = record.indexOf("precipitation_state");
+        const int inCloudsIdx = record.indexOf("in_clouds");
+        const int startLocalSimulationTimeIdx = record.indexOf("start_local_sim_time");
+        const int startZuluSimulationTimeIdx = record.indexOf("start_zulu_sim_time");
+        const int endLocalSimulationTimeIdx = record.indexOf("end_local_sim_time");
+        const int endZuluSimulationTimeIdx = record.indexOf("end_zulu_sim_time");
+        const int userAircraftSequenceNumberIdx = record.indexOf("user_aircraft_seq_nr");
         if (d->selectByIdQuery->next()) {
             flight.setId(d->selectByIdQuery->value(idIdx).toLongLong());
             QDateTime date = d->selectByIdQuery->value(creationDateIdx).toDateTime();
@@ -292,6 +293,7 @@ bool SQLiteFlightDao::getFlightById(qint64 id, Flight &flight) const noexcept
         }
         ok = d->aircraftDao->getByFlightId(id, flight.getAircrafts());
         if (ok) {
+            // Index starts at 0
             const int userAircraftIndex = d->selectByIdQuery->value(userAircraftSequenceNumberIdx).toInt() - 1;
             flight.setUserAircraftIndex(userAircraftIndex);
         }
@@ -358,44 +360,47 @@ QVector<FlightSummary> SQLiteFlightDao::getFlightSummaries() const noexcept
     d->initQueries();
     bool ok = d->selectDescriptionsQuery->exec();
     if (ok) {
-        const int idIdx = d->selectDescriptionsQuery->record().indexOf("id");
-        const int creationDateIdx = d->selectDescriptionsQuery->record().indexOf("creation_date");
-        const int aircraftTypeIdx = d->selectDescriptionsQuery->record().indexOf("type");
-        const int startDateIdx = d->selectDescriptionsQuery->record().indexOf("start_date");
-        const int startLocalSimulationTimeIdx = d->selectDescriptionsQuery->record().indexOf("start_local_sim_time");
-        const int startZuluSimulationTimeIdx = d->selectDescriptionsQuery->record().indexOf("start_zulu_sim_time");
-        const int startWaypointIdx = d->selectDescriptionsQuery->record().indexOf("start_waypoint");
-        const int endDateIdx = d->selectDescriptionsQuery->record().indexOf("end_date");
-        const int endLocalSimulationTimeIdx = d->selectDescriptionsQuery->record().indexOf("end_local_sim_time");
-        const int endZuluSimulationTimeIdx = d->selectDescriptionsQuery->record().indexOf("end_zulu_sim_time");
-        const int endWaypointIdx = d->selectDescriptionsQuery->record().indexOf("end_waypoint");
-        const int titleIdx = d->selectDescriptionsQuery->record().indexOf("title");
+        QSqlRecord record = d->selectDescriptionsQuery->record();
+        const int idIdx = record.indexOf("id");
+        const int creationDateIdx = record.indexOf("creation_date");
+        const int aircraftTypeIdx = record.indexOf("type");
+        const int aircraftCountIdx = record.indexOf("aircraft_count");
+        const int startDateIdx = record.indexOf("start_date");
+        const int startLocalSimulationTimeIdx = record.indexOf("start_local_sim_time");
+        const int startZuluSimulationTimeIdx = record.indexOf("start_zulu_sim_time");
+        const int startWaypointIdx = record.indexOf("start_waypoint");
+        const int endDateIdx = record.indexOf("end_date");
+        const int endLocalSimulationTimeIdx = record.indexOf("end_local_sim_time");
+        const int endZuluSimulationTimeIdx = record.indexOf("end_zulu_sim_time");
+        const int endWaypointIdx = record.indexOf("end_waypoint");
+        const int titleIdx = record.indexOf("title");
         while (d->selectDescriptionsQuery->next()) {            
 
-            FlightSummary description;
-            description.id = d->selectDescriptionsQuery->value(idIdx).toLongLong();
+            FlightSummary summary;
+            summary.id = d->selectDescriptionsQuery->value(idIdx).toLongLong();
 
             QDateTime dateTime = d->selectDescriptionsQuery->value(creationDateIdx).toDateTime();
             dateTime.setTimeZone(QTimeZone::utc());
-            description.creationDate = dateTime.toLocalTime();
-            description.aircraftType = d->selectDescriptionsQuery->value(aircraftTypeIdx).toString();
+            summary.creationDate = dateTime.toLocalTime();
+            summary.aircraftType = d->selectDescriptionsQuery->value(aircraftTypeIdx).toString();
+            summary.aircraftCount = d->selectDescriptionsQuery->value(aircraftCountIdx).toInt();
             dateTime = d->selectDescriptionsQuery->value(startDateIdx).toDateTime();
             dateTime.setTimeZone(QTimeZone::utc());
-            description.startDate = dateTime.toLocalTime();
+            summary.startDate = dateTime.toLocalTime();
             // Persisted times is are already local respectively zulu simulation times
-            description.startSimulationLocalTime = d->selectDescriptionsQuery->value(startLocalSimulationTimeIdx).toDateTime();
-            description.startSimulationZuluTime = d->selectDescriptionsQuery->value(startZuluSimulationTimeIdx).toDateTime();
-            description.startLocation = d->selectDescriptionsQuery->value(startWaypointIdx).toString();
+            summary.startSimulationLocalTime = d->selectDescriptionsQuery->value(startLocalSimulationTimeIdx).toDateTime();
+            summary.startSimulationZuluTime = d->selectDescriptionsQuery->value(startZuluSimulationTimeIdx).toDateTime();
+            summary.startLocation = d->selectDescriptionsQuery->value(startWaypointIdx).toString();
             dateTime = d->selectDescriptionsQuery->value(endDateIdx).toDateTime();
             dateTime.setTimeZone(QTimeZone::utc());
-            description.endDate = dateTime.toLocalTime();
+            summary.endDate = dateTime.toLocalTime();
             // Persisted times is are already local respectively zulu simulation times
-            description.endSimulationLocalTime = d->selectDescriptionsQuery->value(endLocalSimulationTimeIdx).toDateTime();
-            description.endSimulationZuluTime = d->selectDescriptionsQuery->value(endZuluSimulationTimeIdx).toDateTime();
-            description.endLocation = d->selectDescriptionsQuery->value(endWaypointIdx).toString();
-            description.title = d->selectDescriptionsQuery->value(titleIdx).toString();
+            summary.endSimulationLocalTime = d->selectDescriptionsQuery->value(endLocalSimulationTimeIdx).toDateTime();
+            summary.endSimulationZuluTime = d->selectDescriptionsQuery->value(endZuluSimulationTimeIdx).toDateTime();
+            summary.endLocation = d->selectDescriptionsQuery->value(endWaypointIdx).toString();
+            summary.title = d->selectDescriptionsQuery->value(titleIdx).toString();
 
-            summaries.append(description);
+            summaries.append(summary);
         }
 #ifdef DEBUG
     } else {

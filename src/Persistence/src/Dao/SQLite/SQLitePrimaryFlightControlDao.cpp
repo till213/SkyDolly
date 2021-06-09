@@ -130,10 +130,11 @@ bool SQLitePrimaryFlightControlDao::getByAircraftId(qint64 aircraftId, QVector<P
     bool ok = d->selectByAircraftIdQuery->exec();
     if (ok) {
         primaryFlightControlData.clear();
-        const int timestampIdx = d->selectByAircraftIdQuery->record().indexOf("timestamp");
-        const int rudderPositionIdx = d->selectByAircraftIdQuery->record().indexOf("rudder_position");
-        const int elevatorPositionIdx = d->selectByAircraftIdQuery->record().indexOf("elevator_position");
-        const int aileronPositionIdx = d->selectByAircraftIdQuery->record().indexOf("aileron_position");
+        QSqlRecord record = d->selectByAircraftIdQuery->record();
+        const int timestampIdx = record.indexOf("timestamp");
+        const int rudderPositionIdx = record.indexOf("rudder_position");
+        const int elevatorPositionIdx = record.indexOf("elevator_position");
+        const int aileronPositionIdx = record.indexOf("aileron_position");
         while (d->selectByAircraftIdQuery->next()) {
 
             PrimaryFlightControlData data;
