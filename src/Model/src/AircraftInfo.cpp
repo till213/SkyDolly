@@ -26,9 +26,10 @@
 
 // PUBLIC
 
-AircraftInfo::AircraftInfo() noexcept
+AircraftInfo::AircraftInfo(qint64 theAircraftId) noexcept
 {
     clear();
+    aircraftId = theAircraftId;
 }
 
 void AircraftInfo::clear() noexcept

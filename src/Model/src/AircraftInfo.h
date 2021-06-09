@@ -33,6 +33,7 @@
 
 struct MODEL_API AircraftInfo
 {
+    qint64 aircraftId;
     QDateTime startDate;
     QDateTime endDate;
     QString type;
@@ -51,7 +52,7 @@ struct MODEL_API AircraftInfo
     SimType::EngineType engineType;
     int numberOfEngines;
 
-    AircraftInfo() noexcept;
+    AircraftInfo(qint64 aircraftId) noexcept;
     AircraftInfo(AircraftInfo &&) = default;
     AircraftInfo(const AircraftInfo &) = default;
     AircraftInfo &operator= (const AircraftInfo &) = default;
