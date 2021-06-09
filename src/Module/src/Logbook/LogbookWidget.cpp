@@ -153,7 +153,7 @@ void LogbookWidget::initUi() noexcept
 
     ui->logTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    const QStringList headers {tr("Flight"), tr("Date"), tr("Aircraft"), tr("Departure Time"), tr("Departure"), tr("Arrival Time"), tr("Arrival"), tr("Total Time of Flight"), tr("Title")};
+    const QStringList headers {tr("Flight"), tr("Date"), tr("Aircraft"), tr("Number of Aircrafts"), tr("Departure Time"), tr("Departure"), tr("Arrival Time"), tr("Arrival"), tr("Total Time of Flight"), tr("Title")};
     ui->logTableWidget->setColumnCount(headers.count());
     ui->logTableWidget->setHorizontalHeaderLabels(headers);
     ui->logTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -214,6 +214,11 @@ void LogbookWidget::updateUi() noexcept
         ++columnIndex;
 
         newItem = new QTableWidgetItem(summary.aircraftType);
+        ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
+        ++columnIndex;
+
+        newItem = new QTableWidgetItem();
+        newItem->setData(Qt::DisplayRole, summary.aircraftCount);
         ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
         ++columnIndex;
 
