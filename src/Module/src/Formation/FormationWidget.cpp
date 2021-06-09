@@ -132,7 +132,7 @@ void FormationWidget::updateUi() noexcept
 
         const AircraftInfo &aircraftInfo = aircraft->getAircraftInfoConst();
 
-        QBrush backgroundColor = QGuiApplication::palette().mid();
+        QBrush backgroundColor = QGuiApplication::palette().base();
         int columnIndex = 0;
 
         // ID
