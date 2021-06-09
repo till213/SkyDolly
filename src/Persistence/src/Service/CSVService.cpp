@@ -69,7 +69,7 @@ bool CSVService::importAircraft(const QString &filePath) noexcept
     Aircraft &aircraft = flight.getUserAircraft();
     bool ok = CSVImport::importData(file, aircraft);
     if (ok) {
-        AircraftInfo info;
+        AircraftInfo info(aircraft.getId());
         info.startDate = QFileInfo(filePath).birthTime();
         info.endDate = info.startDate.addMSecs(aircraft.getDurationMSec());
         aircraft.setAircraftInfo(info);

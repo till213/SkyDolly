@@ -57,6 +57,7 @@ public:
     std::unique_ptr<QSqlQuery> deleteByIdQuery;
     std::unique_ptr<QSqlQuery> updateTitleQuery;
     std::unique_ptr<QSqlQuery> updateTitleAndDescriptionQuery;
+    std::unique_ptr<QSqlQuery> updateUserAircraftSequenceNumberQuery;
     std::unique_ptr<QSqlQuery> selectDescriptionsQuery;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<AircraftDaoIntf> aircraftDao;
@@ -140,6 +141,13 @@ public:
 "       description = :description "
 "where id = :id;");
         }
+        if (updateUserAircraftSequenceNumberQuery == nullptr) {
+            updateUserAircraftSequenceNumberQuery = std::make_unique<QSqlQuery>();
+            updateUserAircraftSequenceNumberQuery->prepare(
+"update flight "
+"set    user_aircraft_seq_nr = :user_aircraft_seq_nr "
+"where id = :id;");
+        }
         if (selectDescriptionsQuery == nullptr) {
             selectDescriptionsQuery = std::make_unique<QSqlQuery>();
             selectDescriptionsQuery->setForwardOnly(true);
@@ -165,6 +173,7 @@ public:
         deleteByIdQuery = nullptr;
         updateTitleQuery = nullptr;
         updateTitleAndDescriptionQuery = nullptr;
+        updateUserAircraftSequenceNumberQuery = nullptr;
         selectDescriptionsQuery = nullptr;
     }
 };
@@ -187,6 +196,7 @@ bool SQLiteFlightDao::addFlight(Flight &flight)  noexcept
     const FlightCondition &flightCondition = flight.getFlightConditionConst();
     d->insertQuery->bindValue(":title", flight.getTitle());
     d->insertQuery->bindValue(":description", flight.getDescription());
+    // Sequence number starts at 1
     d->insertQuery->bindValue(":user_aircraft_seq_nr", flight.getUserAircraftIndex() + 1);
     d->insertQuery->bindValue(":surface_type", Enum::toUnderlyingType(flightCondition.surfaceType));
     d->insertQuery->bindValue(":ground_altitude", flightCondition.groundAltitude);
@@ -348,6 +358,22 @@ bool SQLiteFlightDao::updateTitleAndDescription(qint64 id, const QString &title,
 #ifdef DEBUG
     if (!ok) {
         qDebug("SQLiteFlightDao::updateTitleAndDescription: SQL error: %s", qPrintable(d->updateTitleAndDescriptionQuery->lastError().databaseText() + " - error code: " + d->updateTitleAndDescriptionQuery->lastError().nativeErrorCode()));
+    }
+#endif
+    return ok;
+}
+
+bool SQLiteFlightDao::updateUserAircraftIndex(qint64 id, int userAircraftIndex) noexcept
+{
+    d->initQueries();
+
+    // Sequence number starts at 1
+    d->updateUserAircraftSequenceNumberQuery->bindValue(":user_aircraft_seq_nr", userAircraftIndex + 1);
+    d->updateUserAircraftSequenceNumberQuery->bindValue(":id", id);
+    bool ok = d->updateUserAircraftSequenceNumberQuery->exec();
+#ifdef DEBUG
+    if (!ok) {
+        qDebug("SQLiteFlightDao::updateUserAircraftIndex: SQL error: %s", qPrintable(d->updateUserAircraftSequenceNumberQuery->lastError().databaseText() + " - error code: " + d->updateUserAircraftSequenceNumberQuery->lastError().nativeErrorCode()));
     }
 #endif
     return ok;
