@@ -26,14 +26,23 @@
 
 #include <QWidget>
 #include <QAction>
+#include <QTableWidget>
 
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
+#include "../../../Model/src/AircraftInfo.h"
 #include "../../../Persistence/src/Service/FlightService.h"
 #include "../../../Persistence/src/Service/AircraftService.h"
 #include "../AbstractModuleWidget.h"
 #include "FormationWidget.h"
 #include "ui_FormationWidget.h"
+
+namespace
+{
+    constexpr int MinimumTableWidth = 600;
+    constexpr int InvalidSelection = -1;
+    constexpr int InvalidColumn = -1;
+}
 
 class FormationWidgetPrivate
 {
@@ -43,6 +52,8 @@ public:
           aircraftService(std::make_unique<AircraftService>())
     {}
 
+    QMetaObject::Connection aircraftIdAssignedConnection;
+    QMetaObject::Connection aircraftInfoChangedConnection;
     std::unique_ptr<QAction> moduleAction;
     std::unique_ptr<AircraftService> aircraftService;
 };
@@ -57,6 +68,8 @@ FormationWidget::FormationWidget(FlightService &flightService, QWidget *parent) 
     ui->setupUi(this);
     initUi();
     frenchConnection();
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    handleUserAircraftChanged(flight.getUserAircraft());
 }
 
 FormationWidget::~FormationWidget() noexcept
@@ -86,17 +99,55 @@ QAction &FormationWidget::getAction() noexcept
 void FormationWidget::showEvent(QShowEvent *event) noexcept
 {
     AbstractModuleWidget::showEvent(event);
-    updateUi();
+
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    connect(&flight, &Flight::userAircraftChanged,
+            this, &FormationWidget::handleUserAircraftChanged);
 }
 
 void FormationWidget::hideEvent(QHideEvent *event) noexcept
 {
     AbstractModuleWidget::hideEvent(event);
+
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    disconnect(&flight, &Flight::userAircraftChanged,
+               this, &FormationWidget::handleUserAircraftChanged);
 }
 
 void FormationWidget::updateUi() noexcept
 {
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
 
+    std::vector<std::unique_ptr<Aircraft>> &aircrafts = flight.getAircrafts();
+    ui->aircraftTableWidget->blockSignals(true);
+    ui->aircraftTableWidget->setSortingEnabled(false);
+    ui->aircraftTableWidget->clearContents();
+    ui->aircraftTableWidget->setRowCount(aircrafts.size());
+    int rowIndex = 0;
+    for (const auto &aircraft : aircrafts) {
+
+        const AircraftInfo &aircraftInfo = aircraft->getAircraftInfoConst();
+
+        int columnIndex = 0;
+
+        // ID
+        QTableWidgetItem *newItem = new QTableWidgetItem();
+        newItem->setData(Qt::DisplayRole, aircraftInfo.aircraftId);
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        ++columnIndex;
+
+        // Type
+        newItem = new QTableWidgetItem(aircraftInfo.type);
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        ++columnIndex;
+
+        ++rowIndex;
+    }
+    ui->aircraftTableWidget->setSortingEnabled(true);
+    ui->aircraftTableWidget->resizeColumnsToContents();
+    ui->aircraftTableWidget->blockSignals(false);
+
+    updateEditUi();
 }
 
 // PROTECTED SLOTS
@@ -118,6 +169,23 @@ void FormationWidget::initUi() noexcept
 {
     d->moduleAction = std::make_unique<QAction>(getName());
     d->moduleAction->setCheckable(true);
+
+    ui->aircraftTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    const QStringList headers {tr("ID"), tr("Type")};
+    ui->aircraftTableWidget->setColumnCount(headers.count());
+    ui->aircraftTableWidget->setHorizontalHeaderLabels(headers);
+    ui->aircraftTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->aircraftTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->aircraftTableWidget->verticalHeader()->hide();
+    ui->aircraftTableWidget->setMinimumWidth(MinimumTableWidth);
+    ui->aircraftTableWidget->horizontalHeader()->setStretchLastSection(true);
+    ui->aircraftTableWidget->sortByColumn(0, Qt::SortOrder::AscendingOrder);
+}
+
+void FormationWidget::updateEditUi() noexcept
+{
+
 }
 
 void FormationWidget::frenchConnection() noexcept
@@ -128,4 +196,33 @@ void FormationWidget::frenchConnection() noexcept
 const QString FormationWidget::getName()
 {
     return QString(QT_TRANSLATE_NOOP("LogbookWidget", "Formation"));
+}
+
+// PRIVATE SLOTS
+
+void FormationWidget::handleUserAircraftChanged(Aircraft &aircraft) noexcept
+{
+    QObject::disconnect(d->aircraftIdAssignedConnection);
+    QObject::disconnect(d->aircraftIdAssignedConnection);
+    d->aircraftInfoChangedConnection = connect(&aircraft, &Aircraft::idAssigned,
+                                               this, &FormationWidget::handleAircraftIdAssigned);
+    d->aircraftInfoChangedConnection = connect(&aircraft, &Aircraft::infoChanged,
+                                               this, &FormationWidget::updateUi);
+}
+
+void FormationWidget::handleAircraftIdAssigned(qint64 id) noexcept
+{
+    int row = 0;
+    QTableWidgetItem *item = nullptr;
+    while (row < ui->aircraftTableWidget->rowCount() && item == nullptr) {
+        item = ui->aircraftTableWidget->item(row, 0);
+        qint64 currentId = item->data(Qt::DisplayRole).toLongLong();
+        if (currentId != Aircraft::InvalidId) {
+            item = nullptr;
+            ++row;
+        }
+    }
+    if (item != nullptr) {
+        item->setData(Qt::DisplayRole, id);
+    }
 }

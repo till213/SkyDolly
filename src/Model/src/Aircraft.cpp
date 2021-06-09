@@ -50,9 +50,10 @@ class AircraftPrivate
 {
 public:
     AircraftPrivate() noexcept
-        : id(0),
+        : id(Aircraft::InvalidId),
           simulationRequestId(Aircraft::InvalidSimulationId),
           simulationObjectId(Aircraft::InvalidSimulationId),
+          aircraftInfo(id),
           duration(TimeVariableData::InvalidTime)
     {}
 
@@ -95,6 +96,8 @@ qint64 Aircraft::getId() const noexcept
 void Aircraft::setId(qint64 id) noexcept
 {
     d->id = id;
+    d->aircraftInfo.aircraftId = id;
+    emit idAssigned(d->id);
 }
 
 qint64 Aircraft::getSimulationRequestId() const noexcept
