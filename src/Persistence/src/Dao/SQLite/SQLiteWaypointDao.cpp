@@ -147,12 +147,13 @@ bool SQLiteWaypointDao::getByAircraftId(qint64 aircraftId, FlightPlan &flightPla
     bool ok = d->selectByAircraftIdQuery->exec();
     if (ok) {
         flightPlan.clear();
-        const int identifierIdx = d->selectByAircraftIdQuery->record().indexOf("ident");
-        const int latitudeIdx = d->selectByAircraftIdQuery->record().indexOf("latitude");
-        const int longitudeIdx = d->selectByAircraftIdQuery->record().indexOf("longitude");
-        const int altitudeIdx = d->selectByAircraftIdQuery->record().indexOf("altitude");
-        const int localSimulationTimeIdx = d->selectByAircraftIdQuery->record().indexOf("local_sim_time");
-        const int zuluSimulationTimeIdx = d->selectByAircraftIdQuery->record().indexOf("zulu_sim_time");
+        QSqlRecord record = d->selectByAircraftIdQuery->record();
+        const int identifierIdx = record.indexOf("ident");
+        const int latitudeIdx = record.indexOf("latitude");
+        const int longitudeIdx = record.indexOf("longitude");
+        const int altitudeIdx = record.indexOf("altitude");
+        const int localSimulationTimeIdx = record.indexOf("local_sim_time");
+        const int zuluSimulationTimeIdx = record.indexOf("zulu_sim_time");
         while (d->selectByAircraftIdQuery->next()) {
             Waypoint data;
             data.identifier = d->selectByAircraftIdQuery->value(identifierIdx).toString();

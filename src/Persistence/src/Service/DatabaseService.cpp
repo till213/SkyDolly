@@ -34,6 +34,7 @@
 
 #include "../../../Kernel/src/Settings.h"
 #include "../../../Kernel/src/Const.h"
+#include "../../../Model/src/Logbook.h"
 #include "../ConnectionManager.h"
 #include "DatabaseService.h"
 
@@ -71,6 +72,8 @@ bool DatabaseService::connectWithLogbook(const QString &logbookPath, QWidget *pa
                 Version databaseVersion;
                 ok = checkDatabaseVersion(databaseVersion);
                 if (ok) {
+                    Flight &flight = Logbook::getInstance().getCurrentFlight();
+                    flight.clear();
                     ok = connectionManager.migrate();
                     if (ok) {
                         Settings::getInstance().setLogbookPath(currentLogbookPath);

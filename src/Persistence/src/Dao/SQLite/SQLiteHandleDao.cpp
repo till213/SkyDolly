@@ -144,15 +144,16 @@ bool SQLiteHandleDao::getByAircraftId(qint64 aircraftId, QVector<AircraftHandleD
     bool ok = d->selectByAircraftIdQuery->exec();
     if (ok) {
         aircraftHandleData.clear();
-        const int timestampIdx = d->selectByAircraftIdQuery->record().indexOf("timestamp");
-        const int brakeLeftPositionIdx = d->selectByAircraftIdQuery->record().indexOf("brake_left_position");
-        const int brakeRightPositionIdx = d->selectByAircraftIdQuery->record().indexOf("brake_right_position");
-        const int waterRudderHandlePositionIdx = d->selectByAircraftIdQuery->record().indexOf("water_rudder_handle_position");
-        const int tailHookPositionIdx = d->selectByAircraftIdQuery->record().indexOf("tail_hook_position");
-        const int canopyOpenIdx = d->selectByAircraftIdQuery->record().indexOf("canopy_open");
-        const int leftWingFoldingIdx = d->selectByAircraftIdQuery->record().indexOf("left_wing_folding");
-        const int rightWingFoldingIdx = d->selectByAircraftIdQuery->record().indexOf("right_wing_folding");
-        const int gearHandlePositionIdx = d->selectByAircraftIdQuery->record().indexOf("gear_handle_position");
+        QSqlRecord record = d->selectByAircraftIdQuery->record();
+        const int timestampIdx = record.indexOf("timestamp");
+        const int brakeLeftPositionIdx = record.indexOf("brake_left_position");
+        const int brakeRightPositionIdx = record.indexOf("brake_right_position");
+        const int waterRudderHandlePositionIdx = record.indexOf("water_rudder_handle_position");
+        const int tailHookPositionIdx = record.indexOf("tail_hook_position");
+        const int canopyOpenIdx = record.indexOf("canopy_open");
+        const int leftWingFoldingIdx = record.indexOf("left_wing_folding");
+        const int rightWingFoldingIdx = record.indexOf("right_wing_folding");
+        const int gearHandlePositionIdx = record.indexOf("gear_handle_position");
         while (d->selectByAircraftIdQuery->next()) {
 
             AircraftHandleData data;
