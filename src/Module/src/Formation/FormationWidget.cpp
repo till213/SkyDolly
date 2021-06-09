@@ -27,10 +27,14 @@
 #include <QWidget>
 #include <QAction>
 #include <QTableWidget>
+#include <QPalette>
+#include <QColor>
 
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/AircraftInfo.h"
+#include "../../../SkyConnect/src/SkyManager.h"
+#include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../Persistence/src/Service/FlightService.h"
 #include "../../../Persistence/src/Service/AircraftService.h"
 #include "../AbstractModuleWidget.h"
@@ -128,21 +132,37 @@ void FormationWidget::updateUi() noexcept
 
         const AircraftInfo &aircraftInfo = aircraft->getAircraftInfoConst();
 
+        QBrush backgroundColor = QGuiApplication::palette().mid();
         int columnIndex = 0;
 
         // ID
         QTableWidgetItem *newItem = new QTableWidgetItem();
-        newItem->setData(Qt::DisplayRole, aircraftInfo.aircraftId);
+        if (aircraftInfo.aircraftId != Aircraft::InvalidId) {
+            newItem->setData(Qt::DisplayRole, aircraftInfo.aircraftId);
+        } else if (SkyManager::getInstance().getCurrentSkyConnect().isRecording()) {
+            backgroundColor = Qt::red;
+        }
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        ++columnIndex;
+
+        // Sequence
+        newItem = new QTableWidgetItem();
+        // Sequence numbers start at 1
+        newItem->setData(Qt::DisplayRole, rowIndex + 1);
+        newItem->setBackground(backgroundColor);
         ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
         ++columnIndex;
 
         // Type
         newItem = new QTableWidgetItem(aircraftInfo.type);
+        newItem->setBackground(backgroundColor);
         ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
         ++columnIndex;
 
         ++rowIndex;
     }
+    // Don't show internal aircraft IDs
+    ui->aircraftTableWidget->hideColumn(0);
     ui->aircraftTableWidget->setSortingEnabled(true);
     ui->aircraftTableWidget->resizeColumnsToContents();
     ui->aircraftTableWidget->blockSignals(false);
@@ -172,7 +192,7 @@ void FormationWidget::initUi() noexcept
 
     ui->aircraftTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    const QStringList headers {tr("ID"), tr("Type")};
+    const QStringList headers {tr("ID"), tr("Sequence"), tr("Type")};
     ui->aircraftTableWidget->setColumnCount(headers.count());
     ui->aircraftTableWidget->setHorizontalHeaderLabels(headers);
     ui->aircraftTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -180,7 +200,7 @@ void FormationWidget::initUi() noexcept
     ui->aircraftTableWidget->verticalHeader()->hide();
     ui->aircraftTableWidget->setMinimumWidth(MinimumTableWidth);
     ui->aircraftTableWidget->horizontalHeader()->setStretchLastSection(true);
-    ui->aircraftTableWidget->sortByColumn(0, Qt::SortOrder::AscendingOrder);
+    ui->aircraftTableWidget->sortByColumn(1, Qt::SortOrder::AscendingOrder);
 }
 
 void FormationWidget::updateEditUi() noexcept
@@ -205,7 +225,7 @@ void FormationWidget::handleUserAircraftChanged(Aircraft &aircraft) noexcept
     QObject::disconnect(d->aircraftIdAssignedConnection);
     QObject::disconnect(d->aircraftIdAssignedConnection);
     d->aircraftInfoChangedConnection = connect(&aircraft, &Aircraft::idAssigned,
-                                               this, &FormationWidget::handleAircraftIdAssigned);
+                                               this, &FormationWidget::updateUi);
     d->aircraftInfoChangedConnection = connect(&aircraft, &Aircraft::infoChanged,
                                                this, &FormationWidget::updateUi);
 }
@@ -216,8 +236,9 @@ void FormationWidget::handleAircraftIdAssigned(qint64 id) noexcept
     QTableWidgetItem *item = nullptr;
     while (row < ui->aircraftTableWidget->rowCount() && item == nullptr) {
         item = ui->aircraftTableWidget->item(row, 0);
-        qint64 currentId = item->data(Qt::DisplayRole).toLongLong();
-        if (currentId != Aircraft::InvalidId) {
+        bool ok;
+        item->data(Qt::DisplayRole).toLongLong(&ok);
+        if (ok) {
             item = nullptr;
             ++row;
         }
