@@ -77,7 +77,7 @@ const LightData &Light::getLast() const noexcept
     if (!d->lightData.isEmpty()) {
         return d->lightData.last();
     } else {
-        return LightData::NullLightData;
+        return LightData::NullData;
     }
 }
 
@@ -131,7 +131,7 @@ const LightData &Light::interpolate(qint64 timestamp, TimeVariableData::Access a
             d->currentLightData.timestamp = timestamp;
         } else {
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
-            d->currentLightData = LightData::NullLightData;
+            d->currentLightData = LightData::NullData;
         }
 
         d->currentTimestamp = timestamp;

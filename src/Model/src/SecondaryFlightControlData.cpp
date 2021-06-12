@@ -36,4 +36,4 @@ SecondaryFlightControlData::SecondaryFlightControlData() noexcept
       flapsHandleIndex(0)
 {}
 
-const SecondaryFlightControlData SecondaryFlightControlData::NullSecondaryFlightControlData = SecondaryFlightControlData();
+const SecondaryFlightControlData SecondaryFlightControlData::NullData = SecondaryFlightControlData();

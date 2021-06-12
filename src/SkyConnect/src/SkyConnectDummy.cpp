@@ -148,7 +148,7 @@ void SkyConnectDummy::onSeek(qint64 currentTimestamp) noexcept
     Q_UNUSED(currentTimestamp)
 };
 
-void SkyConnectDummy::onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
+void SkyConnectDummy::onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
 {
     Q_UNUSED(sampleRate)
 }
@@ -191,7 +191,7 @@ void SkyConnectDummy::onDestroyAIObjects() noexcept
 
 // PROTECTED SLOTS
 
-void SkyConnectDummy::processEvents() noexcept
+void SkyConnectDummy::sampleData() noexcept
 {
     updateCurrentTimestamp();
     switch (getState()) {

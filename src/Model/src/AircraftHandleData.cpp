@@ -41,4 +41,4 @@ AircraftHandleData::AircraftHandleData() noexcept
 {
 }
 
-const AircraftHandleData AircraftHandleData::NullAircraftHandleData = AircraftHandleData();
+const AircraftHandleData AircraftHandleData::NullData = AircraftHandleData();
