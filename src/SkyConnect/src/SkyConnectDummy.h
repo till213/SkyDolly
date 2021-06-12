@@ -44,6 +44,8 @@ public:
     virtual ~SkyConnectDummy() noexcept;
 
 protected:
+    virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
+
     virtual bool onStartRecording() noexcept override;
     virtual void onRecordingPaused(bool paused) noexcept override;
     virtual void onStopRecording() noexcept override;
@@ -71,17 +73,17 @@ private:
     void frenchConnection() noexcept;
     bool sendAircraftData(TimeVariableData::Access access) noexcept;
 
-    void recordData() noexcept;
-    void recordPositionData(qint64 timestamp) noexcept;
-    void recordEngineData(qint64 timestamp) noexcept;
-    void recordPrimaryControls(qint64 timestamp) noexcept;
-    void recordSecondaryControls(qint64 timestamp) noexcept;
-    void recordAircraftHandle(qint64 timestamp) noexcept;
-    void recordLights(qint64 timestamp) noexcept;
-    void recordWaypoint() noexcept;
+    void samplePositionData(qint64 timestamp) noexcept;
+    void sampleEngineData(qint64 timestamp) noexcept;
+    void samplePrimaryControls(qint64 timestamp) noexcept;
+    void sampleSecondaryControls(qint64 timestamp) noexcept;
+    void sampleAircraftHandle(qint64 timestamp) noexcept;
+    void sampleLights(qint64 timestamp) noexcept;
+    void sampleWaypoint() noexcept;
     void recordFlightCondition() noexcept;
     void recordAircraftInfo() noexcept;
 
+private slots:
     void replay() noexcept;
 };
 

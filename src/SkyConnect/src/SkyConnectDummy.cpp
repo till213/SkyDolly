@@ -93,6 +93,12 @@ SkyConnectDummy::~SkyConnectDummy() noexcept
 
 // PROTECTED
 
+bool SkyConnectDummy::isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept
+{
+    Q_UNUSED(sampleRate)
+    return true;
+}
+
 bool SkyConnectDummy::onStartRecording() noexcept
 {
     recordFlightCondition();
@@ -194,15 +200,20 @@ void SkyConnectDummy::onDestroyAIObjects() noexcept
 void SkyConnectDummy::sampleData() noexcept
 {
     updateCurrentTimestamp();
-    switch (getState()) {
-    case Connect::State::Recording:
-        recordData();
-        break;
-    case Connect::State::Replay:
-        replay();
-        break;
-    default:
-        break;
+    const qint64 timestamp = getCurrentTimestamp();
+
+    samplePositionData(timestamp);
+    sampleEngineData(timestamp);
+    samplePrimaryControls(timestamp);
+    sampleSecondaryControls(timestamp);
+    sampleAircraftHandle(timestamp);
+    sampleLights(timestamp);
+    sampleWaypoint();
+
+    if (!isElapsedTimerRunning()) {
+        // Start the elapsed timer with the arrival of the first sample data
+        setCurrentTimestamp(0);
+        resetElapsedTime(true);
     }
 }
 
@@ -211,7 +222,7 @@ void SkyConnectDummy::sampleData() noexcept
 void SkyConnectDummy::frenchConnection() noexcept
 {
     connect(&d->replayTimer, &QTimer::timeout,
-            this, &SkyConnectDummy::processEvents);
+            this, &SkyConnectDummy::replay);
 }
 
 bool SkyConnectDummy::sendAircraftData(TimeVariableData::Access access) noexcept
@@ -234,26 +245,7 @@ bool SkyConnectDummy::sendAircraftData(TimeVariableData::Access access) noexcept
     return dataAvailable;
 }
 
-void SkyConnectDummy::recordData() noexcept
-{
-    const qint64 timestamp = getCurrentTimestamp();
-
-    recordPositionData(timestamp);
-    recordEngineData(timestamp);
-    recordPrimaryControls(timestamp);
-    recordSecondaryControls(timestamp);
-    recordAircraftHandle(timestamp);
-    recordLights(timestamp);
-    recordWaypoint();
-
-    if (!isElapsedTimerRunning()) {
-        // Start the elapsed timer with the arrival of the first sample data
-        setCurrentTimestamp(0);
-        resetElapsedTime(true);
-    }
-}
-
-void SkyConnectDummy::recordPositionData(qint64 timestamp) noexcept
+void SkyConnectDummy::samplePositionData(qint64 timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -276,7 +268,7 @@ void SkyConnectDummy::recordPositionData(qint64 timestamp) noexcept
     aircraft.getPosition().upsert(aircraftData);
 }
 
-void SkyConnectDummy::recordEngineData(qint64 timestamp) noexcept
+void SkyConnectDummy::sampleEngineData(qint64 timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -310,7 +302,7 @@ void SkyConnectDummy::recordEngineData(qint64 timestamp) noexcept
     aircraft.getEngine().upsert(std::move(engineData));
 }
 
-void SkyConnectDummy::recordPrimaryControls(qint64 timestamp) noexcept
+void SkyConnectDummy::samplePrimaryControls(qint64 timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -323,7 +315,7 @@ void SkyConnectDummy::recordPrimaryControls(qint64 timestamp) noexcept
     aircraft.getPrimaryFlightControl().upsert(std::move(primaryFlightControlData));
 }
 
-void SkyConnectDummy::recordSecondaryControls(qint64 timestamp) noexcept
+void SkyConnectDummy::sampleSecondaryControls(qint64 timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -339,7 +331,7 @@ void SkyConnectDummy::recordSecondaryControls(qint64 timestamp) noexcept
     aircraft.getSecondaryFlightControl().upsert(std::move(secondaryFlightControlData));
 }
 
-void SkyConnectDummy::recordAircraftHandle(qint64 timestamp) noexcept
+void SkyConnectDummy::sampleAircraftHandle(qint64 timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -357,7 +349,7 @@ void SkyConnectDummy::recordAircraftHandle(qint64 timestamp) noexcept
     aircraft.getAircraftHandle().upsert(std::move(aircraftHandleData));
 }
 
-void SkyConnectDummy::recordLights(qint64 timestamp) noexcept
+void SkyConnectDummy::sampleLights(qint64 timestamp) noexcept
 {
     static int lights = 0;
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
@@ -370,7 +362,7 @@ void SkyConnectDummy::recordLights(qint64 timestamp) noexcept
     aircraft.getLight().upsert(std::move(lightData));
 }
 
-void SkyConnectDummy::recordWaypoint() noexcept
+void SkyConnectDummy::sampleWaypoint() noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
