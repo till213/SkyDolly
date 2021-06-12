@@ -123,8 +123,9 @@ bool SQLiteLightDao::getByAircraftId(qint64 aircraftId, QVector<LightData> &ligh
     bool ok = d->selectByAircraftIdQuery->exec();
     if (ok) {
         lightData.clear();
-        const int timestampIdx = d->selectByAircraftIdQuery->record().indexOf("timestamp");
-        const int lightStatesIdx = d->selectByAircraftIdQuery->record().indexOf("light_states");
+        QSqlRecord record = d->selectByAircraftIdQuery->record();
+        const int timestampIdx = record.indexOf("timestamp");
+        const int lightStatesIdx = record.indexOf("light_states");
         while (d->selectByAircraftIdQuery->next()) {
 
             LightData data;

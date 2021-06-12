@@ -86,7 +86,7 @@ private:
     void updateRecordingFrequency(SampleRate::SampleRate sampleRate) noexcept;
     void updateRequestPeriod(::SIMCONNECT_PERIOD period) noexcept;
 
-    static void CALLBACK dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context) noexcept;
+    static void CALLBACK dispatch(::SIMCONNECT_RECV *receivedData, DWORD cbData, void *context) noexcept;
 
 private slots:
     void processSimConnectEvent() noexcept;

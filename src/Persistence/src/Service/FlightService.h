@@ -50,7 +50,7 @@ public:
     bool updateTitle(qint64 id, const QString &title) noexcept;
     bool updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept;
 
-    QVector<FlightSummary> getFlightDescriptions() const noexcept;
+    QVector<FlightSummary> getFlightSummaries() const noexcept;
 
 signals:
     void flightStored(qint64 flightId);

@@ -168,19 +168,20 @@ bool SQLitePositionDao::getByAircraftId(qint64 aircraftId, QVector<PositionData>
     bool ok = d->selectByAircraftIdQuery->exec();
     if (ok) {
         positionData.clear();
-        const int timestampIdx = d->selectByAircraftIdQuery->record().indexOf("timestamp");
-        const int latitudeIdx = d->selectByAircraftIdQuery->record().indexOf("latitude");
-        const int longitudeIdx = d->selectByAircraftIdQuery->record().indexOf("longitude");
-        const int altitudeIdx = d->selectByAircraftIdQuery->record().indexOf("altitude");
-        const int pitchIdx = d->selectByAircraftIdQuery->record().indexOf("pitch");
-        const int bankIdx = d->selectByAircraftIdQuery->record().indexOf("bank");
-        const int headingIdx = d->selectByAircraftIdQuery->record().indexOf("heading");
-        const int velocitXIdx = d->selectByAircraftIdQuery->record().indexOf("velocity_x");
-        const int velocitYIdx = d->selectByAircraftIdQuery->record().indexOf("velocity_y");
-        const int velocitZIdx = d->selectByAircraftIdQuery->record().indexOf("velocity_z");
-        const int rotationVelocityXIdx = d->selectByAircraftIdQuery->record().indexOf("rotation_velocity_x");
-        const int rotationVelocityYIdx = d->selectByAircraftIdQuery->record().indexOf("rotation_velocity_y");
-        const int rotationVelocityZIdx = d->selectByAircraftIdQuery->record().indexOf("rotation_velocity_z");
+        QSqlRecord record = d->selectByAircraftIdQuery->record();
+        const int timestampIdx = record.indexOf("timestamp");
+        const int latitudeIdx = record.indexOf("latitude");
+        const int longitudeIdx = record.indexOf("longitude");
+        const int altitudeIdx = record.indexOf("altitude");
+        const int pitchIdx = record.indexOf("pitch");
+        const int bankIdx = record.indexOf("bank");
+        const int headingIdx = record.indexOf("heading");
+        const int velocitXIdx = record.indexOf("velocity_x");
+        const int velocitYIdx = record.indexOf("velocity_y");
+        const int velocitZIdx = record.indexOf("velocity_z");
+        const int rotationVelocityXIdx = record.indexOf("rotation_velocity_x");
+        const int rotationVelocityYIdx = record.indexOf("rotation_velocity_y");
+        const int rotationVelocityZIdx = record.indexOf("rotation_velocity_z");
         while (d->selectByAircraftIdQuery->next()) {
 
             PositionData data;

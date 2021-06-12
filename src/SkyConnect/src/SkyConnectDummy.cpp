@@ -415,7 +415,7 @@ void SkyConnectDummy::recordFlightCondition() noexcept
 void SkyConnectDummy::recordAircraftInfo() noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-    AircraftInfo info;
+    AircraftInfo info(aircraft.getId());
 
     switch (d->randomGenerator->bounded(5)) {
     case 0:

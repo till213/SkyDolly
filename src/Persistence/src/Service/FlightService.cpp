@@ -139,7 +139,7 @@ bool FlightService::updateTitleAndDescription(qint64 id, const QString &title, c
     return ok;
 }
 
-QVector<FlightSummary> FlightService::getFlightDescriptions() const noexcept
+QVector<FlightSummary> FlightService::getFlightSummaries() const noexcept
 {
     QVector<FlightSummary> descriptions;
     if (QSqlDatabase::database().transaction()) {

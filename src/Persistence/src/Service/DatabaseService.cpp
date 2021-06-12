@@ -28,6 +28,7 @@
 
 #include "../../../Kernel/src/Settings.h"
 #include "../../../Kernel/src/Const.h"
+#include "../../../Model/src/Logbook.h"
 #include "../ConnectionManager.h"
 #include "DatabaseService.h"
 
@@ -59,6 +60,8 @@ bool DatabaseService::connectDb() noexcept
     if (ok) {
         ok = connectionManager.connectDb(logbookPath);
         if (ok) {
+            Flight &flight = Logbook::getInstance().getCurrentFlight();
+            flight.clear();
             ok = connectionManager.migrate();
         }
     }

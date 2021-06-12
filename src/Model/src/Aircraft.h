@@ -49,6 +49,7 @@ class MODEL_API Aircraft : public QObject
     Q_OBJECT
 public:
 
+    static constexpr qint64 InvalidId = -1;
     static constexpr qint64 InvalidSimulationId = -1;
 
     Aircraft(QObject *parent = nullptr) noexcept;
@@ -96,6 +97,7 @@ public:
     bool operator != (const Aircraft &rhs) const noexcept;
 
 signals:
+    void idAssigned(qint64 id);
     void infoChanged();
     void dataChanged();
 
