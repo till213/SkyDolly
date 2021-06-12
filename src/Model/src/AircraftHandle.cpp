@@ -81,7 +81,7 @@ const AircraftHandleData &AircraftHandle::getLast() const noexcept
     if (!d->aircraftHandleData.isEmpty()) {
         return d->aircraftHandleData.last();
     } else {
-        return AircraftHandleData::NullAircraftHandleData;
+        return AircraftHandleData::NullData;
     }
 }
 
@@ -145,7 +145,7 @@ const AircraftHandleData &AircraftHandle::interpolate(qint64 timestamp, TimeVari
                 d->previousAircraftHandleData = d->currentAircraftHandleData;
             } else {
                 // "Repeat values" setting disabled
-                d->previousAircraftHandleData = AircraftHandleData::NullAircraftHandleData;
+                d->previousAircraftHandleData = AircraftHandleData::NullData;
             }
             d->currentAircraftHandleData.leftWingFolding = SkyMath::interpolateLinear(p1->leftWingFolding, p2->leftWingFolding, tn);
             d->currentAircraftHandleData.rightWingFolding = SkyMath::interpolateLinear(p1->rightWingFolding, p2->rightWingFolding, tn);
@@ -158,7 +158,7 @@ const AircraftHandleData &AircraftHandle::interpolate(qint64 timestamp, TimeVari
             d->currentAircraftHandleData.timestamp = timestamp;
         } else {
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
-            d->currentAircraftHandleData = AircraftHandleData::NullAircraftHandleData;
+            d->currentAircraftHandleData = AircraftHandleData::NullData;
         }
 
         d->currentTimestamp = timestamp;

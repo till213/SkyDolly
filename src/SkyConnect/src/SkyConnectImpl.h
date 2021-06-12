@@ -31,6 +31,7 @@
 #include <windows.h>
 #include <SimConnect.h>
 
+#include "../../Kernel/src/SampleRate.h"
 #include "../../Model/src/TimeVariableData.h"
 #include "../../Kernel/src/SampleRate.h"
 #include "AbstractSkyConnect.h"
@@ -47,6 +48,7 @@ public:
     virtual ~SkyConnectImpl() noexcept;
 
 protected:
+    virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
     virtual bool onStartRecording() noexcept override;
     virtual void onRecordingPaused(bool paused ) noexcept override;
     virtual void onStopRecording() noexcept override;
@@ -56,7 +58,7 @@ protected:
     virtual void onStopReplay() noexcept override;
 
     virtual void onSeek(qint64 currentTimestamp) noexcept override;
-    virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
+    virtual void onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
 
     virtual bool sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept override;
     virtual bool isConnectedWithSim() const noexcept override;
@@ -66,11 +68,14 @@ protected:
     virtual void onDestroyAIObjects() noexcept override;
 
 protected slots:
-    virtual void processEvents() noexcept override;
+    virtual void sampleData() noexcept override;
 
 private:
     std::unique_ptr<SkyConnectPrivate> d;
 
+    void frenchConnection() noexcept;
+
+    void resetCurrentData() noexcept;
     bool reconnectWithSim() noexcept;
     bool close() noexcept;
     void setupRequestData() noexcept;
@@ -78,10 +83,13 @@ private:
     void setAircraftFrozen(::SIMCONNECT_OBJECT_ID objectId, bool enable) noexcept;
     bool sendAircraftData(TimeVariableData::Access access) noexcept;
     void replay() noexcept;
-    void updateRecordFrequency(SampleRate::SampleRate sampleRate) noexcept;
-    void updateRequestPeriod(::SIMCONNECT_PERIOD period);
+    void updateRecordingFrequency(SampleRate::SampleRate sampleRate) noexcept;
+    void updateRequestPeriod(::SIMCONNECT_PERIOD period) noexcept;
 
     static void CALLBACK dispatch(::SIMCONNECT_RECV *receivedData, DWORD cbData, void *context) noexcept;
+
+private slots:
+    void processSimConnectEvent() noexcept;
 };
 
 #endif // SKYCONNECTIMPL_H

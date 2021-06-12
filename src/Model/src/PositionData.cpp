@@ -46,4 +46,4 @@ PositionData::PositionData(double latitude, double longitude, double altitude) n
     this->altitude = altitude;
 }
 
-const PositionData PositionData::NullPositionData = PositionData(0.0, 0.0, 0.0);
+const PositionData PositionData::NullData = PositionData(0.0, 0.0, 0.0);
