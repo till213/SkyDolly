@@ -395,7 +395,7 @@ bool SkyConnectImpl::connectWithSim() noexcept
 {    
     HWND hWnd = reinterpret_cast<HWND>(d->eventWidget->winId());
     DWORD userEvent = EventWidget::SimConnnectUserMessage;
-    HRESULT result = ::SimConnect_Open(&(d->simConnectHandle), ::ConnectionName, hWnd, userEvent, nullptr, SIMCONNECT_OPEN_CONFIGINDEX_LOCAL);
+    HRESULT result = ::SimConnect_Open(&(d->simConnectHandle), ::ConnectionName, hWnd, userEvent, nullptr, ::SIMCONNECT_OPEN_CONFIGINDEX_LOCAL);
     if (result == S_OK) {
         d->simConnectAI = std::make_unique<SimConnectAI>(d->simConnectHandle);
         setupRequestData();
@@ -628,20 +628,20 @@ void SkyConnectImpl::updateRequestPeriod(::SIMCONNECT_PERIOD period) noexcept
     }
 }
 
-void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbData, void *context) noexcept
+void CALLBACK SkyConnectImpl::dispatch(::SIMCONNECT_RECV *receivedData, DWORD cbData, void *context) noexcept
 {
     Q_UNUSED(cbData);
 
     SkyConnectImpl *skyConnect = static_cast<SkyConnectImpl *>(context);
     Flight &currentFlight = skyConnect->getCurrentFlight();
     Aircraft &userAircraft = currentFlight.getUserAircraft();
-    SIMCONNECT_RECV_SIMOBJECT_DATA *objectData;
+    ::SIMCONNECT_RECV_SIMOBJECT_DATA *objectData;
 
     bool dataStored = false;
     switch (receivedData->dwID) {
-    case SIMCONNECT_RECV_ID_EVENT:
+    case ::SIMCONNECT_RECV_ID_EVENT:
     {
-        const SIMCONNECT_RECV_EVENT *evt = reinterpret_cast<SIMCONNECT_RECV_EVENT *>(receivedData);
+        const ::SIMCONNECT_RECV_EVENT *evt = reinterpret_cast<::SIMCONNECT_RECV_EVENT *>(receivedData);
         switch (static_cast<Event>(evt->uEventID)) {
         case Event::SimStart:
 #ifdef DEBUG
@@ -686,9 +686,9 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
         break;
     }
 
-    case SIMCONNECT_RECV_ID_SIMOBJECT_DATA_BYTYPE:
+    case ::SIMCONNECT_RECV_ID_SIMOBJECT_DATA_BYTYPE:
     {
-        objectData = reinterpret_cast<SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE *>(receivedData);
+        objectData = reinterpret_cast<::SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE *>(receivedData);
         switch (static_cast<DataRequest>(objectData->dwRequestID)) {
         case DataRequest::AircraftInfo:
         {
@@ -706,9 +706,9 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
         break;
     }
 
-    case SIMCONNECT_RECV_ID_SIMOBJECT_DATA:
+    case ::SIMCONNECT_RECV_ID_SIMOBJECT_DATA:
     {
-        objectData = reinterpret_cast<SIMCONNECT_RECV_SIMOBJECT_DATA *>(receivedData);
+        objectData = reinterpret_cast<::SIMCONNECT_RECV_SIMOBJECT_DATA *>(receivedData);
 
         const bool storeDataImmediately = skyConnect->d->storeDataImmediately;
         switch (static_cast<DataRequest>(objectData->dwRequestID)) {
@@ -858,7 +858,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
         break;
     }
 
-    case SIMCONNECT_RECV_ID_EVENT_FRAME:
+    case ::SIMCONNECT_RECV_ID_EVENT_FRAME:
     {
         const Connect::State state = skyConnect->getState();
         if (state == Connect::State::Replay) {
@@ -873,7 +873,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
         break;
     }
 
-    case SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID:
+    case ::SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID:
     {
         SIMCONNECT_RECV_ASSIGNED_OBJECT_ID *objectData = (SIMCONNECT_RECV_ASSIGNED_OBJECT_ID*)receivedData;
         Aircraft *aircraft = skyConnect->d->pendingAIAircraftCreationRequests[objectData->dwRequestID];
@@ -887,20 +887,20 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
         break;
     }
 
-    case SIMCONNECT_RECV_ID_QUIT:
+    case ::SIMCONNECT_RECV_ID_QUIT:
 #ifdef DEBUG
         qDebug("SIMCONNECT_RECV_ID_QUIT");
 #endif
         skyConnect->close();
         break;
 
-    case SIMCONNECT_RECV_ID_OPEN:
+    case ::SIMCONNECT_RECV_ID_OPEN:
 #ifdef DEBUG
         qDebug("SIMCONNECT_RECV_ID_OPEN");
 #endif
         break;
 
-    case SIMCONNECT_RECV_ID_EXCEPTION:
+    case ::SIMCONNECT_RECV_ID_EXCEPTION:
 #ifdef DEBUG
     {
         SIMCONNECT_RECV_EXCEPTION *exception = static_cast<SIMCONNECT_RECV_EXCEPTION *>(receivedData);
@@ -909,7 +909,7 @@ void CALLBACK SkyConnectImpl::dispatch(SIMCONNECT_RECV *receivedData, DWORD cbDa
     }
 #endif
         break;
-    case SIMCONNECT_RECV_ID_NULL:
+    case ::SIMCONNECT_RECV_ID_NULL:
 #ifdef DEBUG
         qDebug("SIMCONNECT_RECV_ID_NULL");
 #endif

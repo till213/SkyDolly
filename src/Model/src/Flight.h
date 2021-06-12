@@ -114,10 +114,8 @@ public:
 
 signals:
     void flightChanged();
-    void aircraftInfoChanged();
-    void positionDataChanged();
     void flightConditionChanged();
-    void userAircraftChanged(const Aircraft &aircraft);
+    void userAircraftChanged(Aircraft &aircraft);
 
 private:
     Q_DISABLE_COPY(Flight)

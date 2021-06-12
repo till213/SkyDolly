@@ -29,8 +29,10 @@
 #include <vector>
 
 #include <QtGlobal>
+#include <QVector>
 
 class Aircraft;
+class AircraftInfo;
 
 class AircraftDaoIntf
 {
@@ -51,6 +53,7 @@ public:
     virtual bool add(qint64 flightId, int sequenceNumber, Aircraft &aircraft) = 0;
     virtual bool getByFlightId(qint64 flightId, std::vector<std::unique_ptr<Aircraft>> &aircrafts) const = 0;
     virtual bool deleteByFlightId(qint64 flightId) = 0;
+    virtual bool getAircraftInfosByFlightId(qint64 flightId, std::vector<AircraftInfo> &aircraftInfos) const = 0;
 };
 
 #endif // AIRCRAFTDAOINTF_H

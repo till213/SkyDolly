@@ -35,6 +35,8 @@ class QAction;
 #include "../AbstractModuleWidget.h"
 #include "../ModuleLib.h"
 
+class Aircraft;
+
 namespace Ui {
     class FormationWidget;
 }
@@ -69,9 +71,14 @@ private:
     std::unique_ptr<FormationWidgetPrivate> d;
 
     void initUi() noexcept;
+    void updateEditUi() noexcept;
     void frenchConnection() noexcept;
 
     static const QString getName();
+
+private slots:
+    void handleUserAircraftChanged(Aircraft &aircraft) noexcept;
+    void handleAircraftIdAssigned(qint64 id) noexcept;
 };
 
 #endif // FORMATIONWIDGET_H

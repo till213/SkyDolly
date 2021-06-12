@@ -26,10 +26,12 @@
 #define AIRCRAFTSERVICE_H
 
 #include <memory>
+#include <vector>
 
 #include <QtGlobal>
 
 #include "../../../Model/src/Aircraft.h"
+#include "../../../Model/src/AircraftInfo.h"
 #include "../PersistenceLib.h"
 
 class AircraftServicePrivate;
@@ -41,6 +43,7 @@ public:
     ~AircraftService() noexcept;
 
     bool store(qint64 flightId, int sequenceNumber, Aircraft &aircraft) noexcept;
+    bool getAircraftInfos(qint64 flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept;
 
 private:
     std::unique_ptr<AircraftServicePrivate> d;

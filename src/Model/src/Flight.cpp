@@ -138,11 +138,6 @@ Aircraft &Flight::addUserAircraft() noexcept
 {
     std::unique_ptr<Aircraft> aircraft = std::make_unique<Aircraft>();
 
-    connect(aircraft.get(), &Aircraft::infoChanged,
-            this, &Flight::aircraftInfoChanged);
-    connect(aircraft.get(), &Aircraft::dataChanged,
-            this, &Flight::positionDataChanged);
-
     d->aircrafts.push_back(std::move(aircraft));
     setUserAircraftIndex(d->aircrafts.size() - 1);
 

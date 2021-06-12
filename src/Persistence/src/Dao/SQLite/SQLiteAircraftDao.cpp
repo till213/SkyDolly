@@ -252,53 +252,16 @@ bool SQLiteAircraftDao::add(qint64 flightId, int sequenceNumber, Aircraft &aircr
 
 bool SQLiteAircraftDao::getByFlightId(qint64 flightId, std::vector<std::unique_ptr<Aircraft>> &aircrafts) const noexcept
 {
-    d->initQueries();
-    d->selectByFlightIdQuery->bindValue(":flight_id", flightId);
-    bool ok = d->selectByFlightIdQuery->exec();
+    std::vector<AircraftInfo> aircraftInfos;
+    bool ok = getAircraftInfosByFlightId(flightId, aircraftInfos);
     if (ok) {
         aircrafts.clear();
-        const int idIdx = d->selectByFlightIdQuery->record().indexOf("id");
-        const int startDateIdx = d->selectByFlightIdQuery->record().indexOf("start_date");
-        const int endDateIdx = d->selectByFlightIdQuery->record().indexOf("end_date");
-        const int typeIdx = d->selectByFlightIdQuery->record().indexOf("type");
-        const int tailNumberIdx = d->selectByFlightIdQuery->record().indexOf("tail_number");
-        const int airlineIdx = d->selectByFlightIdQuery->record().indexOf("airline");
-        const int flightNumberIdx = d->selectByFlightIdQuery->record().indexOf("flight_number");
-        const int categoryIdx = d->selectByFlightIdQuery->record().indexOf("category");
-        const int initialAirspeedIdx = d->selectByFlightIdQuery->record().indexOf("initial_airspeed");
-        const int wingSpanIdx = d->selectByFlightIdQuery->record().indexOf("wing_span");
-        const int engineTypeIdx = d->selectByFlightIdQuery->record().indexOf("engine_type");
-        const int nofEnginesIdx = d->selectByFlightIdQuery->record().indexOf("nof_engines");
-        const int airCraftAltitudeAboveGroundIdx = d->selectByFlightIdQuery->record().indexOf("altitude_above_ground");
-        const int startOnGroundIdx = d->selectByFlightIdQuery->record().indexOf("start_on_ground");
-        while (d->selectByFlightIdQuery->next()) {
+        for (const AircraftInfo &info: aircraftInfos) {
             std::unique_ptr<Aircraft> aircraft = std::make_unique<Aircraft>();
-            aircraft->setId(d->selectByFlightIdQuery->value(idIdx).toLongLong());
-
-            AircraftInfo info;
-            QDateTime dateTime = d->selectByFlightIdQuery->value(startDateIdx).toDateTime();
-            dateTime.setTimeZone(QTimeZone::utc());
-            info.startDate = dateTime.toLocalTime();
-            dateTime = d->selectByFlightIdQuery->value(endDateIdx).toDateTime();
-            dateTime.setTimeZone(QTimeZone::utc());
-            info.endDate = dateTime.toLocalTime();
-            info.type = d->selectByFlightIdQuery->value(typeIdx).toString();
-            info.tailNumber = d->selectByFlightIdQuery->value(tailNumberIdx).toString();
-            info.airline = d->selectByFlightIdQuery->value(airlineIdx).toString();
-            info.flightNumber = d->selectByFlightIdQuery->value(flightNumberIdx).toString();
-            info.category = d->selectByFlightIdQuery->value(categoryIdx).toString();
-            info.initialAirspeed = d->selectByFlightIdQuery->value(initialAirspeedIdx).toInt();
-            info.wingSpan = d->selectByFlightIdQuery->value(wingSpanIdx).toInt();
-            info.engineType = static_cast<SimType::EngineType>(d->selectByFlightIdQuery->value(engineTypeIdx).toInt());
-            info.numberOfEngines = d->selectByFlightIdQuery->value(nofEnginesIdx).toInt();
-            info.altitudeAboveGround = d->selectByFlightIdQuery->value(airCraftAltitudeAboveGroundIdx).toInt();
-            info.startOnGround = d->selectByFlightIdQuery->value(startOnGroundIdx).toBool();
-
+            aircraft->setId(info.aircraftId);
             aircraft->setAircraftInfo(info);
 
-            if (ok) {
-                ok = d->positionDao->getByAircraftId(aircraft->getId(), aircraft->getPosition().getAll());
-            }
+            ok = d->positionDao->getByAircraftId(aircraft->getId(), aircraft->getPosition().getAll());
             if (ok) {
                 ok = d->engineDao->getByAircraftId(aircraft->getId(), aircraft->getEngine().getAll());
             }
@@ -364,6 +327,54 @@ bool SQLiteAircraftDao::deleteByFlightId(qint64 flightId) noexcept
 #endif
     }
 
+    return ok;
+}
+
+bool SQLiteAircraftDao::getAircraftInfosByFlightId(qint64 flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept
+{
+    d->initQueries();
+    d->selectByFlightIdQuery->bindValue(":flight_id", flightId);
+    bool ok = d->selectByFlightIdQuery->exec();
+    if (ok) {
+        aircraftInfos.clear();
+        QSqlRecord record = d->selectByFlightIdQuery->record();
+        const int idIdx = record.indexOf("id");
+        const int startDateIdx = record.indexOf("start_date");
+        const int endDateIdx = record.indexOf("end_date");
+        const int typeIdx = record.indexOf("type");
+        const int tailNumberIdx = record.indexOf("tail_number");
+        const int airlineIdx = record.indexOf("airline");
+        const int flightNumberIdx = record.indexOf("flight_number");
+        const int categoryIdx = record.indexOf("category");
+        const int initialAirspeedIdx = record.indexOf("initial_airspeed");
+        const int wingSpanIdx = record.indexOf("wing_span");
+        const int engineTypeIdx = record.indexOf("engine_type");
+        const int nofEnginesIdx = record.indexOf("nof_engines");
+        const int airCraftAltitudeAboveGroundIdx = record.indexOf("altitude_above_ground");
+        const int startOnGroundIdx = record.indexOf("start_on_ground");
+        while (d->selectByFlightIdQuery->next()) {
+            AircraftInfo info(d->selectByFlightIdQuery->value(idIdx).toLongLong());
+            QDateTime dateTime = d->selectByFlightIdQuery->value(startDateIdx).toDateTime();
+            dateTime.setTimeZone(QTimeZone::utc());
+            info.startDate = dateTime.toLocalTime();
+            dateTime = d->selectByFlightIdQuery->value(endDateIdx).toDateTime();
+            dateTime.setTimeZone(QTimeZone::utc());
+            info.endDate = dateTime.toLocalTime();
+            info.type = d->selectByFlightIdQuery->value(typeIdx).toString();
+            info.tailNumber = d->selectByFlightIdQuery->value(tailNumberIdx).toString();
+            info.airline = d->selectByFlightIdQuery->value(airlineIdx).toString();
+            info.flightNumber = d->selectByFlightIdQuery->value(flightNumberIdx).toString();
+            info.category = d->selectByFlightIdQuery->value(categoryIdx).toString();
+            info.initialAirspeed = d->selectByFlightIdQuery->value(initialAirspeedIdx).toInt();
+            info.wingSpan = d->selectByFlightIdQuery->value(wingSpanIdx).toInt();
+            info.engineType = static_cast<SimType::EngineType>(d->selectByFlightIdQuery->value(engineTypeIdx).toInt());
+            info.numberOfEngines = d->selectByFlightIdQuery->value(nofEnginesIdx).toInt();
+            info.altitudeAboveGround = d->selectByFlightIdQuery->value(airCraftAltitudeAboveGroundIdx).toInt();
+            info.startOnGround = d->selectByFlightIdQuery->value(startOnGroundIdx).toBool();
+
+            aircraftInfos.push_back(info);
+        }
+    }
     return ok;
 }
 
