@@ -81,11 +81,12 @@ protected:
     Flight &getCurrentFlight() const;
     void setCurrentTimestamp(qint64 timestamp) noexcept;
 
-    bool isElapsedTimerRunning() const noexcept;
-    bool isAutoRecordSampleRate() const noexcept;
+    bool isElapsedTimerRunning() const noexcept;   
     void startElapsedTimer() const noexcept;
     void resetElapsedTime(bool restart) noexcept;
     void updateCurrentTimestamp() noexcept;
+
+    virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept = 0;
 
     virtual bool onStartRecording() noexcept = 0;
     virtual void onRecordingPaused(bool paused) noexcept = 0;
@@ -96,7 +97,7 @@ protected:
     virtual void onStopReplay() noexcept = 0;
 
     virtual void onSeek(qint64 currentTimestamp) noexcept = 0;
-    virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept = 0;
+    virtual void onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept = 0;
 
     virtual bool sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept = 0;
     virtual bool isConnectedWithSim() const noexcept = 0;
@@ -106,7 +107,7 @@ protected:
     virtual void onDestroyAIObjects() noexcept = 0;
 
 protected slots:
-    virtual void processEvents() noexcept = 0;
+    virtual void sampleData() noexcept = 0;
 
 private:
     Q_DISABLE_COPY(AbstractSkyConnect)
@@ -119,7 +120,7 @@ private:
     inline bool retryWithReconnect(std::function<bool()> func);
 
 private slots:
-    void handleRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept;
+    void handleRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept;
 };
 
 #endif // ABSTRACTSKYCONNECTIMPL_H

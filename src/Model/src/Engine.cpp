@@ -77,7 +77,7 @@ const EngineData &Engine::getLast() const noexcept
     if (!d->engineData.isEmpty()) {
         return d->engineData.last();
     } else {
-        return EngineData::NullEngineData;
+        return EngineData::NullData;
     }
 }
 
@@ -160,7 +160,7 @@ const EngineData &Engine::interpolate(qint64 timestamp, TimeVariableData::Access
             d->currentEngineData.timestamp = timestamp;
         } else {
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
-            d->currentEngineData = EngineData::NullEngineData;
+            d->currentEngineData = EngineData::NullData;
         }
 
         d->currentTimestamp = timestamp;

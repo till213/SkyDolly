@@ -31,4 +31,4 @@ LightData::LightData(SimType::LightStates theLightStates) noexcept
       lightStates(theLightStates)
 {}
 
-const LightData LightData::NullLightData = LightData();
+const LightData LightData::NullData = LightData();

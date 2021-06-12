@@ -77,7 +77,7 @@ const PositionData &Position::getFirst() const noexcept
     if (!d->positionData.isEmpty()) {
         return d->positionData.first();
     } else {
-        return PositionData::NullPositionData;
+        return PositionData::NullData;
     }
 }
 
@@ -86,7 +86,7 @@ const PositionData &Position::getLast() const noexcept
     if (!d->positionData.isEmpty()) {
         return d->positionData.last();
     } else {
-        return PositionData::NullPositionData;
+        return PositionData::NullData;
     }
 }
 
@@ -167,7 +167,7 @@ const PositionData &Position::interpolate(qint64 timestamp, TimeVariableData::Ac
 
         } else {
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
-            d->currentPositionData = PositionData::NullPositionData;
+            d->currentPositionData = PositionData::NullData;
         }
         d->currentTimestamp = timestamp;
 #ifdef DEBUG

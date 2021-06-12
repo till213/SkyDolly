@@ -925,8 +925,8 @@ void MainWindow::updateMainWindow() noexcept
         }
     }
 
-    if (settings.getRecordSampleRate() != SampleRate::SampleRate::Auto) {
-        ui->recordAction->setToolTip(tr("Record [@%1 Hz]").arg(Settings::getInstance().getRecordSampleRateValue()));
+    if (settings.getRecordingSampleRate() != SampleRate::SampleRate::Auto) {
+        ui->recordAction->setToolTip(tr("Record [@%1 Hz]").arg(Settings::getInstance().getRecordingSampleRateValue()));
     } else {
         ui->recordAction->setToolTip(tr("Record [auto sample rate]"));
     }

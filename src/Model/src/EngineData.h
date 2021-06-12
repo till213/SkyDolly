@@ -66,7 +66,7 @@ struct MODEL_API EngineData : public TimeVariableData
     EngineData(const EngineData &) = default;
     EngineData &operator= (const EngineData &) = default;
 
-    static const EngineData NullEngineData;
+    static const EngineData NullData;
 };
 
 #endif // ENGINEDATA_H
