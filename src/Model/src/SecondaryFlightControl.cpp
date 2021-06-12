@@ -79,7 +79,7 @@ const SecondaryFlightControlData &SecondaryFlightControl::getLast() const noexce
     if (!d->secondaryFlightControlData.isEmpty()) {
         return d->secondaryFlightControlData.last();
     } else {
-        return SecondaryFlightControlData::NullSecondaryFlightControlData;
+        return SecondaryFlightControlData::NullData;
     }
 }
 
@@ -146,7 +146,7 @@ const SecondaryFlightControlData &SecondaryFlightControl::interpolate(qint64 tim
                 d->previousSecondaryFlightControlData = d->currentSecondaryFlightControlData;
             } else {
                 // "Repeat values" setting disabled
-                d->previousSecondaryFlightControlData = SecondaryFlightControlData::NullSecondaryFlightControlData;
+                d->previousSecondaryFlightControlData = SecondaryFlightControlData::NullData;
             }
 
             d->currentSecondaryFlightControlData.timestamp = timestamp;
@@ -156,7 +156,7 @@ const SecondaryFlightControlData &SecondaryFlightControl::interpolate(qint64 tim
             d->currentSecondaryFlightControlData.timestamp = timestamp;
         } else {
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
-            d->currentSecondaryFlightControlData = SecondaryFlightControlData::NullSecondaryFlightControlData;
+            d->currentSecondaryFlightControlData = SecondaryFlightControlData::NullData;
         }
 
         d->currentTimestamp = timestamp;

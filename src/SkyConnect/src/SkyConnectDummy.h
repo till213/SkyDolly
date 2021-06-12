@@ -53,7 +53,7 @@ protected:
     virtual void onStopReplay() noexcept override;
 
     virtual void onSeek(qint64 currentTimestamp) noexcept override;
-    virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
+    virtual void onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
 
     virtual bool sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept override;
     virtual bool isConnectedWithSim() const noexcept override;
@@ -63,7 +63,7 @@ protected:
     virtual void onDestroyAIObjects() noexcept override;
 
 protected slots:
-    virtual void processEvents() noexcept override;
+    virtual void sampleData() noexcept override;
 
 private:
     std::unique_ptr<SkyConnectDummyPrivate> d;

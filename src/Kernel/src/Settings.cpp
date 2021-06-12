@@ -41,7 +41,7 @@ public:
     Version version;
 
     QString logbookPath;
-    double recordSampleRateValue;
+    double recordingSampleRateValue;
     bool windowStayOnTop;
     bool minimalUi;
     QByteArray windowGeometry;
@@ -61,7 +61,7 @@ public:
     int previewInfoDialogCount;
 
     static Settings *instance;
-    static constexpr double DefaultRecordSampleRate = SampleRate::toValue(SampleRate::SampleRate::Auto);
+    static constexpr double DefaultRecordingSampleRate = SampleRate::toValue(SampleRate::SampleRate::Auto);
     static constexpr bool DefaultWindowStayOnTop = false;
     static constexpr bool DefaultMinimalUi = false;
     static constexpr bool DefaultAbsoluteSeek = true;
@@ -139,22 +139,22 @@ void Settings::setExportPath(QString exportPath)
     }
 }
 
-SampleRate::SampleRate Settings::getRecordSampleRate() const noexcept
+SampleRate::SampleRate Settings::getRecordingSampleRate() const noexcept
 {
-    return SampleRate::fromValue(d->recordSampleRateValue);
+    return SampleRate::fromValue(d->recordingSampleRateValue);
 }
 
-double Settings::getRecordSampleRateValue() const noexcept
+double Settings::getRecordingSampleRateValue() const noexcept
 {
-    return d->recordSampleRateValue;
+    return d->recordingSampleRateValue;
 }
 
-void Settings::setRecordSampleRate(SampleRate::SampleRate sampleRate) noexcept
+void Settings::setRecordingSampleRate(SampleRate::SampleRate sampleRate) noexcept
 {
     double sampleRateValue = SampleRate::toValue(sampleRate);
-    if (d->recordSampleRateValue != sampleRateValue) {
-        d->recordSampleRateValue = sampleRateValue;
-        emit recordSampleRateChanged(sampleRate);
+    if (d->recordingSampleRateValue != sampleRateValue) {
+        d->recordingSampleRateValue = sampleRateValue;
+        emit recordingSampleRateChanged(sampleRate);
     }
 }
 
@@ -320,7 +320,7 @@ void Settings::store() noexcept
     d->settings.endGroup();
     d->settings.beginGroup("Recording");
     {
-        d->settings.setValue("RecordSampleRate", d->recordSampleRateValue);
+        d->settings.setValue("RecordingSampleRate", d->recordingSampleRateValue);
     }
     d->settings.endGroup();
     d->settings.beginGroup("Replay");
@@ -379,10 +379,10 @@ void Settings::restore() noexcept
     d->settings.endGroup();
     d->settings.beginGroup("Recording");
     {
-        d->recordSampleRateValue = d->settings.value("RecordSampleRate", SettingsPrivate::DefaultRecordSampleRate).toDouble(&ok);
+        d->recordingSampleRateValue = d->settings.value("RecordingSampleRate", SettingsPrivate::DefaultRecordingSampleRate).toDouble(&ok);
         if (!ok) {
-            qWarning("The record sample rate in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultRecordSampleRate);
-            d->recordSampleRateValue = SettingsPrivate::DefaultRecordSampleRate;
+            qWarning("The recording sample rate in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultRecordingSampleRate);
+            d->recordingSampleRateValue = SettingsPrivate::DefaultRecordingSampleRate;
         }
     }
     d->settings.endGroup();    
@@ -466,7 +466,7 @@ void Settings::frenchConnection() noexcept
 {
     connect(this, &Settings::logbookPathChanged,
             this, &Settings::changed);
-    connect(this, &Settings::recordSampleRateChanged,
+    connect(this, &Settings::recordingSampleRateChanged,
             this, &Settings::changed);
     connect(this, &Settings::stayOnTopChanged,
             this, &Settings::changed);

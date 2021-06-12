@@ -124,7 +124,7 @@ void SettingsDialog::updateUi() noexcept
 {
     Settings &settings = Settings::getInstance();
     // Recording
-    ui->recordFrequencyComboBox->setCurrentIndex(Enum::toUnderlyingType(settings.getRecordSampleRate()));
+    ui->recordFrequencyComboBox->setCurrentIndex(Enum::toUnderlyingType(settings.getRecordingSampleRate()));
 
     // Replay
     ui->absoluteSeekEnabledCheckBox->setChecked(settings.isAbsoluteSeekEnabled());
@@ -143,7 +143,7 @@ void SettingsDialog::handleAccepted() noexcept
     Settings &settings = Settings::getInstance();
 
     // Recording
-    settings.setRecordSampleRate(static_cast<SampleRate::SampleRate>(ui->recordFrequencyComboBox->currentIndex()));
+    settings.setRecordingSampleRate(static_cast<SampleRate::SampleRate>(ui->recordFrequencyComboBox->currentIndex()));
 
     // Replay
     settings.setAbsoluteSeekEnabled(ui->absoluteSeekEnabledCheckBox->isChecked());

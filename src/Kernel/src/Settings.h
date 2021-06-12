@@ -82,23 +82,23 @@ public:
      *
      * \return the SampleRate#SampleRate enumeration value.
      */
-    SampleRate::SampleRate getRecordSampleRate() const noexcept;
+    SampleRate::SampleRate getRecordingSampleRate() const noexcept;
 
     /*!
      * Returns the recording sample rate in Hz.
      *
      * \return the recording sample rate in Hz
      */
-    double getRecordSampleRateValue() const noexcept;
+    double getRecordingSampleRateValue() const noexcept;
 
     /*!
      * Sets the recording sample rate.
      *
      * \param sampleRate
      *        the SampleRate#SampleRate enumeration value
-     * \sa recordSampleRateChanged()
+     * \sa recordingSampleRateChanged()
      */
-    void setRecordSampleRate(SampleRate::SampleRate sampleRate) noexcept;
+    void setRecordingSampleRate(SampleRate::SampleRate sampleRate) noexcept;
 
     /*!
      * Returns whether the \e stay \e on \e top option is enabled.
@@ -348,7 +348,7 @@ signals:
      *
      * \sa changed()
      */
-    void recordSampleRateChanged(SampleRate::SampleRate sampleRate);
+    void recordingSampleRateChanged(SampleRate::SampleRate sampleRate);
 
     /*!
      * Emitted when the stay on top option has changed.

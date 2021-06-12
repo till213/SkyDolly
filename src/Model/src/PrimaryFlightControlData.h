@@ -43,7 +43,7 @@ struct MODEL_API PrimaryFlightControlData : public TimeVariableData
     PrimaryFlightControlData(const PrimaryFlightControlData &) = default;
     PrimaryFlightControlData &operator= (const PrimaryFlightControlData &) = default;
 
-    static const PrimaryFlightControlData NullPrimaryFlightControlData;
+    static const PrimaryFlightControlData NullData;
 };
 
 #endif // PRIMARYFLIGHTCONTROLDATA_H
