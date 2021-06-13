@@ -56,6 +56,7 @@ namespace
     constexpr int MinimumTableWidth = 600;
     constexpr int InvalidSelection = -1;
     constexpr int InvalidColumn = -1;
+    constexpr int FlightIdColumn = 0;
 }
 
 class LogbookWidgetPrivate
@@ -322,9 +323,9 @@ void LogbookWidget::updateAircraftIcon() noexcept
 void LogbookWidget::handleSelectionChanged() noexcept
 {
     QItemSelectionModel *select = ui->logTableWidget->selectionModel();
-    QModelIndexList selectedRow = select->selectedRows(0);
-    if (selectedRow.count() > 0) {
-        QModelIndex modelIndex = selectedRow.at(0);
+    QModelIndexList modelIndices = select->selectedRows(FlightIdColumn);
+    if (modelIndices.count() > 0) {
+        QModelIndex modelIndex = modelIndices.at(0);
         d->selectedRow = modelIndex.row();
         d->selectedFlightId = ui->logTableWidget->model()->data(modelIndex).toLongLong();
     } else {
