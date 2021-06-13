@@ -48,7 +48,7 @@ public:
     virtual bool deleteById(qint64 id) noexcept override;
     virtual bool updateTitle(qint64 id, const QString &title) noexcept override;
     virtual bool updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept override;
-    virtual bool updateUserAircraftIndex(qint64 id, int userAircraftIndex) noexcept override;
+    virtual bool updateUserAircraftIndex(qint64 id, int index) noexcept override;
 
     virtual QVector<FlightSummary> getFlightSummaries() const noexcept override;
 

@@ -27,9 +27,9 @@
 #include <QWidget>
 #include <QAction>
 #include <QTableWidget>
-#include <QPalette>
-#include <QColor>
+#include <QIcon>
 
+#include "../../../Kernel/src/Unit.h"
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/AircraftInfo.h"
@@ -60,6 +60,7 @@ public:
     QMetaObject::Connection aircraftInfoChangedConnection;
     std::unique_ptr<QAction> moduleAction;
     std::unique_ptr<AircraftService> aircraftService;
+    Unit unit;
 };
 
 // PUBLIC
@@ -107,6 +108,8 @@ void FormationWidget::showEvent(QShowEvent *event) noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::userAircraftChanged,
             this, &FormationWidget::handleUserAircraftChanged);
+
+    updateUi();
 }
 
 void FormationWidget::hideEvent(QHideEvent *event) noexcept
@@ -118,57 +121,7 @@ void FormationWidget::hideEvent(QHideEvent *event) noexcept
                this, &FormationWidget::handleUserAircraftChanged);
 }
 
-void FormationWidget::updateUi() noexcept
-{
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
 
-    std::vector<std::unique_ptr<Aircraft>> &aircrafts = flight.getAircrafts();
-    ui->aircraftTableWidget->blockSignals(true);
-    ui->aircraftTableWidget->setSortingEnabled(false);
-    ui->aircraftTableWidget->clearContents();
-    ui->aircraftTableWidget->setRowCount(aircrafts.size());
-    int rowIndex = 0;
-    for (const auto &aircraft : aircrafts) {
-
-        const AircraftInfo &aircraftInfo = aircraft->getAircraftInfoConst();
-
-        QBrush backgroundColor = QGuiApplication::palette().base();
-        int columnIndex = 0;
-
-        // ID
-        QTableWidgetItem *newItem = new QTableWidgetItem();
-        if (aircraftInfo.aircraftId != Aircraft::InvalidId) {
-            newItem->setData(Qt::DisplayRole, aircraftInfo.aircraftId);
-        } else if (SkyManager::getInstance().getCurrentSkyConnect().isRecording()) {
-            backgroundColor = Qt::red;
-        }
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
-        ++columnIndex;
-
-        // Sequence
-        newItem = new QTableWidgetItem();
-        // Sequence numbers start at 1
-        newItem->setData(Qt::DisplayRole, rowIndex + 1);
-        newItem->setBackground(backgroundColor);
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
-        ++columnIndex;
-
-        // Type
-        newItem = new QTableWidgetItem(aircraftInfo.type);
-        newItem->setBackground(backgroundColor);
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
-        ++columnIndex;
-
-        ++rowIndex;
-    }
-    // Don't show internal aircraft IDs
-    ui->aircraftTableWidget->hideColumn(0);
-    ui->aircraftTableWidget->setSortingEnabled(true);
-    ui->aircraftTableWidget->resizeColumnsToContents();
-    ui->aircraftTableWidget->blockSignals(false);
-
-    updateEditUi();
-}
 
 // PROTECTED SLOTS
 
@@ -192,7 +145,7 @@ void FormationWidget::initUi() noexcept
 
     ui->aircraftTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    const QStringList headers {tr("ID"), tr("Sequence"), tr("Type")};
+    const QStringList headers {tr("ID"), tr("Sequence"), tr("Type"), tr("Category"), tr("Wing Span"), tr("Initial Airspeed"), tr("Initial Altitude Above Ground")};
     ui->aircraftTableWidget->setColumnCount(headers.count());
     ui->aircraftTableWidget->setHorizontalHeaderLabels(headers);
     ui->aircraftTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -203,6 +156,87 @@ void FormationWidget::initUi() noexcept
     ui->aircraftTableWidget->sortByColumn(1, Qt::SortOrder::AscendingOrder);
 }
 
+void FormationWidget::updateUi() noexcept
+{
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+
+    std::vector<std::unique_ptr<Aircraft>> &aircrafts = flight.getAircrafts();
+    ui->aircraftTableWidget->blockSignals(true);
+    ui->aircraftTableWidget->setSortingEnabled(false);
+    ui->aircraftTableWidget->clearContents();
+    ui->aircraftTableWidget->setRowCount(aircrafts.size());
+    int rowIndex = 0;
+    const int userAircraftIndex = flight.getUserAircraftIndex();
+    const bool recording = SkyManager::getInstance().getCurrentSkyConnect().isRecording();
+    for (const auto &aircraft : aircrafts) {
+
+        const AircraftInfo &aircraftInfo = aircraft->getAircraftInfoConst();
+        int columnIndex = 0;
+
+        // ID
+        QTableWidgetItem *newItem = new QTableWidgetItem();
+        if (aircraftInfo.aircraftId != Aircraft::InvalidId) {
+            newItem->setData(Qt::DisplayRole, aircraftInfo.aircraftId);
+        }
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        ++columnIndex;
+
+        // Sequence
+        newItem = new QTableWidgetItem();
+        if (rowIndex == userAircraftIndex) {
+            QIcon icon;
+            if (recording) {
+                icon = QIcon(":/img/icons/record-aircraft-normal.png");
+            } else {
+                icon = QIcon(":/img/icons/user-aircraft-normal.png");
+            }
+            newItem->setIcon(icon);
+        }
+        // Sequence numbers start at 1
+        newItem->setData(Qt::DisplayRole, rowIndex + 1);
+        newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        ++columnIndex;
+
+        // Type
+        newItem = new QTableWidgetItem(aircraftInfo.type);
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        ++columnIndex;
+
+        // Category
+        newItem = new QTableWidgetItem(aircraftInfo.category);
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        ++columnIndex;
+
+        // Wing span
+        newItem = new QTableWidgetItem(d->unit.formatFeet(aircraftInfo.wingSpan));
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        ++columnIndex;
+
+        // Initial airspeed
+        newItem = new QTableWidgetItem(d->unit.formatKnots(aircraftInfo.initialAirspeed));
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        ++columnIndex;
+
+        // Initial altitude above ground
+        newItem = new QTableWidgetItem(d->unit.formatFeet(aircraftInfo.altitudeAboveGround));
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        ++columnIndex;
+
+        ++rowIndex;
+    }
+    // Don't show internal aircraft IDs
+    ui->aircraftTableWidget->hideColumn(0);
+    ui->aircraftTableWidget->setSortingEnabled(true);
+    ui->aircraftTableWidget->resizeColumnsToContents();
+    ui->aircraftTableWidget->blockSignals(false);
+
+    updateEditUi();
+}
+
 void FormationWidget::updateEditUi() noexcept
 {
 
@@ -210,7 +244,8 @@ void FormationWidget::updateEditUi() noexcept
 
 void FormationWidget::frenchConnection() noexcept
 {
-
+    connect(ui->aircraftTableWidget, &QTableWidget::cellDoubleClicked,
+            this, &FormationWidget::handleCellSelected);
 }
 
 const QString FormationWidget::getName()
@@ -228,6 +263,7 @@ void FormationWidget::handleUserAircraftChanged(Aircraft &aircraft) noexcept
                                                this, &FormationWidget::updateUi);
     d->aircraftInfoChangedConnection = connect(&aircraft, &Aircraft::infoChanged,
                                                this, &FormationWidget::updateUi);
+    updateUi();
 }
 
 void FormationWidget::handleAircraftIdAssigned(qint64 id) noexcept
@@ -246,4 +282,10 @@ void FormationWidget::handleAircraftIdAssigned(qint64 id) noexcept
     if (item != nullptr) {
         item->setData(Qt::DisplayRole, id);
     }
+}
+
+void FormationWidget::handleCellSelected(int row, int column) noexcept
+{
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    getFlightService().updateUserAircraftIndex(flight, row);
 }

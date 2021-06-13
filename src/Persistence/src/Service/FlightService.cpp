@@ -139,6 +139,22 @@ bool FlightService::updateTitleAndDescription(qint64 id, const QString &title, c
     return ok;
 }
 
+bool FlightService::updateUserAircraftIndex(Flight &flight, int index) noexcept
+{
+    bool ok = QSqlDatabase::database().transaction();
+    if (ok) {
+        flight.setUserAircraftIndex(index);
+        ok = d->flightDao->updateUserAircraftIndex(flight.getId(), index);
+        if (ok) {
+            QSqlDatabase::database().commit();
+            emit flightUpdated(flight.getId());
+        } else {
+            QSqlDatabase::database().rollback();
+        }
+    }
+    return ok;
+}
+
 QVector<FlightSummary> FlightService::getFlightSummaries() const noexcept
 {
     QVector<FlightSummary> descriptions;
