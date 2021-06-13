@@ -129,6 +129,8 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
             this, &LogbookWidget::updateUi);
     connect(&d->flightService, &FlightService::flightStored,
             this, &LogbookWidget::updateUi);
+    connect(&d->flightService, &FlightService::flightRestored,
+            this, &LogbookWidget::updateAircraftIcon);
     connect(&d->flightService, &FlightService::flightUpdated,
             this, &LogbookWidget::updateUi);
 
@@ -143,6 +145,8 @@ void LogbookWidget::hideEvent(QHideEvent *event) noexcept
                this, &LogbookWidget::updateUi);
     disconnect(&d->flightService, &FlightService::flightStored,
                this, &LogbookWidget::updateUi);
+    disconnect(&d->flightService, &FlightService::flightRestored,
+               this, &LogbookWidget::updateAircraftIcon);
     disconnect(&d->flightService, &FlightService::flightUpdated,
                this, &LogbookWidget::updateUi);
 }
@@ -167,23 +171,57 @@ void LogbookWidget::initUi() noexcept
     ui->logTableWidget->sortByColumn(0, Qt::SortOrder::DescendingOrder);
 }
 
+void LogbookWidget::updateEditUi() noexcept
+{
+    ui->loadPushButton->setEnabled(d->selectedFlightId != Flight::InvalidId);
+    ui->deletePushButton->setEnabled(d->selectedFlightId != Flight::InvalidId);
+}
+
+void LogbookWidget::frenchConnection() noexcept
+{
+    connect(ui->logTableWidget, &QTableWidget::itemSelectionChanged,
+            this, &LogbookWidget::handleSelectionChanged);    
+    connect(ui->loadPushButton, &QPushButton::clicked,
+            this, &LogbookWidget::loadFlight);
+    connect(ui->deletePushButton, &QPushButton::clicked,
+            this, &LogbookWidget::deleteFlight);
+    connect(ui->logTableWidget, &QTableWidget::cellDoubleClicked,
+            this, &LogbookWidget::handleCellSelected);
+    connect(ui->logTableWidget, &QTableWidget::cellChanged,
+            this, &LogbookWidget::handleCellChanged);
+}
+
+const QString LogbookWidget::getName()
+{
+    return QString(QT_TRANSLATE_NOOP("LogbookWidget", "Logbook"));
+}
+
+// PRIVATE SLOTS
+
 void LogbookWidget::updateUi() noexcept
 {
     if (d->databaseService.isConnected()) {
+
+        const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
+        const qint64 flightInMemoryId = flight.getId();
         QVector<FlightSummary> summaries = d->flightService.getFlightSummaries();
         ui->logTableWidget->blockSignals(true);
         ui->logTableWidget->setSortingEnabled(false);
         ui->logTableWidget->clearContents();
         ui->logTableWidget->setRowCount(summaries.count());
+        const QIcon aircraftIcon(":/img/icons/aircraft-normal.png");
         int rowIndex = 0;
-
         for (const FlightSummary &summary : summaries) {
 
             int columnIndex = 0;
 
             // ID
             QTableWidgetItem *newItem = new QTableWidgetItem();
+            if (summary.id == flightInMemoryId) {
+                newItem->setIcon(aircraftIcon);
+            }
             newItem->setData(Qt::DisplayRole, summary.id);
+            newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
             newItem->setToolTip(tr("Double-click to load flight"));
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
             ++columnIndex;
@@ -256,32 +294,21 @@ void LogbookWidget::updateUi() noexcept
     updateEditUi();
 }
 
-void LogbookWidget::updateEditUi() noexcept
+void LogbookWidget::updateAircraftIcon() noexcept
 {
-    ui->loadPushButton->setEnabled(d->selectedFlightId != Flight::InvalidId);
-    ui->deletePushButton->setEnabled(d->selectedFlightId != Flight::InvalidId);
+    const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
+    const qint64 flightInMemoryId = flight.getId();
+    const QIcon aircraftIcon(":/img/icons/aircraft-normal.png");
+    const QIcon emptyIcon;
+    for (int row = 0; row < ui->logTableWidget->rowCount(); ++row) {
+        QTableWidgetItem *item = ui->logTableWidget->item(row, 0);
+        if (item->data(Qt::DisplayRole).toLongLong() == flightInMemoryId) {
+            item->setIcon(aircraftIcon);
+        } else {
+            item->setIcon(emptyIcon);
+        }
+    }
 }
-
-void LogbookWidget::frenchConnection() noexcept
-{
-    connect(ui->logTableWidget, &QTableWidget::itemSelectionChanged,
-            this, &LogbookWidget::handleSelectionChanged);    
-    connect(ui->loadPushButton, &QPushButton::clicked,
-            this, &LogbookWidget::loadFlight);
-    connect(ui->deletePushButton, &QPushButton::clicked,
-            this, &LogbookWidget::deleteFlight);
-    connect(ui->logTableWidget, &QTableWidget::cellDoubleClicked,
-            this, &LogbookWidget::handleCellSelected);
-    connect(ui->logTableWidget, &QTableWidget::cellChanged,
-            this, &LogbookWidget::handleCellChanged);
-}
-
-const QString LogbookWidget::getName()
-{
-    return QString(QT_TRANSLATE_NOOP("LogbookWidget", "Logbook"));
-}
-
-// PRIVATE SLOTS
 
 void LogbookWidget::handleSelectionChanged() noexcept
 {

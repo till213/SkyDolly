@@ -27,9 +27,9 @@
         <file>img/icons/checkbox-collapse-normal@2x.png</file>
         <file>img/icons/checkbox-expand-normal.png</file>
         <file>img/icons/checkbox-expand-normal@2x.png</file>
-        <file>img/icons/user-aircraft-normal.png</file>
-        <file>img/icons/user-aircraft-normal@2x.png</file>
         <file>img/icons/record-aircraft-normal@2x.png</file>
         <file>img/icons/record-aircraft-normal.png</file>
+        <file>img/icons/aircraft-normal.png</file>
+        <file>img/icons/aircraft-normal@2x.png</file>
     </qresource>
 </RCC>
