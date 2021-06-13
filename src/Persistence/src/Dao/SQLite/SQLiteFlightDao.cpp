@@ -190,7 +190,7 @@ SQLiteFlightDao::SQLiteFlightDao(QObject *parent) noexcept
 SQLiteFlightDao::~SQLiteFlightDao() noexcept
 {}
 
-bool SQLiteFlightDao::addFlight(Flight &flight)  noexcept
+bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
 {
     d->initQueries();
     const FlightCondition &flightCondition = flight.getFlightConditionConst();
@@ -363,12 +363,12 @@ bool SQLiteFlightDao::updateTitleAndDescription(qint64 id, const QString &title,
     return ok;
 }
 
-bool SQLiteFlightDao::updateUserAircraftIndex(qint64 id, int userAircraftIndex) noexcept
+bool SQLiteFlightDao::updateUserAircraftIndex(qint64 id, int index) noexcept
 {
     d->initQueries();
 
     // Sequence number starts at 1
-    d->updateUserAircraftSequenceNumberQuery->bindValue(":user_aircraft_seq_nr", userAircraftIndex + 1);
+    d->updateUserAircraftSequenceNumberQuery->bindValue(":user_aircraft_seq_nr", index + 1);
     d->updateUserAircraftSequenceNumberQuery->bindValue(":id", id);
     bool ok = d->updateUserAircraftSequenceNumberQuery->exec();
 #ifdef DEBUG

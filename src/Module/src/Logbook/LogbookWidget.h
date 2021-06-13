@@ -63,14 +63,13 @@ protected:
     virtual void showEvent(QShowEvent *event) noexcept override;
     virtual void hideEvent(QHideEvent *event) noexcept override;
 
-    virtual void updateUi() noexcept override;
-
 private:
     Q_DISABLE_COPY(LogbookWidget)
     std::unique_ptr<Ui::LogbookWidget> ui;
     std::unique_ptr<LogbookWidgetPrivate> d;
 
     void initUi() noexcept;
+    void updateUi() noexcept;
     void updateEditUi() noexcept;
     void frenchConnection() noexcept;
 

@@ -60,8 +60,6 @@ protected:
     virtual void showEvent(QShowEvent *event) noexcept override;
     virtual void hideEvent(QHideEvent *event) noexcept override;
 
-    virtual void updateUi() noexcept override;
-
 protected slots:
     virtual void handleRecordingStopped() noexcept override;
 
@@ -71,6 +69,7 @@ private:
     std::unique_ptr<FormationWidgetPrivate> d;
 
     void initUi() noexcept;
+    void updateUi() noexcept;
     void updateEditUi() noexcept;
     void frenchConnection() noexcept;
 
@@ -79,6 +78,7 @@ private:
 private slots:
     void handleUserAircraftChanged(Aircraft &aircraft) noexcept;
     void handleAircraftIdAssigned(qint64 id) noexcept;
+    void handleCellSelected(int row, int column) noexcept;
 };
 
 #endif // FORMATIONWIDGET_H

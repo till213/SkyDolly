@@ -130,6 +130,8 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
             this, &LogbookWidget::updateUi);
     connect(&d->flightService, &FlightService::flightUpdated,
             this, &LogbookWidget::updateUi);
+
+    updateUi();
 }
 
 void LogbookWidget::hideEvent(QHideEvent *event) noexcept
@@ -163,33 +165,6 @@ void LogbookWidget::initUi() noexcept
     ui->logTableWidget->horizontalHeader()->setStretchLastSection(true);
     ui->logTableWidget->sortByColumn(0, Qt::SortOrder::DescendingOrder);
 }
-
-void LogbookWidget::updateEditUi() noexcept
-{
-    ui->loadPushButton->setEnabled(d->selectedFlightId != Flight::InvalidId);
-    ui->deletePushButton->setEnabled(d->selectedFlightId != Flight::InvalidId);
-}
-
-void LogbookWidget::frenchConnection() noexcept
-{
-    connect(ui->logTableWidget, &QTableWidget::itemSelectionChanged,
-            this, &LogbookWidget::handleSelectionChanged);    
-    connect(ui->loadPushButton, &QPushButton::clicked,
-            this, &LogbookWidget::loadFlight);
-    connect(ui->deletePushButton, &QPushButton::clicked,
-            this, &LogbookWidget::deleteFlight);
-    connect(ui->logTableWidget, &QTableWidget::cellDoubleClicked,
-            this, &LogbookWidget::handleCellSelected);
-    connect(ui->logTableWidget, &QTableWidget::cellChanged,
-            this, &LogbookWidget::handleCellChanged);
-}
-
-const QString LogbookWidget::getName()
-{
-    return QString(QT_TRANSLATE_NOOP("LogbookWidget", "Logbook"));
-}
-
-// PROTECTED
 
 void LogbookWidget::updateUi() noexcept
 {
@@ -275,6 +250,31 @@ void LogbookWidget::updateUi() noexcept
     updateEditUi();
 }
 
+void LogbookWidget::updateEditUi() noexcept
+{
+    ui->loadPushButton->setEnabled(d->selectedFlightId != Flight::InvalidId);
+    ui->deletePushButton->setEnabled(d->selectedFlightId != Flight::InvalidId);
+}
+
+void LogbookWidget::frenchConnection() noexcept
+{
+    connect(ui->logTableWidget, &QTableWidget::itemSelectionChanged,
+            this, &LogbookWidget::handleSelectionChanged);    
+    connect(ui->loadPushButton, &QPushButton::clicked,
+            this, &LogbookWidget::loadFlight);
+    connect(ui->deletePushButton, &QPushButton::clicked,
+            this, &LogbookWidget::deleteFlight);
+    connect(ui->logTableWidget, &QTableWidget::cellDoubleClicked,
+            this, &LogbookWidget::handleCellSelected);
+    connect(ui->logTableWidget, &QTableWidget::cellChanged,
+            this, &LogbookWidget::handleCellChanged);
+}
+
+const QString LogbookWidget::getName()
+{
+    return QString(QT_TRANSLATE_NOOP("LogbookWidget", "Logbook"));
+}
+
 // PRIVATE SLOTS
 
 void LogbookWidget::handleSelectionChanged() noexcept
@@ -339,7 +339,7 @@ void LogbookWidget::deleteFlight() noexcept
 
 void LogbookWidget::handleCellSelected(int row, int column) noexcept
 {
-    if (column == 8) {
+    if (column == ui->logTableWidget->columnCount() - 1) {
         QTableWidgetItem *item = ui->logTableWidget->item(row, column);
         ui->logTableWidget->editItem(item);
     } else {

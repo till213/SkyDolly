@@ -53,11 +53,6 @@ public:
 protected:
     FlightService &getFlightService() const noexcept;
 
-    virtual void showEvent(QShowEvent *event) noexcept override;
-    virtual void hideEvent(QHideEvent *event) noexcept override;
-
-    virtual void updateUi() = 0;
-
 protected slots:
     virtual void handleRecordingStopped() noexcept override;
 
