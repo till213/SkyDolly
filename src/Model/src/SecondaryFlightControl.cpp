@@ -61,7 +61,11 @@ SecondaryFlightControl::SecondaryFlightControl(QObject *parent) noexcept
 {}
 
 SecondaryFlightControl::~SecondaryFlightControl() noexcept
-{}
+{
+#ifdef DEBUG
+    qDebug("SecondaryFlightControl::~SecondaryFlightControl: DELETED, data count: %d", d->secondaryFlightControlData.size());
+#endif
+}
 
 void SecondaryFlightControl::upsert(const SecondaryFlightControlData &secondaryFlightControlData) noexcept
 {

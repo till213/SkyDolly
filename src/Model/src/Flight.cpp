@@ -86,7 +86,11 @@ Flight::Flight(QObject *parent) noexcept
 }
 
 Flight::~Flight() noexcept
-{}
+{
+#ifdef DEBUG
+    qDebug("Flight::~Flight:  DELETED, ID: %lld", d->id);
+#endif
+}
 
 void Flight::setId(qint64 id) noexcept
 {
@@ -167,17 +171,19 @@ void Flight::setUserAircraftIndex(int index) noexcept
     }
 }
 
-void Flight::deleteAircraftByIndex(int index) noexcept
+qint64 Flight::deleteAircraftByIndex(int index) noexcept
 {
     if (d->userAircraftIndex == index) {
         setUserAircraftIndex(qMax(d->userAircraftIndex - 1, 0));
     }
+    const qint64 aircraftId = d->aircrafts.at(index)->getId();
     if (d->aircrafts.size() > 1) {
         d->aircrafts.erase(d->aircrafts.begin() + index);
     } else {
         d->aircrafts.at(0)->clear();
     }
     emit aircraftRemoved();
+    return aircraftId;
 }
 
 std::vector<std::unique_ptr<Aircraft>> &Flight::getAircrafts() const noexcept
