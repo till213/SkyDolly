@@ -105,14 +105,22 @@ class SkyConnectPrivate
 {
 public:
     SkyConnectPrivate() noexcept
-        : pendingWaypointTime(false),
+        : storeDataImmediately(true),
+          pendingWaypointTime(false),
           simConnectHandle(nullptr),
           frozen(false),
-          eventWidget(nullptr),
+          eventWidget(std::make_unique<EventWidget>()),
           currentRequestPeriod(::SIMCONNECT_PERIOD_NEVER),
           simConnectAI(nullptr)
     {}
 
+    bool storeDataImmediately;
+    PositionData currentPositionData;
+    EngineData currentEngineData;
+    PrimaryFlightControlData currentPrimaryFlightControlData;
+    SecondaryFlightControlData currentSecondaryFlightControlData;
+    AircraftHandleData currentAircraftHandleData;
+    LightData currentLightData;
     QDateTime currentLocalDateTime;
     QDateTime currentZuluDateTime;
     bool pendingWaypointTime;
@@ -132,7 +140,9 @@ public:
 SkyConnectImpl::SkyConnectImpl(QObject *parent) noexcept
     : AbstractSkyConnect(parent),
       d(std::make_unique<SkyConnectPrivate>())
-{}
+{
+    frenchConnection();
+}
 
 SkyConnectImpl::~SkyConnectImpl() noexcept
 {
@@ -142,9 +152,17 @@ SkyConnectImpl::~SkyConnectImpl() noexcept
 
 // PROTECTED
 
+bool SkyConnectImpl::isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept
+{
+    // "Auto" and 1 Hz sample rates are processed event-based
+    return sampleRate != SampleRate::SampleRate::Auto && sampleRate != SampleRate::SampleRate::Hz1;
+}
+
 bool SkyConnectImpl::onStartRecording() noexcept
 {
-    updateRecordFrequency(Settings::getInstance().getRecordSampleRate());
+    resetCurrentData();
+
+    updateRecordingFrequency(Settings::getInstance().getRecordingSampleRate());
     // Initialise flight plan
     d->flightPlan.clear();
     // Get aircraft information
@@ -162,7 +180,7 @@ bool SkyConnectImpl::onStartRecording() noexcept
 void SkyConnectImpl::onRecordingPaused(bool paused) noexcept
 {
     Q_UNUSED(paused)
-    updateRecordFrequency(Settings::getInstance().getRecordSampleRate());
+    updateRecordingFrequency(Settings::getInstance().getRecordingSampleRate());
 }
 
 void SkyConnectImpl::onStopRecording() noexcept
@@ -222,13 +240,6 @@ void SkyConnectImpl::onStopRecording() noexcept
 
 bool SkyConnectImpl::onStartReplay(qint64 currentTimestamp) noexcept
 {
-    if (d->eventWidget == nullptr) {
-        d->eventWidget = std::make_unique<EventWidget>();
-        connect(d->eventWidget.get(), &EventWidget::simConnectEvent,
-                this, &SkyConnectImpl::processEvents);
-        reconnectWithSim();
-    }
-
     // "Freeze" the simulation: position and attitude only set by (interpolated) sample points
     setAircraftFrozen(::SIMCONNECT_OBJECT_ID_USER, true);
     if (currentTimestamp == 0) {
@@ -265,9 +276,9 @@ void SkyConnectImpl::onSeek(qint64 currentTimestamp) noexcept
     }
 };
 
-void SkyConnectImpl::onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
+void SkyConnectImpl::onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
 {
-     updateRecordFrequency(sampleRate);
+     updateRecordingFrequency(sampleRate);
 }
 
 bool SkyConnectImpl::sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept
@@ -286,10 +297,10 @@ bool SkyConnectImpl::sendAircraftData(qint64 currentTimestamp, TimeVariableData:
             if (objectId != Aircraft::InvalidSimulationId) {
 
                 ok = true;
-                const PositionData &currentPositionData = aircraft->getPositionConst().interpolate(currentTimestamp, access);
-                if (!currentPositionData.isNull()) {
+                const PositionData &positionData = aircraft->getPositionConst().interpolate(currentTimestamp, access);
+                if (!positionData.isNull()) {
                     SimConnectPosition simConnnectPosition;
-                    simConnnectPosition.fromPositionData(currentPositionData);
+                    simConnnectPosition.fromPositionData(positionData);
                     const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionDefinition),
                                                                         objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
                                                                         sizeof(SimConnectPosition), &simConnnectPosition);
@@ -367,8 +378,9 @@ bool SkyConnectImpl::sendAircraftData(qint64 currentTimestamp, TimeVariableData:
 
     } // All aircrafts
 
-    // Start the elapsed timer after sending the first sample data
-    if (access != TimeVariableData::Access::Seek && !isElapsedTimerRunning()) {
+    // Start the elapsed timer after sending the first sample data, but
+    // only when not recording (the first received sample will start the timer then)
+    if (!isElapsedTimerRunning() && access != TimeVariableData::Access::Seek && getState() != Connect::State::Recording) {
         startElapsedTimer();
     }
     return ok;
@@ -380,16 +392,9 @@ bool SkyConnectImpl::isConnectedWithSim() const noexcept
 }
 
 bool SkyConnectImpl::connectWithSim() noexcept
-{
-    HWND hWnd;
-    DWORD userEvent;
-    if (d->eventWidget != nullptr) {
-        hWnd = reinterpret_cast<HWND>(d->eventWidget->winId());
-        userEvent = EventWidget::SimConnnectUserMessage;
-    } else {
-        hWnd = nullptr;
-        userEvent = 0;
-    }
+{    
+    HWND hWnd = reinterpret_cast<HWND>(d->eventWidget->winId());
+    DWORD userEvent = EventWidget::SimConnnectUserMessage;
     HRESULT result = ::SimConnect_Open(&(d->simConnectHandle), ::ConnectionName, hWnd, userEvent, nullptr, ::SIMCONNECT_OPEN_CONFIGINDEX_LOCAL);
     if (result == S_OK) {
         d->simConnectAI = std::make_unique<SimConnectAI>(d->simConnectHandle);
@@ -418,14 +423,67 @@ void SkyConnectImpl::onDestroyAIObjects() noexcept
 
 // PROTECTED SLOTS
 
-void SkyConnectImpl::processEvents() noexcept
+void SkyConnectImpl::sampleData() noexcept
 {
-    updateCurrentTimestamp();
-    // Process system events
-    ::SimConnect_CallDispatch(d->simConnectHandle, SkyConnectImpl::dispatch, this);
+    Aircraft &userAircraft = getCurrentFlight().getUserAircraft();
+    bool dataStored = false;
+    if (!d->currentPositionData.isNull()) {
+        userAircraft.getPosition().upsert(std::move(d->currentPositionData));
+        // Processed
+        dataStored = true;
+        d->currentPositionData = PositionData::NullData;
+    }
+    if (!d->currentEngineData.isNull()) {
+        userAircraft.getEngine().upsert(std::move(d->currentEngineData));
+        // Processed
+        dataStored = true;
+        d->currentEngineData = EngineData::NullData;
+    }
+    if (!d->currentPrimaryFlightControlData.isNull()) {
+        userAircraft.getPrimaryFlightControl().upsert(std::move(d->currentPrimaryFlightControlData));
+        // Processed
+        dataStored = true;
+        d->currentPrimaryFlightControlData = PrimaryFlightControlData::NullData;
+    }
+    if (!d->currentSecondaryFlightControlData.isNull()) {
+        userAircraft.getSecondaryFlightControl().upsert(std::move(d->currentSecondaryFlightControlData));
+        // Processed
+        dataStored = true;
+        d->currentSecondaryFlightControlData = SecondaryFlightControlData::NullData;
+    }
+    if (!d->currentAircraftHandleData.isNull()) {
+        userAircraft.getAircraftHandle().upsert(std::move(d->currentAircraftHandleData));
+        // Processed
+        dataStored = true;
+        d->currentAircraftHandleData = AircraftHandleData::NullData;
+    }
+    if (!d->currentLightData.isNull()) {
+        userAircraft.getLight().upsert(std::move(d->currentLightData));
+        // Processed
+        dataStored = true;
+        d->currentLightData = LightData::NullData;
+    }
+    if (dataStored) {
+        if (!isElapsedTimerRunning()) {
+            // Start the elapsed timer with the storage of the first sampled data
+            setCurrentTimestamp(0);
+            resetElapsedTime(true);
+        }
+    }
 }
 
 // PRIVATE
+
+void SkyConnectImpl::frenchConnection() noexcept
+{
+    connect(d->eventWidget.get(), &EventWidget::simConnectEvent,
+            this, &SkyConnectImpl::processSimConnectEvent);
+}
+
+void SkyConnectImpl::resetCurrentData() noexcept
+{
+    d->currentPositionData = PositionData::NullData;
+}
 
 bool SkyConnectImpl::reconnectWithSim() noexcept
 {
@@ -515,37 +573,28 @@ void SkyConnectImpl::replay() noexcept
     }
 }
 
-void SkyConnectImpl::updateRecordFrequency(SampleRate::SampleRate sampleRate) noexcept
+void SkyConnectImpl::updateRecordingFrequency(SampleRate::SampleRate sampleRate) noexcept
 {
     if (getState() == Connect::State::Recording) {
         switch (sampleRate) {
         case SampleRate::SampleRate::Hz1:
-            if (d->eventWidget != nullptr) {
-                d->eventWidget.reset();
-                d->eventWidget = nullptr;
-                reconnectWithSim();
-            }
             // Get aircraft data @1Hz
             updateRequestPeriod(::SIMCONNECT_PERIOD_SECOND);
+            d->storeDataImmediately = true;
             break;
         case SampleRate::SampleRate::Auto:
-            // Fall-thru intented
-        default:
-            if (sampleRate == SampleRate::SampleRate::Auto) {
-                // Samples are picked up upon availability, using an event-based notification (variable frequency)
-                if (d->eventWidget == nullptr) {
-                    d->eventWidget = std::make_unique<EventWidget>();
-                    connect(d->eventWidget.get(), &EventWidget::simConnectEvent,
-                            this, &SkyConnectImpl::processEvents);
-                    reconnectWithSim();
-                }
-            } else if (d->eventWidget != nullptr) {
-                // Samples are picked up using timer-based polling, with a fixed frequency
-                d->eventWidget.reset();
-                d->eventWidget = nullptr;
-                reconnectWithSim();
-            }
+            // The received data is immediately stored in the aircraft data
+            d->storeDataImmediately = true;
             // Get aircraft data every simulated frame
+            updateRequestPeriod(::SIMCONNECT_PERIOD_SIM_FRAME);
+            break;
+        default:
+            // The received data is temporarily stored until processed by the
+            // timer-based processData method
+            d->storeDataImmediately = false;
+            // Get aircraft data every simulated frame; based on the actual
+            // recording frequency samples are being overwritten, until processed by
+            // the timer-based processData method
             updateRequestPeriod(::SIMCONNECT_PERIOD_SIM_FRAME);
             break;
         }
@@ -554,7 +603,7 @@ void SkyConnectImpl::updateRecordFrequency(SampleRate::SampleRate sampleRate) no
     }
 }
 
-void SkyConnectImpl::updateRequestPeriod(::SIMCONNECT_PERIOD period)
+void SkyConnectImpl::updateRequestPeriod(::SIMCONNECT_PERIOD period) noexcept
 {
     if (d->currentRequestPeriod != period) {
         ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(DataRequest::AircraftPosition), Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionDefinition),
@@ -588,7 +637,7 @@ void CALLBACK SkyConnectImpl::dispatch(::SIMCONNECT_RECV *receivedData, DWORD cb
     Aircraft &userAircraft = currentFlight.getUserAircraft();
     ::SIMCONNECT_RECV_SIMOBJECT_DATA *objectData;
 
-    bool dataReceived = false;
+    bool dataStored = false;
     switch (receivedData->dwID) {
     case ::SIMCONNECT_RECV_ID_EVENT:
     {
@@ -639,7 +688,7 @@ void CALLBACK SkyConnectImpl::dispatch(::SIMCONNECT_RECV *receivedData, DWORD cb
 
     case ::SIMCONNECT_RECV_ID_SIMOBJECT_DATA_BYTYPE:
     {
-        objectData = reinterpret_cast<SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE *>(receivedData);
+        objectData = reinterpret_cast<::SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE *>(receivedData);
         switch (static_cast<DataRequest>(objectData->dwRequestID)) {
         case DataRequest::AircraftInfo:
         {
@@ -658,8 +707,10 @@ void CALLBACK SkyConnectImpl::dispatch(::SIMCONNECT_RECV *receivedData, DWORD cb
     }
 
     case ::SIMCONNECT_RECV_ID_SIMOBJECT_DATA:
-        objectData = reinterpret_cast<SIMCONNECT_RECV_SIMOBJECT_DATA *>(receivedData);
+    {
+        objectData = reinterpret_cast<::SIMCONNECT_RECV_SIMOBJECT_DATA *>(receivedData);
 
+        const bool storeDataImmediately = skyConnect->d->storeDataImmediately;
         switch (static_cast<DataRequest>(objectData->dwRequestID)) {
         case DataRequest::AircraftPosition:
         {
@@ -668,8 +719,12 @@ void CALLBACK SkyConnectImpl::dispatch(::SIMCONNECT_RECV *receivedData, DWORD cb
                 simConnectPosition = reinterpret_cast<const SimConnectPosition *>(&objectData->dwData);
                 PositionData positionData = simConnectPosition->toPositionData();
                 positionData.timestamp = skyConnect->getCurrentTimestamp();
-                userAircraft.getPosition().upsert(positionData);
-                dataReceived = true;
+                if (storeDataImmediately) {
+                    userAircraft.getPosition().upsert(std::move(positionData));
+                    dataStored = true;
+                } else {
+                    skyConnect->d->currentPositionData = std::move(positionData);
+                }
             }
             break;
         }
@@ -680,8 +735,12 @@ void CALLBACK SkyConnectImpl::dispatch(::SIMCONNECT_RECV *receivedData, DWORD cb
                 simConnectEngine = reinterpret_cast<const SimConnectEngine *>(&objectData->dwData);
                 EngineData engineData = simConnectEngine->toEngineData();
                 engineData.timestamp = skyConnect->getCurrentTimestamp();
-                userAircraft.getEngine().upsert(std::move(engineData));
-                dataReceived = true;
+                if (storeDataImmediately) {
+                    userAircraft.getEngine().upsert(std::move(engineData));
+                    dataStored = true;
+                } else {
+                    skyConnect->d->currentEngineData = std::move(engineData);
+                }
             }
             break;
         }
@@ -692,8 +751,12 @@ void CALLBACK SkyConnectImpl::dispatch(::SIMCONNECT_RECV *receivedData, DWORD cb
                 simConnectPrimaryFlightControl = reinterpret_cast<const SimConnectPrimaryFlightControl *>(&objectData->dwData);
                 PrimaryFlightControlData primaryFlightControlData = simConnectPrimaryFlightControl->toPrimaryFlightControlData();
                 primaryFlightControlData.timestamp = skyConnect->getCurrentTimestamp();
-                userAircraft.getPrimaryFlightControl().upsert(std::move(primaryFlightControlData));
-                dataReceived = true;
+                if (storeDataImmediately) {
+                    userAircraft.getPrimaryFlightControl().upsert(std::move(primaryFlightControlData));
+                    dataStored = true;
+                } else {
+                    skyConnect->d->currentPrimaryFlightControlData = std::move(primaryFlightControlData);
+                }
             }
             break;
         }
@@ -704,8 +767,12 @@ void CALLBACK SkyConnectImpl::dispatch(::SIMCONNECT_RECV *receivedData, DWORD cb
                 simConnectSecondaryFlightControl = reinterpret_cast<const SimConnectSecondaryFlightControl *>(&objectData->dwData);
                 SecondaryFlightControlData secondaryFlightControlData = simConnectSecondaryFlightControl->toSecondaryFlightControlData();
                 secondaryFlightControlData.timestamp = skyConnect->getCurrentTimestamp();
-                userAircraft.getSecondaryFlightControl().upsert(std::move(secondaryFlightControlData));
-                dataReceived = true;
+                if (storeDataImmediately) {
+                    userAircraft.getSecondaryFlightControl().upsert(std::move(secondaryFlightControlData));
+                    dataStored = true;
+                } else {
+                    skyConnect->d->currentSecondaryFlightControlData = std::move(secondaryFlightControlData);
+                }
             }
             break;
         }
@@ -716,8 +783,12 @@ void CALLBACK SkyConnectImpl::dispatch(::SIMCONNECT_RECV *receivedData, DWORD cb
                 simConnectAircraftHandle = reinterpret_cast<const SimConnectAircraftHandle *>(&objectData->dwData);
                 AircraftHandleData aircraftHandleData = simConnectAircraftHandle->toAircraftHandleData();
                 aircraftHandleData.timestamp = skyConnect->getCurrentTimestamp();
-                userAircraft.getAircraftHandle().upsert(std::move(aircraftHandleData));
-                dataReceived = true;
+                if (storeDataImmediately) {
+                    userAircraft.getAircraftHandle().upsert(std::move(aircraftHandleData));
+                    dataStored = true;
+                } else {
+                    skyConnect->d->currentAircraftHandleData = std::move(aircraftHandleData);
+                }
             }
             break;
         }
@@ -728,8 +799,12 @@ void CALLBACK SkyConnectImpl::dispatch(::SIMCONNECT_RECV *receivedData, DWORD cb
                 simConnectLight = reinterpret_cast<const SimConnectLight *>(&objectData->dwData);
                 LightData lightData = simConnectLight->toLightData();
                 lightData.timestamp = skyConnect->getCurrentTimestamp();
-                userAircraft.getLight().upsert(std::move(lightData));
-                dataReceived = true;
+                if (storeDataImmediately) {
+                    userAircraft.getLight().upsert(std::move(lightData));
+                    dataStored = true;
+                } else {
+                    skyConnect->d->currentLightData = std::move(lightData);
+                }
             }
             break;
         }
@@ -756,7 +831,6 @@ void CALLBACK SkyConnectImpl::dispatch(::SIMCONNECT_RECV *receivedData, DWORD cb
                         skyConnect->d->flightPlan[waypoint.identifier] = waypoint;
                     }
                 }
-                dataReceived = true;
             }
             break;
         }
@@ -775,7 +849,6 @@ void CALLBACK SkyConnectImpl::dispatch(::SIMCONNECT_RECV *receivedData, DWORD cb
                         skyConnect->d->pendingWaypointTime = false;
                     }
                 }
-                dataReceived = true;
             }
             break;
         }
@@ -783,6 +856,7 @@ void CALLBACK SkyConnectImpl::dispatch(::SIMCONNECT_RECV *receivedData, DWORD cb
             break;
         }
         break;
+    }
 
     case ::SIMCONNECT_RECV_ID_EVENT_FRAME:
     {
@@ -845,11 +919,20 @@ void CALLBACK SkyConnectImpl::dispatch(::SIMCONNECT_RECV *receivedData, DWORD cb
         break;
     }
 
-    if (dataReceived) {
+    if (dataStored) {
         if (!skyConnect->isElapsedTimerRunning()) {
             // Start the elapsed timer with the arrival of the first sample data
             skyConnect->setCurrentTimestamp(0);
             skyConnect->resetElapsedTime(true);
         }
     }
+}
+
+// PRIVATE SLOTS
+
+void SkyConnectImpl::processSimConnectEvent() noexcept
+{
+    updateCurrentTimestamp();
+    // Process system events
+    ::SimConnect_CallDispatch(d->simConnectHandle, SkyConnectImpl::dispatch, this);
 }

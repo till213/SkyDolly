@@ -47,7 +47,7 @@ struct MODEL_API SecondaryFlightControlData : public TimeVariableData
     SecondaryFlightControlData(const SecondaryFlightControlData &) = default;
     SecondaryFlightControlData &operator= (const SecondaryFlightControlData &) = default;
 
-    static const SecondaryFlightControlData NullSecondaryFlightControlData;
+    static const SecondaryFlightControlData NullData;
 };
 
 #endif // SECONDARYFLIGHTCONTROLDATA_H

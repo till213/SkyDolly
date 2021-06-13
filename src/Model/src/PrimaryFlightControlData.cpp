@@ -33,4 +33,4 @@ PrimaryFlightControlData::PrimaryFlightControlData() noexcept
       aileronPosition(0)
 {}
 
-const PrimaryFlightControlData PrimaryFlightControlData::NullPrimaryFlightControlData = PrimaryFlightControlData();
+const PrimaryFlightControlData PrimaryFlightControlData::NullData = PrimaryFlightControlData();

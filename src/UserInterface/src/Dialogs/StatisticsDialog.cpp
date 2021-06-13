@@ -83,7 +83,7 @@ void StatisticsDialog::showEvent(QShowEvent *event) noexcept
     // Signal sent while recording
     connect(&aircraft, &Aircraft::dataChanged,
             this, &StatisticsDialog::updateRecordUi);
-    connect(&Settings::getInstance(), &Settings::recordSampleRateChanged,
+    connect(&Settings::getInstance(), &Settings::recordingSampleRateChanged,
             this, &StatisticsDialog::updateRecordUi);
 
     emit visibilityChanged(true);
@@ -109,10 +109,10 @@ void StatisticsDialog::frenchConnection() noexcept
 void StatisticsDialog::updateRecordUi() noexcept
 {
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
-    if (Settings::getInstance().getRecordSampleRate() != SampleRate::SampleRate::Auto) {
-        ui->recordSampleRateLineEdit->setText(d->unit.formatHz(Settings::getInstance().getRecordSampleRateValue()));
+    if (Settings::getInstance().getRecordingSampleRate() != SampleRate::SampleRate::Auto) {
+        ui->recordingSampleRateLineEdit->setText(d->unit.formatHz(Settings::getInstance().getRecordingSampleRateValue()));
     } else {
-        ui->recordSampleRateLineEdit->setText(tr("Auto"));
+        ui->recordingSampleRateLineEdit->setText(tr("Auto"));
     }
 
     // Samples per second

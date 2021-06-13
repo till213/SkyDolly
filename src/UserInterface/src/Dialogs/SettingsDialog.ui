@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="settingsTabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
@@ -135,7 +135,7 @@
        <item row="0" column="0">
         <widget class="QLabel" name="label_5">
          <property name="text">
-          <string>Record Frequency</string>
+          <string>Recording Frequency</string>
          </property>
         </widget>
        </item>
