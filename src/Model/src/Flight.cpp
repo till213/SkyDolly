@@ -140,7 +140,7 @@ Aircraft &Flight::addUserAircraft() noexcept
 
     d->aircrafts.push_back(std::move(aircraft));
     setUserAircraftIndex(d->aircrafts.size() - 1);
-
+    emit aircraftAdded(*d->aircrafts.end()->get());
     return *d->aircrafts.end()->get();
 }
 
@@ -165,6 +165,19 @@ void Flight::setUserAircraftIndex(int index) noexcept
         d->userAircraftIndex = index;
         emit userAircraftChanged(*d->aircrafts.at(index));
     }
+}
+
+void Flight::deleteAircraftByIndex(int index) noexcept
+{
+    if (d->userAircraftIndex == index) {
+        setUserAircraftIndex(qMax(d->userAircraftIndex - 1, 0));
+    }
+    if (d->aircrafts.size() > 1) {
+        d->aircrafts.erase(d->aircrafts.begin() + index);
+    } else {
+        d->aircrafts.at(0)->clear();
+    }
+    emit aircraftRemoved();
 }
 
 std::vector<std::unique_ptr<Aircraft>> &Flight::getAircrafts() const noexcept
