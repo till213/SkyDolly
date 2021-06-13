@@ -42,9 +42,10 @@ public:
      *        the Waypoint data to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool add(qint64 aircraftId, const QVector<Waypoint> &data) = 0;
-    virtual bool getByAircraftId(qint64 aircraftId, FlightPlan &flightPlan) const = 0;
-    virtual bool deleteByFlightId(qint64 flightId) = 0;
+    virtual bool add(qint64 aircraftId, const QVector<Waypoint> &data) noexcept = 0;
+    virtual bool getByAircraftId(qint64 aircraftId, FlightPlan &flightPlan) const noexcept = 0;
+    virtual bool deleteByFlightId(qint64 flightId) noexcept = 0;
+    virtual bool deleteByAircraftId(qint64 aircraftId) noexcept = 0;
 };
 
 #endif // WAYPOINTDAOINTF_H

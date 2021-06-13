@@ -45,6 +45,7 @@ public:
     virtual bool add(qint64 aircraftId, const EngineData &data) noexcept override;
     virtual bool getByAircraftId(qint64 aircraftId, QVector<EngineData> &data) const noexcept override;
     virtual bool deleteByFlightId(qint64 flightId) noexcept override;
+    virtual bool deleteByAircraftId(qint64 aircraftId) noexcept override;
 
 private:
     std::unique_ptr<SQLiteEngineDaoPrivate> d;

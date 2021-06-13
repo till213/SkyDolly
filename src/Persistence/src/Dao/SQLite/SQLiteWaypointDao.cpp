@@ -47,6 +47,7 @@ public:
     std::unique_ptr<QSqlQuery> insertQuery;
     std::unique_ptr<QSqlQuery> selectByAircraftIdQuery;
     std::unique_ptr<QSqlQuery> deleteByFlightIdQuery;
+    std::unique_ptr<QSqlQuery> deleteByIdQuery;
 
     void initQueries()
     {
@@ -91,6 +92,13 @@ public:
 "                       where a.flight_id = :flight_id"
 "                      );");
         }
+        if (deleteByIdQuery == nullptr) {
+            deleteByIdQuery = std::make_unique<QSqlQuery>();
+            deleteByIdQuery->prepare(
+"delete "
+"from   waypoint "
+"where  aircraft_id = :aircraft_id;");
+        }
     }
 
     void resetQueries() noexcept
@@ -98,6 +106,7 @@ public:
         insertQuery = nullptr;
         selectByAircraftIdQuery = nullptr;
         deleteByFlightIdQuery = nullptr;
+        deleteByIdQuery = nullptr;
     }
 };
 
@@ -186,6 +195,19 @@ bool SQLiteWaypointDao::deleteByFlightId(qint64 flightId) noexcept
     }
 #endif
     return ok;
+}
+
+bool SQLiteWaypointDao::deleteByAircraftId(qint64 aircraftId) noexcept
+{
+    d->initQueries();
+    d->deleteByIdQuery->bindValue(":aircraft_id", aircraftId);
+    bool ok = d->deleteByIdQuery->exec();
+#ifdef DEBUG
+    if (!ok) {
+        qDebug("SQLiteWaypointDao::deleteByAircraftId: SQL error: %s", qPrintable(d->deleteByIdQuery->lastError().databaseText() + " - error code: " + d->deleteByIdQuery->lastError().nativeErrorCode()));
+    }
+#endif
+    return true;
 }
 
 // PRIVATE
