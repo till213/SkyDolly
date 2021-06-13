@@ -44,6 +44,8 @@ public:
     virtual ~SkyConnectDummy() noexcept;
 
 protected:
+    virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
+
     virtual bool onStartRecording() noexcept override;
     virtual void onRecordingPaused(bool paused) noexcept override;
     virtual void onStopRecording() noexcept override;
@@ -53,7 +55,7 @@ protected:
     virtual void onStopReplay() noexcept override;
 
     virtual void onSeek(qint64 currentTimestamp) noexcept override;
-    virtual void onRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
+    virtual void onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
 
     virtual bool sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept override;
     virtual bool isConnectedWithSim() const noexcept override;
@@ -63,7 +65,7 @@ protected:
     virtual void onDestroyAIObjects() noexcept override;
 
 protected slots:
-    virtual void processEvents() noexcept override;
+    virtual void sampleData() noexcept override;
 
 private:
     std::unique_ptr<SkyConnectDummyPrivate> d;
@@ -71,17 +73,17 @@ private:
     void frenchConnection() noexcept;
     bool sendAircraftData(TimeVariableData::Access access) noexcept;
 
-    void recordData() noexcept;
-    void recordPositionData(qint64 timestamp) noexcept;
-    void recordEngineData(qint64 timestamp) noexcept;
-    void recordPrimaryControls(qint64 timestamp) noexcept;
-    void recordSecondaryControls(qint64 timestamp) noexcept;
-    void recordAircraftHandle(qint64 timestamp) noexcept;
-    void recordLights(qint64 timestamp) noexcept;
-    void recordWaypoint() noexcept;
+    void samplePositionData(qint64 timestamp) noexcept;
+    void sampleEngineData(qint64 timestamp) noexcept;
+    void samplePrimaryControls(qint64 timestamp) noexcept;
+    void sampleSecondaryControls(qint64 timestamp) noexcept;
+    void sampleAircraftHandle(qint64 timestamp) noexcept;
+    void sampleLights(qint64 timestamp) noexcept;
+    void sampleWaypoint() noexcept;
     void recordFlightCondition() noexcept;
     void recordAircraftInfo() noexcept;
 
+private slots:
     void replay() noexcept;
 };
 

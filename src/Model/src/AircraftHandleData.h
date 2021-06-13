@@ -48,7 +48,7 @@ struct MODEL_API AircraftHandleData : public TimeVariableData
     AircraftHandleData(const AircraftHandleData &) = default;
     AircraftHandleData &operator= (const AircraftHandleData &) = default;
 
-    static const AircraftHandleData NullAircraftHandleData;
+    static const AircraftHandleData NullData;
 };
 
 #endif // AIRCRAFTHANDLEDATA_H

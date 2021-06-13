@@ -103,7 +103,7 @@ const PrimaryFlightControlData &PrimaryFlightControl::getLast() const noexcept
     if (!d->primaryFlightControlData.isEmpty()) {
         return d->primaryFlightControlData.last();
     } else {
-        return PrimaryFlightControlData::NullPrimaryFlightControlData;
+        return PrimaryFlightControlData::NullData;
     }
 }
 
@@ -162,7 +162,7 @@ const PrimaryFlightControlData &PrimaryFlightControl::interpolate(qint64 timesta
             d->currentPrimaryFlightControlData.timestamp = timestamp;
         } else {
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
-            d->currentPrimaryFlightControlData = PrimaryFlightControlData::NullPrimaryFlightControlData;
+            d->currentPrimaryFlightControlData = PrimaryFlightControlData::NullData;
         }
 
         d->currentTimestamp = timestamp;

@@ -51,21 +51,21 @@ public:
         : state(Connect::State::Disconnected),
           currentFlight(Logbook::getInstance().getCurrentFlight()),
           currentTimestamp(0),
-          recordSampleRate(Settings::getInstance().getRecordSampleRateValue()),
-          recordIntervalMSec(SampleRate::toIntervalMSec(recordSampleRate)),
+          recordingSampleRate(Settings::getInstance().getRecordingSampleRateValue()),
+          recordingIntervalMSec(SampleRate::toIntervalMSec(recordingSampleRate)),
           replaySpeedFactor(1.0),
           elapsedTime(0),
           lastSamplesPerSecondIndex(0)
     {
-        timer.setTimerType(Qt::TimerType::PreciseTimer);
+        recordingTimer.setTimerType(Qt::TimerType::PreciseTimer);
     }
 
     Connect::State state;
     Flight &currentFlight;
-    QTimer timer;
+    QTimer recordingTimer;
     qint64 currentTimestamp;
-    double recordSampleRate;
-    int    recordIntervalMSec;
+    double recordingSampleRate;
+    int    recordingIntervalMSec;
     QElapsedTimer elapsedTimer;
     double replaySpeedFactor;
     qint64 elapsedTime;
@@ -112,8 +112,8 @@ void AbstractSkyConnect::startRecording(bool addFormationAircraft) noexcept
         d->lastSamplesPerSecondIndex = 0;
         d->currentTimestamp = 0;
         d->elapsedTimer.invalidate();
-        if (!isAutoRecordSampleRate()) {
-            d->timer.start(d->recordIntervalMSec);
+        if (isTimerBasedRecording(Settings::getInstance().getRecordingSampleRate())) {
+            d->recordingTimer.start(d->recordingIntervalMSec);
         }
         bool ok = retryWithReconnect([this]() -> bool { return onStartRecording(); });
         if (!ok) {
@@ -128,7 +128,7 @@ void AbstractSkyConnect::startRecording(bool addFormationAircraft) noexcept
 void AbstractSkyConnect::stopRecording() noexcept
 {
     onStopRecording();
-    d->timer.stop();
+    d->recordingTimer.stop();
     setState(Connect::State::Connected);
     // Update AI objects by simply destroying and re-creating them
     onDestroyAIObjects();
@@ -150,7 +150,7 @@ void AbstractSkyConnect::startReplay(bool fromStart) noexcept
         setState(Connect::State::Replay);
         if (fromStart) {
             d->elapsedTime = 0;
-            setCurrentTimestamp(0);
+            d->currentTimestamp = 0;
         }
 
         d->elapsedTimer.invalidate();
@@ -166,7 +166,7 @@ void AbstractSkyConnect::startReplay(bool fromStart) noexcept
 void AbstractSkyConnect::stopReplay() noexcept
 {
     setState(Connect::State::Connected);
-    d->timer.stop();
+    d->recordingTimer.stop();
     // Remember elapsed time since last replay start, in order to continue from
     // current timestamp
     d->elapsedTime = d->currentTimestamp;
@@ -410,11 +410,6 @@ bool AbstractSkyConnect::isElapsedTimerRunning() const noexcept
     return d->elapsedTimer.isValid();
 }
 
-bool AbstractSkyConnect::isAutoRecordSampleRate() const noexcept
-{
-    return d->recordSampleRate == SampleRate::AutoValue;
-}
-
 void AbstractSkyConnect::startElapsedTimer() const noexcept
 {
     if (d->state == Connect::State::Replay || d->state == Connect::State::Recording) {
@@ -452,10 +447,10 @@ void AbstractSkyConnect::updateCurrentTimestamp() noexcept
 
 void AbstractSkyConnect::frenchConnection() noexcept
 {
-    connect(&(d->timer), &QTimer::timeout,
-            this, &AbstractSkyConnect::processEvents);
-    connect(&Settings::getInstance(), &Settings::recordSampleRateChanged,
-            this, &AbstractSkyConnect::handleRecordSampleRateChanged);
+    connect(&(d->recordingTimer), &QTimer::timeout,
+            this, &AbstractSkyConnect::sampleData);
+    connect(&Settings::getInstance(), &Settings::recordingSampleRateChanged,
+            this, &AbstractSkyConnect::handleRecordingSampleRateChanged);
 }
 
 bool AbstractSkyConnect::hasRecordingStarted() const noexcept
@@ -496,19 +491,19 @@ bool AbstractSkyConnect::retryWithReconnect(std::function<bool()> func)
 
 // PRIVATE SLOTS
 
-void AbstractSkyConnect::handleRecordSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
+void AbstractSkyConnect::handleRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
 {
-    d->recordSampleRate = SampleRate::toValue(sampleRate);
-    d->recordIntervalMSec = SampleRate::toIntervalMSec(d->recordSampleRate);
+    d->recordingSampleRate = SampleRate::toValue(sampleRate);
+    d->recordingIntervalMSec = SampleRate::toIntervalMSec(d->recordingSampleRate);
     if (d->state == Connect::State::Recording || d->state == Connect::State::RecordingPaused) {
-        if (!isAutoRecordSampleRate()) {
-            d->timer.setInterval(d->recordIntervalMSec);
-            if (!d->timer.isActive()) {
-                d->timer.start();
+        if (isTimerBasedRecording(sampleRate)) {
+            d->recordingTimer.setInterval(d->recordingIntervalMSec);
+            if (!d->recordingTimer.isActive()) {
+                d->recordingTimer.start();
             }
         } else {
-            d->timer.stop();
+            d->recordingTimer.stop();
         }
-        onRecordSampleRateChanged(sampleRate);
+        onRecordingSampleRateChanged(sampleRate);
     }
 }

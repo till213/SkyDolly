@@ -1292,7 +1292,7 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="138"/>
-        <source>Record Frequency</source>
+        <source>Recording Frequency</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
