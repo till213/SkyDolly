@@ -71,7 +71,7 @@ bool FlightService::store(Flight &flight) noexcept
         ok = d->flightDao->addFlight(flight);
         if (ok) {
             QSqlDatabase::database().commit();
-            emit flightStored(flight.getId());
+             emit flightStored(flight.getId());
         } else {
             QSqlDatabase::database().rollback();
         }
@@ -86,12 +86,12 @@ bool FlightService::restore(qint64 id, Flight &flight) noexcept
         SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
         skyConnect.destroyAIObjects();
         ok = d->flightDao->getFlightById(id, flight);
+        QSqlDatabase::database().rollback();
+        emit flightRestored(flight.getId());
         if (ok) {
             ok = skyConnect.createAIObjects();
-            emit flightRestored(flight.getId());
         }
     }
-    QSqlDatabase::database().rollback();
     return ok;
 }
 

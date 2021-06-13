@@ -168,6 +168,7 @@ void FormationWidget::updateUi() noexcept
     int rowIndex = 0;
     const int userAircraftIndex = flight.getUserAircraftIndex();
     const bool recording = SkyManager::getInstance().getCurrentSkyConnect().isRecording();
+    const QString tooltip = tr("Double-click to change user aircraft");
     for (const auto &aircraft : aircrafts) {
 
         const AircraftInfo &aircraftInfo = aircraft->getAircraftInfoConst();
@@ -188,13 +189,14 @@ void FormationWidget::updateUi() noexcept
             if (recording) {
                 icon = QIcon(":/img/icons/record-aircraft-normal.png");
             } else {
-                icon = QIcon(":/img/icons/user-aircraft-normal.png");
+                icon = QIcon(":/img/icons/aircraft-normal.png");
             }
             newItem->setIcon(icon);
         }
         // Sequence numbers start at 1
         newItem->setData(Qt::DisplayRole, rowIndex + 1);
         newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        newItem->setToolTip(tooltip);
         ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
         ++columnIndex;
 
