@@ -30,4 +30,8 @@ FlightSummary::FlightSummary()
 {}
 
 FlightSummary::~FlightSummary()
-{}
+{
+#ifdef DEBUG
+    qDebug("FlightSummary::~FlightSummary: DELETED");
+#endif
+}

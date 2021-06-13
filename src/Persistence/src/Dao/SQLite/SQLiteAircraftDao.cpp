@@ -73,12 +73,13 @@ public:
           secondaryFlightControlDao(daoFactory->createSecondaryFlightControlDao()),
           handleDao(daoFactory->createHandleDao()),
           lightDao(daoFactory->createLightDao()),
-          flightPlanDao(daoFactory->createFlightPlanDao())
+          waypointDao(daoFactory->createFlightPlanDao())
     {}
 
     std::unique_ptr<QSqlQuery> insertQuery;
     std::unique_ptr<QSqlQuery> selectByFlightIdQuery;
     std::unique_ptr<QSqlQuery> deleteByFlightIdQuery;
+    std::unique_ptr<QSqlQuery> deleteById;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<PositionDaoIntf> positionDao;
     std::unique_ptr<EngineDaoIntf> engineDao;
@@ -86,7 +87,7 @@ public:
     std::unique_ptr<SecondaryFlightControlDaoIntf> secondaryFlightControlDao;
     std::unique_ptr<HandleDaoIntf> handleDao;
     std::unique_ptr<LightDaoIntf> lightDao;
-    std::unique_ptr<WaypointDaoIntf> flightPlanDao;
+    std::unique_ptr<WaypointDaoIntf> waypointDao;
 
     void initQueries()
     {
@@ -145,6 +146,13 @@ public:
 "from   aircraft "
 "where  flight_id = :flight_id;");
         }
+        if (deleteById == nullptr) {
+            deleteById = std::make_unique<QSqlQuery>();
+            deleteById->prepare(
+"delete "
+"from   aircraft "
+"where  id = :id;");
+        }
     }
 
     void resetQueries() noexcept
@@ -152,6 +160,7 @@ public:
         insertQuery = nullptr;
         selectByFlightIdQuery = nullptr;
         deleteByFlightIdQuery = nullptr;
+        deleteById = nullptr;
     }
 };
 
@@ -245,7 +254,7 @@ bool SQLiteAircraftDao::add(qint64 flightId, int sequenceNumber, Aircraft &aircr
         }
     }
     if (ok) {
-        ok = d->flightPlanDao->add(aircraft.getId(), aircraft.getFlightPlanConst().getAllConst());
+        ok = d->waypointDao->add(aircraft.getId(), aircraft.getFlightPlanConst().getAllConst());
     }
     return ok;
 }
@@ -278,7 +287,7 @@ bool SQLiteAircraftDao::getByFlightId(qint64 flightId, std::vector<std::unique_p
                 ok = d->lightDao->getByAircraftId(aircraft->getId(), aircraft->getLight().getAll());
             }
             if (ok) {
-                ok = d->flightPlanDao->getByAircraftId(aircraft->getId(), aircraft->getFlightPlan());
+                ok = d->waypointDao->getByAircraftId(aircraft->getId(), aircraft->getFlightPlan());
             }
             if (ok) {
                 emit aircraft->dataChanged();
@@ -315,7 +324,7 @@ bool SQLiteAircraftDao::deleteByFlightId(qint64 flightId) noexcept
         ok = d->lightDao->deleteByFlightId(flightId);
     }
     if (ok) {
-        ok = d->flightPlanDao->deleteByFlightId(flightId);
+        ok = d->waypointDao->deleteByFlightId(flightId);
     }
     if (ok) {
         d->deleteByFlightIdQuery->bindValue(":flight_id", flightId);
@@ -330,11 +339,40 @@ bool SQLiteAircraftDao::deleteByFlightId(qint64 flightId) noexcept
     return ok;
 }
 
-bool SQLiteAircraftDao::deleteByIndex(qint64 flightId, int index) noexcept
+bool SQLiteAircraftDao::deleteById(qint64 id) noexcept
 {
     d->initQueries();
-    // TODO IMPLEMENT ME!!!
-    return false;
+    // Delete "bottom-up" in order not to violate foreign key constraints
+    bool ok = d->positionDao->deleteByAircraftId(id);
+    if (ok) {
+        ok = d->engineDao->deleteByAircraftId(id);
+    }
+    if (ok) {
+        ok = d->primaryFlightControlDao->deleteByAircraftId(id);
+    }
+    if (ok) {
+        ok = d->secondaryFlightControlDao->deleteByAircraftId(id);
+    }
+    if (ok) {
+        ok = d->handleDao->deleteByAircraftId(id);
+    }
+    if (ok) {
+        ok = d->lightDao->deleteByAircraftId(id);
+    }
+    if (ok) {
+        ok = d->waypointDao->deleteByAircraftId(id);
+    }
+    if (ok) {
+        d->deleteById->bindValue(":id", id);
+        ok = d->deleteById->exec();
+#ifdef DEBUG
+        if (!ok) {
+            qDebug("SQLiteAircraftDao::deleteByIndex: SQL error: %s", qPrintable(d->deleteById->lastError().databaseText() + " - error code: " + d->deleteById->lastError().nativeErrorCode()));
+        }
+#endif
+    }
+
+    return ok;
 }
 
 bool SQLiteAircraftDao::getAircraftInfosByFlightId(qint64 flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept

@@ -43,9 +43,10 @@ public:
      *        the AircraftHandleData to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool add(qint64 aircraftId, const AircraftHandleData &data) = 0;
-    virtual bool getByAircraftId(qint64 aircraftId, QVector<AircraftHandleData> &data) const = 0;
-    virtual bool deleteByFlightId(qint64 flightId) = 0;
+    virtual bool add(qint64 aircraftId, const AircraftHandleData &data) noexcept = 0;
+    virtual bool getByAircraftId(qint64 aircraftId, QVector<AircraftHandleData> &data) const noexcept = 0;
+    virtual bool deleteByFlightId(qint64 flightId) noexcept = 0;
+    virtual bool deleteByAircraftId(qint64 aircraftId) noexcept = 0;
 };
 
 #endif // HANDLEDAOINTF_H

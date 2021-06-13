@@ -62,7 +62,7 @@ public:
     Aircraft &getUserAircraft() const noexcept;
     int getUserAircraftIndex() const noexcept;
     void setUserAircraftIndex(int index) noexcept;
-    void deleteAircraftByIndex(int index) noexcept;
+    qint64 deleteAircraftByIndex(int index) noexcept;
 
     std::vector<std::unique_ptr<Aircraft>> &getAircrafts() const noexcept;
     int getAircraftCount() const noexcept;
