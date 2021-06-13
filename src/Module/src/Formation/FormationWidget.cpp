@@ -45,6 +45,7 @@ namespace
 {
     constexpr int MinimumTableWidth = 600;
     constexpr int InvalidSelection = -1;
+    constexpr int SequenceNumberColumn = 1;
 }
 
 class FormationWidgetPrivate
@@ -132,6 +133,7 @@ void FormationWidget::handleRecordingStopped() noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     int count = flight.getAircraftCount();
     if (count > 1) {
+        // Sequence starts at 1
         d->aircraftService->store(flight.getId(), count, *flight.getAircrafts().at(count - 1));
     } else {
         AbstractModuleWidget::handleRecordingStopped();
@@ -306,9 +308,9 @@ void FormationWidget::handleCellSelected(int row, int column) noexcept
 void FormationWidget::handleSelectionChanged() noexcept
 {
     QItemSelectionModel *select = ui->aircraftTableWidget->selectionModel();
-    QModelIndexList selectedRow = select->selectedRows(1);
-    if (selectedRow.count() > 0) {
-        QModelIndex modelIndex = selectedRow.at(0);
+    QModelIndexList modelIndices = select->selectedRows(SequenceNumberColumn);
+    if (modelIndices.count() > 0) {
+        QModelIndex modelIndex = modelIndices.at(0);
         d->selectedRow = modelIndex.row();
         // Index starts at 0
         d->selectedAircraftIndex = ui->aircraftTableWidget->model()->data(modelIndex).toInt() - 1;
@@ -327,5 +329,7 @@ void FormationWidget::updateUserAircraftIndex() noexcept
 
 void FormationWidget::deleteAircraft() noexcept
 {
-
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    // Sequence starts at 1
+    d->aircraftService->deleteByIndex(flight, d->selectedRow);
 }

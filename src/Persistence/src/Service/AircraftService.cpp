@@ -73,6 +73,20 @@ bool AircraftService::store(qint64 flightId, int sequenceNumber, Aircraft &aircr
     return ok;
 }
 
+bool AircraftService::deleteByIndex(Flight &flight, int index) noexcept
+{
+    bool ok = QSqlDatabase::database().transaction();
+    if (ok) {
+        flight.deleteAircraftByIndex(index);
+        ok = d->aircraftDao->deleteByIndex(flight.getId(), index);
+        if (ok) {
+            QSqlDatabase::database().commit();
+        } else {
+            QSqlDatabase::database().rollback();
+        }
+    }
+    return ok;
+}
 
 bool AircraftService::getAircraftInfos(qint64 flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept
 {
