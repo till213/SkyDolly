@@ -58,11 +58,13 @@ public:
 AircraftHandle::AircraftHandle(QObject *parent) noexcept
     : QObject(parent),
       d(std::make_unique<AircraftHandlePrivate>())
-{
-}
+{}
 
 AircraftHandle::~AircraftHandle() noexcept
 {
+#ifdef DEBUG
+    qDebug("AircraftHandle::~AircraftHandle: DELETED, data count: %d", d->aircraftHandleData.size());
+#endif
 }
 
 void AircraftHandle::upsert(const AircraftHandleData &aircraftHandleData) noexcept

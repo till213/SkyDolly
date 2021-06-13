@@ -53,7 +53,7 @@ public:
     virtual bool add(qint64 flightId, int sequenceNumber, Aircraft &aircraft) noexcept = 0;
     virtual bool getByFlightId(qint64 flightId, std::vector<std::unique_ptr<Aircraft>> &aircrafts) const noexcept = 0;
     virtual bool deleteByFlightId(qint64 flightId) noexcept = 0;
-    virtual bool deleteByIndex(qint64 flightId, int index) noexcept = 0;
+    virtual bool deleteById(qint64 id) noexcept = 0;
     virtual bool getAircraftInfosByFlightId(qint64 flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept = 0;
 };
 
