@@ -425,7 +425,7 @@ void AbstractSkyConnect::resetElapsedTime(bool restart) noexcept
     }
 }
 
-void AbstractSkyConnect::updateCurrentTimestamp() noexcept
+qint64 AbstractSkyConnect::updateCurrentTimestamp() noexcept
 {
     if (d->elapsedTimer.isValid()) {
         // Ignore spontaneous SimConnect events: do not update
@@ -441,6 +441,7 @@ void AbstractSkyConnect::updateCurrentTimestamp() noexcept
             QTimer::singleShot(0, this, [this]() {emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Linear);});
         }        
     }
+    return d->currentTimestamp;
 }
 
 // PRIVATE
@@ -448,7 +449,7 @@ void AbstractSkyConnect::updateCurrentTimestamp() noexcept
 void AbstractSkyConnect::frenchConnection() noexcept
 {
     connect(&(d->recordingTimer), &QTimer::timeout,
-            this, &AbstractSkyConnect::sampleData);
+            this, &AbstractSkyConnect::recordData);
     connect(&Settings::getInstance(), &Settings::recordingSampleRateChanged,
             this, &AbstractSkyConnect::handleRecordingSampleRateChanged);
 }

@@ -68,7 +68,7 @@ protected:
     virtual void onDestroyAIObjects() noexcept override;
 
 protected slots:
-    virtual void sampleData() noexcept override;
+    virtual void recordData() noexcept override;
 
 private:
     std::unique_ptr<SkyConnectPrivate> d;
