@@ -423,7 +423,7 @@ void SkyConnectImpl::onDestroyAIObjects() noexcept
 
 // PROTECTED SLOTS
 
-void SkyConnectImpl::sampleData() noexcept
+void SkyConnectImpl::recordData() noexcept
 {
     Aircraft &userAircraft = getCurrentFlight().getUserAircraft();
     bool dataStored = false;

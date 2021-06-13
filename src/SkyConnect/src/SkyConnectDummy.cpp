@@ -161,13 +161,21 @@ void SkyConnectDummy::onRecordingSampleRateChanged(SampleRate::SampleRate sample
 
 bool SkyConnectDummy::sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept
 {
-    Q_UNUSED(currentTimestamp)
-
-    const Flight &flight = getCurrentFlight();
-    for (const auto &it : flight) {
-        // Send data
+    bool dataAvailable;
+    if (currentTimestamp <= getCurrentFlight().getTotalDurationMSec()) {
+        dataAvailable = true;
+        const PositionData &currentPositionData = getCurrentFlight().getUserAircraftConst().getPosition().interpolate(getCurrentTimestamp(), access);
+        if (!currentPositionData.isNull()) {
+            // Start the elapsed timer after sending the first sample data
+            if (!isElapsedTimerRunning()) {
+                startElapsedTimer();
+            }
+        }
+    } else {
+        // At end of recording
+        dataAvailable = false;
     }
-    return sendAircraftData(access);
+    return dataAvailable;
 }
 
 bool SkyConnectDummy::isConnectedWithSim() const noexcept
@@ -197,18 +205,17 @@ void SkyConnectDummy::onDestroyAIObjects() noexcept
 
 // PROTECTED SLOTS
 
-void SkyConnectDummy::sampleData() noexcept
+void SkyConnectDummy::recordData() noexcept
 {
-    updateCurrentTimestamp();
-    const qint64 timestamp = getCurrentTimestamp();
+    const qint64 timestamp = updateCurrentTimestamp();
 
-    samplePositionData(timestamp);
-    sampleEngineData(timestamp);
-    samplePrimaryControls(timestamp);
-    sampleSecondaryControls(timestamp);
-    sampleAircraftHandle(timestamp);
-    sampleLights(timestamp);
-    sampleWaypoint();
+    recordPositionData(timestamp);
+    recordEngineData(timestamp);
+    recordPrimaryControls(timestamp);
+    recordSecondaryControls(timestamp);
+    recordAircraftHandle(timestamp);
+    recordLights(timestamp);
+    recordWaypoint();
 
     if (!isElapsedTimerRunning()) {
         // Start the elapsed timer with the arrival of the first sample data
@@ -225,27 +232,7 @@ void SkyConnectDummy::frenchConnection() noexcept
             this, &SkyConnectDummy::replay);
 }
 
-bool SkyConnectDummy::sendAircraftData(TimeVariableData::Access access) noexcept
-{
-    bool dataAvailable;
-    const qint64 currentTimestamp = getCurrentTimestamp();
-    if (currentTimestamp <= getCurrentFlight().getTotalDurationMSec()) {
-        dataAvailable = true;
-        const PositionData &currentPositionData = getCurrentFlight().getUserAircraftConst().getPosition().interpolate(getCurrentTimestamp(), access);
-        if (!currentPositionData.isNull()) {
-            // Start the elapsed timer after sending the first sample data
-            if (!isElapsedTimerRunning()) {
-                startElapsedTimer();
-            }
-        }
-    } else {
-        // At end of recording
-        dataAvailable = false;
-    }
-    return dataAvailable;
-}
-
-void SkyConnectDummy::samplePositionData(qint64 timestamp) noexcept
+void SkyConnectDummy::recordPositionData(qint64 timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -268,7 +255,7 @@ void SkyConnectDummy::samplePositionData(qint64 timestamp) noexcept
     aircraft.getPosition().upsert(aircraftData);
 }
 
-void SkyConnectDummy::sampleEngineData(qint64 timestamp) noexcept
+void SkyConnectDummy::recordEngineData(qint64 timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -302,7 +289,7 @@ void SkyConnectDummy::sampleEngineData(qint64 timestamp) noexcept
     aircraft.getEngine().upsert(std::move(engineData));
 }
 
-void SkyConnectDummy::samplePrimaryControls(qint64 timestamp) noexcept
+void SkyConnectDummy::recordPrimaryControls(qint64 timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -315,7 +302,7 @@ void SkyConnectDummy::samplePrimaryControls(qint64 timestamp) noexcept
     aircraft.getPrimaryFlightControl().upsert(std::move(primaryFlightControlData));
 }
 
-void SkyConnectDummy::sampleSecondaryControls(qint64 timestamp) noexcept
+void SkyConnectDummy::recordSecondaryControls(qint64 timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -331,7 +318,7 @@ void SkyConnectDummy::sampleSecondaryControls(qint64 timestamp) noexcept
     aircraft.getSecondaryFlightControl().upsert(std::move(secondaryFlightControlData));
 }
 
-void SkyConnectDummy::sampleAircraftHandle(qint64 timestamp) noexcept
+void SkyConnectDummy::recordAircraftHandle(qint64 timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -349,7 +336,7 @@ void SkyConnectDummy::sampleAircraftHandle(qint64 timestamp) noexcept
     aircraft.getAircraftHandle().upsert(std::move(aircraftHandleData));
 }
 
-void SkyConnectDummy::sampleLights(qint64 timestamp) noexcept
+void SkyConnectDummy::recordLights(qint64 timestamp) noexcept
 {
     static int lights = 0;
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
@@ -362,7 +349,7 @@ void SkyConnectDummy::sampleLights(qint64 timestamp) noexcept
     aircraft.getLight().upsert(std::move(lightData));
 }
 
-void SkyConnectDummy::sampleWaypoint() noexcept
+void SkyConnectDummy::recordWaypoint() noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -466,7 +453,8 @@ void SkyConnectDummy::recordAircraftInfo() noexcept
 
 void SkyConnectDummy::replay() noexcept
 {
-    if (!sendAircraftData(TimeVariableData::Access::Linear)) {
+    const qint64 timestamp = updateCurrentTimestamp();
+    if (!sendAircraftData(timestamp, TimeVariableData::Access::Linear)) {
         stopReplay();
     }
 }

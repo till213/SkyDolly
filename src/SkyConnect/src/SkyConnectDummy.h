@@ -65,21 +65,19 @@ protected:
     virtual void onDestroyAIObjects() noexcept override;
 
 protected slots:
-    virtual void sampleData() noexcept override;
+    virtual void recordData() noexcept override;
 
 private:
     std::unique_ptr<SkyConnectDummyPrivate> d;
 
     void frenchConnection() noexcept;
-    bool sendAircraftData(TimeVariableData::Access access) noexcept;
-
-    void samplePositionData(qint64 timestamp) noexcept;
-    void sampleEngineData(qint64 timestamp) noexcept;
-    void samplePrimaryControls(qint64 timestamp) noexcept;
-    void sampleSecondaryControls(qint64 timestamp) noexcept;
-    void sampleAircraftHandle(qint64 timestamp) noexcept;
-    void sampleLights(qint64 timestamp) noexcept;
-    void sampleWaypoint() noexcept;
+    void recordPositionData(qint64 timestamp) noexcept;
+    void recordEngineData(qint64 timestamp) noexcept;
+    void recordPrimaryControls(qint64 timestamp) noexcept;
+    void recordSecondaryControls(qint64 timestamp) noexcept;
+    void recordAircraftHandle(qint64 timestamp) noexcept;
+    void recordLights(qint64 timestamp) noexcept;
+    void recordWaypoint() noexcept;
     void recordFlightCondition() noexcept;
     void recordAircraftInfo() noexcept;
 
