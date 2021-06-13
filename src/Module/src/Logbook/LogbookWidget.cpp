@@ -135,6 +135,7 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
             this, &LogbookWidget::updateUi);
 
     updateUi();
+    handleSelectionChanged();
 }
 
 void LogbookWidget::hideEvent(QHideEvent *event) noexcept
@@ -180,7 +181,7 @@ void LogbookWidget::updateEditUi() noexcept
 void LogbookWidget::frenchConnection() noexcept
 {
     connect(ui->logTableWidget, &QTableWidget::itemSelectionChanged,
-            this, &LogbookWidget::handleSelectionChanged);    
+            this, &LogbookWidget::handleSelectionChanged);
     connect(ui->loadPushButton, &QPushButton::clicked,
             this, &LogbookWidget::loadFlight);
     connect(ui->deletePushButton, &QPushButton::clicked,
@@ -220,6 +221,7 @@ void LogbookWidget::updateUi() noexcept
             if (summary.id == flightInMemoryId) {
                 newItem->setIcon(aircraftIcon);
             }
+
             newItem->setData(Qt::DisplayRole, summary.id);
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
             newItem->setToolTip(tr("Double-click to load flight"));
@@ -228,6 +230,7 @@ void LogbookWidget::updateUi() noexcept
 
             // Creation date
             newItem = new QTableWidgetItem(d->unit.formatDate(summary.creationDate));
+            newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
             ++columnIndex;
 
@@ -239,28 +242,33 @@ void LogbookWidget::updateUi() noexcept
             // Aircraft count
             newItem = new QTableWidgetItem();
             newItem->setData(Qt::DisplayRole, summary.aircraftCount);
+            newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
             ++columnIndex;
 
             // Start date
             newItem = new QTableWidgetItem(d->unit.formatTime(summary.startDate));
             newItem->setToolTip(tr("Simulation time: %1 (%2Z)").arg(d->unit.formatTime(summary.startSimulationLocalTime), d->unit.formatTime(summary.startSimulationZuluTime)));
+            newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
             ++columnIndex;
 
             // Start location
             newItem = new QTableWidgetItem(summary.startLocation);
+            newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
             ++columnIndex;
 
             // End date
             newItem = new QTableWidgetItem(d->unit.formatTime(summary.endDate));
             newItem->setToolTip(tr("Simulation time: %1 (%2Z)").arg(d->unit.formatTime(summary.endSimulationLocalTime), d->unit.formatTime(summary.endSimulationZuluTime)));
+            newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
             ++columnIndex;
 
             // End location
             newItem = new QTableWidgetItem(summary.endLocation);
+            newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
             ++columnIndex;
 
@@ -268,6 +276,7 @@ void LogbookWidget::updateUi() noexcept
             qint64 durationMSec = summary.startDate.msecsTo(summary.endDate);
             QTime time = QTime(0, 0).addMSecs(durationMSec);
             newItem = new QTableWidgetItem(d->unit.formatDuration(time));
+            newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
             durationMSec = summary.startSimulationLocalTime.msecsTo(summary.endSimulationLocalTime);
             time = QTime(0, 0).addMSecs(durationMSec);
             newItem->setToolTip(tr("Simulation duration: %1").arg(d->unit.formatDuration(time)));
