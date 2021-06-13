@@ -45,7 +45,6 @@ namespace
 {
     constexpr int MinimumTableWidth = 600;
     constexpr int InvalidSelection = -1;
-    constexpr int InvalidColumn = -1;
 }
 
 class FormationWidgetPrivate
@@ -53,13 +52,17 @@ class FormationWidgetPrivate
 public:
     FormationWidgetPrivate() noexcept
         : moduleAction(nullptr),
-          aircraftService(std::make_unique<AircraftService>())
+          aircraftService(std::make_unique<AircraftService>()),
+          selectedRow(InvalidSelection),
+          selectedAircraftIndex(Flight::InvalidId)
     {}
 
     QMetaObject::Connection aircraftIdAssignedConnection;
     QMetaObject::Connection aircraftInfoChangedConnection;
     std::unique_ptr<QAction> moduleAction;
     std::unique_ptr<AircraftService> aircraftService;
+    int selectedRow;
+    qint64 selectedAircraftIndex;
     Unit unit;
 };
 
@@ -110,6 +113,7 @@ void FormationWidget::showEvent(QShowEvent *event) noexcept
             this, &FormationWidget::handleUserAircraftChanged);
 
     updateUi();
+    handleSelectionChanged();
 }
 
 void FormationWidget::hideEvent(QHideEvent *event) noexcept
@@ -120,8 +124,6 @@ void FormationWidget::hideEvent(QHideEvent *event) noexcept
     disconnect(&flight, &Flight::userAircraftChanged,
                this, &FormationWidget::handleUserAircraftChanged);
 }
-
-
 
 // PROTECTED SLOTS
 
@@ -241,13 +243,22 @@ void FormationWidget::updateUi() noexcept
 
 void FormationWidget::updateEditUi() noexcept
 {
-
+    const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
+    bool userAircraftIndex = d->selectedAircraftIndex == flight.getUserAircraftIndex();
+    ui->userAircraftPushButton->setEnabled(d->selectedAircraftIndex != Flight::InvalidId && !userAircraftIndex);
+    ui->deletePushButton->setEnabled(d->selectedAircraftIndex != Flight::InvalidId);
 }
 
 void FormationWidget::frenchConnection() noexcept
 {
+    connect(ui->aircraftTableWidget, &QTableWidget::itemSelectionChanged,
+            this, &FormationWidget::handleSelectionChanged);
     connect(ui->aircraftTableWidget, &QTableWidget::cellDoubleClicked,
             this, &FormationWidget::handleCellSelected);
+    connect(ui->userAircraftPushButton, &QPushButton::clicked,
+            this, &FormationWidget::updateUserAircraftIndex);
+    connect(ui->deletePushButton, &QPushButton::clicked,
+            this, &FormationWidget::deleteAircraft);
 }
 
 const QString FormationWidget::getName()
@@ -290,4 +301,31 @@ void FormationWidget::handleCellSelected(int row, int column) noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     getFlightService().updateUserAircraftIndex(flight, row);
+}
+
+void FormationWidget::handleSelectionChanged() noexcept
+{
+    QItemSelectionModel *select = ui->aircraftTableWidget->selectionModel();
+    QModelIndexList selectedRow = select->selectedRows(1);
+    if (selectedRow.count() > 0) {
+        QModelIndex modelIndex = selectedRow.at(0);
+        d->selectedRow = modelIndex.row();
+        // Index starts at 0
+        d->selectedAircraftIndex = ui->aircraftTableWidget->model()->data(modelIndex).toInt() - 1;
+    } else {
+        d->selectedRow = InvalidSelection;
+        d->selectedAircraftIndex = Flight::InvalidId;
+    }
+    updateEditUi();
+}
+
+void FormationWidget::updateUserAircraftIndex() noexcept
+{
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    getFlightService().updateUserAircraftIndex(flight, d->selectedRow);
+}
+
+void FormationWidget::deleteAircraft() noexcept
+{
+
 }

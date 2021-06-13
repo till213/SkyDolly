@@ -79,6 +79,9 @@ private slots:
     void handleUserAircraftChanged(Aircraft &aircraft) noexcept;
     void handleAircraftIdAssigned(qint64 id) noexcept;
     void handleCellSelected(int row, int column) noexcept;
+    void handleSelectionChanged() noexcept;
+    void updateUserAircraftIndex() noexcept;
+    void deleteAircraft() noexcept;
 };
 
 #endif // FORMATIONWIDGET_H
