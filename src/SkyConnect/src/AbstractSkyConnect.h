@@ -84,7 +84,7 @@ protected:
     bool isElapsedTimerRunning() const noexcept;   
     void startElapsedTimer() const noexcept;
     void resetElapsedTime(bool restart) noexcept;
-    void updateCurrentTimestamp() noexcept;
+    qint64 updateCurrentTimestamp() noexcept;
 
     virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept = 0;
 
@@ -107,7 +107,7 @@ protected:
     virtual void onDestroyAIObjects() noexcept = 0;
 
 protected slots:
-    virtual void sampleData() noexcept = 0;
+    virtual void recordData() noexcept = 0;
 
 private:
     Q_DISABLE_COPY(AbstractSkyConnect)
