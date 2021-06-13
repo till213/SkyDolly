@@ -49,13 +49,14 @@ public:
     bool deleteById(qint64 id) noexcept;
     bool updateTitle(qint64 id, const QString &title) noexcept;
     bool updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept;
+    bool updateUserAircraftIndex(Flight &flight, int index) noexcept;
 
     QVector<FlightSummary> getFlightSummaries() const noexcept;
 
 signals:
-    void flightStored(qint64 flightId);
-    void flightRestored(qint64 flightId);
-    void flightUpdated(qint64 flightId);
+    void flightStored(qint64 id);
+    void flightRestored(qint64 id);
+    void flightUpdated(qint64 id);
 
 private:
     std::unique_ptr<FlightServicePrivate> d;

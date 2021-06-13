@@ -48,7 +48,7 @@ public:
     virtual bool deleteById(qint64 id) noexcept = 0;
     virtual bool updateTitle(qint64 id, const QString &title) noexcept = 0;
     virtual bool updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept = 0;
-    virtual bool updateUserAircraftIndex(qint64 id, int userAircraftIndex) noexcept = 0;
+    virtual bool updateUserAircraftIndex(qint64 id, int index) noexcept = 0;
     virtual QVector<FlightSummary> getFlightSummaries() const noexcept = 0;
 };
 
