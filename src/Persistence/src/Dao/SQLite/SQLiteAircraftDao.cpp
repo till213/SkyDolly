@@ -330,6 +330,13 @@ bool SQLiteAircraftDao::deleteByFlightId(qint64 flightId) noexcept
     return ok;
 }
 
+bool SQLiteAircraftDao::deleteByIndex(qint64 flightId, int index) noexcept
+{
+    d->initQueries();
+    // TODO IMPLEMENT ME!!!
+    return false;
+}
+
 bool SQLiteAircraftDao::getAircraftInfosByFlightId(qint64 flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept
 {
     d->initQueries();

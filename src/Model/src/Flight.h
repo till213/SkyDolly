@@ -62,6 +62,7 @@ public:
     Aircraft &getUserAircraft() const noexcept;
     int getUserAircraftIndex() const noexcept;
     void setUserAircraftIndex(int index) noexcept;
+    void deleteAircraftByIndex(int index) noexcept;
 
     std::vector<std::unique_ptr<Aircraft>> &getAircrafts() const noexcept;
     int getAircraftCount() const noexcept;
@@ -115,6 +116,8 @@ public:
 signals:
     void flightChanged();
     void flightConditionChanged();
+    void aircraftAdded(Aircraft &aircraft);
+    void aircraftRemoved();
     void userAircraftChanged(Aircraft &aircraft);
 
 private:
