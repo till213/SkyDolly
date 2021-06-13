@@ -89,17 +89,6 @@ FlightService &AbstractModuleWidget::getFlightService() const noexcept
     return d->flightService;
 }
 
-void AbstractModuleWidget::showEvent(QShowEvent *event) noexcept
-{
-    QWidget::showEvent(event);
-    updateUi();
-}
-
-void AbstractModuleWidget::hideEvent(QHideEvent *event) noexcept
-{
-    QWidget::hideEvent(event);
-}
-
 // PROTECTED SLOTS
 
 void AbstractModuleWidget::handleRecordingStopped() noexcept
