@@ -754,6 +754,7 @@ void MainWindow::handleReplaySpeedUnitSelected(int index) noexcept
 void MainWindow::updateUi() noexcept
 {
     updateControlUi();
+    updateControlIcons();
     updateReplaySpeedUi();
     updateTimestamp();
     updateFileMenu();
@@ -838,6 +839,22 @@ void MainWindow::updateControlUi() noexcept
     default:
         break;
     }
+}
+
+void MainWindow::updateControlIcons() noexcept
+{
+    QIcon recordIcon;
+    switch (d->moduleManager->getActiveModule().getModuleId()) {
+    case Module::Module::Formation:
+        recordIcon.addFile(":/img/icons/record-add-normal.png", QSize(), QIcon::Normal, QIcon::Off);
+        recordIcon.addFile(":/img/icons/record-add-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
+        break;
+    default:
+        recordIcon.addFile(":/img/icons/record-normal.png", QSize(), QIcon::Normal, QIcon::Off);
+        recordIcon.addFile(":/img/icons/record-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
+        break;
+    }
+    ui->recordAction->setIcon(recordIcon);
 }
 
 void MainWindow::updateReplaySpeedUi() noexcept
@@ -945,6 +962,7 @@ void MainWindow::handleModuleActivated(const QString title, Module::Module modul
     if (minimalUi) {
         updateMinimalUi(false);
     }
+    updateControlIcons();
 }
 
 void MainWindow::on_moduleSelectorVisibleCheckBox_clicked(bool enabled) noexcept
