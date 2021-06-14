@@ -93,6 +93,7 @@ private slots:
 
     void updateUi() noexcept;
     void updateControlUi() noexcept;
+    void updateControlIcons() noexcept;
     void updateReplaySpeedUi() noexcept;
     void updateTimestamp() noexcept;
     void updateFileMenu() noexcept;
