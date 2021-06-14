@@ -45,8 +45,8 @@ public:
      */
     virtual bool add(qint64 aircraftId, const PositionData &data) noexcept = 0;
     virtual bool getByAircraftId(qint64 aircraftId, QVector<PositionData> &data) const noexcept = 0;
-    virtual bool removeByFlightId(qint64 flightId) noexcept = 0;
-    virtual bool removeByAircraftId(qint64 aircraftId) noexcept = 0;
+    virtual bool deleteByFlightId(qint64 flightId) noexcept = 0;
+    virtual bool deleteByAircraftId(qint64 aircraftId) noexcept = 0;
 };
 
 #endif // POSITIONDAOINTF_H
