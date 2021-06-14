@@ -43,7 +43,7 @@ public:
     ~AircraftService() noexcept;
 
     bool store(qint64 flightId, int sequenceNumber, Aircraft &aircraft) noexcept;
-    bool removeByIndex(Flight &flight, int index) noexcept;
+    bool deleteByIndex(Flight &flight, int index) noexcept;
     bool getAircraftInfos(qint64 flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept;
 
 private:

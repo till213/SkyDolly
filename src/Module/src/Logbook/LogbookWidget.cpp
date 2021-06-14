@@ -372,7 +372,7 @@ void LogbookWidget::deleteFlight() noexcept
             doDelete = true;
         }
         if (doDelete) {
-            d->flightService.removeById(d->selectedFlightId);
+            d->flightService.deleteById(d->selectedFlightId);
             int lastSelectedRow = d->selectedRow;
             updateUi();
             int selectedRow = qMin(lastSelectedRow, ui->logTableWidget->rowCount() - 1);
