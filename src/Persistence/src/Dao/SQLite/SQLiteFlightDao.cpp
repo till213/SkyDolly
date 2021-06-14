@@ -54,7 +54,7 @@ public:
 
     std::unique_ptr<QSqlQuery> insertQuery;
     std::unique_ptr<QSqlQuery> selectByIdQuery;
-    std::unique_ptr<QSqlQuery> removeByIdQuery;
+    std::unique_ptr<QSqlQuery> deleteByIdQuery;
     std::unique_ptr<QSqlQuery> updateTitleQuery;
     std::unique_ptr<QSqlQuery> updateTitleAndDescriptionQuery;
     std::unique_ptr<QSqlQuery> updateUserAircraftSequenceNumberQuery;
@@ -119,9 +119,9 @@ public:
 "from flight f "
 "where f.id = :id;");
         }
-        if (removeByIdQuery == nullptr) {
-            removeByIdQuery = std::make_unique<QSqlQuery>();
-            removeByIdQuery->prepare(
+        if (deleteByIdQuery == nullptr) {
+            deleteByIdQuery = std::make_unique<QSqlQuery>();
+            deleteByIdQuery->prepare(
 "delete "
 "from flight "
 "where id = :id;");
@@ -170,7 +170,7 @@ public:
     {
         insertQuery = nullptr;
         selectByIdQuery = nullptr;
-        removeByIdQuery = nullptr;
+        deleteByIdQuery = nullptr;
         updateTitleQuery = nullptr;
         updateTitleAndDescriptionQuery = nullptr;
         updateUserAircraftSequenceNumberQuery = nullptr;
@@ -315,17 +315,17 @@ bool SQLiteFlightDao::getFlightById(qint64 id, Flight &flight) const noexcept
     return ok;
 }
 
-bool SQLiteFlightDao::removeById(qint64 id) noexcept
+bool SQLiteFlightDao::deleteById(qint64 id) noexcept
 {
     d->initQueries();
 
-    bool ok = d->aircraftDao->removeAllByFlightId(id);
+    bool ok = d->aircraftDao->deleteAllByFlightId(id);
     if (ok) {
-        d->removeByIdQuery->bindValue(":id", id);
-        ok = d->removeByIdQuery->exec();
+        d->deleteByIdQuery->bindValue(":id", id);
+        ok = d->deleteByIdQuery->exec();
 #ifdef DEBUG
         if (!ok) {
-            qDebug("SQLiteFlightDao::removeById: SQL error: %s", qPrintable(d->removeByIdQuery->lastError().databaseText() + " - error code: " + d->removeByIdQuery->lastError().nativeErrorCode()));
+            qDebug("SQLiteFlightDao::deleteById: SQL error: %s", qPrintable(d->deleteByIdQuery->lastError().databaseText() + " - error code: " + d->deleteByIdQuery->lastError().nativeErrorCode()));
         }
 #endif
     }

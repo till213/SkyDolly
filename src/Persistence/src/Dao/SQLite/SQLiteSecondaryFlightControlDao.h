@@ -43,8 +43,8 @@ public:
 
     virtual bool add(qint64 aircraftId, const SecondaryFlightControlData &data) noexcept override;
     virtual bool getByAircraftId(qint64 aircraftId, QVector<SecondaryFlightControlData> &data) const noexcept override;
-    virtual bool removeByFlightId(qint64 flightId) noexcept override;
-    virtual bool removeByAircraftId(qint64 aircraftId) noexcept override;
+    virtual bool deleteByFlightId(qint64 flightId) noexcept override;
+    virtual bool deleteByAircraftId(qint64 aircraftId) noexcept override;
 
 private:
     std::unique_ptr<SQLiteSecondaryFlightControlDaoPrivate> d;

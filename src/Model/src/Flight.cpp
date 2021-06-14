@@ -171,7 +171,7 @@ void Flight::setUserAircraftIndex(int index) noexcept
     }
 }
 
-qint64 Flight::removeAircraftByIndex(int index) noexcept
+qint64 Flight::deleteAircraftByIndex(int index) noexcept
 {
     qint64 aircraftId;
     // A flight has at least one aircraft
@@ -179,7 +179,7 @@ qint64 Flight::removeAircraftByIndex(int index) noexcept
         setUserAircraftIndex(qMax(d->userAircraftIndex - 1, 0));
         aircraftId = d->aircrafts.at(index)->getId();
         d->aircrafts.erase(d->aircrafts.begin() + index);
-        emit aircraftRemoved(aircraftId);
+        emit aircraftDeleted(aircraftId);
     } else {
         aircraftId = Aircraft::InvalidId;
     }

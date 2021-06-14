@@ -50,7 +50,7 @@ ActionButton::~ActionButton() noexcept
 void ActionButton::setAction(const QAction *action) noexcept
 {
    // If an action is already associated with the button then
-   // remove all previous connections
+   // disconnect all previous connections
    if (d->action != nullptr && d->action != action) {
        disconnectFromAction();
    }
