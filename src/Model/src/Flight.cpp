@@ -171,18 +171,18 @@ void Flight::setUserAircraftIndex(int index) noexcept
     }
 }
 
-qint64 Flight::deleteAircraftByIndex(int index) noexcept
+qint64 Flight::removeAircraftByIndex(int index) noexcept
 {
-    if (d->userAircraftIndex == index) {
-        setUserAircraftIndex(qMax(d->userAircraftIndex - 1, 0));
-    }
-    const qint64 aircraftId = d->aircrafts.at(index)->getId();
+    qint64 aircraftId;
+    // A flight has at least one aircraft
     if (d->aircrafts.size() > 1) {
+        setUserAircraftIndex(qMax(d->userAircraftIndex - 1, 0));
+        aircraftId = d->aircrafts.at(index)->getId();
         d->aircrafts.erase(d->aircrafts.begin() + index);
+        emit aircraftRemoved(aircraftId);
     } else {
-        d->aircrafts.at(0)->clear();
+        aircraftId = Aircraft::InvalidId;
     }
-    emit aircraftRemoved();
     return aircraftId;
 }
 

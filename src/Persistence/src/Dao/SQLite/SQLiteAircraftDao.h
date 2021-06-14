@@ -44,8 +44,9 @@ public:
 
     virtual bool add(qint64 flightId, int sequenceNumber, Aircraft &aircraft) noexcept override;
     virtual bool getByFlightId(qint64 flightId, std::vector<std::unique_ptr<Aircraft>> &aircrafts) const noexcept override;
-    virtual bool deleteByFlightId(qint64 flightId) noexcept override;
-    virtual bool deleteById(qint64 id) noexcept override;
+    virtual bool adjustAircraftSequenceNumbersByFlightId(qint64 flightId, int sequenceNumber) noexcept override;
+    virtual bool removeAllByFlightId(qint64 flightId) noexcept override;
+    virtual bool removeById(qint64 id) noexcept override;
     virtual bool getAircraftInfosByFlightId(qint64 flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept override;
 
 private:

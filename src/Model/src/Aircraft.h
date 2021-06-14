@@ -97,7 +97,6 @@ public:
     bool operator != (const Aircraft &rhs) const noexcept;
 
 signals:
-    void idAssigned(qint64 id);
     void infoChanged();
     void dataChanged();
 

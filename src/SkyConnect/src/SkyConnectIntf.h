@@ -49,6 +49,20 @@ public:
     virtual bool isReplaying() const noexcept = 0;
     virtual void stop() noexcept = 0;
 
+    /*!
+     * Returns whether SkyConnect is active or not. \em Active means any of the following states:
+     *
+     * - Connect::State::Recording
+     * - Connect::State::RecordingPaused
+     * - Connect::State::Replay
+     * - Connect::State::ReplayPaused
+     *
+     * Or in other words: any state except Connected and Disconnected.
+     *
+     * \return \c true if SkyConnect is active; \c false else
+     */
+    virtual bool isActive() const noexcept = 0;
+
     virtual void setPaused(bool enabled) noexcept = 0;
     virtual bool isPaused() const noexcept = 0;
 
