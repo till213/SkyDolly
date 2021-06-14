@@ -211,7 +211,7 @@ void FormationWidget::updateUi() noexcept
         if (rowIndex == userAircraftIndex) {
             QIcon icon;
             if (recording) {
-                icon = QIcon(":/img/icons/record-aircraft-normal.png");
+                icon = QIcon(":/img/icons/aircraft-record-normal.png");
             } else {
                 icon = QIcon(":/img/icons/aircraft-normal.png");
             }
