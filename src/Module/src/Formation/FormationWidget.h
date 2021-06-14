@@ -69,15 +69,14 @@ private:
     std::unique_ptr<FormationWidgetPrivate> d;
 
     void initUi() noexcept;
-    void updateUi() noexcept;
-    void updateEditUi() noexcept;
     void frenchConnection() noexcept;
 
     static const QString getName();
 
 private slots:
+    void updateUi() noexcept;
+    void updateEditUi() noexcept;
     void handleUserAircraftChanged(Aircraft &aircraft) noexcept;
-    void handleAircraftIdAssigned(qint64 id) noexcept;
     void handleCellSelected(int row, int column) noexcept;
     void handleSelectionChanged() noexcept;
     void updateUserAircraftIndex() noexcept;

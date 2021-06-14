@@ -33,10 +33,10 @@
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/AircraftInfo.h"
-#include "../../../SkyConnect/src/SkyManager.h"
-#include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../Persistence/src/Service/FlightService.h"
 #include "../../../Persistence/src/Service/AircraftService.h"
+#include "../../../SkyConnect/src/SkyManager.h"
+#include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../AbstractModuleWidget.h"
 #include "FormationWidget.h"
 #include "ui_FormationWidget.h"
@@ -45,7 +45,7 @@ namespace
 {
     constexpr int MinimumTableWidth = 600;
     constexpr int InvalidSelection = -1;
-    constexpr int SequenceNumberColumn = 1;
+    constexpr int SequenceNumberColumn = 0;
 }
 
 class FormationWidgetPrivate
@@ -58,7 +58,6 @@ public:
           selectedAircraftIndex(Flight::InvalidId)
     {}
 
-    QMetaObject::Connection aircraftIdAssignedConnection;
     QMetaObject::Connection aircraftInfoChangedConnection;
     std::unique_ptr<QAction> moduleAction;
     std::unique_ptr<AircraftService> aircraftService;
@@ -77,8 +76,6 @@ FormationWidget::FormationWidget(FlightService &flightService, QWidget *parent) 
     ui->setupUi(this);
     initUi();
     frenchConnection();
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
-    handleUserAircraftChanged(flight.getUserAircraft());
 }
 
 FormationWidget::~FormationWidget() noexcept
@@ -112,9 +109,15 @@ void FormationWidget::showEvent(QShowEvent *event) noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::userAircraftChanged,
             this, &FormationWidget::handleUserAircraftChanged);
+    connect(&flight, &Flight::aircraftRemoved,
+            this, &FormationWidget::updateUi);
+    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    connect(&skyConnect, &SkyConnectIntf::stateChanged,
+            this, &FormationWidget::updateUi);
 
-    updateUi();
-    handleSelectionChanged();
+    // Also updates the UI
+    handleUserAircraftChanged(flight.getUserAircraft());
+    handleSelectionChanged();    
 }
 
 void FormationWidget::hideEvent(QHideEvent *event) noexcept
@@ -124,6 +127,12 @@ void FormationWidget::hideEvent(QHideEvent *event) noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     disconnect(&flight, &Flight::userAircraftChanged,
                this, &FormationWidget::handleUserAircraftChanged);
+    disconnect(&flight, &Flight::aircraftRemoved,
+               this, &FormationWidget::updateUi);
+    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    disconnect(&skyConnect, &SkyConnectIntf::stateChanged,
+               this, &FormationWidget::updateUi);
+    QObject::disconnect(d->aircraftInfoChangedConnection);
 }
 
 // PROTECTED SLOTS
@@ -149,7 +158,7 @@ void FormationWidget::initUi() noexcept
 
     ui->aircraftTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    const QStringList headers {tr("ID"), tr("Sequence"), tr("Type"), tr("Category"), tr("Wing Span"), tr("Initial Airspeed"), tr("Initial Altitude Above Ground")};
+    const QStringList headers {tr("Sequence"), tr("Type"), tr("Category"), tr("Wing Span"), tr("Initial Airspeed"), tr("Initial Altitude Above Ground")};
     ui->aircraftTableWidget->setColumnCount(headers.count());
     ui->aircraftTableWidget->setHorizontalHeaderLabels(headers);
     ui->aircraftTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -157,8 +166,27 @@ void FormationWidget::initUi() noexcept
     ui->aircraftTableWidget->verticalHeader()->hide();
     ui->aircraftTableWidget->setMinimumWidth(MinimumTableWidth);
     ui->aircraftTableWidget->horizontalHeader()->setStretchLastSection(true);
-    ui->aircraftTableWidget->sortByColumn(1, Qt::SortOrder::AscendingOrder);
+    ui->aircraftTableWidget->sortByColumn(SequenceNumberColumn, Qt::SortOrder::AscendingOrder);
 }
+
+void FormationWidget::frenchConnection() noexcept
+{
+    connect(ui->aircraftTableWidget, &QTableWidget::itemSelectionChanged,
+            this, &FormationWidget::handleSelectionChanged);
+    connect(ui->aircraftTableWidget, &QTableWidget::cellDoubleClicked,
+            this, &FormationWidget::handleCellSelected);
+    connect(ui->userAircraftPushButton, &QPushButton::clicked,
+            this, &FormationWidget::updateUserAircraftIndex);
+    connect(ui->deletePushButton, &QPushButton::clicked,
+            this, &FormationWidget::deleteAircraft);
+}
+
+const QString FormationWidget::getName()
+{
+    return QString(QT_TRANSLATE_NOOP("LogbookWidget", "Formation"));
+}
+
+// PRIVATE SLOTS
 
 void FormationWidget::updateUi() noexcept
 {
@@ -178,16 +206,8 @@ void FormationWidget::updateUi() noexcept
         const AircraftInfo &aircraftInfo = aircraft->getAircraftInfoConst();
         int columnIndex = 0;
 
-        // ID
-        QTableWidgetItem *newItem = new QTableWidgetItem();
-        if (aircraftInfo.aircraftId != Aircraft::InvalidId) {
-            newItem->setData(Qt::DisplayRole, aircraftInfo.aircraftId);
-        }
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
-        ++columnIndex;
-
         // Sequence
-        newItem = new QTableWidgetItem();
+        QTableWidgetItem *newItem = new QTableWidgetItem();
         if (rowIndex == userAircraftIndex) {
             QIcon icon;
             if (recording) {
@@ -234,8 +254,7 @@ void FormationWidget::updateUi() noexcept
 
         ++rowIndex;
     }
-    // Don't show internal aircraft IDs
-    ui->aircraftTableWidget->hideColumn(0);
+
     ui->aircraftTableWidget->setSortingEnabled(true);
     ui->aircraftTableWidget->resizeColumnsToContents();
     ui->aircraftTableWidget->blockSignals(false);
@@ -245,62 +264,25 @@ void FormationWidget::updateUi() noexcept
 
 void FormationWidget::updateEditUi() noexcept
 {
+    const bool active = SkyManager::getInstance().getCurrentSkyConnect().isActive();
     const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
     bool userAircraftIndex = d->selectedAircraftIndex == flight.getUserAircraftIndex();
-    ui->userAircraftPushButton->setEnabled(d->selectedAircraftIndex != Flight::InvalidId && !userAircraftIndex);
-    ui->deletePushButton->setEnabled(d->selectedAircraftIndex != Flight::InvalidId);
+    ui->userAircraftPushButton->setEnabled(!active &&  d->selectedAircraftIndex != Flight::InvalidId && !userAircraftIndex);
+    const bool formation = flight.getAircraftCount() > 1;
+    ui->deletePushButton->setEnabled(!active && d->selectedAircraftIndex != Flight::InvalidId && formation);
 }
-
-void FormationWidget::frenchConnection() noexcept
-{
-    connect(ui->aircraftTableWidget, &QTableWidget::itemSelectionChanged,
-            this, &FormationWidget::handleSelectionChanged);
-    connect(ui->aircraftTableWidget, &QTableWidget::cellDoubleClicked,
-            this, &FormationWidget::handleCellSelected);
-    connect(ui->userAircraftPushButton, &QPushButton::clicked,
-            this, &FormationWidget::updateUserAircraftIndex);
-    connect(ui->deletePushButton, &QPushButton::clicked,
-            this, &FormationWidget::deleteAircraft);
-}
-
-const QString FormationWidget::getName()
-{
-    return QString(QT_TRANSLATE_NOOP("LogbookWidget", "Formation"));
-}
-
-// PRIVATE SLOTS
 
 void FormationWidget::handleUserAircraftChanged(Aircraft &aircraft) noexcept
 {
-    QObject::disconnect(d->aircraftIdAssignedConnection);
-    QObject::disconnect(d->aircraftIdAssignedConnection);
-    d->aircraftInfoChangedConnection = connect(&aircraft, &Aircraft::idAssigned,
-                                               this, &FormationWidget::updateUi);
+    QObject::disconnect(d->aircraftInfoChangedConnection);
     d->aircraftInfoChangedConnection = connect(&aircraft, &Aircraft::infoChanged,
                                                this, &FormationWidget::updateUi);
     updateUi();
 }
 
-void FormationWidget::handleAircraftIdAssigned(qint64 id) noexcept
-{
-    int row = 0;
-    QTableWidgetItem *item = nullptr;
-    while (row < ui->aircraftTableWidget->rowCount() && item == nullptr) {
-        item = ui->aircraftTableWidget->item(row, 0);
-        bool ok;
-        item->data(Qt::DisplayRole).toLongLong(&ok);
-        if (ok) {
-            item = nullptr;
-            ++row;
-        }
-    }
-    if (item != nullptr) {
-        item->setData(Qt::DisplayRole, id);
-    }
-}
-
 void FormationWidget::handleCellSelected(int row, int column) noexcept
 {
+    Q_UNUSED(column)
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     getFlightService().updateUserAircraftIndex(flight, row);
 }
@@ -330,6 +312,5 @@ void FormationWidget::updateUserAircraftIndex() noexcept
 void FormationWidget::deleteAircraft() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    // Sequence starts at 1
-    d->aircraftService->deleteByIndex(flight, d->selectedRow);
+    d->aircraftService->removeByIndex(flight, d->selectedRow);
 }

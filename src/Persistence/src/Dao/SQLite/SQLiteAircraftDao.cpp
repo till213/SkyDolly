@@ -78,8 +78,10 @@ public:
 
     std::unique_ptr<QSqlQuery> insertQuery;
     std::unique_ptr<QSqlQuery> selectByFlightIdQuery;
-    std::unique_ptr<QSqlQuery> deleteByFlightIdQuery;
-    std::unique_ptr<QSqlQuery> deleteById;
+    std::unique_ptr<QSqlQuery> adjustAircraftSequenceNumbersQuery;
+    std::unique_ptr<QSqlQuery> removeByFlightIdQuery;
+    std::unique_ptr<QSqlQuery> removeById;
+
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<PositionDaoIntf> positionDao;
     std::unique_ptr<EngineDaoIntf> engineDao;
@@ -139,16 +141,24 @@ public:
 "where  a.flight_id = :flight_id "
 "order by a.seq_nr;");
         }
-        if (deleteByFlightIdQuery == nullptr) {
-            deleteByFlightIdQuery = std::make_unique<QSqlQuery>();
-            deleteByFlightIdQuery->prepare(
+        if (adjustAircraftSequenceNumbersQuery == nullptr) {
+            adjustAircraftSequenceNumbersQuery = std::make_unique<QSqlQuery>();
+            adjustAircraftSequenceNumbersQuery->prepare(
+"update aircraft "
+"set    seq_nr = seq_nr - 1 "
+"where flight_id = :flight_id "
+"and   seq_nr    > :seq_nr;");
+        }
+        if (removeByFlightIdQuery == nullptr) {
+            removeByFlightIdQuery = std::make_unique<QSqlQuery>();
+            removeByFlightIdQuery->prepare(
 "delete "
 "from   aircraft "
 "where  flight_id = :flight_id;");
         }
-        if (deleteById == nullptr) {
-            deleteById = std::make_unique<QSqlQuery>();
-            deleteById->prepare(
+        if (removeById == nullptr) {
+            removeById = std::make_unique<QSqlQuery>();
+            removeById->prepare(
 "delete "
 "from   aircraft "
 "where  id = :id;");
@@ -159,8 +169,9 @@ public:
     {
         insertQuery = nullptr;
         selectByFlightIdQuery = nullptr;
-        deleteByFlightIdQuery = nullptr;
-        deleteById = nullptr;
+        adjustAircraftSequenceNumbersQuery = nullptr;
+        removeByFlightIdQuery = nullptr;
+        removeById = nullptr;
     }
 };
 
@@ -303,35 +314,49 @@ bool SQLiteAircraftDao::getByFlightId(qint64 flightId, std::vector<std::unique_p
     return ok;
 }
 
-bool SQLiteAircraftDao::deleteByFlightId(qint64 flightId) noexcept
+bool SQLiteAircraftDao::adjustAircraftSequenceNumbersByFlightId(qint64 flightId, int sequenceNumber) noexcept
+{
+    d->initQueries();
+    d->adjustAircraftSequenceNumbersQuery->bindValue(":flight_id", flightId);
+    d->adjustAircraftSequenceNumbersQuery->bindValue(":seq_nr", sequenceNumber);
+    bool ok = d->adjustAircraftSequenceNumbersQuery->exec();
+#ifdef DEBUG
+    if (!ok) {
+        qDebug("SQLiteAircraftDao::adjustAircraftSequenceNumbersByIndex: SQL error: %s", qPrintable(d->adjustAircraftSequenceNumbersQuery->lastError().databaseText() + " - error code: " + d->adjustAircraftSequenceNumbersQuery->lastError().nativeErrorCode()));
+    }
+#endif
+    return ok;
+}
+
+bool SQLiteAircraftDao::removeAllByFlightId(qint64 flightId) noexcept
 {
     d->initQueries();
     // Delete "bottom-up" in order not to violate foreign key constraints
-    bool ok = d->positionDao->deleteByFlightId(flightId);
+    bool ok = d->positionDao->removeByFlightId(flightId);
     if (ok) {
-        ok = d->engineDao->deleteByFlightId(flightId);
+        ok = d->engineDao->removeByFlightId(flightId);
     }
     if (ok) {
-        ok = d->primaryFlightControlDao->deleteByFlightId(flightId);
+        ok = d->primaryFlightControlDao->removeByFlightId(flightId);
     }
     if (ok) {
-        ok = d->secondaryFlightControlDao->deleteByFlightId(flightId);
+        ok = d->secondaryFlightControlDao->removeByFlightId(flightId);
     }
     if (ok) {
-        ok = d->handleDao->deleteByFlightId(flightId);
+        ok = d->handleDao->removeByFlightId(flightId);
     }
     if (ok) {
-        ok = d->lightDao->deleteByFlightId(flightId);
+        ok = d->lightDao->removeByFlightId(flightId);
     }
     if (ok) {
-        ok = d->waypointDao->deleteByFlightId(flightId);
+        ok = d->waypointDao->removeByFlightId(flightId);
     }
     if (ok) {
-        d->deleteByFlightIdQuery->bindValue(":flight_id", flightId);
-        ok = d->deleteByFlightIdQuery->exec();
+        d->removeByFlightIdQuery->bindValue(":flight_id", flightId);
+        ok = d->removeByFlightIdQuery->exec();
 #ifdef DEBUG
         if (!ok) {
-            qDebug("SQLiteAircraftDao::deleteByFlightId: SQL error: %s", qPrintable(d->deleteByFlightIdQuery->lastError().databaseText() + " - error code: " + d->deleteByFlightIdQuery->lastError().nativeErrorCode()));
+            qDebug("SQLiteAircraftDao::removeByFlightId: SQL error: %s", qPrintable(d->removeByFlightIdQuery->lastError().databaseText() + " - error code: " + d->removeByFlightIdQuery->lastError().nativeErrorCode()));
         }
 #endif
     }
@@ -339,35 +364,35 @@ bool SQLiteAircraftDao::deleteByFlightId(qint64 flightId) noexcept
     return ok;
 }
 
-bool SQLiteAircraftDao::deleteById(qint64 id) noexcept
+bool SQLiteAircraftDao::removeById(qint64 id) noexcept
 {
     d->initQueries();
     // Delete "bottom-up" in order not to violate foreign key constraints
-    bool ok = d->positionDao->deleteByAircraftId(id);
+    bool ok = d->positionDao->removeByAircraftId(id);
     if (ok) {
-        ok = d->engineDao->deleteByAircraftId(id);
+        ok = d->engineDao->removeByAircraftId(id);
     }
     if (ok) {
-        ok = d->primaryFlightControlDao->deleteByAircraftId(id);
+        ok = d->primaryFlightControlDao->removeByAircraftId(id);
     }
     if (ok) {
-        ok = d->secondaryFlightControlDao->deleteByAircraftId(id);
+        ok = d->secondaryFlightControlDao->removeByAircraftId(id);
     }
     if (ok) {
-        ok = d->handleDao->deleteByAircraftId(id);
+        ok = d->handleDao->removeByAircraftId(id);
     }
     if (ok) {
-        ok = d->lightDao->deleteByAircraftId(id);
+        ok = d->lightDao->removeByAircraftId(id);
     }
     if (ok) {
-        ok = d->waypointDao->deleteByAircraftId(id);
+        ok = d->waypointDao->removeByAircraftId(id);
     }
     if (ok) {
-        d->deleteById->bindValue(":id", id);
-        ok = d->deleteById->exec();
+        d->removeById->bindValue(":id", id);
+        ok = d->removeById->exec();
 #ifdef DEBUG
         if (!ok) {
-            qDebug("SQLiteAircraftDao::deleteByIndex: SQL error: %s", qPrintable(d->deleteById->lastError().databaseText() + " - error code: " + d->deleteById->lastError().nativeErrorCode()));
+            qDebug("SQLiteAircraftDao::removeById: SQL error: %s", qPrintable(d->removeById->lastError().databaseText() + " - error code: " + d->removeById->lastError().nativeErrorCode()));
         }
 #endif
     }

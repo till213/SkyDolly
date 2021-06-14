@@ -95,11 +95,11 @@ bool FlightService::restore(qint64 id, Flight &flight) noexcept
     return ok;
 }
 
-bool FlightService::deleteById(qint64 id)  noexcept
+bool FlightService::removeById(qint64 id)  noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
-        ok = d->flightDao->deleteById(id);
+        ok = d->flightDao->removeById(id);
         if (ok) {
             QSqlDatabase::database().commit();
         } else {
