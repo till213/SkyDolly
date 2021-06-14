@@ -69,13 +69,13 @@ private:
     std::unique_ptr<LogbookWidgetPrivate> d;
 
     void initUi() noexcept;
-    void updateEditUi() noexcept;
     void frenchConnection() noexcept;
 
     static const QString getName();
 
 private slots:
     void updateUi() noexcept;
+    void updateEditUi() noexcept;
     void updateAircraftIcon() noexcept;
     void handleSelectionChanged() noexcept;
     void loadFlight() noexcept;

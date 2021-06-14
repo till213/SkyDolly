@@ -44,8 +44,8 @@ public:
 
     std::unique_ptr<QSqlQuery> insertQuery;
     std::unique_ptr<QSqlQuery> selectByAircraftIdQuery;
-    std::unique_ptr<QSqlQuery> deleteByFlightIdQuery;
-    std::unique_ptr<QSqlQuery> deleteByIdQuery;
+    std::unique_ptr<QSqlQuery> removeByFlightIdQuery;
+    std::unique_ptr<QSqlQuery> removeByIdQuery;
 
     void initQueries()
     {
@@ -80,9 +80,9 @@ public:
 "where  sfc.aircraft_id = :aircraft_id "
 "order by sfc.timestamp asc;");
         }
-        if (deleteByFlightIdQuery == nullptr) {
-            deleteByFlightIdQuery = std::make_unique<QSqlQuery>();
-            deleteByFlightIdQuery->prepare(
+        if (removeByFlightIdQuery == nullptr) {
+            removeByFlightIdQuery = std::make_unique<QSqlQuery>();
+            removeByFlightIdQuery->prepare(
 "delete "
 "from   secondary_flight_control "
 "where  aircraft_id in (select a.id "
@@ -90,9 +90,9 @@ public:
 "                       where  a.flight_id = :flight_id"
 "                      );");
         }
-        if (deleteByIdQuery == nullptr) {
-            deleteByIdQuery = std::make_unique<QSqlQuery>();
-            deleteByIdQuery->prepare(
+        if (removeByIdQuery == nullptr) {
+            removeByIdQuery = std::make_unique<QSqlQuery>();
+            removeByIdQuery->prepare(
 "delete "
 "from   secondary_flight_control "
 "where  aircraft_id = :aircraft_id;");
@@ -103,8 +103,8 @@ public:
     {
         insertQuery = nullptr;
         selectByAircraftIdQuery = nullptr;
-        deleteByFlightIdQuery = nullptr;
-        deleteByIdQuery = nullptr;
+        removeByFlightIdQuery = nullptr;
+        removeByIdQuery = nullptr;
     }
 };
 
@@ -179,27 +179,27 @@ bool SQLiteSecondaryFlightControlDao::getByAircraftId(qint64 aircraftId, QVector
     return ok;
 }
 
-bool SQLiteSecondaryFlightControlDao::deleteByFlightId(qint64 flightId) noexcept
+bool SQLiteSecondaryFlightControlDao::removeByFlightId(qint64 flightId) noexcept
 {
     d->initQueries();
-    d->deleteByFlightIdQuery->bindValue(":flight_id", flightId);
-    bool ok = d->deleteByFlightIdQuery->exec();
+    d->removeByFlightIdQuery->bindValue(":flight_id", flightId);
+    bool ok = d->removeByFlightIdQuery->exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteSecondaryFlightControlDao::deleteByFlightId: SQL error: %s", qPrintable(d->deleteByFlightIdQuery->lastError().databaseText() + " - error code: " + d->deleteByFlightIdQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteSecondaryFlightControlDao::removeByFlightId: SQL error: %s", qPrintable(d->removeByFlightIdQuery->lastError().databaseText() + " - error code: " + d->removeByFlightIdQuery->lastError().nativeErrorCode()));
     }
 #endif
     return ok;
 }
 
-bool SQLiteSecondaryFlightControlDao::deleteByAircraftId(qint64 aircraftId) noexcept
+bool SQLiteSecondaryFlightControlDao::removeByAircraftId(qint64 aircraftId) noexcept
 {
     d->initQueries();
-    d->deleteByIdQuery->bindValue(":aircraft_id", aircraftId);
-    bool ok = d->deleteByIdQuery->exec();
+    d->removeByIdQuery->bindValue(":aircraft_id", aircraftId);
+    bool ok = d->removeByIdQuery->exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteSecondaryFlightControlDao::deleteByAircraftId: SQL error: %s", qPrintable(d->deleteByIdQuery->lastError().databaseText() + " - error code: " + d->deleteByIdQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteSecondaryFlightControlDao::removeByAircraftId: SQL error: %s", qPrintable(d->removeByIdQuery->lastError().databaseText() + " - error code: " + d->removeByIdQuery->lastError().nativeErrorCode()));
     }
 #endif
     return true;

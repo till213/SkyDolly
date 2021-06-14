@@ -97,7 +97,6 @@ void Aircraft::setId(qint64 id) noexcept
 {
     d->id = id;
     d->aircraftInfo.aircraftId = id;
-    emit idAssigned(d->id);
 }
 
 qint64 Aircraft::getSimulationRequestId() const noexcept

@@ -46,6 +46,8 @@
 #include "../../../Model/src/Logbook.h"
 #include "../../../Persistence/src/Service/DatabaseService.h"
 #include "../../../Persistence/src/Service/FlightService.h"
+#include "../../../SkyConnect/src/SkyManager.h"
+#include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../AbstractModuleWidget.h"
 #include "../Module.h"
 #include "LogbookWidget.h"
@@ -134,6 +136,9 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
             this, &LogbookWidget::updateAircraftIcon);
     connect(&d->flightService, &FlightService::flightUpdated,
             this, &LogbookWidget::updateUi);
+    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    connect(&skyConnect, &SkyConnectIntf::stateChanged,
+            this, &LogbookWidget::updateEditUi);
 
     updateUi();
     handleSelectionChanged();
@@ -151,6 +156,9 @@ void LogbookWidget::hideEvent(QHideEvent *event) noexcept
                this, &LogbookWidget::updateAircraftIcon);
     disconnect(&d->flightService, &FlightService::flightUpdated,
                this, &LogbookWidget::updateUi);
+    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    disconnect(&skyConnect, &SkyConnectIntf::stateChanged,
+               this, &LogbookWidget::updateEditUi);
 }
 
 // PRIVATE
@@ -170,13 +178,7 @@ void LogbookWidget::initUi() noexcept
     ui->logTableWidget->verticalHeader()->hide();
     ui->logTableWidget->setMinimumWidth(MinimumTableWidth);
     ui->logTableWidget->horizontalHeader()->setStretchLastSection(true);
-    ui->logTableWidget->sortByColumn(0, Qt::SortOrder::DescendingOrder);
-}
-
-void LogbookWidget::updateEditUi() noexcept
-{
-    ui->loadPushButton->setEnabled(d->selectedFlightId != Flight::InvalidId);
-    ui->deletePushButton->setEnabled(d->selectedFlightId != Flight::InvalidId);
+    ui->logTableWidget->sortByColumn(FlightIdColumn, Qt::SortOrder::DescendingOrder);
 }
 
 void LogbookWidget::frenchConnection() noexcept
@@ -304,6 +306,13 @@ void LogbookWidget::updateUi() noexcept
     updateEditUi();
 }
 
+void LogbookWidget::updateEditUi() noexcept
+{
+    const bool active = SkyManager::getInstance().getCurrentSkyConnect().isActive();
+    ui->loadPushButton->setEnabled(!active && d->selectedFlightId != Flight::InvalidId);
+    ui->deletePushButton->setEnabled(!active && d->selectedFlightId != Flight::InvalidId);
+}
+
 void LogbookWidget::updateAircraftIcon() noexcept
 {
     const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
@@ -311,7 +320,7 @@ void LogbookWidget::updateAircraftIcon() noexcept
     const QIcon aircraftIcon(":/img/icons/aircraft-normal.png");
     const QIcon emptyIcon;
     for (int row = 0; row < ui->logTableWidget->rowCount(); ++row) {
-        QTableWidgetItem *item = ui->logTableWidget->item(row, 0);
+        QTableWidgetItem *item = ui->logTableWidget->item(row, FlightIdColumn);
         if (item->data(Qt::DisplayRole).toLongLong() == flightInMemoryId) {
             item->setIcon(aircraftIcon);
         } else {
@@ -371,7 +380,7 @@ void LogbookWidget::deleteFlight() noexcept
             doDelete = true;
         }
         if (doDelete) {
-            d->flightService.deleteById(d->selectedFlightId);
+            d->flightService.removeById(d->selectedFlightId);
             int lastSelectedRow = d->selectedRow;
             updateUi();
             int selectedRow = qMin(lastSelectedRow, ui->logTableWidget->rowCount() - 1);
