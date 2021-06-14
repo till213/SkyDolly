@@ -46,6 +46,18 @@ namespace
     constexpr int MinimumTableWidth = 600;
     constexpr int InvalidSelection = -1;
     constexpr int SequenceNumberColumn = 0;
+
+    enum HorizontalDistance {
+        Close = 0,
+        Nearby,
+        Far
+    };
+
+    enum VerticalDistance {
+        Below = 0,
+        Level,
+        Above
+    };
 }
 
 class FormationWidgetPrivate
@@ -170,6 +182,11 @@ void FormationWidget::initUi() noexcept
     ui->aircraftTableWidget->setMinimumWidth(MinimumTableWidth);
     ui->aircraftTableWidget->horizontalHeader()->setStretchLastSection(true);
     ui->aircraftTableWidget->sortByColumn(SequenceNumberColumn, Qt::SortOrder::AscendingOrder);
+
+    // Default position is south-east
+    ui->sePositionRadioButton->setChecked(true);
+    ui->horizontalDistanceSlider->setValue(HorizontalDistance::Nearby);
+    ui->verticalDistanceSlider->setValue(VerticalDistance::Level);
 }
 
 void FormationWidget::frenchConnection() noexcept
@@ -268,6 +285,7 @@ void FormationWidget::updateUi() noexcept
     }
 
     updateEditUi();
+    updateInitialPositionUi();
 }
 
 void FormationWidget::updateEditUi() noexcept
@@ -278,6 +296,33 @@ void FormationWidget::updateEditUi() noexcept
     ui->userAircraftPushButton->setEnabled(!active &&  d->selectedAircraftIndex != Flight::InvalidId && !userAircraftIndex);
     const bool formation = flight.getAircraftCount() > 1;
     ui->deletePushButton->setEnabled(!active && d->selectedAircraftIndex != Flight::InvalidId && formation);
+}
+
+void FormationWidget::updateInitialPositionUi() noexcept
+{
+    switch (ui->horizontalDistanceSlider->value()) {
+    case HorizontalDistance::Close:
+        ui->horizontalDistanceTextLabel->setText(tr("Close"));
+        break;
+    case HorizontalDistance::Nearby:
+        ui->horizontalDistanceTextLabel->setText(tr("Nearby"));
+        break;
+    default:
+        ui->horizontalDistanceTextLabel->setText(tr("Far"));
+        break;
+    }
+
+    switch (ui->verticalDistanceSlider->value()) {
+    case VerticalDistance::Below:
+        ui->verticalDistanceTextLabel->setText(tr("Below"));
+        break;
+    case VerticalDistance::Level:
+        ui->verticalDistanceTextLabel->setText(tr("Level"));
+        break;
+    default:
+        ui->verticalDistanceTextLabel->setText(tr("Above"));
+        break;
+    }
 }
 
 void FormationWidget::handleUserAircraftChanged(Aircraft &aircraft) noexcept
@@ -321,4 +366,16 @@ void FormationWidget::deleteAircraft() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     d->aircraftService->deleteByIndex(flight, d->selectedRow);
+}
+
+void FormationWidget::on_horizontalDistanceSlider_valueChanged(int value) noexcept
+{
+    Q_UNUSED(value)
+    updateInitialPositionUi();
+}
+
+void FormationWidget::on_verticalDistanceSlider_valueChanged(int value) noexcept
+{
+    Q_UNUSED(value)
+    updateInitialPositionUi();
 }

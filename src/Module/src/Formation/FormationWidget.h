@@ -76,11 +76,16 @@ private:
 private slots:
     void updateUi() noexcept;
     void updateEditUi() noexcept;
+    void updateInitialPositionUi() noexcept;
+
     void handleUserAircraftChanged(Aircraft &aircraft) noexcept;
     void handleCellSelected(int row, int column) noexcept;
     void handleSelectionChanged() noexcept;
     void updateUserAircraftIndex() noexcept;
     void deleteAircraft() noexcept;
+
+    void on_horizontalDistanceSlider_valueChanged(int value) noexcept;
+    void on_verticalDistanceSlider_valueChanged(int value) noexcept;
 };
 
 #endif // FORMATIONWIDGET_H
