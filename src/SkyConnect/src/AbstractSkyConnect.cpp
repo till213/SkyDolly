@@ -188,6 +188,11 @@ void AbstractSkyConnect::stop() noexcept
     }
 }
 
+bool AbstractSkyConnect::isActive() const noexcept
+{
+    return d->state != Connect::State::Disconnected && d->state != Connect::State::Connected;
+}
+
 void AbstractSkyConnect::setPaused(bool enabled) noexcept
 {
     if (enabled) {

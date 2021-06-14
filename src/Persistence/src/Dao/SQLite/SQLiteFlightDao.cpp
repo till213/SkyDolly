@@ -54,11 +54,11 @@ public:
 
     std::unique_ptr<QSqlQuery> insertQuery;
     std::unique_ptr<QSqlQuery> selectByIdQuery;
-    std::unique_ptr<QSqlQuery> deleteByIdQuery;
+    std::unique_ptr<QSqlQuery> removeByIdQuery;
     std::unique_ptr<QSqlQuery> updateTitleQuery;
     std::unique_ptr<QSqlQuery> updateTitleAndDescriptionQuery;
     std::unique_ptr<QSqlQuery> updateUserAircraftSequenceNumberQuery;
-    std::unique_ptr<QSqlQuery> selectDescriptionsQuery;
+    std::unique_ptr<QSqlQuery> selectSummariesQuery;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<AircraftDaoIntf> aircraftDao;
 
@@ -119,9 +119,9 @@ public:
 "from flight f "
 "where f.id = :id;");
         }
-        if (deleteByIdQuery == nullptr) {
-            deleteByIdQuery = std::make_unique<QSqlQuery>();
-            deleteByIdQuery->prepare(
+        if (removeByIdQuery == nullptr) {
+            removeByIdQuery = std::make_unique<QSqlQuery>();
+            removeByIdQuery->prepare(
 "delete "
 "from flight "
 "where id = :id;");
@@ -148,10 +148,10 @@ public:
 "set    user_aircraft_seq_nr = :user_aircraft_seq_nr "
 "where id = :id;");
         }
-        if (selectDescriptionsQuery == nullptr) {
-            selectDescriptionsQuery = std::make_unique<QSqlQuery>();
-            selectDescriptionsQuery->setForwardOnly(true);
-            selectDescriptionsQuery->prepare(
+        if (selectSummariesQuery == nullptr) {
+            selectSummariesQuery = std::make_unique<QSqlQuery>();
+            selectSummariesQuery->setForwardOnly(true);
+            selectSummariesQuery->prepare(
 "select f.id, f.creation_date, f.title, a.type, (select count(*) from aircraft where aircraft.flight_id = f.id) as aircraft_count, "
 "       a.start_date, f.start_local_sim_time, f.start_zulu_sim_time, fp1.ident as start_waypoint,"
 "       a.end_date, f.end_local_sim_time, f.end_zulu_sim_time, fp2.ident as end_waypoint "
@@ -170,11 +170,11 @@ public:
     {
         insertQuery = nullptr;
         selectByIdQuery = nullptr;
-        deleteByIdQuery = nullptr;
+        removeByIdQuery = nullptr;
         updateTitleQuery = nullptr;
         updateTitleAndDescriptionQuery = nullptr;
         updateUserAircraftSequenceNumberQuery = nullptr;
-        selectDescriptionsQuery = nullptr;
+        selectSummariesQuery = nullptr;
     }
 };
 
@@ -315,17 +315,17 @@ bool SQLiteFlightDao::getFlightById(qint64 id, Flight &flight) const noexcept
     return ok;
 }
 
-bool SQLiteFlightDao::deleteById(qint64 id) noexcept
+bool SQLiteFlightDao::removeById(qint64 id) noexcept
 {
     d->initQueries();
 
-    bool ok = d->aircraftDao->deleteByFlightId(id);
+    bool ok = d->aircraftDao->removeAllByFlightId(id);
     if (ok) {
-        d->deleteByIdQuery->bindValue(":id", id);
-        ok = d->deleteByIdQuery->exec();
+        d->removeByIdQuery->bindValue(":id", id);
+        ok = d->removeByIdQuery->exec();
 #ifdef DEBUG
         if (!ok) {
-            qDebug("SQLiteFlightDao::deleteById: SQL error: %s", qPrintable(d->deleteByIdQuery->lastError().databaseText() + " - error code: " + d->deleteByIdQuery->lastError().nativeErrorCode()));
+            qDebug("SQLiteFlightDao::removeById: SQL error: %s", qPrintable(d->removeByIdQuery->lastError().databaseText() + " - error code: " + d->removeByIdQuery->lastError().nativeErrorCode()));
         }
 #endif
     }
@@ -384,9 +384,9 @@ QVector<FlightSummary> SQLiteFlightDao::getFlightSummaries() const noexcept
     QVector<FlightSummary> summaries;
 
     d->initQueries();
-    bool ok = d->selectDescriptionsQuery->exec();
+    bool ok = d->selectSummariesQuery->exec();
     if (ok) {
-        QSqlRecord record = d->selectDescriptionsQuery->record();
+        QSqlRecord record = d->selectSummariesQuery->record();
         const int idIdx = record.indexOf("id");
         const int creationDateIdx = record.indexOf("creation_date");
         const int aircraftTypeIdx = record.indexOf("type");
@@ -400,37 +400,37 @@ QVector<FlightSummary> SQLiteFlightDao::getFlightSummaries() const noexcept
         const int endZuluSimulationTimeIdx = record.indexOf("end_zulu_sim_time");
         const int endWaypointIdx = record.indexOf("end_waypoint");
         const int titleIdx = record.indexOf("title");
-        while (d->selectDescriptionsQuery->next()) {            
+        while (d->selectSummariesQuery->next()) {
 
             FlightSummary summary;
-            summary.id = d->selectDescriptionsQuery->value(idIdx).toLongLong();
+            summary.id = d->selectSummariesQuery->value(idIdx).toLongLong();
 
-            QDateTime dateTime = d->selectDescriptionsQuery->value(creationDateIdx).toDateTime();
+            QDateTime dateTime = d->selectSummariesQuery->value(creationDateIdx).toDateTime();
             dateTime.setTimeZone(QTimeZone::utc());
             summary.creationDate = dateTime.toLocalTime();
-            summary.aircraftType = d->selectDescriptionsQuery->value(aircraftTypeIdx).toString();
-            summary.aircraftCount = d->selectDescriptionsQuery->value(aircraftCountIdx).toInt();
-            dateTime = d->selectDescriptionsQuery->value(startDateIdx).toDateTime();
+            summary.aircraftType = d->selectSummariesQuery->value(aircraftTypeIdx).toString();
+            summary.aircraftCount = d->selectSummariesQuery->value(aircraftCountIdx).toInt();
+            dateTime = d->selectSummariesQuery->value(startDateIdx).toDateTime();
             dateTime.setTimeZone(QTimeZone::utc());
             summary.startDate = dateTime.toLocalTime();
             // Persisted times is are already local respectively zulu simulation times
-            summary.startSimulationLocalTime = d->selectDescriptionsQuery->value(startLocalSimulationTimeIdx).toDateTime();
-            summary.startSimulationZuluTime = d->selectDescriptionsQuery->value(startZuluSimulationTimeIdx).toDateTime();
-            summary.startLocation = d->selectDescriptionsQuery->value(startWaypointIdx).toString();
-            dateTime = d->selectDescriptionsQuery->value(endDateIdx).toDateTime();
+            summary.startSimulationLocalTime = d->selectSummariesQuery->value(startLocalSimulationTimeIdx).toDateTime();
+            summary.startSimulationZuluTime = d->selectSummariesQuery->value(startZuluSimulationTimeIdx).toDateTime();
+            summary.startLocation = d->selectSummariesQuery->value(startWaypointIdx).toString();
+            dateTime = d->selectSummariesQuery->value(endDateIdx).toDateTime();
             dateTime.setTimeZone(QTimeZone::utc());
             summary.endDate = dateTime.toLocalTime();
             // Persisted times is are already local respectively zulu simulation times
-            summary.endSimulationLocalTime = d->selectDescriptionsQuery->value(endLocalSimulationTimeIdx).toDateTime();
-            summary.endSimulationZuluTime = d->selectDescriptionsQuery->value(endZuluSimulationTimeIdx).toDateTime();
-            summary.endLocation = d->selectDescriptionsQuery->value(endWaypointIdx).toString();
-            summary.title = d->selectDescriptionsQuery->value(titleIdx).toString();
+            summary.endSimulationLocalTime = d->selectSummariesQuery->value(endLocalSimulationTimeIdx).toDateTime();
+            summary.endSimulationZuluTime = d->selectSummariesQuery->value(endZuluSimulationTimeIdx).toDateTime();
+            summary.endLocation = d->selectSummariesQuery->value(endWaypointIdx).toString();
+            summary.title = d->selectSummariesQuery->value(titleIdx).toString();
 
             summaries.append(summary);
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteFlightDao::getFlightDescriptions: SQL error: %s", qPrintable(d->selectDescriptionsQuery->lastError().databaseText() + " - error code: " + d->selectDescriptionsQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteFlightDao::getFlightDescriptions: SQL error: %s", qPrintable(d->selectSummariesQuery->lastError().databaseText() + " - error code: " + d->selectSummariesQuery->lastError().nativeErrorCode()));
 #endif
     }
 
