@@ -106,10 +106,13 @@ void FormationWidget::showEvent(QShowEvent *event) noexcept
 {
     AbstractModuleWidget::showEvent(event);
 
+    // Deselect when showing module
+    d->selectedRow = InvalidSelection;
+
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::userAircraftChanged,
             this, &FormationWidget::handleUserAircraftChanged);
-    connect(&flight, &Flight::aircraftRemoved,
+    connect(&flight, &Flight::aircraftDeleted,
             this, &FormationWidget::updateUi);
     SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
     connect(&skyConnect, &SkyConnectIntf::stateChanged,
@@ -127,7 +130,7 @@ void FormationWidget::hideEvent(QHideEvent *event) noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     disconnect(&flight, &Flight::userAircraftChanged,
                this, &FormationWidget::handleUserAircraftChanged);
-    disconnect(&flight, &Flight::aircraftRemoved,
+    disconnect(&flight, &Flight::aircraftDeleted,
                this, &FormationWidget::updateUi);
     SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
     disconnect(&skyConnect, &SkyConnectIntf::stateChanged,
@@ -259,6 +262,11 @@ void FormationWidget::updateUi() noexcept
     ui->aircraftTableWidget->resizeColumnsToContents();
     ui->aircraftTableWidget->blockSignals(false);
 
+    if (d->selectedRow != InvalidSelection) {
+        d->selectedRow = qMin(d->selectedRow, ui->aircraftTableWidget->rowCount() - 1);
+        ui->aircraftTableWidget->selectRow(d->selectedRow);
+    }
+
     updateEditUi();
 }
 
@@ -312,5 +320,5 @@ void FormationWidget::updateUserAircraftIndex() noexcept
 void FormationWidget::deleteAircraft() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    d->aircraftService->removeByIndex(flight, d->selectedRow);
+    d->aircraftService->deleteByIndex(flight, d->selectedRow);
 }
