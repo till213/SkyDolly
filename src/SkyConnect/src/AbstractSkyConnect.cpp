@@ -202,6 +202,7 @@ void AbstractSkyConnect::setPaused(bool enabled) noexcept
             // Store the elapsed recording time...
             d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed();
             d->elapsedTimer.invalidate();
+            d->recordingTimer.stop();
             onRecordingPaused(true);
             break;
         case Connect::State::Replay:
@@ -227,6 +228,7 @@ void AbstractSkyConnect::setPaused(bool enabled) noexcept
                 // Resume recording (but only if it has already recorded samples before)
                 startElapsedTimer();
             }
+            d->recordingTimer.start();
             onRecordingPaused(false);
             break;
         case Connect::State::ReplayPaused:
