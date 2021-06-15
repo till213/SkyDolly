@@ -483,6 +483,11 @@ void SkyConnectImpl::frenchConnection() noexcept
 void SkyConnectImpl::resetCurrentData() noexcept
 {
     d->currentPositionData = PositionData::NullData;
+    d->currentEngineData = EngineData::NullData;
+    d->currentPrimaryFlightControlData = PrimaryFlightControlData::NullData;
+    d->currentSecondaryFlightControlData = SecondaryFlightControlData::NullData;
+    d->currentAircraftHandleData = AircraftHandleData::NullData;
+    d->currentLightData = LightData::NullData;
 }
 
 bool SkyConnectImpl::reconnectWithSim() noexcept
