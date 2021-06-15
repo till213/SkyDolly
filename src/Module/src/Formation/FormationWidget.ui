@@ -69,7 +69,7 @@
           <item>
            <layout class="QGridLayout" name="gridLayout">
             <property name="sizeConstraint">
-             <enum>QLayout::SetDefaultConstraint</enum>
+             <enum>QLayout::SetFixedSize</enum>
             </property>
             <item row="0" column="0">
              <widget class="QRadioButton" name="nwPositionRadioButton">
@@ -81,8 +81,8 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>16</width>
-                <height>16</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="text">
@@ -115,8 +115,8 @@
                 </property>
                 <property name="minimumSize">
                  <size>
-                  <width>16</width>
-                  <height>16</height>
+                  <width>32</width>
+                  <height>32</height>
                  </size>
                 </property>
                 <property name="text">
@@ -149,8 +149,8 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>16</width>
-                <height>16</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="text">
@@ -168,8 +168,8 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>16</width>
-                <height>16</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="text">
@@ -212,8 +212,8 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>16</width>
-                <height>16</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="text">
@@ -231,8 +231,8 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>16</width>
-                <height>16</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="text">
@@ -265,8 +265,8 @@
                 </property>
                 <property name="minimumSize">
                  <size>
-                  <width>16</width>
-                  <height>16</height>
+                  <width>32</width>
+                  <height>32</height>
                  </size>
                 </property>
                 <property name="text">
@@ -299,8 +299,8 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>16</width>
-                <height>16</height>
+                <width>32</width>
+                <height>32</height>
                </size>
               </property>
               <property name="text">
@@ -362,7 +362,7 @@
              <widget class="QLabel" name="horizontalDistanceTextLabel">
               <property name="minimumSize">
                <size>
-                <width>50</width>
+                <width>80</width>
                 <height>0</height>
                </size>
               </property>
@@ -408,7 +408,7 @@
              <widget class="QLabel" name="verticalDistanceTextLabel">
               <property name="minimumSize">
                <size>
-                <width>50</width>
+                <width>80</width>
                 <height>0</height>
                </size>
               </property>
