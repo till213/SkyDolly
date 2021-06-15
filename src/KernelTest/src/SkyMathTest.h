@@ -55,6 +55,9 @@ private slots:
 
     void toPercent_data();
     void toPercent();
+
+    void relativePosition_data();
+    void relativePosition();
 };
 
 #endif // SKYMATHTEST_H

@@ -26,6 +26,8 @@
 #define SKYMATH_H
 
 #include <limits>
+#include <utility>
+#include <cmath>
 
 #include <QtGlobal>
 
@@ -47,6 +49,9 @@ namespace SkyMath {
     inline constexpr double PercentMax8 = static_cast<double>(std::numeric_limits<quint8>::max());
     /*! The range (number of values) for percent values. */
     inline constexpr double PercentRange8 = PercentMax8;
+
+    // Average earth radius [metres]
+    inline constexpr double EarthRadius = 6378137.0;
 
     /*!
      * Returns the sign of \c val.
@@ -265,6 +270,46 @@ namespace SkyMath {
     inline double toPercent(quint8 percent8) noexcept
     {
         return static_cast<double>(100.0 * percent8 / PercentRange8);
+    }
+
+    inline double toRadians(double degree) {
+        return degree * M_PI / 180.0;
+    };
+
+    inline double toDegrees(double radians) {
+        return radians * 180.0 / M_PI;
+    };
+
+    /*!
+     * sinφ2 = sinφ1⋅cosδ + cosφ1⋅sinδ⋅cosθ
+     * tanΔλ = sinθ⋅sinδ⋅cosφ1 / cosδ−sinφ1⋅sinφ2
+     *
+     * \sa mathforum.org/library/drmath/view/52049.html for derivation
+     * \sa https://www.movable-type.co.uk/scripts/latlong.html
+     */
+    inline std::pair<double, double> relativePosition(std::pair<double, double> position, double altitude, double bearing, double distance) noexcept
+    {
+        std::pair<double, double> destination;
+
+        const double radius = EarthRadius + altitude;
+
+        // Angular distance [Radians]
+        const double δ = distance / radius;
+        const double θ = toRadians(bearing);
+
+        const double φ1 = toRadians(position.first);
+        const double λ1 = toRadians(position.second);
+
+        const double sinφ2 = std::sin(φ1) * std::cos(δ) + std::cos(φ1) * std::sin(δ) * std::cos(θ);
+        const double φ2 = std::asin(sinφ2);
+        const double y = std::sin(θ) * std::sin(δ) * std::cos(φ1);
+        const double x = std::cos(δ) - std::sin(φ1) * sinφ2;
+        const double λ2 = λ1 + std::atan2(y, x);
+
+        destination.first = toDegrees(φ2);
+        destination.second = toDegrees(λ2);
+
+        return destination;
     }
 
 } // namespace
