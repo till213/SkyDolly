@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <limits>
+#include <utility>
 
 #include <QtTest/QtTest>
 
@@ -240,6 +241,48 @@ void SkyMathTest::toPercent()
 
     double result = SkyMath::toPercent(p8);
     QCOMPARE(result, expected);
+}
+
+void SkyMathTest::relativePosition_data()
+{
+    QTest::addColumn<double>("latitude");
+    QTest::addColumn<double>("longitude");
+    QTest::addColumn<double>("altitude");
+    QTest::addColumn<double>("bearing");
+    QTest::addColumn<double>("distance");
+    QTest::addColumn<double>("expectedLatitude");
+    QTest::addColumn<double>("expectedLongitude");
+
+    // DMS to degrees: https://boulter.com/gps/
+    // https://www.movable-type.co.uk/scripts/latlong.html
+    QTest::newRow("Northern Hemisphere") << 47.0 << 8.0 << 0.0 << 90.0 << 100000.0 << 46.9924 << 9.3171;
+    QTest::newRow("Southern Hemisphere") << -47.0 << -8.0 << 0.0 << -90.0 << 100000.0 << -46.9924 << -9.3171;
+    QTest::newRow("Northpole") << 90.0 << 0.0 << 0.0 << 0.0 << 100000.0 << 89.1017 << 0.0;
+    QTest::newRow("Southpole") << -90.0 << 0.0 << 0.0 << 0.0 << 100000.0 << -89.1017 << 0.0;
+    QTest::newRow("Same point") << -47.0 << -8.0 << 0.0 << -90.0 << 0.0 << -47.0 << -8.0;
+}
+
+void SkyMathTest::relativePosition()
+{
+    constexpr double PrecisionFactor = 10000;
+
+    // Setup
+    QFETCH(double, latitude);
+    QFETCH(double, longitude);
+    QFETCH(double, altitude);
+    QFETCH(double, bearing);
+    QFETCH(double, distance);
+    QFETCH(double, expectedLatitude);
+    QFETCH(double, expectedLongitude);
+
+    std::pair position(latitude, longitude);
+    std::pair expectedDestination(expectedLatitude, expectedLongitude);
+    std::pair destination = SkyMath::relativePosition(position, altitude, bearing, distance);
+
+    const double lat = std::round(destination.first * PrecisionFactor) / PrecisionFactor;
+    const double lon = std::round(destination.second * PrecisionFactor) / PrecisionFactor;
+    QCOMPARE(lat, expectedDestination.first);
+    QCOMPARE(lon, expectedDestination.second);
 }
 
 QTEST_MAIN(SkyMathTest)
