@@ -85,11 +85,7 @@ PrimaryFlightControl::PrimaryFlightControl(QObject *parent) noexcept
 {}
 
 PrimaryFlightControl::~PrimaryFlightControl() noexcept
-{
-#ifdef DEBUG
-    qDebug("PrimaryFlightControl::~PrimaryFlightControl: DELETED, data count: %d", d->primaryFlightControlData.size());
-#endif
-}
+{}
 
 void PrimaryFlightControl::upsert(const PrimaryFlightControlData &primaryFlightControlData) noexcept
 {

@@ -70,15 +70,17 @@ private:
 
     void initUi() noexcept;
     void frenchConnection() noexcept;
+    void updateInitialPositionUi() noexcept;
 
     static const QString getName();
 
 private slots:
     void updateUi() noexcept;
     void updateEditUi() noexcept;
-    void updateInitialPositionUi() noexcept;
+    void updateInitialPosition() noexcept;
 
     void handleUserAircraftChanged(Aircraft &aircraft) noexcept;
+    void handleAircraftInfoChanged() noexcept;
     void handleCellSelected(int row, int column) noexcept;
     void handleSelectionChanged() noexcept;
     void updateUserAircraftIndex() noexcept;

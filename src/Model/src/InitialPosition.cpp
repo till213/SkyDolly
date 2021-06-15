@@ -22,36 +22,20 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef TIMEVARIABLEDATA_H
-#define TIMEVARIABLEDATA_H
+#include "InitialPosition.h"
 
-#include <limits>
+// PUBLIC
 
-#include "SimType.h"
-#include "ModelLib.h"
-
-struct MODEL_API TimeVariableData
+InitialPosition::InitialPosition(double latitude, double longitude, double altitude) noexcept
+    : pitch(0.0),
+      bank(0.0),
+      heading(0.0),
+      onGround(false),
+      airspeed(InvalidVelocity)
 {
-    static constexpr qint64 InvalidTime = std::numeric_limits<qint64>::min();
+    this->latitude = latitude;
+    this->longitude = longitude;
+    this->altitude = altitude;
+}
 
-    enum class Access {
-        Linear,
-        Seek
-    };
-
-    // In milliseconds since the start of recording
-    qint64 timestamp;
-
-    TimeVariableData() noexcept;
-    virtual ~TimeVariableData() noexcept;
-
-    inline bool isNull() const noexcept {
-        return (timestamp == InvalidTime);
-    }
-
-    TimeVariableData(TimeVariableData &&) = default;
-    TimeVariableData(const TimeVariableData &) = default;
-    TimeVariableData &operator= (const TimeVariableData &) = default;
-};
-
-#endif // TIMEVARIABLEDATA_H
+const InitialPosition InitialPosition::NullData = InitialPosition(0.0, 0.0, 0.0);
