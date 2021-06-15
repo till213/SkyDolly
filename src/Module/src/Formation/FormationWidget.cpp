@@ -28,11 +28,16 @@
 #include <QAction>
 #include <QTableWidget>
 #include <QIcon>
+#include <QButtonGroup>
 
 #include "../../../Kernel/src/Unit.h"
+#include "../../../Kernel/src/SkyMath.h"
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/AircraftInfo.h"
+#include "../../../Model/src/Position.h"
+#include "../../../Model/src/PositionData.h"
+#include "../../../Model/src/InitialPosition.h"
 #include "../../../Persistence/src/Service/FlightService.h"
 #include "../../../Persistence/src/Service/AircraftService.h"
 #include "../../../SkyConnect/src/SkyManager.h"
@@ -58,18 +63,31 @@ namespace
         Level,
         Above
     };
+
+    enum RelativePosition {
+        North,
+        NorthEast,
+        East,
+        SouthEast,
+        South,
+        SouthWest,
+        West,
+        NorthWest
+    };
 }
 
 class FormationWidgetPrivate
 {
 public:
-    FormationWidgetPrivate() noexcept
-        : moduleAction(nullptr),
+    FormationWidgetPrivate(QObject *parent) noexcept
+        : positionButtonGroup(new QButtonGroup(parent)),
+          moduleAction(nullptr),
           aircraftService(std::make_unique<AircraftService>()),
           selectedRow(InvalidSelection),
           selectedAircraftIndex(Flight::InvalidId)
     {}
 
+    QButtonGroup *positionButtonGroup;
     QMetaObject::Connection aircraftInfoChangedConnection;
     std::unique_ptr<QAction> moduleAction;
     std::unique_ptr<AircraftService> aircraftService;
@@ -83,7 +101,7 @@ public:
 FormationWidget::FormationWidget(FlightService &flightService, QWidget *parent) noexcept
     : AbstractModuleWidget(flightService, parent),
       ui(std::make_unique<Ui::FormationWidget>()),
-      d(std::make_unique<FormationWidgetPrivate>())
+      d(std::make_unique<FormationWidgetPrivate>(this))
 {
     ui->setupUi(this);
     initUi();
@@ -187,6 +205,15 @@ void FormationWidget::initUi() noexcept
     ui->sePositionRadioButton->setChecked(true);
     ui->horizontalDistanceSlider->setValue(HorizontalDistance::Nearby);
     ui->verticalDistanceSlider->setValue(VerticalDistance::Level);
+
+    d->positionButtonGroup->addButton(ui->nPositionRadioButton, RelativePosition::North);
+    d->positionButtonGroup->addButton(ui->nePositionRadioButton, RelativePosition::NorthEast);
+    d->positionButtonGroup->addButton(ui->ePositionRadioButton, RelativePosition::East);
+    d->positionButtonGroup->addButton(ui->sePositionRadioButton, RelativePosition::SouthEast);
+    d->positionButtonGroup->addButton(ui->sPositionRadioButton, RelativePosition::South);
+    d->positionButtonGroup->addButton(ui->swPositionRadioButton, RelativePosition::SouthWest);
+    d->positionButtonGroup->addButton(ui->wPositionRadioButton, RelativePosition::West);
+    d->positionButtonGroup->addButton(ui->nwPositionRadioButton, RelativePosition::NorthWest);
 }
 
 void FormationWidget::frenchConnection() noexcept
@@ -199,6 +226,35 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::updateUserAircraftIndex);
     connect(ui->deletePushButton, &QPushButton::clicked,
             this, &FormationWidget::deleteAircraft);
+    connect(d->positionButtonGroup, &QButtonGroup::idClicked,
+            this, &FormationWidget::updateInitialPosition);
+}
+
+void FormationWidget::updateInitialPositionUi() noexcept
+{
+    switch (ui->horizontalDistanceSlider->value()) {
+    case HorizontalDistance::Close:
+        ui->horizontalDistanceTextLabel->setText(tr("Close"));
+        break;
+    case HorizontalDistance::Nearby:
+        ui->horizontalDistanceTextLabel->setText(tr("Nearby"));
+        break;
+    default:
+        ui->horizontalDistanceTextLabel->setText(tr("Far"));
+        break;
+    }
+
+    switch (ui->verticalDistanceSlider->value()) {
+    case VerticalDistance::Below:
+        ui->verticalDistanceTextLabel->setText(tr("Below"));
+        break;
+    case VerticalDistance::Level:
+        ui->verticalDistanceTextLabel->setText(tr("Level"));
+        break;
+    default:
+        ui->verticalDistanceTextLabel->setText(tr("Above"));
+        break;
+    }
 }
 
 const QString FormationWidget::getName()
@@ -293,35 +349,96 @@ void FormationWidget::updateEditUi() noexcept
     const bool active = SkyManager::getInstance().getCurrentSkyConnect().isActive();
     const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
     bool userAircraftIndex = d->selectedAircraftIndex == flight.getUserAircraftIndex();
-    ui->userAircraftPushButton->setEnabled(!active &&  d->selectedAircraftIndex != Flight::InvalidId && !userAircraftIndex);
+    ui->userAircraftPushButton->setEnabled(d->selectedAircraftIndex != Flight::InvalidId && !userAircraftIndex);
     const bool formation = flight.getAircraftCount() > 1;
     ui->deletePushButton->setEnabled(!active && d->selectedAircraftIndex != Flight::InvalidId && formation);
 }
 
-void FormationWidget::updateInitialPositionUi() noexcept
+void FormationWidget::updateInitialPosition() noexcept
 {
-    switch (ui->horizontalDistanceSlider->value()) {
-    case HorizontalDistance::Close:
-        ui->horizontalDistanceTextLabel->setText(tr("Close"));
-        break;
-    case HorizontalDistance::Nearby:
-        ui->horizontalDistanceTextLabel->setText(tr("Nearby"));
-        break;
-    default:
-        ui->horizontalDistanceTextLabel->setText(tr("Far"));
-        break;
-    }
+    InitialPosition initialPosition;
+    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
 
-    switch (ui->verticalDistanceSlider->value()) {
-    case VerticalDistance::Below:
-        ui->verticalDistanceTextLabel->setText(tr("Below"));
-        break;
-    case VerticalDistance::Level:
-        ui->verticalDistanceTextLabel->setText(tr("Level"));
-        break;
-    default:
-        ui->verticalDistanceTextLabel->setText(tr("Above"));
-        break;
+    const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
+    const Aircraft &userAircraft = flight.getUserAircraftConst();
+    const PositionData &positionData = userAircraft.getPositionConst().getFirst();
+    if (!positionData.isNull()) {
+        const AircraftInfo &info = userAircraft.getAircraftInfoConst();
+
+        initialPosition.fromPositionData(positionData);
+
+        // Horizontal distance [feet]
+        double distance;
+        switch (ui->horizontalDistanceSlider->value()) {
+        case HorizontalDistance::Close:
+            // Aircrafts one wingspan apart
+            distance = 1.5 * info.wingSpan;
+            break;
+        case HorizontalDistance::Nearby:
+            // Aircrafts two wingspans apart
+            distance = 2.0 * info.wingSpan;
+            break;
+        default:
+            // Aircrafts three wingspans apart
+            distance = 3.0 * info.wingSpan;
+            break;
+        }
+
+        // Vertical distance [feet]
+        const std::pair sourcePosition(positionData.latitude, positionData.longitude);
+        double deltaAltitude;
+        switch (ui->verticalDistanceSlider->value()) {
+        case VerticalDistance::Below:
+            deltaAltitude = -distance;
+            break;
+        case VerticalDistance::Above:
+            deltaAltitude = +distance;
+            break;
+        default:
+            deltaAltitude = 0.0;
+            break;
+        }
+        const double altitude = positionData.altitude + deltaAltitude;
+
+        // Degrees
+        double bearing;
+        switch (d->positionButtonGroup->checkedId()) {
+        case RelativePosition::North:
+            bearing = 0.0;
+            break;
+        case RelativePosition::NorthEast:
+            bearing = 45.0;
+            break;
+        case RelativePosition::East:
+            bearing = 90.0;
+            break;
+        case RelativePosition::SouthEast:
+            bearing = 135.0;
+            break;
+        case RelativePosition::South:
+            bearing = 180.0;
+            break;
+        case RelativePosition::SouthWest:
+            bearing = 225.0;
+            break;
+        case RelativePosition::West:
+            bearing = 270.0;
+            break;
+        case RelativePosition::NorthWest:
+            bearing = 315.0;
+            break;
+        default:
+            bearing = 0.0;
+            break;
+        }
+        bearing += positionData.heading;
+        std::pair initial = SkyMath::relativePosition(sourcePosition, SkyMath::feetToMeters(altitude), bearing, SkyMath::feetToMeters(distance));
+
+        initialPosition.latitude = initial.first;
+        initialPosition.longitude = initial.second;
+        initialPosition.altitude = altitude;
+        initialPosition.fromAircraftInfo(info);
+        skyConnect.setInitialRecordingPosition(initialPosition);
     }
 }
 
@@ -329,7 +446,14 @@ void FormationWidget::handleUserAircraftChanged(Aircraft &aircraft) noexcept
 {
     QObject::disconnect(d->aircraftInfoChangedConnection);
     d->aircraftInfoChangedConnection = connect(&aircraft, &Aircraft::infoChanged,
-                                               this, &FormationWidget::updateUi);
+                                               this, &FormationWidget::handleAircraftInfoChanged);
+    updateInitialPosition();
+    updateUi();
+}
+
+void FormationWidget::handleAircraftInfoChanged() noexcept
+{
+    updateInitialPosition();
     updateUi();
 }
 
@@ -366,16 +490,19 @@ void FormationWidget::deleteAircraft() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     d->aircraftService->deleteByIndex(flight, d->selectedRow);
+    SkyManager::getInstance().getCurrentSkyConnect().updateAIObjects();
 }
 
 void FormationWidget::on_horizontalDistanceSlider_valueChanged(int value) noexcept
 {
     Q_UNUSED(value)
     updateInitialPositionUi();
+    updateInitialPosition();
 }
 
 void FormationWidget::on_verticalDistanceSlider_valueChanged(int value) noexcept
 {
     Q_UNUSED(value)
     updateInitialPositionUi();
+    updateInitialPosition();
 }

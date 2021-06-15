@@ -64,39 +64,46 @@ SimConnectAI::~SimConnectAI()
 #endif
 }
 
-bool SimConnectAI::createSimulatedAircrafts(Flight &flight, std::unordered_map<::SIMCONNECT_DATA_REQUEST_ID, Aircraft *> &aircraftByRequestId, ::SIMCONNECT_DATA_REQUEST_ID baseRequestId) noexcept
+bool SimConnectAI::createSimulatedAircrafts(Flight &flight, std::unordered_map<::SIMCONNECT_DATA_REQUEST_ID, Aircraft *> &pendingAIAircraftCreationRequests, ::SIMCONNECT_DATA_REQUEST_ID baseRequestId) noexcept
 {
     HRESULT result;
     bool ok;
-    SIMCONNECT_DATA_INITPOSITION initialPosition;
+    ::SIMCONNECT_DATA_INITPOSITION initialPosition;
     const Aircraft &userAircraft = flight.getUserAircraftConst();
     int i = 0;
     ok = true;
     for (auto &aircraft : flight) {
 
-        const SIMCONNECT_DATA_REQUEST_ID requestId = baseRequestId + i;
-        aircraftByRequestId[requestId] = aircraft.get();
+        const ::SIMCONNECT_DATA_REQUEST_ID requestId = baseRequestId + i;
         aircraft->setSimulationRequestId(requestId);
         if (*aircraft == userAircraft) {
-            aircraft->setSimulationRequestId(requestId);
             aircraft->setSimulationObjectId(::SIMCONNECT_OBJECT_ID_USER);
-            ++i;
-        } else {
+#ifdef DEBUG
+        qDebug("SimConnectAI::createSimulatedAircrafts: USER aircraft: request ID: %lld simulation object ID: %lld aircraft ID: %lld",
+               aircraft->getSimulationRequestId(), aircraft->getSimulationObjectId(), aircraft->getId());
+#endif
+        } else if (aircraft->getSimulationObjectId() == Aircraft::InvalidSimulationId) {
+            pendingAIAircraftCreationRequests[requestId] = aircraft.get();
             const AircraftInfo aircraftInfo = aircraft->getAircraftInfoConst();
             initialPosition = SimConnectPosition::toInitialPosition(aircraft->getPositionConst().getFirst(), aircraftInfo.startOnGround, aircraftInfo.initialAirspeed);
             result = ::SimConnect_AICreateNonATCAircraft(d->simConnectHandle, aircraftInfo.type.toLatin1(), aircraftInfo.tailNumber.toLatin1(), initialPosition, requestId);
-            aircraft->setSimulationObjectId(Aircraft::InvalidSimulationId);
             ok = result == S_OK;
             if (ok) {
-                ++i;
+                aircraft->setSimulationObjectId(Aircraft::PendingSimulationId);
             } else {
+                aircraft->setSimulationObjectId(Aircraft::InvalidSimulationId);
                 break;
             }
-        }
 #ifdef DEBUG
-        qDebug("SimConnectAI::createSimulatedAircrafts: created (AI) aircraft: request ID: %lld simulation object ID: %lld aircraft ID: %lld",
+        qDebug("SimConnectAI::createSimulatedAircrafts: created AI aircraft: request ID: %lld simulation object ID: %lld aircraft ID: %lld",
                aircraft->getSimulationRequestId(), aircraft->getSimulationObjectId(), aircraft->getId());
+        } else {
+            qDebug("SimConnectAI::createSimulatedAircrafts: PENDING AI aircraft: request ID: %lld aircraft ID: %lld",
+                   aircraft->getSimulationRequestId(), aircraft->getId());
 #endif
+        }
+        ++i;
+
     }
     return ok;
 }
@@ -104,15 +111,32 @@ bool SimConnectAI::createSimulatedAircrafts(Flight &flight, std::unordered_map<:
 void SimConnectAI::destroySimulatedAircrafts(Flight &flight) noexcept
 {
     for (auto &aircraft : flight) {
-        const ::SIMCONNECT_OBJECT_ID objectId = aircraft->getSimulationObjectId();
-        if (objectId != ::SIMCONNECT_OBJECT_ID_USER) {
-#ifdef DEBUG
-        qDebug("SimConnectAI::destroySimulatedAircrafts: destroying AI aircraft: request ID: %lld simulation object ID: %lld aircraft ID: %lld",
-               aircraft->getSimulationRequestId(), aircraft->getSimulationObjectId(), aircraft->getId());
-#endif
-            SimConnect_AIRemoveObject(d->simConnectHandle, objectId, aircraft->getSimulationRequestId());
-        }
-        aircraft->setSimulationRequestId(Aircraft::InvalidSimulationId);
-        aircraft->setSimulationObjectId(Aircraft::InvalidSimulationId);
+        destroySimulatedAircraft(*aircraft);
     }
+}
+
+void SimConnectAI::destroySimulatedAircraft(Aircraft &aircraft) noexcept
+{
+    const ::SIMCONNECT_OBJECT_ID objectId = aircraft.getSimulationObjectId();
+    if (isValidAIObjectId(objectId)) {
+#ifdef DEBUG
+    qDebug("SimConnectAI::destroySimulatedAircrafts: destroying AI aircraft: request ID: %lld simulation object ID: %lld aircraft ID: %lld",
+           aircraft.getSimulationRequestId(), aircraft.getSimulationObjectId(), aircraft.getId());
+#endif
+        destroySimulatedObject(objectId, aircraft.getSimulationRequestId());
+    }
+    aircraft.setSimulationRequestId(Aircraft::InvalidSimulationId);
+    aircraft.setSimulationObjectId(Aircraft::InvalidSimulationId);
+}
+
+void SimConnectAI::destroySimulatedObject(qint64 objectId, ::SIMCONNECT_DATA_REQUEST_ID requestId) noexcept
+{
+    ::SimConnect_AIRemoveObject(d->simConnectHandle, objectId, requestId);
+}
+
+// PRIVATE
+
+bool SimConnectAI::isValidAIObjectId(qint64 objectId) const noexcept
+{
+    return objectId != ::SIMCONNECT_OBJECT_ID_USER && objectId != Aircraft::InvalidSimulationId && objectId != Aircraft::PendingSimulationId;
 }

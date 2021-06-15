@@ -34,6 +34,7 @@
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/Position.h"
 #include "../../Model/src/PositionData.h"
+#include "../../Model/src/InitialPosition.h"
 #include "Connect.h"
 #include "SkyConnectIntf.h"
 #include "AbstractSkyConnect.h"
@@ -60,6 +61,7 @@ public:
         recordingTimer.setTimerType(Qt::TimerType::PreciseTimer);
     }
 
+    InitialPosition initialRecordingPosition;
     Connect::State state;
     Flight &currentFlight;
     QTimer recordingTimer;
@@ -83,6 +85,16 @@ AbstractSkyConnect::AbstractSkyConnect(QObject *parent) noexcept
 
 AbstractSkyConnect::~AbstractSkyConnect() noexcept
 {}
+
+const InitialPosition &AbstractSkyConnect::getInitialRecordingPosition() const noexcept
+{
+    return d->initialRecordingPosition;
+}
+
+void AbstractSkyConnect::setInitialRecordingPosition(const InitialPosition &initialPosition) noexcept
+{
+    d->initialRecordingPosition = initialPosition;
+}
 
 void AbstractSkyConnect::startRecording(bool addFormationAircraft) noexcept
 {
@@ -115,7 +127,11 @@ void AbstractSkyConnect::startRecording(bool addFormationAircraft) noexcept
         if (isTimerBasedRecording(Settings::getInstance().getRecordingSampleRate())) {
             d->recordingTimer.start(d->recordingIntervalMSec);
         }
-        bool ok = retryWithReconnect([this]() -> bool { return onStartRecording(); });
+        if (!addFormationAircraft) {
+            // New flight: reset initial recording position
+            d->initialRecordingPosition = InitialPosition();
+        }
+        bool ok = retryWithReconnect([this]() -> bool { return onStartRecording(d->initialRecordingPosition); });
         if (!ok) {
             setState(Connect::State::Disconnected);
         }
@@ -130,9 +146,8 @@ void AbstractSkyConnect::stopRecording() noexcept
     onStopRecording();
     d->recordingTimer.stop();
     setState(Connect::State::Connected);
-    // Update AI objects by simply destroying and re-creating them
-    onDestroyAIObjects();
-    onCreateAIObjects();
+    // Update AI objects
+    updateAIObjects();
     emit recordingStopped();
 }
 
@@ -286,7 +301,7 @@ void AbstractSkyConnect::seek(qint64 timestamp) noexcept
             d->currentTimestamp = timestamp;
             d->elapsedTime = timestamp;
             emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Seek);
-            bool ok = retryWithReconnect([this, timestamp]() -> bool { return sendAircraftData(timestamp, TimeVariableData::Access::Seek); });
+            bool ok = retryWithReconnect([this, timestamp]() -> bool { return sendAircraftData(timestamp, TimeVariableData::Access::Seek, AircraftSelection::All); });
             if (ok) {
                 if (d->elapsedTimer.isValid()) {
                     // Restart the elapsed timer, counting onwards from the newly
@@ -397,6 +412,22 @@ void AbstractSkyConnect::destroyAIObjects() noexcept
     }
 }
 
+bool AbstractSkyConnect::updateAIObjects() noexcept
+{
+    destroyAIObjects();
+    bool ok = createAIObjects();
+    return ok;
+}
+
+bool AbstractSkyConnect::updateUserAircraft() noexcept
+{
+    bool ok = updateAIObjects();
+    if (ok) {
+        ok = sendAircraftData(d->currentTimestamp, TimeVariableData::Access::Seek, AircraftSelection::UserAircraft);
+    }
+    return ok;
+}
+
 // PROTECTED
 
 void AbstractSkyConnect::setState(Connect::State state) noexcept
@@ -470,8 +501,8 @@ qint64 AbstractSkyConnect::getSkipInterval() const noexcept
 {
     Settings &settings = Settings::getInstance();
     return static_cast<qint64>(qRound(settings.isAbsoluteSeekEnabled() ?
-                                          settings.getSeekIntervalSeconds() * 1000.0 :
-                                          settings.getSeekIntervalPercent() * d->currentFlight.getTotalDurationMSec() / 100.0));
+                                      settings.getSeekIntervalSeconds() * 1000.0 :
+                                      settings.getSeekIntervalPercent() * d->currentFlight.getTotalDurationMSec() / 100.0));
 }
 
 bool AbstractSkyConnect::retryWithReconnect(std::function<bool()> func)

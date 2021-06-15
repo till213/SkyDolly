@@ -59,11 +59,7 @@ Light::Light(QObject *parent) noexcept
 {}
 
 Light::~Light() noexcept
-{
-#ifdef DEBUG
-    qDebug("Light::~Light: DELETED, data count: %d", d->lightData.size());
-#endif
-}
+{}
 
 void Light::upsert(const LightData &lightData) noexcept
 {

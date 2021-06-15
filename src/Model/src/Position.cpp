@@ -59,11 +59,7 @@ Position::Position(QObject *parent) noexcept
 {}
 
 Position::~Position() noexcept
-{
-#ifdef DEBUG
-    qDebug("Position::~Position: DELETED, data count: %d", d->positionData.size());
-#endif
-}
+{}
 
 void Position::upsert(const PositionData &positionData) noexcept
 {

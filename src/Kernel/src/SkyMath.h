@@ -53,6 +53,22 @@ namespace SkyMath {
     // Average earth radius [metres]
     inline constexpr double EarthRadius = 6378137.0;
 
+    inline double degreesToRadians(double degree) {
+        return degree * M_PI / 180.0;
+    };
+
+    inline double radiansToDegrees(double radians) {
+        return radians * 180.0 / M_PI;
+    };
+
+    inline double feetToMeters(double feet) {
+        return feet / 3.2808;
+    };
+
+    inline double metersToFeet(double meters) {
+        return meters * 3.2808;
+    };
+
     /*!
      * Returns the sign of \c val.
      *
@@ -272,14 +288,6 @@ namespace SkyMath {
         return static_cast<double>(100.0 * percent8 / PercentRange8);
     }
 
-    inline double toRadians(double degree) {
-        return degree * M_PI / 180.0;
-    };
-
-    inline double toDegrees(double radians) {
-        return radians * 180.0 / M_PI;
-    };
-
     /*!
      * sinphi2 = sinphi1⋅cosδ + cosphi1⋅sinδ⋅costheta
      * tanΔlambda = sintheta⋅sinδ⋅cosphi1 / cosδ−sinphi1⋅sinphi2
@@ -295,10 +303,10 @@ namespace SkyMath {
 
         // Angular distance [Radians]
         const double delta = distance / radius;
-        const double theta = toRadians(bearing);
+        const double theta = degreesToRadians(bearing);
 
-        const double phi1 = toRadians(position.first);
-        const double lambda1 = toRadians(position.second);
+        const double phi1 = degreesToRadians(position.first);
+        const double lambda1 = degreesToRadians(position.second);
 
         const double sinphi2 = std::sin(phi1) * std::cos(delta) + std::cos(phi1) * std::sin(delta) * std::cos(theta);
         const double phi2 = std::asin(sinphi2);
@@ -306,8 +314,8 @@ namespace SkyMath {
         const double x = std::cos(delta) - std::sin(phi1) * sinphi2;
         const double lambda2 = lambda1 + std::atan2(y, x);
 
-        destination.first = toDegrees(phi2);
-        destination.second = toDegrees(lambda2);
+        destination.first = radiansToDegrees(phi2);
+        destination.second = radiansToDegrees(lambda2);
 
         return destination;
     }

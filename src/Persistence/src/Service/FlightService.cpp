@@ -144,6 +144,8 @@ bool FlightService::updateUserAircraftIndex(Flight &flight, int index) noexcept
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
         flight.setUserAircraftIndex(index);
+        SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+        skyConnect.updateUserAircraft();
         ok = d->flightDao->updateUserAircraftIndex(flight.getId(), index);
         if (ok) {
             QSqlDatabase::database().commit();
