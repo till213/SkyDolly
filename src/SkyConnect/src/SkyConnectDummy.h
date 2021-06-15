@@ -30,6 +30,7 @@
 #include <QObject>
 
 #include "../../Model/src/TimeVariableData.h"
+#include "../../Model/src/InitialPosition.h"
 #include "AbstractSkyConnect.h"
 
 struct PositionData;
@@ -46,7 +47,7 @@ public:
 protected:
     virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
 
-    virtual bool onStartRecording() noexcept override;
+    virtual bool onStartRecording(const InitialPosition &initialPosition = InitialPosition::NullData) noexcept override;
     virtual void onRecordingPaused(bool paused) noexcept override;
     virtual void onStopRecording() noexcept override;
 
@@ -57,7 +58,7 @@ protected:
     virtual void onSeek(qint64 currentTimestamp) noexcept override;
     virtual void onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
 
-    virtual bool sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept override;
+    virtual bool sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept override;
     virtual bool isConnectedWithSim() const noexcept override;
     virtual bool connectWithSim() noexcept override;
 

@@ -31,6 +31,7 @@
 #include "../../Kernel/src/SkyMath.h"
 #include "../../Model/src/SimType.h"
 #include "../../Model/src/PositionData.h"
+#include "../../Model/src/InitialPosition.h"
 
 /*!
  * Simulation variables which represent the aircraft's position, attitude and velocities.
@@ -109,6 +110,22 @@ struct SimConnectPosition
         initialPosition.Airspeed = initialAirspeed;
 
         return initialPosition;
+    }
+
+    static inline SIMCONNECT_DATA_INITPOSITION toInitialPosition(const InitialPosition &initialPosition)
+    {
+        SIMCONNECT_DATA_INITPOSITION initialSimConnnectPosition;
+
+        initialSimConnnectPosition.Latitude = initialPosition.latitude;
+        initialSimConnnectPosition.Longitude = initialPosition.longitude;
+        initialSimConnnectPosition.Altitude = initialPosition.altitude;
+        initialSimConnnectPosition.Pitch = initialPosition.pitch;
+        initialSimConnnectPosition.Bank = initialPosition.bank;
+        initialSimConnnectPosition.Heading = initialPosition.heading;
+        initialSimConnnectPosition.OnGround = initialPosition.onGround ? 1 : 0;
+        initialSimConnnectPosition.Airspeed = initialPosition.airspeed;
+
+        return initialSimConnnectPosition;
     }
 };
 #pragma pack(pop)

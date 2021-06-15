@@ -47,11 +47,7 @@ FlightPlan::FlightPlan(QObject *parent) noexcept
 {}
 
 FlightPlan::~FlightPlan() noexcept
-{
-#ifdef DEBUG
-    qDebug("FlightPlan::~FlightPlan: DELETED, data count: %d", d->waypoints.size());
-#endif
-}
+{}
 
 void FlightPlan::add(const Waypoint &waypoint) noexcept
 {

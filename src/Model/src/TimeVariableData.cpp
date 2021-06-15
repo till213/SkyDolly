@@ -27,3 +27,6 @@
 TimeVariableData::TimeVariableData() noexcept
     : timestamp(InvalidTime)
 {}
+
+TimeVariableData::~TimeVariableData() noexcept
+{}

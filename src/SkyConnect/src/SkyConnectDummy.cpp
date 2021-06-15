@@ -37,6 +37,7 @@
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/Position.h"
 #include "../../Model/src/PositionData.h"
+#include "../../Model/src/InitialPosition.h"
 #include "../../Model/src/Engine.h"
 #include "../../Model/src/EngineData.h"
 #include "../../Model/src/PrimaryFlightControl.h"
@@ -99,8 +100,9 @@ bool SkyConnectDummy::isTimerBasedRecording(SampleRate::SampleRate sampleRate) c
     return true;
 }
 
-bool SkyConnectDummy::onStartRecording() noexcept
+bool SkyConnectDummy::onStartRecording(const InitialPosition &initialPosition) noexcept
 {
+    Q_UNUSED(initialPosition)
     recordFlightCondition();
     recordAircraftInfo();
     return true;
@@ -159,8 +161,9 @@ void SkyConnectDummy::onRecordingSampleRateChanged(SampleRate::SampleRate sample
     Q_UNUSED(sampleRate)
 }
 
-bool SkyConnectDummy::sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept
+bool SkyConnectDummy::sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept
 {
+    Q_UNUSED(aircraftSelection)
     bool dataAvailable;
     if (currentTimestamp <= getCurrentFlight().getTotalDurationMSec()) {
         dataAvailable = true;

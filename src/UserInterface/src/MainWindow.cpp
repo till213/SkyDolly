@@ -68,7 +68,7 @@
 #include "../../SkyConnect/src/SkyManager.h"
 #include "../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../SkyConnect/src/Connect.h"
-#include "../../Module/src/Logbook/LogbookWidget.h"
+#include "../../Module/src/ModuleIntf.h"
 #include "../../Module/src/ModuleManager.h"
 #include "Dialogs/AboutDialog.h"
 #include "Dialogs/AboutLogbookDialog.h"

@@ -61,11 +61,7 @@ AircraftHandle::AircraftHandle(QObject *parent) noexcept
 {}
 
 AircraftHandle::~AircraftHandle() noexcept
-{
-#ifdef DEBUG
-    qDebug("AircraftHandle::~AircraftHandle: DELETED, data count: %d", d->aircraftHandleData.size());
-#endif
-}
+{}
 
 void AircraftHandle::upsert(const AircraftHandleData &aircraftHandleData) noexcept
 {
