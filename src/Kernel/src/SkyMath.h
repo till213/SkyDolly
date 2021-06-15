@@ -281,8 +281,8 @@ namespace SkyMath {
     };
 
     /*!
-     * sinφ2 = sinφ1⋅cosδ + cosφ1⋅sinδ⋅cosθ
-     * tanΔλ = sinθ⋅sinδ⋅cosφ1 / cosδ−sinφ1⋅sinφ2
+     * sinphi2 = sinphi1⋅cosδ + cosphi1⋅sinδ⋅costheta
+     * tanΔlambda = sintheta⋅sinδ⋅cosphi1 / cosδ−sinphi1⋅sinphi2
      *
      * \sa mathforum.org/library/drmath/view/52049.html for derivation
      * \sa https://www.movable-type.co.uk/scripts/latlong.html
@@ -294,20 +294,20 @@ namespace SkyMath {
         const double radius = EarthRadius + altitude;
 
         // Angular distance [Radians]
-        const double δ = distance / radius;
-        const double θ = toRadians(bearing);
+        const double delta = distance / radius;
+        const double theta = toRadians(bearing);
 
-        const double φ1 = toRadians(position.first);
-        const double λ1 = toRadians(position.second);
+        const double phi1 = toRadians(position.first);
+        const double lambda1 = toRadians(position.second);
 
-        const double sinφ2 = std::sin(φ1) * std::cos(δ) + std::cos(φ1) * std::sin(δ) * std::cos(θ);
-        const double φ2 = std::asin(sinφ2);
-        const double y = std::sin(θ) * std::sin(δ) * std::cos(φ1);
-        const double x = std::cos(δ) - std::sin(φ1) * sinφ2;
-        const double λ2 = λ1 + std::atan2(y, x);
+        const double sinphi2 = std::sin(phi1) * std::cos(delta) + std::cos(phi1) * std::sin(delta) * std::cos(theta);
+        const double phi2 = std::asin(sinphi2);
+        const double y = std::sin(theta) * std::sin(delta) * std::cos(phi1);
+        const double x = std::cos(delta) - std::sin(phi1) * sinphi2;
+        const double lambda2 = lambda1 + std::atan2(y, x);
 
-        destination.first = toDegrees(φ2);
-        destination.second = toDegrees(λ2);
+        destination.first = toDegrees(phi2);
+        destination.second = toDegrees(lambda2);
 
         return destination;
     }
