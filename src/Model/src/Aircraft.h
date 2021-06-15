@@ -51,6 +51,7 @@ public:
 
     static constexpr qint64 InvalidId = -1;
     static constexpr qint64 InvalidSimulationId = -1;
+    static constexpr qint64 PendingSimulationId = -2;
 
     Aircraft(QObject *parent = nullptr) noexcept;
     virtual ~Aircraft() noexcept;

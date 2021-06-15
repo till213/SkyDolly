@@ -30,6 +30,7 @@
 #include <QObject>
 
 #include "../../Kernel/src/SampleRate.h"
+#include "../../Model/src/InitialPosition.h"
 #include "SkyConnectIntf.h"
 #include "Connect.h"
 
@@ -40,8 +41,17 @@ class  AbstractSkyConnect : public SkyConnectIntf
 {
     Q_OBJECT
 public:
+
+    enum class AircraftSelection {
+        All,
+        UserAircraft
+    };
+
     AbstractSkyConnect(QObject *parent = nullptr) noexcept;
     virtual ~AbstractSkyConnect() noexcept;
+
+    virtual const InitialPosition &getInitialRecordingPosition() const noexcept override;
+    virtual void setInitialRecordingPosition(const InitialPosition &initialPosition) noexcept override;
 
     virtual void startRecording(bool addFormationAircraft) noexcept override;
     virtual void stopRecording() noexcept override;
@@ -77,6 +87,8 @@ public:
 
     virtual bool createAIObjects() noexcept override;
     virtual void destroyAIObjects() noexcept override;
+    virtual bool updateAIObjects() noexcept override;
+    virtual bool updateUserAircraft() noexcept override;
 
 protected:
     void setState(Connect::State state) noexcept;
@@ -90,7 +102,7 @@ protected:
 
     virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept = 0;
 
-    virtual bool onStartRecording() noexcept = 0;
+    virtual bool onStartRecording(const InitialPosition &initialPosition = InitialPosition::NullData) noexcept = 0;
     virtual void onRecordingPaused(bool paused) noexcept = 0;
     virtual void onStopRecording() noexcept = 0;
 
@@ -101,7 +113,7 @@ protected:
     virtual void onSeek(qint64 currentTimestamp) noexcept = 0;
     virtual void onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept = 0;
 
-    virtual bool sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access) noexcept = 0;
+    virtual bool sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept = 0;
     virtual bool isConnectedWithSim() const noexcept = 0;
     virtual bool connectWithSim() noexcept = 0;
 

@@ -31,6 +31,7 @@
 #include "Connect.h"
 #include "SkyConnectLib.h"
 
+class InitialPosition;
 class SkyConnectImpl;
 
 class SKYCONNECT_API SkyConnectIntf : public QObject
@@ -39,6 +40,9 @@ class SKYCONNECT_API SkyConnectIntf : public QObject
 public:
 
     virtual ~SkyConnectIntf() = default;
+
+    virtual const InitialPosition &getInitialRecordingPosition() const noexcept = 0;
+    virtual void setInitialRecordingPosition(const InitialPosition &initialPosition) noexcept = 0;
 
     virtual void startRecording(bool addFormationAircraft) noexcept = 0;
     virtual void stopRecording() noexcept = 0;
@@ -85,6 +89,8 @@ public:
 
     virtual bool createAIObjects() noexcept = 0;
     virtual void destroyAIObjects() noexcept = 0;
+    virtual bool updateAIObjects() noexcept = 0;
+    virtual bool updateUserAircraft() noexcept = 0;
 
 protected:
     SkyConnectIntf(QObject *parent = nullptr) noexcept

@@ -25,6 +25,8 @@ target_sources(Model
         src/Position.h
         src/PositionData.cpp
         src/PositionData.h
+        src/InitialPosition.cpp
+        src/InitialPosition.h
         src/Engine.cpp
         src/Engine.h
         src/EngineData.cpp

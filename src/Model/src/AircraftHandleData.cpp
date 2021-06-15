@@ -38,7 +38,6 @@ AircraftHandleData::AircraftHandleData() noexcept
       leftWingFolding(0),
       rightWingFolding(0),
       gearHandlePosition(false)
-{
-}
+{}
 
 const AircraftHandleData AircraftHandleData::NullData = AircraftHandleData();

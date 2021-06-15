@@ -59,11 +59,7 @@ Engine::Engine(QObject *parent) noexcept
 {}
 
 Engine::~Engine() noexcept
-{
-#ifdef DEBUG
-    qDebug("Engine::~Engine: DELETED, data count: %d", d->engineData.size());
-#endif
-}
+{}
 
 void Engine::upsert(const EngineData &engineData) noexcept
 {
