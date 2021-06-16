@@ -35,6 +35,7 @@
 
 #include "../../Kernel/src/SkyMath.h"
 #include "../../Model/src/SimType.h"
+#include "../../Model/src/Aircraft.h"
 #include "../../Model/src/AircraftInfo.h"
 #include "../../Model/src/FlightCondition.h"
 
@@ -118,7 +119,7 @@ struct SimConnectAircraftInfo
 
     inline AircraftInfo toAircraftInfo() const noexcept
     {
-        AircraftInfo aircraftInfo;
+        AircraftInfo aircraftInfo(Aircraft::InvalidId);
 
         // Length check
         if (SUCCEEDED(StringCbLengthA(&title[0], sizeof(title), nullptr))) {
