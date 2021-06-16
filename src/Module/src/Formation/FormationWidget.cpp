@@ -183,6 +183,7 @@ void FormationWidget::handleRecordingStopped() noexcept
     } else {
         AbstractModuleWidget::handleRecordingStopped();
     }
+    updateInitialPosition();
 }
 
 // PRIVATE
