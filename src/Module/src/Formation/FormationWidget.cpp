@@ -241,10 +241,10 @@ void FormationWidget::initUi() noexcept
 
     const QString css =
 "QRadioButton::indicator:unchecked {"
-"    image: url(:/img/icons/aircraft-normal-off.png); width: 16px; height: 16px;"
+"    image: url(:/img/icons/aircraft-normal-off.png);"
 "}"
 "QRadioButton::indicator:checked {"
-"    image: url(:/img/icons/aircraft-record-normal.png); width: 16px; height: 16px;"
+"    image: url(:/img/icons/aircraft-record-normal.png);"
 "}";
     ui->nPositionRadioButton->setStyleSheet(css);
     ui->nnePositionRadioButton->setStyleSheet(css);
@@ -434,7 +434,7 @@ void FormationWidget::updateInitialPosition() noexcept
         if (button->isChecked()) {
             button->setToolTip(tr("Selected aircraft position for next recording"));
         } else {
-            button->setToolTip(tr("Select recording position"));
+            button->setToolTip(tr("Select aircraft position"));
         }
     }
 

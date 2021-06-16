@@ -66,6 +66,9 @@
            <height>10</height>
           </size>
          </property>
+         <property name="toolTip">
+          <string>Show/hide module selector</string>
+         </property>
          <property name="text">
           <string/>
          </property>
@@ -236,7 +239,7 @@
      <x>0</x>
      <y>0</y>
      <width>824</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="fileMenu">
