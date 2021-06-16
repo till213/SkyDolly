@@ -69,7 +69,6 @@ target_sources(Persistence
 )
 
 set(PERSISTENCE_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Sql Kernel Model
     Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Sql Kernel Model SkyConnect
 )
 if (APPLE)
