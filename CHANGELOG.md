@@ -4,6 +4,17 @@
 
 ### New Features
 
+- New module: Formation - record an unlimited number of aircrafts and replay them altogher, with one single user interface
+  * Simply add new aircrafts to the formation by clicking the "record" button while in the Formation module (the plus (+) sign inidcates that aircrafts are being added)
+  * Previously recorded aircrafts are replayed during recording of the new aircraft
+  * Change the user aircraft (the one which is being followed by the camera) at any time during replay
+  * Take control over the user aircraft any time during replay: manually fly it at any time (and give control back to replay at any time)
+  * Delete aircrafts from a formation
+  * Set the position (relative to the current user aircraft) for the new aircraft to be recorded
+- All aircrafts are automatically persisted and added to the current flight
+- Start a new flight (starting with a single aircraft) by switching into the Logbook module
+- The existing Simulation Variables and Flight dialogs show data about the currently selected user aircraft
+- The module selector may be hidden
 - Reduced data size of requested simulation variables
 
 ## 0.6.2
