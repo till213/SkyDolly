@@ -398,9 +398,9 @@ void LogbookWidget::handleCellChanged(int row, int column) noexcept
         const QString title = item->data(Qt::EditRole).toString();
 
         // Also update the current flight, if in memory
-        Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
-        if (currentFlight.getId() == d->selectedFlightId) {
-            currentFlight.setTitle(title);
+        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        if (flight.getId() == d->selectedFlightId) {
+            flight.setTitle(title);
         }
 
         d->flightService.updateTitle(d->selectedFlightId, title);

@@ -104,14 +104,14 @@ void FlightDescriptionWidget::frenchConnection() noexcept
 
 void FlightDescriptionWidget::updateUi() noexcept
 {
-    const Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
 
-    bool enabled = currentFlight.getId() != Flight::InvalidId;
+    bool enabled = flight.getId() != Flight::InvalidId;
     ui->titleLineEdit->blockSignals(true);
     ui->focusPlainTextEdit->blockSignals(true);
-    ui->titleLineEdit->setText(currentFlight.getTitle());
+    ui->titleLineEdit->setText(flight.getTitle());
     ui->titleLineEdit->setEnabled(enabled);
-    ui->focusPlainTextEdit->setPlainText(currentFlight.getDescription());
+    ui->focusPlainTextEdit->setPlainText(flight.getDescription());
     ui->focusPlainTextEdit->moveCursor(QTextCursor::MoveOperation::End);
     ui->focusPlainTextEdit->setEnabled(enabled);
     ui->titleLineEdit->blockSignals(false);
@@ -120,14 +120,14 @@ void FlightDescriptionWidget::updateUi() noexcept
 
 void FlightDescriptionWidget::handleTitleEdited() noexcept
 {
-    Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
-    currentFlight.setTitle(ui->titleLineEdit->text());
-    d->flightService.updateTitleAndDescription(currentFlight.getId(), ui->titleLineEdit->text(), ui->focusPlainTextEdit->toPlainText());
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    flight.setTitle(ui->titleLineEdit->text());
+    d->flightService.updateTitleAndDescription(flight.getId(), ui->titleLineEdit->text(), ui->focusPlainTextEdit->toPlainText());
 }
 
 void FlightDescriptionWidget::handleDescriptionEdited() noexcept
 {
-    Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
-    currentFlight.setDescription(ui->focusPlainTextEdit->toPlainText());
-    d->flightService.updateTitleAndDescription(currentFlight.getId(), ui->titleLineEdit->text(), ui->focusPlainTextEdit->toPlainText());
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    flight.setDescription(ui->focusPlainTextEdit->toPlainText());
+    d->flightService.updateTitleAndDescription(flight.getId(), ui->titleLineEdit->text(), ui->focusPlainTextEdit->toPlainText());
 }

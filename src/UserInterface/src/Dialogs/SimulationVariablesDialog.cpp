@@ -104,22 +104,22 @@ void SimulationVariablesDialog::hideEvent(QHideEvent *event) noexcept
 void SimulationVariablesDialog::initUi() noexcept
 {
     SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    AircraftWidget *aircraftWidget = new AircraftWidget(skyConnect, this);
+    AircraftWidget *aircraftWidget = new AircraftWidget(this);
     ui->simulationVariablesTab->addTab(aircraftWidget, tr("&Aircraft"));
 
-    EngineWidget *engineWidget = new EngineWidget(skyConnect, this);
+    EngineWidget *engineWidget = new EngineWidget(this);
     ui->simulationVariablesTab->addTab(engineWidget, tr("&Engine"));
 
-    PrimaryFlightControlWidget *primaryFlightControlWidget = new PrimaryFlightControlWidget(skyConnect, this);
+    PrimaryFlightControlWidget *primaryFlightControlWidget = new PrimaryFlightControlWidget(this);
     ui->simulationVariablesTab->addTab(primaryFlightControlWidget, tr("&Primary Controls"));
 
-    SecondaryFlightControlWidget *secondaryFlightControlWidget = new SecondaryFlightControlWidget(skyConnect, this);
+    SecondaryFlightControlWidget *secondaryFlightControlWidget = new SecondaryFlightControlWidget(this);
     ui->simulationVariablesTab->addTab(secondaryFlightControlWidget, tr("&Secondary Controls"));
 
-    AircraftHandleWidget *aircraftHandleWidget = new AircraftHandleWidget(skyConnect, this);
+    AircraftHandleWidget *aircraftHandleWidget = new AircraftHandleWidget(this);
     ui->simulationVariablesTab->addTab(aircraftHandleWidget, tr("&Handles && Brakes"));
 
-    LightWidget *lightWidget = new LightWidget(skyConnect, this);
+    LightWidget *lightWidget = new LightWidget(this);
     ui->simulationVariablesTab->addTab(lightWidget, tr("&Lights"));
 }
 
@@ -127,6 +127,8 @@ void SimulationVariablesDialog::updateUi() noexcept
 {
     updateTitle();
 }
+
+// PRIVATE SLOTS
 
 void SimulationVariablesDialog::updateTitle() noexcept
 {

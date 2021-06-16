@@ -70,17 +70,19 @@ void AircraftTypeWidget::showEvent(QShowEvent *event) noexcept
     QWidget::showEvent(event);
     updateUi();
 
-    const Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
-    const Aircraft &aircraft = currentFlight.getUserAircraft();
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const Aircraft &aircraft = flight.getUserAircraft();
     connect(&aircraft, &Aircraft::infoChanged,
+            this, &AircraftTypeWidget::updateUi);
+    connect(&flight, &Flight::userAircraftChanged,
             this, &AircraftTypeWidget::updateUi);
 }
 
 void AircraftTypeWidget::hideEvent(QHideEvent *event) noexcept
 {
     QWidget::hideEvent(event);
-    const Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
-    const Aircraft &aircraft = currentFlight.getUserAircraft();
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const Aircraft &aircraft = flight.getUserAircraft();
     disconnect(&aircraft, &Aircraft::infoChanged,
             this, &AircraftTypeWidget::updateUi);
 }
@@ -111,8 +113,8 @@ void AircraftTypeWidget::initUi() noexcept
 
 void AircraftTypeWidget::updateUi() noexcept
 {
-    const Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
-    const Aircraft &aircraft = currentFlight.getUserAircraftConst();
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const Aircraft &aircraft = flight.getUserAircraftConst();
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfoConst();
 
     ui->nameLineEdit->setText(aircraftInfo.type);

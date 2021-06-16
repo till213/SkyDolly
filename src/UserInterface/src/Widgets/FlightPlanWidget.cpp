@@ -66,25 +66,32 @@ void FlightPlanWidget::showEvent(QShowEvent *event) noexcept
     QWidget::showEvent(event);
     updateUi();
 
-    const FlightPlan &flightPlan = Logbook::getInstance().getCurrentFlight().getUserAircraftConst().getFlightPlanConst();
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const FlightPlan &flightPlan = flight.getUserAircraftConst().getFlightPlanConst();
     connect(&flightPlan, &FlightPlan::waypointAdded,
             this, &FlightPlanWidget::addWaypoint);
     connect(&flightPlan, &FlightPlan::waypointUpdated,
             this, &FlightPlanWidget::updateWaypoint);
     connect(&flightPlan, &FlightPlan::waypointsCleared,
             this, &FlightPlanWidget::clear);
+    connect(&flight, &Flight::userAircraftChanged,
+            this, &FlightPlanWidget::updateUi);
+
 }
 
 void FlightPlanWidget::hideEvent(QHideEvent *event) noexcept
 {
     QWidget::hideEvent(event);
-    const FlightPlan &flightPlan = Logbook::getInstance().getCurrentFlight().getUserAircraftConst().getFlightPlanConst();
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const FlightPlan &flightPlan = flight.getUserAircraftConst().getFlightPlanConst();
     disconnect(&flightPlan, &FlightPlan::waypointAdded,
                this, &FlightPlanWidget::addWaypoint);
     disconnect(&flightPlan, &FlightPlan::waypointUpdated,
                this, &FlightPlanWidget::updateWaypoint);
     disconnect(&flightPlan, &FlightPlan::waypointsCleared,
                this, &FlightPlanWidget::clear);
+    disconnect(&flight, &Flight::userAircraftChanged,
+               this, &FlightPlanWidget::updateUi);
 }
 
 // PRIVATE
@@ -92,18 +99,18 @@ void FlightPlanWidget::hideEvent(QHideEvent *event) noexcept
 void FlightPlanWidget::initUi() noexcept
 {}
 
+// PRIVATE SLOTS
+
 void FlightPlanWidget::updateUi() noexcept
 {
-    const Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
-    const FlightPlan &flightPlan = currentFlight.getUserAircraftConst().getFlightPlanConst();
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const FlightPlan &flightPlan = flight.getUserAircraftConst().getFlightPlanConst();
 
     clear();
     for (const Waypoint &waypoint : flightPlan.getAllConst()) {
         addWaypoint(waypoint);
     }
 }
-
-// PRIVATE SLOTS
 
 void FlightPlanWidget::addWaypoint(const Waypoint &waypoint)
 {

@@ -33,6 +33,7 @@
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/Position.h"
 #include "../../../Model/src/PositionData.h"
+#include "../../../SkyConnect/src/SkyManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "AircraftWidget.h"
@@ -41,21 +42,21 @@
 class AircraftWidgetPrivate
 {
 public:
-    AircraftWidgetPrivate(const QWidget &widget, SkyConnectIntf &theSkyConnect) noexcept
-        : skyConnect(theSkyConnect),
-          ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
+    AircraftWidgetPrivate(const QWidget &widget) noexcept
+        : ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
           DisabledTextColor(widget.palette().color(QPalette::Disabled, QPalette::WindowText))
     {}
 
-    SkyConnectIntf &skyConnect;
     Unit unit;
     const QColor ActiveTextColor;
     const QColor DisabledTextColor;
 };
 
-AircraftWidget::AircraftWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept :
-    QWidget(parent),
-    d(std::make_unique<AircraftWidgetPrivate>(*this, skyConnect)),
+// PUBLIC
+
+AircraftWidget::AircraftWidget(QWidget *parent) noexcept :
+    AbstractSimulationVariableWidget(parent),
+    d(std::make_unique<AircraftWidgetPrivate>(*this)),
     ui(std::make_unique<Ui::AircraftWidget>())
 {
     ui->setupUi(this);
@@ -65,60 +66,7 @@ AircraftWidget::AircraftWidget(SkyConnectIntf &skyConnect, QWidget *parent) noex
 AircraftWidget::~AircraftWidget() noexcept
 {}
 
-// PROTECTED
-
-void AircraftWidget::showEvent(QShowEvent *event) noexcept
-{
-    QWidget::showEvent(event);
-    updateUi(d->skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
-    connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
-            this, &AircraftWidget::updateUi);
-}
-
-void AircraftWidget::hideEvent(QHideEvent *event) noexcept
-{
-    QWidget::hideEvent(event);
-    disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
-            this, &AircraftWidget::updateUi);
-}
-
-// PRIVATE
-
-void AircraftWidget::initUi() noexcept
-{
-    // Position
-    ui->latitudeLineEdit->setToolTip(SimVar::Latitude);
-    ui->longitudeLineEdit->setToolTip(SimVar::Longitude);
-    ui->altitudeLineEdit->setToolTip(SimVar::Altitude);
-    ui->pitchLineEdit->setToolTip(SimVar::Pitch);
-    ui->bankLineEdit->setToolTip(SimVar::Bank);
-    ui->headingLineEdit->setToolTip(SimVar::Heading);
-
-    // Velocity
-    ui->velocityXLineEdit->setToolTip(SimVar::VelocityBodyX);
-    ui->velocityYLineEdit->setToolTip(SimVar::VelocityBodyY);
-    ui->velocityZLineEdit->setToolTip(SimVar::VelocityBodyZ);
-    ui->rotationVelocityXLineEdit->setToolTip(SimVar::RotationVelocityBodyX);
-    ui->rotationVelocityYLineEdit->setToolTip(SimVar::RotationVelocityBodyY);
-    ui->rotationVelocityZLineEdit->setToolTip(SimVar::RotationVelocityBodyZ);
-}
-
-const PositionData &AircraftWidget::getCurrentPositionData(qint64 timestamp, TimeVariableData::Access access) const noexcept
-{
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-
-    if (d->skyConnect.getState() == Connect::State::Recording) {
-        return aircraft.getPositionConst().getLast();
-    } else {
-        if (timestamp != TimeVariableData::InvalidTime) {
-            return aircraft.getPositionConst().interpolate(timestamp, access);
-        } else {
-            return aircraft.getPositionConst().interpolate(d->skyConnect.getCurrentTimestamp(), access);
-        }
-    };
-}
-
-// PRIVATE SLOTS
+// PROTECTED SLOTS
 
 void AircraftWidget::updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept
 {
@@ -161,4 +109,40 @@ void AircraftWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
     ui->rotationVelocityXLineEdit->setStyleSheet(css);
     ui->rotationVelocityYLineEdit->setStyleSheet(css);
     ui->rotationVelocityZLineEdit->setStyleSheet(css);
+}
+
+// PRIVATE
+
+void AircraftWidget::initUi() noexcept
+{
+    // Position
+    ui->latitudeLineEdit->setToolTip(SimVar::Latitude);
+    ui->longitudeLineEdit->setToolTip(SimVar::Longitude);
+    ui->altitudeLineEdit->setToolTip(SimVar::Altitude);
+    ui->pitchLineEdit->setToolTip(SimVar::Pitch);
+    ui->bankLineEdit->setToolTip(SimVar::Bank);
+    ui->headingLineEdit->setToolTip(SimVar::Heading);
+
+    // Velocity
+    ui->velocityXLineEdit->setToolTip(SimVar::VelocityBodyX);
+    ui->velocityYLineEdit->setToolTip(SimVar::VelocityBodyY);
+    ui->velocityZLineEdit->setToolTip(SimVar::VelocityBodyZ);
+    ui->rotationVelocityXLineEdit->setToolTip(SimVar::RotationVelocityBodyX);
+    ui->rotationVelocityYLineEdit->setToolTip(SimVar::RotationVelocityBodyY);
+    ui->rotationVelocityZLineEdit->setToolTip(SimVar::RotationVelocityBodyZ);
+}
+
+const PositionData &AircraftWidget::getCurrentPositionData(qint64 timestamp, TimeVariableData::Access access) const noexcept
+{
+    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+    const SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect.getState() == Connect::State::Recording) {
+        return aircraft.getPositionConst().getLast();
+    } else {
+        if (timestamp != TimeVariableData::InvalidTime) {
+            return aircraft.getPositionConst().interpolate(timestamp, access);
+        } else {
+            return aircraft.getPositionConst().interpolate(skyConnect.getCurrentTimestamp(), access);
+        }
+    };
 }
