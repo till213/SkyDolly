@@ -37,6 +37,7 @@
 #include "../../../Model/src/PrimaryFlightControl.h"
 #include "../../../Model/src/PrimaryFlightControlData.h"
 #include "../../../Model/src/TimeVariableData.h"
+#include "../../../SkyConnect/src/SkyManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "PrimaryFlightControlWidget.h"
@@ -45,13 +46,11 @@
 class PrimaryFlightControlWidgetPrivate
 {
 public:
-    PrimaryFlightControlWidgetPrivate(const QWidget &widget, SkyConnectIntf &theSkyConnect) noexcept
-        : skyConnect(theSkyConnect),
-          ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
+    PrimaryFlightControlWidgetPrivate(const QWidget &widget) noexcept
+        : ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
           DisabledTextColor(widget.palette().color(QPalette::Disabled, QPalette::WindowText))
     {}
 
-    SkyConnectIntf &skyConnect;
     Unit unit;
     const QColor ActiveTextColor;
     const QColor DisabledTextColor;
@@ -59,9 +58,9 @@ public:
 
 // PUBLIC
 
-PrimaryFlightControlWidget::PrimaryFlightControlWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept :
-    QWidget(parent),
-    d(std::make_unique<PrimaryFlightControlWidgetPrivate>(*this, skyConnect)),
+PrimaryFlightControlWidget::PrimaryFlightControlWidget(QWidget *parent) noexcept :
+    AbstractSimulationVariableWidget(parent),
+    d(std::make_unique<PrimaryFlightControlWidgetPrivate>(*this)),
     ui(std::make_unique<Ui::PrimaryFlightControlWidget>())
 {
     ui->setupUi(this);
@@ -71,48 +70,7 @@ PrimaryFlightControlWidget::PrimaryFlightControlWidget(SkyConnectIntf &skyConnec
 PrimaryFlightControlWidget::~PrimaryFlightControlWidget() noexcept
 {}
 
-// PROTECTED
-
-void PrimaryFlightControlWidget::showEvent(QShowEvent *event) noexcept
-{
-    QWidget::showEvent(event);
-    updateUi(d->skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
-    connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
-            this, &PrimaryFlightControlWidget::updateUi);
-}
-
-void PrimaryFlightControlWidget::hideEvent(QHideEvent *event) noexcept
-{
-    QWidget::hideEvent(event);
-    disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
-            this, &PrimaryFlightControlWidget::updateUi);
-}
-
-// PRIVATE
-
-void PrimaryFlightControlWidget::initUi()
-{
-    ui->rudderLineEdit->setToolTip(SimVar::RudderPosition);
-    ui->elevatorLineEdit->setToolTip(SimVar::ElevatorPosition);
-    ui->aileronLineEdit->setToolTip(SimVar::AileronPosition);
-}
-
-const PrimaryFlightControlData &PrimaryFlightControlWidget::getCurrentPrimaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const noexcept
-{
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-
-    if (d->skyConnect.getState() == Connect::State::Recording) {
-        return aircraft.getPrimaryFlightControlConst().getLast();
-    } else {
-        if (timestamp != TimeVariableData::InvalidTime) {
-            return aircraft.getPrimaryFlightControlConst().interpolate(timestamp, access);
-        } else {
-            return aircraft.getPrimaryFlightControlConst().interpolate(d->skyConnect.getCurrentTimestamp(), access);
-        }
-    };
-}
-
-// PRIVATE SLOTS
+// PROTECED SLOTS
 
 void PrimaryFlightControlWidget::updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept
 {
@@ -133,4 +91,29 @@ void PrimaryFlightControlWidget::updateUi(qint64 timestamp, TimeVariableData::Ac
     ui->rudderLineEdit->setStyleSheet(css);
     ui->elevatorLineEdit->setStyleSheet(css);
     ui->aileronLineEdit->setStyleSheet(css);
+}
+
+// PRIVATE
+
+void PrimaryFlightControlWidget::initUi()
+{
+    ui->rudderLineEdit->setToolTip(SimVar::RudderPosition);
+    ui->elevatorLineEdit->setToolTip(SimVar::ElevatorPosition);
+    ui->aileronLineEdit->setToolTip(SimVar::AileronPosition);
+}
+
+const PrimaryFlightControlData &PrimaryFlightControlWidget::getCurrentPrimaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const noexcept
+{
+    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+
+    const SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect.getState() == Connect::State::Recording) {
+        return aircraft.getPrimaryFlightControlConst().getLast();
+    } else {
+        if (timestamp != TimeVariableData::InvalidTime) {
+            return aircraft.getPrimaryFlightControlConst().interpolate(timestamp, access);
+        } else {
+            return aircraft.getPrimaryFlightControlConst().interpolate(skyConnect.getCurrentTimestamp(), access);
+        }
+    };
 }

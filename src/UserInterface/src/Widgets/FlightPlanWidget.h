@@ -54,9 +54,9 @@ private:
     std::unique_ptr<Ui::FlightPlanWidget> ui;
 
     void initUi() noexcept;
-    void updateUi() noexcept;
 
-private slots:    
+private slots:
+    void updateUi() noexcept;
     void addWaypoint(const Waypoint &waypoint);
     void updateWaypoint(int index, const Waypoint &waypoint);
     void clear();

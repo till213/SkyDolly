@@ -35,6 +35,7 @@
 #include "../../../Model/src/Light.h"
 #include "../../../Model/src/LightData.h"
 #include "../../../Model/src/TimeVariableData.h"
+#include "../../../SkyConnect/src/SkyManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "LightWidget.h"
@@ -43,22 +44,20 @@
 class LightWidgetPrivate
 {
 public:
-    LightWidgetPrivate(const QWidget &widget, SkyConnectIntf &theSkyConnect) noexcept
-        : skyConnect(theSkyConnect),
-          ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
+    LightWidgetPrivate(const QWidget &widget) noexcept
+        : ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
           DisabledTextColor(widget.palette().color(QPalette::Disabled, QPalette::WindowText))
     {}
 
-    SkyConnectIntf &skyConnect;
     const QColor ActiveTextColor;
     const QColor DisabledTextColor;
 };
 
 // PUBLIC
 
-LightWidget::LightWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept :
-    QWidget(parent),
-    d(std::make_unique<LightWidgetPrivate>(*this, skyConnect)),
+LightWidget::LightWidget(QWidget *parent) noexcept :
+    AbstractSimulationVariableWidget(parent),
+    d(std::make_unique<LightWidgetPrivate>(*this)),
     ui(std::make_unique<Ui::LightWidget>())
 {
     ui->setupUi(this);
@@ -70,20 +69,6 @@ LightWidget::~LightWidget() noexcept
 
 // PROTECTED
 
-void LightWidget::showEvent(QShowEvent *event) noexcept
-{
-    QWidget::showEvent(event);
-    updateUi(d->skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
-    connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
-            this, &LightWidget::updateUi);
-}
-
-void LightWidget::hideEvent(QHideEvent *event) noexcept
-{
-    QWidget::hideEvent(event);
-    disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
-              this, &LightWidget::updateUi);
-}
 
 // PRIVATE
 
@@ -127,13 +112,14 @@ const LightData &LightWidget::getCurrentLightData(qint64 timestamp, TimeVariable
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
-    if (d->skyConnect.getState() == Connect::State::Recording) {
+    const SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect.getState() == Connect::State::Recording) {
         return aircraft.getLightConst().getLast();
     } else {
         if (timestamp != TimeVariableData::InvalidTime) {
             return aircraft.getLightConst().interpolate(timestamp, access);
         } else {
-            return aircraft.getLightConst().interpolate(d->skyConnect.getCurrentTimestamp(), access);
+            return aircraft.getLightConst().interpolate(skyConnect.getCurrentTimestamp(), access);
         }
     };
 }

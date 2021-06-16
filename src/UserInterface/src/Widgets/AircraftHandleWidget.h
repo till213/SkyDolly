@@ -27,10 +27,12 @@
 
 #include <QWidget>
 
-#include "../../../Model/src/TimeVariableData.h"
-
 class QShowEvent;
 class QHideEvent;
+
+#include "../../../Model/src/TimeVariableData.h"
+#include "AbstractSimulationVariableWidget.h"
+
 
 class SkyConnectIntf;
 class AircraftHandleData;
@@ -40,27 +42,22 @@ namespace Ui {
     class AircraftHandleWidget;
 }
 
-class AircraftHandleWidget : public QWidget
+class AircraftHandleWidget : public AbstractSimulationVariableWidget
 {
     Q_OBJECT
 public:
-    explicit AircraftHandleWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept;
+    explicit AircraftHandleWidget(QWidget *parent) noexcept;
     virtual ~AircraftHandleWidget() noexcept;
 
-protected:
-    void showEvent(QShowEvent *event) noexcept override;
-    void hideEvent(QHideEvent *event) noexcept override;
+protected slots:
+    virtual void updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept override;
 
 private:
-    Q_DISABLE_COPY(AircraftHandleWidget)
     std::unique_ptr<AircraftHandleWidgetPrivate> d;
     std::unique_ptr<Ui::AircraftHandleWidget> ui;
 
     void initUi() noexcept;
     const AircraftHandleData &getCurrentAircraftHandleData(qint64 timestamp, TimeVariableData::Access access) const noexcept;
-
-private slots:
-    void updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept;
 };
 
 #endif // AIRCRAFTHANDLEWIDGET_H

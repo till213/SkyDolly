@@ -69,16 +69,16 @@ void FlightConditionWidget::showEvent(QShowEvent *event) noexcept
     QWidget::showEvent(event);
     updateUi();
 
-    const Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
-    connect(&currentFlight, &Flight::flightConditionChanged,
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    connect(&flight, &Flight::flightConditionChanged,
             this, &FlightConditionWidget::updateUi);
 }
 
 void FlightConditionWidget::hideEvent(QHideEvent *event) noexcept
 {
     QWidget::hideEvent(event);
-    const Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
-    disconnect(&currentFlight, &Flight::flightConditionChanged,
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    disconnect(&flight, &Flight::flightConditionChanged,
             this, &FlightConditionWidget::updateUi);
 }
 
@@ -109,8 +109,8 @@ void FlightConditionWidget::initUi() noexcept
 
 void FlightConditionWidget::updateUi() noexcept
 {
-    const Flight &currentFlight = Logbook::getInstance().getCurrentFlight();
-    const FlightCondition &flightCondition = currentFlight.getFlightConditionConst();
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const FlightCondition &flightCondition = flight.getFlightConditionConst();
 
     ui->groundAltitudeLineEdit->setText(d->unit.formatFeet(flightCondition.groundAltitude));
     ui->surfaceTypeLineEdit->setText(SimType::surfaceTypeToString(flightCondition.surfaceType));

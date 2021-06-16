@@ -82,12 +82,10 @@ SkyConnectIntf &SkyManager::getCurrentSkyConnect() const noexcept
 // PROTECTED
 
 SkyManager::~SkyManager() noexcept
-{
-}
+{}
 
 // PRIVATE
 
 SkyManager::SkyManager() noexcept
     : d(std::make_unique<SkyManagerPrivate>())
-{
-}
+{}
