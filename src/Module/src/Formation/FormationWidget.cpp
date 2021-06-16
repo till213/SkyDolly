@@ -613,7 +613,7 @@ void FormationWidget::deleteAircraft() noexcept
     Settings &settings = Settings::getInstance();
     bool doDelete;
     if (settings.isDeleteAircraftConfirmationEnabled()) {
-        QMessageBox messageBox;
+        QMessageBox messageBox(this);
         QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), &messageBox);
 
         // Sequence numbers start at 1
