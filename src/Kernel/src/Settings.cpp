@@ -403,7 +403,7 @@ void Settings::restore() noexcept
         if (ok) {
             d->replaySpeedUnit = static_cast<Replay::SpeedUnit>(replaySpeedUnitValue);
         } else {
-            qWarning("The replay speed unit in the settings coul dnot be parsed, so setting value to default value %d", SettingsPrivate::DefaultReplaySpeedUnit);
+            qWarning("The replay speed unit in the settings coul dnot be parsed, so setting value to default value %d", Enum::toUnderlyingType(SettingsPrivate::DefaultReplaySpeedUnit));
             d->replaySpeedUnit = SettingsPrivate::DefaultReplaySpeedUnit;
         }
         d->repeatFlapsHandleIndex = d->settings.value("RepeatFlapsHandleIndex", SettingsPrivate::DefaultRepeatFlapsHandleIndex).toBool();
