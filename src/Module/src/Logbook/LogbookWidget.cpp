@@ -361,7 +361,7 @@ void LogbookWidget::deleteFlight() noexcept
 
         Settings &settings = Settings::getInstance();
         bool doDelete;
-        if (settings.isDeleteConfirmationEnabled()) {
+        if (settings.isDeleteFlightConfirmationEnabled()) {
             QMessageBox messageBox;
             QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), &messageBox);
 
@@ -375,7 +375,7 @@ void LogbookWidget::deleteFlight() noexcept
 
             messageBox.exec();
             doDelete = messageBox.clickedButton() == deleteButton;
-            settings.setDeleteConfirmationEnabled(!dontAskAgainCheckBox->isChecked());
+            settings.setDeleteFlightConfirmationEnabled(!dontAskAgainCheckBox->isChecked());
         } else {
             doDelete = true;
         }

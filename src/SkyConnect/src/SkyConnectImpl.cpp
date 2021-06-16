@@ -423,7 +423,6 @@ bool SkyConnectImpl::connectWithSim() noexcept
 
 bool SkyConnectImpl::onCreateAIObjects() noexcept
 {
-    d->pendingAIAircraftCreationRequests.clear();
     return d->simConnectAI->createSimulatedAircrafts(getCurrentFlight(), d->pendingAIAircraftCreationRequests, Enum::toUnderlyingType(DataRequest::AIAircraftBase));
 }
 
@@ -431,6 +430,13 @@ void SkyConnectImpl::onDestroyAIObjects() noexcept
 {
     d->pendingAIAircraftCreationRequests.clear();
     d->simConnectAI->destroySimulatedAircrafts(getCurrentFlight());
+}
+
+void SkyConnectImpl::onDestroyAIObject(Aircraft &aircraft) noexcept
+{
+    if (aircraft.getSimulationObjectId() != ::SIMCONNECT_OBJECT_ID_USER) {
+        d->simConnectAI->destroySimulatedAircraft(aircraft);
+    }
 }
 
 // PROTECTED SLOTS

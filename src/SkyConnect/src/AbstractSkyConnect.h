@@ -35,6 +35,7 @@
 #include "Connect.h"
 
 class Flight;
+class Aircraft;
 class AbstractSkyConnectPrivate;
 
 class  AbstractSkyConnect : public SkyConnectIntf
@@ -87,6 +88,7 @@ public:
 
     virtual bool createAIObjects() noexcept override;
     virtual void destroyAIObjects() noexcept override;
+    virtual void destroyAIObject(Aircraft &aircraft) noexcept override;
     virtual bool updateAIObjects() noexcept override;
     virtual bool updateUserAircraft() noexcept override;
 
@@ -119,6 +121,7 @@ protected:
 
     virtual bool onCreateAIObjects() noexcept = 0;
     virtual void onDestroyAIObjects() noexcept = 0;
+    virtual void onDestroyAIObject(Aircraft &aircraft) noexcept = 0;
 
 protected slots:
     virtual void recordData() noexcept = 0;

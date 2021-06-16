@@ -117,9 +117,8 @@ void AbstractSkyConnect::startRecording(bool addFormationAircraft) noexcept
                 // If yes, add a new aircraft to the current flight (formation)
                 d->currentFlight.addUserAircraft();
             }
-            // Update AI objects by simply destroying and re-creating them
-            onDestroyAIObjects();
-            onCreateAIObjects();
+            // Update AI objects
+            updateAIObjects();
         }
         d->lastSamplesPerSecondIndex = 0;
         d->currentTimestamp = 0;
@@ -146,8 +145,6 @@ void AbstractSkyConnect::stopRecording() noexcept
     onStopRecording();
     d->recordingTimer.stop();
     setState(Connect::State::Connected);
-    // Update AI objects
-    updateAIObjects();
     emit recordingStopped();
 }
 
@@ -409,6 +406,13 @@ void AbstractSkyConnect::destroyAIObjects() noexcept
 {
     if (isConnected()) {
         onDestroyAIObjects();
+    }
+}
+
+void AbstractSkyConnect::destroyAIObject(Aircraft &aircraft) noexcept
+{
+    if (isConnected()) {
+        onDestroyAIObject(aircraft);
     }
 }
 
