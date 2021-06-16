@@ -60,8 +60,20 @@
        </item>
        <item>
         <widget class="QCheckBox" name="moduleSelectorVisibleCheckBox">
+         <property name="minimumSize">
+          <size>
+           <width>16</width>
+           <height>10</height>
+          </size>
+         </property>
          <property name="text">
           <string/>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>16</width>
+           <height>10</height>
+          </size>
          </property>
         </widget>
        </item>
