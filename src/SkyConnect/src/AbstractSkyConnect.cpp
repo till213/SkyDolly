@@ -49,7 +49,8 @@ class AbstractSkyConnectPrivate
 {
 public:
     AbstractSkyConnectPrivate() noexcept
-        : state(Connect::State::Disconnected),
+        : userAircraftManualControl(false),
+          state(Connect::State::Disconnected),
           currentFlight(Logbook::getInstance().getCurrentFlight()),
           currentTimestamp(0),
           recordingSampleRate(Settings::getInstance().getRecordingSampleRateValue()),
@@ -62,6 +63,7 @@ public:
     }
 
     InitialPosition initialRecordingPosition;
+    bool userAircraftManualControl;
     Connect::State state;
     Flight &currentFlight;
     QTimer recordingTimer;
@@ -94,6 +96,17 @@ const InitialPosition &AbstractSkyConnect::getInitialRecordingPosition() const n
 void AbstractSkyConnect::setInitialRecordingPosition(const InitialPosition &initialPosition) noexcept
 {
     d->initialRecordingPosition = initialPosition;
+}
+
+bool AbstractSkyConnect::isUserAircraftManualControl() const noexcept
+{
+    return d->userAircraftManualControl;
+}
+
+void AbstractSkyConnect::setUserAircraftManualControl(bool enable) noexcept
+{
+    d->userAircraftManualControl = enable;
+    onUserAircraftManualControl(enable);
 }
 
 void AbstractSkyConnect::startRecording(bool addFormationAircraft) noexcept

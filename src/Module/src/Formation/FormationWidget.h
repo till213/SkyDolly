@@ -88,6 +88,7 @@ private slots:
 
     void on_horizontalDistanceSlider_valueChanged(int value) noexcept;
     void on_verticalDistanceSlider_valueChanged(int value) noexcept;
+    void on_manualUserAircraftCheckBox_toggled(bool enable) noexcept;
 };
 
 #endif // FORMATIONWIDGET_H

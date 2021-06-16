@@ -107,7 +107,6 @@ ModuleIntf &ModuleManager::getActiveModule() const
 void ModuleManager::activateModule(Module::Module moduleId) noexcept
 {
     if (d->activeModuleId != moduleId) {
-        ;
         if (d->activeModuleId != Module::Module::None) {
             ModuleIntf *previousModule = d->moduleMap[d->activeModuleId];
             previousModule->setActive(false);
@@ -133,6 +132,7 @@ void ModuleManager::initModules() noexcept
     QAction &logbookAction = logbookWidget->getAction();
     logbookAction.setData(Enum::toUnderlyingType(logbookWidget->getModuleId()));
     logbookAction.setShortcut(tr("F1"));
+    logbookAction.setToolTip("Open logbook module");
     d->moduleActionGroup->addAction(&logbookAction);
 
     FormationWidget *formationWidget = new FormationWidget(d->flightService, &d->moduleStackWidget);
@@ -141,6 +141,7 @@ void ModuleManager::initModules() noexcept
     QAction &formationAction = formationWidget->getAction();
     formationAction.setData(Enum::toUnderlyingType(formationWidget->getModuleId()));
     formationAction.setShortcut(tr("F2"));
+    formationAction.setToolTip("Open formation module");
     d->moduleActionGroup->addAction(&formationAction);
 }
 

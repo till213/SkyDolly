@@ -44,6 +44,8 @@ public:
 
     virtual const InitialPosition &getInitialRecordingPosition() const noexcept = 0;
     virtual void setInitialRecordingPosition(const InitialPosition &initialPosition) noexcept = 0;
+    virtual bool isUserAircraftManualControl() const noexcept = 0;
+    virtual void setUserAircraftManualControl(bool enable) noexcept = 0;
 
     virtual void startRecording(bool addFormationAircraft) noexcept = 0;
     virtual void stopRecording() noexcept = 0;
