@@ -22,41 +22,35 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef ENGINEWIDGET_H
-#define ENGINEWIDGET_H
+#ifndef ABSTRACTSIMULATIONVARIABLEWIDGET_H
+#define ABSTRACTSIMULATIONVARIABLEWIDGET_H
 
 #include <QWidget>
+
+#include "../../../Model/src/TimeVariableData.h"
 
 class QShowEvent;
 class QHideEvent;
 
-#include "../../../Model/src/TimeVariableData.h"
-#include "AbstractSimulationVariableWidget.h"
-
-class SkyConnectIntf;
-class EngineData;
-class EngineWidgetPrivate;
-
-namespace Ui {
-    class EngineWidget;
-}
-
-class EngineWidget : public AbstractSimulationVariableWidget
+class AbstractSimulationVariableWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit EngineWidget(QWidget *parent) noexcept;
-    virtual ~EngineWidget() noexcept;
+    explicit AbstractSimulationVariableWidget(QWidget *parent) noexcept;
+    virtual ~AbstractSimulationVariableWidget() noexcept;
+
+protected:
+    void showEvent(QShowEvent *event) noexcept override;
+    void hideEvent(QHideEvent *event) noexcept override;
 
 protected slots:
-    virtual void updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept override;
+    virtual void updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept = 0;
 
 private:
-    std::unique_ptr<EngineWidgetPrivate> d;
-    std::unique_ptr<Ui::EngineWidget> ui;
+    Q_DISABLE_COPY(AbstractSimulationVariableWidget)
 
-    void initUi() noexcept;
-    const EngineData &getCurrentEngineData(qint64 timestamp, TimeVariableData::Access access) const noexcept;
+private slots:
+    void updateUiWithCurrentTime() noexcept;
 };
 
-#endif // ENGINEWIDGET_H
+#endif // ABSTRACTSIMULATIONVARIABLEWIDGET_H

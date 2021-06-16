@@ -657,8 +657,8 @@ void CALLBACK SkyConnectImpl::dispatch(::SIMCONNECT_RECV *receivedData, DWORD cb
     Q_UNUSED(cbData);
 
     SkyConnectImpl *skyConnect = static_cast<SkyConnectImpl *>(context);
-    Flight &currentFlight = skyConnect->getCurrentFlight();
-    Aircraft &userAircraft = currentFlight.getUserAircraft();
+    Flight &flight = skyConnect->getCurrentFlight();
+    Aircraft &userAircraft = flight.getUserAircraft();
     ::SIMCONNECT_RECV_SIMOBJECT_DATA *objectData;
 
     bool dataStored = false;
@@ -721,7 +721,7 @@ void CALLBACK SkyConnectImpl::dispatch(::SIMCONNECT_RECV *receivedData, DWORD cb
             aircraftInfo.startDate = QDateTime::currentDateTime();
             userAircraft.setAircraftInfo(aircraftInfo);
             FlightCondition flightCondition = simConnectAircraftInfo->toFlightCondition();
-            currentFlight.setFlightCondition(flightCondition);
+            flight.setFlightCondition(flightCondition);
             break;
         }
         default:

@@ -27,10 +27,11 @@
 
 #include <QWidget>
 
-#include "../../../Model/src/TimeVariableData.h"
-
 class QShowEvent;
 class QHideEvent;
+
+#include "../../../Model/src/TimeVariableData.h"
+#include "AbstractSimulationVariableWidget.h"
 
 class SkyConnectIntf;
 class LightData;
@@ -40,27 +41,22 @@ namespace Ui {
     class LightWidget;
 }
 
-class LightWidget : public QWidget
+class LightWidget : public AbstractSimulationVariableWidget
 {
     Q_OBJECT
 public:
-    explicit LightWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept;
+    explicit LightWidget(QWidget *parent) noexcept;
     virtual ~LightWidget() noexcept;
 
-protected:
-    void showEvent(QShowEvent *event) noexcept override;
-    void hideEvent(QHideEvent *event) noexcept override;
+protected slots:
+    virtual void updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept override;
 
 private:
-    Q_DISABLE_COPY(LightWidget)
     std::unique_ptr<LightWidgetPrivate> d;
     std::unique_ptr<Ui::LightWidget> ui;
 
     void initUi() noexcept;    
     const LightData &getCurrentLightData(qint64 timestamp, TimeVariableData::Access access) const noexcept;
-
-private slots:
-    void updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept;
 };
 
 #endif // LIGHTWIDGET_H

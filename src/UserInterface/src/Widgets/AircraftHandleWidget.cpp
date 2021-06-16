@@ -37,6 +37,7 @@
 #include "../../../Model/src/AircraftHandle.h"
 #include "../../../Model/src/AircraftHandleData.h"
 #include "../../../Model/src/TimeVariableData.h"
+#include "../../../SkyConnect/src/SkyManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "AircraftHandleWidget.h"
@@ -45,13 +46,11 @@
 class AircraftHandleWidgetPrivate
 {
 public:
-    AircraftHandleWidgetPrivate(const QWidget &widget, SkyConnectIntf &theSkyConnect) noexcept
-        : skyConnect(theSkyConnect),
-          ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
+    AircraftHandleWidgetPrivate(const QWidget &widget) noexcept
+        : ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
           DisabledTextColor(widget.palette().color(QPalette::Disabled, QPalette::WindowText))
     {}
 
-    SkyConnectIntf &skyConnect;
     Unit unit;
     const QColor ActiveTextColor;
     const QColor DisabledTextColor;
@@ -59,9 +58,9 @@ public:
 
 // PUBLIC
 
-AircraftHandleWidget::AircraftHandleWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept :
-    QWidget(parent),
-    d(std::make_unique<AircraftHandleWidgetPrivate>(*this, skyConnect)),
+AircraftHandleWidget::AircraftHandleWidget(QWidget *parent) noexcept :
+    AbstractSimulationVariableWidget(parent),
+    d(std::make_unique<AircraftHandleWidgetPrivate>(*this)),
     ui(std::make_unique<Ui::AircraftHandleWidget>())
 {
     ui->setupUi(this);
@@ -73,20 +72,6 @@ AircraftHandleWidget::~AircraftHandleWidget() noexcept
 
 // PROTECTED
 
-void AircraftHandleWidget::showEvent(QShowEvent *event) noexcept
-{
-    QWidget::showEvent(event);
-    updateUi(d->skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
-    connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
-            this, &AircraftHandleWidget::updateUi);
-}
-
-void AircraftHandleWidget::hideEvent(QHideEvent *event) noexcept
-{
-    QWidget::hideEvent(event);
-    disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
-            this, &AircraftHandleWidget::updateUi);
-}
 
 // PRIVATE
 
@@ -106,13 +91,14 @@ const AircraftHandleData &AircraftHandleWidget::getCurrentAircraftHandleData(qin
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
-    if (d->skyConnect.getState() == Connect::State::Recording) {
+    const SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect.getState() == Connect::State::Recording) {
         return aircraft.getAircraftHandleConst().getLast();
     } else {
         if (timestamp != TimeVariableData::InvalidTime) {
             return aircraft.getAircraftHandleConst().interpolate(timestamp, access);
         } else {
-            return aircraft.getAircraftHandleConst().interpolate(d->skyConnect.getCurrentTimestamp(), access);
+            return aircraft.getAircraftHandleConst().interpolate(skyConnect.getCurrentTimestamp(), access);
         }
     };
 }

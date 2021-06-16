@@ -52,6 +52,8 @@ target_sources(UserInterface
         src/Widgets/FlightDescriptionWidget.cpp
         src/Widgets/FlightDescriptionWidget.h
         src/Widgets/FlightDescriptionWidget.ui
+        src/Widgets/AbstractSimulationVariableWidget.cpp
+        src/Widgets/AbstractSimulationVariableWidget.h
         src/Widgets/AircraftWidget.cpp
         src/Widgets/AircraftWidget.h
         src/Widgets/AircraftWidget.ui

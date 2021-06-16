@@ -60,7 +60,7 @@ private:
     void initUi() noexcept;
     void updateUi() noexcept;
 
-private slots:
+private slots:    
     void updateTitle() noexcept;
 };
 
