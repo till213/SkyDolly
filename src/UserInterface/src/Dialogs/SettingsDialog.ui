@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="settingsTabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
@@ -170,6 +170,13 @@
            </widget>
           </item>
           <item row="1" column="0">
+           <widget class="QCheckBox" name="confirmDeleteAircraftCheckBox">
+            <property name="text">
+             <string>Delete Aircraft</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
            <spacer name="verticalSpacer_4">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
