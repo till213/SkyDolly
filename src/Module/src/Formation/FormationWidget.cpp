@@ -29,9 +29,12 @@
 #include <QTableWidget>
 #include <QIcon>
 #include <QButtonGroup>
+#include <QMessageBox>
+#include <QCheckBox>
 
 #include "../../../Kernel/src/Unit.h"
 #include "../../../Kernel/src/SkyMath.h"
+#include "../../../Kernel/src/Settings.h"
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/AircraftInfo.h"
@@ -461,7 +464,9 @@ void FormationWidget::handleCellSelected(int row, int column) noexcept
 {
     Q_UNUSED(column)
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    getFlightService().updateUserAircraftIndex(flight, row);
+    if (row != flight.getUserAircraftIndex()) {
+        getFlightService().updateUserAircraftIndex(flight, row);
+    }
 }
 
 void FormationWidget::handleSelectionChanged() noexcept
@@ -488,9 +493,30 @@ void FormationWidget::updateUserAircraftIndex() noexcept
 
 void FormationWidget::deleteAircraft() noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    d->aircraftService->deleteByIndex(flight, d->selectedRow);
-    SkyManager::getInstance().getCurrentSkyConnect().updateAIObjects();
+    Settings &settings = Settings::getInstance();
+    bool doDelete;
+    if (settings.isDeleteAircraftConfirmationEnabled()) {
+        QMessageBox messageBox;
+        QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), &messageBox);
+
+        // Sequence numbers start at 1
+        messageBox.setText(tr("The aircraft with sequence number %1 is about to be deleted. Deletion cannot be undone.").arg(d->selectedRow + 1));
+        messageBox.setInformativeText(tr("Do you want to delete the aircraft?"));
+        QPushButton *deleteButton = messageBox.addButton(tr("Delete"), QMessageBox::AcceptRole);
+        QPushButton *keepButton = messageBox.addButton(tr("Keep"), QMessageBox::RejectRole);
+        messageBox.setDefaultButton(keepButton);
+        messageBox.setCheckBox(dontAskAgainCheckBox);
+        messageBox.setIcon(QMessageBox::Icon::Question);
+
+        messageBox.exec();
+        doDelete = messageBox.clickedButton() == deleteButton;
+        settings.setDeleteAircraftConfirmationEnabled(!dontAskAgainCheckBox->isChecked());
+    } else {
+        doDelete = true;
+    }
+    if (doDelete) {
+        d->aircraftService->deleteByIndex(d->selectedRow);
+    }
 }
 
 void FormationWidget::on_horizontalDistanceSlider_valueChanged(int value) noexcept

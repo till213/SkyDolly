@@ -56,7 +56,8 @@ public:
     bool repeatFlapsHandleIndex;
     bool repeatCanopyOpen;
 
-    bool deleteConfirmation;
+    bool deleteFlightConfirmation;
+    bool deleteAircraftConfirmation;
 
     int previewInfoDialogCount;
 
@@ -72,7 +73,8 @@ public:
     // For now the default value is true, as no known aircraft exists where the canopy values would not
     // have to be repeated
     static constexpr double DefaultRepeatCanopyOpen = true;
-    static constexpr bool DefaultDeleteConfirmation = true;
+    static constexpr bool DefaultDeleteFlightConfirmation = true;
+    static constexpr bool DefaultDeleteAircraftConfirmation = true;
 
     static constexpr int DefaultPreviewInfoDialogCount = 3;
     static constexpr int PreviewInfoDialogBase = 30;
@@ -237,7 +239,7 @@ double Settings::getSeekIntervalPercent() const noexcept
 
 void Settings::setSeekIntervalPercent(double percent) noexcept
 {
-    if (d->seekIntervalPercent!= percent) {
+    if (d->seekIntervalPercent != percent) {
         d->seekIntervalPercent = percent;
         emit seekIntervalPercentChanged(d->seekIntervalPercent);
     }
@@ -250,7 +252,7 @@ Replay::SpeedUnit Settings::getReplaySpeeedUnit() const noexcept
 
 void Settings::setReplaySpeedUnit(Replay::SpeedUnit replaySpeedUnit) noexcept
 {
-    if (d->replaySpeedUnit!= replaySpeedUnit) {
+    if (d->replaySpeedUnit != replaySpeedUnit) {
         d->replaySpeedUnit = replaySpeedUnit;
         emit replaySpeedUnitChanged(d->replaySpeedUnit);
     }
@@ -263,7 +265,7 @@ bool Settings::isRepeatFlapsHandleIndexEnabled() const noexcept
 
 void Settings::setRepeatFlapsHandleIndexEnabled(bool enable) noexcept
 {
-    if (d->repeatFlapsHandleIndex!= enable) {
+    if (d->repeatFlapsHandleIndex != enable) {
         d->repeatFlapsHandleIndex = enable;
         emit repeatFlapsPositionChanged(d->repeatFlapsHandleIndex);
     }
@@ -276,21 +278,34 @@ bool Settings::isRepeatCanopyOpenEnabled() const noexcept
 
 void Settings::setRepeatCanopyOpenEnabled(bool enable) noexcept
 {
-    if (d->repeatCanopyOpen!= enable) {
+    if (d->repeatCanopyOpen != enable) {
         d->repeatCanopyOpen = enable;
         emit repeatCanopyChanged(d->repeatCanopyOpen);
     }
 }
 
-bool Settings::isDeleteConfirmationEnabled() const noexcept
+bool Settings::isDeleteFlightConfirmationEnabled() const noexcept
 {
-    return d->deleteConfirmation;
+    return d->deleteFlightConfirmation;
 }
 
-void Settings::setDeleteConfirmationEnabled(bool enable) noexcept
+void Settings::setDeleteFlightConfirmationEnabled(bool enable) noexcept
 {
-    if (d->deleteConfirmation!= enable) {
-        d->deleteConfirmation = enable;
+    if (d->deleteFlightConfirmation != enable) {
+        d->deleteFlightConfirmation = enable;
+        emit changed();
+    }
+}
+
+bool Settings::isDeleteAircraftConfirmationEnabled() const noexcept
+{
+    return d->deleteAircraftConfirmation;
+}
+
+void Settings::setDeleteAircraftConfirmationEnabled(bool enable) noexcept
+{
+    if (d->deleteAircraftConfirmation != enable) {
+        d->deleteAircraftConfirmation = enable;
         emit changed();
     }
 }
@@ -335,7 +350,8 @@ void Settings::store() noexcept
     d->settings.endGroup();
     d->settings.beginGroup("UI");
     {
-        d->settings.setValue("DeleteConfirmation", d->deleteConfirmation);
+        d->settings.setValue("DeleteFlightConfirmation", d->deleteFlightConfirmation);
+        d->settings.setValue("DeleteAircraftConfirmation", d->deleteAircraftConfirmation);
     }
     d->settings.endGroup();
     d->settings.beginGroup("Window");
@@ -412,7 +428,8 @@ void Settings::restore() noexcept
     d->settings.endGroup();
     d->settings.beginGroup("UI");
     {
-        d->deleteConfirmation = d->settings.value("DeleteConfirmation", SettingsPrivate::DefaultDeleteConfirmation).toBool();
+        d->deleteFlightConfirmation = d->settings.value("DeleteFlightConfirmation", SettingsPrivate::DefaultDeleteFlightConfirmation).toBool();
+        d->deleteAircraftConfirmation = d->settings.value("DeleteAircraftConfirmation", SettingsPrivate::DefaultDeleteAircraftConfirmation).toBool();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Window");

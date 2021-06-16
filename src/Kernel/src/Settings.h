@@ -289,21 +289,38 @@ public:
     void setRepeatCanopyOpenEnabled(bool enable) noexcept;
 
     /*!
-     * Returns whether the delete confirmation is enabled or not.
+     * Returns whether the flight deletion confirmation is enabled or not.
      *
-     * \return \c true if the delete confirmation is enabled; \c false else
+     * \return \c true if the flight deletion confirmation is enabled; \c false else
      */
-    bool isDeleteConfirmationEnabled() const noexcept;
+    bool isDeleteFlightConfirmationEnabled() const noexcept;
 
     /*!
-     * Enables the delete confirmation.
+     * Enables the flight deletion confirmation.
      *
      * \param enable
-     *        set to \c true to set the delete confirmation enabled;
+     *        set to \c true to set the flight deletion confirmation enabled;
      *        \c false else
      * \sa changed
      */
-    void setDeleteConfirmationEnabled(bool enable) noexcept;
+    void setDeleteFlightConfirmationEnabled(bool enable) noexcept;
+
+    /*!
+     * Returns whether the aircraft deletion confirmation is enabled or not.
+     *
+     * \return \c true if the aircraft deletion confirmation is enabled; \c false else
+     */
+    bool isDeleteAircraftConfirmationEnabled() const noexcept;
+
+    /*!
+     * Enables the aircraft deletion confirmation.
+     *
+     * \param enable
+     *        set to \c true to set the aircraft deletion confirmation enabled;
+     *        \c false else
+     * \sa changed
+     */
+    void setDeleteAircraftConfirmationEnabled(bool enable) noexcept;
 
     /*!
      * Returns the count of how many times the "preview" dialog is still

@@ -66,6 +66,7 @@ protected:
 
     virtual bool onCreateAIObjects() noexcept override;
     virtual void onDestroyAIObjects() noexcept override;
+    virtual void onDestroyAIObject(Aircraft &aircraft) noexcept override;
 
 protected slots:
     virtual void recordData() noexcept override;
