@@ -79,7 +79,7 @@ public:
     static constexpr bool DefaultDeleteAircraftConfirmation = true;
 
     static constexpr int DefaultPreviewInfoDialogCount = 3;
-    static constexpr int PreviewInfoDialogBase = 30;
+    static constexpr int PreviewInfoDialogBase = 40;
 
     SettingsPrivate() noexcept
         : version(QCoreApplication::instance()->applicationVersion())
