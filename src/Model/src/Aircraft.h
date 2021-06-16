@@ -59,9 +59,6 @@ public:
     qint64 getId() const noexcept;
     void setId(qint64 id) noexcept;
 
-    qint64 getSimulationRequestId() const noexcept;
-    void setSimulationRequestId(qint64 id) noexcept;
-
     qint64 getSimulationObjectId() const noexcept;
     void setSimulationObjectId(qint64 id) noexcept;
 

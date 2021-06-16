@@ -42,6 +42,24 @@ namespace SimConnectType
         AircraftLightDefinition,
         AircraftInitialPosition
     };
+
+    enum class DataRequest: ::SIMCONNECT_DATA_REQUEST_ID {
+        AircraftInfo,
+        FlightPlan,
+        SimulationTime,
+        AircraftPosition,
+        Engine,
+        PrimaryFlightControl,
+        SecondaryFlightControl,
+        AircraftHandle,
+        Light,
+        // AI objects
+        AICreateObject,
+        AIRemoveObject,
+        AIReleaseControl,
+        // Must come last
+        AIObjectBase
+    };
 }
 
 #endif // SIMCONNECTTYPE_H
