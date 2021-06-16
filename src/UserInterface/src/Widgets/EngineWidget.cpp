@@ -37,6 +37,7 @@
 #include "../../../Model/src/PositionData.h"
 #include "../../../Model/src/EngineData.h"
 #include "../../../Model/src/TimeVariableData.h"
+#include "../../../SkyConnect/src/SkyManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "EngineWidget.h"
@@ -45,13 +46,11 @@
 class EngineWidgetPrivate
 {
 public:
-    EngineWidgetPrivate(const QWidget &widget, SkyConnectIntf &theSkyConnect) noexcept
-        : skyConnect(theSkyConnect),
-          ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
+    EngineWidgetPrivate(const QWidget &widget) noexcept
+        : ActiveTextColor(widget.palette().color(QPalette::Active, QPalette::WindowText)),
           DisabledTextColor(widget.palette().color(QPalette::Disabled, QPalette::WindowText))
     {}
 
-    SkyConnectIntf &skyConnect;
     Unit unit;
     const QColor ActiveTextColor;
     const QColor DisabledTextColor;
@@ -59,9 +58,9 @@ public:
 
 // PUBLIC
 
-EngineWidget::EngineWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept :
-    QWidget(parent),
-    d(std::make_unique<EngineWidgetPrivate>(*this, skyConnect)),
+EngineWidget::EngineWidget(QWidget *parent) noexcept :
+    AbstractSimulationVariableWidget(parent),
+    d(std::make_unique<EngineWidgetPrivate>(*this)),
     ui(std::make_unique<Ui::EngineWidget>())
 {
     ui->setupUi(this);
@@ -71,80 +70,7 @@ EngineWidget::EngineWidget(SkyConnectIntf &skyConnect, QWidget *parent) noexcept
 EngineWidget::~EngineWidget() noexcept
 {}
 
-// PROTECTED
-
-void EngineWidget::showEvent(QShowEvent *event) noexcept
-{
-    QWidget::showEvent(event);
-    updateUi(d->skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
-    connect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
-            this, &EngineWidget::updateUi);
-}
-
-void EngineWidget::hideEvent(QHideEvent *event) noexcept
-{
-    QWidget::hideEvent(event);
-    disconnect(&d->skyConnect, &SkyConnectIntf::timestampChanged,
-            this, &EngineWidget::updateUi);
-}
-
-// PRIVATE
-
-void EngineWidget::initUi() noexcept
-{
-    ui->throttle1LineEdit->setToolTip(SimVar::ThrottleLeverPosition1);
-    ui->throttle2LineEdit->setToolTip(SimVar::ThrottleLeverPosition2);
-    ui->throttle3LineEdit->setToolTip(SimVar::ThrottleLeverPosition3);
-    ui->throttle4LineEdit->setToolTip(SimVar::ThrottleLeverPosition4);
-    ui->propeller1LineEdit->setToolTip(SimVar::PropellerLeverPosition1);
-    ui->propeller2LineEdit->setToolTip(SimVar::PropellerLeverPosition2);
-    ui->propeller3LineEdit->setToolTip(SimVar::PropellerLeverPosition3);
-    ui->propeller4LineEdit->setToolTip(SimVar::PropellerLeverPosition4);
-    ui->mixture1LineEdit->setToolTip(SimVar::MixtureLeverPosition1);
-    ui->mixture2LineEdit->setToolTip(SimVar::MixtureLeverPosition2);
-    ui->mixture3LineEdit->setToolTip(SimVar::MixtureLeverPosition3);
-    ui->mixture4LineEdit->setToolTip(SimVar::MixtureLeverPosition4);
-    ui->cowlFlaps1LineEdit->setToolTip(SimVar::RecipEngineCowlFlapPosition1);
-    ui->cowlFlaps2LineEdit->setToolTip(SimVar::RecipEngineCowlFlapPosition2);
-    ui->cowlFlaps3LineEdit->setToolTip(SimVar::RecipEngineCowlFlapPosition3);
-    ui->cowlFlaps4LineEdit->setToolTip(SimVar::RecipEngineCowlFlapPosition4);
-
-    // Make the master battery and starter checkboxes checkable, but not for the user
-    ui->masterBattery1CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    ui->masterBattery1CheckBox->setFocusPolicy(Qt::NoFocus);
-    ui->masterBattery2CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    ui->masterBattery2CheckBox->setFocusPolicy(Qt::NoFocus);
-    ui->masterBattery3CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    ui->masterBattery3CheckBox->setFocusPolicy(Qt::NoFocus);
-    ui->masterBattery4CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    ui->masterBattery4CheckBox->setFocusPolicy(Qt::NoFocus);
-
-    ui->generalEngineStarter1CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    ui->generalEngineStarter1CheckBox->setFocusPolicy(Qt::NoFocus);
-    ui->generalEngineStarter2CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    ui->generalEngineStarter2CheckBox->setFocusPolicy(Qt::NoFocus);
-    ui->generalEngineStarter3CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    ui->generalEngineStarter3CheckBox->setFocusPolicy(Qt::NoFocus);
-    ui->generalEngineStarter4CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    ui->generalEngineStarter4CheckBox->setFocusPolicy(Qt::NoFocus);
-}
-
-const EngineData &EngineWidget::getCurrentEngineData(qint64 timestamp, TimeVariableData::Access access) const noexcept
-{
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-
-    if (d->skyConnect.getState() == Connect::State::Recording) {
-        return aircraft.getEngineConst().getLast();
-    } else {
-        if (timestamp != TimeVariableData::InvalidTime) {
-            return aircraft.getEngineConst().interpolate(timestamp, access);
-        } else {
-            return aircraft.getEngineConst().interpolate(d->skyConnect.getCurrentTimestamp(), access);
-        }
-    };
-}
-
-// PRIVATE SLOTS
+// PROTECTED SLOTS
 
 void EngineWidget::updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept
 {
@@ -208,4 +134,61 @@ void EngineWidget::updateUi(qint64 timestamp, TimeVariableData::Access access) n
     ui->generalEngineStarter2CheckBox->setStyleSheet(css);
     ui->generalEngineStarter3CheckBox->setStyleSheet(css);
     ui->generalEngineStarter4CheckBox->setStyleSheet(css);
+}
+
+// PRIVATE
+
+void EngineWidget::initUi() noexcept
+{
+    ui->throttle1LineEdit->setToolTip(SimVar::ThrottleLeverPosition1);
+    ui->throttle2LineEdit->setToolTip(SimVar::ThrottleLeverPosition2);
+    ui->throttle3LineEdit->setToolTip(SimVar::ThrottleLeverPosition3);
+    ui->throttle4LineEdit->setToolTip(SimVar::ThrottleLeverPosition4);
+    ui->propeller1LineEdit->setToolTip(SimVar::PropellerLeverPosition1);
+    ui->propeller2LineEdit->setToolTip(SimVar::PropellerLeverPosition2);
+    ui->propeller3LineEdit->setToolTip(SimVar::PropellerLeverPosition3);
+    ui->propeller4LineEdit->setToolTip(SimVar::PropellerLeverPosition4);
+    ui->mixture1LineEdit->setToolTip(SimVar::MixtureLeverPosition1);
+    ui->mixture2LineEdit->setToolTip(SimVar::MixtureLeverPosition2);
+    ui->mixture3LineEdit->setToolTip(SimVar::MixtureLeverPosition3);
+    ui->mixture4LineEdit->setToolTip(SimVar::MixtureLeverPosition4);
+    ui->cowlFlaps1LineEdit->setToolTip(SimVar::RecipEngineCowlFlapPosition1);
+    ui->cowlFlaps2LineEdit->setToolTip(SimVar::RecipEngineCowlFlapPosition2);
+    ui->cowlFlaps3LineEdit->setToolTip(SimVar::RecipEngineCowlFlapPosition3);
+    ui->cowlFlaps4LineEdit->setToolTip(SimVar::RecipEngineCowlFlapPosition4);
+
+    // Make the master battery and starter checkboxes checkable, but not for the user
+    ui->masterBattery1CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->masterBattery1CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->masterBattery2CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->masterBattery2CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->masterBattery3CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->masterBattery3CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->masterBattery4CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->masterBattery4CheckBox->setFocusPolicy(Qt::NoFocus);
+
+    ui->generalEngineStarter1CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->generalEngineStarter1CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->generalEngineStarter2CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->generalEngineStarter2CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->generalEngineStarter3CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->generalEngineStarter3CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->generalEngineStarter4CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->generalEngineStarter4CheckBox->setFocusPolicy(Qt::NoFocus);
+}
+
+const EngineData &EngineWidget::getCurrentEngineData(qint64 timestamp, TimeVariableData::Access access) const noexcept
+{
+    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+
+    const SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect.getState() == Connect::State::Recording) {
+        return aircraft.getEngineConst().getLast();
+    } else {
+        if (timestamp != TimeVariableData::InvalidTime) {
+            return aircraft.getEngineConst().interpolate(timestamp, access);
+        } else {
+            return aircraft.getEngineConst().interpolate(skyConnect.getCurrentTimestamp(), access);
+        }
+    };
 }
