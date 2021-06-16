@@ -464,7 +464,7 @@ void SkyConnectDummy::recordAircraftInfo() noexcept
 void SkyConnectDummy::replay() noexcept
 {
     const qint64 timestamp = updateCurrentTimestamp();
-    if (!sendAircraftData(timestamp, TimeVariableData::Access::Linear)) {
+    if (!sendAircraftData(timestamp, TimeVariableData::Access::Linear, AircraftSelection::All)) {
         stopReplay();
     }
 }
