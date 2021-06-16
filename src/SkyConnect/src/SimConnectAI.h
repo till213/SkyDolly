@@ -44,10 +44,10 @@ public:
     SimConnectAI(::HANDLE simConnectHandle);
     ~SimConnectAI();
 
-    bool createSimulatedAircrafts(Flight &flight, std::unordered_map<::SIMCONNECT_DATA_REQUEST_ID, Aircraft *> &pendingAIAircraftCreationRequests, ::SIMCONNECT_DATA_REQUEST_ID baseRequestId) noexcept;
+    bool createSimulatedAircrafts(Flight &flight, std::unordered_map<::SIMCONNECT_DATA_REQUEST_ID, Aircraft *> &pendingAIAircraftCreationRequests) noexcept;
     void destroySimulatedAircrafts(Flight &flight) noexcept;
     void destroySimulatedAircraft(Aircraft &aircraft) noexcept;
-    void destroySimulatedObject(qint64 objectId, ::SIMCONNECT_DATA_REQUEST_ID requestId) noexcept;
+    void destroySimulatedObject(qint64 objectId) noexcept;
 
 private:
     std::unique_ptr<SimConnectAIPrivate> d;
