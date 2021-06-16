@@ -137,6 +137,24 @@ public:
     void setMinimalUiEnabled(bool enable) noexcept;
 
     /*!
+     * Returns whether the \e module selector is visible.
+     *
+     * \return \c true if the module selector is shown
+     *         \c false else
+     */
+    bool isModuleSelectorVisible() const noexcept;
+
+    /*!
+     * Sets the \e module selector visible
+     *
+     * \param enable
+     *        \c true in order to show the module selector
+     *        \c false in order to hide the module selector
+     * \sa moduleSelectorVisibilityChanged()
+     */
+    void setModuleSelectorVisible(bool enable) noexcept;
+
+    /*!
      * Returns the saved window geometry.
      *
      * \return the window geometry; a \e null QByteArray if not saved before
@@ -380,6 +398,13 @@ signals:
      * \sa changed()
      */
     void minimalUiChanged(bool enable);
+
+    /*!
+     * Emitted when the module selector visibility has changed.
+     *
+     * \sa changed()
+     */
+    void moduleSelectorVisibilityChanged(bool enable);
 
     /*!
      * Emitted when the export path has changed.
