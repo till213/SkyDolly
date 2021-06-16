@@ -17,6 +17,10 @@
 - The module selector may be hidden
 - Reduced data size of requested simulation variables
 
+### Bug Fixes
+
+- Make sure that the "delete flight" confirmation dialog is on top of the main window (specifically when the "stay on top" option is enabled)
+
 ## 0.6.2
 
 ### New Features

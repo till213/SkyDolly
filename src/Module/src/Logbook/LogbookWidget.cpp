@@ -362,7 +362,7 @@ void LogbookWidget::deleteFlight() noexcept
         Settings &settings = Settings::getInstance();
         bool doDelete;
         if (settings.isDeleteFlightConfirmationEnabled()) {
-            QMessageBox messageBox;
+            QMessageBox messageBox(this);
             QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), &messageBox);
 
             messageBox.setText(tr("The flight %1 is about to be deleted. Deletion cannot be undone.").arg(d->selectedFlightId));
