@@ -748,7 +748,7 @@ void CALLBACK SkyConnectImpl::dispatch(::SIMCONNECT_RECV *receivedData, DWORD cb
 
     case ::SIMCONNECT_RECV_ID_SIMOBJECT_DATA:
     {
-        objectData = reinterpret_cast<SIMCONNECT_RECV_SIMOBJECT_DATA *>(receivedData);
+        objectData = reinterpret_cast<::SIMCONNECT_RECV_SIMOBJECT_DATA *>(receivedData);
 
         const bool storeDataImmediately = skyConnect->d->storeDataImmediately;
         switch (static_cast<SimConnectType::DataRequest>(objectData->dwRequestID)) {
