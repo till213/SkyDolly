@@ -53,6 +53,8 @@ public:
 
     virtual const InitialPosition &getInitialRecordingPosition() const noexcept override;
     virtual void setInitialRecordingPosition(const InitialPosition &initialPosition) noexcept override;
+    virtual bool isUserAircraftManualControl() const noexcept override;
+    virtual void setUserAircraftManualControl(bool enable) noexcept override;
 
     virtual void startRecording(bool addFormationAircraft) noexcept override;
     virtual void stopRecording() noexcept override;
@@ -103,6 +105,8 @@ protected:
     qint64 updateCurrentTimestamp() noexcept;
 
     virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept = 0;
+
+    virtual bool onUserAircraftManualControl(bool enable) noexcept = 0;
 
     virtual bool onStartRecording(const InitialPosition &initialPosition = InitialPosition::NullData) noexcept = 0;
     virtual void onRecordingPaused(bool paused) noexcept = 0;

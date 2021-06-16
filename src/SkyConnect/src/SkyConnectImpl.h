@@ -49,6 +49,9 @@ public:
 
 protected:
     virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
+
+    virtual bool onUserAircraftManualControl(bool enable) noexcept override;
+
     virtual bool onStartRecording(const InitialPosition &initialPosition = InitialPosition::NullData) noexcept override;
     virtual void onRecordingPaused(bool paused ) noexcept override;
     virtual void onStopRecording() noexcept override;

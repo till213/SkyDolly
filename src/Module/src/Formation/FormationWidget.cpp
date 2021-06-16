@@ -262,6 +262,9 @@ void FormationWidget::initUi() noexcept
     ui->wnwPositionRadioButton->setStyleSheet(css);
     ui->nwPositionRadioButton->setStyleSheet(css);
     ui->nnwPositionRadioButton->setStyleSheet(css);
+
+    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    ui->manualUserAircraftCheckBox->setChecked(skyConnect.isUserAircraftManualControl());
 }
 
 void FormationWidget::frenchConnection() noexcept
@@ -287,7 +290,7 @@ void FormationWidget::updateInitialPositionUi() noexcept
 {
     switch (ui->horizontalDistanceSlider->value()) {
     case HorizontalDistance::VeryClose:
-        ui->horizontalDistanceTextLabel->setText(tr("Very Close"));
+        ui->horizontalDistanceTextLabel->setText(tr("Very close"));
         break;
     case HorizontalDistance::Close:
         ui->horizontalDistanceTextLabel->setText(tr("Close"));
@@ -299,7 +302,7 @@ void FormationWidget::updateInitialPositionUi() noexcept
         ui->horizontalDistanceTextLabel->setText(tr("Far"));
         break;
     default:
-        ui->horizontalDistanceTextLabel->setText(tr("Very Far"));
+        ui->horizontalDistanceTextLabel->setText(tr("Very far"));
         break;
     }
 
@@ -308,13 +311,13 @@ void FormationWidget::updateInitialPositionUi() noexcept
         ui->verticalDistanceTextLabel->setText(tr("Below"));
         break;
     case VerticalDistance::JustBelow:
-        ui->verticalDistanceTextLabel->setText(tr("Just Below"));
+        ui->verticalDistanceTextLabel->setText(tr("Just below"));
         break;
     case VerticalDistance::Level:
         ui->verticalDistanceTextLabel->setText(tr("Level"));
         break;
     case VerticalDistance::JustAbove:
-        ui->verticalDistanceTextLabel->setText(tr("Just Above"));
+        ui->verticalDistanceTextLabel->setText(tr("Just above"));
         break;
     default:
         ui->verticalDistanceTextLabel->setText(tr("Above"));
@@ -645,4 +648,10 @@ void FormationWidget::on_verticalDistanceSlider_valueChanged(int value) noexcept
     Q_UNUSED(value)
     updateInitialPositionUi();
     updateInitialPosition();
+}
+
+void FormationWidget::on_manualUserAircraftCheckBox_toggled(bool enable) noexcept
+{
+    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    skyConnect.setUserAircraftManualControl(enable);
 }

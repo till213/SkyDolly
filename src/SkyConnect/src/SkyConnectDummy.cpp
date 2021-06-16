@@ -100,6 +100,12 @@ bool SkyConnectDummy::isTimerBasedRecording(SampleRate::SampleRate sampleRate) c
     return true;
 }
 
+bool SkyConnectDummy::onUserAircraftManualControl(bool enable) noexcept
+{
+    Q_UNUSED(enable)
+    return true;
+}
+
 bool SkyConnectDummy::onStartRecording(const InitialPosition &initialPosition) noexcept
 {
     Q_UNUSED(initialPosition)
