@@ -905,7 +905,7 @@ void CALLBACK SkyConnectImpl::dispatch(::SIMCONNECT_RECV *receivedData, DWORD cb
             Aircraft *aircraft = it.mapped();
             aircraft->setSimulationObjectId(objectData->dwObjectID);
 #ifdef DEBUG
-            qDebug("SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID: Request ID: %lu Assigned Object ID: %lu aircraft ID: %lld, remaining pending requests: %lld",
+            qDebug("SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID: Request ID: %lu, asssigned object ID: %lu, aircraft ID: %lld, remaining pending requests: %lld",
                    objectData->dwRequestID, objectData->dwObjectID, aircraft->getId(), skyConnect->d->pendingAIAircraftCreationRequests.size());
 #endif
             ::SimConnect_AIReleaseControl(skyConnect->d->simConnectHandle, aircraft->getSimulationObjectId(), Enum::toUnderlyingType(SimConnectType::DataRequest::AIReleaseControl));
