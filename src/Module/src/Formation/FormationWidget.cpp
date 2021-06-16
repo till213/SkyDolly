@@ -195,7 +195,7 @@ void FormationWidget::initUi() noexcept
 
     ui->aircraftTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    const QStringList headers {tr("Sequence"), tr("Type"), tr("Category"), tr("Wing Span"), tr("Initial Airspeed"), tr("Initial Altitude Above Ground")};
+    const QStringList headers {tr("Sequence"), tr("Type"), tr("Category"), tr("Wing Span"), tr("Initial Airspeed"), tr("Initial Altitude Above Ground"), tr("Tail Number")};
     ui->aircraftTableWidget->setColumnCount(headers.count());
     ui->aircraftTableWidget->setHorizontalHeaderLabels(headers);
     ui->aircraftTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -335,6 +335,11 @@ void FormationWidget::updateUi() noexcept
         newItem = new QTableWidgetItem(d->unit.formatFeet(aircraftInfo.altitudeAboveGround));
         ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
         newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        ++columnIndex;
+
+        // Tail number
+        newItem = new QTableWidgetItem(aircraftInfo.tailNumber);
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
         ++columnIndex;
 
         ++rowIndex;
