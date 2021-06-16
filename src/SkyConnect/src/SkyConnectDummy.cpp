@@ -206,6 +206,13 @@ void SkyConnectDummy::onDestroyAIObjects() noexcept
 #endif
 }
 
+void SkyConnectDummy::onDestroyAIObject(Aircraft &aircraft) noexcept
+{
+#ifdef DEBUG
+    qDebug("SkyConnectDummy::onDestroyAIObject: aircraft ID: %lld", aircraft.getId());
+#endif
+}
+
 // PROTECTED SLOTS
 
 void SkyConnectDummy::recordData() noexcept

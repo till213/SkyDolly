@@ -32,6 +32,7 @@
 #include "SkyConnectLib.h"
 
 class InitialPosition;
+class Aircraft;
 class SkyConnectImpl;
 
 class SKYCONNECT_API SkyConnectIntf : public QObject
@@ -89,6 +90,7 @@ public:
 
     virtual bool createAIObjects() noexcept = 0;
     virtual void destroyAIObjects() noexcept = 0;
+    virtual void destroyAIObject(Aircraft &aircraft) noexcept = 0;
     virtual bool updateAIObjects() noexcept = 0;
     virtual bool updateUserAircraft() noexcept = 0;
 
