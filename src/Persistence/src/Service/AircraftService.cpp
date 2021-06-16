@@ -30,6 +30,8 @@
 
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/Logbook.h"
+#include "../../../SkyConnect/src/SkyManager.h"
+#include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../Dao/DaoFactory.h"
 #include "../Dao/AircraftDaoIntf.h"
 #include "AircraftService.h"
@@ -73,9 +75,18 @@ bool AircraftService::store(qint64 flightId, int sequenceNumber, Aircraft &aircr
     return ok;
 }
 
-bool AircraftService::deleteByIndex(Flight &flight, int index) noexcept
+bool AircraftService::deleteByIndex(int index) noexcept
 {
+    // Remove AI object
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    bool userAircraftRemoved = flight.getUserAircraftIndex() == index;
+    Aircraft &aircraft = flight[index];
+    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    skyConnect.destroyAIObject(aircraft);
     const qint64 aircraftId = flight.deleteAircraftByIndex(index);
+    if (userAircraftRemoved) {
+        skyConnect.updateUserAircraft();
+    }
     bool ok;
     if (aircraftId != Aircraft::InvalidId) {
         ok = QSqlDatabase::database().transaction();

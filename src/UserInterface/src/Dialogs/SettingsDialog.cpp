@@ -135,7 +135,8 @@ void SettingsDialog::updateUi() noexcept
     ui->repeatCanopyOpenCheckBox->setChecked(settings.isRepeatCanopyOpenEnabled());
 
     // User interface
-    ui->confirmDeleteFlightCheckBox->setChecked(settings.isDeleteConfirmationEnabled());
+    ui->confirmDeleteFlightCheckBox->setChecked(settings.isDeleteFlightConfirmationEnabled());
+    ui->confirmDeleteAircraftCheckBox->setChecked(settings.isDeleteAircraftConfirmationEnabled());
 }
 
 void SettingsDialog::handleAccepted() noexcept
@@ -154,5 +155,6 @@ void SettingsDialog::handleAccepted() noexcept
     settings.setRepeatCanopyOpenEnabled(ui->repeatCanopyOpenCheckBox->isChecked());
 
     // User interface
-    settings.setDeleteConfirmationEnabled(ui->confirmDeleteFlightCheckBox->isChecked());
+    settings.setDeleteFlightConfirmationEnabled(ui->confirmDeleteFlightCheckBox->isChecked());
+    settings.setDeleteAircraftConfirmationEnabled(ui->confirmDeleteAircraftCheckBox->isChecked());
 }

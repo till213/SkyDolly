@@ -244,3 +244,15 @@ const Flight::it Flight::end() const noexcept
 {
     return it(d->aircrafts.end());
 }
+
+// OPERATORS
+
+Aircraft& Flight::operator[](std::size_t index) noexcept
+{
+    return *d->aircrafts[index];
+}
+
+const Aircraft& Flight::operator[](std::size_t index) const noexcept
+{
+    return *d->aircrafts[index];
+}

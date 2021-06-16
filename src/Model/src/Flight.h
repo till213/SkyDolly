@@ -111,6 +111,9 @@ public:
     const it begin() const noexcept;
     const it end() const noexcept;
 
+    Aircraft& operator[](std::size_t index) noexcept;
+    const Aircraft& operator[](std::size_t index) const noexcept;
+
     static constexpr int InvalidId = -1;
 
 signals:
