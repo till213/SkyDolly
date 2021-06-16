@@ -44,6 +44,7 @@ public:
     double recordingSampleRateValue;
     bool windowStayOnTop;
     bool minimalUi;
+    bool moduleSelectorVisible;
     QByteArray windowGeometry;
     QByteArray windowState;
     QString exportPath;
@@ -65,6 +66,7 @@ public:
     static constexpr double DefaultRecordingSampleRate = SampleRate::toValue(SampleRate::SampleRate::Auto);
     static constexpr bool DefaultWindowStayOnTop = false;
     static constexpr bool DefaultMinimalUi = false;
+    static constexpr bool DefaultModuleSelectorVisible = true;
     static constexpr bool DefaultAbsoluteSeek = true;
     static constexpr double DefaultSeekIntervalSeconds = 1.0;
     static constexpr double DefaultSeekIntervalPercent = 0.5;
@@ -183,6 +185,19 @@ void Settings::setMinimalUiEnabled(bool enable) noexcept
     if (d->minimalUi != enable) {
         d->minimalUi = enable;
         emit minimalUiChanged(enable);
+    }
+}
+
+bool Settings::isModuleSelectorVisible() const noexcept
+{
+    return d->moduleSelectorVisible;
+}
+
+void Settings::setModuleSelectorVisible(bool enable) noexcept
+{
+    if (d->moduleSelectorVisible != enable) {
+        d->moduleSelectorVisible = enable;
+        emit moduleSelectorVisibilityChanged(enable);
     }
 }
 
@@ -358,6 +373,7 @@ void Settings::store() noexcept
     {
         d->settings.setValue("WindowStaysOnTop", d->windowStayOnTop);
         d->settings.setValue("MinimalUi", d->minimalUi);
+        d->settings.setValue("ModuleSelectorVisible", d->moduleSelectorVisible);
         d->settings.setValue("Geometry", d->windowGeometry);
         d->settings.setValue("State", d->windowState);
     }
@@ -436,6 +452,7 @@ void Settings::restore() noexcept
     {
         d->windowStayOnTop = d->settings.value("WindowStaysOnTop", SettingsPrivate::DefaultWindowStayOnTop).toBool();
         d->minimalUi = d->settings.value("MinimalUi", SettingsPrivate::DefaultMinimalUi).toBool();
+        d->moduleSelectorVisible = d->settings.value("ModuleSelectorVisible", SettingsPrivate::DefaultModuleSelectorVisible).toBool();
         d->windowGeometry = d->settings.value("Geometry").toByteArray();
         d->windowState = d->settings.value("State").toByteArray();
     }
@@ -488,6 +505,8 @@ void Settings::frenchConnection() noexcept
     connect(this, &Settings::stayOnTopChanged,
             this, &Settings::changed);
     connect(this, &Settings::minimalUiChanged,
+            this, &Settings::changed);
+    connect(this, &Settings::moduleSelectorVisibilityChanged,
             this, &Settings::changed);
     connect(this, &Settings::exportPathChanged,
             this, &Settings::changed);

@@ -136,8 +136,7 @@ public:
           customReplaySpeedFactorValidator(nullptr),
           customReplaySpeedPercentValidator(nullptr),
           moduleManager(nullptr),
-          activeModuleId(Module::Module::None),
-          showModuleSelector(true)
+          activeModuleId(Module::Module::None)
     {}
 
     SkyConnectIntf &skyConnect;
@@ -171,7 +170,6 @@ public:
 
     std::unique_ptr<ModuleManager> moduleManager;
     Module::Module activeModuleId;
-    bool showModuleSelector;
 };
 
 // PUBLIC
@@ -299,11 +297,12 @@ void MainWindow::initUi() noexcept
 
     const ModuleIntf &activeModule = d->moduleManager->getActiveModule();
     ui->moduleGroupBox->setTitle(activeModule.getModuleName());
-    ui->moduleSelectorVisibleCheckBox->setChecked(d->showModuleSelector);
+    const bool flightor = Settings::getInstance().isModuleSelectorVisible();
+    ui->moduleSelectorVisibleCheckBox->setChecked(flightor);
+    ui->moduleSelectorVisibleCheckBox->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     d->activeModuleId = activeModule.getModuleId();
 
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
-    ui->showMinimalAction->setChecked(d->showModuleSelector);
 
     initModuleSelectorUi();
     initControlUi();
@@ -553,15 +552,16 @@ void MainWindow::initReplaySpeedUi() noexcept
 
 void MainWindow::updateMinimalUi(bool enabled)
 {
+    Settings &settings = Settings::getInstance();
     if (enabled) {
         ui->moduleVisibilityWidget->setHidden(enabled);
         ui->moduleSelectorWidget->setHidden(enabled);
     } else {
         ui->moduleVisibilityWidget->setVisible(true);
-        ui->moduleSelectorWidget->setVisible(d->showModuleSelector);
+        ui->moduleSelectorWidget->setVisible(settings.isModuleSelectorVisible());
     }
     ui->moduleGroupBox->setHidden(enabled);
-    Settings::getInstance().setMinimalUiEnabled(enabled);
+    settings.setMinimalUiEnabled(enabled);
     // When hiding a widget it takes some time for the layout manager to
     // get notified, so we return to the Qt event queue first
     QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
@@ -967,8 +967,9 @@ void MainWindow::handleModuleActivated(const QString title, Module::Module modul
 
 void MainWindow::on_moduleSelectorVisibleCheckBox_clicked(bool enabled) noexcept
 {
-    d->showModuleSelector = enabled;
-    ui->moduleSelectorWidget->setVisible(d->showModuleSelector);
+    Settings &settings = Settings::getInstance();
+    settings.setModuleSelectorVisible(enabled);
+    ui->moduleSelectorWidget->setVisible(enabled);
 }
 
 void MainWindow::on_newLogbookAction_triggered() noexcept
