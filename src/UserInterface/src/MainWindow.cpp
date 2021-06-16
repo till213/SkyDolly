@@ -324,7 +324,7 @@ void MainWindow::initUi() noexcept
 
 void MainWindow::initModuleSelectorUi() noexcept
 {
-    QString css =
+    const QString css =
 "QCheckBox::indicator:unchecked {"
 "    image: url(:/img/icons/checkbox-expand-normal.png);"
 "}"

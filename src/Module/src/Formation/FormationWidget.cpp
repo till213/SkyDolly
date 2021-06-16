@@ -56,26 +56,38 @@ namespace
     constexpr int SequenceNumberColumn = 0;
 
     enum HorizontalDistance {
-        Close = 0,
+        VeryClose = 0,
+        Close,
         Nearby,
-        Far
+        Far,
+        VeryFar
     };
 
     enum VerticalDistance {
         Below = 0,
+        JustBelow,
         Level,
+        JustAbove,
         Above
     };
 
     enum RelativePosition {
         North,
+        NorthNorthEast,
         NorthEast,
+        EastNorthEast,
         East,
+        EastSouthEast,
         SouthEast,
+        SouthSouthEast,
         South,
+        SouthSouthWest,
         SouthWest,
+        WestSouthWest,
         West,
-        NorthWest
+        WestNorthWest,
+        NorthWest,
+        NorthNorthWest
     };
 }
 
@@ -211,13 +223,45 @@ void FormationWidget::initUi() noexcept
     ui->verticalDistanceSlider->setValue(VerticalDistance::Level);
 
     d->positionButtonGroup->addButton(ui->nPositionRadioButton, RelativePosition::North);
+    d->positionButtonGroup->addButton(ui->nnePositionRadioButton, RelativePosition::NorthNorthEast);
     d->positionButtonGroup->addButton(ui->nePositionRadioButton, RelativePosition::NorthEast);
+    d->positionButtonGroup->addButton(ui->enePositionRadioButton, RelativePosition::EastNorthEast);
     d->positionButtonGroup->addButton(ui->ePositionRadioButton, RelativePosition::East);
+    d->positionButtonGroup->addButton(ui->esePositionRadioButton, RelativePosition::EastSouthEast);
     d->positionButtonGroup->addButton(ui->sePositionRadioButton, RelativePosition::SouthEast);
+    d->positionButtonGroup->addButton(ui->ssePositionRadioButton, RelativePosition::SouthSouthEast);
     d->positionButtonGroup->addButton(ui->sPositionRadioButton, RelativePosition::South);
+    d->positionButtonGroup->addButton(ui->sswPositionRadioButton, RelativePosition::SouthSouthWest);
     d->positionButtonGroup->addButton(ui->swPositionRadioButton, RelativePosition::SouthWest);
+    d->positionButtonGroup->addButton(ui->wswPositionRadioButton, RelativePosition::WestSouthWest);
     d->positionButtonGroup->addButton(ui->wPositionRadioButton, RelativePosition::West);
+    d->positionButtonGroup->addButton(ui->wnwPositionRadioButton, RelativePosition::WestNorthWest);
     d->positionButtonGroup->addButton(ui->nwPositionRadioButton, RelativePosition::NorthWest);
+    d->positionButtonGroup->addButton(ui->nnwPositionRadioButton, RelativePosition::NorthNorthWest);
+
+    const QString css =
+"QRadioButton::indicator:unchecked {"
+"    image: url(:/img/icons/aircraft-normal-off.png); width: 16px; height: 16px;"
+"}"
+"QRadioButton::indicator:checked {"
+"    image: url(:/img/icons/aircraft-record-normal.png); width: 16px; height: 16px;"
+"}";
+    ui->nPositionRadioButton->setStyleSheet(css);
+    ui->nnePositionRadioButton->setStyleSheet(css);
+    ui->nePositionRadioButton->setStyleSheet(css);
+    ui->enePositionRadioButton->setStyleSheet(css);
+    ui->ePositionRadioButton->setStyleSheet(css);
+    ui->esePositionRadioButton->setStyleSheet(css);
+    ui->sePositionRadioButton->setStyleSheet(css);
+    ui->ssePositionRadioButton->setStyleSheet(css);
+    ui->sPositionRadioButton->setStyleSheet(css);
+    ui->sswPositionRadioButton->setStyleSheet(css);
+    ui->swPositionRadioButton->setStyleSheet(css);
+    ui->wswPositionRadioButton->setStyleSheet(css);
+    ui->wPositionRadioButton->setStyleSheet(css);
+    ui->wnwPositionRadioButton->setStyleSheet(css);
+    ui->nwPositionRadioButton->setStyleSheet(css);
+    ui->nnwPositionRadioButton->setStyleSheet(css);
 }
 
 void FormationWidget::frenchConnection() noexcept
@@ -242,14 +286,20 @@ void FormationWidget::frenchConnection() noexcept
 void FormationWidget::updateInitialPositionUi() noexcept
 {
     switch (ui->horizontalDistanceSlider->value()) {
+    case HorizontalDistance::VeryClose:
+        ui->horizontalDistanceTextLabel->setText(tr("Very Close"));
+        break;
     case HorizontalDistance::Close:
         ui->horizontalDistanceTextLabel->setText(tr("Close"));
         break;
     case HorizontalDistance::Nearby:
         ui->horizontalDistanceTextLabel->setText(tr("Nearby"));
         break;
-    default:
+    case HorizontalDistance::Far:
         ui->horizontalDistanceTextLabel->setText(tr("Far"));
+        break;
+    default:
+        ui->horizontalDistanceTextLabel->setText(tr("Very Far"));
         break;
     }
 
@@ -257,8 +307,14 @@ void FormationWidget::updateInitialPositionUi() noexcept
     case VerticalDistance::Below:
         ui->verticalDistanceTextLabel->setText(tr("Below"));
         break;
+    case VerticalDistance::JustBelow:
+        ui->verticalDistanceTextLabel->setText(tr("Just Below"));
+        break;
     case VerticalDistance::Level:
         ui->verticalDistanceTextLabel->setText(tr("Level"));
+        break;
+    case VerticalDistance::JustAbove:
+        ui->verticalDistanceTextLabel->setText(tr("Just Above"));
         break;
     default:
         ui->verticalDistanceTextLabel->setText(tr("Above"));
@@ -373,6 +429,15 @@ void FormationWidget::updateInitialPosition() noexcept
     InitialPosition initialPosition;
     SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
 
+    QList<QAbstractButton *> buttons = d->positionButtonGroup->buttons();
+    for (QAbstractButton *button : buttons) {
+        if (button->isChecked()) {
+            button->setToolTip(tr("Selected aircraft position for next recording"));
+        } else {
+            button->setToolTip(tr("Select recording position"));
+        }
+    }
+
     const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
     const Aircraft &userAircraft = flight.getUserAircraftConst();
     const PositionData &positionData = userAircraft.getPositionConst().getFirst();
@@ -384,17 +449,25 @@ void FormationWidget::updateInitialPosition() noexcept
         // Horizontal distance [feet]
         double distance;
         switch (ui->horizontalDistanceSlider->value()) {
-        case HorizontalDistance::Close:
-            // Aircrafts one wingspan apart
+        case HorizontalDistance::VeryClose:
+            // Aircrafts one wing apart
             distance = 1.5 * info.wingSpan;
             break;
-        case HorizontalDistance::Nearby:
-            // Aircrafts two wingspans apart
+        case HorizontalDistance::Close:
+            // Aircrafts one wingspan
             distance = 2.0 * info.wingSpan;
             break;
-        default:
-            // Aircrafts three wingspans apart
+        case HorizontalDistance::Nearby:
+            // Aircrafts two wingspans
             distance = 3.0 * info.wingSpan;
+            break;
+        case HorizontalDistance::Far:
+            // Aircrafts three wingspans apart
+            distance = 4.0 * info.wingSpan;
+            break;
+        default:
+            // Aircrafts four wingspans apart
+            distance = 5.0 * info.wingSpan;
             break;
         }
 
@@ -404,6 +477,12 @@ void FormationWidget::updateInitialPosition() noexcept
         switch (ui->verticalDistanceSlider->value()) {
         case VerticalDistance::Below:
             deltaAltitude = -distance;
+            break;
+        case VerticalDistance::JustBelow:
+            deltaAltitude = -distance / 2.0;
+            break;
+        case VerticalDistance::JustAbove:
+            deltaAltitude = +distance / 2.0;
             break;
         case VerticalDistance::Above:
             deltaAltitude = +distance;
@@ -420,26 +499,50 @@ void FormationWidget::updateInitialPosition() noexcept
         case RelativePosition::North:
             bearing = 0.0;
             break;
+        case RelativePosition::NorthNorthEast:
+            bearing = 22.5;
+            break;
         case RelativePosition::NorthEast:
             bearing = 45.0;
+            break;
+        case RelativePosition::EastNorthEast:
+            bearing = 67.5;
             break;
         case RelativePosition::East:
             bearing = 90.0;
             break;
+        case RelativePosition::EastSouthEast:
+            bearing = 112.5;
+            break;
         case RelativePosition::SouthEast:
             bearing = 135.0;
+            break;
+        case RelativePosition::SouthSouthEast:
+            bearing = 157.5;
             break;
         case RelativePosition::South:
             bearing = 180.0;
             break;
+        case RelativePosition::SouthSouthWest:
+            bearing = 202.5;
+            break;
         case RelativePosition::SouthWest:
             bearing = 225.0;
+            break;
+        case RelativePosition::WestSouthWest:
+            bearing = 247.5;
             break;
         case RelativePosition::West:
             bearing = 270.0;
             break;
+        case RelativePosition::WestNorthWest:
+            bearing = 292.5;
+            break;
         case RelativePosition::NorthWest:
             bearing = 315.0;
+            break;
+        case RelativePosition::NorthNorthWest:
+            bearing = 337.5;
             break;
         default:
             bearing = 0.0;
