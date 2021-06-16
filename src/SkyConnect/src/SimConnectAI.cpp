@@ -30,11 +30,12 @@
 
 #include <QtGlobal>
 
+#include "../../Kernel/src/Enum.h"
 #include "../../Model/src/Flight.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/Position.h"
 #include "../../Model/src/PositionData.h"
-
+#include "SimConnectType.h"
 #include "SimConnectPosition.h"
 #include "SimConnectAI.h"
 
@@ -64,7 +65,7 @@ SimConnectAI::~SimConnectAI()
 #endif
 }
 
-bool SimConnectAI::createSimulatedAircrafts(Flight &flight, std::unordered_map<::SIMCONNECT_DATA_REQUEST_ID, Aircraft *> &pendingAIAircraftCreationRequests, ::SIMCONNECT_DATA_REQUEST_ID baseRequestId) noexcept
+bool SimConnectAI::createSimulatedAircrafts(Flight &flight, std::unordered_map<::SIMCONNECT_DATA_REQUEST_ID, Aircraft *> &pendingAIAircraftCreationRequests) noexcept
 {
     HRESULT result;
     bool ok;
@@ -74,13 +75,12 @@ bool SimConnectAI::createSimulatedAircrafts(Flight &flight, std::unordered_map<:
     ok = true;
     for (auto &aircraft : flight) {
 
-        const ::SIMCONNECT_DATA_REQUEST_ID requestId = baseRequestId + i;
-        aircraft->setSimulationRequestId(requestId);
+        const ::SIMCONNECT_DATA_REQUEST_ID requestId = Enum::toUnderlyingType(SimConnectType::DataRequest::AIObjectBase) + i;
         if (*aircraft == userAircraft) {
             aircraft->setSimulationObjectId(::SIMCONNECT_OBJECT_ID_USER);
 #ifdef DEBUG
-        qDebug("SimConnectAI::createSimulatedAircrafts: USER aircraft: request ID: %lld simulation object ID: %lld aircraft ID: %lld",
-               aircraft->getSimulationRequestId(), aircraft->getSimulationObjectId(), aircraft->getId());
+        qDebug("SimConnectAI::createSimulatedAircrafts: USER aircraft: request ID: %ld simulation object ID: %lld aircraft ID: %lld",
+               requestId, aircraft->getSimulationObjectId(), aircraft->getId());
 #endif
         } else if (aircraft->getSimulationObjectId() == Aircraft::InvalidSimulationId) {
             pendingAIAircraftCreationRequests[requestId] = aircraft.get();
@@ -95,11 +95,11 @@ bool SimConnectAI::createSimulatedAircrafts(Flight &flight, std::unordered_map<:
                 break;
             }
 #ifdef DEBUG
-        qDebug("SimConnectAI::createSimulatedAircrafts: created AI aircraft: request ID: %lld simulation object ID: %lld aircraft ID: %lld",
-               aircraft->getSimulationRequestId(), aircraft->getSimulationObjectId(), aircraft->getId());
+        qDebug("SimConnectAI::createSimulatedAircrafts: created AI aircraft: request ID: %ld simulation object ID: %lld aircraft ID: %lld",
+               requestId, aircraft->getSimulationObjectId(), aircraft->getId());
         } else {
-            qDebug("SimConnectAI::createSimulatedAircrafts: PENDING AI aircraft: request ID: %lld aircraft ID: %lld",
-                   aircraft->getSimulationRequestId(), aircraft->getId());
+            qDebug("SimConnectAI::createSimulatedAircrafts: PENDING AI aircraft: request ID: %ld aircraft ID: %lld",
+                   requestId, aircraft->getId());
 #endif
         }
         ++i;
@@ -120,18 +120,17 @@ void SimConnectAI::destroySimulatedAircraft(Aircraft &aircraft) noexcept
     const ::SIMCONNECT_OBJECT_ID objectId = aircraft.getSimulationObjectId();
     if (isValidAIObjectId(objectId)) {
 #ifdef DEBUG
-    qDebug("SimConnectAI::destroySimulatedAircrafts: destroying AI aircraft: request ID: %lld simulation object ID: %lld aircraft ID: %lld",
-           aircraft.getSimulationRequestId(), aircraft.getSimulationObjectId(), aircraft.getId());
+    qDebug("SimConnectAI::destroySimulatedAircrafts: destroying AI aircraft: simulation object ID: %lld aircraft ID: %lld",
+           aircraft.getSimulationObjectId(), aircraft.getId());
 #endif
-        destroySimulatedObject(objectId, aircraft.getSimulationRequestId());
+        destroySimulatedObject(objectId);
     }
-    aircraft.setSimulationRequestId(Aircraft::InvalidSimulationId);
     aircraft.setSimulationObjectId(Aircraft::InvalidSimulationId);
 }
 
-void SimConnectAI::destroySimulatedObject(qint64 objectId, ::SIMCONNECT_DATA_REQUEST_ID requestId) noexcept
+void SimConnectAI::destroySimulatedObject(qint64 objectId) noexcept
 {
-    ::SimConnect_AIRemoveObject(d->simConnectHandle, objectId, requestId);
+    ::SimConnect_AIRemoveObject(d->simConnectHandle, objectId, Enum::toUnderlyingType(SimConnectType::DataRequest::AIRemoveObject));
 }
 
 // PRIVATE
