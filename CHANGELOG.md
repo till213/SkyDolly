@@ -12,6 +12,7 @@
   * Delete aircrafts from a formation
   * Set the position (relative to the current user aircraft) for the new aircraft to be recorded
 - All aircrafts are automatically persisted and added to the current flight
+- The logbook now shows the number of aircrafts per flight
 - Start a new flight (starting with a single aircraft) by switching into the Logbook module
 - The existing Simulation Variables and Flight dialogs show data about the currently selected user aircraft
 - The module selector may be hidden
