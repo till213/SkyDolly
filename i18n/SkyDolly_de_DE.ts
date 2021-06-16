@@ -523,67 +523,92 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="176"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="197"/>
         <source>Sequence</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="176"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="197"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="176"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="197"/>
         <source>Category</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="176"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="197"/>
         <source>Wing Span</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="176"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="197"/>
         <source>Initial Airspeed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="176"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="197"/>
         <source>Initial Altitude Above Ground</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="223"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="287"/>
         <source>Double-click to change user aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="305"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="505"/>
+        <source>Do not ask again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="508"/>
+        <source>The aircraft with sequence number %1 is about to be deleted. Deletion cannot be undone.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="509"/>
+        <source>Do you want to delete the aircraft?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="510"/>
+        <source>Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="511"/>
+        <source>Keep</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="245"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="308"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="248"/>
         <source>Nearby</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="311"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="251"/>
         <source>Far</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="317"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="257"/>
         <source>Below</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="320"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="260"/>
         <source>Level</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="323"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="263"/>
         <source>Above</source>
         <translation type="unfinished"></translation>
     </message>
@@ -675,7 +700,7 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="206"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="270"/>
         <source>Formation</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1363,6 +1388,11 @@ MIT License</source>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="168"/>
         <source>Delete Flight</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="175"/>
+        <source>Delete Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
