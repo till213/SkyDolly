@@ -229,8 +229,13 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::updateUserAircraftIndex);
     connect(ui->deletePushButton, &QPushButton::clicked,
             this, &FormationWidget::deleteAircraft);
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+    connect(d->positionButtonGroup, QOverload<int>::of(&QButtonGroup::buttonClicked),
+            this, &FormationWidget::updateInitialPosition);
+#else
     connect(d->positionButtonGroup, &QButtonGroup::idClicked,
             this, &FormationWidget::updateInitialPosition);
+#endif
 }
 
 void FormationWidget::updateInitialPositionUi() noexcept
