@@ -58,7 +58,10 @@ FlightService::FlightService(QObject *parent) noexcept
 
 FlightService::~FlightService() noexcept
 {
-    SkyManager::getInstance().getCurrentSkyConnect().destroyAIObjects();
+    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect.isConnected()) {
+        skyConnect.destroyAIObjects();
+    }
 #ifdef DEBUG
     qDebug("FlightService::~FlightService: DELETED.");
 #endif

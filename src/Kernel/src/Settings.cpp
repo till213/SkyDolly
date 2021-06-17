@@ -403,6 +403,10 @@ void Settings::restore() noexcept
 #endif
     }
 
+#ifdef DEBUG
+    qDebug("Settings::restore: RESTORE: app name %s, organisation name: %s", qPrintable(d->settings.applicationName()), qPrintable(d->settings.organizationName()));
+#endif
+
     bool ok;
     d->settings.beginGroup("Logbook");
     {
