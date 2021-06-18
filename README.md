@@ -4,7 +4,7 @@ Sky Dolly - The black sheep for your flight recordings.
 ## About
 Sky Dolly connects to a running Flight Simulator 2020 instance and records various simulation variables, for replay.
 
-![Sky Dolly v0.5.0](./img/SkyDolly-v0.6.0.png)
+![Sky Dolly v0.7.0](./img/SkyDolly-v0.7.0.png)
 
 The connection is made via SimConnect, a standard API introduced with Flight Simulator X to connect with the flight simulator.
 
@@ -32,13 +32,39 @@ For more videos created with Sky Dolly also refer to [SHOWCASE](SHOWCASE.md). Ne
 * Recorded flights are automatically persisted in the "logbook"
 * Select a flight in the logbook and press "Load" (or double-click the row) to load the persisted flight
 
+### Formation Recording & Replay
+
+#### Recording
+
+* Switch to the "Formation" module (key F2)
+* Click on "Record" (key R)
+* Each recorded aircraft is added to the current flight
+* While existing aircrafts are replayed during the recording with "auto" sample rate you may still change the recording sample rate 
+
+#### Position
+
+* The last recorded aircraft becomes the "user aircraft" (being followed by the camera in the flight simulator)
+* Select a position relative to the current "user aircraft" before recording
+
+#### Replay
+
+* Simply click on "Play", "Pause" and seek in the timeline, just like with a single aircraft flight
+* Change the "user aircraft" (also during replay) to "jump from cockpit to cockpit"
+* Take control of the "user aircraft" by checking the "Fly user aircraft manually" checkbox
+
+#### Managing Formations
+
+* You may delete single aircrafts from a flight ("formation")
+* There must be at least one aircraft per flight, so the last aircraft cannot be deleted
+* To start a new, single-aircraft flight change back to the "Logbook" module (key F1) and click on "Record" (key R)
+
 Why don't you try it with one of the guided ["Tell Tours"](https://github.com/till213/Tell-Tours)? :)
 
 ## Download
 
 Go to [Releases](https://github.com/till213/SkyDolly/releases) and download the latest release.
 
-Latest (pre-)release: **Sky Dolly 0.6.2**
+Latest (pre-)release: **Sky Dolly 0.7.0**
 
 ## Build
 
