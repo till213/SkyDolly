@@ -213,6 +213,16 @@ void AbstractSkyConnect::stop() noexcept
     }
 }
 
+bool AbstractSkyConnect::inRecordingMode() const noexcept
+{
+    return isRecording() || d->state == Connect::State::RecordingPaused;
+}
+
+bool AbstractSkyConnect::inReplayMode() const noexcept
+{
+    return isReplaying() || d->state == Connect::State::ReplayPaused;
+}
+
 bool AbstractSkyConnect::isActive() const noexcept
 {
     return d->state != Connect::State::Disconnected && d->state != Connect::State::Connected;
