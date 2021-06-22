@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.0
+
+### Improvements
+
+- Aircrafts can now also be deleted from a formation flight during (paused) replay
+
 ## 0.7.0
 
 ### New Features

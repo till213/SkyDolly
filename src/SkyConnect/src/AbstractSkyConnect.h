@@ -65,6 +65,8 @@ public:
     virtual bool isReplaying() const noexcept override;
     virtual void stop() noexcept override;
 
+    virtual bool inRecordingMode() const noexcept override;
+    virtual bool inReplayMode() const noexcept override;
     virtual bool isActive() const noexcept override;
 
     virtual void setPaused(bool enabled) noexcept override;

@@ -438,12 +438,12 @@ void FormationWidget::updateUi() noexcept
 
 void FormationWidget::updateEditUi() noexcept
 {
-    const bool active = SkyManager::getInstance().getCurrentSkyConnect().isActive();
+    const bool inRecordingMode = SkyManager::getInstance().getCurrentSkyConnect().inRecordingMode();
     const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
     bool userAircraftIndex = d->selectedAircraftIndex == flight.getUserAircraftIndex();
     ui->userAircraftPushButton->setEnabled(d->selectedAircraftIndex != Flight::InvalidId && !userAircraftIndex);
     const bool formation = flight.getAircraftCount() > 1;
-    ui->deletePushButton->setEnabled(!active && d->selectedAircraftIndex != Flight::InvalidId && formation);
+    ui->deletePushButton->setEnabled(formation && !inRecordingMode && d->selectedAircraftIndex != Flight::InvalidId);
 }
 
 void FormationWidget::updateInitialPosition() noexcept
