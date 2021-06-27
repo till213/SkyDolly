@@ -23,6 +23,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
 #include <QString>
@@ -132,13 +134,12 @@ bool SQLitePrimaryFlightControlDao::add(qint64 aircraftId, const PrimaryFlightCo
     return ok;
 }
 
-bool SQLitePrimaryFlightControlDao::getByAircraftId(qint64 aircraftId, QVector<PrimaryFlightControlData> &primaryFlightControlData) const noexcept
+bool SQLitePrimaryFlightControlDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<PrimaryFlightControlData>> insertIterator) const noexcept
 {
     d->initQueries();
     d->selectByAircraftIdQuery->bindValue(":aircraft_id", aircraftId);
     bool ok = d->selectByAircraftIdQuery->exec();
     if (ok) {
-        primaryFlightControlData.clear();
         QSqlRecord record = d->selectByAircraftIdQuery->record();
         const int timestampIdx = record.indexOf("timestamp");
         const int rudderPositionIdx = record.indexOf("rudder_position");
@@ -153,7 +154,7 @@ bool SQLitePrimaryFlightControlDao::getByAircraftId(qint64 aircraftId, QVector<P
             data.elevatorPosition = d->selectByAircraftIdQuery->value(elevatorPositionIdx).toDouble();
             data.aileronPosition = d->selectByAircraftIdQuery->value(aileronPositionIdx).toDouble();
 
-            primaryFlightControlData.append(data);
+            insertIterator = data;
         }
 #ifdef DEBUG
     } else {

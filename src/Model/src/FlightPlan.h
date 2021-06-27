@@ -25,11 +25,11 @@
 #ifndef FLIGHTPLAN_H
 #define FLIGHTPLAN_H
 
-
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
-#include <QByteArray>
 #include <QVector>
 
 #include "ModelLib.h"
@@ -46,9 +46,20 @@ public:
 
     void add(const Waypoint &waypoint) noexcept;
     void update(int index, const Waypoint &waypoint) noexcept;
-    const QVector<Waypoint> &getAllConst() const noexcept;
-
+    std::size_t count() const noexcept;
     void clear() noexcept;
+
+    typedef std::vector<Waypoint>::iterator Iterator;
+    typedef std::insert_iterator<std::vector<Waypoint>> InsertIterator;
+
+    Iterator begin() noexcept;
+    Iterator end() noexcept;
+    const Iterator begin() const noexcept;
+    const Iterator end() const noexcept;
+    InsertIterator insertIterator() noexcept;
+
+    Waypoint& operator[](std::size_t index) noexcept;
+    const Waypoint& operator[](std::size_t index) const noexcept;
 
 signals:
     void waypointAdded(const Waypoint &waypoint);

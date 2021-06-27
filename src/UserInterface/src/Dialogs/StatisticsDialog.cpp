@@ -126,20 +126,20 @@ void StatisticsDialog::updateRecordUi() noexcept
     qint64 totalCount = 0;
     qint64 totalSize = 0;
     for (const auto &aircraft : flight) {
-        const QVector<PositionData> &positionData = aircraft->getPositionConst().getAllConst();
-        const QVector<EngineData> &engineData = aircraft->getEngineConst().getAllConst();
-        const QVector<PrimaryFlightControlData> &primaryFlightControlData = aircraft->getPrimaryFlightControlConst().getAllConst();
-        const QVector<SecondaryFlightControlData> &secondaryFlightControlData = aircraft->getSecondaryFlightControlConst().getAllConst();
-        const QVector<AircraftHandleData> &aircraftHandleData = aircraft->getAircraftHandleConst().getAllConst();
-        const QVector<LightData> &lightData = aircraft->getLightConst().getAllConst();
-        totalCount = totalCount + positionData.count() + engineData.count() + primaryFlightControlData.count() + secondaryFlightControlData.count() + aircraftHandleData.count() + lightData.count();
+        const int positionDataCount = aircraft->getPositionConst().count();
+        const int engineDataCount = aircraft->getEngineConst().count();
+        const int primaryFlightControlDataCount = aircraft->getPrimaryFlightControlConst().count();
+        const int secondaryFlightControlDataCount = aircraft->getSecondaryFlightControlConst().count();
+        const int aircraftHandleDataCount = aircraft->getAircraftHandleConst().count();
+        const int lightDataCount = aircraft->getLightConst().count();
+        totalCount = totalCount + positionDataCount + engineDataCount + primaryFlightControlDataCount + secondaryFlightControlDataCount + aircraftHandleDataCount + lightDataCount;
 
-        const qint64 positionDataSize = positionData.count() * sizeof(PositionData);
-        const qint64 engineDataSize = engineData.count() * sizeof(EngineData);
-        const qint64 primaryFlightControlDataSize = primaryFlightControlData.count() * sizeof(PrimaryFlightControlData);
-        const qint64 secondaryFlightControlDataSize = secondaryFlightControlData.count() * sizeof(SecondaryFlightControlData);
-        const qint64 aircraftHandleDataSize = aircraftHandleData.count() * sizeof(AircraftHandleData);
-        const qint64 lightDataSize = lightData.count() * sizeof(LightData);
+        const qint64 positionDataSize = positionDataCount * sizeof(PositionData);
+        const qint64 engineDataSize = engineDataCount * sizeof(EngineData);
+        const qint64 primaryFlightControlDataSize = primaryFlightControlDataCount * sizeof(PrimaryFlightControlData);
+        const qint64 secondaryFlightControlDataSize = secondaryFlightControlDataCount * sizeof(SecondaryFlightControlData);
+        const qint64 aircraftHandleDataSize = aircraftHandleDataCount * sizeof(AircraftHandleData);
+        const qint64 lightDataSize = lightDataCount * sizeof(LightData);
         totalSize = totalSize + positionDataSize + engineDataSize + primaryFlightControlDataSize + secondaryFlightControlDataSize + aircraftHandleDataSize + lightDataSize;
     }
 

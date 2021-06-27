@@ -25,7 +25,10 @@
 #ifndef POSITIONDAOINTF_H
 #define POSITIONDAOINTF_H
 
-#include <QVector>
+#include <vector>
+#include <iterator>
+
+#include <QtGlobal>
 
 class PositionData;
 
@@ -44,7 +47,7 @@ public:
      * \return \c true on success; \c false else
      */
     virtual bool add(qint64 aircraftId, const PositionData &data) noexcept = 0;
-    virtual bool getByAircraftId(qint64 aircraftId, QVector<PositionData> &data) const noexcept = 0;
+    virtual bool getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<PositionData>> insertIterator) const noexcept = 0;
     virtual bool deleteByFlightId(qint64 flightId) noexcept = 0;
     virtual bool deleteByAircraftId(qint64 aircraftId) noexcept = 0;
 };

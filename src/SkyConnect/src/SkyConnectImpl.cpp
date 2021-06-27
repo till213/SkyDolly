@@ -198,16 +198,16 @@ void SkyConnectImpl::onStopRecording() noexcept
     }
 
     // Update timestamp and simulation time of last waypoint
-    int waypointCount = flightPlan.getAllConst().count();
+    int waypointCount = flightPlan.count();
     if (waypointCount > 1) {
-        Waypoint waypoint = flightPlan.getAllConst().at(waypointCount - 1);
+        Waypoint waypoint = flightPlan[waypointCount - 1];
         waypoint.localTime = d->currentLocalDateTime;
         waypoint.zuluTime = d->currentZuluDateTime;
         waypoint.timestamp = getCurrentTimestamp();
         flightPlan.update(waypointCount - 1, waypoint);
-    } else if (waypointCount == 0 && userAircraft.getPositionConst().getAllConst().size() > 0) {
+    } else if (waypointCount == 0 && userAircraft.getPositionConst().count() > 0) {
         Waypoint departureWaypoint;
-        PositionData position = userAircraft.getPositionConst().getAllConst().at(0);
+        PositionData position = userAircraft.getPositionConst().getFirst();
         departureWaypoint.identifier = "CUSTD";
         departureWaypoint.latitude = position.latitude;
         departureWaypoint.longitude = position.longitude;

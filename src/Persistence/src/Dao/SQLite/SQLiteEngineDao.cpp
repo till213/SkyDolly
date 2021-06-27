@@ -23,6 +23,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
 #include <QString>
@@ -194,13 +196,12 @@ bool SQLiteEngineDao::add(qint64 aircraftId, const EngineData &data)  noexcept
     return ok;
 }
 
-bool SQLiteEngineDao::getByAircraftId(qint64 aircraftId, QVector<EngineData> &engineData) const noexcept
+bool SQLiteEngineDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<EngineData>> insertIterator) const noexcept
 {
     d->initQueries();
     d->selectByAircraftIdQuery->bindValue(":aircraft_id", aircraftId);
     bool ok = d->selectByAircraftIdQuery->exec();
     if (ok) {
-        engineData.clear();
         QSqlRecord record = d->selectByAircraftIdQuery->record();
         const int timestampIdx = record.indexOf("timestamp");
         const int throttleLeverPosition1Idx = record.indexOf("throttle_lever_position1");
@@ -258,7 +259,7 @@ bool SQLiteEngineDao::getByAircraftId(qint64 aircraftId, QVector<EngineData> &en
             data.generalEngineStarter3 = d->selectByAircraftIdQuery->value(generalEngineStarter3Idx).toBool();
             data.generalEngineStarter4 = d->selectByAircraftIdQuery->value(generalEngineStarter4Idx).toBool();
 
-            engineData.append(data);
+            insertIterator = data;
         }
 #ifdef DEBUG
     } else {

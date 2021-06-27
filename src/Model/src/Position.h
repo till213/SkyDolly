@@ -26,10 +26,10 @@
 #define POSITION_H
 
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
-#include <QByteArray>
-#include <QVector>
 
 #include "TimeVariableData.h"
 #include "ModelLib.h"
@@ -47,11 +47,21 @@ public:
     void upsert(const PositionData &positionData) noexcept;
     const PositionData &getFirst() const noexcept;
     const PositionData &getLast() const noexcept;
-    QVector<PositionData> &getAll() const noexcept;
-    const QVector<PositionData> &getAllConst() const noexcept;
+    std::size_t count() const noexcept;
     const PositionData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
-
     void clear() noexcept;
+
+    typedef std::vector<PositionData>::iterator Iterator;
+    typedef std::insert_iterator<std::vector<PositionData>> InsertIterator;
+
+    Iterator begin() noexcept;
+    Iterator end() noexcept;
+    const Iterator begin() const noexcept;
+    const Iterator end() const noexcept;
+    InsertIterator insertIterator() noexcept;
+
+    PositionData& operator[](std::size_t index) noexcept;
+    const PositionData& operator[](std::size_t index) const noexcept;
 
 signals:
     void dataChanged();

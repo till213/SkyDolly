@@ -50,10 +50,10 @@ void SkySearchTest::initTestCase()
     PositionData data4;
     data4.timestamp = t3;
 
-    m_positionData.append(data1);
-    m_positionData.append(data2);
-    m_positionData.append(data3);
-    m_positionData.append(data4);
+    m_positionData.push_back(data1);
+    m_positionData.push_back(data2);
+    m_positionData.push_back(data3);
+    m_positionData.push_back(data4);
 }
 
 void SkySearchTest::cleanupTestCase()

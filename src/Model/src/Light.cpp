@@ -23,9 +23,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
-#include <QVector>
 
 #include "../../Kernel/src/SkyMath.h"
 #include "TimeVariableData.h"
@@ -42,7 +43,7 @@ public:
           currentIndex(SkySearch::InvalidIndex)
     {}
 
-    QVector<LightData> lightData;
+    std::vector<LightData> lightData;
     qint64 currentTimestamp;
     TimeVariableData::Access currentAccess;
     LightData currentLightData;
@@ -63,40 +64,36 @@ Light::~Light() noexcept
 
 void Light::upsert(const LightData &lightData) noexcept
 {
-    if (d->lightData.count() > 0 && d->lightData.last().timestamp == lightData.timestamp)  {
+    if (d->lightData.size() > 0 && d->lightData.back().timestamp == lightData.timestamp)  {
         // Same timestamp -> replace
-        d->lightData[d->lightData.count() - 1] = lightData;
+        d->lightData[d->lightData.size() - 1] = lightData;
     } else {
-        d->lightData.append(lightData);
+        d->lightData.push_back(lightData);
     }
     emit dataChanged();
 }
 
-const LightData &Light::getLast() const noexcept
+const LightData &Light::getFirst() const noexcept
 {
-    if (!d->lightData.isEmpty()) {
-        return d->lightData.last();
+    if (!d->lightData.empty()) {
+        return d->lightData.front();
     } else {
         return LightData::NullData;
     }
 }
 
-QVector<LightData> &Light::getAll() const noexcept
+const LightData &Light::getLast() const noexcept
 {
-    return d->lightData;
+    if (!d->lightData.empty()) {
+        return d->lightData.back();
+    } else {
+        return LightData::NullData;
+    }
 }
 
-const QVector<LightData> &Light::getAllConst() const noexcept
+std::size_t Light::count() const noexcept
 {
-    return d->lightData;
-}
-
-void Light::clear() noexcept
-{
-    d->lightData.clear();
-    d->currentTimestamp = TimeVariableData::InvalidTime;
-    d->currentIndex = SkySearch::InvalidIndex;
-    emit dataChanged();
+    return d->lightData.size();
 }
 
 const LightData &Light::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
@@ -142,4 +139,49 @@ const LightData &Light::interpolate(qint64 timestamp, TimeVariableData::Access a
 #endif
     }
     return d->currentLightData;
+}
+
+void Light::clear() noexcept
+{
+    d->lightData.clear();
+    d->currentTimestamp = TimeVariableData::InvalidTime;
+    d->currentIndex = SkySearch::InvalidIndex;
+    emit dataChanged();
+}
+
+Light::Iterator Light::begin() noexcept
+{
+    return d->lightData.begin();
+}
+
+Light::Iterator Light::end() noexcept
+{
+    return Iterator(d->lightData.end());
+}
+
+const Light::Iterator Light::begin() const noexcept
+{
+    return Iterator(d->lightData.begin());
+}
+
+const Light::Iterator Light::end() const noexcept
+{
+    return Iterator(d->lightData.end());
+}
+
+Light::InsertIterator Light::insertIterator() noexcept
+{
+    return std::inserter(d->lightData, d->lightData.begin());
+}
+
+// OPERATORS
+
+LightData& Light::operator[](std::size_t index) noexcept
+{
+    return d->lightData[index];
+}
+
+const LightData& Light::operator[](std::size_t index) const noexcept
+{
+    return d->lightData[index];
 }
