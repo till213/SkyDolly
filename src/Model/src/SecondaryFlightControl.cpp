@@ -23,9 +23,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
-#include <QVector>
 
 #include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/SkyMath.h"
@@ -43,7 +44,7 @@ public:
           currentIndex(SkySearch::InvalidIndex)
     {}
 
-    QVector<SecondaryFlightControlData> secondaryFlightControlData;
+    std::vector<SecondaryFlightControlData> secondaryFlightControlData;
     qint64 currentTimestamp;
     TimeVariableData::Access currentAccess;
     SecondaryFlightControlData previousSecondaryFlightControlData;
@@ -65,40 +66,36 @@ SecondaryFlightControl::~SecondaryFlightControl() noexcept
 
 void SecondaryFlightControl::upsert(const SecondaryFlightControlData &secondaryFlightControlData) noexcept
 {
-    if (d->secondaryFlightControlData.count() > 0 && d->secondaryFlightControlData.last().timestamp == secondaryFlightControlData.timestamp)  {
+    if (d->secondaryFlightControlData.size() > 0 && d->secondaryFlightControlData.back().timestamp == secondaryFlightControlData.timestamp)  {
         // Same timestamp -> replace
-        d->secondaryFlightControlData[d->secondaryFlightControlData.count() - 1] = secondaryFlightControlData;
+        d->secondaryFlightControlData[d->secondaryFlightControlData.size() - 1] = secondaryFlightControlData;
     } else {
-        d->secondaryFlightControlData.append(secondaryFlightControlData);
+        d->secondaryFlightControlData.push_back(secondaryFlightControlData);
     }
     emit dataChanged();
 }
 
-const SecondaryFlightControlData &SecondaryFlightControl::getLast() const noexcept
+const SecondaryFlightControlData &SecondaryFlightControl::getFirst() const noexcept
 {
-    if (!d->secondaryFlightControlData.isEmpty()) {
-        return d->secondaryFlightControlData.last();
+    if (!d->secondaryFlightControlData.empty()) {
+        return d->secondaryFlightControlData.front();
     } else {
         return SecondaryFlightControlData::NullData;
     }
 }
 
-QVector<SecondaryFlightControlData> &SecondaryFlightControl::getAll() const noexcept
+const SecondaryFlightControlData &SecondaryFlightControl::getLast() const noexcept
 {
-    return d->secondaryFlightControlData;
+    if (!d->secondaryFlightControlData.empty()) {
+        return d->secondaryFlightControlData.back();
+    } else {
+        return SecondaryFlightControlData::NullData;
+    }
 }
 
-const QVector<SecondaryFlightControlData> &SecondaryFlightControl::getAllConst() const noexcept
+std::size_t SecondaryFlightControl::count() const noexcept
 {
-    return d->secondaryFlightControlData;
-}
-
-void SecondaryFlightControl::clear() noexcept
-{
-    d->secondaryFlightControlData.clear();
-    d->currentTimestamp = TimeVariableData::InvalidTime;
-    d->currentIndex = SkySearch::InvalidIndex;
-    emit dataChanged();
+    return d->secondaryFlightControlData.size();
 }
 
 const SecondaryFlightControlData &SecondaryFlightControl::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
@@ -163,4 +160,49 @@ const SecondaryFlightControlData &SecondaryFlightControl::interpolate(qint64 tim
         d->currentAccess = access;
     }
     return d->currentSecondaryFlightControlData;
+}
+
+void SecondaryFlightControl::clear() noexcept
+{
+    d->secondaryFlightControlData.clear();
+    d->currentTimestamp = TimeVariableData::InvalidTime;
+    d->currentIndex = SkySearch::InvalidIndex;
+    emit dataChanged();
+}
+
+SecondaryFlightControl::Iterator SecondaryFlightControl::begin() noexcept
+{
+    return d->secondaryFlightControlData.begin();
+}
+
+SecondaryFlightControl::Iterator SecondaryFlightControl::end() noexcept
+{
+    return Iterator(d->secondaryFlightControlData.end());
+}
+
+const SecondaryFlightControl::Iterator SecondaryFlightControl::begin() const noexcept
+{
+    return Iterator(d->secondaryFlightControlData.begin());
+}
+
+const SecondaryFlightControl::Iterator SecondaryFlightControl::end() const noexcept
+{
+    return Iterator(d->secondaryFlightControlData.end());
+}
+
+SecondaryFlightControl::InsertIterator SecondaryFlightControl::insertIterator() noexcept
+{
+    return std::inserter(d->secondaryFlightControlData, d->secondaryFlightControlData.begin());
+}
+
+// OPERATORS
+
+SecondaryFlightControlData& SecondaryFlightControl::operator[](std::size_t index) noexcept
+{
+    return d->secondaryFlightControlData[index];
+}
+
+const SecondaryFlightControlData& SecondaryFlightControl::operator[](std::size_t index) const noexcept
+{
+    return d->secondaryFlightControlData[index];
 }

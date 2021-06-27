@@ -25,8 +25,9 @@
 #ifndef SKYSEARCHTEST_H
 #define SKYSEARCHTEST_H
 
+#include <vector>
+
 #include <QObject>
-#include <QVector>
 
 #include "../../Model/src/PositionData.h"
 
@@ -48,7 +49,7 @@ private slots:
     void linearIntervalSearch();
 
 private:
-     QVector<PositionData> m_positionData;
+     std::vector<PositionData> m_positionData;
 };
 
 #endif // SKYSEARCHTEST_H
