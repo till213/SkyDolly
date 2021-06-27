@@ -23,9 +23,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
-#include <QVector>
 
 #include "../../Kernel/src/SkyMath.h"
 #include "TimeVariableData.h"
@@ -42,7 +43,7 @@ public:
           currentIndex(SkySearch::InvalidIndex)
     {}
 
-    QVector<EngineData> engineData;
+    std::vector<EngineData> engineData;
     qint64 currentTimestamp;
     TimeVariableData::Access currentAccess;
     EngineData currentEngineData;
@@ -63,40 +64,36 @@ Engine::~Engine() noexcept
 
 void Engine::upsert(const EngineData &engineData) noexcept
 {
-    if (d->engineData.count() > 0 && d->engineData.last().timestamp == engineData.timestamp)  {
+    if (d->engineData.size() > 0 && d->engineData.back().timestamp == engineData.timestamp)  {
         // Same timestamp -> replace
-        d->engineData[d->engineData.count() - 1] = engineData;
+        d->engineData[d->engineData.size() - 1] = engineData;
     } else {
-        d->engineData.append(engineData);
+        d->engineData.push_back(engineData);
     }
     emit dataChanged();
 }
 
-const EngineData &Engine::getLast() const noexcept
+const EngineData &Engine::getFirst() const noexcept
 {
-    if (!d->engineData.isEmpty()) {
-        return d->engineData.last();
+    if (!d->engineData.empty()) {
+        return d->engineData.front();
     } else {
         return EngineData::NullData;
     }
 }
 
-QVector<EngineData> &Engine::getAll() const noexcept
+const EngineData &Engine::getLast() const noexcept
 {
-    return d->engineData;
+    if (!d->engineData.empty()) {
+        return d->engineData.back();
+    } else {
+        return EngineData::NullData;
+    }
 }
 
-const QVector<EngineData> &Engine::getAllConst() const noexcept
+std::size_t Engine::count() const noexcept
 {
-    return d->engineData;
-}
-
-void Engine::clear() noexcept
-{
-    d->engineData.clear();
-    d->currentTimestamp = TimeVariableData::InvalidTime;
-    d->currentIndex = SkySearch::InvalidIndex;
-    emit dataChanged();
+    return d->engineData.size();
 }
 
 const EngineData &Engine::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
@@ -171,4 +168,49 @@ const EngineData &Engine::interpolate(qint64 timestamp, TimeVariableData::Access
 #endif
     }
     return d->currentEngineData;
+}
+
+void Engine::clear() noexcept
+{
+    d->engineData.clear();
+    d->currentTimestamp = TimeVariableData::InvalidTime;
+    d->currentIndex = SkySearch::InvalidIndex;
+    emit dataChanged();
+}
+
+Engine::Iterator Engine::begin() noexcept
+{
+    return d->engineData.begin();
+}
+
+Engine::Iterator Engine::end() noexcept
+{
+    return Iterator(d->engineData.end());
+}
+
+const Engine::Iterator Engine::begin() const noexcept
+{
+    return Iterator(d->engineData.begin());
+}
+
+const Engine::Iterator Engine::end() const noexcept
+{
+    return Iterator(d->engineData.end());
+}
+
+Engine::InsertIterator Engine::insertIterator() noexcept
+{
+    return std::inserter(d->engineData, d->engineData.begin());
+}
+
+// OPERATORS
+
+EngineData& Engine::operator[](std::size_t index) noexcept
+{
+    return d->engineData[index];
+}
+
+const EngineData& Engine::operator[](std::size_t index) const noexcept
+{
+    return d->engineData[index];
 }

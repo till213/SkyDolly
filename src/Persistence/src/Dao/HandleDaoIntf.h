@@ -25,7 +25,10 @@
 #ifndef HANDLEDAOINTF_H
 #define HANDLEDAOINTF_H
 
-#include <QVector>
+#include <vector>
+#include <iterator>
+
+#include <QtGlobal>
 
 class AircraftHandleData;
 
@@ -44,7 +47,7 @@ public:
      * \return \c true on success; \c false else
      */
     virtual bool add(qint64 aircraftId, const AircraftHandleData &data) noexcept = 0;
-    virtual bool getByAircraftId(qint64 aircraftId, QVector<AircraftHandleData> &data) const noexcept = 0;
+    virtual bool getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<AircraftHandleData>> insertIterator) const noexcept = 0;
     virtual bool deleteByFlightId(qint64 flightId) noexcept = 0;
     virtual bool deleteByAircraftId(qint64 aircraftId) noexcept = 0;
 };

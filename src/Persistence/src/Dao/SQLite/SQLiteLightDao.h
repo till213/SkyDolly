@@ -26,9 +26,10 @@
 #define SQLITELIGHTDAO_H
 
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
-#include <QVector>
 
 #include "../../../../Model/src/LightData.h"
 #include "../LightDaoIntf.h"
@@ -42,7 +43,7 @@ public:
     virtual ~SQLiteLightDao() noexcept;
 
     virtual bool add(qint64 aircraftId, const LightData &data) noexcept override;
-    virtual bool getByAircraftId(qint64 aircraftId, QVector<LightData> &data) const noexcept override;
+    virtual bool getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<LightData>> insertIterator) const noexcept override;
     virtual bool deleteByFlightId(qint64 flightId) noexcept override;
     virtual bool deleteByAircraftId(qint64 aircraftId) noexcept override;
 

@@ -207,10 +207,10 @@ void FormationWidget::hideEvent(QHideEvent *event) noexcept
 void FormationWidget::handleRecordingStopped() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    int count = flight.getAircraftCount();
+    int count = flight.count();
     if (count > 1) {
         // Sequence starts at 1
-        d->aircraftService->store(flight.getId(), count, *flight.getAircrafts().at(count - 1));
+        d->aircraftService->store(flight.getId(), count, flight[count - 1]);
     } else {
         AbstractModuleWidget::handleRecordingStopped();
     }
@@ -355,16 +355,15 @@ void FormationWidget::updateUi() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
 
-    std::vector<std::unique_ptr<Aircraft>> &aircrafts = flight.getAircrafts();
     ui->aircraftTableWidget->blockSignals(true);
     ui->aircraftTableWidget->setSortingEnabled(false);
     ui->aircraftTableWidget->clearContents();
-    ui->aircraftTableWidget->setRowCount(aircrafts.size());
+    ui->aircraftTableWidget->setRowCount(flight.count());
     int rowIndex = 0;
     const int userAircraftIndex = flight.getUserAircraftIndex();
     const bool recording = SkyManager::getInstance().getCurrentSkyConnect().isRecording();
     const QString tooltip = tr("Double-click to change user aircraft");
-    for (const auto &aircraft : aircrafts) {
+    for (const auto &aircraft : flight) {
 
         const AircraftInfo &aircraftInfo = aircraft->getAircraftInfoConst();
         int columnIndex = 0;
@@ -442,7 +441,7 @@ void FormationWidget::updateEditUi() noexcept
     const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
     bool userAircraftIndex = d->selectedAircraftIndex == flight.getUserAircraftIndex();
     ui->userAircraftPushButton->setEnabled(d->selectedAircraftIndex != Flight::InvalidId && !userAircraftIndex);
-    const bool formation = flight.getAircraftCount() > 1;
+    const bool formation = flight.count() > 1;
     ui->deletePushButton->setEnabled(formation && !inRecordingMode && d->selectedAircraftIndex != Flight::InvalidId);
 }
 

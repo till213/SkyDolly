@@ -26,9 +26,10 @@
 #define SQLITEENGINEDAO_H
 
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
-#include <QVector>
 
 #include "../../../../Model/src/EngineData.h"
 #include "../EngineDaoIntf.h"
@@ -43,7 +44,7 @@ public:
     virtual ~SQLiteEngineDao() noexcept;
 
     virtual bool add(qint64 aircraftId, const EngineData &data) noexcept override;
-    virtual bool getByAircraftId(qint64 aircraftId, QVector<EngineData> &data) const noexcept override;
+    virtual bool getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<EngineData>> insertIterator) const noexcept override;
     virtual bool deleteByFlightId(qint64 flightId) noexcept override;
     virtual bool deleteByAircraftId(qint64 aircraftId) noexcept override;
 

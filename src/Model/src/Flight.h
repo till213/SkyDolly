@@ -26,16 +26,18 @@
 #define FLIGHT_H
 
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
 
 class QDateTime;
 class QString;
 
+#include "Aircraft.h"
 #include "ModelLib.h"
 
 class FlightCondition;
-class Aircraft;
 class FlightPrivate;
 
 class MODEL_API Flight : public QObject
@@ -63,9 +65,7 @@ public:
     int getUserAircraftIndex() const noexcept;
     void setUserAircraftIndex(int index) noexcept;
     qint64 deleteAircraftByIndex(int index) noexcept;
-
-    std::vector<std::unique_ptr<Aircraft>> &getAircrafts() const noexcept;
-    int getAircraftCount() const noexcept;
+    std::size_t count() const noexcept;
 
     const FlightCondition &getFlightConditionConst() const noexcept;
     void setFlightCondition(FlightCondition flightCondition) noexcept;
@@ -74,42 +74,14 @@ public:
 
     void clear() noexcept;
 
-    template <typename T>
-    class Iterator
-    {
-    public:
-        using iterator_category = std::forward_iterator_tag;
-        using difference_type   = std::ptrdiff_t;
-        using value_type        = T;
-        using pointer           = value_type*;
-        using reference         = value_type&;
+    typedef std::vector<std::unique_ptr<Aircraft>>::iterator Iterator;
+    typedef std::insert_iterator<std::vector<std::unique_ptr<Aircraft>>> InsertIterator;
 
-        Iterator(typename std::vector<value_type>::iterator it) noexcept
-            : m_it(it)
-        {}
-
-        reference operator*() const noexcept { return m_it.operator*(); }
-        pointer operator->() noexcept { return m_it.operator->(); }
-
-        // Prefix increment
-        Iterator& operator++() noexcept { m_it++; return *this; }
-
-        // Postfix increment
-        Iterator operator++(int) noexcept { Iterator tmp = *this; ++(*this); return tmp; }
-
-        friend bool operator== (const Iterator& a, const Iterator& b) noexcept { return a.m_it == b.m_it; };
-        friend bool operator!= (const Iterator& a, const Iterator& b) noexcept { return a.m_it != b.m_it; };
-
-    private:
-        typename std::vector<value_type>::iterator m_it;
-    };
-
-    typedef Iterator<std::unique_ptr<Aircraft>> it;
-
-    it begin() noexcept;
-    it end() noexcept;
-    const it begin() const noexcept;
-    const it end() const noexcept;
+    Iterator begin() noexcept;
+    Iterator end() noexcept;
+    const Iterator begin() const noexcept;
+    const Iterator end() const noexcept;
+    InsertIterator insertIterator() noexcept;
 
     Aircraft& operator[](std::size_t index) noexcept;
     const Aircraft& operator[](std::size_t index) const noexcept;

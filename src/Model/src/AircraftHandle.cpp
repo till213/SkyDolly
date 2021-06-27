@@ -23,9 +23,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
-#include <QVector>
 
 #include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/SkyMath.h"
@@ -43,7 +44,7 @@ public:
           currentIndex(SkySearch::InvalidIndex)
     {}
 
-    QVector<AircraftHandleData> aircraftHandleData;
+    std::vector<AircraftHandleData> aircraftHandleData;
     qint64 currentTimestamp;
     TimeVariableData::Access currentAccess;
     AircraftHandleData previousAircraftHandleData;
@@ -65,40 +66,36 @@ AircraftHandle::~AircraftHandle() noexcept
 
 void AircraftHandle::upsert(const AircraftHandleData &aircraftHandleData) noexcept
 {
-    if (d->aircraftHandleData.count() > 0 && d->aircraftHandleData.last().timestamp == aircraftHandleData.timestamp)  {
+    if (d->aircraftHandleData.size() > 0 && d->aircraftHandleData.back().timestamp == aircraftHandleData.timestamp)  {
         // Same timestamp -> replace
-        d->aircraftHandleData[d->aircraftHandleData.count() - 1] = aircraftHandleData;
+        d->aircraftHandleData[d->aircraftHandleData.size() - 1] = aircraftHandleData;
     } else {
-        d->aircraftHandleData.append(aircraftHandleData);
+        d->aircraftHandleData.push_back(aircraftHandleData);
     }
     emit dataChanged();
 }
 
-const AircraftHandleData &AircraftHandle::getLast() const noexcept
+const AircraftHandleData &AircraftHandle::getFirst() const noexcept
 {
-    if (!d->aircraftHandleData.isEmpty()) {
-        return d->aircraftHandleData.last();
+    if (!d->aircraftHandleData.empty()) {
+        return d->aircraftHandleData.front();
     } else {
         return AircraftHandleData::NullData;
     }
 }
 
-QVector<AircraftHandleData> &AircraftHandle::getAll() const noexcept
+const AircraftHandleData &AircraftHandle::getLast() const noexcept
 {
-    return d->aircraftHandleData;
+    if (!d->aircraftHandleData.empty()) {
+        return d->aircraftHandleData.back();
+    } else {
+        return AircraftHandleData::NullData;
+    }
 }
 
-const QVector<AircraftHandleData> &AircraftHandle::getAllConst() const noexcept
+std::size_t AircraftHandle::count() const noexcept
 {
-    return d->aircraftHandleData;
-}
-
-void AircraftHandle::clear() noexcept
-{
-    d->aircraftHandleData.clear();
-    d->currentTimestamp = TimeVariableData::InvalidTime;
-    d->currentIndex = SkySearch::InvalidIndex;
-    emit dataChanged();
+    return d->aircraftHandleData.size();
 }
 
 const AircraftHandleData &AircraftHandle::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
@@ -167,4 +164,49 @@ const AircraftHandleData &AircraftHandle::interpolate(qint64 timestamp, TimeVari
 #endif
     }
     return d->currentAircraftHandleData;
+}
+
+void AircraftHandle::clear() noexcept
+{
+    d->aircraftHandleData.clear();
+    d->currentTimestamp = TimeVariableData::InvalidTime;
+    d->currentIndex = SkySearch::InvalidIndex;
+    emit dataChanged();
+}
+
+AircraftHandle::Iterator AircraftHandle::begin() noexcept
+{
+    return d->aircraftHandleData.begin();
+}
+
+AircraftHandle::Iterator AircraftHandle::end() noexcept
+{
+    return Iterator(d->aircraftHandleData.end());
+}
+
+const AircraftHandle::Iterator AircraftHandle::begin() const noexcept
+{
+    return Iterator(d->aircraftHandleData.begin());
+}
+
+const AircraftHandle::Iterator AircraftHandle::end() const noexcept
+{
+    return Iterator(d->aircraftHandleData.end());
+}
+
+AircraftHandle::InsertIterator AircraftHandle::insertIterator() noexcept
+{
+    return std::inserter(d->aircraftHandleData, d->aircraftHandleData.begin());
+}
+
+// OPERATORS
+
+AircraftHandleData& AircraftHandle::operator[](std::size_t index) noexcept
+{
+    return d->aircraftHandleData[index];
+}
+
+const AircraftHandleData& AircraftHandle::operator[](std::size_t index) const noexcept
+{
+    return d->aircraftHandleData[index];
 }

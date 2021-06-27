@@ -42,7 +42,7 @@ public:
     explicit SQLiteWaypointDao(QObject *parent = nullptr) noexcept;
     virtual ~SQLiteWaypointDao() noexcept;
 
-    virtual bool add(qint64 aircraftId, const QVector<Waypoint> &data) noexcept override;
+    virtual bool add(qint64 aircraftId, const FlightPlan &flightPlan) noexcept override;
     virtual bool getByAircraftId(qint64 aircraftId, FlightPlan &flightPlan) const noexcept override;
     virtual bool deleteByFlightId(qint64 flightId) noexcept override;
     virtual bool deleteByAircraftId(qint64 aircraftId) noexcept override;

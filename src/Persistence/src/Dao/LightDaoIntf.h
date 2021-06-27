@@ -25,6 +25,11 @@
 #ifndef LIGHTDAOINTF_H
 #define LIGHTDAOINTF_H
 
+#include <vector>
+#include <iterator>
+
+#include <QtGlobal>
+
 class LightData;
 
 class LightDaoIntf
@@ -42,7 +47,7 @@ public:
      * \return \c true on success; \c false else
      */
     virtual bool add(qint64 aircraftId, const LightData &lightData) noexcept = 0;
-    virtual bool getByAircraftId(qint64 aircraftId, QVector<LightData> &data) const noexcept = 0;
+    virtual bool getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<LightData>> insertIterator) const noexcept = 0;
     virtual bool deleteByFlightId(qint64 flightId) noexcept = 0;
     virtual bool deleteByAircraftId(qint64 aircraftId) noexcept = 0;
 };

@@ -26,6 +26,8 @@
 #define SQLITEHANDLEDAO_H
 
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
 #include <QVector>
@@ -42,7 +44,7 @@ public:
     virtual ~SQLiteHandleDao() noexcept;
 
     virtual bool add(qint64 aircraftId, const AircraftHandleData &data) noexcept override;
-    virtual bool getByAircraftId(qint64 aircraftId, QVector<AircraftHandleData> &data) const noexcept override;
+    virtual bool getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<AircraftHandleData>> insertIterator) const noexcept override;
     virtual bool deleteByFlightId(qint64 flightId) noexcept override;
     virtual bool deleteByAircraftId(qint64 aircraftId) noexcept override;
 

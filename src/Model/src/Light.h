@@ -26,10 +26,10 @@
 #define LIGHT_H
 
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
-#include <QByteArray>
-#include <QVector>
 
 #include "TimeVariableData.h"
 #include "ModelLib.h"
@@ -45,12 +45,23 @@ public:
     virtual ~Light() noexcept;
 
     void upsert(const LightData &lightData) noexcept;
+    const LightData &getFirst() const noexcept;
     const LightData &getLast() const noexcept;
-    QVector<LightData> &getAll() const noexcept;
-    const QVector<LightData> &getAllConst() const noexcept;
+    std::size_t count() const noexcept;
     const LightData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
-
     void clear() noexcept;
+
+    typedef std::vector<LightData>::iterator Iterator;
+    typedef std::insert_iterator<std::vector<LightData>> InsertIterator;
+
+    Iterator begin() noexcept;
+    Iterator end() noexcept;
+    const Iterator begin() const noexcept;
+    const Iterator end() const noexcept;
+    InsertIterator insertIterator() noexcept;
+
+    LightData& operator[](std::size_t index) noexcept;
+    const LightData& operator[](std::size_t index) const noexcept;
 
 signals:
     void dataChanged();
