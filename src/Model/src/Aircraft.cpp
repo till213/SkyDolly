@@ -192,22 +192,22 @@ qint64 Aircraft::getDurationMSec() const noexcept
 {
     if (d->duration == TimeVariableData::InvalidTime) {
         d->duration = 0;
-        if (d->position.getAllConst().count() > 0) {
+        if (d->position.count() > 0) {
             d->duration = d->position.getLast().timestamp;
         }
-        if (d->engine.getAllConst().count() > 0) {
+        if (d->engine.count() > 0) {
             d->duration = qMax(d->engine.getLast().timestamp, d->duration);
         }
-        if (d->primaryFlightControl.getAllConst().count() > 0) {
+        if (d->primaryFlightControl.count() > 0) {
             d->duration = qMax(d->primaryFlightControl.getLast().timestamp, d->duration);
         }
-        if (d->secondaryFlightControl.getAllConst().count() > 0) {
+        if (d->secondaryFlightControl.count() > 0) {
             d->duration = qMax(d->secondaryFlightControl.getLast().timestamp, d->duration);
         }
-        if (d->aircraftHandle.getAllConst().count() > 0) {
+        if (d->aircraftHandle.count() > 0) {
             d->duration = qMax(d->aircraftHandle.getLast().timestamp, d->duration);
         }
-        if (d->light.getAllConst().count() > 0) {
+        if (d->light.count() > 0) {
             d->duration = qMax(d->light.getLast().timestamp, d->duration);
         }
         // Update end time
@@ -218,7 +218,7 @@ qint64 Aircraft::getDurationMSec() const noexcept
 
 bool Aircraft::hasRecording() const noexcept
 {
-    return d->position.getAllConst().count() > 0;
+    return d->position.count() > 0;
 }
 
 void Aircraft::clear() noexcept

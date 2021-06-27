@@ -26,10 +26,10 @@
 #define SECONDARYFLIGHTCONTROL_H
 
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
-#include <QByteArray>
-#include <QVector>
 
 #include "TimeVariableData.h"
 #include "ModelLib.h"
@@ -45,12 +45,23 @@ public:
     virtual ~SecondaryFlightControl() noexcept;
 
     void upsert(const SecondaryFlightControlData &secondaryFlightControlData) noexcept;
+    const SecondaryFlightControlData &getFirst() const noexcept;
     const SecondaryFlightControlData &getLast() const noexcept;
-    QVector<SecondaryFlightControlData> &getAll() const noexcept;
-    const QVector<SecondaryFlightControlData> &getAllConst() const noexcept;
+    std::size_t count() const noexcept;
     const SecondaryFlightControlData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
-
     void clear() noexcept;
+
+    typedef std::vector<SecondaryFlightControlData>::iterator Iterator;
+    typedef std::insert_iterator<std::vector<SecondaryFlightControlData>> InsertIterator;
+
+    Iterator begin() noexcept;
+    Iterator end() noexcept;
+    const Iterator begin() const noexcept;
+    const Iterator end() const noexcept;
+    InsertIterator insertIterator() noexcept;
+
+    SecondaryFlightControlData& operator[](std::size_t index) noexcept;
+    const SecondaryFlightControlData& operator[](std::size_t index) const noexcept;
 
 signals:
     void dataChanged();

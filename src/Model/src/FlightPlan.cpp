@@ -23,9 +23,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
-#include <QVector>
 
 #include "Waypoint.h"
 #include "FlightPlan.h"
@@ -36,7 +37,7 @@ public:
     FlightPlanPrivate() noexcept
     {}
 
-    QVector<Waypoint> waypoints;
+    std::vector<Waypoint> waypoints;
 };
 
 // PUBLIC
@@ -51,7 +52,7 @@ FlightPlan::~FlightPlan() noexcept
 
 void FlightPlan::add(const Waypoint &waypoint) noexcept
 {
-    d->waypoints.append(waypoint);
+    d->waypoints.push_back(waypoint);
     emit waypointAdded(waypoint);
 }
 
@@ -59,7 +60,7 @@ void FlightPlan::update(int index, const Waypoint &waypoint) noexcept
 {
     Waypoint currentWaypoint = d->waypoints.at(index);
     bool changed = false;
-    if (index >= 0 && index < d->waypoints.count()) {
+    if (index >= 0 && index < d->waypoints.size()) {
         if (currentWaypoint.timestamp != waypoint.timestamp) {
             currentWaypoint.timestamp = waypoint.timestamp;
             changed = true;
@@ -91,13 +92,50 @@ void FlightPlan::update(int index, const Waypoint &waypoint) noexcept
     }
 }
 
-const QVector<Waypoint> &FlightPlan::getAllConst() const noexcept
+std::size_t FlightPlan::count() const noexcept
 {
-    return d->waypoints;
+    return d->waypoints.size();
 }
 
 void FlightPlan::clear() noexcept
 {
     d->waypoints.clear();
     emit waypointsCleared();
+}
+
+FlightPlan::Iterator FlightPlan::begin() noexcept
+{
+    return d->waypoints.begin();
+}
+
+FlightPlan::Iterator FlightPlan::end() noexcept
+{
+    return Iterator(d->waypoints.end());
+}
+
+const FlightPlan::Iterator FlightPlan::begin() const noexcept
+{
+    return Iterator(d->waypoints.begin());
+}
+
+const FlightPlan::Iterator FlightPlan::end() const noexcept
+{
+    return Iterator(d->waypoints.end());
+}
+
+FlightPlan::InsertIterator FlightPlan::insertIterator() noexcept
+{
+    return std::inserter(d->waypoints, d->waypoints.begin());
+}
+
+// OPERATORS
+
+Waypoint& FlightPlan::operator[](std::size_t index) noexcept
+{
+    return d->waypoints[index];
+}
+
+const Waypoint& FlightPlan::operator[](std::size_t index) const noexcept
+{
+    return d->waypoints[index];
 }

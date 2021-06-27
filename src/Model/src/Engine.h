@@ -26,6 +26,8 @@
 #define ENGINE_H
 
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
 #include <QByteArray>
@@ -45,12 +47,23 @@ public:
     virtual ~Engine() noexcept;
 
     void upsert(const EngineData &engineData) noexcept;
+    const EngineData &getFirst() const noexcept;
     const EngineData &getLast() const noexcept;
-    QVector<EngineData> &getAll() const noexcept;
-    const QVector<EngineData> &getAllConst() const noexcept;
+    std::size_t count() const noexcept;
     const EngineData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
-
     void clear() noexcept;
+
+    typedef std::vector<EngineData>::iterator Iterator;
+    typedef std::insert_iterator<std::vector<EngineData>> InsertIterator;
+
+    Iterator begin() noexcept;
+    Iterator end() noexcept;
+    const Iterator begin() const noexcept;
+    const Iterator end() const noexcept;
+    InsertIterator insertIterator() noexcept;
+
+    EngineData& operator[](std::size_t index) noexcept;
+    const EngineData& operator[](std::size_t index) const noexcept;
 
 signals:
     void dataChanged();

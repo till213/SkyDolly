@@ -23,6 +23,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
 #include <QString>
@@ -125,13 +127,12 @@ bool SQLiteLightDao::add(qint64 aircraftId, const LightData &lightData)  noexcep
     return ok;
 }
 
-bool SQLiteLightDao::getByAircraftId(qint64 aircraftId, QVector<LightData> &lightData) const noexcept
+bool SQLiteLightDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<LightData>> insertIterator) const noexcept
 {
     d->initQueries();
     d->selectByAircraftIdQuery->bindValue(":aircraft_id", aircraftId);
     bool ok = d->selectByAircraftIdQuery->exec();
     if (ok) {
-        lightData.clear();
         QSqlRecord record = d->selectByAircraftIdQuery->record();
         const int timestampIdx = record.indexOf("timestamp");
         const int lightStatesIdx = record.indexOf("light_states");
@@ -140,7 +141,7 @@ bool SQLiteLightDao::getByAircraftId(qint64 aircraftId, QVector<LightData> &ligh
             LightData data;
             data.timestamp = d->selectByAircraftIdQuery->value(timestampIdx).toLongLong();
             data.lightStates = static_cast<SimType::LightStates>(d->selectByAircraftIdQuery->value(lightStatesIdx).toInt());
-            lightData.append(data);
+            insertIterator = data;
         }
 #ifdef DEBUG
     } else {

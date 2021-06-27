@@ -23,6 +23,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
 #include <QString>
@@ -160,13 +162,12 @@ bool SQLitePositionDao::add(qint64 aircraftId, const PositionData &position)  no
     return ok;
 }
 
-bool SQLitePositionDao::getByAircraftId(qint64 aircraftId, QVector<PositionData> &positionData) const noexcept
+bool SQLitePositionDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<PositionData>> insertIterator) const noexcept
 {
     d->initQueries();
     d->selectByAircraftIdQuery->bindValue(":aircraft_id", aircraftId);
     bool ok = d->selectByAircraftIdQuery->exec();
     if (ok) {
-        positionData.clear();
         QSqlRecord record = d->selectByAircraftIdQuery->record();
         const int timestampIdx = record.indexOf("timestamp");
         const int latitudeIdx = record.indexOf("latitude");
@@ -199,7 +200,7 @@ bool SQLitePositionDao::getByAircraftId(qint64 aircraftId, QVector<PositionData>
             data.rotationVelocityBodyY = d->selectByAircraftIdQuery->value(rotationVelocityYIdx).toDouble();
             data.rotationVelocityBodyZ = d->selectByAircraftIdQuery->value(rotationVelocityZIdx).toDouble();
 
-            positionData.append(data);
+            insertIterator = data;
         }
 #ifdef DEBUG
     } else {

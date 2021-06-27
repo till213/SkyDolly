@@ -24,8 +24,7 @@
  */
 #include <memory>
 #include <vector>
-#include <iterator> // For std::forward_iterator_tag
-#include <cstddef>  // For std::ptrdiff_t
+#include <iterator>
 
 #include <QDateTime>
 #include <QString>
@@ -186,12 +185,7 @@ qint64 Flight::deleteAircraftByIndex(int index) noexcept
     return aircraftId;
 }
 
-std::vector<std::unique_ptr<Aircraft>> &Flight::getAircrafts() const noexcept
-{
-    return d->aircrafts;
-}
-
-int Flight::getAircraftCount() const noexcept
+std::size_t Flight::count() const noexcept
 {
     return d->aircrafts.size();
 }
@@ -225,24 +219,29 @@ void Flight::clear() noexcept
     d->clear();
 }
 
-Flight::it Flight::begin() noexcept
+Flight::Iterator Flight::begin() noexcept
 {
-    return it(d->aircrafts.begin());
+    return d->aircrafts.begin();
 }
 
-Flight::it Flight::end() noexcept
+Flight::Iterator Flight::end() noexcept
 {
-    return it(d->aircrafts.end());
+    return d->aircrafts.end();
 }
 
-const Flight::it Flight::begin() const noexcept
+const Flight::Iterator Flight::begin() const noexcept
 {
-    return it(d->aircrafts.begin());
+    return d->aircrafts.begin();
 }
 
-const Flight::it Flight::end() const noexcept
+const Flight::Iterator Flight::end() const noexcept
 {
-    return it(d->aircrafts.end());
+    return d->aircrafts.end();
+}
+
+Flight::InsertIterator Flight::insertIterator() noexcept
+{
+    return std::inserter(d->aircrafts, d->aircrafts.begin());
 }
 
 // OPERATORS
