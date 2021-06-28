@@ -200,7 +200,7 @@ bool SQLitePositionDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<
             data.rotationVelocityBodyY = d->selectByAircraftIdQuery->value(rotationVelocityYIdx).toDouble();
             data.rotationVelocityBodyZ = d->selectByAircraftIdQuery->value(rotationVelocityZIdx).toDouble();
 
-            insertIterator = data;
+            insertIterator = std::move(data);
         }
 #ifdef DEBUG
     } else {
