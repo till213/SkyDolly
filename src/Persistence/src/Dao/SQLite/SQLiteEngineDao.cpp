@@ -259,7 +259,7 @@ bool SQLiteEngineDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<st
             data.generalEngineStarter3 = d->selectByAircraftIdQuery->value(generalEngineStarter3Idx).toBool();
             data.generalEngineStarter4 = d->selectByAircraftIdQuery->value(generalEngineStarter4Idx).toBool();
 
-            insertIterator = data;
+            insertIterator = std::move(data);
         }
 #ifdef DEBUG
     } else {

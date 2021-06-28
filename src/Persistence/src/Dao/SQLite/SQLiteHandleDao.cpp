@@ -178,7 +178,7 @@ bool SQLiteHandleDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<st
             data.rightWingFolding = d->selectByAircraftIdQuery->value(rightWingFoldingIdx).toInt();
             data.gearHandlePosition = d->selectByAircraftIdQuery->value(gearHandlePositionIdx).toBool();            
 
-            insertIterator = data;
+            insertIterator = std::move(data);
         }
 #ifdef DEBUG
     } else {

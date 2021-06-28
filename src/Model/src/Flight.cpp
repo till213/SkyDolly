@@ -45,7 +45,7 @@ public:
     FlightPrivate() noexcept
         : userAircraftIndex(InvalidAircraftIndex)
     {
-        clear();
+        clear(true);
     }
 
     qint64 id;
@@ -56,14 +56,15 @@ public:
     std::vector<std::unique_ptr<Aircraft>> aircrafts;
     int userAircraftIndex;
 
-    inline void clear() noexcept {
+    inline void clear(bool withOneAircraft) noexcept {
         id = Flight::InvalidId;
         title.clear();
         description.clear();
         flightCondition.clear();
         if (aircrafts.size() > 1) {
-            aircrafts.resize(1);
-            userAircraftIndex = 0;
+            const int aircraftCount = withOneAircraft ? 1 : 0;
+            aircrafts.resize(aircraftCount);
+            userAircraftIndex = withOneAircraft ? 0 : InvalidAircraftIndex;
         }
         // A flight always has at least one aircraft; unless
         // it is newly allocated: the aircraft is only added
@@ -214,9 +215,9 @@ qint64 Flight::getTotalDurationMSec(bool ofUserAircraft) const noexcept
     return totalDuractionMSec;
 }
 
-void Flight::clear() noexcept
+void Flight::clear(bool withOneAircraft) noexcept
 {
-    d->clear();
+    d->clear(withOneAircraft);
 }
 
 Flight::Iterator Flight::begin() noexcept

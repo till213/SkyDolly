@@ -72,7 +72,7 @@ public:
 
     qint64 getTotalDurationMSec(bool ofUserAircraft = false) const noexcept;
 
-    void clear() noexcept;
+    void clear(bool withOneAircraft) noexcept;
 
     typedef std::vector<std::unique_ptr<Aircraft>>::iterator Iterator;
     typedef std::insert_iterator<std::vector<std::unique_ptr<Aircraft>>> InsertIterator;

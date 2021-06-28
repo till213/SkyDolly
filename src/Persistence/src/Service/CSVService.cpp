@@ -65,7 +65,7 @@ bool CSVService::importAircraft(const QString &filePath) noexcept
     Unit unit;
     QFile file(filePath);
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    flight.clear();
+    flight.clear(true);
     Aircraft &aircraft = flight.getUserAircraft();
     bool ok = CSVImport::importData(file, aircraft);
     if (ok) {
