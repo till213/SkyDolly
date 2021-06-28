@@ -141,7 +141,8 @@ bool SQLiteLightDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<std
             LightData data;
             data.timestamp = d->selectByAircraftIdQuery->value(timestampIdx).toLongLong();
             data.lightStates = static_cast<SimType::LightStates>(d->selectByAircraftIdQuery->value(lightStatesIdx).toInt());
-            insertIterator = data;
+
+            insertIterator = std::move(data);
         }
 #ifdef DEBUG
     } else {

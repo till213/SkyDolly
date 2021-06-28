@@ -169,7 +169,7 @@ bool SQLiteSecondaryFlightControlDao::getByAircraftId(qint64 aircraftId, std::in
             data.spoilersHandlePosition = d->selectByAircraftIdQuery->value(spoilersHandlePositionIdx).toInt();
             data.flapsHandleIndex = d->selectByAircraftIdQuery->value(flapsHandleIndexIdx).toInt();
 
-            insertIterator = data;
+            insertIterator = std::move(data);
         }
 #ifdef DEBUG
     } else {

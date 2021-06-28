@@ -173,7 +173,7 @@ bool SQLiteWaypointDao::getByAircraftId(qint64 aircraftId, FlightPlan &flightPla
             data.localTime = d->selectByAircraftIdQuery->value(localSimulationTimeIdx).toDateTime();
             // UTC equals zulu time, so no conversion necessary
             data.zuluTime = d->selectByAircraftIdQuery->value(zuluSimulationTimeIdx).toDateTime();
-            flightPlan.add(data);
+            flightPlan.add(std::move(data));
         }
 #ifdef DEBUG
     } else {
