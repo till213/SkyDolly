@@ -154,7 +154,7 @@ bool SQLitePrimaryFlightControlDao::getByAircraftId(qint64 aircraftId, std::inse
             data.elevatorPosition = d->selectByAircraftIdQuery->value(elevatorPositionIdx).toDouble();
             data.aileronPosition = d->selectByAircraftIdQuery->value(aileronPositionIdx).toDouble();
 
-            insertIterator = data;
+            insertIterator = std::move(data);
         }
 #ifdef DEBUG
     } else {

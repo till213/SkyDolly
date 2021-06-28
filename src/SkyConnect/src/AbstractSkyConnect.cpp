@@ -121,7 +121,7 @@ void AbstractSkyConnect::startRecording(bool addFormationAircraft) noexcept
             // Single flight - destroy any previous AI aircrafts
             onDestroyAIObjects();
             // Start a new flight
-            d->currentFlight.clear();
+            d->currentFlight.clear(true);
             // Assign user aircraft ID
             onCreateAIObjects();
         } else {

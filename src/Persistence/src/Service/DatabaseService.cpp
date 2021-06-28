@@ -73,7 +73,7 @@ bool DatabaseService::connectWithLogbook(const QString &logbookPath, QWidget *pa
                 ok = checkDatabaseVersion(databaseVersion);
                 if (ok) {
                     Flight &flight = Logbook::getInstance().getCurrentFlight();
-                    flight.clear();
+                    flight.clear(true);
                     ok = connectionManager.migrate();
                     if (ok) {
                         Settings::getInstance().setLogbookPath(currentLogbookPath);

@@ -250,7 +250,7 @@ bool SQLiteFlightDao::getFlightById(qint64 id, Flight &flight) const noexcept
     d->selectByIdQuery->bindValue(":id", id);
     bool ok = d->selectByIdQuery->exec();
     if (ok) {
-        flight.clear();
+        flight.clear(false);
         QSqlRecord record = d->selectByIdQuery->record();
         const int idIdx = record.indexOf("id");
         const int creationDateIdx = record.indexOf("creation_date");
