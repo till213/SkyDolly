@@ -41,6 +41,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/Model)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/ModelTest)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Persistence)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/SkyConnect)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/Plugin)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Module)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
 
@@ -114,3 +115,16 @@ target_include_directories(SkyDolly PUBLIC
                           )
 target_link_libraries(SkyDolly PRIVATE ${SKYDOLLY_LIBS})
 message(STATUS OUTPUT_NAME=${PROJECT_NAME})
+
+if (APPLE)
+file(GLOB BUNDLE_EXPORT_PLUGINS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins/export/*")
+message(STATUS EXPORT_PLUGIN_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins/export/")
+target_sources(SkyDolly PUBLIC ${BUNDLE_EXPORT_PLUGINS})
+set_property(
+    SOURCE ${BUNDLE_EXPORT_PLUGINS}
+    PROPERTY MACOSX_PACKAGE_LOCATION "PlugIns/export"
+)
+endif()
+
+
+
