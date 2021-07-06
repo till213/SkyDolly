@@ -31,4 +31,6 @@ target_include_directories(Plugin PUBLIC
 
 # Plugins
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins)
+
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/Export)

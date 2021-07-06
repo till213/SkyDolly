@@ -96,15 +96,17 @@ std::vector<PluginManager::Handle> PluginManager::enumerateExportPlugins() const
         d->pluginsDirectoryPath.cd(ExportDirectoryName);
         const QStringList entryList = d->pluginsDirectoryPath.entryList(QDir::Files);
         for (const QString &fileName : entryList) {
-            QPluginLoader loader(d->pluginsDirectoryPath.absoluteFilePath(fileName));
+            const QString pluginPath = d->pluginsDirectoryPath.absoluteFilePath(fileName);
+            QPluginLoader loader(pluginPath);
 
             QJsonObject metaData = loader.metaData();
             if (!metaData.isEmpty()) {
-                QUuid pluginUuid = metaData.value(PluginUuidKey).toString();
-                QString pluginName = metaData.value(PluginNameKey).toString();
+                QJsonObject pluginMetaData = metaData.value("MetaData").toObject();
+                QUuid pluginUuid = pluginMetaData.value(PluginUuidKey).toString();
+                QString pluginName = pluginMetaData.value(PluginNameKey).toString();
                 Handle handle = {pluginUuid, pluginName};
                 exportPlugins.push_back(handle);
-                d->exportPlugins.insert(pluginUuid, pluginName);
+                d->exportPlugins.insert(pluginUuid, pluginPath);
             }
         }
 
@@ -137,12 +139,18 @@ bool PluginManager::exportData(const QUuid pluginUuid) const noexcept
 // PROTECTED
 
 PluginManager::~PluginManager() noexcept
-{}
+{
+#ifdef DEBUG
+    qDebug("PluginManager::~PluginManager: DELETED");
+#endif
+}
 
 // PRIVATE
 
 PluginManager::PluginManager() noexcept
     : d(std::make_unique<PluginManagerPrivate>())
 {
-
+#ifdef DEBUG
+    qDebug("PluginManager::PluginManager: CREATED");
+#endif
 }
