@@ -125,11 +125,19 @@ bool ConnectionManager::getMetadata(Metadata &metadata) noexcept
 // PROTECTED
 
 ConnectionManager::~ConnectionManager() noexcept
-{}
+{
+#ifdef DEBUG
+    qDebug("ConnectionManager::ConnectionManager: DELETED");
+#endif
+}
 
 // PRIVATE
 
 ConnectionManager::ConnectionManager() noexcept
     : d(std::make_unique<ConnectionManagerPrivate>())
-{}
+{
+#ifdef DEBUG
+    qDebug("ConnectionManager::ConnectionManager: CREATED");
+#endif
+}
 

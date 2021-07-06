@@ -37,7 +37,7 @@ public:
     virtual bool exportData() noexcept = 0;
 };
 
-inline constexpr char ExportInterface_iid[] = "com.github.till213.SkyDolly.ExportInterface/1.0";
-Q_DECLARE_INTERFACE(ExportIntf, ExportInterface_iid)
+#define EXPORT_INTERFACE_IID "com.github.till213.SkyDolly.ExportInterface/1.0"
+Q_DECLARE_INTERFACE(ExportIntf, EXPORT_INTERFACE_IID)
 
 #endif // EXPORTINTF_H

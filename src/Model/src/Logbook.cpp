@@ -76,13 +76,20 @@ const Flight &Logbook::getCurrentFlightConst() const
 // PROTECTED
 
 Logbook::~Logbook()
-{}
+{
+#ifdef DEBUG
+    qDebug("Logbook::~Logbook: DELETED");
+#endif
+}
 
 // PRIVATE
 
 Logbook::Logbook() noexcept
     : d(std::make_unique<LogbookPrivate>())
 {
+#ifdef DEBUG
+    qDebug("Logbook::Logbook: CREATED");
+#endif
     // Logbook may support several flights, but for now there will be always
     // exactly one
     std::unique_ptr<Flight> defaultFlight = std::make_unique<Flight>();

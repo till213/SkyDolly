@@ -82,10 +82,18 @@ SkyConnectIntf &SkyManager::getCurrentSkyConnect() const noexcept
 // PROTECTED
 
 SkyManager::~SkyManager() noexcept
-{}
+{
+#ifdef DEBUG
+    qDebug("SkyManager::~SkyManager: DELETED");
+#endif
+}
 
 // PRIVATE
 
 SkyManager::SkyManager() noexcept
     : d(std::make_unique<SkyManagerPrivate>())
-{}
+{
+#ifdef DEBUG
+    qDebug("SkyManager::SkyManager: CREATED");
+#endif
+}
