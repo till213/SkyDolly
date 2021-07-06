@@ -70,6 +70,7 @@ private:
 
     void frenchConnection() noexcept;
     void initUi() noexcept;
+    void initFileMenu() noexcept;
     void initModuleSelectorUi() noexcept;
     void initControlUi() noexcept;
     void initReplaySpeedUi() noexcept;
@@ -139,5 +140,8 @@ private slots:
     // Service
     void handleFlightRestored() noexcept;
     void handleLogbookConnectionChanged(bool connected) noexcept;
+
+    // Export
+    void handleExport(QAction *action) noexcept;
 };
 #endif // MAINWINDOW_H
