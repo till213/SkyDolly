@@ -33,7 +33,7 @@
 class CSVExportPlugin : public QObject, public ExportIntf
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "com.github.till213.SkyDolly.ExportInterface/1.0" FILE "CSVExportPlugin.json")
+    Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "CSVExportPlugin.json")
     Q_INTERFACES(ExportIntf)
 
 public:

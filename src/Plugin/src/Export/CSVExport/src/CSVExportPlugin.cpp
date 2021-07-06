@@ -27,10 +27,18 @@
 // PUBLIC
 
 CSVExportPlugin::CSVExportPlugin()
-{}
+{
+#ifdef DEBUG
+    qDebug("CSVExportPlugin::CSVExportPlugin: PLUGIN LOADED");
+#endif
+}
 
 CSVExportPlugin::~CSVExportPlugin()
-{}
+{
+#ifdef DEBUG
+    qDebug("CSVExportPlugin::~CSVExportPlugin: PLUGIN UNLOADED");
+#endif
+}
 
 bool CSVExportPlugin::exportData() noexcept
 {
