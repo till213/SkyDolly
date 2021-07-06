@@ -41,6 +41,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/Model)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/ModelTest)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Persistence)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/SkyConnect)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/Plugin)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Module)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
 

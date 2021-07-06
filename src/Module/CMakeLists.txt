@@ -11,7 +11,7 @@ else()
 endif()
 
 set(MODULE_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence SkyConnect tsl::ordered_map
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence SkyConnect Plugin tsl::ordered_map
 )
 if (APPLE)
     list(APPEND MODULE_LIBS -lc++)

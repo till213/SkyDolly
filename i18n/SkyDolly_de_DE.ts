@@ -339,64 +339,72 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="35"/>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="147"/>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="259"/>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="371"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="167"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="299"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="431"/>
         <source>Throttle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="55"/>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="167"/>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="279"/>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="391"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="187"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="319"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="451"/>
         <source>Propeller</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="75"/>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="187"/>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="299"/>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="411"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="207"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="339"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="471"/>
         <source>Master Battery</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="86"/>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="198"/>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="310"/>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="422"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="99"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="231"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="363"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="495"/>
         <source>Mixture</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="106"/>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="218"/>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="330"/>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="442"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="119"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="251"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="383"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="515"/>
         <source>Cowl Flaps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="126"/>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="238"/>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="350"/>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="462"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="139"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="271"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="403"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="535"/>
         <source>General Engine Starter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="136"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="146"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="278"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="410"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="542"/>
+        <source>Combustion</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="156"/>
         <source>Engine 2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="248"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="288"/>
         <source>Engine 3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="360"/>
+        <location filename="../src/UserInterface/src/Widgets/EngineWidget.ui" line="420"/>
         <source>Engine 4</source>
         <translation type="unfinished"></translation>
     </message>
@@ -676,42 +684,42 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="366"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="365"/>
         <source>Double-click to change user aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="457"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="456"/>
         <source>Selected aircraft position for next recording</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="459"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="458"/>
         <source>Select aircraft position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="636"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="635"/>
         <source>Do not ask again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="639"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="638"/>
         <source>The aircraft with sequence number %1 is about to be deleted. Deletion cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="640"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="639"/>
         <source>Do you want to delete the aircraft?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="641"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="640"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="642"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="641"/>
         <source>Keep</source>
         <translation type="unfinished"></translation>
     </message>
@@ -803,8 +811,8 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="200"/>
-        <source>Logbook</source>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="349"/>
+        <source>Formation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -815,6 +823,11 @@ MIT License</source>
     <message>
         <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="173"/>
         <source>Aircraft</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="173"/>
+        <source>Number of Aircrafts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -848,8 +861,8 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="173"/>
-        <source>Number of Aircrafts</source>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="200"/>
+        <source>Logbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -906,11 +919,6 @@ MIT License</source>
     <message>
         <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="371"/>
         <source>Keep</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="349"/>
-        <source>Formation</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1464,11 +1472,6 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="175"/>
-        <source>Delete Aircraft</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="156"/>
         <source>User Interface</source>
         <translation type="unfinished"></translation>
@@ -1481,6 +1484,11 @@ MIT License</source>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="168"/>
         <source>Delete Flight</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="175"/>
+        <source>Delete Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
