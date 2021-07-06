@@ -22,52 +22,22 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef PLUGINMANAGER_H
-#define PLUGINMANAGER_H
-
-#include <memory>
-#include <utility>
-#include <vector>
+#ifndef EXPORTINTF_H
+#define EXPORTINTF_H
 
 #include <QObject>
 
-class QUuid;
-class QString;
-
-#include "ExportIntf.h"
 #include "PluginLib.h"
 
-class SkyConnectIntf;
-class PluginManagerPrivate;
-
-class PLUGIN_API PluginManager : public QObject
+class ExportIntf
 {
-    Q_OBJECT
-
 public:
+    virtual ~ExportIntf() = default;
 
-    static constexpr char PluginUuidKey[] = "uuid";
-    static constexpr char PluginNameKey[] = "name";
-
-    static PluginManager &getInstance() noexcept;
-    static void destroyInstance() noexcept;
-
-    /*!
-     * The UUID and (non-translated) name of the plugin.
-     */
-    typedef std::pair<QUuid, QString> Handle;
-    std::vector<Handle> enumerateExportPlugins() const noexcept;
-
-    bool exportData(const QUuid pluginUuid) const noexcept;
-
-protected:
-    virtual ~PluginManager() noexcept;
-
-private:
-    Q_DISABLE_COPY(PluginManager)
-    std::unique_ptr<PluginManagerPrivate> d;
-
-    PluginManager() noexcept;
+    virtual bool exportData() noexcept = 0;
 };
 
-#endif // PLUGINMANAGER_H
+inline constexpr char ExportInterface_iid[] = "com.github.till213.SkyDolly.ExportInterface/1.0";
+Q_DECLARE_INTERFACE(ExportIntf, ExportInterface_iid)
+
+#endif // EXPORTINTF_H

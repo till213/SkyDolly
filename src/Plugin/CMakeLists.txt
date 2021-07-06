@@ -11,6 +11,7 @@ target_sources(Plugin
         src/PluginLib.h
         src/PluginManager.cpp
         src/PluginManager.h
+        src/ExportIntf.h
 )
 
 set(PLUGIN_LIBS
@@ -27,3 +28,7 @@ set_target_properties(Plugin PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
 target_include_directories(Plugin PUBLIC
     "${CMAKE_CURRENT_BINARY_DIR}"
 )
+
+# Plugins
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/Export)

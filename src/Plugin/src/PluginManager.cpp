@@ -24,17 +24,47 @@
  */
 #include <memory>
 
+#include <QCoreApplication>
+#include <QPluginLoader>
+#include <QJsonObject>
+#include <QUuid>
+#include <QMap>
+#include <QDir>
+#include <QStringList>
+
+#include "ExportIntf.h"
 #include "PluginManager.h"
+
+namespace
+{
+    constexpr char ExportDirectoryName[] = "export";
+#if defined(Q_OS_MAC)
+    constexpr char PluginDirectoryName[] = "PlugIns";
+#else
+    constexpr char PluginDirectoryName[] = "plugins";
+#endif
+}
 
 class PluginManagerPrivate
 {
 public:
     PluginManagerPrivate() noexcept
-    {}
+    {
+        pluginsDirectoryPath = QDir(QCoreApplication::applicationDirPath());
+#if defined(Q_OS_MAC)
+        if (pluginsDirectoryPath.dirName() == "MacOS") {
+            // Navigate up the app bundle structure, into the Contents folder
+            pluginsDirectoryPath.cdUp();
+        }
+#endif
+        pluginsDirectoryPath.cd(PluginDirectoryName);
+    }
 
     ~PluginManagerPrivate() noexcept
     {}
 
+    QDir pluginsDirectoryPath;
+    QMap<QUuid, QString> exportPlugins;
     static PluginManager *instance;
 };
 
@@ -58,6 +88,51 @@ void PluginManager::destroyInstance() noexcept
     }
 }
 
+std::vector<PluginManager::Handle> PluginManager::enumerateExportPlugins() const noexcept
+{
+    std::vector<PluginManager::Handle> exportPlugins;
+    d->exportPlugins.clear();
+    if (d->pluginsDirectoryPath.exists(ExportDirectoryName)) {
+        d->pluginsDirectoryPath.cd(ExportDirectoryName);
+        const QStringList entryList = d->pluginsDirectoryPath.entryList(QDir::Files);
+        for (const QString &fileName : entryList) {
+            QPluginLoader loader(d->pluginsDirectoryPath.absoluteFilePath(fileName));
+
+            QJsonObject metaData = loader.metaData();
+            if (!metaData.isEmpty()) {
+                QUuid pluginUuid = metaData.value(PluginUuidKey).toString();
+                QString pluginName = metaData.value(PluginNameKey).toString();
+                Handle handle = {pluginUuid, pluginName};
+                exportPlugins.push_back(handle);
+                d->exportPlugins.insert(pluginUuid, pluginName);
+            }
+        }
+
+        d->pluginsDirectoryPath.cdUp();
+    }
+
+    return exportPlugins;
+}
+
+bool PluginManager::exportData(const QUuid pluginUuid) const noexcept
+{
+    bool ok;
+    if (d->exportPlugins.contains(pluginUuid)) {
+        const QString pluginPath = d->exportPlugins.value(pluginUuid);
+        QPluginLoader loader(pluginPath);
+        QObject *plugin = loader.instance();
+        ExportIntf *exportPlugin = qobject_cast<ExportIntf *>(plugin);
+        if (exportPlugin != nullptr) {
+            ok = exportPlugin->exportData();
+        } else {
+            ok = false;
+        }
+        loader.unload();
+    } else {
+        ok = false;
+    }
+    return ok;
+}
 
 // PROTECTED
 
@@ -68,4 +143,6 @@ PluginManager::~PluginManager() noexcept
 
 PluginManager::PluginManager() noexcept
     : d(std::make_unique<PluginManagerPrivate>())
-{}
+{
+
+}

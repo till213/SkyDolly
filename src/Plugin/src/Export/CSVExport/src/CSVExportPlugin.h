@@ -22,52 +22,25 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef PLUGINMANAGER_H
-#define PLUGINMANAGER_H
-
-#include <memory>
-#include <utility>
-#include <vector>
+#ifndef CSVEXPORTPLUGIN_H
+#define CSVEXPORTPLUGIN_H
 
 #include <QObject>
+#include <QtPlugin>
 
-class QUuid;
-class QString;
+#include "../../../ExportIntf.h"
 
-#include "ExportIntf.h"
-#include "PluginLib.h"
-
-class SkyConnectIntf;
-class PluginManagerPrivate;
-
-class PLUGIN_API PluginManager : public QObject
+class CSVExportPlugin : public QObject, public ExportIntf
 {
     Q_OBJECT
+    Q_PLUGIN_METADATA(IID "com.github.till213.SkyDolly.ExportInterface/1.0" FILE "CSVExportPlugin.json")
+    Q_INTERFACES(ExportIntf)
 
 public:
+    CSVExportPlugin();
+    virtual ~CSVExportPlugin();
 
-    static constexpr char PluginUuidKey[] = "uuid";
-    static constexpr char PluginNameKey[] = "name";
-
-    static PluginManager &getInstance() noexcept;
-    static void destroyInstance() noexcept;
-
-    /*!
-     * The UUID and (non-translated) name of the plugin.
-     */
-    typedef std::pair<QUuid, QString> Handle;
-    std::vector<Handle> enumerateExportPlugins() const noexcept;
-
-    bool exportData(const QUuid pluginUuid) const noexcept;
-
-protected:
-    virtual ~PluginManager() noexcept;
-
-private:
-    Q_DISABLE_COPY(PluginManager)
-    std::unique_ptr<PluginManagerPrivate> d;
-
-    PluginManager() noexcept;
+    virtual bool exportData() noexcept override;
 };
 
-#endif // PLUGINMANAGER_H
+#endif // CSVEXPORTPLUGIN_H
