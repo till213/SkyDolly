@@ -22,52 +22,13 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef PLUGINMANAGER_H
-#define PLUGINMANAGER_H
+#ifndef CSVEXPORTPLUGINLIB_H
+#define CSVEXPORTPLUGINLIB_H
 
-#include <memory>
-#include <utility>
-#include <vector>
+#ifdef CSVEXPORTPLUGIN_EXPORT
+# define CSV_EXPORT_PLUGIN_API Q_DECL_EXPORT
+#else
+# define CSV_EXPORT_PLUGIN_API Q_DECL_IMPORT
+#endif
 
-#include <QObject>
-
-class QUuid;
-class QString;
-
-#include "ExportIntf.h"
-#include "PluginLib.h"
-
-class SkyConnectIntf;
-class PluginManagerPrivate;
-
-class PLUGIN_API PluginManager : public QObject
-{
-    Q_OBJECT
-
-public:
-
-    static constexpr char PluginUuidKey[] = "uuid";
-    static constexpr char PluginNameKey[] = "name";
-
-    static PluginManager &getInstance() noexcept;
-    static void destroyInstance() noexcept;
-
-    /*!
-     * The UUID and (non-translated) name of the plugin.
-     */
-    typedef std::pair<QUuid, QString> Handle;
-    std::vector<Handle> enumerateExportPlugins() const noexcept;
-
-    bool exportData(const QUuid pluginUuid) const noexcept;
-
-protected:
-    virtual ~PluginManager() noexcept;
-
-private:
-    Q_DISABLE_COPY(PluginManager)
-    std::unique_ptr<PluginManagerPrivate> d;
-
-    PluginManager() noexcept;
-};
-
-#endif // PLUGINMANAGER_H
+#endif // CSVEXPORTPLUGINLIB_H
