@@ -2,6 +2,11 @@
 
 ## 0.8.0
 
+### New Features
+
+- Plugin architecture
+  * Export CSV plugin
+
 ### Improvements
 
 - Aircrafts can now also be deleted from a formation flight during (paused) replay

@@ -45,7 +45,7 @@ namespace CSVConst {
         Light = 'l'
     };
 
-    extern const char *TypeColumnName;
+    inline constexpr char TypeColumnName[] = "Type";
 }
 
 #endif // CSVCONST_H

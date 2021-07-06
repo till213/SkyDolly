@@ -1085,22 +1085,6 @@ void MainWindow::on_importCSVAction_triggered() noexcept
     }
 }
 
-void MainWindow::on_exportCSVAction_triggered() noexcept
-{
-    QString exportPath = Settings::getInstance().getExportPath();
-    const QString filePath = QFileDialog::getSaveFileName(this, tr("Export CSV"), exportPath, QString("*.csv"));
-    if (!filePath.isEmpty()) {
-        const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();
-        bool ok = d->csvService->exportAircraft(aircraft, filePath);
-        if (ok) {
-            exportPath = QFileInfo(filePath).absolutePath();
-            Settings::getInstance().setExportPath(exportPath);
-        } else {
-            QMessageBox::critical(this, tr("Export error"), tr("The CSV file %1 could not be written.").arg(filePath));
-        }
-    }
-}
-
 void MainWindow::on_showSettingsAction_triggered() noexcept
 {
     d->settingsDialog->exec();
