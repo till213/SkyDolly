@@ -239,13 +239,18 @@
      <x>0</x>
      <y>0</y>
      <width>824</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="fileMenu">
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <widget class="QMenu" name="exportMenu">
+     <property name="title">
+      <string>Export</string>
+     </property>
+    </widget>
     <addaction name="newLogbookAction"/>
     <addaction name="openLogbookAction"/>
     <addaction name="separator"/>
@@ -254,6 +259,7 @@
     <addaction name="separator"/>
     <addaction name="importCSVAction"/>
     <addaction name="exportCSVAction"/>
+    <addaction name="exportMenu"/>
     <addaction name="separator"/>
     <addaction name="showSettingsAction"/>
     <addaction name="separator"/>
@@ -555,6 +561,11 @@
    </property>
    <property name="shortcut">
     <string>M</string>
+   </property>
+  </action>
+  <action name="actionMore_Text">
+   <property name="text">
+    <string>More Text</string>
    </property>
   </action>
  </widget>

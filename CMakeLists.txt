@@ -115,3 +115,16 @@ target_include_directories(SkyDolly PUBLIC
                           )
 target_link_libraries(SkyDolly PRIVATE ${SKYDOLLY_LIBS})
 message(STATUS OUTPUT_NAME=${PROJECT_NAME})
+
+if (APPLE)
+file(GLOB BUNDLE_EXPORT_PLUGINS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins/export/*")
+message(STATUS EXPORT_PLUGIN_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins/export/")
+target_sources(SkyDolly PUBLIC ${BUNDLE_EXPORT_PLUGINS})
+set_property(
+    SOURCE ${BUNDLE_EXPORT_PLUGINS}
+    PROPERTY MACOSX_PACKAGE_LOCATION "PlugIns/export"
+)
+endif()
+
+
+
