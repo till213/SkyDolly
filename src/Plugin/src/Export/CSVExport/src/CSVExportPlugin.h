@@ -28,7 +28,20 @@
 #include <QObject>
 #include <QtPlugin>
 
+class QString;
+
 #include "../../../ExportIntf.h"
+
+class Aircraft;
+class PositionData;
+class EngineData;
+class PrimaryFlightControlData;
+class SecondaryFlightControlData;
+class AircraftHandleData;
+class LightData;
+class CSVExportPrivate;
+
+class CSVExportPrivate;
 
 class CSVExportPlugin : public QObject, public ExportIntf
 {
@@ -41,6 +54,27 @@ public:
     virtual ~CSVExportPlugin();
 
     virtual bool exportData() noexcept override;
+
+private:
+    CSVExportPrivate *d;
+
+    static QString getPositionHeader() noexcept;
+    static QString getPositionData(const PositionData &data) noexcept;
+
+    static QString getEngineHeader() noexcept;
+    static QString getEngineData(const EngineData &data) noexcept;
+
+    static QString getPrimaryFlightControlHeader() noexcept;
+    static QString getPrimaryFlightControlData(const PrimaryFlightControlData &data) noexcept;
+
+    static QString getSecondaryFlightControlHeader() noexcept;
+    static QString getSecondaryFlightControlData(const SecondaryFlightControlData &data) noexcept;
+
+    static QString getAircraftHandleHeader() noexcept;
+    static QString getAircraftHandleData(const AircraftHandleData &data) noexcept;
+
+    static QString getLighteHeader() noexcept;
+    static QString getLightData(const LightData &data) noexcept;
 };
 
 #endif // CSVEXPORTPLUGIN_H

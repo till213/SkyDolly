@@ -111,7 +111,6 @@ private slots:
     void on_backupLogbookAction_triggered() noexcept;
     void on_optimiseLogbookAction_triggered() noexcept;
     void on_importCSVAction_triggered() noexcept;
-    void on_exportCSVAction_triggered() noexcept;
     void on_showSettingsAction_triggered() noexcept;
     void on_quitAction_triggered() noexcept;
     // Window menu

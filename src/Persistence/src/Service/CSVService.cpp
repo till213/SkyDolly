@@ -36,7 +36,6 @@
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/AircraftInfo.h"
 #include "../Import/CSVImport.h"
-#include "../Export/CSVExport.h"
 #include "FlightService.h"
 #include "CSVService.h"
 
@@ -78,10 +77,4 @@ bool CSVService::importAircraft(const QString &filePath) noexcept
         d->flightService.store(flight);
     }
     return ok;
-}
-
-bool CSVService::exportAircraft(const Aircraft &aircraft, const QString &filePath) noexcept
-{
-    QFile file(filePath);
-    return CSVExport::exportData(aircraft, file);
 }
