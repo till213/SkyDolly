@@ -50,6 +50,7 @@
 #include <QActionGroup>
 #include <QSpacerItem>
 #include <QTimer>
+#include <QUuid>
 
 #include "../../Kernel/src/Const.h"
 #include "../../Kernel/src/Replay.h"
@@ -70,6 +71,7 @@
 #include "../../SkyConnect/src/Connect.h"
 #include "../../Module/src/ModuleIntf.h"
 #include "../../Module/src/ModuleManager.h"
+#include "../../Plugin/src/PluginManager.h"
 #include "Dialogs/AboutDialog.h"
 #include "Dialogs/AboutLogbookDialog.h"
 #include "Dialogs/SettingsDialog.h"
@@ -135,6 +137,7 @@ public:
           replaySpeedUnitComboBox(nullptr),
           customReplaySpeedFactorValidator(nullptr),
           customReplaySpeedPercentValidator(nullptr),
+          exportQActionGroup(nullptr),
           moduleManager(nullptr),
           activeModuleId(Module::Module::None)
     {}
@@ -159,14 +162,17 @@ public:
 
     QSize lastNormalUiSize;
 
-    QActionGroup *replaySpeedActionGroup ;
+    // Replay speed
+    QActionGroup *replaySpeedActionGroup;
     ActionRadioButton *customSpeedRadioButton;
     double lastCustomReplaySpeed;
     QLineEdit *customSpeedLineEdit;
     QComboBox *replaySpeedUnitComboBox;
-
     QDoubleValidator *customReplaySpeedFactorValidator;
     QDoubleValidator *customReplaySpeedPercentValidator;
+
+    // Import / export
+    QActionGroup *exportQActionGroup;
 
     std::unique_ptr<ModuleManager> moduleManager;
     Module::Module activeModuleId;
@@ -232,7 +238,11 @@ void MainWindow::frenchConnection() noexcept
     connect(d->replaySpeedActionGroup, &QActionGroup::triggered,
             this, &MainWindow::updateReplaySpeedUi);
     connect(d->replaySpeedActionGroup, &QActionGroup::triggered,
-            this, &MainWindow::handleReplaySpeedSelected);    
+            this, &MainWindow::handleReplaySpeedSelected);
+
+    // Menu actions
+    connect(d->exportQActionGroup, &QActionGroup::triggered,
+            this, &MainWindow::handleExport);
 
     // Ui elements
     connect(d->customSpeedLineEdit, &QLineEdit::editingFinished,
@@ -305,6 +315,7 @@ void MainWindow::initUi() noexcept
 
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
 
+    initFileMenu();
     initModuleSelectorUi();
     initControlUi();
     initReplaySpeedUi();
@@ -319,6 +330,26 @@ void MainWindow::initUi() noexcept
     if (!windowGeometry.isEmpty()) {
         restoreGeometry(windowGeometry);
         restoreState(windowState);
+    }
+}
+
+void MainWindow::initFileMenu() noexcept
+{
+    std::vector<PluginManager::Handle> exportPlugins;
+
+    exportPlugins = PluginManager::getInstance().enumerateExportPlugins();
+    if (exportPlugins.size() > 0) {
+        d->exportQActionGroup = new QActionGroup(this);
+        ui->exportMenu->setVisible(true);
+
+        for (const PluginManager::Handle &handle : exportPlugins) {
+            QAction *exportAction = new QAction(handle.second, ui->exportMenu);
+            exportAction->setData(handle.first);
+            d->exportQActionGroup->addAction(exportAction);
+        }
+
+    } else {
+        ui->exportMenu->setVisible(false);
     }
 }
 
@@ -1212,4 +1243,10 @@ void MainWindow::handleLogbookConnectionChanged(bool connected) noexcept
 {
     d->connectedWithLogbook = connected;
     updateUi();
+}
+
+void MainWindow::handleExport(QAction *action) noexcept
+{
+    QUuid uuid = action->data().toUuid();
+    PluginManager::getInstance().exportData(uuid);
 }
