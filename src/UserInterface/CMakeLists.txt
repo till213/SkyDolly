@@ -13,7 +13,7 @@ else()
 endif()
 
 set(USERINTERFACE_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence SkyConnect Module
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence SkyConnect Module Plugin
 )
 if (APPLE)
     list(APPEND USERINTERFACE_LIBS -lc++)
