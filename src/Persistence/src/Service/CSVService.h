@@ -43,7 +43,6 @@ public:
     virtual ~CSVService() noexcept;
 
     bool importAircraft(const QString &filePath) noexcept;
-    bool exportAircraft(const Aircraft &aircraft, const QString &filePath) noexcept;
 
 private:
     std::unique_ptr<CSVServicePrivate> d;
