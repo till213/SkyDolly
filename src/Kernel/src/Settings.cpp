@@ -483,6 +483,9 @@ void Settings::restore() noexcept
 
 Settings::~Settings()
 {
+#ifdef DEBUG
+    qDebug("Settings::~Settings: DELETED");
+#endif
     store();
 }
 
@@ -496,6 +499,9 @@ const Version &Settings::getVersion() const
 Settings::Settings() noexcept
     : d(std::make_unique<SettingsPrivate>())
 {
+#ifdef DEBUG
+    qDebug("Settings::Settings: CREATED");
+#endif
     restore();
     frenchConnection();
 }

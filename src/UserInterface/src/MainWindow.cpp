@@ -346,6 +346,7 @@ void MainWindow::initFileMenu() noexcept
             QAction *exportAction = new QAction(handle.second, ui->exportMenu);
             exportAction->setData(handle.first);
             d->exportQActionGroup->addAction(exportAction);
+            ui->exportMenu->addAction(exportAction);
         }
 
     } else {

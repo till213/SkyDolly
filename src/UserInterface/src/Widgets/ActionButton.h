@@ -81,7 +81,6 @@ private slots:
     * action is deleted.
     */
    void disconnectFromAction() noexcept;
-
 };
 
 #endif // ACTIONBUTTON_H
