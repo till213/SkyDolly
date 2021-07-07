@@ -7,6 +7,7 @@
 - Plugin architecture
   * Import CSV plugin
   * Export CSV plugin
+  * Export KML plugin ("Google Earth")
 
 ### Improvements
 
