@@ -15,7 +15,7 @@ set(CSV_EXPORT_PLUGIN_LIBS
     Qt${QT_VERSION_MAJOR}::Widgets Kernel Model
 )
 if (APPLE)
-    list(APPEND PLUGIN_LIBS -lc++)
+    list(APPEND CSV_EXPORT_PLUGIN_LIBS -lc++)
 endif()
 
 target_link_libraries(CSVExport PRIVATE ${CSV_EXPORT_PLUGIN_LIBS})
