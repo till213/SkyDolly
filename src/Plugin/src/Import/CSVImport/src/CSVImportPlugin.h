@@ -22,53 +22,20 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef PLUGINMANAGER_H
-#define PLUGINMANAGER_H
-
-#include <memory>
-#include <utility>
-#include <vector>
+#ifndef CSVIMPORTPLUGIN_H
+#define CSVIMPORTPLUGIN_H
 
 #include <QObject>
 
-class QUuid;
-class QString;
+#include "../../../ImportIntf.h"
 
-#include "ExportIntf.h"
-#include "PluginLib.h"
-
-class SkyConnectIntf;
-class PluginManagerPrivate;
-
-class PLUGIN_API PluginManager : public QObject
+class CSVImportPlugin : public QObject, public ImportIntf
 {
-    Q_OBJECT
-
 public:
+    CSVImportPlugin() noexcept;
+    virtual ~CSVImportPlugin() noexcept;
 
-    static constexpr char PluginUuidKey[] = "uuid";
-    static constexpr char PluginNameKey[] = "name";
-
-    static PluginManager &getInstance() noexcept;
-    static void destroyInstance() noexcept;
-
-    /*!
-     * The UUID and (non-translated) name of the plugin.
-     */
-    typedef std::pair<QUuid, QString> Handle;
-    std::vector<Handle> enumerateExportPlugins() const noexcept;
-    std::vector<Handle> enumerateImportPlugins() const noexcept;
-
-    bool exportData(const QUuid pluginUuid) const noexcept;
-
-protected:
-    virtual ~PluginManager() noexcept;
-
-private:
-    Q_DISABLE_COPY(PluginManager)
-    std::unique_ptr<PluginManagerPrivate> d;
-
-    PluginManager() noexcept;
+    virtual bool importData() noexcept override;
 };
 
-#endif // PLUGINMANAGER_H
+#endif // CSVIMPORTPLUGIN_H
