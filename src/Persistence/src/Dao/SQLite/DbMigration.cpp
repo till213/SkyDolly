@@ -40,6 +40,7 @@ public:
 DbMigration::DbMigration()
     : d(std::make_unique<DbMigrationPrivate>())
 {
+     Q_INIT_RESOURCE(Migration);
 }
 
 DbMigration::~DbMigration()
@@ -52,9 +53,6 @@ bool DbMigration::migrateExAnte() noexcept
 
 bool DbMigration::migrateDdl() noexcept
 {
-
-    Q_INIT_RESOURCE(Migration);
-
     QFile migr(":/dao/sqlite/migr/migr-ddl.sql");
     migr.open(QFile::OpenModeFlag::ReadOnly | QFile::OpenModeFlag::Text);
 

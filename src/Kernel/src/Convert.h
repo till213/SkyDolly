@@ -22,31 +22,26 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLEXPORTPLUGIN_H
-#define KMLEXPORTPLUGIN_H
+#ifndef CONVERT_H
+#define CONVERT_H
 
-#include <QObject>
-#include <QtPlugin>
+#include "KernelLib.h"
 
-class QFile;
-
-#include "../../../ExportIntf.h"
-
-class Aircraft;
-
-class KMLExportPlugin : public QObject, public ExportIntf
+class KERNEL_API Convert
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "KMLExportPlugin.json")
-    Q_INTERFACES(ExportIntf)
 public:
-    KMLExportPlugin();
-    virtual ~KMLExportPlugin();
 
-    virtual bool exportData() const noexcept override;
-
-private:
-    bool exportPositionData(const Aircraft &aircraft, QFile &file) const noexcept;
+    /*!
+     * Converts the \c feet to metres.
+     *
+     * https://www.metric-conversions.org/length/feet-to-meters.htm
+     *
+     * \return the \c feet converted to metres
+     */
+    static inline double feetToMeters(double feet) noexcept
+    {
+        return feet / 3.2808;
+    }
 };
 
-#endif // KMLEXPORTPLUGIN_H
+#endif // CONVERT_H

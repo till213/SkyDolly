@@ -183,6 +183,8 @@ MainWindow::MainWindow(QWidget *parent) noexcept
       ui(std::make_unique<Ui::MainWindow>()),
       d(std::make_unique<MainWindowPrivate>())
 {
+    Q_INIT_RESOURCE(SkyDolly);
+
     ui->setupUi(this);
     const QString logbookPath = Settings::getInstance().getLogbookPath();
     d->connectedWithLogbook = d->databaseService->connectWithLogbook(logbookPath, this);
@@ -960,14 +962,14 @@ void MainWindow::updateFileMenu() noexcept
     case Connect::State::Recording:
         // Fall-thru intentional
     case Connect::State::RecordingPaused:
-        ui->importCSVAction->setEnabled(false);
-        ui->exportCSVAction->setEnabled(false);
+        ui->importMenu->setEnabled(false);
+        ui->exportMenu->setEnabled(false);
         ui->backupLogbookAction->setEnabled(false);
         ui->optimiseLogbookAction->setEnabled(false);
         break;
     default:        
-        ui->importCSVAction->setEnabled(d->connectedWithLogbook);
-        ui->exportCSVAction->setEnabled(hasRecording);
+        ui->importMenu->setEnabled(d->connectedWithLogbook);
+        ui->exportMenu->setEnabled(hasRecording);
         ui->backupLogbookAction->setEnabled(d->connectedWithLogbook);
         ui->optimiseLogbookAction->setEnabled(d->connectedWithLogbook);
     }
