@@ -251,13 +251,18 @@
       <string>Export</string>
      </property>
     </widget>
+    <widget class="QMenu" name="importMenu">
+     <property name="title">
+      <string>Import</string>
+     </property>
+    </widget>
     <addaction name="newLogbookAction"/>
     <addaction name="openLogbookAction"/>
     <addaction name="separator"/>
     <addaction name="backupLogbookAction"/>
     <addaction name="optimiseLogbookAction"/>
     <addaction name="separator"/>
-    <addaction name="importCSVAction"/>
+    <addaction name="importMenu"/>
     <addaction name="exportMenu"/>
     <addaction name="separator"/>
     <addaction name="showSettingsAction"/>
@@ -565,6 +570,11 @@
   <action name="actionMore_Text">
    <property name="text">
     <string>More Text</string>
+   </property>
+  </action>
+  <action name="actionabc">
+   <property name="text">
+    <string>abc</string>
    </property>
   </action>
  </widget>

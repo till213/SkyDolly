@@ -172,6 +172,7 @@ public:
     QDoubleValidator *customReplaySpeedPercentValidator;
 
     // Import / export
+    QActionGroup *importQActionGroup;
     QActionGroup *exportQActionGroup;
 
     std::unique_ptr<ModuleManager> moduleManager;
@@ -241,6 +242,8 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::handleReplaySpeedSelected);
 
     // Menu actions
+    connect(d->importQActionGroup, &QActionGroup::triggered,
+            this, &MainWindow::handleImport);
     connect(d->exportQActionGroup, &QActionGroup::triggered,
             this, &MainWindow::handleExport);
 
@@ -335,8 +338,27 @@ void MainWindow::initUi() noexcept
 
 void MainWindow::initFileMenu() noexcept
 {
+    std::vector<PluginManager::Handle> importPlugins;
     std::vector<PluginManager::Handle> exportPlugins;
 
+    // Import
+    importPlugins = PluginManager::getInstance().enumerateImportPlugins();
+    if (importPlugins.size() > 0) {
+        d->importQActionGroup = new QActionGroup(this);
+        ui->importMenu->setVisible(true);
+
+        for (const PluginManager::Handle &handle : importPlugins) {
+            QAction *importAction = new QAction(handle.second, ui->importMenu);
+            importAction->setData(handle.first);
+            d->importQActionGroup->addAction(importAction);
+            ui->importMenu->addAction(importAction);
+        }
+
+    } else {
+        ui->exportMenu->setVisible(false);
+    }
+
+    // Export
     exportPlugins = PluginManager::getInstance().enumerateExportPlugins();
     if (exportPlugins.size() > 0) {
         d->exportQActionGroup = new QActionGroup(this);
@@ -1047,44 +1069,6 @@ void MainWindow::on_optimiseLogbookAction_triggered() noexcept
     }
 }
 
-void MainWindow::on_importCSVAction_triggered() noexcept
-{
-    QMessageBox::StandardButton reply;
-    int previewInfoCount = Settings::getInstance().getPreviewInfoDialogCount();
-    if (previewInfoCount > 0) {
-        --previewInfoCount;
-        reply = QMessageBox::question(this, "Preview",
-            QString("%1 %2 is an early preview version. The format of the exported CSV values in this version has changed compared with the previous version 0.4.2, "
-                    "making the data invalid. Upcoming preview versions may still change the format in an incompatible way yet again.\n\n"
-                    "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(previewInfoCount),
-            QMessageBox::StandardButton::Ok | QMessageBox::StandardButton::Abort);
-        Settings::getInstance().setPreviewInfoDialogCount(previewInfoCount);
-    } else {
-        reply = QMessageBox::StandardButton::Ok;
-    }
-
-    if (reply == QMessageBox::StandardButton::Ok) {
-        QString exportPath = Settings::getInstance().getExportPath();
-        const QString filePath = QFileDialog::getOpenFileName(this, tr("Import CSV"), exportPath, QString("*.csv"));
-        if (!filePath.isEmpty()) {
-
-            bool ok = d->csvService->importAircraft(filePath);
-            if (ok) {
-                updateUi();
-                d->skyConnect.skipToBegin();
-                if (d->skyConnect.isConnected()) {
-                    d->skyConnect.startReplay(true);
-                    d->skyConnect.setPaused(true);
-                }
-                exportPath = QFileInfo(filePath).absolutePath();
-                Settings::getInstance().setExportPath(exportPath);
-            } else {
-                QMessageBox::critical(this, tr("Import error"), tr("The CSV file %1 could not be read.").arg(filePath));
-            }
-        }
-    }
-}
-
 void MainWindow::on_showSettingsAction_triggered() noexcept
 {
     d->settingsDialog->exec();
@@ -1228,6 +1212,12 @@ void MainWindow::handleLogbookConnectionChanged(bool connected) noexcept
 {
     d->connectedWithLogbook = connected;
     updateUi();
+}
+
+void MainWindow::handleImport(QAction *action) noexcept
+{
+    QUuid uuid = action->data().toUuid();
+    PluginManager::getInstance().importData(uuid);
 }
 
 void MainWindow::handleExport(QAction *action) noexcept

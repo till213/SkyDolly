@@ -67,8 +67,8 @@ public:
 
     QDir pluginsDirectoryPath;
     // UUID / plugin path
-    QMap<QUuid, QString> exportPlugins;
-    QMap<QUuid, QString> importPlugins;
+    QMap<QUuid, QString> exportPluginRegistry;
+    QMap<QUuid, QString> importPluginRegistry;
     static PluginManager *instance;
 };
 
@@ -92,67 +92,41 @@ void PluginManager::destroyInstance() noexcept
     }
 }
 
-std::vector<PluginManager::Handle> PluginManager::enumerateExportPlugins() const noexcept
+std::vector<PluginManager::Handle> PluginManager::enumerateExportPlugins() noexcept
 {
-    std::vector<PluginManager::Handle> exportPlugins;
-    d->exportPlugins.clear();
-    if (d->pluginsDirectoryPath.exists(ExportDirectoryName)) {
-        d->pluginsDirectoryPath.cd(ExportDirectoryName);
-        const QStringList entryList = d->pluginsDirectoryPath.entryList(QDir::Files);
-        for (const QString &fileName : entryList) {
-            const QString pluginPath = d->pluginsDirectoryPath.absoluteFilePath(fileName);
-            QPluginLoader loader(pluginPath);
-
-            QJsonObject metaData = loader.metaData();
-            if (!metaData.isEmpty()) {
-                QJsonObject pluginMetaData = metaData.value("MetaData").toObject();
-                QUuid pluginUuid = pluginMetaData.value(PluginUuidKey).toString();
-                QString pluginName = pluginMetaData.value(PluginNameKey).toString();
-                Handle handle = {pluginUuid, pluginName};
-                exportPlugins.push_back(handle);
-                d->exportPlugins.insert(pluginUuid, pluginPath);
-            }
-        }
-
-        d->pluginsDirectoryPath.cdUp();
-    }
-
-    return exportPlugins;
+    return enumeratePlugins(ExportDirectoryName, d->exportPluginRegistry);
 }
 
-std::vector<PluginManager::Handle> PluginManager::enumerateImportPlugins() const noexcept
+std::vector<PluginManager::Handle> PluginManager::enumerateImportPlugins() noexcept
 {
-    std::vector<PluginManager::Handle> exportPlugins;
-    d->exportPlugins.clear();
-    if (d->pluginsDirectoryPath.exists(ExportDirectoryName)) {
-        d->pluginsDirectoryPath.cd(ExportDirectoryName);
-        const QStringList entryList = d->pluginsDirectoryPath.entryList(QDir::Files);
-        for (const QString &fileName : entryList) {
-            const QString pluginPath = d->pluginsDirectoryPath.absoluteFilePath(fileName);
-            QPluginLoader loader(pluginPath);
+    return enumeratePlugins(ImportDirectoryName, d->importPluginRegistry);
+}
 
-            QJsonObject metaData = loader.metaData();
-            if (!metaData.isEmpty()) {
-                QJsonObject pluginMetaData = metaData.value("MetaData").toObject();
-                QUuid pluginUuid = pluginMetaData.value(PluginUuidKey).toString();
-                QString pluginName = pluginMetaData.value(PluginNameKey).toString();
-                Handle handle = {pluginUuid, pluginName};
-                exportPlugins.push_back(handle);
-                d->exportPlugins.insert(pluginUuid, pluginPath);
-            }
+bool PluginManager::importData(const QUuid pluginUuid) const noexcept
+{
+    bool ok;
+    if (d->importPluginRegistry.contains(pluginUuid)) {
+        const QString pluginPath = d->importPluginRegistry.value(pluginUuid);
+        QPluginLoader loader(pluginPath);
+        QObject *plugin = loader.instance();
+        ImportIntf *importPlugin = qobject_cast<ImportIntf *>(plugin);
+        if (importPlugin != nullptr) {
+            ok = importPlugin->importData();
+        } else {
+            ok = false;
         }
-
-        d->pluginsDirectoryPath.cdUp();
+        loader.unload();
+    } else {
+        ok = false;
     }
-
-    return exportPlugins;
+    return ok;
 }
 
 bool PluginManager::exportData(const QUuid pluginUuid) const noexcept
 {
     bool ok;
-    if (d->exportPlugins.contains(pluginUuid)) {
-        const QString pluginPath = d->exportPlugins.value(pluginUuid);
+    if (d->exportPluginRegistry.contains(pluginUuid)) {
+        const QString pluginPath = d->exportPluginRegistry.value(pluginUuid);
         QPluginLoader loader(pluginPath);
         QObject *plugin = loader.instance();
         ExportIntf *exportPlugin = qobject_cast<ExportIntf *>(plugin);
@@ -185,4 +159,31 @@ PluginManager::PluginManager() noexcept
 #ifdef DEBUG
     qDebug("PluginManager::PluginManager: CREATED");
 #endif
+}
+
+std::vector<PluginManager::Handle> PluginManager::enumeratePlugins(const QString &pluginDirectoryName, QMap<QUuid, QString> &pluginRegistry) noexcept
+{
+    std::vector<PluginManager::Handle> pluginHandles;
+    pluginRegistry.clear();
+    if (d->pluginsDirectoryPath.exists(pluginDirectoryName)) {
+        d->pluginsDirectoryPath.cd(pluginDirectoryName);
+        const QStringList entryList = d->pluginsDirectoryPath.entryList(QDir::Files);
+        for (const QString &fileName : entryList) {
+            const QString pluginPath = d->pluginsDirectoryPath.absoluteFilePath(fileName);
+            QPluginLoader loader(pluginPath);
+
+            QJsonObject metaData = loader.metaData();
+            if (!metaData.isEmpty()) {
+                QJsonObject pluginMetaData = metaData.value("MetaData").toObject();
+                QUuid pluginUuid = pluginMetaData.value(PluginUuidKey).toString();
+                QString pluginName = pluginMetaData.value(PluginNameKey).toString();
+                Handle handle = {pluginUuid, pluginName};
+                pluginHandles.push_back(handle);
+                pluginRegistry.insert(pluginUuid, pluginPath);
+            }
+        }
+        d->pluginsDirectoryPath.cdUp();
+    }
+
+    return pluginHandles;
 }
