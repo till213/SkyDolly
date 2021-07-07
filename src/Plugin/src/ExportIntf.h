@@ -25,7 +25,7 @@
 #ifndef EXPORTINTF_H
 #define EXPORTINTF_H
 
-#include <QObject>
+#include <QtPlugin>
 
 #include "PluginLib.h"
 

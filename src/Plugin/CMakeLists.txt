@@ -12,6 +12,7 @@ target_sources(Plugin
         src/PluginManager.cpp
         src/PluginManager.h
         src/ExportIntf.h
+        src/ImportIntf.h
 )
 
 set(PLUGIN_LIBS
@@ -34,3 +35,5 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins)
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/Export)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/Import)
+
