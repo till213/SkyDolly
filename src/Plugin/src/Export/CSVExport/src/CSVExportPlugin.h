@@ -52,7 +52,7 @@ public:
     CSVExportPlugin();
     virtual ~CSVExportPlugin();
 
-    virtual bool exportData() noexcept override;
+    virtual bool exportData() const noexcept override;
 
 private:
     CSVExportPrivate *d;
