@@ -56,9 +56,10 @@ public:
      * The UUID and (non-translated) name of the plugin.
      */
     typedef std::pair<QUuid, QString> Handle;
-    std::vector<Handle> enumerateExportPlugins() const noexcept;
-    std::vector<Handle> enumerateImportPlugins() const noexcept;
+    std::vector<Handle> enumerateExportPlugins() noexcept;
+    std::vector<Handle> enumerateImportPlugins() noexcept;
 
+    bool importData(const QUuid pluginUuid) const noexcept;
     bool exportData(const QUuid pluginUuid) const noexcept;
 
 protected:
@@ -69,6 +70,8 @@ private:
     std::unique_ptr<PluginManagerPrivate> d;
 
     PluginManager() noexcept;
+
+    std::vector<PluginManager::Handle> enumeratePlugins(const QString &pluginDirectoryName, QMap<QUuid, QString> &plugins) noexcept;
 };
 
 #endif // PLUGINMANAGER_H

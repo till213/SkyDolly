@@ -110,7 +110,6 @@ private slots:
     void on_openLogbookAction_triggered() noexcept;
     void on_backupLogbookAction_triggered() noexcept;
     void on_optimiseLogbookAction_triggered() noexcept;
-    void on_importCSVAction_triggered() noexcept;
     void on_showSettingsAction_triggered() noexcept;
     void on_quitAction_triggered() noexcept;
     // Window menu
@@ -140,7 +139,8 @@ private slots:
     void handleFlightRestored() noexcept;
     void handleLogbookConnectionChanged(bool connected) noexcept;
 
-    // Export
+    // Import / export
+    void handleImport(QAction *action) noexcept;
     void handleExport(QAction *action) noexcept;
 };
 #endif // MAINWINDOW_H
