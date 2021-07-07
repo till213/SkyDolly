@@ -28,16 +28,19 @@
 
 CSVImportPlugin::CSVImportPlugin() noexcept
 {
-
+#ifdef DEBUG
+    qDebug("CSVImportPlugin::CSVImportPlugin: PLUGIN LOADED");
+#endif
 }
 
-CSVImport::~CSVImportPlugin() noexcept
+CSVImportPlugin::~CSVImportPlugin() noexcept
 {
-    // TODO
-    return true;
+#ifdef DEBUG
+    qDebug("CSVImportPlugin::~CSVImportPlugin: PLUGIN UNLOADED");
+#endif
 }
 
-bool CSVImport::importData() noexcept
+bool CSVImportPlugin::importData() noexcept
 {
     return true;
 }
