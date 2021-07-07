@@ -33,11 +33,13 @@
 #include <QStringList>
 
 #include "ExportIntf.h"
+#include "ImportIntf.h"
 #include "PluginManager.h"
 
 namespace
 {
     constexpr char ExportDirectoryName[] = "export";
+    constexpr char ImportDirectoryName[] = "import";
 #if defined(Q_OS_MAC)
     constexpr char PluginDirectoryName[] = "PlugIns";
 #else
@@ -64,7 +66,9 @@ public:
     {}
 
     QDir pluginsDirectoryPath;
+    // UUID / plugin path
     QMap<QUuid, QString> exportPlugins;
+    QMap<QUuid, QString> importPlugins;
     static PluginManager *instance;
 };
 
@@ -89,6 +93,34 @@ void PluginManager::destroyInstance() noexcept
 }
 
 std::vector<PluginManager::Handle> PluginManager::enumerateExportPlugins() const noexcept
+{
+    std::vector<PluginManager::Handle> exportPlugins;
+    d->exportPlugins.clear();
+    if (d->pluginsDirectoryPath.exists(ExportDirectoryName)) {
+        d->pluginsDirectoryPath.cd(ExportDirectoryName);
+        const QStringList entryList = d->pluginsDirectoryPath.entryList(QDir::Files);
+        for (const QString &fileName : entryList) {
+            const QString pluginPath = d->pluginsDirectoryPath.absoluteFilePath(fileName);
+            QPluginLoader loader(pluginPath);
+
+            QJsonObject metaData = loader.metaData();
+            if (!metaData.isEmpty()) {
+                QJsonObject pluginMetaData = metaData.value("MetaData").toObject();
+                QUuid pluginUuid = pluginMetaData.value(PluginUuidKey).toString();
+                QString pluginName = pluginMetaData.value(PluginNameKey).toString();
+                Handle handle = {pluginUuid, pluginName};
+                exportPlugins.push_back(handle);
+                d->exportPlugins.insert(pluginUuid, pluginPath);
+            }
+        }
+
+        d->pluginsDirectoryPath.cdUp();
+    }
+
+    return exportPlugins;
+}
+
+std::vector<PluginManager::Handle> PluginManager::enumerateImportPlugins() const noexcept
 {
     std::vector<PluginManager::Handle> exportPlugins;
     d->exportPlugins.clear();
