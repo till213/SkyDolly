@@ -118,11 +118,19 @@ bool KMLExportPlugin::exportPositionData(const Aircraft &aircraft, QFile &file) 
     bool ok = file.write(placemarkBegin.toUtf8());
     if (ok) {
         // Position data
-        for (const PositionData &data : aircraft.getPositionConst()) {
-            ok = file.write((QString::number(data.longitude, 'g', 12) % "," % QString::number(data.latitude, 'g', 12) % "," % QString::number(Convert::feetToMeters(data.altitude), 'g', 6)).toUtf8() % " ");
-            if (!ok) {
-                break;
+        const Position &position = aircraft.getPositionConst();
+        const qint64 duration = position.getLast().timestamp;
+        qint64 time = 0;
+
+        while (time <= duration && ok) {
+            const PositionData &positionData = position.interpolate(time, TimeVariableData::Access::Linear);
+            if (!positionData.isNull()) {
+                ok = file.write((QString::number(positionData.longitude, 'g', 12) % "," %
+                                 QString::number(positionData.latitude, 'g', 12) % "," %
+                                 QString::number(Convert::feetToMeters(positionData.altitude), 'g', 6)).toUtf8() % " ");
             }
+            // Advance in 1 second (1000 ms) steps (resampling @1Hz)
+            time += 1000;
         }
     }
     if (ok) {
