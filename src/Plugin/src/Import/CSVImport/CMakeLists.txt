@@ -15,7 +15,7 @@ set(CSV_IMPORT_PLUGIN_LIBS
     Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Plugin Persistence
 )
 if (APPLE)
-    list(APPEND PLUGIN_LIBS -lc++)
+    list(APPEND CSV_IMPORT_PLUGIN_LIBS -lc++)
 endif()
 
 target_link_libraries(CSVImport PRIVATE ${CSV_IMPORT_PLUGIN_LIBS})
