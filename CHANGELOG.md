@@ -5,6 +5,7 @@
 ### New Features
 
 - Plugin architecture
+  * Import CSV plugin
   * Export CSV plugin
 
 ### Improvements
