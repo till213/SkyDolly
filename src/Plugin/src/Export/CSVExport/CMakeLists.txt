@@ -1,5 +1,3 @@
-add_definitions(-DCSVEXPORTPLUGIN_EXPORT)
-
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_library(CSVExport SHARED "")
 else()
@@ -8,7 +6,6 @@ endif()
 
 target_sources(CSVExport
     PRIVATE
-        src/CSVExportPluginLib.h
         src/CSVExportPlugin.cpp
         src/CSVExportPlugin.h
         src/CSVExportPlugin.json

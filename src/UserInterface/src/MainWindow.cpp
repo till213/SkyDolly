@@ -1217,7 +1217,15 @@ void MainWindow::handleLogbookConnectionChanged(bool connected) noexcept
 void MainWindow::handleImport(QAction *action) noexcept
 {
     QUuid uuid = action->data().toUuid();
-    PluginManager::getInstance().importData(uuid);
+    bool ok = PluginManager::getInstance().importData(uuid, *d->flightService);
+    if (ok) {
+        updateUi();
+        d->skyConnect.skipToBegin();
+        if (d->skyConnect.isConnected()) {
+            d->skyConnect.startReplay(true);
+            d->skyConnect.setPaused(true);
+        }
+    }
 }
 
 void MainWindow::handleExport(QAction *action) noexcept

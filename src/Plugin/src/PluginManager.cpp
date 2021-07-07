@@ -32,6 +32,7 @@
 #include <QDir>
 #include <QStringList>
 
+#include "../../Persistence/src/Service/FlightService.h"
 #include "ExportIntf.h"
 #include "ImportIntf.h"
 #include "PluginManager.h"
@@ -102,7 +103,7 @@ std::vector<PluginManager::Handle> PluginManager::enumerateImportPlugins() noexc
     return enumeratePlugins(ImportDirectoryName, d->importPluginRegistry);
 }
 
-bool PluginManager::importData(const QUuid pluginUuid) const noexcept
+bool PluginManager::importData(const QUuid pluginUuid, FlightService &flightService) const noexcept
 {
     bool ok;
     if (d->importPluginRegistry.contains(pluginUuid)) {
@@ -111,7 +112,7 @@ bool PluginManager::importData(const QUuid pluginUuid) const noexcept
         QObject *plugin = loader.instance();
         ImportIntf *importPlugin = qobject_cast<ImportIntf *>(plugin);
         if (importPlugin != nullptr) {
-            ok = importPlugin->importData();
+            ok = importPlugin->importData(flightService);
         } else {
             ok = false;
         }

@@ -1,5 +1,3 @@
-add_definitions(-DCSVIMPORTPLUGIN_EXPORT)
-
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_library(CSVImport SHARED "")
 else()
@@ -14,7 +12,7 @@ target_sources(CSVImport
 )
 
 set(CSV_IMPORT_PLUGIN_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Plugin Persistence
 )
 if (APPLE)
     list(APPEND PLUGIN_LIBS -lc++)

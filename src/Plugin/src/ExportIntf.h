@@ -27,8 +27,6 @@
 
 #include <QtPlugin>
 
-#include "PluginLib.h"
-
 class ExportIntf
 {
 public:
