@@ -70,8 +70,8 @@ bool CSVExportPlugin::exportData() noexcept
 {
     bool ok;
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();
-
     QString exportPath = Settings::getInstance().getExportPath();
+
     // TODO pass along main window as parent
     const QString filePath = QFileDialog::getSaveFileName(nullptr, tr("Export CSV"), exportPath, QString("*.csv"));
     if (!filePath.isEmpty()) {

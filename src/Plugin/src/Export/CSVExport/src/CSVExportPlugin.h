@@ -48,7 +48,6 @@ class CSVExportPlugin : public QObject, public ExportIntf
     Q_OBJECT
     Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "CSVExportPlugin.json")
     Q_INTERFACES(ExportIntf)
-
 public:
     CSVExportPlugin();
     virtual ~CSVExportPlugin();
