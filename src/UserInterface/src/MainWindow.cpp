@@ -135,7 +135,10 @@ public:
           replaySpeedUnitComboBox(nullptr),
           customReplaySpeedFactorValidator(nullptr),
           customReplaySpeedPercentValidator(nullptr),
+          importQActionGroup(nullptr),
           exportQActionGroup(nullptr),
+          hasImportPlugins(false),
+          hasExportPlugins(false),
           moduleManager(nullptr),
           activeModuleId(Module::Module::None)
     {}
@@ -171,6 +174,8 @@ public:
     // Import / export
     QActionGroup *importQActionGroup;
     QActionGroup *exportQActionGroup;
+    bool hasImportPlugins;
+    bool hasExportPlugins;
 
     std::unique_ptr<ModuleManager> moduleManager;
     Module::Module activeModuleId;
@@ -345,7 +350,8 @@ void MainWindow::initFileMenu() noexcept
 
     // Import
     importPlugins = PluginManager::getInstance().enumerateImportPlugins();
-    if (importPlugins.size() > 0) {        
+    d->hasImportPlugins = importPlugins.size() > 0;
+    if (d->hasImportPlugins) {
         ui->importMenu->setEnabled(true);
 
         for (const PluginManager::Handle &handle : importPlugins) {
@@ -361,7 +367,8 @@ void MainWindow::initFileMenu() noexcept
 
     // Export
     exportPlugins = PluginManager::getInstance().enumerateExportPlugins();
-    if (exportPlugins.size() > 0) {       
+    d->hasExportPlugins = exportPlugins.size() > 0;
+    if (d->hasExportPlugins) {
         ui->exportMenu->setEnabled(true);
 
         for (const PluginManager::Handle &handle : exportPlugins) {
@@ -968,8 +975,8 @@ void MainWindow::updateFileMenu() noexcept
         ui->optimiseLogbookAction->setEnabled(false);
         break;
     default:        
-        ui->importMenu->setEnabled(d->connectedWithLogbook);
-        ui->exportMenu->setEnabled(hasRecording);
+        ui->importMenu->setEnabled(d->hasImportPlugins && d->connectedWithLogbook);
+        ui->exportMenu->setEnabled(d->hasExportPlugins && hasRecording);
         ui->backupLogbookAction->setEnabled(d->connectedWithLogbook);
         ui->optimiseLogbookAction->setEnabled(d->connectedWithLogbook);
     }
