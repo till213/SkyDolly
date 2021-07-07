@@ -65,7 +65,6 @@
 #include "../../Persistence/src/Dao/DaoFactory.h"
 #include "../../Persistence/src/Service/FlightService.h"
 #include "../../Persistence/src/Service/DatabaseService.h"
-#include "../../Persistence/src/Service/CSVService.h"
 #include "../../SkyConnect/src/SkyManager.h"
 #include "../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../SkyConnect/src/Connect.h"
@@ -130,7 +129,6 @@ public:
           statisticsDialog(nullptr),
           flightService(std::make_unique<FlightService>()),
           databaseService(std::make_unique<DatabaseService>()),
-          csvService(std::make_unique<CSVService>(*flightService)),
           replaySpeedActionGroup(nullptr),
           customSpeedRadioButton(nullptr),
           customSpeedLineEdit(nullptr),
@@ -158,7 +156,6 @@ public:
     // Services
     std::unique_ptr<FlightService> flightService;
     std::unique_ptr<DatabaseService> databaseService;
-    std::unique_ptr<CSVService> csvService;
 
     QSize lastNormalUiSize;
 
@@ -341,11 +338,13 @@ void MainWindow::initFileMenu() noexcept
     std::vector<PluginManager::Handle> importPlugins;
     std::vector<PluginManager::Handle> exportPlugins;
 
+    d->importQActionGroup = new QActionGroup(this);
+    d->exportQActionGroup = new QActionGroup(this);
+
     // Import
     importPlugins = PluginManager::getInstance().enumerateImportPlugins();
-    if (importPlugins.size() > 0) {
-        d->importQActionGroup = new QActionGroup(this);
-        ui->importMenu->setVisible(true);
+    if (importPlugins.size() > 0) {        
+        ui->importMenu->setEnabled(true);
 
         for (const PluginManager::Handle &handle : importPlugins) {
             QAction *importAction = new QAction(handle.second, ui->importMenu);
@@ -355,14 +354,13 @@ void MainWindow::initFileMenu() noexcept
         }
 
     } else {
-        ui->exportMenu->setVisible(false);
+        ui->importMenu->setEnabled(false);
     }
 
     // Export
     exportPlugins = PluginManager::getInstance().enumerateExportPlugins();
-    if (exportPlugins.size() > 0) {
-        d->exportQActionGroup = new QActionGroup(this);
-        ui->exportMenu->setVisible(true);
+    if (exportPlugins.size() > 0) {       
+        ui->exportMenu->setEnabled(true);
 
         for (const PluginManager::Handle &handle : exportPlugins) {
             QAction *exportAction = new QAction(handle.second, ui->exportMenu);
@@ -372,7 +370,7 @@ void MainWindow::initFileMenu() noexcept
         }
 
     } else {
-        ui->exportMenu->setVisible(false);
+        ui->exportMenu->setEnabled(false);
     }
 }
 
