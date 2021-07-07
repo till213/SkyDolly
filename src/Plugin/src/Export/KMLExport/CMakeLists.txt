@@ -1,9 +1,15 @@
 set(PLUGIN_NAME "KMLExportPlugin")
 
+qt5_add_resources(PLUGIN_SOURCES res/KMLExport.qrc)
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(${PLUGIN_NAME} SHARED "")
+    qt_add_library(${PLUGIN_NAME} SHARED
+        ${PLUGIN_SOURCES}
+    )
 else()
-    add_library(${PLUGIN_NAME} SHARED "")
+    add_library(${PLUGIN_NAME} SHARED
+        ${PLUGIN_SOURCES}
+    )
 endif()
 
 target_sources(${PLUGIN_NAME}

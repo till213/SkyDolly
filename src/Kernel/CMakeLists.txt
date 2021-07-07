@@ -23,6 +23,7 @@ target_sources(Kernel
         src/Settings.cpp
         src/Settings.h
         src/Replay.h
+        src/Convert.h
 )
 
 set(KERNEL_LIBS
