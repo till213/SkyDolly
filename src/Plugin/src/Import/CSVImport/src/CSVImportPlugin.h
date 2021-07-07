@@ -26,16 +26,38 @@
 #define CSVIMPORTPLUGIN_H
 
 #include <QObject>
+#include <QtPlugin>
+
+class Aircraft;
+class Engine;
+class PrimaryFlightControl;
+class SecondaryFlightControl;
+class AircraftHandle;
+class Light;
+class FlightService;
+class CSVExportPrivate;
 
 #include "../../../ImportIntf.h"
 
 class CSVImportPlugin : public QObject, public ImportIntf
 {
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "CSVImportPlugin.json")
+    Q_INTERFACES(ImportIntf)
 public:
     CSVImportPlugin() noexcept;
     virtual ~CSVImportPlugin() noexcept;
 
-    virtual bool importData() noexcept override;
+    virtual bool importData(FlightService &flightService) noexcept override;
+
+private:
+    static bool importPositionData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Aircraft &aircraft) noexcept;
+    static bool importEngineData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Engine &engine) noexcept;
+    static bool importPrimaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, PrimaryFlightControl &primaryFlightControl) noexcept;
+    static bool importSecondaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, SecondaryFlightControl &secondaryFlightControl) noexcept;
+    static bool importAircraftHandleData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, AircraftHandle &aircraftHandle) noexcept;
+    static bool importLightData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Light &light) noexcept;
+    static bool importTimestamp(const QList<QByteArray> &values, int columnIndex, bool firstRow, qint64 &timestamp, qint64 &timestampDelta);
 };
 
 #endif // CSVIMPORTPLUGIN_H

@@ -38,6 +38,7 @@ class QString;
 #include "PluginLib.h"
 
 class SkyConnectIntf;
+class FlightService;
 class PluginManagerPrivate;
 
 class PLUGIN_API PluginManager : public QObject
@@ -59,7 +60,7 @@ public:
     std::vector<Handle> enumerateExportPlugins() noexcept;
     std::vector<Handle> enumerateImportPlugins() noexcept;
 
-    bool importData(const QUuid pluginUuid) const noexcept;
+    bool importData(const QUuid pluginUuid, FlightService &flightService) const noexcept;
     bool exportData(const QUuid pluginUuid) const noexcept;
 
 protected:
