@@ -33,6 +33,7 @@ class QFile;
 #include "../../../ExportIntf.h"
 #include "../../../PluginBase.h"
 
+class Flight;
 class Aircraft;
 
 class KMLExportPlugin : public PluginBase, public ExportIntf
@@ -57,7 +58,8 @@ public:
     virtual bool exportData() const noexcept override;
 
 private:
-    bool exportPositionData(const Aircraft &aircraft, QFile &file) const noexcept;
+    bool exportFlightData(const Flight &flight, QFile &file) const noexcept;
+    bool exportAircraftData(const Aircraft &aircraft, QFile &file) const noexcept;
 };
 
 #endif // KMLEXPORTPLUGIN_H

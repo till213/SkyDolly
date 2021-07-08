@@ -58,7 +58,7 @@ KMLExportPlugin::~KMLExportPlugin()
 bool KMLExportPlugin::exportData() const noexcept
 {
     bool ok;
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
     QString exportPath = Settings::getInstance().getExportPath();
 
     const QString filePath = QFileDialog::getSaveFileName(getParentWidget(), tr("Export KML"), exportPath, QString("*.kml"));
@@ -75,7 +75,7 @@ bool KMLExportPlugin::exportData() const noexcept
             kmlFile.close();
         }
         if (ok) {
-            ok = exportPositionData(aircraft, file);
+            ok = exportFlightData(flight, file);
         }
         if (ok) {
             QFile kmlFile(":/kml/Footer.kml");
@@ -100,7 +100,19 @@ bool KMLExportPlugin::exportData() const noexcept
 
 // PRIVATE
 
-bool KMLExportPlugin::exportPositionData(const Aircraft &aircraft, QFile &file) const noexcept
+bool KMLExportPlugin::exportFlightData(const Flight &flight, QFile &file) const noexcept
+{
+    bool ok = true;
+    for (const auto &aircraft : flight) {
+        ok = exportAircraftData(*aircraft, file);
+        if (!ok) {
+            break;
+        }
+    }
+    return ok;
+}
+
+bool KMLExportPlugin::exportAircraftData(const Aircraft &aircraft, QFile &file) const noexcept
 {
     const PositionData positionData;
     const QString placemarkBegin = QString(
