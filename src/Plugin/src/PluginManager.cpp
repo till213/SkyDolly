@@ -27,10 +27,9 @@
 #include <QCoreApplication>
 #include <QPluginLoader>
 #include <QJsonObject>
-#include <QUuid>
-#include <QMap>
 #include <QDir>
 #include <QStringList>
+#include <QMap>
 
 #include "../../Persistence/src/Service/FlightService.h"
 #include "ExportIntf.h"
@@ -67,9 +66,9 @@ public:
     {}
 
     QDir pluginsDirectoryPath;
-    // UUID / plugin path
-    QMap<QUuid, QString> exportPluginRegistry;
-    QMap<QUuid, QString> importPluginRegistry;
+    // Class name / plugin path
+    QMap<QString, QString> exportPluginRegistry;
+    QMap<QString, QString> importPluginRegistry;
     static PluginManager *instance;
 };
 
@@ -103,14 +102,14 @@ std::vector<PluginManager::Handle> PluginManager::enumerateImportPlugins() noexc
     return enumeratePlugins(ImportDirectoryName, d->importPluginRegistry);
 }
 
-bool PluginManager::importData(const QUuid pluginUuid, FlightService &flightService) const noexcept
+bool PluginManager::importData(const QString &pluginClassName, FlightService &flightService) const noexcept
 {
     bool ok;
-    if (d->importPluginRegistry.contains(pluginUuid)) {
-        const QString pluginPath = d->importPluginRegistry.value(pluginUuid);
+    if (d->importPluginRegistry.contains(pluginClassName)) {
+        const QString pluginPath = d->importPluginRegistry.value(pluginClassName);
         QPluginLoader loader(pluginPath);
-        QObject *plugin = loader.instance();
-        ImportIntf *importPlugin = qobject_cast<ImportIntf *>(plugin);
+        const QObject *plugin = loader.instance();
+        const ImportIntf *importPlugin = qobject_cast<ImportIntf *>(plugin);
         if (importPlugin != nullptr) {
             ok = importPlugin->importData(flightService);
         } else {
@@ -123,11 +122,11 @@ bool PluginManager::importData(const QUuid pluginUuid, FlightService &flightServ
     return ok;
 }
 
-bool PluginManager::exportData(const QUuid pluginUuid) const noexcept
+bool PluginManager::exportData(const QString &pluginClassName) const noexcept
 {
     bool ok;
-    if (d->exportPluginRegistry.contains(pluginUuid)) {
-        const QString pluginPath = d->exportPluginRegistry.value(pluginUuid);
+    if (d->exportPluginRegistry.contains(pluginClassName)) {
+        const QString pluginPath = d->exportPluginRegistry.value(pluginClassName);
         QPluginLoader loader(pluginPath);
         QObject *plugin = loader.instance();
         ExportIntf *exportPlugin = qobject_cast<ExportIntf *>(plugin);
@@ -162,7 +161,7 @@ PluginManager::PluginManager() noexcept
 #endif
 }
 
-std::vector<PluginManager::Handle> PluginManager::enumeratePlugins(const QString &pluginDirectoryName, QMap<QUuid, QString> &pluginRegistry) noexcept
+std::vector<PluginManager::Handle> PluginManager::enumeratePlugins(const QString &pluginDirectoryName, QMap<QString, QString> &pluginRegistry) noexcept
 {
     std::vector<PluginManager::Handle> pluginHandles;
     pluginRegistry.clear();
@@ -173,14 +172,14 @@ std::vector<PluginManager::Handle> PluginManager::enumeratePlugins(const QString
             const QString pluginPath = d->pluginsDirectoryPath.absoluteFilePath(fileName);
             QPluginLoader loader(pluginPath);
 
-            QJsonObject metaData = loader.metaData();
+            const QJsonObject metaData = loader.metaData();
             if (!metaData.isEmpty()) {
-                QJsonObject pluginMetaData = metaData.value("MetaData").toObject();
-                QUuid pluginUuid = pluginMetaData.value(PluginUuidKey).toString();
-                QString pluginName = pluginMetaData.value(PluginNameKey).toString();
-                Handle handle = {pluginUuid, pluginName};
+                const QString className = metaData.value(ClassNameKey).toString();
+                const QJsonObject pluginMetaData = metaData.value("MetaData").toObject();
+                const QString pluginName = pluginMetaData.value(PluginNameKey).toString();
+                const Handle handle = {className, pluginName};
                 pluginHandles.push_back(handle);
-                pluginRegistry.insert(pluginUuid, pluginPath);
+                pluginRegistry.insert(className, pluginPath);
             }
         }
         d->pluginsDirectoryPath.cdUp();

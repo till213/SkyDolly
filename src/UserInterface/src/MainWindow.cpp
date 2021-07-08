@@ -50,7 +50,6 @@
 #include <QActionGroup>
 #include <QSpacerItem>
 #include <QTimer>
-#include <QUuid>
 
 #include "../../Kernel/src/Const.h"
 #include "../../Kernel/src/Replay.h"
@@ -356,6 +355,7 @@ void MainWindow::initFileMenu() noexcept
 
         for (const PluginManager::Handle &handle : importPlugins) {
             QAction *importAction = new QAction(handle.second, ui->importMenu);
+            // First: plugin class name
             importAction->setData(handle.first);
             d->importQActionGroup->addAction(importAction);
             ui->importMenu->addAction(importAction);
@@ -373,6 +373,7 @@ void MainWindow::initFileMenu() noexcept
 
         for (const PluginManager::Handle &handle : exportPlugins) {
             QAction *exportAction = new QAction(handle.second, ui->exportMenu);
+            // First: plugin class name
             exportAction->setData(handle.first);
             d->exportQActionGroup->addAction(exportAction);
             ui->exportMenu->addAction(exportAction);
@@ -1223,8 +1224,8 @@ void MainWindow::handleLogbookConnectionChanged(bool connected) noexcept
 
 void MainWindow::handleImport(QAction *action) noexcept
 {
-    QUuid uuid = action->data().toUuid();
-    bool ok = PluginManager::getInstance().importData(uuid, *d->flightService);
+    const QString className = action->data().toString();
+    const bool ok = PluginManager::getInstance().importData(className, *d->flightService);
     if (ok) {
         updateUi();
         d->skyConnect.skipToBegin();
@@ -1237,6 +1238,6 @@ void MainWindow::handleImport(QAction *action) noexcept
 
 void MainWindow::handleExport(QAction *action) noexcept
 {
-    QUuid uuid = action->data().toUuid();
-    PluginManager::getInstance().exportData(uuid);
+    const QString className = action->data().toString();
+    PluginManager::getInstance().exportData(className);
 }
