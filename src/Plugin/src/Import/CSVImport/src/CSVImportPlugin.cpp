@@ -164,16 +164,20 @@ bool CSVImportPlugin::importData(FlightService &flightService) const noexcept
                     aircraft.blockSignals(false);
                     emit aircraft.dataChanged();
 
-                    exportPath = QFileInfo(filePath).absolutePath();
-                    Settings::getInstance().setExportPath(exportPath);
+                    if (ok) {
+                        exportPath = QFileInfo(filePath).absolutePath();
+                        Settings::getInstance().setExportPath(exportPath);
 
-                    AircraftInfo info(aircraft.getId());
-                    info.startDate = QFileInfo(filePath).birthTime();
-                    info.endDate = info.startDate.addMSecs(aircraft.getDurationMSec());
-                    aircraft.setAircraftInfo(info);
-                    flight.setTitle(tr("CSV import"));
-                    flight.setDescription(tr("Aircraft imported on %1 from file: %2").arg(unit.formatDateTime(QDateTime::currentDateTime()), filePath));
-                    flightService.store(flight);
+                        AircraftInfo info(aircraft.getId());
+                        info.startDate = QFileInfo(filePath).birthTime();
+                        info.endDate = info.startDate.addMSecs(aircraft.getDurationMSec());
+                        aircraft.setAircraftInfo(info);
+                        flight.setTitle(tr("CSV import"));
+                        flight.setDescription(tr("Aircraft imported on %1 from file: %2").arg(unit.formatDateTime(QDateTime::currentDateTime()), filePath));
+                        flightService.store(flight);
+                    } else {
+                         QMessageBox::critical(getParentWidget(), tr("Import error"), tr("The CSV file %1 could not be read.").arg(filePath));
+                    }
 
                 } else {
                     ok = false;
