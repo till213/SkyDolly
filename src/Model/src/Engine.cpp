@@ -147,7 +147,7 @@ const EngineData &Engine::interpolate(qint64 timestamp, TimeVariableData::Access
             d->currentEngineData.cowlFlapPosition3 = SkyMath::interpolateLinear(p1->cowlFlapPosition3, p2->cowlFlapPosition3, tn);
             d->currentEngineData.cowlFlapPosition4 = SkyMath::interpolateLinear(p1->cowlFlapPosition4, p2->cowlFlapPosition4, tn);
 
-            // No interpolation for battery and starter states (boolean)
+            // No interpolation for battery and starter/combustion states (boolean)
             d->currentEngineData.electricalMasterBattery1 = p1->electricalMasterBattery1;
             d->currentEngineData.electricalMasterBattery2 = p1->electricalMasterBattery2;
             d->currentEngineData.electricalMasterBattery3 = p1->electricalMasterBattery3;
@@ -156,6 +156,10 @@ const EngineData &Engine::interpolate(qint64 timestamp, TimeVariableData::Access
             d->currentEngineData.generalEngineStarter2 = p1->generalEngineStarter2;
             d->currentEngineData.generalEngineStarter3 = p1->generalEngineStarter3;
             d->currentEngineData.generalEngineStarter4 = p1->generalEngineStarter4;
+            d->currentEngineData.generalEngineCombustion1 = p1->generalEngineCombustion1;
+            d->currentEngineData.generalEngineCombustion2 = p1->generalEngineCombustion2;
+            d->currentEngineData.generalEngineCombustion3 = p1->generalEngineCombustion3;
+            d->currentEngineData.generalEngineCombustion4 = p1->generalEngineCombustion4;
 
             d->currentEngineData.timestamp = timestamp;
         } else {
@@ -165,10 +169,6 @@ const EngineData &Engine::interpolate(qint64 timestamp, TimeVariableData::Access
 
         d->currentTimestamp = timestamp;
         d->currentAccess = access;
-#ifdef DEBUG
-    } else {
-        qDebug("Engine::interpolateEngineData: cached result for timestamp: %lld", timestamp);
-#endif
     }
     return d->currentEngineData;
 }
