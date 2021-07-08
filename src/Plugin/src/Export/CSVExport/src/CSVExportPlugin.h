@@ -31,6 +31,7 @@
 class QString;
 
 #include "../../../ExportIntf.h"
+#include "../../../PluginBase.h"
 
 class Aircraft;
 class PositionData;
@@ -43,7 +44,7 @@ class CSVExportPrivate;
 
 class CSVExportPrivate;
 
-class CSVExportPlugin : public QObject, public ExportIntf
+class CSVExportPlugin : public PluginBase, public ExportIntf
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "CSVExportPlugin.json")
@@ -51,6 +52,16 @@ class CSVExportPlugin : public QObject, public ExportIntf
 public:
     CSVExportPlugin();
     virtual ~CSVExportPlugin();
+
+    virtual QWidget *getParentWidget() const noexcept override
+    {
+        return PluginBase::getParentWidget();
+    }
+
+    virtual void setParentWidget(QWidget *parent) noexcept override
+    {
+        PluginBase::setParentWidget(parent);
+    }
 
     virtual bool exportData() const noexcept override;
 

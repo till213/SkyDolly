@@ -78,8 +78,7 @@ bool CSVImportPlugin::importData(FlightService &flightService) const noexcept
     // Start with the last export path
     QString exportPath = Settings::getInstance().getExportPath();
 
-    // TODO Pass main window as parent
-    const QString filePath = QFileDialog::getOpenFileName(nullptr, tr("Import CSV"), exportPath, QString("*.csv"));
+    const QString filePath = QFileDialog::getOpenFileName(getParentWidget(), tr("Import CSV"), exportPath, QString("*.csv"));
     if (!filePath.isEmpty()) {
 
         QFile file(filePath);

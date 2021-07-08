@@ -22,20 +22,30 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef EXPORTINTF_H
-#define EXPORTINTF_H
+#ifndef PLUGINBASE_H
+#define PLUGINBASE_H
 
-#include <QtPlugin>
+#include <memory>
+
+#include <QObject>
 
 #include "PluginIntf.h"
+#include "PluginLib.h"
 
-class ExportIntf : public PluginIntf
+class PluginBasePrivate;
+
+class PLUGIN_API PluginBase : public QObject, public PluginIntf
 {
+    Q_OBJECT
 public:
-    virtual bool exportData() const noexcept = 0;
+    PluginBase();
+    virtual ~PluginBase();
+
+    virtual QWidget *getParentWidget() const noexcept override;
+    virtual void setParentWidget(QWidget *parent) noexcept override;
+
+private:
+    std::unique_ptr<PluginBasePrivate> d;
 };
 
-#define EXPORT_INTERFACE_IID "com.github.till213.SkyDolly.ExportInterface/1.0"
-Q_DECLARE_INTERFACE(ExportIntf, EXPORT_INTERFACE_IID)
-
-#endif // EXPORTINTF_H
+#endif // PLUGINBASE_H
