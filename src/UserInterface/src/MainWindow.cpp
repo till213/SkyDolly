@@ -321,7 +321,7 @@ void MainWindow::initUi() noexcept
 
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
 
-    initFileMenu();
+    initPlugins();
     initModuleSelectorUi();
     initControlUi();
     initReplaySpeedUi();
@@ -339,13 +339,16 @@ void MainWindow::initUi() noexcept
     }
 }
 
-void MainWindow::initFileMenu() noexcept
+void MainWindow::initPlugins() noexcept
 {
     std::vector<PluginManager::Handle> importPlugins;
     std::vector<PluginManager::Handle> exportPlugins;
 
     d->importQActionGroup = new QActionGroup(this);
     d->exportQActionGroup = new QActionGroup(this);
+
+    PluginManager &pluginManager = PluginManager::getInstance();
+    pluginManager.initialise(this);
 
     // Import
     importPlugins = PluginManager::getInstance().enumerateImportPlugins();
