@@ -38,8 +38,9 @@ class FlightService;
 class CSVExportPrivate;
 
 #include "../../../ImportIntf.h"
+#include "../../../PluginBase.h"
 
-class CSVImportPlugin : public QObject, public ImportIntf
+class CSVImportPlugin : public PluginBase, public ImportIntf
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "CSVImportPlugin.json")
@@ -47,6 +48,16 @@ class CSVImportPlugin : public QObject, public ImportIntf
 public:
     CSVImportPlugin() noexcept;
     virtual ~CSVImportPlugin() noexcept;
+
+    virtual QWidget *getParentWidget() const noexcept override
+    {
+        return PluginBase::getParentWidget();
+    }
+
+    virtual void setParentWidget(QWidget *parent) noexcept override
+    {
+        PluginBase::setParentWidget(parent);
+    }
 
     virtual bool importData(FlightService &flightService) const noexcept override;
 

@@ -11,8 +11,11 @@ target_sources(Plugin
         src/PluginLib.h
         src/PluginManager.cpp
         src/PluginManager.h
+        src/PluginIntf.h
         src/ExportIntf.h
         src/ImportIntf.h
+        src/PluginBase.cpp
+        src/PluginBase.h
 )
 
 set(PLUGIN_LIBS

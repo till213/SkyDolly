@@ -20,7 +20,7 @@ target_sources(${PLUGIN_NAME}
 )
 
 set(PLUGIN_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Plugin
 )
 if (APPLE)
     list(APPEND PLUGIN_LIBS -lc++)

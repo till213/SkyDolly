@@ -51,6 +51,7 @@ class PluginManagerPrivate
 {
 public:
     PluginManagerPrivate() noexcept
+        : parentWidget(nullptr)
     {
         pluginsDirectoryPath = QDir(QCoreApplication::applicationDirPath());
 #if defined(Q_OS_MAC)
@@ -65,6 +66,7 @@ public:
     ~PluginManagerPrivate() noexcept
     {}
 
+    QWidget *parentWidget;
     QDir pluginsDirectoryPath;
     // Class name / plugin path
     QMap<QString, QString> exportPluginRegistry;
@@ -92,6 +94,11 @@ void PluginManager::destroyInstance() noexcept
     }
 }
 
+void PluginManager::initialise(QWidget *parentWidget)
+{
+    d->parentWidget = parentWidget;
+}
+
 std::vector<PluginManager::Handle> PluginManager::enumerateExportPlugins() noexcept
 {
     return enumeratePlugins(ExportDirectoryName, d->exportPluginRegistry);
@@ -109,8 +116,9 @@ bool PluginManager::importData(const QString &pluginClassName, FlightService &fl
         const QString pluginPath = d->importPluginRegistry.value(pluginClassName);
         QPluginLoader loader(pluginPath);
         const QObject *plugin = loader.instance();
-        const ImportIntf *importPlugin = qobject_cast<ImportIntf *>(plugin);
+        ImportIntf *importPlugin = qobject_cast<ImportIntf *>(plugin);
         if (importPlugin != nullptr) {
+            importPlugin->setParentWidget(d->parentWidget);
             ok = importPlugin->importData(flightService);
         } else {
             ok = false;
@@ -131,6 +139,7 @@ bool PluginManager::exportData(const QString &pluginClassName) const noexcept
         QObject *plugin = loader.instance();
         ExportIntf *exportPlugin = qobject_cast<ExportIntf *>(plugin);
         if (exportPlugin != nullptr) {
+            exportPlugin->setParentWidget(d->parentWidget);
             ok = exportPlugin->exportData();
         } else {
             ok = false;

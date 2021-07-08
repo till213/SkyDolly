@@ -27,13 +27,13 @@
 
 #include <QtPlugin>
 
+#include "PluginIntf.h"
+
 class FlightService;
 
-class ImportIntf
+class ImportIntf : public PluginIntf
 {
 public:
-    virtual ~ImportIntf() = default;
-
     virtual bool importData(FlightService &flightService) const noexcept = 0;
 };
 
