@@ -71,7 +71,7 @@ CSVImportPlugin::~CSVImportPlugin() noexcept
 #endif
 }
 
-bool CSVImportPlugin::importData(FlightService &flightService) noexcept
+bool CSVImportPlugin::importData(FlightService &flightService) const noexcept
 {
     bool ok;
 
