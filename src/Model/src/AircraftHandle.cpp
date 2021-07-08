@@ -161,10 +161,6 @@ const AircraftHandleData &AircraftHandle::interpolate(qint64 timestamp, TimeVari
 
         d->currentTimestamp = timestamp;
         d->currentAccess = access;
-#ifdef DEBUG
-    } else {
-        qDebug("AircraftHandle::interpolateAircraftHandleData: cached result for timestamp: %lld", timestamp);
-#endif
     }
     return d->currentAircraftHandleData;
 }

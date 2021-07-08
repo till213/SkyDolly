@@ -103,6 +103,10 @@ void EngineWidget::updateUi(qint64 timestamp, TimeVariableData::Access access) n
         ui->generalEngineStarter2CheckBox->setChecked(engineData.generalEngineStarter2);
         ui->generalEngineStarter3CheckBox->setChecked(engineData.generalEngineStarter3);
         ui->generalEngineStarter4CheckBox->setChecked(engineData.generalEngineStarter4);
+        ui->generalEngineCombustion1CheckBox->setChecked(engineData.generalEngineCombustion1);
+        ui->generalEngineCombustion2CheckBox->setChecked(engineData.generalEngineCombustion2);
+        ui->generalEngineCombustion3CheckBox->setChecked(engineData.generalEngineCombustion3);
+        ui->generalEngineCombustion4CheckBox->setChecked(engineData.generalEngineCombustion4);
 
         colorName = d->ActiveTextColor.name();
     } else {
@@ -134,6 +138,10 @@ void EngineWidget::updateUi(qint64 timestamp, TimeVariableData::Access access) n
     ui->generalEngineStarter2CheckBox->setStyleSheet(css);
     ui->generalEngineStarter3CheckBox->setStyleSheet(css);
     ui->generalEngineStarter4CheckBox->setStyleSheet(css);
+    ui->generalEngineCombustion1CheckBox->setStyleSheet(css);
+    ui->generalEngineCombustion2CheckBox->setStyleSheet(css);
+    ui->generalEngineCombustion3CheckBox->setStyleSheet(css);
+    ui->generalEngineCombustion4CheckBox->setStyleSheet(css);
 }
 
 // PRIVATE
@@ -157,24 +165,45 @@ void EngineWidget::initUi() noexcept
     ui->cowlFlaps3LineEdit->setToolTip(SimVar::RecipEngineCowlFlapPosition3);
     ui->cowlFlaps4LineEdit->setToolTip(SimVar::RecipEngineCowlFlapPosition4);
 
-    // Make the master battery and starter checkboxes checkable, but not for the user
+    // Make the master battery, starter and combustion checkboxes checkable, but not for the user
     ui->masterBattery1CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->masterBattery1CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->masterBattery1CheckBox->setToolTip(SimVar::ElectricalMasterBattery1);
     ui->masterBattery2CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->masterBattery2CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->masterBattery2CheckBox->setToolTip(SimVar::ElectricalMasterBattery2);
     ui->masterBattery3CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->masterBattery3CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->masterBattery3CheckBox->setToolTip(SimVar::ElectricalMasterBattery3);
     ui->masterBattery4CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->masterBattery4CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->masterBattery4CheckBox->setToolTip(SimVar::ElectricalMasterBattery4);
 
     ui->generalEngineStarter1CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->generalEngineStarter1CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->generalEngineStarter1CheckBox->setToolTip(SimVar::GeneralEngineStarter1);
     ui->generalEngineStarter2CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->generalEngineStarter2CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->generalEngineStarter2CheckBox->setToolTip(SimVar::GeneralEngineStarter2);
     ui->generalEngineStarter3CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->generalEngineStarter3CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->generalEngineStarter3CheckBox->setToolTip(SimVar::GeneralEngineStarter3);
     ui->generalEngineStarter4CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     ui->generalEngineStarter4CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->generalEngineStarter4CheckBox->setToolTip(SimVar::GeneralEngineStarter4);
+
+    ui->generalEngineCombustion1CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->generalEngineCombustion1CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->generalEngineCombustion1CheckBox->setToolTip(SimVar::GeneralEngineCombustion1);
+    ui->generalEngineCombustion2CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->generalEngineCombustion2CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->generalEngineCombustion2CheckBox->setToolTip(SimVar::GeneralEngineCombustion2);
+    ui->generalEngineCombustion3CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->generalEngineCombustion3CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->generalEngineCombustion3CheckBox->setToolTip(SimVar::GeneralEngineCombustion3);
+    ui->generalEngineCombustion4CheckBox->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui->generalEngineCombustion4CheckBox->setFocusPolicy(Qt::NoFocus);
+    ui->generalEngineCombustion4CheckBox->setToolTip(SimVar::GeneralEngineCombustion4);
 }
 
 const EngineData &EngineWidget::getCurrentEngineData(qint64 timestamp, TimeVariableData::Access access) const noexcept

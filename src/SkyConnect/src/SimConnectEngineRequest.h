@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTENGINE_H
-#define SIMCONNECTENGINE_H
+#ifndef SIMCONNECTENGINEREQUEST_H
+#define SIMCONNECTENGINEREQUEST_H
 
 #include <windows.h>
 
@@ -32,12 +32,12 @@
 #include "../../Model/src/EngineData.h"
 
 /*!
- * Simulation variables which represent the engine.
+ * Simulation variables which represent the engine (request sent to the flight simulator).
  *
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectEngine
+struct SimConnectEngineRequest
 {
     float throttleLeverPosition1;
     float throttleLeverPosition2;
@@ -63,40 +63,6 @@ struct SimConnectEngine
     qint32 generalEngineStarter2;
     qint32 generalEngineStarter3;
     qint32 generalEngineStarter4;
-
-    inline EngineData toEngineData() const noexcept
-    {
-        EngineData engineData;
-
-        // Note: the throttle can also yield negative thrust, hence the Sky Dolly internal type
-        //       position (qint16) which supports negative values as well
-        engineData.throttleLeverPosition1 = SkyMath::fromPosition(throttleLeverPosition1);
-        engineData.throttleLeverPosition2 = SkyMath::fromPosition(throttleLeverPosition2);
-        engineData.throttleLeverPosition3 = SkyMath::fromPosition(throttleLeverPosition3);
-        engineData.throttleLeverPosition4 = SkyMath::fromPosition(throttleLeverPosition4);
-        engineData.propellerLeverPosition1 = SkyMath::fromPosition(propellerLeverPosition1);
-        engineData.propellerLeverPosition2 = SkyMath::fromPosition(propellerLeverPosition2);
-        engineData.propellerLeverPosition3 = SkyMath::fromPosition(propellerLeverPosition3);
-        engineData.propellerLeverPosition4 = SkyMath::fromPosition(propellerLeverPosition4);
-        engineData.mixtureLeverPosition1 = SkyMath::fromPercent(mixtureLeverPosition1);
-        engineData.mixtureLeverPosition2 = SkyMath::fromPercent(mixtureLeverPosition2);
-        engineData.mixtureLeverPosition3 = SkyMath::fromPercent(mixtureLeverPosition3);
-        engineData.mixtureLeverPosition4 = SkyMath::fromPercent(mixtureLeverPosition4);
-        engineData.cowlFlapPosition1 = SkyMath::fromPercent(recipEngineCowlFlapPosition1);
-        engineData.cowlFlapPosition2 = SkyMath::fromPercent(recipEngineCowlFlapPosition2);
-        engineData.cowlFlapPosition3 = SkyMath::fromPercent(recipEngineCowlFlapPosition3);
-        engineData.cowlFlapPosition4 = SkyMath::fromPercent(recipEngineCowlFlapPosition4);
-        engineData.electricalMasterBattery1 = (electricalMasterBattery1 != 0);
-        engineData.electricalMasterBattery2 = (electricalMasterBattery2 != 0);
-        engineData.electricalMasterBattery3 = (electricalMasterBattery3 != 0);
-        engineData.electricalMasterBattery4 = (electricalMasterBattery4 != 0);
-        engineData.generalEngineStarter1 = (generalEngineStarter1 != 0);
-        engineData.generalEngineStarter2 = (generalEngineStarter2 != 0);
-        engineData.generalEngineStarter3 = (generalEngineStarter3 != 0);
-        engineData.generalEngineStarter4 = (generalEngineStarter4 != 0);
-
-        return engineData;
-    }
 
     inline void fromEngineData(const EngineData &engineData) noexcept
     {
@@ -130,4 +96,4 @@ struct SimConnectEngine
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTENGINE_H
+#endif // SIMCONNECTENGINEREQUEST_H
