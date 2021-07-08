@@ -130,10 +130,6 @@ const EngineData &Engine::interpolate(qint64 timestamp, TimeVariableData::Access
         }
 
         if (p1 != nullptr) {
-            d->currentEngineData.generalEngineFuelPressure1 = SkyMath::interpolateLinear(p1->generalEngineFuelPressure1, p2->generalEngineFuelPressure1, tn);
-            d->currentEngineData.generalEngineFuelPressure2 = SkyMath::interpolateLinear(p1->generalEngineFuelPressure2, p2->generalEngineFuelPressure2, tn);
-            d->currentEngineData.generalEngineFuelPressure3 = SkyMath::interpolateLinear(p1->generalEngineFuelPressure3, p2->generalEngineFuelPressure3, tn);
-            d->currentEngineData.generalEngineFuelPressure4 = SkyMath::interpolateLinear(p1->generalEngineFuelPressure4, p2->generalEngineFuelPressure4, tn);
             d->currentEngineData.throttleLeverPosition1 = SkyMath::interpolateLinear(p1->throttleLeverPosition1, p2->throttleLeverPosition1, tn);
             d->currentEngineData.throttleLeverPosition2 = SkyMath::interpolateLinear(p1->throttleLeverPosition2, p2->throttleLeverPosition2, tn);
             d->currentEngineData.throttleLeverPosition3 = SkyMath::interpolateLinear(p1->throttleLeverPosition3, p2->throttleLeverPosition3, tn);
@@ -151,7 +147,7 @@ const EngineData &Engine::interpolate(qint64 timestamp, TimeVariableData::Access
             d->currentEngineData.cowlFlapPosition3 = SkyMath::interpolateLinear(p1->cowlFlapPosition3, p2->cowlFlapPosition3, tn);
             d->currentEngineData.cowlFlapPosition4 = SkyMath::interpolateLinear(p1->cowlFlapPosition4, p2->cowlFlapPosition4, tn);
 
-            // No interpolation for battery and starter states (boolean)
+            // No interpolation for battery and starter/combustion states (boolean)
             d->currentEngineData.electricalMasterBattery1 = p1->electricalMasterBattery1;
             d->currentEngineData.electricalMasterBattery2 = p1->electricalMasterBattery2;
             d->currentEngineData.electricalMasterBattery3 = p1->electricalMasterBattery3;
@@ -173,10 +169,6 @@ const EngineData &Engine::interpolate(qint64 timestamp, TimeVariableData::Access
 
         d->currentTimestamp = timestamp;
         d->currentAccess = access;
-#ifdef DEBUG
-    } else {
-        qDebug("Engine::interpolateEngineData: cached result for timestamp: %lld", timestamp);
-#endif
     }
     return d->currentEngineData;
 }

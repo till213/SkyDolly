@@ -29,8 +29,10 @@ if (WIN32)
             src/SimConnectType.h
             src/SimConnectPosition.cpp
             src/SimConnectPosition.h
-            src/SimConnectEngine.cpp
-            src/SimConnectEngine.h
+            src/SimConnectEngineReply.cpp
+            src/SimConnectEngineReply.h
+            src/SimConnectEngineRequest.cpp
+            src/SimConnectEngineRequest.h
             src/SimConnectPrimaryFlightControl.cpp
             src/SimConnectPrimaryFlightControl.h
             src/SimConnectSecondaryFlightControl.cpp

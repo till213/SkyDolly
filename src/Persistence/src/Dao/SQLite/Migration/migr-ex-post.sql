@@ -22,3 +22,14 @@ set    user_aircraft_seq_nr = 1;
 @migr(id = "804503b9-61a3-40e9-b06e-9a9e3d5b4740", descn = "Update application version to 0.7", step = 1)
 update metadata
 set app_version = '0.7.0';
+
+@migr(id = "d43d7a22-34f5-40c5-82e8-155b45bb274d", descn = "Add general engine combustion column", step = 5)
+update engine
+set    general_engine_combustion1 = general_engine_starter1,
+       general_engine_combustion2 = general_engine_starter2,
+       general_engine_combustion3 = general_engine_starter3,
+       general_engine_combustion4 = general_engine_starter4;
+
+@migr(id = "1c13f02d-9def-4fd6-af8d-3b7984573682", descn = "Update application version to 0.8", step = 1)
+update metadata
+set app_version = '0.8.0';
