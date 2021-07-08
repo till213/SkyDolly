@@ -36,10 +36,6 @@ struct MODEL_API EngineData : public TimeVariableData
 {
     // Implementation note: the throttle and propeller levers can also yield
     // negative thrust, hence the type qint16 (position) which also supports negative values
-    double generalEngineFuelPressure1;
-    double generalEngineFuelPressure2;
-    double generalEngineFuelPressure3;
-    double generalEngineFuelPressure4;
     qint16 throttleLeverPosition1;
     qint16 throttleLeverPosition2;
     qint16 throttleLeverPosition3;
@@ -74,6 +70,16 @@ struct MODEL_API EngineData : public TimeVariableData
     EngineData(EngineData &&) = default;
     EngineData(const EngineData &) = default;
     EngineData &operator= (const EngineData &) = default;
+
+    inline bool hasEngineStarterEnabled() const noexcept
+    {
+        return (generalEngineStarter1 || generalEngineStarter2 || generalEngineStarter3 || generalEngineStarter4);
+    }
+
+    inline bool hasCombustion() const noexcept
+    {
+        return (generalEngineCombustion1 || generalEngineCombustion2 || generalEngineCombustion3 || generalEngineCombustion4);
+    }
 
     static const EngineData NullData;
 };

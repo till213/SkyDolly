@@ -29,10 +29,6 @@
 
 EngineData::EngineData(qint16 theThrottleLeverPosition1, qint16 thePropellerLeverPosition1, quint8 theMixtureLeverPosition1, quint8 theCowlFlapPosition1) noexcept
     : TimeVariableData(),
-      generalEngineFuelPressure1(0.0),
-      generalEngineFuelPressure2(0.0),
-      generalEngineFuelPressure3(0.0),
-      generalEngineFuelPressure4(0.0),
       throttleLeverPosition1(theThrottleLeverPosition1),
       throttleLeverPosition2(0),
       throttleLeverPosition3(0),

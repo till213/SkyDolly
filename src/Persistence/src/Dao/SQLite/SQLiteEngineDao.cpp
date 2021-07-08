@@ -77,7 +77,11 @@ public:
 "  general_engine_starter1,"
 "  general_engine_starter2,"
 "  general_engine_starter3,"
-"  general_engine_starter4"
+"  general_engine_starter4,"
+"  general_engine_combustion1,"
+"  general_engine_combustion2,"
+"  general_engine_combustion3,"
+"  general_engine_combustion4"
 ") values ("
 " :aircraft_id,"
 " :timestamp,"
@@ -104,7 +108,11 @@ public:
 " :general_engine_starter1,"
 " :general_engine_starter2,"
 " :general_engine_starter3,"
-" :general_engine_starter4"
+" :general_engine_starter4,"
+" :general_engine_combustion1,"
+" :general_engine_combustion2,"
+" :general_engine_combustion3,"
+" :general_engine_combustion4"
 ");");            
         }
         if (selectByAircraftIdQuery == nullptr) {
@@ -184,6 +192,10 @@ bool SQLiteEngineDao::add(qint64 aircraftId, const EngineData &data)  noexcept
     d->insertQuery->bindValue(":general_engine_starter2", data.generalEngineStarter2);
     d->insertQuery->bindValue(":general_engine_starter3", data.generalEngineStarter3);
     d->insertQuery->bindValue(":general_engine_starter4", data.generalEngineStarter4);
+    d->insertQuery->bindValue(":general_engine_combustion1", data.generalEngineCombustion1);
+    d->insertQuery->bindValue(":general_engine_combustion2", data.generalEngineCombustion2);
+    d->insertQuery->bindValue(":general_engine_combustion3", data.generalEngineCombustion3);
+    d->insertQuery->bindValue(":general_engine_combustion4", data.generalEngineCombustion4);
 
     bool ok = d->insertQuery->exec();
 #ifdef DEBUG
@@ -227,6 +239,10 @@ bool SQLiteEngineDao::getByAircraftId(qint64 aircraftId, QVector<EngineData> &en
         const int generalEngineStarter2Idx = record.indexOf("general_engine_starter2");
         const int generalEngineStarter3Idx = record.indexOf("general_engine_starter3");
         const int generalEngineStarter4Idx = record.indexOf("general_engine_starter4");
+        const int generalEngineCombustion1Idx = record.indexOf("general_engine_combustion1");
+        const int generalEngineCombustion2Idx = record.indexOf("general_engine_combustion2");
+        const int generalEngineCombustion3Idx = record.indexOf("general_engine_combustion3");
+        const int generalEngineCombustion4Idx = record.indexOf("general_engine_combustion4");
 
         while (d->selectByAircraftIdQuery->next()) {
 
@@ -257,6 +273,10 @@ bool SQLiteEngineDao::getByAircraftId(qint64 aircraftId, QVector<EngineData> &en
             data.generalEngineStarter2 = d->selectByAircraftIdQuery->value(generalEngineStarter2Idx).toBool();
             data.generalEngineStarter3 = d->selectByAircraftIdQuery->value(generalEngineStarter3Idx).toBool();
             data.generalEngineStarter4 = d->selectByAircraftIdQuery->value(generalEngineStarter4Idx).toBool();
+            data.generalEngineCombustion1 = d->selectByAircraftIdQuery->value(generalEngineCombustion1Idx).toBool();
+            data.generalEngineCombustion2 = d->selectByAircraftIdQuery->value(generalEngineCombustion2Idx).toBool();
+            data.generalEngineCombustion3 = d->selectByAircraftIdQuery->value(generalEngineCombustion3Idx).toBool();
+            data.generalEngineCombustion4 = d->selectByAircraftIdQuery->value(generalEngineCombustion4Idx).toBool();
 
             engineData.append(data);
         }
