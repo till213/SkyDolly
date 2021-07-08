@@ -32,6 +32,7 @@
 #include <QObject>
 #include <QMap>
 
+class QWidget;
 class QString;
 
 #include "ExportIntf.h"
@@ -52,6 +53,8 @@ public:
 
     static PluginManager &getInstance() noexcept;
     static void destroyInstance() noexcept;
+
+    void initialise(QWidget *parentWidget);
 
     /*!
      * The class name and (non-translated) name of the plugin.

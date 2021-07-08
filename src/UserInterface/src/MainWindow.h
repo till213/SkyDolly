@@ -70,7 +70,7 @@ private:
 
     void frenchConnection() noexcept;
     void initUi() noexcept;
-    void initFileMenu() noexcept;
+    void initPlugins() noexcept;
     void initModuleSelectorUi() noexcept;
     void initControlUi() noexcept;
     void initReplaySpeedUi() noexcept;

@@ -12,7 +12,7 @@ target_sources(CSVExport
 )
 
 set(CSV_EXPORT_PLUGIN_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Plugin
 )
 if (APPLE)
     list(APPEND CSV_EXPORT_PLUGIN_LIBS -lc++)

@@ -72,8 +72,7 @@ bool CSVExportPlugin::exportData() const noexcept
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();
     QString exportPath = Settings::getInstance().getExportPath();
 
-    // TODO pass along main window as parent
-    const QString filePath = QFileDialog::getSaveFileName(nullptr, tr("Export CSV"), exportPath, QString("*.csv"));
+    const QString filePath = QFileDialog::getSaveFileName(getParentWidget(), tr("Export CSV"), exportPath, QString("*.csv"));
     if (!filePath.isEmpty()) {
         QFile file(filePath);
         ok = file.open(QIODevice::WriteOnly);
@@ -200,8 +199,7 @@ bool CSVExportPlugin::exportData() const noexcept
             exportPath = QFileInfo(filePath).absolutePath();
             Settings::getInstance().setExportPath(exportPath);
         } else {
-            // TODO Pass along main window as parent!!!
-            QMessageBox::critical(nullptr, tr("Export error"), tr("The CSV file %1 could not be written.").arg(filePath));
+            QMessageBox::critical(getParentWidget(), tr("Export error"), tr("The CSV file %1 could not be written.").arg(filePath));
         }
     } else {
         ok = true;
