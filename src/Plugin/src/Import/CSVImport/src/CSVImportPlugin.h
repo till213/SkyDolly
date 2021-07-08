@@ -48,7 +48,7 @@ public:
     CSVImportPlugin() noexcept;
     virtual ~CSVImportPlugin() noexcept;
 
-    virtual bool importData(FlightService &flightService) noexcept override;
+    virtual bool importData(FlightService &flightService) const noexcept override;
 
 private:
     static bool importPositionData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Aircraft &aircraft) noexcept;

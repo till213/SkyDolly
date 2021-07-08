@@ -30,8 +30,8 @@
 #include <vector>
 
 #include <QObject>
+#include <QMap>
 
-class QUuid;
 class QString;
 
 #include "ExportIntf.h"
@@ -47,21 +47,21 @@ class PLUGIN_API PluginManager : public QObject
 
 public:
 
-    static constexpr char PluginUuidKey[] = "uuid";
+    static constexpr char ClassNameKey[] = "className";
     static constexpr char PluginNameKey[] = "name";
 
     static PluginManager &getInstance() noexcept;
     static void destroyInstance() noexcept;
 
     /*!
-     * The UUID and (non-translated) name of the plugin.
+     * The class name and (non-translated) name of the plugin.
      */
-    typedef std::pair<QUuid, QString> Handle;
+    typedef std::pair<QString, QString> Handle;
     std::vector<Handle> enumerateExportPlugins() noexcept;
     std::vector<Handle> enumerateImportPlugins() noexcept;
 
-    bool importData(const QUuid pluginUuid, FlightService &flightService) const noexcept;
-    bool exportData(const QUuid pluginUuid) const noexcept;
+    bool importData(const QString &pluginClassName, FlightService &flightService) const noexcept;
+    bool exportData(const QString &pluginClassName) const noexcept;
 
 protected:
     virtual ~PluginManager() noexcept;
@@ -72,7 +72,7 @@ private:
 
     PluginManager() noexcept;
 
-    std::vector<PluginManager::Handle> enumeratePlugins(const QString &pluginDirectoryName, QMap<QUuid, QString> &plugins) noexcept;
+    std::vector<PluginManager::Handle> enumeratePlugins(const QString &pluginDirectoryName, QMap<QString, QString> &plugins) noexcept;
 };
 
 #endif // PLUGINMANAGER_H
