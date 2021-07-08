@@ -175,19 +175,19 @@ bool CSVImportPlugin::importData(FlightService &flightService) const noexcept
                         flight.setTitle(tr("CSV import"));
                         flight.setDescription(tr("Aircraft imported on %1 from file: %2").arg(unit.formatDateTime(QDateTime::currentDateTime()), filePath));
                         flightService.store(flight);
-                    } else {
-                         QMessageBox::critical(getParentWidget(), tr("Import error"), tr("The CSV file %1 could not be read.").arg(filePath));
                     }
-
                 } else {
                     ok = false;
                 }
             }
             file.close();
         }
+        if (!ok) {
+            QMessageBox::critical(getParentWidget(), tr("Import error"), tr("The CSV file %1 could not be read.").arg(filePath));
+        }
     } else {
         ok = true;
-    }
+    }    
     return ok;
 }
 
