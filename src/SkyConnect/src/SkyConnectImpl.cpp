@@ -59,7 +59,8 @@
 #include "SimConnectType.h"
 #include "SimConnectAircraftInfo.h"
 #include "SimConnectPosition.h"
-#include "SimConnectEngine.h"
+#include "SimConnectEngineReply.h"
+#include "SimConnectEngineRequest.h"
 #include "SimConnectPrimaryFlightControl.h"
 #include "SimConnectSecondaryFlightControl.h"
 #include "SimConnectAircraftHandle.h"
@@ -83,7 +84,16 @@ namespace
         Frame,
         FreezeLatituteLongitude,
         FreezeAltitude,
-        FreezeAttitude
+        FreezeAttitude,
+        EngineAutoStart,
+        EngineAutoShutdown
+    };
+
+    enum class EngineState: int {
+        Unknown,
+        Starting,
+        Started,
+        Stopped
     };
 }
 
@@ -92,6 +102,7 @@ class SkyConnectPrivate
 public:
     SkyConnectPrivate() noexcept
         : storeDataImmediately(true),
+          engineState(EngineState::Unknown),
           pendingWaypointTime(false),
           simConnectHandle(nullptr),
           eventWidget(std::make_unique<EventWidget>()),
@@ -102,6 +113,7 @@ public:
     bool storeDataImmediately;
     PositionData currentPositionData;
     EngineData currentEngineData;
+    EngineState engineState;
     PrimaryFlightControlData currentPrimaryFlightControlData;
     SecondaryFlightControlData currentSecondaryFlightControlData;
     AircraftHandleData currentAircraftHandleData;
@@ -238,6 +250,7 @@ void SkyConnectImpl::onStopRecording() noexcept
 
 bool SkyConnectImpl::onStartReplay(qint64 currentTimestamp) noexcept
 {
+    d->engineState = EngineState::Unknown;
     // "Freeze" the simulation: position and attitude only set by (interpolated) sample points
     setAircraftFrozen(::SIMCONNECT_OBJECT_ID_USER, true);
     if (currentTimestamp == 0) {
@@ -266,6 +279,7 @@ void SkyConnectImpl::onStopReplay() noexcept
 
 void SkyConnectImpl::onSeek(qint64 currentTimestamp) noexcept
 {
+    d->engineState = EngineState::Unknown;
     if (currentTimestamp == 0) {
         setupInitialReplayPosition();
 #ifdef DEBUG
@@ -319,12 +333,15 @@ bool SkyConnectImpl::sendAircraftData(qint64 currentTimestamp, TimeVariableData:
                 if (ok) {
                     const EngineData &engineData = aircraft->getEngineConst().interpolate(currentTimestamp, access);
                     if (!engineData.isNull()) {
-                        SimConnectEngine simConnectEngine;
-                        simConnectEngine.fromEngineData(engineData);
-                        const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftEngineDefinition),
+                        SimConnectEngineRequest simConnectEngineRequest;
+                        simConnectEngineRequest.fromEngineData(engineData);
+                        const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftEngineRequestDefinition),
                                                                             objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
-                                                                            sizeof(SimConnectEngine), &simConnectEngine);
+                                                                            sizeof(SimConnectEngineRequest), &simConnectEngineRequest);
                         ok = res == S_OK;
+                        if (ok) {
+                            ok = updateAndSendEngineStartEvent(objectId, engineData, access);
+                        }
                     }
                 }
 
@@ -392,6 +409,85 @@ bool SkyConnectImpl::sendAircraftData(qint64 currentTimestamp, TimeVariableData:
         startElapsedTimer();
     }
     return ok;
+}
+
+inline bool SkyConnectImpl::updateAndSendEngineStartEvent(qint64 objectId, const EngineData &engineData, TimeVariableData::Access access) noexcept
+{
+    HRESULT res = S_OK;
+
+    if (access == TimeVariableData::Access::Seek) {
+        d->engineState = EngineState::Unknown;
+    }
+
+    switch (d->engineState) {
+    case EngineState::Starting:
+        if (engineData.hasCombustion()) {
+            d->engineState = EngineState::Started;
+#ifdef DEBUG
+            qDebug("SkyConnectImpl::updateAndSendEngineState: STARTING -> ENGINE STARTED");
+#endif
+        } else if (!engineData.hasEngineStarterEnabled()) {
+             // STARTING: Engine started disabled, no combustion -> STOPPED
+            res = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::toUnderlyingType(Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+            d->engineState = EngineState::Stopped;
+#ifdef DEBUG
+            qDebug("SkyConnectImpl::updateAndSendEngineState: STARTING -> ENGINE STOPPED");
+#endif
+        }
+        break;
+    case EngineState::Started:
+        if (!engineData.hasCombustion()) {
+            // STARTED: No combustion -> STOPPED
+            res = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::toUnderlyingType(Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+            d->engineState = EngineState::Stopped;
+#ifdef DEBUG
+            qDebug("SkyConnectImpl::updateAndSendEngineState: STARTED -> ENGINE STOPPED");
+#endif
+        }
+        break;
+    case EngineState::Stopped:
+        // Either general engine starter has been enabled or combustion has started -> engine start
+        // Note: apparently the engine starter can be disabled (false) and yet with an active combustion (= running engine)
+        //       specifically in the case when the aircraft has been "auto-started" (CTRL + E)
+        if (engineData.hasEngineStarterEnabled() || engineData.hasCombustion()) {
+            res = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::toUnderlyingType(Event::EngineAutoStart), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+            d->engineState = EngineState::Starting;
+#ifdef DEBUG
+            qDebug("SkyConnectImpl::updateAndSendEngineState: STOPPED -> ENGINE STARTING");
+#endif
+        }
+        break;
+    default:
+        // Unknown
+        if (engineData.hasEngineStarterEnabled() || engineData.hasCombustion()) {
+            res = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::toUnderlyingType(Event::EngineAutoStart), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+            d->engineState = engineData.hasCombustion() ? EngineState::Started : EngineState::Starting;
+        } else {
+            res = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::toUnderlyingType(Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
+            d->engineState = EngineState::Stopped;
+        }
+#ifdef DEBUG
+        QString newEngineStateName;
+        switch (d->engineState) {
+        case EngineState::Starting:
+            newEngineStateName = "Starting";
+            break;
+        case EngineState::Started:
+            newEngineStateName = "Started";
+            break;
+        case EngineState::Stopped:
+            newEngineStateName = "Stopped";
+            break;
+        default:
+            newEngineStateName = "Unknown";
+            break;
+        }
+        qDebug("SkyConnectImpl::updateAndSendEngineState: STATE UNKNOWN -> NEW ENGINE STATE: %s", qPrintable(newEngineStateName));
+#endif
+        break;
+    }
+
+    return res == S_OK;
 }
 
 bool SkyConnectImpl::isConnectedWithSim() const noexcept
@@ -534,7 +630,8 @@ void SkyConnectImpl::setupRequestData() noexcept
     // Request data
     SimConnectAircraftInfo::addToDataDefinition(d->simConnectHandle);
     SimConnectPosition::addToDataDefinition(d->simConnectHandle);
-    SimConnectEngine::addToDataDefinition(d->simConnectHandle);
+    SimConnectEngineReply::addToDataDefinition(d->simConnectHandle);
+    SimConnectEngineRequest::addToDataDefinition(d->simConnectHandle);
     SimConnectPrimaryFlightControl::addToDataDefinition(d->simConnectHandle);
     SimConnectSecondaryFlightControl::addToDataDefinition(d->simConnectHandle);
     SimConnectAircraftHandle::addToDataDefinition(d->simConnectHandle);
@@ -553,6 +650,10 @@ void SkyConnectImpl::setupRequestData() noexcept
     ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::FreezeLatituteLongitude), "FREEZE_LATITUDE_LONGITUDE_SET");
     ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::FreezeAltitude), "FREEZE_ALTITUDE_SET");
     ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::FreezeAttitude), "FREEZE_ATTITUDE_SET");
+
+    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::EngineAutoStart), "ENGINE_AUTO_START");
+    ::SimConnect_MapClientEventToSimEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::EngineAutoShutdown), "ENGINE_AUTO_SHUTDOWN");
+
 }
 
 bool SkyConnectImpl::setupInitialRecordingPosition(const InitialPosition &initialPosition) noexcept
@@ -648,7 +749,7 @@ void SkyConnectImpl::updateRequestPeriod(::SIMCONNECT_PERIOD period) noexcept
     if (d->currentRequestPeriod != period) {
         ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::AircraftPosition), Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionDefinition),
                                             ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::Engine), Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftEngineDefinition),
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::Engine), Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftEngineReplyDefinition),
                                             ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
         ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::PrimaryFlightControl), Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPrimaryFlightControlDefinition),
                                             ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
@@ -770,10 +871,10 @@ void CALLBACK SkyConnectImpl::dispatch(::SIMCONNECT_RECV *receivedData, DWORD cb
         }
         case SimConnectType::DataRequest::Engine:
         {
-            const SimConnectEngine *simConnectEngine;
+            const SimConnectEngineReply *simConnectEngineReply;
             if (skyConnect->getState() == Connect::State::Recording) {
-                simConnectEngine = reinterpret_cast<const SimConnectEngine *>(&objectData->dwData);
-                EngineData engineData = simConnectEngine->toEngineData();
+                simConnectEngineReply = reinterpret_cast<const SimConnectEngineReply *>(&objectData->dwData);
+                EngineData engineData = simConnectEngineReply->toEngineData();
                 engineData.timestamp = skyConnect->getCurrentTimestamp();
                 if (storeDataImmediately) {
                     userAircraft.getEngine().upsert(std::move(engineData));

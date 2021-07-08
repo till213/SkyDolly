@@ -183,3 +183,55 @@ create table waypoint (
 @migr(id = "6c6aac3b-1b85-4bec-9477-d300c4cbccbf", descn = "Add user aircraft column", step_cnt = 2)
 alter table flight add column user_aircraft_seq_nr integer;
 
+@migr(id = "91c45e15-a72d-499e-8b85-eebe6a86da32", descn = "Adjust engine table column types", step_cnt = 4)
+create table engine_new (
+    aircraft_id integer not null,
+    timestamp integer not null,
+    throttle_lever_position1 real,
+    throttle_lever_position2 real,
+    throttle_lever_position3 real,
+    throttle_lever_position4 real,
+    propeller_lever_position1 real,
+    propeller_lever_position2 real,
+    propeller_lever_position3 real,
+    propeller_lever_position4 real,
+    mixture_lever_position1 real,
+    mixture_lever_position2 real,
+    mixture_lever_position3 real,
+    mixture_lever_position4 real,
+    cowl_flap_position1 real,
+    cowl_flap_position2 real,
+    cowl_flap_position3 real,
+    cowl_flap_position4 real,
+    electrical_master_battery1 integer,
+    electrical_master_battery2 integer,
+    electrical_master_battery3 integer,
+    electrical_master_battery4 integer,
+    general_engine_starter1 integer,
+    general_engine_starter2 integer,
+    general_engine_starter3 integer,
+    general_engine_starter4 integer,
+    primary key(aircraft_id, timestamp),
+    foreign key(aircraft_id) references aircraft(id)
+);
+
+@migr(id = "91c45e15-a72d-499e-8b85-eebe6a86da32", descn = "Adjust engine table column types", step = 2)
+insert into engine_new select * from engine;
+
+@migr(id = "91c45e15-a72d-499e-8b85-eebe6a86da32", descn = "Adjust engine table column types", step = 3)
+drop table engine;
+
+@migr(id = "91c45e15-a72d-499e-8b85-eebe6a86da32", descn = "Adjust engine table column types", step = 4)
+alter table engine_new rename to engine;
+
+@migr(id = "d43d7a22-34f5-40c5-82e8-155b45bb274d", descn = "Add general engine combustion columns", step_cnt = 5)
+alter table engine add column general_engine_combustion1 integer;
+
+@migr(id = "d43d7a22-34f5-40c5-82e8-155b45bb274d", descn = "Add general engine combustion columns", step = 2)
+alter table engine add column general_engine_combustion2 integer;
+
+@migr(id = "d43d7a22-34f5-40c5-82e8-155b45bb274d", descn = "Add general engine combustion columns", step = 3)
+alter table engine add column general_engine_combustion3 integer;
+
+@migr(id = "d43d7a22-34f5-40c5-82e8-155b45bb274d", descn = "Add general engine combustion columns", step = 4)
+alter table engine add column general_engine_combustion4 integer;
