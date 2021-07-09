@@ -246,14 +246,24 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <widget class="QMenu" name="exportMenu">
+     <property name="title">
+      <string>Export</string>
+     </property>
+    </widget>
+    <widget class="QMenu" name="importMenu">
+     <property name="title">
+      <string>Import</string>
+     </property>
+    </widget>
     <addaction name="newLogbookAction"/>
     <addaction name="openLogbookAction"/>
     <addaction name="separator"/>
     <addaction name="backupLogbookAction"/>
     <addaction name="optimiseLogbookAction"/>
     <addaction name="separator"/>
-    <addaction name="importCSVAction"/>
-    <addaction name="exportCSVAction"/>
+    <addaction name="importMenu"/>
+    <addaction name="exportMenu"/>
     <addaction name="separator"/>
     <addaction name="showSettingsAction"/>
     <addaction name="separator"/>
@@ -443,16 +453,6 @@
     <string>PgDown</string>
    </property>
   </action>
-  <action name="exportCSVAction">
-   <property name="text">
-    <string>Export CSV...</string>
-   </property>
-  </action>
-  <action name="importCSVAction">
-   <property name="text">
-    <string>Import CSV...</string>
-   </property>
-  </action>
   <action name="stayOnTopAction">
    <property name="checkable">
     <bool>true</bool>
@@ -493,14 +493,6 @@
    </property>
    <property name="shortcut">
     <string>F</string>
-   </property>
-  </action>
-  <action name="openFlightAction">
-   <property name="text">
-    <string>O&amp;pen Flight...</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+O</string>
    </property>
   </action>
   <action name="newLogbookAction">

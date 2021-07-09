@@ -1,0 +1,7 @@
+# Directory name must match with constant values defined in the PluginManager.cpp
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/export)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/export)
+message(STATUS CMAKE_RUNTIME_OUTPUT_DIRECTORY="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/CSVExport)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/KMLExport)

@@ -26,8 +26,7 @@
 #define SKYSEARCH_H
 
 #include <type_traits>
-
-#include <QVector>
+#include <vector>
 
 #include "TimeVariableData.h"
 #include "PositionData.h"
@@ -69,7 +68,7 @@ namespace SkySearch {
      * \return the lower index i of the interval [i, j], or \c InvalidIndex if not found
      */
     template <typename T>
-    int binaryIntervalSearch(const QVector<T> &data, qint64 timestamp, int lowIndex, int highIndex) noexcept
+    int binaryIntervalSearch(const std::vector<T> &data, qint64 timestamp, int lowIndex, int highIndex) noexcept
     {
         int index;
         if (data.size() == 0) {
@@ -80,7 +79,7 @@ namespace SkySearch {
             index = InvalidIndex;
         } else if (data.at(0).timestamp == timestamp) {
             index = 0;
-        } else if (data.constLast().timestamp == timestamp) {
+        } else if (data.back().timestamp == timestamp) {
             index = data.size() - 1;
         } else {
 
@@ -114,14 +113,14 @@ namespace SkySearch {
     }
 
     template <typename T>
-    int linearIntervalSearch(const QVector<T> &data, qint64 timestamp, int startIndex) noexcept
+    int linearIntervalSearch(const std::vector<T> &data, qint64 timestamp, int startIndex) noexcept
     {
         int index;
         if (data.size() == 0) {
             index = InvalidIndex;
         } else if (data.at(startIndex).timestamp > timestamp) {
             index = InvalidIndex;
-        } else if (data.constLast().timestamp < timestamp) {
+        } else if (data.back().timestamp < timestamp) {
             index = InvalidIndex;
         } else {
             index = startIndex;
@@ -151,12 +150,12 @@ namespace SkySearch {
      *  Updates the \c startIndex with the last index having a timestamp <= the given \c timestamp.
      */
     template <typename T>
-    int updateStartIndex(QVector<T> data, int startIndex, qint64 timestamp) noexcept
+    int updateStartIndex(const std::vector<T> &data, int startIndex, qint64 timestamp) noexcept
     {
         int index = startIndex;
         int size = data.size();
         if (size > 0) {
-            if (timestamp < data.last().timestamp) {
+            if (timestamp < data.back().timestamp) {
                 if (index != InvalidIndex) {
                     if (timestamp < data.at(index).timestamp) {
                         // The timestamp was moved to front ("rewind"), so search the
@@ -172,14 +171,14 @@ namespace SkySearch {
             } else {
                 // The given timestamp lies past the last sample data
                 // -> return the last sample data
-                index = data.count() - 1;
+                index = data.size() - 1;
             }
         } else {
             // No data yet, or timestamp not between given range
             index = InvalidIndex;
         }
 
-        if (index != InvalidIndex && index != (data.count() - 1)) {
+        if (index != InvalidIndex && index != (data.size() - 1)) {
 
             // If the given timestamp lies "in the future" (as seen from the timetamp of the current index
             // the we assume that time has progressed "only a little" (normal replay) and we simply do
@@ -216,7 +215,7 @@ namespace SkySearch {
     }
 
     template <typename T>
-    bool getCubicInterpolationSupportData(const QVector<T> data, qint64 timestamp, int &startIndex, const T **p0, const T **p1, const T **p2, const T **p3) noexcept
+    bool getCubicInterpolationSupportData(const std::vector<T> &data, qint64 timestamp, int &startIndex, const T **p0, const T **p1, const T **p2, const T **p3) noexcept
     {
         static_assert(std::is_base_of<TimeVariableData, T>::value, "T not derived from TimeVariableData");
 
@@ -232,8 +231,8 @@ namespace SkySearch {
                 } else {
                    *p0 = *p1;
                 }
-                if (startIndex < data.count() - 1) {
-                   if (startIndex < data.count() - 2) {
+                if (startIndex < data.size() - 1) {
+                   if (startIndex < data.size() - 2) {
                        *p2 = &data.at(startIndex + 1);
                        *p3 = &data.at(startIndex + 2);
                    } else {
@@ -257,8 +256,8 @@ namespace SkySearch {
 
         } else {
             // We are past the last sample point
-            if (data.count() > 0 && timestamp - data.last().timestamp <= InterpolationWindow) {
-                *p0 = *p1 = *p2 = *p3 = &data.last();
+            if (data.size() > 0 && timestamp - data.back().timestamp <= InterpolationWindow) {
+                *p0 = *p1 = *p2 = *p3 = &data.back();
             } else {
                 *p0 = *p1 = *p2 = *p3 = nullptr;
             }
@@ -268,7 +267,7 @@ namespace SkySearch {
     }
 
     template <typename T>
-    bool getLinearInterpolationSupportData(const QVector<T> data, qint64 timestamp, int &startIndex, const T **p1, const T **p2) noexcept
+    bool getLinearInterpolationSupportData(const std::vector<T> &data, qint64 timestamp, int &startIndex, const T **p1, const T **p2) noexcept
     {
         static_assert(std::is_base_of<TimeVariableData, T>::value, "T not derived from TimeVariableData");
 
@@ -279,7 +278,7 @@ namespace SkySearch {
             // Is p1 within the interpolation window?
             if ((timestamp - (*p1)->timestamp) <= InterpolationWindow) {
 
-                if (startIndex < data.count() - 1) {
+                if (startIndex < data.size() - 1) {
                     *p2 = &data.at(startIndex + 1);
                 } else {
                     // p1 is the last data
@@ -297,8 +296,8 @@ namespace SkySearch {
 
         } else {
             // We are past the last sample point
-            if (data.count() > 0 && timestamp - data.last().timestamp <= InterpolationWindow) {
-                *p1 = *p2 = &data.last();
+            if (data.size() > 0 && timestamp - data.back().timestamp <= InterpolationWindow) {
+                *p1 = *p2 = &data.back();
             } else {
                 *p1 = *p2 = nullptr;
             }

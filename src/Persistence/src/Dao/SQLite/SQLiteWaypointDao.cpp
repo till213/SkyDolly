@@ -122,12 +122,12 @@ SQLiteWaypointDao::SQLiteWaypointDao(QObject *parent) noexcept
 SQLiteWaypointDao::~SQLiteWaypointDao() noexcept
 {}
 
-bool SQLiteWaypointDao::add(qint64 aircraftId, const QVector<Waypoint> &waypoints)  noexcept
+bool SQLiteWaypointDao::add(qint64 aircraftId, const FlightPlan &flightPlan)  noexcept
 {
     d->initQueries();
     d->insertQuery->bindValue(":aircraft_id", aircraftId);
     bool ok = true;
-    for (const Waypoint &waypoint : waypoints) {
+    for (const Waypoint &waypoint : flightPlan) {
         d->insertQuery->bindValue(":timestamp", waypoint.timestamp);
         d->insertQuery->bindValue(":ident", waypoint.identifier);
         d->insertQuery->bindValue(":latitude", waypoint.latitude);
@@ -173,7 +173,7 @@ bool SQLiteWaypointDao::getByAircraftId(qint64 aircraftId, FlightPlan &flightPla
             data.localTime = d->selectByAircraftIdQuery->value(localSimulationTimeIdx).toDateTime();
             // UTC equals zulu time, so no conversion necessary
             data.zuluTime = d->selectByAircraftIdQuery->value(zuluSimulationTimeIdx).toDateTime();
-            flightPlan.add(data);
+            flightPlan.add(std::move(data));
         }
 #ifdef DEBUG
     } else {

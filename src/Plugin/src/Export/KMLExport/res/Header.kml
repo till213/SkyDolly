@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+    <Document>
+        <name>KmlFile</name>
+        <Style id="s_flight_h">
+            <LineStyle>
+                <color>ff00ffff</color>
+                <width>1.5</width>
+            </LineStyle>
+            <PolyStyle>
+                <color>7f7faadd</color>
+                <colorMode>normal</colorMode>
+                <outline>0</outline>
+            </PolyStyle>
+        </Style>
+        <Style id="s_flight">
+            <LineStyle>
+                <color>ff0000ff</color>
+                <width>1.5</width>
+            </LineStyle>
+            <PolyStyle>
+                <color>7f7faaaa</color>
+                <colorMode>normal</colorMode>
+                <outline>0</outline>
+            </PolyStyle>
+        </Style>
+        <StyleMap id="m_flight">
+            <Pair>
+                <key>normal</key>
+                <styleUrl>#s_flight</styleUrl>
+            </Pair>
+            <Pair>
+                <key>highlight</key>
+                <styleUrl>#s_flight_h</styleUrl>
+            </Pair>
+        </StyleMap>

@@ -22,31 +22,20 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVSERVICE_H
-#define CSVSERVICE_H
+#ifndef EXPORTINTF_H
+#define EXPORTINTF_H
 
-#include <memory>
+#include <QtPlugin>
 
-#include <QObject>
+#include "PluginIntf.h"
 
-#include "../PersistenceLib.h"
-
-class FlightService;
-class Aircraft;
-class CSVServicePrivate;
-
-class PERSISTENCE_API CSVService : public QObject
+class ExportIntf : public PluginIntf
 {
-    Q_OBJECT
 public:
-    explicit CSVService(FlightService &flightService, QObject *parent = nullptr) noexcept;
-    virtual ~CSVService() noexcept;
-
-    bool importAircraft(const QString &filePath) noexcept;
-    bool exportAircraft(const Aircraft &aircraft, const QString &filePath) noexcept;
-
-private:
-    std::unique_ptr<CSVServicePrivate> d;
+    virtual bool exportData() const noexcept = 0;
 };
 
-#endif // CSVSERVICE_H
+#define EXPORT_INTERFACE_IID "com.github.till213.SkyDolly.ExportInterface/1.0"
+Q_DECLARE_INTERFACE(ExportIntf, EXPORT_INTERFACE_IID)
+
+#endif // EXPORTINTF_H

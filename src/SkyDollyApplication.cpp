@@ -30,6 +30,7 @@
 #include "../../Model/src/Logbook.h"
 #include "../../SkyConnect/src/SkyManager.h"
 #include "../../Persistence/src/ConnectionManager.h"
+#include "../../Plugin/src/PluginManager.h"
 #include "SkyDollyApplication.h"
 
 // PUBLIC
@@ -66,4 +67,5 @@ void SkyDollyApplication::handleAboutToQuit() noexcept
     SkyManager::destroyInstance();
     Logbook::destroyInstance();
     ConnectionManager::destroyInstance();
+    PluginManager::destroyInstance();
 }

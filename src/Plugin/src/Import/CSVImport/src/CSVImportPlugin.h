@@ -22,10 +22,11 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVIMPORT_H
-#define CSVIMPORT_H
+#ifndef CSVIMPORTPLUGIN_H
+#define CSVIMPORTPLUGIN_H
 
-class QIODevice;
+#include <QObject>
+#include <QtPlugin>
 
 class Aircraft;
 class Engine;
@@ -33,12 +34,32 @@ class PrimaryFlightControl;
 class SecondaryFlightControl;
 class AircraftHandle;
 class Light;
+class FlightService;
 class CSVExportPrivate;
 
-class CSVImport
+#include "../../../ImportIntf.h"
+#include "../../../PluginBase.h"
+
+class CSVImportPlugin : public PluginBase, public ImportIntf
 {
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "CSVImportPlugin.json")
+    Q_INTERFACES(ImportIntf)
 public:
-    static bool importData(QIODevice &io, Aircraft &aircraft) noexcept;
+    CSVImportPlugin() noexcept;
+    virtual ~CSVImportPlugin() noexcept;
+
+    virtual QWidget *getParentWidget() const noexcept override
+    {
+        return PluginBase::getParentWidget();
+    }
+
+    virtual void setParentWidget(QWidget *parent) noexcept override
+    {
+        PluginBase::setParentWidget(parent);
+    }
+
+    virtual bool importData(FlightService &flightService) const noexcept override;
 
 private:
     static bool importPositionData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Aircraft &aircraft) noexcept;
@@ -50,4 +71,4 @@ private:
     static bool importTimestamp(const QList<QByteArray> &values, int columnIndex, bool firstRow, qint64 &timestamp, qint64 &timestampDelta);
 };
 
-#endif // CSVIMPORT_H
+#endif // CSVIMPORTPLUGIN_H

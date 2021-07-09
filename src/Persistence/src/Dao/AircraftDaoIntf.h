@@ -27,9 +27,9 @@
 
 #include <memory>
 #include <vector>
+#include <iterator>
 
 #include <QtGlobal>
-#include <QVector>
 
 class Aircraft;
 class AircraftInfo;
@@ -51,7 +51,7 @@ public:
      * \return \c true on success; \c false else
      */
     virtual bool add(qint64 flightId, int sequenceNumber, Aircraft &aircraft) noexcept = 0;
-    virtual bool getByFlightId(qint64 flightId, std::vector<std::unique_ptr<Aircraft>> &aircrafts) const noexcept = 0;
+    virtual bool getByFlightId(qint64 flightId, std::insert_iterator<std::vector<std::unique_ptr<Aircraft>>> insertIterator) const noexcept = 0;
     virtual bool adjustAircraftSequenceNumbersByFlightId(qint64 id, int sequenceNumber) noexcept = 0;
     virtual bool deleteAllByFlightId(qint64 flightId) noexcept = 0;
     virtual bool deleteById(qint64 id) noexcept = 0;

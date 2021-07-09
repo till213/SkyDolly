@@ -26,10 +26,10 @@
 #define AIRCRAFTHANDLE_H
 
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
-#include <QByteArray>
-#include <QVector>
 
 #include "TimeVariableData.h"
 #include "ModelLib.h"
@@ -45,12 +45,23 @@ public:
     virtual ~AircraftHandle() noexcept;
 
     void upsert(const AircraftHandleData &aircraftHandleData) noexcept;
+    const AircraftHandleData &getFirst() const noexcept;
     const AircraftHandleData &getLast() const noexcept;
-    QVector<AircraftHandleData> &getAll() const noexcept;
-    const QVector<AircraftHandleData> &getAllConst() const noexcept;
+    std::size_t count() const noexcept;
     const AircraftHandleData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
-
     void clear() noexcept;
+
+    typedef std::vector<AircraftHandleData>::iterator Iterator;
+    typedef std::insert_iterator<std::vector<AircraftHandleData>> InsertIterator;
+
+    Iterator begin() noexcept;
+    Iterator end() noexcept;
+    const Iterator begin() const noexcept;
+    const Iterator end() const noexcept;
+    InsertIterator insertIterator() noexcept;
+
+    AircraftHandleData& operator[](std::size_t index) noexcept;
+    const AircraftHandleData& operator[](std::size_t index) const noexcept;
 
 signals:
     void dataChanged();

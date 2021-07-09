@@ -25,6 +25,8 @@
 #ifndef WAYPOINTDAOINTF_H
 #define WAYPOINTDAOINTF_H
 
+#include <QtGlobal>
+
 class FlightPlan;
 class Waypoint;
 
@@ -42,7 +44,7 @@ public:
      *        the Waypoint data to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool add(qint64 aircraftId, const QVector<Waypoint> &data) noexcept = 0;
+    virtual bool add(qint64 aircraftId, const FlightPlan &flightPlan) noexcept = 0;
     virtual bool getByAircraftId(qint64 aircraftId, FlightPlan &flightPlan) const noexcept = 0;
     virtual bool deleteByFlightId(qint64 flightId) noexcept = 0;
     virtual bool deleteByAircraftId(qint64 aircraftId) noexcept = 0;
