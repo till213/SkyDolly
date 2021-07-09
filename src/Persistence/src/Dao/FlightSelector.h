@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The black sheep for your Logbook recordings
+ * Sky Dolly - The black sheep for your flight recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,39 +22,23 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SQLITELOGBOOKDAO_H
-#define SQLITELOGBOOKDAO_H
+#ifndef FLIGHTSELECTOR_H
+#define FLIGHTSELECTOR_H
 
-#include <memory>
-#include <forward_list>
-#include <vector>
+#include <QDate>
 
-#include <QObject>
-#include <QtGlobal>
+#include "../PersistenceLib.h"
 
-#include "../FlightSelector.h"
-#include "../LogbookDaoIntf.h"
-
-class Logbook;
-class FlightSummary;
-class SQLiteLogbookDaoPrivate;
-
-class SQLiteLogbookDao : public QObject, public LogbookDaoIntf
+struct PERSISTENCE_API FlightSelector
 {
 public:
-    explicit SQLiteLogbookDao(QObject *parent = nullptr) noexcept;
-    virtual ~SQLiteLogbookDao() noexcept;
+    FlightSelector();
 
-    virtual std::forward_list<FlightDate> getFlightDates() const noexcept override;
-    virtual std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector) const noexcept override;
+    QDate fromDate;
+    QDate toDate;
 
-private:
-    std::unique_ptr<SQLiteLogbookDaoPrivate> d;
-
-    void frenchConnection() noexcept;
-
-private slots:
-    void handleConnectionChanged() noexcept;
+    static const QDate MinDate;
+    static const QDate MaxDate;
 };
 
-#endif // SQLITELOGBOOKDAO_H
+#endif // FLIGHTSELECTOR_H

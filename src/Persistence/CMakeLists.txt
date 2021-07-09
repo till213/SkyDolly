@@ -15,6 +15,8 @@ target_sources(Persistence
         src/Dao/DatabaseDaoIntf.h
         src/Dao/LogbookDaoIntf.h
         src/Dao/FlightDaoIntf.h
+        src/Dao/FlightSelector.cpp
+        src/Dao/FlightSelector.h
         src/Dao/AircraftDaoIntf.h
         src/Dao/PositionDaoIntf.h
         src/Dao/EngineDaoIntf.h
