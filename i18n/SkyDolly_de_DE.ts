@@ -1184,90 +1184,90 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="486"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="489"/>
         <source>Normal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="506"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="509"/>
         <source>Custom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="599"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="602"/>
         <source>Factor [f]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="600"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="603"/>
         <source>Percent [%]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="931"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="934"/>
         <source>Custom replay speed factor in [%L1, %L2]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="935"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="938"/>
         <source>Custom replay speed % in [%L1%, %L2%]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1008"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1011"/>
         <source>Record [@%1 Hz]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1010"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1013"/>
         <source>Record [auto sample rate]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1015"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1018"/>
         <source>Fast forward [%1 sec]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1016"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1019"/>
         <source>Rewind [%1 sec]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1019"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1022"/>
         <source>Fast forward [%1 %]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1020"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1023"/>
         <source>Rewind [%1 %]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1048"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1059"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1068"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1076"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1051"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1062"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1071"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1079"/>
         <source>Database error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1048"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1051"/>
         <source>The logbook %1 could not be created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1059"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1062"/>
         <source>The logbook %1 could not be opened.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1068"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1071"/>
         <source>The logbook backup could not be created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1076"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1079"/>
         <source>The logbook could not be optimised.</source>
         <translation type="unfinished"></translation>
     </message>

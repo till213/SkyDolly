@@ -12,6 +12,7 @@
 ### Improvements
 
 - Aircrafts can now also be deleted from a formation flight during (paused) replay
+- Better support for aircraft engine start & shutdown
 
 ## 0.7.0
 
