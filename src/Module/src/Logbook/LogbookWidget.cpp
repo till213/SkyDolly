@@ -195,7 +195,51 @@ void LogbookWidget::frenchConnection() noexcept
             this, &LogbookWidget::handleCellChanged);
 }
 
-const QString LogbookWidget::getName()
+inline void LogbookWidget::insertYear(QTreeWidget *parent, std::forward_list<FlightDate> &flightDatesByYear) noexcept
+{
+    QTreeWidgetItem *yearItem = new QTreeWidgetItem(parent, QStringList(QString::number(flightDatesByYear.cbegin()->year)));
+    while (!flightDatesByYear.empty()) {
+        std::forward_list<FlightDate>::const_iterator first = flightDatesByYear.cbegin();
+        std::forward_list<FlightDate>::const_iterator last = first;
+
+        // Group by year
+        int currentMonth = first->month;
+        while (last != flightDatesByYear.end() && last->month == currentMonth) {
+            ++last;
+        }
+        std::forward_list<FlightDate> flightDatesByMonth = {};
+        flightDatesByMonth.splice_after(flightDatesByMonth.cbefore_begin(), flightDatesByYear, flightDatesByYear.cbefore_begin(), last);
+        insertMonth(yearItem, flightDatesByMonth);
+    }
+    // The parent takes ownership over yearItem
+    // -> suppress the clang code analysis warning about "potential leak of memory"
+    // * Is there a better way (annotation) to suppress this warning?
+    // * https://stackoverflow.com/questions/65667955/clang-static-analyzer-complains-about-memory-leak-when-using-protobufs-set-allo
+#ifdef __clang_analyzer__
+    delete yearItem;
+#endif
+}
+
+inline void LogbookWidget::insertMonth(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByMonth) noexcept
+{
+    QTreeWidgetItem *monthItem = new QTreeWidgetItem(parent, QStringList(d->unit.formatMonth(flightDatesByMonth.cbegin()->month)));
+    // The days are already unique
+    insertDay(monthItem, flightDatesByMonth);
+    // The parent takes ownership over monthItem
+    // -> suppress the clang code analysis warning about "potential leak of memory"
+#ifdef __clang_analyzer__
+    delete monthItem;
+#endif
+}
+
+inline void LogbookWidget::insertDay(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByDayOfMonth) noexcept
+{
+    for (auto &it: flightDatesByDayOfMonth) {
+        new QTreeWidgetItem(parent, QStringList(QString::number(it.dayOfMonth)));
+    }
+}
+
+const QString LogbookWidget::getName() noexcept
 {
     return QString(QT_TRANSLATE_NOOP("LogbookWidget", "Logbook"));
 }
@@ -303,6 +347,7 @@ void LogbookWidget::updateUi() noexcept
         ui->logTableWidget->setRowCount(0);
     }
 
+    updateDateSelectorUi();
     updateEditUi();
 }
 
@@ -331,43 +376,24 @@ void LogbookWidget::updateAircraftIcon() noexcept
 
 void LogbookWidget::updateDateSelectorUi() noexcept
 {
-    QVector<FlightDate> flightDates = d->flightService.getFlightDates();
+    // Sorted by year, month, day
+    std::forward_list<FlightDate> flightDates = d->flightService.getFlightDates();
     ui->logTreeWidget->blockSignals(true);
     ui->logTreeWidget->reset();
 
+    while (!flightDates.empty()) {
+        std::forward_list<FlightDate>::const_iterator first = flightDates.cbegin();
+        std::forward_list<FlightDate>::const_iterator last = first;
 
-    int currentYear = -1;
-    int i = 0;
-    while (i < flightDates.count()) {
-        const FlightDate &flightbyYear = flightDates.at(i);
-        if (flightbyYear.year != currentYear) {
-            QTreeWidgetItem *yearItem = new QTreeWidgetItem(ui->logTreeWidget, QStringList(QString::number(flightbyYear.year)));
-            QTreeWidgetItem *monthItem = new QTreeWidgetItem(yearItem, QStringList(QString::number(flightbyYear.month)));
-            QTreeWidgetItem *dayItem = new QTreeWidgetItem(monthItem, QStringList(QString::number(flightbyYear.dayOfMonth)));
-            ui->logTreeWidget->addTopLevelItem(yearItem);
-
-            int currentMonth = flightbyYear.month;
-             ++i;
-            while (i < flightDates.count()) {
-                const FlightDate &flightByMonth = flightDates.at(i);
-                if (flightByMonth.year != currentYear) {
-                    break;
-                }
-                if (flightByMonth.month != currentMonth) {
-                    QTreeWidgetItem *monthItem = new QTreeWidgetItem(yearItem, QStringList(QString::number(flightbyYear.month)));
-                    QTreeWidgetItem *dayItem = new QTreeWidgetItem(monthItem, QStringList(QString::number(flightbyYear.dayOfMonth)));
-                }
-                currentMonth = flightbyYear.month;
-                ++i;
-            }
+        // Group by year
+        int currentYear = first->year;
+        while (last != flightDates.end() && last->year == currentYear) {
+            ++last;
         }
-        currentYear = flightbyYear.year;
-        ++i;
+        std::forward_list<FlightDate> flightDatesByYear = {};
+        flightDatesByYear.splice_after(flightDatesByYear.cbefore_begin(), flightDates, flightDates.cbefore_begin(), last);
+        insertYear(ui->logTreeWidget, flightDatesByYear);
     }
-    // TODO IMPLEMENT ME
-//    for (int i = 0; i < 10; ++i)
-//         items.append(.arg(i))));
-//    ui->logTreeWidget->insertTopLevelItems(0, items);
 }
 
 void LogbookWidget::handleSelectionChanged() noexcept

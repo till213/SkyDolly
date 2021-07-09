@@ -27,6 +27,7 @@
 
 #include <memory>
 #include <utility>
+#include <forward_list>
 
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"
@@ -160,21 +161,21 @@ bool FlightService::updateUserAircraftIndex(Flight &flight, int index) noexcept
     return ok;
 }
 
-QVector<FlightDate> FlightService::getFlightDates() const noexcept
+std::forward_list<FlightDate> FlightService::getFlightDates() const noexcept
 {
-    QVector<FlightDate> flightDates;
+    std::forward_list<FlightDate> flightDates;
     if (QSqlDatabase::database().transaction()) {
         // TODO IMPLEMENT ME!!!
-        flightDates.append({2010, 1, 5});
-        flightDates.append({2010, 1, 6});
-        flightDates.append({2010, 5, 6});
-        flightDates.append({2010, 6, 6});
-        flightDates.append({2015, 1, 6});
-        flightDates.append({2016, 5, 20});
-        flightDates.append({2021, 4, 1});
-        flightDates.append({2021, 4, 2});
-        flightDates.append({2021, 4, 3});
-        flightDates.append({2021, 5, 3});
+        flightDates.emplace_front(2010, 1, 5);
+        flightDates.emplace_front(2010, 1, 6);
+        flightDates.emplace_front(2010, 5, 6);
+        flightDates.emplace_front(2010, 6, 6);
+        flightDates.emplace_front(2015, 1, 6);
+        flightDates.emplace_front(2016, 5, 20);
+        flightDates.emplace_front(2021, 4, 1);
+        flightDates.emplace_front(2021, 4, 2);
+        flightDates.emplace_front(2021, 4, 3);
+        flightDates.emplace_front(2021, 5, 3);
         QSqlDatabase::database().rollback();
     }
     return flightDates;

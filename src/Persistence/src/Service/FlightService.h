@@ -26,6 +26,7 @@
 #define FLIGHTSERVICE_H
 
 #include <memory>
+#include <forward_list>
 
 #include <QObject>
 #include <QVector>
@@ -52,7 +53,7 @@ public:
     bool updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept;
     bool updateUserAircraftIndex(Flight &flight, int index) noexcept;
 
-    QVector<FlightDate> getFlightDates() const noexcept;
+    std::forward_list<FlightDate> getFlightDates() const noexcept;
     QVector<FlightSummary> getFlightSummaries() const noexcept;
 
 signals:
