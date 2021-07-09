@@ -22,6 +22,18 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "CSVConst.h"
+#ifndef PLUGININTF_H
+#define PLUGININTF_H
 
-const char *CSVConst::TypeColumnName = "Type";
+class QWidget;
+
+class PluginIntf
+{
+public:
+    virtual ~PluginIntf() = default;
+
+    virtual QWidget *getParentWidget() const noexcept = 0;
+    virtual void setParentWidget(QWidget *parent) noexcept = 0;
+};
+
+#endif // PLUGININTF_H

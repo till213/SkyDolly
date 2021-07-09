@@ -217,7 +217,7 @@ bool SQLiteAircraftDao::add(qint64 flightId, int sequenceNumber, Aircraft &aircr
 #endif
     }
     if (ok) {
-        for (const PositionData &data : aircraft.getPositionConst().getAllConst()) {
+        for (const PositionData &data : aircraft.getPositionConst()) {
             ok = d->positionDao->add(aircraft.getId(), data);
             if (!ok) {
                 break;
@@ -225,7 +225,7 @@ bool SQLiteAircraftDao::add(qint64 flightId, int sequenceNumber, Aircraft &aircr
         }
     }
     if (ok) {
-        for (const EngineData &data : aircraft.getEngineConst().getAllConst()) {
+        for (const EngineData &data : aircraft.getEngineConst()) {
             ok = d->engineDao->add(aircraft.getId(), data);
             if (!ok) {
                 break;
@@ -233,7 +233,7 @@ bool SQLiteAircraftDao::add(qint64 flightId, int sequenceNumber, Aircraft &aircr
         }
     }
     if (ok) {
-        for (const PrimaryFlightControlData &data : aircraft.getPrimaryFlightControlConst().getAllConst()) {
+        for (const PrimaryFlightControlData &data : aircraft.getPrimaryFlightControlConst()) {
             ok = d->primaryFlightControlDao->add(aircraft.getId(), data);
             if (!ok) {
                 break;
@@ -241,7 +241,7 @@ bool SQLiteAircraftDao::add(qint64 flightId, int sequenceNumber, Aircraft &aircr
         }
     }
     if (ok) {
-        for (const SecondaryFlightControlData &data : aircraft.getSecondaryFlightControlConst().getAllConst()) {
+        for (const SecondaryFlightControlData &data : aircraft.getSecondaryFlightControlConst()) {
             ok = d->secondaryFlightControlDao->add(aircraft.getId(), data);
             if (!ok) {
                 break;
@@ -249,7 +249,7 @@ bool SQLiteAircraftDao::add(qint64 flightId, int sequenceNumber, Aircraft &aircr
         }
     }
     if (ok) {
-        for (const AircraftHandleData &data : aircraft.getAircraftHandleConst().getAllConst()) {
+        for (const AircraftHandleData &data : aircraft.getAircraftHandleConst()) {
             ok = d->handleDao->add(aircraft.getId(), data);
             if (!ok) {
                 break;
@@ -257,7 +257,7 @@ bool SQLiteAircraftDao::add(qint64 flightId, int sequenceNumber, Aircraft &aircr
         }
     }
     if (ok) {
-        for (const LightData &data : aircraft.getLightConst().getAllConst()) {
+        for (const LightData &data : aircraft.getLightConst()) {
             ok = d->lightDao->add(aircraft.getId(), data);
             if (!ok) {
                 break;
@@ -265,44 +265,42 @@ bool SQLiteAircraftDao::add(qint64 flightId, int sequenceNumber, Aircraft &aircr
         }
     }
     if (ok) {
-        ok = d->waypointDao->add(aircraft.getId(), aircraft.getFlightPlanConst().getAllConst());
+        ok = d->waypointDao->add(aircraft.getId(), aircraft.getFlightPlan());
     }
     return ok;
 }
 
-bool SQLiteAircraftDao::getByFlightId(qint64 flightId, std::vector<std::unique_ptr<Aircraft>> &aircrafts) const noexcept
+bool SQLiteAircraftDao::getByFlightId(qint64 flightId, std::insert_iterator<std::vector<std::unique_ptr<Aircraft>>> insertIterator) const noexcept
 {
     std::vector<AircraftInfo> aircraftInfos;
     bool ok = getAircraftInfosByFlightId(flightId, aircraftInfos);
     if (ok) {
-        aircrafts.clear();
         for (const AircraftInfo &info: aircraftInfos) {
             std::unique_ptr<Aircraft> aircraft = std::make_unique<Aircraft>();
             aircraft->setId(info.aircraftId);
             aircraft->setAircraftInfo(info);
-
-            ok = d->positionDao->getByAircraftId(aircraft->getId(), aircraft->getPosition().getAll());
+            ok = d->positionDao->getByAircraftId(aircraft->getId(), aircraft->getPosition().insertIterator());
             if (ok) {
-                ok = d->engineDao->getByAircraftId(aircraft->getId(), aircraft->getEngine().getAll());
+                ok = d->engineDao->getByAircraftId(aircraft->getId(), aircraft->getEngine().insertIterator());
             }
             if (ok) {
-                ok = d->primaryFlightControlDao->getByAircraftId(aircraft->getId(), aircraft->getPrimaryFlightControl().getAll());
+                ok = d->primaryFlightControlDao->getByAircraftId(aircraft->getId(), aircraft->getPrimaryFlightControl().insertIterator());
             }
             if (ok) {
-                ok = d->secondaryFlightControlDao->getByAircraftId(aircraft->getId(), aircraft->getSecondaryFlightControl().getAll());
+                ok = d->secondaryFlightControlDao->getByAircraftId(aircraft->getId(), aircraft->getSecondaryFlightControl().insertIterator());
             }
             if (ok) {
-                ok = d->handleDao->getByAircraftId(aircraft->getId(), aircraft->getAircraftHandle().getAll());
+                ok = d->handleDao->getByAircraftId(aircraft->getId(), aircraft->getAircraftHandle().insertIterator());
             }
             if (ok) {
-                ok = d->lightDao->getByAircraftId(aircraft->getId(), aircraft->getLight().getAll());
+                ok = d->lightDao->getByAircraftId(aircraft->getId(), aircraft->getLight().insertIterator());
             }
             if (ok) {
                 ok = d->waypointDao->getByAircraftId(aircraft->getId(), aircraft->getFlightPlan());
             }
             if (ok) {
                 emit aircraft->dataChanged();
-                aircrafts.push_back(std::move(aircraft));
+                insertIterator = std::move(aircraft);
             }
         }
 #ifdef DEBUG

@@ -64,12 +64,12 @@
 #include "../../Persistence/src/Dao/DaoFactory.h"
 #include "../../Persistence/src/Service/FlightService.h"
 #include "../../Persistence/src/Service/DatabaseService.h"
-#include "../../Persistence/src/Service/CSVService.h"
 #include "../../SkyConnect/src/SkyManager.h"
 #include "../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../SkyConnect/src/Connect.h"
 #include "../../Module/src/ModuleIntf.h"
 #include "../../Module/src/ModuleManager.h"
+#include "../../Plugin/src/PluginManager.h"
 #include "Dialogs/AboutDialog.h"
 #include "Dialogs/AboutLogbookDialog.h"
 #include "Dialogs/SettingsDialog.h"
@@ -128,13 +128,16 @@ public:
           statisticsDialog(nullptr),
           flightService(std::make_unique<FlightService>()),
           databaseService(std::make_unique<DatabaseService>()),
-          csvService(std::make_unique<CSVService>(*flightService)),
           replaySpeedActionGroup(nullptr),
           customSpeedRadioButton(nullptr),
           customSpeedLineEdit(nullptr),
           replaySpeedUnitComboBox(nullptr),
           customReplaySpeedFactorValidator(nullptr),
           customReplaySpeedPercentValidator(nullptr),
+          importQActionGroup(nullptr),
+          exportQActionGroup(nullptr),
+          hasImportPlugins(false),
+          hasExportPlugins(false),
           moduleManager(nullptr),
           activeModuleId(Module::Module::None)
     {}
@@ -155,18 +158,23 @@ public:
     // Services
     std::unique_ptr<FlightService> flightService;
     std::unique_ptr<DatabaseService> databaseService;
-    std::unique_ptr<CSVService> csvService;
 
     QSize lastNormalUiSize;
 
-    QActionGroup *replaySpeedActionGroup ;
+    // Replay speed
+    QActionGroup *replaySpeedActionGroup;
     ActionRadioButton *customSpeedRadioButton;
     double lastCustomReplaySpeed;
     QLineEdit *customSpeedLineEdit;
     QComboBox *replaySpeedUnitComboBox;
-
     QDoubleValidator *customReplaySpeedFactorValidator;
     QDoubleValidator *customReplaySpeedPercentValidator;
+
+    // Import / export
+    QActionGroup *importQActionGroup;
+    QActionGroup *exportQActionGroup;
+    bool hasImportPlugins;
+    bool hasExportPlugins;
 
     std::unique_ptr<ModuleManager> moduleManager;
     Module::Module activeModuleId;
@@ -179,6 +187,8 @@ MainWindow::MainWindow(QWidget *parent) noexcept
       ui(std::make_unique<Ui::MainWindow>()),
       d(std::make_unique<MainWindowPrivate>())
 {
+    Q_INIT_RESOURCE(SkyDolly);
+
     ui->setupUi(this);
     const QString logbookPath = Settings::getInstance().getLogbookPath();
     d->connectedWithLogbook = d->databaseService->connectWithLogbook(logbookPath, this);
@@ -232,7 +242,13 @@ void MainWindow::frenchConnection() noexcept
     connect(d->replaySpeedActionGroup, &QActionGroup::triggered,
             this, &MainWindow::updateReplaySpeedUi);
     connect(d->replaySpeedActionGroup, &QActionGroup::triggered,
-            this, &MainWindow::handleReplaySpeedSelected);    
+            this, &MainWindow::handleReplaySpeedSelected);
+
+    // Menu actions
+    connect(d->importQActionGroup, &QActionGroup::triggered,
+            this, &MainWindow::handleImport);
+    connect(d->exportQActionGroup, &QActionGroup::triggered,
+            this, &MainWindow::handleExport);
 
     // Ui elements
     connect(d->customSpeedLineEdit, &QLineEdit::editingFinished,
@@ -305,6 +321,7 @@ void MainWindow::initUi() noexcept
 
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
 
+    initPlugins();
     initModuleSelectorUi();
     initControlUi();
     initReplaySpeedUi();
@@ -319,6 +336,54 @@ void MainWindow::initUi() noexcept
     if (!windowGeometry.isEmpty()) {
         restoreGeometry(windowGeometry);
         restoreState(windowState);
+    }
+}
+
+void MainWindow::initPlugins() noexcept
+{
+    std::vector<PluginManager::Handle> importPlugins;
+    std::vector<PluginManager::Handle> exportPlugins;
+
+    d->importQActionGroup = new QActionGroup(this);
+    d->exportQActionGroup = new QActionGroup(this);
+
+    PluginManager &pluginManager = PluginManager::getInstance();
+    pluginManager.initialise(this);
+
+    // Import
+    importPlugins = PluginManager::getInstance().enumerateImportPlugins();
+    d->hasImportPlugins = importPlugins.size() > 0;
+    if (d->hasImportPlugins) {
+        ui->importMenu->setEnabled(true);
+
+        for (const PluginManager::Handle &handle : importPlugins) {
+            QAction *importAction = new QAction(handle.second, ui->importMenu);
+            // First: plugin class name
+            importAction->setData(handle.first);
+            d->importQActionGroup->addAction(importAction);
+            ui->importMenu->addAction(importAction);
+        }
+
+    } else {
+        ui->importMenu->setEnabled(false);
+    }
+
+    // Export
+    exportPlugins = PluginManager::getInstance().enumerateExportPlugins();
+    d->hasExportPlugins = exportPlugins.size() > 0;
+    if (d->hasExportPlugins) {
+        ui->exportMenu->setEnabled(true);
+
+        for (const PluginManager::Handle &handle : exportPlugins) {
+            QAction *exportAction = new QAction(handle.second, ui->exportMenu);
+            // First: plugin class name
+            exportAction->setData(handle.first);
+            d->exportQActionGroup->addAction(exportAction);
+            ui->exportMenu->addAction(exportAction);
+        }
+
+    } else {
+        ui->exportMenu->setEnabled(false);
     }
 }
 
@@ -908,14 +973,14 @@ void MainWindow::updateFileMenu() noexcept
     case Connect::State::Recording:
         // Fall-thru intentional
     case Connect::State::RecordingPaused:
-        ui->importCSVAction->setEnabled(false);
-        ui->exportCSVAction->setEnabled(false);
+        ui->importMenu->setEnabled(false);
+        ui->exportMenu->setEnabled(false);
         ui->backupLogbookAction->setEnabled(false);
         ui->optimiseLogbookAction->setEnabled(false);
         break;
     default:        
-        ui->importCSVAction->setEnabled(d->connectedWithLogbook);
-        ui->exportCSVAction->setEnabled(hasRecording);
+        ui->importMenu->setEnabled(d->hasImportPlugins && d->connectedWithLogbook);
+        ui->exportMenu->setEnabled(d->hasExportPlugins && hasRecording);
         ui->backupLogbookAction->setEnabled(d->connectedWithLogbook);
         ui->optimiseLogbookAction->setEnabled(d->connectedWithLogbook);
     }
@@ -1012,60 +1077,6 @@ void MainWindow::on_optimiseLogbookAction_triggered() noexcept
     bool ok = d->databaseService->optimise();
     if (!ok) {
         QMessageBox::critical(this, tr("Database error"), tr("The logbook could not be optimised."));
-    }
-}
-
-void MainWindow::on_importCSVAction_triggered() noexcept
-{
-    QMessageBox::StandardButton reply;
-    int previewInfoCount = Settings::getInstance().getPreviewInfoDialogCount();
-    if (previewInfoCount > 0) {
-        --previewInfoCount;
-        reply = QMessageBox::question(this, "Preview",
-            QString("%1 %2 is an early preview version. The format of the exported CSV values in this version has changed compared with the previous version 0.4.2, "
-                    "making the data invalid. Upcoming preview versions may still change the format in an incompatible way yet again.\n\n"
-                    "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(previewInfoCount),
-            QMessageBox::StandardButton::Ok | QMessageBox::StandardButton::Abort);
-        Settings::getInstance().setPreviewInfoDialogCount(previewInfoCount);
-    } else {
-        reply = QMessageBox::StandardButton::Ok;
-    }
-
-    if (reply == QMessageBox::StandardButton::Ok) {
-        QString exportPath = Settings::getInstance().getExportPath();
-        const QString filePath = QFileDialog::getOpenFileName(this, tr("Import CSV"), exportPath, QString("*.csv"));
-        if (!filePath.isEmpty()) {
-
-            bool ok = d->csvService->importAircraft(filePath);
-            if (ok) {
-                updateUi();
-                d->skyConnect.skipToBegin();
-                if (d->skyConnect.isConnected()) {
-                    d->skyConnect.startReplay(true);
-                    d->skyConnect.setPaused(true);
-                }
-                exportPath = QFileInfo(filePath).absolutePath();
-                Settings::getInstance().setExportPath(exportPath);
-            } else {
-                QMessageBox::critical(this, tr("Import error"), tr("The CSV file %1 could not be read.").arg(filePath));
-            }
-        }
-    }
-}
-
-void MainWindow::on_exportCSVAction_triggered() noexcept
-{
-    QString exportPath = Settings::getInstance().getExportPath();
-    const QString filePath = QFileDialog::getSaveFileName(this, tr("Export CSV"), exportPath, QString("*.csv"));
-    if (!filePath.isEmpty()) {
-        const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();
-        bool ok = d->csvService->exportAircraft(aircraft, filePath);
-        if (ok) {
-            exportPath = QFileInfo(filePath).absolutePath();
-            Settings::getInstance().setExportPath(exportPath);
-        } else {
-            QMessageBox::critical(this, tr("Export error"), tr("The CSV file %1 could not be written.").arg(filePath));
-        }
     }
 }
 
@@ -1212,4 +1223,24 @@ void MainWindow::handleLogbookConnectionChanged(bool connected) noexcept
 {
     d->connectedWithLogbook = connected;
     updateUi();
+}
+
+void MainWindow::handleImport(QAction *action) noexcept
+{
+    const QString className = action->data().toString();
+    const bool ok = PluginManager::getInstance().importData(className, *d->flightService);
+    if (ok) {
+        updateUi();
+        d->skyConnect.skipToBegin();
+        if (d->skyConnect.isConnected()) {
+            d->skyConnect.startReplay(true);
+            d->skyConnect.setPaused(true);
+        }
+    }
+}
+
+void MainWindow::handleExport(QAction *action) noexcept
+{
+    const QString className = action->data().toString();
+    PluginManager::getInstance().exportData(className);
 }

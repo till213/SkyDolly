@@ -25,7 +25,7 @@
 #ifndef FLIGHTDAOINTF_H
 #define FLIGHTDAOINTF_H
 
-#include <QVector>
+#include <QtGlobal>
 
 class QString;
 

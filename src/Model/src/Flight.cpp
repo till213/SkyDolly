@@ -24,8 +24,7 @@
  */
 #include <memory>
 #include <vector>
-#include <iterator> // For std::forward_iterator_tag
-#include <cstddef>  // For std::ptrdiff_t
+#include <iterator>
 
 #include <QDateTime>
 #include <QString>
@@ -46,7 +45,7 @@ public:
     FlightPrivate() noexcept
         : userAircraftIndex(InvalidAircraftIndex)
     {
-        clear();
+        clear(true);
     }
 
     qint64 id;
@@ -57,14 +56,15 @@ public:
     std::vector<std::unique_ptr<Aircraft>> aircrafts;
     int userAircraftIndex;
 
-    inline void clear() noexcept {
+    inline void clear(bool withOneAircraft) noexcept {
         id = Flight::InvalidId;
         title.clear();
         description.clear();
         flightCondition.clear();
         if (aircrafts.size() > 1) {
-            aircrafts.resize(1);
-            userAircraftIndex = 0;
+            const int aircraftCount = withOneAircraft ? 1 : 0;
+            aircrafts.resize(aircraftCount);
+            userAircraftIndex = withOneAircraft ? 0 : InvalidAircraftIndex;
         }
         // A flight always has at least one aircraft; unless
         // it is newly allocated: the aircraft is only added
@@ -186,12 +186,7 @@ qint64 Flight::deleteAircraftByIndex(int index) noexcept
     return aircraftId;
 }
 
-std::vector<std::unique_ptr<Aircraft>> &Flight::getAircrafts() const noexcept
-{
-    return d->aircrafts;
-}
-
-int Flight::getAircraftCount() const noexcept
+std::size_t Flight::count() const noexcept
 {
     return d->aircrafts.size();
 }
@@ -220,29 +215,34 @@ qint64 Flight::getTotalDurationMSec(bool ofUserAircraft) const noexcept
     return totalDuractionMSec;
 }
 
-void Flight::clear() noexcept
+void Flight::clear(bool withOneAircraft) noexcept
 {
-    d->clear();
+    d->clear(withOneAircraft);
 }
 
-Flight::it Flight::begin() noexcept
+Flight::Iterator Flight::begin() noexcept
 {
-    return it(d->aircrafts.begin());
+    return d->aircrafts.begin();
 }
 
-Flight::it Flight::end() noexcept
+Flight::Iterator Flight::end() noexcept
 {
-    return it(d->aircrafts.end());
+    return d->aircrafts.end();
 }
 
-const Flight::it Flight::begin() const noexcept
+const Flight::Iterator Flight::begin() const noexcept
 {
-    return it(d->aircrafts.begin());
+    return d->aircrafts.begin();
 }
 
-const Flight::it Flight::end() const noexcept
+const Flight::Iterator Flight::end() const noexcept
 {
-    return it(d->aircrafts.end());
+    return d->aircrafts.end();
+}
+
+Flight::InsertIterator Flight::insertIterator() noexcept
+{
+    return std::inserter(d->aircrafts, d->aircrafts.begin());
 }
 
 // OPERATORS

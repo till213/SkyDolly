@@ -28,115 +28,170 @@
 #include <QFlags>
 #include <QByteArray>
 #include <QList>
+#include <QFileDialog>
+#include <QMessageBox>
 
-#include "../../../Model/src/SimVar.h"
-#include "../../../Model/src/Aircraft.h"
-#include "../../../Model/src/Position.h"
-#include "../../../Model/src/PositionData.h"
-#include "../../../Model/src/Engine.h"
-#include "../../../Model/src/EngineData.h"
-#include "../../../Model/src/Engine.h"
-#include "../../../Model/src/EngineData.h"
-#include "../../../Model/src/PrimaryFlightControl.h"
-#include "../../../Model/src/PrimaryFlightControlData.h"
-#include "../../../Model/src/SecondaryFlightControl.h"
-#include "../../../Model/src/SecondaryFlightControlData.h"
-#include "../../../Model/src/AircraftHandle.h"
-#include "../../../Model/src/AircraftHandleData.h"
-#include "../../../Model/src/Light.h"
-#include "../../../Model/src/LightData.h"
-#include "../CSVConst.h"
-#include "CSVImport.h"
+#include "../../../../../Kernel/src/Unit.h"
+#include "../../../../../Kernel/src/Settings.h"
+#include "../../../../../Model/src/SimVar.h"
+#include "../../../../../Model/src/Logbook.h"
+#include "../../../../../Model/src/Flight.h"
+#include "../../../../../Model/src/Aircraft.h"
+#include "../../../../../Model/src/Position.h"
+#include "../../../../../Model/src/PositionData.h"
+#include "../../../../../Model/src/Engine.h"
+#include "../../../../../Model/src/EngineData.h"
+#include "../../../../../Model/src/Engine.h"
+#include "../../../../../Model/src/EngineData.h"
+#include "../../../../../Model/src/PrimaryFlightControl.h"
+#include "../../../../../Model/src/PrimaryFlightControlData.h"
+#include "../../../../../Model/src/SecondaryFlightControl.h"
+#include "../../../../../Model/src/SecondaryFlightControlData.h"
+#include "../../../../../Model/src/AircraftHandle.h"
+#include "../../../../../Model/src/AircraftHandleData.h"
+#include "../../../../../Model/src/Light.h"
+#include "../../../../../Model/src/LightData.h"
+#include "../../../../../Persistence/src/CSVConst.h"
+#include "../../../../../Persistence/src/Service/FlightService.h"
+#include "CSVImportPlugin.h"
 
 // PUBLIC
 
-bool CSVImport::importData(QIODevice &io, Aircraft &aircraft) noexcept
+CSVImportPlugin::CSVImportPlugin() noexcept
 {
-    bool ok = io.open(QIODevice::ReadOnly);
-    if (ok) {
-        // Headers
-        QByteArray line = io.readLine();
-        // Trim away line endings (\r\n for instance)
-        QByteArray data = line.trimmed();
+#ifdef DEBUG
+    qDebug("CSVImportPlugin::CSVImportPlugin: PLUGIN LOADED");
+#endif
+}
 
-        ok = !data.isNull();
+CSVImportPlugin::~CSVImportPlugin() noexcept
+{
+#ifdef DEBUG
+    qDebug("CSVImportPlugin::~CSVImportPlugin: PLUGIN UNLOADED");
+#endif
+}
+
+bool CSVImportPlugin::importData(FlightService &flightService) const noexcept
+{
+    bool ok;
+
+    // Start with the last export path
+    QString exportPath = Settings::getInstance().getExportPath();
+
+    const QString filePath = QFileDialog::getOpenFileName(getParentWidget(), tr("Import CSV"), exportPath, QString("*.csv"));
+    if (!filePath.isEmpty()) {
+
+        QFile file(filePath);
+        ok = file.open(QIODevice::ReadOnly);
         if (ok) {
-            QList<QByteArray> headers = data.split(CSVConst::Sep);
-            if (headers.first() == QString(CSVConst::TypeColumnName)) {
-                headers.removeFirst();
 
-                // Clear existing data
-                aircraft.blockSignals(true);
-                aircraft.clear();
+            Unit unit;
+            Flight &flight = Logbook::getInstance().getCurrentFlight();
+            Aircraft &aircraft = flight.getUserAircraft();
+            flight.clear(true);
 
-                // CSV data
-                data = io.readLine();
-                bool firstPositionData = true;
-                bool firstEngineData = true;
-                bool firstPrimaryFlightControlData = true;
-                bool firstSecondaryFlightControlData = true;
-                bool firstAircraftHandleData = true;
-                bool firstLightData = true;
-                while (!data.isNull()) {
+            // Headers
+            QByteArray line = file.readLine();
+            // Trim away line endings (\r\n for instance)
+            QByteArray data = line.trimmed();
 
-                    PositionData positionData;
-                    QList<QByteArray> values = data.split(CSVConst::Sep);
+            ok = !data.isNull();
+            if (ok) {
+                QList<QByteArray> headers = data.split(CSVConst::Sep);
+                if (headers.first() == QString(CSVConst::TypeColumnName)) {
+                    headers.removeFirst();
 
-                    // Type
-                    ok = values.at(0).size() > 0;
-                    if (ok) {
-                        CSVConst::DataType dataType = static_cast<CSVConst::DataType>(values.at(0).at(0));
-                        values.removeFirst();
-                        switch (dataType) {
-                        case CSVConst::DataType::Aircraft:
-                            ok = importPositionData(headers, values, firstPositionData, aircraft);
-                            firstPositionData = false;
-                            break;
-                        case CSVConst::DataType::Engine:
-                            ok = importEngineData(headers, values, firstEngineData, aircraft.getEngine());
-                            firstEngineData = false;
-                            break;
-                        case CSVConst::DataType::PrimaryFlightControl:
-                            ok = importPrimaryFlightControlData(headers, values, firstPrimaryFlightControlData, aircraft.getPrimaryFlightControl());
-                            firstPrimaryFlightControlData = false;
-                            break;
-                        case CSVConst::DataType::SecondaryFlightControl:
-                            ok = importSecondaryFlightControlData(headers, values, firstSecondaryFlightControlData, aircraft.getSecondaryFlightControl());
-                            firstSecondaryFlightControlData = false;
-                            break;
-                        case CSVConst::DataType::AircraftHandle:
-                            ok = importAircraftHandleData(headers, values, firstAircraftHandleData, aircraft.getAircraftHandle());
-                            firstAircraftHandleData = false;
-                            break;
-                        case CSVConst::DataType::Light:
-                            ok = importLightData(headers, values, firstLightData, aircraft.getLight());
-                            firstLightData = false;
-                            break;
-                        default:
-                            // Ignore unknown data types
+                    // Clear existing data
+                    aircraft.blockSignals(true);
+                    aircraft.clear();
+
+                    // CSV data
+                    data = file.readLine();
+                    bool firstPositionData = true;
+                    bool firstEngineData = true;
+                    bool firstPrimaryFlightControlData = true;
+                    bool firstSecondaryFlightControlData = true;
+                    bool firstAircraftHandleData = true;
+                    bool firstLightData = true;
+                    while (!data.isNull()) {
+
+                        PositionData positionData;
+                        QList<QByteArray> values = data.split(CSVConst::Sep);
+
+                        // Type
+                        ok = values.at(0).size() > 0;
+                        if (ok) {
+                            CSVConst::DataType dataType = static_cast<CSVConst::DataType>(values.at(0).at(0));
+                            values.removeFirst();
+                            switch (dataType) {
+                            case CSVConst::DataType::Aircraft:
+                                ok = importPositionData(headers, values, firstPositionData, aircraft);
+                                firstPositionData = false;
+                                break;
+                            case CSVConst::DataType::Engine:
+                                ok = importEngineData(headers, values, firstEngineData, aircraft.getEngine());
+                                firstEngineData = false;
+                                break;
+                            case CSVConst::DataType::PrimaryFlightControl:
+                                ok = importPrimaryFlightControlData(headers, values, firstPrimaryFlightControlData, aircraft.getPrimaryFlightControl());
+                                firstPrimaryFlightControlData = false;
+                                break;
+                            case CSVConst::DataType::SecondaryFlightControl:
+                                ok = importSecondaryFlightControlData(headers, values, firstSecondaryFlightControlData, aircraft.getSecondaryFlightControl());
+                                firstSecondaryFlightControlData = false;
+                                break;
+                            case CSVConst::DataType::AircraftHandle:
+                                ok = importAircraftHandleData(headers, values, firstAircraftHandleData, aircraft.getAircraftHandle());
+                                firstAircraftHandleData = false;
+                                break;
+                            case CSVConst::DataType::Light:
+                                ok = importLightData(headers, values, firstLightData, aircraft.getLight());
+                                firstLightData = false;
+                                break;
+                            default:
+                                // Ignore unknown data types
+                                break;
+                            }
+                        }
+
+                        // Read next line
+                        if (ok) {
+                            data = file.readLine();
+                        } else {
                             break;
                         }
                     }
+                    aircraft.blockSignals(false);
+                    emit aircraft.dataChanged();
 
-                    // Read next line
                     if (ok) {
-                        data = io.readLine();
-                    } else {
-                        break;
+                        exportPath = QFileInfo(filePath).absolutePath();
+                        Settings::getInstance().setExportPath(exportPath);
+
+                        AircraftInfo info(aircraft.getId());
+                        info.startDate = QFileInfo(filePath).birthTime();
+                        info.endDate = info.startDate.addMSecs(aircraft.getDurationMSec());
+                        aircraft.setAircraftInfo(info);
+                        flight.setTitle(tr("CSV import"));
+                        flight.setDescription(tr("Aircraft imported on %1 from file: %2").arg(unit.formatDateTime(QDateTime::currentDateTime()), filePath));
+                        flightService.store(flight);
                     }
+                } else {
+                    ok = false;
                 }
-                aircraft.blockSignals(false);
-                emit aircraft.dataChanged();
-            } else {
-                ok = false;
             }
+            file.close();
         }
-        io.close();
-    }
+        if (!ok) {
+            QMessageBox::critical(getParentWidget(), tr("Import error"), tr("The CSV file %1 could not be read.").arg(filePath));
+        }
+    } else {
+        ok = true;
+    }    
     return ok;
 }
 
-inline bool CSVImport::importPositionData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Aircraft &aircraft) noexcept
+inline bool CSVImportPlugin::importPositionData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Aircraft &aircraft) noexcept
 {
     PositionData data;
     int columnIndex = 0;
@@ -183,7 +238,7 @@ inline bool CSVImport::importPositionData(const QList<QByteArray> &headers, cons
             if (ok) {
                 data.heading = doubleValue;
             }
-        // Velocity
+            // Velocity
         } else if (header == SimVar::VelocityBodyX) {
             doubleValue = values.at(columnIndex).toDouble(&ok);
             if (ok) {
@@ -214,7 +269,7 @@ inline bool CSVImport::importPositionData(const QList<QByteArray> &headers, cons
             if (ok) {
                 data.rotationVelocityBodyZ = doubleValue;
             }
-        // Timestamp
+            // Timestamp
         } else if (header == SimVar::Timestamp) {
             timestamp = values.at(columnIndex).toLongLong(&ok);
             if (ok) {
@@ -247,7 +302,7 @@ inline bool CSVImport::importPositionData(const QList<QByteArray> &headers, cons
     return ok;
 }
 
-inline bool CSVImport::importEngineData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Engine &engine) noexcept
+inline bool CSVImportPlugin::importEngineData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Engine &engine) noexcept
 {
     EngineData data;
     int columnIndex = 0;
@@ -383,7 +438,7 @@ inline bool CSVImport::importEngineData(const QList<QByteArray> &headers, const 
             if (ok) {
                 data.generalEngineStarter4 = intValue != 0;
             }
-        // Timestamp
+            // Timestamp
         } else if (header == SimVar::Timestamp) {
             timestamp = values.at(columnIndex).toLongLong(&ok);
             if (ok) {
@@ -416,7 +471,7 @@ inline bool CSVImport::importEngineData(const QList<QByteArray> &headers, const 
     return ok;
 }
 
-inline bool CSVImport::importPrimaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, PrimaryFlightControl &primaryFlightControl) noexcept
+inline bool CSVImportPlugin::importPrimaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, PrimaryFlightControl &primaryFlightControl) noexcept
 {
     PrimaryFlightControlData data;
     int columnIndex = 0;
@@ -447,7 +502,7 @@ inline bool CSVImport::importPrimaryFlightControlData(const QList<QByteArray> &h
             if (ok) {
                 data.aileronPosition = intValue;
             }
-        // Timestamp
+            // Timestamp
         } else if (header == SimVar::Timestamp) {
             timestamp = values.at(columnIndex).toLongLong(&ok);
             if (ok) {
@@ -480,7 +535,7 @@ inline bool CSVImport::importPrimaryFlightControlData(const QList<QByteArray> &h
     return ok;
 }
 
-inline bool CSVImport::importSecondaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, SecondaryFlightControl &secondaryFlightControl) noexcept
+inline bool CSVImportPlugin::importSecondaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, SecondaryFlightControl &secondaryFlightControl) noexcept
 {
     SecondaryFlightControlData data;
     int columnIndex = 0;
@@ -526,7 +581,7 @@ inline bool CSVImport::importSecondaryFlightControlData(const QList<QByteArray> 
             if (ok) {
                 data.flapsHandleIndex = intValue;
             }
-        // Timestamp
+            // Timestamp
         } else if (header == SimVar::Timestamp) {
             timestamp = values.at(columnIndex).toLongLong(&ok);
             if (ok) {
@@ -559,7 +614,7 @@ inline bool CSVImport::importSecondaryFlightControlData(const QList<QByteArray> 
     return ok;
 }
 
-inline bool CSVImport::importAircraftHandleData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, AircraftHandle &aircraftHandle) noexcept
+inline bool CSVImportPlugin::importAircraftHandleData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, AircraftHandle &aircraftHandle) noexcept
 {
     AircraftHandleData data;
     int columnIndex = 0;
@@ -614,7 +669,7 @@ inline bool CSVImport::importAircraftHandleData(const QList<QByteArray> &headers
             if (ok) {
                 data.rightWingFolding = intValue;
             }
-        // Timestamp
+            // Timestamp
         } else if (header == SimVar::Timestamp) {
             ok = importTimestamp(values, columnIndex, firstRow, data.timestamp, timestampDelta);
         } else {
@@ -636,7 +691,7 @@ inline bool CSVImport::importAircraftHandleData(const QList<QByteArray> &headers
     return ok;
 }
 
-inline bool CSVImport::importLightData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Light &light) noexcept
+inline bool CSVImportPlugin::importLightData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Light &light) noexcept
 {
     LightData data;
     int columnIndex = 0;
@@ -657,7 +712,7 @@ inline bool CSVImport::importLightData(const QList<QByteArray> &headers, const Q
             if (ok) {
                 data.lightStates = static_cast<SimType::LightStates>(intValue);
             }
-        // Timestamp
+            // Timestamp
         } else if (header == SimVar::Timestamp) {
             timestamp = values.at(columnIndex).toLongLong(&ok);
             if (ok) {
@@ -690,7 +745,7 @@ inline bool CSVImport::importLightData(const QList<QByteArray> &headers, const Q
     return ok;
 }
 
-inline bool CSVImport::importTimestamp(const QList<QByteArray> &values, int columnIndex, bool firstRow, qint64 &timestamp, qint64 &timestampDelta)
+inline bool CSVImportPlugin::importTimestamp(const QList<QByteArray> &values, int columnIndex, bool firstRow, qint64 &timestamp, qint64 &timestampDelta)
 {
     bool ok;
     timestamp = values.at(columnIndex).toLongLong(&ok);

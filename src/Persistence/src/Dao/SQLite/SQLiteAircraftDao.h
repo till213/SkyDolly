@@ -43,7 +43,7 @@ public:
     virtual ~SQLiteAircraftDao() noexcept;
 
     virtual bool add(qint64 flightId, int sequenceNumber, Aircraft &aircraft) noexcept override;
-    virtual bool getByFlightId(qint64 flightId, std::vector<std::unique_ptr<Aircraft>> &aircrafts) const noexcept override;
+    virtual bool getByFlightId(qint64 flightId, std::insert_iterator<std::vector<std::unique_ptr<Aircraft>>> insertIterator) const noexcept override;
     virtual bool adjustAircraftSequenceNumbersByFlightId(qint64 flightId, int sequenceNumber) noexcept override;
     virtual bool deleteAllByFlightId(qint64 flightId) noexcept override;
     virtual bool deleteById(qint64 id) noexcept override;

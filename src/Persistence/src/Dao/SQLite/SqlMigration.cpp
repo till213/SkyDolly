@@ -41,15 +41,15 @@ public:
 
 SqlMigration::SqlMigration()
     : d(std::make_unique<SqlMigrationPrivate>())
-{}
+{
+     Q_INIT_RESOURCE(Migration);
+}
 
 SqlMigration::~SqlMigration()
 {}
 
 bool SqlMigration::migrateExAnte() noexcept
 {
-    Q_INIT_RESOURCE(Migration);
-
     return migrate(":/dao/sqlite/migr/migr-ex-ante.sql");
 }
 

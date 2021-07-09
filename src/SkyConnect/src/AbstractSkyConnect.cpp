@@ -121,7 +121,7 @@ void AbstractSkyConnect::startRecording(bool addFormationAircraft) noexcept
             // Single flight - destroy any previous AI aircrafts
             onDestroyAIObjects();
             // Start a new flight
-            d->currentFlight.clear();
+            d->currentFlight.clear(true);
             // Assign user aircraft ID
             onCreateAIObjects();
         } else {
@@ -390,19 +390,19 @@ bool AbstractSkyConnect::isIdle() const noexcept
 double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
 {
     double samplesPerSecond;
-    const QVector<PositionData> &positionData = d->currentFlight.getUserAircraftConst().getPosition().getAllConst();
-    if (positionData.count() > 0) {
-        const qint64 startTimestamp = qMin(qMax(d->currentTimestamp - SamplesPerSecondPeriodMSec, 0ll), positionData.last().timestamp);
+    const Position &position = d->currentFlight.getUserAircraftConst().getPosition();
+    if (position.count() > 0) {
+        const qint64 startTimestamp = qMin(qMax(d->currentTimestamp - SamplesPerSecondPeriodMSec, 0ll), position.getLast().timestamp);
         int index = d->lastSamplesPerSecondIndex;
 
-        while (positionData.at(index).timestamp < startTimestamp) {
+        while (position[index].timestamp < startTimestamp) {
             ++index;
         }
         d->lastSamplesPerSecondIndex = index;
 
-        const int lastIndex = positionData.count() - 1;
+        const int lastIndex = position.count() - 1;
         const int nofSamples = lastIndex - index + 1;
-        const qint64 period = positionData.at(lastIndex).timestamp - positionData.at(index).timestamp;
+        const qint64 period = position[lastIndex].timestamp - position[index].timestamp;
         if (period > 0) {
             samplesPerSecond = static_cast<double>(nofSamples) * 1000.0 / (static_cast<double>(period));
         } else {
@@ -521,7 +521,7 @@ void AbstractSkyConnect::frenchConnection() noexcept
 
 bool AbstractSkyConnect::hasRecordingStarted() const noexcept
 {
-    return d->currentFlight.getUserAircraftConst().getPosition().getAllConst().count() > 0;
+    return d->currentFlight.getUserAircraftConst().getPosition().count() > 0;
 }
 
 qint64 AbstractSkyConnect::getSkipInterval() const noexcept

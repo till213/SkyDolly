@@ -23,6 +23,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
 #include <QString>
@@ -141,13 +143,12 @@ bool SQLiteSecondaryFlightControlDao::add(qint64 aircraftId, const SecondaryFlig
     return ok;
 }
 
-bool SQLiteSecondaryFlightControlDao::getByAircraftId(qint64 aircraftId, QVector<SecondaryFlightControlData> &secondaryFlightControlData) const noexcept
+bool SQLiteSecondaryFlightControlDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<SecondaryFlightControlData>> insertIterator) const noexcept
 {
     d->initQueries();
     d->selectByAircraftIdQuery->bindValue(":aircraft_id", aircraftId);
     bool ok = d->selectByAircraftIdQuery->exec();
     if (ok) {
-        secondaryFlightControlData.clear();
         QSqlRecord record = d->selectByAircraftIdQuery->record();
         const int timestampIdx = record.indexOf("timestamp");
         const int leadingEdgeFlapsLeftPercentIdx = record.indexOf("leading_edge_flaps_left_percent");
@@ -168,7 +169,7 @@ bool SQLiteSecondaryFlightControlDao::getByAircraftId(qint64 aircraftId, QVector
             data.spoilersHandlePosition = d->selectByAircraftIdQuery->value(spoilersHandlePositionIdx).toInt();
             data.flapsHandleIndex = d->selectByAircraftIdQuery->value(flapsHandleIndexIdx).toInt();
 
-            secondaryFlightControlData.append(data);
+            insertIterator = std::move(data);
         }
 #ifdef DEBUG
     } else {

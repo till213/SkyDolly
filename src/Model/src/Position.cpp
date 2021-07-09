@@ -23,9 +23,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
-#include <QVector>
 
 #include "../../Kernel/src/SkyMath.h"
 #include "TimeVariableData.h"
@@ -42,7 +43,7 @@ public:
           currentIndex(SkySearch::InvalidIndex)
     {}
 
-    QVector<PositionData> positionData;
+    std::vector<PositionData> positionData;
     qint64 currentTimestamp;
     TimeVariableData::Access currentAccess;
     PositionData currentPositionData;
@@ -63,19 +64,19 @@ Position::~Position() noexcept
 
 void Position::upsert(const PositionData &positionData) noexcept
 {
-    if (d->positionData.count() > 0 && d->positionData.last().timestamp == positionData.timestamp)  {
+    if (d->positionData.size() > 0 && d->positionData.back().timestamp == positionData.timestamp)  {
         // Same timestamp -> replace
-        d->positionData[d->positionData.count() - 1] = positionData;
+        d->positionData[d->positionData.size() - 1] = positionData;
     } else {
-        d->positionData.append(positionData);
+        d->positionData.push_back(positionData);
     }
     emit dataChanged();
 }
 
 const PositionData &Position::getFirst() const noexcept
 {
-    if (!d->positionData.isEmpty()) {
-        return d->positionData.first();
+    if (!d->positionData.empty()) {
+        return d->positionData.front();
     } else {
         return PositionData::NullData;
     }
@@ -83,29 +84,16 @@ const PositionData &Position::getFirst() const noexcept
 
 const PositionData &Position::getLast() const noexcept
 {
-    if (!d->positionData.isEmpty()) {
-        return d->positionData.last();
+    if (!d->positionData.empty()) {
+        return d->positionData.back();
     } else {
         return PositionData::NullData;
     }
 }
 
-QVector<PositionData> &Position::getAll() const noexcept
+std::size_t Position::count() const noexcept
 {
-    return d->positionData;
-}
-
-const QVector<PositionData> &Position::getAllConst() const noexcept
-{
-    return d->positionData;
-}
-
-void Position::clear() noexcept
-{
-    d->positionData.clear();
-    d->currentTimestamp = TimeVariableData::InvalidTime;
-    d->currentIndex = SkySearch::InvalidIndex;
-    emit dataChanged();
+    return d->positionData.size();
 }
 
 const PositionData &Position::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
@@ -172,4 +160,49 @@ const PositionData &Position::interpolate(qint64 timestamp, TimeVariableData::Ac
         d->currentTimestamp = timestamp;
     }
     return d->currentPositionData;
+}
+
+void Position::clear() noexcept
+{
+    d->positionData.clear();
+    d->currentTimestamp = TimeVariableData::InvalidTime;
+    d->currentIndex = SkySearch::InvalidIndex;
+    emit dataChanged();
+}
+
+Position::Iterator Position::begin() noexcept
+{
+    return d->positionData.begin();
+}
+
+Position::Iterator Position::end() noexcept
+{
+    return Iterator(d->positionData.end());
+}
+
+const Position::Iterator Position::begin() const noexcept
+{
+    return Iterator(d->positionData.begin());
+}
+
+const Position::Iterator Position::end() const noexcept
+{
+    return Iterator(d->positionData.end());
+}
+
+Position::InsertIterator Position::insertIterator() noexcept
+{
+    return std::inserter(d->positionData, d->positionData.begin());
+}
+
+// OPERATORS
+
+PositionData& Position::operator[](std::size_t index) noexcept
+{
+    return d->positionData[index];
+}
+
+const PositionData& Position::operator[](std::size_t index) const noexcept
+{
+    return d->positionData[index];
 }

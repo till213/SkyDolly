@@ -70,6 +70,7 @@ private:
 
     void frenchConnection() noexcept;
     void initUi() noexcept;
+    void initPlugins() noexcept;
     void initModuleSelectorUi() noexcept;
     void initControlUi() noexcept;
     void initReplaySpeedUi() noexcept;
@@ -109,8 +110,6 @@ private slots:
     void on_openLogbookAction_triggered() noexcept;
     void on_backupLogbookAction_triggered() noexcept;
     void on_optimiseLogbookAction_triggered() noexcept;
-    void on_importCSVAction_triggered() noexcept;
-    void on_exportCSVAction_triggered() noexcept;
     void on_showSettingsAction_triggered() noexcept;
     void on_quitAction_triggered() noexcept;
     // Window menu
@@ -139,5 +138,9 @@ private slots:
     // Service
     void handleFlightRestored() noexcept;
     void handleLogbookConnectionChanged(bool connected) noexcept;
+
+    // Import / export
+    void handleImport(QAction *action) noexcept;
+    void handleExport(QAction *action) noexcept;
 };
 #endif // MAINWINDOW_H

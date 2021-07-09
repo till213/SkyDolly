@@ -49,9 +49,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
-#include <QVector>
 
 #include "../../Kernel/src/SkyMath.h"
 #include "TimeVariableData.h"
@@ -68,7 +69,7 @@ public:
           currentIndex(SkySearch::InvalidIndex)
     {}
 
-    QVector<PrimaryFlightControlData> primaryFlightControlData;
+    std::vector<PrimaryFlightControlData> primaryFlightControlData;
     qint64 currentTimestamp;
     TimeVariableData::Access currentAccess;
     PrimaryFlightControlData currentPrimaryFlightControlData;
@@ -89,40 +90,36 @@ PrimaryFlightControl::~PrimaryFlightControl() noexcept
 
 void PrimaryFlightControl::upsert(const PrimaryFlightControlData &primaryFlightControlData) noexcept
 {
-    if (d->primaryFlightControlData.count() > 0 && d->primaryFlightControlData.last().timestamp == primaryFlightControlData.timestamp)  {
+    if (d->primaryFlightControlData.size() > 0 && d->primaryFlightControlData.back().timestamp == primaryFlightControlData.timestamp)  {
         // Same timestamp -> replace
-        d->primaryFlightControlData[d->primaryFlightControlData.count() - 1] = primaryFlightControlData;
+        d->primaryFlightControlData[d->primaryFlightControlData.size() - 1] = primaryFlightControlData;
     } else {
-        d->primaryFlightControlData.append(primaryFlightControlData);
+        d->primaryFlightControlData.push_back(primaryFlightControlData);
     }
     emit dataChanged();
 }
 
-const PrimaryFlightControlData &PrimaryFlightControl::getLast() const noexcept
+const PrimaryFlightControlData &PrimaryFlightControl::getFirst() const noexcept
 {
-    if (!d->primaryFlightControlData.isEmpty()) {
-        return d->primaryFlightControlData.last();
+    if (!d->primaryFlightControlData.empty()) {
+        return d->primaryFlightControlData.front();
     } else {
         return PrimaryFlightControlData::NullData;
     }
 }
 
-QVector<PrimaryFlightControlData> &PrimaryFlightControl::getAll() const noexcept
+const PrimaryFlightControlData &PrimaryFlightControl::getLast() const noexcept
 {
-    return d->primaryFlightControlData;
+    if (!d->primaryFlightControlData.empty()) {
+        return d->primaryFlightControlData.back();
+    } else {
+        return PrimaryFlightControlData::NullData;
+    }
 }
 
-const QVector<PrimaryFlightControlData> &PrimaryFlightControl::getAllConst() const noexcept
+std::size_t PrimaryFlightControl::count() const noexcept
 {
-    return d->primaryFlightControlData;
-}
-
-void PrimaryFlightControl::clear() noexcept
-{
-    d->primaryFlightControlData.clear();
-    d->currentTimestamp = TimeVariableData::InvalidTime;
-    d->currentIndex = SkySearch::InvalidIndex;
-    emit dataChanged();
+    return d->primaryFlightControlData.size();
 }
 
 const PrimaryFlightControlData &PrimaryFlightControl::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
@@ -169,4 +166,49 @@ const PrimaryFlightControlData &PrimaryFlightControl::interpolate(qint64 timesta
         d->currentAccess = access;
     }
     return d->currentPrimaryFlightControlData;
+}
+
+void PrimaryFlightControl::clear() noexcept
+{
+    d->primaryFlightControlData.clear();
+    d->currentTimestamp = TimeVariableData::InvalidTime;
+    d->currentIndex = SkySearch::InvalidIndex;
+    emit dataChanged();
+}
+
+PrimaryFlightControl::Iterator PrimaryFlightControl::begin() noexcept
+{
+    return d->primaryFlightControlData.begin();
+}
+
+PrimaryFlightControl::Iterator PrimaryFlightControl::end() noexcept
+{
+    return Iterator(d->primaryFlightControlData.end());
+}
+
+const PrimaryFlightControl::Iterator PrimaryFlightControl::begin() const noexcept
+{
+    return Iterator(d->primaryFlightControlData.begin());
+}
+
+const PrimaryFlightControl::Iterator PrimaryFlightControl::end() const noexcept
+{
+    return Iterator(d->primaryFlightControlData.end());
+}
+
+PrimaryFlightControl::InsertIterator PrimaryFlightControl::insertIterator() noexcept
+{
+    return std::inserter(d->primaryFlightControlData, d->primaryFlightControlData.begin());
+}
+
+// OPERATORS
+
+PrimaryFlightControlData& PrimaryFlightControl::operator[](std::size_t index) noexcept
+{
+    return d->primaryFlightControlData[index];
+}
+
+const PrimaryFlightControlData& PrimaryFlightControl::operator[](std::size_t index) const noexcept
+{
+    return d->primaryFlightControlData[index];
 }

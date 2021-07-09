@@ -2,6 +2,13 @@
 
 ## 0.8.0
 
+### New Features
+
+- Plugin architecture
+  * Import CSV plugin
+  * Export CSV plugin
+  * Export KML plugin ("Google Earth")
+
 ### Improvements
 
 - Aircrafts can now also be deleted from a formation flight during (paused) replay

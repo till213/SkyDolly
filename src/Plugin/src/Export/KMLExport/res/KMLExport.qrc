@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/kml">
+        <file>Header.kml</file>
+        <file>Footer.kml</file>
+    </qresource>
+</RCC>

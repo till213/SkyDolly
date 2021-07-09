@@ -23,6 +23,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
 #include <QString>
@@ -30,7 +32,6 @@
 #include <QVariant>
 #include <QSqlError>
 #include <QSqlRecord>
-#include <QVector>
 #include <QDateTime>
 #include <QTimeZone>
 
@@ -249,7 +250,7 @@ bool SQLiteFlightDao::getFlightById(qint64 id, Flight &flight) const noexcept
     d->selectByIdQuery->bindValue(":id", id);
     bool ok = d->selectByIdQuery->exec();
     if (ok) {
-        flight.clear();
+        flight.clear(false);
         QSqlRecord record = d->selectByIdQuery->record();
         const int idIdx = record.indexOf("id");
         const int creationDateIdx = record.indexOf("creation_date");
@@ -301,7 +302,7 @@ bool SQLiteFlightDao::getFlightById(qint64 id, Flight &flight) const noexcept
 
             flight.setFlightCondition(flightCondition);
         }
-        ok = d->aircraftDao->getByFlightId(id, flight.getAircrafts());
+        ok = d->aircraftDao->getByFlightId(id, flight.insertIterator());
         if (ok) {
             // Index starts at 0
             const int userAircraftIndex = d->selectByIdQuery->value(userAircraftSequenceNumberIdx).toInt() - 1;

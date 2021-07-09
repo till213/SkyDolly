@@ -22,11 +22,16 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVEXPORT_H
-#define CSVEXPORT_H
+#ifndef CSVEXPORTPLUGIN_H
+#define CSVEXPORTPLUGIN_H
+
+#include <QObject>
+#include <QtPlugin>
 
 class QString;
-class QIODevice;
+
+#include "../../../ExportIntf.h"
+#include "../../../PluginBase.h"
 
 class Aircraft;
 class PositionData;
@@ -37,13 +42,28 @@ class AircraftHandleData;
 class LightData;
 class CSVExportPrivate;
 
-/*!
- * Exports the Aircraft data as comma-separated values (CSV).
- */
-class CSVExport
+class CSVExportPrivate;
+
+class CSVExportPlugin : public PluginBase, public ExportIntf
 {
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "CSVExportPlugin.json")
+    Q_INTERFACES(ExportIntf)
 public:
-    static bool exportData(const Aircraft &aircraft, QIODevice &io) noexcept;
+    CSVExportPlugin();
+    virtual ~CSVExportPlugin();
+
+    virtual QWidget *getParentWidget() const noexcept override
+    {
+        return PluginBase::getParentWidget();
+    }
+
+    virtual void setParentWidget(QWidget *parent) noexcept override
+    {
+        PluginBase::setParentWidget(parent);
+    }
+
+    virtual bool exportData() const noexcept override;
 
 private:
     CSVExportPrivate *d;
@@ -67,4 +87,4 @@ private:
     static QString getLightData(const LightData &data) noexcept;
 };
 
-#endif // CSVEXPORT_H
+#endif // CSVEXPORTPLUGIN_H
