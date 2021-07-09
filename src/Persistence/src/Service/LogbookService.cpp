@@ -23,6 +23,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <forward_list>
+#include <vector>
 
 #include <QSqlDatabase>
 
@@ -60,26 +62,15 @@ std::forward_list<FlightDate> LogbookService::getFlightDates() const noexcept
 {
     std::forward_list<FlightDate> flightDates;
     if (QSqlDatabase::database().transaction()) {
-        // TODO IMPLEMENT ME!!!
-        flightDates.emplace_front(2010, 1, 5);
-        flightDates.emplace_front(2010, 1, 6);
-        flightDates.emplace_front(2010, 5, 6);
-        flightDates.emplace_front(2010, 6, 6);
-        flightDates.emplace_front(2015, 1, 6);
-        flightDates.emplace_front(2016, 5, 20);
-        flightDates.emplace_front(2021, 4, 1);
-        flightDates.emplace_front(2021, 4, 2);
-        flightDates.emplace_front(2021, 4, 3);
-        flightDates.emplace_front(2021, 5, 3);
+        flightDates = d->logbookDao->getFlightDates();
         QSqlDatabase::database().rollback();
     }
     return flightDates;
 }
 
-
-QVector<FlightSummary> LogbookService::getFlightSummaries() const noexcept
+std::vector<FlightSummary> LogbookService::getFlightSummaries() const noexcept
 {
-    QVector<FlightSummary> descriptions;
+    std::vector<FlightSummary> descriptions;
     if (QSqlDatabase::database().transaction()) {
         descriptions = d->logbookDao->getFlightSummaries();
         QSqlDatabase::database().rollback();

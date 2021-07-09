@@ -24,6 +24,7 @@
  */
 #include <memory>
 #include <vector>
+#include <forward_list>
 #include <iterator>
 
 #include <QObject>
@@ -37,6 +38,7 @@
 
 #include "../../../../Kernel/src/Enum.h"
 #include "../../../../Model/src/Logbook.h"
+#include "../../../../Model/src/FlightDate.h"
 #include "../../../../Model/src/FlightSummary.h"
 #include "../../../../Model/src/FlightCondition.h"
 #include "../../Dao/AircraftDaoIntf.h"
@@ -53,12 +55,21 @@ public:
           aircraftDao(daoFactory->createAircraftDao())
     {}
 
+    std::unique_ptr<QSqlQuery> selectFlightDatesQuery;
     std::unique_ptr<QSqlQuery> selectSummariesQuery;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<AircraftDaoIntf> aircraftDao;
 
     void initQueries()
     {
+        if (selectFlightDatesQuery == nullptr) {
+            selectFlightDatesQuery = std::make_unique<QSqlQuery>();
+            selectFlightDatesQuery->setForwardOnly(true);
+            selectFlightDatesQuery->prepare(
+"select strftime('%Y', creation_date) as year, strftime('%m', creation_date) as month, strftime('%d', creation_date) as day "
+"from  flight "
+"group by year, month, day");
+        }
         if (selectSummariesQuery == nullptr) {
             selectSummariesQuery = std::make_unique<QSqlQuery>();
             selectSummariesQuery->setForwardOnly(true);
@@ -79,6 +90,7 @@ public:
 
     void resetQueries() noexcept
     {
+        selectFlightDatesQuery = nullptr;
         selectSummariesQuery = nullptr;
     }
 };
@@ -95,12 +107,39 @@ SQLiteLogbookDao::SQLiteLogbookDao(QObject *parent) noexcept
 SQLiteLogbookDao::~SQLiteLogbookDao() noexcept
 {}
 
-QVector<FlightSummary> SQLiteLogbookDao::getFlightSummaries() const noexcept
+std::forward_list<FlightDate> SQLiteLogbookDao::getFlightDates() const noexcept
 {
-    QVector<FlightSummary> summaries;
+    std::forward_list<FlightDate> flightDates;
 
     d->initQueries();
-    bool ok = d->selectSummariesQuery->exec();
+    const bool ok = d->selectFlightDatesQuery->exec();
+    if (ok) {
+        QSqlRecord record = d->selectFlightDatesQuery->record();
+        const int yearIdx = record.indexOf("year");
+        const int monthIdx = record.indexOf("month");
+        const int dayIdx = record.indexOf("day");
+
+        while (d->selectFlightDatesQuery->next()) {
+            const int year = d->selectFlightDatesQuery->value(yearIdx).toInt();
+            const int month = d->selectFlightDatesQuery->value(monthIdx).toInt();
+            const int day = d->selectFlightDatesQuery->value(dayIdx).toInt();
+            flightDates.emplace_front(year, month, day);
+        }
+#ifdef DEBUG
+    } else {
+        qDebug("SQLiteLogbookDao::getFlightDates: SQL error: %s", qPrintable(d->selectFlightDatesQuery->lastError().databaseText() + " - error code: " + d->selectFlightDatesQuery->lastError().nativeErrorCode()));
+#endif
+    }
+
+    return flightDates;
+}
+
+std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries() const noexcept
+{
+    std::vector<FlightSummary> summaries;
+
+    d->initQueries();
+    const bool ok = d->selectSummariesQuery->exec();
     if (ok) {
         QSqlRecord record = d->selectSummariesQuery->record();
         const int idIdx = record.indexOf("id");
@@ -142,7 +181,7 @@ QVector<FlightSummary> SQLiteLogbookDao::getFlightSummaries() const noexcept
             summary.endLocation = d->selectSummariesQuery->value(endWaypointIdx).toString();
             summary.title = d->selectSummariesQuery->value(titleIdx).toString();
 
-            summaries.append(summary);
+            summaries.push_back(summary);
         }
 #ifdef DEBUG
     } else {

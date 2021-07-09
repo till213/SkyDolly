@@ -25,11 +25,15 @@
 #ifndef LOGBOOKDAO_H
 #define LOGBOOKDAO_H
 
+#include <forward_list>
+#include <vector>
+
 #include <QtGlobal>
 
 class QString;
 
 class Flight;
+class FlightDate;
 class FlightSummary;
 
 class LogbookDaoIntf
@@ -37,7 +41,8 @@ class LogbookDaoIntf
 public:
     virtual ~LogbookDaoIntf() = default;
 
-    virtual QVector<FlightSummary> getFlightSummaries() const noexcept = 0;
+    virtual std::forward_list<FlightDate> getFlightDates() const noexcept = 0;
+    virtual std::vector<FlightSummary> getFlightSummaries() const noexcept = 0;
 };
 
 #endif // LOGBOOKDAO_H

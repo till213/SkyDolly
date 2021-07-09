@@ -26,6 +26,8 @@
 #define SQLITELOGBOOKDAO_H
 
 #include <memory>
+#include <forward_list>
+#include <vector>
 
 #include <QObject>
 #include <QtGlobal>
@@ -42,7 +44,8 @@ public:
     explicit SQLiteLogbookDao(QObject *parent = nullptr) noexcept;
     virtual ~SQLiteLogbookDao() noexcept;
 
-    virtual QVector<FlightSummary> getFlightSummaries() const noexcept override;
+    virtual std::forward_list<FlightDate> getFlightDates() const noexcept override;
+    virtual std::vector<FlightSummary> getFlightSummaries() const noexcept override;
 
 private:
     std::unique_ptr<SQLiteLogbookDaoPrivate> d;
