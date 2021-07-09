@@ -22,33 +22,33 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTDAOINTF_H
-#define FLIGHTDAOINTF_H
+#ifndef LOGBOOKSERVICE_H
+#define LOGBOOKSERVICE_H
 
-#include <QtGlobal>
+#include <memory>
+#include <forward_list>
 
-class QString;
+#include <QObject>
+#include <QVector>
 
-class Flight;
-class FlightSummary;
+#include "../../../Model/src/FlightDate.h"
+#include "../../../Model/src/FlightSummary.h"
+#include "../PersistenceLib.h"
 
-class FlightDaoIntf
+class LogbookServicePrivate;
+
+class PERSISTENCE_API LogbookService : public QObject
 {
+    Q_OBJECT
 public:
-    virtual ~FlightDaoIntf() = default;
+    LogbookService(QObject *parent = nullptr) noexcept;
+    virtual ~LogbookService() noexcept;
 
-    /*!
-     * Persists the \c flight. The \c id in \c flight is updated.
-     * \param flight
-     *        the Flight to be persisted
-     * \return \c true on success; \c false else
-     */
-    virtual bool addFlight(Flight &flight) noexcept = 0;
-    virtual bool getFlightById(qint64 id, Flight &flight) const noexcept = 0;
-    virtual bool deleteById(qint64 id) noexcept = 0;
-    virtual bool updateTitle(qint64 id, const QString &title) noexcept = 0;
-    virtual bool updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept = 0;
-    virtual bool updateUserAircraftIndex(qint64 id, int index) noexcept = 0;
+    std::forward_list<FlightDate> getFlightDates() const noexcept;
+    QVector<FlightSummary> getFlightSummaries() const noexcept;
+
+private:
+    std::unique_ptr<LogbookServicePrivate> d;
 };
 
-#endif // FLIGHTDAOINTF_H
+#endif // LOGBOOKSERVICE_H

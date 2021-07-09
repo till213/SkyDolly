@@ -50,8 +50,6 @@ public:
     virtual bool updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept override;
     virtual bool updateUserAircraftIndex(qint64 id, int index) noexcept override;
 
-    virtual QVector<FlightSummary> getFlightSummaries() const noexcept override;
-
 private:
     std::unique_ptr<SQLiteFlightDaoPrivate> d;
 

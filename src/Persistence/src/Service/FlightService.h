@@ -53,9 +53,6 @@ public:
     bool updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept;
     bool updateUserAircraftIndex(Flight &flight, int index) noexcept;
 
-    std::forward_list<FlightDate> getFlightDates() const noexcept;
-    QVector<FlightSummary> getFlightSummaries() const noexcept;
-
 signals:
     void flightStored(qint64 id);
     void flightRestored(qint64 id);
