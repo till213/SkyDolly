@@ -27,6 +27,7 @@
 
 #include <memory>
 #include <forward_list>
+#include <vector>
 
 #include <QObject>
 #include <QVector>
@@ -45,7 +46,7 @@ public:
     virtual ~LogbookService() noexcept;
 
     std::forward_list<FlightDate> getFlightDates() const noexcept;
-    QVector<FlightSummary> getFlightSummaries() const noexcept;
+    std::vector<FlightSummary> getFlightSummaries() const noexcept;
 
 private:
     std::unique_ptr<LogbookServicePrivate> d;

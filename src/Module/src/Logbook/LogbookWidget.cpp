@@ -23,6 +23,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <forward_list>
+#include <vector>
 
 #include <QTableWidget>
 #include <QTableWidgetItem>
@@ -255,11 +257,11 @@ void LogbookWidget::updateUi() noexcept
 
         const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
         const qint64 flightInMemoryId = flight.getId();
-        QVector<FlightSummary> summaries = d->logbookService->getFlightSummaries();
+        std::vector<FlightSummary> summaries = d->logbookService->getFlightSummaries();
         ui->logTableWidget->blockSignals(true);
         ui->logTableWidget->setSortingEnabled(false);
         ui->logTableWidget->clearContents();
-        ui->logTableWidget->setRowCount(summaries.count());
+        ui->logTableWidget->setRowCount(summaries.size());
         const QIcon aircraftIcon(":/img/icons/aircraft-normal.png");
         int rowIndex = 0;
         for (const FlightSummary &summary : summaries) {
