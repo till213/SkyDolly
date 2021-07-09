@@ -36,6 +36,7 @@
 #include "../../../Model/src/FlightSummary.h"
 #include "../PersistenceLib.h"
 
+class FlightSelector;
 class LogbookServicePrivate;
 
 class PERSISTENCE_API LogbookService : public QObject
@@ -46,7 +47,7 @@ public:
     virtual ~LogbookService() noexcept;
 
     std::forward_list<FlightDate> getFlightDates() const noexcept;
-    std::vector<FlightSummary> getFlightSummaries() const noexcept;
+    std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector) const noexcept;
 
 private:
     std::unique_ptr<LogbookServicePrivate> d;

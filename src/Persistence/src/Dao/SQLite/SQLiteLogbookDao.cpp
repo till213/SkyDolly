@@ -41,7 +41,7 @@
 #include "../../../../Model/src/FlightDate.h"
 #include "../../../../Model/src/FlightSummary.h"
 #include "../../../../Model/src/FlightCondition.h"
-#include "../../Dao/AircraftDaoIntf.h"
+#include "../../Dao/FlightSelector.h"
 #include "../../Dao/DaoFactory.h"
 #include "../../ConnectionManager.h"
 #include "SQLiteLogbookDao.h"
@@ -51,14 +51,12 @@ class SQLiteLogbookDaoPrivate
 {
 public:
     SQLiteLogbookDaoPrivate() noexcept
-        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
-          aircraftDao(daoFactory->createAircraftDao())
+        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite))
     {}
 
     std::unique_ptr<QSqlQuery> selectFlightDatesQuery;
     std::unique_ptr<QSqlQuery> selectSummariesQuery;
     std::unique_ptr<DaoFactory> daoFactory;
-    std::unique_ptr<AircraftDaoIntf> aircraftDao;
 
     void initQueries()
     {
@@ -84,7 +82,8 @@ public:
 "left join (select ident, aircraft_id from waypoint wo1 where wo1.timestamp = (select min(wi1.timestamp) from waypoint wi1 where wi1.aircraft_id = wo1.aircraft_id)) fp1 "
 "on fp1.aircraft_id = a.id "
 "left join (select ident, aircraft_id from waypoint wo2 where wo2.timestamp = (select max(wi2.timestamp) from waypoint wi2 where wi2.aircraft_id = wo2.aircraft_id)) fp2 "
-"on fp2.aircraft_id = a.id");
+"on fp2.aircraft_id = a.id "
+"where f.creation_date between :from_date and :to_date;");
         }
     }
 
@@ -134,11 +133,13 @@ std::forward_list<FlightDate> SQLiteLogbookDao::getFlightDates() const noexcept
     return flightDates;
 }
 
-std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries() const noexcept
+std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSelector &flightSelector) const noexcept
 {
     std::vector<FlightSummary> summaries;
 
     d->initQueries();
+    d->selectSummariesQuery->bindValue(":from_date", flightSelector.fromDate);
+    d->selectSummariesQuery->bindValue(":to_date", flightSelector.toDate);
     const bool ok = d->selectSummariesQuery->exec();
     if (ok) {
         QSqlRecord record = d->selectSummariesQuery->record();

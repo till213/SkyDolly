@@ -73,13 +73,14 @@ private:
     std::unique_ptr<LogbookWidgetPrivate> d;
 
     void initUi() noexcept;
+    void updateFlightTable() noexcept;
     void frenchConnection() noexcept;
     inline void insertYear(QTreeWidget *parent, std::forward_list<FlightDate> &flightDatesByYear) noexcept;
     inline void insertMonth(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByMonth) noexcept;
     inline void insertDay(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByDayOfMonth) noexcept;
+    inline void updateSelectionDateRange(QTreeWidgetItem *item) const noexcept;
 
     static const QString getName() noexcept;
-
 
 private slots:
     void updateUi() noexcept;
@@ -89,8 +90,11 @@ private slots:
     void handleSelectionChanged() noexcept;
     void loadFlight() noexcept;
     void deleteFlight() noexcept;
+    // Flight log table
     void handleCellSelected(int row, int column) noexcept;
     void handleCellChanged(int row, int column) noexcept;
+    // Flight date tree
+    void handleDateItemClicked(QTreeWidgetItem *item, int column) noexcept;
 };
 
 #endif // LOGBOOKWIDGET_H

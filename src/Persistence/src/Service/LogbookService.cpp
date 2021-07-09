@@ -28,6 +28,7 @@
 
 #include <QSqlDatabase>
 
+#include "../Dao/FlightSelector.h"
 #include "../Dao/DaoFactory.h"
 #include "../Dao/LogbookDaoIntf.h"
 #include "LogbookService.h"
@@ -68,11 +69,11 @@ std::forward_list<FlightDate> LogbookService::getFlightDates() const noexcept
     return flightDates;
 }
 
-std::vector<FlightSummary> LogbookService::getFlightSummaries() const noexcept
+std::vector<FlightSummary> LogbookService::getFlightSummaries(const FlightSelector &flightSelector) const noexcept
 {
     std::vector<FlightSummary> descriptions;
     if (QSqlDatabase::database().transaction()) {
-        descriptions = d->logbookDao->getFlightSummaries();
+        descriptions = d->logbookDao->getFlightSummaries(flightSelector);
         QSqlDatabase::database().rollback();
     }
     return descriptions;

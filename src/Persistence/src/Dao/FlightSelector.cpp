@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The black sheep for your Logbook recordings
+ * Sky Dolly - The black sheep for your flight recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -22,39 +22,15 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SQLITELOGBOOKDAO_H
-#define SQLITELOGBOOKDAO_H
+#include "FlightSelector.h"
 
-#include <memory>
-#include <forward_list>
-#include <vector>
+// PUBLIC
 
-#include <QObject>
-#include <QtGlobal>
+FlightSelector::FlightSelector()
+    : fromDate(MinDate),
+      toDate(MaxDate)
+{}
 
-#include "../FlightSelector.h"
-#include "../LogbookDaoIntf.h"
-
-class Logbook;
-class FlightSummary;
-class SQLiteLogbookDaoPrivate;
-
-class SQLiteLogbookDao : public QObject, public LogbookDaoIntf
-{
-public:
-    explicit SQLiteLogbookDao(QObject *parent = nullptr) noexcept;
-    virtual ~SQLiteLogbookDao() noexcept;
-
-    virtual std::forward_list<FlightDate> getFlightDates() const noexcept override;
-    virtual std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector) const noexcept override;
-
-private:
-    std::unique_ptr<SQLiteLogbookDaoPrivate> d;
-
-    void frenchConnection() noexcept;
-
-private slots:
-    void handleConnectionChanged() noexcept;
-};
-
-#endif // SQLITELOGBOOKDAO_H
+// The release date of FS2020 ;)
+const QDate FlightSelector::MinDate {2020, 8, 18};
+const QDate FlightSelector::MaxDate {9999, 12, 31};

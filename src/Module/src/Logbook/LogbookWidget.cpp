@@ -26,9 +26,7 @@
 #include <forward_list>
 #include <vector>
 
-#include <QTableWidget>
-#include <QTableWidgetItem>
-#include <QVector>
+#include <QVariant>
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QItemSelectionModel>
@@ -46,6 +44,7 @@
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/FlightSummary.h"
 #include "../../../Model/src/Logbook.h"
+#include "../../../Persistence/src/Dao/FlightSelector.h"
 #include "../../../Persistence/src/Service/DatabaseService.h"
 #include "../../../Persistence/src/Service/LogbookService.h"
 #include "../../../Persistence/src/Service/FlightService.h"
@@ -85,6 +84,7 @@ public:
     qint64 selectedFlightId;
     Unit unit;
     std::unique_ptr<QAction> moduleAction;
+    FlightSelector flightSelector;
 };
 
 // PUBLIC
@@ -145,6 +145,9 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
     connect(&skyConnect, &SkyConnectIntf::stateChanged,
             this, &LogbookWidget::updateEditUi);
 
+    connect(ui->logTreeWidget, &QTreeWidget::itemClicked,
+            this, &LogbookWidget::handleDateItemClicked);
+
     updateUi();
     handleSelectionChanged();
 }
@@ -164,6 +167,9 @@ void LogbookWidget::hideEvent(QHideEvent *event) noexcept
     SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
     disconnect(&skyConnect, &SkyConnectIntf::stateChanged,
                this, &LogbookWidget::updateEditUi);
+
+    disconnect(ui->logTreeWidget, &QTreeWidget::itemClicked,
+               this, &LogbookWidget::handleDateItemClicked);
 }
 
 // PRIVATE
@@ -173,6 +179,10 @@ void LogbookWidget::initUi() noexcept
     d->moduleAction = std::make_unique<QAction>(getName());
     d->moduleAction->setCheckable(true);
 
+    // Date selection
+    ui->logTreeWidget->setHeaderLabel(tr("Creation Date"));
+
+    // Flight log table
     ui->logTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     const QStringList headers {tr("Flight"), tr("Date"), tr("Aircraft"), tr("Number of Aircrafts"), tr("Departure Time"), tr("Departure"), tr("Arrival Time"), tr("Arrival"), tr("Total Time of Flight"), tr("Title")};
@@ -186,78 +196,14 @@ void LogbookWidget::initUi() noexcept
     ui->logTableWidget->sortByColumn(FlightIdColumn, Qt::SortOrder::DescendingOrder);
 }
 
-void LogbookWidget::frenchConnection() noexcept
+void LogbookWidget::updateFlightTable() noexcept
 {
-    connect(ui->logTableWidget, &QTableWidget::itemSelectionChanged,
-            this, &LogbookWidget::handleSelectionChanged);
-    connect(ui->loadPushButton, &QPushButton::clicked,
-            this, &LogbookWidget::loadFlight);
-    connect(ui->deletePushButton, &QPushButton::clicked,
-            this, &LogbookWidget::deleteFlight);
-    connect(ui->logTableWidget, &QTableWidget::cellDoubleClicked,
-            this, &LogbookWidget::handleCellSelected);
-    connect(ui->logTableWidget, &QTableWidget::cellChanged,
-            this, &LogbookWidget::handleCellChanged);
-}
-
-inline void LogbookWidget::insertYear(QTreeWidget *parent, std::forward_list<FlightDate> &flightDatesByYear) noexcept
-{
-    QTreeWidgetItem *yearItem = new QTreeWidgetItem(parent, QStringList(QString::number(flightDatesByYear.cbegin()->year)));
-    while (!flightDatesByYear.empty()) {
-        std::forward_list<FlightDate>::const_iterator first = flightDatesByYear.cbegin();
-        std::forward_list<FlightDate>::const_iterator last = first;
-
-        // Group by year
-        int currentMonth = first->month;
-        while (last != flightDatesByYear.end() && last->month == currentMonth) {
-            ++last;
-        }
-        std::forward_list<FlightDate> flightDatesByMonth = {};
-        flightDatesByMonth.splice_after(flightDatesByMonth.cbefore_begin(), flightDatesByYear, flightDatesByYear.cbefore_begin(), last);
-        insertMonth(yearItem, flightDatesByMonth);
-    }
-    // The parent takes ownership over yearItem
-    // -> suppress the clang code analysis warning about "potential leak of memory"
-    // * Is there a better way (annotation) to suppress this warning?
-    // * https://stackoverflow.com/questions/65667955/clang-static-analyzer-complains-about-memory-leak-when-using-protobufs-set-allo
-#ifdef __clang_analyzer__
-    delete yearItem;
-#endif
-}
-
-inline void LogbookWidget::insertMonth(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByMonth) noexcept
-{
-    QTreeWidgetItem *monthItem = new QTreeWidgetItem(parent, QStringList(d->unit.formatMonth(flightDatesByMonth.cbegin()->month)));
-    // The days are already unique
-    insertDay(monthItem, flightDatesByMonth);
-    // The parent takes ownership over monthItem
-    // -> suppress the clang code analysis warning about "potential leak of memory"
-#ifdef __clang_analyzer__
-    delete monthItem;
-#endif
-}
-
-inline void LogbookWidget::insertDay(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByDayOfMonth) noexcept
-{
-    for (auto &it: flightDatesByDayOfMonth) {
-        new QTreeWidgetItem(parent, QStringList(QString::number(it.dayOfMonth)));
-    }
-}
-
-const QString LogbookWidget::getName() noexcept
-{
-    return QString(QT_TRANSLATE_NOOP("LogbookWidget", "Logbook"));
-}
-
-// PRIVATE SLOTS
-
-void LogbookWidget::updateUi() noexcept
-{
+    d->selectedFlightId = Flight::InvalidId;
     if (d->databaseService.isConnected()) {
 
         const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
         const qint64 flightInMemoryId = flight.getId();
-        std::vector<FlightSummary> summaries = d->logbookService->getFlightSummaries();
+        std::vector<FlightSummary> summaries = d->logbookService->getFlightSummaries(d->flightSelector);
         ui->logTableWidget->blockSignals(true);
         ui->logTableWidget->setSortingEnabled(false);
         ui->logTableWidget->clearContents();
@@ -351,9 +297,112 @@ void LogbookWidget::updateUi() noexcept
         // Clear existing entries
         ui->logTableWidget->setRowCount(0);
     }
-
-    updateDateSelectorUi();
     updateEditUi();
+}
+
+void LogbookWidget::frenchConnection() noexcept
+{
+    connect(ui->logTableWidget, &QTableWidget::itemSelectionChanged,
+            this, &LogbookWidget::handleSelectionChanged);
+    connect(ui->loadPushButton, &QPushButton::clicked,
+            this, &LogbookWidget::loadFlight);
+    connect(ui->deletePushButton, &QPushButton::clicked,
+            this, &LogbookWidget::deleteFlight);
+    connect(ui->logTableWidget, &QTableWidget::cellDoubleClicked,
+            this, &LogbookWidget::handleCellSelected);
+    connect(ui->logTableWidget, &QTableWidget::cellChanged,
+            this, &LogbookWidget::handleCellChanged);
+}
+
+inline void LogbookWidget::insertYear(QTreeWidget *parent, std::forward_list<FlightDate> &flightDatesByYear) noexcept
+{
+    const int year = flightDatesByYear.cbegin()->year;
+    QTreeWidgetItem *yearItem = new QTreeWidgetItem(parent, QStringList(QString::number(year)));
+    yearItem->setData(0, Qt::UserRole, year);
+    while (!flightDatesByYear.empty()) {
+        std::forward_list<FlightDate>::const_iterator first = flightDatesByYear.cbegin();
+        std::forward_list<FlightDate>::const_iterator last = first;
+
+        // Group by year
+        int currentMonth = first->month;
+        while (last != flightDatesByYear.end() && last->month == currentMonth) {
+            ++last;
+        }
+        std::forward_list<FlightDate> flightDatesByMonth = {};
+        flightDatesByMonth.splice_after(flightDatesByMonth.cbefore_begin(), flightDatesByYear, flightDatesByYear.cbefore_begin(), last);
+        insertMonth(yearItem, flightDatesByMonth);
+    }
+    // The parent takes ownership over yearItem
+    // -> suppress the clang code analysis warning about "potential leak of memory"
+    // * Is there a better way (annotation) to suppress this warning?
+    // * https://stackoverflow.com/questions/65667955/clang-static-analyzer-complains-about-memory-leak-when-using-protobufs-set-allo
+#ifdef __clang_analyzer__
+    delete yearItem;
+#endif
+}
+
+inline void LogbookWidget::insertMonth(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByMonth) noexcept
+{
+    const int month = flightDatesByMonth.cbegin()->month;
+    QTreeWidgetItem *monthItem = new QTreeWidgetItem(parent, QStringList(d->unit.formatMonth(month)));
+    monthItem->setData(0, Qt::UserRole, month);
+    // The days are already unique
+    insertDay(monthItem, flightDatesByMonth);
+    // The parent takes ownership over monthItem
+    // -> suppress the clang code analysis warning about "potential leak of memory"
+#ifdef __clang_analyzer__
+    delete monthItem;
+#endif
+}
+
+inline void LogbookWidget::insertDay(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByDayOfMonth) noexcept
+{
+    for (auto &it: flightDatesByDayOfMonth) {
+        const int dayOfMonth = it.dayOfMonth;
+        QTreeWidgetItem *dayItem = new QTreeWidgetItem(parent, QStringList(QString::number(dayOfMonth)));
+        dayItem->setData(0, Qt::UserRole, dayOfMonth);
+    }
+}
+
+inline void LogbookWidget::updateSelectionDateRange(QTreeWidgetItem *item) const noexcept
+{
+    const QTreeWidgetItem *parent1 = item->parent();
+    if (parent1 != nullptr) {
+        const QTreeWidgetItem *parent2 = parent1->parent();
+        if (parent2 != nullptr) {
+            // Item: day selected
+            const int year = parent2->data(0, Qt::UserRole).toInt();
+            const int month = parent1->data(0, Qt::UserRole).toInt();
+            const int day = item->data(0, Qt::UserRole).toInt();
+            d->flightSelector.fromDate.setDate(year, month, day);
+            d->flightSelector.toDate = d->flightSelector.fromDate.addDays(1);
+        } else {
+            // Item: month selected
+            const int year = parent1->data(0, Qt::UserRole).toInt();
+            const int month = item->data(0, Qt::UserRole).toInt();
+            d->flightSelector.fromDate.setDate(year, month, 1);
+            const int daysInMonth = d->flightSelector.fromDate.daysInMonth();
+            d->flightSelector.toDate.setDate(year, month, daysInMonth);
+        }
+    } else {
+        // Item: year selected
+        const int year = item->data(0, Qt::UserRole).toInt();
+        d->flightSelector.fromDate.setDate(year, 1, 1);
+        d->flightSelector.toDate.setDate(year, 12, 31);
+    }
+}
+
+const QString LogbookWidget::getName() noexcept
+{
+    return QString(QT_TRANSLATE_NOOP("LogbookWidget", "Logbook"));
+}
+
+// PRIVATE SLOTS
+
+void LogbookWidget::updateUi() noexcept
+{
+    updateFlightTable();
+    updateDateSelectorUi();
 }
 
 void LogbookWidget::updateEditUi() noexcept
@@ -384,7 +433,7 @@ void LogbookWidget::updateDateSelectorUi() noexcept
     // Sorted by year, month, day
     std::forward_list<FlightDate> flightDates = d->logbookService->getFlightDates();
     ui->logTreeWidget->blockSignals(true);
-    ui->logTreeWidget->reset();
+    ui->logTreeWidget->clear();
 
     while (!flightDates.empty()) {
         std::forward_list<FlightDate>::const_iterator first = flightDates.cbegin();
@@ -399,6 +448,8 @@ void LogbookWidget::updateDateSelectorUi() noexcept
         flightDatesByYear.splice_after(flightDatesByYear.cbefore_begin(), flightDates, flightDates.cbefore_begin(), last);
         insertYear(ui->logTreeWidget, flightDatesByYear);
     }
+
+     ui->logTreeWidget->blockSignals(false);
 }
 
 void LogbookWidget::handleSelectionChanged() noexcept
@@ -485,4 +536,10 @@ void LogbookWidget::handleCellChanged(int row, int column) noexcept
 
         d->flightService.updateTitle(d->selectedFlightId, title);
     }
+}
+
+void LogbookWidget::handleDateItemClicked(QTreeWidgetItem *item, int column) noexcept
+{
+    updateSelectionDateRange(item);
+    updateFlightTable();
 }

@@ -32,6 +32,7 @@
 
 class QString;
 
+class FlightSelector;
 class Flight;
 class FlightDate;
 class FlightSummary;
@@ -42,7 +43,7 @@ public:
     virtual ~LogbookDaoIntf() = default;
 
     virtual std::forward_list<FlightDate> getFlightDates() const noexcept = 0;
-    virtual std::vector<FlightSummary> getFlightSummaries() const noexcept = 0;
+    virtual std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector) const noexcept = 0;
 };
 
 #endif // LOGBOOKDAO_H
