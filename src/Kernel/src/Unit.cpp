@@ -25,6 +25,7 @@
 #include <memory>
 #include <cmath>
 #include <limits>
+#include <unordered_map>
 
 #include <QString>
 #include <QStringBuilder>
@@ -206,6 +207,11 @@ QString Unit::formatDateTime(const QDateTime &dateTime) noexcept
 QString Unit::formatDuration(const QTime &time) noexcept
 {
     return d->locale.toString(time, "hh:mm:s");
+}
+
+const QString Unit::formatMonth(int month) noexcept
+{
+    return d->locale.monthName(month);
 }
 
 // PRIVATE
