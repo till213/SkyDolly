@@ -45,6 +45,7 @@
 #include "../../../Model/src/FlightSummary.h"
 #include "../../../Model/src/Logbook.h"
 #include "../../../Persistence/src/Service/DatabaseService.h"
+#include "../../../Persistence/src/Service/LogbookService.h"
 #include "../../../Persistence/src/Service/FlightService.h"
 #include "../../../SkyConnect/src/SkyManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
@@ -68,6 +69,7 @@ public:
         : titleColumnIndex(InvalidColumn),
           databaseService(theDatabaseService),
           flightService(theFlightService),
+          logbookService(std::make_unique<LogbookService>()),
           selectedRow(InvalidSelection),
           selectedFlightId(Flight::InvalidId),
           moduleAction(nullptr)
@@ -76,6 +78,7 @@ public:
     int titleColumnIndex;
     DatabaseService &databaseService;
     FlightService &flightService;
+    std::unique_ptr<LogbookService> logbookService;
     int selectedRow;
     qint64 selectedFlightId;
     Unit unit;
@@ -252,7 +255,7 @@ void LogbookWidget::updateUi() noexcept
 
         const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
         const qint64 flightInMemoryId = flight.getId();
-        QVector<FlightSummary> summaries = d->flightService.getFlightSummaries();
+        QVector<FlightSummary> summaries = d->logbookService->getFlightSummaries();
         ui->logTableWidget->blockSignals(true);
         ui->logTableWidget->setSortingEnabled(false);
         ui->logTableWidget->clearContents();
@@ -377,7 +380,7 @@ void LogbookWidget::updateAircraftIcon() noexcept
 void LogbookWidget::updateDateSelectorUi() noexcept
 {
     // Sorted by year, month, day
-    std::forward_list<FlightDate> flightDates = d->flightService.getFlightDates();
+    std::forward_list<FlightDate> flightDates = d->logbookService->getFlightDates();
     ui->logTreeWidget->blockSignals(true);
     ui->logTreeWidget->reset();
 

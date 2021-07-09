@@ -32,6 +32,7 @@
 #include "../../../Model/src/Logbook.h"
 #include "../../../SkyConnect/src/SkyManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
+#include "../Dao/FlightDaoIntf.h"
 #include "../Dao/DaoFactory.h"
 #include "../Dao/AircraftDaoIntf.h"
 #include "AircraftService.h"
