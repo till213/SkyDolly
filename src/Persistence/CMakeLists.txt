@@ -53,9 +53,7 @@ target_sources(Persistence
         src/Dao/SQLite/SqlMigration.h
         src/Dao/SQLite/SqlMigrationStep.cpp
         src/Dao/SQLite/SqlMigrationStep.h
-        src/Dao/SQLite/Migration/migr-ex-ante.sql
-        src/Dao/SQLite/Migration/migr-ddl.sql
-        src/Dao/SQLite/Migration/migr-ex-post.sql
+        src/Dao/SQLite/Migration/migr.sql
         src/Dao/SQLite/Migration/Migration.qrc
         src/Service/LogbookService.cpp
         src/Service/LogbookService.h

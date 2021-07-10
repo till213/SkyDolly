@@ -77,13 +77,7 @@ bool SQLiteDatabaseDao::migrate() noexcept
     bool ok = createMigrationTable();
     if (ok) {
         SqlMigration sqlMigration;
-        ok = sqlMigration.migrateExAnte();
-        if (ok) {
-            ok = sqlMigration.migrateDdl();
-        }
-        if (ok) {
-            ok = sqlMigration.migrateExPost();
-        }
+        ok = sqlMigration.migrate();
     }
     return ok;
 }
