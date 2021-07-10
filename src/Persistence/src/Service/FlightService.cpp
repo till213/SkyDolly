@@ -160,4 +160,3 @@ bool FlightService::updateUserAircraftIndex(Flight &flight, int index) noexcept
     }
     return ok;
 }
-
