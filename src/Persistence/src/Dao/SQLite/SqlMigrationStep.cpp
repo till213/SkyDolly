@@ -42,11 +42,7 @@ public:
         : step(0),
           stepCount(0),
           applied(false)
-    {
-        checkAppliedQuery.prepare("select m.success, m.step, m.msg from migr m where m.id = :id and m.step = :step;");
-        insertMigrQuery.prepare("insert into migr (id, step, success, msg) values(:id, :step, :success, :msg);");
-        updateMigrQuery.prepare("update migr set success = :success, step = :step, msg = :msg where id = :id;");
-    }
+    {}
 
     QString migrationId;
     QString description;
@@ -55,10 +51,6 @@ public:
 
     bool applied;
     QString errorMessage;
-
-    QSqlQuery checkAppliedQuery;
-    QSqlQuery insertMigrQuery;
-    QSqlQuery updateMigrQuery;
 };
 
 // PUBLIC
@@ -108,13 +100,15 @@ bool SqlMigrationStep::parseTag(const QRegularExpressionMatch &tagMatch) noexcep
 
 bool SqlMigrationStep::checkApplied() noexcept
 {
-    d->checkAppliedQuery.bindValue(":id", d->migrationId);
-    d->checkAppliedQuery.bindValue(":step", d->step);
-    d->checkAppliedQuery.exec();
+    QSqlQuery checkAppliedQuery;
+    checkAppliedQuery.prepare("select m.success, m.step, m.msg from migr m where m.id = :id and m.step = :step;");
+    checkAppliedQuery.bindValue(":id", d->migrationId);
+    checkAppliedQuery.bindValue(":step", d->step);
+    checkAppliedQuery.exec();
 
-    if (d->checkAppliedQuery.next()) {
-        d->applied = d->checkAppliedQuery.value(0).toInt() > 0;
-        d->errorMessage = d->checkAppliedQuery.value(1).toString();
+    if (checkAppliedQuery.next()) {
+        d->applied = checkAppliedQuery.value(0).toInt() > 0;
+        d->errorMessage = checkAppliedQuery.value(1).toString();
         if (!d->applied && d->errorMessage.isNull()) {
             // Make sure an error message exists
             d->errorMessage = QString("Migration %s failed.").arg(d->migrationId);
@@ -134,32 +128,37 @@ bool SqlMigrationStep::execute(const QString &sql) noexcept
 
     // Note that DDL statements do not require transactions; but for
     // now we execute all queries within a transaction
-    QSqlDatabase::database().transaction();
+    bool ok = QSqlDatabase::database().transaction();
 
     QRegularExpressionMatchIterator it = sqlRegExp.globalMatch(sql);
-    bool ok = true;
     while (ok && it.hasNext()) {
 
         QRegularExpressionMatch match = it.next();
 #ifdef DEBUG
-        qDebug("SqlMigrationStep::execute: SQL:\n%s", qPrintable(match.captured(1).toUtf8()));
-        qDebug("\n\n");
+        qDebug("SqlMigrationStep::execute: SQL:\n%s\n", qPrintable(match.captured(1).toUtf8()));
+        qDebug("\n");
 #endif
-
         QSqlQuery query;
-        query.prepare(match.captured(1).trimmed() % ";");
-        ok = query.exec();
+        ok = query.exec(match.captured(1).trimmed() % ";");
         if (!ok) {
             errorMessage = query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode();
+            QSqlDatabase::database().rollback();
+#ifdef DEBUG
+            qDebug("SqlMigrationStep::execute: FAILED:\n%s\n", qPrintable(errorMessage));
+#endif
         }
     }
+    QSqlQuery insertMigrQuery;
+    insertMigrQuery.prepare("insert into migr (id, step, success, msg) values(:id, :step, :success, :msg);");
+    QSqlQuery updateMigrQuery;
+    updateMigrQuery.prepare("update migr set success = :success, step = :step, msg = :msg where id = :id;");
     if (ok) {
         QSqlQuery query;
         if (!hasPreviousAttempt()) {
-            query = d->insertMigrQuery;
+            query = insertMigrQuery;
 
         } else {
-            query = d->updateMigrQuery;
+            query = updateMigrQuery;
         }
         query.bindValue(":id", d->migrationId);
         query.bindValue(":step", d->step);
@@ -170,13 +169,12 @@ bool SqlMigrationStep::execute(const QString &sql) noexcept
         d->applied = true;
         d->errorMessage.clear();
     } else {
-        QSqlDatabase::database().rollback();
         QSqlDatabase::database().transaction();
         QSqlQuery query;
         if (!hasPreviousAttempt()) {
-            query = d->insertMigrQuery;
+            query = insertMigrQuery;
         } else {
-            query = d->updateMigrQuery;
+            query = updateMigrQuery;
         }
         d->applied = false;
         d->errorMessage = errorMessage;
