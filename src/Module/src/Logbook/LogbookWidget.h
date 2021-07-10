@@ -33,7 +33,6 @@
 class QShowEvent;
 class QHideEvent;
 class QAction;
-class QTreeWidget;
 class QTreeWidgetItem;
 
 #include "../ModuleIntf.h"
@@ -75,7 +74,7 @@ private:
     void initUi() noexcept;
     void updateFlightTable() noexcept;
     void frenchConnection() noexcept;
-    inline void insertYear(QTreeWidget *parent, std::forward_list<FlightDate> &flightDatesByYear) noexcept;
+    inline void insertYear(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByYear) noexcept;
     inline void insertMonth(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByMonth) noexcept;
     inline void insertDay(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByDayOfMonth) noexcept;
     inline void updateSelectionDateRange(QTreeWidgetItem *item) const noexcept;
