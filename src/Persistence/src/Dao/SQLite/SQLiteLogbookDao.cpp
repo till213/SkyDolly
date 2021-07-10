@@ -64,7 +64,7 @@ public:
             selectFlightDatesQuery = std::make_unique<QSqlQuery>();
             selectFlightDatesQuery->setForwardOnly(true);
             selectFlightDatesQuery->prepare(
-"select strftime('%Y', creation_date) as year, strftime('%m', creation_date) as month, strftime('%d', creation_date) as day "
+"select strftime('%Y', creation_date) as year, strftime('%m', creation_date) as month, strftime('%d', creation_date) as day, count(flight.id) as nof_flights "
 "from  flight "
 "group by year, month, day");
         }
@@ -117,12 +117,13 @@ std::forward_list<FlightDate> SQLiteLogbookDao::getFlightDates() const noexcept
         const int yearIdx = record.indexOf("year");
         const int monthIdx = record.indexOf("month");
         const int dayIdx = record.indexOf("day");
-
+        const int nofFlightIdx = record.indexOf("nof_flights");
         while (d->selectFlightDatesQuery->next()) {
             const int year = d->selectFlightDatesQuery->value(yearIdx).toInt();
             const int month = d->selectFlightDatesQuery->value(monthIdx).toInt();
             const int day = d->selectFlightDatesQuery->value(dayIdx).toInt();
-            flightDates.emplace_front(year, month, day);
+            const int nofFlights = d->selectFlightDatesQuery->value(nofFlightIdx).toInt();
+            flightDates.emplace_front(year, month, day, nofFlights);
         }
 #ifdef DEBUG
     } else {
