@@ -26,6 +26,7 @@
 #include <QTextStream>
 #include <QRegularExpression>
 #include <QStringRef>
+#include <QSqlQuery>
 
 #include "SqlMigrationStep.h"
 #include "SqlMigration.h"
@@ -57,39 +58,43 @@ bool SqlMigration::migrate() noexcept
 
 bool SqlMigration::migrate(const QString &migrationFilePath) noexcept
 {
-    QFile migr(migrationFilePath);
-    bool ok = migr.open(QFile::OpenModeFlag::ReadOnly | QFile::OpenModeFlag::Text);
-
+    QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;");
+    bool ok = query.exec();
     if (ok) {
-        QTextStream textStream(&migr);
-        const QString migration = textStream.readAll();
+        QFile migr(migrationFilePath);
+        ok = migr.open(QFile::OpenModeFlag::ReadOnly | QFile::OpenModeFlag::Text);
 
-        // https://regex101.com/
-        // @migr(...)
-        const QRegularExpression migrRegExp("@migr\\(([\\w=\"\\-,.\\s]+)\\)");
+        if (ok) {
+            QTextStream textStream(&migr);
+            const QString migration = textStream.readAll();
 
-        QStringList sqlStatements = migration.split(migrRegExp);
-        QRegularExpressionMatchIterator it = migrRegExp.globalMatch(migration);
+            // https://regex101.com/
+            // @migr(...)
+            const QRegularExpression migrRegExp("@migr\\(([\\w=\"\\-,.\\s]+)\\)");
 
-        // The first migration SQL statements start at index 1
-        int i = 1;
-        bool ok = true;
-        while (ok && it.hasNext()) {
-            const QRegularExpressionMatch tagMatch = it.next();
-            QString tag = tagMatch.captured(1);
+            QStringList sqlStatements = migration.split(migrRegExp);
+            QRegularExpressionMatchIterator it = migrRegExp.globalMatch(migration);
+
+            // The first migration SQL statements start at index 1
+            int i = 1;
+            ok = true;
+            while (ok && it.hasNext()) {
+                const QRegularExpressionMatch tagMatch = it.next();
+                QString tag = tagMatch.captured(1);
 #ifdef DEBUG
-            qDebug("SqlMigration::migrate: %s", qPrintable(tag));
+                qDebug("SqlMigration::migrate: %s", qPrintable(tag));
 #endif
-
-            SqlMigrationStep step;
-            ok = step.parseTag(tagMatch);
-            if (ok && !step.checkApplied()) {
-                ok = step.execute(sqlStatements.at(i));
+                SqlMigrationStep step;
+                ok = step.parseTag(tagMatch);
+                if (ok && !step.checkApplied()) {
+                    ok = step.execute(sqlStatements.at(i));
+                }
+                ++i;
             }
-            ++i;
-        }
 
-        migr.close();
+            migr.close();
+        }
     }
-    return ok;
+    query.prepare("PRAGMA foreign_keys=1;");
+    return query.exec() && ok;
 }
