@@ -1,7 +1,5 @@
 <RCC>
     <qresource prefix="/dao/sqlite/migr">
-        <file>migr-ddl.sql</file>
-        <file>migr-ex-ante.sql</file>
-        <file>migr-ex-post.sql</file>
+        <file>migr.sql</file>
     </qresource>
 </RCC>

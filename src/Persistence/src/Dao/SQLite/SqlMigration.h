@@ -37,9 +37,7 @@ public:
     SqlMigration();
     ~SqlMigration();
 
-    bool migrateExAnte() noexcept;
-    bool migrateDdl() noexcept;
-    bool migrateExPost() noexcept;
+    bool migrate() noexcept;
 
 private:
     std::unique_ptr<SqlMigrationPrivate> d;

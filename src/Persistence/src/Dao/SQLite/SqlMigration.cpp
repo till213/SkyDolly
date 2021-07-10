@@ -48,19 +48,9 @@ SqlMigration::SqlMigration()
 SqlMigration::~SqlMigration()
 {}
 
-bool SqlMigration::migrateExAnte() noexcept
+bool SqlMigration::migrate() noexcept
 {
-    return migrate(":/dao/sqlite/migr/migr-ex-ante.sql");
-}
-
-bool SqlMigration::migrateDdl() noexcept
-{
-    return migrate(":/dao/sqlite/migr/migr-ddl.sql");
-}
-
-bool SqlMigration::migrateExPost() noexcept
-{
-    return migrate(":/dao/sqlite/migr/migr-ex-post.sql");
+    return migrate(":/dao/sqlite/migr/migr.sql");
 }
 
 // PRIVATE

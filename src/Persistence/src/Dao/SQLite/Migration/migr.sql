@@ -7,6 +7,15 @@ create table enum_backup_interval (
 );
 create unique index enum_backup_interval_idx1 on enum_backup_interval (intl_id);
 
+@migr(id = "a0209e1d-4d7b-4b29-b359-1d2dfd65126e", descn = "Create backup interval enumeration table", step = 2)
+insert into enum_backup_interval (intl_id, name, desc)
+values
+  ('NOW', 'Now', 'The backup is created only this time (now)'),
+  ('MONTH', 'Once A Month', 'The backup is created once a month, upon quitting the application'),
+  ('WEEK', 'Once A Week', 'The backup is created once a week, upon quitting the application'),
+  ('DAY', 'Once A Day', 'The backup is created once a day, upon quitting the application'),
+  ('ALWAYS', 'Always', 'The backup is created each time upon quitting the application');
+
 @migr(id = "4a66fae6-d70a-4230-ad1e-0db27c9b1466", descn = "Create metadata table", step_cnt = 2)
 create table metadata (
     creation_date datetime,
@@ -17,6 +26,10 @@ create table metadata (
     backup_interval_id integer,
     foreign key(backup_interval_id) references enum_backup_interval(id)
 );
+
+@migr(id = "4a66fae6-d70a-4230-ad1e-0db27c9b1466", descn = "Create metadata table", step = 2)
+insert into metadata (creation_date, backup_interval_id)
+values (datetime('now'), 3);
 
 @migr(id = "da30cf74-c698-4a73-bad1-c1cf3f380f32", descn = "Create flight table", step_cnt = 1)
 create table flight (
@@ -183,6 +196,10 @@ create table waypoint (
 @migr(id = "6c6aac3b-1b85-4bec-9477-d300c4cbccbf", descn = "Add user aircraft column", step_cnt = 2)
 alter table flight add column user_aircraft_seq_nr integer;
 
+@migr(id = "6c6aac3b-1b85-4bec-9477-d300c4cbccbf", descn = "Set first aircraft as user aircraft", step = 2)
+update flight
+set    user_aircraft_seq_nr = 1;
+
 @migr(id = "91c45e15-a72d-499e-8b85-eebe6a86da32", descn = "Adjust engine table column types", step_cnt = 4)
 create table engine_new (
     aircraft_id integer not null,
@@ -235,3 +252,23 @@ alter table engine add column general_engine_combustion3 integer;
 
 @migr(id = "d43d7a22-34f5-40c5-82e8-155b45bb274d", descn = "Add general engine combustion columns", step = 4)
 alter table engine add column general_engine_combustion4 integer;
+
+@migr(id = "d43d7a22-34f5-40c5-82e8-155b45bb274d", descn = "Add general engine combustion column", step = 5)
+update engine
+set    general_engine_combustion1 = general_engine_starter1,
+       general_engine_combustion2 = general_engine_starter2,
+       general_engine_combustion3 = general_engine_starter3,
+       general_engine_combustion4 = general_engine_starter4;
+
+@migr(id = "32f3803f-c267-441d-a052-3b89e4dccc68", descn = "Add case-insensitive title index", step = 1)
+create index 'flight_idx1' on flight ('title' collate nocase);
+
+@migr(id = "40c19057-ae5e-43c8-8f68-5eb2327dcb47", descn = "Add case-insensitive aircraft type index", step = 1)
+create index 'aircraft_idx2' on aircraft ('type' collate nocase);
+
+@migr(id = "5d6c8672-fecc-44b5-bd83-9ee00ecb61b7", descn = "Add case-insensitive ident index", step = 1)
+create index 'waypoint_idx1' on waypoint ('ident' collate nocase);
+
+@migr(id = "1c13f02d-9def-4fd6-af8d-3b7984573682", descn = "Update application version to 0.8", step = 1)
+update metadata
+set app_version = '0.8.0';
