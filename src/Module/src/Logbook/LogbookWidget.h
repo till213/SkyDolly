@@ -89,6 +89,8 @@ private slots:
     void handleSelectionChanged() noexcept;
     void loadFlight() noexcept;
     void deleteFlight() noexcept;
+    // Search
+    void handleSearchChanged() noexcept;
     // Flight log table
     void handleCellSelected(int row, int column) noexcept;
     void handleCellChanged(int row, int column) noexcept;

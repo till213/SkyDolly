@@ -29,6 +29,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QStringBuilder>
 #include <QSqlQuery>
 #include <QVariant>
 #include <QSqlError>
@@ -83,7 +84,12 @@ public:
 "on fp1.aircraft_id = a.id "
 "left join (select ident, aircraft_id from waypoint wo2 where wo2.timestamp = (select max(wi2.timestamp) from waypoint wi2 where wi2.aircraft_id = wo2.aircraft_id)) fp2 "
 "on fp2.aircraft_id = a.id "
-"where f.creation_date between :from_date and :to_date;");
+"where f.creation_date between :from_date and :to_date "
+"and   (  f.title like coalesce(:search_keyword, f.title) "
+"       or a.type like coalesce(:search_keyword, a.type) "
+"       or start_waypoint like coalesce(:search_keyword, start_waypoint) "
+"       or end_waypoint like coalesce(:search_keyword, end_waypoint) "
+"      )");
         }
     }
 
@@ -136,11 +142,19 @@ std::forward_list<FlightDate> SQLiteLogbookDao::getFlightDates() const noexcept
 
 std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSelector &flightSelector) const noexcept
 {
+    const QString LikeOperatorPlaceholder("%");
+
     std::vector<FlightSummary> summaries;
+    QString searchKeyword;
+    if (!flightSelector.searchKeyword.isEmpty()) {
+        // Case-insensitive search, add like operator placeholders
+        searchKeyword = LikeOperatorPlaceholder  % flightSelector.searchKeyword.toLower() % LikeOperatorPlaceholder;
+    }
 
     d->initQueries();
     d->selectSummariesQuery->bindValue(":from_date", flightSelector.fromDate);
     d->selectSummariesQuery->bindValue(":to_date", flightSelector.toDate);
+    d->selectSummariesQuery->bindValue(":search_keyword", searchKeyword);
     const bool ok = d->selectSummariesQuery->exec();
     if (ok) {
         QSqlRecord record = d->selectSummariesQuery->record();
