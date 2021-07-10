@@ -61,6 +61,9 @@ namespace
     constexpr int InvalidSelection = -1;
     constexpr int InvalidColumn = -1;
     constexpr int FlightIdColumn = 0;
+
+    constexpr int DateColumn = 0;
+    constexpr int NofFlightsColumn = 1;
 }
 
 class LogbookWidgetPrivate
@@ -180,7 +183,7 @@ void LogbookWidget::initUi() noexcept
     d->moduleAction->setCheckable(true);
 
     // Date selection
-    ui->logTreeWidget->setHeaderHidden(true);
+    ui->logTreeWidget->setHeaderLabels({tr("Creation Date"), tr("Flights")});
 
     // Flight log table
     ui->logTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -194,6 +197,9 @@ void LogbookWidget::initUi() noexcept
     ui->logTableWidget->setMinimumWidth(MinimumTableWidth);
     ui->logTableWidget->horizontalHeader()->setStretchLastSection(true);
     ui->logTableWidget->sortByColumn(FlightIdColumn, Qt::SortOrder::DescendingOrder);
+
+    ui->splitter->setStretchFactor(0, 1);
+    ui->splitter->setStretchFactor(1, 2);
 }
 
 void LogbookWidget::updateFlightTable() noexcept
@@ -314,23 +320,25 @@ void LogbookWidget::frenchConnection() noexcept
             this, &LogbookWidget::handleCellChanged);
 }
 
-inline void LogbookWidget::insertYear(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByYear) noexcept
+inline void LogbookWidget::insertYear(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByYear, int nofFlightsPerYear) noexcept
 {
     const int year = flightDatesByYear.cbegin()->year;
-    QTreeWidgetItem *yearItem = new QTreeWidgetItem(parent, QStringList(QString::number(year)));
-    yearItem->setData(0, Qt::UserRole, year);
+    QTreeWidgetItem *yearItem = new QTreeWidgetItem(parent, {QString::number(year), QString::number(nofFlightsPerYear)});
+    yearItem->setData(DateColumn, Qt::UserRole, year);
     while (!flightDatesByYear.empty()) {
         std::forward_list<FlightDate>::const_iterator first = flightDatesByYear.cbegin();
         std::forward_list<FlightDate>::const_iterator last = first;
 
-        // Group by year
+        // Group by month
         int currentMonth = first->month;
+        int nofFlightsPerMonth = 0;
         while (last != flightDatesByYear.end() && last->month == currentMonth) {
+            nofFlightsPerMonth += last->nofFlights;
             ++last;
         }
         std::forward_list<FlightDate> flightDatesByMonth = {};
         flightDatesByMonth.splice_after(flightDatesByMonth.cbefore_begin(), flightDatesByYear, flightDatesByYear.cbefore_begin(), last);
-        insertMonth(yearItem, flightDatesByMonth);
+        insertMonth(yearItem, flightDatesByMonth, nofFlightsPerMonth);
     }
     // The parent takes ownership over yearItem
     // -> suppress the clang code analysis warning about "potential leak of memory"
@@ -341,11 +349,11 @@ inline void LogbookWidget::insertYear(QTreeWidgetItem *parent, std::forward_list
 #endif
 }
 
-inline void LogbookWidget::insertMonth(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByMonth) noexcept
+inline void LogbookWidget::insertMonth(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByMonth, int nofFlightsPerMonth) noexcept
 {
     const int month = flightDatesByMonth.cbegin()->month;
-    QTreeWidgetItem *monthItem = new QTreeWidgetItem(parent, QStringList(d->unit.formatMonth(month)));
-    monthItem->setData(0, Qt::UserRole, month);
+    QTreeWidgetItem *monthItem = new QTreeWidgetItem(parent, {d->unit.formatMonth(month), QString::number(nofFlightsPerMonth)});
+    monthItem->setData(DateColumn, Qt::UserRole, month);
     // The days are already unique
     insertDay(monthItem, flightDatesByMonth);
     // The parent takes ownership over monthItem
@@ -359,8 +367,9 @@ inline void LogbookWidget::insertDay(QTreeWidgetItem *parent, std::forward_list<
 {
     for (auto &it: flightDatesByDayOfMonth) {
         const int dayOfMonth = it.dayOfMonth;
-        QTreeWidgetItem *dayItem = new QTreeWidgetItem(parent, QStringList(QString::number(dayOfMonth)));
-        dayItem->setData(0, Qt::UserRole, dayOfMonth);
+        const int nofFlights = it.nofFlights;
+        QTreeWidgetItem *dayItem = new QTreeWidgetItem(parent, {QString::number(dayOfMonth), QString::number(nofFlights)});
+        dayItem->setData(DateColumn, Qt::UserRole, dayOfMonth);
     }
 }
 
@@ -373,22 +382,22 @@ inline void LogbookWidget::updateSelectionDateRange(QTreeWidgetItem *item) const
             const QTreeWidgetItem *parent2 = parent1->parent();
             if (parent2 != nullptr) {
                 // Item: day selected
-                const int year = parent1->data(0, Qt::UserRole).toInt();
-                const int month = parent->data(0, Qt::UserRole).toInt();
-                const int day = item->data(0, Qt::UserRole).toInt();
+                const int year = parent1->data(DateColumn, Qt::UserRole).toInt();
+                const int month = parent->data(DateColumn, Qt::UserRole).toInt();
+                const int day = item->data(DateColumn, Qt::UserRole).toInt();
                 d->flightSelector.fromDate.setDate(year, month, day);
                 d->flightSelector.toDate = d->flightSelector.fromDate.addDays(1);
             } else {
                 // Item: month selected
-                const int year = parent->data(0, Qt::UserRole).toInt();
-                const int month = item->data(0, Qt::UserRole).toInt();
+                const int year = parent->data(DateColumn, Qt::UserRole).toInt();
+                const int month = item->data(DateColumn, Qt::UserRole).toInt();
                 d->flightSelector.fromDate.setDate(year, month, 1);
                 const int daysInMonth = d->flightSelector.fromDate.daysInMonth();
                 d->flightSelector.toDate.setDate(year, month, daysInMonth);
             }
         } else {
             // Item: year selected
-            const int year = item->data(0, Qt::UserRole).toInt();
+            const int year = item->data(DateColumn, Qt::UserRole).toInt();
             d->flightSelector.fromDate.setDate(year, 1, 1);
             d->flightSelector.toDate.setDate(year, 12, 31);
         }
@@ -449,12 +458,14 @@ void LogbookWidget::updateDateSelectorUi() noexcept
 
         // Group by year
         int currentYear = first->year;
+        int nofFlightsPerYear = 0;
         while (last != flightDates.end() && last->year == currentYear) {
+            nofFlightsPerYear += last->nofFlights;
             ++last;
         }
         std::forward_list<FlightDate> flightDatesByYear = {};
         flightDatesByYear.splice_after(flightDatesByYear.cbefore_begin(), flightDates, flightDates.cbefore_begin(), last);
-        insertYear(logbookItem, flightDatesByYear);
+        insertYear(logbookItem, flightDatesByYear, nofFlightsPerYear);
     }
     logbookItem->setExpanded(true);
 

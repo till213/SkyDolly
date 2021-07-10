@@ -2,8 +2,9 @@
 
 // PUBLIC
 
-FlightDate::FlightDate(int theYear, int theMonth, int theDayOfMonth)
+FlightDate::FlightDate(int theYear, int theMonth, int theDayOfMonth, int theNofFlights) noexcept
     : year(theYear),
       month(theMonth),
-      dayOfMonth(theDayOfMonth)
+      dayOfMonth(theDayOfMonth),
+      nofFlights(theNofFlights)
 {}
