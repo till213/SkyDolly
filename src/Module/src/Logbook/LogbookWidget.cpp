@@ -36,6 +36,7 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <QCheckBox>
+#include <QLineEdit>
 #include <QAction>
 
 #include "../../../Kernel/src/Version.h"
@@ -148,9 +149,6 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
     connect(&skyConnect, &SkyConnectIntf::stateChanged,
             this, &LogbookWidget::updateEditUi);
 
-    connect(ui->logTreeWidget, &QTreeWidget::itemClicked,
-            this, &LogbookWidget::handleDateItemClicked);
-
     updateUi();
     handleSelectionChanged();
 }
@@ -170,9 +168,6 @@ void LogbookWidget::hideEvent(QHideEvent *event) noexcept
     SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
     disconnect(&skyConnect, &SkyConnectIntf::stateChanged,
                this, &LogbookWidget::updateEditUi);
-
-    disconnect(ui->logTreeWidget, &QTreeWidget::itemClicked,
-               this, &LogbookWidget::handleDateItemClicked);
 }
 
 // PRIVATE
@@ -308,6 +303,11 @@ void LogbookWidget::updateFlightTable() noexcept
 
 void LogbookWidget::frenchConnection() noexcept
 {
+    // Search
+    connect(ui->searchLineEdit, &QLineEdit::returnPressed,
+            this, &LogbookWidget::handleSearchChanged);
+
+    // Logbook table
     connect(ui->logTableWidget, &QTableWidget::itemSelectionChanged,
             this, &LogbookWidget::handleSelectionChanged);
     connect(ui->loadPushButton, &QPushButton::clicked,
@@ -318,6 +318,10 @@ void LogbookWidget::frenchConnection() noexcept
             this, &LogbookWidget::handleCellSelected);
     connect(ui->logTableWidget, &QTableWidget::cellChanged,
             this, &LogbookWidget::handleCellChanged);
+
+    // Date selection
+    connect(ui->logTreeWidget, &QTreeWidget::itemClicked,
+            this, &LogbookWidget::handleDateItemClicked);
 }
 
 inline void LogbookWidget::insertYear(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByYear, int nofFlightsPerYear) noexcept
@@ -530,6 +534,12 @@ void LogbookWidget::deleteFlight() noexcept
             ui->logTableWidget->selectRow(selectedRow);
         }
     }
+}
+
+void LogbookWidget::handleSearchChanged() noexcept
+{
+    d->flightSelector.searchKeyword = ui->searchLineEdit->text();
+    updateFlightTable();
 }
 
 void LogbookWidget::handleCellSelected(int row, int column) noexcept

@@ -26,6 +26,7 @@
 #define FLIGHTSELECTOR_H
 
 #include <QDate>
+#include <QString>
 
 #include "../PersistenceLib.h"
 
@@ -36,6 +37,7 @@ public:
 
     QDate fromDate;
     QDate toDate;
+    QString searchKeyword;
 
     static const QDate MinDate;
     static const QDate MaxDate;
