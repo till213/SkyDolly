@@ -293,9 +293,8 @@ create table aircraft_new (
 
 @migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Copy the original aircraft data into new aircraft_new table", step = 4)
 insert into aircraft_new(id, flight_id, seq_nr, type, start_date, end_date, tail_number, airline, flight_number, initial_airspeed, altitude_above_ground, start_on_ground)
-select id, flight_id, seq_nr, type, start_date, end_date, tail_number, airline, flight_number, initial_airspeed, altitude_above_ground, start_on_ground
-from   aircraft a
-where  a.type not null;
+select id, flight_id, seq_nr, coalesce(type, (select type from aircraft_type limit 1)), start_date, end_date, tail_number, airline, flight_number, initial_airspeed, altitude_above_ground, start_on_ground
+from   aircraft a;
 
 @migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Create case-insensitive index on type in aircraft_type table", step = 5)
 create index aircraft_type_idx on aircraft_type (type collate nocase);
