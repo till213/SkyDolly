@@ -25,7 +25,6 @@
 #include <memory>
 #include <cmath>
 #include <limits>
-#include <unordered_map>
 
 #include <QString>
 #include <QStringBuilder>
