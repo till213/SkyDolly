@@ -74,6 +74,15 @@ public:
     QString formatDateTime(const QDateTime &dateTime) noexcept;
     QString formatDuration(const QTime &time) noexcept;
 
+    /*!
+     * Returns the name of the month.
+     *
+     * \param month
+     *        the month of year [1, 12]
+     * \return
+     */
+    const QString formatMonth(int month) noexcept;
+
 private:
     std::unique_ptr<UnitPrivate> d;
     static inline void dd2dms(double dd, int &degrees, int &minutes, double &seconds) noexcept;

@@ -22,33 +22,43 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTDAOINTF_H
-#define FLIGHTDAOINTF_H
+#ifndef AIRCRAFTTYPE_H
+#define AIRCRAFTTYPE_H
 
-#include <QtGlobal>
+#include <QString>
+#include <QDateTime>
 
-class QString;
+#include "SimType.h"
+#include "ModelLib.h"
 
-class Flight;
-class FlightSummary;
-
-class FlightDaoIntf
+struct MODEL_API AircraftType
 {
-public:
-    virtual ~FlightDaoIntf() = default;
+    /*!
+     * The aircraft type, e.g. "Pitts Special". This is really the SimConnect "container title"
+     * which is also used to spawn AI aircrafts.
+     */
+    QString type;
 
     /*!
-     * Persists the \c flight. The \c id in \c flight is updated.
-     * \param flight
-     *        the Flight to be persisted
-     * \return \c true on success; \c false else
+     * The aircraft category:
+     * - Piston
+     * - Jet
+     * - Rocket
+     * - Glider
+     * - ...
      */
-    virtual bool addFlight(Flight &flight) noexcept = 0;
-    virtual bool getFlightById(qint64 id, Flight &flight) const noexcept = 0;
-    virtual bool deleteById(qint64 id) noexcept = 0;
-    virtual bool updateTitle(qint64 id, const QString &title) noexcept = 0;
-    virtual bool updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept = 0;
-    virtual bool updateUserAircraftIndex(qint64 id, int index) noexcept = 0;
+    QString category;
+    // Feet
+    int wingSpan;
+    SimType::EngineType engineType;
+    int numberOfEngines;
+
+    AircraftType() noexcept;
+    AircraftType(AircraftType &&) = default;
+    AircraftType(const AircraftType &) = default;
+    AircraftType &operator= (const AircraftType &) = default;
+
+    void clear() noexcept;
 };
 
-#endif // FLIGHTDAOINTF_H
+#endif // AIRCRAFTTYPE_H

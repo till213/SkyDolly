@@ -29,31 +29,21 @@
 #include <vector>
 #include <iterator>
 
-#include <QObject>
+#include <QtGlobal>
 
 #include "../../../../Model/src/LightData.h"
 #include "../LightDaoIntf.h"
 
-class SQLiteLightDaoPrivate;
-
-class SQLiteLightDao : public QObject, public LightDaoIntf
+class SQLiteLightDao : public LightDaoIntf
 {
 public:
-    explicit SQLiteLightDao(QObject *parent = nullptr) noexcept;
+    explicit SQLiteLightDao() noexcept;
     virtual ~SQLiteLightDao() noexcept;
 
     virtual bool add(qint64 aircraftId, const LightData &data) noexcept override;
     virtual bool getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<LightData>> insertIterator) const noexcept override;
     virtual bool deleteByFlightId(qint64 flightId) noexcept override;
     virtual bool deleteByAircraftId(qint64 aircraftId) noexcept override;
-
-private:
-    std::unique_ptr<SQLiteLightDaoPrivate> d;
-
-    void frenchConnection() noexcept;
-
-private slots:
-    void handleConnectionChanged() noexcept;
 };
 
 #endif // SQLITELIGHTDAO_H

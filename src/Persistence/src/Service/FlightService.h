@@ -26,11 +26,13 @@
 #define FLIGHTSERVICE_H
 
 #include <memory>
+#include <forward_list>
 
 #include <QObject>
 #include <QVector>
 
 #include "../../../Model/src/Flight.h"
+#include "../../../Model/src/FlightDate.h"
 #include "../../../Model/src/FlightSummary.h"
 #include "../PersistenceLib.h"
 
@@ -50,8 +52,6 @@ public:
     bool updateTitle(qint64 id, const QString &title) noexcept;
     bool updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept;
     bool updateUserAircraftIndex(Flight &flight, int index) noexcept;
-
-    QVector<FlightSummary> getFlightSummaries() const noexcept;
 
 signals:
     void flightStored(qint64 id);

@@ -13,8 +13,12 @@ target_sources(Persistence
         src/ConnectionManager.h
         src/Metadata.h
         src/Dao/DatabaseDaoIntf.h
+        src/Dao/LogbookDaoIntf.h
         src/Dao/FlightDaoIntf.h
+        src/Dao/FlightSelector.cpp
+        src/Dao/FlightSelector.h
         src/Dao/AircraftDaoIntf.h
+        src/Dao/AircraftTypeDaoIntf.h
         src/Dao/PositionDaoIntf.h
         src/Dao/EngineDaoIntf.h
         src/Dao/PrimaryFlightControlDaoIntf.h
@@ -26,10 +30,14 @@ target_sources(Persistence
         src/Dao/DaoFactory.h
         src/Dao/SQLite/SQLiteDatabaseDao.cpp
         src/Dao/SQLite/SQLiteDatabaseDao.h
+        src/Dao/SQLite/SQLiteLogbookDao.cpp
+        src/Dao/SQLite/SQLiteLogbookDao.h
         src/Dao/SQLite/SQLiteFlightDao.cpp
         src/Dao/SQLite/SQLiteFlightDao.h
         src/Dao/SQLite/SQLiteAircraftDao.cpp
         src/Dao/SQLite/SQLiteAircraftDao.h
+        src/Dao/SQLite/SQLiteAircraftTypeDao.cpp
+        src/Dao/SQLite/SQLiteAircraftTypeDao.h
         src/Dao/SQLite/SQLitePositionDao.cpp
         src/Dao/SQLite/SQLitePositionDao.h
         src/Dao/SQLite/SQLiteEngineDao.cpp
@@ -48,10 +56,10 @@ target_sources(Persistence
         src/Dao/SQLite/SqlMigration.h
         src/Dao/SQLite/SqlMigrationStep.cpp
         src/Dao/SQLite/SqlMigrationStep.h
-        src/Dao/SQLite/Migration/migr-ex-ante.sql
-        src/Dao/SQLite/Migration/migr-ddl.sql
-        src/Dao/SQLite/Migration/migr-ex-post.sql
+        src/Dao/SQLite/Migration/migr.sql
         src/Dao/SQLite/Migration/Migration.qrc
+        src/Service/LogbookService.cpp
+        src/Service/LogbookService.h
         src/Service/FlightService.cpp
         src/Service/FlightService.h
         src/Service/AircraftService.cpp

@@ -22,33 +22,28 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTDAOINTF_H
-#define FLIGHTDAOINTF_H
+#ifndef LOGBOOKDAO_H
+#define LOGBOOKDAO_H
+
+#include <forward_list>
+#include <vector>
 
 #include <QtGlobal>
 
 class QString;
 
+class FlightSelector;
 class Flight;
+class FlightDate;
 class FlightSummary;
 
-class FlightDaoIntf
+class LogbookDaoIntf
 {
 public:
-    virtual ~FlightDaoIntf() = default;
+    virtual ~LogbookDaoIntf() = default;
 
-    /*!
-     * Persists the \c flight. The \c id in \c flight is updated.
-     * \param flight
-     *        the Flight to be persisted
-     * \return \c true on success; \c false else
-     */
-    virtual bool addFlight(Flight &flight) noexcept = 0;
-    virtual bool getFlightById(qint64 id, Flight &flight) const noexcept = 0;
-    virtual bool deleteById(qint64 id) noexcept = 0;
-    virtual bool updateTitle(qint64 id, const QString &title) noexcept = 0;
-    virtual bool updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept = 0;
-    virtual bool updateUserAircraftIndex(qint64 id, int index) noexcept = 0;
+    virtual std::forward_list<FlightDate> getFlightDates() const noexcept = 0;
+    virtual std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector) const noexcept = 0;
 };
 
-#endif // FLIGHTDAOINTF_H
+#endif // LOGBOOKDAO_H

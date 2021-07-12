@@ -26,12 +26,15 @@
 #define LOGBOOKWIDGET_H
 
 #include <memory>
+#include <forward_list>
 
 #include <QWidget>
 
 class QShowEvent;
 class QHideEvent;
 class QAction;
+class QTreeWidgetItem;
+class QString;
 
 #include "../ModuleIntf.h"
 #include "../Module.h"
@@ -40,6 +43,7 @@ class QAction;
 
 class DatabaseService;
 class FlightService;
+class FlightDate;
 class LogbookWidgetPrivate;
 
 namespace Ui {
@@ -69,19 +73,31 @@ private:
     std::unique_ptr<LogbookWidgetPrivate> d;
 
     void initUi() noexcept;
+    void updateFlightTable() noexcept;
     void frenchConnection() noexcept;
+    inline void insertYear(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByYear, int nofFlightsPerYear) noexcept;
+    inline void insertMonth(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByMonth, int nofFlightsPerMonth) noexcept;
+    inline void insertDay(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByDayOfMonth) noexcept;
+    inline void updateSelectionDateRange(QTreeWidgetItem *item) const noexcept;
 
-    static const QString getName();
+    static const QString getName() noexcept;
 
 private slots:
     void updateUi() noexcept;
     void updateEditUi() noexcept;
     void updateAircraftIcon() noexcept;
+    void updateDateSelectorUi() noexcept;
     void handleSelectionChanged() noexcept;
     void loadFlight() noexcept;
     void deleteFlight() noexcept;
+    // Search
+    void handleSearchTextChanged() noexcept;
+    void searchText() noexcept;
+    // Flight log table
     void handleCellSelected(int row, int column) noexcept;
     void handleCellChanged(int row, int column) noexcept;
+    // Flight date tree
+    void handleDateItemClicked(QTreeWidgetItem *item) noexcept;
 };
 
 #endif // LOGBOOKWIDGET_H

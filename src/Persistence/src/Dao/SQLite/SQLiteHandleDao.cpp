@@ -26,7 +26,6 @@
 #include <vector>
 #include <iterator>
 
-#include <QObject>
 #include <QString>
 #include <QSqlQuery>
 #include <QVariant>
@@ -37,112 +36,58 @@
 #include "../../ConnectionManager.h"
 #include "SQLiteHandleDao.h"
 
-class SQLiteHandleDaoPrivate
-{
-public:
-    SQLiteHandleDaoPrivate() noexcept
-    {}
-
-    std::unique_ptr<QSqlQuery> insertQuery;
-    std::unique_ptr<QSqlQuery> selectByAircraftIdQuery;
-    std::unique_ptr<QSqlQuery> deleteByFlightIdQuery;
-    std::unique_ptr<QSqlQuery> deleteByIdQuery;
-
-    void initQueries()
-    {
-        if (insertQuery == nullptr) {
-            insertQuery = std::make_unique<QSqlQuery>();
-            insertQuery->prepare(
-"insert into handle ("
-"  aircraft_id,"
-"  timestamp,"
-"  brake_left_position,"
-"  brake_right_position,"
-"  water_rudder_handle_position,"
-"  tail_hook_position,"
-"  canopy_open,"
-"  left_wing_folding,"
-"  right_wing_folding,"
-"  gear_handle_position"
-") values ("
-" :aircraft_id,"
-" :timestamp,"
-" :brake_left_position,"
-" :brake_right_position,"
-" :water_rudder_handle_position,"
-" :tail_hook_position,"
-" :canopy_open,"
-" :left_wing_folding,"
-" :right_wing_folding,"
-" :gear_handle_position"
-");");           
-        }
-        if (selectByAircraftIdQuery == nullptr) {
-            selectByAircraftIdQuery = std::make_unique<QSqlQuery>();
-            selectByAircraftIdQuery->prepare(
-"select * "
-"from   handle h "
-"where  h.aircraft_id = :aircraft_id "
-"order by h.timestamp asc;");
-        }
-        if (deleteByFlightIdQuery == nullptr) {
-            deleteByFlightIdQuery = std::make_unique<QSqlQuery>();
-            deleteByFlightIdQuery->prepare(
-"delete "
-"from   handle "
-"where  aircraft_id in (select a.id "
-"                       from aircraft a"
-"                       where a.flight_id = :flight_id"
-"                      );");
-        }
-        if (deleteByIdQuery == nullptr) {
-            deleteByIdQuery = std::make_unique<QSqlQuery>();
-            deleteByIdQuery->prepare(
-"delete "
-"from   handle "
-"where  aircraft_id = :aircraft_id;");
-        }
-    }
-
-    void resetQueries() noexcept
-    {
-        insertQuery = nullptr;
-        selectByAircraftIdQuery = nullptr;
-        deleteByFlightIdQuery = nullptr;
-        deleteByIdQuery = nullptr;
-    }
-};
-
 // PUBLIC
 
-SQLiteHandleDao::SQLiteHandleDao(QObject *parent) noexcept
-    : QObject(parent),
-      d(std::make_unique<SQLiteHandleDaoPrivate>())
-{
-    frenchConnection();
-}
+SQLiteHandleDao::SQLiteHandleDao() noexcept
+{}
 
 SQLiteHandleDao::~SQLiteHandleDao() noexcept
 {}
 
 bool SQLiteHandleDao::add(qint64 aircraftId, const AircraftHandleData &aircraftHandleData)  noexcept
 {
-    d->initQueries();
-    d->insertQuery->bindValue(":aircraft_id", aircraftId);
-    d->insertQuery->bindValue(":timestamp", aircraftHandleData.timestamp);
-    d->insertQuery->bindValue(":brake_left_position", aircraftHandleData.brakeLeftPosition);
-    d->insertQuery->bindValue(":brake_right_position", aircraftHandleData.brakeRightPosition);
-    d->insertQuery->bindValue(":water_rudder_handle_position", aircraftHandleData.waterRudderHandlePosition);
-    d->insertQuery->bindValue(":tail_hook_position", aircraftHandleData.tailhookPosition);
-    d->insertQuery->bindValue(":canopy_open", aircraftHandleData.canopyOpen);
-    d->insertQuery->bindValue(":left_wing_folding", aircraftHandleData.leftWingFolding);
-    d->insertQuery->bindValue(":right_wing_folding", aircraftHandleData.rightWingFolding);
-    d->insertQuery->bindValue(":gear_handle_position", aircraftHandleData.gearHandlePosition ? 1 : 0);    
+    QSqlQuery query;
+    query.prepare(
+        "insert into handle ("
+        "  aircraft_id,"
+        "  timestamp,"
+        "  brake_left_position,"
+        "  brake_right_position,"
+        "  water_rudder_handle_position,"
+        "  tail_hook_position,"
+        "  canopy_open,"
+        "  left_wing_folding,"
+        "  right_wing_folding,"
+        "  gear_handle_position"
+        ") values ("
+        " :aircraft_id,"
+        " :timestamp,"
+        " :brake_left_position,"
+        " :brake_right_position,"
+        " :water_rudder_handle_position,"
+        " :tail_hook_position,"
+        " :canopy_open,"
+        " :left_wing_folding,"
+        " :right_wing_folding,"
+        " :gear_handle_position"
+        ");"
+    );
 
-    bool ok = d->insertQuery->exec();
+    query.bindValue(":aircraft_id", aircraftId);
+    query.bindValue(":timestamp", aircraftHandleData.timestamp);
+    query.bindValue(":brake_left_position", aircraftHandleData.brakeLeftPosition);
+    query.bindValue(":brake_right_position", aircraftHandleData.brakeRightPosition);
+    query.bindValue(":water_rudder_handle_position", aircraftHandleData.waterRudderHandlePosition);
+    query.bindValue(":tail_hook_position", aircraftHandleData.tailhookPosition);
+    query.bindValue(":canopy_open", aircraftHandleData.canopyOpen);
+    query.bindValue(":left_wing_folding", aircraftHandleData.leftWingFolding);
+    query.bindValue(":right_wing_folding", aircraftHandleData.rightWingFolding);
+    query.bindValue(":gear_handle_position", aircraftHandleData.gearHandlePosition ? 1 : 0);
+
+    bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteHandleDao::add: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteHandleDao::add: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
     }
 #endif
     return ok;
@@ -150,11 +95,19 @@ bool SQLiteHandleDao::add(qint64 aircraftId, const AircraftHandleData &aircraftH
 
 bool SQLiteHandleDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<AircraftHandleData>> insertIterator) const noexcept
 {
-    d->initQueries();
-    d->selectByAircraftIdQuery->bindValue(":aircraft_id", aircraftId);
-    bool ok = d->selectByAircraftIdQuery->exec();
+    QSqlQuery query;
+    query.setForwardOnly(true);
+    query.prepare(
+        "select * "
+        "from   handle h "
+        "where  h.aircraft_id = :aircraft_id "
+        "order by h.timestamp asc;"
+    );
+
+    query.bindValue(":aircraft_id", aircraftId);
+    bool ok = query.exec();
     if (ok) {
-        QSqlRecord record = d->selectByAircraftIdQuery->record();
+        QSqlRecord record = query.record();
         const int timestampIdx = record.indexOf("timestamp");
         const int brakeLeftPositionIdx = record.indexOf("brake_left_position");
         const int brakeRightPositionIdx = record.indexOf("brake_right_position");
@@ -164,25 +117,25 @@ bool SQLiteHandleDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<st
         const int leftWingFoldingIdx = record.indexOf("left_wing_folding");
         const int rightWingFoldingIdx = record.indexOf("right_wing_folding");
         const int gearHandlePositionIdx = record.indexOf("gear_handle_position");
-        while (d->selectByAircraftIdQuery->next()) {
+        while (query.next()) {
 
             AircraftHandleData data;
 
-            data.timestamp = d->selectByAircraftIdQuery->value(timestampIdx).toLongLong();
-            data.brakeLeftPosition = d->selectByAircraftIdQuery->value(brakeLeftPositionIdx).toInt();
-            data.brakeRightPosition = d->selectByAircraftIdQuery->value(brakeRightPositionIdx).toInt();
-            data.waterRudderHandlePosition = d->selectByAircraftIdQuery->value(waterRudderHandlePositionIdx).toInt();
-            data.tailhookPosition = d->selectByAircraftIdQuery->value(tailHookPositionIdx).toInt();
-            data.canopyOpen = d->selectByAircraftIdQuery->value(canopyOpenIdx).toInt();
-            data.leftWingFolding = d->selectByAircraftIdQuery->value(leftWingFoldingIdx).toInt();
-            data.rightWingFolding = d->selectByAircraftIdQuery->value(rightWingFoldingIdx).toInt();
-            data.gearHandlePosition = d->selectByAircraftIdQuery->value(gearHandlePositionIdx).toBool();            
+            data.timestamp = query.value(timestampIdx).toLongLong();
+            data.brakeLeftPosition = query.value(brakeLeftPositionIdx).toInt();
+            data.brakeRightPosition = query.value(brakeRightPositionIdx).toInt();
+            data.waterRudderHandlePosition = query.value(waterRudderHandlePositionIdx).toInt();
+            data.tailhookPosition = query.value(tailHookPositionIdx).toInt();
+            data.canopyOpen = query.value(canopyOpenIdx).toInt();
+            data.leftWingFolding = query.value(leftWingFoldingIdx).toInt();
+            data.rightWingFolding = query.value(rightWingFoldingIdx).toInt();
+            data.gearHandlePosition = query.value(gearHandlePositionIdx).toBool();
 
             insertIterator = std::move(data);
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteHandleDao::getByAircraftId: SQL error: %s", qPrintable(d->selectByAircraftIdQuery->lastError().databaseText() + " - error code: " + d->selectByAircraftIdQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteHandleDao::getByAircraftId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
 #endif
     }
 
@@ -191,12 +144,21 @@ bool SQLiteHandleDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<st
 
 bool SQLiteHandleDao::deleteByFlightId(qint64 flightId) noexcept
 {
-    d->initQueries();
-    d->deleteByFlightIdQuery->bindValue(":flight_id", flightId);
-    bool ok = d->deleteByFlightIdQuery->exec();
+    QSqlQuery query;
+    query.prepare(
+        "delete "
+        "from   handle "
+        "where  aircraft_id in (select a.id "
+        "                       from aircraft a"
+        "                       where a.flight_id = :flight_id"
+        "                      );"
+    );
+
+    query.bindValue(":flight_id", flightId);
+    bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteHandleDao::deleteByFlightId: SQL error: %s", qPrintable(d->deleteByFlightIdQuery->lastError().databaseText() + " - error code: " + d->deleteByFlightIdQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteHandleDao::deleteByFlightId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
     }
 #endif
     return ok;
@@ -204,28 +166,19 @@ bool SQLiteHandleDao::deleteByFlightId(qint64 flightId) noexcept
 
 bool SQLiteHandleDao::deleteByAircraftId(qint64 aircraftId) noexcept
 {
-    d->initQueries();
-    d->deleteByIdQuery->bindValue(":aircraft_id", aircraftId);
-    bool ok = d->deleteByIdQuery->exec();
+    QSqlQuery query;
+    query.prepare(
+        "delete "
+        "from   handle "
+        "where  aircraft_id = :aircraft_id;"
+    );
+
+    query.bindValue(":aircraft_id", aircraftId);
+    bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteHandleDao::deleteByAircraftId: SQL error: %s", qPrintable(d->deleteByIdQuery->lastError().databaseText() + " - error code: " + d->deleteByIdQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteHandleDao::deleteByAircraftId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
     }
 #endif
     return true;
-}
-
-// PRIVATE
-
-void SQLiteHandleDao::frenchConnection() noexcept
-{
-    connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
-            this, &SQLiteHandleDao::handleConnectionChanged);
-}
-
-// PRIVATE SLOTS
-
-void SQLiteHandleDao::handleConnectionChanged() noexcept
-{
-    d->resetQueries();
 }

@@ -1,7 +1,5 @@
 add_definitions(-DUSERINTERFACE_EXPORT)
 
-qt5_add_resources(USERINTERFACE_SOURCES res/SkyDolly.qrc)
-
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_library(UserInterface SHARED
         ${USERINTERFACE_SOURCES}
@@ -20,7 +18,8 @@ if (APPLE)
 endif()
 
 target_sources(UserInterface
-    PRIVATE        
+    PRIVATE
+        res/SkyDolly.qrc
         src/UserInterfaceLib.h
         src/MainWindow.cpp
         src/MainWindow.h

@@ -22,33 +22,25 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTDAOINTF_H
-#define FLIGHTDAOINTF_H
+#ifndef FLIGHTSELECTOR_H
+#define FLIGHTSELECTOR_H
 
-#include <QtGlobal>
+#include <QDate>
+#include <QString>
 
-class QString;
+#include "../PersistenceLib.h"
 
-class Flight;
-class FlightSummary;
-
-class FlightDaoIntf
+struct PERSISTENCE_API FlightSelector
 {
 public:
-    virtual ~FlightDaoIntf() = default;
+    FlightSelector();
 
-    /*!
-     * Persists the \c flight. The \c id in \c flight is updated.
-     * \param flight
-     *        the Flight to be persisted
-     * \return \c true on success; \c false else
-     */
-    virtual bool addFlight(Flight &flight) noexcept = 0;
-    virtual bool getFlightById(qint64 id, Flight &flight) const noexcept = 0;
-    virtual bool deleteById(qint64 id) noexcept = 0;
-    virtual bool updateTitle(qint64 id, const QString &title) noexcept = 0;
-    virtual bool updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept = 0;
-    virtual bool updateUserAircraftIndex(qint64 id, int index) noexcept = 0;
+    QDate fromDate;
+    QDate toDate;
+    QString searchKeyword;
+
+    static const QDate MinDate;
+    static const QDate MaxDate;
 };
 
-#endif // FLIGHTDAOINTF_H
+#endif // FLIGHTSELECTOR_H
