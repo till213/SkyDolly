@@ -33,6 +33,7 @@
 #include <QModelIndex>
 #include <QDateTime>
 #include <QTime>
+#include <QTimer>
 #include <QPushButton>
 #include <QMessageBox>
 #include <QCheckBox>
@@ -65,20 +66,26 @@ namespace
 
     constexpr int DateColumn = 0;
     constexpr int NofFlightsColumn = 1;
+
+    constexpr int SearchTimeoutMSec = 200;
 }
 
 class LogbookWidgetPrivate
 {
 public:
-    LogbookWidgetPrivate(DatabaseService &theDatabaseService, FlightService &theFlightService) noexcept
+    LogbookWidgetPrivate(QObject *parent, DatabaseService &theDatabaseService, FlightService &theFlightService) noexcept
         : titleColumnIndex(InvalidColumn),
           databaseService(theDatabaseService),
           flightService(theFlightService),
           logbookService(std::make_unique<LogbookService>()),
           selectedRow(InvalidSelection),
           selectedFlightId(Flight::InvalidId),
-          moduleAction(nullptr)
-    {}
+          moduleAction(nullptr),
+          searchTimer(new QTimer(parent))
+    {
+        searchTimer->setSingleShot(true);
+        searchTimer->setInterval(SearchTimeoutMSec);
+    }
 
     int titleColumnIndex;
     DatabaseService &databaseService;
@@ -89,6 +96,7 @@ public:
     Unit unit;
     std::unique_ptr<QAction> moduleAction;
     FlightSelector flightSelector;
+    QTimer *searchTimer;
 };
 
 // PUBLIC
@@ -96,7 +104,7 @@ public:
 LogbookWidget::LogbookWidget(DatabaseService &databaseService, FlightService &flightService, QWidget *parent) noexcept
     : AbstractModuleWidget(flightService, parent),
       ui(std::make_unique<Ui::LogbookWidget>()),
-      d(std::make_unique<LogbookWidgetPrivate>(databaseService, flightService))
+      d(std::make_unique<LogbookWidgetPrivate>(this, databaseService, flightService))
 {
     ui->setupUi(this);
     initUi();
@@ -304,8 +312,10 @@ void LogbookWidget::updateFlightTable() noexcept
 void LogbookWidget::frenchConnection() noexcept
 {
     // Search
-    connect(ui->searchLineEdit, &QLineEdit::returnPressed,
-            this, &LogbookWidget::handleSearchChanged);
+    connect(d->searchTimer, &QTimer::timeout,
+            this, &LogbookWidget::searchText);
+    connect(ui->searchLineEdit, &QLineEdit::textChanged,
+            this, &LogbookWidget::handleSearchTextChanged);
 
     // Logbook table
     connect(ui->logTableWidget, &QTableWidget::itemSelectionChanged,
@@ -541,8 +551,16 @@ void LogbookWidget::deleteFlight() noexcept
     }
 }
 
-void LogbookWidget::handleSearchChanged() noexcept
+void LogbookWidget::handleSearchTextChanged() noexcept
 {
+    d->searchTimer->start();
+}
+
+void LogbookWidget::searchText() noexcept
+{
+#ifdef DEBUG
+    qDebug("LogbookWidget::searchText: initiating search for: %s", qPrintable(ui->searchLineEdit->text()));
+#endif
     d->flightSelector.searchKeyword = ui->searchLineEdit->text();
     updateFlightTable();
 }
@@ -573,7 +591,7 @@ void LogbookWidget::handleCellChanged(int row, int column) noexcept
     }
 }
 
-void LogbookWidget::handleDateItemClicked(QTreeWidgetItem *item, int column) noexcept
+void LogbookWidget::handleDateItemClicked(QTreeWidgetItem *item) noexcept
 {
     updateSelectionDateRange(item);
     updateFlightTable();

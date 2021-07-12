@@ -34,6 +34,7 @@ class QShowEvent;
 class QHideEvent;
 class QAction;
 class QTreeWidgetItem;
+class QString;
 
 #include "../ModuleIntf.h"
 #include "../Module.h"
@@ -90,12 +91,13 @@ private slots:
     void loadFlight() noexcept;
     void deleteFlight() noexcept;
     // Search
-    void handleSearchChanged() noexcept;
+    void handleSearchTextChanged() noexcept;
+    void searchText() noexcept;
     // Flight log table
     void handleCellSelected(int row, int column) noexcept;
     void handleCellChanged(int row, int column) noexcept;
     // Flight date tree
-    void handleDateItemClicked(QTreeWidgetItem *item, int column) noexcept;
+    void handleDateItemClicked(QTreeWidgetItem *item) noexcept;
 };
 
 #endif // LOGBOOKWIDGET_H
