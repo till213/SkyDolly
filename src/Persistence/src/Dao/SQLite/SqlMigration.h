@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef DBMIGRATION_H
-#define DBMIGRATION_H
+#ifndef SQLMIGRATION_H
+#define SQLMIGRATION_H
 
 #include <memory>
 
@@ -45,4 +45,4 @@ private:
     bool migrate(const QString &migration) noexcept;
 };
 
-#endif // DBMIGRATION_H
+#endif // SQLMIGRATION_H

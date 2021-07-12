@@ -47,14 +47,15 @@ bool SQLiteAircraftTypeDao::upsert(const AircraftType &aircraftType)  noexcept
 {
     QSqlQuery query;
     query.prepare(
-"insert into aircraft_type (type, category, wing_span, engine_type, nof_engines) "
-"values(:type, :category, :wing_span, :engine_type, :nof_engines) "
-"on conflict(type) "
-"do update "
-"set category = excluded.category, "
-"    wing_span = excluded.wing_span, "
-"	 engine_type = excluded.engine_type, "
-"	 nof_engines = excluded.nof_engines;");
+        "insert into aircraft_type (type, category, wing_span, engine_type, nof_engines) "
+        "values(:type, :category, :wing_span, :engine_type, :nof_engines) "
+        "on conflict(type) "
+        "do update "
+        "set category = excluded.category, "
+        "    wing_span = excluded.wing_span, "
+        "	 engine_type = excluded.engine_type, "
+        "	 nof_engines = excluded.nof_engines;"
+    );
 
     query.bindValue(":type", aircraftType.type);
     query.bindValue(":category", aircraftType.category);
@@ -75,9 +76,10 @@ bool SQLiteAircraftTypeDao::getByType(const QString &type, AircraftType &aircraf
 {
     QSqlQuery query;
     query.prepare(
-"select at.category, at.wing_span, at.engine_type, at.nof_engines "
-"from   aircraft_type at "
-"where  at.type = :type;");
+        "select at.category, at.wing_span, at.engine_type, at.nof_engines "
+        "from   aircraft_type at "
+        "where  at.type = :type;"
+    );
 
     query.bindValue(":type", type);
 
@@ -106,5 +108,6 @@ bool SQLiteAircraftTypeDao::getByType(const QString &type, AircraftType &aircraf
 
 bool SQLiteAircraftTypeDao::getAlld(std::insert_iterator<std::vector<AircraftType>> insertIterator) const noexcept
 {
-
+    // TODO IMPLEMENT ME!!!
+    return false;
 }

@@ -113,12 +113,11 @@ bool SQLiteDatabaseDao::getMetadata(Metadata &metadata) const noexcept
 {
     QSqlQuery query;
     bool ok = query.exec(
-"select m.creation_date, m.app_version, m.last_optim_date, m.last_backup_date, m.backup_directory_path, e.intl_id "
-"from metadata m "
-"left join enum_backup_interval e "
-"on m.backup_interval_id = e.id;"
-
-);
+        "select m.creation_date, m.app_version, m.last_optim_date, m.last_backup_date, m.backup_directory_path, e.intl_id "
+        "from metadata m "
+        "left join enum_backup_interval e "
+        "on m.backup_interval_id = e.id;"
+    );
     if (query.next()) {
         QDateTime dateTime = query.value(0).toDateTime();
         dateTime.setTimeZone(QTimeZone::utc());
@@ -151,12 +150,14 @@ void SQLiteDatabaseDao::disconnectSQLite() noexcept
 bool SQLiteDatabaseDao::createMigrationTable() noexcept
 {
     QSqlQuery query;
-    query.prepare("create table if not exists migr("
-    "id text not null,"
-    "step integer not null,"
-    "success integer not null,"
-    "timestamp datetime default current_timestamp,"
-    "msg text,"
-    "primary key (id, step));");
+    query.prepare(
+        "create table if not exists migr("
+        "id text not null,"
+        "step integer not null,"
+        "success integer not null,"
+        "timestamp datetime default current_timestamp,"
+        "msg text,"
+        "primary key (id, step));"
+    );
     return query.exec();
 }

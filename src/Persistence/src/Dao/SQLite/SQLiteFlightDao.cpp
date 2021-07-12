@@ -26,7 +26,6 @@
 #include <vector>
 #include <iterator>
 
-#include <QObject>
 #include <QString>
 #include <QSqlQuery>
 #include <QVariant>
@@ -53,159 +52,98 @@ public:
           aircraftDao(daoFactory->createAircraftDao())
     {}
 
-    std::unique_ptr<QSqlQuery> insertQuery;
-    std::unique_ptr<QSqlQuery> selectByIdQuery;
-    std::unique_ptr<QSqlQuery> deleteByIdQuery;
-    std::unique_ptr<QSqlQuery> updateTitleQuery;
-    std::unique_ptr<QSqlQuery> updateTitleAndDescriptionQuery;
-    std::unique_ptr<QSqlQuery> updateUserAircraftSequenceNumberQuery;
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<AircraftDaoIntf> aircraftDao;
-
-    void initQueries()
-    {
-        if (insertQuery == nullptr) {
-            insertQuery = std::make_unique<QSqlQuery>();
-            insertQuery->prepare(
-"insert into flight ("
-"  title,"
-"  description,"
-"  user_aircraft_seq_nr,"
-"  surface_type,"
-"  ground_altitude,"
-"  ambient_temperature,"
-"  total_air_temperature,"
-"  wind_velocity,"
-"  wind_direction,"
-"  visibility,"
-"  sea_level_pressure,"
-"  pitot_icing,"
-"  structural_icing,"
-"  precipitation_state,"
-"  in_clouds,"
-"  start_local_sim_time,"
-"  start_zulu_sim_time,"
-"  end_local_sim_time,"
-"  end_zulu_sim_time"
-") values ("
-" :title,"
-" :description,"
-" :user_aircraft_seq_nr,"
-" :surface_type,"
-" :ground_altitude,"
-" :ambient_temperature,"
-" :total_air_temperature,"
-" :wind_velocity,"
-" :wind_direction,"
-" :visibility,"
-" :sea_level_pressure,"
-" :pitot_icing,"
-" :structural_icing,"
-" :precipitation_state,"
-" :in_clouds,"
-" :start_local_sim_time,"
-" :start_zulu_sim_time,"
-" :end_local_sim_time,"
-" :end_zulu_sim_time"
-");");
-        }
-        if (selectByIdQuery == nullptr) {
-            selectByIdQuery = std::make_unique<QSqlQuery>();
-            selectByIdQuery->setForwardOnly(true);
-            selectByIdQuery->prepare(
-"select * "
-"from flight f "
-"where f.id = :id;");
-        }
-        if (deleteByIdQuery == nullptr) {
-            deleteByIdQuery = std::make_unique<QSqlQuery>();
-            deleteByIdQuery->prepare(
-"delete "
-"from flight "
-"where id = :id;");
-        }
-        if (updateTitleQuery == nullptr) {
-            updateTitleQuery = std::make_unique<QSqlQuery>();
-            updateTitleQuery->prepare(
-"update flight "
-"set    title = :title "
-"where id = :id;");
-        }
-        if (updateTitleAndDescriptionQuery == nullptr) {
-            updateTitleAndDescriptionQuery = std::make_unique<QSqlQuery>();
-            updateTitleAndDescriptionQuery->prepare(
-"update flight "
-"set    title = :title,"
-"       description = :description "
-"where id = :id;");
-        }
-        if (updateUserAircraftSequenceNumberQuery == nullptr) {
-            updateUserAircraftSequenceNumberQuery = std::make_unique<QSqlQuery>();
-            updateUserAircraftSequenceNumberQuery->prepare(
-"update flight "
-"set    user_aircraft_seq_nr = :user_aircraft_seq_nr "
-"where id = :id;");
-        }
-    }
-
-    void resetQueries() noexcept
-    {
-        insertQuery = nullptr;
-        selectByIdQuery = nullptr;
-        deleteByIdQuery = nullptr;
-        updateTitleQuery = nullptr;
-        updateTitleAndDescriptionQuery = nullptr;
-        updateUserAircraftSequenceNumberQuery = nullptr;
-    }
 };
 
 // PUBLIC
 
-SQLiteFlightDao::SQLiteFlightDao(QObject *parent) noexcept
-    : QObject(parent),
-      d(std::make_unique<SQLiteFlightDaoPrivate>())
-{
-    frenchConnection();
-}
+SQLiteFlightDao::SQLiteFlightDao() noexcept
+    : d(std::make_unique<SQLiteFlightDaoPrivate>())
+{}
 
 SQLiteFlightDao::~SQLiteFlightDao() noexcept
 {}
 
 bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
 {
-    d->initQueries();
+    QSqlQuery query;
+    query.prepare(
+        "insert into flight ("
+        "  title,"
+        "  description,"
+        "  user_aircraft_seq_nr,"
+        "  surface_type,"
+        "  ground_altitude,"
+        "  ambient_temperature,"
+        "  total_air_temperature,"
+        "  wind_velocity,"
+        "  wind_direction,"
+        "  visibility,"
+        "  sea_level_pressure,"
+        "  pitot_icing,"
+        "  structural_icing,"
+        "  precipitation_state,"
+        "  in_clouds,"
+        "  start_local_sim_time,"
+        "  start_zulu_sim_time,"
+        "  end_local_sim_time,"
+        "  end_zulu_sim_time"
+        ") values ("
+        " :title,"
+        " :description,"
+        " :user_aircraft_seq_nr,"
+        " :surface_type,"
+        " :ground_altitude,"
+        " :ambient_temperature,"
+        " :total_air_temperature,"
+        " :wind_velocity,"
+        " :wind_direction,"
+        " :visibility,"
+        " :sea_level_pressure,"
+        " :pitot_icing,"
+        " :structural_icing,"
+        " :precipitation_state,"
+        " :in_clouds,"
+        " :start_local_sim_time,"
+        " :start_zulu_sim_time,"
+        " :end_local_sim_time,"
+        " :end_zulu_sim_time"
+        ");"
+    );
+
     const FlightCondition &flightCondition = flight.getFlightConditionConst();
-    d->insertQuery->bindValue(":title", flight.getTitle());
-    d->insertQuery->bindValue(":description", flight.getDescription());
+    query.bindValue(":title", flight.getTitle());
+    query.bindValue(":description", flight.getDescription());
     // Sequence number starts at 1
-    d->insertQuery->bindValue(":user_aircraft_seq_nr", flight.getUserAircraftIndex() + 1);
-    d->insertQuery->bindValue(":surface_type", Enum::toUnderlyingType(flightCondition.surfaceType));
-    d->insertQuery->bindValue(":ground_altitude", flightCondition.groundAltitude);
-    d->insertQuery->bindValue(":ambient_temperature", flightCondition.ambientTemperature);
-    d->insertQuery->bindValue(":total_air_temperature", flightCondition.totalAirTemperature);
-    d->insertQuery->bindValue(":wind_velocity", flightCondition.windVelocity);
-    d->insertQuery->bindValue(":wind_direction", flightCondition.windDirection);
-    d->insertQuery->bindValue(":visibility", flightCondition.visibility);
-    d->insertQuery->bindValue(":sea_level_pressure", flightCondition.seaLevelPressure);
-    d->insertQuery->bindValue(":pitot_icing", flightCondition.pitotIcingPercent);
-    d->insertQuery->bindValue(":structural_icing", flightCondition.structuralIcingPercent);
-    d->insertQuery->bindValue(":precipitation_state", Enum::toUnderlyingType(flightCondition.precipitationState));
-    d->insertQuery->bindValue(":in_clouds", flightCondition.inClouds);
+    query.bindValue(":user_aircraft_seq_nr", flight.getUserAircraftIndex() + 1);
+    query.bindValue(":surface_type", Enum::toUnderlyingType(flightCondition.surfaceType));
+    query.bindValue(":ground_altitude", flightCondition.groundAltitude);
+    query.bindValue(":ambient_temperature", flightCondition.ambientTemperature);
+    query.bindValue(":total_air_temperature", flightCondition.totalAirTemperature);
+    query.bindValue(":wind_velocity", flightCondition.windVelocity);
+    query.bindValue(":wind_direction", flightCondition.windDirection);
+    query.bindValue(":visibility", flightCondition.visibility);
+    query.bindValue(":sea_level_pressure", flightCondition.seaLevelPressure);
+    query.bindValue(":pitot_icing", flightCondition.pitotIcingPercent);
+    query.bindValue(":structural_icing", flightCondition.structuralIcingPercent);
+    query.bindValue(":precipitation_state", Enum::toUnderlyingType(flightCondition.precipitationState));
+    query.bindValue(":in_clouds", flightCondition.inClouds);
     // No conversion to UTC
-    d->insertQuery->bindValue(":start_local_sim_time", flightCondition.startLocalTime);
+    query.bindValue(":start_local_sim_time", flightCondition.startLocalTime);
     // Zulu time equals to UTC time
-    d->insertQuery->bindValue(":start_zulu_sim_time", flightCondition.startZuluTime);
+    query.bindValue(":start_zulu_sim_time", flightCondition.startZuluTime);
     // No conversion to UTC
-    d->insertQuery->bindValue(":end_local_sim_time", flightCondition.endLocalTime);
+    query.bindValue(":end_local_sim_time", flightCondition.endLocalTime);
     // Zulu time equals to UTC time
-    d->insertQuery->bindValue(":end_zulu_sim_time", flightCondition.endZuluTime);   
-    bool ok = d->insertQuery->exec();
+    query.bindValue(":end_zulu_sim_time", flightCondition.endZuluTime);
+    bool ok = query.exec();
     if (ok) {
-        qint64 id = d->insertQuery->lastInsertId().toLongLong(&ok);
+        qint64 id = query.lastInsertId().toLongLong(&ok);
         flight.setId(id);
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteFlightDao::addFlight: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteFlightDao::addFlight: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
 #endif
     }
     if (ok) {
@@ -226,12 +164,18 @@ bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
 
 bool SQLiteFlightDao::getFlightById(qint64 id, Flight &flight) const noexcept
 {
-    d->initQueries();
-    d->selectByIdQuery->bindValue(":id", id);
-    bool ok = d->selectByIdQuery->exec();
+    QSqlQuery query;
+    query.prepare(
+        "select * "
+        "from flight f "
+        "where f.id = :id;"
+    );
+
+    query.bindValue(":id", id);
+    bool ok = query.exec();
     if (ok) {
         flight.clear(false);
-        QSqlRecord record = d->selectByIdQuery->record();
+        QSqlRecord record = query.record();
         const int idIdx = record.indexOf("id");
         const int creationDateIdx = record.indexOf("creation_date");
         const int titleIdx = record.indexOf("title");
@@ -253,44 +197,44 @@ bool SQLiteFlightDao::getFlightById(qint64 id, Flight &flight) const noexcept
         const int endLocalSimulationTimeIdx = record.indexOf("end_local_sim_time");
         const int endZuluSimulationTimeIdx = record.indexOf("end_zulu_sim_time");
         const int userAircraftSequenceNumberIdx = record.indexOf("user_aircraft_seq_nr");
-        if (d->selectByIdQuery->next()) {
-            flight.setId(d->selectByIdQuery->value(idIdx).toLongLong());
-            QDateTime date = d->selectByIdQuery->value(creationDateIdx).toDateTime();
+        if (query.next()) {
+            flight.setId(query.value(idIdx).toLongLong());
+            QDateTime date = query.value(creationDateIdx).toDateTime();
             date.setTimeZone(QTimeZone::utc());
             flight.setCreationDate(date.toLocalTime());
-            flight.setTitle(d->selectByIdQuery->value(titleIdx).toString());
-            flight.setDescription(d->selectByIdQuery->value(descriptionIdx).toString());
+            flight.setTitle(query.value(titleIdx).toString());
+            flight.setDescription(query.value(descriptionIdx).toString());
 
             FlightCondition flightCondition;
-            flightCondition.surfaceType = static_cast<SimType::SurfaceType>(d->selectByIdQuery->value(surfaceTypeIdx).toInt());
-            flightCondition.groundAltitude = d->selectByIdQuery->value(groundAltitudeIdx).toFloat();
-            flightCondition.ambientTemperature = d->selectByIdQuery->value(ambientTemperatureIdx).toFloat();
-            flightCondition.totalAirTemperature = d->selectByIdQuery->value(totalAirTemperatureIdx).toFloat();
-            flightCondition.windVelocity = d->selectByIdQuery->value(windVelocityIdx).toFloat();
-            flightCondition.windDirection = d->selectByIdQuery->value(windDirectionIdx).toFloat();
-            flightCondition.visibility = d->selectByIdQuery->value(visibilityIdx).toFloat();
-            flightCondition.seaLevelPressure = d->selectByIdQuery->value(seaLevelPressureIdx).toFloat();
-            flightCondition.pitotIcingPercent = d->selectByIdQuery->value(pitotIcingIdx).toInt();
-            flightCondition.structuralIcingPercent = d->selectByIdQuery->value(structuralIcingIdx).toInt();
-            flightCondition.precipitationState = static_cast<SimType::PrecipitationState>(d->selectByIdQuery->value(precipitationStateIdx).toInt());
-            flightCondition.inClouds = d->selectByIdQuery->value(inCloudsIdx).toBool();
+            flightCondition.surfaceType = static_cast<SimType::SurfaceType>(query.value(surfaceTypeIdx).toInt());
+            flightCondition.groundAltitude = query.value(groundAltitudeIdx).toFloat();
+            flightCondition.ambientTemperature = query.value(ambientTemperatureIdx).toFloat();
+            flightCondition.totalAirTemperature = query.value(totalAirTemperatureIdx).toFloat();
+            flightCondition.windVelocity = query.value(windVelocityIdx).toFloat();
+            flightCondition.windDirection = query.value(windDirectionIdx).toFloat();
+            flightCondition.visibility = query.value(visibilityIdx).toFloat();
+            flightCondition.seaLevelPressure = query.value(seaLevelPressureIdx).toFloat();
+            flightCondition.pitotIcingPercent = query.value(pitotIcingIdx).toInt();
+            flightCondition.structuralIcingPercent = query.value(structuralIcingIdx).toInt();
+            flightCondition.precipitationState = static_cast<SimType::PrecipitationState>(query.value(precipitationStateIdx).toInt());
+            flightCondition.inClouds = query.value(inCloudsIdx).toBool();
             // Persisted times is are already local respectively zulu simulation times
-            flightCondition.startLocalTime = d->selectByIdQuery->value(startLocalSimulationTimeIdx).toDateTime();
-            flightCondition.startZuluTime = d->selectByIdQuery->value(startZuluSimulationTimeIdx).toDateTime();
-            flightCondition.endLocalTime = d->selectByIdQuery->value(endLocalSimulationTimeIdx).toDateTime();
-            flightCondition.endZuluTime = d->selectByIdQuery->value(endZuluSimulationTimeIdx).toDateTime();
+            flightCondition.startLocalTime = query.value(startLocalSimulationTimeIdx).toDateTime();
+            flightCondition.startZuluTime = query.value(startZuluSimulationTimeIdx).toDateTime();
+            flightCondition.endLocalTime = query.value(endLocalSimulationTimeIdx).toDateTime();
+            flightCondition.endZuluTime = query.value(endZuluSimulationTimeIdx).toDateTime();
 
             flight.setFlightCondition(flightCondition);
         }
         ok = d->aircraftDao->getByFlightId(id, flight.insertIterator());
         if (ok) {
             // Index starts at 0
-            const int userAircraftIndex = d->selectByIdQuery->value(userAircraftSequenceNumberIdx).toInt() - 1;
+            const int userAircraftIndex = query.value(userAircraftSequenceNumberIdx).toInt() - 1;
             flight.setUserAircraftIndex(userAircraftIndex);
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteFlightDao::getFlightById: SQL error: %s", qPrintable(d->selectByIdQuery->lastError().databaseText() + " - error code: " + d->selectByIdQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteFlightDao::getFlightById: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
 #endif
     }
     return ok;
@@ -298,15 +242,20 @@ bool SQLiteFlightDao::getFlightById(qint64 id, Flight &flight) const noexcept
 
 bool SQLiteFlightDao::deleteById(qint64 id) noexcept
 {
-    d->initQueries();
+    QSqlQuery query;
+    query.prepare(
+        "delete "
+        "from flight "
+        "where id = :id;"
+    );
 
     bool ok = d->aircraftDao->deleteAllByFlightId(id);
     if (ok) {
-        d->deleteByIdQuery->bindValue(":id", id);
-        ok = d->deleteByIdQuery->exec();
+        query.bindValue(":id", id);
+        ok = query.exec();
 #ifdef DEBUG
         if (!ok) {
-            qDebug("SQLiteFlightDao::deleteById: SQL error: %s", qPrintable(d->deleteByIdQuery->lastError().databaseText() + " - error code: " + d->deleteByIdQuery->lastError().nativeErrorCode()));
+            qDebug("SQLiteFlightDao::deleteById: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
         }
 #endif
     }
@@ -315,14 +264,19 @@ bool SQLiteFlightDao::deleteById(qint64 id) noexcept
 
 bool SQLiteFlightDao::updateTitle(qint64 id, const QString &title) noexcept
 {
-    d->initQueries();
+    QSqlQuery query;
+    query.prepare(
+        "update flight "
+        "set    title = :title "
+        "where id = :id;"
+    );
 
-    d->updateTitleQuery->bindValue(":title", title);
-    d->updateTitleQuery->bindValue(":id", id);
-    bool ok = d->updateTitleQuery->exec();
+    query.bindValue(":title", title);
+    query.bindValue(":id", id);
+    bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteFlightDao::updateTitleQuery: SQL error: %s", qPrintable(d->updateTitleQuery->lastError().databaseText() + " - error code: " + d->updateTitleQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteFlightDao::updateTitleQuery: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
     }
 #endif
     return ok;
@@ -330,15 +284,21 @@ bool SQLiteFlightDao::updateTitle(qint64 id, const QString &title) noexcept
 
 bool SQLiteFlightDao::updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept
 {
-    d->initQueries();
+    QSqlQuery query;
+    query.prepare(
+        "update flight "
+        "set    title = :title,"
+        "       description = :description "
+        "where id = :id;"
+    );
 
-    d->updateTitleAndDescriptionQuery->bindValue(":title", title);
-    d->updateTitleAndDescriptionQuery->bindValue(":description", description);
-    d->updateTitleAndDescriptionQuery->bindValue(":id", id);
-    bool ok = d->updateTitleAndDescriptionQuery->exec();
+    query.bindValue(":title", title);
+    query.bindValue(":description", description);
+    query.bindValue(":id", id);
+    bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteFlightDao::updateTitleAndDescription: SQL error: %s", qPrintable(d->updateTitleAndDescriptionQuery->lastError().databaseText() + " - error code: " + d->updateTitleAndDescriptionQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteFlightDao::updateTitleAndDescription: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
     }
 #endif
     return ok;
@@ -346,31 +306,21 @@ bool SQLiteFlightDao::updateTitleAndDescription(qint64 id, const QString &title,
 
 bool SQLiteFlightDao::updateUserAircraftIndex(qint64 id, int index) noexcept
 {
-    d->initQueries();
+    QSqlQuery query;
+    query.prepare(
+        "update flight "
+        "set    user_aircraft_seq_nr = :user_aircraft_seq_nr "
+        "where id = :id;"
+    );
 
     // Sequence number starts at 1
-    d->updateUserAircraftSequenceNumberQuery->bindValue(":user_aircraft_seq_nr", index + 1);
-    d->updateUserAircraftSequenceNumberQuery->bindValue(":id", id);
-    bool ok = d->updateUserAircraftSequenceNumberQuery->exec();
+    query.bindValue(":user_aircraft_seq_nr", index + 1);
+    query.bindValue(":id", id);
+    bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteFlightDao::updateUserAircraftIndex: SQL error: %s", qPrintable(d->updateUserAircraftSequenceNumberQuery->lastError().databaseText() + " - error code: " + d->updateUserAircraftSequenceNumberQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteFlightDao::updateUserAircraftIndex: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
     }
 #endif
     return ok;
-}
-
-// PRIVATE
-
-void SQLiteFlightDao::frenchConnection() noexcept
-{
-    connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
-            this, &SQLiteFlightDao::handleConnectionChanged);
-}
-
-// PRIVATE SLOTS
-
-void SQLiteFlightDao::handleConnectionChanged() noexcept
-{
-    d->resetQueries();
 }

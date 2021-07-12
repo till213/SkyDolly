@@ -26,7 +26,6 @@
 #include <vector>
 #include <iterator>
 
-#include <QObject>
 #include <QString>
 #include <QSqlQuery>
 #include <QVariant>
@@ -37,91 +36,36 @@
 #include "../../ConnectionManager.h"
 #include "SQLiteLightDao.h"
 
-class SQLiteLightDaoPrivate
-{
-public:
-    SQLiteLightDaoPrivate() noexcept
-    {}
-
-    std::unique_ptr<QSqlQuery> insertQuery;
-    std::unique_ptr<QSqlQuery> selectByAircraftIdQuery;
-    std::unique_ptr<QSqlQuery> deleteByFlightIdQuery;
-    std::unique_ptr<QSqlQuery> deleteByIdQuery;
-
-    void initQueries()
-    {
-        if (insertQuery == nullptr) {
-            insertQuery = std::make_unique<QSqlQuery>();
-            insertQuery->prepare(
-"insert into light ("
-"  aircraft_id,"
-"  timestamp,"
-"  light_states"
-") values ("
-" :aircraft_id,"
-" :timestamp,"
-" :light_states"
-");");
-        }
-        if (selectByAircraftIdQuery == nullptr) {
-            selectByAircraftIdQuery = std::make_unique<QSqlQuery>();
-            selectByAircraftIdQuery->prepare(
-"select * "
-"from   light l "
-"where  l.aircraft_id = :aircraft_id "
-"order by l.timestamp asc;");
-        }
-        if (deleteByFlightIdQuery == nullptr) {
-            deleteByFlightIdQuery = std::make_unique<QSqlQuery>();
-            deleteByFlightIdQuery->prepare(
-"delete "
-"from   light "
-"where  aircraft_id in (select a.id "
-"                       from aircraft a"
-"                       where a.flight_id = :flight_id"
-"                      );");
-        }
-        if (deleteByIdQuery == nullptr) {
-            deleteByIdQuery = std::make_unique<QSqlQuery>();
-            deleteByIdQuery->prepare(
-"delete "
-"from   light "
-"where  aircraft_id = :aircraft_id;");
-        }
-    }
-
-    void resetQueries() noexcept
-    {
-        insertQuery = nullptr;
-        selectByAircraftIdQuery = nullptr;
-        deleteByFlightIdQuery = nullptr;
-        deleteByIdQuery = nullptr;
-    }
-};
-
 // PUBLIC
 
-SQLiteLightDao::SQLiteLightDao(QObject *parent) noexcept
-    : QObject(parent),
-      d(std::make_unique<SQLiteLightDaoPrivate>())
-{
-    frenchConnection();
-}
+SQLiteLightDao::SQLiteLightDao() noexcept
+{}
 
 SQLiteLightDao::~SQLiteLightDao() noexcept
 {}
 
 bool SQLiteLightDao::add(qint64 aircraftId, const LightData &lightData)  noexcept
 {
-    d->initQueries();
-    d->insertQuery->bindValue(":aircraft_id", aircraftId);
-    d->insertQuery->bindValue(":timestamp", lightData.timestamp);
-    d->insertQuery->bindValue(":light_states", static_cast<int>(lightData.lightStates));
+    QSqlQuery query;
+    query.prepare(
+        "insert into light ("
+        "  aircraft_id,"
+        "  timestamp,"
+        "  light_states"
+        ") values ("
+        " :aircraft_id,"
+        " :timestamp,"
+        " :light_states"
+        ");"
+    );
+    query.bindValue(":aircraft_id", aircraftId);
+    query.bindValue(":timestamp", lightData.timestamp);
+    query.bindValue(":light_states", static_cast<int>(lightData.lightStates));
 
-    bool ok = d->insertQuery->exec();
+    bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteLightDao::add: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteLightDao::add: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
     }
 #endif
     return ok;
@@ -129,24 +73,31 @@ bool SQLiteLightDao::add(qint64 aircraftId, const LightData &lightData)  noexcep
 
 bool SQLiteLightDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<LightData>> insertIterator) const noexcept
 {
-    d->initQueries();
-    d->selectByAircraftIdQuery->bindValue(":aircraft_id", aircraftId);
-    bool ok = d->selectByAircraftIdQuery->exec();
+    QSqlQuery query;
+    query.prepare(
+        "select * "
+        "from   light l "
+        "where  l.aircraft_id = :aircraft_id "
+        "order by l.timestamp asc;"
+    );
+
+    query.bindValue(":aircraft_id", aircraftId);
+    bool ok = query.exec();
     if (ok) {
-        QSqlRecord record = d->selectByAircraftIdQuery->record();
+        QSqlRecord record = query.record();
         const int timestampIdx = record.indexOf("timestamp");
         const int lightStatesIdx = record.indexOf("light_states");
-        while (d->selectByAircraftIdQuery->next()) {
+        while (query.next()) {
 
             LightData data;
-            data.timestamp = d->selectByAircraftIdQuery->value(timestampIdx).toLongLong();
-            data.lightStates = static_cast<SimType::LightStates>(d->selectByAircraftIdQuery->value(lightStatesIdx).toInt());
+            data.timestamp = query.value(timestampIdx).toLongLong();
+            data.lightStates = static_cast<SimType::LightStates>(query.value(lightStatesIdx).toInt());
 
             insertIterator = std::move(data);
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteLightDao::getByAircraftId: SQL error: %s", qPrintable(d->selectByAircraftIdQuery->lastError().databaseText() + " - error code: " + d->selectByAircraftIdQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteLightDao::getByAircraftId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
 #endif
     }
 
@@ -155,12 +106,20 @@ bool SQLiteLightDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<std
 
 bool SQLiteLightDao::deleteByFlightId(qint64 flightId) noexcept
 {
-    d->initQueries();
-    d->deleteByFlightIdQuery->bindValue(":flight_id", flightId);
-    bool ok = d->deleteByFlightIdQuery->exec();
+    QSqlQuery query;
+    query.prepare(
+        "delete "
+        "from   light "
+        "where  aircraft_id in (select a.id "
+        "                       from aircraft a"
+        "                       where a.flight_id = :flight_id"
+        "                      );"
+    );
+    query.bindValue(":flight_id", flightId);
+    bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteLightDao::deleteByFlightId: SQL error: %s", qPrintable(d->deleteByFlightIdQuery->lastError().databaseText() + " - error code: " + d->deleteByFlightIdQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteLightDao::deleteByFlightId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
     }
 #endif
     return ok;
@@ -168,30 +127,18 @@ bool SQLiteLightDao::deleteByFlightId(qint64 flightId) noexcept
 
 bool SQLiteLightDao::deleteByAircraftId(qint64 aircraftId) noexcept
 {
-    d->initQueries();
-    d->deleteByIdQuery->bindValue(":aircraft_id", aircraftId);
-    bool ok = d->deleteByIdQuery->exec();
+    QSqlQuery query;
+    query.prepare(
+        "delete "
+        "from   light "
+        "where  aircraft_id = :aircraft_id;"
+    );
+    query.bindValue(":aircraft_id", aircraftId);
+    bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteLightDao::deleteByAircraftId: SQL error: %s", qPrintable(d->deleteByIdQuery->lastError().databaseText() + " - error code: " + d->deleteByIdQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteLightDao::deleteByAircraftId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
     }
 #endif
     return true;
 }
-
-// PRIVATE
-
-void SQLiteLightDao::frenchConnection() noexcept
-{
-    connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
-            this, &SQLiteLightDao::handleConnectionChanged);
-}
-
-// PRIVATE SLOTS
-
-void SQLiteLightDao::handleConnectionChanged() noexcept
-{
-    d->resetQueries();
-}
-
-
