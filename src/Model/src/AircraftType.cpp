@@ -29,7 +29,6 @@
 // PUBLIC
 
 AircraftType::AircraftType() noexcept
-    : id(-1)
 {
     clear();
 }

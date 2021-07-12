@@ -33,9 +33,8 @@
 
 struct MODEL_API AircraftType
 {
-    qint64 id;
     /*!
-     * The aircraft type, e.g. "Pitts Special". This is really the "container title"
+     * The aircraft type, e.g. "Pitts Special". This is really the SimConnect "container title"
      * which is also used to spawn AI aircrafts.
      */
     QString type;
