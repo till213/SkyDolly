@@ -22,26 +22,38 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QString>
+#ifndef AIRCRAFTTYPEDAO_H
+#define AIRCRAFTTYPEDAO_H
 
-#include "AircraftType.h"
-#include "AircraftInfo.h"
+#include <memory>
+#include <vector>
+#include <iterator>
 
-// PUBLIC
+#include <QObject>
 
-AircraftInfo::AircraftInfo(qint64 theAircraftId) noexcept
+#include "../AircraftTypeDaoIntf.h"
+
+class AircraftType;
+class SQLiteAircraftTypeDaoPrivate;
+
+class SQLiteAircraftTypeDao : public QObject, public AircraftTypeDaoIntf
 {
-    clear();
-    aircraftId = theAircraftId;
-}
+    Q_OBJECT
+public:
+    explicit SQLiteAircraftTypeDao(QObject *parent = nullptr) noexcept;
+    virtual ~SQLiteAircraftTypeDao() noexcept;
 
-void AircraftInfo::clear() noexcept
-{
-    aircraftType.clear();
-    tailNumber.clear();
-    airline.clear();
-    flightNumber.clear();
-    startOnGround = false;
-    altitudeAboveGround = 0.0f;
-    initialAirspeed = 0;
-}
+    virtual bool upsert(const AircraftType &aircraftType) noexcept override;
+    virtual bool getByType(const QString &type, AircraftType &aircraftType) const noexcept override;
+    virtual bool getAlld(std::insert_iterator<std::vector<AircraftType>> insertIterator) const noexcept override;
+
+private:
+    std::unique_ptr<SQLiteAircraftTypeDaoPrivate> d;
+
+    void frenchConnection() noexcept;
+
+private slots:
+    void handleConnectionChanged() noexcept;
+};
+
+#endif // AIRCRAFTTYPEDAO_H

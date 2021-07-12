@@ -29,28 +29,24 @@
 #include <QDateTime>
 
 #include "SimType.h"
+#include "AircraftType.h"
 #include "ModelLib.h"
 
 struct MODEL_API AircraftInfo
 {
     qint64 aircraftId;
+    AircraftType aircraftType;
     QDateTime startDate;
     QDateTime endDate;
-    QString type;
     QString tailNumber;
     QString airline;
     QString flightNumber;
-    QString category;
 
     // Feet
     float altitudeAboveGround;
     bool startOnGround;
     // Knots
     int initialAirspeed;
-    // Feet
-    int wingSpan;
-    SimType::EngineType engineType;
-    int numberOfEngines;
 
     AircraftInfo(qint64 aircraftId) noexcept;
     AircraftInfo(AircraftInfo &&) = default;

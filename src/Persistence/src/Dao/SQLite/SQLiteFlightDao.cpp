@@ -68,7 +68,6 @@ public:
             insertQuery = std::make_unique<QSqlQuery>();
             insertQuery->prepare(
 "insert into flight ("
-"  id,"
 "  title,"
 "  description,"
 "  user_aircraft_seq_nr,"
@@ -89,7 +88,6 @@ public:
 "  end_local_sim_time,"
 "  end_zulu_sim_time"
 ") values ("
-"  null,"
 " :title,"
 " :description,"
 " :user_aircraft_seq_nr,"

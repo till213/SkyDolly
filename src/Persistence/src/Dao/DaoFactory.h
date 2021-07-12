@@ -30,6 +30,7 @@
 class LogbookDaoIntf;
 class FlightDaoIntf;
 class AircraftDaoIntf;
+class AircraftTypeDaoIntf;
 class PositionDaoIntf;
 class EngineDaoIntf;
 class PrimaryFlightControlDaoIntf;
@@ -57,6 +58,7 @@ public:
     std::unique_ptr<LogbookDaoIntf> createLogbookDao() noexcept;
     std::unique_ptr<FlightDaoIntf> createFlightDao() noexcept;
     std::unique_ptr<AircraftDaoIntf> createAircraftDao() noexcept;
+    std::unique_ptr<AircraftTypeDaoIntf> createAircraftTypeDao() noexcept;
     std::unique_ptr<PositionDaoIntf> createPositionDao() noexcept;
     std::unique_ptr<EngineDaoIntf> createEngineDao() noexcept;
     std::unique_ptr<PrimaryFlightControlDaoIntf> createPrimaryFlightControlDao() noexcept;

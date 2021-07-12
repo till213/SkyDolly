@@ -32,6 +32,7 @@
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/AircraftInfo.h"
+#include "../../../Model/src/AircraftType.h"
 #include "../../../Model/src/FlightCondition.h"
 #include "../../../Kernel/src/SkyMath.h"
 #include "AircraftTypeWidget.h"
@@ -117,17 +118,17 @@ void AircraftTypeWidget::updateUi() noexcept
     const Aircraft &aircraft = flight.getUserAircraftConst();
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfoConst();
 
-    ui->nameLineEdit->setText(aircraftInfo.type);
+    ui->nameLineEdit->setText(aircraftInfo.aircraftType.type);
     ui->tailNumberLineEdit->setText(aircraftInfo.tailNumber);
     ui->airlineLineEdit->setText(aircraftInfo.airline);
     ui->flightLineEdit->setText(aircraftInfo.flightNumber);
-    ui->categoryLineEdit->setText(aircraftInfo.category);
+    ui->categoryLineEdit->setText(aircraftInfo.aircraftType.category);
     ui->startOnGroundCheckBox->setChecked(aircraftInfo.startOnGround);
 
     ui->initialAirspeedLineEdit->setText(d->unit.formatKnots(aircraftInfo.initialAirspeed));
-    ui->wingSpanLineEdit->setText(d->unit.formatFeet(aircraftInfo.wingSpan));
-    ui->engineTypeLineEdit->setText(SimType::engineTypeToString(aircraftInfo.engineType));
-    ui->numberOfEnginesLineEdit->setText(QString::number(aircraftInfo.numberOfEngines));
+    ui->wingSpanLineEdit->setText(d->unit.formatFeet(aircraftInfo.aircraftType.wingSpan));
+    ui->engineTypeLineEdit->setText(SimType::engineTypeToString(aircraftInfo.aircraftType.engineType));
+    ui->numberOfEnginesLineEdit->setText(QString::number(aircraftInfo.aircraftType.numberOfEngines));
     ui->aircraftAltitudeAboveGroundLineEdit->setText(d->unit.formatFeet(aircraftInfo.altitudeAboveGround));
     ui->startOnGroundCheckBox->setChecked(aircraftInfo.startOnGround);
 }

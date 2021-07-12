@@ -50,6 +50,7 @@
 #include "../../../../Model/src/FlightPlan.h"
 #include "../../../../Model/src/Waypoint.h"
 #include "../../Dao/FlightDaoIntf.h"
+#include "../../Dao/AircraftTypeDaoIntf.h"
 #include "../../Dao/AircraftDaoIntf.h"
 #include "../../Dao/PositionDaoIntf.h"
 #include "../../Dao/EngineDaoIntf.h"
@@ -67,6 +68,7 @@ class SQLiteAircraftDaoPrivate
 public:
     SQLiteAircraftDaoPrivate() noexcept
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
+          aircraftTypeDao(daoFactory->createAircraftTypeDao()),
           positionDao(daoFactory->createPositionDao()),
           engineDao(daoFactory->createEngineDao()),
           primaryFlightControlDao(daoFactory->createPrimaryFlightControlDao()),
@@ -83,6 +85,7 @@ public:
     std::unique_ptr<QSqlQuery> deleteById;
 
     std::unique_ptr<DaoFactory> daoFactory;
+    std::unique_ptr<AircraftTypeDaoIntf> aircraftTypeDao;
     std::unique_ptr<PositionDaoIntf> positionDao;
     std::unique_ptr<EngineDaoIntf> engineDao;
     std::unique_ptr<PrimaryFlightControlDaoIntf> primaryFlightControlDao;
@@ -97,7 +100,6 @@ public:
             insertQuery = std::make_unique<QSqlQuery>();
             insertQuery->prepare(
 "insert into aircraft ("
-"  id,"
 "  flight_id,"
 "  seq_nr,"
 "  start_date,"
@@ -114,7 +116,6 @@ public:
 "  altitude_above_ground,"
 "  start_on_ground"
 ") values ("
-"  null,"
 " :flight_id,"
 " :seq_nr,"
 " :start_date,"
@@ -190,20 +191,20 @@ SQLiteAircraftDao::~SQLiteAircraftDao() noexcept
 bool SQLiteAircraftDao::add(qint64 flightId, int sequenceNumber, Aircraft &aircraft)  noexcept
 {
     d->initQueries();
+
+    const AircraftType &aircraftType = aircraft.getAircraftInfoConst().aircraftType;
+    d->aircraftTypeDao->upsert(aircraftType);
+
     const AircraftInfo &info = aircraft.getAircraftInfoConst();
     d->insertQuery->bindValue(":flight_id", flightId);
+    d->insertQuery->bindValue(":type", aircraftType.type);
     d->insertQuery->bindValue(":seq_nr", sequenceNumber);
     d->insertQuery->bindValue(":start_date", info.startDate.toUTC());
     d->insertQuery->bindValue(":end_date", info.endDate.toUTC());
-    d->insertQuery->bindValue(":type", info.type);
     d->insertQuery->bindValue(":tail_number", info.tailNumber);
     d->insertQuery->bindValue(":airline", info.airline);
     d->insertQuery->bindValue(":flight_number", info.flightNumber);
-    d->insertQuery->bindValue(":category", info.category);
     d->insertQuery->bindValue(":initial_airspeed", info.initialAirspeed);
-    d->insertQuery->bindValue(":wing_span", info.wingSpan);
-    d->insertQuery->bindValue(":engine_type", Enum::toUnderlyingType(info.engineType));
-    d->insertQuery->bindValue(":nof_engines", info.numberOfEngines);
     d->insertQuery->bindValue(":altitude_above_ground", info.altitudeAboveGround);
     d->insertQuery->bindValue(":start_on_ground", info.startOnGround);
 
@@ -366,6 +367,7 @@ bool SQLiteAircraftDao::deleteById(qint64 id) noexcept
 {
     d->initQueries();
     // Delete "bottom-up" in order not to violate foreign key constraints
+    // Note: aircraft types (table aircraft_type) are not deleted
     bool ok = d->positionDao->deleteByAircraftId(id);
     if (ok) {
         ok = d->engineDao->deleteByAircraftId(id);
@@ -407,40 +409,37 @@ bool SQLiteAircraftDao::getAircraftInfosByFlightId(qint64 flightId, std::vector<
         aircraftInfos.clear();
         QSqlRecord record = d->selectByFlightIdQuery->record();
         const int idIdx = record.indexOf("id");
+        const int typeIdx = record.indexOf("type");
         const int startDateIdx = record.indexOf("start_date");
         const int endDateIdx = record.indexOf("end_date");
-        const int typeIdx = record.indexOf("type");
         const int tailNumberIdx = record.indexOf("tail_number");
         const int airlineIdx = record.indexOf("airline");
         const int flightNumberIdx = record.indexOf("flight_number");
-        const int categoryIdx = record.indexOf("category");
         const int initialAirspeedIdx = record.indexOf("initial_airspeed");
-        const int wingSpanIdx = record.indexOf("wing_span");
-        const int engineTypeIdx = record.indexOf("engine_type");
-        const int nofEnginesIdx = record.indexOf("nof_engines");
         const int airCraftAltitudeAboveGroundIdx = record.indexOf("altitude_above_ground");
         const int startOnGroundIdx = record.indexOf("start_on_ground");
-        while (d->selectByFlightIdQuery->next()) {
+        while (ok && d->selectByFlightIdQuery->next()) {
             AircraftInfo info(d->selectByFlightIdQuery->value(idIdx).toLongLong());
+            const QString &type = d->selectByFlightIdQuery->value(typeIdx).toString();
             QDateTime dateTime = d->selectByFlightIdQuery->value(startDateIdx).toDateTime();
             dateTime.setTimeZone(QTimeZone::utc());
             info.startDate = dateTime.toLocalTime();
             dateTime = d->selectByFlightIdQuery->value(endDateIdx).toDateTime();
             dateTime.setTimeZone(QTimeZone::utc());
             info.endDate = dateTime.toLocalTime();
-            info.type = d->selectByFlightIdQuery->value(typeIdx).toString();
             info.tailNumber = d->selectByFlightIdQuery->value(tailNumberIdx).toString();
             info.airline = d->selectByFlightIdQuery->value(airlineIdx).toString();
             info.flightNumber = d->selectByFlightIdQuery->value(flightNumberIdx).toString();
-            info.category = d->selectByFlightIdQuery->value(categoryIdx).toString();
             info.initialAirspeed = d->selectByFlightIdQuery->value(initialAirspeedIdx).toInt();
-            info.wingSpan = d->selectByFlightIdQuery->value(wingSpanIdx).toInt();
-            info.engineType = static_cast<SimType::EngineType>(d->selectByFlightIdQuery->value(engineTypeIdx).toInt());
-            info.numberOfEngines = d->selectByFlightIdQuery->value(nofEnginesIdx).toInt();
             info.altitudeAboveGround = d->selectByFlightIdQuery->value(airCraftAltitudeAboveGroundIdx).toInt();
             info.startOnGround = d->selectByFlightIdQuery->value(startOnGroundIdx).toBool();
 
-            aircraftInfos.push_back(info);
+            AircraftType aircraftType;
+            ok = d->aircraftTypeDao->getByType(type, aircraftType);
+            if (ok) {
+                info.aircraftType = std::move(aircraftType);
+                aircraftInfos.push_back(info);
+            };
         }
     }
     return ok;
