@@ -131,6 +131,7 @@ bool SQLiteSecondaryFlightControlDao::add(qint64 aircraftId, const SecondaryFlig
 bool SQLiteSecondaryFlightControlDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<SecondaryFlightControlData>> insertIterator) const noexcept
 {
     QSqlQuery query;
+    query.setForwardOnly(true);
     query.prepare(
         "select * "
         "from   secondary_flight_control sfc "

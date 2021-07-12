@@ -59,12 +59,12 @@ std::forward_list<FlightDate> SQLiteLogbookDao::getFlightDates() const noexcept
     std::forward_list<FlightDate> flightDates;
 
     QSqlQuery query;
+    query.setForwardOnly(true);
     query.prepare(
         "select strftime('%Y', creation_date) as year, strftime('%m', creation_date) as month, strftime('%d', creation_date) as day, count(flight.id) as nof_flights "
         "from  flight "
         "group by year, month, day"
     );
-    query.setForwardOnly(true);
 
     const bool ok = query.exec();
     if (ok) {
@@ -101,6 +101,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
     }
 
     QSqlQuery query;
+    query.setForwardOnly(true);
     query.prepare(
         "select f.id, f.creation_date, f.title, a.type, (select count(*) from aircraft where aircraft.flight_id = f.id) as aircraft_count,"
         "       a.start_date, f.start_local_sim_time, f.start_zulu_sim_time, fp1.ident as start_waypoint,"
@@ -121,7 +122,6 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
         "      )"
     );
 
-    query.setForwardOnly(true);
     query.bindValue(":from_date", flightSelector.fromDate);
     query.bindValue(":to_date", flightSelector.toDate);
     query.bindValue(":search_keyword", searchKeyword);

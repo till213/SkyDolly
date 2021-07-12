@@ -74,6 +74,7 @@ bool SQLiteLightDao::add(qint64 aircraftId, const LightData &lightData)  noexcep
 bool SQLiteLightDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<LightData>> insertIterator) const noexcept
 {
     QSqlQuery query;
+    query.setForwardOnly(true);
     query.prepare(
         "select * "
         "from   light l "

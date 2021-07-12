@@ -165,6 +165,7 @@ bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
 bool SQLiteFlightDao::getFlightById(qint64 id, Flight &flight) const noexcept
 {
     QSqlQuery query;
+    query.setForwardOnly(true);
     query.prepare(
         "select * "
         "from flight f "

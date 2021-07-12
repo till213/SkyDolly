@@ -122,6 +122,7 @@ bool SQLitePrimaryFlightControlDao::add(qint64 aircraftId, const PrimaryFlightCo
 bool SQLitePrimaryFlightControlDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<PrimaryFlightControlData>> insertIterator) const noexcept
 {
     QSqlQuery query;
+    query.setForwardOnly(true);
     query.prepare(
         "select * "
         "from   primary_flight_control pfc "
