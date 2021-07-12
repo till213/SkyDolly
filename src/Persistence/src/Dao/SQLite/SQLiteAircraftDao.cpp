@@ -102,33 +102,25 @@ public:
 "insert into aircraft ("
 "  flight_id,"
 "  seq_nr,"
+"  type,"
 "  start_date,"
 "  end_date,"
-"  type,"
 "  tail_number,"
 "  airline,"
 "  flight_number,"
-"  category,"
 "  initial_airspeed,"
-"  wing_span,"
-"  engine_type,"
-"  nof_engines,"
 "  altitude_above_ground,"
 "  start_on_ground"
 ") values ("
 " :flight_id,"
 " :seq_nr,"
+" :type,"
 " :start_date,"
 " :end_date,"
-" :type,"
 " :tail_number,"
 " :airline,"
 " :flight_number,"
-" :category,"
 " :initial_airspeed,"
-" :wing_span,"
-" :engine_type,"
-" :nof_engines,"
 " :altitude_above_ground,"
 " :start_on_ground"
 ");");
@@ -197,8 +189,8 @@ bool SQLiteAircraftDao::add(qint64 flightId, int sequenceNumber, Aircraft &aircr
 
     const AircraftInfo &info = aircraft.getAircraftInfoConst();
     d->insertQuery->bindValue(":flight_id", flightId);
-    d->insertQuery->bindValue(":type", aircraftType.type);
     d->insertQuery->bindValue(":seq_nr", sequenceNumber);
+    d->insertQuery->bindValue(":type", aircraftType.type);
     d->insertQuery->bindValue(":start_date", info.startDate.toUTC());
     d->insertQuery->bindValue(":end_date", info.endDate.toUTC());
     d->insertQuery->bindValue(":tail_number", info.tailNumber);

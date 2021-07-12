@@ -29,31 +29,19 @@
 #include <vector>
 #include <iterator>
 
-#include <QObject>
-
 #include "../AircraftTypeDaoIntf.h"
 
 class AircraftType;
-class SQLiteAircraftTypeDaoPrivate;
 
-class SQLiteAircraftTypeDao : public QObject, public AircraftTypeDaoIntf
+class SQLiteAircraftTypeDao : public AircraftTypeDaoIntf
 {
-    Q_OBJECT
 public:
-    explicit SQLiteAircraftTypeDao(QObject *parent = nullptr) noexcept;
+    explicit SQLiteAircraftTypeDao() noexcept;
     virtual ~SQLiteAircraftTypeDao() noexcept;
 
     virtual bool upsert(const AircraftType &aircraftType) noexcept override;
     virtual bool getByType(const QString &type, AircraftType &aircraftType) const noexcept override;
     virtual bool getAlld(std::insert_iterator<std::vector<AircraftType>> insertIterator) const noexcept override;
-
-private:
-    std::unique_ptr<SQLiteAircraftTypeDaoPrivate> d;
-
-    void frenchConnection() noexcept;
-
-private slots:
-    void handleConnectionChanged() noexcept;
 };
 
 #endif // AIRCRAFTTYPEDAO_H
