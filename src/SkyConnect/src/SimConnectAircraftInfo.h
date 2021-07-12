@@ -37,6 +37,7 @@
 #include "../../Model/src/SimType.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/AircraftInfo.h"
+#include "../../Model/src/AircraftType.h"
 #include "../../Model/src/FlightCondition.h"
 
 /*!
@@ -123,8 +124,12 @@ struct SimConnectAircraftInfo
 
         // Length check
         if (SUCCEEDED(StringCbLengthA(&title[0], sizeof(title), nullptr))) {
-            aircraftInfo.type = QString(title);
+            aircraftInfo.aircraftType.type = QString(title);
         }
+        aircraftInfo.aircraftType.wingSpan = wingSpan;
+        aircraftInfo.aircraftType.engineType = toEngineType(engineType);
+        aircraftInfo.aircraftType.numberOfEngines = numberOfEngines;
+
         if (SUCCEEDED(StringCbLengthA(&atcId[0], sizeof(atcId), nullptr))) {
             aircraftInfo.tailNumber = QString(atcId);
         }
@@ -135,13 +140,10 @@ struct SimConnectAircraftInfo
             aircraftInfo.flightNumber = QString(atcFlightNumber);
         }
         if (SUCCEEDED(StringCbLengthA(&category[0], sizeof(category), nullptr))) {
-            aircraftInfo.category = QString(category);
+            aircraftInfo.aircraftType.category = QString(category);
         }
 
-        aircraftInfo.initialAirspeed = airspeedTrue;
-        aircraftInfo.wingSpan = wingSpan;
-        aircraftInfo.engineType = toEngineType(engineType);
-        aircraftInfo.numberOfEngines = numberOfEngines;
+        aircraftInfo.initialAirspeed = airspeedTrue;        
         aircraftInfo.altitudeAboveGround = planeAltAboveGround;
         aircraftInfo.startOnGround = (simOnGround != 0);
 
