@@ -8,10 +8,18 @@
   * Import CSV plugin
   * Export CSV plugin
   * Export KML plugin ("Google Earth")
+  
+- Modules
+  * Logbook
+    - Filtering by date via recording date tree widget
+    - Search field which matches the flight title, aircraft name and destinations
+  * Formation
+    - Aircrafts can now also be deleted from a formation flight during (paused) replay
 
 ### Improvements
 
-- Aircrafts can now also be deleted from a formation flight during (paused) replay
+- Better support for aircraft engine start & shutdown
+- Database performance improvements ("forward queries")
 
 ## 0.7.0
 

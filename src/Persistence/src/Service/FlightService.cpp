@@ -27,6 +27,7 @@
 
 #include <memory>
 #include <utility>
+#include <forward_list>
 
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"
@@ -158,14 +159,4 @@ bool FlightService::updateUserAircraftIndex(Flight &flight, int index) noexcept
         }
     }
     return ok;
-}
-
-QVector<FlightSummary> FlightService::getFlightSummaries() const noexcept
-{
-    QVector<FlightSummary> descriptions;
-    if (QSqlDatabase::database().transaction()) {
-        descriptions = d->flightDao->getFlightSummaries();
-        QSqlDatabase::database().rollback();
-    }
-    return descriptions;
 }

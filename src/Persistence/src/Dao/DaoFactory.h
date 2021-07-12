@@ -27,16 +27,18 @@
 
 #include <memory>
 
-#include "FlightDaoIntf.h"
-#include "AircraftDaoIntf.h"
-#include "PositionDaoIntf.h"
-#include "EngineDaoIntf.h"
-#include "PrimaryFlightControlDaoIntf.h"
-#include "SecondaryFlightControlDaoIntf.h"
-#include "HandleDaoIntf.h"
-#include "LightDaoIntf.h"
-#include "WaypointDaoIntf.h"
-#include "DatabaseDaoIntf.h"
+class LogbookDaoIntf;
+class FlightDaoIntf;
+class AircraftDaoIntf;
+class AircraftTypeDaoIntf;
+class PositionDaoIntf;
+class EngineDaoIntf;
+class PrimaryFlightControlDaoIntf;
+class SecondaryFlightControlDaoIntf;
+class HandleDaoIntf;
+class LightDaoIntf;
+class WaypointDaoIntf;
+class DatabaseDaoIntf;
 
 class DaoFactoryPrivate;
 
@@ -53,8 +55,10 @@ public:
     ~DaoFactory();
 
     std::unique_ptr<DatabaseDaoIntf> createDatabaseDao() noexcept;
+    std::unique_ptr<LogbookDaoIntf> createLogbookDao() noexcept;
     std::unique_ptr<FlightDaoIntf> createFlightDao() noexcept;
     std::unique_ptr<AircraftDaoIntf> createAircraftDao() noexcept;
+    std::unique_ptr<AircraftTypeDaoIntf> createAircraftTypeDao() noexcept;
     std::unique_ptr<PositionDaoIntf> createPositionDao() noexcept;
     std::unique_ptr<EngineDaoIntf> createEngineDao() noexcept;
     std::unique_ptr<PrimaryFlightControlDaoIntf> createPrimaryFlightControlDao() noexcept;

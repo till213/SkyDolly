@@ -29,32 +29,21 @@
 #include <vector>
 #include <iterator>
 
-#include <QObject>
+#include <QtGlobal>
 
 #include "../../../../Model/src/EngineData.h"
 #include "../EngineDaoIntf.h"
 
-class SQLiteEngineDaoPrivate;
-
-class SQLiteEngineDao : public QObject, public EngineDaoIntf
+class SQLiteEngineDao : public EngineDaoIntf
 {
-    Q_OBJECT
 public:
-    explicit SQLiteEngineDao(QObject *parent = nullptr) noexcept;
+    explicit SQLiteEngineDao() noexcept;
     virtual ~SQLiteEngineDao() noexcept;
 
     virtual bool add(qint64 aircraftId, const EngineData &data) noexcept override;
     virtual bool getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<EngineData>> insertIterator) const noexcept override;
     virtual bool deleteByFlightId(qint64 flightId) noexcept override;
     virtual bool deleteByAircraftId(qint64 aircraftId) noexcept override;
-
-private:
-    std::unique_ptr<SQLiteEngineDaoPrivate> d;
-
-    void frenchConnection() noexcept;
-
-private slots:
-    void handleConnectionChanged() noexcept;
 };
 
 

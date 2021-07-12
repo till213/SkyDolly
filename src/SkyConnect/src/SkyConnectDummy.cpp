@@ -35,6 +35,8 @@
 #include "../../Model/src/Logbook.h"
 #include "../../Model/src/Flight.h"
 #include "../../Model/src/Aircraft.h"
+#include "../../Model/src/AircraftInfo.h"
+#include "../../Model/src/AircraftType.h"
 #include "../../Model/src/Position.h"
 #include "../../Model/src/PositionData.h"
 #include "../../Model/src/InitialPosition.h"
@@ -414,23 +416,45 @@ void SkyConnectDummy::recordAircraftInfo() noexcept
 
     switch (d->randomGenerator->bounded(5)) {
     case 0:
-        info.type = "Boeing 787";
+        info.aircraftType.type = "Boeing 787";
         break;
     case 1:
-        info.type = "Cirrus SR22";
+        info.aircraftType.type = "Cirrus SR22";
         break;
     case 2:
-        info.type = "Douglas DC-3";
+        info.aircraftType.type = "Douglas DC-3";
         break;
     case 3:
-        info.type = "Cessna 172";
+        info.aircraftType.type = "Cessna 172";
         break;
     case 4:
-        info.type = "Airbus A320";
+        info.aircraftType.type = "Airbus A320";
         break;
     default:
-        info.type = "Unknown";
+        info.aircraftType.type = "Unknown";
     }
+    switch (d->randomGenerator->bounded(5)) {
+    case 0:
+        info.aircraftType.category = "Piston";
+        break;
+    case 1:
+        info.aircraftType.category = "Glider";
+        break;
+    case 2:
+        info.aircraftType.category = "Rocket";
+        break;
+    case 3:
+        info.aircraftType.category = "Jet";
+        break;
+    case 4:
+        info.aircraftType.category = "Turbo";
+        break;
+    default:
+        info.aircraftType.category = "Unknown";
+    }
+    info.aircraftType.wingSpan = d->randomGenerator->bounded(200);
+    info.aircraftType.engineType = static_cast<SimType::EngineType>(d->randomGenerator->bounded(7));
+    info.aircraftType.numberOfEngines = d->randomGenerator->bounded(5);
 
     if (info.startDate.isNull()) {
         info.startDate = QDateTime::currentDateTime();
@@ -438,33 +462,11 @@ void SkyConnectDummy::recordAircraftInfo() noexcept
     info.tailNumber = QString::number(d->randomGenerator->bounded(1000));
     info.airline = QString::number(d->randomGenerator->bounded(1000));
     info.flightNumber = QString::number(d->randomGenerator->bounded(100));
-    switch (d->randomGenerator->bounded(5)) {
-    case 0:
-        info.category = "Piston";
-        break;
-    case 1:
-        info.category = "Glider";
-        break;
-    case 2:
-        info.category = "Rocket";
-        break;
-    case 3:
-        info.category = "Jet";
-        break;
-    case 4:
-        info.category = "Turbo";
-        break;
-    default:
-        info.category = "Unknown";
-    }
     info.altitudeAboveGround = d->randomGenerator->bounded(40000);
     info.startOnGround = d->randomGenerator->bounded(2) > 0 ? true : false;
     info.initialAirspeed = d->randomGenerator->bounded(600);
-    info.wingSpan = d->randomGenerator->bounded(200);
-    info.engineType = static_cast<SimType::EngineType>(d->randomGenerator->bounded(7));
-    info.numberOfEngines = d->randomGenerator->bounded(5);
 
-    aircraft.setAircraftInfo(info);
+    aircraft.setAircraftInfo(std::move(info));
 }
 
 void SkyConnectDummy::replay() noexcept

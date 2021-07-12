@@ -208,6 +208,11 @@ QString Unit::formatDuration(const QTime &time) noexcept
     return d->locale.toString(time, "hh:mm:s");
 }
 
+const QString Unit::formatMonth(int month) noexcept
+{
+    return d->locale.monthName(month);
+}
+
 // PRIVATE
 
 // https://www.omnicalculator.com/conversion/coordinates-converter#how-to-convert-latitude-and-longitude-coordinates

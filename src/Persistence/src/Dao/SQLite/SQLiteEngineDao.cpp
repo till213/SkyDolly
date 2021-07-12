@@ -26,7 +26,6 @@
 #include <vector>
 #include <iterator>
 
-#include <QObject>
 #include <QString>
 #include <QSqlQuery>
 #include <QVariant>
@@ -37,172 +36,118 @@
 #include "../../ConnectionManager.h"
 #include "SQLiteEngineDao.h"
 
-class SQLiteEngineDaoPrivate
-{
-public:
-    SQLiteEngineDaoPrivate() noexcept
-    {}
-
-    std::unique_ptr<QSqlQuery> insertQuery;
-    std::unique_ptr<QSqlQuery> selectByAircraftIdQuery;
-    std::unique_ptr<QSqlQuery> deleteByFlightIdQuery;
-    std::unique_ptr<QSqlQuery> deleteByIdQuery;
-
-    void initQueries()
-    {
-        if (insertQuery == nullptr) {
-            insertQuery = std::make_unique<QSqlQuery>();
-            insertQuery->prepare(
-"insert into engine ("
-"  aircraft_id,"
-"  timestamp,"
-"  throttle_lever_position1,"
-"  throttle_lever_position2,"
-"  throttle_lever_position3,"
-"  throttle_lever_position4,"
-"  propeller_lever_position1,"
-"  propeller_lever_position2,"
-"  propeller_lever_position3,"
-"  propeller_lever_position4,"
-"  mixture_lever_position1,"
-"  mixture_lever_position2,"
-"  mixture_lever_position3,"
-"  mixture_lever_position4,"
-"  cowl_flap_position1,"
-"  cowl_flap_position2,"
-"  cowl_flap_position3,"
-"  cowl_flap_position4,"
-"  electrical_master_battery1,"
-"  electrical_master_battery2,"
-"  electrical_master_battery3,"
-"  electrical_master_battery4,"
-"  general_engine_starter1,"
-"  general_engine_starter2,"
-"  general_engine_starter3,"
-"  general_engine_starter4,"
-"  general_engine_combustion1,"
-"  general_engine_combustion2,"
-"  general_engine_combustion3,"
-"  general_engine_combustion4"
-") values ("
-" :aircraft_id,"
-" :timestamp,"
-" :throttle_lever_position1,"
-" :throttle_lever_position2,"
-" :throttle_lever_position3,"
-" :throttle_lever_position4,"
-" :propeller_lever_position1,"
-" :propeller_lever_position2,"
-" :propeller_lever_position3,"
-" :propeller_lever_position4,"
-" :mixture_lever_position1,"
-" :mixture_lever_position2,"
-" :mixture_lever_position3,"
-" :mixture_lever_position4,"
-" :cowl_flap_position1,"
-" :cowl_flap_position2,"
-" :cowl_flap_position3,"
-" :cowl_flap_position4,"
-" :electrical_master_battery1,"
-" :electrical_master_battery2,"
-" :electrical_master_battery3,"
-" :electrical_master_battery4,"
-" :general_engine_starter1,"
-" :general_engine_starter2,"
-" :general_engine_starter3,"
-" :general_engine_starter4,"
-" :general_engine_combustion1,"
-" :general_engine_combustion2,"
-" :general_engine_combustion3,"
-" :general_engine_combustion4"
-");");            
-        }
-        if (selectByAircraftIdQuery == nullptr) {
-            selectByAircraftIdQuery = std::make_unique<QSqlQuery>();
-            selectByAircraftIdQuery->prepare(
-"select * "
-"from   engine e "
-"where  e.aircraft_id = :aircraft_id "
-"order by e.timestamp asc;");
-        }
-        if (deleteByFlightIdQuery == nullptr) {
-            deleteByFlightIdQuery = std::make_unique<QSqlQuery>();
-            deleteByFlightIdQuery->prepare(
-"delete "
-"from   engine "
-"where  aircraft_id in (select a.id "
-"                       from aircraft a"
-"                       where a.flight_id = :flight_id"
-"                      );");
-        }
-        if (deleteByIdQuery == nullptr) {
-            deleteByIdQuery = std::make_unique<QSqlQuery>();
-            deleteByIdQuery->prepare(
-"delete "
-"from   engine "
-"where  aircraft_id = :aircraft_id;");
-        }
-    }
-
-    void resetQueries() noexcept
-    {
-        insertQuery = nullptr;
-        selectByAircraftIdQuery = nullptr;
-        deleteByFlightIdQuery = nullptr;
-        deleteByIdQuery = nullptr;
-    }
-};
-
 // PUBLIC
 
-SQLiteEngineDao::SQLiteEngineDao(QObject *parent) noexcept
-    : QObject(parent),
-      d(std::make_unique<SQLiteEngineDaoPrivate>())
-{
-    frenchConnection();
-}
+SQLiteEngineDao::SQLiteEngineDao() noexcept
+{}
 
 SQLiteEngineDao::~SQLiteEngineDao() noexcept
 {}
 
 bool SQLiteEngineDao::add(qint64 aircraftId, const EngineData &data)  noexcept
 {
-    d->initQueries();
-    d->insertQuery->bindValue(":aircraft_id", aircraftId);
-    d->insertQuery->bindValue(":timestamp", data.timestamp);
-    d->insertQuery->bindValue(":throttle_lever_position1", data.throttleLeverPosition1);
-    d->insertQuery->bindValue(":throttle_lever_position2", data.throttleLeverPosition2);
-    d->insertQuery->bindValue(":throttle_lever_position3", data.throttleLeverPosition3);
-    d->insertQuery->bindValue(":throttle_lever_position4", data.throttleLeverPosition4);
-    d->insertQuery->bindValue(":propeller_lever_position1", data.propellerLeverPosition1);
-    d->insertQuery->bindValue(":propeller_lever_position2", data.propellerLeverPosition2);
-    d->insertQuery->bindValue(":propeller_lever_position3", data.propellerLeverPosition3);
-    d->insertQuery->bindValue(":propeller_lever_position4", data.propellerLeverPosition4);
-    d->insertQuery->bindValue(":mixture_lever_position1", data.mixtureLeverPosition1);
-    d->insertQuery->bindValue(":mixture_lever_position2", data.mixtureLeverPosition2);
-    d->insertQuery->bindValue(":mixture_lever_position3", data.mixtureLeverPosition3);
-    d->insertQuery->bindValue(":mixture_lever_position4", data.mixtureLeverPosition4);
-    d->insertQuery->bindValue(":cowl_flap_position1", data.cowlFlapPosition1);
-    d->insertQuery->bindValue(":cowl_flap_position2", data.cowlFlapPosition2);
-    d->insertQuery->bindValue(":cowl_flap_position3", data.cowlFlapPosition3);
-    d->insertQuery->bindValue(":cowl_flap_position4", data.cowlFlapPosition4);
-    d->insertQuery->bindValue(":electrical_master_battery1", data.electricalMasterBattery1);
-    d->insertQuery->bindValue(":electrical_master_battery2", data.electricalMasterBattery2);
-    d->insertQuery->bindValue(":electrical_master_battery3", data.electricalMasterBattery3);
-    d->insertQuery->bindValue(":electrical_master_battery4", data.electricalMasterBattery4);
-    d->insertQuery->bindValue(":general_engine_starter1", data.generalEngineStarter1);
-    d->insertQuery->bindValue(":general_engine_starter2", data.generalEngineStarter2);
-    d->insertQuery->bindValue(":general_engine_starter3", data.generalEngineStarter3);
-    d->insertQuery->bindValue(":general_engine_starter4", data.generalEngineStarter4);
-    d->insertQuery->bindValue(":general_engine_combustion1", data.generalEngineCombustion1);
-    d->insertQuery->bindValue(":general_engine_combustion2", data.generalEngineCombustion2);
-    d->insertQuery->bindValue(":general_engine_combustion3", data.generalEngineCombustion3);
-    d->insertQuery->bindValue(":general_engine_combustion4", data.generalEngineCombustion4);
+    QSqlQuery query;
+    query.prepare(
+        "insert into engine ("
+        "  aircraft_id,"
+        "  timestamp,"
+        "  throttle_lever_position1,"
+        "  throttle_lever_position2,"
+        "  throttle_lever_position3,"
+        "  throttle_lever_position4,"
+        "  propeller_lever_position1,"
+        "  propeller_lever_position2,"
+        "  propeller_lever_position3,"
+        "  propeller_lever_position4,"
+        "  mixture_lever_position1,"
+        "  mixture_lever_position2,"
+        "  mixture_lever_position3,"
+        "  mixture_lever_position4,"
+        "  cowl_flap_position1,"
+        "  cowl_flap_position2,"
+        "  cowl_flap_position3,"
+        "  cowl_flap_position4,"
+        "  electrical_master_battery1,"
+        "  electrical_master_battery2,"
+        "  electrical_master_battery3,"
+        "  electrical_master_battery4,"
+        "  general_engine_starter1,"
+        "  general_engine_starter2,"
+        "  general_engine_starter3,"
+        "  general_engine_starter4,"
+        "  general_engine_combustion1,"
+        "  general_engine_combustion2,"
+        "  general_engine_combustion3,"
+        "  general_engine_combustion4"
+        ") values ("
+        " :aircraft_id,"
+        " :timestamp,"
+        " :throttle_lever_position1,"
+        " :throttle_lever_position2,"
+        " :throttle_lever_position3,"
+        " :throttle_lever_position4,"
+        " :propeller_lever_position1,"
+        " :propeller_lever_position2,"
+        " :propeller_lever_position3,"
+        " :propeller_lever_position4,"
+        " :mixture_lever_position1,"
+        " :mixture_lever_position2,"
+        " :mixture_lever_position3,"
+        " :mixture_lever_position4,"
+        " :cowl_flap_position1,"
+        " :cowl_flap_position2,"
+        " :cowl_flap_position3,"
+        " :cowl_flap_position4,"
+        " :electrical_master_battery1,"
+        " :electrical_master_battery2,"
+        " :electrical_master_battery3,"
+        " :electrical_master_battery4,"
+        " :general_engine_starter1,"
+        " :general_engine_starter2,"
+        " :general_engine_starter3,"
+        " :general_engine_starter4,"
+        " :general_engine_combustion1,"
+        " :general_engine_combustion2,"
+        " :general_engine_combustion3,"
+        " :general_engine_combustion4"
+        ");"
+    );
 
-    bool ok = d->insertQuery->exec();
+    query.bindValue(":aircraft_id", aircraftId);
+    query.bindValue(":timestamp", data.timestamp);
+    query.bindValue(":throttle_lever_position1", data.throttleLeverPosition1);
+    query.bindValue(":throttle_lever_position2", data.throttleLeverPosition2);
+    query.bindValue(":throttle_lever_position3", data.throttleLeverPosition3);
+    query.bindValue(":throttle_lever_position4", data.throttleLeverPosition4);
+    query.bindValue(":propeller_lever_position1", data.propellerLeverPosition1);
+    query.bindValue(":propeller_lever_position2", data.propellerLeverPosition2);
+    query.bindValue(":propeller_lever_position3", data.propellerLeverPosition3);
+    query.bindValue(":propeller_lever_position4", data.propellerLeverPosition4);
+    query.bindValue(":mixture_lever_position1", data.mixtureLeverPosition1);
+    query.bindValue(":mixture_lever_position2", data.mixtureLeverPosition2);
+    query.bindValue(":mixture_lever_position3", data.mixtureLeverPosition3);
+    query.bindValue(":mixture_lever_position4", data.mixtureLeverPosition4);
+    query.bindValue(":cowl_flap_position1", data.cowlFlapPosition1);
+    query.bindValue(":cowl_flap_position2", data.cowlFlapPosition2);
+    query.bindValue(":cowl_flap_position3", data.cowlFlapPosition3);
+    query.bindValue(":cowl_flap_position4", data.cowlFlapPosition4);
+    query.bindValue(":electrical_master_battery1", data.electricalMasterBattery1);
+    query.bindValue(":electrical_master_battery2", data.electricalMasterBattery2);
+    query.bindValue(":electrical_master_battery3", data.electricalMasterBattery3);
+    query.bindValue(":electrical_master_battery4", data.electricalMasterBattery4);
+    query.bindValue(":general_engine_starter1", data.generalEngineStarter1);
+    query.bindValue(":general_engine_starter2", data.generalEngineStarter2);
+    query.bindValue(":general_engine_starter3", data.generalEngineStarter3);
+    query.bindValue(":general_engine_starter4", data.generalEngineStarter4);
+    query.bindValue(":general_engine_combustion1", data.generalEngineCombustion1);
+    query.bindValue(":general_engine_combustion2", data.generalEngineCombustion2);
+    query.bindValue(":general_engine_combustion3", data.generalEngineCombustion3);
+    query.bindValue(":general_engine_combustion4", data.generalEngineCombustion4);
+
+    bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteEngineDao::add: SQL error: %s", qPrintable(d->insertQuery->lastError().databaseText() + " - error code: " + d->insertQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteEngineDao::add: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
     }
 #endif
     return ok;
@@ -210,11 +155,19 @@ bool SQLiteEngineDao::add(qint64 aircraftId, const EngineData &data)  noexcept
 
 bool SQLiteEngineDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<EngineData>> insertIterator) const noexcept
 {
-    d->initQueries();
-    d->selectByAircraftIdQuery->bindValue(":aircraft_id", aircraftId);
-    bool ok = d->selectByAircraftIdQuery->exec();
+    QSqlQuery query;
+    query.setForwardOnly(true);
+    query.prepare(
+        "select * "
+        "from   engine e "
+        "where  e.aircraft_id = :aircraft_id "
+        "order by e.timestamp asc;"
+    );
+
+    query.bindValue(":aircraft_id", aircraftId);
+    bool ok = query.exec();
     if (ok) {
-        QSqlRecord record = d->selectByAircraftIdQuery->record();
+        QSqlRecord record = query.record();
         const int timestampIdx = record.indexOf("timestamp");
         const int throttleLeverPosition1Idx = record.indexOf("throttle_lever_position1");
         const int throttleLeverPosition2Idx = record.indexOf("throttle_lever_position2");
@@ -245,45 +198,45 @@ bool SQLiteEngineDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<st
         const int generalEngineCombustion3Idx = record.indexOf("general_engine_combustion3");
         const int generalEngineCombustion4Idx = record.indexOf("general_engine_combustion4");
 
-        while (d->selectByAircraftIdQuery->next()) {
+        while (query.next()) {
 
             EngineData data;
 
-            data.timestamp = d->selectByAircraftIdQuery->value(timestampIdx).toLongLong();
-            data.throttleLeverPosition1 = d->selectByAircraftIdQuery->value(throttleLeverPosition1Idx).toInt();
-            data.throttleLeverPosition2 = d->selectByAircraftIdQuery->value(throttleLeverPosition2Idx).toInt();
-            data.throttleLeverPosition3 = d->selectByAircraftIdQuery->value(throttleLeverPosition3Idx).toInt();
-            data.throttleLeverPosition4 = d->selectByAircraftIdQuery->value(throttleLeverPosition4Idx).toInt();
-            data.propellerLeverPosition1 = d->selectByAircraftIdQuery->value(propellerLeverPosition1Idx).toInt();
-            data.propellerLeverPosition2 = d->selectByAircraftIdQuery->value(propellerLeverPosition2Idx).toInt();
-            data.propellerLeverPosition3 = d->selectByAircraftIdQuery->value(propellerLeverPosition3Idx).toInt();
-            data.propellerLeverPosition4 = d->selectByAircraftIdQuery->value(propellerLeverPosition4Idx).toInt();
-            data.mixtureLeverPosition1 = d->selectByAircraftIdQuery->value(mixtureLeverPosition1Idx).toInt();
-            data.mixtureLeverPosition2 = d->selectByAircraftIdQuery->value(mixtureLeverPosition2Idx).toInt();
-            data.mixtureLeverPosition3 = d->selectByAircraftIdQuery->value(mixtureLeverPosition3Idx).toInt();
-            data.mixtureLeverPosition4 = d->selectByAircraftIdQuery->value(mixtureLeverPosition4Idx).toInt();
-            data.cowlFlapPosition1 = d->selectByAircraftIdQuery->value(cowlFlapPosition1Idx).toInt();
-            data.cowlFlapPosition2 = d->selectByAircraftIdQuery->value(cowlFlapPosition2Idx).toInt();
-            data.cowlFlapPosition3 = d->selectByAircraftIdQuery->value(cowlFlapPosition3Idx).toInt();
-            data.cowlFlapPosition4 = d->selectByAircraftIdQuery->value(cowlFlapPosition4Idx).toInt();
-            data.electricalMasterBattery1 = d->selectByAircraftIdQuery->value(electricalMasterBattery1Idx).toBool();
-            data.electricalMasterBattery2 = d->selectByAircraftIdQuery->value(electricalMasterBattery2Idx).toBool();
-            data.electricalMasterBattery3 = d->selectByAircraftIdQuery->value(electricalMasterBattery3Idx).toBool();
-            data.electricalMasterBattery4 = d->selectByAircraftIdQuery->value(electricalMasterBattery4Idx).toBool();
-            data.generalEngineStarter1 = d->selectByAircraftIdQuery->value(generalEngineStarter1Idx).toBool();
-            data.generalEngineStarter2 = d->selectByAircraftIdQuery->value(generalEngineStarter2Idx).toBool();
-            data.generalEngineStarter3 = d->selectByAircraftIdQuery->value(generalEngineStarter3Idx).toBool();
-            data.generalEngineStarter4 = d->selectByAircraftIdQuery->value(generalEngineStarter4Idx).toBool();
-            data.generalEngineCombustion1 = d->selectByAircraftIdQuery->value(generalEngineCombustion1Idx).toBool();
-            data.generalEngineCombustion2 = d->selectByAircraftIdQuery->value(generalEngineCombustion2Idx).toBool();
-            data.generalEngineCombustion3 = d->selectByAircraftIdQuery->value(generalEngineCombustion3Idx).toBool();
-            data.generalEngineCombustion4 = d->selectByAircraftIdQuery->value(generalEngineCombustion4Idx).toBool();
+            data.timestamp = query.value(timestampIdx).toLongLong();
+            data.throttleLeverPosition1 = query.value(throttleLeverPosition1Idx).toInt();
+            data.throttleLeverPosition2 = query.value(throttleLeverPosition2Idx).toInt();
+            data.throttleLeverPosition3 = query.value(throttleLeverPosition3Idx).toInt();
+            data.throttleLeverPosition4 = query.value(throttleLeverPosition4Idx).toInt();
+            data.propellerLeverPosition1 = query.value(propellerLeverPosition1Idx).toInt();
+            data.propellerLeverPosition2 = query.value(propellerLeverPosition2Idx).toInt();
+            data.propellerLeverPosition3 = query.value(propellerLeverPosition3Idx).toInt();
+            data.propellerLeverPosition4 = query.value(propellerLeverPosition4Idx).toInt();
+            data.mixtureLeverPosition1 = query.value(mixtureLeverPosition1Idx).toInt();
+            data.mixtureLeverPosition2 = query.value(mixtureLeverPosition2Idx).toInt();
+            data.mixtureLeverPosition3 = query.value(mixtureLeverPosition3Idx).toInt();
+            data.mixtureLeverPosition4 = query.value(mixtureLeverPosition4Idx).toInt();
+            data.cowlFlapPosition1 = query.value(cowlFlapPosition1Idx).toInt();
+            data.cowlFlapPosition2 = query.value(cowlFlapPosition2Idx).toInt();
+            data.cowlFlapPosition3 = query.value(cowlFlapPosition3Idx).toInt();
+            data.cowlFlapPosition4 = query.value(cowlFlapPosition4Idx).toInt();
+            data.electricalMasterBattery1 = query.value(electricalMasterBattery1Idx).toBool();
+            data.electricalMasterBattery2 = query.value(electricalMasterBattery2Idx).toBool();
+            data.electricalMasterBattery3 = query.value(electricalMasterBattery3Idx).toBool();
+            data.electricalMasterBattery4 = query.value(electricalMasterBattery4Idx).toBool();
+            data.generalEngineStarter1 = query.value(generalEngineStarter1Idx).toBool();
+            data.generalEngineStarter2 = query.value(generalEngineStarter2Idx).toBool();
+            data.generalEngineStarter3 = query.value(generalEngineStarter3Idx).toBool();
+            data.generalEngineStarter4 = query.value(generalEngineStarter4Idx).toBool();
+            data.generalEngineCombustion1 = query.value(generalEngineCombustion1Idx).toBool();
+            data.generalEngineCombustion2 = query.value(generalEngineCombustion2Idx).toBool();
+            data.generalEngineCombustion3 = query.value(generalEngineCombustion3Idx).toBool();
+            data.generalEngineCombustion4 = query.value(generalEngineCombustion4Idx).toBool();
 
             insertIterator = std::move(data);
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteEngineDao::getByAircraftId: SQL error: %s", qPrintable(d->selectByAircraftIdQuery->lastError().databaseText() + " - error code: " + d->selectByAircraftIdQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteEngineDao::getByAircraftId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
 #endif
     }
     return ok;
@@ -291,12 +244,21 @@ bool SQLiteEngineDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<st
 
 bool SQLiteEngineDao::deleteByFlightId(qint64 flightId) noexcept
 {
-    d->initQueries();
-    d->deleteByFlightIdQuery->bindValue(":flight_id", flightId);
-    bool ok = d->deleteByFlightIdQuery->exec();
+    QSqlQuery query;
+    query.prepare(
+        "delete "
+        "from   engine "
+        "where  aircraft_id in (select a.id "
+        "                       from aircraft a"
+        "                       where a.flight_id = :flight_id"
+        "                      );"
+    );
+
+    query.bindValue(":flight_id", flightId);
+    bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteEngineDao::deleteByFlightId: SQL error: %s", qPrintable(d->deleteByFlightIdQuery->lastError().databaseText() + " - error code: " + d->deleteByFlightIdQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteEngineDao::deleteByFlightId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
     }
 #endif
     return ok;
@@ -304,29 +266,19 @@ bool SQLiteEngineDao::deleteByFlightId(qint64 flightId) noexcept
 
 bool SQLiteEngineDao::deleteByAircraftId(qint64 aircraftId) noexcept
 {
-    d->initQueries();
-    d->deleteByIdQuery->bindValue(":aircraft_id", aircraftId);
-    bool ok = d->deleteByIdQuery->exec();
+    QSqlQuery query;
+    query.prepare(
+        "delete "
+        "from   engine "
+        "where  aircraft_id = :aircraft_id;"
+    );
+
+    query.bindValue(":aircraft_id", aircraftId);
+    bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteEngineDao::deleteByAircraftId: SQL error: %s", qPrintable(d->deleteByIdQuery->lastError().databaseText() + " - error code: " + d->deleteByIdQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteEngineDao::deleteByAircraftId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
     }
 #endif
     return true;
 }
-
-// PRIVATE
-
-void SQLiteEngineDao::frenchConnection() noexcept
-{
-    connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
-            this, &SQLiteEngineDao::handleConnectionChanged);
-}
-
-// PRIVATE SLOTS
-
-void SQLiteEngineDao::handleConnectionChanged() noexcept
-{
-    d->resetQueries();
-}
-

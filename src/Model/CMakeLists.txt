@@ -15,6 +15,8 @@ target_sources(Model
         src/Flight.h
         src/FlightSummary.cpp
         src/FlightSummary.h
+        src/FlightDate.cpp
+        src/FlightDate.h
         src/FlightCondition.cpp
         src/FlightCondition.h
         src/Aircraft.cpp
@@ -47,6 +49,8 @@ target_sources(Model
         src/Light.h
         src/LightData.cpp
         src/LightData.h
+        src/AircraftType.cpp
+        src/AircraftType.h
         src/AircraftInfo.cpp
         src/AircraftInfo.h
         src/Waypoint.cpp

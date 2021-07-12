@@ -29,31 +29,21 @@
 #include <vector>
 #include <iterator>
 
-#include <QObject>
+#include <QtGlobal>
 
 #include "../../../../Model/src/SecondaryFlightControlData.h"
 #include "../SecondaryFlightControlDaoIntf.h"
 
-class SQLiteSecondaryFlightControlDaoPrivate;
-
-class SQLiteSecondaryFlightControlDao : public QObject, public SecondaryFlightControlDaoIntf
+class SQLiteSecondaryFlightControlDao : public SecondaryFlightControlDaoIntf
 {
 public:
-    explicit SQLiteSecondaryFlightControlDao(QObject *parent = nullptr) noexcept;
+    explicit SQLiteSecondaryFlightControlDao() noexcept;
     virtual ~SQLiteSecondaryFlightControlDao() noexcept;
 
     virtual bool add(qint64 aircraftId, const SecondaryFlightControlData &data) noexcept override;
     virtual bool getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<SecondaryFlightControlData>> insertIterator) const noexcept override;
     virtual bool deleteByFlightId(qint64 flightId) noexcept override;
     virtual bool deleteByAircraftId(qint64 aircraftId) noexcept override;
-
-private:
-    std::unique_ptr<SQLiteSecondaryFlightControlDaoPrivate> d;
-
-    void frenchConnection() noexcept;
-
-private slots:
-    void handleConnectionChanged() noexcept;
 };
 
 #endif // SQLITESECONDARYFLIGHTCONTROLDAO_H

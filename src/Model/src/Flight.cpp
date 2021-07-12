@@ -61,14 +61,14 @@ public:
         title.clear();
         description.clear();
         flightCondition.clear();
-        if (aircrafts.size() > 1) {
+        if (aircrafts.size() > 0) {
             const int aircraftCount = withOneAircraft ? 1 : 0;
             aircrafts.resize(aircraftCount);
             userAircraftIndex = withOneAircraft ? 0 : InvalidAircraftIndex;
         }
         // A flight always has at least one aircraft; unless
-        // it is newly allocated: the aircraft is only added
-        // in the constructor body
+        // it is newly allocated (the aircraft is only added in the constructor body)
+        // or cleared just before loading a flight
         if (aircrafts.size() > 0) {
             aircrafts.at(0)->clear();
         }

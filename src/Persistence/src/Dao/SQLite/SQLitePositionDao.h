@@ -29,31 +29,21 @@
 #include <vector>
 #include <iterator>
 
-#include <QObject>
+#include <QtGlobal>
 
 #include "../../../../Model/src/PositionData.h"
 #include "../PositionDaoIntf.h"
 
-class SQLitePositionDaoPrivate;
-
-class SQLitePositionDao : public QObject, public PositionDaoIntf
+class SQLitePositionDao : public PositionDaoIntf
 {
 public:
-    explicit SQLitePositionDao(QObject *parent = nullptr) noexcept;
+    explicit SQLitePositionDao() noexcept;
     virtual ~SQLitePositionDao() noexcept;
 
     virtual bool add(qint64 aircraftId, const PositionData &data) noexcept override;
     virtual bool getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<PositionData>> insertIterator) const noexcept override;
     virtual bool deleteByFlightId(qint64 flightId) noexcept override;
     virtual bool deleteByAircraftId(qint64 aircraftId) noexcept override;
-
-private:
-    std::unique_ptr<SQLitePositionDaoPrivate> d;
-
-    void frenchConnection() noexcept;
-
-private slots:
-    void handleConnectionChanged() noexcept;
 };
 
 #endif // SQLITEPOSITIONDAO_H

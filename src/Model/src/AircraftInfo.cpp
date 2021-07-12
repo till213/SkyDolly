@@ -22,6 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <QString>
+
+#include "AircraftType.h"
 #include "AircraftInfo.h"
 
 // PUBLIC
@@ -34,15 +37,11 @@ AircraftInfo::AircraftInfo(qint64 theAircraftId) noexcept
 
 void AircraftInfo::clear() noexcept
 {
-    type.clear();
+    aircraftType.clear();
     tailNumber.clear();
     airline.clear();
     flightNumber.clear();
-    category.clear();
     startOnGround = false;
     altitudeAboveGround = 0.0f;
     initialAirspeed = 0;
-    wingSpan = 0;
-    engineType = SimType::EngineType::Unknown;
-    numberOfEngines = 0;    
 }
