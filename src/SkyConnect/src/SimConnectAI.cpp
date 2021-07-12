@@ -33,6 +33,8 @@
 #include "../../Kernel/src/Enum.h"
 #include "../../Model/src/Flight.h"
 #include "../../Model/src/Aircraft.h"
+#include "../../Model/src/AircraftInfo.h"
+#include "../../Model/src/AircraftType.h"
 #include "../../Model/src/Position.h"
 #include "../../Model/src/PositionData.h"
 #include "SimConnectType.h"
@@ -74,7 +76,6 @@ bool SimConnectAI::createSimulatedAircrafts(Flight &flight, std::unordered_map<:
     int i = 0;
     ok = true;
     for (auto &aircraft : flight) {
-
         const ::SIMCONNECT_DATA_REQUEST_ID requestId = Enum::toUnderlyingType(SimConnectType::DataRequest::AIObjectBase) + i;
         if (*aircraft == userAircraft) {
             aircraft->setSimulationObjectId(::SIMCONNECT_OBJECT_ID_USER);
@@ -86,7 +87,7 @@ bool SimConnectAI::createSimulatedAircrafts(Flight &flight, std::unordered_map<:
             pendingAIAircraftCreationRequests[requestId] = aircraft.get();
             const AircraftInfo aircraftInfo = aircraft->getAircraftInfoConst();
             initialPosition = SimConnectPosition::toInitialPosition(aircraft->getPositionConst().getFirst(), aircraftInfo.startOnGround, aircraftInfo.initialAirspeed);
-            result = ::SimConnect_AICreateNonATCAircraft(d->simConnectHandle, aircraftInfo.type.toLatin1(), aircraftInfo.tailNumber.toLatin1(), initialPosition, requestId);
+            result = ::SimConnect_AICreateNonATCAircraft(d->simConnectHandle, aircraftInfo.aircraftType.type.toLatin1(), aircraftInfo.tailNumber.toLatin1(), initialPosition, requestId);
             ok = result == S_OK;
             if (ok) {
                 aircraft->setSimulationObjectId(Aircraft::PendingSimulationId);
@@ -103,7 +104,6 @@ bool SimConnectAI::createSimulatedAircrafts(Flight &flight, std::unordered_map<:
 #endif
         }
         ++i;
-
     }
     return ok;
 }
