@@ -67,8 +67,8 @@ bool SQLiteAircraftTypeDao::upsert(const AircraftType &aircraftType)  noexcept
 #ifdef DEBUG
     if (!ok) {
         qDebug("SQLiteAircraftTypeDao::upsert: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
-#endif
     }
+#endif
     return ok;
 }
 
@@ -102,8 +102,8 @@ bool SQLiteAircraftTypeDao::getByType(const QString &type, AircraftType &aircraf
 #ifdef DEBUG
     else {
         qDebug("SQLiteAircraftTypeDao::getByType: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
-#endif
     }
+#endif
     return ok;
 }
 
