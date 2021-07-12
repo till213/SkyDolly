@@ -22,26 +22,27 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QString>
+#ifndef AIRCRAFTTYPEDAOINTF_H
+#define AIRCRAFTTYPEDAOINTF_H
 
-#include "AircraftType.h"
-#include "AircraftInfo.h"
+#include <memory>
+#include <vector>
+#include <iterator>
 
-// PUBLIC
+#include <QtGlobal>
 
-AircraftInfo::AircraftInfo(qint64 theAircraftId) noexcept
+class QString;
+
+class AircraftType;
+
+class AircraftTypeDaoIntf
 {
-    clear();
-    aircraftId = theAircraftId;
-}
+public:
+    virtual ~AircraftTypeDaoIntf() = default;
 
-void AircraftInfo::clear() noexcept
-{
-    aircraftType.clear();
-    tailNumber.clear();
-    airline.clear();
-    flightNumber.clear();
-    startOnGround = false;
-    altitudeAboveGround = 0.0f;
-    initialAirspeed = 0;
-}
+    virtual bool upsert(const AircraftType &aircraftType) noexcept = 0;
+    virtual bool getByType(const QString &type, AircraftType &aircraftType) const noexcept = 0;
+    virtual bool getAlld(std::insert_iterator<std::vector<AircraftType>> insertIterator) const noexcept = 0;
+};
+
+#endif // AIRCRAFTTYPEDAOINTF_H

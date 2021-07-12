@@ -254,22 +254,20 @@ set    general_engine_combustion1 = general_engine_starter1,
 create index flight_idx1 on flight (title collate nocase);
 create index waypoint_idx1 on waypoint (ident collate nocase);
 
-@migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Move aircraft type into separate table", step_cnt = 8)
+@migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Move aircraft type into separate table", step_cnt = 9)
 create table aircraft_type (
-    id integer primary key,
-    title text not null,
+    type text primary key,
     category text,
     wing_span integer,
     engine_type integer,
     nof_engines integer
 );
-create unique index aircraft_type_idx1 on aircraft_type (title collate nocase);
 
 @migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Create new aircraft table with the new columns", step = 2)
 create table aircraft_new (
     id integer primary key,
     flight_id integer not null,
-    aircraft_type_id integer not null,
+    type text not null,
     seq_nr integer not null,
     start_date datetime,
     end_date datetime,
@@ -283,37 +281,37 @@ create table aircraft_new (
     foreign key(aircraft_type_id) references aircraft_type(id)
 );
 
-@migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Copy the original aircraft data into new aircraft_new table, using a dummy aircaft_type reference", step = 3)
-insert into aircraft_type (id, title)
-values (-1, 'dummy');
-insert into aircraft_new(id, flight_id, aircraft_type_id, seq_nr, start_date, end_date, tail_number, airline, flight_number, initial_airspeed, altitude_above_ground, start_on_ground)
-select id, flight_id, -1, seq_nr, start_date, end_date, tail_number, airline, flight_number, initial_airspeed, altitude_above_ground, start_on_ground
+@migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Copy the original aircraft data into new aircraft_new table, using a dummy aircaft type reference", step = 3)
+insert into aircraft_type (title)
+values ('dummy');
+insert into aircraft_new(id, flight_id, type, seq_nr, start_date, end_date, tail_number, airline, flight_number, initial_airspeed, altitude_above_ground, start_on_ground)
+select id, flight_id, 'dummy', seq_nr, start_date, end_date, tail_number, airline, flight_number, initial_airspeed, altitude_above_ground, start_on_ground
 from   aircraft a
 where  a.type not null;
 
 @migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Populate the aircraft_type table, based on the existing data in table aircraft", step = 4)
-insert or replace into aircraft_type (title, category, wing_span, engine_type, nof_engines)
-select a.type as title,
+insert or replace into aircraft_type (type, category, wing_span, engine_type, nof_engines)
+select a.type,
        a.category,
        a.wing_span,
        a.engine_type,
        a.nof_engines
 from aircraft a
-where title not null;
+where type not null;
 
-@migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Update the aircaft_type references in the new aircraft table, remove the dummy aircaft_type entry", step = 5)
+@migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Update the aircaft type references in the new aircraft table, remove the dummy aircaft type entry", step = 5)
 update aircraft_new
-set    aircraft_type_id = type.aircraft_type_id
-from  (select an.id as aircraft_id, at.id as aircraft_type_id
+set    type = t.type
+from  (select an.id as aircraft_id, at.type as type
        from   aircraft_new an
        left join aircraft a
        on an.id = a.id
        left join aircraft_type at
-       on a.type = at.title
-      ) as type
-where id = type.aircraft_id;
+       on a.type = at.type
+      ) as t
+where id = t.aircraft_id;
 delete from aircraft_type
-where  id = -1;
+where  type = 'dummy';
 
 @migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Drop the old aircraft table", step = 6)
 drop table aircraft;
@@ -323,6 +321,9 @@ alter table aircraft_new rename to aircraft;
 
 @migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Re-create indices in aircraft table", step = 8)
 create unique index aircraft_idx1 on aircraft (flight_id, seq_nr);
+
+@migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Re-create indices in aircraft table", step = 9)
+create index aircraft_idx2 on aircraft (type collate nocase);
 
 @migr(id = "1c13f02d-9def-4fd6-af8d-3b7984573682", descn = "Update application version to 0.8", step = 1)
 update metadata

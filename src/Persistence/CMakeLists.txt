@@ -18,6 +18,7 @@ target_sources(Persistence
         src/Dao/FlightSelector.cpp
         src/Dao/FlightSelector.h
         src/Dao/AircraftDaoIntf.h
+        src/Dao/AircraftTypeDaoIntf.h
         src/Dao/PositionDaoIntf.h
         src/Dao/EngineDaoIntf.h
         src/Dao/PrimaryFlightControlDaoIntf.h
@@ -35,6 +36,8 @@ target_sources(Persistence
         src/Dao/SQLite/SQLiteFlightDao.h
         src/Dao/SQLite/SQLiteAircraftDao.cpp
         src/Dao/SQLite/SQLiteAircraftDao.h
+        src/Dao/SQLite/SQLiteAircraftTypeDao.cpp
+        src/Dao/SQLite/SQLiteAircraftTypeDao.h
         src/Dao/SQLite/SQLitePositionDao.cpp
         src/Dao/SQLite/SQLitePositionDao.h
         src/Dao/SQLite/SQLiteEngineDao.cpp

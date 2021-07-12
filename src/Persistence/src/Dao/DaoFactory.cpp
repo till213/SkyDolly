@@ -28,6 +28,7 @@
 #include "SQLite/SQLiteLogbookDao.h"
 #include "SQLite/SQLiteFlightDao.h"
 #include "SQLite/SQLiteAircraftDao.h"
+#include "SQLite/SQLiteAircraftTypeDao.h"
 #include "SQLite/SQLitePositionDao.h"
 #include "SQLite/SQLiteEngineDao.h"
 #include "SQLite/SQLitePrimaryFlightControlDao.h"
@@ -37,6 +38,7 @@
 #include "SQLite/SQLiteWaypointDao.h"
 #include "FlightDaoIntf.h"
 #include "AircraftDaoIntf.h"
+#include "AircraftTypeDaoIntf.h"
 #include "PositionDaoIntf.h"
 #include "EngineDaoIntf.h"
 #include "PrimaryFlightControlDaoIntf.h"
@@ -106,6 +108,18 @@ std::unique_ptr<AircraftDaoIntf> DaoFactory::createAircraftDao() noexcept
     switch (d->dbType) {
     case DbType::SQLite:
         return std::make_unique<SQLiteAircraftDao>();
+        break;
+    default:
+        return nullptr;
+        break;
+    }
+}
+
+std::unique_ptr<AircraftTypeDaoIntf> DaoFactory::createAircraftTypeDao() noexcept
+{
+    switch (d->dbType) {
+    case DbType::SQLite:
+        return std::make_unique<SQLiteAircraftTypeDao>();
         break;
     default:
         return nullptr;

@@ -38,6 +38,7 @@
 #include "../../../Kernel/src/Settings.h"
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
+#include "../../../Model/src/AircraftType.h"
 #include "../../../Model/src/AircraftInfo.h"
 #include "../../../Model/src/Position.h"
 #include "../../../Model/src/PositionData.h"
@@ -387,17 +388,17 @@ void FormationWidget::updateUi() noexcept
         ++columnIndex;
 
         // Type
-        newItem = new QTableWidgetItem(aircraftInfo.type);
+        newItem = new QTableWidgetItem(aircraftInfo.aircraftType.type);
         ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
         ++columnIndex;
 
         // Category
-        newItem = new QTableWidgetItem(aircraftInfo.category);
+        newItem = new QTableWidgetItem(aircraftInfo.aircraftType.category);
         ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
         ++columnIndex;
 
         // Wing span
-        newItem = new QTableWidgetItem(d->unit.formatFeet(aircraftInfo.wingSpan));
+        newItem = new QTableWidgetItem(d->unit.formatFeet(aircraftInfo.aircraftType.wingSpan));
         ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
         newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
         ++columnIndex;
@@ -463,7 +464,8 @@ void FormationWidget::updateInitialPosition() noexcept
     const Aircraft &userAircraft = flight.getUserAircraftConst();
     const PositionData &positionData = userAircraft.getPositionConst().getFirst();
     if (!positionData.isNull()) {
-        const AircraftInfo &info = userAircraft.getAircraftInfoConst();
+        const AircraftInfo &aircraftInfo = userAircraft.getAircraftInfoConst();
+        const AircraftType &aircraftType = aircraftInfo.aircraftType;
 
         initialPosition.fromPositionData(positionData);
 
@@ -472,23 +474,23 @@ void FormationWidget::updateInitialPosition() noexcept
         switch (ui->horizontalDistanceSlider->value()) {
         case HorizontalDistance::VeryClose:
             // Aircrafts one wing apart
-            distance = 1.5 * info.wingSpan;
+            distance = 1.5 * aircraftType.wingSpan;
             break;
         case HorizontalDistance::Close:
             // Aircrafts one wingspan
-            distance = 2.0 * info.wingSpan;
+            distance = 2.0 * aircraftType.wingSpan;
             break;
         case HorizontalDistance::Nearby:
             // Aircrafts two wingspans
-            distance = 3.0 * info.wingSpan;
+            distance = 3.0 * aircraftType.wingSpan;
             break;
         case HorizontalDistance::Far:
             // Aircrafts three wingspans apart
-            distance = 4.0 * info.wingSpan;
+            distance = 4.0 * aircraftType.wingSpan;
             break;
         default:
             // Aircrafts four wingspans apart
-            distance = 5.0 * info.wingSpan;
+            distance = 5.0 * aircraftType.wingSpan;
             break;
         }
 
@@ -575,7 +577,7 @@ void FormationWidget::updateInitialPosition() noexcept
         initialPosition.latitude = initial.first;
         initialPosition.longitude = initial.second;
         initialPosition.altitude = altitude;
-        initialPosition.fromAircraftInfo(info);
+        initialPosition.fromAircraftInfo(aircraftInfo);
         skyConnect.setInitialRecordingPosition(initialPosition);
     }
 }

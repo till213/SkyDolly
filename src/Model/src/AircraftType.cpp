@@ -25,23 +25,20 @@
 #include <QString>
 
 #include "AircraftType.h"
-#include "AircraftInfo.h"
 
 // PUBLIC
 
-AircraftInfo::AircraftInfo(qint64 theAircraftId) noexcept
+AircraftType::AircraftType() noexcept
+    : id(-1)
 {
     clear();
-    aircraftId = theAircraftId;
 }
 
-void AircraftInfo::clear() noexcept
+void AircraftType::clear() noexcept
 {
-    aircraftType.clear();
-    tailNumber.clear();
-    airline.clear();
-    flightNumber.clear();
-    startOnGround = false;
-    altitudeAboveGround = 0.0f;
-    initialAirspeed = 0;
+    type.clear();
+    category.clear();
+    wingSpan = 0;
+    engineType = SimType::EngineType::Unknown;
+    numberOfEngines = 0;
 }

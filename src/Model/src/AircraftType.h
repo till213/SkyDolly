@@ -22,26 +22,44 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#ifndef AIRCRAFTTYPE_H
+#define AIRCRAFTTYPE_H
+
 #include <QString>
+#include <QDateTime>
 
-#include "AircraftType.h"
-#include "AircraftInfo.h"
+#include "SimType.h"
+#include "ModelLib.h"
 
-// PUBLIC
-
-AircraftInfo::AircraftInfo(qint64 theAircraftId) noexcept
+struct MODEL_API AircraftType
 {
-    clear();
-    aircraftId = theAircraftId;
-}
+    qint64 id;
+    /*!
+     * The aircraft type, e.g. "Pitts Special". This is really the "container title"
+     * which is also used to spawn AI aircrafts.
+     */
+    QString type;
 
-void AircraftInfo::clear() noexcept
-{
-    aircraftType.clear();
-    tailNumber.clear();
-    airline.clear();
-    flightNumber.clear();
-    startOnGround = false;
-    altitudeAboveGround = 0.0f;
-    initialAirspeed = 0;
-}
+    /*!
+     * The aircraft category:
+     * - Piston
+     * - Jet
+     * - Rocket
+     * - Glider
+     * - ...
+     */
+    QString category;
+    // Feet
+    int wingSpan;
+    SimType::EngineType engineType;
+    int numberOfEngines;
+
+    AircraftType() noexcept;
+    AircraftType(AircraftType &&) = default;
+    AircraftType(const AircraftType &) = default;
+    AircraftType &operator= (const AircraftType &) = default;
+
+    void clear() noexcept;
+};
+
+#endif // AIRCRAFTTYPE_H

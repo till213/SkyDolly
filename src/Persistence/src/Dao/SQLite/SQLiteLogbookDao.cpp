@@ -73,22 +73,20 @@ public:
             selectSummariesQuery = std::make_unique<QSqlQuery>();
             selectSummariesQuery->setForwardOnly(true);
             selectSummariesQuery->prepare(
-"select f.id, f.creation_date, f.title, at.title as aircraft_type, (select count(*) from aircraft where aircraft.flight_id = f.id) as aircraft_count,"
+"select f.id, f.creation_date, f.title, a.type, (select count(*) from aircraft where aircraft.flight_id = f.id) as aircraft_count,"
 "       a.start_date, f.start_local_sim_time, f.start_zulu_sim_time, fp1.ident as start_waypoint,"
 "       a.end_date, f.end_local_sim_time, f.end_zulu_sim_time, fp2.ident as end_waypoint "
 "from   flight f "
 "join   aircraft a "
 "on     a.flight_id = f.id "
 "and    a.seq_nr = 1 "
-"join   aircraft_type at "
-"on     a.aircraft_type_id = at.id "
 "left join (select ident, aircraft_id from waypoint wo1 where wo1.timestamp = (select min(wi1.timestamp) from waypoint wi1 where wi1.aircraft_id = wo1.aircraft_id)) fp1 "
 "on fp1.aircraft_id = a.id "
 "left join (select ident, aircraft_id from waypoint wo2 where wo2.timestamp = (select max(wi2.timestamp) from waypoint wi2 where wi2.aircraft_id = wo2.aircraft_id)) fp2 "
 "on fp2.aircraft_id = a.id "
 "where f.creation_date between :from_date and :to_date "
 "and   (  f.title like coalesce(:search_keyword, f.title) "
-"       or at.title like coalesce(:search_keyword, at.title) "
+"       or a.type like coalesce(:search_keyword, a.type) "
 "       or start_waypoint like coalesce(:search_keyword, start_waypoint) "
 "       or end_waypoint like coalesce(:search_keyword, end_waypoint) "
 "      )");
@@ -162,7 +160,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
         QSqlRecord record = d->selectSummariesQuery->record();
         const int idIdx = record.indexOf("id");
         const int creationDateIdx = record.indexOf("creation_date");
-        const int aircraftTypeIdx = record.indexOf("aircraft_type");
+        const int typeIdx = record.indexOf("type");
         const int aircraftCountIdx = record.indexOf("aircraft_count");
         const int startDateIdx = record.indexOf("start_date");
         const int startLocalSimulationTimeIdx = record.indexOf("start_local_sim_time");
@@ -181,7 +179,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
             QDateTime dateTime = d->selectSummariesQuery->value(creationDateIdx).toDateTime();
             dateTime.setTimeZone(QTimeZone::utc());
             summary.creationDate = dateTime.toLocalTime();
-            summary.aircraftType = d->selectSummariesQuery->value(aircraftTypeIdx).toString();
+            summary.aircraftType = d->selectSummariesQuery->value(typeIdx).toString();
             summary.aircraftCount = d->selectSummariesQuery->value(aircraftCountIdx).toInt();
             dateTime = d->selectSummariesQuery->value(startDateIdx).toDateTime();
             dateTime.setTimeZone(QTimeZone::utc());
