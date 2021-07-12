@@ -22,24 +22,23 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SQLITEFLIGHTCONDITIONDAO_H
-#define SQLITEFLIGHTCONDITIONDAO_H
+#ifndef SQLITEAIRCRAFTDAO_H
+#define SQLITEAIRCRAFTDAO_H
 
 #include <memory>
 #include <vector>
 
-#include <QObject>
+#include <QtGlobal>
 
 #include "../../../../Model/src/Aircraft.h"
 #include "../AircraftDaoIntf.h"
 
 class SQLiteAircraftDaoPrivate;
 
-class SQLiteAircraftDao : public QObject, public AircraftDaoIntf
+class SQLiteAircraftDao : public AircraftDaoIntf
 {
-    Q_OBJECT
 public:
-    explicit SQLiteAircraftDao(QObject *parent = nullptr) noexcept;
+    explicit SQLiteAircraftDao() noexcept;
     virtual ~SQLiteAircraftDao() noexcept;
 
     virtual bool add(qint64 flightId, int sequenceNumber, Aircraft &aircraft) noexcept override;
@@ -51,11 +50,6 @@ public:
 
 private:
     std::unique_ptr<SQLiteAircraftDaoPrivate> d;
-
-    void frenchConnection() noexcept;
-
-private slots:
-    void handleConnectionChanged() noexcept;
 };
 
-#endif // SQLITEFLIGHTCONDITIONDAO_H
+#endif // SQLITEAIRCRAFTDAO_H

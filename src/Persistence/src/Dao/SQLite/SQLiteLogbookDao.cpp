@@ -27,7 +27,6 @@
 #include <forward_list>
 #include <iterator>
 
-#include <QObject>
 #include <QString>
 #include <QStringBuilder>
 #include <QSqlQuery>
@@ -43,71 +42,14 @@
 #include "../../../../Model/src/FlightSummary.h"
 #include "../../../../Model/src/FlightCondition.h"
 #include "../../Dao/FlightSelector.h"
-#include "../../Dao/DaoFactory.h"
 #include "../../ConnectionManager.h"
 #include "SQLiteLogbookDao.h"
 #include "SQLiteLogbookDao.h"
 
-class SQLiteLogbookDaoPrivate
-{
-public:
-    SQLiteLogbookDaoPrivate() noexcept
-        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite))
-    {}
-
-    std::unique_ptr<QSqlQuery> selectFlightDatesQuery;
-    std::unique_ptr<QSqlQuery> selectSummariesQuery;
-    std::unique_ptr<DaoFactory> daoFactory;
-
-    void initQueries()
-    {
-        if (selectFlightDatesQuery == nullptr) {
-            selectFlightDatesQuery = std::make_unique<QSqlQuery>();
-            selectFlightDatesQuery->setForwardOnly(true);
-            selectFlightDatesQuery->prepare(
-"select strftime('%Y', creation_date) as year, strftime('%m', creation_date) as month, strftime('%d', creation_date) as day, count(flight.id) as nof_flights "
-"from  flight "
-"group by year, month, day");
-        }
-        if (selectSummariesQuery == nullptr) {
-            selectSummariesQuery = std::make_unique<QSqlQuery>();
-            selectSummariesQuery->setForwardOnly(true);
-            selectSummariesQuery->prepare(
-"select f.id, f.creation_date, f.title, a.type, (select count(*) from aircraft where aircraft.flight_id = f.id) as aircraft_count,"
-"       a.start_date, f.start_local_sim_time, f.start_zulu_sim_time, fp1.ident as start_waypoint,"
-"       a.end_date, f.end_local_sim_time, f.end_zulu_sim_time, fp2.ident as end_waypoint "
-"from   flight f "
-"join   aircraft a "
-"on     a.flight_id = f.id "
-"and    a.seq_nr = 1 "
-"left join (select ident, aircraft_id from waypoint wo1 where wo1.timestamp = (select min(wi1.timestamp) from waypoint wi1 where wi1.aircraft_id = wo1.aircraft_id)) fp1 "
-"on fp1.aircraft_id = a.id "
-"left join (select ident, aircraft_id from waypoint wo2 where wo2.timestamp = (select max(wi2.timestamp) from waypoint wi2 where wi2.aircraft_id = wo2.aircraft_id)) fp2 "
-"on fp2.aircraft_id = a.id "
-"where f.creation_date between :from_date and :to_date "
-"and   (  f.title like coalesce(:search_keyword, f.title) "
-"       or a.type like coalesce(:search_keyword, a.type) "
-"       or start_waypoint like coalesce(:search_keyword, start_waypoint) "
-"       or end_waypoint like coalesce(:search_keyword, end_waypoint) "
-"      )");
-        }
-    }
-
-    void resetQueries() noexcept
-    {
-        selectFlightDatesQuery = nullptr;
-        selectSummariesQuery = nullptr;
-    }
-};
-
 // PUBLIC
 
-SQLiteLogbookDao::SQLiteLogbookDao(QObject *parent) noexcept
-    : QObject(parent),
-      d(std::make_unique<SQLiteLogbookDaoPrivate>())
-{
-    frenchConnection();
-}
+SQLiteLogbookDao::SQLiteLogbookDao() noexcept
+{}
 
 SQLiteLogbookDao::~SQLiteLogbookDao() noexcept
 {}
@@ -116,24 +58,31 @@ std::forward_list<FlightDate> SQLiteLogbookDao::getFlightDates() const noexcept
 {
     std::forward_list<FlightDate> flightDates;
 
-    d->initQueries();
-    const bool ok = d->selectFlightDatesQuery->exec();
+    QSqlQuery query;
+    query.prepare(
+        "select strftime('%Y', creation_date) as year, strftime('%m', creation_date) as month, strftime('%d', creation_date) as day, count(flight.id) as nof_flights "
+        "from  flight "
+        "group by year, month, day"
+    );
+    query.setForwardOnly(true);
+
+    const bool ok = query.exec();
     if (ok) {
-        QSqlRecord record = d->selectFlightDatesQuery->record();
+        QSqlRecord record = query.record();
         const int yearIdx = record.indexOf("year");
         const int monthIdx = record.indexOf("month");
         const int dayIdx = record.indexOf("day");
         const int nofFlightIdx = record.indexOf("nof_flights");
-        while (d->selectFlightDatesQuery->next()) {
-            const int year = d->selectFlightDatesQuery->value(yearIdx).toInt();
-            const int month = d->selectFlightDatesQuery->value(monthIdx).toInt();
-            const int day = d->selectFlightDatesQuery->value(dayIdx).toInt();
-            const int nofFlights = d->selectFlightDatesQuery->value(nofFlightIdx).toInt();
+        while (query.next()) {
+            const int year = query.value(yearIdx).toInt();
+            const int month = query.value(monthIdx).toInt();
+            const int day = query.value(dayIdx).toInt();
+            const int nofFlights = query.value(nofFlightIdx).toInt();
             flightDates.emplace_front(year, month, day, nofFlights);
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteLogbookDao::getFlightDates: SQL error: %s", qPrintable(d->selectFlightDatesQuery->lastError().databaseText() + " - error code: " + d->selectFlightDatesQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteLogbookDao::getFlightDates: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
 #endif
     }
 
@@ -147,17 +96,38 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
     std::vector<FlightSummary> summaries;
     QString searchKeyword;
     if (!flightSelector.searchKeyword.isEmpty()) {
-        // Case-insensitive search, add like operator placeholders
-        searchKeyword = LikeOperatorPlaceholder  % flightSelector.searchKeyword.toLower() % LikeOperatorPlaceholder;
+        // Add like operator placeholders
+        searchKeyword = LikeOperatorPlaceholder  % flightSelector.searchKeyword % LikeOperatorPlaceholder;
     }
 
-    d->initQueries();
-    d->selectSummariesQuery->bindValue(":from_date", flightSelector.fromDate);
-    d->selectSummariesQuery->bindValue(":to_date", flightSelector.toDate);
-    d->selectSummariesQuery->bindValue(":search_keyword", searchKeyword);
-    const bool ok = d->selectSummariesQuery->exec();
+    QSqlQuery query;
+    query.prepare(
+        "select f.id, f.creation_date, f.title, a.type, (select count(*) from aircraft where aircraft.flight_id = f.id) as aircraft_count,"
+        "       a.start_date, f.start_local_sim_time, f.start_zulu_sim_time, fp1.ident as start_waypoint,"
+        "       a.end_date, f.end_local_sim_time, f.end_zulu_sim_time, fp2.ident as end_waypoint "
+        "from   flight f "
+        "join   aircraft a "
+        "on     a.flight_id = f.id "
+        "and    a.seq_nr = 1 "
+        "left join (select ident, aircraft_id from waypoint wo1 where wo1.timestamp = (select min(wi1.timestamp) from waypoint wi1 where wi1.aircraft_id = wo1.aircraft_id)) fp1 "
+        "on fp1.aircraft_id = a.id "
+        "left join (select ident, aircraft_id from waypoint wo2 where wo2.timestamp = (select max(wi2.timestamp) from waypoint wi2 where wi2.aircraft_id = wo2.aircraft_id)) fp2 "
+        "on fp2.aircraft_id = a.id "
+        "where f.creation_date between :from_date and :to_date "
+        "and   (  f.title like coalesce(:search_keyword, f.title) "
+        "       or a.type like coalesce(:search_keyword, a.type) "
+        "       or start_waypoint like coalesce(:search_keyword, start_waypoint) "
+        "       or end_waypoint like coalesce(:search_keyword, end_waypoint) "
+        "      )"
+    );
+
+    query.setForwardOnly(true);
+    query.bindValue(":from_date", flightSelector.fromDate);
+    query.bindValue(":to_date", flightSelector.toDate);
+    query.bindValue(":search_keyword", searchKeyword);
+    const bool ok = query.exec();
     if (ok) {
-        QSqlRecord record = d->selectSummariesQuery->record();
+        QSqlRecord record = query.record();
         const int idIdx = record.indexOf("id");
         const int creationDateIdx = record.indexOf("creation_date");
         const int typeIdx = record.indexOf("type");
@@ -171,54 +141,39 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
         const int endZuluSimulationTimeIdx = record.indexOf("end_zulu_sim_time");
         const int endWaypointIdx = record.indexOf("end_waypoint");
         const int titleIdx = record.indexOf("title");
-        while (d->selectSummariesQuery->next()) {
+        while (query.next()) {
 
             FlightSummary summary;
-            summary.id = d->selectSummariesQuery->value(idIdx).toLongLong();
+            summary.id = query.value(idIdx).toLongLong();
 
-            QDateTime dateTime = d->selectSummariesQuery->value(creationDateIdx).toDateTime();
+            QDateTime dateTime = query.value(creationDateIdx).toDateTime();
             dateTime.setTimeZone(QTimeZone::utc());
             summary.creationDate = dateTime.toLocalTime();
-            summary.aircraftType = d->selectSummariesQuery->value(typeIdx).toString();
-            summary.aircraftCount = d->selectSummariesQuery->value(aircraftCountIdx).toInt();
-            dateTime = d->selectSummariesQuery->value(startDateIdx).toDateTime();
+            summary.aircraftType = query.value(typeIdx).toString();
+            summary.aircraftCount = query.value(aircraftCountIdx).toInt();
+            dateTime = query.value(startDateIdx).toDateTime();
             dateTime.setTimeZone(QTimeZone::utc());
             summary.startDate = dateTime.toLocalTime();
             // Persisted times is are already local respectively zulu simulation times
-            summary.startSimulationLocalTime = d->selectSummariesQuery->value(startLocalSimulationTimeIdx).toDateTime();
-            summary.startSimulationZuluTime = d->selectSummariesQuery->value(startZuluSimulationTimeIdx).toDateTime();
-            summary.startLocation = d->selectSummariesQuery->value(startWaypointIdx).toString();
-            dateTime = d->selectSummariesQuery->value(endDateIdx).toDateTime();
+            summary.startSimulationLocalTime = query.value(startLocalSimulationTimeIdx).toDateTime();
+            summary.startSimulationZuluTime = query.value(startZuluSimulationTimeIdx).toDateTime();
+            summary.startLocation = query.value(startWaypointIdx).toString();
+            dateTime = query.value(endDateIdx).toDateTime();
             dateTime.setTimeZone(QTimeZone::utc());
             summary.endDate = dateTime.toLocalTime();
             // Persisted times is are already local respectively zulu simulation times
-            summary.endSimulationLocalTime = d->selectSummariesQuery->value(endLocalSimulationTimeIdx).toDateTime();
-            summary.endSimulationZuluTime = d->selectSummariesQuery->value(endZuluSimulationTimeIdx).toDateTime();
-            summary.endLocation = d->selectSummariesQuery->value(endWaypointIdx).toString();
-            summary.title = d->selectSummariesQuery->value(titleIdx).toString();
+            summary.endSimulationLocalTime = query.value(endLocalSimulationTimeIdx).toDateTime();
+            summary.endSimulationZuluTime = query.value(endZuluSimulationTimeIdx).toDateTime();
+            summary.endLocation = query.value(endWaypointIdx).toString();
+            summary.title = query.value(titleIdx).toString();
 
             summaries.push_back(summary);
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteLogbookDao::getFlightSummaries: SQL error: %s", qPrintable(d->selectSummariesQuery->lastError().databaseText() + " - error code: " + d->selectSummariesQuery->lastError().nativeErrorCode()));
+        qDebug("SQLiteLogbookDao::getFlightSummaries: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
 #endif
     }
 
     return summaries;
-}
-
-// PRIVATE
-
-void SQLiteLogbookDao::frenchConnection() noexcept
-{
-    connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
-            this, &SQLiteLogbookDao::handleConnectionChanged);
-}
-
-// PRIVATE SLOTS
-
-void SQLiteLogbookDao::handleConnectionChanged() noexcept
-{
-    d->resetQueries();
 }

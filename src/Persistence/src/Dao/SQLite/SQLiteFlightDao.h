@@ -27,7 +27,6 @@
 
 #include <memory>
 
-#include <QObject>
 #include <QtGlobal>
 
 class QString;
@@ -37,10 +36,10 @@ class QString;
 class Flight;
 class SQLiteFlightDaoPrivate;
 
-class SQLiteFlightDao : public QObject, public FlightDaoIntf
+class SQLiteFlightDao : public FlightDaoIntf
 {
 public:
-    explicit SQLiteFlightDao(QObject *parent = nullptr) noexcept;
+    explicit SQLiteFlightDao() noexcept;
     virtual ~SQLiteFlightDao() noexcept;
 
     virtual bool addFlight(Flight &flight)  noexcept override;
@@ -52,11 +51,6 @@ public:
 
 private:
     std::unique_ptr<SQLiteFlightDaoPrivate> d;
-
-    void frenchConnection() noexcept;
-
-private slots:
-    void handleConnectionChanged() noexcept;
 };
 
 #endif // SQLITEFLIGHTDAO_H

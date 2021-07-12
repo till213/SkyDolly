@@ -135,7 +135,7 @@ bool SqlMigrationStep::execute(const QString &sql) noexcept
 
         QRegularExpressionMatch match = it.next();
 #ifdef DEBUG
-        qDebug("SqlMigrationStep::execute: SQL:\n%s\n", qPrintable(match.captured(1).toUtf8()));
+        qDebug("SqlMigrationStep::execute: SQL: %s", qPrintable(match.captured(1).toUtf8()));
         qDebug("\n");
 #endif
         QSqlQuery query;

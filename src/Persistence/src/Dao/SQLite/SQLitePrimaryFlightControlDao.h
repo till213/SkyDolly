@@ -29,30 +29,21 @@
 #include <vector>
 #include <iterator>
 
-#include <QObject>
+#include <QtGlobal>
 
 #include "../../../../Model/src/PrimaryFlightControlData.h"
 #include "../PrimaryFlightControlDaoIntf.h"
 
-class SQLitePrimaryFlightControlDaoPrivate;
-
-class SQLitePrimaryFlightControlDao : public QObject, public PrimaryFlightControlDaoIntf
+class SQLitePrimaryFlightControlDao : public PrimaryFlightControlDaoIntf
 {
 public:
-    explicit SQLitePrimaryFlightControlDao(QObject *parent = nullptr) noexcept;
+    explicit SQLitePrimaryFlightControlDao() noexcept;
     virtual ~SQLitePrimaryFlightControlDao() noexcept;
 
     virtual bool add(qint64 aircraftId, const PrimaryFlightControlData &data) noexcept override;
     virtual bool getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<PrimaryFlightControlData>> insertIterator) const noexcept override;
     virtual bool deleteByFlightId(qint64 flightId) noexcept override;
     virtual bool deleteByAircraftId(qint64 aircraftId) noexcept override;
-
-private:
-    std::unique_ptr<SQLitePrimaryFlightControlDaoPrivate> d;
-    void frenchConnection() noexcept;
-
-private slots:
-    void handleConnectionChanged() noexcept;
 };
 
 #endif // SQLITEPRIMARYFLIGHTCONTROLDAO_H

@@ -27,33 +27,23 @@
 
 #include <memory>
 
-#include <QObject>
-#include <QVector>
+#include <QtGlobal>
 
 #include "../../../../Model/src/Waypoint.h"
 #include "../WaypointDaoIntf.h"
 
 class FlightPlan;
-class SQLiteWaypointDaoPrivate;
 
-class SQLiteWaypointDao : public QObject, public WaypointDaoIntf
+class SQLiteWaypointDao : public WaypointDaoIntf
 {
 public:
-    explicit SQLiteWaypointDao(QObject *parent = nullptr) noexcept;
+    explicit SQLiteWaypointDao() noexcept;
     virtual ~SQLiteWaypointDao() noexcept;
 
     virtual bool add(qint64 aircraftId, const FlightPlan &flightPlan) noexcept override;
     virtual bool getByAircraftId(qint64 aircraftId, FlightPlan &flightPlan) const noexcept override;
     virtual bool deleteByFlightId(qint64 flightId) noexcept override;
     virtual bool deleteByAircraftId(qint64 aircraftId) noexcept override;
-
-private:
-    std::unique_ptr<SQLiteWaypointDaoPrivate> d;
-
-    void frenchConnection() noexcept;
-
-private slots:
-    void handleConnectionChanged() noexcept;
 };
 
 #endif // SQLITEWAYPOINTDAO_H
