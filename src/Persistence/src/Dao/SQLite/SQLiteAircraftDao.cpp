@@ -351,6 +351,7 @@ bool SQLiteAircraftDao::deleteById(qint64 id) noexcept
 bool SQLiteAircraftDao::getAircraftInfosByFlightId(qint64 flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept
 {
     QSqlQuery query;
+    query.setForwardOnly(true);
     query.prepare(
         "select * "
         "from   aircraft a "

@@ -156,6 +156,7 @@ bool SQLiteEngineDao::add(qint64 aircraftId, const EngineData &data)  noexcept
 bool SQLiteEngineDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<EngineData>> insertIterator) const noexcept
 {
     QSqlQuery query;
+    query.setForwardOnly(true);
     query.prepare(
         "select * "
         "from   engine e "

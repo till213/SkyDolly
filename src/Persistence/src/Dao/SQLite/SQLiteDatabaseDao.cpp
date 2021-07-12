@@ -112,6 +112,8 @@ bool SQLiteDatabaseDao::backup(const QString &backupPath) noexcept
 bool SQLiteDatabaseDao::getMetadata(Metadata &metadata) const noexcept
 {
     QSqlQuery query;
+    query.setForwardOnly(true);
+
     bool ok = query.exec(
         "select m.creation_date, m.app_version, m.last_optim_date, m.last_backup_date, m.backup_directory_path, e.intl_id "
         "from metadata m "

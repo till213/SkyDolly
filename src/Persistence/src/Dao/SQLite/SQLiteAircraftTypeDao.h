@@ -41,7 +41,7 @@ public:
 
     virtual bool upsert(const AircraftType &aircraftType) noexcept override;
     virtual bool getByType(const QString &type, AircraftType &aircraftType) const noexcept override;
-    virtual bool getAlld(std::insert_iterator<std::vector<AircraftType>> insertIterator) const noexcept override;
+    virtual bool getAll(std::insert_iterator<std::vector<AircraftType>> insertIterator) const noexcept override;
 };
 
 #endif // AIRCRAFTTYPEDAO_H

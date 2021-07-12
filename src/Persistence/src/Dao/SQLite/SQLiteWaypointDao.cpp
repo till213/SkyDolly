@@ -137,6 +137,7 @@ bool SQLiteWaypointDao::add(qint64 aircraftId, const FlightPlan &flightPlan)  no
 bool SQLiteWaypointDao::getByAircraftId(qint64 aircraftId, FlightPlan &flightPlan) const noexcept
 {
     QSqlQuery query;
+    query.setForwardOnly(true);
     query.prepare(
         "select * "
         "from   waypoint w "

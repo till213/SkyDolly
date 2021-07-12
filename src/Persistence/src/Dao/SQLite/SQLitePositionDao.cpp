@@ -149,6 +149,7 @@ bool SQLitePositionDao::add(qint64 aircraftId, const PositionData &position)  no
 bool SQLitePositionDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<PositionData>> insertIterator) const noexcept
 {
     QSqlQuery query;
+    query.setForwardOnly(true);
     query.prepare(
         "select * "
         "from   position p "

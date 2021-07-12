@@ -75,6 +75,7 @@ bool SQLiteAircraftTypeDao::upsert(const AircraftType &aircraftType)  noexcept
 bool SQLiteAircraftTypeDao::getByType(const QString &type, AircraftType &aircraftType) const noexcept
 {
     QSqlQuery query;
+    query.setForwardOnly(true);
     query.prepare(
         "select at.category, at.wing_span, at.engine_type, at.nof_engines "
         "from   aircraft_type at "
@@ -106,8 +107,39 @@ bool SQLiteAircraftTypeDao::getByType(const QString &type, AircraftType &aircraf
     return ok;
 }
 
-bool SQLiteAircraftTypeDao::getAlld(std::insert_iterator<std::vector<AircraftType>> insertIterator) const noexcept
+bool SQLiteAircraftTypeDao::getAll(std::insert_iterator<std::vector<AircraftType>> insertIterator) const noexcept
 {
-    // TODO IMPLEMENT ME!!!
-    return false;
+    QSqlQuery query;
+    query.setForwardOnly(true);
+    query.prepare(
+        "select * "
+        "from   aircraft_type at "
+        "order by at.type asc;"
+    );
+
+    bool ok = query.exec();
+    if (ok) {
+        QSqlRecord record = query.record();
+        const int typeIdx = record.indexOf("type");
+        const int categoryIdx = record.indexOf("category");
+        const int wingSpanIdx = record.indexOf("wing_span");
+        const int engineTypeIdx = record.indexOf("engine_type");
+        const int nofEnginesIdx = record.indexOf("nof_enngines");
+        while (query.next()) {
+            AircraftType aircraftType;
+            aircraftType.type = query.value(typeIdx).toString();
+            aircraftType.category = query.value(categoryIdx).toString();
+            aircraftType.wingSpan = query.value(wingSpanIdx).toInt();
+            aircraftType.engineType = static_cast<SimType::EngineType>(query.value(engineTypeIdx).toInt());
+            aircraftType.numberOfEngines = query.value(nofEnginesIdx).toInt();
+
+            insertIterator = std::move(aircraftType);
+        }
+#ifdef DEBUG
+    } else {
+        qDebug("SQLitePositionDao::getAlld: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+#endif
+    }
+
+    return ok;
 }
