@@ -456,6 +456,8 @@ void LogbookWidget::updateDateSelectorUi() noexcept
     ui->logTreeWidget->clear();
 
     QTreeWidgetItem *logbookItem = new QTreeWidgetItem(ui->logTreeWidget, QStringList(tr("Logbook")));
+
+    int totalFlights = 0;
     while (!flightDates.empty()) {
         std::forward_list<FlightDate>::const_iterator first = flightDates.cbegin();
         std::forward_list<FlightDate>::const_iterator last = first;
@@ -470,8 +472,11 @@ void LogbookWidget::updateDateSelectorUi() noexcept
         std::forward_list<FlightDate> flightDatesByYear = {};
         flightDatesByYear.splice_after(flightDatesByYear.cbefore_begin(), flightDates, flightDates.cbefore_begin(), last);
         insertYear(logbookItem, flightDatesByYear, nofFlightsPerYear);
+
+        totalFlights += nofFlightsPerYear;
     }
     logbookItem->setExpanded(true);
+    logbookItem->setData(NofFlightsColumn, Qt::DisplayRole, totalFlights);
 
     ui->logTreeWidget->blockSignals(false);
 }
