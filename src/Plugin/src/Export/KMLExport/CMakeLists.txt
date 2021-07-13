@@ -30,4 +30,3 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE ${PLUGIN_LIBS})
 target_include_directories(${PLUGIN_NAME} PUBLIC
     "${CMAKE_CURRENT_BINARY_DIR}"
 )
-

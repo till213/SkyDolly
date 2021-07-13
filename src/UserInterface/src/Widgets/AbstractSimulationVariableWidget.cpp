@@ -47,10 +47,12 @@ void AbstractSimulationVariableWidget::showEvent(QShowEvent *event) noexcept
 {
     QWidget::showEvent(event);
 
-    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    updateUi(skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
-    connect(&skyConnect, &SkyConnectIntf::timestampChanged,
-            this, &AbstractSimulationVariableWidget::updateUi);
+    SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
+        updateUi(skyConnect->getCurrentTimestamp(), TimeVariableData::Access::Seek);
+        connect(skyConnect, &SkyConnectIntf::timestampChanged,
+                this, &AbstractSimulationVariableWidget::updateUi);
+    }
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::userAircraftChanged,
             this, &AbstractSimulationVariableWidget::updateUiWithCurrentTime);
@@ -60,9 +62,11 @@ void AbstractSimulationVariableWidget::hideEvent(QHideEvent *event) noexcept
 {
     QWidget::hideEvent(event);
 
-    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    disconnect(&skyConnect, &SkyConnectIntf::timestampChanged,
-               this, &AbstractSimulationVariableWidget::updateUi);
+    SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect != nullptr) {
+        disconnect(skyConnect, &SkyConnectIntf::timestampChanged,
+                   this, &AbstractSimulationVariableWidget::updateUi);
+    }
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     disconnect(&flight, &Flight::userAircraftChanged,
                this, &AbstractSimulationVariableWidget::updateUiWithCurrentTime);
@@ -72,6 +76,9 @@ void AbstractSimulationVariableWidget::hideEvent(QHideEvent *event) noexcept
 
 void AbstractSimulationVariableWidget::updateUiWithCurrentTime() noexcept
 {
-    updateUi(SkyManager::getInstance().getCurrentSkyConnect().getCurrentTimestamp(), TimeVariableData::Access::Seek);
+    const SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect != nullptr) {
+        updateUi(skyConnect->getCurrentTimestamp(), TimeVariableData::Access::Seek);
+    }
 }
 
