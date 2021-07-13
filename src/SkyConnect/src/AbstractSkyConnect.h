@@ -33,12 +33,13 @@
 #include "../../Model/src/InitialPosition.h"
 #include "SkyConnectIntf.h"
 #include "Connect.h"
+#include "SkyConnectLib.h"
 
 class Flight;
 class Aircraft;
 class AbstractSkyConnectPrivate;
 
-class  AbstractSkyConnect : public SkyConnectIntf
+class SKYCONNECT_API AbstractSkyConnect : public SkyConnectIntf
 {
     Q_OBJECT
 public:
