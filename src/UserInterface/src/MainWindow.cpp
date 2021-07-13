@@ -32,6 +32,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QString>
+#include <QUuid>
 #include <QTime>
 #include <QTimeEdit>
 #include <QComboBox>
@@ -362,7 +363,7 @@ void MainWindow::initPlugins() noexcept
 
         for (const PluginManager::Handle &handle : importPlugins) {
             QAction *importAction = new QAction(handle.second, ui->importMenu);
-            // First: plugin class name
+            // First: plugin uuid
             importAction->setData(handle.first);
             d->importQActionGroup->addAction(importAction);
             ui->importMenu->addAction(importAction);
@@ -380,7 +381,7 @@ void MainWindow::initPlugins() noexcept
 
         for (const PluginManager::Handle &handle : exportPlugins) {
             QAction *exportAction = new QAction(handle.second, ui->exportMenu);
-            // First: plugin class name
+            // First: plugin uuid
             exportAction->setData(handle.first);
             d->exportQActionGroup->addAction(exportAction);
             ui->exportMenu->addAction(exportAction);

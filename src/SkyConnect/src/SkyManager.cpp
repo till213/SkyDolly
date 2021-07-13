@@ -28,7 +28,9 @@
 #include <QPluginLoader>
 #include <QJsonObject>
 #include <QDir>
+#include <QString>
 #include <QStringList>
+#include <QUuid>
 #include <QMap>
 
 #include "SkyConnectIntf.h"
@@ -42,6 +44,8 @@ namespace
 #else
     constexpr char PluginDirectoryName[] = "plugins";
 #endif
+     constexpr char PluginUuidKey[] = "uuid";
+     constexpr char PluginNameKey[] = "name";
 }
 
 class SkyManagerPrivate
@@ -65,8 +69,8 @@ public:
     {}
 
     QDir pluginsDirectoryPath;
-    // Class name / plugin path
-    QMap<QString, QString> pluginRegistry;
+    // Plugin UUID / plugin path
+    QMap<QUuid, QString> pluginRegistry;
     QPluginLoader *pluginLoader;
 
     static SkyManager *instance;
@@ -103,17 +107,23 @@ SkyConnectIntf *SkyManager::getCurrentSkyConnect() const noexcept
     return qobject_cast<SkyConnectIntf *>(plugin);
 }
 
-bool SkyManager::setCurrentSkyConnect(const QString &pluginClassName) noexcept
+bool SkyManager::setCurrentSkyConnect(const QUuid &uuid) noexcept
 {
     bool ok;
-    if (d->pluginRegistry.contains(pluginClassName)) {
+    if (d->pluginRegistry.contains(uuid)) {
         // Unload the previous plugin (if any)
         d->pluginLoader->unload();
-        const QString pluginPath = d->pluginRegistry.value(pluginClassName);
+        const QString pluginPath = d->pluginRegistry.value(uuid);
         d->pluginLoader->setFileName(pluginPath);
         QObject *plugin = d->pluginLoader->instance();
         SkyConnectIntf *skyPlugin = qobject_cast<SkyConnectIntf *>(plugin);
         if (skyPlugin != nullptr) {
+            connect(skyPlugin, &SkyConnectIntf::timestampChanged,
+                    this, &SkyManager::timestampChanged);
+            connect(skyPlugin, &SkyConnectIntf::stateChanged,
+                    this, &SkyManager::stateChanged);
+            connect(skyPlugin, &SkyConnectIntf::recordingStopped,
+                    this, &SkyManager::recordingStopped);
             ok = true;
         } else {
             // Not a valid SkyConnect plugin
@@ -145,7 +155,7 @@ SkyManager::SkyManager() noexcept
 #endif
 }
 
-std::vector<SkyManager::Handle> SkyManager::enumeratePlugins(const QString &pluginDirectoryName, QMap<QString, QString> &pluginRegistry) noexcept
+std::vector<SkyManager::Handle> SkyManager::enumeratePlugins(const QString &pluginDirectoryName, QMap<QUuid, QString> &pluginRegistry) noexcept
 {
     std::vector<SkyManager::Handle> pluginHandles;
     pluginRegistry.clear();
@@ -158,12 +168,12 @@ std::vector<SkyManager::Handle> SkyManager::enumeratePlugins(const QString &plug
 
             const QJsonObject metaData = loader.metaData();
             if (!metaData.isEmpty()) {
-                const QString className = metaData.value(ClassNameKey).toString();
                 const QJsonObject pluginMetaData = metaData.value("MetaData").toObject();
+                const QUuid uuid = pluginMetaData.value(PluginUuidKey).toString();
                 const QString pluginName = pluginMetaData.value(PluginNameKey).toString();
-                const Handle handle = {className, pluginName};
+                const Handle handle = {uuid, pluginName};
                 pluginHandles.push_back(handle);
-                pluginRegistry.insert(className, pluginPath);
+                pluginRegistry.insert(uuid, pluginPath);
             }
         }
         d->pluginsDirectoryPath.cdUp();
