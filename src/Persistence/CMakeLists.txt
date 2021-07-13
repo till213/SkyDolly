@@ -1,12 +1,14 @@
+set(LIBRARY_NAME "Persistence")
+
 add_definitions(-DPERSISTENCE_EXPORT)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(Persistence SHARED "")
+    qt_add_library(${LIBRARY_NAME} SHARED "")
 else()
-    add_library(Persistence SHARED "")
+    add_library(${LIBRARY_NAME} SHARED "")
 endif()
 
-target_sources(Persistence
+target_sources(${LIBRARY_NAME}
     PRIVATE
         src/PersistenceLib.h
         src/ConnectionManager.cpp
@@ -69,17 +71,17 @@ target_sources(Persistence
         src/CSVConst.h
 )
 
-set(PERSISTENCE_LIBS
+set(LIBRARY_DEPENDENCIES
     Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Sql Kernel Model SkyConnect
 )
 if (APPLE)
-    list(APPEND PERSISTENCE_LIBS -lc++)
+    list(APPEND LIBRARY_DEPENDENCIES -lc++)
 endif()
 
-target_link_libraries(Persistence PRIVATE ${PERSISTENCE_LIBS})
-set_target_properties(Persistence PROPERTIES VERSION ${PROJECT_VERSION})
-set_target_properties(Persistence PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
+target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})
+set_target_properties(${LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
+set_target_properties(${LIBRARY_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
 
-target_include_directories(Persistence PUBLIC
+target_include_directories(${LIBRARY_NAME} PUBLIC
     "${CMAKE_CURRENT_BINARY_DIR}"
 )

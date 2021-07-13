@@ -112,16 +112,20 @@ const LightData &LightWidget::getCurrentLightData(qint64 timestamp, TimeVariable
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
-    const SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect.getState() == Connect::State::Recording) {
-        return aircraft.getLightConst().getLast();
-    } else {
-        if (timestamp != TimeVariableData::InvalidTime) {
-            return aircraft.getLightConst().interpolate(timestamp, access);
+    const SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect != nullptr) {
+        if (skyConnect->getState() == Connect::State::Recording) {
+            return aircraft.getLightConst().getLast();
         } else {
-            return aircraft.getLightConst().interpolate(skyConnect.getCurrentTimestamp(), access);
-        }
-    };
+            if (timestamp != TimeVariableData::InvalidTime) {
+                return aircraft.getLightConst().interpolate(timestamp, access);
+            } else {
+                return aircraft.getLightConst().interpolate(skyConnect->getCurrentTimestamp(), access);
+            }
+        };
+    } else {
+        return LightData::NullData;
+    }
 }
 
 // PRIVATE SLOTS

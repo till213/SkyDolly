@@ -116,14 +116,18 @@ const SecondaryFlightControlData &SecondaryFlightControlWidget::getCurrentSecond
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
-    const SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect.getState() == Connect::State::Recording) {
-        return aircraft.getSecondaryFlightControlConst().getLast();
-    } else {
-        if (timestamp != TimeVariableData::InvalidTime) {
-            return aircraft.getSecondaryFlightControlConst().interpolate(timestamp, access);
+    const SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect != nullptr) {
+        if (skyConnect->getState() == Connect::State::Recording) {
+            return aircraft.getSecondaryFlightControlConst().getLast();
         } else {
-            return aircraft.getSecondaryFlightControlConst().interpolate(skyConnect.getCurrentTimestamp(), access);
-        }
-    };
+            if (timestamp != TimeVariableData::InvalidTime) {
+                return aircraft.getSecondaryFlightControlConst().interpolate(timestamp, access);
+            } else {
+                return aircraft.getSecondaryFlightControlConst().interpolate(skyConnect->getCurrentTimestamp(), access);
+            }
+        };
+    } else {
+        return SecondaryFlightControlData::NullData;
+    }
 }

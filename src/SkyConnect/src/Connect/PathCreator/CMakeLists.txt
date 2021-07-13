@@ -1,4 +1,4 @@
-set(PLUGIN_NAME "CSVImport")
+set(PLUGIN_NAME "PathCreator")
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_library(${PLUGIN_NAME} SHARED
@@ -10,15 +10,15 @@ else()
     )
 endif()
 
-target_sources(CSVImport
+target_sources(${PLUGIN_NAME}
     PRIVATE
-        src/CSVImportPlugin.cpp
-        src/CSVImportPlugin.h
-        src/CSVImportPlugin.json
+        src/PathCreatorPlugin.cpp
+        src/PathCreatorPlugin.h
+        src/PathCreatorPlugin.json
 )
 
 set(PLUGIN_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Plugin Persistence
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model SkyConnect
 )
 if (APPLE)
     list(APPEND PLUGIN_LIBS -lc++)
