@@ -1,7 +1,13 @@
+set(PLUGIN_NAME "CSVExport")
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(CSVExport SHARED "")
+    qt_add_library(${PLUGIN_NAME} SHARED
+        ${PLUGIN_SOURCES}
+    )
 else()
-    add_library(CSVExport SHARED "")
+    add_library(${PLUGIN_NAME} SHARED
+        ${PLUGIN_SOURCES}
+    )
 endif()
 
 target_sources(CSVExport
@@ -11,16 +17,17 @@ target_sources(CSVExport
         src/CSVExportPlugin.json
 )
 
-set(CSV_EXPORT_PLUGIN_LIBS
+set(PLUGIN_LIBS
     Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Plugin
 )
 if (APPLE)
-    list(APPEND CSV_EXPORT_PLUGIN_LIBS -lc++)
+    list(APPEND PLUGIN_LIBS -lc++)
 endif()
 
-target_link_libraries(CSVExport PRIVATE ${CSV_EXPORT_PLUGIN_LIBS})
+target_link_libraries(${PLUGIN_NAME} PRIVATE ${PLUGIN_LIBS})
 
-target_include_directories(CSVExport PUBLIC
+target_include_directories(${PLUGIN_NAME} PUBLIC
     "${CMAKE_CURRENT_BINARY_DIR}"
 )
+
 

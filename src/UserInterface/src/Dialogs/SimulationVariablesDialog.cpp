@@ -82,9 +82,11 @@ void SimulationVariablesDialog::showEvent(QShowEvent *event) noexcept
 {
     QDialog::showEvent(event);
     updateUi();
-    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    connect(&skyConnect, &SkyConnectIntf::stateChanged,
-            this, &SimulationVariablesDialog::updateTitle);
+    SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect != nullptr) {
+        connect(skyConnect, &SkyConnectIntf::stateChanged,
+                this, &SimulationVariablesDialog::updateTitle);
+    }
 
     emit visibilityChanged(true);
 }
@@ -92,9 +94,11 @@ void SimulationVariablesDialog::showEvent(QShowEvent *event) noexcept
 void SimulationVariablesDialog::hideEvent(QHideEvent *event) noexcept
 {
     QDialog::hideEvent(event);
-    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    disconnect(&skyConnect, &SkyConnectIntf::stateChanged,
-               this, &SimulationVariablesDialog::updateTitle);
+    SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect != nullptr) {
+        disconnect(skyConnect, &SkyConnectIntf::stateChanged,
+                   this, &SimulationVariablesDialog::updateTitle);
+    }
 
     emit visibilityChanged(false);
 }
@@ -103,7 +107,6 @@ void SimulationVariablesDialog::hideEvent(QHideEvent *event) noexcept
 
 void SimulationVariablesDialog::initUi() noexcept
 {
-    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
     AircraftWidget *aircraftWidget = new AircraftWidget(this);
     ui->simulationVariablesTab->addTab(aircraftWidget, tr("&Aircraft"));
 
@@ -133,8 +136,9 @@ void SimulationVariablesDialog::updateUi() noexcept
 void SimulationVariablesDialog::updateTitle() noexcept
 {
     QString windowTitle = SimulationVariablesDialogPrivate::WindowTitle;
-    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    switch (skyConnect.getState()) {
+    const SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    const Connect::State state = skyConnect != nullptr ? skyConnect->getState() : Connect::State::Disconnected;
+    switch (state) {
     case Connect::State::Recording:
         windowTitle.append(" - " + tr("RECORDING"));
         break;

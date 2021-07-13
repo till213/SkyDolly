@@ -19,7 +19,7 @@ target_sources(Plugin
 )
 
 set(PLUGIN_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model SkyConnect
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model
 )
 if (APPLE)
     list(APPEND PLUGIN_LIBS -lc++)
@@ -39,4 +39,3 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins)
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/Export)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/Import)
-

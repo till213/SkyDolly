@@ -135,14 +135,18 @@ void AircraftWidget::initUi() noexcept
 const PositionData &AircraftWidget::getCurrentPositionData(qint64 timestamp, TimeVariableData::Access access) const noexcept
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-    const SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect.getState() == Connect::State::Recording) {
-        return aircraft.getPositionConst().getLast();
-    } else {
-        if (timestamp != TimeVariableData::InvalidTime) {
-            return aircraft.getPositionConst().interpolate(timestamp, access);
+    const SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect != nullptr) {
+        if (skyConnect->getState() == Connect::State::Recording) {
+            return aircraft.getPositionConst().getLast();
         } else {
-            return aircraft.getPositionConst().interpolate(skyConnect.getCurrentTimestamp(), access);
-        }
-    };
+            if (timestamp != TimeVariableData::InvalidTime) {
+                return aircraft.getPositionConst().interpolate(timestamp, access);
+            } else {
+                return aircraft.getPositionConst().interpolate(skyConnect->getCurrentTimestamp(), access);
+            }
+        };
+    } else {
+        return PositionData::NullData;
+    }
 }

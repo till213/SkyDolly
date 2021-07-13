@@ -91,16 +91,20 @@ const AircraftHandleData &AircraftHandleWidget::getCurrentAircraftHandleData(qin
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
-    const SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect.getState() == Connect::State::Recording) {
-        return aircraft.getAircraftHandleConst().getLast();
-    } else {
-        if (timestamp != TimeVariableData::InvalidTime) {
-            return aircraft.getAircraftHandleConst().interpolate(timestamp, access);
+    const SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect != nullptr) {
+        if (skyConnect->getState() == Connect::State::Recording) {
+            return aircraft.getAircraftHandleConst().getLast();
         } else {
-            return aircraft.getAircraftHandleConst().interpolate(skyConnect.getCurrentTimestamp(), access);
-        }
-    };
+            if (timestamp != TimeVariableData::InvalidTime) {
+                return aircraft.getAircraftHandleConst().interpolate(timestamp, access);
+            } else {
+                return aircraft.getAircraftHandleConst().interpolate(skyConnect->getCurrentTimestamp(), access);
+            }
+        };
+    } else {
+        return AircraftHandleData::NullData;
+    }
 }
 
 // PRIVATE SLOTS

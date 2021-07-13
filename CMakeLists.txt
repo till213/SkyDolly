@@ -119,6 +119,15 @@ message(STATUS OUTPUT_NAME=${PROJECT_NAME})
 # macOS: copy plugins into app bundle
 if (APPLE)
 
+    # Connect plugins
+    file(GLOB BUNDLE_IMPORT_PLUGINS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins/connect/*")
+    message(STATUS IMPORT_PLUGIN_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins/connect/")
+    target_sources(SkyDolly PUBLIC ${BUNDLE_IMPORT_PLUGINS})
+    set_property(
+        SOURCE ${BUNDLE_IMPORT_PLUGINS}
+        PROPERTY MACOSX_PACKAGE_LOCATION "PlugIns/connect"
+    )
+
     # Import plugins
     file(GLOB BUNDLE_IMPORT_PLUGINS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins/import/*")
     message(STATUS IMPORT_PLUGIN_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins/import/")

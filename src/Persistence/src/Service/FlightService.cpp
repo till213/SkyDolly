@@ -59,9 +59,9 @@ FlightService::FlightService(QObject *parent) noexcept
 
 FlightService::~FlightService() noexcept
 {
-    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect.isConnected()) {
-        skyConnect.destroyAIObjects();
+    SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect !=nullptr && skyConnect->isConnected()) {
+        skyConnect->destroyAIObjects();
     }
 #ifdef DEBUG
     qDebug("FlightService::~FlightService: DELETED.");
@@ -87,14 +87,16 @@ bool FlightService::restore(qint64 id, Flight &flight) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
-        SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-        skyConnect.destroyAIObjects();
-        ok = d->flightDao->getFlightById(id, flight);
-        QSqlDatabase::database().rollback();
-        emit flightRestored(flight.getId());
-        if (ok) {
-            ok = skyConnect.createAIObjects();
+        SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+        if (skyConnect != nullptr) {
+            skyConnect->destroyAIObjects();
+            ok = d->flightDao->getFlightById(id, flight);
+            emit flightRestored(flight.getId());
+            if (ok) {
+                ok = skyConnect->createAIObjects();
+            }
         }
+        QSqlDatabase::database().rollback();
     }
     return ok;
 }
@@ -148,8 +150,10 @@ bool FlightService::updateUserAircraftIndex(Flight &flight, int index) noexcept
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
         flight.setUserAircraftIndex(index);
-        SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-        skyConnect.updateUserAircraft();
+        SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+        if (skyConnect != nullptr) {
+            skyConnect->updateUserAircraft();
+        }
         ok = d->flightDao->updateUserAircraftIndex(flight.getId(), index);
         if (ok) {
             QSqlDatabase::database().commit();
