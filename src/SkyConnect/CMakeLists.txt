@@ -17,56 +17,11 @@ target_sources(SkyConnect
         src/AbstractSkyConnect.h
 )
 
-if (WIN32)
-    # SimConnect
-    list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/3rdParty/cmake")
-    find_package(SimConnect REQUIRED)
-
-    target_sources(SkyConnect
-        PRIVATE
-            src/SkyConnectImpl.cpp
-            src/SkyConnectImpl.h
-            src/SimConnectType.h
-            src/SimConnectPosition.cpp
-            src/SimConnectPosition.h
-            src/SimConnectEngineReply.cpp
-            src/SimConnectEngineReply.h
-            src/SimConnectEngineRequest.cpp
-            src/SimConnectEngineRequest.h
-            src/SimConnectPrimaryFlightControl.cpp
-            src/SimConnectPrimaryFlightControl.h
-            src/SimConnectSecondaryFlightControl.cpp
-            src/SimConnectSecondaryFlightControl.h
-            src/SimConnectAircraftHandle.cpp
-            src/SimConnectAircraftHandle.h
-            src/SimConnectLight.cpp
-            src/SimConnectLight.h
-            src/SimConnectAircraftInfo.cpp
-            src/SimConnectAircraftInfo.h
-            src/SimConnectFlightPlan.cpp
-            src/SimConnectFlightPlan.h
-            src/SimConnectSimulationTime.cpp
-            src/SimConnectSimulationTime.h
-            src/SimConnectAI.cpp
-            src/SimConnectAI.h
-            src/EventWidget.cpp
-            src/EventWidget.h
-        )
-
-    # Copy SimConnect.dll to bin directory (for development)
-    add_custom_command(TARGET SkyConnect POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:SimConnect>
-            $<TARGET_FILE_DIR:SkyConnect>)
-endif()
-
 set(SKYCONNECT_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model tsl::ordered_map
+    Qt${QT_VERSION_MAJOR}::Core Kernel Model
 )
 if (APPLE)
     list(APPEND SKYCONNECT_LIBS -lc++)
-elseif (WIN32)
-    list(APPEND SKYCONNECT_LIBS SimConnect)
 endif()
 
 target_link_libraries(SkyConnect PRIVATE ${SKYCONNECT_LIBS})
