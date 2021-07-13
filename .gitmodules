@@ -1,3 +1,6 @@
 [submodule "3rdParty/ordered-map"]
 	path = 3rdParty/ordered-map
 	url = https://github.com/Tessil/ordered-map
+[submodule "src/SkyConnect/src/Connect/FS2020SimConnectPlugin"]
+	path = src/SkyConnect/src/Connect/FS2020SimConnectPlugin
+	url = git@github.com:till213/FS2020SimConnectPlugin.git
