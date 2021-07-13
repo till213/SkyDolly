@@ -1,4 +1,4 @@
-set(PLUGIN_NAME "PathCreator")
+set(PLUGIN_NAME "PathCreatorPlugin")
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_library(${PLUGIN_NAME} SHARED
