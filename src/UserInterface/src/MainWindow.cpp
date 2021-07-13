@@ -401,7 +401,6 @@ void MainWindow::initPlugins() noexcept
     if (skyConnectPlugins.size() == 1) {
         skyManager.setCurrentSkyConnect(skyConnectPlugins.front().first);
     }
-
 }
 
 void MainWindow::initModuleSelectorUi() noexcept
