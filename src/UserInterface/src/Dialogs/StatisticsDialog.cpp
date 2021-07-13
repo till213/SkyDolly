@@ -116,9 +116,13 @@ void StatisticsDialog::updateRecordUi() noexcept
     }
 
     // Samples per second
-    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect.getState() == Connect::State::Recording) {
-        ui->samplesPerSecondLineEdit->setText(d->unit.formatHz(skyConnect.calculateRecordedSamplesPerSecond()));
+    const SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect != nullptr) {
+        if (skyConnect->getState() == Connect::State::Recording) {
+            ui->samplesPerSecondLineEdit->setText(d->unit.formatHz(skyConnect->calculateRecordedSamplesPerSecond()));
+        } else {
+            ui->samplesPerSecondLineEdit->clear();
+        }
     } else {
         ui->samplesPerSecondLineEdit->clear();
     }

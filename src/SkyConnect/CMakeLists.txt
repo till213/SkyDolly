@@ -58,12 +58,6 @@ if (WIN32)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             $<TARGET_FILE:SimConnect>
             $<TARGET_FILE_DIR:SkyConnect>)
-else()
-    target_sources(SkyConnect
-        PRIVATE
-            src/SkyConnectDummy.cpp
-            src/SkyConnectDummy.h
-        )
 endif()
 
 set(SKYCONNECT_LIBS
@@ -78,3 +72,9 @@ endif()
 target_link_libraries(SkyConnect PRIVATE ${SKYCONNECT_LIBS})
 set_target_properties(SkyConnect PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(SkyConnect PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
+
+# Plugins
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins)
+
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/Connect)

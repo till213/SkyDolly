@@ -22,27 +22,30 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SKYCONNECTDUMMY_H
-#define SKYCONNECTDUMMY_H
+#ifndef PATHCREATORPLUGIN_H
+#define PATHCREATORPLUGIN_H
 
 #include <memory>
 
 #include <QObject>
 
-#include "../../Model/src/TimeVariableData.h"
-#include "../../Model/src/InitialPosition.h"
-#include "AbstractSkyConnect.h"
+#include "../../../../../Model/src/TimeVariableData.h"
+#include "../../../../../Model/src/InitialPosition.h"
+#include "../../../AbstractSkyConnect.h"
+#include "../../../SkyConnectIntf.h"
 
 struct PositionData;
 class Aircraft;
-class SkyConnectDummyPrivate;
+class PathCreatorPluginPrivate;
 
-class SkyConnectDummy : public AbstractSkyConnect
+class PathCreatorPlugin : public AbstractSkyConnect
 {
     Q_OBJECT
+    Q_PLUGIN_METADATA(IID SKYCONNECT_INTERFACE_IID FILE "PathCreatorPlugin.json")
+    Q_INTERFACES(SkyConnectIntf)
 public:
-    SkyConnectDummy(QObject *parent = nullptr) noexcept;
-    virtual ~SkyConnectDummy() noexcept;
+    PathCreatorPlugin(QObject *parent = nullptr) noexcept;
+    virtual ~PathCreatorPlugin() noexcept;
 
 protected:
     virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
@@ -72,7 +75,7 @@ protected slots:
     virtual void recordData() noexcept override;
 
 private:
-    std::unique_ptr<SkyConnectDummyPrivate> d;
+    std::unique_ptr<PathCreatorPluginPrivate> d;
 
     void frenchConnection() noexcept;
     void recordPositionData(qint64 timestamp) noexcept;
@@ -89,4 +92,4 @@ private slots:
     void replay() noexcept;
 };
 
-#endif // SKYCONNECTDUMMY_H
+#endif // PATHCREATORPLUGIN_H

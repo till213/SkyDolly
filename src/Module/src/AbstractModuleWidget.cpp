@@ -62,14 +62,15 @@ bool AbstractModuleWidget::isActive() const noexcept
 
 void AbstractModuleWidget::setActive(bool enable) noexcept
 {
-    if (enable) {
-        SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-        connect(&skyConnect, &SkyConnectIntf::recordingStopped,
-                this, &AbstractModuleWidget::handleRecordingStopped);
-    } else {
-        SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-        disconnect(&skyConnect, &SkyConnectIntf::recordingStopped,
-                   this, &AbstractModuleWidget::handleRecordingStopped);
+    SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect != nullptr) {
+        if (enable) {
+            connect(skyConnect, &SkyConnectIntf::recordingStopped,
+                    this, &AbstractModuleWidget::handleRecordingStopped);
+        } else {
+            disconnect(skyConnect, &SkyConnectIntf::recordingStopped,
+                       this, &AbstractModuleWidget::handleRecordingStopped);
+        }
     }
     getAction().setChecked(enable);
     d->active = enable;

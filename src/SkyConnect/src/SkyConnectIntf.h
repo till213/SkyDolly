@@ -25,6 +25,8 @@
 #ifndef SKYCONNECT_H
 #define SKYCONNECT_H
 
+#include <QtPlugin>
+
 #include "../../Kernel/src/SampleRate.h"
 #include "../../Model/src/TimeVariableData.h"
 #include "../../Model/src/Aircraft.h"
@@ -109,5 +111,9 @@ signals:
     void stateChanged(Connect::State state);
     void recordingStopped();
 };
+
+
+#define SKYCONNECT_INTERFACE_IID "com.github.till213.SkyDolly.SkyConnectInterface/1.0"
+Q_DECLARE_INTERFACE(SkyConnectIntf, SKYCONNECT_INTERFACE_IID)
 
 #endif // SKYCONNECT_H

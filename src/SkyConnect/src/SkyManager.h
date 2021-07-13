@@ -26,6 +26,8 @@
 #define SKYMANAGER_H
 
 #include <memory>
+#include <vector>
+#include <utility>
 
 #include <QtGlobal>
 #include <QObject>
@@ -38,13 +40,22 @@ class SkyManagerPrivate;
 class SKYCONNECT_API SkyManager : public QObject
 {
     Q_OBJECT
-
 public:
+
+    static constexpr char ClassNameKey[] = "className";
+    static constexpr char PluginNameKey[] = "name";
 
     static SkyManager &getInstance() noexcept;
     static void destroyInstance() noexcept;
 
-    SkyConnectIntf &getCurrentSkyConnect() const noexcept;
+    /*!
+     * The class name and (non-translated) name of the plugin.
+     */
+    typedef std::pair<QString, QString> Handle;
+    std::vector<Handle> enumeratePlugins() noexcept;
+
+    SkyConnectIntf *getCurrentSkyConnect() const noexcept;
+    bool setCurrentSkyConnect(const QString &pluginClassName) noexcept;
 
 signals:
     void connectionChanged(SkyConnectIntf *skyConnect);
@@ -57,6 +68,8 @@ private:
     std::unique_ptr<SkyManagerPrivate> d;
 
     SkyManager() noexcept;
+
+    std::vector<Handle> enumeratePlugins(const QString &pluginDirectoryName, QMap<QString, QString> &plugins) noexcept;
 };
 
 #endif // SKYMANAGER_H

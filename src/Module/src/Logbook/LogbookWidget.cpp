@@ -153,9 +153,11 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
             this, &LogbookWidget::updateAircraftIcon);
     connect(&d->flightService, &FlightService::flightUpdated,
             this, &LogbookWidget::updateUi);
-    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    connect(&skyConnect, &SkyConnectIntf::stateChanged,
-            this, &LogbookWidget::updateEditUi);
+    SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect != nullptr) {
+        connect(skyConnect, &SkyConnectIntf::stateChanged,
+                this, &LogbookWidget::updateEditUi);
+    }
 
     updateUi();
     handleSelectionChanged();
@@ -173,9 +175,11 @@ void LogbookWidget::hideEvent(QHideEvent *event) noexcept
                this, &LogbookWidget::updateAircraftIcon);
     disconnect(&d->flightService, &FlightService::flightUpdated,
                this, &LogbookWidget::updateUi);
-    SkyConnectIntf &skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    disconnect(&skyConnect, &SkyConnectIntf::stateChanged,
-               this, &LogbookWidget::updateEditUi);
+    SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect != nullptr) {
+        disconnect(skyConnect, &SkyConnectIntf::stateChanged,
+                   this, &LogbookWidget::updateEditUi);
+    }
 }
 
 // PRIVATE
@@ -437,7 +441,8 @@ void LogbookWidget::updateUi() noexcept
 
 void LogbookWidget::updateEditUi() noexcept
 {
-    const bool active = SkyManager::getInstance().getCurrentSkyConnect().isActive();
+    SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    const bool active = skyConnect != nullptr && skyConnect->isActive();
     ui->loadPushButton->setEnabled(!active && d->selectedFlightId != Flight::InvalidId);
     ui->deletePushButton->setEnabled(!active && d->selectedFlightId != Flight::InvalidId);
 }

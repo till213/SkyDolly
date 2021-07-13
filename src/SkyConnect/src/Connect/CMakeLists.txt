@@ -1,0 +1,6 @@
+# Directory name must match with constant values defined in the SkyManager.cpp
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/connect)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/connect)
+message(STATUS CMAKE_RUNTIME_OUTPUT_DIRECTORY="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/PathCreator)

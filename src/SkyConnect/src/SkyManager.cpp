@@ -24,32 +24,50 @@
  */
 #include <memory>
 
-#ifdef WIN32
-#include "SkyConnectImpl.h"
-#else
-#include "SkyConnectDummy.h"
-#endif
+#include <QCoreApplication>
+#include <QPluginLoader>
+#include <QJsonObject>
+#include <QDir>
+#include <QStringList>
+#include <QMap>
+
+#include "SkyConnectIntf.h"
 #include "SkyManager.h"
+
+namespace
+{
+    constexpr char ConnectPluginDirectoryName[] = "connect";
+#if defined(Q_OS_MAC)
+    constexpr char PluginDirectoryName[] = "PlugIns";
+#else
+    constexpr char PluginDirectoryName[] = "plugins";
+#endif
+}
 
 class SkyManagerPrivate
 {
 public:
 
-    // TODO Plugin system
-#ifdef WIN32
-    SkyManagerPrivate() noexcept
-        : currentSkyConnect(std::make_unique<SkyConnectImpl>())
-    {}
-#else
-    SkyManagerPrivate() noexcept
-        : currentSkyConnect(std::make_unique<SkyConnectDummy>())
-    {}
+    SkyManagerPrivate(QObject *parent) noexcept
+        : pluginLoader(new QPluginLoader(parent))
+    {
+        pluginsDirectoryPath = QDir(QCoreApplication::applicationDirPath());
+#if defined(Q_OS_MAC)
+        if (pluginsDirectoryPath.dirName() == "MacOS") {
+            // Navigate up the app bundle structure, into the Contents folder
+            pluginsDirectoryPath.cdUp();
+        }
 #endif
+        pluginsDirectoryPath.cd(PluginDirectoryName);
+    }
 
     ~SkyManagerPrivate() noexcept
     {}
 
-    std::unique_ptr<SkyConnectIntf> currentSkyConnect;
+    QDir pluginsDirectoryPath;
+    // Class name / plugin path
+    QMap<QString, QString> pluginRegistry;
+    QPluginLoader *pluginLoader;
 
     static SkyManager *instance;
 };
@@ -74,9 +92,38 @@ void SkyManager::destroyInstance() noexcept
     }
 }
 
-SkyConnectIntf &SkyManager::getCurrentSkyConnect() const noexcept
+std::vector<SkyManager::Handle> SkyManager::enumeratePlugins() noexcept
 {
-    return *d->currentSkyConnect;
+    return enumeratePlugins(ConnectPluginDirectoryName, d->pluginRegistry);
+}
+
+SkyConnectIntf *SkyManager::getCurrentSkyConnect() const noexcept
+{
+    QObject *plugin = d->pluginLoader->instance();
+    return qobject_cast<SkyConnectIntf *>(plugin);
+}
+
+bool SkyManager::setCurrentSkyConnect(const QString &pluginClassName) noexcept
+{
+    bool ok;
+    if (d->pluginRegistry.contains(pluginClassName)) {
+        // Unload the previous plugin (if any)
+        d->pluginLoader->unload();
+        const QString pluginPath = d->pluginRegistry.value(pluginClassName);
+        d->pluginLoader->setFileName(pluginPath);
+        QObject *plugin = d->pluginLoader->instance();
+        SkyConnectIntf *skyPlugin = qobject_cast<SkyConnectIntf *>(plugin);
+        if (skyPlugin != nullptr) {
+            ok = true;
+        } else {
+            // Not a valid SkyConnect plugin
+            d->pluginLoader->unload();
+            ok = false;
+        }
+    } else {
+        ok = false;
+    }
+    return ok;
 }
 
 // PROTECTED
@@ -91,9 +138,36 @@ SkyManager::~SkyManager() noexcept
 // PRIVATE
 
 SkyManager::SkyManager() noexcept
-    : d(std::make_unique<SkyManagerPrivate>())
+    : d(std::make_unique<SkyManagerPrivate>(this))
 {
 #ifdef DEBUG
     qDebug("SkyManager::SkyManager: CREATED");
 #endif
+}
+
+std::vector<SkyManager::Handle> SkyManager::enumeratePlugins(const QString &pluginDirectoryName, QMap<QString, QString> &pluginRegistry) noexcept
+{
+    std::vector<SkyManager::Handle> pluginHandles;
+    pluginRegistry.clear();
+    if (d->pluginsDirectoryPath.exists(pluginDirectoryName)) {
+        d->pluginsDirectoryPath.cd(pluginDirectoryName);
+        const QStringList entryList = d->pluginsDirectoryPath.entryList(QDir::Files);
+        for (const QString &fileName : entryList) {
+            const QString pluginPath = d->pluginsDirectoryPath.absoluteFilePath(fileName);
+            QPluginLoader loader(pluginPath);
+
+            const QJsonObject metaData = loader.metaData();
+            if (!metaData.isEmpty()) {
+                const QString className = metaData.value(ClassNameKey).toString();
+                const QJsonObject pluginMetaData = metaData.value("MetaData").toObject();
+                const QString pluginName = pluginMetaData.value(PluginNameKey).toString();
+                const Handle handle = {className, pluginName};
+                pluginHandles.push_back(handle);
+                pluginRegistry.insert(className, pluginPath);
+            }
+        }
+        d->pluginsDirectoryPath.cdUp();
+    }
+
+    return pluginHandles;
 }

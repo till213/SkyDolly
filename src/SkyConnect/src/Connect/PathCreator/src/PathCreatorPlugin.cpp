@@ -29,33 +29,33 @@
 #include <QRandomGenerator>
 #include <QStringList>
 
-#include "../../Kernel/src/Settings.h"
-#include "../../Kernel/src/SkyMath.h"
-#include "../../Model/src/TimeVariableData.h"
-#include "../../Model/src/Logbook.h"
-#include "../../Model/src/Flight.h"
-#include "../../Model/src/Aircraft.h"
-#include "../../Model/src/AircraftInfo.h"
-#include "../../Model/src/AircraftType.h"
-#include "../../Model/src/Position.h"
-#include "../../Model/src/PositionData.h"
-#include "../../Model/src/InitialPosition.h"
-#include "../../Model/src/Engine.h"
-#include "../../Model/src/EngineData.h"
-#include "../../Model/src/PrimaryFlightControl.h"
-#include "../../Model/src/PrimaryFlightControlData.h"
-#include "../../Model/src/SecondaryFlightControl.h"
-#include "../../Model/src/SecondaryFlightControlData.h"
-#include "../../Model/src/AircraftHandle.h"
-#include "../../Model/src/AircraftHandleData.h"
-#include "../../Model/src/Light.h"
-#include "../../Model/src/LightData.h"
-#include "../../Model/src/FlightPlan.h"
-#include "../../Model/src/Waypoint.h"
-#include "../../Model/src/FlightCondition.h"
-#include "../../Model/src/SimType.h"
-#include "AbstractSkyConnect.h"
-#include "SkyConnectDummy.h"
+#include "../../../../../Kernel/src/Settings.h"
+#include "../../../../../Kernel/src/SkyMath.h"
+#include "../../../../../Model/src/TimeVariableData.h"
+#include "../../../../../Model/src/Logbook.h"
+#include "../../../../../Model/src/Flight.h"
+#include "../../../../../Model/src/Aircraft.h"
+#include "../../../../../Model/src/AircraftInfo.h"
+#include "../../../../../Model/src/AircraftType.h"
+#include "../../../../../Model/src/Position.h"
+#include "../../../../../Model/src/PositionData.h"
+#include "../../../../../Model/src/InitialPosition.h"
+#include "../../../../../Model/src/Engine.h"
+#include "../../../../../Model/src/EngineData.h"
+#include "../../../../../Model/src/PrimaryFlightControl.h"
+#include "../../../../../Model/src/PrimaryFlightControlData.h"
+#include "../../../../../Model/src/SecondaryFlightControl.h"
+#include "../../../../../Model/src/SecondaryFlightControlData.h"
+#include "../../../../../Model/src/AircraftHandle.h"
+#include "../../../../../Model/src/AircraftHandleData.h"
+#include "../../../../../Model/src/Light.h"
+#include "../../../../../Model/src/LightData.h"
+#include "../../../../../Model/src/FlightPlan.h"
+#include "../../../../../Model/src/Waypoint.h"
+#include "../../../../../Model/src/FlightCondition.h"
+#include "../../../../../Model/src/SimType.h"
+#include "../../../AbstractSkyConnect.h"
+#include "PathCreatorPlugin.h"
 
 namespace {
     // Hz
@@ -63,10 +63,10 @@ namespace {
     constexpr int ReplayPeriod = qRound(1000.0 / ReplayRate);
 }
 
-class SkyConnectDummyPrivate
+class PathCreatorPluginPrivate
 {
 public:
-    SkyConnectDummyPrivate() noexcept
+    PathCreatorPluginPrivate() noexcept
         : randomGenerator(QRandomGenerator::global())
     {}
 
@@ -76,39 +76,39 @@ public:
     static const QStringList IcaoList;
 };
 
-const QStringList SkyConnectDummyPrivate::IcaoList {"LSZH", "LSGG", "LSME", "LSZW", "LSTZ", "LSZB", "LSMA", "LSZJ", "LSPD", "LSHG", "LSZG", "LSZN", "LSGL", "LSEY", "LSPF"};
+const QStringList PathCreatorPluginPrivate::IcaoList {"LSZH", "LSGG", "LSME", "LSZW", "LSTZ", "LSZB", "LSMA", "LSZJ", "LSPD", "LSHG", "LSZG", "LSZN", "LSGL", "LSEY", "LSPF"};
 
 // PUBLIC
 
-SkyConnectDummy::SkyConnectDummy(QObject *parent) noexcept
+PathCreatorPlugin::PathCreatorPlugin(QObject *parent) noexcept
     : AbstractSkyConnect(parent),
-      d(std::make_unique<SkyConnectDummyPrivate>())
+      d(std::make_unique<PathCreatorPluginPrivate>())
 {
     frenchConnection();
 }
 
-SkyConnectDummy::~SkyConnectDummy() noexcept
+PathCreatorPlugin::~PathCreatorPlugin() noexcept
 {
 #ifdef DEBUG
-    qDebug("SkyConnectDummy::~SkyConnectDummy: DELETED");
+    qDebug("PathCreatorPlugin::~PathCreatorPlugin: DELETED");
 #endif
 }
 
 // PROTECTED
 
-bool SkyConnectDummy::isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept
+bool PathCreatorPlugin::isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept
 {
     Q_UNUSED(sampleRate)
     return true;
 }
 
-bool SkyConnectDummy::onUserAircraftManualControl(bool enable) noexcept
+bool PathCreatorPlugin::onUserAircraftManualControl(bool enable) noexcept
 {
     Q_UNUSED(enable)
     return true;
 }
 
-bool SkyConnectDummy::onStartRecording(const InitialPosition &initialPosition) noexcept
+bool PathCreatorPlugin::onStartRecording(const InitialPosition &initialPosition) noexcept
 {
     Q_UNUSED(initialPosition)
     recordFlightCondition();
@@ -116,12 +116,12 @@ bool SkyConnectDummy::onStartRecording(const InitialPosition &initialPosition) n
     return true;
 }
 
-void SkyConnectDummy::onRecordingPaused(bool paused) noexcept
+void PathCreatorPlugin::onRecordingPaused(bool paused) noexcept
 {
     Q_UNUSED(paused)
 }
 
-void SkyConnectDummy::onStopRecording() noexcept
+void PathCreatorPlugin::onStopRecording() noexcept
 {
     Flight &flight = getCurrentFlight();
     FlightCondition flightCondition = flight.getFlightConditionConst();
@@ -139,13 +139,13 @@ void SkyConnectDummy::onStopRecording() noexcept
     }
 }
 
-bool SkyConnectDummy::onStartReplay(qint64 currentTimestamp) noexcept {
+bool PathCreatorPlugin::onStartReplay(qint64 currentTimestamp) noexcept {
     Q_UNUSED(currentTimestamp)
     d->replayTimer.start(ReplayPeriod);
     return true;
 }
 
-void SkyConnectDummy::onReplayPaused(bool paused) noexcept
+void PathCreatorPlugin::onReplayPaused(bool paused) noexcept
 {
     if (paused) {
          d->replayTimer.stop();
@@ -154,22 +154,22 @@ void SkyConnectDummy::onReplayPaused(bool paused) noexcept
     }
 }
 
-void SkyConnectDummy::onStopReplay() noexcept
+void PathCreatorPlugin::onStopReplay() noexcept
 {
     d->replayTimer.stop();
 }
 
-void SkyConnectDummy::onSeek(qint64 currentTimestamp) noexcept
+void PathCreatorPlugin::onSeek(qint64 currentTimestamp) noexcept
 {
     Q_UNUSED(currentTimestamp)
 };
 
-void SkyConnectDummy::onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
+void PathCreatorPlugin::onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
 {
     Q_UNUSED(sampleRate)
 }
 
-bool SkyConnectDummy::sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept
+bool PathCreatorPlugin::sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept
 {
     Q_UNUSED(aircraftSelection)
     bool dataAvailable;
@@ -189,41 +189,41 @@ bool SkyConnectDummy::sendAircraftData(qint64 currentTimestamp, TimeVariableData
     return dataAvailable;
 }
 
-bool SkyConnectDummy::isConnectedWithSim() const noexcept
+bool PathCreatorPlugin::isConnectedWithSim() const noexcept
 {
     return true;
 }
 
-bool SkyConnectDummy::connectWithSim() noexcept
+bool PathCreatorPlugin::connectWithSim() noexcept
 {
     return true;
 }
 
-bool SkyConnectDummy::onCreateAIObjects() noexcept
+bool PathCreatorPlugin::onCreateAIObjects() noexcept
 {
 #ifdef DEBUG
-    qDebug("SkyConnectDummy::onCreateAIObjects: CALLED");
+    qDebug("PathCreatorPlugin::onCreateAIObjects: CALLED");
 #endif
     return true;
 }
 
-void SkyConnectDummy::onDestroyAIObjects() noexcept
+void PathCreatorPlugin::onDestroyAIObjects() noexcept
 {
 #ifdef DEBUG
-    qDebug("SkyConnectDummy::onDestroyAIObjects: CALLED");
+    qDebug("PathCreatorPlugin::onDestroyAIObjects: CALLED");
 #endif
 }
 
-void SkyConnectDummy::onDestroyAIObject(Aircraft &aircraft) noexcept
+void PathCreatorPlugin::onDestroyAIObject(Aircraft &aircraft) noexcept
 {
 #ifdef DEBUG
-    qDebug("SkyConnectDummy::onDestroyAIObject: aircraft ID: %lld", aircraft.getId());
+    qDebug("PathCreatorPlugin::onDestroyAIObject: aircraft ID: %lld", aircraft.getId());
 #endif
 }
 
 // PROTECTED SLOTS
 
-void SkyConnectDummy::recordData() noexcept
+void PathCreatorPlugin::recordData() noexcept
 {
     const qint64 timestamp = updateCurrentTimestamp();
 
@@ -244,13 +244,13 @@ void SkyConnectDummy::recordData() noexcept
 
 // PRIVATE
 
-void SkyConnectDummy::frenchConnection() noexcept
+void PathCreatorPlugin::frenchConnection() noexcept
 {
     connect(&d->replayTimer, &QTimer::timeout,
-            this, &SkyConnectDummy::replay);
+            this, &PathCreatorPlugin::replay);
 }
 
-void SkyConnectDummy::recordPositionData(qint64 timestamp) noexcept
+void PathCreatorPlugin::recordPositionData(qint64 timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -273,7 +273,7 @@ void SkyConnectDummy::recordPositionData(qint64 timestamp) noexcept
     aircraft.getPosition().upsert(aircraftData);
 }
 
-void SkyConnectDummy::recordEngineData(qint64 timestamp) noexcept
+void PathCreatorPlugin::recordEngineData(qint64 timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -307,7 +307,7 @@ void SkyConnectDummy::recordEngineData(qint64 timestamp) noexcept
     aircraft.getEngine().upsert(std::move(engineData));
 }
 
-void SkyConnectDummy::recordPrimaryControls(qint64 timestamp) noexcept
+void PathCreatorPlugin::recordPrimaryControls(qint64 timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -320,7 +320,7 @@ void SkyConnectDummy::recordPrimaryControls(qint64 timestamp) noexcept
     aircraft.getPrimaryFlightControl().upsert(std::move(primaryFlightControlData));
 }
 
-void SkyConnectDummy::recordSecondaryControls(qint64 timestamp) noexcept
+void PathCreatorPlugin::recordSecondaryControls(qint64 timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -336,7 +336,7 @@ void SkyConnectDummy::recordSecondaryControls(qint64 timestamp) noexcept
     aircraft.getSecondaryFlightControl().upsert(std::move(secondaryFlightControlData));
 }
 
-void SkyConnectDummy::recordAircraftHandle(qint64 timestamp) noexcept
+void PathCreatorPlugin::recordAircraftHandle(qint64 timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -354,7 +354,7 @@ void SkyConnectDummy::recordAircraftHandle(qint64 timestamp) noexcept
     aircraft.getAircraftHandle().upsert(std::move(aircraftHandleData));
 }
 
-void SkyConnectDummy::recordLights(qint64 timestamp) noexcept
+void PathCreatorPlugin::recordLights(qint64 timestamp) noexcept
 {
     static int lights = 0;
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
@@ -367,14 +367,14 @@ void SkyConnectDummy::recordLights(qint64 timestamp) noexcept
     aircraft.getLight().upsert(std::move(lightData));
 }
 
-void SkyConnectDummy::recordWaypoint() noexcept
+void PathCreatorPlugin::recordWaypoint() noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
     Waypoint waypoint;
     if (d->randomGenerator->bounded(100.0) < 0.5) {
-        int i = d->randomGenerator->bounded(SkyConnectDummyPrivate::IcaoList.size());
-        waypoint.identifier = SkyConnectDummyPrivate::IcaoList.at(i);
+        int i = d->randomGenerator->bounded(PathCreatorPluginPrivate::IcaoList.size());
+        waypoint.identifier = PathCreatorPluginPrivate::IcaoList.at(i);
         waypoint.latitude = -180.0 + d->randomGenerator->bounded(360.0);
         waypoint.longitude = -90.0 + d->randomGenerator->bounded(180.0);
         waypoint.altitude = d->randomGenerator->bounded(3000.0);
@@ -386,7 +386,7 @@ void SkyConnectDummy::recordWaypoint() noexcept
     }
 }
 
-void SkyConnectDummy::recordFlightCondition() noexcept
+void PathCreatorPlugin::recordFlightCondition() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     FlightCondition flightCondition;
@@ -409,7 +409,7 @@ void SkyConnectDummy::recordFlightCondition() noexcept
     flight.setFlightCondition(flightCondition);
 }
 
-void SkyConnectDummy::recordAircraftInfo() noexcept
+void PathCreatorPlugin::recordAircraftInfo() noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
     AircraftInfo info(aircraft.getId());
@@ -469,7 +469,7 @@ void SkyConnectDummy::recordAircraftInfo() noexcept
     aircraft.setAircraftInfo(std::move(info));
 }
 
-void SkyConnectDummy::replay() noexcept
+void PathCreatorPlugin::replay() noexcept
 {
     const qint64 timestamp = updateCurrentTimestamp();
     if (!sendAircraftData(timestamp, TimeVariableData::Access::Linear, AircraftSelection::All)) {
