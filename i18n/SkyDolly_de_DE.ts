@@ -1200,90 +1200,100 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="506"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="407"/>
+        <source>No connetion plugin found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="407"/>
+        <source>No connection plugin has been found in the plugin directory! Sky Dolly will launch with reduced functionality.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="510"/>
         <source>Normal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="526"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="530"/>
         <source>Custom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="622"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="626"/>
         <source>Factor [f]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="623"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="627"/>
         <source>Percent [%]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="975"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="979"/>
         <source>Custom replay speed factor in [%L1, %L2]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="979"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="983"/>
         <source>Custom replay speed % in [%L1%, %L2%]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1055"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1059"/>
         <source>Record [@%1 Hz]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1057"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1061"/>
         <source>Record [auto sample rate]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1062"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1066"/>
         <source>Fast forward [%1 sec]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1063"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1067"/>
         <source>Rewind [%1 sec]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1066"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1070"/>
         <source>Fast forward [%1 %]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1067"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1071"/>
         <source>Rewind [%1 %]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1095"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1106"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1115"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1123"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1099"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1110"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1119"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1127"/>
         <source>Database error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1095"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1099"/>
         <source>The logbook %1 could not be created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1106"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1110"/>
         <source>The logbook %1 could not be opened.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1115"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1119"/>
         <source>The logbook backup could not be created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1123"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1127"/>
         <source>The logbook could not be optimised.</source>
         <translation type="unfinished"></translation>
     </message>

@@ -400,6 +400,11 @@ void MainWindow::initPlugins() noexcept
     //   https://docs.microsoft.com/de-de/windows/win32/psapi/enumerating-all-processes?redirectedfrom=MSDN
     if (skyConnectPlugins.size() == 1) {
         skyManager.setCurrentSkyConnect(skyConnectPlugins.front().first);
+    } else if (skyConnectPlugins.size() > 1) {
+        // TODO Query capabilities, check settings - for now we still take only the first found plugin
+        skyManager.setCurrentSkyConnect(skyConnectPlugins.front().first);
+    } else {
+        QMessageBox::warning(this, tr("No connetion plugin found"), tr("No connection plugin has been found in the plugin directory! Sky Dolly will launch with reduced functionality."));
     }
 }
 
