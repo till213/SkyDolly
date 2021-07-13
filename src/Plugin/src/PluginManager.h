@@ -32,6 +32,7 @@
 #include <QObject>
 #include <QMap>
 
+class QUuid;
 class QWidget;
 class QString;
 
@@ -45,21 +46,16 @@ class PluginManagerPrivate;
 class PLUGIN_API PluginManager : public QObject
 {
     Q_OBJECT
-
 public:
-
-    static constexpr char ClassNameKey[] = "className";
-    static constexpr char PluginNameKey[] = "name";
-
     static PluginManager &getInstance() noexcept;
     static void destroyInstance() noexcept;
 
     void initialise(QWidget *parentWidget);
 
     /*!
-     * The class name and (non-translated) name of the plugin.
+     * The plugin UUID and (non-translated) name of the plugin.
      */
-    typedef std::pair<QString, QString> Handle;
+    typedef std::pair<QUuid, QString> Handle;
     std::vector<Handle> enumerateExportPlugins() noexcept;
     std::vector<Handle> enumerateImportPlugins() noexcept;
 
@@ -75,7 +71,7 @@ private:
 
     PluginManager() noexcept;
 
-    std::vector<PluginManager::Handle> enumeratePlugins(const QString &pluginDirectoryName, QMap<QString, QString> &plugins) noexcept;
+    std::vector<PluginManager::Handle> enumeratePlugins(const QString &pluginDirectoryName, QMap<QUuid, QString> &plugins) noexcept;
 };
 
 #endif // PLUGINMANAGER_H
