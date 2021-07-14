@@ -146,7 +146,7 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
 SkyConnectManager::~SkyConnectManager() noexcept
 {
 #ifdef DEBUG
-    qDebug("skyConnectManager::~skyConnectManager: DELETED");
+    qDebug("SkyConnectManager::~SkyConnectManager: DELETED");
 #endif
 }
 
@@ -156,7 +156,7 @@ SkyConnectManager::SkyConnectManager() noexcept
     : d(std::make_unique<skyConnectManagerPrivate>(this))
 {
 #ifdef DEBUG
-    qDebug("skyConnectManager::skyConnectManager: CREATED");
+    qDebug("SkyConnectManager::SkyConnectManager: CREATED");
 #endif
 }
 
