@@ -1284,80 +1284,80 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="656"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="704"/>
         <source>No valid connection plugin found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="656"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="704"/>
         <source>No valid connection plugin has been found in the plugin directory! Sky Dolly will launch with reduced functionality.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="997"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1045"/>
         <source>Custom replay speed factor in [%L1, %L2]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1001"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1049"/>
         <source>Custom replay speed % in [%L1%, %L2%]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1077"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1125"/>
         <source>Record [@%1 Hz]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1079"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1127"/>
         <source>Record [auto sample rate]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1084"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1132"/>
         <source>Fast forward [%1 sec]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1085"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1133"/>
         <source>Rewind [%1 sec]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1088"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1136"/>
         <source>Fast forward [%1 %]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1089"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1137"/>
         <source>Rewind [%1 %]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1117"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1128"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1137"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1145"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1165"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1176"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1185"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1193"/>
         <source>Database error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1117"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1165"/>
         <source>The logbook %1 could not be created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1128"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1176"/>
         <source>The logbook %1 could not be opened.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1137"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1185"/>
         <source>The logbook backup could not be created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1145"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1193"/>
         <source>The logbook could not be optimised.</source>
         <translation type="unfinished"></translation>
     </message>
