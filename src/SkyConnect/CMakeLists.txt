@@ -9,8 +9,8 @@ endif()
 target_sources(SkyConnect
     PRIVATE
         src/SkyConnectLib.h
-        src/SkyManager.cpp
-        src/SkyManager.h
+        src/SkyConnectManager.cpp
+        src/SkyConnectManager.h
         src/SkyConnectIntf.h
         src/Connect.h
         src/AbstractSkyConnect.cpp

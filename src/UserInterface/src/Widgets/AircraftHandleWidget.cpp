@@ -37,7 +37,7 @@
 #include "../../../Model/src/AircraftHandle.h"
 #include "../../../Model/src/AircraftHandleData.h"
 #include "../../../Model/src/TimeVariableData.h"
-#include "../../../SkyConnect/src/SkyManager.h"
+#include "../../../SkyConnect/src/SkyConnectManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "AircraftHandleWidget.h"
@@ -91,7 +91,7 @@ const AircraftHandleData &AircraftHandleWidget::getCurrentAircraftHandleData(qin
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
-    const SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    const SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect != nullptr) {
         if (skyConnect->getState() == Connect::State::Recording) {
             return aircraft.getAircraftHandleConst().getLast();

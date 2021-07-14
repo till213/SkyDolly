@@ -31,7 +31,7 @@
 
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"
-#include "../../../SkyConnect/src/SkyManager.h"
+#include "../../../SkyConnect/src/SkyConnectManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../Dao/DaoFactory.h"
 #include "../Dao/FlightDaoIntf.h"
@@ -59,7 +59,7 @@ FlightService::FlightService(QObject *parent) noexcept
 
 FlightService::~FlightService() noexcept
 {
-    SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect !=nullptr && skyConnect->isConnected()) {
         skyConnect->destroyAIObjects();
     }
@@ -87,7 +87,7 @@ bool FlightService::restore(qint64 id, Flight &flight) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
-        SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+        SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
         if (skyConnect != nullptr) {
             skyConnect->destroyAIObjects();
             ok = d->flightDao->getFlightById(id, flight);
@@ -150,7 +150,7 @@ bool FlightService::updateUserAircraftIndex(Flight &flight, int index) noexcept
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
         flight.setUserAircraftIndex(index);
-        SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+        SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
         if (skyConnect != nullptr) {
             skyConnect->updateUserAircraft();
         }

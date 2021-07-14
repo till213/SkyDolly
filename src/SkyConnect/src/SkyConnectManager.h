@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SKYMANAGER_H
-#define SKYMANAGER_H
+#ifndef SKYCONNECTMANAGER_H
+#define SKYCONNECTMANAGER_H
 
 #include <memory>
 #include <vector>
@@ -41,11 +41,11 @@ class QUuid;
 class SkyConnectIntf;
 class SkyManagerPrivate;
 
-class SKYCONNECT_API SkyManager : public QObject
+class SKYCONNECT_API SkyConnectManager : public QObject
 {
     Q_OBJECT
 public:
-    static SkyManager &getInstance() noexcept;
+    static SkyConnectManager &getInstance() noexcept;
     static void destroyInstance() noexcept;
 
     /*!
@@ -65,15 +65,15 @@ signals:
     void recordingStopped();
 
 protected:
-    virtual ~SkyManager() noexcept;
+    virtual ~SkyConnectManager() noexcept;
 
 private:
-    Q_DISABLE_COPY(SkyManager)
+    Q_DISABLE_COPY(SkyConnectManager)
     std::unique_ptr<SkyManagerPrivate> d;
 
-    SkyManager() noexcept;
+    SkyConnectManager() noexcept;
 
     std::vector<Handle> enumeratePlugins(const QString &pluginDirectoryName, QMap<QUuid, QString> &plugins) noexcept;
 };
 
-#endif // SKYMANAGER_H
+#endif // SKYCONNECTMANAGER_H

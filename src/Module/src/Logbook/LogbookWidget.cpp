@@ -50,7 +50,7 @@
 #include "../../../Persistence/src/Service/DatabaseService.h"
 #include "../../../Persistence/src/Service/LogbookService.h"
 #include "../../../Persistence/src/Service/FlightService.h"
-#include "../../../SkyConnect/src/SkyManager.h"
+#include "../../../SkyConnect/src/SkyConnectManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../AbstractModuleWidget.h"
 #include "../Module.h"
@@ -153,11 +153,9 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
             this, &LogbookWidget::updateAircraftIcon);
     connect(&d->flightService, &FlightService::flightUpdated,
             this, &LogbookWidget::updateUi);
-    SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        connect(skyConnect, &SkyConnectIntf::stateChanged,
-                this, &LogbookWidget::updateEditUi);
-    }
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    connect(&skyConnectManager, &SkyConnectManager::stateChanged,
+            this, &LogbookWidget::updateEditUi);
 
     updateUi();
     handleSelectionChanged();
@@ -175,11 +173,9 @@ void LogbookWidget::hideEvent(QHideEvent *event) noexcept
                this, &LogbookWidget::updateAircraftIcon);
     disconnect(&d->flightService, &FlightService::flightUpdated,
                this, &LogbookWidget::updateUi);
-    SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        disconnect(skyConnect, &SkyConnectIntf::stateChanged,
-                   this, &LogbookWidget::updateEditUi);
-    }
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    disconnect(&skyConnectManager, &SkyConnectManager::stateChanged,
+               this, &LogbookWidget::updateEditUi);
 }
 
 // PRIVATE
@@ -441,7 +437,7 @@ void LogbookWidget::updateUi() noexcept
 
 void LogbookWidget::updateEditUi() noexcept
 {
-    SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const bool active = skyConnect != nullptr && skyConnect->isActive();
     ui->loadPushButton->setEnabled(!active && d->selectedFlightId != Flight::InvalidId);
     ui->deletePushButton->setEnabled(!active && d->selectedFlightId != Flight::InvalidId);

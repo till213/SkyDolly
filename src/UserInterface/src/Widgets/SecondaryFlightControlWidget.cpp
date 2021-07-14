@@ -37,7 +37,7 @@
 #include "../../../Model/src/SecondaryFlightControl.h"
 #include "../../../Model/src/SecondaryFlightControlData.h"
 #include "../../../Model/src/TimeVariableData.h"
-#include "../../../SkyConnect/src/SkyManager.h"
+#include "../../../SkyConnect/src/SkyConnectManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "SecondaryFlightControlWidget.h"
@@ -116,7 +116,7 @@ const SecondaryFlightControlData &SecondaryFlightControlWidget::getCurrentSecond
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
-    const SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    const SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect != nullptr) {
         if (skyConnect->getState() == Connect::State::Recording) {
             return aircraft.getSecondaryFlightControlConst().getLast();
