@@ -50,9 +50,9 @@ void AbstractSimulationVariableWidget::showEvent(QShowEvent *event) noexcept
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::timestampChanged,
             this, &AbstractSimulationVariableWidget::updateUi);
-    SkyConnectIntf *skyConnect = skyConnectManager.getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        updateUi(skyConnect->getCurrentTimestamp(), TimeVariableData::Access::Seek);
+    auto skyConnect = skyConnectManager.getCurrentSkyConnect();
+    if (skyConnect) {
+        updateUi(skyConnect->get().getCurrentTimestamp(), TimeVariableData::Access::Seek);
     }
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::userAircraftChanged,
@@ -75,9 +75,9 @@ void AbstractSimulationVariableWidget::hideEvent(QHideEvent *event) noexcept
 
 void AbstractSimulationVariableWidget::updateUiWithCurrentTime() noexcept
 {
-    const SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        updateUi(skyConnect->getCurrentTimestamp(), TimeVariableData::Access::Seek);
+    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
+        updateUi(skyConnect->get().getCurrentTimestamp(), TimeVariableData::Access::Seek);
     }
 }
 

@@ -202,7 +202,7 @@ MainWindow::MainWindow(QWidget *parent) noexcept
 
 MainWindow::~MainWindow() noexcept
 {
-    // The SkyConnect instances have been deleted by the SkyManager (singleton)
+    // The SkyConnect instances have been deleted by the skyConnectManager (singleton)
     // already at this point; no need to disconnect from their "stateChanged"
     // signal
 
@@ -389,22 +389,7 @@ void MainWindow::initPlugins() noexcept
         ui->exportMenu->setEnabled(false);
     }
 
-    // Initialise SkyConnect plugins
-    SkyConnectManager &skyManager = SkyConnectManager::getInstance();
-    std::vector<SkyConnectManager::Handle> skyConnectPlugins = skyManager.enumeratePlugins();
-    // TOOD IMPLEMENT ME
-    // - Use settings
-    // - Initialise with preference to flight simulator (add "capabilities" to plugin handle)
-    // - Maybe even guesstimate running flight simulator:
-    //   https://docs.microsoft.com/de-de/windows/win32/psapi/enumerating-all-processes?redirectedfrom=MSDN
-    if (skyConnectPlugins.size() == 1) {
-        skyManager.setCurrentSkyConnect(skyConnectPlugins.front().first);
-    } else if (skyConnectPlugins.size() > 1) {
-        // TODO Query capabilities, check settings - for now we still take only the first found plugin
-        skyManager.setCurrentSkyConnect(skyConnectPlugins.front().first);
-    } else {
-        QMessageBox::warning(this, tr("No connetion plugin found"), tr("No connection plugin has been found in the plugin directory! Sky Dolly will launch with reduced functionality."));
-    }
+    initSkyConnectPlugin();
 }
 
 void MainWindow::initModuleSelectorUi() noexcept
@@ -604,16 +589,16 @@ void MainWindow::initReplaySpeedUi() noexcept
     d->customReplaySpeedPercentValidator->setRange(ReplaySpeedAbsoluteMin * 100.0, ReplaySpeedAbsoluteMax * 100.0, ReplaySpeedDecimalPlaces);
 
     // The replay speed factor in SkyConnect is always an absolute factor
-    const SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        const double replaySpeed = skyConnect->getReplaySpeedFactor();
+    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
+        const double replaySpeed = skyConnect->get().getReplaySpeedFactor();
         Settings &settings = Settings::getInstance();
         if (settings.getReplaySpeeedUnit() == Replay::SpeedUnit::Absolute) {
             d->lastCustomReplaySpeed = replaySpeed;
         } else {
             d->lastCustomReplaySpeed = replaySpeed * 100.0;
         }
-        if (qFuzzyCompare(skyConnect->getReplaySpeedFactor(), 1.0)) {
+        if (qFuzzyCompare(skyConnect->get().getReplaySpeedFactor(), 1.0)) {
             normalSpeedRadioButton->setChecked(true);
         } else {
             d->customSpeedRadioButton ->setChecked(true);
@@ -637,6 +622,45 @@ void MainWindow::initReplaySpeedUi() noexcept
     }
 
     replaySpeedLayout->addWidget(d->replaySpeedUnitComboBox);
+}
+
+void MainWindow::initSkyConnectPlugin() noexcept
+{
+    Settings &settings = Settings::getInstance();
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    std::vector<SkyConnectManager::Handle> skyConnectPlugins = skyConnectManager.enumeratePlugins();
+    // TOOD IMPLEMENT ME
+    // - Use settings
+    // - Initialise with preference to flight simulator (add "capabilities" to plugin handle)
+    // - Maybe even guesstimate running flight simulator:
+    //   https://docs.microsoft.com/de-de/windows/win32/psapi/enumerating-all-processes?redirectedfrom=MSDN
+
+
+    QUuid uuid = settings.getSkyConnectPluginUuid();
+    // Try to load plugin as stored in the settings
+    bool ok = !uuid.isNull() && skyConnectManager.tryAndSetCurrentSkyConnect(uuid);
+    if (!ok) {
+        // First attempt or not a valid plugin (anymore), so try the other plugins
+        if (skyConnectPlugins.size() == 1) {
+            // There is only one plugin
+            ok = skyConnectManager.tryAndSetCurrentSkyConnect(skyConnectPlugins.front().first);
+        } else if (skyConnectPlugins.size() > 1) {
+            // TODO Query capabilities, check settings - for now we still take only the first found plugin
+
+            for (auto &plugin : skyConnectPlugins) {
+                if (FlightSimulator::isRunning(plugin.second.flightSimulatorId)) {}
+            }
+
+            ok = skyConnectManager.tryAndSetCurrentSkyConnect(skyConnectPlugins.front().first);
+        } else {
+            // No plugins found
+            ok = false;
+        }
+    }
+    if (!ok) {
+        QMessageBox::warning(this, tr("No valid connection plugin found"), tr("No valid connection plugin has been found in the plugin directory! Sky Dolly will launch with reduced functionality."));
+    }
+
 }
 
 void MainWindow::updateMinimalUi(bool enabled)
@@ -682,47 +706,47 @@ double MainWindow::getCustomSpeedFactor() const
 
 void MainWindow::on_positionSlider_sliderPressed() noexcept
 {
-    SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        d->previousState = skyConnect->getState();
+    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
+        d->previousState = skyConnect->get().getState();
         if (d->previousState == Connect::State::Replay) {
             // Pause the replay while sliding the position slider
-            skyConnect->setPaused(true);
+            skyConnect->get().setPaused(true);
         }
     }
 }
 
 void MainWindow::on_positionSlider_valueChanged(int value) noexcept
 {
-    SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
+    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
         const double scale = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
         const qint64 totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
         const qint64 timestamp = static_cast<qint64>(qRound(scale * static_cast<double>(totalDuration)));
 
         // Prevent the timestampTimeEdit field to set the play position as well
         ui->timestampTimeEdit->blockSignals(true);
-        skyConnect->seek(timestamp);
+        skyConnect->get().seek(timestamp);
         ui->timestampTimeEdit->blockSignals(false);
     }
 }
 
 void MainWindow::on_positionSlider_sliderReleased() noexcept
 {
-    SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
+    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
         if (d->previousState == Connect::State::Replay) {
-            skyConnect->setPaused(false);
+            skyConnect->get().setPaused(false);
         }
     }
 }
 
 void MainWindow::on_timestampTimeEdit_timeChanged(const QTime &time) noexcept
 {
-    SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr && (skyConnect->isIdle() || skyConnect->getState() == Connect::State::ReplayPaused)) {
+    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect && (skyConnect->get().isIdle() || skyConnect->get().getState() == Connect::State::ReplayPaused)) {
         qint64 timestamp = time.hour() * MilliSecondsPerHour + time.minute() * MilliSecondsPerMinute + time.second() * MilliSecondsPerSecond;
-        skyConnect->seek(timestamp);
+        skyConnect->get().seek(timestamp);
     }
 }
 
@@ -743,9 +767,9 @@ void MainWindow::updateWindowSize() noexcept
 
 void MainWindow::handleTimestampChanged(qint64 timestamp) noexcept
 {
-    const SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        if (skyConnect->isRecording()) {
+    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
+        if (skyConnect->get().isRecording()) {
             updateTimestamp();
         } else {
             const qint64 totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
@@ -810,18 +834,18 @@ void MainWindow::handleReplaySpeedSelected(QAction *action) noexcept
         break;
     }
 
-    SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        skyConnect->setReplaySpeedFactor(replaySpeedFactor);
+    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
+        skyConnect->get().setReplaySpeedFactor(replaySpeedFactor);
     }
 }
 
 void MainWindow::handleCustomSpeedChanged() noexcept
 {
-    SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const double customReplaySpeedFactor = getCustomSpeedFactor();
-    if (skyConnect != nullptr) {
-        skyConnect->setReplaySpeedFactor(customReplaySpeedFactor);
+    if (skyConnect) {
+        skyConnect->get().setReplaySpeedFactor(customReplaySpeedFactor);
     }
     switch (Settings::getInstance().getReplaySpeeedUnit()) {
     case Replay::SpeedUnit::Absolute:
@@ -874,8 +898,8 @@ void MainWindow::updateControlUi() noexcept
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();
     const bool hasRecording = aircraft.hasRecording();
-    const SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    const Connect::State state = skyConnect != nullptr ? skyConnect->getState() : Connect::State::Disconnected;
+    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const Connect::State state = skyConnect ? skyConnect->get().getState() : Connect::State::Disconnected;
     switch (state) {
     case Connect::State::Disconnected:
         // Fall-thru intened: each time a control element is triggered a connection
@@ -996,8 +1020,8 @@ void MainWindow::updateReplaySpeedUi() noexcept
 
 void MainWindow::updateTimestamp() noexcept
 {
-    const SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    const bool isRecording = skyConnect != nullptr && skyConnect->isRecording();
+    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const bool isRecording = skyConnect && skyConnect->get().isRecording();
     const bool ofUserAircraft = isRecording;
     const qint64 totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec(ofUserAircraft);
     ui->timestampTimeEdit->blockSignals(true);
@@ -1014,8 +1038,8 @@ void MainWindow::updateFileMenu() noexcept
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();
     const bool hasRecording = aircraft.hasRecording();
-    const SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    const Connect::State state = skyConnect != nullptr ? skyConnect->getState() : Connect::State::Disconnected;
+    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const Connect::State state = skyConnect ? skyConnect->get().getState() : Connect::State::Disconnected;
     switch (state) {
     case Connect::State::Recording:
         // Fall-thru intentional
@@ -1191,25 +1215,25 @@ void MainWindow::on_aboutQtAction_triggered() noexcept
 
 void MainWindow::toggleRecord(bool enable) noexcept
 {
-    SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
+    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
         blockSignals(true);
-        switch (skyConnect->getState()) {
+        switch (skyConnect->get().getState()) {
         case Connect::State::Recording:
             if (!enable) {
-                skyConnect->stopRecording();
+                skyConnect->get().stopRecording();
             }
             break;
         case Connect::State::RecordingPaused:
             if (enable) {
                 // The record button also unpauses a paused recording
-                skyConnect->setPaused(false);
+                skyConnect->get().setPaused(false);
             }
             break;
         default:
             if (enable) {
                 const bool addFormationAircraft = d->activeModuleId == Module::Module::Formation;
-                skyConnect->startRecording(addFormationAircraft);
+                skyConnect->get().startRecording(addFormationAircraft);
             }
             break;
         }
@@ -1219,76 +1243,76 @@ void MainWindow::toggleRecord(bool enable) noexcept
 
 void MainWindow::togglePause(bool enable) noexcept
 {
-    SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
-        skyConnect->setPaused(enable);
+        skyConnect->get().setPaused(enable);
     }
 }
 
 void MainWindow::togglePlay(bool enable) noexcept
 {
-    SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (enable) {
-            skyConnect->startReplay(skyConnect->isAtEnd());
-        } else if (skyConnect->isPaused()) {
+            skyConnect->get().startReplay(skyConnect->get().isAtEnd());
+        } else if (skyConnect->get().isPaused()) {
             // The play button also unpauses a paused replay
-            skyConnect->setPaused(false);
+            skyConnect->get().setPaused(false);
         } else {
-            skyConnect->stopReplay();
+            skyConnect->get().stopReplay();
         }
     }
 }
 
 void MainWindow::stop() noexcept
 {
-    SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        skyConnect->stop();
+    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
+        skyConnect->get().stop();
     }
 }
 
 void MainWindow::skipToBegin() noexcept
 {
-    SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        skyConnect->skipToBegin();
+    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
+        skyConnect->get().skipToBegin();
     }
 }
 
 void MainWindow::skipBackward() noexcept
 {
-    SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        skyConnect->skipBackward();
+    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
+        skyConnect->get().skipBackward();
     }
 }
 
 void MainWindow::skipForward() noexcept
 {
-    SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        skyConnect->skipForward();
+    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
+        skyConnect->get().skipForward();
     }
 }
 
 void MainWindow::skipToEnd() noexcept
 {
-    SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        skyConnect->skipToEnd();
+    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
+        skyConnect->get().skipToEnd();
     }
 }
 
 void MainWindow::handleFlightRestored() noexcept
 {
     updateUi();
-    SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        skyConnect->skipToBegin();
-        if (skyConnect->isConnected()) {
-            skyConnect->startReplay(true);
-            skyConnect->setPaused(true);
+    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
+        skyConnect->get().skipToBegin();
+        if (skyConnect->get().isConnected()) {
+            skyConnect->get().startReplay(true);
+            skyConnect->get().setPaused(true);
         }
     }
 }
@@ -1305,12 +1329,12 @@ void MainWindow::handleImport(QAction *action) noexcept
     const bool ok = PluginManager::getInstance().importData(className, *d->flightService);
     if (ok) {
         updateUi();
-        SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-        if (skyConnect != nullptr) {
-            skyConnect->skipToBegin();
-            if (skyConnect->isConnected()) {
-                skyConnect->startReplay(true);
-                skyConnect->setPaused(true);
+        auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+        if (skyConnect) {
+            skyConnect->get().skipToBegin();
+            if (skyConnect->get().isConnected()) {
+                skyConnect->get().startReplay(true);
+                skyConnect->get().setPaused(true);
             }
         }
     }

@@ -28,6 +28,8 @@
 #include <memory>
 #include <vector>
 #include <utility>
+#include <optional>
+#include <functional>
 
 #include <QtGlobal>
 #include <QObject>
@@ -35,11 +37,12 @@
 class QString;
 class QUuid;
 
+#include "../../Kernel/src/FlightSimulator.h"
 #include "Connect.h"
 #include "SkyConnectLib.h"
 
 class SkyConnectIntf;
-class SkyManagerPrivate;
+class skyConnectManagerPrivate;
 
 class SKYCONNECT_API SkyConnectManager : public QObject
 {
@@ -49,13 +52,21 @@ public:
     static void destroyInstance() noexcept;
 
     /*!
-     * The class name and (non-translated) name of the plugin.
+     * The plugin name and the flight simulator it supports.
      */
-    typedef std::pair<QUuid, QString> Handle;
+    typedef struct {
+        QString name;
+        FlightSimulator::Id flightSimulatorId;
+    } SkyConnectPlugin;
+
+    /*!
+     * The plugin UUID and the plugin name and capabilities.
+     */
+    typedef std::pair<QUuid, SkyConnectPlugin> Handle;
     std::vector<Handle> enumeratePlugins() noexcept;
 
-    SkyConnectIntf *getCurrentSkyConnect() const noexcept;
-    bool setCurrentSkyConnect(const QUuid &uuid) noexcept;
+    std::optional<std::reference_wrapper<SkyConnectIntf>> getCurrentSkyConnect() const noexcept;
+    bool tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept;
 
 signals:
     void connectionChanged(SkyConnectIntf *skyConnect);
@@ -69,7 +80,7 @@ protected:
 
 private:
     Q_DISABLE_COPY(SkyConnectManager)
-    std::unique_ptr<SkyManagerPrivate> d;
+    std::unique_ptr<skyConnectManagerPrivate> d;
 
     SkyConnectManager() noexcept;
 

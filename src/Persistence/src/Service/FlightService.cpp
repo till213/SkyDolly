@@ -59,9 +59,9 @@ FlightService::FlightService(QObject *parent) noexcept
 
 FlightService::~FlightService() noexcept
 {
-    SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect !=nullptr && skyConnect->isConnected()) {
-        skyConnect->destroyAIObjects();
+    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect && skyConnect->get().isConnected()) {
+        skyConnect->get().destroyAIObjects();
     }
 #ifdef DEBUG
     qDebug("FlightService::~FlightService: DELETED.");
@@ -87,13 +87,13 @@ bool FlightService::restore(qint64 id, Flight &flight) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
-        SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-        if (skyConnect != nullptr) {
-            skyConnect->destroyAIObjects();
+        auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+        if (skyConnect) {
+            skyConnect->get().destroyAIObjects();
             ok = d->flightDao->getFlightById(id, flight);
             emit flightRestored(flight.getId());
             if (ok) {
-                ok = skyConnect->createAIObjects();
+                ok = skyConnect->get().createAIObjects();
             }
         }
         QSqlDatabase::database().rollback();
@@ -150,9 +150,9 @@ bool FlightService::updateUserAircraftIndex(Flight &flight, int index) noexcept
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
         flight.setUserAircraftIndex(index);
-        SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-        if (skyConnect != nullptr) {
-            skyConnect->updateUserAircraft();
+        auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+        if (skyConnect) {
+            skyConnect->get().updateUserAircraft();
         }
         ok = d->flightDao->updateUserAircraftIndex(flight.getId(), index);
         if (ok) {

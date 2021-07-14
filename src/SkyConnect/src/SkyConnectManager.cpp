@@ -44,15 +44,16 @@ namespace
 #else
     constexpr char PluginDirectoryName[] = "plugins";
 #endif
-     constexpr char PluginUuidKey[] = "uuid";
-     constexpr char PluginNameKey[] = "name";
+    constexpr char PluginUuidKey[] = "uuid";
+    constexpr char PluginNameKey[] = "name";
+    constexpr char PluginFlightSimulatorNameKey[] = "flightSimulator";
 }
 
-class SkyManagerPrivate
+class skyConnectManagerPrivate
 {
 public:
 
-    SkyManagerPrivate(QObject *parent) noexcept
+    skyConnectManagerPrivate(QObject *parent) noexcept
         : pluginLoader(new QPluginLoader(parent))
     {
         pluginsDirectoryPath = QDir(QCoreApplication::applicationDirPath());
@@ -65,7 +66,7 @@ public:
         pluginsDirectoryPath.cd(PluginDirectoryName);
     }
 
-    ~SkyManagerPrivate() noexcept
+    ~skyConnectManagerPrivate() noexcept
     {}
 
     QDir pluginsDirectoryPath;
@@ -76,23 +77,23 @@ public:
     static SkyConnectManager *instance;
 };
 
-SkyConnectManager *SkyManagerPrivate::instance = nullptr;
+SkyConnectManager *skyConnectManagerPrivate::instance = nullptr;
 
 // PUBLIC
 
 SkyConnectManager &SkyConnectManager::getInstance() noexcept
 {
-    if (SkyManagerPrivate::instance == nullptr) {
-        SkyManagerPrivate::instance = new SkyConnectManager();
+    if (skyConnectManagerPrivate::instance == nullptr) {
+        skyConnectManagerPrivate::instance = new SkyConnectManager();
     }
-    return *SkyManagerPrivate::instance;
+    return *skyConnectManagerPrivate::instance;
 }
 
 void SkyConnectManager::destroyInstance() noexcept
 {
-    if (SkyManagerPrivate::instance != nullptr) {
-        delete SkyManagerPrivate::instance;
-        SkyManagerPrivate::instance = nullptr;
+    if (skyConnectManagerPrivate::instance != nullptr) {
+        delete skyConnectManagerPrivate::instance;
+        skyConnectManagerPrivate::instance = nullptr;
     }
 }
 
@@ -101,13 +102,17 @@ std::vector<SkyConnectManager::Handle> SkyConnectManager::enumeratePlugins() noe
     return enumeratePlugins(ConnectPluginDirectoryName, d->pluginRegistry);
 }
 
-SkyConnectIntf *SkyConnectManager::getCurrentSkyConnect() const noexcept
+std::optional<std::reference_wrapper<SkyConnectIntf>> SkyConnectManager::getCurrentSkyConnect() const noexcept
 {
     QObject *plugin = d->pluginLoader->instance();
-    return qobject_cast<SkyConnectIntf *>(plugin);
+    if (plugin != nullptr) {
+        return std::optional<std::reference_wrapper<SkyConnectIntf>>{*(static_cast<SkyConnectIntf *>(plugin))};
+    } else {
+        return {};
+    }
 }
 
-bool SkyConnectManager::setCurrentSkyConnect(const QUuid &uuid) noexcept
+bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
 {
     bool ok;
     if (d->pluginRegistry.contains(uuid)) {
@@ -141,17 +146,17 @@ bool SkyConnectManager::setCurrentSkyConnect(const QUuid &uuid) noexcept
 SkyConnectManager::~SkyConnectManager() noexcept
 {
 #ifdef DEBUG
-    qDebug("SkyManager::~SkyManager: DELETED");
+    qDebug("skyConnectManager::~skyConnectManager: DELETED");
 #endif
 }
 
 // PRIVATE
 
 SkyConnectManager::SkyConnectManager() noexcept
-    : d(std::make_unique<SkyManagerPrivate>(this))
+    : d(std::make_unique<skyConnectManagerPrivate>(this))
 {
 #ifdef DEBUG
-    qDebug("SkyManager::SkyManager: CREATED");
+    qDebug("skyConnectManager::skyConnectManager: CREATED");
 #endif
 }
 
@@ -171,7 +176,10 @@ std::vector<SkyConnectManager::Handle> SkyConnectManager::enumeratePlugins(const
                 const QJsonObject pluginMetaData = metaData.value("MetaData").toObject();
                 const QUuid uuid = pluginMetaData.value(PluginUuidKey).toString();
                 const QString pluginName = pluginMetaData.value(PluginNameKey).toString();
-                const Handle handle = {uuid, pluginName};
+                const QString flightSimulatorName = pluginMetaData.value(PluginFlightSimulatorNameKey).toString();
+                const FlightSimulator::Id flightSimulatorId = FlightSimulator::nameToId(flightSimulatorName);
+                SkyConnectPlugin plugin = {pluginName, flightSimulatorId};
+                const Handle handle = {uuid, plugin};
                 pluginHandles.push_back(handle);
                 pluginRegistry.insert(uuid, pluginPath);
             }

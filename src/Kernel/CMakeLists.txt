@@ -24,6 +24,8 @@ target_sources(Kernel
         src/Settings.h
         src/Replay.h
         src/Convert.h
+        src/FlightSimulator.cpp
+        src/FlightSimulator.h
 )
 
 set(KERNEL_LIBS

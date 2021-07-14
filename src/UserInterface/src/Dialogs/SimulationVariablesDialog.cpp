@@ -132,8 +132,8 @@ void SimulationVariablesDialog::updateUi() noexcept
 void SimulationVariablesDialog::updateTitle() noexcept
 {
     QString windowTitle = SimulationVariablesDialogPrivate::WindowTitle;
-    const SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    const Connect::State state = skyConnect != nullptr ? skyConnect->getState() : Connect::State::Disconnected;
+    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const Connect::State state = skyConnect ? skyConnect->get().getState() : Connect::State::Disconnected;
     switch (state) {
     case Connect::State::Recording:
         windowTitle.append(" - " + tr("RECORDING"));

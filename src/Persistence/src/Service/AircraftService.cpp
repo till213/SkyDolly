@@ -82,15 +82,15 @@ bool AircraftService::deleteByIndex(int index) noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
 
     Aircraft &aircraft = flight[index];
-    SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        skyConnect->destroyAIObject(aircraft);
+    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
+        skyConnect->get().destroyAIObject(aircraft);
     }
     const qint64 aircraftId = flight.deleteAircraftByIndex(index);
-    if (skyConnect != nullptr) {
+    if (skyConnect) {
         const bool userAircraftRemoved = flight.getUserAircraftIndex() == index;
         if (userAircraftRemoved) {
-            skyConnect->updateUserAircraft();
+            skyConnect->get().updateUserAircraft();
         }
     }
     bool ok;

@@ -29,6 +29,7 @@
 
 #include <QObject>
 #include <QSettings>
+#include <QUuid>
 
 class QByteArray;
 
@@ -74,8 +75,26 @@ public:
      *
      * \param logbookPath
      *        the path of the logbook
+     * \sa logbookPathChanged
      */
     void setLogbookPath(const QString &logbookPath) noexcept;
+
+    /*!
+     * Returns the SkyConnect plugin UUID: an attempt to instantiate and use this plugin
+     * is made upon application launch.
+     *
+     * \return the UUID of the last used SkyConnect plugin
+     */
+    QUuid getSkyConnectPluginUuid() const noexcept;
+
+    /*!
+     * Sets the SkyConnect plugin UUID.
+     *
+     * \param uuid
+     *        the UUID of the SkyConnect plugin
+     * \sa skyConnectPluginUuidChanged
+     */
+    void setSkyConnectPluginUuid(QUuid uuid) noexcept;
 
     /*!
      * Returns the recording sample rate enumeration value.
@@ -96,7 +115,7 @@ public:
      *
      * \param sampleRate
      *        the SampleRate#SampleRate enumeration value
-     * \sa recordingSampleRateChanged()
+     * \sa recordingSampleRateChanged
      */
     void setRecordingSampleRate(SampleRate::SampleRate sampleRate) noexcept;
 
@@ -114,7 +133,7 @@ public:
      * \param enable
      *        \c true in order to keep the application windoww in the foreground;
      *        \c false to enable default window behaviour
-     * \sa stayOnTopChanged()
+     * \sa stayOnTopChanged
      */
     void setWindowStaysOnTopEnabled(bool enable) noexcept;
 
@@ -132,7 +151,7 @@ public:
      * \param enable
      *        \c true in order to show the minimal UI;
      *        \c false in order to show the normal UI;
-     * \sa minimalUiChanged()
+     * \sa minimalUiChanged
      */
     void setMinimalUiEnabled(bool enable) noexcept;
 
@@ -150,7 +169,7 @@ public:
      * \param enable
      *        \c true in order to show the module selector
      *        \c false in order to hide the module selector
-     * \sa moduleSelectorVisibilityChanged()
+     * \sa moduleSelectorVisibilityChanged
      */
     void setModuleSelectorVisible(bool enable) noexcept;
 
@@ -196,7 +215,7 @@ public:
      *
      * \param exportPath
      *        the path of the last export / import directory
-     * \sa exportPathChanged()
+     * \sa exportPathChanged
      */
     void setExportPath(QString exportPath);
 
@@ -213,7 +232,7 @@ public:
      * \param enable
      *        set to \c true in order to set the seek interval as an absolute value; \c false to
      *        set the seek interval as relative value (in percent of the duration)
-     * \sa absoluteSeekEnabledChanged()
+     * \sa absoluteSeekEnabledChanged
      */
     void setAbsoluteSeekEnabled(bool enable) noexcept;
 
@@ -229,7 +248,7 @@ public:
      *
      * \param seconds
      *        the absolute seek interval in seconds
-     * \sa seekIntervalSecondsChanged()
+     * \sa seekIntervalSecondsChanged
      */
     void setSeekIntervalSeconds(double seconds) noexcept;
 
@@ -302,7 +321,7 @@ public:
      * \param enable
      *        set to \c true in order to enable value repeat;
      *        \c false else
-     * \sa repeatCanopyChanged()
+     * \sa repeatCanopyChanged
      */
     void setRepeatCanopyOpenEnabled(bool enable) noexcept;
 
@@ -366,7 +385,7 @@ public slots:
      * Restores these Settings from a user configuration file. If no user
      * configuration is present the settings are set to default values.
      *
-     * \sa #changed()
+     * \sa #changed
      */
     void restore() noexcept;
 
@@ -374,84 +393,91 @@ signals:
     /*!
      * Emitted when the logbook directory path has changed.
      *
-     * \sa changed()
+     * \sa changed
      */
     void logbookPathChanged(const QString &logbookPath);
 
     /*!
+     * Emitted when the SkyConnect plugin UUID has changed.
+     *
+     * \sa changed
+     */
+    void skyConnectPluginUuidChanged(QUuid uuid);
+
+    /*!
      * Emitted when the record sample rate has changed.
      *
-     * \sa changed()
+     * \sa changed
      */
     void recordingSampleRateChanged(SampleRate::SampleRate sampleRate);
 
     /*!
      * Emitted when the stay on top option has changed.
      *
-     * \sa changed()
+     * \sa changed
      */
     void stayOnTopChanged(bool enable);
 
     /*!
      * Emitted when the minimal user interface option has changed.
      *
-     * \sa changed()
+     * \sa changed
      */
     void minimalUiChanged(bool enable);
 
     /*!
      * Emitted when the module selector visibility has changed.
      *
-     * \sa changed()
+     * \sa changed
      */
     void moduleSelectorVisibilityChanged(bool enable);
 
     /*!
      * Emitted when the export path has changed.
      *
-     * \sa changed()
+     * \sa changed
      */
     void exportPathChanged(const QString &exportPath);
 
     /*!
      * Emitted when the absolute/relative seek setting has changed.
      *
-     * \sa changed()
+     * \sa changed
      */
     void absoluteSeekEnabledChanged(bool enabled);
 
     /*!
      * Emitted when the seek interval in secondshas changed.
      *
-     * \sa changed()
+     * \sa changed
      */
     void seekIntervalSecondsChanged(double seconds);
 
     /*!
      * Emitted when the seek interval in percent has changed.
      *
-     * \sa changed()
+     * \sa changed
      */
     void seekIntervalPercentChanged(double percent);
 
     /*!
      * Emitted when the replay speed unit has changed.
      *
-     * \sa changed()
+     * \sa changed
      */
     void replaySpeedUnitChanged(Replay::SpeedUnit replaySpeedUnit);
 
     /*!
      * Emitted when the repeat flaps position has changed.
      *
-     * \sa changed()
+     * \sa changed
      */
     void repeatFlapsPositionChanged(bool enable);
 
     /*!
      * Emitted when the repeat canopy has changed.
      *
-     * \sa changed()
+     * \sa changed
      */
     void repeatCanopyChanged(bool enable);
 
