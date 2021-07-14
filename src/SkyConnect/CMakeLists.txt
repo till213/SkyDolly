@@ -20,7 +20,7 @@ target_sources(SkyConnect
 set(SKYCONNECT_LIBS
     Qt${QT_VERSION_MAJOR}::Core Kernel Model
 )
-if (APPLE)
+if (${PLATFORM_IS_MACOS})
     list(APPEND SKYCONNECT_LIBS -lc++)
 endif()
 

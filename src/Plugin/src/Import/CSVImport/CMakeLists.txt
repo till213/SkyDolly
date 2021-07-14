@@ -20,7 +20,7 @@ target_sources(CSVImport
 set(PLUGIN_LIBS
     Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Plugin Persistence
 )
-if (APPLE)
+if (${PLATFORM_IS_MACOS})
     list(APPEND PLUGIN_LIBS -lc++)
 endif()
 

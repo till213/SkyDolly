@@ -13,7 +13,7 @@ endif()
 set(MODULE_LIBS
     Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence SkyConnect Plugin tsl::ordered_map
 )
-if (APPLE)
+if (${PLATFORM_IS_MACOS})
     list(APPEND MODULE_LIBS -lc++)
 endif()
 

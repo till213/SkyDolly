@@ -28,10 +28,27 @@ target_sources(Kernel
         src/FlightSimulator.h
 )
 
+if (${PLATFORM_IS_WINDOWS})
+    target_sources(Kernel
+        PRIVATE
+            src/FlightSimulator_Windows.cpp
+    )
+elseif (${PLATFORM_IS_MACOS})
+    target_sources(Kernel
+        PRIVATE
+            src/FlightSimulator_macOS.cpp
+    )
+elseif (${PLATFORM_IS_LINUX})
+    target_sources(Kernel
+        PRIVATE
+            src/FlightSimulator_Linux.cpp
+    )
+endif()
+
 set(KERNEL_LIBS
     Qt${QT_VERSION_MAJOR}::Core
 )
-if (APPLE)
+if (${PLATFORM_IS_MACOS})
     list(APPEND KERNEL_LIBS -lc++)
 endif()
 
