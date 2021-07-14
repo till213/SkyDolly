@@ -133,7 +133,7 @@ if (${PLATFORM_IS_MACOS})
     target_sources(SkyDolly PUBLIC ${BUNDLE_IMPORT_PLUGINS})
     set_property(
         SOURCE ${BUNDLE_IMPORT_PLUGINS}
-        PROPERTY MACOSX_PACKAGE_LOCATION "PlugIns/connect"
+        PROPERTY MACOSX_PACKAGE_LOCATION "PlugIns/Connect"
     )
 
     # Import plugins

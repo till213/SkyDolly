@@ -66,6 +66,7 @@ public:
     typedef std::pair<QUuid, SkyConnectPlugin> Handle;
     const std::vector<Handle> &initialisePlugins() noexcept;
     const std::vector<Handle> &availablePlugins() const noexcept;
+    bool hasPlugins() const noexcept;
 
     std::optional<std::reference_wrapper<SkyConnectIntf>> getCurrentSkyConnect() const noexcept;
 

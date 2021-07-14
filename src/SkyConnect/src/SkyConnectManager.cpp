@@ -112,6 +112,11 @@ const std::vector<SkyConnectManager::Handle> &SkyConnectManager::availablePlugin
     return d->pluginHandles;
 }
 
+bool SkyConnectManager::hasPlugins() const noexcept
+{
+    return d->pluginRegistry.size() > 0;
+}
+
 std::optional<std::reference_wrapper<SkyConnectIntf>> SkyConnectManager::getCurrentSkyConnect() const noexcept
 {
     QObject *plugin = d->pluginLoader->instance();

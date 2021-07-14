@@ -697,7 +697,6 @@ void MainWindow::initSkyConnectPlugin() noexcept
     } else {
         QMessageBox::warning(this, tr("No valid connection plugin found"), tr("No valid connection plugin has been found in the plugin directory! Sky Dolly will launch with reduced functionality."));
     }
-
 }
 
 void MainWindow::updateMinimalUi(bool enabled)
@@ -935,7 +934,10 @@ void MainWindow::updateControlUi() noexcept
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();
     const bool hasRecording = aircraft.hasRecording();
-    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+
+    const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    const bool hasSkyConnectPlugins = skyConnectManager.hasPlugins();
+    const auto skyConnect = skyConnectManager.getCurrentSkyConnect();
     const Connect::State state = skyConnect ? skyConnect->get().getState() : Connect::State::Disconnected;
     switch (state) {
     case Connect::State::Disconnected:
@@ -943,21 +945,21 @@ void MainWindow::updateControlUi() noexcept
         // attempt is made, so we enable the same elements as in connected state
     case Connect::State::Connected:
         // Actions
-        ui->recordAction->setEnabled(d->connectedWithLogbook);
+        ui->recordAction->setEnabled(d->connectedWithLogbook && hasSkyConnectPlugins);
         ui->recordAction->setChecked(false);
         ui->stopAction->setEnabled(false);
         ui->pauseAction->setEnabled(false);
         ui->pauseAction->setChecked(false);
-        ui->playAction->setEnabled(hasRecording);
+        ui->playAction->setEnabled(hasRecording && hasSkyConnectPlugins);
         ui->playAction->setChecked(false);
         // Transport
-        ui->skipToBeginAction->setEnabled(hasRecording);
-        ui->backwardAction->setEnabled(hasRecording);
-        ui->forwardAction->setEnabled(hasRecording);
-        ui->skipToEndAction->setEnabled(hasRecording);
+        ui->skipToBeginAction->setEnabled(hasRecording && hasSkyConnectPlugins);
+        ui->backwardAction->setEnabled(hasRecording && hasSkyConnectPlugins);
+        ui->forwardAction->setEnabled(hasRecording && hasSkyConnectPlugins);
+        ui->skipToEndAction->setEnabled(hasRecording && hasSkyConnectPlugins);
         // Position
-        ui->positionSlider->setEnabled(hasRecording);
-        ui->timestampTimeEdit->setEnabled(hasRecording);
+        ui->positionSlider->setEnabled(hasRecording && hasSkyConnectPlugins);
+        ui->timestampTimeEdit->setEnabled(hasRecording && hasSkyConnectPlugins);
         break;
     case Connect::State::Recording:
         // Actions
