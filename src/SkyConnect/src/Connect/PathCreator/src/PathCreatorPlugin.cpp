@@ -85,6 +85,9 @@ PathCreatorPlugin::PathCreatorPlugin(QObject *parent) noexcept
       d(std::make_unique<PathCreatorPluginPrivate>())
 {
     frenchConnection();
+#ifdef DEBUG
+    qDebug("PathCreatorPlugin::PathCreatorPlugin: CREATED");
+#endif
 }
 
 PathCreatorPlugin::~PathCreatorPlugin() noexcept
