@@ -31,6 +31,10 @@ create table metadata (
 insert into metadata (creation_date, backup_interval_id)
 values (datetime('now'), 3);
 
+@migr(id = "6afa06c3-3a6c-4a27-a3df-58be6bbe0893", descn = "Update application version to 0.6", step = 1)
+update metadata
+set app_version = '0.6.0';
+
 @migr(id = "da30cf74-c698-4a73-bad1-c1cf3f380f32", descn = "Create flight table", step_cnt = 1)
 create table flight (
     id integer primary key,
@@ -199,6 +203,10 @@ alter table flight add column user_aircraft_seq_nr integer;
 @migr(id = "6c6aac3b-1b85-4bec-9477-d300c4cbccbf", descn = "Set first aircraft as user aircraft", step = 2)
 update flight
 set    user_aircraft_seq_nr = 1;
+
+@migr(id = "804503b9-61a3-40e9-b06e-9a9e3d5b4740", descn = "Update application version to 0.7", step = 1)
+update metadata
+set app_version = '0.7.0';
 
 @migr(id = "91c45e15-a72d-499e-8b85-eebe6a86da32", descn = "Adjust engine table column types", step_cnt = 2)
 create table engine_new (
