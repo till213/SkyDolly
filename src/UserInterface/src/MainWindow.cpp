@@ -629,12 +629,6 @@ void MainWindow::initSkyConnectPlugin() noexcept
     Settings &settings = Settings::getInstance();
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     std::vector<SkyConnectManager::Handle> skyConnectPlugins = skyConnectManager.enumeratePlugins();
-    // TOOD IMPLEMENT ME
-    // - Use settings
-    // - Initialise with preference to flight simulator (add "capabilities" to plugin handle)
-    // - Maybe even guesstimate running flight simulator:
-    //   https://docs.microsoft.com/de-de/windows/win32/psapi/enumerating-all-processes?redirectedfrom=MSDN
-
 
     QUuid uuid = settings.getSkyConnectPluginUuid();
     // Try to load plugin as stored in the settings
