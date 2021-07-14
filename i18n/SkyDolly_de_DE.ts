@@ -1284,80 +1284,80 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="704"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="698"/>
         <source>No valid connection plugin found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="704"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="698"/>
         <source>No valid connection plugin has been found in the plugin directory! Sky Dolly will launch with reduced functionality.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1045"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1039"/>
         <source>Custom replay speed factor in [%L1, %L2]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1049"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1043"/>
         <source>Custom replay speed % in [%L1%, %L2%]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1125"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1119"/>
         <source>Record [@%1 Hz]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1127"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1121"/>
         <source>Record [auto sample rate]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1132"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1126"/>
         <source>Fast forward [%1 sec]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1133"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1127"/>
         <source>Rewind [%1 sec]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1136"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1130"/>
         <source>Fast forward [%1 %]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1137"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1131"/>
         <source>Rewind [%1 %]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1165"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1176"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1185"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1193"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1159"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1170"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1179"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1187"/>
         <source>Database error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1165"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1159"/>
         <source>The logbook %1 could not be created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1176"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1170"/>
         <source>The logbook %1 could not be opened.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1185"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1179"/>
         <source>The logbook backup could not be created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1193"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1187"/>
         <source>The logbook could not be optimised.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1455,141 +1455,151 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="24"/>
-        <source>Replay</source>
+        <source>Flight Simulator</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="30"/>
+        <source>Connection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="48"/>
+        <source>Replay</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="54"/>
         <source>Seek</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="36"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="60"/>
         <source>Absolute [Seconds]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="43"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="67"/>
         <source>Seconds</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="53"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="77"/>
         <source>Percent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="79"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="103"/>
         <source>Repeat Values</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="85"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="109"/>
         <source>Flaps Position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="92"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="116"/>
         <source>Canopy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="105"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="129"/>
         <source>The optimal settings are to disable all &quot;repeat&quot; options. But if e.g. the canopy closes automatically when it should remain open then enabling the corresponding &quot;Canopy&quot; option will keep the canopy open, by repeatedly sending the same value.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="132"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="156"/>
         <source>Recording</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="138"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="162"/>
         <source>Recording Frequency</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="156"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="180"/>
         <source>User Interface</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="162"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="186"/>
         <source>Confirmation Messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="168"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="192"/>
         <source>Delete Flight</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="175"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.ui" line="199"/>
         <source>Delete Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="84"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="88"/>
         <source>Auto</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="85"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="89"/>
         <source>1 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="86"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="90"/>
         <source>2 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="87"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="91"/>
         <source>5 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="88"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="92"/>
         <source>10 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="89"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="93"/>
         <source>15 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="90"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="94"/>
         <source>20 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="91"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="95"/>
         <source>24 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="92"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="96"/>
         <source>25 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="93"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="97"/>
         <source>30 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="94"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="98"/>
         <source>45 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="95"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="99"/>
         <source>50 Hz</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="96"/>
+        <location filename="../src/UserInterface/src/Dialogs/SettingsDialog.cpp" line="100"/>
         <source>60 Hz</source>
         <translation type="unfinished"></translation>
     </message>

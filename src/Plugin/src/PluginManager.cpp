@@ -40,12 +40,12 @@
 
 namespace
 {
-    constexpr char ExportDirectoryName[] = "export";
-    constexpr char ImportDirectoryName[] = "import";
+    constexpr char ExportDirectoryName[] = "Export";
+    constexpr char ImportDirectoryName[] = "Import";
 #if defined(Q_OS_MAC)
     constexpr char PluginDirectoryName[] = "PlugIns";
 #else
-    constexpr char PluginDirectoryName[] = "plugins";
+    constexpr char PluginDirectoryName[] = "Plugins";
 #endif
     constexpr char PluginUuidKey[] = "uuid";
     constexpr char PluginNameKey[] = "name";
@@ -103,12 +103,12 @@ void PluginManager::initialise(QWidget *parentWidget)
     d->parentWidget = parentWidget;
 }
 
-std::vector<PluginManager::Handle> PluginManager::enumerateExportPlugins() noexcept
+std::vector<PluginManager::Handle> PluginManager::initialiseExportPlugins() noexcept
 {
     return enumeratePlugins(ExportDirectoryName, d->exportPluginRegistry);
 }
 
-std::vector<PluginManager::Handle> PluginManager::enumerateImportPlugins() noexcept
+std::vector<PluginManager::Handle> PluginManager::initialiseImportPlugins() noexcept
 {
     return enumeratePlugins(ImportDirectoryName, d->importPluginRegistry);
 }
