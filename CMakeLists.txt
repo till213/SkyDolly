@@ -21,6 +21,14 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+# Platform identifiers
+
+# https://gitlab.kitware.com/cmake/community/-/wikis/doc/tutorials/How-To-Write-Platform-Checks
+string(COMPARE EQUAL "Windows" ${CMAKE_SYSTEM_NAME} PLATFORM_IS_WINDOWS)
+string(COMPARE EQUAL "Darwin" ${CMAKE_SYSTEM_NAME} PLATFORM_IS_MACOS)
+string(COMPARE EQUAL "Linux" ${CMAKE_SYSTEM_NAME} PLATFORM_IS_LINUX)
+message(STATUS PLATFORM="${CMAKE_SYSTEM_NAME}")
+
 # Definitions
 
 # Debug output
@@ -64,7 +72,7 @@ set(OTHER_SOURCES
 )
 
 # Resource file (*.rc)
-if (WIN32)
+if (${PLATFORM_IS_WINDOWS})
     configure_file(${PROJECT_SOURCE_DIR}/res/SkyDolly.rc.in
                    ${PROJECT_SOURCE_DIR}/res/SkyDolly.rc @ONLY)
     add_library(resources OBJECT ${PROJECT_SOURCE_DIR}/res/SkyDolly.rc)
@@ -72,9 +80,9 @@ if (WIN32)
     set(RESOURCES $<TARGET_OBJECTS:resources>)
 endif()
 
-if(WIN32)
+if (${PLATFORM_IS_WINDOWS})
     set(SKYDOLLY_PLATFORM WIN32)
-elseif(APPLE)
+elseif (${PLATFORM_IS_MACOS})
     set(SKYDOLLY_PLATFORM MACOSX_BUNDLE)
 endif()
 
@@ -95,7 +103,7 @@ endif()
 set(SKYDOLLY_LIBS
     Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence SkyConnect Plugin UserInterface
 )
-if (APPLE)
+if (${PLATFORM_IS_MACOS})
     list(APPEND SKYDOLLY_LIBS -lc++)
     set_target_properties(SkyDolly PROPERTIES
                           MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/res/Info.plist.in")
@@ -117,7 +125,7 @@ target_link_libraries(SkyDolly PRIVATE ${SKYDOLLY_LIBS})
 message(STATUS OUTPUT_NAME=${PROJECT_NAME})
 
 # macOS: copy plugins into app bundle
-if (APPLE)
+if (${PLATFORM_IS_MACOS})
 
     # Connect plugins
     file(GLOB BUNDLE_IMPORT_PLUGINS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins/connect/*")

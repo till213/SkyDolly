@@ -22,48 +22,17 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTSIMULATOR_H
-#define FLIGHTSIMULATOR_H
 
-#include <QString>
+#include "FlightSimulator.h"
 
-#include "KernelLib.h"
-
-class KERNEL_API FlightSimulator
+bool FlightSimulator::isRunning(Id id) noexcept
 {
-public:
-    FlightSimulator();
+    // TODO IMPLEMENT ME
+    return false;
+}
 
-    enum class Id {
-        None,
-        All,
-        FS2020,
-        Prepar3Dv5
-    };
-
-    static const char FlightSimulatorNameAll[];
-    static const char FlightSimulatorNameFS2020[];
-    static const char FlightSimulatorNamePrepar3Dv5[];
-
-    static inline Id nameToId(const QString &name) noexcept {
-        Id id;
-        if (name == QString(FlightSimulatorNameAll)) {
-            id = Id::All;
-        } else if (name == QString(FlightSimulatorNameFS2020)) {
-            id = Id::FS2020;
-        } else if (name == QString(FlightSimulatorNamePrepar3Dv5)) {
-            id = Id::Prepar3Dv5;
-        } else {
-            id = Id::None;
-        }
-        return id;
-    }
-
-    static bool isRunning(Id id) noexcept;
-    static bool isInstalled(Id id) noexcept;
-
-private:
-    static bool isFS2020Installed() noexcept;
-};
-
-#endif // FLIGHTSIMULATOR_H
+bool FlightSimulator::isInstalled(Id id) noexcept
+{
+    // TODO IMPLEMENT ME
+    return false;
+}

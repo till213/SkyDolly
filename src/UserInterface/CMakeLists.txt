@@ -13,7 +13,7 @@ endif()
 set(USERINTERFACE_LIBS
     Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence SkyConnect Module Plugin
 )
-if (APPLE)
+if (${PLATFORM_IS_MACOS})
     list(APPEND USERINTERFACE_LIBS -lc++)
 endif()
 

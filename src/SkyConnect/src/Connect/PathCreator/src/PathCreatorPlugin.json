@@ -1,4 +1,5 @@
 {
     "uuid": "90064498-8afc-45c4-9c0f-30f2d113232d",
-    "name": "Path Creator"
+    "name": "Path Creator",
+    "flightSimulator": "All"
 }
