@@ -270,6 +270,52 @@ MIT License</source>
     </message>
 </context>
 <context>
+    <name>CSVExportPlugin</name>
+    <message>
+        <location filename="../src/Plugin/src/Export/CSVExport/src/CSVExportPlugin.cpp" line="75"/>
+        <source>Export CSV</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugin/src/Export/CSVExport/src/CSVExportPlugin.cpp" line="202"/>
+        <source>Export error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugin/src/Export/CSVExport/src/CSVExportPlugin.cpp" line="202"/>
+        <source>The CSV file %1 could not be written.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CSVImportPlugin</name>
+    <message>
+        <location filename="../src/Plugin/src/Import/CSVImport/src/CSVImportPlugin.cpp" line="81"/>
+        <source>Import CSV</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugin/src/Import/CSVImport/src/CSVImportPlugin.cpp" line="175"/>
+        <source>CSV import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugin/src/Import/CSVImport/src/CSVImportPlugin.cpp" line="176"/>
+        <source>Aircraft imported on %1 from file: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugin/src/Import/CSVImport/src/CSVImportPlugin.cpp" line="186"/>
+        <source>Import error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugin/src/Import/CSVImport/src/CSVImportPlugin.cpp" line="186"/>
+        <source>The CSV file %1 could not be read.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>DatabaseService</name>
     <message>
         <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="86"/>
@@ -708,6 +754,24 @@ MIT License</source>
     <message>
         <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="646"/>
         <source>Keep</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>KMLExportPlugin</name>
+    <message>
+        <location filename="../src/Plugin/src/Export/KMLExport/src/KMLExportPlugin.cpp" line="64"/>
+        <source>Export KML</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugin/src/Export/KMLExport/src/KMLExportPlugin.cpp" line="93"/>
+        <source>Export error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Plugin/src/Export/KMLExport/src/KMLExportPlugin.cpp" line="93"/>
+        <source>The KML file %1 could not be written.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1200,100 +1264,100 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="407"/>
-        <source>No connetion plugin found</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="407"/>
-        <source>No connection plugin has been found in the plugin directory! Sky Dolly will launch with reduced functionality.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="510"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="494"/>
         <source>Normal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="530"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="514"/>
         <source>Custom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="626"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="610"/>
         <source>Factor [f]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="627"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="611"/>
         <source>Percent [%]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="979"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="656"/>
+        <source>No valid connection plugin found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="656"/>
+        <source>No valid connection plugin has been found in the plugin directory! Sky Dolly will launch with reduced functionality.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="997"/>
         <source>Custom replay speed factor in [%L1, %L2]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="983"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1001"/>
         <source>Custom replay speed % in [%L1%, %L2%]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1059"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1077"/>
         <source>Record [@%1 Hz]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1061"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1079"/>
         <source>Record [auto sample rate]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1066"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1084"/>
         <source>Fast forward [%1 sec]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1067"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1085"/>
         <source>Rewind [%1 sec]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1070"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1088"/>
         <source>Fast forward [%1 %]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1071"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1089"/>
         <source>Rewind [%1 %]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1099"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1110"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1119"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1127"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1117"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1128"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1137"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1145"/>
         <source>Database error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1099"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1117"/>
         <source>The logbook %1 could not be created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1110"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1128"/>
         <source>The logbook %1 could not be opened.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1119"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1137"/>
         <source>The logbook backup could not be created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1127"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1145"/>
         <source>The logbook could not be optimised.</source>
         <translation type="unfinished"></translation>
     </message>

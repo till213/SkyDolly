@@ -91,15 +91,15 @@ const AircraftHandleData &AircraftHandleWidget::getCurrentAircraftHandleData(qin
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
-    const SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        if (skyConnect->getState() == Connect::State::Recording) {
+    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
+        if (skyConnect->get().getState() == Connect::State::Recording) {
             return aircraft.getAircraftHandleConst().getLast();
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
                 return aircraft.getAircraftHandleConst().interpolate(timestamp, access);
             } else {
-                return aircraft.getAircraftHandleConst().interpolate(skyConnect->getCurrentTimestamp(), access);
+                return aircraft.getAircraftHandleConst().interpolate(skyConnect->get().getCurrentTimestamp(), access);
             }
         };
     } else {
