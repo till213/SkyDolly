@@ -283,8 +283,8 @@ void FormationWidget::initUi() noexcept
     ui->nwPositionRadioButton->setStyleSheet(css);
     ui->nnwPositionRadioButton->setStyleSheet(css);
 
-    const SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    ui->manualUserAircraftCheckBox->setChecked(skyConnect != nullptr && skyConnect->isUserAircraftManualControl());
+    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    ui->manualUserAircraftCheckBox->setChecked(skyConnect && skyConnect->get().isUserAircraftManualControl());
 }
 
 void FormationWidget::frenchConnection() noexcept
@@ -362,8 +362,8 @@ void FormationWidget::updateUi() noexcept
     ui->aircraftTableWidget->setRowCount(flight.count());
     int rowIndex = 0;
     const int userAircraftIndex = flight.getUserAircraftIndex();
-    const SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    const bool recording = skyConnect != nullptr && skyConnect->isRecording();
+    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const bool recording = skyConnect && skyConnect->get().isRecording();
     const QString tooltip = tr("Double-click to change user aircraft");
     for (const auto &aircraft : flight) {
 
@@ -439,8 +439,8 @@ void FormationWidget::updateUi() noexcept
 
 void FormationWidget::updateEditUi() noexcept
 {
-    const SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    const bool inRecordingMode = skyConnect != nullptr && skyConnect->inRecordingMode();
+    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const bool inRecordingMode = skyConnect && skyConnect->get().inRecordingMode();
     const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
     bool userAircraftIndex = d->selectedAircraftIndex == flight.getUserAircraftIndex();
     ui->userAircraftPushButton->setEnabled(d->selectedAircraftIndex != Flight::InvalidId && !userAircraftIndex);
@@ -578,9 +578,9 @@ void FormationWidget::updateInitialPosition() noexcept
         initialPosition.longitude = initial.second;
         initialPosition.altitude = altitude;
         initialPosition.fromAircraftInfo(aircraftInfo);
-        SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-        if (skyConnect != nullptr) {
-            skyConnect->setInitialRecordingPosition(initialPosition);
+        auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+        if (skyConnect) {
+            skyConnect->get().setInitialRecordingPosition(initialPosition);
         }
     }
 }
@@ -675,8 +675,8 @@ void FormationWidget::on_verticalDistanceSlider_valueChanged(int value) noexcept
 
 void FormationWidget::on_manualUserAircraftCheckBox_toggled(bool enable) noexcept
 {
-    SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        skyConnect->setUserAircraftManualControl(enable);
+    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
+        skyConnect->get().setUserAircraftManualControl(enable);
     }
 }

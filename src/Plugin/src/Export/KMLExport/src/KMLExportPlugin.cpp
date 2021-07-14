@@ -61,7 +61,7 @@ bool KMLExportPlugin::exportData() const noexcept
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     QString exportPath = Settings::getInstance().getExportPath();
 
-    const QString filePath = QFileDialog::getSaveFileName(getParentWidget(), tr("Export KML"), exportPath, QString("*.kml"));
+    const QString filePath = QFileDialog::getSaveFileName(getParentWidget(), QT_TRANSLATE_NOOP("KMLExportPlugin", "Export KML"), exportPath, QString("*.kml"));
     if (!filePath.isEmpty()) {
         QFile file(filePath);
         ok = file.open(QIODevice::WriteOnly);
@@ -90,7 +90,7 @@ bool KMLExportPlugin::exportData() const noexcept
             exportPath = QFileInfo(filePath).absolutePath();
             Settings::getInstance().setExportPath(exportPath);
         } else {
-            QMessageBox::critical(getParentWidget(), tr("Export error"), tr("The KML file %1 could not be written.").arg(filePath));
+            QMessageBox::critical(getParentWidget(), QT_TRANSLATE_NOOP("KMLExportPlugin", "Export error"), QString(QT_TRANSLATE_NOOP("KMLExportPlugin", "The KML file %1 could not be written.")).arg(filePath));
         }
     } else {
         ok = true;

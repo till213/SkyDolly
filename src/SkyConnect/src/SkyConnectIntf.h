@@ -110,8 +110,10 @@ signals:
     void timestampChanged(qint64 timestamp, TimeVariableData::Access access);
     void stateChanged(Connect::State state);
     void recordingStopped();
-};
 
+private:
+    Q_DISABLE_COPY(SkyConnectIntf)
+};
 
 #define SKYCONNECT_INTERFACE_IID "com.github.till213.SkyDolly.SkyConnectInterface/1.0"
 Q_DECLARE_INTERFACE(SkyConnectIntf, SKYCONNECT_INTERFACE_IID)

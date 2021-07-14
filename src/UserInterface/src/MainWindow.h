@@ -74,6 +74,7 @@ private:
     void initModuleSelectorUi() noexcept;
     void initControlUi() noexcept;
     void initReplaySpeedUi() noexcept;
+    void initSkyConnectPlugin() noexcept;
 
     void updateMinimalUi(bool enable);    
     double getCustomSpeedFactor() const;
