@@ -128,8 +128,8 @@ message(STATUS OUTPUT_NAME=${PROJECT_NAME})
 if (${PLATFORM_IS_MACOS})
 
     # Connect plugins
-    file(GLOB BUNDLE_IMPORT_PLUGINS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins/connect/*")
-    message(STATUS IMPORT_PLUGIN_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins/connect/")
+    file(GLOB BUNDLE_IMPORT_PLUGINS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Connect/*")
+    message(STATUS IMPORT_PLUGIN_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Connect/")
     target_sources(SkyDolly PUBLIC ${BUNDLE_IMPORT_PLUGINS})
     set_property(
         SOURCE ${BUNDLE_IMPORT_PLUGINS}
@@ -137,21 +137,21 @@ if (${PLATFORM_IS_MACOS})
     )
 
     # Import plugins
-    file(GLOB BUNDLE_IMPORT_PLUGINS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins/import/*")
-    message(STATUS IMPORT_PLUGIN_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins/import/")
+    file(GLOB BUNDLE_IMPORT_PLUGINS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Import/*")
+    message(STATUS IMPORT_PLUGIN_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Import/")
     target_sources(SkyDolly PUBLIC ${BUNDLE_IMPORT_PLUGINS})
     set_property(
         SOURCE ${BUNDLE_IMPORT_PLUGINS}
-        PROPERTY MACOSX_PACKAGE_LOCATION "PlugIns/import"
+        PROPERTY MACOSX_PACKAGE_LOCATION "PlugIns/Import"
     )
 
     # Export
-    file(GLOB BUNDLE_EXPORT_PLUGINS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins/export/*")
-    message(STATUS EXPORT_PLUGIN_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins/export/")
+    file(GLOB BUNDLE_EXPORT_PLUGINS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Export/*")
+    message(STATUS EXPORT_PLUGIN_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Export/")
     target_sources(SkyDolly PUBLIC ${BUNDLE_EXPORT_PLUGINS})
     set_property(
         SOURCE ${BUNDLE_EXPORT_PLUGINS}
-        PROPERTY MACOSX_PACKAGE_LOCATION "PlugIns/export"
+        PROPERTY MACOSX_PACKAGE_LOCATION "PlugIns/Export"
     )
 endif()
 
