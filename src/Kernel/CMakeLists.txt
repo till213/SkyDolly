@@ -29,6 +29,8 @@ target_sources(Kernel
 )
 
 if (${PLATFORM_IS_WINDOWS})
+    # https://docs.microsoft.com/en-us/windows/win32/psapi/enumerating-all-processes
+    add_definitions(-DPSAPI_VERSION=1)
     target_sources(Kernel
         PRIVATE
             src/FlightSimulator_Windows.cpp
@@ -48,7 +50,10 @@ endif()
 set(KERNEL_LIBS
     Qt${QT_VERSION_MAJOR}::Core
 )
-if (${PLATFORM_IS_MACOS})
+if (${PLATFORM_IS_WINDOWS})
+    find_library (PSAPI psapi)
+    list(APPEND KERNEL_LIBS -lpsapi)
+elseif (${PLATFORM_IS_MACOS})
     list(APPEND KERNEL_LIBS -lc++)
 endif()
 
