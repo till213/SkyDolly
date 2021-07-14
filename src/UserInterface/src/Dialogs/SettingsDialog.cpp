@@ -32,6 +32,7 @@
 #include "../../../Kernel/src/Enum.h"
 #include "../../../Kernel/src/Settings.h"
 #include "../../../Model/src/SimVar.h"
+#include "../../../SkyConnect/src/SkyConnectManager.h"
 #include "SettingsDialog.h"
 #include "ui_SettingsDialog.h"
 
@@ -79,6 +80,13 @@ void SettingsDialog::initUi() noexcept
 {
     Qt::WindowFlags flags = Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
     setWindowFlags(flags);
+
+    // Flight Simulator
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    std::vector<SkyConnectManager::Handle> plugins = skyConnectManager.availablePlugins();
+    for (auto &plugin : plugins) {
+        ui->connectionComboBox->addItem(plugin.second.name, plugin.first);
+    }
 
     // Record
     ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Auto), tr("Auto"));
@@ -142,6 +150,10 @@ void SettingsDialog::updateUi() noexcept
 void SettingsDialog::handleAccepted() noexcept
 {
     Settings &settings = Settings::getInstance();
+
+    // Flight simulator
+    const QUuid uuid = ui->connectionComboBox->currentData().toUuid();
+    settings.setSkyConnectPluginUuid(uuid);
 
     // Recording
     settings.setRecordingSampleRate(static_cast<SampleRate::SampleRate>(ui->recordFrequencyComboBox->currentIndex()));

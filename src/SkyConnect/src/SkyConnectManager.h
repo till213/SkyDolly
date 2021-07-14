@@ -37,6 +37,7 @@
 class QString;
 class QUuid;
 
+#include "../../Model/src/TimeVariableData.h"
 #include "../../Kernel/src/FlightSimulator.h"
 #include "Connect.h"
 #include "SkyConnectLib.h"
@@ -63,9 +64,12 @@ public:
      * The plugin UUID and the plugin name and capabilities.
      */
     typedef std::pair<QUuid, SkyConnectPlugin> Handle;
-    std::vector<Handle> enumeratePlugins() noexcept;
+    const std::vector<Handle> &initialisePlugins() noexcept;
+    const std::vector<Handle> &availablePlugins() const noexcept;
 
     std::optional<std::reference_wrapper<SkyConnectIntf>> getCurrentSkyConnect() const noexcept;
+
+public slots:
     bool tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept;
 
 signals:
@@ -84,7 +88,8 @@ private:
 
     SkyConnectManager() noexcept;
 
-    std::vector<Handle> enumeratePlugins(const QString &pluginDirectoryName, QMap<QUuid, QString> &plugins) noexcept;
+    void frenchConnection() noexcept;
+    void initialisePlugins(const QString &pluginDirectoryName) noexcept;
 };
 
 #endif // SKYCONNECTMANAGER_H

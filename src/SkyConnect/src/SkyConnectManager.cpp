@@ -33,16 +33,17 @@
 #include <QUuid>
 #include <QMap>
 
+#include "../../Kernel/src/Settings.h"
 #include "SkyConnectIntf.h"
 #include "SkyConnectManager.h"
 
 namespace
 {
-    constexpr char ConnectPluginDirectoryName[] = "connect";
+    constexpr char ConnectPluginDirectoryName[] = "Connect";
 #if defined(Q_OS_MAC)
     constexpr char PluginDirectoryName[] = "PlugIns";
 #else
-    constexpr char PluginDirectoryName[] = "plugins";
+    constexpr char PluginDirectoryName[] = "Plugins";
 #endif
     constexpr char PluginUuidKey[] = "uuid";
     constexpr char PluginNameKey[] = "name";
@@ -74,6 +75,7 @@ public:
     QDir pluginsDirectoryPath;
     // Plugin UUID / plugin path
     QMap<QUuid, QString> pluginRegistry;
+    std::vector<SkyConnectManager::Handle> pluginHandles;
     QPluginLoader *pluginLoader;
 
     static SkyConnectManager *instance;
@@ -99,9 +101,15 @@ void SkyConnectManager::destroyInstance() noexcept
     }
 }
 
-std::vector<SkyConnectManager::Handle> SkyConnectManager::enumeratePlugins() noexcept
+const std::vector<SkyConnectManager::Handle> &SkyConnectManager::initialisePlugins() noexcept
 {
-    return enumeratePlugins(ConnectPluginDirectoryName, d->pluginRegistry);
+    initialisePlugins(ConnectPluginDirectoryName);
+    return availablePlugins();
+}
+
+const std::vector<SkyConnectManager::Handle> &SkyConnectManager::availablePlugins() const noexcept
+{
+    return d->pluginHandles;
 }
 
 std::optional<std::reference_wrapper<SkyConnectIntf>> SkyConnectManager::getCurrentSkyConnect() const noexcept
@@ -157,15 +165,21 @@ SkyConnectManager::~SkyConnectManager() noexcept
 SkyConnectManager::SkyConnectManager() noexcept
     : d(std::make_unique<skyConnectManagerPrivate>(this))
 {
+    frenchConnection();
 #ifdef DEBUG
     qDebug("SkyConnectManager::SkyConnectManager: CREATED");
 #endif
 }
 
-std::vector<SkyConnectManager::Handle> SkyConnectManager::enumeratePlugins(const QString &pluginDirectoryName, QMap<QUuid, QString> &pluginRegistry) noexcept
+void SkyConnectManager::frenchConnection() noexcept
 {
-    std::vector<SkyConnectManager::Handle> pluginHandles;
-    pluginRegistry.clear();
+    connect(&Settings::getInstance(), &Settings::skyConnectPluginUuidChanged,
+            this, &SkyConnectManager::tryAndSetCurrentSkyConnect);
+}
+
+void SkyConnectManager::initialisePlugins(const QString &pluginDirectoryName) noexcept
+{
+    d->pluginRegistry.clear();
     if (d->pluginsDirectoryPath.exists(pluginDirectoryName)) {
         d->pluginsDirectoryPath.cd(pluginDirectoryName);
         const QStringList entryList = d->pluginsDirectoryPath.entryList(QDir::Files);
@@ -182,12 +196,10 @@ std::vector<SkyConnectManager::Handle> SkyConnectManager::enumeratePlugins(const
                 const FlightSimulator::Id flightSimulatorId = FlightSimulator::nameToId(flightSimulatorName);
                 SkyConnectPlugin plugin = {pluginName, flightSimulatorId};
                 const Handle handle = {uuid, plugin};
-                pluginHandles.push_back(handle);
-                pluginRegistry.insert(uuid, pluginPath);
+                d->pluginHandles.push_back(handle);
+                d->pluginRegistry.insert(uuid, pluginPath);
             }
         }
         d->pluginsDirectoryPath.cdUp();
     }
-
-    return pluginHandles;
 }

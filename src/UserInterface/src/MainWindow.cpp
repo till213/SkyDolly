@@ -354,7 +354,7 @@ void MainWindow::initPlugins() noexcept
     pluginManager.initialise(this);
 
     // Import
-    importPlugins = PluginManager::getInstance().enumerateImportPlugins();
+    importPlugins = PluginManager::getInstance().initialiseImportPlugins();
     d->hasImportPlugins = importPlugins.size() > 0;
     if (d->hasImportPlugins) {
         ui->importMenu->setEnabled(true);
@@ -372,7 +372,7 @@ void MainWindow::initPlugins() noexcept
     }
 
     // Export
-    exportPlugins = PluginManager::getInstance().enumerateExportPlugins();
+    exportPlugins = PluginManager::getInstance().initialiseExportPlugins();
     d->hasExportPlugins = exportPlugins.size() > 0;
     if (d->hasExportPlugins) {
         ui->exportMenu->setEnabled(true);
@@ -628,7 +628,7 @@ void MainWindow::initSkyConnectPlugin() noexcept
 {
     Settings &settings = Settings::getInstance();
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    std::vector<SkyConnectManager::Handle> skyConnectPlugins = skyConnectManager.enumeratePlugins();
+    std::vector<SkyConnectManager::Handle> skyConnectPlugins = skyConnectManager.initialisePlugins();
 
     QUuid uuid = settings.getSkyConnectPluginUuid();
     // Try to load plugin as stored in the settings
