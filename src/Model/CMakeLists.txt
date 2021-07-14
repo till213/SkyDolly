@@ -66,7 +66,7 @@ target_sources(Model
 set(MODEL_LIBS
     Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Sql Kernel
 )
-if (APPLE)
+if (${PLATFORM_IS_MACOS})
     list(APPEND MODEL_LIBS -lc++)
 endif()
 

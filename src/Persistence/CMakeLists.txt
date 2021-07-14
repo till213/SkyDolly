@@ -74,7 +74,7 @@ target_sources(${LIBRARY_NAME}
 set(LIBRARY_DEPENDENCIES
     Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Sql Kernel Model SkyConnect
 )
-if (APPLE)
+if (${PLATFORM_IS_MACOS})
     list(APPEND LIBRARY_DEPENDENCIES -lc++)
 endif()
 
