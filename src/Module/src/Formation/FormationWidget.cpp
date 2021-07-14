@@ -45,7 +45,7 @@
 #include "../../../Model/src/InitialPosition.h"
 #include "../../../Persistence/src/Service/FlightService.h"
 #include "../../../Persistence/src/Service/AircraftService.h"
-#include "../../../SkyConnect/src/SkyManager.h"
+#include "../../../SkyConnect/src/SkyConnectManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../AbstractModuleWidget.h"
 #include "FormationWidget.h"
@@ -179,11 +179,9 @@ void FormationWidget::showEvent(QShowEvent *event) noexcept
             this, &FormationWidget::handleUserAircraftChanged);
     connect(&flight, &Flight::aircraftDeleted,
             this, &FormationWidget::updateUi);
-    SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        connect(skyConnect, &SkyConnectIntf::stateChanged,
-                this, &FormationWidget::updateUi);
-    }
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    connect(&skyConnectManager, &SkyConnectManager::stateChanged,
+            this, &FormationWidget::updateUi);
 
     // Also updates the UI
     handleUserAircraftChanged(flight.getUserAircraft());
@@ -199,11 +197,9 @@ void FormationWidget::hideEvent(QHideEvent *event) noexcept
                this, &FormationWidget::handleUserAircraftChanged);
     disconnect(&flight, &Flight::aircraftDeleted,
                this, &FormationWidget::updateUi);
-    SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        disconnect(skyConnect, &SkyConnectIntf::stateChanged,
-                   this, &FormationWidget::updateUi);
-    }
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    disconnect(&skyConnectManager, &SkyConnectManager::stateChanged,
+               this, &FormationWidget::updateUi);
     QObject::disconnect(d->aircraftInfoChangedConnection);
 }
 
@@ -287,7 +283,7 @@ void FormationWidget::initUi() noexcept
     ui->nwPositionRadioButton->setStyleSheet(css);
     ui->nnwPositionRadioButton->setStyleSheet(css);
 
-    const SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    const SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     ui->manualUserAircraftCheckBox->setChecked(skyConnect != nullptr && skyConnect->isUserAircraftManualControl());
 }
 
@@ -366,7 +362,7 @@ void FormationWidget::updateUi() noexcept
     ui->aircraftTableWidget->setRowCount(flight.count());
     int rowIndex = 0;
     const int userAircraftIndex = flight.getUserAircraftIndex();
-    const SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    const SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const bool recording = skyConnect != nullptr && skyConnect->isRecording();
     const QString tooltip = tr("Double-click to change user aircraft");
     for (const auto &aircraft : flight) {
@@ -443,7 +439,7 @@ void FormationWidget::updateUi() noexcept
 
 void FormationWidget::updateEditUi() noexcept
 {
-    const SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    const SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const bool inRecordingMode = skyConnect != nullptr && skyConnect->inRecordingMode();
     const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
     bool userAircraftIndex = d->selectedAircraftIndex == flight.getUserAircraftIndex();
@@ -582,7 +578,7 @@ void FormationWidget::updateInitialPosition() noexcept
         initialPosition.longitude = initial.second;
         initialPosition.altitude = altitude;
         initialPosition.fromAircraftInfo(aircraftInfo);
-        SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+        SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
         if (skyConnect != nullptr) {
             skyConnect->setInitialRecordingPosition(initialPosition);
         }
@@ -679,7 +675,7 @@ void FormationWidget::on_verticalDistanceSlider_valueChanged(int value) noexcept
 
 void FormationWidget::on_manualUserAircraftCheckBox_toggled(bool enable) noexcept
 {
-    SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect != nullptr) {
         skyConnect->setUserAircraftManualControl(enable);
     }

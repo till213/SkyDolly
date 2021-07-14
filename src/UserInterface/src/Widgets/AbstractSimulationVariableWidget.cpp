@@ -28,7 +28,7 @@
 
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
-#include "../../../SkyConnect/src/SkyManager.h"
+#include "../../../SkyConnect/src/SkyConnectManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "AbstractSimulationVariableWidget.h"
@@ -47,11 +47,12 @@ void AbstractSimulationVariableWidget::showEvent(QShowEvent *event) noexcept
 {
     QWidget::showEvent(event);
 
-    SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    connect(&skyConnectManager, &SkyConnectManager::timestampChanged,
+            this, &AbstractSimulationVariableWidget::updateUi);
+    SkyConnectIntf *skyConnect = skyConnectManager.getCurrentSkyConnect();
+    if (skyConnect != nullptr) {
         updateUi(skyConnect->getCurrentTimestamp(), TimeVariableData::Access::Seek);
-        connect(skyConnect, &SkyConnectIntf::timestampChanged,
-                this, &AbstractSimulationVariableWidget::updateUi);
     }
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::userAircraftChanged,
@@ -62,11 +63,9 @@ void AbstractSimulationVariableWidget::hideEvent(QHideEvent *event) noexcept
 {
     QWidget::hideEvent(event);
 
-    SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        disconnect(skyConnect, &SkyConnectIntf::timestampChanged,
-                   this, &AbstractSimulationVariableWidget::updateUi);
-    }
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    disconnect(&skyConnectManager, &SkyConnectManager::timestampChanged,
+               this, &AbstractSimulationVariableWidget::updateUi);
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     disconnect(&flight, &Flight::userAircraftChanged,
                this, &AbstractSimulationVariableWidget::updateUiWithCurrentTime);
@@ -76,7 +75,7 @@ void AbstractSimulationVariableWidget::hideEvent(QHideEvent *event) noexcept
 
 void AbstractSimulationVariableWidget::updateUiWithCurrentTime() noexcept
 {
-    const SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    const SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect != nullptr) {
         updateUi(skyConnect->getCurrentTimestamp(), TimeVariableData::Access::Seek);
     }

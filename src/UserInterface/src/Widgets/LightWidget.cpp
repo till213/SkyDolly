@@ -35,7 +35,7 @@
 #include "../../../Model/src/Light.h"
 #include "../../../Model/src/LightData.h"
 #include "../../../Model/src/TimeVariableData.h"
-#include "../../../SkyConnect/src/SkyManager.h"
+#include "../../../SkyConnect/src/SkyConnectManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "LightWidget.h"
@@ -112,7 +112,7 @@ const LightData &LightWidget::getCurrentLightData(qint64 timestamp, TimeVariable
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
-    const SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    const SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect != nullptr) {
         if (skyConnect->getState() == Connect::State::Recording) {
             return aircraft.getLightConst().getLast();
