@@ -35,7 +35,7 @@
 
 class InitialPosition;
 class Aircraft;
-class SkyConnectImpl;
+class FS2020SimConnectPlugin;
 
 class SKYCONNECT_API SkyConnectIntf : public QObject
 {

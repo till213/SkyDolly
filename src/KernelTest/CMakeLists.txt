@@ -15,7 +15,7 @@ target_sources(SkyMathTest
 set(KERNELTEST_LIBS
     Qt${QT_VERSION_MAJOR}::Test Kernel
 )
-if (APPLE)
+if (${PLATFORM_IS_MACOS})
     list(APPEND KERNELTEST_LIBS -lc++)
 endif()
 

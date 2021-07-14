@@ -30,15 +30,3 @@ FlightSimulator::FlightSimulator()
 const char FlightSimulator::FlightSimulatorNameAll[] = "All";
 const char FlightSimulator::FlightSimulatorNameFS2020[] = "FS2020";
 const char FlightSimulator::FlightSimulatorNamePrepar3Dv5[] = "Prepar3Dv5";
-
-bool FlightSimulator::isRunning(Id id) noexcept
-{
-    // TODO IMPLEMENT ME
-    return false;
-}
-
-bool FlightSimulator::isInstalled(Id id) noexcept
-{
-    // TODO IMPLEMENT ME
-    return false;
-}
