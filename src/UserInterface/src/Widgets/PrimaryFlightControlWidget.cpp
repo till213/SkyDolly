@@ -37,7 +37,7 @@
 #include "../../../Model/src/PrimaryFlightControl.h"
 #include "../../../Model/src/PrimaryFlightControlData.h"
 #include "../../../Model/src/TimeVariableData.h"
-#include "../../../SkyConnect/src/SkyManager.h"
+#include "../../../SkyConnect/src/SkyConnectManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "PrimaryFlightControlWidget.h"
@@ -106,7 +106,7 @@ const PrimaryFlightControlData &PrimaryFlightControlWidget::getCurrentPrimaryFli
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
-    const SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    const SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect != nullptr) {
         if (skyConnect->getState() == Connect::State::Recording) {
             return aircraft.getPrimaryFlightControlConst().getLast();

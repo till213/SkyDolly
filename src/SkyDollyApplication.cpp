@@ -28,7 +28,7 @@
 
 #include "../../Kernel/src/Settings.h"
 #include "../../Model/src/Logbook.h"
-#include "../../SkyConnect/src/SkyManager.h"
+#include "../../SkyConnect/src/SkyConnectManager.h"
 #include "../../Persistence/src/ConnectionManager.h"
 #include "../../Plugin/src/PluginManager.h"
 #include "SkyDollyApplication.h"
@@ -64,7 +64,7 @@ void SkyDollyApplication::handleAboutToQuit() noexcept
 
     // Destroying the settings singleton also persists the settings
     Settings::destroyInstance();
-    SkyManager::destroyInstance();
+    SkyConnectManager::destroyInstance();
     Logbook::destroyInstance();
     ConnectionManager::destroyInstance();
     PluginManager::destroyInstance();

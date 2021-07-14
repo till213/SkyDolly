@@ -41,7 +41,7 @@
 #include "../../../Model/src/AircraftHandleData.h"
 #include "../../../Model/src/Light.h"
 #include "../../../Model/src/LightData.h"
-#include "../../../SkyConnect/src/SkyManager.h"
+#include "../../../SkyConnect/src/SkyConnectManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "StatisticsDialog.h"
@@ -116,7 +116,7 @@ void StatisticsDialog::updateRecordUi() noexcept
     }
 
     // Samples per second
-    const SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    const SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect != nullptr) {
         if (skyConnect->getState() == Connect::State::Recording) {
             ui->samplesPerSecondLineEdit->setText(d->unit.formatHz(skyConnect->calculateRecordedSamplesPerSecond()));

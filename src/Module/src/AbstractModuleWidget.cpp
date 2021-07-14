@@ -27,7 +27,7 @@
 #include <QAction>
 
 #include "../../Model/src/Logbook.h"
-#include "../../SkyConnect/src/SkyManager.h"
+#include "../../SkyConnect/src/SkyConnectManager.h"
 #include "../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../Persistence/src/Service/FlightService.h"
 #include "Module.h"
@@ -62,15 +62,13 @@ bool AbstractModuleWidget::isActive() const noexcept
 
 void AbstractModuleWidget::setActive(bool enable) noexcept
 {
-    SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        if (enable) {
-            connect(skyConnect, &SkyConnectIntf::recordingStopped,
-                    this, &AbstractModuleWidget::handleRecordingStopped);
-        } else {
-            disconnect(skyConnect, &SkyConnectIntf::recordingStopped,
-                       this, &AbstractModuleWidget::handleRecordingStopped);
-        }
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    if (enable) {
+        connect(&skyConnectManager, &SkyConnectManager::recordingStopped,
+                this, &AbstractModuleWidget::handleRecordingStopped);
+    } else {
+        disconnect(&skyConnectManager, &SkyConnectManager::recordingStopped,
+                   this, &AbstractModuleWidget::handleRecordingStopped);
     }
     getAction().setChecked(enable);
     d->active = enable;

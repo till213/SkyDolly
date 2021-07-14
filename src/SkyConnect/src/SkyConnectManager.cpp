@@ -34,7 +34,7 @@
 #include <QMap>
 
 #include "SkyConnectIntf.h"
-#include "SkyManager.h"
+#include "SkyConnectManager.h"
 
 namespace
 {
@@ -73,22 +73,22 @@ public:
     QMap<QUuid, QString> pluginRegistry;
     QPluginLoader *pluginLoader;
 
-    static SkyManager *instance;
+    static SkyConnectManager *instance;
 };
 
-SkyManager *SkyManagerPrivate::instance = nullptr;
+SkyConnectManager *SkyManagerPrivate::instance = nullptr;
 
 // PUBLIC
 
-SkyManager &SkyManager::getInstance() noexcept
+SkyConnectManager &SkyConnectManager::getInstance() noexcept
 {
     if (SkyManagerPrivate::instance == nullptr) {
-        SkyManagerPrivate::instance = new SkyManager();
+        SkyManagerPrivate::instance = new SkyConnectManager();
     }
     return *SkyManagerPrivate::instance;
 }
 
-void SkyManager::destroyInstance() noexcept
+void SkyConnectManager::destroyInstance() noexcept
 {
     if (SkyManagerPrivate::instance != nullptr) {
         delete SkyManagerPrivate::instance;
@@ -96,18 +96,18 @@ void SkyManager::destroyInstance() noexcept
     }
 }
 
-std::vector<SkyManager::Handle> SkyManager::enumeratePlugins() noexcept
+std::vector<SkyConnectManager::Handle> SkyConnectManager::enumeratePlugins() noexcept
 {
     return enumeratePlugins(ConnectPluginDirectoryName, d->pluginRegistry);
 }
 
-SkyConnectIntf *SkyManager::getCurrentSkyConnect() const noexcept
+SkyConnectIntf *SkyConnectManager::getCurrentSkyConnect() const noexcept
 {
     QObject *plugin = d->pluginLoader->instance();
     return qobject_cast<SkyConnectIntf *>(plugin);
 }
 
-bool SkyManager::setCurrentSkyConnect(const QUuid &uuid) noexcept
+bool SkyConnectManager::setCurrentSkyConnect(const QUuid &uuid) noexcept
 {
     bool ok;
     if (d->pluginRegistry.contains(uuid)) {
@@ -119,11 +119,11 @@ bool SkyManager::setCurrentSkyConnect(const QUuid &uuid) noexcept
         SkyConnectIntf *skyPlugin = qobject_cast<SkyConnectIntf *>(plugin);
         if (skyPlugin != nullptr) {
             connect(skyPlugin, &SkyConnectIntf::timestampChanged,
-                    this, &SkyManager::timestampChanged);
+                    this, &SkyConnectManager::timestampChanged);
             connect(skyPlugin, &SkyConnectIntf::stateChanged,
-                    this, &SkyManager::stateChanged);
+                    this, &SkyConnectManager::stateChanged);
             connect(skyPlugin, &SkyConnectIntf::recordingStopped,
-                    this, &SkyManager::recordingStopped);
+                    this, &SkyConnectManager::recordingStopped);
             ok = true;
         } else {
             // Not a valid SkyConnect plugin
@@ -138,7 +138,7 @@ bool SkyManager::setCurrentSkyConnect(const QUuid &uuid) noexcept
 
 // PROTECTED
 
-SkyManager::~SkyManager() noexcept
+SkyConnectManager::~SkyConnectManager() noexcept
 {
 #ifdef DEBUG
     qDebug("SkyManager::~SkyManager: DELETED");
@@ -147,7 +147,7 @@ SkyManager::~SkyManager() noexcept
 
 // PRIVATE
 
-SkyManager::SkyManager() noexcept
+SkyConnectManager::SkyConnectManager() noexcept
     : d(std::make_unique<SkyManagerPrivate>(this))
 {
 #ifdef DEBUG
@@ -155,9 +155,9 @@ SkyManager::SkyManager() noexcept
 #endif
 }
 
-std::vector<SkyManager::Handle> SkyManager::enumeratePlugins(const QString &pluginDirectoryName, QMap<QUuid, QString> &pluginRegistry) noexcept
+std::vector<SkyConnectManager::Handle> SkyConnectManager::enumeratePlugins(const QString &pluginDirectoryName, QMap<QUuid, QString> &pluginRegistry) noexcept
 {
-    std::vector<SkyManager::Handle> pluginHandles;
+    std::vector<SkyConnectManager::Handle> pluginHandles;
     pluginRegistry.clear();
     if (d->pluginsDirectoryPath.exists(pluginDirectoryName)) {
         d->pluginsDirectoryPath.cd(pluginDirectoryName);
