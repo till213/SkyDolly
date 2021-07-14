@@ -209,15 +209,15 @@ void EngineWidget::initUi() noexcept
 const EngineData &EngineWidget::getCurrentEngineData(qint64 timestamp, TimeVariableData::Access access) const noexcept
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-    const SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        if (skyConnect->getState() == Connect::State::Recording) {
+    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
+        if (skyConnect->get().getState() == Connect::State::Recording) {
             return aircraft.getEngineConst().getLast();
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
                 return aircraft.getEngineConst().interpolate(timestamp, access);
             } else {
-                return aircraft.getEngineConst().interpolate(skyConnect->getCurrentTimestamp(), access);
+                return aircraft.getEngineConst().interpolate(skyConnect->get().getCurrentTimestamp(), access);
             }
         };
     } else {

@@ -26,6 +26,7 @@
 #include <QStandardPaths>
 #include <QSettings>
 #include <QString>
+#include <QUuid>
 #include <QByteArray>
 
 #include "Enum.h"
@@ -41,6 +42,7 @@ public:
     Version version;
 
     QString logbookPath;
+    QUuid skyConnectPluginUuid;
     double recordingSampleRateValue;
     bool windowStayOnTop;
     bool minimalUi;
@@ -63,6 +65,7 @@ public:
     int previewInfoDialogCount;
 
     static Settings *instance;
+    static constexpr QUuid DefaultSkyConnectPluginUuid = QUuid();
     static constexpr double DefaultRecordingSampleRate = SampleRate::toValue(SampleRate::SampleRate::Auto);
     static constexpr bool DefaultWindowStayOnTop = false;
     static constexpr bool DefaultMinimalUi = false;
@@ -127,6 +130,19 @@ void Settings::setLogbookPath(const QString &logbookPath) noexcept
     if (d->logbookPath != logbookPath) {
         d->logbookPath = logbookPath;
         emit logbookPathChanged(d->logbookPath);
+    }
+}
+
+QUuid Settings::getSkyConnectPluginUuid() const noexcept
+{
+    return d->skyConnectPluginUuid;
+}
+
+void Settings::setSkyConnectPluginUuid(QUuid uuid) noexcept
+{
+    if (d->skyConnectPluginUuid != uuid) {
+        d->skyConnectPluginUuid = uuid;
+        emit skyConnectPluginUuidChanged(d->skyConnectPluginUuid);
     }
 }
 
@@ -348,6 +364,11 @@ void Settings::store() noexcept
         d->settings.setValue("Path", d->logbookPath);
     }
     d->settings.endGroup();
+    d->settings.beginGroup("Plugins");
+    {
+        d->settings.setValue("SkyConnectPluginUuid", d->skyConnectPluginUuid);
+    }
+    d->settings.endGroup();
     d->settings.beginGroup("Recording");
     {
         d->settings.setValue("RecordingSampleRate", d->recordingSampleRateValue);
@@ -411,6 +432,11 @@ void Settings::restore() noexcept
     d->settings.beginGroup("Logbook");
     {
         d->logbookPath = d->settings.value("Path", d->defaultLogbookPath).toString();
+    }
+    d->settings.endGroup();
+    d->settings.beginGroup("Plugins");
+    {
+        d->skyConnectPluginUuid = d->settings.value("SkyConnectPluginUuid", d->DefaultSkyConnectPluginUuid).toUuid();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Recording");
@@ -509,6 +535,8 @@ Settings::Settings() noexcept
 void Settings::frenchConnection() noexcept
 {
     connect(this, &Settings::logbookPathChanged,
+            this, &Settings::changed);
+    connect(this, &Settings::skyConnectPluginUuidChanged,
             this, &Settings::changed);
     connect(this, &Settings::recordingSampleRateChanged,
             this, &Settings::changed);

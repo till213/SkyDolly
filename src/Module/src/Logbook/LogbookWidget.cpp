@@ -437,8 +437,8 @@ void LogbookWidget::updateUi() noexcept
 
 void LogbookWidget::updateEditUi() noexcept
 {
-    SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    const bool active = skyConnect != nullptr && skyConnect->isActive();
+    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const bool active = skyConnect && skyConnect->get().isActive();
     ui->loadPushButton->setEnabled(!active && d->selectedFlightId != Flight::InvalidId);
     ui->deletePushButton->setEnabled(!active && d->selectedFlightId != Flight::InvalidId);
 }
