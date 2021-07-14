@@ -67,7 +67,9 @@ public:
     }
 
     ~skyConnectManagerPrivate() noexcept
-    {}
+    {
+        pluginLoader->unload();
+    }
 
     QDir pluginsDirectoryPath;
     // Plugin UUID / plugin path

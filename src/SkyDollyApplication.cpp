@@ -64,8 +64,8 @@ void SkyDollyApplication::handleAboutToQuit() noexcept
 
     // Destroying the settings singleton also persists the settings
     Settings::destroyInstance();
-    SkyConnectManager::destroyInstance();
     Logbook::destroyInstance();
     ConnectionManager::destroyInstance();
+    SkyConnectManager::destroyInstance();
     PluginManager::destroyInstance();
 }
