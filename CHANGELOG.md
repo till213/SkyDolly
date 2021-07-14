@@ -8,10 +8,14 @@
   * Import CSV plugin
   * Export CSV plugin
   * Export KML plugin ("Google Earth")
+  * SkyConnect plugin architecture
+    - SimConnect plugin (currently FS2020 only)
+    - Auto-detection of installed flight simulator (automatic plugin selection)
+    - Plugin changeable at runtime via Settings dialog
   
 - Modules
   * Logbook
-    - Filtering by date via recording date tree widget
+    - Filtering of flights by date via creation date tree widget
     - Search field which matches the flight title, aircraft name and destinations
   * Formation
     - Aircrafts can now also be deleted from a formation flight during (paused) replay
@@ -19,7 +23,9 @@
 ### Improvements
 
 - Better support for aircraft engine start & shutdown
-- Database performance improvements ("forward queries")
+- Database performance improvements:
+  * "forward queries"
+  * "Normalisation" of "aircraft type" data (new table - less storage space required)
 
 ## 0.7.0
 
