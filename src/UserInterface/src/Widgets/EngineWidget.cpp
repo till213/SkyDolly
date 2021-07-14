@@ -37,7 +37,7 @@
 #include "../../../Model/src/PositionData.h"
 #include "../../../Model/src/EngineData.h"
 #include "../../../Model/src/TimeVariableData.h"
-#include "../../../SkyConnect/src/SkyManager.h"
+#include "../../../SkyConnect/src/SkyConnectManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "EngineWidget.h"
@@ -209,7 +209,7 @@ void EngineWidget::initUi() noexcept
 const EngineData &EngineWidget::getCurrentEngineData(qint64 timestamp, TimeVariableData::Access access) const noexcept
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-    const SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    const SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect != nullptr) {
         if (skyConnect->getState() == Connect::State::Recording) {
             return aircraft.getEngineConst().getLast();

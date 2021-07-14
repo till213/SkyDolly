@@ -33,7 +33,7 @@
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/PrimaryFlightControl.h"
 #include "../../../Model/src/AircraftInfo.h"
-#include "../../../SkyConnect/src/SkyManager.h"
+#include "../../../SkyConnect/src/SkyConnectManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../SkyConnect/src/Connect.h"
 #include "../Widgets/AircraftWidget.h"
@@ -82,11 +82,9 @@ void SimulationVariablesDialog::showEvent(QShowEvent *event) noexcept
 {
     QDialog::showEvent(event);
     updateUi();
-    SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        connect(skyConnect, &SkyConnectIntf::stateChanged,
-                this, &SimulationVariablesDialog::updateTitle);
-    }
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    connect(&skyConnectManager, &SkyConnectManager::stateChanged,
+            this, &SimulationVariablesDialog::updateTitle);
 
     emit visibilityChanged(true);
 }
@@ -94,11 +92,9 @@ void SimulationVariablesDialog::showEvent(QShowEvent *event) noexcept
 void SimulationVariablesDialog::hideEvent(QHideEvent *event) noexcept
 {
     QDialog::hideEvent(event);
-    SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect != nullptr) {
-        disconnect(skyConnect, &SkyConnectIntf::stateChanged,
-                   this, &SimulationVariablesDialog::updateTitle);
-    }
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    disconnect(&skyConnectManager, &SkyConnectManager::stateChanged,
+               this, &SimulationVariablesDialog::updateTitle);
 
     emit visibilityChanged(false);
 }
@@ -136,7 +132,7 @@ void SimulationVariablesDialog::updateUi() noexcept
 void SimulationVariablesDialog::updateTitle() noexcept
 {
     QString windowTitle = SimulationVariablesDialogPrivate::WindowTitle;
-    const SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    const SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const Connect::State state = skyConnect != nullptr ? skyConnect->getState() : Connect::State::Disconnected;
     switch (state) {
     case Connect::State::Recording:

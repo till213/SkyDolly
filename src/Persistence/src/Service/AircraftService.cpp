@@ -30,7 +30,7 @@
 
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/Logbook.h"
-#include "../../../SkyConnect/src/SkyManager.h"
+#include "../../../SkyConnect/src/SkyConnectManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../Dao/FlightDaoIntf.h"
 #include "../Dao/DaoFactory.h"
@@ -82,7 +82,7 @@ bool AircraftService::deleteByIndex(int index) noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
 
     Aircraft &aircraft = flight[index];
-    SkyConnectIntf *skyConnect = SkyManager::getInstance().getCurrentSkyConnect();
+    SkyConnectIntf *skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect != nullptr) {
         skyConnect->destroyAIObject(aircraft);
     }
