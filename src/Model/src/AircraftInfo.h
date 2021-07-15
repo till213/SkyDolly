@@ -38,9 +38,11 @@ struct MODEL_API AircraftInfo
     AircraftType aircraftType;
     QDateTime startDate;
     QDateTime endDate;
+    // Milliseconds
+    qint64 timestampOffset;
     QString tailNumber;
     QString airline;
-    QString flightNumber;
+    QString flightNumber;    
 
     // Feet
     float altitudeAboveGround;
@@ -55,5 +57,23 @@ struct MODEL_API AircraftInfo
 
     void clear() noexcept;
 };
+
+inline bool operator==(const AircraftInfo& lhs, const AircraftInfo& rhs) {
+    return lhs.aircraftId == rhs.aircraftId &&
+           lhs.aircraftType == rhs.aircraftType &&
+           lhs.startDate == rhs.startDate &&
+           lhs.endDate == rhs.endDate &&
+           lhs.timestampOffset == rhs.timestampOffset &&
+           lhs.tailNumber == rhs.tailNumber &&
+           lhs.airline == rhs.airline &&
+           lhs.flightNumber == rhs.flightNumber &&
+           lhs.altitudeAboveGround == rhs.altitudeAboveGround &&
+           lhs.startOnGround == rhs.startOnGround &&
+           lhs.initialAirspeed == rhs.initialAirspeed;
+}
+
+inline bool operator!=(const AircraftInfo& lhs, const AircraftInfo& rhs) {
+    return !(lhs == rhs);
+}
 
 #endif // AIRCRAFTINFO_H

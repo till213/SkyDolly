@@ -78,6 +78,7 @@ private slots:
     void updateUi() noexcept;
     void updateEditUi() noexcept;
     void updateInitialPosition() noexcept;
+    void updateOffsetUi() noexcept;
 
     void handleUserAircraftChanged(Aircraft &aircraft) noexcept;
     void handleAircraftInfoChanged() noexcept;
@@ -89,6 +90,11 @@ private slots:
     void on_horizontalDistanceSlider_valueChanged(int value) noexcept;
     void on_verticalDistanceSlider_valueChanged(int value) noexcept;
     void on_manualUserAircraftCheckBox_toggled(bool enable) noexcept;
+
+    void on_increaseOffsetALotPushButton_clicked() noexcept;
+    void on_increaseOffsetPushButton_clicked() noexcept;
+    void on_decreaseOffsetALotPushButton_clicked() noexcept;
+    void on_decreaseOffsetPushButton_clicked() noexcept;
 };
 
 #endif // FORMATIONWIDGET_H

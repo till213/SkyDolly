@@ -319,6 +319,13 @@ create unique index aircraft_idx1 on aircraft (flight_id, seq_nr);
 @migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Create case-insensitive index on type in aircraft table", step = 9)
 create index aircraft_idx2 on aircraft (type collate nocase);
 
+@migr(id = "bd5b845b-4525-406f-b440-0f33e215bf72", descn = "Add timestamp offset to aircraft", step_cnt = 2)
+alter table aircraft add column timestamp_offset integer;
+
+@migr(id = "bd5b845b-4525-406f-b440-0f33e215bf72", descn = "Initialise timestamp offset to 0", step_cnt = 2)
+update aircraft
+set    timestamp_offset = 0;
+
 @migr(id = "1c13f02d-9def-4fd6-af8d-3b7984573682", descn = "Update application version to 0.8", step = 1)
 update metadata
 set app_version = '0.8.0';

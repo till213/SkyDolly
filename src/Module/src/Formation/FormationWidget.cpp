@@ -91,6 +91,12 @@ namespace
         NorthWest,
         NorthNorthWest
     };
+
+    // Milliseconds
+    constexpr qint64 TimestampOffsetIncrease = 100;
+    constexpr qint64 TimestampOffsetIncreaseLarge = 1000;
+    constexpr qint64 TimestampOffsetDecrease = 100;
+    constexpr qint64 TimestampOffsetDecreaseLarge = 1000;
 }
 
 class FormationWidgetPrivate
@@ -439,6 +445,7 @@ void FormationWidget::updateUi() noexcept
 
     updateEditUi();
     updateInitialPositionUi();
+    updateOffsetUi();
 }
 
 void FormationWidget::updateEditUi() noexcept
@@ -589,6 +596,26 @@ void FormationWidget::updateInitialPosition() noexcept
     }
 }
 
+void FormationWidget::updateOffsetUi() noexcept
+{
+    const bool enabled = d->selectedAircraftIndex != Flight::InvalidId;
+
+    ui->decreaseOffsetALotPushButton->setEnabled(enabled);
+    ui->decreaseOffsetPushButton->setEnabled(enabled);
+    ui->timestampOffsetLineEdit->setEnabled(enabled);
+    ui->increaseOffsetPushButton->setEnabled(enabled);
+    ui->increaseOffsetALotPushButton->setEnabled(enabled);
+
+    if (enabled) {
+        const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
+        const Aircraft &aircraft = flight[d->selectedAircraftIndex];
+        QString offsetString = QString::number(aircraft.getAircraftInfoConst().timestampOffset);
+        ui->timestampOffsetLineEdit->setText(offsetString);
+    } else {
+        ui->timestampOffsetLineEdit->setText("");
+    }
+}
+
 void FormationWidget::handleUserAircraftChanged(Aircraft &aircraft) noexcept
 {
     QObject::disconnect(d->aircraftInfoChangedConnection);
@@ -627,6 +654,7 @@ void FormationWidget::handleSelectionChanged() noexcept
         d->selectedAircraftIndex = Flight::InvalidId;
     }
     updateEditUi();
+    updateOffsetUi();
 }
 
 void FormationWidget::updateUserAircraftIndex() noexcept
@@ -683,4 +711,42 @@ void FormationWidget::on_manualUserAircraftCheckBox_toggled(bool enable) noexcep
     if (skyConnect) {
         skyConnect->get().setUserAircraftManualControl(enable);
     }
+}
+
+void FormationWidget::on_increaseOffsetALotPushButton_clicked() noexcept
+{
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    Aircraft &aircraft = flight[d->selectedAircraftIndex];
+
+    const qint64 newTimestampOffset = aircraft.getTimestampOffset() + TimestampOffsetIncreaseLarge;
+    d->aircraftService->changeTimestampOffset(aircraft, newTimestampOffset);
+}
+
+
+void FormationWidget::on_increaseOffsetPushButton_clicked() noexcept
+{
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    Aircraft &aircraft = flight[d->selectedAircraftIndex];
+
+    const qint64 newTimestampOffset = aircraft.getTimestampOffset() + TimestampOffsetIncrease;
+    d->aircraftService->changeTimestampOffset(aircraft, newTimestampOffset);
+}
+
+void FormationWidget::on_decreaseOffsetALotPushButton_clicked() noexcept
+{
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    Aircraft &aircraft = flight[d->selectedAircraftIndex];
+
+    const qint64 newTimestampOffset = aircraft.getTimestampOffset() + TimestampOffsetDecreaseLarge;
+    d->aircraftService->changeTimestampOffset(aircraft, newTimestampOffset);
+}
+
+
+void FormationWidget::on_decreaseOffsetPushButton_clicked() noexcept
+{
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    Aircraft &aircraft = flight[d->selectedAircraftIndex];
+
+    const qint64 newTimestampOffset = aircraft.getTimestampOffset() + TimestampOffsetDecrease;
+    d->aircraftService->changeTimestampOffset(aircraft, newTimestampOffset);
 }

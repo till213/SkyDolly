@@ -174,8 +174,22 @@ const AircraftInfo &Aircraft::getAircraftInfoConst() const noexcept
 
 void Aircraft::setAircraftInfo(const AircraftInfo &aircraftInfo) noexcept
 {
-    d->aircraftInfo = aircraftInfo;
-    emit infoChanged();
+    if (d->aircraftInfo != aircraftInfo) {
+        d->aircraftInfo = aircraftInfo;
+        emit infoChanged();
+    }
+}
+
+qint64 Aircraft::getTimestampOffset() const noexcept
+{
+    return d->aircraftInfo.timestampOffset;
+}
+
+void Aircraft::setTimestampOffset(qint64 timestampOffset) noexcept {
+    if (d->aircraftInfo.timestampOffset != timestampOffset) {
+        d->aircraftInfo.timestampOffset = timestampOffset;
+        emit infoChanged();
+    }
 }
 
 const FlightPlan &Aircraft::getFlightPlanConst() const noexcept
