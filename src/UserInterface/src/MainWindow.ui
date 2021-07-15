@@ -34,67 +34,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QWidget" name="moduleVisibilityWidget" native="true">
-      <layout class="QHBoxLayout" name="moduleVisibilityLayout">
-       <property name="sizeConstraint">
-        <enum>QLayout::SetMinimumSize</enum>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="moduleSelectorVisibleCheckBox">
-         <property name="minimumSize">
-          <size>
-           <width>16</width>
-           <height>10</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>Show/hide module selector</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>16</width>
-           <height>10</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
+     <widget class="QWidget" name="moduleVisibilityWidget" native="true"/>
     </item>
     <item>
      <widget class="QWidget" name="moduleSelectorWidget" native="true">
@@ -321,10 +261,17 @@
      <string>&amp;Module</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menu_View">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="showModulesAction"/>
+   </widget>
    <addaction name="fileMenu"/>
    <addaction name="replayMenu"/>
-   <addaction name="viewMenu"/>
+   <addaction name="menu_View"/>
    <addaction name="moduleMenu"/>
+   <addaction name="viewMenu"/>
    <addaction name="infoMenu"/>
   </widget>
   <action name="quitAction">
@@ -547,6 +494,14 @@
    </property>
    <property name="shortcut">
     <string>M</string>
+   </property>
+  </action>
+  <action name="showModulesAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Modules</string>
    </property>
   </action>
  </widget>

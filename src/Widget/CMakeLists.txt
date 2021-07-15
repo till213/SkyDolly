@@ -22,6 +22,8 @@ target_sources(${LIBRARY_NAME}
         src/ActionButton.h
         src/ActionRadioButton.h
         src/ActionRadioButton.cpp
+        src/ActionCheckBox.h
+        src/ActionCheckBox.cpp
         src/FocusPlainTextEdit.h
         src/FocusPlainTextEdit.cpp
         src/AircraftSelectionComboBox.cpp
