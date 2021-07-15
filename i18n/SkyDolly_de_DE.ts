@@ -288,30 +288,25 @@ MIT License</source>
     </message>
 </context>
 <context>
-    <name>CSVImportPlugin</name>
+    <name>CSVImportDialog</name>
     <message>
-        <location filename="../src/Plugin/src/Import/CSVImport/src/CSVImportPlugin.cpp" line="81"/>
-        <source>Import CSV</source>
+        <location filename="../src/Plugin/src/Import/CSVImport/src/CSVImportDialog.ui" line="14"/>
+        <source>Dialog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugin/src/Import/CSVImport/src/CSVImportPlugin.cpp" line="175"/>
-        <source>CSV import</source>
+        <location filename="../src/Plugin/src/Import/CSVImport/src/CSVImportDialog.ui" line="20"/>
+        <source>CSV File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugin/src/Import/CSVImport/src/CSVImportPlugin.cpp" line="176"/>
-        <source>Aircraft imported on %1 from file: %2</source>
+        <location filename="../src/Plugin/src/Import/CSVImport/src/CSVImportDialog.ui" line="39"/>
+        <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Plugin/src/Import/CSVImport/src/CSVImportPlugin.cpp" line="186"/>
-        <source>Import error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Plugin/src/Import/CSVImport/src/CSVImportPlugin.cpp" line="186"/>
-        <source>The CSV file %1 could not be read.</source>
+        <location filename="../src/Plugin/src/Import/CSVImport/src/CSVImportDialog.ui" line="48"/>
+        <source>Aircraft Type</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

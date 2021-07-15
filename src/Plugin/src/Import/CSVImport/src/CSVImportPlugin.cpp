@@ -53,6 +53,7 @@
 #include "../../../../../Model/src/LightData.h"
 #include "../../../../../Persistence/src/CSVConst.h"
 #include "../../../../../Persistence/src/Service/FlightService.h"
+#include "CSVImportDialog.h"
 #include "CSVImportPlugin.h"
 
 // PUBLIC
@@ -74,120 +75,131 @@ CSVImportPlugin::~CSVImportPlugin() noexcept
 bool CSVImportPlugin::importData(FlightService &flightService) const noexcept
 {
     bool ok;
-
-    // Start with the last export path
-    QString exportPath = Settings::getInstance().getExportPath();
-
-    const QString filePath = QFileDialog::getOpenFileName(getParentWidget(), QT_TRANSLATE_NOOP("CSVImportPlugin", "Import CSV"), exportPath, QString("*.csv"));
-    if (!filePath.isEmpty()) {
-
-        QFile file(filePath);
-        ok = file.open(QIODevice::ReadOnly);
+    std::unique_ptr<CSVImportDialog> csvImportDialog = std::make_unique<CSVImportDialog>(getParentWidget());
+    const int choice = csvImportDialog->exec();
+    if (choice == QDialog::Accepted) {
+        AircraftType aircraftType;
+        ok = csvImportDialog->getSelectedAircraftType(aircraftType);
         if (ok) {
-
-            Unit unit;
-            Flight &flight = Logbook::getInstance().getCurrentFlight();
-            Aircraft &aircraft = flight.getUserAircraft();
-            flight.clear(true);
-
-            // Headers
-            QByteArray line = file.readLine();
-            // Trim away line endings (\r\n for instance)
-            QByteArray data = line.trimmed();
-
-            ok = !data.isNull();
-            if (ok) {
-                QList<QByteArray> headers = data.split(CSVConst::Sep);
-                if (headers.first() == QString(CSVConst::TypeColumnName)) {
-                    headers.removeFirst();
-
-                    // Clear existing data
-                    aircraft.blockSignals(true);
-                    aircraft.clear();
-
-                    // CSV data
-                    data = file.readLine();
-                    bool firstPositionData = true;
-                    bool firstEngineData = true;
-                    bool firstPrimaryFlightControlData = true;
-                    bool firstSecondaryFlightControlData = true;
-                    bool firstAircraftHandleData = true;
-                    bool firstLightData = true;
-                    while (!data.isNull()) {
-
-                        PositionData positionData;
-                        QList<QByteArray> values = data.split(CSVConst::Sep);
-
-                        // Type
-                        ok = values.at(0).size() > 0;
-                        if (ok) {
-                            CSVConst::DataType dataType = static_cast<CSVConst::DataType>(values.at(0).at(0));
-                            values.removeFirst();
-                            switch (dataType) {
-                            case CSVConst::DataType::Aircraft:
-                                ok = importPositionData(headers, values, firstPositionData, aircraft);
-                                firstPositionData = false;
-                                break;
-                            case CSVConst::DataType::Engine:
-                                ok = importEngineData(headers, values, firstEngineData, aircraft.getEngine());
-                                firstEngineData = false;
-                                break;
-                            case CSVConst::DataType::PrimaryFlightControl:
-                                ok = importPrimaryFlightControlData(headers, values, firstPrimaryFlightControlData, aircraft.getPrimaryFlightControl());
-                                firstPrimaryFlightControlData = false;
-                                break;
-                            case CSVConst::DataType::SecondaryFlightControl:
-                                ok = importSecondaryFlightControlData(headers, values, firstSecondaryFlightControlData, aircraft.getSecondaryFlightControl());
-                                firstSecondaryFlightControlData = false;
-                                break;
-                            case CSVConst::DataType::AircraftHandle:
-                                ok = importAircraftHandleData(headers, values, firstAircraftHandleData, aircraft.getAircraftHandle());
-                                firstAircraftHandleData = false;
-                                break;
-                            case CSVConst::DataType::Light:
-                                ok = importLightData(headers, values, firstLightData, aircraft.getLight());
-                                firstLightData = false;
-                                break;
-                            default:
-                                // Ignore unknown data types
-                                break;
-                            }
-                        }
-
-                        // Read next line
-                        if (ok) {
-                            data = file.readLine();
-                        } else {
-                            break;
-                        }
-                    }
-                    aircraft.blockSignals(false);
-                    emit aircraft.dataChanged();
-
-                    if (ok) {
-                        exportPath = QFileInfo(filePath).absolutePath();
-                        Settings::getInstance().setExportPath(exportPath);
-
-                        AircraftInfo info(aircraft.getId());
-                        info.startDate = QFileInfo(filePath).birthTime();
-                        info.endDate = info.startDate.addMSecs(aircraft.getDurationMSec());
-                        aircraft.setAircraftInfo(info);
-                        flight.setTitle(QT_TRANSLATE_NOOP("CSVImportPlugin", "CSV import"));
-                        flight.setDescription(QString(QT_TRANSLATE_NOOP("CSVImportPlugin", "Aircraft imported on %1 from file: %2")).arg(unit.formatDateTime(QDateTime::currentDateTime()), filePath));
-                        flightService.store(flight);
-                    }
-                } else {
-                    ok = false;
-                }
-            }
-            file.close();
-        }
-        if (!ok) {
-            QMessageBox::critical(getParentWidget(), QT_TRANSLATE_NOOP("CSVImportPlugin", "Import error"), QString(QT_TRANSLATE_NOOP("CSVImportPlugin", "The CSV file %1 could not be read.")).arg(filePath));
+            ok = import(csvImportDialog->getSelectedFilePath(), aircraftType, flightService);
         }
     } else {
         ok = true;
-    }    
+    }
+    return ok;
+}
+
+// PRIVATE
+
+bool getAircraftType(const QString &type, AircraftType &aircraftType) noexcept;
+
+bool CSVImportPlugin::import(const QString &filePath, const AircraftType &aircraftType, FlightService &flightService) const noexcept
+{
+    QFile file(filePath);
+    bool ok = file.open(QIODevice::ReadOnly);
+    if (ok) {
+
+        Unit unit;
+        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        Aircraft &aircraft = flight.getUserAircraft();
+        flight.clear(true);
+
+        // Headers
+        QByteArray line = file.readLine();
+        // Trim away line endings (\r\n for instance)
+        QByteArray data = line.trimmed();
+
+        ok = !data.isNull();
+        if (ok) {
+            QList<QByteArray> headers = data.split(CSVConst::Sep);
+            if (headers.first() == QString(CSVConst::TypeColumnName)) {
+                headers.removeFirst();
+
+                // Clear existing data
+                aircraft.blockSignals(true);
+                aircraft.clear();
+
+                // CSV data
+                data = file.readLine();
+                bool firstPositionData = true;
+                bool firstEngineData = true;
+                bool firstPrimaryFlightControlData = true;
+                bool firstSecondaryFlightControlData = true;
+                bool firstAircraftHandleData = true;
+                bool firstLightData = true;
+                while (!data.isNull()) {
+
+                    PositionData positionData;
+                    QList<QByteArray> values = data.split(CSVConst::Sep);
+
+                    // Type
+                    ok = values.at(0).size() > 0;
+                    if (ok) {
+                        CSVConst::DataType dataType = static_cast<CSVConst::DataType>(values.at(0).at(0));
+                        values.removeFirst();
+                        switch (dataType) {
+                        case CSVConst::DataType::Aircraft:
+                            ok = importPositionData(headers, values, firstPositionData, aircraft);
+                            firstPositionData = false;
+                            break;
+                        case CSVConst::DataType::Engine:
+                            ok = importEngineData(headers, values, firstEngineData, aircraft.getEngine());
+                            firstEngineData = false;
+                            break;
+                        case CSVConst::DataType::PrimaryFlightControl:
+                            ok = importPrimaryFlightControlData(headers, values, firstPrimaryFlightControlData, aircraft.getPrimaryFlightControl());
+                            firstPrimaryFlightControlData = false;
+                            break;
+                        case CSVConst::DataType::SecondaryFlightControl:
+                            ok = importSecondaryFlightControlData(headers, values, firstSecondaryFlightControlData, aircraft.getSecondaryFlightControl());
+                            firstSecondaryFlightControlData = false;
+                            break;
+                        case CSVConst::DataType::AircraftHandle:
+                            ok = importAircraftHandleData(headers, values, firstAircraftHandleData, aircraft.getAircraftHandle());
+                            firstAircraftHandleData = false;
+                            break;
+                        case CSVConst::DataType::Light:
+                            ok = importLightData(headers, values, firstLightData, aircraft.getLight());
+                            firstLightData = false;
+                            break;
+                        default:
+                            // Ignore unknown data types
+                            break;
+                        }
+                    }
+
+                    // Read next line
+                    if (ok) {
+                        data = file.readLine();
+                    } else {
+                        break;
+                    }
+                }
+                aircraft.blockSignals(false);
+                emit aircraft.dataChanged();
+
+                if (ok) {
+                    const QString exportPath = QFileInfo(filePath).absolutePath();
+                    Settings::getInstance().setExportPath(exportPath);
+
+                    AircraftInfo info(aircraft.getId());
+                    info.aircraftType = aircraftType;
+                    info.startDate = QFileInfo(filePath).birthTime();
+                    info.endDate = info.startDate.addMSecs(aircraft.getDurationMSec());
+                    aircraft.setAircraftInfo(info);
+                    flight.setTitle(QT_TRANSLATE_NOOP("CSVImportPlugin", "CSV import"));
+                    flight.setDescription(QString(QT_TRANSLATE_NOOP("CSVImportPlugin", "Aircraft imported on %1 from file: %2")).arg(unit.formatDateTime(QDateTime::currentDateTime()), filePath));
+                    flightService.store(flight);
+                }
+            } else {
+                ok = false;
+            }
+        }
+        file.close();
+    }
+    if (!ok) {
+        QMessageBox::critical(getParentWidget(), QT_TRANSLATE_NOOP("CSVImportPlugin", "Import error"), QString(QT_TRANSLATE_NOOP("CSVImportPlugin", "The CSV file %1 could not be read.")).arg(filePath));
+    }
     return ok;
 }
 

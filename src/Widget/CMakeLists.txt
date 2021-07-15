@@ -24,6 +24,8 @@ target_sources(${LIBRARY_NAME}
         src/ActionRadioButton.cpp
         src/FocusPlainTextEdit.h
         src/FocusPlainTextEdit.cpp
+        src/AircraftSelectionComboBox.cpp
+        src/AircraftSelectionComboBox.h
 )
 
 target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})
