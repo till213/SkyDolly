@@ -74,7 +74,7 @@ bool FlightService::store(Flight &flight) noexcept
     if (ok) {
         ok = d->flightDao->addFlight(flight);
         if (ok) {
-            QSqlDatabase::database().commit();
+            ok = QSqlDatabase::database().commit();
             // TODO Refactor: remove all signals from services, move them to Flight
             emit flightStored(flight.getId());
             emit flight.flightStored(flight.getId());
@@ -109,7 +109,7 @@ bool FlightService::deleteById(qint64 id)  noexcept
     if (ok) {
         ok = d->flightDao->deleteById(id);
         if (ok) {
-            QSqlDatabase::database().commit();
+            ok = QSqlDatabase::database().commit();
         } else {
             QSqlDatabase::database().rollback();
         }
@@ -123,7 +123,7 @@ bool FlightService::updateTitle(qint64 id, const QString &title) noexcept
     if (ok) {
         ok = d->flightDao->updateTitle(id, title);
         if (ok) {
-            QSqlDatabase::database().commit();
+            ok = QSqlDatabase::database().commit();
             emit flightUpdated(id);
         } else {
             QSqlDatabase::database().rollback();
@@ -138,7 +138,7 @@ bool FlightService::updateTitleAndDescription(qint64 id, const QString &title, c
     if (ok) {
         ok = d->flightDao->updateTitleAndDescription(id, title, description);
         if (ok) {
-            QSqlDatabase::database().commit();
+            ok = QSqlDatabase::database().commit();
             emit flightUpdated(id);
         } else {
             QSqlDatabase::database().rollback();
@@ -158,7 +158,7 @@ bool FlightService::updateUserAircraftIndex(Flight &flight, int index) noexcept
         }
         ok = d->flightDao->updateUserAircraftIndex(flight.getId(), index);
         if (ok) {
-            QSqlDatabase::database().commit();
+            ok = QSqlDatabase::database().commit();
             emit flightUpdated(flight.getId());
         } else {
             QSqlDatabase::database().rollback();

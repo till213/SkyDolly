@@ -47,6 +47,7 @@ public:
     virtual bool deleteAllByFlightId(qint64 flightId) noexcept override;
     virtual bool deleteById(qint64 id) noexcept override;
     virtual bool getAircraftInfosByFlightId(qint64 flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept override;
+    virtual bool updateTimestampOffset(qint64 id, qint64 timestampOffset) noexcept override;
 
 private:
     std::unique_ptr<SQLiteAircraftDaoPrivate> d;

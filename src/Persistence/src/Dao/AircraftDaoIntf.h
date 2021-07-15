@@ -56,6 +56,7 @@ public:
     virtual bool deleteAllByFlightId(qint64 flightId) noexcept = 0;
     virtual bool deleteById(qint64 id) noexcept = 0;
     virtual bool getAircraftInfosByFlightId(qint64 flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept = 0;
+    virtual bool updateTimestampOffset(qint64 id, qint64 timestampOffset) noexcept = 0;
 };
 
 #endif // AIRCRAFTDAOINTF_H
