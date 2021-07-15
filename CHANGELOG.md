@@ -6,6 +6,7 @@
 
 - Plugin architecture
   * Import CSV plugin
+    - Select the aircraft type (used when spawning AI aircrafts in formation flights)
   * Export CSV plugin
   * Export KML plugin ("Google Earth")
   * SkyConnect plugin architecture

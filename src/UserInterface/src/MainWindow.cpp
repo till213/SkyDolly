@@ -67,6 +67,7 @@
 #include "../../Persistence/src/Service/DatabaseService.h"
 #include "../../Widget/src/ActionButton.h"
 #include "../../Widget/src/ActionRadioButton.h"
+#include "../../Widget/src/ActionCheckBox.h"
 #include "../../SkyConnect/src/SkyConnectManager.h"
 #include "../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../SkyConnect/src/Connect.h"
@@ -313,17 +314,6 @@ void MainWindow::initUi() noexcept
     d->aboutDialog = new AboutDialog(this);
     d->aboutLogbookDialog = new AboutLogbookDialog(*d->databaseService, this);
     d->settingsDialog = new SettingsDialog(this);
-
-    // Modules
-    d->moduleManager = std::make_unique<ModuleManager>(*ui->moduleStackWidget, *d->databaseService, *d->flightService);
-
-    const ModuleIntf &activeModule = d->moduleManager->getActiveModule();
-    ui->moduleGroupBox->setTitle(activeModule.getModuleName());
-    const bool flightor = Settings::getInstance().isModuleSelectorVisible();
-    ui->moduleSelectorVisibleCheckBox->setChecked(flightor);
-    ui->moduleSelectorVisibleCheckBox->setFocusPolicy(Qt::FocusPolicy::NoFocus);
-    d->activeModuleId = activeModule.getModuleId();
-
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
 
     initModuleSelectorUi();
@@ -395,6 +385,11 @@ void MainWindow::initPlugins() noexcept
 
 void MainWindow::initModuleSelectorUi() noexcept
 {
+    // Modules
+    d->moduleManager = std::make_unique<ModuleManager>(*ui->moduleStackWidget, *d->databaseService, *d->flightService);
+    ActionCheckBox *actionCheckBox = new ActionCheckBox(false, this);
+    actionCheckBox->setAction(ui->showModulesAction);
+    actionCheckBox->setFocusPolicy(Qt::NoFocus);
     const QString css =
 "QCheckBox::indicator:unchecked {"
 "    image: url(:/img/icons/checkbox-expand-normal.png);"
@@ -402,7 +397,25 @@ void MainWindow::initModuleSelectorUi() noexcept
 "QCheckBox::indicator:checked {"
 "    image: url(:/img/icons/checkbox-collapse-normal.png);"
 "}";
-    ui->moduleSelectorVisibleCheckBox->setStyleSheet(css);
+    actionCheckBox->setStyleSheet(css);
+    actionCheckBox->setContentsMargins(0, 0, 0, 0);
+
+    QSpacerItem *horizontalSpacerLeft = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    QSpacerItem *horizontalSpacerRight = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    QHBoxLayout *moduleVisibilityLayout = new QHBoxLayout();
+    moduleVisibilityLayout->setContentsMargins(0, 0, 0, 0);
+    ui->moduleVisibilityWidget->setLayout(moduleVisibilityLayout);
+
+    moduleVisibilityLayout->addSpacerItem(horizontalSpacerLeft);
+    moduleVisibilityLayout->addWidget(actionCheckBox);
+    moduleVisibilityLayout->addSpacerItem(horizontalSpacerRight);
+
+    const ModuleIntf &activeModule = d->moduleManager->getActiveModule();
+    ui->moduleGroupBox->setTitle(activeModule.getModuleName());
+    const bool moduleSelectorVisible = Settings::getInstance().isModuleSelectorVisible();
+    ui->showModulesAction->setChecked(moduleSelectorVisible);
+
+    d->activeModuleId = activeModule.getModuleId();
     for (const auto &item : d->moduleManager->getModules()) {
         QAction &moduleAction = item->getAction();
         ui->moduleMenu->addAction(&moduleAction);
@@ -1146,7 +1159,7 @@ void MainWindow::handleModuleActivated(const QString title, Module::Module modul
     updateControlIcons();
 }
 
-void MainWindow::on_moduleSelectorVisibleCheckBox_clicked(bool enabled) noexcept
+void MainWindow::on_showModulesAction_triggered(bool enabled) noexcept
 {
     Settings &settings = Settings::getInstance();
     settings.setModuleSelectorVisible(enabled);

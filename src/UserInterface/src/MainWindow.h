@@ -104,7 +104,7 @@ private slots:
 
     // Modules
     void handleModuleActivated(const QString title, Module::Module moduleId) noexcept;
-    void on_moduleSelectorVisibleCheckBox_clicked(bool enabled) noexcept;
+    void on_showModulesAction_triggered(bool enabled) noexcept;
 
     // File menu
     void on_newLogbookAction_triggered() noexcept;
