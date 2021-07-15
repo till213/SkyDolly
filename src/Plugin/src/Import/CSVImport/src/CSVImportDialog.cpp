@@ -80,6 +80,11 @@ bool CSVImportDialog::getSelectedAircraftType(AircraftType &aircraftType) const 
     return d->aircraftTypeDao->getByType(ui->aircraftTypeComboBox->currentText(), aircraftType);
 }
 
+bool CSVImportDialog::addToCurrentFlight() const noexcept
+{
+    return ui->addToFlightCheckBox->isChecked();
+}
+
 // PRIVATE
 
 void CSVImportDialog::initUi() noexcept

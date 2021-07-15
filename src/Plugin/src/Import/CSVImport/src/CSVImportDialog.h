@@ -45,6 +45,7 @@ public:
 
     const QString getSelectedFilePath() const noexcept;
     bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
+    bool addToCurrentFlight() const noexcept;
 
 private:
     Ui::CSVImportDialog *ui;

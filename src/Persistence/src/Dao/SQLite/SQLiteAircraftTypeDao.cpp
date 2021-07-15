@@ -90,7 +90,7 @@ bool SQLiteAircraftTypeDao::getByType(const QString &type, AircraftType &aircraf
         const int categoryIdx = record.indexOf("category");
         const int wingSpanIdx = record.indexOf("wing_span");
         const int engineTypeIdx = record.indexOf("engine_type");
-        const int nofEnginesIdx = record.indexOf("nof_enngines");
+        const int nofEnginesIdx = record.indexOf("nof_engines");
         aircraftType.type = type;
         if (query.next()) {
             aircraftType.category = query.value(categoryIdx).toString();

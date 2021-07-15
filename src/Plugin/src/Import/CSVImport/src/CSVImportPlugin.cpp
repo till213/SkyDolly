@@ -53,12 +53,24 @@
 #include "../../../../../Model/src/LightData.h"
 #include "../../../../../Persistence/src/CSVConst.h"
 #include "../../../../../Persistence/src/Service/FlightService.h"
+#include "../../../../../Persistence/src/Service/AircraftService.h"
 #include "CSVImportDialog.h"
 #include "CSVImportPlugin.h"
+
+class CSVImportPluginPrivate
+{
+public:
+    CSVImportPluginPrivate()
+        : aircraftService(std::make_unique<AircraftService>())
+    {}
+
+    std::unique_ptr<AircraftService> aircraftService;
+};
 
 // PUBLIC
 
 CSVImportPlugin::CSVImportPlugin() noexcept
+    : d(std::make_unique<CSVImportPluginPrivate>())
 {
 #ifdef DEBUG
     qDebug("CSVImportPlugin::CSVImportPlugin: PLUGIN LOADED");
@@ -80,8 +92,9 @@ bool CSVImportPlugin::importData(FlightService &flightService) const noexcept
     if (choice == QDialog::Accepted) {
         AircraftType aircraftType;
         ok = csvImportDialog->getSelectedAircraftType(aircraftType);
+        const bool addToCurrentFlight = csvImportDialog->addToCurrentFlight();
         if (ok) {
-            ok = import(csvImportDialog->getSelectedFilePath(), aircraftType, flightService);
+            ok = import(csvImportDialog->getSelectedFilePath(), aircraftType, flightService, addToCurrentFlight);
         }
     } else {
         ok = true;
@@ -93,7 +106,7 @@ bool CSVImportPlugin::importData(FlightService &flightService) const noexcept
 
 bool getAircraftType(const QString &type, AircraftType &aircraftType) noexcept;
 
-bool CSVImportPlugin::import(const QString &filePath, const AircraftType &aircraftType, FlightService &flightService) const noexcept
+bool CSVImportPlugin::import(const QString &filePath, const AircraftType &aircraftType, FlightService &flightService, bool addToCurrentFlight) const noexcept
 {
     QFile file(filePath);
     bool ok = file.open(QIODevice::ReadOnly);
@@ -101,8 +114,13 @@ bool CSVImportPlugin::import(const QString &filePath, const AircraftType &aircra
 
         Unit unit;
         Flight &flight = Logbook::getInstance().getCurrentFlight();
-        Aircraft &aircraft = flight.getUserAircraft();
-        flight.clear(true);
+        if (!addToCurrentFlight) {
+            flight.clear(true);
+        }
+        // The flight has at least one aircraft, but possibly without recording
+        const int aircraftCount = flight.count();
+        const bool addNewAircraft = addToCurrentFlight && (aircraftCount > 1 || flight.getUserAircraft().hasRecording());
+        Aircraft &aircraft = addNewAircraft ? flight.addUserAircraft() : flight.getUserAircraft();
 
         // Headers
         QByteArray line = file.readLine();
@@ -179,6 +197,7 @@ bool CSVImportPlugin::import(const QString &filePath, const AircraftType &aircra
                 emit aircraft.dataChanged();
 
                 if (ok) {
+                    // Remember import (export) path
                     const QString exportPath = QFileInfo(filePath).absolutePath();
                     Settings::getInstance().setExportPath(exportPath);
 
@@ -187,9 +206,15 @@ bool CSVImportPlugin::import(const QString &filePath, const AircraftType &aircra
                     info.startDate = QFileInfo(filePath).birthTime();
                     info.endDate = info.startDate.addMSecs(aircraft.getDurationMSec());
                     aircraft.setAircraftInfo(info);
-                    flight.setTitle(QT_TRANSLATE_NOOP("CSVImportPlugin", "CSV import"));
-                    flight.setDescription(QString(QT_TRANSLATE_NOOP("CSVImportPlugin", "Aircraft imported on %1 from file: %2")).arg(unit.formatDateTime(QDateTime::currentDateTime()), filePath));
-                    flightService.store(flight);
+                    if (addNewAircraft) {
+                        // Sequence starts at 1
+                        const int newAircraftCount = flight.count();
+                        ok = d->aircraftService->store(flight.getId(), newAircraftCount, flight[newAircraftCount - 1]);
+                    } else {
+                        flight.setTitle(QT_TRANSLATE_NOOP("CSVImportPlugin", "CSV import"));
+                        flight.setDescription(QString(QT_TRANSLATE_NOOP("CSVImportPlugin", "Aircraft imported on %1 from file: %2")).arg(unit.formatDateTime(QDateTime::currentDateTime()), filePath));
+                        ok = flightService.store(flight);
+                    }
                 }
             } else {
                 ok = false;

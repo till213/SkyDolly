@@ -145,7 +145,7 @@ Aircraft &Flight::addUserAircraft() noexcept
     d->aircrafts.push_back(std::move(aircraft));
     setUserAircraftIndex(d->aircrafts.size() - 1);
     emit aircraftAdded(*d->aircrafts.end()->get());
-    return *d->aircrafts.end()->get();
+    return *d->aircrafts.back().get();
 }
 
 const Aircraft &Flight::getUserAircraftConst() const noexcept

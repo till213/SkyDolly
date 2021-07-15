@@ -27,6 +27,7 @@
 - Database performance improvements:
   * "forward queries"
   * "Normalisation" of "aircraft type" data (new table - less storage space required)
+- A new "View" menu has been added, providing options to show/hide various UI elements such as the module selector
 
 ## 0.7.0
 
