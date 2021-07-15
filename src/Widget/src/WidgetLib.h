@@ -22,24 +22,15 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FOCUSPLAINTEXTEDIT_H
-#define FOCUSPLAINTEXTEDIT_H
+#ifndef WIDGETLIB_H
+#define WIDGETLIB_H
 
-#include <QPlainTextEdit>
+#include <QtGlobal>
 
-class QFocusEvent;
+#ifdef WIDGET_EXPORT
+# define WIDGET_API Q_DECL_EXPORT
+#else
+# define WIDGET_API Q_DECL_IMPORT
+#endif
 
-class FocusPlainTextEdit : public QPlainTextEdit
-{
-    Q_OBJECT
-public:
-    FocusPlainTextEdit(QWidget *parent = nullptr) noexcept;
-
-protected:
-    void focusOutEvent(QFocusEvent *event) noexcept override;
-
-signals:
-    void focusLost();
-};
-
-#endif // FOCUSPLAINTEXTEDIT_H
+#endif // WIDGETLIB_H

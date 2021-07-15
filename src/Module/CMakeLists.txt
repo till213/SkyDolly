@@ -1,13 +1,9 @@
 add_definitions(-DMODULE_EXPORT)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(Module SHARED
-        ${MODULE_SOURCES}
-    )
+    qt_add_library(Module SHARED "")
 else()
-    add_library(Module SHARED
-        ${MODULE_SOURCES}
-    )
+    add_library(Module SHARED "")
 endif()
 
 set(MODULE_LIBS

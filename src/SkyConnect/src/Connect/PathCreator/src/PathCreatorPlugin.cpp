@@ -305,6 +305,10 @@ void PathCreatorPlugin::recordEngineData(qint64 timestamp) noexcept
     engineData.generalEngineStarter2 = d->randomGenerator->bounded(2) < 1 ? false : true;
     engineData.generalEngineStarter3 = d->randomGenerator->bounded(2) < 1 ? false : true;
     engineData.generalEngineStarter4 = d->randomGenerator->bounded(2) < 1 ? false : true;
+    engineData.generalEngineCombustion1 = d->randomGenerator->bounded(2) < 1 ? false : true;
+    engineData.generalEngineCombustion2 = d->randomGenerator->bounded(2) < 1 ? false : true;
+    engineData.generalEngineCombustion3 = d->randomGenerator->bounded(2) < 1 ? false : true;
+    engineData.generalEngineCombustion4 = d->randomGenerator->bounded(2) < 1 ? false : true;
 
     engineData.timestamp = timestamp;
     aircraft.getEngine().upsert(std::move(engineData));
