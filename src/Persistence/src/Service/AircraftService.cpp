@@ -69,6 +69,7 @@ bool AircraftService::store(qint64 flightId, int sequenceNumber, Aircraft &aircr
         ok = d->flightDao->updateUserAircraftIndex(flight.getId(), flight.getUserAircraftIndex());
         if (ok) {
             QSqlDatabase::database().commit();
+            emit flight.aircraftStored(aircraft);
         } else {
             QSqlDatabase::database().rollback();
         }

@@ -75,7 +75,9 @@ bool FlightService::store(Flight &flight) noexcept
         ok = d->flightDao->addFlight(flight);
         if (ok) {
             QSqlDatabase::database().commit();
-             emit flightStored(flight.getId());
+            // TODO Refactor: remove all signals from services, move them to Flight
+            emit flightStored(flight.getId());
+            emit flight.flightStored(flight.getId());
         } else {
             QSqlDatabase::database().rollback();
         }

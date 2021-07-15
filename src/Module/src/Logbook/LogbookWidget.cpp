@@ -144,6 +144,11 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
 {
     AbstractModuleWidget::showEvent(event);
 
+    // Flight
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    connect(&flight, &Flight::aircraftStored,
+            this, &LogbookWidget::updateUi);
+
     // Service
     connect(&d->databaseService, &DatabaseService::logbookConnectionChanged,
             this, &LogbookWidget::updateUi);
@@ -165,6 +170,12 @@ void LogbookWidget::hideEvent(QHideEvent *event) noexcept
 {
     AbstractModuleWidget::hideEvent(event);
 
+    // Flight
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    disconnect(&flight, &Flight::aircraftStored,
+               this, &LogbookWidget::updateUi);
+
+    // Service
     disconnect(&d->databaseService, &DatabaseService::logbookConnectionChanged,
                this, &LogbookWidget::updateUi);
     disconnect(&d->flightService, &FlightService::flightStored,

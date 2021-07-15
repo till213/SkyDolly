@@ -94,6 +94,8 @@ signals:
     void aircraftAdded(Aircraft &aircraft);
     void aircraftDeleted(qint64 removedAircraftId);
     void userAircraftChanged(Aircraft &aircraft);
+    void flightStored(qint64 id);
+    void aircraftStored(Aircraft &aircraft);
 
 private:
     Q_DISABLE_COPY(Flight)
