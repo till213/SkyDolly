@@ -438,6 +438,26 @@ inline bool CSVImportPlugin::importEngineData(const QList<QByteArray> &headers, 
             if (ok) {
                 data.generalEngineStarter4 = intValue != 0;
             }
+        } else if (header == SimVar::GeneralEngineCombustion1) {
+            intValue = values.at(columnIndex).toInt(&ok);
+            if (ok) {
+                data.generalEngineCombustion1 = intValue != 0;
+            }
+        } else if (header == SimVar::GeneralEngineCombustion2) {
+            intValue = values.at(columnIndex).toInt(&ok);
+            if (ok) {
+                data.generalEngineCombustion2 = intValue != 0;
+            }
+        } else if (header == SimVar::GeneralEngineCombustion3) {
+            intValue = values.at(columnIndex).toInt(&ok);
+            if (ok) {
+                data.generalEngineCombustion3 = intValue != 0;
+            }
+        } else if (header == SimVar::GeneralEngineCombustion4) {
+            intValue = values.at(columnIndex).toInt(&ok);
+            if (ok) {
+                data.generalEngineCombustion4 = intValue != 0;
+            }
             // Timestamp
         } else if (header == SimVar::Timestamp) {
             timestamp = values.at(columnIndex).toLongLong(&ok);

@@ -32,7 +32,7 @@
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
 #include "../../../Persistence/src/Service/FlightService.h"
-#include "FocusPlainTextEdit.h"
+#include "../../../Widget/src/FocusPlainTextEdit.h"
 #include "FlightDescriptionWidget.h"
 #include "ui_FlightDescriptionWidget.h"
 

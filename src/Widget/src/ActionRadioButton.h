@@ -22,36 +22,38 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef ACTIONBUTTON_H
-#define ACTIONBUTTON_H
+#ifndef ACTIONRADIOBUTTON_H
+#define ACTIONRADIOBUTTON_H
 
 #include <memory>
 
 #include <QObject>
-#include <QPushButton>
+#include <QRadioButton>
 
-class ActionButtonPrivate;
+#include "WidgetLib.h"
+
+class ActionRadioButtonPrivate;
 
 /*!
- * An extension of a QPushButton that supports QAction.
- * This class represents a QPushButton extension that can be
+ * An extension of a QRadioButton that supports QAction.
+ * This class represents a QRadioButton extension that can be
  * connected to an action and that configures itself depending
  * on the status of the action.
- * When the action changes its state, the button reflects
+ * When the action changes its state, the radio button reflects
  * such changes, and when the button is clicked the action
  * is triggered.
  *
- * Source: https://wiki.qt.io/PushButton_Based_On_Action
+ * Based on: https://wiki.qt.io/PushButton_Based_On_Action
  */
-class ActionButton : public QPushButton
+class WIDGET_API ActionRadioButton : public QRadioButton
 {
     Q_OBJECT
 public:
-    explicit ActionButton(QWidget *parent = nullptr) noexcept;
-    virtual ~ActionButton() noexcept;
+    explicit ActionRadioButton(QWidget *parent = nullptr) noexcept;
+    virtual ~ActionRadioButton() noexcept;
 
     /*!
-     * Sets the action to be associated with this button. This button is
+     * Sets the action to be associated with this radio button. This radio button is
      * configured immediately according to the action status and the button and
      * the action are connected together so that when the action is changed the button
      * is updated and when the button is clicked the action is triggered.
@@ -62,13 +64,13 @@ public:
     void setAction(const QAction *action) noexcept;
 
 private:
-    Q_DISABLE_COPY(ActionButton)
-    std::unique_ptr<ActionButtonPrivate> d;
+    Q_DISABLE_COPY(ActionRadioButton)
+    std::unique_ptr<ActionRadioButtonPrivate> d;
 
 private slots:
 
    /*!
-    * Update the button status depending on a change
+    * Update the radio button status depending on a change
     * on the action status. This slot is invoked each time the action
     * "changed" signal is emitted.
     */
@@ -77,10 +79,10 @@ private slots:
    void connectToAction() noexcept;
 
    /*!
-    * Disassociates this button from the action, typically when the
+    * Disassociates this radio button from the action, typically when the
     * action is deleted.
     */
    void disconnectFromAction() noexcept;
 };
 
-#endif // ACTIONBUTTON_H
+#endif // ACTIONRADIOBUTTON_H
