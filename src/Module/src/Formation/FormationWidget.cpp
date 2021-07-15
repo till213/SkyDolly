@@ -179,6 +179,8 @@ void FormationWidget::showEvent(QShowEvent *event) noexcept
             this, &FormationWidget::handleUserAircraftChanged);
     connect(&flight, &Flight::aircraftDeleted,
             this, &FormationWidget::updateUi);
+    connect(&flight, &Flight::flightStored,
+            this, &FormationWidget::updateUi);
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::stateChanged,
             this, &FormationWidget::updateUi);
@@ -196,6 +198,8 @@ void FormationWidget::hideEvent(QHideEvent *event) noexcept
     disconnect(&flight, &Flight::userAircraftChanged,
                this, &FormationWidget::handleUserAircraftChanged);
     disconnect(&flight, &Flight::aircraftDeleted,
+               this, &FormationWidget::updateUi);
+    disconnect(&flight, &Flight::flightStored,
                this, &FormationWidget::updateUi);
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     disconnect(&skyConnectManager, &SkyConnectManager::stateChanged,
