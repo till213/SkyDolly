@@ -208,7 +208,7 @@ void FormationWidget::hideEvent(QHideEvent *event) noexcept
 void FormationWidget::handleRecordingStopped() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    int count = flight.count();
+    const int count = flight.count();
     if (count > 1) {
         // Sequence starts at 1
         d->aircraftService->store(flight.getId(), count, flight[count - 1]);

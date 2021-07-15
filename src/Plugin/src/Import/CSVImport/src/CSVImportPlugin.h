@@ -43,6 +43,8 @@ class CSVExportPrivate;
 #include "../../../ImportIntf.h"
 #include "../../../PluginBase.h"
 
+class CSVImportPluginPrivate;
+
 class CSVImportPlugin : public PluginBase, public ImportIntf
 {
     Q_OBJECT
@@ -65,8 +67,10 @@ public:
     virtual bool importData(FlightService &flightService) const noexcept override;
 
 private:
+    std::unique_ptr<CSVImportPluginPrivate> d;
+
     bool getAircraftType(const QString &type, AircraftType &aircraftType) noexcept;
-    bool import(const QString &filePath, const AircraftType &aircraftType, FlightService &flightService) const noexcept;
+    bool import(const QString &filePath, const AircraftType &aircraftType, FlightService &flightService, bool addToCurrentFlight) const noexcept;
 
     static inline bool importPositionData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Aircraft &aircraft) noexcept;
     static inline bool importEngineData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Engine &engine) noexcept;
