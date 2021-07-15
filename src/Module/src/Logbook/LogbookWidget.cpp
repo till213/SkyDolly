@@ -486,7 +486,14 @@ void LogbookWidget::updateDateSelectorUi() noexcept
 
         totalFlights += nofFlightsPerYear;
     }
-    logbookItem->setExpanded(true);
+
+    // Expand all "first" children
+    QTreeWidgetItem *item = logbookItem;
+    while (item->childCount() > 0) {
+        item->setExpanded(true);
+        item = item->child(0);
+    }
+
     logbookItem->setData(NofFlightsColumn, Qt::DisplayRole, totalFlights);
 
     ui->logTreeWidget->blockSignals(false);
