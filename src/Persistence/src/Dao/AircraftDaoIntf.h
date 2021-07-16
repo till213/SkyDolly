@@ -31,6 +31,8 @@
 
 #include <QtGlobal>
 
+class QString;
+
 class Aircraft;
 class AircraftInfo;
 
@@ -57,6 +59,7 @@ public:
     virtual bool deleteById(qint64 id) noexcept = 0;
     virtual bool getAircraftInfosByFlightId(qint64 flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept = 0;
     virtual bool updateTimeOffset(qint64 id, qint64 timeOffset) noexcept = 0;
+    virtual bool updateTailNumber(qint64 id, const QString &tailNumber) noexcept = 0;
 };
 
 #endif // AIRCRAFTDAOINTF_H

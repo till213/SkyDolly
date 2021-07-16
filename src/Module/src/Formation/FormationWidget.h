@@ -84,6 +84,7 @@ private slots:
     void handleUserAircraftChanged(Aircraft &aircraft) noexcept;
     void handleAircraftInfoChanged() noexcept;
     void handleCellSelected(int row, int column) noexcept;
+    void handleCellChanged(int row, int column) noexcept;
     void handleSelectionChanged() noexcept;
     void updateUserAircraftIndex() noexcept;
     void deleteAircraft() noexcept;

@@ -180,6 +180,13 @@ void Aircraft::setAircraftInfo(const AircraftInfo &aircraftInfo) noexcept
     }
 }
 
+void Aircraft::setTailNumber(const QString &tailNumber) noexcept {
+    if (d->aircraftInfo.tailNumber != tailNumber) {
+        d->aircraftInfo.tailNumber = tailNumber;
+        emit tailNumberChanged(*this);
+    }
+}
+
 qint64 Aircraft::getTimeOffset() const noexcept
 {
     return d->aircraftInfo.timeOffset;
@@ -281,6 +288,9 @@ void Aircraft::frenchConnection()
             this, &Aircraft::handleDataChanged);
     connect(this, &Aircraft::dataChanged,
             this, &Aircraft::invalidateDuration);
+    // Tail number
+    connect(this, &Aircraft::tailNumberChanged,
+            this, &Aircraft::infoChanged);
     // Timestamp offset
     connect(this, &Aircraft::timeOffsetChanged,
             this, &Aircraft::invalidateDuration);

@@ -6,20 +6,24 @@
 
 - Plugin architecture
   * Import CSV plugin
+    - Aircrafts can now be _added_ to existing flights ("multiplayer formation flying")
     - Select the aircraft type (used when spawning AI aircrafts in formation flights)
   * Export CSV plugin
   * Export KML plugin ("Google Earth")
   * SkyConnect plugin architecture
     - SimConnect plugin (currently FS2020 only)
     - Auto-detection of installed flight simulator (automatic plugin selection)
-    - Plugin changeable at runtime via Settings dialog
+    - Plugin changeable at runtime via settings dialog
   
-- Modules
-  * Logbook
-    - Filtering of flights by date via creation date tree widget
-    - Search field which matches the flight title, aircraft name and destinations
-  * Formation
-    - Aircrafts can now also be deleted from a formation flight during (paused) replay
+#### Modules
+
+- Logbook
+  * Filtering of flights by date via creation date tree widget
+  * Search field which matches the flight title, aircraft name and destinations
+- Formation
+  * Aircrafts can now also be deleted from a formation flight during (paused) replay
+  * A time offset can be added to the selected aircraft, effectively "shifting" it back or forth on the timeline
+    - This is useful for "multiplayer formation flights" in order to synchronise the imported aircrafts (also see CSV import plugin above)
 
 ### Improvements
 

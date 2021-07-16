@@ -86,6 +86,8 @@ public:
     QString formatNumber(double number, int precision) noexcept;
     double toNumber(const QString &value, bool *ok = nullptr) noexcept;
 
+    static QString formatHHMMSS(qint64 msec) noexcept;
+
 private:
     std::unique_ptr<UnitPrivate> d;
     static inline void dd2dms(double dd, int &degrees, int &minutes, double &seconds) noexcept;

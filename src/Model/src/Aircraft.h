@@ -83,6 +83,8 @@ public:
     const AircraftInfo &getAircraftInfoConst() const noexcept;
     void setAircraftInfo(const AircraftInfo &aircraftInfo) noexcept;
 
+    void setTailNumber(const QString &tailNumber) noexcept;
+
     qint64 getTimeOffset() const noexcept;
     void setTimeOffset(qint64 timeOffset) noexcept;
 
@@ -100,6 +102,7 @@ public:
 signals:
     void infoChanged(Aircraft &aircraft);
     void dataChanged();
+    void tailNumberChanged(Aircraft &aircraft);
     void timeOffsetChanged(Aircraft &aircraft);
 
 private:
