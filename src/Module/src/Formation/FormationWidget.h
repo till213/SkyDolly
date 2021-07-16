@@ -69,6 +69,7 @@ private:
     std::unique_ptr<FormationWidgetPrivate> d;
 
     void initUi() noexcept;
+    void initTimeOffsetUi() noexcept;
     void frenchConnection() noexcept;
     void updateInitialPositionUi() noexcept;
 
@@ -95,7 +96,7 @@ private slots:
     void on_increaseOffsetPushButton_clicked() noexcept;
     void on_decreaseOffsetALotPushButton_clicked() noexcept;
     void on_decreaseOffsetPushButton_clicked() noexcept;
-    void on_timestampOffsetLineEdit_editingFinished() noexcept;
+    void on_timeOffsetLineEdit_editingFinished() noexcept;
 };
 
 #endif // FORMATIONWIDGET_H

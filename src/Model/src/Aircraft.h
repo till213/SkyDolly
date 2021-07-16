@@ -83,8 +83,8 @@ public:
     const AircraftInfo &getAircraftInfoConst() const noexcept;
     void setAircraftInfo(const AircraftInfo &aircraftInfo) noexcept;
 
-    qint64 getTimestampOffset() const noexcept;
-    void setTimestampOffset(qint64 timestampOffset) noexcept;
+    qint64 getTimeOffset() const noexcept;
+    void setTimeOffset(qint64 timeOffset) noexcept;
 
     const FlightPlan &getFlightPlanConst() const noexcept;
     FlightPlan &getFlightPlan() const noexcept;
@@ -100,7 +100,7 @@ public:
 signals:
     void infoChanged(Aircraft &aircraft);
     void dataChanged();
-    void timestampOffsetChanged(Aircraft &aircraft);
+    void timeOffsetChanged(Aircraft &aircraft);
 
 private:
     Q_DISABLE_COPY(Aircraft)

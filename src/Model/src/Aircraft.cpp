@@ -180,15 +180,15 @@ void Aircraft::setAircraftInfo(const AircraftInfo &aircraftInfo) noexcept
     }
 }
 
-qint64 Aircraft::getTimestampOffset() const noexcept
+qint64 Aircraft::getTimeOffset() const noexcept
 {
-    return d->aircraftInfo.timestampOffset;
+    return d->aircraftInfo.timeOffset;
 }
 
-void Aircraft::setTimestampOffset(qint64 timestampOffset) noexcept {
-    if (d->aircraftInfo.timestampOffset != timestampOffset) {
-        d->aircraftInfo.timestampOffset = timestampOffset;
-        emit timestampOffsetChanged(*this);
+void Aircraft::setTimeOffset(qint64 timeOffset) noexcept {
+    if (d->aircraftInfo.timeOffset != timeOffset) {
+        d->aircraftInfo.timeOffset = timeOffset;
+        emit timeOffsetChanged(*this);
     }
 }
 
@@ -204,29 +204,29 @@ FlightPlan &Aircraft::getFlightPlan() const noexcept
 
 qint64 Aircraft::getDurationMSec() const noexcept
 {
-    const qint64 timestampOffset = d->aircraftInfo.timestampOffset;
+    const qint64 timeOffset = d->aircraftInfo.timeOffset;
     if (d->duration == TimeVariableData::InvalidTime) {
         d->duration = 0;
         // The timestamp offset indicates the time difference the given aircraft
         // is "ahead" of its "schedule" (sampled data). The more ahead the aircraft
         // is, the less the duration -> subtract the offset
         if (d->position.count() > 0) {
-            d->duration = d->position.getLast().timestamp - timestampOffset;
+            d->duration = d->position.getLast().timestamp - timeOffset;
         }
         if (d->engine.count() > 0) {
-            d->duration = qMax(d->engine.getLast().timestamp - timestampOffset, d->duration);
+            d->duration = qMax(d->engine.getLast().timestamp - timeOffset, d->duration);
         }
         if (d->primaryFlightControl.count() > 0) {
-            d->duration = qMax(d->primaryFlightControl.getLast().timestamp - timestampOffset, d->duration);
+            d->duration = qMax(d->primaryFlightControl.getLast().timestamp - timeOffset, d->duration);
         }
         if (d->secondaryFlightControl.count() > 0) {
-            d->duration = qMax(d->secondaryFlightControl.getLast().timestamp - timestampOffset, d->duration);
+            d->duration = qMax(d->secondaryFlightControl.getLast().timestamp - timeOffset, d->duration);
         }
         if (d->aircraftHandle.count() > 0) {
-            d->duration = qMax(d->aircraftHandle.getLast().timestamp - timestampOffset, d->duration);
+            d->duration = qMax(d->aircraftHandle.getLast().timestamp - timeOffset, d->duration);
         }
         if (d->light.count() > 0) {
-            d->duration = qMax(d->light.getLast().timestamp - timestampOffset, d->duration);
+            d->duration = qMax(d->light.getLast().timestamp - timeOffset, d->duration);
         }
         // Update end time
         d->aircraftInfo.endDate = d->aircraftInfo.startDate.addMSecs(d->duration);
@@ -282,9 +282,9 @@ void Aircraft::frenchConnection()
     connect(this, &Aircraft::dataChanged,
             this, &Aircraft::invalidateDuration);
     // Timestamp offset
-    connect(this, &Aircraft::timestampOffsetChanged,
+    connect(this, &Aircraft::timeOffsetChanged,
             this, &Aircraft::invalidateDuration);
-    connect(this, &Aircraft::timestampOffsetChanged,
+    connect(this, &Aircraft::timeOffsetChanged,
             this, &Aircraft::infoChanged);
 }
 

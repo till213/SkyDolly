@@ -81,7 +81,10 @@ public:
      *        the month of year [1, 12]
      * \return
      */
-    const QString formatMonth(int month) noexcept;
+    QString formatMonth(int month) noexcept;
+
+    QString formatNumber(double number, int precision) noexcept;
+    double toNumber(const QString &value, bool *ok = nullptr) noexcept;
 
 private:
     std::unique_ptr<UnitPrivate> d;
