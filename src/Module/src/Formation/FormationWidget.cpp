@@ -33,6 +33,7 @@
 #include <QMessageBox>
 #include <QCheckBox>
 #include <QLineEdit>
+#include <QPushButton>
 
 #include "../../../Kernel/src/Version.h"
 #include "../../../Kernel/src/Const.h"
@@ -837,6 +838,18 @@ void FormationWidget::on_timeOffsetLineEdit_editingFinished() noexcept
         if (ok) {
             const qint64 timeOffset = static_cast<qint64>(qRound(timeOffsetSec * 1000.0));
             d->aircraftService->changeTimeOffset(aircraft, timeOffset);
+        }
+    }
+}
+
+void FormationWidget::on_resetAllTimeOffsetPushButton_clicked() noexcept
+{
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    bool ok = true;
+    for (auto &aircraft : flight) {
+        ok = d->aircraftService->changeTimeOffset(*aircraft.get(), 0);
+        if (!ok) {
+            break;
         }
     }
 }
