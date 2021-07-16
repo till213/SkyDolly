@@ -66,6 +66,8 @@ target_sources(${LIBRARY_NAME}
         src/Service/FlightService.h
         src/Service/AircraftService.cpp
         src/Service/AircraftService.h
+        src/Service/AircraftTypeService.cpp
+        src/Service/AircraftTypeService.h
         src/Service/DatabaseService.cpp
         src/Service/DatabaseService.h
         src/CSVConst.h

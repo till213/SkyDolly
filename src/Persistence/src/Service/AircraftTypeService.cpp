@@ -23,49 +23,53 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <utility>
 #include <vector>
-#include <iterator>
 
-#include <QWidget>
-#include <QComboBox>
+#include <QSqlDatabase>
 
-#include "../../Model/src/AircraftType.h"
-#include "../../Persistence/src/Service/AircraftTypeService.h"
-#include "AircraftSelectionComboBox.h"
+#include "../../../Model/src/AircraftType.h"
+#include "../Dao/DaoFactory.h"
+#include "../Dao/AircraftTypeDaoIntf.h"
+#include "AircraftTypeService.h"
 
-class AircraftSelectionComboBoxPrivate
+class AircraftTypeServicePrivate
 {
 public:
-    AircraftSelectionComboBoxPrivate() noexcept
-        : aircraftTypeService(std::make_unique<AircraftTypeService>())
+    AircraftTypeServicePrivate() noexcept
+        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
+          aircraftTypeDao(daoFactory->createAircraftTypeDao())
     {}
 
-    std::unique_ptr<AircraftTypeService> aircraftTypeService;
+    std::unique_ptr<DaoFactory> daoFactory;
+    std::unique_ptr<AircraftTypeDaoIntf> aircraftTypeDao;
 };
 
 // PUBLIC
 
-AircraftSelectionComboBox::AircraftSelectionComboBox(QWidget *parent) noexcept
-    : QComboBox(parent),
-      d(std::make_unique<AircraftSelectionComboBoxPrivate>())
-{
-    initialise();
-}
-
-AircraftSelectionComboBox::~AircraftSelectionComboBox() noexcept
+AircraftTypeService::AircraftTypeService() noexcept
+    : d(std::make_unique<AircraftTypeServicePrivate>())
 {}
 
-// PRIVATE
+AircraftTypeService::~AircraftTypeService() noexcept
+{}
 
-void AircraftSelectionComboBox::initialise() noexcept
+bool AircraftTypeService::getByType(const QString &type, AircraftType &aircraftType) const noexcept
 {
-    std::vector<AircraftType> aircraftTypes;
-    std::vector<AircraftType>::iterator it = aircraftTypes.begin();
-
-    const bool ok = d->aircraftTypeService->getAll(std::inserter(aircraftTypes, it));
+    bool ok = QSqlDatabase::database().transaction();
     if (ok) {
-        for (AircraftType &aircraftType : aircraftTypes) {
-            this->addItem(aircraftType.type);
-        }
+        ok = d->aircraftTypeDao->getByType(type, aircraftType);
+        QSqlDatabase::database().rollback();
     }
+    return ok;
+}
+
+bool AircraftTypeService::getAll(std::insert_iterator<std::vector<AircraftType>> insertIterator) const noexcept
+{
+    bool ok = QSqlDatabase::database().transaction();
+    if (ok) {
+        ok = d->aircraftTypeDao->getAll(insertIterator);
+        QSqlDatabase::database().rollback();
+    }
+    return ok;
 }

@@ -62,11 +62,13 @@ AircraftService::~AircraftService() noexcept
 
 bool AircraftService::store(qint64 flightId, int sequenceNumber, Aircraft &aircraft) noexcept
 {
-    QSqlDatabase::database().transaction();
-    bool ok = d->aircraftDao->add(flightId, sequenceNumber, aircraft);
+    bool ok = QSqlDatabase::database().transaction();
     if (ok) {
         Flight &flight = Logbook::getInstance().getCurrentFlight();
-        ok = d->flightDao->updateUserAircraftIndex(flight.getId(), flight.getUserAircraftIndex());
+        ok = d->aircraftDao->add(flightId, sequenceNumber, aircraft);
+        if (ok) {
+            ok = d->flightDao->updateUserAircraftIndex(flight.getId(), flight.getUserAircraftIndex());
+        }
         if (ok) {
             ok = QSqlDatabase::database().commit();
             emit flight.aircraftStored(aircraft);

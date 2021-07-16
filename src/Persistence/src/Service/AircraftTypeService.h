@@ -22,30 +22,31 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef AIRCRAFTSELECTIONCOMBOBOX_H
-#define AIRCRAFTSELECTIONCOMBOBOX_H
+#ifndef AIRCRAFTTYPESERVICE_H
+#define AIRCRAFTTYPESERVICE_H
 
 #include <memory>
+#include <vector>
 
-#include <QComboBox>
+#include <QtGlobal>
 
-class QWidget;
+#include "../../../Model/src/Aircraft.h"
+#include "../../../Model/src/AircraftInfo.h"
+#include "../PersistenceLib.h"
 
-#include "WidgetLib.h"
+class AircraftTypeServicePrivate;
 
-class AircraftSelectionComboBoxPrivate;
-
-class WIDGET_API AircraftSelectionComboBox : public QComboBox
+class PERSISTENCE_API AircraftTypeService
 {
-    Q_OBJECT
 public:
-    AircraftSelectionComboBox(QWidget *parent = nullptr) noexcept;
-    virtual ~AircraftSelectionComboBox() noexcept;
+    AircraftTypeService() noexcept;
+    ~AircraftTypeService() noexcept;
+
+    bool getByType(const QString &type, AircraftType &aircraftType) const noexcept;
+    bool getAll(std::insert_iterator<std::vector<AircraftType>> insertIterator) const noexcept;
 
 private:
-    std::unique_ptr<AircraftSelectionComboBoxPrivate> d;
-
-    void initialise() noexcept;
+    std::unique_ptr<AircraftTypeServicePrivate> d;
 };
 
-#endif // AIRCRAFTSELECTIONCOMBOBOX_H
+#endif // AIRCRAFTTYPESERVICE_H
