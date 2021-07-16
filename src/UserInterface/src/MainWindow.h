@@ -80,7 +80,6 @@ private:
     double getCustomSpeedFactor() const;
     
 private slots:
-
     // Ui elements
     void on_positionSlider_sliderPressed() noexcept;
     void on_positionSlider_valueChanged(int value) noexcept;

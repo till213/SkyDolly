@@ -93,6 +93,7 @@ signals:
     void aircraftAdded(Aircraft &aircraft);
     void aircraftDeleted(qint64 removedAircraftId);
     void aircraftInfoChanged(Aircraft &aircraft);
+    void timestampOffsetChanged(Aircraft &aircraft);
     void userAircraftChanged(Aircraft &aircraft);
     void flightStored(qint64 id);
     void aircraftStored(Aircraft &aircraft);
@@ -100,6 +101,8 @@ signals:
 private:
     Q_DISABLE_COPY(Flight)
     std::unique_ptr<FlightPrivate> d;
+
+    inline void connectSignals(Aircraft &aircraft);
 };
 
 #endif // FLIGHT_H

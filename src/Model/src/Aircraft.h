@@ -100,6 +100,7 @@ public:
 signals:
     void infoChanged(Aircraft &aircraft);
     void dataChanged();
+    void timestampOffsetChanged(Aircraft &aircraft);
 
 private:
     Q_DISABLE_COPY(Aircraft)

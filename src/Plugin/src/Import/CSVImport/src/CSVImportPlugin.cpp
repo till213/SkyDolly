@@ -51,6 +51,8 @@
 #include "../../../../../Model/src/AircraftHandleData.h"
 #include "../../../../../Model/src/Light.h"
 #include "../../../../../Model/src/LightData.h"
+#include "../../../../../SkyConnect/src/SkyConnectManager.h"
+#include "../../../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../../../Persistence/src/CSVConst.h"
 #include "../../../../../Persistence/src/Service/FlightService.h"
 #include "../../../../../Persistence/src/Service/AircraftService.h"
@@ -95,6 +97,12 @@ bool CSVImportPlugin::importData(FlightService &flightService) const noexcept
         const bool addToCurrentFlight = csvImportDialog->addToCurrentFlight();
         if (ok) {
             ok = import(csvImportDialog->getSelectedFilePath(), aircraftType, flightService, addToCurrentFlight);
+            if (ok && addToCurrentFlight) {
+                auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+                if (skyConnect) {
+                    skyConnect->get().updateAIObjects();
+                }
+            }
         }
     } else {
         ok = true;

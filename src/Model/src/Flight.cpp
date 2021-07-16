@@ -142,20 +142,19 @@ void Flight::setAircrafts(std::vector<std::unique_ptr<Aircraft>> aircrafts) noex
 {
     d->aircrafts = std::move(aircrafts);
     for (auto &aircraft : d->aircrafts) {
-        connect(aircraft.get(), &Aircraft::infoChanged,
-                this, &Flight::aircraftInfoChanged);
+        emit aircraftAdded(*aircraft.get());
+        connectSignals(*aircraft.get());
     }
 }
 
 Aircraft &Flight::addUserAircraft() noexcept
 {
     std::unique_ptr<Aircraft> aircraft = std::make_unique<Aircraft>();
-    connect(aircraft.get(), &Aircraft::infoChanged,
-            this, &Flight::aircraftInfoChanged);
+    connectSignals(*aircraft.get());
 
     d->aircrafts.push_back(std::move(aircraft));
     setUserAircraftIndex(d->aircrafts.size() - 1);
-    emit aircraftAdded(*d->aircrafts.end()->get());
+    emit aircraftAdded(*d->aircrafts.back().get());
     return *d->aircrafts.back().get();
 }
 
@@ -261,4 +260,14 @@ Aircraft& Flight::operator[](std::size_t index) noexcept
 const Aircraft& Flight::operator[](std::size_t index) const noexcept
 {
     return *d->aircrafts[index];
+}
+
+// PRIVATE
+
+inline void Flight::connectSignals(Aircraft &aircraft)
+{
+    connect(&aircraft, &Aircraft::infoChanged,
+            this, &Flight::aircraftInfoChanged);
+    connect(&aircraft, &Aircraft::timestampOffsetChanged,
+            this, &Flight::timestampOffsetChanged);
 }

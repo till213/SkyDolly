@@ -179,7 +179,7 @@
      <x>0</x>
      <y>0</y>
      <width>824</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="fileMenu">
@@ -269,8 +269,8 @@
    </widget>
    <addaction name="fileMenu"/>
    <addaction name="replayMenu"/>
-   <addaction name="menu_View"/>
    <addaction name="moduleMenu"/>
+   <addaction name="menu_View"/>
    <addaction name="viewMenu"/>
    <addaction name="infoMenu"/>
   </widget>
@@ -506,7 +506,6 @@
   </action>
  </widget>
  <resources>
-  <include location="../res/SkyDolly.qrc"/>
   <include location="../res/SkyDolly.qrc"/>
  </resources>
  <connections/>
