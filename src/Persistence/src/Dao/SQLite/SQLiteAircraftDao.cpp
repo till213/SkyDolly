@@ -430,3 +430,23 @@ bool SQLiteAircraftDao::updateTimeOffset(qint64 id, qint64 timeOffset) noexcept
 #endif
     return ok;
 };
+
+bool SQLiteAircraftDao::updateTailNumber(qint64 id, const QString &tailNumber) noexcept
+{
+    QSqlQuery query;
+    query.prepare(
+        "update aircraft "
+        "set    tail_number = :tail_number "
+        "where  id = :id;"
+    );
+
+    query.bindValue(":tail_number", tailNumber);
+    query.bindValue(":id", id);
+    bool ok = query.exec();
+#ifdef DEBUG
+    if (!ok) {
+        qDebug("SQLiteAircraftDao::updateTailNumber: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+    }
+#endif
+    return ok;
+};

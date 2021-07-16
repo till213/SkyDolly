@@ -25,6 +25,7 @@
 #include <memory>
 #include <cmath>
 #include <limits>
+#include <chrono>
 
 #include <QString>
 #include <QStringBuilder>
@@ -221,6 +222,27 @@ QString Unit::formatNumber(double number, int precision) noexcept
 double Unit::toNumber(const QString &value, bool *ok) noexcept
 {
     return d->locale.toDouble(value, ok);
+}
+
+QString Unit::formatHHMMSS(qint64 msec) noexcept
+{
+//    int seconds     = milliseconds / 1000;
+//    int minutes     = seconds / 60;
+//    seconds         = seconds % 60;
+//    const int hours = minutes / 60;
+//    minutes         = minutes % 60;
+
+    std::chrono::milliseconds milliseconds {msec};
+    std::chrono::seconds seconds = std::chrono::duration_cast<std::chrono::seconds>(milliseconds);
+    milliseconds -= seconds;
+    std::chrono::minutes minutes = std::chrono::duration_cast<std::chrono::minutes>(seconds);
+    seconds -= minutes;
+    std::chrono::hours hours = std::chrono::duration_cast<std::chrono::hours>(minutes);
+    minutes -= hours;
+
+    QTime time;
+    time.setHMS(hours.count(), minutes.count(), seconds.count());
+    return time.toString("hh:mm:ss");
 }
 
 // PRIVATE

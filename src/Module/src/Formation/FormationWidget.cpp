@@ -35,6 +35,7 @@
 #include <QLineEdit>
 
 #include "../../../Kernel/src/Version.h"
+#include "../../../Kernel/src/Const.h"
 #include "../../../Kernel/src/Unit.h"
 #include "../../../Kernel/src/SkyMath.h"
 #include "../../../Kernel/src/Settings.h"
@@ -57,6 +58,7 @@ namespace
 {
     constexpr int MinimumTableWidth = 600;
     constexpr int InvalidSelection = -1;
+    constexpr int InvalidColumn = -1;
     constexpr int SequenceNumberColumn = 0;
 
     enum HorizontalDistance {
@@ -110,7 +112,8 @@ class FormationWidgetPrivate
 {
 public:
     FormationWidgetPrivate(QObject *parent) noexcept
-        : positionButtonGroup(new QButtonGroup(parent)),
+        : tailNumberColumnIndex(InvalidColumn),
+          positionButtonGroup(new QButtonGroup(parent)),
           moduleAction(nullptr),
           aircraftService(std::make_unique<AircraftService>()),
           selectedRow(InvalidSelection),
@@ -118,6 +121,7 @@ public:
           timeOffsetValidator(nullptr)
     {}
 
+    int tailNumberColumnIndex;
     QButtonGroup *positionButtonGroup;
     std::unique_ptr<QAction> moduleAction;
     std::unique_ptr<AircraftService> aircraftService;
@@ -249,7 +253,7 @@ void FormationWidget::initUi() noexcept
 
     ui->aircraftTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    const QStringList headers {tr("Sequence"), tr("Aircraft"), tr("Category"), tr("Wing Span"), tr("Initial Airspeed"), tr("Initial Altitude Above Ground"), tr("Tail Number")};
+    const QStringList headers {tr("Sequence"), tr("Aircraft"), tr("Engine Type"), tr("Wing Span"), tr("Initial Airspeed"), tr("Initial Altitude"), tr("Duration"), tr("Tail Number")};
     ui->aircraftTableWidget->setColumnCount(headers.count());
     ui->aircraftTableWidget->setHorizontalHeaderLabels(headers);
     ui->aircraftTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -323,6 +327,8 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::handleSelectionChanged);
     connect(ui->aircraftTableWidget, &QTableWidget::cellDoubleClicked,
             this, &FormationWidget::handleCellSelected);
+    connect(ui->aircraftTableWidget, &QTableWidget::cellChanged,
+            this, &FormationWidget::handleCellChanged);
     connect(ui->userAircraftPushButton, &QPushButton::clicked,
             this, &FormationWidget::updateUserAircraftIndex);
     connect(ui->deletePushButton, &QPushButton::clicked,
@@ -418,13 +424,13 @@ void FormationWidget::updateUi() noexcept
         ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
         ++columnIndex;
 
-        // Type
+        // Aircraft type
         newItem = new QTableWidgetItem(aircraftInfo.aircraftType.type);
         ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
         ++columnIndex;
 
-        // Category
-        newItem = new QTableWidgetItem(aircraftInfo.aircraftType.category);
+        // Engine type
+        newItem = new QTableWidgetItem(SimType::engineTypeToString(aircraftInfo.aircraftType.engineType));
         ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
         ++columnIndex;
 
@@ -442,13 +448,24 @@ void FormationWidget::updateUi() noexcept
 
         // Initial altitude above ground
         newItem = new QTableWidgetItem(d->unit.formatFeet(aircraftInfo.altitudeAboveGround));
+        newItem->setToolTip(tr("Above ground"));
         ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
         newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
         ++columnIndex;
 
+        // Duration
+        newItem = new QTableWidgetItem();
+        newItem->setData(Qt::DisplayRole, Unit::formatHHMMSS(aircraft->getDurationMSec()));
+        newItem->setToolTip(tr("Hours:Minutes:Seconds"));
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        ++columnIndex;
+
         // Tail number
         newItem = new QTableWidgetItem(aircraftInfo.tailNumber);
+        newItem->setToolTip(tr("Double-click to edit tail number"));
+        newItem->setBackground(QColor(Const::EditableTableCellBGColor));
         ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        d->tailNumberColumnIndex = columnIndex;
         ++columnIndex;
 
         ++rowIndex;
@@ -654,8 +671,23 @@ void FormationWidget::handleCellSelected(int row, int column) noexcept
 {
     Q_UNUSED(column)
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    if (row != flight.getUserAircraftIndex()) {
+    if (column == d->tailNumberColumnIndex) {
+        QTableWidgetItem *item = ui->aircraftTableWidget->item(row, column);
+        ui->aircraftTableWidget->editItem(item);
+    } else if (row != flight.getUserAircraftIndex()) {
         getFlightService().updateUserAircraftIndex(flight, row);
+    }
+}
+
+void FormationWidget::handleCellChanged(int row, int column) noexcept
+{
+    if (column == d->tailNumberColumnIndex) {
+        QTableWidgetItem *item = ui->aircraftTableWidget->item(row, column);
+        const QString tailNumber = item->data(Qt::EditRole).toString();
+
+        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        Aircraft &aircraft = flight[d->selectedAircraftIndex];
+        d->aircraftService->changeTailNumber(aircraft, tailNumber);
     }
 }
 

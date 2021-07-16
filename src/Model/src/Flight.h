@@ -93,6 +93,7 @@ signals:
     void aircraftAdded(Aircraft &aircraft);
     void aircraftDeleted(qint64 removedAircraftId);
     void aircraftInfoChanged(Aircraft &aircraft);
+    void tailNumberChanged(Aircraft &aircraft);
     void timeOffsetChanged(Aircraft &aircraft);
     void userAircraftChanged(Aircraft &aircraft);
     void flightStored(qint64 id);

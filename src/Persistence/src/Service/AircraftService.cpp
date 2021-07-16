@@ -134,12 +134,32 @@ bool AircraftService::changeTimeOffset(Aircraft &aircraft, qint64 newOffset) noe
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
-        aircraft.setTimeOffset(newOffset);
         ok = d->aircraftDao->updateTimeOffset(aircraft.getId(), newOffset);
         if (ok) {
+            aircraft.setTimeOffset(newOffset);
+            auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+            if (skyConnect && !skyConnect->get().isReplaying()) {
+                // Update the aircraft position in the flight simulator
+                skyConnect->get().seek(skyConnect->get().getCurrentTimestamp());
+            }
+            ok = QSqlDatabase::database().commit();
+        } else {
+            QSqlDatabase::database().rollback();
+        }
+    }
+    return ok;
+}
+
+bool AircraftService::changeTailNumber(Aircraft &aircraft, const QString &tailNumber) noexcept
+{
+    bool ok = QSqlDatabase::database().transaction();
+    if (ok) {
+        ok = d->aircraftDao->updateTailNumber(aircraft.getId(), tailNumber);
+        if (ok) {
+            aircraft.setTailNumber(tailNumber);
             auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
             if (skyConnect) {
-                skyConnect->get().seek(skyConnect->get().getCurrentTimestamp());
+                skyConnect->get().updateAIObjects();
             }
             ok = QSqlDatabase::database().commit();
         } else {

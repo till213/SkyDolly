@@ -41,6 +41,7 @@
 #include <QAction>
 
 #include "../../../Kernel/src/Version.h"
+#include "../../../Kernel/src/Const.h"
 #include "../../../Kernel/src/Unit.h"
 #include "../../../Kernel/src/Settings.h"
 #include "../../../Model/src/Flight.h"
@@ -305,6 +306,7 @@ void LogbookWidget::updateFlightTable() noexcept
             // Title
             newItem = new QTableWidgetItem(summary.title);
             newItem->setToolTip(tr("Double-click to edit title"));
+            newItem->setBackground(QColor(Const::EditableTableCellBGColor));
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
             d->titleColumnIndex = columnIndex;
             ++columnIndex;
@@ -588,7 +590,7 @@ void LogbookWidget::searchText() noexcept
 
 void LogbookWidget::handleCellSelected(int row, int column) noexcept
 {
-    if (column == ui->logTableWidget->columnCount() - 1) {
+    if (column == d->titleColumnIndex) {
         QTableWidgetItem *item = ui->logTableWidget->item(row, column);
         ui->logTableWidget->editItem(item);
     } else {
