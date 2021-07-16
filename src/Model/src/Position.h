@@ -32,6 +32,7 @@
 #include <QObject>
 
 #include "TimeVariableData.h"
+#include "AircraftInfo.h"
 #include "ModelLib.h"
 
 class PositionData;
@@ -41,7 +42,7 @@ class MODEL_API Position : public QObject
 {
     Q_OBJECT
 public:
-    Position(QObject *parent = nullptr) noexcept;
+    Position(const AircraftInfo &aircraftInfo, QObject *parent = nullptr) noexcept;
     virtual ~Position() noexcept;
 
     void upsert(const PositionData &positionData) noexcept;

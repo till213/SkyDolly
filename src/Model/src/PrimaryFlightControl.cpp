@@ -22,32 +22,6 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "PrimaryFlightControl.h"
-
-/**
- * Sky Dolly - The black sheep for your flight recordings
- *
- * Copyright (c) Oliver Knoll
- * All rights reserved.
- *
- * MIT License
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this
- * software and associated documentation files (the "Software"), to deal in the Software
- * without restriction, including without limitation the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
- * to whom the Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies or
- * substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
- * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
- * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
- */
 #include <memory>
 #include <vector>
 #include <iterator>
@@ -57,18 +31,21 @@
 #include "../../Kernel/src/SkyMath.h"
 #include "TimeVariableData.h"
 #include "SkySearch.h"
+#include "AircraftInfo.h"
 #include "PrimaryFlightControlData.h"
 #include "PrimaryFlightControl.h"
 
 class PrimaryFlightControlPrivate
 {
 public:
-    PrimaryFlightControlPrivate() noexcept
-        : currentTimestamp(TimeVariableData::InvalidTime),
+    PrimaryFlightControlPrivate(const AircraftInfo &aircraftInfo) noexcept
+        : aircraftInfo(aircraftInfo),
+          currentTimestamp(TimeVariableData::InvalidTime),
           currentAccess(TimeVariableData::Access::Linear),
           currentIndex(SkySearch::InvalidIndex)
     {}
 
+    const AircraftInfo &aircraftInfo;
     std::vector<PrimaryFlightControlData> primaryFlightControlData;
     qint64 currentTimestamp;
     TimeVariableData::Access currentAccess;
@@ -80,9 +57,9 @@ public:
 
 // PUBLIC
 
-PrimaryFlightControl::PrimaryFlightControl(QObject *parent) noexcept
+PrimaryFlightControl::PrimaryFlightControl(const AircraftInfo &aircraftInfo, QObject *parent) noexcept
     : QObject(parent),
-      d(std::make_unique<PrimaryFlightControlPrivate>())
+      d(std::make_unique<PrimaryFlightControlPrivate>(aircraftInfo))
 {}
 
 PrimaryFlightControl::~PrimaryFlightControl() noexcept
@@ -125,20 +102,21 @@ std::size_t PrimaryFlightControl::count() const noexcept
 const PrimaryFlightControlData &PrimaryFlightControl::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
 {
     const PrimaryFlightControlData *p1, *p2;
+    const qint64 adjustedTimestamp = timestamp + d->aircraftInfo.timestampOffset;
 
-    if (d->currentTimestamp != timestamp || d->currentAccess != access) {
+    if (d->currentTimestamp != adjustedTimestamp || d->currentAccess != access) {
 
         double tn;
         switch (access) {
         case TimeVariableData::Access::Linear:
-            if (SkySearch::getLinearInterpolationSupportData(d->primaryFlightControlData, timestamp, d->currentIndex, &p1, &p2)) {
-                tn = SkySearch::normaliseTimestamp(*p1, *p2, timestamp);
+            if (SkySearch::getLinearInterpolationSupportData(d->primaryFlightControlData, adjustedTimestamp, d->currentIndex, &p1, &p2)) {
+                tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
             }
             break;
         case TimeVariableData::Access::Seek:
             // Get the last sample data just before the seeked position
             // (that sample point may lie far outside of the "sample window")
-            d->currentIndex = SkySearch::updateStartIndex(d->primaryFlightControlData, d->currentIndex, timestamp);
+            d->currentIndex = SkySearch::updateStartIndex(d->primaryFlightControlData, d->currentIndex, adjustedTimestamp);
             if (d->currentIndex != SkySearch::InvalidIndex) {
                 p1 = &d->primaryFlightControlData.at(d->currentIndex);
                 p2 = p1;
@@ -156,13 +134,13 @@ const PrimaryFlightControlData &PrimaryFlightControl::interpolate(qint64 timesta
             d->currentPrimaryFlightControlData.rudderPosition = SkyMath::interpolateLinear(p1->rudderPosition, p2->rudderPosition, tn);
             d->currentPrimaryFlightControlData.elevatorPosition = SkyMath::interpolateLinear(p1->elevatorPosition, p2->elevatorPosition, tn);
             d->currentPrimaryFlightControlData.aileronPosition = SkyMath::interpolateLinear(p1->aileronPosition, p2->aileronPosition, tn);
-            d->currentPrimaryFlightControlData.timestamp = timestamp;
+            d->currentPrimaryFlightControlData.timestamp = adjustedTimestamp;
         } else {
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
             d->currentPrimaryFlightControlData = PrimaryFlightControlData::NullData;
         }
 
-        d->currentTimestamp = timestamp;
+        d->currentTimestamp = adjustedTimestamp;
         d->currentAccess = access;
     }
     return d->currentPrimaryFlightControlData;
