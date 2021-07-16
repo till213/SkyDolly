@@ -32,8 +32,7 @@
 
 #include "../../../../../Kernel/src/Settings.h"
 #include "../../../../../Model/src/AircraftType.h"
-#include "../../../../../Persistence/src/Dao/AircraftTypeDaoIntf.h"
-#include "../../../../../Persistence/src/Dao/DaoFactory.h"
+#include "../../../../../Persistence/src/Service/AircraftTypeService.h"
 #include "CSVImportDialog.h"
 #include "ui_CSVImportDialog.h"
 
@@ -41,12 +40,10 @@ class CSVImportDialogPrivate
 {
 public:
     CSVImportDialogPrivate() noexcept
-        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
-          aircraftTypeDao(daoFactory->createAircraftTypeDao())
+        : aircraftTypeService(std::make_unique<AircraftTypeService>())
     {}
 
-    std::unique_ptr<DaoFactory> daoFactory;
-    std::unique_ptr<AircraftTypeDaoIntf> aircraftTypeDao;
+    std::unique_ptr<AircraftTypeService> aircraftTypeService;
 
     QPushButton *importButton;
 
@@ -77,7 +74,7 @@ const QString CSVImportDialog::getSelectedFilePath() const noexcept
 
 bool CSVImportDialog::getSelectedAircraftType(AircraftType &aircraftType) const noexcept
 {
-    return d->aircraftTypeDao->getByType(ui->aircraftTypeComboBox->currentText(), aircraftType);
+    return d->aircraftTypeService->getByType(ui->aircraftTypeComboBox->currentText(), aircraftType);
 }
 
 bool CSVImportDialog::addToCurrentFlight() const noexcept
