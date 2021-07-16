@@ -138,9 +138,20 @@ void Flight::setDescription(const QString &description) noexcept
     }
 }
 
+void Flight::setAircrafts(std::vector<std::unique_ptr<Aircraft>> aircrafts) noexcept
+{
+    d->aircrafts = std::move(aircrafts);
+    for (auto &aircraft : d->aircrafts) {
+        connect(aircraft.get(), &Aircraft::infoChanged,
+                this, &Flight::aircraftInfoChanged);
+    }
+}
+
 Aircraft &Flight::addUserAircraft() noexcept
 {
     std::unique_ptr<Aircraft> aircraft = std::make_unique<Aircraft>();
+    connect(aircraft.get(), &Aircraft::infoChanged,
+            this, &Flight::aircraftInfoChanged);
 
     d->aircrafts.push_back(std::move(aircraft));
     setUserAircraftIndex(d->aircrafts.size() - 1);
@@ -238,11 +249,6 @@ const Flight::Iterator Flight::begin() const noexcept
 const Flight::Iterator Flight::end() const noexcept
 {
     return d->aircrafts.end();
-}
-
-Flight::InsertIterator Flight::insertIterator() noexcept
-{
-    return std::inserter(d->aircrafts, d->aircrafts.begin());
 }
 
 // OPERATORS

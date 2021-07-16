@@ -111,7 +111,6 @@ public:
     {}
 
     QButtonGroup *positionButtonGroup;
-    QMetaObject::Connection aircraftInfoChangedConnection;
     std::unique_ptr<QAction> moduleAction;
     std::unique_ptr<AircraftService> aircraftService;
     int selectedRow;
@@ -187,6 +186,8 @@ void FormationWidget::showEvent(QShowEvent *event) noexcept
             this, &FormationWidget::updateUi);
     connect(&flight, &Flight::flightStored,
             this, &FormationWidget::updateUi);
+    connect(&flight, &Flight::aircraftInfoChanged,
+            this, &FormationWidget::updateUi);
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::stateChanged,
             this, &FormationWidget::updateUi);
@@ -207,10 +208,11 @@ void FormationWidget::hideEvent(QHideEvent *event) noexcept
                this, &FormationWidget::updateUi);
     disconnect(&flight, &Flight::flightStored,
                this, &FormationWidget::updateUi);
+    disconnect(&flight, &Flight::aircraftInfoChanged,
+               this, &FormationWidget::updateUi);
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     disconnect(&skyConnectManager, &SkyConnectManager::stateChanged,
                this, &FormationWidget::updateUi);
-    QObject::disconnect(d->aircraftInfoChangedConnection);
 }
 
 // PROTECTED SLOTS
@@ -618,9 +620,6 @@ void FormationWidget::updateOffsetUi() noexcept
 
 void FormationWidget::handleUserAircraftChanged(Aircraft &aircraft) noexcept
 {
-    QObject::disconnect(d->aircraftInfoChangedConnection);
-    d->aircraftInfoChangedConnection = connect(&aircraft, &Aircraft::infoChanged,
-                                               this, &FormationWidget::handleAircraftInfoChanged);
     updateInitialPosition();
     updateUi();
 }

@@ -98,7 +98,7 @@ public:
     bool operator != (const Aircraft &rhs) const noexcept;
 
 signals:
-    void infoChanged();
+    void infoChanged(Aircraft &aircraft);
     void dataChanged();
 
 private:

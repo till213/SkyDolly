@@ -59,6 +59,7 @@ public:
     const QString &getDescription() const noexcept;
     void setDescription(const QString &description) noexcept;
 
+    void setAircrafts(std::vector<std::unique_ptr<Aircraft>> aircrafts) noexcept;
     Aircraft &addUserAircraft() noexcept;
     const Aircraft &getUserAircraftConst() const noexcept;
     Aircraft &getUserAircraft() const noexcept;
@@ -75,13 +76,11 @@ public:
     void clear(bool withOneAircraft) noexcept;
 
     typedef std::vector<std::unique_ptr<Aircraft>>::iterator Iterator;
-    typedef std::insert_iterator<std::vector<std::unique_ptr<Aircraft>>> InsertIterator;
 
     Iterator begin() noexcept;
     Iterator end() noexcept;
     const Iterator begin() const noexcept;
     const Iterator end() const noexcept;
-    InsertIterator insertIterator() noexcept;
 
     Aircraft& operator[](std::size_t index) noexcept;
     const Aircraft& operator[](std::size_t index) const noexcept;
@@ -93,6 +92,7 @@ signals:
     void flightConditionChanged();
     void aircraftAdded(Aircraft &aircraft);
     void aircraftDeleted(qint64 removedAircraftId);
+    void aircraftInfoChanged(Aircraft &aircraft);
     void userAircraftChanged(Aircraft &aircraft);
     void flightStored(qint64 id);
     void aircraftStored(Aircraft &aircraft);
