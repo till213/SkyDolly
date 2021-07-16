@@ -103,7 +103,7 @@ const PositionData &Position::interpolate(qint64 timestamp, TimeVariableData::Ac
 {
     const PositionData *p0, *p1, *p2, *p3;
     const double Tension = 0.0;
-    const qint64 adjustedTimestamp = timestamp + d->aircraftInfo.timestampOffset;
+    const qint64 adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timestampOffset, 0LL);
 
     if (d->currentTimestamp != adjustedTimestamp || d->currentAccess != access) {
 

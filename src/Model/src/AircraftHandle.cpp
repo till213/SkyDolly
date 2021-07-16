@@ -104,7 +104,7 @@ std::size_t AircraftHandle::count() const noexcept
 const AircraftHandleData &AircraftHandle::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
 {
     const AircraftHandleData *p1, *p2;
-    const qint64 adjustedTimestamp = timestamp + d->aircraftInfo.timestampOffset;
+    const qint64 adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timestampOffset, 0LL);
 
     if (d->currentTimestamp != adjustedTimestamp || d->currentAccess != access) {
 

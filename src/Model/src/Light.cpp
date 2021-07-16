@@ -102,7 +102,7 @@ std::size_t Light::count() const noexcept
 const LightData &Light::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
 {
     const LightData *p1, *p2;
-    const qint64 adjustedTimestamp = timestamp + d->aircraftInfo.timestampOffset;
+    const qint64 adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timestampOffset, 0LL);
 
     if (d->currentTimestamp != adjustedTimestamp || d->currentAccess != access) {
 

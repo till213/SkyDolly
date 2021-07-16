@@ -239,6 +239,7 @@ void MainWindow::closeEvent(QCloseEvent *event) noexcept
 
 void MainWindow::frenchConnection() noexcept
 {
+    // Sky Connect
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::timestampChanged,
             this, &MainWindow::handleTimestampChanged);
@@ -249,6 +250,11 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::updateReplaySpeedUi);
     connect(d->replaySpeedActionGroup, &QActionGroup::triggered,
             this, &MainWindow::handleReplaySpeedSelected);
+
+    // Flight
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    connect(&flight, &Flight::timestampOffsetChanged,
+            this, &MainWindow::updateTimestamp);
 
     // Menu actions
     connect(d->importQActionGroup, &QActionGroup::triggered,

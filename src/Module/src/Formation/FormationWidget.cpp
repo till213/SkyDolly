@@ -31,6 +31,7 @@
 #include <QButtonGroup>
 #include <QMessageBox>
 #include <QCheckBox>
+#include <QLineEdit>
 
 #include "../../../Kernel/src/Version.h"
 #include "../../../Kernel/src/Unit.h"
@@ -178,6 +179,7 @@ void FormationWidget::showEvent(QShowEvent *event) noexcept
 
     // Deselect when showing module
     d->selectedRow = InvalidSelection;
+    d->selectedAircraftIndex = Flight::InvalidId;
 
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::userAircraftChanged,
@@ -714,36 +716,58 @@ void FormationWidget::on_manualUserAircraftCheckBox_toggled(bool enable) noexcep
 
 void FormationWidget::on_increaseOffsetALotPushButton_clicked() noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    Aircraft &aircraft = flight[d->selectedAircraftIndex];
+    if (d->selectedAircraftIndex != Flight::InvalidId) {
+        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
-    const qint64 newTimestampOffset = aircraft.getTimestampOffset() + TimestampOffsetIncreaseLarge;
-    d->aircraftService->changeTimestampOffset(aircraft, newTimestampOffset);
+        const qint64 newTimestampOffset = aircraft.getTimestampOffset() + TimestampOffsetIncreaseLarge;
+        d->aircraftService->changeTimestampOffset(aircraft, newTimestampOffset);
+    }
 }
 
 void FormationWidget::on_increaseOffsetPushButton_clicked() noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    Aircraft &aircraft = flight[d->selectedAircraftIndex];
+    if (d->selectedAircraftIndex != Flight::InvalidId) {
+        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
-    const qint64 newTimestampOffset = aircraft.getTimestampOffset() + TimestampOffsetIncrease;
-    d->aircraftService->changeTimestampOffset(aircraft, newTimestampOffset);
+        const qint64 newTimestampOffset = aircraft.getTimestampOffset() + TimestampOffsetIncrease;
+        d->aircraftService->changeTimestampOffset(aircraft, newTimestampOffset);
+    }
 }
 
 void FormationWidget::on_decreaseOffsetALotPushButton_clicked() noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    Aircraft &aircraft = flight[d->selectedAircraftIndex];
+    if (d->selectedAircraftIndex != Flight::InvalidId) {
+        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
-    const qint64 newTimestampOffset = aircraft.getTimestampOffset() - TimestampOffsetDecreaseLarge;
-    d->aircraftService->changeTimestampOffset(aircraft, newTimestampOffset);
+        const qint64 newTimestampOffset = aircraft.getTimestampOffset() - TimestampOffsetDecreaseLarge;
+        d->aircraftService->changeTimestampOffset(aircraft, newTimestampOffset);
+    }
 }
 
 void FormationWidget::on_decreaseOffsetPushButton_clicked() noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    Aircraft &aircraft = flight[d->selectedAircraftIndex];
+    if (d->selectedAircraftIndex != Flight::InvalidId) {
+        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
-    const qint64 newTimestampOffset = aircraft.getTimestampOffset() - TimestampOffsetDecrease;
-    d->aircraftService->changeTimestampOffset(aircraft, newTimestampOffset);
+        const qint64 newTimestampOffset = aircraft.getTimestampOffset() - TimestampOffsetDecrease;
+        d->aircraftService->changeTimestampOffset(aircraft, newTimestampOffset);
+    }
+}
+
+void FormationWidget::on_timestampOffsetLineEdit_editingFinished() noexcept
+{
+    if (d->selectedAircraftIndex != Flight::InvalidId) {
+        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        Aircraft &aircraft = flight[d->selectedAircraftIndex];
+
+        bool ok;
+        qint64 timestampOffset = ui->timestampOffsetLineEdit->text().toLongLong(&ok);
+        if (ok) {
+            d->aircraftService->changeTimestampOffset(aircraft, timestampOffset);
+        }
+    }
 }

@@ -21,7 +21,7 @@ target_sources(CSVImport
 )
 
 set(PLUGIN_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence Widget Plugin
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence Widget SkyConnect Plugin
 )
 if (${PLATFORM_IS_MACOS})
     list(APPEND PLUGIN_DEPENDENCIES -lc++)

@@ -31,6 +31,9 @@
 #include <QComboBox>
 
 #include "../../../../../Kernel/src/Settings.h"
+#include "../../../../../Model/src/Logbook.h"
+#include "../../../../../Model/src/Flight.h"
+#include "../../../../../Model/src/Aircraft.h"
 #include "../../../../../Model/src/AircraftType.h"
 #include "../../../../../Persistence/src/Service/AircraftTypeService.h"
 #include "CSVImportDialog.h"
@@ -87,6 +90,11 @@ bool CSVImportDialog::addToCurrentFlight() const noexcept
 void CSVImportDialog::initUi() noexcept
 {
     d->importButton = ui->buttonBox->addButton(tr("Import"), QDialogButtonBox::AcceptRole);
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    QString type = flight.getUserAircraftConst().getAircraftInfoConst().aircraftType.type;
+    if (!type.isEmpty()) {
+        ui->aircraftTypeComboBox->setCurrentText(type);
+    }
 }
 
 void CSVImportDialog::frenchConnection() noexcept
