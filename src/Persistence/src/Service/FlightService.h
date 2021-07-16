@@ -49,7 +49,9 @@ public:
     bool store(Flight &flight) noexcept;
     bool restore(qint64 id, Flight &flight) noexcept;
     bool deleteById(qint64 id) noexcept;
+    bool updateTitle(Flight &flight, const QString &title) noexcept;
     bool updateTitle(qint64 id, const QString &title) noexcept;
+    bool updateTitleAndDescription(Flight &flight, const QString &title, const QString &description) noexcept;
     bool updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept;
     bool updateUserAircraftIndex(Flight &flight, int index) noexcept;
 

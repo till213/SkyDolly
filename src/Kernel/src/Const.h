@@ -4,7 +4,7 @@
 namespace Const {
     inline constexpr char LogbookExtension[] = ".sdlog";
 
-    inline constexpr int EditableTableCellBGColor = 0xffcce4f7;
+    inline constexpr int EditableTableCellBGColor = 0xff3aa8ff;
 }
 
 #endif // CONST_H

@@ -121,13 +121,11 @@ void FlightDescriptionWidget::updateUi() noexcept
 void FlightDescriptionWidget::handleTitleEdited() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    flight.setTitle(ui->titleLineEdit->text());
-    d->flightService.updateTitleAndDescription(flight.getId(), ui->titleLineEdit->text(), ui->focusPlainTextEdit->toPlainText());
+    d->flightService.updateTitleAndDescription(flight, ui->titleLineEdit->text(), ui->focusPlainTextEdit->toPlainText());
 }
 
 void FlightDescriptionWidget::handleDescriptionEdited() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    flight.setDescription(ui->focusPlainTextEdit->toPlainText());
-    d->flightService.updateTitleAndDescription(flight.getId(), ui->titleLineEdit->text(), ui->focusPlainTextEdit->toPlainText());
+    d->flightService.updateTitleAndDescription(flight, ui->titleLineEdit->text(), ui->focusPlainTextEdit->toPlainText());
 }
