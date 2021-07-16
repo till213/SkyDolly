@@ -32,6 +32,7 @@
 #include <QObject>
 
 #include "TimeVariableData.h"
+#include "AircraftInfo.h"
 #include "ModelLib.h"
 
 struct PrimaryFlightControlData;
@@ -41,7 +42,7 @@ class MODEL_API PrimaryFlightControl : public QObject
 {
     Q_OBJECT
 public:
-    PrimaryFlightControl(QObject *parent = nullptr) noexcept;
+    PrimaryFlightControl(const AircraftInfo &aircraftInfo, QObject *parent = nullptr) noexcept;
     virtual ~PrimaryFlightControl() noexcept;
 
     void upsert(const PrimaryFlightControlData &primaryFlightControlData) noexcept;

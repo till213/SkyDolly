@@ -107,27 +107,27 @@ bool SQLiteAircraftDao::add(qint64 flightId, int sequenceNumber, Aircraft &aircr
         "  type,"
         "  start_date,"
         "  end_date,"
+        "  timestamp_offset,"
         "  tail_number,"
         "  airline,"
         "  flight_number,"
         "  initial_airspeed,"
         "  altitude_above_ground,"
-        "  start_on_ground,"
-        "  time_offset"
+        "  start_on_ground"
         ") values ("
         " :flight_id,"
         " :seq_nr,"
         " :type,"
         " :start_date,"
         " :end_date,"
+        " :timestamp_offset,"
         " :tail_number,"
         " :airline,"
         " :flight_number,"
         " :initial_airspeed,"
         " :altitude_above_ground,"
-        " :start_on_ground,"
-        " :time_offset"
-");");
+        " :start_on_ground"
+        ");");
 
     const AircraftType &aircraftType = aircraft.getAircraftInfoConst().aircraftType;
     d->aircraftTypeDao->upsert(aircraftType);

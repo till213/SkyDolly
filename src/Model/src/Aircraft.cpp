@@ -59,12 +59,12 @@ public:
     qint64 id;
     qint64 simulationObjectId;
     AircraftInfo aircraftInfo;
-    Position position;
-    Engine engine;
-    PrimaryFlightControl primaryFlightControl;
-    SecondaryFlightControl secondaryFlightControl;
-    AircraftHandle aircraftHandle;
-    Light light;
+    Position position{aircraftInfo};
+    Engine engine{aircraftInfo};
+    PrimaryFlightControl primaryFlightControl{aircraftInfo};
+    SecondaryFlightControl secondaryFlightControl{aircraftInfo};
+    AircraftHandle aircraftHandle{aircraftInfo};
+    Light light{aircraftInfo};
     FlightPlan flightPlan;
 
     mutable qint64 duration;

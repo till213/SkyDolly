@@ -32,18 +32,21 @@
 #include "../../Kernel/src/SkyMath.h"
 #include "TimeVariableData.h"
 #include "SkySearch.h"
+#include "AircraftInfo.h"
 #include "AircraftHandleData.h"
 #include "AircraftHandle.h"
 
 class AircraftHandlePrivate
 {
 public:
-    AircraftHandlePrivate() noexcept
-        : currentTimestamp(TimeVariableData::InvalidTime),
+    AircraftHandlePrivate(const AircraftInfo &aircraftInfo) noexcept
+        : aircraftInfo(aircraftInfo),
+          currentTimestamp(TimeVariableData::InvalidTime),
           currentAccess(TimeVariableData::Access::Linear),
           currentIndex(SkySearch::InvalidIndex)
     {}
 
+    const AircraftInfo &aircraftInfo;
     std::vector<AircraftHandleData> aircraftHandleData;
     qint64 currentTimestamp;
     TimeVariableData::Access currentAccess;
@@ -56,9 +59,9 @@ public:
 
 // PUBLIC
 
-AircraftHandle::AircraftHandle(QObject *parent) noexcept
+AircraftHandle::AircraftHandle(const AircraftInfo &aircraftInfo, QObject *parent) noexcept
     : QObject(parent),
-      d(std::make_unique<AircraftHandlePrivate>())
+      d(std::make_unique<AircraftHandlePrivate>(aircraftInfo))
 {}
 
 AircraftHandle::~AircraftHandle() noexcept
@@ -101,20 +104,21 @@ std::size_t AircraftHandle::count() const noexcept
 const AircraftHandleData &AircraftHandle::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
 {
     const AircraftHandleData *p1, *p2;
+    const qint64 adjustedTimestamp = timestamp + d->aircraftInfo.timestampOffset;
 
-    if (d->currentTimestamp != timestamp || d->currentAccess != access) {
+    if (d->currentTimestamp != adjustedTimestamp || d->currentAccess != access) {
 
         double tn;
         switch (access) {
         case TimeVariableData::Access::Linear:
-            if (SkySearch::getLinearInterpolationSupportData(d->aircraftHandleData, timestamp, d->currentIndex, &p1, &p2)) {
-                tn = SkySearch::normaliseTimestamp(*p1, *p2, timestamp);
+            if (SkySearch::getLinearInterpolationSupportData(d->aircraftHandleData, adjustedTimestamp, d->currentIndex, &p1, &p2)) {
+                tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
             }
             break;
         case TimeVariableData::Access::Seek:
             // Get the last sample data just before the seeked position
             // (that sample point may lie far outside of the "sample window")
-            d->currentIndex = SkySearch::updateStartIndex(d->aircraftHandleData, d->currentIndex, timestamp);
+            d->currentIndex = SkySearch::updateStartIndex(d->aircraftHandleData, d->currentIndex, adjustedTimestamp);
             if (d->currentIndex != SkySearch::InvalidIndex) {
                 p1 = &d->aircraftHandleData.at(d->currentIndex);
                 p2 = p1;
@@ -146,17 +150,17 @@ const AircraftHandleData &AircraftHandle::interpolate(qint64 timestamp, TimeVari
             d->currentAircraftHandleData.rightWingFolding = SkyMath::interpolateLinear(p1->rightWingFolding, p2->rightWingFolding, tn);
             d->currentAircraftHandleData.gearHandlePosition = p1->gearHandlePosition;
 
-            d->currentAircraftHandleData.timestamp = timestamp;
+            d->currentAircraftHandleData.timestamp = adjustedTimestamp;
         } else if (!d->previousAircraftHandleData.isNull()) {
             // ... and send the previous values again (for as long as the canopy remains "open")
             d->currentAircraftHandleData = d->previousAircraftHandleData;
-            d->currentAircraftHandleData.timestamp = timestamp;
+            d->currentAircraftHandleData.timestamp = adjustedTimestamp;
         } else {
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
             d->currentAircraftHandleData = AircraftHandleData::NullData;
         }
 
-        d->currentTimestamp = timestamp;
+        d->currentTimestamp = adjustedTimestamp;
         d->currentAccess = access;
     }
     return d->currentAircraftHandleData;

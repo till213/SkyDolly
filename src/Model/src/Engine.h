@@ -34,6 +34,7 @@
 #include <QVector>
 
 #include "TimeVariableData.h"
+#include "AircraftInfo.h"
 #include "ModelLib.h"
 
 class EngineData;
@@ -43,7 +44,7 @@ class MODEL_API Engine : public QObject
 {
     Q_OBJECT
 public:
-    Engine(QObject *parent = nullptr) noexcept;
+    Engine(const AircraftInfo &aircraftInfo, QObject *parent = nullptr) noexcept;
     virtual ~Engine() noexcept;
 
     void upsert(const EngineData &engineData) noexcept;
