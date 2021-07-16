@@ -604,13 +604,13 @@ void LogbookWidget::handleCellChanged(int row, int column) noexcept
         QTableWidgetItem *item = ui->logTableWidget->item(row, column);
         const QString title = item->data(Qt::EditRole).toString();
 
-        // Also update the current flight, if in memory
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         if (flight.getId() == d->selectedFlightId) {
-            flight.setTitle(title);
+            // Also update the current flight, if in memory
+            d->flightService.updateTitle(flight, title);
+        } else {
+            d->flightService.updateTitle(d->selectedFlightId, title);
         }
-
-        d->flightService.updateTitle(d->selectedFlightId, title);
     }
 }
 

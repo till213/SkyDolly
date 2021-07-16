@@ -117,6 +117,15 @@ bool FlightService::deleteById(qint64 id)  noexcept
     return ok;
 }
 
+bool FlightService::updateTitle(Flight &flight, const QString &title) noexcept
+{
+    const bool ok = updateTitle(flight.getId(), title);
+    if (ok) {
+        flight.setTitle(title);
+    }
+    return ok;
+}
+
 bool FlightService::updateTitle(qint64 id, const QString &title) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
@@ -128,6 +137,15 @@ bool FlightService::updateTitle(qint64 id, const QString &title) noexcept
         } else {
             QSqlDatabase::database().rollback();
         }
+    }
+    return ok;
+}
+
+bool FlightService::updateTitleAndDescription(Flight &flight, const QString &title, const QString &description) noexcept
+{
+    const bool ok = updateTitleAndDescription(flight.getId(), title, description);
+    if (ok) {
+        flight.setTitle(title);
     }
     return ok;
 }

@@ -113,6 +113,7 @@ class FormationWidgetPrivate
 public:
     FormationWidgetPrivate(QObject *parent) noexcept
         : tailNumberColumnIndex(InvalidColumn),
+          timeOffsetColumnIndex(InvalidColumn),
           positionButtonGroup(new QButtonGroup(parent)),
           moduleAction(nullptr),
           aircraftService(std::make_unique<AircraftService>()),
@@ -122,6 +123,7 @@ public:
     {}
 
     int tailNumberColumnIndex;
+    int timeOffsetColumnIndex;
     QButtonGroup *positionButtonGroup;
     std::unique_ptr<QAction> moduleAction;
     std::unique_ptr<AircraftService> aircraftService;
@@ -253,7 +255,7 @@ void FormationWidget::initUi() noexcept
 
     ui->aircraftTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    const QStringList headers {tr("Sequence"), tr("Aircraft"), tr("Engine Type"), tr("Wing Span"), tr("Initial Airspeed"), tr("Initial Altitude"), tr("Duration"), tr("Tail Number")};
+    const QStringList headers {tr("Sequence"), tr("Aircraft"), tr("Engine Type"), tr("Wing Span"), tr("Initial Airspeed"), tr("Initial Altitude"), tr("Duration"), tr("Tail Number"), tr("Time Offset")};
     ui->aircraftTableWidget->setColumnCount(headers.count());
     ui->aircraftTableWidget->setHorizontalHeaderLabels(headers);
     ui->aircraftTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -468,6 +470,15 @@ void FormationWidget::updateUi() noexcept
         d->tailNumberColumnIndex = columnIndex;
         ++columnIndex;
 
+        // Time offset
+        const double timeOffsetSec = static_cast<double>(aircraftInfo.timeOffset) / 1000.0;
+        newItem = new QTableWidgetItem(d->unit.formatNumber(timeOffsetSec, TimeOffsetDecimalPlaces));
+        newItem->setToolTip(tr("Double-click to edit time offset [seconds]"));
+        newItem->setBackground(QColor(Const::EditableTableCellBGColor));
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        d->timeOffsetColumnIndex = columnIndex;
+        ++columnIndex;
+
         ++rowIndex;
     }
 
@@ -671,7 +682,7 @@ void FormationWidget::handleCellSelected(int row, int column) noexcept
 {
     Q_UNUSED(column)
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    if (column == d->tailNumberColumnIndex) {
+    if (column == d->tailNumberColumnIndex || column == d->timeOffsetColumnIndex) {
         QTableWidgetItem *item = ui->aircraftTableWidget->item(row, column);
         ui->aircraftTableWidget->editItem(item);
     } else if (row != flight.getUserAircraftIndex()) {
@@ -681,13 +692,20 @@ void FormationWidget::handleCellSelected(int row, int column) noexcept
 
 void FormationWidget::handleCellChanged(int row, int column) noexcept
 {
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    Aircraft &aircraft = flight[d->selectedAircraftIndex];
     if (column == d->tailNumberColumnIndex) {
         QTableWidgetItem *item = ui->aircraftTableWidget->item(row, column);
         const QString tailNumber = item->data(Qt::EditRole).toString();
-
-        Flight &flight = Logbook::getInstance().getCurrentFlight();
-        Aircraft &aircraft = flight[d->selectedAircraftIndex];
         d->aircraftService->changeTailNumber(aircraft, tailNumber);
+    } else if (column == d->timeOffsetColumnIndex) {
+        QTableWidgetItem *item = ui->aircraftTableWidget->item(row, column);
+        bool ok;
+        const double timeOffsetSec = item->data(Qt::EditRole).toDouble(&ok);
+        if (ok) {
+            const qint64 timeOffset = static_cast<qint64>(qRound(timeOffsetSec * 1000.0));
+            d->aircraftService->changeTimeOffset(aircraft, timeOffset);
+        }
     }
 }
 
