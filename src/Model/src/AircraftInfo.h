@@ -39,7 +39,7 @@ struct MODEL_API AircraftInfo
     QDateTime startDate;
     QDateTime endDate;
     // Milliseconds
-    qint64 timestampOffset;
+    qint64 timeOffset;
     QString tailNumber;
     QString airline;
     QString flightNumber;    
@@ -63,7 +63,7 @@ inline bool operator==(const AircraftInfo& lhs, const AircraftInfo& rhs) {
            lhs.aircraftType == rhs.aircraftType &&
            lhs.startDate == rhs.startDate &&
            lhs.endDate == rhs.endDate &&
-           lhs.timestampOffset == rhs.timestampOffset &&
+           lhs.timeOffset == rhs.timeOffset &&
            lhs.tailNumber == rhs.tailNumber &&
            lhs.airline == rhs.airline &&
            lhs.flightNumber == rhs.flightNumber &&

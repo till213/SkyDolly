@@ -268,6 +268,6 @@ inline void Flight::connectSignals(Aircraft &aircraft)
 {
     connect(&aircraft, &Aircraft::infoChanged,
             this, &Flight::aircraftInfoChanged);
-    connect(&aircraft, &Aircraft::timestampOffsetChanged,
-            this, &Flight::timestampOffsetChanged);
+    connect(&aircraft, &Aircraft::timeOffsetChanged,
+            this, &Flight::timeOffsetChanged);
 }

@@ -320,11 +320,11 @@ create unique index aircraft_idx1 on aircraft (flight_id, seq_nr);
 create index aircraft_idx2 on aircraft (type collate nocase);
 
 @migr(id = "bd5b845b-4525-406f-b440-0f33e215bf72", descn = "Add timestamp offset to aircraft", step_cnt = 2)
-alter table aircraft add column timestamp_offset integer;
+alter table aircraft add column time_offset integer;
 
-@migr(id = "bd5b845b-4525-406f-b440-0f33e215bf72", descn = "Initialise timestamp offset to 0", step_cnt = 2)
+@migr(id = "bd5b845b-4525-406f-b440-0f33e215bf72", descn = "Initialise timestamp offset to 0", step = 2)
 update aircraft
-set    timestamp_offset = 0;
+set    time_offset = 0;
 
 @migr(id = "1c13f02d-9def-4fd6-af8d-3b7984573682", descn = "Update application version to 0.8", step = 1)
 update metadata

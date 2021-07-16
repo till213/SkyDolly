@@ -107,7 +107,7 @@ bool SQLiteAircraftDao::add(qint64 flightId, int sequenceNumber, Aircraft &aircr
         "  type,"
         "  start_date,"
         "  end_date,"
-        "  timestamp_offset,"
+        "  time_offset,"
         "  tail_number,"
         "  airline,"
         "  flight_number,"
@@ -120,7 +120,7 @@ bool SQLiteAircraftDao::add(qint64 flightId, int sequenceNumber, Aircraft &aircr
         " :type,"
         " :start_date,"
         " :end_date,"
-        " :timestamp_offset,"
+        " :time_offset,"
         " :tail_number,"
         " :airline,"
         " :flight_number,"
@@ -138,7 +138,7 @@ bool SQLiteAircraftDao::add(qint64 flightId, int sequenceNumber, Aircraft &aircr
     query.bindValue(":type", aircraftType.type);
     query.bindValue(":start_date", info.startDate.toUTC());
     query.bindValue(":end_date", info.endDate.toUTC());
-    query.bindValue(":timestamp_offset", info.timestampOffset);
+    query.bindValue(":time_offset", info.timeOffset);
     query.bindValue(":tail_number", info.tailNumber);
     query.bindValue(":airline", info.airline);
     query.bindValue(":flight_number", info.flightNumber);
@@ -371,7 +371,7 @@ bool SQLiteAircraftDao::getAircraftInfosByFlightId(qint64 flightId, std::vector<
         const int typeIdx = record.indexOf("type");
         const int startDateIdx = record.indexOf("start_date");
         const int endDateIdx = record.indexOf("end_date");
-        const int timestampOffsetIdx = record.indexOf("timestamp_offset");
+        const int timeOffsetIdx = record.indexOf("time_offset");
         const int tailNumberIdx = record.indexOf("tail_number");
         const int airlineIdx = record.indexOf("airline");
         const int flightNumberIdx = record.indexOf("flight_number");
@@ -387,7 +387,7 @@ bool SQLiteAircraftDao::getAircraftInfosByFlightId(qint64 flightId, std::vector<
             dateTime = query.value(endDateIdx).toDateTime();
             dateTime.setTimeZone(QTimeZone::utc());
             info.endDate = dateTime.toLocalTime();
-            info.timestampOffset = query.value(timestampOffsetIdx).toULongLong();
+            info.timeOffset = query.value(timeOffsetIdx).toULongLong();
             info.tailNumber = query.value(tailNumberIdx).toString();
             info.airline = query.value(airlineIdx).toString();
             info.flightNumber = query.value(flightNumberIdx).toString();
@@ -411,21 +411,21 @@ bool SQLiteAircraftDao::getAircraftInfosByFlightId(qint64 flightId, std::vector<
     return ok;
 }
 
-bool SQLiteAircraftDao::updateTimestampOffset(qint64 id, qint64 timestampOffset) noexcept
+bool SQLiteAircraftDao::updateTimeOffset(qint64 id, qint64 timeOffset) noexcept
 {
     QSqlQuery query;
     query.prepare(
         "update aircraft "
-        "set    timestamp_offset = :timestamp_offset "
+        "set    time_offset = :time_offset "
         "where  id = :id;"
     );
 
-    query.bindValue(":timestamp_offset", timestampOffset);
+    query.bindValue(":time_offset", timeOffset);
     query.bindValue(":id", id);
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("SQLiteAircraftDao::updateTimestampOffset: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug("SQLiteAircraftDao::updateTimeOffset: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
     }
 #endif
     return ok;

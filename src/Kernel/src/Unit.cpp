@@ -208,9 +208,19 @@ QString Unit::formatDuration(const QTime &time) noexcept
     return d->locale.toString(time, "hh:mm:s");
 }
 
-const QString Unit::formatMonth(int month) noexcept
+QString Unit::formatMonth(int month) noexcept
 {
     return d->locale.monthName(month);
+}
+
+QString Unit::formatNumber(double number, int precision) noexcept
+{
+    return d->locale.toString(number, 'f', precision);
+}
+
+double Unit::toNumber(const QString &value, bool *ok) noexcept
+{
+    return d->locale.toDouble(value, ok);
 }
 
 // PRIVATE

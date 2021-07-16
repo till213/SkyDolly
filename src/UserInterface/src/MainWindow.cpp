@@ -42,7 +42,6 @@
 #include <QRadioButton>
 #include <QDoubleValidator>
 #include <QIcon>
-#include <QLocale>
 #include <QStackedWidget>
 #include <QEvent>
 #include <QResizeEvent>
@@ -52,6 +51,7 @@
 #include <QSpacerItem>
 #include <QTimer>
 
+#include "../../Kernel/src/Unit.h"
 #include "../../Kernel/src/Const.h"
 #include "../../Kernel/src/Replay.h"
 #include "../../Kernel/src/Version.h"
@@ -154,7 +154,7 @@ public:
     SimulationVariablesDialog *simulationVariablesDialog;
     StatisticsDialog *statisticsDialog;    
 
-    QLocale locale;
+    Unit unit;
 
     // Services
     std::unique_ptr<FlightService> flightService;
@@ -253,7 +253,7 @@ void MainWindow::frenchConnection() noexcept
 
     // Flight
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    connect(&flight, &Flight::timestampOffsetChanged,
+    connect(&flight, &Flight::timeOffsetChanged,
             this, &MainWindow::updateTimestamp);
 
     // Menu actions
@@ -622,7 +622,7 @@ void MainWindow::initReplaySpeedUi() noexcept
             normalSpeedRadioButton->setChecked(true);
         } else {
             d->customSpeedRadioButton ->setChecked(true);
-            d->customSpeedLineEdit->setText(d->locale.toString(d->lastCustomReplaySpeed, 'f', ReplaySpeedDecimalPlaces));
+            d->customSpeedLineEdit->setText(d->unit.formatNumber(d->lastCustomReplaySpeed, ReplaySpeedDecimalPlaces));
         }
     }
 
@@ -743,10 +743,10 @@ double MainWindow::getCustomSpeedFactor() const
     if (!text.isEmpty()) {
         switch (Settings::getInstance().getReplaySpeeedUnit()) {
         case Replay::SpeedUnit::Absolute:
-            customSpeedFactor = d->locale.toDouble(text);
+            customSpeedFactor = d->unit.toNumber(text);
             break;
         case Replay::SpeedUnit::Percent:
-            customSpeedFactor = d->locale.toDouble(text) / 100.0;
+            customSpeedFactor = d->unit.toNumber(text) / 100.0;
             break;
         default:
             customSpeedFactor = 1.0;
@@ -1054,7 +1054,7 @@ void MainWindow::updateReplaySpeedUi() noexcept
 {
     if (d->customSpeedRadioButton->isChecked()) {
         d->customSpeedLineEdit->setEnabled(true);
-        d->customSpeedLineEdit->setText(d->locale.toString(d->lastCustomReplaySpeed, 'f', ReplaySpeedDecimalPlaces));
+        d->customSpeedLineEdit->setText(d->unit.formatNumber(d->lastCustomReplaySpeed, ReplaySpeedDecimalPlaces));
 
         switch (Settings::getInstance().getReplaySpeeedUnit()) {
         case Replay::SpeedUnit::Absolute:

@@ -102,7 +102,7 @@ std::size_t PrimaryFlightControl::count() const noexcept
 const PrimaryFlightControlData &PrimaryFlightControl::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
 {
     const PrimaryFlightControlData *p1, *p2;
-    const qint64 adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timestampOffset, 0LL);
+    const qint64 adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timeOffset, 0LL);
 
     if (d->currentTimestamp != adjustedTimestamp || d->currentAccess != access) {
 

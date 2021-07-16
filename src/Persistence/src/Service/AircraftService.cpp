@@ -130,12 +130,12 @@ bool AircraftService::getAircraftInfos(qint64 flightId, std::vector<AircraftInfo
     return ok;
 }
 
-bool AircraftService::changeTimestampOffset(Aircraft &aircraft, qint64 newOffset) noexcept
+bool AircraftService::changeTimeOffset(Aircraft &aircraft, qint64 newOffset) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
-        aircraft.setTimestampOffset(newOffset);
-        ok = d->aircraftDao->updateTimestampOffset(aircraft.getId(), newOffset);
+        aircraft.setTimeOffset(newOffset);
+        ok = d->aircraftDao->updateTimeOffset(aircraft.getId(), newOffset);
         if (ok) {
             auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
             if (skyConnect) {

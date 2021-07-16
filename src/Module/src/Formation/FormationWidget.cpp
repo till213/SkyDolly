@@ -24,6 +24,7 @@
  */
 #include <memory>
 
+#include <QDoubleValidator>
 #include <QWidget>
 #include <QAction>
 #include <QTableWidget>
@@ -94,10 +95,15 @@ namespace
     };
 
     // Milliseconds
-    constexpr qint64 TimestampOffsetIncrease = 100;
-    constexpr qint64 TimestampOffsetIncreaseLarge = 1000;
-    constexpr qint64 TimestampOffsetDecrease = 100;
-    constexpr qint64 TimestampOffsetDecreaseLarge = 1000;
+    constexpr qint64 TimeOffsetIncrease = 100;
+    constexpr qint64 TimeOffsetIncreaseLarge = 1000;
+    constexpr qint64 TimeOffsetDecrease = 100;
+    constexpr qint64 TimeOffsetDecreaseLarge = 1000;
+
+    // Seconds
+    constexpr double TimeOffsetMax = 24.0 * 60.0 * 60.0;
+    constexpr double TimeOffsetMin = -TimeOffsetMax;
+    constexpr double TimeOffsetDecimalPlaces = 2;
 }
 
 class FormationWidgetPrivate
@@ -108,7 +114,8 @@ public:
           moduleAction(nullptr),
           aircraftService(std::make_unique<AircraftService>()),
           selectedRow(InvalidSelection),
-          selectedAircraftIndex(Flight::InvalidId)
+          selectedAircraftIndex(Flight::InvalidId),
+          timeOffsetValidator(nullptr)
     {}
 
     QButtonGroup *positionButtonGroup;
@@ -116,6 +123,7 @@ public:
     std::unique_ptr<AircraftService> aircraftService;
     int selectedRow;
     qint64 selectedAircraftIndex;
+    QDoubleValidator *timeOffsetValidator;
     Unit unit;
 };
 
@@ -299,6 +307,14 @@ void FormationWidget::initUi() noexcept
 
     const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     ui->manualUserAircraftCheckBox->setChecked(skyConnect && skyConnect->get().isUserAircraftManualControl());
+
+    initTimeOffsetUi();
+}
+
+void FormationWidget::initTimeOffsetUi() noexcept
+{
+    d->timeOffsetValidator = new QDoubleValidator(ui->timeOffsetLineEdit);
+    d->timeOffsetValidator->setRange(TimeOffsetMin, TimeOffsetMax, TimeOffsetDecimalPlaces);
 }
 
 void FormationWidget::frenchConnection() noexcept
@@ -606,17 +622,19 @@ void FormationWidget::updateOffsetUi() noexcept
 
     ui->decreaseOffsetALotPushButton->setEnabled(enabled);
     ui->decreaseOffsetPushButton->setEnabled(enabled);
-    ui->timestampOffsetLineEdit->setEnabled(enabled);
+    ui->timeOffsetLineEdit->setEnabled(enabled);
     ui->increaseOffsetPushButton->setEnabled(enabled);
     ui->increaseOffsetALotPushButton->setEnabled(enabled);
 
     if (enabled) {
         const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
         const Aircraft &aircraft = flight[d->selectedAircraftIndex];
-        QString offsetString = QString::number(aircraft.getAircraftInfoConst().timestampOffset);
-        ui->timestampOffsetLineEdit->setText(offsetString);
+        const qint64 timeOffset = aircraft.getAircraftInfoConst().timeOffset;
+        const double timeOffsetSec = static_cast<double>(timeOffset) / 1000.0;
+        QString offsetString = d->unit.formatNumber(timeOffsetSec, TimeOffsetDecimalPlaces);
+        ui->timeOffsetLineEdit->setText(offsetString);
     } else {
-        ui->timestampOffsetLineEdit->setText("");
+        ui->timeOffsetLineEdit->setText("");
     }
 }
 
@@ -720,8 +738,8 @@ void FormationWidget::on_increaseOffsetALotPushButton_clicked() noexcept
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
-        const qint64 newTimestampOffset = aircraft.getTimestampOffset() + TimestampOffsetIncreaseLarge;
-        d->aircraftService->changeTimestampOffset(aircraft, newTimestampOffset);
+        const qint64 newTimeOffset = aircraft.getTimeOffset() + TimeOffsetIncreaseLarge;
+        d->aircraftService->changeTimeOffset(aircraft, newTimeOffset);
     }
 }
 
@@ -731,8 +749,8 @@ void FormationWidget::on_increaseOffsetPushButton_clicked() noexcept
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
-        const qint64 newTimestampOffset = aircraft.getTimestampOffset() + TimestampOffsetIncrease;
-        d->aircraftService->changeTimestampOffset(aircraft, newTimestampOffset);
+        const qint64 newTimeOffset = aircraft.getTimeOffset() + TimeOffsetIncrease;
+        d->aircraftService->changeTimeOffset(aircraft, newTimeOffset);
     }
 }
 
@@ -742,8 +760,8 @@ void FormationWidget::on_decreaseOffsetALotPushButton_clicked() noexcept
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
-        const qint64 newTimestampOffset = aircraft.getTimestampOffset() - TimestampOffsetDecreaseLarge;
-        d->aircraftService->changeTimestampOffset(aircraft, newTimestampOffset);
+        const qint64 newTimeOffset = aircraft.getTimeOffset() - TimeOffsetDecreaseLarge;
+        d->aircraftService->changeTimeOffset(aircraft, newTimeOffset);
     }
 }
 
@@ -753,21 +771,22 @@ void FormationWidget::on_decreaseOffsetPushButton_clicked() noexcept
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
-        const qint64 newTimestampOffset = aircraft.getTimestampOffset() - TimestampOffsetDecrease;
-        d->aircraftService->changeTimestampOffset(aircraft, newTimestampOffset);
+        const qint64 newTimeOffset = aircraft.getTimeOffset() - TimeOffsetDecrease;
+        d->aircraftService->changeTimeOffset(aircraft, newTimeOffset);
     }
 }
 
-void FormationWidget::on_timestampOffsetLineEdit_editingFinished() noexcept
+void FormationWidget::on_timeOffsetLineEdit_editingFinished() noexcept
 {
     if (d->selectedAircraftIndex != Flight::InvalidId) {
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
         bool ok;
-        qint64 timestampOffset = ui->timestampOffsetLineEdit->text().toLongLong(&ok);
+        const double timeOffsetSec = ui->timeOffsetLineEdit->text().toDouble(&ok);
         if (ok) {
-            d->aircraftService->changeTimestampOffset(aircraft, timestampOffset);
+            const qint64 timeOffset = static_cast<qint64>(qRound(timeOffsetSec * 1000.0));
+            d->aircraftService->changeTimeOffset(aircraft, timeOffset);
         }
     }
 }
