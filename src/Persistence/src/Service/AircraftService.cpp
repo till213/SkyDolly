@@ -137,6 +137,10 @@ bool AircraftService::changeTimestampOffset(Aircraft &aircraft, qint64 newOffset
         aircraft.setTimestampOffset(newOffset);
         ok = d->aircraftDao->updateTimestampOffset(aircraft.getId(), newOffset);
         if (ok) {
+            auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+            if (skyConnect) {
+                skyConnect->get().seek(skyConnect->get().getCurrentTimestamp());
+            }
             ok = QSqlDatabase::database().commit();
         } else {
             QSqlDatabase::database().rollback();
