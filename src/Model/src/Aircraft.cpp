@@ -176,7 +176,7 @@ void Aircraft::setAircraftInfo(const AircraftInfo &aircraftInfo) noexcept
 {
     if (d->aircraftInfo != aircraftInfo) {
         d->aircraftInfo = aircraftInfo;
-        emit infoChanged();
+        emit infoChanged(*this);
     }
 }
 
@@ -188,7 +188,7 @@ qint64 Aircraft::getTimestampOffset() const noexcept
 void Aircraft::setTimestampOffset(qint64 timestampOffset) noexcept {
     if (d->aircraftInfo.timestampOffset != timestampOffset) {
         d->aircraftInfo.timestampOffset = timestampOffset;
-        emit infoChanged();
+        emit infoChanged(*this);
     }
 }
 

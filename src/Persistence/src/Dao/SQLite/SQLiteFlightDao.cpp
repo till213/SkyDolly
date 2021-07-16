@@ -227,7 +227,9 @@ bool SQLiteFlightDao::getFlightById(qint64 id, Flight &flight) const noexcept
 
             flight.setFlightCondition(flightCondition);
         }
-        ok = d->aircraftDao->getByFlightId(id, flight.insertIterator());
+        std::vector<std::unique_ptr<Aircraft>> aircrafts;
+        ok = d->aircraftDao->getByFlightId(id, std::inserter(aircrafts, aircrafts.begin()));
+        flight.setAircrafts(std::move(aircrafts));
         if (ok) {
             // Index starts at 0
             const int userAircraftIndex = query.value(userAircraftSequenceNumberIdx).toInt() - 1;
