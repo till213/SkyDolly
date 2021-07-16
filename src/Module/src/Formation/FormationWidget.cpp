@@ -721,7 +721,6 @@ void FormationWidget::on_increaseOffsetALotPushButton_clicked() noexcept
     d->aircraftService->changeTimestampOffset(aircraft, newTimestampOffset);
 }
 
-
 void FormationWidget::on_increaseOffsetPushButton_clicked() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
@@ -739,7 +738,6 @@ void FormationWidget::on_decreaseOffsetALotPushButton_clicked() noexcept
     const qint64 newTimestampOffset = aircraft.getTimestampOffset() - TimestampOffsetDecreaseLarge;
     d->aircraftService->changeTimestampOffset(aircraft, newTimestampOffset);
 }
-
 
 void FormationWidget::on_decreaseOffsetPushButton_clicked() noexcept
 {
