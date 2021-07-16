@@ -218,7 +218,7 @@ qint64 Aircraft::getDurationMSec() const noexcept
         // is "ahead" of its "schedule" (sampled data). The more ahead the aircraft
         // is, the less the duration -> subtract the offset
         if (d->position.count() > 0) {
-            d->duration = d->position.getLast().timestamp - timeOffset;
+            d->duration = qMax(d->position.getLast().timestamp - timeOffset, 0LL);
         }
         if (d->engine.count() > 0) {
             d->duration = qMax(d->engine.getLast().timestamp - timeOffset, d->duration);

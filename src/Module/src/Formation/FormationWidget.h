@@ -98,6 +98,7 @@ private slots:
     void on_decreaseOffsetALotPushButton_clicked() noexcept;
     void on_decreaseOffsetPushButton_clicked() noexcept;
     void on_timeOffsetLineEdit_editingFinished() noexcept;
+    void on_resetAllTimeOffsetPushButton_clicked() noexcept;
 };
 
 #endif // FORMATIONWIDGET_H
