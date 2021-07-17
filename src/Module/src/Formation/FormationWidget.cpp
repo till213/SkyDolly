@@ -844,12 +844,34 @@ void FormationWidget::on_timeOffsetLineEdit_editingFinished() noexcept
 
 void FormationWidget::on_resetAllTimeOffsetPushButton_clicked() noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    bool ok = true;
-    for (auto &aircraft : flight) {
-        ok = d->aircraftService->changeTimeOffset(*aircraft.get(), 0);
-        if (!ok) {
-            break;
+    Settings &settings = Settings::getInstance();
+    bool doReset;
+    if (settings.isResetTimeOffsetConfirmationEnabled()) {
+        QMessageBox messageBox(this);
+        QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), &messageBox);
+
+        messageBox.setText(tr("The time offsets of all aircrafts in this formation will be changed."));
+        messageBox.setInformativeText(tr("Do you want to reset all time offsets to 0?"));
+        QPushButton *resetButton = messageBox.addButton(tr("Reset Time Offsets"), QMessageBox::AcceptRole);
+        QPushButton *doNotChangeButon = messageBox.addButton(tr("Do Not Change"), QMessageBox::RejectRole);
+        messageBox.setDefaultButton(doNotChangeButon);
+        messageBox.setCheckBox(dontAskAgainCheckBox);
+        messageBox.setIcon(QMessageBox::Icon::Question);
+
+        messageBox.exec();
+        doReset = messageBox.clickedButton() == resetButton;
+        settings.setResetTimeOffsetConfirmationEnabled(!dontAskAgainCheckBox->isChecked());
+    } else {
+        doReset = true;
+    }
+    if (doReset) {
+        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        bool ok = true;
+        for (auto &aircraft : flight) {
+            ok = d->aircraftService->changeTimeOffset(*aircraft.get(), 0);
+            if (!ok) {
+                break;
+            }
         }
     }
 }
