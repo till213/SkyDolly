@@ -23,10 +23,12 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <optional>
 
 #include <QDoubleValidator>
 #include <QDialog>
 #include <QWidget>
+#include <QString>
 
 #include "../../../Kernel/src/SampleRate.h"
 #include "../../../Kernel/src/Enum.h"
@@ -81,7 +83,7 @@ void SettingsDialog::initUi() noexcept
     Qt::WindowFlags flags = Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
     setWindowFlags(flags);
 
-    // Flight Simulator
+    // SkyConnect plugin (flight simulator)
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     std::vector<SkyConnectManager::Handle> plugins = skyConnectManager.availablePlugins();
     for (auto &plugin : plugins) {
@@ -131,6 +133,14 @@ void SettingsDialog::frenchConnection() noexcept
 void SettingsDialog::updateUi() noexcept
 {
     Settings &settings = Settings::getInstance();
+
+    // SkyConnect plugin
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    std::optional<QString> pluginName = skyConnectManager.getCurrentSkyConnectPluginName();
+    if (pluginName) {
+        ui->connectionComboBox->setCurrentText(pluginName.value());
+    }
+
     // Recording
     ui->recordFrequencyComboBox->setCurrentIndex(Enum::toUnderlyingType(settings.getRecordingSampleRate()));
 

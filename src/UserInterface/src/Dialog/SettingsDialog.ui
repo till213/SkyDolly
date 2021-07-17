@@ -7,42 +7,18 @@
     <x>0</x>
     <y>0</y>
     <width>664</width>
-    <height>381</height>
+    <height>411</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Settings</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
     <widget class="QTabWidget" name="settingsTabWidget">
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab_4">
-      <attribute name="title">
-       <string>Flight Simulator</string>
-      </attribute>
-      <layout class="QFormLayout" name="formLayout_4">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>Connection</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="connectionComboBox">
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>0</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
        <string>Replay</string>
@@ -53,7 +29,7 @@
          <property name="title">
           <string>Seek</string>
          </property>
-         <layout class="QFormLayout" name="formLayout">
+         <layout class="QFormLayout" name="formLayout_5">
           <item row="0" column="1">
            <widget class="QCheckBox" name="absoluteSeekEnabledCheckBox">
             <property name="text">
@@ -102,22 +78,22 @@
          <property name="title">
           <string>Repeat Values</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
+         <layout class="QFormLayout" name="formLayout">
+          <item row="0" column="0">
            <widget class="QCheckBox" name="repeatFlapsCheckBox">
             <property name="text">
              <string>Flaps Position</string>
             </property>
            </widget>
           </item>
-          <item>
+          <item row="1" column="0">
            <widget class="QCheckBox" name="repeatCanopyOpenCheckBox">
             <property name="text">
              <string>Canopy</string>
             </property>
            </widget>
           </item>
-          <item>
+          <item row="2" column="0" colspan="2">
            <widget class="QLabel" name="label_3">
             <property name="minimumSize">
              <size>
@@ -133,7 +109,7 @@
             </property>
            </widget>
           </item>
-          <item>
+          <item row="3" column="1">
            <spacer name="verticalSpacer_2">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -172,6 +148,56 @@
           </size>
          </property>
         </widget>
+       </item>
+       <item row="1" column="1">
+        <spacer name="verticalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_4">
+      <attribute name="title">
+       <string>Flight Simulator</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout_4">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Connection</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="connectionComboBox">
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>0</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -220,7 +246,7 @@
      </widget>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
