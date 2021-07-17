@@ -360,6 +360,23 @@ public:
     void setDeleteAircraftConfirmationEnabled(bool enable) noexcept;
 
     /*!
+     * Returns whether the reset time offset confirmation is enabled or not.
+     *
+     * \return \c true if the reset time offset confirmation is enabled; \c false else
+     */
+    bool isResetTimeOffsetConfirmationEnabled() const noexcept;
+
+    /*!
+     * Enables the reset time offset confirmation.
+     *
+     * \param enable
+     *        set to \c true to set the reset time offset confirmation enabled;
+     *        \c false else
+     * \sa changed
+     */
+    void setResetTimeOffsetConfirmationEnabled(bool enable) noexcept;
+
+    /*!
      * Returns the count of how many times the "preview" dialog is still
      * to be shown.
      *

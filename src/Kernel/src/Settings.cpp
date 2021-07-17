@@ -61,6 +61,7 @@ public:
 
     bool deleteFlightConfirmation;
     bool deleteAircraftConfirmation;
+    bool resetTimeOffsetConfirmation;
 
     int previewInfoDialogCount;
 
@@ -80,6 +81,7 @@ public:
     static constexpr double DefaultRepeatCanopyOpen = true;
     static constexpr bool DefaultDeleteFlightConfirmation = true;
     static constexpr bool DefaultDeleteAircraftConfirmation = true;
+    static constexpr bool DefaultResetTimeOffsetConfirmation = true;
 
     static constexpr int DefaultPreviewInfoDialogCount = 3;
     static constexpr int PreviewInfoDialogBase = 40;
@@ -341,6 +343,19 @@ void Settings::setDeleteAircraftConfirmationEnabled(bool enable) noexcept
     }
 }
 
+bool Settings::isResetTimeOffsetConfirmationEnabled() const noexcept
+{
+    return d->resetTimeOffsetConfirmation;
+}
+
+void Settings::setResetTimeOffsetConfirmationEnabled(bool enable) noexcept
+{
+    if (d->resetTimeOffsetConfirmation != enable) {
+        d->resetTimeOffsetConfirmation = enable;
+        emit changed();
+    }
+}
+
 int Settings::getPreviewInfoDialogCount() const noexcept
 {
     return d->previewInfoDialogCount - SettingsPrivate::PreviewInfoDialogBase;
@@ -388,6 +403,7 @@ void Settings::store() noexcept
     {
         d->settings.setValue("DeleteFlightConfirmation", d->deleteFlightConfirmation);
         d->settings.setValue("DeleteAircraftConfirmation", d->deleteAircraftConfirmation);
+        d->settings.setValue("ResetTimeOffsetConfirmation", d->resetTimeOffsetConfirmation);
     }
     d->settings.endGroup();
     d->settings.beginGroup("Window");
@@ -476,6 +492,7 @@ void Settings::restore() noexcept
     {
         d->deleteFlightConfirmation = d->settings.value("DeleteFlightConfirmation", SettingsPrivate::DefaultDeleteFlightConfirmation).toBool();
         d->deleteAircraftConfirmation = d->settings.value("DeleteAircraftConfirmation", SettingsPrivate::DefaultDeleteAircraftConfirmation).toBool();
+        d->resetTimeOffsetConfirmation = d->settings.value("ResetTimeOffsetConfirmation", SettingsPrivate::DefaultResetTimeOffsetConfirmation).toBool();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Window");
