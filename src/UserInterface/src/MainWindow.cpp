@@ -140,8 +140,7 @@ public:
           exportQActionGroup(nullptr),
           hasImportPlugins(false),
           hasExportPlugins(false),
-          moduleManager(nullptr),
-          activeModuleId(Module::Module::None)
+          moduleManager(nullptr)
     {}
 
     Connect::State previousState;
@@ -178,7 +177,6 @@ public:
     bool hasExportPlugins;
 
     std::unique_ptr<ModuleManager> moduleManager;
-    Module::Module activeModuleId;
 };
 
 // PUBLIC
@@ -421,7 +419,6 @@ void MainWindow::initModuleSelectorUi() noexcept
     const bool moduleSelectorVisible = Settings::getInstance().isModuleSelectorVisible();
     ui->showModulesAction->setChecked(moduleSelectorVisible);
 
-    d->activeModuleId = activeModule.getModuleId();
     for (const auto &item : d->moduleManager->getModules()) {
         QAction &moduleAction = item->getAction();
         ui->moduleMenu->addAction(&moduleAction);
@@ -609,7 +606,7 @@ void MainWindow::initReplaySpeedUi() noexcept
     d->customReplaySpeedPercentValidator->setRange(ReplaySpeedAbsoluteMin * 100.0, ReplaySpeedAbsoluteMax * 100.0, ReplaySpeedDecimalPlaces);
 
     // The replay speed factor in SkyConnect is always an absolute factor
-    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         const double replaySpeed = skyConnect->get().getReplaySpeedFactor();
         Settings &settings = Settings::getInstance();
@@ -762,7 +759,7 @@ double MainWindow::getCustomSpeedFactor() const
 
 void MainWindow::on_positionSlider_sliderPressed() noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         d->previousState = skyConnect->get().getState();
         if (d->previousState == Connect::State::Replay) {
@@ -774,7 +771,7 @@ void MainWindow::on_positionSlider_sliderPressed() noexcept
 
 void MainWindow::on_positionSlider_valueChanged(int value) noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         const double scale = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
         const qint64 totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
@@ -789,7 +786,7 @@ void MainWindow::on_positionSlider_valueChanged(int value) noexcept
 
 void MainWindow::on_positionSlider_sliderReleased() noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (d->previousState == Connect::State::Replay) {
             skyConnect->get().setPaused(false);
@@ -799,7 +796,7 @@ void MainWindow::on_positionSlider_sliderReleased() noexcept
 
 void MainWindow::on_timestampTimeEdit_timeChanged(const QTime &time) noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect && (skyConnect->get().isIdle() || skyConnect->get().getState() == Connect::State::ReplayPaused)) {
         qint64 timestamp = time.hour() * MilliSecondsPerHour + time.minute() * MilliSecondsPerMinute + time.second() * MilliSecondsPerSecond;
         skyConnect->get().seek(timestamp);
@@ -823,7 +820,7 @@ void MainWindow::updateWindowSize() noexcept
 
 void MainWindow::handleTimestampChanged(qint64 timestamp) noexcept
 {
-    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().isRecording()) {
             updateTimestamp();
@@ -890,7 +887,7 @@ void MainWindow::handleReplaySpeedSelected(QAction *action) noexcept
         break;
     }
 
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().setReplaySpeedFactor(replaySpeedFactor);
     }
@@ -898,7 +895,7 @@ void MainWindow::handleReplaySpeedSelected(QAction *action) noexcept
 
 void MainWindow::handleCustomSpeedChanged() noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const double customReplaySpeedFactor = getCustomSpeedFactor();
     if (skyConnect) {
         skyConnect->get().setReplaySpeedFactor(customReplaySpeedFactor);
@@ -957,7 +954,7 @@ void MainWindow::updateControlUi() noexcept
 
     const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     const bool hasSkyConnectPlugins = skyConnectManager.hasPlugins();
-    const auto skyConnect = skyConnectManager.getCurrentSkyConnect();
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = skyConnectManager.getCurrentSkyConnect();
     const Connect::State state = skyConnect ? skyConnect->get().getState() : Connect::State::Disconnected;
     switch (state) {
     case Connect::State::Disconnected:
@@ -1079,7 +1076,7 @@ void MainWindow::updateReplaySpeedUi() noexcept
 
 void MainWindow::updateTimestamp() noexcept
 {
-    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const bool isRecording = skyConnect && skyConnect->get().isRecording();
     const bool ofUserAircraft = isRecording;
     const qint64 totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec(ofUserAircraft);
@@ -1097,7 +1094,7 @@ void MainWindow::updateFileMenu() noexcept
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();
     const bool hasRecording = aircraft.hasRecording();
-    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const Connect::State state = skyConnect ? skyConnect->get().getState() : Connect::State::Disconnected;
     switch (state) {
     case Connect::State::Recording:
@@ -1156,8 +1153,8 @@ void MainWindow::updateMainWindow() noexcept
 
 void MainWindow::handleModuleActivated(const QString title, Module::Module moduleId) noexcept
 {
+    Q_UNUSED(moduleId)
     ui->moduleGroupBox->setTitle(title);
-    d->activeModuleId = moduleId;
     const bool minimalUi = Settings::getInstance().isMinimalUiEnabled();
     if (minimalUi) {
         updateMinimalUi(false);
@@ -1274,58 +1271,24 @@ void MainWindow::on_aboutQtAction_triggered() noexcept
 
 void MainWindow::toggleRecord(bool enable) noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        blockSignals(true);
-        switch (skyConnect->get().getState()) {
-        case Connect::State::Recording:
-            if (!enable) {
-                skyConnect->get().stopRecording();
-            }
-            break;
-        case Connect::State::RecordingPaused:
-            if (enable) {
-                // The record button also unpauses a paused recording
-                skyConnect->get().setPaused(false);
-            }
-            break;
-        default:
-            if (enable) {
-                const bool addFormationAircraft = d->activeModuleId == Module::Module::Formation;
-                skyConnect->get().startRecording(addFormationAircraft);
-            }
-            break;
-        }
-        blockSignals(false);
-    }
+    blockSignals(true);
+    d->moduleManager->getActiveModule().setRecording(enable);
+    blockSignals(false);
 }
 
 void MainWindow::togglePause(bool enable) noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        skyConnect->get().setPaused(enable);
-    }
+    d->moduleManager->getActiveModule().setPaused(enable);
 }
 
 void MainWindow::togglePlay(bool enable) noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        if (enable) {
-            skyConnect->get().startReplay(skyConnect->get().isAtEnd());
-        } else if (skyConnect->get().isPaused()) {
-            // The play button also unpauses a paused replay
-            skyConnect->get().setPaused(false);
-        } else {
-            skyConnect->get().stopReplay();
-        }
-    }
+     d->moduleManager->getActiveModule().setPlaying(enable);
 }
 
 void MainWindow::stop() noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().stop();
     }
@@ -1333,7 +1296,7 @@ void MainWindow::stop() noexcept
 
 void MainWindow::skipToBegin() noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().skipToBegin();
     }
@@ -1341,7 +1304,7 @@ void MainWindow::skipToBegin() noexcept
 
 void MainWindow::skipBackward() noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().skipBackward();
     }
@@ -1349,7 +1312,7 @@ void MainWindow::skipBackward() noexcept
 
 void MainWindow::skipForward() noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().skipForward();
     }
@@ -1357,7 +1320,7 @@ void MainWindow::skipForward() noexcept
 
 void MainWindow::skipToEnd() noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().skipToEnd();
     }
@@ -1366,12 +1329,13 @@ void MainWindow::skipToEnd() noexcept
 void MainWindow::handleFlightRestored() noexcept
 {
     updateUi();
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().skipToBegin();
+        ModuleIntf &module = d->moduleManager->getActiveModule();
         if (skyConnect->get().isConnected()) {
-            skyConnect->get().startReplay(true);
-            skyConnect->get().setPaused(true);
+            module.setPlaying(true);
+            module.setPaused(true);
         }
     }
 }
@@ -1388,12 +1352,13 @@ void MainWindow::handleImport(QAction *action) noexcept
     const bool ok = PluginManager::getInstance().importData(className, *d->flightService);
     if (ok) {
         updateUi();
-        auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+        std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
         if (skyConnect) {
             skyConnect->get().skipToBegin();
+            ModuleIntf &module = d->moduleManager->getActiveModule();
             if (skyConnect->get().isConnected()) {
-                skyConnect->get().startReplay(true);
-                skyConnect->get().setPaused(true);
+                module.setPlaying(true);
+                module.setPaused(true);
             }
         }
     }

@@ -132,7 +132,7 @@ void SimulationVariablesDialog::updateUi() noexcept
 void SimulationVariablesDialog::updateTitle() noexcept
 {
     QString windowTitle = SimulationVariablesDialogPrivate::WindowTitle;
-    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const Connect::State state = skyConnect ? skyConnect->get().getState() : Connect::State::Disconnected;
     switch (state) {
     case Connect::State::Recording:

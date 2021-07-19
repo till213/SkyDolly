@@ -98,7 +98,7 @@ bool CSVImportPlugin::importData(FlightService &flightService) const noexcept
         if (ok) {
             ok = import(csvImportDialog->getSelectedFilePath(), aircraftType, flightService, addToCurrentFlight);
             if (ok && addToCurrentFlight) {
-                auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+                std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
                 if (skyConnect) {
                     skyConnect->get().updateAIObjects();
                 }

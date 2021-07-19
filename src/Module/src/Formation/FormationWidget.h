@@ -31,6 +31,7 @@ class QShowEvent;
 class QHideEvent;
 class QAction;
 
+#include "../../../src/Model/src/InitialPosition.h"
 #include "../ModuleIntf.h"
 #include "../AbstractModuleWidget.h"
 #include "../ModuleLib.h"
@@ -60,6 +61,9 @@ protected:
     virtual void showEvent(QShowEvent *event) noexcept override;
     virtual void hideEvent(QHideEvent *event) noexcept override;
 
+    virtual void onStartRecording() noexcept override;
+    virtual void onStartReplay() noexcept override;
+
 protected slots:
     virtual void handleRecordingStopped() noexcept override;
 
@@ -73,13 +77,16 @@ private:
     void frenchConnection() noexcept;
     void updateInitialPositionUi() noexcept;
 
+    InitialPosition calculateRelativePositionToUserAircraft(qint64 timestamp) const noexcept;
+
     static const QString getName();
 
 private slots:
     void updateUi() noexcept;
     void updateEditUi() noexcept;
-    void updateInitialPosition() noexcept;
+    void updateRelativePosition() noexcept;
     void updateOffsetUi() noexcept;
+    void updateReplayUi() noexcept;
 
     void handleUserAircraftChanged(Aircraft &aircraft) noexcept;
     void handleAircraftInfoChanged() noexcept;
@@ -91,7 +98,8 @@ private slots:
 
     void on_horizontalDistanceSlider_valueChanged(int value) noexcept;
     void on_verticalDistanceSlider_valueChanged(int value) noexcept;
-    void on_manualUserAircraftCheckBox_toggled(bool enable) noexcept;
+
+    void on_replayModeComboBox_currentIndexChanged(int index) noexcept;
 
     void on_increaseOffsetALotPushButton_clicked() noexcept;
     void on_increaseOffsetPushButton_clicked() noexcept;

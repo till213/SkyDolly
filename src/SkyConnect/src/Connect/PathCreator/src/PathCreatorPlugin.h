@@ -30,11 +30,11 @@
 #include <QObject>
 
 #include "../../../../../Model/src/TimeVariableData.h"
-#include "../../../../../Model/src/InitialPosition.h"
 #include "../../../AbstractSkyConnect.h"
 #include "../../../SkyConnectIntf.h"
 
 struct PositionData;
+class InitialPosition;
 class Aircraft;
 class PathCreatorPluginPrivate;
 
@@ -50,9 +50,10 @@ public:
 protected:
     virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
 
-    virtual bool onUserAircraftManualControl(bool enable) noexcept override;
+    virtual bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept override;
+    virtual bool onFreezeUserAircraft(bool enable) noexcept override;
 
-    virtual bool onStartRecording(const InitialPosition &initialPosition = InitialPosition::NullData) noexcept override;
+    virtual bool onStartRecording() noexcept override;
     virtual void onRecordingPaused(bool paused) noexcept override;
     virtual void onStopRecording() noexcept override;
 

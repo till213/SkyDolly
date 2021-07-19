@@ -106,7 +106,7 @@ const PrimaryFlightControlData &PrimaryFlightControlWidget::getCurrentPrimaryFli
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
-    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().getState() == Connect::State::Recording) {
             return aircraft.getPrimaryFlightControlConst().getLast();

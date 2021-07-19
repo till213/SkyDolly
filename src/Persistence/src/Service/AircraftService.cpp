@@ -85,7 +85,7 @@ bool AircraftService::deleteByIndex(int index) noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
 
     Aircraft &aircraft = flight[index];
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().destroyAIObject(aircraft);
     }
@@ -137,7 +137,7 @@ bool AircraftService::changeTimeOffset(Aircraft &aircraft, qint64 newOffset) noe
         ok = d->aircraftDao->updateTimeOffset(aircraft.getId(), newOffset);
         if (ok) {
             aircraft.setTimeOffset(newOffset);
-            auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+            std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
             if (skyConnect && !skyConnect->get().isReplaying()) {
                 // Update the aircraft position in the flight simulator
                 skyConnect->get().seek(skyConnect->get().getCurrentTimestamp());
@@ -157,7 +157,7 @@ bool AircraftService::changeTailNumber(Aircraft &aircraft, const QString &tailNu
         ok = d->aircraftDao->updateTailNumber(aircraft.getId(), tailNumber);
         if (ok) {
             aircraft.setTailNumber(tailNumber);
-            auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+            std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
             if (skyConnect) {
                 skyConnect->get().updateAIObjects();
             }

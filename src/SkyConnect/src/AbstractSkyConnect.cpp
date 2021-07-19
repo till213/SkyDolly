@@ -49,7 +49,7 @@ class AbstractSkyConnectPrivate
 {
 public:
     AbstractSkyConnectPrivate() noexcept
-        : userAircraftManualControl(false),
+        : replayMode(SkyConnectIntf::ReplayMode::Normal),
           state(Connect::State::Disconnected),
           currentFlight(Logbook::getInstance().getCurrentFlight()),
           currentTimestamp(0),
@@ -62,8 +62,10 @@ public:
         recordingTimer.setTimerType(Qt::TimerType::PreciseTimer);
     }
 
+    // When "formation recording" is enabled (addFormationAircraft is true) the
+    // user aircraft will be placed here upon recording
     InitialPosition initialRecordingPosition;
-    bool userAircraftManualControl;
+    SkyConnectIntf::ReplayMode replayMode;
     Connect::State state;
     Flight &currentFlight;
     QTimer recordingTimer;
@@ -98,18 +100,31 @@ void AbstractSkyConnect::setInitialRecordingPosition(const InitialPosition &init
     d->initialRecordingPosition = initialPosition;
 }
 
-bool AbstractSkyConnect::isUserAircraftManualControl() const noexcept
+bool AbstractSkyConnect::updateUserAircraftPosition(const InitialPosition &initialPosition) noexcept
 {
-    return d->userAircraftManualControl;
+    return onInitialPositionSetup(initialPosition);
 }
 
-void AbstractSkyConnect::setUserAircraftManualControl(bool enable) noexcept
+bool AbstractSkyConnect::freezeUserAircraft(bool enable) noexcept
 {
-    d->userAircraftManualControl = enable;
-    onUserAircraftManualControl(enable);
+    return onFreezeUserAircraft(enable);
 }
 
-void AbstractSkyConnect::startRecording(bool addFormationAircraft) noexcept
+SkyConnectIntf::ReplayMode AbstractSkyConnect::getReplayMode() const noexcept
+{
+    return d->replayMode;
+}
+
+void AbstractSkyConnect::setReplayMode(ReplayMode replayMode) noexcept
+{
+    if (d->replayMode != replayMode) {
+        d->replayMode = replayMode;
+        updateAIObjects();
+        updateUserAircraftFreeze();
+    }
+}
+
+void AbstractSkyConnect::startRecording(RecordingMode recordingMode) noexcept
 {
     if (!isConnectedWithSim()) {
         connectWithSim();
@@ -117,14 +132,18 @@ void AbstractSkyConnect::startRecording(bool addFormationAircraft) noexcept
 
     if (isConnectedWithSim()) {
         setState(Connect::State::Recording);
-        if (!addFormationAircraft) {
+        switch (recordingMode) {
+        case RecordingMode::SingleAircraft:
             // Single flight - destroy any previous AI aircrafts
             onDestroyAIObjects();
             // Start a new flight
             d->currentFlight.clear(true);
             // Assign user aircraft ID
             onCreateAIObjects();
-        } else {
+            // New flight: reset initial recording position
+            d->initialRecordingPosition = InitialPosition();
+            break;
+        case RecordingMode::AddToFormation:
             // Check if the current user aircraft already has a recording
             if (d->currentFlight.getUserAircraft().hasRecording()) {
                 // If yes, add a new aircraft to the current flight (formation)
@@ -132,6 +151,7 @@ void AbstractSkyConnect::startRecording(bool addFormationAircraft) noexcept
             }
             // Update AI objects
             updateAIObjects();
+            break;
         }
         d->lastSamplesPerSecondIndex = 0;
         d->currentTimestamp = 0;
@@ -139,15 +159,13 @@ void AbstractSkyConnect::startRecording(bool addFormationAircraft) noexcept
         if (isTimerBasedRecording(Settings::getInstance().getRecordingSampleRate())) {
             d->recordingTimer.start(d->recordingIntervalMSec);
         }
-        if (!addFormationAircraft) {
-            // New flight: reset initial recording position
-            d->initialRecordingPosition = InitialPosition();
+        const bool ok = retryWithReconnect([this]() -> bool { return setupInitialRecordingPosition(); });
+        if (ok) {
+            onStartRecording();
         }
-        bool ok = retryWithReconnect([this]() -> bool { return onStartRecording(d->initialRecordingPosition); });
         if (!ok) {
             setState(Connect::State::Disconnected);
         }
-
     } else {
         setState(Connect::State::Disconnected);
     }
@@ -166,7 +184,7 @@ bool AbstractSkyConnect::isRecording() const noexcept
     return d->state == Connect::State::Recording;
 }
 
-void AbstractSkyConnect::startReplay(bool fromStart) noexcept
+void AbstractSkyConnect::startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition) noexcept
 {
     if (!isConnectedWithSim()) {
         connectWithSim();
@@ -180,7 +198,15 @@ void AbstractSkyConnect::startReplay(bool fromStart) noexcept
 
         d->elapsedTimer.invalidate();
         bool ok = retryWithReconnect([this]() -> bool { return onStartReplay(d->currentTimestamp); });
-        if (!ok) {
+        if (ok) {
+            ok = setupInitialReplayPosition(flyWithFormationPosition);
+            if (ok) {
+                ok = updateUserAircraftFreeze();
+            }
+            if (!ok) {
+                stopReplay();
+            }
+        } else {
             setState(Connect::State::Disconnected);
         }
     } else {
@@ -197,6 +223,7 @@ void AbstractSkyConnect::stopReplay() noexcept
     d->elapsedTime = d->currentTimestamp;
     d->elapsedTimer.invalidate();
     onStopReplay();
+    updateUserAircraftFreeze();
 }
 
 bool AbstractSkyConnect::isReplaying() const noexcept
@@ -231,7 +258,7 @@ bool AbstractSkyConnect::isActive() const noexcept
 void AbstractSkyConnect::setPaused(bool enabled) noexcept
 {
     if (enabled) {
-        switch (getState()) {
+        switch (d->state) {
         case Connect::State::Recording:
             setState(Connect::State::RecordingPaused);
             // Store the elapsed recording time...
@@ -249,6 +276,7 @@ void AbstractSkyConnect::setPaused(bool enabled) noexcept
                 // ... and stop the elapsed timer
                 d->elapsedTimer.invalidate();
             }
+            updateUserAircraftFreeze();
             onReplayPaused(true);
             break;
          default:
@@ -256,7 +284,7 @@ void AbstractSkyConnect::setPaused(bool enabled) noexcept
             break;
         }
     } else {
-        switch (getState()) {
+        switch (d->state) {
         case Connect::State::RecordingPaused:
             setState(Connect::State::Recording);
             if (hasRecordingStarted()) {
@@ -269,6 +297,7 @@ void AbstractSkyConnect::setPaused(bool enabled) noexcept
         case Connect::State::ReplayPaused:
             setState(Connect::State::Replay);
             startElapsedTimer();
+            updateUserAircraftFreeze();
             onReplayPaused(false);
             break;
          default:
@@ -279,7 +308,7 @@ void AbstractSkyConnect::setPaused(bool enabled) noexcept
 }
 
 bool AbstractSkyConnect::isPaused() const noexcept {
-    return getState() == Connect::State::RecordingPaused || getState() == Connect::State::ReplayPaused;
+    return d->state == Connect::State::RecordingPaused || d->state == Connect::State::ReplayPaused;
 }
 
 void AbstractSkyConnect::skipToBegin() noexcept
@@ -317,7 +346,7 @@ void AbstractSkyConnect::seek(qint64 timestamp) noexcept
     }
     if (isConnectedWithSim()) {
         d->elapsedTime = d->currentTimestamp;
-        if (getState() != Connect::State::Recording) {
+        if (d->state != Connect::State::Recording) {
             d->currentTimestamp = timestamp;
             d->elapsedTime = timestamp;
             emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Seek);
@@ -330,7 +359,7 @@ void AbstractSkyConnect::seek(qint64 timestamp) noexcept
                 }
                 onSeek(d->currentTimestamp);
             } else {
-                 setState(Connect::State::Disconnected);
+                setState(Connect::State::Disconnected);
             }
         }
     } else {
@@ -553,6 +582,70 @@ bool AbstractSkyConnect::retryWithReconnect(std::function<bool()> func)
         }
     }
     return ok;
+}
+
+bool AbstractSkyConnect::setupInitialRecordingPosition() noexcept
+{
+    bool ok;
+    if (!d->initialRecordingPosition.isNull()) {
+        // Set initial recording position
+        ok = onInitialPositionSetup(d->initialRecordingPosition);
+    } else {
+        ok = true;
+    }
+    return ok;
+}
+
+bool AbstractSkyConnect::setupInitialReplayPosition(const InitialPosition &flyWithFormationPosition) noexcept
+{
+    bool ok;
+    switch (d->replayMode) {
+    case ReplayMode::FlyWithFormation:
+        if (!flyWithFormationPosition.isNull()) {
+            ok = onInitialPositionSetup(flyWithFormationPosition);
+        } else {
+            // No initial position given
+            ok = true;
+        }
+        break;
+    default:
+        if (d->currentTimestamp == 0) {
+            const Aircraft &userAircraft = getCurrentFlight().getUserAircraftConst();
+            const PositionData &positionData = userAircraft.getPositionConst().getFirst();
+            // Make sure recorded position data exists
+            ok = !positionData.isNull();
+            if (ok) {
+                const AircraftInfo aircraftInfo = userAircraft.getAircraftInfoConst();
+                const InitialPosition initialPosition = InitialPosition(positionData, aircraftInfo);
+                ok = onInitialPositionSetup(initialPosition);
+            }
+        } else {
+            // Not at beginning of replay
+            ok = true;
+        }
+        break;
+    }
+    return ok;
+}
+
+bool AbstractSkyConnect::updateUserAircraftFreeze() noexcept
+{
+    bool freeze;
+    switch (d->replayMode) {
+    case ReplayMode::Normal:
+        freeze = d->state == Connect::State::Replay || d->state == Connect::State::ReplayPaused;
+        break;
+    case ReplayMode::UserAircraftManualControl:
+        freeze = d->state == Connect::State::ReplayPaused;
+        break;
+    case ReplayMode::FlyWithFormation:
+        freeze = d->state == Connect::State::ReplayPaused;
+        break;
+    default:
+        freeze = false;
+        break;
+    }
+    return onFreezeUserAircraft(freeze);
 }
 
 // PRIVATE SLOTS

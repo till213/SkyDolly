@@ -30,10 +30,10 @@
 #include "../../Kernel/src/SampleRate.h"
 #include "../../Model/src/TimeVariableData.h"
 #include "../../Model/src/Aircraft.h"
+#include "../../Model/src/InitialPosition.h"
 #include "Connect.h"
 #include "SkyConnectLib.h"
 
-class InitialPosition;
 class Aircraft;
 class FS2020SimConnectPlugin;
 
@@ -42,18 +42,39 @@ class SKYCONNECT_API SkyConnectIntf : public QObject
     Q_OBJECT
 public:
 
+    enum class RecordingMode {
+        /*! A (new) flight with a single aircrat is to be recorded. */
+        SingleAircraft,
+        /*! The aircraft is to be added to the current flight; existing aircrafts
+         *  are replayed during recording.
+         */
+        AddToFormation
+    };
+
+    enum class ReplayMode {
+        /*! All aircrafts are controlled by Sky Dolly. */
+        Normal,
+        /*! User takes control of recorded user aircraft. */
+        UserAircraftManualControl,
+        /*! User flies along with all recorded aircrafts. */
+        FlyWithFormation
+    };
+
     virtual ~SkyConnectIntf() = default;
 
     virtual const InitialPosition &getInitialRecordingPosition() const noexcept = 0;
     virtual void setInitialRecordingPosition(const InitialPosition &initialPosition) noexcept = 0;
-    virtual bool isUserAircraftManualControl() const noexcept = 0;
-    virtual void setUserAircraftManualControl(bool enable) noexcept = 0;
+    virtual bool updateUserAircraftPosition(const InitialPosition &initialPosition) noexcept = 0;
+    virtual bool freezeUserAircraft(bool enable) noexcept = 0;
 
-    virtual void startRecording(bool addFormationAircraft) noexcept = 0;
+    virtual ReplayMode getReplayMode() const noexcept = 0;
+    virtual void setReplayMode(ReplayMode replayMode) noexcept = 0;
+
+    virtual void startRecording(RecordingMode recordingMode) noexcept = 0;
     virtual void stopRecording() noexcept = 0;
     virtual bool isRecording() const noexcept = 0;
 
-    virtual void startReplay(bool fromStart) noexcept = 0;
+    virtual void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition()) noexcept = 0;
     virtual void stopReplay() noexcept = 0;
     virtual bool isReplaying() const noexcept = 0;
     virtual void stop() noexcept = 0;

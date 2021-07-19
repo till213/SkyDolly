@@ -50,7 +50,7 @@ void AbstractSimulationVariableWidget::showEvent(QShowEvent *event) noexcept
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::timestampChanged,
             this, &AbstractSimulationVariableWidget::updateUi);
-    auto skyConnect = skyConnectManager.getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = skyConnectManager.getCurrentSkyConnect();
     if (skyConnect) {
         updateUi(skyConnect->get().getCurrentTimestamp(), TimeVariableData::Access::Seek);
     }
@@ -75,7 +75,7 @@ void AbstractSimulationVariableWidget::hideEvent(QHideEvent *event) noexcept
 
 void AbstractSimulationVariableWidget::updateUiWithCurrentTime() noexcept
 {
-    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         updateUi(skyConnect->get().getCurrentTimestamp(), TimeVariableData::Access::Seek);
     }

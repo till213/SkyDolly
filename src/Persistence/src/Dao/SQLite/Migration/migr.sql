@@ -251,12 +251,12 @@ alter table engine add column general_engine_combustion2 integer;
 alter table engine add column general_engine_combustion3 integer;
 alter table engine add column general_engine_combustion4 integer;
 
-@migr(id = "d43d7a22-34f5-40c5-82e8-155b45bb274d", descn = "Add general engine combustion column", step = 2)
+@migr(id = "d43d7a22-34f5-40c5-82e8-155b45bb274d", descn = "Enable combustion based on throttle lever position heuristic", step = 2)
 update engine
-set    general_engine_combustion1 = general_engine_starter1,
-       general_engine_combustion2 = general_engine_starter2,
-       general_engine_combustion3 = general_engine_starter3,
-       general_engine_combustion4 = general_engine_starter4;
+set    general_engine_combustion1 = case when throttle_lever_position1 > 0 then 1 else 0 end,
+       general_engine_combustion2 = case when throttle_lever_position2 > 0 then 1 else 0 end,
+       general_engine_combustion3 = case when throttle_lever_position3 > 0 then 1 else 0 end,
+       general_engine_combustion4 = case when throttle_lever_position4 > 0 then 1 else 0 end;
 
 @migr(id = "32f3803f-c267-441d-a052-3b89e4dccc68", descn = "Add case-insensitive title index", step = 1)
 create index flight_idx1 on flight (title collate nocase);

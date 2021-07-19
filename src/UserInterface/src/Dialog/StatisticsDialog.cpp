@@ -116,7 +116,7 @@ void StatisticsDialog::updateRecordUi() noexcept
     }
 
     // Samples per second
-    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().getState() == Connect::State::Recording) {
             ui->samplesPerSecondLineEdit->setText(d->unit.formatHz(skyConnect->get().calculateRecordedSamplesPerSecond()));
