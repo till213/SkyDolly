@@ -689,13 +689,16 @@ void FormationWidget::updateRelativePosition() noexcept
     if (skyConnectOptional) {
         // The initial recording position is calculated for timestamp = 0 ("at the beginning")
         InitialPosition initialPosition = calculateRelativePositionToUserAircraft(0);
-        SkyConnectIntf &skyConnect = skyConnectOptional->get();
-        skyConnect.setInitialRecordingPosition(initialPosition);
+        // Has recorded data?
+        if (!initialPosition.isNull()) {
+            SkyConnectIntf &skyConnect = skyConnectOptional->get();
+            skyConnect.setInitialRecordingPosition(initialPosition);
 
-        // When "Fly with formation" is paused also update the manually flown user aircraft position ("at the current timestamp")
-        if (skyConnect.getReplayMode() == SkyConnectIntf::ReplayMode::FlyWithFormation && skyConnect.getState() == Connect::State::ReplayPaused) {
-            initialPosition = calculateRelativePositionToUserAircraft(skyConnect.getCurrentTimestamp());
-            skyConnect.updateUserAircraftPosition(initialPosition);
+            // When "Fly with formation" is paused also update the manually flown user aircraft position ("at the current timestamp")
+            if (skyConnect.getReplayMode() == SkyConnectIntf::ReplayMode::FlyWithFormation && skyConnect.getState() == Connect::State::ReplayPaused) {
+                initialPosition = calculateRelativePositionToUserAircraft(skyConnect.getCurrentTimestamp());
+                skyConnect.updateUserAircraftPosition(initialPosition);
+            }
         }
     }
 }
