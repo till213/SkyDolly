@@ -105,15 +105,20 @@ bool PathCreatorPlugin::isTimerBasedRecording(SampleRate::SampleRate sampleRate)
     return true;
 }
 
-bool PathCreatorPlugin::onUserAircraftManualControl(bool enable) noexcept
+bool PathCreatorPlugin::onInitialPositionSetup(const InitialPosition &initialPosition) noexcept
+{
+    Q_UNUSED(initialPosition)
+    return true;
+}
+
+bool PathCreatorPlugin::onFreezeUserAircraft(bool enable) noexcept
 {
     Q_UNUSED(enable)
     return true;
 }
 
-bool PathCreatorPlugin::onStartRecording(const InitialPosition &initialPosition) noexcept
+bool PathCreatorPlugin::onStartRecording() noexcept
 {
-    Q_UNUSED(initialPosition)
     recordFlightCondition();
     recordAircraftInfo();
     return true;

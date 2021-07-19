@@ -34,11 +34,13 @@
 #include <QCheckBox>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QComboBox>
 
 #include "../../../Kernel/src/Version.h"
 #include "../../../Kernel/src/Const.h"
 #include "../../../Kernel/src/Unit.h"
 #include "../../../Kernel/src/SkyMath.h"
+#include "../../../Kernel/src/Enum.h"
 #include "../../../Kernel/src/Settings.h"
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
@@ -95,6 +97,12 @@ namespace
         WestNorthWest,
         NorthWest,
         NorthNorthWest
+    };
+
+    enum ReplayMode {
+        NormalIndex,
+        ManualControlUserAircraftIndex,
+        FlyWithFormationIndex
     };
 
     // Milliseconds
@@ -183,7 +191,7 @@ void FormationWidget::showEvent(QShowEvent *event) noexcept
                     "recorded aircrafts are being added to the current flight. Additional aircrafts are initially positioned relative to the last user aircraft.\n\n"
                     "Each newly recorded aircraft is automatically stored into a database (the logbook). As new features are being added and developed the database format will change.\n\n"
                     "During the preview phase older databases will automatically be migrated to the current data format. As a matter of fact at the time you see this message any existing "
-                    "logbook from the previous 0.6 version has already been converted to the current format.\n\n"
+                    "logbook from the previous 0.7 version has already been converted to the current format.\n\n"
                     "However take note that the first release version 1.0.0 will consolidate all migration steps into the final database format, making logbooks generated with preview "
                     "versions (such as this one) unreadable!\n\n"
                     "From that point onwards databases (logbooks) will of course again be migrated to the format of the next release version.\n\n"
@@ -232,6 +240,26 @@ void FormationWidget::hideEvent(QHideEvent *event) noexcept
                this, &FormationWidget::updateUi);
 }
 
+void FormationWidget::onStartRecording() noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
+        skyConnect->get().startRecording(SkyConnectIntf::RecordingMode::AddToFormation);
+    }
+}
+
+void FormationWidget::onStartReplay() noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnectOptional = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnectOptional) {
+        SkyConnectIntf &skyConnect = skyConnectOptional->get();
+        const bool fromStart = skyConnect.isAtEnd();
+        const qint64 timestamp = fromStart ? 0 : skyConnect.getCurrentTimestamp();
+        const InitialPosition initialPosition = calculateRelativePositionToUserAircraft(timestamp);
+        skyConnect.startReplay(fromStart, initialPosition);
+    }
+}
+
 // PROTECTED SLOTS
 
 void FormationWidget::handleRecordingStopped() noexcept
@@ -244,7 +272,7 @@ void FormationWidget::handleRecordingStopped() noexcept
     } else {
         AbstractModuleWidget::handleRecordingStopped();
     }
-    updateInitialPosition();
+    updateRelativePosition();
 }
 
 // PRIVATE
@@ -312,8 +340,9 @@ void FormationWidget::initUi() noexcept
     ui->nwPositionRadioButton->setStyleSheet(css);
     ui->nnwPositionRadioButton->setStyleSheet(css);
 
-    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    ui->manualUserAircraftCheckBox->setChecked(skyConnect && skyConnect->get().isUserAircraftManualControl());
+    ui->replayModeComboBox->insertItem(ReplayMode::NormalIndex, tr("Formation (Normal)"), Enum::toUnderlyingType(SkyConnectIntf::ReplayMode::Normal));
+    ui->replayModeComboBox->insertItem(ReplayMode::ManualControlUserAircraftIndex, tr("Take control of recorded user aircraft"), Enum::toUnderlyingType(SkyConnectIntf::ReplayMode::UserAircraftManualControl));
+    ui->replayModeComboBox->insertItem(ReplayMode::FlyWithFormationIndex, tr("Fly with formation (with current user aircraft)"), Enum::toUnderlyingType(SkyConnectIntf::ReplayMode::FlyWithFormation));
 
     initTimeOffsetUi();
 }
@@ -341,7 +370,7 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::updateInitialPosition);
 #else
     connect(d->positionButtonGroup, &QButtonGroup::idClicked,
-            this, &FormationWidget::updateInitialPosition);
+            this, &FormationWidget::updateRelativePosition);
 #endif
 }
 
@@ -384,149 +413,20 @@ void FormationWidget::updateInitialPositionUi() noexcept
     }
 }
 
-const QString FormationWidget::getName()
-{
-    return QString(QT_TRANSLATE_NOOP("LogbookWidget", "Formation"));
-}
-
-// PRIVATE SLOTS
-
-void FormationWidget::updateUi() noexcept
-{
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-
-    ui->aircraftTableWidget->blockSignals(true);
-    ui->aircraftTableWidget->setSortingEnabled(false);
-    ui->aircraftTableWidget->clearContents();
-    ui->aircraftTableWidget->setRowCount(flight.count());
-    int rowIndex = 0;
-    const int userAircraftIndex = flight.getUserAircraftIndex();
-    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    const bool recording = skyConnect && skyConnect->get().isRecording();
-    const QString tooltip = tr("Double-click to change user aircraft");
-    for (const auto &aircraft : flight) {
-
-        const AircraftInfo &aircraftInfo = aircraft->getAircraftInfoConst();
-        int columnIndex = 0;
-
-        // Sequence
-        QTableWidgetItem *newItem = new QTableWidgetItem();
-        if (rowIndex == userAircraftIndex) {
-            QIcon icon;
-            if (recording) {
-                icon = QIcon(":/img/icons/aircraft-record-normal.png");
-            } else {
-                icon = QIcon(":/img/icons/aircraft-normal.png");
-            }
-            newItem->setIcon(icon);
-        }
-        // Sequence numbers start at 1
-        newItem->setData(Qt::DisplayRole, rowIndex + 1);
-        newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-        newItem->setToolTip(tooltip);
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
-        ++columnIndex;
-
-        // Aircraft type
-        newItem = new QTableWidgetItem(aircraftInfo.aircraftType.type);
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
-        ++columnIndex;
-
-        // Engine type
-        newItem = new QTableWidgetItem(SimType::engineTypeToString(aircraftInfo.aircraftType.engineType));
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
-        ++columnIndex;
-
-        // Wing span
-        newItem = new QTableWidgetItem(d->unit.formatFeet(aircraftInfo.aircraftType.wingSpan));
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
-        newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-        ++columnIndex;
-
-        // Initial airspeed
-        newItem = new QTableWidgetItem(d->unit.formatKnots(aircraftInfo.initialAirspeed));
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
-        newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-        ++columnIndex;
-
-        // Initial altitude above ground
-        newItem = new QTableWidgetItem(d->unit.formatFeet(aircraftInfo.altitudeAboveGround));
-        newItem->setToolTip(tr("Above ground"));
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
-        newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-        ++columnIndex;
-
-        // Duration
-        newItem = new QTableWidgetItem();
-        newItem->setData(Qt::DisplayRole, Unit::formatHHMMSS(aircraft->getDurationMSec()));
-        newItem->setToolTip(tr("Hours:Minutes:Seconds"));
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
-        ++columnIndex;
-
-        // Tail number
-        newItem = new QTableWidgetItem(aircraftInfo.tailNumber);
-        newItem->setToolTip(tr("Double-click to edit tail number"));
-        newItem->setBackground(QColor(Const::EditableTableCellBGColor));
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
-        d->tailNumberColumnIndex = columnIndex;
-        ++columnIndex;
-
-        // Time offset
-        const double timeOffsetSec = static_cast<double>(aircraftInfo.timeOffset) / 1000.0;
-        newItem = new QTableWidgetItem(d->unit.formatNumber(timeOffsetSec, TimeOffsetDecimalPlaces));
-        newItem->setToolTip(tr("Double-click to edit time offset [seconds]"));
-        newItem->setBackground(QColor(Const::EditableTableCellBGColor));
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
-        d->timeOffsetColumnIndex = columnIndex;
-        ++columnIndex;
-
-        ++rowIndex;
-    }
-
-    ui->aircraftTableWidget->setSortingEnabled(true);
-    ui->aircraftTableWidget->resizeColumnsToContents();
-    ui->aircraftTableWidget->blockSignals(false);
-
-    if (d->selectedRow != InvalidSelection) {
-        d->selectedRow = qMin(d->selectedRow, ui->aircraftTableWidget->rowCount() - 1);
-        ui->aircraftTableWidget->selectRow(d->selectedRow);
-    }
-
-    updateEditUi();
-    updateInitialPositionUi();
-    updateOffsetUi();
-}
-
-void FormationWidget::updateEditUi() noexcept
-{
-    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    const bool inRecordingMode = skyConnect && skyConnect->get().inRecordingMode();
-    const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
-    bool userAircraftIndex = d->selectedAircraftIndex == flight.getUserAircraftIndex();
-    ui->userAircraftPushButton->setEnabled(d->selectedAircraftIndex != Flight::InvalidId && !userAircraftIndex);
-    const bool formation = flight.count() > 1;
-    ui->deletePushButton->setEnabled(formation && !inRecordingMode && d->selectedAircraftIndex != Flight::InvalidId);
-}
-
-void FormationWidget::updateInitialPosition() noexcept
+InitialPosition FormationWidget::calculateRelativePositionToUserAircraft(qint64 timestamp) const noexcept
 {
     InitialPosition initialPosition;
-    QList<QAbstractButton *> buttons = d->positionButtonGroup->buttons();
-    for (QAbstractButton *button : buttons) {
-        if (button->isChecked()) {
-            button->setToolTip(tr("Selected aircraft position for next recording"));
-        } else {
-            button->setToolTip(tr("Select aircraft position"));
-        }
-    }
 
     const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
     const Aircraft &userAircraft = flight.getUserAircraftConst();
-    const PositionData &positionData = userAircraft.getPositionConst().getFirst();
+    const Position &position = userAircraft.getPositionConst();
+    const PositionData &positionData = timestamp == 0 ? position.getFirst() : position.interpolate(timestamp, TimeVariableData::Access::Seek);
     if (!positionData.isNull()) {
+
         const AircraftInfo &aircraftInfo = userAircraft.getAircraftInfoConst();
         const AircraftType &aircraftType = aircraftInfo.aircraftType;
 
+        // Copy pitch, bank and heading
         initialPosition.fromPositionData(positionData);
 
         // Horizontal distance [feet]
@@ -637,10 +537,165 @@ void FormationWidget::updateInitialPosition() noexcept
         initialPosition.latitude = initial.first;
         initialPosition.longitude = initial.second;
         initialPosition.altitude = altitude;
-        initialPosition.fromAircraftInfo(aircraftInfo);
-        auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-        if (skyConnect) {
-            skyConnect->get().setInitialRecordingPosition(initialPosition);
+        if (timestamp == 0) {
+            initialPosition.fromAircraftInfo(aircraftInfo);
+        } else {
+            initialPosition.airspeed = qRound(positionData.velocityBodyZ);
+            initialPosition.onGround = false;
+        }
+
+    } // positionData is not null
+
+    return initialPosition;
+}
+
+const QString FormationWidget::getName()
+{
+    return QString(QT_TRANSLATE_NOOP("LogbookWidget", "Formation"));
+}
+
+// PRIVATE SLOTS
+
+void FormationWidget::updateUi() noexcept
+{
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+
+    ui->aircraftTableWidget->blockSignals(true);
+    ui->aircraftTableWidget->setSortingEnabled(false);
+    ui->aircraftTableWidget->clearContents();
+    ui->aircraftTableWidget->setRowCount(flight.count());
+    int rowIndex = 0;
+    const int userAircraftIndex = flight.getUserAircraftIndex();
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const bool recording = skyConnect && skyConnect->get().isRecording();
+    const QString tooltip = tr("Double-click to change user aircraft");
+    for (const auto &aircraft : flight) {
+
+        const AircraftInfo &aircraftInfo = aircraft->getAircraftInfoConst();
+        int columnIndex = 0;
+
+        // Sequence
+        QTableWidgetItem *newItem = new QTableWidgetItem();
+        if (rowIndex == userAircraftIndex) {
+            QIcon icon;
+            if (recording) {
+                icon = QIcon(":/img/icons/aircraft-record-normal.png");
+            } else {
+                icon = QIcon(":/img/icons/aircraft-normal.png");
+            }
+            newItem->setIcon(icon);
+        }
+        // Sequence numbers start at 1
+        newItem->setData(Qt::DisplayRole, rowIndex + 1);
+        newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        newItem->setToolTip(tooltip);
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        ++columnIndex;
+
+        // Aircraft type
+        newItem = new QTableWidgetItem(aircraftInfo.aircraftType.type);
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        ++columnIndex;
+
+        // Engine type
+        newItem = new QTableWidgetItem(SimType::engineTypeToString(aircraftInfo.aircraftType.engineType));
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        ++columnIndex;
+
+        // Wing span
+        newItem = new QTableWidgetItem(d->unit.formatFeet(aircraftInfo.aircraftType.wingSpan));
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        ++columnIndex;
+
+        // Initial airspeed
+        newItem = new QTableWidgetItem(d->unit.formatKnots(aircraftInfo.initialAirspeed));
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        ++columnIndex;
+
+        // Initial altitude above ground
+        newItem = new QTableWidgetItem(d->unit.formatFeet(aircraftInfo.altitudeAboveGround));
+        newItem->setToolTip(tr("Above ground"));
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        ++columnIndex;
+
+        // Duration
+        newItem = new QTableWidgetItem();
+        newItem->setData(Qt::DisplayRole, Unit::formatHHMMSS(aircraft->getDurationMSec()));
+        newItem->setToolTip(tr("Hours:Minutes:Seconds"));
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        ++columnIndex;
+
+        // Tail number
+        newItem = new QTableWidgetItem(aircraftInfo.tailNumber);
+        newItem->setToolTip(tr("Double-click to edit tail number"));
+        newItem->setBackground(QColor(Const::EditableTableCellBGColor));
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        d->tailNumberColumnIndex = columnIndex;
+        ++columnIndex;
+
+        // Time offset
+        const double timeOffsetSec = static_cast<double>(aircraftInfo.timeOffset) / 1000.0;
+        newItem = new QTableWidgetItem(d->unit.formatNumber(timeOffsetSec, TimeOffsetDecimalPlaces));
+        newItem->setToolTip(tr("Double-click to edit time offset [seconds]"));
+        newItem->setBackground(QColor(Const::EditableTableCellBGColor));
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        d->timeOffsetColumnIndex = columnIndex;
+        ++columnIndex;
+
+        ++rowIndex;
+    }
+
+    ui->aircraftTableWidget->setSortingEnabled(true);
+    ui->aircraftTableWidget->resizeColumnsToContents();
+    ui->aircraftTableWidget->blockSignals(false);
+
+    if (d->selectedRow != InvalidSelection) {
+        d->selectedRow = qMin(d->selectedRow, ui->aircraftTableWidget->rowCount() - 1);
+        ui->aircraftTableWidget->selectRow(d->selectedRow);
+    }
+
+    updateEditUi();
+    updateInitialPositionUi();
+    updateOffsetUi();
+    updateReplayUi();
+}
+
+void FormationWidget::updateEditUi() noexcept
+{
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const bool inRecordingMode = skyConnect && skyConnect->get().inRecordingMode();
+    const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
+    bool userAircraftIndex = d->selectedAircraftIndex == flight.getUserAircraftIndex();
+    ui->userAircraftPushButton->setEnabled(d->selectedAircraftIndex != Flight::InvalidId && !userAircraftIndex);
+    const bool formation = flight.count() > 1;
+    ui->deletePushButton->setEnabled(formation && !inRecordingMode && d->selectedAircraftIndex != Flight::InvalidId);
+}
+
+void FormationWidget::updateRelativePosition() noexcept
+{
+    QList<QAbstractButton *> buttons = d->positionButtonGroup->buttons();
+    for (QAbstractButton *button : buttons) {
+        if (button->isChecked()) {
+            button->setToolTip(tr("Selected aircraft position for next recording"));
+        } else {
+            button->setToolTip(tr("Select aircraft position"));
+        }
+    }
+
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnectOptional = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnectOptional) {
+        // The initial recording position is calculated for timestamp = 0 ("at the beginning")
+        InitialPosition initialPosition = calculateRelativePositionToUserAircraft(0);
+        SkyConnectIntf &skyConnect = skyConnectOptional->get();
+        skyConnect.setInitialRecordingPosition(initialPosition);
+
+        // When "Fly with formation" is paused also update the manually flown user aircraft position ("at the current timestamp")
+        if (skyConnect.getReplayMode() == SkyConnectIntf::ReplayMode::FlyWithFormation && skyConnect.getState() == Connect::State::ReplayPaused) {
+            initialPosition = calculateRelativePositionToUserAircraft(skyConnect.getCurrentTimestamp());
+            skyConnect.updateUserAircraftPosition(initialPosition);
         }
     }
 }
@@ -667,15 +722,38 @@ void FormationWidget::updateOffsetUi() noexcept
     }
 }
 
+void FormationWidget::updateReplayUi() noexcept
+{
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
+        switch (skyConnect->get().getReplayMode()) {
+        case SkyConnectIntf::ReplayMode::Normal:
+            ui->replayModeComboBox->setCurrentIndex(ReplayMode::NormalIndex);
+            break;
+        case SkyConnectIntf::ReplayMode::UserAircraftManualControl:
+            ui->replayModeComboBox->setCurrentIndex(ReplayMode::ManualControlUserAircraftIndex);
+            break;
+        case SkyConnectIntf::ReplayMode::FlyWithFormation:
+            ui->replayModeComboBox->setCurrentIndex(ReplayMode::FlyWithFormationIndex);
+            break;
+        default:
+            ui->replayModeComboBox->setCurrentIndex(ReplayMode::NormalIndex);
+            break;
+        }
+    } else {
+        ui->replayModeComboBox->setCurrentIndex(ReplayMode::NormalIndex);
+    }
+}
+
 void FormationWidget::handleUserAircraftChanged(Aircraft &aircraft) noexcept
 {
-    updateInitialPosition();
+    updateRelativePosition();
     updateUi();
 }
 
 void FormationWidget::handleAircraftInfoChanged() noexcept
 {
-    updateInitialPosition();
+    updateRelativePosition();
     updateUi();
 }
 
@@ -765,21 +843,51 @@ void FormationWidget::on_horizontalDistanceSlider_valueChanged(int value) noexce
 {
     Q_UNUSED(value)
     updateInitialPositionUi();
-    updateInitialPosition();
+    updateRelativePosition();
 }
 
 void FormationWidget::on_verticalDistanceSlider_valueChanged(int value) noexcept
 {
     Q_UNUSED(value)
     updateInitialPositionUi();
-    updateInitialPosition();
+    updateRelativePosition();
 }
 
-void FormationWidget::on_manualUserAircraftCheckBox_toggled(bool enable) noexcept
+void FormationWidget::on_replayModeComboBox_currentIndexChanged(int index) noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        skyConnect->get().setUserAircraftManualControl(enable);
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnectOptional = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnectOptional) {
+        SkyConnectIntf &skyConnect = skyConnectOptional->get();
+        switch(index) {
+        case ReplayMode::NormalIndex:
+            skyConnect.setReplayMode(SkyConnectIntf::ReplayMode::Normal);
+            break;
+        case ReplayMode::ManualControlUserAircraftIndex:
+        {
+            Flight &flight = Logbook::getInstance().getCurrentFlight();
+            const Aircraft &aircraft = flight.getUserAircraft();
+            const Position &position = aircraft.getPosition();
+            const qint64 timestamp = skyConnect.getCurrentTimestamp();
+            const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Seek);
+            skyConnect.setReplayMode(SkyConnectIntf::ReplayMode::UserAircraftManualControl);
+            InitialPosition initialPosition;
+            initialPosition.fromPositionData(positionData);
+            initialPosition.airspeed = qRound(positionData.velocityBodyZ);
+            initialPosition.onGround = timestamp == 0 ? aircraft.getAircraftInfoConst().startOnGround : false;
+            skyConnect.updateUserAircraftPosition(initialPosition);
+            break;
+        }
+        case ReplayMode::FlyWithFormationIndex:
+        {
+            skyConnect.setReplayMode(SkyConnectIntf::ReplayMode::FlyWithFormation);
+            const InitialPosition position = calculateRelativePositionToUserAircraft(skyConnect.getCurrentTimestamp());
+            skyConnect.updateUserAircraftPosition(position);
+            break;
+        }
+        default:
+            skyConnect.setReplayMode(SkyConnectIntf::ReplayMode::Normal);
+            break;
+        }
     }
 }
 

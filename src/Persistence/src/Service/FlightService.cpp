@@ -59,7 +59,7 @@ FlightService::FlightService(QObject *parent) noexcept
 
 FlightService::~FlightService() noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect && skyConnect->get().isConnected()) {
         skyConnect->get().destroyAIObjects();
     }
@@ -89,7 +89,7 @@ bool FlightService::restore(qint64 id, Flight &flight) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
-        auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+        std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
         if (skyConnect) {
             skyConnect->get().destroyAIObjects();
             ok = d->flightDao->getFlightById(id, flight);
@@ -170,7 +170,7 @@ bool FlightService::updateUserAircraftIndex(Flight &flight, int index) noexcept
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
         flight.setUserAircraftIndex(index);
-        auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+        std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
         if (skyConnect) {
             skyConnect->get().updateUserAircraft();
         }
