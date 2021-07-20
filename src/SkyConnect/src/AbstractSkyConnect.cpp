@@ -62,9 +62,6 @@ public:
         recordingTimer.setTimerType(Qt::TimerType::PreciseTimer);
     }
 
-    // When "formation recording" is enabled (addFormationAircraft is true) the
-    // user aircraft will be placed here upon recording
-    InitialPosition initialRecordingPosition;
     SkyConnectIntf::ReplayMode replayMode;
     Connect::State state;
     Flight &currentFlight;
@@ -90,17 +87,7 @@ AbstractSkyConnect::AbstractSkyConnect(QObject *parent) noexcept
 AbstractSkyConnect::~AbstractSkyConnect() noexcept
 {}
 
-const InitialPosition &AbstractSkyConnect::getInitialRecordingPosition() const noexcept
-{
-    return d->initialRecordingPosition;
-}
-
-void AbstractSkyConnect::setInitialRecordingPosition(const InitialPosition &initialPosition) noexcept
-{
-    d->initialRecordingPosition = initialPosition;
-}
-
-bool AbstractSkyConnect::updateUserAircraftPosition(const InitialPosition &initialPosition) noexcept
+bool AbstractSkyConnect::setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept
 {
     return onInitialPositionSetup(initialPosition);
 }
@@ -124,7 +111,7 @@ void AbstractSkyConnect::setReplayMode(ReplayMode replayMode) noexcept
     }
 }
 
-void AbstractSkyConnect::startRecording(RecordingMode recordingMode) noexcept
+void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition) noexcept
 {
     if (!isConnectedWithSim()) {
         connectWithSim();
@@ -140,8 +127,6 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode) noexcept
             d->currentFlight.clear(true);
             // Assign user aircraft ID
             onCreateAIObjects();
-            // New flight: reset initial recording position
-            d->initialRecordingPosition = InitialPosition();
             break;
         case RecordingMode::AddToFormation:
             // Check if the current user aircraft already has a recording
@@ -159,7 +144,7 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode) noexcept
         if (isTimerBasedRecording(Settings::getInstance().getRecordingSampleRate())) {
             d->recordingTimer.start(d->recordingIntervalMSec);
         }
-        const bool ok = retryWithReconnect([this]() -> bool { return setupInitialRecordingPosition(); });
+        const bool ok = retryWithReconnect([this, initialPosition]() -> bool { return setupInitialRecordingPosition(initialPosition); });
         if (ok) {
             onStartRecording();
         }
@@ -584,12 +569,12 @@ bool AbstractSkyConnect::retryWithReconnect(std::function<bool()> func)
     return ok;
 }
 
-bool AbstractSkyConnect::setupInitialRecordingPosition() noexcept
+bool AbstractSkyConnect::setupInitialRecordingPosition(const InitialPosition &initialPosition) noexcept
 {
     bool ok;
-    if (!d->initialRecordingPosition.isNull()) {
+    if (!initialPosition.isNull()) {
         // Set initial recording position
-        ok = onInitialPositionSetup(d->initialRecordingPosition);
+        ok = onInitialPositionSetup(initialPosition);
     } else {
         ok = true;
     }

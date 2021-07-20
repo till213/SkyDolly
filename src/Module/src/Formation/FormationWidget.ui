@@ -29,7 +29,7 @@
      <item>
       <widget class="QGroupBox" name="groupBox_5">
        <property name="title">
-        <string>Time Offset</string>
+        <string>Aircraft Time Offset</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="0">

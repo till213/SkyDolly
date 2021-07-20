@@ -62,15 +62,13 @@ public:
 
     virtual ~SkyConnectIntf() = default;
 
-    virtual const InitialPosition &getInitialRecordingPosition() const noexcept = 0;
-    virtual void setInitialRecordingPosition(const InitialPosition &initialPosition) noexcept = 0;
-    virtual bool updateUserAircraftPosition(const InitialPosition &initialPosition) noexcept = 0;
+    virtual bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept = 0;
     virtual bool freezeUserAircraft(bool enable) noexcept = 0;
 
     virtual ReplayMode getReplayMode() const noexcept = 0;
     virtual void setReplayMode(ReplayMode replayMode) noexcept = 0;
 
-    virtual void startRecording(RecordingMode recordingMode) noexcept = 0;
+    virtual void startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition()) noexcept = 0;
     virtual void stopRecording() noexcept = 0;
     virtual bool isRecording() const noexcept = 0;
 

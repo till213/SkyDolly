@@ -244,7 +244,9 @@ void FormationWidget::onStartRecording() noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
-        skyConnect->get().startRecording(SkyConnectIntf::RecordingMode::AddToFormation);
+        // The initial recording position is calculated for timestamp = 0 ("at the beginning")
+        const InitialPosition initialPosition = calculateRelativePositionToUserAircraft(0);
+        skyConnect->get().startRecording(SkyConnectIntf::RecordingMode::AddToFormation, initialPosition);
     }
 }
 
@@ -687,19 +689,13 @@ void FormationWidget::updateRelativePosition() noexcept
 
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnectOptional = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnectOptional) {
-        // The initial recording position is calculated for timestamp = 0 ("at the beginning")
-        InitialPosition initialPosition = calculateRelativePositionToUserAircraft(0);
-        // Has recorded data?
-        if (!initialPosition.isNull()) {
-            SkyConnectIntf &skyConnect = skyConnectOptional->get();
-            skyConnect.setInitialRecordingPosition(initialPosition);
-
-            // When "Fly with formation" is paused also update the manually flown user aircraft position ("at the current timestamp")
-            if (skyConnect.getReplayMode() == SkyConnectIntf::ReplayMode::FlyWithFormation && skyConnect.getState() == Connect::State::ReplayPaused) {
-                initialPosition = calculateRelativePositionToUserAircraft(skyConnect.getCurrentTimestamp());
-                skyConnect.updateUserAircraftPosition(initialPosition);
-            }
+        SkyConnectIntf &skyConnect = skyConnectOptional->get();
+        // When "Fly with formation" is paused also update the manually flown user aircraft position ("at the current timestamp")
+        if (skyConnect.getReplayMode() == SkyConnectIntf::ReplayMode::FlyWithFormation && skyConnect.getState() == Connect::State::ReplayPaused) {
+            const InitialPosition initialPosition = calculateRelativePositionToUserAircraft(skyConnect.getCurrentTimestamp());
+            skyConnect.setUserAircraftInitialPosition(initialPosition);
         }
+
     }
 }
 
@@ -877,14 +873,14 @@ void FormationWidget::on_replayModeComboBox_currentIndexChanged(int index) noexc
             initialPosition.fromPositionData(positionData);
             initialPosition.airspeed = qRound(positionData.velocityBodyZ);
             initialPosition.onGround = timestamp == 0 ? aircraft.getAircraftInfoConst().startOnGround : false;
-            skyConnect.updateUserAircraftPosition(initialPosition);
+            skyConnect.setUserAircraftInitialPosition(initialPosition);
             break;
         }
         case ReplayMode::FlyWithFormationIndex:
         {
             skyConnect.setReplayMode(SkyConnectIntf::ReplayMode::FlyWithFormation);
             const InitialPosition position = calculateRelativePositionToUserAircraft(skyConnect.getCurrentTimestamp());
-            skyConnect.updateUserAircraftPosition(position);
+            skyConnect.setUserAircraftInitialPosition(position);
             break;
         }
         default:
