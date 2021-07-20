@@ -20,6 +20,7 @@
 - Logbook
   * Filtering of flights by date via creation date tree widget
   * Search field which matches the flight title, aircraft name and destinations
+  * Filtering of formation flights (flights having more than one aircraft)
 - Formation
   * Aircrafts can now also be deleted from a formation flight during (paused) replay
   * A time offset can be added to the selected aircraft, effectively "shifting" it back or forth on the timeline
@@ -40,6 +41,10 @@
   * "forward queries"
   * "Normalisation" of "aircraft type" data (new table - less storage space required)
 - A new "View" menu has been added, providing options to show/hide various UI elements such as the module selector
+
+### Bug Fixes
+
+- Proper "HiDPI support" on Windows
 
 ## 0.7.0
 
