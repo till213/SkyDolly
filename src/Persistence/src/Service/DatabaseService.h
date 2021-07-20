@@ -31,6 +31,7 @@
 
 class QString;
 class QWidget;
+class QDateTime;
 
 #include "../Metadata.h"
 #include "../PersistenceLib.h"
@@ -45,7 +46,8 @@ public:
     virtual ~DatabaseService() noexcept;
 
     bool backup() noexcept;
-    bool updateBackupPeriod(const QString &backupPeriodIntlId) noexcept;
+    bool setBackupPeriod(const QString &backupPeriodIntlId) noexcept;
+    bool setNextBackupDate(const QDateTime &date) noexcept;
 
     static QString getExistingLogbookPath(QWidget *parent) noexcept;
     static QString getNewLogbookPath(QWidget *parent) noexcept;

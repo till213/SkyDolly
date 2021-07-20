@@ -81,6 +81,7 @@
 #include "Dialog/FlightDialog.h"
 #include "Dialog/SimulationVariablesDialog.h"
 #include "Dialog/StatisticsDialog.h"
+#include "Dialog/LogbookBackupDialog.h"
 
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
@@ -1220,6 +1221,13 @@ void MainWindow::on_showLogbookSettingsAction_triggered() noexcept
 
 void MainWindow::on_quitAction_triggered() noexcept
 {
+    Metadata metaData;
+    if (ConnectionManager::getInstance().getMetadata(metaData)) {
+        if (QDateTime::currentDateTime() > metaData.nextBackupDate) {
+            std::unique_ptr<LogbookBackupDialog> backupDialog = std::make_unique<LogbookBackupDialog>(this);
+            backupDialog->exec();
+        }
+    }
     QApplication::quit();
 }
 

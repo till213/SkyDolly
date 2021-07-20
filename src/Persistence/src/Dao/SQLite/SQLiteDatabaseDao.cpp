@@ -30,6 +30,7 @@
 #include <QVariant>
 #include <QDateTime>
 #include <QTimeZone>
+#include <QDateTime>
 
 #include "../../../../Kernel/src/Settings.h"
 #include "../../../../Kernel/src/Version.h"
@@ -125,13 +126,32 @@ bool SQLiteDatabaseDao::updateBackupPeriod(const QString &backupPeriodIntlId) no
     return ok;
 }
 
+bool SQLiteDatabaseDao::updateNextBackupDate(const QDateTime &date) noexcept
+{
+    QSqlQuery query;
+    query.prepare(
+        "update metadata "
+        "set    next_backup_date = :next_backup_date;"
+    );
+
+    query.bindValue(":next_backup_date", date.toUTC());
+    bool ok = query.exec();
+    return ok;
+}
+
 bool SQLiteDatabaseDao::getMetadata(Metadata &metadata) const noexcept
 {
     QSqlQuery query;
     query.setForwardOnly(true);
 
     bool ok = query.exec(
-        "select m.creation_date, m.app_version, m.last_optim_date, m.last_backup_date, m.backup_directory_path, ebp.intl_id "
+        "select m.creation_date,"
+        "       m.app_version,"
+        "       m.last_optim_date,"
+        "       m.last_backup_date,"
+        "       m.next_backup_date,"
+        "       m.backup_directory_path,"
+        "       ebp.intl_id "
         "from metadata m "
         "left join enum_backup_period ebp "
         "on m.backup_period_id = ebp.id;"
@@ -152,8 +172,12 @@ bool SQLiteDatabaseDao::getMetadata(Metadata &metadata) const noexcept
         dateTime.setTimeZone(QTimeZone::utc());
         metadata.lastBackupDate = dateTime.toLocalTime();
 
-        metadata.backupDirectoryPath = query.value(4).toString();
-        metadata.backupPeriodIntlId = query.value(5).toString();
+        dateTime = query.value(4).toDateTime();
+        dateTime.setTimeZone(QTimeZone::utc());
+        metadata.nextBackupDate = dateTime.toLocalTime();
+
+        metadata.backupDirectoryPath = query.value(5).toString();
+        metadata.backupPeriodIntlId = query.value(6).toString();
     }
     return ok;
 };

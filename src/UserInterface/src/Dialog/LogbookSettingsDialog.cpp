@@ -158,8 +158,9 @@ void LogbookSettingsDialog::handleAccepted() noexcept
 {
     if (ui->backupPeriodComboBox->currentIndex() != BackupPeriodIndex::NextTime) {
         const QString backupPeriodIntlId = ui->backupPeriodComboBox->currentData().toString();
-        d->databaseService.updateBackupPeriod(backupPeriodIntlId);
+        d->databaseService.setBackupPeriod(backupPeriodIntlId);
     } else {
-        // TODO IMPLEMENT ME Remember to ask user about backup upon quit
+        // Ask next time Sky Dolly is quitting
+        d->databaseService.setNextBackupDate(QDateTime::currentDateTime());
     }
 }

@@ -32,6 +32,7 @@
 #include <QPushButton>
 #include <QCoreApplication>
 #include <QSqlDatabase>
+#include <QDateTime>
 
 #include "../../../Kernel/src/Settings.h"
 #include "../../../Kernel/src/Const.h"
@@ -102,11 +103,25 @@ bool DatabaseService::backup() noexcept
     return ok;
 }
 
-bool DatabaseService::updateBackupPeriod(const QString &backupPeriodIntlId) noexcept
+bool DatabaseService::setBackupPeriod(const QString &backupPeriodIntlId) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
         ok = d->databaseDao->updateBackupPeriod(backupPeriodIntlId);
+        if (ok) {
+            ok = QSqlDatabase::database().commit();
+        } else {
+            QSqlDatabase::database().rollback();
+        }
+    }
+    return ok;
+}
+
+bool DatabaseService::setNextBackupDate(const QDateTime &date) noexcept
+{
+    bool ok = QSqlDatabase::database().transaction();
+    if (ok) {
+        ok = d->databaseDao->updateNextBackupDate(date);
         if (ok) {
             ok = QSqlDatabase::database().commit();
         } else {

@@ -30,6 +30,7 @@
 #include <QtGlobal>
 
 class QString;
+class QDateTime;
 
 #include "../../Metadata.h"
 #include "../DatabaseDaoIntf.h"
@@ -49,6 +50,7 @@ public:
     virtual bool optimise() noexcept override;
     virtual bool backup(const QString &backupPath) noexcept override;
     virtual bool updateBackupPeriod(const QString &backupPeriodIntlId) noexcept override;
+    virtual bool updateNextBackupDate(const QDateTime &date) noexcept override;
 
     virtual bool getMetadata(Metadata &metadata) const noexcept override;
 
