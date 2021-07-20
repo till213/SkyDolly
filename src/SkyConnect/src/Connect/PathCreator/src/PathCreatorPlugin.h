@@ -47,6 +47,8 @@ public:
     PathCreatorPlugin(QObject *parent = nullptr) noexcept;
     virtual ~PathCreatorPlugin() noexcept;
 
+    virtual bool setUserAircraftPosition(const PositionData &positionData) noexcept override;
+
 protected:
     virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
 

@@ -245,7 +245,7 @@ void FormationWidget::onStartRecording() noexcept
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         // The initial recording position is calculated for timestamp = 0 ("at the beginning")
-        const InitialPosition initialPosition = calculateRelativePositionToUserAircraft(0);
+        const InitialPosition initialPosition = calculateRelativeInitialPositionToUserAircraft(0);
         skyConnect->get().startRecording(SkyConnectIntf::RecordingMode::AddToFormation, initialPosition);
     }
 }
@@ -257,7 +257,7 @@ void FormationWidget::onStartReplay() noexcept
         SkyConnectIntf &skyConnect = skyConnectOptional->get();
         const bool fromStart = skyConnect.isAtEnd();
         const qint64 timestamp = fromStart ? 0 : skyConnect.getCurrentTimestamp();
-        const InitialPosition initialPosition = calculateRelativePositionToUserAircraft(timestamp);
+        const InitialPosition initialPosition = calculateRelativeInitialPositionToUserAircraft(timestamp);
         skyConnect.startReplay(fromStart, initialPosition);
     }
 }
@@ -415,9 +415,28 @@ void FormationWidget::updateInitialPositionUi() noexcept
     }
 }
 
-InitialPosition FormationWidget::calculateRelativePositionToUserAircraft(qint64 timestamp) const noexcept
+InitialPosition FormationWidget::calculateRelativeInitialPositionToUserAircraft(qint64 timestamp) const noexcept
 {
     InitialPosition initialPosition;
+    const PositionData &relativePositionData = calculateRelativePositionToUserAircraft(timestamp);
+
+    initialPosition.fromPositionData(relativePositionData);
+    if (timestamp == 0) {
+        const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
+        const Aircraft &userAircraft = flight.getUserAircraftConst();
+        const AircraftInfo &aircraftInfo = userAircraft.getAircraftInfoConst();
+        initialPosition.fromAircraftInfo(aircraftInfo);
+    } else {
+        initialPosition.airspeed = qRound(relativePositionData.velocityBodyZ);
+        initialPosition.onGround = false;
+    }
+
+    return initialPosition;
+}
+
+PositionData FormationWidget::calculateRelativePositionToUserAircraft(qint64 timestamp) const noexcept
+{
+    PositionData initialPosition;
 
     const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
     const Aircraft &userAircraft = flight.getUserAircraftConst();
@@ -429,7 +448,7 @@ InitialPosition FormationWidget::calculateRelativePositionToUserAircraft(qint64 
         const AircraftType &aircraftType = aircraftInfo.aircraftType;
 
         // Copy pitch, bank and heading
-        initialPosition.fromPositionData(positionData);
+        initialPosition = positionData;
 
         // Horizontal distance [feet]
         double distance;
@@ -539,12 +558,6 @@ InitialPosition FormationWidget::calculateRelativePositionToUserAircraft(qint64 
         initialPosition.latitude = initial.first;
         initialPosition.longitude = initial.second;
         initialPosition.altitude = altitude;
-        if (timestamp == 0) {
-            initialPosition.fromAircraftInfo(aircraftInfo);
-        } else {
-            initialPosition.airspeed = qRound(positionData.velocityBodyZ);
-            initialPosition.onGround = false;
-        }
 
     } // positionData is not null
 
@@ -692,10 +705,9 @@ void FormationWidget::updateRelativePosition() noexcept
         SkyConnectIntf &skyConnect = skyConnectOptional->get();
         // When "Fly with formation" is paused also update the manually flown user aircraft position ("at the current timestamp")
         if (skyConnect.getReplayMode() == SkyConnectIntf::ReplayMode::FlyWithFormation && skyConnect.getState() == Connect::State::ReplayPaused) {
-            const InitialPosition initialPosition = calculateRelativePositionToUserAircraft(skyConnect.getCurrentTimestamp());
+            const InitialPosition initialPosition = calculateRelativeInitialPositionToUserAircraft(skyConnect.getCurrentTimestamp());
             skyConnect.setUserAircraftInitialPosition(initialPosition);
         }
-
     }
 }
 
@@ -863,24 +875,21 @@ void FormationWidget::on_replayModeComboBox_currentIndexChanged(int index) noexc
             break;
         case ReplayMode::ManualControlUserAircraftIndex:
         {
+            skyConnect.setReplayMode(SkyConnectIntf::ReplayMode::UserAircraftManualControl);
+
             Flight &flight = Logbook::getInstance().getCurrentFlight();
             const Aircraft &aircraft = flight.getUserAircraft();
-            const Position &position = aircraft.getPosition();
-            const qint64 timestamp = skyConnect.getCurrentTimestamp();
-            const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Seek);
-            skyConnect.setReplayMode(SkyConnectIntf::ReplayMode::UserAircraftManualControl);
-            InitialPosition initialPosition;
-            initialPosition.fromPositionData(positionData);
-            initialPosition.airspeed = qRound(positionData.velocityBodyZ);
-            initialPosition.onGround = timestamp == 0 ? aircraft.getAircraftInfoConst().startOnGround : false;
-            skyConnect.setUserAircraftInitialPosition(initialPosition);
+            const Position &position = aircraft.getPosition();   
+            const PositionData positionData = position.interpolate(skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
+            skyConnect.setUserAircraftPosition(positionData);
             break;
         }
         case ReplayMode::FlyWithFormationIndex:
         {
             skyConnect.setReplayMode(SkyConnectIntf::ReplayMode::FlyWithFormation);
-            const InitialPosition position = calculateRelativePositionToUserAircraft(skyConnect.getCurrentTimestamp());
-            skyConnect.setUserAircraftInitialPosition(position);
+
+            const PositionData positionData = calculateRelativePositionToUserAircraft(skyConnect.getCurrentTimestamp());
+            skyConnect.setUserAircraftPosition(positionData);
             break;
         }
         default:
