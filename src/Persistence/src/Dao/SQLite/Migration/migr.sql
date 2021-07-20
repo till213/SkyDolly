@@ -343,6 +343,15 @@ drop index enum_backup_interval_idx1;
 @migr(id = "688a9607-541a-435a-b76b-69de4f815a49", descn = "Re-create index on new period enumeration table", step = 5)
 create unique index enum_backup_period_idx1 on enum_backup_period (intl_id);
 
+@migr(id = "9fe6c8e5-4188-4533-8836-536ca0785b82", descn = "Add next backup date column", step_cnt = 2)
+alter table metadata add column next_backup_date datetime;
+
+@migr(id = "9fe6c8e5-4188-4533-8836-536ca0785b82", descn = "Initialise next backup date", step = 2)
+update metadata
+set next_backup_date = (select date(m.creation_date, '+7 day')
+                        from metadata m
+                       );
+
 @migr(id = "1c13f02d-9def-4fd6-af8d-3b7984573682", descn = "Update application version to 0.8", step = 1)
 update metadata
 set app_version = '0.8.0';

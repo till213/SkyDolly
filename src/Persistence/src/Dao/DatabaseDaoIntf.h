@@ -26,6 +26,7 @@
 #define DATABASEDAOINTF_H
 
 class QString;
+class QDateTime;
 
 #include "../Metadata.h"
 
@@ -41,6 +42,7 @@ public:
     virtual bool optimise() noexcept = 0;
     virtual bool backup(const QString &backupPath) noexcept= 0;
     virtual bool updateBackupPeriod(const QString &backupPeriodIntlId) noexcept = 0;
+    virtual bool updateNextBackupDate(const QDateTime &date) noexcept = 0;
 
     virtual bool getMetadata(Metadata &metadata) const noexcept = 0;
 };

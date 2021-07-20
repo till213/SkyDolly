@@ -42,6 +42,9 @@ target_sources(UserInterface
         src/Dialog/FlightDialog.cpp
         src/Dialog/FlightDialog.h
         src/Dialog/FlightDialog.ui
+        src/Dialog/LogbookBackupDialog.cpp
+        src/Dialog/LogbookBackupDialog.h
+        src/Dialog/LogbookBackupDialog.ui
         src/Widget/FlightDescriptionWidget.cpp
         src/Widget/FlightDescriptionWidget.h
         src/Widget/FlightDescriptionWidget.ui
