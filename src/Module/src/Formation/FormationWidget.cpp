@@ -775,8 +775,8 @@ void FormationWidget::handleCellSelected(int row, int column) noexcept
     if (column == d->tailNumberColumnIndex || column == d->timeOffsetColumnIndex) {
         QTableWidgetItem *item = ui->aircraftTableWidget->item(row, column);
         ui->aircraftTableWidget->editItem(item);
-    } else if (row != flight.getUserAircraftIndex()) {
-        getFlightService().updateUserAircraftIndex(flight, row);
+    } else {
+        updateUserAircraftIndex();
     }
 }
 
@@ -819,7 +819,20 @@ void FormationWidget::handleSelectionChanged() noexcept
 void FormationWidget::updateUserAircraftIndex() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    getFlightService().updateUserAircraftIndex(flight, d->selectedRow);
+    if (d->selectedRow != flight.getUserAircraftIndex()) {
+        getFlightService().updateUserAircraftIndex(flight, d->selectedRow);
+        std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnectOptional = SkyConnectManager::getInstance().getCurrentSkyConnect();
+        if (skyConnectOptional) {
+            SkyConnectIntf &skyConnect = skyConnectOptional->get();
+            // Also update the manually flown user aircraft's position
+            if (skyConnect.getReplayMode() == SkyConnectIntf::ReplayMode::UserAircraftManualControl) {
+                const Aircraft &aircraft = flight.getUserAircraft();
+                const Position &position = aircraft.getPosition();
+                const PositionData positionData = position.interpolate(skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
+                skyConnect.setUserAircraftPosition(positionData);
+            }
+        }
+    }
 }
 
 void FormationWidget::deleteAircraft() noexcept
