@@ -25,29 +25,38 @@
 #include <memory>
 
 #include <QString>
+#include <QFileInfo>
+#include <QDir>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QFileDialog>
+#include <QSqlDatabase>
 
+#include "../../Kernel/src/Const.h"
 #include "../../Kernel/src/Settings.h"
+#include "../../Model/src/Logbook.h"
+#include "../../Model/src/Flight.h"
 #include "Metadata.h"
 #include "Dao/DaoFactory.h"
 #include "Dao/DatabaseDaoIntf.h"
+#include "Service/DatabaseService.h"
 #include "ConnectionManager.h"
 
 class ConnectionManagerPrivate
 {
 public:
+    ConnectionManagerPrivate() noexcept
+        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
+          databaseDao(daoFactory->createDatabaseDao()),
+          connected(false)
+    {}
 
     std::unique_ptr<DaoFactory> daoFactory;
     std::unique_ptr<DatabaseDaoIntf> databaseDao;
     QString logbookPath;
     bool connected;
 
-    static ConnectionManager *instance;
-
-    ConnectionManagerPrivate() noexcept
-        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
-          databaseDao(daoFactory->createDatabaseDao()),
-          connected(false)
-    {}
+    static ConnectionManager *instance; 
 };
 
 ConnectionManager *ConnectionManagerPrivate::instance = nullptr;
@@ -70,17 +79,78 @@ void ConnectionManager::destroyInstance() noexcept
     }
 }
 
-bool ConnectionManager::connectDb(const QString &logbookPath) noexcept
+bool ConnectionManager::connectWithLogbook(const QString &logbookPath, QWidget *parent) noexcept
 {
-    if (d->logbookPath != logbookPath) {
-        d->connected = d->databaseDao->connectDb(logbookPath);
-        d->logbookPath = logbookPath;
-        emit connectionChanged(d->connected);
+    QString currentLogbookPath = logbookPath;
+    bool ok = true;
+    bool retry = true;
+    while (retry && ok) {
+        const QString logbookDirectoryPath = QFileInfo(currentLogbookPath).absolutePath();
+        QFileInfo info(logbookDirectoryPath);
+        ok = info.exists();
+        if (!ok) {
+            QDir dir(logbookDirectoryPath);
+            ok = dir.mkpath(logbookDirectoryPath);
+        }
+        if (ok) {
+            if (isConnected()) {
+                disconnectFromLogbook();
+            }
+            ok = connectDb(currentLogbookPath);
+            if (ok) {
+                Version databaseVersion;
+                ok = checkDatabaseVersion(databaseVersion);
+                if (ok) {
+                    Flight &flight = Logbook::getInstance().getCurrentFlight();
+                    flight.clear(true);
+                    ok = migrate();
+                    if (ok) {
+                        Settings::getInstance().setLogbookPath(currentLogbookPath);
+                    }
+                    retry = false;
+                } else {
+                    disconnectFromLogbook();
+                    QMessageBox messageBox(parent);
+                    messageBox.setWindowIcon(QIcon(":/img/icons/application-icon.png"));
+                    messageBox.setText(tr("The logbook %1 has been created with a newer version %2.").arg(currentLogbookPath, databaseVersion.toString()));
+                    messageBox.setInformativeText("Do you want to create a new logbook?");
+                    QPushButton *createNewPushButton = messageBox.addButton(tr("Create new logbook"), QMessageBox::AcceptRole);
+                    QPushButton *openExistingPushButton = messageBox.addButton(tr("Open another logbook"), QMessageBox::AcceptRole);
+                    messageBox.addButton(tr("Cancel"), QMessageBox::RejectRole);
+                    messageBox.setDefaultButton(createNewPushButton);
+                    messageBox.setIcon(QMessageBox::Icon::Question);
+
+                    messageBox.exec();
+                    const QAbstractButton *clickedButton = messageBox.clickedButton();
+                    if (clickedButton == createNewPushButton) {
+                        currentLogbookPath = DatabaseService::getNewLogbookPath(parent);
+                    } else if (clickedButton == openExistingPushButton) {
+                        currentLogbookPath = DatabaseService::getExistingLogbookPath(parent);
+                    } else {
+                        currentLogbookPath.clear();
+                    }
+                    if (!currentLogbookPath.isNull()) {
+                        retry = true;
+                        ok = true;
+                    } else {
+                        retry = false;
+                        ok = false;
+                    }
+                }
+            }
+        }
     }
-    return d->connected;
+    d->connected = ok;
+    if (d->connected) {
+        emit connectionChanged(true);
+    } else {
+        disconnectFromLogbook();
+    }
+
+    return ok;
 }
 
-void ConnectionManager::disconnectDb() noexcept
+void ConnectionManager::disconnectFromLogbook() noexcept
 {
     d->databaseDao->disconnectDb();
     d->logbookPath.clear();
@@ -105,27 +175,29 @@ bool ConnectionManager::migrate() noexcept
 
 bool ConnectionManager::optimise() noexcept
 {
-    emit connectionChanged(d->connected);
     return d->databaseDao->optimise();
 }
 
 bool ConnectionManager::backup(const QString &backupLogbookPath) noexcept
 {
-    // In order to release all existing prepared SQL queries we pretend
-    // that the connection has changed
-    emit connectionChanged(d->connected);
     return d->databaseDao->backup(backupLogbookPath);
 }
 
-bool ConnectionManager::getMetadata(Metadata &metadata) noexcept
+bool ConnectionManager::getMetadata(Metadata &metadata) const noexcept
 {
-    return d->databaseDao->getMetadata(metadata);
+    bool ok = QSqlDatabase::database().transaction();
+    if (ok) {
+        ok = d->databaseDao->getMetadata(metadata);
+        QSqlDatabase::database().rollback();
+    }
+    return ok;
 }
 
 // PROTECTED
 
 ConnectionManager::~ConnectionManager() noexcept
 {
+    disconnectFromLogbook();
 #ifdef DEBUG
     qDebug("ConnectionManager::ConnectionManager: DELETED");
 #endif
@@ -134,10 +206,38 @@ ConnectionManager::~ConnectionManager() noexcept
 // PRIVATE
 
 ConnectionManager::ConnectionManager() noexcept
-    : d(std::make_unique<ConnectionManagerPrivate>())
+    : QObject(),
+      d(std::make_unique<ConnectionManagerPrivate>())
 {
 #ifdef DEBUG
     qDebug("ConnectionManager::ConnectionManager: CREATED");
 #endif
 }
 
+bool ConnectionManager::connectDb(const QString &logbookPath) noexcept
+{
+    bool ok;
+    if (d->logbookPath != logbookPath) {
+        ok = d->databaseDao->connectDb(logbookPath);
+        d->logbookPath = logbookPath;
+    } else {
+        ok = false;
+    }
+    return ok;
+}
+
+bool ConnectionManager::checkDatabaseVersion(Version &databaseVersion) const noexcept
+{
+    Version appVersion;
+    Metadata metadata;
+    bool ok = getMetadata(metadata);
+    if (ok) {
+        ok = appVersion >= metadata.appVersion;
+        databaseVersion = metadata.appVersion;
+    } else {
+        // New database - no metadata exists yet
+        ok = true;
+        databaseVersion = Version(0, 0, 0);
+    }
+    return ok;
+}

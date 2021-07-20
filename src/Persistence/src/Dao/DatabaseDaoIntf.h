@@ -34,14 +34,15 @@ class DatabaseDaoIntf
 public:
     virtual ~DatabaseDaoIntf() = default;
 
-    virtual bool connectDb(const QString &logbookPath) = 0;
-    virtual void disconnectDb() = 0;
+    virtual bool connectDb(const QString &logbookPath) noexcept = 0;
+    virtual void disconnectDb() noexcept = 0;
 
-    virtual bool migrate() = 0;
-    virtual bool optimise() = 0;
-    virtual bool backup(const QString &backupPath) = 0;
+    virtual bool migrate() noexcept = 0;
+    virtual bool optimise() noexcept = 0;
+    virtual bool backup(const QString &backupPath) noexcept= 0;
+    virtual bool updateBackupPeriod(const QString &backupPeriodIntlId) noexcept = 0;
 
-    virtual bool getMetadata(Metadata &metadata) const = 0;
+    virtual bool getMetadata(Metadata &metadata) const noexcept = 0;
 };
 
 #endif // DATABASEDAOINTF_H

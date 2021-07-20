@@ -25,6 +25,8 @@
 #ifndef DATABASESERVICE_H
 #define DATABASESERVICE_H
 
+#include <memory>
+
 #include <QObject>
 
 class QString;
@@ -36,47 +38,20 @@ class QWidget;
 class Version;
 class DatabaseServicePrivate;
 
-class PERSISTENCE_API DatabaseService : public QObject
+class PERSISTENCE_API DatabaseService
 {
-    Q_OBJECT
 public:
-    DatabaseService(QObject *parent = nullptr) noexcept;
+    DatabaseService() noexcept;
     virtual ~DatabaseService() noexcept;
 
-    /*!
-     * Connects with the database given by \c logbookPath
-     * and initialises the database by applying the required migrations.
-     *
-     * If a problem with opening the database occurs (e.g. a version
-     * mismatch) then a dialog asks the user for alternative logbook
-     * paths (or to quit the application altogether).
-     *
-     * The actual logbook path (which is usually the given \c logbookPath)
-     * is stored in the Settings.
-     *
-     * \param logbookPath
-     *        the path of the logbook (database) file to connect with
-     * \return \c true if the connection succeeded; \c false else
-     * \sa Settings#setLogbookPath
-     * \sa logbookConnectionChanged
-     */
-    bool connectWithLogbook(const QString &logbookPath, QWidget *parent) noexcept;
-    void disconnectFromLogbook() noexcept;
-    bool isConnected() const noexcept;
-    const QString &getLogbookPath() const noexcept;
-
-    bool optimise() noexcept;
     bool backup() noexcept;
-    bool getMetadata(Metadata &metadata) const noexcept;
+    bool updateBackupPeriod(const QString &backupPeriodIntlId) noexcept;
 
     static QString getExistingLogbookPath(QWidget *parent) noexcept;
     static QString getNewLogbookPath(QWidget *parent) noexcept;
 
 private:
-    bool checkDatabaseVersion(Version &databaseVdersion) const noexcept;
-
-signals:
-    void logbookConnectionChanged(bool connected);
+    std::unique_ptr<DatabaseServicePrivate> d;
 };
 
 #endif // DATABASESERVICE_H

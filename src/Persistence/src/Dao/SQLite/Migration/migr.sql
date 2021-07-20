@@ -326,6 +326,23 @@ alter table aircraft add column time_offset integer;
 update aircraft
 set    time_offset = 0;
 
+@migr(id = "688a9607-541a-435a-b76b-69de4f815a49", descn = "Metadata rename interval to period", step_cnt = 5)
+alter table metadata rename column backup_interval_id to backup_period_id;
+
+@migr(id = "688a9607-541a-435a-b76b-69de4f815a49", descn = "Rename interval enumeration table to period", step = 2)
+alter table enum_backup_interval rename to enum_backup_period;
+
+@migr(id = "688a9607-541a-435a-b76b-69de4f815a49", descn = "Add additional backup period", step = 3)
+insert into enum_backup_period (intl_id, name, desc)
+values
+  ('NEVER', 'Never', 'No backup is created');
+
+@migr(id = "688a9607-541a-435a-b76b-69de4f815a49", descn = "Drop interval index", step = 4)
+drop index enum_backup_interval_idx1;
+
+@migr(id = "688a9607-541a-435a-b76b-69de4f815a49", descn = "Re-create index on new period enumeration table", step = 5)
+create unique index enum_backup_period_idx1 on enum_backup_period (intl_id);
+
 @migr(id = "1c13f02d-9def-4fd6-af8d-3b7984573682", descn = "Update application version to 0.8", step = 1)
 update metadata
 set app_version = '0.8.0';

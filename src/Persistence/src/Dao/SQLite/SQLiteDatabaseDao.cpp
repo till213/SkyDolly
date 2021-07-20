@@ -109,16 +109,32 @@ bool SQLiteDatabaseDao::backup(const QString &backupPath) noexcept
     return ok;
 }
 
+bool SQLiteDatabaseDao::updateBackupPeriod(const QString &backupPeriodIntlId) noexcept
+{
+    QSqlQuery query;
+    query.prepare(
+        "update metadata "
+        "set    backup_period_id = (select ebp.id"
+        "                           from enum_backup_period ebp"
+        "                           where ebp.intl_id = :intl_id"
+        "                          );"
+    );
+
+    query.bindValue(":intl_id", backupPeriodIntlId);
+    bool ok = query.exec();
+    return ok;
+}
+
 bool SQLiteDatabaseDao::getMetadata(Metadata &metadata) const noexcept
 {
     QSqlQuery query;
     query.setForwardOnly(true);
 
     bool ok = query.exec(
-        "select m.creation_date, m.app_version, m.last_optim_date, m.last_backup_date, m.backup_directory_path, e.intl_id "
+        "select m.creation_date, m.app_version, m.last_optim_date, m.last_backup_date, m.backup_directory_path, ebp.intl_id "
         "from metadata m "
-        "left join enum_backup_interval e "
-        "on m.backup_interval_id = e.id;"
+        "left join enum_backup_period ebp "
+        "on m.backup_period_id = ebp.id;"
     );
     if (query.next()) {
         QDateTime dateTime = query.value(0).toDateTime();
