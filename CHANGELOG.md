@@ -31,7 +31,7 @@
     - You can now switch control between user aircrafts (also during replay), by double-clicking on the aircraft in the "Formation" table (or push the "Set User Aircraft" button)
   * Pause will now also "freeze" the user aircraft
     - For both "Fly with formation" and "Take control" replay modes
-    - Additionally in "Fly with formation" replay mode user aircraft can be re-positioned relative to the recorded aircraft in the formation while paused, by clicking on one of the "relative positions"
+    - Additionally in "Fly with formation" replay mode user aircraft can be re-positioned relative to the _recorded_ user aircraft in the formation while paused, by clicking on one of the "relative positions"
 
 ### Improvements
 

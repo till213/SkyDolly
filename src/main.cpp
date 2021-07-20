@@ -32,9 +32,11 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName(Version::getOrganisationName());
     QCoreApplication::setApplicationName(Version::getApplicationName());
 
-    SkyDollyApplication application(argc, argv);
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
+
+    SkyDollyApplication application(argc, argv);
 
     MainWindow mainWindow;
     mainWindow.show();
