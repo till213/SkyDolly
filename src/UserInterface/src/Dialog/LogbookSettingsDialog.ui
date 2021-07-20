@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AboutLogbookDialog</class>
- <widget class="QDialog" name="AboutLogbookDialog">
+ <class>LogbookSettingsDialog</class>
+ <widget class="QDialog" name="LogbookSettingsDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>824</width>
-    <height>250</height>
+    <width>850</width>
+    <height>347</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -38,7 +38,7 @@
         <item row="0" column="0">
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>Logbook Path:</string>
+           <string>Logbook path:</string>
           </property>
          </widget>
         </item>
@@ -98,7 +98,7 @@
         <item row="3" column="0">
          <widget class="QLabel" name="label_6">
           <property name="text">
-           <string>Last Backup:</string>
+           <string>Last backup:</string>
           </property>
          </widget>
         </item>
@@ -118,7 +118,7 @@
         <item row="4" column="0">
          <widget class="QLabel" name="label_5">
           <property name="text">
-           <string>Last Optimisation:</string>
+           <string>Last optimisation:</string>
           </property>
          </widget>
         </item>
@@ -168,12 +168,31 @@
     </widget>
    </item>
    <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Backup</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>Backup logbook:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="backupPeriodComboBox"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Close</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
@@ -184,7 +203,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>AboutLogbookDialog</receiver>
+   <receiver>LogbookSettingsDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -200,7 +219,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>AboutLogbookDialog</receiver>
+   <receiver>LogbookSettingsDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

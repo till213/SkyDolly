@@ -27,9 +27,9 @@ target_sources(UserInterface
         src/Dialog/AboutDialog.cpp
         src/Dialog/AboutDialog.h
         src/Dialog/AboutDialog.ui
-        src/Dialog/AboutLogbookDialog.cpp
-        src/Dialog/AboutLogbookDialog.h
-        src/Dialog/AboutLogbookDialog.ui
+        src/Dialog/LogbookSettingsDialog.cpp
+        src/Dialog/LogbookSettingsDialog.h
+        src/Dialog/LogbookSettingsDialog.ui
         src/Dialog/SimulationVariablesDialog.cpp
         src/Dialog/SimulationVariablesDialog.h
         src/Dialog/SimulationVariablesDialog.ui

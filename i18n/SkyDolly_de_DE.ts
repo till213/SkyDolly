@@ -18,49 +18,49 @@ MIT License</source>
     </message>
 </context>
 <context>
-    <name>AboutLogbookDialog</name>
+    <name>LogbookSettingsDialog</name>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/AboutLogbookDialog.ui" line="14"/>
+        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="14"/>
         <source>Logbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/AboutLogbookDialog.ui" line="20"/>
+        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="20"/>
         <source>Information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/AboutLogbookDialog.ui" line="41"/>
+        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="41"/>
         <source>Logbook Path:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/AboutLogbookDialog.ui" line="61"/>
+        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="61"/>
         <source>Filename:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/AboutLogbookDialog.ui" line="81"/>
+        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="81"/>
         <source>Created:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/AboutLogbookDialog.ui" line="101"/>
+        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="101"/>
         <source>Last Backup:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/AboutLogbookDialog.ui" line="121"/>
+        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="121"/>
         <source>Last Optimisation:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/AboutLogbookDialog.ui" line="141"/>
+        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="141"/>
         <source>Size:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/AboutLogbookDialog.ui" line="163"/>
+        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="163"/>
         <source>&amp;Show</source>
         <translation type="unfinished"></translation>
     </message>

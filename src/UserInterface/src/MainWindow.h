@@ -111,6 +111,7 @@ private slots:
     void on_backupLogbookAction_triggered() noexcept;
     void on_optimiseLogbookAction_triggered() noexcept;
     void on_showSettingsAction_triggered() noexcept;
+    void on_showLogbookSettingsAction_triggered() noexcept;
     void on_quitAction_triggered() noexcept;
     // Window menu
     void on_showFlightAction_triggered(bool enabled) noexcept;
@@ -119,7 +120,6 @@ private slots:
     void on_stayOnTopAction_triggered(bool enabled) noexcept;
     void on_showMinimalAction_triggered(bool enabled) noexcept;
     // About menu
-    void on_aboutLogbookAction_triggered() noexcept;
     void on_aboutAction_triggered() noexcept;
     void on_aboutQtAction_triggered() noexcept;
 
