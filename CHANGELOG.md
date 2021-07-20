@@ -19,8 +19,9 @@
 
 - Logbook
   * Filtering of flights by date via creation date tree widget
-  * Search field which matches the flight title, aircraft name and destinations
+  * Search field which matches the flight title, user aircraft and destinations
   * Filtering of formation flights (flights having more than one aircraft)
+  * The selected user aircraft is now shown in the flight table (and not just the first aircraft of the flight)
 - Formation
   * Aircrafts can now also be deleted from a formation flight during (paused) replay
   * A time offset can be added to the selected aircraft, effectively "shifting" it back or forth on the timeline
