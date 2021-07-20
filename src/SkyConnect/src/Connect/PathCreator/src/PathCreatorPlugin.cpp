@@ -97,6 +97,12 @@ PathCreatorPlugin::~PathCreatorPlugin() noexcept
 #endif
 }
 
+bool PathCreatorPlugin::setUserAircraftPosition(const PositionData &positionData) noexcept
+{
+    Q_UNUSED(positionData)
+    return true;
+}
+
 // PROTECTED
 
 bool PathCreatorPlugin::isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept

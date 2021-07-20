@@ -35,6 +35,7 @@
 #include "SkyConnectLib.h"
 
 class Aircraft;
+class PositionData;
 class FS2020SimConnectPlugin;
 
 class SKYCONNECT_API SkyConnectIntf : public QObject
@@ -63,6 +64,7 @@ public:
     virtual ~SkyConnectIntf() = default;
 
     virtual bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept = 0;
+    virtual bool setUserAircraftPosition(const PositionData &positionData) noexcept = 0;
     virtual bool freezeUserAircraft(bool enable) noexcept = 0;
 
     virtual ReplayMode getReplayMode() const noexcept = 0;

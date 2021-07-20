@@ -37,6 +37,7 @@ class QAction;
 #include "../ModuleLib.h"
 
 class Aircraft;
+class PositionData;
 
 namespace Ui {
     class FormationWidget;
@@ -77,7 +78,8 @@ private:
     void frenchConnection() noexcept;
     void updateInitialPositionUi() noexcept;
 
-    InitialPosition calculateRelativePositionToUserAircraft(qint64 timestamp) const noexcept;
+    InitialPosition calculateRelativeInitialPositionToUserAircraft(qint64 timestamp) const noexcept;
+    PositionData calculateRelativePositionToUserAircraft(qint64 timestamp) const noexcept;
 
     static const QString getName();
 
