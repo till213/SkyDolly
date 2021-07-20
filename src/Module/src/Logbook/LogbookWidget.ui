@@ -33,6 +33,13 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QCheckBox" name="formationCheckBox">
+       <property name="text">
+        <string>Formation</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
@@ -54,7 +61,7 @@
        </size>
       </property>
       <attribute name="headerVisible">
-       <bool>false</bool>
+       <bool>true</bool>
       </attribute>
       <column>
        <property name="text">

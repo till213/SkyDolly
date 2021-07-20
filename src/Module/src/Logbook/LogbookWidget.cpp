@@ -619,3 +619,9 @@ void LogbookWidget::handleDateItemClicked(QTreeWidgetItem *item) noexcept
     updateSelectionDateRange(item);
     updateFlightTable();
 }
+
+void LogbookWidget::on_formationCheckBox_toggled(bool checked)
+{
+    d->flightSelector.hasFormation = checked;
+    updateFlightTable();
+}

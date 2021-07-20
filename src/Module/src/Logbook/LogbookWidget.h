@@ -98,6 +98,8 @@ private slots:
     void handleCellChanged(int row, int column) noexcept;
     // Flight date tree
     void handleDateItemClicked(QTreeWidgetItem *item) noexcept;
+
+    void on_formationCheckBox_toggled(bool checked);
 };
 
 #endif // LOGBOOKWIDGET_H
