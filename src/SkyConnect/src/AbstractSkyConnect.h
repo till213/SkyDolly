@@ -52,15 +52,13 @@ public:
     AbstractSkyConnect(QObject *parent = nullptr) noexcept;
     virtual ~AbstractSkyConnect() noexcept;
 
-    virtual const InitialPosition &getInitialRecordingPosition() const noexcept override;
-    virtual void setInitialRecordingPosition(const InitialPosition &initialPosition) noexcept override;
-    virtual bool updateUserAircraftPosition(const InitialPosition &initialPosition) noexcept override;
+    virtual bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept override;
     virtual bool freezeUserAircraft(bool enable) noexcept override;
 
     virtual ReplayMode getReplayMode() const noexcept override;
     virtual void setReplayMode(ReplayMode replayMode) noexcept override;
 
-    virtual void startRecording(RecordingMode recordingMode) noexcept override;
+    virtual void startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition()) noexcept override;
     virtual void stopRecording() noexcept override;
     virtual bool isRecording() const noexcept override;
 
@@ -147,7 +145,7 @@ private:
 
     inline bool retryWithReconnect(std::function<bool()> func);
 
-    bool setupInitialRecordingPosition() noexcept;
+    bool setupInitialRecordingPosition(const InitialPosition &initialPosition) noexcept;
     bool setupInitialReplayPosition(const InitialPosition &flyWithFormationPosition) noexcept;
     bool updateUserAircraftFreeze() noexcept;
 

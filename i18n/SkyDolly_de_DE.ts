@@ -616,8 +616,7 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/Module/src/Formation/FormationWidget.ui" line="32"/>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="287"/>
-        <source>Time Offset</source>
+        <source>Aircraft Time Offset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -712,6 +711,11 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="287"/>
+        <source>Engine Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="287"/>
         <source>Wing Span</source>
         <translation type="unfinished"></translation>
     </message>
@@ -722,22 +726,22 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="287"/>
-        <source>Tail Number</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="287"/>
-        <source>Engine Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="287"/>
         <source>Initial Altitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="287"/>
         <source>Duration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="287"/>
+        <source>Tail Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="287"/>
+        <source>Time Offset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -841,48 +845,48 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="820"/>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="959"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="823"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="962"/>
         <source>Do not ask again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="823"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="826"/>
         <source>The aircraft with sequence number %1 is about to be deleted. Deletion cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="824"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="827"/>
         <source>Do you want to delete the aircraft?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="825"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="828"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="826"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="829"/>
         <source>Keep</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="961"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="964"/>
         <source>The time offsets of all aircrafts in this formation will be changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="962"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="965"/>
         <source>Do you want to reset all time offsets to 0?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="963"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="966"/>
         <source>Reset Time Offsets</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="964"/>
+        <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="967"/>
         <source>Do Not Change</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1594,16 +1598,6 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/SettingsDialog.ui" line="169"/>
-        <source>Flight Simulator</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Dialog/SettingsDialog.ui" line="175"/>
-        <source>Connection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/UserInterface/src/Dialog/SettingsDialog.ui" line="24"/>
         <source>Replay</source>
         <translation type="unfinished"></translation>
@@ -1656,6 +1650,16 @@ MIT License</source>
     <message>
         <location filename="../src/UserInterface/src/Dialog/SettingsDialog.ui" line="138"/>
         <source>Recording Frequency</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialog/SettingsDialog.ui" line="169"/>
+        <source>Flight Simulator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialog/SettingsDialog.ui" line="175"/>
+        <source>Connection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

@@ -1334,7 +1334,11 @@ void MainWindow::handleFlightRestored() noexcept
         skyConnect->get().skipToBegin();
         ModuleIntf &module = d->moduleManager->getActiveModule();
         if (skyConnect->get().isConnected()) {
+            // Make sure we are unpaused...
+            module.setPaused(false);
+            // ... play the first frame (which will "move" to the new location)...
             module.setPlaying(true);
+            // ... and pause again (such that the new scenery can be loaded)
             module.setPaused(true);
         }
     }
