@@ -38,12 +38,12 @@ class Metadata;
 class Version;
 class ConnectionManagerPrivate;
 
-class ConnectionManager : public QObject
+class PERSISTENCE_API ConnectionManager : public QObject
 {
     Q_OBJECT
 public:
     static ConnectionManager &getInstance() noexcept;
-    PERSISTENCE_API static void destroyInstance() noexcept;
+    static void destroyInstance() noexcept;
 
     /*!
      * Connects with the database given by \c logbookPath
