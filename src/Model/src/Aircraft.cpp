@@ -59,12 +59,12 @@ public:
     qint64 id;
     qint64 simulationObjectId;
     AircraftInfo aircraftInfo;
-    Position position;
-    Engine engine;
-    PrimaryFlightControl primaryFlightControl;
-    SecondaryFlightControl secondaryFlightControl;
-    AircraftHandle aircraftHandle;
-    Light light;
+    Position position{aircraftInfo};
+    Engine engine{aircraftInfo};
+    PrimaryFlightControl primaryFlightControl{aircraftInfo};
+    SecondaryFlightControl secondaryFlightControl{aircraftInfo};
+    AircraftHandle aircraftHandle{aircraftInfo};
+    Light light{aircraftInfo};
     FlightPlan flightPlan;
 
     mutable qint64 duration;
@@ -174,8 +174,29 @@ const AircraftInfo &Aircraft::getAircraftInfoConst() const noexcept
 
 void Aircraft::setAircraftInfo(const AircraftInfo &aircraftInfo) noexcept
 {
-    d->aircraftInfo = aircraftInfo;
-    emit infoChanged();
+    if (d->aircraftInfo != aircraftInfo) {
+        d->aircraftInfo = aircraftInfo;
+        emit infoChanged(*this);
+    }
+}
+
+void Aircraft::setTailNumber(const QString &tailNumber) noexcept {
+    if (d->aircraftInfo.tailNumber != tailNumber) {
+        d->aircraftInfo.tailNumber = tailNumber;
+        emit tailNumberChanged(*this);
+    }
+}
+
+qint64 Aircraft::getTimeOffset() const noexcept
+{
+    return d->aircraftInfo.timeOffset;
+}
+
+void Aircraft::setTimeOffset(qint64 timeOffset) noexcept {
+    if (d->aircraftInfo.timeOffset != timeOffset) {
+        d->aircraftInfo.timeOffset = timeOffset;
+        emit timeOffsetChanged(*this);
+    }
 }
 
 const FlightPlan &Aircraft::getFlightPlanConst() const noexcept
@@ -190,25 +211,29 @@ FlightPlan &Aircraft::getFlightPlan() const noexcept
 
 qint64 Aircraft::getDurationMSec() const noexcept
 {
+    const qint64 timeOffset = d->aircraftInfo.timeOffset;
     if (d->duration == TimeVariableData::InvalidTime) {
         d->duration = 0;
+        // The timestamp offset indicates the time difference the given aircraft
+        // is "ahead" of its "schedule" (sampled data). The more ahead the aircraft
+        // is, the less the duration -> subtract the offset
         if (d->position.count() > 0) {
-            d->duration = d->position.getLast().timestamp;
+            d->duration = qMax(d->position.getLast().timestamp - timeOffset, 0LL);
         }
         if (d->engine.count() > 0) {
-            d->duration = qMax(d->engine.getLast().timestamp, d->duration);
+            d->duration = qMax(d->engine.getLast().timestamp - timeOffset, d->duration);
         }
         if (d->primaryFlightControl.count() > 0) {
-            d->duration = qMax(d->primaryFlightControl.getLast().timestamp, d->duration);
+            d->duration = qMax(d->primaryFlightControl.getLast().timestamp - timeOffset, d->duration);
         }
         if (d->secondaryFlightControl.count() > 0) {
-            d->duration = qMax(d->secondaryFlightControl.getLast().timestamp, d->duration);
+            d->duration = qMax(d->secondaryFlightControl.getLast().timestamp - timeOffset, d->duration);
         }
         if (d->aircraftHandle.count() > 0) {
-            d->duration = qMax(d->aircraftHandle.getLast().timestamp, d->duration);
+            d->duration = qMax(d->aircraftHandle.getLast().timestamp - timeOffset, d->duration);
         }
         if (d->light.count() > 0) {
-            d->duration = qMax(d->light.getLast().timestamp, d->duration);
+            d->duration = qMax(d->light.getLast().timestamp - timeOffset, d->duration);
         }
         // Update end time
         d->aircraftInfo.endDate = d->aircraftInfo.startDate.addMSecs(d->duration);
@@ -248,6 +273,7 @@ bool Aircraft::operator != (const Aircraft &rhs) const noexcept
 
 void Aircraft::frenchConnection()
 {
+    // Aircraft sample data
     connect(&d->position, &Position::dataChanged,
             this, &Aircraft::handleDataChanged);
     connect(&d->engine, &Engine::dataChanged,
@@ -262,6 +288,14 @@ void Aircraft::frenchConnection()
             this, &Aircraft::handleDataChanged);
     connect(this, &Aircraft::dataChanged,
             this, &Aircraft::invalidateDuration);
+    // Tail number
+    connect(this, &Aircraft::tailNumberChanged,
+            this, &Aircraft::infoChanged);
+    // Timestamp offset
+    connect(this, &Aircraft::timeOffsetChanged,
+            this, &Aircraft::invalidateDuration);
+    connect(this, &Aircraft::timeOffsetChanged,
+            this, &Aircraft::infoChanged);
 }
 
 // PRIVATE SLOTS

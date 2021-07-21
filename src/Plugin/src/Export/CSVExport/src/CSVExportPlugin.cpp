@@ -284,7 +284,11 @@ inline QString CSVExportPlugin::getEngineHeader() noexcept
             QString(SimVar::GeneralEngineStarter1) % CSVConst::Sep %
             QString(SimVar::GeneralEngineStarter2) % CSVConst::Sep %
             QString(SimVar::GeneralEngineStarter3) % CSVConst::Sep %
-            QString(SimVar::GeneralEngineStarter4);
+            QString(SimVar::GeneralEngineStarter4) % CSVConst::Sep %
+            QString(SimVar::GeneralEngineCombustion1) % CSVConst::Sep %
+            QString(SimVar::GeneralEngineCombustion2) % CSVConst::Sep %
+            QString(SimVar::GeneralEngineCombustion3) % CSVConst::Sep %
+            QString(SimVar::GeneralEngineCombustion4);
 }
 
 inline QString CSVExportPlugin::getEngineData(const EngineData &data) noexcept
@@ -314,10 +318,18 @@ inline QString CSVExportPlugin::getEngineData(const EngineData &data) noexcept
                 QString::number(data.generalEngineStarter1) % CSVConst::Sep %
                 QString::number(data.generalEngineStarter2) % CSVConst::Sep %
                 QString::number(data.generalEngineStarter3) % CSVConst::Sep %
-                QString::number(data.generalEngineStarter4);
+                QString::number(data.generalEngineStarter4) % CSVConst::Sep %
+                QString::number(data.generalEngineCombustion1) % CSVConst::Sep %
+                QString::number(data.generalEngineCombustion2) % CSVConst::Sep %
+                QString::number(data.generalEngineCombustion3) % CSVConst::Sep %
+                QString::number(data.generalEngineCombustion4);
     } else {
         const QString EmptyString;
         csv = EmptyString % CSVConst::Sep %
+                EmptyString % CSVConst::Sep %
+                EmptyString % CSVConst::Sep %
+                EmptyString % CSVConst::Sep %
+                EmptyString % CSVConst::Sep %
                 EmptyString % CSVConst::Sep %
                 EmptyString % CSVConst::Sep %
                 EmptyString % CSVConst::Sep %

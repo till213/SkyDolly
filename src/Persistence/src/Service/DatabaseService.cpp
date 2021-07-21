@@ -22,164 +22,168 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QObject>
+#include <memory>
+
+#include <QWidget>
 #include <QFileInfo>
 #include <QDir>
-#include <QWidget>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QPushButton>
 #include <QCoreApplication>
-#include <QTimer>
+#include <QSqlDatabase>
+#include <QDateTime>
 
 #include "../../../Kernel/src/Settings.h"
 #include "../../../Kernel/src/Const.h"
 #include "../../../Model/src/Logbook.h"
 #include "../ConnectionManager.h"
+#include "../Dao/DaoFactory.h"
+#include "../Dao/DatabaseDaoIntf.h"
 #include "DatabaseService.h"
 
 namespace
 {
     constexpr int MaxBackupIndex = 1024;
+    constexpr int BackupPeriodYearsNever = 999;
+    constexpr int BackupPeriodOneMonth = 1;
+    constexpr int BackupPeriodSevenDays = 7;
+    constexpr int BackupPeriodOneDay = 1;
 }
+
+class DatabaseServicePrivate
+{
+public:
+    DatabaseServicePrivate() noexcept
+        : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
+          databaseDao(daoFactory->createDatabaseDao())
+    {}
+
+    std::unique_ptr<DaoFactory> daoFactory;
+    std::unique_ptr<DatabaseDaoIntf> databaseDao;
+};
 
 // PUBLIC
 
-DatabaseService::DatabaseService(QObject *parent) noexcept
-    : QObject(parent)
+DatabaseService::DatabaseService() noexcept
+    : d(std::make_unique<DatabaseServicePrivate>())
 {}
 
 DatabaseService::~DatabaseService() noexcept
 {}
 
-bool DatabaseService::connectWithLogbook(const QString &logbookPath, QWidget *parent) noexcept
-{
-    ConnectionManager &connectionManager = ConnectionManager::getInstance();
-    QString currentLogbookPath = logbookPath;
-    bool ok = true;
-    bool retry = true;
-    while (retry && ok) {
-        const QString logbookDirectoryPath = QFileInfo(currentLogbookPath).absolutePath();
-        QFileInfo info(logbookDirectoryPath);
-        ok = info.exists();
-        if (!ok) {
-            QDir dir(logbookDirectoryPath);
-            ok = dir.mkpath(logbookDirectoryPath);
-        }
-        if (ok) {
-            ok = connectionManager.connectDb(currentLogbookPath);
-            if (ok) {
-                Version databaseVersion;
-                ok = checkDatabaseVersion(databaseVersion);
-                if (ok) {
-                    Flight &flight = Logbook::getInstance().getCurrentFlight();
-                    flight.clear(true);
-                    ok = connectionManager.migrate();
-                    if (ok) {
-                        Settings::getInstance().setLogbookPath(currentLogbookPath);
-                    }
-                    retry = false;
-                } else {
-                    disconnectFromLogbook();
-                    QMessageBox messageBox(parent);
-                    messageBox.setWindowIcon(QIcon(":/img/icons/application-icon.png"));
-                    messageBox.setText(tr("The logbook %1 has been created with a newer version %2.").arg(currentLogbookPath, databaseVersion.toString()));
-                    messageBox.setInformativeText("Do you want to create a new logbook?");
-                    QPushButton *createNewPushButton = messageBox.addButton(tr("Create new logbook"), QMessageBox::AcceptRole);
-                    QPushButton *openExistingPushButton = messageBox.addButton(tr("Open another logbook"), QMessageBox::AcceptRole);
-                    messageBox.addButton(tr("Cancel"), QMessageBox::RejectRole);
-                    messageBox.setDefaultButton(createNewPushButton);
-                    messageBox.setIcon(QMessageBox::Icon::Question);
-
-                    messageBox.exec();
-                    const QAbstractButton *clickedButton = messageBox.clickedButton();
-                    if (clickedButton == createNewPushButton) {
-                        currentLogbookPath = getNewLogbookPath(nullptr);
-                    } else if (clickedButton == openExistingPushButton) {
-                        currentLogbookPath = getExistingLogbookPath(nullptr);
-                    } else {
-                        currentLogbookPath.clear();
-                    }
-                    if (!currentLogbookPath.isNull()) {
-                        retry = true;
-                        ok = true;
-                    } else {
-                        retry = false;
-                        ok = false;
-                    }
-                }
-            }
-        }
-    }
-    emit logbookConnectionChanged(ok);
-    return ok;
-}
-
-void DatabaseService::disconnectFromLogbook() noexcept
-{
-    ConnectionManager::getInstance().disconnectDb();
-    emit logbookConnectionChanged(false);
-}
-
-bool DatabaseService::isConnected() const noexcept
-{
-    return ConnectionManager::getInstance().isConnected();
-}
-
-const QString &DatabaseService::getLogbookPath() const noexcept
-{
-    return ConnectionManager::getInstance().getLogbookPath();
-}
-
-bool DatabaseService::optimise() noexcept
-{
-    return ConnectionManager::getInstance().optimise();
-}
-
 bool DatabaseService::backup() noexcept
 {
-    const QString &logbookPath = getLogbookPath();
-    QFileInfo logbookInfo = QFileInfo(logbookPath);
+    QString backupDirectoryPath;
 
-    const QString logbookDirectoryPath = logbookInfo.absolutePath();
-    const QString baseName = logbookInfo.baseName();
-    const QString backupDirectoryName = "Backups";
-    QDir logbookDir(logbookDirectoryPath);
-    bool ok;
-    if (!logbookDir.exists(backupDirectoryName)) {
-        ok = logbookDir.mkdir(backupDirectoryName);
-    } else {
-        ok = true;
-    }
+    Metadata metaData;
+    bool ok = ConnectionManager::getInstance().getMetadata(metaData);
     if (ok) {
-        const QString backupLogbookDirectoryPath = logbookDirectoryPath + "/" + backupDirectoryName;
+        backupDirectoryPath = getExistingBackupPath(metaData.backupDirectoryPath);
+    }
+    ok = !backupDirectoryPath.isNull();
+    if (ok) {
+        QDir backupDir(backupDirectoryPath);
+        ConnectionManager &connectionManager = ConnectionManager::getInstance();
+        const QString &logbookPath = connectionManager.getLogbookPath();
+        const QFileInfo logbookInfo = QFileInfo(logbookPath);
+        const QString baseName = logbookInfo.baseName();
         const QString baseBackupLogbookName = baseName + "-" + QDateTime::currentDateTime().toString("yyyy-MM-dd hhmm");
         QString backupLogbookName = baseBackupLogbookName + Const::LogbookExtension;
-        QDir backupLogbookDir(backupLogbookDirectoryPath);
         int index = 1;
-        while (backupLogbookDir.exists(backupLogbookName) && index <= MaxBackupIndex) {
+        while (backupDir.exists(backupLogbookName) && index <= MaxBackupIndex) {
             backupLogbookName = baseBackupLogbookName + QString("-%1").arg(index) + Const::LogbookExtension;
             ++index;
         }
         ok = index <= MaxBackupIndex;
         if (ok) {
-            const QString backupLogbookPath = backupLogbookDirectoryPath + "/" + backupLogbookName;
-            ok = ConnectionManager::getInstance().backup(backupLogbookPath);
+            const QString backupLogbookPath = backupDirectoryPath + "/" + backupLogbookName;
+            ok = connectionManager.backup(backupLogbookPath);
+            if (ok) {
+                ok = d->databaseDao->updateBackupDirectoryPath(backupDirectoryPath);
+            }
+        }
+    }
+
+    // Update the next backup date
+    if (ok) {
+        ok = updateBackupDate();
+    }
+
+    return ok;
+}
+
+bool DatabaseService::setBackupPeriod(const QString &backupPeriodIntlId) noexcept
+{
+    bool ok = QSqlDatabase::database().transaction();
+    if (ok) {
+        ok = d->databaseDao->updateBackupPeriod(backupPeriodIntlId);
+        if (ok) {
+            ok = QSqlDatabase::database().commit();
+        } else {
+            QSqlDatabase::database().rollback();
         }
     }
     return ok;
 }
 
-bool DatabaseService::getMetadata(Metadata &metadata) const noexcept
+bool DatabaseService::setNextBackupDate(const QDateTime &date) noexcept
 {
-    return ConnectionManager::getInstance().getMetadata(metadata);
+    bool ok = QSqlDatabase::database().transaction();
+    if (ok) {
+        ok = d->databaseDao->updateNextBackupDate(date);
+        if (ok) {
+            ok = QSqlDatabase::database().commit();
+        } else {
+            QSqlDatabase::database().rollback();
+        }
+    }
+    return ok;
+}
+
+bool DatabaseService::updateBackupDate() noexcept
+{
+    Metadata metaData;
+    bool ok = ConnectionManager::getInstance().getMetadata(metaData);
+    if (ok) {
+        const QDateTime today = QDateTime::currentDateTime();
+        QDateTime nextBackupDate = metaData.lastBackupDate.isNull() ? today : metaData.lastBackupDate;
+        if (metaData.backupPeriodIntlId == Const::BackupNeverIntlId) {
+            nextBackupDate = nextBackupDate.addYears(BackupPeriodYearsNever);
+        } else if (metaData.backupPeriodIntlId == Const::BackupMonthlyIntlId) {
+            nextBackupDate = nextBackupDate.addMonths(BackupPeriodOneMonth);
+        } else if (metaData.backupPeriodIntlId == Const::BackupWeeklyIntlId) {
+            nextBackupDate = nextBackupDate.addDays(BackupPeriodSevenDays);
+        } else if (metaData.backupPeriodIntlId == Const::BackupDailyIntlId) {
+            nextBackupDate = nextBackupDate.addDays(BackupPeriodOneDay);
+        }
+        if (nextBackupDate < today) {
+            nextBackupDate = today;
+        }
+        ok = setNextBackupDate(nextBackupDate);
+    }
+    return ok;
+}
+
+bool DatabaseService::setBackupDirectoryPath(const QString &backupDirectoryPath) noexcept
+{
+    bool ok = QSqlDatabase::database().transaction();
+    if (ok) {
+        ok = d->databaseDao->updateBackupDirectoryPath(backupDirectoryPath);
+        if (ok) {
+            ok = QSqlDatabase::database().commit();
+        } else {
+            QSqlDatabase::database().rollback();
+        }
+    }
+    return ok;
 }
 
 QString DatabaseService::getExistingLogbookPath(QWidget *parent) noexcept
 {
     Settings &settings = Settings::getInstance();
     QString existingLogbookPath = QFileInfo(settings.getLogbookPath()).absolutePath();
-    QString logbookPath = QFileDialog::getOpenFileName(parent, tr("Open logbook"), existingLogbookPath, QString("*") + Const::LogbookExtension);
+    QString logbookPath = QFileDialog::getOpenFileName(parent, QT_TRANSLATE_NOOP("DatabaseService", "Open logbook"), existingLogbookPath, QString("*") + Const::LogbookExtension);
     return logbookPath;
 }
 
@@ -191,14 +195,14 @@ QString DatabaseService::getNewLogbookPath(QWidget *parent) noexcept
     QString newLogbookPath;
     bool retry = true;
     while (retry) {
-        QString logbookDirectoryPath = QFileDialog::getSaveFileName(parent, tr("New logbook"), existingLogbookDirectoryPath);
+        QString logbookDirectoryPath = QFileDialog::getSaveFileName(parent, QT_TRANSLATE_NOOP("DatabaseService", "New logbook"), existingLogbookDirectoryPath);
         if (!logbookDirectoryPath.isEmpty()) {
             QFileInfo info = QFileInfo(logbookDirectoryPath);
             if (!info.exists()) {
                 newLogbookPath = logbookDirectoryPath + "/" + info.fileName() + Const::LogbookExtension;
                 retry = false;
             } else {
-                QMessageBox::information(parent, tr("Database exists"), tr("The logbook %1 already exists. Please choose another path.").arg(logbookDirectoryPath));
+                QMessageBox::information(parent, QT_TRANSLATE_NOOP("DatabaseService", "Database exists"), QCoreApplication::translate("DatabaseService", "The logbook %1 already exists. Please choose another path.").arg(logbookDirectoryPath));
             }
         } else {
             retry = false;
@@ -207,20 +211,24 @@ QString DatabaseService::getNewLogbookPath(QWidget *parent) noexcept
     return newLogbookPath;
 }
 
-// PRIVATE
-
-bool DatabaseService::checkDatabaseVersion(Version &databaseVersion) const noexcept
+QString DatabaseService::getExistingBackupPath(const QString &backupPath) noexcept
 {
-    Version appVersion;
-    Metadata metadata;
-    bool ok = getMetadata(metadata);
-    if (ok) {
-        ok = appVersion >= metadata.appVersion;
-        databaseVersion = metadata.appVersion;
+    QString existingBackupPath;
+
+    if (QDir::isRelativePath(backupPath)) {
+        const ConnectionManager &connectionManager = ConnectionManager::getInstance();
+        const QString &logbookDirectoryPath = QFileInfo(connectionManager.getLogbookPath()).absolutePath();
+        existingBackupPath = logbookDirectoryPath + "/" + QFileInfo(backupPath).fileName();
     } else {
-        // New database - no metadata exists yet
-        ok = true;
-        databaseVersion = Version(0, 0, 0);
+        existingBackupPath = backupPath;
     }
-    return ok;
+
+    QDir backupDir(existingBackupPath);
+    if (!backupDir.exists()) {
+         const bool ok = backupDir.mkpath(existingBackupPath);
+         if (!ok) {
+             existingBackupPath.clear();
+         }
+    }
+    return existingBackupPath;
 }

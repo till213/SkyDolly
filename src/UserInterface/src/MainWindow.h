@@ -80,7 +80,6 @@ private:
     double getCustomSpeedFactor() const;
     
 private slots:
-
     // Ui elements
     void on_positionSlider_sliderPressed() noexcept;
     void on_positionSlider_valueChanged(int value) noexcept;
@@ -104,7 +103,7 @@ private slots:
 
     // Modules
     void handleModuleActivated(const QString title, Module::Module moduleId) noexcept;
-    void on_moduleSelectorVisibleCheckBox_clicked(bool enabled) noexcept;
+    void on_showModulesAction_triggered(bool enabled) noexcept;
 
     // File menu
     void on_newLogbookAction_triggered() noexcept;
@@ -112,6 +111,7 @@ private slots:
     void on_backupLogbookAction_triggered() noexcept;
     void on_optimiseLogbookAction_triggered() noexcept;
     void on_showSettingsAction_triggered() noexcept;
+    void on_showLogbookSettingsAction_triggered() noexcept;
     void on_quitAction_triggered() noexcept;
     // Window menu
     void on_showFlightAction_triggered(bool enabled) noexcept;
@@ -120,7 +120,6 @@ private slots:
     void on_stayOnTopAction_triggered(bool enabled) noexcept;
     void on_showMinimalAction_triggered(bool enabled) noexcept;
     // About menu
-    void on_aboutLogbookAction_triggered() noexcept;
     void on_aboutAction_triggered() noexcept;
     void on_aboutQtAction_triggered() noexcept;
 

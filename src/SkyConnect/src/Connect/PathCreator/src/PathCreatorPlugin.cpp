@@ -97,6 +97,12 @@ PathCreatorPlugin::~PathCreatorPlugin() noexcept
 #endif
 }
 
+bool PathCreatorPlugin::setUserAircraftPosition(const PositionData &positionData) noexcept
+{
+    Q_UNUSED(positionData)
+    return true;
+}
+
 // PROTECTED
 
 bool PathCreatorPlugin::isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept
@@ -105,15 +111,20 @@ bool PathCreatorPlugin::isTimerBasedRecording(SampleRate::SampleRate sampleRate)
     return true;
 }
 
-bool PathCreatorPlugin::onUserAircraftManualControl(bool enable) noexcept
+bool PathCreatorPlugin::onInitialPositionSetup(const InitialPosition &initialPosition) noexcept
+{
+    Q_UNUSED(initialPosition)
+    return true;
+}
+
+bool PathCreatorPlugin::onFreezeUserAircraft(bool enable) noexcept
 {
     Q_UNUSED(enable)
     return true;
 }
 
-bool PathCreatorPlugin::onStartRecording(const InitialPosition &initialPosition) noexcept
+bool PathCreatorPlugin::onStartRecording() noexcept
 {
-    Q_UNUSED(initialPosition)
     recordFlightCondition();
     recordAircraftInfo();
     return true;
@@ -305,6 +316,10 @@ void PathCreatorPlugin::recordEngineData(qint64 timestamp) noexcept
     engineData.generalEngineStarter2 = d->randomGenerator->bounded(2) < 1 ? false : true;
     engineData.generalEngineStarter3 = d->randomGenerator->bounded(2) < 1 ? false : true;
     engineData.generalEngineStarter4 = d->randomGenerator->bounded(2) < 1 ? false : true;
+    engineData.generalEngineCombustion1 = d->randomGenerator->bounded(2) < 1 ? false : true;
+    engineData.generalEngineCombustion2 = d->randomGenerator->bounded(2) < 1 ? false : true;
+    engineData.generalEngineCombustion3 = d->randomGenerator->bounded(2) < 1 ? false : true;
+    engineData.generalEngineCombustion4 = d->randomGenerator->bounded(2) < 1 ? false : true;
 
     engineData.timestamp = timestamp;
     aircraft.getEngine().upsert(std::move(engineData));

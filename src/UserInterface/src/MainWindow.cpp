@@ -42,7 +42,6 @@
 #include <QRadioButton>
 #include <QDoubleValidator>
 #include <QIcon>
-#include <QLocale>
 #include <QStackedWidget>
 #include <QEvent>
 #include <QResizeEvent>
@@ -52,6 +51,7 @@
 #include <QSpacerItem>
 #include <QTimer>
 
+#include "../../Kernel/src/Unit.h"
 #include "../../Kernel/src/Const.h"
 #include "../../Kernel/src/Replay.h"
 #include "../../Kernel/src/Version.h"
@@ -65,20 +65,24 @@
 #include "../../Persistence/src/Dao/DaoFactory.h"
 #include "../../Persistence/src/Service/FlightService.h"
 #include "../../Persistence/src/Service/DatabaseService.h"
+#include "../../Persistence/src/ConnectionManager.h"
+#include "../../Widget/src/ActionButton.h"
+#include "../../Widget/src/ActionRadioButton.h"
+#include "../../Widget/src/ActionCheckBox.h"
 #include "../../SkyConnect/src/SkyConnectManager.h"
 #include "../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../SkyConnect/src/Connect.h"
 #include "../../Module/src/ModuleIntf.h"
 #include "../../Module/src/ModuleManager.h"
 #include "../../Plugin/src/PluginManager.h"
-#include "Dialogs/AboutDialog.h"
-#include "Dialogs/AboutLogbookDialog.h"
-#include "Dialogs/SettingsDialog.h"
-#include "Dialogs/FlightDialog.h"
-#include "Dialogs/SimulationVariablesDialog.h"
-#include "Dialogs/StatisticsDialog.h"
-#include "Widgets/ActionButton.h"
-#include "Widgets/ActionRadioButton.h"
+#include "Dialog/AboutDialog.h"
+#include "Dialog/LogbookSettingsDialog.h"
+#include "Dialog/SettingsDialog.h"
+#include "Dialog/FlightDialog.h"
+#include "Dialog/SimulationVariablesDialog.h"
+#include "Dialog/StatisticsDialog.h"
+#include "Dialog/LogbookBackupDialog.h"
+
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
 
@@ -120,8 +124,6 @@ public:
     MainWindowPrivate() noexcept
         : previousState(Connect::State::Connected),
           connectedWithLogbook(false),
-          aboutDialog(nullptr),
-          aboutLogbookDialog(nullptr),
           settingsDialog(nullptr),
           flightDialog(nullptr),
           simulationVariablesDialog(nullptr),
@@ -138,21 +140,18 @@ public:
           exportQActionGroup(nullptr),
           hasImportPlugins(false),
           hasExportPlugins(false),
-          moduleManager(nullptr),
-          activeModuleId(Module::Module::None)
+          moduleManager(nullptr)
     {}
 
     Connect::State previousState;
     bool connectedWithLogbook;
 
-    AboutDialog *aboutDialog;
-    AboutLogbookDialog *aboutLogbookDialog;
     SettingsDialog *settingsDialog;
     FlightDialog *flightDialog;
     SimulationVariablesDialog *simulationVariablesDialog;
     StatisticsDialog *statisticsDialog;    
 
-    QLocale locale;
+    Unit unit;
 
     // Services
     std::unique_ptr<FlightService> flightService;
@@ -176,7 +175,6 @@ public:
     bool hasExportPlugins;
 
     std::unique_ptr<ModuleManager> moduleManager;
-    Module::Module activeModuleId;
 };
 
 // PUBLIC
@@ -192,7 +190,7 @@ MainWindow::MainWindow(QWidget *parent) noexcept
 
     // Connect with logbook
     const QString logbookPath = Settings::getInstance().getLogbookPath();
-    d->connectedWithLogbook = d->databaseService->connectWithLogbook(logbookPath, this);
+    d->connectedWithLogbook = ConnectionManager::getInstance().connectWithLogbook(logbookPath, this);
 
     initPlugins();
     initUi();
@@ -202,10 +200,6 @@ MainWindow::MainWindow(QWidget *parent) noexcept
 
 MainWindow::~MainWindow() noexcept
 {
-    // The SkyConnect instances have been deleted by the skyConnectManager (singleton)
-    // already at this point; no need to disconnect from their "stateChanged"
-    // signal
-
     // Make sure that all widgets having a reference to the flight service
     // are deleted before this MainWindow instance (which owns the flight
     // service); we make sure by simply deleting their parent moduleStackWidget
@@ -228,6 +222,15 @@ void MainWindow::resizeEvent(QResizeEvent *event) noexcept
 void MainWindow::closeEvent(QCloseEvent *event) noexcept
 {
     QMainWindow::closeEvent(event);
+
+    Metadata metaData;
+    if (ConnectionManager::getInstance().getMetadata(metaData)) {
+        if (QDateTime::currentDateTime() > metaData.nextBackupDate) {
+            std::unique_ptr<LogbookBackupDialog> backupDialog = std::make_unique<LogbookBackupDialog>(this);
+            backupDialog->exec();
+        }
+    }
+
     Settings &settings = Settings::getInstance();
     settings.setWindowGeometry(saveGeometry());
     settings.setWindowState(saveState());
@@ -237,6 +240,7 @@ void MainWindow::closeEvent(QCloseEvent *event) noexcept
 
 void MainWindow::frenchConnection() noexcept
 {
+    // Sky Connect
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::timestampChanged,
             this, &MainWindow::handleTimestampChanged);
@@ -247,6 +251,11 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::updateReplaySpeedUi);
     connect(d->replaySpeedActionGroup, &QActionGroup::triggered,
             this, &MainWindow::handleReplaySpeedSelected);
+
+    // Flight
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    connect(&flight, &Flight::timeOffsetChanged,
+            this, &MainWindow::updateTimestamp);
 
     // Menu actions
     connect(d->importQActionGroup, &QActionGroup::triggered,
@@ -297,7 +306,7 @@ void MainWindow::frenchConnection() noexcept
     // Service
     connect(d->flightService.get(), &FlightService::flightRestored,
             this, &MainWindow::handleFlightRestored);
-    connect(d->databaseService.get(), &DatabaseService::logbookConnectionChanged,
+    connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
             this, &MainWindow::handleLogbookConnectionChanged);
 }
 
@@ -309,20 +318,7 @@ void MainWindow::initUi() noexcept
     d->flightDialog = new FlightDialog(*d->flightService, this);
     d->simulationVariablesDialog = new SimulationVariablesDialog(this);
     d->statisticsDialog = new StatisticsDialog(this);
-    d->aboutDialog = new AboutDialog(this);
-    d->aboutLogbookDialog = new AboutLogbookDialog(*d->databaseService, this);
     d->settingsDialog = new SettingsDialog(this);
-
-    // Modules
-    d->moduleManager = std::make_unique<ModuleManager>(*ui->moduleStackWidget, *d->databaseService, *d->flightService);
-
-    const ModuleIntf &activeModule = d->moduleManager->getActiveModule();
-    ui->moduleGroupBox->setTitle(activeModule.getModuleName());
-    const bool flightor = Settings::getInstance().isModuleSelectorVisible();
-    ui->moduleSelectorVisibleCheckBox->setChecked(flightor);
-    ui->moduleSelectorVisibleCheckBox->setFocusPolicy(Qt::FocusPolicy::NoFocus);
-    d->activeModuleId = activeModule.getModuleId();
-
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
 
     initModuleSelectorUi();
@@ -394,6 +390,11 @@ void MainWindow::initPlugins() noexcept
 
 void MainWindow::initModuleSelectorUi() noexcept
 {
+    // Modules
+    d->moduleManager = std::make_unique<ModuleManager>(*ui->moduleStackWidget, *d->databaseService, *d->flightService);
+    ActionCheckBox *actionCheckBox = new ActionCheckBox(false, this);
+    actionCheckBox->setAction(ui->showModulesAction);
+    actionCheckBox->setFocusPolicy(Qt::NoFocus);
     const QString css =
 "QCheckBox::indicator:unchecked {"
 "    image: url(:/img/icons/checkbox-expand-normal.png);"
@@ -401,7 +402,24 @@ void MainWindow::initModuleSelectorUi() noexcept
 "QCheckBox::indicator:checked {"
 "    image: url(:/img/icons/checkbox-collapse-normal.png);"
 "}";
-    ui->moduleSelectorVisibleCheckBox->setStyleSheet(css);
+    actionCheckBox->setStyleSheet(css);
+    actionCheckBox->setContentsMargins(0, 0, 0, 0);
+
+    QSpacerItem *horizontalSpacerLeft = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    QSpacerItem *horizontalSpacerRight = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    QHBoxLayout *moduleVisibilityLayout = new QHBoxLayout();
+    moduleVisibilityLayout->setContentsMargins(0, 0, 0, 0);
+    ui->moduleVisibilityWidget->setLayout(moduleVisibilityLayout);
+
+    moduleVisibilityLayout->addSpacerItem(horizontalSpacerLeft);
+    moduleVisibilityLayout->addWidget(actionCheckBox);
+    moduleVisibilityLayout->addSpacerItem(horizontalSpacerRight);
+
+    const ModuleIntf &activeModule = d->moduleManager->getActiveModule();
+    ui->moduleGroupBox->setTitle(activeModule.getModuleName());
+    const bool moduleSelectorVisible = Settings::getInstance().isModuleSelectorVisible();
+    ui->showModulesAction->setChecked(moduleSelectorVisible);
+
     for (const auto &item : d->moduleManager->getModules()) {
         QAction &moduleAction = item->getAction();
         ui->moduleMenu->addAction(&moduleAction);
@@ -589,7 +607,7 @@ void MainWindow::initReplaySpeedUi() noexcept
     d->customReplaySpeedPercentValidator->setRange(ReplaySpeedAbsoluteMin * 100.0, ReplaySpeedAbsoluteMax * 100.0, ReplaySpeedDecimalPlaces);
 
     // The replay speed factor in SkyConnect is always an absolute factor
-    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         const double replaySpeed = skyConnect->get().getReplaySpeedFactor();
         Settings &settings = Settings::getInstance();
@@ -602,7 +620,7 @@ void MainWindow::initReplaySpeedUi() noexcept
             normalSpeedRadioButton->setChecked(true);
         } else {
             d->customSpeedRadioButton ->setChecked(true);
-            d->customSpeedLineEdit->setText(d->locale.toString(d->lastCustomReplaySpeed, 'f', ReplaySpeedDecimalPlaces));
+            d->customSpeedLineEdit->setText(d->unit.formatNumber(d->lastCustomReplaySpeed, ReplaySpeedDecimalPlaces));
         }
     }
 
@@ -723,10 +741,10 @@ double MainWindow::getCustomSpeedFactor() const
     if (!text.isEmpty()) {
         switch (Settings::getInstance().getReplaySpeeedUnit()) {
         case Replay::SpeedUnit::Absolute:
-            customSpeedFactor = d->locale.toDouble(text);
+            customSpeedFactor = d->unit.toNumber(text);
             break;
         case Replay::SpeedUnit::Percent:
-            customSpeedFactor = d->locale.toDouble(text) / 100.0;
+            customSpeedFactor = d->unit.toNumber(text) / 100.0;
             break;
         default:
             customSpeedFactor = 1.0;
@@ -742,7 +760,7 @@ double MainWindow::getCustomSpeedFactor() const
 
 void MainWindow::on_positionSlider_sliderPressed() noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         d->previousState = skyConnect->get().getState();
         if (d->previousState == Connect::State::Replay) {
@@ -754,7 +772,7 @@ void MainWindow::on_positionSlider_sliderPressed() noexcept
 
 void MainWindow::on_positionSlider_valueChanged(int value) noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         const double scale = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
         const qint64 totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
@@ -769,7 +787,7 @@ void MainWindow::on_positionSlider_valueChanged(int value) noexcept
 
 void MainWindow::on_positionSlider_sliderReleased() noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (d->previousState == Connect::State::Replay) {
             skyConnect->get().setPaused(false);
@@ -779,7 +797,7 @@ void MainWindow::on_positionSlider_sliderReleased() noexcept
 
 void MainWindow::on_timestampTimeEdit_timeChanged(const QTime &time) noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect && (skyConnect->get().isIdle() || skyConnect->get().getState() == Connect::State::ReplayPaused)) {
         qint64 timestamp = time.hour() * MilliSecondsPerHour + time.minute() * MilliSecondsPerMinute + time.second() * MilliSecondsPerSecond;
         skyConnect->get().seek(timestamp);
@@ -803,7 +821,7 @@ void MainWindow::updateWindowSize() noexcept
 
 void MainWindow::handleTimestampChanged(qint64 timestamp) noexcept
 {
-    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().isRecording()) {
             updateTimestamp();
@@ -870,7 +888,7 @@ void MainWindow::handleReplaySpeedSelected(QAction *action) noexcept
         break;
     }
 
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().setReplaySpeedFactor(replaySpeedFactor);
     }
@@ -878,7 +896,7 @@ void MainWindow::handleReplaySpeedSelected(QAction *action) noexcept
 
 void MainWindow::handleCustomSpeedChanged() noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const double customReplaySpeedFactor = getCustomSpeedFactor();
     if (skyConnect) {
         skyConnect->get().setReplaySpeedFactor(customReplaySpeedFactor);
@@ -937,7 +955,7 @@ void MainWindow::updateControlUi() noexcept
 
     const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     const bool hasSkyConnectPlugins = skyConnectManager.hasPlugins();
-    const auto skyConnect = skyConnectManager.getCurrentSkyConnect();
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = skyConnectManager.getCurrentSkyConnect();
     const Connect::State state = skyConnect ? skyConnect->get().getState() : Connect::State::Disconnected;
     switch (state) {
     case Connect::State::Disconnected:
@@ -1034,7 +1052,7 @@ void MainWindow::updateReplaySpeedUi() noexcept
 {
     if (d->customSpeedRadioButton->isChecked()) {
         d->customSpeedLineEdit->setEnabled(true);
-        d->customSpeedLineEdit->setText(d->locale.toString(d->lastCustomReplaySpeed, 'f', ReplaySpeedDecimalPlaces));
+        d->customSpeedLineEdit->setText(d->unit.formatNumber(d->lastCustomReplaySpeed, ReplaySpeedDecimalPlaces));
 
         switch (Settings::getInstance().getReplaySpeeedUnit()) {
         case Replay::SpeedUnit::Absolute:
@@ -1059,7 +1077,7 @@ void MainWindow::updateReplaySpeedUi() noexcept
 
 void MainWindow::updateTimestamp() noexcept
 {
-    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const bool isRecording = skyConnect && skyConnect->get().isRecording();
     const bool ofUserAircraft = isRecording;
     const qint64 totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec(ofUserAircraft);
@@ -1077,7 +1095,7 @@ void MainWindow::updateFileMenu() noexcept
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();
     const bool hasRecording = aircraft.hasRecording();
-    const auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const Connect::State state = skyConnect ? skyConnect->get().getState() : Connect::State::Disconnected;
     switch (state) {
     case Connect::State::Recording:
@@ -1136,8 +1154,8 @@ void MainWindow::updateMainWindow() noexcept
 
 void MainWindow::handleModuleActivated(const QString title, Module::Module moduleId) noexcept
 {
+    Q_UNUSED(moduleId)
     ui->moduleGroupBox->setTitle(title);
-    d->activeModuleId = moduleId;
     const bool minimalUi = Settings::getInstance().isMinimalUiEnabled();
     if (minimalUi) {
         updateMinimalUi(false);
@@ -1145,7 +1163,7 @@ void MainWindow::handleModuleActivated(const QString title, Module::Module modul
     updateControlIcons();
 }
 
-void MainWindow::on_moduleSelectorVisibleCheckBox_clicked(bool enabled) noexcept
+void MainWindow::on_showModulesAction_triggered(bool enabled) noexcept
 {
     Settings &settings = Settings::getInstance();
     settings.setModuleSelectorVisible(enabled);
@@ -1156,7 +1174,7 @@ void MainWindow::on_newLogbookAction_triggered() noexcept
 {
     const QString logbookPath = DatabaseService::getNewLogbookPath(this);
     if (!logbookPath.isNull()) {
-        const bool ok = d->databaseService->connectWithLogbook(logbookPath, this);
+        const bool ok = ConnectionManager::getInstance().connectWithLogbook(logbookPath, this);
         if (!ok) {
             QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be created.").arg(logbookPath));
         }
@@ -1167,7 +1185,7 @@ void MainWindow::on_openLogbookAction_triggered() noexcept
 {
     QString existingLogbookPath = DatabaseService::getExistingLogbookPath(this);
     if (!existingLogbookPath.isEmpty()) {
-        bool ok = d->databaseService->connectWithLogbook(existingLogbookPath, this);
+        bool ok = ConnectionManager::getInstance().connectWithLogbook(existingLogbookPath, this);
         if (!ok) {
             QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be opened.").arg(existingLogbookPath));
         }
@@ -1184,7 +1202,7 @@ void MainWindow::on_backupLogbookAction_triggered() noexcept
 
 void MainWindow::on_optimiseLogbookAction_triggered() noexcept
 {
-    bool ok = d->databaseService->optimise();
+    bool ok = ConnectionManager::getInstance().optimise();
     if (!ok) {
         QMessageBox::critical(this, tr("Database error"), tr("The logbook could not be optimised."));
     }
@@ -1195,9 +1213,15 @@ void MainWindow::on_showSettingsAction_triggered() noexcept
     d->settingsDialog->exec();
 }
 
+void MainWindow::on_showLogbookSettingsAction_triggered() noexcept
+{
+    std::unique_ptr<LogbookSettingsDialog> logbookSettingsDialog = std::make_unique<LogbookSettingsDialog>(this);
+    logbookSettingsDialog->exec();
+}
+
 void MainWindow::on_quitAction_triggered() noexcept
 {
-    QApplication::quit();
+    close();
 }
 
 void MainWindow::on_showFlightAction_triggered(bool enabled) noexcept
@@ -1237,14 +1261,10 @@ void MainWindow::on_showMinimalAction_triggered(bool enabled) noexcept
     updateMinimalUi(enabled);
 }
 
-void MainWindow::on_aboutLogbookAction_triggered() noexcept
-{
-    d->aboutLogbookDialog->exec();
-}
-
 void MainWindow::on_aboutAction_triggered() noexcept
 {
-    d->aboutDialog->exec();
+    std::unique_ptr<AboutDialog> aboutDialog = std::make_unique<AboutDialog>(this);
+    aboutDialog->exec();
 }
 
 void MainWindow::on_aboutQtAction_triggered() noexcept
@@ -1254,58 +1274,24 @@ void MainWindow::on_aboutQtAction_triggered() noexcept
 
 void MainWindow::toggleRecord(bool enable) noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        blockSignals(true);
-        switch (skyConnect->get().getState()) {
-        case Connect::State::Recording:
-            if (!enable) {
-                skyConnect->get().stopRecording();
-            }
-            break;
-        case Connect::State::RecordingPaused:
-            if (enable) {
-                // The record button also unpauses a paused recording
-                skyConnect->get().setPaused(false);
-            }
-            break;
-        default:
-            if (enable) {
-                const bool addFormationAircraft = d->activeModuleId == Module::Module::Formation;
-                skyConnect->get().startRecording(addFormationAircraft);
-            }
-            break;
-        }
-        blockSignals(false);
-    }
+    blockSignals(true);
+    d->moduleManager->getActiveModule().setRecording(enable);
+    blockSignals(false);
 }
 
 void MainWindow::togglePause(bool enable) noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        skyConnect->get().setPaused(enable);
-    }
+    d->moduleManager->getActiveModule().setPaused(enable);
 }
 
 void MainWindow::togglePlay(bool enable) noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        if (enable) {
-            skyConnect->get().startReplay(skyConnect->get().isAtEnd());
-        } else if (skyConnect->get().isPaused()) {
-            // The play button also unpauses a paused replay
-            skyConnect->get().setPaused(false);
-        } else {
-            skyConnect->get().stopReplay();
-        }
-    }
+     d->moduleManager->getActiveModule().setPlaying(enable);
 }
 
 void MainWindow::stop() noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().stop();
     }
@@ -1313,7 +1299,7 @@ void MainWindow::stop() noexcept
 
 void MainWindow::skipToBegin() noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().skipToBegin();
     }
@@ -1321,7 +1307,7 @@ void MainWindow::skipToBegin() noexcept
 
 void MainWindow::skipBackward() noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().skipBackward();
     }
@@ -1329,7 +1315,7 @@ void MainWindow::skipBackward() noexcept
 
 void MainWindow::skipForward() noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().skipForward();
     }
@@ -1337,7 +1323,7 @@ void MainWindow::skipForward() noexcept
 
 void MainWindow::skipToEnd() noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().skipToEnd();
     }
@@ -1346,12 +1332,17 @@ void MainWindow::skipToEnd() noexcept
 void MainWindow::handleFlightRestored() noexcept
 {
     updateUi();
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().skipToBegin();
+        ModuleIntf &module = d->moduleManager->getActiveModule();
         if (skyConnect->get().isConnected()) {
-            skyConnect->get().startReplay(true);
-            skyConnect->get().setPaused(true);
+            // Make sure we are unpaused...
+            module.setPaused(false);
+            // ... play the first frame (which will "move" to the new location)...
+            module.setPlaying(true);
+            // ... and pause again (such that the new scenery can be loaded)
+            module.setPaused(true);
         }
     }
 }
@@ -1368,12 +1359,13 @@ void MainWindow::handleImport(QAction *action) noexcept
     const bool ok = PluginManager::getInstance().importData(className, *d->flightService);
     if (ok) {
         updateUi();
-        auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+        std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
         if (skyConnect) {
             skyConnect->get().skipToBegin();
+            ModuleIntf &module = d->moduleManager->getActiveModule();
             if (skyConnect->get().isConnected()) {
-                skyConnect->get().startReplay(true);
-                skyConnect->get().setPaused(true);
+                module.setPlaying(true);
+                module.setPaused(true);
             }
         }
     }

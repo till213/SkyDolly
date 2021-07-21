@@ -15,17 +15,21 @@ target_sources(CSVImport
         src/CSVImportPlugin.cpp
         src/CSVImportPlugin.h
         src/CSVImportPlugin.json
+        src/CSVImportDialog.cpp
+        src/CSVImportDialog.h
+        src/CSVImportDialog.ui
 )
 
-set(PLUGIN_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Plugin Persistence
+set(PLUGIN_DEPENDENCIES
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence Widget SkyConnect Plugin
 )
 if (${PLATFORM_IS_MACOS})
-    list(APPEND PLUGIN_LIBS -lc++)
+    list(APPEND PLUGIN_DEPENDENCIES -lc++)
 endif()
 
-target_link_libraries(${PLUGIN_NAME} PRIVATE ${PLUGIN_LIBS})
+target_link_libraries(${PLUGIN_NAME} PRIVATE ${PLUGIN_DEPENDENCIES})
 
+include_directories(${PLUGIN_NAME} PRIVATE ../../../../Widget/src/)
 target_include_directories(${PLUGIN_NAME} PUBLIC
     "${CMAKE_CURRENT_BINARY_DIR}"
 )

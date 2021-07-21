@@ -31,18 +31,21 @@
 #include "../../Kernel/src/SkyMath.h"
 #include "TimeVariableData.h"
 #include "SkySearch.h"
+#include "AircraftInfo.h"
 #include "LightData.h"
 #include "Light.h"
 
 class LightPrivate
 {
 public:
-    LightPrivate() noexcept
-        : currentTimestamp(TimeVariableData::InvalidTime),
+    LightPrivate(const AircraftInfo &aircraftInfo) noexcept
+        : aircraftInfo(aircraftInfo),
+          currentTimestamp(TimeVariableData::InvalidTime),
           currentAccess(TimeVariableData::Access::Linear),
           currentIndex(SkySearch::InvalidIndex)
     {}
 
+    const AircraftInfo &aircraftInfo;
     std::vector<LightData> lightData;
     qint64 currentTimestamp;
     TimeVariableData::Access currentAccess;
@@ -54,9 +57,9 @@ public:
 
 // PUBLIC
 
-Light::Light(QObject *parent) noexcept
+Light::Light(const AircraftInfo &aircraftInfo, QObject *parent) noexcept
     : QObject(parent),
-      d(std::make_unique<LightPrivate>())
+      d(std::make_unique<LightPrivate>(aircraftInfo))
 {}
 
 Light::~Light() noexcept
@@ -99,17 +102,18 @@ std::size_t Light::count() const noexcept
 const LightData &Light::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
 {
     const LightData *p1, *p2;
+    const qint64 adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timeOffset, 0LL);
 
-    if (d->currentTimestamp != timestamp || d->currentAccess != access) {
+    if (d->currentTimestamp != adjustedTimestamp || d->currentAccess != access) {
 
         switch (access) {
         case TimeVariableData::Access::Linear:
-            SkySearch::getLinearInterpolationSupportData(d->lightData, timestamp, d->currentIndex, &p1, &p2);
+            SkySearch::getLinearInterpolationSupportData(d->lightData, adjustedTimestamp, d->currentIndex, &p1, &p2);
             break;
         case TimeVariableData::Access::Seek:
             // Get the last sample data just before the seeked position
             // (that sample point may lie far outside of the "sample window")
-            d->currentIndex = SkySearch::updateStartIndex(d->lightData, d->currentIndex, timestamp);
+            d->currentIndex = SkySearch::updateStartIndex(d->lightData, d->currentIndex, adjustedTimestamp);
             if (d->currentIndex != SkySearch::InvalidIndex) {
                 p1 = &d->lightData.at(d->currentIndex);
                 p2 = p1;
@@ -125,13 +129,13 @@ const LightData &Light::interpolate(qint64 timestamp, TimeVariableData::Access a
         if (p1 != nullptr) {
             // No interpolation for light states
             d->currentLightData.lightStates = p1->lightStates;
-            d->currentLightData.timestamp = timestamp;
+            d->currentLightData.timestamp = adjustedTimestamp;
         } else {
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
             d->currentLightData = LightData::NullData;
         }
 
-        d->currentTimestamp = timestamp;
+        d->currentTimestamp = adjustedTimestamp;
         d->currentAccess = access;
     }
     return d->currentLightData;

@@ -61,7 +61,7 @@ public:
     } SkyConnectPlugin;
 
     /*!
-     * The plugin UUID and the plugin name and capabilities.
+     * The plugin UUID and the plugin name and capabilities (flight simulator).
      */
     typedef std::pair<QUuid, SkyConnectPlugin> Handle;
     const std::vector<Handle> &initialisePlugins() noexcept;
@@ -69,6 +69,7 @@ public:
     bool hasPlugins() const noexcept;
 
     std::optional<std::reference_wrapper<SkyConnectIntf>> getCurrentSkyConnect() const noexcept;
+    std::optional<QString> getCurrentSkyConnectPluginName() const noexcept;
 
 public slots:
     bool tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept;

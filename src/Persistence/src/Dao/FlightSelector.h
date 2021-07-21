@@ -38,6 +38,7 @@ public:
     QDate fromDate;
     QDate toDate;
     QString searchKeyword;
+    bool hasFormation;
 
     static const QDate MinDate;
     static const QDate MaxDate;

@@ -45,6 +45,10 @@ public:
     virtual QWidget &getWidget() noexcept = 0;
     virtual QAction &getAction() noexcept = 0;
 
+    virtual void setRecording(bool enable) noexcept = 0;
+    virtual void setPaused(bool enable) noexcept = 0;
+    virtual void setPlaying(bool enable) noexcept = 0;
+
 protected:
     virtual void handleRecordingStopped() noexcept = 0;
 };

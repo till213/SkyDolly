@@ -6,19 +6,34 @@
 
 - Plugin architecture
   * Import CSV plugin
+    - Aircrafts can now be _added_ to existing flights ("multiplayer formation flying")
+    - Select the aircraft type (used when spawning AI aircrafts in formation flights)
   * Export CSV plugin
   * Export KML plugin ("Google Earth")
   * SkyConnect plugin architecture
     - SimConnect plugin (currently FS2020 only)
     - Auto-detection of installed flight simulator (automatic plugin selection)
-    - Plugin changeable at runtime via Settings dialog
+    - Plugin changeable at runtime via settings dialog
   
-- Modules
-  * Logbook
-    - Filtering of flights by date via creation date tree widget
-    - Search field which matches the flight title, aircraft name and destinations
-  * Formation
-    - Aircrafts can now also be deleted from a formation flight during (paused) replay
+#### Modules
+
+- Logbook
+  * Filtering of flights by date via creation date tree widget
+  * Search field which matches the flight title, user aircraft and destinations
+  * Filtering of formation flights (flights having more than one aircraft)
+  * The selected user aircraft is now shown in the flight table (and not just the first aircraft of the flight)
+- Formation
+  * Aircrafts can now also be deleted from a formation flight during (paused) replay
+  * A time offset can be added to the selected aircraft, effectively "shifting" it back or forth on the timeline
+    - This is useful for "multiplayer formation flights" in order to synchronise the imported aircrafts (also see CSV import plugin above)
+  * A new "Fly with Formation" replay mode has been added:
+    - All previously recorded aircrafts are replayed
+    - You will with your currently loaded user aircraft with the formation ("in addition" to the recorded aircrafts)
+  * "Take control of recorded user aircraft" still exists
+    - You can now switch control between user aircrafts (also during replay), by double-clicking on the aircraft in the "Formation" table (or push the "Set User Aircraft" button)
+  * Pause will now also "freeze" the user aircraft
+    - For both "Fly with formation" and "Take control" replay modes
+    - Additionally in "Fly with formation" replay mode user aircraft can be re-positioned relative to the _recorded_ user aircraft in the formation while paused, by clicking on one of the "relative positions"
 
 ### Improvements
 
@@ -26,6 +41,16 @@
 - Database performance improvements:
   * "forward queries"
   * "Normalisation" of "aircraft type" data (new table - less storage space required)
+- A new "View" menu has been added, providing options to show/hide various UI elements such as the module selector
+- Logbook backup can now be scheduled, the logbook settings are now in the "File" menu
+  * Once a month
+  * Once a week
+  * Daily
+  * Never or whenever exiting Sky Dolly
+
+### Bug Fixes
+
+- Proper "HiDPI support" on Windows
 
 ## 0.7.0
 

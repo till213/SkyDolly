@@ -34,7 +34,7 @@
 class MODEL_API InitialPosition
 {
 public:
-    static constexpr qint64 InvalidVelocity = std::numeric_limits<qint64>::min();
+    static constexpr qint64 InvalidVelocity = std::numeric_limits<int>::min();
 
     double latitude;
     double longitude;
@@ -43,9 +43,11 @@ public:
     double bank;
     double heading;
     bool onGround;
-    double airspeed;
+    // Knots
+    int airspeed;
 
     InitialPosition(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
+    InitialPosition(const PositionData &positionData, const AircraftInfo &aircraftInfo) noexcept;
 
     InitialPosition(InitialPosition &&) = default;
     InitialPosition(const InitialPosition &) = default;

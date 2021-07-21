@@ -138,14 +138,24 @@ void Flight::setDescription(const QString &description) noexcept
     }
 }
 
+void Flight::setAircrafts(std::vector<std::unique_ptr<Aircraft>> aircrafts) noexcept
+{
+    d->aircrafts = std::move(aircrafts);
+    for (auto &aircraft : d->aircrafts) {
+        emit aircraftAdded(*aircraft.get());
+        connectSignals(*aircraft.get());
+    }
+}
+
 Aircraft &Flight::addUserAircraft() noexcept
 {
     std::unique_ptr<Aircraft> aircraft = std::make_unique<Aircraft>();
+    connectSignals(*aircraft.get());
 
     d->aircrafts.push_back(std::move(aircraft));
     setUserAircraftIndex(d->aircrafts.size() - 1);
-    emit aircraftAdded(*d->aircrafts.end()->get());
-    return *d->aircrafts.end()->get();
+    emit aircraftAdded(*d->aircrafts.back().get());
+    return *d->aircrafts.back().get();
 }
 
 const Aircraft &Flight::getUserAircraftConst() const noexcept
@@ -240,11 +250,6 @@ const Flight::Iterator Flight::end() const noexcept
     return d->aircrafts.end();
 }
 
-Flight::InsertIterator Flight::insertIterator() noexcept
-{
-    return std::inserter(d->aircrafts, d->aircrafts.begin());
-}
-
 // OPERATORS
 
 Aircraft& Flight::operator[](std::size_t index) noexcept
@@ -255,4 +260,16 @@ Aircraft& Flight::operator[](std::size_t index) noexcept
 const Aircraft& Flight::operator[](std::size_t index) const noexcept
 {
     return *d->aircrafts[index];
+}
+
+// PRIVATE
+
+inline void Flight::connectSignals(Aircraft &aircraft)
+{
+    connect(&aircraft, &Aircraft::infoChanged,
+            this, &Flight::aircraftInfoChanged);
+    connect(&aircraft, &Aircraft::tailNumberChanged,
+            this, &Flight::tailNumberChanged);
+    connect(&aircraft, &Aircraft::timeOffsetChanged,
+            this, &Flight::timeOffsetChanged);
 }

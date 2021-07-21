@@ -62,13 +62,16 @@ AircraftService::~AircraftService() noexcept
 
 bool AircraftService::store(qint64 flightId, int sequenceNumber, Aircraft &aircraft) noexcept
 {
-    QSqlDatabase::database().transaction();
-    bool ok = d->aircraftDao->add(flightId, sequenceNumber, aircraft);
+    bool ok = QSqlDatabase::database().transaction();
     if (ok) {
         Flight &flight = Logbook::getInstance().getCurrentFlight();
-        ok = d->flightDao->updateUserAircraftIndex(flight.getId(), flight.getUserAircraftIndex());
+        ok = d->aircraftDao->add(flightId, sequenceNumber, aircraft);
         if (ok) {
-            QSqlDatabase::database().commit();
+            ok = d->flightDao->updateUserAircraftIndex(flight.getId(), flight.getUserAircraftIndex());
+        }
+        if (ok) {
+            ok = QSqlDatabase::database().commit();
+            emit flight.aircraftStored(aircraft);
         } else {
             QSqlDatabase::database().rollback();
         }
@@ -82,7 +85,7 @@ bool AircraftService::deleteByIndex(int index) noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
 
     Aircraft &aircraft = flight[index];
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().destroyAIObject(aircraft);
     }
@@ -106,7 +109,7 @@ bool AircraftService::deleteByIndex(int index) noexcept
                 ok = d->aircraftDao->adjustAircraftSequenceNumbersByFlightId(flight.getId(), index + 1);
             }
             if (ok) {
-                QSqlDatabase::database().commit();
+                ok = QSqlDatabase::database().commit();
             } else {
                 QSqlDatabase::database().rollback();
             }
@@ -119,11 +122,49 @@ bool AircraftService::deleteByIndex(int index) noexcept
 
 bool AircraftService::getAircraftInfos(qint64 flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept
 {
-    bool ok;
-    ok = QSqlDatabase::database().transaction();
+    bool ok = QSqlDatabase::database().transaction();
     if (ok) {
         ok = d->aircraftDao->getAircraftInfosByFlightId(flightId, aircraftInfos);
         QSqlDatabase::database().rollback();
+    }
+    return ok;
+}
+
+bool AircraftService::changeTimeOffset(Aircraft &aircraft, qint64 newOffset) noexcept
+{
+    bool ok = QSqlDatabase::database().transaction();
+    if (ok) {
+        ok = d->aircraftDao->updateTimeOffset(aircraft.getId(), newOffset);
+        if (ok) {
+            aircraft.setTimeOffset(newOffset);
+            std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+            if (skyConnect && !skyConnect->get().isReplaying()) {
+                // Update the aircraft position in the flight simulator
+                skyConnect->get().seek(skyConnect->get().getCurrentTimestamp());
+            }
+            ok = QSqlDatabase::database().commit();
+        } else {
+            QSqlDatabase::database().rollback();
+        }
+    }
+    return ok;
+}
+
+bool AircraftService::changeTailNumber(Aircraft &aircraft, const QString &tailNumber) noexcept
+{
+    bool ok = QSqlDatabase::database().transaction();
+    if (ok) {
+        ok = d->aircraftDao->updateTailNumber(aircraft.getId(), tailNumber);
+        if (ok) {
+            aircraft.setTailNumber(tailNumber);
+            std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+            if (skyConnect) {
+                skyConnect->get().updateAIObjects();
+            }
+            ok = QSqlDatabase::database().commit();
+        } else {
+            QSqlDatabase::database().rollback();
+        }
     }
     return ok;
 }

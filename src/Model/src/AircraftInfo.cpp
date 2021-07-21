@@ -38,6 +38,7 @@ AircraftInfo::AircraftInfo(qint64 theAircraftId) noexcept
 void AircraftInfo::clear() noexcept
 {
     aircraftType.clear();
+    timeOffset = 0;
     tailNumber.clear();
     airline.clear();
     flightNumber.clear();

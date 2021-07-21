@@ -17,14 +17,14 @@ target_sources(CSVExport
         src/CSVExportPlugin.json
 )
 
-set(PLUGIN_LIBS
+set(PLUGIN_DEPENDENCIES
     Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Plugin
 )
 if (${PLATFORM_IS_MACOS})
-    list(APPEND PLUGIN_LIBS -lc++)
+    list(APPEND PLUGIN_DEPENDENCIES -lc++)
 endif()
 
-target_link_libraries(${PLUGIN_NAME} PRIVATE ${PLUGIN_LIBS})
+target_link_libraries(${PLUGIN_NAME} PRIVATE ${PLUGIN_DEPENDENCIES})
 
 target_include_directories(${PLUGIN_NAME} PUBLIC
     "${CMAKE_CURRENT_BINARY_DIR}"

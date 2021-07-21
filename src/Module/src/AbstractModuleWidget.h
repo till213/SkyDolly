@@ -50,8 +50,15 @@ public:
 
     virtual QWidget &getWidget() noexcept override;
 
+    virtual void setRecording(bool enable) noexcept override;
+    virtual void setPaused(bool enable) noexcept override;
+    virtual void setPlaying(bool enable) noexcept override;
+
 protected:
     FlightService &getFlightService() const noexcept;
+    virtual void onStartRecording() noexcept;
+    virtual void onPaused(bool enable) noexcept;
+    virtual void onStartReplay() noexcept;
 
 protected slots:
     virtual void handleRecordingStopped() noexcept override;
