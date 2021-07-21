@@ -47,6 +47,7 @@ public:
     std::unique_ptr<DatabaseService> databaseService;
     QPushButton *backupButton;
     QPushButton *skipThisTimeButton;
+    QString originalBackupPeriodIntlId;
 };
 
 // PUBLIC
@@ -58,6 +59,14 @@ LogbookBackupDialog::LogbookBackupDialog(QWidget *parent) noexcept
 {
     ui->setupUi(this);
     initUi();
+
+    ConnectionManager &connectionManager = ConnectionManager::getInstance();
+    Metadata metadata;
+    if (connectionManager.getMetadata(metadata)) {
+        d->originalBackupPeriodIntlId = metadata.backupPeriodIntlId;
+    } else {
+        d->originalBackupPeriodIntlId = Const::BackupNeverIntlId;
+    }
 }
 
 LogbookBackupDialog::~LogbookBackupDialog() noexcept
@@ -70,18 +79,40 @@ LogbookBackupDialog::~LogbookBackupDialog() noexcept
 void LogbookBackupDialog::accept() noexcept
 {
     QDialog::accept();
-    const QString path = ui->backupDirectoryLineEdit->text();
 
-    if (!d->databaseService->backup(path)) {
+    // Update the backup directory
+    bool ok = d->databaseService->setBackupDirectoryPath(ui->backupDirectoryLineEdit->text());
+
+    // First update the backup period, as this influences...
+    const QString backupPeriodIntlId = ui->backupPeriodComboBox->currentData().toString();
+    if (ok && backupPeriodIntlId != Const::BackupNowIntlId) {
+        ok = d->databaseService->setBackupPeriod(backupPeriodIntlId);
+    }
+
+    // ... the next backup date which is set upon successful backup
+    if (ok) {
+        ok =d->databaseService->backup();
+    }
+
+    if (!ok) {
         QMessageBox::critical(this, tr("Database error"), tr("The logbook backup could not be created."));
     }
 }
 
 void LogbookBackupDialog::reject() noexcept
 {
-    // TODO IMPLEMENT ME!!!
-   qDebug("Reject");
    QDialog::reject();
+
+   // First update the backup period in case it has been changed...
+   const QString backupPeriodIntlId = ui->backupPeriodComboBox->currentData().toString();
+   if (backupPeriodIntlId != d->originalBackupPeriodIntlId) {
+       // ... as this influences...
+       if (backupPeriodIntlId != Const::BackupNowIntlId) {
+           d->databaseService->setBackupPeriod(backupPeriodIntlId);
+           // ... the next backup date
+           d->databaseService->updateBackupDate();
+       }
+   }
 }
 
 // PROTECTED

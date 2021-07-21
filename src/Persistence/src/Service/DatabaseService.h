@@ -45,9 +45,11 @@ public:
     DatabaseService() noexcept;
     virtual ~DatabaseService() noexcept;
 
-    bool backup(const QString &backupDirectoryPath = QString()) noexcept;
+    bool backup() noexcept;
     bool setBackupPeriod(const QString &backupPeriodIntlId) noexcept;
     bool setNextBackupDate(const QDateTime &date) noexcept;
+    bool updateBackupDate() noexcept;
+    bool setBackupDirectoryPath(const QString &backupFolderPath) noexcept;
 
     static QString getExistingLogbookPath(QWidget *parent) noexcept;
     static QString getNewLogbookPath(QWidget *parent) noexcept;

@@ -45,6 +45,10 @@
 namespace
 {
     constexpr int MaxBackupIndex = 1024;
+    constexpr int BackupPeriodYearsNever = 999;
+    constexpr int BackupPeriodOneMonth = 1;
+    constexpr int BackupPeriodSevenDays = 7;
+    constexpr int BackupPeriodOneDay = 1;
 }
 
 class DatabaseServicePrivate
@@ -68,25 +72,18 @@ DatabaseService::DatabaseService() noexcept
 DatabaseService::~DatabaseService() noexcept
 {}
 
-bool DatabaseService::backup(const QString &backupDirectoryPath) noexcept
+bool DatabaseService::backup() noexcept
 {
-    bool ok;
-    QString theBackupDirectoryPath;
-    if (!backupDirectoryPath.isNull()) {
-        theBackupDirectoryPath = backupDirectoryPath;
-        ok = true;
-    } else {
-        Metadata metaData;
-        ok = ConnectionManager::getInstance().getMetadata(metaData);
-        if (ok) {
-            theBackupDirectoryPath = getExistingBackupPath(metaData.backupDirectoryPath);
-        }
-    }
-    QDir backupDir(theBackupDirectoryPath);
-    if (!backupDir.exists()) {
-        ok = backupDir.mkpath(theBackupDirectoryPath);
-    }
+    QString backupDirectoryPath;
+
+    Metadata metaData;
+    bool ok = ConnectionManager::getInstance().getMetadata(metaData);
     if (ok) {
+        backupDirectoryPath = getExistingBackupPath(metaData.backupDirectoryPath);
+    }
+    ok = !backupDirectoryPath.isNull();
+    if (ok) {
+        QDir backupDir(backupDirectoryPath);
         ConnectionManager &connectionManager = ConnectionManager::getInstance();
         const QString &logbookPath = connectionManager.getLogbookPath();
         const QFileInfo logbookInfo = QFileInfo(logbookPath);
@@ -100,10 +97,19 @@ bool DatabaseService::backup(const QString &backupDirectoryPath) noexcept
         }
         ok = index <= MaxBackupIndex;
         if (ok) {
-            const QString backupLogbookPath = theBackupDirectoryPath + "/" + backupLogbookName;
+            const QString backupLogbookPath = backupDirectoryPath + "/" + backupLogbookName;
             ok = connectionManager.backup(backupLogbookPath);
+            if (ok) {
+                ok = d->databaseDao->updateBackupDirectoryPath(backupDirectoryPath);
+            }
         }
     }
+
+    // Update the next backup date
+    if (ok) {
+        ok = updateBackupDate();
+    }
+
     return ok;
 }
 
@@ -126,6 +132,44 @@ bool DatabaseService::setNextBackupDate(const QDateTime &date) noexcept
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
         ok = d->databaseDao->updateNextBackupDate(date);
+        if (ok) {
+            ok = QSqlDatabase::database().commit();
+        } else {
+            QSqlDatabase::database().rollback();
+        }
+    }
+    return ok;
+}
+
+bool DatabaseService::updateBackupDate() noexcept
+{
+    Metadata metaData;
+    bool ok = ConnectionManager::getInstance().getMetadata(metaData);
+    if (ok) {
+        const QDateTime today = QDateTime::currentDateTime();
+        QDateTime nextBackupDate = metaData.lastBackupDate.isNull() ? today : metaData.lastBackupDate;
+        if (metaData.backupPeriodIntlId == Const::BackupNeverIntlId) {
+            nextBackupDate = nextBackupDate.addYears(BackupPeriodYearsNever);
+        } else if (metaData.backupPeriodIntlId == Const::BackupMonthlyIntlId) {
+            nextBackupDate = nextBackupDate.addMonths(BackupPeriodOneMonth);
+        } else if (metaData.backupPeriodIntlId == Const::BackupWeeklyIntlId) {
+            nextBackupDate = nextBackupDate.addDays(BackupPeriodSevenDays);
+        } else if (metaData.backupPeriodIntlId == Const::BackupDailyIntlId) {
+            nextBackupDate = nextBackupDate.addDays(BackupPeriodOneDay);
+        }
+        if (nextBackupDate < today) {
+            nextBackupDate = today;
+        }
+        ok = setNextBackupDate(nextBackupDate);
+    }
+    return ok;
+}
+
+bool DatabaseService::setBackupDirectoryPath(const QString &backupDirectoryPath) noexcept
+{
+    bool ok = QSqlDatabase::database().transaction();
+    if (ok) {
+        ok = d->databaseDao->updateBackupDirectoryPath(backupDirectoryPath);
         if (ok) {
             ok = QSqlDatabase::database().commit();
         } else {
