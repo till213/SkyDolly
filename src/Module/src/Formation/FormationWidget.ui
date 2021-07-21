@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1141</width>
+    <width>837</width>
     <height>566</height>
    </rect>
   </property>
@@ -20,7 +20,7 @@
       <widget class="QTableWidget" name="aircraftTableWidget">
        <property name="minimumSize">
         <size>
-         <width>800</width>
+         <width>400</width>
          <height>0</height>
         </size>
        </property>
@@ -67,6 +67,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Seconds:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLineEdit" name="timeOffsetLineEdit">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -85,13 +92,6 @@
               <width>140</width>
               <height>16777215</height>
              </size>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>Seconds</string>
             </property>
            </widget>
           </item>
@@ -856,7 +856,7 @@
              <item row="1" column="0">
               <widget class="QLabel" name="label_3">
                <property name="text">
-                <string>Horizontal</string>
+                <string>Horizontal:</string>
                </property>
               </widget>
              </item>
@@ -902,7 +902,7 @@
              <item row="2" column="0">
               <widget class="QLabel" name="label_2">
                <property name="text">
-                <string>Vertical</string>
+                <string>Vertical:</string>
                </property>
               </widget>
              </item>

@@ -19,7 +19,7 @@
      <item row="0" column="0">
       <widget class="QLabel" name="label_14">
        <property name="text">
-        <string>Ground Altitude</string>
+        <string>Ground altitude:</string>
        </property>
       </widget>
      </item>
@@ -39,7 +39,7 @@
      <item row="1" column="0">
       <widget class="QLabel" name="label_9">
        <property name="text">
-        <string>Surface Type</string>
+        <string>Surface type:</string>
        </property>
       </widget>
      </item>
@@ -62,7 +62,7 @@
      <item row="2" column="0">
       <widget class="QLabel" name="label_15">
        <property name="text">
-        <string>Temperature</string>
+        <string>Temperature:</string>
        </property>
       </widget>
      </item>
@@ -82,7 +82,7 @@
      <item row="3" column="0">
       <widget class="QLabel" name="label_16">
        <property name="text">
-        <string>Total Air Temperature</string>
+        <string>Total air temperature:</string>
        </property>
       </widget>
      </item>
@@ -102,7 +102,7 @@
      <item row="4" column="0">
       <widget class="QLabel" name="label_17">
        <property name="text">
-        <string>Wind Velocity</string>
+        <string>Wind velocity:</string>
        </property>
       </widget>
      </item>
@@ -122,7 +122,7 @@
      <item row="5" column="0">
       <widget class="QLabel" name="label_18">
        <property name="text">
-        <string>Wind Direction</string>
+        <string>Wind direction:</string>
        </property>
       </widget>
      </item>
@@ -142,7 +142,7 @@
      <item row="6" column="0">
       <widget class="QLabel" name="label_19">
        <property name="text">
-        <string>Precipitation State</string>
+        <string>Precipitation state:</string>
        </property>
       </widget>
      </item>
@@ -175,7 +175,7 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="text">
-        <string>In Clouds</string>
+        <string>In clouds</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -201,7 +201,7 @@
      <item row="1" column="0">
       <widget class="QLabel" name="label_22">
        <property name="text">
-        <string>Sea Level Pressure</string>
+        <string>Sea level pressure:</string>
        </property>
       </widget>
      </item>
@@ -221,7 +221,7 @@
      <item row="2" column="0">
       <widget class="QLabel" name="label_23">
        <property name="text">
-        <string>Pitot Icing</string>
+        <string>Pitot icing:</string>
        </property>
       </widget>
      </item>
@@ -241,7 +241,7 @@
      <item row="3" column="0">
       <widget class="QLabel" name="label_25">
        <property name="text">
-        <string>Structural Icing</string>
+        <string>Structural icing:</string>
        </property>
       </widget>
      </item>
@@ -261,14 +261,14 @@
      <item row="4" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Start Simulation Time</string>
+        <string>Start simulation time:</string>
        </property>
       </widget>
      </item>
      <item row="5" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>End Simulation Time</string>
+        <string>End simulation time:</string>
        </property>
       </widget>
      </item>
@@ -301,7 +301,7 @@
      <item row="0" column="0">
       <widget class="QLabel" name="label_21">
        <property name="text">
-        <string>Visibility</string>
+        <string>Visibility:</string>
        </property>
       </widget>
      </item>

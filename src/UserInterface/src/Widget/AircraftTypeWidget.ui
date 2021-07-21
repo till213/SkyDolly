@@ -19,7 +19,7 @@
      <item row="0" column="0">
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>Name</string>
+        <string>Name:</string>
        </property>
       </widget>
      </item>
@@ -39,7 +39,7 @@
      <item row="1" column="0">
       <widget class="QLabel" name="label_13">
        <property name="text">
-        <string>Tail Number</string>
+        <string>Tail number:</string>
        </property>
       </widget>
      </item>
@@ -62,7 +62,7 @@
      <item row="2" column="0">
       <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>Airline</string>
+        <string>Airline:</string>
        </property>
       </widget>
      </item>
@@ -82,7 +82,7 @@
      <item row="3" column="0">
       <widget class="QLabel" name="label_7">
        <property name="text">
-        <string>Flight Number</string>
+        <string>Flight number:</string>
        </property>
       </widget>
      </item>
@@ -102,7 +102,7 @@
      <item row="4" column="0">
       <widget class="QLabel" name="label_8">
        <property name="text">
-        <string>Category</string>
+        <string>Category:</string>
        </property>
       </widget>
      </item>
@@ -131,7 +131,7 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="text">
-        <string>Start On Ground</string>
+        <string>Start on ground</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -148,7 +148,7 @@
      <item row="0" column="0">
       <widget class="QLabel" name="label_24">
        <property name="text">
-        <string>Initial Speed</string>
+        <string>Initial speed:</string>
        </property>
       </widget>
      </item>
@@ -168,7 +168,7 @@
      <item row="1" column="0">
       <widget class="QLabel" name="label_10">
        <property name="text">
-        <string>Wing Span</string>
+        <string>Wing span:</string>
        </property>
       </widget>
      </item>
@@ -191,7 +191,7 @@
      <item row="2" column="0">
       <widget class="QLabel" name="label_12">
        <property name="text">
-        <string>Engine Type</string>
+        <string>Engine type:</string>
        </property>
       </widget>
      </item>
@@ -214,7 +214,7 @@
      <item row="3" column="0">
       <widget class="QLabel" name="label_11">
        <property name="text">
-        <string>Number of Engines</string>
+        <string>Number of engines:</string>
        </property>
       </widget>
      </item>
@@ -237,7 +237,7 @@
      <item row="4" column="0">
       <widget class="QLabel" name="label_26">
        <property name="text">
-        <string>Altitude Above Ground</string>
+        <string>Altitude above ground:</string>
        </property>
       </widget>
      </item>

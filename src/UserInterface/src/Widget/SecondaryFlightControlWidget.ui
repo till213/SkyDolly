@@ -28,7 +28,7 @@
         <item row="0" column="0">
          <widget class="QLabel" name="label_40">
           <property name="text">
-           <string>Leading Edge Flaps Left</string>
+           <string>Left leading edge flap:</string>
           </property>
          </widget>
         </item>
@@ -48,7 +48,7 @@
         <item row="1" column="0">
          <widget class="QLabel" name="label_41">
           <property name="text">
-           <string>Leading Edge Flaps Right</string>
+           <string>Right leading edge flaps:</string>
           </property>
          </widget>
         </item>
@@ -68,7 +68,7 @@
         <item row="2" column="0">
          <widget class="QLabel" name="label_42">
           <property name="text">
-           <string>Trailing Edge Flaps Left</string>
+           <string>Left trailing edge flaps:</string>
           </property>
          </widget>
         </item>
@@ -88,7 +88,7 @@
         <item row="3" column="0">
          <widget class="QLabel" name="label_43">
           <property name="text">
-           <string>Trailing Edge Flaps Right</string>
+           <string>Right trailing edge flaps:</string>
           </property>
          </widget>
         </item>
@@ -108,7 +108,7 @@
         <item row="4" column="0">
          <widget class="QLabel" name="label_38">
           <property name="text">
-           <string>Flaps Position</string>
+           <string>Flaps position:</string>
           </property>
          </widget>
         </item>
@@ -128,7 +128,7 @@
         <item row="5" column="0">
          <widget class="QLabel" name="label_37">
           <property name="text">
-           <string>Spoiler</string>
+           <string>Spoiler:</string>
           </property>
          </widget>
         </item>
