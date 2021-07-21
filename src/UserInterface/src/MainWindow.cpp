@@ -200,10 +200,6 @@ MainWindow::MainWindow(QWidget *parent) noexcept
 
 MainWindow::~MainWindow() noexcept
 {
-    // The SkyConnect instances have been deleted by the skyConnectManager (singleton)
-    // already at this point; no need to disconnect from their "stateChanged"
-    // signal
-
     // Make sure that all widgets having a reference to the flight service
     // are deleted before this MainWindow instance (which owns the flight
     // service); we make sure by simply deleting their parent moduleStackWidget

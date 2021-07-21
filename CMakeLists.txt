@@ -113,9 +113,6 @@ endif()
 target_sources(SkyDolly
     PRIVATE
         src/main.cpp
-        src/SkyDollyApplication.cpp
-        src/SkyDollyApplication.h
-        ${TS_FILES}
         ${OTHER_SOURCES}
 )
 
