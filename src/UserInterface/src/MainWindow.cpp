@@ -225,6 +225,8 @@ void MainWindow::resizeEvent(QResizeEvent *event) noexcept
 
 void MainWindow::closeEvent(QCloseEvent *event) noexcept
 {
+    QMainWindow::closeEvent(event);
+
     Metadata metaData;
     if (ConnectionManager::getInstance().getMetadata(metaData)) {
         if (QDateTime::currentDateTime() > metaData.nextBackupDate) {
@@ -233,7 +235,6 @@ void MainWindow::closeEvent(QCloseEvent *event) noexcept
         }
     }
 
-    QMainWindow::closeEvent(event);
     Settings &settings = Settings::getInstance();
     settings.setWindowGeometry(saveGeometry());
     settings.setWindowState(saveState());
