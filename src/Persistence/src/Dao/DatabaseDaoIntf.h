@@ -40,9 +40,10 @@ public:
 
     virtual bool migrate() noexcept = 0;
     virtual bool optimise() noexcept = 0;
-    virtual bool backup(const QString &backupPath) noexcept= 0;
+    virtual bool backup(const QString &backupFilePath) noexcept= 0;
     virtual bool updateBackupPeriod(const QString &backupPeriodIntlId) noexcept = 0;
     virtual bool updateNextBackupDate(const QDateTime &date) noexcept = 0;
+    virtual bool updateBackupDirectoryPath(const QString &backupDirectoryPath) noexcept = 0;
 
     virtual bool getMetadata(Metadata &metadata) const noexcept = 0;
 };

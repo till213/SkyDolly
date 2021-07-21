@@ -49,6 +49,7 @@ public:
     {}
 
     std::unique_ptr<DatabaseService> databaseService;
+    QString originalBackupPeriodIntlId;
 };
 
 // PUBLIC
@@ -61,6 +62,14 @@ LogbookSettingsDialog::LogbookSettingsDialog(QWidget *parent) noexcept :
     ui->setupUi(this);
     initUi();
     frenchConnection();
+
+    ConnectionManager &connectionManager = ConnectionManager::getInstance();
+    Metadata metadata;
+    if (connectionManager.getMetadata(metadata)) {
+        d->originalBackupPeriodIntlId = metadata.backupPeriodIntlId;
+    } else {
+        d->originalBackupPeriodIntlId = Const::BackupNeverIntlId;
+    }
 }
 
 LogbookSettingsDialog::~LogbookSettingsDialog() noexcept
@@ -73,12 +82,15 @@ LogbookSettingsDialog::~LogbookSettingsDialog() noexcept
 void LogbookSettingsDialog::accept() noexcept
 {
     QDialog::accept();
-    if (ui->backupPeriodComboBox->currentIndex() != Enum::toUnderlyingType(BackupPeriodComboBox::Index::NextTime)) {
-        const QString backupPeriodIntlId = ui->backupPeriodComboBox->currentData().toString();
-        d->databaseService->setBackupPeriod(backupPeriodIntlId);
-    } else {
-        // Ask next time Sky Dolly is quitting
-        d->databaseService->setNextBackupDate(QDateTime::currentDateTime());
+    const QString backupPeriodIntlId = ui->backupPeriodComboBox->currentData().toString();
+    if (backupPeriodIntlId != d->originalBackupPeriodIntlId) {
+        if (ui->backupPeriodComboBox->currentIndex() != Enum::toUnderlyingType(BackupPeriodComboBox::Index::NextTime)) {
+            d->databaseService->setBackupPeriod(backupPeriodIntlId);
+            d->databaseService->updateBackupDate();
+        } else {
+            // Ask next time Sky Dolly is quitting
+            d->databaseService->setNextBackupDate(QDateTime::currentDateTime());
+        }
     }
 }
 

@@ -139,6 +139,19 @@ bool SQLiteDatabaseDao::updateNextBackupDate(const QDateTime &date) noexcept
     return ok;
 }
 
+bool SQLiteDatabaseDao::updateBackupDirectoryPath(const QString &backupDirectoryPath) noexcept
+{
+    QSqlQuery query;
+    query.prepare(
+        "update metadata "
+        "set    backup_directory_path = :backup_directory_path;"
+    );
+
+    query.bindValue(":backup_directory_path", backupDirectoryPath);
+    bool ok = query.exec();
+    return ok;
+}
+
 bool SQLiteDatabaseDao::getMetadata(Metadata &metadata) const noexcept
 {
     QSqlQuery query;

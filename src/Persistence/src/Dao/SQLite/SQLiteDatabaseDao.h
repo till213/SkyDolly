@@ -48,9 +48,10 @@ public:
 
     virtual bool migrate() noexcept override;
     virtual bool optimise() noexcept override;
-    virtual bool backup(const QString &backupPath) noexcept override;
+    virtual bool backup(const QString &backupFilePath) noexcept override;
     virtual bool updateBackupPeriod(const QString &backupPeriodIntlId) noexcept override;
     virtual bool updateNextBackupDate(const QDateTime &date) noexcept override;
+    virtual bool updateBackupDirectoryPath(const QString &backupDirectoryPath) noexcept override;
 
     virtual bool getMetadata(Metadata &metadata) const noexcept override;
 
