@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef ABOUTLOGBOOKDIALOG_H
-#define ABOUTLOGBOOKDIALOG_H
+#ifndef LOGBOOKSETTINGSDIALOG_H
+#define LOGBOOKSETTINGSDIALOG_H
 
 #include <memory>
 
@@ -34,30 +34,33 @@ class QShowEvent;
 class DatabaseService;
 
 namespace Ui {
-    class AboutLogbookDialog;
+    class LogbookSettingsDialog;
 }
 
-class AboutLogbookDialogPrivate;
+class LogbookSettingsDialogPrivate;
 
-class AboutLogbookDialog : public QDialog
+class LogbookSettingsDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit AboutLogbookDialog(DatabaseService &databaseService, QWidget *parent = nullptr) noexcept;
-    virtual ~AboutLogbookDialog() noexcept;
+    explicit LogbookSettingsDialog(DatabaseService &databaseService, QWidget *parent = nullptr) noexcept;
+    virtual ~LogbookSettingsDialog() noexcept;
 
 protected:
     virtual void showEvent(QShowEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(AboutLogbookDialog)
-    std::unique_ptr<AboutLogbookDialogPrivate> d;
-    Ui::AboutLogbookDialog *ui;
+    Q_DISABLE_COPY(LogbookSettingsDialog)
+    std::unique_ptr<LogbookSettingsDialogPrivate> d;
+    Ui::LogbookSettingsDialog *ui;
 
+    void initUi() noexcept;
     void updateUi() noexcept;
+    void frenchConnection() noexcept;
 
 private slots:
     void on_showLogbookPathPushButton_clicked() noexcept;
+    void handleAccepted() noexcept;
 };
 
-#endif // ABOUTLOGBOOKDIALOG_H
+#endif // LOGBOOKSETTINGSDIALOG_H

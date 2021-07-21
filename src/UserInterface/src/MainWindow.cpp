@@ -65,6 +65,7 @@
 #include "../../Persistence/src/Dao/DaoFactory.h"
 #include "../../Persistence/src/Service/FlightService.h"
 #include "../../Persistence/src/Service/DatabaseService.h"
+#include "../../Persistence/src/ConnectionManager.h"
 #include "../../Widget/src/ActionButton.h"
 #include "../../Widget/src/ActionRadioButton.h"
 #include "../../Widget/src/ActionCheckBox.h"
@@ -75,11 +76,12 @@
 #include "../../Module/src/ModuleManager.h"
 #include "../../Plugin/src/PluginManager.h"
 #include "Dialog/AboutDialog.h"
-#include "Dialog/AboutLogbookDialog.h"
+#include "Dialog/LogbookSettingsDialog.h"
 #include "Dialog/SettingsDialog.h"
 #include "Dialog/FlightDialog.h"
 #include "Dialog/SimulationVariablesDialog.h"
 #include "Dialog/StatisticsDialog.h"
+#include "Dialog/LogbookBackupDialog.h"
 
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
@@ -123,7 +125,7 @@ public:
         : previousState(Connect::State::Connected),
           connectedWithLogbook(false),
           aboutDialog(nullptr),
-          aboutLogbookDialog(nullptr),
+          logbookSettingsDialog(nullptr),
           settingsDialog(nullptr),
           flightDialog(nullptr),
           simulationVariablesDialog(nullptr),
@@ -147,7 +149,7 @@ public:
     bool connectedWithLogbook;
 
     AboutDialog *aboutDialog;
-    AboutLogbookDialog *aboutLogbookDialog;
+    LogbookSettingsDialog *logbookSettingsDialog;
     SettingsDialog *settingsDialog;
     FlightDialog *flightDialog;
     SimulationVariablesDialog *simulationVariablesDialog;
@@ -192,7 +194,7 @@ MainWindow::MainWindow(QWidget *parent) noexcept
 
     // Connect with logbook
     const QString logbookPath = Settings::getInstance().getLogbookPath();
-    d->connectedWithLogbook = d->databaseService->connectWithLogbook(logbookPath, this);
+    d->connectedWithLogbook = ConnectionManager::getInstance().connectWithLogbook(logbookPath, this);
 
     initPlugins();
     initUi();
@@ -303,7 +305,7 @@ void MainWindow::frenchConnection() noexcept
     // Service
     connect(d->flightService.get(), &FlightService::flightRestored,
             this, &MainWindow::handleFlightRestored);
-    connect(d->databaseService.get(), &DatabaseService::logbookConnectionChanged,
+    connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
             this, &MainWindow::handleLogbookConnectionChanged);
 }
 
@@ -316,7 +318,7 @@ void MainWindow::initUi() noexcept
     d->simulationVariablesDialog = new SimulationVariablesDialog(this);
     d->statisticsDialog = new StatisticsDialog(this);
     d->aboutDialog = new AboutDialog(this);
-    d->aboutLogbookDialog = new AboutLogbookDialog(*d->databaseService, this);
+    d->logbookSettingsDialog = new LogbookSettingsDialog(*d->databaseService, this);
     d->settingsDialog = new SettingsDialog(this);
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
 
@@ -1173,7 +1175,7 @@ void MainWindow::on_newLogbookAction_triggered() noexcept
 {
     const QString logbookPath = DatabaseService::getNewLogbookPath(this);
     if (!logbookPath.isNull()) {
-        const bool ok = d->databaseService->connectWithLogbook(logbookPath, this);
+        const bool ok = ConnectionManager::getInstance().connectWithLogbook(logbookPath, this);
         if (!ok) {
             QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be created.").arg(logbookPath));
         }
@@ -1184,7 +1186,7 @@ void MainWindow::on_openLogbookAction_triggered() noexcept
 {
     QString existingLogbookPath = DatabaseService::getExistingLogbookPath(this);
     if (!existingLogbookPath.isEmpty()) {
-        bool ok = d->databaseService->connectWithLogbook(existingLogbookPath, this);
+        bool ok = ConnectionManager::getInstance().connectWithLogbook(existingLogbookPath, this);
         if (!ok) {
             QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be opened.").arg(existingLogbookPath));
         }
@@ -1201,7 +1203,7 @@ void MainWindow::on_backupLogbookAction_triggered() noexcept
 
 void MainWindow::on_optimiseLogbookAction_triggered() noexcept
 {
-    bool ok = d->databaseService->optimise();
+    bool ok = ConnectionManager::getInstance().optimise();
     if (!ok) {
         QMessageBox::critical(this, tr("Database error"), tr("The logbook could not be optimised."));
     }
@@ -1212,8 +1214,20 @@ void MainWindow::on_showSettingsAction_triggered() noexcept
     d->settingsDialog->exec();
 }
 
+void MainWindow::on_showLogbookSettingsAction_triggered() noexcept
+{
+    d->logbookSettingsDialog->exec();
+}
+
 void MainWindow::on_quitAction_triggered() noexcept
 {
+    Metadata metaData;
+    if (ConnectionManager::getInstance().getMetadata(metaData)) {
+        if (QDateTime::currentDateTime() > metaData.nextBackupDate) {
+            std::unique_ptr<LogbookBackupDialog> backupDialog = std::make_unique<LogbookBackupDialog>(this);
+            backupDialog->exec();
+        }
+    }
     QApplication::quit();
 }
 
@@ -1252,11 +1266,6 @@ void MainWindow::on_stayOnTopAction_triggered(bool enabled) noexcept
 void MainWindow::on_showMinimalAction_triggered(bool enabled) noexcept
 {
     updateMinimalUi(enabled);
-}
-
-void MainWindow::on_aboutLogbookAction_triggered() noexcept
-{
-    d->aboutLogbookDialog->exec();
 }
 
 void MainWindow::on_aboutAction_triggered() noexcept
