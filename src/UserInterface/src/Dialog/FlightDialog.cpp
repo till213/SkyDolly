@@ -62,8 +62,6 @@ FlightDialog::FlightDialog(FlightService &flightService, QWidget *parent) noexce
     ui(std::make_unique<Ui::FlightDialog>())
 {
     ui->setupUi(this);
-    Qt::WindowFlags flags = Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
-    setWindowFlags(flags);
     initUi();
 }
 
@@ -89,6 +87,9 @@ void FlightDialog::hideEvent(QHideEvent *event) noexcept
 
 void FlightDialog::initUi() noexcept
 {
+    Qt::WindowFlags flags = Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
+    setWindowFlags(flags);
+
     FlightDescriptionWidget *flightDescriptionWidget = new FlightDescriptionWidget(d->flightService, this);
     ui->flightTab->addTab(flightDescriptionWidget, tr("&Description"));
 

@@ -352,6 +352,10 @@ set next_backup_date = (select date(m.creation_date, '+7 day')
                         from metadata m
                        );
 
+@migr(id = "c3e24dbf-07c0-4554-afd6-9b6cbd9d4279", descn = "Set default backup directory path", step = 1)
+update metadata
+set backup_directory_path = './Backups';
+
 @migr(id = "1c13f02d-9def-4fd6-af8d-3b7984573682", descn = "Update application version to 0.8", step = 1)
 update metadata
 set app_version = '0.8.0';

@@ -64,8 +64,7 @@ StatisticsDialog::StatisticsDialog(QWidget *parent) noexcept :
     ui(std::make_unique<Ui::StatisticsDialog>())
 {
     ui->setupUi(this);
-    Qt::WindowFlags flags = Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
-    setWindowFlags(flags);
+    initUi();
     frenchConnection();
 }
 
@@ -100,6 +99,12 @@ void StatisticsDialog::hideEvent(QHideEvent *event) noexcept
 }
 
 // PRIVATE
+
+void StatisticsDialog::initUi() noexcept
+{
+    Qt::WindowFlags flags = Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
+    setWindowFlags(flags);
+}
 
 void StatisticsDialog::frenchConnection() noexcept
 {}

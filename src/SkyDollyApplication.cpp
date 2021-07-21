@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+
 #include <QApplication>
 #include <QWidgetList>
 #include <QWidget>
@@ -54,10 +56,10 @@ void SkyDollyApplication::frenchConnection() noexcept
 void SkyDollyApplication::handleAboutToQuit() noexcept
 {
     // Some widgets try to disconnect from the below singleton instances upon
-    // a "hide" event, so make sure that all windows and dialogs are closed first
+    // a "hide" event, so make sure that all dialogs are closed first
     QWidgetList widgetList = topLevelWidgets();
     for (QWidget *widget : widgetList) {
-        if (widget->inherits("QMainWindow") || widget->inherits("QDialog")) {
+        if (widget->inherits("QDialog")) {
             widget->close();
         }
     }
@@ -66,6 +68,6 @@ void SkyDollyApplication::handleAboutToQuit() noexcept
     Settings::destroyInstance();
     Logbook::destroyInstance();
     ConnectionManager::destroyInstance();
-    SkyConnectManager::destroyInstance();
     PluginManager::destroyInstance();
+    SkyConnectManager::destroyInstance();
 }

@@ -124,8 +124,6 @@ public:
     MainWindowPrivate() noexcept
         : previousState(Connect::State::Connected),
           connectedWithLogbook(false),
-          aboutDialog(nullptr),
-          logbookSettingsDialog(nullptr),
           settingsDialog(nullptr),
           flightDialog(nullptr),
           simulationVariablesDialog(nullptr),
@@ -148,8 +146,6 @@ public:
     Connect::State previousState;
     bool connectedWithLogbook;
 
-    AboutDialog *aboutDialog;
-    LogbookSettingsDialog *logbookSettingsDialog;
     SettingsDialog *settingsDialog;
     FlightDialog *flightDialog;
     SimulationVariablesDialog *simulationVariablesDialog;
@@ -229,6 +225,14 @@ void MainWindow::resizeEvent(QResizeEvent *event) noexcept
 
 void MainWindow::closeEvent(QCloseEvent *event) noexcept
 {
+    Metadata metaData;
+    if (ConnectionManager::getInstance().getMetadata(metaData)) {
+        if (QDateTime::currentDateTime() > metaData.nextBackupDate) {
+            std::unique_ptr<LogbookBackupDialog> backupDialog = std::make_unique<LogbookBackupDialog>(this);
+            backupDialog->exec();
+        }
+    }
+
     QMainWindow::closeEvent(event);
     Settings &settings = Settings::getInstance();
     settings.setWindowGeometry(saveGeometry());
@@ -317,8 +321,6 @@ void MainWindow::initUi() noexcept
     d->flightDialog = new FlightDialog(*d->flightService, this);
     d->simulationVariablesDialog = new SimulationVariablesDialog(this);
     d->statisticsDialog = new StatisticsDialog(this);
-    d->aboutDialog = new AboutDialog(this);
-    d->logbookSettingsDialog = new LogbookSettingsDialog(*d->databaseService, this);
     d->settingsDialog = new SettingsDialog(this);
     ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
 
@@ -1216,19 +1218,13 @@ void MainWindow::on_showSettingsAction_triggered() noexcept
 
 void MainWindow::on_showLogbookSettingsAction_triggered() noexcept
 {
-    d->logbookSettingsDialog->exec();
+    std::unique_ptr<LogbookSettingsDialog> logbookSettingsDialog = std::make_unique<LogbookSettingsDialog>(this);
+    logbookSettingsDialog->exec();
 }
 
 void MainWindow::on_quitAction_triggered() noexcept
 {
-    Metadata metaData;
-    if (ConnectionManager::getInstance().getMetadata(metaData)) {
-        if (QDateTime::currentDateTime() > metaData.nextBackupDate) {
-            std::unique_ptr<LogbookBackupDialog> backupDialog = std::make_unique<LogbookBackupDialog>(this);
-            backupDialog->exec();
-        }
-    }
-    QApplication::quit();
+    close();
 }
 
 void MainWindow::on_showFlightAction_triggered(bool enabled) noexcept
@@ -1270,7 +1266,8 @@ void MainWindow::on_showMinimalAction_triggered(bool enabled) noexcept
 
 void MainWindow::on_aboutAction_triggered() noexcept
 {
-    d->aboutDialog->exec();
+    std::unique_ptr<AboutDialog> aboutDialog = std::make_unique<AboutDialog>(this);
+    aboutDialog->exec();
 }
 
 void MainWindow::on_aboutQtAction_triggered() noexcept

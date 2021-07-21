@@ -33,37 +33,29 @@
 
 #include "../../../Kernel/src/Unit.h"
 #include "../../../Kernel/src/Const.h"
+#include "../../../Kernel/src/Enum.h"
 #include "../../../Persistence/src/Service/DatabaseService.h"
 #include "../../../Persistence/src/ConnectionManager.h"
+#include "../../../Persistence/src/Metadata.h"
+#include "../../../Widget/src/BackupPeriodComboBox.h"
 #include "LogbookSettingsDialog.h"
 #include "ui_LogbookSettingsDialog.h"
-
-namespace {
-    enum BackupPeriodIndex {
-        Never,
-        Monthly,
-        Weekly,
-        Daily,
-        Always,
-        NextTime
-    };
-}
 
 class LogbookSettingsDialogPrivate
 {
 public:
-    LogbookSettingsDialogPrivate(DatabaseService &theDatabaseService) noexcept
-        : databaseService(theDatabaseService)
+    LogbookSettingsDialogPrivate() noexcept
+        : databaseService(std::make_unique<DatabaseService>())
     {}
 
-    DatabaseService &databaseService;
+    std::unique_ptr<DatabaseService> databaseService;
 };
 
 // PUBLIC
 
-LogbookSettingsDialog::LogbookSettingsDialog(DatabaseService &databaseService, QWidget *parent) noexcept :
+LogbookSettingsDialog::LogbookSettingsDialog(QWidget *parent) noexcept :
     QDialog(parent),
-    d(std::make_unique<LogbookSettingsDialogPrivate>(databaseService)),
+    d(std::make_unique<LogbookSettingsDialogPrivate>()),
     ui(new Ui::LogbookSettingsDialog)
 {
     ui->setupUi(this);
@@ -74,6 +66,19 @@ LogbookSettingsDialog::LogbookSettingsDialog(DatabaseService &databaseService, Q
 LogbookSettingsDialog::~LogbookSettingsDialog() noexcept
 {
     delete ui;
+}
+
+// PUBLIC SLOTS
+
+void LogbookSettingsDialog::accept() noexcept
+{
+    if (ui->backupPeriodComboBox->currentIndex() != Enum::toUnderlyingType(BackupPeriodComboBox::Index::NextTime)) {
+        const QString backupPeriodIntlId = ui->backupPeriodComboBox->currentData().toString();
+        d->databaseService->setBackupPeriod(backupPeriodIntlId);
+    } else {
+        // Ask next time Sky Dolly is quitting
+        d->databaseService->setNextBackupDate(QDateTime::currentDateTime());
+    }
 }
 
 // PROTECTED
@@ -88,12 +93,10 @@ void LogbookSettingsDialog::showEvent(QShowEvent *event) noexcept
 
 void LogbookSettingsDialog::initUi() noexcept
 {
-    ui->backupPeriodComboBox->insertItem(BackupPeriodIndex::Never, tr("Never"), Const::BackupNeverIntlId);
-    ui->backupPeriodComboBox->insertItem(BackupPeriodIndex::Monthly, tr("Once a month when quitting Sky Dolly"), Const::BackupMonthlyIntlId);
-    ui->backupPeriodComboBox->insertItem(BackupPeriodIndex::Weekly, tr("Once a week when quitting Sky Dolly"), Const::BackupWeeklyIntlId);
-    ui->backupPeriodComboBox->insertItem(BackupPeriodIndex::Daily, tr("Daily when quitting Sky Dolly"), Const::BackupDailyIntlId);
-    ui->backupPeriodComboBox->insertItem(BackupPeriodIndex::Always, tr("Always when quitting Sky Dolly"), Const::BackupAlwaysIntlId);
-    ui->backupPeriodComboBox->insertItem(BackupPeriodIndex::NextTime, tr("Next time when quitting Sky Dolly"));
+    Qt::WindowFlags flags = Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
+    setWindowFlags(flags);
+
+    ui->backupPeriodComboBox->setSelection(BackupPeriodComboBox::Selection::IncludingNextTime);
 }
 
 void LogbookSettingsDialog::updateUi() noexcept
@@ -123,26 +126,23 @@ void LogbookSettingsDialog::updateUi() noexcept
         ui->logbookSizeLineEdit->setText(unit.formatMemory(fileSize));
 
         if (metadata.backupPeriodIntlId == Const::BackupNeverIntlId) {
-            ui->backupPeriodComboBox->setCurrentIndex(BackupPeriodIndex::Never);
+            ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Never));
         } else if (metadata.backupPeriodIntlId == Const::BackupMonthlyIntlId) {
-            ui->backupPeriodComboBox->setCurrentIndex(BackupPeriodIndex::Monthly);
+            ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Monthly));
         } else if (metadata.backupPeriodIntlId == Const::BackupWeeklyIntlId) {
-            ui->backupPeriodComboBox->setCurrentIndex(BackupPeriodIndex::Weekly);
+            ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Weekly));
         } else if (metadata.backupPeriodIntlId == Const::BackupDailyIntlId) {
-            ui->backupPeriodComboBox->setCurrentIndex(BackupPeriodIndex::Daily);
+            ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Daily));
         } else if (metadata.backupPeriodIntlId == Const::BackupAlwaysIntlId) {
-            ui->backupPeriodComboBox->setCurrentIndex(BackupPeriodIndex::Always);
+            ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Always));
         } else {
-            ui->backupPeriodComboBox->setCurrentIndex(BackupPeriodIndex::Never);
+            ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Never));
         }
     }
 }
 
 void LogbookSettingsDialog::frenchConnection() noexcept
-{
-    connect(this, &LogbookSettingsDialog::accepted,
-            this, &LogbookSettingsDialog::handleAccepted);
-}
+{}
 
 // PRIVATE SLOTS
 
@@ -152,15 +152,4 @@ void LogbookSettingsDialog::on_showLogbookPathPushButton_clicked() noexcept
     QFileInfo fileInfo = QFileInfo(logbookPath);
     QUrl url = QUrl::fromLocalFile(fileInfo.absolutePath());
     QDesktopServices::openUrl(url);
-}
-
-void LogbookSettingsDialog::handleAccepted() noexcept
-{
-    if (ui->backupPeriodComboBox->currentIndex() != BackupPeriodIndex::NextTime) {
-        const QString backupPeriodIntlId = ui->backupPeriodComboBox->currentData().toString();
-        d->databaseService.setBackupPeriod(backupPeriodIntlId);
-    } else {
-        // Ask next time Sky Dolly is quitting
-        d->databaseService.setNextBackupDate(QDateTime::currentDateTime());
-    }
 }
