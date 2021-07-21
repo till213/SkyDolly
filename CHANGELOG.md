@@ -42,6 +42,11 @@
   * "forward queries"
   * "Normalisation" of "aircraft type" data (new table - less storage space required)
 - A new "View" menu has been added, providing options to show/hide various UI elements such as the module selector
+- Logbook backup can now be scheduled, the logbook settings are now in the "File" menu
+  * Once a month
+  * Once a week
+  * Daily
+  * Never or whenever exiting Sky Dolly
 
 ### Bug Fixes
 
