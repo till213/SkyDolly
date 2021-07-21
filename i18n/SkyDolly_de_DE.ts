@@ -18,54 +18,6 @@ MIT License</source>
     </message>
 </context>
 <context>
-    <name>LogbookSettingsDialog</name>
-    <message>
-        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="14"/>
-        <source>Logbook</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="20"/>
-        <source>Information</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="41"/>
-        <source>Logbook Path:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="61"/>
-        <source>Filename:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="81"/>
-        <source>Created:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="101"/>
-        <source>Last Backup:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="121"/>
-        <source>Last Optimisation:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="141"/>
-        <source>Size:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="163"/>
-        <source>&amp;Show</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>AircraftHandleWidget</name>
     <message>
         <location filename="../src/UserInterface/src/Widget/AircraftHandleWidget.ui" line="14"/>
@@ -270,6 +222,40 @@ MIT License</source>
     </message>
 </context>
 <context>
+    <name>BackupPeriodComboBox</name>
+    <message>
+        <location filename="../src/Widget/src/BackupPeriodComboBox.cpp" line="70"/>
+        <source>Never</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Widget/src/BackupPeriodComboBox.cpp" line="71"/>
+        <source>Once a month, when exiting Sky Dolly</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Widget/src/BackupPeriodComboBox.cpp" line="72"/>
+        <source>Once a week, when exiting Sky Dolly</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Widget/src/BackupPeriodComboBox.cpp" line="73"/>
+        <source>Daily, when exiting Sky Dolly</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Widget/src/BackupPeriodComboBox.cpp" line="74"/>
+        <source>Always, when exiting Sky Dolly</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Widget/src/BackupPeriodComboBox.cpp" line="76"/>
+        <location filename="../src/Widget/src/BackupPeriodComboBox.cpp" line="85"/>
+        <source>Next time, when exiting Sky Dolly</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CSVExportPlugin</name>
     <message>
         <location filename="../src/Plugin/src/Export/CSVExport/src/CSVExportPlugin.cpp" line="75"/>
@@ -349,44 +335,47 @@ MIT License</source>
     </message>
 </context>
 <context>
-    <name>DatabaseService</name>
+    <name>ConnectionManager</name>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="86"/>
+        <location filename="../src/Persistence/src/ConnectionManager.cpp" line="115"/>
         <source>The logbook %1 has been created with a newer version %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="88"/>
+        <location filename="../src/Persistence/src/ConnectionManager.cpp" line="117"/>
         <source>Create new logbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="89"/>
+        <location filename="../src/Persistence/src/ConnectionManager.cpp" line="118"/>
         <source>Open another logbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="90"/>
+        <location filename="../src/Persistence/src/ConnectionManager.cpp" line="119"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>DatabaseService</name>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="182"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="142"/>
         <source>Open logbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="194"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="154"/>
         <source>New logbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="201"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="161"/>
         <source>Database exists</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="201"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="161"/>
         <source>The logbook %1 already exists. Please choose another path.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -579,22 +568,22 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/FlightDialog.cpp" line="93"/>
+        <location filename="../src/UserInterface/src/Dialog/FlightDialog.cpp" line="94"/>
         <source>&amp;Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/FlightDialog.cpp" line="96"/>
+        <location filename="../src/UserInterface/src/Dialog/FlightDialog.cpp" line="97"/>
         <source>&amp;Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/FlightDialog.cpp" line="99"/>
+        <location filename="../src/UserInterface/src/Dialog/FlightDialog.cpp" line="100"/>
         <source>&amp;Conditions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/FlightDialog.cpp" line="102"/>
+        <location filename="../src/UserInterface/src/Dialog/FlightDialog.cpp" line="103"/>
         <source>&amp;Flight Plan</source>
         <translation type="unfinished"></translation>
     </message>
@@ -978,10 +967,106 @@ MIT License</source>
     </message>
 </context>
 <context>
+    <name>LogbookBackupDialog</name>
+    <message>
+        <location filename="../src/UserInterface/src/Dialog/LogbookBackupDialog.ui" line="14"/>
+        <source>Logbook Backup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialog/LogbookBackupDialog.ui" line="20"/>
+        <source>Backup Logbook:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialog/LogbookBackupDialog.ui" line="30"/>
+        <source>Backup Folder:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialog/LogbookBackupDialog.ui" line="49"/>
+        <source>Choose...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialog/LogbookBackupDialog.cpp" line="101"/>
+        <source>&amp;Backup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialog/LogbookBackupDialog.cpp" line="104"/>
+        <source>&amp;Skip This Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialog/LogbookBackupDialog.cpp" line="146"/>
+        <source>Select Backup Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>LogbookSettingsDialog</name>
+    <message>
+        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="14"/>
+        <source>Logbook Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="20"/>
+        <source>Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="41"/>
+        <source>Logbook Folder:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="61"/>
+        <source>Filename:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="81"/>
+        <source>Created:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="101"/>
+        <source>Last Backup:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="121"/>
+        <source>Last Optimisation:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="141"/>
+        <source>Size:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="163"/>
+        <source>&amp;Show</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="173"/>
+        <source>Backup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/UserInterface/src/Dialog/LogbookSettingsDialog.ui" line="179"/>
+        <source>Backup Logbook:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>LogbookWidget</name>
     <message>
         <location filename="../src/Module/src/Logbook/LogbookWidget.ui" line="14"/>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="208"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="209"/>
         <source>Flight</source>
         <translation type="unfinished"></translation>
     </message>
@@ -991,139 +1076,140 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.ui" line="91"/>
-        <source>&amp;Load</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.ui" line="98"/>
-        <source>&amp;Delete</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.ui" line="39"/>
         <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="569"/>
         <source>Formation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="201"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.ui" line="98"/>
+        <source>&amp;Load</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.ui" line="105"/>
+        <source>&amp;Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="202"/>
         <source>Creation Date</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="201"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="202"/>
         <source>Flights</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="206"/>
-        <source>Aircraft, title, departure, arrival</source>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="207"/>
+        <source>User aircraft, title, departure, arrival</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="208"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="209"/>
         <source>Date</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="208"/>
-        <source>Aircraft</source>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="209"/>
+        <source>User Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="208"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="209"/>
         <source>Number of Aircrafts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="208"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="209"/>
         <source>Departure Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="208"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="209"/>
         <source>Departure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="208"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="209"/>
         <source>Arrival Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="208"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="209"/>
         <source>Arrival</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="208"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="209"/>
         <source>Total Time of Flight</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="208"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="209"/>
         <source>Title</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="247"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="248"/>
         <source>Double-click to load flight</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="271"/>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="284"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="272"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="285"/>
         <source>Simulation time: %1 (%2Z)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="302"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="303"/>
         <source>Simulation duration: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="308"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="309"/>
         <source>Double-click to edit title</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="442"/>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="484"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="443"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="485"/>
         <source>Logbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="538"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="539"/>
         <source>Database error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="538"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="539"/>
         <source>The flight %1 could not be read from the logbook.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="551"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="552"/>
         <source>Do not ask again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="553"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="554"/>
         <source>The flight %1 is about to be deleted. Deletion cannot be undone.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="554"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="555"/>
         <source>Do you want to delete the flight?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="555"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="556"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="556"/>
+        <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="557"/>
         <source>Keep</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1171,7 +1257,7 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.ui" line="214"/>
+        <location filename="../src/UserInterface/src/MainWindow.ui" line="215"/>
         <source>&amp;Info</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1377,7 +1463,7 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/UserInterface/src/MainWindow.ui" line="469"/>
-        <source>&amp;Logbook...</source>
+        <source>&amp;Logbook Settings...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1408,100 +1494,100 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="511"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="515"/>
         <source>Normal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="531"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="535"/>
         <source>Custom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="627"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="631"/>
         <source>Factor [f]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="628"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="632"/>
         <source>Percent [%]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="715"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="719"/>
         <source>No valid connection plugin found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="715"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="719"/>
         <source>No valid connection plugin has been found in the plugin directory! Sky Dolly will launch with reduced functionality.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1058"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1062"/>
         <source>Custom replay speed factor in [%L1, %L2]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1062"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1066"/>
         <source>Custom replay speed % in [%L1%, %L2%]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1138"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1142"/>
         <source>Record [@%1 Hz]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1140"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1144"/>
         <source>Record [auto sample rate]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1145"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1149"/>
         <source>Fast forward [%1 sec]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1146"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1150"/>
         <source>Rewind [%1 sec]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1149"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1153"/>
         <source>Fast forward [%1 %]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1150"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1154"/>
         <source>Rewind [%1 %]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1178"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1189"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1198"/>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1206"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1182"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1193"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1202"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1210"/>
         <source>Database error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1178"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1182"/>
         <source>The logbook %1 could not be created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1189"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1193"/>
         <source>The logbook %1 could not be opened.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1198"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1202"/>
         <source>The logbook backup could not be created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1206"/>
+        <location filename="../src/UserInterface/src/MainWindow.cpp" line="1210"/>
         <source>The logbook could not be optimised.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1928,58 +2014,58 @@ MIT License</source>
 <context>
     <name>SimulationVariablesDialog</name>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/SimulationVariablesDialog.ui" line="6"/>
+        <location filename="../src/UserInterface/src/Dialog/SimulationVariablesDialog.ui" line="14"/>
         <location filename="../src/UserInterface/src/Dialog/SimulationVariablesDialog.cpp" line="57"/>
         <source>Simulation Variables</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/SimulationVariablesDialog.cpp" line="107"/>
+        <location filename="../src/UserInterface/src/Dialog/SimulationVariablesDialog.cpp" line="108"/>
         <source>&amp;Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/SimulationVariablesDialog.cpp" line="110"/>
+        <location filename="../src/UserInterface/src/Dialog/SimulationVariablesDialog.cpp" line="111"/>
         <source>&amp;Engine</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/SimulationVariablesDialog.cpp" line="113"/>
+        <location filename="../src/UserInterface/src/Dialog/SimulationVariablesDialog.cpp" line="114"/>
         <source>&amp;Primary Controls</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/SimulationVariablesDialog.cpp" line="116"/>
+        <location filename="../src/UserInterface/src/Dialog/SimulationVariablesDialog.cpp" line="117"/>
         <source>&amp;Secondary Controls</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/SimulationVariablesDialog.cpp" line="119"/>
+        <location filename="../src/UserInterface/src/Dialog/SimulationVariablesDialog.cpp" line="120"/>
         <source>&amp;Handles &amp;&amp; Brakes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/SimulationVariablesDialog.cpp" line="122"/>
+        <location filename="../src/UserInterface/src/Dialog/SimulationVariablesDialog.cpp" line="123"/>
         <source>&amp;Lights</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/SimulationVariablesDialog.cpp" line="139"/>
+        <location filename="../src/UserInterface/src/Dialog/SimulationVariablesDialog.cpp" line="140"/>
         <source>RECORDING</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/SimulationVariablesDialog.cpp" line="142"/>
+        <location filename="../src/UserInterface/src/Dialog/SimulationVariablesDialog.cpp" line="143"/>
         <source>RECORDING PAUSED</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/SimulationVariablesDialog.cpp" line="145"/>
+        <location filename="../src/UserInterface/src/Dialog/SimulationVariablesDialog.cpp" line="146"/>
         <source>PLAYBACK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/SimulationVariablesDialog.cpp" line="148"/>
+        <location filename="../src/UserInterface/src/Dialog/SimulationVariablesDialog.cpp" line="149"/>
         <source>PLAYPACK PAUSED</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2022,7 +2108,7 @@ MIT License</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/UserInterface/src/Dialog/StatisticsDialog.cpp" line="115"/>
+        <location filename="../src/UserInterface/src/Dialog/StatisticsDialog.cpp" line="120"/>
         <source>Auto</source>
         <translation type="unfinished"></translation>
     </message>

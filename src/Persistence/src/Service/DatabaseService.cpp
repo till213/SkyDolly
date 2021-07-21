@@ -68,35 +68,39 @@ DatabaseService::DatabaseService() noexcept
 DatabaseService::~DatabaseService() noexcept
 {}
 
-bool DatabaseService::backup() noexcept
+bool DatabaseService::backup(const QString &backupDirectoryPath) noexcept
 {
-    ConnectionManager &connectionManager = ConnectionManager::getInstance();
-    const QString &logbookPath = connectionManager.getLogbookPath();
-    QFileInfo logbookInfo = QFileInfo(logbookPath);
-
-    const QString logbookDirectoryPath = logbookInfo.absolutePath();
-    const QString baseName = logbookInfo.baseName();
-    const QString backupDirectoryName = "Backups";
-    QDir logbookDir(logbookDirectoryPath);
     bool ok;
-    if (!logbookDir.exists(backupDirectoryName)) {
-        ok = logbookDir.mkdir(backupDirectoryName);
-    } else {
+    QString theBackupDirectoryPath;
+    if (!backupDirectoryPath.isNull()) {
+        theBackupDirectoryPath = backupDirectoryPath;
         ok = true;
+    } else {
+        Metadata metaData;
+        ok = ConnectionManager::getInstance().getMetadata(metaData);
+        if (ok) {
+            theBackupDirectoryPath = getExistingBackupPath(metaData.backupDirectoryPath);
+        }
+    }
+    QDir backupDir(theBackupDirectoryPath);
+    if (!backupDir.exists()) {
+        ok = backupDir.mkpath(theBackupDirectoryPath);
     }
     if (ok) {
-        const QString backupLogbookDirectoryPath = logbookDirectoryPath + "/" + backupDirectoryName;
+        ConnectionManager &connectionManager = ConnectionManager::getInstance();
+        const QString &logbookPath = connectionManager.getLogbookPath();
+        const QFileInfo logbookInfo = QFileInfo(logbookPath);
+        const QString baseName = logbookInfo.baseName();
         const QString baseBackupLogbookName = baseName + "-" + QDateTime::currentDateTime().toString("yyyy-MM-dd hhmm");
         QString backupLogbookName = baseBackupLogbookName + Const::LogbookExtension;
-        QDir backupLogbookDir(backupLogbookDirectoryPath);
         int index = 1;
-        while (backupLogbookDir.exists(backupLogbookName) && index <= MaxBackupIndex) {
+        while (backupDir.exists(backupLogbookName) && index <= MaxBackupIndex) {
             backupLogbookName = baseBackupLogbookName + QString("-%1").arg(index) + Const::LogbookExtension;
             ++index;
         }
         ok = index <= MaxBackupIndex;
         if (ok) {
-            const QString backupLogbookPath = backupLogbookDirectoryPath + "/" + backupLogbookName;
+            const QString backupLogbookPath = theBackupDirectoryPath + "/" + backupLogbookName;
             ok = connectionManager.backup(backupLogbookPath);
         }
     }
@@ -161,4 +165,26 @@ QString DatabaseService::getNewLogbookPath(QWidget *parent) noexcept
         }
     }
     return newLogbookPath;
+}
+
+QString DatabaseService::getExistingBackupPath(const QString &backupPath) noexcept
+{
+    QString existingBackupPath;
+
+    if (QDir::isRelativePath(backupPath)) {
+        const ConnectionManager &connectionManager = ConnectionManager::getInstance();
+        const QString &logbookDirectoryPath = QFileInfo(connectionManager.getLogbookPath()).absolutePath();
+        existingBackupPath = logbookDirectoryPath + "/" + QFileInfo(backupPath).fileName();
+    } else {
+        existingBackupPath = backupPath;
+    }
+
+    QDir backupDir(existingBackupPath);
+    if (!backupDir.exists()) {
+         const bool ok = backupDir.mkpath(existingBackupPath);
+         if (!ok) {
+             existingBackupPath.clear();
+         }
+    }
+    return existingBackupPath;
 }

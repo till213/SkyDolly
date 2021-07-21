@@ -22,46 +22,48 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef STATISTICSDIALOG_H
-#define STATISTICSDIALOG_H
+#ifndef BACKUPPERIODCOMBOBOX_H
+#define BACKUPPERIODCOMBOBOX_H
 
 #include <memory>
 
-#include <QDialog>
+#include <QWidget>
+#include <QComboBox>
 
-class QShowEvent;
-class QHideEvent;
+#include "WidgetLib.h"
 
-class StatisticsDialogPrivate;
+class BackupPeriodComboBoxPrivate;
 
-namespace Ui {
-    class StatisticsDialog;
-}
-
-class StatisticsDialog : public QDialog
+class WIDGET_API BackupPeriodComboBox : public QComboBox
 {
     Q_OBJECT
 public:
-    explicit StatisticsDialog(QWidget *parent = nullptr) noexcept;
-    virtual ~StatisticsDialog() noexcept;
+    enum class Index {
+        Never,
+        Monthly,
+        Weekly,
+        Daily,
+        Always,
+        NextTime,
+        // Number of elements (dummy entry)
+        NofIndices
+    };
 
-signals:
-    void visibilityChanged(bool visible);
+    enum class Selection {
+        BackupPeriod,
+        IncludingNextTime
+    };
 
-protected:
-    virtual void showEvent(QShowEvent *event) noexcept override;
-    virtual void hideEvent(QHideEvent *event) noexcept override;
+    BackupPeriodComboBox(QWidget *parent = nullptr, Selection selection = Selection::BackupPeriod) noexcept;
+    virtual ~BackupPeriodComboBox() noexcept;
+
+    Selection getSelection() const noexcept;
+    void setSelection(Selection selection) noexcept;
 
 private:
-    Q_DISABLE_COPY(StatisticsDialog)
-    std::unique_ptr<StatisticsDialogPrivate> d;
-    std::unique_ptr<Ui::StatisticsDialog> ui;
-
+    std::unique_ptr<BackupPeriodComboBoxPrivate> d;
     void initUi() noexcept;
-    void frenchConnection() noexcept;
-
-private slots:
-    void updateRecordUi() noexcept;
+    void updateUi() noexcept;
 };
 
-#endif // STATISTICSDIALOG_H
+#endif // BACKUPPERIODCOMBOBOX_H

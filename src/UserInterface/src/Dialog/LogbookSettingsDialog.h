@@ -29,9 +29,8 @@
 
 #include <QDialog>
 
+class QWidget;
 class QShowEvent;
-
-class DatabaseService;
 
 namespace Ui {
     class LogbookSettingsDialog;
@@ -43,8 +42,11 @@ class LogbookSettingsDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit LogbookSettingsDialog(DatabaseService &databaseService, QWidget *parent = nullptr) noexcept;
+    explicit LogbookSettingsDialog(QWidget *parent = nullptr) noexcept;
     virtual ~LogbookSettingsDialog() noexcept;
+
+public slots:
+    virtual void accept() noexcept override;
 
 protected:
     virtual void showEvent(QShowEvent *event) noexcept override;
@@ -60,7 +62,6 @@ private:
 
 private slots:
     void on_showLogbookPathPushButton_clicked() noexcept;
-    void handleAccepted() noexcept;
 };
 
 #endif // LOGBOOKSETTINGSDIALOG_H

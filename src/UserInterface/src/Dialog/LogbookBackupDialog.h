@@ -25,24 +25,43 @@
 #ifndef LOGBOOKBACKUPDIALOG_H
 #define LOGBOOKBACKUPDIALOG_H
 
+#include <memory>
+
 #include <QDialog>
 
+class QWidget;
+class QShowEvent;
+
 namespace Ui {
-class LogbookBackupDialog;
+    class LogbookBackupDialog;
 }
+
+class LogbookBackupDialogPrivate;
 
 class LogbookBackupDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit LogbookBackupDialog(QWidget *parent = nullptr);
-    virtual ~LogbookBackupDialog();
+    explicit LogbookBackupDialog(QWidget *parent = nullptr) noexcept;
+    virtual ~LogbookBackupDialog() noexcept;
+
+public slots:
+    virtual void accept() noexcept override;
+    virtual void reject() noexcept override;
+
+protected:
+    virtual void showEvent(QShowEvent *event) noexcept override;
 
 private:
     Q_DISABLE_COPY(LogbookBackupDialog)
     Ui::LogbookBackupDialog *ui;
+    std::unique_ptr<LogbookBackupDialogPrivate> d;
 
     void initUi() noexcept;
+    void updateUi() noexcept;
+
+private slots:
+    void on_chooseBackupFolderPushButton_clicked() noexcept;
 };
 
 #endif // LOGBOOKBACKUPDIALOG_H
