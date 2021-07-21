@@ -38,7 +38,7 @@
         <item row="0" column="0">
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>Logbook Folder:</string>
+           <string>Logbook folder:</string>
           </property>
          </widget>
         </item>
@@ -98,7 +98,7 @@
         <item row="3" column="0">
          <widget class="QLabel" name="label_6">
           <property name="text">
-           <string>Last Backup:</string>
+           <string>Last backup:</string>
           </property>
          </widget>
         </item>
@@ -118,7 +118,7 @@
         <item row="4" column="0">
          <widget class="QLabel" name="label_5">
           <property name="text">
-           <string>Last Optimisation:</string>
+           <string>Last optimisation:</string>
           </property>
          </widget>
         </item>
@@ -176,7 +176,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="label_7">
         <property name="text">
-         <string>Backup Logbook:</string>
+         <string>Period:</string>
         </property>
        </widget>
       </item>
