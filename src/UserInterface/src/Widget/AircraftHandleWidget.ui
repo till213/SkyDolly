@@ -31,7 +31,7 @@
         <item row="0" column="0">
          <widget class="QLabel" name="label_39">
           <property name="text">
-           <string>Gear</string>
+           <string>Gear:</string>
           </property>
          </widget>
         </item>
@@ -51,7 +51,7 @@
         <item row="1" column="0">
          <widget class="QLabel" name="label_45">
           <property name="text">
-           <string>Brake Left</string>
+           <string>Left brake:</string>
           </property>
          </widget>
         </item>
@@ -71,7 +71,7 @@
         <item row="2" column="0">
          <widget class="QLabel" name="label_46">
           <property name="text">
-           <string>Brake Right</string>
+           <string>Right brake:</string>
           </property>
          </widget>
         </item>
@@ -91,7 +91,7 @@
         <item row="3" column="0">
          <widget class="QLabel" name="label_44">
           <property name="text">
-           <string>Water Rudder</string>
+           <string>Water rudder:</string>
           </property>
          </widget>
         </item>
@@ -115,7 +115,7 @@
         <item row="0" column="0">
          <widget class="QLabel" name="label_60">
           <property name="text">
-           <string>Tailhook</string>
+           <string>Tailhook:</string>
           </property>
          </widget>
         </item>
@@ -135,7 +135,7 @@
         <item row="1" column="0">
          <widget class="QLabel" name="label_61">
           <property name="text">
-           <string>Canopy</string>
+           <string>Canopy:</string>
           </property>
          </widget>
         </item>
@@ -158,7 +158,7 @@
         <item row="2" column="0">
          <widget class="QLabel" name="label_40">
           <property name="text">
-           <string>Left Wing Folding</string>
+           <string>Left wing folding:</string>
           </property>
          </widget>
         </item>
@@ -178,7 +178,7 @@
         <item row="3" column="0">
          <widget class="QLabel" name="label_41">
           <property name="text">
-           <string>Right Wing Folding</string>
+           <string>Right wing folding:</string>
           </property>
          </widget>
         </item>

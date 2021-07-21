@@ -26,7 +26,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="label_57">
         <property name="text">
-         <string>Sample Rate</string>
+         <string>Sample rate:</string>
         </property>
        </widget>
       </item>
@@ -46,7 +46,7 @@
       <item row="1" column="0">
        <widget class="QLabel" name="label_55">
         <property name="text">
-         <string>Actual Sample Rate</string>
+         <string>Actual sample rate:</string>
         </property>
        </widget>
       </item>
@@ -66,7 +66,7 @@
       <item row="2" column="0">
        <widget class="QLabel" name="label_56">
         <property name="text">
-         <string>Sample Count</string>
+         <string>Sample count:</string>
         </property>
        </widget>
       </item>
@@ -86,7 +86,7 @@
       <item row="3" column="0">
        <widget class="QLabel" name="label_59">
         <property name="text">
-         <string>Duration</string>
+         <string>Duration:</string>
         </property>
        </widget>
       </item>
@@ -109,7 +109,7 @@
       <item row="4" column="0">
        <widget class="QLabel" name="label_58">
         <property name="text">
-         <string>Sample Size</string>
+         <string>Sample size:</string>
         </property>
        </widget>
       </item>

@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="settingsTabWidget">
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
@@ -33,14 +33,14 @@
           <item row="0" column="1">
            <widget class="QCheckBox" name="absoluteSeekEnabledCheckBox">
             <property name="text">
-             <string>Absolute [Seconds]</string>
+             <string>Absolute [seconds]</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label">
             <property name="text">
-             <string>Seconds</string>
+             <string>Seconds:</string>
             </property>
            </widget>
           </item>
@@ -50,7 +50,7 @@
           <item row="2" column="0">
            <widget class="QLabel" name="label_2">
             <property name="text">
-             <string>Percent</string>
+             <string>Percent:</string>
             </property>
            </widget>
           </item>
@@ -82,7 +82,7 @@
           <item row="0" column="0">
            <widget class="QCheckBox" name="repeatFlapsCheckBox">
             <property name="text">
-             <string>Flaps Position</string>
+             <string>Flaps position</string>
             </property>
            </widget>
           </item>
@@ -135,7 +135,7 @@
        <item row="0" column="0">
         <widget class="QLabel" name="label_5">
          <property name="text">
-          <string>Recording Frequency</string>
+          <string>Recording frequency:</string>
          </property>
         </widget>
        </item>
@@ -172,7 +172,7 @@
        <item row="0" column="0">
         <widget class="QLabel" name="label_6">
          <property name="text">
-          <string>Connection</string>
+          <string>Connection:</string>
          </property>
         </widget>
        </item>
@@ -215,21 +215,21 @@
           <item row="0" column="0">
            <widget class="QCheckBox" name="confirmDeleteFlightCheckBox">
             <property name="text">
-             <string>Delete Flight</string>
+             <string>Delete flight</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
            <widget class="QCheckBox" name="confirmDeleteAircraftCheckBox">
             <property name="text">
-             <string>Delete Aircraft</string>
+             <string>Delete aircraft</string>
             </property>
            </widget>
           </item>
           <item row="2" column="0">
            <widget class="QCheckBox" name="confirmResetAllTimeOffsetCheckBox">
             <property name="text">
-             <string>Reset All Time Offsets</string>
+             <string>Reset all time offsets</string>
             </property>
            </widget>
           </item>

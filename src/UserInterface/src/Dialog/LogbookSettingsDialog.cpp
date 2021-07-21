@@ -72,6 +72,7 @@ LogbookSettingsDialog::~LogbookSettingsDialog() noexcept
 
 void LogbookSettingsDialog::accept() noexcept
 {
+    QDialog::accept();
     if (ui->backupPeriodComboBox->currentIndex() != Enum::toUnderlyingType(BackupPeriodComboBox::Index::NextTime)) {
         const QString backupPeriodIntlId = ui->backupPeriodComboBox->currentData().toString();
         d->databaseService->setBackupPeriod(backupPeriodIntlId);

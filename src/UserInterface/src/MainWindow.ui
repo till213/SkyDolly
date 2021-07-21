@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>824</width>
-    <height>274</height>
+    <width>818</width>
+    <height>239</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -178,8 +178,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>824</width>
-     <height>22</height>
+     <width>818</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="fileMenu">
@@ -405,7 +405,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Stay On &amp;Top</string>
+    <string>Stay on &amp;Top</string>
    </property>
   </action>
   <action name="stopAction">
@@ -506,7 +506,6 @@
   </action>
  </widget>
  <resources>
-  <include location="../res/SkyDolly.qrc"/>
   <include location="../res/SkyDolly.qrc"/>
  </resources>
  <connections/>

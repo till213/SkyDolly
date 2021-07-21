@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>248</width>
-    <height>192</height>
+    <width>252</width>
+    <height>136</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,7 +32,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="label_57">
         <property name="text">
-         <string>Rudder</string>
+         <string>Rudder:</string>
         </property>
        </widget>
       </item>
@@ -52,7 +52,7 @@
       <item row="1" column="0">
        <widget class="QLabel" name="label_58">
         <property name="text">
-         <string>Elevator</string>
+         <string>Elevator:</string>
         </property>
        </widget>
       </item>
@@ -72,7 +72,7 @@
       <item row="2" column="0">
        <widget class="QLabel" name="label_59">
         <property name="text">
-         <string>Aileron</string>
+         <string>Aileron:</string>
         </property>
        </widget>
       </item>

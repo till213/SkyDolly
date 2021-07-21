@@ -27,6 +27,7 @@
 #include <QDialog>
 #include <QPushButton>
 #include <QFileDialog>
+#include <QMessageBox>
 
 #include "../../../Kernel/src/Const.h"
 #include "../../../Kernel/src/Enum.h"
@@ -70,9 +71,9 @@ void LogbookBackupDialog::accept() noexcept
 {
     QDialog::accept();
     const QString path = ui->backupDirectoryLineEdit->text();
-    QDir backupDir(path);
-    if (backupDir.exists() || backupDir.mkpath(path)) {
-        d->databaseService->backup(path);
+
+    if (!d->databaseService->backup(path)) {
+        QMessageBox::critical(this, tr("Database error"), tr("The logbook backup could not be created."));
     }
 }
 
