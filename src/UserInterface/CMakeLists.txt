@@ -27,9 +27,9 @@ target_sources(UserInterface
         src/Dialog/AboutDialog.cpp
         src/Dialog/AboutDialog.h
         src/Dialog/AboutDialog.ui
-        src/Dialog/AboutLogbookDialog.cpp
-        src/Dialog/AboutLogbookDialog.h
-        src/Dialog/AboutLogbookDialog.ui
+        src/Dialog/LogbookSettingsDialog.cpp
+        src/Dialog/LogbookSettingsDialog.h
+        src/Dialog/LogbookSettingsDialog.ui
         src/Dialog/SimulationVariablesDialog.cpp
         src/Dialog/SimulationVariablesDialog.h
         src/Dialog/SimulationVariablesDialog.ui
@@ -42,6 +42,9 @@ target_sources(UserInterface
         src/Dialog/FlightDialog.cpp
         src/Dialog/FlightDialog.h
         src/Dialog/FlightDialog.ui
+        src/Dialog/LogbookBackupDialog.cpp
+        src/Dialog/LogbookBackupDialog.h
+        src/Dialog/LogbookBackupDialog.ui
         src/Widget/FlightDescriptionWidget.cpp
         src/Widget/FlightDescriptionWidget.h
         src/Widget/FlightDescriptionWidget.ui

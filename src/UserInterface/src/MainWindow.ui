@@ -179,7 +179,7 @@
      <x>0</x>
      <y>0</y>
      <width>824</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="fileMenu">
@@ -206,6 +206,7 @@
     <addaction name="exportMenu"/>
     <addaction name="separator"/>
     <addaction name="showSettingsAction"/>
+    <addaction name="showLogbookSettingsAction"/>
     <addaction name="separator"/>
     <addaction name="quitAction"/>
    </widget>
@@ -213,7 +214,6 @@
     <property name="title">
      <string>&amp;Info</string>
     </property>
-    <addaction name="aboutLogbookAction"/>
     <addaction name="separator"/>
     <addaction name="aboutAction"/>
     <addaction name="aboutQtAction"/>
@@ -464,9 +464,9 @@
     <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="aboutLogbookAction">
+  <action name="showLogbookSettingsAction">
    <property name="text">
-    <string>&amp;Logbook...</string>
+    <string>&amp;Logbook Settings...</string>
    </property>
   </action>
   <action name="optimiseLogbookAction">
@@ -506,6 +506,7 @@
   </action>
  </widget>
  <resources>
+  <include location="../res/SkyDolly.qrc"/>
   <include location="../res/SkyDolly.qrc"/>
  </resources>
  <connections/>

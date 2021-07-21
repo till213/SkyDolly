@@ -22,22 +22,27 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef METADATA_H
-#define METADATA_H
+#ifndef LOGBOOKBACKUPDIALOG_H
+#define LOGBOOKBACKUPDIALOG_H
 
-#include <QDateTime>
+#include <QDialog>
 
-#include "../../Kernel/src/Version.h"
+namespace Ui {
+class LogbookBackupDialog;
+}
 
-struct Metadata
+class LogbookBackupDialog : public QDialog
 {
-    QDateTime creationDate;
-    Version appVersion;
-    QDateTime lastOptimisationDate;
-    QDateTime lastBackupDate;
-    QDateTime nextBackupDate;
-    QString backupDirectoryPath;
-    QString backupPeriodIntlId;
+    Q_OBJECT
+public:
+    explicit LogbookBackupDialog(QWidget *parent = nullptr);
+    virtual ~LogbookBackupDialog();
+
+private:
+    Q_DISABLE_COPY(LogbookBackupDialog)
+    Ui::LogbookBackupDialog *ui;
+
+    void initUi() noexcept;
 };
 
-#endif // METADATA_H
+#endif // LOGBOOKBACKUPDIALOG_H

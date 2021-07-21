@@ -51,6 +51,7 @@
 #include "../../../Persistence/src/Service/DatabaseService.h"
 #include "../../../Persistence/src/Service/LogbookService.h"
 #include "../../../Persistence/src/Service/FlightService.h"
+#include "../../../Persistence/src/ConnectionManager.h"
 #include "../../../SkyConnect/src/SkyConnectManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../AbstractModuleWidget.h"
@@ -151,7 +152,7 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
             this, &LogbookWidget::updateUi);
 
     // Service
-    connect(&d->databaseService, &DatabaseService::logbookConnectionChanged,
+    connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
             this, &LogbookWidget::updateUi);
     connect(&d->flightService, &FlightService::flightStored,
             this, &LogbookWidget::updateUi);
@@ -177,7 +178,7 @@ void LogbookWidget::hideEvent(QHideEvent *event) noexcept
                this, &LogbookWidget::updateUi);
 
     // Service
-    disconnect(&d->databaseService, &DatabaseService::logbookConnectionChanged,
+    disconnect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
                this, &LogbookWidget::updateUi);
     disconnect(&d->flightService, &FlightService::flightStored,
                this, &LogbookWidget::updateUi);
@@ -222,7 +223,7 @@ void LogbookWidget::initUi() noexcept
 void LogbookWidget::updateFlightTable() noexcept
 {
     d->selectedFlightId = Flight::InvalidId;
-    if (d->databaseService.isConnected()) {
+    if (ConnectionManager::getInstance().isConnected()) {
 
         const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
         const qint64 flightInMemoryId = flight.getId();
