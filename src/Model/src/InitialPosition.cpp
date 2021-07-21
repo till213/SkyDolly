@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include "PositionData.h"
+#include "AircraftInfo.h"
 #include "InitialPosition.h"
 
 // PUBLIC
@@ -36,6 +38,12 @@ InitialPosition::InitialPosition(double latitude, double longitude, double altit
     this->latitude = latitude;
     this->longitude = longitude;
     this->altitude = altitude;
+}
+
+InitialPosition::InitialPosition(const PositionData &positionData, const AircraftInfo &aircraftInfo) noexcept
+{
+    fromPositionData(positionData);
+    fromAircraftInfo(aircraftInfo);
 }
 
 const InitialPosition InitialPosition::NullData = InitialPosition(0.0, 0.0, 0.0);

@@ -77,6 +77,7 @@ public:
     QMap<QUuid, QString> pluginRegistry;
     std::vector<SkyConnectManager::Handle> pluginHandles;
     QPluginLoader *pluginLoader;
+    QUuid currentPluginUuid;
 
     static SkyConnectManager *instance;
 };
@@ -127,9 +128,22 @@ std::optional<std::reference_wrapper<SkyConnectIntf>> SkyConnectManager::getCurr
     }
 }
 
+std::optional<QString> SkyConnectManager::getCurrentSkyConnectPluginName() const noexcept
+{
+    if (d->currentPluginUuid != QUuid()) {
+        for (auto &handle : d->pluginHandles) {
+            if (d->currentPluginUuid == handle.first) {
+                return std::optional<QString>{handle.second.name};
+            }
+        }
+    }
+    return {};
+}
+
 bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
 {
     bool ok;
+    d->currentPluginUuid = QUuid();
     if (d->pluginRegistry.contains(uuid)) {
         // Unload the previous plugin (if any)
         d->pluginLoader->unload();
@@ -144,6 +158,7 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
                     this, &SkyConnectManager::stateChanged);
             connect(skyPlugin, &SkyConnectIntf::recordingStopped,
                     this, &SkyConnectManager::recordingStopped);
+            d->currentPluginUuid = uuid;
             ok = true;
         } else {
             // Not a valid SkyConnect plugin

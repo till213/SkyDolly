@@ -37,6 +37,7 @@ namespace SampleRate
      * "event-based sampling" ("as fast as data arrives").
      */
     inline constexpr int AutoValue = 999.0;
+    inline constexpr double DefaultAutoSampleRate = 60.0;
 
     /*!
      * The SampleRate defines various recording sample rates.
@@ -147,7 +148,7 @@ namespace SampleRate
         if (sampleRateValue != AutoValue) {
             return static_cast<int>(1000.0 / sampleRateValue);
         } else {
-            return 0;
+            return 1000.0 / DefaultAutoSampleRate;
         }
     }
 
@@ -161,7 +162,7 @@ namespace SampleRate
         if (sampleRate != SampleRate::Auto) {
             return static_cast<int>(1000.0 / toValue(sampleRate));
         } else {
-            return 0;
+            return DefaultAutoSampleRate;
         }
     }
 }

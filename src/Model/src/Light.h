@@ -32,6 +32,7 @@
 #include <QObject>
 
 #include "TimeVariableData.h"
+#include "AircraftInfo.h"
 #include "ModelLib.h"
 
 class LightData;
@@ -41,7 +42,7 @@ class MODEL_API Light : public QObject
 {
     Q_OBJECT
 public:
-    Light(QObject *parent = nullptr) noexcept;
+    Light(const AircraftInfo &aircraftInfo, QObject *parent = nullptr) noexcept;
     virtual ~Light() noexcept;
 
     void upsert(const LightData &lightData) noexcept;

@@ -165,9 +165,13 @@ bool SqlMigrationStep::execute(const QString &sql) noexcept
         query.bindValue(":success", 1);
         query.bindValue(":msg", QString());
         ok = query.exec();
-        QSqlDatabase::database().commit();
-        d->applied = true;
-        d->errorMessage.clear();
+        if (ok) {
+            ok = QSqlDatabase::database().commit();
+        }
+        if (ok) {
+            d->applied = true;
+            d->errorMessage.clear();
+        }
     } else {
         QSqlDatabase::database().transaction();
         QSqlQuery query;

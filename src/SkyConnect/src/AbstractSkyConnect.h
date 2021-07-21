@@ -52,16 +52,17 @@ public:
     AbstractSkyConnect(QObject *parent = nullptr) noexcept;
     virtual ~AbstractSkyConnect() noexcept;
 
-    virtual const InitialPosition &getInitialRecordingPosition() const noexcept override;
-    virtual void setInitialRecordingPosition(const InitialPosition &initialPosition) noexcept override;
-    virtual bool isUserAircraftManualControl() const noexcept override;
-    virtual void setUserAircraftManualControl(bool enable) noexcept override;
+    virtual bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept override;
+    virtual bool freezeUserAircraft(bool enable) noexcept override;
 
-    virtual void startRecording(bool addFormationAircraft) noexcept override;
+    virtual ReplayMode getReplayMode() const noexcept override;
+    virtual void setReplayMode(ReplayMode replayMode) noexcept override;
+
+    virtual void startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition()) noexcept override;
     virtual void stopRecording() noexcept override;
     virtual bool isRecording() const noexcept override;
 
-    virtual void startReplay(bool fromStart) noexcept override;
+    virtual void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition()) noexcept override;
     virtual void stopReplay() noexcept override;
     virtual bool isReplaying() const noexcept override;
     virtual void stop() noexcept override;
@@ -109,9 +110,10 @@ protected:
 
     virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept = 0;
 
-    virtual bool onUserAircraftManualControl(bool enable) noexcept = 0;
+    virtual bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept = 0;
+    virtual bool onFreezeUserAircraft(bool enable) noexcept = 0;
 
-    virtual bool onStartRecording(const InitialPosition &initialPosition = InitialPosition::NullData) noexcept = 0;
+    virtual bool onStartRecording() noexcept = 0;
     virtual void onRecordingPaused(bool paused) noexcept = 0;
     virtual void onStopRecording() noexcept = 0;
 
@@ -142,6 +144,10 @@ private:
     inline qint64 getSkipInterval() const noexcept;
 
     inline bool retryWithReconnect(std::function<bool()> func);
+
+    bool setupInitialRecordingPosition(const InitialPosition &initialPosition) noexcept;
+    bool setupInitialReplayPosition(const InitialPosition &flyWithFormationPosition) noexcept;
+    bool updateUserAircraftFreeze() noexcept;
 
 private slots:
     void handleRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept;

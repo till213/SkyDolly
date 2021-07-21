@@ -22,21 +22,47 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <QCoreApplication>
+#include <QApplication>
+
 #include "../../Kernel/src/Version.h"
+#include "../../Kernel/src/Settings.h"
+#include "../../Model/src/Logbook.h"
+#include "../../SkyConnect/src/SkyConnectManager.h"
+#include "../../Persistence/src/ConnectionManager.h"
+#include "../../Plugin/src/PluginManager.h"
 #include "../../UserInterface/src/MainWindow.h"
 
-#include "SkyDollyApplication.h"
+static void destroySingletons() noexcept
+{
+    // Block all signals (avoids main window flickering)
+    Settings::getInstance().blockSignals(true);
+    ConnectionManager::getInstance().blockSignals(true);
+    PluginManager::getInstance().blockSignals(true);
+    SkyConnectManager::getInstance().blockSignals(true);
+
+    // Destroying the settings singleton also persists the settings
+    Settings::destroyInstance();
+    Logbook::destroyInstance();
+    ConnectionManager::destroyInstance();
+    PluginManager::destroyInstance();
+    SkyConnectManager::destroyInstance();
+}
 
 int main(int argc, char *argv[])
 {
     QCoreApplication::setOrganizationName(Version::getOrganisationName());
     QCoreApplication::setApplicationName(Version::getApplicationName());
 
-    SkyDollyApplication application(argc, argv);
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
 
+    QApplication application(argc, argv);
+
     MainWindow mainWindow;
     mainWindow.show();
-    return application.exec();
+    const int res = application.exec();
+    destroySingletons();
+    return res;
 }

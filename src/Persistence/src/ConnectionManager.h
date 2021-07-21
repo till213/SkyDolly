@@ -30,29 +30,49 @@
 #include <QObject>
 
 class QString;
-
-class Metadata;
+class QWidget;
 
 #include "PersistenceLib.h"
 
+class Metadata;
+class Version;
 class ConnectionManagerPrivate;
 
-class ConnectionManager : public QObject
+class PERSISTENCE_API ConnectionManager : public QObject
 {
     Q_OBJECT
 public:
     static ConnectionManager &getInstance() noexcept;
-    PERSISTENCE_API static void destroyInstance() noexcept;
+    static void destroyInstance() noexcept;
 
-    bool connectDb(const QString &logbookPath) noexcept;
-    void disconnectDb() noexcept;
+    /*!
+     * Connects with the database given by \c logbookPath
+     * and initialises the database by applying the required migrations.
+     *
+     * If a problem with opening the database occurs (e.g. a version
+     * mismatch) then a dialog asks the user for alternative logbook
+     * paths (or to quit the application altogether).
+     *
+     * The actual logbook path (which is usually the given \c logbookPath)
+     * is stored in the Settings.
+     *
+     * \param logbookPath
+     *        the path of the logbook (database) file to connect with
+     * \return \c true if the connection succeeded; \c false else
+     * \sa Settings#setLogbookPath
+     * \sa connectionChanged
+     */
+    bool connectWithLogbook(const QString &logbookPath, QWidget *parent) noexcept;
+
+    void disconnectFromLogbook() noexcept;
     bool isConnected() const noexcept;
     const QString &getLogbookPath() const noexcept;
 
     bool migrate() noexcept;
     bool optimise() noexcept;
     bool backup(const QString &backupLogbookPath) noexcept;
-    bool getMetadata(Metadata &metadata) noexcept;
+
+    bool getMetadata(Metadata &metadata) const noexcept;
 
 signals:
     void connectionChanged(bool connected);
@@ -65,6 +85,9 @@ private:
     std::unique_ptr<ConnectionManagerPrivate> d;
 
     ConnectionManager() noexcept;
+
+    bool connectDb(const QString &logbookPath) noexcept;
+    bool checkDatabaseVersion(Version &databaseVersion) const noexcept;
 };
 
 #endif // CONNECTIONMANAGER_H

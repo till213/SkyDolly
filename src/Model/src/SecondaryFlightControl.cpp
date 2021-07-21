@@ -32,18 +32,21 @@
 #include "../../Kernel/src/SkyMath.h"
 #include "TimeVariableData.h"
 #include "SkySearch.h"
+#include "AircraftInfo.h"
 #include "SecondaryFlightControlData.h"
 #include "SecondaryFlightControl.h"
 
 class SecondaryFlightControlPrivate
 {
 public:
-    SecondaryFlightControlPrivate() noexcept
-        : currentTimestamp(TimeVariableData::InvalidTime),
+    SecondaryFlightControlPrivate(const AircraftInfo &aircraftInfo) noexcept
+        : aircraftInfo(aircraftInfo),
+          currentTimestamp(TimeVariableData::InvalidTime),
           currentAccess(TimeVariableData::Access::Linear),
           currentIndex(SkySearch::InvalidIndex)
     {}
 
+    const AircraftInfo &aircraftInfo;
     std::vector<SecondaryFlightControlData> secondaryFlightControlData;
     qint64 currentTimestamp;
     TimeVariableData::Access currentAccess;
@@ -56,9 +59,9 @@ public:
 
 // PUBLIC
 
-SecondaryFlightControl::SecondaryFlightControl(QObject *parent) noexcept
+SecondaryFlightControl::SecondaryFlightControl(const AircraftInfo &aircraftInfo, QObject *parent) noexcept
     : QObject(parent),
-      d(std::make_unique<SecondaryFlightControlPrivate>())
+      d(std::make_unique<SecondaryFlightControlPrivate>(aircraftInfo))
 {}
 
 SecondaryFlightControl::~SecondaryFlightControl() noexcept
@@ -101,20 +104,21 @@ std::size_t SecondaryFlightControl::count() const noexcept
 const SecondaryFlightControlData &SecondaryFlightControl::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
 {
     const SecondaryFlightControlData *p1, *p2;
+    const qint64 adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timeOffset, 0LL);
 
-    if (d->currentTimestamp != timestamp || d->currentAccess != access) {
+    if (d->currentTimestamp != adjustedTimestamp || d->currentAccess != access) {
 
         double tn;
         switch (access) {
         case TimeVariableData::Access::Linear:
-            if (SkySearch::getLinearInterpolationSupportData(d->secondaryFlightControlData, timestamp, d->currentIndex, &p1, &p2)) {
-                tn = SkySearch::normaliseTimestamp(*p1, *p2, timestamp);
+            if (SkySearch::getLinearInterpolationSupportData(d->secondaryFlightControlData, adjustedTimestamp, d->currentIndex, &p1, &p2)) {
+                tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
             }
             break;
         case TimeVariableData::Access::Seek:
             // Get the last sample data just before the seeked position
             // (that sample point may lie far outside of the "sample window")
-            d->currentIndex = SkySearch::updateStartIndex(d->secondaryFlightControlData, d->currentIndex, timestamp);
+            d->currentIndex = SkySearch::updateStartIndex(d->secondaryFlightControlData, d->currentIndex, adjustedTimestamp);
             if (d->currentIndex != SkySearch::InvalidIndex) {
                 p1 = &d->secondaryFlightControlData.at(d->currentIndex);
                 p2 = p1;
@@ -146,17 +150,17 @@ const SecondaryFlightControlData &SecondaryFlightControl::interpolate(qint64 tim
                 d->previousSecondaryFlightControlData = SecondaryFlightControlData::NullData;
             }
 
-            d->currentSecondaryFlightControlData.timestamp = timestamp;
+            d->currentSecondaryFlightControlData.timestamp = adjustedTimestamp;
         } else if (!d->previousSecondaryFlightControlData.isNull()) {
             // ... and send the previous values again (for as long as the flaps are extracted)
             d->currentSecondaryFlightControlData = d->previousSecondaryFlightControlData;
-            d->currentSecondaryFlightControlData.timestamp = timestamp;
+            d->currentSecondaryFlightControlData.timestamp = adjustedTimestamp;
         } else {
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
             d->currentSecondaryFlightControlData = SecondaryFlightControlData::NullData;
         }
 
-        d->currentTimestamp = timestamp;
+        d->currentTimestamp = adjustedTimestamp;
         d->currentAccess = access;
     }
     return d->currentSecondaryFlightControlData;

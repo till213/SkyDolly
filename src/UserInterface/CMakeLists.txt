@@ -11,7 +11,7 @@ else()
 endif()
 
 set(USERINTERFACE_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence SkyConnect Module Plugin
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence Widget SkyConnect Plugin Module
 )
 if (${PLATFORM_IS_MACOS})
     list(APPEND USERINTERFACE_LIBS -lc++)
@@ -24,68 +24,65 @@ target_sources(UserInterface
         src/MainWindow.cpp
         src/MainWindow.h
         src/MainWindow.ui
-        src/Dialogs/AboutDialog.cpp
-        src/Dialogs/AboutDialog.h
-        src/Dialogs/AboutDialog.ui
-        src/Dialogs/AboutLogbookDialog.cpp
-        src/Dialogs/AboutLogbookDialog.h
-        src/Dialogs/AboutLogbookDialog.ui
-        src/Dialogs/SimulationVariablesDialog.cpp
-        src/Dialogs/SimulationVariablesDialog.h
-        src/Dialogs/SimulationVariablesDialog.ui
-        src/Dialogs/SettingsDialog.cpp
-        src/Dialogs/SettingsDialog.h
-        src/Dialogs/SettingsDialog.ui
-        src/Dialogs/StatisticsDialog.cpp
-        src/Dialogs/StatisticsDialog.h
-        src/Dialogs/StatisticsDialog.ui
-        src/Dialogs/FlightDialog.cpp
-        src/Dialogs/FlightDialog.h
-        src/Dialogs/FlightDialog.ui
-        src/Widgets/ActionButton.cpp
-        src/Widgets/ActionButton.h
-        src/Widgets/ActionRadioButton.h
-        src/Widgets/ActionRadioButton.cpp
-        src/Widgets/FocusPlainTextEdit.h
-        src/Widgets/FocusPlainTextEdit.cpp
-        src/Widgets/FlightDescriptionWidget.cpp
-        src/Widgets/FlightDescriptionWidget.h
-        src/Widgets/FlightDescriptionWidget.ui
-        src/Widgets/AbstractSimulationVariableWidget.cpp
-        src/Widgets/AbstractSimulationVariableWidget.h
-        src/Widgets/AircraftWidget.cpp
-        src/Widgets/AircraftWidget.h
-        src/Widgets/AircraftWidget.ui
-        src/Widgets/EngineWidget.cpp
-        src/Widgets/EngineWidget.h
-        src/Widgets/EngineWidget.ui
-        src/Widgets/PrimaryFlightControlWidget.cpp
-        src/Widgets/PrimaryFlightControlWidget.h
-        src/Widgets/PrimaryFlightControlWidget.ui
-        src/Widgets/SecondaryFlightControlWidget.cpp
-        src/Widgets/SecondaryFlightControlWidget.h
-        src/Widgets/SecondaryFlightControlWidget.ui
-        src/Widgets/AircraftHandleWidget.cpp
-        src/Widgets/AircraftHandleWidget.h
-        src/Widgets/AircraftHandleWidget.ui
-        src/Widgets/LightWidget.cpp
-        src/Widgets/LightWidget.h
-        src/Widgets/LightWidget.ui
-        src/Widgets/AircraftTypeWidget.cpp
-        src/Widgets/AircraftTypeWidget.h
-        src/Widgets/AircraftTypeWidget.ui
-        src/Widgets/FlightConditionWidget.cpp
-        src/Widgets/FlightConditionWidget.h
-        src/Widgets/FlightConditionWidget.ui
-        src/Widgets/FlightPlanWidget.cpp
-        src/Widgets/FlightPlanWidget.h
-        src/Widgets/FlightPlanWidget.ui
-        src/Widgets/WaypointWidget.cpp
-        src/Widgets/WaypointWidget.h
-        src/Widgets/WaypointWidget.ui
+        src/Dialog/AboutDialog.cpp
+        src/Dialog/AboutDialog.h
+        src/Dialog/AboutDialog.ui
+        src/Dialog/LogbookSettingsDialog.cpp
+        src/Dialog/LogbookSettingsDialog.h
+        src/Dialog/LogbookSettingsDialog.ui
+        src/Dialog/SimulationVariablesDialog.cpp
+        src/Dialog/SimulationVariablesDialog.h
+        src/Dialog/SimulationVariablesDialog.ui
+        src/Dialog/SettingsDialog.cpp
+        src/Dialog/SettingsDialog.h
+        src/Dialog/SettingsDialog.ui
+        src/Dialog/StatisticsDialog.cpp
+        src/Dialog/StatisticsDialog.h
+        src/Dialog/StatisticsDialog.ui
+        src/Dialog/FlightDialog.cpp
+        src/Dialog/FlightDialog.h
+        src/Dialog/FlightDialog.ui
+        src/Dialog/LogbookBackupDialog.cpp
+        src/Dialog/LogbookBackupDialog.h
+        src/Dialog/LogbookBackupDialog.ui
+        src/Widget/FlightDescriptionWidget.cpp
+        src/Widget/FlightDescriptionWidget.h
+        src/Widget/FlightDescriptionWidget.ui
+        src/Widget/AbstractSimulationVariableWidget.cpp
+        src/Widget/AbstractSimulationVariableWidget.h
+        src/Widget/AircraftWidget.cpp
+        src/Widget/AircraftWidget.h
+        src/Widget/AircraftWidget.ui
+        src/Widget/EngineWidget.cpp
+        src/Widget/EngineWidget.h
+        src/Widget/EngineWidget.ui
+        src/Widget/PrimaryFlightControlWidget.cpp
+        src/Widget/PrimaryFlightControlWidget.h
+        src/Widget/PrimaryFlightControlWidget.ui
+        src/Widget/SecondaryFlightControlWidget.cpp
+        src/Widget/SecondaryFlightControlWidget.h
+        src/Widget/SecondaryFlightControlWidget.ui
+        src/Widget/AircraftHandleWidget.cpp
+        src/Widget/AircraftHandleWidget.h
+        src/Widget/AircraftHandleWidget.ui
+        src/Widget/LightWidget.cpp
+        src/Widget/LightWidget.h
+        src/Widget/LightWidget.ui
+        src/Widget/AircraftTypeWidget.cpp
+        src/Widget/AircraftTypeWidget.h
+        src/Widget/AircraftTypeWidget.ui
+        src/Widget/FlightConditionWidget.cpp
+        src/Widget/FlightConditionWidget.h
+        src/Widget/FlightConditionWidget.ui
+        src/Widget/FlightPlanWidget.cpp
+        src/Widget/FlightPlanWidget.h
+        src/Widget/FlightPlanWidget.ui
+        src/Widget/WaypointWidget.cpp
+        src/Widget/WaypointWidget.h
+        src/Widget/WaypointWidget.ui
 )
 
-include_directories(UserInterface PRIVATE src/Widgets)
+include_directories(UserInterface PRIVATE ../Widget/src/)
 target_link_libraries(UserInterface PRIVATE ${USERINTERFACE_LIBS})
 set_target_properties(UserInterface PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(UserInterface PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})

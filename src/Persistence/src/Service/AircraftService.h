@@ -46,6 +46,9 @@ public:
     bool deleteByIndex(int index) noexcept;
     bool getAircraftInfos(qint64 flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept;
 
+    bool changeTimeOffset(Aircraft &aircraft, qint64 newOffset) noexcept;
+    bool changeTailNumber(Aircraft &aircraft, const QString &tailNumber) noexcept;
+
 private:
     std::unique_ptr<AircraftServicePrivate> d;
 };

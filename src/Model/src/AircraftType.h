@@ -61,4 +61,16 @@ struct MODEL_API AircraftType
     void clear() noexcept;
 };
 
+inline bool operator==(const AircraftType& lhs, const AircraftType& rhs) {
+    return lhs.type == rhs.type &&
+           lhs.category == rhs.category &&
+           lhs.wingSpan == rhs.wingSpan &&
+           lhs.engineType == rhs.engineType &&
+           lhs.numberOfEngines == rhs.numberOfEngines;
+}
+
+inline bool operator!=(const AircraftType& lhs, const AircraftType& rhs) {
+    return !(lhs == rhs);
+}
+
 #endif // AIRCRAFTTYPE_H

@@ -41,6 +41,7 @@
 #include <QAction>
 
 #include "../../../Kernel/src/Version.h"
+#include "../../../Kernel/src/Const.h"
 #include "../../../Kernel/src/Unit.h"
 #include "../../../Kernel/src/Settings.h"
 #include "../../../Model/src/Flight.h"
@@ -50,6 +51,7 @@
 #include "../../../Persistence/src/Service/DatabaseService.h"
 #include "../../../Persistence/src/Service/LogbookService.h"
 #include "../../../Persistence/src/Service/FlightService.h"
+#include "../../../Persistence/src/ConnectionManager.h"
 #include "../../../SkyConnect/src/SkyConnectManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../AbstractModuleWidget.h"
@@ -144,8 +146,13 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
 {
     AbstractModuleWidget::showEvent(event);
 
+    // Flight
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    connect(&flight, &Flight::aircraftStored,
+            this, &LogbookWidget::updateUi);
+
     // Service
-    connect(&d->databaseService, &DatabaseService::logbookConnectionChanged,
+    connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
             this, &LogbookWidget::updateUi);
     connect(&d->flightService, &FlightService::flightStored,
             this, &LogbookWidget::updateUi);
@@ -165,7 +172,13 @@ void LogbookWidget::hideEvent(QHideEvent *event) noexcept
 {
     AbstractModuleWidget::hideEvent(event);
 
-    disconnect(&d->databaseService, &DatabaseService::logbookConnectionChanged,
+    // Flight
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    disconnect(&flight, &Flight::aircraftStored,
+               this, &LogbookWidget::updateUi);
+
+    // Service
+    disconnect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
                this, &LogbookWidget::updateUi);
     disconnect(&d->flightService, &FlightService::flightStored,
                this, &LogbookWidget::updateUi);
@@ -191,7 +204,9 @@ void LogbookWidget::initUi() noexcept
     // Flight log table
     ui->logTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    const QStringList headers {tr("Flight"), tr("Date"), tr("Aircraft"), tr("Number of Aircrafts"), tr("Departure Time"), tr("Departure"), tr("Arrival Time"), tr("Arrival"), tr("Total Time of Flight"), tr("Title")};
+    ui->searchLineEdit->setPlaceholderText(tr("User aircraft, title, departure, arrival"));
+
+    const QStringList headers {tr("Flight"), tr("Date"), tr("User Aircraft"), tr("Number of Aircrafts"), tr("Departure Time"), tr("Departure"), tr("Arrival Time"), tr("Arrival"), tr("Total Time of Flight"), tr("Title")};
     ui->logTableWidget->setColumnCount(headers.count());
     ui->logTableWidget->setHorizontalHeaderLabels(headers);
     ui->logTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -201,14 +216,14 @@ void LogbookWidget::initUi() noexcept
     ui->logTableWidget->horizontalHeader()->setStretchLastSection(true);
     ui->logTableWidget->sortByColumn(FlightIdColumn, Qt::SortOrder::DescendingOrder);
 
-    ui->splitter->setStretchFactor(0, 1);
-    ui->splitter->setStretchFactor(1, 2);
+    ui->splitter->setStretchFactor(0, 2);
+    ui->splitter->setStretchFactor(1, 3);
 }
 
 void LogbookWidget::updateFlightTable() noexcept
 {
     d->selectedFlightId = Flight::InvalidId;
-    if (d->databaseService.isConnected()) {
+    if (ConnectionManager::getInstance().isConnected()) {
 
         const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
         const qint64 flightInMemoryId = flight.getId();
@@ -292,6 +307,7 @@ void LogbookWidget::updateFlightTable() noexcept
             // Title
             newItem = new QTableWidgetItem(summary.title);
             newItem->setToolTip(tr("Double-click to edit title"));
+            newItem->setBackground(QColor(Const::EditableTableCellBGColor));
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
             d->titleColumnIndex = columnIndex;
             ++columnIndex;
@@ -437,7 +453,7 @@ void LogbookWidget::updateUi() noexcept
 
 void LogbookWidget::updateEditUi() noexcept
 {
-    auto skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const bool active = skyConnect && skyConnect->get().isActive();
     ui->loadPushButton->setEnabled(!active && d->selectedFlightId != Flight::InvalidId);
     ui->deletePushButton->setEnabled(!active && d->selectedFlightId != Flight::InvalidId);
@@ -486,7 +502,14 @@ void LogbookWidget::updateDateSelectorUi() noexcept
 
         totalFlights += nofFlightsPerYear;
     }
-    logbookItem->setExpanded(true);
+
+    // Expand all "first" children
+    QTreeWidgetItem *item = logbookItem;
+    while (item->childCount() > 0) {
+        item->setExpanded(true);
+        item = item->child(0);
+    }
+
     logbookItem->setData(NofFlightsColumn, Qt::DisplayRole, totalFlights);
 
     ui->logTreeWidget->blockSignals(false);
@@ -568,7 +591,7 @@ void LogbookWidget::searchText() noexcept
 
 void LogbookWidget::handleCellSelected(int row, int column) noexcept
 {
-    if (column == ui->logTableWidget->columnCount() - 1) {
+    if (column == d->titleColumnIndex) {
         QTableWidgetItem *item = ui->logTableWidget->item(row, column);
         ui->logTableWidget->editItem(item);
     } else {
@@ -582,18 +605,24 @@ void LogbookWidget::handleCellChanged(int row, int column) noexcept
         QTableWidgetItem *item = ui->logTableWidget->item(row, column);
         const QString title = item->data(Qt::EditRole).toString();
 
-        // Also update the current flight, if in memory
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         if (flight.getId() == d->selectedFlightId) {
-            flight.setTitle(title);
+            // Also update the current flight, if in memory
+            d->flightService.updateTitle(flight, title);
+        } else {
+            d->flightService.updateTitle(d->selectedFlightId, title);
         }
-
-        d->flightService.updateTitle(d->selectedFlightId, title);
     }
 }
 
 void LogbookWidget::handleDateItemClicked(QTreeWidgetItem *item) noexcept
 {
     updateSelectionDateRange(item);
+    updateFlightTable();
+}
+
+void LogbookWidget::on_formationCheckBox_toggled(bool checked)
+{
+    d->flightSelector.hasFormation = checked;
     updateFlightTable();
 }

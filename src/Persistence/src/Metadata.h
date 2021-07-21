@@ -35,6 +35,7 @@ struct Metadata
     Version appVersion;
     QDateTime lastOptimisationDate;
     QDateTime lastBackupDate;
+    QDateTime nextBackupDate;
     QString backupDirectoryPath;
     QString backupPeriodIntlId;
 };

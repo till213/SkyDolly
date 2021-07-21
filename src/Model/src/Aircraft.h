@@ -83,6 +83,11 @@ public:
     const AircraftInfo &getAircraftInfoConst() const noexcept;
     void setAircraftInfo(const AircraftInfo &aircraftInfo) noexcept;
 
+    void setTailNumber(const QString &tailNumber) noexcept;
+
+    qint64 getTimeOffset() const noexcept;
+    void setTimeOffset(qint64 timeOffset) noexcept;
+
     const FlightPlan &getFlightPlanConst() const noexcept;
     FlightPlan &getFlightPlan() const noexcept;
 
@@ -95,8 +100,10 @@ public:
     bool operator != (const Aircraft &rhs) const noexcept;
 
 signals:
-    void infoChanged();
+    void infoChanged(Aircraft &aircraft);
     void dataChanged();
+    void tailNumberChanged(Aircraft &aircraft);
+    void timeOffsetChanged(Aircraft &aircraft);
 
 private:
     Q_DISABLE_COPY(Aircraft)

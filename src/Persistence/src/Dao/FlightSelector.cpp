@@ -27,7 +27,8 @@
 // PUBLIC
 
 FlightSelector::FlightSelector()
-    : fromDate(MinDate),
+    : hasFormation(false),
+      fromDate(MinDate),
       toDate(MaxDate)
 {}
 

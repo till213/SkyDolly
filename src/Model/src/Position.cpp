@@ -31,18 +31,21 @@
 #include "../../Kernel/src/SkyMath.h"
 #include "TimeVariableData.h"
 #include "SkySearch.h"
+#include "AircraftInfo.h"
 #include "PositionData.h"
 #include "Position.h"
 
 class PositionPrivate
 {
 public:
-    PositionPrivate() noexcept
-        : currentTimestamp(TimeVariableData::InvalidTime),
+    PositionPrivate(const AircraftInfo &aircraftInfo) noexcept
+        : aircraftInfo(aircraftInfo),
+          currentTimestamp(TimeVariableData::InvalidTime),
           currentAccess(TimeVariableData::Access::Linear),
           currentIndex(SkySearch::InvalidIndex)
     {}
 
+    const AircraftInfo &aircraftInfo;
     std::vector<PositionData> positionData;
     qint64 currentTimestamp;
     TimeVariableData::Access currentAccess;
@@ -54,9 +57,9 @@ public:
 
 // PUBLIC
 
-Position::Position(QObject *parent) noexcept
+Position::Position(const AircraftInfo &aircraftInfo, QObject *parent) noexcept
     : QObject(parent),
-      d(std::make_unique<PositionPrivate>())
+      d(std::make_unique<PositionPrivate>(aircraftInfo))
 {}
 
 Position::~Position() noexcept
@@ -100,20 +103,21 @@ const PositionData &Position::interpolate(qint64 timestamp, TimeVariableData::Ac
 {
     const PositionData *p0, *p1, *p2, *p3;
     const double Tension = 0.0;
+    const qint64 adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timeOffset, 0LL);
 
-    if (d->currentTimestamp != timestamp || d->currentAccess != access) {
+    if (d->currentTimestamp != adjustedTimestamp || d->currentAccess != access) {
 
         double tn;
         switch (access) {
         case TimeVariableData::Access::Linear:
-            if (SkySearch::getCubicInterpolationSupportData(d->positionData, timestamp, d->currentIndex, &p0, &p1, &p2, &p3)) {
-                tn = SkySearch::normaliseTimestamp(*p1, *p2, timestamp);
+            if (SkySearch::getCubicInterpolationSupportData(d->positionData, adjustedTimestamp, d->currentIndex, &p0, &p1, &p2, &p3)) {
+                tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
             }
             break;
         case TimeVariableData::Access::Seek:
             // Get the last sample data just before the seeked position
             // (that sample point may lie far outside of the "sample window")
-            d->currentIndex = SkySearch::updateStartIndex(d->positionData, d->currentIndex, timestamp);
+            d->currentIndex = SkySearch::updateStartIndex(d->positionData, d->currentIndex, adjustedTimestamp);
             if (d->currentIndex != SkySearch::InvalidIndex) {
                 p1 = &d->positionData.at(d->currentIndex);
                 p0 = p2 = p3 = p1;
@@ -151,13 +155,13 @@ const PositionData &Position::interpolate(qint64 timestamp, TimeVariableData::Ac
             d->currentPositionData.rotationVelocityBodyY = SkyMath::interpolateLinear(p1->rotationVelocityBodyY, p2->rotationVelocityBodyY, tn);
             d->currentPositionData.rotationVelocityBodyZ = SkyMath::interpolateLinear(p1->rotationVelocityBodyZ, p2->rotationVelocityBodyZ, tn);
 
-            d->currentPositionData.timestamp = timestamp;
+            d->currentPositionData.timestamp = adjustedTimestamp;
 
         } else {
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
             d->currentPositionData = PositionData::NullData;
         }
-        d->currentTimestamp = timestamp;
+        d->currentTimestamp = adjustedTimestamp;
     }
     return d->currentPositionData;
 }

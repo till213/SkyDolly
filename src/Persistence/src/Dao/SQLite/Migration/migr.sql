@@ -251,12 +251,12 @@ alter table engine add column general_engine_combustion2 integer;
 alter table engine add column general_engine_combustion3 integer;
 alter table engine add column general_engine_combustion4 integer;
 
-@migr(id = "d43d7a22-34f5-40c5-82e8-155b45bb274d", descn = "Add general engine combustion column", step = 2)
+@migr(id = "d43d7a22-34f5-40c5-82e8-155b45bb274d", descn = "Enable combustion based on throttle lever position heuristic", step = 2)
 update engine
-set    general_engine_combustion1 = general_engine_starter1,
-       general_engine_combustion2 = general_engine_starter2,
-       general_engine_combustion3 = general_engine_starter3,
-       general_engine_combustion4 = general_engine_starter4;
+set    general_engine_combustion1 = case when throttle_lever_position1 > 0 then 1 else 0 end,
+       general_engine_combustion2 = case when throttle_lever_position2 > 0 then 1 else 0 end,
+       general_engine_combustion3 = case when throttle_lever_position3 > 0 then 1 else 0 end,
+       general_engine_combustion4 = case when throttle_lever_position4 > 0 then 1 else 0 end;
 
 @migr(id = "32f3803f-c267-441d-a052-3b89e4dccc68", descn = "Add case-insensitive title index", step = 1)
 create index flight_idx1 on flight (title collate nocase);
@@ -318,6 +318,43 @@ create unique index aircraft_idx1 on aircraft (flight_id, seq_nr);
 
 @migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Create case-insensitive index on type in aircraft table", step = 9)
 create index aircraft_idx2 on aircraft (type collate nocase);
+
+@migr(id = "bd5b845b-4525-406f-b440-0f33e215bf72", descn = "Add timestamp offset to aircraft", step_cnt = 2)
+alter table aircraft add column time_offset integer;
+
+@migr(id = "bd5b845b-4525-406f-b440-0f33e215bf72", descn = "Initialise timestamp offset to 0", step = 2)
+update aircraft
+set    time_offset = 0;
+
+@migr(id = "688a9607-541a-435a-b76b-69de4f815a49", descn = "Metadata rename interval to period", step_cnt = 5)
+alter table metadata rename column backup_interval_id to backup_period_id;
+
+@migr(id = "688a9607-541a-435a-b76b-69de4f815a49", descn = "Rename interval enumeration table to period", step = 2)
+alter table enum_backup_interval rename to enum_backup_period;
+
+@migr(id = "688a9607-541a-435a-b76b-69de4f815a49", descn = "Add additional backup period", step = 3)
+insert into enum_backup_period (intl_id, name, desc)
+values
+  ('NEVER', 'Never', 'No backup is created');
+
+@migr(id = "688a9607-541a-435a-b76b-69de4f815a49", descn = "Drop interval index", step = 4)
+drop index enum_backup_interval_idx1;
+
+@migr(id = "688a9607-541a-435a-b76b-69de4f815a49", descn = "Re-create index on new period enumeration table", step = 5)
+create unique index enum_backup_period_idx1 on enum_backup_period (intl_id);
+
+@migr(id = "9fe6c8e5-4188-4533-8836-536ca0785b82", descn = "Add next backup date column", step_cnt = 2)
+alter table metadata add column next_backup_date datetime;
+
+@migr(id = "9fe6c8e5-4188-4533-8836-536ca0785b82", descn = "Initialise next backup date", step = 2)
+update metadata
+set next_backup_date = (select date(m.creation_date, '+7 day')
+                        from metadata m
+                       );
+
+@migr(id = "c3e24dbf-07c0-4554-afd6-9b6cbd9d4279", descn = "Set default backup directory path", step = 1)
+update metadata
+set backup_directory_path = './Backups';
 
 @migr(id = "1c13f02d-9def-4fd6-af8d-3b7984573682", descn = "Update application version to 0.8", step = 1)
 update metadata
