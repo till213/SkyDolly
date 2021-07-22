@@ -88,15 +88,15 @@ void KMLExportDialog::initUi() noexcept
     d->exportButton = ui->buttonBox->addButton(tr("Export"), QDialogButtonBox::AcceptRole);
 
     // Resampling
-    ui->resamplingComboBox->addItem(QString("10 Hz") % " (" % tr("less data, less accuracy") % ")", Enum::toUnderlyingType(ResamplingPeriod::TenHz));
-    ui->resamplingComboBox->addItem("5 Hz", Enum::toUnderlyingType(ResamplingPeriod::FiveHz));
-    ui->resamplingComboBox->addItem("2 Hz", Enum::toUnderlyingType(ResamplingPeriod::TwoHz));
-    ui->resamplingComboBox->addItem(QString("1 Hz") % " (" % tr("good accuracy") % ")", Enum::toUnderlyingType(ResamplingPeriod::OneHz));
+    ui->resamplingComboBox->addItem(QString("1/10 Hz") % " (" % tr("less data, less accuracy") % ")", Enum::toUnderlyingType(ResamplingPeriod::ATenthHz));
     ui->resamplingComboBox->addItem("1/5 Hz", Enum::toUnderlyingType(ResamplingPeriod::AFifthHz));
-    ui->resamplingComboBox->addItem("1/10 Hz", Enum::toUnderlyingType(ResamplingPeriod::ATenthHz));
+    ui->resamplingComboBox->addItem(QString("1 Hz") % " (" % tr("good accuracy") % ")", Enum::toUnderlyingType(ResamplingPeriod::OneHz));
+    ui->resamplingComboBox->addItem("2 Hz", Enum::toUnderlyingType(ResamplingPeriod::TwoHz));
+    ui->resamplingComboBox->addItem("5 Hz", Enum::toUnderlyingType(ResamplingPeriod::FiveHz));
+    ui->resamplingComboBox->addItem("10 Hz", Enum::toUnderlyingType(ResamplingPeriod::TenHz));
     ui->resamplingComboBox->addItem(tr("Original data (performance critical)"), Enum::toUnderlyingType(ResamplingPeriod::Original));
 
-    ui->resamplingComboBox->setCurrentIndex(3);
+    ui->resamplingComboBox->setCurrentIndex(2);
 }
 
 void KMLExportDialog::updateInfoUi() noexcept
@@ -105,11 +105,11 @@ void KMLExportDialog::updateInfoUi() noexcept
     ResamplingPeriod resamplingPeriod = static_cast<ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt());
     qint64 samplePoints = estimateNofSamplePoints();
     if (resamplingPeriod != ResamplingPeriod::Original) {
-        infoText = tr("The position data is resampled every %1 milliseconds, resulting in approximately %2 exported position points in total.")
+        infoText = tr("The position data is resampled every %1 milliseconds, resulting in approximately %2 exported positions in total.")
                 .arg(d->unit.formatNumber(Enum::toUnderlyingType(resamplingPeriod), 0), d->unit.formatNumber(samplePoints, 0));
     } else {
         infoText = tr("WARNING: exporting the original position data may result in too large KML files. The KML viewer performance may "
-                      "drastically slow down, or the exported data may not even be displayed at all.\nIn total %1 position points will be exported.")
+                      "drastically slow down, or the exported data may not even be displayed at all.\n\nIn total %1 positions will be exported.")
                 .arg(d->unit.formatNumber(samplePoints, 0));
     }
     ui->infoLabel->setText(infoText);
