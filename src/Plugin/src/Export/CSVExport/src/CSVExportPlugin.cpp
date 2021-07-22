@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <QCoreApplication>
 #include <QFile>
 // Implements the % operator for string concatenation
 #include <QStringBuilder>
@@ -52,14 +53,14 @@
 
 // PUBLIC
 
-CSVExportPlugin::CSVExportPlugin()
+CSVExportPlugin::CSVExportPlugin() noexcept
 {
 #ifdef DEBUG
     qDebug("CSVExportPlugin::CSVExportPlugin: PLUGIN LOADED");
 #endif
 }
 
-CSVExportPlugin::~CSVExportPlugin()
+CSVExportPlugin::~CSVExportPlugin() noexcept
 {
 #ifdef DEBUG
     qDebug("CSVExportPlugin::~CSVExportPlugin: PLUGIN UNLOADED");
@@ -72,7 +73,7 @@ bool CSVExportPlugin::exportData() const noexcept
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();
     QString exportPath = Settings::getInstance().getExportPath();
 
-    const QString filePath = QFileDialog::getSaveFileName(getParentWidget(), QT_TRANSLATE_NOOP("CSVExportPlugin", "Export CSV"), exportPath, QString("*.csv"));
+    const QString filePath = QFileDialog::getSaveFileName(getParentWidget(), QCoreApplication::translate("CSVExportPlugin", "Export CSV"), exportPath, QString("*.csv"));
     if (!filePath.isEmpty()) {
         QFile file(filePath);
         ok = file.open(QIODevice::WriteOnly);
@@ -199,7 +200,7 @@ bool CSVExportPlugin::exportData() const noexcept
             exportPath = QFileInfo(filePath).absolutePath();
             Settings::getInstance().setExportPath(exportPath);
         } else {
-            QMessageBox::critical(getParentWidget(), QT_TRANSLATE_NOOP("CSVExportPlugin", "Export error"), QString(QT_TRANSLATE_NOOP("CSVExportPlugin", "The CSV file %1 could not be written.")).arg(filePath));
+            QMessageBox::critical(getParentWidget(), QCoreApplication::translate("CSVExportPlugin", "Export error"), QString(QCoreApplication::translate("CSVExportPlugin", "The CSV file %1 could not be written.")).arg(filePath));
         }
     } else {
         ok = true;

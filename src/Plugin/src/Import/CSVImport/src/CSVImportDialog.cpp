@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <QCoreApplication>
 #include <QString>
 #include <QPushButton>
 #include <QFileDialog>
@@ -110,7 +111,7 @@ void CSVImportDialog::on_fileSelectionPushButton_clicked() noexcept
     // Start with the last export path
     QString exportPath = Settings::getInstance().getExportPath();
 
-    const QString filePath = QFileDialog::getOpenFileName(this, QT_TRANSLATE_NOOP("CSVImportDialog", "Import CSV"), exportPath, QString("*.csv"));
+    const QString filePath = QFileDialog::getOpenFileName(this, QCoreApplication::translate("CSVImportDialog", "Import CSV"), exportPath, QString("*.csv"));
     if (!filePath.isEmpty()) {
         ui->filePathLineEdit->setText(filePath);
     }

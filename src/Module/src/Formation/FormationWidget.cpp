@@ -24,6 +24,7 @@
  */
 #include <memory>
 
+#include <QCoreApplication>
 #include <QDoubleValidator>
 #include <QWidget>
 #include <QAction>
@@ -566,7 +567,7 @@ PositionData FormationWidget::calculateRelativePositionToUserAircraft(qint64 tim
 
 const QString FormationWidget::getName()
 {
-    return QString(QT_TRANSLATE_NOOP("LogbookWidget", "Formation"));
+    return QCoreApplication::translate("FormationWidget", "Formation");
 }
 
 // PRIVATE SLOTS

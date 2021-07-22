@@ -24,6 +24,7 @@
  */
 #include <memory>
 
+#include <QCoreApplication>
 #include <QWidget>
 #include <QFileInfo>
 #include <QDir>
@@ -183,7 +184,7 @@ QString DatabaseService::getExistingLogbookPath(QWidget *parent) noexcept
 {
     Settings &settings = Settings::getInstance();
     QString existingLogbookPath = QFileInfo(settings.getLogbookPath()).absolutePath();
-    QString logbookPath = QFileDialog::getOpenFileName(parent, QT_TRANSLATE_NOOP("DatabaseService", "Open logbook"), existingLogbookPath, QString("*") + Const::LogbookExtension);
+    QString logbookPath = QFileDialog::getOpenFileName(parent, QCoreApplication::translate("DatabaseService", "Open logbook"), existingLogbookPath, QString("*") + Const::LogbookExtension);
     return logbookPath;
 }
 
@@ -195,14 +196,14 @@ QString DatabaseService::getNewLogbookPath(QWidget *parent) noexcept
     QString newLogbookPath;
     bool retry = true;
     while (retry) {
-        QString logbookDirectoryPath = QFileDialog::getSaveFileName(parent, QT_TRANSLATE_NOOP("DatabaseService", "New logbook"), existingLogbookDirectoryPath);
+        QString logbookDirectoryPath = QFileDialog::getSaveFileName(parent, QCoreApplication::translate("DatabaseService", "New logbook"), existingLogbookDirectoryPath);
         if (!logbookDirectoryPath.isEmpty()) {
             QFileInfo info = QFileInfo(logbookDirectoryPath);
             if (!info.exists()) {
                 newLogbookPath = logbookDirectoryPath + "/" + info.fileName() + Const::LogbookExtension;
                 retry = false;
             } else {
-                QMessageBox::information(parent, QT_TRANSLATE_NOOP("DatabaseService", "Database exists"), QCoreApplication::translate("DatabaseService", "The logbook %1 already exists. Please choose another path.").arg(logbookDirectoryPath));
+                QMessageBox::information(parent, QCoreApplication::translate("DatabaseService", "Database exists"), QCoreApplication::translate("DatabaseService", "The logbook %1 already exists. Please choose another path.").arg(logbookDirectoryPath));
             }
         } else {
             retry = false;

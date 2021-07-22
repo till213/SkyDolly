@@ -12,7 +12,6 @@ endif()
 
 target_sources(${PLUGIN_NAME}
     PRIVATE
-        res/KMLExport.qrc
         src/KMLExportPlugin.cpp
         src/KMLExportPlugin.h
         src/KMLExportPlugin.json
