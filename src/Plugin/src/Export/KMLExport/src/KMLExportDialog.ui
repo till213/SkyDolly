@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CSVImportDialog</class>
- <widget class="QDialog" name="CSVImportDialog">
+ <class>KMLExportDialog</class>
+ <widget class="QDialog" name="KMLExportDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>352</width>
-    <height>130</height>
+    <width>472</width>
+    <height>214</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>CSV Import</string>
+   <string>KML Export</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
    <item row="0" column="0">
     <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>CSV File</string>
+      <string>KML file:</string>
      </property>
     </widget>
    </item>
@@ -27,7 +27,7 @@
       <widget class="QLineEdit" name="filePathLineEdit">
        <property name="minimumSize">
         <size>
-         <width>200</width>
+         <width>300</width>
          <height>0</height>
         </size>
        </property>
@@ -42,23 +42,6 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Aircraft:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="AircraftSelectionComboBox" name="aircraftSelectionComboBox"/>
-   </item>
-   <item row="2" column="1">
-    <widget class="QCheckBox" name="addToFlightCheckBox">
-     <property name="text">
-      <string>Add to existing flight</string>
-     </property>
-    </widget>
-   </item>
    <item row="3" column="1">
     <spacer name="verticalSpacer">
      <property name="orientation">
@@ -66,13 +49,13 @@
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>0</width>
-       <height>0</height>
+       <width>385</width>
+       <height>21</height>
       </size>
      </property>
     </spacer>
    </item>
-   <item row="4" column="0" colspan="2">
+   <item row="4" column="1">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -82,21 +65,40 @@
      </property>
     </widget>
    </item>
+   <item row="1" column="1">
+    <widget class="QComboBox" name="resamplingComboBox"/>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Resampling:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLabel" name="infoLabel">
+     <property name="minimumSize">
+      <size>
+       <width>300</width>
+       <height>80</height>
+      </size>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>AircraftSelectionComboBox</class>
-   <extends>QComboBox</extends>
-   <header location="global">AircraftSelectionComboBox.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>CSVImportDialog</receiver>
+   <receiver>KMLExportDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -112,7 +114,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>CSVImportDialog</receiver>
+   <receiver>KMLExportDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

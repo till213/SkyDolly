@@ -22,41 +22,55 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVIMPORTDIALOG_H
-#define CSVIMPORTDIALOG_H
-
-#include <memory>
+#ifndef KMLEXPORTDIALOG_H
+#define KMLEXPORTDIALOG_H
 
 #include <QDialog>
 
 namespace Ui {
-    class CSVImportDialog;
+    class KMLExportDialog;
 }
 
-class AircraftType;
-class CSVImportDialogPrivate;
+class KMLExportDialogPrivate;
 
-class CSVImportDialog : public QDialog
+class KMLExportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit CSVImportDialog(QWidget *parent = nullptr) noexcept;
-    virtual ~CSVImportDialog() noexcept;
+    /*!
+     * Resampling period [millisecons]
+     */
+    enum class ResamplingPeriod {
+        Original = 0,
+        TenHz = 100,
+        FiveHz = 200,
+        TwoHz = 500,
+        OneHz = 1000,
+        AFifthHz = 5000,
+        ATenthHz = 10000
+    };
+
+    explicit KMLExportDialog(QWidget *parent = nullptr) noexcept;
+    virtual ~KMLExportDialog() noexcept;
 
     QString getSelectedFilePath() const noexcept;
-    bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
-    bool isAddToFlightEnabled() const noexcept;
+    ResamplingPeriod getSelectedResamplingPeriod() const noexcept;
 
 private:
-    Ui::CSVImportDialog *ui;
-    std::unique_ptr<CSVImportDialogPrivate> d;
+    Ui::KMLExportDialog *ui;
+    std::unique_ptr<KMLExportDialogPrivate> d;
 
-    void frenchConnection() noexcept;
     void initUi() noexcept;
+    void updateInfoUi() noexcept;
+    void frenchConnection() noexcept;
+
+    qint64 estimateNofSamplePoints() noexcept;
 
 private slots:
-    void on_fileSelectionPushButton_clicked() noexcept;
     void updateUi() noexcept;
+
+    void on_fileSelectionPushButton_clicked() noexcept;
+    void on_resamplingComboBox_activated(int index) noexcept;
 };
 
-#endif // CSVIMPORTDIALOG_H
+#endif // KMLEXPORTDIALOG_H

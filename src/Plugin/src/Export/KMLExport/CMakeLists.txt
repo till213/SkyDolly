@@ -14,6 +14,9 @@ target_sources(${PLUGIN_NAME}
     PRIVATE
         src/KMLExportPlugin.cpp
         src/KMLExportPlugin.h
+        src/KMLExportDialog.cpp
+        src/KMLExportDialog.h
+        src/KMLExportDialog.ui
         src/KMLExportPlugin.json
 )
 
