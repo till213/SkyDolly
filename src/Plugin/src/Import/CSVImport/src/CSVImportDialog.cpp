@@ -48,9 +48,7 @@ public:
     {}
 
     std::unique_ptr<AircraftTypeService> aircraftTypeService;
-
     QPushButton *importButton;
-
 };
 
 // PUBLIC
@@ -71,17 +69,17 @@ CSVImportDialog::~CSVImportDialog() noexcept
     delete ui;
 }
 
-const QString CSVImportDialog::getSelectedFilePath() const noexcept
+QString CSVImportDialog::getSelectedFilePath() const noexcept
 {
     return ui->filePathLineEdit->text();
 }
 
 bool CSVImportDialog::getSelectedAircraftType(AircraftType &aircraftType) const noexcept
 {
-    return d->aircraftTypeService->getByType(ui->aircraftTypeComboBox->currentText(), aircraftType);
+    return d->aircraftTypeService->getByType(ui->aircraftSelectionComboBox->currentText(), aircraftType);
 }
 
-bool CSVImportDialog::addToCurrentFlight() const noexcept
+bool CSVImportDialog::isAddToFlightEnabled() const noexcept
 {
     return ui->addToFlightCheckBox->isChecked();
 }
@@ -94,7 +92,7 @@ void CSVImportDialog::initUi() noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     QString type = flight.getUserAircraftConst().getAircraftInfoConst().aircraftType.type;
     if (!type.isEmpty()) {
-        ui->aircraftTypeComboBox->setCurrentText(type);
+        ui->aircraftSelectionComboBox->setCurrentText(type);
     }
 }
 

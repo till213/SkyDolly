@@ -35,6 +35,7 @@
 #include <QMessageBox>
 
 #include "../../../../../Kernel/src/Convert.h"
+#include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/Unit.h"
 #include "../../../../../Kernel/src/Settings.h"
 #include "../../../../../Model/src/Logbook.h"
@@ -45,6 +46,7 @@
 #include "../../../../../Model/src/Aircraft.h"
 #include "../../../../../Model/src/Position.h"
 #include "../../../../../Model/src/PositionData.h"
+#include "KMLExportDialog.h"
 #include "KMLExportPlugin.h"
 
 namespace
@@ -62,10 +64,12 @@ class KMLExportPluginPrivate
 {
 public:
     KMLExportPluginPrivate() noexcept
-        : flight(Logbook::getInstance().getCurrentFlight())
+        : flight(Logbook::getInstance().getCurrentFlight()),
+          resamplingPeriod(KMLExportDialog::ResamplingPeriod::OneHz)
     {}
 
     Flight &flight;
+    KMLExportDialog::ResamplingPeriod resamplingPeriod;
     Unit unit;
     std::unordered_map<QString, int> aircraftTypeCount;
 };
@@ -90,41 +94,48 @@ KMLExportPlugin::~KMLExportPlugin() noexcept
 bool KMLExportPlugin::exportData() const noexcept
 {
     bool ok;
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
-    QString exportPath = Settings::getInstance().getExportPath();
 
     d->aircraftTypeCount.clear();
 
-    const QString filePath = QFileDialog::getSaveFileName(getParentWidget(), QCoreApplication::translate("KMLExportPlugin", "Export KML"), exportPath, QString("*.kml"));
-    if (!filePath.isEmpty()) {
-        QFile file(filePath);
-        ok = file.open(QIODevice::WriteOnly);
-        if (ok) {
-            file.setTextModeEnabled(true);
-            ok = exportHeader(file);
-        }
-        if (ok) {
-            ok = exportStyles(file);
-        }
-        if (ok) {
-            ok = exportFlightInfo(file);
-        }
-        if (ok) {
-            ok = exportAircrafts(file);
-        }
-        if (ok) {
-            ok = exportWaypoints(file);
-        }
-        if (ok) {
-            ok = exportFooter(file);
-        }
-        file.close();
+    std::unique_ptr<KMLExportDialog> kmlExportDialog = std::make_unique<KMLExportDialog>(getParentWidget());
+    const int choice = kmlExportDialog->exec();
+    if (choice == QDialog::Accepted) {
+        const QString &filePath = kmlExportDialog->getSelectedFilePath();
+        if (!filePath.isEmpty()) {
 
-        if (ok) {
-            exportPath = QFileInfo(filePath).absolutePath();
-            Settings::getInstance().setExportPath(exportPath);
+            QFile file(filePath);
+            ok = file.open(QIODevice::WriteOnly);
+            if (ok) {
+                file.setTextModeEnabled(true);
+                ok = exportHeader(file);
+            }
+            if (ok) {
+                ok = exportStyles(file);
+            }
+            if (ok) {
+                ok = exportFlightInfo(file);
+            }
+            if (ok) {
+                d->resamplingPeriod = kmlExportDialog->getSelectedResamplingPeriod();
+                ok = exportAircrafts(file);
+            }
+            if (ok) {
+                ok = exportWaypoints(file);
+            }
+            if (ok) {
+                ok = exportFooter(file);
+            }
+            file.close();
+
+            if (ok) {
+                const QString exportPath = QFileInfo(filePath).absolutePath();
+                Settings::getInstance().setExportPath(exportPath);
+            } else {
+                QMessageBox::critical(getParentWidget(), QCoreApplication::translate("KMLExportPlugin", "Export error"), QString(QCoreApplication::translate("KMLExportPlugin", "The KML file %1 could not be written.")).arg(filePath));
+            }
+
         } else {
-            QMessageBox::critical(getParentWidget(), QCoreApplication::translate("KMLExportPlugin", "Export error"), QString(QCoreApplication::translate("KMLExportPlugin", "The KML file %1 could not be written.")).arg(filePath));
+            ok = true;
         }
     } else {
         ok = true;
@@ -281,17 +292,29 @@ bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
     if (ok) {
         // Position data
         const Position &position = aircraft.getPositionConst();
-        const qint64 duration = position.getLast().timestamp;
-
-        qint64 time = 0;
-        while (time <= duration && ok) {
-            const PositionData &positionData = position.interpolate(time, TimeVariableData::Access::Linear);
-            if (!positionData.isNull()) {
+        if (d->resamplingPeriod != KMLExportDialog::ResamplingPeriod::Original) {
+            const qint64 duration = position.getLast().timestamp;
+            qint64 time = 0;
+            while (ok && time <= duration) {
+                const PositionData &positionData = position.interpolate(time, TimeVariableData::Access::Linear);
+                if (!positionData.isNull()) {
+                    ok = io.write((toString(positionData.longitude) % "," %
+                                   toString(positionData.latitude) % "," %
+                                   toString(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
+                }
+                time += Enum::toUnderlyingType(d->resamplingPeriod);
+            }
+        } else {
+            // Original data requested
+            // (may result in huge KML files: e.g. the KML viewer may not be able to display the data at all)
+            for (const PositionData &positionData : position) {
                 ok = io.write((toString(positionData.longitude) % "," %
                                toString(positionData.latitude) % "," %
                                toString(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
+                if (!ok) {
+                    break;
+                }
             }
-            time += ResamplePeriodMSec;
         }
     }
     if (ok) {

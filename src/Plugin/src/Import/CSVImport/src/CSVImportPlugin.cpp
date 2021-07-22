@@ -94,7 +94,7 @@ bool CSVImportPlugin::importData(FlightService &flightService) const noexcept
     if (choice == QDialog::Accepted) {
         AircraftType aircraftType;
         ok = csvImportDialog->getSelectedAircraftType(aircraftType);
-        const bool addToCurrentFlight = csvImportDialog->addToCurrentFlight();
+        const bool addToCurrentFlight = csvImportDialog->isAddToFlightEnabled();
         if (ok) {
             ok = import(csvImportDialog->getSelectedFilePath(), aircraftType, flightService, addToCurrentFlight);
             if (ok && addToCurrentFlight) {
