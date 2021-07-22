@@ -63,14 +63,16 @@ namespace
 
     constexpr char LineWidth[] = "1.5";
 
-    constexpr QRgb StartColor = 0xffff0000;
-    constexpr QRgb EndColor = 0xff0000ff;
+    // in AARRGGBB format
+    constexpr QRgb StartColor = 0xffe54f8f;
+    constexpr QRgb EndColor = 0xff4340a7;
     // Number of colors per color ramp
     constexpr int NofColorsPerRamp = 8;
 
     // In KML format: AABBGGRR
     constexpr char LineHighlightColor[] = "ff00ffff";
-    constexpr char PolygonHighlightColor[] = "ff7faadd";
+    constexpr char PolygonHighlightColor[] = "ccd5c97e";
+    constexpr char PolygonColor[] = "33d5c97e";
 }
 
 class KMLExportPluginPrivate
@@ -227,7 +229,7 @@ bool KMLExportPlugin::exportNormalLineStyles(QIODevice &io) const noexcept
 "        <width>" % QString(LineWidth) % "</width>\n"
 "      </LineStyle>\n"
 "      <PolyStyle>\n"
-"        <color>" % QString(PolygonHighlightColor) % "</color>\n"
+"        <color>" % QString(PolygonColor) % "</color>\n"
 "        <outline>0</outline>\n"
 "      </PolyStyle>\n"
 "    </Style>\n";
