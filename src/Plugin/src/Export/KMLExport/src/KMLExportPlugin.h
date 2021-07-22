@@ -31,12 +31,15 @@
 #include <QtPlugin>
 
 class QIODevice;
+class QString;
 
 #include "../../../ExportIntf.h"
 #include "../../../PluginBase.h"
 
 class Flight;
 class Aircraft;
+struct PositionData;
+struct Waypoint;
 class KMLExportPluginPrivate;
 
 class KMLExportPlugin : public PluginBase, public ExportIntf
@@ -61,18 +64,30 @@ public:
     virtual bool exportData() const noexcept override;
 
 private:
+    enum class Icon {
+        Airport,
+        Flag
+    };
+
     std::unique_ptr<KMLExportPluginPrivate> d;
 
     bool exportHeader(QIODevice &io) const noexcept;
     bool exportStyles(QIODevice &io) const noexcept;
     bool exportFlightInfo(QIODevice &io) const noexcept;
     bool exportAircrafts(QIODevice &io) const noexcept;
-    bool exportAircraf(const Aircraft &aircraft, QIODevice &io) const noexcept;
+    bool exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept;
+    bool exportWaypoints(QIODevice &io) const noexcept;
     bool exportFooter(QIODevice &io) const noexcept;
     QString getFlightDescription() const noexcept;
     QString getAircraftDescription(const Aircraft &aircraft) const noexcept;
+    QString getWaypointDescription(const Waypoint &waypoint) const noexcept;
 
     static inline QString toString(double number) noexcept;
+    static inline bool exportPlacemark(QIODevice &io, Icon icon, const QString &name, const QString &description,
+                                       const PositionData &positionData) noexcept;
+    static inline bool exportPlacemark(QIODevice &io, Icon icon, const QString &name, const QString &description,
+                                       double longitude, double latitude, double altitudeInFeet, double heading) noexcept;
+    static inline QString getStyleUrl(Icon icon) noexcept;
 };
 
 #endif // KMLEXPORTPLUGIN_H

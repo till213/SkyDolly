@@ -38,6 +38,8 @@
 #include "../../../../../Kernel/src/Settings.h"
 #include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
+#include "../../../../../Model/src/FlightPlan.h"
+#include "../../../../../Model/src/Waypoint.h"
 #include "../../../../../Model/src/FlightCondition.h"
 #include "../../../../../Model/src/Aircraft.h"
 #include "../../../../../Model/src/Position.h"
@@ -52,6 +54,7 @@ namespace
     constexpr int NumberPrecision = 12;
     constexpr char LookAtTilt[] = "50";
     constexpr char LookAtRange[] = "4000";
+    constexpr int HeadingNorth = 0;
 }
 
 class KMLExportPluginPrivate
@@ -106,6 +109,9 @@ bool KMLExportPlugin::exportData() const noexcept
             ok = exportAircrafts(file);
         }
         if (ok) {
+            ok = exportWaypoints(file);
+        }
+        if (ok) {
             ok = exportFooter(file);
         }
         file.close();
@@ -148,58 +154,85 @@ bool KMLExportPlugin::exportStyles(QIODevice &io) const noexcept
 "      </LineStyle>\n"
 "      <PolyStyle>\n"
 "        <color>ff7faadd</color>\n"
-"          <colorMode>normal</colorMode>\n"
-"          <outline>0</outline>\n"
-"        </PolyStyle>\n"
-"      </Style>\n"
-"      <Style id=\"s_flight\">\n"
-"        <LineStyle>\n"
-"          <color>ff0000ff</color>\n"
-"          <width>1.5</width>\n"
-"        </LineStyle>\n"
-"        <PolyStyle>\n"
-"          <color>7f7faaaa</color>\n"
-"          <colorMode>normal</colorMode>\n"
-"          <outline>0</outline>\n"
-"        </PolyStyle>\n"
-"      </Style>\n"
-"      <StyleMap id=\"sm_flight\">\n"
-"        <Pair>\n"
-"          <key>normal</key>\n"
-"          <styleUrl>#s_flight</styleUrl>\n"
-"        </Pair>\n"
-"        <Pair>\n"
-"          <key>highlight</key>\n"
-"          <styleUrl>#s_flight_h</styleUrl>\n"
-"        </Pair>\n"
-"      </StyleMap>\n"
+"        <colorMode>normal</colorMode>\n"
+"        <outline>0</outline>\n"
+"      </PolyStyle>\n"
+"    </Style>\n"
+"    <Style id=\"s_flight\">\n"
+"      <LineStyle>\n"
+"        <color>ff0000ff</color>\n"
+"        <width>1.5</width>\n"
+"      </LineStyle>\n"
+"      <PolyStyle>\n"
+"        <color>7f7faaaa</color>\n"
+"        <colorMode>normal</colorMode>\n"
+"        <outline>0</outline>\n"
+"      </PolyStyle>\n"
+"    </Style>\n"
+"    <StyleMap id=\"sm_flight\">\n"
+"      <Pair>\n"
+"        <key>normal</key>\n"
+"        <styleUrl>#s_flight</styleUrl>\n"
+"      </Pair>\n"
+"      <Pair>\n"
+"        <key>highlight</key>\n"
+"        <styleUrl>#s_flight_h</styleUrl>\n"
+"      </Pair>\n"
+"    </StyleMap>\n"
 
-// Placemark style
+// Placemark styles
 
-"      <Style id=\"s_airports\">\n"
-"        <IconStyle>\n"
-"          <scale>1.2</scale>\n"
-"          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href></Icon>\n"
-"          <hotSpot x=\"0.5\" y=\"0\" xunits=\"fraction\" yunits=\"fraction\"/>\n"
-"        </IconStyle>\n"
-"	   </Style>\n"
-"      <Style id=\"s_airports_h\">\n"
-"        <IconStyle>\n"
-"          <scale>1.4</scale>\n"
-"          <Icon><href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href></Icon>\n"
-"          <hotSpot x=\"0.5\" y=\"0\" xunits=\"fraction\" yunits=\"fraction\"/>\n"
-"        </IconStyle>\n"
-"	   </Style>\n"
-"      <StyleMap id=\"sm_airports\">\n"
-"        <Pair>\n"
-"          <key>normal</key>\n"
-"          <styleUrl>#s_airports</styleUrl>\n"
-"        </Pair>\n"
-"        <Pair>\n"
-"          <key>highlight</key>\n"
-"          <styleUrl>#s_airports_h</styleUrl>\n"
-"        </Pair>\n"
-"      </StyleMap>\n";
+// Airport
+"    <Style id=\"s_airports\">\n"
+"      <IconStyle>\n"
+"        <scale>1.2</scale>\n"
+"        <Icon><href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href></Icon>\n"
+"        <hotSpot x=\"0.5\" y=\"0\" xunits=\"fraction\" yunits=\"fraction\"/>\n"
+"      </IconStyle>\n"
+"	 </Style>\n"
+"    <Style id=\"s_airports_h\">\n"
+"      <IconStyle>\n"
+"        <scale>1.4</scale>\n"
+"        <Icon><href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href></Icon>\n"
+"        <hotSpot x=\"0.5\" y=\"0\" xunits=\"fraction\" yunits=\"fraction\"/>\n"
+"      </IconStyle>\n"
+"	 </Style>\n"
+"    <StyleMap id=\"sm_airports\">\n"
+"      <Pair>\n"
+"        <key>normal</key>\n"
+"        <styleUrl>#s_airports</styleUrl>\n"
+"      </Pair>\n"
+"      <Pair>\n"
+"        <key>highlight</key>\n"
+"        <styleUrl>#s_airports_h</styleUrl>\n"
+"      </Pair>\n"
+"    </StyleMap>\n"
+
+// Flag
+"    <Style id=\"s_flag\">\n"
+"      <IconStyle>\n"
+"        <scale>1.2</scale>\n"
+"        <Icon><href>http://maps.google.com/mapfiles/kml/shapes/flag.png</href></Icon>\n"
+"        <hotSpot x=\"0.5\" y=\"0\" xunits=\"fraction\" yunits=\"fraction\"/>\n"
+"      </IconStyle>\n"
+"	 </Style>\n"
+"    <Style id=\"s_flag_h\">\n"
+"      <IconStyle>\n"
+"        <scale>1.4</scale>\n"
+"        <Icon><href>http://maps.google.com/mapfiles/kml/shapes/flag.png</href></Icon>\n"
+"        <hotSpot x=\"0.5\" y=\"0\" xunits=\"fraction\" yunits=\"fraction\"/>\n"
+"      </IconStyle>\n"
+"    </Style>\n"
+"    <StyleMap id=\"sm_flag\">\n"
+"      <Pair>\n"
+"        <key>normal</key>\n"
+"        <styleUrl>#s_flag</styleUrl>\n"
+"      </Pair>\n"
+"      <Pair>\n"
+"        <key>highlight</key>\n"
+"        <styleUrl>#s_flag_h</styleUrl>\n"
+"      </Pair>\n"
+"    </StyleMap>\n";
 
     return io.write(header.toUtf8());
 }
@@ -208,39 +241,14 @@ bool KMLExportPlugin::exportFlightInfo(QIODevice &io) const noexcept
 {
     const Aircraft &aircraft = d->flight.getUserAircraftConst();
     const PositionData &positionData = aircraft.getPosition().getFirst();
-    bool ok = !positionData.isNull();
-    if (ok) {
-        const QString placemark =
-"      <Placemark>\n"
-"        <name>" % d->flight.getTitle() % "</name>\n"
-"        <description>" % getFlightDescription() % "</description>\n"
-"        <LookAt>\n"
-"          <longitude>" % toString(positionData.longitude) % "</longitude>\n"
-"          <latitude>" % toString(positionData.latitude) % "</latitude>\n"
-"          <altitude>" % toString(Convert::feetToMeters(positionData.altitude)) % "</altitude>\n"
-"          <heading>" % toString(positionData.heading) % "</heading>\n"
-"          <tilt>" % LookAtTilt % "</tilt>\n"
-"          <range>" % LookAtRange % "</range>\n"
-"          <altitudeMode>absolute</altitudeMode>\n"
-"        </LookAt>\n"
-"        <styleUrl>#sm_airports</styleUrl>\n"
-"        <Point>\n"
-"          <extrude>1</extrude>\n"
-"          <altitudeMode>absolute</altitudeMode>\n"
-"          <gx:drawOrder>1</gx:drawOrder>\n"
-"          <coordinates>" % toString(positionData.longitude) % "," % toString(positionData.latitude) % "," % toString(Convert::feetToMeters(positionData.altitude)) % "</coordinates>\n"
-"        </Point>\n"
-"      </Placemark>\n";
-        ok = io.write(placemark.toUtf8());
-    }
-    return ok;
+    return exportPlacemark(io, Icon::Airport, d->flight.getTitle(), getFlightDescription(), positionData);
 }
 
 bool KMLExportPlugin::exportAircrafts(QIODevice &io) const noexcept
 {
     bool ok = true;
     for (const auto &aircraft : d->flight) {
-        ok = exportAircraf(*aircraft, io);
+        ok = exportAircraft(*aircraft, io);
         if (!ok) {
             break;
         }
@@ -248,7 +256,7 @@ bool KMLExportPlugin::exportAircrafts(QIODevice &io) const noexcept
     return ok;
 }
 
-bool KMLExportPlugin::exportAircraf(const Aircraft &aircraft, QIODevice &io) const noexcept
+bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     const PositionData positionData;
     const QString placemarkBegin = QString(
@@ -285,6 +293,18 @@ bool KMLExportPlugin::exportAircraf(const Aircraft &aircraft, QIODevice &io) con
 "      </LineString>\n"
 "    </Placemark>\n");
         ok = io.write(placemarkEnd.toUtf8());
+    }
+    return ok;
+}
+
+bool KMLExportPlugin::exportWaypoints(QIODevice &io) const noexcept
+{
+    bool ok = true;
+
+    const FlightPlan &flightPlan = d->flight.getUserAircraft().getFlightPlanConst();
+    for (const Waypoint &waypoint : flightPlan) {
+        ok = exportPlacemark(io, Icon::Flag, waypoint.identifier, getWaypointDescription(waypoint),
+                             waypoint.longitude, waypoint.latitude, waypoint.altitude, HeadingNorth);
     }
     return ok;
 }
@@ -335,7 +355,70 @@ QString KMLExportPlugin::getAircraftDescription(const Aircraft &aircraft) const 
     return description;
 }
 
+QString KMLExportPlugin::getWaypointDescription(const Waypoint &waypoint) const noexcept
+{
+    const QString description =
+            tr("Arrival time (local)") % ": " % d->unit.formatTime(waypoint.localTime) % "\n" %
+            tr("Arrival time (zulu)") % ": " % d->unit.formatTime(waypoint.zuluTime) % "\n" %
+            tr("Altitude") % ": " % d->unit.formatFeet(waypoint.altitude) % "\n";
+    return description;
+}
+
 inline QString KMLExportPlugin::toString(double number) noexcept
 {
     return QString::number(number, 'g', NumberPrecision);
+}
+
+inline bool KMLExportPlugin::exportPlacemark(QIODevice &io, Icon icon, const QString &name, const QString &description, const PositionData &positionData) noexcept
+{
+    bool ok = !positionData.isNull();
+    if (ok) {
+        ok = exportPlacemark(io, icon, name, description,
+                             positionData.longitude, positionData.latitude, positionData.altitude, positionData.heading);
+    }
+    return ok;
+}
+
+inline bool KMLExportPlugin::exportPlacemark(QIODevice &io, Icon icon, const QString &name, const QString &description,
+                                             double longitude, double latitude, double altitudeInFeet, double heading) noexcept
+{
+    const QString placemark =
+"      <Placemark>\n"
+"        <name>" % name % "</name>\n"
+"        <description>" % description % "</description>\n"
+"        <LookAt>\n"
+"          <longitude>" % toString(longitude) % "</longitude>\n"
+"          <latitude>" % toString(latitude) % "</latitude>\n"
+"          <altitude>" % toString(Convert::feetToMeters(altitudeInFeet)) % "</altitude>\n"
+"          <heading>" % toString(heading) % "</heading>\n"
+"          <tilt>" % LookAtTilt % "</tilt>\n"
+"          <range>" % LookAtRange % "</range>\n"
+"          <altitudeMode>absolute</altitudeMode>\n"
+"        </LookAt>\n"
+"        <styleUrl>" % getStyleUrl(icon) %"</styleUrl>\n"
+"        <Point>\n"
+"          <extrude>1</extrude>\n"
+"          <altitudeMode>absolute</altitudeMode>\n"
+"          <gx:drawOrder>1</gx:drawOrder>\n"
+"          <coordinates>" % toString(longitude) % "," % toString(latitude) % "," % toString(Convert::feetToMeters(altitudeInFeet)) % "</coordinates>\n"
+"        </Point>\n"
+"      </Placemark>\n";
+    return io.write(placemark.toUtf8());
+}
+
+inline QString KMLExportPlugin::getStyleUrl(Icon icon) noexcept
+{
+    QString styleUrl;
+    switch (icon) {
+    case Icon::Airport:
+        styleUrl = "#sm_airports";
+        break;
+    case Icon::Flag:
+        styleUrl = "#sm_flag";
+        break;
+    default:
+        styleUrl = "#sm_airports";
+        break;
+    }
+    return styleUrl;
 }
