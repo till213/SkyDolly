@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <unordered_map>
 
 #include <QCoreApplication>
 #include <QIODevice>
@@ -66,6 +67,7 @@ public:
 
     Flight &flight;
     Unit unit;
+    std::unordered_map<QString, int> aircraftTypeCount;
 };
 
 // PUBLIC
@@ -90,6 +92,8 @@ bool KMLExportPlugin::exportData() const noexcept
     bool ok;
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     QString exportPath = Settings::getInstance().getExportPath();
+
+    d->aircraftTypeCount.clear();
 
     const QString filePath = QFileDialog::getSaveFileName(getParentWidget(), QCoreApplication::translate("KMLExportPlugin", "Export KML"), exportPath, QString("*.kml"));
     if (!filePath.isEmpty()) {
@@ -248,6 +252,7 @@ bool KMLExportPlugin::exportAircrafts(QIODevice &io) const noexcept
 {
     bool ok = true;
     for (const auto &aircraft : d->flight) {
+        d->aircraftTypeCount[aircraft->getAircraftInfoConst().aircraftType.type] += 1;
         ok = exportAircraft(*aircraft, io);
         if (!ok) {
             break;
@@ -259,9 +264,12 @@ bool KMLExportPlugin::exportAircrafts(QIODevice &io) const noexcept
 bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     const PositionData positionData;
+    const int aircraftTypeCount = d->aircraftTypeCount[aircraft.getAircraftInfoConst().aircraftType.type];
+    const bool isFormation = d->flight.count() > 1;
+    const QString aircratId = isFormation ? " #" % d->unit.formatNumber(aircraftTypeCount, 0) : QString();
     const QString placemarkBegin = QString(
 "    <Placemark>\n"
-"      <name>" % aircraft.getAircraftInfoConst().aircraftType.type % "</name>\n"
+"      <name>" % aircraft.getAircraftInfoConst().aircraftType.type % aircratId % "</name>\n"
 "      <description>" % getAircraftDescription(aircraft) % "</description>\n"
 "      <styleUrl>#sm_flight</styleUrl>\n"
 "      <LineString>\n"
