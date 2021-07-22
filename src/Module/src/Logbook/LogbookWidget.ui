@@ -49,7 +49,7 @@
      </property>
      <widget class="QTreeWidget" name="logTreeWidget">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+       <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -72,20 +72,7 @@
      <widget class="QWidget" name="layoutWidget">
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QTableWidget" name="logTableWidget">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>800</width>
-           <height>0</height>
-          </size>
-         </property>
-        </widget>
+        <widget class="QTableWidget" name="logTableWidget"/>
        </item>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout">
