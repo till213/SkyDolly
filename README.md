@@ -75,6 +75,7 @@ Refer to the [BUILD](BUILD.md) documentation.
 * https://github.com/nguyenquyhy/Flight-Recorder - A .Net based flight recording & replay application
 * https://github.com/saltysimulations/saltyreplay/ - A recording & replay with a web user interface
 * https://github.com/SAHorowitz/MSFS2020-PilotPathRecorder - Records the flight and generates Google Earth (KML format) "replays"
+* https://github.com/Elephant42/FS_Tool/tree/v0.6.2.1 - A simple tool that allows to set the aircraft location and simulation rate
 
 ## Other Useful Resources
 

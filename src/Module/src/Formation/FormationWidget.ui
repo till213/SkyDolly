@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>837</width>
+    <width>777</width>
     <height>566</height>
    </rect>
   </property>
@@ -17,14 +17,7 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_4">
      <item>
-      <widget class="QTableWidget" name="aircraftTableWidget">
-       <property name="minimumSize">
-        <size>
-         <width>400</width>
-         <height>0</height>
-        </size>
-       </property>
-      </widget>
+      <widget class="QTableWidget" name="aircraftTableWidget"/>
      </item>
      <item>
       <widget class="QGroupBox" name="groupBox_5">
@@ -83,7 +76,7 @@
             </property>
             <property name="minimumSize">
              <size>
-              <width>140</width>
+              <width>80</width>
               <height>0</height>
              </size>
             </property>
