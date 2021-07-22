@@ -67,7 +67,7 @@ CSVExportPlugin::~CSVExportPlugin() noexcept
 #endif
 }
 
-bool CSVExportPlugin::exportData() const noexcept
+bool CSVExportPlugin::exportData() noexcept
 {
     bool ok;
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();

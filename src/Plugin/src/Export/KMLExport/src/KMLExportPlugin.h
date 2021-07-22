@@ -61,23 +61,31 @@ public:
         PluginBase::setParentWidget(parent);
     }
 
-    virtual bool exportData() const noexcept override;
+    virtual bool exportData() noexcept override;
 
 private:
     enum class Icon {
         Airport,
         Flag
     };
-
     std::unique_ptr<KMLExportPluginPrivate> d;
 
+    void init() noexcept;
+
     bool exportHeader(QIODevice &io) const noexcept;
+
     bool exportStyles(QIODevice &io) const noexcept;
+    bool exportHighlightLineStyle(QIODevice &io) const noexcept;
+    bool exportNormalLineStyles(QIODevice &io) const noexcept;
+    bool exportLineStyleMaps(QIODevice &io) const noexcept;
+    bool exportPlacemarkStyles(QIODevice &io) const noexcept;
+
     bool exportFlightInfo(QIODevice &io) const noexcept;
     bool exportAircrafts(QIODevice &io) const noexcept;
     bool exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept;
     bool exportWaypoints(QIODevice &io) const noexcept;
     bool exportFooter(QIODevice &io) const noexcept;
+
     QString getFlightDescription() const noexcept;
     QString getAircraftDescription(const Aircraft &aircraft) const noexcept;
     QString getWaypointDescription(const Waypoint &waypoint) const noexcept;

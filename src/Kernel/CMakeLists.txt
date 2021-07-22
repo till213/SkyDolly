@@ -26,6 +26,8 @@ target_sources(Kernel
         src/Convert.h
         src/FlightSimulator.cpp
         src/FlightSimulator.h
+        src/Color.cpp
+        src/Color.h
 )
 
 if (${PLATFORM_IS_WINDOWS})
@@ -48,7 +50,7 @@ elseif (${PLATFORM_IS_LINUX})
 endif()
 
 set(KERNEL_LIBS
-    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Widgets
 )
 if (${PLATFORM_IS_WINDOWS})
     find_library (PSAPI psapi)
