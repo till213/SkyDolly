@@ -25,16 +25,19 @@
 #ifndef KMLEXPORTPLUGIN_H
 #define KMLEXPORTPLUGIN_H
 
+#include <memory>
+
 #include <QObject>
 #include <QtPlugin>
 
-class QFile;
+class QIODevice;
 
 #include "../../../ExportIntf.h"
 #include "../../../PluginBase.h"
 
 class Flight;
 class Aircraft;
+class KMLExportPluginPrivate;
 
 class KMLExportPlugin : public PluginBase, public ExportIntf
 {
@@ -42,8 +45,8 @@ class KMLExportPlugin : public PluginBase, public ExportIntf
     Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "KMLExportPlugin.json")
     Q_INTERFACES(ExportIntf)
 public:
-    KMLExportPlugin();
-    virtual ~KMLExportPlugin();
+    KMLExportPlugin() noexcept;
+    virtual ~KMLExportPlugin() noexcept;
 
     virtual QWidget *getParentWidget() const noexcept override
     {
@@ -58,8 +61,18 @@ public:
     virtual bool exportData() const noexcept override;
 
 private:
-    bool exportFlightData(const Flight &flight, QFile &file) const noexcept;
-    bool exportAircraftData(const Aircraft &aircraft, QFile &file) const noexcept;
+    std::unique_ptr<KMLExportPluginPrivate> d;
+
+    bool exportHeader(QIODevice &io) const noexcept;
+    bool exportStyles(QIODevice &io) const noexcept;
+    bool exportFlightInfo(QIODevice &io) const noexcept;
+    bool exportAircrafts(QIODevice &io) const noexcept;
+    bool exportAircraf(const Aircraft &aircraft, QIODevice &io) const noexcept;
+    bool exportFooter(QIODevice &io) const noexcept;
+    QString getFlightDescription() const noexcept;
+    QString getAircraftDescription(const Aircraft &aircraft) const noexcept;
+
+    static inline QString toString(double number) noexcept;
 };
 
 #endif // KMLEXPORTPLUGIN_H

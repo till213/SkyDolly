@@ -26,6 +26,7 @@
 #include <forward_list>
 #include <vector>
 
+#include <QCoreApplication>
 #include <QVariant>
 #include <QTableWidget>
 #include <QTableWidgetItem>
@@ -440,7 +441,7 @@ inline void LogbookWidget::updateSelectionDateRange(QTreeWidgetItem *item) const
 
 const QString LogbookWidget::getName() noexcept
 {
-    return QString(QT_TRANSLATE_NOOP("LogbookWidget", "Logbook"));
+    return QCoreApplication::translate("LogbookWidget", "Logbook");
 }
 
 // PRIVATE SLOTS

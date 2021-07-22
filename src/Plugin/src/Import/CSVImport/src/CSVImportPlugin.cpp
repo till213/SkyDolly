@@ -219,8 +219,8 @@ bool CSVImportPlugin::import(const QString &filePath, const AircraftType &aircra
                         const int newAircraftCount = flight.count();
                         ok = d->aircraftService->store(flight.getId(), newAircraftCount, flight[newAircraftCount - 1]);
                     } else {
-                        flight.setTitle(QT_TRANSLATE_NOOP("CSVImportPlugin", "CSV import"));
-                        flight.setDescription(QString(QT_TRANSLATE_NOOP("CSVImportPlugin", "Aircraft imported on %1 from file: %2")).arg(unit.formatDateTime(QDateTime::currentDateTime()), filePath));
+                        flight.setTitle(QCoreApplication::translate("CSVImportPlugin", "CSV import"));
+                        flight.setDescription(QCoreApplication::translate("CSVImportPlugin", "Aircraft imported on %1 from file: %2").arg(unit.formatDateTime(QDateTime::currentDateTime()), filePath));
                         ok = flightService.store(flight);
                     }
                 }
@@ -231,7 +231,7 @@ bool CSVImportPlugin::import(const QString &filePath, const AircraftType &aircra
         file.close();
     }
     if (!ok) {
-        QMessageBox::critical(getParentWidget(), QT_TRANSLATE_NOOP("CSVImportPlugin", "Import error"), QString(QT_TRANSLATE_NOOP("CSVImportPlugin", "The CSV file %1 could not be read.")).arg(filePath));
+        QMessageBox::critical(getParentWidget(), QCoreApplication::translate("CSVImportPlugin", "Import error"), QCoreApplication::translate("CSVImportPlugin", "The CSV file %1 could not be read.").arg(filePath));
     }
     return ok;
 }

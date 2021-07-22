@@ -87,6 +87,7 @@ public:
     double toNumber(const QString &value, bool *ok = nullptr) noexcept;
 
     static QString formatHHMMSS(qint64 msec) noexcept;
+    static QString formatBoolean(bool value) noexcept;
 
 private:
     std::unique_ptr<UnitPrivate> d;

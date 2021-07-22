@@ -51,10 +51,10 @@ public:
     SimulationVariablesDialogPrivate() noexcept
     {}
 
-    static const QString WindowTitle;
+    static const char WindowTitle[];
 };
 
-const QString SimulationVariablesDialogPrivate::WindowTitle = QT_TRANSLATE_NOOP("SimulationVariablesDialog", "Simulation Variables");
+const char SimulationVariablesDialogPrivate::WindowTitle[] = QT_TRANSLATE_NOOP("SimulationVariablesDialog", "Simulation Variables");
 
 // PUBLIC
 
@@ -132,7 +132,7 @@ void SimulationVariablesDialog::updateUi() noexcept
 
 void SimulationVariablesDialog::updateTitle() noexcept
 {
-    QString windowTitle = SimulationVariablesDialogPrivate::WindowTitle;
+    QString windowTitle = QCoreApplication::translate("SimulationVariablesDialog", SimulationVariablesDialogPrivate::WindowTitle);
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const Connect::State state = skyConnect ? skyConnect->get().getState() : Connect::State::Disconnected;
     switch (state) {
