@@ -111,6 +111,8 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
         "join   aircraft a "
         "on     a.flight_id = f.id "
         "and    a.seq_nr = f.user_aircraft_seq_nr "
+        "join   aircraft_type at "
+        "on     a.type = at.type "
         "left join (select ident, aircraft_id from waypoint wo1 where wo1.timestamp = (select min(wi1.timestamp) from waypoint wi1 where wi1.aircraft_id = wo1.aircraft_id)) fp1 "
         "on fp1.aircraft_id = a.id "
         "left join (select ident, aircraft_id from waypoint wo2 where wo2.timestamp = (select max(wi2.timestamp) from waypoint wi2 where wi2.aircraft_id = wo2.aircraft_id)) fp2 "
@@ -121,7 +123,8 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
         "       or start_waypoint like coalesce(:search_keyword, start_waypoint) "
         "       or end_waypoint like coalesce(:search_keyword, end_waypoint) "
         "      ) "
-        "  and aircraft_count > :aircraft_count;"
+        "  and aircraft_count > :aircraft_count "
+        "  and at.engine_type = coalesce(:engine_type, at.engine_type);"
     );
 
     const int aircraftCount = flightSelector.hasFormation ? 1 : 0;
@@ -130,6 +133,8 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
     query.bindValue(":to_date", flightSelector.toDate);
     query.bindValue(":search_keyword", searchKeyword);
     query.bindValue(":aircraft_count", aircraftCount);
+    const QVariant engineTypeVariant = flightSelector.engineType != SimType::EngineType::All ? Enum::toUnderlyingType(flightSelector.engineType) : QVariant();
+    query.bindValue(":engine_type", engineTypeVariant);
     const bool ok = query.exec();
     if (ok) {
         QSqlRecord record = query.record();

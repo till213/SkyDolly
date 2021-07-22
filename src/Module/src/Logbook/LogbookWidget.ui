@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>454</width>
+    <width>537</width>
     <height>150</height>
    </rect>
   </property>
@@ -28,6 +28,23 @@
        <property name="minimumSize">
         <size>
          <width>200</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Engine type:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="engineTypeComboBox">
+       <property name="minimumSize">
+        <size>
+         <width>120</width>
          <height>0</height>
         </size>
        </property>
@@ -69,7 +86,7 @@
        </property>
       </column>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QTableWidget" name="logTableWidget"/>
