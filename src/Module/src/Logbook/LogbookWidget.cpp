@@ -38,16 +38,19 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <QCheckBox>
+#include <QComboBox>
 #include <QLineEdit>
 #include <QAction>
 
 #include "../../../Kernel/src/Version.h"
 #include "../../../Kernel/src/Const.h"
+#include "../../../Kernel/src/Enum.h"
 #include "../../../Kernel/src/Unit.h"
 #include "../../../Kernel/src/Settings.h"
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/FlightSummary.h"
 #include "../../../Model/src/Logbook.h"
+#include "../../../Model/src/SimType.h"
 #include "../../../Persistence/src/Dao/FlightSelector.h"
 #include "../../../Persistence/src/Service/DatabaseService.h"
 #include "../../../Persistence/src/Service/LogbookService.h"
@@ -217,8 +220,16 @@ void LogbookWidget::initUi() noexcept
     ui->logTableWidget->horizontalHeader()->setStretchLastSection(true);
     ui->logTableWidget->sortByColumn(FlightIdColumn, Qt::SortOrder::DescendingOrder);
 
-    ui->splitter->setStretchFactor(0, 2);
     ui->splitter->setStretchFactor(1, 3);
+
+    // Engine type
+    ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::All), Enum::toUnderlyingType(SimType::EngineType::All));
+    ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::Jet), Enum::toUnderlyingType(SimType::EngineType::Jet));
+    ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::Turboprop), Enum::toUnderlyingType(SimType::EngineType::Turboprop));
+    ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::Piston), Enum::toUnderlyingType(SimType::EngineType::Piston));
+    ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::HeloBellTurbine), Enum::toUnderlyingType(SimType::EngineType::HeloBellTurbine));
+    ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::None), Enum::toUnderlyingType(SimType::EngineType::None));
+    ui->engineTypeComboBox->setCurrentText(0);
 }
 
 void LogbookWidget::updateFlightTable() noexcept
@@ -622,8 +633,14 @@ void LogbookWidget::handleDateItemClicked(QTreeWidgetItem *item) noexcept
     updateFlightTable();
 }
 
-void LogbookWidget::on_formationCheckBox_toggled(bool checked)
+void LogbookWidget::on_formationCheckBox_toggled(bool checked) noexcept
 {
     d->flightSelector.hasFormation = checked;
+    updateFlightTable();
+}
+
+void LogbookWidget::on_engineTypeComboBox_activated(int index) noexcept
+{
+    d->flightSelector.engineType = static_cast<SimType::EngineType>(ui->engineTypeComboBox->currentData().toInt());
     updateFlightTable();
 }

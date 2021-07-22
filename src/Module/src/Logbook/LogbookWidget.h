@@ -99,7 +99,8 @@ private slots:
     // Flight date tree
     void handleDateItemClicked(QTreeWidgetItem *item) noexcept;
 
-    void on_formationCheckBox_toggled(bool checked);
+    void on_formationCheckBox_toggled(bool checked) noexcept;
+    void on_engineTypeComboBox_activated(int index) noexcept;
 };
 
 #endif // LOGBOOKWIDGET_H

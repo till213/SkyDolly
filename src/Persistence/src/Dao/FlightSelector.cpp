@@ -29,7 +29,8 @@
 FlightSelector::FlightSelector()
     : hasFormation(false),
       fromDate(MinDate),
-      toDate(MaxDate)
+      toDate(MaxDate),
+      engineType(SimType::EngineType::All)
 {}
 
 // The release date of FS2020 ;)
