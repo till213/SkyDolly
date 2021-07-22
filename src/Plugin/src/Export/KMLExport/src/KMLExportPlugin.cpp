@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <vector>
 #include <unordered_map>
 
 #include <QCoreApplication>
@@ -35,6 +36,7 @@
 #include <QMessageBox>
 
 #include "../../../../../Kernel/src/Convert.h"
+#include "../../../../../Kernel/src/Color.h"
 #include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/Unit.h"
 #include "../../../../../Kernel/src/Settings.h"
@@ -51,13 +53,24 @@
 
 namespace
 {
-    // Resampling at 1 Hz
-    constexpr int ResamplePeriodMSec = 1000;
     // Precision of exported double values
     constexpr int NumberPrecision = 12;
+
+    // Placemark "look at" direction
     constexpr char LookAtTilt[] = "50";
     constexpr char LookAtRange[] = "4000";
     constexpr int HeadingNorth = 0;
+
+    constexpr char LineWidth[] = "1.5";
+
+    constexpr QRgb StartColor = 0xffff0000;
+    constexpr QRgb EndColor = 0xff0000ff;
+    // Number of colors per color ramp
+    constexpr int NofColorsPerRamp = 8;
+
+    // In KML format: AABBGGRR
+    constexpr char LineHighlightColor[] = "ff00ffff";
+    constexpr char PolygonHighlightColor[] = "ff7faadd";
 }
 
 class KMLExportPluginPrivate
@@ -65,13 +78,17 @@ class KMLExportPluginPrivate
 public:
     KMLExportPluginPrivate() noexcept
         : flight(Logbook::getInstance().getCurrentFlight()),
-          resamplingPeriod(KMLExportDialog::ResamplingPeriod::OneHz)
+          resamplingPeriod(KMLExportDialog::ResamplingPeriod::OneHz),
+          colorRampIndex(0)
     {}
 
     Flight &flight;
     KMLExportDialog::ResamplingPeriod resamplingPeriod;
     Unit unit;
     std::unordered_map<QString, int> aircraftTypeCount;
+    std::vector<QRgb> colorRamp;
+    // Index into colorRamp, modulo its size
+    int colorRampIndex;
 };
 
 // PUBLIC
@@ -91,11 +108,11 @@ KMLExportPlugin::~KMLExportPlugin() noexcept
 #endif
 }
 
-bool KMLExportPlugin::exportData() const noexcept
+bool KMLExportPlugin::exportData() noexcept
 {
     bool ok;
 
-    d->aircraftTypeCount.clear();
+    init();
 
     std::unique_ptr<KMLExportDialog> kmlExportDialog = std::make_unique<KMLExportDialog>(getParentWidget());
     const int choice = kmlExportDialog->exec();
@@ -145,6 +162,13 @@ bool KMLExportPlugin::exportData() const noexcept
 
 // PRIVATE
 
+void KMLExportPlugin::init() noexcept
+{
+    d->aircraftTypeCount.clear();
+    d->colorRamp = Color::createColorRamp(StartColor, EndColor, NofColorsPerRamp);
+    d->colorRampIndex = 0;
+}
+
 bool KMLExportPlugin::exportHeader(QIODevice &io) const noexcept
 {
     const QString header =
@@ -158,43 +182,93 @@ bool KMLExportPlugin::exportHeader(QIODevice &io) const noexcept
 
 bool KMLExportPlugin::exportStyles(QIODevice &io) const noexcept
 {
-    const QString header =
+    bool ok = exportHighlightLineStyle(io);
+    if (ok) {
+        ok = exportNormalLineStyles(io);
+    }
+    if (ok) {
+        ok = exportLineStyleMaps(io);
+    }
+    if (ok) {
+        ok = exportPlacemarkStyles(io);
+    }
+    return ok;
+}
 
-// Polyline style
-
+bool KMLExportPlugin::exportHighlightLineStyle(QIODevice &io) const noexcept
+{
+    const QString style =
 "    <Style id=\"s_flight_h\">\n"
 "      <LineStyle>\n"
-"        <color>ff00ffff</color>\n"
-"        <width>1.5</width>\n"
+"        <color>" % QString(LineHighlightColor) % "</color>\n"
+"        <width>" % QString(LineWidth) % "</width>\n"
 "      </LineStyle>\n"
 "      <PolyStyle>\n"
-"        <color>ff7faadd</color>\n"
+"        <color>" % QString(PolygonHighlightColor) % "</color>\n"
 "        <outline>0</outline>\n"
 "      </PolyStyle>\n"
-"    </Style>\n"
-"    <Style id=\"s_flight\">\n"
+"    </Style>\n";
+
+    return io.write(style.toUtf8());
+}
+
+bool KMLExportPlugin::exportNormalLineStyles(QIODevice &io) const noexcept
+{
+    bool ok = true;
+    int index = 0;
+    for (const QRgb color : d->colorRamp) {
+
+        const QRgb aabbggrr = Color::convertRgbToKml(color);
+
+        const QString style =
+"    <Style id=\"s_flight_" % QString::number(index) % "\">\n"
 "      <LineStyle>\n"
-"        <color>ff0000ff</color>\n"
-"        <width>1.5</width>\n"
+"        <color>" % QString::number(aabbggrr, 16) % "</color>\n"
+"        <width>" % QString(LineWidth) % "</width>\n"
 "      </LineStyle>\n"
 "      <PolyStyle>\n"
-"        <color>7f7faaaa</color>\n"
+"        <color>" % QString(PolygonHighlightColor) % "</color>\n"
 "        <outline>0</outline>\n"
 "      </PolyStyle>\n"
-"    </Style>\n"
-"    <StyleMap id=\"sm_flight\">\n"
+"    </Style>\n";
+
+        ok = io.write(style.toUtf8());
+        if (ok) {
+            ++index;
+        } else {
+            break;
+        }
+    }
+
+    return ok;
+}
+
+bool KMLExportPlugin::exportLineStyleMaps(QIODevice &io) const noexcept
+{
+    bool ok = true;
+    for (int index = 0; ok && index < d->colorRamp.size(); ++index) {
+
+        const QString styleMap =
+"    <StyleMap id=\"sm_flight_" % QString::number(index) % "\">\n"
 "      <Pair>\n"
 "        <key>normal</key>\n"
-"        <styleUrl>#s_flight</styleUrl>\n"
+"        <styleUrl>#s_flight_" % QString::number(index) % "</styleUrl>\n"
 "      </Pair>\n"
 "      <Pair>\n"
 "        <key>highlight</key>\n"
 "        <styleUrl>#s_flight_h</styleUrl>\n"
 "      </Pair>\n"
-"    </StyleMap>\n"
+"    </StyleMap>\n";
 
-// Placemark styles
+        ok = io.write(styleMap.toUtf8());
+    }
 
+    return ok;
+}
+
+bool KMLExportPlugin::exportPlacemarkStyles(QIODevice &io) const noexcept
+{
+    const QString styles =
 // Airport
 "    <Style id=\"s_airports\">\n"
 "      <IconStyle>\n"
@@ -247,8 +321,9 @@ bool KMLExportPlugin::exportStyles(QIODevice &io) const noexcept
 "      </Pair>\n"
 "    </StyleMap>\n";
 
-    return io.write(header.toUtf8());
+    return io.write(styles.toUtf8());
 }
+
 
 bool KMLExportPlugin::exportFlightInfo(QIODevice &io) const noexcept
 {
@@ -276,11 +351,12 @@ bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
     const int aircraftTypeCount = d->aircraftTypeCount[aircraft.getAircraftInfoConst().aircraftType.type];
     const bool isFormation = d->flight.count() > 1;
     const QString aircratId = isFormation ? " #" % d->unit.formatNumber(aircraftTypeCount, 0) : QString();
+
     const QString placemarkBegin = QString(
 "    <Placemark>\n"
 "      <name>" % aircraft.getAircraftInfoConst().aircraftType.type % aircratId % "</name>\n"
 "      <description>" % getAircraftDescription(aircraft) % "</description>\n"
-"      <styleUrl>#sm_flight</styleUrl>\n"
+"      <styleUrl>#sm_flight_" % QString::number(d->colorRampIndex) % "</styleUrl>\n"
 "      <LineString>\n"
 "        <extrude>1</extrude>\n"
 "        <tessellate>1</tessellate>\n"
@@ -321,6 +397,7 @@ bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
 "        </coordinates>\n"
 "      </LineString>\n"
 "    </Placemark>\n");
+        d->colorRampIndex = (++d->colorRampIndex) % d->colorRamp.size();
         ok = io.write(placemarkEnd.toUtf8());
     }
     return ok;

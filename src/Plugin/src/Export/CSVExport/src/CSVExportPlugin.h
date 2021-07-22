@@ -63,7 +63,7 @@ public:
         PluginBase::setParentWidget(parent);
     }
 
-    virtual bool exportData() const noexcept override;
+    virtual bool exportData() noexcept override;
 
 private:
     CSVExportPrivate *d;

@@ -22,20 +22,34 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef EXPORTINTF_H
-#define EXPORTINTF_H
+#ifndef COLOR_H
+#define COLOR_H
 
-#include <QtPlugin>
+#include <vector>
 
-#include "PluginIntf.h"
+#include <QColor>
 
-class ExportIntf : public PluginIntf
+#include "KernelLib.h"
+
+class KERNEL_API Color
 {
 public:
-    virtual bool exportData() noexcept = 0;
+    static std::vector<QRgb> createColorRamp(QRgb start, QRgb end, int nofTotalColors) noexcept;
+
+    /*!
+     * Converts the \c color from format AARRGGBB to the KML format AABBGGRR.
+     *
+     * \param color
+     *        the color in format AARRGGBB to be converted
+     * \return the converted color in format AABBGGRR
+     */
+    inline static QRgb convertRgbToKml(QRgb color) {
+        const QRgb alpha = qAlpha(color);
+        const QRgb red = qRed(color);
+        const QRgb green = qGreen(color);
+        const QRgb blue = qBlue(color);
+        return alpha << 24 | blue << 16 | green << 8 | red;
+    }
 };
 
-#define EXPORT_INTERFACE_IID "com.github.till213.SkyDolly.ExportInterface/1.0"
-Q_DECLARE_INTERFACE(ExportIntf, EXPORT_INTERFACE_IID)
-
-#endif // EXPORTINTF_H
+#endif // COLOR_H
