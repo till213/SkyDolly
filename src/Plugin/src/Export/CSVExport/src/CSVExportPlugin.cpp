@@ -49,7 +49,12 @@
 #include "../../../../../Model/src/Light.h"
 #include "../../../../../Model/src/LightData.h"
 #include "../../../../../Persistence/src/CSVConst.h"
+#include "../../../../src/Export.h"
 #include "CSVExportPlugin.h"
+
+namespace  {
+    constexpr char FileSuffix[] = "csv";
+}
 
 // PUBLIC
 
@@ -71,8 +76,7 @@ bool CSVExportPlugin::exportData() noexcept
 {
     bool ok;
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();
-    QString exportPath = Settings::getInstance().getExportPath();
-
+    QString exportPath = Export::suggestFilePath(FileSuffix);
     const QString filePath = QFileDialog::getSaveFileName(getParentWidget(), QCoreApplication::translate("CSVExportPlugin", "Export CSV"), exportPath, QString("*.csv"));
     if (!filePath.isEmpty()) {
         QFile file(filePath);
