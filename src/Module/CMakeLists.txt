@@ -7,7 +7,7 @@ else()
 endif()
 
 set(MODULE_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence SkyConnect Plugin tsl::ordered_map
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence SkyConnect Plugin Widget tsl::ordered_map
 )
 if (${PLATFORM_IS_MACOS})
     list(APPEND MODULE_LIBS -lc++)
@@ -30,7 +30,7 @@ target_sources(Module
         src/Formation/FormationWidget.ui
 )
 
-include_directories(Module PRIVATE src/Widgets)
+include_directories(Module PRIVATE ../Widget/src/)
 target_link_libraries(Module PRIVATE ${MODULE_LIBS})
 set_target_properties(Module PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(Module PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
