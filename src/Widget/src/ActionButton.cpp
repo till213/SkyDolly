@@ -40,7 +40,7 @@ public:
 // PUBLIC
 
 ActionButton::ActionButton(QWidget *parent) noexcept
-    : QPushButton(parent),
+    : ActiveButton(parent),
       d(std::make_unique<ActionButtonPrivate>())
 {}
 

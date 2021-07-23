@@ -18,6 +18,8 @@ endif()
 target_sources(${LIBRARY_NAME}
     PRIVATE
         src/WidgetLib.h
+        src/ActiveButton.cpp
+        src/ActiveButton.h
         src/ActionButton.cpp
         src/ActionButton.h
         src/ActionRadioButton.h

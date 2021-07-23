@@ -87,7 +87,7 @@ private slots:
     void updateUi() noexcept;
     void updateEditUi() noexcept;
     void updateRelativePosition() noexcept;
-    void updateOffsetUi() noexcept;
+    void updateTimeOffsetUi() noexcept;
     void updateReplayUi() noexcept;
     void updateToolTips() noexcept;
 

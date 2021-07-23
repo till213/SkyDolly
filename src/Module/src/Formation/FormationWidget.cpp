@@ -676,7 +676,7 @@ void FormationWidget::updateUi() noexcept
 
     updateEditUi();
     updateInitialPositionUi();
-    updateOffsetUi();
+    updateTimeOffsetUi();
     updateReplayUi();
 }
 
@@ -713,7 +713,7 @@ void FormationWidget::updateRelativePosition() noexcept
     }
 }
 
-void FormationWidget::updateOffsetUi() noexcept
+void FormationWidget::updateTimeOffsetUi() noexcept
 {
     const bool enabled = d->selectedAircraftIndex != Flight::InvalidId;
 
@@ -848,7 +848,7 @@ void FormationWidget::handleSelectionChanged() noexcept
         d->selectedAircraftIndex = Flight::InvalidId;
     }
     updateEditUi();
-    updateOffsetUi();
+    updateTimeOffsetUi();
     updateToolTips();
 }
 

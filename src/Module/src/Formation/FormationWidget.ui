@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>835</width>
-    <height>472</height>
+    <width>811</width>
+    <height>448</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -923,7 +923,7 @@
            <enum>QLayout::SetMinimumSize</enum>
           </property>
           <item>
-           <widget class="QPushButton" name="fastBackwardOffsetPushButton">
+           <widget class="ActiveButton" name="fastBackwardOffsetPushButton">
             <property name="maximumSize">
              <size>
               <width>32</width>
@@ -938,7 +938,8 @@
             </property>
             <property name="icon">
              <iconset resource="../../../UserInterface/res/SkyDolly.qrc">
-              <normaloff>:/img/icons/fast-backward-offset-normal.png</normaloff>:/img/icons/fast-backward-offset-normal.png</iconset>
+              <normaloff>:/img/icons/fast-backward-offset-normal.png</normaloff>
+              <activeoff>:/img/icons/fast-backward-offset-active.png</activeoff>:/img/icons/fast-backward-offset-normal.png</iconset>
             </property>
             <property name="autoRepeat">
              <bool>true</bool>
@@ -949,7 +950,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="backwardOffsetPushButton">
+           <widget class="ActiveButton" name="backwardOffsetPushButton">
             <property name="maximumSize">
              <size>
               <width>32</width>
@@ -964,7 +965,8 @@
             </property>
             <property name="icon">
              <iconset resource="../../../UserInterface/res/SkyDolly.qrc">
-              <normaloff>:/img/icons/backward-offset-normal.png</normaloff>:/img/icons/backward-offset-normal.png</iconset>
+              <normaloff>:/img/icons/backward-offset-normal.png</normaloff>
+              <activeoff>:/img/icons/backward-offset-active.png</activeoff>:/img/icons/backward-offset-normal.png</iconset>
             </property>
             <property name="autoRepeat">
              <bool>true</bool>
@@ -1004,7 +1006,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="forwardOffsetPushButton">
+           <widget class="ActiveButton" name="forwardOffsetPushButton">
             <property name="maximumSize">
              <size>
               <width>32</width>
@@ -1019,7 +1021,8 @@
             </property>
             <property name="icon">
              <iconset resource="../../../UserInterface/res/SkyDolly.qrc">
-              <normaloff>:/img/icons/forward-offset-normal.png</normaloff>:/img/icons/forward-offset-normal.png</iconset>
+              <normaloff>:/img/icons/forward-offset-normal.png</normaloff>
+              <activeoff>:/img/icons/forward-offset-active.png</activeoff>:/img/icons/forward-offset-normal.png</iconset>
             </property>
             <property name="autoRepeat">
              <bool>true</bool>
@@ -1030,7 +1033,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="fastForwardOffsetPushButton">
+           <widget class="ActiveButton" name="fastForwardOffsetPushButton">
             <property name="maximumSize">
              <size>
               <width>32</width>
@@ -1045,7 +1048,8 @@
             </property>
             <property name="icon">
              <iconset resource="../../../UserInterface/res/SkyDolly.qrc">
-              <normaloff>:/img/icons/fast-forward-offset-normal.png</normaloff>:/img/icons/fast-forward-offset-normal.png</iconset>
+              <normaloff>:/img/icons/fast-forward-offset-normal.png</normaloff>
+              <activeoff>:/img/icons/fast-forward-offset-active.png</activeoff>:/img/icons/fast-forward-offset-normal.png</iconset>
             </property>
             <property name="autoRepeat">
              <bool>true</bool>
@@ -1123,6 +1127,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ActiveButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">ActiveButton.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../../../UserInterface/res/SkyDolly.qrc"/>
   <include location="../../../UserInterface/res/SkyDolly.qrc"/>
