@@ -160,11 +160,11 @@ QString Unit::formatKnots(double velocity) noexcept
 QString Unit::formatElapsedTime(qint64 milliSeconds) noexcept
 {
     QString elapsedTime;
-    if (milliSeconds < 1000) {
-        elapsedTime = QString("%1 ms").arg(elapsedTime);
-    } else if (milliSeconds < 1000 * 60) {
+    if (qAbs(milliSeconds) < 1000) {
+        elapsedTime = QString("%1 ms").arg(milliSeconds);
+    } else if (qAbs(milliSeconds) < 1000 * 60) {
         elapsedTime = QString("%1 s").arg(QString::number(static_cast<double>(milliSeconds) / 1000.0, 'f', 1));
-    } else if (milliSeconds < 1000 * 60 * 60) {
+    } else if (qAbs(milliSeconds) < 1000 * 60 * 60) {
         elapsedTime = QString("%1 min").arg(QString::number(static_cast<double>(milliSeconds) / (1000.0 * 60.0), 'f', 1));
     } else {
         elapsedTime = QString("%1 hours").arg(QString::number(static_cast<double>(milliSeconds) / (1000.0 * 60.0 * 60), 'f', 1));
