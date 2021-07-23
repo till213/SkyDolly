@@ -33,6 +33,7 @@
 class QIODevice;
 class QString;
 
+#include "../../../../../Model/src/SimType.h"
 #include "../../../ExportIntf.h"
 #include "../../../PluginBase.h"
 
@@ -90,12 +91,14 @@ private:
     QString getAircraftDescription(const Aircraft &aircraft) const noexcept;
     QString getWaypointDescription(const Waypoint &waypoint) const noexcept;
 
-    static inline QString toString(double number) noexcept;
+    static bool exportNormalLineStyesPerEngineType(SimType::EngineType engineType, const std::vector<QRgb> &colorRamp, QIODevice &io) noexcept;
     static inline bool exportPlacemark(QIODevice &io, Icon icon, const QString &name, const QString &description,
                                        const PositionData &positionData) noexcept;
     static inline bool exportPlacemark(QIODevice &io, Icon icon, const QString &name, const QString &description,
                                        double longitude, double latitude, double altitudeInFeet, double heading) noexcept;
     static inline QString getStyleUrl(Icon icon) noexcept;
+
+    static inline QString toString(double number) noexcept;
 };
 
 #endif // KMLEXPORTPLUGIN_H
