@@ -29,7 +29,6 @@
 #include <QCoreApplication>
 #include <QIODevice>
 #include <QFile>
-// Implements the % operator for string concatenation
 #include <QStringBuilder>
 #include <QString>
 #include <QFileDialog>
@@ -39,7 +38,6 @@
 
 #include "../../../../../Kernel/src/Convert.h"
 #include "../../../../../Kernel/src/File.h"
-#include "../../../../../Kernel/src/Color.h"
 #include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/Unit.h"
 #include "../../../../../Kernel/src/Settings.h"
@@ -51,7 +49,9 @@
 #include "../../../../../Model/src/Aircraft.h"
 #include "../../../../../Model/src/Position.h"
 #include "../../../../../Model/src/PositionData.h"
+#include "../../../../../Model/src/SimType.h"
 #include "KMLExportDialog.h"
+#include "KMLStyleExport.h"
 #include "KMLExportPlugin.h"
 
 namespace
@@ -64,35 +64,8 @@ namespace
     constexpr char LookAtRange[] = "4000";
     constexpr int HeadingNorth = 0;
 
-    constexpr char LineWidth[] = "1.5";
-
-    // in AARRGGBB format
-// TODO Choose good colours!!!
-    constexpr QRgb JetStartColor = 0xffe54f8f;
-    constexpr QRgb JetEndColor = 0xff4340a7;
-    constexpr QRgb TurbopropStartColor = 0xffa58fcf;
-    constexpr QRgb TurbopropEndColor = 0xff1022a7;
-    constexpr QRgb PistonStartColor = 0xffe4548f;
-    constexpr QRgb PistonEndColor = 0xff43ffa1;
-    constexpr QRgb OtherStartColor = 0xffe54f8f;
-    constexpr QRgb OtherEndColor = 0xff43ccff;
-
     // Number of colors per color ramp
     constexpr int MaxColorsPerRamp = 8;
-
-    constexpr QRgb LineHighlightColor = 0xffffff00;
-    constexpr QRgb PolygonHighlightColor = 0xcc7ed5c9;
-    constexpr QRgb PolygonColor = 0x337ed5c9;
-
-    constexpr char JetStyleId[] = "s_jet_style";
-    constexpr char TurbopropStyleId[] = "s_turbo_prop_style";
-    constexpr char PistonStyleId[] = "s_piston_style";
-    constexpr char OtherStyleId[] = "s_other_style";
-
-    constexpr char JetStyleMapId[] = "sm_jet_style";
-    constexpr char TurbopropStyleMapId[] = "sm_turbo_prop_style";
-    constexpr char PistonStyleMapId[] = "sm_piston_style";
-    constexpr char OtherStyleMapId[] = "sm_other_style";
 }
 
 class KMLExportPluginPrivate
@@ -100,26 +73,18 @@ class KMLExportPluginPrivate
 public:
     KMLExportPluginPrivate() noexcept
         : flight(Logbook::getInstance().getCurrentFlight()),
-          resamplingPeriod(KMLExportDialog::ResamplingPeriod::OneHz),
-          jetColorRampIndex(0),
-          turbopropColorRampIndex(0),
-          pistonColorRampIndex(0),
-          otherColorRampIndex(0)
+          nofAircrafts(flight.count()),
+          styleExport(std::make_unique<KMLStyleExport>(qMin(nofAircrafts, MaxColorsPerRamp))),
+          resamplingPeriod(KMLExportDialog::ResamplingPeriod::OneHz)
     {}
 
     Flight &flight;
+    int nofAircrafts;
+    std::unique_ptr<KMLStyleExport> styleExport;
     KMLExportDialog::ResamplingPeriod resamplingPeriod;
     Unit unit;
     std::unordered_map<QString, int> aircraftTypeCount;
-    std::vector<QRgb> jetColorRamp;
-    std::vector<QRgb> turbopropColorRamp;
-    std::vector<QRgb> pistonColorRamp;
-    std::vector<QRgb> otherColorRamp;
-    // Index into color ramp, modulo its size
-    int jetColorRampIndex;
-    int turbopropColorRampIndex;
-    int pistonColorRampIndex;
-    int otherColorRampIndex;
+
 };
 
 // PUBLIC
@@ -158,7 +123,7 @@ bool KMLExportPlugin::exportData() noexcept
                 ok = exportHeader(file);
             }
             if (ok) {
-                ok = exportStyles(file);
+                ok = d->styleExport->exportStyles(file);
             }
             if (ok) {
                 ok = exportFlightInfo(file);
@@ -202,17 +167,6 @@ bool KMLExportPlugin::exportData() noexcept
 void KMLExportPlugin::init() noexcept
 {
     d->aircraftTypeCount.clear();
-
-    const int aircraftCount = d->flight.count();
-    const int nofColors = qMin(aircraftCount, MaxColorsPerRamp);
-    d->jetColorRamp = Color::createColorRamp(JetStartColor, JetEndColor, nofColors);
-    d->turbopropColorRamp = Color::createColorRamp(TurbopropStartColor, TurbopropEndColor, nofColors);
-    d->pistonColorRamp = Color::createColorRamp(PistonStartColor, PistonEndColor, nofColors);
-    d->otherColorRamp = Color::createColorRamp(OtherStartColor, OtherEndColor, nofColors);
-    d->jetColorRampIndex = 0;
-    d->turbopropColorRampIndex = 0;
-    d->pistonColorRampIndex = 0;
-    d->otherColorRampIndex = 0;
 }
 
 bool KMLExportPlugin::exportHeader(QIODevice &io) const noexcept
@@ -226,191 +180,11 @@ bool KMLExportPlugin::exportHeader(QIODevice &io) const noexcept
     return io.write(header.toUtf8());
 }
 
-bool KMLExportPlugin::exportStyles(QIODevice &io) const noexcept
-{
-    bool ok = exportHighlightLineStyle(io);
-    if (ok) {
-        ok = exportNormalLineStyles(io);
-    }
-    if (ok) {
-        ok = exportLineStyleMaps(io);
-    }
-    if (ok) {
-        ok = exportPlacemarkStyles(io);
-    }
-    return ok;
-}
-
-bool KMLExportPlugin::exportHighlightLineStyle(QIODevice &io) const noexcept
-{
-    const QRgb lineHighlightKml = Color::convertRgbToKml(LineHighlightColor);
-    const QRgb polygonHighlightKml = Color::convertRgbToKml(PolygonHighlightColor);
-    const QString style =
-"    <Style id=\"s_flight_h\">\n"
-"      <LineStyle>\n"
-"        <color>" % QString::number(lineHighlightKml, 16) % "</color>\n"
-"        <width>" % QString(LineWidth) % "</width>\n"
-"      </LineStyle>\n"
-"      <PolyStyle>\n"
-"        <color>" % QString::number(polygonHighlightKml, 16) % "</color>\n"
-"        <outline>0</outline>\n"
-"      </PolyStyle>\n"
-"    </Style>\n";
-
-    return io.write(style.toUtf8());
-}
-
-bool KMLExportPlugin::exportNormalLineStyles(QIODevice &io) const noexcept
-{
-    bool ok = exportNormalLineStyesPerEngineType(SimType::EngineType::Jet, d->jetColorRamp, io);
-    if (ok) {
-        ok = exportNormalLineStyesPerEngineType(SimType::EngineType::Turboprop, d->turbopropColorRamp, io);
-    }
-    if (ok) {
-        ok = exportNormalLineStyesPerEngineType(SimType::EngineType::Piston, d->pistonColorRamp, io);
-    }
-    if (ok) {
-        ok = exportNormalLineStyesPerEngineType(SimType::EngineType::All, d->otherColorRamp, io);
-    }
-
-    return ok;
-}
-
-bool KMLExportPlugin::exportLineStyleMaps(QIODevice &io) const noexcept
-{
-    bool ok = true;
-
-    // Jet style map
-    for (std::size_t index = 0; ok && index < d->jetColorRamp.size(); ++index) {
-        const QString styleMap =
-"    <StyleMap id=\"" % QString(JetStyleMapId) % "_" % QString::number(index) % "\">\n"
-"      <Pair>\n"
-"        <key>normal</key>\n"
-"        <styleUrl>#" % QString(JetStyleId) % "_" % QString::number(index) % "</styleUrl>\n"
-"      </Pair>\n"
-"      <Pair>\n"
-"        <key>highlight</key>\n"
-"        <styleUrl>#s_flight_h</styleUrl>\n"
-"      </Pair>\n"
-"    </StyleMap>\n";
-        ok = io.write(styleMap.toUtf8());
-    }
-
-    // Turboprop style map
-    for (std::size_t index = 0; ok && index < d->jetColorRamp.size(); ++index) {
-        const QString styleMap =
-"    <StyleMap id=\"" % QString(TurbopropStyleMapId) % "_" % QString::number(index) % "\">\n"
-"      <Pair>\n"
-"        <key>normal</key>\n"
-"        <styleUrl>#" % QString(TurbopropStyleId) % "_" % QString::number(index) % "</styleUrl>\n"
-"      </Pair>\n"
-"      <Pair>\n"
-"        <key>highlight</key>\n"
-"        <styleUrl>#s_flight_h</styleUrl>\n"
-"      </Pair>\n"
-"    </StyleMap>\n";
-        ok = io.write(styleMap.toUtf8());
-    }
-
-    // Piston style map
-    for (std::size_t index = 0; ok && index < d->jetColorRamp.size(); ++index) {
-        const QString styleMap =
-"    <StyleMap id=\"" % QString(PistonStyleMapId) % "_" % QString::number(index) % "\">\n"
-"      <Pair>\n"
-"        <key>normal</key>\n"
-"        <styleUrl>#" % QString(PistonStyleId) % "_" % QString::number(index) % "</styleUrl>\n"
-"      </Pair>\n"
-"      <Pair>\n"
-"        <key>highlight</key>\n"
-"        <styleUrl>#s_flight_h</styleUrl>\n"
-"      </Pair>\n"
-"    </StyleMap>\n";
-        ok = io.write(styleMap.toUtf8());
-    }
-
-    // Other style map
-    for (std::size_t index = 0; ok && index < d->jetColorRamp.size(); ++index) {
-        const QString styleMap =
-"    <StyleMap id=\"" % QString(OtherStyleMapId) % "_" % QString::number(index) % "\">\n"
-"      <Pair>\n"
-"        <key>normal</key>\n"
-"        <styleUrl>#" % QString(OtherStyleId) % "_" % QString::number(index) % "</styleUrl>\n"
-"      </Pair>\n"
-"      <Pair>\n"
-"        <key>highlight</key>\n"
-"        <styleUrl>#s_flight_h</styleUrl>\n"
-"      </Pair>\n"
-"    </StyleMap>\n";
-        ok = io.write(styleMap.toUtf8());
-    }
-
-    return ok;
-}
-
-bool KMLExportPlugin::exportPlacemarkStyles(QIODevice &io) const noexcept
-{
-    const QString styles =
-// Airport
-"    <Style id=\"s_airports\">\n"
-"      <IconStyle>\n"
-"        <scale>1.2</scale>\n"
-"        <Icon><href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href></Icon>\n"
-"        <hotSpot x=\"0.5\" y=\"0\" xunits=\"fraction\" yunits=\"fraction\"/>\n"
-"      </IconStyle>\n"
-"	 </Style>\n"
-"    <Style id=\"s_airports_h\">\n"
-"      <IconStyle>\n"
-"        <scale>1.4</scale>\n"
-"        <Icon><href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href></Icon>\n"
-"        <hotSpot x=\"0.5\" y=\"0\" xunits=\"fraction\" yunits=\"fraction\"/>\n"
-"      </IconStyle>\n"
-"	 </Style>\n"
-"    <StyleMap id=\"sm_airports\">\n"
-"      <Pair>\n"
-"        <key>normal</key>\n"
-"        <styleUrl>#s_airports</styleUrl>\n"
-"      </Pair>\n"
-"      <Pair>\n"
-"        <key>highlight</key>\n"
-"        <styleUrl>#s_airports_h</styleUrl>\n"
-"      </Pair>\n"
-"    </StyleMap>\n"
-
-// Flag
-"    <Style id=\"s_flag\">\n"
-"      <IconStyle>\n"
-"        <scale>1.2</scale>\n"
-"        <Icon><href>http://maps.google.com/mapfiles/kml/shapes/flag.png</href></Icon>\n"
-"        <hotSpot x=\"0.5\" y=\"0\" xunits=\"fraction\" yunits=\"fraction\"/>\n"
-"      </IconStyle>\n"
-"	 </Style>\n"
-"    <Style id=\"s_flag_h\">\n"
-"      <IconStyle>\n"
-"        <scale>1.4</scale>\n"
-"        <Icon><href>http://maps.google.com/mapfiles/kml/shapes/flag.png</href></Icon>\n"
-"        <hotSpot x=\"0.5\" y=\"0\" xunits=\"fraction\" yunits=\"fraction\"/>\n"
-"      </IconStyle>\n"
-"    </Style>\n"
-"    <StyleMap id=\"sm_flag\">\n"
-"      <Pair>\n"
-"        <key>normal</key>\n"
-"        <styleUrl>#s_flag</styleUrl>\n"
-"      </Pair>\n"
-"      <Pair>\n"
-"        <key>highlight</key>\n"
-"        <styleUrl>#s_flag_h</styleUrl>\n"
-"      </Pair>\n"
-"    </StyleMap>\n";
-
-    return io.write(styles.toUtf8());
-}
-
-
 bool KMLExportPlugin::exportFlightInfo(QIODevice &io) const noexcept
 {
     const Aircraft &aircraft = d->flight.getUserAircraftConst();
     const PositionData &positionData = aircraft.getPosition().getFirst();
-    return exportPlacemark(io, Icon::Airport, d->flight.getTitle(), getFlightDescription(), positionData);
+    return exportPlacemark(io, KMLStyleExport::Icon::Airport, d->flight.getTitle(), getFlightDescription(), positionData);
 }
 
 bool KMLExportPlugin::exportAircrafts(QIODevice &io) const noexcept
@@ -433,36 +207,14 @@ bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
     const bool isFormation = d->flight.count() > 1;
     const QString aircratId = isFormation ? " #" % d->unit.formatNumber(aircraftTypeCount, 0) : QString();
 
-    QString styleMapId;
-    int colorRampIndex;
-    switch (aircraft.getAircraftInfoConst().aircraftType.engineType) {
-    case SimType::EngineType::Jet:
-        styleMapId = JetStyleMapId;
-        colorRampIndex = d->jetColorRampIndex % d->jetColorRamp.size();
-        ++d->jetColorRampIndex;
-        break;
-    case SimType::EngineType::Turboprop:
-        styleMapId = TurbopropStyleMapId;
-        colorRampIndex = d->turbopropColorRampIndex % d->turbopropColorRamp.size();
-        ++d->turbopropColorRampIndex;
-        break;
-    case SimType::EngineType::Piston:
-        styleMapId = PistonStyleMapId;
-        colorRampIndex = d->pistonColorRampIndex % d->pistonColorRamp.size();
-        ++d->pistonColorRampIndex;
-        break;
-    default:
-        styleMapId = OtherStyleMapId;
-        colorRampIndex = d->otherColorRampIndex % d->otherColorRamp.size();
-        ++d->otherColorRampIndex;
-        break;
-    }
+    const SimType::EngineType engineType = aircraft.getAircraftInfoConst().aircraftType.engineType;
+    QString styleMapId = d->styleExport->getNextStyleMapPerEngineType(engineType);
 
     const QString placemarkBegin = QString(
 "    <Placemark>\n"
 "      <name>" % aircraft.getAircraftInfoConst().aircraftType.type % aircratId % "</name>\n"
 "      <description>" % getAircraftDescription(aircraft) % "</description>\n"
-"      <styleUrl>#" % styleMapId % "_" % QString::number(colorRampIndex) % "</styleUrl>\n"
+"      <styleUrl>#" % styleMapId % "</styleUrl>\n"
 "      <LineString>\n"
 "        <extrude>1</extrude>\n"
 "        <tessellate>1</tessellate>\n"
@@ -514,7 +266,7 @@ bool KMLExportPlugin::exportWaypoints(QIODevice &io) const noexcept
 
     const FlightPlan &flightPlan = d->flight.getUserAircraft().getFlightPlanConst();
     for (const Waypoint &waypoint : flightPlan) {
-        ok = exportPlacemark(io, Icon::Flag, waypoint.identifier, getWaypointDescription(waypoint),
+        ok = exportPlacemark(io, KMLStyleExport::Icon::Flag, waypoint.identifier, getWaypointDescription(waypoint),
                              waypoint.longitude, waypoint.latitude, waypoint.altitude, HeadingNorth);
     }
     return ok;
@@ -575,54 +327,8 @@ QString KMLExportPlugin::getWaypointDescription(const Waypoint &waypoint) const 
     return description;
 }
 
-bool KMLExportPlugin::exportNormalLineStyesPerEngineType(SimType::EngineType engineType, const std::vector<QRgb> &colorRamp, QIODevice &io) noexcept
-{
-    QString styleId;
-    switch (engineType) {
-    case SimType::EngineType::Jet:
-        styleId = JetStyleId;
-        break;
-    case SimType::EngineType::Turboprop:
-        styleId = TurbopropStyleId;
-        break;
-    case SimType::EngineType::Piston:
-        styleId = PistonStyleId;
-        break;
-    default:
-        styleId = OtherStyleId;
-        break;
-    }
 
-    bool ok = true;
-    int index = 0;
-    const QRgb polygonColorKml = Color::convertRgbToKml(PolygonColor);
-    for (const QRgb color : colorRamp) {
-
-        const QRgb lineColorKml = Color::convertRgbToKml(color);
-        const QString style =
-"    <Style id=\"" % styleId % "_" % QString::number(index) % "\">\n"
-"      <LineStyle>\n"
-"        <color>" % QString::number(lineColorKml, 16) % "</color>\n"
-"        <width>" % QString(LineWidth) % "</width>\n"
-"      </LineStyle>\n"
-"      <PolyStyle>\n"
-"        <color>" % QString::number(polygonColorKml, 16) % "</color>\n"
-"        <outline>0</outline>\n"
-"      </PolyStyle>\n"
-"    </Style>\n";
-
-        ok = io.write(style.toUtf8());
-        if (ok) {
-            ++index;
-        } else {
-            break;
-        }
-    }
-
-    return ok;
-}
-
-inline bool KMLExportPlugin::exportPlacemark(QIODevice &io, Icon icon, const QString &name, const QString &description, const PositionData &positionData) noexcept
+inline bool KMLExportPlugin::exportPlacemark(QIODevice &io, KMLStyleExport::Icon icon, const QString &name, const QString &description, const PositionData &positionData) const noexcept
 {
     bool ok = !positionData.isNull();
     if (ok) {
@@ -632,8 +338,8 @@ inline bool KMLExportPlugin::exportPlacemark(QIODevice &io, Icon icon, const QSt
     return ok;
 }
 
-inline bool KMLExportPlugin::exportPlacemark(QIODevice &io, Icon icon, const QString &name, const QString &description,
-                                             double longitude, double latitude, double altitudeInFeet, double heading) noexcept
+inline bool KMLExportPlugin::exportPlacemark(QIODevice &io, KMLStyleExport::Icon icon, const QString &name, const QString &description,
+                                             double longitude, double latitude, double altitudeInFeet, double heading) const noexcept
 {
     const QString placemark =
 "    <Placemark>\n"
@@ -648,7 +354,7 @@ inline bool KMLExportPlugin::exportPlacemark(QIODevice &io, Icon icon, const QSt
 "        <range>" % LookAtRange % "</range>\n"
 "        <altitudeMode>absolute</altitudeMode>\n"
 "      </LookAt>\n"
-"      <styleUrl>" % getStyleUrl(icon) %"</styleUrl>\n"
+"      <styleUrl>" % d->styleExport->getStyleUrl(icon) %"</styleUrl>\n"
 "      <Point>\n"
 "        <extrude>1</extrude>\n"
 "        <altitudeMode>absolute</altitudeMode>\n"
@@ -657,23 +363,6 @@ inline bool KMLExportPlugin::exportPlacemark(QIODevice &io, Icon icon, const QSt
 "      </Point>\n"
 "    </Placemark>\n";
     return io.write(placemark.toUtf8());
-}
-
-inline QString KMLExportPlugin::getStyleUrl(Icon icon) noexcept
-{
-    QString styleUrl;
-    switch (icon) {
-    case Icon::Airport:
-        styleUrl = "#sm_airports";
-        break;
-    case Icon::Flag:
-        styleUrl = "#sm_flag";
-        break;
-    default:
-        styleUrl = "#sm_airports";
-        break;
-    }
-    return styleUrl;
 }
 
 inline QString KMLExportPlugin::toString(double number) noexcept

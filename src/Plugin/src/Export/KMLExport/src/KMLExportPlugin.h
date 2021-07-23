@@ -36,6 +36,7 @@ class QString;
 #include "../../../../../Model/src/SimType.h"
 #include "../../../ExportIntf.h"
 #include "../../../PluginBase.h"
+#include "KMLStyleExport.h"
 
 class Flight;
 class Aircraft;
@@ -65,22 +66,11 @@ public:
     virtual bool exportData() noexcept override;
 
 private:
-    enum class Icon {
-        Airport,
-        Flag
-    };
     std::unique_ptr<KMLExportPluginPrivate> d;
 
     void init() noexcept;
 
     bool exportHeader(QIODevice &io) const noexcept;
-
-    bool exportStyles(QIODevice &io) const noexcept;
-    bool exportHighlightLineStyle(QIODevice &io) const noexcept;
-    bool exportNormalLineStyles(QIODevice &io) const noexcept;
-    bool exportLineStyleMaps(QIODevice &io) const noexcept;
-    bool exportPlacemarkStyles(QIODevice &io) const noexcept;
-
     bool exportFlightInfo(QIODevice &io) const noexcept;
     bool exportAircrafts(QIODevice &io) const noexcept;
     bool exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept;
@@ -91,12 +81,10 @@ private:
     QString getAircraftDescription(const Aircraft &aircraft) const noexcept;
     QString getWaypointDescription(const Waypoint &waypoint) const noexcept;
 
-    static bool exportNormalLineStyesPerEngineType(SimType::EngineType engineType, const std::vector<QRgb> &colorRamp, QIODevice &io) noexcept;
-    static inline bool exportPlacemark(QIODevice &io, Icon icon, const QString &name, const QString &description,
-                                       const PositionData &positionData) noexcept;
-    static inline bool exportPlacemark(QIODevice &io, Icon icon, const QString &name, const QString &description,
-                                       double longitude, double latitude, double altitudeInFeet, double heading) noexcept;
-    static inline QString getStyleUrl(Icon icon) noexcept;
+    inline bool exportPlacemark(QIODevice &io, KMLStyleExport::Icon icon, const QString &name, const QString &description,
+                               const PositionData &positionData) const noexcept;
+    inline bool exportPlacemark(QIODevice &io, KMLStyleExport::Icon icon, const QString &name, const QString &description,
+                               double longitude, double latitude, double altitudeInFeet, double heading) const noexcept;
 
     static inline QString toString(double number) noexcept;
 };
