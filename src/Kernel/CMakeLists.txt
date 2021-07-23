@@ -28,6 +28,8 @@ target_sources(Kernel
         src/FlightSimulator.h
         src/Color.cpp
         src/Color.h
+        src/File.cpp
+        src/File.h
 )
 
 if (${PLATFORM_IS_WINDOWS})
