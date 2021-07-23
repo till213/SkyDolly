@@ -327,7 +327,7 @@
      <x>0</x>
      <y>0</y>
      <width>826</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="fileMenu">
@@ -469,8 +469,7 @@
    <property name="icon">
     <iconset resource="../res/SkyDolly.qrc">
      <normaloff>:/img/icons/play-normal.png</normaloff>
-     <normalon>:/img/icons/play-normal-on.png</normalon>
-     <activeoff>:/img/icons/play-active.png</activeoff>:/img/icons/play-normal.png</iconset>
+     <normalon>:/img/icons/play-normal-on.png</normalon>:/img/icons/play-normal.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Play</string>
@@ -667,7 +666,6 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../res/SkyDolly.qrc"/>
   <include location="../res/SkyDolly.qrc"/>
  </resources>
  <connections/>

@@ -25,17 +25,17 @@
     - Formation flights (flights having more than one aircraft)
   * The selected _user aircraft_ is now shown in the flight log table (previously: simply the first recorded aircraft of the formation was shown)
 - Formation
-  * Aircrafts can now also be deleted from a formation flight during (paused) replay
   * A time offset can be added to the selected aircraft, effectively "shifting" it back or forth on the timeline
     - This is useful for "multiplayer formation flights" in order to synchronise the imported aircrafts (also see CSV import plugin above)
   * A new "Fly with Formation" replay mode has been added:
     - All previously recorded aircrafts are replayed
-    - You will with your currently loaded user aircraft with the formation ("in addition" to the recorded aircrafts)
+    - You fly with your currently loaded user aircraft with the formation ("in addition" to the recorded aircrafts)
   * "Take control of recorded user aircraft" still exists
     - You can now switch control between user aircrafts (also during replay), by double-clicking on the aircraft in the "Formation" table (or push the "Set User Aircraft" button)
   * Pause will now also "freeze" the user aircraft
     - For both "Fly with formation" and "Take control" replay modes
     - Additionally in "Fly with formation" replay mode user aircraft can be re-positioned relative to the _recorded_ user aircraft in the formation while paused, by clicking on one of the "relative positions"
+  * Aircrafts can now also be deleted from a formation flight during (paused) replay
 
 ### Improvements
 
@@ -49,6 +49,9 @@
   * Once a week
   * Daily
   * Never or whenever exiting Sky Dolly
+- UI refinments
+  * "Active" icons
+  * Small layout optimisations
 
 ### Bug Fixes
 

@@ -63,9 +63,5 @@
         <file>img/icons/backward-active@2x.png</file>
         <file>img/icons/forward-active.png</file>
         <file>img/icons/forward-active@2x.png</file>
-        <file>img/icons/play-active.png</file>
-        <file>img/icons/play-active@2x.png</file>
-        <file>img/icons/pause-normal-active.png</file>
-        <file>img/icons/pause-normal-active@2x.png</file>
     </qresource>
 </RCC>

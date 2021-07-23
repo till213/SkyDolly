@@ -32,10 +32,10 @@ class ActiveButtonPrivate
 {
 public:
     ActiveButtonPrivate()
-        : normalIcon()
     {}
 
-    QIcon normalIcon;
+    QPixmap normalPixmap;
+    QPixmap activePixmap;
 };
 
 // PUBLIC
@@ -43,7 +43,9 @@ public:
 ActiveButton::ActiveButton(QWidget *parent) noexcept
     : QPushButton(parent),
       d(std::make_unique<ActiveButtonPrivate>())
-{}
+{
+    setAutoDefault(false);
+}
 
 ActiveButton::~ActiveButton() noexcept
 {}
@@ -54,13 +56,15 @@ void ActiveButton::mousePressEvent(QMouseEvent *e) noexcept
 {
     QPushButton::mousePressEvent(e);
 
-    d->normalIcon = icon();
-    QPixmap activePixmap = d->normalIcon.pixmap(iconSize(), QIcon::Active);
-    setIcon(activePixmap);
+    if (d->normalPixmap.isNull()) {
+        d->normalPixmap = icon().pixmap(iconSize(), QIcon::Normal);
+        d->activePixmap = icon().pixmap(iconSize(), QIcon::Active);
+    }
+    setIcon(d->activePixmap);
 }
 
 void ActiveButton::mouseReleaseEvent(QMouseEvent *e) noexcept
 {
+    setIcon(d->normalPixmap);
     QPushButton::mouseReleaseEvent(e);
-    setIcon(d->normalIcon);
 }
