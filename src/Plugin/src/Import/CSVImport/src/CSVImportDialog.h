@@ -43,9 +43,9 @@ public:
     explicit CSVImportDialog(QWidget *parent = nullptr) noexcept;
     virtual ~CSVImportDialog() noexcept;
 
-    const QString getSelectedFilePath() const noexcept;
+    QString getSelectedFilePath() const noexcept;
     bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
-    bool addToCurrentFlight() const noexcept;
+    bool isAddToFlightEnabled() const noexcept;
 
 private:
     Ui::CSVImportDialog *ui;

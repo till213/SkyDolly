@@ -70,9 +70,6 @@ AircraftHandleWidget::AircraftHandleWidget(QWidget *parent) noexcept :
 AircraftHandleWidget::~AircraftHandleWidget() noexcept
 {}
 
-// PROTECTED
-
-
 // PRIVATE
 
 void AircraftHandleWidget::initUi() noexcept
@@ -81,6 +78,7 @@ void AircraftHandleWidget::initUi() noexcept
     ui->brakeLeftLineEdit->setToolTip(SimVar::BrakeLeftPosition);
     ui->brakeRightLineEdit->setToolTip(SimVar::BrakeRightPosition);
     ui->waterRudderLineEdit->setToolTip(SimVar::WaterRudderHandlePosition);
+    ui->smokeEnabledLineEdit->setToolTip(SimVar::SmokeEnable);
     ui->tailhookLineEdit->setToolTip(SimVar::TailhookPosition);
     ui->canopyOpenLineEdit->setToolTip(SimVar::CanopyOpen);
     ui->leftWingFoldingLineEdit->setToolTip(SimVar::FoldingWingLeftPercent);
@@ -119,6 +117,7 @@ void AircraftHandleWidget::updateUi(qint64 timestamp, TimeVariableData::Access a
         ui->brakeLeftLineEdit->setText(d->unit.formatPosition(aircraftHandleData.brakeLeftPosition));
         ui->brakeRightLineEdit->setText(d->unit.formatPosition(aircraftHandleData.brakeRightPosition));
         ui->waterRudderLineEdit->setText(d->unit.formatPosition(aircraftHandleData.waterRudderHandlePosition));
+        aircraftHandleData.smokeEnabled ? ui->smokeEnabledLineEdit->setText(tr("On")) : ui->smokeEnabledLineEdit->setText(tr("Off"));
         ui->tailhookLineEdit->setText(d->unit.formatPercent(aircraftHandleData.tailhookPosition));
         ui->canopyOpenLineEdit->setText(d->unit.formatPercent(aircraftHandleData.canopyOpen));
         ui->leftWingFoldingLineEdit->setText(d->unit.formatPercent(aircraftHandleData.leftWingFolding));
@@ -134,6 +133,7 @@ void AircraftHandleWidget::updateUi(qint64 timestamp, TimeVariableData::Access a
     ui->brakeLeftLineEdit->setStyleSheet(css);
     ui->brakeRightLineEdit->setStyleSheet(css);
     ui->waterRudderLineEdit->setStyleSheet(css);
+    ui->smokeEnabledLineEdit->setStyleSheet(css);
     ui->tailhookLineEdit->setStyleSheet(css);
     ui->canopyOpenLineEdit->setStyleSheet(css);
     ui->leftWingFoldingLineEdit->setStyleSheet(css);

@@ -58,7 +58,8 @@ bool SQLiteHandleDao::add(qint64 aircraftId, const AircraftHandleData &aircraftH
         "  canopy_open,"
         "  left_wing_folding,"
         "  right_wing_folding,"
-        "  gear_handle_position"
+        "  gear_handle_position,"
+        "  smoke_enable"
         ") values ("
         " :aircraft_id,"
         " :timestamp,"
@@ -69,7 +70,8 @@ bool SQLiteHandleDao::add(qint64 aircraftId, const AircraftHandleData &aircraftH
         " :canopy_open,"
         " :left_wing_folding,"
         " :right_wing_folding,"
-        " :gear_handle_position"
+        " :gear_handle_position,"
+        " :smoke_enable"
         ");"
     );
 
@@ -83,6 +85,7 @@ bool SQLiteHandleDao::add(qint64 aircraftId, const AircraftHandleData &aircraftH
     query.bindValue(":left_wing_folding", aircraftHandleData.leftWingFolding);
     query.bindValue(":right_wing_folding", aircraftHandleData.rightWingFolding);
     query.bindValue(":gear_handle_position", aircraftHandleData.gearHandlePosition ? 1 : 0);
+    query.bindValue(":smoke_enable", aircraftHandleData.smokeEnabled ? 1 : 0);
 
     bool ok = query.exec();
 #ifdef DEBUG
@@ -117,6 +120,7 @@ bool SQLiteHandleDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<st
         const int leftWingFoldingIdx = record.indexOf("left_wing_folding");
         const int rightWingFoldingIdx = record.indexOf("right_wing_folding");
         const int gearHandlePositionIdx = record.indexOf("gear_handle_position");
+        const int smokeEnablePositionIdx = record.indexOf("smoke_enable");
         while (query.next()) {
 
             AircraftHandleData data;
@@ -130,6 +134,7 @@ bool SQLiteHandleDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<st
             data.leftWingFolding = query.value(leftWingFoldingIdx).toInt();
             data.rightWingFolding = query.value(rightWingFoldingIdx).toInt();
             data.gearHandlePosition = query.value(gearHandlePositionIdx).toBool();
+            data.smokeEnabled = query.value(smokeEnablePositionIdx).toBool();
 
             insertIterator = std::move(data);
         }

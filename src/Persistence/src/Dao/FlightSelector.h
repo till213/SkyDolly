@@ -28,6 +28,7 @@
 #include <QDate>
 #include <QString>
 
+#include "../../../Model/src/SimType.h"
 #include "../PersistenceLib.h"
 
 struct PERSISTENCE_API FlightSelector
@@ -39,6 +40,7 @@ public:
     QDate toDate;
     QString searchKeyword;
     bool hasFormation;
+    SimType::EngineType engineType;
 
     static const QDate MinDate;
     static const QDate MaxDate;

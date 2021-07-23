@@ -30,12 +30,13 @@
 #include <QObject>
 #include <QPushButton>
 
+#include "ActiveButton.h"
 #include "WidgetLib.h"
 
 class ActionButtonPrivate;
 
 /*!
- * An extension of a QPushButton that supports QAction.
+ * An extension of an ActiveButton (QPushButton) that supports QAction.
  * This class represents a QPushButton extension that can be
  * connected to an action and that configures itself depending
  * on the status of the action.
@@ -43,9 +44,13 @@ class ActionButtonPrivate;
  * such changes, and when the button is clicked the action
  * is triggered.
  *
+ * This ActionButton also inherits the "active icons" functionality
+ * from its direct base class ActiveButton: the \em active pixmap
+ * is displayed while this button is being pressed.
+ *
  * Source: https://wiki.qt.io/PushButton_Based_On_Action
  */
-class WIDGET_API ActionButton : public QPushButton
+class WIDGET_API ActionButton : public ActiveButton
 {
     Q_OBJECT
 public:

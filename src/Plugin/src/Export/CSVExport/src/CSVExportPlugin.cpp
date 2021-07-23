@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <QCoreApplication>
 #include <QFile>
 // Implements the % operator for string concatenation
 #include <QStringBuilder>
@@ -52,27 +53,27 @@
 
 // PUBLIC
 
-CSVExportPlugin::CSVExportPlugin()
+CSVExportPlugin::CSVExportPlugin() noexcept
 {
 #ifdef DEBUG
     qDebug("CSVExportPlugin::CSVExportPlugin: PLUGIN LOADED");
 #endif
 }
 
-CSVExportPlugin::~CSVExportPlugin()
+CSVExportPlugin::~CSVExportPlugin() noexcept
 {
 #ifdef DEBUG
     qDebug("CSVExportPlugin::~CSVExportPlugin: PLUGIN UNLOADED");
 #endif
 }
 
-bool CSVExportPlugin::exportData() const noexcept
+bool CSVExportPlugin::exportData() noexcept
 {
     bool ok;
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();
     QString exportPath = Settings::getInstance().getExportPath();
 
-    const QString filePath = QFileDialog::getSaveFileName(getParentWidget(), QT_TRANSLATE_NOOP("CSVExportPlugin", "Export CSV"), exportPath, QString("*.csv"));
+    const QString filePath = QFileDialog::getSaveFileName(getParentWidget(), QCoreApplication::translate("CSVExportPlugin", "Export CSV"), exportPath, QString("*.csv"));
     if (!filePath.isEmpty()) {
         QFile file(filePath);
         ok = file.open(QIODevice::WriteOnly);
@@ -199,7 +200,7 @@ bool CSVExportPlugin::exportData() const noexcept
             exportPath = QFileInfo(filePath).absolutePath();
             Settings::getInstance().setExportPath(exportPath);
         } else {
-            QMessageBox::critical(getParentWidget(), QT_TRANSLATE_NOOP("CSVExportPlugin", "Export error"), QString(QT_TRANSLATE_NOOP("CSVExportPlugin", "The CSV file %1 could not be written.")).arg(filePath));
+            QMessageBox::critical(getParentWidget(), QCoreApplication::translate("CSVExportPlugin", "Export error"), QString(QCoreApplication::translate("CSVExportPlugin", "The CSV file %1 could not be written.")).arg(filePath));
         }
     } else {
         ok = true;
@@ -421,7 +422,8 @@ inline QString CSVExportPlugin::getAircraftHandleHeader() noexcept
             QString(SimVar::TailhookPosition) % CSVConst::Sep %
             QString(SimVar::FoldingWingLeftPercent)  % CSVConst::Sep %
             QString(SimVar::FoldingWingRightPercent)  % CSVConst::Sep %
-            QString(SimVar::CanopyOpen);
+            QString(SimVar::CanopyOpen) % CSVConst::Sep %
+            QString(SimVar::SmokeEnable);
 }
 
 inline QString CSVExportPlugin::getAircraftHandleData(const AircraftHandleData &data) noexcept
@@ -435,11 +437,13 @@ inline QString CSVExportPlugin::getAircraftHandleData(const AircraftHandleData &
                 QString::number(data.tailhookPosition) % CSVConst::Sep %
                 QString::number(data.leftWingFolding) % CSVConst::Sep %
                 QString::number(data.rightWingFolding) % CSVConst::Sep %
-                QString::number(data.canopyOpen);
+                QString::number(data.canopyOpen) % CSVConst::Sep %
+                QString::number(data.smokeEnabled);
 
     } else {
         const QString EmptyString;
         csv = EmptyString % CSVConst::Sep %
+                EmptyString % CSVConst::Sep %
                 EmptyString % CSVConst::Sep %
                 EmptyString % CSVConst::Sep %
                 EmptyString % CSVConst::Sep %

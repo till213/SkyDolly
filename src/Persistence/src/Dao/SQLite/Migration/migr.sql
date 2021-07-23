@@ -356,6 +356,13 @@ set next_backup_date = (select date(m.creation_date, '+7 day')
 update metadata
 set backup_directory_path = './Backups';
 
+@migr(id = "6d4095e3-e7e0-4e39-8b0b-3f4b92b5d7fe", descn = "Add smoke enable column", step_cnt = 2)
+alter table handle add column smoke_enable integer;
+
+@migr(id = "6d4095e3-e7e0-4e39-8b0b-3f4b92b5d7fe", descn = "Initialise smoke enable column", step = 2)
+update handle
+set smoke_enable = 0;
+
 @migr(id = "1c13f02d-9def-4fd6-af8d-3b7984573682", descn = "Update application version to 0.8", step = 1)
 update metadata
 set app_version = '0.8.0';
