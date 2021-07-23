@@ -4,8 +4,6 @@
 namespace Const {
     inline constexpr char LogbookExtension[] = ".sdlog";
 
-    inline constexpr int EditableTableCellBGColor = 0xff3aa8ff;
-
     inline constexpr char BackupNeverIntlId[] = "NEVER";
     inline constexpr char BackupNowIntlId[] = "NOW";
     inline constexpr char BackupMonthlyIntlId[] = "MONTH";

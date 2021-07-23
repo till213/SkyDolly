@@ -58,6 +58,7 @@
 #include "../../../Persistence/src/ConnectionManager.h"
 #include "../../../SkyConnect/src/SkyConnectManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
+#include "../../../Widget/src/Platform.h"
 #include "../AbstractModuleWidget.h"
 #include "../Module.h"
 #include "LogbookWidget.h"
@@ -321,7 +322,7 @@ void LogbookWidget::updateFlightTable() noexcept
             // Title
             newItem = new QTableWidgetItem(summary.title);
             newItem->setToolTip(tr("Double-click to edit title"));
-            newItem->setBackground(QColor(Const::EditableTableCellBGColor));
+            newItem->setBackground(Platform::getEditableTableCellBGColor());
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
             d->titleColumnIndex = columnIndex;
             ++columnIndex;
@@ -643,6 +644,8 @@ void LogbookWidget::on_formationCheckBox_toggled(bool checked) noexcept
 
 void LogbookWidget::on_engineTypeComboBox_activated(int index) noexcept
 {
+    Q_UNUSED(index)
+
     d->flightSelector.engineType = static_cast<SimType::EngineType>(ui->engineTypeComboBox->currentData().toInt());
     updateFlightTable();
 }
