@@ -89,6 +89,7 @@ private slots:
     void updateRelativePosition() noexcept;
     void updateOffsetUi() noexcept;
     void updateReplayUi() noexcept;
+    void updateToolTips() noexcept;
 
     void handleUserAircraftChanged(Aircraft &aircraft) noexcept;
     void handleAircraftInfoChanged() noexcept;
