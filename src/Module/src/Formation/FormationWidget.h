@@ -104,10 +104,10 @@ private slots:
 
     void on_replayModeComboBox_currentIndexChanged(int index) noexcept;
 
-    void on_increaseOffsetALotPushButton_clicked() noexcept;
-    void on_increaseOffsetPushButton_clicked() noexcept;
-    void on_decreaseOffsetALotPushButton_clicked() noexcept;
-    void on_decreaseOffsetPushButton_clicked() noexcept;
+    void on_fastForwardOffsetPushButton_clicked() noexcept;
+    void on_forwardOffsetPushButton_clicked() noexcept;
+    void on_backwardOffsetPushButton_clicked() noexcept;
+    void on_fastBackwardOffsetPushButton_clicked() noexcept;
     void on_timeOffsetLineEdit_editingFinished() noexcept;
     void on_resetAllTimeOffsetPushButton_clicked() noexcept;
 };

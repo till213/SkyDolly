@@ -209,6 +209,8 @@ void LogbookWidget::initUi() noexcept
     ui->logTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     ui->searchLineEdit->setPlaceholderText(tr("User aircraft, title, departure, arrival"));
+    // Make sure that shortcuts are initially accepted
+    ui->searchLineEdit->clearFocus();
 
     const QStringList headers {tr("Flight"), tr("Date"), tr("User Aircraft"), tr("Number of Aircrafts"), tr("Departure Time"), tr("Departure"), tr("Arrival Time"), tr("Arrival"), tr("Total Time of Flight"), tr("Title")};
     ui->logTableWidget->setColumnCount(headers.count());
