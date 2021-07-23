@@ -352,6 +352,7 @@ void FormationWidget::initUi() noexcept
 
 void FormationWidget::initTimeOffsetUi() noexcept
 {
+    // Validation
     d->timeOffsetValidator = new QDoubleValidator(ui->timeOffsetLineEdit);
     d->timeOffsetValidator->setRange(TimeOffsetMin, TimeOffsetMax, TimeOffsetDecimalPlaces);
 }
@@ -716,11 +717,11 @@ void FormationWidget::updateOffsetUi() noexcept
 {
     const bool enabled = d->selectedAircraftIndex != Flight::InvalidId;
 
-    ui->decreaseOffsetALotPushButton->setEnabled(enabled);
-    ui->decreaseOffsetPushButton->setEnabled(enabled);
+    ui->fastBackwardOffsetPushButton->setEnabled(enabled);
+    ui->backwardOffsetPushButton->setEnabled(enabled);
     ui->timeOffsetLineEdit->setEnabled(enabled);
-    ui->increaseOffsetPushButton->setEnabled(enabled);
-    ui->increaseOffsetALotPushButton->setEnabled(enabled);
+    ui->forwardOffsetPushButton->setEnabled(enabled);
+    ui->fastBackwardOffsetPushButton->setEnabled(enabled);
 
     if (enabled) {
         const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
@@ -792,6 +793,7 @@ void FormationWidget::updateToolTips() noexcept
 
 void FormationWidget::handleUserAircraftChanged(Aircraft &aircraft) noexcept
 {
+    Q_UNUSED(aircraft)
     updateRelativePosition();
     updateUi();
 }
@@ -805,7 +807,6 @@ void FormationWidget::handleAircraftInfoChanged() noexcept
 void FormationWidget::handleCellSelected(int row, int column) noexcept
 {
     Q_UNUSED(column)
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
     if (column == d->tailNumberColumnIndex || column == d->timeOffsetColumnIndex) {
         QTableWidgetItem *item = ui->aircraftTableWidget->item(row, column);
         ui->aircraftTableWidget->editItem(item);
@@ -948,7 +949,7 @@ void FormationWidget::on_replayModeComboBox_currentIndexChanged(int index) noexc
     updateToolTips();
 }
 
-void FormationWidget::on_increaseOffsetALotPushButton_clicked() noexcept
+void FormationWidget::on_fastForwardOffsetPushButton_clicked() noexcept
 {
     if (d->selectedAircraftIndex != Flight::InvalidId) {
         Flight &flight = Logbook::getInstance().getCurrentFlight();
@@ -960,7 +961,7 @@ void FormationWidget::on_increaseOffsetALotPushButton_clicked() noexcept
     }
 }
 
-void FormationWidget::on_increaseOffsetPushButton_clicked() noexcept
+void FormationWidget::on_forwardOffsetPushButton_clicked() noexcept
 {
     if (d->selectedAircraftIndex != Flight::InvalidId) {
         Flight &flight = Logbook::getInstance().getCurrentFlight();
@@ -972,7 +973,7 @@ void FormationWidget::on_increaseOffsetPushButton_clicked() noexcept
     }
 }
 
-void FormationWidget::on_decreaseOffsetALotPushButton_clicked() noexcept
+void FormationWidget::on_backwardOffsetPushButton_clicked() noexcept
 {
     if (d->selectedAircraftIndex != Flight::InvalidId) {
         Flight &flight = Logbook::getInstance().getCurrentFlight();
@@ -984,7 +985,7 @@ void FormationWidget::on_decreaseOffsetALotPushButton_clicked() noexcept
     }
 }
 
-void FormationWidget::on_decreaseOffsetPushButton_clicked() noexcept
+void FormationWidget::on_fastBackwardOffsetPushButton_clicked() noexcept
 {
     if (d->selectedAircraftIndex != Flight::InvalidId) {
         Flight &flight = Logbook::getInstance().getCurrentFlight();
