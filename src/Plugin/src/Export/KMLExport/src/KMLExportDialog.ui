@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>472</width>
-    <height>214</height>
+    <width>606</width>
+    <height>266</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,7 +27,7 @@
       <widget class="QLineEdit" name="filePathLineEdit">
        <property name="minimumSize">
         <size>
-         <width>300</width>
+         <width>400</width>
          <height>0</height>
         </size>
        </property>
@@ -42,20 +42,55 @@
      </item>
     </layout>
    </item>
-   <item row="3" column="1">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Resampling:</string>
      </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>385</width>
-       <height>21</height>
-      </size>
-     </property>
-    </spacer>
+    </widget>
    </item>
-   <item row="4" column="1">
+   <item row="2" column="1">
+    <widget class="QComboBox" name="resamplingComboBox"/>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="QGroupBox" name="informationGroupBox">
+     <property name="title">
+      <string>Information</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="infoLabel">
+        <property name="minimumSize">
+         <size>
+          <width>300</width>
+          <height>80</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>385</width>
+          <height>21</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="5" column="1">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -65,29 +100,10 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QComboBox" name="resamplingComboBox"/>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label">
+   <item row="3" column="1">
+    <widget class="QCheckBox" name="openExportCheckBox">
      <property name="text">
-      <string>Resampling:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QLabel" name="infoLabel">
-     <property name="minimumSize">
-      <size>
-       <width>300</width>
-       <height>80</height>
-      </size>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
+      <string>Open exported file</string>
      </property>
     </widget>
    </item>

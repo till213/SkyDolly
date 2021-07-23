@@ -40,6 +40,7 @@
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/Aircraft.h"
 #include "../../../../../Model/src/Position.h"
+#include "../../../../src/Export.h"
 #include "KMLExportDialog.h"
 #include "ui_KMLExportDialog.h"
 
@@ -81,11 +82,19 @@ KMLExportDialog::ResamplingPeriod KMLExportDialog::getSelectedResamplingPeriod()
     return static_cast<KMLExportDialog::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt());
 }
 
+bool KMLExportDialog::doOpenExportedFile() const noexcept
+{
+    return ui->openExportCheckBox->isChecked();
+}
+
 // PRIVATE
 
 void KMLExportDialog::initUi() noexcept
 {
     d->exportButton = ui->buttonBox->addButton(tr("Export"), QDialogButtonBox::AcceptRole);
+
+    // File path
+    ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestFilePath(FileSuffix)));
 
     // Resampling
     ui->resamplingComboBox->addItem(QString("1/10 Hz") % " (" % tr("less data, less accuracy") % ")", Enum::toUnderlyingType(ResamplingPeriod::ATenthHz));
@@ -106,11 +115,11 @@ void KMLExportDialog::updateInfoUi() noexcept
     qint64 samplePoints = estimateNofSamplePoints();
     if (resamplingPeriod != ResamplingPeriod::Original) {
         infoText = tr("The position data is resampled every %1 milliseconds, resulting in approximately %2 exported positions in total.")
-                .arg(d->unit.formatNumber(Enum::toUnderlyingType(resamplingPeriod), 0), d->unit.formatNumber(samplePoints, 0));
+                      .arg(d->unit.formatNumber(Enum::toUnderlyingType(resamplingPeriod), 0), d->unit.formatNumber(samplePoints, 0));
     } else {
         infoText = tr("WARNING: exporting the original position data may result in too large KML files. The KML viewer performance may "
                       "drastically slow down, or the exported data may not even be displayed at all.\n\nIn total %1 positions will be exported.")
-                .arg(d->unit.formatNumber(samplePoints, 0));
+                      .arg(d->unit.formatNumber(samplePoints, 0));
     }
     ui->infoLabel->setText(infoText);
 }
@@ -154,9 +163,7 @@ void KMLExportDialog::updateUi() noexcept
 
 void KMLExportDialog::on_fileSelectionPushButton_clicked() noexcept
 {
-    // Start with the last export path
-    QString exportPath = Settings::getInstance().getExportPath();
-    const QString filePath = QFileDialog::getSaveFileName(this, QCoreApplication::translate("KMLExportDialog", "Export KML"), exportPath, QString("*.kml"));
+    const QString filePath = QFileDialog::getSaveFileName(this, QCoreApplication::translate("KMLExportDialog", "Export KML"), ui->filePathLineEdit->text(), QString("*.kml"));
     if (!filePath.isEmpty()) {
         ui->filePathLineEdit->setText(filePath);
     }

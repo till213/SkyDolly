@@ -34,8 +34,11 @@
 #include <QString>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QCheckBox>
+#include <QDesktopServices>
 
 #include "../../../../../Kernel/src/Convert.h"
+#include "../../../../../Kernel/src/File.h"
 #include "../../../../../Kernel/src/Color.h"
 #include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/Unit.h"
@@ -69,10 +72,9 @@ namespace
     // Number of colors per color ramp
     constexpr int NofColorsPerRamp = 8;
 
-    // In KML format: AABBGGRR
-    constexpr char LineHighlightColor[] = "ff00ffff";
-    constexpr char PolygonHighlightColor[] = "ccd5c97e";
-    constexpr char PolygonColor[] = "33d5c97e";
+    constexpr QRgb LineHighlightColor = 0xffffff00;
+    constexpr QRgb PolygonHighlightColor = 0xcc7ed5c9;
+    constexpr QRgb PolygonColor = 0x337ed5c9;
 }
 
 class KMLExportPluginPrivate
@@ -119,7 +121,7 @@ bool KMLExportPlugin::exportData() noexcept
     std::unique_ptr<KMLExportDialog> kmlExportDialog = std::make_unique<KMLExportDialog>(getParentWidget());
     const int choice = kmlExportDialog->exec();
     if (choice == QDialog::Accepted) {
-        const QString &filePath = kmlExportDialog->getSelectedFilePath();
+        const QString &filePath = File::ensureSuffix(kmlExportDialog->getSelectedFilePath(), KMLExportDialog::FileSuffix);
         if (!filePath.isEmpty()) {
 
             QFile file(filePath);
@@ -156,6 +158,12 @@ bool KMLExportPlugin::exportData() noexcept
         } else {
             ok = true;
         }
+
+        if (ok && kmlExportDialog->doOpenExportedFile()) {
+            const QString fileUrl = QString("file:///") + filePath;
+            QDesktopServices::openUrl(QUrl(fileUrl));
+        }
+
     } else {
         ok = true;
     }
@@ -199,14 +207,16 @@ bool KMLExportPlugin::exportStyles(QIODevice &io) const noexcept
 
 bool KMLExportPlugin::exportHighlightLineStyle(QIODevice &io) const noexcept
 {
+    const QRgb lineHighlightKml = Color::convertRgbToKml(LineHighlightColor);
+    const QRgb polygonHighlightKml = Color::convertRgbToKml(PolygonHighlightColor);
     const QString style =
 "    <Style id=\"s_flight_h\">\n"
 "      <LineStyle>\n"
-"        <color>" % QString(LineHighlightColor) % "</color>\n"
+"        <color>" % QString::number(lineHighlightKml, 16) % "</color>\n"
 "        <width>" % QString(LineWidth) % "</width>\n"
 "      </LineStyle>\n"
 "      <PolyStyle>\n"
-"        <color>" % QString(PolygonHighlightColor) % "</color>\n"
+"        <color>" % QString::number(polygonHighlightKml, 16) % "</color>\n"
 "        <outline>0</outline>\n"
 "      </PolyStyle>\n"
 "    </Style>\n";
@@ -218,18 +228,18 @@ bool KMLExportPlugin::exportNormalLineStyles(QIODevice &io) const noexcept
 {
     bool ok = true;
     int index = 0;
+    const QRgb polygonColorKml = Color::convertRgbToKml(PolygonColor);
     for (const QRgb color : d->colorRamp) {
 
-        const QRgb aabbggrr = Color::convertRgbToKml(color);
-
+        const QRgb lineColorKml = Color::convertRgbToKml(color);
         const QString style =
 "    <Style id=\"s_flight_" % QString::number(index) % "\">\n"
 "      <LineStyle>\n"
-"        <color>" % QString::number(aabbggrr, 16) % "</color>\n"
+"        <color>" % QString::number(lineColorKml, 16) % "</color>\n"
 "        <width>" % QString(LineWidth) % "</width>\n"
 "      </LineStyle>\n"
 "      <PolyStyle>\n"
-"        <color>" % QString(PolygonColor) % "</color>\n"
+"        <color>" % QString::number(polygonColorKml, 16) % "</color>\n"
 "        <outline>0</outline>\n"
 "      </PolyStyle>\n"
 "    </Style>\n";
@@ -248,7 +258,7 @@ bool KMLExportPlugin::exportNormalLineStyles(QIODevice &io) const noexcept
 bool KMLExportPlugin::exportLineStyleMaps(QIODevice &io) const noexcept
 {
     bool ok = true;
-    for (int index = 0; ok && index < d->colorRamp.size(); ++index) {
+    for (std::size_t index = 0; ok && index < d->colorRamp.size(); ++index) {
 
         const QString styleMap =
 "    <StyleMap id=\"sm_flight_" % QString::number(index) % "\">\n"

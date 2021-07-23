@@ -22,57 +22,17 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLEXPORTDIALOG_H
-#define KMLEXPORTDIALOG_H
+#ifndef FILE_H
+#define FILE_H
 
-#include <QDialog>
+#include <QString>
 
-namespace Ui {
-    class KMLExportDialog;
-}
+#include "KernelLib.h"
 
-class KMLExportDialogPrivate;
-
-class KMLExportDialog : public QDialog
+class KERNEL_API File
 {
-    Q_OBJECT
 public:
-    /*!
-     * Resampling period [millisecons]
-     */
-    enum class ResamplingPeriod {
-        Original = 0,
-        TenHz = 100,
-        FiveHz = 200,
-        TwoHz = 500,
-        OneHz = 1000,
-        AFifthHz = 5000,
-        ATenthHz = 10000
-    };
-    static constexpr char FileSuffix[] = "kml";
-
-    explicit KMLExportDialog(QWidget *parent = nullptr) noexcept;
-    virtual ~KMLExportDialog() noexcept;
-
-    QString getSelectedFilePath() const noexcept;
-    ResamplingPeriod getSelectedResamplingPeriod() const noexcept;
-    bool doOpenExportedFile() const noexcept;
-
-private:
-    Ui::KMLExportDialog *ui;
-    std::unique_ptr<KMLExportDialogPrivate> d;
-
-    void initUi() noexcept;
-    void updateInfoUi() noexcept;
-    void frenchConnection() noexcept;
-
-    qint64 estimateNofSamplePoints() noexcept;
-
-private slots:
-    void updateUi() noexcept;
-
-    void on_fileSelectionPushButton_clicked() noexcept;
-    void on_resamplingComboBox_activated(int index) noexcept;
+    static QString ensureSuffix(const QString filePath, const QString &suffix) noexcept;
 };
 
-#endif // KMLEXPORTDIALOG_H
+#endif // FILE_H

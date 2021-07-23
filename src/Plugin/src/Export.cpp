@@ -22,57 +22,36 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLEXPORTDIALOG_H
-#define KMLEXPORTDIALOG_H
+#include <QString>
 
-#include <QDialog>
+#include "../../Kernel/src/Version.h"
+#include "../../Kernel/src/Settings.h"
+#include "../../Kernel/src/File.h"
+#include "../../Model/src/Logbook.h"
+#include "../../Model/src/Flight.h"
+#include "../../Model/src/Aircraft.h"
+#include "../../Model/src/AircraftInfo.h"
 
-namespace Ui {
-    class KMLExportDialog;
-}
+#include "Export.h"
 
-class KMLExportDialogPrivate;
+// PUBLIC
 
-class KMLExportDialog : public QDialog
+QString Export::suggestFilePath(const QString &suffix) noexcept
 {
-    Q_OBJECT
-public:
-    /*!
-     * Resampling period [millisecons]
-     */
-    enum class ResamplingPeriod {
-        Original = 0,
-        TenHz = 100,
-        FiveHz = 200,
-        TwoHz = 500,
-        OneHz = 1000,
-        AFifthHz = 5000,
-        ATenthHz = 10000
-    };
-    static constexpr char FileSuffix[] = "kml";
+    QString suggestedFileName;
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    Settings &settings = Settings::getInstance();
 
-    explicit KMLExportDialog(QWidget *parent = nullptr) noexcept;
-    virtual ~KMLExportDialog() noexcept;
-
-    QString getSelectedFilePath() const noexcept;
-    ResamplingPeriod getSelectedResamplingPeriod() const noexcept;
-    bool doOpenExportedFile() const noexcept;
-
-private:
-    Ui::KMLExportDialog *ui;
-    std::unique_ptr<KMLExportDialogPrivate> d;
-
-    void initUi() noexcept;
-    void updateInfoUi() noexcept;
-    void frenchConnection() noexcept;
-
-    qint64 estimateNofSamplePoints() noexcept;
-
-private slots:
-    void updateUi() noexcept;
-
-    void on_fileSelectionPushButton_clicked() noexcept;
-    void on_resamplingComboBox_activated(int index) noexcept;
-};
-
-#endif // KMLEXPORTDIALOG_H
+    const QString &title = flight.getTitle();
+    if (title.isNull()) {
+        if (flight.count() > 0) {
+            const Aircraft &aircraft = flight.getUserAircraft();
+            suggestedFileName = aircraft.getAircraftInfoConst().aircraftType.type;
+        } else {
+            suggestedFileName = Version::getApplicationName();
+        }
+    } else {
+        suggestedFileName = title;
+    }
+    return settings.getExportPath() + "/" + File::ensureSuffix(suggestedFileName, suffix);
+}
