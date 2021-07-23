@@ -146,6 +146,7 @@ bool FlightService::updateTitleAndDescription(Flight &flight, const QString &tit
     const bool ok = updateTitleAndDescription(flight.getId(), title, description);
     if (ok) {
         flight.setTitle(title);
+        flight.setDescription(description);
     }
     return ok;
 }
