@@ -100,8 +100,6 @@ namespace
     constexpr qint64 MilliSecondsPerMinute = 60 * MilliSecondsPerSecond;
     constexpr qint64 MilliSecondsPerHour = 60 * MilliSecondsPerMinute;
 
-    constexpr int MinimumControlButtonHeight = 32;
-
     constexpr char ReplaySpeedProperty[] = "ReplaySpeed";
 
     enum class ReplaySpeed {
@@ -437,58 +435,14 @@ void MainWindow::initControlUi() noexcept
     ui->timestampTimeEdit->setDisplayFormat(TimestampFormat);
 
     // Record/replay control buttons
-    ActionButton *recordButton = new ActionButton(this);
-    recordButton->setAction(ui->recordAction);
-    recordButton->setFlat(true);
-    recordButton->setMinimumHeight(MinimumControlButtonHeight);
-    ui->controlButtonLayout->addWidget(recordButton);
-
-    ActionButton *skipToStartButton = new ActionButton(this);
-    skipToStartButton->setAction(ui->skipToBeginAction);
-    skipToStartButton->setFlat(true);
-    skipToStartButton->setMinimumHeight(MinimumControlButtonHeight);
-    ui->controlButtonLayout->addWidget(skipToStartButton);
-
-    ActionButton *skipBackwardButton = new ActionButton(this);
-    skipBackwardButton->setAction(ui->backwardAction);
-    skipBackwardButton->setFlat(true);
-    skipBackwardButton->setMinimumHeight(MinimumControlButtonHeight);
-    skipBackwardButton->setAutoRepeat(true);
-    ui->controlButtonLayout->addWidget(skipBackwardButton);
-
-    ActionButton *stopButton = new ActionButton(this);
-    stopButton->setAction(ui->stopAction);
-    stopButton->setFlat(true);
-    stopButton->setMinimumHeight(MinimumControlButtonHeight);
-    ui->controlButtonLayout->addWidget(stopButton);
-
-    ActionButton *pauseButton = new ActionButton(this);
-    pauseButton->setAction(ui->pauseAction);
-    pauseButton->setFlat(true);
-    pauseButton->setMinimumHeight(MinimumControlButtonHeight);
-    ui->controlButtonLayout->addWidget(pauseButton);
-
-    ActionButton *playButton = new ActionButton(this);
-    playButton->setAction(ui->playAction);
-    playButton->setFlat(true);
-    playButton->setMinimumHeight(MinimumControlButtonHeight);
-    ui->controlButtonLayout->addWidget(playButton);
-
-    ActionButton *skipForwardButton = new ActionButton(this);
-    skipForwardButton->setAction(ui->forwardAction);
-    skipForwardButton->setFlat(true);
-    skipForwardButton->setMinimumHeight(MinimumControlButtonHeight);
-    skipForwardButton->setAutoRepeat(true);
-    ui->controlButtonLayout->addWidget(skipForwardButton);
-
-    ActionButton *skipToEndButton = new ActionButton(this);
-    skipToEndButton->setAction(ui->skipToEndAction);
-    skipToEndButton->setFlat(true);
-    skipToEndButton->setMinimumHeight(MinimumControlButtonHeight);
-    ui->controlButtonLayout->addWidget(skipToEndButton);
-
-    QSpacerItem *horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    ui->controlButtonLayout->addSpacerItem(horizontalSpacer);
+    ui->recordButton->setAction(ui->recordAction);
+    ui->skipToStartButton->setAction(ui->skipToBeginAction);
+    ui->skipBackwardButton->setAction(ui->backwardAction);
+    ui->stopButton->setAction(ui->stopAction);
+    ui->pauseButton->setAction(ui->pauseAction);
+    ui->playButton->setAction(ui->playAction);
+    ui->skipForwardButton->setAction(ui->forwardAction);
+    ui->skipToEndButton->setAction(ui->skipToEndAction);
 }
 
 void MainWindow::initReplaySpeedUi() noexcept

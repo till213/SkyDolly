@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <QCoreApplication>
 #include <QString>
 #include <QPushButton>
 #include <QFileDialog>
@@ -47,9 +48,7 @@ public:
     {}
 
     std::unique_ptr<AircraftTypeService> aircraftTypeService;
-
     QPushButton *importButton;
-
 };
 
 // PUBLIC
@@ -70,17 +69,17 @@ CSVImportDialog::~CSVImportDialog() noexcept
     delete ui;
 }
 
-const QString CSVImportDialog::getSelectedFilePath() const noexcept
+QString CSVImportDialog::getSelectedFilePath() const noexcept
 {
     return ui->filePathLineEdit->text();
 }
 
 bool CSVImportDialog::getSelectedAircraftType(AircraftType &aircraftType) const noexcept
 {
-    return d->aircraftTypeService->getByType(ui->aircraftTypeComboBox->currentText(), aircraftType);
+    return d->aircraftTypeService->getByType(ui->aircraftSelectionComboBox->currentText(), aircraftType);
 }
 
-bool CSVImportDialog::addToCurrentFlight() const noexcept
+bool CSVImportDialog::isAddToFlightEnabled() const noexcept
 {
     return ui->addToFlightCheckBox->isChecked();
 }
@@ -93,7 +92,7 @@ void CSVImportDialog::initUi() noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     QString type = flight.getUserAircraftConst().getAircraftInfoConst().aircraftType.type;
     if (!type.isEmpty()) {
-        ui->aircraftTypeComboBox->setCurrentText(type);
+        ui->aircraftSelectionComboBox->setCurrentText(type);
     }
 }
 
@@ -110,7 +109,7 @@ void CSVImportDialog::on_fileSelectionPushButton_clicked() noexcept
     // Start with the last export path
     QString exportPath = Settings::getInstance().getExportPath();
 
-    const QString filePath = QFileDialog::getOpenFileName(this, QT_TRANSLATE_NOOP("CSVImportDialog", "Import CSV"), exportPath, QString("*.csv"));
+    const QString filePath = QFileDialog::getOpenFileName(this, QCoreApplication::translate("CSVImportDialog", "Import CSV"), exportPath, QString("*.csv"));
     if (!filePath.isEmpty()) {
         ui->filePathLineEdit->setText(filePath);
     }

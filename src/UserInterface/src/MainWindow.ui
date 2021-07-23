@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>818</width>
-    <height>239</height>
+    <width>826</width>
+    <height>289</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -131,7 +131,155 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="controlButtonLayout"/>
+          <layout class="QHBoxLayout" name="controlButtonLayout">
+           <item>
+            <widget class="ActionButton" name="recordButton">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="ActionButton" name="skipToStartButton">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="ActionButton" name="skipBackwardButton">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="autoRepeat">
+              <bool>true</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="ActionButton" name="stopButton">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="ActionButton" name="pauseButton">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="ActionButton" name="playButton">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="ActionButton" name="skipForwardButton">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="autoRepeat">
+              <bool>true</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="ActionButton" name="skipToEndButton">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>
@@ -178,7 +326,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>818</width>
+     <width>826</width>
      <height>21</height>
     </rect>
    </property>
@@ -337,7 +485,8 @@
    <property name="icon">
     <iconset resource="../res/SkyDolly.qrc">
      <normaloff>:/img/icons/pause-normal.png</normaloff>
-     <normalon>:/img/icons/pause-normal-on.png</normalon>:/img/icons/pause-normal.png</iconset>
+     <normalon>:/img/icons/pause-normal-on.png</normalon>
+     <activeoff>:/img/icons/pause-normal-active.png</activeoff>:/img/icons/pause-normal.png</iconset>
    </property>
    <property name="text">
     <string>P&amp;ause</string>
@@ -354,7 +503,8 @@
   <action name="skipToBeginAction">
    <property name="icon">
     <iconset resource="../res/SkyDolly.qrc">
-     <normaloff>:/img/icons/begin-normal.png</normaloff>:/img/icons/begin-normal.png</iconset>
+     <normaloff>:/img/icons/begin-normal.png</normaloff>
+     <activeoff>:/img/icons/begin-active.png</activeoff>:/img/icons/begin-normal.png</iconset>
    </property>
    <property name="text">
     <string>B&amp;egin</string>
@@ -367,7 +517,7 @@
    <property name="icon">
     <iconset resource="../res/SkyDolly.qrc">
      <normaloff>:/img/icons/backward-normal.png</normaloff>
-     <selectedoff>:/img/icons/backward-active.png</selectedoff>:/img/icons/backward-normal.png</iconset>
+     <activeoff>:/img/icons/backward-active.png</activeoff>:/img/icons/backward-normal.png</iconset>
    </property>
    <property name="text">
     <string>Re&amp;wind</string>
@@ -379,7 +529,8 @@
   <action name="forwardAction">
    <property name="icon">
     <iconset resource="../res/SkyDolly.qrc">
-     <normaloff>:/img/icons/forward-normal.png</normaloff>:/img/icons/forward-normal.png</iconset>
+     <normaloff>:/img/icons/forward-normal.png</normaloff>
+     <activeoff>:/img/icons/forward-active.png</activeoff>:/img/icons/forward-normal.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Fast Forward</string>
@@ -391,7 +542,8 @@
   <action name="skipToEndAction">
    <property name="icon">
     <iconset resource="../res/SkyDolly.qrc">
-     <normaloff>:/img/icons/end-normal.png</normaloff>:/img/icons/end-normal.png</iconset>
+     <normaloff>:/img/icons/end-normal.png</normaloff>
+     <activeoff>:/img/icons/end-active.png</activeoff>:/img/icons/end-normal.png</iconset>
    </property>
    <property name="text">
     <string>E&amp;nd</string>
@@ -411,7 +563,8 @@
   <action name="stopAction">
    <property name="icon">
     <iconset resource="../res/SkyDolly.qrc">
-     <normaloff>:/img/icons/stop-normal.png</normaloff>:/img/icons/stop-normal.png</iconset>
+     <normaloff>:/img/icons/stop-normal.png</normaloff>
+     <activeoff>:/img/icons/stop-active.png</activeoff>:/img/icons/stop-normal.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Stop</string>
@@ -505,6 +658,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ActionButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">ActionButton.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../res/SkyDolly.qrc"/>
  </resources>

@@ -27,6 +27,7 @@
 #include <limits>
 #include <chrono>
 
+#include <QCoreApplication>
 #include <QString>
 #include <QStringBuilder>
 #include <QLocale>
@@ -68,7 +69,7 @@ QString Unit::formatLatitude(double latitude) noexcept
 
     dd2dms(latitude, degrees, minutes, seconds);
 
-    QString hemisphere = latitude >= 0.0 ? QT_TRANSLATE_NOOP("Unit", "N") : QT_TRANSLATE_NOOP("Unit", "S");
+    QString hemisphere = latitude >= 0.0 ? QCoreApplication::translate("Unit", "N") : QCoreApplication::translate("Unit", "S");
     return QString::number(degrees) % "° " % QString::number(minutes) % "' " % QString::number(seconds, 'f', Precision) % "'' " % " " % hemisphere;
 }
 
@@ -79,7 +80,7 @@ QString Unit::formatLongitude(double longitude) noexcept
     double seconds = 0;
 
     dd2dms(longitude, degrees, minutes, seconds);
-    QString hemisphere = longitude >= 0.0 ? QT_TRANSLATE_NOOP("Unit", "E") : QT_TRANSLATE_NOOP("Unit", "W");
+    QString hemisphere = longitude >= 0.0 ? QCoreApplication::translate("Unit", "E") : QCoreApplication::translate("Unit", "W");
     return QString::number(degrees) % "° " % QString::number(minutes) % "' " % QString::number(seconds, 'f', Precision) % "'' " % " " % hemisphere;
 }
 
@@ -102,13 +103,13 @@ QString Unit::formatVisibility(double metres) noexcept
 {
     QString visibility;
     if (metres < Fog) {
-        visibility = QT_TRANSLATE_NOOP("Unit", "Fog (< 3,300 ft)");
+        visibility = QCoreApplication::translate("Unit", "Fog (< 3,300 ft)");
     } else if (metres < Mist) {
-        visibility = QT_TRANSLATE_NOOP("Unit", "Mist (< 1.2 mi)");
+        visibility = QCoreApplication::translate("Unit", "Mist (< 1.2 mi)");
     } else if (metres < Haze) {
-        visibility = QT_TRANSLATE_NOOP("Unit", "Haze (< 3.1 mi)");
+        visibility = QCoreApplication::translate("Unit", "Haze (< 3.1 mi)");
     } else {
-        visibility = QT_TRANSLATE_NOOP("Unit", "Clear (>= 3.1 mi)");
+        visibility = QCoreApplication::translate("Unit", "Clear (>= 3.1 mi)");
     }
     return visibility;
 }
@@ -159,11 +160,11 @@ QString Unit::formatKnots(double velocity) noexcept
 QString Unit::formatElapsedTime(qint64 milliSeconds) noexcept
 {
     QString elapsedTime;
-    if (milliSeconds < 1000) {
-        elapsedTime = QString("%1 ms").arg(elapsedTime);
-    } else if (milliSeconds < 1000 * 60) {
+    if (qAbs(milliSeconds) < 1000) {
+        elapsedTime = QString("%1 ms").arg(milliSeconds);
+    } else if (qAbs(milliSeconds) < 1000 * 60) {
         elapsedTime = QString("%1 s").arg(QString::number(static_cast<double>(milliSeconds) / 1000.0, 'f', 1));
-    } else if (milliSeconds < 1000 * 60 * 60) {
+    } else if (qAbs(milliSeconds) < 1000 * 60 * 60) {
         elapsedTime = QString("%1 min").arg(QString::number(static_cast<double>(milliSeconds) / (1000.0 * 60.0), 'f', 1));
     } else {
         elapsedTime = QString("%1 hours").arg(QString::number(static_cast<double>(milliSeconds) / (1000.0 * 60.0 * 60), 'f', 1));
@@ -226,12 +227,6 @@ double Unit::toNumber(const QString &value, bool *ok) noexcept
 
 QString Unit::formatHHMMSS(qint64 msec) noexcept
 {
-//    int seconds     = milliseconds / 1000;
-//    int minutes     = seconds / 60;
-//    seconds         = seconds % 60;
-//    const int hours = minutes / 60;
-//    minutes         = minutes % 60;
-
     std::chrono::milliseconds milliseconds {msec};
     std::chrono::seconds seconds = std::chrono::duration_cast<std::chrono::seconds>(milliseconds);
     milliseconds -= seconds;
@@ -243,6 +238,11 @@ QString Unit::formatHHMMSS(qint64 msec) noexcept
     QTime time;
     time.setHMS(hours.count(), minutes.count(), seconds.count());
     return time.toString("hh:mm:ss");
+}
+
+QString Unit::formatBoolean(bool value) noexcept
+{
+    return value ? QCoreApplication::translate("Unit", "Yes") : QCoreApplication::translate("Unit", "No");
 }
 
 // PRIVATE

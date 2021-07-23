@@ -25,16 +25,24 @@
 #ifndef KMLEXPORTPLUGIN_H
 #define KMLEXPORTPLUGIN_H
 
+#include <memory>
+
 #include <QObject>
 #include <QtPlugin>
 
-class QFile;
+class QIODevice;
+class QString;
 
+#include "../../../../../Model/src/SimType.h"
 #include "../../../ExportIntf.h"
 #include "../../../PluginBase.h"
+#include "KMLStyleExport.h"
 
 class Flight;
 class Aircraft;
+struct PositionData;
+struct Waypoint;
+class KMLExportPluginPrivate;
 
 class KMLExportPlugin : public PluginBase, public ExportIntf
 {
@@ -42,8 +50,8 @@ class KMLExportPlugin : public PluginBase, public ExportIntf
     Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "KMLExportPlugin.json")
     Q_INTERFACES(ExportIntf)
 public:
-    KMLExportPlugin();
-    virtual ~KMLExportPlugin();
+    KMLExportPlugin() noexcept;
+    virtual ~KMLExportPlugin() noexcept;
 
     virtual QWidget *getParentWidget() const noexcept override
     {
@@ -55,11 +63,30 @@ public:
         PluginBase::setParentWidget(parent);
     }
 
-    virtual bool exportData() const noexcept override;
+    virtual bool exportData() noexcept override;
 
 private:
-    bool exportFlightData(const Flight &flight, QFile &file) const noexcept;
-    bool exportAircraftData(const Aircraft &aircraft, QFile &file) const noexcept;
+    std::unique_ptr<KMLExportPluginPrivate> d;
+
+    void init() noexcept;
+
+    bool exportHeader(QIODevice &io) const noexcept;
+    bool exportFlightInfo(QIODevice &io) const noexcept;
+    bool exportAircrafts(QIODevice &io) const noexcept;
+    bool exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept;
+    bool exportWaypoints(QIODevice &io) const noexcept;
+    bool exportFooter(QIODevice &io) const noexcept;
+
+    QString getFlightDescription() const noexcept;
+    QString getAircraftDescription(const Aircraft &aircraft) const noexcept;
+    QString getWaypointDescription(const Waypoint &waypoint) const noexcept;
+
+    inline bool exportPlacemark(QIODevice &io, KMLStyleExport::Icon icon, const QString &name, const QString &description,
+                               const PositionData &positionData) const noexcept;
+    inline bool exportPlacemark(QIODevice &io, KMLStyleExport::Icon icon, const QString &name, const QString &description,
+                               double longitude, double latitude, double altitudeInFeet, double heading) const noexcept;
+
+    static inline QString toString(double number) noexcept;
 };
 
 #endif // KMLEXPORTPLUGIN_H

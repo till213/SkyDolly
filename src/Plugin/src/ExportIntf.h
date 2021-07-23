@@ -32,7 +32,7 @@
 class ExportIntf : public PluginIntf
 {
 public:
-    virtual bool exportData() const noexcept = 0;
+    virtual bool exportData() noexcept = 0;
 };
 
 #define EXPORT_INTERFACE_IID "com.github.till213.SkyDolly.ExportInterface/1.0"
