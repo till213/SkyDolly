@@ -41,7 +41,8 @@ struct MODEL_API AircraftHandleData : public TimeVariableData
     quint8 canopyOpen;
     quint8 leftWingFolding;
     quint8 rightWingFolding;
-    bool gearHandlePosition;    
+    bool gearHandlePosition;
+    bool smokeEnabled;
 
     AircraftHandleData() noexcept;
     AircraftHandleData(AircraftHandleData &&) = default;
