@@ -37,7 +37,7 @@ namespace Dark {
 }
 
 namespace Bright {
-    constexpr QRgb EditableTableCellBGColor = 0xffafd4f0;
+    constexpr QRgb EditableTableCellBGColor = 0xfff6fdff;
 }
 
 // PUBLIC

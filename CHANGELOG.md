@@ -40,6 +40,9 @@
 ### Improvements
 
 - Better support for aircraft engine start & shutdown
+- Additional simulation variables
+  - Combustion
+  - Smoke enabled/disabled (at the time of this writing not yet supported by FS2020)
 - Database performance improvements:
   * "forward queries"
   * "Normalisation" of "aircraft type" data (new table - less storage space required)

@@ -37,7 +37,8 @@ AircraftHandleData::AircraftHandleData() noexcept
       canopyOpen(0),
       leftWingFolding(0),
       rightWingFolding(0),
-      gearHandlePosition(false)
+      gearHandlePosition(false),
+      smokeEnabled(false)
 {}
 
 const AircraftHandleData AircraftHandleData::NullData = AircraftHandleData();

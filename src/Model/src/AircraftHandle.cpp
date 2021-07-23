@@ -149,6 +149,7 @@ const AircraftHandleData &AircraftHandle::interpolate(qint64 timestamp, TimeVari
             d->currentAircraftHandleData.leftWingFolding = SkyMath::interpolateLinear(p1->leftWingFolding, p2->leftWingFolding, tn);
             d->currentAircraftHandleData.rightWingFolding = SkyMath::interpolateLinear(p1->rightWingFolding, p2->rightWingFolding, tn);
             d->currentAircraftHandleData.gearHandlePosition = p1->gearHandlePosition;
+            d->currentAircraftHandleData.smokeEnabled = p1->smokeEnabled;
 
             d->currentAircraftHandleData.timestamp = adjustedTimestamp;
         } else if (!d->previousAircraftHandleData.isNull()) {
