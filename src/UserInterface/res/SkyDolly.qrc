@@ -53,5 +53,19 @@
         <file>img/icons/backward-offset-active@2x.png</file>
         <file>img/icons/backward-offset-normal.png</file>
         <file>img/icons/backward-offset-normal@2x.png</file>
+        <file>img/icons/begin-active.png</file>
+        <file>img/icons/begin-active@2x.png</file>
+        <file>img/icons/end-active.png</file>
+        <file>img/icons/end-active@2x.png</file>
+        <file>img/icons/stop-active.png</file>
+        <file>img/icons/stop-active@2x.png</file>
+        <file>img/icons/backward-active.png</file>
+        <file>img/icons/backward-active@2x.png</file>
+        <file>img/icons/forward-active.png</file>
+        <file>img/icons/forward-active@2x.png</file>
+        <file>img/icons/play-active.png</file>
+        <file>img/icons/play-active@2x.png</file>
+        <file>img/icons/pause-normal-active.png</file>
+        <file>img/icons/pause-normal-active@2x.png</file>
     </qresource>
 </RCC>
