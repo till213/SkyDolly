@@ -32,6 +32,8 @@ target_sources(${LIBRARY_NAME}
         src/AircraftSelectionComboBox.h
         src/BackupPeriodComboBox.cpp
         src/BackupPeriodComboBox.h
+        src/Platform.cpp
+        src/Platform.h
 )
 
 target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})

@@ -54,6 +54,7 @@
 #include "../../../Persistence/src/Service/AircraftService.h"
 #include "../../../SkyConnect/src/SkyConnectManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
+#include "../../../Widget/src/Platform.h"
 #include "../AbstractModuleWidget.h"
 #include "FormationWidget.h"
 #include "ui_FormationWidget.h"
@@ -648,7 +649,7 @@ void FormationWidget::updateUi() noexcept
         // Tail number
         newItem = new QTableWidgetItem(aircraftInfo.tailNumber);
         newItem->setToolTip(tr("Double-click to edit tail number."));
-        newItem->setBackground(QColor(Const::EditableTableCellBGColor));
+        newItem->setBackground(Platform::getEditableTableCellBGColor());
         ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
         d->tailNumberColumnIndex = columnIndex;
         ++columnIndex;
@@ -657,7 +658,7 @@ void FormationWidget::updateUi() noexcept
         const double timeOffsetSec = static_cast<double>(aircraftInfo.timeOffset) / 1000.0;
         newItem = new QTableWidgetItem(d->unit.formatNumber(timeOffsetSec, TimeOffsetDecimalPlaces));
         newItem->setToolTip(tr("Double-click to edit time offset [seconds]."));
-        newItem->setBackground(QColor(Const::EditableTableCellBGColor));
+        newItem->setBackground(Platform::getEditableTableCellBGColor());
         ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
         d->timeOffsetColumnIndex = columnIndex;
         ++columnIndex;
