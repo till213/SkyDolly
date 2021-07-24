@@ -1,23 +1,21 @@
+set(LIBRARY_NAME "UserInterface")
+
 add_definitions(-DUSERINTERFACE_EXPORT)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(UserInterface SHARED
-        ${USERINTERFACE_SOURCES}
-    )
+    qt_add_library(${LIBRARY_NAME} SHARED "")
 else()
-    add_library(UserInterface SHARED
-        ${USERINTERFACE_SOURCES}
-    )
+    add_library(${LIBRARY_NAME} SHARED "")
 endif()
 
-set(USERINTERFACE_LIBS
+set(LIBRARY_DEPENDENCIES
     Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence Widget SkyConnect Plugin Module
 )
 if (${PLATFORM_IS_MACOS})
-    list(APPEND USERINTERFACE_LIBS -lc++)
+    list(APPEND LIBRARY_DEPENDENCIES -lc++)
 endif()
 
-target_sources(UserInterface
+target_sources(${LIBRARY_NAME}
     PRIVATE
         res/SkyDolly.qrc
         src/UserInterfaceLib.h
@@ -83,6 +81,6 @@ target_sources(UserInterface
 )
 
 include_directories(UserInterface PRIVATE ../Widget/src/)
-target_link_libraries(UserInterface PRIVATE ${USERINTERFACE_LIBS})
-set_target_properties(UserInterface PROPERTIES VERSION ${PROJECT_VERSION})
-set_target_properties(UserInterface PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
+target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})
+set_target_properties(${LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
+set_target_properties(${LIBRARY_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
