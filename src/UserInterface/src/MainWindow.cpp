@@ -1057,13 +1057,11 @@ void MainWindow::updateFileMenu() noexcept
     case Connect::State::RecordingPaused:
         ui->importMenu->setEnabled(false);
         ui->exportMenu->setEnabled(false);
-        ui->backupLogbookAction->setEnabled(false);
         ui->optimiseLogbookAction->setEnabled(false);
         break;
     default:        
         ui->importMenu->setEnabled(d->hasImportPlugins && d->connectedWithLogbook);
         ui->exportMenu->setEnabled(d->hasExportPlugins && hasRecording);
-        ui->backupLogbookAction->setEnabled(d->connectedWithLogbook);
         ui->optimiseLogbookAction->setEnabled(d->connectedWithLogbook);
     }
 }
@@ -1143,14 +1141,6 @@ void MainWindow::on_openLogbookAction_triggered() noexcept
         if (!ok) {
             QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be opened.").arg(existingLogbookPath));
         }
-    }
-}
-
-void MainWindow::on_backupLogbookAction_triggered() noexcept
-{
-    bool ok = d->databaseService->backup();
-    if (!ok) {
-        QMessageBox::critical(this, tr("Database error"), tr("The logbook backup could not be created."));
     }
 }
 

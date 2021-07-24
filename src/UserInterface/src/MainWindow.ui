@@ -327,7 +327,7 @@
      <x>0</x>
      <y>0</y>
      <width>826</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="fileMenu">
@@ -347,7 +347,6 @@
     <addaction name="newLogbookAction"/>
     <addaction name="openLogbookAction"/>
     <addaction name="separator"/>
-    <addaction name="backupLogbookAction"/>
     <addaction name="optimiseLogbookAction"/>
     <addaction name="separator"/>
     <addaction name="importMenu"/>
@@ -630,14 +629,6 @@
     <string>Optimise Logbook</string>
    </property>
   </action>
-  <action name="backupLogbookAction">
-   <property name="text">
-    <string>Backup Logbook</string>
-   </property>
-   <property name="toolTip">
-    <string>Backup Logbook</string>
-   </property>
-  </action>
   <action name="showMinimalAction">
    <property name="checkable">
     <bool>true</bool>
@@ -666,6 +657,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../res/SkyDolly.qrc"/>
   <include location="../res/SkyDolly.qrc"/>
  </resources>
  <connections/>
