@@ -25,6 +25,8 @@
 #ifndef KMLEXPORTDIALOG_H
 #define KMLEXPORTDIALOG_H
 
+#include <memory>
+
 #include <QDialog>
 
 namespace Ui {
