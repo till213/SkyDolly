@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>606</width>
-    <height>266</height>
+    <width>607</width>
+    <height>446</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>KML Export</string>
   </property>
-  <layout class="QFormLayout" name="formLayout">
+  <layout class="QFormLayout" name="formLayout_2">
    <item row="0" column="0">
     <widget class="QLabel" name="label_2">
      <property name="text">
@@ -52,7 +52,48 @@
    <item row="2" column="1">
     <widget class="QComboBox" name="resamplingComboBox"/>
    </item>
+   <item row="3" column="1">
+    <widget class="QCheckBox" name="openExportCheckBox">
+     <property name="text">
+      <string>Open exported file</string>
+     </property>
+    </widget>
+   </item>
    <item row="4" column="0" colspan="2">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Style</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Color style:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="colorStyleComboBox"/>
+      </item>
+      <item row="3" column="1">
+       <widget class="QToolButton" name="chooseColorToolButton">
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../../../../UserInterface/res/SkyDolly.qrc">
+          <normaloff>:/img/icons/backward-normal.png</normaloff>
+          <activeoff>:/img/icons/backward-active.png</activeoff>:/img/icons/backward-normal.png</iconset>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="2">
     <widget class="QGroupBox" name="informationGroupBox">
      <property name="title">
       <string>Information</string>
@@ -90,7 +131,7 @@
      </layout>
     </widget>
    </item>
-   <item row="5" column="1">
+   <item row="7" column="1">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -100,16 +141,12 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
-    <widget class="QCheckBox" name="openExportCheckBox">
-     <property name="text">
-      <string>Open exported file</string>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../../../../UserInterface/res/SkyDolly.qrc"/>
+  <include location="../../../../../UserInterface/res/SkyDolly.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>
