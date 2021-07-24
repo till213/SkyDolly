@@ -108,7 +108,6 @@ private slots:
     // File menu
     void on_newLogbookAction_triggered() noexcept;
     void on_openLogbookAction_triggered() noexcept;
-    void on_backupLogbookAction_triggered() noexcept;
     void on_optimiseLogbookAction_triggered() noexcept;
     void on_showSettingsAction_triggered() noexcept;
     void on_showLogbookSettingsAction_triggered() noexcept;
