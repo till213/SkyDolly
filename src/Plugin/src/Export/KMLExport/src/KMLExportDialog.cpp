@@ -42,7 +42,32 @@
 #include "../../../../../Model/src/Position.h"
 #include "../../../../src/Export.h"
 #include "KMLExportDialog.h"
+#include "KMLStyleExport.h"
 #include "ui_KMLExportDialog.h"
+
+namespace {
+    // in AARRGGBB format
+    // https://designs.ai/colors/color-wheel
+    // http://khroma.co/generator/
+    // http://colormind.io/
+    const QRgb Opaque = 0xff000000;
+
+    // Cyan
+    constexpr QRgb DefaultJetStartColor = Opaque | 0x00d9ff;
+    constexpr QRgb DefaultJetEndColor = Opaque | 0x001aff;
+    // Red
+    constexpr QRgb DefaultTurbopropStartColor = Opaque | 0xe60000;
+    constexpr QRgb DefaultTurbopropEndColor = Opaque | 0x66008c;
+    // Green
+    constexpr QRgb DefaultPistonStartColor = Opaque | 0x00ff20;
+    constexpr QRgb DefaultPistonEndColor = Opaque | 0x007020;
+    // Orange
+    constexpr QRgb DefaultAllStartColor = Opaque | 0xff8f00;
+    constexpr QRgb DefaultAllEndColor = Opaque | 0xa06417;
+
+    constexpr int DefaultNofColorsPerRamp = 8;
+    constexpr float DefaultLineWidth = 3.0f;
+}
 
 class KMLExportDialogPrivate
 {
@@ -85,6 +110,24 @@ KMLExportDialog::ResamplingPeriod KMLExportDialog::getSelectedResamplingPeriod()
 bool KMLExportDialog::doOpenExportedFile() const noexcept
 {
     return ui->openExportCheckBox->isChecked();
+}
+
+KMLStyleExport::StyleParameter KMLExportDialog::getStyleParameters() const noexcept
+{
+    KMLStyleExport::StyleParameter p;
+
+    p.categoryColors[SimType::EngineType::Jet].first = DefaultJetStartColor;
+    p.categoryColors[SimType::EngineType::Jet].second = DefaultJetEndColor;
+    p.categoryColors[SimType::EngineType::Turboprop].first = DefaultTurbopropStartColor;
+    p.categoryColors[SimType::EngineType::Turboprop].second = DefaultTurbopropStartColor;
+    p.categoryColors[SimType::EngineType::Piston].first = DefaultPistonStartColor;
+    p.categoryColors[SimType::EngineType::Piston].second = DefaultPistonEndColor;
+    p.categoryColors[SimType::EngineType::All].first = DefaultAllStartColor;
+    p.categoryColors[SimType::EngineType::All].second = DefaultAllEndColor;
+    p.nofColorsPerRamp = DefaultNofColorsPerRamp;
+    p.lineWidth = DefaultLineWidth;
+
+    return p;
 }
 
 // PRIVATE

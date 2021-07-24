@@ -26,6 +26,8 @@
 #define KMLSTYLEEXPORT_H
 
 #include <memory>
+#include <unordered_map>
+#include <utility>
 
 #include <QColor>
 
@@ -43,24 +45,31 @@ public:
         Flag
     };
 
-    KMLStyleExport(int nofColorsPerRamp) noexcept;
+    typedef std::unordered_map<SimType::EngineType, std::pair<QRgb, QRgb>> CategoryColor;
+    typedef struct {
+        CategoryColor categoryColors;
+        int nofColorsPerRamp;
+        float lineWidth;
+    } StyleParameter;
+
+    KMLStyleExport() noexcept;
     ~KMLStyleExport() noexcept;
 
-    bool exportStyles(QIODevice &io) const noexcept;
+    bool exportStyles(const StyleParameter &styleParameters, QIODevice &io) noexcept;
     QString getNextStyleMapPerEngineType(SimType::EngineType engineType) noexcept;
 
     static QString getStyleUrl(Icon icon) noexcept;
 
 private:
-
     std::unique_ptr<KMLStyleExportPrivate> d;
 
+    void initialiseColorRamps() noexcept;
     bool exportHighlightLineStyle(QIODevice &io) const noexcept;
     bool exportNormalLineStyles(QIODevice &io) const noexcept;
     bool exportLineStyleMaps(QIODevice &io) const noexcept;
     bool exportPlacemarkStyles(QIODevice &io) const noexcept;
 
-    static bool exportNormalLineStylesPerEngineType(SimType::EngineType engineType, const std::vector<QRgb> &colorRamp, QIODevice &io) noexcept;
+    static bool exportNormalLineStylesPerEngineType(SimType::EngineType engineType, std::vector<QRgb> &colorRamp, float lineWidth, QIODevice &io) noexcept;
 };
 
 #endif // KMLSTYLEEXPORT_H

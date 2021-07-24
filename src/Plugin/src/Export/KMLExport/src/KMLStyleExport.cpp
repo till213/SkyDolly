@@ -36,27 +36,6 @@
 
 namespace
 {
-    constexpr char LineWidth[] = "3.5";
-
-    // in AARRGGBB format
-    // https://designs.ai/colors/color-wheel
-    // http://khroma.co/generator/
-    // http://colormind.io/
-    const QRgb Opaque = 0xff000000;
-
-    // Cyan
-    constexpr QRgb JetStartColor = Opaque | 0x00d9ff;
-    constexpr QRgb JetEndColor = Opaque | 0x001aff;
-    // Red
-    constexpr QRgb TurbopropStartColor = Opaque | 0xe60000;
-    constexpr QRgb TurbopropEndColor = Opaque | 0x66008c;
-    // Green
-    constexpr QRgb PistonStartColor = Opaque | 0x00ff20;
-    constexpr QRgb PistonEndColor = Opaque | 0x007020;
-    // Orange
-    constexpr QRgb OtherStartColor = Opaque | 0xff8f00;
-    constexpr QRgb OtherEndColor = Opaque | 0xa06417;
-
     constexpr QRgb LineHighlightColor = 0xffffff00;
     constexpr QRgb PolygonHighlightColor = 0xcc7ed5c9;
     constexpr QRgb PolygonColor = 0x337ed5c9;
@@ -69,34 +48,29 @@ namespace
     constexpr char JetStyleMapId[] = "sm_jet_style";
     constexpr char TurbopropStyleMapId[] = "sm_turbo_prop_style";
     constexpr char PistonStyleMapId[] = "sm_piston_style";
-    constexpr char OtherStyleMapId[] = "sm_other_style";
+    constexpr char AllStyleMapId[] = "sm_all_style";
 }
 
 class KMLStyleExportPrivate
 {
 public:
-    KMLStyleExportPrivate(int theNofColorsPerRamp) noexcept
-        : nofColorsPerRamp(theNofColorsPerRamp),
-          jetColorRampIndex(0),
+    KMLStyleExportPrivate() noexcept
+        : jetColorRampIndex(0),
           turbopropColorRampIndex(0),
           pistonColorRampIndex(0),
           otherColorRampIndex(0)
     {
-        jetColorRamp = Color::createColorRamp(JetStartColor, JetEndColor, nofColorsPerRamp);
-        turbopropColorRamp = Color::createColorRamp(TurbopropStartColor, TurbopropEndColor, nofColorsPerRamp);
-        pistonColorRamp = Color::createColorRamp(PistonStartColor, PistonEndColor, nofColorsPerRamp);
-        otherColorRamp = Color::createColorRamp(OtherStartColor, OtherEndColor, nofColorsPerRamp);
         jetColorRampIndex = 0;
         turbopropColorRampIndex = 0;
         pistonColorRampIndex = 0;
         otherColorRampIndex = 0;
     }
 
-    int nofColorsPerRamp;
+    KMLStyleExport::StyleParameter styleParameters;
     std::vector<QRgb> jetColorRamp;
     std::vector<QRgb> turbopropColorRamp;
     std::vector<QRgb> pistonColorRamp;
-    std::vector<QRgb> otherColorRamp;
+    std::vector<QRgb> allColorRamp;
     // Index into color ramp, modulo its size
     int jetColorRampIndex;
     int turbopropColorRampIndex;
@@ -106,15 +80,17 @@ public:
 
 // PUBLIC
 
-KMLStyleExport::KMLStyleExport(int nofColorsPerRamp) noexcept
-    : d(std::make_unique<KMLStyleExportPrivate>(nofColorsPerRamp))
+KMLStyleExport::KMLStyleExport() noexcept
+    : d(std::make_unique<KMLStyleExportPrivate>())
 {}
 
 KMLStyleExport::~KMLStyleExport() noexcept
 {}
 
-bool KMLStyleExport::exportStyles(QIODevice &io) const noexcept
+bool KMLStyleExport::exportStyles(const StyleParameter &styleParameters, QIODevice &io) noexcept
 {
+    d->styleParameters = styleParameters;
+    initialiseColorRamps();
     bool ok = exportHighlightLineStyle(io);
     if (ok) {
         ok = exportNormalLineStyles(io);
@@ -131,23 +107,36 @@ bool KMLStyleExport::exportStyles(QIODevice &io) const noexcept
 QString KMLStyleExport::getNextStyleMapPerEngineType(SimType::EngineType engineType) noexcept
 {
     QString styleMapId;
+    std::size_t nofColors;
 
     switch (engineType) {
     case SimType::EngineType::Jet:
-        styleMapId = QString(JetStyleMapId) % "_" % QString::number(d->jetColorRampIndex % d->nofColorsPerRamp);
-        ++d->jetColorRampIndex;
+        nofColors = d->jetColorRamp.size();
+        if (nofColors > 0) {
+            styleMapId = QString(JetStyleMapId) % "_" % QString::number(d->jetColorRampIndex % nofColors);
+            ++d->jetColorRampIndex;
+        }
         break;
     case SimType::EngineType::Turboprop:
-        styleMapId = QString(TurbopropStyleMapId) % "_" % QString::number(d->turbopropColorRampIndex % d->nofColorsPerRamp);
-        ++d->turbopropColorRampIndex;
+        nofColors = d->turbopropColorRamp.size();
+        if (nofColors > 0) {
+            styleMapId = QString(TurbopropStyleMapId) % "_" % QString::number(d->turbopropColorRampIndex % d->turbopropColorRamp.size());
+            ++d->turbopropColorRampIndex;
+        }
         break;
     case SimType::EngineType::Piston:
-        styleMapId = QString(PistonStyleMapId) % "_" % QString::number(d->pistonColorRampIndex % d->nofColorsPerRamp);
-        ++d->pistonColorRampIndex;
+        nofColors = d->pistonColorRamp.size();
+        if (nofColors > 0) {
+            styleMapId = QString(PistonStyleMapId) % "_" % QString::number(d->pistonColorRampIndex % d->pistonColorRamp.size());
+            ++d->pistonColorRampIndex;
+        }
         break;
     default:
-        styleMapId = QString(OtherStyleMapId) % "_" % QString::number(d->otherColorRampIndex % d->nofColorsPerRamp);
-        ++d->otherColorRampIndex;
+        nofColors = d->allColorRamp.size();
+        if (nofColors > 0) {
+            styleMapId = QString(AllStyleMapId) % "_" % QString::number(d->otherColorRampIndex % d->allColorRamp.size());
+            ++d->otherColorRampIndex;
+        }
         break;
     }
     return styleMapId;
@@ -172,6 +161,34 @@ QString KMLStyleExport::getStyleUrl(Icon icon) noexcept
 
 // PRIVATE
 
+inline void KMLStyleExport::initialiseColorRamps() noexcept
+{
+    if (d->styleParameters.categoryColors.find(SimType::EngineType::Jet) != d->styleParameters.categoryColors.end()) {
+        d->jetColorRamp = Color::createColorRamp(
+                    d->styleParameters.categoryColors.at(SimType::EngineType::Jet).first,
+                    d->styleParameters.categoryColors.at(SimType::EngineType::Jet).second,
+                    d->styleParameters.nofColorsPerRamp);
+    }
+    if (d->styleParameters.categoryColors.find(SimType::EngineType::Turboprop) != d->styleParameters.categoryColors.end()) {
+        d->turbopropColorRamp = Color::createColorRamp(
+                    d->styleParameters.categoryColors.at(SimType::EngineType::Turboprop).first,
+                    d->styleParameters.categoryColors.at(SimType::EngineType::Turboprop).second,
+                    d->styleParameters.nofColorsPerRamp);
+    }
+    if (d->styleParameters.categoryColors.find(SimType::EngineType::Piston) != d->styleParameters.categoryColors.end()) {
+        d->pistonColorRamp = Color::createColorRamp(
+                    d->styleParameters.categoryColors.at(SimType::EngineType::Piston).first,
+                    d->styleParameters.categoryColors.at(SimType::EngineType::Piston).second,
+                    d->styleParameters.nofColorsPerRamp);
+    }
+    if (d->styleParameters.categoryColors.find(SimType::EngineType::All) != d->styleParameters.categoryColors.end()) {
+        d->allColorRamp = Color::createColorRamp(
+                    d->styleParameters.categoryColors.at(SimType::EngineType::All).first,
+                    d->styleParameters.categoryColors.at(SimType::EngineType::All).second,
+                    d->styleParameters.nofColorsPerRamp);
+    }
+}
+
 bool KMLStyleExport::exportHighlightLineStyle(QIODevice &io) const noexcept
 {
     const QRgb lineHighlightKml = Color::convertRgbToKml(LineHighlightColor);
@@ -180,7 +197,7 @@ bool KMLStyleExport::exportHighlightLineStyle(QIODevice &io) const noexcept
 "    <Style id=\"s_flight_h\">\n"
 "      <LineStyle>\n"
 "        <color>" % QString::number(lineHighlightKml, 16) % "</color>\n"
-"        <width>" % QString(LineWidth) % "</width>\n"
+"        <width>" % QString::number(d->styleParameters.lineWidth) % "</width>\n"
 "      </LineStyle>\n"
 "      <PolyStyle>\n"
 "        <color>" % QString::number(polygonHighlightKml, 16) % "</color>\n"
@@ -193,15 +210,16 @@ bool KMLStyleExport::exportHighlightLineStyle(QIODevice &io) const noexcept
 
 bool KMLStyleExport::exportNormalLineStyles(QIODevice &io) const noexcept
 {
-    bool ok = exportNormalLineStylesPerEngineType(SimType::EngineType::Jet, d->jetColorRamp, io);
+    const float lineWidth = d->styleParameters.lineWidth;
+    bool ok = exportNormalLineStylesPerEngineType(SimType::EngineType::Jet, d->jetColorRamp, lineWidth, io);
     if (ok) {
-        ok = exportNormalLineStylesPerEngineType(SimType::EngineType::Turboprop, d->turbopropColorRamp, io);
+        ok = exportNormalLineStylesPerEngineType(SimType::EngineType::Turboprop, d->turbopropColorRamp, lineWidth, io);
     }
     if (ok) {
-        ok = exportNormalLineStylesPerEngineType(SimType::EngineType::Piston, d->pistonColorRamp, io);
+        ok = exportNormalLineStylesPerEngineType(SimType::EngineType::Piston, d->pistonColorRamp, lineWidth, io);
     }
     if (ok) {
-        ok = exportNormalLineStylesPerEngineType(SimType::EngineType::All, d->otherColorRamp, io);
+        ok = exportNormalLineStylesPerEngineType(SimType::EngineType::All, d->allColorRamp, lineWidth, io);
     }
 
     return ok;
@@ -262,7 +280,7 @@ bool KMLStyleExport::exportLineStyleMaps(QIODevice &io) const noexcept
     // Other style map
     for (std::size_t index = 0; ok && index < d->jetColorRamp.size(); ++index) {
         const QString styleMap =
-"    <StyleMap id=\"" % QString(OtherStyleMapId) % "_" % QString::number(index) % "\">\n"
+"    <StyleMap id=\"" % QString(AllStyleMapId) % "_" % QString::number(index) % "\">\n"
 "      <Pair>\n"
 "        <key>normal</key>\n"
 "        <styleUrl>#" % QString(OtherStyleId) % "_" % QString::number(index) % "</styleUrl>\n"
@@ -336,7 +354,7 @@ bool KMLStyleExport::exportPlacemarkStyles(QIODevice &io) const noexcept
     return io.write(styles.toUtf8());
 }
 
-bool KMLStyleExport::exportNormalLineStylesPerEngineType(SimType::EngineType engineType, const std::vector<QRgb> &colorRamp, QIODevice &io) noexcept
+bool KMLStyleExport::exportNormalLineStylesPerEngineType(SimType::EngineType engineType, std::vector<QRgb> &colorRamp, float lineWidth, QIODevice &io) noexcept
 {
     QString styleId;
     switch (engineType) {
@@ -357,6 +375,7 @@ bool KMLStyleExport::exportNormalLineStylesPerEngineType(SimType::EngineType eng
     bool ok = true;
     int index = 0;
     const QRgb polygonColorKml = Color::convertRgbToKml(PolygonColor);
+
     for (const QRgb color : colorRamp) {
 
         const QRgb lineColorKml = Color::convertRgbToKml(color);
@@ -364,7 +383,7 @@ bool KMLStyleExport::exportNormalLineStylesPerEngineType(SimType::EngineType eng
 "    <Style id=\"" % styleId % "_" % QString::number(index) % "\">\n"
 "      <LineStyle>\n"
 "        <color>" % QString::number(lineColorKml, 16) % "</color>\n"
-"        <width>" % QString(LineWidth) % "</width>\n"
+"        <width>" % QString::number(lineWidth) % "</width>\n"
 "      </LineStyle>\n"
 "      <PolyStyle>\n"
 "        <color>" % QString::number(polygonColorKml, 16) % "</color>\n"

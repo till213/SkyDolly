@@ -29,6 +29,8 @@
 
 #include <QDialog>
 
+#include "KMLStyleExport.h"
+
 namespace Ui {
     class KMLExportDialog;
 }
@@ -59,6 +61,7 @@ public:
     QString getSelectedFilePath() const noexcept;
     ResamplingPeriod getSelectedResamplingPeriod() const noexcept;
     bool doOpenExportedFile() const noexcept;
+    KMLStyleExport::StyleParameter getStyleParameters() const noexcept;
 
 private:
     Ui::KMLExportDialog *ui;
