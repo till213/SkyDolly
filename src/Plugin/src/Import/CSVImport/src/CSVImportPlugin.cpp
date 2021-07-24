@@ -112,8 +112,6 @@ bool CSVImportPlugin::importData(FlightService &flightService) const noexcept
 
 // PRIVATE
 
-bool getAircraftType(const QString &type, AircraftType &aircraftType) noexcept;
-
 bool CSVImportPlugin::import(const QString &filePath, const AircraftType &aircraftType, FlightService &flightService, bool addToCurrentFlight) const noexcept
 {
     QFile file(filePath);
