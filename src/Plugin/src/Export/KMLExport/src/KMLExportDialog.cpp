@@ -65,6 +65,8 @@ namespace {
     constexpr QRgb DefaultAllStartColor = Opaque | 0xff8f00;
     constexpr QRgb DefaultAllEndColor = Opaque | 0xa06417;
 
+    constexpr KMLStyleExport::ColorStyle DefaultColorStyle = KMLStyleExport::ColorStyle::ColorRampPerEngineType;
+
     constexpr int DefaultNofColorsPerRamp = 8;
     constexpr float DefaultLineWidth = 3.0f;
 }

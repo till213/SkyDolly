@@ -45,9 +45,16 @@ public:
         Flag
     };
 
+    enum class ColorStyle {
+        OneColor,
+        ColorRamp,
+        ColorRampPerEngineType
+    };
+
     typedef std::unordered_map<SimType::EngineType, std::pair<QRgb, QRgb>> CategoryColor;
     typedef struct {
         CategoryColor categoryColors;
+        ColorStyle colorStyle;
         int nofColorsPerRamp;
         float lineWidth;
     } StyleParameter;
