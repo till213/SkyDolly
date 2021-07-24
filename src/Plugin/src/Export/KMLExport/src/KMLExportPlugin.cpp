@@ -74,7 +74,7 @@ public:
     KMLExportPluginPrivate() noexcept
         : flight(Logbook::getInstance().getCurrentFlight()),
           nofAircrafts(flight.count()),
-          styleExport(std::make_unique<KMLStyleExport>(qMin(nofAircrafts, MaxColorsPerRamp))),
+          styleExport(std::make_unique<KMLStyleExport>()),
           resamplingPeriod(KMLExportDialog::ResamplingPeriod::OneHz)
     {}
 
@@ -117,13 +117,17 @@ bool KMLExportPlugin::exportData() noexcept
 {
     bool ok;
 
-    init();
+    d->aircraftTypeCount.clear();
 
     std::unique_ptr<KMLExportDialog> kmlExportDialog = std::make_unique<KMLExportDialog>(getParentWidget());
     const int choice = kmlExportDialog->exec();
     if (choice == QDialog::Accepted) {
         const QString &filePath = File::ensureSuffix(kmlExportDialog->getSelectedFilePath(), KMLExportDialog::FileSuffix);
         if (!filePath.isEmpty()) {
+
+            KMLStyleExport::StyleParameter styleParameters = kmlExportDialog->getStyleParameters();
+            const int nofAircrafts = d->flight.count();
+            styleParameters.nofColorsPerRamp = qMin(nofAircrafts, styleParameters.nofColorsPerRamp);
 
             QFile file(filePath);
             ok = file.open(QIODevice::WriteOnly);
@@ -132,7 +136,7 @@ bool KMLExportPlugin::exportData() noexcept
                 ok = exportHeader(file);
             }
             if (ok) {
-                ok = d->styleExport->exportStyles(file);
+                ok = d->styleExport->exportStyles(styleParameters, file);
             }
             if (ok) {
                 ok = exportFlightInfo(file);
@@ -172,11 +176,6 @@ bool KMLExportPlugin::exportData() noexcept
 }
 
 // PRIVATE
-
-void KMLExportPlugin::init() noexcept
-{
-    d->aircraftTypeCount.clear();
-}
 
 bool KMLExportPlugin::exportHeader(QIODevice &io) const noexcept
 {

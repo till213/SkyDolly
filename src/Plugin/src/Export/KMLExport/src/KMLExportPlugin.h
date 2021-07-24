@@ -68,8 +68,6 @@ public:
 private:
     std::unique_ptr<KMLExportPluginPrivate> d;
 
-    void init() noexcept;
-
     bool exportHeader(QIODevice &io) const noexcept;
     bool exportFlightInfo(QIODevice &io) const noexcept;
     bool exportAircrafts(QIODevice &io) const noexcept;
