@@ -29,10 +29,12 @@
 
 #include <QObject>
 #include <QtPlugin>
+#include <QUuid>
 
 class QIODevice;
 class QString;
 
+#include "../../../../../Kernel/src/Settings.h"
 #include "../../../../../Model/src/SimType.h"
 #include "../../../ExportIntf.h"
 #include "../../../PluginBase.h"
@@ -63,7 +65,22 @@ public:
         PluginBase::setParentWidget(parent);
     }
 
+    virtual void storeSettings(const QUuid &pluginUuid) const noexcept override
+    {
+        PluginBase::storeSettings(pluginUuid);
+    }
+
+    virtual void restoreSettings(const QUuid &pluginUuid) noexcept override
+    {
+        PluginBase::restoreSettings(pluginUuid);
+    }
+
     virtual bool exportData() noexcept override;
+
+protected:
+    virtual Settings::PluginSettings getSettings() const noexcept override;
+    virtual Settings::KeysWithDefaults getKeys() const noexcept override;
+    virtual void setSettings(Settings::ValuesByKey) noexcept override;
 
 private:
     std::unique_ptr<KMLExportPluginPrivate> d;

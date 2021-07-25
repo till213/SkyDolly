@@ -55,7 +55,10 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0" colspan="2">
+      <item row="0" column="1">
+       <widget class="QComboBox" name="resamplingComboBox"/>
+      </item>
+      <item row="1" column="0" colspan="2">
        <widget class="QLabel" name="infoLabel">
         <property name="minimumSize">
          <size>
@@ -70,9 +73,6 @@
          <bool>true</bool>
         </property>
        </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QComboBox" name="resamplingComboBox"/>
       </item>
      </layout>
     </widget>
@@ -103,7 +103,7 @@
       <item row="1" column="0">
        <widget class="QLabel" name="label_4">
         <property name="text">
-         <string>Color (start):</string>
+         <string>Start color:</string>
         </property>
        </widget>
       </item>
@@ -182,7 +182,7 @@
       <item row="2" column="0">
        <widget class="QLabel" name="label_5">
         <property name="text">
-         <string>Color (end):</string>
+         <string>End color:</string>
         </property>
        </widget>
       </item>

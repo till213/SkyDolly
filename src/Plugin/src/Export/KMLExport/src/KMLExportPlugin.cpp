@@ -66,6 +66,8 @@ namespace
 
     // Number of colors per color ramp
     constexpr int MaxColorsPerRamp = 8;
+
+    constexpr KMLExportDialog::ResamplingPeriod DefaultResamplingPeriod = KMLExportDialog::ResamplingPeriod::OneHz;
 }
 
 class KMLExportPluginPrivate
@@ -173,6 +175,38 @@ bool KMLExportPlugin::exportData() noexcept
         ok = true;
     }
     return ok;
+}
+
+// PROTECTED
+
+Settings::PluginSettings KMLExportPlugin::getSettings() const noexcept
+{
+    Settings::PluginSettings settings;
+    Settings::KeyValue keyValue;
+    keyValue.first = "ResamplingPeriod";
+    keyValue.second = Enum::toUnderlyingType(d->resamplingPeriod);
+    settings.push_back(keyValue);
+
+    return settings;
+}
+
+Settings::KeysWithDefaults KMLExportPlugin::getKeys() const noexcept
+{
+    Settings::KeysWithDefaults keys;
+
+    // TODO IMPLEMENT ME (other values)
+    Settings::KeyValue keyValue;
+    keyValue.first = "ResamplingPeriod";
+    keyValue.second = Enum::toUnderlyingType(DefaultResamplingPeriod);
+    keys.push_back(keyValue);
+    return keys;
+
+}
+
+void KMLExportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+{
+    // TODO IMPLEMENT ME
+    KMLExportDialog::ResamplingPeriod resamplingPeriod = static_cast<KMLExportDialog::ResamplingPeriod >(valuesByKey["ResamplingPeriod"].toInt());
 }
 
 // PRIVATE
