@@ -64,6 +64,16 @@ public:
         PluginBase::setParentWidget(parent);
     }
 
+    virtual void storeSettings(const QUuid &pluginUuid) const noexcept override
+    {
+        PluginBase::storeSettings(pluginUuid);
+    }
+
+    virtual void restoreSettings(const QUuid &pluginUuid) noexcept override
+    {
+        PluginBase::restoreSettings(pluginUuid);
+    }
+
     virtual bool importData(FlightService &flightService) const noexcept override;
 
 private:

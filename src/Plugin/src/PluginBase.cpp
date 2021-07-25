@@ -23,7 +23,9 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <QWidget>
+#include <QUuid>
 
+#include "../../Kernel/src/Settings.h"
 #include "PluginBase.h"
 
 class PluginBasePrivate
@@ -55,4 +57,36 @@ void PluginBase::setParentWidget(QWidget *parent) noexcept
     d->parent = parent;
 }
 
+void PluginBase::storeSettings(const QUuid &pluginUuid) const noexcept
+{
+    const Settings::PluginSettings settings = getSettings();
+    if (settings.size() > 0) {
+        Settings::getInstance().storePluginSettings(pluginUuid, settings);
+    }
+}
 
+void PluginBase::restoreSettings(const QUuid &pluginUuid) noexcept
+{
+    const Settings::KeysWithDefaults keys = getKeys();
+    if (keys.size() > 0) {
+        Settings::ValuesByKey values = Settings::getInstance().restorePluginSettings(pluginUuid, keys);
+        setSettings(values);
+    }
+}
+
+// PROTECTED
+
+Settings::PluginSettings PluginBase::getSettings() const noexcept
+{
+    Settings::PluginSettings settings;
+    return settings;
+}
+
+Settings::KeysWithDefaults PluginBase::getKeys() const noexcept
+{
+    Settings::KeysWithDefaults keys;
+    return keys;
+}
+
+void PluginBase::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+{}

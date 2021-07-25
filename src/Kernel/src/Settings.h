@@ -26,10 +26,15 @@
 #define SETTINGS_H
 
 #include <memory>
+#include <vector>
+#include <unordered_map>
+#include <utility>
 
 #include <QObject>
 #include <QSettings>
 #include <QUuid>
+#include <QString>
+#include <QVariant>
 
 class QByteArray;
 
@@ -392,11 +397,19 @@ public:
      */
     void setPreviewInfoDialogCount(int count) noexcept;
 
+    typedef std::pair<QString, QVariant> KeyValue;
+    typedef std::unordered_map<QString, QVariant> ValuesByKey;
+    typedef std::vector<KeyValue> PluginSettings;
+    typedef std::vector<KeyValue> KeysWithDefaults;
+
+    void storePluginSettings(QUuid pluginUuid, const PluginSettings &settings) const noexcept;
+    ValuesByKey restorePluginSettings(QUuid pluginUuid, const KeysWithDefaults &keys) noexcept;
+
 public slots:
     /*!
      * Stores these Settings to a user configuration file.
      */
-    void store() noexcept;
+    void store() const noexcept;
 
     /*!
      * Restores these Settings from a user configuration file. If no user
