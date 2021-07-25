@@ -26,9 +26,11 @@
 #define KMLEXPORTDIALOG_H
 
 #include <memory>
+#include <utility>
 
 #include <QDialog>
 
+#include "../../../../../Model/src/SimType.h"
 #include "KMLStyleExport.h"
 
 namespace Ui {
@@ -68,7 +70,9 @@ private:
     std::unique_ptr<KMLExportDialogPrivate> d;
 
     void initUi() noexcept;
+    void initColorUi() noexcept;
     void updateInfoUi() noexcept;
+    void updateColorUi() noexcept;
     void frenchConnection() noexcept;
 
     qint64 estimateNofSamplePoints() noexcept;
@@ -76,8 +80,11 @@ private:
 private slots:
     void updateUi() noexcept;
 
+    void selectColor(int id) noexcept;
+
     void on_fileSelectionPushButton_clicked() noexcept;
     void on_resamplingComboBox_activated(int index) noexcept;
+    void on_colorStyleComboBox_activated(int index) noexcept;
 };
 
 #endif // KMLEXPORTDIALOG_H

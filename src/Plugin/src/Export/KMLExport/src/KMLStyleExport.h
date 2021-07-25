@@ -47,6 +47,7 @@ public:
 
     enum class ColorStyle {
         OneColor,
+        OneColorPerEngineType,
         ColorRamp,
         ColorRampPerEngineType
     };
