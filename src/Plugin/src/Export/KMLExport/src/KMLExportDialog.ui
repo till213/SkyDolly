@@ -110,10 +110,23 @@
       <item row="1" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QToolButton" name="color1StartToolButton">
+         <widget class="QToolButton" name="allStartColorToolButton">
           <property name="acceptDrops">
            <bool>false</bool>
           </property>
+          <property name="toolTip">
+           <string>All engines</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="jetStartColorToolButton">
           <property name="toolTip">
            <string>Jet engines</string>
           </property>
@@ -126,7 +139,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="color2StartToolButton">
+         <widget class="QToolButton" name="turbopropStartColorToolButton">
           <property name="toolTip">
            <string>Turboprop engines</string>
           </property>
@@ -139,22 +152,9 @@
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="color3StartToolButton">
+         <widget class="QToolButton" name="pistonStartColorToolButton">
           <property name="toolTip">
            <string>Piston engines</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QToolButton" name="color4StartToolButton">
-          <property name="toolTip">
-           <string>All engines</string>
           </property>
           <property name="text">
            <string/>
@@ -189,7 +189,20 @@
       <item row="2" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QToolButton" name="color1EndToolButton">
+         <widget class="QToolButton" name="allEndColorToolButton">
+          <property name="toolTip">
+           <string>All engines</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="jetEndColorToolButton">
           <property name="toolTip">
            <string>Jet engines</string>
           </property>
@@ -202,7 +215,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="color2EndToolButton">
+         <widget class="QToolButton" name="turbopropEndColorToolButton">
           <property name="toolTip">
            <string>Turboprop engines</string>
           </property>
@@ -215,22 +228,9 @@
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="color3EndToolButton">
+         <widget class="QToolButton" name="pistonEndColorToolButton">
           <property name="toolTip">
            <string>Piston engines</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QToolButton" name="color4EndToolButton">
-          <property name="toolTip">
-           <string>All engines</string>
           </property>
           <property name="text">
            <string/>

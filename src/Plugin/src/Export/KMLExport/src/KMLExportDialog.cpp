@@ -153,17 +153,23 @@ KMLStyleExport::StyleParameter KMLExportDialog::getStyleParameters() const noexc
 {
     KMLStyleExport::StyleParameter p;
 
-    p.categoryColors[SimType::EngineType::Jet].first = d->jetColorStart.rgba();
-    p.categoryColors[SimType::EngineType::Jet].second = d->jetColorEnd.rgba();
-    p.categoryColors[SimType::EngineType::Turboprop].first = d->turbopropColorStart.rgba();
-    p.categoryColors[SimType::EngineType::Turboprop].second = d->turbopropColorEnd.rgba();
-    p.categoryColors[SimType::EngineType::Piston].first = d->pistonColorStart.rgba();
-    p.categoryColors[SimType::EngineType::Piston].second = d->pistonColorEnd.rgba();
+    p.colorStyle = static_cast<KMLStyleExport::ColorStyle>(ui->colorStyleComboBox->currentIndex());
+    if (p.colorStyle == KMLStyleExport::ColorStyle::ColorRampPerEngineType || p.colorStyle == KMLStyleExport::ColorStyle::OneColorPerEngineType) {
+        p.categoryColors[SimType::EngineType::Jet].first = d->jetColorStart.rgba();
+        p.categoryColors[SimType::EngineType::Jet].second = d->jetColorEnd.rgba();
+        p.categoryColors[SimType::EngineType::Turboprop].first = d->turbopropColorStart.rgba();
+        p.categoryColors[SimType::EngineType::Turboprop].second = d->turbopropColorEnd.rgba();
+        p.categoryColors[SimType::EngineType::Piston].first = d->pistonColorStart.rgba();
+        p.categoryColors[SimType::EngineType::Piston].second = d->pistonColorEnd.rgba();
+    }
     p.categoryColors[SimType::EngineType::All].first = d->allColorStart.rgba();
     p.categoryColors[SimType::EngineType::All].second = d->allColorEnd.rgba();
 
-    p.colorStyle = static_cast<KMLStyleExport::ColorStyle>(ui->colorStyleComboBox->currentIndex());
-    p.nofColorsPerRamp = DefaultNofColorsPerRamp;
+    if (p.colorStyle == KMLStyleExport::ColorStyle::ColorRamp || p.colorStyle == KMLStyleExport::ColorStyle::ColorRampPerEngineType) {
+        p.nofColorsPerRamp = DefaultNofColorsPerRamp;
+    } else {
+        p.nofColorsPerRamp = 1;
+    }
     p.lineWidth = DefaultLineWidth;
 
     return p;
@@ -198,15 +204,16 @@ void KMLExportDialog::initColorUi() noexcept
     ui->colorStyleComboBox->insertItem(Enum::toUnderlyingType(KMLStyleExport::ColorStyle::OneColorPerEngineType), tr("One color per engine type"));
     ui->colorStyleComboBox->insertItem(Enum::toUnderlyingType(KMLStyleExport::ColorStyle::ColorRamp), tr("Color ramp"));
     ui->colorStyleComboBox->insertItem(Enum::toUnderlyingType(KMLStyleExport::ColorStyle::ColorRampPerEngineType), tr("Color ramp per engine type"));
+    ui->colorStyleComboBox->setCurrentIndex(Enum::toUnderlyingType(DefaultColorStyle));
 
-    d->colorButtonGroup->addButton(ui->color1StartToolButton, Enum::toUnderlyingType(ColorButton::JetColorStart));
-    d->colorButtonGroup->addButton(ui->color1EndToolButton, Enum::toUnderlyingType(ColorButton::JetColorEnd));
-    d->colorButtonGroup->addButton(ui->color2StartToolButton, Enum::toUnderlyingType(ColorButton::TurbopropColorStart));
-    d->colorButtonGroup->addButton(ui->color2EndToolButton, Enum::toUnderlyingType(ColorButton::TurbopropColorEnd));
-    d->colorButtonGroup->addButton(ui->color3StartToolButton, Enum::toUnderlyingType(ColorButton::PistonColorStart));
-    d->colorButtonGroup->addButton(ui->color3EndToolButton, Enum::toUnderlyingType(ColorButton::PistonColorEnd));
-    d->colorButtonGroup->addButton(ui->color4StartToolButton, Enum::toUnderlyingType(ColorButton::AllColorStart));
-    d->colorButtonGroup->addButton(ui->color4EndToolButton, Enum::toUnderlyingType(ColorButton::AllColorEnd));
+    d->colorButtonGroup->addButton(ui->allStartColorToolButton, Enum::toUnderlyingType(ColorButton::AllColorStart));
+    d->colorButtonGroup->addButton(ui->allEndColorToolButton, Enum::toUnderlyingType(ColorButton::AllColorEnd));
+    d->colorButtonGroup->addButton(ui->jetStartColorToolButton, Enum::toUnderlyingType(ColorButton::JetColorStart));
+    d->colorButtonGroup->addButton(ui->jetEndColorToolButton, Enum::toUnderlyingType(ColorButton::JetColorEnd));
+    d->colorButtonGroup->addButton(ui->turbopropStartColorToolButton, Enum::toUnderlyingType(ColorButton::TurbopropColorStart));
+    d->colorButtonGroup->addButton(ui->turbopropEndColorToolButton, Enum::toUnderlyingType(ColorButton::TurbopropColorEnd));
+    d->colorButtonGroup->addButton(ui->pistonStartColorToolButton, Enum::toUnderlyingType(ColorButton::PistonColorStart));
+    d->colorButtonGroup->addButton(ui->pistonEndColorToolButton, Enum::toUnderlyingType(ColorButton::PistonColorEnd));
 }
 
 void KMLExportDialog::updateInfoUi() noexcept
@@ -229,105 +236,101 @@ void KMLExportDialog::updateColorUi() noexcept
 {
     switch (static_cast<KMLStyleExport::ColorStyle>(ui->colorStyleComboBox->currentIndex())) {
     case KMLStyleExport::ColorStyle::OneColor:
-        ui->color1StartToolButton->setEnabled(true);
-        ui->color1EndToolButton->setEnabled(false);
-        ui->color2StartToolButton->setEnabled(false);
-        ui->color2EndToolButton->setEnabled(false);
-        ui->color3StartToolButton->setEnabled(false);
-        ui->color3EndToolButton->setEnabled(false);
-        ui->color4StartToolButton->setEnabled(false);
-        ui->color4EndToolButton->setEnabled(false);
+        ui->allStartColorToolButton->setEnabled(true);
+        ui->allEndColorToolButton->setEnabled(false);
+        ui->jetStartColorToolButton->setEnabled(false);
+        ui->jetEndColorToolButton->setEnabled(false);
+        ui->turbopropStartColorToolButton->setEnabled(false);
+        ui->turbopropEndColorToolButton->setEnabled(false);
+        ui->pistonStartColorToolButton->setEnabled(false);
+        ui->pistonEndColorToolButton->setEnabled(false);
         break;
     case KMLStyleExport::ColorStyle::OneColorPerEngineType:
-        ui->color1StartToolButton->setEnabled(true);
-        ui->color1EndToolButton->setEnabled(false);
-        ui->color2StartToolButton->setEnabled(true);
-        ui->color2EndToolButton->setEnabled(false);
-        ui->color3StartToolButton->setEnabled(true);
-        ui->color3EndToolButton->setEnabled(false);
-        ui->color4StartToolButton->setEnabled(true);
-        ui->color4EndToolButton->setEnabled(false);
+        ui->allStartColorToolButton->setEnabled(true);
+        ui->allEndColorToolButton->setEnabled(false);
+        ui->jetStartColorToolButton->setEnabled(true);
+        ui->jetEndColorToolButton->setEnabled(false);
+        ui->turbopropStartColorToolButton->setEnabled(true);
+        ui->turbopropEndColorToolButton->setEnabled(false);
+        ui->pistonStartColorToolButton->setEnabled(true);
+        ui->pistonEndColorToolButton->setEnabled(false);
         break;
     case KMLStyleExport::ColorStyle::ColorRamp:
-        ui->color1StartToolButton->setEnabled(true);
-        ui->color1EndToolButton->setEnabled(true);
-        ui->color2StartToolButton->setEnabled(false);
-        ui->color2EndToolButton->setEnabled(false);
-        ui->color3StartToolButton->setEnabled(false);
-        ui->color3EndToolButton->setEnabled(false);
-        ui->color4StartToolButton->setEnabled(false);
-        ui->color4EndToolButton->setEnabled(false);
+        ui->allStartColorToolButton->setEnabled(true);
+        ui->allEndColorToolButton->setEnabled(true);
+        ui->jetStartColorToolButton->setEnabled(false);
+        ui->jetEndColorToolButton->setEnabled(false);
+        ui->turbopropStartColorToolButton->setEnabled(false);
+        ui->turbopropEndColorToolButton->setEnabled(false);
+        ui->pistonStartColorToolButton->setEnabled(false);
+        ui->pistonEndColorToolButton->setEnabled(false);
         break;
     case KMLStyleExport::ColorStyle::ColorRampPerEngineType:
-        ui->color1StartToolButton->setEnabled(true);
-        ui->color1EndToolButton->setEnabled(true);
-        ui->color2StartToolButton->setEnabled(true);
-        ui->color2EndToolButton->setEnabled(true);
-        ui->color3StartToolButton->setEnabled(true);
-        ui->color3EndToolButton->setEnabled(true);
-        ui->color4StartToolButton->setEnabled(true);
-        ui->color4EndToolButton->setEnabled(true);
+        ui->allStartColorToolButton->setEnabled(true);
+        ui->allEndColorToolButton->setEnabled(true);
+        ui->jetStartColorToolButton->setEnabled(true);
+        ui->jetEndColorToolButton->setEnabled(true);
+        ui->turbopropStartColorToolButton->setEnabled(true);
+        ui->turbopropEndColorToolButton->setEnabled(true);
+        ui->pistonStartColorToolButton->setEnabled(true);
+        ui->pistonEndColorToolButton->setEnabled(true);
         break;
     default:
         break;
     }
 
     QString css;
-    if (ui->color1StartToolButton->isEnabled()) {
-        css = "background-color: " % d->jetColorStart.name() % ";";
-    } else {
-        css = "background-color: #aaa;";
-    }
-    ui->color1StartToolButton->setStyleSheet(css);
-
-    if (ui->color1EndToolButton->isEnabled()) {
-        css = "background-color: " % d->jetColorEnd.name() % ";";
-    } else {
-        css = "background-color: #aaa;";
-    }
-    ui->color1EndToolButton->setStyleSheet(css);
-
-    if (ui->color2StartToolButton->isEnabled()) {
-        css = "background-color: " % d->turbopropColorStart.name() % ";";
-    } else {
-        css = "background-color: #aaa;";
-    }
-    ui->color2StartToolButton->setStyleSheet(css);
-
-    if (ui->color2EndToolButton->isEnabled()) {
-        css = "background-color: " % d->turbopropColorEnd.name() % ";";
-    } else {
-        css = "background-color: #aaa;";
-    }
-    ui->color2EndToolButton->setStyleSheet(css);
-
-    if (ui->color3StartToolButton->isEnabled()) {
-        css = "background-color: " % d->pistonColorStart.name() % ";";
-    } else {
-        css = "background-color: #aaa;";
-    }
-    ui->color3StartToolButton->setStyleSheet(css);
-
-    if (ui->color3EndToolButton->isEnabled()) {
-        css = "background-color: " % d->pistonColorEnd.name() % ";";
-    } else {
-        css = "background-color: #aaa;";
-    }
-    ui->color3EndToolButton->setStyleSheet(css);
-
-    if (ui->color4StartToolButton->isEnabled()) {
+    if (ui->allStartColorToolButton->isEnabled()) {
         css = "background-color: " % d->allColorStart.name() % ";";
     } else {
         css = "background-color: #aaa;";
     }
-    ui->color4StartToolButton->setStyleSheet(css);
-
-    if (ui->color4EndToolButton->isEnabled()) {
+    ui->allStartColorToolButton->setStyleSheet(css);
+    if (ui->allEndColorToolButton->isEnabled()) {
         css = "background-color: " % d->allColorEnd.name() % ";";
     } else {
         css = "background-color: #aaa;";
     }
-    ui->color4EndToolButton->setStyleSheet(css);
+    ui->allEndColorToolButton->setStyleSheet(css);
+
+    if (ui->jetStartColorToolButton->isEnabled()) {
+        css = "background-color: " % d->jetColorStart.name() % ";";
+    } else {
+        css = "background-color: #aaa;";
+    }
+    ui->jetStartColorToolButton->setStyleSheet(css);
+    if (ui->jetEndColorToolButton->isEnabled()) {
+        css = "background-color: " % d->jetColorEnd.name() % ";";
+    } else {
+        css = "background-color: #aaa;";
+    }
+    ui->jetEndColorToolButton->setStyleSheet(css);
+
+    if (ui->turbopropStartColorToolButton->isEnabled()) {
+        css = "background-color: " % d->turbopropColorStart.name() % ";";
+    } else {
+        css = "background-color: #aaa;";
+    }
+    ui->turbopropStartColorToolButton->setStyleSheet(css);
+    if (ui->turbopropEndColorToolButton->isEnabled()) {
+        css = "background-color: " % d->turbopropColorEnd.name() % ";";
+    } else {
+        css = "background-color: #aaa;";
+    }
+    ui->turbopropEndColorToolButton->setStyleSheet(css);
+
+    if (ui->pistonStartColorToolButton->isEnabled()) {
+        css = "background-color: " % d->pistonColorStart.name() % ";";
+    } else {
+        css = "background-color: #aaa;";
+    }
+    ui->pistonStartColorToolButton->setStyleSheet(css);
+    if (ui->pistonEndColorToolButton->isEnabled()) {
+        css = "background-color: " % d->pistonColorEnd.name() % ";";
+    } else {
+        css = "background-color: #aaa;";
+    }
+    ui->pistonEndColorToolButton->setStyleSheet(css);
 }
 
 void KMLExportDialog::frenchConnection() noexcept
