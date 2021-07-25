@@ -111,6 +111,12 @@
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
          <widget class="QToolButton" name="color1StartToolButton">
+          <property name="acceptDrops">
+           <bool>false</bool>
+          </property>
+          <property name="toolTip">
+           <string>Jet engines</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -121,6 +127,9 @@
         </item>
         <item>
          <widget class="QToolButton" name="color2StartToolButton">
+          <property name="toolTip">
+           <string>Turboprop engines</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -131,6 +140,9 @@
         </item>
         <item>
          <widget class="QToolButton" name="color3StartToolButton">
+          <property name="toolTip">
+           <string>Piston engines</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -141,6 +153,9 @@
         </item>
         <item>
          <widget class="QToolButton" name="color4StartToolButton">
+          <property name="toolTip">
+           <string>All engines</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -175,6 +190,9 @@
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
          <widget class="QToolButton" name="color1EndToolButton">
+          <property name="toolTip">
+           <string>Jet engines</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -185,6 +203,9 @@
         </item>
         <item>
          <widget class="QToolButton" name="color2EndToolButton">
+          <property name="toolTip">
+           <string>Turboprop engines</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -195,6 +216,9 @@
         </item>
         <item>
          <widget class="QToolButton" name="color3EndToolButton">
+          <property name="toolTip">
+           <string>Piston engines</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -205,6 +229,9 @@
         </item>
         <item>
          <widget class="QToolButton" name="color4EndToolButton">
+          <property name="toolTip">
+           <string>All engines</string>
+          </property>
           <property name="text">
            <string/>
           </property>

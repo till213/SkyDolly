@@ -402,35 +402,37 @@ void KMLExportDialog::selectColor(int id) noexcept
         break;
     }
 
-    QColor color = QColorDialog::getColor(initialColor, this, tr("Choose color"));
-
-    switch (static_cast<ColorButton>(id)) {
-    case ColorButton::JetColorStart:
-        d->jetColorStart = color.rgba();
-        break;
-    case ColorButton::JetColorEnd:
-        d->jetColorEnd = color.rgba();
-        break;
-    case ColorButton::TurbopropColorStart:
-        d->turbopropColorStart = color.rgba();
-        break;
-    case ColorButton::TurbopropColorEnd:
-        d->turbopropColorEnd = color.rgba();
-        break;
-    case ColorButton::PistonColorStart:
-        d->pistonColorStart = color.rgba();
-        break;
-    case ColorButton::PistonColorEnd:
-        d->pistonColorEnd = color.rgba();
-        break;
-    case ColorButton::AllColorStart:
-        d->allColorStart = color.rgba();
-        break;
-    case ColorButton::AllColorEnd:
-        d->allColorEnd= color.rgba();
-        break;
-    default:
-        break;
+    QColor color = QColorDialog::getColor(initialColor, this);
+    if (color.isValid()) {
+        switch (static_cast<ColorButton>(id)) {
+        case ColorButton::JetColorStart:
+            d->jetColorStart = color;
+            break;
+        case ColorButton::JetColorEnd:
+            d->jetColorEnd = color;
+            break;
+        case ColorButton::TurbopropColorStart:
+            d->turbopropColorStart = color;
+            break;
+        case ColorButton::TurbopropColorEnd:
+            d->turbopropColorEnd = color;
+            break;
+        case ColorButton::PistonColorStart:
+            d->pistonColorStart = color;
+            break;
+        case ColorButton::PistonColorEnd:
+            d->pistonColorEnd = color;
+            break;
+        case ColorButton::AllColorStart:
+            d->allColorStart = color;
+            break;
+        case ColorButton::AllColorEnd:
+            d->allColorEnd= color;
+            break;
+        default:
+            break;
+        }
+        updateColorUi();
     }
 }
 
