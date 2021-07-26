@@ -67,7 +67,6 @@ namespace
     // Number of colors per color ramp
     constexpr int MaxColorsPerRamp = 8;
 
-    constexpr KMLExportDialog::ResamplingPeriod DefaultResamplingPeriod = KMLExportDialog::ResamplingPeriod::OneHz;
 }
 
 class KMLExportPluginPrivate
@@ -76,14 +75,13 @@ public:
     KMLExportPluginPrivate() noexcept
         : flight(Logbook::getInstance().getCurrentFlight()),
           nofAircrafts(flight.count()),
-          styleExport(std::make_unique<KMLStyleExport>()),
-          resamplingPeriod(KMLExportDialog::ResamplingPeriod::OneHz)
+          styleExport(std::make_unique<KMLStyleExport>())
     {}
 
+    KMLExportSettings exportSettings;
     Flight &flight;
     int nofAircrafts;
     std::unique_ptr<KMLStyleExport> styleExport;
-    KMLExportDialog::ResamplingPeriod resamplingPeriod;
     Unit unit;
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
     // https://www.kdab.com/qt-datatypes-in-standard-library/
@@ -121,15 +119,16 @@ bool KMLExportPlugin::exportData() noexcept
 
     d->aircraftTypeCount.clear();
 
-    std::unique_ptr<KMLExportDialog> kmlExportDialog = std::make_unique<KMLExportDialog>(getParentWidget());
-    const int choice = kmlExportDialog->exec();
+    std::unique_ptr<KMLExportDialog> exportDialog = std::make_unique<KMLExportDialog>(d->exportSettings);
+    const int choice = exportDialog->exec();
     if (choice == QDialog::Accepted) {
-        const QString &filePath = File::ensureSuffix(kmlExportDialog->getSelectedFilePath(), KMLExportDialog::FileSuffix);
+        const QString &filePath = File::ensureSuffix(exportDialog->getSelectedFilePath(), KMLExportDialog::FileSuffix);
         if (!filePath.isEmpty()) {
 
-            KMLStyleExport::StyleParameter styleParameters = kmlExportDialog->getStyleParameters();
             const int nofAircrafts = d->flight.count();
-            styleParameters.nofColorsPerRamp = qMin(nofAircrafts, styleParameters.nofColorsPerRamp);
+            // Only create as many colors per ramp as there are aircrafts (if there are less aircrafts
+            // than requested colors per ramp)
+            d->exportSettings.nofColorsPerRamp = qMin(nofAircrafts, d->exportSettings.nofColorsPerRamp);
 
             QFile file(filePath);
             ok = file.open(QIODevice::WriteOnly);
@@ -138,13 +137,12 @@ bool KMLExportPlugin::exportData() noexcept
                 ok = exportHeader(file);
             }
             if (ok) {
-                ok = d->styleExport->exportStyles(styleParameters, file);
+                ok = d->styleExport->exportStyles(d->exportSettings, file);
             }
             if (ok) {
                 ok = exportFlightInfo(file);
             }
             if (ok) {
-                d->resamplingPeriod = kmlExportDialog->getSelectedResamplingPeriod();
                 ok = exportAircrafts(file);
             }
             if (ok) {
@@ -166,7 +164,7 @@ bool KMLExportPlugin::exportData() noexcept
             ok = true;
         }
 
-        if (ok && kmlExportDialog->doOpenExportedFile()) {
+        if (ok && exportDialog->doOpenExportedFile()) {
             const QString fileUrl = QString("file:///") + filePath;
             QDesktopServices::openUrl(QUrl(fileUrl));
         }
@@ -184,7 +182,7 @@ Settings::PluginSettings KMLExportPlugin::getSettings() const noexcept
     Settings::PluginSettings settings;
     Settings::KeyValue keyValue;
     keyValue.first = "ResamplingPeriod";
-    keyValue.second = Enum::toUnderlyingType(d->resamplingPeriod);
+    keyValue.second = Enum::toUnderlyingType(d->exportSettings.resamplingPeriod);
     settings.push_back(keyValue);
 
     return settings;
@@ -197,7 +195,7 @@ Settings::KeysWithDefaults KMLExportPlugin::getKeys() const noexcept
     // TODO IMPLEMENT ME (other values)
     Settings::KeyValue keyValue;
     keyValue.first = "ResamplingPeriod";
-    keyValue.second = Enum::toUnderlyingType(DefaultResamplingPeriod);
+    keyValue.second = Enum::toUnderlyingType(KMLExportSettings::DefaultResamplingPeriod);
     keys.push_back(keyValue);
     return keys;
 
@@ -206,7 +204,7 @@ Settings::KeysWithDefaults KMLExportPlugin::getKeys() const noexcept
 void KMLExportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     // TODO IMPLEMENT ME
-    KMLExportDialog::ResamplingPeriod resamplingPeriod = static_cast<KMLExportDialog::ResamplingPeriod >(valuesByKey["ResamplingPeriod"].toInt());
+    KMLExportSettings::ResamplingPeriod resamplingPeriod = static_cast<KMLExportSettings::ResamplingPeriod >(valuesByKey["ResamplingPeriod"].toInt());
 }
 
 // PRIVATE
@@ -266,7 +264,7 @@ bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
     if (ok) {
         // Position data
         const Position &position = aircraft.getPositionConst();
-        if (d->resamplingPeriod != KMLExportDialog::ResamplingPeriod::Original) {
+        if (d->exportSettings.resamplingPeriod != KMLExportSettings::ResamplingPeriod::Original) {
             const qint64 duration = position.getLast().timestamp;
             qint64 time = 0;
             while (ok && time <= duration) {
@@ -276,7 +274,7 @@ bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
                                    toString(positionData.latitude) % "," %
                                    toString(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
                 }
-                time += Enum::toUnderlyingType(d->resamplingPeriod);
+                time += Enum::toUnderlyingType(d->exportSettings.resamplingPeriod);
             }
         } else {
             // Original data requested
