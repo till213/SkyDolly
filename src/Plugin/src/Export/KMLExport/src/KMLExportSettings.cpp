@@ -184,7 +184,7 @@ void KMLExportSettings::setSettings(Settings::ValuesByKey valuesByKey) noexcept
     allEndColor = valuesByKey["AllEndColor"].value<QColor>();
 }
 
-inline void KMLExportSettings::restoreDefaults() noexcept
+void KMLExportSettings::restoreDefaults() noexcept
 {
     resamplingPeriod = DefaultResamplingPeriod;
     colorStyle = DefaultColorStyle;

@@ -31,10 +31,6 @@ target_link_libraries(Plugin PRIVATE ${PLUGIN_LIBS})
 set_target_properties(Plugin PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(Plugin PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
 
-target_include_directories(Plugin PUBLIC
-    "${CMAKE_CURRENT_BINARY_DIR}"
-)
-
 # Plugins
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins)
