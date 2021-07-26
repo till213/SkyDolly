@@ -25,6 +25,7 @@
 #ifndef KMLEXPORTSETTINGS_H
 #define KMLEXPORTSETTINGS_H
 
+#include "../../../../../Kernel/src/Settings.h"
 #include "../../../../../Model/src/SimType.h"
 #include <QColor>
 
@@ -64,6 +65,10 @@ struct KMLExportSettings
     int nofColorsPerRamp;
     float lineWidth;
 
+    Settings::PluginSettings getSettings() const noexcept;
+    Settings::KeysWithDefaults getKeys() const noexcept;
+    void setSettings(Settings::ValuesByKey) noexcept;
+
     static constexpr ResamplingPeriod DefaultResamplingPeriod = ResamplingPeriod::OneHz;
     static constexpr ColorStyle DefaultColorStyle = ColorStyle::OneColor;
 
@@ -74,14 +79,14 @@ struct KMLExportSettings
     static constexpr QRgb Opaque = 0xff000000;
 
     // "Tetraedic" colors
-    static constexpr QRgb DefaultJetStartColor = Opaque | 0xde7b51;
+    static constexpr QRgb DefaultJetStartRgba = Opaque | 0xde7b51;
     static constexpr QRgb DefaultJetEndColor = Opaque | 0x6f3d28;
-    static constexpr QRgb DefaultTurbopropStartColor = Opaque | 0x6ade4b;
-    static constexpr QRgb DefaultTurbopropEndColor = Opaque | 0x356f25;
-    static constexpr QRgb DefaultPistonStartColor = Opaque | 0x4bb3de;
-    static constexpr QRgb DefaultPistonEndColor = Opaque | 0x255a6f;
-    static constexpr QRgb DefaultAllStartColor = Opaque | 0xc561de;
-    static constexpr QRgb DefaultAllEndColor = Opaque | 0x63316f;
+    static constexpr QRgb DefaultTurbopropStartRgba = Opaque | 0x6ade4b;
+    static constexpr QRgb DefaultTurbopropEndRgba = Opaque | 0x356f25;
+    static constexpr QRgb DefaultPistonStartRgba = Opaque | 0x4bb3de;
+    static constexpr QRgb DefaultPistonEndRgba = Opaque | 0x255a6f;
+    static constexpr QRgb DefaultAllStartRgba = Opaque | 0xc561de;
+    static constexpr QRgb DefaultAllEndRgba = Opaque | 0x63316f;
 
     static constexpr int DefaultNofColorsPerRamp = 8;
     static constexpr float DefaultLineWidth = 3.0f;

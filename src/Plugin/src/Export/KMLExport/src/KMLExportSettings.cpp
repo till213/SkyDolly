@@ -23,6 +23,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+#include "../../../../../Kernel/src/Enum.h"
+#include "../../../../../Kernel/src/Settings.h"
 #include "../../../../../Model/src/SimType.h"
 #include "KMLExportSettings.h"
 
@@ -33,12 +35,163 @@ KMLExportSettings::KMLExportSettings() noexcept
       colorStyle(DefaultColorStyle),
       nofColorsPerRamp(DefaultNofColorsPerRamp),
       lineWidth(DefaultLineWidth),
-      jetStartColor(DefaultJetStartColor),
+      jetStartColor(DefaultJetStartRgba),
       jetEndColor(DefaultJetEndColor),
-      turbopropStartColor(DefaultTurbopropStartColor),
-      turbopropEndColor(DefaultTurbopropEndColor),
-      pistonStartColor(DefaultPistonStartColor),
-      pistonEndColor(DefaultPistonEndColor),
-      allStartColor(DefaultAllStartColor),
-      allEndColor(DefaultAllEndColor)
+      turbopropStartColor(DefaultTurbopropStartRgba),
+      turbopropEndColor(DefaultTurbopropEndRgba),
+      pistonStartColor(DefaultPistonStartRgba),
+      pistonEndColor(DefaultPistonEndRgba),
+      allStartColor(DefaultAllStartRgba),
+      allEndColor(DefaultAllEndRgba)
 {}
+
+Settings::PluginSettings KMLExportSettings::getSettings() const noexcept
+{
+    Settings::PluginSettings settings;
+    Settings::KeyValue keyValue;
+
+    keyValue.first = "ResamplingPeriod";
+    keyValue.second = Enum::toUnderlyingType(resamplingPeriod);
+    settings.push_back(keyValue);
+
+    keyValue.first = "ColorStyle";
+    keyValue.second = Enum::toUnderlyingType(colorStyle);
+    settings.push_back(keyValue);
+
+    keyValue.first = "NofColorsPerRamp";
+    keyValue.second = nofColorsPerRamp;
+    settings.push_back(keyValue);
+
+    keyValue.first = "LineWidth";
+    keyValue.second = lineWidth;
+    settings.push_back(keyValue);
+
+    keyValue.first = "JetStartColor";
+    keyValue.second = jetStartColor;
+    settings.push_back(keyValue);
+
+    keyValue.first = "JetEndColor";
+    keyValue.second = jetEndColor;
+    settings.push_back(keyValue);
+
+    keyValue.first = "TurbopropStartColor";
+    keyValue.second = turbopropStartColor;
+    settings.push_back(keyValue);
+
+    keyValue.first = "TurbopropEndColor";
+    keyValue.second = turbopropEndColor;
+    settings.push_back(keyValue);
+
+    keyValue.first = "PistonStartColor";
+    keyValue.second = pistonStartColor;
+    settings.push_back(keyValue);
+
+    keyValue.first = "PistonEndColor";
+    keyValue.second = pistonEndColor;
+    settings.push_back(keyValue);
+
+    keyValue.first = "AllStartColor";
+    keyValue.second = allStartColor;
+    settings.push_back(keyValue);
+
+    keyValue.first = "AllEndColor";
+    keyValue.second = allEndColor;
+    settings.push_back(keyValue);
+
+    return settings;
+}
+
+Settings::KeysWithDefaults KMLExportSettings::getKeys() const noexcept
+{
+    Settings::KeysWithDefaults keys;
+
+    // TODO IMPLEMENT ME (other values)
+    Settings::KeyValue keyValue;
+
+    keyValue.first = "ResamplingPeriod";
+    keyValue.second = Enum::toUnderlyingType(KMLExportSettings::DefaultResamplingPeriod);
+    keys.push_back(keyValue);
+
+    keyValue.first = "ColorStyle";
+    keyValue.second = Enum::toUnderlyingType(KMLExportSettings::DefaultColorStyle);
+    keys.push_back(keyValue);
+
+    keyValue.first = "NofColorsPerRamp";
+    keyValue.second = DefaultNofColorsPerRamp;
+    keys.push_back(keyValue);
+
+    keyValue.first = "LineWidth";
+    keyValue.second = DefaultLineWidth;
+    keys.push_back(keyValue);
+
+    keyValue.first = "JetStartColor";
+    keyValue.second = QColor(DefaultJetStartRgba);
+    keys.push_back(keyValue);
+
+    keyValue.first = "JetEndColor";
+    keyValue.second = QColor(DefaultJetEndColor);
+    keys.push_back(keyValue);
+
+    keyValue.first = "TurbopropStartColor";
+    keyValue.second = QColor(DefaultTurbopropStartRgba);
+    keys.push_back(keyValue);
+
+    keyValue.first = "TurbopropEndColor";
+    keyValue.second = QColor(DefaultTurbopropEndRgba);
+    keys.push_back(keyValue);
+
+    keyValue.first = "PistonStartColor";
+    keyValue.second = QColor(DefaultPistonStartRgba);
+    keys.push_back(keyValue);
+
+    keyValue.first = "PistonEndColor";
+    keyValue.second = QColor(DefaultPistonEndRgba);
+    keys.push_back(keyValue);
+
+    keyValue.first = "AllStartColor";
+    keyValue.second = QColor(DefaultAllStartRgba);
+    keys.push_back(keyValue);
+
+    keyValue.first = "AllEndColor";
+    keyValue.second = QColor(DefaultAllEndRgba);
+    keys.push_back(keyValue);
+
+    return keys;
+}
+
+void KMLExportSettings::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+{
+    bool ok;
+    int enumeration = valuesByKey["ResamplingPeriod"].toInt(&ok);
+    if (ok) {
+        resamplingPeriod = static_cast<KMLExportSettings::ResamplingPeriod >(enumeration);
+    } else {
+        resamplingPeriod = DefaultResamplingPeriod;
+    }
+
+    enumeration = valuesByKey["ColorStyle"].toInt(&ok);
+    if (ok) {
+        colorStyle = static_cast<KMLExportSettings::ColorStyle >(enumeration);
+    } else {
+        colorStyle = DefaultColorStyle;
+    }
+
+    nofColorsPerRamp = valuesByKey["NofColorsPerRamp"].toInt(&ok);
+    if (!ok) {
+        nofColorsPerRamp = DefaultNofColorsPerRamp;
+    }
+
+    lineWidth = valuesByKey["LineWidth"].toFloat(&ok);
+    if (!ok) {
+        lineWidth = DefaultLineWidth;
+    }
+
+    jetStartColor = valuesByKey["JetStartColor"].value<QColor>();
+    jetEndColor = valuesByKey["JetEndColor"].value<QColor>();
+    turbopropStartColor = valuesByKey["TurbopropStartColor"].value<QColor>();
+    turbopropEndColor = valuesByKey["TurbopropEndColor"].value<QColor>();
+    pistonStartColor = valuesByKey["PistonStartColor"].value<QColor>();
+    pistonEndColor = valuesByKey["PistonEndColor"].value<QColor>();
+    allStartColor = valuesByKey["AllStartColor"].value<QColor>();
+    allEndColor = valuesByKey["AllEndColor"].value<QColor>();
+}

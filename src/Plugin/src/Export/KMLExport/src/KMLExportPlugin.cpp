@@ -179,32 +179,17 @@ bool KMLExportPlugin::exportData() noexcept
 
 Settings::PluginSettings KMLExportPlugin::getSettings() const noexcept
 {
-    Settings::PluginSettings settings;
-    Settings::KeyValue keyValue;
-    keyValue.first = "ResamplingPeriod";
-    keyValue.second = Enum::toUnderlyingType(d->exportSettings.resamplingPeriod);
-    settings.push_back(keyValue);
-
-    return settings;
+    return d->exportSettings.getSettings();
 }
 
 Settings::KeysWithDefaults KMLExportPlugin::getKeys() const noexcept
 {
-    Settings::KeysWithDefaults keys;
-
-    // TODO IMPLEMENT ME (other values)
-    Settings::KeyValue keyValue;
-    keyValue.first = "ResamplingPeriod";
-    keyValue.second = Enum::toUnderlyingType(KMLExportSettings::DefaultResamplingPeriod);
-    keys.push_back(keyValue);
-    return keys;
-
+    return d->exportSettings.getKeys();
 }
 
 void KMLExportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
-    // TODO IMPLEMENT ME
-    KMLExportSettings::ResamplingPeriod resamplingPeriod = static_cast<KMLExportSettings::ResamplingPeriod >(valuesByKey["ResamplingPeriod"].toInt());
+    d->exportSettings.setSettings(valuesByKey);
 }
 
 // PRIVATE
