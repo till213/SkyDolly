@@ -174,29 +174,36 @@ bool SqlMigrationStep::execute(const QString &sql) noexcept
             d->errorMessage.clear();
         }
     } else {
-        QSqlDatabase::database().transaction();
-        QSqlQuery migrQuery;
-        if (!hasPreviousAttempt()) {
-            migrQuery.prepare("insert into migr (id, step, success, msg) values(:id, :step, :success, :msg);");
-        } else {
-            migrQuery.prepare("update migr set success = :success, msg = :msg where id = :id and step = :step;");
-        }
-        d->applied = false;
-        d->errorMessage = errorMessage;
+        bool migrQueryOk = QSqlDatabase::database().transaction();
+        if (migrQueryOk) {
+            QSqlQuery migrQuery;
+            if (!hasPreviousAttempt()) {
+                migrQuery.prepare("insert into migr (id, step, success, msg) values(:id, :step, :success, :msg);");
+            } else {
+                migrQuery.prepare("update migr set success = :success, msg = :msg where id = :id and step = :step;");
+            }
+            d->applied = false;
+            d->errorMessage = errorMessage;
 
-        migrQuery.bindValue(":id", d->migrationId);
-        migrQuery.bindValue(":step", d->step);
-        migrQuery.bindValue(":success", 0);
-        migrQuery.bindValue(":msg", d->errorMessage);
-        ok = migrQuery.exec();
-        if (ok) {
-            ok = QSqlDatabase::database().commit();
-        } else {
+            migrQuery.bindValue(":id", d->migrationId);
+            migrQuery.bindValue(":step", d->step);
+            migrQuery.bindValue(":success", 0);
+            migrQuery.bindValue(":msg", d->errorMessage);
+            migrQueryOk = migrQuery.exec();
+            if (migrQueryOk) {
+                QSqlDatabase::database().commit();
+            } else {
 #ifdef DEBUG
             qDebug("SqlMigrationStep::execute: update MIGR table FAILED:\n%s\n", qPrintable(migrQuery.lastError().databaseText() + " - error code: " + migrQuery.lastError().nativeErrorCode()));
 #endif
-            QSqlDatabase::database().rollback();
+                QSqlDatabase::database().rollback();
+            }
         }
+#ifdef DEBUG
+        else {
+            qDebug("SqlMigrationStep::execute: FAILED to create transaction.");
+        }
+#endif
     }
     return ok;
 }
