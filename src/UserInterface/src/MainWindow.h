@@ -56,7 +56,7 @@ class USERINTERFACE_API MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr) noexcept;
+    explicit MainWindow(const QString &filePath = QString(), QWidget *parent = nullptr) noexcept;
     virtual ~MainWindow() noexcept;
 
     bool connectWithLogbook(const QString &filePath) noexcept;

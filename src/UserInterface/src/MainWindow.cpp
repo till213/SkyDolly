@@ -177,7 +177,7 @@ public:
 
 // PUBLIC
 
-MainWindow::MainWindow(QWidget *parent) noexcept
+MainWindow::MainWindow(const QString &filePath, QWidget *parent) noexcept
     : QMainWindow(parent),
       ui(std::make_unique<Ui::MainWindow>()),
       d(std::make_unique<MainWindowPrivate>())
@@ -188,7 +188,11 @@ MainWindow::MainWindow(QWidget *parent) noexcept
 
     // Connect with logbook
     const QString logbookPath = Settings::getInstance().getLogbookPath();
-    d->connectedWithLogbook = ConnectionManager::getInstance().connectWithLogbook(logbookPath, this);
+    if (!filePath.isNull()) {
+        connectWithLogbook(filePath);
+    } else {
+        d->connectedWithLogbook = ConnectionManager::getInstance().connectWithLogbook(logbookPath, this);
+    }
 
     initPlugins();
     initUi();

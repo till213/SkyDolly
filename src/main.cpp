@@ -61,13 +61,15 @@ int main(int argc, char *argv[])
 
     QApplication application(argc, argv);
 
-    MainWindow mainWindow;
-
     // Simplistic command line parsing: first arg is assumed to be a file path
     QStringList args = application.arguments();
+    QString filePath;
     if (args.count() > 1) {
-        mainWindow.connectWithLogbook(args.at(1));
+       filePath = args.at(1);
     }
+    MainWindow mainWindow(filePath);
+
+
 
     mainWindow.show();
     const int res = application.exec();
