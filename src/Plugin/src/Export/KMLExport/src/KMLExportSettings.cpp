@@ -31,19 +31,9 @@
 // PUBLIC
 
 KMLExportSettings::KMLExportSettings() noexcept
-    : resamplingPeriod(DefaultResamplingPeriod),
-      colorStyle(DefaultColorStyle),
-      nofColorsPerRamp(DefaultNofColorsPerRamp),
-      lineWidth(DefaultLineWidth),
-      jetStartColor(DefaultJetStartRgba),
-      jetEndColor(DefaultJetEndColor),
-      turbopropStartColor(DefaultTurbopropStartRgba),
-      turbopropEndColor(DefaultTurbopropEndRgba),
-      pistonStartColor(DefaultPistonStartRgba),
-      pistonEndColor(DefaultPistonEndRgba),
-      allStartColor(DefaultAllStartRgba),
-      allEndColor(DefaultAllEndRgba)
-{}
+{
+    restoreDefaults();
+}
 
 Settings::PluginSettings KMLExportSettings::getSettings() const noexcept
 {
@@ -194,4 +184,20 @@ void KMLExportSettings::setSettings(Settings::ValuesByKey valuesByKey) noexcept
     pistonEndColor = valuesByKey["PistonEndColor"].value<QColor>();
     allStartColor = valuesByKey["AllStartColor"].value<QColor>();
     allEndColor = valuesByKey["AllEndColor"].value<QColor>();
+}
+
+inline void KMLExportSettings::restoreDefaults() noexcept
+{
+    resamplingPeriod = DefaultResamplingPeriod;
+    colorStyle = DefaultColorStyle;
+    nofColorsPerRamp = DefaultNofColorsPerRamp;
+    lineWidth = DefaultLineWidth;
+    jetStartColor = DefaultJetStartRgba;
+    jetEndColor = DefaultJetEndColor;
+    turbopropStartColor = DefaultTurbopropStartRgba;
+    turbopropEndColor = DefaultTurbopropEndRgba;
+    pistonStartColor = DefaultPistonStartRgba;
+    pistonEndColor = DefaultPistonEndRgba;
+    allStartColor = DefaultAllStartRgba;
+    allEndColor = DefaultAllEndRgba;
 }

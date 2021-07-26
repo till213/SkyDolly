@@ -68,6 +68,7 @@ struct KMLExportSettings
     Settings::PluginSettings getSettings() const noexcept;
     Settings::KeysWithDefaults getKeys() const noexcept;
     void setSettings(Settings::ValuesByKey) noexcept;
+    void restoreDefaults() noexcept;
 
     static constexpr ResamplingPeriod DefaultResamplingPeriod = ResamplingPeriod::OneHz;
     static constexpr ColorStyle DefaultColorStyle = ColorStyle::OneColor;
