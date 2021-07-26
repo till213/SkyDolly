@@ -61,6 +61,8 @@ namespace {
         AllStartColor,
         AllEndColor
     };
+
+    constexpr char DisabledColor[] = "#aaa";
 }
 
 class KMLExportDialogPrivate
@@ -127,7 +129,12 @@ void KMLExportDialog::initUi() noexcept
     ui->resamplingComboBox->addItem("10 Hz", Enum::toUnderlyingType(KMLExportSettings::ResamplingPeriod::TenHz));
     ui->resamplingComboBox->addItem(tr("Original data (performance critical)"), Enum::toUnderlyingType(KMLExportSettings::ResamplingPeriod::Original));
 
-    ui->resamplingComboBox->setCurrentIndex(2);
+    int currentIndex = 0;
+    while (currentIndex < ui->resamplingComboBox->count() &&
+           static_cast<KMLExportSettings::ResamplingPeriod>(ui->resamplingComboBox->itemData(currentIndex).toInt()) != d->exportSettings.resamplingPeriod) {
+        ++currentIndex;
+    }
+    ui->resamplingComboBox->setCurrentIndex(currentIndex);
 
     initColorUi();
 }
@@ -138,7 +145,13 @@ void KMLExportDialog::initColorUi() noexcept
     ui->colorStyleComboBox->addItem(tr("One color per engine type"), Enum::toUnderlyingType(KMLExportSettings::ColorStyle::OneColorPerEngineType));
     ui->colorStyleComboBox->addItem(tr("Color ramp"), Enum::toUnderlyingType(KMLExportSettings::ColorStyle::ColorRamp));
     ui->colorStyleComboBox->addItem(tr("Color ramp per engine type"), Enum::toUnderlyingType(KMLExportSettings::ColorStyle::ColorRampPerEngineType));
-    ui->colorStyleComboBox->setCurrentIndex(0);
+
+    int currentIndex = 0;
+    while (currentIndex < ui->colorStyleComboBox->count() &&
+           static_cast<KMLExportSettings::ColorStyle>(ui->colorStyleComboBox->itemData(currentIndex).toInt()) != d->exportSettings.colorStyle) {
+        ++currentIndex;
+    }
+    ui->colorStyleComboBox->setCurrentIndex(currentIndex);
 
     d->colorButtonGroup->addButton(ui->allStartColorToolButton, Enum::toUnderlyingType(ColorButton::AllStartColor));
     d->colorButtonGroup->addButton(ui->allEndColorToolButton, Enum::toUnderlyingType(ColorButton::AllEndColor));
@@ -217,52 +230,52 @@ void KMLExportDialog::updateColorUi() noexcept
     if (ui->allStartColorToolButton->isEnabled()) {
         css = "background-color: " % d->exportSettings.allStartColor.name() % ";";
     } else {
-        css = "background-color: #aaa;";
+        css = QString("background-color: ") % DisabledColor % ";";
     }
     ui->allStartColorToolButton->setStyleSheet(css);
     if (ui->allEndColorToolButton->isEnabled()) {
         css = "background-color: " % d->exportSettings.allEndColor.name() % ";";
     } else {
-        css = "background-color: #aaa;";
+        css = QString("background-color: ") % DisabledColor % ";";
     }
     ui->allEndColorToolButton->setStyleSheet(css);
 
     if (ui->jetStartColorToolButton->isEnabled()) {
         css = "background-color: " % d->exportSettings.jetStartColor.name() % ";";
     } else {
-        css = "background-color: #aaa;";
+        css = QString("background-color: ") % DisabledColor % ";";
     }
     ui->jetStartColorToolButton->setStyleSheet(css);
     if (ui->jetEndColorToolButton->isEnabled()) {
         css = "background-color: " % d->exportSettings.jetEndColor.name() % ";";
     } else {
-        css = "background-color: #aaa;";
+        css = QString("background-color: ") % DisabledColor % ";";
     }
     ui->jetEndColorToolButton->setStyleSheet(css);
 
     if (ui->turbopropStartColorToolButton->isEnabled()) {
         css = "background-color: " % d->exportSettings.turbopropStartColor.name() % ";";
     } else {
-        css = "background-color: #aaa;";
+        css = QString("background-color: ") % DisabledColor % ";";
     }
     ui->turbopropStartColorToolButton->setStyleSheet(css);
     if (ui->turbopropEndColorToolButton->isEnabled()) {
         css = "background-color: " % d->exportSettings.turbopropEndColor.name() % ";";
     } else {
-        css = "background-color: #aaa;";
+        css = QString("background-color: ") % DisabledColor % ";";
     }
     ui->turbopropEndColorToolButton->setStyleSheet(css);
 
     if (ui->pistonStartColorToolButton->isEnabled()) {
         css = "background-color: " % d->exportSettings.pistonStartColor.name() % ";";
     } else {
-        css = "background-color: #aaa;";
+        css = QString("background-color: ") % DisabledColor % ";";
     }
     ui->pistonStartColorToolButton->setStyleSheet(css);
     if (ui->pistonEndColorToolButton->isEnabled()) {
         css = "background-color: " % d->exportSettings.pistonEndColor.name() % ";";
     } else {
-        css = "background-color: #aaa;";
+        css = QString("background-color: ") % DisabledColor % ";";
     }
     ui->pistonEndColorToolButton->setStyleSheet(css);
 }
