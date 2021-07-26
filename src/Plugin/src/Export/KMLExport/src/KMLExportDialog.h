@@ -67,6 +67,7 @@ private slots:
     void updateUi() noexcept;
 
     void selectColor(int id) noexcept;
+    void restoreDefaults() noexcept;
 
     void on_fileSelectionPushButton_clicked() noexcept;
     void on_resamplingComboBox_activated(int index) noexcept;

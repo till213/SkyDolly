@@ -129,13 +129,6 @@ void KMLExportDialog::initUi() noexcept
     ui->resamplingComboBox->addItem("10 Hz", Enum::toUnderlyingType(KMLExportSettings::ResamplingPeriod::TenHz));
     ui->resamplingComboBox->addItem(tr("Original data (performance critical)"), Enum::toUnderlyingType(KMLExportSettings::ResamplingPeriod::Original));
 
-    int currentIndex = 0;
-    while (currentIndex < ui->resamplingComboBox->count() &&
-           static_cast<KMLExportSettings::ResamplingPeriod>(ui->resamplingComboBox->itemData(currentIndex).toInt()) != d->exportSettings.resamplingPeriod) {
-        ++currentIndex;
-    }
-    ui->resamplingComboBox->setCurrentIndex(currentIndex);
-
     initColorUi();
 }
 
@@ -145,13 +138,6 @@ void KMLExportDialog::initColorUi() noexcept
     ui->colorStyleComboBox->addItem(tr("One color per engine type"), Enum::toUnderlyingType(KMLExportSettings::ColorStyle::OneColorPerEngineType));
     ui->colorStyleComboBox->addItem(tr("Color ramp"), Enum::toUnderlyingType(KMLExportSettings::ColorStyle::ColorRamp));
     ui->colorStyleComboBox->addItem(tr("Color ramp per engine type"), Enum::toUnderlyingType(KMLExportSettings::ColorStyle::ColorRampPerEngineType));
-
-    int currentIndex = 0;
-    while (currentIndex < ui->colorStyleComboBox->count() &&
-           static_cast<KMLExportSettings::ColorStyle>(ui->colorStyleComboBox->itemData(currentIndex).toInt()) != d->exportSettings.colorStyle) {
-        ++currentIndex;
-    }
-    ui->colorStyleComboBox->setCurrentIndex(currentIndex);
 
     d->colorButtonGroup->addButton(ui->allStartColorToolButton, Enum::toUnderlyingType(ColorButton::AllStartColor));
     d->colorButtonGroup->addButton(ui->allEndColorToolButton, Enum::toUnderlyingType(ColorButton::AllEndColor));
@@ -181,6 +167,13 @@ void KMLExportDialog::updateInfoUi() noexcept
 
 void KMLExportDialog::updateColorUi() noexcept
 {
+    int currentIndex = 0;
+    while (currentIndex < ui->colorStyleComboBox->count() &&
+           static_cast<KMLExportSettings::ColorStyle>(ui->colorStyleComboBox->itemData(currentIndex).toInt()) != d->exportSettings.colorStyle) {
+        ++currentIndex;
+    }
+    ui->colorStyleComboBox->setCurrentIndex(currentIndex);
+
     switch (static_cast<KMLExportSettings::ColorStyle>(ui->colorStyleComboBox->currentIndex())) {
     case KMLExportSettings::ColorStyle::OneColor:
         ui->allStartColorToolButton->setEnabled(true);
@@ -286,6 +279,11 @@ void KMLExportDialog::frenchConnection() noexcept
             this, &KMLExportDialog::updateUi);
     connect(d->colorButtonGroup.get(), &QButtonGroup::idClicked,
             this, &KMLExportDialog::selectColor);
+
+    QPushButton *resetButton = ui->buttonBox->button(QDialogButtonBox::RestoreDefaults);
+    connect(resetButton, &QPushButton::clicked,
+            this, KMLExportDialog::restoreDefaults);
+
 }
 
 qint64 KMLExportDialog::estimateNofSamplePoints() noexcept
@@ -315,6 +313,13 @@ void KMLExportDialog::updateUi() noexcept
     QFileInfo fileInfo(filePath);
     QFile file(fileInfo.absolutePath());
     d->exportButton->setEnabled(file.exists());
+
+    int currentIndex = 0;
+    while (currentIndex < ui->resamplingComboBox->count() &&
+           static_cast<KMLExportSettings::ResamplingPeriod>(ui->resamplingComboBox->itemData(currentIndex).toInt()) != d->exportSettings.resamplingPeriod) {
+        ++currentIndex;
+    }
+    ui->resamplingComboBox->setCurrentIndex(currentIndex);
 
     updateInfoUi();
     updateColorUi();
@@ -388,6 +393,12 @@ void KMLExportDialog::selectColor(int id) noexcept
         }
         updateColorUi();
     }
+}
+
+void KMLExportDialog::restoreDefaults() noexcept
+{
+    d->exportSettings.restoreDefaults();
+    updateUi();
 }
 
 void KMLExportDialog::on_fileSelectionPushButton_clicked() noexcept
