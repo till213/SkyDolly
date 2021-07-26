@@ -53,8 +53,8 @@ bool SQLiteAircraftTypeDao::upsert(const AircraftType &aircraftType)  noexcept
         "do update "
         "set category = excluded.category, "
         "    wing_span = excluded.wing_span, "
-        "	 engine_type = excluded.engine_type, "
-        "	 nof_engines = excluded.nof_engines;"
+        "    engine_type = excluded.engine_type, "
+        "    nof_engines = excluded.nof_engines;"
     );
 
     query.bindValue(":type", aircraftType.type);
