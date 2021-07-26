@@ -59,6 +59,8 @@ public:
     MainWindow(QWidget *parent = nullptr) noexcept;
     virtual ~MainWindow() noexcept;
 
+    bool connectWithLogbook(const QString &filePath) noexcept;
+
 protected:
     virtual void resizeEvent(QResizeEvent *event) noexcept override;
     virtual void closeEvent(QCloseEvent *event) noexcept override;

@@ -24,6 +24,7 @@
  */
 #include <QCoreApplication>
 #include <QApplication>
+#include <QStringList>
 
 #include "../../Kernel/src/Version.h"
 #include "../../Kernel/src/Settings.h"
@@ -61,6 +62,13 @@ int main(int argc, char *argv[])
     QApplication application(argc, argv);
 
     MainWindow mainWindow;
+
+    // Simplistic command line parsing: first arg is assumed to be a file path
+    QStringList args = application.arguments();
+    if (args.count() > 1) {
+        mainWindow.connectWithLogbook(args.at(1));
+    }
+
     mainWindow.show();
     const int res = application.exec();
     destroySingletons();
