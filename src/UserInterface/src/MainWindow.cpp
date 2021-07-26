@@ -208,6 +208,15 @@ MainWindow::~MainWindow() noexcept
 #endif
 }
 
+bool MainWindow::connectWithLogbook(const QString &filePath) noexcept
+{
+    bool ok = ConnectionManager::getInstance().connectWithLogbook(filePath, this);
+    if (!ok) {
+        QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be opened.").arg(filePath));
+    }
+    return ok;
+}
+
 // PROTECTED
 
 void MainWindow::resizeEvent(QResizeEvent *event) noexcept
@@ -1152,12 +1161,9 @@ void MainWindow::on_newLogbookAction_triggered() noexcept
 
 void MainWindow::on_openLogbookAction_triggered() noexcept
 {
-    QString existingLogbookPath = DatabaseService::getExistingLogbookPath(this);
-    if (!existingLogbookPath.isEmpty()) {
-        bool ok = ConnectionManager::getInstance().connectWithLogbook(existingLogbookPath, this);
-        if (!ok) {
-            QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be opened.").arg(existingLogbookPath));
-        }
+    QString filePath = DatabaseService::getExistingLogbookPath(this);
+    if (!filePath.isEmpty()) {
+        connectWithLogbook(filePath);
     }
 }
 
