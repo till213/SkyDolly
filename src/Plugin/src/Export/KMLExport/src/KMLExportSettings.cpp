@@ -94,8 +94,6 @@ Settings::PluginSettings KMLExportSettings::getSettings() const noexcept
 Settings::KeysWithDefaults KMLExportSettings::getKeys() const noexcept
 {
     Settings::KeysWithDefaults keys;
-
-    // TODO IMPLEMENT ME (other values)
     Settings::KeyValue keyValue;
 
     keyValue.first = "ResamplingPeriod";

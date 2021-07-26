@@ -310,6 +310,7 @@ void MainWindow::frenchConnection() noexcept
 
 void MainWindow::initUi() noexcept
 {
+    Settings &settings = Settings::getInstance();
     setWindowIcon(QIcon(":/img/icons/application-icon.png"));
 
     // Dialogs
@@ -317,7 +318,7 @@ void MainWindow::initUi() noexcept
     d->simulationVariablesDialog = new SimulationVariablesDialog(this);
     d->statisticsDialog = new StatisticsDialog(this);
     d->settingsDialog = new SettingsDialog(this);
-    ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
+    ui->stayOnTopAction->setChecked(settings.isWindowStaysOnTopEnabled());
 
     initModuleSelectorUi();
     initControlUi();
@@ -327,12 +328,28 @@ void MainWindow::initUi() noexcept
     ui->showMinimalAction->setChecked(minimalUi);
     updateMinimalUi(minimalUi);
 
-    Settings &settings = Settings::getInstance();
+
     QByteArray windowGeometry = settings.getWindowGeometry();
     QByteArray windowState = settings.getWindowState();
     if (!windowGeometry.isEmpty()) {
         restoreGeometry(windowGeometry);
         restoreState(windowState);
+    }
+
+    int previewInfoCount = settings.getPreviewInfoDialogCount();
+    if (previewInfoCount > 0) {
+        --previewInfoCount;
+        QMessageBox::information(this, "Preview",
+            QString("%1 %2 now supports automated logbook backups, for instance every month, every week or every day after exiting the application. "
+                    "The schedule can be setup in the Logbook Settings, which are now in the File menu (previously: Info menu).\n\n"
+                    "During the preview phase older databases will automatically be migrated to the current data format. As a matter of fact at the time you read this message any existing "
+                    "logbook from previous releases has already been converted to the current format.\n\n"
+                    "However take note that the first release version 1.0.0 will consolidate all migration steps into the final database format, making logbooks generated with preview "
+                    "versions (such as this one) unreadable.\n\n"
+                    "From that point onwards databases (logbooks) will of course again be migrated to the format of the next release version.\n\n"
+                    "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(previewInfoCount),
+            QMessageBox::StandardButton::Ok);
+        settings.setPreviewInfoDialogCount(previewInfoCount);
     }
 }
 
