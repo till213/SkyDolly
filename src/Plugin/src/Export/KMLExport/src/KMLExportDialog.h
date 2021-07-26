@@ -43,27 +43,13 @@ class KMLExportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    /*!
-     * Resampling period [millisecons]
-     */
-    enum class ResamplingPeriod {
-        Original = 0,
-        TenHz = 100,
-        FiveHz = 200,
-        TwoHz = 500,
-        OneHz = 1000,
-        AFifthHz = 5000,
-        ATenthHz = 10000
-    };
     static constexpr char FileSuffix[] = "kml";
 
-    explicit KMLExportDialog(QWidget *parent = nullptr) noexcept;
+    explicit KMLExportDialog(KMLExportSettings &exportSettings, QWidget *parent = nullptr) noexcept;
     virtual ~KMLExportDialog() noexcept;
 
     QString getSelectedFilePath() const noexcept;
-    ResamplingPeriod getSelectedResamplingPeriod() const noexcept;
     bool doOpenExportedFile() const noexcept;
-    KMLStyleExport::StyleParameter getStyleParameters() const noexcept;
 
 private:
     Ui::KMLExportDialog *ui;

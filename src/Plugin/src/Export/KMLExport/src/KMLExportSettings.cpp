@@ -22,35 +22,23 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef COLOR_H
-#define COLOR_H
 
-#include <vector>
+#include "../../../../../Model/src/SimType.h"
+#include "KMLExportSettings.h"
 
-#include <QColor>
+// PUBLIC
 
-#include "KernelLib.h"
-
-class KERNEL_API Color
-{
-public:
-    static std::vector<QRgb> createColorRamp(QColor startColor, QColor endColor, int nofTotalColors) noexcept;
-    static std::vector<QRgb> createColorRamp(QRgb start, QRgb end, int nofTotalColors) noexcept;
-
-    /*!
-     * Converts the \c color from format AARRGGBB to the KML format AABBGGRR.
-     *
-     * \param color
-     *        the color in format AARRGGBB to be converted
-     * \return the converted color in format AABBGGRR
-     */
-    inline static QRgb convertRgbToKml(QRgb color) {
-        const QRgb alpha = qAlpha(color);
-        const QRgb red = qRed(color);
-        const QRgb green = qGreen(color);
-        const QRgb blue = qBlue(color);
-        return alpha << 24 | blue << 16 | green << 8 | red;
-    }
-};
-
-#endif // COLOR_H
+KMLExportSettings::KMLExportSettings() noexcept
+    : resamplingPeriod(DefaultResamplingPeriod),
+      colorStyle(DefaultColorStyle),
+      nofColorsPerRamp(DefaultNofColorsPerRamp),
+      lineWidth(DefaultLineWidth),
+      jetStartColor(DefaultJetStartColor),
+      jetEndColor(DefaultJetEndColor),
+      turbopropStartColor(DefaultTurbopropStartColor),
+      turbopropEndColor(DefaultTurbopropEndColor),
+      pistonStartColor(DefaultPistonStartColor),
+      pistonEndColor(DefaultPistonEndColor),
+      allStartColor(DefaultAllStartColor),
+      allEndColor(DefaultAllEndColor)
+{}

@@ -46,30 +46,10 @@
 #include "../../../../../Model/src/SimType.h"
 #include "../../../../src/Export.h"
 #include "KMLExportDialog.h"
-#include "KMLStyleExport.h"
+#include "KMLExportSettings.h"
 #include "ui_KMLExportDialog.h"
 
 namespace {
-    // in AARRGGBB format
-    // https://designs.ai/colors/color-wheel
-    // http://khroma.co/generator/
-    // http://colormind.io/
-    const QRgb Opaque = 0xff000000;
-
-    // "Tetraedic" colors
-    constexpr QRgb DefaultJetStartColor = Opaque | 0xde7b51;
-    constexpr QRgb DefaultJetEndColor = Opaque | 0x6f3d28;
-    constexpr QRgb DefaultTurbopropStartColor = Opaque | 0x6ade4b;
-    constexpr QRgb DefaultTurbopropEndColor = Opaque | 0x356f25;
-    constexpr QRgb DefaultPistonStartColor = Opaque | 0x4bb3de;
-    constexpr QRgb DefaultPistonEndColor = Opaque | 0x255a6f;
-    constexpr QRgb DefaultAllStartColor = Opaque | 0xc561de;
-    constexpr QRgb DefaultAllEndColor = Opaque | 0x63316f;
-
-    constexpr KMLStyleExport::ColorStyle DefaultColorStyle = KMLStyleExport::ColorStyle::ColorRampPerEngineType;
-
-    constexpr int DefaultNofColorsPerRamp = 8;
-    constexpr float DefaultLineWidth = 3.0f;
 
     enum class ColorButton {
         JetStartColor,
@@ -86,39 +66,24 @@ namespace {
 class KMLExportDialogPrivate
 {
 public:
-    KMLExportDialogPrivate() noexcept
-        : exportButton(nullptr),
-          colorButtonGroup(std::make_unique<QButtonGroup>()),
-          jetStartColor(DefaultJetStartColor),
-          jetEndColor(DefaultJetEndColor),
-          turbopropStartColor(DefaultTurbopropStartColor),
-          turbopropEndColor(DefaultTurbopropEndColor),
-          pistonStartColor(DefaultPistonStartColor),
-          pistonEndColor(DefaultPistonEndColor),
-          allStartColor(DefaultAllStartColor),
-          allEndColor(DefaultAllEndColor)
+    KMLExportDialogPrivate(KMLExportSettings &theExportSettings) noexcept
+        : exportSettings(theExportSettings),
+          exportButton(nullptr),
+          colorButtonGroup(std::make_unique<QButtonGroup>())
     {}
 
+    KMLExportSettings &exportSettings;
     QPushButton *exportButton;
     std::unique_ptr<QButtonGroup> colorButtonGroup;
     Unit unit;
-
-    QColor jetStartColor;
-    QColor jetEndColor;
-    QColor turbopropStartColor;
-    QColor turbopropEndColor;
-    QColor pistonStartColor;
-    QColor pistonEndColor;
-    QColor allStartColor;
-    QColor allEndColor;
 };
 
 // PUBLIC
 
-KMLExportDialog::KMLExportDialog(QWidget *parent) noexcept
+KMLExportDialog::KMLExportDialog(KMLExportSettings &exportSettings, QWidget *parent) noexcept
     : QDialog(parent),
       ui(new Ui::KMLExportDialog),
-      d(std::make_unique<KMLExportDialogPrivate>())
+      d(std::make_unique<KMLExportDialogPrivate>(exportSettings))
 {
     ui->setupUi(this);
     initUi();
@@ -129,6 +94,9 @@ KMLExportDialog::KMLExportDialog(QWidget *parent) noexcept
 KMLExportDialog::~KMLExportDialog() noexcept
 {
     delete ui;
+#ifdef DEBUG
+    qDebug("KMLExportDialog::~KMLExportDialog: DELETED");
+#endif
 }
 
 QString KMLExportDialog::getSelectedFilePath() const noexcept
@@ -136,40 +104,9 @@ QString KMLExportDialog::getSelectedFilePath() const noexcept
     return ui->filePathLineEdit->text();
 }
 
-KMLExportDialog::ResamplingPeriod KMLExportDialog::getSelectedResamplingPeriod() const noexcept
-{
-    return static_cast<KMLExportDialog::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt());
-}
-
 bool KMLExportDialog::doOpenExportedFile() const noexcept
 {
     return ui->openExportCheckBox->isChecked();
-}
-
-KMLStyleExport::StyleParameter KMLExportDialog::getStyleParameters() const noexcept
-{
-    KMLStyleExport::StyleParameter p;
-
-    p.colorStyle = static_cast<KMLStyleExport::ColorStyle>(ui->colorStyleComboBox->currentIndex());
-    if (p.colorStyle == KMLStyleExport::ColorStyle::ColorRampPerEngineType || p.colorStyle == KMLStyleExport::ColorStyle::OneColorPerEngineType) {
-        p.categoryColors[SimType::EngineType::Jet].first = d->jetStartColor.rgba();
-        p.categoryColors[SimType::EngineType::Jet].second = d->jetEndColor.rgba();
-        p.categoryColors[SimType::EngineType::Turboprop].first = d->turbopropStartColor.rgba();
-        p.categoryColors[SimType::EngineType::Turboprop].second = d->turbopropEndColor.rgba();
-        p.categoryColors[SimType::EngineType::Piston].first = d->pistonStartColor.rgba();
-        p.categoryColors[SimType::EngineType::Piston].second = d->pistonEndColor.rgba();
-    }
-    p.categoryColors[SimType::EngineType::All].first = d->allStartColor.rgba();
-    p.categoryColors[SimType::EngineType::All].second = d->allEndColor.rgba();
-
-    if (p.colorStyle == KMLStyleExport::ColorStyle::ColorRamp || p.colorStyle == KMLStyleExport::ColorStyle::ColorRampPerEngineType) {
-        p.nofColorsPerRamp = DefaultNofColorsPerRamp;
-    } else {
-        p.nofColorsPerRamp = 1;
-    }
-    p.lineWidth = DefaultLineWidth;
-
-    return p;
 }
 
 // PRIVATE
@@ -182,13 +119,13 @@ void KMLExportDialog::initUi() noexcept
     ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestFilePath(FileSuffix)));
 
     // Resampling
-    ui->resamplingComboBox->addItem(QString("1/10 Hz") % " (" % tr("less data, less accuracy") % ")", Enum::toUnderlyingType(ResamplingPeriod::ATenthHz));
-    ui->resamplingComboBox->addItem("1/5 Hz", Enum::toUnderlyingType(ResamplingPeriod::AFifthHz));
-    ui->resamplingComboBox->addItem(QString("1 Hz") % " (" % tr("good accuracy") % ")", Enum::toUnderlyingType(ResamplingPeriod::OneHz));
-    ui->resamplingComboBox->addItem("2 Hz", Enum::toUnderlyingType(ResamplingPeriod::TwoHz));
-    ui->resamplingComboBox->addItem("5 Hz", Enum::toUnderlyingType(ResamplingPeriod::FiveHz));
-    ui->resamplingComboBox->addItem("10 Hz", Enum::toUnderlyingType(ResamplingPeriod::TenHz));
-    ui->resamplingComboBox->addItem(tr("Original data (performance critical)"), Enum::toUnderlyingType(ResamplingPeriod::Original));
+    ui->resamplingComboBox->addItem(QString("1/10 Hz") % " (" % tr("less data, less accuracy") % ")", Enum::toUnderlyingType(KMLExportSettings::ResamplingPeriod::ATenthHz));
+    ui->resamplingComboBox->addItem("1/5 Hz", Enum::toUnderlyingType(KMLExportSettings::ResamplingPeriod::AFifthHz));
+    ui->resamplingComboBox->addItem(QString("1 Hz") % " (" % tr("good accuracy") % ")", Enum::toUnderlyingType(KMLExportSettings::ResamplingPeriod::OneHz));
+    ui->resamplingComboBox->addItem("2 Hz", Enum::toUnderlyingType(KMLExportSettings::ResamplingPeriod::TwoHz));
+    ui->resamplingComboBox->addItem("5 Hz", Enum::toUnderlyingType(KMLExportSettings::ResamplingPeriod::FiveHz));
+    ui->resamplingComboBox->addItem("10 Hz", Enum::toUnderlyingType(KMLExportSettings::ResamplingPeriod::TenHz));
+    ui->resamplingComboBox->addItem(tr("Original data (performance critical)"), Enum::toUnderlyingType(KMLExportSettings::ResamplingPeriod::Original));
 
     ui->resamplingComboBox->setCurrentIndex(2);
 
@@ -197,11 +134,11 @@ void KMLExportDialog::initUi() noexcept
 
 void KMLExportDialog::initColorUi() noexcept
 {
-    ui->colorStyleComboBox->insertItem(Enum::toUnderlyingType(KMLStyleExport::ColorStyle::OneColor), tr("One color"));
-    ui->colorStyleComboBox->insertItem(Enum::toUnderlyingType(KMLStyleExport::ColorStyle::OneColorPerEngineType), tr("One color per engine type"));
-    ui->colorStyleComboBox->insertItem(Enum::toUnderlyingType(KMLStyleExport::ColorStyle::ColorRamp), tr("Color ramp"));
-    ui->colorStyleComboBox->insertItem(Enum::toUnderlyingType(KMLStyleExport::ColorStyle::ColorRampPerEngineType), tr("Color ramp per engine type"));
-    ui->colorStyleComboBox->setCurrentIndex(Enum::toUnderlyingType(DefaultColorStyle));
+    ui->colorStyleComboBox->addItem(tr("One color"), Enum::toUnderlyingType(KMLExportSettings::ColorStyle::OneColor));
+    ui->colorStyleComboBox->addItem(tr("One color per engine type"), Enum::toUnderlyingType(KMLExportSettings::ColorStyle::OneColorPerEngineType));
+    ui->colorStyleComboBox->addItem(tr("Color ramp"), Enum::toUnderlyingType(KMLExportSettings::ColorStyle::ColorRamp));
+    ui->colorStyleComboBox->addItem(tr("Color ramp per engine type"), Enum::toUnderlyingType(KMLExportSettings::ColorStyle::ColorRampPerEngineType));
+    ui->colorStyleComboBox->setCurrentIndex(0);
 
     d->colorButtonGroup->addButton(ui->allStartColorToolButton, Enum::toUnderlyingType(ColorButton::AllStartColor));
     d->colorButtonGroup->addButton(ui->allEndColorToolButton, Enum::toUnderlyingType(ColorButton::AllEndColor));
@@ -216,9 +153,9 @@ void KMLExportDialog::initColorUi() noexcept
 void KMLExportDialog::updateInfoUi() noexcept
 {
     QString infoText;
-    ResamplingPeriod resamplingPeriod = static_cast<ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt());
+    KMLExportSettings::ResamplingPeriod resamplingPeriod = static_cast<KMLExportSettings::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt());
     qint64 samplePoints = estimateNofSamplePoints();
-    if (resamplingPeriod != ResamplingPeriod::Original) {
+    if (resamplingPeriod != KMLExportSettings::ResamplingPeriod::Original) {
         infoText = tr("The position data is resampled every %1 milliseconds, resulting in approximately %2 exported positions in total.")
                       .arg(d->unit.formatNumber(Enum::toUnderlyingType(resamplingPeriod), 0), d->unit.formatNumber(samplePoints, 0));
     } else {
@@ -231,8 +168,8 @@ void KMLExportDialog::updateInfoUi() noexcept
 
 void KMLExportDialog::updateColorUi() noexcept
 {
-    switch (static_cast<KMLStyleExport::ColorStyle>(ui->colorStyleComboBox->currentIndex())) {
-    case KMLStyleExport::ColorStyle::OneColor:
+    switch (static_cast<KMLExportSettings::ColorStyle>(ui->colorStyleComboBox->currentIndex())) {
+    case KMLExportSettings::ColorStyle::OneColor:
         ui->allStartColorToolButton->setEnabled(true);
         ui->allEndColorToolButton->setEnabled(false);
         ui->jetStartColorToolButton->setEnabled(false);
@@ -242,7 +179,7 @@ void KMLExportDialog::updateColorUi() noexcept
         ui->pistonStartColorToolButton->setEnabled(false);
         ui->pistonEndColorToolButton->setEnabled(false);
         break;
-    case KMLStyleExport::ColorStyle::OneColorPerEngineType:
+    case KMLExportSettings::ColorStyle::OneColorPerEngineType:
         ui->allStartColorToolButton->setEnabled(true);
         ui->allEndColorToolButton->setEnabled(false);
         ui->jetStartColorToolButton->setEnabled(true);
@@ -252,7 +189,7 @@ void KMLExportDialog::updateColorUi() noexcept
         ui->pistonStartColorToolButton->setEnabled(true);
         ui->pistonEndColorToolButton->setEnabled(false);
         break;
-    case KMLStyleExport::ColorStyle::ColorRamp:
+    case KMLExportSettings::ColorStyle::ColorRamp:
         ui->allStartColorToolButton->setEnabled(true);
         ui->allEndColorToolButton->setEnabled(true);
         ui->jetStartColorToolButton->setEnabled(false);
@@ -262,7 +199,7 @@ void KMLExportDialog::updateColorUi() noexcept
         ui->pistonStartColorToolButton->setEnabled(false);
         ui->pistonEndColorToolButton->setEnabled(false);
         break;
-    case KMLStyleExport::ColorStyle::ColorRampPerEngineType:
+    case KMLExportSettings::ColorStyle::ColorRampPerEngineType:
         ui->allStartColorToolButton->setEnabled(true);
         ui->allEndColorToolButton->setEnabled(true);
         ui->jetStartColorToolButton->setEnabled(true);
@@ -278,52 +215,52 @@ void KMLExportDialog::updateColorUi() noexcept
 
     QString css;
     if (ui->allStartColorToolButton->isEnabled()) {
-        css = "background-color: " % d->allStartColor.name() % ";";
+        css = "background-color: " % d->exportSettings.allStartColor.name() % ";";
     } else {
         css = "background-color: #aaa;";
     }
     ui->allStartColorToolButton->setStyleSheet(css);
     if (ui->allEndColorToolButton->isEnabled()) {
-        css = "background-color: " % d->allEndColor.name() % ";";
+        css = "background-color: " % d->exportSettings.allEndColor.name() % ";";
     } else {
         css = "background-color: #aaa;";
     }
     ui->allEndColorToolButton->setStyleSheet(css);
 
     if (ui->jetStartColorToolButton->isEnabled()) {
-        css = "background-color: " % d->jetStartColor.name() % ";";
+        css = "background-color: " % d->exportSettings.jetStartColor.name() % ";";
     } else {
         css = "background-color: #aaa;";
     }
     ui->jetStartColorToolButton->setStyleSheet(css);
     if (ui->jetEndColorToolButton->isEnabled()) {
-        css = "background-color: " % d->jetEndColor.name() % ";";
+        css = "background-color: " % d->exportSettings.jetEndColor.name() % ";";
     } else {
         css = "background-color: #aaa;";
     }
     ui->jetEndColorToolButton->setStyleSheet(css);
 
     if (ui->turbopropStartColorToolButton->isEnabled()) {
-        css = "background-color: " % d->turbopropStartColor.name() % ";";
+        css = "background-color: " % d->exportSettings.turbopropStartColor.name() % ";";
     } else {
         css = "background-color: #aaa;";
     }
     ui->turbopropStartColorToolButton->setStyleSheet(css);
     if (ui->turbopropEndColorToolButton->isEnabled()) {
-        css = "background-color: " % d->turbopropEndColor.name() % ";";
+        css = "background-color: " % d->exportSettings.turbopropEndColor.name() % ";";
     } else {
         css = "background-color: #aaa;";
     }
     ui->turbopropEndColorToolButton->setStyleSheet(css);
 
     if (ui->pistonStartColorToolButton->isEnabled()) {
-        css = "background-color: " % d->pistonStartColor.name() % ";";
+        css = "background-color: " % d->exportSettings.pistonStartColor.name() % ";";
     } else {
         css = "background-color: #aaa;";
     }
     ui->pistonStartColorToolButton->setStyleSheet(css);
     if (ui->pistonEndColorToolButton->isEnabled()) {
-        css = "background-color: " % d->pistonEndColor.name() % ";";
+        css = "background-color: " % d->exportSettings.pistonEndColor.name() % ";";
     } else {
         css = "background-color: #aaa;";
     }
@@ -375,28 +312,28 @@ void KMLExportDialog::selectColor(int id) noexcept
     QColor initialColor;
     switch (static_cast<ColorButton>(id)) {
     case ColorButton::JetStartColor:
-        initialColor = d->jetStartColor;
+        initialColor = d->exportSettings.jetStartColor;
         break;
     case ColorButton::JetEndColor:
-        initialColor = d->jetEndColor;
+        initialColor = d->exportSettings.jetEndColor;
         break;
     case ColorButton::TurbopropStartColor:
-        initialColor = d->turbopropStartColor;
+        initialColor = d->exportSettings.turbopropStartColor;
         break;
     case ColorButton::TurbopropEndColor:
-        initialColor = d->turbopropEndColor;
+        initialColor = d->exportSettings.turbopropEndColor;
         break;
     case ColorButton::PistonStartColor:
-        initialColor = d->pistonStartColor;
+        initialColor = d->exportSettings.pistonStartColor;
         break;
     case ColorButton::PistonEndColor:
-        initialColor = d->pistonEndColor;
+        initialColor = d->exportSettings.pistonEndColor;
         break;
     case ColorButton::AllStartColor:
-        initialColor = d->allStartColor;
+        initialColor = d->exportSettings.allStartColor;
         break;
     case ColorButton::AllEndColor:
-        initialColor = d->allEndColor;
+        initialColor = d->exportSettings.allEndColor;
         break;
     default:
         break;
@@ -406,32 +343,32 @@ void KMLExportDialog::selectColor(int id) noexcept
     if (color.isValid()) {
         switch (static_cast<ColorButton>(id)) {
         case ColorButton::JetStartColor:
-            d->jetStartColor = color;
-            d->jetEndColor = color.darker();
+            d->exportSettings.jetStartColor = color;
+            d->exportSettings.jetEndColor = color.darker();
             break;
         case ColorButton::JetEndColor:
-            d->jetEndColor = color;
+            d->exportSettings.jetEndColor = color;
             break;
         case ColorButton::TurbopropStartColor:
-            d->turbopropStartColor = color;
-            d->turbopropEndColor = color.darker();
+            d->exportSettings.turbopropStartColor = color;
+            d->exportSettings.turbopropEndColor = color.darker();
             break;
         case ColorButton::TurbopropEndColor:
-            d->turbopropEndColor = color;
+            d->exportSettings.turbopropEndColor = color;
             break;
         case ColorButton::PistonStartColor:
-            d->pistonStartColor = color;
-            d->pistonEndColor = color.darker();
+            d->exportSettings.pistonStartColor = color;
+            d->exportSettings.pistonEndColor = color.darker();
             break;
         case ColorButton::PistonEndColor:
-            d->pistonEndColor = color;
+            d->exportSettings.pistonEndColor = color;
             break;
         case ColorButton::AllStartColor:
-            d->allStartColor = color;
-            d->allEndColor = color.darker();
+            d->exportSettings.allStartColor = color;
+            d->exportSettings.allEndColor = color.darker();
             break;
         case ColorButton::AllEndColor:
-            d->allEndColor= color;
+            d->exportSettings.allEndColor = color;
             break;
         default:
             break;
@@ -452,10 +389,19 @@ void KMLExportDialog::on_fileSelectionPushButton_clicked() noexcept
 void KMLExportDialog::on_resamplingComboBox_activated(int index) noexcept
 {
     Q_UNUSED(index)
+    d->exportSettings.resamplingPeriod = static_cast<KMLExportSettings::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt());
     updateInfoUi();
 }
 
 void KMLExportDialog::on_colorStyleComboBox_activated(int index) noexcept
 {
+    Q_UNUSED(index)
+    d->exportSettings.colorStyle = static_cast<KMLExportSettings::ColorStyle>(ui->colorStyleComboBox->currentData().toInt());
+    if (d->exportSettings.colorStyle == KMLExportSettings::ColorStyle::ColorRamp || d->exportSettings.colorStyle == KMLExportSettings::ColorStyle::ColorRampPerEngineType) {
+        d->exportSettings.nofColorsPerRamp = KMLExportSettings::DefaultNofColorsPerRamp;
+    } else {
+        d->exportSettings.nofColorsPerRamp = 1;
+    }
+
     updateColorUi();
 }

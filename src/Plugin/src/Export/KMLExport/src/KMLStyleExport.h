@@ -33,7 +33,9 @@
 
 class QIODevice;
 
+
 #include "../../../../../Model/src/SimType.h"
+#include "KMLExportSettings.h"
 
 class KMLStyleExportPrivate;
 
@@ -45,25 +47,10 @@ public:
         Flag
     };
 
-    enum class ColorStyle {
-        OneColor,
-        OneColorPerEngineType,
-        ColorRamp,
-        ColorRampPerEngineType
-    };
-
-    typedef std::unordered_map<SimType::EngineType, std::pair<QRgb, QRgb>> CategoryColor;
-    typedef struct {
-        CategoryColor categoryColors;
-        ColorStyle colorStyle;
-        int nofColorsPerRamp;
-        float lineWidth;
-    } StyleParameter;
-
     KMLStyleExport() noexcept;
     ~KMLStyleExport() noexcept;
 
-    bool exportStyles(const StyleParameter &styleParameters, QIODevice &io) noexcept;
+    bool exportStyles(const KMLExportSettings &exportSettings, QIODevice &io) noexcept;
     QString getNextStyleMapPerEngineType(SimType::EngineType engineType) noexcept;
 
     static QString getStyleUrl(Icon icon) noexcept;
