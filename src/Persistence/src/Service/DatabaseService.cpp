@@ -192,11 +192,16 @@ QString DatabaseService::getNewLogbookPath(QWidget *parent) noexcept
 {
     Settings &settings = Settings::getInstance();
     QString existingLogbookPath = settings.getLogbookPath();
-    QString existingLogbookDirectoryPath = QFileInfo(existingLogbookPath).absolutePath();
+    QFileInfo existingLogbookInfo(existingLogbookPath);
+    QDir existingLogbookDirectory(existingLogbookInfo.absolutePath());
+    if (existingLogbookDirectory.dirName() == existingLogbookInfo.baseName()) {
+        existingLogbookDirectory.cdUp();
+    }
+
     QString newLogbookPath;
     bool retry = true;
     while (retry) {
-        QString logbookDirectoryPath = QFileDialog::getSaveFileName(parent, QCoreApplication::translate("DatabaseService", "New logbook"), existingLogbookDirectoryPath);
+        QString logbookDirectoryPath = QFileDialog::getSaveFileName(parent, QCoreApplication::translate("DatabaseService", "New logbook"), existingLogbookDirectory.absolutePath());
         if (!logbookDirectoryPath.isEmpty()) {
             QFileInfo info = QFileInfo(logbookDirectoryPath);
             if (!info.exists()) {
