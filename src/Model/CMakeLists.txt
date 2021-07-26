@@ -1,12 +1,21 @@
+set(LIBRARY_NAME "Model")
+
 add_definitions(-DMODEL_EXPORT)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(Model SHARED "")
+    qt_add_library(${LIBRARY_NAME} SHARED "")
 else()
-    add_library(Model SHARED "")
+    add_library(${LIBRARY_NAME} SHARED "")
 endif()
 
-target_sources(Model
+set(LIBRARY_DEPENDENCIES
+    Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Sql Kernel
+)
+if (${PLATFORM_IS_MACOS})
+    list(APPEND LIBRARY_DEPENDENCIES -lc++)
+endif()
+
+target_sources(${LIBRARY_NAME}
     PRIVATE
         src/ModelLib.h
         src/Logbook.cpp
@@ -63,17 +72,7 @@ target_sources(Model
         src/SkySearch.h
 )
 
-set(MODEL_LIBS
-    Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Sql Kernel
-)
-if (${PLATFORM_IS_MACOS})
-    list(APPEND MODEL_LIBS -lc++)
-endif()
+target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})
+set_target_properties(${LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
+set_target_properties(${LIBRARY_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
 
-target_link_libraries(Model PRIVATE ${MODEL_LIBS})
-set_target_properties(Model PROPERTIES VERSION ${PROJECT_VERSION})
-set_target_properties(Model PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
-
-target_include_directories(Model PUBLIC
-    "${CMAKE_CURRENT_BINARY_DIR}"
-)
