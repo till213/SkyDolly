@@ -492,42 +492,44 @@ void LogbookWidget::updateAircraftIcon() noexcept
 
 void LogbookWidget::updateDateSelectorUi() noexcept
 {
-    // Sorted by year, month, day
-    std::forward_list<FlightDate> flightDates = d->logbookService->getFlightDates();
-    ui->logTreeWidget->blockSignals(true);
-    ui->logTreeWidget->clear();
+    if (ConnectionManager::getInstance().isConnected()) {
+        // Sorted by year, month, day
+        std::forward_list<FlightDate> flightDates = d->logbookService->getFlightDates();
+        ui->logTreeWidget->blockSignals(true);
+        ui->logTreeWidget->clear();
 
-    QTreeWidgetItem *logbookItem = new QTreeWidgetItem(ui->logTreeWidget, QStringList(tr("Logbook")));
+        QTreeWidgetItem *logbookItem = new QTreeWidgetItem(ui->logTreeWidget, QStringList(tr("Logbook")));
 
-    int totalFlights = 0;
-    while (!flightDates.empty()) {
-        std::forward_list<FlightDate>::const_iterator first = flightDates.cbegin();
-        std::forward_list<FlightDate>::const_iterator last = first;
+        int totalFlights = 0;
+        while (!flightDates.empty()) {
+            std::forward_list<FlightDate>::const_iterator first = flightDates.cbegin();
+            std::forward_list<FlightDate>::const_iterator last = first;
 
-        // Group by year
-        int currentYear = first->year;
-        int nofFlightsPerYear = 0;
-        while (last != flightDates.end() && last->year == currentYear) {
-            nofFlightsPerYear += last->nofFlights;
-            ++last;
+            // Group by year
+            int currentYear = first->year;
+            int nofFlightsPerYear = 0;
+            while (last != flightDates.end() && last->year == currentYear) {
+                nofFlightsPerYear += last->nofFlights;
+                ++last;
+            }
+            std::forward_list<FlightDate> flightDatesByYear = {};
+            flightDatesByYear.splice_after(flightDatesByYear.cbefore_begin(), flightDates, flightDates.cbefore_begin(), last);
+            insertYear(logbookItem, flightDatesByYear, nofFlightsPerYear);
+
+            totalFlights += nofFlightsPerYear;
         }
-        std::forward_list<FlightDate> flightDatesByYear = {};
-        flightDatesByYear.splice_after(flightDatesByYear.cbefore_begin(), flightDates, flightDates.cbefore_begin(), last);
-        insertYear(logbookItem, flightDatesByYear, nofFlightsPerYear);
 
-        totalFlights += nofFlightsPerYear;
+        // Expand all "first" children
+        QTreeWidgetItem *item = logbookItem;
+        while (item->childCount() > 0) {
+            item->setExpanded(true);
+            item = item->child(0);
+        }
+
+        logbookItem->setData(NofFlightsColumn, Qt::DisplayRole, totalFlights);
+
+        ui->logTreeWidget->blockSignals(false);
     }
-
-    // Expand all "first" children
-    QTreeWidgetItem *item = logbookItem;
-    while (item->childCount() > 0) {
-        item->setExpanded(true);
-        item = item->child(0);
-    }
-
-    logbookItem->setData(NofFlightsColumn, Qt::DisplayRole, totalFlights);
-
-    ui->logTreeWidget->blockSignals(false);
 }
 
 void LogbookWidget::handleSelectionChanged() noexcept
