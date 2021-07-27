@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The black sheep for your flight recordings
+ * Sky Dolly - The Black Sheep for your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -26,10 +26,15 @@
 #define SETTINGS_H
 
 #include <memory>
+#include <vector>
+#include <unordered_map>
+#include <utility>
 
 #include <QObject>
 #include <QSettings>
 #include <QUuid>
+#include <QString>
+#include <QVariant>
 
 class QByteArray;
 
@@ -392,11 +397,24 @@ public:
      */
     void setPreviewInfoDialogCount(int count) noexcept;
 
+    typedef std::pair<QString, QVariant> KeyValue;
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+#include "QStringHasher.h"
+    typedef std::unordered_map<QString, QVariant, QStringHasher> ValuesByKey;
+#else
+    typedef std::unordered_map<QString, QVariant> ValuesByKey;
+#endif
+    typedef std::vector<KeyValue> PluginSettings;
+    typedef std::vector<KeyValue> KeysWithDefaults;
+
+    void storePluginSettings(QUuid pluginUuid, const PluginSettings &settings) const noexcept;
+    ValuesByKey restorePluginSettings(QUuid pluginUuid, const KeysWithDefaults &keys) noexcept;
+
 public slots:
     /*!
      * Stores these Settings to a user configuration file.
      */
-    void store() noexcept;
+    void store() const noexcept;
 
     /*!
      * Restores these Settings from a user configuration file. If no user

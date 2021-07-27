@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The black sheep for your flight recordings
+ * Sky Dolly - The Black Sheep for your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -59,8 +59,8 @@ public:
     std::vector<Handle> initialiseExportPlugins() noexcept;
     std::vector<Handle> initialiseImportPlugins() noexcept;
 
-    bool importData(const QString &pluginClassName, FlightService &flightService) const noexcept;
-    bool exportData(const QString &pluginClassName) const noexcept;
+    bool importData(const QUuid &pluginUuid, FlightService &flightService) const noexcept;
+    bool exportData(const QUuid &pluginUuid) const noexcept;
 
 protected:
     virtual ~PluginManager() noexcept;

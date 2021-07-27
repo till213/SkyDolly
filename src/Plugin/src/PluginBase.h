@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The black sheep for your flight recordings
+ * Sky Dolly - The Black Sheep for your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -28,7 +28,9 @@
 #include <memory>
 
 #include <QObject>
+#include <QUuid>
 
+#include "../../Kernel/src/Settings.h"
 #include "PluginIntf.h"
 #include "PluginLib.h"
 
@@ -43,6 +45,14 @@ public:
 
     virtual QWidget *getParentWidget() const noexcept override;
     virtual void setParentWidget(QWidget *parent) noexcept override;
+
+    virtual void storeSettings(const QUuid &pluginUuid) const noexcept override;
+    virtual void restoreSettings(const QUuid &pluginUuid) noexcept override;
+
+protected:
+    virtual Settings::PluginSettings getSettings() const noexcept;
+    virtual Settings::KeysWithDefaults getKeys() const noexcept;
+    virtual void setSettings(Settings::ValuesByKey valuesByKey) noexcept;
 
 private:
     std::unique_ptr<PluginBasePrivate> d;

@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The black sheep for your flight recordings
+ * Sky Dolly - The Black Sheep for your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -26,8 +26,12 @@
 #define KMLEXPORTDIALOG_H
 
 #include <memory>
+#include <utility>
 
 #include <QDialog>
+
+#include "../../../../../Model/src/SimType.h"
+#include "KMLStyleExport.h"
 
 namespace Ui {
     class KMLExportDialog;
@@ -39,25 +43,12 @@ class KMLExportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    /*!
-     * Resampling period [millisecons]
-     */
-    enum class ResamplingPeriod {
-        Original = 0,
-        TenHz = 100,
-        FiveHz = 200,
-        TwoHz = 500,
-        OneHz = 1000,
-        AFifthHz = 5000,
-        ATenthHz = 10000
-    };
     static constexpr char FileSuffix[] = "kml";
 
-    explicit KMLExportDialog(QWidget *parent = nullptr) noexcept;
+    explicit KMLExportDialog(KMLExportSettings &exportSettings, QWidget *parent = nullptr) noexcept;
     virtual ~KMLExportDialog() noexcept;
 
     QString getSelectedFilePath() const noexcept;
-    ResamplingPeriod getSelectedResamplingPeriod() const noexcept;
     bool doOpenExportedFile() const noexcept;
 
 private:
@@ -65,7 +56,9 @@ private:
     std::unique_ptr<KMLExportDialogPrivate> d;
 
     void initUi() noexcept;
+    void initColorUi() noexcept;
     void updateInfoUi() noexcept;
+    void updateColorUi() noexcept;
     void frenchConnection() noexcept;
 
     qint64 estimateNofSamplePoints() noexcept;
@@ -73,8 +66,12 @@ private:
 private slots:
     void updateUi() noexcept;
 
+    void selectColor(int id) noexcept;
+    void restoreDefaults() noexcept;
+
     void on_fileSelectionPushButton_clicked() noexcept;
     void on_resamplingComboBox_activated(int index) noexcept;
+    void on_colorStyleComboBox_activated(int index) noexcept;
 };
 
 #endif // KMLEXPORTDIALOG_H

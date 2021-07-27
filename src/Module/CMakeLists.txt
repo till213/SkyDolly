@@ -1,19 +1,21 @@
+set(LIBRARY_NAME "Module")
+
 add_definitions(-DMODULE_EXPORT)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(Module SHARED "")
+    qt_add_library(${LIBRARY_NAME} SHARED "")
 else()
-    add_library(Module SHARED "")
+    add_library(${LIBRARY_NAME} SHARED "")
 endif()
 
-set(MODULE_LIBS
+set(LIBRARY_DEPENDENCIES
     Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence SkyConnect Plugin Widget tsl::ordered_map
 )
 if (${PLATFORM_IS_MACOS})
-    list(APPEND MODULE_LIBS -lc++)
+    list(APPEND LIBRARY_DEPENDENCIES -lc++)
 endif()
 
-target_sources(Module
+target_sources(${LIBRARY_NAME}
     PRIVATE
         src/ModuleLib.h
         src/Module.h
@@ -31,6 +33,6 @@ target_sources(Module
 )
 
 include_directories(Module PRIVATE ../Widget/src/)
-target_link_libraries(Module PRIVATE ${MODULE_LIBS})
-set_target_properties(Module PROPERTIES VERSION ${PROJECT_VERSION})
-set_target_properties(Module PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
+target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})
+set_target_properties(${LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
+set_target_properties(${LIBRARY_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})

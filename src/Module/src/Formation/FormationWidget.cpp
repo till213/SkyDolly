@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The black sheep for your flight recordings
+ * Sky Dolly - The Black Sheep for your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -183,24 +183,6 @@ QAction &FormationWidget::getAction() noexcept
 void FormationWidget::showEvent(QShowEvent *event) noexcept
 {
     AbstractModuleWidget::showEvent(event);
-
-    Settings &settings = Settings::getInstance();
-    int previewInfoCount = settings.getPreviewInfoDialogCount();
-    if (previewInfoCount > 0) {
-        --previewInfoCount;
-        QMessageBox::information(this, "Preview",
-            QString("%1 %2 supports multiple aircrafts per flight (\"formation\"). While in the Fomation module the record button switches its symbol: the plus (+) sign indicates that "
-                    "recorded aircrafts are being added to the current flight. Additional aircrafts are initially positioned relative to the last user aircraft.\n\n"
-                    "Each newly recorded aircraft is automatically stored into a database (the logbook). As new features are being added and developed the database format will change.\n\n"
-                    "During the preview phase older databases will automatically be migrated to the current data format. As a matter of fact at the time you see this message any existing "
-                    "logbook from the previous 0.7 version has already been converted to the current format.\n\n"
-                    "However take note that the first release version 1.0.0 will consolidate all migration steps into the final database format, making logbooks generated with preview "
-                    "versions (such as this one) unreadable!\n\n"
-                    "From that point onwards databases (logbooks) will of course again be migrated to the format of the next release version.\n\n"
-                    "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(previewInfoCount),
-            QMessageBox::StandardButton::Ok);
-        settings.setPreviewInfoDialogCount(previewInfoCount);
-    }
 
     // Deselect when showing module
     d->selectedRow = InvalidSelection;

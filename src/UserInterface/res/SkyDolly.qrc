@@ -63,5 +63,6 @@
         <file>img/icons/backward-active@2x.png</file>
         <file>img/icons/forward-active.png</file>
         <file>img/icons/forward-active@2x.png</file>
+        <file>img/icons/application-icon@2x.png</file>
     </qresource>
 </RCC>

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(SKYDOLLY_DESCRIPTION "Sky Dolly - The black sheep for your flight recordings")
+set(SKYDOLLY_DESCRIPTION "Sky Dolly - The Black Sheep for your Flight Recordings")
 project(SkyDolly LANGUAGES CXX VERSION 0.8.0 DESCRIPTION ${SKYDOLLY_DESCRIPTION})
 set(PROJECT_APPLICATION_NAME "Sky Dolly")
 set(PROJECT_ORGANISATION_NAME till213)
@@ -70,6 +70,7 @@ set(OTHER_SOURCES
     THIRD_PARTY.md
     doc/SkyDolly.simvars
     res/Info.plist.in
+    res/SkyDolly.rc.in
 )
 
 # Resource file (*.rc)

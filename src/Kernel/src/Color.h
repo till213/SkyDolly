@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The black sheep for your flight recordings
+ * Sky Dolly - The Black Sheep for your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -34,6 +34,7 @@
 class KERNEL_API Color
 {
 public:
+    static std::vector<QRgb> createColorRamp(QColor startColor, QColor endColor, int nofTotalColors) noexcept;
     static std::vector<QRgb> createColorRamp(QRgb start, QRgb end, int nofTotalColors) noexcept;
 
     /*!

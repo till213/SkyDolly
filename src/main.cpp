@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The black sheep for your flight recordings
+ * Sky Dolly - The Black Sheep for your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -24,6 +24,7 @@
  */
 #include <QCoreApplication>
 #include <QApplication>
+#include <QStringList>
 
 #include "../../Kernel/src/Version.h"
 #include "../../Kernel/src/Settings.h"
@@ -60,7 +61,16 @@ int main(int argc, char *argv[])
 
     QApplication application(argc, argv);
 
-    MainWindow mainWindow;
+    // Simplistic command line parsing: first arg is assumed to be a file path
+    QStringList args = application.arguments();
+    QString filePath;
+    if (args.count() > 1) {
+       filePath = args.at(1);
+    }
+    MainWindow mainWindow(filePath);
+
+
+
     mainWindow.show();
     const int res = application.exec();
     destroySingletons();

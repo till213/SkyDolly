@@ -83,7 +83,3 @@ endif()
 target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})
 set_target_properties(${LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(${LIBRARY_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
-
-target_include_directories(${LIBRARY_NAME} PUBLIC
-    "${CMAKE_CURRENT_BINARY_DIR}"
-)
