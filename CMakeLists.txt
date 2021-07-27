@@ -70,6 +70,7 @@ set(OTHER_SOURCES
     THIRD_PARTY.md
     doc/SkyDolly.simvars
     res/Info.plist.in
+    res/SkyDolly.rc.in
 )
 
 # Resource file (*.rc)
