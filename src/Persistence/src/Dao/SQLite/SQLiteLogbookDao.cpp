@@ -124,7 +124,10 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
         "       or end_waypoint like coalesce(:search_keyword, end_waypoint) "
         "      ) "
         "  and aircraft_count > :aircraft_count "
-        "  and at.engine_type = coalesce(:engine_type, at.engine_type);"
+        "  and at.engine_type = coalesce(:engine_type, at.engine_type)"
+        "  and (   :duration = 0"
+        "       or round((julianday(f.end_zulu_sim_time) - julianday(f.start_zulu_sim_time)) * 1440) >= :duration"
+        "      );"
     );
 
     const int aircraftCount = flightSelector.hasFormation ? 1 : 0;
@@ -135,6 +138,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
     query.bindValue(":aircraft_count", aircraftCount);
     const QVariant engineTypeVariant = flightSelector.engineType != SimType::EngineType::All ? Enum::toUnderlyingType(flightSelector.engineType) : QVariant();
     query.bindValue(":engine_type", engineTypeVariant);
+    query.bindValue(":duration", flightSelector.mininumDurationMinutes);
     const bool ok = query.exec();
     if (ok) {
         QSqlRecord record = query.record();

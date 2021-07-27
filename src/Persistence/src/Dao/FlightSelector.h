@@ -41,6 +41,7 @@ public:
     QString searchKeyword;
     bool hasFormation;
     SimType::EngineType engineType;
+    int mininumDurationMinutes;
 
     static const QDate MinDate;
     static const QDate MaxDate;

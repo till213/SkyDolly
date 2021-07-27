@@ -75,6 +75,19 @@ namespace
     constexpr int NofFlightsColumn = 1;
 
     constexpr int SearchTimeoutMSec = 200;
+
+    enum class Duration {
+        All = 0,
+        TwoMinutes = 2,
+        FiveMinutes = 5,
+        TenMinutes = 10,
+        Fifteen = 15,
+        ThirtyMinutes = 30,
+        OneHour = 60,
+        TwoHours = 120,
+        ThreeHours = 180,
+        FourHours = 240
+    };
 }
 
 class LogbookWidgetPrivate
@@ -224,6 +237,23 @@ void LogbookWidget::initUi() noexcept
     ui->logTableWidget->sortByColumn(FlightIdColumn, Qt::SortOrder::DescendingOrder);
 
     ui->splitter->setStretchFactor(1, 3);
+
+    initFilterUi();
+}
+
+void LogbookWidget::initFilterUi() noexcept
+{
+    // Duration
+    ui->durationComboBox->addItem(tr("All"), Enum::toUnderlyingType(Duration::All));
+    ui->durationComboBox->addItem(tr("2 minutes"), Enum::toUnderlyingType(Duration::TwoMinutes));
+    ui->durationComboBox->addItem(tr("5 minutes"), Enum::toUnderlyingType(Duration::FiveMinutes));
+    ui->durationComboBox->addItem(tr("10 minutes"), Enum::toUnderlyingType(Duration::TenMinutes));
+    ui->durationComboBox->addItem(tr("15 minutes"), Enum::toUnderlyingType(Duration::Fifteen));
+    ui->durationComboBox->addItem(tr("30 minutes"), Enum::toUnderlyingType(Duration::ThirtyMinutes));
+    ui->durationComboBox->addItem(tr("1 hour"), Enum::toUnderlyingType(Duration::OneHour));
+    ui->durationComboBox->addItem(tr("2 hours"), Enum::toUnderlyingType(Duration::TwoHours));
+    ui->durationComboBox->addItem(tr("3 hours"), Enum::toUnderlyingType(Duration::ThreeHours));
+    ui->durationComboBox->addItem(tr("4 hours"), Enum::toUnderlyingType(Duration::FourHours));
 
     // Engine type
     ui->engineTypeComboBox->addItem(SimType::engineTypeToString(SimType::EngineType::All), Enum::toUnderlyingType(SimType::EngineType::All));
@@ -649,5 +679,50 @@ void LogbookWidget::on_engineTypeComboBox_activated(int index) noexcept
     Q_UNUSED(index)
 
     d->flightSelector.engineType = static_cast<SimType::EngineType>(ui->engineTypeComboBox->currentData().toInt());
+    updateFlightTable();
+}
+
+void LogbookWidget::on_durationComboBox_activated(int index) noexcept
+{
+    Q_UNUSED(index)
+
+    int minimumDurationMinutes;
+    switch (static_cast<Duration>(ui->durationComboBox->currentData().toUInt())) {
+    case Duration::All:
+        minimumDurationMinutes = 0;
+        break;
+    case Duration::TwoMinutes:
+        minimumDurationMinutes = 2;
+        break;
+    case Duration::FiveMinutes:
+        minimumDurationMinutes = 5;
+        break;
+    case Duration::TenMinutes:
+        minimumDurationMinutes = 10;
+        break;
+    case Duration::Fifteen:
+        minimumDurationMinutes = 15;
+        break;
+    case Duration::ThirtyMinutes:
+        minimumDurationMinutes = 30;
+        break;
+    case Duration::OneHour:
+        minimumDurationMinutes = 60;
+        break;
+    case Duration::TwoHours:
+        minimumDurationMinutes = 120;
+        break;
+    case Duration::ThreeHours:
+        minimumDurationMinutes = 180;
+        break;
+    case Duration::FourHours:
+        minimumDurationMinutes = 240;
+        break;
+    default:
+        minimumDurationMinutes = 0;
+        break;
+    }
+
+    d->flightSelector.mininumDurationMinutes = minimumDurationMinutes;
     updateFlightTable();
 }

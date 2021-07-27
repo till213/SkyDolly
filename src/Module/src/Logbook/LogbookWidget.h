@@ -73,6 +73,7 @@ private:
     std::unique_ptr<LogbookWidgetPrivate> d;
 
     void initUi() noexcept;
+    void initFilterUi() noexcept;
     void updateFlightTable() noexcept;
     void frenchConnection() noexcept;
     inline void insertYear(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByYear, int nofFlightsPerYear) noexcept;
@@ -101,6 +102,7 @@ private slots:
 
     void on_formationCheckBox_toggled(bool checked) noexcept;
     void on_engineTypeComboBox_activated(int index) noexcept;
+    void on_durationComboBox_activated(int index) noexcept;
 };
 
 #endif // LOGBOOKWIDGET_H
