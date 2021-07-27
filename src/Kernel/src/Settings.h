@@ -179,6 +179,24 @@ public:
     void setModuleSelectorVisible(bool enable) noexcept;
 
     /*!
+     * Returns whether the \e replay speed group box is visible.
+     *
+     * \return \c true if the replay speed group box is shown
+     *         \c false else
+     */
+    bool isReplaySpeedVisible() const noexcept;
+
+    /*!
+     * Sets the \e replay speed group box visible
+     *
+     * \param enable
+     *        \c true in order to show the replay speed
+     *        \c false in order to hide the replay speed
+     * \sa replaySpeedVisibilityChanged
+     */
+    void setReplaySpeedVisible(bool enable) noexcept;
+
+    /*!
      * Returns the saved window geometry.
      *
      * \return the window geometry; a \e null QByteArray if not saved before
@@ -466,6 +484,13 @@ signals:
      * \sa changed
      */
     void moduleSelectorVisibilityChanged(bool enable);
+
+    /*!
+     * Emitted when the replay speed visibility has changed.
+     *
+     * \sa changed
+     */
+    void replaySpeedVisibilityChanged(bool enable);
 
     /*!
      * Emitted when the export path has changed.

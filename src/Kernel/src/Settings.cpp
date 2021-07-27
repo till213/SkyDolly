@@ -48,6 +48,7 @@ public:
     bool windowStayOnTop;
     bool minimalUi;
     bool moduleSelectorVisible;
+    bool replaySpeedVisible;
     QByteArray windowGeometry;
     QByteArray windowState;
     QString exportPath;
@@ -72,6 +73,7 @@ public:
     static constexpr bool DefaultWindowStayOnTop = false;
     static constexpr bool DefaultMinimalUi = false;
     static constexpr bool DefaultModuleSelectorVisible = true;
+    static constexpr bool DefaultReplaySpeedVisible = true;
     static constexpr bool DefaultAbsoluteSeek = true;
     static constexpr double DefaultSeekIntervalSeconds = 1.0;
     static constexpr double DefaultSeekIntervalPercent = 0.5;
@@ -217,6 +219,19 @@ void Settings::setModuleSelectorVisible(bool enable) noexcept
     if (d->moduleSelectorVisible != enable) {
         d->moduleSelectorVisible = enable;
         emit moduleSelectorVisibilityChanged(enable);
+    }
+}
+
+bool Settings::isReplaySpeedVisible() const noexcept
+{
+    return d->replaySpeedVisible;
+}
+
+void Settings::setReplaySpeedVisible(bool enable) noexcept
+{
+    if (d->replaySpeedVisible != enable) {
+        d->replaySpeedVisible = enable;
+        emit replaySpeedVisibilityChanged(enable);
     }
 }
 
@@ -432,11 +447,16 @@ void Settings::store() const noexcept
         d->settings.setValue("ResetTimeOffsetConfirmation", d->resetTimeOffsetConfirmation);
     }
     d->settings.endGroup();
+    d->settings.beginGroup("View");
+    {
+        d->settings.setValue("ModuleSelectorVisible", d->moduleSelectorVisible);
+        d->settings.setValue("ReplaySpeedVisible", d->replaySpeedVisible);
+    }
+    d->settings.endGroup();
     d->settings.beginGroup("Window");
     {
         d->settings.setValue("WindowStaysOnTop", d->windowStayOnTop);
         d->settings.setValue("MinimalUi", d->minimalUi);
-        d->settings.setValue("ModuleSelectorVisible", d->moduleSelectorVisible);
         d->settings.setValue("Geometry", d->windowGeometry);
         d->settings.setValue("State", d->windowState);
     }
@@ -521,11 +541,16 @@ void Settings::restore() noexcept
         d->resetTimeOffsetConfirmation = d->settings.value("ResetTimeOffsetConfirmation", SettingsPrivate::DefaultResetTimeOffsetConfirmation).toBool();
     }
     d->settings.endGroup();
+    d->settings.beginGroup("View");
+    {
+        d->moduleSelectorVisible = d->settings.value("ModuleSelectorVisible", SettingsPrivate::DefaultModuleSelectorVisible).toBool();
+        d->replaySpeedVisible = d->settings.value("ReplaySpeedVisible", SettingsPrivate::DefaultReplaySpeedVisible).toBool();
+    }
+    d->settings.endGroup();
     d->settings.beginGroup("Window");
     {
         d->windowStayOnTop = d->settings.value("WindowStaysOnTop", SettingsPrivate::DefaultWindowStayOnTop).toBool();
         d->minimalUi = d->settings.value("MinimalUi", SettingsPrivate::DefaultMinimalUi).toBool();
-        d->moduleSelectorVisible = d->settings.value("ModuleSelectorVisible", SettingsPrivate::DefaultModuleSelectorVisible).toBool();
         d->windowGeometry = d->settings.value("Geometry").toByteArray();
         d->windowState = d->settings.value("State").toByteArray();
     }
@@ -588,6 +613,8 @@ void Settings::frenchConnection() noexcept
     connect(this, &Settings::minimalUiChanged,
             this, &Settings::changed);
     connect(this, &Settings::moduleSelectorVisibilityChanged,
+            this, &Settings::changed);
+    connect(this, &Settings::replaySpeedVisibilityChanged,
             this, &Settings::changed);
     connect(this, &Settings::exportPathChanged,
             this, &Settings::changed);

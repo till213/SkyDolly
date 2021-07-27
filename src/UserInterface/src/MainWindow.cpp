@@ -334,6 +334,7 @@ void MainWindow::initUi() noexcept
     ui->stayOnTopAction->setChecked(settings.isWindowStaysOnTopEnabled());
 
     initModuleSelectorUi();
+    initViewUi();
     initControlUi();
     initReplaySpeedUi();
 
@@ -445,8 +446,6 @@ void MainWindow::initModuleSelectorUi() noexcept
 
     const ModuleIntf &activeModule = d->moduleManager->getActiveModule();
     ui->moduleGroupBox->setTitle(activeModule.getModuleName());
-    const bool moduleSelectorVisible = Settings::getInstance().isModuleSelectorVisible();
-    ui->showModulesAction->setChecked(moduleSelectorVisible);
 
     for (const auto &item : d->moduleManager->getModules()) {
         QAction &moduleAction = item->getAction();
@@ -457,6 +456,17 @@ void MainWindow::initModuleSelectorUi() noexcept
         actionButton->setText(moduleAction.text().toUpper());
         ui->moduleSelectorLayout->addWidget(actionButton);
     }
+}
+
+void MainWindow::initViewUi() noexcept
+{
+    Settings &settings = Settings::getInstance();
+
+    const bool moduleSelectorVisible = settings.isModuleSelectorVisible();
+    ui->showModulesAction->setChecked(moduleSelectorVisible);
+    const bool replaySpeedVisible = settings.isReplaySpeedVisible();
+    ui->showReplaySpeedAction->setChecked(replaySpeedVisible);
+    ui->replaySpeedGroupBox->setVisible(replaySpeedVisible);
 }
 
 void MainWindow::initControlUi() noexcept
@@ -705,11 +715,17 @@ void MainWindow::updateMinimalUi(bool enabled)
 {
     Settings &settings = Settings::getInstance();
     if (enabled) {
-        ui->moduleVisibilityWidget->setHidden(enabled);
-        ui->moduleSelectorWidget->setHidden(enabled);
+        ui->moduleVisibilityWidget->setHidden(true);
+        ui->moduleSelectorWidget->setHidden(true);
+        ui->showModulesAction->setChecked(false);
+        ui->showModulesAction->setEnabled(false);
+        ui->showReplaySpeedAction->setEnabled(false);
     } else {
         ui->moduleVisibilityWidget->setVisible(true);
         ui->moduleSelectorWidget->setVisible(settings.isModuleSelectorVisible());
+        ui->showModulesAction->setChecked(settings.isModuleSelectorVisible());
+        ui->showModulesAction->setEnabled(true);
+        ui->showReplaySpeedAction->setEnabled(true);
     }
     ui->moduleGroupBox->setHidden(enabled);
     settings.setMinimalUiEnabled(enabled);
@@ -1145,12 +1161,7 @@ void MainWindow::handleModuleActivated(const QString title, Module::Module modul
     updateControlIcons();
 }
 
-void MainWindow::on_showModulesAction_triggered(bool enabled) noexcept
-{
-    Settings &settings = Settings::getInstance();
-    settings.setModuleSelectorVisible(enabled);
-    ui->moduleSelectorWidget->setVisible(enabled);
-}
+// File menu
 
 void MainWindow::on_newLogbookAction_triggered() noexcept
 {
@@ -1195,6 +1206,24 @@ void MainWindow::on_quitAction_triggered() noexcept
     close();
 }
 
+// View menu
+
+void MainWindow::on_showModulesAction_triggered(bool enabled) noexcept
+{
+    Settings &settings = Settings::getInstance();
+    settings.setModuleSelectorVisible(enabled);
+    ui->moduleSelectorWidget->setVisible(enabled);
+}
+
+void MainWindow::on_showReplaySpeedAction_triggered(bool enabled) noexcept
+{
+    Settings &settings = Settings::getInstance();
+    settings.setReplaySpeedVisible(enabled);
+    ui->replaySpeedGroupBox->setVisible(enabled);
+}
+
+// Window menu
+
 void MainWindow::on_showFlightAction_triggered(bool enabled) noexcept
 {
     if (enabled) {
@@ -1232,6 +1261,8 @@ void MainWindow::on_showMinimalAction_triggered(bool enabled) noexcept
     updateMinimalUi(enabled);
 }
 
+// About menu
+
 void MainWindow::on_aboutAction_triggered() noexcept
 {
     std::unique_ptr<AboutDialog> aboutDialog = std::make_unique<AboutDialog>(this);
@@ -1242,6 +1273,8 @@ void MainWindow::on_aboutQtAction_triggered() noexcept
 {
     QMessageBox::aboutQt(this);
 }
+
+// Replay
 
 void MainWindow::toggleRecord(bool enable) noexcept
 {
@@ -1267,6 +1300,8 @@ void MainWindow::stop() noexcept
         skyConnect->get().stop();
     }
 }
+
+// Transport
 
 void MainWindow::skipToBegin() noexcept
 {
@@ -1299,6 +1334,8 @@ void MainWindow::skipToEnd() noexcept
         skyConnect->get().skipToEnd();
     }
 }
+
+// Service
 
 void MainWindow::handleFlightRestored() noexcept
 {
