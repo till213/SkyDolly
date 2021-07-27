@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>559</width>
-    <height>158</height>
+    <width>915</width>
+    <height>258</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,6 +46,26 @@
       </widget>
      </item>
      <item>
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Duration:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="durationComboBox">
+       <property name="minimumSize">
+        <size>
+         <width>120</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Filter by minimum flight duration.</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>Engine type:</string>
@@ -60,10 +80,16 @@
          <height>0</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>Filter by engine type.</string>
+       </property>
       </widget>
      </item>
      <item>
       <widget class="QCheckBox" name="formationCheckBox">
+       <property name="toolTip">
+        <string>Filter by formation flights.</string>
+       </property>
        <property name="text">
         <string>Formation</string>
        </property>
