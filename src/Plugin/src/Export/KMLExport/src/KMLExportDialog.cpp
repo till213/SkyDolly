@@ -277,8 +277,13 @@ void KMLExportDialog::frenchConnection() noexcept
 {
     connect(ui->filePathLineEdit, &QLineEdit::textChanged,
             this, &KMLExportDialog::updateUi);
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+    connect(d->colorButtonGroup.get(), QOverload<int>::of(&QButtonGroup::buttonClicked),
+            this, &KMLExportDialog::selectColor);
+#else
     connect(d->colorButtonGroup.get(), &QButtonGroup::idClicked,
             this, &KMLExportDialog::selectColor);
+#endif
 
     QPushButton *resetButton = ui->buttonBox->button(QDialogButtonBox::RestoreDefaults);
     connect(resetButton, &QPushButton::clicked,

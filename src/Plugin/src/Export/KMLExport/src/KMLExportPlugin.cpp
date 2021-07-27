@@ -84,12 +84,7 @@ public:
     std::unique_ptr<KMLStyleExport> styleExport;
     Unit unit;
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    // https://www.kdab.com/qt-datatypes-in-standard-library/
-    struct QStringHasher {
-        size_t operator()(const QString &value) const noexcept {
-            return qHash(value);
-        }
-    };
+    #include "../../../../../Kernel/src/QStringHasher.h"
     std::unordered_map<QString, int, QStringHasher> aircraftTypeCount;
 #else
     std::unordered_map<QString, int> aircraftTypeCount;

@@ -398,7 +398,12 @@ public:
     void setPreviewInfoDialogCount(int count) noexcept;
 
     typedef std::pair<QString, QVariant> KeyValue;
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+#include "QStringHasher.h"
+    typedef std::unordered_map<QString, QVariant, QStringHasher> ValuesByKey;
+#else
     typedef std::unordered_map<QString, QVariant> ValuesByKey;
+#endif
     typedef std::vector<KeyValue> PluginSettings;
     typedef std::vector<KeyValue> KeysWithDefaults;
 
