@@ -49,5 +49,5 @@ void AboutDialog::initUi() noexcept
 {
     Qt::WindowFlags flags = Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
     setWindowFlags(flags);
-    ui->aboutLabel->setText(tr("%1 - The Black Sheep for Your Fight Recordings\nVersion %2\n\nMIT License").arg(Version::getApplicationName(), Version::getApplicationVersion()));
+    ui->aboutLabel->setText(tr("%1\nThe Black Sheep for Your Fight Recordings\n\nVersion %2\n\nMIT License").arg(Version::getApplicationName(), Version::getApplicationVersion()));
 }
