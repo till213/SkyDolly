@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The black sheep for your flight recordings
+ * Sky Dolly - The Black Sheep for your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
