@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The black sheep for your flight recordings
+ * Sky Dolly - The Black Sheep for your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -28,6 +28,7 @@
 #include <QString>
 #include <QUuid>
 #include <QByteArray>
+#include <QVariant>
 
 #include "Enum.h"
 #include "Const.h"
@@ -369,9 +370,34 @@ void Settings::setPreviewInfoDialogCount(int count) noexcept
     }
 }
 
+void Settings::storePluginSettings(QUuid pluginUuid, const PluginSettings &settings) const noexcept
+{
+    d->settings.beginGroup("Plugins/" + pluginUuid.toByteArray());
+    {
+        for (const auto &keyValue : settings) {
+            d->settings.setValue(keyValue.first, keyValue.second);
+        }
+    }
+    d->settings.endGroup();
+}
+
+Settings::ValuesByKey Settings::restorePluginSettings(QUuid pluginUuid, const KeysWithDefaults &keys) noexcept
+{
+    ValuesByKey values;
+    d->settings.beginGroup("Plugins/" + pluginUuid.toByteArray());
+    {
+        for (const auto &key : keys) {
+            values[key.first] = d->settings.value(key.first, key.second);
+        }
+    }
+    d->settings.endGroup();
+
+    return values;
+}
+
 // PUBLIC SLOTS
 
-void Settings::store() noexcept
+void Settings::store() const noexcept
 {
     d->settings.setValue("Version", d->version.toString());
     d->settings.beginGroup("Logbook");

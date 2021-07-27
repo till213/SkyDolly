@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The black sheep for your flight recordings
+ * Sky Dolly - The Black Sheep for your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -53,8 +53,8 @@ bool SQLiteAircraftTypeDao::upsert(const AircraftType &aircraftType)  noexcept
         "do update "
         "set category = excluded.category, "
         "    wing_span = excluded.wing_span, "
-        "	 engine_type = excluded.engine_type, "
-        "	 nof_engines = excluded.nof_engines;"
+        "    engine_type = excluded.engine_type, "
+        "    nof_engines = excluded.nof_engines;"
     );
 
     query.bindValue(":type", aircraftType.type);

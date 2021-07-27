@@ -177,7 +177,7 @@ public:
 
 // PUBLIC
 
-MainWindow::MainWindow(QWidget *parent) noexcept
+MainWindow::MainWindow(const QString &filePath, QWidget *parent) noexcept
     : QMainWindow(parent),
       ui(std::make_unique<Ui::MainWindow>()),
       d(std::make_unique<MainWindowPrivate>())
@@ -188,7 +188,11 @@ MainWindow::MainWindow(QWidget *parent) noexcept
 
     // Connect with logbook
     const QString logbookPath = Settings::getInstance().getLogbookPath();
-    d->connectedWithLogbook = ConnectionManager::getInstance().connectWithLogbook(logbookPath, this);
+    if (!filePath.isNull()) {
+        connectWithLogbook(filePath);
+    } else {
+        d->connectedWithLogbook = ConnectionManager::getInstance().connectWithLogbook(logbookPath, this);
+    }
 
     initPlugins();
     initUi();
@@ -206,6 +210,15 @@ MainWindow::~MainWindow() noexcept
 #ifdef DEBUG
     qDebug("MainWindow::~MainWindow: DELETED");
 #endif
+}
+
+bool MainWindow::connectWithLogbook(const QString &filePath) noexcept
+{
+    bool ok = ConnectionManager::getInstance().connectWithLogbook(filePath, this);
+    if (!ok) {
+        QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be opened.").arg(filePath));
+    }
+    return ok;
 }
 
 // PROTECTED
@@ -310,6 +323,7 @@ void MainWindow::frenchConnection() noexcept
 
 void MainWindow::initUi() noexcept
 {
+    Settings &settings = Settings::getInstance();
     setWindowIcon(QIcon(":/img/icons/application-icon.png"));
 
     // Dialogs
@@ -317,7 +331,7 @@ void MainWindow::initUi() noexcept
     d->simulationVariablesDialog = new SimulationVariablesDialog(this);
     d->statisticsDialog = new StatisticsDialog(this);
     d->settingsDialog = new SettingsDialog(this);
-    ui->stayOnTopAction->setChecked(Settings::getInstance().isWindowStaysOnTopEnabled());
+    ui->stayOnTopAction->setChecked(settings.isWindowStaysOnTopEnabled());
 
     initModuleSelectorUi();
     initControlUi();
@@ -327,12 +341,28 @@ void MainWindow::initUi() noexcept
     ui->showMinimalAction->setChecked(minimalUi);
     updateMinimalUi(minimalUi);
 
-    Settings &settings = Settings::getInstance();
+
     QByteArray windowGeometry = settings.getWindowGeometry();
     QByteArray windowState = settings.getWindowState();
     if (!windowGeometry.isEmpty()) {
         restoreGeometry(windowGeometry);
         restoreState(windowState);
+    }
+
+    int previewInfoCount = settings.getPreviewInfoDialogCount();
+    if (previewInfoCount > 0) {
+        --previewInfoCount;
+        QMessageBox::information(this, "Preview",
+            QString("%1 %2 now supports automated logbook backups, for instance every month, every week or every day after exiting the application. "
+                    "The schedule can be setup in the Logbook Settings, which are now in the File menu (previously: Info menu).\n\n"
+                    "During the preview phase older databases will automatically be migrated to the current data format. As a matter of fact at the time you read this message any existing "
+                    "logbook from previous releases has already been converted to the current format.\n\n"
+                    "However take note that the first release version 1.0.0 will consolidate all migration steps into the final database format, making logbooks generated with preview "
+                    "versions (such as this one) unreadable.\n\n"
+                    "From that point onwards databases (logbooks) will of course again be migrated to the format of the next release version.\n\n"
+                    "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(previewInfoCount),
+            QMessageBox::StandardButton::Ok);
+        settings.setPreviewInfoDialogCount(previewInfoCount);
     }
 }
 
@@ -1057,13 +1087,11 @@ void MainWindow::updateFileMenu() noexcept
     case Connect::State::RecordingPaused:
         ui->importMenu->setEnabled(false);
         ui->exportMenu->setEnabled(false);
-        ui->backupLogbookAction->setEnabled(false);
         ui->optimiseLogbookAction->setEnabled(false);
         break;
     default:        
         ui->importMenu->setEnabled(d->hasImportPlugins && d->connectedWithLogbook);
         ui->exportMenu->setEnabled(d->hasExportPlugins && hasRecording);
-        ui->backupLogbookAction->setEnabled(d->connectedWithLogbook);
         ui->optimiseLogbookAction->setEnabled(d->connectedWithLogbook);
     }
 }
@@ -1137,20 +1165,9 @@ void MainWindow::on_newLogbookAction_triggered() noexcept
 
 void MainWindow::on_openLogbookAction_triggered() noexcept
 {
-    QString existingLogbookPath = DatabaseService::getExistingLogbookPath(this);
-    if (!existingLogbookPath.isEmpty()) {
-        bool ok = ConnectionManager::getInstance().connectWithLogbook(existingLogbookPath, this);
-        if (!ok) {
-            QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be opened.").arg(existingLogbookPath));
-        }
-    }
-}
-
-void MainWindow::on_backupLogbookAction_triggered() noexcept
-{
-    bool ok = d->databaseService->backup();
-    if (!ok) {
-        QMessageBox::critical(this, tr("Database error"), tr("The logbook backup could not be created."));
+    QString filePath = DatabaseService::getExistingLogbookPath(this);
+    if (!filePath.isEmpty()) {
+        connectWithLogbook(filePath);
     }
 }
 
@@ -1309,8 +1326,8 @@ void MainWindow::handleLogbookConnectionChanged(bool connected) noexcept
 
 void MainWindow::handleImport(QAction *action) noexcept
 {
-    const QString className = action->data().toString();
-    const bool ok = PluginManager::getInstance().importData(className, *d->flightService);
+    const QUuid pluginUuid = action->data().toUuid();
+    const bool ok = PluginManager::getInstance().importData(pluginUuid, *d->flightService);
     if (ok) {
         updateUi();
         std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
@@ -1327,6 +1344,6 @@ void MainWindow::handleImport(QAction *action) noexcept
 
 void MainWindow::handleExport(QAction *action) noexcept
 {
-    const QString className = action->data().toString();
-    PluginManager::getInstance().exportData(className);
+    const QUuid pluginUuid = action->data().toUuid();
+    PluginManager::getInstance().exportData(pluginUuid);
 }

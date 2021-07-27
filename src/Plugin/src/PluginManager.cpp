@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The black sheep for your flight recordings
+ * Sky Dolly - The Black Sheep for your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -113,17 +113,19 @@ std::vector<PluginManager::Handle> PluginManager::initialiseImportPlugins() noex
     return enumeratePlugins(ImportDirectoryName, d->importPluginRegistry);
 }
 
-bool PluginManager::importData(const QString &pluginClassName, FlightService &flightService) const noexcept
+bool PluginManager::importData(const QUuid &pluginUuid, FlightService &flightService) const noexcept
 {
     bool ok;
-    if (d->importPluginRegistry.contains(pluginClassName)) {
-        const QString pluginPath = d->importPluginRegistry.value(pluginClassName);
+    if (d->importPluginRegistry.contains(pluginUuid)) {
+        const QString pluginPath = d->importPluginRegistry.value(pluginUuid);
         QPluginLoader loader(pluginPath);
         const QObject *plugin = loader.instance();
         ImportIntf *importPlugin = qobject_cast<ImportIntf *>(plugin);
         if (importPlugin != nullptr) {
             importPlugin->setParentWidget(d->parentWidget);
+            importPlugin->restoreSettings(pluginUuid);
             ok = importPlugin->importData(flightService);
+            importPlugin->storeSettings(pluginUuid);
         } else {
             ok = false;
         }
@@ -134,17 +136,19 @@ bool PluginManager::importData(const QString &pluginClassName, FlightService &fl
     return ok;
 }
 
-bool PluginManager::exportData(const QString &pluginClassName) const noexcept
+bool PluginManager::exportData(const QUuid &pluginUuid) const noexcept
 {
     bool ok;
-    if (d->exportPluginRegistry.contains(pluginClassName)) {
-        const QString pluginPath = d->exportPluginRegistry.value(pluginClassName);
+    if (d->exportPluginRegistry.contains(pluginUuid)) {
+        const QString pluginPath = d->exportPluginRegistry.value(pluginUuid);
         QPluginLoader loader(pluginPath);
         QObject *plugin = loader.instance();
         ExportIntf *exportPlugin = qobject_cast<ExportIntf *>(plugin);
         if (exportPlugin != nullptr) {
             exportPlugin->setParentWidget(d->parentWidget);
+            exportPlugin->restoreSettings(pluginUuid);
             ok = exportPlugin->exportData();
+            exportPlugin->storeSettings(pluginUuid);
         } else {
             ok = false;
         }

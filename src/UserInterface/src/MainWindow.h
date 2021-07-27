@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The black sheep for your flight recordings
+ * Sky Dolly - The Black Sheep for your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -56,8 +56,10 @@ class USERINTERFACE_API MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr) noexcept;
+    explicit MainWindow(const QString &filePath = QString(), QWidget *parent = nullptr) noexcept;
     virtual ~MainWindow() noexcept;
+
+    bool connectWithLogbook(const QString &filePath) noexcept;
 
 protected:
     virtual void resizeEvent(QResizeEvent *event) noexcept override;
@@ -108,7 +110,6 @@ private slots:
     // File menu
     void on_newLogbookAction_triggered() noexcept;
     void on_openLogbookAction_triggered() noexcept;
-    void on_backupLogbookAction_triggered() noexcept;
     void on_optimiseLogbookAction_triggered() noexcept;
     void on_showSettingsAction_triggered() noexcept;
     void on_showLogbookSettingsAction_triggered() noexcept;

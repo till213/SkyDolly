@@ -8,8 +8,13 @@
   * Import CSV plugin
     - Aircrafts can now be _added_ to existing flights ("multiplayer formation flying")
     - Select the aircraft type (used when spawning AI aircrafts in formation flights)
+    - Aircraft types (name, number of engines, wingspan, ...) are constantly updated upon flight recordings
+      * The default aircrafts of FS 2020 are already in the logbook and hence immediatelly selectable when importing a CSV file
+    - Also refer to new "time offset" feature in the Formation module which is useful to "synchronise multiplayer formation flights", see below
   * Export CSV plugin
   * Export KML plugin ("Google Earth")
+    - Basic line style settings
+    - Plugin settings are persisted in Sky Dolly application settings
   * SkyConnect plugin architecture
     - SimConnect plugin (currently FS2020 only)
     - Auto-detection of installed flight simulator (automatic plugin selection)
@@ -52,9 +57,14 @@
   * Once a week
   * Daily
   * Never or whenever exiting Sky Dolly
-- UI refinments
+- User interface and usability refinments
   * "Active" icons
   * Small layout optimisations
+  * Creating a new logbook now changes into parent directory of the actual logbook directory, when logbook file name (without extension) corresponds with the parent directory name
+    - E.g. when creating a new logbook, when the existing one is "c:\Users\The User\Documents\Sky Dolly\Sky Dolly.sdlog", the file dialog will now start with "c:\Users\The User\Documents\"
+    - (Previously: "c:\Users\The User\Documents\Sky Dolly\")
+- Sky Dolly logbooks (*.sdlog) can now be associated with the Sky Dolly application: they will be opened upon double-click on the logbook (file)
+  * Associating *.sdlog files with SkyDolly.exe needs to be manually done for now (right-click on file, "Open with...", choose SkyDolly.exe)
 
 ### Bug Fixes
 

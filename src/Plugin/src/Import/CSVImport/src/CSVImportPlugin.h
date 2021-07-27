@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The black sheep for your flight recordings
+ * Sky Dolly - The Black Sheep for your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -62,6 +62,16 @@ public:
     virtual void setParentWidget(QWidget *parent) noexcept override
     {
         PluginBase::setParentWidget(parent);
+    }
+
+    virtual void storeSettings(const QUuid &pluginUuid) const noexcept override
+    {
+        PluginBase::storeSettings(pluginUuid);
+    }
+
+    virtual void restoreSettings(const QUuid &pluginUuid) noexcept override
+    {
+        PluginBase::restoreSettings(pluginUuid);
     }
 
     virtual bool importData(FlightService &flightService) const noexcept override;
