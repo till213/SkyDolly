@@ -60,6 +60,7 @@ private:
 
     void initUi() noexcept;
     void updateUi() noexcept;
+    void frenchConnection() noexcept;
 };
 
 #endif // FLIGHTDIALOG_H

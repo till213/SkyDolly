@@ -59,6 +59,7 @@ private:
 
     void initUi() noexcept;
     void updateUi() noexcept;
+    void frenchConnection() noexcept;
 
 private slots:    
     void updateTitle() noexcept;

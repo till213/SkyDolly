@@ -69,6 +69,7 @@
     - Note that the module selector and replay speed group view visibiliites cannot be toggled while in "minimal UI": switch to normal UI (key M) first
 - Sky Dolly logbooks (*.sdlog) can now be associated with the Sky Dolly application: they will be opened upon double-click on the logbook (file)
   * Associating *.sdlog files with SkyDolly.exe needs to be manually done for now (right-click on file, "Open with...", choose SkyDolly.exe)
+- Pressing the same shortcut for the Show Flight|Simulation Variables|Statistics (keys F, V and S respectively) now closes the corresonding dialog again
 
 ### Bug Fixes
 
