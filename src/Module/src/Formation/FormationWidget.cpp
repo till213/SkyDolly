@@ -109,9 +109,9 @@ namespace
 
     // Milliseconds
     constexpr qint64 TimeOffsetIncrease = 100;
-    constexpr qint64 TimeOffsetIncreaseLarge = 1000;
+    constexpr qint64 FastTimeOffsetIncrease = 1000;
     constexpr qint64 TimeOffsetDecrease = 100;
-    constexpr qint64 TimeOffsetDecreaseLarge = 1000;
+    constexpr qint64 FastTimeOffsetDecrease = 1000;
 
     // Seconds
     constexpr double TimeOffsetMax = 24.0 * 60.0 * 60.0;
@@ -938,7 +938,7 @@ void FormationWidget::on_fastForwardOffsetPushButton_clicked() noexcept
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
-        const qint64 newTimeOffset = aircraft.getTimeOffset() + TimeOffsetIncreaseLarge;
+        const qint64 newTimeOffset = aircraft.getTimeOffset() + FastTimeOffsetIncrease;
         d->aircraftService->changeTimeOffset(aircraft, newTimeOffset);
         updateToolTips();
     }
@@ -962,7 +962,7 @@ void FormationWidget::on_backwardOffsetPushButton_clicked() noexcept
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
-        const qint64 newTimeOffset = aircraft.getTimeOffset() - TimeOffsetDecreaseLarge;
+        const qint64 newTimeOffset = aircraft.getTimeOffset() - TimeOffsetDecrease;
         d->aircraftService->changeTimeOffset(aircraft, newTimeOffset);
         updateToolTips();
     }
@@ -974,7 +974,7 @@ void FormationWidget::on_fastBackwardOffsetPushButton_clicked() noexcept
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
-        const qint64 newTimeOffset = aircraft.getTimeOffset() - TimeOffsetDecrease;
+        const qint64 newTimeOffset = aircraft.getTimeOffset() - FastTimeOffsetDecrease;
         d->aircraftService->changeTimeOffset(aircraft, newTimeOffset);
         updateToolTips();
     }
