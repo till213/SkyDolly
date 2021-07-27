@@ -27,7 +27,11 @@
 
 #include <memory>
 
+#include <QWidget>
 #include <QDialog>
+#include <QShortcut>
+#include <QShowEvent>
+#include <QHideEvent>
 
 #include "../../../Model/src/SimVar.h"
 #include "../../../Model/src/Logbook.h"
@@ -48,10 +52,12 @@ class FlightDialogPrivate
 {
 public:
     FlightDialogPrivate(FlightService &theFlightService) noexcept
-        : flightService(theFlightService)
+        : flightService(theFlightService),
+          closeDialogShortcut(nullptr)
     {}
 
     FlightService &flightService;
+    QShortcut *closeDialogShortcut;
 };
 
 // PUBLIC
@@ -63,6 +69,7 @@ FlightDialog::FlightDialog(FlightService &flightService, QWidget *parent) noexce
 {
     ui->setupUi(this);
     initUi();
+    frenchConnection();
 }
 
 FlightDialog::~FlightDialog() noexcept
@@ -103,7 +110,16 @@ void FlightDialog::initUi() noexcept
     ui->flightTab->addTab(flightPlanWidget, tr("&Flight Plan"));
 
     ui->flightTab->setCurrentIndex(0);
+
+    // TODO DRY: "centrally" define the "F" shortcut (currently also assigned to the corresponding QAction)
+    d->closeDialogShortcut = new QShortcut(QKeySequence(tr("F", "Window|Flight...")), this);
 }
 
 void FlightDialog::updateUi() noexcept
 {}
+
+void FlightDialog::frenchConnection() noexcept
+{
+    connect(d->closeDialogShortcut, &QShortcut::activated,
+            this, &FlightDialog::close);
+}

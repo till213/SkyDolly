@@ -24,6 +24,12 @@
  */
 #include <memory>
 
+#include <QWidget>
+#include <QDialog>
+#include <QShortcut>
+#include <QShowEvent>
+#include <QHideEvent>
+
 #include "../../../Kernel/src/Settings.h"
 #include "../../../Kernel/src/Unit.h"
 #include "../../../Model/src/Logbook.h"
@@ -51,9 +57,11 @@ class StatisticsDialogPrivate
 {
 public:
     StatisticsDialogPrivate() noexcept
+        : closeDialogShortcut(nullptr)
     {}
 
     Unit unit;
+    QShortcut *closeDialogShortcut;
 };
 
 // PUBLIC
@@ -104,10 +112,16 @@ void StatisticsDialog::initUi() noexcept
 {
     Qt::WindowFlags flags = Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
     setWindowFlags(flags);
+
+    // TODO DRY: "centrally" define the "S" shortcut (currently also assigned to the corresponding QAction)
+    d->closeDialogShortcut = new QShortcut(QKeySequence(tr("S", "Window|Statistics...")), this);
 }
 
 void StatisticsDialog::frenchConnection() noexcept
-{}
+{
+    connect(d->closeDialogShortcut, &QShortcut::activated,
+            this, &StatisticsDialog::close);
+}
 
 // PRIVATE SLOTS
 

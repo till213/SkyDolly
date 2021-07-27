@@ -24,7 +24,11 @@
  */
 #include <memory>
 
+#include <QWidget>
 #include <QDialog>
+#include <QShortcut>
+#include <QShowEvent>
+#include <QHideEvent>
 
 #include "../../../Model/src/SimVar.h"
 #include "../../../Model/src/Logbook.h"
@@ -49,7 +53,10 @@ class SimulationVariablesDialogPrivate
 {
 public:
     SimulationVariablesDialogPrivate() noexcept
+        : closeDialogShortcut(nullptr)
     {}
+
+    QShortcut *closeDialogShortcut;
 
     static const char WindowTitle[];
 };
@@ -65,6 +72,7 @@ SimulationVariablesDialog::SimulationVariablesDialog(QWidget *parent) noexcept :
 {
     ui->setupUi(this);
     initUi();
+    frenchConnection();
 }
 
 SimulationVariablesDialog::~SimulationVariablesDialog() noexcept
@@ -121,11 +129,20 @@ void SimulationVariablesDialog::initUi() noexcept
 
     LightWidget *lightWidget = new LightWidget(this);
     ui->simulationVariablesTab->addTab(lightWidget, tr("&Lights"));
+
+    // TODO DRY: "centrally" define the "V" shortcut (currently also assigned to the corresponding QAction)
+    d->closeDialogShortcut = new QShortcut(QKeySequence(tr("V", "Window|Simulation Variables...")), this);
 }
 
 void SimulationVariablesDialog::updateUi() noexcept
 {
     updateTitle();
+}
+
+void SimulationVariablesDialog::frenchConnection() noexcept
+{
+    connect(d->closeDialogShortcut, &QShortcut::activated,
+            this, &SimulationVariablesDialog::close);
 }
 
 // PRIVATE SLOTS
