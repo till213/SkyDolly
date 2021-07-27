@@ -291,7 +291,6 @@ void KMLExportDialog::frenchConnection() noexcept
     QPushButton *resetButton = ui->buttonBox->button(QDialogButtonBox::RestoreDefaults);
     connect(resetButton, &QPushButton::clicked,
             this, &KMLExportDialog::restoreDefaults);
-
 }
 
 qint64 KMLExportDialog::estimateNofSamplePoints() noexcept
