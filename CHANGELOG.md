@@ -63,6 +63,10 @@
   * Creating a new logbook now changes into parent directory of the actual logbook directory, when logbook file name (without extension) corresponds with the parent directory name
     - E.g. when creating a new logbook, when the existing one is "c:\Users\The User\Documents\Sky Dolly\Sky Dolly.sdlog", the file dialog will now start with "c:\Users\The User\Documents\"
     - (Previously: "c:\Users\The User\Documents\Sky Dolly\")
+  * The replay speed group can now be hidden has well, just like the module selector
+    - Both view options are now in the new View menu
+    - Hiding the replay speed group and then switching into "minimal UI" mode (key M) allows for a truly minimalistic UI now
+    - Note that the module selector and replay speed group view visibiliites cannot be toggled while in "minimal UI": switch to normal UI (key M) first
 - Sky Dolly logbooks (*.sdlog) can now be associated with the Sky Dolly application: they will be opened upon double-click on the logbook (file)
   * Associating *.sdlog files with SkyDolly.exe needs to be manually done for now (right-click on file, "Open with...", choose SkyDolly.exe)
 

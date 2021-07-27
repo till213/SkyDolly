@@ -327,7 +327,7 @@
      <x>0</x>
      <y>0</y>
      <width>826</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="fileMenu">
@@ -365,7 +365,7 @@
     <addaction name="aboutAction"/>
     <addaction name="aboutQtAction"/>
    </widget>
-   <widget class="QMenu" name="viewMenu">
+   <widget class="QMenu" name="windowMenu">
     <property name="title">
      <string>&amp;Window</string>
     </property>
@@ -408,17 +408,18 @@
      <string>&amp;Module</string>
     </property>
    </widget>
-   <widget class="QMenu" name="menu_View">
+   <widget class="QMenu" name="viewMenu">
     <property name="title">
      <string>&amp;View</string>
     </property>
     <addaction name="showModulesAction"/>
+    <addaction name="showReplaySpeedAction"/>
    </widget>
    <addaction name="fileMenu"/>
    <addaction name="replayMenu"/>
    <addaction name="moduleMenu"/>
-   <addaction name="menu_View"/>
    <addaction name="viewMenu"/>
+   <addaction name="windowMenu"/>
    <addaction name="infoMenu"/>
   </widget>
   <action name="quitAction">
@@ -648,6 +649,14 @@
     <string>&amp;Modules</string>
    </property>
   </action>
+  <action name="showReplaySpeedAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Replay Speed</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -657,7 +666,6 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../res/SkyDolly.qrc"/>
   <include location="../res/SkyDolly.qrc"/>
  </resources>
  <connections/>

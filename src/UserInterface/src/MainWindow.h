@@ -74,6 +74,7 @@ private:
     void initUi() noexcept;
     void initPlugins() noexcept;
     void initModuleSelectorUi() noexcept;
+    void initViewUi() noexcept;
     void initControlUi() noexcept;
     void initReplaySpeedUi() noexcept;
     void initSkyConnectPlugin() noexcept;
@@ -105,7 +106,6 @@ private slots:
 
     // Modules
     void handleModuleActivated(const QString title, Module::Module moduleId) noexcept;
-    void on_showModulesAction_triggered(bool enabled) noexcept;
 
     // File menu
     void on_newLogbookAction_triggered() noexcept;
@@ -114,6 +114,9 @@ private slots:
     void on_showSettingsAction_triggered() noexcept;
     void on_showLogbookSettingsAction_triggered() noexcept;
     void on_quitAction_triggered() noexcept;
+    // View menu
+    void on_showModulesAction_triggered(bool enabled) noexcept;
+    void on_showReplaySpeedAction_triggered(bool enabled) noexcept;
     // Window menu
     void on_showFlightAction_triggered(bool enabled) noexcept;
     void on_showSimulationVariablesAction_triggered(bool enabled) noexcept;
