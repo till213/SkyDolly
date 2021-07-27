@@ -27,6 +27,7 @@
 #include <QPushButton>
 #include <QFileDialog>
 #include <QFile>
+#include <QDir>
 #include <QDialogButtonBox>
 #include <QLineEdit>
 #include <QComboBox>
@@ -88,6 +89,9 @@ bool CSVImportDialog::isAddToFlightEnabled() const noexcept
 
 void CSVImportDialog::initUi() noexcept
 {
+    Qt::WindowFlags flags = Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
+    setWindowFlags(flags);
+
     d->importButton = ui->buttonBox->addButton(tr("Import"), QDialogButtonBox::AcceptRole);
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     QString type = flight.getUserAircraftConst().getAircraftInfoConst().aircraftType.type;
@@ -111,7 +115,7 @@ void CSVImportDialog::on_fileSelectionPushButton_clicked() noexcept
 
     const QString filePath = QFileDialog::getOpenFileName(this, QCoreApplication::translate("CSVImportDialog", "Import CSV"), exportPath, QString("*.csv"));
     if (!filePath.isEmpty()) {
-        ui->filePathLineEdit->setText(filePath);
+        ui->filePathLineEdit->setText(QDir::toNativeSeparators(filePath));
     }
     updateUi();
 }

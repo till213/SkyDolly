@@ -115,6 +115,9 @@ bool KMLExportDialog::doOpenExportedFile() const noexcept
 
 void KMLExportDialog::initUi() noexcept
 {
+    Qt::WindowFlags flags = Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
+    setWindowFlags(flags);
+
     d->exportButton = ui->buttonBox->addButton(tr("Export"), QDialogButtonBox::AcceptRole);
 
     // File path
@@ -410,7 +413,7 @@ void KMLExportDialog::on_fileSelectionPushButton_clicked() noexcept
 {
     const QString filePath = QFileDialog::getSaveFileName(this, QCoreApplication::translate("KMLExportDialog", "Export KML"), ui->filePathLineEdit->text(), QString("*.kml"));
     if (!filePath.isEmpty()) {
-        ui->filePathLineEdit->setText(filePath);
+        ui->filePathLineEdit->setText(QDir::toNativeSeparators(filePath));
     }
     updateUi();
 }
