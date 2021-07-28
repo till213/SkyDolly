@@ -55,8 +55,6 @@ public:
     static QString getExistingLogbookPath(QWidget *parent) noexcept;
     static QString getNewLogbookPath(QWidget *parent) noexcept;
 
-    static QString getExistingBackupPath(const QString &backupPath) noexcept;
-
 private:
     std::unique_ptr<DatabaseServicePrivate> d;
 };

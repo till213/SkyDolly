@@ -34,6 +34,7 @@
 #include "../../../Kernel/src/Unit.h"
 #include "../../../Kernel/src/Const.h"
 #include "../../../Kernel/src/Enum.h"
+#include "../../../Kernel/src/Settings.h"
 #include "../../../Persistence/src/Service/DatabaseService.h"
 #include "../../../Persistence/src/ConnectionManager.h"
 #include "../../../Persistence/src/Metadata.h"
@@ -92,6 +93,7 @@ void LogbookSettingsDialog::accept() noexcept
             d->databaseService->setNextBackupDate(QDateTime::currentDateTime());
         }
     }
+    Settings::getInstance().setBackupBeforeMigrationEnabled(ui->backupBeforeMigrationCheckBox->isChecked());
 }
 
 // PROTECTED
@@ -152,6 +154,7 @@ void LogbookSettingsDialog::updateUi() noexcept
             ui->backupPeriodComboBox->setCurrentIndex(Enum::toUnderlyingType(BackupPeriodComboBox::Index::Never));
         }
     }
+    ui->backupBeforeMigrationCheckBox->setChecked(Settings::getInstance().isBackupBeforeMigrationEnabled());
 }
 
 void LogbookSettingsDialog::frenchConnection() noexcept

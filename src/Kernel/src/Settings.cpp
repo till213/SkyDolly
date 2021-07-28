@@ -43,6 +43,7 @@ public:
     Version version;
 
     QString logbookPath;
+    bool backupBeforeMigration;
     QUuid skyConnectPluginUuid;
     double recordingSampleRateValue;
     bool windowStayOnTop;
@@ -68,6 +69,7 @@ public:
     int previewInfoDialogCount;
 
     static Settings *instance;
+    static constexpr bool DefaultBackupBeforeMigration = true;
     static constexpr QUuid DefaultSkyConnectPluginUuid = QUuid();
     static constexpr double DefaultRecordingSampleRate = SampleRate::toValue(SampleRate::SampleRate::Auto);
     static constexpr bool DefaultWindowStayOnTop = false;
@@ -135,6 +137,19 @@ void Settings::setLogbookPath(const QString &logbookPath) noexcept
     if (d->logbookPath != logbookPath) {
         d->logbookPath = logbookPath;
         emit logbookPathChanged(d->logbookPath);
+    }
+}
+
+bool Settings::isBackupBeforeMigrationEnabled() const noexcept
+{
+    return d->backupBeforeMigration;
+}
+
+void Settings::setBackupBeforeMigrationEnabled(bool enable) noexcept
+{
+    if (d->backupBeforeMigration != enable) {
+        d->backupBeforeMigration = enable;
+        emit backupBeforeMigrationChanged(d->backupBeforeMigration);
     }
 }
 
@@ -418,6 +433,7 @@ void Settings::store() const noexcept
     d->settings.beginGroup("Logbook");
     {
         d->settings.setValue("Path", d->logbookPath);
+        d->settings.setValue("BackupBeforeMigration", d->backupBeforeMigration);
     }
     d->settings.endGroup();
     d->settings.beginGroup("Plugins");
@@ -494,6 +510,7 @@ void Settings::restore() noexcept
     d->settings.beginGroup("Logbook");
     {
         d->logbookPath = d->settings.value("Path", d->defaultLogbookPath).toString();
+        d->backupBeforeMigration = d->settings.value("BackupBeforeMigration", SettingsPrivate::DefaultBackupBeforeMigration).toBool();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Plugins");
@@ -603,6 +620,8 @@ Settings::Settings() noexcept
 void Settings::frenchConnection() noexcept
 {
     connect(this, &Settings::logbookPathChanged,
+            this, &Settings::changed);
+    connect(this, &Settings::backupBeforeMigrationChanged,
             this, &Settings::changed);
     connect(this, &Settings::skyConnectPluginUuidChanged,
             this, &Settings::changed);

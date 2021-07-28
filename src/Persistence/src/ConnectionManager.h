@@ -77,6 +77,10 @@ public:
 
     bool getMetadata(Metadata &metadata) const noexcept;
     bool getDatabaseVersion(Version &databaseVersion) const noexcept;
+    bool getBackupDirectoryPath(QString &backupDirectoryPath) const noexcept;
+
+    QString getBackupFileName(const QString &backupDirectoryPath) const noexcept;
+    static QString createBackupPathIfNotExists(const QString &relativeOrAbsoluteBackupDirectoryPath) noexcept;
 
 signals:
     void connectionChanged(bool connected);
