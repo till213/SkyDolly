@@ -4,16 +4,17 @@ Sky Dolly - The Black Sheep for your Flight Recordings.
 ## About
 Sky Dolly connects to a running Flight Simulator 2020 instance and records various simulation variables, for replay.
 
-![Sky Dolly v0.7.0](./img/SkyDolly-v0.7.0.png)
+![Sky Dolly v0.8.0](./img/SkyDolly-v0.8.0.png)
 
 The connection is made via SimConnect, a standard API introduced with Flight Simulator X to connect with the flight simulator.
 
 ## Features
 * Record / Pause / Play
+* Formation flights (multiple aircrafts, replay during recording, "fly with formation", time offset)
 * Settable recording sample rate: fixed or variable ("auto")
 * Adjustable replay speed ("slow motion", "timelapse")
 * Position, velocity and basic flight control simulation variables (ailerons, rudder, flaps, gears, ...) are recorded
-* Basic CSV import & export
+* Plugin architecture with various import/export plugins (KML, CSV)
 * Database (SQLite) based persistence ("logbook")
 
 Watch the (preview) release trailer on [YouTube](https://www.youtube.com/watch?v=_n4qRtm78_I):
@@ -50,12 +51,13 @@ For more videos created with Sky Dolly also refer to [SHOWCASE](SHOWCASE.md). Ne
 
 * Simply click on "Play", "Pause" and seek in the timeline, just like with a single aircraft flight
 * Change the "user aircraft" (also during replay) to "jump from cockpit to cockpit"
-* Take control of the "user aircraft" by checking the "Fly user aircraft manually" checkbox
+* Take control of the "user aircraft" by selecting either "Take control" or "Fly with Formation" option
 
 #### Managing Formations
 
 * You may delete single aircrafts from a flight ("formation")
 * There must be at least one aircraft per flight, so the last aircraft cannot be deleted
+* Add a time offset to the selected aircraft ("multiplayer formation flight synchronisation")
 * To start a new, single-aircraft flight change back to the "Logbook" module (key F1) and click on "Record" (key R)
 
 Why don't you try it with one of the guided ["Tell Tours"](https://github.com/till213/Tell-Tours)? :)
@@ -64,7 +66,7 @@ Why don't you try it with one of the guided ["Tell Tours"](https://github.com/ti
 
 Go to [Releases](https://github.com/till213/SkyDolly/releases) and download the latest release.
 
-Latest (pre-)release: **Sky Dolly 0.7.0**
+Latest (pre-)release: **Sky Dolly 0.8.0**
 
 ## Build
 
