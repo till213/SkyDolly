@@ -33,7 +33,9 @@
 #include <QTimer>
 
 #include "../../../Kernel/src/Settings.h"
+#include "../../../Kernel/src/Version.h"
 #include "../../../Kernel/src/Const.h"
+#include "../Metadata.h"
 #include "../ConnectionManager.h"
 #include "DatabaseService.h"
 
@@ -172,6 +174,11 @@ bool DatabaseService::getMetadata(Metadata &metadata) const noexcept
     return ConnectionManager::getInstance().getMetadata(metadata);
 }
 
+bool DatabaseService::getDatabaseVersion(Version &databaseVersion) const noexcept
+{
+    return ConnectionManager::getInstance().getDatabasVersion(databaseVersion);
+}
+
 QString DatabaseService::getExistingLogbookPath(QWidget *parent) noexcept
 {
     Settings &settings = Settings::getInstance();
@@ -208,12 +215,10 @@ QString DatabaseService::getNewLogbookPath(QWidget *parent) noexcept
 
 bool DatabaseService::checkDatabaseVersion(Version &databaseVersion) const noexcept
 {
-    Version appVersion;
-    Metadata metadata;
-    bool ok = getMetadata(metadata);
+    Version currentAppVersion;
+    bool ok = getDatabaseVersion(databaseVersion);
     if (ok) {
-        ok = appVersion >= metadata.appVersion;
-        databaseVersion = metadata.appVersion;
+        ok = currentAppVersion >= databaseVersion;
     } else {
         // New database - no metadata exists yet
         ok = true;

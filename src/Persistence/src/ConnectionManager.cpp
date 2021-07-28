@@ -27,6 +27,7 @@
 #include <QString>
 
 #include "../../Kernel/src/Settings.h"
+#include "../../Kernel/src/Version.h"
 #include "Metadata.h"
 #include "Dao/DaoFactory.h"
 #include "Dao/DatabaseDaoIntf.h"
@@ -117,9 +118,14 @@ bool ConnectionManager::backup(const QString &backupLogbookPath) noexcept
     return d->databaseDao->backup(backupLogbookPath);
 }
 
-bool ConnectionManager::getMetadata(Metadata &metadata) noexcept
+bool ConnectionManager::getMetadata(Metadata &metadata) const noexcept
 {
     return d->databaseDao->getMetadata(metadata);
+}
+
+bool ConnectionManager::getDatabasVersion(Version &databaseVersion) const noexcept
+{
+    return d->databaseDao->getDatabaseVersion(databaseVersion);
 }
 
 // PROTECTED

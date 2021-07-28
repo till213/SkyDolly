@@ -33,6 +33,7 @@ class QWidget;
 #include "../Metadata.h"
 #include "../PersistenceLib.h"
 
+class Metadata;
 class Version;
 class DatabaseServicePrivate;
 
@@ -68,6 +69,7 @@ public:
     bool optimise() noexcept;
     bool backup() noexcept;
     bool getMetadata(Metadata &metadata) const noexcept;
+    bool getDatabaseVersion(Version &databaseVersion) const noexcept;
 
     static QString getExistingLogbookPath(QWidget *parent) noexcept;
     static QString getNewLogbookPath(QWidget *parent) noexcept;
