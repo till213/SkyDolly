@@ -169,7 +169,7 @@ bool SQLiteDatabaseDao::getMetadata(Metadata &metadata) const noexcept
         "left join enum_backup_period ebp "
         "on m.backup_period_id = ebp.id;"
     );
-    if (query.next()) {
+    if (ok && query.next()) {
         QDateTime dateTime = query.value(0).toDateTime();
         dateTime.setTimeZone(QTimeZone::utc());
         metadata.creationDate = dateTime.toLocalTime();
@@ -199,9 +199,19 @@ bool SQLiteDatabaseDao::getDatabaseVersion(Version &databaseVersion) const noexc
 {
     QSqlQuery query;
     bool ok = query.exec("select m.app_version from metadata m;");
-    if (query.next()) {
+    if (ok && query.next()) {
         QString appVersion = query.value(0).toString();
         databaseVersion.fromString(appVersion);
+    }
+    return ok;
+};
+
+bool SQLiteDatabaseDao::getBackupDirectoryPath(QString &backupDirectoryPath) const noexcept
+{
+    QSqlQuery query;
+    bool ok = query.exec("select m.backup_directory_path from metadata m;");
+    if (ok && query.next()) {
+        backupDirectoryPath = query.value(0).toString();
     }
     return ok;
 };

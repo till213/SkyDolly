@@ -146,7 +146,7 @@ void LogbookBackupDialog::updateUi() noexcept
     const bool ok = connectionManager.getMetadata(metadata);
     if (ok) {
         // Backup folder
-        const QString backupDirectoryPath = d->databaseService->getExistingBackupPath(metadata.backupDirectoryPath);
+        const QString backupDirectoryPath = ConnectionManager::createBackupPathIfNotExists(metadata.backupDirectoryPath);
         ui->backupDirectoryLineEdit->setText(QDir::toNativeSeparators(backupDirectoryPath));
 
         // Backup period

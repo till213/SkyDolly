@@ -85,6 +85,25 @@ public:
     void setLogbookPath(const QString &logbookPath) noexcept;
 
     /*!
+     * Returns whether a backup of the logbook to be migrated should be done
+     * before the migration.
+     *
+     * \return \c true if a backup should be done before migration; \c false
+     *         if migration should proceed without prior backup
+     */
+    bool isBackupBeforeMigrationEnabled() const noexcept;
+
+    /*!
+     * Enables or disables backups before migration.
+     *
+     * \param enable
+     *        set to \c true if a backup should be done before logbook migration;
+     *        set to \c false if migration should proceed without prior backup
+     * \sa backupBeforeMigrationChanged
+     */
+    void setBackupBeforeMigrationEnabled(bool enable) noexcept;
+
+    /*!
      * Returns the SkyConnect plugin UUID: an attempt to instantiate and use this plugin
      * is made upon application launch.
      *
@@ -449,6 +468,13 @@ signals:
      * \sa changed
      */
     void logbookPathChanged(const QString &logbookPath);
+
+    /*!
+     * Emitted when the backup before migration option has changed.
+     *
+     * \sa changed
+     */
+    void backupBeforeMigrationChanged(bool enable);
 
     /*!
      * Emitted when the SkyConnect plugin UUID has changed.

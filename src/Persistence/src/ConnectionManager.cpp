@@ -43,6 +43,10 @@
 #include "Service/DatabaseService.h"
 #include "ConnectionManager.h"
 
+namespace {
+    constexpr int MaxBackupIndex = 1024;
+}
+
 class ConnectionManagerPrivate
 {
 public:
@@ -102,11 +106,39 @@ bool ConnectionManager::connectWithLogbook(const QString &logbookPath, QWidget *
                 Version databaseVersion;
                 ok = checkDatabaseVersion(databaseVersion);
                 if (ok) {
+                    Settings &settings = Settings::getInstance();
                     Flight &flight = Logbook::getInstance().getCurrentFlight();
                     flight.clear(true);
-                    ok = migrate();
+                    // Create a backup before migration
+                    Version appVersion;
+                    if (settings.isBackupBeforeMigrationEnabled() && databaseVersion < appVersion) {
+                        QString backupDirectoryPath;
+                        ok = d->databaseDao->getBackupDirectoryPath(backupDirectoryPath);
+                        if (ok) {
+                            if (backupDirectoryPath.isNull()) {
+                                // Default backup location, relative to logbook path
+                                backupDirectoryPath = "./Backups";
+                            }
+                            backupDirectoryPath = createBackupPathIfNotExists(backupDirectoryPath);
+                            ok = !backupDirectoryPath.isNull();
+                        }
+                        QString backupFileName;
+                        if (ok) {
+                            backupFileName = getBackupFileName(backupDirectoryPath);
+                            ok = !backupFileName.isNull();
+                        }
+                        if (ok) {
+                            ok = backup(backupDirectoryPath + "/" + backupFileName);
+                        }
+                    }
                     if (ok) {
-                        Settings::getInstance().setLogbookPath(currentLogbookPath);
+                        // We still migrate, even if the above version check indicates that the database is up to date
+                        // (to make sure that we really do not miss any migration steps, in case the database version
+                        // was "forgotten" to be updated during some prior migration)
+                        ok = migrate();
+                    }
+                    if (ok) {
+                        settings.setLogbookPath(currentLogbookPath);
                     }
                     retry = false;
                 } else {
@@ -197,6 +229,52 @@ bool ConnectionManager::getMetadata(Metadata &metadata) const noexcept
 bool ConnectionManager::getDatabaseVersion(Version &databaseVersion) const noexcept
 {
     return d->databaseDao->getDatabaseVersion(databaseVersion);
+}
+
+bool ConnectionManager::getBackupDirectoryPath(QString &backupDirectoryPath) const noexcept
+{
+    return d->databaseDao->getBackupDirectoryPath(backupDirectoryPath);
+}
+
+QString ConnectionManager::getBackupFileName(const QString &backupDirectoryPath) const noexcept
+{
+    QDir backupDir(backupDirectoryPath);
+    const QString &logbookPath = getLogbookPath();
+    const QFileInfo logbookInfo = QFileInfo(logbookPath);
+    const QString baseName = logbookInfo.completeBaseName();
+    const QString baseBackupLogbookName = baseName + "-" + QDateTime::currentDateTime().toString("yyyy-MM-dd hhmm");
+    QString backupLogbookName = baseBackupLogbookName + Const::LogbookExtension;
+    int index = 1;
+    while (backupDir.exists(backupLogbookName) && index <= MaxBackupIndex) {
+        backupLogbookName = baseBackupLogbookName + QString("-%1").arg(index) + Const::LogbookExtension;
+        ++index;
+    }
+    if (index <= MaxBackupIndex) {
+        return backupLogbookName;
+    } else {
+        return QString();
+    }
+}
+
+QString ConnectionManager::createBackupPathIfNotExists(const QString &relativeOrAbsoluteBackupDirectoryPath) noexcept
+{
+    QString existingBackupPath;
+    if (QDir::isRelativePath(relativeOrAbsoluteBackupDirectoryPath)) {
+        const ConnectionManager &connectionManager = ConnectionManager::getInstance();
+        const QString &logbookDirectoryPath = QFileInfo(connectionManager.getLogbookPath()).absolutePath();
+        existingBackupPath = logbookDirectoryPath + "/" + QFileInfo(relativeOrAbsoluteBackupDirectoryPath).fileName();
+    } else {
+        existingBackupPath = relativeOrAbsoluteBackupDirectoryPath;
+    }
+
+    QDir backupDir(existingBackupPath);
+    if (!backupDir.exists()) {
+         const bool ok = backupDir.mkpath(existingBackupPath);
+         if (!ok) {
+             existingBackupPath.clear();
+         }
+    }
+    return existingBackupPath;
 }
 
 // PROTECTED
