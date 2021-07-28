@@ -22,6 +22,13 @@
 
 - Make sure that the "delete flight" confirmation dialog is on top of the main window (specifically when the "stay on top" option is enabled)
 
+## 0.6.3
+
+### Bug Fixes
+
+- Only the database version is now read from the metadata table when comparing versions
+  * Related metadata tables and columns may change in future versions, resulting in an SQL error when trying to read the entire metadata table
+
 ## 0.6.2
 
 ### New Features

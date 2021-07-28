@@ -32,6 +32,7 @@
 class QString;
 
 class Metadata;
+class Version;
 
 #include "PersistenceLib.h"
 
@@ -52,7 +53,8 @@ public:
     bool migrate() noexcept;
     bool optimise() noexcept;
     bool backup(const QString &backupLogbookPath) noexcept;
-    bool getMetadata(Metadata &metadata) noexcept;
+    bool getMetadata(Metadata &metadata) const noexcept;
+    bool getDatabasVersion(Version &databaseVersion) const noexcept;
 
 signals:
     void connectionChanged(bool connected);
