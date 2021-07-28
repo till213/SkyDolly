@@ -188,10 +188,10 @@ MainWindow::MainWindow(const QString &filePath, QWidget *parent) noexcept
 
     // Connect with logbook
     if (!filePath.isNull()) {
-        connectWithLogbook(filePath);
+        d->connectedWithLogbook = connectWithLogbook(filePath);
     } else {
         const QString logbookPath = Settings::getInstance().getLogbookPath();
-        connectWithLogbook(logbookPath);
+        d->connectedWithLogbook = connectWithLogbook(logbookPath);
     }
 
     initPlugins();
