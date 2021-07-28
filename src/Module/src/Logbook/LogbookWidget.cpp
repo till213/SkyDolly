@@ -367,6 +367,10 @@ void LogbookWidget::updateFlightTable() noexcept
         // Clear existing entries
         ui->logTableWidget->setRowCount(0);
     }
+
+    const int flightCount = ui->logTableWidget->rowCount();
+    ui->flightCountLabel->setText(tr("%1 flights", "Number of flights selected in the logbook", flightCount).arg(flightCount));
+
     updateEditUi();
 }
 
