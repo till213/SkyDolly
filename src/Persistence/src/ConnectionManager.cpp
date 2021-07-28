@@ -36,6 +36,7 @@
 #include "../../Kernel/src/Settings.h"
 #include "../../Model/src/Logbook.h"
 #include "../../Model/src/Flight.h"
+#include "../../Kernel/src/Version.h"
 #include "Metadata.h"
 #include "Dao/DaoFactory.h"
 #include "Dao/DatabaseDaoIntf.h"
@@ -193,6 +194,11 @@ bool ConnectionManager::getMetadata(Metadata &metadata) const noexcept
     return ok;
 }
 
+bool ConnectionManager::getDatabaseVersion(Version &databaseVersion) const noexcept
+{
+    return d->databaseDao->getDatabaseVersion(databaseVersion);
+}
+
 // PROTECTED
 
 ConnectionManager::~ConnectionManager() noexcept
@@ -228,12 +234,10 @@ bool ConnectionManager::connectDb(const QString &logbookPath) noexcept
 
 bool ConnectionManager::checkDatabaseVersion(Version &databaseVersion) const noexcept
 {
-    Version appVersion;
-    Metadata metadata;
-    bool ok = getMetadata(metadata);
+    Version currentAppVersion;
+    bool ok = getDatabaseVersion(databaseVersion);
     if (ok) {
-        ok = appVersion >= metadata.appVersion;
-        databaseVersion = metadata.appVersion;
+        ok = currentAppVersion >= databaseVersion;
     } else {
         // New database - no metadata exists yet
         ok = true;
