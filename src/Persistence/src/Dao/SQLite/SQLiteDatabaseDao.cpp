@@ -195,6 +195,17 @@ bool SQLiteDatabaseDao::getMetadata(Metadata &metadata) const noexcept
     return ok;
 };
 
+bool SQLiteDatabaseDao::getDatabaseVersion(Version &databaseVersion) const noexcept
+{
+    QSqlQuery query;
+    bool ok = query.exec("select m.app_version from metadata m;");
+    if (query.next()) {
+        QString appVersion = query.value(0).toString();
+        databaseVersion.fromString(appVersion);
+    }
+    return ok;
+};
+
 // PRIVATE
 
 void SQLiteDatabaseDao::disconnectSQLite() noexcept

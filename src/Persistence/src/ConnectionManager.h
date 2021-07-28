@@ -32,6 +32,9 @@
 class QString;
 class QWidget;
 
+class Metadata;
+class Version;
+
 #include "PersistenceLib.h"
 
 class Metadata;
@@ -73,6 +76,7 @@ public:
     bool backup(const QString &backupLogbookPath) noexcept;
 
     bool getMetadata(Metadata &metadata) const noexcept;
+    bool getDatabaseVersion(Version &databaseVersion) const noexcept;
 
 signals:
     void connectionChanged(bool connected);

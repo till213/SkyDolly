@@ -54,6 +54,7 @@ public:
     virtual bool updateBackupDirectoryPath(const QString &backupDirectoryPath) noexcept override;
 
     virtual bool getMetadata(Metadata &metadata) const noexcept override;
+    virtual bool getDatabaseVersion(Version &databaseVersion) const noexcept override;
 
 private:
     Q_DISABLE_COPY(SQLiteDatabaseDao)

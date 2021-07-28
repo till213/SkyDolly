@@ -46,6 +46,7 @@ public:
     virtual ~DatabaseService() noexcept;
 
     bool backup() noexcept;
+
     bool setBackupPeriod(const QString &backupPeriodIntlId) noexcept;
     bool setNextBackupDate(const QDateTime &date) noexcept;
     bool updateBackupDate() noexcept;

@@ -46,6 +46,7 @@ public:
     virtual bool updateBackupDirectoryPath(const QString &backupDirectoryPath) noexcept = 0;
 
     virtual bool getMetadata(Metadata &metadata) const noexcept = 0;
+    virtual bool getDatabaseVersion(Version &databaseVersion) const noexcept = 0;
 };
 
 #endif // DATABASEDAOINTF_H
