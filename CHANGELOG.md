@@ -57,6 +57,8 @@
   * Once a week
   * Daily
   * Never or whenever exiting Sky Dolly
+- Older logbooks are not backed up before migration
+  * This can be disabled in the new Logbook Settings (File/Logbook Settings...)
 - User interface and usability refinments
   * "Active" icons
   * Small layout optimisations
