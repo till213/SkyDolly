@@ -285,22 +285,22 @@ MIT License</source>
 <context>
     <name>DatabaseService</name>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="85"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="83"/>
         <source>The logbook %1 has been created with a newer version %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="87"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="85"/>
         <source>Create new logbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="88"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="86"/>
         <source>Open another logbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="89"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="87"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
