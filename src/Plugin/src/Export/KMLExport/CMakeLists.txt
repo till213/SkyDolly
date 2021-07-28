@@ -1,4 +1,4 @@
-set(LIBRARY_NAME "KMLExportPlugin")
+set(LIBRARY_NAME "KMLExport")
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_library(${LIBRARY_NAME} SHARED "")
