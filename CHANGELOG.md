@@ -75,6 +75,13 @@
 
 - Proper "HiDPI support" on Windows
 
+## 0.7.1
+
+### Bug Fixes
+
+- Only the database version is now read from the metadata table when comparing versions
+  * Related metadata tables and columns may change in future versions, resulting in an SQL error when trying to read the entire metadata table
+
 ## 0.7.0
 
 ### New Features
