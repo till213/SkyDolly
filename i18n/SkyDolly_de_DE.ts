@@ -285,42 +285,42 @@ MIT License</source>
 <context>
     <name>DatabaseService</name>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="83"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="85"/>
         <source>The logbook %1 has been created with a newer version %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="85"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="87"/>
         <source>Create new logbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="86"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="88"/>
         <source>Open another logbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="87"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="89"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="191"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="198"/>
         <source>New logbook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="198"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="205"/>
         <source>Database exists</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="198"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="205"/>
         <source>The logbook %1 already exists. Please choose another path.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="179"/>
+        <location filename="../src/Persistence/src/Service/DatabaseService.cpp" line="186"/>
         <source>Open logbook</source>
         <translation type="unfinished"></translation>
     </message>
