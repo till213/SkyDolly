@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.1
+
+### Bug Fixes
+
+- Creating new logbooks works again
+  * an attempt was made to create a backup before migration of a non-existing database
+
 ## 0.8.0
 
 ### New Features
