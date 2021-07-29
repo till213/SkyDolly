@@ -109,9 +109,9 @@ bool ConnectionManager::connectWithLogbook(const QString &logbookPath, QWidget *
                     Settings &settings = Settings::getInstance();
                     Flight &flight = Logbook::getInstance().getCurrentFlight();
                     flight.clear(true);
-                    // Create a backup before migration
+                    // Create a backup before migration of existing logbooks
                     Version appVersion;
-                    if (settings.isBackupBeforeMigrationEnabled() && databaseVersion < appVersion) {
+                    if (!databaseVersion.isNull() && settings.isBackupBeforeMigrationEnabled() && databaseVersion < appVersion) {
                         QString backupDirectoryPath;
                         ok = d->databaseDao->getBackupDirectoryPath(backupDirectoryPath);
                         if (ok) {
