@@ -60,6 +60,9 @@ public:
           lastSamplesPerSecondIndex(0)
     {
         recordingTimer.setTimerType(Qt::TimerType::PreciseTimer);
+#ifdef DEBUG
+        qDebug("AbstractSkyConnectPrivate: AbstractSkyConnectPrivate: elapsed timer clock type: %d", elapsedTimer.clockType());
+#endif
     }
 
     SkyConnectIntf::ReplayMode replayMode;

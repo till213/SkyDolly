@@ -68,7 +68,9 @@ class PathCreatorPluginPrivate
 public:
     PathCreatorPluginPrivate() noexcept
         : randomGenerator(QRandomGenerator::global())
-    {}
+    {
+        replayTimer.setTimerType(Qt::TimerType::PreciseTimer);
+    }
 
     QTimer replayTimer;
     QRandomGenerator *randomGenerator;
