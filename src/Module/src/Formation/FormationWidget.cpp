@@ -403,19 +403,20 @@ void FormationWidget::updateInitialPositionUi() noexcept
 InitialPosition FormationWidget::calculateRelativeInitialPositionToUserAircraft(qint64 timestamp) const noexcept
 {
     InitialPosition initialPosition;
+
     const PositionData &relativePositionData = calculateRelativePositionToUserAircraft(timestamp);
-
-    initialPosition.fromPositionData(relativePositionData);
-    if (timestamp == 0) {
-        const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
-        const Aircraft &userAircraft = flight.getUserAircraftConst();
-        const AircraftInfo &aircraftInfo = userAircraft.getAircraftInfoConst();
-        initialPosition.fromAircraftInfo(aircraftInfo);
-    } else {
-        initialPosition.airspeed = qRound(relativePositionData.velocityBodyZ);
-        initialPosition.onGround = false;
+    if (!relativePositionData.isNull()) {
+        initialPosition.fromPositionData(relativePositionData);
+        if (timestamp == 0) {
+            const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
+            const Aircraft &userAircraft = flight.getUserAircraftConst();
+            const AircraftInfo &aircraftInfo = userAircraft.getAircraftInfoConst();
+            initialPosition.fromAircraftInfo(aircraftInfo);
+        } else {
+            initialPosition.airspeed = qRound(relativePositionData.velocityBodyZ);
+            initialPosition.onGround = false;
+        }
     }
-
     return initialPosition;
 }
 
