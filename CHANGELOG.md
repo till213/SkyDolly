@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.2
+
+### Bug Fixes
+
+- Starting the recording of the first aircraft directly in the Formation module would "teleport" the aircraft to be recorded right to the northpole (0/0 longitude/latitude)
+  * The "relative initial recording position" calculation now properly checks the returned "null position" value
+
 ## 0.8.1
 
 ### Bug Fixes
