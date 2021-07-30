@@ -108,7 +108,7 @@ const LightData &Light::interpolate(qint64 timestamp, TimeVariableData::Access a
 
         switch (access) {
         case TimeVariableData::Access::Linear:
-            SkySearch::getLinearInterpolationSupportData(d->lightData, adjustedTimestamp, d->currentIndex, &p1, &p2);
+            SkySearch::getLinearInterpolationSupportData(d->lightData, adjustedTimestamp, SkySearch::DefaultInterpolationWindow, d->currentIndex, &p1, &p2);
             break;
         case TimeVariableData::Access::Seek:
             // Get the last sample data just before the seeked position
