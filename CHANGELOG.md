@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.3
+
+### Bug Fixes
+
+- The main window is now made a "parent" of the KML export dialog, making sure that the export dialog is always centered and on top of the main window
+  * Especially when the "Stay on Top" option is enabled for the main window
+
 ## 0.8.2
 
 ### Bug Fixes
