@@ -51,8 +51,6 @@ public:
     TimeVariableData::Access currentAccess;
     PositionData currentPositionData;
     mutable int currentIndex;
-
-    static inline constexpr qint64 TimestampWindow = 1000; // msec
 };
 
 // PUBLIC

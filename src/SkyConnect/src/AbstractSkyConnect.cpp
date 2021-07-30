@@ -333,7 +333,6 @@ void AbstractSkyConnect::seek(qint64 timestamp) noexcept
         }
     }
     if (isConnectedWithSim()) {
-        d->elapsedTime = d->currentTimestamp;
         if (d->state != Connect::State::Recording) {
             d->currentTimestamp = timestamp;
             d->elapsedTime = timestamp;
