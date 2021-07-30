@@ -109,7 +109,7 @@ const EngineData &Engine::interpolate(qint64 timestamp, TimeVariableData::Access
         double tn;
         switch (access) {
         case TimeVariableData::Access::Linear:
-            if (SkySearch::getLinearInterpolationSupportData(d->engineData, adjustedTimestamp, d->currentIndex, &p1, &p2)) {
+            if (SkySearch::getLinearInterpolationSupportData(d->engineData, adjustedTimestamp, SkySearch::DefaultInterpolationWindow, d->currentIndex, &p1, &p2)) {
                 tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
             }
             break;

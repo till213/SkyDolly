@@ -111,7 +111,7 @@ const SecondaryFlightControlData &SecondaryFlightControl::interpolate(qint64 tim
         double tn;
         switch (access) {
         case TimeVariableData::Access::Linear:
-            if (SkySearch::getLinearInterpolationSupportData(d->secondaryFlightControlData, adjustedTimestamp, d->currentIndex, &p1, &p2)) {
+            if (SkySearch::getLinearInterpolationSupportData(d->secondaryFlightControlData, adjustedTimestamp, SkySearch::DefaultInterpolationWindow, d->currentIndex, &p1, &p2)) {
                 tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
             }
             break;

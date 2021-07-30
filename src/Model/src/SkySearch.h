@@ -27,6 +27,7 @@
 
 #include <type_traits>
 #include <vector>
+#include <limits>
 
 #include "TimeVariableData.h"
 #include "PositionData.h"
@@ -45,9 +46,16 @@ namespace SkySearch {
     inline constexpr qint64 BinaryIntervalSearchThreshold = 3000;
 
     /*!
-     * The size of the interpolation window [-TimestampWindows, TimestampWindow] [milliseconds].
+     * The size of the default interpolation window [-DefaultInterpolationWindow, DefaultInterpolationWindow] [milliseconds].
+     * Only sampled data within that time window is considered for interpolation. Any other sampled data outside
+     * (before or after) this window is considered "inactive".
      */
-    inline constexpr qint64 InterpolationWindow = 2000;
+    inline constexpr qint64 DefaultInterpolationWindow = 2000;
+
+    /*!
+     * An interpolation window that considers all sample points.
+     */
+    inline constexpr qint64 InfinitetInterpolationWindow = std::numeric_limits<qint64>::max();
 
     /*!
      * Returns the lower index i of the interval [i, j] where i.timestamp <= timestamp < j.timestamp.
@@ -215,7 +223,7 @@ namespace SkySearch {
     }
 
     template <typename T>
-    bool getCubicInterpolationSupportData(const std::vector<T> &data, qint64 timestamp, int &startIndex, const T **p0, const T **p1, const T **p2, const T **p3) noexcept
+    bool getCubicInterpolationSupportData(const std::vector<T> &data, qint64 timestamp, qint64 interpolationWindow, int &startIndex, const T **p0, const T **p1, const T **p2, const T **p3) noexcept
     {
         static_assert(std::is_base_of<TimeVariableData, T>::value, "T not derived from TimeVariableData");
 
@@ -224,7 +232,7 @@ namespace SkySearch {
 
             *p1 = &data.at(startIndex);
             // Is p1 within the interpolation window?
-            if ((timestamp - (*p1)->timestamp) <= InterpolationWindow) {
+            if ((timestamp - (*p1)->timestamp) <= interpolationWindow) {
 
                 if (startIndex > 0) {
                    *p0 = &data.at(startIndex - 1);
@@ -246,7 +254,7 @@ namespace SkySearch {
                 }
 
                 // Is p2 within the interpolation window?
-                if (((*p2)->timestamp - timestamp) > InterpolationWindow) {
+                if (((*p2)->timestamp - timestamp) > interpolationWindow) {
                     *p2 = *p3 = *p1;
                 }
 
@@ -256,7 +264,7 @@ namespace SkySearch {
 
         } else {
             // We are past the last sample point
-            if (data.size() > 0 && timestamp - data.back().timestamp <= InterpolationWindow) {
+            if (data.size() > 0 && timestamp - data.back().timestamp <= interpolationWindow) {
                 *p0 = *p1 = *p2 = *p3 = &data.back();
             } else {
                 *p0 = *p1 = *p2 = *p3 = nullptr;
@@ -267,7 +275,7 @@ namespace SkySearch {
     }
 
     template <typename T>
-    bool getLinearInterpolationSupportData(const std::vector<T> &data, qint64 timestamp, int &startIndex, const T **p1, const T **p2) noexcept
+    bool getLinearInterpolationSupportData(const std::vector<T> &data, qint64 timestamp, qint64 interpolationWindow, int &startIndex, const T **p1, const T **p2) noexcept
     {
         static_assert(std::is_base_of<TimeVariableData, T>::value, "T not derived from TimeVariableData");
 
@@ -276,7 +284,7 @@ namespace SkySearch {
 
             *p1 = &data.at(startIndex);
             // Is p1 within the interpolation window?
-            if ((timestamp - (*p1)->timestamp) <= InterpolationWindow) {
+            if ((timestamp - (*p1)->timestamp) <= interpolationWindow) {
 
                 if (startIndex < data.size() - 1) {
                     *p2 = &data.at(startIndex + 1);
@@ -286,7 +294,7 @@ namespace SkySearch {
                 }
 
                 // Is p2 within the interpolation window?
-                if (((*p2)->timestamp - timestamp) > InterpolationWindow) {
+                if (((*p2)->timestamp - timestamp) > interpolationWindow) {
                     *p2 = *p1;
                 }
 
@@ -296,7 +304,7 @@ namespace SkySearch {
 
         } else {
             // We are past the last sample point
-            if (data.size() > 0 && timestamp - data.back().timestamp <= InterpolationWindow) {
+            if (data.size() > 0 && timestamp - data.back().timestamp <= interpolationWindow) {
                 *p1 = *p2 = &data.back();
             } else {
                 *p1 = *p2 = nullptr;

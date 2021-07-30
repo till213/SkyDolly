@@ -108,20 +108,13 @@ const PositionData &Position::interpolate(qint64 timestamp, TimeVariableData::Ac
         double tn;
         switch (access) {
         case TimeVariableData::Access::Linear:
-            if (SkySearch::getCubicInterpolationSupportData(d->positionData, adjustedTimestamp, d->currentIndex, &p0, &p1, &p2, &p3)) {
+            if (SkySearch::getCubicInterpolationSupportData(d->positionData, adjustedTimestamp, SkySearch::DefaultInterpolationWindow, d->currentIndex, &p0, &p1, &p2, &p3)) {
                 tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
             }
             break;
         case TimeVariableData::Access::Seek:
-            // Get the last sample data just before the seeked position
-            // (that sample point may lie far outside of the "sample window")
-            d->currentIndex = SkySearch::updateStartIndex(d->positionData, d->currentIndex, adjustedTimestamp);
-            if (d->currentIndex != SkySearch::InvalidIndex) {
-                p1 = &d->positionData.at(d->currentIndex);
-                p0 = p2 = p3 = p1;
-                tn = 0.0;
-            } else {
-                p0 = p1 = p2 = p3 = nullptr;
+            if (SkySearch::getCubicInterpolationSupportData(d->positionData, adjustedTimestamp, SkySearch::InfinitetInterpolationWindow, d->currentIndex, &p0, &p1, &p2, &p3)) {
+                tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
             }
             break;
         default:
