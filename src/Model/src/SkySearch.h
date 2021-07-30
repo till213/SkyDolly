@@ -47,7 +47,7 @@ namespace SkySearch {
     /*!
      * The size of the interpolation window [-TimestampWindows, TimestampWindow] [milliseconds].
      */
-    inline constexpr qint64 InterpolationWindow = 1000;
+    inline constexpr qint64 InterpolationWindow = 2000;
 
     /*!
      * Returns the lower index i of the interval [i, j] where i.timestamp <= timestamp < j.timestamp.
