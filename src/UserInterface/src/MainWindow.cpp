@@ -472,6 +472,7 @@ void MainWindow::initViewUi() noexcept
 void MainWindow::initControlUi() noexcept
 {
     ui->positionSlider->setRange(PositionSliderMin, PositionSliderMax);
+    ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatNumber(0, 0), d->unit.formatElapsedTime(0)));
     ui->timestampTimeEdit->setDisplayFormat(TimestampFormat);
 
     // Record/replay control buttons
@@ -777,6 +778,7 @@ void MainWindow::on_positionSlider_valueChanged(int value) noexcept
         const double scale = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
         const qint64 totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
         const qint64 timestamp = static_cast<qint64>(qRound(scale * static_cast<double>(totalDuration)));
+        ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatNumber(timestamp, 0), d->unit.formatElapsedTime(timestamp)));
 
         // Prevent the timestampTimeEdit field to set the play position as well
         ui->timestampTimeEdit->blockSignals(true);
@@ -837,6 +839,7 @@ void MainWindow::handleTimestampChanged(qint64 timestamp) noexcept
             }
             ui->positionSlider->blockSignals(true);
             ui->positionSlider->setValue(sliderPosition);
+            ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatNumber(timestamp, 0), d->unit.formatElapsedTime(timestamp)));
             ui->positionSlider->blockSignals(false);
 
             QTime time(0, 0, 0, 0);
