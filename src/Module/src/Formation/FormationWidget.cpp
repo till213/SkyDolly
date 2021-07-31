@@ -412,11 +412,8 @@ InitialPosition FormationWidget::calculateRelativeInitialPositionToUserAircraft(
             const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
             const Aircraft &userAircraft = flight.getUserAircraftConst();
             const AircraftInfo &aircraftInfo = userAircraft.getAircraftInfoConst();
-            initialPosition.fromAircraftInfo(aircraftInfo);
+            initialPosition.onGround =  aircraftInfo.startOnGround;
         } else {
-            const double trueAirspeed = Convert::feetPerSecondsToKnots(relativePositionData.velocityBodyZ);
-            // The initial
-            initialPosition.indicatedAirspeed = qRound(Convert::trueToIndicatedAirspeed(trueAirspeed, relativePositionData.altitude));
             initialPosition.onGround = false;
         }
     }
