@@ -43,8 +43,8 @@ public:
     double bank;
     double heading;
     bool onGround;
-    // Knots
-    int airspeed;
+    // Indicated airspeed [knots]
+    int indicatedAirspeed;
 
     InitialPosition(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
     InitialPosition(const PositionData &positionData, const AircraftInfo &aircraftInfo) noexcept;
@@ -54,7 +54,7 @@ public:
     InitialPosition &operator= (const InitialPosition &) = default;
 
     inline bool isNull() const noexcept {
-        return (airspeed == InvalidVelocity);
+        return (indicatedAirspeed == InvalidVelocity);
     }
 
     inline void fromPositionData(const PositionData &positionData) {
@@ -68,7 +68,7 @@ public:
 
     inline void fromAircraftInfo(const AircraftInfo &aircraftInfo) {
         onGround = aircraftInfo.startOnGround;
-        airspeed = aircraftInfo.initialAirspeed;
+        indicatedAirspeed = aircraftInfo.initialAirspeed;
     }
 
     static const InitialPosition NullData;
