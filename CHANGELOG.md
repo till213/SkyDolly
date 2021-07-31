@@ -6,7 +6,7 @@
 
 - The main window is now made a "parent" of the KML export dialog, making sure that the export dialog is always centered and on top of the main window
   * Especially when the "Stay on Top" option is enabled for the main window
-- The initial velocity in "fly with formation replay mode is now properly set
+- The initial velocity in "fly with formation" replay mode is now properly set
   * Properly converted from feet/s to knots
   * Properly converted from true to indicated airspeed (the SIMCONNECT_DATA_INITPOSITION structure really seems to expected indicated airspeed)
 
