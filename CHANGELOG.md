@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.4
+
+### Bug Fixes
+
+- The initial velocity when recording a new formation aircraft is now properly set (as indicated airspeed, as opposed to true airspeed)
+
 ## 0.8.3
 
 ### Bug Fixes

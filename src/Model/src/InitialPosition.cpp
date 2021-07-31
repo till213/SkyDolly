@@ -33,7 +33,7 @@ InitialPosition::InitialPosition(double latitude, double longitude, double altit
       bank(0.0),
       heading(0.0),
       onGround(false),
-      indicatedAirspeed(InvalidVelocity)
+      indicatedAirspeed(InvalidAirspeed)
 {
     this->latitude = latitude;
     this->longitude = longitude;
@@ -43,7 +43,7 @@ InitialPosition::InitialPosition(double latitude, double longitude, double altit
 InitialPosition::InitialPosition(const PositionData &positionData, const AircraftInfo &aircraftInfo) noexcept
 {
     fromPositionData(positionData);
-    fromAircraftInfo(aircraftInfo);
+    onGround = aircraftInfo.startOnGround;
 }
 
 const InitialPosition InitialPosition::NullData = InitialPosition(0.0, 0.0, 0.0);
