@@ -27,6 +27,9 @@
 
 #include <limits>
 
+#include <QtGlobal>
+
+#include "../../Kernel/src/Convert.h"
 #include "PositionData.h"
 #include "AircraftInfo.h"
 #include "ModelLib.h"
@@ -34,7 +37,7 @@
 class MODEL_API InitialPosition
 {
 public:
-    static constexpr qint64 InvalidVelocity = std::numeric_limits<int>::min();
+    static constexpr qint64 InvalidAirspeed = std::numeric_limits<int>::min();
 
     double latitude;
     double longitude;
@@ -54,7 +57,7 @@ public:
     InitialPosition &operator= (const InitialPosition &) = default;
 
     inline bool isNull() const noexcept {
-        return (indicatedAirspeed == InvalidVelocity);
+        return (indicatedAirspeed == InvalidAirspeed);
     }
 
     inline void fromPositionData(const PositionData &positionData) {
@@ -64,11 +67,8 @@ public:
         pitch = positionData.pitch;
         bank = positionData.bank;
         heading = positionData.heading;
-    }
-
-    inline void fromAircraftInfo(const AircraftInfo &aircraftInfo) {
-        onGround = aircraftInfo.startOnGround;
-        indicatedAirspeed = aircraftInfo.initialAirspeed;
+        const double trueAirspeed = Convert::feetPerSecondsToKnots(positionData.velocityBodyZ);
+        indicatedAirspeed = qRound(Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude));
     }
 
     static const InitialPosition NullData;
