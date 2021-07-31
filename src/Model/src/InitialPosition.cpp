@@ -33,7 +33,7 @@ InitialPosition::InitialPosition(double latitude, double longitude, double altit
       bank(0.0),
       heading(0.0),
       onGround(false),
-      airspeed(InvalidVelocity)
+      indicatedAirspeed(InvalidVelocity)
 {
     this->latitude = latitude;
     this->longitude = longitude;
