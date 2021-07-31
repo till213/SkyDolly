@@ -39,6 +39,7 @@
 
 #include "../../../Kernel/src/Version.h"
 #include "../../../Kernel/src/Const.h"
+#include "../../../Kernel/src/Convert.h"
 #include "../../../Kernel/src/Unit.h"
 #include "../../../Kernel/src/SkyMath.h"
 #include "../../../Kernel/src/Enum.h"
@@ -413,7 +414,9 @@ InitialPosition FormationWidget::calculateRelativeInitialPositionToUserAircraft(
             const AircraftInfo &aircraftInfo = userAircraft.getAircraftInfoConst();
             initialPosition.fromAircraftInfo(aircraftInfo);
         } else {
-            initialPosition.airspeed = qRound(relativePositionData.velocityBodyZ);
+            const double trueAirspeed = Convert::feetPerSecondsToKnots(relativePositionData.velocityBodyZ);
+            // The initial
+            initialPosition.indicatedAirspeed = qRound(Convert::trueToIndicatedAirspeed(trueAirspeed, relativePositionData.altitude));
             initialPosition.onGround = false;
         }
     }
@@ -433,7 +436,7 @@ PositionData FormationWidget::calculateRelativePositionToUserAircraft(qint64 tim
         const AircraftInfo &aircraftInfo = userAircraft.getAircraftInfoConst();
         const AircraftType &aircraftType = aircraftInfo.aircraftType;
 
-        // Copy pitch, bank and heading
+        // Copy pitch, bank, heading and velocity
         initialPosition = positionData;
 
         // Horizontal distance [feet]

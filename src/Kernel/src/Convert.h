@@ -27,6 +27,11 @@
 
 #include "KernelLib.h"
 
+/*!
+ * Unit converter.
+ *
+ * https://www.convertunits.com/
+ */
 class KERNEL_API Convert
 {
 public:
@@ -41,6 +46,30 @@ public:
     static inline double feetToMeters(double feet) noexcept
     {
         return feet / 3.2808;
+    }
+
+    static inline double feetPerSecondsToKnots(double feetPerSeconds) noexcept
+    {
+        return feetPerSeconds * 0.5924838012959;
+    }
+
+    /*!
+     * This is a "rule of thumb" conversion from true airspeed to indicated airspeed:
+     * "The general rule of thumb is that true airspeed is an additional roughly 2% higher
+     * than indicated airspeed for each 1,000 feet above sea level."
+     *
+     * https://www.pilotmall.com/blogs/news/how-to-calculate-true-airspeed-and-what-it-is-guide
+     *
+     * \param trueAirspeedInKnots
+     *        the true airspeed [knots] to be converted to indicated airspeed [knots]
+     * \param altitudeAboveSealevel
+     *        the altitude above sea level [feet]
+     * \return the estimated indicated airspeed [knots]
+     */
+    static inline double trueToIndicatedAirspeed(double trueAirspeed, double altitudeAboveSealevel) noexcept
+    {
+        const double altitudeFactor = altitudeAboveSealevel / 1000.0;
+        return trueAirspeed / (1 + altitudeFactor * 0.02);
     }
 };
 
