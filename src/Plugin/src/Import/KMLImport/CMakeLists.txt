@@ -1,4 +1,4 @@
-set(LIBRARY_NAME "CSVImport")
+set(LIBRARY_NAME "KMLImport")
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_library(${LIBRARY_NAME} SHARED "")
@@ -15,12 +15,12 @@ endif()
 
 target_sources(${LIBRARY_NAME}
     PRIVATE
-        src/CSVImportPlugin.cpp
-        src/CSVImportPlugin.h
-        src/CSVImportPlugin.json
-        src/CSVImportDialog.cpp
-        src/CSVImportDialog.h
-        src/CSVImportDialog.ui
+        src/KMLImportPlugin.cpp
+        src/KMLImportPlugin.h
+        src/KMLImportPlugin.json
+        src/KMLImportDialog.cpp
+        src/KMLImportDialog.h
+        src/KMLImportDialog.ui
 )
 
 include_directories(${PLUGIN_NAME} PRIVATE ../../../../Widget/src/)
