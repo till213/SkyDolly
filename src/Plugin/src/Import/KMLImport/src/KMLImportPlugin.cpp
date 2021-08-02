@@ -33,6 +33,8 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QXmlStreamReader>
+#include <QDateTime>
+#include <QTimeZone>
 
 #include "../../../../../Kernel/src/Unit.h"
 #include "../../../../../Kernel/src/Settings.h"
@@ -69,7 +71,8 @@ public:
     KMLImportPluginPrivate()
         : aircraftService(std::make_unique<AircraftService>()),
           addToCurrentFlight(false),
-          currentWaypointTimestamp(0)
+          currentWaypointTimestamp(0),
+          currentPositionIndex(0)
     {}
 
     std::unique_ptr<AircraftService> aircraftService;
@@ -77,6 +80,9 @@ public:
     Unit unit;
     bool addToCurrentFlight;
     qint64 currentWaypointTimestamp;
+    int currentPositionIndex;
+    QDateTime firstDateTime;
+    QDateTime currentDateTime;
 };
 
 // PUBLIC
@@ -224,6 +230,8 @@ void KMLImportPlugin::readPlacemark() noexcept
             name = d->xml.readElementText();
         } else if (d->xml.name() == QLatin1String("Point")) {
             readWaypoint(name);
+        } else if (d->xml.name() == QLatin1String("Track")) {
+            readTrack();
         } else {
             d->xml.skipCurrentElement();
         }
@@ -263,6 +271,75 @@ void KMLImportPlugin::readWaypoint(const QString &name) noexcept
 
                 Flight &flight = Logbook::getInstance().getCurrentFlight();
                 flight.getUserAircraft().getFlightPlan().add(std::move(waypoint));
+            } else {
+                d->xml.raiseError(tr("Invalid GPS coordinate."));
+            }
+        } else {
+            d->xml.skipCurrentElement();
+        }
+    }
+}
+
+void KMLImportPlugin::readTrack() noexcept
+{
+    bool ok;
+    while (d->xml.readNextStartElement()) {
+#ifdef DEBUG
+        qDebug("KMLImportPlugin::readWaypoint: XML start element: %s", qPrintable(d->xml.name().toString()));
+#endif
+        if (d->xml.name() == QLatin1String("when")) {
+            const QString dateTimeText = d->xml.readElementText();
+            if (d->firstDateTime.isNull()) {
+                d->firstDateTime = QDateTime::fromString(dateTimeText, Qt::ISODate);
+                d->firstDateTime.setTimeZone(QTimeZone::utc());
+                d->currentDateTime = d->firstDateTime;
+            } else {
+                d->currentDateTime = QDateTime::fromString(dateTimeText, Qt::ISODate);
+                d->currentDateTime.setTimeZone(QTimeZone::utc());
+            }
+            if (d->currentDateTime.isValid()) {
+                const qint64 timestamp = d->firstDateTime.msecsTo(d->currentDateTime);
+                PositionData positionData;
+                positionData.timestamp = timestamp;
+                Flight &flight = Logbook::getInstance().getCurrentFlight();
+                Position &position = flight.getUserAircraft().getPosition();
+                position.upsert(std::move(positionData));
+            } else {
+                d->xml.raiseError(tr("Invalid timestamp."));
+            }
+        } else if (d->xml.name() == QLatin1String("coord")) {
+            const QString coordinatesText = d->xml.readElementText();
+            const QStringList coordinates = coordinatesText.split(" ");
+            if (coordinates.count() == 3) {
+
+                const double longitude = coordinates.at(0).toFloat(&ok);
+                if (!ok) {
+                    d->xml.raiseError(tr("Invalid longitude number."));
+                }
+                const double latitude = coordinates.at(1).toFloat(&ok);
+                if (!ok) {
+                    d->xml.raiseError(tr("Invalid latitude number."));
+                }
+                const double altitude = coordinates.at(2).toFloat(&ok);
+                if (!ok) {
+                    d->xml.raiseError(tr("Invalid altitude number."));
+                }
+                if (ok) {
+
+
+                    Flight &flight = Logbook::getInstance().getCurrentFlight();
+                    Position &position = flight.getUserAircraft().getPosition();
+                    position[d->currentPositionIndex].latitude = latitude;
+                    position[d->currentPositionIndex].longitude = longitude;
+                    position[d->currentPositionIndex].altitude = altitude;
+                    // TODO Calcualte feet/sec
+                    position[d->currentPositionIndex].velocityBodyZ = 400;
+
+
+                    ++d->currentPositionIndex;
+                }
+
+
             } else {
                 d->xml.raiseError(tr("Invalid GPS coordinate."));
             }
