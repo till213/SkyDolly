@@ -31,8 +31,9 @@
 
 #include "../../Kernel/src/Convert.h"
 #include "PositionData.h"
-#include "AircraftInfo.h"
 #include "ModelLib.h"
+
+struct AircraftInfo;
 
 class MODEL_API InitialPosition
 {
