@@ -4,7 +4,10 @@
 
 ### Bug Fixes
 
-- The initial velocity when recording a new formation aircraft is now properly set (as indicated airspeed, as opposed to true airspeed)
+- The initial velocity when recording a new formation aircraft is now properly set (indicated airspeed, as opposed to true airspeed)
+  * Note that the conversion from true to indicated airspeed is currently done with a "rule of thumb" only
+  * https://www.pilotmall.com/blogs/news/how-to-calculate-true-airspeed-and-what-it-is-guide
+  * Depending on the altitude and especially pressure there might still be a substantial difference to the actual indicated airspeed
 
 ## 0.8.3
 
