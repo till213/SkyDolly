@@ -43,7 +43,7 @@ void SimConnectAircraftInfo::addToDataDefinition(HANDLE simConnectHandle) noexce
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::Category, NULL, SIMCONNECT_DATATYPE_STRING256);
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::PlaneAltAboveGround, "Feet", SIMCONNECT_DATATYPE_FLOAT32);
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::SimOnGround, "Bool", ::SIMCONNECT_DATATYPE_INT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::AirspeedTrue, "knots", ::SIMCONNECT_DATATYPE_INT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::AirspeedTrue, "Knots", ::SIMCONNECT_DATATYPE_INT32);
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::WingSpan, "Feet", SIMCONNECT_DATATYPE_INT32);
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::EngineType, "Number", SIMCONNECT_DATATYPE_INT32);
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), SimVar::NumberOfEngines, "Number", SIMCONNECT_DATATYPE_INT32);
