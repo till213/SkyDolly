@@ -64,13 +64,18 @@ public:
         PluginBase::restoreSettings(pluginUuid);
     }
 
-    virtual bool importData(FlightService &flightService) const noexcept override;
+    virtual bool importData(FlightService &flightService) noexcept override;
 
 private:
     std::unique_ptr<KMLImportPluginPrivate> d;
 
     bool getAircraftType(const QString &type, AircraftType &aircraftType) noexcept;
-    bool import(const QString &filePath, const AircraftType &aircraftType, FlightService &flightService, bool addToCurrentFlight) const noexcept;
+    bool import(const QString &filePath, const AircraftType &aircraftType, FlightService &flightService) noexcept;
+
+    void readKML() noexcept;
+    void readDocument() noexcept;
+    void readPlacemark() noexcept;
+    void readWaypoint(const QString &name) noexcept;
 };
 
 #endif // KMLIMPORTPLUGIN_H
