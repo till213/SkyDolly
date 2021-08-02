@@ -108,8 +108,7 @@ void LogbookSettingsDialog::showEvent(QShowEvent *event) noexcept
 
 void LogbookSettingsDialog::initUi() noexcept
 {
-    Qt::WindowFlags flags = Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
-    setWindowFlags(flags);
+    setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
     ui->backupPeriodComboBox->setSelection(BackupPeriodComboBox::Selection::IncludingNextTime);
 }

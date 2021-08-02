@@ -115,8 +115,7 @@ bool KMLExportDialog::doOpenExportedFile() const noexcept
 
 void KMLExportDialog::initUi() noexcept
 {
-    Qt::WindowFlags flags = Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
-    setWindowFlags(flags);
+    setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
     d->exportButton = ui->buttonBox->addButton(tr("Export"), QDialogButtonBox::AcceptRole);
 

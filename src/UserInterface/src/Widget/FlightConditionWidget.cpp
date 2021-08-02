@@ -53,9 +53,6 @@ FlightConditionWidget::FlightConditionWidget(QWidget *parent) noexcept :
     ui(std::make_unique<Ui::FlightConditionWidget>())
 {
     ui->setupUi(this);
-    Qt::WindowFlags flags = Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
-    setWindowFlags(flags);
-
     initUi();
 }
 
