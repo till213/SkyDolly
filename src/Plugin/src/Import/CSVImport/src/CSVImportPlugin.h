@@ -73,7 +73,7 @@ public:
         PluginBase::restoreSettings(pluginUuid);
     }
 
-    virtual bool importData(FlightService &flightService) const noexcept override;
+    virtual bool importData(FlightService &flightService) noexcept override;
 
 private:
     std::unique_ptr<CSVImportPluginPrivate> d;

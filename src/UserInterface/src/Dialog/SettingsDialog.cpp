@@ -80,8 +80,7 @@ void SettingsDialog::hideEvent(QHideEvent *event) noexcept
 
 void SettingsDialog::initUi() noexcept
 {
-    Qt::WindowFlags flags = Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
-    setWindowFlags(flags);
+    setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
     // SkyConnect plugin (flight simulator)
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();

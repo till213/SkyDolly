@@ -89,8 +89,7 @@ bool KMLImportDialog::isAddToFlightEnabled() const noexcept
 
 void KMLImportDialog::initUi() noexcept
 {
-    Qt::WindowFlags flags = Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
-    setWindowFlags(flags);
+    setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
     d->importButton = ui->buttonBox->addButton(tr("Import"), QDialogButtonBox::AcceptRole);
     Flight &flight = Logbook::getInstance().getCurrentFlight();
