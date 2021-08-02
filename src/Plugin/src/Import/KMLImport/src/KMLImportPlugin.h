@@ -76,6 +76,7 @@ private:
     void readDocument() noexcept;
     void readPlacemark() noexcept;
     void readWaypoint(const QString &name) noexcept;
+    void readTrack() noexcept;
 };
 
 #endif // KMLIMPORTPLUGIN_H
