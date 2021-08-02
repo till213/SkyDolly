@@ -109,8 +109,7 @@ void SimulationVariablesDialog::hideEvent(QHideEvent *event) noexcept
 
 void SimulationVariablesDialog::initUi() noexcept
 {
-    Qt::WindowFlags flags = Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
-    setWindowFlags(flags);
+    setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
     AircraftWidget *aircraftWidget = new AircraftWidget(this);
     ui->simulationVariablesTab->addTab(aircraftWidget, tr("&Aircraft"));
