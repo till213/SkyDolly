@@ -58,6 +58,9 @@ private slots:
 
     void relativePosition_data();
     void relativePosition();
+
+    void headingChange_data();
+    void headingChange();
 };
 
 #endif // SKYMATHTEST_H

@@ -39,9 +39,9 @@
 namespace {
     constexpr int Precision = 2;
     // https://en.wikipedia.org/wiki/Visibility - Fog, mist, haze, and freezing drizzle
-    constexpr int Fog = 1000; // In metres
-    constexpr int Mist = 2000; // In metres
-    constexpr int Haze = 5000; // In metres
+    constexpr int Fog = 1000; // In meters
+    constexpr int Mist = 2000; // In meters
+    constexpr int Haze = 5000; // In meters
 }
 
 class UnitPrivate {
@@ -99,14 +99,14 @@ QString Unit::formatPressureInHPa(double pressure) noexcept
     return d->locale.toString(pressure, 'f', Precision) % " hPa";
 }
 
-QString Unit::formatVisibility(double metres) noexcept
+QString Unit::formatVisibility(double meters) noexcept
 {
     QString visibility;
-    if (metres < Fog) {
+    if (meters < Fog) {
         visibility = QCoreApplication::translate("Unit", "Fog (< 3,300 ft)");
-    } else if (metres < Mist) {
+    } else if (meters < Mist) {
         visibility = QCoreApplication::translate("Unit", "Mist (< 1.2 mi)");
-    } else if (metres < Haze) {
+    } else if (meters < Haze) {
         visibility = QCoreApplication::translate("Unit", "Haze (< 3.1 mi)");
     } else {
         visibility = QCoreApplication::translate("Unit", "Clear (>= 3.1 mi)");

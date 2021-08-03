@@ -180,7 +180,10 @@ void SkyMathTest::fromPosition()
     QFETCH(double, p);
     QFETCH(qint16, expected);
 
+    // Exercise
     qint16 result = SkyMath::fromPosition(p);
+
+    // Verify
     QCOMPARE(result, expected);
 }
 
@@ -200,7 +203,10 @@ void SkyMathTest::toPosition()
     QFETCH(qint16, p16);
     QFETCH(double, expected);
 
+    // Exercise
     double result = SkyMath::toPosition(p16);
+
+    // Verify
     QCOMPARE(result, expected);
 }
 
@@ -220,7 +226,10 @@ void SkyMathTest::fromPercent()
     QFETCH(double, p);
     QFETCH(quint8, expected);
 
+    // Exercise
     quint8 result = SkyMath::fromPercent(p);
+
+    // Verify
     QCOMPARE(result, expected);
 }
 
@@ -239,7 +248,10 @@ void SkyMathTest::toPercent()
     QFETCH(quint8, p8);
     QFETCH(double, expected);
 
+    // Exercise
     double result = SkyMath::toPercent(p8);
+
+    // Verify
     QCOMPARE(result, expected);
 }
 
@@ -277,12 +289,41 @@ void SkyMathTest::relativePosition()
 
     std::pair position(latitude, longitude);
     std::pair expectedDestination(expectedLatitude, expectedLongitude);
+
+    // Exercise
     std::pair destination = SkyMath::relativePosition(position, altitude, bearing, distance);
 
+    // Verify
     const double lat = std::round(destination.first * PrecisionFactor) / PrecisionFactor;
     const double lon = std::round(destination.second * PrecisionFactor) / PrecisionFactor;
     QCOMPARE(lat, expectedDestination.first);
     QCOMPARE(lon, expectedDestination.second);
+}
+
+void SkyMathTest::headingChange_data()
+{
+    QTest::addColumn<double>("currentHeading");
+    QTest::addColumn<double>("targetHeading");
+    QTest::addColumn<double>("expectedHeadingChange");
+
+    QTest::newRow("Left turn by 170") << 270.0 << 100.0 << -170.0;
+    QTest::newRow("Left turn across north") << 5.0 << 355.0 << -10.0;
+    QTest::newRow("Right turn by 5") << 5.0 << 10.0 << 5.0;
+    QTest::newRow("Right turn by 100") << 270.0 << 10.0 << 100.0;
+}
+
+void SkyMathTest::headingChange()
+{
+    // Setup
+    QFETCH(double, currentHeading);
+    QFETCH(double, targetHeading);
+    QFETCH(double, expectedHeadingChange);
+
+    // Exercise
+    const double headingChange = SkyMath::headingChange(currentHeading, targetHeading);
+
+    // Verify
+    QCOMPARE(headingChange, expectedHeadingChange);
 }
 
 QTEST_MAIN(SkyMathTest)
