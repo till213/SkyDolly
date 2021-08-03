@@ -38,6 +38,8 @@
 
 #include "../../../../../Kernel/src/Unit.h"
 #include "../../../../../Kernel/src/Settings.h"
+#include "../../../../../Kernel/src/SkyMath.h"
+#include "../../../../../Kernel/src/Convert.h"
 #include "../../../../../Model/src/SimVar.h"
 #include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
@@ -65,6 +67,17 @@
 #include "KMLImportDialog.h"
 #include "KMLImportPlugin.h"
 
+namespace  {
+    // Estimated landing speed [knots]
+    constexpr double LandingVelocity = 140.0;
+    // Estimated landing pitch [degrees]
+    // Note: negative pitch values means "noise points upwards"
+    constexpr double LandingPitch = -3.0;
+    // Max banking angle [degrees]
+    // https://www.pprune.org/tech-log/377244-a320-321-ap-bank-angle-limits.html
+    constexpr double MaxBank = 25;
+}
+
 class KMLImportPluginPrivate
 {
 public:
@@ -83,6 +96,7 @@ public:
     int currentPositionIndex;
     QDateTime firstDateTime;
     QDateTime currentDateTime;
+    QString flightNumber;
 };
 
 // PUBLIC
@@ -157,6 +171,8 @@ bool KMLImportPlugin::import(const QString &filePath, const AircraftType &aircra
 
         if (!d->xml.hasError()) {
 
+            augmentPositionData();
+
             // Remember import (export) path
             const QString exportPath = QFileInfo(filePath).absolutePath();
             Settings::getInstance().setExportPath(exportPath);
@@ -165,6 +181,7 @@ bool KMLImportPlugin::import(const QString &filePath, const AircraftType &aircra
             info.aircraftType = aircraftType;
             info.startDate = QFileInfo(filePath).birthTime();
             info.endDate = info.startDate.addMSecs(aircraft.getDurationMSec());
+            info.flightNumber = d->flightNumber;
             aircraft.setAircraftInfo(info);
             if (addNewAircraft) {
                 // Sequence starts at 1
@@ -231,6 +248,8 @@ void KMLImportPlugin::readPlacemark() noexcept
         } else if (d->xml.name() == QLatin1String("Point")) {
             readWaypoint(name);
         } else if (d->xml.name() == QLatin1String("Track")) {
+            // The track contains the flight number
+            d->flightNumber = name;
             readTrack();
         } else {
             d->xml.skipCurrentElement();
@@ -325,26 +344,87 @@ void KMLImportPlugin::readTrack() noexcept
                     d->xml.raiseError(tr("Invalid altitude number."));
                 }
                 if (ok) {
-
-
                     Flight &flight = Logbook::getInstance().getCurrentFlight();
                     Position &position = flight.getUserAircraft().getPosition();
                     position[d->currentPositionIndex].latitude = latitude;
                     position[d->currentPositionIndex].longitude = longitude;
                     position[d->currentPositionIndex].altitude = Convert::metersToFeet(altitude);
-                    // TODO Calcualte feet/sec
-                    position[d->currentPositionIndex].velocityBodyZ = 400;
-
-
                     ++d->currentPositionIndex;
                 }
-
 
             } else {
                 d->xml.raiseError(tr("Invalid GPS coordinate."));
             }
         } else {
             d->xml.skipCurrentElement();
+        }
+    }
+}
+
+void KMLImportPlugin::augmentPositionData() noexcept
+{
+    Position &position = Logbook::getInstance().getCurrentFlight().getUserAircraft().getPosition();
+    const int positionCount = position.count();
+    for (int i = 0; i < positionCount; ++i) {
+        if (i < positionCount - 1) {
+
+            PositionData &startPositionData = position[i];
+            const PositionData &endPositionData = position[i + 1];
+            const std::pair<double, double> startPosition(startPositionData.latitude, startPositionData.longitude);
+            const qint64 startTimestamp = startPositionData.timestamp;
+            const std::pair<double, double> endPosition(endPositionData.latitude, endPositionData.longitude);
+            const qint64 endTimestamp = endPositionData.timestamp;
+            const double averageAltitude = Convert::feetToMeters((startPositionData.altitude + endPositionData.altitude) / 2.0);
+
+            const std::pair distanceAndVelocity = SkyMath::distanceAndVelocity(startPosition, startTimestamp, endPosition, endTimestamp, averageAltitude);
+            startPositionData.velocityBodyX = 0.0;
+            startPositionData.velocityBodyY = 0.0;
+            startPositionData.velocityBodyZ = Convert::metersPerSecondToFeetPerSecond(distanceAndVelocity.second);
+
+            const double deltaAltitude = Convert::feetToMeters(endPositionData.altitude - startPositionData.altitude);
+            // SimConnect: positive pitch values "point downward", negative pitch values "upward"
+            // -> so switch the sign
+            startPositionData.pitch = -SkyMath::approximatePitch(distanceAndVelocity.first, deltaAltitude);
+            const double initialBearing = SkyMath::initialBearing(startPosition, endPosition);
+            startPositionData.heading = initialBearing;
+
+            if (i > 0) {
+                // [-180, 180]
+                const double headingChange = SkyMath::headingChange(position[i - 1].heading, startPositionData.heading);
+                // Maximum bank angle: 70
+                // TODO: Fine-tune me (bank angle max. should probably more like 15 degrees or so)
+                // SimConnect: negative values are a "right" turn, positive values a left turn -> switch sign (-70.0)
+                startPositionData.bank = (std::abs(headingChange) / 180.0) * -70.0 * SkyMath::sgn(headingChange);
+            } else {
+                // First point, zero bank angle
+                startPositionData.bank = 0.0;
+            }
+
+        } else if (positionCount > 1){
+
+            // Last point
+            PositionData &lastPositionData = position[i];
+            PositionData &previousPositionData = position[i -1];
+            lastPositionData.velocityBodyX = previousPositionData.velocityBodyX;
+            lastPositionData.velocityBodyY = previousPositionData.velocityBodyY;
+            lastPositionData.velocityBodyZ = Convert::knotsToFeetPerSecond(LandingVelocity);
+
+            // Attitude
+            lastPositionData.pitch = LandingPitch;
+            lastPositionData.bank = 0.0;
+            lastPositionData.heading = previousPositionData.heading;
+
+        } else {
+            // Only one sampled data point ("academic case")
+            PositionData &lastPositionData = position[i];
+            lastPositionData.velocityBodyX = 0.0;
+            lastPositionData.velocityBodyY = 0.0;
+            lastPositionData.velocityBodyZ = 0.0;
+
+            // Attitude
+            lastPositionData.pitch = 0.0;
+            lastPositionData.bank = 0.0;
+            lastPositionData.heading = 0.0;
         }
     }
 }
