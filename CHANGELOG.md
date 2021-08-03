@@ -8,6 +8,9 @@
   * Note that the conversion from true to indicated airspeed is currently done with a "rule of thumb" only
   * https://www.pilotmall.com/blogs/news/how-to-calculate-true-airspeed-and-what-it-is-guide
   * Depending on the altitude and especially pressure there might still be a substantial difference to the actual indicated airspeed
+- Export
+  * Illegal file path characters are replaced by _ in the initially suggested file path
+  * KML export: exported character data (title, description) is properly enclosed in a CDATA tag
 
 ## 0.8.3
 
