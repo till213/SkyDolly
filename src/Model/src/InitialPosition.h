@@ -68,7 +68,7 @@ public:
         pitch = positionData.pitch;
         bank = positionData.bank;
         heading = positionData.heading;
-        const double trueAirspeed = Convert::feetPerSecondsToKnots(positionData.velocityBodyZ);
+        const double trueAirspeed = Convert::feetPerSecondToKnots(positionData.velocityBodyZ);
         indicatedAirspeed = qRound(Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude));
     }
 
