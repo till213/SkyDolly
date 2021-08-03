@@ -331,7 +331,7 @@ void KMLImportPlugin::readTrack() noexcept
                     Position &position = flight.getUserAircraft().getPosition();
                     position[d->currentPositionIndex].latitude = latitude;
                     position[d->currentPositionIndex].longitude = longitude;
-                    position[d->currentPositionIndex].altitude = altitude;
+                    position[d->currentPositionIndex].altitude = Convert::metersToFeet(altitude);
                     // TODO Calcualte feet/sec
                     position[d->currentPositionIndex].velocityBodyZ = 400;
 
