@@ -195,7 +195,7 @@ bool KMLExportPlugin::exportHeader(QIODevice &io) const noexcept
 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 "<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\" xmlns:kml=\"http://www.opengis.net/kml/2.2\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n"
 "  <Document>\n"
-"    <name>" % d->flight.getTitle() % "</name>\n";
+"    <name><![CDATA[" % d->flight.getTitle() % "]]></name>\n";
 
     return io.write(header.toUtf8());
 }
@@ -363,8 +363,8 @@ inline bool KMLExportPlugin::exportPlacemark(QIODevice &io, KMLStyleExport::Icon
 {
     const QString placemark =
 "    <Placemark>\n"
-"      <name>" % name % "</name>\n"
-"      <description>" % description % "</description>\n"
+"      <name><![CDATA[" % name % "]]></name>\n"
+"      <description><![CDATA[" % description % "]]></description>\n"
 "      <LookAt>\n"
 "        <longitude>" % toString(longitude) % "</longitude>\n"
 "        <latitude>" % toString(latitude) % "</latitude>\n"
