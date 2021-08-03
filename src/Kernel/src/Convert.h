@@ -37,15 +37,27 @@ class KERNEL_API Convert
 public:
 
     /*!
-     * Converts the \c feet to metres.
+     * Converts the \c feet to meters.
      *
      * https://www.metric-conversions.org/length/feet-to-meters.htm
      *
-     * \return the \c feet converted to metres
+     * \return the \c feet converted to meters
      */
     static inline double feetToMeters(double feet) noexcept
     {
         return feet / 3.2808;
+    }
+
+    /*!
+     * Converts the \c meters to feet.
+     *
+     * https://www.metric-conversions.org/length/feet-to-meters.htm
+     *
+     * \return the \c meters converted to feet
+     */
+    static inline double metersToFeet(double meters) noexcept
+    {
+        return meters * 3.2808;
     }
 
     static inline double feetPerSecondsToKnots(double feetPerSeconds) noexcept
