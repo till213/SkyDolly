@@ -45,6 +45,7 @@
 #include "../../../../../Model/src/SimVar.h"
 #include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
+#include "../../../../../Model/src/FlightCondition.h"
 #include "../../../../../Model/src/Aircraft.h"
 #include "../../../../../Model/src/Position.h"
 #include "../../../../../Model/src/PositionData.h"
@@ -92,10 +93,11 @@ public:
     std::unique_ptr<AircraftService> aircraftService;
     QXmlStreamReader xml;
     Unit unit;
+    AircraftType aircraftType;
     bool addToCurrentFlight;
     qint64 currentWaypointTimestamp;
-    QDateTime firstDateTime;
-    QDateTime currentDateTime;
+    QDateTime firstDateTimeUtc;
+    QDateTime currentDateTimeUtc;
     QString flightNumber;
 };
 
@@ -122,11 +124,11 @@ bool KMLImportPlugin::importData(FlightService &flightService) noexcept
     std::unique_ptr<KMLImportDialog> kmlImportDialog = std::make_unique<KMLImportDialog>(getParentWidget());
     const int choice = kmlImportDialog->exec();
     if (choice == QDialog::Accepted) {
-        AircraftType aircraftType;
-        ok = kmlImportDialog->getSelectedAircraftType(aircraftType);
-        d->addToCurrentFlight = kmlImportDialog->isAddToFlightEnabled();
+
+        ok = kmlImportDialog->getSelectedAircraftType(d->aircraftType);
         if (ok) {
-            ok = import(kmlImportDialog->getSelectedFilePath(), aircraftType, flightService);
+            d->addToCurrentFlight = kmlImportDialog->isAddToFlightEnabled();
+            ok = import(kmlImportDialog->getSelectedFilePath(), flightService);
             if (ok && d->addToCurrentFlight) {
                 std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
                 if (skyConnect) {
@@ -142,7 +144,7 @@ bool KMLImportPlugin::importData(FlightService &flightService) noexcept
 
 // PRIVATE
 
-bool KMLImportPlugin::import(const QString &filePath, const AircraftType &aircraftType, FlightService &flightService) noexcept
+bool KMLImportPlugin::import(const QString &filePath, FlightService &flightService) noexcept
 {
     QFile file(filePath);
     bool ok = file.open(QIODevice::ReadOnly);
@@ -155,8 +157,6 @@ bool KMLImportPlugin::import(const QString &filePath, const AircraftType &aircra
         const int aircraftCount = flight.count();
         const bool addNewAircraft = d->addToCurrentFlight && (aircraftCount > 1 || flight.getUserAircraft().hasRecording());
         Aircraft &aircraft = addNewAircraft ? flight.addUserAircraft() : flight.getUserAircraft();
-
-
         d->xml.setDevice(&file);
         if (d->xml.readNextStartElement()) {
 #ifdef DEBUG
@@ -172,28 +172,25 @@ bool KMLImportPlugin::import(const QString &filePath, const AircraftType &aircra
         if (!d->xml.hasError()) {
 
             augmentPositionData();
+            updateAircraftInfo();
 
             // Remember import (export) path
             const QString exportPath = QFileInfo(filePath).absolutePath();
             Settings::getInstance().setExportPath(exportPath);
-
-            AircraftInfo info(aircraft.getId());
-            info.aircraftType = aircraftType;
-            info.startDate = QFileInfo(filePath).birthTime();
-            info.endDate = info.startDate.addMSecs(aircraft.getDurationMSec());
-            info.flightNumber = d->flightNumber;
-            aircraft.setAircraftInfo(info);
             if (addNewAircraft) {
                 // Sequence starts at 1
                 const int newAircraftCount = flight.count();
                 ok = d->aircraftService->store(flight.getId(), newAircraftCount, flight[newAircraftCount - 1]);
             } else {
                 flight.setDescription(tr("Aircraft imported on %1 from file: %2").arg(d->unit.formatDateTime(QDateTime::currentDateTime()), filePath));
+                flight.setCreationDate(QFileInfo(filePath).birthTime());
+                updateFlightCondition();
                 ok = flightService.store(flight);
             }
         } else {
-
-            qDebug("XML Error: %s", qPrintable(d->xml.errorString()));
+#ifdef DEBUG
+            qDebug("KMLImportPlugin::import: XML error: %s", qPrintable(d->xml.errorString()));
+#endif
             ok = false;
         }
     }
@@ -245,6 +242,10 @@ void KMLImportPlugin::readPlacemark() noexcept
 #endif
         if (d->xml.name() == QLatin1String("name")) {
             name = d->xml.readElementText();
+            if (name.endsWith(" Airport")) {
+                // Extract the 4 letter ICAO code
+                name = name.left(4);
+            }
         } else if (d->xml.name() == QLatin1String("Point")) {
             readWaypoint(name);
         } else if (d->xml.name() == QLatin1String("Track")) {
@@ -257,7 +258,7 @@ void KMLImportPlugin::readPlacemark() noexcept
     }
 }
 
-void KMLImportPlugin::readWaypoint(const QString &name) noexcept
+void KMLImportPlugin::readWaypoint(const QString &icaoOrName) noexcept
 {
     bool ok;
     while (d->xml.readNextStartElement()) {
@@ -281,7 +282,7 @@ void KMLImportPlugin::readWaypoint(const QString &name) noexcept
                 if (!ok) {
                     d->xml.raiseError(tr("Invalid altitude number."));
                 }
-                waypoint.identifier = name;
+                waypoint.identifier = icaoOrName;
                 waypoint.timestamp = d->currentWaypointTimestamp;
                 // The actual timestamps of the waypoints are later updated
                 // with the flight duration, once the entire gx:Track data
@@ -303,9 +304,8 @@ void KMLImportPlugin::readTrack() noexcept
 {
     // Timestamp (msec), latitude (degrees), longitude (degrees), altitude (feet)
     typedef std::tuple<qint64, double, double, double> TrackItem;
-    // The track data may contain data with identical timestamps (granularity of
-    // timestamps is one minute only), so we first read all track data into
-    // this vector and only then "upsert" the position data
+    // The track data may contain data with identical timestamps, so we first read
+    // all track data into this vector and only then "upsert" the position data
     std::vector<TrackItem> trackData;
 
     bool ok = true;
@@ -316,14 +316,14 @@ void KMLImportPlugin::readTrack() noexcept
 #endif
         if (d->xml.name() == QLatin1String("when")) {
             const QString dateTimeText = d->xml.readElementText();
-            if (d->firstDateTime.isNull()) {
-                d->firstDateTime = QDateTime::fromString(dateTimeText, Qt::ISODate);
-                d->currentDateTime = d->firstDateTime;
+            if (d->firstDateTimeUtc.isNull()) {
+                d->firstDateTimeUtc = QDateTime::fromString(dateTimeText, Qt::ISODate);
+                d->currentDateTimeUtc = d->firstDateTimeUtc;
             } else {
-                d->currentDateTime = QDateTime::fromString(dateTimeText, Qt::ISODate);
+                d->currentDateTimeUtc = QDateTime::fromString(dateTimeText, Qt::ISODate);
             }
-            if (d->currentDateTime.isValid()) {
-                const qint64 timestamp = d->firstDateTime.msecsTo(d->currentDateTime);
+            if (d->currentDateTimeUtc.isValid()) {
+                const qint64 timestamp = d->firstDateTimeUtc.msecsTo(d->currentDateTimeUtc);
                 TrackItem trackItem = std::make_tuple(timestamp, 0.0, 0.0, 0.0);
                 trackData.push_back(std::move(trackItem));
             } else {
@@ -373,6 +373,60 @@ void KMLImportPlugin::readTrack() noexcept
 
         position.upsert(std::move(positionData));
     }
+
+    // Set timezone
+    d->firstDateTimeUtc.setTimeZone(QTimeZone::utc());
+    d->currentDateTimeUtc.setTimeZone(QTimeZone::utc());
+}
+
+void KMLImportPlugin::updateFlightCondition() noexcept
+{
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    FlightCondition flightCondition;
+
+    flightCondition.startLocalTime = d->firstDateTimeUtc.toLocalTime();
+    flightCondition.startZuluTime = d->firstDateTimeUtc;
+    flightCondition.endLocalTime = d->currentDateTimeUtc.toLocalTime();
+    flightCondition.endZuluTime = d->currentDateTimeUtc;
+
+    flight.setFlightCondition(flightCondition);
+
+}
+
+void KMLImportPlugin::updateAircraftInfo() noexcept
+{
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    Aircraft &aircraft = flight.getUserAircraft();
+    AircraftInfo aircraftInfo(aircraft.getId());
+    aircraftInfo.aircraftType = d->aircraftType;
+
+    aircraftInfo.startDate = d->firstDateTimeUtc.toLocalTime();
+    aircraftInfo.endDate = d->currentDateTimeUtc.toLocalTime();
+    int positionCount = aircraft.getPosition().count();
+    if (positionCount > 0) {
+        const PositionData &firstPositionData = aircraft.getPosition().getFirst();
+        aircraftInfo.initialAirspeed = Convert::feetPerSecondToKnots(firstPositionData.velocityBodyZ);
+
+        int waypointCount = aircraft.getFlightPlan().count();
+        if (waypointCount > 0) {
+            Waypoint &departure = aircraft.getFlightPlan()[0];
+            departure.altitude = firstPositionData.altitude;
+            departure.localTime = d->firstDateTimeUtc.toLocalTime();
+            departure.zuluTime = d->firstDateTimeUtc;
+
+            if (waypointCount > 1) {
+                const PositionData &lastPositionData = aircraft.getPosition().getLast();
+                Waypoint &arrival = aircraft.getFlightPlan()[1];
+                arrival.altitude = lastPositionData.altitude;
+                arrival.localTime = d->currentDateTimeUtc.toLocalTime();
+                arrival.zuluTime = d->currentDateTimeUtc;
+            }
+        }
+    } else {
+        aircraftInfo.initialAirspeed = 0.0;
+    }
+    aircraftInfo.flightNumber = d->flightNumber;
+    aircraft.setAircraftInfo(aircraftInfo);
 }
 
 void KMLImportPlugin::augmentPositionData() noexcept
