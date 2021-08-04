@@ -84,20 +84,18 @@ bool AircraftService::deleteByIndex(int index) noexcept
     // Remove AI object
     Flight &flight = Logbook::getInstance().getCurrentFlight();
 
+    const bool removeUserAircraft = flight.getUserAircraftIndex() == index;
     Aircraft &aircraft = flight[index];
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         skyConnect->get().destroyAIObject(aircraft);
     }
     const qint64 aircraftId = flight.deleteAircraftByIndex(index);
-    if (skyConnect) {
-        const bool userAircraftRemoved = flight.getUserAircraftIndex() == index;
-        if (userAircraftRemoved) {
-            skyConnect->get().updateUserAircraft();
-        }
-    }
     bool ok;
     if (aircraftId != Aircraft::InvalidId) {
+        if (skyConnect && removeUserAircraft) {
+            skyConnect->get().updateUserAircraft();
+        }
         ok = QSqlDatabase::database().transaction();
         if (ok) {
             ok = d->aircraftDao->deleteById(aircraftId);

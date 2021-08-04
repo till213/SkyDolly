@@ -11,6 +11,7 @@
 - Export
   * Illegal file path characters are replaced by _ in the initially suggested file path
   * KML export: exported character data (title, description) is properly enclosed in a CDATA tag
+- Properly update AI aircrafts when deleting the user aircraft during replay
 
 ## 0.8.3
 
