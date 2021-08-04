@@ -419,8 +419,8 @@ namespace SkyMath {
      * \param targetHeading
      *        the target heading the first heading [0, 360[ [degrees]
      * \return the required heading change [-180, 180] [degrees]; negative values
-     *         correspond to counter-clockwise ("left") roation; positive values
-     *         correspond to clockwise ("right") rotation
+     *         correspond to clockwise ("right") turn; positive values
+     *         correspond to anti-clockwise ("left") turn
      * \sa https://forum.arduino.cc/t/calculating-heading-distance-and-direction/92144/6
      */
     inline double headingChange(double currentHeading, double targetHeading) noexcept
@@ -430,15 +430,15 @@ namespace SkyMath {
             currentHeading += 360.0;
         }
         // Calculate left turn, will allways be in [0, 360[
-        int headingChange = currentHeading - targetHeading;
+        double headingChange = currentHeading - targetHeading;
 
         // Take the smallest turn
-        if (headingChange < 180) {
-            // Left turns are negative
-            headingChange = -headingChange;
+        if (headingChange < 180.0) {
+            // Left turns are positive
+            headingChange = headingChange;
         } else {
-          // Turn right : 360-left degrees
-            headingChange = 360.0 - headingChange;
+          // Right turns are negative: -(360 - headingChange)
+            headingChange = -360.0 + headingChange;
         }
         return headingChange;
     }
