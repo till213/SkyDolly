@@ -81,7 +81,9 @@ private:
 
     void updateFlightCondition() noexcept;
     void updateAircraftInfo() noexcept;
-    void augmentPositionData() noexcept;
+    void augmentAircraftData() noexcept;
+    void augmentWithStartProcedure() noexcept;
+    void augmentWithLandingProcedure() noexcept;
 };
 
 #endif // KMLIMPORTPLUGIN_H
