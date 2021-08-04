@@ -23,6 +23,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <tuple>
+#include <vector>
 
 #include <QIODevice>
 // Implements the % operator for string concatenation
@@ -75,7 +77,7 @@ namespace  {
     constexpr double LandingPitch = -3.0;
     // Max banking angle [degrees]
     // https://www.pprune.org/tech-log/377244-a320-321-ap-bank-angle-limits.html
-    constexpr double MaxBank = 25;
+    constexpr double MaxBankAngle = 25;
 }
 
 class KMLImportPluginPrivate
@@ -84,8 +86,7 @@ public:
     KMLImportPluginPrivate()
         : aircraftService(std::make_unique<AircraftService>()),
           addToCurrentFlight(false),
-          currentWaypointTimestamp(0),
-          currentPositionIndex(0)
+          currentWaypointTimestamp(0)
     {}
 
     std::unique_ptr<AircraftService> aircraftService;
@@ -93,7 +94,6 @@ public:
     Unit unit;
     bool addToCurrentFlight;
     qint64 currentWaypointTimestamp;
-    int currentPositionIndex;
     QDateTime firstDateTime;
     QDateTime currentDateTime;
     QString flightNumber;
@@ -301,7 +301,15 @@ void KMLImportPlugin::readWaypoint(const QString &name) noexcept
 
 void KMLImportPlugin::readTrack() noexcept
 {
-    bool ok;
+    // Timestamp (msec), latitude (degrees), longitude (degrees), altitude (feet)
+    typedef std::tuple<qint64, double, double, double> TrackItem;
+    // The track data may contain data with identical timestamps (granularity of
+    // timestamps is one minute only), so we first read all track data into
+    // this vector and only then "upsert" the position data
+    std::vector<TrackItem> trackData;
+
+    bool ok = true;
+    int currentTrackDataIndex = 0;
     while (d->xml.readNextStartElement()) {
 #ifdef DEBUG
         qDebug("KMLImportPlugin::readWaypoint: XML start element: %s", qPrintable(d->xml.name().toString()));
@@ -310,19 +318,14 @@ void KMLImportPlugin::readTrack() noexcept
             const QString dateTimeText = d->xml.readElementText();
             if (d->firstDateTime.isNull()) {
                 d->firstDateTime = QDateTime::fromString(dateTimeText, Qt::ISODate);
-                d->firstDateTime.setTimeZone(QTimeZone::utc());
                 d->currentDateTime = d->firstDateTime;
             } else {
                 d->currentDateTime = QDateTime::fromString(dateTimeText, Qt::ISODate);
-                d->currentDateTime.setTimeZone(QTimeZone::utc());
             }
             if (d->currentDateTime.isValid()) {
                 const qint64 timestamp = d->firstDateTime.msecsTo(d->currentDateTime);
-                PositionData positionData;
-                positionData.timestamp = timestamp;
-                Flight &flight = Logbook::getInstance().getCurrentFlight();
-                Position &position = flight.getUserAircraft().getPosition();
-                position.upsert(std::move(positionData));
+                TrackItem trackItem = std::make_tuple(timestamp, 0.0, 0.0, 0.0);
+                trackData.push_back(std::move(trackItem));
             } else {
                 d->xml.raiseError(tr("Invalid timestamp."));
             }
@@ -344,12 +347,10 @@ void KMLImportPlugin::readTrack() noexcept
                     d->xml.raiseError(tr("Invalid altitude number."));
                 }
                 if (ok) {
-                    Flight &flight = Logbook::getInstance().getCurrentFlight();
-                    Position &position = flight.getUserAircraft().getPosition();
-                    position[d->currentPositionIndex].latitude = latitude;
-                    position[d->currentPositionIndex].longitude = longitude;
-                    position[d->currentPositionIndex].altitude = Convert::metersToFeet(altitude);
-                    ++d->currentPositionIndex;
+                    std::get<1>(trackData[currentTrackDataIndex]) = latitude;
+                    std::get<2>(trackData[currentTrackDataIndex]) = longitude;
+                    std::get<3>(trackData[currentTrackDataIndex]) = Convert::metersToFeet(altitude);
+                    ++currentTrackDataIndex;
                 }
 
             } else {
@@ -358,6 +359,19 @@ void KMLImportPlugin::readTrack() noexcept
         } else {
             d->xml.skipCurrentElement();
         }
+    }
+
+    // Now "upsert" the position data, taking duplicate timestamps into account
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    Position &position = flight.getUserAircraft().getPosition();
+    for (const TrackItem &trackItem : trackData) {
+        PositionData positionData;
+        positionData.timestamp = std::get<0>(trackItem);
+        positionData.latitude = std::get<1>(trackItem);
+        positionData.longitude = std::get<2>(trackItem);
+        positionData.altitude = std::get<3>(trackItem);
+
+        position.upsert(std::move(positionData));
     }
 }
 
@@ -391,10 +405,9 @@ void KMLImportPlugin::augmentPositionData() noexcept
             if (i > 0) {
                 // [-180, 180]
                 const double headingChange = SkyMath::headingChange(position[i - 1].heading, startPositionData.heading);
-                // Maximum bank angle: 70
-                // TODO: Fine-tune me (bank angle max. should probably more like 15 degrees or so)
-                // SimConnect: negative values are a "right" turn, positive values a left turn -> switch sign (-70.0)
-                startPositionData.bank = (std::abs(headingChange) / 180.0) * -70.0 * SkyMath::sgn(headingChange);
+                // We go into maximum bank angle with a heading change of 45 degrees
+                // SimConnect: negative values are a "right" turn, positive values a left turn
+                startPositionData.bank = qMin((std::abs(headingChange) / 45.0) * MaxBankAngle, MaxBankAngle) * SkyMath::sgn(headingChange);
             } else {
                 // First point, zero bank angle
                 startPositionData.bank = 0.0;
