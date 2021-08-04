@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef AIRCRAFTTYPEWIDGET_H
-#define AIRCRAFTTYPEWIDGET_H
+#ifndef AIRCRAFTINFOWIDGET_H
+#define AIRCRAFTINFOWIDGET_H
 
 #include <memory>
 
@@ -32,28 +32,28 @@
 class QShowEvent;
 class QHideEvent;
 
-class AircraftTypeWidgetPrivate;
+class AircraftInfoWidgetPrivate;
 class PositionData;
 
 namespace Ui {
-    class AircraftTypeWidget;
+    class AircraftInfoWidget;
 }
 
-class AircraftTypeWidget : public QWidget
+class AircraftInfoWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit AircraftTypeWidget(QWidget *parent = nullptr) noexcept;
-    virtual ~AircraftTypeWidget() noexcept;
+    explicit AircraftInfoWidget(QWidget *parent = nullptr) noexcept;
+    virtual ~AircraftInfoWidget() noexcept;
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;
     void hideEvent(QHideEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(AircraftTypeWidget)
-    std::unique_ptr<AircraftTypeWidgetPrivate> d;
-    std::unique_ptr<Ui::AircraftTypeWidget> ui;
+    Q_DISABLE_COPY(AircraftInfoWidget)
+    std::unique_ptr<AircraftInfoWidgetPrivate> d;
+    std::unique_ptr<Ui::AircraftInfoWidget> ui;
 
     void initUi() noexcept;
 
@@ -61,4 +61,4 @@ private slots:
     void updateUi() noexcept;
 };
 
-#endif // AIRCRAFTTYPEWIDGET_H
+#endif // AIRCRAFTINFOWIDGET_H
