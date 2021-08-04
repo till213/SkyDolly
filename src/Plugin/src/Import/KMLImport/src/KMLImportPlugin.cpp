@@ -25,6 +25,7 @@
 #include <memory>
 #include <tuple>
 #include <vector>
+#include <algorithm>
 
 #include <QIODevice>
 // Implements the % operator for string concatenation
@@ -171,7 +172,7 @@ bool KMLImportPlugin::import(const QString &filePath, FlightService &flightServi
 
         if (!d->xml.hasError()) {
 
-            augmentPositionData();
+            augmentAircraftData();
             updateAircraftInfo();
 
             // Remember import (export) path
@@ -224,6 +225,9 @@ void KMLImportPlugin::readDocument() noexcept
                 Flight &flight = Logbook::getInstance().getCurrentFlight();
                 const QString name = d->xml.readElementText();
                 flight.setTitle(name);
+            } else {
+                // Flight keeps its existing title (name)
+                d->xml.skipCurrentElement();
             }
         } else if (d->xml.name() == QLatin1String("Placemark")) {
             readPlacemark();
@@ -429,9 +433,10 @@ void KMLImportPlugin::updateAircraftInfo() noexcept
     aircraft.setAircraftInfo(aircraftInfo);
 }
 
-void KMLImportPlugin::augmentPositionData() noexcept
+void KMLImportPlugin::augmentAircraftData() noexcept
 {
-    Position &position = Logbook::getInstance().getCurrentFlight().getUserAircraft().getPosition();
+    Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+    Position &position = aircraft.getPosition();
     const int positionCount = position.count();
     for (int i = 0; i < positionCount; ++i) {
         if (i < positionCount - 1) {
@@ -467,7 +472,7 @@ void KMLImportPlugin::augmentPositionData() noexcept
                 startPositionData.bank = 0.0;
             }
 
-        } else if (positionCount > 1){
+        } else if (positionCount > 1) {
 
             // Last point
             PositionData &lastPositionData = position[i];
@@ -492,6 +497,429 @@ void KMLImportPlugin::augmentPositionData() noexcept
             lastPositionData.pitch = 0.0;
             lastPositionData.bank = 0.0;
             lastPositionData.heading = 0.0;
+        }
+    }
+
+    augmentWithStartProcedure();
+    augmentWithLandingProcedure();
+
+    // In case the flight is very short it is possible that the augmented start- and landing
+    // events overlap and are hence out of order
+    std::sort(aircraft.getEngine().begin(), aircraft.getEngine().end());
+    std::sort(aircraft.getSecondaryFlightControl().begin(), aircraft.getSecondaryFlightControl().end());
+    std::sort(aircraft.getAircraftHandle().begin(), aircraft.getAircraftHandle().end());
+    std::sort(aircraft.getLight().begin(), aircraft.getLight().end());
+}
+
+void KMLImportPlugin::augmentWithStartProcedure() noexcept
+{
+    Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+    const qint64 lastTimestamp = aircraft.getPosition().getLast().timestamp;
+
+    // Engine
+
+    Engine &engine = aircraft.getEngine();
+    EngineData engineData;
+
+    // 0 seconds
+    engineData.timestamp = 0;
+    engineData.electricalMasterBattery1 = true;
+    engineData.electricalMasterBattery2 = true;
+    engineData.electricalMasterBattery3 = true;
+    engineData.electricalMasterBattery4 = true;
+    engineData.generalEngineCombustion1 = true;
+    engineData.generalEngineCombustion2 = true;
+    engineData.generalEngineCombustion3 = true;
+    engineData.generalEngineCombustion4 = true;
+    engineData.throttleLeverPosition1 = SkyMath::fromPosition(1.0);
+    engineData.throttleLeverPosition2 = SkyMath::fromPosition(1.0);
+    engineData.throttleLeverPosition3 = SkyMath::fromPosition(1.0);
+    engineData.throttleLeverPosition4 = SkyMath::fromPosition(1.0);
+    engineData.propellerLeverPosition1 = SkyMath::fromPosition(1.0);
+    engineData.propellerLeverPosition2 = SkyMath::fromPosition(1.0);
+    engineData.propellerLeverPosition3 = SkyMath::fromPosition(1.0);
+    engineData.propellerLeverPosition4 = SkyMath::fromPosition(1.0);
+    engineData.mixtureLeverPosition1 = SkyMath::fromPosition(1.0);
+    engineData.mixtureLeverPosition2 = SkyMath::fromPosition(1.0);
+    engineData.mixtureLeverPosition3 = SkyMath::fromPosition(1.0);
+    engineData.mixtureLeverPosition4 = SkyMath::fromPosition(1.0);
+    engine.upsert(engineData);
+
+    // 2 minutes
+    engineData.timestamp = qMin(2ll * 60ll * 1000ll, lastTimestamp);
+    engineData.electricalMasterBattery1 = true;
+    engineData.electricalMasterBattery2 = true;
+    engineData.electricalMasterBattery3 = true;
+    engineData.electricalMasterBattery4 = true;
+    engineData.generalEngineCombustion1 = true;
+    engineData.generalEngineCombustion2 = true;
+    engineData.generalEngineCombustion3 = true;
+    engineData.generalEngineCombustion4 = true;
+    // In the (stock) A320neo 86% correspond to "climb" throttle detent
+    engineData.throttleLeverPosition1 = SkyMath::fromPosition(0.86);
+    engineData.throttleLeverPosition2 = SkyMath::fromPosition(0.86);
+    engineData.throttleLeverPosition3 = SkyMath::fromPosition(0.86);
+    engineData.throttleLeverPosition4 = SkyMath::fromPosition(0.86);
+    // Reduce propeller power to 80%
+    engineData.propellerLeverPosition1 = SkyMath::fromPosition(0.80);
+    engineData.propellerLeverPosition2 = SkyMath::fromPosition(0.80);
+    engineData.propellerLeverPosition3 = SkyMath::fromPosition(0.80);
+    engineData.propellerLeverPosition4 = SkyMath::fromPosition(0.80);
+    // Mixture down to 85%
+    engineData.mixtureLeverPosition1 = SkyMath::fromPosition(0.85);
+    engineData.mixtureLeverPosition2 = SkyMath::fromPosition(0.85);
+    engineData.mixtureLeverPosition3 = SkyMath::fromPosition(0.85);
+    engineData.mixtureLeverPosition4 = SkyMath::fromPosition(0.85);
+    engine.upsert(engineData);
+
+    // 5 minutes
+    engineData.timestamp = qMin(5ll * 60ll * 1000ll, lastTimestamp);
+    engineData.electricalMasterBattery1 = true;
+    engineData.electricalMasterBattery2 = true;
+    engineData.electricalMasterBattery3 = true;
+    engineData.electricalMasterBattery4 = true;
+    engineData.generalEngineCombustion1 = true;
+    engineData.generalEngineCombustion2 = true;
+    engineData.generalEngineCombustion3 = true;
+    engineData.generalEngineCombustion4 = true;
+    engineData.throttleLeverPosition1 = SkyMath::fromPosition(0.86);
+    engineData.throttleLeverPosition2 = SkyMath::fromPosition(0.86);
+    engineData.throttleLeverPosition3 = SkyMath::fromPosition(0.86);
+    engineData.throttleLeverPosition4 = SkyMath::fromPosition(0.86);
+    engineData.propellerLeverPosition1 = SkyMath::fromPosition(0.80);
+    engineData.propellerLeverPosition2 = SkyMath::fromPosition(0.80);
+    engineData.propellerLeverPosition3 = SkyMath::fromPosition(0.80);
+    engineData.propellerLeverPosition4 = SkyMath::fromPosition(0.80);
+    // Mixture down to 75%
+    engineData.mixtureLeverPosition1 = SkyMath::fromPosition(0.75);
+    engineData.mixtureLeverPosition2 = SkyMath::fromPosition(0.75);
+    engineData.mixtureLeverPosition3 = SkyMath::fromPosition(0.75);
+    engineData.mixtureLeverPosition4 = SkyMath::fromPosition(0.75);
+    engine.upsert(engineData);
+
+    // Secondary flight controls
+
+    SecondaryFlightControl &secondaryFlightControl = aircraft.getSecondaryFlightControl();
+    SecondaryFlightControlData secondaryFlightControlData;
+
+    // 0 seconds
+    secondaryFlightControlData.timestamp = 0;
+    // Flaps
+    secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(66.6);
+    secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(66.6);
+    secondaryFlightControlData.trailingEdgeFlapsLeftPercent = SkyMath::fromPercent(28.6);
+    secondaryFlightControlData.trailingEdgeFlapsRightPercent = SkyMath::fromPercent(28.6);
+    secondaryFlightControlData.flapsHandleIndex = 1;
+    secondaryFlightControlData.spoilersHandlePosition = 0;
+    secondaryFlightControl.upsert(secondaryFlightControlData);
+
+    // 30 seconds
+    secondaryFlightControlData.timestamp = qMin(30ll * 1000ll, lastTimestamp);
+    // Retract flaps
+    secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(0);
+    secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(0);
+    secondaryFlightControlData.trailingEdgeFlapsLeftPercent = SkyMath::fromPercent(0);
+    secondaryFlightControlData.trailingEdgeFlapsRightPercent = SkyMath::fromPercent(0);
+    secondaryFlightControlData.flapsHandleIndex = 0;
+    secondaryFlightControlData.spoilersHandlePosition = 0;
+    secondaryFlightControl.upsert(secondaryFlightControlData);
+
+    // Handles & gear
+
+    AircraftHandle &aircraftHandle = aircraft.getAircraftHandle();
+    AircraftHandleData handleData;
+
+    // 0 seconds
+    handleData.timestamp = 0;
+    // Gear down
+    handleData.gearHandlePosition = true;
+    aircraftHandle.upsert(handleData);
+
+    // 5 seconds
+    handleData.timestamp = qMin(5ll * 1000ll, lastTimestamp);
+    // Gear up
+    handleData.gearHandlePosition = false;
+    aircraftHandle.upsert(handleData);
+
+    // Lights
+
+    Light &light = aircraft.getLight();
+    LightData lightData;
+
+    // 0 seconds
+    lightData.timestamp = 0;
+    lightData.lightStates = SimType::LightState::Navigation |
+                            SimType::LightState::Beacon |
+                            SimType::LightState::Landing |
+                            SimType::LightState::Strobe |
+                            SimType::LightState::Panel |
+                            SimType::LightState::Recognition |
+                            SimType::LightState::Wing |
+                            SimType::LightState::Logo;
+    light.upsert(lightData);
+
+    // 3 minutes
+    lightData.timestamp = qMin(3ll * 60ll * 1000ll, lastTimestamp);
+    lightData.lightStates = SimType::LightState::Navigation |
+                            SimType::LightState::Beacon |
+                            SimType::LightState::Strobe |
+                            SimType::LightState::Panel |
+                            SimType::LightState::Recognition |
+                            SimType::LightState::Wing |
+                            SimType::LightState::Logo;
+    light.upsert(lightData);
+
+    // 4 minutes
+    lightData.timestamp = qMin(4ll * 60ll * 1000ll, lastTimestamp);
+    lightData.lightStates = SimType::LightState::Navigation |
+                            SimType::LightState::Beacon |
+                            SimType::LightState::Strobe |
+                            SimType::LightState::Panel |
+                            SimType::LightState::Recognition |
+                            SimType::LightState::Logo;
+    light.upsert(lightData);
+}
+
+void KMLImportPlugin::augmentWithLandingProcedure() noexcept
+{
+    Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+    Position &position = aircraft.getPosition();
+    const qint64 lastTimestamp = position.getLast().timestamp;
+
+    // Engine
+
+    Engine &engine = aircraft.getEngine();
+    EngineData engineData;
+
+    // t minus 5 minutes
+    engineData.timestamp = qMax(lastTimestamp - 5 * 60 * 1000, 0ll);
+    engineData.electricalMasterBattery1 = true;
+    engineData.electricalMasterBattery2 = true;
+    engineData.electricalMasterBattery3 = true;
+    engineData.electricalMasterBattery4 = true;
+    engineData.generalEngineCombustion1 = true;
+    engineData.generalEngineCombustion2 = true;
+    engineData.generalEngineCombustion3 = true;
+    engineData.generalEngineCombustion4 = true;
+    engineData.throttleLeverPosition1 = SkyMath::fromPosition(0.86);
+    engineData.throttleLeverPosition2 = SkyMath::fromPosition(0.86);
+    engineData.throttleLeverPosition3 = SkyMath::fromPosition(0.86);
+    engineData.throttleLeverPosition4 = SkyMath::fromPosition(0.86);
+    engineData.propellerLeverPosition1 = SkyMath::fromPosition(0.60);
+    engineData.propellerLeverPosition2 = SkyMath::fromPosition(0.60);
+    engineData.propellerLeverPosition3 = SkyMath::fromPosition(0.60);
+    engineData.propellerLeverPosition4 = SkyMath::fromPosition(0.60);
+    // Mixture up to 85%
+    engineData.mixtureLeverPosition1 = SkyMath::fromPosition(0.85);
+    engineData.mixtureLeverPosition2 = SkyMath::fromPosition(0.85);
+    engineData.mixtureLeverPosition3 = SkyMath::fromPosition(0.85);
+    engineData.mixtureLeverPosition4 = SkyMath::fromPosition(0.85);
+    engine.upsert(engineData);
+
+    // t minus 2 minutes
+    engineData.timestamp = qMax(lastTimestamp - 2 * 60 * 1000, 0ll);
+    engineData.electricalMasterBattery1 = true;
+    engineData.electricalMasterBattery2 = true;
+    engineData.electricalMasterBattery3 = true;
+    engineData.electricalMasterBattery4 = true;
+    engineData.generalEngineCombustion1 = true;
+    engineData.generalEngineCombustion2 = true;
+    engineData.generalEngineCombustion3 = true;
+    engineData.generalEngineCombustion4 = true;
+    engineData.throttleLeverPosition1 = SkyMath::fromPosition(0.86);
+    engineData.throttleLeverPosition2 = SkyMath::fromPosition(0.86);
+    engineData.throttleLeverPosition3 = SkyMath::fromPosition(0.86);
+    engineData.throttleLeverPosition4 = SkyMath::fromPosition(0.86);
+    // Propeller down to 40%
+    engineData.propellerLeverPosition1 = SkyMath::fromPosition(0.40);
+    engineData.propellerLeverPosition2 = SkyMath::fromPosition(0.40);
+    engineData.propellerLeverPosition3 = SkyMath::fromPosition(0.40);
+    engineData.propellerLeverPosition4 = SkyMath::fromPosition(0.40);
+    // Mixture up to 100%
+    engineData.mixtureLeverPosition1 = SkyMath::fromPosition(1.0);
+    engineData.mixtureLeverPosition2 = SkyMath::fromPosition(1.0);
+    engineData.mixtureLeverPosition3 = SkyMath::fromPosition(1.0);
+    engineData.mixtureLeverPosition4 = SkyMath::fromPosition(1.0);
+    engine.upsert(engineData);
+
+    // At end
+    engineData.timestamp = lastTimestamp;
+    engineData.electricalMasterBattery1 = true;
+    engineData.electricalMasterBattery2 = true;
+    engineData.electricalMasterBattery3 = true;
+    engineData.electricalMasterBattery4 = true;
+    engineData.generalEngineCombustion1 = true;
+    engineData.generalEngineCombustion2 = true;
+    engineData.generalEngineCombustion3 = true;
+    engineData.generalEngineCombustion4 = true;
+    // Reverse thrust (-20%)
+    engineData.throttleLeverPosition1 = SkyMath::fromPosition(-0.2);
+    engineData.throttleLeverPosition2 = SkyMath::fromPosition(-0.2);
+    engineData.throttleLeverPosition3 = SkyMath::fromPosition(-0.2);
+    engineData.throttleLeverPosition4 = SkyMath::fromPosition(-0.2);
+    // Propeller down to 0%
+    engineData.propellerLeverPosition1 = SkyMath::fromPosition(0.0);
+    engineData.propellerLeverPosition2 = SkyMath::fromPosition(0.0);
+    engineData.propellerLeverPosition3 = SkyMath::fromPosition(0.0);
+    engineData.propellerLeverPosition4 = SkyMath::fromPosition(0.0);
+    engineData.mixtureLeverPosition1 = SkyMath::fromPosition(1.0);
+    engineData.mixtureLeverPosition2 = SkyMath::fromPosition(1.0);
+    engineData.mixtureLeverPosition3 = SkyMath::fromPosition(1.0);
+    engineData.mixtureLeverPosition4 = SkyMath::fromPosition(1.0);
+    engine.upsert(engineData);
+
+    // Secondary flight controls
+
+    SecondaryFlightControl &secondaryFlightControl = aircraft.getSecondaryFlightControl();
+    SecondaryFlightControlData secondaryFlightControlData;
+
+    // t minus 10 minutes
+    secondaryFlightControlData.timestamp = qMax(lastTimestamp - 10 * 60 * 1000, 0ll);
+    // Flaps 0
+    secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(0);
+    secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(0);
+    secondaryFlightControlData.trailingEdgeFlapsLeftPercent = SkyMath::fromPercent(0);
+    secondaryFlightControlData.trailingEdgeFlapsRightPercent = SkyMath::fromPercent(0);
+    secondaryFlightControlData.flapsHandleIndex = 0;
+    // Spoilers 40%
+    secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(20.0);
+    secondaryFlightControl.upsert(secondaryFlightControlData);
+
+    // t minus 8 minutes
+    secondaryFlightControlData.timestamp = qMax(lastTimestamp - 8 * 60 * 1000, 0ll);
+    // Flaps 1
+    secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(66.6);
+    secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(66.6);
+    secondaryFlightControlData.trailingEdgeFlapsLeftPercent = SkyMath::fromPercent(28.6);
+    secondaryFlightControlData.trailingEdgeFlapsRightPercent = SkyMath::fromPercent(28.6);
+    secondaryFlightControlData.flapsHandleIndex = 1;
+    // Spoilers 60%
+    secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(60.0);
+    secondaryFlightControl.upsert(secondaryFlightControlData);
+
+    // t minus 7 minutes
+    secondaryFlightControlData.timestamp = qMax(lastTimestamp - 7 * 60 * 1000, 0ll);
+    // Flaps 2
+    secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(81.57);
+    secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(81.57);
+    secondaryFlightControlData.trailingEdgeFlapsLeftPercent = SkyMath::fromPercent(42.75);
+    secondaryFlightControlData.trailingEdgeFlapsRightPercent = SkyMath::fromPercent(42.75);
+    secondaryFlightControlData.flapsHandleIndex = 2;
+    // Spoilers 60%
+    secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(60.0);
+    secondaryFlightControl.upsert(secondaryFlightControlData);
+
+    // t minus 5 minutes
+    secondaryFlightControlData.timestamp = qMax(lastTimestamp - 5 * 60 * 1000, 0ll);
+    // Flaps 3
+    secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(81.57);
+    secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(81.57);
+    secondaryFlightControlData.trailingEdgeFlapsLeftPercent = SkyMath::fromPercent(57.25);
+    secondaryFlightControlData.trailingEdgeFlapsRightPercent = SkyMath::fromPercent(57.25);
+    secondaryFlightControlData.flapsHandleIndex = 3;
+    // Spoilers 20%
+    secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(20.0);
+    secondaryFlightControl.upsert(secondaryFlightControlData);
+
+    // t minus 4 minutes
+    secondaryFlightControlData.timestamp = qMax(lastTimestamp - 4 * 60 * 1000, 0ll);
+    // Flaps 4
+    secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(100.0);
+    secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(100.0);
+    secondaryFlightControlData.trailingEdgeFlapsLeftPercent = SkyMath::fromPercent(100.0);
+    secondaryFlightControlData.trailingEdgeFlapsRightPercent = SkyMath::fromPercent(100.0);
+    secondaryFlightControlData.flapsHandleIndex = 4;
+    // Spoilers 0%
+    secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(0.0);
+    secondaryFlightControl.upsert(secondaryFlightControlData);
+
+    // t
+    secondaryFlightControlData.timestamp = lastTimestamp;
+    // Flaps 4
+    secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(100.0);
+    secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(100.0);
+    secondaryFlightControlData.trailingEdgeFlapsLeftPercent = SkyMath::fromPercent(100.0);
+    secondaryFlightControlData.trailingEdgeFlapsRightPercent = SkyMath::fromPercent(100.0);
+    secondaryFlightControlData.flapsHandleIndex = 4;
+    // Spoilers 100%
+    secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(100.0);
+    secondaryFlightControl.upsert(secondaryFlightControlData);
+
+    // Handles & gear
+
+    AircraftHandle &aircraftHandle = aircraft.getAircraftHandle();
+    AircraftHandleData handleData;
+
+    // t minus 3 minutes
+    handleData.timestamp = qMax(lastTimestamp - 3 * 60 * 1000, 0ll);
+    // Gear down
+    handleData.gearHandlePosition = true;
+    aircraftHandle.upsert(handleData);
+
+    // Lights
+
+    Light &light = aircraft.getLight();
+    LightData lightData;
+
+    // t minus 8 minutes
+    lightData.timestamp = qMax(lastTimestamp - 8 * 60 * 1000, 0ll);
+    lightData.lightStates = SimType::LightState::Navigation |
+                            SimType::LightState::Beacon |
+                            SimType::LightState::Strobe |
+                            SimType::LightState::Panel |
+                            SimType::LightState::Recognition |
+                            SimType::LightState::Wing |
+                            SimType::LightState::Logo;
+    light.upsert(lightData);
+
+    // t minus 6 minutes
+    lightData.timestamp = qMax(lastTimestamp - 6 * 60 * 1000, 0ll);
+    lightData.lightStates = SimType::LightState::Navigation |
+                            SimType::LightState::Beacon |
+                            SimType::LightState::Landing |
+                            SimType::LightState::Strobe |
+                            SimType::LightState::Panel |
+                            SimType::LightState::Recognition |
+                            SimType::LightState::Wing |
+                            SimType::LightState::Logo;
+    light.upsert(lightData);
+
+    // t minus 4 minutes
+    lightData.timestamp = qMax(lastTimestamp - 4 * 60 * 1000, 0ll);
+    lightData.lightStates = SimType::LightState::Navigation |
+                            SimType::LightState::Beacon |
+                            SimType::LightState::Landing |
+                            SimType::LightState::Taxi |
+                            SimType::LightState::Strobe |
+                            SimType::LightState::Panel |
+                            SimType::LightState::Recognition |
+                            SimType::LightState::Wing |
+                            SimType::LightState::Logo;
+    light.upsert(lightData);
+
+    // Adjust approach pitch for the last 3 minutes
+    // https://forum.aerosoft.com/index.php?/topic/123864-a320-pitch-angle-during-landing/
+    int index = position.count() - 1;
+    if (index >= 0) {
+        // Last sample: flare with nose up 6 degrees
+        PositionData &positionData = position[index];
+        positionData.pitch = -6.0;
+
+        if (index > 0) {
+            // Second to last sample -> adjust pitch to 3 degrees nose up
+            --index;
+            qint64 currentTimeStamp = position[index].timestamp;
+            while (index >= 0 && currentTimeStamp >= lastTimestamp - (3 * 60 * 1000)) {
+                // Nose up 3 degrees
+                PositionData &positionData = position[index];
+                positionData.pitch = -3.0;
+                if (index > 0) {
+                    currentTimeStamp = positionData.timestamp;
+                    --index;
+                } else {
+                    currentTimeStamp = 0;
+                }
+            }
         }
     }
 }
