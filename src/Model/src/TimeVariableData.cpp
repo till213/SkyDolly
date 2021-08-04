@@ -24,9 +24,21 @@
  */
 #include "TimeVariableData.h"
 
+// PUBLIC
+
 TimeVariableData::TimeVariableData() noexcept
     : timestamp(InvalidTime)
 {}
 
 TimeVariableData::~TimeVariableData() noexcept
 {}
+
+bool TimeVariableData::operator>=(const TimeVariableData &other) noexcept
+{
+    return timestamp >= other.timestamp;
+}
+
+bool TimeVariableData::operator<(const TimeVariableData &other) noexcept
+{
+    return !(*this >= other);
+}
