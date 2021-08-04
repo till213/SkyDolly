@@ -33,6 +33,7 @@
 #include "../../../ImportIntf.h"
 #include "../../../PluginBase.h"
 
+class AircraftType;
 class KMLImportPluginPrivate;
 
 class KMLImportPlugin : public PluginBase, public ImportIntf
@@ -70,14 +71,16 @@ private:
     std::unique_ptr<KMLImportPluginPrivate> d;
 
     bool getAircraftType(const QString &type, AircraftType &aircraftType) noexcept;
-    bool import(const QString &filePath, const AircraftType &aircraftType, FlightService &flightService) noexcept;
+    bool import(const QString &filePath, FlightService &flightService) noexcept;
 
     void readKML() noexcept;
     void readDocument() noexcept;
     void readPlacemark() noexcept;
-    void readWaypoint(const QString &name) noexcept;
+    void readWaypoint(const QString &icaoOrName) noexcept;
     void readTrack() noexcept;
 
+    void updateFlightCondition() noexcept;
+    void updateAircraftInfo() noexcept;
     void augmentPositionData() noexcept;
 };
 
