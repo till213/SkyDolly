@@ -47,7 +47,7 @@ struct MODEL_API AircraftInfo
     // Feet
     float altitudeAboveGround;
     bool startOnGround;
-    // Knots
+    // Knots (TAS)
     int initialAirspeed;
 
     AircraftInfo(qint64 aircraftId) noexcept;
