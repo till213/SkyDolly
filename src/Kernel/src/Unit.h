@@ -58,7 +58,7 @@ public:
     QString formatDegrees(double degrees) noexcept;
     QString formatHz(double hz) noexcept;
 
-    QString formatVelocityInFeet(double velocity) noexcept;
+    QString formatVelocityInFeetPerSecond(double velocity) noexcept;
     QString formatVelocityInRadians(double velocity) noexcept;
 
     QString formatPosition(qint16 position) noexcept;

@@ -132,7 +132,7 @@ QString Unit::formatHz(double hz) noexcept
     return hzString;
 }
 
-QString Unit::formatVelocityInFeet(double velocity) noexcept
+QString Unit::formatVelocityInFeetPerSecond(double velocity) noexcept
 {
     return d->locale.toString(velocity, 'f', Precision) % " ft/s";
 }

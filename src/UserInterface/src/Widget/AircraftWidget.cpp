@@ -25,6 +25,7 @@
 #include <memory>
 
 #include <QDialog>
+#include <QStringBuilder>
 
 #include "../../../Kernel/src/Unit.h"
 #include "../../../Model/src/SimVar.h"
@@ -83,9 +84,15 @@ void AircraftWidget::updateUi(qint64 timestamp, TimeVariableData::Access access)
         ui->headingLineEdit->setText(d->unit.formatDegrees(positionData.heading));
 
         // Velocity
-        ui->velocityXLineEdit->setText(d->unit.formatVelocityInFeet(positionData.velocityBodyX));
-        ui->velocityYLineEdit->setText(d->unit.formatVelocityInFeet(positionData.velocityBodyY));
-        ui->velocityZLineEdit->setText(d->unit.formatVelocityInFeet(positionData.velocityBodyZ));
+        double velocityFeetPerSec = positionData.velocityBodyX;
+        double velocityKnots = Convert::feetPerSecondToKnots(velocityFeetPerSec);
+        ui->velocityXLineEdit->setText(d->unit.formatKnots(velocityKnots) % " (" % d->unit.formatVelocityInFeetPerSecond(velocityFeetPerSec) % ")");
+        velocityFeetPerSec = positionData.velocityBodyY;
+        velocityKnots = Convert::feetPerSecondToKnots(velocityFeetPerSec);
+        ui->velocityYLineEdit->setText(d->unit.formatKnots(velocityKnots) % " (" % d->unit.formatVelocityInFeetPerSecond(velocityFeetPerSec) % ")");
+        velocityFeetPerSec = positionData.velocityBodyZ;
+        velocityKnots = Convert::feetPerSecondToKnots(velocityFeetPerSec);
+        ui->velocityZLineEdit->setText(d->unit.formatKnots(velocityKnots) % " (" % d->unit.formatVelocityInFeetPerSecond(velocityFeetPerSec) % ")");
         ui->rotationVelocityXLineEdit->setText(d->unit.formatVelocityInRadians(positionData.rotationVelocityBodyX));
         ui->rotationVelocityYLineEdit->setText(d->unit.formatVelocityInRadians(positionData.rotationVelocityBodyY));
         ui->rotationVelocityZLineEdit->setText(d->unit.formatVelocityInRadians(positionData.rotationVelocityBodyZ));
