@@ -174,6 +174,26 @@ namespace SkyMath {
         return (a0 * y1 + a1 * m0 + a2 * m1 + a3 * y2);
     }
 
+    template <typename T>
+    T interpolateCatmullRom(
+        T y0, T y1, T y2, T y3,
+        T mu) noexcept
+    {
+        T a0, a1, a2, a3, mu2;
+
+        mu2 = mu*mu;
+        a0 = -0.5 * y0 + 1.5 * y1 - 1.5 * y2 + 0.5 * y3;
+        a1 = y0 - 2.5 * y1 + 2 * y2 - 0.5 * y3;
+        a2 = -0.5 * y0 + 0.5 * y2;
+        a3 = y1;
+
+#ifdef DEBUG
+        qDebug("interpolateCatmullRom: mu: %f", mu);
+#endif
+
+        return (a0 * mu * mu2 + a1 * mu2 + a2 * mu + a3);
+    }
+
     /*!
      * Interpolates circular values in a range of [-180, 180[ using Hermite
      * (cubic) interpolation.
