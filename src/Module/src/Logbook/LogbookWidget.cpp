@@ -59,6 +59,8 @@
 #include "../../../SkyConnect/src/SkyConnectManager.h"
 #include "../../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../../Widget/src/Platform.h"
+#include "../../../Widget/src/TableDateItem.h"
+#include "../../../Widget/src/TableTimeItem.h"
 #include "../AbstractModuleWidget.h"
 #include "../Module.h"
 #include "LogbookWidget.h"
@@ -295,7 +297,7 @@ void LogbookWidget::updateFlightTable() noexcept
             ++columnIndex;
 
             // Creation date
-            newItem = new QTableWidgetItem(d->unit.formatDate(summary.creationDate));
+            newItem = new TableDateItem(d->unit.formatDate(summary.creationDate), summary.creationDate.date());
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
             ++columnIndex;
@@ -312,8 +314,8 @@ void LogbookWidget::updateFlightTable() noexcept
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
             ++columnIndex;
 
-            // Start date
-            newItem = new QTableWidgetItem(d->unit.formatTime(summary.startDate));
+            // Start time
+            newItem = new TableTimeItem(d->unit.formatTime(summary.startDate), summary.startDate.time());
             newItem->setToolTip(tr("Simulation time: %1 (%2Z)").arg(d->unit.formatTime(summary.startSimulationLocalTime), d->unit.formatTime(summary.startSimulationZuluTime)));
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
@@ -325,8 +327,8 @@ void LogbookWidget::updateFlightTable() noexcept
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
             ++columnIndex;
 
-            // End date
-            newItem = new QTableWidgetItem(d->unit.formatTime(summary.endDate));
+            // End time
+            newItem = new TableTimeItem(d->unit.formatTime(summary.endDate), summary.endDate.time());
             newItem->setToolTip(tr("Simulation time: %1 (%2Z)").arg(d->unit.formatTime(summary.endSimulationLocalTime), d->unit.formatTime(summary.endSimulationZuluTime)));
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);

@@ -190,19 +190,21 @@ QString Unit::formatMemory(qint64 memory) noexcept
     return size;
 }
 
-QString Unit::formatDate(const QDateTime &date) noexcept
+QString Unit::formatDate(const QDateTime &dateTime) noexcept
 {
-    return d->locale.toString(date, "dd.MM.yyyy");
+    QDate date(dateTime.date());
+    return d->locale.toString(date, QLocale::ShortFormat);
 }
 
-QString Unit::formatTime(const QDateTime &time) noexcept
+QString Unit::formatTime(const QDateTime &dateTime) noexcept
 {
-    return d->locale.toString(time, "hh:mm:s");
+    QTime time(dateTime.time());
+    return d->locale.toString(time, QLocale::ShortFormat);
 }
 
 QString Unit::formatDateTime(const QDateTime &dateTime) noexcept
 {
-    return d->locale.toString(dateTime, "yyyy.MM.dd hh:mm:s");
+    return d->locale.toString(dateTime, QLocale::ShortFormat);
 }
 
 QString Unit::formatDuration(const QTime &time) noexcept

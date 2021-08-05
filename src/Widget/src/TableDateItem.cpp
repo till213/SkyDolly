@@ -22,23 +22,38 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "TimeVariableData.h"
+#include <QDate>
+
+#include "../../Kernel/src/Unit.h"
+#include "TableDateItem.h"
+
+class TableDateItemPrivate
+{
+public:
+    TableDateItemPrivate(const QDate &theDate) noexcept
+        : date(theDate)
+    {}
+
+    QDate date;
+    Unit unit;
+};
 
 // PUBLIC
 
-TimeVariableData::TimeVariableData() noexcept
-    : timestamp(InvalidTime)
+TableDateItem::TableDateItem(const QString &dateString, const QDate &date) noexcept
+    : QTableWidgetItem(dateString),
+      d(std::make_unique<TableDateItemPrivate>(date))
 {}
 
-TimeVariableData::~TimeVariableData() noexcept
+TableDateItem::~TableDateItem() noexcept
 {}
 
-bool TimeVariableData::operator>=(const TimeVariableData &rhs) noexcept
+bool TableDateItem::operator<(const QTableWidgetItem &rhs) const noexcept
 {
-    return timestamp >= rhs.timestamp;
-}
-
-bool TimeVariableData::operator<(const TimeVariableData &rhs) noexcept
-{
-    return !(*this >= rhs);
+    TableDateItem const *r = dynamic_cast<const TableDateItem *>(&rhs);
+    if (r != nullptr) {
+        return d->date < r->d->date;
+    } else {
+        return false;
+    }
 }

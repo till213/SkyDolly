@@ -53,8 +53,8 @@ struct MODEL_API TimeVariableData
     TimeVariableData(const TimeVariableData &) = default;
     TimeVariableData &operator= (const TimeVariableData &) = default;
 
-    bool operator>=(const TimeVariableData &other) noexcept;
-    bool operator<(const TimeVariableData &other) noexcept;
+    bool operator>=(const TimeVariableData &rhs) noexcept;
+    bool operator<(const TimeVariableData &rhs) noexcept;
 };
 
 #endif // TIMEVARIABLEDATA_H
