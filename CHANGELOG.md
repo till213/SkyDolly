@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.5
+
+### Bug Fixes
+
+- Dates and times are now properly displayed using the system locale (e.g. "8/5/2021" or "5.8.2021" for dates like "August 5 2021",
+  "5:35 PM" or "17:35" for times)
+  * Date and time table items are now also properly sorted, regardless of their "locale representation"
+
 ## 0.8.4
 
 ### Bug Fixes

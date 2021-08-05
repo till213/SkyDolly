@@ -69,8 +69,8 @@ public:
     QString formatElapsedTime(qint64 milliseconds) noexcept;
     QString formatMemory(qint64 memory) noexcept;
 
-    QString formatDate(const QDateTime &date) noexcept;
-    QString formatTime(const QDateTime &time) noexcept;
+    QString formatDate(const QDateTime &dateTime) noexcept;
+    QString formatTime(const QDateTime &dateTime) noexcept;
     QString formatDateTime(const QDateTime &dateTime) noexcept;
     QString formatDuration(const QTime &time) noexcept;
 
