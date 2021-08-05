@@ -22,22 +22,34 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "TimeVariableData.h"
+#ifndef TABLEDATEITEM_H
+#define TABLEDATEITEM_H
 
-TimeVariableData::TimeVariableData() noexcept
-    : timestamp(InvalidTime)
-{}
+#include <memory>
 
-TimeVariableData::~TimeVariableData() noexcept
-{}
+#include <QString>
+#include <QDate>
+#include <QTableWidgetItem>
 
-bool TimeVariableData::operator>=(const TimeVariableData &rhs) noexcept
+#include "WidgetLib.h"
+
+class TableDateItemPrivate;
+
+/*!
+ * Sortable QTableWidgetItem displaying a QDate.
+ *
+ * https://linux.m2osw.com/sorting-any-numeric-column-qtablewidget
+ */
+class WIDGET_API TableDateItem : public QTableWidgetItem
 {
-    return timestamp >= rhs.timestamp;
-}
+public:
+    TableDateItem(const QString &dateString, const QDate &date) noexcept;
+    virtual ~TableDateItem() noexcept;
 
-bool TimeVariableData::operator<(const TimeVariableData &rhs) noexcept
-{
-    return !(*this >= rhs);
-}
+    virtual bool operator<(const QTableWidgetItem &rhs) const noexcept override;
 
+private:
+    std::unique_ptr<TableDateItemPrivate> d;
+};
+
+#endif // TABLEDATEITEM_H
