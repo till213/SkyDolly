@@ -34,6 +34,10 @@ target_sources(${LIBRARY_NAME}
         src/BackupPeriodComboBox.h
         src/Platform.cpp
         src/Platform.h
+        src/TableDateItem.cpp
+        src/TableDateItem.h
+        src/TableTimeItem.cpp
+        src/TableTimeItem.h
 )
 
 target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})

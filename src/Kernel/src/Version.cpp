@@ -111,32 +111,32 @@ bool Version::isNull() const noexcept
     return d->major == 0 && d->minor == 0 && d->patch == 0;
 }
 
-void Version::operator=(const Version &other) noexcept
+void Version::operator=(const Version &rhs) noexcept
 {
-    d = std::make_unique<VersionPrivate>(other.d->major, other.d->minor, other.d->patch);
+    d = std::make_unique<VersionPrivate>(rhs.d->major, rhs.d->minor, rhs.d->patch);
 }
 
-bool Version::operator==(const Version &other) noexcept
+bool Version::operator==(const Version &rhs) noexcept
 {
     bool result;
-    result = d->major == other.d->major && d->minor == other.d->minor && d->patch == other.d->patch;
+    result = d->major == rhs.d->major && d->minor == rhs.d->minor && d->patch == rhs.d->patch;
     return result;
 }
 
-bool Version::operator>=(const Version &other) noexcept
+bool Version::operator>=(const Version &rhs) noexcept
 {
     bool result;
-    if (d->major > other.d->major) {
+    if (d->major > rhs.d->major) {
         result = true;
-    } else if (d->major < other.d->major) {
+    } else if (d->major < rhs.d->major) {
         result = false;
     } else {
-        if (d->minor > other.d->minor) {
+        if (d->minor > rhs.d->minor) {
             result = true;
-        } else if (d->minor < other.d->minor) {
+        } else if (d->minor < rhs.d->minor) {
             result = false;
         } else {
-            if (d->patch >= other.d->patch) {
+            if (d->patch >= rhs.d->patch) {
                 result = true;
             } else {
                 result = false;
@@ -146,9 +146,9 @@ bool Version::operator>=(const Version &other) noexcept
     return result;
 }
 
-bool Version::operator<(const Version &other) noexcept
+bool Version::operator<(const Version &rhs) noexcept
 {
-    return !(*this >= other);
+    return !(*this >= rhs);
 }
 
 const QString Version::getCodeName() noexcept
