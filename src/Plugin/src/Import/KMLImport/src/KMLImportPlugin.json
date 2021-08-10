@@ -1,8 +1,4 @@
 {
     "uuid": "5a72c866-310d-4d84-8bd6-1baa720bc64e",
-<<<<<<< HEAD
     "name": "KML (Keyhole Markup Language)"
-=======
-    "name": "KML (FlightAware)"
->>>>>>> 4cabb0a (Initial KML import plugin)
 }
