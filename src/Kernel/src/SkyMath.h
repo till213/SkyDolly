@@ -50,7 +50,7 @@ namespace SkyMath {
     /*! The range (number of values) for percent values. */
     inline constexpr double PercentRange8 = PercentMax8;
 
-    // Average earth radius [metres]
+    // Average earth radius [meters]
     inline constexpr double EarthRadius = 6378137.0;
 
     inline double degreesToRadians(double degree) {
@@ -174,6 +174,26 @@ namespace SkyMath {
         return (a0 * y1 + a1 * m0 + a2 * m1 + a3 * y2);
     }
 
+    template <typename T>
+    T interpolateCatmullRom(
+        T y0, T y1, T y2, T y3,
+        T mu) noexcept
+    {
+        T a0, a1, a2, a3, mu2;
+
+        mu2 = mu*mu;
+        a0 = -0.5 * y0 + 1.5 * y1 - 1.5 * y2 + 0.5 * y3;
+        a1 = y0 - 2.5 * y1 + 2 * y2 - 0.5 * y3;
+        a2 = -0.5 * y0 + 0.5 * y2;
+        a3 = y1;
+
+#ifdef DEBUG
+        qDebug("interpolateCatmullRom: mu: %f", mu);
+#endif
+
+        return (a0 * mu * mu2 + a1 * mu2 + a2 * mu + a3);
+    }
+
     /*!
      * Interpolates circular values in a range of [-180, 180[ using Hermite
      * (cubic) interpolation.
@@ -289,9 +309,176 @@ namespace SkyMath {
     }
 
     /*!
-     * sinphi2 = sinphi1⋅cosδ + cosphi1⋅sinδ⋅costheta
+     * Calculates the spherical distance [meters] of two points by using the ‘haversine’ formula to calculate
+     * the great-circle distance between these two points.
+     *
+     * a = sin²(Δφ/2) + cos φ1 ⋅ cos φ2 ⋅ sin²(Δλ/2)
+     * c = 2 ⋅ atan2(√a, √(1−a))
+     * d = R ⋅ c
+     *
+     * \param startPosition
+     *        the <latitude, longitude> of the start position [degrees]
+     * \param endPosition
+     *        the <latitude, longitude> of the end position [degrees]
+     * \param averageAltitude
+     *        the average altitude of the two points [meters]
+     * \return the spherical distance between the points [meters]
+     * \sa https://www.movable-type.co.uk/scripts/latlong.html
+     */
+    inline double sphericalDistance(std::pair<double, double> startPosition, std::pair<double, double> endPosition, double averageAltitude) noexcept
+    {
+        const double radius = EarthRadius + averageAltitude;
+        // phi,  lambda in radians
+        const double phi1 = startPosition.first * M_PI / 180.0;
+        const double phi2 = endPosition.first * M_PI / 180.0;
+        const double deltaPhi = (endPosition.first - startPosition.first) * M_PI / 180.0;
+        const double deltaLambda = (endPosition.second - startPosition.second) * M_PI / 180.0;
+
+        const double sinDeltaPhi = std::sin(deltaPhi / 2.0);
+        const double sinDeltaLambda = std::sin(deltaLambda / 2.0);
+        const double a = sinDeltaPhi * sinDeltaPhi +
+                         std::cos(phi1) * std::cos(phi2) *
+                         sinDeltaLambda * sinDeltaLambda;
+        const double c = 2.0 * std::atan2(std::sqrt(a), std::sqrt(1 - a));
+
+        return radius * c;
+    }
+
+    /*!
+     * Calculates the spherical distance between the \startPoint and the\c endPoint and the
+     * velocity [meters per second] it takes to travel that distance, taking the timestamps \startTimestamp
+     * and \c endTimestamp into account.
+     *
+     * \param startPosition
+     *        the <latitude, longitude> of the start position [degrees]
+     * \param startTimestamp
+     *        the timestamp of the start point [milliseconds]
+     * \param endPosition
+     *        the <latitude, longitude> of the end position [degrees]
+     * \param endTimestamp
+     *        the timestamp of the end point [milliseconds]
+     * \param averageAltitude
+     *        the average altitude of the two points [meters]
+     * \return the distance and required speed [m/s]
+     * \sa https://www.movable-type.co.uk/scripts/latlong.html
+     */
+    inline std::pair<double, double> distanceAndVelocity(std::pair<double, double> startPosition, qint64 startTimestamp,
+                           std::pair<double, double> endPosition, qint64 endTimestamp,
+                           double averageAltitude) noexcept
+    {
+        const double distance = sphericalDistance(startPosition, endPosition, averageAltitude);
+        const double deltaT = (endTimestamp - startTimestamp) / 1000.0;
+
+        return std::pair(distance, distance / deltaT);
+    }
+
+    /*!
+     * Calculates the initial bearing required to get from \c startPosition
+     * to \c endPosition, with an average altitude of \c averageAltitude [meters].
+     *
+     * θ = atan2(sin Δλ ⋅ cos φ2 , cos φ1 ⋅ sin φ2 − sin φ1 ⋅ cos φ2 ⋅ cos Δλ)
+     *
+     * \param startPosition
+     *        the <latitude, longitude> of the start position [degrees]
+     * \param endPosition
+     *        the <latitude, longitude> of the end position [degrees]
+     * \return the initial bearing [degrees]
+     * \sa https://www.movable-type.co.uk/scripts/latlong.html
+     */
+    inline double initialBearing(std::pair<double, double> startPosition, std::pair<double, double> endPosition) noexcept
+    {
+        const double phi1 = startPosition.first * M_PI / 180.0;
+        const double lambda1 = startPosition.second * M_PI / 180.0;
+        const double phi2 = endPosition.first * M_PI / 180.0;
+        const double lambda2 = endPosition.second * M_PI / 180.0;
+        const double deltaLambda = (endPosition.second - startPosition.second) * M_PI / 180.0;
+
+        const double y = std::sin(lambda2 - lambda1) * std::cos(phi2);
+        const double x = std::cos(phi1) * std::sin(phi2) -
+                         std::sin(phi1) * std::cos(phi2) * std::cos(lambda2 - lambda1);
+        const double theta = std::atan2(y, x);
+        // In degrees, converted to [0.0, 360.0[
+        return std::fmod(theta * 180.0 / M_PI + 360.0, 360.0);
+    }
+
+    /*!
+     * Approximates the pitch angle [degrees] by assuming a straight distance line
+     * and delta altitude, that is a triangle defined by \c sphericalDistance
+     * and orthognal \c deltaAltitude (both in [meters]). The estimated elevation
+     * (pitch) angle should be exact enough for short distances.
+     *
+     * Note that we assume that the aircraft is not flying "upside down", so the
+     * maximum estimated pitch angles are in [-90, 90] degrees.
+     *
+     * \param sphericalDistance
+     *        the spherical distance [meters]
+     * \param deltaAltitude
+     *        the difference in altitude [meters]; positive values yield a
+     *        positive pitch angle
+     * \return the eximated pitch angle [-90, 90] [degrees]
+     */
+    inline double approximatePitch(double sphericalDistance, double deltaAltitude) noexcept
+    {
+        double pitch;
+        if (sphericalDistance > 0.0) {
+            pitch = std::atan(deltaAltitude / sphericalDistance);
+        } else if (deltaAltitude > 0) {
+            pitch = M_PI / 2.0;
+        } else {
+            pitch = -M_PI / 2.0;
+        }
+        return pitch * 180.0 / M_PI;
+    }
+
+    /*!
+     * Calculates the shortest heading change to get from the \c currentHeading to
+     * the \c targetHeading. All headings are in degrees.
+     *
+     * \param currentHeading
+     *        the current heading [0, 360[ [degrees]
+     * \param targetHeading
+     *        the target heading the first heading [0, 360[ [degrees]
+     * \return the required heading change [-180, 180] [degrees]; negative values
+     *         correspond to clockwise ("right") turn; positive values
+     *         correspond to anti-clockwise ("left") turn
+     * \sa https://forum.arduino.cc/t/calculating-heading-distance-and-direction/92144/6
+     */
+    inline double headingChange(double currentHeading, double targetHeading) noexcept
+    {
+        if (currentHeading < targetHeading) {
+            // Denormalize ...
+            currentHeading += 360.0;
+        }
+        // Calculate left turn, will allways be in [0, 360[
+        double headingChange = currentHeading - targetHeading;
+
+        // Take the smallest turn
+        if (headingChange < 180.0) {
+            // Left turns are positive
+            headingChange = headingChange;
+        } else {
+          // Right turns are negative: -(360 - headingChange)
+            headingChange = -360.0 + headingChange;
+        }
+        return headingChange;
+    }
+
+    /*!
+     * Returns the relative position from the starting \c position at altitude \c altitude,
+     * given the \c bearing and \c distance.
+     *
+     * sinphi2    = sinphi1⋅cosδ + cosphi1⋅sinδ⋅costheta
      * tanΔlambda = sintheta⋅sinδ⋅cosphi1 / cosδ−sinphi1⋅sinphi2
      *
+     * \param position
+     *        the <latitude, longitude> of the position [degrees]
+     * \param altitude
+     *        the altitude above sea level [meters]
+     * \param bearing
+     *        the bearing of the destination point [degrees]
+     * \param distance
+     *        the distance to the destination point [meters]
+     * \return the <latitude, longitude> of the relative position [degrees]
      * \sa mathforum.org/library/drmath/view/52049.html for derivation
      * \sa https://www.movable-type.co.uk/scripts/latlong.html
      */

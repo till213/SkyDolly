@@ -52,6 +52,8 @@ namespace SkySearch {
      */
     inline constexpr qint64 DefaultInterpolationWindow = 2000;
 
+    inline constexpr qint64 PositionInterpolationWindow = 1000 * 60 * 30;
+
     /*!
      * An interpolation window that considers all sample points.
      */

@@ -22,31 +22,43 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#ifndef AIRCRAFTINFOWIDGET_H
+#define AIRCRAFTINFOWIDGET_H
+
 #include <memory>
 
-#include <QDialog>
+#include <QWidget>
 
-#include "../../../Kernel/src/Version.h"
-#include "AboutDialog.h"
-#include "ui_AboutDialog.h"
+class QShowEvent;
+class QHideEvent;
 
-// PUBLIC
+class AircraftInfoWidgetPrivate;
+class PositionData;
 
-AboutDialog::AboutDialog(QWidget *parent) noexcept :
-    QDialog(parent),
-    ui(std::make_unique<Ui::AboutDialog>())
-{
-    ui->setupUi(this);
-    initUi();
+namespace Ui {
+    class AircraftInfoWidget;
 }
 
-AboutDialog::~AboutDialog() noexcept
-{}
-
-// PRIVATE
-
-void AboutDialog::initUi() noexcept
+class AircraftInfoWidget : public QWidget
 {
-    setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
-    ui->aboutLabel->setText(tr("%1\nThe Black Sheep for Your Flight Recordings\n\nVersion %2\n\nMIT License").arg(Version::getApplicationName(), Version::getApplicationVersion()));
-}
+    Q_OBJECT
+public:
+    explicit AircraftInfoWidget(QWidget *parent = nullptr) noexcept;
+    virtual ~AircraftInfoWidget() noexcept;
+
+protected:
+    void showEvent(QShowEvent *event) noexcept override;
+    void hideEvent(QHideEvent *event) noexcept override;
+
+private:
+    Q_DISABLE_COPY(AircraftInfoWidget)
+    std::unique_ptr<AircraftInfoWidgetPrivate> d;
+    std::unique_ptr<Ui::AircraftInfoWidget> ui;
+
+    void initUi() noexcept;
+
+private slots:
+    void updateUi() noexcept;
+};
+
+#endif // AIRCRAFTINFOWIDGET_H

@@ -48,7 +48,7 @@ public:
     QString formatFeet(double feet) noexcept;
     QString formatCelcius(double temperature) noexcept;
     QString formatPressureInHPa(double pressure) noexcept;
-    QString formatVisibility(double metres) noexcept;
+    QString formatVisibility(double meters) noexcept;
 
     /*!
      * Returns a formatted string for \c degrees [0, 360].
@@ -58,7 +58,7 @@ public:
     QString formatDegrees(double degrees) noexcept;
     QString formatHz(double hz) noexcept;
 
-    QString formatVelocityInFeet(double velocity) noexcept;
+    QString formatVelocityInFeetPerSecond(double velocity) noexcept;
     QString formatVelocityInRadians(double velocity) noexcept;
 
     QString formatPosition(qint16 position) noexcept;
