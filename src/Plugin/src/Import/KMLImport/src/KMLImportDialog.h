@@ -22,43 +22,42 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef AIRCRAFTTYPEWIDGET_H
-#define AIRCRAFTTYPEWIDGET_H
+#ifndef KMLIMPORTDIALOG_H
+#define KMLIMPORTDIALOG_H
 
 #include <memory>
 
-#include <QWidget>
-
-class QShowEvent;
-class QHideEvent;
-
-class AircraftTypeWidgetPrivate;
-class PositionData;
+#include <QDialog>
 
 namespace Ui {
-    class AircraftTypeWidget;
+    class KMLImportDialog;
 }
 
-class AircraftTypeWidget : public QWidget
+class AircraftType;
+class KMLImportDialogPrivate;
+
+class KMLImportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit AircraftTypeWidget(QWidget *parent = nullptr) noexcept;
-    virtual ~AircraftTypeWidget() noexcept;
+    explicit KMLImportDialog(QWidget *parent = nullptr) noexcept;
+    virtual ~KMLImportDialog() noexcept;
 
-protected:
-    void showEvent(QShowEvent *event) noexcept override;
-    void hideEvent(QHideEvent *event) noexcept override;
+    QString getSelectedFilePath() const noexcept;
+    bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
+    bool isAddToFlightEnabled() const noexcept;
 
 private:
-    Q_DISABLE_COPY(AircraftTypeWidget)
-    std::unique_ptr<AircraftTypeWidgetPrivate> d;
-    std::unique_ptr<Ui::AircraftTypeWidget> ui;
+    Ui::KMLImportDialog *ui;
+    std::unique_ptr<KMLImportDialogPrivate> d;
 
+    void frenchConnection() noexcept;
     void initUi() noexcept;
 
 private slots:
+    void on_fileSelectionPushButton_clicked() noexcept;
     void updateUi() noexcept;
 };
 
-#endif // AIRCRAFTTYPEWIDGET_H
+#endif // KMLIMPORTDIALOG_H
+

@@ -42,7 +42,7 @@
 #include "../../../Model/src/AircraftInfo.h"
 #include "../../../Persistence/src/Service/FlightService.h"
 #include "../Widget/FlightDescriptionWidget.h"
-#include "../Widget/AircraftTypeWidget.h"
+#include "../Widget/AircraftInfoWidget.h"
 #include "../Widget/FlightConditionWidget.h"
 #include "../Widget/FlightPlanWidget.h"
 #include "FlightDialog.h"
@@ -94,14 +94,13 @@ void FlightDialog::hideEvent(QHideEvent *event) noexcept
 
 void FlightDialog::initUi() noexcept
 {
-    Qt::WindowFlags flags = Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
-    setWindowFlags(flags);
+    setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
     FlightDescriptionWidget *flightDescriptionWidget = new FlightDescriptionWidget(d->flightService, this);
     ui->flightTab->addTab(flightDescriptionWidget, tr("&Description"));
 
-    AircraftTypeWidget *aircraftTypeWidget = new AircraftTypeWidget(this);
-    ui->flightTab->addTab(aircraftTypeWidget, tr("&Aircraft"));
+    AircraftInfoWidget *aircraftInfoWidget = new AircraftInfoWidget(this);
+    ui->flightTab->addTab(aircraftInfoWidget, tr("&Aircraft"));
 
     FlightConditionWidget *flightConditionsWidget = new FlightConditionWidget(this);
     ui->flightTab->addTab(flightConditionsWidget, tr("&Conditions"));

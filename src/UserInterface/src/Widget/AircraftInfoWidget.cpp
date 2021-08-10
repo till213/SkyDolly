@@ -35,13 +35,13 @@
 #include "../../../Model/src/AircraftType.h"
 #include "../../../Model/src/FlightCondition.h"
 #include "../../../Kernel/src/SkyMath.h"
-#include "AircraftTypeWidget.h"
-#include "ui_AircraftTypeWidget.h"
+#include "AircraftInfoWidget.h"
+#include "ui_AircraftInfoWidget.h"
 
-class AircraftTypeWidgetPrivate
+class AircraftInfoWidgetPrivate
 {
 public:
-    AircraftTypeWidgetPrivate() noexcept
+    AircraftInfoWidgetPrivate() noexcept
     {}
 
     Unit unit;
@@ -49,24 +49,21 @@ public:
 
 // PUBLIC
 
-AircraftTypeWidget::AircraftTypeWidget(QWidget *parent) noexcept :
+AircraftInfoWidget::AircraftInfoWidget(QWidget *parent) noexcept :
     QWidget(parent),
-    d(std::make_unique<AircraftTypeWidgetPrivate>()),
-    ui(std::make_unique<Ui::AircraftTypeWidget>())
+    d(std::make_unique<AircraftInfoWidgetPrivate>()),
+    ui(std::make_unique<Ui::AircraftInfoWidget>())
 {
     ui->setupUi(this);
-    Qt::WindowFlags flags = Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
-    setWindowFlags(flags);
-
     initUi();
 }
 
-AircraftTypeWidget::~AircraftTypeWidget() noexcept
+AircraftInfoWidget::~AircraftInfoWidget() noexcept
 {}
 
 // PROTECTED
 
-void AircraftTypeWidget::showEvent(QShowEvent *event) noexcept
+void AircraftInfoWidget::showEvent(QShowEvent *event) noexcept
 {
     QWidget::showEvent(event);
     updateUi();
@@ -74,23 +71,23 @@ void AircraftTypeWidget::showEvent(QShowEvent *event) noexcept
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     const Aircraft &aircraft = flight.getUserAircraft();
     connect(&aircraft, &Aircraft::infoChanged,
-            this, &AircraftTypeWidget::updateUi);
+            this, &AircraftInfoWidget::updateUi);
     connect(&flight, &Flight::userAircraftChanged,
-            this, &AircraftTypeWidget::updateUi);
+            this, &AircraftInfoWidget::updateUi);
 }
 
-void AircraftTypeWidget::hideEvent(QHideEvent *event) noexcept
+void AircraftInfoWidget::hideEvent(QHideEvent *event) noexcept
 {
     QWidget::hideEvent(event);
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     const Aircraft &aircraft = flight.getUserAircraft();
     disconnect(&aircraft, &Aircraft::infoChanged,
-            this, &AircraftTypeWidget::updateUi);
+            this, &AircraftInfoWidget::updateUi);
 }
 
 // PRIVATE
 
-void AircraftTypeWidget::initUi() noexcept
+void AircraftInfoWidget::initUi() noexcept
 {
     ui->nameLineEdit->setToolTip(SimVar::Title);
     ui->tailNumberLineEdit->setToolTip(SimVar::ATCFlightNumber);
@@ -112,7 +109,7 @@ void AircraftTypeWidget::initUi() noexcept
 
 // PRIVATE SLOTS
 
-void AircraftTypeWidget::updateUi() noexcept
+void AircraftInfoWidget::updateUi() noexcept
 {
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     const Aircraft &aircraft = flight.getUserAircraftConst();

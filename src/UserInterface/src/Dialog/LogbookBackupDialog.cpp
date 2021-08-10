@@ -127,8 +127,7 @@ void LogbookBackupDialog::showEvent(QShowEvent *event) noexcept
 
 void LogbookBackupDialog::initUi() noexcept
 {
-    Qt::WindowFlags flags = Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint;
-    setWindowFlags(flags);
+    setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
     d->backupButton = new QPushButton(tr("&Backup"));
     d->backupButton->setDefault(true);

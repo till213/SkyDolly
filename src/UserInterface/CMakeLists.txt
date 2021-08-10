@@ -66,9 +66,9 @@ target_sources(${LIBRARY_NAME}
         src/Widget/LightWidget.cpp
         src/Widget/LightWidget.h
         src/Widget/LightWidget.ui
-        src/Widget/AircraftTypeWidget.cpp
-        src/Widget/AircraftTypeWidget.h
-        src/Widget/AircraftTypeWidget.ui
+        src/Widget/AircraftInfoWidget.cpp
+        src/Widget/AircraftInfoWidget.h
+        src/Widget/AircraftInfoWidget.ui
         src/Widget/FlightConditionWidget.cpp
         src/Widget/FlightConditionWidget.h
         src/Widget/FlightConditionWidget.ui

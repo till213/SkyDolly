@@ -38,13 +38,13 @@
 #include "../../../../../Model/src/Aircraft.h"
 #include "../../../../../Model/src/AircraftType.h"
 #include "../../../../../Persistence/src/Service/AircraftTypeService.h"
-#include "CSVImportDialog.h"
-#include "ui_CSVImportDialog.h"
+#include "KMLImportDialog.h"
+#include "ui_KMLImportDialog.h"
 
-class CSVImportDialogPrivate
+class KMLImportDialogPrivate
 {
 public:
-    CSVImportDialogPrivate() noexcept
+    KMLImportDialogPrivate() noexcept
         : aircraftTypeService(std::make_unique<AircraftTypeService>())
     {}
 
@@ -54,10 +54,10 @@ public:
 
 // PUBLIC
 
-CSVImportDialog::CSVImportDialog(QWidget *parent) noexcept
+KMLImportDialog::KMLImportDialog(QWidget *parent) noexcept
     : QDialog(parent),
-      ui(new Ui::CSVImportDialog),
-      d(std::make_unique<CSVImportDialogPrivate>())
+      ui(new Ui::KMLImportDialog),
+      d(std::make_unique<KMLImportDialogPrivate>())
 {
     ui->setupUi(this);
     initUi();
@@ -65,29 +65,29 @@ CSVImportDialog::CSVImportDialog(QWidget *parent) noexcept
     frenchConnection();
 }
 
-CSVImportDialog::~CSVImportDialog() noexcept
+KMLImportDialog::~KMLImportDialog() noexcept
 {
     delete ui;
 }
 
-QString CSVImportDialog::getSelectedFilePath() const noexcept
+QString KMLImportDialog::getSelectedFilePath() const noexcept
 {
     return ui->filePathLineEdit->text();
 }
 
-bool CSVImportDialog::getSelectedAircraftType(AircraftType &aircraftType) const noexcept
+bool KMLImportDialog::getSelectedAircraftType(AircraftType &aircraftType) const noexcept
 {
     return d->aircraftTypeService->getByType(ui->aircraftSelectionComboBox->currentText(), aircraftType);
 }
 
-bool CSVImportDialog::isAddToFlightEnabled() const noexcept
+bool KMLImportDialog::isAddToFlightEnabled() const noexcept
 {
     return ui->addToFlightCheckBox->isChecked();
 }
 
 // PRIVATE
 
-void CSVImportDialog::initUi() noexcept
+void KMLImportDialog::initUi() noexcept
 {
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
@@ -99,27 +99,27 @@ void CSVImportDialog::initUi() noexcept
     }
 }
 
-void CSVImportDialog::frenchConnection() noexcept
+void KMLImportDialog::frenchConnection() noexcept
 {
     connect(ui->filePathLineEdit, &QLineEdit::textChanged,
-            this, &CSVImportDialog::updateUi);
+            this, &KMLImportDialog::updateUi);
 }
 
 // PRIVATE SLOTS
 
-void CSVImportDialog::on_fileSelectionPushButton_clicked() noexcept
+void KMLImportDialog::on_fileSelectionPushButton_clicked() noexcept
 {
     // Start with the last export path
     QString exportPath = Settings::getInstance().getExportPath();
 
-    const QString filePath = QFileDialog::getOpenFileName(this, QCoreApplication::translate("CSVImportDialog", "Import CSV"), exportPath, QString("*.csv"));
+    const QString filePath = QFileDialog::getOpenFileName(this, QCoreApplication::translate("KMLImportDialog", "Import KML"), exportPath, QString("*.KML"));
     if (!filePath.isEmpty()) {
         ui->filePathLineEdit->setText(QDir::toNativeSeparators(filePath));
     }
     updateUi();
 }
 
-void CSVImportDialog::updateUi() noexcept
+void KMLImportDialog::updateUi() noexcept
 {
     const QString filePath = ui->filePathLineEdit->text();
     QFile file(filePath);

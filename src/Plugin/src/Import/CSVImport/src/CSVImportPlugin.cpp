@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+
 #include <QIODevice>
 // Implements the % operator for string concatenation
 #include <QStringBuilder>
@@ -86,7 +88,7 @@ CSVImportPlugin::~CSVImportPlugin() noexcept
 #endif
 }
 
-bool CSVImportPlugin::importData(FlightService &flightService) const noexcept
+bool CSVImportPlugin::importData(FlightService &flightService) noexcept
 {
     bool ok;
     std::unique_ptr<CSVImportDialog> csvImportDialog = std::make_unique<CSVImportDialog>(getParentWidget());

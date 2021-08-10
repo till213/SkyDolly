@@ -43,7 +43,8 @@ class FlightPrivate
 public:
 
     FlightPrivate() noexcept
-        : userAircraftIndex(InvalidAircraftIndex)
+        : creationDate(QDateTime::currentDateTime()),
+          userAircraftIndex(InvalidAircraftIndex)
     {
         clear(true);
     }
