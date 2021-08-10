@@ -126,7 +126,7 @@ const PositionData &Position::interpolate(qint64 timestamp, TimeVariableData::Ac
             // Aircraft position & attitude
 
             // Latitude: [-90, 90] - no discontinuity at +/- 90
-            d->currentPositionData.latitude  = SkyMath::interpolateCatmullRom(p0->latitude, p1->latitude, p2->latitude, p3->latitude, tn);
+            d->currentPositionData.latitude  = SkyMath::interpolateHermite(p0->latitude, p1->latitude, p2->latitude, p3->latitude, tn);
             // Longitude: [-180, 180] - discontinuity at the +/- 180 meridian
             d->currentPositionData.longitude = SkyMath::interpolateHermite180(p0->longitude, p1->longitude, p2->longitude, p3->longitude, tn);
             // Altitude [open range]
