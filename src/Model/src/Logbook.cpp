@@ -40,7 +40,6 @@ public:
     std::vector<std::unique_ptr<Flight>> flights;
 
     static Logbook *instance;
-
 };
 
 Logbook *LogbookPrivate::instance = nullptr;

@@ -53,8 +53,6 @@ public:
     SecondaryFlightControlData previousSecondaryFlightControlData;
     SecondaryFlightControlData currentSecondaryFlightControlData;
     mutable int currentIndex;
-
-    static inline constexpr qint64 TimestampWindow = 1000; // msec
 };
 
 // PUBLIC
