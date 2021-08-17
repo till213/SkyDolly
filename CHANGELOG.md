@@ -2,11 +2,16 @@
 
 ## 0.8.5
 
+### New Features
+
+- KML import plugin which imports KML flight data from flightaware.com
+
 ### Bug Fixes
 
 - Dates and times are now properly displayed using the system locale (e.g. "8/5/2021" or "5.8.2021" for dates like "August 5 2021",
   "5:35 PM" or "17:35" for times)
   * Date and time table items are now also properly sorted, regardless of their "locale representation"
+- Logbook: the date column of the "date chooser widget" is now properly resized according to its content (month names)
 
 ## 0.8.4
 
