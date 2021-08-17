@@ -31,26 +31,71 @@
  * Unit converter.
  *
  * https://www.convertunits.com/
+ * https://www.metric-conversions.org/length/feet-to-meters.htm
  */
 class KERNEL_API Convert
 {
 public:
 
     /*!
-     * Converts the \c feet to metres.
+     * Converts the \c feet to meters.
      *
-     * https://www.metric-conversions.org/length/feet-to-meters.htm
-     *
-     * \return the \c feet converted to metres
+     * \return the \c feet converted to meters
+     * \sa https://www.convertunits.com/from/feet/to/meter
      */
     static inline double feetToMeters(double feet) noexcept
     {
-        return feet / 3.2808;
+        return feet * 0.3048;
     }
 
-    static inline double feetPerSecondsToKnots(double feetPerSeconds) noexcept
+    /*!
+     * Converts the \c meters to feet.
+     *
+     * \return the \c meters converted to feet
+     * \sa https://www.convertunits.com/from/meter/to/feet
+     */
+    static inline double metersToFeet(double meters) noexcept
     {
-        return feetPerSeconds * 0.5924838012959;
+        return meters * 3.28083989501312;
+    }
+
+    /*!
+     * Converts feet per secon to knots.
+     *
+     * \param feetPerSecond
+     *        the feet per second to convert
+     * \return the converted knots
+     * \sa https://www.convertunits.com/from/feet/second/to/knots
+     */
+    static inline double feetPerSecondToKnots(double feetPerSecond) noexcept
+    {
+        return feetPerSecond * 0.5924838012959;
+    }
+
+    /*!
+     * Converts knots to feet per second.
+     *
+     * \param knots
+     *        the knots to convert
+     * \return the converted feet per second
+     * \sa https://www.convertunits.com/from/knots/to/feet/second/
+     */
+    static inline double knotsToFeetPerSecond(double knots) noexcept
+    {
+        return knots * 1.6878098571012;
+    }
+
+    /*!
+     * Converts m/s to feet/s.
+     *
+     * \param metersPerSecond
+     *        the meters per second to convert
+     * \return the converted feet/s
+     * \sa https://www.convertunits.com/from/meter/second/to/foot/second
+     */
+    static inline double metersPerSecondToFeetPerSecond(double metersPerSecond) noexcept
+    {
+        return metersPerSecond * 3.28083989501312;
     }
 
     /*!

@@ -86,7 +86,7 @@ CSVImportPlugin::~CSVImportPlugin() noexcept
 #endif
 }
 
-bool CSVImportPlugin::importData(FlightService &flightService) const noexcept
+bool CSVImportPlugin::importData(FlightService &flightService) noexcept
 {
     bool ok;
     std::unique_ptr<CSVImportDialog> csvImportDialog = std::make_unique<CSVImportDialog>(getParentWidget());

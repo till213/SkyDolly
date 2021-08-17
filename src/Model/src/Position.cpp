@@ -51,8 +51,6 @@ public:
     TimeVariableData::Access currentAccess;
     PositionData currentPositionData;
     mutable int currentIndex;
-
-    static inline constexpr qint64 TimestampWindow = 1000; // msec
 };
 
 // PUBLIC
@@ -110,7 +108,7 @@ const PositionData &Position::interpolate(qint64 timestamp, TimeVariableData::Ac
         double tn;
         switch (access) {
         case TimeVariableData::Access::Linear:
-            if (SkySearch::getCubicInterpolationSupportData(d->positionData, adjustedTimestamp, d->currentIndex, &p0, &p1, &p2, &p3)) {
+            if (SkySearch::getCubicInterpolationSupportData(d->positionData, adjustedTimestamp, SkySearch::PositionInterpolationWindow, d->currentIndex, &p0, &p1, &p2, &p3)) {
                 tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
             }
             break;

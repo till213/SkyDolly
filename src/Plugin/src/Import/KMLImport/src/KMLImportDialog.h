@@ -22,22 +22,42 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef IMPORTINTF_H
-#define IMPORTINTF_H
+#ifndef KMLIMPORTDIALOG_H
+#define KMLIMPORTDIALOG_H
 
-#include <QtPlugin>
+#include <memory>
 
-#include "PluginIntf.h"
+#include <QDialog>
 
-class FlightService;
+namespace Ui {
+    class KMLImportDialog;
+}
 
-class ImportIntf : public PluginIntf
+class AircraftType;
+class KMLImportDialogPrivate;
+
+class KMLImportDialog : public QDialog
 {
+    Q_OBJECT
 public:
-    virtual bool importData(FlightService &flightService) noexcept = 0;
+    explicit KMLImportDialog(QWidget *parent = nullptr) noexcept;
+    virtual ~KMLImportDialog() noexcept;
+
+    QString getSelectedFilePath() const noexcept;
+    bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
+    bool isAddToFlightEnabled() const noexcept;
+
+private:
+    Ui::KMLImportDialog *ui;
+    std::unique_ptr<KMLImportDialogPrivate> d;
+
+    void frenchConnection() noexcept;
+    void initUi() noexcept;
+
+private slots:
+    void on_fileSelectionPushButton_clicked() noexcept;
+    void updateUi() noexcept;
 };
 
-#define IMPORT_INTERFACE_IID "com.github.till213.SkyDolly.ImportInterface/1.0"
-Q_DECLARE_INTERFACE(ImportIntf, IMPORT_INTERFACE_IID)
+#endif // KMLIMPORTDIALOG_H
 
-#endif // IMPORTINTF_H

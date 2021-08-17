@@ -51,8 +51,6 @@ public:
     TimeVariableData::Access currentAccess;
     PrimaryFlightControlData currentPrimaryFlightControlData;
     mutable int currentIndex;
-
-    static inline constexpr qint64 TimestampWindow = 1000; // msec
 };
 
 // PUBLIC
@@ -109,7 +107,7 @@ const PrimaryFlightControlData &PrimaryFlightControl::interpolate(qint64 timesta
         double tn;
         switch (access) {
         case TimeVariableData::Access::Linear:
-            if (SkySearch::getLinearInterpolationSupportData(d->primaryFlightControlData, adjustedTimestamp, d->currentIndex, &p1, &p2)) {
+            if (SkySearch::getLinearInterpolationSupportData(d->primaryFlightControlData, adjustedTimestamp, SkySearch::DefaultInterpolationWindow, d->currentIndex, &p1, &p2)) {
                 tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
             }
             break;
