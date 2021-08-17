@@ -562,6 +562,7 @@ void LogbookWidget::updateDateSelectorUi() noexcept
             item = item->child(0);
         }
 
+        ui->logTreeWidget->resizeColumnToContents(DateColumn);
         logbookItem->setData(NofFlightsColumn, Qt::DisplayRole, totalFlights);
 
         ui->logTreeWidget->blockSignals(false);
