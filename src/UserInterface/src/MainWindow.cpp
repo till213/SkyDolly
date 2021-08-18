@@ -50,6 +50,7 @@
 #include <QActionGroup>
 #include <QSpacerItem>
 #include <QTimer>
+#include <QStringBuilder>
 
 #include "../../Kernel/src/Unit.h"
 #include "../../Kernel/src/Const.h"
@@ -353,15 +354,18 @@ void MainWindow::initUi() noexcept
     int previewInfoCount = settings.getPreviewInfoDialogCount();
     if (previewInfoCount > 0) {
         --previewInfoCount;
+        constexpr uint CakeChar = 0x1f382;
+        const QString CakeString = QString::fromUcs4(&CakeChar, 1);
         QMessageBox::information(this, "Preview",
-            QString("%1 %2 now supports automated logbook backups, for instance every month, every week or every day after exiting the application. "
-                    "The schedule can be setup in the Logbook Settings, which are now in the File menu (previously: Info menu).\n\n"
-                    "During the preview phase older databases will automatically be migrated to the current data format. As a matter of fact at the time you read this message any existing "
-                    "logbook from previous releases has already been converted to the current format.\n\n"
-                    "However take note that the first release version 1.0.0 will consolidate all migration steps into the final database format, making logbooks generated with preview "
-                    "versions (such as this one) unreadable.\n\n"
-                    "From that point onwards databases (logbooks) will of course again be migrated to the format of the next release version.\n\n"
-                    "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(previewInfoCount),
+            CakeString + CakeString + CakeString + QString(" HAPPY BIRTHDAY, FLIGHT SIMULATOR 2020! ") + CakeString + CakeString + CakeString + QString("\n\n"
+                    "The Flight Simulator 2020 was first released on August 18 2020 and now turns one year old.\n\n"
+                    "As a little present also for the community %1 %2 provides a new KML import plugin (File | Import | KML): this import plugin "
+                    "allows to import real-world flight data from flightaware.com, a flight tracker providing free (basic) access to "
+                    "actual flight plans and routes.\n\n"
+                    "Please note that the imported data only contains the aircraft positions and timestamps, sampled at a very coarse resolution "
+                    "(depending on the aircraft type and flown distance roughly one sample every 30 seconds). The reconstructed "
+                    "aircraft attitude and gears and flaps up/down events are still very simplistic. But hopefully you enjoy "
+                    "this new KML import plugin and have fun visualising real-world aviation!").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(previewInfoCount),
             QMessageBox::StandardButton::Ok);
         settings.setPreviewInfoDialogCount(previewInfoCount);
     }
