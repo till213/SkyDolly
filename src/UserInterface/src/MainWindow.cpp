@@ -365,7 +365,8 @@ void MainWindow::initUi() noexcept
                     "Please note that the imported data only contains the aircraft positions and timestamps, sampled at a very coarse resolution "
                     "(depending on the aircraft type and flown distance roughly one sample every 30 seconds). The reconstructed "
                     "aircraft attitude and gears and flaps up/down events are still very simplistic. But hopefully you enjoy "
-                    "this new KML import plugin and have fun visualising real-world aviation!").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(previewInfoCount),
+                    "this new KML import plugin and have fun visualising real-world aviation!\n\n"
+                    "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(previewInfoCount),
             QMessageBox::StandardButton::Ok);
         settings.setPreviewInfoDialogCount(previewInfoCount);
     }
