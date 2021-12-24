@@ -33,7 +33,7 @@ namespace Replay
     /*!
      * The replay speed factor: absolute or percent.
      */
-    enum class SpeedUnit: int {
+    enum struct SpeedUnit: int {
         Absolute = 0,
         Percent
     };

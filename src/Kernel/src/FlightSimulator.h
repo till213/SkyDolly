@@ -34,7 +34,7 @@ class KERNEL_API FlightSimulator
 public:
     FlightSimulator();
 
-    enum class Id {
+    enum struct Id {
         None,
         All,
         FS2020,

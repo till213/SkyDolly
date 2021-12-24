@@ -78,7 +78,7 @@ namespace
 
     constexpr int SearchTimeoutMSec = 200;
 
-    enum class Duration {
+    enum struct Duration {
         All = 0,
         TwoMinutes = 2,
         FiveMinutes = 5,

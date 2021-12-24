@@ -30,7 +30,7 @@
 
 namespace SimConnectType
 {
-    enum class DataDefinition: ::SIMCONNECT_DATA_DEFINITION_ID {
+    enum struct DataDefinition: ::SIMCONNECT_DATA_DEFINITION_ID {
         FlightInformationDefinition,
         FlightPlanDefinition,
         SimulationTimeDefinition,
@@ -44,7 +44,7 @@ namespace SimConnectType
         AircraftInitialPosition
     };
 
-    enum class DataRequest: ::SIMCONNECT_DATA_REQUEST_ID {
+    enum struct DataRequest: ::SIMCONNECT_DATA_REQUEST_ID {
         AircraftInfo,
         FlightPlan,
         SimulationTime,

@@ -77,7 +77,7 @@ namespace
     const char *ConnectionName = "SkyConnect";
     constexpr DWORD UserAirplaneRadiusMeters = 0;
 
-    enum class Event: ::SIMCONNECT_CLIENT_EVENT_ID {
+    enum struct Event: ::SIMCONNECT_CLIENT_EVENT_ID {
         SimStart,
         Pause,
         Crashed,
@@ -89,7 +89,7 @@ namespace
         EngineAutoShutdown
     };
 
-    enum class EngineState: int {
+    enum struct EngineState: int {
         Unknown,
         Starting,
         Started,

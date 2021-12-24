@@ -51,7 +51,7 @@
 
 namespace {
 
-    enum class ColorButton {
+    enum struct ColorButton {
         JetStartColor,
         JetEndColor,
         TurbopropStartColor,

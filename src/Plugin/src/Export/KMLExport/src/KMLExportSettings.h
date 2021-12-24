@@ -34,7 +34,7 @@ struct KMLExportSettings
     /*!
      * Resampling period [millisecons]
      */
-    enum class ResamplingPeriod {
+    enum struct ResamplingPeriod {
         Original = 0,
         TenHz = 100,
         FiveHz = 200,
@@ -43,7 +43,7 @@ struct KMLExportSettings
         AFifthHz = 5000,
         ATenthHz = 10000
     };
-    enum class ColorStyle {
+    enum struct ColorStyle {
         OneColor,
         OneColorPerEngineType,
         ColorRamp,

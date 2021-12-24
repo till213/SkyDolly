@@ -27,7 +27,7 @@
 
 namespace Module
 {
-    enum class Module {
+    enum struct Module {
         None,
         Logbook,
         Formation
