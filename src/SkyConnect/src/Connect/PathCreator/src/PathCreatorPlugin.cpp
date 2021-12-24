@@ -99,29 +99,25 @@ PathCreatorPlugin::~PathCreatorPlugin() noexcept
 #endif
 }
 
-bool PathCreatorPlugin::setUserAircraftPosition(const PositionData &positionData) noexcept
+bool PathCreatorPlugin::setUserAircraftPosition([[maybe_unused]] const PositionData &positionData) noexcept
 {
-    Q_UNUSED(positionData)
     return true;
 }
 
 // PROTECTED
 
-bool PathCreatorPlugin::isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept
+bool PathCreatorPlugin::isTimerBasedRecording([[maybe_unused]] SampleRate::SampleRate sampleRate) const noexcept
 {
-    Q_UNUSED(sampleRate)
     return true;
 }
 
-bool PathCreatorPlugin::onInitialPositionSetup(const InitialPosition &initialPosition) noexcept
+bool PathCreatorPlugin::onInitialPositionSetup([[maybe_unused]] const InitialPosition &initialPosition) noexcept
 {
-    Q_UNUSED(initialPosition)
     return true;
 }
 
-bool PathCreatorPlugin::onFreezeUserAircraft(bool enable) noexcept
+bool PathCreatorPlugin::onFreezeUserAircraft([[maybe_unused]] bool enable) noexcept
 {
-    Q_UNUSED(enable)
     return true;
 }
 
@@ -132,10 +128,8 @@ bool PathCreatorPlugin::onStartRecording() noexcept
     return true;
 }
 
-void PathCreatorPlugin::onRecordingPaused(bool paused) noexcept
-{
-    Q_UNUSED(paused)
-}
+void PathCreatorPlugin::onRecordingPaused([[maybe_unused]] bool paused) noexcept
+{}
 
 void PathCreatorPlugin::onStopRecording() noexcept
 {
@@ -155,8 +149,7 @@ void PathCreatorPlugin::onStopRecording() noexcept
     }
 }
 
-bool PathCreatorPlugin::onStartReplay(qint64 currentTimestamp) noexcept {
-    Q_UNUSED(currentTimestamp)
+bool PathCreatorPlugin::onStartReplay([[maybe_unused]] qint64 currentTimestamp) noexcept {
     d->replayTimer.start(ReplayPeriod);
     return true;
 }
@@ -175,19 +168,14 @@ void PathCreatorPlugin::onStopReplay() noexcept
     d->replayTimer.stop();
 }
 
-void PathCreatorPlugin::onSeek(qint64 currentTimestamp) noexcept
-{
-    Q_UNUSED(currentTimestamp)
-};
+void PathCreatorPlugin::onSeek([[maybe_unused]] qint64 currentTimestamp) noexcept
+{}
 
-void PathCreatorPlugin::onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept
-{
-    Q_UNUSED(sampleRate)
-}
+void PathCreatorPlugin::onRecordingSampleRateChanged([[maybe_unused]] SampleRate::SampleRate sampleRate) noexcept
+{}
 
-bool PathCreatorPlugin::sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept
+bool PathCreatorPlugin::sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access, [[maybe_unused]] AircraftSelection aircraftSelection) noexcept
 {
-    Q_UNUSED(aircraftSelection)
     bool dataAvailable;
     if (currentTimestamp <= getCurrentFlight().getTotalDurationMSec()) {
         dataAvailable = true;

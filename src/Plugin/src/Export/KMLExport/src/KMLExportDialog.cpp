@@ -416,16 +416,14 @@ void KMLExportDialog::on_fileSelectionPushButton_clicked() noexcept
     updateUi();
 }
 
-void KMLExportDialog::on_resamplingComboBox_activated(int index) noexcept
+void KMLExportDialog::on_resamplingComboBox_activated([[maybe_unused]] int index) noexcept
 {
-    Q_UNUSED(index)
     d->exportSettings.resamplingPeriod = static_cast<KMLExportSettings::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt());
     updateInfoUi();
 }
 
-void KMLExportDialog::on_colorStyleComboBox_activated(int index) noexcept
+void KMLExportDialog::on_colorStyleComboBox_activated([[maybe_unused]] int index) noexcept
 {
-    Q_UNUSED(index)
     d->exportSettings.colorStyle = static_cast<KMLExportSettings::ColorStyle>(ui->colorStyleComboBox->currentData().toInt());
     if (d->exportSettings.colorStyle == KMLExportSettings::ColorStyle::ColorRamp || d->exportSettings.colorStyle == KMLExportSettings::ColorStyle::ColorRampPerEngineType) {
         d->exportSettings.nofColorsPerRamp = KMLExportSettings::DefaultNofColorsPerRamp;

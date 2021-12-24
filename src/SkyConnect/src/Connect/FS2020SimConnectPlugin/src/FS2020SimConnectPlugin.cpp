@@ -204,9 +204,8 @@ bool FS2020SimConnectPlugin::onStartRecording() noexcept
     return ok;
 }
 
-void FS2020SimConnectPlugin::onRecordingPaused(bool paused) noexcept
+void FS2020SimConnectPlugin::onRecordingPaused([[maybe_unused]] bool paused) noexcept
 {
-    Q_UNUSED(paused)
     updateRecordingFrequency(Settings::getInstance().getRecordingSampleRate());
 }
 
@@ -744,10 +743,8 @@ void FS2020SimConnectPlugin::updateRequestPeriod(::SIMCONNECT_PERIOD period) noe
     }
 }
 
-void CALLBACK FS2020SimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, DWORD cbData, void *context) noexcept
+void CALLBACK FS2020SimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[maybe_unused]] DWORD cbData, void *context) noexcept
 {
-    Q_UNUSED(cbData);
-
     FS2020SimConnectPlugin *skyConnect = static_cast<FS2020SimConnectPlugin *>(context);
     Flight &flight = skyConnect->getCurrentFlight();
     Aircraft &userAircraft = flight.getUserAircraft();

@@ -681,18 +681,14 @@ void LogbookWidget::on_formationCheckBox_toggled(bool checked) noexcept
     updateFlightTable();
 }
 
-void LogbookWidget::on_engineTypeComboBox_activated(int index) noexcept
+void LogbookWidget::on_engineTypeComboBox_activated([[maybe_unused]] int index) noexcept
 {
-    Q_UNUSED(index)
-
     d->flightSelector.engineType = static_cast<SimType::EngineType>(ui->engineTypeComboBox->currentData().toInt());
     updateFlightTable();
 }
 
-void LogbookWidget::on_durationComboBox_activated(int index) noexcept
+void LogbookWidget::on_durationComboBox_activated([[maybe_unused]] int index) noexcept
 {
-    Q_UNUSED(index)
-
     int minimumDurationMinutes;
     switch (static_cast<Duration>(ui->durationComboBox->currentData().toUInt())) {
     case Duration::All:

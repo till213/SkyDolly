@@ -45,11 +45,8 @@ EventWidget::~EventWidget() noexcept
 
 // PROTECTED
 
-bool EventWidget::nativeEvent(const QByteArray &eventType, void *message, long *result) noexcept
+bool EventWidget::nativeEvent([[maybe_unused]] const QByteArray &eventType, void *message, [[maybe_unused]] long *result) noexcept
 {
-    Q_UNUSED(eventType)
-    Q_UNUSED(result)
-
     bool handled;
     const MSG *msg = static_cast<MSG *>(message);
     switch(msg->message) {
