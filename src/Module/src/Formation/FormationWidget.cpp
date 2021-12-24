@@ -775,9 +775,8 @@ void FormationWidget::updateToolTips() noexcept
     }
 }
 
-void FormationWidget::handleUserAircraftChanged(Aircraft &aircraft) noexcept
+void FormationWidget::handleUserAircraftChanged([[maybe_unused]] Aircraft &aircraft) noexcept
 {
-    Q_UNUSED(aircraft)
     updateRelativePosition();
     updateUi();
 }
@@ -788,9 +787,8 @@ void FormationWidget::handleAircraftInfoChanged() noexcept
     updateUi();
 }
 
-void FormationWidget::handleCellSelected(int row, int column) noexcept
+void FormationWidget::handleCellSelected(int row, [[maybe_unused]] int column) noexcept
 {
-    Q_UNUSED(column)
     if (column == d->tailNumberColumnIndex || column == d->timeOffsetColumnIndex) {
         QTableWidgetItem *item = ui->aircraftTableWidget->item(row, column);
         ui->aircraftTableWidget->editItem(item);
@@ -883,16 +881,14 @@ void FormationWidget::deleteAircraft() noexcept
     }
 }
 
-void FormationWidget::on_horizontalDistanceSlider_valueChanged(int value) noexcept
+void FormationWidget::on_horizontalDistanceSlider_valueChanged([[maybe_unused]] int value) noexcept
 {
-    Q_UNUSED(value)
     updateInitialPositionUi();
     updateRelativePosition();
 }
 
-void FormationWidget::on_verticalDistanceSlider_valueChanged(int value) noexcept
+void FormationWidget::on_verticalDistanceSlider_valueChanged([[maybe_unused]] int value) noexcept
 {
-    Q_UNUSED(value)
     updateInitialPositionUi();
     updateRelativePosition();
 }

@@ -1158,9 +1158,8 @@ void MainWindow::updateMainWindow() noexcept
     }
 }
 
-void MainWindow::handleModuleActivated(const QString title, Module::Module moduleId) noexcept
+void MainWindow::handleModuleActivated(const QString title, [[maybe_unused]] Module::Module moduleId) noexcept
 {
-    Q_UNUSED(moduleId)
     ui->moduleGroupBox->setTitle(title);
     const bool minimalUi = Settings::getInstance().isMinimalUiEnabled();
     if (minimalUi) {
