@@ -36,7 +36,7 @@ namespace CSVConst {
     inline constexpr char Format = 'g';
     inline constexpr int Precision = 9;
 
-    enum class DataType : char {
+    enum struct DataType : char {
         Aircraft = 'a',
         Engine = 'e',
         PrimaryFlightControl = 'p',

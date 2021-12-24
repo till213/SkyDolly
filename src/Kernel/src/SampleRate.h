@@ -42,7 +42,7 @@ namespace SampleRate
     /*!
      * The SampleRate defines various recording sample rates.
      */
-    enum class SampleRate: int {
+    enum struct SampleRate: int {
         Auto = 0,
         Hz1,
         Hz2,

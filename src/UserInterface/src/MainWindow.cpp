@@ -103,7 +103,7 @@ namespace
 
     constexpr char ReplaySpeedProperty[] = "ReplaySpeed";
 
-    enum class ReplaySpeed {
+    enum struct ReplaySpeed {
         Slow10,
         Slow25,
         Slow50,

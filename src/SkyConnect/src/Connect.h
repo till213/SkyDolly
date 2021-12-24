@@ -26,7 +26,7 @@
 #define CONNECT_H
 
 namespace Connect {
-    enum class State {
+    enum struct State {
         Disconnected,
         Connected,
         Recording,

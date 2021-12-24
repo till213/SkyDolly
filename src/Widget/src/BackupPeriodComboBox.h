@@ -38,7 +38,7 @@ class WIDGET_API BackupPeriodComboBox : public QComboBox
 {
     Q_OBJECT
 public:
-    enum class Index {
+    enum struct Index {
         Never,
         Monthly,
         Weekly,
@@ -49,7 +49,7 @@ public:
         NofIndices
     };
 
-    enum class Selection {
+    enum struct Selection {
         BackupPeriod,
         IncludingNextTime
     };

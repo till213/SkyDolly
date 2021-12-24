@@ -34,7 +34,7 @@ struct MODEL_API TimeVariableData
 {
     static constexpr qint64 InvalidTime = std::numeric_limits<qint64>::min();
 
-    enum class Access {
+    enum struct Access {
         Linear,
         Seek
     };

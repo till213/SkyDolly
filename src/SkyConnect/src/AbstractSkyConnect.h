@@ -44,7 +44,7 @@ class SKYCONNECT_API AbstractSkyConnect : public SkyConnectIntf
     Q_OBJECT
 public:
 
-    enum class AircraftSelection {
+    enum struct AircraftSelection {
         All,
         UserAircraft
     };

@@ -46,7 +46,7 @@ class DaoFactory
 {
 public:
 
-    enum class DbType
+    enum struct DbType
     {
         SQLite = 0
     };

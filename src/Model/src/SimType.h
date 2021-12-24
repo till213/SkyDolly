@@ -38,7 +38,7 @@ namespace SimType {
      *
      * Implemenation note: those values act as actual flag values which get persisted in the database.
      */
-    enum class LightState {
+    enum struct LightState {
         None = 0x0000,
         Navigation = 0x0001,
         Beacon = 0x0002,
@@ -58,7 +58,7 @@ namespace SimType {
      *
      * Implemenation note: those values act as actual IDs which get persisted in the database.
      */
-    enum class SurfaceType {
+    enum struct SurfaceType {
         Unknown = 0,
         Concrete = 1,
         Grass = 2,
@@ -92,7 +92,7 @@ namespace SimType {
      *
      * Implemenation note: those values act as actual IDs which get persisted in the database.
      */
-    enum class EngineType {
+    enum struct EngineType {
         Unknown = 0,
         Piston = 1,
         Jet = 2,
@@ -109,7 +109,7 @@ namespace SimType {
      *
      * Implemenation note: those values act as actual IDs which get persisted in the database.
      */
-    enum class PrecipitationState {
+    enum struct PrecipitationState {
         Unknown = 0,
         None = 1,
         Rain = 2,

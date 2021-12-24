@@ -43,7 +43,7 @@ class SKYCONNECT_API SkyConnectIntf : public QObject
     Q_OBJECT
 public:
 
-    enum class RecordingMode {
+    enum struct RecordingMode {
         /*! A (new) flight with a single aircrat is to be recorded. */
         SingleAircraft,
         /*! The aircraft is to be added to the current flight; existing aircrafts
@@ -52,7 +52,7 @@ public:
         AddToFormation
     };
 
-    enum class ReplayMode {
+    enum struct ReplayMode {
         /*! All aircrafts are controlled by Sky Dolly. */
         Normal,
         /*! User takes control of recorded user aircraft. */

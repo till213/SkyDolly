@@ -42,7 +42,7 @@ class KMLStyleExportPrivate;
 class KMLStyleExport
 {
 public:
-    enum class Icon {
+    enum struct Icon {
         Airport,
         Flag
     };
