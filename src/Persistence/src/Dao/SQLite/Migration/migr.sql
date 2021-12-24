@@ -551,3 +551,7 @@ set smoke_enable = 0;
 @migr(id = "1c13f02d-9def-4fd6-af8d-3b7984573682", descn = "Update application version to 0.8", step = 1)
 update metadata
 set app_version = '0.8.0';
+
+@migr(id = "58835694-4d47-42cd-8c9c-1b9e164e21b8", descn = "Update application version to 0.9", step = 1)
+update metadata
+set app_version = '0.9.0';
