@@ -345,8 +345,8 @@ namespace SkyMath {
     }
 
     /*!
-     * Calculates the spherical distance between the \startPoint and the\c endPoint and the
-     * velocity [meters per second] it takes to travel that distance, taking the timestamps \startTimestamp
+     * Calculates the spherical distance between the \c startPoint and the\c endPoint and the
+     * velocity [meters per second] it takes to travel that distance, taking the timestamps \c startTimestamp
      * and \c endTimestamp into account.
      *
      * \param startPosition

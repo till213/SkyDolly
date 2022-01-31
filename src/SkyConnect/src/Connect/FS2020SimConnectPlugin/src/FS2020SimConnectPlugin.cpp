@@ -304,7 +304,7 @@ bool FS2020SimConnectPlugin::sendAircraftData(qint64 currentTimestamp, TimeVaria
     bool ok = true;
     for (auto &aircraft : flight) {
 
-        // Replay AI aircrafts - if any - during recording (if all aircrafts are selected for replay)
+        // Replay AI aircraft - if any - during recording (if all aircraft are selected for replay)
         const bool isUserAircraft = *aircraft == userAircraft;
         if (isUserAircraft && getReplayMode() == ReplayMode::UserAircraftManualControl) {
             // The user aircraft is manually flown
@@ -404,7 +404,7 @@ bool FS2020SimConnectPlugin::sendAircraftData(qint64 currentTimestamp, TimeVaria
 
         } // User aircraft not sent during recording
 
-    } // All aircrafts
+    } // All aircraft
 
     // Start the elapsed timer after sending the first sample data, but
     // only when not recording (the first received sample will start the timer then)
@@ -520,15 +520,15 @@ bool FS2020SimConnectPlugin::connectWithSim() noexcept
 bool FS2020SimConnectPlugin::onCreateAIObjects() noexcept
 {
     // When "fly with formation" is enabled we also create an AI aircraft for the user aircraft
-    // (the user aircraft of the recorded aircrafts in the formation, that is)
+    // (the user aircraft of the recorded aircraft in the formation, that is)
     const bool includingUserAircraft = getReplayMode() == ReplayMode::FlyWithFormation;
-    return d->simConnectAI->createSimulatedAircrafts(getCurrentFlight(), getCurrentTimestamp(), includingUserAircraft, d->pendingAIAircraftCreationRequests);
+    return d->simConnectAI->createSimulatedAircraft(getCurrentFlight(), getCurrentTimestamp(), includingUserAircraft, d->pendingAIAircraftCreationRequests);
 }
 
 void FS2020SimConnectPlugin::onDestroyAIObjects() noexcept
 {
     d->pendingAIAircraftCreationRequests.clear();
-    d->simConnectAI->destroySimulatedAircrafts(getCurrentFlight());
+    d->simConnectAI->destroySimulatedAircraft(getCurrentFlight());
 }
 
 void FS2020SimConnectPlugin::onDestroyAIObject(Aircraft &aircraft) noexcept

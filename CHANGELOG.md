@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.6
+
+### Bug Fixes
+
+- Typo: plural of aircraft is aircraft
+
 ## 0.8.5
 
 ### New Features
@@ -24,7 +30,7 @@
 - Export
   * Illegal file path characters are replaced by _ in the initially suggested file path
   * KML export: exported character data (title, description) is properly enclosed in a CDATA tag
-- Properly update AI aircrafts when deleting the user aircraft during replay
+- Properly update AI aircraft when deleting the user aircraft during replay
 
 ## 0.8.3
 
@@ -56,10 +62,10 @@
 
 - Plugin architecture
   * Import CSV plugin
-    - Aircrafts can now be _added_ to existing flights ("multiplayer formation flying")
-    - Select the aircraft type (used when spawning AI aircrafts in formation flights)
+    - Aircraft can now be _added_ to existing flights ("multiplayer formation flying")
+    - Select the aircraft type (used when spawning AI aircraft in formation flights)
     - Aircraft types (name, number of engines, wingspan, ...) are constantly updated upon flight recordings
-      * The default aircrafts of FS 2020 are already in the logbook and hence immediatelly selectable when importing a CSV file
+      * The default aircraft of FS 2020 are already in the logbook and hence immediatelly selectable when importing a CSV file
     - Also refer to new "time offset" feature in the Formation module which is useful to "synchronise multiplayer formation flights", see below
   * Export CSV plugin
   * Export KML plugin ("Google Earth")
@@ -81,16 +87,16 @@
   * The selected _user aircraft_ is now shown in the flight log table (previously: simply the first recorded aircraft of the formation was shown)
 - Formation
   * A time offset can be added to the selected aircraft, effectively "shifting" it back or forth on the timeline
-    - This is useful for "multiplayer formation flights" in order to synchronise the imported aircrafts (also see CSV import plugin above)
+    - This is useful for "multiplayer formation flights" in order to synchronise the imported aircraft (also see CSV import plugin above)
   * A new "Fly with Formation" replay mode has been added:
-    - All previously recorded aircrafts are replayed
-    - You fly with your currently loaded user aircraft with the formation ("in addition" to the recorded aircrafts)
+    - All previously recorded aircraft are replayed
+    - You fly with your currently loaded user aircraft with the formation ("in addition" to the recorded aircraft)
   * "Take control of recorded user aircraft" still exists
-    - You can now switch control between user aircrafts (also during replay), by double-clicking on the aircraft in the "Formation" table (or push the "Set User Aircraft" button)
+    - You can now switch control between user aircraft (also during replay), by double-clicking on the aircraft in the "Formation" table (or push the "Set User Aircraft" button)
   * Pause will now also "freeze" the user aircraft
     - For both "Fly with formation" and "Take control" replay modes
     - Additionally in "Fly with formation" replay mode user aircraft can be re-positioned relative to the _recorded_ user aircraft in the formation while paused, by clicking on one of the "relative positions"
-  * Aircrafts can now also be deleted from a formation flight during (paused) replay
+  * Aircraft can now also be deleted from a formation flight during (paused) replay
 
 ### Improvements
 
@@ -138,15 +144,15 @@
 
 ### New Features
 
-- New module: Formation - record an unlimited number of aircrafts and replay them altogher, with one single user interface
-  * Simply add new aircrafts to the formation by clicking the "record" button while in the Formation module (the plus (+) sign inidcates that aircrafts are being added)
-  * Previously recorded aircrafts are replayed during recording of the new aircraft
+- New module: Formation - record an unlimited number of aircraft and replay them altogher, with one single user interface
+  * Simply add new aircraft to the formation by clicking the "record" button while in the Formation module (the plus (+) sign inidcates that aircraft are being added)
+  * Previously recorded aircraft are replayed during recording of the new aircraft
   * Change the user aircraft (the one which is being followed by the camera) at any time during replay
   * Take control over the user aircraft any time during replay: manually fly it at any time (and give control back to replay at any time)
-  * Delete aircrafts from a formation
+  * Delete aircraft from a formation
   * Set the position (relative to the current user aircraft) for the new aircraft to be recorded
-- All aircrafts are automatically persisted and added to the current flight
-- The logbook now shows the number of aircrafts per flight
+- All aircraft are automatically persisted and added to the current flight
+- The logbook now shows the number of aircraft per flight
 - Start a new flight (starting with a single aircraft) by switching into the Logbook module
 - The existing Simulation Variables and Flight dialogs show data about the currently selected user aircraft
 - The module selector may be hidden
@@ -218,7 +224,7 @@
 ### New Features
 
 - New "repeat values" settings for selected simulation variables have been introduced: canopy and flaps  
-  * Certain aircrafts counteract the requested simulation variables, e.g. the canopy closes or the flaps retract automatically
+  * Certain aircraft counteract the requested simulation variables, e.g. the canopy closes or the flaps retract automatically
   * So with the "repeat" option enabled and if the given simulation variable has a value greater zero (e.g. "canopy open") then its value is repeatedly sent to Flight Simulator
   * The optimal settings are to disable the "repeat" options (in which case simulation variables are only sent when the value actually changes)
 
@@ -304,7 +310,7 @@
 - Validate the CSV data upon import: specifically the first timestamp must be 0 (timestamps are shifted accordingly)
 - "Show simulation variables" action is now deselected when the dialog is closed (via close button)
 - Set the initial start position ("on ground") when replay from (or seek to) start
-- Prevent aircrafts from "dropping out of the sky" after replay, by recording body velocities
+- Prevent aircraft from "dropping out of the sky" after replay, by recording body velocities
 
 ## 0.3.1
 

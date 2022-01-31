@@ -74,13 +74,13 @@ class KMLExportPluginPrivate
 public:
     KMLExportPluginPrivate() noexcept
         : flight(Logbook::getInstance().getCurrentFlight()),
-          nofAircrafts(flight.count()),
+          nofAircraft(flight.count()),
           styleExport(std::make_unique<KMLStyleExport>())
     {}
 
     KMLExportSettings exportSettings;
     Flight &flight;
-    int nofAircrafts;
+    int nofAircraft;
     std::unique_ptr<KMLStyleExport> styleExport;
     Unit unit;
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
@@ -120,10 +120,10 @@ bool KMLExportPlugin::exportData() noexcept
         const QString &filePath = File::ensureSuffix(exportDialog->getSelectedFilePath(), KMLExportDialog::FileSuffix);
         if (!filePath.isEmpty()) {
 
-            const int nofAircrafts = d->flight.count();
-            // Only create as many colors per ramp as there are aircrafts (if there are less aircrafts
+            const int nofAircraft = d->flight.count();
+            // Only create as many colors per ramp as there are aircraft (if there are less aircraft
             // than requested colors per ramp)
-            d->exportSettings.nofColorsPerRamp = qMin(nofAircrafts, d->exportSettings.nofColorsPerRamp);
+            d->exportSettings.nofColorsPerRamp = qMin(nofAircraft, d->exportSettings.nofColorsPerRamp);
 
             QFile file(filePath);
             ok = file.open(QIODevice::WriteOnly);
@@ -138,7 +138,7 @@ bool KMLExportPlugin::exportData() noexcept
                 ok = exportFlightInfo(file);
             }
             if (ok) {
-                ok = exportAircrafts(file);
+                ok = exportAircraft(file);
             }
             if (ok) {
                 ok = exportWaypoints(file);
@@ -207,7 +207,7 @@ bool KMLExportPlugin::exportFlightInfo(QIODevice &io) const noexcept
     return exportPlacemark(io, KMLStyleExport::Icon::Airport, d->flight.getTitle(), getFlightDescription(), positionData);
 }
 
-bool KMLExportPlugin::exportAircrafts(QIODevice &io) const noexcept
+bool KMLExportPlugin::exportAircraft(QIODevice &io) const noexcept
 {
     bool ok = true;
     for (const auto &aircraft : d->flight) {

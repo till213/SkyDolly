@@ -228,7 +228,7 @@ void LogbookWidget::initUi() noexcept
     // Make sure that shortcuts are initially accepted
     ui->searchLineEdit->clearFocus();
 
-    const QStringList headers {tr("Flight"), tr("Date"), tr("User Aircraft"), tr("Number of Aircrafts"), tr("Departure Time"), tr("Departure"), tr("Arrival Time"), tr("Arrival"), tr("Total Time of Flight"), tr("Title")};
+    const QStringList headers {tr("Flight"), tr("Date"), tr("User Aircraft"), tr("Number of Aircraft"), tr("Departure Time"), tr("Departure"), tr("Arrival Time"), tr("Arrival"), tr("Total Time of Flight"), tr("Title")};
     ui->logTableWidget->setColumnCount(headers.count());
     ui->logTableWidget->setHorizontalHeaderLabels(headers);
     ui->logTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
