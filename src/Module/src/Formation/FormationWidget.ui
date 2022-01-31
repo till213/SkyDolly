@@ -1064,7 +1064,7 @@
         <item>
          <widget class="QPushButton" name="resetAllTimeOffsetPushButton">
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reset the time offsets of all formation aircrafts.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reset the time offsets of all formation aircraft.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="text">
            <string>&amp;Reset All</string>

@@ -54,7 +54,7 @@ public:
     QString title;
     QString description;
     FlightCondition flightCondition;
-    std::vector<std::unique_ptr<Aircraft>> aircrafts;
+    std::vector<std::unique_ptr<Aircraft>> aircraft;
     int userAircraftIndex;
 
     inline void clear(bool withOneAircraft) noexcept {
@@ -62,16 +62,16 @@ public:
         title.clear();
         description.clear();
         flightCondition.clear();
-        if (aircrafts.size() > 0) {
+        if (aircraft.size() > 0) {
             const int aircraftCount = withOneAircraft ? 1 : 0;
-            aircrafts.resize(aircraftCount);
+            aircraft.resize(aircraftCount);
             userAircraftIndex = withOneAircraft ? 0 : InvalidAircraftIndex;
         }
         // A flight always has at least one aircraft; unless
         // it is newly allocated (the aircraft is only added in the constructor body)
         // or cleared just before loading a flight
-        if (aircrafts.size() > 0) {
-            aircrafts.at(0)->clear();
+        if (aircraft.size() > 0) {
+            aircraft.at(0)->clear();
         }
     }
 };
@@ -139,10 +139,10 @@ void Flight::setDescription(const QString &description) noexcept
     }
 }
 
-void Flight::setAircrafts(std::vector<std::unique_ptr<Aircraft>> aircrafts) noexcept
+void Flight::setAircraft(std::vector<std::unique_ptr<Aircraft>> aircraft) noexcept
 {
-    d->aircrafts = std::move(aircrafts);
-    for (auto &aircraft : d->aircrafts) {
+    d->aircraft = std::move(aircraft);
+    for (auto &aircraft : d->aircraft) {
         emit aircraftAdded(*aircraft.get());
         connectSignals(*aircraft.get());
     }
@@ -153,20 +153,20 @@ Aircraft &Flight::addUserAircraft() noexcept
     std::unique_ptr<Aircraft> aircraft = std::make_unique<Aircraft>();
     connectSignals(*aircraft.get());
 
-    d->aircrafts.push_back(std::move(aircraft));
-    setUserAircraftIndex(d->aircrafts.size() - 1);
-    emit aircraftAdded(*d->aircrafts.back().get());
-    return *d->aircrafts.back().get();
+    d->aircraft.push_back(std::move(aircraft));
+    setUserAircraftIndex(d->aircraft.size() - 1);
+    emit aircraftAdded(*d->aircraft.back().get());
+    return *d->aircraft.back().get();
 }
 
 const Aircraft &Flight::getUserAircraftConst() const noexcept
 {
-    return *d->aircrafts.at(d->userAircraftIndex);
+    return *d->aircraft.at(d->userAircraftIndex);
 }
 
 Aircraft &Flight::getUserAircraft() const noexcept
 {
-    return *d->aircrafts.at(d->userAircraftIndex);
+    return *d->aircraft.at(d->userAircraftIndex);
 }
 
 int Flight::getUserAircraftIndex() const noexcept
@@ -178,7 +178,7 @@ void Flight::setUserAircraftIndex(int index) noexcept
 {
     if (d->userAircraftIndex != index) {
         d->userAircraftIndex = index;
-        emit userAircraftChanged(*d->aircrafts.at(index));
+        emit userAircraftChanged(*d->aircraft.at(index));
     }
 }
 
@@ -186,10 +186,10 @@ qint64 Flight::deleteAircraftByIndex(int index) noexcept
 {
     qint64 aircraftId;
     // A flight has at least one aircraft
-    if (d->aircrafts.size() > 1) {
+    if (d->aircraft.size() > 1) {
         setUserAircraftIndex(qMax(d->userAircraftIndex - 1, 0));
-        aircraftId = d->aircrafts.at(index)->getId();
-        d->aircrafts.erase(d->aircrafts.begin() + index);
+        aircraftId = d->aircraft.at(index)->getId();
+        d->aircraft.erase(d->aircraft.begin() + index);
         emit aircraftDeleted(aircraftId);
     } else {
         aircraftId = Aircraft::InvalidId;
@@ -199,7 +199,7 @@ qint64 Flight::deleteAircraftByIndex(int index) noexcept
 
 std::size_t Flight::count() const noexcept
 {
-    return d->aircrafts.size();
+    return d->aircraft.size();
 }
 
 const FlightCondition &Flight::getFlightConditionConst() const noexcept
@@ -219,7 +219,7 @@ qint64 Flight::getTotalDurationMSec(bool ofUserAircraft) const noexcept
     if (ofUserAircraft) {
         totalDuractionMSec = getUserAircraftConst().getDurationMSec();
     } else {
-        for (const auto &aircraft : d->aircrafts) {
+        for (const auto &aircraft : d->aircraft) {
             totalDuractionMSec = qMax(aircraft->getDurationMSec(), totalDuractionMSec);
         }
     }
@@ -233,34 +233,34 @@ void Flight::clear(bool withOneAircraft) noexcept
 
 Flight::Iterator Flight::begin() noexcept
 {
-    return d->aircrafts.begin();
+    return d->aircraft.begin();
 }
 
 Flight::Iterator Flight::end() noexcept
 {
-    return d->aircrafts.end();
+    return d->aircraft.end();
 }
 
 const Flight::Iterator Flight::begin() const noexcept
 {
-    return d->aircrafts.begin();
+    return d->aircraft.begin();
 }
 
 const Flight::Iterator Flight::end() const noexcept
 {
-    return d->aircrafts.end();
+    return d->aircraft.end();
 }
 
 // OPERATORS
 
 Aircraft& Flight::operator[](std::size_t index) noexcept
 {
-    return *d->aircrafts[index];
+    return *d->aircraft[index];
 }
 
 const Aircraft& Flight::operator[](std::size_t index) const noexcept
 {
-    return *d->aircrafts[index];
+    return *d->aircraft[index];
 }
 
 // PRIVATE

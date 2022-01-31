@@ -124,7 +124,7 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
         setState(Connect::State::Recording);
         switch (recordingMode) {
         case RecordingMode::SingleAircraft:
-            // Single flight - destroy any previous AI aircrafts
+            // Single flight - destroy any previous AI aircraft
             onDestroyAIObjects();
             // Start a new flight
             d->currentFlight.clear(true);

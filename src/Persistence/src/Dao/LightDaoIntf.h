@@ -38,11 +38,11 @@ public:
     virtual ~LightDaoIntf() = default;
 
     /*!
-     * Persists the \c data.
+     * Persists the \c lightData.
      *
      * \param aircraftId
-     *        the aircraft the \c data belongs to
-     * \param data
+     *        the aircraft the \c lightData belongs to
+     * \param lightData
      *        the LightData to be persisted
      * \return \c true on success; \c false else
      */

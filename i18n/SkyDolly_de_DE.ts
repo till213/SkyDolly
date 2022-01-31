@@ -861,7 +861,7 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/Module/src/Formation/FormationWidget.cpp" line="982"/>
-        <source>The time offsets of all aircrafts in this formation will be changed.</source>
+        <source>The time offsets of all aircraft in this formation will be changed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1128,7 +1128,7 @@ MIT License</source>
     </message>
     <message>
         <location filename="../src/Module/src/Logbook/LogbookWidget.cpp" line="209"/>
-        <source>Number of Aircrafts</source>
+        <source>Number of Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
