@@ -36,12 +36,12 @@ public:
     virtual ~WaypointDaoIntf() = default;
 
     /*!
-     * Persists the \c data.
+     * Persists the \c flightPlan.
      *
      * \param aircraftId
-     *        the aircraft the \c data belongs to
-     * \param data
-     *        the Waypoint data to be persisted
+     *        the aircraft the \c flightPlan belongs to
+     * \param flightPlan
+     *        the FlightPlan data to be persisted
      * \return \c true on success; \c false else
      */
     virtual bool add(qint64 aircraftId, const FlightPlan &flightPlan) noexcept = 0;

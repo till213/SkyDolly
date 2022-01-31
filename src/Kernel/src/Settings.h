@@ -286,7 +286,7 @@ public:
     double getSeekIntervalSeconds() const noexcept;
 
     /*!
-     * \Sets the absolute seek interval.
+     * Sets the absolute seek interval.
      *
      * \param seconds
      *        the absolute seek interval in seconds
@@ -422,16 +422,18 @@ public:
      * Returns the count of how many times the "preview" dialog is still
      * to be shown.
      *
-     * \obsolete
+     * \deprecated
      */
+    [[deprecated("Do not use once version 1.0 has been reached.")]]
     int getPreviewInfoDialogCount() const noexcept;
 
     /*!
      * Sets the count of how many times the "preview" dialog is still
      * to be shown.
      *
-     * \obsolete
+     * \deprecated
      */
+    [[deprecated("Do not use once version 1.0 has been reached.")]]
     void setPreviewInfoDialogCount(int count) noexcept;
 
     typedef std::pair<QString, QVariant> KeyValue;
