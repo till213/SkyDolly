@@ -10,6 +10,7 @@
   * Basic task ("C records") import (waypoints)
 
 ### Bug Fixes
+
 - Typo: plural of aircraft is aircraft
 - KML import: 
   * "Flight augmentation" (adding flight procedures, aircraft attitude etc.) does properly terminate when imported flight duration is less than 3 minutes
