@@ -440,23 +440,23 @@ PositionData FormationWidget::calculateRelativePositionToUserAircraft(qint64 tim
         double distance;
         switch (ui->horizontalDistanceSlider->value()) {
         case HorizontalDistance::VeryClose:
-            // Aircrafts one wing apart
+            // Aircraft one wing apart
             distance = 1.5 * aircraftType.wingSpan;
             break;
         case HorizontalDistance::Close:
-            // Aircrafts one wingspan
+            // Aircraft one wingspan
             distance = 2.0 * aircraftType.wingSpan;
             break;
         case HorizontalDistance::Nearby:
-            // Aircrafts two wingspans
+            // Aircraft two wingspans
             distance = 3.0 * aircraftType.wingSpan;
             break;
         case HorizontalDistance::Far:
-            // Aircrafts three wingspans apart
+            // Aircraft three wingspans apart
             distance = 4.0 * aircraftType.wingSpan;
             break;
         default:
-            // Aircrafts four wingspans apart
+            // Aircraft four wingspans apart
             distance = 5.0 * aircraftType.wingSpan;
             break;
         }
@@ -762,7 +762,7 @@ void FormationWidget::updateToolTips() noexcept
     // Replay mode
     switch (ui->replayModeComboBox->currentIndex()) {
     case ReplayMode::NormalIndex:
-        ui->replayModeComboBox->setToolTip(tr("%1 controls all recorded aircrafts.").arg(Version::getApplicationName()));
+        ui->replayModeComboBox->setToolTip(tr("%1 controls all recorded aircraft.").arg(Version::getApplicationName()));
         break;
     case ReplayMode::ManualControlUserAircraftIndex:
         ui->replayModeComboBox->setToolTip(tr("Take control of the recorded user aircraft of the formation. The user aircraft can be changed during replay."));
@@ -1005,7 +1005,7 @@ void FormationWidget::on_resetAllTimeOffsetPushButton_clicked() noexcept
         QMessageBox messageBox(this);
         QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), &messageBox);
 
-        messageBox.setText(tr("The time offsets of all aircrafts in this formation will be changed."));
+        messageBox.setText(tr("The time offsets of all aircraft in this formation will be changed."));
         messageBox.setInformativeText(tr("Do you want to reset all time offsets to 0?"));
         QPushButton *resetButton = messageBox.addButton(tr("Reset Time Offsets"), QMessageBox::AcceptRole);
         QPushButton *doNotChangeButon = messageBox.addButton(tr("Do Not Change"), QMessageBox::RejectRole);

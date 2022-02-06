@@ -108,7 +108,7 @@ public:
     /*!
      * Returns whether the version is 0.0.0.
      *
-     * \return \true if all major, minor and patch numbers are zero (0.0.0); \c false else
+     * \return \c true if all major, minor and patch numbers are zero (0.0.0); \c false else
      */
     bool isNull() const noexcept;
 

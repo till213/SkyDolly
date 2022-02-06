@@ -46,18 +46,18 @@ public:
     enum class RecordingMode {
         /*! A (new) flight with a single aircrat is to be recorded. */
         SingleAircraft,
-        /*! The aircraft is to be added to the current flight; existing aircrafts
+        /*! The aircraft is to be added to the current flight; existing aircraft
          *  are replayed during recording.
          */
         AddToFormation
     };
 
     enum class ReplayMode {
-        /*! All aircrafts are controlled by Sky Dolly. */
+        /*! All aircraft are controlled by Sky Dolly. */
         Normal,
         /*! User takes control of recorded user aircraft. */
         UserAircraftManualControl,
-        /*! User flies along with all recorded aircrafts. */
+        /*! User flies along with all recorded aircraft. */
         FlyWithFormation
     };
 

@@ -10,7 +10,7 @@ The connection is made via SimConnect, a standard API introduced with Flight Sim
 
 ## Features
 * Record / Pause / Play
-* Formation flights (multiple aircrafts, replay during recording, "fly with formation", time offset)
+* Formation flights (multiple aircraft, replay during recording, "fly with formation", time offset)
 * Settable recording sample rate: fixed or variable ("auto")
 * Adjustable replay speed ("slow motion", "timelapse")
 * Position, velocity and basic flight control simulation variables (ailerons, rudder, flaps, gears, ...) are recorded
@@ -40,7 +40,7 @@ For more videos created with Sky Dolly also refer to [SHOWCASE](SHOWCASE.md). Ne
 * Switch to the "Formation" module (key F2)
 * Click on "Record" (key R)
 * Each recorded aircraft is added to the current flight
-* While existing aircrafts are replayed during the recording with "auto" sample rate you may still change the recording sample rate 
+* While existing aircraft are replayed during the recording with "auto" sample rate you may still change the recording sample rate 
 
 #### Position
 
@@ -55,7 +55,7 @@ For more videos created with Sky Dolly also refer to [SHOWCASE](SHOWCASE.md). Ne
 
 #### Managing Formations
 
-* You may delete single aircrafts from a flight ("formation")
+* You may delete single aircraft from a flight ("formation")
 * There must be at least one aircraft per flight, so the last aircraft cannot be deleted
 * Add a time offset to the selected aircraft ("multiplayer formation flight synchronisation")
 * To start a new, single-aircraft flight change back to the "Logbook" module (key F1) and click on "Record" (key R)

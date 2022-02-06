@@ -132,7 +132,7 @@ void ModuleManager::initModules() noexcept
     QAction &logbookAction = logbookWidget->getAction();
     logbookAction.setData(Enum::toUnderlyingType(logbookWidget->getModuleId()));
     logbookAction.setShortcut(tr("F1"));
-    logbookAction.setToolTip("Record single aircrafts, load and manage existing flights.");
+    logbookAction.setToolTip("Record single aircraft, load and manage existing flights.");
     d->moduleActionGroup->addAction(&logbookAction);
 
     FormationWidget *formationWidget = new FormationWidget(d->flightService, &d->moduleStackWidget);

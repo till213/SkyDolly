@@ -38,12 +38,12 @@ public:
     virtual ~PrimaryFlightControlDaoIntf() = default;
 
     /*!
-     * Persists the \c data.
+     * Persists the \c primaryFlightControlData.
      *
      * \param aircraftId
-     *        the aircraft the \c data belongs to
-     * \param data
-     *        the SecondaryFlightControlData to be persisted
+     *        the aircraft the \c primaryFlightControlData belongs to
+     * \param primaryFlightControlData
+     *        the PrimaryFlightControlData to be persisted
      * \return \c true on success; \c false else
      */
     virtual bool add(qint64 aircraftId, const PrimaryFlightControlData &primaryFlightControlData) noexcept = 0;

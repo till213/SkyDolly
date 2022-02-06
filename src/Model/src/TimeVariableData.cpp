@@ -30,13 +30,3 @@ TimeVariableData::TimeVariableData() noexcept
 
 TimeVariableData::~TimeVariableData() noexcept
 {}
-
-bool TimeVariableData::operator>=(const TimeVariableData &rhs) noexcept
-{
-    return timestamp >= rhs.timestamp;
-}
-
-bool TimeVariableData::operator<(const TimeVariableData &rhs) noexcept
-{
-    return !(*this >= rhs);
-}

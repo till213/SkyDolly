@@ -161,7 +161,7 @@ public:
      *
      * https://www.pilotmall.com/blogs/news/how-to-calculate-true-airspeed-and-what-it-is-guide
      *
-     * \param trueAirspeedInKnots
+     * \param trueAirspeed
      *        the true airspeed [knots] to be converted to indicated airspeed [knots]
      * \param altitudeAboveSealevel
      *        the altitude above sea level [feet]
