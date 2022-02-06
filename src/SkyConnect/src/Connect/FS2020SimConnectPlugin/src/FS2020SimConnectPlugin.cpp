@@ -546,37 +546,37 @@ void FS2020SimConnectPlugin::recordData() noexcept
     Aircraft &userAircraft = getCurrentFlight().getUserAircraft();
     bool dataStored = false;
     if (!d->currentPositionData.isNull()) {
-        userAircraft.getPosition().upsert(std::move(d->currentPositionData));
+        userAircraft.getPosition().upsertLast(std::move(d->currentPositionData));
         // Processed
         dataStored = true;
         d->currentPositionData = PositionData::NullData;
     }
     if (!d->currentEngineData.isNull()) {
-        userAircraft.getEngine().upsert(std::move(d->currentEngineData));
+        userAircraft.getEngine().upsertLast(std::move(d->currentEngineData));
         // Processed
         dataStored = true;
         d->currentEngineData = EngineData::NullData;
     }
     if (!d->currentPrimaryFlightControlData.isNull()) {
-        userAircraft.getPrimaryFlightControl().upsert(std::move(d->currentPrimaryFlightControlData));
+        userAircraft.getPrimaryFlightControl().upsertLast(std::move(d->currentPrimaryFlightControlData));
         // Processed
         dataStored = true;
         d->currentPrimaryFlightControlData = PrimaryFlightControlData::NullData;
     }
     if (!d->currentSecondaryFlightControlData.isNull()) {
-        userAircraft.getSecondaryFlightControl().upsert(std::move(d->currentSecondaryFlightControlData));
+        userAircraft.getSecondaryFlightControl().upsertLast(std::move(d->currentSecondaryFlightControlData));
         // Processed
         dataStored = true;
         d->currentSecondaryFlightControlData = SecondaryFlightControlData::NullData;
     }
     if (!d->currentAircraftHandleData.isNull()) {
-        userAircraft.getAircraftHandle().upsert(std::move(d->currentAircraftHandleData));
+        userAircraft.getAircraftHandle().upsertLast(std::move(d->currentAircraftHandleData));
         // Processed
         dataStored = true;
         d->currentAircraftHandleData = AircraftHandleData::NullData;
     }
     if (!d->currentLightData.isNull()) {
-        userAircraft.getLight().upsert(std::move(d->currentLightData));
+        userAircraft.getLight().upsertLast(std::move(d->currentLightData));
         // Processed
         dataStored = true;
         d->currentLightData = LightData::NullData;
@@ -836,7 +836,7 @@ void CALLBACK FS2020SimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, 
                 PositionData positionData = simConnectPosition->toPositionData();
                 positionData.timestamp = skyConnect->getCurrentTimestamp();
                 if (storeDataImmediately) {
-                    userAircraft.getPosition().upsert(std::move(positionData));
+                    userAircraft.getPosition().upsertLast(std::move(positionData));
                     dataStored = true;
                 } else {
                     skyConnect->d->currentPositionData = std::move(positionData);
@@ -852,7 +852,7 @@ void CALLBACK FS2020SimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, 
                 EngineData engineData = simConnectEngineReply->toEngineData();
                 engineData.timestamp = skyConnect->getCurrentTimestamp();
                 if (storeDataImmediately) {
-                    userAircraft.getEngine().upsert(std::move(engineData));
+                    userAircraft.getEngine().upsertLast(std::move(engineData));
                     dataStored = true;
                 } else {
                     skyConnect->d->currentEngineData = std::move(engineData);
@@ -868,7 +868,7 @@ void CALLBACK FS2020SimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, 
                 PrimaryFlightControlData primaryFlightControlData = simConnectPrimaryFlightControl->toPrimaryFlightControlData();
                 primaryFlightControlData.timestamp = skyConnect->getCurrentTimestamp();
                 if (storeDataImmediately) {
-                    userAircraft.getPrimaryFlightControl().upsert(std::move(primaryFlightControlData));
+                    userAircraft.getPrimaryFlightControl().upsertLast(std::move(primaryFlightControlData));
                     dataStored = true;
                 } else {
                     skyConnect->d->currentPrimaryFlightControlData = std::move(primaryFlightControlData);
@@ -884,7 +884,7 @@ void CALLBACK FS2020SimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, 
                 SecondaryFlightControlData secondaryFlightControlData = simConnectSecondaryFlightControl->toSecondaryFlightControlData();
                 secondaryFlightControlData.timestamp = skyConnect->getCurrentTimestamp();
                 if (storeDataImmediately) {
-                    userAircraft.getSecondaryFlightControl().upsert(std::move(secondaryFlightControlData));
+                    userAircraft.getSecondaryFlightControl().upsertLast(std::move(secondaryFlightControlData));
                     dataStored = true;
                 } else {
                     skyConnect->d->currentSecondaryFlightControlData = std::move(secondaryFlightControlData);
@@ -900,7 +900,7 @@ void CALLBACK FS2020SimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, 
                 AircraftHandleData aircraftHandleData = simConnectAircraftHandle->toAircraftHandleData();
                 aircraftHandleData.timestamp = skyConnect->getCurrentTimestamp();
                 if (storeDataImmediately) {
-                    userAircraft.getAircraftHandle().upsert(std::move(aircraftHandleData));
+                    userAircraft.getAircraftHandle().upsertLast(std::move(aircraftHandleData));
                     dataStored = true;
                 } else {
                     skyConnect->d->currentAircraftHandleData = std::move(aircraftHandleData);
@@ -916,7 +916,7 @@ void CALLBACK FS2020SimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, 
                 LightData lightData = simConnectLight->toLightData();
                 lightData.timestamp = skyConnect->getCurrentTimestamp();
                 if (storeDataImmediately) {
-                    userAircraft.getLight().upsert(std::move(lightData));
+                    userAircraft.getLight().upsertLast(std::move(lightData));
                     dataStored = true;
                 } else {
                     skyConnect->d->currentLightData = std::move(lightData);

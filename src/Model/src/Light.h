@@ -45,7 +45,31 @@ public:
     Light(const AircraftInfo &aircraftInfo, QObject *parent = nullptr) noexcept;
     virtual ~Light() noexcept;
 
-    void upsert(const LightData &lightData) noexcept;
+    /*!
+     * Inserts \c data at the end, or updates the \em last element (only) if
+     * the data items have the same timestamp.
+     *
+     * Use case: recorded data items are inserted chronologically, but some recorded items
+     * may have the same timestamp: the last recorded data item "wins".
+     *
+     * \param data
+     *        the data to be upserted
+     * \sa upsert
+     */
+    void upsertLast(const LightData &data) noexcept;
+
+    /*!
+     * Inserts \c data at the end, or updates the element having the same
+     * timestamp. That is, the entire collection is being searched first.
+     *
+     * Use case: data items are inserted in random order ("flight augmentation");
+     * use \c upsertLast in case items are to be inserted sequentially in order
+     *
+     * \param data
+     *        the data to be upserted
+     * \sa upsertLast
+     */
+    void upsert(const LightData &data) noexcept;
     const LightData &getFirst() const noexcept;
     const LightData &getLast() const noexcept;
     std::size_t count() const noexcept;

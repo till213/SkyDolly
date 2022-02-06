@@ -23,25 +23,19 @@ configure_file(src/VersionConfig.h.in VersionConfig.h)
 target_sources(${LIBRARY_NAME}
     PRIVATE
         src/KernelLib.h
-        src/Unit.cpp
-        src/Unit.h
+        src/Unit.h src/Unit.cpp
         src/Const.h
         src/Enum.h
         src/SampleRate.h
         src/SkyMath.h
         src/VersionConfig.h.in
-        src/Version.cpp
-        src/Version.h
-        src/Settings.cpp
-        src/Settings.h
+        src/Version.h src/Version.cpp
+        src/Settings.h src/Settings.cpp
         src/Replay.h
         src/Convert.h
-        src/FlightSimulator.cpp
-        src/FlightSimulator.h
-        src/Color.cpp
-        src/Color.h
-        src/File.cpp
-        src/File.h
+        src/FlightSimulator.h src/FlightSimulator.cpp
+        src/Color.h src/Color.cpp
+        src/File.h src/File.cpp
         src/QStringHasher.h
 )
 

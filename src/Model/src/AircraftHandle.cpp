@@ -25,6 +25,7 @@
 #include <memory>
 #include <vector>
 #include <iterator>
+#include <algorithm>
 
 #include <QObject>
 
@@ -65,7 +66,7 @@ AircraftHandle::AircraftHandle(const AircraftInfo &aircraftInfo, QObject *parent
 AircraftHandle::~AircraftHandle() noexcept
 {}
 
-void AircraftHandle::upsert(const AircraftHandleData &aircraftHandleData) noexcept
+void AircraftHandle::upsertLast(const AircraftHandleData &aircraftHandleData) noexcept
 {
     if (d->aircraftHandleData.size() > 0 && d->aircraftHandleData.back().timestamp == aircraftHandleData.timestamp)  {
         // Same timestamp -> replace
@@ -74,6 +75,18 @@ void AircraftHandle::upsert(const AircraftHandleData &aircraftHandleData) noexce
         d->aircraftHandleData.push_back(aircraftHandleData);
     }
     emit dataChanged();
+}
+
+void AircraftHandle::upsert(const AircraftHandleData &data) noexcept
+{
+    auto result = std::find_if(d->aircraftHandleData.begin(), d->aircraftHandleData.end(),
+                              [&data] (TimeVariableData const &d) { return d.timestamp == data.timestamp; });
+    if (result != d->aircraftHandleData.end()) {
+        // Same timestamp -> update
+        *result = data;
+    } else {
+        d->aircraftHandleData.push_back(data);
+    }
 }
 
 const AircraftHandleData &AircraftHandle::getFirst() const noexcept

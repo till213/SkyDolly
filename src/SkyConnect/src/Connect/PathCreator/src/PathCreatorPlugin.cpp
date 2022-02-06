@@ -284,7 +284,7 @@ void PathCreatorPlugin::recordPositionData(qint64 timestamp) noexcept
     aircraftData.velocityBodyZ = d->randomGenerator->bounded(1.0);
 
     aircraftData.timestamp = timestamp;
-    aircraft.getPosition().upsert(aircraftData);
+    aircraft.getPosition().upsertLast(aircraftData);
 }
 
 void PathCreatorPlugin::recordEngineData(qint64 timestamp) noexcept
@@ -322,7 +322,7 @@ void PathCreatorPlugin::recordEngineData(qint64 timestamp) noexcept
     engineData.generalEngineCombustion4 = d->randomGenerator->bounded(2) < 1 ? false : true;
 
     engineData.timestamp = timestamp;
-    aircraft.getEngine().upsert(std::move(engineData));
+    aircraft.getEngine().upsertLast(std::move(engineData));
 }
 
 void PathCreatorPlugin::recordPrimaryControls(qint64 timestamp) noexcept
@@ -335,7 +335,7 @@ void PathCreatorPlugin::recordPrimaryControls(qint64 timestamp) noexcept
     primaryFlightControlData.aileronPosition = SkyMath::fromPosition(-1.0 + d->randomGenerator->bounded(2.0));
 
     primaryFlightControlData.timestamp = timestamp;
-    aircraft.getPrimaryFlightControl().upsert(std::move(primaryFlightControlData));
+    aircraft.getPrimaryFlightControl().upsertLast(std::move(primaryFlightControlData));
 }
 
 void PathCreatorPlugin::recordSecondaryControls(qint64 timestamp) noexcept
@@ -351,7 +351,7 @@ void PathCreatorPlugin::recordSecondaryControls(qint64 timestamp) noexcept
     secondaryFlightControlData.flapsHandleIndex = d->randomGenerator->bounded(5);
 
     secondaryFlightControlData.timestamp = timestamp;
-    aircraft.getSecondaryFlightControl().upsert(std::move(secondaryFlightControlData));
+    aircraft.getSecondaryFlightControl().upsertLast(std::move(secondaryFlightControlData));
 }
 
 void PathCreatorPlugin::recordAircraftHandle(qint64 timestamp) noexcept
@@ -370,7 +370,7 @@ void PathCreatorPlugin::recordAircraftHandle(qint64 timestamp) noexcept
     aircraftHandleData.smokeEnabled = d->randomGenerator->bounded(2) < 1 ? false : true;
 
     aircraftHandleData.timestamp = timestamp;
-    aircraft.getAircraftHandle().upsert(std::move(aircraftHandleData));
+    aircraft.getAircraftHandle().upsertLast(std::move(aircraftHandleData));
 }
 
 void PathCreatorPlugin::recordLights(qint64 timestamp) noexcept
@@ -383,7 +383,7 @@ void PathCreatorPlugin::recordLights(qint64 timestamp) noexcept
     lights = ++lights % 0b1111111111;
 
     lightData.timestamp = timestamp;
-    aircraft.getLight().upsert(std::move(lightData));
+    aircraft.getLight().upsertLast(std::move(lightData));
 }
 
 void PathCreatorPlugin::recordWaypoint() noexcept

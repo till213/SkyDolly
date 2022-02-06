@@ -79,6 +79,9 @@ bool CSVExportPlugin::exportData() noexcept
     QString exportPath = Export::suggestFilePath(FileSuffix);
     const QString filePath = QFileDialog::getSaveFileName(getParentWidget(), QCoreApplication::translate("CSVExportPlugin", "Export CSV"), exportPath, QString("*.csv"));
     if (!filePath.isEmpty()) {
+        // Remember export path
+        const QString exportDirectoryPath = QFileInfo(filePath).absolutePath();
+        Settings::getInstance().setExportPath(exportDirectoryPath);
         QFile file(filePath);
         ok = file.open(QIODevice::WriteOnly);
         if (ok) {
@@ -200,11 +203,8 @@ bool CSVExportPlugin::exportData() noexcept
             }
             file.close();
         }
-        if (ok) {
-            exportPath = QFileInfo(filePath).absolutePath();
-            Settings::getInstance().setExportPath(exportPath);
-        } else {
-            QMessageBox::critical(getParentWidget(), QCoreApplication::translate("CSVExportPlugin", "Export error"), QString(QCoreApplication::translate("CSVExportPlugin", "The CSV file %1 could not be written.")).arg(filePath));
+        if (!ok) {
+            QMessageBox::critical(getParentWidget(), tr("Export error"), tr("The CSV file %1 could not be exported.").arg(filePath));
         }
     } else {
         ok = true;

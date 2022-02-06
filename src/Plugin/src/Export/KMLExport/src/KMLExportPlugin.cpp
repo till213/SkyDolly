@@ -117,7 +117,10 @@ bool KMLExportPlugin::exportData() noexcept
     std::unique_ptr<KMLExportDialog> exportDialog = std::make_unique<KMLExportDialog>(d->exportSettings, getParentWidget());
     const int choice = exportDialog->exec();
     if (choice == QDialog::Accepted) {
-        const QString &filePath = File::ensureSuffix(exportDialog->getSelectedFilePath(), KMLExportDialog::FileSuffix);
+        // Remember export path
+        const QString exportDirectoryPath = QFileInfo(exportDialog->getSelectedFilePath()).absolutePath();
+        Settings::getInstance().setExportPath(exportDirectoryPath);
+        const QString filePath = File::ensureSuffix(exportDialog->getSelectedFilePath(), KMLExportDialog::FileSuffix);
         if (!filePath.isEmpty()) {
 
             const int nofAircrafts = d->flight.count();
@@ -148,25 +151,23 @@ bool KMLExportPlugin::exportData() noexcept
             }
             file.close();
 
-            if (ok) {
-                const QString exportPath = QFileInfo(filePath).absolutePath();
-                Settings::getInstance().setExportPath(exportPath);
-            } else {
-                QMessageBox::critical(getParentWidget(), QCoreApplication::translate("KMLExportPlugin", "Export error"), QString(QCoreApplication::translate("KMLExportPlugin", "The KML file %1 could not be written.")).arg(filePath));
-            }
-
         } else {
             ok = true;
         }
 
-        if (ok && exportDialog->doOpenExportedFile()) {
-            const QString fileUrl = QString("file:///") + filePath;
-            QDesktopServices::openUrl(QUrl(fileUrl));
+        if (ok) {
+            if (exportDialog->doOpenExportedFile()) {
+                const QString fileUrl = QString("file:///") + filePath;
+                QDesktopServices::openUrl(QUrl(fileUrl));
+            }
+        } else {
+            QMessageBox::critical(getParentWidget(), tr("Export error"), tr("The KML file %1 could not be exported.").arg(filePath));
         }
 
     } else {
         ok = true;
     }
+
     return ok;
 }
 

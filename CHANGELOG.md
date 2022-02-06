@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.8.6
+
+### New Features
+
+- IGC import plugin: the International Gliding Commission (IGC) approved flight recorder format for gliders
+  * Basic header data ("H records") import (pilot names, glider type and ID)
+  * Basic position ("B records (fix)") import
+  * Basic task ("C records") import (waypoints)
+
+### Bug Fixes
+
+- Typo: plural of aircraft is aircraft
+- KML import: 
+  * "Flight augmentation" (adding flight procedures, aircraft attitude etc.) does properly terminate when imported flight duration is less than 3 minutes
+  * Validate the number of imported positions
+  * Show a simple error message in case of import failure
+
 ## 0.8.5
 
 ### New Features

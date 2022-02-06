@@ -38,6 +38,62 @@ class KERNEL_API Convert
 public:
 
     /*!
+     * Converts a latitude or longitude coordinate given in degrees, minutes and seconds (e.g.
+     * as string: 43° 30' 12.34'') to a single decimal value (double).
+     *
+     * \param degrees
+     *        the degrees
+     * \param minutes
+     *        the minutes [0, 59]
+     * \param seconds
+     *        the seconds [0.0, 59.99]
+     * \return the coordinate as a single fractional value
+     */
+    static inline double dms2dd(int degrees, int minutes, double seconds) noexcept
+    {
+        return degrees + static_cast<double>(minutes) / 60.0 + seconds / 3600.0;
+    }
+
+    /*!
+     * Converts a latitude or longitude coordinate given in degrees and decimal minutes (e.g.
+     * as string: 43° 30.1234') to a single decimal value (double).
+     *
+     * \param degrees
+     *        the degrees
+     * \param minutes
+     *        the decimal minutes [0.0, 59.99]
+     * \return the coordinate as a single fractional value
+     */
+    static inline double dm2dd(int degrees, double minutes) noexcept
+    {
+        return degrees + minutes / 60.0;
+    }
+
+    /*!
+     * Converts a latitude or longitude coordinate given as single decimal value (double)
+     * to degrees, minutes and seconds (e.g. as string: 43° 30' 12.34'').
+     *
+     * Also refer to: https://www.omnicalculator.com/conversion/coordinates-converter#how-to-convert-latitude-and-longitude-coordinates
+     *
+     * \param dd
+     *        the coordinate as single fractional value
+     * \param degrees
+     *        the resulting degrees
+     * \param minutes
+     *        the resulting minutes [0, 59]
+     * \param seconds
+     *        the resulting seconds [0.0, 59.99]
+     */
+    static inline void dd2dms(double dd, int &degrees, int &minutes, double &seconds) noexcept
+    {
+        double absDegrees = std::abs(dd);
+        degrees = static_cast<int>(absDegrees);
+        double v = (absDegrees - static_cast<double>(degrees)) * 60.0;
+        minutes = static_cast<int>(v);
+        seconds = (v - static_cast<double>(minutes)) * 60.0;
+    }
+
+    /*!
      * Converts the \c feet to meters.
      *
      * \return the \c feet converted to meters

@@ -25,6 +25,7 @@
 #include <memory>
 #include <vector>
 #include <iterator>
+#include <algorithm>
 
 #include <QObject>
 
@@ -63,7 +64,7 @@ PrimaryFlightControl::PrimaryFlightControl(const AircraftInfo &aircraftInfo, QOb
 PrimaryFlightControl::~PrimaryFlightControl() noexcept
 {}
 
-void PrimaryFlightControl::upsert(const PrimaryFlightControlData &primaryFlightControlData) noexcept
+void PrimaryFlightControl::upsertLast(const PrimaryFlightControlData &primaryFlightControlData) noexcept
 {
     if (d->primaryFlightControlData.size() > 0 && d->primaryFlightControlData.back().timestamp == primaryFlightControlData.timestamp)  {
         // Same timestamp -> replace
@@ -72,6 +73,18 @@ void PrimaryFlightControl::upsert(const PrimaryFlightControlData &primaryFlightC
         d->primaryFlightControlData.push_back(primaryFlightControlData);
     }
     emit dataChanged();
+}
+
+void PrimaryFlightControl::upsert(const PrimaryFlightControlData &data) noexcept
+{
+    auto result = std::find_if(d->primaryFlightControlData.begin(), d->primaryFlightControlData.end(),
+                              [&data] (TimeVariableData const &d) { return d.timestamp == data.timestamp; });
+    if (result != d->primaryFlightControlData.end()) {
+        // Same timestamp -> update
+        *result = data;
+    } else {
+        d->primaryFlightControlData.push_back(data);
+    }
 }
 
 const PrimaryFlightControlData &PrimaryFlightControl::getFirst() const noexcept
