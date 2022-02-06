@@ -27,7 +27,6 @@
 #include <QObject>
 #include <QVector>
 
-#include "../../Kernel/src/SkyMath.h"
 #include "TimeVariableData.h"
 #include "SkySearch.h"
 #include "AircraftInfo.h"

@@ -32,8 +32,10 @@
 #include <QStringBuilder>
 #include <QLocale>
 #include <QDateTime>
+#include <QDate>
 #include <QTime>
 
+#include "Convert.h"
 #include "Unit.h"
 
 namespace {
@@ -67,7 +69,7 @@ QString Unit::formatLatitude(double latitude) noexcept
     int minutes;
     double seconds;
 
-    dd2dms(latitude, degrees, minutes, seconds);
+    Convert::dd2dms(latitude, degrees, minutes, seconds);
 
     QString hemisphere = latitude >= 0.0 ? QCoreApplication::translate("Unit", "N") : QCoreApplication::translate("Unit", "S");
     return QString::number(degrees) % "° " % QString::number(minutes) % "' " % QString::number(seconds, 'f', Precision) % "'' " % " " % hemisphere;
@@ -77,11 +79,16 @@ QString Unit::formatLongitude(double longitude) noexcept
 {
     int degrees;
     int minutes = 0;
-    double seconds = 0;
+    double seconds = 0.0;
 
-    dd2dms(longitude, degrees, minutes, seconds);
+    Convert::dd2dms(longitude, degrees, minutes, seconds);
     QString hemisphere = longitude >= 0.0 ? QCoreApplication::translate("Unit", "E") : QCoreApplication::translate("Unit", "W");
     return QString::number(degrees) % "° " % QString::number(minutes) % "' " % QString::number(seconds, 'f', Precision) % "'' " % " " % hemisphere;
+}
+
+QString Unit::formatLatLongPosition(double latitude, double longitude) noexcept
+{
+    return formatLatitude(latitude) % " " % formatLongitude(longitude);
 }
 
 QString Unit::formatFeet(double feet) noexcept
@@ -190,10 +197,14 @@ QString Unit::formatMemory(qint64 memory) noexcept
     return size;
 }
 
+QString Unit::formatDate(const QDate &date) noexcept
+{
+    return d->locale.toString(date, QLocale::ShortFormat);
+}
+
 QString Unit::formatDate(const QDateTime &dateTime) noexcept
 {
-    QDate date(dateTime.date());
-    return d->locale.toString(date, QLocale::ShortFormat);
+    return formatDate(dateTime.date());
 }
 
 QString Unit::formatTime(const QDateTime &dateTime) noexcept
@@ -245,16 +256,4 @@ QString Unit::formatHHMMSS(qint64 msec) noexcept
 QString Unit::formatBoolean(bool value) noexcept
 {
     return value ? QCoreApplication::translate("Unit", "Yes") : QCoreApplication::translate("Unit", "No");
-}
-
-// PRIVATE
-
-// https://www.omnicalculator.com/conversion/coordinates-converter#how-to-convert-latitude-and-longitude-coordinates
-void Unit::dd2dms(double dd, int &degrees, int &minutes, double &seconds) noexcept
-{
-    double absDegrees = std::abs(dd);
-    degrees = static_cast<int>(absDegrees);
-    double v = (absDegrees - static_cast<double>(degrees)) * 60.0;
-    minutes = static_cast<int>(v);
-    seconds = (v - static_cast<double>(minutes)) * 60.0;
 }

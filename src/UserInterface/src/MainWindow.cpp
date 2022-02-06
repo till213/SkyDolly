@@ -354,19 +354,19 @@ void MainWindow::initUi() noexcept
     int previewInfoCount = settings.getPreviewInfoDialogCount();
     if (previewInfoCount > 0) {
         --previewInfoCount;
-        constexpr uint CakeChar = 0x1f382;
-        const QString CakeString = QString::fromUcs4(&CakeChar, 1);
+        constexpr uint DropBearChar = 0x1f428;
+        const QString DropBearString = QString::fromUcs4(&DropBearChar, 1);
         QMessageBox::information(this, "Preview",
-            CakeString + CakeString + CakeString + QString(" HAPPY BIRTHDAY, FLIGHT SIMULATOR 2020! ") + CakeString + CakeString + CakeString + QString("\n\n"
-                    "The Flight Simulator 2020 was first released on August 18 2020 and now turns one year old.\n\n"
-                    "As a little present also for the community %1 %2 provides a new KML import plugin (File | Import | KML): this import plugin "
-                    "allows to import real-world flight data from flightaware.com, a flight tracker providing free (basic) access to "
-                    "actual flight plans and routes.\n\n"
-                    "Please note that the imported data only contains the aircraft positions and timestamps, sampled at a very coarse resolution "
-                    "(depending on the aircraft type and flown distance roughly one sample every 30 seconds). The reconstructed "
-                    "aircraft attitude and gears and flaps up/down events are still very simplistic. But hopefully you enjoy "
-                    "this new KML import plugin and have fun visualising real-world aviation!\n\n"
-                    "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(previewInfoCount),
+            DropBearString + " "  + DropBearString + QString(" SKY DOLLY - DROP BEAR EDITION ") + DropBearString + " " + DropBearString + QString("\n\n"
+            "In appreciation of the MSFS Australia World Update this version gives kuddos to all drop bears out there!\n\n"
+            "As glider support in MSFS will become more and more important %1 %2 provides a new IGC import plugin (File | Import | IGC): this import plugin "
+            "allows to import flight recorder data in a format specified by the International Gliding Commission (IGC), "
+            "a popular flight recorder format used by gliders.\n\n"
+            "Please note that currently only basic position data (so-called B records, or fix records), simple flight plans (C records, or task records) "
+            "and basic header data (H records) are imported. The sampling rate depends on the used flight recorder, but may be as coarse as 10 seconds (only). "
+            "The reconstructed aircraft attitude and gears and flaps up/down events are still very simplistic. But hopefully you enjoy "
+            "this new IGC import plugin and have fun visualising real-world glider flights!\n\n"
+            "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(previewInfoCount),
             QMessageBox::StandardButton::Ok);
         settings.setPreviewInfoDialogCount(previewInfoCount);
     }

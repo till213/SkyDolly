@@ -25,6 +25,7 @@
 #include <memory>
 #include <vector>
 #include <iterator>
+#include <algorithm>
 
 #include <QObject>
 
@@ -63,7 +64,7 @@ Light::Light(const AircraftInfo &aircraftInfo, QObject *parent) noexcept
 Light::~Light() noexcept
 {}
 
-void Light::upsert(const LightData &lightData) noexcept
+void Light::upsertLast(const LightData &lightData) noexcept
 {
     if (d->lightData.size() > 0 && d->lightData.back().timestamp == lightData.timestamp)  {
         // Same timestamp -> replace
@@ -72,6 +73,18 @@ void Light::upsert(const LightData &lightData) noexcept
         d->lightData.push_back(lightData);
     }
     emit dataChanged();
+}
+
+void Light::upsert(const LightData &data) noexcept
+{
+    auto result = std::find_if(d->lightData.begin(), d->lightData.end(),
+                              [&data] (TimeVariableData const &d) { return d.timestamp == data.timestamp; });
+    if (result != d->lightData.end()) {
+        // Same timestamp -> update
+        *result = data;
+    } else {
+        d->lightData.push_back(data);
+    }
 }
 
 const LightData &Light::getFirst() const noexcept

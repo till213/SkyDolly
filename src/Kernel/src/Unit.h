@@ -31,6 +31,7 @@
 
 class QString;
 class QDateTime;
+class QDate;
 class QTime;
 
 #include "KernelLib.h"
@@ -45,6 +46,8 @@ public:
 
     QString formatLatitude(double latitude) noexcept;
     QString formatLongitude(double longitude) noexcept;
+    QString formatLatLongPosition(double latitude, double longitude) noexcept;
+
     QString formatFeet(double feet) noexcept;
     QString formatCelcius(double temperature) noexcept;
     QString formatPressureInHPa(double pressure) noexcept;
@@ -69,6 +72,7 @@ public:
     QString formatElapsedTime(qint64 milliseconds) noexcept;
     QString formatMemory(qint64 memory) noexcept;
 
+    QString formatDate(const QDate &date) noexcept;
     QString formatDate(const QDateTime &dateTime) noexcept;
     QString formatTime(const QDateTime &dateTime) noexcept;
     QString formatDateTime(const QDateTime &dateTime) noexcept;
@@ -79,7 +83,7 @@ public:
      *
      * \param month
      *        the month of year [1, 12]
-     * \return
+     * \return then name of the months
      */
     QString formatMonth(int month) noexcept;
 
@@ -91,7 +95,6 @@ public:
 
 private:
     std::unique_ptr<UnitPrivate> d;
-    static inline void dd2dms(double dd, int &degrees, int &minutes, double &seconds) noexcept;
 };
 
 #endif // UNIT_H

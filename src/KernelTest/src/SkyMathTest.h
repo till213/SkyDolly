@@ -61,6 +61,9 @@ private slots:
 
     void headingChange_data();
     void headingChange();
+
+    void bankAngle_data();
+    void bankAngle();
 };
 
 #endif // SKYMATHTEST_H

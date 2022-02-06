@@ -25,6 +25,7 @@
 #include <memory>
 #include <vector>
 #include <iterator>
+#include <algorithm>
 
 #include <QObject>
 
@@ -63,7 +64,7 @@ Position::Position(const AircraftInfo &aircraftInfo, QObject *parent) noexcept
 Position::~Position() noexcept
 {}
 
-void Position::upsert(const PositionData &positionData) noexcept
+void Position::upsertLast(const PositionData &positionData) noexcept
 {
     if (d->positionData.size() > 0 && d->positionData.back().timestamp == positionData.timestamp)  {
         // Same timestamp -> replace
@@ -72,6 +73,18 @@ void Position::upsert(const PositionData &positionData) noexcept
         d->positionData.push_back(positionData);
     }
     emit dataChanged();
+}
+
+void Position::upsert(const PositionData &data) noexcept
+{
+    auto result = std::find_if(d->positionData.begin(), d->positionData.end(),
+                              [&data] (TimeVariableData const &d) { return d.timestamp == data.timestamp; });
+    if (result != d->positionData.end()) {
+        // Same timestamp -> update
+        *result = data;
+    } else {
+        d->positionData.push_back(data);
+    }
 }
 
 const PositionData &Position::getFirst() const noexcept

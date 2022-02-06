@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLIMPORTDIALOG_H
-#define KMLIMPORTDIALOG_H
+#ifndef IGCIMPORTDIALOG_H
+#define IGCIMPORTDIALOG_H
 
 #include <memory>
 
@@ -32,26 +32,26 @@
 class QWidget;
 
 namespace Ui {
-    class KMLImportDialog;
+    class IGCImportDialog;
 }
 
 class AircraftType;
-class KMLImportDialogPrivate;
+class IGCImportDialogPrivate;
 
-class KMLImportDialog : public QDialog
+class IGCImportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit KMLImportDialog(QWidget *parent = nullptr) noexcept;
-    virtual ~KMLImportDialog() noexcept;
+    explicit IGCImportDialog(QWidget *parent = nullptr) noexcept;
+    virtual ~IGCImportDialog() noexcept;
 
     QString getSelectedFilePath() const noexcept;
     bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
     bool isAddToFlightEnabled() const noexcept;
 
 private:
-    Ui::KMLImportDialog *ui;
-    std::unique_ptr<KMLImportDialogPrivate> d;
+    Ui::IGCImportDialog *ui;
+    std::unique_ptr<IGCImportDialogPrivate> d;
 
     void frenchConnection() noexcept;
     void initUi() noexcept;
@@ -61,5 +61,4 @@ private slots:
     void updateUi() noexcept;
 };
 
-#endif // KMLIMPORTDIALOG_H
-
+#endif // IGCIMPORTDIALOG_H

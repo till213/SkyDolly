@@ -22,28 +22,30 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLIMPORTPLUGIN_H
-#define KMLIMPORTPLUGIN_H
+#ifndef IGCIMPORTPLUGIN_H
+#define IGCIMPORTPLUGIN_H
 
 #include <memory>
 
 #include <QObject>
 #include <QtPlugin>
+#include <QStringView>
+
+class QRegularExpression;
 
 #include "../../../ImportIntf.h"
 #include "../../../PluginBase.h"
 
-class AircraftType;
-class KMLImportPluginPrivate;
+class IGCImportPluginPrivate;
 
-class KMLImportPlugin : public PluginBase, public ImportIntf
+class IGCImportPlugin : public PluginBase, public ImportIntf
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "KMLImportPlugin.json")
+    Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "IGCImportPlugin.json")
     Q_INTERFACES(ImportIntf)
 public:
-    KMLImportPlugin() noexcept;
-    virtual ~KMLImportPlugin() noexcept;
+    IGCImportPlugin() noexcept;
+    virtual ~IGCImportPlugin() noexcept;
 
     virtual QWidget *getParentWidget() const noexcept override
     {
@@ -68,18 +70,32 @@ public:
     virtual bool importData(FlightService &flightService) noexcept override;
 
 private:
-    std::unique_ptr<KMLImportPluginPrivate> d;
+    std::unique_ptr<IGCImportPluginPrivate> d;
 
     bool import(const QString &filePath, FlightService &flightService) noexcept;
 
-    void readKML() noexcept;
-    void readDocument() noexcept;
-    void readPlacemark() noexcept;
-    void readWaypoint(const QString &icaoOrName) noexcept;
-    void readTrack() noexcept;
+    bool readIGCFile() noexcept;
 
+    // A record, containing manufacturer ID
+    bool readManufacturer() noexcept;
+    // All records
+    bool readRecords() noexcept;
+
+    bool parseHeader(const QByteArray &line) noexcept;
+    bool parseHeaderDate(const QByteArray &line) noexcept;
+    bool parseHeaderText(const QByteArray &line, const QRegularExpression &regExp, QString &text) noexcept;
+    bool parseHeaderPilot(const QByteArray &line) noexcept;
+    bool parseHeaderCoPilot(const QByteArray &line) noexcept;
+    bool parseHeaderGliderType(const QByteArray &line) noexcept;
+    bool parseHeaderGliderId(const QByteArray &line) noexcept;
+
+    bool parseTask(const QByteArray &line) noexcept;
+    bool parseFix(const QByteArray &line) noexcept;
+    inline double parseCoordinate(QStringView degreesText, QStringView minutesBy1000Text);
+
+    void updateFlightInfo() noexcept;
     void updateFlightCondition() noexcept;
     void updateAircraftInfo() noexcept;
 };
 
-#endif // KMLIMPORTPLUGIN_H
+#endif // IGCIMPORTPLUGIN_H
