@@ -117,7 +117,7 @@ bool KMLExportPlugin::exportData() noexcept
     std::unique_ptr<KMLExportDialog> exportDialog = std::make_unique<KMLExportDialog>(d->exportSettings, getParentWidget());
     const int choice = exportDialog->exec();
     if (choice == QDialog::Accepted) {
-        const QString &filePath = File::ensureSuffix(exportDialog->getSelectedFilePath(), KMLExportDialog::FileSuffix);
+        const QString filePath = File::ensureSuffix(exportDialog->getSelectedFilePath(), KMLExportDialog::FileSuffix);
         if (!filePath.isEmpty()) {
 
             const int nofAircraft = d->flight.count();

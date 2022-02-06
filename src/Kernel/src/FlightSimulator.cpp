@@ -22,11 +22,13 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <QString>
+
 #include "FlightSimulator.h"
 
 FlightSimulator::FlightSimulator()
 {}
 
-const char FlightSimulator::FlightSimulatorNameAll[] = "All";
-const char FlightSimulator::FlightSimulatorNameFS2020[] = "FS2020";
-const char FlightSimulator::FlightSimulatorNamePrepar3Dv5[] = "Prepar3Dv5";
+const QString FlightSimulator::FlightSimulatorNameAll = "All";
+const QString FlightSimulator::FlightSimulatorNameFS2020 = "FS2020";
+const QString FlightSimulator::FlightSimulatorNamePrepar3Dv5 = "Prepar3Dv5";

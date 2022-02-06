@@ -23,19 +23,20 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <QString>
+#include <QStringView>
 #include <QStringBuilder>
 
 #include "File.h"
 
 // PUBLIC
 
-QString File::ensureSuffix(const QString filePath, const QString &suffix) noexcept
+QString File::ensureSuffix(QStringView filePath, QStringView suffix) noexcept
 {
     QString filePathWithSuffix;
     if (!filePath.endsWith(suffix, Qt::CaseInsensitive)) {
         filePathWithSuffix = filePath % "." % suffix;
     } else {
-        filePathWithSuffix = filePath;
+        filePathWithSuffix = filePath.toString();
     }
     return filePathWithSuffix;
 }

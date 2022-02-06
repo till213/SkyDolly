@@ -25,7 +25,7 @@
 #include <memory>
 
 #include <QString>
-#include <QRegExp>
+#include <QRegularExpression>
 
 #include <VersionConfig.h>
 #include "Version.h"
@@ -67,19 +67,20 @@ Version::Version(int majorNo, int minorNo, int patch) noexcept
     : d(new VersionPrivate(majorNo, minorNo, patch))
 {}
 
-Version::Version(const QString &version) noexcept
+Version::Version(QStringView version) noexcept
     : d(std::make_unique<VersionPrivate>())
 {
     fromString(version);
 }
 
-void Version::fromString(const QString &version) noexcept
+void Version::fromString(QStringView version) noexcept
 {
-    QRegExp versionRegExp("^(\\d+)\\.(\\d+)\\.(\\d+)$");
-    if (versionRegExp.indexIn(version) != -1) {
-        d->major = versionRegExp.cap(1).toInt();
-        d->minor = versionRegExp.cap(2).toInt();
-        d->patch = versionRegExp.cap(3).toInt();
+    QRegularExpression versionRegExp("^(\\d+)\\.(\\d+)\\.(\\d+)$");
+    QRegularExpressionMatch match = versionRegExp.match(version);
+    if (match.isValid()) {
+        d->major = match.captured(1).toInt();
+        d->minor = match.captured(2).toInt();
+        d->patch = match.captured(3).toInt();
     }
 }
 

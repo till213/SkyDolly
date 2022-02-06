@@ -25,14 +25,16 @@
 #ifndef FILE_H
 #define FILE_H
 
-#include <QString>
+#include <QStringView>
+
+class QString;
 
 #include "KernelLib.h"
 
 class KERNEL_API File
 {
 public:
-    static QString ensureSuffix(const QString filePath, const QString &suffix) noexcept;
+    static QString ensureSuffix(QStringView filePath, QStringView suffix) noexcept;
 };
 
 #endif // FILE_H

@@ -43,7 +43,7 @@ class KMLExportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    static constexpr char FileSuffix[] = "kml";
+    static const QString FileSuffix;
 
     explicit KMLExportDialog(KMLExportSettings &exportSettings, QWidget *parent = nullptr) noexcept;
     virtual ~KMLExportDialog() noexcept;
