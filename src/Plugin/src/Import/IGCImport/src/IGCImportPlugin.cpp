@@ -78,6 +78,9 @@ namespace
     // Timestamp (msec), latitude (degrees), longitude (degrees), altitude (feet)
     typedef std::tuple<qint64, double, double, double> TrackItem;
 
+    // One hour threshold
+    constexpr int DayChangeThresholdSeconds = 60 * 60;
+
     // Record types
     constexpr char ARecord = 'A';
     constexpr char HRecord = 'H';
@@ -205,7 +208,11 @@ public:
     QRegularExpression cRecordTaskDefinitionRegExp;
     QRegularExpression cRecordTaskRegExp;
     QRegularExpression bRecordRegExp;
+
+    static const QTime DayChangeThreshold;
 };
+
+const QTime IGCImportPluginPrivate::DayChangeThreshold{1, 0, 0, 0};
 
 // PUBLIC
 
@@ -512,7 +519,7 @@ bool IGCImportPlugin::parseFix(const QByteArray &line) noexcept
             d->firstDateTimeUtc = QDateTime(d->flightDate, d->currentTime, QTimeZone::utc());
             d->currentDateTimeUtc = d->firstDateTimeUtc;
         } else {
-            if (d->currentTime < d->previousTime) {
+            if (d->currentTime.addSecs(DayChangeThresholdSeconds) < d->previousTime) {
                 // Flight crossed "midnight" (next day)
                 d->flightDate = d->flightDate.addDays(1);
             }
