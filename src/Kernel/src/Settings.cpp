@@ -89,7 +89,7 @@ public:
     static constexpr bool DefaultResetTimeOffsetConfirmation = true;
 
     static constexpr int DefaultPreviewInfoDialogCount = 3;
-    static constexpr int PreviewInfoDialogBase = 50;
+    static constexpr int PreviewInfoDialogBase = 60;
 
     SettingsPrivate() noexcept
         : version(QCoreApplication::instance()->applicationVersion())

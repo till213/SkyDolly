@@ -91,19 +91,26 @@ CSVImportPlugin::~CSVImportPlugin() noexcept
 bool CSVImportPlugin::importData(FlightService &flightService) noexcept
 {
     bool ok;
-    std::unique_ptr<CSVImportDialog> csvImportDialog = std::make_unique<CSVImportDialog>(getParentWidget());
-    const int choice = csvImportDialog->exec();
+    std::unique_ptr<CSVImportDialog> importDialog = std::make_unique<CSVImportDialog>(getParentWidget());
+    const int choice = importDialog->exec();
     if (choice == QDialog::Accepted) {
+        // Remember import (export) path
+        const QString filePath = QFileInfo(importDialog->getSelectedFilePath()).absolutePath();
+        Settings::getInstance().setExportPath(filePath);
         AircraftType aircraftType;
-        ok = csvImportDialog->getSelectedAircraftType(aircraftType);
-        const bool addToCurrentFlight = csvImportDialog->isAddToFlightEnabled();
+        ok = importDialog->getSelectedAircraftType(aircraftType);
+        const bool addToCurrentFlight = importDialog->isAddToFlightEnabled();
         if (ok) {
-            ok = import(csvImportDialog->getSelectedFilePath(), aircraftType, flightService, addToCurrentFlight);
-            if (ok && addToCurrentFlight) {
-                std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-                if (skyConnect) {
-                    skyConnect->get().updateAIObjects();
+            ok = import(importDialog->getSelectedFilePath(), aircraftType, flightService, addToCurrentFlight);
+            if (ok) {
+                if (addToCurrentFlight) {
+                    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+                    if (skyConnect) {
+                        skyConnect->get().updateAIObjects();
+                    }
                 }
+            } else {
+                QMessageBox::critical(getParentWidget(), tr("Import error"), tr("The CSV file %1 could not be imported.").arg(filePath));
             }
         }
     } else {
@@ -205,10 +212,6 @@ bool CSVImportPlugin::import(const QString &filePath, const AircraftType &aircra
                 emit aircraft.dataChanged();
 
                 if (ok) {
-                    // Remember import (export) path
-                    const QString exportPath = QFileInfo(filePath).absolutePath();
-                    Settings::getInstance().setExportPath(exportPath);
-
                     AircraftInfo info(aircraft.getId());
                     info.aircraftType = aircraftType;
                     info.startDate = QFileInfo(filePath).birthTime();
@@ -229,9 +232,6 @@ bool CSVImportPlugin::import(const QString &filePath, const AircraftType &aircra
             }
         }
         file.close();
-    }
-    if (!ok) {
-        QMessageBox::critical(getParentWidget(), QCoreApplication::translate("CSVImportPlugin", "Import error"), QCoreApplication::translate("CSVImportPlugin", "The CSV file %1 could not be read.").arg(filePath));
     }
     return ok;
 }
@@ -342,7 +342,7 @@ inline bool CSVImportPlugin::importPositionData(const QList<QByteArray> &headers
 
     }
     if (ok) {
-        aircraft.getPosition().upsert(data);
+        aircraft.getPosition().upsertLast(data);
     }
     return ok;
 }
@@ -531,7 +531,7 @@ inline bool CSVImportPlugin::importEngineData(const QList<QByteArray> &headers, 
 
     }
     if (ok) {
-        engine.upsert(std::move(data));
+        engine.upsertLast(std::move(data));
     }
     return ok;
 }
@@ -595,7 +595,7 @@ inline bool CSVImportPlugin::importPrimaryFlightControlData(const QList<QByteArr
 
     }
     if (ok) {
-        primaryFlightControl.upsert(std::move(data));
+        primaryFlightControl.upsertLast(std::move(data));
     }
     return ok;
 }
@@ -674,7 +674,7 @@ inline bool CSVImportPlugin::importSecondaryFlightControlData(const QList<QByteA
 
     }
     if (ok) {
-        secondaryFlightControl.upsert(std::move(data));
+        secondaryFlightControl.upsertLast(std::move(data));
     }
     return ok;
 }
@@ -756,7 +756,7 @@ inline bool CSVImportPlugin::importAircraftHandleData(const QList<QByteArray> &h
 
     }
     if (ok) {
-        aircraftHandle.upsert(std::move(data));
+        aircraftHandle.upsertLast(std::move(data));
     }
     return ok;
 }
@@ -810,7 +810,7 @@ inline bool CSVImportPlugin::importLightData(const QList<QByteArray> &headers, c
 
     }
     if (ok) {
-        light.upsert(std::move(data));
+        light.upsertLast(std::move(data));
     }
     return ok;
 }

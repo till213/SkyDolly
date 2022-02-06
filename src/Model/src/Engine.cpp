@@ -25,6 +25,7 @@
 #include <memory>
 #include <vector>
 #include <iterator>
+#include <algorithm>
 
 #include <QObject>
 
@@ -63,15 +64,27 @@ Engine::Engine(const AircraftInfo &aircraftInfo, QObject *parent) noexcept
 Engine::~Engine() noexcept
 {}
 
-void Engine::upsert(const EngineData &engineData) noexcept
+void Engine::upsertLast(const EngineData &data) noexcept
 {
-    if (d->engineData.size() > 0 && d->engineData.back().timestamp == engineData.timestamp)  {
-        // Same timestamp -> replace
-        d->engineData[d->engineData.size() - 1] = engineData;
+    if (d->engineData.size() > 0 && d->engineData.back().timestamp == data.timestamp)  {
+        // Same timestamp -> update
+        d->engineData[d->engineData.size() - 1] = data;
     } else {
-        d->engineData.push_back(engineData);
+        d->engineData.push_back(data);
     }
     emit dataChanged();
+}
+
+void Engine::upsert(const EngineData &data) noexcept
+{
+    auto result = std::find_if(d->engineData.begin(), d->engineData.end(),
+                              [&data] (TimeVariableData const &d) { return d.timestamp == data.timestamp; });
+    if (result != d->engineData.end()) {
+        // Same timestamp -> update
+        *result = data;
+    } else {
+        d->engineData.push_back(data);
+    }
 }
 
 const EngineData &Engine::getFirst() const noexcept

@@ -58,8 +58,8 @@ public:
      * the action are connected together so that when the action is changed the button
      * is updated and when the button is clicked the action is triggered.
      *
-     * \p action
-     *    the action to be associated with this button
+     * \param action
+     *        the action to be associated with this button
      */
     void setAction(const QAction *action) noexcept;
 

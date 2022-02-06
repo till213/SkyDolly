@@ -48,6 +48,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/KernelTest)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Model)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/ModelTest)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Persistence)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/Flight)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Widget)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/SkyConnect)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Plugin)
@@ -153,6 +154,3 @@ if (${PLATFORM_IS_MACOS})
         PROPERTY MACOSX_PACKAGE_LOCATION "PlugIns/Export"
     )
 endif()
-
-
-

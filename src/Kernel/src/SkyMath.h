@@ -33,6 +33,9 @@
 
 /*!
  * Mathematical functions for interpolation.
+ *
+ * Useful links:
+ * - https://tools.timodenk.com/cubic-spline-interpolation
  */
 namespace SkyMath {
 
@@ -198,7 +201,7 @@ namespace SkyMath {
      * Interpolates circular values in a range of [-180, 180[ using Hermite
      * (cubic) interpolation.
      *
-     * Also refer to \c #interpolateHermite().
+     * \sa #interpolateHermite
      */
     template <typename T>
     T interpolateHermite180(
@@ -228,7 +231,7 @@ namespace SkyMath {
      * Interpolates circular values in a range of [0, 360[ using Hermite
      * (cubic) interpolation.
      *
-     * Also refer to \c #interpolateHermite().
+     * \sa #interpolateHermite
      */
     template <typename T>
     T interpolateHermite360(
@@ -345,7 +348,7 @@ namespace SkyMath {
     }
 
     /*!
-     * Calculates the spherical distance between the \c startPoint and the\c endPoint and the
+     * Calculates the spherical distance between the \c startPoint and the \c endPoint and the
      * velocity [meters per second] it takes to travel that distance, taking the timestamps \c startTimestamp
      * and \c endTimestamp into account.
      *
@@ -374,7 +377,7 @@ namespace SkyMath {
 
     /*!
      * Calculates the initial bearing required to get from \c startPosition
-     * to \c endPosition, with an average altitude of \c averageAltitude [meters].
+     * to \c endPosition.
      *
      * θ = atan2(sin Δλ ⋅ cos φ2 , cos φ1 ⋅ sin φ2 − sin φ1 ⋅ cos φ2 ⋅ cos Δλ)
      *
@@ -404,11 +407,17 @@ namespace SkyMath {
     /*!
      * Approximates the pitch angle [degrees] by assuming a straight distance line
      * and delta altitude, that is a triangle defined by \c sphericalDistance
-     * and orthognal \c deltaAltitude (both in [meters]). The estimated elevation
+     * and orthogonal \c deltaAltitude (both in [meters]). The estimated elevation
      * (pitch) angle should be exact enough for short distances.
      *
      * Note that we assume that the aircraft is not flying "upside down", so the
-     * maximum estimated pitch angles are in [-90, 90] degrees.
+     * maximum estimated pitch angles are in [-90, 90] degrees. Also, we also assume
+     * that the aircraft is never "perfectly flying straight up" (or down), or in
+     * other words: if the \c sphericalDistance is 0.0 then the resulting pitch angle
+     * will also be 0.0. While this is mathematically not quite correct (the pitch
+     * angle would either be a perfect +90 or -90 degrees) it better reflects reality
+     * when an aircraft is stationary on the ground, but the measured altitude values
+     * fluctuate slightly.
      *
      * \param sphericalDistance
      *        the spherical distance [meters]
@@ -420,12 +429,18 @@ namespace SkyMath {
     inline double approximatePitch(double sphericalDistance, double deltaAltitude) noexcept
     {
         double pitch;
-        if (sphericalDistance > 0.0) {
-            pitch = std::atan(deltaAltitude / sphericalDistance);
-        } else if (deltaAltitude > 0) {
-            pitch = M_PI / 2.0;
+        if (!qFuzzyIsNull(deltaAltitude)) {
+            if (sphericalDistance > 0.0) {
+                pitch = std::atan(deltaAltitude / sphericalDistance);
+            } else {
+                // Mathematically the angle would be +/- 90 degrees, but when no
+                // distance is travelled we assume that the aircraft is stationary,
+                // or in other words: level (0.0 degrees pitch) on the ground
+                pitch = 0.0;
+            }
         } else {
-            pitch = -M_PI / 2.0;
+            // Level flight
+            pitch = 0.0;
         }
         return pitch * 180.0 / M_PI;
     }
@@ -434,6 +449,13 @@ namespace SkyMath {
      * Calculates the shortest heading change to get from the \c currentHeading to
      * the \c targetHeading. All headings are in degrees.
      *
+     * The following convention is applied when turning exaclty 180 degrees:
+     * - If the \c currentHeading is < \c targetHeading then a right turn (-180.0)
+     *   is done
+     * - Otherwise a left turn (180.0) is done
+     *
+     * This is in analogy with #interpolateHermite360.
+     *
      * \param currentHeading
      *        the current heading [0, 360[ [degrees]
      * \param targetHeading
@@ -441,26 +463,56 @@ namespace SkyMath {
      * \return the required heading change [-180, 180] [degrees]; negative values
      *         correspond to clockwise ("right") turn; positive values
      *         correspond to anti-clockwise ("left") turn
+     * \sa #interpolateHermite360
      * \sa https://forum.arduino.cc/t/calculating-heading-distance-and-direction/92144/6
      */
     inline double headingChange(double currentHeading, double targetHeading) noexcept
     {
-        if (currentHeading < targetHeading) {
-            // Denormalize ...
-            currentHeading += 360.0;
-        }
+        // The denormalizedHeading is always larger or equal than the targetHeading
+        const double denormalizedHeading = currentHeading >= targetHeading ? currentHeading : currentHeading + 360.0;
+
         // Calculate left turn, will allways be in [0, 360[
-        double headingChange = currentHeading - targetHeading;
+        double headingChange = denormalizedHeading - targetHeading;
 
         // Take the smallest turn
-        if (headingChange < 180.0) {
+        if (qFuzzyCompare(headingChange, 180.0)) {
+            // If the - original (!) - currentHeading was smaller than the target
+            // heading then we turn right 180 degrees (negative value), otherwise
+            // left (positive value - by convention, which is in analogy how
+            // interpolateHermite360 interpolates 180 degree turns)
+            headingChange = currentHeading < targetHeading ? -180.0 : +180.0;
+        } else if (headingChange < 180.0) {
             // Left turns are positive
             headingChange = headingChange;
         } else {
-          // Right turns are negative: -(360 - headingChange)
+            // Right turns are negative: -(360 - headingChange)
             headingChange = -360.0 + headingChange;
         }
         return headingChange;
+    }
+
+    /*!
+     * Approximates the required bank angle required for the given \c headingChange.
+     * The maximum bank angle is limited by \c maxBankAngle and required for turns
+     * of \c maxBankAngleForHeadingChange degrees.
+     *
+     * \param headingChange
+     *        the desired heading change [-180, 180] [degrees]; negative values
+     *         correspond to clockwise ("right") turn; positive values
+     *         correspond to anti-clockwise ("left") turn
+     * \param maxBankAngleForHeadingChange
+     *        the heading change (absolute value: [0, 180]) [degrees] for which the \c maxBankAngle
+     *        is required
+     * \param maxBankAngle
+     *        the maximum bank angle (absolute value: [0, 90]) the aircraft typically can do
+     *        (in either direction)
+     * \return the approximate bank angle required for the heading change; negative values
+     *         for "right turns"; positive values for "left turns"
+     * \sa headingChange
+     */
+    inline double bankAngle(double headingChange, double maxBankAngleForHeadingChange, double maxBankAngle) noexcept
+    {
+        return qMin((std::abs(headingChange) / maxBankAngleForHeadingChange) * maxBankAngle, maxBankAngle) * SkyMath::sgn(headingChange);
     }
 
     /*!

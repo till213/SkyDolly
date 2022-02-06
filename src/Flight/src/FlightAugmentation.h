@@ -22,44 +22,31 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLIMPORTDIALOG_H
-#define KMLIMPORTDIALOG_H
+#ifndef FLIGHTAUGMENTATION_H
+#define FLIGHTAUGMENTATION_H
 
-#include <memory>
+#include "FlightLib.h"
 
-#include <QDialog>
+class Aircraft;
 
-class QWidget;
-
-namespace Ui {
-    class KMLImportDialog;
-}
-
-class AircraftType;
-class KMLImportDialogPrivate;
-
-class KMLImportDialog : public QDialog
+/*!
+ * Augments flight data with attitude and velocity, for instance.
+ *
+ * This is useful for imported flights where no such data is available
+ * (for instance only position data is imported).
+ */
+class FLIGHT_API FlightAugmentation
 {
-    Q_OBJECT
 public:
-    explicit KMLImportDialog(QWidget *parent = nullptr) noexcept;
-    virtual ~KMLImportDialog() noexcept;
+    FlightAugmentation();
 
-    QString getSelectedFilePath() const noexcept;
-    bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
-    bool isAddToFlightEnabled() const noexcept;
+    void augmentAircraftData(Aircraft &aircraft) noexcept;
+    void augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept;
+    void augmentProcedures(Aircraft &aircraft) noexcept;
 
 private:
-    Ui::KMLImportDialog *ui;
-    std::unique_ptr<KMLImportDialogPrivate> d;
-
-    void frenchConnection() noexcept;
-    void initUi() noexcept;
-
-private slots:
-    void on_fileSelectionPushButton_clicked() noexcept;
-    void updateUi() noexcept;
+    void augmentStartProcedure(Aircraft &aircraft) noexcept;
+    void augmentLandingProcedure(Aircraft &aircraft) noexcept;
 };
 
-#endif // KMLIMPORTDIALOG_H
-
+#endif // FLIGHTAUGMENTATION_H
