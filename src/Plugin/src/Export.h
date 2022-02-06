@@ -25,6 +25,7 @@
 #ifndef EXPORT_H
 #define EXPORT_H
 
+#include <QStringView>
 #include <QString>
 
 #include "PluginLib.h"
@@ -35,7 +36,7 @@
 class PLUGIN_API Export
 {
 public:
-    static QString suggestFilePath(const QString &suffix)  noexcept;
+    static QString suggestFilePath(const QStringView suffix)  noexcept;
 };
 
 #endif // EXPORT_H

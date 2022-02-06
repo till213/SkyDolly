@@ -23,7 +23,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <QString>
-#include <QRegExp>
+#include <QStringView>
+#include <QRegularExpression>
 
 #include "../../Kernel/src/Version.h"
 #include "../../Kernel/src/Settings.h"
@@ -37,7 +38,7 @@
 
 // PUBLIC
 
-QString Export::suggestFilePath(const QString &suffix) noexcept
+QString Export::suggestFilePath(QStringView suffix) noexcept
 {
     QString suggestedFileName;
     Flight &flight = Logbook::getInstance().getCurrentFlight();
@@ -56,7 +57,7 @@ QString Export::suggestFilePath(const QString &suffix) noexcept
     }
 
     // https://www.codeproject.com/tips/758861/removing-characters-which-are-not-allowed-in-windo
-    QRegExp illegalInFileName = QRegExp("[\\\\/:*?""<>|]");
+    QRegularExpression illegalInFileName = QRegularExpression("[\\\\/:*?""<>|]");
     suggestedFileName = suggestedFileName.replace(illegalInFileName, "_");
     return settings.getExportPath() + "/" + File::ensureSuffix(suggestedFileName, suffix);
 }

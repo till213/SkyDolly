@@ -82,6 +82,8 @@ public:
 
 // PUBLIC
 
+const QString KMLExportDialog::FileSuffix = "kml";
+
 KMLExportDialog::KMLExportDialog(KMLExportSettings &exportSettings, QWidget *parent) noexcept
     : QDialog(parent),
       ui(new Ui::KMLExportDialog),

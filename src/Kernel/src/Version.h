@@ -28,6 +28,7 @@
 #include <memory>
 
 #include <QString>
+#include <QStringView>
 #include <QDate>
 
 #include "KernelLib.h"
@@ -70,10 +71,10 @@ public:
      *        a QString containing the version of the expected [major].[minor].[patch]
      * \sa #operator<()
      */
-    Version(const QString &version) noexcept;
+    Version(QStringView version) noexcept;
     ~Version() noexcept;
 
-    void fromString(const QString &version) noexcept;
+    void fromString(QStringView version) noexcept;
 
     /*!
      * Returns the major version number.
@@ -101,7 +102,7 @@ public:
      * which can be used to construct another Version instance.
      *
      * \return a QString containing a user-friendly version value
-     * \sa Version(const QString &)
+     * \sa Version(QStringView)
      */
     QString toString() const noexcept;
 

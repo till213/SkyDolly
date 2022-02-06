@@ -26,6 +26,7 @@
 #define FLIGHTSIMULATOR_H
 
 #include <QString>
+#include <QStringView>
 
 #include "KernelLib.h"
 
@@ -41,17 +42,17 @@ public:
         Prepar3Dv5
     };
 
-    static const char FlightSimulatorNameAll[];
-    static const char FlightSimulatorNameFS2020[];
-    static const char FlightSimulatorNamePrepar3Dv5[];
+    static const QString FlightSimulatorNameAll;
+    static const QString FlightSimulatorNameFS2020;
+    static const QString FlightSimulatorNamePrepar3Dv5;
 
-    static inline Id nameToId(const QString &name) noexcept {
+    static inline Id nameToId(QStringView name) noexcept {
         Id id;
-        if (name == QString(FlightSimulatorNameAll)) {
+        if (name == FlightSimulatorNameAll) {
             id = Id::All;
-        } else if (name == QString(FlightSimulatorNameFS2020)) {
+        } else if (name == FlightSimulatorNameFS2020) {
             id = Id::FS2020;
-        } else if (name == QString(FlightSimulatorNamePrepar3Dv5)) {
+        } else if (name == FlightSimulatorNamePrepar3Dv5) {
             id = Id::Prepar3Dv5;
         } else {
             id = Id::None;

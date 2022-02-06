@@ -52,11 +52,9 @@
 #include "../../../../src/Export.h"
 #include "CSVExportPlugin.h"
 
-namespace  {
-    constexpr char FileSuffix[] = "csv";
-}
-
 // PUBLIC
+
+const QString CSVExportPlugin::FileSuffix = "csv";
 
 CSVExportPlugin::CSVExportPlugin() noexcept
 {

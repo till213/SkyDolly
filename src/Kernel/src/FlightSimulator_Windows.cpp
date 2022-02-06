@@ -30,13 +30,14 @@
 #include <QDir>
 #include <QStandardPaths>
 #include <QString>
+#include <QStringView>
 #include <QStringList>
 
 #include "FlightSimulator.h"
 
 // To ensure correct resolution of symbols, add Psapi.lib to TARGETLIBS
 // and compile with -DPSAPI_VERSION=1
-static bool isProcessRunning(DWORD pid, const QString &processName)
+static bool isProcessRunning(DWORD pid, QStringView processName)
 {
     TCHAR actualProcessName[MAX_PATH] = TEXT("<unknown>");
 
