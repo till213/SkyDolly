@@ -11,7 +11,7 @@
 
 ### Bug Fixes
 
-- Typo: plural of aircraft is aircraft
+- Typo: plural of aircraft is aircraft (credits: Stefano Caporelli, Youtube comment [Sky Dolly - Formation Flying](https://www.youtube.com/watch?v=Op_zTfM3-HQ&lc=UgyZXpfBxZ5iLpqnd5F4AaABAg))
 - KML import: 
   * "Flight augmentation" (adding flight procedures, aircraft attitude etc.) does properly terminate when imported flight duration is less than 3 minutes
   * Validate the number of imported positions

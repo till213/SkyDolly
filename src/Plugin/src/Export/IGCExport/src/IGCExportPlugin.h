@@ -29,9 +29,12 @@
 #include <QtPlugin>
 
 class QString;
+class QDateTime;
 
 #include "../../../ExportIntf.h"
 #include "../../../PluginBase.h"
+
+class Aircraft;
 
 class IGCExportPluginPrivate;
 
@@ -68,6 +71,19 @@ public:
 
 private:
     std::unique_ptr<IGCExportPluginPrivate> d;
+
+    bool exportIGCFile(const Aircraft &aircraft, QIODevice &io) const noexcept;
+    inline bool exportARecord(QIODevice &io) const noexcept;
+    inline bool exportHRecord(const Aircraft &aircraft, QIODevice &io) const noexcept;
+    inline bool exportIRecord(QIODevice &io) const noexcept;
+    inline bool exportBRecord(const Aircraft &aircraft, QIODevice &io) const noexcept;
+    inline bool exportGRecord(QIODevice &io) const noexcept;
+
+    inline QByteArray formatDate(const QDateTime &date) const noexcept;
+    inline QByteArray formatTime(const QDateTime &date) const noexcept;
+    inline QByteArray formatNumber(int value, int padding) const noexcept;
+    inline QByteArray formatLatitude(double latitude) const noexcept;
+    inline QByteArray formatLongitude(double longitude) const noexcept;
 };
 
 #endif // IGCEXPORTPLUGIN_H
