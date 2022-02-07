@@ -63,10 +63,6 @@ namespace
     constexpr char LookAtTilt[] = "50";
     constexpr char LookAtRange[] = "4000";
     constexpr int HeadingNorth = 0;
-
-    // Number of colors per color ramp
-    constexpr int MaxColorsPerRamp = 8;
-
 }
 
 class KMLExportPluginPrivate
@@ -74,13 +70,11 @@ class KMLExportPluginPrivate
 public:
     KMLExportPluginPrivate() noexcept
         : flight(Logbook::getInstance().getCurrentFlight()),
-          nofAircraft(flight.count()),
           styleExport(std::make_unique<KMLStyleExport>())
     {}
 
     KMLExportSettings exportSettings;
     Flight &flight;
-    int nofAircraft;
     std::unique_ptr<KMLStyleExport> styleExport;
     Unit unit;
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)

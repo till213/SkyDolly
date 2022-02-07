@@ -49,8 +49,8 @@
 #include "KMLExportSettings.h"
 #include "ui_KMLExportDialog.h"
 
-namespace {
-
+namespace
+{
     enum struct ColorButton {
         JetStartColor,
         JetEndColor,
@@ -131,7 +131,7 @@ void KMLExportDialog::initUi() noexcept
     ui->resamplingComboBox->addItem("2 Hz", Enum::toUnderlyingType(KMLExportSettings::ResamplingPeriod::TwoHz));
     ui->resamplingComboBox->addItem("5 Hz", Enum::toUnderlyingType(KMLExportSettings::ResamplingPeriod::FiveHz));
     ui->resamplingComboBox->addItem("10 Hz", Enum::toUnderlyingType(KMLExportSettings::ResamplingPeriod::TenHz));
-    ui->resamplingComboBox->addItem(tr("Original data (performance critical)"), Enum::toUnderlyingType(KMLExportSettings::ResamplingPeriod::Original));
+    ui->resamplingComboBox->addItem(tr("Original data"), Enum::toUnderlyingType(KMLExportSettings::ResamplingPeriod::Original));
 
     initColorUi();
 }
@@ -411,7 +411,7 @@ void KMLExportDialog::restoreDefaults() noexcept
 
 void KMLExportDialog::on_fileSelectionPushButton_clicked() noexcept
 {
-    const QString filePath = QFileDialog::getSaveFileName(this, QCoreApplication::translate("KMLExportDialog", "Export KML"), ui->filePathLineEdit->text(), QString("*.kml"));
+    const QString filePath = QFileDialog::getSaveFileName(this, tr("Export KML"), ui->filePathLineEdit->text(), QString("*.kml"));
     if (!filePath.isEmpty()) {
         ui->filePathLineEdit->setText(QDir::toNativeSeparators(filePath));
     }

@@ -1,4 +1,4 @@
-set(LIBRARY_NAME "KMLExport")
+set(LIBRARY_NAME "IGCExport")
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_library(${LIBRARY_NAME} SHARED "")
@@ -15,11 +15,13 @@ endif()
 
 target_sources(${LIBRARY_NAME}
     PRIVATE
-        src/KMLExportPlugin.h src/KMLExportPlugin.cpp
-        src/KMLExportSettings.h src/KMLExportSettings.cpp
-        src/KMLExportDialog.h src/KMLExportDialog.cpp src/KMLExportDialog.ui
-        src/KMLStyleExport.h src/KMLStyleExport.cpp
-        src/KMLExportPlugin.json
+        src/IGCExportPlugin.h src/IGCExportPlugin.cpp
+        src/IGCExportDialog.h src/IGCExportDialog.cpp src/IGCExportDialog.ui
+        src/IGCExportSettings.h src/IGCExportSettings.cpp
+        src/IGCExportPlugin.json
 )
 
+target_include_directories(${LIBRARY_NAME} PUBLIC
+    "${CMAKE_CURRENT_BINARY_DIR}"
+)
 target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})

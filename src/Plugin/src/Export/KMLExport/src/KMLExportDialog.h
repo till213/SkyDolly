@@ -30,13 +30,13 @@
 
 #include <QDialog>
 
-#include "../../../../../Model/src/SimType.h"
 #include "KMLStyleExport.h"
 
 namespace Ui {
     class KMLExportDialog;
 }
 
+struct KMLExportSettings;
 class KMLExportDialogPrivate;
 
 class KMLExportDialog : public QDialog
