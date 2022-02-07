@@ -15,8 +15,9 @@ Various XML elements may store coordinates (latitude/longitude/altitude), as chi
   * Stores &lt;coordinates&gt; (including altitude &lt;altitudeMode&gt;)
   * The sibling &lt;TimeStamp&gt; contains the timestamp
   * Example: KML exported from flightradar24.com
-- &lt;LineString&gt; (child of &lt;MultiGeometry&gt;)
-  * Connects two coordinates
+- &lt;LineString&gt; (may be child of &lt;MultiGeometry&gt; or directly a &lt;Placemark&gt;)
+  * Connects two or more coordinates
+  * No associated timestamps
   * Example: KML exported from flightradar24.com
 
 ## Resources
