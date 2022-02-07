@@ -26,6 +26,7 @@
 
 #include <QString>
 #include <QRegularExpression>
+#include <QRegularExpressionMatch>
 
 #include <VersionConfig.h>
 #include "Version.h"
@@ -76,7 +77,11 @@ Version::Version(QStringView version) noexcept
 void Version::fromString(QStringView version) noexcept
 {
     QRegularExpression versionRegExp("^(\\d+)\\.(\\d+)\\.(\\d+)$");
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+    QRegularExpressionMatch match = versionRegExp.match(version.toString());
+#else
     QRegularExpressionMatch match = versionRegExp.match(version);
+#endif
     if (match.isValid()) {
         d->major = match.captured(1).toInt();
         d->minor = match.captured(2).toInt();
