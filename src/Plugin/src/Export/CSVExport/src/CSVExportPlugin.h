@@ -95,7 +95,7 @@ private:
     static QString getAircraftHandleHeader() noexcept;
     static QString getAircraftHandleData(const AircraftHandleData &data) noexcept;
 
-    static QString getLighteHeader() noexcept;
+    static QString getLightHeader() noexcept;
     static QString getLightData(const LightData &data) noexcept;
 };
 
