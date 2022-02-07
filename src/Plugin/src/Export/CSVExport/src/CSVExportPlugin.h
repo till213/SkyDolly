@@ -40,9 +40,6 @@ class PrimaryFlightControlData;
 class SecondaryFlightControlData;
 class AircraftHandleData;
 class LightData;
-class CSVExportPrivate;
-
-class CSVExportPrivate;
 
 class CSVExportPlugin : public PluginBase, public ExportIntf
 {
@@ -78,8 +75,6 @@ public:
     virtual bool exportData() noexcept override;
 
 private:
-    CSVExportPrivate *d;
-
     static QString getPositionHeader() noexcept;
     static QString getPositionData(const PositionData &data) noexcept;
 

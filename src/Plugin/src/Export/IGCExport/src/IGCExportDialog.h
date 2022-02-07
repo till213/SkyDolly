@@ -22,46 +22,50 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLSTYLEEXPORT_H
-#define KMLSTYLEEXPORT_H
+#ifndef IGCEXPORTDIALOG_H
+#define IGCEXPORTDIALOG_H
 
 #include <memory>
-#include <unordered_map>
 #include <utility>
 
-class QIODevice;
+#include <QDialog>
 
-#include "../../../../../Model/src/SimType.h"
-#include "KMLExportSettings.h"
+namespace Ui {
+    class IGCExportDialog;
+}
 
-class KMLStyleExportPrivate;
+struct IGCExportSettings;
+class IGCExportDialogPrivate;
 
-class KMLStyleExport
+class IGCExportDialog : public QDialog
 {
+    Q_OBJECT
 public:
-    enum struct Icon {
-        Airport,
-        Flag
-    };
+    static const QString FileSuffix;
 
-    KMLStyleExport() noexcept;
-    ~KMLStyleExport() noexcept;
+    explicit IGCExportDialog(IGCExportSettings &exportSettings, QWidget *parent = nullptr) noexcept;
+    virtual ~IGCExportDialog() noexcept;
 
-    bool exportStyles(const KMLExportSettings &exportSettings, QIODevice &io) noexcept;
-    QString getNextStyleMapPerEngineType(SimType::EngineType engineType) noexcept;
-
-    static QString getStyleUrl(Icon icon) noexcept;
+    QString getSelectedFilePath() const noexcept;
+    bool doOpenExportedFile() const noexcept;
 
 private:
-    std::unique_ptr<KMLStyleExportPrivate> d;
+    Ui::IGCExportDialog *ui;
+    std::unique_ptr<IGCExportDialogPrivate> d;
 
-    void initialiseColorRamps() noexcept;
-    bool exportHighlightLineStyle(QIODevice &io) const noexcept;
-    bool exportNormalLineStyles(QIODevice &io) const noexcept;
-    bool exportLineStyleMaps(QIODevice &io) const noexcept;
-    bool exportPlacemarkStyles(QIODevice &io) const noexcept;
+    void initUi() noexcept;
+    void updateInfoUi() noexcept;
+    void frenchConnection() noexcept;
 
-    static bool exportNormalLineStylesPerEngineType(SimType::EngineType engineType, std::vector<QRgb> &colorRamp, float lineWidth, QIODevice &io) noexcept;
+    qint64 estimateNofSamplePoints() noexcept;
+
+private slots:
+    void updateUi() noexcept;
+
+    void restoreDefaults() noexcept;
+
+    void on_fileSelectionPushButton_clicked() noexcept;
+    void on_resamplingComboBox_activated(int index) noexcept;
 };
 
-#endif // KMLSTYLEEXPORT_H
+#endif // IGCEXPORTDIALOG_H

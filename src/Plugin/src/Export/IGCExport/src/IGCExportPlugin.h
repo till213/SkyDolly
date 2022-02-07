@@ -22,46 +22,52 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLSTYLEEXPORT_H
-#define KMLSTYLEEXPORT_H
+#ifndef IGCEXPORTPLUGIN_H
+#define IGCEXPORTPLUGIN_H
 
-#include <memory>
-#include <unordered_map>
-#include <utility>
+#include <QObject>
+#include <QtPlugin>
 
-class QIODevice;
+class QString;
 
-#include "../../../../../Model/src/SimType.h"
-#include "KMLExportSettings.h"
+#include "../../../ExportIntf.h"
+#include "../../../PluginBase.h"
 
-class KMLStyleExportPrivate;
+class IGCExportPluginPrivate;
 
-class KMLStyleExport
+class IGCExportPlugin : public PluginBase, public ExportIntf
 {
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "IGCExportPlugin.json")
+    Q_INTERFACES(ExportIntf)
 public:
-    enum struct Icon {
-        Airport,
-        Flag
-    };
+    IGCExportPlugin() noexcept;
+    virtual ~IGCExportPlugin() noexcept;
 
-    KMLStyleExport() noexcept;
-    ~KMLStyleExport() noexcept;
+    virtual QWidget *getParentWidget() const noexcept override
+    {
+        return PluginBase::getParentWidget();
+    }
 
-    bool exportStyles(const KMLExportSettings &exportSettings, QIODevice &io) noexcept;
-    QString getNextStyleMapPerEngineType(SimType::EngineType engineType) noexcept;
+    virtual void setParentWidget(QWidget *parent) noexcept override
+    {
+        PluginBase::setParentWidget(parent);
+    }
 
-    static QString getStyleUrl(Icon icon) noexcept;
+    virtual void storeSettings(const QUuid &pluginUuid) const noexcept override
+    {
+        PluginBase::storeSettings(pluginUuid);
+    }
+
+    virtual void restoreSettings(const QUuid &pluginUuid) noexcept override
+    {
+        PluginBase::restoreSettings(pluginUuid);
+    }
+
+    virtual bool exportData() noexcept override;
 
 private:
-    std::unique_ptr<KMLStyleExportPrivate> d;
-
-    void initialiseColorRamps() noexcept;
-    bool exportHighlightLineStyle(QIODevice &io) const noexcept;
-    bool exportNormalLineStyles(QIODevice &io) const noexcept;
-    bool exportLineStyleMaps(QIODevice &io) const noexcept;
-    bool exportPlacemarkStyles(QIODevice &io) const noexcept;
-
-    static bool exportNormalLineStylesPerEngineType(SimType::EngineType engineType, std::vector<QRgb> &colorRamp, float lineWidth, QIODevice &io) noexcept;
+    std::unique_ptr<IGCExportPluginPrivate> d;
 };
 
-#endif // KMLSTYLEEXPORT_H
+#endif // IGCEXPORTPLUGIN_H
