@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <QtGlobal>
 #include <QCoreApplication>
 #include <QFile>
 // Implements the % operator for string concatenation
@@ -58,6 +59,8 @@
 #include "../../../../../Model/src/AircraftHandleData.h"
 #include "../../../../../Model/src/Light.h"
 #include "../../../../../Model/src/LightData.h"
+#include "../../../../../Model/src/FlightPlan.h"
+#include "../../../../../Model/src/Waypoint.h"
 #include "../../../../src/Export.h"
 #include "IGCExportDialog.h"
 #include "IGCExportSettings.h"
@@ -90,6 +93,15 @@ namespace
 
     // I record
     constexpr char EnvironmentalNoiseLevel[] = "ENL";
+
+    // C record
+    constexpr char ObsoleteFlightDate[] = "000000";
+    constexpr char ObsoleteTaskNumber[] = "000000";
+    constexpr char TakeoffPoint[] = "TAKEOFF";
+    constexpr char StartPoint[] = "START";
+    constexpr char TurnPoint[] = "TURN";
+    constexpr char FinishPoint[] = "FINISH";
+    constexpr char LandingPoint[] = "LANDING";
 
     // B record
     constexpr char FixValid[] = "A";
@@ -200,6 +212,9 @@ bool IGCExportPlugin::exportIGCFile(const Aircraft &aircraft, QIODevice &io) con
         ok = exportIRecord(io);
     }
     if (ok) {
+        ok = exportCRecord(aircraft, io);
+    }
+    if (ok) {
         ok = exportBRecord(aircraft, io);
     }
     if (ok) {
@@ -241,6 +256,43 @@ inline bool IGCExportPlugin::exportIRecord(QIODevice &io) const noexcept
     return io.write(record);
 }
 
+inline bool IGCExportPlugin::exportCRecord(const Aircraft &aircraft, QIODevice &io) const noexcept
+{
+    const AircraftInfo &info = aircraft.getAircraftInfoConst();
+    const FlightPlan &flightPlan = aircraft.getFlightPlanConst();
+    const Position &position = aircraft.getPositionConst();
+    QByteArray record = IGCExportPluginPrivate::CRecord % formatDateTime(info.startDate.toUTC()) %
+                        ::ObsoleteFlightDate % ::ObsoleteTaskNumber %
+                        // Number of turn points, excluding start and end wapoints
+                        formatNumber(qMin(flightPlan.count() - 2, 0lu), 2) %
+                        d->flight.getTitle().toLatin1() % ::LineEnd;
+    bool ok = io.write(record);
+    const std::size_t count = flightPlan.count();
+    std::size_t i = 0;
+    while (ok && i < count) {
+        const Waypoint &waypoint = flightPlan[i];
+        if (i == 0) {
+            record = IGCExportPluginPrivate::CRecord % formatPosition(waypoint.latitude, waypoint.longitude);
+            record = record % ::TakeoffPoint % " " % waypoint.identifier.toLatin1() % ::LineEnd;
+            const PositionData &positionData = position.getFirst();
+            record = record % IGCExportPluginPrivate::CRecord % formatPosition(positionData.latitude, positionData.longitude);
+            record = record % ::StartPoint % ::LineEnd;
+        } else if (i == count - 1) {
+            const PositionData &positionData = position.getLast();
+            record = IGCExportPluginPrivate::CRecord % formatPosition(positionData.latitude, positionData.longitude);
+            record = record % ::FinishPoint % ::LineEnd;
+            record = record % IGCExportPluginPrivate::CRecord % formatPosition(waypoint.latitude, waypoint.longitude);
+            record = record % ::LandingPoint % " " % waypoint.identifier.toLatin1() % ::LineEnd;
+        } else {
+            record = IGCExportPluginPrivate::CRecord % formatPosition(waypoint.latitude, waypoint.longitude);
+            record = record % ::TurnPoint % " " % waypoint.identifier.toLatin1() % ::LineEnd;
+        }
+        ++i;
+        ok = io.write(record);
+    }
+    return ok;
+}
+
 inline bool IGCExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     bool ok;
@@ -257,16 +309,16 @@ inline bool IGCExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &
             const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Linear);
             if (!positionData.isNull()) {
                 const int altitude = qRound(Convert::feetToMeters(positionData.altitude));
+                const QByteArray altitudeByteArray = formatNumber(altitude, 5);
                 const EngineData &engineData = engine.interpolate(timestamp, TimeVariableData::Access::Linear);
-                const int noise = estimateEnvironmentalNoise(engineData);
+                const int noise = estimateEnvironmentalNoise(engineData);                
                 const QByteArray record = IGCExportPluginPrivate::BRecord %
                                           formatTime(startTime.addMSecs(timestamp)) %
-                                          formatLatitude(positionData.latitude) %
-                                          formatLongitude(positionData.longitude) %
+                                          formatPosition(positionData.latitude, positionData.longitude) %
                                           ::FixValid %
-                                          // TODO Ignore pressure altitude (or properly calculate it somehow)
-                                          formatNumber(altitude, 5) %
-                                          formatNumber(altitude, 5) %
+                                          // For now we report pressure altitude the same as GNSS altitude
+                                          altitudeByteArray %
+                                          altitudeByteArray %
                                           formatNumber(noise, 3) %
                                           ::LineEnd;
                 ok = io.write(record);
@@ -277,15 +329,16 @@ inline bool IGCExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &
         // Original data requested
         for (const PositionData &positionData : position) {
             const int altitude = qRound(Convert::feetToMeters(positionData.altitude));
+            const QByteArray altitudeByteArray = formatNumber(altitude, 5);
             const EngineData &engineData = engine.interpolate(positionData.timestamp, TimeVariableData::Access::Linear);
             const int noise = estimateEnvironmentalNoise(engineData);
             const QByteArray record = IGCExportPluginPrivate::BRecord %
                                       formatTime(startTime.addMSecs(positionData.timestamp)) %
-                                      formatLatitude(positionData.latitude) %
-                                      formatLongitude(positionData.longitude) %
+                                      formatPosition(positionData.latitude, positionData.longitude) %
                                       ::FixValid %
-                                      formatNumber(altitude, 5) %
-                                      formatNumber(altitude, 5) %
+                                      // See comment above
+                                      altitudeByteArray %
+                                      altitudeByteArray %
                                       formatNumber(noise, 3) %
                                       ::LineEnd;
             ok = io.write(record);
@@ -309,9 +362,14 @@ inline QByteArray IGCExportPlugin::formatDate(const QDateTime &date) const noexc
     return date.toString(::DateFormat).toLatin1();
 }
 
-inline QByteArray IGCExportPlugin::formatTime(const QDateTime &date) const noexcept
+inline QByteArray IGCExportPlugin::formatTime(const QDateTime &time) const noexcept
 {
-    return date.toString(::TimeFormat).toLatin1();
+    return time.toString(::TimeFormat).toLatin1();
+}
+
+inline QByteArray IGCExportPlugin::formatDateTime(const QDateTime &dateTime) const noexcept
+{
+    return formatDate(dateTime) % formatTime(dateTime);
 }
 
 inline QByteArray IGCExportPlugin::IGCExportPlugin::formatNumber(int value, int padding) const noexcept
@@ -348,6 +406,11 @@ inline QByteArray IGCExportPlugin::IGCExportPlugin::formatLongitude(double longi
             .arg(longitude >= 0.0 ? QLatin1Char('E') : QLatin1Char('W'))
             .toLatin1();
     return latitudeString;
+}
+
+inline QByteArray IGCExportPlugin::formatPosition(double latitude, double longitude) const noexcept
+{
+    return formatLatitude(latitude) % formatLongitude(longitude);
 }
 
 inline int IGCExportPlugin::estimateEnvironmentalNoise(const EngineData &engineData) const noexcept
