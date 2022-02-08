@@ -22,34 +22,27 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef IGCEXPORTSETTINGS_H
-#define IGCEXPORTSETTINGS_H
+#ifndef KMLIMPORTETTINGS_H
+#define KMLIMPORTETTINGS_H
 
 #include <QString>
 
 #include "../../../../../Kernel/src/Settings.h"
 
-struct IGCExportSettings
+struct KMLImportSettings
 {
 public:
     /*!
-     * Resampling period [millisecons]
+     * KML format (flavour).
      */
-    enum struct ResamplingPeriod {
-        Original = 0,
-        TenHz = 100,
-        FiveHz = 200,
-        TwoHz = 500,
-        OneHz = 1000,
-        AFifthHz = 5000,
-        ATenthHz = 10000
+    enum struct Format {
+        FlightAware = 0,
+        FlightRadar24 = 1,
     };
 
-    IGCExportSettings() noexcept;
+    KMLImportSettings() noexcept;
 
-    ResamplingPeriod resamplingPeriod;
-    QString pilotName;
-    QString coPilotName;
+    Format format;
 
     Settings::PluginSettings getSettings() const noexcept;
     Settings::KeysWithDefaults getKeysWithDefault() const noexcept;
@@ -57,9 +50,7 @@ public:
     void restoreDefaults() noexcept;
 
 private:
-    QString defaultPilotName;
-    static constexpr ResamplingPeriod DefaultResamplingPeriod = ResamplingPeriod::OneHz;
-    static inline const QString DefaultCoPilotName {};
+    static constexpr Format DefaultFormat = Format::FlightAware;
 };
 
-#endif // IGCEXPORTSETTINGS_H
+#endif // KMLIMPORTETTINGS_H

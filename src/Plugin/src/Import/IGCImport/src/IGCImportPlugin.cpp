@@ -145,13 +145,16 @@ namespace
     constexpr int BRecordLongitudeDirectionIndex = 7;
 
     // Pressure altitude (in metres, relative to the ICAO ISA 1013.25 HPa datum)
+    [[maybe_unused]]
     constexpr int BRecordPressureAltitudeIndex = 8;
     // GNSS altitude (in metres, above the WGS84 ellipsoid)
     constexpr int BRecordGNSSAltitudeIndex = 9;
 
     // Values
+    [[maybe_unused]]
     constexpr char DirectionTypeNorth = 'N';
     constexpr char DirectionTypeSouth = 'S';
+    [[maybe_unused]]
     constexpr char DirectionTypeEast = 'E';
     constexpr char DirectionTypeWest = 'W';
 }

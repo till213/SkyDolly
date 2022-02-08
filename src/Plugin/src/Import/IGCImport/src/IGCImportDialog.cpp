@@ -116,7 +116,6 @@ void IGCImportDialog::on_fileSelectionPushButton_clicked() noexcept
     if (!filePath.isEmpty()) {
         ui->filePathLineEdit->setText(QDir::toNativeSeparators(filePath));
     }
-    updateUi();
 }
 
 void IGCImportDialog::updateUi() noexcept
