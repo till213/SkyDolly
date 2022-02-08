@@ -28,7 +28,3 @@
 
 FlightSimulator::FlightSimulator()
 {}
-
-const QString FlightSimulator::FlightSimulatorNameAll = "All";
-const QString FlightSimulator::FlightSimulatorNameFS2020 = "FS2020";
-const QString FlightSimulator::FlightSimulatorNamePrepar3Dv5 = "Prepar3Dv5";

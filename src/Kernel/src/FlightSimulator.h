@@ -42,9 +42,9 @@ public:
         Prepar3Dv5
     };
 
-    static const QString FlightSimulatorNameAll;
-    static const QString FlightSimulatorNameFS2020;
-    static const QString FlightSimulatorNamePrepar3Dv5;
+    static inline const QString FlightSimulatorNameAll {"All"};
+    static inline const QString FlightSimulatorNameFS2020 {"FS2020"};
+    static inline const QString FlightSimulatorNamePrepar3Dv5 {"Prepar3Dv5"};
 
     static inline Id nameToId(QStringView name) noexcept {
         Id id;
