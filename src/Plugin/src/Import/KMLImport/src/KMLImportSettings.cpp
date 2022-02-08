@@ -22,44 +22,55 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef IGCEXPORTSETTINGS_H
-#define IGCEXPORTSETTINGS_H
 
-#include <QString>
-
+#include "../../../../../Kernel/src/Enum.h"
+#include "../../../../../Kernel/src/System.h"
 #include "../../../../../Kernel/src/Settings.h"
+#include "KMLImportSettings.h"
 
-struct IGCExportSettings
+// PUBLIC
+
+KMLImportSettings::KMLImportSettings() noexcept
 {
-public:
-    /*!
-     * Resampling period [millisecons]
-     */
-    enum struct ResamplingPeriod {
-        Original = 0,
-        TenHz = 100,
-        FiveHz = 200,
-        TwoHz = 500,
-        OneHz = 1000,
-        AFifthHz = 5000,
-        ATenthHz = 10000
-    };
+    restoreDefaults();
+}
 
-    IGCExportSettings() noexcept;
+Settings::PluginSettings KMLImportSettings::getSettings() const noexcept
+{
+    Settings::PluginSettings settings;
+    Settings::KeyValue keyValue;
 
-    ResamplingPeriod resamplingPeriod;
-    QString pilotName;
-    QString coPilotName;
+    keyValue.first = "Format";
+    keyValue.second = Enum::toUnderlyingType(format);
+    settings.push_back(keyValue);
 
-    Settings::PluginSettings getSettings() const noexcept;
-    Settings::KeysWithDefaults getKeysWithDefault() const noexcept;
-    void setSettings(Settings::ValuesByKey) noexcept;
-    void restoreDefaults() noexcept;
+    return settings;
+}
 
-private:
-    QString defaultPilotName;
-    static constexpr ResamplingPeriod DefaultResamplingPeriod = ResamplingPeriod::OneHz;
-    static inline const QString DefaultCoPilotName {};
-};
+Settings::KeysWithDefaults KMLImportSettings::getKeysWithDefault() const noexcept
+{
+    Settings::KeysWithDefaults keys;
+    Settings::KeyValue keyValue;
 
-#endif // IGCEXPORTSETTINGS_H
+    keyValue.first = "Format";
+    keyValue.second = Enum::toUnderlyingType(KMLImportSettings::DefaultFormat);
+    keys.push_back(keyValue);
+
+    return keys;
+}
+
+void KMLImportSettings::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+{
+    bool ok;
+    int enumeration = valuesByKey["Format"].toInt(&ok);
+    if (ok) {
+        format = static_cast<KMLImportSettings::Format >(enumeration);
+    } else {
+        format = DefaultFormat;
+    }
+}
+
+void KMLImportSettings::restoreDefaults() noexcept
+{
+    format = DefaultFormat;
+}

@@ -31,6 +31,7 @@
 #include <QStringBuilder>
 #include <QFlags>
 #include <QByteArray>
+#include <QStringLiteral>
 #include <QList>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -69,6 +70,7 @@
 #include "../../../../../Persistence/src/Service/FlightService.h"
 #include "../../../../../Persistence/src/Service/AircraftService.h"
 #include "KMLImportDialog.h"
+#include "KMLImportSettings.h"
 #include "KMLImportPlugin.h"
 
 class KMLImportPluginPrivate
@@ -83,6 +85,7 @@ public:
     std::unique_ptr<AircraftService> aircraftService;
     QXmlStreamReader xml;
     Unit unit;
+    KMLImportSettings importSettings;
     AircraftType aircraftType;
     bool addToCurrentFlight;
     qint64 currentWaypointTimestamp;
@@ -112,7 +115,7 @@ KMLImportPlugin::~KMLImportPlugin() noexcept
 bool KMLImportPlugin::importData(FlightService &flightService) noexcept
 {
     bool ok;
-    std::unique_ptr<KMLImportDialog> importDialog = std::make_unique<KMLImportDialog>(getParentWidget());
+    std::unique_ptr<KMLImportDialog> importDialog = std::make_unique<KMLImportDialog>(d->importSettings, getParentWidget());
     const int choice = importDialog->exec();
     if (choice == QDialog::Accepted) {
         // Remember import (export) path
@@ -139,6 +142,23 @@ bool KMLImportPlugin::importData(FlightService &flightService) noexcept
     return ok;
 }
 
+// PROTECTED
+
+Settings::PluginSettings KMLImportPlugin::getSettings() const noexcept
+{
+    return d->importSettings.getSettings();
+}
+
+Settings::KeysWithDefaults KMLImportPlugin::getKeyWithDefaults() const noexcept
+{
+    return d->importSettings.getKeysWithDefault();
+}
+
+void KMLImportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+{
+    d->importSettings.setSettings(valuesByKey);
+}
+
 // PRIVATE
 
 bool KMLImportPlugin::import(const QString &filePath, FlightService &flightService) noexcept
@@ -159,7 +179,7 @@ bool KMLImportPlugin::import(const QString &filePath, FlightService &flightServi
 #ifdef DEBUG
             qDebug("KMLImportPlugin::import: XML start element: %s", qPrintable(d->xml.name().toString()));
 #endif
-            if (d->xml.name() == QLatin1String("kml")) {
+            if (d->xml.name() == QStringLiteral("kml")) {
                 readKML();
             } else {
                 d->xml.raiseError(tr("The file is not a KML file."));
@@ -198,7 +218,7 @@ void KMLImportPlugin::readKML() noexcept
 #ifdef DEBUG
         qDebug("KMLImportPlugin::readKML: XML start element: %s", qPrintable(d->xml.name().toString()));
 #endif
-        if (d->xml.name() == QLatin1String("Document")) {
+        if (d->xml.name() == QStringLiteral("Document")) {
             readDocument();
         } else {
             d->xml.raiseError(tr("The file is not a KML document."));
@@ -214,7 +234,7 @@ void KMLImportPlugin::readDocument() noexcept
 #ifdef DEBUG
         qDebug("KMLImportPlugin::readDocument: XML start element: %s", qPrintable(d->xml.name().toString()));
 #endif
-        if (d->xml.name() == QLatin1String("name")) {
+        if (d->xml.name() == QStringLiteral("name")) {
             if (!d->addToCurrentFlight) {
                 Flight &flight = Logbook::getInstance().getCurrentFlight();
                 const QString name = d->xml.readElementText();
@@ -223,7 +243,7 @@ void KMLImportPlugin::readDocument() noexcept
                 // Flight keeps its existing title (name)
                 d->xml.skipCurrentElement();
             }
-        } else if (d->xml.name() == QLatin1String("Placemark")) {
+        } else if (d->xml.name() == QStringLiteral("Placemark")) {
             readPlacemark();
         } else {
             d->xml.skipCurrentElement();
@@ -238,15 +258,15 @@ void KMLImportPlugin::readPlacemark() noexcept
 #ifdef DEBUG
         qDebug("KMLImportPlugin::readDocument: XML start element: %s", qPrintable(d->xml.name().toString()));
 #endif
-        if (d->xml.name() == QLatin1String("name")) {
+        if (d->xml.name() == QStringLiteral("name")) {
             name = d->xml.readElementText();
             if (name.endsWith(" Airport")) {
                 // Extract the 4 letter ICAO code
                 name = name.left(4);
             }
-        } else if (d->xml.name() == QLatin1String("Point")) {
+        } else if (d->xml.name() == QStringLiteral("Point")) {
             readWaypoint(name);
-        } else if (d->xml.name() == QLatin1String("Track")) {
+        } else if (d->xml.name() == QStringLiteral("Track")) {
             // The track contains the flight number
             d->flightNumber = name;
             readTrack();
@@ -263,7 +283,7 @@ void KMLImportPlugin::readWaypoint(const QString &icaoOrName) noexcept
 #ifdef DEBUG
         qDebug("KMLImportPlugin::readWaypoint: XML start element: %s", qPrintable(d->xml.name().toString()));
 #endif
-        if (d->xml.name() == QLatin1String("coordinates")) {
+        if (d->xml.name() == QStringLiteral("coordinates")) {
             const QString coordinatesText = d->xml.readElementText();
             const QStringList coordinates = coordinatesText.split(",");
             if (coordinates.count() == 3) {
@@ -312,7 +332,7 @@ void KMLImportPlugin::readTrack() noexcept
 #ifdef DEBUG
         qDebug("KMLImportPlugin::readWaypoint: XML start element: %s", qPrintable(d->xml.name().toString()));
 #endif
-        if (d->xml.name() == QLatin1String("when")) {
+        if (d->xml.name() == QStringLiteral("when")) {
             const QString dateTimeText = d->xml.readElementText();
             if (d->firstDateTimeUtc.isNull()) {
                 d->firstDateTimeUtc = QDateTime::fromString(dateTimeText, Qt::ISODate);
@@ -327,7 +347,7 @@ void KMLImportPlugin::readTrack() noexcept
             } else {
                 d->xml.raiseError(tr("Invalid timestamp."));
             }
-        } else if (d->xml.name() == QLatin1String("coord")) {
+        } else if (d->xml.name() == QStringLiteral("coord")) {
             const QString coordinatesText = d->xml.readElementText();
             const QStringList coordinates = coordinatesText.split(" ");
             if (coordinates.count() == 3) {

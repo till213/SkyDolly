@@ -36,13 +36,14 @@ namespace Ui {
 }
 
 class AircraftType;
+class KMLImportSettings;
 class KMLImportDialogPrivate;
 
 class KMLImportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit KMLImportDialog(QWidget *parent = nullptr) noexcept;
+    explicit KMLImportDialog(KMLImportSettings &importSettings, QWidget *parent = nullptr) noexcept;
     virtual ~KMLImportDialog() noexcept;
 
     QString getSelectedFilePath() const noexcept;
@@ -55,10 +56,15 @@ private:
 
     void frenchConnection() noexcept;
     void initUi() noexcept;
+    void initOptionUi() noexcept;
+    void updateOptionUi() noexcept;
 
 private slots:
     void on_fileSelectionPushButton_clicked() noexcept;
+    void on_formatComboBox_activated(int index) noexcept;
+
     void updateUi() noexcept;
+    void restoreDefaults() noexcept;
 };
 
 #endif // KMLIMPORTDIALOG_H
