@@ -83,14 +83,17 @@ private:
     inline bool exportARecord(QIODevice &io) const noexcept;
     inline bool exportHRecord(const Aircraft &aircraft, QIODevice &io) const noexcept;
     inline bool exportIRecord(QIODevice &io) const noexcept;
+    inline bool exportCRecord(const Aircraft &aircraft, QIODevice &io) const noexcept;
     inline bool exportBRecord(const Aircraft &aircraft, QIODevice &io) const noexcept;
     inline bool exportGRecord(QIODevice &io) const noexcept;
 
     inline QByteArray formatDate(const QDateTime &date) const noexcept;
-    inline QByteArray formatTime(const QDateTime &date) const noexcept;
+    inline QByteArray formatTime(const QDateTime &time) const noexcept;
+    inline QByteArray formatDateTime(const QDateTime &dateTime) const noexcept;
     inline QByteArray formatNumber(int value, int padding) const noexcept;
     inline QByteArray formatLatitude(double latitude) const noexcept;
     inline QByteArray formatLongitude(double longitude) const noexcept;
+    inline QByteArray formatPosition(double latitude, double longitude) const noexcept;
 
     inline int estimateEnvironmentalNoise(const EngineData &engineData) const noexcept;
 };
