@@ -25,10 +25,13 @@
 #ifndef IGCEXPORTSETTINGS_H
 #define IGCEXPORTSETTINGS_H
 
+#include <QStringLiteral>
+
 #include "../../../../../Kernel/src/Settings.h"
 
 struct IGCExportSettings
 {
+public:
     /*!
      * Resampling period [millisecons]
      */
@@ -51,13 +54,18 @@ struct IGCExportSettings
     IGCExportSettings() noexcept;
 
     ResamplingPeriod resamplingPeriod;
+    QString pilotName;
+    QString coPilotName;
 
     Settings::PluginSettings getSettings() const noexcept;
-    Settings::KeysWithDefaults getKeys() const noexcept;
+    Settings::KeysWithDefaults getKeysWithDefault() const noexcept;
     void setSettings(Settings::ValuesByKey) noexcept;
     void restoreDefaults() noexcept;
 
+private:
+    QString defaultPilotName;
     static constexpr ResamplingPeriod DefaultResamplingPeriod = ResamplingPeriod::OneHz;
+    static inline const QString DefaultCoPilotName {};
 };
 
 #endif // IGCEXPORTSETTINGS_H

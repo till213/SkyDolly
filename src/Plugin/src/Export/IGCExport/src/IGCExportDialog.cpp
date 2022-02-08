@@ -63,8 +63,6 @@ public:
 
 // PUBLIC
 
-const QString IGCExportDialog::FileSuffix = "igc";
-
 IGCExportDialog::IGCExportDialog(IGCExportSettings &exportSettings, QWidget *parent) noexcept
     : QDialog(parent),
       ui(new Ui::IGCExportDialog),
@@ -124,13 +122,18 @@ void IGCExportDialog::updateInfoUi() noexcept
         infoText = tr("The position data is resampled every %1 milliseconds, resulting in approximately %2 exported positions in total.")
                       .arg(d->unit.formatNumber(Enum::toUnderlyingType(resamplingPeriod), 0), d->unit.formatNumber(samplePoints, 0));
     } else {
-        infoText = tr("WARNING: exporting the original position data may result in too large IGC files. The IGC viewer performance may "
-                      "drastically slow down, or the exported data may not even be displayed at all.\n\nIn total %1 positions will be exported.")
+        infoText = tr("WARNING: depending on the original sampling frequencey exporting the original position data may result in large IGC files. The IGC viewer performance may "
+                      "drastically slow down.\n\nIn total %1 positions will be exported.")
                       .arg(d->unit.formatNumber(samplePoints, 0));
     }
     ui->infoLabel->setText(infoText);
 }
 
+void IGCExportDialog::updateFlightUi() noexcept
+{
+    ui->pilotNameLineEdit->setText(d->exportSettings.pilotName);
+    ui->coPilotNameLineEdit->setText(d->exportSettings.coPilotName);
+}
 
 void IGCExportDialog::frenchConnection() noexcept
 {
@@ -178,6 +181,7 @@ void IGCExportDialog::updateUi() noexcept
     ui->resamplingComboBox->setCurrentIndex(currentIndex);
 
     updateInfoUi();
+    updateFlightUi();
 }
 
 void IGCExportDialog::restoreDefaults() noexcept
@@ -199,4 +203,16 @@ void IGCExportDialog::on_resamplingComboBox_activated([[maybe_unused]] int index
 {
     d->exportSettings.resamplingPeriod = static_cast<IGCExportSettings::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt());
     updateInfoUi();
+}
+
+void IGCExportDialog::on_pilotNameLineEdit_editingFinished() noexcept
+{
+    d->exportSettings.pilotName = ui->pilotNameLineEdit->text();
+    updateFlightUi();
+}
+
+void IGCExportDialog::on_coPilotNameLineEdit_editingFinished() noexcept
+{
+    d->exportSettings.coPilotName = ui->coPilotNameLineEdit->text();
+    updateFlightUi();
 }

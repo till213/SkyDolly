@@ -31,13 +31,16 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDateTime>
+#include <QSysInfo>
 #include <QDesktopServices>
 
 #include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/File.h"
 #include "../../../../../Kernel/src/Unit.h"
 #include "../../../../../Kernel/src/Convert.h"
+#include "../../../../../Kernel/src/Version.h"
 #include "../../../../../Kernel/src/Settings.h"
+#include "../../../../../Kernel/src/SkyMath.h"
 #include "../../../../../Model/src/SimVar.h"
 #include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
@@ -103,20 +106,13 @@ public:
     IGCExportSettings exportSettings;
     Unit unit;
 
-    static const QByteArray ARecord;
-    static const QByteArray HRecord;
-    static const QByteArray IRecord;
-    static const QByteArray CRecord;
-    static const QByteArray BRecord;
-    static const QByteArray GRecord;
+    static inline const QByteArray ARecord {"A"};
+    static inline const QByteArray HRecord {"H"};
+    static inline const QByteArray IRecord {"I"};
+    static inline const QByteArray CRecord {"C"};
+    static inline const QByteArray BRecord {"B"};
+    static inline const QByteArray GRecord {"G"};
 };
-
-const QByteArray IGCExportPluginPrivate::ARecord {"A"};
-const QByteArray IGCExportPluginPrivate::HRecord {"H"};
-const QByteArray IGCExportPluginPrivate::IRecord {"I"};
-const QByteArray IGCExportPluginPrivate::CRecord {"C"};
-const QByteArray IGCExportPluginPrivate::BRecord {"B"};
-const QByteArray IGCExportPluginPrivate::GRecord {"G"};
 
 // PUBLIC
 
@@ -175,6 +171,23 @@ bool IGCExportPlugin::exportData() noexcept
     return ok;
 }
 
+// PROTECTED
+
+Settings::PluginSettings IGCExportPlugin::getSettings() const noexcept
+{
+    return d->exportSettings.getSettings();
+}
+
+Settings::KeysWithDefaults IGCExportPlugin::getKeyWithDefaults() const noexcept
+{
+    return d->exportSettings.getKeysWithDefault();
+}
+
+void IGCExportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+{
+    d->exportSettings.setSettings(valuesByKey);
+}
+
 // PRIVATE
 
 bool IGCExportPlugin::exportIGCFile(const Aircraft &aircraft, QIODevice &io) const noexcept
@@ -205,16 +218,17 @@ inline bool IGCExportPlugin::exportHRecord(const Aircraft &aircraft, QIODevice &
 {
     const QByteArray record =
         IGCExportPluginPrivate::HRecord % ::Date % formatDate(d->flight.getFlightConditionConst().startZuluTime) % ::LineEnd %
-        IGCExportPluginPrivate::HRecord % ::Pilot % "TODO Pilot Name" % ::LineEnd %
-        IGCExportPluginPrivate::HRecord % ::CoPilot % "TODO CoPilot Name" % ::LineEnd %
+        IGCExportPluginPrivate::HRecord % ::Pilot % d->exportSettings.pilotName.toLatin1() % ::LineEnd %
+        IGCExportPluginPrivate::HRecord % ::CoPilot % d->exportSettings.coPilotName.toLatin1() % ::LineEnd %
         IGCExportPluginPrivate::HRecord % ::GliderType % aircraft.getAircraftInfoConst().aircraftType.type.toLatin1() % ::LineEnd %
         IGCExportPluginPrivate::HRecord % ::GliderId % aircraft.getAircraftInfoConst().tailNumber.toLatin1() % ::LineEnd %
         IGCExportPluginPrivate::HRecord % ::GPSDatum % ::LineEnd %
-        IGCExportPluginPrivate::HRecord % ::FirmwareVersion % "TODO FirmwareVersion" % ::LineEnd %
-        IGCExportPluginPrivate::HRecord % ::HardwareVersion % "TODO HardwareVersion" % ::LineEnd %
-        IGCExportPluginPrivate::HRecord % ::FlightRecorderType % "TODO FlightRecorderType" % ::LineEnd %
-        IGCExportPluginPrivate::HRecord % ::GpsReceiver % "TODO GpsReceiver" % ::LineEnd %
-        IGCExportPluginPrivate::HRecord % ::PressureAltitudeSensor % "TODO PressureAltitudeSensor" % ::LineEnd %
+        IGCExportPluginPrivate::HRecord % ::FirmwareVersion % Version::getApplicationVersion().toLatin1() % " with WGS84 Ellipsoid GPS altitude datum" % ::LineEnd %
+        // Reporting the kernel version is somewhat arbitrary here - but we have a cool version number value :)
+        IGCExportPluginPrivate::HRecord % ::HardwareVersion % QSysInfo::kernelVersion().toLatin1() % ::LineEnd %
+        IGCExportPluginPrivate::HRecord % ::FlightRecorderType % Version::getApplicationName().toLatin1() % ::LineEnd %
+        IGCExportPluginPrivate::HRecord % ::GpsReceiver % ::LineEnd %
+        IGCExportPluginPrivate::HRecord % ::PressureAltitudeSensor % ::LineEnd %
         IGCExportPluginPrivate::HRecord % ::Security % ::LineEnd;
 
     return io.write(record);
@@ -234,6 +248,7 @@ inline bool IGCExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &
 
     // Position data
     const Position &position = aircraft.getPositionConst();
+    const Engine &engine = aircraft.getEngineConst();
     ok = true;
     if (d->exportSettings.resamplingPeriod != IGCExportSettings::ResamplingPeriod::Original) {
         const qint64 duration = position.getLast().timestamp;
@@ -242,7 +257,8 @@ inline bool IGCExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &
             const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Linear);
             if (!positionData.isNull()) {
                 const int altitude = qRound(Convert::feetToMeters(positionData.altitude));
-                const int noise = 0;
+                const EngineData &engineData = engine.interpolate(timestamp, TimeVariableData::Access::Linear);
+                const int noise = estimateEnvironmentalNoise(engineData);
                 const QByteArray record = IGCExportPluginPrivate::BRecord %
                                           formatTime(startTime.addMSecs(timestamp)) %
                                           formatLatitude(positionData.latitude) %
@@ -261,7 +277,8 @@ inline bool IGCExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &
         // Original data requested
         for (const PositionData &positionData : position) {
             const int altitude = qRound(Convert::feetToMeters(positionData.altitude));
-            const int noise = 0;
+            const EngineData &engineData = engine.interpolate(positionData.timestamp, TimeVariableData::Access::Linear);
+            const int noise = estimateEnvironmentalNoise(engineData);
             const QByteArray record = IGCExportPluginPrivate::BRecord %
                                       formatTime(startTime.addMSecs(positionData.timestamp)) %
                                       formatLatitude(positionData.latitude) %
@@ -331,4 +348,16 @@ inline QByteArray IGCExportPlugin::IGCExportPlugin::formatLongitude(double longi
             .arg(longitude >= 0.0 ? QLatin1Char('E') : QLatin1Char('W'))
             .toLatin1();
     return latitudeString;
+}
+
+inline int IGCExportPlugin::estimateEnvironmentalNoise(const EngineData &engineData) const noexcept
+{
+    int noise;
+    if (engineData.hasCombustion()) {
+        noise = static_cast<int>(static_cast<double>(qAbs(engineData.propellerLeverPosition1)) / SkyMath::PositionMax16 * 999.0);
+        noise = qMin(noise, 999);
+    } else {
+        noise = 0;
+    }
+    return noise;
 }

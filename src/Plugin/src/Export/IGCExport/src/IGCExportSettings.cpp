@@ -24,12 +24,14 @@
  */
 
 #include "../../../../../Kernel/src/Enum.h"
+#include "../../../../../Kernel/src/System.h"
 #include "../../../../../Kernel/src/Settings.h"
 #include "IGCExportSettings.h"
 
 // PUBLIC
 
 IGCExportSettings::IGCExportSettings() noexcept
+    : defaultPilotName(System::getUsername())
 {
     restoreDefaults();
 }
@@ -43,16 +45,32 @@ Settings::PluginSettings IGCExportSettings::getSettings() const noexcept
     keyValue.second = Enum::toUnderlyingType(resamplingPeriod);
     settings.push_back(keyValue);
 
+    keyValue.first = "PilotName";
+    keyValue.second = pilotName;
+    settings.push_back(keyValue);
+
+    keyValue.first = "CoPilotName";
+    keyValue.second = coPilotName;
+    settings.push_back(keyValue);
+
     return settings;
 }
 
-Settings::KeysWithDefaults IGCExportSettings::getKeys() const noexcept
+Settings::KeysWithDefaults IGCExportSettings::getKeysWithDefault() const noexcept
 {
     Settings::KeysWithDefaults keys;
     Settings::KeyValue keyValue;
 
     keyValue.first = "ResamplingPeriod";
     keyValue.second = Enum::toUnderlyingType(IGCExportSettings::DefaultResamplingPeriod);
+    keys.push_back(keyValue);
+
+    keyValue.first = "PilotName";
+    keyValue.second = defaultPilotName;
+    keys.push_back(keyValue);
+
+    keyValue.first = "CoPilotName";
+    keyValue.second = DefaultCoPilotName;
     keys.push_back(keyValue);
 
     return keys;
@@ -67,9 +85,14 @@ void IGCExportSettings::setSettings(Settings::ValuesByKey valuesByKey) noexcept
     } else {
         resamplingPeriod = DefaultResamplingPeriod;
     }
+
+    pilotName = valuesByKey["PilotName"].value<QString>();
+    coPilotName = valuesByKey["CoPilotName"].value<QString>();
 }
 
 void IGCExportSettings::restoreDefaults() noexcept
 {
     resamplingPeriod = DefaultResamplingPeriod;
+    pilotName = defaultPilotName;
+    coPilotName = DefaultCoPilotName;
 }

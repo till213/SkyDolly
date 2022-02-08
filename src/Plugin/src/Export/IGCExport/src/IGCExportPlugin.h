@@ -31,10 +31,12 @@
 class QString;
 class QDateTime;
 
+#include "../../../../../Kernel/src/Settings.h"
 #include "../../../ExportIntf.h"
 #include "../../../PluginBase.h"
 
 class Aircraft;
+class EngineData;
 
 class IGCExportPluginPrivate;
 
@@ -69,6 +71,11 @@ public:
 
     virtual bool exportData() noexcept override;
 
+protected:
+    virtual Settings::PluginSettings getSettings() const noexcept override;
+    virtual Settings::KeysWithDefaults getKeyWithDefaults() const noexcept override;
+    virtual void setSettings(Settings::ValuesByKey) noexcept override;
+
 private:
     std::unique_ptr<IGCExportPluginPrivate> d;
 
@@ -84,6 +91,8 @@ private:
     inline QByteArray formatNumber(int value, int padding) const noexcept;
     inline QByteArray formatLatitude(double latitude) const noexcept;
     inline QByteArray formatLongitude(double longitude) const noexcept;
+
+    inline int estimateEnvironmentalNoise(const EngineData &engineData) const noexcept;
 };
 
 #endif // IGCEXPORTPLUGIN_H

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.0
+
+### New Features
+
+- IGC export plugin: the International Gliding Commission (IGC) approved flight recorder format for gliders
+
 ## 0.8.6
 
 ### New Features
