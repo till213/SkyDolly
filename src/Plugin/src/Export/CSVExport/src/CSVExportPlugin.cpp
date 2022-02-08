@@ -54,8 +54,6 @@
 
 // PUBLIC
 
-const QString CSVExportPlugin::FileSuffix = "csv";
-
 CSVExportPlugin::CSVExportPlugin() noexcept
 {
 #ifdef DEBUG

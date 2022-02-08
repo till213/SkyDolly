@@ -22,53 +22,26 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef IGCEXPORTDIALOG_H
-#define IGCEXPORTDIALOG_H
+#ifndef SYSTEM_H
+#define SYSTEM_H
 
-#include <memory>
-#include <utility>
+#include <QString>
 
-#include <QDialog>
+#include "KernelLib.h"
 
-namespace Ui {
-    class IGCExportDialog;
-}
-
-struct IGCExportSettings;
-class IGCExportDialogPrivate;
-
-class IGCExportDialog : public QDialog
+class KERNEL_API System
 {
-    Q_OBJECT
 public:
-    static inline const QString FileSuffix {"igc"};
 
-    explicit IGCExportDialog(IGCExportSettings &exportSettings, QWidget *parent = nullptr) noexcept;
-    virtual ~IGCExportDialog() noexcept;
-
-    QString getSelectedFilePath() const noexcept;
-    bool doOpenExportedFile() const noexcept;
-
-private:
-    Ui::IGCExportDialog *ui;
-    std::unique_ptr<IGCExportDialogPrivate> d;
-
-    void initUi() noexcept;
-    void updateInfoUi() noexcept;
-    void updateFlightUi() noexcept;
-    void frenchConnection() noexcept;
-
-    qint64 estimateNofSamplePoints() noexcept;
-
-private slots:
-    void updateUi() noexcept;
-
-    void restoreDefaults() noexcept;
-
-    void on_fileSelectionPushButton_clicked() noexcept;
-    void on_resamplingComboBox_activated(int index) noexcept;
-    void on_pilotNameLineEdit_editingFinished() noexcept;
-    void on_coPilotNameLineEdit_editingFinished() noexcept;
+    /*!
+     * Returns the name of the currently logged in user.
+     *
+     * Implementation note: the current implemenation is extremely simplistic
+     * and relies on environment variables USERNAME or USER.
+     *
+     * \return the name of the logged in user; may be an empty string
+     */
+    static QString getUsername() noexcept;
 };
 
-#endif // IGCEXPORTDIALOG_H
+#endif // SYSTEM_H
