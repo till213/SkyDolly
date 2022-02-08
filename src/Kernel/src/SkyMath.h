@@ -394,7 +394,6 @@ namespace SkyMath {
         const double lambda1 = startPosition.second * M_PI / 180.0;
         const double phi2 = endPosition.first * M_PI / 180.0;
         const double lambda2 = endPosition.second * M_PI / 180.0;
-        const double deltaLambda = (endPosition.second - startPosition.second) * M_PI / 180.0;
 
         const double y = std::sin(lambda2 - lambda1) * std::cos(phi2);
         const double x = std::cos(phi1) * std::sin(phi2) -
@@ -481,10 +480,7 @@ namespace SkyMath {
             // left (positive value - by convention, which is in analogy how
             // interpolateHermite360 interpolates 180 degree turns)
             headingChange = currentHeading < targetHeading ? -180.0 : +180.0;
-        } else if (headingChange < 180.0) {
-            // Left turns are positive
-            headingChange = headingChange;
-        } else {
+        } else if (headingChange > 180.0) {
             // Right turns are negative: -(360 - headingChange)
             headingChange = -360.0 + headingChange;
         }
