@@ -55,8 +55,8 @@ struct MODEL_API Waypoint : public TimeVariableData
     bool isValid() const noexcept;
 
     static const Waypoint NullWaypoint;
-    static constexpr char CustomDepartureIdentifier[] = "CUSTD";
-    static constexpr char CustomArrivalIdentifier[] = "CUSTA";
+    static const char CustomDepartureIdentifier[];
+    static const char CustomArrivalIdentifier[];
 };
 
 #endif // WAYPOINT_H

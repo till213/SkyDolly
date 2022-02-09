@@ -264,7 +264,7 @@ inline bool IGCExportPlugin::exportCRecord(const Aircraft &aircraft, QIODevice &
     QByteArray record = IGCExportPluginPrivate::CRecord % formatDateTime(info.startDate.toUTC()) %
                         ::ObsoleteFlightDate % ::ObsoleteTaskNumber %
                         // Number of turn points, excluding start and end wapoints
-                        formatNumber(qMin(flightPlan.count() - 2, 0lu), 2) %
+                        formatNumber(qMin(flightPlan.count() - 2, 0llu), 2) %
                         d->flight.getTitle().toLatin1() % ::LineEnd;
     bool ok = io.write(record);
     const std::size_t count = flightPlan.count();
