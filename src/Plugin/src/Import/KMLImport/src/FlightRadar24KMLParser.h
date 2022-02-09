@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTAWAREKMLPARSER_H
-#define FLIGHTAWAREKMLPARSER_H
+#ifndef FLIGHTRADAR24KMLPARSER_H
+#define FLIGHTRADAR24KMLPARSER_H
 
 #include <memory>
 
@@ -35,22 +35,24 @@ class QXmlStreamReader;
 
 #include "KMLParser.h"
 
-class FlightAwareKMLParserPrivate;
+class FlightRadar24KMLParserPrivate;
 
-class FlightAwareKMLParser : public KMLParser
+class FlightRadar24KMLParser : public KMLParser
 {
 public:
-    FlightAwareKMLParser(QXmlStreamReader &xmlStreamReader) noexcept;
-    virtual ~FlightAwareKMLParser() noexcept;
+    FlightRadar24KMLParser(QXmlStreamReader &xmlStreamReader) noexcept;
+    virtual ~FlightRadar24KMLParser() noexcept;
 
     virtual void parse(QDateTime &firstDateTimeUtc, QDateTime &lastDateTimeUtc, QString &flightNumber) noexcept override;
 
 private:
-    std::unique_ptr<FlightAwareKMLParserPrivate> d;
+    std::unique_ptr<FlightRadar24KMLParserPrivate> d;
 
+    void parseFolder() noexcept;
     void parsePlacemark() noexcept;
-    void parseWaypoint(const QString &name) noexcept;
-    void parseTrack() noexcept;
+    bool parseDescription() noexcept;
+    void parseTimestamp() noexcept;
+    void parsePoint() noexcept;
 };
 
-#endif // FLIGHTAWAREKMLPARSER_H
+#endif // FLIGHTRADAR24KMLPARSER_H

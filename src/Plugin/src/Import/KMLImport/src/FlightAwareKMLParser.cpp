@@ -81,8 +81,9 @@ FlightAwareKMLParser::~FlightAwareKMLParser() noexcept
 void FlightAwareKMLParser::parse(QDateTime &firstDateTimeUtc, QDateTime &lastDateTimeUtc, QString &flightNumber) noexcept
 {
     while (d->xml.readNextStartElement()) {
-        if (d->xml.name() == QStringLiteral("Placemark")) {
-            readPlacemark();
+        const QStringRef xmlName = d->xml.name();
+        if (xmlName == QStringLiteral("Placemark")) {
+            parsePlacemark();
         } else {
             d->xml.skipCurrentElement();
         }
@@ -94,39 +95,41 @@ void FlightAwareKMLParser::parse(QDateTime &firstDateTimeUtc, QDateTime &lastDat
 
 // PRIVATE
 
-void FlightAwareKMLParser::readPlacemark() noexcept
+void FlightAwareKMLParser::parsePlacemark() noexcept
 {
     QString name;
     while (d->xml.readNextStartElement()) {
+        const QStringRef xmlName = d->xml.name();
 #ifdef DEBUG
-        qDebug("KMLImportPlugin::readDocument: XML start element: %s", qPrintable(d->xml.name().toString()));
+        qDebug("FlightAwareKMLParser::parsePlacemark: XML start element: %s", qPrintable(xmlName.toString()));
 #endif
-        if (d->xml.name() == QStringLiteral("name")) {
+        if (xmlName == QStringLiteral("name")) {
             name = d->xml.readElementText();
             if (name.endsWith(QStringLiteral(" Airport"))) {
                 // Extract the 4 letter ICAO code
                 name = name.left(4);
             }
-        } else if (d->xml.name() == QStringLiteral("Point")) {
-            readWaypoint(name);
-        } else if (d->xml.name() == QStringLiteral("Track")) {
+        } else if (xmlName == QStringLiteral("Point")) {
+            parseWaypoint(name);
+        } else if (xmlName == QStringLiteral("Track")) {
             // The track contains the flight number
             d->flightNumber = name;
-            readTrack();
+            parseTrack();
         } else {
             d->xml.skipCurrentElement();
         }
     }
 }
 
-void FlightAwareKMLParser::readWaypoint(const QString &icaoOrName) noexcept
+void FlightAwareKMLParser::parseWaypoint(const QString &icaoOrName) noexcept
 {
     bool ok;
     while (d->xml.readNextStartElement()) {
+        const QStringRef xmlName = d->xml.name();
 #ifdef DEBUG
-        qDebug("KMLImportPlugin::readWaypoint: XML start element: %s", qPrintable(d->xml.name().toString()));
+        qDebug("FlightAwareKMLParser::parseWaypoint: XML start element: %s", qPrintable(xmlName.toString()));
 #endif
-        if (d->xml.name() == QStringLiteral("coordinates")) {
+        if (xmlName == QStringLiteral("coordinates")) {
             const QString coordinatesText = d->xml.readElementText();
             const QStringList coordinates = coordinatesText.split(",");
             if (coordinates.count() == 3) {
@@ -161,7 +164,7 @@ void FlightAwareKMLParser::readWaypoint(const QString &icaoOrName) noexcept
     }
 }
 
-void FlightAwareKMLParser::readTrack() noexcept
+void FlightAwareKMLParser::parseTrack() noexcept
 {
     // Timestamp (msec), latitude (degrees), longitude (degrees), altitude (feet)
     typedef std::tuple<qint64, double, double, double> TrackItem;
@@ -172,10 +175,11 @@ void FlightAwareKMLParser::readTrack() noexcept
     bool ok = true;
     int currentTrackDataIndex = 0;
     while (d->xml.readNextStartElement()) {
+        const QStringRef xmlName = d->xml.name();
 #ifdef DEBUG
-        qDebug("KMLImportPlugin::readWaypoint: XML start element: %s", qPrintable(d->xml.name().toString()));
+        qDebug("FlightAwareKMLParser::parseTrack: XML start element: %s", qPrintable(xmlName.toString()));
 #endif
-        if (d->xml.name() == QStringLiteral("when")) {
+        if (xmlName == QStringLiteral("when")) {
             const QString dateTimeText = d->xml.readElementText();
             if (d->firstDateTimeUtc.isNull()) {
                 d->firstDateTimeUtc = QDateTime::fromString(dateTimeText, Qt::ISODate);
@@ -190,7 +194,7 @@ void FlightAwareKMLParser::readTrack() noexcept
             } else {
                 d->xml.raiseError(QStringLiteral("Invalid timestamp."));
             }
-        } else if (d->xml.name() == QStringLiteral("coord")) {
+        } else if (xmlName == QStringLiteral("coord")) {
             const QString coordinatesText = d->xml.readElementText();
             const QStringList coordinates = coordinatesText.split(" ");
             if (coordinates.count() == 3) {
