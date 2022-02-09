@@ -250,13 +250,13 @@ void FlightRadar24KMLParser::parsePoint() noexcept
             const QStringList coordinates = coordinatesText.split(",");
             if (coordinates.count() == 3) {
 
-                const double latitude = coordinates.at(0).toFloat(&ok);
-                if (!ok) {
-                    d->xml.raiseError(QStringLiteral("Invalid latitude number."));
-                }
-                const double longitude = coordinates.at(1).toFloat(&ok);
+                const double longitude = coordinates.at(0).toFloat(&ok);
                 if (!ok) {
                     d->xml.raiseError(QStringLiteral("Invalid longitude number."));
+                }
+                const double latitude = coordinates.at(1).toFloat(&ok);
+                if (!ok) {
+                    d->xml.raiseError(QStringLiteral("Invalid latitude number."));
                 }
                 const double altitude = coordinates.at(2).toFloat(&ok);
                 if (!ok) {
