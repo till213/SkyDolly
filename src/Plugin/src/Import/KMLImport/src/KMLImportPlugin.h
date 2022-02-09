@@ -79,7 +79,7 @@ private:
 
     void parseKML() noexcept;
     void parseName() noexcept;
-    void parsePlacemarks() noexcept;
+    void parseDocument() noexcept;
 
     void updateFlightCondition() noexcept;
     void updateAircraftInfo() noexcept;

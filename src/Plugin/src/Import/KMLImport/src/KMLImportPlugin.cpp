@@ -73,6 +73,7 @@
 #include "KMLImportSettings.h"
 #include "KMLParser.h"
 #include "FlightAwareKMLParser.h"
+#include "FlightRadar24KMLParser.h"
 #include "KMLImportPlugin.h"
 
 class KMLImportPluginPrivate
@@ -220,7 +221,7 @@ void KMLImportPlugin::parseKML() noexcept
 #endif
         if (d->xml.name() == QStringLiteral("Document")) {
             parseName();
-            parsePlacemarks();
+            parseDocument();
         } else {
             d->xml.raiseError(QStringLiteral("The file is not a KML document."));
         }
@@ -250,12 +251,15 @@ void KMLImportPlugin::parseName() noexcept
     }
 }
 
-void KMLImportPlugin::parsePlacemarks() noexcept
+void KMLImportPlugin::parseDocument() noexcept
 {
     std::unique_ptr<KMLParser> parser;
     switch (d->importSettings.format) {
     case KMLImportSettings::Format::FlightAware:
         parser = std::make_unique<FlightAwareKMLParser>(d->xml);
+        break;
+    case KMLImportSettings::Format::FlightRadar24:
+        parser = std::make_unique<FlightRadar24KMLParser>(d->xml);
         break;
     default:
         break;
