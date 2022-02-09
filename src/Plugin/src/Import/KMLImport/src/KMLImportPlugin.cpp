@@ -71,6 +71,8 @@
 #include "../../../../../Persistence/src/Service/AircraftService.h"
 #include "KMLImportDialog.h"
 #include "KMLImportSettings.h"
+#include "KMLParser.h"
+#include "FlightAwareKMLParser.h"
 #include "KMLImportPlugin.h"
 
 class KMLImportPluginPrivate
@@ -78,8 +80,7 @@ class KMLImportPluginPrivate
 public:
     KMLImportPluginPrivate()
         : aircraftService(std::make_unique<AircraftService>()),
-          addToCurrentFlight(false),
-          currentWaypointTimestamp(0)
+          addToCurrentFlight(false)
     {}
 
     std::unique_ptr<AircraftService> aircraftService;
@@ -88,9 +89,8 @@ public:
     KMLImportSettings importSettings;
     AircraftType aircraftType;
     bool addToCurrentFlight;
-    qint64 currentWaypointTimestamp;
     QDateTime firstDateTimeUtc;
-    QDateTime currentDateTimeUtc;
+    QDateTime lastDateTimeUtc;
     QString flightNumber;
     FlightAugmentation flightAugmentation;
 };
@@ -180,15 +180,15 @@ bool KMLImportPlugin::import(const QString &filePath, FlightService &flightServi
             qDebug("KMLImportPlugin::import: XML start element: %s", qPrintable(d->xml.name().toString()));
 #endif
             if (d->xml.name() == QStringLiteral("kml")) {
-                readKML();
+                parseKML();
             } else {
-                d->xml.raiseError(tr("The file is not a KML file."));
+                d->xml.raiseError(QStringLiteral("The file is not a KML file."));
             }
         }
 
         // Also ensure that at least one position could be imported;
-        // depending on the "KML flavour" that might not always succeed,
-        // keyword: placemarks vs line segments etc.
+        // depending on the "KML format" that might not always succeed,
+        // keyword: points vs coordinates vs line segments etc.
         if (!d->xml.hasError() && aircraft.getPositionConst().count() > 0) {
             d->flightAugmentation.augmentAircraftData(aircraft);
             updateAircraftInfo();
@@ -212,25 +212,26 @@ bool KMLImportPlugin::import(const QString &filePath, FlightService &flightServi
     return ok;
 }
 
-void KMLImportPlugin::readKML() noexcept
+void KMLImportPlugin::parseKML() noexcept
 {
     if (d->xml.readNextStartElement()) {
 #ifdef DEBUG
         qDebug("KMLImportPlugin::readKML: XML start element: %s", qPrintable(d->xml.name().toString()));
 #endif
         if (d->xml.name() == QStringLiteral("Document")) {
-            readDocument();
+            parseName();
+            parsePlacemarks();
         } else {
-            d->xml.raiseError(tr("The file is not a KML document."));
+            d->xml.raiseError(QStringLiteral("The file is not a KML document."));
         }
     } else {
-        d->xml.raiseError(tr("Error reading the XML data."));
+        d->xml.raiseError(QStringLiteral("Error reading the XML data."));
     }
 }
 
-void KMLImportPlugin::readDocument() noexcept
+void KMLImportPlugin::parseName() noexcept
 {
-    while (d->xml.readNextStartElement()) {
+    if (d->xml.readNextStartElement()) {
 #ifdef DEBUG
         qDebug("KMLImportPlugin::readDocument: XML start element: %s", qPrintable(d->xml.name().toString()));
 #endif
@@ -243,158 +244,25 @@ void KMLImportPlugin::readDocument() noexcept
                 // Flight keeps its existing title (name)
                 d->xml.skipCurrentElement();
             }
-        } else if (d->xml.name() == QStringLiteral("Placemark")) {
-            readPlacemark();
         } else {
-            d->xml.skipCurrentElement();
+            d->xml.raiseError(QStringLiteral("The KML document does not have a name element."));
         }
     }
 }
 
-void KMLImportPlugin::readPlacemark() noexcept
+void KMLImportPlugin::parsePlacemarks() noexcept
 {
-    QString name;
-    while (d->xml.readNextStartElement()) {
-#ifdef DEBUG
-        qDebug("KMLImportPlugin::readDocument: XML start element: %s", qPrintable(d->xml.name().toString()));
-#endif
-        if (d->xml.name() == QStringLiteral("name")) {
-            name = d->xml.readElementText();
-            if (name.endsWith(" Airport")) {
-                // Extract the 4 letter ICAO code
-                name = name.left(4);
-            }
-        } else if (d->xml.name() == QStringLiteral("Point")) {
-            readWaypoint(name);
-        } else if (d->xml.name() == QStringLiteral("Track")) {
-            // The track contains the flight number
-            d->flightNumber = name;
-            readTrack();
-        } else {
-            d->xml.skipCurrentElement();
-        }
+    std::unique_ptr<KMLParser> parser;
+    switch (d->importSettings.format) {
+    case KMLImportSettings::Format::FlightAware:
+        parser = std::make_unique<FlightAwareKMLParser>(d->xml);
+        break;
+    default:
+        break;
     }
-}
-
-void KMLImportPlugin::readWaypoint(const QString &icaoOrName) noexcept
-{
-    bool ok;
-    while (d->xml.readNextStartElement()) {
-#ifdef DEBUG
-        qDebug("KMLImportPlugin::readWaypoint: XML start element: %s", qPrintable(d->xml.name().toString()));
-#endif
-        if (d->xml.name() == QStringLiteral("coordinates")) {
-            const QString coordinatesText = d->xml.readElementText();
-            const QStringList coordinates = coordinatesText.split(",");
-            if (coordinates.count() == 3) {
-                Waypoint waypoint;
-                waypoint.longitude = coordinates.at(0).toFloat(&ok);
-                if (!ok) {
-                    d->xml.raiseError(tr("Invalid longitude number."));
-                }
-                waypoint.latitude = coordinates.at(1).toFloat(&ok);
-                if (!ok) {
-                    d->xml.raiseError(tr("Invalid latitude number."));
-                }
-                waypoint.altitude = coordinates.at(2).toFloat(&ok);
-                if (!ok) {
-                    d->xml.raiseError(tr("Invalid altitude number."));
-                }
-                waypoint.identifier = icaoOrName;
-                waypoint.timestamp = d->currentWaypointTimestamp;
-                // The actual timestamps of the waypoints are later updated
-                // with the flight duration, once the entire gx:Track data
-                // has been parsed
-                ++d->currentWaypointTimestamp;
-
-                Flight &flight = Logbook::getInstance().getCurrentFlight();
-                flight.getUserAircraft().getFlightPlan().add(std::move(waypoint));
-            } else {
-                d->xml.raiseError(tr("Invalid GPS coordinate."));
-            }
-        } else {
-            d->xml.skipCurrentElement();
-        }
+    if (parser != nullptr) {
+        parser->parse(d->firstDateTimeUtc, d->lastDateTimeUtc, d->flightNumber);
     }
-}
-
-void KMLImportPlugin::readTrack() noexcept
-{
-    // Timestamp (msec), latitude (degrees), longitude (degrees), altitude (feet)
-    typedef std::tuple<qint64, double, double, double> TrackItem;
-    // The track data may contain data with identical timestamps, so we first read
-    // all track data into this vector and only then "upsert" the position data
-    std::vector<TrackItem> trackData;
-
-    bool ok = true;
-    int currentTrackDataIndex = 0;
-    while (d->xml.readNextStartElement()) {
-#ifdef DEBUG
-        qDebug("KMLImportPlugin::readWaypoint: XML start element: %s", qPrintable(d->xml.name().toString()));
-#endif
-        if (d->xml.name() == QStringLiteral("when")) {
-            const QString dateTimeText = d->xml.readElementText();
-            if (d->firstDateTimeUtc.isNull()) {
-                d->firstDateTimeUtc = QDateTime::fromString(dateTimeText, Qt::ISODate);
-                d->currentDateTimeUtc = d->firstDateTimeUtc;
-            } else {
-                d->currentDateTimeUtc = QDateTime::fromString(dateTimeText, Qt::ISODate);
-            }
-            if (d->currentDateTimeUtc.isValid()) {
-                const qint64 timestamp = d->firstDateTimeUtc.msecsTo(d->currentDateTimeUtc);
-                TrackItem trackItem = std::make_tuple(timestamp, 0.0, 0.0, 0.0);
-                trackData.push_back(std::move(trackItem));
-            } else {
-                d->xml.raiseError(tr("Invalid timestamp."));
-            }
-        } else if (d->xml.name() == QStringLiteral("coord")) {
-            const QString coordinatesText = d->xml.readElementText();
-            const QStringList coordinates = coordinatesText.split(" ");
-            if (coordinates.count() == 3) {
-
-                const double longitude = coordinates.at(0).toFloat(&ok);
-                if (!ok) {
-                    d->xml.raiseError(tr("Invalid longitude number."));
-                }
-                const double latitude = coordinates.at(1).toFloat(&ok);
-                if (!ok) {
-                    d->xml.raiseError(tr("Invalid latitude number."));
-                }
-                const double altitude = coordinates.at(2).toFloat(&ok);
-                if (!ok) {
-                    d->xml.raiseError(tr("Invalid altitude number."));
-                }
-                if (ok) {
-                    std::get<1>(trackData[currentTrackDataIndex]) = latitude;
-                    std::get<2>(trackData[currentTrackDataIndex]) = longitude;
-                    std::get<3>(trackData[currentTrackDataIndex]) = Convert::metersToFeet(altitude);
-                    ++currentTrackDataIndex;
-                }
-
-            } else {
-                d->xml.raiseError(tr("Invalid GPS coordinate."));
-            }
-        } else {
-            d->xml.skipCurrentElement();
-        }
-    }
-
-    // Now "upsert" the position data, taking duplicate timestamps into account
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    Position &position = flight.getUserAircraft().getPosition();
-    for (const TrackItem &trackItem : trackData) {
-        PositionData positionData;
-        positionData.timestamp = std::get<0>(trackItem);
-        positionData.latitude = std::get<1>(trackItem);
-        positionData.longitude = std::get<2>(trackItem);
-        positionData.altitude = std::get<3>(trackItem);
-
-        position.upsertLast(std::move(positionData));
-    }
-
-    // Set timezone
-    d->firstDateTimeUtc.setTimeZone(QTimeZone::utc());
-    d->currentDateTimeUtc.setTimeZone(QTimeZone::utc());
 }
 
 void KMLImportPlugin::updateFlightCondition() noexcept
@@ -404,8 +272,8 @@ void KMLImportPlugin::updateFlightCondition() noexcept
 
     flightCondition.startLocalTime = d->firstDateTimeUtc.toLocalTime();
     flightCondition.startZuluTime = d->firstDateTimeUtc;
-    flightCondition.endLocalTime = d->currentDateTimeUtc.toLocalTime();
-    flightCondition.endZuluTime = d->currentDateTimeUtc;
+    flightCondition.endLocalTime = d->lastDateTimeUtc.toLocalTime();
+    flightCondition.endZuluTime = d->lastDateTimeUtc;
 
     flight.setFlightCondition(flightCondition);
 }
@@ -418,7 +286,7 @@ void KMLImportPlugin::updateAircraftInfo() noexcept
     aircraftInfo.aircraftType = d->aircraftType;
 
     aircraftInfo.startDate = d->firstDateTimeUtc.toLocalTime();
-    aircraftInfo.endDate = d->currentDateTimeUtc.toLocalTime();
+    aircraftInfo.endDate = d->lastDateTimeUtc.toLocalTime();
     int positionCount = aircraft.getPosition().count();
     if (positionCount > 0) {
         const PositionData &firstPositionData = aircraft.getPosition().getFirst();
@@ -435,8 +303,8 @@ void KMLImportPlugin::updateAircraftInfo() noexcept
                 const PositionData &lastPositionData = aircraft.getPosition().getLast();
                 Waypoint &arrival = aircraft.getFlightPlan()[1];
                 arrival.altitude = lastPositionData.altitude;
-                arrival.localTime = d->currentDateTimeUtc.toLocalTime();
-                arrival.zuluTime = d->currentDateTimeUtc;
+                arrival.localTime = d->lastDateTimeUtc.toLocalTime();
+                arrival.zuluTime = d->lastDateTimeUtc;
             }
         }
     } else {

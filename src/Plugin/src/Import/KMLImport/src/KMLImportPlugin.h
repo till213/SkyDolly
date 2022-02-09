@@ -77,11 +77,9 @@ private:
 
     bool import(const QString &filePath, FlightService &flightService) noexcept;
 
-    void readKML() noexcept;
-    void readDocument() noexcept;
-    void readPlacemark() noexcept;
-    void readWaypoint(const QString &icaoOrName) noexcept;
-    void readTrack() noexcept;
+    void parseKML() noexcept;
+    void parseName() noexcept;
+    void parsePlacemarks() noexcept;
 
     void updateFlightCondition() noexcept;
     void updateAircraftInfo() noexcept;
