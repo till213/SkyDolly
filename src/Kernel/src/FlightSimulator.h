@@ -42,15 +42,17 @@ public:
         Prepar3Dv5
     };
 
-    static inline const QString FlightSimulatorNameAll {"All"};
-    static inline const QString FlightSimulatorNameFS2020 {"FS2020"};
-    static inline const QString FlightSimulatorNamePrepar3Dv5 {"Prepar3Dv5"};
+    // Implemenation note: we need to use QStringLiteral here for static inline const QStrings
+    // https://forum.qt.io/topic/102312/very-strange-heap-corruption-exit-code-1073740940-0xc0000374-with-static-inline-const-qstring-release-only
+    static inline const QString FlightSimulatorNameAll {QStringLiteral("All")};
+    static inline const QString FlightSimulatorNameMSFS {QStringLiteral("MSFS")};
+    static inline const QString FlightSimulatorNamePrepar3Dv5 {QStringLiteral("Prepar3Dv5")};
 
     static inline Id nameToId(QStringView name) noexcept {
         Id id;
         if (name == FlightSimulatorNameAll) {
             id = Id::All;
-        } else if (name == FlightSimulatorNameFS2020) {
+        } else if (name == FlightSimulatorNameMSFS) {
             id = Id::FS2020;
         } else if (name == FlightSimulatorNamePrepar3Dv5) {
             id = Id::Prepar3Dv5;

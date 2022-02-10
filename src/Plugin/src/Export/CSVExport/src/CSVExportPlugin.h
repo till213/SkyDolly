@@ -47,7 +47,7 @@ class CSVExportPlugin : public PluginBase, public ExportIntf
     Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "CSVExportPlugin.json")
     Q_INTERFACES(ExportIntf)
 public:
-    static inline const QString FileSuffix {"csv"};
+    static inline const QString FileSuffix {QStringLiteral("csv")};
 
     CSVExportPlugin() noexcept;
     virtual ~CSVExportPlugin() noexcept;
