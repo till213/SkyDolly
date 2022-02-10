@@ -34,7 +34,7 @@ class QHideEvent;
 #include "AbstractSimulationVariableWidget.h"
 
 class SkyConnectIntf;
-class LightData;
+struct LightData;
 class LightWidgetPrivate;
 
 namespace Ui {

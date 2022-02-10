@@ -30,7 +30,7 @@
 
 #include <QtGlobal>
 
-class EngineData;
+struct EngineData;
 
 class EngineDaoIntf
 {

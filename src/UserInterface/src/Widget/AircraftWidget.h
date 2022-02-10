@@ -34,7 +34,7 @@ class QHideEvent;
 #include "AbstractSimulationVariableWidget.h"
 
 class SkyConnectIntf;
-class PositionData;
+struct PositionData;
 class AircraftWidgetPrivate;
 
 namespace Ui {

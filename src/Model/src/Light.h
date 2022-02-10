@@ -35,7 +35,7 @@
 #include "AircraftInfo.h"
 #include "ModelLib.h"
 
-class LightData;
+struct LightData;
 class LightPrivate;
 
 class MODEL_API Light : public QObject

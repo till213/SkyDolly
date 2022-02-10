@@ -33,7 +33,7 @@ class QShowEvent;
 class QHideEvent;
 
 class AircraftInfoWidgetPrivate;
-class PositionData;
+struct PositionData;
 
 namespace Ui {
     class AircraftInfoWidget;

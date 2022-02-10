@@ -37,7 +37,7 @@ class QAction;
 #include "../ModuleLib.h"
 
 class Aircraft;
-class PositionData;
+struct PositionData;
 
 namespace Ui {
     class FormationWidget;
