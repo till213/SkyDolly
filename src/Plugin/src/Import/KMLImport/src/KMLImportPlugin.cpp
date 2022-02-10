@@ -113,7 +113,7 @@ KMLImportPlugin::~KMLImportPlugin() noexcept
 #endif
 }
 
-bool KMLImportPlugin::importData(FlightService &flightService) noexcept
+bool KMLImportPlugin::import(FlightService &flightService) noexcept
 {
     bool ok;
     std::unique_ptr<KMLImportDialog> importDialog = std::make_unique<KMLImportDialog>(d->importSettings, getParentWidget());

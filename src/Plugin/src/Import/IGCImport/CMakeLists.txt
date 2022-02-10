@@ -15,12 +15,8 @@ endif()
 
 target_sources(${LIBRARY_NAME}
     PRIVATE
-        src/IGCImportPlugin.cpp
-        src/IGCImportPlugin.h
+        src/IGCImportPlugin.h src/IGCImportPlugin.cpp
         src/IGCImportPlugin.json
-        src/IGCImportDialog.cpp
-        src/IGCImportDialog.h
-        src/IGCImportDialog.ui
 )
 
 include_directories(${PLUGIN_NAME} PRIVATE ../../../../Widget/src/)

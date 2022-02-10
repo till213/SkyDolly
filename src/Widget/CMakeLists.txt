@@ -17,29 +17,21 @@ endif()
 
 target_sources(${LIBRARY_NAME}
     PRIVATE
-        src/WidgetLib.h
-        src/ActiveButton.cpp
-        src/ActiveButton.h
-        src/ActionButton.cpp
-        src/ActionButton.h
-        src/ActionRadioButton.h
-        src/ActionRadioButton.cpp
-        src/ActionCheckBox.h
-        src/ActionCheckBox.cpp
-        src/FocusPlainTextEdit.h
-        src/FocusPlainTextEdit.cpp
-        src/AircraftSelectionComboBox.cpp
-        src/AircraftSelectionComboBox.h
-        src/BackupPeriodComboBox.cpp
-        src/BackupPeriodComboBox.h
-        src/Platform.cpp
-        src/Platform.h
-        src/TableDateItem.cpp
-        src/TableDateItem.h
-        src/TableTimeItem.cpp
-        src/TableTimeItem.h
+        src/WidgetLib.h        
+        src/ActiveButton.h src/ActiveButton.cpp
+        src/ActionButton.h src/ActionButton.cpp
+        src/ActionRadioButton.h src/ActionRadioButton.cpp
+        src/ActionCheckBox.h src/ActionCheckBox.cpp
+        src/FocusPlainTextEdit.h src/FocusPlainTextEdit.cpp
+        src/AircraftSelectionComboBox.h src/AircraftSelectionComboBox.cpp
+        src/BackupPeriodComboBox.h src/BackupPeriodComboBox.cpp
+        src/Platform.h src/Platform.cpp
+        src/TableDateItem.h src/TableDateItem.cpp
+        src/TableTimeItem.h src/TableTimeItem.cpp
+        src/BasicImportDialog.h src/BasicImportDialog.cpp src/BasicImportDialog.ui
 )
 
+include_directories(${LIBRARY_NAME} PRIVATE src)
 target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})
 set_target_properties(${LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(${LIBRARY_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
