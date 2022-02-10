@@ -161,6 +161,8 @@ bool ImportPluginBase::importFile(const QString &filePath, FlightService &flight
                 updateFlight();
                 ok = flightService.store(flight);
             }
+        } else {
+            ok = false;
         }
         d->file.close();
     }

@@ -45,6 +45,7 @@ class ImportPluginBasePrivate;
 class PLUGIN_API ImportPluginBase : public PluginBase, public ImportIntf
 {
     Q_OBJECT
+    Q_INTERFACES(ImportIntf)
 public:
     ImportPluginBase() noexcept;
     virtual ~ImportPluginBase() noexcept;
