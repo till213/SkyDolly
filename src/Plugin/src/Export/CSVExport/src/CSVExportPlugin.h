@@ -34,12 +34,12 @@ class QString;
 #include "../../../PluginBase.h"
 
 class Aircraft;
-class PositionData;
-class EngineData;
-class PrimaryFlightControlData;
-class SecondaryFlightControlData;
-class AircraftHandleData;
-class LightData;
+struct PositionData;
+struct EngineData;
+struct PrimaryFlightControlData;
+struct SecondaryFlightControlData;
+struct AircraftHandleData;
+struct LightData;
 
 class CSVExportPlugin : public PluginBase, public ExportIntf
 {
