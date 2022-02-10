@@ -205,7 +205,7 @@ bool KMLImportPlugin::import(const QString &filePath, FlightService &flightServi
             }
         } else {
 #ifdef DEBUG
-            qDebug("KMLImportPlugin::import: XML error: %s - number of imported positions: %lu", qPrintable(d->xml.errorString()), aircraft.getPositionConst().count());
+            qDebug("KMLImportPlugin::import: XML error: %s - number of imported positions: %d", qPrintable(d->xml.errorString()), static_cast<int>(aircraft.getPositionConst().count()));
 #endif
             ok = false;
         }
