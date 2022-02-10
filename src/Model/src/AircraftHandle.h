@@ -35,7 +35,7 @@
 #include "AircraftInfo.h"
 #include "ModelLib.h"
 
-class AircraftHandleData;
+struct AircraftHandleData;
 class AircraftHandlePrivate;
 
 class MODEL_API AircraftHandle : public QObject

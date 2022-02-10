@@ -30,7 +30,7 @@
 
 #include <QtGlobal>
 
-class PositionData;
+struct PositionData;
 
 class PositionDaoIntf
 {

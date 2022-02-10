@@ -35,7 +35,7 @@ class QHideEvent;
 
 
 class SkyConnectIntf;
-class AircraftHandleData;
+struct AircraftHandleData;
 class AircraftHandleWidgetPrivate;
 
 namespace Ui {

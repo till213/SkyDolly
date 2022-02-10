@@ -35,7 +35,7 @@
 #include "SkyConnectLib.h"
 
 class Aircraft;
-class PositionData;
+struct PositionData;
 class FS2020SimConnectPlugin;
 
 class SKYCONNECT_API SkyConnectIntf : public QObject
