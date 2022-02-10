@@ -44,6 +44,7 @@
 #include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/SkyMath.h"
 #include "../../Kernel/src/Convert.h"
+#include "../../Flight/src/FlightAugmentation.h"
 #include "../../Model/src/Logbook.h"
 #include "../../Model/src/Flight.h"
 #include "../../Model/src/FlightCondition.h"
@@ -64,8 +65,7 @@ class ImportPluginBasePrivate
 public:
     ImportPluginBasePrivate()
         : aircraftService(std::make_unique<AircraftService>()),
-          addToCurrentFlight(false),
-          currentWaypointTimestamp(0)
+          addToCurrentFlight(false)
     {}
 
     std::unique_ptr<AircraftService> aircraftService;
@@ -73,7 +73,7 @@ public:
     Unit unit;
     AircraftType aircraftType;
     bool addToCurrentFlight;
-    qint64 currentWaypointTimestamp;
+    FlightAugmentation flightAugmentation;
 };
 
 // PUBLIC
@@ -151,6 +151,7 @@ bool ImportPluginBase::importFile(const QString &filePath, FlightService &flight
 
         ok = readFile(d->file);
         if (ok && aircraft.getPositionConst().count() > 0) {
+            d->flightAugmentation.augmentAircraftData(aircraft);
             updateAircraftInfo();
             if (addNewAircraft) {
                 // Sequence starts at 1
