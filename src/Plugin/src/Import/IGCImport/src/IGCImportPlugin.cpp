@@ -233,8 +233,20 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
     // Manufacturer / identifier
     bool ok = readManufacturer();
     if (ok) {
-        // Header
         ok = readRecords();
+    }
+    if (ok) {
+        // Now "upsert" the position data, taking duplicate timestamps into account
+        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        Position &position = flight.getUserAircraft().getPosition();
+        for (const TrackItem &trackItem : d->trackData) {
+            PositionData positionData;
+            positionData.timestamp = std::get<0>(trackItem);
+            positionData.latitude = std::get<1>(trackItem);
+            positionData.longitude = std::get<2>(trackItem);
+            positionData.altitude = std::get<3>(trackItem);
+            position.upsertLast(std::move(positionData));
+        }
     }
     return ok;
 }
