@@ -22,28 +22,32 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLIMPORTPLUGIN_H
-#define KMLIMPORTPLUGIN_H
+#ifndef IMPORTPLUGINBASE_H
+#define IMPORTPLUGINBASE_H
 
 #include <memory>
 
 #include <QObject>
 #include <QtPlugin>
+#include <QStringView>
 
-#include "../../../ImportIntf.h"
-#include "../../../PluginBase.h"
+class QFile;
 
-class AircraftType;
-class KMLImportPluginPrivate;
+#include "ImportIntf.h"
+#include "PluginBase.h"
+#include "PluginLib.h"
 
-class KMLImportPlugin : public PluginBase, public ImportIntf
+class FlightService;
+struct AircraftType;
+struct AircraftInfo;
+class ImportPluginBasePrivate;
+
+class PLUGIN_API ImportPluginBase : public PluginBase, public ImportIntf
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "KMLImportPlugin.json")
-    Q_INTERFACES(ImportIntf)
 public:
-    KMLImportPlugin() noexcept;
-    virtual ~KMLImportPlugin() noexcept;
+    ImportPluginBase() noexcept;
+    virtual ~ImportPluginBase() noexcept;
 
     virtual QWidget *getParentWidget() const noexcept override
     {
@@ -68,21 +72,20 @@ public:
     virtual bool import(FlightService &flightService) noexcept override;
 
 protected:
-    virtual Settings::PluginSettings getSettings() const noexcept override;
-    virtual Settings::KeysWithDefaults getKeyWithDefaults() const noexcept override;
-    virtual void setSettings(Settings::ValuesByKey) noexcept override;
+
+    AircraftType &getSelectedAircraftType() const noexcept;
+
+    // Re-implement
+    virtual bool readFile(QFile &file) noexcept = 0;
+    virtual QDateTime getStartDateTimeUtc() noexcept = 0;
+    virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept = 0;
+    virtual void updateFlight() noexcept = 0;
 
 private:
-    std::unique_ptr<KMLImportPluginPrivate> d;
+    std::unique_ptr<ImportPluginBasePrivate> d;
 
-    bool import(const QString &filePath, FlightService &flightService) noexcept;
-
-    void parseKML() noexcept;
-    void parseName() noexcept;
-    void parseDocument() noexcept;
-
-    void updateFlightCondition() noexcept;
+    bool importFile(const QString &filePath, FlightService &flightService) noexcept;
     void updateAircraftInfo() noexcept;
 };
 
-#endif // KMLIMPORTPLUGIN_H
+#endif // IMPORTPLUGINBASE_H

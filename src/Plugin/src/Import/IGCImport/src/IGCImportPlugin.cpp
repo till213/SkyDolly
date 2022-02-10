@@ -68,9 +68,6 @@
 #include "../../../../../Flight/src/FlightAugmentation.h"
 #include "../../../../../SkyConnect/src/SkyConnectManager.h"
 #include "../../../../../SkyConnect/src/SkyConnectIntf.h"
-#include "../../../../../Persistence/src/Service/FlightService.h"
-#include "../../../../../Persistence/src/Service/AircraftService.h"
-#include "IGCImportDialog.h"
 #include "IGCImportPlugin.h"
 
 namespace
@@ -163,8 +160,7 @@ class IGCImportPluginPrivate
 {
 public:
     IGCImportPluginPrivate()
-        : aircraftService(std::make_unique<AircraftService>()),
-          addToCurrentFlight(false),
+        : file(nullptr),
           currentWaypointTimestamp(0),
           hRecordDateRegExp(QString(::HRecordDatePattern)),
           hRecordPilotRegExp(QString(::HRecordPilotPattern)),
@@ -176,11 +172,8 @@ public:
           bRecordRegExp(QString(::BRecordPattern))
     {}
 
-    std::unique_ptr<AircraftService> aircraftService;
-    QFile file;
+    QFile *file;
     Unit unit;
-    AircraftType aircraftType;
-    bool addToCurrentFlight;
     qint64 currentWaypointTimestamp;
 
     // Header data
@@ -193,7 +186,7 @@ public:
     QString gliderId;
 
     // Fix timestamps
-    QDateTime firstDateTimeUtc;
+    QDateTime startDateTimeUtc;
     QTime previousTime;
     QTime currentTime;
     QDateTime currentDateTimeUtc;
@@ -212,10 +205,8 @@ public:
     QRegularExpression cRecordTaskRegExp;
     QRegularExpression bRecordRegExp;
 
-    static const QTime DayChangeThreshold;
+    static inline const QTime DayChangeThreshold {1, 0, 0, 0};
 };
-
-const QTime IGCImportPluginPrivate::DayChangeThreshold{1, 0, 0, 0};
 
 // PUBLIC
 
@@ -234,104 +225,49 @@ IGCImportPlugin::~IGCImportPlugin() noexcept
 #endif
 }
 
-bool IGCImportPlugin::importData(FlightService &flightService) noexcept
+// PROTECTED
+
+bool IGCImportPlugin::readFile(QFile &file) noexcept
 {
-    bool ok;
-    std::unique_ptr<IGCImportDialog> importDialog = std::make_unique<IGCImportDialog>(getParentWidget());
-    const int choice = importDialog->exec();
-    if (choice == QDialog::Accepted) {
-        // Remember import (export) path
-        const QString filePath = QFileInfo(importDialog->getSelectedFilePath()).absolutePath();
-        Settings::getInstance().setExportPath(filePath);
-        ok = importDialog->getSelectedAircraftType(d->aircraftType);
-        if (ok) {
-            d->addToCurrentFlight = importDialog->isAddToFlightEnabled();
-            ok = import(importDialog->getSelectedFilePath(), flightService);
-            if (ok) {
-                if (d->addToCurrentFlight) {
-                    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-                    if (skyConnect) {
-                        skyConnect->get().updateAIObjects();
-                    }
-                }
-            } else {
-                QMessageBox::critical(getParentWidget(), tr("Import error"), tr("The IGC file %1 could not be imported.").arg(filePath));
-            }
-        }
-    } else {
-        ok = true;
-    }
-    return ok;
-}
-
-// PRIVATE
-
-bool IGCImportPlugin::import(const QString &filePath, FlightService &flightService) noexcept
-{
-    d->file.setFileName(filePath);
-    bool ok = d->file.open(QIODevice::ReadOnly);
-    if (ok) {
-        Flight &flight = Logbook::getInstance().getCurrentFlight();
-        if (!d->addToCurrentFlight) {
-            flight.clear(true);
-        }
-        // The flight has at least one aircraft, but possibly without recording
-        const int aircraftCount = flight.count();
-        const bool addNewAircraft = d->addToCurrentFlight && (aircraftCount > 1 || flight.getUserAircraft().hasRecording());
-        Aircraft &aircraft = addNewAircraft ? flight.addUserAircraft() : flight.getUserAircraft();
-
-        ok = readIGCFile();
-        if (ok) {
-            // Now "upsert" the position data, taking duplicate timestamps into account
-            Position &position = aircraft.getPosition();
-            for (const TrackItem &trackItem : d->trackData) {
-                PositionData positionData;
-                positionData.timestamp = std::get<0>(trackItem);
-                positionData.latitude = std::get<1>(trackItem);
-                positionData.longitude = std::get<2>(trackItem);
-                positionData.altitude = std::get<3>(trackItem);
-                position.upsertLast(std::move(positionData));
-            }
-
-            d->flightAugmentation.augmentAircraftData(aircraft);
-            updateAircraftInfo();
-            if (addNewAircraft) {
-                // Sequence starts at 1
-                const int newAircraftCount = flight.count();
-                ok = d->aircraftService->store(flight.getId(), newAircraftCount, flight[newAircraftCount - 1]);
-            } else {
-                updateFlightInfo();
-                updateFlightCondition();
-                ok = flightService.store(flight);
-            }
-
-        }
-    }
-    return ok;
-}
-
-bool IGCImportPlugin::readIGCFile() noexcept
-{
+    d->file = &file;
     // Manufacturer / identifier
     bool ok = readManufacturer();
     if (ok) {
         // Header
         ok = readRecords();
     }
-
     return ok;
 }
 
+QDateTime IGCImportPlugin::getStartDateTimeUtc() noexcept
+{
+    return d->startDateTimeUtc;
+}
+
+void IGCImportPlugin::updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept
+{
+    aircraftInfo.tailNumber = d->gliderId;
+    aircraftInfo.flightNumber = d->flightNumber;
+}
+
+void IGCImportPlugin::updateFlight() noexcept
+{
+    updateFlightInfo();
+    updateFlightCondition();
+}
+
+// PRIVATE
+
 bool IGCImportPlugin::readManufacturer() noexcept
 {
-    const QByteArray line = d->file.readLine();
+    const QByteArray line = d->file->readLine();
     return !line.isEmpty() && line.at(0) == ARecord;
 }
 
 bool IGCImportPlugin::readRecords() noexcept
 {
     bool ok = true;
-    QByteArray line = d->file.readLine();
+    QByteArray line = d->file->readLine();
     while (ok && !line.isEmpty()) {
         switch (line.at(0)) {
         case HRecord:
@@ -350,7 +286,7 @@ bool IGCImportPlugin::readRecords() noexcept
             // Ignore other record types
             break;
         }
-        line = d->file.readLine();
+        line = d->file->readLine();
     }
     return ok;
 }
@@ -492,8 +428,8 @@ bool IGCImportPlugin::parseTask(const QByteArray &line) noexcept
             waypoint.identifier = captures.at(::CRecordTaskIndex);
             waypoint.timestamp = d->currentWaypointTimestamp;
             // The actual timestamps of the waypoints are later updated
-            // with the flight duration, once the entire gx:Track data
-            // has been parsed
+            // with the flight duration, after the B records with the timestamps have been
+            // read
             ++d->currentWaypointTimestamp;
             flight.getUserAircraft().getFlightPlan().add(std::move(waypoint));
             ok = true;
@@ -518,9 +454,9 @@ bool IGCImportPlugin::parseFix(const QByteArray &line) noexcept
         // Timestamp
         const QString timeText = captures.at(::BRecordDateIndex);
         d->currentTime = QTime::fromString(timeText, ::DateFormat);
-        if (d->firstDateTimeUtc.isNull()) {
-            d->firstDateTimeUtc = QDateTime(d->flightDate, d->currentTime, QTimeZone::utc());
-            d->currentDateTimeUtc = d->firstDateTimeUtc;
+        if (d->startDateTimeUtc.isNull()) {
+            d->startDateTimeUtc = QDateTime(d->flightDate, d->currentTime, QTimeZone::utc());
+            d->currentDateTimeUtc = d->startDateTimeUtc;
         } else {
             if (d->currentTime.addSecs(DayChangeThresholdSeconds) < d->previousTime) {
                 // Flight crossed "midnight" (next day)
@@ -531,7 +467,7 @@ bool IGCImportPlugin::parseFix(const QByteArray &line) noexcept
         d->previousTime = d->currentTime;
 
         if (d->currentDateTimeUtc.isValid()) {
-            const qint64 timestamp = d->firstDateTimeUtc.msecsTo(d->currentDateTimeUtc);
+            const qint64 timestamp = d->startDateTimeUtc.msecsTo(d->currentDateTimeUtc);
 
             // Latitude
             QString degreesText = captures.at(::BRecordLatitudeDegreesIndex);
@@ -590,85 +526,21 @@ void IGCImportPlugin::updateFlightInfo() noexcept
                                 tr("Pilot:") % " " % d->pilotName % "\n" %
                                 tr("Co-Pilot:") % " " % d->coPilotName % "\n" %
                                 tr("Flight date:") % " " % d->unit.formatDate(d->flightDate) % "\n\n" %
-                                tr("Aircraft imported on %1 from file: %2").arg(d->unit.formatDateTime(QDateTime::currentDateTime()), d->file.fileName());
+                                tr("Aircraft imported on %1 from file: %2").arg(d->unit.formatDateTime(QDateTime::currentDateTime()), d->file->fileName());
     flight.setDescription(description);
-    flight.setCreationDate(QFileInfo(d->file).birthTime());
+    flight.setCreationDate(QFileInfo(*d->file).birthTime());
 }
-
 
 void IGCImportPlugin::updateFlightCondition() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     FlightCondition flightCondition;
 
-    flightCondition.startLocalTime = d->firstDateTimeUtc.toLocalTime();
-    flightCondition.startZuluTime = d->firstDateTimeUtc;
+    flightCondition.startLocalTime = d->startDateTimeUtc.toLocalTime();
+    flightCondition.startZuluTime = d->startDateTimeUtc;
     flightCondition.endLocalTime = d->currentDateTimeUtc.toLocalTime();
     flightCondition.endZuluTime = d->currentDateTimeUtc;
 
     flight.setFlightCondition(flightCondition);
 }
 
-void IGCImportPlugin::updateAircraftInfo() noexcept
-{
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    Aircraft &aircraft = flight.getUserAircraft();
-    AircraftInfo aircraftInfo(aircraft.getId());
-    aircraftInfo.aircraftType = d->aircraftType;
-
-    aircraftInfo.startDate = d->firstDateTimeUtc.toLocalTime();
-    aircraftInfo.endDate = d->currentDateTimeUtc.toLocalTime();
-    int positionCount = aircraft.getPosition().count();
-    if (positionCount > 0) {
-        const PositionData &firstPositionData = aircraft.getPosition().getFirst();
-        aircraftInfo.initialAirspeed = Convert::feetPerSecondToKnots(firstPositionData.velocityBodyZ);
-
-        FlightPlan &flightPlan = aircraft.getFlightPlan();
-        int waypointCount = flightPlan.count();
-        if (waypointCount > 0) {
-            Waypoint &departure = aircraft.getFlightPlan()[0];
-            departure.altitude = firstPositionData.altitude;
-            departure.localTime = d->firstDateTimeUtc.toLocalTime();
-            departure.zuluTime = d->firstDateTimeUtc;
-
-            if (waypointCount > 1) {
-                const PositionData &lastPositionData = aircraft.getPosition().getLast();
-                Waypoint &arrival = aircraft.getFlightPlan()[1];
-                arrival.altitude = lastPositionData.altitude;
-                arrival.localTime = d->currentDateTimeUtc.toLocalTime();
-                arrival.zuluTime = d->currentDateTimeUtc;
-            }
-        } else {
-            // No C records describing tasks (waypoings), so take the first
-            // and last position coordinates as start/end waypoint data
-            Waypoint departure;
-
-            departure.identifier = d->unit.formatLatLongPosition(firstPositionData.latitude, firstPositionData.longitude);
-            departure.latitude = firstPositionData.latitude;
-            departure.longitude = firstPositionData.longitude;
-            departure.altitude = firstPositionData.altitude;
-            departure.localTime = d->firstDateTimeUtc.toLocalTime();
-            departure.zuluTime = d->firstDateTimeUtc;
-
-            departure.timestamp = firstPositionData.timestamp;
-            flight.getUserAircraft().getFlightPlan().add(std::move(departure));
-
-            Waypoint arrival;
-            const PositionData &lastPositionData = aircraft.getPosition().getLast();
-            arrival.identifier = d->unit.formatLatLongPosition(lastPositionData.latitude, lastPositionData.longitude);
-            arrival.latitude = lastPositionData.latitude;
-            arrival.longitude = lastPositionData.longitude;
-            arrival.altitude = lastPositionData.altitude;
-            arrival.localTime = d->currentDateTimeUtc.toLocalTime();
-            arrival.zuluTime = d->currentDateTimeUtc;
-
-            arrival.timestamp = lastPositionData.timestamp;
-            flight.getUserAircraft().getFlightPlan().add(std::move(arrival));
-        }
-    } else {
-        aircraftInfo.initialAirspeed = 0.0;
-    }
-    aircraftInfo.tailNumber = d->gliderId;
-    aircraftInfo.flightNumber = d->flightNumber;
-    aircraft.setAircraftInfo(aircraftInfo);
-}

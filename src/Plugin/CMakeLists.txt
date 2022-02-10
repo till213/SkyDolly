@@ -9,19 +9,18 @@ endif()
 target_sources(Plugin
     PRIVATE
         src/PluginLib.h
-        src/PluginManager.cpp
-        src/PluginManager.h
+        src/PluginManager.h src/PluginManager.cpp
         src/PluginIntf.h
         src/ExportIntf.h
-        src/ImportIntf.h
-        src/PluginBase.cpp
-        src/PluginBase.h
+        src/ImportIntf.h      
         src/Export.cpp
         src/Export.h
+        src/PluginBase.h src/PluginBase.cpp
+        src/ImportPluginBase.h src/ImportPluginBase.cpp
 )
 
 set(PLUGIN_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence SkyConnect Widget
 )
 if (${PLATFORM_IS_MACOS})
     list(APPEND PLUGIN_LIBS -lc++)

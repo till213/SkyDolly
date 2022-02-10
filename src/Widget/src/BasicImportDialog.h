@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef IGCIMPORTDIALOG_H
-#define IGCIMPORTDIALOG_H
+#ifndef BASICIMPORTDIALOG_H
+#define BASICIMPORTDIALOG_H
 
 #include <memory>
 
@@ -31,27 +31,30 @@
 
 class QWidget;
 
-namespace Ui {
-    class IGCImportDialog;
-}
+#include "WidgetLib.h"
 
 class AircraftType;
-class IGCImportDialogPrivate;
+class BasicImportDialogPrivate;
 
-class IGCImportDialog : public QDialog
+namespace Ui {
+    class BasicImportDialog;
+}
+
+class WIDGET_API BasicImportDialog : public QDialog
 {
     Q_OBJECT
+
 public:
-    explicit IGCImportDialog(QWidget *parent = nullptr) noexcept;
-    virtual ~IGCImportDialog() noexcept;
+    explicit BasicImportDialog(QWidget *parent = nullptr);
+    virtual ~BasicImportDialog();
 
     QString getSelectedFilePath() const noexcept;
     bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
     bool isAddToFlightEnabled() const noexcept;
 
 private:
-    Ui::IGCImportDialog *ui;
-    std::unique_ptr<IGCImportDialogPrivate> d;
+    Ui::BasicImportDialog *ui;
+    std::unique_ptr<BasicImportDialogPrivate> d;
 
     void frenchConnection() noexcept;
     void initUi() noexcept;
@@ -61,4 +64,4 @@ private slots:
     void updateUi() noexcept;
 };
 
-#endif // IGCIMPORTDIALOG_H
+#endif // BASICIMPORTDIALOG_H
