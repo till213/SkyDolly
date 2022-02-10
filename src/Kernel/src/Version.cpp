@@ -46,17 +46,9 @@ public:
     int minor;
     int patch;
 
-    static const QString CodeName;
-    static const QString UserVersion;
-    static const QString OrganisationName;
-    static const QString ApplicationName;
+    static inline const QString CodeName {QStringLiteral("Beasty Boeing")};
+    static inline const QString UserVersion {QStringLiteral("22.02")};
 };
-
-// Application version
-const QString VersionPrivate::CodeName = QString("Anarchic Airbus");
-const QString VersionPrivate::UserVersion = QString("21.05");
-const QString VersionPrivate::OrganisationName = QString(VersionConfig::OrganisationName);
-const QString VersionPrivate::ApplicationName = QString(VersionConfig::ApplicationName);
 
 // PUBLIC
 
@@ -175,10 +167,10 @@ const QString Version::getApplicationVersion() noexcept
 
 const QString Version::getOrganisationName() noexcept
 {
-    return VersionPrivate::OrganisationName;
+    return VersionConfig::OrganisationName;
 }
 
 const QString Version::getApplicationName() noexcept
 {
-    return VersionPrivate::ApplicationName;
+    return VersionConfig::ApplicationName;
 }
