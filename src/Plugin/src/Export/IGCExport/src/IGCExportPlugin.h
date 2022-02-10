@@ -36,7 +36,7 @@ class QDateTime;
 #include "../../../PluginBase.h"
 
 class Aircraft;
-class EngineData;
+struct EngineData;
 
 class IGCExportPluginPrivate;
 
