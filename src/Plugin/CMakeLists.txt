@@ -20,7 +20,7 @@ target_sources(Plugin
 )
 
 set(PLUGIN_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence SkyConnect Widget
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Flight Persistence SkyConnect Widget
 )
 if (${PLATFORM_IS_MACOS})
     list(APPEND PLUGIN_LIBS -lc++)

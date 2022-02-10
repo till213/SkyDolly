@@ -40,6 +40,7 @@
 #include "../../Model/src/SecondaryFlightControlData.h"
 #include "../../Model/src/Light.h"
 #include "../../Model/src/LightData.h"
+#include "Analytics.h"
 #include "FlightAugmentation.h"
 
 namespace  {
@@ -68,6 +69,12 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
 {
     Position &position = aircraft.getPosition();
     const int positionCount = position.count();
+
+
+    Analytics analytics(aircraft);
+
+    const PositionData &positionData = analytics.firstMovementPosition();
+
     for (int i = 0; i < positionCount; ++i) {
         if (i < positionCount - 1) {
 

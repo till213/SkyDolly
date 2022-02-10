@@ -65,7 +65,6 @@
 #include "../../../../../Model/src/LightData.h"
 #include "../../../../../Model/src/FlightPlan.h"
 #include "../../../../../Model/src/Waypoint.h"
-#include "../../../../../Flight/src/FlightAugmentation.h"
 #include "../../../../../SkyConnect/src/SkyConnectManager.h"
 #include "../../../../../SkyConnect/src/SkyConnectIntf.h"
 #include "IGCImportPlugin.h"
@@ -194,7 +193,6 @@ public:
     // The track data may contain data with identical timestamps, so we first read
     // all track data into this vector and only then "upsert" the position data
     std::vector<TrackItem> trackData;
-    FlightAugmentation flightAugmentation;
 
     QRegularExpression hRecordDateRegExp;
     QRegularExpression hRecordPilotRegExp;
@@ -248,6 +246,7 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
             position.upsertLast(std::move(positionData));
         }
     }
+
     return ok;
 }
 
