@@ -61,7 +61,6 @@ void SkySearchTest::cleanupTestCase()
 
 void SkySearchTest::binaryIntervalSearch_data()
 {
-    // Note: somehow QTest does not like the type qint64
     QTest::addColumn<qint64>("timestamp");
     QTest::addColumn<std::size_t>("low");
     QTest::addColumn<std::size_t>("high");
@@ -99,7 +98,6 @@ void SkySearchTest::binaryIntervalSearch()
 
 void SkySearchTest::linearIntervalSearch_data()
 {
-    // Note: somehow QTest does not like the type qint64
     QTest::addColumn<qint64>("timestamp");
     QTest::addColumn<int>("start");
     QTest::addColumn<int>("expected");
