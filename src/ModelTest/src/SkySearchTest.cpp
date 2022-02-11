@@ -31,10 +31,10 @@
 
 namespace
 {
-    constexpr int t0 = 0;
-    constexpr int t1 = 10;
-    constexpr int t2 = 20;
-    constexpr int t3 = 30;
+    constexpr qint64 t0 = 0;
+    constexpr qint64 t1 = 10;
+    constexpr qint64 t2 = 20;
+    constexpr qint64 t3 = 30;
 }
 
 // PRIVATE SLOTS
@@ -63,32 +63,32 @@ void SkySearchTest::cleanupTestCase()
 void SkySearchTest::binaryIntervalSearch_data()
 {
     // Note: somehow QTest does not like the type qint64
-    QTest::addColumn<int>("timestamp");
-    QTest::addColumn<int>("low");
-    QTest::addColumn<int>("high");
+    QTest::addColumn<qint64>("timestamp");
+    QTest::addColumn<std::size_t>("low");
+    QTest::addColumn<std::size_t>("high");
     QTest::addColumn<int>("expected");
 
-    QTest::newRow("Index for t1") << t0 << 0 << m_positionData.size() - 1 << 0;
-    QTest::newRow("Index for t2") << t1 << 0 << m_positionData.size() - 1 << 1;
-    QTest::newRow("Index for t3") << t2 << 0 << m_positionData.size() - 1 << 2;
-    QTest::newRow("Index for t4") << t3 << 0 << m_positionData.size() - 1 << 3;
+    QTest::newRow("Index for t1") << t0 << std::size_t(0) << m_positionData.size() - 1 << 0;
+    QTest::newRow("Index for t2") << t1 << std::size_t(0) << m_positionData.size() - 1 << 1;
+    QTest::newRow("Index for t3") << t2 << std::size_t(0) << m_positionData.size() - 1 << 2;
+    QTest::newRow("Index for t4") << t3 << std::size_t(0) << m_positionData.size() - 1 << 3;
 
-    QTest::newRow("Middle")       << (t3 - t0) / 2 << 0 << m_positionData.size() - 1 << 1;
-    QTest::newRow("After end")    << t3 + 1        << 0 << m_positionData.size() - 1 << SkySearch::InvalidIndex;
-    QTest::newRow("Before start") << t0 - 1        << 0 << m_positionData.size() - 1 << SkySearch::InvalidIndex;
+    QTest::newRow("Middle")       << (t3 - t0) / 2 << std::size_t(0) << m_positionData.size() - 1 << 1;
+    QTest::newRow("After end")    << t3 + 1        << std::size_t(0) << m_positionData.size() - 1 << SkySearch::InvalidIndex;
+    QTest::newRow("Before start") << t0 - 1        << std::size_t(0) << m_positionData.size() - 1 << SkySearch::InvalidIndex;
 
-    QTest::newRow("Start interval 1")   << t1 << 0 << 2 << 1;
+    QTest::newRow("Start interval 1")   << t1 << std::size_t(0) << std::size_t(2) << 1;
     QTest::newRow("Start interval 2")   << t3 << m_positionData.size() - 2 << m_positionData.size() -1 << 3;
-    QTest::newRow("Outside interval 1") << t1 << 2 << 3 << SkySearch::InvalidIndex;
-    QTest::newRow("Outside interval 2") << t3 << 0 << 1 << SkySearch::InvalidIndex;
+    QTest::newRow("Outside interval 1") << t1 << std::size_t(2) << std::size_t(3) << SkySearch::InvalidIndex;
+    QTest::newRow("Outside interval 2") << t3 << std::size_t(0) << std::size_t(1) << SkySearch::InvalidIndex;
 }
 
 void SkySearchTest::binaryIntervalSearch()
 {
     // Setup
-    QFETCH(int, timestamp);
-    QFETCH(int, low);
-    QFETCH(int, high);
+    QFETCH(qint64, timestamp);
+    QFETCH(std::size_t, low);
+    QFETCH(std::size_t, high);
     QFETCH(int, expected);
 
     // Exercise
@@ -101,7 +101,7 @@ void SkySearchTest::binaryIntervalSearch()
 void SkySearchTest::linearIntervalSearch_data()
 {
     // Note: somehow QTest does not like the type qint64
-    QTest::addColumn<int>("timestamp");
+    QTest::addColumn<qint64>("timestamp");
     QTest::addColumn<int>("start");
     QTest::addColumn<int>("expected");
 
@@ -123,7 +123,7 @@ void SkySearchTest::linearIntervalSearch_data()
 void SkySearchTest::linearIntervalSearch()
 {
     // Setup
-    QFETCH(int, timestamp);
+    QFETCH(qint64, timestamp);
     QFETCH(int, start);
     QFETCH(int, expected);
 
