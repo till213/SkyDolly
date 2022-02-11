@@ -22,11 +22,32 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <utility>
+#include <utility>
+
+#include <QtGlobal>
+
 #include "../../Kernel/src/SkyMath.h"
+#include "../../Kernel/src/Convert.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/Position.h"
 #include "../../Model/src/PositionData.h"
 #include "Analytics.h"
+
+namespace  {
+    // The first significant movement of 'DistanceThreshold' meters defines the
+    // initial heading
+    constexpr double DistanceThreshold = 10.0;
+    constexpr double DefaultHeading = 0.0;
+    constexpr qint64 DefaultTimestamp = 0.0;
+
+    auto distanceLambda = [](const PositionData &start, const PositionData &end) -> bool {
+        const auto startPos = std::make_pair(start.latitude, start.longitude);
+        const auto endPos = std::make_pair(end.latitude, end.longitude);
+        const double distance = SkyMath::sphericalDistance(startPos, endPos, Convert::feetToMeters((start.altitude + end.altitude) / 2.0));
+        return std::abs(distance) > DistanceThreshold;
+    };
+}
 
 class AnalyticsPrivate
 {
@@ -47,20 +68,26 @@ Analytics::Analytics(const Aircraft &aircraft)
 Analytics::~Analytics()
 {}
 
-const PositionData &Analytics::firstMovementPosition() const noexcept
+const std::pair<qint64, double> Analytics::firstMovementHeading() const noexcept
 {
-    // @todo IMPLEMENT ME!!!
+    std::pair<qint64, double> result;
     Position &position = d->aircraft.getPosition();
-    const PositionData &positionData = position.getFirst();
-    const std::size_t count = position.count();
-    auto curr = position.begin();
-    auto prev = curr;
-    if (count > 1) {
-        auto pos = std::adjacent_find(position.begin(), position.end(),
-                                     [](const PositionData &a, const PositionData &b)->bool { return std::abs(a.longitude - b.longitude) > 0.001;});
-        qDebug("Timestamp %llu", pos->timestamp);
+    auto pos = std::adjacent_find(position.begin(), position.end(), ::distanceLambda);
+    if (pos != position.end()) {
+        auto nextPos = std::next(pos);
+        if (nextPos != position.end()) {
+            const auto startPos = std::make_pair(pos->latitude, pos->longitude);
+            const auto endPos = std::make_pair(nextPos->latitude, nextPos->longitude);
+            const double initialHeading = SkyMath::initialBearing(startPos, endPos);
+            result = std::make_pair(pos->timestamp, initialHeading);
+        } else {
+            // Just one point
+            result = std::make_pair(pos->timestamp, ::DefaultHeading);
+        }
 
+    } else {
+        // Just one point
+        result = std::make_pair(::DefaultTimestamp, ::DefaultHeading);
     }
-
-    return positionData;
+    return result;
 }

@@ -26,6 +26,9 @@
 #define ANALYTICS_H
 
 #include <memory>
+#include <utility>
+
+#include <QtGlobal>
 
 #include "FlightLib.h"
 
@@ -52,7 +55,7 @@ public:
      * \return the heading of the first aircraft movement; PositionData::NullData if
      *         no positions exist
      */
-    const PositionData &firstMovementPosition() const noexcept;
+    const std::pair<qint64, double> firstMovementHeading() const noexcept;
 
 private:
     std::unique_ptr<AnalyticsPrivate> d;
