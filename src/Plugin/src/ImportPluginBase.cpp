@@ -159,7 +159,7 @@ bool ImportPluginBase::importFile(const QString &filePath, FlightService &flight
                 ok = d->aircraftService->store(flight.getId(), sequenceNumber, aircraft);
             } else {
                 // Also update flight info and condition
-                updateFlight();
+                updateFlight(d->file);
                 ok = flightService.store(flight);
             }
         } else {
@@ -187,48 +187,49 @@ void ImportPluginBase::updateAircraftInfo() noexcept
         const PositionData &firstPositionData = aircraft.getPosition().getFirst();
         aircraftInfo.initialAirspeed = Convert::feetPerSecondToKnots(firstPositionData.velocityBodyZ);
 
-        FlightPlan &flightPlan = aircraft.getFlightPlan();
-        int waypointCount = flightPlan.count();
-        if (waypointCount > 0) {
-            Waypoint &departure = aircraft.getFlightPlan()[0];
-            departure.altitude = firstPositionData.altitude;
-            departure.localTime = startDateTimeUtc.toLocalTime();
-            departure.zuluTime = startDateTimeUtc;
+        // @todo FIXME / IMPLEMENT ME Update properly the first/last waypoint time - handle case when no waypoints at all exist (in case of IGC files: "no C records")
+//        FlightPlan &flightPlan = aircraft.getFlightPlan();
+//        int waypointCount = flightPlan.count();
+//        if (waypointCount > 0) {
+//            Waypoint &departure = aircraft.getFlightPlan()[0];
+//            departure.altitude = firstPositionData.altitude;
+//            departure.localTime = startDateTimeUtc.toLocalTime();
+//            departure.zuluTime = startDateTimeUtc;
 
-            if (waypointCount > 1) {
-                const PositionData &lastPositionData = aircraft.getPosition().getLast();
-                Waypoint &arrival = aircraft.getFlightPlan()[1];
-                arrival.altitude = lastPositionData.altitude;
-                arrival.localTime = endDateTimeUtc.toLocalTime();
-                arrival.zuluTime = endDateTimeUtc;
-            }
-        } else {
-            // No C records describing tasks (waypoings), so take the first
-            // and last position coordinates as start/end waypoint data
-            Waypoint departure;
+//            if (waypointCount > 1) {
+//                const PositionData &lastPositionData = aircraft.getPosition().getLast();
+//                Waypoint &arrival = aircraft.getFlightPlan()[1];
+//                arrival.altitude = lastPositionData.altitude;
+//                arrival.localTime = endDateTimeUtc.toLocalTime();
+//                arrival.zuluTime = endDateTimeUtc;
+//            }
+//        } else {
+//            // No C records describing tasks (waypoings), so take the first
+//            // and last position coordinates as start/end waypoint data
+//            Waypoint departure;
 
-            departure.identifier = d->unit.formatLatLongPosition(firstPositionData.latitude, firstPositionData.longitude);
-            departure.latitude = firstPositionData.latitude;
-            departure.longitude = firstPositionData.longitude;
-            departure.altitude = firstPositionData.altitude;
-            departure.localTime = startDateTimeUtc.toLocalTime();
-            departure.zuluTime = startDateTimeUtc;
+//            departure.identifier = d->unit.formatLatLongPosition(firstPositionData.latitude, firstPositionData.longitude);
+//            departure.latitude = firstPositionData.latitude;
+//            departure.longitude = firstPositionData.longitude;
+//            departure.altitude = firstPositionData.altitude;
+//            departure.localTime = startDateTimeUtc.toLocalTime();
+//            departure.zuluTime = startDateTimeUtc;
 
-            departure.timestamp = firstPositionData.timestamp;
-            flight.getUserAircraft().getFlightPlan().add(std::move(departure));
+//            departure.timestamp = firstPositionData.timestamp;
+//            flight.getUserAircraft().getFlightPlan().add(std::move(departure));
 
-            Waypoint arrival;
-            const PositionData &lastPositionData = aircraft.getPosition().getLast();
-            arrival.identifier = d->unit.formatLatLongPosition(lastPositionData.latitude, lastPositionData.longitude);
-            arrival.latitude = lastPositionData.latitude;
-            arrival.longitude = lastPositionData.longitude;
-            arrival.altitude = lastPositionData.altitude;
-            arrival.localTime = endDateTimeUtc.toLocalTime();
-            arrival.zuluTime = endDateTimeUtc;
+//            Waypoint arrival;
+//            const PositionData &lastPositionData = aircraft.getPosition().getLast();
+//            arrival.identifier = d->unit.formatLatLongPosition(lastPositionData.latitude, lastPositionData.longitude);
+//            arrival.latitude = lastPositionData.latitude;
+//            arrival.longitude = lastPositionData.longitude;
+//            arrival.altitude = lastPositionData.altitude;
+//            arrival.localTime = endDateTimeUtc.toLocalTime();
+//            arrival.zuluTime = endDateTimeUtc;
 
-            arrival.timestamp = lastPositionData.timestamp;
-            flight.getUserAircraft().getFlightPlan().add(std::move(arrival));
-        }
+//            arrival.timestamp = lastPositionData.timestamp;
+//            flight.getUserAircraft().getFlightPlan().add(std::move(arrival));
+//        }
     } else {
         aircraftInfo.initialAirspeed = 0.0;
     }

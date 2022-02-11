@@ -13,6 +13,7 @@
 
 - IGC import plugin
   * The initial heading is now calculated on the "first significant movement", compensating GPS inaccuracies (when the glider is standing still on the ground)
+  * Times of turn points (waypoints) in the task list ("C records") are now updated with the actual arrival time
   
 ## 0.8.6
 

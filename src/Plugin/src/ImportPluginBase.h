@@ -50,27 +50,27 @@ public:
     ImportPluginBase() noexcept;
     virtual ~ImportPluginBase() noexcept;
 
-    virtual QWidget *getParentWidget() const noexcept override
+    virtual QWidget *getParentWidget() const noexcept override final
     {
         return PluginBase::getParentWidget();
     }
 
-    virtual void setParentWidget(QWidget *parent) noexcept override
+    virtual void setParentWidget(QWidget *parent) noexcept override final
     {
         PluginBase::setParentWidget(parent);
     }
 
-    virtual void storeSettings(const QUuid &pluginUuid) const noexcept override
+    virtual void storeSettings(const QUuid &pluginUuid) const noexcept override final
     {
         PluginBase::storeSettings(pluginUuid);
     }
 
-    virtual void restoreSettings(const QUuid &pluginUuid) noexcept override
+    virtual void restoreSettings(const QUuid &pluginUuid) noexcept override final
     {
         PluginBase::restoreSettings(pluginUuid);
     }
 
-    virtual bool import(FlightService &flightService) noexcept override;
+    virtual bool import(FlightService &flightService) noexcept override final;
 
 protected:
 
@@ -80,7 +80,7 @@ protected:
     virtual bool readFile(QFile &file) noexcept = 0;
     virtual QDateTime getStartDateTimeUtc() noexcept = 0;
     virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept = 0;
-    virtual void updateFlight() noexcept = 0;
+    virtual void updateFlight(const QFile &file) noexcept = 0;
 
 private:
     std::unique_ptr<ImportPluginBasePrivate> d;
