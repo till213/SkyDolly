@@ -7,7 +7,7 @@ else()
 endif()
 
 set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Plugin
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Flight Plugin
 )
 if (${PLATFORM_IS_MACOS})
     list(APPEND LIBRARY_DEPENDENCIES -lc++)
@@ -16,6 +16,7 @@ endif()
 target_sources(${LIBRARY_NAME}
     PRIVATE
         src/IGCImportPlugin.h src/IGCImportPlugin.cpp
+        src/IGCParser.h src/IGCParser.cpp
         src/IGCImportPlugin.json
 )
 

@@ -52,7 +52,7 @@ protected:
     virtual bool readFile(QFile &file) noexcept override;
     virtual QDateTime getStartDateTimeUtc() noexcept override;
     virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept override;
-    virtual void updateFlight() noexcept override;
+    virtual void updateFlight(const QFile &file) noexcept override;
 
 private:
     std::unique_ptr<IGCImportPluginPrivate> d;
@@ -74,7 +74,7 @@ private:
     bool parseFix(const QByteArray &line) noexcept;
     inline double parseCoordinate(QStringView degreesText, QStringView minutesBy1000Text);
 
-    void updateFlightInfo() noexcept;
+    void updateFlightInfo(const QFile &file) noexcept;
     void updateFlightCondition() noexcept;
 
 };

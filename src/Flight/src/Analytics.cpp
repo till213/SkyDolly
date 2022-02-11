@@ -23,7 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <utility>
-#include <utility>
+#include <limits>
 
 #include <QtGlobal>
 
@@ -90,4 +90,26 @@ const std::pair<qint64, double> Analytics::firstMovementHeading() const noexcept
         result = std::make_pair(::DefaultTimestamp, ::DefaultHeading);
     }
     return result;
+}
+
+const PositionData &Analytics::closestPosition(double latitude, double longitude) const noexcept
+{
+    double minimumDistance = std::numeric_limits<double>::max();
+    const PositionData *closestPositionData {nullptr};
+
+    Position &position = d->aircraft.getPosition();
+    for (const PositionData &pos : position) {
+        const double distance = SkyMath::sphericalDistance(std::make_pair(latitude, longitude),
+                                                           std::make_pair(pos.latitude, pos.longitude),
+                                                           Convert::feetToMeters(pos.altitude));
+        if (minimumDistance > distance) {
+            closestPositionData = &pos;
+            minimumDistance = distance;
+        }
+    }
+    if (closestPositionData != nullptr) {
+        return *closestPositionData;
+    } else {
+        return PositionData::NullData;
+    }
 }

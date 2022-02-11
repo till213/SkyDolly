@@ -57,6 +57,8 @@ public:
      */
     const std::pair<qint64, double> firstMovementHeading() const noexcept;
 
+    const PositionData &closestPosition(double latitude, double longitude) const noexcept;
+
 private:
     std::unique_ptr<AnalyticsPrivate> d;
 };
