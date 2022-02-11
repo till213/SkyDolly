@@ -73,7 +73,7 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
 
     Analytics analytics(aircraft);
 
-    const PositionData &positionData = analytics.firstMovementPosition();
+    const auto [firstMovementTimestamp, firstMovementHeading] = analytics.firstMovementHeading();
 
     for (int i = 0; i < positionCount; ++i) {
         if (i < positionCount - 1) {
@@ -86,26 +86,31 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
             const qint64 endTimestamp = endPositionData.timestamp;
             const double averageAltitude = Convert::feetToMeters((startPositionData.altitude + endPositionData.altitude) / 2.0);
 
-            const std::pair distanceAndVelocity = SkyMath::distanceAndVelocity(startPosition, startTimestamp, endPosition, endTimestamp, averageAltitude);
+            const auto [distance, velocity] = SkyMath::distanceAndVelocity(startPosition, startTimestamp, endPosition, endTimestamp, averageAltitude);
             startPositionData.velocityBodyX = 0.0;
             startPositionData.velocityBodyY = 0.0;
-            startPositionData.velocityBodyZ = Convert::metersPerSecondToFeetPerSecond(distanceAndVelocity.second);
+            startPositionData.velocityBodyZ = Convert::metersPerSecondToFeetPerSecond(velocity);
 
-            const double deltaAltitude = Convert::feetToMeters(endPositionData.altitude - startPositionData.altitude);
-            // SimConnect: positive pitch values "point downward", negative pitch values "upward"
-            // -> so switch the sign
-            startPositionData.pitch = -SkyMath::approximatePitch(distanceAndVelocity.first, deltaAltitude);
-            const double initialBearing = SkyMath::initialBearing(startPosition, endPosition);
-            startPositionData.heading = initialBearing;
-
-            if (i > 0) {
-                // [-180, 180]
-                const double headingChange = SkyMath::headingChange(position[i - 1].heading, startPositionData.heading);
-                // We go into maximum bank angle of 30 degrees with a heading change of 45 degrees
-                // SimConnect: negative values are a "right" turn, positive values a left turn
-                startPositionData.bank = SkyMath::bankAngle(headingChange, 45.0, 30.0);
+            if (startPositionData.timestamp > firstMovementTimestamp) {
+                const double deltaAltitude = Convert::feetToMeters(endPositionData.altitude - startPositionData.altitude);
+                // SimConnect: positive pitch values "point downwards", negative pitch values "upwards"
+                // -> so switch the sign
+                startPositionData.pitch = -SkyMath::approximatePitch(distance, deltaAltitude);
+                const double initialBearing = SkyMath::initialBearing(startPosition, endPosition);
+                startPositionData.heading = initialBearing;
+                if (i > 0) {
+                    // [-180, 180]
+                    const double headingChange = SkyMath::headingChange(position[i - 1].heading, startPositionData.heading);
+                    // We go into maximum bank angle of 30 degrees with a heading change of 45 degrees
+                    // SimConnect: negative values are a "right" turn, positive values a left turn
+                    startPositionData.bank = SkyMath::bankAngle(headingChange, 45.0, 30.0);
+                } else {
+                    // First point, zero bank angle
+                    startPositionData.bank = 0.0;
+                }
             } else {
-                // First point, zero bank angle
+                startPositionData.pitch = 0.0;
+                startPositionData.heading = firstMovementHeading;
                 startPositionData.bank = 0.0;
             }
 

@@ -36,6 +36,7 @@
  *
  * Useful links:
  * - https://tools.timodenk.com/cubic-spline-interpolation
+ * - https://www.wikihow.com/Write-Latitude-and-Longitude
  */
 namespace SkyMath {
 
@@ -362,12 +363,12 @@ namespace SkyMath {
      *        the timestamp of the end point [milliseconds]
      * \param averageAltitude
      *        the average altitude of the two points [meters]
-     * \return the distance and required speed [m/s]
+     * \return the distance (first value) and required speed [m/s] (second value)
      * \sa https://www.movable-type.co.uk/scripts/latlong.html
      */
     inline std::pair<double, double> distanceAndVelocity(std::pair<double, double> startPosition, qint64 startTimestamp,
-                           std::pair<double, double> endPosition, qint64 endTimestamp,
-                           double averageAltitude) noexcept
+                                                         std::pair<double, double> endPosition, qint64 endTimestamp,
+                                                         double averageAltitude) noexcept
     {
         const double distance = sphericalDistance(startPosition, endPosition, averageAltitude);
         const double deltaT = (endTimestamp - startTimestamp) / 1000.0;

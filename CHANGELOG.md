@@ -9,6 +9,11 @@
   * Export waypoints as flight tasks ("C records")
   * Export pilot names
   
+### Improvements
+
+- IGC import plugin
+  * The initial heading is now calculated on the "first significant movement", compensating GPS inaccuracies (when the glider is standing still on the ground)
+  
 ## 0.8.6
 
 ### New Features
