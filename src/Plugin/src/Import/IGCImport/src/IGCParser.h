@@ -153,7 +153,6 @@ private:
     bool parseTask(const QByteArray &line) noexcept;    
     bool parseFix(const QByteArray &line) noexcept;
     inline double parseCoordinate(QStringView degreesText, QStringView minutesBy1000Text) noexcept;
-    inline bool parseAdditions(QStringView additionValues, Additions &additions) noexcept;
 };
 
 #endif // IGCPARSER_H

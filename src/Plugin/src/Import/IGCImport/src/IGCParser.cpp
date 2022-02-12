@@ -101,7 +101,7 @@ namespace
     constexpr int CRecordTaskIndex = 7;
 
     // B (fix) record
-    constexpr char BRecordPattern[] = "^B(\\d{6})(\\d{2})(\\d{5})([NS])(\\d{3})(\\d{5})([EW])([AV])(-\\d{4}|\\d{5})(-\\d{4}|\\d{5})(.*)\r\n";
+    constexpr char BRecordPattern[] = "^B(\\d{6})(\\d{2})(\\d{5})([NS])(\\d{3})(\\d{5})([EW])([AV])(-\\d{4}|\\d{5})(-\\d{4}|\\d{5})";
     // HHMMSS
     constexpr int BRecordDateIndex = 1;
 
@@ -121,12 +121,6 @@ namespace
     constexpr int BRecordPressureAltitudeIndex = 9;
     // GNSS altitude (in metres, above the WGS84 ellipsoid)
     constexpr int BRecordGNSSAltitudeIndex = 10;
-    // Optional additions
-    constexpr int BRecordAdditionsIndex = 11;
-    // The number of regexp captures - the last captured value (additions) is optional
-    constexpr int BRecordNofCaptures = 12;
-    // Basic data length (bytes)
-    constexpr int BRecordBasicDataLength = 35 ;
 
     // Values
     constexpr char DirectionTypeNorth = 'N';
@@ -465,9 +459,9 @@ bool IGCParser::parseFix(const QByteArray &line) noexcept
             }
 
             // Longitude
-            const QString &longitudeTex = captures.at(::BRecordLongitudeDegreesIndex);
+            const QString &longitudeText = captures.at(::BRecordLongitudeDegreesIndex);
             const QString &longitudeMinutesBy1000Text = captures.at(::BRecordLongitudeMinutesIndex);
-            double longitude = parseCoordinate(longitudeTex, longitudeMinutesBy1000Text);
+            double longitude = parseCoordinate(longitudeText, longitudeMinutesBy1000Text);
             if (captures.at(::BRecordLongitudeDirectionIndex) == ::DirectionTypeWest) {
                 longitude = -longitude;
             }
@@ -484,19 +478,12 @@ bool IGCParser::parseFix(const QByteArray &line) noexcept
 
             // Optional additions
             if (d->additionDefinitions.size() > 0) {
-                // But mandatory if specified in I records
-                if (captures.length() == ::BRecordNofCaptures) {
-                    ok = parseAdditions(captures.at(::BRecordAdditionsIndex), d->fixes.back().additions);
-                } else {
-                    ok = false;
+                for (auto &def : d->additionDefinitions) {
+                    const int len = def.endOffset - def.startOffset;
+                    d->fixes.back().additions.emplace(def.name, line.mid(def.startOffset, len));
                 }
-            } else {
-                ok = true;
             }
-            if (ok) {
-                ;
-            }
-
+            ok = true;
         } else {
             // Invalid timestamp
             ok = false;
@@ -518,14 +505,4 @@ inline double IGCParser::parseCoordinate(QStringView degreesText, QStringView mi
     double minutes = minutesBy1000Text.toDouble() / 1000.0;
 #endif
     return Convert::dm2dd(degrees, minutes);
-}
-
-inline bool IGCParser::parseAdditions(QStringView additionValues, Additions &additions) noexcept
-{
-    for (auto &def : d->additionDefinitions) {
-        const int len = def.endOffset - def.startOffset;
-        const QString addition = additionValues.mid(def.startOffset - ::BRecordBasicDataLength, len).toString();
-        additions.insert(std::make_pair(def.name, addition));
-    }
-    return true;
 }
