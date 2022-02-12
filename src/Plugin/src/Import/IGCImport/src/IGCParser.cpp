@@ -23,6 +23,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <vector>
+#include <unordered_map>
 
 #include <QFile>
 #include <QByteArray>
@@ -34,6 +36,8 @@
 #include "../../../../../Kernel/src/Convert.h"
 #include "IGCParser.h"
 
+// Useful resources:
+// - https://regex101.com/
 namespace
 {
     // Timestamp (msec), latitude (degrees), longitude (degrees), altitude (feet)
@@ -46,6 +50,7 @@ namespace
     constexpr char ARecord = 'A';
     constexpr char HRecord = 'H';
     constexpr char CRecord = 'C';
+    constexpr char IRecord = 'I';
     constexpr char BRecord = 'B';
 
     // Three letter codes (TLC)
@@ -70,6 +75,13 @@ namespace
     constexpr int HRecordYearIndex = 3;
     constexpr int HRecordFlightNumberIndex = 4;
 
+    // I (addition definition) record
+    constexpr char IRecordPattern[] = "^I(\\d{2})((?:\\d{4}[A-Z]{3})*)\r\n";
+    constexpr int IRecordNofAdditionsIndex = 1;
+    constexpr int IRecordAdditionsDefinitionsIndex = 2;
+    // Length of addition definition [bytes]
+    constexpr int IRecordAdditionDefinitionLength = 7;
+
     // C (task) record
     constexpr char CRecordTaskDefinitionPattern[] = "^C(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{4})([-\\d]{2})(.*)";
     constexpr char CRecordTaskPattern[] = "^C(\\d{2})(\\d{5})([NS])(\\d{3})(\\d{5})([EW])(.*)";
@@ -89,7 +101,7 @@ namespace
     constexpr int CRecordTaskIndex = 7;
 
     // B (fix) record
-    constexpr char BRecordPattern[] = "^B(\\d{6})(\\d{2})(\\d{5})([NS])(\\d{3})(\\d{5})([EW])([AV])(-\\d{4}|\\d{5})(-\\d{4}|\\d{5})";
+    constexpr char BRecordPattern[] = "^B(\\d{6})(\\d{2})(\\d{5})([NS])(\\d{3})(\\d{5})([EW])([AV])(-\\d{4}|\\d{5})(-\\d{4}|\\d{5})(.*)\r\n";
     // HHMMSS
     constexpr int BRecordDateIndex = 1;
 
@@ -106,16 +118,19 @@ namespace
     constexpr int BRecordLongitudeDirectionIndex = 7;
 
     // Pressure altitude (in metres, relative to the ICAO ISA 1013.25 HPa datum)
-    [[maybe_unused]]
-    constexpr int BRecordPressureAltitudeIndex = 8;
+    constexpr int BRecordPressureAltitudeIndex = 9;
     // GNSS altitude (in metres, above the WGS84 ellipsoid)
-    constexpr int BRecordGNSSAltitudeIndex = 9;
+    constexpr int BRecordGNSSAltitudeIndex = 10;
+    // Optional additions
+    constexpr int BRecordAdditionsIndex = 11;
+    // The number of regexp captures - the last captured value (additions) is optional
+    constexpr int BRecordNofCaptures = 12;
+    // Basic data length (bytes)
+    constexpr int BRecordBasicDataLength = 35 ;
 
     // Values
-    [[maybe_unused]]
     constexpr char DirectionTypeNorth = 'N';
     constexpr char DirectionTypeSouth = 'S';
-    [[maybe_unused]]
     constexpr char DirectionTypeEast = 'E';
     constexpr char DirectionTypeWest = 'W';
 }
@@ -130,8 +145,9 @@ public:
           hRecordCoPilotRegExp(QString(::HRecordCoPilotPattern)),
           hRecordGliderTypeRegExp(QString(::HRecordGliderTypePattern)),
           hRecordGliderIdRegExp(QString(::HRecordGliderIdPattern)),
+          iRecordRegExp(QString(::IRecordPattern)),
           cRecordTaskDefinitionRegExp(QString(::CRecordTaskDefinitionPattern)),
-          cRecordTaskRegExp(QString(::CRecordTaskPattern)),
+          cRecordTaskRegExp(QString(::CRecordTaskPattern)),          
           bRecordRegExp(QString(::BRecordPattern))
     {}
 
@@ -145,13 +161,16 @@ public:
     IGCParser::Task task;
     std::vector<IGCParser::Fix> fixes;
 
+    std::vector<IGCParser::AdditionDefinition> additionDefinitions;
+
     QRegularExpression hRecordDateRegExp;
     QRegularExpression hRecordPilotRegExp;
     QRegularExpression hRecordCoPilotRegExp;
     QRegularExpression hRecordGliderTypeRegExp;
     QRegularExpression hRecordGliderIdRegExp;
+    QRegularExpression iRecordRegExp;
     QRegularExpression cRecordTaskDefinitionRegExp;
-    QRegularExpression cRecordTaskRegExp;
+    QRegularExpression cRecordTaskRegExp;    
     QRegularExpression bRecordRegExp;
 };
 
@@ -206,6 +225,7 @@ const std::vector<IGCParser::Fix> &IGCParser::getFixes() const noexcept
 void IGCParser::init() noexcept
 {
     d->task.tasks.clear();
+    d->additionDefinitions.clear();
     d->fixes.clear();
 }
 
@@ -225,10 +245,14 @@ bool IGCParser::readRecords() noexcept
             // Header
             ok = parseHeader(line);
             break;
+        case IRecord:
+            // Header
+            ok = parseFixAdditions(line);
+            break;
         case CRecord:
             // Header
             ok = parseTask(line);
-            break;
+            break;        
         case BRecord:
             // Fix
             ok = parseFix(line);
@@ -258,7 +282,6 @@ bool IGCParser::parseHeader(const QByteArray &line) noexcept
     } else if (type == ::TLCGliderId) {
         ok = parseHeaderGliderId(line);
     }
-
     return ok;
 }
 
@@ -269,14 +292,15 @@ bool IGCParser::parseHeaderDate(const QByteArray &line) noexcept
     if (match.hasMatch()) {
         const QStringList captures = match.capturedTexts();
         int year;
-        QString yearText = captures.at(::HRecordYearIndex);
+        const QString &yearText = captures.at(::HRecordYearIndex);
         if (yearText.at(0) == '8' || yearText.at(0) == '9') {
             // The glorious 80ies and 90ies: two-digit year dates were all the rage!
             // (The IGC format was invented in the 80ies, so any date starting with
             // either 8 or 9 is boldly assumed to be in those decades)
             year= 1900 + yearText.toInt();
         } else {
-            // This code needs fixing again in the year 2080 onwards ;)
+            // This code needs fixing again in the year 2080 onwards.
+            // Sorry, my future fellows - but not my fault ¯\_(ツ)_/¯
             year = 2000 + yearText.toInt();
         }
         const int month = captures.at(::HRecordMonthIndex).toInt();
@@ -296,7 +320,6 @@ bool IGCParser::parseHeaderDate(const QByteArray &line) noexcept
         // No pattern match
         ok = false;
     }
-
     return ok;
 }
 
@@ -313,7 +336,6 @@ bool IGCParser::parseHeaderText(const QByteArray &line, const QRegularExpression
         // No pattern match
         ok = false;
     }
-
     return ok;
 }
 
@@ -337,6 +359,37 @@ bool IGCParser::parseHeaderGliderId(const QByteArray &line) noexcept
     return parseHeaderText(line, d->hRecordGliderIdRegExp, d->header.gliderId);
 }
 
+bool IGCParser::parseFixAdditions(const QByteArray &line) noexcept
+{
+    bool ok;
+    QRegularExpressionMatch match = d->iRecordRegExp.match(line);
+    if (match.hasMatch()) {
+        const QStringList captures = match.capturedTexts();
+        const int nofAdditions = captures.at(::IRecordNofAdditionsIndex).toInt();
+        const QString &definitions = captures.at(::IRecordAdditionsDefinitionsIndex);
+
+        // Validate the number of bytes: each definition is expected to be
+        // of the form SS FF CCC (7 bytes in total)
+        if (definitions.length() >= nofAdditions * ::IRecordAdditionDefinitionLength) {
+            int index = 0;
+            for (int i = 0; i < nofAdditions; ++i) {
+                const QStringRef ref = definitions.midRef(i * ::IRecordAdditionDefinitionLength, ::IRecordAdditionDefinitionLength);
+                int startOffset = ref.mid(0, 2).toInt();
+                int endOffset = ref.mid(2, 2).toInt();
+                const ThreeLetterCode tlc = ref.mid(4, 3).toLatin1();
+                d->additionDefinitions.emplace_back(tlc, startOffset, endOffset);
+            }
+            ok = true;
+        } else {
+            ok = false;
+        }
+    } else {
+        // No pattern match
+        ok = false;
+    }
+    return ok;
+}
+
 bool IGCParser::parseTask(const QByteArray &line) noexcept
 {
     bool ok;
@@ -351,17 +404,17 @@ bool IGCParser::parseTask(const QByteArray &line) noexcept
             const QStringList captures = match.capturedTexts();
 
             // Latitude
-            QString degreesText = captures.at(::CRecordLatitudeDegreesIndex);
+            const QString &latitudeText = captures.at(::CRecordLatitudeDegreesIndex);
             QString minutesBy1000Text = captures.at(::CRecordLatitudeMinutesIndex);
-            double latitude = parseCoordinate(degreesText, minutesBy1000Text);
+            double latitude = parseCoordinate(latitudeText, minutesBy1000Text);
             if (captures.at(::CRecordLatitudeDirectionIndex) == ::DirectionTypeSouth) {
                 latitude = -latitude;
             }
 
             // Longitude
-            degreesText = captures.at(::CRecordLongitudeDegreesIndex);
+            const QString &longitudeText  = captures.at(::CRecordLongitudeDegreesIndex);
             minutesBy1000Text = captures.at(::CRecordLongitudeMinutesIndex);
-            double longitude = parseCoordinate(degreesText, minutesBy1000Text);
+            double longitude = parseCoordinate(longitudeText, minutesBy1000Text);
             if (captures.at(::CRecordLongitudeDirectionIndex) == ::DirectionTypeWest) {
                 longitude = -longitude;
             }
@@ -373,7 +426,6 @@ bool IGCParser::parseTask(const QByteArray &line) noexcept
             ok = false;
         }
     }
-
     return ok;
 }
 
@@ -385,7 +437,7 @@ bool IGCParser::parseFix(const QByteArray &line) noexcept
         const QStringList captures = match.capturedTexts();
 
         // Timestamp
-        const QString timeText = captures.at(::BRecordDateIndex);
+        const QString &timeText = captures.at(::BRecordDateIndex);
         const QTime currentTime = QTime::fromString(timeText, ::DateFormat);
         if (d->fixes.size() > 0) {
             if (currentTime.addSecs(DayChangeThresholdSeconds) < d->previousTime) {
@@ -405,31 +457,46 @@ bool IGCParser::parseFix(const QByteArray &line) noexcept
             const qint64 timestamp = d->header.flightDateTimeUtc.msecsTo(d->currentDateTimeUtc);
 
             // Latitude
-            QString degreesText = captures.at(::BRecordLatitudeDegreesIndex);
-            QString minutesBy1000Text = captures.at(::BRecordLatitudeMinutesIndex);
-            double latitude = parseCoordinate(degreesText, minutesBy1000Text);
+            const QString &latitudeText = captures.at(::BRecordLatitudeDegreesIndex);
+            const QString &latitudeMinutesBy1000Text = captures.at(::BRecordLatitudeMinutesIndex);
+            double latitude = parseCoordinate(latitudeText, latitudeMinutesBy1000Text);
             if (captures.at(::BRecordLatitudeDirectionIndex) == ::DirectionTypeSouth) {
                 latitude = -latitude;
             }
 
             // Longitude
-            degreesText = captures.at(::BRecordLongitudeDegreesIndex);
-            minutesBy1000Text = captures.at(::BRecordLongitudeMinutesIndex);
-            double longitude = parseCoordinate(degreesText, minutesBy1000Text);
+            const QString &longitudeTex = captures.at(::BRecordLongitudeDegreesIndex);
+            const QString &longitudeMinutesBy1000Text = captures.at(::BRecordLongitudeMinutesIndex);
+            double longitude = parseCoordinate(longitudeTex, longitudeMinutesBy1000Text);
             if (captures.at(::BRecordLongitudeDirectionIndex) == ::DirectionTypeWest) {
                 longitude = -longitude;
             }
 
             // Pressure altitude
-            const QString pressureAltitudeText = captures.at(::BRecordPressureAltitudeIndex);
+            const QString &pressureAltitudeText = captures.at(::BRecordPressureAltitudeIndex);
             const double pressureAltitude = Convert::metersToFeet(pressureAltitudeText.toDouble());
 
             // GNSS altitude
-            const QString gnssAltitudeText = captures.at(::BRecordGNSSAltitudeIndex);
+            const QString &gnssAltitudeText = captures.at(::BRecordGNSSAltitudeIndex);
             const double gnssAltitude = Convert::metersToFeet(gnssAltitudeText.toDouble());
 
             d->fixes.emplace_back(timestamp, latitude, longitude, pressureAltitude, gnssAltitude);
-            ok = true;
+
+            // Optional additions
+            if (d->additionDefinitions.size() > 0) {
+                // But mandatory if specified in I records
+                if (captures.length() == ::BRecordNofCaptures) {
+                    ok = parseAdditions(captures.at(::BRecordAdditionsIndex), d->fixes.back().additions);
+                } else {
+                    ok = false;
+                }
+            } else {
+                ok = true;
+            }
+            if (ok) {
+                ;
+            }
+
         } else {
             // Invalid timestamp
             ok = false;
@@ -438,11 +505,10 @@ bool IGCParser::parseFix(const QByteArray &line) noexcept
         // No pattern match
         ok = false;
     }
-
     return ok;
 }
 
-inline double IGCParser::parseCoordinate(QStringView degreesText, QStringView minutesBy1000Text)
+inline double IGCParser::parseCoordinate(QStringView degreesText, QStringView minutesBy1000Text) noexcept
 {
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
     int degrees = degreesText.toString().toInt();
@@ -452,4 +518,14 @@ inline double IGCParser::parseCoordinate(QStringView degreesText, QStringView mi
     double minutes = minutesBy1000Text.toDouble() / 1000.0;
 #endif
     return Convert::dm2dd(degrees, minutes);
+}
+
+inline bool IGCParser::parseAdditions(QStringView additionValues, Additions &additions) noexcept
+{
+    for (auto &def : d->additionDefinitions) {
+        const int len = def.endOffset - def.startOffset;
+        const QString addition = additionValues.mid(def.startOffset - ::BRecordBasicDataLength, len).toString();
+        additions.insert(std::make_pair(def.name, addition));
+    }
+    return true;
 }
