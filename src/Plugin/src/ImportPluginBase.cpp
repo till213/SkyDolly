@@ -178,8 +178,9 @@ void ImportPluginBase::updateAircraftInfo() noexcept
     aircraftInfo.aircraftType = d->aircraftType;
 
     const Position &position = aircraft.getPositionConst();
+    const PositionData &lastPositionData = position.getLast();
     const QDateTime startDateTimeUtc = getStartDateTimeUtc();
-    const QDateTime endDateTimeUtc = aircraftInfo.startDate.addMSecs(position.getLast().timestamp);
+    const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
     aircraftInfo.startDate = startDateTimeUtc.toLocalTime();
     aircraftInfo.endDate = endDateTimeUtc;
     int positionCount = aircraft.getPosition().count();
@@ -193,7 +194,6 @@ void ImportPluginBase::updateAircraftInfo() noexcept
         if (waypointCount == 0) {
 
             Waypoint departure;
-
             departure.identifier = Waypoint::CustomDepartureIdentifier;
             departure.latitude = firstPositionData.latitude;
             departure.longitude = firstPositionData.longitude;
@@ -204,7 +204,6 @@ void ImportPluginBase::updateAircraftInfo() noexcept
             flightPlan.add(std::move(departure));
 
             Waypoint arrival;
-            const PositionData &lastPositionData = aircraft.getPosition().getLast();
             arrival.identifier = Waypoint::CustomArrivalIdentifier;
             arrival.latitude = lastPositionData.latitude;
             arrival.longitude = lastPositionData.longitude;
