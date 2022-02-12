@@ -42,8 +42,8 @@ namespace  {
     constexpr qint64 DefaultTimestamp = 0.0;
 
     auto distanceLambda = [](const PositionData &start, const PositionData &end) -> bool {
-        const auto startPos = std::make_pair(start.latitude, start.longitude);
-        const auto endPos = std::make_pair(end.latitude, end.longitude);
+        const SkyMath::Coordinate startPos(start.latitude, start.longitude);
+        const SkyMath::Coordinate endPos(end.latitude, end.longitude);
         const double distance = SkyMath::sphericalDistance(startPos, endPos, Convert::feetToMeters((start.altitude + end.altitude) / 2.0));
         return std::abs(distance) > DistanceThreshold;
     };
@@ -76,8 +76,8 @@ const std::pair<qint64, double> Analytics::firstMovementHeading() const noexcept
     if (pos != position.end()) {
         auto nextPos = std::next(pos);
         if (nextPos != position.end()) {
-            const auto startPos = std::make_pair(pos->latitude, pos->longitude);
-            const auto endPos = std::make_pair(nextPos->latitude, nextPos->longitude);
+            const SkyMath::Coordinate startPos(pos->latitude, pos->longitude);
+            const SkyMath::Coordinate endPos(nextPos->latitude, nextPos->longitude);
             const double initialHeading = SkyMath::initialBearing(startPos, endPos);
             result = std::make_pair(pos->timestamp, initialHeading);
         } else {
@@ -99,8 +99,8 @@ const PositionData &Analytics::closestPosition(double latitude, double longitude
 
     Position &position = d->aircraft.getPosition();
     for (const PositionData &pos : position) {
-        const double distance = SkyMath::sphericalDistance(std::make_pair(latitude, longitude),
-                                                           std::make_pair(pos.latitude, pos.longitude),
+        const double distance = SkyMath::sphericalDistance(SkyMath::Coordinate(latitude, longitude),
+                                                           SkyMath::Coordinate(pos.latitude, pos.longitude),
                                                            Convert::feetToMeters(pos.altitude));
         if (minimumDistance > distance) {
             closestPositionData = &pos;

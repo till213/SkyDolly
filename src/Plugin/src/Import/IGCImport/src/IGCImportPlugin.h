@@ -76,7 +76,7 @@ private:
 
     void updateFlightInfo(const QFile &file) noexcept;
     void updateFlightCondition() noexcept;
-
+    void updateWaypoints() noexcept;
 };
 
 #endif // IGCIMPORTPLUGIN_H

@@ -80,9 +80,9 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
 
             PositionData &startPositionData = position[i];
             const PositionData &endPositionData = position[i + 1];
-            const std::pair<double, double> startPosition(startPositionData.latitude, startPositionData.longitude);
+            const SkyMath::Coordinate startPosition(startPositionData.latitude, startPositionData.longitude);
             const qint64 startTimestamp = startPositionData.timestamp;
-            const std::pair<double, double> endPosition(endPositionData.latitude, endPositionData.longitude);
+            const SkyMath::Coordinate endPosition(endPositionData.latitude, endPositionData.longitude);
             const qint64 endTimestamp = endPositionData.timestamp;
             const double averageAltitude = Convert::feetToMeters((startPositionData.altitude + endPositionData.altitude) / 2.0);
 
