@@ -27,9 +27,11 @@
 
 #include <memory>
 #include <vector>
+#include <unordered_map>
 
 #include <QStringView>
 #include <QString>
+#include <QLatin1String>
 #include <QDate>
 
 class QFile;
@@ -48,6 +50,9 @@ public:
     IGCParser() noexcept;
     ~IGCParser() noexcept;
 
+    typedef QByteArray ThreeLetterCode;
+    typedef std::unordered_map<ThreeLetterCode, QString> Additions;
+
     // "H" record
     typedef struct
     {
@@ -63,6 +68,21 @@ public:
         // Aircraft registration
         QString gliderId;
     } Header;
+
+    // "I" record
+    typedef struct AdditionDefinition_
+    {
+        AdditionDefinition_(ThreeLetterCode theName, int start, int end)
+            : name(theName),
+              startOffset(start),
+              endOffset(end)
+        {}
+
+        ThreeLetterCode name;
+        // Byte offset in the record (either "B records" or "K records")
+        int startOffset;
+        int endOffset;
+    } AdditionDefinition;
 
     // "C" record
     typedef struct Task_
@@ -103,6 +123,8 @@ public:
         // Note: in feet
         double pressureAltitude;
         double gnssAltitude;
+        // Optional additions
+        Additions additions;
     } Fix;
 
     bool parse(QFile &file) noexcept;
@@ -127,10 +149,11 @@ private:
     bool parseHeaderCoPilot(const QByteArray &line) noexcept;
     bool parseHeaderGliderType(const QByteArray &line) noexcept;
     bool parseHeaderGliderId(const QByteArray &line) noexcept;
-
-    bool parseTask(const QByteArray &line) noexcept;
+    bool parseFixAdditions(const QByteArray &line) noexcept;
+    bool parseTask(const QByteArray &line) noexcept;    
     bool parseFix(const QByteArray &line) noexcept;
-    inline double parseCoordinate(QStringView degreesText, QStringView minutesBy1000Text);
+    inline double parseCoordinate(QStringView degreesText, QStringView minutesBy1000Text) noexcept;
+    inline bool parseAdditions(QStringView additionValues, Additions &additions) noexcept;
 };
 
 #endif // IGCPARSER_H
