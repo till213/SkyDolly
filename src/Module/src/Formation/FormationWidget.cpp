@@ -462,7 +462,7 @@ PositionData FormationWidget::calculateRelativePositionToUserAircraft(qint64 tim
         }
 
         // Vertical distance [feet]
-        const std::pair sourcePosition(positionData.latitude, positionData.longitude);
+        const SkyMath::Coordinate sourcePosition(positionData.latitude, positionData.longitude);
         double deltaAltitude;
         switch (ui->verticalDistanceSlider->value()) {
         case VerticalDistance::Below:
@@ -539,7 +539,7 @@ PositionData FormationWidget::calculateRelativePositionToUserAircraft(qint64 tim
             break;
         }
         bearing += positionData.heading;
-        std::pair initial = SkyMath::relativePosition(sourcePosition, SkyMath::feetToMeters(altitude), bearing, SkyMath::feetToMeters(distance));
+        SkyMath::Coordinate initial = SkyMath::relativePosition(sourcePosition, SkyMath::feetToMeters(altitude), bearing, SkyMath::feetToMeters(distance));
 
         initialPosition.latitude = initial.first;
         initialPosition.longitude = initial.second;

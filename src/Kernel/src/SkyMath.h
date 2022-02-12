@@ -38,7 +38,10 @@
  * - https://tools.timodenk.com/cubic-spline-interpolation
  * - https://www.wikihow.com/Write-Latitude-and-Longitude
  */
-namespace SkyMath {
+namespace SkyMath
+{
+    // Latitude, longitude [degrees]
+    typedef std::pair<double, double> Coordinate;
 
     /*! The minimal position value, such that value 0 is exaclty in the middle of the entire range. */
     inline constexpr double PositionMin16 = static_cast<double>(-std::numeric_limits<qint16>::max());
@@ -54,8 +57,11 @@ namespace SkyMath {
     /*! The range (number of values) for percent values. */
     inline constexpr double PercentRange8 = PercentMax8;
 
-    // Average earth radius [meters]
+    /*! Average earth radius [meters] */
     inline constexpr double EarthRadius = 6378137.0;
+
+    /*! Default threshold beyond with two coordinates are considered to be different [meters] */
+    inline constexpr double DefaultDistanceThreshold = 50.0;
 
     inline double degreesToRadians(double degree) {
         return degree * M_PI / 180.0;
@@ -321,15 +327,15 @@ namespace SkyMath {
      * d = R ⋅ c
      *
      * \param startPosition
-     *        the <latitude, longitude> of the start position [degrees]
+     *        the Coordinate of the start position [degrees]
      * \param endPosition
-     *        the <latitude, longitude> of the end position [degrees]
+     *        the Coordinate of the end position [degrees]
      * \param averageAltitude
      *        the average altitude of the two points [meters]
      * \return the spherical distance between the points [meters]
      * \sa https://www.movable-type.co.uk/scripts/latlong.html
      */
-    inline double sphericalDistance(std::pair<double, double> startPosition, std::pair<double, double> endPosition, double averageAltitude) noexcept
+    inline double sphericalDistance(Coordinate startPosition, Coordinate endPosition, double averageAltitude) noexcept
     {
         const double radius = EarthRadius + averageAltitude;
         // phi,  lambda in radians
@@ -354,11 +360,11 @@ namespace SkyMath {
      * and \c endTimestamp into account.
      *
      * \param startPosition
-     *        the <latitude, longitude> of the start position [degrees]
+     *        the Coordinate of the start position [degrees]
      * \param startTimestamp
      *        the timestamp of the start point [milliseconds]
      * \param endPosition
-     *        the <latitude, longitude> of the end position [degrees]
+     *        the Coordinate of the end position [degrees]
      * \param endTimestamp
      *        the timestamp of the end point [milliseconds]
      * \param averageAltitude
@@ -366,8 +372,8 @@ namespace SkyMath {
      * \return the distance (first value) and required speed [m/s] (second value)
      * \sa https://www.movable-type.co.uk/scripts/latlong.html
      */
-    inline std::pair<double, double> distanceAndVelocity(std::pair<double, double> startPosition, qint64 startTimestamp,
-                                                         std::pair<double, double> endPosition, qint64 endTimestamp,
+    inline std::pair<double, double> distanceAndVelocity(Coordinate startPosition, qint64 startTimestamp,
+                                                         Coordinate endPosition, qint64 endTimestamp,
                                                          double averageAltitude) noexcept
     {
         const double distance = sphericalDistance(startPosition, endPosition, averageAltitude);
@@ -383,13 +389,13 @@ namespace SkyMath {
      * θ = atan2(sin Δλ ⋅ cos φ2 , cos φ1 ⋅ sin φ2 − sin φ1 ⋅ cos φ2 ⋅ cos Δλ)
      *
      * \param startPosition
-     *        the <latitude, longitude> of the start position [degrees]
+     *        the Coordinate of the start position [degrees]
      * \param endPosition
-     *        the <latitude, longitude> of the end position [degrees]
+     *        the Coordinate of the end position [degrees]
      * \return the initial bearing [degrees]
      * \sa https://www.movable-type.co.uk/scripts/latlong.html
      */
-    inline double initialBearing(std::pair<double, double> startPosition, std::pair<double, double> endPosition) noexcept
+    inline double initialBearing(Coordinate startPosition, Coordinate endPosition) noexcept
     {
         const double phi1 = startPosition.first * M_PI / 180.0;
         const double lambda1 = startPosition.second * M_PI / 180.0;
@@ -520,20 +526,20 @@ namespace SkyMath {
      * tanΔlambda = sintheta⋅sinδ⋅cosphi1 / cosδ−sinphi1⋅sinphi2
      *
      * \param position
-     *        the <latitude, longitude> of the position [degrees]
+     *        the Coordinate of the position [degrees]
      * \param altitude
      *        the altitude above sea level [meters]
      * \param bearing
      *        the bearing of the destination point [degrees]
      * \param distance
      *        the distance to the destination point [meters]
-     * \return the <latitude, longitude> of the relative position [degrees]
+     * \return the Coordinate of the relative position [degrees]
      * \sa mathforum.org/library/drmath/view/52049.html for derivation
      * \sa https://www.movable-type.co.uk/scripts/latlong.html
      */
-    inline std::pair<double, double> relativePosition(std::pair<double, double> position, double altitude, double bearing, double distance) noexcept
+    inline Coordinate relativePosition(Coordinate position, double altitude, double bearing, double distance) noexcept
     {
-        std::pair<double, double> destination;
+        Coordinate destination;
 
         const double radius = EarthRadius + altitude;
 
@@ -554,6 +560,12 @@ namespace SkyMath {
         destination.second = radiansToDegrees(lambda2);
 
         return destination;
+    }
+
+    inline bool isSameWaypoint(Coordinate wp1, Coordinate wp2, double threshold = DefaultDistanceThreshold) noexcept
+    {
+        const double distance = sphericalDistance(wp1, wp2, 0.0);
+        return distance < threshold;
     }
 
 } // namespace

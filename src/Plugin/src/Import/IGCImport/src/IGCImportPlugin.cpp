@@ -72,7 +72,12 @@
 #include "IGCParser.h"
 #include "IGCImportPlugin.h"
 
-
+namespace
+{
+    // Distance threshold beyond which two waypoints are to be considered different [meters]
+    // (taking the average size of a glider airfield into account)
+    constexpr double SameWaypointDistanceThreshold = 500;
+}
 
 class IGCImportPluginPrivate
 {
@@ -106,7 +111,7 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
 {
     bool ok = d->igcParser.parse(file);
     if (ok) {
-        // Now "upsert" the position data, taking duplicate timestamps into account
+        // Now "upsert" the position data, taking possible duplicate timestamps into account
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         const Aircraft &aircraft = flight.getUserAircraft();
         Position &position = aircraft.getPosition();
@@ -119,49 +124,9 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
             position.upsertLast(std::move(positionData));
         }
 
-        FlightPlan &flightPlan = aircraft.getFlightPlan();
-        if (position.count() > 0) {
-            Analytics analytics(aircraft);
-            const QDateTime startDateTimeUtc = d->igcParser.getHeader().flightDateTimeUtc;
-            // Typically the takeoff and landing location are repeated in the IGC task list,
-            // e.g. the takeoff airport and the actual takeoff point; those points can be
-            // identical. So to ensure that each waypoint gets assigned a unique timestamp
-            // we increment a given timestamp for as long as it does not exist in the
-            // 'timestamps' set. Also note that while the aircraft is expected to reach
-            // the waypoints in order of the task list that is actually not guaranteed;
-            // depending on how much fun the pilot had in the cockpit ;)
-            std::unordered_set<qint64> timestamps;
-            for (const IGCParser::TaskItem &item : d->igcParser.getTask().tasks) {
-                Waypoint waypoint;
-                waypoint.latitude = item.latitude;
-                waypoint.longitude = item.longitude;
-                waypoint.identifier = item.description;
-                const PositionData &closestPositionData = analytics.closestPosition(waypoint.latitude, waypoint.longitude);
-                double uniqueTimestamp = closestPositionData.timestamp;
-                while (timestamps.find(uniqueTimestamp) != timestamps.end()) {
-                    ++uniqueTimestamp;
-                }
-                waypoint.timestamp = uniqueTimestamp;
-                timestamps.insert(uniqueTimestamp);
-                waypoint.altitude = closestPositionData.altitude;
-                const QDateTime dateTimeUtc = startDateTimeUtc.addMSecs(closestPositionData.timestamp);
-                waypoint.localTime = dateTimeUtc.toLocalTime();
-                waypoint.zuluTime = dateTimeUtc;
-
-                flightPlan.add(std::move(waypoint));
-            }
-        } else {
-            // No positions - use timestamps 0, 1, 2, ...
-            qint64 currentWaypointTimestamp = 0;
-            for (const IGCParser::TaskItem &item : d->igcParser.getTask().tasks) {
-                Waypoint waypoint;
-                waypoint.latitude = item.latitude;
-                waypoint.longitude = item.longitude;
-                waypoint.identifier = item.description;
-                waypoint.timestamp = currentWaypointTimestamp;
-                ++currentWaypointTimestamp;
-                flightPlan.add(std::move(waypoint));
-            }
+        std::vector<IGCParser::TaskItem> tasks = d->igcParser.getTask().tasks;
+        if (tasks.size() > 0) {
+            updateWaypoints();
         }
     }
     return ok;
@@ -186,7 +151,6 @@ void IGCImportPlugin::updateFlight(const QFile &file) noexcept
 }
 
 // PRIVATE
-
 
 void IGCImportPlugin::updateFlightInfo(const QFile &file) noexcept
 {
@@ -218,5 +182,136 @@ void IGCImportPlugin::updateFlightCondition() noexcept
     flightCondition.endZuluTime = header.flightEndDateTimeUtc;
 
     flight.setFlightCondition(flightCondition);
+}
+
+void IGCImportPlugin::updateWaypoints() noexcept
+{
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const Aircraft &aircraft = flight.getUserAircraft();
+    Position &position = aircraft.getPosition();
+
+    FlightPlan &flightPlan = aircraft.getFlightPlan();
+    if (position.count() > 0) {
+        Analytics analytics(aircraft);
+        const QDateTime startDateTimeUtc = d->igcParser.getHeader().flightDateTimeUtc;
+        const PositionData firstPositionData = position.getFirst();
+        const PositionData lastPositionData = position.getLast();
+        const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
+        // Typically the takeoff and landing location are repeated in the IGC task list,
+        // e.g. the takeoff airport and the actual takeoff point; those points can be
+        // identical. So to ensure that each waypoint gets assigned a unique timestamp
+        // we increment a given timestamp for as long as it does not exist in the
+        // 'timestamps' set. Also note that while the aircraft is expected to reach
+        // the waypoints in order of the task list that is actually not guaranteed;
+        // depending on how much fun the pilot had in the cockpit ;)
+        std::unordered_set<qint64> timestamps;
+        const std::vector<IGCParser::TaskItem> tasks = d->igcParser.getTask().tasks;
+        const int nofTasks = tasks.size();
+        for (int i = 0; i < nofTasks; ++i) {
+
+            const IGCParser::TaskItem &item = tasks[i];
+            Waypoint waypoint;
+            waypoint.latitude = item.latitude;
+            waypoint.longitude = item.longitude;
+            waypoint.identifier = item.description;
+
+            qint64 uniqueTimestamp;
+
+            // The first and last waypoint always contain the start- respectively
+            // end date & time.
+            // The second and second-last waypoints are special in that they are
+            // typically identical ("on the same airport") with the first
+            // respectively last waypoint; in fact, with the same departure and
+            // arrival airport those four waypoints may define the same point; if
+            // that is the case then they will be assigned the same start- respectively
+            // end date & time as the first and last flown position.
+            // All other waypoints are considered "turn points" and will be assigned
+            // the timestamp of the closest position. The 'timestamps' set ensures
+            // that all assigned timestamps are unique (in order to satisfy the
+            // uniqueness requirement of the persistence layer)
+            if (i == 0) {
+                // First waypoint
+                waypoint.altitude = firstPositionData.altitude;
+                waypoint.localTime = startDateTimeUtc.toLocalTime();
+                waypoint.zuluTime = startDateTimeUtc;
+                uniqueTimestamp = i;
+                waypoint.timestamp = uniqueTimestamp;
+                timestamps.insert(uniqueTimestamp);
+            } else if (i == 1 && i != nofTasks - 1) {
+                // Second (but not last) waypoint
+                const IGCParser::TaskItem firstItem = tasks[0];
+                if (SkyMath::isSameWaypoint(SkyMath::Coordinate(item.latitude, item.longitude),
+                                            SkyMath::Coordinate(firstItem.latitude, firstItem.longitude),
+                                            SameWaypointDistanceThreshold)) {
+                    waypoint.altitude = firstPositionData.altitude;
+                    waypoint.localTime = startDateTimeUtc.toLocalTime();
+                    waypoint.zuluTime = startDateTimeUtc;
+                    uniqueTimestamp = i;
+                    waypoint.timestamp = uniqueTimestamp;
+                    timestamps.insert(uniqueTimestamp);
+                }
+
+            } else if (i == nofTasks - 2 && i != 1) {
+                // Second last (but not second) waypoint
+                const IGCParser::TaskItem lastItem = tasks[nofTasks - 1];
+                if (SkyMath::isSameWaypoint(SkyMath::Coordinate(item.latitude, item.longitude),
+                                            SkyMath::Coordinate(lastItem.latitude, lastItem.longitude),
+                                            SameWaypointDistanceThreshold)) {
+                    waypoint.altitude = lastPositionData.altitude;
+                    waypoint.localTime = endDateTimeUtc.toLocalTime();
+                    waypoint.zuluTime = endDateTimeUtc;
+                    uniqueTimestamp = lastPositionData.timestamp - 1;
+                    while (timestamps.find(uniqueTimestamp) != timestamps.end()) {
+                        ++uniqueTimestamp;
+                    }
+                    waypoint.timestamp = uniqueTimestamp;
+                    timestamps.insert(uniqueTimestamp);
+                }
+            } else if (i == nofTasks - 1) {
+                // Last waypoint
+                waypoint.altitude = lastPositionData.altitude;
+                waypoint.localTime = endDateTimeUtc.toLocalTime();
+                waypoint.zuluTime = endDateTimeUtc;
+                uniqueTimestamp = lastPositionData.timestamp;
+                while (timestamps.find(uniqueTimestamp) != timestamps.end()) {
+                    ++uniqueTimestamp;
+                }
+                waypoint.timestamp = uniqueTimestamp;
+                timestamps.insert(uniqueTimestamp);
+            }
+
+            // If at this point no date & times have been assigned (especially for
+            // the second and second to last task waypoint) then the task item is
+            // considered to be a "turn point", in which case we search the closest
+            // flown position
+            if (waypoint.timestamp == TimeVariableData::InvalidTime) {
+                const PositionData &closestPositionData = analytics.closestPosition(waypoint.latitude, waypoint.longitude);
+                waypoint.altitude = closestPositionData.altitude;
+                const QDateTime dateTimeUtc = startDateTimeUtc.addMSecs(closestPositionData.timestamp);
+                waypoint.localTime = dateTimeUtc.toLocalTime();
+                waypoint.zuluTime = dateTimeUtc;
+                uniqueTimestamp = closestPositionData.timestamp;
+                while (timestamps.find(uniqueTimestamp) != timestamps.end()) {
+                    ++uniqueTimestamp;
+                }
+                waypoint.timestamp = uniqueTimestamp;
+                timestamps.insert(uniqueTimestamp);
+            }
+
+            flightPlan.add(std::move(waypoint));
+        }
+    } else {
+        // No positions - use timestamps 0, 1, 2, ...
+        qint64 currentWaypointTimestamp = 0;
+        for (const IGCParser::TaskItem &item : d->igcParser.getTask().tasks) {
+            Waypoint waypoint;
+            waypoint.latitude = item.latitude;
+            waypoint.longitude = item.longitude;
+            waypoint.identifier = item.description;
+            waypoint.timestamp = currentWaypointTimestamp;
+            ++currentWaypointTimestamp;
+            flightPlan.add(std::move(waypoint));
+        }
+    }
 }
 

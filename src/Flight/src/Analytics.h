@@ -43,6 +43,9 @@ class AnalyticsPrivate;
 class FLIGHT_API Analytics
 {
 public:
+
+
+
     Analytics(const Aircraft &aircraft);
     ~Analytics();
 
