@@ -39,6 +39,7 @@
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
 #include <QStringView>
+#include <QElapsedTimer>
 
 #include "../../Kernel/src/Unit.h"
 #include "../../Kernel/src/Settings.h"
@@ -106,7 +107,14 @@ bool ImportPluginBase::import(FlightService &flightService) noexcept
         ok = importDialog->getSelectedAircraftType(d->aircraftType);
         if (ok) {
             d->addToCurrentFlight = importDialog->isAddToFlightEnabled();
+#ifdef DEBUG
+            QElapsedTimer timer;
+            timer.start();
+#endif
             ok = importFile(selectedFilePath, flightService);
+#ifdef DEBUG
+            qDebug() << QFileInfo(selectedFilePath).fileName() << "import " << (ok ? "SUCCESS" : "FAIL") << " in " << timer.elapsed() << "milliseconds";
+#endif
             if (ok) {
                 if (d->addToCurrentFlight) {
                     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
