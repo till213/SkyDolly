@@ -126,19 +126,19 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
             position.upsertLast(std::move(positionData));
 
             // @todo IMPLEMENT ME!!!
-            auto addition = fix.additions.find(IGCParser::EnvironmentalNoiseLevel);
-            if (addition != fix.additions.end()) {
-                int noise = addition->second.toInt(&ok);
-                if (ok) {
-#ifdef DEBUG
-                    if (noise > noiseThreshold) {
-                        qDebug("IGCImportPlugin::readFile(: noise ABOVE threshold: %d", noise);
-                    } else {
-                        qDebug("IGCImportPlugin::readFile(: noise BELOW threshold: %d", noise);
-                    }
-#endif
-                }
-            }
+//            auto addition = fix.additions.find(IGCParser::EnvironmentalNoiseLevel);
+//            if (addition != fix.additions.end()) {
+//                int noise = addition->second.toInt(&ok);
+//                if (ok) {
+//#ifdef DEBUG
+//                    if (noise > noiseThreshold) {
+//                        qDebug("IGCImportPlugin::readFile(: noise ABOVE threshold: %d", noise);
+//                    } else {
+//                        qDebug("IGCImportPlugin::readFile(: noise BELOW threshold: %d", noise);
+//                    }
+//#endif
+//                }
+//            }
         }
 
         std::vector<IGCParser::TaskItem> tasks = d->igcParser.getTask().tasks;

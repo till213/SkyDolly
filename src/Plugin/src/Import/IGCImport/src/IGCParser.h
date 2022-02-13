@@ -27,7 +27,6 @@
 
 #include <memory>
 #include <vector>
-#include <unordered_map>
 
 #include <QStringView>
 #include <QString>
@@ -51,7 +50,6 @@ public:
     ~IGCParser() noexcept;
 
     typedef QByteArray ThreeLetterCode;
-    typedef std::unordered_map<ThreeLetterCode, QString> Additions;
 
     // "H" record
     typedef struct
@@ -68,21 +66,6 @@ public:
         // Aircraft registration
         QString gliderId;
     } Header;
-
-    // "I" record
-    typedef struct AdditionDefinition_
-    {
-        AdditionDefinition_(ThreeLetterCode theName, int start, int end)
-            : name(theName),
-              startOffset(start),
-              endOffset(end)
-        {}
-
-        ThreeLetterCode name;
-        // Byte offset in the record (either "B records" or "K records")
-        int startOffset;
-        int endOffset;
-    } AdditionDefinition;
 
     // "C" record
     typedef struct Task_
@@ -104,15 +87,20 @@ public:
         std::vector<TaskItem> tasks;
     } Task;
 
-    // "B" record
+    /*!
+     * The "B record" contains the position and altitude values ("fixes").
+     * Note that the environmental noise level ("ENL") is an option addition.
+     * If not present then the value is set to 0.0.
+     */
     typedef struct Fix_
     {
-        Fix_(qint64 theTimestamp, double lat, double lon, double pressureAlt, double gnssAlt)
+        Fix_(qint64 theTimestamp, double lat, double lon, double pressureAlt, double gnssAlt, double enl)
             : timestamp(theTimestamp),
               latitude(lat),
               longitude(lon),
               pressureAltitude(pressureAlt),
-              gnssAltitude(gnssAlt)
+              gnssAltitude(gnssAlt),
+              environmentalNoiseLevel(enl)
         {}
 
         // Note: we store a timestamp instead of UTC time here:
@@ -123,8 +111,8 @@ public:
         // Note: in feet
         double pressureAltitude;
         double gnssAltitude;
-        // Optional additions
-        Additions additions;
+        /*! Normalised environmental noise level [0.0, 1.0]; 0.0 if not present */
+        double environmentalNoiseLevel;
     } Fix;
 
     bool parse(QFile &file) noexcept;

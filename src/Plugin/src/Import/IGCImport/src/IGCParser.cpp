@@ -24,7 +24,6 @@
  */
 #include <memory>
 #include <vector>
-#include <unordered_map>
 
 #include <QFile>
 #include <QByteArray>
@@ -59,6 +58,9 @@ namespace
     constexpr char TLCCoPilot[] = "CM2";
     constexpr char TLCGliderType[] = "GTY";
     constexpr char TLCGliderId[] = "GID";
+
+    // Offsets
+    constexpr int InvalidOffset = -1;
 
     // Formats
     constexpr char DateFormat[] = "HHmmss";
@@ -134,6 +136,9 @@ class IGCParserPrivate
 public:
     IGCParserPrivate() noexcept
         : file(nullptr),
+          enlAddition(false),
+          enlStartOffset(::InvalidOffset),
+          enlLength(0),
           hRecordDateRegExp(QString(::HRecordDatePattern)),
           hRecordPilotRegExp(QString(::HRecordPilotPattern)),
           hRecordCoPilotRegExp(QString(::HRecordCoPilotPattern)),
@@ -155,7 +160,10 @@ public:
     IGCParser::Task task;
     std::vector<IGCParser::Fix> fixes;
 
-    std::vector<IGCParser::AdditionDefinition> additionDefinitions;
+    bool enlAddition;
+    int enlStartOffset;
+    int enlLength;
+    double maxEnlValue;
 
     QRegularExpression hRecordDateRegExp;
     QRegularExpression hRecordPilotRegExp;
@@ -218,8 +226,8 @@ const std::vector<IGCParser::Fix> &IGCParser::getFixes() const noexcept
 
 void IGCParser::init() noexcept
 {
+    d->enlAddition = false;
     d->task.tasks.clear();
-    d->additionDefinitions.clear();
     d->fixes.clear();
 }
 
@@ -368,10 +376,13 @@ bool IGCParser::parseFixAdditions(const QByteArray &line) noexcept
             int index = 0;
             for (int i = 0; i < nofAdditions; ++i) {
                 const QStringRef ref = definitions.midRef(i * ::IRecordAdditionDefinitionLength, ::IRecordAdditionDefinitionLength);
-                int startOffset = ref.mid(0, 2).toInt();
-                int endOffset = ref.mid(2, 2).toInt();
-                const ThreeLetterCode tlc = ref.mid(4, 3).toLatin1();
-                d->additionDefinitions.emplace_back(tlc, startOffset, endOffset);
+                // We are only interested in the ENL addition for now
+                if (ref.mid(4, 3) == EnvironmentalNoiseLevel) {
+                    d->enlAddition = true;
+                    d->enlStartOffset = ref.mid(0, 2).toInt();
+                    d->enlLength = ref.mid(2, 2).toInt() - d->enlStartOffset;
+                    d->maxEnlValue = std::pow(10, d->enlLength ) - 1;
+                }
             }
             ok = true;
         } else {
@@ -474,16 +485,22 @@ bool IGCParser::parseFix(const QByteArray &line) noexcept
             const QString &gnssAltitudeText = captures.at(::BRecordGNSSAltitudeIndex);
             const double gnssAltitude = Convert::metersToFeet(gnssAltitudeText.toDouble());
 
-            d->fixes.emplace_back(timestamp, latitude, longitude, pressureAltitude, gnssAltitude);
-
-            // Optional additions
-            if (d->additionDefinitions.size() > 0) {
-                for (auto &def : d->additionDefinitions) {
-                    const int len = def.endOffset - def.startOffset;
-                    d->fixes.back().additions.emplace(def.name, line.mid(def.startOffset, len));
+            // Optional environmental noise level (ENL) addition
+            double enlNorm;
+            if (d->enlAddition) {
+                const QByteArray enlText = line.mid(d->enlStartOffset, d->enlLength);
+                const double enlValue = enlText.toDouble(&ok);
+                if (ok) {
+                    enlNorm = enlValue / d->maxEnlValue;
                 }
+            } else {
+                enlNorm = 0.0;
+                ok = true;
             }
-            ok = true;
+
+            if (ok) {
+                d->fixes.emplace_back(timestamp, latitude, longitude, pressureAltitude, gnssAltitude, enlNorm);
+            }
         } else {
             // Invalid timestamp
             ok = false;
