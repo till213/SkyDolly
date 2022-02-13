@@ -24,6 +24,7 @@
  */
 #include <memory>
 #include <vector>
+#include <cmath>
 
 #include <QFile>
 #include <QByteArray>
@@ -383,7 +384,7 @@ bool IGCParser::parseFixAdditions(const QByteArray &line) noexcept
                     d->enlAddition = true;
                     d->enlStartOffset = def.mid(0, 2).toInt();
                     d->enlLength = def.mid(2, 2).toInt() - d->enlStartOffset;
-                    d->maxEnlValue = std::pow(10, d->enlLength ) - 1;
+                    d->maxEnlValue = ::pow(10, d->enlLength ) - 1;
                 }
             }
             ok = true;
