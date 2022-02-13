@@ -117,9 +117,7 @@ public:
     const Header &getHeader() const noexcept;
     const Task &getTask() const noexcept;
     const std::vector<Fix> &getFixes() const noexcept;
-
-    // Environmental noise level
-    static inline const QLatin1String EnvironmentalNoiseLevel {"ENL"};
+    bool hasEnvironmentalNoiseLevel() const noexcept;
 
 private:
     std::unique_ptr<IGCParserPrivate> d;
@@ -142,6 +140,9 @@ private:
     bool parseTask(const QByteArray &line) noexcept;    
     bool parseFix(const QByteArray &line) noexcept;
     inline double parseCoordinate(QStringView degreesText, QStringView minutesBy1000Text) noexcept;
+
+    // Environmental noise level
+    static inline const QLatin1String EnvironmentalNoiseLevel {"ENL"};
 };
 
 #endif // IGCPARSER_H

@@ -222,6 +222,11 @@ const std::vector<IGCParser::Fix> &IGCParser::getFixes() const noexcept
     return d->fixes;
 }
 
+bool IGCParser::hasEnvironmentalNoiseLevel() const noexcept
+{
+    return d->enlAddition;
+}
+
 // PRIVATE
 
 void IGCParser::init() noexcept

@@ -46,7 +46,6 @@
 #include "../../../../../Kernel/src/SkyMath.h"
 #include "../../../../../Kernel/src/Convert.h"
 #include "../../../../../Flight/src/Analytics.h"
-#include "../../../../../Model/src/SimVar.h"
 #include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/FlightCondition.h"
@@ -55,16 +54,6 @@
 #include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/Engine.h"
 #include "../../../../../Model/src/EngineData.h"
-#include "../../../../../Model/src/Engine.h"
-#include "../../../../../Model/src/EngineData.h"
-#include "../../../../../Model/src/PrimaryFlightControl.h"
-#include "../../../../../Model/src/PrimaryFlightControlData.h"
-#include "../../../../../Model/src/SecondaryFlightControl.h"
-#include "../../../../../Model/src/SecondaryFlightControlData.h"
-#include "../../../../../Model/src/AircraftHandle.h"
-#include "../../../../../Model/src/AircraftHandleData.h"
-#include "../../../../../Model/src/Light.h"
-#include "../../../../../Model/src/LightData.h"
 #include "../../../../../Model/src/FlightPlan.h"
 #include "../../../../../Model/src/Waypoint.h"
 #include "../../../../../SkyConnect/src/SkyConnectManager.h"
@@ -77,6 +66,10 @@ namespace
     // Distance threshold beyond which two waypoints are to be considered different [meters]
     // (taking the average size of a glider airfield into account)
     constexpr double SameWaypointDistanceThreshold = 500;
+
+    // The environmental noise level threshold for which it is assumed that the engine (propeller)
+    // is turned on
+    constexpr double EnvironmentalNoiseThreshold = 0.8;
 }
 
 class IGCImportPluginPrivate
@@ -86,6 +79,12 @@ public:
     {}
 
     IGCParser igcParser;
+
+    enum struct EngineState {
+        Unknown,
+        Running,
+        Shutdown
+    };
 };
 
 // PUBLIC
@@ -115,8 +114,12 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         const Aircraft &aircraft = flight.getUserAircraft();
         Position &position = aircraft.getPosition();
-        int engineState = -1;
-        const int noiseThreshold = 200;
+
+        // Engine
+        Engine &engine = aircraft.getEngine();
+        EngineData engineData;
+        IGCImportPluginPrivate::EngineState engineState = IGCImportPluginPrivate::EngineState::Unknown;
+
         for (const IGCParser::Fix &fix : d->igcParser.getFixes()) {
             PositionData positionData;
             positionData.timestamp = fix.timestamp;
@@ -125,20 +128,90 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
             positionData.altitude = fix.gnssAltitude;
             position.upsertLast(std::move(positionData));
 
-            // @todo IMPLEMENT ME!!!
-//            auto addition = fix.additions.find(IGCParser::EnvironmentalNoiseLevel);
-//            if (addition != fix.additions.end()) {
-//                int noise = addition->second.toInt(&ok);
-//                if (ok) {
-//#ifdef DEBUG
-//                    if (noise > noiseThreshold) {
-//                        qDebug("IGCImportPlugin::readFile(: noise ABOVE threshold: %d", noise);
-//                    } else {
-//                        qDebug("IGCImportPlugin::readFile(: noise BELOW threshold: %d", noise);
-//                    }
-//#endif
-//                }
-//            }
+            if (d->igcParser.hasEnvironmentalNoiseLevel()) {
+                const double enl = fix.environmentalNoiseLevel;
+                const double position = noiseToPosition(enl);
+                const bool loudNoise = enl > ::EnvironmentalNoiseThreshold;
+                switch (engineState) {
+                case IGCImportPluginPrivate::EngineState::Unknown:
+                    // Previous engine state unknown, so initially engine in any case
+                    engineData.timestamp = fix.timestamp;
+                    engineData.electricalMasterBattery1 = true;
+                    engineData.electricalMasterBattery2 = true;
+                    engineData.electricalMasterBattery3 = true;
+                    engineData.electricalMasterBattery4 = true;
+                    engineData.generalEngineCombustion1 = loudNoise;
+                    engineData.generalEngineCombustion2 = loudNoise;
+                    engineData.generalEngineCombustion3 = loudNoise;
+                    engineData.generalEngineCombustion4 = loudNoise;
+
+                    engineData.throttleLeverPosition1 = SkyMath::fromPosition(position);
+                    engineData.throttleLeverPosition2 = SkyMath::fromPosition(position);
+                    engineData.throttleLeverPosition3 = SkyMath::fromPosition(position);
+                    engineData.throttleLeverPosition4 = SkyMath::fromPosition(position);
+                    engineData.propellerLeverPosition1 = SkyMath::fromPosition(position);
+                    engineData.propellerLeverPosition2 = SkyMath::fromPosition(position);
+                    engineData.propellerLeverPosition3 = SkyMath::fromPosition(position);
+                    engineData.propellerLeverPosition4 = SkyMath::fromPosition(position);
+                    engineData.mixtureLeverPosition1 = SkyMath::fromPosition(1.0);
+                    engineData.mixtureLeverPosition2 = SkyMath::fromPosition(1.0);
+                    engineData.mixtureLeverPosition3 = SkyMath::fromPosition(1.0);
+                    engineData.mixtureLeverPosition4 = SkyMath::fromPosition(1.0);
+                    // Elements are inserted chronologically from the start (and no other engine
+                    // data exist yet), so we can use upsertLast (instead of the more general upsert)
+                    engine.upsertLast(engineData);
+                    engineState = loudNoise ? IGCImportPluginPrivate::EngineState::Running : IGCImportPluginPrivate::EngineState::Shutdown;
+#ifdef DEBUG
+    qDebug("IGCImportPlugin::readFile: engine INITIALISED, current ENL: %f > %f, engine RUNNING: %d", enl, ::EnvironmentalNoiseThreshold, loudNoise);
+#endif
+                    break;
+                case IGCImportPluginPrivate::EngineState::Running:
+                    if (!loudNoise) {
+                        engineData.generalEngineCombustion1 = false;
+                        engineData.generalEngineCombustion2 = false;
+                        engineData.generalEngineCombustion3 = false;
+                        engineData.generalEngineCombustion4 = false;
+                        engineData.throttleLeverPosition1 = SkyMath::fromPosition(0.0);
+                        engineData.throttleLeverPosition2 = SkyMath::fromPosition(0.0);
+                        engineData.throttleLeverPosition3 = SkyMath::fromPosition(0.0);
+                        engineData.throttleLeverPosition4 = SkyMath::fromPosition(0.0);
+                        engineData.propellerLeverPosition1 = SkyMath::fromPosition(0.0);
+                        engineData.propellerLeverPosition2 = SkyMath::fromPosition(0.0);
+                        engineData.propellerLeverPosition3 = SkyMath::fromPosition(0.0);
+                        engineData.propellerLeverPosition4 = SkyMath::fromPosition(0.0);
+                        engine.upsertLast(engineData);
+                        engineState = IGCImportPluginPrivate::EngineState::Shutdown;
+#ifdef DEBUG
+    qDebug("IGCImportPlugin::readFile: engine now SHUTDOWN, current ENL: %f > %f", enl, ::EnvironmentalNoiseThreshold);
+#endif
+                    }
+                    break;
+
+                case IGCImportPluginPrivate::EngineState::Shutdown:
+                    if (loudNoise) {
+                        engineData.generalEngineCombustion1 = true;
+                        engineData.generalEngineCombustion2 = true;
+                        engineData.generalEngineCombustion3 = true;
+                        engineData.generalEngineCombustion4 = true;
+                        engineData.throttleLeverPosition1 = SkyMath::fromPosition(position);
+                        engineData.throttleLeverPosition2 = SkyMath::fromPosition(position);
+                        engineData.throttleLeverPosition3 = SkyMath::fromPosition(position);
+                        engineData.throttleLeverPosition4 = SkyMath::fromPosition(position);
+                        engineData.propellerLeverPosition1 = SkyMath::fromPosition(position);
+                        engineData.propellerLeverPosition2 = SkyMath::fromPosition(position);
+                        engineData.propellerLeverPosition3 = SkyMath::fromPosition(position);
+                        engineData.propellerLeverPosition4 = SkyMath::fromPosition(position);
+                        engine.upsertLast(engineData);
+                        engineState = IGCImportPluginPrivate::EngineState::Running;
+#ifdef DEBUG
+    qDebug("IGCImportPlugin::readFile: engine now RUNNING, current ENL: %f > %f", enl, ::EnvironmentalNoiseThreshold);
+#endif
+                    }
+                    break;
+                default:
+                    break;
+                }
+            }
         }
 
         std::vector<IGCParser::TaskItem> tasks = d->igcParser.getTask().tasks;
@@ -332,3 +405,7 @@ void IGCImportPlugin::updateWaypoints() noexcept
     }
 }
 
+inline double IGCImportPlugin::noiseToPosition(double environmentalNoiseLevel) noexcept
+{
+    return qMin(environmentalNoiseLevel - ::EnvironmentalNoiseThreshold, 0.0) / (1.0 - ::EnvironmentalNoiseThreshold);
+}

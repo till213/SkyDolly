@@ -77,6 +77,10 @@ private:
     void updateFlightInfo(const QFile &file) noexcept;
     void updateFlightCondition() noexcept;
     void updateWaypoints() noexcept;
+
+    // Estimates the propeller (thrust) lever position, based on the
+    // environmentalNoiseLevel and the threshold
+    inline double noiseToPosition(double environmentalNoiseLevel) noexcept;
 };
 
 #endif // IGCIMPORTPLUGIN_H
