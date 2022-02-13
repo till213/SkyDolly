@@ -67,7 +67,7 @@ void PluginBase::storeSettings(const QUuid &pluginUuid) const noexcept
 
 void PluginBase::restoreSettings(const QUuid &pluginUuid) noexcept
 {
-    const Settings::KeysWithDefaults keys = getKeys();
+    const Settings::KeysWithDefaults keys = getKeyWithDefaults();
     if (keys.size() > 0) {
         Settings::ValuesByKey values = Settings::getInstance().restorePluginSettings(pluginUuid, keys);
         setSettings(values);
@@ -82,11 +82,11 @@ Settings::PluginSettings PluginBase::getSettings() const noexcept
     return settings;
 }
 
-Settings::KeysWithDefaults PluginBase::getKeys() const noexcept
+Settings::KeysWithDefaults PluginBase::getKeyWithDefaults() const noexcept
 {
     Settings::KeysWithDefaults keys;
     return keys;
 }
 
-void PluginBase::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+void PluginBase::setSettings([[maybe_unused]]Settings::ValuesByKey valuesByKey) noexcept
 {}

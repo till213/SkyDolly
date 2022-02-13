@@ -15,12 +15,13 @@ endif()
 
 target_sources(${LIBRARY_NAME}
     PRIVATE
-        src/KMLImportPlugin.cpp
-        src/KMLImportPlugin.h
+        src/KMLImportPlugin.h src/KMLImportPlugin.cpp
+        src/KMLImportDialog.h src/KMLImportDialog.cpp src/KMLImportDialog.ui
+        src/KMLImportSettings.h src/KMLImportSettings.cpp
+        src/KMLParser.h
+        src/FlightAwareKMLParser.h src/FlightAwareKMLParser.cpp
+        src/FlightRadar24KMLParser.h src/FlightRadar24KMLParser.cpp
         src/KMLImportPlugin.json
-        src/KMLImportDialog.cpp
-        src/KMLImportDialog.h
-        src/KMLImportDialog.ui
 )
 
 include_directories(${PLUGIN_NAME} PRIVATE ../../../../Widget/src/)

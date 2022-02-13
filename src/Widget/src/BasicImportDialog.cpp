@@ -22,29 +22,27 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QCoreApplication>
-#include <QString>
-#include <QPushButton>
+#include "BasicImportDialog.h"
+#include "ui_BasicImportDialog.h"
+
+#include <memory>
+
+#include <QDialog>
 #include <QFileDialog>
-#include <QFile>
-#include <QDir>
-#include <QDialogButtonBox>
-#include <QLineEdit>
-#include <QComboBox>
+#include <QWidget>
+#include <QPushButton>
 
-#include "../../../../../Kernel/src/Settings.h"
-#include "../../../../../Model/src/Logbook.h"
-#include "../../../../../Model/src/Flight.h"
-#include "../../../../../Model/src/Aircraft.h"
-#include "../../../../../Model/src/AircraftType.h"
-#include "../../../../../Persistence/src/Service/AircraftTypeService.h"
-#include "IGCImportDialog.h"
-#include "ui_IGCImportDialog.h"
+#include "../../Kernel/src/Settings.h"
+#include "../../Model/src/Aircraft.h"
+#include "../../Model/src/AircraftType.h"
+#include "../../Model/src/Logbook.h"
+#include "../../Model/src/Flight.h"
+#include "../../Persistence/src/Service/AircraftTypeService.h"
 
-class IGCImportDialogPrivate
+class BasicImportDialogPrivate
 {
 public:
-    IGCImportDialogPrivate() noexcept
+    BasicImportDialogPrivate() noexcept
         : aircraftTypeService(std::make_unique<AircraftTypeService>())
     {}
 
@@ -54,44 +52,50 @@ public:
 
 // PUBLIC
 
-IGCImportDialog::IGCImportDialog(QWidget *parent) noexcept
-    : QDialog(parent),
-      ui(new Ui::IGCImportDialog),
-      d(std::make_unique<IGCImportDialogPrivate>())
+BasicImportDialog::BasicImportDialog(QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::BasicImportDialog),
+    d(std::make_unique<BasicImportDialogPrivate>())
 {
-    ui->setupUi(this);
+    ui->setupUi(this);    
     initUi();
     updateUi();
     frenchConnection();
 }
 
-IGCImportDialog::~IGCImportDialog() noexcept
+BasicImportDialog::~BasicImportDialog()
 {
     delete ui;
 }
 
-QString IGCImportDialog::getSelectedFilePath() const noexcept
+QString BasicImportDialog::getSelectedFilePath() const noexcept
 {
     return ui->filePathLineEdit->text();
 }
 
-bool IGCImportDialog::getSelectedAircraftType(AircraftType &aircraftType) const noexcept
+bool BasicImportDialog::getSelectedAircraftType(AircraftType &aircraftType) const noexcept
 {
     return d->aircraftTypeService->getByType(ui->aircraftSelectionComboBox->currentText(), aircraftType);
 }
 
-bool IGCImportDialog::isAddToFlightEnabled() const noexcept
+bool BasicImportDialog::isAddToFlightEnabled() const noexcept
 {
     return ui->addToFlightCheckBox->isChecked();
 }
 
 // PRIVATE
 
-void IGCImportDialog::initUi() noexcept
+void BasicImportDialog::frenchConnection() noexcept
+{
+    connect(ui->filePathLineEdit, &QLineEdit::textChanged,
+            this, &BasicImportDialog::updateUi);
+}
+
+void BasicImportDialog::initUi() noexcept
 {
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
-    d->importButton = ui->buttonBox->addButton(tr("Import"), QDialogButtonBox::AcceptRole);
+    d->importButton = ui->defaultButtonBox->addButton(tr("Import"), QDialogButtonBox::AcceptRole);
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     QString type = flight.getUserAircraftConst().getAircraftInfoConst().aircraftType.type;
     if (!type.isEmpty()) {
@@ -99,27 +103,21 @@ void IGCImportDialog::initUi() noexcept
     }
 }
 
-void IGCImportDialog::frenchConnection() noexcept
-{
-    connect(ui->filePathLineEdit, &QLineEdit::textChanged,
-            this, &IGCImportDialog::updateUi);
-}
-
 // PRIVATE SLOTS
 
-void IGCImportDialog::on_fileSelectionPushButton_clicked() noexcept
+void BasicImportDialog::on_fileSelectionPushButton_clicked() noexcept
 {
     // Start with the last export path
     QString exportPath = Settings::getInstance().getExportPath();
 
-    const QString filePath = QFileDialog::getOpenFileName(this, QCoreApplication::translate("IGCImportDialog", "Import IGC"), exportPath, QString("*.IGC"));
+    // @todo Define proper file extension
+    const QString filePath = QFileDialog::getOpenFileName(this, tr("Import file..."), exportPath, QString("*.IGC"));
     if (!filePath.isEmpty()) {
         ui->filePathLineEdit->setText(QDir::toNativeSeparators(filePath));
     }
-    updateUi();
 }
 
-void IGCImportDialog::updateUi() noexcept
+void BasicImportDialog::updateUi() noexcept
 {
     const QString filePath = ui->filePathLineEdit->text();
     QFile file(filePath);

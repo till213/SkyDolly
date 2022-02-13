@@ -30,7 +30,7 @@
 
 #include <QtGlobal>
 
-class LightData;
+struct LightData;
 
 class LightDaoIntf
 {

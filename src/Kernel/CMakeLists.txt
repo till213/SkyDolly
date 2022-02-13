@@ -37,6 +37,7 @@ target_sources(${LIBRARY_NAME}
         src/Color.h src/Color.cpp
         src/File.h src/File.cpp
         src/QStringHasher.h
+        src/System.h src/System.cpp
 )
 
 if (${PLATFORM_IS_WINDOWS})

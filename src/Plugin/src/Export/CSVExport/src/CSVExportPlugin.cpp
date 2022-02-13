@@ -54,8 +54,6 @@
 
 // PUBLIC
 
-const QString CSVExportPlugin::FileSuffix = "csv";
-
 CSVExportPlugin::CSVExportPlugin() noexcept
 {
 #ifdef DEBUG
@@ -91,7 +89,7 @@ bool CSVExportPlugin::exportData() noexcept
                     getPrimaryFlightControlHeader()  % CSVConst::Sep %
                     getSecondaryFlightControlHeader() % CSVConst::Sep %
                     getAircraftHandleHeader() % CSVConst::Sep %
-                    getLighteHeader() % CSVConst::Sep %
+                    getLightHeader() % CSVConst::Sep %
                     QString(SimVar::Timestamp) % CSVConst::Ln;
 
             ok = file.write(csv.toUtf8());
@@ -457,7 +455,7 @@ inline QString CSVExportPlugin::getAircraftHandleData(const AircraftHandleData &
     return csv;
 }
 
-inline QString CSVExportPlugin::getLighteHeader() noexcept
+inline QString CSVExportPlugin::getLightHeader() noexcept
 {
     return QString(SimVar::LightStates);
 }

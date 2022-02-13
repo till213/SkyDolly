@@ -35,7 +35,7 @@
 #include "AircraftInfo.h"
 #include "ModelLib.h"
 
-class PositionData;
+struct PositionData;
 class PositionPrivate;
 
 class MODEL_API Position : public QObject

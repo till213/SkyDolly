@@ -30,20 +30,20 @@
 
 #include <QDialog>
 
-#include "../../../../../Model/src/SimType.h"
 #include "KMLStyleExport.h"
 
 namespace Ui {
     class KMLExportDialog;
 }
 
+struct KMLExportSettings;
 class KMLExportDialogPrivate;
 
 class KMLExportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    static const QString FileSuffix;
+    static inline const QString FileSuffix {QStringLiteral("kml")};
 
     explicit KMLExportDialog(KMLExportSettings &exportSettings, QWidget *parent = nullptr) noexcept;
     virtual ~KMLExportDialog() noexcept;

@@ -28,17 +28,18 @@
 #include <memory>
 
 #include <QObject>
+#include <QDateTime>
 #include <QtPlugin>
 #include <QStringView>
 
 class QRegularExpression;
 
 #include "../../../ImportIntf.h"
-#include "../../../PluginBase.h"
+#include "../../../ImportPluginBase.h"
 
 class IGCImportPluginPrivate;
 
-class IGCImportPlugin : public PluginBase, public ImportIntf
+class IGCImportPlugin : public ImportPluginBase
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "IGCImportPlugin.json")
@@ -47,34 +48,14 @@ public:
     IGCImportPlugin() noexcept;
     virtual ~IGCImportPlugin() noexcept;
 
-    virtual QWidget *getParentWidget() const noexcept override
-    {
-        return PluginBase::getParentWidget();
-    }
-
-    virtual void setParentWidget(QWidget *parent) noexcept override
-    {
-        PluginBase::setParentWidget(parent);
-    }
-
-    virtual void storeSettings(const QUuid &pluginUuid) const noexcept override
-    {
-        PluginBase::storeSettings(pluginUuid);
-    }
-
-    virtual void restoreSettings(const QUuid &pluginUuid) noexcept override
-    {
-        PluginBase::restoreSettings(pluginUuid);
-    }
-
-    virtual bool importData(FlightService &flightService) noexcept override;
+protected:
+    virtual bool readFile(QFile &file) noexcept override;
+    virtual QDateTime getStartDateTimeUtc() noexcept override;
+    virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept override;
+    virtual void updateFlight(const QFile &file) noexcept override;
 
 private:
     std::unique_ptr<IGCImportPluginPrivate> d;
-
-    bool import(const QString &filePath, FlightService &flightService) noexcept;
-
-    bool readIGCFile() noexcept;
 
     // A record, containing manufacturer ID
     bool readManufacturer() noexcept;
@@ -93,9 +74,9 @@ private:
     bool parseFix(const QByteArray &line) noexcept;
     inline double parseCoordinate(QStringView degreesText, QStringView minutesBy1000Text);
 
-    void updateFlightInfo() noexcept;
+    void updateFlightInfo(const QFile &file) noexcept;
     void updateFlightCondition() noexcept;
-    void updateAircraftInfo() noexcept;
+    void updateWaypoints() noexcept;
 };
 
 #endif // IGCIMPORTPLUGIN_H

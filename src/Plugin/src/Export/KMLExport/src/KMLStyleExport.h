@@ -29,10 +29,7 @@
 #include <unordered_map>
 #include <utility>
 
-#include <QColor>
-
 class QIODevice;
-
 
 #include "../../../../../Model/src/SimType.h"
 #include "KMLExportSettings.h"

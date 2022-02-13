@@ -7,7 +7,7 @@ else()
 endif()
 
 set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence Flight Widget SkyConnect Plugin
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Flight Plugin
 )
 if (${PLATFORM_IS_MACOS})
     list(APPEND LIBRARY_DEPENDENCIES -lc++)
@@ -15,12 +15,9 @@ endif()
 
 target_sources(${LIBRARY_NAME}
     PRIVATE
-        src/IGCImportPlugin.cpp
-        src/IGCImportPlugin.h
+        src/IGCImportPlugin.h src/IGCImportPlugin.cpp
+        src/IGCParser.h src/IGCParser.cpp
         src/IGCImportPlugin.json
-        src/IGCImportDialog.cpp
-        src/IGCImportDialog.h
-        src/IGCImportDialog.ui
 )
 
 include_directories(${PLUGIN_NAME} PRIVATE ../../../../Widget/src/)

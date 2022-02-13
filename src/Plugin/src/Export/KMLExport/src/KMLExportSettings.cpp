@@ -91,7 +91,7 @@ Settings::PluginSettings KMLExportSettings::getSettings() const noexcept
     return settings;
 }
 
-Settings::KeysWithDefaults KMLExportSettings::getKeys() const noexcept
+Settings::KeysWithDefaults KMLExportSettings::getKeyWithDefaults() const noexcept
 {
     Settings::KeysWithDefaults keys;
     Settings::KeyValue keyValue;

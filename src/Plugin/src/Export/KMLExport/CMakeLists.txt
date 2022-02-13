@@ -15,15 +15,10 @@ endif()
 
 target_sources(${LIBRARY_NAME}
     PRIVATE
-        src/KMLExportPlugin.cpp
-        src/KMLExportPlugin.h
-        src/KMLExportSettings.cpp
-        src/KMLExportSettings.h
-        src/KMLExportDialog.cpp
-        src/KMLExportDialog.h
-        src/KMLExportDialog.ui
-        src/KMLStyleExport.cpp
-        src/KMLStyleExport.h
+        src/KMLExportPlugin.h src/KMLExportPlugin.cpp
+        src/KMLExportSettings.h src/KMLExportSettings.cpp
+        src/KMLExportDialog.h src/KMLExportDialog.cpp src/KMLExportDialog.ui
+        src/KMLStyleExport.h src/KMLStyleExport.cpp
         src/KMLExportPlugin.json
 )
 

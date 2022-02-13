@@ -25,9 +25,10 @@
 #ifndef KMLEXPORTSETTINGS_H
 #define KMLEXPORTSETTINGS_H
 
+#include <QColor>
+
 #include "../../../../../Kernel/src/Settings.h"
 #include "../../../../../Model/src/SimType.h"
-#include <QColor>
 
 struct KMLExportSettings
 {
@@ -66,7 +67,7 @@ struct KMLExportSettings
     float lineWidth;
 
     Settings::PluginSettings getSettings() const noexcept;
-    Settings::KeysWithDefaults getKeys() const noexcept;
+    Settings::KeysWithDefaults getKeyWithDefaults() const noexcept;
     void setSettings(Settings::ValuesByKey) noexcept;
     void restoreDefaults() noexcept;
 
