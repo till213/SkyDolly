@@ -30,7 +30,7 @@
 
 #include <QtGlobal>
 
-class SecondaryFlightControlData;
+struct SecondaryFlightControlData;
 
 class SecondaryFlightControlDaoIntf
 {

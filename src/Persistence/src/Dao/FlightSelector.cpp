@@ -33,7 +33,3 @@ FlightSelector::FlightSelector()
       engineType(SimType::EngineType::All),
       mininumDurationMinutes(0)
 {}
-
-// The release date of FS2020 ;)
-const QDate FlightSelector::MinDate {2020, 8, 18};
-const QDate FlightSelector::MaxDate {9999, 12, 31};

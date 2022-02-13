@@ -79,7 +79,7 @@ public:
 
 protected:
     virtual Settings::PluginSettings getSettings() const noexcept override;
-    virtual Settings::KeysWithDefaults getKeys() const noexcept override;
+    virtual Settings::KeysWithDefaults getKeyWithDefaults() const noexcept override;
     virtual void setSettings(Settings::ValuesByKey) noexcept override;
 
 private:
@@ -101,7 +101,7 @@ private:
     inline bool exportPlacemark(QIODevice &io, KMLStyleExport::Icon icon, const QString &name, const QString &description,
                                double longitude, double latitude, double altitudeInFeet, double heading) const noexcept;
 
-    static inline QString toString(double number) noexcept;
+    static inline QString formatNumber(double number) noexcept;
 };
 
 #endif // KMLEXPORTPLUGIN_H

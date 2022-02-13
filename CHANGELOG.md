@@ -1,18 +1,34 @@
 # Changelog
 
+## 0.9.0
+
+### New Features
+
+- IGC export plugin
+  * Export flight path (position and GNSS altitude)
+  * Export waypoints as flight tasks ("C records")
+  * Export pilot names
+  
+### Improvements
+
+- IGC import plugin
+  * The initial heading is now calculated on the "first significant movement", compensating GPS inaccuracies (when the glider is standing still on the ground)
+  * Date and time of turn points (waypoints) defined by the task list ("C records") are now updated with the actual flight time, based on the closest flown position
+  
 ## 0.8.6
 
 ### New Features
 
-- IGC import plugin: the International Gliding Commission (IGC) approved flight recorder format for gliders
+- IGC import plugin
+  * The International Gliding Commission (IGC) approved flight recorder format for gliders
   * Basic header data ("H records") import (pilot names, glider type and ID)
   * Basic position ("B records (fix)") import
   * Basic task ("C records") import (waypoints)
 
 ### Bug Fixes
 
-- Typo: plural of aircraft is aircraft
-- KML import: 
+- Typo: plural of aircraft is aircraft (credits: Stefano Caporelli, Youtube comment [Sky Dolly - Formation Flying](https://www.youtube.com/watch?v=Op_zTfM3-HQ&lc=UgyZXpfBxZ5iLpqnd5F4AaABAg))
+- KML import plugin
   * "Flight augmentation" (adding flight procedures, aircraft attitude etc.) does properly terminate when imported flight duration is less than 3 minutes
   * Validate the number of imported positions
   * Show a simple error message in case of import failure

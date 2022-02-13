@@ -30,8 +30,10 @@
 /*!
  * Unit converter.
  *
- * https://www.convertunits.com/
- * https://www.metric-conversions.org/length/feet-to-meters.htm
+ * Useful links:
+ * - https://www.convertunits.com/
+ * - https://www.metric-conversions.org/length/feet-to-meters.htm
+ * - https://www.omnicalculator.com/conversion/coordinates-converter#how-to-convert-latitude-and-longitude-coordinates
  */
 class KERNEL_API Convert
 {
@@ -73,8 +75,6 @@ public:
      * Converts a latitude or longitude coordinate given as single decimal value (double)
      * to degrees, minutes and seconds (e.g. as string: 43° 30' 12.34'').
      *
-     * Also refer to: https://www.omnicalculator.com/conversion/coordinates-converter#how-to-convert-latitude-and-longitude-coordinates
-     *
      * \param dd
      *        the coordinate as single fractional value
      * \param degrees
@@ -91,6 +91,24 @@ public:
         double v = (absDegrees - static_cast<double>(degrees)) * 60.0;
         minutes = static_cast<int>(v);
         seconds = (v - static_cast<double>(minutes)) * 60.0;
+    }
+
+    /*!
+     * Converts a latitude or longitude coordinate given as single decimal value (double)
+     * to degrees and minutes (e.g. as string: 43° 30.34').
+     *
+     * \param dd
+     *        the coordinate as single fractional value
+     * \param degrees
+     *        the resulting degrees
+     * \param minutes
+     *        the resulting minutes [0, 59.99]
+     */
+    static inline void dd2dm(double dd, int &degrees, double &minutes) noexcept
+    {
+        double absDegrees = std::abs(dd);
+        degrees = static_cast<int>(absDegrees);
+        minutes = (absDegrees - static_cast<double>(degrees)) * 60.0;
     }
 
     /*!

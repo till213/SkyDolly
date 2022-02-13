@@ -30,7 +30,7 @@
 
 #include <QtGlobal>
 
-class AircraftHandleData;
+struct AircraftHandleData;
 
 class HandleDaoIntf
 {

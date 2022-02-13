@@ -19,6 +19,7 @@ target_sources(${LIBRARY_NAME}
     PRIVATE
         src/FlightLib.h
         src/FlightAugmentation.h src/FlightAugmentation.cpp
+        src/Analytics.h src/Analytics.cpp
 )
 
 target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})

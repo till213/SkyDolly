@@ -438,11 +438,11 @@ void SkyMathTest::relativePosition()
     QFETCH(double, expectedLatitude);
     QFETCH(double, expectedLongitude);
 
-    std::pair position(latitude, longitude);
-    std::pair expectedDestination(expectedLatitude, expectedLongitude);
+    SkyMath::Coordinate position(latitude, longitude);
+    SkyMath::Coordinate expectedDestination(expectedLatitude, expectedLongitude);
 
     // Exercise
-    std::pair destination = SkyMath::relativePosition(position, altitude, bearing, distance);
+    SkyMath::Coordinate destination = SkyMath::relativePosition(position, altitude, bearing, distance);
 
     // Verify
     const double lat = std::round(destination.first * PrecisionFactor) / PrecisionFactor;

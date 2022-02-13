@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>FZ981/FDB981</name>
+    <description><![CDATA[<div style="width:220px; text-align:center;">
+<div style="width:210px; text-align:center;">
+<div style=" background: #000; color: #fff; font-size: 14px; text-align:left; border: 1px solid #000; padding: 2px 6px; text-shadow: 0 1px 0 #000; box-shadow: 0 1px 3px rgba(0,0,0,0.6); background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#808080), color-stop(2%,#303030), color-stop(100%,#0c0c0c));"><span style="font-size: 14px; font-weight: bold;"><a href="https://www.flightradar24.com/flight/fz981" style="color: #fff; cursor: pointer;text-decoration: none;">FZ981</a></span> / FDB981<br/>FlyDubai</div>
+<div>
+<span style="margin: 125px 0 0 10px; color: #f0f0f0; font-size: 0.7em !important; padding: 2px 3px; position: absolute; text-align: right; text-shadow: 0 1px 0 #000; width: 194px; background: -moz-linear-gradient(left,  rgba(0,0,0,0) 0%, rgba(0,0,0,0.45) 65%, rgba(0,0,0,0.45) 100%);  background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(0,0,0,0)), color-stop(65%,rgba(0,0,0,0.45)), color-stop(100%,rgba(0,0,0,0.45)));  background: -webkit-linear-gradient(left,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.45) 65%,rgba(0,0,0,0.45) 100%); background: -o-linear-gradient(left,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.45) 65%,rgba(0,0,0,0.45) 100%);  background: -ms-linear-gradient(left,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.45) 65%,rgba(0,0,0,0.45) 100%); background: linear-gradient(to right,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.45) 65%,rgba(0,0,0,0.45) 100%); ">&copy; Alexey Ignatyev</span>
+<a title="View bigger image of A6-FDN at Planespotters.net" target="_blank" href="https://www.flightradar24.com/redir.php?url=https%3A%2F%2Fexternal.flightradar24.com%2Fredirect%2F%3Furl%3Dhttp%253A%252F%252Fwww.jetphotos.net%252Fphoto%252F8120727">
+<img style="width:210px;" src="https://cdn.flightradar24.com/200/6/62027_1444464066_tb.jpg?v=0"/>
+</a>
+</div>
+<div style="border-top: 1px solid #005c90; color: #fff; padding-bottom: 5px; box-shadow: 0 0 1px #9BE3F6 inset, 0 1px 0 #9BE3F6 inset, 0 -1px 3px rgba(0,0,0,0.4); background:rgba(43,114,173,1); background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(92,184,229,1)), color-stop(100%,rgba(43,114,173,1)));">
+<a style="text-decoration: none; color: rgb(255, 255, 255); font-size: 12px; width:77px; display: inline-block;" title="Dubai Airport" href="https://www.flightradar24.com/airport/dxb/departures"><h3 style="padding: 0px; margin: 10px 0px 0px; font-size: 16px; ">DXB</h3>Dubai</a>
+<span style="background: url(https://www.flightradar24.com/static/images/userUI_sprite.png?14) no-repeat scroll 0 -464px rgba(0, 0, 0, 0); border: medium none; display: inline-block; height: 16px; width: 45px;"></span>
+<a style="text-decoration: none; color: rgb(255, 255, 255); font-size: 12px; width:77px; display: inline-block;" title="Rostov-on-Don Airport" href="https://www.flightradar24.com/airport/rov/arrivals"><h3 style="padding: 0px; margin: 10px 0px 0px; font-size: 16px;">ROV</h3>Rostov-on-Don</a>
+<div style=" margin-top:10px;">
+<div style="display: inline-block; font-size: 12px; padding: 0 5px;">
+<div>
+<span style="color: #c1eaff;" title="Scheduled Time of Departure">STD </span>
+<span title="2016-03-18 17:45">17:45</span> <span title="Coordinated Universal Time">UTC</span>
+</div>
+<div>
+<span style="color: #c1eaff;" title="Actual Time of Departure">ATD </span>
+<span title="2016-03-18 18:37">18:37</span> <span title="Coordinated Universal Time">UTC</span>
+</div>
+</div>
+<div style="display: inline-block; font-size: 12px; padding: 0 5px;">
+<div>
+<span style="color: #c1eaff;" title="Scheduled Time of Arrival">STA </span>
+<span title="2016-03-18 22:20">22:20</span> <span title="Coordinated Universal Time">UTC</span>
+</div>
+<div>
+<span style="color: #c1eaff;" title="Estimated Time of Arrival">ETA </span>
+<span title="2016-03-19 00:42">00:42</span> <span title="Coordinated Universal Time">UTC</span>
+</div>
+</div>
+</div>
+<br style="clear: both;"/>
+</div>
+
+<div style="display: block;">
+<table style="border-collapse: collapse; width: 100%;">
+<tr style="border-right: 1px solid #dadada; ">
+<td style="background: none repeat scroll 0 0 #dadada; padding: 0; width: 31px;">
+<span style="background: url(https://www.flightradar24.com/static/images/userUI_sprite.png?14) no-repeat scroll -208px -464px rgba(0, 0, 0, 0); height: 26px; margin: 8px 0 0 4px; width: 23px; display: block;"></span>
+</td>
+<td colspan="2" style="border-bottom: 1px solid #dadada; border-left: 1px solid #dadada; color: #666; line-height: 1.1em; padding: 3px 6px; vertical-align: top; font-size: 14px;">
+Aircraft<span style="float: right; font-size: 12px;">(B738)</span><br>
+<span style="color: #333; font-size: 16px; font-weight: bold; line-height: 1.3em;">Boeing 737-8KN</span>
+</td>
+</tr>
+<tr style="border-right: 1px solid #dadada; ">
+<td style="background: none repeat scroll 0 0 #dadada; padding: 0; width: 31px;">
+<td colspan="2" style="border-bottom: 1px solid #dadada; border-left: 1px solid #dadada; color: #666; line-height: 1.1em; padding: 3px 6px; vertical-align: top; font-size: 14px;">
+Registration<br>
+<span style="color: #333; font-size: 16px; font-weight: bold; line-height: 1.3em;"><a href="https://www.flightradar24.com/reg/a6-fdn" style="text-decoration: none; color: #333;">A6-FDN</a></span>
+</td>
+</tr>
+</table>
+</div>
+
+</div>
+</div>]]></description>
+    <Folder>
+      <name>Route</name>
+      <Placemark>
+        <name>2016-03-18 18:20:47 UTC</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>10 kt</span></div>
+<div><span><b>Heading:</b></span> <span>209&deg;</span></div>
+</div>]]></description>
+        <TimeStamp>
+          <when>2016-03-18T18:20:47+00:00</when>
+        </TimeStamp>
+        <Style>
+          <IconStyle>
+            <heading>209</heading>
+            <Icon>
+              <href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href>
+            </Icon>
+          </IconStyle>
+        </Style>
+        <Point>
+          <altitudeMode>absolute</altitudeMode>
+          <coordinates>55.362,25.2619,0</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>2016-03-18 18:22:18 UTC</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>0 kt</span></div>
+<div><span><b>Heading:</b></span> <span>234&deg;</span></div>
+</div>]]></description>
+        <TimeStamp>
+          <when>2016-03-18T18:22:18+00:00</when>
+        </TimeStamp>
+        <Style>
+          <IconStyle>
+            <heading>234</heading>
+            <Icon>
+              <href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href>
+            </Icon>
+          </IconStyle>
+        </Style>
+        <Point>
+          <altitudeMode>absolute</altitudeMode>
+          <coordinates>55.3615,25.2615,0</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>2016-03-18 18:26:32 UTC</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>19 kt</span></div>
+<div><span><b>Heading:</b></span> <span>119&deg;</span></div>
+</div>]]></description>
+        <TimeStamp>
+          <when>2016-03-18T18:26:32+00:00</when>
+        </TimeStamp>
+        <Style>
+          <IconStyle>
+            <heading>119</heading>
+            <Icon>
+              <href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href>
+            </Icon>
+          </IconStyle>
+        </Style>
+        <Point>
+          <altitudeMode>absolute</altitudeMode>
+          <coordinates>55.3619,25.2613,0</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>2016-03-18 18:26:42 UTC</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>23 kt</span></div>
+<div><span><b>Heading:</b></span> <span>120&deg;</span></div>
+</div>]]></description>
+        <TimeStamp>
+          <when>2016-03-18T18:26:42+00:00</when>
+        </TimeStamp>
+        <Style>
+          <IconStyle>
+            <heading>120</heading>
+            <Icon>
+              <href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href>
+            </Icon>
+          </IconStyle>
+        </Style>
+        <Point>
+          <altitudeMode>absolute</altitudeMode>
+          <coordinates>55.3622,25.2611,0</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>2016-03-18 18:26:52 UTC</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>24 kt</span></div>
+<div><span><b>Heading:</b></span> <span>120&deg;</span></div>
+</div>]]></description>
+        <TimeStamp>
+          <when>2016-03-18T18:26:52+00:00</when>
+        </TimeStamp>
+        <Style>
+          <IconStyle>
+            <heading>120</heading>
+            <Icon>
+              <href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href>
+            </Icon>
+          </IconStyle>
+        </Style>
+        <Point>
+          <altitudeMode>absolute</altitudeMode>
+          <coordinates>55.3625,25.2609,0</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>2016-03-18 18:27:02 UTC</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>25 kt</span></div>
+<div><span><b>Heading:</b></span> <span>120&deg;</span></div>
+</div>]]></description>
+        <TimeStamp>
+          <when>2016-03-18T18:27:02+00:00</when>
+        </TimeStamp>
+        <Style>
+          <IconStyle>
+            <heading>120</heading>
+            <Icon>
+              <href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href>
+            </Icon>
+          </IconStyle>
+        </Style>
+        <Point>
+          <altitudeMode>absolute</altitudeMode>
+          <coordinates>55.3631,25.2606,0</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>2016-03-18 18:27:12 UTC</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>26 kt</span></div>
+<div><span><b>Heading:</b></span> <span>120&deg;</span></div>
+</div>]]></description>
+        <TimeStamp>
+          <when>2016-03-18T18:27:12+00:00</when>
+        </TimeStamp>
+        <Style>
+          <IconStyle>
+            <heading>120</heading>
+            <Icon>
+              <href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href>
+            </Icon>
+          </IconStyle>
+        </Style>
+        <Point>
+          <altitudeMode>absolute</altitudeMode>
+          <coordinates>55.3635,25.2604,0</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>2016-03-18 18:27:38 UTC</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>26 kt</span></div>
+<div><span><b>Heading:</b></span> <span>120&deg;</span></div>
+</div>]]></description>
+        <TimeStamp>
+          <when>2016-03-18T18:27:38+00:00</when>
+        </TimeStamp>
+        <Style>
+          <IconStyle>
+            <heading>120</heading>
+            <Icon>
+              <href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href>
+            </Icon>
+          </IconStyle>
+        </Style>
+        <Point>
+          <altitudeMode>absolute</altitudeMode>
+          <coordinates>55.3646,25.2598,0</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>2016-03-18 18:27:48 UTC</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>26 kt</span></div>
+<div><span><b>Heading:</b></span> <span>120&deg;</span></div>
+</div>]]></description>
+        <TimeStamp>
+          <when>2016-03-18T18:27:48+00:00</when>
+        </TimeStamp>
+        <Style>
+          <IconStyle>
+            <heading>120</heading>
+            <Icon>
+              <href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href>
+            </Icon>
+          </IconStyle>
+        </Style>
+        <Point>
+          <altitudeMode>absolute</altitudeMode>
+          <coordinates>55.3652,25.2594,0</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>2016-03-18 18:28:08 UTC</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>25 kt</span></div>
+<div><span><b>Heading:</b></span> <span>120&deg;</span></div>
+</div>]]></description>
+        <TimeStamp>
+          <when>2016-03-18T18:28:08+00:00</when>
+        </TimeStamp>
+        <Style>
+          <IconStyle>
+            <heading>120</heading>
+            <Icon>
+              <href>http://maps.google.com/mapfiles/kml/shapes/airports.png</href>
+            </Icon>
+          </IconStyle>
+        </Style>
+        <Point>
+          <altitudeMode>absolute</altitudeMode>
+          <coordinates>55.3662,25.2589,0</coordinates>
+        </Point>
+      </Placemark>
+    </Folder>
+    <Folder>
+      <name>Trail</name>
+      <Placemark>
+        <Style>
+          <LineStyle>
+            <color>ffffffff</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <MultiGeometry>
+          <LineString>
+            <tessellate>1</tessellate>
+            <altitudeMode>clampToGround</altitudeMode>
+            <coordinates>55.362,25.2619,0 55.3615,25.2615,0</coordinates>
+          </LineString>
+        </MultiGeometry>
+        <name>P-1</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>10 kt - 0 kt</span></div>
+<div><span><b>Timestamp:</b></span><br/><span>2016-03-18 18:20:47 UTC<br/>2016-03-18 18:22:18 UTC</span></div>
+</div>]]></description>
+      </Placemark>
+      <Placemark>
+        <Style>
+          <LineStyle>
+            <color>ffffffff</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <MultiGeometry>
+          <LineString>
+            <tessellate>1</tessellate>
+            <altitudeMode>clampToGround</altitudeMode>
+            <coordinates>55.3615,25.2615,0 55.3619,25.2613,0</coordinates>
+          </LineString>
+        </MultiGeometry>
+        <name>P-2</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>0 kt - 19 kt</span></div>
+<div><span><b>Timestamp:</b></span><br/><span>2016-03-18 18:22:18 UTC<br/>2016-03-18 18:26:32 UTC</span></div>
+</div>]]></description>
+      </Placemark>
+      <Placemark>
+        <Style>
+          <LineStyle>
+            <color>ffffffff</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <MultiGeometry>
+          <LineString>
+            <tessellate>1</tessellate>
+            <altitudeMode>clampToGround</altitudeMode>
+            <coordinates>55.3619,25.2613,0 55.3622,25.2611,0</coordinates>
+          </LineString>
+        </MultiGeometry>
+        <name>P-3</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>19 kt - 23 kt</span></div>
+<div><span><b>Timestamp:</b></span><br/><span>2016-03-18 18:26:32 UTC<br/>2016-03-18 18:26:42 UTC</span></div>
+</div>]]></description>
+      </Placemark>
+      <Placemark>
+        <Style>
+          <LineStyle>
+            <color>ffffffff</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <MultiGeometry>
+          <LineString>
+            <tessellate>1</tessellate>
+            <altitudeMode>clampToGround</altitudeMode>
+            <coordinates>55.3622,25.2611,0 55.3625,25.2609,0</coordinates>
+          </LineString>
+        </MultiGeometry>
+        <name>P-4</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>23 kt - 24 kt</span></div>
+<div><span><b>Timestamp:</b></span><br/><span>2016-03-18 18:26:42 UTC<br/>2016-03-18 18:26:52 UTC</span></div>
+</div>]]></description>
+      </Placemark>
+      <Placemark>
+        <Style>
+          <LineStyle>
+            <color>ffffffff</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <MultiGeometry>
+          <LineString>
+            <tessellate>1</tessellate>
+            <altitudeMode>clampToGround</altitudeMode>
+            <coordinates>55.3625,25.2609,0 55.3631,25.2606,0</coordinates>
+          </LineString>
+        </MultiGeometry>
+        <name>P-5</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>24 kt - 25 kt</span></div>
+<div><span><b>Timestamp:</b></span><br/><span>2016-03-18 18:26:52 UTC<br/>2016-03-18 18:27:02 UTC</span></div>
+</div>]]></description>
+      </Placemark>
+      <Placemark>
+        <Style>
+          <LineStyle>
+            <color>ffffffff</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <MultiGeometry>
+          <LineString>
+            <tessellate>1</tessellate>
+            <altitudeMode>clampToGround</altitudeMode>
+            <coordinates>55.3631,25.2606,0 55.3635,25.2604,0</coordinates>
+          </LineString>
+        </MultiGeometry>
+        <name>P-6</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>25 kt - 26 kt</span></div>
+<div><span><b>Timestamp:</b></span><br/><span>2016-03-18 18:27:02 UTC<br/>2016-03-18 18:27:12 UTC</span></div>
+</div>]]></description>
+      </Placemark>
+      <Placemark>
+        <Style>
+          <LineStyle>
+            <color>ffffffff</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <MultiGeometry>
+          <LineString>
+            <tessellate>1</tessellate>
+            <altitudeMode>clampToGround</altitudeMode>
+            <coordinates>55.3635,25.2604,0 55.3646,25.2598,0</coordinates>
+          </LineString>
+        </MultiGeometry>
+        <name>P-7</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>26 kt</span></div>
+<div><span><b>Timestamp:</b></span><br/><span>2016-03-18 18:27:12 UTC<br/>2016-03-18 18:27:38 UTC</span></div>
+</div>]]></description>
+      </Placemark>
+      <Placemark>
+        <Style>
+          <LineStyle>
+            <color>ffffffff</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <MultiGeometry>
+          <LineString>
+            <tessellate>1</tessellate>
+            <altitudeMode>clampToGround</altitudeMode>
+            <coordinates>55.3646,25.2598,0 55.3652,25.2594,0</coordinates>
+          </LineString>
+        </MultiGeometry>
+        <name>P-8</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>26 kt</span></div>
+<div><span><b>Timestamp:</b></span><br/><span>2016-03-18 18:27:38 UTC<br/>2016-03-18 18:27:48 UTC</span></div>
+</div>]]></description>
+      </Placemark>
+      <Placemark>
+        <Style>
+          <LineStyle>
+            <color>ffffffff</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <MultiGeometry>
+          <LineString>
+            <tessellate>1</tessellate>
+            <altitudeMode>clampToGround</altitudeMode>
+            <coordinates>55.3652,25.2594,0 55.3662,25.2589,0</coordinates>
+          </LineString>
+        </MultiGeometry>
+        <name>P-9</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>26 kt - 25 kt</span></div>
+<div><span><b>Timestamp:</b></span><br/><span>2016-03-18 18:27:48 UTC<br/>2016-03-18 18:28:08 UTC</span></div>
+</div>]]></description>
+      </Placemark>
+      <Placemark>
+        <Style>
+          <LineStyle>
+            <color>ffffffff</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <MultiGeometry>
+          <LineString>
+            <tessellate>1</tessellate>
+            <altitudeMode>clampToGround</altitudeMode>
+            <coordinates>55.3662,25.2589,0 55.3667,25.2586,0</coordinates>
+          </LineString>
+        </MultiGeometry>
+        <name>P-10</name>
+        <description><![CDATA[<div><div><span><b>Altitude:</b></span> <span>0 ft</span></div>
+<div><span><b>Speed:</b></span> <span>25 kt</span></div>
+<div><span><b>Timestamp:</b></span><br/><span>2016-03-18 18:28:08 UTC<br/>2016-03-18 18:28:24 UTC</span></div>
+</div>]]></description>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>

@@ -37,7 +37,7 @@
 #include "AircraftInfo.h"
 #include "ModelLib.h"
 
-class EngineData;
+struct EngineData;
 class EnginePrivate;
 
 class MODEL_API Engine : public QObject

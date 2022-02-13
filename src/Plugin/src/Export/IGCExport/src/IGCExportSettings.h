@@ -22,43 +22,44 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef IGCIMPORTDIALOG_H
-#define IGCIMPORTDIALOG_H
+#ifndef IGCEXPORTSETTINGS_H
+#define IGCEXPORTSETTINGS_H
 
-#include <memory>
+#include <QString>
 
-#include <QDialog>
+#include "../../../../../Kernel/src/Settings.h"
 
-class QWidget;
-
-namespace Ui {
-    class IGCImportDialog;
-}
-
-class AircraftType;
-class IGCImportDialogPrivate;
-
-class IGCImportDialog : public QDialog
+struct IGCExportSettings
 {
-    Q_OBJECT
 public:
-    explicit IGCImportDialog(QWidget *parent = nullptr) noexcept;
-    virtual ~IGCImportDialog() noexcept;
+    /*!
+     * Resampling period [millisecons]
+     */
+    enum struct ResamplingPeriod {
+        Original = 0,
+        TenHz = 100,
+        FiveHz = 200,
+        TwoHz = 500,
+        OneHz = 1000,
+        AFifthHz = 5000,
+        ATenthHz = 10000
+    };
 
-    QString getSelectedFilePath() const noexcept;
-    bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
-    bool isAddToFlightEnabled() const noexcept;
+    IGCExportSettings() noexcept;
+
+    ResamplingPeriod resamplingPeriod;
+    QString pilotName;
+    QString coPilotName;
+
+    Settings::PluginSettings getSettings() const noexcept;
+    Settings::KeysWithDefaults getKeysWithDefault() const noexcept;
+    void setSettings(Settings::ValuesByKey) noexcept;
+    void restoreDefaults() noexcept;
 
 private:
-    Ui::IGCImportDialog *ui;
-    std::unique_ptr<IGCImportDialogPrivate> d;
-
-    void frenchConnection() noexcept;
-    void initUi() noexcept;
-
-private slots:
-    void on_fileSelectionPushButton_clicked() noexcept;
-    void updateUi() noexcept;
+    QString defaultPilotName;
+    static constexpr ResamplingPeriod DefaultResamplingPeriod = ResamplingPeriod::OneHz;
+    static inline const QString DefaultCoPilotName {};
 };
 
-#endif // IGCIMPORTDIALOG_H
+#endif // IGCEXPORTSETTINGS_H

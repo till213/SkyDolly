@@ -63,10 +63,6 @@ namespace
     constexpr char LookAtTilt[] = "50";
     constexpr char LookAtRange[] = "4000";
     constexpr int HeadingNorth = 0;
-
-    // Number of colors per color ramp
-    constexpr int MaxColorsPerRamp = 8;
-
 }
 
 class KMLExportPluginPrivate
@@ -74,13 +70,11 @@ class KMLExportPluginPrivate
 public:
     KMLExportPluginPrivate() noexcept
         : flight(Logbook::getInstance().getCurrentFlight()),
-          nofAircraft(flight.count()),
           styleExport(std::make_unique<KMLStyleExport>())
     {}
 
     KMLExportSettings exportSettings;
     Flight &flight;
-    int nofAircraft;
     std::unique_ptr<KMLStyleExport> styleExport;
     Unit unit;
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
@@ -178,9 +172,9 @@ Settings::PluginSettings KMLExportPlugin::getSettings() const noexcept
     return d->exportSettings.getSettings();
 }
 
-Settings::KeysWithDefaults KMLExportPlugin::getKeys() const noexcept
+Settings::KeysWithDefaults KMLExportPlugin::getKeyWithDefaults() const noexcept
 {
-    return d->exportSettings.getKeys();
+    return d->exportSettings.getKeyWithDefaults();
 }
 
 void KMLExportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
@@ -247,23 +241,23 @@ bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
         const Position &position = aircraft.getPositionConst();
         if (d->exportSettings.resamplingPeriod != KMLExportSettings::ResamplingPeriod::Original) {
             const qint64 duration = position.getLast().timestamp;
-            qint64 time = 0;
-            while (ok && time <= duration) {
-                const PositionData &positionData = position.interpolate(time, TimeVariableData::Access::Linear);
+            qint64 timestamp = 0;
+            while (ok && timestamp <= duration) {
+                const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Linear);
                 if (!positionData.isNull()) {
-                    ok = io.write((toString(positionData.longitude) % "," %
-                                   toString(positionData.latitude) % "," %
-                                   toString(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
+                    ok = io.write((formatNumber(positionData.longitude) % "," %
+                                   formatNumber(positionData.latitude) % "," %
+                                   formatNumber(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
                 }
-                time += Enum::toUnderlyingType(d->exportSettings.resamplingPeriod);
+                timestamp += Enum::toUnderlyingType(d->exportSettings.resamplingPeriod);
             }
         } else {
             // Original data requested
             // (may result in huge KML files: e.g. the KML viewer may not be able to display the data at all)
             for (const PositionData &positionData : position) {
-                ok = io.write((toString(positionData.longitude) % "," %
-                               toString(positionData.latitude) % "," %
-                               toString(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
+                ok = io.write((formatNumber(positionData.longitude) % "," %
+                               formatNumber(positionData.latitude) % "," %
+                               formatNumber(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
                 if (!ok) {
                     break;
                 }
@@ -367,10 +361,10 @@ inline bool KMLExportPlugin::exportPlacemark(QIODevice &io, KMLStyleExport::Icon
 "      <name><![CDATA[" % name % "]]></name>\n"
 "      <description><![CDATA[" % description % "]]></description>\n"
 "      <LookAt>\n"
-"        <longitude>" % toString(longitude) % "</longitude>\n"
-"        <latitude>" % toString(latitude) % "</latitude>\n"
-"        <altitude>" % toString(Convert::feetToMeters(altitudeInFeet)) % "</altitude>\n"
-"        <heading>" % toString(heading) % "</heading>\n"
+"        <longitude>" % formatNumber(longitude) % "</longitude>\n"
+"        <latitude>" % formatNumber(latitude) % "</latitude>\n"
+"        <altitude>" % formatNumber(Convert::feetToMeters(altitudeInFeet)) % "</altitude>\n"
+"        <heading>" % formatNumber(heading) % "</heading>\n"
 "        <tilt>" % LookAtTilt % "</tilt>\n"
 "        <range>" % LookAtRange % "</range>\n"
 "        <altitudeMode>absolute</altitudeMode>\n"
@@ -380,13 +374,13 @@ inline bool KMLExportPlugin::exportPlacemark(QIODevice &io, KMLStyleExport::Icon
 "        <extrude>1</extrude>\n"
 "        <altitudeMode>absolute</altitudeMode>\n"
 "        <gx:drawOrder>1</gx:drawOrder>\n"
-"        <coordinates>" % toString(longitude) % "," % toString(latitude) % "," % toString(Convert::feetToMeters(altitudeInFeet)) % "</coordinates>\n"
+"        <coordinates>" % formatNumber(longitude) % "," % formatNumber(latitude) % "," % formatNumber(Convert::feetToMeters(altitudeInFeet)) % "</coordinates>\n"
 "      </Point>\n"
 "    </Placemark>\n";
     return io.write(placemark.toUtf8());
 }
 
-inline QString KMLExportPlugin::toString(double number) noexcept
+inline QString KMLExportPlugin::formatNumber(double number) noexcept
 {
     return QString::number(number, 'g', NumberPrecision);
 }

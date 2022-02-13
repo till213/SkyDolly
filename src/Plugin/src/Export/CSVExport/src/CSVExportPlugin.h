@@ -34,15 +34,12 @@ class QString;
 #include "../../../PluginBase.h"
 
 class Aircraft;
-class PositionData;
-class EngineData;
-class PrimaryFlightControlData;
-class SecondaryFlightControlData;
-class AircraftHandleData;
-class LightData;
-class CSVExportPrivate;
-
-class CSVExportPrivate;
+struct PositionData;
+struct EngineData;
+struct PrimaryFlightControlData;
+struct SecondaryFlightControlData;
+struct AircraftHandleData;
+struct LightData;
 
 class CSVExportPlugin : public PluginBase, public ExportIntf
 {
@@ -50,7 +47,7 @@ class CSVExportPlugin : public PluginBase, public ExportIntf
     Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "CSVExportPlugin.json")
     Q_INTERFACES(ExportIntf)
 public:
-    static const QString FileSuffix;
+    static inline const QString FileSuffix {QStringLiteral("csv")};
 
     CSVExportPlugin() noexcept;
     virtual ~CSVExportPlugin() noexcept;
@@ -78,8 +75,6 @@ public:
     virtual bool exportData() noexcept override;
 
 private:
-    CSVExportPrivate *d;
-
     static QString getPositionHeader() noexcept;
     static QString getPositionData(const PositionData &data) noexcept;
 
@@ -95,7 +90,7 @@ private:
     static QString getAircraftHandleHeader() noexcept;
     static QString getAircraftHandleData(const AircraftHandleData &data) noexcept;
 
-    static QString getLighteHeader() noexcept;
+    static QString getLightHeader() noexcept;
     static QString getLightData(const LightData &data) noexcept;
 };
 

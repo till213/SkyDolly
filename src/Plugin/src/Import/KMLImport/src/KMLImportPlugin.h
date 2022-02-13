@@ -65,18 +65,21 @@ public:
         PluginBase::restoreSettings(pluginUuid);
     }
 
-    virtual bool importData(FlightService &flightService) noexcept override;
+    virtual bool import(FlightService &flightService) noexcept override;
+
+protected:
+    virtual Settings::PluginSettings getSettings() const noexcept override;
+    virtual Settings::KeysWithDefaults getKeyWithDefaults() const noexcept override;
+    virtual void setSettings(Settings::ValuesByKey) noexcept override;
 
 private:
     std::unique_ptr<KMLImportPluginPrivate> d;
 
     bool import(const QString &filePath, FlightService &flightService) noexcept;
 
-    void readKML() noexcept;
-    void readDocument() noexcept;
-    void readPlacemark() noexcept;
-    void readWaypoint(const QString &icaoOrName) noexcept;
-    void readTrack() noexcept;
+    void parseKML() noexcept;
+    void parseName() noexcept;
+    void parseDocument() noexcept;
 
     void updateFlightCondition() noexcept;
     void updateAircraftInfo() noexcept;

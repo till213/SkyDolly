@@ -34,7 +34,7 @@ class QHideEvent;
 #include "AbstractSimulationVariableWidget.h"
 
 class SkyConnectIntf;
-class EngineData;
+struct EngineData;
 class EngineWidgetPrivate;
 
 namespace Ui {

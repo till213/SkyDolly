@@ -51,7 +51,7 @@ public:
 
 protected:
     virtual Settings::PluginSettings getSettings() const noexcept;
-    virtual Settings::KeysWithDefaults getKeys() const noexcept;
+    virtual Settings::KeysWithDefaults getKeyWithDefaults() const noexcept;
     virtual void setSettings(Settings::ValuesByKey valuesByKey) noexcept;
 
 private:

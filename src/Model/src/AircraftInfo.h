@@ -36,6 +36,7 @@ struct MODEL_API AircraftInfo
 {
     qint64 aircraftId;
     AircraftType aircraftType;
+    // Local (simulation) times
     QDateTime startDate;
     QDateTime endDate;
     // Milliseconds
