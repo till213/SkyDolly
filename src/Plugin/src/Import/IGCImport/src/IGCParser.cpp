@@ -292,9 +292,8 @@ bool IGCParser::parseHeaderDate(const QByteArray &line) noexcept
     bool ok = true;
     QRegularExpressionMatch match = d->hRecordDateRegExp.match(line);
     if (match.hasMatch()) {
-        const QStringList captures = match.capturedTexts();
         int year;
-        const QString &yearText = captures.at(::HRecordYearIndex);
+        const QStringView yearText = match.capturedView(::HRecordYearIndex);
         if (yearText.at(0) == '8' || yearText.at(0) == '9') {
             // The glorious 80ies and 90ies: two-digit year dates were all the rage!
             // (The IGC format was invented in the 80ies, so any date starting with
@@ -305,13 +304,13 @@ bool IGCParser::parseHeaderDate(const QByteArray &line) noexcept
             // Sorry, my future fellows - but not my fault ¯\_(ツ)_/¯
             year = 2000 + yearText.toInt();
         }
-        const int month = captures.at(::HRecordMonthIndex).toInt();
-        const int day   = captures.at(::HRecordDayIndex).toInt();
+        const int month = match.capturedView(::HRecordMonthIndex).toInt();
+        const int day   = match.capturedView(::HRecordDayIndex).toInt();
         d->header.flightDateTimeUtc.setDate(QDate(year, month, day));
         d->header.flightDateTimeUtc.setTimeZone(QTimeZone::utc());
         // The flight number is optional
-        if (::HRecordFlightNumberIndex < captures.count()) {
-            d->header.flightNumber = captures.at(::HRecordFlightNumberIndex);
+        if (::HRecordFlightNumberIndex == match.lastCapturedIndex()) {
+            d->header.flightNumber = match.captured(::HRecordFlightNumberIndex);
         } else {
             // Assume first flight of day
             d->header.flightNumber = QString("1");
@@ -330,9 +329,8 @@ bool IGCParser::parseHeaderText(const QByteArray &line, const QRegularExpression
     bool ok = true;
     QRegularExpressionMatch match = regExp.match(line);
     if (match.hasMatch()) {
-        const QStringList captures = match.capturedTexts();
         // Ignore the data source for now (F: flight recorder, O: observer, P: pilot)
-        text = captures.at(2).trimmed().replace('_', ' ');
+        text = match.captured(2).trimmed().replace('_', ' ');
         ok = true;
     } else {
         // No pattern match
@@ -366,21 +364,20 @@ bool IGCParser::parseFixAdditions(const QByteArray &line) noexcept
     bool ok;
     QRegularExpressionMatch match = d->iRecordRegExp.match(line);
     if (match.hasMatch()) {
-        const QStringList captures = match.capturedTexts();
-        const int nofAdditions = captures.at(::IRecordNofAdditionsIndex).toInt();
-        const QString &definitions = captures.at(::IRecordAdditionsDefinitionsIndex);
+        const int nofAdditions = match.capturedView(::IRecordNofAdditionsIndex).toInt();
+        const QStringView definitions = match.capturedView(::IRecordAdditionsDefinitionsIndex);
 
         // Validate the number of bytes: each definition is expected to be
         // of the form SS FF CCC (7 bytes in total)
         if (definitions.length() >= nofAdditions * ::IRecordAdditionDefinitionLength) {
             int index = 0;
             for (int i = 0; i < nofAdditions; ++i) {
-                const QStringRef ref = definitions.midRef(i * ::IRecordAdditionDefinitionLength, ::IRecordAdditionDefinitionLength);
+                const QStringView def = definitions.mid(i * ::IRecordAdditionDefinitionLength, ::IRecordAdditionDefinitionLength);
                 // We are only interested in the ENL addition for now
-                if (ref.mid(4, 3) == EnvironmentalNoiseLevel) {
+                if (def.mid(4, 3) == EnvironmentalNoiseLevel) {
                     d->enlAddition = true;
-                    d->enlStartOffset = ref.mid(0, 2).toInt();
-                    d->enlLength = ref.mid(2, 2).toInt() - d->enlStartOffset;
+                    d->enlStartOffset = def.mid(0, 2).toInt();
+                    d->enlLength = def.mid(2, 2).toInt() - d->enlStartOffset;
                     d->maxEnlValue = std::pow(10, d->enlLength ) - 1;
                 }
             }
@@ -400,31 +397,27 @@ bool IGCParser::parseTask(const QByteArray &line) noexcept
     bool ok;
     QRegularExpressionMatch match = d->cRecordTaskDefinitionRegExp.match(line);
     if (match.hasMatch()) {
-        const QStringList captures = match.capturedTexts();
         ok = true;
     } else {
         match = d->cRecordTaskRegExp.match(line);
-
         if (match.hasMatch()) {
-            const QStringList captures = match.capturedTexts();
-
             // Latitude
-            const QString &latitudeText = captures.at(::CRecordLatitudeDegreesIndex);
-            QString minutesBy1000Text = captures.at(::CRecordLatitudeMinutesIndex);
+            const QStringView latitudeText = match.capturedView(::CRecordLatitudeDegreesIndex);
+            QStringView minutesBy1000Text = match.capturedView(::CRecordLatitudeMinutesIndex);
             double latitude = parseCoordinate(latitudeText, minutesBy1000Text);
-            if (captures.at(::CRecordLatitudeDirectionIndex) == ::DirectionTypeSouth) {
+            if (match.capturedView(::CRecordLatitudeDirectionIndex) == ::DirectionTypeSouth) {
                 latitude = -latitude;
             }
 
             // Longitude
-            const QString &longitudeText  = captures.at(::CRecordLongitudeDegreesIndex);
-            minutesBy1000Text = captures.at(::CRecordLongitudeMinutesIndex);
+            const QStringView longitudeText  = match.capturedView(::CRecordLongitudeDegreesIndex);
+            minutesBy1000Text = match.capturedView(::CRecordLongitudeMinutesIndex);
             double longitude = parseCoordinate(longitudeText, minutesBy1000Text);
-            if (captures.at(::CRecordLongitudeDirectionIndex) == ::DirectionTypeWest) {
+            if (match.capturedView(::CRecordLongitudeDirectionIndex) == ::DirectionTypeWest) {
                 longitude = -longitude;
             }
 
-            d->task.tasks.emplace_back(latitude, longitude, captures.at(::CRecordTaskIndex));
+            d->task.tasks.emplace_back(latitude, longitude, match.captured(::CRecordTaskIndex));
 
             ok = true;
         } else {
@@ -439,10 +432,9 @@ bool IGCParser::parseFix(const QByteArray &line) noexcept
     bool ok;
     QRegularExpressionMatch match = d->bRecordRegExp.match(line);
     if (match.hasMatch()) {
-        const QStringList captures = match.capturedTexts();
 
         // Timestamp
-        const QString &timeText = captures.at(::BRecordDateIndex);
+        const QString timeText = match.captured(::BRecordDateIndex);
         const QTime currentTime = QTime::fromString(timeText, ::DateFormat);
         if (d->fixes.size() > 0) {
             if (currentTime.addSecs(DayChangeThresholdSeconds) < d->previousTime) {
@@ -462,27 +454,27 @@ bool IGCParser::parseFix(const QByteArray &line) noexcept
             const qint64 timestamp = d->header.flightDateTimeUtc.msecsTo(d->currentDateTimeUtc);
 
             // Latitude
-            const QString &latitudeText = captures.at(::BRecordLatitudeDegreesIndex);
-            const QString &latitudeMinutesBy1000Text = captures.at(::BRecordLatitudeMinutesIndex);
+            const QStringView latitudeText = match.capturedView(::BRecordLatitudeDegreesIndex);
+            const QStringView latitudeMinutesBy1000Text = match.capturedView(::BRecordLatitudeMinutesIndex);
             double latitude = parseCoordinate(latitudeText, latitudeMinutesBy1000Text);
-            if (captures.at(::BRecordLatitudeDirectionIndex) == ::DirectionTypeSouth) {
+            if (match.capturedView(::BRecordLatitudeDirectionIndex) == ::DirectionTypeSouth) {
                 latitude = -latitude;
             }
 
             // Longitude
-            const QString &longitudeText = captures.at(::BRecordLongitudeDegreesIndex);
-            const QString &longitudeMinutesBy1000Text = captures.at(::BRecordLongitudeMinutesIndex);
+            const QStringView longitudeText = match.capturedView(::BRecordLongitudeDegreesIndex);
+            const QStringView longitudeMinutesBy1000Text = match.capturedView(::BRecordLongitudeMinutesIndex);
             double longitude = parseCoordinate(longitudeText, longitudeMinutesBy1000Text);
-            if (captures.at(::BRecordLongitudeDirectionIndex) == ::DirectionTypeWest) {
+            if (match.capturedView(::BRecordLongitudeDirectionIndex) == ::DirectionTypeWest) {
                 longitude = -longitude;
             }
 
             // Pressure altitude
-            const QString &pressureAltitudeText = captures.at(::BRecordPressureAltitudeIndex);
+            const QStringView pressureAltitudeText = match.capturedView(::BRecordPressureAltitudeIndex);
             const double pressureAltitude = Convert::metersToFeet(pressureAltitudeText.toDouble());
 
             // GNSS altitude
-            const QString &gnssAltitudeText = captures.at(::BRecordGNSSAltitudeIndex);
+            const QStringView&gnssAltitudeText = match.capturedView(::BRecordGNSSAltitudeIndex);
             const double gnssAltitude = Convert::metersToFeet(gnssAltitudeText.toDouble());
 
             // Optional environmental noise level (ENL) addition

@@ -49,8 +49,6 @@ public:
     IGCParser() noexcept;
     ~IGCParser() noexcept;
 
-    typedef QByteArray ThreeLetterCode;
-
     // "H" record
     typedef struct
     {
@@ -121,7 +119,7 @@ public:
     const std::vector<Fix> &getFixes() const noexcept;
 
     // Environmental noise level
-    static inline const ThreeLetterCode EnvironmentalNoiseLevel {"ENL"};
+    static inline const QLatin1String EnvironmentalNoiseLevel {"ENL"};
 
 private:
     std::unique_ptr<IGCParserPrivate> d;
