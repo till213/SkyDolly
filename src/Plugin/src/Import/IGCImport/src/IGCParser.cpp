@@ -65,10 +65,10 @@ namespace
 
     // H (header) record
     constexpr char HRecordDatePattern[] = "^HFDTE(?:DATE:)?(\\d{2})(\\d{2})(\\d{2})(?:,?(\\d{2}))?";
-    constexpr char HRecordPilotPattern[] = "^H(\\w)PLT(?:.{0,}?:(.*)|(.*))\r\n";
-    constexpr char HRecordCoPilotPattern[] = "^H(\\w)CM2(?:.{0,}?:(.*)|(.*))\r\n";
-    constexpr char HRecordGliderTypePattern[] = "^H(\\w)GTY(?:.{0,}?:(.*)|(.*))\r\n";
-    constexpr char HRecordGliderIdPattern[] = "^H(\\w)GID(?:.{0,}?:(.*)|(.*))\r\n";
+    constexpr char HRecordPilotPattern[] = "^H(\\w)PLT(?:.{0,}?:(.*)|(.*))$";
+    constexpr char HRecordCoPilotPattern[] = "^H(\\w)CM2(?:.{0,}?:(.*)|(.*))$";
+    constexpr char HRecordGliderTypePattern[] = "^H(\\w)GTY(?:.{0,}?:(.*)|(.*))$";
+    constexpr char HRecordGliderIdPattern[] = "^H(\\w)GID(?:.{0,}?:(.*)|(.*))$";
 
     constexpr int HRecordDayIndex = 1;
     constexpr int HRecordMonthIndex = 2;
@@ -76,7 +76,7 @@ namespace
     constexpr int HRecordFlightNumberIndex = 4;
 
     // I (addition definition) record
-    constexpr char IRecordPattern[] = "^I(\\d{2})((?:\\d{4}[A-Z]{3})*)\r\n";
+    constexpr char IRecordPattern[] = "^I(\\d{2})((?:\\d{4}[A-Z]{3})*)$";
     constexpr int IRecordNofAdditionsIndex = 1;
     constexpr int IRecordAdditionsDefinitionsIndex = 2;
     // Length of addition definition [bytes]

@@ -125,14 +125,18 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
             positionData.altitude = fix.gnssAltitude;
             position.upsertLast(std::move(positionData));
 
+            // @todo IMPLEMENT ME!!!
             auto addition = fix.additions.find(IGCParser::EnvironmentalNoiseLevel);
             if (addition != fix.additions.end()) {
                 int noise = addition->second.toInt(&ok);
                 if (ok) {
-
-                    if (noise > noiseThreshold)
-
-                    qDebug("Noise: %d", noise);
+#ifdef DEBUG
+                    if (noise > noiseThreshold) {
+                        qDebug("IGCImportPlugin::readFile(: noise ABOVE threshold: %d", noise);
+                    } else {
+                        qDebug("IGCImportPlugin::readFile(: noise BELOW threshold: %d", noise);
+                    }
+#endif
                 }
             }
         }
