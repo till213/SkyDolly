@@ -115,6 +115,8 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         const Aircraft &aircraft = flight.getUserAircraft();
         Position &position = aircraft.getPosition();
+        int engineState = -1;
+        const int noiseThreshold = 200;
         for (const IGCParser::Fix &fix : d->igcParser.getFixes()) {
             PositionData positionData;
             positionData.timestamp = fix.timestamp;
@@ -122,6 +124,17 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
             positionData.longitude = fix.longitude;
             positionData.altitude = fix.gnssAltitude;
             position.upsertLast(std::move(positionData));
+
+            auto addition = fix.additions.find(IGCParser::EnvironmentalNoiseLevel);
+            if (addition != fix.additions.end()) {
+                int noise = addition->second.toInt(&ok);
+                if (ok) {
+
+                    if (noise > noiseThreshold)
+
+                    qDebug("Noise: %d", noise);
+                }
+            }
         }
 
         std::vector<IGCParser::TaskItem> tasks = d->igcParser.getTask().tasks;

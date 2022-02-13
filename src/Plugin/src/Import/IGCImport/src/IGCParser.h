@@ -132,6 +132,9 @@ public:
     const Task &getTask() const noexcept;
     const std::vector<Fix> &getFixes() const noexcept;
 
+    // Environmental noise level
+    static inline const ThreeLetterCode EnvironmentalNoiseLevel {"ENL"};
+
 private:
     std::unique_ptr<IGCParserPrivate> d;
 
