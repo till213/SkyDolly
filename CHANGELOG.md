@@ -14,7 +14,9 @@
 - IGC import plugin
   * The initial heading is now calculated on the "first significant movement", compensating GPS inaccuracies (when the glider is standing still on the ground)
   * Date and time of turn points (waypoints) defined by the task list ("C records") are now updated with the actual flight time, based on the closest flown position
-  
+- KML import plugin
+  * KML from flightradar24.com can now also be imported (new format drowdown list)
+
 ## 0.8.6
 
 ### New Features
