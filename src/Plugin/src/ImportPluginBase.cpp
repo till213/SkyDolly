@@ -113,7 +113,7 @@ bool ImportPluginBase::import(FlightService &flightService) noexcept
 #endif
             ok = importFile(selectedFilePath, flightService);
 #ifdef DEBUG
-            qDebug() << QFileInfo(selectedFilePath).fileName() << "import " << (ok ? "SUCCESS" : "FAIL") << " in " << timer.elapsed() << "milliseconds";
+            qDebug("%s import %s in %d ms", qPrintable(QFileInfo(selectedFilePath).fileName()), (ok ? "SUCCESS" : "FAIL"), timer.elapsed());
 #endif
             if (ok) {
                 if (d->addToCurrentFlight) {
