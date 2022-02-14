@@ -26,6 +26,7 @@
 #include <vector>
 #include <iterator>
 #include <cstdint>
+#include <inttypes.h>
 
 #include <QDateTime>
 #include <QString>
@@ -90,7 +91,7 @@ Flight::Flight(QObject *parent) noexcept
 Flight::~Flight() noexcept
 {
 #ifdef DEBUG
-    qDebug("Flight::~Flight:  DELETED, ID: %lld", d->id);
+    qDebug("Flight::~Flight:  DELETED, ID: %" PRId64, d->id);
 #endif
 }
 
