@@ -24,6 +24,7 @@
  */
 #include <memory>
 #include <cstdint>
+#include <inttypes.h>
 
 #include <QTimer>
 #include <QtGlobal>
@@ -222,7 +223,7 @@ void PathCreatorPlugin::onDestroyAIObjects() noexcept
 void PathCreatorPlugin::onDestroyAIObject(Aircraft &aircraft) noexcept
 {
 #ifdef DEBUG
-    qDebug("PathCreatorPlugin::onDestroyAIObject: aircraft ID: %lld", aircraft.getId());
+    qDebug("PathCreatorPlugin::onDestroyAIObject: aircraft ID: %" PRId64, aircraft.getId());
 #endif
 }
 

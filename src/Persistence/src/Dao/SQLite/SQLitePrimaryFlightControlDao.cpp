@@ -105,8 +105,8 @@ bool SQLitePrimaryFlightControlDao::add(int64_t aircraftId, const PrimaryFlightC
         ");"
     );
 
-    query.bindValue(":aircraft_id", aircraftId);
-    query.bindValue(":timestamp", primaryFlightControlData.timestamp);
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
+    query.bindValue(":timestamp", QVariant::fromValue(primaryFlightControlData.timestamp));
     query.bindValue(":rudder_position", primaryFlightControlData.rudderPosition);
     query.bindValue(":elevator_position", primaryFlightControlData.elevatorPosition);
     query.bindValue(":aileron_position", primaryFlightControlData.aileronPosition);
@@ -131,7 +131,7 @@ bool SQLitePrimaryFlightControlDao::getByAircraftId(int64_t aircraftId, std::ins
         "order by pfc.timestamp asc;"
     );
 
-    query.bindValue(":aircraft_id", aircraftId);
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     bool ok = query.exec();
     if (ok) {
         QSqlRecord record = query.record();
@@ -171,7 +171,7 @@ bool SQLitePrimaryFlightControlDao::deleteByFlightId(int64_t flightId) noexcept
         "                      );"
     );
 
-    query.bindValue(":flight_id", flightId);
+    query.bindValue(":flight_id", QVariant::fromValue(flightId));
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
@@ -190,7 +190,7 @@ bool SQLitePrimaryFlightControlDao::deleteByAircraftId(int64_t aircraftId) noexc
         "where  aircraft_id = :aircraft_id;"
     );
 
-    query.bindValue(":aircraft_id", aircraftId);
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {

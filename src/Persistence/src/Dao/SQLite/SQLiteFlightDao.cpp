@@ -173,7 +173,7 @@ bool SQLiteFlightDao::getFlightById(int64_t id, Flight &flight) const noexcept
         "where f.id = :id;"
     );
 
-    query.bindValue(":id", id);
+    query.bindValue(":id", QVariant::fromValue(id));
     bool ok = query.exec();
     if (ok) {
         flight.clear(false);
@@ -255,7 +255,7 @@ bool SQLiteFlightDao::deleteById(int64_t id) noexcept
 
     bool ok = d->aircraftDao->deleteAllByFlightId(id);
     if (ok) {
-        query.bindValue(":id", id);
+        query.bindValue(":id", QVariant::fromValue(id));
         ok = query.exec();
 #ifdef DEBUG
         if (!ok) {
@@ -276,7 +276,7 @@ bool SQLiteFlightDao::updateTitle(int64_t id, const QString &title) noexcept
     );
 
     query.bindValue(":title", title);
-    query.bindValue(":id", id);
+    query.bindValue(":id", QVariant::fromValue(id));
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
@@ -298,7 +298,7 @@ bool SQLiteFlightDao::updateTitleAndDescription(int64_t id, const QString &title
 
     query.bindValue(":title", title);
     query.bindValue(":description", description);
-    query.bindValue(":id", id);
+    query.bindValue(":id", QVariant::fromValue(id));
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
@@ -319,7 +319,7 @@ bool SQLiteFlightDao::updateUserAircraftIndex(int64_t id, int index) noexcept
 
     // Sequence number starts at 1
     query.bindValue(":user_aircraft_seq_nr", index + 1);
-    query.bindValue(":id", id);
+    query.bindValue(":id", QVariant::fromValue(id));
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {

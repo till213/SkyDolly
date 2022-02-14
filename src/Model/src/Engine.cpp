@@ -114,7 +114,7 @@ std::size_t Engine::count() const noexcept
 const EngineData &Engine::interpolate(int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const EngineData *p1, *p2;
-    const int64_t adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timeOffset, 0LL);
+    const int64_t adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timeOffset, int64_t(0));
 
     if (d->currentTimestamp != timestamp || d->currentAccess != access) {
 

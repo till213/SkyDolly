@@ -291,7 +291,7 @@ void LogbookWidget::updateFlightTable() noexcept
             if (summary.id == flightInMemoryId) {
                 newItem->setIcon(aircraftIcon);
             }
-            newItem->setData(Qt::DisplayRole, summary.id);
+            newItem->setData(Qt::DisplayRole, QVariant::fromValue(summary.id));
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
             newItem->setToolTip(tr("Double-click to load flight"));
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);

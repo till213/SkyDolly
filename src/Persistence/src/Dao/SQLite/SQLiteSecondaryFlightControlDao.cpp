@@ -111,8 +111,8 @@ bool SQLiteSecondaryFlightControlDao::add(int64_t aircraftId, const SecondaryFli
         ");"
     );
 
-    query.bindValue(":aircraft_id", aircraftId);
-    query.bindValue(":timestamp", secondaryFlightControlData.timestamp);
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
+    query.bindValue(":timestamp", QVariant::fromValue(secondaryFlightControlData.timestamp));
     query.bindValue(":leading_edge_flaps_left_percent", secondaryFlightControlData.leadingEdgeFlapsLeftPercent);
     query.bindValue(":leading_edge_flaps_right_percent", secondaryFlightControlData.leadingEdgeFlapsRightPercent);
     query.bindValue(":trailing_edge_flaps_left_percent", secondaryFlightControlData.trailingEdgeFlapsLeftPercent);
@@ -140,7 +140,7 @@ bool SQLiteSecondaryFlightControlDao::getByAircraftId(int64_t aircraftId, std::i
         "order by sfc.timestamp asc;"
     );
 
-    query.bindValue(":aircraft_id", aircraftId);
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     bool ok = query.exec();
     if (ok) {
         QSqlRecord record = query.record();
@@ -186,7 +186,7 @@ bool SQLiteSecondaryFlightControlDao::deleteByFlightId(int64_t flightId) noexcep
         "                      );"
     );
 
-    query.bindValue(":flight_id", flightId);
+    query.bindValue(":flight_id", QVariant::fromValue(flightId));
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
@@ -205,7 +205,7 @@ bool SQLiteSecondaryFlightControlDao::deleteByAircraftId(int64_t aircraftId) noe
         "where  aircraft_id = :aircraft_id;"
     );
 
-    query.bindValue(":aircraft_id", aircraftId);
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {

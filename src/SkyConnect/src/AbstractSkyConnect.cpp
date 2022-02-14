@@ -308,7 +308,7 @@ void AbstractSkyConnect::skipToBegin() noexcept
 void AbstractSkyConnect::skipBackward() noexcept
 {
     int64_t skipMSec = getSkipInterval();
-    const int64_t newTimeStamp = qMax(getCurrentTimestamp() - skipMSec, 0ll);
+    const int64_t newTimeStamp = qMax(getCurrentTimestamp() - skipMSec, int64_t(0));
     seek(newTimeStamp);
 }
 
@@ -409,7 +409,7 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
     double samplesPerSecond;
     const Position &position = d->currentFlight.getUserAircraftConst().getPosition();
     if (position.count() > 0) {
-        const int64_t startTimestamp = qMin(qMax(d->currentTimestamp - SamplesPerSecondPeriodMSec, 0ll), position.getLast().timestamp);
+        const int64_t startTimestamp = qMin(qMax(d->currentTimestamp - SamplesPerSecondPeriodMSec, int64_t(0)), position.getLast().timestamp);
         int index = d->lastSamplesPerSecondIndex;
 
         while (position[index].timestamp < startTimestamp) {

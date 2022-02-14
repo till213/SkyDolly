@@ -134,12 +134,12 @@ bool SQLiteAircraftDao::add(int64_t flightId, int sequenceNumber, Aircraft &airc
     d->aircraftTypeDao->upsert(aircraftType);
 
     const AircraftInfo &info = aircraft.getAircraftInfoConst();
-    query.bindValue(":flight_id", flightId);
+    query.bindValue(":flight_id", QVariant::fromValue(flightId));
     query.bindValue(":seq_nr", sequenceNumber);
     query.bindValue(":type", aircraftType.type);
     query.bindValue(":start_date", info.startDate.toUTC());
     query.bindValue(":end_date", info.endDate.toUTC());
-    query.bindValue(":time_offset", info.timeOffset);
+    query.bindValue(":time_offset", QVariant::fromValue(info.timeOffset));
     query.bindValue(":tail_number", info.tailNumber);
     query.bindValue(":airline", info.airline);
     query.bindValue(":flight_number", info.flightNumber);
@@ -258,7 +258,7 @@ bool SQLiteAircraftDao::adjustAircraftSequenceNumbersByFlightId(int64_t flightId
         "and   seq_nr    > :seq_nr;"
     );
 
-    query.bindValue(":flight_id", flightId);
+    query.bindValue(":flight_id", QVariant::fromValue(flightId));
     query.bindValue(":seq_nr", sequenceNumber);
     bool ok = query.exec();
 #ifdef DEBUG
@@ -298,7 +298,7 @@ bool SQLiteAircraftDao::deleteAllByFlightId(int64_t flightId) noexcept
             "from   aircraft "
             "where  flight_id = :flight_id;"
         );
-        query.bindValue(":flight_id", flightId);
+        query.bindValue(":flight_id", QVariant::fromValue(flightId));
         ok = query.exec();
 #ifdef DEBUG
         if (!ok) {
@@ -340,7 +340,7 @@ bool SQLiteAircraftDao::deleteById(int64_t id) noexcept
             "from   aircraft "
             "where  id = :id;"
         );
-        query.bindValue(":id", id);
+        query.bindValue(":id", QVariant::fromValue(id));
         ok = query.exec();
 #ifdef DEBUG
         if (!ok) {
@@ -363,7 +363,7 @@ bool SQLiteAircraftDao::getAircraftInfosByFlightId(int64_t flightId, std::vector
         "order by a.seq_nr;"
     );
 
-    query.bindValue(":flight_id", flightId);
+    query.bindValue(":flight_id", QVariant::fromValue(flightId));
     bool ok = query.exec();
     if (ok) {
         aircraftInfos.clear();
@@ -421,8 +421,8 @@ bool SQLiteAircraftDao::updateTimeOffset(int64_t id, int64_t timeOffset) noexcep
         "where  id = :id;"
     );
 
-    query.bindValue(":time_offset", timeOffset);
-    query.bindValue(":id", id);
+    query.bindValue(":time_offset", QVariant::fromValue(timeOffset));
+    query.bindValue(":id", QVariant::fromValue(id));
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
@@ -442,7 +442,7 @@ bool SQLiteAircraftDao::updateTailNumber(int64_t id, const QString &tailNumber) 
     );
 
     query.bindValue(":tail_number", tailNumber);
-    query.bindValue(":id", id);
+    query.bindValue(":id", QVariant::fromValue(id));
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {

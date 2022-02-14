@@ -24,6 +24,7 @@
  */
 #include <memory>
 #include <cstdint>
+#include <inttypes.h>
 
 #include <QObject>
 
@@ -80,8 +81,9 @@ Aircraft::Aircraft(QObject *parent) noexcept
 
 Aircraft::~Aircraft() noexcept
 {
+    // https://stackoverflow.com/questions/31534474/format-lld-expects-type-long-long-int-but-argument-4-has-type-int64-t
 #ifdef DEBUG
-    qDebug("Aircraft::~Aircraft: DELETED, ID: %lld", d->id);
+    qDebug("Aircraft::~Aircraft: DELETED, ID: %" PRId64, d->id);
 #endif
 }
 
@@ -217,7 +219,7 @@ int64_t Aircraft::getDurationMSec() const noexcept
         // is "ahead" of its "schedule" (sampled data). The more ahead the aircraft
         // is, the less the duration -> subtract the offset
         if (d->position.count() > 0) {
-            d->duration = qMax(d->position.getLast().timestamp - timeOffset, 0LL);
+            d->duration = qMax(d->position.getLast().timestamp - timeOffset, int64_t(0));
         }
         if (d->engine.count() > 0) {
             d->duration = qMax(d->engine.getLast().timestamp - timeOffset, d->duration);

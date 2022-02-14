@@ -111,10 +111,10 @@ bool SQLiteWaypointDao::add(int64_t aircraftId, const FlightPlan &flightPlan)  n
         ");"
     );
 
-    query.bindValue(":aircraft_id", aircraftId);
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     bool ok = true;
     for (const Waypoint &waypoint : flightPlan) {
-        query.bindValue(":timestamp", waypoint.timestamp);
+        query.bindValue(":timestamp", QVariant::fromValue(waypoint.timestamp));
         query.bindValue(":ident", waypoint.identifier);
         query.bindValue(":latitude", waypoint.latitude);
         query.bindValue(":longitude", waypoint.longitude);
@@ -146,7 +146,7 @@ bool SQLiteWaypointDao::getByAircraftId(int64_t aircraftId, FlightPlan &flightPl
         "order by w.timestamp asc;"
     );
 
-    query.bindValue(":aircraft_id", aircraftId);
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     bool ok = query.exec();
     if (ok) {
         flightPlan.clear();
@@ -190,7 +190,7 @@ bool SQLiteWaypointDao::deleteByFlightId(int64_t flightId) noexcept
         "                      );"
     );
 
-    query.bindValue(":flight_id", flightId);
+    query.bindValue(":flight_id", QVariant::fromValue(flightId));
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
@@ -209,7 +209,7 @@ bool SQLiteWaypointDao::deleteByAircraftId(int64_t aircraftId) noexcept
         "where  aircraft_id = :aircraft_id;"
     );
 
-    query.bindValue(":aircraft_id", aircraftId);
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {

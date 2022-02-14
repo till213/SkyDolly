@@ -122,8 +122,8 @@ bool SQLitePositionDao::add(int64_t aircraftId, const PositionData &position)  n
         " :rotation_velocity_z"
         ");"
     );
-    query.bindValue(":aircraft_id", aircraftId);
-    query.bindValue(":timestamp", position.timestamp);
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
+    query.bindValue(":timestamp", QVariant::fromValue(position.timestamp));
     query.bindValue(":latitude", position.latitude);
     query.bindValue(":longitude", position.longitude);
     query.bindValue(":altitude", position.altitude);
@@ -158,7 +158,7 @@ bool SQLitePositionDao::getByAircraftId(int64_t aircraftId, std::insert_iterator
         "order by p.timestamp asc;"
     );
 
-    query.bindValue(":aircraft_id", aircraftId);
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     bool ok = query.exec();
     if (ok) {
         QSqlRecord record = query.record();
@@ -216,7 +216,7 @@ bool SQLitePositionDao::deleteByFlightId(int64_t flightId) noexcept
         "                      );"
     );
 
-    query.bindValue(":flight_id", flightId);
+    query.bindValue(":flight_id", QVariant::fromValue(flightId));
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
@@ -235,7 +235,7 @@ bool SQLitePositionDao::deleteByAircraftId(int64_t aircraftId) noexcept
         "where  aircraft_id = :aircraft_id;"
     );
 
-    query.bindValue(":aircraft_id", aircraftId);
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
