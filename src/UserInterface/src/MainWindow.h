@@ -26,6 +26,7 @@
 #define MAINWINDOW_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QMainWindow>
 
@@ -90,7 +91,7 @@ private slots:
     void on_timestampTimeEdit_timeChanged(const QTime &time) noexcept;
 
     void updateWindowSize() noexcept;
-    void handleTimestampChanged(qint64 timestamp) noexcept;
+    void handleTimestampChanged(int64_t timestamp) noexcept;
     void handleReplaySpeedSelected(QAction *action) noexcept;
     void handleCustomSpeedChanged() noexcept;
     void handleReplaySpeedUnitSelected(int index) noexcept;

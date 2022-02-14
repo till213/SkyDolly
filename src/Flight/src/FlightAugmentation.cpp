@@ -22,9 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-
 #include <utility>
 #include <algorithm>
+#include <cstdint>
 
 #include "../../Kernel/src/Convert.h"
 #include "../../Kernel/src/SkyMath.h"
@@ -81,9 +81,9 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
             PositionData &startPositionData = position[i];
             const PositionData &endPositionData = position[i + 1];
             const SkyMath::Coordinate startPosition(startPositionData.latitude, startPositionData.longitude);
-            const qint64 startTimestamp = startPositionData.timestamp;
+            const int64_t startTimestamp = startPositionData.timestamp;
             const SkyMath::Coordinate endPosition(endPositionData.latitude, endPositionData.longitude);
-            const qint64 endTimestamp = endPositionData.timestamp;
+            const int64_t endTimestamp = endPositionData.timestamp;
             const double averageAltitude = Convert::feetToMeters((startPositionData.altitude + endPositionData.altitude) / 2.0);
 
             const auto [distance, velocity] = SkyMath::distanceAndVelocity(startPosition, startTimestamp, endPosition, endTimestamp, averageAltitude);
@@ -160,7 +160,7 @@ void FlightAugmentation::augmentProcedures(Aircraft &aircraft) noexcept
 
 void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
 {
-    const qint64 lastTimestamp = aircraft.getPosition().getLast().timestamp;
+    const int64_t lastTimestamp = aircraft.getPosition().getLast().timestamp;
 
     // Engine
 
@@ -335,7 +335,7 @@ void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
 void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
 {
     Position &position = aircraft.getPosition();
-    const qint64 lastTimestamp = position.getLast().timestamp;
+    const int64_t lastTimestamp = position.getLast().timestamp;
 
     // Engine
 

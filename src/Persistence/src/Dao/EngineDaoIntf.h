@@ -27,6 +27,7 @@
 
 #include <vector>
 #include <iterator>
+#include <cstdint>
 
 #include <QtGlobal>
 
@@ -46,10 +47,10 @@ public:
      *        the EngineData to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool add(qint64 aircraftId, const EngineData &data) noexcept = 0;
-    virtual bool getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<EngineData>> insertIterator) const noexcept = 0;
-    virtual bool deleteByFlightId(qint64 flightId) noexcept = 0;
-    virtual bool deleteByAircraftId(qint64 aircraftId) noexcept = 0;
+    virtual bool add(int64_t aircraftId, const EngineData &data) noexcept = 0;
+    virtual bool getByAircraftId(int64_t aircraftId, std::insert_iterator<std::vector<EngineData>> insertIterator) const noexcept = 0;
+    virtual bool deleteByFlightId(int64_t flightId) noexcept = 0;
+    virtual bool deleteByAircraftId(int64_t aircraftId) noexcept = 0;
 };
 
 

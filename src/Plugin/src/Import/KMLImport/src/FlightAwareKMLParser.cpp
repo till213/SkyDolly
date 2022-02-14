@@ -22,9 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "FlightAwareKMLParser.h"
-
 #include <memory>
+#include <cstdint>
 
 #include <QString>
 #include <QStringLiteral>
@@ -41,6 +40,7 @@
 #include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/Waypoint.h"
+#include "FlightAwareKMLParser.h"
 
 class FlightAwareKMLParserPrivate
 {
@@ -52,7 +52,7 @@ public:
 
     QXmlStreamReader &xml;
     QString flightNumber;
-    qint64 currentWaypointTimestamp;
+    int64_t currentWaypointTimestamp;
     QDateTime firstDateTimeUtc;
     QDateTime currentDateTimeUtc;
 };
@@ -167,7 +167,7 @@ void FlightAwareKMLParser::parseWaypoint(const QString &icaoOrName) noexcept
 void FlightAwareKMLParser::parseTrack() noexcept
 {
     // Timestamp (msec), latitude (degrees), longitude (degrees), altitude (feet)
-    typedef std::tuple<qint64, double, double, double> TrackItem;
+    typedef std::tuple<int64_t, double, double, double> TrackItem;
     // The track data may contain data with identical timestamps, so we first read
     // all track data into this vector and only then "upsert" the position data
     std::vector<TrackItem> trackData;
@@ -188,7 +188,7 @@ void FlightAwareKMLParser::parseTrack() noexcept
                 d->currentDateTimeUtc = QDateTime::fromString(dateTimeText, Qt::ISODate);
             }
             if (d->currentDateTimeUtc.isValid()) {
-                const qint64 timestamp = d->firstDateTimeUtc.msecsTo(d->currentDateTimeUtc);
+                const int64_t timestamp = d->firstDateTimeUtc.msecsTo(d->currentDateTimeUtc);
                 TrackItem trackItem = std::make_tuple(timestamp, 0.0, 0.0, 0.0);
                 trackData.push_back(std::move(trackItem));
             } else {

@@ -25,6 +25,7 @@
 #include <memory>
 #include <vector>
 #include <iterator>
+#include <cstdint>
 
 #include <QString>
 #include <QSqlQuery>
@@ -139,7 +140,7 @@ bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
     query.bindValue(":end_zulu_sim_time", flightCondition.endZuluTime);
     bool ok = query.exec();
     if (ok) {
-        qint64 id = query.lastInsertId().toLongLong(&ok);
+        int64_t id = query.lastInsertId().toLongLong(&ok);
         flight.setId(id);
 #ifdef DEBUG
     } else {
@@ -162,7 +163,7 @@ bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
     return ok;
 }
 
-bool SQLiteFlightDao::getFlightById(qint64 id, Flight &flight) const noexcept
+bool SQLiteFlightDao::getFlightById(int64_t id, Flight &flight) const noexcept
 {
     QSqlQuery query;
     query.setForwardOnly(true);
@@ -243,7 +244,7 @@ bool SQLiteFlightDao::getFlightById(qint64 id, Flight &flight) const noexcept
     return ok;
 }
 
-bool SQLiteFlightDao::deleteById(qint64 id) noexcept
+bool SQLiteFlightDao::deleteById(int64_t id) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -265,7 +266,7 @@ bool SQLiteFlightDao::deleteById(qint64 id) noexcept
     return ok;
 }
 
-bool SQLiteFlightDao::updateTitle(qint64 id, const QString &title) noexcept
+bool SQLiteFlightDao::updateTitle(int64_t id, const QString &title) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -285,7 +286,7 @@ bool SQLiteFlightDao::updateTitle(qint64 id, const QString &title) noexcept
     return ok;
 }
 
-bool SQLiteFlightDao::updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept
+bool SQLiteFlightDao::updateTitleAndDescription(int64_t id, const QString &title, const QString &description) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -307,7 +308,7 @@ bool SQLiteFlightDao::updateTitleAndDescription(qint64 id, const QString &title,
     return ok;
 }
 
-bool SQLiteFlightDao::updateUserAircraftIndex(qint64 id, int index) noexcept
+bool SQLiteFlightDao::updateUserAircraftIndex(int64_t id, int index) noexcept
 {
     QSqlQuery query;
     query.prepare(

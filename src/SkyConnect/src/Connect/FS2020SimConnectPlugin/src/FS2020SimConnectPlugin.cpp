@@ -24,12 +24,12 @@
  */
 #include <memory>
 #include <unordered_map>
+#include <cstdint>
 
 #include <windows.h>
 #include <SimConnect.h>
 
 #include <QTimer>
-#include <QtGlobal>
 #include <QApplication>
 #include <QWidget>
 #include <QDateTime>
@@ -264,7 +264,7 @@ void FS2020SimConnectPlugin::onStopRecording() noexcept
     flight.setFlightCondition(condition);
 }
 
-bool FS2020SimConnectPlugin::onStartReplay(qint64 currentTimestamp) noexcept
+bool FS2020SimConnectPlugin::onStartReplay(int64_t currentTimestamp) noexcept
 {
     d->engineState = EngineState::Unknown;
 
@@ -287,7 +287,7 @@ void FS2020SimConnectPlugin::onStopReplay() noexcept
     ::SimConnect_UnsubscribeFromSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::Frame));
 }
 
-void FS2020SimConnectPlugin::onSeek(qint64 currentTimestamp) noexcept
+void FS2020SimConnectPlugin::onSeek(int64_t currentTimestamp) noexcept
 {
     d->engineState = EngineState::Unknown;
 };
@@ -297,7 +297,7 @@ void FS2020SimConnectPlugin::onRecordingSampleRateChanged(SampleRate::SampleRate
      updateRecordingFrequency(sampleRate);
 }
 
-bool FS2020SimConnectPlugin::sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept
+bool FS2020SimConnectPlugin::sendAircraftData(int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept
 {
     const Flight &flight = getCurrentFlight();
     const Aircraft &userAircraft = flight.getUserAircraftConst();
@@ -318,7 +318,7 @@ bool FS2020SimConnectPlugin::sendAircraftData(qint64 currentTimestamp, TimeVaria
 
         if (getState() != Connect::State::Recording || !isUserAircraft) {
 
-            const qint64 objectId = aircraft->getSimulationObjectId();
+            const int64_t objectId = aircraft->getSimulationObjectId();
             if (objectId != Aircraft::InvalidSimulationId && objectId != Aircraft::PendingSimulationId) {
 
                 ok = true;
@@ -414,7 +414,7 @@ bool FS2020SimConnectPlugin::sendAircraftData(qint64 currentTimestamp, TimeVaria
     return ok;
 }
 
-inline bool FS2020SimConnectPlugin::updateAndSendEngineStartEvent(qint64 objectId, const EngineData &engineData, TimeVariableData::Access access) noexcept
+inline bool FS2020SimConnectPlugin::updateAndSendEngineStartEvent(int64_t objectId, const EngineData &engineData, TimeVariableData::Access access) noexcept
 {
     HRESULT res = S_OK;
 
@@ -676,7 +676,7 @@ bool FS2020SimConnectPlugin::setAircraftFrozen(::SIMCONNECT_OBJECT_ID objectId, 
 
 void FS2020SimConnectPlugin::replay() noexcept
 {
-    const qint64 currentTimestamp = getCurrentTimestamp();
+    const int64_t currentTimestamp = getCurrentTimestamp();
     if (currentTimestamp <= getCurrentFlight().getTotalDurationMSec()) {
         if (!sendAircraftData(currentTimestamp, TimeVariableData::Access::Linear, AircraftSelection::All)) {
             // Connection error
@@ -935,7 +935,7 @@ void CALLBACK FS2020SimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, 
                         // No simulation time received yet: set flag for pending update
                         skyConnect->d->pendingWaypointTime = true;
                     }
-                    const qint64 currentTimeStamp = skyConnect->getCurrentTimestamp();
+                    const int64_t currentTimeStamp = skyConnect->getCurrentTimestamp();
                     waypoint.timestamp = currentTimeStamp;
                     skyConnect->d->flightPlan[waypoint.identifier] = waypoint;
                     waypoint = simConnectFlightPlan->toNextWaypoint();
@@ -977,7 +977,7 @@ void CALLBACK FS2020SimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, 
         if (state == Connect::State::Replay) {
             skyConnect->replay();
         } else if (state == Connect::State::Recording) {
-            const qint64 currentTimeStamp = skyConnect->getCurrentTimestamp();
+            const int64_t currentTimeStamp = skyConnect->getCurrentTimestamp();
             if (!skyConnect->sendAircraftData(currentTimeStamp, TimeVariableData::Access::Linear, AircraftSelection::All)) {
                 // Connection error
                 skyConnect->stopRecording();

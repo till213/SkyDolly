@@ -26,6 +26,7 @@
 #define FORMATIONWIDGET_H
 
 #include <memory>
+#include <cstdint>
 
 class QShowEvent;
 class QHideEvent;
@@ -78,8 +79,8 @@ private:
     void frenchConnection() noexcept;
     void updateInitialPositionUi() noexcept;
 
-    InitialPosition calculateRelativeInitialPositionToUserAircraft(qint64 timestamp) const noexcept;
-    PositionData calculateRelativePositionToUserAircraft(qint64 timestamp) const noexcept;
+    InitialPosition calculateRelativeInitialPositionToUserAircraft(int64_t timestamp) const noexcept;
+    PositionData calculateRelativePositionToUserAircraft(int64_t timestamp) const noexcept;
 
     static const QString getName();
 

@@ -25,7 +25,7 @@
 #ifndef FLIGHTDAOINTF_H
 #define FLIGHTDAOINTF_H
 
-#include <QtGlobal>
+#include <cstdint>
 
 class QString;
 
@@ -44,11 +44,11 @@ public:
      * \return \c true on success; \c false else
      */
     virtual bool addFlight(Flight &flight) noexcept = 0;
-    virtual bool getFlightById(qint64 id, Flight &flight) const noexcept = 0;
-    virtual bool deleteById(qint64 id) noexcept = 0;
-    virtual bool updateTitle(qint64 id, const QString &title) noexcept = 0;
-    virtual bool updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept = 0;
-    virtual bool updateUserAircraftIndex(qint64 id, int index) noexcept = 0;
+    virtual bool getFlightById(int64_t id, Flight &flight) const noexcept = 0;
+    virtual bool deleteById(int64_t id) noexcept = 0;
+    virtual bool updateTitle(int64_t id, const QString &title) noexcept = 0;
+    virtual bool updateTitleAndDescription(int64_t id, const QString &title, const QString &description) noexcept = 0;
+    virtual bool updateUserAircraftIndex(int64_t id, int index) noexcept = 0;
 };
 
 #endif // FLIGHTDAOINTF_H

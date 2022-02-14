@@ -27,6 +27,7 @@
 
 #include <memory>
 #include <utility>
+#include <cstdint>
 
 #include <QDialog>
 
@@ -58,7 +59,7 @@ private:
     void updateFlightUi() noexcept;
     void frenchConnection() noexcept;
 
-    qint64 estimateNofSamplePoints() noexcept;
+    int64_t estimateNofSamplePoints() noexcept;
 
 private slots:
     void updateUi() noexcept;

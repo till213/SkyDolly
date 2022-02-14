@@ -27,6 +27,7 @@
 
 #include <memory>
 #include <forward_list>
+#include <cstdint>
 
 #include <QWidget>
 
@@ -57,7 +58,7 @@ public:
     explicit LogbookWidget(DatabaseService &databaseService, FlightService &flightService, QWidget *parent = nullptr) noexcept;
     virtual ~LogbookWidget() noexcept;
 
-    qint64 getSelectedFlightId() const noexcept;
+    int64_t getSelectedFlightId() const noexcept;
 
     virtual Module::Module getModuleId() const noexcept override;
     virtual const QString getModuleName() const noexcept override;

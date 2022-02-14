@@ -22,9 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "FlightRadar24KMLParser.h"
-
 #include <memory>
+#include <cstdint>
 
 #include <QString>
 #include <QStringLiteral>
@@ -42,12 +41,13 @@
 #include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/Waypoint.h"
+#include "FlightRadar24KMLParser.h"
 
 class FlightRadar24KMLParserPrivate
 {
 public:
     typedef struct {
-        qint64 timestamp;
+        int64_t timestamp;
         double latitude;
         double longitude;
         double altitude;
@@ -66,7 +66,7 @@ public:
 
     QXmlStreamReader &xml;
     QString flightNumber;
-    qint64 currentWaypointTimestamp;
+    int64_t currentWaypointTimestamp;
     QDateTime firstDateTimeUtc;
     QDateTime currentDateTimeUtc;
 

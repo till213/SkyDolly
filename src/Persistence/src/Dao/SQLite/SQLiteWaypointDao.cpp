@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <cstdint>
 
 #include <QString>
 #include <QSqlQuery>
@@ -85,7 +86,7 @@ SQLiteWaypointDao::SQLiteWaypointDao() noexcept
 SQLiteWaypointDao::~SQLiteWaypointDao() noexcept
 {}
 
-bool SQLiteWaypointDao::add(qint64 aircraftId, const FlightPlan &flightPlan)  noexcept
+bool SQLiteWaypointDao::add(int64_t aircraftId, const FlightPlan &flightPlan)  noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -134,7 +135,7 @@ bool SQLiteWaypointDao::add(qint64 aircraftId, const FlightPlan &flightPlan)  no
     return ok;
 }
 
-bool SQLiteWaypointDao::getByAircraftId(qint64 aircraftId, FlightPlan &flightPlan) const noexcept
+bool SQLiteWaypointDao::getByAircraftId(int64_t aircraftId, FlightPlan &flightPlan) const noexcept
 {
     QSqlQuery query;
     query.setForwardOnly(true);
@@ -177,7 +178,7 @@ bool SQLiteWaypointDao::getByAircraftId(qint64 aircraftId, FlightPlan &flightPla
     return ok;
 }
 
-bool SQLiteWaypointDao::deleteByFlightId(qint64 flightId) noexcept
+bool SQLiteWaypointDao::deleteByFlightId(int64_t flightId) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -199,7 +200,7 @@ bool SQLiteWaypointDao::deleteByFlightId(qint64 flightId) noexcept
     return ok;
 }
 
-bool SQLiteWaypointDao::deleteByAircraftId(qint64 aircraftId) noexcept
+bool SQLiteWaypointDao::deleteByAircraftId(int64_t aircraftId) noexcept
 {
     QSqlQuery query;
     query.prepare(

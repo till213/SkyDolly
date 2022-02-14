@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <cstdint>
 
 #include <QIODevice>
 // Implements the % operator for string concatenation
@@ -238,8 +239,8 @@ inline bool CSVImportPlugin::importPositionData(const QList<QByteArray> &headers
 {
     PositionData data;
     int columnIndex = 0;
-    qint64 timestamp;
-    qint64 timestampDelta = 0;
+    int64_t timestamp;
+    int64_t timestampDelta = 0;
     bool ok = false;
     for (const QByteArray &header : headers) {
 
@@ -349,8 +350,8 @@ inline bool CSVImportPlugin::importEngineData(const QList<QByteArray> &headers, 
 {
     EngineData data;
     int columnIndex = 0;
-    qint64 timestamp;
-    qint64 timestampDelta = 0;
+    int64_t timestamp;
+    int64_t timestampDelta = 0;
     bool ok = false;
     for (const QByteArray &header : headers) {
 
@@ -538,8 +539,8 @@ inline bool CSVImportPlugin::importPrimaryFlightControlData(const QList<QByteArr
 {
     PrimaryFlightControlData data;
     int columnIndex = 0;
-    qint64 timestamp;
-    qint64 timestampDelta = 0;
+    int64_t timestamp;
+    int64_t timestampDelta = 0;
     bool ok = false;
     for (const QByteArray &header : headers) {
 
@@ -602,8 +603,8 @@ inline bool CSVImportPlugin::importSecondaryFlightControlData(const QList<QByteA
 {
     SecondaryFlightControlData data;
     int columnIndex = 0;
-    qint64 timestamp;
-    qint64 timestampDelta = 0;
+    int64_t timestamp;
+    int64_t timestampDelta = 0;
     bool ok = false;
     for (const QByteArray &header : headers) {
 
@@ -681,7 +682,7 @@ inline bool CSVImportPlugin::importAircraftHandleData(const QList<QByteArray> &h
 {
     AircraftHandleData data;
     int columnIndex = 0;
-    qint64 timestampDelta = 0;
+    int64_t timestampDelta = 0;
     bool ok = false;
     for (const QByteArray &header : headers) {
 
@@ -763,8 +764,8 @@ inline bool CSVImportPlugin::importLightData(const QList<QByteArray> &headers, c
 {
     LightData data;
     int columnIndex = 0;
-    qint64 timestamp;
-    qint64 timestampDelta = 0;
+    int64_t timestamp;
+    int64_t timestampDelta = 0;
     bool ok = false;
     for (const QByteArray &header : headers) {
 
@@ -813,7 +814,7 @@ inline bool CSVImportPlugin::importLightData(const QList<QByteArray> &headers, c
     return ok;
 }
 
-inline bool CSVImportPlugin::importTimestamp(const QList<QByteArray> &values, int columnIndex, bool firstRow, qint64 &timestamp, qint64 &timestampDelta)
+inline bool CSVImportPlugin::importTimestamp(const QList<QByteArray> &values, int columnIndex, bool firstRow, int64_t &timestamp, int64_t &timestampDelta)
 {
     bool ok;
     timestamp = values.at(columnIndex).toLongLong(&ok);

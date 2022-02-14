@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <cstdint>
+
 #include <QString>
 
 #include "AircraftType.h"
@@ -29,7 +31,7 @@
 
 // PUBLIC
 
-AircraftInfo::AircraftInfo(qint64 theAircraftId) noexcept
+AircraftInfo::AircraftInfo(int64_t theAircraftId) noexcept
 {
     clear();
     aircraftId = theAircraftId;

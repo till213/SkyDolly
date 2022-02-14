@@ -23,9 +23,9 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <cstdint>
 
 #include <QObject>
-#include <QVector>
 
 #include "TimeVariableData.h"
 #include "SkySearch.h"
@@ -55,8 +55,8 @@ public:
           duration(TimeVariableData::InvalidTime)
     {}
 
-    qint64 id;
-    qint64 simulationObjectId;
+    int64_t id;
+    int64_t simulationObjectId;
     AircraftInfo aircraftInfo;
     Position position{aircraftInfo};
     Engine engine{aircraftInfo};
@@ -66,7 +66,7 @@ public:
     Light light{aircraftInfo};
     FlightPlan flightPlan;
 
-    mutable qint64 duration;
+    mutable int64_t duration;
 };
 
 // PUBLIC
@@ -85,23 +85,23 @@ Aircraft::~Aircraft() noexcept
 #endif
 }
 
-qint64 Aircraft::getId() const noexcept
+int64_t Aircraft::getId() const noexcept
 {
     return d->id;
 }
 
-void Aircraft::setId(qint64 id) noexcept
+void Aircraft::setId(int64_t id) noexcept
 {
     d->id = id;
     d->aircraftInfo.aircraftId = id;
 }
 
-qint64 Aircraft::getSimulationObjectId() const noexcept
+int64_t Aircraft::getSimulationObjectId() const noexcept
 {
     return d->simulationObjectId;
 }
 
-void Aircraft::setSimulationObjectId(qint64 id) noexcept
+void Aircraft::setSimulationObjectId(int64_t id) noexcept
 {
     d->simulationObjectId = id;
 }
@@ -186,12 +186,12 @@ void Aircraft::setTailNumber(const QString &tailNumber) noexcept {
     }
 }
 
-qint64 Aircraft::getTimeOffset() const noexcept
+int64_t Aircraft::getTimeOffset() const noexcept
 {
     return d->aircraftInfo.timeOffset;
 }
 
-void Aircraft::setTimeOffset(qint64 timeOffset) noexcept {
+void Aircraft::setTimeOffset(int64_t timeOffset) noexcept {
     if (d->aircraftInfo.timeOffset != timeOffset) {
         d->aircraftInfo.timeOffset = timeOffset;
         emit timeOffsetChanged(*this);
@@ -208,9 +208,9 @@ FlightPlan &Aircraft::getFlightPlan() const noexcept
     return d->flightPlan;
 }
 
-qint64 Aircraft::getDurationMSec() const noexcept
+int64_t Aircraft::getDurationMSec() const noexcept
 {
-    const qint64 timeOffset = d->aircraftInfo.timeOffset;
+    const int64_t timeOffset = d->aircraftInfo.timeOffset;
     if (d->duration == TimeVariableData::InvalidTime) {
         d->duration = 0;
         // The timestamp offset indicates the time difference the given aircraft

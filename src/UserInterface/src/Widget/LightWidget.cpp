@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <cstdint>
 
 #include <QString>
 #include <QDialog>
@@ -108,7 +109,7 @@ void LightWidget::initUi() noexcept
     ui->cabinCheckBox->setFocusPolicy(Qt::NoFocus);
 }
 
-const LightData &LightWidget::getCurrentLightData(qint64 timestamp, TimeVariableData::Access access) const noexcept
+const LightData &LightWidget::getCurrentLightData(int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -130,7 +131,7 @@ const LightData &LightWidget::getCurrentLightData(qint64 timestamp, TimeVariable
 
 // PRIVATE SLOTS
 
-void LightWidget::updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept
+void LightWidget::updateUi(int64_t timestamp, TimeVariableData::Access access) noexcept
 {
     const LightData &lightData = getCurrentLightData(timestamp, access);
     QString colorName;

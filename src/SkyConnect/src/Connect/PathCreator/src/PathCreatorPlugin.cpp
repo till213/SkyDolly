@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <cstdint>
 
 #include <QTimer>
 #include <QtGlobal>
@@ -149,7 +150,7 @@ void PathCreatorPlugin::onStopRecording() noexcept
     }
 }
 
-bool PathCreatorPlugin::onStartReplay([[maybe_unused]] qint64 currentTimestamp) noexcept {
+bool PathCreatorPlugin::onStartReplay([[maybe_unused]] int64_t currentTimestamp) noexcept {
     d->replayTimer.start(ReplayPeriod);
     return true;
 }
@@ -168,13 +169,13 @@ void PathCreatorPlugin::onStopReplay() noexcept
     d->replayTimer.stop();
 }
 
-void PathCreatorPlugin::onSeek([[maybe_unused]] qint64 currentTimestamp) noexcept
+void PathCreatorPlugin::onSeek([[maybe_unused]] int64_t currentTimestamp) noexcept
 {}
 
 void PathCreatorPlugin::onRecordingSampleRateChanged([[maybe_unused]] SampleRate::SampleRate sampleRate) noexcept
 {}
 
-bool PathCreatorPlugin::sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access, [[maybe_unused]] AircraftSelection aircraftSelection) noexcept
+bool PathCreatorPlugin::sendAircraftData(int64_t currentTimestamp, TimeVariableData::Access access, [[maybe_unused]] AircraftSelection aircraftSelection) noexcept
 {
     bool dataAvailable;
     if (currentTimestamp <= getCurrentFlight().getTotalDurationMSec()) {
@@ -229,7 +230,7 @@ void PathCreatorPlugin::onDestroyAIObject(Aircraft &aircraft) noexcept
 
 void PathCreatorPlugin::recordData() noexcept
 {
-    const qint64 timestamp = updateCurrentTimestamp();
+    const int64_t timestamp = updateCurrentTimestamp();
 
     recordPositionData(timestamp);
     recordEngineData(timestamp);
@@ -254,7 +255,7 @@ void PathCreatorPlugin::frenchConnection() noexcept
             this, &PathCreatorPlugin::replay);
 }
 
-void PathCreatorPlugin::recordPositionData(qint64 timestamp) noexcept
+void PathCreatorPlugin::recordPositionData(int64_t timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -277,7 +278,7 @@ void PathCreatorPlugin::recordPositionData(qint64 timestamp) noexcept
     aircraft.getPosition().upsertLast(aircraftData);
 }
 
-void PathCreatorPlugin::recordEngineData(qint64 timestamp) noexcept
+void PathCreatorPlugin::recordEngineData(int64_t timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -315,7 +316,7 @@ void PathCreatorPlugin::recordEngineData(qint64 timestamp) noexcept
     aircraft.getEngine().upsertLast(std::move(engineData));
 }
 
-void PathCreatorPlugin::recordPrimaryControls(qint64 timestamp) noexcept
+void PathCreatorPlugin::recordPrimaryControls(int64_t timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -328,7 +329,7 @@ void PathCreatorPlugin::recordPrimaryControls(qint64 timestamp) noexcept
     aircraft.getPrimaryFlightControl().upsertLast(std::move(primaryFlightControlData));
 }
 
-void PathCreatorPlugin::recordSecondaryControls(qint64 timestamp) noexcept
+void PathCreatorPlugin::recordSecondaryControls(int64_t timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -344,7 +345,7 @@ void PathCreatorPlugin::recordSecondaryControls(qint64 timestamp) noexcept
     aircraft.getSecondaryFlightControl().upsertLast(std::move(secondaryFlightControlData));
 }
 
-void PathCreatorPlugin::recordAircraftHandle(qint64 timestamp) noexcept
+void PathCreatorPlugin::recordAircraftHandle(int64_t timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -363,7 +364,7 @@ void PathCreatorPlugin::recordAircraftHandle(qint64 timestamp) noexcept
     aircraft.getAircraftHandle().upsertLast(std::move(aircraftHandleData));
 }
 
-void PathCreatorPlugin::recordLights(qint64 timestamp) noexcept
+void PathCreatorPlugin::recordLights(int64_t timestamp) noexcept
 {
     static int lights = 0;
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
@@ -480,7 +481,7 @@ void PathCreatorPlugin::recordAircraftInfo() noexcept
 
 void PathCreatorPlugin::replay() noexcept
 {
-    const qint64 timestamp = updateCurrentTimestamp();
+    const int64_t timestamp = updateCurrentTimestamp();
     if (!sendAircraftData(timestamp, TimeVariableData::Access::Linear, AircraftSelection::All)) {
         stopReplay();
     }

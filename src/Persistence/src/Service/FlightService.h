@@ -27,6 +27,7 @@
 
 #include <memory>
 #include <forward_list>
+#include <cstdint>
 
 #include <QObject>
 #include <QVector>
@@ -47,18 +48,18 @@ public:
     virtual ~FlightService() noexcept;
 
     bool store(Flight &flight) noexcept;
-    bool restore(qint64 id, Flight &flight) noexcept;
-    bool deleteById(qint64 id) noexcept;
+    bool restore(int64_t id, Flight &flight) noexcept;
+    bool deleteById(int64_t id) noexcept;
     bool updateTitle(Flight &flight, const QString &title) noexcept;
-    bool updateTitle(qint64 id, const QString &title) noexcept;
+    bool updateTitle(int64_t id, const QString &title) noexcept;
     bool updateTitleAndDescription(Flight &flight, const QString &title, const QString &description) noexcept;
-    bool updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept;
+    bool updateTitleAndDescription(int64_t id, const QString &title, const QString &description) noexcept;
     bool updateUserAircraftIndex(Flight &flight, int index) noexcept;
 
 signals:
-    void flightStored(qint64 id);
-    void flightRestored(qint64 id);
-    void flightUpdated(qint64 id);
+    void flightStored(int64_t id);
+    void flightRestored(int64_t id);
+    void flightUpdated(int64_t id);
 
 private:
     std::unique_ptr<FlightServicePrivate> d;

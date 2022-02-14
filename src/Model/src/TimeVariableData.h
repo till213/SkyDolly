@@ -26,13 +26,14 @@
 #define TIMEVARIABLEDATA_H
 
 #include <limits>
+#include <cstdint>
 
 #include "SimType.h"
 #include "ModelLib.h"
 
 struct MODEL_API TimeVariableData
 {
-    static constexpr qint64 InvalidTime = std::numeric_limits<qint64>::min();
+    static constexpr int64_t InvalidTime = std::numeric_limits<int64_t>::min();
 
     enum struct Access {
         Linear,
@@ -40,7 +41,7 @@ struct MODEL_API TimeVariableData
     };
 
     // In milliseconds since the start of recording
-    qint64 timestamp;
+    int64_t timestamp;
 
     TimeVariableData() noexcept;
     virtual ~TimeVariableData() noexcept;

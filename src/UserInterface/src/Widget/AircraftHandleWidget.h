@@ -25,6 +25,8 @@
 #ifndef AIRCRAFTHANDLEWIDGET_H
 #define AIRCRAFTHANDLEWIDGET_H
 
+#include <cstdint>
+
 #include <QWidget>
 
 class QShowEvent;
@@ -50,14 +52,14 @@ public:
     virtual ~AircraftHandleWidget() noexcept;
 
 protected slots:
-    virtual void updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept override;
+    virtual void updateUi(int64_t timestamp, TimeVariableData::Access access) noexcept override;
 
 private:
     std::unique_ptr<AircraftHandleWidgetPrivate> d;
     std::unique_ptr<Ui::AircraftHandleWidget> ui;
 
     void initUi() noexcept;
-    const AircraftHandleData &getCurrentAircraftHandleData(qint64 timestamp, TimeVariableData::Access access) const noexcept;
+    const AircraftHandleData &getCurrentAircraftHandleData(int64_t timestamp, TimeVariableData::Access access) const noexcept;
 };
 
 #endif // AIRCRAFTHANDLEWIDGET_H

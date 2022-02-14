@@ -25,6 +25,8 @@
 #ifndef ABSTRACTSIMULATIONVARIABLEWIDGET_H
 #define ABSTRACTSIMULATIONVARIABLEWIDGET_H
 
+#include <cstdint>
+
 #include <QWidget>
 
 #include "../../../Model/src/TimeVariableData.h"
@@ -44,7 +46,7 @@ protected:
     void hideEvent(QHideEvent *event) noexcept override;
 
 protected slots:
-    virtual void updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept = 0;
+    virtual void updateUi(int64_t timestamp, TimeVariableData::Access access) noexcept = 0;
 
 private:
     Q_DISABLE_COPY(AbstractSimulationVariableWidget)

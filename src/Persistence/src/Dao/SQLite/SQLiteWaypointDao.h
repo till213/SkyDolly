@@ -26,8 +26,7 @@
 #define SQLITEWAYPOINTDAO_H
 
 #include <memory>
-
-#include <QtGlobal>
+#include <cstdint>
 
 #include "../../../../Model/src/Waypoint.h"
 #include "../WaypointDaoIntf.h"
@@ -40,10 +39,10 @@ public:
     explicit SQLiteWaypointDao() noexcept;
     virtual ~SQLiteWaypointDao() noexcept;
 
-    virtual bool add(qint64 aircraftId, const FlightPlan &flightPlan) noexcept override;
-    virtual bool getByAircraftId(qint64 aircraftId, FlightPlan &flightPlan) const noexcept override;
-    virtual bool deleteByFlightId(qint64 flightId) noexcept override;
-    virtual bool deleteByAircraftId(qint64 aircraftId) noexcept override;
+    virtual bool add(int64_t aircraftId, const FlightPlan &flightPlan) noexcept override;
+    virtual bool getByAircraftId(int64_t aircraftId, FlightPlan &flightPlan) const noexcept override;
+    virtual bool deleteByFlightId(int64_t flightId) noexcept override;
+    virtual bool deleteByAircraftId(int64_t aircraftId) noexcept override;
 };
 
 #endif // SQLITEWAYPOINTDAO_H

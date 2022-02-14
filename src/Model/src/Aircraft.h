@@ -26,9 +26,9 @@
 #define AIRCRAFT_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QObject>
-#include <QVector>
 
 class QDateTime;
 
@@ -49,18 +49,18 @@ class MODEL_API Aircraft : public QObject
     Q_OBJECT
 public:
 
-    static constexpr qint64 InvalidId = -1;
-    static constexpr qint64 InvalidSimulationId = -1;
-    static constexpr qint64 PendingSimulationId = -2;
+    static constexpr int64_t InvalidId = -1;
+    static constexpr int64_t InvalidSimulationId = -1;
+    static constexpr int64_t PendingSimulationId = -2;
 
     Aircraft(QObject *parent = nullptr) noexcept;
     virtual ~Aircraft() noexcept;
 
-    qint64 getId() const noexcept;
-    void setId(qint64 id) noexcept;
+    int64_t getId() const noexcept;
+    void setId(int64_t id) noexcept;
 
-    qint64 getSimulationObjectId() const noexcept;
-    void setSimulationObjectId(qint64 id) noexcept;
+    int64_t getSimulationObjectId() const noexcept;
+    void setSimulationObjectId(int64_t id) noexcept;
 
     const Position &getPositionConst() const noexcept;
     Position &getPosition() const noexcept;
@@ -85,13 +85,13 @@ public:
 
     void setTailNumber(const QString &tailNumber) noexcept;
 
-    qint64 getTimeOffset() const noexcept;
-    void setTimeOffset(qint64 timeOffset) noexcept;
+    int64_t getTimeOffset() const noexcept;
+    void setTimeOffset(int64_t timeOffset) noexcept;
 
     const FlightPlan &getFlightPlanConst() const noexcept;
     FlightPlan &getFlightPlan() const noexcept;
 
-    qint64 getDurationMSec() const noexcept;
+    int64_t getDurationMSec() const noexcept;
     bool hasRecording() const noexcept;
 
     void clear() noexcept;

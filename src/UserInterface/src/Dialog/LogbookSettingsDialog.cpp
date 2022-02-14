@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <cstdint>
 
 #include <QFileInfo>
 #include <QLineEdit>
@@ -136,7 +137,7 @@ void LogbookSettingsDialog::updateUi() noexcept
         QString lastBackupDate = unit.formatDateTime(metadata.lastBackupDate);
         ui->lastBackupDateLineEdit->setText(lastBackupDate);
 
-        qint64 fileSize = fileInfo.size();
+        int64_t fileSize = fileInfo.size();
         ui->logbookSizeLineEdit->setText(unit.formatMemory(fileSize));
 
         if (metadata.backupPeriodIntlId == Const::BackupNeverIntlId) {

@@ -25,6 +25,8 @@
 #ifndef SKYCONNECT_H
 #define SKYCONNECT_H
 
+#include <cstdint>
+
 #include <QtPlugin>
 
 #include "../../Kernel/src/SampleRate.h"
@@ -103,8 +105,8 @@ public:
     virtual void skipBackward() noexcept = 0;
     virtual void skipForward() noexcept = 0;
     virtual void skipToEnd() noexcept = 0;
-    virtual void seek(qint64 timestamp) noexcept = 0;
-    virtual qint64 getCurrentTimestamp() const noexcept = 0;
+    virtual void seek(int64_t timestamp) noexcept = 0;
+    virtual int64_t getCurrentTimestamp() const noexcept = 0;
     virtual bool isAtEnd() const noexcept = 0;
 
     virtual double getReplaySpeedFactor() const noexcept = 0;
@@ -128,7 +130,7 @@ protected:
     {}
 
 signals:
-    void timestampChanged(qint64 timestamp, TimeVariableData::Access access);
+    void timestampChanged(int64_t timestamp, TimeVariableData::Access access);
     void stateChanged(Connect::State state);
     void recordingStopped();
 

@@ -25,6 +25,7 @@
 #include <memory>
 #include <vector>
 #include <cmath>
+#include <cstdint>
 
 #include <QFile>
 #include <QByteArray>
@@ -41,7 +42,7 @@
 namespace
 {
     // Timestamp (msec), latitude (degrees), longitude (degrees), altitude (feet)
-    typedef std::tuple<qint64, double, double, double> TrackItem;
+    typedef std::tuple<int64_t, double, double, double> TrackItem;
 
     // One hour threshold
     constexpr int DayChangeThresholdSeconds = 60 * 60;
@@ -198,7 +199,7 @@ bool IGCParser::parse(QFile &file) noexcept
     }
     if (ok) {
         if (d->fixes.size() > 0) {
-            const qint64 endTimestamp = d->fixes.back().timestamp;
+            const int64_t endTimestamp = d->fixes.back().timestamp;
             d->header.flightEndDateTimeUtc = d->header.flightDateTimeUtc.addMSecs(endTimestamp);
         } else {
             d->header.flightEndDateTimeUtc = d->header.flightDateTimeUtc;
@@ -478,7 +479,7 @@ bool IGCParser::parseFix(const QByteArray &line) noexcept
 
         if (d->currentDateTimeUtc.isValid()) {
 
-            const qint64 timestamp = d->header.flightDateTimeUtc.msecsTo(d->currentDateTimeUtc);
+            const int64_t timestamp = d->header.flightDateTimeUtc.msecsTo(d->currentDateTimeUtc);
 
             // Latitude
             const QStringView latitudeText = match.capturedView(::BRecordLatitudeDegreesIndex);

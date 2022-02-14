@@ -26,6 +26,7 @@
 #define CSVIMPORTPLUGIN_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QObject>
 #include <QtPlugin>
@@ -87,7 +88,7 @@ private:
     static inline bool importSecondaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, SecondaryFlightControl &secondaryFlightControl) noexcept;
     static inline bool importAircraftHandleData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, AircraftHandle &aircraftHandle) noexcept;
     static inline bool importLightData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Light &light) noexcept;
-    static inline bool importTimestamp(const QList<QByteArray> &values, int columnIndex, bool firstRow, qint64 &timestamp, qint64 &timestampDelta);
+    static inline bool importTimestamp(const QList<QByteArray> &values, int columnIndex, bool firstRow, int64_t &timestamp, int64_t &timestampDelta);
 };
 
 #endif // CSVIMPORTPLUGIN_H

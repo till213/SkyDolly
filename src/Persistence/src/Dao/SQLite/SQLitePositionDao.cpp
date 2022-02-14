@@ -25,6 +25,7 @@
 #include <memory>
 #include <vector>
 #include <iterator>
+#include <cstdint>
 
 #include <QString>
 #include <QSqlQuery>
@@ -85,7 +86,7 @@ SQLitePositionDao::SQLitePositionDao() noexcept
 SQLitePositionDao::~SQLitePositionDao() noexcept
 {}
 
-bool SQLitePositionDao::add(qint64 aircraftId, const PositionData &position)  noexcept
+bool SQLitePositionDao::add(int64_t aircraftId, const PositionData &position)  noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -146,7 +147,7 @@ bool SQLitePositionDao::add(qint64 aircraftId, const PositionData &position)  no
     return ok;
 }
 
-bool SQLitePositionDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<PositionData>> insertIterator) const noexcept
+bool SQLitePositionDao::getByAircraftId(int64_t aircraftId, std::insert_iterator<std::vector<PositionData>> insertIterator) const noexcept
 {
     QSqlQuery query;
     query.setForwardOnly(true);
@@ -203,7 +204,7 @@ bool SQLitePositionDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<
     return ok;
 }
 
-bool SQLitePositionDao::deleteByFlightId(qint64 flightId) noexcept
+bool SQLitePositionDao::deleteByFlightId(int64_t flightId) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -225,7 +226,7 @@ bool SQLitePositionDao::deleteByFlightId(qint64 flightId) noexcept
     return ok;
 }
 
-bool SQLitePositionDao::deleteByAircraftId(qint64 aircraftId) noexcept
+bool SQLitePositionDao::deleteByAircraftId(int64_t aircraftId) noexcept
 {
     QSqlQuery query;
     query.prepare(

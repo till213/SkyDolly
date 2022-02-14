@@ -28,6 +28,7 @@
 #include <memory>
 #include <vector>
 #include <iterator>
+#include <cstdint>
 
 #include <QObject>
 
@@ -73,7 +74,7 @@ public:
     const SecondaryFlightControlData &getFirst() const noexcept;
     const SecondaryFlightControlData &getLast() const noexcept;
     std::size_t count() const noexcept;
-    const SecondaryFlightControlData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
+    const SecondaryFlightControlData &interpolate(int64_t timestamp, TimeVariableData::Access access) const noexcept;
     void clear() noexcept;
 
     typedef std::vector<SecondaryFlightControlData>::iterator Iterator;

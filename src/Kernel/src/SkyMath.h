@@ -28,6 +28,7 @@
 #include <limits>
 #include <utility>
 #include <cmath>
+#include <cstdint>
 
 #include <QtGlobal>
 
@@ -372,8 +373,8 @@ namespace SkyMath
      * \return the distance (first value) and required speed [m/s] (second value)
      * \sa https://www.movable-type.co.uk/scripts/latlong.html
      */
-    inline std::pair<double, double> distanceAndVelocity(Coordinate startPosition, qint64 startTimestamp,
-                                                         Coordinate endPosition, qint64 endTimestamp,
+    inline std::pair<double, double> distanceAndVelocity(Coordinate startPosition, int64_t startTimestamp,
+                                                         Coordinate endPosition, int64_t endTimestamp,
                                                          double averageAltitude) noexcept
     {
         const double distance = sphericalDistance(startPosition, endPosition, averageAltitude);

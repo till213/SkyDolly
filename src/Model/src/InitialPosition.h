@@ -26,6 +26,7 @@
 #define INITIALPOSITION_H
 
 #include <limits>
+#include <cstdint>
 
 #include <QtGlobal>
 
@@ -38,7 +39,7 @@ struct AircraftInfo;
 class MODEL_API InitialPosition
 {
 public:
-    static constexpr qint64 InvalidAirspeed = std::numeric_limits<int>::min();
+    static constexpr int InvalidAirspeed = std::numeric_limits<int>::min();
 
     double latitude;
     double longitude;

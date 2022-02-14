@@ -25,6 +25,8 @@
 #ifndef AIRCRAFTINFO_H
 #define AIRCRAFTINFO_H
 
+#include <cstdint>
+
 #include <QString>
 #include <QDateTime>
 
@@ -34,13 +36,13 @@
 
 struct MODEL_API AircraftInfo
 {
-    qint64 aircraftId;
+    int64_t aircraftId;
     AircraftType aircraftType;
     // Local (simulation) times
     QDateTime startDate;
     QDateTime endDate;
     // Milliseconds
-    qint64 timeOffset;
+    int64_t timeOffset;
     QString tailNumber;
     QString airline;
     QString flightNumber;    
@@ -51,7 +53,7 @@ struct MODEL_API AircraftInfo
     // Knots (TAS)
     int initialAirspeed;
 
-    AircraftInfo(qint64 aircraftId) noexcept;
+    AircraftInfo(int64_t aircraftId) noexcept;
     AircraftInfo(AircraftInfo &&) = default;
     AircraftInfo(const AircraftInfo &) = default;
     AircraftInfo &operator= (const AircraftInfo &) = default;

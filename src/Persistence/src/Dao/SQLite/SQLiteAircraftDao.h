@@ -27,6 +27,7 @@
 
 #include <memory>
 #include <vector>
+#include <cstdint>
 
 #include <QtGlobal>
 
@@ -41,14 +42,14 @@ public:
     explicit SQLiteAircraftDao() noexcept;
     virtual ~SQLiteAircraftDao() noexcept;
 
-    virtual bool add(qint64 flightId, int sequenceNumber, Aircraft &aircraft) noexcept override;
-    virtual bool getByFlightId(qint64 flightId, std::insert_iterator<std::vector<std::unique_ptr<Aircraft>>> insertIterator) const noexcept override;
-    virtual bool adjustAircraftSequenceNumbersByFlightId(qint64 flightId, int sequenceNumber) noexcept override;
-    virtual bool deleteAllByFlightId(qint64 flightId) noexcept override;
-    virtual bool deleteById(qint64 id) noexcept override;
-    virtual bool getAircraftInfosByFlightId(qint64 flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept override;
-    virtual bool updateTimeOffset(qint64 id, qint64 timeOffset) noexcept override;
-    virtual bool updateTailNumber(qint64 id, const QString &tailNumber) noexcept override;
+    virtual bool add(int64_t flightId, int sequenceNumber, Aircraft &aircraft) noexcept override;
+    virtual bool getByFlightId(int64_t flightId, std::insert_iterator<std::vector<std::unique_ptr<Aircraft>>> insertIterator) const noexcept override;
+    virtual bool adjustAircraftSequenceNumbersByFlightId(int64_t flightId, int sequenceNumber) noexcept override;
+    virtual bool deleteAllByFlightId(int64_t flightId) noexcept override;
+    virtual bool deleteById(int64_t id) noexcept override;
+    virtual bool getAircraftInfosByFlightId(int64_t flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept override;
+    virtual bool updateTimeOffset(int64_t id, int64_t timeOffset) noexcept override;
+    virtual bool updateTailNumber(int64_t id, const QString &tailNumber) noexcept override;
 
 private:
     std::unique_ptr<SQLiteAircraftDaoPrivate> d;

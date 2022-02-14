@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <cstdint>
+
 #include <QtGlobal>
 #include <QCoreApplication>
 #include <QFile>
@@ -296,8 +298,8 @@ inline bool IGCExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &
     const Engine &engine = aircraft.getEngineConst();
     ok = true;
     if (d->exportSettings.resamplingPeriod != IGCExportSettings::ResamplingPeriod::Original) {
-        const qint64 duration = position.getLast().timestamp;
-        qint64 timestamp = 0;
+        const int64_t duration = position.getLast().timestamp;
+        int64_t timestamp = 0;
         while (ok && timestamp <= duration) {
             const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Linear);
             if (!positionData.isNull()) {
