@@ -304,14 +304,27 @@ bool IGCParser::parseHeaderDate(const QByteArray &line) noexcept
             // The glorious 80ies and 90ies: two-digit year dates were all the rage!
             // (The IGC format was invented in the 80ies, so any date starting with
             // either 8 or 9 is boldly assumed to be in those decades)
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+            year= 1900 + yearText.toString().toInt();
+#else
             year= 1900 + yearText.toInt();
+#endif
         } else {
             // This code needs fixing again in the year 2080 onwards.
             // Sorry, my future fellows - but not my fault ¯\_(ツ)_/¯
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+            year = 2000 + yearText.toString().toInt();
+#else
             year = 2000 + yearText.toInt();
+#endif
         }
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+        const int month = match.capturedView(::HRecordMonthIndex).toString().toInt();
+        const int day   = match.capturedView(::HRecordDayIndex).toString().toInt();
+#else
         const int month = match.capturedView(::HRecordMonthIndex).toInt();
         const int day   = match.capturedView(::HRecordDayIndex).toInt();
+#endif
         d->header.flightDateTimeUtc.setDate(QDate(year, month, day));
         d->header.flightDateTimeUtc.setTimeZone(QTimeZone::utc());
         // The flight number is optional
@@ -370,9 +383,12 @@ bool IGCParser::parseFixAdditions(const QByteArray &line) noexcept
     bool ok;
     QRegularExpressionMatch match = d->iRecordRegExp.match(line);
     if (match.hasMatch()) {
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+        const int nofAdditions = match.capturedView(::IRecordNofAdditionsIndex).toString().toInt();
+#else
         const int nofAdditions = match.capturedView(::IRecordNofAdditionsIndex).toInt();
+#endif
         const QStringView definitions = match.capturedView(::IRecordAdditionsDefinitionsIndex);
-
         // Validate the number of bytes: each definition is expected to be
         // of the form SS FF CCC (7 bytes in total)
         if (definitions.length() >= nofAdditions * ::IRecordAdditionDefinitionLength) {
@@ -382,8 +398,13 @@ bool IGCParser::parseFixAdditions(const QByteArray &line) noexcept
                 // We are only interested in the ENL addition for now
                 if (def.mid(4, 3) == EnvironmentalNoiseLevel) {
                     d->enlAddition = true;
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+                    d->enlStartOffset = def.mid(0, 2).toString().toInt() - 1;
+                    d->enlLength = def.mid(2, 2).toString().toInt() - d->enlStartOffset;
+#else
                     d->enlStartOffset = def.mid(0, 2).toInt() - 1;
                     d->enlLength = def.mid(2, 2).toInt() - d->enlStartOffset;
+#endif
                     d->maxEnlValue = ::pow(10, d->enlLength ) - 1;
                 }
             }
@@ -477,12 +498,19 @@ bool IGCParser::parseFix(const QByteArray &line) noexcept
 
             // Pressure altitude
             const QStringView pressureAltitudeText = match.capturedView(::BRecordPressureAltitudeIndex);
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+            const double pressureAltitude = Convert::metersToFeet(pressureAltitudeText.toString().toDouble());
+#else
             const double pressureAltitude = Convert::metersToFeet(pressureAltitudeText.toDouble());
+#endif
 
             // GNSS altitude
             const QStringView&gnssAltitudeText = match.capturedView(::BRecordGNSSAltitudeIndex);
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+            const double gnssAltitude = Convert::metersToFeet(gnssAltitudeText.toString().toDouble());
+#else
             const double gnssAltitude = Convert::metersToFeet(gnssAltitudeText.toDouble());
-
+#endif
             // Optional environmental noise level (ENL) addition
             double enlNorm;
             if (d->enlAddition) {
