@@ -69,7 +69,7 @@ namespace
 
     // The environmental noise level threshold for which it is assumed that the engine (propeller)
     // is turned on
-    constexpr double EnvironmentalNoiseThreshold = 0.8;
+    constexpr double EnvironmentalNoiseThreshold = 0.9;
 }
 
 class IGCImportPluginPrivate
@@ -162,7 +162,7 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
                     engine.upsertLast(engineData);
                     engineState = loudNoise ? IGCImportPluginPrivate::EngineState::Running : IGCImportPluginPrivate::EngineState::Shutdown;
 #ifdef DEBUG
-    qDebug("IGCImportPlugin::readFile: engine INITIALISED, current ENL: %f > %f, engine RUNNING: %d", enl, ::EnvironmentalNoiseThreshold, loudNoise);
+    qDebug("IGCImportPlugin::readFile: engine INITIALISED, current ENL: %f threshold %f, engine RUNNING: %d", enl, ::EnvironmentalNoiseThreshold, loudNoise);
 #endif
                     break;
                 case IGCImportPluginPrivate::EngineState::Running:
@@ -182,7 +182,7 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
                         engine.upsertLast(engineData);
                         engineState = IGCImportPluginPrivate::EngineState::Shutdown;
 #ifdef DEBUG
-    qDebug("IGCImportPlugin::readFile: engine now SHUTDOWN, current ENL: %f > %f", enl, ::EnvironmentalNoiseThreshold);
+    qDebug("IGCImportPlugin::readFile: engine now SHUTDOWN, current ENL: %f < %f", enl, ::EnvironmentalNoiseThreshold);
 #endif
                     }
                     break;

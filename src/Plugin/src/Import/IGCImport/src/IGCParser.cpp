@@ -79,7 +79,7 @@ namespace
     constexpr int HRecordFlightNumberIndex = 4;
 
     // I (addition definition) record
-    constexpr char IRecordPattern[] = "^I(\\d{2})((?:\\d{4}[A-Z]{3})*)$";
+    constexpr char IRecordPattern[] = "^[I](\\d{2})((?:\\d{4}[A-Z]{3})+)";
     constexpr int IRecordNofAdditionsIndex = 1;
     constexpr int IRecordAdditionsDefinitionsIndex = 2;
     // Length of addition definition [bytes]
@@ -382,7 +382,7 @@ bool IGCParser::parseFixAdditions(const QByteArray &line) noexcept
                 // We are only interested in the ENL addition for now
                 if (def.mid(4, 3) == EnvironmentalNoiseLevel) {
                     d->enlAddition = true;
-                    d->enlStartOffset = def.mid(0, 2).toInt();
+                    d->enlStartOffset = def.mid(0, 2).toInt() - 1;
                     d->enlLength = def.mid(2, 2).toInt() - d->enlStartOffset;
                     d->maxEnlValue = ::pow(10, d->enlLength ) - 1;
                 }
