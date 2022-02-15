@@ -24,7 +24,7 @@
  */
 #include <memory>
 #include <cstdint>
-#include <inttypes.h>
+#include <cinttypes>
 
 #include <QTimer>
 #include <QtGlobal>

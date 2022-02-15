@@ -26,7 +26,7 @@
 #include <vector>
 #include <iterator>
 #include <cstdint>
-#include <inttypes.h>
+#include <cinttypes>
 
 #include <QDateTime>
 #include <QString>
