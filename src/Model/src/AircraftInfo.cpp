@@ -31,7 +31,7 @@
 
 // PUBLIC
 
-AircraftInfo::AircraftInfo(int64_t theAircraftId) noexcept
+AircraftInfo::AircraftInfo(std::int64_t theAircraftId) noexcept
 {
     clear();
     aircraftId = theAircraftId;

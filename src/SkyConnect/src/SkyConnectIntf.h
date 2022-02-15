@@ -105,8 +105,8 @@ public:
     virtual void skipBackward() noexcept = 0;
     virtual void skipForward() noexcept = 0;
     virtual void skipToEnd() noexcept = 0;
-    virtual void seek(int64_t timestamp) noexcept = 0;
-    virtual int64_t getCurrentTimestamp() const noexcept = 0;
+    virtual void seek(std::int64_t timestamp) noexcept = 0;
+    virtual std::int64_t getCurrentTimestamp() const noexcept = 0;
     virtual bool isAtEnd() const noexcept = 0;
 
     virtual double getReplaySpeedFactor() const noexcept = 0;
@@ -130,7 +130,7 @@ protected:
     {}
 
 signals:
-    void timestampChanged(int64_t timestamp, TimeVariableData::Access access);
+    void timestampChanged(std::int64_t timestamp, TimeVariableData::Access access);
     void stateChanged(Connect::State state);
     void recordingStopped();
 

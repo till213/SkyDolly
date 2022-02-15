@@ -70,7 +70,7 @@ AircraftWidget::~AircraftWidget() noexcept
 
 // PROTECTED SLOTS
 
-void AircraftWidget::updateUi(int64_t timestamp, TimeVariableData::Access access) noexcept
+void AircraftWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {
     const PositionData &positionData = getCurrentPositionData(timestamp, access);
     QString colorName;
@@ -140,7 +140,7 @@ void AircraftWidget::initUi() noexcept
     ui->rotationVelocityZLineEdit->setToolTip(SimVar::RotationVelocityBodyZ);
 }
 
-const PositionData &AircraftWidget::getCurrentPositionData(int64_t timestamp, TimeVariableData::Access access) const noexcept
+const PositionData &AircraftWidget::getCurrentPositionData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();

@@ -76,7 +76,7 @@ public:
     const EngineData &getFirst() const noexcept;
     const EngineData &getLast() const noexcept;
     std::size_t count() const noexcept;
-    const EngineData &interpolate(int64_t timestamp, TimeVariableData::Access access) const noexcept;
+    const EngineData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
     void clear() noexcept;
 
     typedef std::vector<EngineData>::iterator Iterator;

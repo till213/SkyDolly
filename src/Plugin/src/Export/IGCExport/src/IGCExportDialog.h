@@ -59,7 +59,7 @@ private:
     void updateFlightUi() noexcept;
     void frenchConnection() noexcept;
 
-    int64_t estimateNofSamplePoints() noexcept;
+    std::int64_t estimateNofSamplePoints() noexcept;
 
 private slots:
     void updateUi() noexcept;

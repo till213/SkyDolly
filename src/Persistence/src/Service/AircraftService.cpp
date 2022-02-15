@@ -61,7 +61,7 @@ AircraftService::AircraftService() noexcept
 AircraftService::~AircraftService() noexcept
 {}
 
-bool AircraftService::store(int64_t flightId, int sequenceNumber, Aircraft &aircraft) noexcept
+bool AircraftService::store(std::int64_t flightId, int sequenceNumber, Aircraft &aircraft) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
@@ -91,7 +91,7 @@ bool AircraftService::deleteByIndex(int index) noexcept
     if (skyConnect) {
         skyConnect->get().destroyAIObject(aircraft);
     }
-    const int64_t aircraftId = flight.deleteAircraftByIndex(index);
+    const std::int64_t aircraftId = flight.deleteAircraftByIndex(index);
     bool ok;
     if (aircraftId != Aircraft::InvalidId) {
         if (skyConnect && removeUserAircraft) {
@@ -119,7 +119,7 @@ bool AircraftService::deleteByIndex(int index) noexcept
     return ok;
 }
 
-bool AircraftService::getAircraftInfos(int64_t flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept
+bool AircraftService::getAircraftInfos(std::int64_t flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
@@ -129,7 +129,7 @@ bool AircraftService::getAircraftInfos(int64_t flightId, std::vector<AircraftInf
     return ok;
 }
 
-bool AircraftService::changeTimeOffset(Aircraft &aircraft, int64_t newOffset) noexcept
+bool AircraftService::changeTimeOffset(Aircraft &aircraft, std::int64_t newOffset) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {

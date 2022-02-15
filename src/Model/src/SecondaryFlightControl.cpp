@@ -50,7 +50,7 @@ public:
 
     const AircraftInfo &aircraftInfo;
     std::vector<SecondaryFlightControlData> secondaryFlightControlData;
-    int64_t currentTimestamp;
+    std::int64_t currentTimestamp;
     TimeVariableData::Access currentAccess;
     SecondaryFlightControlData previousSecondaryFlightControlData;
     SecondaryFlightControlData currentSecondaryFlightControlData;
@@ -113,10 +113,10 @@ std::size_t SecondaryFlightControl::count() const noexcept
     return d->secondaryFlightControlData.size();
 }
 
-const SecondaryFlightControlData &SecondaryFlightControl::interpolate(int64_t timestamp, TimeVariableData::Access access) const noexcept
+const SecondaryFlightControlData &SecondaryFlightControl::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const SecondaryFlightControlData *p1, *p2;
-    const int64_t adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timeOffset, int64_t(0));
+    const std::int64_t adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timeOffset, std::int64_t(0));
 
     if (d->currentTimestamp != adjustedTimestamp || d->currentAccess != access) {
 

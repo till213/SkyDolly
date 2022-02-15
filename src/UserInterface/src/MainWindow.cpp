@@ -98,9 +98,9 @@ namespace
     constexpr double ReplaySpeedDecimalPlaces = 2;
 
     constexpr char TimestampFormat[] = "hh:mm:ss";
-    constexpr int64_t MilliSecondsPerSecond = 1000;
-    constexpr int64_t MilliSecondsPerMinute = 60 * MilliSecondsPerSecond;
-    constexpr int64_t MilliSecondsPerHour = 60 * MilliSecondsPerMinute;
+    constexpr std::int64_t MilliSecondsPerSecond = 1000;
+    constexpr std::int64_t MilliSecondsPerMinute = 60 * MilliSecondsPerSecond;
+    constexpr std::int64_t MilliSecondsPerHour = 60 * MilliSecondsPerMinute;
 
     constexpr char ReplaySpeedProperty[] = "ReplaySpeed";
 
@@ -782,8 +782,8 @@ void MainWindow::on_positionSlider_valueChanged(int value) noexcept
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         const double scale = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
-        const int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
-        const int64_t timestamp = static_cast<int64_t>(qRound(scale * static_cast<double>(totalDuration)));
+        const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
+        const std::int64_t timestamp = static_cast<std::int64_t>(qRound(scale * static_cast<double>(totalDuration)));
         ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatNumber(timestamp, 0), d->unit.formatElapsedTime(timestamp)));
 
         // Prevent the timestampTimeEdit field to set the play position as well
@@ -807,7 +807,7 @@ void MainWindow::on_timestampTimeEdit_timeChanged(const QTime &time) noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect && (skyConnect->get().isIdle() || skyConnect->get().getState() == Connect::State::ReplayPaused)) {
-        int64_t timestamp = time.hour() * MilliSecondsPerHour + time.minute() * MilliSecondsPerMinute + time.second() * MilliSecondsPerSecond;
+        std::int64_t timestamp = time.hour() * MilliSecondsPerHour + time.minute() * MilliSecondsPerMinute + time.second() * MilliSecondsPerSecond;
         skyConnect->get().seek(timestamp);
     }
 }
@@ -827,15 +827,15 @@ void MainWindow::updateWindowSize() noexcept
     }
 }
 
-void MainWindow::handleTimestampChanged(int64_t timestamp) noexcept
+void MainWindow::handleTimestampChanged(std::int64_t timestamp) noexcept
 {
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().isRecording()) {
             updateTimestamp();
         } else {
-            const int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
-            const int64_t ts = qMin(timestamp, totalDuration);
+            const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
+            const std::int64_t ts = qMin(timestamp, totalDuration);
 
             int sliderPosition;
             if (totalDuration > 0) {
@@ -1089,7 +1089,7 @@ void MainWindow::updateTimestamp() noexcept
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const bool isRecording = skyConnect && skyConnect->get().isRecording();
     const bool ofUserAircraft = isRecording;
-    const int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec(ofUserAircraft);
+    const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec(ofUserAircraft);
     ui->timestampTimeEdit->blockSignals(true);
     QTime time(0, 0, 0, 0);
     time = time.addMSecs(totalDuration);

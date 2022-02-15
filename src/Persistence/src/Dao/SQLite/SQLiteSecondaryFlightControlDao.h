@@ -39,10 +39,10 @@ public:
     explicit SQLiteSecondaryFlightControlDao() noexcept;
     virtual ~SQLiteSecondaryFlightControlDao() noexcept;
 
-    virtual bool add(int64_t aircraftId, const SecondaryFlightControlData &data) noexcept override;
-    virtual bool getByAircraftId(int64_t aircraftId, std::insert_iterator<std::vector<SecondaryFlightControlData>> insertIterator) const noexcept override;
-    virtual bool deleteByFlightId(int64_t flightId) noexcept override;
-    virtual bool deleteByAircraftId(int64_t aircraftId) noexcept override;
+    virtual bool add(std::int64_t aircraftId, const SecondaryFlightControlData &data) noexcept override;
+    virtual bool getByAircraftId(std::int64_t aircraftId, std::insert_iterator<std::vector<SecondaryFlightControlData>> insertIterator) const noexcept override;
+    virtual bool deleteByFlightId(std::int64_t flightId) noexcept override;
+    virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
 };
 
 #endif // SQLITESECONDARYFLIGHTCONTROLDAO_H

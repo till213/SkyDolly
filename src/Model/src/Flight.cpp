@@ -51,7 +51,7 @@ public:
         clear(true);
     }
 
-    int64_t id;
+    std::int64_t id;
     QDateTime creationDate;
     QString title;
     QString description;
@@ -95,12 +95,12 @@ Flight::~Flight() noexcept
 #endif
 }
 
-void Flight::setId(int64_t id) noexcept
+void Flight::setId(std::int64_t id) noexcept
 {
     d->id = id;
 }
 
-int64_t Flight::getId() const noexcept
+std::int64_t Flight::getId() const noexcept
 {
     return d->id;
 }
@@ -184,9 +184,9 @@ void Flight::setUserAircraftIndex(int index) noexcept
     }
 }
 
-int64_t Flight::deleteAircraftByIndex(int index) noexcept
+std::int64_t Flight::deleteAircraftByIndex(int index) noexcept
 {
-    int64_t aircraftId;
+    std::int64_t aircraftId;
     // A flight has at least one aircraft
     if (d->aircraft.size() > 1) {
         setUserAircraftIndex(qMax(d->userAircraftIndex - 1, 0));
@@ -215,9 +215,9 @@ void Flight::setFlightCondition(FlightCondition flightCondition) noexcept
     emit flightConditionChanged();
 }
 
-int64_t Flight::getTotalDurationMSec(bool ofUserAircraft) const noexcept
+std::int64_t Flight::getTotalDurationMSec(bool ofUserAircraft) const noexcept
 {
-    int64_t totalDuractionMSec = 0;
+    std::int64_t totalDuractionMSec = 0;
     if (ofUserAircraft) {
         totalDuractionMSec = getUserAircraftConst().getDurationMSec();
     } else {

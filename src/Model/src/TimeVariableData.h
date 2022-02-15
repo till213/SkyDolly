@@ -33,7 +33,7 @@
 
 struct MODEL_API TimeVariableData
 {
-    static constexpr int64_t InvalidTime = std::numeric_limits<int64_t>::min();
+    static constexpr std::int64_t InvalidTime = std::numeric_limits<std::int64_t>::min();
 
     enum struct Access {
         Linear,
@@ -41,7 +41,7 @@ struct MODEL_API TimeVariableData
     };
 
     // In milliseconds since the start of recording
-    int64_t timestamp;
+    std::int64_t timestamp;
 
     TimeVariableData() noexcept;
     virtual ~TimeVariableData() noexcept;

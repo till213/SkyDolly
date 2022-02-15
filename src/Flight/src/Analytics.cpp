@@ -40,7 +40,7 @@ namespace  {
     // initial heading
     constexpr double DistanceThreshold = 10.0;
     constexpr double DefaultHeading = 0.0;
-    constexpr int64_t DefaultTimestamp = 0.0;
+    constexpr std::int64_t DefaultTimestamp = 0.0;
 
     auto distanceLambda = [](const PositionData &start, const PositionData &end) -> bool {
         const SkyMath::Coordinate startPos(start.latitude, start.longitude);
@@ -69,9 +69,9 @@ Analytics::Analytics(const Aircraft &aircraft)
 Analytics::~Analytics()
 {}
 
-const std::pair<int64_t, double> Analytics::firstMovementHeading() const noexcept
+const std::pair<std::int64_t, double> Analytics::firstMovementHeading() const noexcept
 {
-    std::pair<int64_t, double> result;
+    std::pair<std::int64_t, double> result;
     Position &position = d->aircraft.getPosition();
     auto pos = std::adjacent_find(position.begin(), position.end(), ::distanceLambda);
     if (pos != position.end()) {

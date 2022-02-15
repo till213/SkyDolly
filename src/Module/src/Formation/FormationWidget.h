@@ -79,8 +79,8 @@ private:
     void frenchConnection() noexcept;
     void updateInitialPositionUi() noexcept;
 
-    InitialPosition calculateRelativeInitialPositionToUserAircraft(int64_t timestamp) const noexcept;
-    PositionData calculateRelativePositionToUserAircraft(int64_t timestamp) const noexcept;
+    InitialPosition calculateRelativeInitialPositionToUserAircraft(std::int64_t timestamp) const noexcept;
+    PositionData calculateRelativePositionToUserAircraft(std::int64_t timestamp) const noexcept;
 
     static const QString getName();
 

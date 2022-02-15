@@ -73,7 +73,7 @@ SecondaryFlightControlWidget::~SecondaryFlightControlWidget() noexcept
 
 // PROTECTED SLOTS
 
-void SecondaryFlightControlWidget::updateUi(int64_t timestamp, TimeVariableData::Access access) noexcept
+void SecondaryFlightControlWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {
     const SecondaryFlightControlData &secondaryFlightControlData = getCurrentSecondaryFlightControlData(timestamp, access);
     QString colorName;
@@ -113,7 +113,7 @@ void SecondaryFlightControlWidget::initUi() noexcept
     ui->spoilerLineEdit->setToolTip(SimVar::SpoilersHandlePosition);
 }
 
-const SecondaryFlightControlData &SecondaryFlightControlWidget::getCurrentSecondaryFlightControlData(int64_t timestamp, TimeVariableData::Access access) const noexcept
+const SecondaryFlightControlData &SecondaryFlightControlWidget::getCurrentSecondaryFlightControlData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 

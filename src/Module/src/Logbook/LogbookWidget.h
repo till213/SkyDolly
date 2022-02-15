@@ -58,7 +58,7 @@ public:
     explicit LogbookWidget(DatabaseService &databaseService, FlightService &flightService, QWidget *parent = nullptr) noexcept;
     virtual ~LogbookWidget() noexcept;
 
-    int64_t getSelectedFlightId() const noexcept;
+    std::int64_t getSelectedFlightId() const noexcept;
 
     virtual Module::Module getModuleId() const noexcept override;
     virtual const QString getModuleName() const noexcept override;

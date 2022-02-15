@@ -151,7 +151,7 @@ void PathCreatorPlugin::onStopRecording() noexcept
     }
 }
 
-bool PathCreatorPlugin::onStartReplay([[maybe_unused]] int64_t currentTimestamp) noexcept {
+bool PathCreatorPlugin::onStartReplay([[maybe_unused]] std::int64_t currentTimestamp) noexcept {
     d->replayTimer.start(ReplayPeriod);
     return true;
 }
@@ -170,13 +170,13 @@ void PathCreatorPlugin::onStopReplay() noexcept
     d->replayTimer.stop();
 }
 
-void PathCreatorPlugin::onSeek([[maybe_unused]] int64_t currentTimestamp) noexcept
+void PathCreatorPlugin::onSeek([[maybe_unused]] std::int64_t currentTimestamp) noexcept
 {}
 
 void PathCreatorPlugin::onRecordingSampleRateChanged([[maybe_unused]] SampleRate::SampleRate sampleRate) noexcept
 {}
 
-bool PathCreatorPlugin::sendAircraftData(int64_t currentTimestamp, TimeVariableData::Access access, [[maybe_unused]] AircraftSelection aircraftSelection) noexcept
+bool PathCreatorPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, [[maybe_unused]] AircraftSelection aircraftSelection) noexcept
 {
     bool dataAvailable;
     if (currentTimestamp <= getCurrentFlight().getTotalDurationMSec()) {
@@ -231,7 +231,7 @@ void PathCreatorPlugin::onDestroyAIObject(Aircraft &aircraft) noexcept
 
 void PathCreatorPlugin::recordData() noexcept
 {
-    const int64_t timestamp = updateCurrentTimestamp();
+    const std::int64_t timestamp = updateCurrentTimestamp();
 
     recordPositionData(timestamp);
     recordEngineData(timestamp);
@@ -256,7 +256,7 @@ void PathCreatorPlugin::frenchConnection() noexcept
             this, &PathCreatorPlugin::replay);
 }
 
-void PathCreatorPlugin::recordPositionData(int64_t timestamp) noexcept
+void PathCreatorPlugin::recordPositionData(std::int64_t timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -279,7 +279,7 @@ void PathCreatorPlugin::recordPositionData(int64_t timestamp) noexcept
     aircraft.getPosition().upsertLast(aircraftData);
 }
 
-void PathCreatorPlugin::recordEngineData(int64_t timestamp) noexcept
+void PathCreatorPlugin::recordEngineData(std::int64_t timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -317,7 +317,7 @@ void PathCreatorPlugin::recordEngineData(int64_t timestamp) noexcept
     aircraft.getEngine().upsertLast(std::move(engineData));
 }
 
-void PathCreatorPlugin::recordPrimaryControls(int64_t timestamp) noexcept
+void PathCreatorPlugin::recordPrimaryControls(std::int64_t timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -330,7 +330,7 @@ void PathCreatorPlugin::recordPrimaryControls(int64_t timestamp) noexcept
     aircraft.getPrimaryFlightControl().upsertLast(std::move(primaryFlightControlData));
 }
 
-void PathCreatorPlugin::recordSecondaryControls(int64_t timestamp) noexcept
+void PathCreatorPlugin::recordSecondaryControls(std::int64_t timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -346,7 +346,7 @@ void PathCreatorPlugin::recordSecondaryControls(int64_t timestamp) noexcept
     aircraft.getSecondaryFlightControl().upsertLast(std::move(secondaryFlightControlData));
 }
 
-void PathCreatorPlugin::recordAircraftHandle(int64_t timestamp) noexcept
+void PathCreatorPlugin::recordAircraftHandle(std::int64_t timestamp) noexcept
 {
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -365,7 +365,7 @@ void PathCreatorPlugin::recordAircraftHandle(int64_t timestamp) noexcept
     aircraft.getAircraftHandle().upsertLast(std::move(aircraftHandleData));
 }
 
-void PathCreatorPlugin::recordLights(int64_t timestamp) noexcept
+void PathCreatorPlugin::recordLights(std::int64_t timestamp) noexcept
 {
     static int lights = 0;
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
@@ -482,7 +482,7 @@ void PathCreatorPlugin::recordAircraftInfo() noexcept
 
 void PathCreatorPlugin::replay() noexcept
 {
-    const int64_t timestamp = updateCurrentTimestamp();
+    const std::int64_t timestamp = updateCurrentTimestamp();
     if (!sendAircraftData(timestamp, TimeVariableData::Access::Linear, AircraftSelection::All)) {
         stopReplay();
     }

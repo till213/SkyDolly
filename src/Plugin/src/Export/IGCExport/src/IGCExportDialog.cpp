@@ -118,7 +118,7 @@ void IGCExportDialog::updateInfoUi() noexcept
 {
     QString infoText;
     IGCExportSettings::ResamplingPeriod resamplingPeriod = static_cast<IGCExportSettings::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt());
-    int64_t samplePoints = estimateNofSamplePoints();
+    std::int64_t samplePoints = estimateNofSamplePoints();
     if (resamplingPeriod != IGCExportSettings::ResamplingPeriod::Original) {
         infoText = tr("The position data is resampled every %1 milliseconds, resulting in approximately %2 exported positions in total.")
                       .arg(d->unit.formatNumber(Enum::toUnderlyingType(resamplingPeriod), 0), d->unit.formatNumber(samplePoints, 0));
@@ -146,14 +146,14 @@ void IGCExportDialog::frenchConnection() noexcept
             this, &IGCExportDialog::restoreDefaults);
 }
 
-int64_t IGCExportDialog::estimateNofSamplePoints() noexcept
+std::int64_t IGCExportDialog::estimateNofSamplePoints() noexcept
 {
     Flight &flight = Logbook::getInstance().getInstance().getCurrentFlight();
-    int64_t nofSamplePoints = 0;
-    const int64_t period = ui->resamplingComboBox->currentData().toInt();
+    std::int64_t nofSamplePoints = 0;
+    const std::int64_t period = ui->resamplingComboBox->currentData().toInt();
     if (period != 0) {
         for (const auto &aircraft : flight) {
-            int64_t duration = aircraft->getDurationMSec();
+            std::int64_t duration = aircraft->getDurationMSec();
             nofSamplePoints += qRound(static_cast<double>(duration) / static_cast<double>(period));
         }
     } else {

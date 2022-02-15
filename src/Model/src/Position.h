@@ -74,7 +74,7 @@ public:
     const PositionData &getFirst() const noexcept;
     const PositionData &getLast() const noexcept;
     std::size_t count() const noexcept;
-    const PositionData &interpolate(int64_t timestamp, TimeVariableData::Access access) const noexcept;
+    const PositionData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
     void clear() noexcept;
 
     typedef std::vector<PositionData>::iterator Iterator;

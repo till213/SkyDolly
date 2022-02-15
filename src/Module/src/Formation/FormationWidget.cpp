@@ -110,10 +110,10 @@ namespace
     };
 
     // Milliseconds
-    constexpr int64_t TimeOffsetIncrease = 100;
-    constexpr int64_t FastTimeOffsetIncrease = 1000;
-    constexpr int64_t TimeOffsetDecrease = 100;
-    constexpr int64_t FastTimeOffsetDecrease = 1000;
+    constexpr std::int64_t TimeOffsetIncrease = 100;
+    constexpr std::int64_t FastTimeOffsetIncrease = 1000;
+    constexpr std::int64_t TimeOffsetDecrease = 100;
+    constexpr std::int64_t FastTimeOffsetDecrease = 1000;
 
     // Seconds
     constexpr double TimeOffsetMax = 24.0 * 60.0 * 60.0;
@@ -141,7 +141,7 @@ public:
     std::unique_ptr<QAction> moduleAction;
     std::unique_ptr<AircraftService> aircraftService;
     int selectedRow;
-    int64_t selectedAircraftIndex;
+    std::int64_t selectedAircraftIndex;
     QDoubleValidator *timeOffsetValidator;
     Unit unit;
 };
@@ -242,7 +242,7 @@ void FormationWidget::onStartReplay() noexcept
     if (skyConnectOptional) {
         SkyConnectIntf &skyConnect = skyConnectOptional->get();
         const bool fromStart = skyConnect.isAtEnd();
-        const int64_t timestamp = fromStart ? 0 : skyConnect.getCurrentTimestamp();
+        const std::int64_t timestamp = fromStart ? 0 : skyConnect.getCurrentTimestamp();
         const InitialPosition initialPosition = calculateRelativeInitialPositionToUserAircraft(timestamp);
         skyConnect.startReplay(fromStart, initialPosition);
     }
@@ -402,7 +402,7 @@ void FormationWidget::updateInitialPositionUi() noexcept
     }
 }
 
-InitialPosition FormationWidget::calculateRelativeInitialPositionToUserAircraft(int64_t timestamp) const noexcept
+InitialPosition FormationWidget::calculateRelativeInitialPositionToUserAircraft(std::int64_t timestamp) const noexcept
 {
     InitialPosition initialPosition;
 
@@ -421,7 +421,7 @@ InitialPosition FormationWidget::calculateRelativeInitialPositionToUserAircraft(
     return initialPosition;
 }
 
-PositionData FormationWidget::calculateRelativePositionToUserAircraft(int64_t timestamp) const noexcept
+PositionData FormationWidget::calculateRelativePositionToUserAircraft(std::int64_t timestamp) const noexcept
 {
     PositionData initialPosition;
 
@@ -711,7 +711,7 @@ void FormationWidget::updateTimeOffsetUi() noexcept
     if (enabled) {
         const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
         const Aircraft &aircraft = flight[d->selectedAircraftIndex];
-        const int64_t timeOffset = aircraft.getAircraftInfoConst().timeOffset;
+        const std::int64_t timeOffset = aircraft.getAircraftInfoConst().timeOffset;
         const double timeOffsetSec = static_cast<double>(timeOffset) / 1000.0;
         QString offsetString = d->unit.formatNumber(timeOffsetSec, TimeOffsetDecimalPlaces);
         ui->timeOffsetLineEdit->setText(offsetString);
@@ -750,7 +750,7 @@ void FormationWidget::updateToolTips() noexcept
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
-        const int64_t timeOffset = aircraft.getTimeOffset();
+        const std::int64_t timeOffset = aircraft.getTimeOffset();
         if (timeOffset < 0) {
             ui->timeOffsetLineEdit->setToolTip(tr("The aircraft is %1 behind its recorded schedule.").arg(d->unit.formatElapsedTime(timeOffset)));
         } else if (timeOffset > 0) {
@@ -811,7 +811,7 @@ void FormationWidget::handleCellChanged(int row, int column) noexcept
         bool ok;
         const double timeOffsetSec = item->data(Qt::EditRole).toDouble(&ok);
         if (ok) {
-            const int64_t timeOffset = static_cast<int64_t>(qRound(timeOffsetSec * 1000.0));
+            const std::int64_t timeOffset = static_cast<std::int64_t>(qRound(timeOffsetSec * 1000.0));
             d->aircraftService->changeTimeOffset(aircraft, timeOffset);
         }
     }
@@ -936,7 +936,7 @@ void FormationWidget::on_fastForwardOffsetPushButton_clicked() noexcept
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
-        const int64_t newTimeOffset = aircraft.getTimeOffset() + FastTimeOffsetIncrease;
+        const std::int64_t newTimeOffset = aircraft.getTimeOffset() + FastTimeOffsetIncrease;
         d->aircraftService->changeTimeOffset(aircraft, newTimeOffset);
         updateToolTips();
     }
@@ -948,7 +948,7 @@ void FormationWidget::on_forwardOffsetPushButton_clicked() noexcept
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
-        const int64_t newTimeOffset = aircraft.getTimeOffset() + TimeOffsetIncrease;
+        const std::int64_t newTimeOffset = aircraft.getTimeOffset() + TimeOffsetIncrease;
         d->aircraftService->changeTimeOffset(aircraft, newTimeOffset);
         updateToolTips();
     }
@@ -960,7 +960,7 @@ void FormationWidget::on_backwardOffsetPushButton_clicked() noexcept
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
-        const int64_t newTimeOffset = aircraft.getTimeOffset() - TimeOffsetDecrease;
+        const std::int64_t newTimeOffset = aircraft.getTimeOffset() - TimeOffsetDecrease;
         d->aircraftService->changeTimeOffset(aircraft, newTimeOffset);
         updateToolTips();
     }
@@ -972,7 +972,7 @@ void FormationWidget::on_fastBackwardOffsetPushButton_clicked() noexcept
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
-        const int64_t newTimeOffset = aircraft.getTimeOffset() - FastTimeOffsetDecrease;
+        const std::int64_t newTimeOffset = aircraft.getTimeOffset() - FastTimeOffsetDecrease;
         d->aircraftService->changeTimeOffset(aircraft, newTimeOffset);
         updateToolTips();
     }
@@ -987,7 +987,7 @@ void FormationWidget::on_timeOffsetLineEdit_editingFinished() noexcept
         bool ok;
         const double timeOffsetSec = ui->timeOffsetLineEdit->text().toDouble(&ok);
         if (ok) {
-            const int64_t timeOffset = static_cast<int64_t>(qRound(timeOffsetSec * 1000.0));
+            const std::int64_t timeOffset = static_cast<std::int64_t>(qRound(timeOffsetSec * 1000.0));
             d->aircraftService->changeTimeOffset(aircraft, timeOffset);
             updateToolTips();
         }

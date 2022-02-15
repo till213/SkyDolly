@@ -37,7 +37,7 @@ struct MODEL_API FlightSummary
     FlightSummary();
     ~FlightSummary();
 
-    int64_t id;
+    std::int64_t id;
     QDateTime creationDate;
     QString aircraftType;
     int aircraftCount;

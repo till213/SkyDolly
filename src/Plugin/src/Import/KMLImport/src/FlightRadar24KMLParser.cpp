@@ -47,7 +47,7 @@ class FlightRadar24KMLParserPrivate
 {
 public:
     typedef struct {
-        int64_t timestamp;
+        std::int64_t timestamp;
         double latitude;
         double longitude;
         double altitude;
@@ -66,7 +66,7 @@ public:
 
     QXmlStreamReader &xml;
     QString flightNumber;
-    int64_t currentWaypointTimestamp;
+    std::int64_t currentWaypointTimestamp;
     QDateTime firstDateTimeUtc;
     QDateTime currentDateTimeUtc;
 

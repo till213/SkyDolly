@@ -295,7 +295,7 @@ void IGCImportPlugin::updateWaypoints() noexcept
         // 'timestamps' set. Also note that while the aircraft is expected to reach
         // the waypoints in order of the task list that is actually not guaranteed;
         // depending on how much fun the pilot had in the cockpit ;)
-        std::unordered_set<int64_t> timestamps;
+        std::unordered_set<std::int64_t> timestamps;
         const std::vector<IGCParser::TaskItem> tasks = d->igcParser.getTask().tasks;
         const int nofTasks = tasks.size();
         for (int i = 0; i < nofTasks; ++i) {
@@ -306,7 +306,7 @@ void IGCImportPlugin::updateWaypoints() noexcept
             waypoint.longitude = item.longitude;
             waypoint.identifier = item.description;
 
-            int64_t uniqueTimestamp;
+            std::int64_t uniqueTimestamp;
 
             // The first and last waypoint always contain the start- respectively
             // end date & time.
@@ -393,7 +393,7 @@ void IGCImportPlugin::updateWaypoints() noexcept
         }
     } else {
         // No positions - use timestamps 0, 1, 2, ...
-        int64_t currentWaypointTimestamp = 0;
+        std::int64_t currentWaypointTimestamp = 0;
         for (const IGCParser::TaskItem &item : d->igcParser.getTask().tasks) {
             Waypoint waypoint;
             waypoint.latitude = item.latitude;

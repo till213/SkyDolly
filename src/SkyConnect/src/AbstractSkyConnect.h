@@ -79,9 +79,9 @@ public:
     virtual void skipBackward() noexcept override;
     virtual void skipForward() noexcept override;
     virtual void skipToEnd() noexcept override;
-    virtual void seek(int64_t timestamp) noexcept override;
+    virtual void seek(std::int64_t timestamp) noexcept override;
 
-    virtual int64_t getCurrentTimestamp() const noexcept override;
+    virtual std::int64_t getCurrentTimestamp() const noexcept override;
     virtual bool isAtEnd() const noexcept override;
 
     virtual double getReplaySpeedFactor() const noexcept override;
@@ -102,12 +102,12 @@ public:
 protected:
     void setState(Connect::State state) noexcept;
     Flight &getCurrentFlight() const;
-    void setCurrentTimestamp(int64_t timestamp) noexcept;
+    void setCurrentTimestamp(std::int64_t timestamp) noexcept;
 
     bool isElapsedTimerRunning() const noexcept;   
     void startElapsedTimer() const noexcept;
     void resetElapsedTime(bool restart) noexcept;
-    int64_t updateCurrentTimestamp() noexcept;
+    std::int64_t updateCurrentTimestamp() noexcept;
 
     virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept = 0;
 
@@ -118,14 +118,14 @@ protected:
     virtual void onRecordingPaused(bool paused) noexcept = 0;
     virtual void onStopRecording() noexcept = 0;
 
-    virtual bool onStartReplay(int64_t currentTimestamp) noexcept = 0;
+    virtual bool onStartReplay(std::int64_t currentTimestamp) noexcept = 0;
     virtual void onReplayPaused(bool paused) noexcept = 0;
     virtual void onStopReplay() noexcept = 0;
 
-    virtual void onSeek(int64_t currentTimestamp) noexcept = 0;
+    virtual void onSeek(std::int64_t currentTimestamp) noexcept = 0;
     virtual void onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept = 0;
 
-    virtual bool sendAircraftData(int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept = 0;
+    virtual bool sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept = 0;
     virtual bool isConnectedWithSim() const noexcept = 0;
     virtual bool connectWithSim() noexcept = 0;
 
@@ -142,7 +142,7 @@ private:
 
     void frenchConnection() noexcept;
     bool hasRecordingStarted() const noexcept;
-    inline int64_t getSkipInterval() const noexcept;
+    inline std::int64_t getSkipInterval() const noexcept;
 
     inline bool retryWithReconnect(std::function<bool()> func);
 

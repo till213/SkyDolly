@@ -109,7 +109,7 @@ void LightWidget::initUi() noexcept
     ui->cabinCheckBox->setFocusPolicy(Qt::NoFocus);
 }
 
-const LightData &LightWidget::getCurrentLightData(int64_t timestamp, TimeVariableData::Access access) const noexcept
+const LightData &LightWidget::getCurrentLightData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -131,7 +131,7 @@ const LightData &LightWidget::getCurrentLightData(int64_t timestamp, TimeVariabl
 
 // PRIVATE SLOTS
 
-void LightWidget::updateUi(int64_t timestamp, TimeVariableData::Access access) noexcept
+void LightWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {
     const LightData &lightData = getCurrentLightData(timestamp, access);
     QString colorName;

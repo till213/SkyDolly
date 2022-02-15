@@ -44,21 +44,21 @@ namespace SkySearch {
      * to find the next position (otherwise linear search, assuming that
      * the next position is "nearby" (within the 3 seconds threshold).
      */
-    inline constexpr int64_t BinaryIntervalSearchThreshold = 3000;
+    inline constexpr std::int64_t BinaryIntervalSearchThreshold = 3000;
 
     /*!
      * The size of the default interpolation window [-DefaultInterpolationWindow, DefaultInterpolationWindow] [milliseconds].
      * Only sampled data within that time window is considered for interpolation. Any other sampled data outside
      * (before or after) this window is considered "inactive".
      */
-    inline constexpr int64_t DefaultInterpolationWindow = 2000;
+    inline constexpr std::int64_t DefaultInterpolationWindow = 2000;
 
-    inline constexpr int64_t PositionInterpolationWindow = 1000 * 60 * 30;
+    inline constexpr std::int64_t PositionInterpolationWindow = 1000 * 60 * 30;
 
     /*!
      * An interpolation window that considers all sample points.
      */
-    inline constexpr int64_t InfinitetInterpolationWindow = std::numeric_limits<int64_t>::max();
+    inline constexpr std::int64_t InfinitetInterpolationWindow = std::numeric_limits<std::int64_t>::max();
 
     /*!
      * Returns the lower index i of the interval [i, j] where i.timestamp <= timestamp < j.timestamp.
@@ -79,7 +79,7 @@ namespace SkySearch {
      * \return the lower index i of the interval [i, j], or \c InvalidIndex if not found
      */
     template <typename T>
-    int binaryIntervalSearch(const std::vector<T> &data, int64_t timestamp, int lowIndex, int highIndex) noexcept
+    int binaryIntervalSearch(const std::vector<T> &data, std::int64_t timestamp, int lowIndex, int highIndex) noexcept
     {
         int index;
         if (data.size() == 0) {
@@ -124,7 +124,7 @@ namespace SkySearch {
     }
 
     template <typename T>
-    int linearIntervalSearch(const std::vector<T> &data, int64_t timestamp, int startIndex) noexcept
+    int linearIntervalSearch(const std::vector<T> &data, std::int64_t timestamp, int startIndex) noexcept
     {
         int index;
         if (data.size() == 0) {
@@ -161,7 +161,7 @@ namespace SkySearch {
      *  Updates the \c startIndex with the last index having a timestamp <= the given \c timestamp.
      */
     template <typename T>
-    int updateStartIndex(const std::vector<T> &data, int startIndex, int64_t timestamp) noexcept
+    int updateStartIndex(const std::vector<T> &data, int startIndex, std::int64_t timestamp) noexcept
     {
         int index = startIndex;
         int size = data.size();
@@ -226,7 +226,7 @@ namespace SkySearch {
     }
 
     template <typename T>
-    bool getCubicInterpolationSupportData(const std::vector<T> &data, int64_t timestamp, int64_t interpolationWindow, int &startIndex, const T **p0, const T **p1, const T **p2, const T **p3) noexcept
+    bool getCubicInterpolationSupportData(const std::vector<T> &data, std::int64_t timestamp, std::int64_t interpolationWindow, int &startIndex, const T **p0, const T **p1, const T **p2, const T **p3) noexcept
     {
         static_assert(std::is_base_of<TimeVariableData, T>::value, "T not derived from TimeVariableData");
 
@@ -278,7 +278,7 @@ namespace SkySearch {
     }
 
     template <typename T>
-    bool getLinearInterpolationSupportData(const std::vector<T> &data, int64_t timestamp, int64_t interpolationWindow, int &startIndex, const T **p1, const T **p2) noexcept
+    bool getLinearInterpolationSupportData(const std::vector<T> &data, std::int64_t timestamp, std::int64_t interpolationWindow, int &startIndex, const T **p1, const T **p2) noexcept
     {
         static_assert(std::is_base_of<TimeVariableData, T>::value, "T not derived from TimeVariableData");
 

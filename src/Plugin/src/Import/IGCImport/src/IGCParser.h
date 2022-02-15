@@ -93,7 +93,7 @@ public:
      */
     typedef struct Fix_
     {
-        Fix_(int64_t theTimestamp, double lat, double lon, double pressureAlt, double gnssAlt, double enl)
+        Fix_(std::int64_t theTimestamp, double lat, double lon, double pressureAlt, double gnssAlt, double enl)
             : timestamp(theTimestamp),
               latitude(lat),
               longitude(lon),
@@ -104,7 +104,7 @@ public:
 
         // Note: we store a timestamp instead of UTC time here:
         // msecs from the header.flightDateTime
-        int64_t timestamp;
+        std::int64_t timestamp;
         double latitude;
         double longitude;
         // Note: in feet

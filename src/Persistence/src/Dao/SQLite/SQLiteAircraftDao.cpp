@@ -98,7 +98,7 @@ SQLiteAircraftDao::SQLiteAircraftDao() noexcept
 SQLiteAircraftDao::~SQLiteAircraftDao() noexcept
 {}
 
-bool SQLiteAircraftDao::add(int64_t flightId, int sequenceNumber, Aircraft &aircraft)  noexcept
+bool SQLiteAircraftDao::add(std::int64_t flightId, int sequenceNumber, Aircraft &aircraft)  noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -149,7 +149,7 @@ bool SQLiteAircraftDao::add(int64_t flightId, int sequenceNumber, Aircraft &airc
 
     bool ok = query.exec();
     if (ok) {
-        int64_t id = query.lastInsertId().toLongLong(&ok);
+        std::int64_t id = query.lastInsertId().toLongLong(&ok);
         aircraft.setId(id);
 #ifdef DEBUG
     } else {
@@ -210,7 +210,7 @@ bool SQLiteAircraftDao::add(int64_t flightId, int sequenceNumber, Aircraft &airc
     return ok;
 }
 
-bool SQLiteAircraftDao::getByFlightId(int64_t flightId, std::insert_iterator<std::vector<std::unique_ptr<Aircraft>>> insertIterator) const noexcept
+bool SQLiteAircraftDao::getByFlightId(std::int64_t flightId, std::insert_iterator<std::vector<std::unique_ptr<Aircraft>>> insertIterator) const noexcept
 {
     std::vector<AircraftInfo> aircraftInfos;
     bool ok = getAircraftInfosByFlightId(flightId, aircraftInfos);
@@ -248,7 +248,7 @@ bool SQLiteAircraftDao::getByFlightId(int64_t flightId, std::insert_iterator<std
     return ok;
 }
 
-bool SQLiteAircraftDao::adjustAircraftSequenceNumbersByFlightId(int64_t flightId, int sequenceNumber) noexcept
+bool SQLiteAircraftDao::adjustAircraftSequenceNumbersByFlightId(std::int64_t flightId, int sequenceNumber) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -269,7 +269,7 @@ bool SQLiteAircraftDao::adjustAircraftSequenceNumbersByFlightId(int64_t flightId
     return ok;
 }
 
-bool SQLiteAircraftDao::deleteAllByFlightId(int64_t flightId) noexcept
+bool SQLiteAircraftDao::deleteAllByFlightId(std::int64_t flightId) noexcept
 {
     // Delete "bottom-up" in order not to violate foreign key constraints
     bool ok = d->positionDao->deleteByFlightId(flightId);
@@ -310,7 +310,7 @@ bool SQLiteAircraftDao::deleteAllByFlightId(int64_t flightId) noexcept
     return ok;
 }
 
-bool SQLiteAircraftDao::deleteById(int64_t id) noexcept
+bool SQLiteAircraftDao::deleteById(std::int64_t id) noexcept
 {
     // Delete "bottom-up" in order not to violate foreign key constraints
     // Note: aircraft types (table aircraft_type) are not deleted
@@ -352,7 +352,7 @@ bool SQLiteAircraftDao::deleteById(int64_t id) noexcept
     return ok;
 }
 
-bool SQLiteAircraftDao::getAircraftInfosByFlightId(int64_t flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept
+bool SQLiteAircraftDao::getAircraftInfosByFlightId(std::int64_t flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept
 {
     QSqlQuery query;
     query.setForwardOnly(true);
@@ -412,7 +412,7 @@ bool SQLiteAircraftDao::getAircraftInfosByFlightId(int64_t flightId, std::vector
     return ok;
 }
 
-bool SQLiteAircraftDao::updateTimeOffset(int64_t id, int64_t timeOffset) noexcept
+bool SQLiteAircraftDao::updateTimeOffset(std::int64_t id, std::int64_t timeOffset) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -432,7 +432,7 @@ bool SQLiteAircraftDao::updateTimeOffset(int64_t id, int64_t timeOffset) noexcep
     return ok;
 };
 
-bool SQLiteAircraftDao::updateTailNumber(int64_t id, const QString &tailNumber) noexcept
+bool SQLiteAircraftDao::updateTailNumber(std::int64_t id, const QString &tailNumber) noexcept
 {
     QSqlQuery query;
     query.prepare(

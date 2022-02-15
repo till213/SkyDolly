@@ -41,11 +41,11 @@ public:
     AircraftService() noexcept;
     ~AircraftService() noexcept;
 
-    bool store(int64_t flightId, int sequenceNumber, Aircraft &aircraft) noexcept;
+    bool store(std::int64_t flightId, int sequenceNumber, Aircraft &aircraft) noexcept;
     bool deleteByIndex(int index) noexcept;
-    bool getAircraftInfos(int64_t flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept;
+    bool getAircraftInfos(std::int64_t flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept;
 
-    bool changeTimeOffset(Aircraft &aircraft, int64_t newOffset) noexcept;
+    bool changeTimeOffset(Aircraft &aircraft, std::int64_t newOffset) noexcept;
     bool changeTailNumber(Aircraft &aircraft, const QString &tailNumber) noexcept;
 
 private:

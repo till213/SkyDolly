@@ -48,8 +48,8 @@ public:
     Flight(QObject *parent = nullptr) noexcept;
     virtual ~Flight() noexcept;
 
-    int64_t getId() const noexcept;
-    void setId(int64_t id) noexcept;
+    std::int64_t getId() const noexcept;
+    void setId(std::int64_t id) noexcept;
 
     const QDateTime &getCreationDate() const noexcept;
     void setCreationDate(const QDateTime &creationDate) noexcept;
@@ -66,13 +66,13 @@ public:
     Aircraft &getUserAircraft() const noexcept;
     int getUserAircraftIndex() const noexcept;
     void setUserAircraftIndex(int index) noexcept;
-    int64_t deleteAircraftByIndex(int index) noexcept;
+    std::int64_t deleteAircraftByIndex(int index) noexcept;
     std::size_t count() const noexcept;
 
     const FlightCondition &getFlightConditionConst() const noexcept;
     void setFlightCondition(FlightCondition flightCondition) noexcept;
 
-    int64_t getTotalDurationMSec(bool ofUserAircraft = false) const noexcept;
+    std::int64_t getTotalDurationMSec(bool ofUserAircraft = false) const noexcept;
 
     void clear(bool withOneAircraft) noexcept;
 
@@ -92,12 +92,12 @@ signals:
     void flightChanged();
     void flightConditionChanged();
     void aircraftAdded(Aircraft &aircraft);
-    void aircraftDeleted(int64_t removedAircraftId);
+    void aircraftDeleted(std::int64_t removedAircraftId);
     void aircraftInfoChanged(Aircraft &aircraft);
     void tailNumberChanged(Aircraft &aircraft);
     void timeOffsetChanged(Aircraft &aircraft);
     void userAircraftChanged(Aircraft &aircraft);
-    void flightStored(int64_t id);
+    void flightStored(std::int64_t id);
     void aircraftStored(Aircraft &aircraft);
 
 private:

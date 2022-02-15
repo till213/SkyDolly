@@ -56,8 +56,8 @@ public:
           duration(TimeVariableData::InvalidTime)
     {}
 
-    int64_t id;
-    int64_t simulationObjectId;
+    std::int64_t id;
+    std::int64_t simulationObjectId;
     AircraftInfo aircraftInfo;
     Position position{aircraftInfo};
     Engine engine{aircraftInfo};
@@ -67,7 +67,7 @@ public:
     Light light{aircraftInfo};
     FlightPlan flightPlan;
 
-    mutable int64_t duration;
+    mutable std::int64_t duration;
 };
 
 // PUBLIC
@@ -87,23 +87,23 @@ Aircraft::~Aircraft() noexcept
 #endif
 }
 
-int64_t Aircraft::getId() const noexcept
+std::int64_t Aircraft::getId() const noexcept
 {
     return d->id;
 }
 
-void Aircraft::setId(int64_t id) noexcept
+void Aircraft::setId(std::int64_t id) noexcept
 {
     d->id = id;
     d->aircraftInfo.aircraftId = id;
 }
 
-int64_t Aircraft::getSimulationObjectId() const noexcept
+std::int64_t Aircraft::getSimulationObjectId() const noexcept
 {
     return d->simulationObjectId;
 }
 
-void Aircraft::setSimulationObjectId(int64_t id) noexcept
+void Aircraft::setSimulationObjectId(std::int64_t id) noexcept
 {
     d->simulationObjectId = id;
 }
@@ -188,12 +188,12 @@ void Aircraft::setTailNumber(const QString &tailNumber) noexcept {
     }
 }
 
-int64_t Aircraft::getTimeOffset() const noexcept
+std::int64_t Aircraft::getTimeOffset() const noexcept
 {
     return d->aircraftInfo.timeOffset;
 }
 
-void Aircraft::setTimeOffset(int64_t timeOffset) noexcept {
+void Aircraft::setTimeOffset(std::int64_t timeOffset) noexcept {
     if (d->aircraftInfo.timeOffset != timeOffset) {
         d->aircraftInfo.timeOffset = timeOffset;
         emit timeOffsetChanged(*this);
@@ -210,16 +210,16 @@ FlightPlan &Aircraft::getFlightPlan() const noexcept
     return d->flightPlan;
 }
 
-int64_t Aircraft::getDurationMSec() const noexcept
+std::int64_t Aircraft::getDurationMSec() const noexcept
 {
-    const int64_t timeOffset = d->aircraftInfo.timeOffset;
+    const std::int64_t timeOffset = d->aircraftInfo.timeOffset;
     if (d->duration == TimeVariableData::InvalidTime) {
         d->duration = 0;
         // The timestamp offset indicates the time difference the given aircraft
         // is "ahead" of its "schedule" (sampled data). The more ahead the aircraft
         // is, the less the duration -> subtract the offset
         if (d->position.count() > 0) {
-            d->duration = qMax(d->position.getLast().timestamp - timeOffset, int64_t(0));
+            d->duration = qMax(d->position.getLast().timestamp - timeOffset, std::int64_t(0));
         }
         if (d->engine.count() > 0) {
             d->duration = qMax(d->engine.getLast().timestamp - timeOffset, d->duration);

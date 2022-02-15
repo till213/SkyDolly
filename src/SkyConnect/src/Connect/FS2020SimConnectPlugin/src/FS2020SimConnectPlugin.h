@@ -62,14 +62,14 @@ protected:
     virtual void onRecordingPaused(bool paused ) noexcept override;
     virtual void onStopRecording() noexcept override;
 
-    virtual bool onStartReplay(int64_t currentTimestamp) noexcept override;
+    virtual bool onStartReplay(std::int64_t currentTimestamp) noexcept override;
     virtual void onReplayPaused(bool paused) noexcept override;
     virtual void onStopReplay() noexcept override;
 
-    virtual void onSeek(int64_t currentTimestamp) noexcept override;
+    virtual void onSeek(std::int64_t currentTimestamp) noexcept override;
     virtual void onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
 
-    virtual bool sendAircraftData(int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept override;
+    virtual bool sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept override;
     virtual bool isConnectedWithSim() const noexcept override;
     virtual bool connectWithSim() noexcept override;
 
@@ -91,7 +91,7 @@ private:
     void setupRequestData() noexcept;
     bool setAircraftFrozen(::SIMCONNECT_OBJECT_ID objectId, bool enable) noexcept;
     bool sendAircraftData(TimeVariableData::Access access) noexcept;
-    inline bool updateAndSendEngineStartEvent(int64_t objectId, const EngineData &engineData, TimeVariableData::Access access) noexcept;
+    inline bool updateAndSendEngineStartEvent(std::int64_t objectId, const EngineData &engineData, TimeVariableData::Access access) noexcept;
     void replay() noexcept;
     void updateRecordingFrequency(SampleRate::SampleRate sampleRate) noexcept;
     void updateRequestPeriod(::SIMCONNECT_PERIOD period) noexcept;

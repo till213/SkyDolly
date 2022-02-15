@@ -49,7 +49,7 @@ public:
 
     const AircraftInfo &aircraftInfo;
     std::vector<EngineData> engineData;
-    int64_t currentTimestamp;
+    std::int64_t currentTimestamp;
     TimeVariableData::Access currentAccess;
     EngineData currentEngineData;
     mutable int currentIndex;
@@ -111,10 +111,10 @@ std::size_t Engine::count() const noexcept
     return d->engineData.size();
 }
 
-const EngineData &Engine::interpolate(int64_t timestamp, TimeVariableData::Access access) const noexcept
+const EngineData &Engine::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const EngineData *p1, *p2;
-    const int64_t adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timeOffset, int64_t(0));
+    const std::int64_t adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timeOffset, std::int64_t(0));
 
     if (d->currentTimestamp != timestamp || d->currentAccess != access) {
 

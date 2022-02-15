@@ -140,7 +140,7 @@ bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
     query.bindValue(":end_zulu_sim_time", flightCondition.endZuluTime);
     bool ok = query.exec();
     if (ok) {
-        int64_t id = query.lastInsertId().toLongLong(&ok);
+        std::int64_t id = query.lastInsertId().toLongLong(&ok);
         flight.setId(id);
 #ifdef DEBUG
     } else {
@@ -163,7 +163,7 @@ bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
     return ok;
 }
 
-bool SQLiteFlightDao::getFlightById(int64_t id, Flight &flight) const noexcept
+bool SQLiteFlightDao::getFlightById(std::int64_t id, Flight &flight) const noexcept
 {
     QSqlQuery query;
     query.setForwardOnly(true);
@@ -244,7 +244,7 @@ bool SQLiteFlightDao::getFlightById(int64_t id, Flight &flight) const noexcept
     return ok;
 }
 
-bool SQLiteFlightDao::deleteById(int64_t id) noexcept
+bool SQLiteFlightDao::deleteById(std::int64_t id) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -266,7 +266,7 @@ bool SQLiteFlightDao::deleteById(int64_t id) noexcept
     return ok;
 }
 
-bool SQLiteFlightDao::updateTitle(int64_t id, const QString &title) noexcept
+bool SQLiteFlightDao::updateTitle(std::int64_t id, const QString &title) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -286,7 +286,7 @@ bool SQLiteFlightDao::updateTitle(int64_t id, const QString &title) noexcept
     return ok;
 }
 
-bool SQLiteFlightDao::updateTitleAndDescription(int64_t id, const QString &title, const QString &description) noexcept
+bool SQLiteFlightDao::updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -308,7 +308,7 @@ bool SQLiteFlightDao::updateTitleAndDescription(int64_t id, const QString &title
     return ok;
 }
 
-bool SQLiteFlightDao::updateUserAircraftIndex(int64_t id, int index) noexcept
+bool SQLiteFlightDao::updateUserAircraftIndex(std::int64_t id, int index) noexcept
 {
     QSqlQuery query;
     query.prepare(

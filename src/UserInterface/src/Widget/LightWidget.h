@@ -51,14 +51,14 @@ public:
     virtual ~LightWidget() noexcept;
 
 protected slots:
-    virtual void updateUi(int64_t timestamp, TimeVariableData::Access access) noexcept override;
+    virtual void updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 
 private:
     std::unique_ptr<LightWidgetPrivate> d;
     std::unique_ptr<Ui::LightWidget> ui;
 
     void initUi() noexcept;    
-    const LightData &getCurrentLightData(int64_t timestamp, TimeVariableData::Access access) const noexcept;
+    const LightData &getCurrentLightData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
 };
 
 #endif // LIGHTWIDGET_H

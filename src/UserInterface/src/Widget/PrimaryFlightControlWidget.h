@@ -51,14 +51,14 @@ public:
     virtual ~PrimaryFlightControlWidget() noexcept;
 
 protected slots:
-    virtual void updateUi(int64_t timestamp, TimeVariableData::Access access) noexcept override;
+    virtual void updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 
 private:
     std::unique_ptr<PrimaryFlightControlWidgetPrivate> d;
     std::unique_ptr<Ui::PrimaryFlightControlWidget> ui;
 
     void initUi();    
-    const PrimaryFlightControlData &getCurrentPrimaryFlightControlData(int64_t timestamp, TimeVariableData::Access access) const noexcept;
+    const PrimaryFlightControlData &getCurrentPrimaryFlightControlData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
 };
 
 #endif // PRIMARYFLIGHTCONTROLWIDGET_H

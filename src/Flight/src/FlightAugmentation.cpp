@@ -81,9 +81,9 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
             PositionData &startPositionData = position[i];
             const PositionData &endPositionData = position[i + 1];
             const SkyMath::Coordinate startPosition(startPositionData.latitude, startPositionData.longitude);
-            const int64_t startTimestamp = startPositionData.timestamp;
+            const std::int64_t startTimestamp = startPositionData.timestamp;
             const SkyMath::Coordinate endPosition(endPositionData.latitude, endPositionData.longitude);
-            const int64_t endTimestamp = endPositionData.timestamp;
+            const std::int64_t endTimestamp = endPositionData.timestamp;
             const double averageAltitude = Convert::feetToMeters((startPositionData.altitude + endPositionData.altitude) / 2.0);
 
             const auto [distance, velocity] = SkyMath::distanceAndVelocity(startPosition, startTimestamp, endPosition, endTimestamp, averageAltitude);
@@ -160,7 +160,7 @@ void FlightAugmentation::augmentProcedures(Aircraft &aircraft) noexcept
 
 void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
 {
-    const int64_t lastTimestamp = aircraft.getPosition().getLast().timestamp;
+    const std::int64_t lastTimestamp = aircraft.getPosition().getLast().timestamp;
 
     // Engine
 
@@ -195,7 +195,7 @@ void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
     engine.upsertLast(engineData);
 
     // 2 minutes
-    engineData.timestamp = qMin(static_cast<int64_t>(2 * 60 * 1000), lastTimestamp);
+    engineData.timestamp = qMin(static_cast<std::int64_t>(2 * 60 * 1000), lastTimestamp);
     engineData.electricalMasterBattery1 = true;
     engineData.electricalMasterBattery2 = true;
     engineData.electricalMasterBattery3 = true;
@@ -222,7 +222,7 @@ void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
     engine.upsertLast(engineData);
 
     // 5 minutes
-    engineData.timestamp = qMin(static_cast<int64_t>(5 * 60 * 1000), lastTimestamp);
+    engineData.timestamp = qMin(static_cast<std::int64_t>(5 * 60 * 1000), lastTimestamp);
     engineData.electricalMasterBattery1 = true;
     engineData.electricalMasterBattery2 = true;
     engineData.electricalMasterBattery3 = true;
@@ -263,7 +263,7 @@ void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
     secondaryFlightControl.upsertLast(secondaryFlightControlData);
 
     // 30 seconds
-    secondaryFlightControlData.timestamp = qMin(static_cast<int64_t>(30 * 1000), lastTimestamp);
+    secondaryFlightControlData.timestamp = qMin(static_cast<std::int64_t>(30 * 1000), lastTimestamp);
     // Retract flaps
     secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(0);
     secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(0);
@@ -285,7 +285,7 @@ void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
     aircraftHandle.upsertLast(handleData);
 
     // 5 seconds
-    handleData.timestamp = qMin(static_cast<int64_t>(5 * 1000), lastTimestamp);
+    handleData.timestamp = qMin(static_cast<std::int64_t>(5 * 1000), lastTimestamp);
     // Gear up
     handleData.gearHandlePosition = false;
     aircraftHandle.upsertLast(handleData);
@@ -308,7 +308,7 @@ void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
     light.upsertLast(lightData);
 
     // 3 minutes
-    lightData.timestamp = qMin(static_cast<int64_t>(3 * 60 * 1000), lastTimestamp);
+    lightData.timestamp = qMin(static_cast<std::int64_t>(3 * 60 * 1000), lastTimestamp);
     lightData.lightStates = SimType::LightState::Navigation |
                             SimType::LightState::Beacon |
                             SimType::LightState::Strobe |
@@ -319,7 +319,7 @@ void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
     light.upsertLast(lightData);
 
     // 4 minutes
-    lightData.timestamp = qMin(static_cast<int64_t>(4 * 60 * 1000), lastTimestamp);
+    lightData.timestamp = qMin(static_cast<std::int64_t>(4 * 60 * 1000), lastTimestamp);
     lightData.lightStates = SimType::LightState::Navigation |
                             SimType::LightState::Beacon |
                             SimType::LightState::Strobe |
@@ -335,7 +335,7 @@ void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
 void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
 {
     Position &position = aircraft.getPosition();
-    const int64_t lastTimestamp = position.getLast().timestamp;
+    const std::int64_t lastTimestamp = position.getLast().timestamp;
 
     // Engine
 
@@ -343,7 +343,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     EngineData engineData;
 
     // t minus 5 minutes
-    engineData.timestamp = qMax(lastTimestamp - 5 * 60 * 1000, int64_t(0));
+    engineData.timestamp = qMax(lastTimestamp - 5 * 60 * 1000, std::int64_t(0));
     engineData.electricalMasterBattery1 = true;
     engineData.electricalMasterBattery2 = true;
     engineData.electricalMasterBattery3 = true;
@@ -368,7 +368,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     engine.upsert(engineData);
 
     // t minus 2 minutes
-    engineData.timestamp = qMax(lastTimestamp - 2 * 60 * 1000, int64_t(0));
+    engineData.timestamp = qMax(lastTimestamp - 2 * 60 * 1000, std::int64_t(0));
     engineData.electricalMasterBattery1 = true;
     engineData.electricalMasterBattery2 = true;
     engineData.electricalMasterBattery3 = true;
@@ -425,7 +425,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     SecondaryFlightControlData secondaryFlightControlData;
 
     // t minus 10 minutes
-    secondaryFlightControlData.timestamp = qMax(lastTimestamp - 10 * 60 * 1000, int64_t(0));
+    secondaryFlightControlData.timestamp = qMax(lastTimestamp - 10 * 60 * 1000, std::int64_t(0));
     // Flaps 0
     secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(0);
     secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(0);
@@ -437,7 +437,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     secondaryFlightControl.upsert(secondaryFlightControlData);
 
     // t minus 8 minutes
-    secondaryFlightControlData.timestamp = qMax(lastTimestamp - 8 * 60 * 1000, int64_t(0));
+    secondaryFlightControlData.timestamp = qMax(lastTimestamp - 8 * 60 * 1000, std::int64_t(0));
     // Flaps 1
     secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(66.6);
     secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(66.6);
@@ -449,7 +449,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     secondaryFlightControl.upsert(secondaryFlightControlData);
 
     // t minus 7 minutes
-    secondaryFlightControlData.timestamp = qMax(lastTimestamp - 7 * 60 * 1000, int64_t(0));
+    secondaryFlightControlData.timestamp = qMax(lastTimestamp - 7 * 60 * 1000, std::int64_t(0));
     // Flaps 2
     secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(81.57);
     secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(81.57);
@@ -461,7 +461,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     secondaryFlightControl.upsert(secondaryFlightControlData);
 
     // t minus 5 minutes
-    secondaryFlightControlData.timestamp = qMax(lastTimestamp - 5 * 60 * 1000, int64_t(0));
+    secondaryFlightControlData.timestamp = qMax(lastTimestamp - 5 * 60 * 1000, std::int64_t(0));
     // Flaps 3
     secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(81.57);
     secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(81.57);
@@ -473,7 +473,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     secondaryFlightControl.upsert(secondaryFlightControlData);
 
     // t minus 4 minutes
-    secondaryFlightControlData.timestamp = qMax(lastTimestamp - 4 * 60 * 1000, int64_t(0));
+    secondaryFlightControlData.timestamp = qMax(lastTimestamp - 4 * 60 * 1000, std::int64_t(0));
     // Flaps 4
     secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(100.0);
     secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(100.0);
@@ -502,7 +502,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     AircraftHandleData handleData;
 
     // t minus 3 minutes
-    handleData.timestamp = qMax(lastTimestamp - 3 * 60 * 1000, int64_t(0));
+    handleData.timestamp = qMax(lastTimestamp - 3 * 60 * 1000, std::int64_t(0));
     // Gear down
     handleData.gearHandlePosition = true;
     aircraftHandle.upsert(handleData);
@@ -513,7 +513,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     LightData lightData;
 
     // t minus 8 minutes
-    lightData.timestamp = qMax(lastTimestamp - 8 * 60 * 1000, int64_t(0));
+    lightData.timestamp = qMax(lastTimestamp - 8 * 60 * 1000, std::int64_t(0));
     lightData.lightStates = SimType::LightState::Navigation |
                             SimType::LightState::Beacon |
                             SimType::LightState::Strobe |
@@ -524,7 +524,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     light.upsert(lightData);
 
     // t minus 6 minutes
-    lightData.timestamp = qMax(lastTimestamp - 6 * 60 * 1000, int64_t(0));
+    lightData.timestamp = qMax(lastTimestamp - 6 * 60 * 1000, std::int64_t(0));
     lightData.lightStates = SimType::LightState::Navigation |
                             SimType::LightState::Beacon |
                             SimType::LightState::Landing |
@@ -536,7 +536,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     light.upsert(lightData);
 
     // t minus 4 minutes
-    lightData.timestamp = qMax(lastTimestamp - 4 * 60 * 1000, int64_t(0));
+    lightData.timestamp = qMax(lastTimestamp - 4 * 60 * 1000, std::int64_t(0));
     lightData.lightStates = SimType::LightState::Navigation |
                             SimType::LightState::Beacon |
                             SimType::LightState::Landing |
@@ -559,7 +559,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
         if (index > 0) {
             // Second to last sample -> adjust pitch to 3 degrees nose up
             --index;
-            while (index >= 0 && position[index].timestamp >= qMax(lastTimestamp - (3 * 60 * 1000), int64_t(0))) {
+            while (index >= 0 && position[index].timestamp >= qMax(lastTimestamp - (3 * 60 * 1000), std::int64_t(0))) {
                 // Nose up 3 degrees
                 position[index].pitch = -3.0;
                 --index;

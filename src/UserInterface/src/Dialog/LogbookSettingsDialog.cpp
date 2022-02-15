@@ -137,7 +137,7 @@ void LogbookSettingsDialog::updateUi() noexcept
         QString lastBackupDate = unit.formatDateTime(metadata.lastBackupDate);
         ui->lastBackupDateLineEdit->setText(lastBackupDate);
 
-        int64_t fileSize = fileInfo.size();
+        std::int64_t fileSize = fileInfo.size();
         ui->logbookSizeLineEdit->setText(unit.formatMemory(fileSize));
 
         if (metadata.backupPeriodIntlId == Const::BackupNeverIntlId) {

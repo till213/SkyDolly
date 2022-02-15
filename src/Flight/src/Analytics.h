@@ -59,7 +59,7 @@ public:
      * \return the heading of the first aircraft movement; PositionData::NullData if
      *         no positions exist
      */
-    const std::pair<int64_t, double> firstMovementHeading() const noexcept;
+    const std::pair<std::int64_t, double> firstMovementHeading() const noexcept;
 
     const PositionData &closestPosition(double latitude, double longitude) const noexcept;
 

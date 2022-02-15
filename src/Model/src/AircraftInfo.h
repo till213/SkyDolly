@@ -36,13 +36,13 @@
 
 struct MODEL_API AircraftInfo
 {
-    int64_t aircraftId;
+    std::int64_t aircraftId;
     AircraftType aircraftType;
     // Local (simulation) times
     QDateTime startDate;
     QDateTime endDate;
     // Milliseconds
-    int64_t timeOffset;
+    std::int64_t timeOffset;
     QString tailNumber;
     QString airline;
     QString flightNumber;    
@@ -53,7 +53,7 @@ struct MODEL_API AircraftInfo
     // Knots (TAS)
     int initialAirspeed;
 
-    AircraftInfo(int64_t aircraftId) noexcept;
+    AircraftInfo(std::int64_t aircraftId) noexcept;
     AircraftInfo(AircraftInfo &&) = default;
     AircraftInfo(const AircraftInfo &) = default;
     AircraftInfo &operator= (const AircraftInfo &) = default;

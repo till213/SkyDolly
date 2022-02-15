@@ -86,7 +86,7 @@ void AircraftHandleWidget::initUi() noexcept
     ui->rightWingFoldingLineEdit->setToolTip(SimVar::FoldingWingRightPercent);
 }
 
-const AircraftHandleData &AircraftHandleWidget::getCurrentAircraftHandleData(int64_t timestamp, TimeVariableData::Access access) const noexcept
+const AircraftHandleData &AircraftHandleWidget::getCurrentAircraftHandleData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
@@ -108,7 +108,7 @@ const AircraftHandleData &AircraftHandleWidget::getCurrentAircraftHandleData(int
 
 // PRIVATE SLOTS
 
-void AircraftHandleWidget::updateUi(int64_t timestamp, TimeVariableData::Access access) noexcept
+void AircraftHandleWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {
     const AircraftHandleData &aircraftHandleData = getCurrentAircraftHandleData(timestamp, access);
     QString colorName;

@@ -48,18 +48,18 @@ public:
     virtual ~FlightService() noexcept;
 
     bool store(Flight &flight) noexcept;
-    bool restore(int64_t id, Flight &flight) noexcept;
-    bool deleteById(int64_t id) noexcept;
+    bool restore(std::int64_t id, Flight &flight) noexcept;
+    bool deleteById(std::int64_t id) noexcept;
     bool updateTitle(Flight &flight, const QString &title) noexcept;
-    bool updateTitle(int64_t id, const QString &title) noexcept;
+    bool updateTitle(std::int64_t id, const QString &title) noexcept;
     bool updateTitleAndDescription(Flight &flight, const QString &title, const QString &description) noexcept;
-    bool updateTitleAndDescription(int64_t id, const QString &title, const QString &description) noexcept;
+    bool updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept;
     bool updateUserAircraftIndex(Flight &flight, int index) noexcept;
 
 signals:
-    void flightStored(int64_t id);
-    void flightRestored(int64_t id);
-    void flightUpdated(int64_t id);
+    void flightStored(std::int64_t id);
+    void flightRestored(std::int64_t id);
+    void flightUpdated(std::int64_t id);
 
 private:
     std::unique_ptr<FlightServicePrivate> d;

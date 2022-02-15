@@ -77,7 +77,7 @@ public slots:
 signals:
     void connectionChanged(SkyConnectIntf *skyConnect);
 
-    void timestampChanged(int64_t timestamp, TimeVariableData::Access access);
+    void timestampChanged(std::int64_t timestamp, TimeVariableData::Access access);
     void stateChanged(Connect::State state);
     void recordingStopped();
 

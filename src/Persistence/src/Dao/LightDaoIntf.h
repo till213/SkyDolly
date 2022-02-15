@@ -45,10 +45,10 @@ public:
      *        the LightData to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool add(int64_t aircraftId, const LightData &lightData) noexcept = 0;
-    virtual bool getByAircraftId(int64_t aircraftId, std::insert_iterator<std::vector<LightData>> insertIterator) const noexcept = 0;
-    virtual bool deleteByFlightId(int64_t flightId) noexcept = 0;
-    virtual bool deleteByAircraftId(int64_t aircraftId) noexcept = 0;
+    virtual bool add(std::int64_t aircraftId, const LightData &lightData) noexcept = 0;
+    virtual bool getByAircraftId(std::int64_t aircraftId, std::insert_iterator<std::vector<LightData>> insertIterator) const noexcept = 0;
+    virtual bool deleteByFlightId(std::int64_t flightId) noexcept = 0;
+    virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept = 0;
 };
 
 #endif // LIGHTDAOINTF_H

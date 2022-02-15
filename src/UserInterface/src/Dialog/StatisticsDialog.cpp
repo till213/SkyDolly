@@ -146,8 +146,8 @@ void StatisticsDialog::updateRecordUi() noexcept
         ui->samplesPerSecondLineEdit->clear();
     }
 
-    int64_t totalCount = 0;
-    int64_t totalSize = 0;
+    std::int64_t totalCount = 0;
+    std::int64_t totalSize = 0;
     for (const auto &aircraft : flight) {
         const int positionDataCount = aircraft->getPositionConst().count();
         const int engineDataCount = aircraft->getEngineConst().count();
@@ -157,12 +157,12 @@ void StatisticsDialog::updateRecordUi() noexcept
         const int lightDataCount = aircraft->getLightConst().count();
         totalCount = totalCount + positionDataCount + engineDataCount + primaryFlightControlDataCount + secondaryFlightControlDataCount + aircraftHandleDataCount + lightDataCount;
 
-        const int64_t positionDataSize = positionDataCount * sizeof(PositionData);
-        const int64_t engineDataSize = engineDataCount * sizeof(EngineData);
-        const int64_t primaryFlightControlDataSize = primaryFlightControlDataCount * sizeof(PrimaryFlightControlData);
-        const int64_t secondaryFlightControlDataSize = secondaryFlightControlDataCount * sizeof(SecondaryFlightControlData);
-        const int64_t aircraftHandleDataSize = aircraftHandleDataCount * sizeof(AircraftHandleData);
-        const int64_t lightDataSize = lightDataCount * sizeof(LightData);
+        const std::int64_t positionDataSize = positionDataCount * sizeof(PositionData);
+        const std::int64_t engineDataSize = engineDataCount * sizeof(EngineData);
+        const std::int64_t primaryFlightControlDataSize = primaryFlightControlDataCount * sizeof(PrimaryFlightControlData);
+        const std::int64_t secondaryFlightControlDataSize = secondaryFlightControlDataCount * sizeof(SecondaryFlightControlData);
+        const std::int64_t aircraftHandleDataSize = aircraftHandleDataCount * sizeof(AircraftHandleData);
+        const std::int64_t lightDataSize = lightDataCount * sizeof(LightData);
         totalSize = totalSize + positionDataSize + engineDataSize + primaryFlightControlDataSize + secondaryFlightControlDataSize + aircraftHandleDataSize + lightDataSize;
     }
 

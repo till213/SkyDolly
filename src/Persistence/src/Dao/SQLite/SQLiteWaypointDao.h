@@ -39,10 +39,10 @@ public:
     explicit SQLiteWaypointDao() noexcept;
     virtual ~SQLiteWaypointDao() noexcept;
 
-    virtual bool add(int64_t aircraftId, const FlightPlan &flightPlan) noexcept override;
-    virtual bool getByAircraftId(int64_t aircraftId, FlightPlan &flightPlan) const noexcept override;
-    virtual bool deleteByFlightId(int64_t flightId) noexcept override;
-    virtual bool deleteByAircraftId(int64_t aircraftId) noexcept override;
+    virtual bool add(std::int64_t aircraftId, const FlightPlan &flightPlan) noexcept override;
+    virtual bool getByAircraftId(std::int64_t aircraftId, FlightPlan &flightPlan) const noexcept override;
+    virtual bool deleteByFlightId(std::int64_t flightId) noexcept override;
+    virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
 };
 
 #endif // SQLITEWAYPOINTDAO_H

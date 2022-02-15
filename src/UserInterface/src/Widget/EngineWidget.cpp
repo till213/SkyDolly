@@ -73,7 +73,7 @@ EngineWidget::~EngineWidget() noexcept
 
 // PROTECTED SLOTS
 
-void EngineWidget::updateUi(int64_t timestamp, TimeVariableData::Access access) noexcept
+void EngineWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {
     const EngineData &engineData = getCurrentEngineData(timestamp, access);
     QString colorName;
@@ -207,7 +207,7 @@ void EngineWidget::initUi() noexcept
     ui->generalEngineCombustion4CheckBox->setToolTip(SimVar::GeneralEngineCombustion4);
 }
 
-const EngineData &EngineWidget::getCurrentEngineData(int64_t timestamp, TimeVariableData::Access access) const noexcept
+const EngineData &EngineWidget::getCurrentEngineData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();

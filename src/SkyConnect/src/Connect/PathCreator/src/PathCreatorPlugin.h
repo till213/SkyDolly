@@ -60,14 +60,14 @@ protected:
     virtual void onRecordingPaused(bool paused) noexcept override;
     virtual void onStopRecording() noexcept override;
 
-    virtual bool onStartReplay(int64_t currentTimestamp) noexcept override;
+    virtual bool onStartReplay(std::int64_t currentTimestamp) noexcept override;
     virtual void onReplayPaused(bool paused) noexcept override;
     virtual void onStopReplay() noexcept override;
 
-    virtual void onSeek(int64_t currentTimestamp) noexcept override;
+    virtual void onSeek(std::int64_t currentTimestamp) noexcept override;
     virtual void onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
 
-    virtual bool sendAircraftData(int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept override;
+    virtual bool sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept override;
     virtual bool isConnectedWithSim() const noexcept override;
     virtual bool connectWithSim() noexcept override;
 
@@ -82,12 +82,12 @@ private:
     std::unique_ptr<PathCreatorPluginPrivate> d;
 
     void frenchConnection() noexcept;
-    void recordPositionData(int64_t timestamp) noexcept;
-    void recordEngineData(int64_t timestamp) noexcept;
-    void recordPrimaryControls(int64_t timestamp) noexcept;
-    void recordSecondaryControls(int64_t timestamp) noexcept;
-    void recordAircraftHandle(int64_t timestamp) noexcept;
-    void recordLights(int64_t timestamp) noexcept;
+    void recordPositionData(std::int64_t timestamp) noexcept;
+    void recordEngineData(std::int64_t timestamp) noexcept;
+    void recordPrimaryControls(std::int64_t timestamp) noexcept;
+    void recordSecondaryControls(std::int64_t timestamp) noexcept;
+    void recordAircraftHandle(std::int64_t timestamp) noexcept;
+    void recordLights(std::int64_t timestamp) noexcept;
     void recordWaypoint() noexcept;
     void recordFlightCondition() noexcept;
     void recordAircraftInfo() noexcept;

@@ -74,7 +74,7 @@ public:
     const PrimaryFlightControlData &getFirst() const noexcept;
     const PrimaryFlightControlData &getLast() const noexcept;
     std::size_t count() const noexcept;
-    const PrimaryFlightControlData &interpolate(int64_t timestamp, TimeVariableData::Access access) const noexcept;
+    const PrimaryFlightControlData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
     void clear() noexcept;
 
     typedef std::vector<PrimaryFlightControlData>::iterator Iterator;

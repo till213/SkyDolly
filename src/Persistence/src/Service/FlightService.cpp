@@ -86,7 +86,7 @@ bool FlightService::store(Flight &flight) noexcept
     return ok;
 }
 
-bool FlightService::restore(int64_t id, Flight &flight) noexcept
+bool FlightService::restore(std::int64_t id, Flight &flight) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
@@ -104,7 +104,7 @@ bool FlightService::restore(int64_t id, Flight &flight) noexcept
     return ok;
 }
 
-bool FlightService::deleteById(int64_t id)  noexcept
+bool FlightService::deleteById(std::int64_t id)  noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
@@ -127,7 +127,7 @@ bool FlightService::updateTitle(Flight &flight, const QString &title) noexcept
     return ok;
 }
 
-bool FlightService::updateTitle(int64_t id, const QString &title) noexcept
+bool FlightService::updateTitle(std::int64_t id, const QString &title) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
@@ -152,7 +152,7 @@ bool FlightService::updateTitleAndDescription(Flight &flight, const QString &tit
     return ok;
 }
 
-bool FlightService::updateTitleAndDescription(int64_t id, const QString &title, const QString &description) noexcept
+bool FlightService::updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {

@@ -86,7 +86,7 @@ SQLiteWaypointDao::SQLiteWaypointDao() noexcept
 SQLiteWaypointDao::~SQLiteWaypointDao() noexcept
 {}
 
-bool SQLiteWaypointDao::add(int64_t aircraftId, const FlightPlan &flightPlan)  noexcept
+bool SQLiteWaypointDao::add(std::int64_t aircraftId, const FlightPlan &flightPlan)  noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -135,7 +135,7 @@ bool SQLiteWaypointDao::add(int64_t aircraftId, const FlightPlan &flightPlan)  n
     return ok;
 }
 
-bool SQLiteWaypointDao::getByAircraftId(int64_t aircraftId, FlightPlan &flightPlan) const noexcept
+bool SQLiteWaypointDao::getByAircraftId(std::int64_t aircraftId, FlightPlan &flightPlan) const noexcept
 {
     QSqlQuery query;
     query.setForwardOnly(true);
@@ -178,7 +178,7 @@ bool SQLiteWaypointDao::getByAircraftId(int64_t aircraftId, FlightPlan &flightPl
     return ok;
 }
 
-bool SQLiteWaypointDao::deleteByFlightId(int64_t flightId) noexcept
+bool SQLiteWaypointDao::deleteByFlightId(std::int64_t flightId) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -200,7 +200,7 @@ bool SQLiteWaypointDao::deleteByFlightId(int64_t flightId) noexcept
     return ok;
 }
 
-bool SQLiteWaypointDao::deleteByAircraftId(int64_t aircraftId) noexcept
+bool SQLiteWaypointDao::deleteByAircraftId(std::int64_t aircraftId) noexcept
 {
     QSqlQuery query;
     query.prepare(

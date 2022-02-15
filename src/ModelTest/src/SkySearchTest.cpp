@@ -32,10 +32,10 @@
 
 namespace
 {
-    constexpr int64_t t0 = 0;
-    constexpr int64_t t1 = 10;
-    constexpr int64_t t2 = 20;
-    constexpr int64_t t3 = 30;
+    constexpr std::int64_t t0 = 0;
+    constexpr std::int64_t t1 = 10;
+    constexpr std::int64_t t2 = 20;
+    constexpr std::int64_t t3 = 30;
 }
 
 // PRIVATE SLOTS
@@ -62,7 +62,7 @@ void SkySearchTest::cleanupTestCase()
 
 void SkySearchTest::binaryIntervalSearch_data()
 {
-    QTest::addColumn<int64_t>("timestamp");
+    QTest::addColumn<std::int64_t>("timestamp");
     QTest::addColumn<std::size_t>("low");
     QTest::addColumn<std::size_t>("high");
     QTest::addColumn<int>("expected");
@@ -85,7 +85,7 @@ void SkySearchTest::binaryIntervalSearch_data()
 void SkySearchTest::binaryIntervalSearch()
 {
     // Setup
-    QFETCH(int64_t, timestamp);
+    QFETCH(std::int64_t, timestamp);
     QFETCH(std::size_t, low);
     QFETCH(std::size_t, high);
     QFETCH(int, expected);
@@ -99,7 +99,7 @@ void SkySearchTest::binaryIntervalSearch()
 
 void SkySearchTest::linearIntervalSearch_data()
 {
-    QTest::addColumn<int64_t>("timestamp");
+    QTest::addColumn<std::int64_t>("timestamp");
     QTest::addColumn<int>("start");
     QTest::addColumn<int>("expected");
 
@@ -121,7 +121,7 @@ void SkySearchTest::linearIntervalSearch_data()
 void SkySearchTest::linearIntervalSearch()
 {
     // Setup
-    QFETCH(int64_t, timestamp);
+    QFETCH(std::int64_t, timestamp);
     QFETCH(int, start);
     QFETCH(int, expected);
 

@@ -298,8 +298,8 @@ inline bool IGCExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &
     const Engine &engine = aircraft.getEngineConst();
     ok = true;
     if (d->exportSettings.resamplingPeriod != IGCExportSettings::ResamplingPeriod::Original) {
-        const int64_t duration = position.getLast().timestamp;
-        int64_t timestamp = 0;
+        const std::int64_t duration = position.getLast().timestamp;
+        std::int64_t timestamp = 0;
         while (ok && timestamp <= duration) {
             const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Linear);
             if (!positionData.isNull()) {

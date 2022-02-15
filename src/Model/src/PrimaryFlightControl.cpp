@@ -49,7 +49,7 @@ public:
 
     const AircraftInfo &aircraftInfo;
     std::vector<PrimaryFlightControlData> primaryFlightControlData;
-    int64_t currentTimestamp;
+    std::int64_t currentTimestamp;
     TimeVariableData::Access currentAccess;
     PrimaryFlightControlData currentPrimaryFlightControlData;
     mutable int currentIndex;
@@ -111,10 +111,10 @@ std::size_t PrimaryFlightControl::count() const noexcept
     return d->primaryFlightControlData.size();
 }
 
-const PrimaryFlightControlData &PrimaryFlightControl::interpolate(int64_t timestamp, TimeVariableData::Access access) const noexcept
+const PrimaryFlightControlData &PrimaryFlightControl::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const PrimaryFlightControlData *p1, *p2;
-    const int64_t adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timeOffset, int64_t(0));
+    const std::int64_t adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timeOffset, std::int64_t(0));
 
     if (d->currentTimestamp != adjustedTimestamp || d->currentAccess != access) {
 

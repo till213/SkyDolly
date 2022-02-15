@@ -115,7 +115,7 @@ public:
     FlightService &flightService;
     std::unique_ptr<LogbookService> logbookService;
     int selectedRow;
-    int64_t selectedFlightId;
+    std::int64_t selectedFlightId;
     Unit unit;
     std::unique_ptr<QAction> moduleAction;
     FlightSelector flightSelector;
@@ -141,7 +141,7 @@ LogbookWidget::~LogbookWidget() noexcept
 #endif
 }
 
-int64_t LogbookWidget::getSelectedFlightId() const noexcept
+std::int64_t LogbookWidget::getSelectedFlightId() const noexcept
 {
     return d->selectedFlightId;
 }
@@ -274,7 +274,7 @@ void LogbookWidget::updateFlightTable() noexcept
     if (ConnectionManager::getInstance().isConnected()) {
 
         const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
-        const int64_t flightInMemoryId = flight.getId();
+        const std::int64_t flightInMemoryId = flight.getId();
         std::vector<FlightSummary> summaries = d->logbookService->getFlightSummaries(d->flightSelector);
         ui->logTableWidget->blockSignals(true);
         ui->logTableWidget->setSortingEnabled(false);
@@ -342,7 +342,7 @@ void LogbookWidget::updateFlightTable() noexcept
             ++columnIndex;
 
             // Duration
-            int64_t durationMSec = summary.startDate.msecsTo(summary.endDate);
+            std::int64_t durationMSec = summary.startDate.msecsTo(summary.endDate);
             QTime time = QTime(0, 0).addMSecs(durationMSec);
             newItem = new QTableWidgetItem(d->unit.formatDuration(time));
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -514,7 +514,7 @@ void LogbookWidget::updateEditUi() noexcept
 void LogbookWidget::updateAircraftIcon() noexcept
 {
     const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
-    const int64_t flightInMemoryId = flight.getId();
+    const std::int64_t flightInMemoryId = flight.getId();
     const QIcon aircraftIcon(":/img/icons/aircraft-normal.png");
     const QIcon emptyIcon;
     for (int row = 0; row < ui->logTableWidget->rowCount(); ++row) {
@@ -587,7 +587,7 @@ void LogbookWidget::handleSelectionChanged() noexcept
 
 void LogbookWidget::loadFlight() noexcept
 {
-    int64_t selectedFlightId = d->selectedFlightId;
+    std::int64_t selectedFlightId = d->selectedFlightId;
     if (selectedFlightId != Flight::InvalidId) {
         const bool ok = d->flightService.restore(selectedFlightId, Logbook::getInstance().getCurrentFlight());
         if (!ok) {
