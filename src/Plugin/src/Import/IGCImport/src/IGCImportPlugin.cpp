@@ -86,6 +86,8 @@ public:
         Running,
         Shutdown
     };
+
+    static const inline QString FileExtension {QStringLiteral("igc")};
 };
 
 // PUBLIC
@@ -106,6 +108,11 @@ IGCImportPlugin::~IGCImportPlugin() noexcept
 }
 
 // PROTECTED
+
+QString IGCImportPlugin::getFileFilter() const noexcept
+{
+    return tr("International Gliding Commission (*.%1)").arg(IGCImportPluginPrivate::FileExtension);
+}
 
 bool IGCImportPlugin::readFile(QFile &file) noexcept
 {

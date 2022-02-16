@@ -146,7 +146,7 @@ bool IGCExportPlugin::exportData() noexcept
         // Remember export path
         const QString exportDirectoryPath = QFileInfo(exportDialog->getSelectedFilePath()).absolutePath();
         Settings::getInstance().setExportPath(exportDirectoryPath);
-        const QString filePath = File::ensureSuffix(exportDialog->getSelectedFilePath(), IGCExportDialog::FileSuffix);
+        const QString filePath = File::ensureSuffix(exportDialog->getSelectedFilePath(), IGCExportDialog::FileExtension);
         if (!filePath.isEmpty()) {
 
             QFile file(filePath);

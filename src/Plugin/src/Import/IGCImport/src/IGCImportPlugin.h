@@ -49,6 +49,7 @@ public:
     virtual ~IGCImportPlugin() noexcept;
 
 protected:
+    virtual QString getFileFilter() const noexcept override;
     virtual bool readFile(QFile &file) noexcept override;
     virtual QDateTime getStartDateTimeUtc() noexcept override;
     virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept override;
@@ -56,23 +57,6 @@ protected:
 
 private:
     std::unique_ptr<IGCImportPluginPrivate> d;
-
-    // A record, containing manufacturer ID
-    bool readManufacturer() noexcept;
-    // All records
-    bool readRecords() noexcept;
-
-    bool parseHeader(const QByteArray &line) noexcept;
-    bool parseHeaderDate(const QByteArray &line) noexcept;
-    bool parseHeaderText(const QByteArray &line, const QRegularExpression &regExp, QString &text) noexcept;
-    bool parseHeaderPilot(const QByteArray &line) noexcept;
-    bool parseHeaderCoPilot(const QByteArray &line) noexcept;
-    bool parseHeaderGliderType(const QByteArray &line) noexcept;
-    bool parseHeaderGliderId(const QByteArray &line) noexcept;
-
-    bool parseTask(const QByteArray &line) noexcept;
-    bool parseFix(const QByteArray &line) noexcept;
-    inline double parseCoordinate(QStringView degreesText, QStringView minutesBy1000Text);
 
     void updateFlightInfo(const QFile &file) noexcept;
     void updateFlightCondition() noexcept;

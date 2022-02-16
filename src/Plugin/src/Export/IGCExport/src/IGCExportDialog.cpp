@@ -102,7 +102,7 @@ void IGCExportDialog::initUi() noexcept
     d->exportButton = ui->buttonBox->addButton(tr("Export"), QDialogButtonBox::AcceptRole);
 
     // File path
-    ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestFilePath(FileSuffix)));
+    ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestFilePath(FileExtension)));
 
     // Resampling
     ui->resamplingComboBox->addItem(QString("1/10 Hz") % " (" % tr("less data, less accuracy") % ")", Enum::toUnderlyingType(IGCExportSettings::ResamplingPeriod::ATenthHz));

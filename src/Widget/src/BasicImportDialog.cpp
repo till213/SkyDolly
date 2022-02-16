@@ -28,6 +28,7 @@
 #include <memory>
 
 #include <QDialog>
+#include <QString>
 #include <QFileDialog>
 #include <QWidget>
 #include <QPushButton>
@@ -42,20 +43,22 @@
 class BasicImportDialogPrivate
 {
 public:
-    BasicImportDialogPrivate() noexcept
-        : aircraftTypeService(std::make_unique<AircraftTypeService>())
+    BasicImportDialogPrivate(const QString &theFileFilter) noexcept
+        : aircraftTypeService(std::make_unique<AircraftTypeService>()),
+          fileFilter(theFileFilter)
     {}
 
     std::unique_ptr<AircraftTypeService> aircraftTypeService;
     QPushButton *importButton;
+    QString fileFilter;
 };
 
 // PUBLIC
 
-BasicImportDialog::BasicImportDialog(QWidget *parent) :
+BasicImportDialog::BasicImportDialog(const QString &fileExtension, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::BasicImportDialog),
-    d(std::make_unique<BasicImportDialogPrivate>())
+    d(std::make_unique<BasicImportDialogPrivate>(fileExtension))
 {
     ui->setupUi(this);    
     initUi();
@@ -83,12 +86,24 @@ bool BasicImportDialog::isAddToFlightEnabled() const noexcept
     return ui->addToFlightCheckBox->isChecked();
 }
 
+void BasicImportDialog::setFileFilter(const QString &extension) noexcept
+{
+    d->fileFilter = extension;
+}
+
+QString BasicImportDialog::getFileFilter() const noexcept
+{
+    return d->fileFilter;
+}
+
 // PRIVATE
 
 void BasicImportDialog::frenchConnection() noexcept
 {
     connect(ui->filePathLineEdit, &QLineEdit::textChanged,
             this, &BasicImportDialog::updateUi);
+    connect(ui->fileSelectionPushButton, &QPushButton::clicked,
+            this, &BasicImportDialog::onFileSelectionPushButtonClicked);
 }
 
 void BasicImportDialog::initUi() noexcept
@@ -105,13 +120,12 @@ void BasicImportDialog::initUi() noexcept
 
 // PRIVATE SLOTS
 
-void BasicImportDialog::on_fileSelectionPushButton_clicked() noexcept
+void BasicImportDialog::onFileSelectionPushButtonClicked() noexcept
 {
     // Start with the last export path
     QString exportPath = Settings::getInstance().getExportPath();
 
-    // @todo Define proper file extension
-    const QString filePath = QFileDialog::getOpenFileName(this, tr("Import file..."), exportPath, QString("*.IGC"));
+    const QString filePath = QFileDialog::getOpenFileName(this, tr("Import file..."), exportPath, d->fileFilter);
     if (!filePath.isEmpty()) {
         ui->filePathLineEdit->setText(QDir::toNativeSeparators(filePath));
     }

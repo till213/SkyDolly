@@ -97,7 +97,7 @@ ImportPluginBase::~ImportPluginBase() noexcept
 bool ImportPluginBase::import(FlightService &flightService) noexcept
 {
     bool ok;
-    std::unique_ptr<BasicImportDialog> importDialog = std::make_unique<BasicImportDialog>(getParentWidget());
+    std::unique_ptr<BasicImportDialog> importDialog = std::make_unique<BasicImportDialog>(getFileFilter(), getParentWidget());
     const int choice = importDialog->exec();
     if (choice == QDialog::Accepted) {
         // Remember import (export) path

@@ -138,7 +138,7 @@ private:
     bool parseHeaderGliderType(const QByteArray &line) noexcept;
     bool parseHeaderGliderId(const QByteArray &line) noexcept;
     bool parseFixAdditions(const QByteArray &line) noexcept;
-    bool parseTask(const QByteArray &line) noexcept;    
+    bool parseTask(const QByteArray &line) noexcept;
     bool parseFix(const QByteArray &line) noexcept;
     inline double parseCoordinate(QStringView degreesText, QStringView minutesBy1000Text) noexcept;
 

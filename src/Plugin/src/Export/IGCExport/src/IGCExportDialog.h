@@ -42,7 +42,7 @@ class IGCExportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    static inline const QString FileSuffix {QStringLiteral("igc")};
+    static inline const QString FileExtension {QStringLiteral("igc")};
 
     explicit IGCExportDialog(IGCExportSettings &exportSettings, QWidget *parent = nullptr) noexcept;
     virtual ~IGCExportDialog() noexcept;

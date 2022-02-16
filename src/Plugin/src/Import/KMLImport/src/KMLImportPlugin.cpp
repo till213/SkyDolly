@@ -57,6 +57,8 @@ public:
     QDateTime lastDateTimeUtc;
     QString flightNumber;
     QString title;
+
+    static inline const QString FileExtension {QStringLiteral("kml")};
 };
 
 // PUBLIC
@@ -77,6 +79,26 @@ KMLImportPlugin::~KMLImportPlugin() noexcept
 }
 
 // PROTECTED
+
+Settings::PluginSettings KMLImportPlugin::getSettings() const noexcept
+{
+    return d->importSettings.getSettings();
+}
+
+Settings::KeysWithDefaults KMLImportPlugin::getKeyWithDefaults() const noexcept
+{
+    return d->importSettings.getKeysWithDefault();
+}
+
+void KMLImportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+{
+    d->importSettings.setSettings(valuesByKey);
+}
+
+QString KMLImportPlugin::getFileFilter() const noexcept
+{
+    return tr("Keyhole Markup Language (*.%1)").arg(KMLImportPluginPrivate::FileExtension);
+}
 
 bool KMLImportPlugin::readFile(QFile &file) noexcept
 {
@@ -115,23 +137,6 @@ void KMLImportPlugin::updateFlight(const QFile &file) noexcept
 {
     updateFlightInfo(file);
     updateFlightCondition();
-}
-
-// PROTECTED
-
-Settings::PluginSettings KMLImportPlugin::getSettings() const noexcept
-{
-    return d->importSettings.getSettings();
-}
-
-Settings::KeysWithDefaults KMLImportPlugin::getKeyWithDefaults() const noexcept
-{
-    return d->importSettings.getKeysWithDefault();
-}
-
-void KMLImportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
-{
-    d->importSettings.setSettings(valuesByKey);
 }
 
 // PRIVATE

@@ -28,6 +28,7 @@
 #include <memory>
 
 #include <QObject>
+#include <QString>
 #include <QtPlugin>
 
 class QFile;
@@ -47,17 +48,22 @@ public:
     virtual ~KMLImportPlugin() noexcept;
 
 protected:
+    // PluginBase
     virtual Settings::PluginSettings getSettings() const noexcept override;
     virtual Settings::KeysWithDefaults getKeyWithDefaults() const noexcept override;
     virtual void setSettings(Settings::ValuesByKey) noexcept override;
 
-private:
-    std::unique_ptr<KMLImportPluginPrivate> d;
-
+    // ImportPluginBase
+    virtual QString getFileFilter() const noexcept override;
     virtual bool readFile(QFile &file) noexcept override;
     virtual QDateTime getStartDateTimeUtc() noexcept override;
     virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept override;
     virtual void updateFlight(const QFile &file) noexcept override;
+
+private:
+    std::unique_ptr<KMLImportPluginPrivate> d;
+
+
 
     void parseKML() noexcept;
     void parseName() noexcept;

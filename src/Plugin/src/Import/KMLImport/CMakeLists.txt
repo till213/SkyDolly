@@ -7,7 +7,7 @@ else()
 endif()
 
 set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Flight Persistence Widget SkyConnect Plugin
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Flight Persistence Plugin Widget
 )
 if (${PLATFORM_IS_MACOS})
     list(APPEND LIBRARY_DEPENDENCIES -lc++)
