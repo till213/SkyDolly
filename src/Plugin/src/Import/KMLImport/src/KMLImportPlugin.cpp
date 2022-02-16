@@ -107,9 +107,9 @@ std::unique_ptr<QWidget> KMLImportPlugin::createOptionWidget() const noexcept
     return std::make_unique<KMLImportOptionWidget>(d->importSettings);
 }
 
-QWidget *KMLImportPlugin::createOptionWidget() const noexcept
+std::unique_ptr<QWidget> KMLImportPlugin::createOptionWidget() const noexcept
 {
-    return new KMLImportOptionWidget(d->importSettings);
+    return std::make_unique<KMLImportOptionWidget>(d->importSettings);
 }
 
 bool KMLImportPlugin::readFile(QFile &file) noexcept
@@ -180,6 +180,13 @@ void KMLImportPlugin::updateExtendedFlightInfo(Flight &flight) noexcept
 
 void KMLImportPlugin::updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept
 {}
+
+// PROTECTED SLOTS
+
+void KMLImportPlugin::onRestoreDefaultSettings() noexcept
+{
+    d->importSettings.restoreDefaults();
+}
 
 // PROTECTED SLOTS
 

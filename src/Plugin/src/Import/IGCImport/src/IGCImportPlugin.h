@@ -68,6 +68,9 @@ protected:
 protected slots:
     virtual void onRestoreDefaultSettings() noexcept override;
 
+protected slots:
+    virtual void onRestoreDefaultSettings() noexcept override;
+
 private:
     std::unique_ptr<IGCImportPluginPrivate> d;
 
