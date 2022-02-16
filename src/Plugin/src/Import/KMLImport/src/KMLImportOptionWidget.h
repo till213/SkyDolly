@@ -22,37 +22,30 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLIMPORTDIALOG_H
-#define KMLIMPORTDIALOG_H
+#ifndef KMLIMPORTOPTIONWIDGET_H
+#define KMLIMPORTOPTIONWIDGET_H
 
 #include <memory>
 
-#include <QDialog>
-
-class QWidget;
+#include <QWidget>
 
 namespace Ui {
-    class KMLImportDialog;
+    class KMLImportOptionWidget;
 }
 
-struct AircraftType;
 class KMLImportSettings;
-class KMLImportDialogPrivate;
+class KMLImportOptionWidgetPrivate;
 
-class KMLImportDialog : public QDialog
+class KMLImportOptionWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit KMLImportDialog(KMLImportSettings &importSettings, QWidget *parent = nullptr) noexcept;
-    virtual ~KMLImportDialog() noexcept;
-
-    QString getSelectedFilePath() const noexcept;
-    bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
-    bool isAddToFlightEnabled() const noexcept;
+    explicit KMLImportOptionWidget(KMLImportSettings &importSettings, QWidget *parent = nullptr) noexcept;
+    virtual ~KMLImportOptionWidget() noexcept;
 
 private:
-    Ui::KMLImportDialog *ui;
-    std::unique_ptr<KMLImportDialogPrivate> d;
+    Ui::KMLImportOptionWidget *ui;
+    std::unique_ptr<KMLImportOptionWidgetPrivate> d;
 
     void frenchConnection() noexcept;
     void initUi() noexcept;
@@ -60,12 +53,10 @@ private:
     void updateOptionUi() noexcept;
 
 private slots:
-    void on_fileSelectionPushButton_clicked() noexcept;
     void on_formatComboBox_activated(int index) noexcept;
 
     void updateUi() noexcept;
-    void restoreDefaults() noexcept;
 };
 
-#endif // KMLIMPORTDIALOG_H
+#endif // KMLIMPORTOPTIONWIDGET_H
 

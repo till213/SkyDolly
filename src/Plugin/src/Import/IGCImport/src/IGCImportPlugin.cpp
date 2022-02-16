@@ -114,6 +114,11 @@ QString IGCImportPlugin::getFileFilter() const noexcept
     return tr("International Gliding Commission (*.%1)").arg(IGCImportPluginPrivate::FileExtension);
 }
 
+QWidget *IGCImportPlugin::createOptionWidget() const noexcept
+{
+    return nullptr;
+}
+
 bool IGCImportPlugin::readFile(QFile &file) noexcept
 {
     bool ok = d->igcParser.parse(file);

@@ -45,12 +45,15 @@ class BasicImportDialogPrivate
 public:
     BasicImportDialogPrivate(const QString &theFileFilter) noexcept
         : aircraftTypeService(std::make_unique<AircraftTypeService>()),
-          fileFilter(theFileFilter)
+          fileFilter(theFileFilter),
+          importButton(nullptr),
+          optionWidget(nullptr)
     {}
 
     std::unique_ptr<AircraftTypeService> aircraftTypeService;
-    QPushButton *importButton;
     QString fileFilter;
+    QPushButton *importButton;
+    QWidget *optionWidget;
 };
 
 // PUBLIC
@@ -64,11 +67,17 @@ BasicImportDialog::BasicImportDialog(const QString &fileExtension, QWidget *pare
     initUi();
     updateUi();
     frenchConnection();
+#ifdef DEBUG
+    qDebug("BasicImportDialog::BasicImportDialog: CREATED");
+#endif
 }
 
 BasicImportDialog::~BasicImportDialog()
 {
     delete ui;
+#ifdef DEBUG
+    qDebug("BasicImportDialog::~BasicImportDialog: DELETED");
+#endif
 }
 
 QString BasicImportDialog::getSelectedFilePath() const noexcept
@@ -96,6 +105,12 @@ QString BasicImportDialog::getFileFilter() const noexcept
     return d->fileFilter;
 }
 
+void BasicImportDialog::setOptionWidget(QWidget *widget) noexcept
+{
+    d->optionWidget = widget;
+    initOptionUi();
+}
+
 // PRIVATE
 
 void BasicImportDialog::frenchConnection() noexcept
@@ -115,6 +130,23 @@ void BasicImportDialog::initUi() noexcept
     QString type = flight.getUserAircraftConst().getAircraftInfoConst().aircraftType.type;
     if (!type.isEmpty()) {
         ui->aircraftSelectionComboBox->setCurrentText(type);
+    }
+
+    initOptionUi();
+}
+
+void BasicImportDialog::initOptionUi() noexcept
+{
+    if (d->optionWidget != nullptr) {
+        ui->optionGroupBox->setHidden(false);
+        QLayout *layout = ui->optionGroupBox->layout();
+        if (layout == nullptr) {
+            layout = new QVBoxLayout();
+            ui->optionGroupBox->setLayout(layout);
+        }
+        layout->addWidget(d->optionWidget);
+    } else {
+        ui->optionGroupBox->setHidden(true);
     }
 }
 

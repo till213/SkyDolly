@@ -42,6 +42,7 @@
 #include "KMLParserIntf.h"
 #include "FlightAwareKMLParser.h"
 #include "FlightRadar24KMLParser.h"
+#include "KMLImportOptionWidget.h"
 #include "KMLImportPlugin.h"
 
 class KMLImportPluginPrivate
@@ -98,6 +99,11 @@ void KMLImportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
 QString KMLImportPlugin::getFileFilter() const noexcept
 {
     return tr("Keyhole Markup Language (*.%1)").arg(KMLImportPluginPrivate::FileExtension);
+}
+
+QWidget *KMLImportPlugin::createOptionWidget() const noexcept
+{
+    return new KMLImportOptionWidget(d->importSettings);
 }
 
 bool KMLImportPlugin::readFile(QFile &file) noexcept

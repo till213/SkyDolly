@@ -50,6 +50,8 @@ public:
 
 protected:
     virtual QString getFileFilter() const noexcept override;
+    virtual QWidget *createOptionWidget() const noexcept override;
+
     virtual bool readFile(QFile &file) noexcept override;
     virtual QDateTime getStartDateTimeUtc() noexcept override;
     virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept override;

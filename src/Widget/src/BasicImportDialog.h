@@ -55,12 +55,16 @@ public:
     void setFileFilter(const QString &extension) noexcept;
     QString getFileFilter() const noexcept;
 
+    void setOptionWidget(QWidget *widget) noexcept;
+    QWidget *getOptionWidget() const noexcept;
+
 private:
     Ui::BasicImportDialog *ui;
     std::unique_ptr<BasicImportDialogPrivate> d;
 
     void frenchConnection() noexcept;
     void initUi() noexcept;
+    void initOptionUi() noexcept;
 
 private slots:
     void onFileSelectionPushButtonClicked() noexcept;

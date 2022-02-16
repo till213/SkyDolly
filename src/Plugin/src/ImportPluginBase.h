@@ -78,6 +78,8 @@ protected:
 
     // Re-implement
     virtual QString getFileFilter() const noexcept = 0;
+    virtual QWidget *createOptionWidget() const noexcept = 0;
+
     virtual bool readFile(QFile &file) noexcept = 0;
     virtual QDateTime getStartDateTimeUtc() noexcept = 0;
     virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept = 0;

@@ -16,7 +16,7 @@ endif()
 target_sources(${LIBRARY_NAME}
     PRIVATE
         src/KMLImportPlugin.h src/KMLImportPlugin.cpp
-        src/KMLImportDialog.h src/KMLImportDialog.cpp src/KMLImportDialog.ui
+        src/KMLImportOptionWidget.h src/KMLImportOptionWidget.cpp src/KMLImportOptionWidget.ui
         src/KMLImportSettings.h src/KMLImportSettings.cpp
         src/KMLParserIntf.h
         src/FlightAwareKMLParser.h src/FlightAwareKMLParser.cpp
