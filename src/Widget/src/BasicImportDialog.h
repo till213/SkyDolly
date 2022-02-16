@@ -33,7 +33,7 @@ class QWidget;
 
 #include "WidgetLib.h"
 
-class AircraftType;
+struct AircraftType;
 class BasicImportDialogPrivate;
 
 namespace Ui {

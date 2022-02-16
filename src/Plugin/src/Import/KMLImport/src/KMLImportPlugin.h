@@ -30,13 +30,14 @@
 #include <QObject>
 #include <QtPlugin>
 
-#include "../../../ImportIntf.h"
-#include "../../../PluginBase.h"
+class QFile;
 
-class AircraftType;
+#include "../../../ImportPluginBase.h"
+
+struct AircraftType;
 class KMLImportPluginPrivate;
 
-class KMLImportPlugin : public PluginBase, public ImportIntf
+class KMLImportPlugin : public ImportPluginBase
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "KMLImportPlugin.json")
@@ -44,28 +45,6 @@ class KMLImportPlugin : public PluginBase, public ImportIntf
 public:
     KMLImportPlugin() noexcept;
     virtual ~KMLImportPlugin() noexcept;
-
-    virtual QWidget *getParentWidget() const noexcept override
-    {
-        return PluginBase::getParentWidget();
-    }
-
-    virtual void setParentWidget(QWidget *parent) noexcept override
-    {
-        PluginBase::setParentWidget(parent);
-    }
-
-    virtual void storeSettings(const QUuid &pluginUuid) const noexcept override
-    {
-        PluginBase::storeSettings(pluginUuid);
-    }
-
-    virtual void restoreSettings(const QUuid &pluginUuid) noexcept override
-    {
-        PluginBase::restoreSettings(pluginUuid);
-    }
-
-    virtual bool import(FlightService &flightService) noexcept override;
 
 protected:
     virtual Settings::PluginSettings getSettings() const noexcept override;
@@ -75,14 +54,17 @@ protected:
 private:
     std::unique_ptr<KMLImportPluginPrivate> d;
 
-    bool import(const QString &filePath, FlightService &flightService) noexcept;
+    virtual bool readFile(QFile &file) noexcept override;
+    virtual QDateTime getStartDateTimeUtc() noexcept override;
+    virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept override;
+    virtual void updateFlight(const QFile &file) noexcept override;
 
     void parseKML() noexcept;
     void parseName() noexcept;
     void parseDocument() noexcept;
 
+    void updateFlightInfo(const QFile &file) noexcept;
     void updateFlightCondition() noexcept;
-    void updateAircraftInfo() noexcept;
 };
 
 #endif // KMLIMPORTPLUGIN_H

@@ -32,7 +32,7 @@
 #include <QtPlugin>
 
 class Aircraft;
-class AircraftType;
+struct AircraftType;
 class Engine;
 class PrimaryFlightControl;
 class SecondaryFlightControl;

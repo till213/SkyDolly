@@ -33,7 +33,7 @@ namespace Ui {
     class CSVImportDialog;
 }
 
-class AircraftType;
+struct AircraftType;
 class CSVImportDialogPrivate;
 
 class CSVImportDialog : public QDialog

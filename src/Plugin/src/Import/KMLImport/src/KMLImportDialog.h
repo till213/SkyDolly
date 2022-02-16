@@ -35,7 +35,7 @@ namespace Ui {
     class KMLImportDialog;
 }
 
-class AircraftType;
+struct AircraftType;
 class KMLImportSettings;
 class KMLImportDialogPrivate;
 

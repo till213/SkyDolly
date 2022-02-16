@@ -33,11 +33,11 @@ class QDateTime;
 class QString;
 class QXmlStreamReader;
 
-#include "KMLParser.h"
+#include "KMLParserIntf.h"
 
 class FlightAwareKMLParserPrivate;
 
-class FlightAwareKMLParser : public KMLParser
+class FlightAwareKMLParser : public KMLParserIntf
 {
 public:
     FlightAwareKMLParser(QXmlStreamReader &xmlStreamReader) noexcept;

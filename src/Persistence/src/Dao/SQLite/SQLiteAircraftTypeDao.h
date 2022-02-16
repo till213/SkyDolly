@@ -31,7 +31,7 @@
 
 #include "../AircraftTypeDaoIntf.h"
 
-class AircraftType;
+struct AircraftType;
 
 class SQLiteAircraftTypeDao : public AircraftTypeDaoIntf
 {

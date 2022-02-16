@@ -28,10 +28,10 @@
 class QDateTime;
 class QString;
 
-class KMLParser
+class KMLParserIntf
 {
 public:
-    virtual ~KMLParser() = default;
+    virtual ~KMLParserIntf() = default;
 
     virtual void parse(QDateTime &first, QDateTime &last, QString &flightNumber) noexcept = 0;
 };

@@ -26,50 +26,20 @@
 #include <tuple>
 #include <vector>
 
-#include <QIODevice>
-// Implements the % operator for string concatenation
-#include <QStringBuilder>
-#include <QFlags>
-#include <QByteArray>
+#include <QFile>
+#include <QFileInfo>
 #include <QStringLiteral>
-#include <QList>
-#include <QFileDialog>
-#include <QMessageBox>
 #include <QXmlStreamReader>
 #include <QDateTime>
 #include <QTimeZone>
 
 #include "../../../../../Kernel/src/Unit.h"
-#include "../../../../../Kernel/src/Settings.h"
-#include "../../../../../Kernel/src/SkyMath.h"
-#include "../../../../../Kernel/src/Convert.h"
-#include "../../../../../Model/src/SimVar.h"
 #include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
-#include "../../../../../Model/src/FlightCondition.h"
 #include "../../../../../Model/src/Aircraft.h"
-#include "../../../../../Model/src/Position.h"
-#include "../../../../../Model/src/PositionData.h"
-#include "../../../../../Model/src/Engine.h"
-#include "../../../../../Model/src/EngineData.h"
-#include "../../../../../Model/src/PrimaryFlightControl.h"
-#include "../../../../../Model/src/PrimaryFlightControlData.h"
-#include "../../../../../Model/src/SecondaryFlightControl.h"
-#include "../../../../../Model/src/SecondaryFlightControlData.h"
-#include "../../../../../Model/src/AircraftHandle.h"
-#include "../../../../../Model/src/AircraftHandleData.h"
-#include "../../../../../Model/src/Light.h"
-#include "../../../../../Model/src/LightData.h"
-#include "../../../../../Model/src/FlightPlan.h"
-#include "../../../../../Model/src/Waypoint.h"
-#include "../../../../../Flight/src/FlightAugmentation.h"
-#include "../../../../../SkyConnect/src/SkyConnectManager.h"
-#include "../../../../../SkyConnect/src/SkyConnectIntf.h"
-#include "../../../../../Persistence/src/Service/FlightService.h"
-#include "../../../../../Persistence/src/Service/AircraftService.h"
-#include "KMLImportDialog.h"
+#include "../../../../../Model/src/FlightCondition.h"
 #include "KMLImportSettings.h"
-#include "KMLParser.h"
+#include "KMLParserIntf.h"
 #include "FlightAwareKMLParser.h"
 #include "FlightRadar24KMLParser.h"
 #include "KMLImportPlugin.h"
@@ -78,20 +48,15 @@ class KMLImportPluginPrivate
 {
 public:
     KMLImportPluginPrivate()
-        : aircraftService(std::make_unique<AircraftService>()),
-          addToCurrentFlight(false)
     {}
 
-    std::unique_ptr<AircraftService> aircraftService;
     QXmlStreamReader xml;
     Unit unit;
     KMLImportSettings importSettings;
-    AircraftType aircraftType;
-    bool addToCurrentFlight;
     QDateTime firstDateTimeUtc;
     QDateTime lastDateTimeUtc;
     QString flightNumber;
-    FlightAugmentation flightAugmentation;
+    QString title;
 };
 
 // PUBLIC
@@ -111,34 +76,45 @@ KMLImportPlugin::~KMLImportPlugin() noexcept
 #endif
 }
 
-bool KMLImportPlugin::import(FlightService &flightService) noexcept
+// PROTECTED
+
+bool KMLImportPlugin::readFile(QFile &file) noexcept
 {
-    bool ok;
-    std::unique_ptr<KMLImportDialog> importDialog = std::make_unique<KMLImportDialog>(d->importSettings, getParentWidget());
-    const int choice = importDialog->exec();
-    if (choice == QDialog::Accepted) {
-        // Remember import (export) path
-        const QString filePath = QFileInfo(importDialog->getSelectedFilePath()).absolutePath();
-        Settings::getInstance().setExportPath(filePath);
-        ok = importDialog->getSelectedAircraftType(d->aircraftType);
-        if (ok) {
-            d->addToCurrentFlight = importDialog->isAddToFlightEnabled();
-            ok = import(importDialog->getSelectedFilePath(), flightService);
-            if (ok) {
-                if (d->addToCurrentFlight) {
-                    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-                    if (skyConnect) {
-                        skyConnect->get().updateAIObjects();
-                    }
-                }
-            } else {
-                QMessageBox::critical(getParentWidget(), tr("Import error"), tr("The KML file %1 could not be imported.").arg(filePath));
-            }
+    d->xml.setDevice(&file);
+    if (d->xml.readNextStartElement()) {
+#ifdef DEBUG
+        qDebug("KMLImportPlugin::import: XML start element: %s", qPrintable(d->xml.name().toString()));
+#endif
+        if (d->xml.name() == QStringLiteral("kml")) {
+            parseKML();
+        } else {
+            d->xml.raiseError(QStringLiteral("The file is not a KML file."));
         }
-    } else {
-        ok = true;
     }
+
+    bool ok = !d->xml.hasError();
+#ifdef DEBUG
+    if (!ok) {
+        qDebug("KMLImportPlugin::import: XML error: %s", qPrintable(d->xml.errorString()));
+    }
+#endif
     return ok;
+}
+
+QDateTime KMLImportPlugin::getStartDateTimeUtc() noexcept
+{
+    return d->firstDateTimeUtc;
+}
+
+void KMLImportPlugin::updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept
+{
+    aircraftInfo.flightNumber = d->flightNumber;
+}
+
+void KMLImportPlugin::updateFlight(const QFile &file) noexcept
+{
+    updateFlightInfo(file);
+    updateFlightCondition();
 }
 
 // PROTECTED
@@ -159,57 +135,6 @@ void KMLImportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
 }
 
 // PRIVATE
-
-bool KMLImportPlugin::import(const QString &filePath, FlightService &flightService) noexcept
-{
-    QFile file(filePath);
-    bool ok = file.open(QIODevice::ReadOnly);
-    if (ok) {
-        Flight &flight = Logbook::getInstance().getCurrentFlight();
-        if (!d->addToCurrentFlight) {
-            flight.clear(true);
-        }
-        // The flight has at least one aircraft, but possibly without recording
-        const int aircraftCount = flight.count();
-        const bool addNewAircraft = d->addToCurrentFlight && (aircraftCount > 1 || flight.getUserAircraft().hasRecording());
-        Aircraft &aircraft = addNewAircraft ? flight.addUserAircraft() : flight.getUserAircraft();
-        d->xml.setDevice(&file);
-        if (d->xml.readNextStartElement()) {
-#ifdef DEBUG
-            qDebug("KMLImportPlugin::import: XML start element: %s", qPrintable(d->xml.name().toString()));
-#endif
-            if (d->xml.name() == QStringLiteral("kml")) {
-                parseKML();
-            } else {
-                d->xml.raiseError(QStringLiteral("The file is not a KML file."));
-            }
-        }
-
-        // Also ensure that at least one position could be imported;
-        // depending on the "KML format" that might not always succeed,
-        // keyword: points vs coordinates vs line segments etc.
-        if (!d->xml.hasError() && aircraft.getPositionConst().count() > 0) {
-            d->flightAugmentation.augmentAircraftData(aircraft);
-            updateAircraftInfo();
-            if (addNewAircraft) {
-                // Sequence starts at 1
-                const int newAircraftCount = flight.count();
-                ok = d->aircraftService->store(flight.getId(), newAircraftCount, flight[newAircraftCount - 1]);
-            } else {
-                flight.setDescription(tr("Aircraft imported on %1 from file: %2").arg(d->unit.formatDateTime(QDateTime::currentDateTime()), filePath));
-                flight.setCreationDate(QFileInfo(filePath).birthTime());
-                updateFlightCondition();
-                ok = flightService.store(flight);
-            }
-        } else {
-#ifdef DEBUG
-            qDebug("KMLImportPlugin::import: XML error: %s - number of imported positions: %d", qPrintable(d->xml.errorString()), static_cast<int>(aircraft.getPositionConst().count()));
-#endif
-            ok = false;
-        }
-    }
-    return ok;
-}
 
 void KMLImportPlugin::parseKML() noexcept
 {
@@ -235,14 +160,7 @@ void KMLImportPlugin::parseName() noexcept
         qDebug("KMLImportPlugin::readDocument: XML start element: %s", qPrintable(d->xml.name().toString()));
 #endif
         if (d->xml.name() == QStringLiteral("name")) {
-            if (!d->addToCurrentFlight) {
-                Flight &flight = Logbook::getInstance().getCurrentFlight();
-                const QString name = d->xml.readElementText();
-                flight.setTitle(name);
-            } else {
-                // Flight keeps its existing title (name)
-                d->xml.skipCurrentElement();
-            }
+            d->title = d->xml.readElementText();
         } else {
             d->xml.raiseError(QStringLiteral("The KML document does not have a name element."));
         }
@@ -251,7 +169,7 @@ void KMLImportPlugin::parseName() noexcept
 
 void KMLImportPlugin::parseDocument() noexcept
 {
-    std::unique_ptr<KMLParser> parser;
+    std::unique_ptr<KMLParserIntf> parser;
     switch (d->importSettings.format) {
     case KMLImportSettings::Format::FlightAware:
         parser = std::make_unique<FlightAwareKMLParser>(d->xml);
@@ -267,6 +185,16 @@ void KMLImportPlugin::parseDocument() noexcept
     }
 }
 
+void KMLImportPlugin::updateFlightInfo(const QFile &file) noexcept
+{
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    flight.setTitle(d->title);
+
+    const QString description = tr("Aircraft imported on %1 from file: %2").arg(d->unit.formatDateTime(QDateTime::currentDateTime()), file.fileName());
+    flight.setDescription(description);
+    flight.setCreationDate(QFileInfo(file).birthTime());
+}
+
 void KMLImportPlugin::updateFlightCondition() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
@@ -278,40 +206,4 @@ void KMLImportPlugin::updateFlightCondition() noexcept
     flightCondition.endZuluTime = d->lastDateTimeUtc;
 
     flight.setFlightCondition(flightCondition);
-}
-
-void KMLImportPlugin::updateAircraftInfo() noexcept
-{
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    Aircraft &aircraft = flight.getUserAircraft();
-    AircraftInfo aircraftInfo(aircraft.getId());
-    aircraftInfo.aircraftType = d->aircraftType;
-
-    aircraftInfo.startDate = d->firstDateTimeUtc.toLocalTime();
-    aircraftInfo.endDate = d->lastDateTimeUtc.toLocalTime();
-    int positionCount = aircraft.getPosition().count();
-    if (positionCount > 0) {
-        const PositionData &firstPositionData = aircraft.getPosition().getFirst();
-        aircraftInfo.initialAirspeed = Convert::feetPerSecondToKnots(firstPositionData.velocityBodyZ);
-
-        int waypointCount = aircraft.getFlightPlan().count();
-        if (waypointCount > 0) {
-            Waypoint &departure = aircraft.getFlightPlan()[0];
-            departure.altitude = firstPositionData.altitude;
-            departure.localTime = d->firstDateTimeUtc.toLocalTime();
-            departure.zuluTime = d->firstDateTimeUtc;
-
-            if (waypointCount > 1) {
-                const PositionData &lastPositionData = aircraft.getPosition().getLast();
-                Waypoint &arrival = aircraft.getFlightPlan()[1];
-                arrival.altitude = lastPositionData.altitude;
-                arrival.localTime = d->lastDateTimeUtc.toLocalTime();
-                arrival.zuluTime = d->lastDateTimeUtc;
-            }
-        }
-    } else {
-        aircraftInfo.initialAirspeed = 0.0;
-    }
-    aircraftInfo.flightNumber = d->flightNumber;
-    aircraft.setAircraftInfo(aircraftInfo);
 }
