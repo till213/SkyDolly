@@ -26,6 +26,7 @@
 #include <tuple>
 #include <vector>
 
+#include <QWidget>
 #include <QStringBuilder>
 #include <QIODevice>
 #include <QFlags>
@@ -97,8 +98,12 @@ ImportPluginBase::~ImportPluginBase() noexcept
 bool ImportPluginBase::import(FlightService &flightService) noexcept
 {
     bool ok;
+    std::unique_ptr<QWidget> optionWidget = createOptionWidget();
     std::unique_ptr<BasicImportDialog> importDialog = std::make_unique<BasicImportDialog>(getFileFilter(), getParentWidget());
-    importDialog->setOptionWidget(createOptionWidget());
+    connect(importDialog.get(), &BasicImportDialog::restoreDefaultOptions,
+            this, &ImportPluginBase::onRestoreDefaultSettings);
+    // Transfer ownership to importDialog
+    importDialog->setOptionWidget(optionWidget.release());
     const int choice = importDialog->exec();
     if (choice == QDialog::Accepted) {
         // Remember import (export) path

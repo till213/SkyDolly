@@ -32,7 +32,7 @@
 
 KMLImportSettings::KMLImportSettings() noexcept
 {
-    restoreDefaults();
+    initSettings();
 }
 
 Settings::PluginSettings KMLImportSettings::getSettings() const noexcept
@@ -71,6 +71,14 @@ void KMLImportSettings::setSettings(Settings::ValuesByKey valuesByKey) noexcept
 }
 
 void KMLImportSettings::restoreDefaults() noexcept
+{
+    initSettings();
+    emit defaultsRestored();
+}
+
+// PRIVATE
+
+void KMLImportSettings::initSettings() noexcept
 {
     format = DefaultFormat;
 }

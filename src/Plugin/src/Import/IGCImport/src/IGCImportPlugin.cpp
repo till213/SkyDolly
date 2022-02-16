@@ -114,7 +114,7 @@ QString IGCImportPlugin::getFileFilter() const noexcept
     return tr("International Gliding Commission (*.%1)").arg(IGCImportPluginPrivate::FileExtension);
 }
 
-QWidget *IGCImportPlugin::createOptionWidget() const noexcept
+std::unique_ptr<QWidget> IGCImportPlugin::createOptionWidget() const noexcept
 {
     return nullptr;
 }
@@ -252,6 +252,11 @@ void IGCImportPlugin::updateFlight(const QFile &file) noexcept
     updateFlightInfo(file);
     updateFlightCondition();
 }
+
+// PROTECTED SLOTS
+
+void IGCImportPlugin::onRestoreDefaultSettings() noexcept
+{}
 
 // PRIVATE
 

@@ -101,9 +101,9 @@ QString KMLImportPlugin::getFileFilter() const noexcept
     return tr("Keyhole Markup Language (*.%1)").arg(KMLImportPluginPrivate::FileExtension);
 }
 
-QWidget *KMLImportPlugin::createOptionWidget() const noexcept
+std::unique_ptr<QWidget> KMLImportPlugin::createOptionWidget() const noexcept
 {
-    return new KMLImportOptionWidget(d->importSettings);
+    return std::make_unique<KMLImportOptionWidget>(d->importSettings);
 }
 
 bool KMLImportPlugin::readFile(QFile &file) noexcept
@@ -143,6 +143,13 @@ void KMLImportPlugin::updateFlight(const QFile &file) noexcept
 {
     updateFlightInfo(file);
     updateFlightCondition();
+}
+
+// PROTECTED SLOTS
+
+void KMLImportPlugin::onRestoreDefaultSettings() noexcept
+{
+    d->importSettings.restoreDefaults();
 }
 
 // PRIVATE

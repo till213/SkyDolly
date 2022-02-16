@@ -28,8 +28,9 @@
 #include <QString>
 
 #include "../../../../../Kernel/src/Settings.h"
+#include "../../../SettingsIntf.h"
 
-struct KMLImportSettings
+class KMLImportSettings : public SettingsIntf
 {
 public:
     /*!
@@ -44,13 +45,14 @@ public:
 
     Format format;
 
-    Settings::PluginSettings getSettings() const noexcept;
-    Settings::KeysWithDefaults getKeysWithDefault() const noexcept;
-    void setSettings(Settings::ValuesByKey) noexcept;
-    void restoreDefaults() noexcept;
+    Settings::PluginSettings getSettings() const noexcept override;
+    Settings::KeysWithDefaults getKeysWithDefault() const noexcept override;
+    void setSettings(Settings::ValuesByKey) noexcept override;
+    void restoreDefaults() noexcept override;
 
 private:
     static constexpr Format DefaultFormat = Format::FlightAware;
+    void initSettings() noexcept;
 };
 
 #endif // KMLIMPORTETTINGS_H

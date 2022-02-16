@@ -73,17 +73,19 @@ public:
     virtual bool import(FlightService &flightService) noexcept override final;
 
 protected:
-
     AircraftType &getSelectedAircraftType() const noexcept;
 
     // Re-implement
     virtual QString getFileFilter() const noexcept = 0;
-    virtual QWidget *createOptionWidget() const noexcept = 0;
+    virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
 
     virtual bool readFile(QFile &file) noexcept = 0;
     virtual QDateTime getStartDateTimeUtc() noexcept = 0;
     virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept = 0;
     virtual void updateFlight(const QFile &file) noexcept = 0;
+
+protected slots:
+    virtual void onRestoreDefaultSettings() noexcept = 0;
 
 private:
     std::unique_ptr<ImportPluginBasePrivate> d;

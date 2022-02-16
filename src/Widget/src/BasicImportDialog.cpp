@@ -141,10 +141,14 @@ void BasicImportDialog::initOptionUi() noexcept
         ui->optionGroupBox->setHidden(false);
         QLayout *layout = ui->optionGroupBox->layout();
         if (layout == nullptr) {
-            layout = new QVBoxLayout();
-            ui->optionGroupBox->setLayout(layout);
+            delete layout;
         }
+        layout = new QVBoxLayout();
+        ui->optionGroupBox->setLayout(layout);
         layout->addWidget(d->optionWidget);
+        QPushButton *restoreDefaultsButton = ui->defaultButtonBox->addButton(QDialogButtonBox::RestoreDefaults);
+        connect(restoreDefaultsButton, &QPushButton::clicked,
+                this, &BasicImportDialog::restoreDefaultOptions);
     } else {
         ui->optionGroupBox->setHidden(true);
     }

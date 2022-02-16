@@ -53,7 +53,7 @@ private:
     void updateOptionUi() noexcept;
 
 private slots:
-    void on_formatComboBox_activated(int index) noexcept;
+    void onFormatComboBoxActivated(int index) noexcept;
 
     void updateUi() noexcept;
 };

@@ -22,55 +22,33 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef BASICIMPORTDIALOG_H
-#define BASICIMPORTDIALOG_H
+#ifndef SETTINGSINTF_H
+#define SETTINGSINTF_H
 
-#include <memory>
+#include <QObject>
 
-#include <QDialog>
-#include <QString>
+#include "../../Kernel/src/Settings.h"
+#include "PluginLib.h"
 
-class QWidget;
-
-#include "WidgetLib.h"
-
-struct AircraftType;
-class BasicImportDialogPrivate;
-
-namespace Ui {
-    class BasicImportDialog;
-}
-
-class WIDGET_API BasicImportDialog : public QDialog
+class PLUGIN_API SettingsIntf : public QObject
 {
     Q_OBJECT
 public:
-    explicit BasicImportDialog(const QString &fileExtension, QWidget *parent = nullptr);
-    virtual ~BasicImportDialog();
+    virtual ~SettingsIntf()
+    {}
 
-    QString getSelectedFilePath() const noexcept;
-    bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
-    bool isAddToFlightEnabled() const noexcept;
-
-    void setFileFilter(const QString &extension) noexcept;
-    QString getFileFilter() const noexcept;
-
-    void setOptionWidget(QWidget *widget) noexcept;
+    virtual Settings::PluginSettings getSettings() const noexcept = 0;
+    virtual Settings::KeysWithDefaults getKeysWithDefault() const noexcept = 0;
+    virtual void setSettings(Settings::ValuesByKey) noexcept = 0;
+    /*!
+     * Restores the default settings.
+     *
+     * Emits \c defaultsRestored.
+     */
+    virtual void restoreDefaults() noexcept = 0;
 
 signals:
-    void restoreDefaultOptions();
-
-private:
-    Ui::BasicImportDialog *ui;
-    std::unique_ptr<BasicImportDialogPrivate> d;
-
-    void frenchConnection() noexcept;
-    void initUi() noexcept;
-    void initOptionUi() noexcept;
-
-private slots:
-    void onFileSelectionPushButtonClicked() noexcept;
-    void updateUi() noexcept;
+    void defaultsRestored();
 };
 
-#endif // BASICIMPORTDIALOG_H
+#endif // SETTINGSINTF_H

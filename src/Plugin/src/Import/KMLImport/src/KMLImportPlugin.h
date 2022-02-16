@@ -55,17 +55,18 @@ protected:
 
     // ImportPluginBase
     virtual QString getFileFilter() const noexcept override;
-    virtual QWidget *createOptionWidget() const noexcept override;
+    virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
 
     virtual bool readFile(QFile &file) noexcept override;
     virtual QDateTime getStartDateTimeUtc() noexcept override;
     virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept override;
     virtual void updateFlight(const QFile &file) noexcept override;
 
+protected slots:
+    virtual void onRestoreDefaultSettings() noexcept override;
+
 private:
     std::unique_ptr<KMLImportPluginPrivate> d;
-
-
 
     void parseKML() noexcept;
     void parseName() noexcept;

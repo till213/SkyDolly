@@ -17,6 +17,7 @@ target_sources(Plugin
         src/Export.h
         src/PluginBase.h src/PluginBase.cpp
         src/ImportPluginBase.h src/ImportPluginBase.cpp
+        src/SettingsIntf.h
 )
 
 set(PLUGIN_LIBS
