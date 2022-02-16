@@ -107,6 +107,11 @@ std::unique_ptr<QWidget> KMLImportPlugin::createOptionWidget() const noexcept
     return std::make_unique<KMLImportOptionWidget>(d->importSettings);
 }
 
+QWidget *KMLImportPlugin::createOptionWidget() const noexcept
+{
+    return new KMLImportOptionWidget(d->importSettings);
+}
+
 bool KMLImportPlugin::readFile(QFile &file) noexcept
 {
     d->xml.setDevice(&file);
