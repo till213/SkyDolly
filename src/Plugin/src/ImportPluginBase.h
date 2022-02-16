@@ -95,6 +95,9 @@ protected:
 protected slots:
     virtual void onRestoreDefaultSettings() noexcept = 0;
 
+protected slots:
+    virtual void onRestoreDefaultSettings() noexcept = 0;
+
 private:
     std::unique_ptr<ImportPluginBasePrivate> d;
 
