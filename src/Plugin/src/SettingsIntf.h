@@ -34,7 +34,11 @@ class PLUGIN_API SettingsIntf : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~SettingsIntf()
+    SettingsIntf()
+        : QObject()
+    {}
+
+    virtual ~SettingsIntf() noexcept
     {}
 
     virtual Settings::PluginSettings getSettings() const noexcept = 0;
@@ -48,6 +52,9 @@ public:
     virtual void restoreDefaults() noexcept = 0;
 
 signals:
+    /*! @todo FIXME This signal is "not found" when trying to connect to it (apparently Windows only - works on Mac)?
+     *  Probably related to DLL exported symbols / visibility...
+     */
     void defaultsRestored();
 };
 
