@@ -31,6 +31,8 @@
 #include <QObject>
 #include <QtPlugin>
 
+class QFile;
+
 class Aircraft;
 struct AircraftType;
 class Engine;
@@ -40,12 +42,11 @@ class AircraftHandle;
 class Light;
 class FlightService;
 
-#include "../../../ImportIntf.h"
-#include "../../../PluginBase.h"
+#include "../../../ImportPluginBase.h"
 
 class CSVImportPluginPrivate;
 
-class CSVImportPlugin : public PluginBase, public ImportIntf
+class CSVImportPlugin : public ImportPluginBase
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "CSVImportPlugin.json")
@@ -54,33 +55,28 @@ public:
     CSVImportPlugin() noexcept;
     virtual ~CSVImportPlugin() noexcept;
 
-    virtual QWidget *getParentWidget() const noexcept override
-    {
-        return PluginBase::getParentWidget();
-    }
+protected:
+    // PluginBase
+    virtual Settings::PluginSettings getSettings() const noexcept override;
+    virtual Settings::KeysWithDefaults getKeyWithDefaults() const noexcept override;
+    virtual void setSettings(Settings::ValuesByKey) noexcept override;
 
-    virtual void setParentWidget(QWidget *parent) noexcept override
-    {
-        PluginBase::setParentWidget(parent);
-    }
+    // ImportPluginBase
+    virtual QString getFileFilter() const noexcept override;
+    virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
 
-    virtual void storeSettings(const QUuid &pluginUuid) const noexcept override
-    {
-        PluginBase::storeSettings(pluginUuid);
-    }
+    virtual bool readFile(QFile &file) noexcept override;
+    virtual QDateTime getStartDateTimeUtc() noexcept override;
+    virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept override;
+    virtual void updateFlight(const QFile &file) noexcept override;
 
-    virtual void restoreSettings(const QUuid &pluginUuid) noexcept override
-    {
-        PluginBase::restoreSettings(pluginUuid);
-    }
-
-    virtual bool import(FlightService &flightService) noexcept override;
+protected slots:
+    virtual void onRestoreDefaultSettings() noexcept override;
 
 private:
     std::unique_ptr<CSVImportPluginPrivate> d;
 
     bool getAircraftType(const QString &type, AircraftType &aircraftType) noexcept;
-    bool import(const QString &filePath, const AircraftType &aircraftType, FlightService &flightService, bool addToCurrentFlight) const noexcept;
 
     static inline bool importPositionData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Aircraft &aircraft) noexcept;
     static inline bool importEngineData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Engine &engine) noexcept;

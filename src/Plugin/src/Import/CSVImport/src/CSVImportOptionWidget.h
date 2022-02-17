@@ -22,37 +22,41 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLIMPORTSETTINGS_H
-#define KMLIMPORTSETTINGS_H
+#ifndef CSVIMPORTOPTIONWIDGET_H
+#define CSVIMPORTOPTIONWIDGET_H
 
-#include <QString>
+#include <memory>
 
-#include "../../../../../Kernel/src/Settings.h"
-#include "../../../SettingsIntf.h"
+#include <QWidget>
 
-class KMLImportSettings : public SettingsIntf
+namespace Ui {
+    class CSVImportOptionWidget;
+}
+
+class CSVImportSettings;
+class CSVImportOptionWidgetPrivate;
+
+class CSVImportOptionWidget : public QWidget
 {
+    Q_OBJECT
 public:
-    /*!
-     * KML format (flavour).
-     */
-    enum struct Format {
-        FlightAware = 0,
-        FlightRadar24 = 1,
-    };
-
-    KMLImportSettings() noexcept;
-
-    Format format;
-
-    Settings::PluginSettings getSettings() const noexcept override;
-    Settings::KeysWithDefaults getKeysWithDefault() const noexcept override;
-    void setSettings(Settings::ValuesByKey) noexcept override;
-    void restoreDefaults() noexcept override;
+    explicit CSVImportOptionWidget(CSVImportSettings &importSettings, QWidget *parent = nullptr) noexcept;
+    virtual ~CSVImportOptionWidget() noexcept;
 
 private:
-    static constexpr Format DefaultFormat = Format::FlightAware;
-    void initSettings() noexcept;
+    Ui::CSVImportOptionWidget *ui;
+    std::unique_ptr<CSVImportOptionWidgetPrivate> d;
+
+    void frenchConnection() noexcept;
+    void initUi() noexcept;
+    void initOptionUi() noexcept;
+    void updateOptionUi() noexcept;
+
+private slots:
+    void onFormatComboBoxActivated(int index) noexcept;
+
+    void updateUi() noexcept;
 };
 
-#endif // KMLIMPORTSETTINGS_H
+#endif // CSVIMPORTOPTIONWIDGET_H
+

@@ -98,7 +98,7 @@ void KMLImportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
 
 QString KMLImportPlugin::getFileFilter() const noexcept
 {
-    return tr("Keyhole Markup Language (*.%1)").arg(KMLImportPluginPrivate::FileExtension);
+    return tr("Keyhole markup language (*.%1)").arg(KMLImportPluginPrivate::FileExtension);
 }
 
 std::unique_ptr<QWidget> KMLImportPlugin::createOptionWidget() const noexcept
@@ -196,6 +196,7 @@ void KMLImportPlugin::parseDocument() noexcept
         parser = std::make_unique<FlightRadar24KMLParser>(d->xml);
         break;
     default:
+        parser = nullptr;
         break;
     }
     if (parser != nullptr) {

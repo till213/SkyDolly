@@ -22,41 +22,36 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVIMPORTDIALOG_H
-#define CSVIMPORTDIALOG_H
+#ifndef CSVIMPORTSETTINGS_H
+#define CSVIMPORTSETTINGS_H
 
-#include <memory>
+#include <QString>
 
-#include <QDialog>
+#include "../../../../../Kernel/src/Settings.h"
+#include "../../../SettingsIntf.h"
 
-namespace Ui {
-    class CSVImportDialog;
-}
-
-struct AircraftType;
-class CSVImportDialogPrivate;
-
-class CSVImportDialog : public QDialog
+class CSVImportSettings : public SettingsIntf
 {
-    Q_OBJECT
 public:
-    explicit CSVImportDialog(QWidget *parent = nullptr) noexcept;
-    virtual ~CSVImportDialog() noexcept;
+    /*!
+     * CSV format (flavour).
+     */
+    enum struct Format {
+        SkyDolly = 0
+    };
 
-    QString getSelectedFilePath() const noexcept;
-    bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
-    bool isAddToFlightEnabled() const noexcept;
+    CSVImportSettings() noexcept;
+
+    Format format;
+
+    Settings::PluginSettings getSettings() const noexcept override;
+    Settings::KeysWithDefaults getKeysWithDefault() const noexcept override;
+    void setSettings(Settings::ValuesByKey) noexcept override;
+    void restoreDefaults() noexcept override;
 
 private:
-    Ui::CSVImportDialog *ui;
-    std::unique_ptr<CSVImportDialogPrivate> d;
-
-    void frenchConnection() noexcept;
-    void initUi() noexcept;
-
-private slots:
-    void on_fileSelectionPushButton_clicked() noexcept;
-    void updateUi() noexcept;
+    static constexpr Format DefaultFormat = Format::SkyDolly;
+    void initSettings() noexcept;
 };
 
-#endif // CSVIMPORTDIALOG_H
+#endif // CSVIMPORTSETTINGS_H
