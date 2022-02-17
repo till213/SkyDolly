@@ -54,6 +54,7 @@ public:
 signals:
     /*! @todo FIXME This signal is "not found" when trying to connect to it (apparently Windows only - works on Mac)?
      *  Probably related to DLL exported symbols / visibility...
+     *  -> Check this out: https://stackoverflow.com/questions/17943496/declare-abstract-signal-in-interface-class
      */
     void defaultsRestored();
 };
