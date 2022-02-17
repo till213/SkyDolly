@@ -165,6 +165,8 @@ bool ImportPluginBase::importFile(const QString &filePath, FlightService &flight
 
         ok = readFile(d->file);
         if (ok && aircraft.getPositionConst().count() > 0) {
+            d->flightAugmentation.setProcedures(getProcedures());
+            d->flightAugmentation.setAspects(getAspects());
             d->flightAugmentation.augmentAircraftData(aircraft);
             updateAircraftInfo();
             if (addNewAircraft) {

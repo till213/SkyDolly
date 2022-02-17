@@ -33,6 +33,10 @@
 
 class QFile;
 
+#include "../../../../../Flight/src/FlightAugmentation.h"
+#include "../../../ImportIntf.h"
+#include "../../../ImportPluginBase.h"
+
 class Aircraft;
 struct AircraftType;
 class Engine;
@@ -41,9 +45,6 @@ class SecondaryFlightControl;
 class AircraftHandle;
 class Light;
 class FlightService;
-
-#include "../../../ImportPluginBase.h"
-
 class CSVImportPluginPrivate;
 
 class CSVImportPlugin : public ImportPluginBase
@@ -66,6 +67,9 @@ protected:
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
 
     virtual bool readFile(QFile &file) noexcept override;
+
+    virtual FlightAugmentation::Procedures getProcedures() const noexcept override;
+    virtual FlightAugmentation::Aspects getAspects() const noexcept override;
     virtual QDateTime getStartDateTimeUtc() noexcept override;
     virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept override;
     virtual void updateFlight(const QFile &file) noexcept override;

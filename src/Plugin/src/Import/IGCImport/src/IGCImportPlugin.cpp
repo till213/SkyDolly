@@ -57,6 +57,7 @@
 #include "../../../../../Model/src/EngineData.h"
 #include "../../../../../Model/src/FlightPlan.h"
 #include "../../../../../Model/src/Waypoint.h"
+#include "../../../../../Flight/src/FlightAugmentation.h"
 #include "../../../../../SkyConnect/src/SkyConnectManager.h"
 #include "../../../../../SkyConnect/src/SkyConnectIntf.h"
 #include "IGCParser.h"
@@ -233,6 +234,16 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
         }
     }
     return ok;
+}
+
+FlightAugmentation::Procedures IGCImportPlugin::getProcedures() const noexcept
+{
+    return FlightAugmentation::Procedures::None;
+}
+
+FlightAugmentation::Aspects IGCImportPlugin::getAspects() const noexcept
+{
+    return FlightAugmentation::Aspects::None;
 }
 
 QDateTime IGCImportPlugin::getStartDateTimeUtc() noexcept

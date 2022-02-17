@@ -58,6 +58,7 @@
 #include "../../../../../Persistence/src/CSVConst.h"
 #include "../../../../../Persistence/src/Service/FlightService.h"
 #include "../../../../../Persistence/src/Service/AircraftService.h"
+#include "../../../../../Flight/src/FlightAugmentation.h"
 #include "CSVImportSettings.h"
 #include "CSVImportOptionWidget.h"
 #include "CSVImportPlugin.h"
@@ -198,6 +199,16 @@ bool CSVImportPlugin::readFile(QFile &file) noexcept
         }
     }
     return ok;
+}
+
+FlightAugmentation::Procedures CSVImportPlugin::getProcedures() const noexcept
+{
+    return FlightAugmentation::Procedures::None;
+}
+
+FlightAugmentation::Aspects CSVImportPlugin::getAspects() const noexcept
+{
+    return FlightAugmentation::Aspects::None;
 }
 
 QDateTime CSVImportPlugin::getStartDateTimeUtc() noexcept

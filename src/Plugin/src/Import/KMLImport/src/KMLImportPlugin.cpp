@@ -38,6 +38,7 @@
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/Aircraft.h"
 #include "../../../../../Model/src/FlightCondition.h"
+#include "../../../../../Flight/src/FlightAugmentation.h"
 #include "KMLImportSettings.h"
 #include "KMLParserIntf.h"
 #include "FlightAwareKMLParser.h"
@@ -127,6 +128,16 @@ bool KMLImportPlugin::readFile(QFile &file) noexcept
     }
 #endif
     return ok;
+}
+
+FlightAugmentation::Procedures KMLImportPlugin::getProcedures() const noexcept
+{
+    return FlightAugmentation::Procedures::All;
+}
+
+FlightAugmentation::Aspects KMLImportPlugin::getAspects() const noexcept
+{
+    return FlightAugmentation::Aspects::All;
 }
 
 QDateTime KMLImportPlugin::getStartDateTimeUtc() noexcept

@@ -33,6 +33,7 @@
 
 class QFile;
 
+#include "../../Flight/src/FlightAugmentation.h"
 #include "ImportIntf.h"
 #include "PluginBase.h"
 #include "PluginLib.h"
@@ -80,6 +81,9 @@ protected:
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
 
     virtual bool readFile(QFile &file) noexcept = 0;
+
+    virtual FlightAugmentation::Procedures getProcedures() const noexcept = 0;
+    virtual FlightAugmentation::Aspects getAspects() const noexcept = 0;
     virtual QDateTime getStartDateTimeUtc() noexcept = 0;
     virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept = 0;
     virtual void updateFlight(const QFile &file) noexcept = 0;

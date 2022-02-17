@@ -22,9 +22,10 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <utility>
+#include <memory>
 #include <algorithm>
 #include <cstdint>
+#include <utility>
 
 #include "../../Kernel/src/Convert.h"
 #include "../../Kernel/src/SkyMath.h"
@@ -44,6 +45,9 @@
 #include "FlightAugmentation.h"
 
 namespace  {
+// @todo IMPLEMENT ME: Those are the typical/max values for A320-like aircraft
+//       -> define "per aircraft group"-specific limits (jet, propeller/GA, turboprop, glider, ...)
+
     // Estimated landing speed [knots]
     constexpr double LandingVelocity = 140.0;
     // Estimated landing pitch [degrees]
@@ -54,15 +58,64 @@ namespace  {
     constexpr double MaxBankAngle = 25;
 }
 
+class FlightAugmentationPrivate
+{
+public:
+    FlightAugmentationPrivate(FlightAugmentation::Procedures theProcedures, FlightAugmentation::Aspects theAspects)
+        : procedures(theProcedures),
+          aspects(theAspects)
+    {}
+
+    FlightAugmentation::Procedures procedures;
+    FlightAugmentation::Aspects aspects;
+};
+
 // PUBLIC
 
-FlightAugmentation::FlightAugmentation()
-{}
+FlightAugmentation::FlightAugmentation(Procedures procedures, Aspects aspects) noexcept
+    : d(std::make_unique<FlightAugmentationPrivate>(procedures, aspects))
+{
+#ifdef DEBUG
+    qDebug("FlightAugmentation::~FlightAugmentation: CREATED");
+#endif
+}
+
+FlightAugmentation::~FlightAugmentation() noexcept
+{
+#ifdef DEBUG
+    qDebug("FlightAugmentation::~FlightAugmentation: DELETED");
+#endif
+}
+
+void FlightAugmentation::setProcedures(Procedures procedures) noexcept
+{
+    d->procedures = procedures;
+}
+
+FlightAugmentation::Procedures FlightAugmentation::getProcedures() const noexcept
+{
+    return d->procedures;
+}
+
+void FlightAugmentation::setAspects(Aspects aspects) noexcept
+{
+    d->aspects = aspects;
+}
+
+FlightAugmentation::Aspects FlightAugmentation::getAspects() const noexcept
+{
+    return d->aspects;
+}
 
 void FlightAugmentation::augmentAircraftData(Aircraft &aircraft) noexcept
 {
-    augmentAttitudeAndVelocity(aircraft);
-    augmentProcedures(aircraft);
+    if (d->aspects != Aspects::None) {
+        augmentAttitudeAndVelocity(aircraft);
+    }
+
+    if (d->procedures != Procedures::None) {
+        augmentProcedures(aircraft);
+    }
 }
 
 void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
@@ -70,9 +123,7 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
     Position &position = aircraft.getPosition();
     const int positionCount = position.count();
 
-
     Analytics analytics(aircraft);
-
     const auto [firstMovementTimestamp, firstMovementHeading] = analytics.firstMovementHeading();
 
     for (int i = 0; i < positionCount; ++i) {
@@ -103,7 +154,7 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
                     const double headingChange = SkyMath::headingChange(position[i - 1].heading, startPositionData.heading);
                     // We go into maximum bank angle of 30 degrees with a heading change of 45 degrees
                     // SimConnect: negative values are a "right" turn, positive values a left turn
-                    startPositionData.bank = SkyMath::bankAngle(headingChange, 45.0, 30.0);
+                    startPositionData.bank = SkyMath::bankAngle(headingChange, 45.0, ::MaxBankAngle);
                 } else {
                     // First point, zero bank angle
                     startPositionData.bank = 0.0;
@@ -121,10 +172,10 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
             PositionData &previousPositionData = position[i -1];
             lastPositionData.velocityBodyX = previousPositionData.velocityBodyX;
             lastPositionData.velocityBodyY = previousPositionData.velocityBodyY;
-            lastPositionData.velocityBodyZ = Convert::knotsToFeetPerSecond(LandingVelocity);
+            lastPositionData.velocityBodyZ = Convert::knotsToFeetPerSecond(::LandingVelocity);
 
             // Attitude
-            lastPositionData.pitch = LandingPitch;
+            lastPositionData.pitch = ::LandingPitch;
             lastPositionData.bank = 0.0;
             lastPositionData.heading = previousPositionData.heading;
 
