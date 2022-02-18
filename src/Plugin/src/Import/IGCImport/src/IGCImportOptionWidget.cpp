@@ -22,11 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QCoreApplication>
-#include <QString>
-#include <QFile>
-#include <QDir>
 #include <QComboBox>
+#include <QSpinBox>
 
 #include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/Version.h"
@@ -79,6 +76,8 @@ void IGCImportOptionWidget::frenchConnection() noexcept
     connect(ui->altitudeComboBox, &QComboBox::currentIndexChanged,
             this, &IGCImportOptionWidget::onAltitudeComboBoxCurrentIndexChanged);
 #endif
+    connect(ui->enlThresholdSpinBox, &QSpinBox::valueChanged,
+            this, &IGCImportOptionWidget::onENLThresholdIntSpinBoxValueChanged);
     connect(&d->importSettings, &IGCImportSettings::defaultsRestored,
             this, &IGCImportOptionWidget::updateUi);
 }
@@ -92,6 +91,9 @@ void IGCImportOptionWidget::initOptionUi() noexcept
 {
     ui->altitudeComboBox->addItem(tr("GNSS altitdue"), Enum::toUnderlyingType(IGCImportSettings::Altitude::GnssAltitude));
     ui->altitudeComboBox->addItem(tr("Pressure altitdue"), Enum::toUnderlyingType(IGCImportSettings::Altitude::PressureAltitude));
+
+    // Percent [0, 100]
+    ui->enlThresholdSpinBox->setRange(0, 100);
 }
 
 void IGCImportOptionWidget::updateOptionUi() noexcept
@@ -102,6 +104,8 @@ void IGCImportOptionWidget::updateOptionUi() noexcept
         ++currentIndex;
     }
     ui->altitudeComboBox->setCurrentIndex(currentIndex);
+
+    ui->enlThresholdSpinBox->setValue(d->importSettings.m_enlThresholdPercent);
 }
 
 // PRIVATE SLOTS
@@ -109,6 +113,11 @@ void IGCImportOptionWidget::updateOptionUi() noexcept
 void IGCImportOptionWidget::onAltitudeComboBoxCurrentIndexChanged([[maybe_unused]]int index) noexcept
 {
     d->importSettings.m_altitude = static_cast<IGCImportSettings::Altitude>(ui->altitudeComboBox->currentData().toInt());
+}
+
+void IGCImportOptionWidget::onENLThresholdIntSpinBoxValueChanged(int value) noexcept
+{
+    d->importSettings.m_enlThresholdPercent = value;
 }
 
 void IGCImportOptionWidget::updateUi() noexcept

@@ -71,10 +71,6 @@ namespace
     // Distance threshold beyond which two waypoints are to be considered different [meters]
     // (taking the average size of a glider airfield into account)
     constexpr double SameWaypointDistanceThreshold = 500;
-
-    // The environmental noise level threshold for which it is assumed that the engine (propeller)
-    // is turned on
-    constexpr double EnvironmentalNoiseThreshold = 0.4;
 }
 
 class IGCImportPluginPrivate
@@ -141,19 +137,21 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
         Engine &engine = aircraft.getEngine();
         EngineData engineData;
         IGCImportPluginPrivate::EngineState engineState = IGCImportPluginPrivate::EngineState::Unknown;
+        const double enlThresholdNorm = static_cast<double>(d->importSettings.m_enlThresholdPercent) / 100.0;
 
         for (const IGCParser::Fix &fix : d->igcParser.getFixes()) {
             PositionData positionData;
             positionData.timestamp = fix.timestamp;
             positionData.latitude = fix.latitude;
             positionData.longitude = fix.longitude;
-            positionData.altitude = fix.gnssAltitude;
+            // Import either GNSS or pressure altitude
+            positionData.altitude = d->importSettings.m_altitude == IGCImportSettings::Altitude::GnssAltitude ? fix.gnssAltitude : fix.pressureAltitude;
             position.upsertLast(std::move(positionData));
 
             if (d->igcParser.hasEnvironmentalNoiseLevel()) {
                 const double enl = fix.environmentalNoiseLevel;
-                const double position = noiseToPosition(enl);
-                const bool loudNoise = enl > ::EnvironmentalNoiseThreshold;
+                const double position = noiseToPosition(enl, enlThresholdNorm);
+                const bool loudNoise = enl > enlThresholdNorm;
                 switch (engineState) {
                 case IGCImportPluginPrivate::EngineState::Unknown:
                     // Previous engine state unknown, so initially engine in any case
@@ -184,7 +182,7 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
                     engine.upsertLast(engineData);
                     engineState = loudNoise ? IGCImportPluginPrivate::EngineState::Running : IGCImportPluginPrivate::EngineState::Shutdown;
 #ifdef DEBUG
-    qDebug("IGCImportPlugin::readFile: engine INITIALISED, current ENL: %f threshold %f, engine RUNNING: %d", enl, ::EnvironmentalNoiseThreshold, loudNoise);
+    qDebug("IGCImportPlugin::readFile: engine INITIALISED, current ENL: %f threshold %f, engine RUNNING: %d", enl, enlThresholdNorm, loudNoise);
 #endif
                     break;
                 case IGCImportPluginPrivate::EngineState::Running:
@@ -205,7 +203,7 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
                         engine.upsertLast(engineData);
                         engineState = IGCImportPluginPrivate::EngineState::Shutdown;
 #ifdef DEBUG
-    qDebug("IGCImportPlugin::readFile: engine now SHUTDOWN, current ENL: %f < %f", enl, ::EnvironmentalNoiseThreshold);
+    qDebug("IGCImportPlugin::readFile: engine now SHUTDOWN, current ENL: %f < %f", enl, enlThresholdNorm);
 #endif
                     }
                     break;
@@ -228,7 +226,7 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
                         engine.upsertLast(engineData);
                         engineState = IGCImportPluginPrivate::EngineState::Running;
 #ifdef DEBUG
-    qDebug("IGCImportPlugin::readFile: engine now RUNNING, current ENL: %f > %f", enl, ::EnvironmentalNoiseThreshold);
+    qDebug("IGCImportPlugin::readFile: engine now RUNNING, current ENL: %f > %f", enl, enlThresholdNorm);
 #endif
                     }
                     break;
@@ -279,7 +277,9 @@ void IGCImportPlugin::updateFlight(const QFile &file) noexcept
 // PROTECTED SLOTS
 
 void IGCImportPlugin::onRestoreDefaultSettings() noexcept
-{}
+{
+    d->importSettings.restoreDefaults();
+}
 
 // PRIVATE
 
@@ -446,8 +446,8 @@ void IGCImportPlugin::updateWaypoints() noexcept
     }
 }
 
-inline double IGCImportPlugin::noiseToPosition(double environmentalNoiseLevel) noexcept
+inline double IGCImportPlugin::noiseToPosition(double environmentalNoiseLevel, double threhsold) noexcept
 {
-    const double linear = qMax(environmentalNoiseLevel - ::EnvironmentalNoiseThreshold, 0.0) / (1.0 - ::EnvironmentalNoiseThreshold);
+    const double linear = qMax(environmentalNoiseLevel - threhsold, 0.0) / (1.0 - threhsold);
     return d->throttleResponseCurve.valueForProgress(linear);
 }

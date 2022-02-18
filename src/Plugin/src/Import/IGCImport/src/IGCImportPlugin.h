@@ -73,7 +73,7 @@ private:
 
     // Estimates the propeller (thrust) lever position, based on the
     // environmentalNoiseLevel and the threshold
-    inline double noiseToPosition(double environmentalNoiseLevel) noexcept;
+    inline double noiseToPosition(double environmentalNoiseLevel, double threshold) noexcept;
 };
 
 #endif // IGCIMPORTPLUGIN_H

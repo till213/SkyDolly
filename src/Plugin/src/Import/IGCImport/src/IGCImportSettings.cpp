@@ -28,6 +28,12 @@
 #include "../../../../../Kernel/src/Settings.h"
 #include "IGCImportSettings.h"
 
+namespace
+{
+    constexpr char AltitudeKey[] = "Altitude";
+    constexpr char ENLThresholdKey[] = "ENLThreshold";
+}
+
 // PUBLIC
 
 IGCImportSettings::IGCImportSettings() noexcept
@@ -40,8 +46,12 @@ Settings::PluginSettings IGCImportSettings::getSettings() const noexcept
     Settings::PluginSettings settings;
     Settings::KeyValue keyValue;
 
-    keyValue.first = "Altitude";
+    keyValue.first = ::AltitudeKey;
     keyValue.second = Enum::toUnderlyingType(m_altitude);
+    settings.push_back(keyValue);
+
+    keyValue.first = ::ENLThresholdKey;
+    keyValue.second = m_enlThresholdPercent;
     settings.push_back(keyValue);
 
     return settings;
@@ -52,8 +62,12 @@ Settings::KeysWithDefaults IGCImportSettings::getKeysWithDefault() const noexcep
     Settings::KeysWithDefaults keys;
     Settings::KeyValue keyValue;
 
-    keyValue.first = "Altitude";
+    keyValue.first = ::AltitudeKey;
     keyValue.second = Enum::toUnderlyingType(IGCImportSettings::DefaultAltitude);
+    keys.push_back(keyValue);
+
+    keyValue.first = ::ENLThresholdKey;
+    keyValue.second = IGCImportSettings::DefaultENLThresholdPercent;
     keys.push_back(keyValue);
 
     return keys;
@@ -62,11 +76,18 @@ Settings::KeysWithDefaults IGCImportSettings::getKeysWithDefault() const noexcep
 void IGCImportSettings::setSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     bool ok;
-    int enumeration = valuesByKey["Altitude"].toInt(&ok);
+    const int enumeration = valuesByKey[::AltitudeKey].toInt(&ok);
     if (ok) {
         m_altitude = static_cast<IGCImportSettings::Altitude >(enumeration);
     } else {
         m_altitude = DefaultAltitude;
+    }
+
+    const double enlThresholdPercent = valuesByKey[::ENLThresholdKey].toDouble(&ok);
+    if (ok) {
+        m_enlThresholdPercent = enlThresholdPercent;
+    } else {
+        m_enlThresholdPercent = DefaultENLThresholdPercent;
     }
 }
 
@@ -81,4 +102,5 @@ void IGCImportSettings::restoreDefaults() noexcept
 void IGCImportSettings::initSettings() noexcept
 {
     m_altitude = DefaultAltitude;
+    m_enlThresholdPercent = DefaultENLThresholdPercent;
 }

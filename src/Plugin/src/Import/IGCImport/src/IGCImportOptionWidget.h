@@ -54,6 +54,7 @@ private:
 
 private slots:
     void onAltitudeComboBoxCurrentIndexChanged(int index) noexcept;
+    void onENLThresholdIntSpinBoxValueChanged(int value) noexcept;
 
     void updateUi() noexcept;
 };

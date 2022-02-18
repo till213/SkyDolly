@@ -22,10 +22,6 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QCoreApplication>
-#include <QString>
-#include <QFile>
-#include <QDir>
 #include <QComboBox>
 
 #include "../../../../../Kernel/src/Enum.h"
@@ -97,7 +93,7 @@ void KMLImportOptionWidget::updateOptionUi() noexcept
 {
     int currentIndex = 0;
     while (currentIndex < ui->formatComboBox->count() &&
-           static_cast<KMLImportSettings::Format>(ui->formatComboBox->itemData(currentIndex).toInt()) != d->importSettings.format) {
+           static_cast<KMLImportSettings::Format>(ui->formatComboBox->itemData(currentIndex).toInt()) != d->importSettings.m_format) {
         ++currentIndex;
     }
     ui->formatComboBox->setCurrentIndex(currentIndex);
@@ -107,7 +103,7 @@ void KMLImportOptionWidget::updateOptionUi() noexcept
 
 void KMLImportOptionWidget::onFormatComboBoxCurrentIndexChanged([[maybe_unused]]int index) noexcept
 {
-    d->importSettings.format = static_cast<KMLImportSettings::Format>(ui->formatComboBox->currentData().toInt());
+    d->importSettings.m_format = static_cast<KMLImportSettings::Format>(ui->formatComboBox->currentData().toInt());
 }
 
 void KMLImportOptionWidget::updateUi() noexcept

@@ -44,7 +44,7 @@ public:
 
     KMLImportSettings() noexcept;
 
-    Format format;
+    Format m_format;
 
     Settings::PluginSettings getSettings() const noexcept;
     Settings::KeysWithDefaults getKeysWithDefault() const noexcept;
@@ -55,8 +55,9 @@ signals:
     void defaultsRestored();
 
 private:
-    static constexpr Format DefaultFormat = Format::FlightAware;
     void initSettings() noexcept;
+
+    static constexpr Format DefaultFormat = Format::FlightAware;
 };
 
 #endif // KMLIMPORTSETTINGS_H

@@ -43,7 +43,7 @@ public:
 
     CSVImportSettings() noexcept;
 
-    Format format;
+    Format m_format;
 
     Settings::PluginSettings getSettings() const noexcept;
     Settings::KeysWithDefaults getKeysWithDefault() const noexcept;
@@ -54,8 +54,9 @@ signals:
     void defaultsRestored();
 
 private:
-    static constexpr Format DefaultFormat = Format::SkyDolly;
     void initSettings() noexcept;
+
+    static constexpr Format DefaultFormat = Format::SkyDolly;
 };
 
 #endif // CSVIMPORTSETTINGS_H

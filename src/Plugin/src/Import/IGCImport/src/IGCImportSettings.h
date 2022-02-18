@@ -34,9 +34,6 @@ class IGCImportSettings : public QObject
 {
     Q_OBJECT
 public:
-    /*!
-     * IGC format (flavour).
-     */
     enum struct Altitude {
         GnssAltitude = 0,
         PressureAltitude = 1
@@ -45,6 +42,7 @@ public:
     IGCImportSettings() noexcept;
 
     Altitude m_altitude;
+    int m_enlThresholdPercent;
 
     Settings::PluginSettings getSettings() const noexcept;
     Settings::KeysWithDefaults getKeysWithDefault() const noexcept;
@@ -55,8 +53,10 @@ signals:
     void defaultsRestored();
 
 private:
-    static constexpr Altitude DefaultAltitude = Altitude::GnssAltitude;
     void initSettings() noexcept;
+
+    static constexpr Altitude DefaultAltitude = Altitude::GnssAltitude;
+    static constexpr int DefaultENLThresholdPercent = 40;
 };
 
 #endif // IGCIMPORTSETTINGS_H

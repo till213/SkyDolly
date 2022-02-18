@@ -41,7 +41,7 @@ Settings::PluginSettings KMLImportSettings::getSettings() const noexcept
     Settings::KeyValue keyValue;
 
     keyValue.first = "Format";
-    keyValue.second = Enum::toUnderlyingType(format);
+    keyValue.second = Enum::toUnderlyingType(m_format);
     settings.push_back(keyValue);
 
     return settings;
@@ -62,11 +62,11 @@ Settings::KeysWithDefaults KMLImportSettings::getKeysWithDefault() const noexcep
 void KMLImportSettings::setSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     bool ok;
-    int enumeration = valuesByKey["Format"].toInt(&ok);
+    const int enumeration = valuesByKey["Format"].toInt(&ok);
     if (ok) {
-        format = static_cast<KMLImportSettings::Format >(enumeration);
+        m_format = static_cast<KMLImportSettings::Format >(enumeration);
     } else {
-        format = DefaultFormat;
+        m_format = DefaultFormat;
     }
 }
 
@@ -80,5 +80,5 @@ void KMLImportSettings::restoreDefaults() noexcept
 
 void KMLImportSettings::initSettings() noexcept
 {
-    format = DefaultFormat;
+    m_format = DefaultFormat;
 }

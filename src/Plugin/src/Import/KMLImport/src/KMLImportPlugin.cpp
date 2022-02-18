@@ -199,7 +199,7 @@ void KMLImportPlugin::parseName() noexcept
 void KMLImportPlugin::parseDocument() noexcept
 {
     std::unique_ptr<KMLParserIntf> parser;
-    switch (d->importSettings.format) {
+    switch (d->importSettings.m_format) {
     case KMLImportSettings::Format::FlightAware:
         parser = std::make_unique<FlightAwareKMLParser>(d->xml);
         break;
