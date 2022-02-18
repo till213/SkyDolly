@@ -61,6 +61,8 @@
 #include "../../../../../Flight/src/FlightAugmentation.h"
 #include "../../../../../SkyConnect/src/SkyConnectManager.h"
 #include "../../../../../SkyConnect/src/SkyConnectIntf.h"
+#include "IGCImportOptionWidget.h"
+#include "IGCImportSettings.h"
 #include "IGCParser.h"
 #include "IGCImportPlugin.h"
 
@@ -90,7 +92,9 @@ public:
         Shutdown
     };
 
+    IGCImportSettings importSettings;
     QEasingCurve throttleResponseCurve;
+
 
     static const inline QString FileExtension {QStringLiteral("igc")};
 };
@@ -121,7 +125,7 @@ QString IGCImportPlugin::getFileFilter() const noexcept
 
 std::unique_ptr<QWidget> IGCImportPlugin::createOptionWidget() const noexcept
 {
-    return nullptr;
+    return std::make_unique<IGCImportOptionWidget>(d->importSettings);
 }
 
 bool IGCImportPlugin::readFile(QFile &file) noexcept
