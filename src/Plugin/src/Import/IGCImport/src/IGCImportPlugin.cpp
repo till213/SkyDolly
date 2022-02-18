@@ -181,6 +181,7 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
                     break;
                 case IGCImportPluginPrivate::EngineState::Running:
                     if (!loudNoise) {
+                        engineData.timestamp = fix.timestamp;
                         engineData.generalEngineCombustion1 = false;
                         engineData.generalEngineCombustion2 = false;
                         engineData.generalEngineCombustion3 = false;
@@ -203,6 +204,7 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
 
                 case IGCImportPluginPrivate::EngineState::Shutdown:
                     if (loudNoise) {
+                        engineData.timestamp = fix.timestamp;
                         engineData.generalEngineCombustion1 = true;
                         engineData.generalEngineCombustion2 = true;
                         engineData.generalEngineCombustion3 = true;
@@ -438,5 +440,5 @@ void IGCImportPlugin::updateWaypoints() noexcept
 
 inline double IGCImportPlugin::noiseToPosition(double environmentalNoiseLevel) noexcept
 {
-    return qMin(environmentalNoiseLevel - ::EnvironmentalNoiseThreshold, 0.0) / (1.0 - ::EnvironmentalNoiseThreshold);
+    return qMax(environmentalNoiseLevel - ::EnvironmentalNoiseThreshold, 0.0) / (1.0 - ::EnvironmentalNoiseThreshold);
 }
