@@ -54,8 +54,10 @@ public:
     {
         None = 0x0,
         Attitude = 0x1,
-        Engine = 0x2,
-        Light = 0x4,
+        Velocity = 0x2,
+        AttitudeAndVelocity = Attitude | Velocity,
+        Engine = 0x4,
+        Light = 0x8,
         All = 0xffffffff
     };
 
@@ -100,6 +102,12 @@ inline FlightAugmentation::Aspects operator&(FlightAugmentation::Aspects a, Flig
 {
     typedef std::underlying_type<FlightAugmentation::Aspects>::type EnumType;
     return static_cast<FlightAugmentation::Aspects>(static_cast<EnumType>(a) & static_cast<EnumType>(b));
+}
+
+inline bool operator==(FlightAugmentation::Aspects a, FlightAugmentation::Aspects b) noexcept
+{
+    typedef std::underlying_type<FlightAugmentation::Aspects>::type EnumType;
+    return static_cast<EnumType>(a) == static_cast<EnumType>(b);
 }
 
 #endif // FLIGHTAUGMENTATION_H

@@ -71,7 +71,7 @@ namespace
 
     // The environmental noise level threshold for which it is assumed that the engine (propeller)
     // is turned on
-    constexpr double EnvironmentalNoiseThreshold = 0.9;
+    constexpr double EnvironmentalNoiseThreshold = 0.8;
 }
 
 class IGCImportPluginPrivate
@@ -238,12 +238,14 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
 
 FlightAugmentation::Procedures IGCImportPlugin::getProcedures() const noexcept
 {
-    return FlightAugmentation::Procedures::None;
+    return FlightAugmentation::Procedures::All;
 }
 
 FlightAugmentation::Aspects IGCImportPlugin::getAspects() const noexcept
 {
-    return FlightAugmentation::Aspects::None;
+    // Do not augment the engine data: the engine data is already derived from the
+    // environmental noise level (ENL - if available)
+    return FlightAugmentation::Aspects::AttitudeAndVelocity | FlightAugmentation::Aspects::Light;
 }
 
 QDateTime IGCImportPlugin::getStartDateTimeUtc() noexcept
