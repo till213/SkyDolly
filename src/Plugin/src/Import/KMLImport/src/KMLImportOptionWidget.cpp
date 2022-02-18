@@ -78,7 +78,7 @@ void KMLImportOptionWidget::frenchConnection() noexcept
     connect(ui->formatComboBox, &QComboBox::currentIndexChanged,
             this, &KMLImportOptionWidget::onFormatComboBoxCurrentIndexChanged);
 #endif
-    connect(&d->importSettings, &SettingsIntf::defaultsRestored,
+    connect(&d->importSettings, &KMLImportSettings::defaultsRestored,
             this, &KMLImportOptionWidget::updateUi);
 }
 

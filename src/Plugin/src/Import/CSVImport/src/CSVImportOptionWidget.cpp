@@ -79,7 +79,7 @@ void CSVImportOptionWidget::frenchConnection() noexcept
     connect(ui->formatComboBox, &QComboBox::currentIndexChanged,
             this, &CSVImportOptionWidget::onFormatComboBoxCurrentIndexChanged);
 #endif
-    connect(&d->importSettings, &SettingsIntf::defaultsRestored,
+    connect(&d->importSettings, &CSVImportSettings::defaultsRestored,
             this, &CSVImportOptionWidget::updateUi);
 }
 
