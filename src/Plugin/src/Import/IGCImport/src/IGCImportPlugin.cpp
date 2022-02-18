@@ -41,6 +41,7 @@
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
 #include <QStringView>
+#include <QEasingCurve>
 
 #include "../../../../../Kernel/src/Unit.h"
 #include "../../../../../Kernel/src/Settings.h"
@@ -71,13 +72,14 @@ namespace
 
     // The environmental noise level threshold for which it is assumed that the engine (propeller)
     // is turned on
-    constexpr double EnvironmentalNoiseThreshold = 0.8;
+    constexpr double EnvironmentalNoiseThreshold = 0.4;
 }
 
 class IGCImportPluginPrivate
 {
 public:
     IGCImportPluginPrivate()
+        : throttleResponseCurve(QEasingCurve::OutExpo)
     {}
 
     IGCParser igcParser;
@@ -87,6 +89,8 @@ public:
         Running,
         Shutdown
     };
+
+    QEasingCurve throttleResponseCurve;
 
     static const inline QString FileExtension {QStringLiteral("igc")};
 };
@@ -440,5 +444,6 @@ void IGCImportPlugin::updateWaypoints() noexcept
 
 inline double IGCImportPlugin::noiseToPosition(double environmentalNoiseLevel) noexcept
 {
-    return qMax(environmentalNoiseLevel - ::EnvironmentalNoiseThreshold, 0.0) / (1.0 - ::EnvironmentalNoiseThreshold);
+    const double linear = qMax(environmentalNoiseLevel - ::EnvironmentalNoiseThreshold, 0.0) / (1.0 - ::EnvironmentalNoiseThreshold);
+    return d->throttleResponseCurve.valueForProgress(linear);
 }
