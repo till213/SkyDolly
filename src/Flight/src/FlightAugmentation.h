@@ -53,11 +53,14 @@ public:
     enum struct Aspects: std::uint32_t
     {
         None = 0x0,
-        Attitude = 0x1,
-        Velocity = 0x2,
+        Pitch = 0x1,
+        Bank = 0x2,
+        Heading = 0x4,
+        Attitude = Pitch | Bank | Heading,
+        Velocity = 0x8,
         AttitudeAndVelocity = Attitude | Velocity,
-        Engine = 0x4,
-        Light = 0x8,
+        Engine = 0x10,
+        Light = 0x20,
         All = 0xffffffff
     };
 

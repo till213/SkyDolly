@@ -144,9 +144,8 @@ FlightAugmentation::Aspects KMLImportPlugin::getAspects() const noexcept
         aspects = FlightAugmentation::Aspects::All;
         break;
     case KMLImportSettings::Format::FlightRadar24:
-        // Do not augment attitude and velocity
-        // @todo FIXME We need to distinguish between heading and pitch/roll! FlightRadar only contains heading data!
-        aspects = FlightAugmentation::Aspects::Engine | FlightAugmentation::Aspects::Light;
+        // Do not augment heading and velocity
+        aspects = FlightAugmentation::Aspects::Pitch | FlightAugmentation::Aspects::Bank |FlightAugmentation::Aspects::Engine |FlightAugmentation::Aspects::Light;
         break;
     default:
         aspects = FlightAugmentation::Aspects::All;
