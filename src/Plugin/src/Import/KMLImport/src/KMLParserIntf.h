@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLPARSER_H
-#define KMLPARSER_H
+#ifndef KMLPARSERINTF_H
+#define KMLPARSERINTF_H
 
 class QDateTime;
 class QString;
@@ -36,4 +36,4 @@ public:
     virtual void parse(QDateTime &first, QDateTime &last, QString &flightNumber) noexcept = 0;
 };
 
-#endif // KMLPARSER_H
+#endif // KMLPARSERINTF_H

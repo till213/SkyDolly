@@ -22,35 +22,17 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTRADAR24KMLPARSER_H
-#define FLIGHTRADAR24KMLPARSER_H
+#ifndef CSVPARSERINTF_H
+#define CSVPARSERINTF_H
 
-#include <memory>
+class QFile;
 
-class QDateTime;
-class QString;
-class QXmlStreamReader;
-
-#include "KMLParserIntf.h"
-
-class FlightRadar24KMLParserPrivate;
-
-class FlightRadar24KMLParser : public KMLParserIntf
+class CSVParserIntf
 {
 public:
-    FlightRadar24KMLParser(QXmlStreamReader &xmlStreamReader) noexcept;
-    virtual ~FlightRadar24KMLParser() noexcept;
+    virtual ~CSVParserIntf() = default;
 
-    virtual void parse(QDateTime &firstDateTimeUtc, QDateTime &lastDateTimeUtc, QString &flightNumber) noexcept override;
-
-private:
-    std::unique_ptr<FlightRadar24KMLParserPrivate> d;
-
-    void parseFolder() noexcept;
-    void parsePlacemark() noexcept;
-    bool parseDescription() noexcept;
-    void parseTimestamp() noexcept;
-    void parsePoint() noexcept;
+    virtual bool parse(QFile &file) noexcept = 0;
 };
 
-#endif // FLIGHTRADAR24KMLPARSER_H
+#endif // CSVPARSERINTF_H

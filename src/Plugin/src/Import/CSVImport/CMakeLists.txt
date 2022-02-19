@@ -18,6 +18,8 @@ target_sources(${LIBRARY_NAME}
         src/CSVImportPlugin.h src/CSVImportPlugin.cpp
         src/CSVImportOptionWidget.h src/CSVImportOptionWidget.cpp src/CSVImportOptionWidget.ui
         src/CSVImportSettings.h src/CSVImportSettings.cpp
+        src/CSVParserIntf.h
+        src/SkyDollyCSVParser.h src/SkyDollyCSVParser.cpp
         src/CSVImportPlugin.json
 )
 

@@ -26,7 +26,6 @@
 #define CSVIMPORTPLUGIN_H
 
 #include <memory>
-#include <cstdint>
 
 #include <QObject>
 #include <QtPlugin>
@@ -79,16 +78,6 @@ protected slots:
 
 private:
     std::unique_ptr<CSVImportPluginPrivate> d;
-
-    bool getAircraftType(const QString &type, AircraftType &aircraftType) noexcept;
-
-    static inline bool importPositionData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Aircraft &aircraft) noexcept;
-    static inline bool importEngineData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Engine &engine) noexcept;
-    static inline bool importPrimaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, PrimaryFlightControl &primaryFlightControl) noexcept;
-    static inline bool importSecondaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, SecondaryFlightControl &secondaryFlightControl) noexcept;
-    static inline bool importAircraftHandleData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, AircraftHandle &aircraftHandle) noexcept;
-    static inline bool importLightData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Light &light) noexcept;
-    static inline bool importTimestamp(const QList<QByteArray> &values, int columnIndex, bool firstRow, std::int64_t &timestamp, std::int64_t &timestampDelta);
 };
 
 #endif // CSVIMPORTPLUGIN_H

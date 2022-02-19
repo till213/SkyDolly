@@ -27,8 +27,6 @@
 
 #include <memory>
 
-#include <QStringView>
-
 class QDateTime;
 class QString;
 class QXmlStreamReader;

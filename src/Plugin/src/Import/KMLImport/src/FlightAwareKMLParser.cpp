@@ -77,7 +77,7 @@ FlightAwareKMLParser::~FlightAwareKMLParser() noexcept
 // FlightAware KML files (are expected to) have 3 Placemarks, with:
 // - <Point> Takeoff airpart
 // - <Point> Destination airport
-// - <gx:Track> timestamps (<when>) and positions (<gx:coord>)s
+// - <gx:Track> timestamps (<when>) and positions (<gx:coord>)
 void FlightAwareKMLParser::parse(QDateTime &firstDateTimeUtc, QDateTime &lastDateTimeUtc, QString &flightNumber) noexcept
 {
     while (d->xml.readNextStartElement()) {

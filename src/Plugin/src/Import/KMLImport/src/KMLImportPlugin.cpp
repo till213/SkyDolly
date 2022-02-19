@@ -137,7 +137,23 @@ FlightAugmentation::Procedures KMLImportPlugin::getProcedures() const noexcept
 
 FlightAugmentation::Aspects KMLImportPlugin::getAspects() const noexcept
 {
-    return FlightAugmentation::Aspects::All;
+    FlightAugmentation::Aspects aspects;
+    switch (d->importSettings.m_format)
+    {
+    case KMLImportSettings::Format::FlightAware:
+        aspects = FlightAugmentation::Aspects::All;
+        break;
+    case KMLImportSettings::Format::FlightRadar24:
+        // Do not augment attitude and velocity
+        // @todo FIXME We need to distinguish between heading and pitch/roll! FlightRadar only contains heading data!
+        aspects = FlightAugmentation::Aspects::Engine | FlightAugmentation::Aspects::Light;
+        break;
+    default:
+        aspects = FlightAugmentation::Aspects::All;
+        break;
+    }
+
+    return aspects;
 }
 
 QDateTime KMLImportPlugin::getStartDateTimeUtc() noexcept
