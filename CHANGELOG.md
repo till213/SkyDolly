@@ -16,6 +16,8 @@
   * Date and time of turn points (waypoints) defined by the task list ("C records") are now updated with the actual flight time, based on the closest flown position
 - KML import plugin
   * KML from flightradar24.com can now also be imported (new format drowdown list)
+- CSV import plugin
+  * CSV from flightradar24.com can now also be imported (new format dropdown list)
 
 ## 0.8.6
 
