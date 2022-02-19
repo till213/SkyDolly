@@ -67,10 +67,12 @@ SkyDollyCSVParser::~SkyDollyCSVParser() noexcept
 #endif
 }
 
-bool SkyDollyCSVParser::parse(QFile &file) noexcept
+bool SkyDollyCSVParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     Aircraft &aircraft = flight.getUserAircraft();
+
+    firstDateTimeUtc = QFileInfo(file).birthTime().toUTC();
 
     // Headers
     QByteArray line = file.readLine();

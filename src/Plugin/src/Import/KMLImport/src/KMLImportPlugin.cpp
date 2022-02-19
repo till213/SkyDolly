@@ -145,7 +145,7 @@ FlightAugmentation::Aspects KMLImportPlugin::getAspects() const noexcept
         break;
     case KMLImportSettings::Format::FlightRadar24:
         // Do not augment heading and velocity
-        aspects = FlightAugmentation::Aspects::Pitch | FlightAugmentation::Aspects::Bank |FlightAugmentation::Aspects::Engine |FlightAugmentation::Aspects::Light;
+        aspects = FlightAugmentation::Aspects::Pitch | FlightAugmentation::Aspects::Bank | FlightAugmentation::Aspects::Engine | FlightAugmentation::Aspects::Light;
         break;
     default:
         aspects = FlightAugmentation::Aspects::All;

@@ -33,6 +33,7 @@
 #include "../../../../../Flight/src/FlightAugmentation.h"
 #include "CSVParserIntf.h"
 #include "SkyDollyCSVParser.h"
+#include "FlightRadar24CSVParser.h"
 #include "CSVImportSettings.h"
 #include "CSVImportOptionWidget.h"
 #include "CSVImportPlugin.h"
@@ -44,7 +45,8 @@ public:
     {}
 
     CSVImportSettings importSettings;
-    QDateTime fileCreationDate;
+    QDateTime firstDateTimeUtc;
+    QString flightNumber;
 
     static inline const QString FileExtension {QStringLiteral("csv")};
 };
@@ -96,12 +98,14 @@ std::unique_ptr<QWidget> CSVImportPlugin::createOptionWidget() const noexcept
 bool CSVImportPlugin::readFile(QFile &file) noexcept
 {
     bool ok;
-    d->fileCreationDate = QFileInfo(file).birthTime();
 
     std::unique_ptr<CSVParserIntf> parser;
     switch (d->importSettings.m_format) {
     case CSVImportSettings::Format::SkyDolly:
         parser = std::make_unique<SkyDollyCSVParser>();
+        break;
+    case CSVImportSettings::Format::FlightRadar24:
+        parser = std::make_unique<FlightRadar24CSVParser>();
         break;
     default:
         parser = nullptr;
@@ -109,7 +113,7 @@ bool CSVImportPlugin::readFile(QFile &file) noexcept
         break;
     }
     if (parser != nullptr) {
-        ok = parser->parse(file);
+        ok = parser->parse(file, d->firstDateTimeUtc, d->flightNumber);
     }
     return ok;
 }
@@ -121,18 +125,35 @@ FlightAugmentation::Procedures CSVImportPlugin::getProcedures() const noexcept
 
 FlightAugmentation::Aspects CSVImportPlugin::getAspects() const noexcept
 {
-    return FlightAugmentation::Aspects::None;
+    FlightAugmentation::Aspects aspects;
+    switch (d->importSettings.m_format)
+    {
+    case CSVImportSettings::Format::SkyDolly:
+        aspects = FlightAugmentation::Aspects::None;
+        break;
+    case CSVImportSettings::Format::FlightRadar24:
+        // Do not augment heading and velocity
+        aspects = FlightAugmentation::Aspects::Pitch | FlightAugmentation::Aspects::Bank | FlightAugmentation::Aspects::Engine | FlightAugmentation::Aspects::Light;
+        break;
+    default:
+        aspects = FlightAugmentation::Aspects::All;
+        break;
+    }
+
+    return aspects;
 }
 
 QDateTime CSVImportPlugin::getStartDateTimeUtc() noexcept
 {
-    return d->fileCreationDate.toUTC();
+    return d->firstDateTimeUtc;
 }
 
-void CSVImportPlugin::updateExtendedAircraftInfo([[maybe_unused]]AircraftInfo &aircraftInfo) noexcept
-{}
+void CSVImportPlugin::updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept
+{
+    aircraftInfo.flightNumber = d->flightNumber;
+}
 
-void CSVImportPlugin::updateFlight([[maybe_unused]] const QFile &file) noexcept
+void CSVImportPlugin::updateFlight(const QFile &file) noexcept
 {
     Unit unit;
     Flight &flight = Logbook::getInstance().getCurrentFlight();

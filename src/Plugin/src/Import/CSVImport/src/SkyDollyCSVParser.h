@@ -25,26 +25,21 @@
 #ifndef SKYDOLLYCSVPARSER_H
 #define SKYDOLLYCSVPARSER_H
 
-#include <memory>
-
 #include <QByteArray>
 #include <QList>
 
+class QFile;
 class QDateTime;
 class QString;
-class QFile;
 
 #include "CSVParserIntf.h"
 
 class Aircraft;
-struct AircraftType;
 class Engine;
 class PrimaryFlightControl;
 class SecondaryFlightControl;
 class AircraftHandle;
 class Light;
-class FlightService;
-class CSVImportPluginPrivate;
 
 class SkyDollyCSVParser : public CSVParserIntf
 {
@@ -52,7 +47,7 @@ public:
     SkyDollyCSVParser() noexcept;
     virtual ~SkyDollyCSVParser() noexcept;
 
-    virtual bool parse(QFile &file) noexcept override;
+    virtual bool parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept override;
 
 private:
     static inline bool importPositionData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Aircraft &aircraft) noexcept;

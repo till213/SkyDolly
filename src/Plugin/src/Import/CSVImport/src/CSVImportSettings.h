@@ -38,7 +38,8 @@ public:
      * CSV format (flavour).
      */
     enum struct Format {
-        SkyDolly = 0
+        SkyDolly = 0,
+        FlightRadar24 = 1
     };
 
     CSVImportSettings() noexcept;

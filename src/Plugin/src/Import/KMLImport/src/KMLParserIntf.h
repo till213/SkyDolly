@@ -33,7 +33,7 @@ class KMLParserIntf
 public:
     virtual ~KMLParserIntf() = default;
 
-    virtual void parse(QDateTime &first, QDateTime &last, QString &flightNumber) noexcept = 0;
+    virtual void parse(QDateTime &firstDateTimeUtc, QDateTime &lastDateTimeUtc, QString &flightNumber) noexcept = 0;
 };
 
 #endif // KMLPARSERINTF_H

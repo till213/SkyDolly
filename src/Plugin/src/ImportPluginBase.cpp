@@ -198,7 +198,7 @@ void ImportPluginBase::updateAircraftInfo() noexcept
     const QDateTime startDateTimeUtc = getStartDateTimeUtc();
     const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
     aircraftInfo.startDate = startDateTimeUtc.toLocalTime();
-    aircraftInfo.endDate = endDateTimeUtc;
+    aircraftInfo.endDate = endDateTimeUtc.toLocalTime();
     int positionCount = aircraft.getPosition().count();
     if (positionCount > 0) {
         const PositionData &firstPositionData = aircraft.getPosition().getFirst();
@@ -235,3 +235,5 @@ void ImportPluginBase::updateAircraftInfo() noexcept
     updateExtendedAircraftInfo(aircraftInfo);
     aircraft.setAircraftInfo(aircraftInfo);
 }
+
+// @todo IMPLEMENT ME also implement udpateFlightCondition() and updateExtendedFlightCondition()

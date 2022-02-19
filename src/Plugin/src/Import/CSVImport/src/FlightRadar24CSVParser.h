@@ -22,19 +22,22 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVPARSERINTF_H
-#define CSVPARSERINTF_H
+#ifndef FLIGHTRADAR24CSVPARSER_H
+#define FLIGHTRADAR24CSVPARSER_H
 
 class QFile;
 class QDateTime;
 class QString;
 
-class CSVParserIntf
+#include "CSVParserIntf.h"
+
+class FlightRadar24CSVParser : public CSVParserIntf
 {
 public:
-    virtual ~CSVParserIntf() = default;
+    FlightRadar24CSVParser() noexcept;
+    virtual ~FlightRadar24CSVParser() noexcept;
 
-    virtual bool parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept = 0;
+    virtual bool parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept override;
 };
 
-#endif // CSVPARSERINTF_H
+#endif // FLIGHTRADAR24CSVPARSER_H
