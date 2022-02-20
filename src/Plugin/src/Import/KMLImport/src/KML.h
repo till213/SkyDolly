@@ -22,18 +22,30 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLPARSERINTF_H
-#define KMLPARSERINTF_H
+#ifndef KML_H
+#define KML_H
 
-class QDateTime;
-class QString;
+#include <QString>
+#include <QStringLiteral>
 
-class KMLParserIntf
+/*!
+ * From https://developers.google.com/kml/documentation/kml_element_hierarchy:
+ * "In KML, simple element names begin with a lowercase letter. Simple elements can contain a value, but they do not contain other elements.
+ * Complex element names being with an uppercase letter. Complex elements can contain other elements (referred to as their children)."
+ *
+ * We adhere to this naming convention for the constants defined in this namespace.
+ */
+namespace KML
 {
-public:
-    virtual ~KMLParserIntf() = default;
+    inline const QString Document = QStringLiteral("Document");
+    inline const QString Folder = QStringLiteral("Folder");
+    inline const QString Placemark = QStringLiteral("Placemark");
+    inline const QString Point = QStringLiteral("Point");
+    inline const QString Track = QStringLiteral("Track");
 
-    virtual void parse(QDateTime &firstDateTimeUtc, QString &name, QString &flightNumber) noexcept = 0;
-};
+    inline const QString name = QStringLiteral("name");
+    inline const QString when = QStringLiteral("when");
+    inline const QString coord = QStringLiteral("coord");
+}
 
-#endif // KMLPARSERINTF_H
+#endif // KML_H

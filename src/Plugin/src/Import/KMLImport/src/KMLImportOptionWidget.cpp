@@ -87,6 +87,7 @@ void KMLImportOptionWidget::initOptionUi() noexcept
 {
     ui->formatComboBox->addItem("FlightAware.com", Enum::toUnderlyingType(KMLImportSettings::Format::FlightAware));
     ui->formatComboBox->addItem("FlightRadar24.com", Enum::toUnderlyingType(KMLImportSettings::Format::FlightRadar24));
+    ui->formatComboBox->addItem(tr("Generic Track KML"), Enum::toUnderlyingType(KMLImportSettings::Format::Generic));
 }
 
 void KMLImportOptionWidget::updateOptionUi() noexcept

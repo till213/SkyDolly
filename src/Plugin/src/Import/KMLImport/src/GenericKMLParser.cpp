@@ -31,6 +31,7 @@
 #include <QTimeZone>
 #include <QDateTime>
 #include <QXmlStreamReader>
+#include <QRegularExpression>
 
 #include "../../../../../Kernel/src/Convert.h"
 #include "../../../../../Model/src/Logbook.h"
@@ -41,12 +42,21 @@
 #include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/Waypoint.h"
 #include "KML.h"
-#include "FlightAwareKMLParser.h"
+#include "GenericKMLParser.h"
 
-class FlightAwareKMLParserPrivate
+class GenericKMLParserPrivate
 {
 public:
-    FlightAwareKMLParserPrivate(QXmlStreamReader &xmlStreamReader) noexcept
+    typedef struct {
+        std::int64_t timestamp;
+        double latitude;
+        double longitude;
+        double altitude;
+    } TrackItem;
+    // The track data may contain data with identical timestamps
+    std::vector<TrackItem> trackData;
+
+    GenericKMLParserPrivate(QXmlStreamReader &xmlStreamReader) noexcept
         : xml(xmlStreamReader),
           currentWaypointTimestamp(0)
     {
@@ -62,39 +72,50 @@ public:
 
 // PUBLIC
 
-FlightAwareKMLParser::FlightAwareKMLParser(QXmlStreamReader &xmlStreamReader) noexcept
-    : d(std::make_unique<FlightAwareKMLParserPrivate>(xmlStreamReader))
+GenericKMLParser::GenericKMLParser(QXmlStreamReader &xmlStreamReader) noexcept
+    : d(std::make_unique<GenericKMLParserPrivate>(xmlStreamReader))
 {
 #ifdef DEBUG
-    qDebug("FlightAwareKMLParser::~FlightAwareKMLParser: CREATED");
+    qDebug("GenericKMLParser::~GenericKMLParser: CREATED");
 #endif
 }
 
-FlightAwareKMLParser::~FlightAwareKMLParser() noexcept
+GenericKMLParser::~GenericKMLParser() noexcept
 {
 #ifdef DEBUG
-    qDebug("FlightAwareKMLParser::~FlightAwareKMLParser: DELETED");
+    qDebug("GenericKMLParser::~GenericKMLParser: DELETED");
 #endif
 }
 
-// FlightAware KML files (are expected to) have 3 Placemarks, with:
-// - <Point> Takeoff airpart
-// - <Point> Destination airport
-// - <gx:Track> timestamps (<when>) and positions (<gx:coord>)
-void FlightAwareKMLParser::parse(QDateTime &firstDateTimeUtc, QString &name, QString &flightNumber) noexcept
+// Generic KML files (are expected to) have at least one "gx:Track"
+void GenericKMLParser::parse(QDateTime &firstDateTimeUtc, QString &name, QString &flightNumber) noexcept
 {
-    if (d->xml.readNextStartElement()) {
-#ifdef DEBUG
-        qDebug("FlightAwareKMLParser::readKML: XML start element: %s", qPrintable(d->xml.name().toString()));
-#endif
-        if (d->xml.name() == KML::Document) {
-            parseName();
+    d->trackData.clear();
+
+    while (d->xml.readNextStartElement()) {
+        const QStringRef xmlName = d->xml.name();
+        if (xmlName == KML::Placemark) {
+            parsePlacemark();
+        } else if (xmlName == KML::Document) {
             parseDocument();
+        } else if (xmlName == KML::Folder) {
+            parseFolder();
         } else {
-            d->xml.raiseError(QStringLiteral("The file is not a KML document."));
+            qDebug("Skippping element: %s", qPrintable(xmlName.toString()));
+            d->xml.skipCurrentElement();
         }
-    } else {
-        d->xml.raiseError(QStringLiteral("Error reading the XML data."));
+    }
+
+    // Now "upsert" the position data, taking duplicate timestamps into account
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    Position &position = flight.getUserAircraft().getPosition();
+    for (const GenericKMLParserPrivate::TrackItem &trackItem : d->trackData) {
+        PositionData positionData;
+        positionData.timestamp = trackItem.timestamp;
+        positionData.latitude = trackItem.latitude;
+        positionData.longitude = trackItem.longitude;
+        positionData.altitude = trackItem.altitude;
+        position.upsertLast(std::move(positionData));
     }
 
     firstDateTimeUtc = d->firstDateTimeUtc;
@@ -104,51 +125,48 @@ void FlightAwareKMLParser::parse(QDateTime &firstDateTimeUtc, QString &name, QSt
 
 // PRIVATE
 
-void FlightAwareKMLParser::parseName() noexcept
-{
-    if (d->xml.readNextStartElement()) {
-#ifdef DEBUG
-        qDebug("FlightAwareKMLParser::readDocument: XML start element: %s", qPrintable(d->xml.name().toString()));
-#endif
-        if (d->xml.name() == KML::name) {
-            d->name = d->xml.readElementText();
-        } else {
-            d->xml.raiseError(QStringLiteral("The KML document does not have a name element."));
-        }
-    }
-}
-
-void FlightAwareKMLParser::parseDocument() noexcept
+void GenericKMLParser::parseDocument() noexcept
 {
     while (d->xml.readNextStartElement()) {
         const QStringRef xmlName = d->xml.name();
+#ifdef DEBUG
+        qDebug("GenericKMLParser::parseDocument: XML start element: %s", qPrintable(xmlName.toString()));
+#endif
         if (xmlName == KML::Placemark) {
             parsePlacemark();
+        } else if (xmlName == KML::Folder) {
+            parseFolder();
         } else {
             d->xml.skipCurrentElement();
         }
     }
 }
 
-void FlightAwareKMLParser::parsePlacemark() noexcept
+void GenericKMLParser::parseFolder() noexcept
 {
-    QString name;
     while (d->xml.readNextStartElement()) {
         const QStringRef xmlName = d->xml.name();
 #ifdef DEBUG
-        qDebug("FlightAwareKMLParser::parsePlacemark: XML start element: %s", qPrintable(xmlName.toString()));
+        qDebug("GenericKMLParser::parseFolder: XML start element: %s", qPrintable(xmlName.toString()));
 #endif
-        if (xmlName == KML::name) {
-            name = d->xml.readElementText();
-            if (name.endsWith(QStringLiteral(" Airport"))) {
-                // Extract the 4 letter ICAO code
-                name = name.left(4);
-            }
-        } else if (xmlName == KML::Point) {
-            parseWaypoint(name);
-        } else if (xmlName == KML::Track) {
-            // The track contains the flight number
-            d->flightNumber = name;
+        if (xmlName == KML::Placemark) {
+            parsePlacemark();
+        } else if (xmlName == KML::Folder) {
+            parseFolder();
+        } else {
+            d->xml.skipCurrentElement();
+        }
+    }
+}
+
+void GenericKMLParser::parsePlacemark() noexcept
+{
+    while (d->xml.readNextStartElement()) {
+        const QStringRef xmlName = d->xml.name();
+#ifdef DEBUG
+        qDebug("GenericKMLParser::parsePlacemark: XML start element: %s", qPrintable(xmlName.toString()));
+#endif
+        if (xmlName == KML::Track) {
             parseTrack();
         } else {
             d->xml.skipCurrentElement();
@@ -156,50 +174,7 @@ void FlightAwareKMLParser::parsePlacemark() noexcept
     }
 }
 
-void FlightAwareKMLParser::parseWaypoint(const QString &icaoOrName) noexcept
-{
-    bool ok;
-    while (d->xml.readNextStartElement()) {
-        const QStringRef xmlName = d->xml.name();
-#ifdef DEBUG
-        qDebug("FlightAwareKMLParser::parseWaypoint: XML start element: %s", qPrintable(xmlName.toString()));
-#endif
-        if (xmlName == QStringLiteral("coordinates")) {
-            const QString coordinatesText = d->xml.readElementText();
-            const QStringList coordinates = coordinatesText.split(",");
-            if (coordinates.count() == 3) {
-                Waypoint waypoint;
-                waypoint.longitude = coordinates.at(0).toFloat(&ok);
-                if (!ok) {
-                    d->xml.raiseError(QStringLiteral("Invalid longitude number."));
-                }
-                waypoint.latitude = coordinates.at(1).toFloat(&ok);
-                if (!ok) {
-                    d->xml.raiseError(QStringLiteral("Invalid latitude number."));
-                }
-                waypoint.altitude = coordinates.at(2).toFloat(&ok);
-                if (!ok) {
-                    d->xml.raiseError(QStringLiteral("Invalid altitude number."));
-                }
-                waypoint.identifier = icaoOrName;
-                waypoint.timestamp = d->currentWaypointTimestamp;
-                // The actual timestamps of the waypoints are later updated
-                // with the flight duration, once the entire gx:Track data
-                // has been parsed
-                ++d->currentWaypointTimestamp;
-
-                Flight &flight = Logbook::getInstance().getCurrentFlight();
-                flight.getUserAircraft().getFlightPlan().add(std::move(waypoint));
-            } else {
-                d->xml.raiseError(QStringLiteral("Invalid GPS coordinate."));
-            }
-        } else {
-            d->xml.skipCurrentElement();
-        }
-    }
-}
-
-void FlightAwareKMLParser::parseTrack() noexcept
+void GenericKMLParser::parseTrack() noexcept
 {
     // Timestamp (msec), latitude (degrees), longitude (degrees), altitude (feet)
     typedef std::tuple<std::int64_t, double, double, double> TrackItem;
@@ -214,7 +189,7 @@ void FlightAwareKMLParser::parseTrack() noexcept
     while (d->xml.readNextStartElement()) {
         const QStringRef xmlName = d->xml.name();
 #ifdef DEBUG
-        qDebug("FlightAwareKMLParser::parseTrack: XML start element: %s", qPrintable(xmlName.toString()));
+        qDebug("GenericKMLParser::parseTrack: XML start element: %s", qPrintable(xmlName.toString()));
 #endif
         if (xmlName == KML::when) {
             const QString dateTimeText = d->xml.readElementText();

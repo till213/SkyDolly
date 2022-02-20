@@ -41,6 +41,7 @@
 #include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/Waypoint.h"
+#include "KML.h"
 #include "FlightRadar24KMLParser.h"
 
 class FlightRadar24KMLParserPrivate
@@ -62,9 +63,13 @@ public:
           currentWaypointTimestamp(0),
           speedRegExp(FlightRadar24KMLParserPrivate::SpeedPattern),
           headingRegExp(FlightRadar24KMLParserPrivate::HeadingPattern)
-    {}
+    {
+        firstDateTimeUtc.setTimeZone(QTimeZone::utc());
+        currentDateTimeUtc.setTimeZone(QTimeZone::utc());
+    }
 
     QXmlStreamReader &xml;
+    QString name;
     QString flightNumber;
     std::int64_t currentWaypointTimestamp;
     QDateTime firstDateTimeUtc;
@@ -99,17 +104,22 @@ FlightRadar24KMLParser::~FlightRadar24KMLParser() noexcept
 // - <description> - HTML snippet containing speed and heading
 // - <Timestamp> timestamps
 // - <Point> - the coordinates of the track
-void FlightRadar24KMLParser::parse(QDateTime &firstDateTimeUtc, QDateTime &lastDateTimeUtc, QString &flightNumber) noexcept
+void FlightRadar24KMLParser::parse(QDateTime &firstDateTimeUtc, QString &name, QString &flightNumber) noexcept
 {
     d->trackData.clear();
 
-    while (d->xml.readNextStartElement()) {
-        const QStringRef xmlName = d->xml.name();
-        if (xmlName == QStringLiteral("Folder")) {
-            parseFolder();
+    if (d->xml.readNextStartElement()) {
+#ifdef DEBUG
+        qDebug("FlightRadar24KMLParser::readKML: XML start element: %s", qPrintable(d->xml.name().toString()));
+#endif
+        if (d->xml.name() == KML::Document) {
+            parseName();
+            parseDocument();
         } else {
-            d->xml.skipCurrentElement();
+            d->xml.raiseError(QStringLiteral("The file is not a KML document."));
         }
+    } else {
+        d->xml.raiseError(QStringLiteral("Error reading the XML data."));
     }
 
     // Now "upsert" the position data, taking duplicate timestamps into account
@@ -127,16 +137,38 @@ void FlightRadar24KMLParser::parse(QDateTime &firstDateTimeUtc, QDateTime &lastD
         position.upsertLast(std::move(positionData));
     }
 
-    // Set timezone
-    d->firstDateTimeUtc.setTimeZone(QTimeZone::utc());
-    d->currentDateTimeUtc.setTimeZone(QTimeZone::utc());
-
     firstDateTimeUtc = d->firstDateTimeUtc;
-    lastDateTimeUtc = d->currentDateTimeUtc;
+    name = d->name;
     flightNumber = d->flightNumber;
 }
 
 // PRIVATE
+
+void FlightRadar24KMLParser::parseName() noexcept
+{
+    if (d->xml.readNextStartElement()) {
+#ifdef DEBUG
+        qDebug("FlightAwareKMLParser::readDocument: XML start element: %s", qPrintable(d->xml.name().toString()));
+#endif
+        if (d->xml.name() == KML::name) {
+            d->name = d->xml.readElementText();
+        } else {
+            d->xml.raiseError(QStringLiteral("The KML document does not have a name element."));
+        }
+    }
+}
+
+void FlightRadar24KMLParser::parseDocument() noexcept
+{
+    while (d->xml.readNextStartElement()) {
+        const QStringRef xmlName = d->xml.name();
+        if (xmlName == KML::Folder) {
+            parseFolder();
+        } else {
+            d->xml.skipCurrentElement();
+        }
+    }
+}
 
 void FlightRadar24KMLParser::parseFolder() noexcept
 {
@@ -147,12 +179,12 @@ void FlightRadar24KMLParser::parseFolder() noexcept
 #ifdef DEBUG
         qDebug("FlightRadar24KMLParser::readDocument: XML start element: %s", qPrintable(xmlName.toString()));
 #endif
-        if (xmlName == QStringLiteral("name")) {
+        if (xmlName == KML::name) {
             name = d->xml.readElementText();
             if (name == QStringLiteral("Route")) {
                 routePlacemark = true;
             }
-        } else if (xmlName == QStringLiteral("Placemark") && routePlacemark) {
+        } else if (xmlName == KML::Placemark && routePlacemark) {
             // We are interested in the "Route" placemark (only)
             parsePlacemark();
         } else {
@@ -174,7 +206,7 @@ void FlightRadar24KMLParser::parsePlacemark() noexcept
             }
         } else if (xmlName == QStringLiteral("TimeStamp")) {
             parseTimestamp();
-        } else if (xmlName == QStringLiteral("Point")) {
+        } else if (xmlName == KML::Track) {
             parsePoint();
         } else {
             d->xml.skipCurrentElement();
@@ -216,7 +248,7 @@ void FlightRadar24KMLParser::parseTimestamp() noexcept
 #ifdef DEBUG
         qDebug("FlightRadar24KMLParser::parseTimestamp: XML start element: %s", qPrintable(xmlName.toString()));
 #endif
-        if (xmlName == QStringLiteral("when")) {
+        if (xmlName == KML::when) {
             const QString dateTimeText = d->xml.readElementText();
             if (d->firstDateTimeUtc.isNull()) {
                 d->firstDateTimeUtc = QDateTime::fromString(dateTimeText, Qt::ISODate);

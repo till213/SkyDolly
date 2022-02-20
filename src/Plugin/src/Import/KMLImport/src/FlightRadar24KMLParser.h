@@ -41,11 +41,13 @@ public:
     FlightRadar24KMLParser(QXmlStreamReader &xmlStreamReader) noexcept;
     virtual ~FlightRadar24KMLParser() noexcept;
 
-    virtual void parse(QDateTime &firstDateTimeUtc, QDateTime &lastDateTimeUtc, QString &flightNumber) noexcept override;
+    virtual void parse(QDateTime &firstDateTimeUtc, QString &name, QString &flightNumber) noexcept override;
 
 private:
     std::unique_ptr<FlightRadar24KMLParserPrivate> d;
 
+    void parseName() noexcept;
+    void parseDocument() noexcept;
     void parseFolder() noexcept;
     void parsePlacemark() noexcept;
     bool parseDescription() noexcept;

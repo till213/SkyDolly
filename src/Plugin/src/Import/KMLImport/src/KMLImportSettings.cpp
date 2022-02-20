@@ -28,6 +28,11 @@
 #include "../../../../../Kernel/src/Settings.h"
 #include "KMLImportSettings.h"
 
+namespace
+{
+    constexpr char FormatKey[] = "Format";
+}
+
 // PUBLIC
 
 KMLImportSettings::KMLImportSettings() noexcept
@@ -40,7 +45,7 @@ Settings::PluginSettings KMLImportSettings::getSettings() const noexcept
     Settings::PluginSettings settings;
     Settings::KeyValue keyValue;
 
-    keyValue.first = "Format";
+    keyValue.first = ::FormatKey;
     keyValue.second = Enum::toUnderlyingType(m_format);
     settings.push_back(keyValue);
 
@@ -52,7 +57,7 @@ Settings::KeysWithDefaults KMLImportSettings::getKeysWithDefault() const noexcep
     Settings::KeysWithDefaults keys;
     Settings::KeyValue keyValue;
 
-    keyValue.first = "Format";
+    keyValue.first = ::FormatKey;
     keyValue.second = Enum::toUnderlyingType(KMLImportSettings::DefaultFormat);
     keys.push_back(keyValue);
 
@@ -62,7 +67,7 @@ Settings::KeysWithDefaults KMLImportSettings::getKeysWithDefault() const noexcep
 void KMLImportSettings::setSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     bool ok;
-    const int enumeration = valuesByKey["Format"].toInt(&ok);
+    const int enumeration = valuesByKey[::FormatKey].toInt(&ok);
     if (ok) {
         m_format = static_cast<KMLImportSettings::Format >(enumeration);
     } else {

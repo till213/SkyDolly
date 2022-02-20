@@ -41,11 +41,13 @@ public:
     FlightAwareKMLParser(QXmlStreamReader &xmlStreamReader) noexcept;
     virtual ~FlightAwareKMLParser() noexcept;
 
-    virtual void parse(QDateTime &firstDateTimeUtc, QDateTime &lastDateTimeUtc, QString &flightNumber) noexcept override;
+    virtual void parse(QDateTime &firstDateTimeUtc, QString &name, QString &flightNumber) noexcept override;
 
 private:
     std::unique_ptr<FlightAwareKMLParserPrivate> d;
 
+    void parseName() noexcept;
+    void parseDocument() noexcept;
     void parsePlacemark() noexcept;
     void parseWaypoint(const QString &name) noexcept;
     void parseTrack() noexcept;
