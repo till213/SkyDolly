@@ -28,8 +28,8 @@
 #include <memory>
 
 #include <QObject>
+#include <QDateTime>
 #include <QString>
-#include <QtPlugin>
 
 class QFile;
 
@@ -37,7 +37,9 @@ class QFile;
 #include "../../../ImportIntf.h"
 #include "../../../ImportPluginBase.h"
 
-struct AircraftType;
+class Flight;
+struct AircraftInfo;
+struct FlightCondition;
 class KMLImportPluginPrivate;
 
 class KMLImportPlugin : public ImportPluginBase
@@ -64,8 +66,10 @@ protected:
     virtual FlightAugmentation::Procedures getProcedures() const noexcept override;
     virtual FlightAugmentation::Aspects getAspects() const noexcept override;
     virtual QDateTime getStartDateTimeUtc() noexcept override;
+    virtual QString getTitle() const noexcept override;
     virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept override;
-    virtual void updateFlight(const QFile &file) noexcept override;
+    virtual void updateExtendedFlightInfo(Flight &flight) noexcept override;
+    virtual void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept override;
 
 protected slots:
     virtual void onRestoreDefaultSettings() noexcept override;
@@ -76,9 +80,6 @@ private:
     void parseKML() noexcept;
     void parseName() noexcept;
     void parseDocument() noexcept;
-
-    void updateFlightInfo(const QFile &file) noexcept;
-    void updateFlightCondition() noexcept;
 };
 
 #endif // KMLIMPORTPLUGIN_H

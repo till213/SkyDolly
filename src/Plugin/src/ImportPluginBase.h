@@ -39,8 +39,10 @@ class QFile;
 #include "PluginLib.h"
 
 class FlightService;
+class Flight;
 struct AircraftType;
 struct AircraftInfo;
+struct FlightCondition;
 class ImportPluginBasePrivate;
 
 class PLUGIN_API ImportPluginBase : public PluginBase, public ImportIntf
@@ -85,8 +87,10 @@ protected:
     virtual FlightAugmentation::Procedures getProcedures() const noexcept = 0;
     virtual FlightAugmentation::Aspects getAspects() const noexcept = 0;
     virtual QDateTime getStartDateTimeUtc() noexcept = 0;
+    virtual QString getTitle() const noexcept = 0;
     virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept = 0;
-    virtual void updateFlight(const QFile &file) noexcept = 0;
+    virtual void updateExtendedFlightInfo(Flight &flight) noexcept = 0;
+    virtual void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept = 0;
 
 protected slots:
     virtual void onRestoreDefaultSettings() noexcept = 0;
@@ -96,6 +100,8 @@ private:
 
     bool importFile(const QString &filePath, FlightService &flightService) noexcept;
     void updateAircraftInfo() noexcept;
+    void updateFlightInfo() noexcept;
+    void updateFlightCondition() noexcept;
 };
 
 #endif // IMPORTPLUGINBASE_H

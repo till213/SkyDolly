@@ -29,8 +29,7 @@
 
 #include <QObject>
 #include <QDateTime>
-#include <QtPlugin>
-#include <QStringView>
+#include <QString>
 
 class QRegularExpression;
 
@@ -38,6 +37,9 @@ class QRegularExpression;
 #include "../../../ImportIntf.h"
 #include "../../../ImportPluginBase.h"
 
+class Flight;
+struct AircraftInfo;
+struct FlightCondition;
 class IGCImportPluginPrivate;
 
 class IGCImportPlugin : public ImportPluginBase
@@ -58,8 +60,10 @@ protected:
     virtual FlightAugmentation::Procedures getProcedures() const noexcept override;
     virtual FlightAugmentation::Aspects getAspects() const noexcept override;
     virtual QDateTime getStartDateTimeUtc() noexcept override;
+    virtual QString getTitle() const noexcept override;
     virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept override;
-    virtual void updateFlight(const QFile &file) noexcept override;
+    virtual void updateExtendedFlightInfo(Flight &flight) noexcept override;
+    virtual void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept override;
 
 protected slots:
     virtual void onRestoreDefaultSettings() noexcept override;
@@ -67,8 +71,6 @@ protected slots:
 private:
     std::unique_ptr<IGCImportPluginPrivate> d;
 
-    void updateFlightInfo(const QFile &file) noexcept;
-    void updateFlightCondition() noexcept;
     void updateWaypoints() noexcept;
 
     // Estimates the propeller (thrust) lever position, based on the

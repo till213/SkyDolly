@@ -91,7 +91,6 @@ public:
     IGCImportSettings importSettings;
     QEasingCurve throttleResponseCurve;
 
-
     static const inline QString FileExtension {QStringLiteral("igc")};
 };
 
@@ -261,6 +260,11 @@ QDateTime IGCImportPlugin::getStartDateTimeUtc() noexcept
     return d->igcParser.getHeader().flightDateTimeUtc;
 }
 
+QString IGCImportPlugin::getTitle() const noexcept
+{
+    return d->igcParser.getHeader().gliderType;
+}
+
 void IGCImportPlugin::updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept
 {
     const IGCParser::Header &header = d->igcParser.getHeader();
@@ -268,11 +272,20 @@ void IGCImportPlugin::updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noe
     aircraftInfo.flightNumber = header.flightNumber;
 }
 
-void IGCImportPlugin::updateFlight(const QFile &file) noexcept
+void IGCImportPlugin::updateExtendedFlightInfo(Flight &flight) noexcept
 {
-    updateFlightInfo(file);
-    updateFlightCondition();
+    const IGCParser::Header &header = d->igcParser.getHeader();
+    Unit unit;
+    const QString description = flight.getDescription() % "\n\n" %
+                                tr("Glider type:") % " " % header.gliderType % "\n" %
+                                tr("Pilot:") % " " % header.pilotName % "\n" %
+                                tr("Co-Pilot:") % " " % header.coPilotName % "\n" %
+                                tr("Flight date:") % " " % unit.formatDateTime(header.flightDateTimeUtc);
+    flight.setDescription(description);
 }
+
+void IGCImportPlugin::updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept
+{}
 
 // PROTECTED SLOTS
 
@@ -282,38 +295,6 @@ void IGCImportPlugin::onRestoreDefaultSettings() noexcept
 }
 
 // PRIVATE
-
-void IGCImportPlugin::updateFlightInfo(const QFile &file) noexcept
-{
-    const IGCParser::Header &header = d->igcParser.getHeader();
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-
-    const QString title = header.gliderType;
-    flight.setTitle(title);
-
-    Unit unit;
-    const QString description = tr("Glider type:") % " " % header.gliderType % "\n" %
-                                tr("Pilot:") % " " % header.pilotName % "\n" %
-                                tr("Co-Pilot:") % " " % header.coPilotName % "\n" %
-                                tr("Flight date:") % " " % unit.formatDateTime(header.flightDateTimeUtc) % "\n\n" %
-                                tr("Aircraft imported on %1 from file: %2").arg(unit.formatDateTime(QDateTime::currentDateTime()), file.fileName());
-    flight.setDescription(description);
-    flight.setCreationDate(QFileInfo(file).birthTime());
-}
-
-void IGCImportPlugin::updateFlightCondition() noexcept
-{
-    const IGCParser::Header &header = d->igcParser.getHeader();
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-
-    FlightCondition flightCondition;
-    flightCondition.startLocalTime = header.flightDateTimeUtc.toLocalTime();
-    flightCondition.startZuluTime = header.flightDateTimeUtc;
-    flightCondition.endLocalTime = header.flightEndDateTimeUtc.toLocalTime();
-    flightCondition.endZuluTime = header.flightEndDateTimeUtc;
-
-    flight.setFlightCondition(flightCondition);
-}
 
 void IGCImportPlugin::updateWaypoints() noexcept
 {

@@ -148,21 +148,21 @@ QDateTime CSVImportPlugin::getStartDateTimeUtc() noexcept
     return d->firstDateTimeUtc;
 }
 
+QString CSVImportPlugin::getTitle() const noexcept
+{
+    return tr("CSV import");
+}
+
 void CSVImportPlugin::updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept
 {
     aircraftInfo.flightNumber = d->flightNumber;
 }
 
-void CSVImportPlugin::updateFlight(const QFile &file) noexcept
-{
-    Unit unit;
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    flight.setTitle(tr("CSV import"));
+void CSVImportPlugin::updateExtendedFlightInfo(Flight &flight) noexcept
+{}
 
-    const QString description = tr("Aircraft imported on %1 from file: %2").arg(unit.formatDateTime(QDateTime::currentDateTime()), file.fileName());
-    flight.setDescription(description);
-    flight.setCreationDate(QFileInfo(file).birthTime());
-}
+void CSVImportPlugin::updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept
+{}
 
 // PROTECTED SLOTS
 

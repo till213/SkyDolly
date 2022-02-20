@@ -175,7 +175,8 @@ bool ImportPluginBase::importFile(const QString &filePath, FlightService &flight
                 ok = d->aircraftService->store(flight.getId(), sequenceNumber, aircraft);
             } else {
                 // Also update flight info and condition
-                updateFlight(d->file);
+                updateFlightInfo();
+                updateFlightCondition();
                 ok = flightService.store(flight);
             }
         } else {
@@ -236,4 +237,34 @@ void ImportPluginBase::updateAircraftInfo() noexcept
     aircraft.setAircraftInfo(aircraftInfo);
 }
 
-// @todo IMPLEMENT ME also implement udpateFlightCondition() and updateExtendedFlightCondition()
+void ImportPluginBase::updateFlightInfo() noexcept
+{
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    flight.setTitle(getTitle());
+
+    const QString description = tr("Aircraft imported on %1 from file: %2").arg(d->unit.formatDateTime(QDateTime::currentDateTime()), d->file.fileName());
+    flight.setDescription(description);
+    flight.setCreationDate(QFileInfo(d->file).birthTime());
+    updateExtendedFlightInfo(flight);
+}
+
+void ImportPluginBase::updateFlightCondition() noexcept
+{
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    FlightCondition flightCondition;
+
+    Aircraft &aircraft = flight.getUserAircraft();
+
+    const Position &position = aircraft.getPositionConst();
+    const PositionData &lastPositionData = position.getLast();
+    const QDateTime startDateTimeUtc = getStartDateTimeUtc();
+    const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
+
+    flightCondition.startLocalTime = startDateTimeUtc.toLocalTime();
+    flightCondition.startZuluTime = startDateTimeUtc;
+    flightCondition.endLocalTime = endDateTimeUtc.toLocalTime();
+    flightCondition.endZuluTime = endDateTimeUtc;
+    updateExtendedFlightCondition(flightCondition);
+
+    flight.setFlightCondition(flightCondition);
+}

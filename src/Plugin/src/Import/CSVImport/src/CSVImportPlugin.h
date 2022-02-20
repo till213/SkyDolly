@@ -28,7 +28,8 @@
 #include <memory>
 
 #include <QObject>
-#include <QtPlugin>
+#include <QDateTime>
+#include <QString>
 
 class QFile;
 
@@ -36,14 +37,9 @@ class QFile;
 #include "../../../ImportIntf.h"
 #include "../../../ImportPluginBase.h"
 
-class Aircraft;
-struct AircraftType;
-class Engine;
-class PrimaryFlightControl;
-class SecondaryFlightControl;
-class AircraftHandle;
-class Light;
-class FlightService;
+class Flight;
+struct AircraftInfo;
+struct FlightCondition;
 class CSVImportPluginPrivate;
 
 class CSVImportPlugin : public ImportPluginBase
@@ -70,8 +66,10 @@ protected:
     virtual FlightAugmentation::Procedures getProcedures() const noexcept override;
     virtual FlightAugmentation::Aspects getAspects() const noexcept override;
     virtual QDateTime getStartDateTimeUtc() noexcept override;
+    virtual QString getTitle() const noexcept override;
     virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept override;
-    virtual void updateFlight(const QFile &file) noexcept override;
+    virtual void updateExtendedFlightInfo(Flight &flight) noexcept override;
+    virtual void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept override;
 
 protected slots:
     virtual void onRestoreDefaultSettings() noexcept override;

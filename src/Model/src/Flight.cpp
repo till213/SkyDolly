@@ -86,6 +86,9 @@ Flight::Flight(QObject *parent) noexcept
 {
     // A flight always has at least one (user) aircraft
     addUserAircraft();
+#ifdef DEBUG
+    qDebug("Flight::Flight:  CREATED, ID: %" PRId64, d->id);
+#endif
 }
 
 Flight::~Flight() noexcept
