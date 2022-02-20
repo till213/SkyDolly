@@ -83,16 +83,16 @@ bool SQLiteAircraftTypeDao::getByType(const QString &type, AircraftType &aircraf
     );
 
     query.bindValue(":type", type);
-
+    aircraftType.type = type;
     bool ok = query.exec();
     if (ok) {
         const QSqlRecord record = query.record();
-        const int categoryIdx = record.indexOf("category");
-        const int wingSpanIdx = record.indexOf("wing_span");
-        const int engineTypeIdx = record.indexOf("engine_type");
-        const int nofEnginesIdx = record.indexOf("nof_engines");
-        aircraftType.type = type;
-        if (query.next()) {
+        ok = query.next();
+        if (ok) {
+            const int categoryIdx = record.indexOf("category");
+            const int wingSpanIdx = record.indexOf("wing_span");
+            const int engineTypeIdx = record.indexOf("engine_type");
+            const int nofEnginesIdx = record.indexOf("nof_engines");
             aircraftType.category = query.value(categoryIdx).toString();
             aircraftType.wingSpan = query.value(wingSpanIdx).toInt();
             aircraftType.engineType = static_cast<SimType::EngineType>(query.value(engineTypeIdx).toInt());

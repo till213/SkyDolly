@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <cstdint>
 
 #include <QWidget>
 #include <QDialog>
@@ -145,8 +146,8 @@ void StatisticsDialog::updateRecordUi() noexcept
         ui->samplesPerSecondLineEdit->clear();
     }
 
-    qint64 totalCount = 0;
-    qint64 totalSize = 0;
+    std::int64_t totalCount = 0;
+    std::int64_t totalSize = 0;
     for (const auto &aircraft : flight) {
         const int positionDataCount = aircraft->getPositionConst().count();
         const int engineDataCount = aircraft->getEngineConst().count();
@@ -156,12 +157,12 @@ void StatisticsDialog::updateRecordUi() noexcept
         const int lightDataCount = aircraft->getLightConst().count();
         totalCount = totalCount + positionDataCount + engineDataCount + primaryFlightControlDataCount + secondaryFlightControlDataCount + aircraftHandleDataCount + lightDataCount;
 
-        const qint64 positionDataSize = positionDataCount * sizeof(PositionData);
-        const qint64 engineDataSize = engineDataCount * sizeof(EngineData);
-        const qint64 primaryFlightControlDataSize = primaryFlightControlDataCount * sizeof(PrimaryFlightControlData);
-        const qint64 secondaryFlightControlDataSize = secondaryFlightControlDataCount * sizeof(SecondaryFlightControlData);
-        const qint64 aircraftHandleDataSize = aircraftHandleDataCount * sizeof(AircraftHandleData);
-        const qint64 lightDataSize = lightDataCount * sizeof(LightData);
+        const std::int64_t positionDataSize = positionDataCount * sizeof(PositionData);
+        const std::int64_t engineDataSize = engineDataCount * sizeof(EngineData);
+        const std::int64_t primaryFlightControlDataSize = primaryFlightControlDataCount * sizeof(PrimaryFlightControlData);
+        const std::int64_t secondaryFlightControlDataSize = secondaryFlightControlDataCount * sizeof(SecondaryFlightControlData);
+        const std::int64_t aircraftHandleDataSize = aircraftHandleDataCount * sizeof(AircraftHandleData);
+        const std::int64_t lightDataSize = lightDataCount * sizeof(LightData);
         totalSize = totalSize + positionDataSize + engineDataSize + primaryFlightControlDataSize + secondaryFlightControlDataSize + aircraftHandleDataSize + lightDataSize;
     }
 

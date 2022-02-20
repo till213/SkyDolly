@@ -23,9 +23,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <cstdint>
+#include <cinttypes>
 
 #include <QObject>
-#include <QVector>
 
 #include "TimeVariableData.h"
 #include "SkySearch.h"
@@ -55,8 +56,8 @@ public:
           duration(TimeVariableData::InvalidTime)
     {}
 
-    qint64 id;
-    qint64 simulationObjectId;
+    std::int64_t id;
+    std::int64_t simulationObjectId;
     AircraftInfo aircraftInfo;
     Position position{aircraftInfo};
     Engine engine{aircraftInfo};
@@ -66,7 +67,7 @@ public:
     Light light{aircraftInfo};
     FlightPlan flightPlan;
 
-    mutable qint64 duration;
+    mutable std::int64_t duration;
 };
 
 // PUBLIC
@@ -80,28 +81,29 @@ Aircraft::Aircraft(QObject *parent) noexcept
 
 Aircraft::~Aircraft() noexcept
 {
+    // https://stackoverflow.com/questions/31534474/format-lld-expects-type-long-long-int-but-argument-4-has-type-int64-t
 #ifdef DEBUG
-    qDebug("Aircraft::~Aircraft: DELETED, ID: %lld", d->id);
+    qDebug("Aircraft::~Aircraft: DELETED, ID: %" PRId64, d->id);
 #endif
 }
 
-qint64 Aircraft::getId() const noexcept
+std::int64_t Aircraft::getId() const noexcept
 {
     return d->id;
 }
 
-void Aircraft::setId(qint64 id) noexcept
+void Aircraft::setId(std::int64_t id) noexcept
 {
     d->id = id;
     d->aircraftInfo.aircraftId = id;
 }
 
-qint64 Aircraft::getSimulationObjectId() const noexcept
+std::int64_t Aircraft::getSimulationObjectId() const noexcept
 {
     return d->simulationObjectId;
 }
 
-void Aircraft::setSimulationObjectId(qint64 id) noexcept
+void Aircraft::setSimulationObjectId(std::int64_t id) noexcept
 {
     d->simulationObjectId = id;
 }
@@ -186,12 +188,12 @@ void Aircraft::setTailNumber(const QString &tailNumber) noexcept {
     }
 }
 
-qint64 Aircraft::getTimeOffset() const noexcept
+std::int64_t Aircraft::getTimeOffset() const noexcept
 {
     return d->aircraftInfo.timeOffset;
 }
 
-void Aircraft::setTimeOffset(qint64 timeOffset) noexcept {
+void Aircraft::setTimeOffset(std::int64_t timeOffset) noexcept {
     if (d->aircraftInfo.timeOffset != timeOffset) {
         d->aircraftInfo.timeOffset = timeOffset;
         emit timeOffsetChanged(*this);
@@ -208,16 +210,16 @@ FlightPlan &Aircraft::getFlightPlan() const noexcept
     return d->flightPlan;
 }
 
-qint64 Aircraft::getDurationMSec() const noexcept
+std::int64_t Aircraft::getDurationMSec() const noexcept
 {
-    const qint64 timeOffset = d->aircraftInfo.timeOffset;
+    const std::int64_t timeOffset = d->aircraftInfo.timeOffset;
     if (d->duration == TimeVariableData::InvalidTime) {
         d->duration = 0;
         // The timestamp offset indicates the time difference the given aircraft
         // is "ahead" of its "schedule" (sampled data). The more ahead the aircraft
         // is, the less the duration -> subtract the offset
         if (d->position.count() > 0) {
-            d->duration = qMax(d->position.getLast().timestamp - timeOffset, 0LL);
+            d->duration = qMax(d->position.getLast().timestamp - timeOffset, std::int64_t(0));
         }
         if (d->engine.count() > 0) {
             d->duration = qMax(d->engine.getLast().timestamp - timeOffset, d->duration);

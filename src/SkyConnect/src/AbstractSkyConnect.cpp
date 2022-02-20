@@ -22,7 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QtGlobal>
+#include <cstdint>
+
 #include <QTimer>
 #include <QElapsedTimer>
 #include <QDateTime>
@@ -42,7 +43,7 @@
 namespace
 {
     // Period [ms] over which we count the recorded samples per second
-    constexpr qint64 SamplesPerSecondPeriodMSec = 10000;
+    constexpr std::int64_t SamplesPerSecondPeriodMSec = 10000;
 }
 
 class AbstractSkyConnectPrivate
@@ -69,12 +70,12 @@ public:
     Connect::State state;
     Flight &currentFlight;
     QTimer recordingTimer;
-    qint64 currentTimestamp;
+    std::int64_t currentTimestamp;
     double recordingSampleRate;
     int    recordingIntervalMSec;
     QElapsedTimer elapsedTimer;
     double replaySpeedFactor;
-    qint64 elapsedTime;
+    std::int64_t elapsedTime;
     mutable int lastSamplesPerSecondIndex;
 };
 
@@ -306,26 +307,26 @@ void AbstractSkyConnect::skipToBegin() noexcept
 
 void AbstractSkyConnect::skipBackward() noexcept
 {
-    qint64 skipMSec = getSkipInterval();
-    const qint64 newTimeStamp = qMax(getCurrentTimestamp() - skipMSec, 0ll);
+    std::int64_t skipMSec = getSkipInterval();
+    const std::int64_t newTimeStamp = qMax(getCurrentTimestamp() - skipMSec, std::int64_t(0));
     seek(newTimeStamp);
 }
 
 void AbstractSkyConnect::skipForward() noexcept
 {
-    qint64 skipMSec = getSkipInterval();
-    const qint64 totalDuration = d->currentFlight.getTotalDurationMSec();
-    const qint64 newTimeStamp = qMin(getCurrentTimestamp() + skipMSec, totalDuration);
+    std::int64_t skipMSec = getSkipInterval();
+    const std::int64_t totalDuration = d->currentFlight.getTotalDurationMSec();
+    const std::int64_t newTimeStamp = qMin(getCurrentTimestamp() + skipMSec, totalDuration);
     seek(newTimeStamp);
 }
 
 void AbstractSkyConnect::skipToEnd() noexcept
 {
-    const qint64 totalDuration = d->currentFlight.getTotalDurationMSec();
+    const std::int64_t totalDuration = d->currentFlight.getTotalDurationMSec();
     seek(totalDuration);
 }
 
-void AbstractSkyConnect::seek(qint64 timestamp) noexcept
+void AbstractSkyConnect::seek(std::int64_t timestamp) noexcept
 {
     if (!isConnectedWithSim()) {
         if (connectWithSim()) {
@@ -359,7 +360,7 @@ Flight &AbstractSkyConnect::getCurrentFlight() const
     return d->currentFlight;
 }
 
-qint64 AbstractSkyConnect::getCurrentTimestamp() const noexcept
+std::int64_t AbstractSkyConnect::getCurrentTimestamp() const noexcept
 {
     return d->currentTimestamp;
 }
@@ -408,7 +409,7 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
     double samplesPerSecond;
     const Position &position = d->currentFlight.getUserAircraftConst().getPosition();
     if (position.count() > 0) {
-        const qint64 startTimestamp = qMin(qMax(d->currentTimestamp - SamplesPerSecondPeriodMSec, 0ll), position.getLast().timestamp);
+        const std::int64_t startTimestamp = qMin(qMax(d->currentTimestamp - SamplesPerSecondPeriodMSec, std::int64_t(0)), position.getLast().timestamp);
         int index = d->lastSamplesPerSecondIndex;
 
         while (position[index].timestamp < startTimestamp) {
@@ -418,7 +419,7 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
 
         const int lastIndex = position.count() - 1;
         const int nofSamples = lastIndex - index + 1;
-        const qint64 period = position[lastIndex].timestamp - position[index].timestamp;
+        const std::int64_t period = position[lastIndex].timestamp - position[index].timestamp;
         if (period > 0) {
             samplesPerSecond = static_cast<double>(nofSamples) * 1000.0 / (static_cast<double>(period));
         } else {
@@ -481,7 +482,7 @@ void AbstractSkyConnect::setState(Connect::State state) noexcept
     }
 }
 
-void AbstractSkyConnect::setCurrentTimestamp(qint64 timestamp) noexcept
+void AbstractSkyConnect::setCurrentTimestamp(std::int64_t timestamp) noexcept
 {
     d->currentTimestamp = timestamp;
 }
@@ -506,13 +507,13 @@ void AbstractSkyConnect::resetElapsedTime(bool restart) noexcept
     }
 }
 
-qint64 AbstractSkyConnect::updateCurrentTimestamp() noexcept
+std::int64_t AbstractSkyConnect::updateCurrentTimestamp() noexcept
 {
     if (d->elapsedTimer.isValid()) {
         // Ignore spontaneous SimConnect events: do not update
         // the current timestamp unless we are replaying or recording
         if (d->state == Connect::State::Replay) {
-            d->currentTimestamp = d->elapsedTime + static_cast<qint64>(d->elapsedTimer.elapsed() * d->replaySpeedFactor);
+            d->currentTimestamp = d->elapsedTime + static_cast<std::int64_t>(d->elapsedTimer.elapsed() * d->replaySpeedFactor);
             emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Linear);
         } else if (d->state == Connect::State::Recording) {
             d->currentTimestamp = d->elapsedTime + d->elapsedTimer.elapsed();
@@ -540,10 +541,10 @@ bool AbstractSkyConnect::hasRecordingStarted() const noexcept
     return d->currentFlight.getUserAircraftConst().getPosition().count() > 0;
 }
 
-qint64 AbstractSkyConnect::getSkipInterval() const noexcept
+std::int64_t AbstractSkyConnect::getSkipInterval() const noexcept
 {
     Settings &settings = Settings::getInstance();
-    return static_cast<qint64>(qRound(settings.isAbsoluteSeekEnabled() ?
+    return static_cast<std::int64_t>(qRound(settings.isAbsoluteSeekEnabled() ?
                                       settings.getSeekIntervalSeconds() * 1000.0 :
                                       settings.getSeekIntervalPercent() * d->currentFlight.getTotalDurationMSec() / 100.0));
 }

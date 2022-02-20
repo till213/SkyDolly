@@ -28,15 +28,21 @@
 #include <memory>
 
 #include <QObject>
-#include <QtPlugin>
+#include <QDateTime>
+#include <QString>
 
+class QFile;
+
+#include "../../../../../Flight/src/FlightAugmentation.h"
 #include "../../../ImportIntf.h"
-#include "../../../PluginBase.h"
+#include "../../../ImportPluginBase.h"
 
-class AircraftType;
+class Flight;
+struct AircraftInfo;
+struct FlightCondition;
 class KMLImportPluginPrivate;
 
-class KMLImportPlugin : public PluginBase, public ImportIntf
+class KMLImportPlugin : public ImportPluginBase
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "KMLImportPlugin.json")
@@ -45,44 +51,35 @@ public:
     KMLImportPlugin() noexcept;
     virtual ~KMLImportPlugin() noexcept;
 
-    virtual QWidget *getParentWidget() const noexcept override
-    {
-        return PluginBase::getParentWidget();
-    }
-
-    virtual void setParentWidget(QWidget *parent) noexcept override
-    {
-        PluginBase::setParentWidget(parent);
-    }
-
-    virtual void storeSettings(const QUuid &pluginUuid) const noexcept override
-    {
-        PluginBase::storeSettings(pluginUuid);
-    }
-
-    virtual void restoreSettings(const QUuid &pluginUuid) noexcept override
-    {
-        PluginBase::restoreSettings(pluginUuid);
-    }
-
-    virtual bool import(FlightService &flightService) noexcept override;
-
 protected:
+    // PluginBase
     virtual Settings::PluginSettings getSettings() const noexcept override;
     virtual Settings::KeysWithDefaults getKeyWithDefaults() const noexcept override;
     virtual void setSettings(Settings::ValuesByKey) noexcept override;
 
+    // ImportPluginBase
+    virtual QString getFileFilter() const noexcept override;
+    virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
+
+    virtual bool readFile(QFile &file) noexcept override;
+
+    virtual FlightAugmentation::Procedures getProcedures() const noexcept override;
+    virtual FlightAugmentation::Aspects getAspects() const noexcept override;
+    virtual QDateTime getStartDateTimeUtc() noexcept override;
+    virtual QString getTitle() const noexcept override;
+    virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept override;
+    virtual void updateExtendedFlightInfo(Flight &flight) noexcept override;
+    virtual void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept override;
+
+protected slots:
+    virtual void onRestoreDefaultSettings() noexcept override;
+
 private:
     std::unique_ptr<KMLImportPluginPrivate> d;
-
-    bool import(const QString &filePath, FlightService &flightService) noexcept;
 
     void parseKML() noexcept;
     void parseName() noexcept;
     void parseDocument() noexcept;
-
-    void updateFlightCondition() noexcept;
-    void updateAircraftInfo() noexcept;
 };
 
 #endif // KMLIMPORTPLUGIN_H

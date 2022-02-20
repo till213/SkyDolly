@@ -29,14 +29,17 @@
 
 #include <QObject>
 #include <QDateTime>
-#include <QtPlugin>
-#include <QStringView>
+#include <QString>
 
 class QRegularExpression;
 
+#include "../../../../../Flight/src/FlightAugmentation.h"
 #include "../../../ImportIntf.h"
 #include "../../../ImportPluginBase.h"
 
+class Flight;
+struct AircraftInfo;
+struct FlightCondition;
 class IGCImportPluginPrivate;
 
 class IGCImportPlugin : public ImportPluginBase
@@ -49,34 +52,30 @@ public:
     virtual ~IGCImportPlugin() noexcept;
 
 protected:
+    virtual QString getFileFilter() const noexcept override;
+    virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
+
     virtual bool readFile(QFile &file) noexcept override;
+
+    virtual FlightAugmentation::Procedures getProcedures() const noexcept override;
+    virtual FlightAugmentation::Aspects getAspects() const noexcept override;
     virtual QDateTime getStartDateTimeUtc() noexcept override;
+    virtual QString getTitle() const noexcept override;
     virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept override;
-    virtual void updateFlight(const QFile &file) noexcept override;
+    virtual void updateExtendedFlightInfo(Flight &flight) noexcept override;
+    virtual void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept override;
+
+protected slots:
+    virtual void onRestoreDefaultSettings() noexcept override;
 
 private:
     std::unique_ptr<IGCImportPluginPrivate> d;
 
-    // A record, containing manufacturer ID
-    bool readManufacturer() noexcept;
-    // All records
-    bool readRecords() noexcept;
-
-    bool parseHeader(const QByteArray &line) noexcept;
-    bool parseHeaderDate(const QByteArray &line) noexcept;
-    bool parseHeaderText(const QByteArray &line, const QRegularExpression &regExp, QString &text) noexcept;
-    bool parseHeaderPilot(const QByteArray &line) noexcept;
-    bool parseHeaderCoPilot(const QByteArray &line) noexcept;
-    bool parseHeaderGliderType(const QByteArray &line) noexcept;
-    bool parseHeaderGliderId(const QByteArray &line) noexcept;
-
-    bool parseTask(const QByteArray &line) noexcept;
-    bool parseFix(const QByteArray &line) noexcept;
-    inline double parseCoordinate(QStringView degreesText, QStringView minutesBy1000Text);
-
-    void updateFlightInfo(const QFile &file) noexcept;
-    void updateFlightCondition() noexcept;
     void updateWaypoints() noexcept;
+
+    // Estimates the propeller (thrust) lever position, based on the
+    // environmentalNoiseLevel and the threshold
+    inline double noiseToPosition(double environmentalNoiseLevel, double threshold) noexcept;
 };
 
 #endif // IGCIMPORTPLUGIN_H

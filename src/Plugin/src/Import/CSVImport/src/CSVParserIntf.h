@@ -22,50 +22,19 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLIMPORTDIALOG_H
-#define KMLIMPORTDIALOG_H
+#ifndef CSVPARSERINTF_H
+#define CSVPARSERINTF_H
 
-#include <memory>
+class QFile;
+class QDateTime;
+class QString;
 
-#include <QDialog>
-
-class QWidget;
-
-namespace Ui {
-    class KMLImportDialog;
-}
-
-class AircraftType;
-class KMLImportSettings;
-class KMLImportDialogPrivate;
-
-class KMLImportDialog : public QDialog
+class CSVParserIntf
 {
-    Q_OBJECT
 public:
-    explicit KMLImportDialog(KMLImportSettings &importSettings, QWidget *parent = nullptr) noexcept;
-    virtual ~KMLImportDialog() noexcept;
+    virtual ~CSVParserIntf() = default;
 
-    QString getSelectedFilePath() const noexcept;
-    bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
-    bool isAddToFlightEnabled() const noexcept;
-
-private:
-    Ui::KMLImportDialog *ui;
-    std::unique_ptr<KMLImportDialogPrivate> d;
-
-    void frenchConnection() noexcept;
-    void initUi() noexcept;
-    void initOptionUi() noexcept;
-    void updateOptionUi() noexcept;
-
-private slots:
-    void on_fileSelectionPushButton_clicked() noexcept;
-    void on_formatComboBox_activated(int index) noexcept;
-
-    void updateUi() noexcept;
-    void restoreDefaults() noexcept;
+    virtual bool parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept = 0;
 };
 
-#endif // KMLIMPORTDIALOG_H
-
+#endif // CSVPARSERINTF_H

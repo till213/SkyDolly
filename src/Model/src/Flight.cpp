@@ -25,6 +25,8 @@
 #include <memory>
 #include <vector>
 #include <iterator>
+#include <cstdint>
+#include <cinttypes>
 
 #include <QDateTime>
 #include <QString>
@@ -49,7 +51,7 @@ public:
         clear(true);
     }
 
-    qint64 id;
+    std::int64_t id;
     QDateTime creationDate;
     QString title;
     QString description;
@@ -84,21 +86,24 @@ Flight::Flight(QObject *parent) noexcept
 {
     // A flight always has at least one (user) aircraft
     addUserAircraft();
+#ifdef DEBUG
+    qDebug("Flight::Flight:  CREATED, ID: %" PRId64, d->id);
+#endif
 }
 
 Flight::~Flight() noexcept
 {
 #ifdef DEBUG
-    qDebug("Flight::~Flight:  DELETED, ID: %lld", d->id);
+    qDebug("Flight::~Flight:  DELETED, ID: %" PRId64, d->id);
 #endif
 }
 
-void Flight::setId(qint64 id) noexcept
+void Flight::setId(std::int64_t id) noexcept
 {
     d->id = id;
 }
 
-qint64 Flight::getId() const noexcept
+std::int64_t Flight::getId() const noexcept
 {
     return d->id;
 }
@@ -182,9 +187,9 @@ void Flight::setUserAircraftIndex(int index) noexcept
     }
 }
 
-qint64 Flight::deleteAircraftByIndex(int index) noexcept
+std::int64_t Flight::deleteAircraftByIndex(int index) noexcept
 {
-    qint64 aircraftId;
+    std::int64_t aircraftId;
     // A flight has at least one aircraft
     if (d->aircraft.size() > 1) {
         setUserAircraftIndex(qMax(d->userAircraftIndex - 1, 0));
@@ -213,9 +218,9 @@ void Flight::setFlightCondition(FlightCondition flightCondition) noexcept
     emit flightConditionChanged();
 }
 
-qint64 Flight::getTotalDurationMSec(bool ofUserAircraft) const noexcept
+std::int64_t Flight::getTotalDurationMSec(bool ofUserAircraft) const noexcept
 {
-    qint64 totalDuractionMSec = 0;
+    std::int64_t totalDuractionMSec = 0;
     if (ofUserAircraft) {
         totalDuractionMSec = getUserAircraftConst().getDurationMSec();
     } else {

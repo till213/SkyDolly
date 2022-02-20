@@ -27,8 +27,7 @@
 
 #include <memory>
 #include <vector>
-
-#include <QtGlobal>
+#include <cstdint>
 
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/AircraftInfo.h"
@@ -42,11 +41,11 @@ public:
     AircraftService() noexcept;
     ~AircraftService() noexcept;
 
-    bool store(qint64 flightId, int sequenceNumber, Aircraft &aircraft) noexcept;
+    bool store(std::int64_t flightId, int sequenceNumber, Aircraft &aircraft) noexcept;
     bool deleteByIndex(int index) noexcept;
-    bool getAircraftInfos(qint64 flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept;
+    bool getAircraftInfos(std::int64_t flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept;
 
-    bool changeTimeOffset(Aircraft &aircraft, qint64 newOffset) noexcept;
+    bool changeTimeOffset(Aircraft &aircraft, std::int64_t newOffset) noexcept;
     bool changeTailNumber(Aircraft &aircraft, const QString &tailNumber) noexcept;
 
 private:

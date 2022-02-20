@@ -28,6 +28,7 @@
 #include <memory>
 #include <vector>
 #include <iterator>
+#include <cstdint>
 
 #include <QObject>
 
@@ -73,7 +74,7 @@ public:
     const LightData &getFirst() const noexcept;
     const LightData &getLast() const noexcept;
     std::size_t count() const noexcept;
-    const LightData &interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept;
+    const LightData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
     void clear() noexcept;
 
     typedef std::vector<LightData>::iterator Iterator;

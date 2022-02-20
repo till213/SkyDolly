@@ -26,6 +26,7 @@
 #include <vector>
 #include <iterator>
 #include <algorithm>
+#include <cstdint>
 
 #include <QObject>
 
@@ -48,7 +49,7 @@ public:
 
     const AircraftInfo &aircraftInfo;
     std::vector<LightData> lightData;
-    qint64 currentTimestamp;
+    std::int64_t currentTimestamp;
     TimeVariableData::Access currentAccess;
     LightData currentLightData;
     mutable int currentIndex;
@@ -110,10 +111,10 @@ std::size_t Light::count() const noexcept
     return d->lightData.size();
 }
 
-const LightData &Light::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
+const LightData &Light::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const LightData *p1, *p2;
-    const qint64 adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timeOffset, 0LL);
+    const std::int64_t adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timeOffset, std::int64_t(0));
 
     if (d->currentTimestamp != adjustedTimestamp || d->currentAccess != access) {
 

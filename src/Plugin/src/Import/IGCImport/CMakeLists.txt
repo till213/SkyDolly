@@ -17,6 +17,8 @@ target_sources(${LIBRARY_NAME}
     PRIVATE
         src/IGCImportPlugin.h src/IGCImportPlugin.cpp
         src/IGCParser.h src/IGCParser.cpp
+        src/IGCImportSettings.h src/IGCImportSettings.cpp
+        src/IGCImportOptionWidget.h src/IGCImportOptionWidget.cpp src/IGCImportOptionWidget.ui
         src/IGCImportPlugin.json
 )
 

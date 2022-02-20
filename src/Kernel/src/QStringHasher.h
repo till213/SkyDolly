@@ -28,8 +28,6 @@
 // (for whatever reasons). As this header is supposed to be
 // included into source files only anyway (when compiled with
 // Qt 5.12 only) there is no problem with multiple inclusion
-#ifndef QSTRINGHASHER_H
-#define QSTRINGHASHER_H
 
 #include <QtGlobal>
 
@@ -45,6 +43,3 @@ struct QStringHasher {
     }
 };
 #endif
-
-#endif
-

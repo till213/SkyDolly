@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <cstdint>
 
 #include <QString>
 #include <QDialog>
@@ -72,7 +73,7 @@ PrimaryFlightControlWidget::~PrimaryFlightControlWidget() noexcept
 
 // PROTECED SLOTS
 
-void PrimaryFlightControlWidget::updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept
+void PrimaryFlightControlWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {
     const PrimaryFlightControlData &primaryFlightControlData = getCurrentPrimaryFlightControlData(timestamp, access);
     QString colorName;
@@ -102,7 +103,7 @@ void PrimaryFlightControlWidget::initUi()
     ui->aileronLineEdit->setToolTip(SimVar::AileronPosition);
 }
 
-const PrimaryFlightControlData &PrimaryFlightControlWidget::getCurrentPrimaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const noexcept
+const PrimaryFlightControlData &PrimaryFlightControlWidget::getCurrentPrimaryFlightControlData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 

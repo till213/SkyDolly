@@ -28,8 +28,7 @@
 #include <memory>
 #include <vector>
 #include <iterator>
-
-#include <QtGlobal>
+#include <cstdint>
 
 #include "../../../../Model/src/PrimaryFlightControlData.h"
 #include "../PrimaryFlightControlDaoIntf.h"
@@ -40,10 +39,10 @@ public:
     explicit SQLitePrimaryFlightControlDao() noexcept;
     virtual ~SQLitePrimaryFlightControlDao() noexcept;
 
-    virtual bool add(qint64 aircraftId, const PrimaryFlightControlData &data) noexcept override;
-    virtual bool getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<PrimaryFlightControlData>> insertIterator) const noexcept override;
-    virtual bool deleteByFlightId(qint64 flightId) noexcept override;
-    virtual bool deleteByAircraftId(qint64 aircraftId) noexcept override;
+    virtual bool add(std::int64_t aircraftId, const PrimaryFlightControlData &data) noexcept override;
+    virtual bool getByAircraftId(std::int64_t aircraftId, std::insert_iterator<std::vector<PrimaryFlightControlData>> insertIterator) const noexcept override;
+    virtual bool deleteByFlightId(std::int64_t flightId) noexcept override;
+    virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
 };
 
 #endif // SQLITEPRIMARYFLIGHTCONTROLDAO_H

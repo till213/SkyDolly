@@ -26,6 +26,7 @@
 #include <vector>
 #include <iterator>
 #include <algorithm>
+#include <cstdint>
 
 #include <QObject>
 
@@ -48,7 +49,7 @@ public:
 
     const AircraftInfo &aircraftInfo;
     std::vector<PositionData> positionData;
-    qint64 currentTimestamp;
+    std::int64_t currentTimestamp;
     TimeVariableData::Access currentAccess;
     PositionData currentPositionData;
     mutable int currentIndex;
@@ -110,11 +111,11 @@ std::size_t Position::count() const noexcept
     return d->positionData.size();
 }
 
-const PositionData &Position::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
+const PositionData &Position::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const PositionData *p0, *p1, *p2, *p3;
     const double Tension = 0.0;
-    const qint64 adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timeOffset, 0LL);
+    const std::int64_t adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timeOffset, std::int64_t(0));
 
     if (d->currentTimestamp != adjustedTimestamp || d->currentAccess != access) {
 

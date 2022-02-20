@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <cstdint>
+
 #include <QtGlobal>
 #include <QCoreApplication>
 #include <QFile>
@@ -51,14 +53,6 @@
 #include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/Engine.h"
 #include "../../../../../Model/src/EngineData.h"
-#include "../../../../../Model/src/PrimaryFlightControl.h"
-#include "../../../../../Model/src/PrimaryFlightControlData.h"
-#include "../../../../../Model/src/SecondaryFlightControl.h"
-#include "../../../../../Model/src/SecondaryFlightControlData.h"
-#include "../../../../../Model/src/AircraftHandle.h"
-#include "../../../../../Model/src/AircraftHandleData.h"
-#include "../../../../../Model/src/Light.h"
-#include "../../../../../Model/src/LightData.h"
 #include "../../../../../Model/src/FlightPlan.h"
 #include "../../../../../Model/src/Waypoint.h"
 #include "../../../../src/Export.h"
@@ -152,7 +146,7 @@ bool IGCExportPlugin::exportData() noexcept
         // Remember export path
         const QString exportDirectoryPath = QFileInfo(exportDialog->getSelectedFilePath()).absolutePath();
         Settings::getInstance().setExportPath(exportDirectoryPath);
-        const QString filePath = File::ensureSuffix(exportDialog->getSelectedFilePath(), IGCExportDialog::FileSuffix);
+        const QString filePath = File::ensureSuffix(exportDialog->getSelectedFilePath(), IGCExportDialog::FileExtension);
         if (!filePath.isEmpty()) {
 
             QFile file(filePath);
@@ -304,8 +298,8 @@ inline bool IGCExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &
     const Engine &engine = aircraft.getEngineConst();
     ok = true;
     if (d->exportSettings.resamplingPeriod != IGCExportSettings::ResamplingPeriod::Original) {
-        const qint64 duration = position.getLast().timestamp;
-        qint64 timestamp = 0;
+        const std::int64_t duration = position.getLast().timestamp;
+        std::int64_t timestamp = 0;
         while (ok && timestamp <= duration) {
             const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Linear);
             if (!positionData.isNull()) {

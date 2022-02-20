@@ -15,12 +15,13 @@ endif()
 
 target_sources(${LIBRARY_NAME}
     PRIVATE
-        src/CSVImportPlugin.cpp
-        src/CSVImportPlugin.h
+        src/CSVImportPlugin.h src/CSVImportPlugin.cpp
+        src/CSVImportOptionWidget.h src/CSVImportOptionWidget.cpp src/CSVImportOptionWidget.ui
+        src/CSVImportSettings.h src/CSVImportSettings.cpp
+        src/CSVParserIntf.h
+        src/SkyDollyCSVParser.h src/SkyDollyCSVParser.cpp
+        src/FlightRadar24CSVParser.h src/FlightRadar24CSVParser.cpp
         src/CSVImportPlugin.json
-        src/CSVImportDialog.cpp
-        src/CSVImportDialog.h
-        src/CSVImportDialog.ui
 )
 
 include_directories(${PLUGIN_NAME} PRIVATE ../../../../Widget/src/)

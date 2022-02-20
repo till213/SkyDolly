@@ -25,6 +25,8 @@
 #ifndef FLIGHTSUMMARY_H
 #define FLIGHTSUMMARY_H
 
+#include <cstdint>
+
 #include <QString>
 #include <QDateTime>
 
@@ -35,7 +37,7 @@ struct MODEL_API FlightSummary
     FlightSummary();
     ~FlightSummary();
 
-    qint64 id;
+    std::int64_t id;
     QDateTime creationDate;
     QString aircraftType;
     int aircraftCount;

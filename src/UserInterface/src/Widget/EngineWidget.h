@@ -49,14 +49,14 @@ public:
     virtual ~EngineWidget() noexcept;
 
 protected slots:
-    virtual void updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept override;
+    virtual void updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 
 private:
     std::unique_ptr<EngineWidgetPrivate> d;
     std::unique_ptr<Ui::EngineWidget> ui;
 
     void initUi() noexcept;
-    const EngineData &getCurrentEngineData(qint64 timestamp, TimeVariableData::Access access) const noexcept;
+    const EngineData &getCurrentEngineData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
 };
 
 #endif // ENGINEWIDGET_H

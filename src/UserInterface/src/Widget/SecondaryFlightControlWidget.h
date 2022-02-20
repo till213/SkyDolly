@@ -25,6 +25,8 @@
 #ifndef SECONDARYFLIGHTCONTROLWIDGET_H
 #define SECONDARYFLIGHTCONTROLWIDGET_H
 
+#include <cstdint>
+
 #include <QWidget>
 
 class QShowEvent;
@@ -49,14 +51,14 @@ public:
     virtual ~SecondaryFlightControlWidget() noexcept;
 
 protected slots:
-    virtual void updateUi(qint64 timestamp, TimeVariableData::Access access) noexcept override;
+    virtual void updateUi(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 
 private:
     std::unique_ptr<SecondaryFlightControlWidgetPrivate> d;
     std::unique_ptr<Ui::SecondaryFlightControlWidget> ui;
 
     void initUi() noexcept;    
-    const SecondaryFlightControlData &getCurrentSecondaryFlightControlData(qint64 timestamp, TimeVariableData::Access access) const noexcept;
+    const SecondaryFlightControlData &getCurrentSecondaryFlightControlData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
 };
 
 #endif // SECONDARYFLIGHTCONTROLWIDGET_H

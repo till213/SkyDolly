@@ -25,6 +25,7 @@
 #include <memory>
 #include <vector>
 #include <iterator>
+#include <cstdint>
 
 #include <QString>
 #include <QSqlQuery>
@@ -44,7 +45,7 @@ SQLiteHandleDao::SQLiteHandleDao() noexcept
 SQLiteHandleDao::~SQLiteHandleDao() noexcept
 {}
 
-bool SQLiteHandleDao::add(qint64 aircraftId, const AircraftHandleData &aircraftHandleData)  noexcept
+bool SQLiteHandleDao::add(std::int64_t aircraftId, const AircraftHandleData &aircraftHandleData)  noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -75,8 +76,8 @@ bool SQLiteHandleDao::add(qint64 aircraftId, const AircraftHandleData &aircraftH
         ");"
     );
 
-    query.bindValue(":aircraft_id", aircraftId);
-    query.bindValue(":timestamp", aircraftHandleData.timestamp);
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
+    query.bindValue(":timestamp", QVariant::fromValue(aircraftHandleData.timestamp));
     query.bindValue(":brake_left_position", aircraftHandleData.brakeLeftPosition);
     query.bindValue(":brake_right_position", aircraftHandleData.brakeRightPosition);
     query.bindValue(":water_rudder_handle_position", aircraftHandleData.waterRudderHandlePosition);
@@ -96,7 +97,7 @@ bool SQLiteHandleDao::add(qint64 aircraftId, const AircraftHandleData &aircraftH
     return ok;
 }
 
-bool SQLiteHandleDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<AircraftHandleData>> insertIterator) const noexcept
+bool SQLiteHandleDao::getByAircraftId(std::int64_t aircraftId, std::insert_iterator<std::vector<AircraftHandleData>> insertIterator) const noexcept
 {
     QSqlQuery query;
     query.setForwardOnly(true);
@@ -107,7 +108,7 @@ bool SQLiteHandleDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<st
         "order by h.timestamp asc;"
     );
 
-    query.bindValue(":aircraft_id", aircraftId);
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     bool ok = query.exec();
     if (ok) {
         QSqlRecord record = query.record();
@@ -147,7 +148,7 @@ bool SQLiteHandleDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<st
     return ok;
 }
 
-bool SQLiteHandleDao::deleteByFlightId(qint64 flightId) noexcept
+bool SQLiteHandleDao::deleteByFlightId(std::int64_t flightId) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -159,7 +160,7 @@ bool SQLiteHandleDao::deleteByFlightId(qint64 flightId) noexcept
         "                      );"
     );
 
-    query.bindValue(":flight_id", flightId);
+    query.bindValue(":flight_id", QVariant::fromValue(flightId));
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
@@ -169,7 +170,7 @@ bool SQLiteHandleDao::deleteByFlightId(qint64 flightId) noexcept
     return ok;
 }
 
-bool SQLiteHandleDao::deleteByAircraftId(qint64 aircraftId) noexcept
+bool SQLiteHandleDao::deleteByAircraftId(std::int64_t aircraftId) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -178,7 +179,7 @@ bool SQLiteHandleDao::deleteByAircraftId(qint64 aircraftId) noexcept
         "where  aircraft_id = :aircraft_id;"
     );
 
-    query.bindValue(":aircraft_id", aircraftId);
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {

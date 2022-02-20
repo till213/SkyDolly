@@ -26,6 +26,7 @@
 #include <vector>
 #include <iterator>
 #include <algorithm>
+#include <cstdint>
 
 #include <QObject>
 
@@ -49,7 +50,7 @@ public:
 
     const AircraftInfo &aircraftInfo;
     std::vector<SecondaryFlightControlData> secondaryFlightControlData;
-    qint64 currentTimestamp;
+    std::int64_t currentTimestamp;
     TimeVariableData::Access currentAccess;
     SecondaryFlightControlData previousSecondaryFlightControlData;
     SecondaryFlightControlData currentSecondaryFlightControlData;
@@ -112,10 +113,10 @@ std::size_t SecondaryFlightControl::count() const noexcept
     return d->secondaryFlightControlData.size();
 }
 
-const SecondaryFlightControlData &SecondaryFlightControl::interpolate(qint64 timestamp, TimeVariableData::Access access) const noexcept
+const SecondaryFlightControlData &SecondaryFlightControl::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const SecondaryFlightControlData *p1, *p2;
-    const qint64 adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timeOffset, 0LL);
+    const std::int64_t adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timeOffset, std::int64_t(0));
 
     if (d->currentTimestamp != adjustedTimestamp || d->currentAccess != access) {
 
