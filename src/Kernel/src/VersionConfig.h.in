@@ -27,9 +27,9 @@
  * Application version numbers.
  */
 namespace VersionConfig {
-    inline constexpr int Major = @PROJECT_VERSION_MAJOR@;
-    inline constexpr int Minor = @PROJECT_VERSION_MINOR@;
-    inline constexpr int Patch = @PROJECT_VERSION_PATCH@;
-    inline constexpr char ApplicationName[] = "@PROJECT_APPLICATION_NAME@";
-    inline constexpr char OrganisationName[] = "@PROJECT_ORGANISATION_NAME@";
+    constexpr int Major = @PROJECT_VERSION_MAJOR@;
+    constexpr int Minor = @PROJECT_VERSION_MINOR@;
+    constexpr int Patch = @PROJECT_VERSION_PATCH@;
+    constexpr char ApplicationName[] = "@PROJECT_APPLICATION_NAME@";
+    constexpr char OrganisationName[] = "@PROJECT_ORGANISATION_NAME@";
 }

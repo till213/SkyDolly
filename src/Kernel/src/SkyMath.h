@@ -45,24 +45,24 @@ namespace SkyMath
     typedef std::pair<double, double> Coordinate;
 
     /*! The minimal position value, such that value 0 is exaclty in the middle of the entire range. */
-    inline constexpr double PositionMin16 = static_cast<double>(-std::numeric_limits<qint16>::max());
+    constexpr double PositionMin16 = static_cast<double>(-std::numeric_limits<qint16>::max());
     /*! The maximum position value, such that value 0 is exaclty in the middle of the entire range. */
-    inline constexpr double PositionMax16 = static_cast<double>( std::numeric_limits<qint16>::max());
+    constexpr double PositionMax16 = static_cast<double>( std::numeric_limits<qint16>::max());
     /*! The range (number of values) for position values. */
-    inline constexpr double PositionRange16 = PositionMax16 - PositionMin16;
+    constexpr double PositionRange16 = PositionMax16 - PositionMin16;
 
     /*! The minimal percent value. */
-    inline constexpr double PercentMin8 = static_cast<double>(std::numeric_limits<quint8>::min());
+    constexpr double PercentMin8 = static_cast<double>(std::numeric_limits<quint8>::min());
     /*! The maximum percent value. */
-    inline constexpr double PercentMax8 = static_cast<double>(std::numeric_limits<quint8>::max());
+    constexpr double PercentMax8 = static_cast<double>(std::numeric_limits<quint8>::max());
     /*! The range (number of values) for percent values. */
-    inline constexpr double PercentRange8 = PercentMax8;
+    constexpr double PercentRange8 = PercentMax8;
 
     /*! Average earth radius [meters] */
-    inline constexpr double EarthRadius = 6378137.0;
+    constexpr double EarthRadius = 6378137.0;
 
     /*! Default threshold beyond with two coordinates are considered to be different [meters] */
-    inline constexpr double DefaultDistanceThreshold = 50.0;
+    constexpr double DefaultDistanceThreshold = 50.0;
 
     inline double degreesToRadians(double degree) {
         return degree * M_PI / 180.0;

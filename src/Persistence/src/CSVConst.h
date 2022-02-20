@@ -28,13 +28,13 @@
 namespace CSVConst {
 
     /*! Separator character for CSV import & export */
-    inline constexpr char Sep = '\t';
+    constexpr char Sep = '\t';
     /*! Newline character for CSV import & export */
-    inline constexpr char Ln = '\n';
+    constexpr char Ln = '\n';
 
     // Format and precision for double
-    inline constexpr char Format = 'g';
-    inline constexpr int Precision = 9;
+    constexpr char Format = 'g';
+    constexpr int Precision = 9;
 
     enum struct DataType : char {
         Aircraft = 'a',
@@ -45,7 +45,7 @@ namespace CSVConst {
         Light = 'l'
     };
 
-    inline constexpr char TypeColumnName[] = "Type";
+    constexpr char TypeColumnName[] = "Type";
 }
 
 #endif // CSVCONST_H
