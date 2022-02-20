@@ -22,15 +22,17 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLIMPORTETTINGS_H
-#define KMLIMPORTETTINGS_H
+#ifndef KMLIMPORTSETTINGS_H
+#define KMLIMPORTSETTINGS_H
 
+#include <QObject>
 #include <QString>
 
 #include "../../../../../Kernel/src/Settings.h"
 
-struct KMLImportSettings
+class KMLImportSettings : public QObject
 {
+    Q_OBJECT
 public:
     /*!
      * KML format (flavour).
@@ -42,15 +44,20 @@ public:
 
     KMLImportSettings() noexcept;
 
-    Format format;
+    Format m_format;
 
     Settings::PluginSettings getSettings() const noexcept;
     Settings::KeysWithDefaults getKeysWithDefault() const noexcept;
     void setSettings(Settings::ValuesByKey) noexcept;
     void restoreDefaults() noexcept;
 
+signals:
+    void defaultsRestored();
+
 private:
+    void initSettings() noexcept;
+
     static constexpr Format DefaultFormat = Format::FlightAware;
 };
 
-#endif // KMLIMPORTETTINGS_H
+#endif // KMLIMPORTSETTINGS_H

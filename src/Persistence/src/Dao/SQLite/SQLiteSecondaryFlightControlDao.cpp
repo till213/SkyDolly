@@ -25,6 +25,7 @@
 #include <memory>
 #include <vector>
 #include <iterator>
+#include <cstdint>
 
 #include <QString>
 #include <QSqlQuery>
@@ -85,7 +86,7 @@ SQLiteSecondaryFlightControlDao::SQLiteSecondaryFlightControlDao() noexcept
 SQLiteSecondaryFlightControlDao::~SQLiteSecondaryFlightControlDao() noexcept
 {}
 
-bool SQLiteSecondaryFlightControlDao::add(qint64 aircraftId, const SecondaryFlightControlData &secondaryFlightControlData)  noexcept
+bool SQLiteSecondaryFlightControlDao::add(std::int64_t aircraftId, const SecondaryFlightControlData &secondaryFlightControlData)  noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -110,8 +111,8 @@ bool SQLiteSecondaryFlightControlDao::add(qint64 aircraftId, const SecondaryFlig
         ");"
     );
 
-    query.bindValue(":aircraft_id", aircraftId);
-    query.bindValue(":timestamp", secondaryFlightControlData.timestamp);
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
+    query.bindValue(":timestamp", QVariant::fromValue(secondaryFlightControlData.timestamp));
     query.bindValue(":leading_edge_flaps_left_percent", secondaryFlightControlData.leadingEdgeFlapsLeftPercent);
     query.bindValue(":leading_edge_flaps_right_percent", secondaryFlightControlData.leadingEdgeFlapsRightPercent);
     query.bindValue(":trailing_edge_flaps_left_percent", secondaryFlightControlData.trailingEdgeFlapsLeftPercent);
@@ -128,7 +129,7 @@ bool SQLiteSecondaryFlightControlDao::add(qint64 aircraftId, const SecondaryFlig
     return ok;
 }
 
-bool SQLiteSecondaryFlightControlDao::getByAircraftId(qint64 aircraftId, std::insert_iterator<std::vector<SecondaryFlightControlData>> insertIterator) const noexcept
+bool SQLiteSecondaryFlightControlDao::getByAircraftId(std::int64_t aircraftId, std::insert_iterator<std::vector<SecondaryFlightControlData>> insertIterator) const noexcept
 {
     QSqlQuery query;
     query.setForwardOnly(true);
@@ -139,7 +140,7 @@ bool SQLiteSecondaryFlightControlDao::getByAircraftId(qint64 aircraftId, std::in
         "order by sfc.timestamp asc;"
     );
 
-    query.bindValue(":aircraft_id", aircraftId);
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     bool ok = query.exec();
     if (ok) {
         QSqlRecord record = query.record();
@@ -173,7 +174,7 @@ bool SQLiteSecondaryFlightControlDao::getByAircraftId(qint64 aircraftId, std::in
     return ok;
 }
 
-bool SQLiteSecondaryFlightControlDao::deleteByFlightId(qint64 flightId) noexcept
+bool SQLiteSecondaryFlightControlDao::deleteByFlightId(std::int64_t flightId) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -185,7 +186,7 @@ bool SQLiteSecondaryFlightControlDao::deleteByFlightId(qint64 flightId) noexcept
         "                      );"
     );
 
-    query.bindValue(":flight_id", flightId);
+    query.bindValue(":flight_id", QVariant::fromValue(flightId));
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
@@ -195,7 +196,7 @@ bool SQLiteSecondaryFlightControlDao::deleteByFlightId(qint64 flightId) noexcept
     return ok;
 }
 
-bool SQLiteSecondaryFlightControlDao::deleteByAircraftId(qint64 aircraftId) noexcept
+bool SQLiteSecondaryFlightControlDao::deleteByAircraftId(std::int64_t aircraftId) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -204,7 +205,7 @@ bool SQLiteSecondaryFlightControlDao::deleteByAircraftId(qint64 aircraftId) noex
         "where  aircraft_id = :aircraft_id;"
     );
 
-    query.bindValue(":aircraft_id", aircraftId);
+    query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {

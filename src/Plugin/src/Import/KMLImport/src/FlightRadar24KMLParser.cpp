@@ -22,9 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "FlightRadar24KMLParser.h"
-
 #include <memory>
+#include <cstdint>
 
 #include <QString>
 #include <QStringLiteral>
@@ -42,12 +41,13 @@
 #include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/Waypoint.h"
+#include "FlightRadar24KMLParser.h"
 
 class FlightRadar24KMLParserPrivate
 {
 public:
     typedef struct {
-        qint64 timestamp;
+        std::int64_t timestamp;
         double latitude;
         double longitude;
         double altitude;
@@ -66,7 +66,7 @@ public:
 
     QXmlStreamReader &xml;
     QString flightNumber;
-    qint64 currentWaypointTimestamp;
+    std::int64_t currentWaypointTimestamp;
     QDateTime firstDateTimeUtc;
     QDateTime currentDateTimeUtc;
 
@@ -95,10 +95,10 @@ FlightRadar24KMLParser::~FlightRadar24KMLParser() noexcept
 #endif
 }
 
-// FlightRadar24 KML files (are expected to) have 3 Placemarks, with:
-// - <Point> Takeoff airpart
-// - <Point> Destination airport
-// - <gx:Track> timestamps (<when>) and positions (<gx:coord>)s
+// FlightRadar24 KML files (are expected to) have one "Route" folder with <Placemarks> containing
+// - <description> - HTML snippet containing speed and heading
+// - <Timestamp> timestamps
+// - <Point> - the coordinates of the track
 void FlightRadar24KMLParser::parse(QDateTime &firstDateTimeUtc, QDateTime &lastDateTimeUtc, QString &flightNumber) noexcept
 {
     d->trackData.clear();
@@ -192,8 +192,6 @@ bool FlightRadar24KMLParser::parseDescription() noexcept
     QRegularExpressionMatch match = d->speedRegExp.match(description);
     if (match.hasMatch()) {
         FlightRadar24KMLParserPrivate::TrackItem trackItem;;
-
-
         trackItem.speed = match.captured(1).toInt();
         const int pos = match.capturedEnd();
         match = d->headingRegExp.match(description, pos);

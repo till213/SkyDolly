@@ -26,6 +26,7 @@
 #include <tuple>
 #include <vector>
 
+#include <QWidget>
 #include <QStringBuilder>
 #include <QIODevice>
 #include <QFlags>
@@ -39,6 +40,7 @@
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
 #include <QStringView>
+#include <QElapsedTimer>
 
 #include "../../Kernel/src/Unit.h"
 #include "../../Kernel/src/Settings.h"
@@ -96,7 +98,12 @@ ImportPluginBase::~ImportPluginBase() noexcept
 bool ImportPluginBase::import(FlightService &flightService) noexcept
 {
     bool ok;
-    std::unique_ptr<BasicImportDialog> importDialog = std::make_unique<BasicImportDialog>(getParentWidget());
+    std::unique_ptr<QWidget> optionWidget = createOptionWidget();
+    std::unique_ptr<BasicImportDialog> importDialog = std::make_unique<BasicImportDialog>(getFileFilter(), getParentWidget());
+    connect(importDialog.get(), &BasicImportDialog::restoreDefaultOptions,
+            this, &ImportPluginBase::onRestoreDefaultSettings);
+    // Transfer ownership to importDialog
+    importDialog->setOptionWidget(optionWidget.release());
     const int choice = importDialog->exec();
     if (choice == QDialog::Accepted) {
         // Remember import (export) path
@@ -106,7 +113,14 @@ bool ImportPluginBase::import(FlightService &flightService) noexcept
         ok = importDialog->getSelectedAircraftType(d->aircraftType);
         if (ok) {
             d->addToCurrentFlight = importDialog->isAddToFlightEnabled();
+#ifdef DEBUG
+            QElapsedTimer timer;
+            timer.start();
+#endif
             ok = importFile(selectedFilePath, flightService);
+#ifdef DEBUG
+            qDebug("%s import %s in %lld ms", qPrintable(QFileInfo(selectedFilePath).fileName()), (ok ? qPrintable("SUCCESS") : qPrintable("FAIL")), timer.elapsed());
+#endif
             if (ok) {
                 if (d->addToCurrentFlight) {
                     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
@@ -118,7 +132,9 @@ bool ImportPluginBase::import(FlightService &flightService) noexcept
                 QMessageBox::critical(getParentWidget(), tr("Import error"), tr("The file %1 could not be imported.").arg(selectedFilePath));
             }
         } else {
-            QMessageBox::critical(getParentWidget(), tr("Import error"), tr("The aircraft could not be selected."));
+            QMessageBox::critical(getParentWidget(), tr("Import error"),
+                                  tr("The selected aircraft '%1' is not a known aircraft in the logbook. "
+                                     "Check for spelling errors or record a flight with this aircraft first.").arg(d->aircraftType.type));
         }
     } else {
         ok = true;
@@ -151,6 +167,8 @@ bool ImportPluginBase::importFile(const QString &filePath, FlightService &flight
 
         ok = readFile(d->file);
         if (ok && aircraft.getPositionConst().count() > 0) {
+            d->flightAugmentation.setProcedures(getProcedures());
+            d->flightAugmentation.setAspects(getAspects());
             d->flightAugmentation.augmentAircraftData(aircraft);
             updateAircraftInfo();
             if (addNewAircraft) {
@@ -159,7 +177,8 @@ bool ImportPluginBase::importFile(const QString &filePath, FlightService &flight
                 ok = d->aircraftService->store(flight.getId(), sequenceNumber, aircraft);
             } else {
                 // Also update flight info and condition
-                updateFlight(d->file);
+                updateFlightInfo();
+                updateFlightCondition();
                 ok = flightService.store(flight);
             }
         } else {
@@ -182,7 +201,7 @@ void ImportPluginBase::updateAircraftInfo() noexcept
     const QDateTime startDateTimeUtc = getStartDateTimeUtc();
     const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
     aircraftInfo.startDate = startDateTimeUtc.toLocalTime();
-    aircraftInfo.endDate = endDateTimeUtc;
+    aircraftInfo.endDate = endDateTimeUtc.toLocalTime();
     int positionCount = aircraft.getPosition().count();
     if (positionCount > 0) {
         const PositionData &firstPositionData = aircraft.getPosition().getFirst();
@@ -218,4 +237,36 @@ void ImportPluginBase::updateAircraftInfo() noexcept
     }
     updateExtendedAircraftInfo(aircraftInfo);
     aircraft.setAircraftInfo(aircraftInfo);
+}
+
+void ImportPluginBase::updateFlightInfo() noexcept
+{
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    flight.setTitle(getTitle());
+
+    const QString description = tr("Aircraft imported on %1 from file: %2").arg(d->unit.formatDateTime(QDateTime::currentDateTime()), d->file.fileName());
+    flight.setDescription(description);
+    flight.setCreationDate(QFileInfo(d->file).birthTime());
+    updateExtendedFlightInfo(flight);
+}
+
+void ImportPluginBase::updateFlightCondition() noexcept
+{
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    FlightCondition flightCondition;
+
+    Aircraft &aircraft = flight.getUserAircraft();
+
+    const Position &position = aircraft.getPositionConst();
+    const PositionData &lastPositionData = position.getLast();
+    const QDateTime startDateTimeUtc = getStartDateTimeUtc();
+    const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
+
+    flightCondition.startLocalTime = startDateTimeUtc.toLocalTime();
+    flightCondition.startZuluTime = startDateTimeUtc;
+    flightCondition.endLocalTime = endDateTimeUtc.toLocalTime();
+    flightCondition.endZuluTime = endDateTimeUtc;
+    updateExtendedFlightCondition(flightCondition);
+
+    flight.setFlightCondition(flightCondition);
 }

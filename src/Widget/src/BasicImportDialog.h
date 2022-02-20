@@ -28,12 +28,13 @@
 #include <memory>
 
 #include <QDialog>
+#include <QString>
 
 class QWidget;
 
 #include "WidgetLib.h"
 
-class AircraftType;
+struct AircraftType;
 class BasicImportDialogPrivate;
 
 namespace Ui {
@@ -43,14 +44,21 @@ namespace Ui {
 class WIDGET_API BasicImportDialog : public QDialog
 {
     Q_OBJECT
-
 public:
-    explicit BasicImportDialog(QWidget *parent = nullptr);
+    explicit BasicImportDialog(const QString &fileExtension, QWidget *parent = nullptr);
     virtual ~BasicImportDialog();
 
     QString getSelectedFilePath() const noexcept;
     bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
     bool isAddToFlightEnabled() const noexcept;
+
+    void setFileFilter(const QString &extension) noexcept;
+    QString getFileFilter() const noexcept;
+
+    void setOptionWidget(QWidget *widget) noexcept;
+
+signals:
+    void restoreDefaultOptions();
 
 private:
     Ui::BasicImportDialog *ui;
@@ -58,9 +66,10 @@ private:
 
     void frenchConnection() noexcept;
     void initUi() noexcept;
+    void initOptionUi() noexcept;
 
 private slots:
-    void on_fileSelectionPushButton_clicked() noexcept;
+    void onFileSelectionPushButtonClicked() noexcept;
     void updateUi() noexcept;
 };
 

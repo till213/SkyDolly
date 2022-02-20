@@ -22,12 +22,13 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QObject>
-#include <QSqlDatabase>
-
 #include <memory>
 #include <utility>
 #include <forward_list>
+#include <cstdint>
+
+#include <QObject>
+#include <QSqlDatabase>
 
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"
@@ -85,7 +86,7 @@ bool FlightService::store(Flight &flight) noexcept
     return ok;
 }
 
-bool FlightService::restore(qint64 id, Flight &flight) noexcept
+bool FlightService::restore(std::int64_t id, Flight &flight) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
@@ -103,7 +104,7 @@ bool FlightService::restore(qint64 id, Flight &flight) noexcept
     return ok;
 }
 
-bool FlightService::deleteById(qint64 id)  noexcept
+bool FlightService::deleteById(std::int64_t id)  noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
@@ -126,7 +127,7 @@ bool FlightService::updateTitle(Flight &flight, const QString &title) noexcept
     return ok;
 }
 
-bool FlightService::updateTitle(qint64 id, const QString &title) noexcept
+bool FlightService::updateTitle(std::int64_t id, const QString &title) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
@@ -151,7 +152,7 @@ bool FlightService::updateTitleAndDescription(Flight &flight, const QString &tit
     return ok;
 }
 
-bool FlightService::updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept
+bool FlightService::updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {

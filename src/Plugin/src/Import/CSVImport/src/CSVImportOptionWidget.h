@@ -22,18 +22,41 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLPARSER_H
-#define KMLPARSER_H
+#ifndef CSVIMPORTOPTIONWIDGET_H
+#define CSVIMPORTOPTIONWIDGET_H
 
-class QDateTime;
-class QString;
+#include <memory>
 
-class KMLParser
+#include <QWidget>
+
+namespace Ui {
+    class CSVImportOptionWidget;
+}
+
+class CSVImportSettings;
+class CSVImportOptionWidgetPrivate;
+
+class CSVImportOptionWidget : public QWidget
 {
+    Q_OBJECT
 public:
-    virtual ~KMLParser() = default;
+    explicit CSVImportOptionWidget(CSVImportSettings &importSettings, QWidget *parent = nullptr) noexcept;
+    virtual ~CSVImportOptionWidget() noexcept;
 
-    virtual void parse(QDateTime &first, QDateTime &last, QString &flightNumber) noexcept = 0;
+private:
+    Ui::CSVImportOptionWidget *ui;
+    std::unique_ptr<CSVImportOptionWidgetPrivate> d;
+
+    void frenchConnection() noexcept;
+    void initUi() noexcept;
+    void initOptionUi() noexcept;
+    void updateOptionUi() noexcept;
+
+private slots:
+    void onFormatComboBoxCurrentIndexChanged(int index) noexcept;
+
+    void updateUi() noexcept;
 };
 
-#endif // KMLPARSER_H
+#endif // CSVIMPORTOPTIONWIDGET_H
+

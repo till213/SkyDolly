@@ -11,10 +11,17 @@
   
 ### Improvements
 
+- Import
+  * The aircraft selection combobox is now editable, with basic autocompletion support
 - IGC import plugin
   * The initial heading is now calculated on the "first significant movement", compensating GPS inaccuracies (when the glider is standing still on the ground)
   * Date and time of turn points (waypoints) defined by the task list ("C records") are now updated with the actual flight time, based on the closest flown position
-  
+  * Environmental noise level (ENL) determines the engine state (on/off, propeller lever)
+- KML import plugin
+  * KML from flightradar24.com can now also be imported
+- CSV import plugin
+  * CSV from flightradar24.com can now also be imported
+
 ## 0.8.6
 
 ### New Features

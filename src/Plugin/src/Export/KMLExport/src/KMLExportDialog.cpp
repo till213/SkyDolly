@@ -25,6 +25,7 @@
 #include <memory>
 #include <utility>
 #include <limits>
+#include <cstdint>
 
 #include <QString>
 #include <QStringBuilder>
@@ -155,7 +156,7 @@ void KMLExportDialog::updateInfoUi() noexcept
 {
     QString infoText;
     KMLExportSettings::ResamplingPeriod resamplingPeriod = static_cast<KMLExportSettings::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt());
-    qint64 samplePoints = estimateNofSamplePoints();
+    std::int64_t samplePoints = estimateNofSamplePoints();
     if (resamplingPeriod != KMLExportSettings::ResamplingPeriod::Original) {
         infoText = tr("The position data is resampled every %1 milliseconds, resulting in approximately %2 exported positions in total.")
                       .arg(d->unit.formatNumber(Enum::toUnderlyingType(resamplingPeriod), 0), d->unit.formatNumber(samplePoints, 0));
@@ -292,14 +293,14 @@ void KMLExportDialog::frenchConnection() noexcept
             this, &KMLExportDialog::restoreDefaults);
 }
 
-qint64 KMLExportDialog::estimateNofSamplePoints() noexcept
+std::int64_t KMLExportDialog::estimateNofSamplePoints() noexcept
 {
     Flight &flight = Logbook::getInstance().getInstance().getCurrentFlight();
-    qint64 nofSamplePoints = 0;
-    const qint64 period = ui->resamplingComboBox->currentData().toInt();
+    std::int64_t nofSamplePoints = 0;
+    const std::int64_t period = ui->resamplingComboBox->currentData().toInt();
     if (period != 0) {
         for (const auto &aircraft : flight) {
-            qint64 duration = aircraft->getDurationMSec();
+            std::int64_t duration = aircraft->getDurationMSec();
             nofSamplePoints += qRound(static_cast<double>(duration) / static_cast<double>(period));
         }
     } else {

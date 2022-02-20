@@ -22,41 +22,22 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVIMPORTDIALOG_H
-#define CSVIMPORTDIALOG_H
+#ifndef FLIGHTRADAR24CSVPARSER_H
+#define FLIGHTRADAR24CSVPARSER_H
 
-#include <memory>
+class QFile;
+class QDateTime;
+class QString;
 
-#include <QDialog>
+#include "CSVParserIntf.h"
 
-namespace Ui {
-    class CSVImportDialog;
-}
-
-class AircraftType;
-class CSVImportDialogPrivate;
-
-class CSVImportDialog : public QDialog
+class FlightRadar24CSVParser : public CSVParserIntf
 {
-    Q_OBJECT
 public:
-    explicit CSVImportDialog(QWidget *parent = nullptr) noexcept;
-    virtual ~CSVImportDialog() noexcept;
+    FlightRadar24CSVParser() noexcept;
+    virtual ~FlightRadar24CSVParser() noexcept;
 
-    QString getSelectedFilePath() const noexcept;
-    bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
-    bool isAddToFlightEnabled() const noexcept;
-
-private:
-    Ui::CSVImportDialog *ui;
-    std::unique_ptr<CSVImportDialogPrivate> d;
-
-    void frenchConnection() noexcept;
-    void initUi() noexcept;
-
-private slots:
-    void on_fileSelectionPushButton_clicked() noexcept;
-    void updateUi() noexcept;
+    virtual bool parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept override;
 };
 
-#endif // CSVIMPORTDIALOG_H
+#endif // FLIGHTRADAR24CSVPARSER_H

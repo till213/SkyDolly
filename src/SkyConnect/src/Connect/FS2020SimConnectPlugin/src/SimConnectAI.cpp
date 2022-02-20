@@ -24,11 +24,10 @@
  */
 #include <memory>
 #include <vector>
+#include <cstdint>
 
 #include <windows.h>
 #include <SimConnect.h>
-
-#include <QtGlobal>
 
 #include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Model/src/Flight.h"
@@ -67,7 +66,7 @@ SimConnectAI::~SimConnectAI()
 #endif
 }
 
-bool SimConnectAI::createSimulatedAircraft(Flight &flight, qint64 timestamp, bool includingUserAircraft, std::unordered_map<::SIMCONNECT_DATA_REQUEST_ID, Aircraft *> &pendingAIAircraftCreationRequests) noexcept
+bool SimConnectAI::createSimulatedAircraft(Flight &flight, std::int64_t timestamp, bool includingUserAircraft, std::unordered_map<::SIMCONNECT_DATA_REQUEST_ID, Aircraft *> &pendingAIAircraftCreationRequests) noexcept
 {
     HRESULT result;
     bool ok;
@@ -135,14 +134,14 @@ void SimConnectAI::destroySimulatedAircraft(Aircraft &aircraft) noexcept
     aircraft.setSimulationObjectId(Aircraft::InvalidSimulationId);
 }
 
-void SimConnectAI::destroySimulatedObject(qint64 objectId) noexcept
+void SimConnectAI::destroySimulatedObject(std::int64_t objectId) noexcept
 {
     ::SimConnect_AIRemoveObject(d->simConnectHandle, objectId, Enum::toUnderlyingType(SimConnectType::DataRequest::AIRemoveObject));
 }
 
 // PRIVATE
 
-bool SimConnectAI::isValidAIObjectId(qint64 objectId) const noexcept
+bool SimConnectAI::isValidAIObjectId(std::int64_t objectId) const noexcept
 {
     return objectId != ::SIMCONNECT_OBJECT_ID_USER && objectId != Aircraft::InvalidSimulationId && objectId != Aircraft::PendingSimulationId;
 }

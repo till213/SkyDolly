@@ -33,7 +33,7 @@
 
 class QString;
 
-class AircraftType;
+struct AircraftType;
 
 class AircraftTypeDaoIntf
 {

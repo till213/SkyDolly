@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <cstdint>
 
 #include <QString>
 #include <QSqlQuery>
@@ -97,7 +98,7 @@ SQLiteAircraftDao::SQLiteAircraftDao() noexcept
 SQLiteAircraftDao::~SQLiteAircraftDao() noexcept
 {}
 
-bool SQLiteAircraftDao::add(qint64 flightId, int sequenceNumber, Aircraft &aircraft)  noexcept
+bool SQLiteAircraftDao::add(std::int64_t flightId, int sequenceNumber, Aircraft &aircraft)  noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -133,12 +134,12 @@ bool SQLiteAircraftDao::add(qint64 flightId, int sequenceNumber, Aircraft &aircr
     d->aircraftTypeDao->upsert(aircraftType);
 
     const AircraftInfo &info = aircraft.getAircraftInfoConst();
-    query.bindValue(":flight_id", flightId);
+    query.bindValue(":flight_id", QVariant::fromValue(flightId));
     query.bindValue(":seq_nr", sequenceNumber);
     query.bindValue(":type", aircraftType.type);
     query.bindValue(":start_date", info.startDate.toUTC());
     query.bindValue(":end_date", info.endDate.toUTC());
-    query.bindValue(":time_offset", info.timeOffset);
+    query.bindValue(":time_offset", QVariant::fromValue(info.timeOffset));
     query.bindValue(":tail_number", info.tailNumber);
     query.bindValue(":airline", info.airline);
     query.bindValue(":flight_number", info.flightNumber);
@@ -148,7 +149,7 @@ bool SQLiteAircraftDao::add(qint64 flightId, int sequenceNumber, Aircraft &aircr
 
     bool ok = query.exec();
     if (ok) {
-        qint64 id = query.lastInsertId().toLongLong(&ok);
+        std::int64_t id = query.lastInsertId().toLongLong(&ok);
         aircraft.setId(id);
 #ifdef DEBUG
     } else {
@@ -209,7 +210,7 @@ bool SQLiteAircraftDao::add(qint64 flightId, int sequenceNumber, Aircraft &aircr
     return ok;
 }
 
-bool SQLiteAircraftDao::getByFlightId(qint64 flightId, std::insert_iterator<std::vector<std::unique_ptr<Aircraft>>> insertIterator) const noexcept
+bool SQLiteAircraftDao::getByFlightId(std::int64_t flightId, std::insert_iterator<std::vector<std::unique_ptr<Aircraft>>> insertIterator) const noexcept
 {
     std::vector<AircraftInfo> aircraftInfos;
     bool ok = getAircraftInfosByFlightId(flightId, aircraftInfos);
@@ -247,7 +248,7 @@ bool SQLiteAircraftDao::getByFlightId(qint64 flightId, std::insert_iterator<std:
     return ok;
 }
 
-bool SQLiteAircraftDao::adjustAircraftSequenceNumbersByFlightId(qint64 flightId, int sequenceNumber) noexcept
+bool SQLiteAircraftDao::adjustAircraftSequenceNumbersByFlightId(std::int64_t flightId, int sequenceNumber) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -257,7 +258,7 @@ bool SQLiteAircraftDao::adjustAircraftSequenceNumbersByFlightId(qint64 flightId,
         "and   seq_nr    > :seq_nr;"
     );
 
-    query.bindValue(":flight_id", flightId);
+    query.bindValue(":flight_id", QVariant::fromValue(flightId));
     query.bindValue(":seq_nr", sequenceNumber);
     bool ok = query.exec();
 #ifdef DEBUG
@@ -268,7 +269,7 @@ bool SQLiteAircraftDao::adjustAircraftSequenceNumbersByFlightId(qint64 flightId,
     return ok;
 }
 
-bool SQLiteAircraftDao::deleteAllByFlightId(qint64 flightId) noexcept
+bool SQLiteAircraftDao::deleteAllByFlightId(std::int64_t flightId) noexcept
 {
     // Delete "bottom-up" in order not to violate foreign key constraints
     bool ok = d->positionDao->deleteByFlightId(flightId);
@@ -297,7 +298,7 @@ bool SQLiteAircraftDao::deleteAllByFlightId(qint64 flightId) noexcept
             "from   aircraft "
             "where  flight_id = :flight_id;"
         );
-        query.bindValue(":flight_id", flightId);
+        query.bindValue(":flight_id", QVariant::fromValue(flightId));
         ok = query.exec();
 #ifdef DEBUG
         if (!ok) {
@@ -309,7 +310,7 @@ bool SQLiteAircraftDao::deleteAllByFlightId(qint64 flightId) noexcept
     return ok;
 }
 
-bool SQLiteAircraftDao::deleteById(qint64 id) noexcept
+bool SQLiteAircraftDao::deleteById(std::int64_t id) noexcept
 {
     // Delete "bottom-up" in order not to violate foreign key constraints
     // Note: aircraft types (table aircraft_type) are not deleted
@@ -339,7 +340,7 @@ bool SQLiteAircraftDao::deleteById(qint64 id) noexcept
             "from   aircraft "
             "where  id = :id;"
         );
-        query.bindValue(":id", id);
+        query.bindValue(":id", QVariant::fromValue(id));
         ok = query.exec();
 #ifdef DEBUG
         if (!ok) {
@@ -351,7 +352,7 @@ bool SQLiteAircraftDao::deleteById(qint64 id) noexcept
     return ok;
 }
 
-bool SQLiteAircraftDao::getAircraftInfosByFlightId(qint64 flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept
+bool SQLiteAircraftDao::getAircraftInfosByFlightId(std::int64_t flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept
 {
     QSqlQuery query;
     query.setForwardOnly(true);
@@ -362,7 +363,7 @@ bool SQLiteAircraftDao::getAircraftInfosByFlightId(qint64 flightId, std::vector<
         "order by a.seq_nr;"
     );
 
-    query.bindValue(":flight_id", flightId);
+    query.bindValue(":flight_id", QVariant::fromValue(flightId));
     bool ok = query.exec();
     if (ok) {
         aircraftInfos.clear();
@@ -411,7 +412,7 @@ bool SQLiteAircraftDao::getAircraftInfosByFlightId(qint64 flightId, std::vector<
     return ok;
 }
 
-bool SQLiteAircraftDao::updateTimeOffset(qint64 id, qint64 timeOffset) noexcept
+bool SQLiteAircraftDao::updateTimeOffset(std::int64_t id, std::int64_t timeOffset) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -420,8 +421,8 @@ bool SQLiteAircraftDao::updateTimeOffset(qint64 id, qint64 timeOffset) noexcept
         "where  id = :id;"
     );
 
-    query.bindValue(":time_offset", timeOffset);
-    query.bindValue(":id", id);
+    query.bindValue(":time_offset", QVariant::fromValue(timeOffset));
+    query.bindValue(":id", QVariant::fromValue(id));
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
@@ -431,7 +432,7 @@ bool SQLiteAircraftDao::updateTimeOffset(qint64 id, qint64 timeOffset) noexcept
     return ok;
 };
 
-bool SQLiteAircraftDao::updateTailNumber(qint64 id, const QString &tailNumber) noexcept
+bool SQLiteAircraftDao::updateTailNumber(std::int64_t id, const QString &tailNumber) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -441,7 +442,7 @@ bool SQLiteAircraftDao::updateTailNumber(qint64 id, const QString &tailNumber) n
     );
 
     query.bindValue(":tail_number", tailNumber);
-    query.bindValue(":id", id);
+    query.bindValue(":id", QVariant::fromValue(id));
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {

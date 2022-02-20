@@ -28,23 +28,21 @@
 #include <memory>
 
 #include <QObject>
-#include <QtPlugin>
+#include <QDateTime>
+#include <QString>
 
-class Aircraft;
-class AircraftType;
-class Engine;
-class PrimaryFlightControl;
-class SecondaryFlightControl;
-class AircraftHandle;
-class Light;
-class FlightService;
+class QFile;
 
+#include "../../../../../Flight/src/FlightAugmentation.h"
 #include "../../../ImportIntf.h"
-#include "../../../PluginBase.h"
+#include "../../../ImportPluginBase.h"
 
+class Flight;
+struct AircraftInfo;
+struct FlightCondition;
 class CSVImportPluginPrivate;
 
-class CSVImportPlugin : public PluginBase, public ImportIntf
+class CSVImportPlugin : public ImportPluginBase
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "CSVImportPlugin.json")
@@ -53,41 +51,31 @@ public:
     CSVImportPlugin() noexcept;
     virtual ~CSVImportPlugin() noexcept;
 
-    virtual QWidget *getParentWidget() const noexcept override
-    {
-        return PluginBase::getParentWidget();
-    }
+protected:
+    // PluginBase
+    virtual Settings::PluginSettings getSettings() const noexcept override;
+    virtual Settings::KeysWithDefaults getKeyWithDefaults() const noexcept override;
+    virtual void setSettings(Settings::ValuesByKey) noexcept override;
 
-    virtual void setParentWidget(QWidget *parent) noexcept override
-    {
-        PluginBase::setParentWidget(parent);
-    }
+    // ImportPluginBase
+    virtual QString getFileFilter() const noexcept override;
+    virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
 
-    virtual void storeSettings(const QUuid &pluginUuid) const noexcept override
-    {
-        PluginBase::storeSettings(pluginUuid);
-    }
+    virtual bool readFile(QFile &file) noexcept override;
 
-    virtual void restoreSettings(const QUuid &pluginUuid) noexcept override
-    {
-        PluginBase::restoreSettings(pluginUuid);
-    }
+    virtual FlightAugmentation::Procedures getProcedures() const noexcept override;
+    virtual FlightAugmentation::Aspects getAspects() const noexcept override;
+    virtual QDateTime getStartDateTimeUtc() noexcept override;
+    virtual QString getTitle() const noexcept override;
+    virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept override;
+    virtual void updateExtendedFlightInfo(Flight &flight) noexcept override;
+    virtual void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept override;
 
-    virtual bool import(FlightService &flightService) noexcept override;
+protected slots:
+    virtual void onRestoreDefaultSettings() noexcept override;
 
 private:
     std::unique_ptr<CSVImportPluginPrivate> d;
-
-    bool getAircraftType(const QString &type, AircraftType &aircraftType) noexcept;
-    bool import(const QString &filePath, const AircraftType &aircraftType, FlightService &flightService, bool addToCurrentFlight) const noexcept;
-
-    static inline bool importPositionData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Aircraft &aircraft) noexcept;
-    static inline bool importEngineData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Engine &engine) noexcept;
-    static inline bool importPrimaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, PrimaryFlightControl &primaryFlightControl) noexcept;
-    static inline bool importSecondaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, SecondaryFlightControl &secondaryFlightControl) noexcept;
-    static inline bool importAircraftHandleData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, AircraftHandle &aircraftHandle) noexcept;
-    static inline bool importLightData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Light &light) noexcept;
-    static inline bool importTimestamp(const QList<QByteArray> &values, int columnIndex, bool firstRow, qint64 &timestamp, qint64 &timestampDelta);
 };
 
 #endif // CSVIMPORTPLUGIN_H

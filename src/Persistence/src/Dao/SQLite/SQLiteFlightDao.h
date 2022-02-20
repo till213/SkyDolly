@@ -26,8 +26,7 @@
 #define SQLITEFLIGHTDAO_H
 
 #include <memory>
-
-#include <QtGlobal>
+#include <cstdint>
 
 class QString;
 
@@ -43,11 +42,11 @@ public:
     virtual ~SQLiteFlightDao() noexcept;
 
     virtual bool addFlight(Flight &flight)  noexcept override;
-    virtual bool getFlightById(qint64 id, Flight &flight) const noexcept override;
-    virtual bool deleteById(qint64 id) noexcept override;
-    virtual bool updateTitle(qint64 id, const QString &title) noexcept override;
-    virtual bool updateTitleAndDescription(qint64 id, const QString &title, const QString &description) noexcept override;
-    virtual bool updateUserAircraftIndex(qint64 id, int index) noexcept override;
+    virtual bool getFlightById(std::int64_t id, Flight &flight) const noexcept override;
+    virtual bool deleteById(std::int64_t id) noexcept override;
+    virtual bool updateTitle(std::int64_t id, const QString &title) noexcept override;
+    virtual bool updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept override;
+    virtual bool updateUserAircraftIndex(std::int64_t id, int index) noexcept override;
 
 private:
     std::unique_ptr<SQLiteFlightDaoPrivate> d;

@@ -26,6 +26,7 @@
 #include <cmath>
 #include <limits>
 #include <chrono>
+#include <cstdint>
 
 #include <QCoreApplication>
 #include <QString>
@@ -164,7 +165,7 @@ QString Unit::formatKnots(double velocity) noexcept
     return d->locale.toString(velocity, 'f', Precision) % " knots";
 }
 
-QString Unit::formatElapsedTime(qint64 milliSeconds) noexcept
+QString Unit::formatElapsedTime(std::int64_t milliSeconds) noexcept
 {
     QString elapsedTime;
     if (qAbs(milliSeconds) < 1000) {
@@ -180,7 +181,7 @@ QString Unit::formatElapsedTime(qint64 milliSeconds) noexcept
     return elapsedTime;
 }
 
-QString Unit::formatMemory(qint64 memory) noexcept
+QString Unit::formatMemory(std::int64_t memory) noexcept
 {
     QString size;
     if (memory < 1024) {
@@ -238,7 +239,7 @@ double Unit::toNumber(const QString &value, bool *ok) noexcept
     return d->locale.toDouble(value, ok);
 }
 
-QString Unit::formatHHMMSS(qint64 msec) noexcept
+QString Unit::formatHHMMSS(std::int64_t msec) noexcept
 {
     std::chrono::milliseconds milliseconds {msec};
     std::chrono::seconds seconds = std::chrono::duration_cast<std::chrono::seconds>(milliseconds);

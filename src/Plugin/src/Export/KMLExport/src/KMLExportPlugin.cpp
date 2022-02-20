@@ -25,6 +25,7 @@
 #include <memory>
 #include <vector>
 #include <unordered_map>
+#include <cstdint>
 
 #include <QCoreApplication>
 #include <QIODevice>
@@ -240,8 +241,8 @@ bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
         // Position data
         const Position &position = aircraft.getPositionConst();
         if (d->exportSettings.resamplingPeriod != KMLExportSettings::ResamplingPeriod::Original) {
-            const qint64 duration = position.getLast().timestamp;
-            qint64 timestamp = 0;
+            const std::int64_t duration = position.getLast().timestamp;
+            std::int64_t timestamp = 0;
             while (ok && timestamp <= duration) {
                 const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Linear);
                 if (!positionData.isNull()) {

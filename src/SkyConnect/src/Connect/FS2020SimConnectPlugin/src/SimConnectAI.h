@@ -28,11 +28,10 @@
 #include <memory>
 #include <vector>
 #include <unordered_map>
+#include <cstdint>
 
 #include <windows.h>
 #include <SimConnect.h>
-
-#include <QtGlobal>
 
 class Flight;
 class Aircraft;
@@ -44,15 +43,15 @@ public:
     SimConnectAI(::HANDLE simConnectHandle);
     ~SimConnectAI();
 
-    bool createSimulatedAircraft(Flight &flight, qint64 timestamp, bool includingUserAircraft, std::unordered_map<::SIMCONNECT_DATA_REQUEST_ID, Aircraft *> &pendingAIAircraftCreationRequests) noexcept;
+    bool createSimulatedAircraft(Flight &flight, std::int64_t timestamp, bool includingUserAircraft, std::unordered_map<::SIMCONNECT_DATA_REQUEST_ID, Aircraft *> &pendingAIAircraftCreationRequests) noexcept;
     void destroySimulatedAircraft(Flight &flight) noexcept;
     void destroySimulatedAircraft(Aircraft &aircraft) noexcept;
-    void destroySimulatedObject(qint64 objectId) noexcept;
+    void destroySimulatedObject(std::int64_t objectId) noexcept;
 
 private:
     std::unique_ptr<SimConnectAIPrivate> d;
 
-    inline bool isValidAIObjectId(qint64 objectId) const noexcept;
+    inline bool isValidAIObjectId(std::int64_t objectId) const noexcept;
 };
 
 #endif // SIMCONNECTAI_H

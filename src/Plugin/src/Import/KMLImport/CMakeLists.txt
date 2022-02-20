@@ -7,7 +7,7 @@ else()
 endif()
 
 set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Flight Persistence Widget SkyConnect Plugin
+    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Flight Persistence Plugin Widget
 )
 if (${PLATFORM_IS_MACOS})
     list(APPEND LIBRARY_DEPENDENCIES -lc++)
@@ -16,9 +16,9 @@ endif()
 target_sources(${LIBRARY_NAME}
     PRIVATE
         src/KMLImportPlugin.h src/KMLImportPlugin.cpp
-        src/KMLImportDialog.h src/KMLImportDialog.cpp src/KMLImportDialog.ui
+        src/KMLImportOptionWidget.h src/KMLImportOptionWidget.cpp src/KMLImportOptionWidget.ui
         src/KMLImportSettings.h src/KMLImportSettings.cpp
-        src/KMLParser.h
+        src/KMLParserIntf.h
         src/FlightAwareKMLParser.h src/FlightAwareKMLParser.cpp
         src/FlightRadar24KMLParser.h src/FlightRadar24KMLParser.cpp
         src/KMLImportPlugin.json

@@ -28,8 +28,7 @@
 #include <memory>
 #include <vector>
 #include <iterator>
-
-#include <QtGlobal>
+#include <cstdint>
 
 class QString;
 
@@ -52,14 +51,14 @@ public:
      *        the aircraft to be persisted
      * \return \c true on success; \c false else
      */
-    virtual bool add(qint64 flightId, int sequenceNumber, Aircraft &aircraft) noexcept = 0;
-    virtual bool getByFlightId(qint64 flightId, std::insert_iterator<std::vector<std::unique_ptr<Aircraft>>> insertIterator) const noexcept = 0;
-    virtual bool adjustAircraftSequenceNumbersByFlightId(qint64 id, int sequenceNumber) noexcept = 0;
-    virtual bool deleteAllByFlightId(qint64 flightId) noexcept = 0;
-    virtual bool deleteById(qint64 id) noexcept = 0;
-    virtual bool getAircraftInfosByFlightId(qint64 flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept = 0;
-    virtual bool updateTimeOffset(qint64 id, qint64 timeOffset) noexcept = 0;
-    virtual bool updateTailNumber(qint64 id, const QString &tailNumber) noexcept = 0;
+    virtual bool add(std::int64_t flightId, int sequenceNumber, Aircraft &aircraft) noexcept = 0;
+    virtual bool getByFlightId(std::int64_t flightId, std::insert_iterator<std::vector<std::unique_ptr<Aircraft>>> insertIterator) const noexcept = 0;
+    virtual bool adjustAircraftSequenceNumbersByFlightId(std::int64_t id, int sequenceNumber) noexcept = 0;
+    virtual bool deleteAllByFlightId(std::int64_t flightId) noexcept = 0;
+    virtual bool deleteById(std::int64_t id) noexcept = 0;
+    virtual bool getAircraftInfosByFlightId(std::int64_t flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept = 0;
+    virtual bool updateTimeOffset(std::int64_t id, std::int64_t timeOffset) noexcept = 0;
+    virtual bool updateTailNumber(std::int64_t id, const QString &tailNumber) noexcept = 0;
 };
 
 #endif // AIRCRAFTDAOINTF_H

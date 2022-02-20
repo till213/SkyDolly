@@ -26,6 +26,7 @@
 #define PATHCREATORPLUGIN_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QObject>
 
@@ -59,14 +60,14 @@ protected:
     virtual void onRecordingPaused(bool paused) noexcept override;
     virtual void onStopRecording() noexcept override;
 
-    virtual bool onStartReplay(qint64 currentTimestamp) noexcept override;
+    virtual bool onStartReplay(std::int64_t currentTimestamp) noexcept override;
     virtual void onReplayPaused(bool paused) noexcept override;
     virtual void onStopReplay() noexcept override;
 
-    virtual void onSeek(qint64 currentTimestamp) noexcept override;
+    virtual void onSeek(std::int64_t currentTimestamp) noexcept override;
     virtual void onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
 
-    virtual bool sendAircraftData(qint64 currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept override;
+    virtual bool sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept override;
     virtual bool isConnectedWithSim() const noexcept override;
     virtual bool connectWithSim() noexcept override;
 
@@ -81,12 +82,12 @@ private:
     std::unique_ptr<PathCreatorPluginPrivate> d;
 
     void frenchConnection() noexcept;
-    void recordPositionData(qint64 timestamp) noexcept;
-    void recordEngineData(qint64 timestamp) noexcept;
-    void recordPrimaryControls(qint64 timestamp) noexcept;
-    void recordSecondaryControls(qint64 timestamp) noexcept;
-    void recordAircraftHandle(qint64 timestamp) noexcept;
-    void recordLights(qint64 timestamp) noexcept;
+    void recordPositionData(std::int64_t timestamp) noexcept;
+    void recordEngineData(std::int64_t timestamp) noexcept;
+    void recordPrimaryControls(std::int64_t timestamp) noexcept;
+    void recordSecondaryControls(std::int64_t timestamp) noexcept;
+    void recordAircraftHandle(std::int64_t timestamp) noexcept;
+    void recordLights(std::int64_t timestamp) noexcept;
     void recordWaypoint() noexcept;
     void recordFlightCondition() noexcept;
     void recordAircraftInfo() noexcept;

@@ -30,8 +30,8 @@
 #include <utility>
 #include <optional>
 #include <functional>
+#include <cstdint>
 
-#include <QtGlobal>
 #include <QObject>
 
 class QString;
@@ -77,7 +77,7 @@ public slots:
 signals:
     void connectionChanged(SkyConnectIntf *skyConnect);
 
-    void timestampChanged(qint64 timestamp, TimeVariableData::Access access);
+    void timestampChanged(std::int64_t timestamp, TimeVariableData::Access access);
     void stateChanged(Connect::State state);
     void recordingStopped();
 
