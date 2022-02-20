@@ -132,7 +132,9 @@ bool ImportPluginBase::import(FlightService &flightService) noexcept
                 QMessageBox::critical(getParentWidget(), tr("Import error"), tr("The file %1 could not be imported.").arg(selectedFilePath));
             }
         } else {
-            QMessageBox::critical(getParentWidget(), tr("Import error"), tr("The aircraft could not be selected."));
+            QMessageBox::critical(getParentWidget(), tr("Import error"),
+                                  tr("The selected aircraft '%1' is not a known aircraft in the logbook. "
+                                     "Check for spelling errors or record a flight with this aircraft first.").arg(d->aircraftType.type));
         }
     } else {
         ok = true;

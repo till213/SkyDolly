@@ -32,6 +32,7 @@
 #include <QFileDialog>
 #include <QWidget>
 #include <QPushButton>
+#include <QCompleter>
 
 #include "../../Kernel/src/Settings.h"
 #include "../../Model/src/Aircraft.h"
@@ -119,6 +120,8 @@ void BasicImportDialog::frenchConnection() noexcept
             this, &BasicImportDialog::updateUi);
     connect(ui->fileSelectionPushButton, &QPushButton::clicked,
             this, &BasicImportDialog::onFileSelectionPushButtonClicked);
+    connect(ui->aircraftSelectionComboBox, &QComboBox::currentTextChanged,
+            this, &BasicImportDialog::updateUi);
 }
 
 void BasicImportDialog::initUi() noexcept
@@ -131,6 +134,8 @@ void BasicImportDialog::initUi() noexcept
     if (!type.isEmpty()) {
         ui->aircraftSelectionComboBox->setCurrentText(type);
     }
+    ui->aircraftSelectionComboBox->setEditable(true);
+    ui->aircraftSelectionComboBox->setInsertPolicy(QComboBox::NoInsert);
 
     initOptionUi();
 }
@@ -171,5 +176,6 @@ void BasicImportDialog::updateUi() noexcept
 {
     const QString filePath = ui->filePathLineEdit->text();
     QFile file(filePath);
-    d->importButton->setEnabled(file.exists());
+    const bool enabled = file.exists() && !ui->aircraftSelectionComboBox->currentText().isEmpty();
+    d->importButton->setEnabled(enabled);
 }
