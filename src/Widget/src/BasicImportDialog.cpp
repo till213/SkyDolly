@@ -136,6 +136,8 @@ void BasicImportDialog::initUi() noexcept
     }
     ui->aircraftSelectionComboBox->setEditable(true);
     ui->aircraftSelectionComboBox->setInsertPolicy(QComboBox::NoInsert);
+    QCompleter *completer = ui->aircraftSelectionComboBox->completer();
+    completer->setCompletionMode(QCompleter::PopupCompletion);
 
     initOptionUi();
 }
