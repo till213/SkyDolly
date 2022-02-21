@@ -43,15 +43,11 @@ public:
     virtual ~GenericKMLParser() noexcept;
 
     virtual void parse() noexcept override;
-    virtual QString getDocumentName() const noexcept override;
     virtual QString getFlightNumber() const noexcept override;
 
 private:
     std::unique_ptr<GenericKMLParserPrivate> d;
 
-    void parseDocument() noexcept;
-    void parseFolder() noexcept;
-    void parsePlacemark() noexcept;
 };
 
 #endif // GENERICKMLPARSER_H

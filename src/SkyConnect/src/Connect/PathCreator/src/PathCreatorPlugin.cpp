@@ -386,9 +386,9 @@ void PathCreatorPlugin::recordWaypoint() noexcept
     if (d->randomGenerator->bounded(100.0) < 0.5) {
         int i = d->randomGenerator->bounded(PathCreatorPluginPrivate::IcaoList.size());
         waypoint.identifier = PathCreatorPluginPrivate::IcaoList.at(i);
-        waypoint.latitude = -180.0 + d->randomGenerator->bounded(360.0);
-        waypoint.longitude = -90.0 + d->randomGenerator->bounded(180.0);
-        waypoint.altitude = d->randomGenerator->bounded(3000.0);
+        waypoint.latitude = -180.0f + static_cast<float>(d->randomGenerator->bounded(360.0));
+        waypoint.longitude = -90.0f + static_cast<float>(d->randomGenerator->bounded(180.0));
+        waypoint.altitude = static_cast<float>(d->randomGenerator->bounded(3000.0));
         waypoint.localTime = QDateTime::currentDateTime();
         waypoint.zuluTime = QDateTime::currentDateTimeUtc();
         waypoint.timestamp = getCurrentTimestamp();

@@ -23,22 +23,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
-#include <cstdint>
 
 #include <QString>
-#include <QStringLiteral>
-#include <QCoreApplication>
-#include <QTimeZone>
 #include <QXmlStreamReader>
-#include <QRegularExpression>
 
-#include "../../../../../Kernel/src/Convert.h"
-#include "../../../../../Model/src/Logbook.h"
-#include "../../../../../Model/src/Flight.h"
-#include "../../../../../Model/src/FlightPlan.h"
-#include "../../../../../Model/src/Position.h"
-#include "../../../../../Model/src/PositionData.h"
-#include "../../../../../Model/src/Waypoint.h"
 #include "KML.h"
 #include "AbstractKMLTrackParser.h"
 #include "GenericKMLParser.h"
@@ -47,14 +35,10 @@ class GenericKMLParserPrivate
 {
 public:
     GenericKMLParserPrivate(QXmlStreamReader &xmlStreamReader) noexcept
-        : xml(xmlStreamReader),
-          currentWaypointTimestamp(0)
+        : xml(xmlStreamReader)
     {}
 
     QXmlStreamReader &xml;
-    QString documentName;
-    QString flightNumber;
-    std::int64_t currentWaypointTimestamp;
 };
 
 // PUBLIC
@@ -78,77 +62,10 @@ GenericKMLParser::~GenericKMLParser() noexcept
 // Generic KML files (are expected to) have at least one "gx:Track"
 void GenericKMLParser::parse() noexcept
 {
-    while (d->xml.readNextStartElement()) {
-        const QStringRef xmlName = d->xml.name();
-        if (xmlName == KML::Placemark) {
-            parsePlacemark();
-        } else if (xmlName == KML::Document) {
-            parseDocument();
-        } else if (xmlName == KML::Folder) {
-            parseFolder();
-        } else {
-            d->xml.skipCurrentElement();
-        }
-    }
-}
-
-QString GenericKMLParser::getDocumentName() const noexcept
-{
-    return d->documentName;
+    parseKML();
 }
 
 QString GenericKMLParser::getFlightNumber() const noexcept
 {
-    return d->flightNumber;
-}
-
-// PRIVATE
-
-void GenericKMLParser::parseDocument() noexcept
-{
-    while (d->xml.readNextStartElement()) {
-        const QStringRef xmlName = d->xml.name();
-#ifdef DEBUG
-        qDebug("GenericKMLParser::parseDocument: XML start element: %s", qPrintable(xmlName.toString()));
-#endif
-        if (xmlName == KML::Placemark) {
-            parsePlacemark();
-        } else if (xmlName == KML::Folder) {
-            parseFolder();
-        } else {
-            d->xml.skipCurrentElement();
-        }
-    }
-}
-
-void GenericKMLParser::parseFolder() noexcept
-{
-    while (d->xml.readNextStartElement()) {
-        const QStringRef xmlName = d->xml.name();
-#ifdef DEBUG
-        qDebug("GenericKMLParser::parseFolder: XML start element: %s", qPrintable(xmlName.toString()));
-#endif
-        if (xmlName == KML::Placemark) {
-            parsePlacemark();
-        } else if (xmlName == KML::Folder) {
-            parseFolder();
-        } else {
-            d->xml.skipCurrentElement();
-        }
-    }
-}
-
-void GenericKMLParser::parsePlacemark() noexcept
-{
-    while (d->xml.readNextStartElement()) {
-        const QStringRef xmlName = d->xml.name();
-#ifdef DEBUG
-        qDebug("GenericKMLParser::parsePlacemark: XML start element: %s", qPrintable(xmlName.toString()));
-#endif
-        if (xmlName == KML::Track) {
-            parseTrack();
-        } else {
-            d->xml.skipCurrentElement();
-        }
-    }
+    return QString();
 }

@@ -202,9 +202,9 @@ void ImportPluginBase::updateAircraftInfo() noexcept
     const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
     aircraftInfo.startDate = startDateTimeUtc.toLocalTime();
     aircraftInfo.endDate = endDateTimeUtc.toLocalTime();
-    int positionCount = aircraft.getPosition().count();
+    int positionCount = position.count();
     if (positionCount > 0) {
-        const PositionData &firstPositionData = aircraft.getPosition().getFirst();
+        const PositionData &firstPositionData = position.getFirst();
         aircraftInfo.initialAirspeed = Convert::feetPerSecondToKnots(firstPositionData.velocityBodyZ);
 
         // Add default waypoints (first and last position) in case none are present in the imported data
@@ -214,9 +214,9 @@ void ImportPluginBase::updateAircraftInfo() noexcept
 
             Waypoint departure;
             departure.identifier = Waypoint::CustomDepartureIdentifier;
-            departure.latitude = firstPositionData.latitude;
-            departure.longitude = firstPositionData.longitude;
-            departure.altitude = firstPositionData.altitude;
+            departure.latitude = static_cast<float>(firstPositionData.latitude);
+            departure.longitude = static_cast<float>(firstPositionData.longitude);
+            departure.altitude = static_cast<float>(firstPositionData.altitude);
             departure.localTime = startDateTimeUtc.toLocalTime();
             departure.zuluTime = startDateTimeUtc;
             departure.timestamp = firstPositionData.timestamp;
@@ -224,9 +224,9 @@ void ImportPluginBase::updateAircraftInfo() noexcept
 
             Waypoint arrival;
             arrival.identifier = Waypoint::CustomArrivalIdentifier;
-            arrival.latitude = lastPositionData.latitude;
-            arrival.longitude = lastPositionData.longitude;
-            arrival.altitude = lastPositionData.altitude;
+            arrival.latitude = static_cast<float>(lastPositionData.latitude);
+            arrival.longitude = static_cast<float>(lastPositionData.longitude);
+            arrival.altitude = static_cast<float>(lastPositionData.altitude);
             arrival.localTime = endDateTimeUtc.toLocalTime();
             arrival.zuluTime = endDateTimeUtc;
             arrival.timestamp = lastPositionData.timestamp;

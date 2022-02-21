@@ -27,7 +27,6 @@
 
 #include <QString>
 #include <QStringLiteral>
-#include <QCoreApplication>
 #include <QTimeZone>
 #include <QDateTime>
 #include <QXmlStreamReader>
@@ -39,6 +38,7 @@
 #include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/Waypoint.h"
 #include "KML.h"
+#include "AbstractKMLParser.h"
 #include "AbstractKMLTrackParser.h"
 
 class AbstractKMLTrackParserPrivate
@@ -57,7 +57,8 @@ public:
 // PUBLIC
 
 AbstractKMLTrackParser::AbstractKMLTrackParser(QXmlStreamReader &xmlStreamReader) noexcept
-    : d(std::make_unique<AbstractKMLTrackParserPrivate>(xmlStreamReader))
+    : AbstractKMLParser(xmlStreamReader),
+      d(std::make_unique<AbstractKMLTrackParserPrivate>(xmlStreamReader))
 {
 #ifdef DEBUG
     qDebug("AbstractKMLTrackParser::~AbstractKMLTrackParser: CREATED");
@@ -110,24 +111,24 @@ void AbstractKMLTrackParser::parseTrack() noexcept
                 TrackItem trackItem = std::make_tuple(timestamp, 0.0, 0.0, 0.0);
                 trackData.push_back(std::move(trackItem));
             } else {
-                d->xml.raiseError(QStringLiteral("Invalid timestamp."));
+                d->xml.raiseError("Invalid timestamp.");
             }
         } else if (xmlName == KML::coord) {
             const QString coordinatesText = d->xml.readElementText();
             const QStringList coordinates = coordinatesText.split(" ");
             if (coordinates.count() == 3) {
 
-                const double longitude = coordinates.at(0).toFloat(&ok);
+                const double longitude = coordinates.at(0).toDouble(&ok);
                 if (!ok) {
-                    d->xml.raiseError(QStringLiteral("Invalid longitude number."));
+                    d->xml.raiseError("Invalid longitude number.");
                 }
-                const double latitude = coordinates.at(1).toFloat(&ok);
+                const double latitude = coordinates.at(1).toDouble(&ok);
                 if (!ok) {
-                    d->xml.raiseError(QStringLiteral("Invalid latitude number."));
+                    d->xml.raiseError("Invalid latitude number.");
                 }
-                const double altitude = coordinates.at(2).toFloat(&ok);
+                const double altitude = coordinates.at(2).toDouble(&ok);
                 if (!ok) {
-                    d->xml.raiseError(QStringLiteral("Invalid altitude number."));
+                    d->xml.raiseError("Invalid altitude number.");
                 }
                 if (ok) {
                     std::get<1>(trackData[currentTrackDataIndex]) = latitude;
@@ -137,7 +138,7 @@ void AbstractKMLTrackParser::parseTrack() noexcept
                 }
 
             } else {
-                d->xml.raiseError(QStringLiteral("Invalid GPS coordinate."));
+                d->xml.raiseError("Invalid GPS coordinate.");
             }
         } else {
             d->xml.skipCurrentElement();

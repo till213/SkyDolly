@@ -43,16 +43,14 @@ public:
     virtual ~FlightAwareKMLParser() noexcept;
 
     virtual void parse() noexcept override;
-    virtual QString getDocumentName() const noexcept override;
     virtual QString getFlightNumber() const noexcept override;
 
 private:
     std::unique_ptr<FlightAwareKMLParserPrivate> d;
 
-    void parseName() noexcept;
-    void parseDocument() noexcept;
-    void parsePlacemark() noexcept;
+    void parsePlacemark() noexcept override;
     void parseWaypoint(const QString &name) noexcept;
+    void updateWaypoints() noexcept;
 };
 
 #endif // FLIGHTAWAREKMLPARSER_H

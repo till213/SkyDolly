@@ -206,6 +206,9 @@ void KMLImportPlugin::parseKML() noexcept
         parser->parse();
         d->firstDateTimeUtc = parser->getFirstDateTimeUtc();
         d->title = parser->getDocumentName();
+        if (d->title.isEmpty()) {
+            d->title = tr("KML import");
+        }
         d->flightNumber = parser->getFlightNumber();
     }
 }

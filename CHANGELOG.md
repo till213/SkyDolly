@@ -17,10 +17,11 @@
   * The initial heading is now calculated on the "first significant movement", compensating GPS inaccuracies (when the glider is standing still on the ground)
   * Date and time of turn points (waypoints) defined by the task list ("C records") are now updated with the actual flight time, based on the closest flown position
   * Environmental noise level (ENL) determines the engine state (on/off, propeller lever)
-- KML import plugin
-  * KML from flightradar24.com can now also be imported
-- CSV import plugin
-  * CSV from flightradar24.com can now also be imported
+- The KML import plugin now supports the following new KML flavours
+  * KML from flightradar24.com
+  * Generic KML documents containing at least one &lt;gx:Track&gt; element
+- CSV import plugin now supports the following new CSV flavours
+  * CSV from flightradar24.com
 
 ## 0.8.6
 

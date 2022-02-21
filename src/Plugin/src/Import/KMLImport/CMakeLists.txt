@@ -20,6 +20,7 @@ target_sources(${LIBRARY_NAME}
         src/KMLImportSettings.h src/KMLImportSettings.cpp
         src/KMLParserIntf.h
         src/KML.h
+        src/AbstractKMLParser.h src/AbstractKMLParser.cpp
         src/AbstractKMLTrackParser.h src/AbstractKMLTrackParser.cpp
         src/FlightAwareKMLParser.h src/FlightAwareKMLParser.cpp
         src/FlightRadar24KMLParser.h src/FlightRadar24KMLParser.cpp

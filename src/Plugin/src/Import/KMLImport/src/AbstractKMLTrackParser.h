@@ -31,11 +31,11 @@
 
 class QXmlStreamReader;
 
-#include "KMLParserIntf.h"
+#include "AbstractKMLParser.h"
 
 class AbstractKMLTrackParserPrivate;
 
-class AbstractKMLTrackParser : public KMLParserIntf
+class AbstractKMLTrackParser : public AbstractKMLParser
 {
 public:
     AbstractKMLTrackParser(QXmlStreamReader &xmlStreamReader) noexcept;
@@ -44,7 +44,7 @@ public:
     virtual QDateTime getFirstDateTimeUtc() const noexcept override;
 
 protected:
-    void parseTrack() noexcept;
+    void parseTrack() noexcept override;
 
 private:
     std::unique_ptr<AbstractKMLTrackParserPrivate> d;
