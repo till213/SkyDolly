@@ -203,6 +203,9 @@ void KMLImportPlugin::parseKML() noexcept
         break;
     }
     if (parser != nullptr) {
-        parser->parse(d->firstDateTimeUtc, d->title, d->flightNumber);
+        parser->parse();
+        d->firstDateTimeUtc = parser->getFirstDateTimeUtc();
+        d->title = parser->getDocumentName();
+        d->flightNumber = parser->getFlightNumber();
     }
 }

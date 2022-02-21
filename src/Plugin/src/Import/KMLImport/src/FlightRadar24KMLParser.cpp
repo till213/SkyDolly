@@ -39,7 +39,6 @@
 #include "../../../../../Model/src/FlightPlan.h"
 #include "../../../../../Model/src/Position.h"
 #include "../../../../../Model/src/PositionData.h"
-#include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/Waypoint.h"
 #include "KML.h"
 #include "FlightRadar24KMLParser.h"
@@ -69,7 +68,7 @@ public:
     }
 
     QXmlStreamReader &xml;
-    QString name;
+    QString documentName;
     QString flightNumber;
     std::int64_t currentWaypointTimestamp;
     QDateTime firstDateTimeUtc;
@@ -104,7 +103,7 @@ FlightRadar24KMLParser::~FlightRadar24KMLParser() noexcept
 // - <description> - HTML snippet containing speed and heading
 // - <Timestamp> timestamps
 // - <Point> - the coordinates of the track
-void FlightRadar24KMLParser::parse(QDateTime &firstDateTimeUtc, QString &name, QString &flightNumber) noexcept
+void FlightRadar24KMLParser::parse() noexcept
 {
     d->trackData.clear();
 
@@ -136,10 +135,21 @@ void FlightRadar24KMLParser::parse(QDateTime &firstDateTimeUtc, QString &name, Q
 
         position.upsertLast(std::move(positionData));
     }
+}
 
-    firstDateTimeUtc = d->firstDateTimeUtc;
-    name = d->name;
-    flightNumber = d->flightNumber;
+QString FlightRadar24KMLParser::getDocumentName() const noexcept
+{
+    return d->documentName;
+}
+
+QString FlightRadar24KMLParser::getFlightNumber() const noexcept
+{
+    return d->flightNumber;
+}
+
+QDateTime FlightRadar24KMLParser::getFirstDateTimeUtc() const noexcept
+{
+    return d->firstDateTimeUtc;
 }
 
 // PRIVATE
@@ -151,7 +161,7 @@ void FlightRadar24KMLParser::parseName() noexcept
         qDebug("FlightAwareKMLParser::readDocument: XML start element: %s", qPrintable(d->xml.name().toString()));
 #endif
         if (d->xml.name() == KML::name) {
-            d->name = d->xml.readElementText();
+            d->documentName = d->xml.readElementText();
         } else {
             d->xml.raiseError(QStringLiteral("The KML document does not have a name element."));
         }

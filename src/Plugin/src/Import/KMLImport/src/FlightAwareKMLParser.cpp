@@ -38,9 +38,9 @@
 #include "../../../../../Model/src/FlightPlan.h"
 #include "../../../../../Model/src/Position.h"
 #include "../../../../../Model/src/PositionData.h"
-#include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/Waypoint.h"
 #include "KML.h"
+#include "AbstractKMLTrackParser.h"
 #include "FlightAwareKMLParser.h"
 
 class FlightAwareKMLParserPrivate
@@ -54,7 +54,7 @@ public:
     }
 
     QXmlStreamReader &xml;
-    QString name;
+    QString documentName;
     QString flightNumber;
     std::int64_t currentWaypointTimestamp;
     QDateTime firstDateTimeUtc;
@@ -63,7 +63,8 @@ public:
 // PUBLIC
 
 FlightAwareKMLParser::FlightAwareKMLParser(QXmlStreamReader &xmlStreamReader) noexcept
-    : d(std::make_unique<FlightAwareKMLParserPrivate>(xmlStreamReader))
+    : AbstractKMLTrackParser(xmlStreamReader),
+      d(std::make_unique<FlightAwareKMLParserPrivate>(xmlStreamReader))
 {
 #ifdef DEBUG
     qDebug("FlightAwareKMLParser::~FlightAwareKMLParser: CREATED");
@@ -81,7 +82,7 @@ FlightAwareKMLParser::~FlightAwareKMLParser() noexcept
 // - <Point> Takeoff airpart
 // - <Point> Destination airport
 // - <gx:Track> timestamps (<when>) and positions (<gx:coord>)
-void FlightAwareKMLParser::parse(QDateTime &firstDateTimeUtc, QString &name, QString &flightNumber) noexcept
+void FlightAwareKMLParser::parse() noexcept
 {
     if (d->xml.readNextStartElement()) {
 #ifdef DEBUG
@@ -96,10 +97,16 @@ void FlightAwareKMLParser::parse(QDateTime &firstDateTimeUtc, QString &name, QSt
     } else {
         d->xml.raiseError(QStringLiteral("Error reading the XML data."));
     }
+}
 
-    firstDateTimeUtc = d->firstDateTimeUtc;
-    name = d->name;
-    flightNumber = d->flightNumber;
+QString FlightAwareKMLParser::getDocumentName() const noexcept
+{
+    return d->documentName;
+}
+
+QString FlightAwareKMLParser::getFlightNumber() const noexcept
+{
+    return d->flightNumber;
 }
 
 // PRIVATE
@@ -111,7 +118,7 @@ void FlightAwareKMLParser::parseName() noexcept
         qDebug("FlightAwareKMLParser::readDocument: XML start element: %s", qPrintable(d->xml.name().toString()));
 #endif
         if (d->xml.name() == KML::name) {
-            d->name = d->xml.readElementText();
+            d->documentName = d->xml.readElementText();
         } else {
             d->xml.raiseError(QStringLiteral("The KML document does not have a name element."));
         }
@@ -196,83 +203,5 @@ void FlightAwareKMLParser::parseWaypoint(const QString &icaoOrName) noexcept
         } else {
             d->xml.skipCurrentElement();
         }
-    }
-}
-
-void FlightAwareKMLParser::parseTrack() noexcept
-{
-    // Timestamp (msec), latitude (degrees), longitude (degrees), altitude (feet)
-    typedef std::tuple<std::int64_t, double, double, double> TrackItem;
-    // The track data may contain data with identical timestamps, so we first read
-    // all track data into this vector and only then "upsert" the position data
-    std::vector<TrackItem> trackData;
-    QDateTime currentDateTimeUtc;
-    currentDateTimeUtc.setTimeZone(QTimeZone::utc());
-
-    bool ok = true;
-    int currentTrackDataIndex = 0;
-    while (d->xml.readNextStartElement()) {
-        const QStringRef xmlName = d->xml.name();
-#ifdef DEBUG
-        qDebug("FlightAwareKMLParser::parseTrack: XML start element: %s", qPrintable(xmlName.toString()));
-#endif
-        if (xmlName == KML::when) {
-            const QString dateTimeText = d->xml.readElementText();
-            if (d->firstDateTimeUtc.isNull()) {
-                d->firstDateTimeUtc = QDateTime::fromString(dateTimeText, Qt::ISODate);
-                currentDateTimeUtc = d->firstDateTimeUtc;
-            } else {
-                currentDateTimeUtc = QDateTime::fromString(dateTimeText, Qt::ISODate);
-            }
-            if (currentDateTimeUtc.isValid()) {
-                const std::int64_t timestamp = d->firstDateTimeUtc.msecsTo(currentDateTimeUtc);
-                TrackItem trackItem = std::make_tuple(timestamp, 0.0, 0.0, 0.0);
-                trackData.push_back(std::move(trackItem));
-            } else {
-                d->xml.raiseError(QStringLiteral("Invalid timestamp."));
-            }
-        } else if (xmlName == KML::coord) {
-            const QString coordinatesText = d->xml.readElementText();
-            const QStringList coordinates = coordinatesText.split(" ");
-            if (coordinates.count() == 3) {
-
-                const double longitude = coordinates.at(0).toFloat(&ok);
-                if (!ok) {
-                    d->xml.raiseError(QStringLiteral("Invalid longitude number."));
-                }
-                const double latitude = coordinates.at(1).toFloat(&ok);
-                if (!ok) {
-                    d->xml.raiseError(QStringLiteral("Invalid latitude number."));
-                }
-                const double altitude = coordinates.at(2).toFloat(&ok);
-                if (!ok) {
-                    d->xml.raiseError(QStringLiteral("Invalid altitude number."));
-                }
-                if (ok) {
-                    std::get<1>(trackData[currentTrackDataIndex]) = latitude;
-                    std::get<2>(trackData[currentTrackDataIndex]) = longitude;
-                    std::get<3>(trackData[currentTrackDataIndex]) = Convert::metersToFeet(altitude);
-                    ++currentTrackDataIndex;
-                }
-
-            } else {
-                d->xml.raiseError(QStringLiteral("Invalid GPS coordinate."));
-            }
-        } else {
-            d->xml.skipCurrentElement();
-        }
-    }
-
-    // Now "upsert" the position data, taking duplicate timestamps into account
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    Position &position = flight.getUserAircraft().getPosition();
-    for (const TrackItem &trackItem : trackData) {
-        PositionData positionData;
-        positionData.timestamp = std::get<0>(trackItem);
-        positionData.latitude = std::get<1>(trackItem);
-        positionData.longitude = std::get<2>(trackItem);
-        positionData.altitude = std::get<3>(trackItem);
-
-        position.upsertLast(std::move(positionData));
     }
 }

@@ -27,21 +27,24 @@
 
 #include <memory>
 
-class QDateTime;
-class QString;
+#include <QDateTime>
+#include <QString>
+
 class QXmlStreamReader;
 
-#include "KMLParserIntf.h"
+#include "AbstractKMLTrackParser.h"
 
 class GenericKMLParserPrivate;
 
-class GenericKMLParser : public KMLParserIntf
+class GenericKMLParser : public AbstractKMLTrackParser
 {
 public:
     GenericKMLParser(QXmlStreamReader &xmlStreamReader) noexcept;
     virtual ~GenericKMLParser() noexcept;
 
-    virtual void parse(QDateTime &firstDateTimeUtc, QString &name, QString &flightNumber) noexcept override;
+    virtual void parse() noexcept override;
+    virtual QString getDocumentName() const noexcept override;
+    virtual QString getFlightNumber() const noexcept override;
 
 private:
     std::unique_ptr<GenericKMLParserPrivate> d;
@@ -49,7 +52,6 @@ private:
     void parseDocument() noexcept;
     void parseFolder() noexcept;
     void parsePlacemark() noexcept;
-    void parseTrack() noexcept;
 };
 
 #endif // GENERICKMLPARSER_H
