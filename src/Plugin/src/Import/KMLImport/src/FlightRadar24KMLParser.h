@@ -27,8 +27,9 @@
 
 #include <memory>
 
-class QDateTime;
-class QString;
+#include <QDateTime>
+#include <QString>
+
 class QXmlStreamReader;
 
 #include "KMLParserIntf.h"
@@ -41,11 +42,16 @@ public:
     FlightRadar24KMLParser(QXmlStreamReader &xmlStreamReader) noexcept;
     virtual ~FlightRadar24KMLParser() noexcept;
 
-    virtual void parse(QDateTime &firstDateTimeUtc, QDateTime &lastDateTimeUtc, QString &flightNumber) noexcept override;
+    virtual void parse() noexcept override;
+    virtual QString getDocumentName() const noexcept override;
+    virtual QString getFlightNumber() const noexcept override;
+    virtual QDateTime getFirstDateTimeUtc() const noexcept override;
 
 private:
     std::unique_ptr<FlightRadar24KMLParserPrivate> d;
 
+    void parseName() noexcept;
+    void parseDocument() noexcept;
     void parseFolder() noexcept;
     void parsePlacemark() noexcept;
     bool parseDescription() noexcept;

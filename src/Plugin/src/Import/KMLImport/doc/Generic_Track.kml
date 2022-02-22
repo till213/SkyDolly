@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+	<ExtendedData>
+		<Data name="GPSModelName">
+			<value>Dual XGPS160</value>
+		</Data>
+	</ExtendedData>
+	<Placemark>
+		<gx:Track>
+			<altitudeMode>absolute</altitudeMode>
+				<when>2022-01-22T13:16:02Z</when><gx:coord>2.349156592992094 48.85350602057439 1000.0</gx:coord>
+				<when>2022-01-22T13:16:03Z</when><gx:coord>2.347455887425838 48.85408971615021 1000.0</gx:coord>
+				<when>2022-01-22T13:16:04Z</when><gx:coord>2.348908743351823 48.85660215229586 1000.0</gx:coord>
+				<when>2022-01-22T13:16:05Z</when><gx:coord>2.34707309726357 48.85709975838466 1000.0</gx:coord>
+				<when>2022-01-22T13:16:06Z</when><gx:coord>2.345835833239356 48.8554003605462 1000.0</gx:coord>
+				<when>2022-01-22T13:16:07Z</when><gx:coord>2.34426972019071 48.85379624009235 1000.0</gx:coord>
+				<when>2022-01-22T13:16:08Z</when><gx:coord>2.346834559980204 48.85307210674409 1000.0</gx:coord>
+				<when>2022-01-22T13:16:09Z</when><gx:coord>2.348340461234619 48.85238643680679 1000.0</gx:coord>
+				<when>2022-01-22T13:16:10Z</when><gx:coord>2.348865966138631 48.85322159360348 1000.0</gx:coord>
+		</gx:Track>
+	</Placemark>
+</kml>

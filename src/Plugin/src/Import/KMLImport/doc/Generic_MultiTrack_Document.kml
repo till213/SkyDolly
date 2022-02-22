@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+	<Document>
+		<name>Multitrack with folders</name>
+		<Folder>
+			<name>The Kilimanjaro</name>
+			<Placemark>
+				<name>Route 1</name>
+				<gx:Track>
+					<altitudeMode>absolute</altitudeMode>
+					<when>2022-01-22T13:16:02Z</when>
+					<gx:coord>37.35780840999076 -3.064537604650274 10000.0</gx:coord>
+					<when>2022-01-22T13:16:13Z</when>
+					<gx:coord>38.35780840999076 -2.064537604650274 10000.0</gx:coord>
+				</gx:Track>
+			</Placemark>
+		</Folder>
+		<Folder>
+			<name>Different direction with different altitude</name>
+			<Placemark>
+				<name>Route 2</name>
+				<gx:Track>
+					<when>2022-01-22T13:16:02Z</when>
+					<gx:coord>37.35780840999076 -3.064537604650274 20000.0</gx:coord>
+					<when>2022-01-22T13:16:13Z</when>
+					<gx:coord>36.35780840999076 -4.064537604650274 20000.0</gx:coord>
+				</gx:Track>
+			</Placemark>
+		</Folder>
+	</Document>
+</kml>

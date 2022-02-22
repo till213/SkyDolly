@@ -25,6 +25,8 @@
 #ifndef SECONDARYFLIGHTCONTROLDATA_H
 #define SECONDARYFLIGHTCONTROLDATA_H
 
+#include <cstdint>
+
 #include <QtGlobal>
 #include <QFlags>
 
@@ -35,12 +37,12 @@
 struct MODEL_API SecondaryFlightControlData : public TimeVariableData
 {
     // Flaps & speed brakes
-    quint8 leadingEdgeFlapsLeftPercent;
-    quint8 leadingEdgeFlapsRightPercent;
-    quint8 trailingEdgeFlapsLeftPercent;
-    quint8 trailingEdgeFlapsRightPercent;
-    quint8 spoilersHandlePosition;
-    qint8 flapsHandleIndex;
+    std::uint8_t leadingEdgeFlapsLeftPercent;
+    std::uint8_t leadingEdgeFlapsRightPercent;
+    std::uint8_t trailingEdgeFlapsLeftPercent;
+    std::uint8_t trailingEdgeFlapsRightPercent;
+    std::uint8_t spoilersHandlePosition;
+    std::int8_t flapsHandleIndex;
 
     SecondaryFlightControlData() noexcept;
     SecondaryFlightControlData(SecondaryFlightControlData &&) = default;

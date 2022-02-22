@@ -32,6 +32,7 @@
 #include <QXmlStreamReader>
 #include <QDateTime>
 #include <QTimeZone>
+#include <QFlags>
 
 #include "../../../../../Kernel/src/Unit.h"
 #include "../../../../../Model/src/Logbook.h"
@@ -43,6 +44,7 @@
 #include "KMLParserIntf.h"
 #include "FlightAwareKMLParser.h"
 #include "FlightRadar24KMLParser.h"
+#include "GenericKMLParser.h"
 #include "KMLImportOptionWidget.h"
 #include "KMLImportPlugin.h"
 
@@ -56,7 +58,6 @@ public:
     Unit unit;
     KMLImportSettings importSettings;
     QDateTime firstDateTimeUtc;
-    QDateTime lastDateTimeUtc;
     QString flightNumber;
     QString title;
 
@@ -132,7 +133,7 @@ bool KMLImportPlugin::readFile(QFile &file) noexcept
 
 FlightAugmentation::Procedures KMLImportPlugin::getProcedures() const noexcept
 {
-    return FlightAugmentation::Procedures::All;
+    return FlightAugmentation::Procedure::All;
 }
 
 FlightAugmentation::Aspects KMLImportPlugin::getAspects() const noexcept
@@ -141,14 +142,17 @@ FlightAugmentation::Aspects KMLImportPlugin::getAspects() const noexcept
     switch (d->importSettings.m_format)
     {
     case KMLImportSettings::Format::FlightAware:
-        aspects = FlightAugmentation::Aspects::All;
+        aspects = FlightAugmentation::Aspect::All;
         break;
     case KMLImportSettings::Format::FlightRadar24:
         // Do not augment heading and velocity
-        aspects = FlightAugmentation::Aspects::Pitch | FlightAugmentation::Aspects::Bank | FlightAugmentation::Aspects::Engine | FlightAugmentation::Aspects::Light;
+        aspects = FlightAugmentation::Aspect::All;
+        aspects.setFlag(FlightAugmentation::Aspect::Heading, false);
+        aspects.setFlag(FlightAugmentation::Aspect::Velocity, false);
+        return aspects;
         break;
     default:
-        aspects = FlightAugmentation::Aspects::All;
+        aspects = FlightAugmentation::Aspect::All;
         break;
     }
 
@@ -170,10 +174,10 @@ void KMLImportPlugin::updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noe
     aircraftInfo.flightNumber = d->flightNumber;
 }
 
-void KMLImportPlugin::updateExtendedFlightInfo(Flight &flight) noexcept
+void KMLImportPlugin::updateExtendedFlightInfo([[maybe_unused]] Flight &flight) noexcept
 {}
 
-void KMLImportPlugin::updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept
+void KMLImportPlugin::updateExtendedFlightCondition([[maybe_unused]] FlightCondition &flightCondition) noexcept
 {}
 
 // PROTECTED SLOTS
@@ -187,37 +191,6 @@ void KMLImportPlugin::onRestoreDefaultSettings() noexcept
 
 void KMLImportPlugin::parseKML() noexcept
 {
-    if (d->xml.readNextStartElement()) {
-#ifdef DEBUG
-        qDebug("KMLImportPlugin::readKML: XML start element: %s", qPrintable(d->xml.name().toString()));
-#endif
-        if (d->xml.name() == QStringLiteral("Document")) {
-            parseName();
-            parseDocument();
-        } else {
-            d->xml.raiseError(QStringLiteral("The file is not a KML document."));
-        }
-    } else {
-        d->xml.raiseError(QStringLiteral("Error reading the XML data."));
-    }
-}
-
-void KMLImportPlugin::parseName() noexcept
-{
-    if (d->xml.readNextStartElement()) {
-#ifdef DEBUG
-        qDebug("KMLImportPlugin::readDocument: XML start element: %s", qPrintable(d->xml.name().toString()));
-#endif
-        if (d->xml.name() == QStringLiteral("name")) {
-            d->title = d->xml.readElementText();
-        } else {
-            d->xml.raiseError(QStringLiteral("The KML document does not have a name element."));
-        }
-    }
-}
-
-void KMLImportPlugin::parseDocument() noexcept
-{
     std::unique_ptr<KMLParserIntf> parser;
     switch (d->importSettings.m_format) {
     case KMLImportSettings::Format::FlightAware:
@@ -226,11 +199,20 @@ void KMLImportPlugin::parseDocument() noexcept
     case KMLImportSettings::Format::FlightRadar24:
         parser = std::make_unique<FlightRadar24KMLParser>(d->xml);
         break;
+    case KMLImportSettings::Format::Generic:
+        parser = std::make_unique<GenericKMLParser>(d->xml);
+        break;
     default:
         parser = nullptr;
         break;
     }
     if (parser != nullptr) {
-        parser->parse(d->firstDateTimeUtc, d->lastDateTimeUtc, d->flightNumber);
+        parser->parse();
+        d->firstDateTimeUtc = parser->getFirstDateTimeUtc();
+        d->title = parser->getDocumentName();
+        if (d->title.isEmpty()) {
+            d->title = tr("KML import");
+        }
+        d->flightNumber = parser->getFlightNumber();
     }
 }

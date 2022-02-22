@@ -22,22 +22,32 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLPARSERINTF_H
-#define KMLPARSERINTF_H
+#ifndef GENERICKMLPARSER_H
+#define GENERICKMLPARSER_H
+
+#include <memory>
 
 #include <QDateTime>
+#include <QString>
 
-class QString;
+class QXmlStreamReader;
 
-class KMLParserIntf
+#include "AbstractKMLTrackParser.h"
+
+class GenericKMLParserPrivate;
+
+class GenericKMLParser : public AbstractKMLTrackParser
 {
 public:
-    virtual ~KMLParserIntf() = default;
+    GenericKMLParser(QXmlStreamReader &xmlStreamReader) noexcept;
+    virtual ~GenericKMLParser() noexcept;
 
-    virtual void parse() noexcept = 0;
-    virtual QString getDocumentName() const noexcept = 0;
-    virtual QString getFlightNumber() const noexcept = 0;
-    virtual QDateTime getFirstDateTimeUtc() const noexcept = 0;
+    virtual void parse() noexcept override;
+    virtual QString getFlightNumber() const noexcept override;
+
+private:
+    std::unique_ptr<GenericKMLParserPrivate> d;
+
 };
 
-#endif // KMLPARSERINTF_H
+#endif // GENERICKMLPARSER_H

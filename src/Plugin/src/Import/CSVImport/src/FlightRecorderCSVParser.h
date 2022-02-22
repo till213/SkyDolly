@@ -22,22 +22,42 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLPARSERINTF_H
-#define KMLPARSERINTF_H
+#ifndef FLIGHTRECORDERCSVPARSER_H
+#define FLIGHTRECORDERCSVPARSER_H
 
-#include <QDateTime>
+#include <memory>
 
+#include <QByteArray>
+#include <QList>
+
+class QFile;
+class QDateTime;
 class QString;
 
-class KMLParserIntf
+#include "CSVParserIntf.h"
+
+struct EngineData;
+struct AircraftHandleData;
+class FlightRecorderCSVParserPrivate;
+
+class FlightRecorderCSVParser : public CSVParserIntf
 {
 public:
-    virtual ~KMLParserIntf() = default;
+    FlightRecorderCSVParser() noexcept;
+    virtual ~FlightRecorderCSVParser() noexcept;
 
-    virtual void parse() noexcept = 0;
-    virtual QString getDocumentName() const noexcept = 0;
-    virtual QString getFlightNumber() const noexcept = 0;
-    virtual QDateTime getFirstDateTimeUtc() const noexcept = 0;
+    virtual bool parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept override;
+
+private:
+    std::unique_ptr<FlightRecorderCSVParserPrivate> d;
+
+    bool parseHeader(QFile &file) noexcept;
+    bool parseData(QFile &file) noexcept;
+    inline bool importTimestamp(const QList<QByteArray> &values, bool firstRow, std::int64_t &timestamp, std::int64_t &timestampDelta) noexcept;
+    template <typename T>
+    inline bool importValue(const QList<QByteArray> &values, const char *name, int &index, T &value) noexcept;
+    inline void initEngineDefaultValues(EngineData &engineData) noexcept;
+    inline void initAircraftHandleDefaultValues(AircraftHandleData &aircraftHandle) noexcept;
 };
 
-#endif // KMLPARSERINTF_H
+#endif // FLIGHTRECORDERCSVPARSER_H

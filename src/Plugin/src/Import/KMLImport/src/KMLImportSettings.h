@@ -40,6 +40,7 @@ public:
     enum struct Format {
         FlightAware = 0,
         FlightRadar24 = 1,
+        Generic = 2
     };
 
     KMLImportSettings() noexcept;

@@ -670,7 +670,7 @@ inline bool SkyDollyCSVParser::importLightData(const QList<QByteArray> &headers,
     return ok;
 }
 
-inline bool SkyDollyCSVParser::importTimestamp(const QList<QByteArray> &values, int columnIndex, bool firstRow, std::int64_t &timestamp, std::int64_t &timestampDelta)
+inline bool SkyDollyCSVParser::importTimestamp(const QList<QByteArray> &values, int columnIndex, bool firstRow, std::int64_t &timestamp, std::int64_t &timestampDelta) noexcept
 {
     bool ok;
     timestamp = values.at(columnIndex).toLongLong(&ok);
@@ -687,4 +687,3 @@ inline bool SkyDollyCSVParser::importTimestamp(const QList<QByteArray> &values, 
     }
     return ok;
 }
-

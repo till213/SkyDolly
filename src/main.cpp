@@ -68,9 +68,6 @@ int main(int argc, char *argv[])
        filePath = args.at(1);
     }
     MainWindow mainWindow(filePath);
-
-
-
     mainWindow.show();
     const int res = application.exec();
     destroySingletons();

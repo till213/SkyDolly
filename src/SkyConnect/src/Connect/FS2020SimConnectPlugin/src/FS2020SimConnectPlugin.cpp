@@ -237,9 +237,9 @@ void FS2020SimConnectPlugin::onStopRecording() noexcept
         Waypoint departureWaypoint;
         PositionData position = userAircraft.getPositionConst().getFirst();
         departureWaypoint.identifier = Waypoint::CustomDepartureIdentifier;
-        departureWaypoint.latitude = position.latitude;
-        departureWaypoint.longitude = position.longitude;
-        departureWaypoint.altitude = position.altitude;
+        departureWaypoint.latitude = static_cast<float>(position.latitude);
+        departureWaypoint.longitude = static_cast<float>(position.longitude);
+        departureWaypoint.altitude = static_cast<float>(position.altitude);
         departureWaypoint.localTime = flight.getFlightConditionConst().startLocalTime;
         departureWaypoint.zuluTime = flight.getFlightConditionConst().startZuluTime;
         departureWaypoint.timestamp = 0;
@@ -248,9 +248,9 @@ void FS2020SimConnectPlugin::onStopRecording() noexcept
         Waypoint arrivalWaypoint;
         position = userAircraft.getPositionConst().getLast();
         arrivalWaypoint.identifier = Waypoint::CustomArrivalIdentifier;
-        arrivalWaypoint.latitude = position.latitude;
-        arrivalWaypoint.longitude = position.longitude;
-        arrivalWaypoint.altitude = position.altitude;
+        arrivalWaypoint.latitude = static_cast<float>(position.latitude);
+        arrivalWaypoint.longitude = static_cast<float>(position.longitude);
+        arrivalWaypoint.altitude = static_cast<float>(position.altitude);
         arrivalWaypoint.localTime = d->currentLocalDateTime;
         arrivalWaypoint.zuluTime = d->currentZuluDateTime;
         arrivalWaypoint.timestamp = qMax(getCurrentTimestamp(), departureWaypoint.timestamp + 1);

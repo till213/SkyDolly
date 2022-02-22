@@ -25,6 +25,8 @@
 #ifndef AIRCRAFTHANDLEDATA_H
 #define AIRCRAFTHANDLEDATA_H
 
+#include <cstdint>
+
 #include <QtGlobal>
 #include <QFlags>
 #include "TimeVariableData.h"
@@ -32,15 +34,15 @@
 
 struct MODEL_API AircraftHandleData : public TimeVariableData
 {
-    qint16 brakeLeftPosition;
-    qint16 brakeRightPosition;
+    std::int16_t brakeLeftPosition;
+    std::int16_t brakeRightPosition;
     // Implementation note: the water rudder can also have negative (-100.0) values,
-    // hence hence the type qint16 (position) which also supports negative values
-    qint16 waterRudderHandlePosition;
-    quint8 tailhookPosition;
-    quint8 canopyOpen;
-    quint8 leftWingFolding;
-    quint8 rightWingFolding;
+    // hence hence the type std::int16_t (position) which also supports negative values
+    std::int16_t waterRudderHandlePosition;
+    std::uint8_t tailhookPosition;
+    std::uint8_t canopyOpen;
+    std::uint8_t leftWingFolding;
+    std::uint8_t rightWingFolding;
     bool gearHandlePosition;
     bool smokeEnabled;
 

@@ -27,6 +27,7 @@
 
 #include <QFile>
 #include <QFileInfo>
+#include <QFlags>
 
 #include "../../../../../Kernel/src/Unit.h"
 #include "../../../../../Model/src/Logbook.h"
@@ -34,6 +35,7 @@
 #include "CSVParserIntf.h"
 #include "SkyDollyCSVParser.h"
 #include "FlightRadar24CSVParser.h"
+#include "FlightRecorderCSVParser.h"
 #include "CSVImportSettings.h"
 #include "CSVImportOptionWidget.h"
 #include "CSVImportPlugin.h"
@@ -107,6 +109,9 @@ bool CSVImportPlugin::readFile(QFile &file) noexcept
     case CSVImportSettings::Format::FlightRadar24:
         parser = std::make_unique<FlightRadar24CSVParser>();
         break;
+    case CSVImportSettings::Format::FlightRecorder:
+        parser = std::make_unique<FlightRecorderCSVParser>();
+        break;
     default:
         parser = nullptr;
         ok = false;
@@ -120,7 +125,7 @@ bool CSVImportPlugin::readFile(QFile &file) noexcept
 
 FlightAugmentation::Procedures CSVImportPlugin::getProcedures() const noexcept
 {
-    return FlightAugmentation::Procedures::None;
+    return FlightAugmentation::Procedure::None;
 }
 
 FlightAugmentation::Aspects CSVImportPlugin::getAspects() const noexcept
@@ -129,14 +134,19 @@ FlightAugmentation::Aspects CSVImportPlugin::getAspects() const noexcept
     switch (d->importSettings.m_format)
     {
     case CSVImportSettings::Format::SkyDolly:
-        aspects = FlightAugmentation::Aspects::None;
+        aspects = FlightAugmentation::Aspect::None;
         break;
     case CSVImportSettings::Format::FlightRadar24:
         // Do not augment heading and velocity
-        aspects = FlightAugmentation::Aspects::Pitch | FlightAugmentation::Aspects::Bank | FlightAugmentation::Aspects::Engine | FlightAugmentation::Aspects::Light;
+        aspects = FlightAugmentation::Aspect::All;
+        aspects.setFlag(FlightAugmentation::Aspect::Heading, false);
+        aspects.setFlag(FlightAugmentation::Aspect::Velocity, false);
+        break;
+    case CSVImportSettings::Format::FlightRecorder:
+        aspects = FlightAugmentation::Aspect::None;
         break;
     default:
-        aspects = FlightAugmentation::Aspects::All;
+        aspects = FlightAugmentation::Aspect::All;
         break;
     }
 
@@ -150,7 +160,24 @@ QDateTime CSVImportPlugin::getStartDateTimeUtc() noexcept
 
 QString CSVImportPlugin::getTitle() const noexcept
 {
-    return tr("CSV import");
+    QString title;
+    switch (d->importSettings.m_format)
+    {
+    case CSVImportSettings::Format::SkyDolly:
+        title = tr("Sky Dolly CSV import");
+        break;
+    case CSVImportSettings::Format::FlightRadar24:
+        // Do not augment heading and velocity
+        title = tr("Flightradar24 CSV import");
+        break;
+    case CSVImportSettings::Format::FlightRecorder:
+        title = tr("Flight Recorder CSV import");
+        break;
+    default:
+        title = tr("CSV import");
+        break;
+    }
+    return title;
 }
 
 void CSVImportPlugin::updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept

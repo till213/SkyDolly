@@ -65,8 +65,8 @@ public:
     QString formatVelocityInFeetPerSecond(double velocity) noexcept;
     QString formatVelocityInRadians(double velocity) noexcept;
 
-    QString formatPosition(qint16 position) noexcept;
-    QString formatPercent(quint8 percent) noexcept;
+    QString formatPosition(std::int16_t position) noexcept;
+    QString formatPercent(std::uint8_t percent) noexcept;
 
     QString formatKnots(double velocity) noexcept;
 

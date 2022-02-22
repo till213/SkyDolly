@@ -27,9 +27,6 @@
 
 #include <QString>
 #include <QStringLiteral>
-#include <QCoreApplication>
-#include <QTimeZone>
-#include <QDateTime>
 #include <QXmlStreamReader>
 
 #include "../../../../../Kernel/src/Convert.h"
@@ -38,29 +35,27 @@
 #include "../../../../../Model/src/FlightPlan.h"
 #include "../../../../../Model/src/Position.h"
 #include "../../../../../Model/src/PositionData.h"
-#include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/Waypoint.h"
+#include "KML.h"
+#include "AbstractKMLTrackParser.h"
 #include "FlightAwareKMLParser.h"
 
 class FlightAwareKMLParserPrivate
 {
 public:
     FlightAwareKMLParserPrivate(QXmlStreamReader &xmlStreamReader) noexcept
-        : xml(xmlStreamReader),
-          currentWaypointTimestamp(0)
+        : xml(xmlStreamReader)
     {}
 
     QXmlStreamReader &xml;
     QString flightNumber;
-    std::int64_t currentWaypointTimestamp;
-    QDateTime firstDateTimeUtc;
-    QDateTime currentDateTimeUtc;
 };
 
 // PUBLIC
 
 FlightAwareKMLParser::FlightAwareKMLParser(QXmlStreamReader &xmlStreamReader) noexcept
-    : d(std::make_unique<FlightAwareKMLParserPrivate>(xmlStreamReader))
+    : AbstractKMLTrackParser(xmlStreamReader),
+      d(std::make_unique<FlightAwareKMLParserPrivate>(xmlStreamReader))
 {
 #ifdef DEBUG
     qDebug("FlightAwareKMLParser::~FlightAwareKMLParser: CREATED");
@@ -78,42 +73,38 @@ FlightAwareKMLParser::~FlightAwareKMLParser() noexcept
 // - <Point> Takeoff airpart
 // - <Point> Destination airport
 // - <gx:Track> timestamps (<when>) and positions (<gx:coord>)
-void FlightAwareKMLParser::parse(QDateTime &firstDateTimeUtc, QDateTime &lastDateTimeUtc, QString &flightNumber) noexcept
+void FlightAwareKMLParser::parse() noexcept
 {
-    while (d->xml.readNextStartElement()) {
-        const QStringRef xmlName = d->xml.name();
-        if (xmlName == QStringLiteral("Placemark")) {
-            parsePlacemark();
-        } else {
-            d->xml.skipCurrentElement();
-        }
-    }
-    firstDateTimeUtc = d->firstDateTimeUtc;
-    lastDateTimeUtc = d->currentDateTimeUtc;
-    flightNumber = d->flightNumber;
+    parseKML();
+    updateWaypoints();
+}
+
+QString FlightAwareKMLParser::getFlightNumber() const noexcept
+{
+    return d->flightNumber;
 }
 
 // PRIVATE
 
 void FlightAwareKMLParser::parsePlacemark() noexcept
 {
-    QString name;
+    QString placemarkName;
     while (d->xml.readNextStartElement()) {
         const QStringRef xmlName = d->xml.name();
 #ifdef DEBUG
         qDebug("FlightAwareKMLParser::parsePlacemark: XML start element: %s", qPrintable(xmlName.toString()));
 #endif
-        if (xmlName == QStringLiteral("name")) {
-            name = d->xml.readElementText();
-            if (name.endsWith(QStringLiteral(" Airport"))) {
+        if (xmlName == KML::name) {
+            placemarkName = d->xml.readElementText();
+            if (placemarkName.endsWith(QStringLiteral(" Airport"))) {
                 // Extract the 4 letter ICAO code
-                name = name.left(4);
+                placemarkName = placemarkName.left(4);
             }
-        } else if (xmlName == QStringLiteral("Point")) {
-            parseWaypoint(name);
-        } else if (xmlName == QStringLiteral("Track")) {
+        } else if (xmlName == KML::Point) {
+            parseWaypoint(placemarkName);
+        } else if (xmlName == KML::Track) {
             // The track contains the flight number
-            d->flightNumber = name;
+            d->flightNumber = placemarkName;
             parseTrack();
         } else {
             d->xml.skipCurrentElement();
@@ -136,27 +127,26 @@ void FlightAwareKMLParser::parseWaypoint(const QString &icaoOrName) noexcept
                 Waypoint waypoint;
                 waypoint.longitude = coordinates.at(0).toFloat(&ok);
                 if (!ok) {
-                    d->xml.raiseError(QStringLiteral("Invalid longitude number."));
+                    d->xml.raiseError("Invalid longitude number.");
                 }
                 waypoint.latitude = coordinates.at(1).toFloat(&ok);
                 if (!ok) {
-                    d->xml.raiseError(QStringLiteral("Invalid latitude number."));
+                    d->xml.raiseError("Invalid latitude number.");
                 }
                 waypoint.altitude = coordinates.at(2).toFloat(&ok);
                 if (!ok) {
-                    d->xml.raiseError(QStringLiteral("Invalid altitude number."));
+                    d->xml.raiseError("Invalid altitude number.");
                 }
                 waypoint.identifier = icaoOrName;
-                waypoint.timestamp = d->currentWaypointTimestamp;
                 // The actual timestamps of the waypoints are later updated
-                // with the flight duration, once the entire gx:Track data
-                // has been parsed
-                ++d->currentWaypointTimestamp;
+                // in updateWaypoints with the actual timestamp, once the entire
+                // gx:Track data has been parsed
+                waypoint.timestamp = TimeVariableData::InvalidTime;
 
                 Flight &flight = Logbook::getInstance().getCurrentFlight();
                 flight.getUserAircraft().getFlightPlan().add(std::move(waypoint));
             } else {
-                d->xml.raiseError(QStringLiteral("Invalid GPS coordinate."));
+                d->xml.raiseError("Invalid GPS coordinate.");
             }
         } else {
             d->xml.skipCurrentElement();
@@ -164,82 +154,47 @@ void FlightAwareKMLParser::parseWaypoint(const QString &icaoOrName) noexcept
     }
 }
 
-void FlightAwareKMLParser::parseTrack() noexcept
+void FlightAwareKMLParser::updateWaypoints() noexcept
 {
-    // Timestamp (msec), latitude (degrees), longitude (degrees), altitude (feet)
-    typedef std::tuple<std::int64_t, double, double, double> TrackItem;
-    // The track data may contain data with identical timestamps, so we first read
-    // all track data into this vector and only then "upsert" the position data
-    std::vector<TrackItem> trackData;
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    Aircraft &aircraft = flight.getUserAircraft();
 
-    bool ok = true;
-    int currentTrackDataIndex = 0;
-    while (d->xml.readNextStartElement()) {
-        const QStringRef xmlName = d->xml.name();
-#ifdef DEBUG
-        qDebug("FlightAwareKMLParser::parseTrack: XML start element: %s", qPrintable(xmlName.toString()));
-#endif
-        if (xmlName == QStringLiteral("when")) {
-            const QString dateTimeText = d->xml.readElementText();
-            if (d->firstDateTimeUtc.isNull()) {
-                d->firstDateTimeUtc = QDateTime::fromString(dateTimeText, Qt::ISODate);
-                d->currentDateTimeUtc = d->firstDateTimeUtc;
-            } else {
-                d->currentDateTimeUtc = QDateTime::fromString(dateTimeText, Qt::ISODate);
-            }
-            if (d->currentDateTimeUtc.isValid()) {
-                const std::int64_t timestamp = d->firstDateTimeUtc.msecsTo(d->currentDateTimeUtc);
-                TrackItem trackItem = std::make_tuple(timestamp, 0.0, 0.0, 0.0);
-                trackData.push_back(std::move(trackItem));
-            } else {
-                d->xml.raiseError(QStringLiteral("Invalid timestamp."));
-            }
-        } else if (xmlName == QStringLiteral("coord")) {
-            const QString coordinatesText = d->xml.readElementText();
-            const QStringList coordinates = coordinatesText.split(" ");
-            if (coordinates.count() == 3) {
+    int positionCount = aircraft.getPosition().count();
+    if (positionCount > 0) {
+        const PositionData &firstPositionData = aircraft.getPosition().getFirst();
 
-                const double longitude = coordinates.at(0).toFloat(&ok);
-                if (!ok) {
-                    d->xml.raiseError(QStringLiteral("Invalid longitude number."));
-                }
-                const double latitude = coordinates.at(1).toFloat(&ok);
-                if (!ok) {
-                    d->xml.raiseError(QStringLiteral("Invalid latitude number."));
-                }
-                const double altitude = coordinates.at(2).toFloat(&ok);
-                if (!ok) {
-                    d->xml.raiseError(QStringLiteral("Invalid altitude number."));
-                }
-                if (ok) {
-                    std::get<1>(trackData[currentTrackDataIndex]) = latitude;
-                    std::get<2>(trackData[currentTrackDataIndex]) = longitude;
-                    std::get<3>(trackData[currentTrackDataIndex]) = Convert::metersToFeet(altitude);
-                    ++currentTrackDataIndex;
-                }
+        int waypointCount = aircraft.getFlightPlan().count();
+        if (waypointCount > 0) {
 
-            } else {
-                d->xml.raiseError(QStringLiteral("Invalid GPS coordinate."));
+            const Position &position = aircraft.getPositionConst();
+            const PositionData firstPositionData = position.getFirst();
+            const PositionData lastPositionData = position.getLast();
+            const QDateTime startDateTimeUtc = getFirstDateTimeUtc();
+            const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
+
+            Waypoint &departure = aircraft.getFlightPlan()[0];
+            departure.timestamp = firstPositionData.timestamp;
+            departure.altitude = firstPositionData.altitude;
+            departure.localTime = getFirstDateTimeUtc().toLocalTime();
+            departure.zuluTime = getFirstDateTimeUtc();
+
+            if (waypointCount > 1) {
+                const PositionData &lastPositionData = aircraft.getPosition().getLast();
+                Waypoint &arrival = aircraft.getFlightPlan()[1];
+                arrival.timestamp = lastPositionData.timestamp;
+                arrival.altitude = lastPositionData.altitude;
+                arrival.localTime = endDateTimeUtc.toLocalTime();
+                arrival.zuluTime = endDateTimeUtc;
             }
-        } else {
-            d->xml.skipCurrentElement();
+        }
+    } else {
+        // No positions - use timestamps 0, 1, 2, ...
+        std::int64_t currentWaypointTimestamp = 0;
+        for (Waypoint &waypoint : aircraft.getFlightPlan()) {
+            waypoint.timestamp = currentWaypointTimestamp;
+            ++currentWaypointTimestamp;
+
         }
     }
-
-    // Now "upsert" the position data, taking duplicate timestamps into account
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    Position &position = flight.getUserAircraft().getPosition();
-    for (const TrackItem &trackItem : trackData) {
-        PositionData positionData;
-        positionData.timestamp = std::get<0>(trackItem);
-        positionData.latitude = std::get<1>(trackItem);
-        positionData.longitude = std::get<2>(trackItem);
-        positionData.altitude = std::get<3>(trackItem);
-
-        position.upsertLast(std::move(positionData));
-    }
-
-    // Set timezone
-    d->firstDateTimeUtc.setTimeZone(QTimeZone::utc());
-    d->currentDateTimeUtc.setTimeZone(QTimeZone::utc());
 }
+
