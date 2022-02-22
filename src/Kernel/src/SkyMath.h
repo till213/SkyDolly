@@ -29,6 +29,7 @@
 #include <utility>
 #include <cmath>
 #include <cstdint>
+#include <cstdint>
 
 #include <QtGlobal>
 
@@ -45,16 +46,16 @@ namespace SkyMath
     typedef std::pair<double, double> Coordinate;
 
     /*! The minimal position value, such that value 0 is exaclty in the middle of the entire range. */
-    constexpr double PositionMin16 = static_cast<double>(-std::numeric_limits<qint16>::max());
+    constexpr double PositionMin16 = static_cast<double>(-std::numeric_limits<std::int16_t>::max());
     /*! The maximum position value, such that value 0 is exaclty in the middle of the entire range. */
-    constexpr double PositionMax16 = static_cast<double>( std::numeric_limits<qint16>::max());
+    constexpr double PositionMax16 = static_cast<double>( std::numeric_limits<std::int16_t>::max());
     /*! The range (number of values) for position values. */
     constexpr double PositionRange16 = PositionMax16 - PositionMin16;
 
     /*! The minimal percent value. */
-    constexpr double PercentMin8 = static_cast<double>(std::numeric_limits<quint8>::min());
+    constexpr double PercentMin8 = static_cast<double>(std::numeric_limits<std::uint8_t>::min());
     /*! The maximum percent value. */
-    constexpr double PercentMax8 = static_cast<double>(std::numeric_limits<quint8>::max());
+    constexpr double PercentMax8 = static_cast<double>(std::numeric_limits<std::uint8_t>::max());
     /*! The range (number of values) for percent values. */
     constexpr double PercentRange8 = PercentMax8;
 
@@ -278,9 +279,9 @@ namespace SkyMath
      *        the position value in the range [-1.0, 1.0]
      * \return the mapped discrete, signed 16bit value [PositionMin16, PositionMax16] (note: symmetric range)
      */
-    inline qint16 fromPosition(double position) noexcept
+    inline std::int16_t fromPosition(double position) noexcept
     {
-        return static_cast<qint16>(qRound(PositionMin16 + ((position + 1.0) * PositionRange16) / 2.0));
+        return static_cast<std::int16_t>(qRound(PositionMin16 + ((position + 1.0) * PositionRange16) / 2.0));
     }
 
     /*!
@@ -290,7 +291,7 @@ namespace SkyMath
      *        the discrete signed 16bit position value in the range [PositionMin16, PositionMax16] (note: symmetric range)
      * \return the position mapped onto a double value [-1.0, 1.0]
      */
-    inline double toPosition(qint16 position16) noexcept
+    inline double toPosition(std::int16_t position16) noexcept
     {
         return 2.0 * (static_cast<double>(position16) - PositionMin16) / PositionRange16 - 1.0;
     }
@@ -302,9 +303,9 @@ namespace SkyMath
      *        the percent value in the range [0.0, 100.0]
      * \return the mapped discrete, unsigned 8bit value [0, PercentMax8]
      */
-    inline quint8 fromPercent(double percent) noexcept
+    inline std::uint8_t fromPercent(double percent) noexcept
     {
-        return static_cast<quint8>(qRound(percent * PercentRange8 / 100.0));
+        return static_cast<std::uint8_t>(qRound(percent * PercentRange8 / 100.0));
     }
 
     /*!
@@ -314,7 +315,7 @@ namespace SkyMath
      *        the discrete unsigned 8bit percent value in the range [0, PercentMax8]
      * \return the percent mapped onto a double value [0, 100.0]
      */
-    inline double toPercent(quint8 percent8) noexcept
+    inline double toPercent(std::uint8_t percent8) noexcept
     {
         return static_cast<double>(100.0 * percent8 / PercentRange8);
     }

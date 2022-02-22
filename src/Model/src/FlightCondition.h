@@ -25,6 +25,8 @@
 #ifndef FLIGHTCONDITION_H
 #define FLIGHTCONDITION_H
 
+#include <cstdint>
+
 #include <QtGlobal>
 #include <QDateTime>
 
@@ -42,8 +44,8 @@ struct MODEL_API FlightCondition
     SimType::PrecipitationState precipitationState;
     float visibility;
     float seaLevelPressure;
-    quint8 pitotIcingPercent;
-    quint8 structuralIcingPercent;
+    std::uint8_t pitotIcingPercent;
+    std::uint8_t structuralIcingPercent;
     bool inClouds;
     QDateTime startLocalTime;
     QDateTime startZuluTime;

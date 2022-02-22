@@ -22,12 +22,14 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <cstdint>
+
 #include "TimeVariableData.h"
 #include "EngineData.h"
 
 // PUBLIC
 
-EngineData::EngineData(qint16 theThrottleLeverPosition1, qint16 thePropellerLeverPosition1, quint8 theMixtureLeverPosition1, quint8 theCowlFlapPosition1) noexcept
+EngineData::EngineData(std::int16_t theThrottleLeverPosition1, std::int16_t thePropellerLeverPosition1, std::uint8_t theMixtureLeverPosition1, std::uint8_t theCowlFlapPosition1) noexcept
     : TimeVariableData(),
       throttleLeverPosition1(theThrottleLeverPosition1),
       throttleLeverPosition2(0),
