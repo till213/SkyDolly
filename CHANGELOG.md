@@ -18,10 +18,11 @@
   * Date and time of turn points (waypoints) defined by the task list ("C records") are now updated with the actual flight time, based on the closest flown position
   * Environmental noise level (ENL) determines the engine state (on/off, propeller lever)
 - The KML import plugin now supports the following new KML flavours
-  * KML from flightradar24.com
+  * KML from [flightradar24.com](https://www.flightradar24.com/)
   * Generic KML documents containing at least one &lt;gx:Track&gt; element
 - CSV import plugin now supports the following new CSV flavours
-  * CSV from flightradar24.com
+  * CSV from [flightradar24.com](https://www.flightradar24.com/)
+  * CSV from [Flight Recorder](https://flightsim.to/file/8163/flight-recorder)
 
 ## 0.8.6
 
@@ -45,7 +46,7 @@
 
 ### New Features
 
-- KML import plugin which imports KML flight data from flightaware.com
+- KML import plugin which imports KML flight data from [flightaware.com](https://flightaware.com)
 
 ### Bug Fixes
 
