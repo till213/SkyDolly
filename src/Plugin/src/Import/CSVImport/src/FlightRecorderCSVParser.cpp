@@ -38,6 +38,7 @@
 
 #include "../../../../../Kernel/src/Convert.h"
 #include "../../../../../Kernel/src/SkyMath.h"
+#include "../../../../../Model/src/SimType.h"
 #include "../../../../../Model/src/SimVar.h"
 #include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
@@ -50,6 +51,10 @@
 #include "../../../../../Model/src/PrimaryFlightControlData.h"
 #include "../../../../../Model/src/SecondaryFlightControl.h"
 #include "../../../../../Model/src/SecondaryFlightControlData.h"
+#include "../../../../../Model/src/AircraftHandle.h"
+#include "../../../../../Model/src/AircraftHandleData.h"
+#include "../../../../../Model/src/Light.h"
+#include "../../../../../Model/src/LightData.h"
 #include "../../../../../Persistence/src/CSVConst.h"
 #include "FlightRecorderCSVParser.h"
 
@@ -86,13 +91,29 @@ namespace
     constexpr char AileronPosition[] = "AileronPosition";
 
     // Secondary flight controls
-
     constexpr char LeadingEdgeFlapsLeftPercent[] = "LeadingEdgeFlapsLeftPercent";
     constexpr char LeadingEdgeFlapsRightPercent[] = "LeadingEdgeFlapsRightPercent";
     constexpr char TrailingEdgeFlapsLeftPercent[] = "TrailingEdgeFlapsLeftPercent";
     constexpr char TrailingEdgeFlapsRightPercent[] = "TrailingEdgeFlapsRightPercent";
     constexpr char SpoilerHandlePosition[] = "SpoilerHandlePosition";
     constexpr char FlapsHandleIndex[] = "FlapsHandleIndex";
+
+    // Aircraft handles
+    constexpr char BrakeLeftPosition[] = "BrakeLeftPosition";
+    constexpr char BrakeRightPosition[] = "BrakeRightPosition";
+    constexpr char WaterRudderHandlePosition[] = "WaterRudderHandlePosition";
+    constexpr char GearHandlePosition[] = "GearHandlePosition";
+
+    // Lights
+    constexpr char LightTaxi[] = "LightTaxi";
+    constexpr char LightLanding[] = "LightLanding";
+    constexpr char LightStrobe[] = "LightStrobe";
+    constexpr char LightBeacon[] = "LightBeacon";
+    constexpr char LightNav[] = "LightNav";
+    constexpr char LightWing[] = "LightWing";
+    constexpr char LightLogo[] = "LightLogo";
+    constexpr char LightRecognition[] = "LightRecognition";
+    constexpr char LightCabin[] = "LightCabin";
 
     constexpr int InvalidIdx = std::numeric_limits<int>::max();
 }
@@ -176,6 +197,14 @@ bool FlightRecorderCSVParser::parseData(QFile &file) noexcept
     int leadingEdgeFlapsLeftPercentIdx {InvalidIdx}, leadingEdgeFlapsRightPercentIdx {InvalidIdx},
         trailingEdgeFlapsLeftPercentIdx {InvalidIdx}, trailingEdgeFlapsRightPercentIdx {InvalidIdx},
         spoilerHandlePositionIdx {InvalidIdx}, flapsHandleIndexIdx {InvalidIdx};
+    //  Aircraft handles
+    int brakeLeftPositionIdx {InvalidIdx}, brakeRightPositionIdx {InvalidIdx},
+        waterRudderHandlePositionIdx {InvalidIdx}, gearHandlePositionIdx {InvalidIdx};
+    // Lights
+    int lightTaxiIdx {InvalidIdx}, lightLandingIdx {InvalidIdx}, lightStrobeIdx {InvalidIdx}, lightBeaconIdx {InvalidIdx},
+        lightNavIdx {InvalidIdx}, lightWingIdx {InvalidIdx}, lightLogoIdx {InvalidIdx}, lightRecognitionIdx {InvalidIdx},
+        lightCabinIdx {InvalidIdx};
+
     bool ok;
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     Aircraft &aircraft = flight.getUserAircraft();
@@ -183,6 +212,8 @@ bool FlightRecorderCSVParser::parseData(QFile &file) noexcept
     Engine &engine = aircraft.getEngine();
     PrimaryFlightControl &primaryFlightControl = aircraft.getPrimaryFlightControl();
     SecondaryFlightControl &secondaryFlightControl = aircraft.getSecondaryFlightControl();
+    AircraftHandle &aircraftHandle = aircraft.getAircraftHandle();
+    Light &light = aircraft.getLight();
 
     QByteArray data = file.readLine();
     // At least one data row expected
@@ -288,6 +319,66 @@ bool FlightRecorderCSVParser::parseData(QFile &file) noexcept
             break;
         }
 
+        // Aircraft handle
+        AircraftHandleData aircraftHandleData;
+        aircraftHandleData.timestamp = timestamp;
+
+        double brakeLeftPosition {0.0f};
+        double brakeRightPosition {0.0f};
+        double waterRudderHandlePosition {0.0f};
+        ok = ok && importValue(values, ::BrakeLeftPosition, brakeLeftPositionIdx, brakeLeftPosition);
+        ok = ok && importValue(values, ::BrakeRightPosition, brakeRightPositionIdx, brakeRightPosition);
+        ok = ok && importValue(values, ::WaterRudderHandlePosition, waterRudderHandlePositionIdx, waterRudderHandlePosition);
+        ok = ok && importValue(values, ::GearHandlePosition, gearHandlePositionIdx, aircraftHandleData.gearHandlePosition);
+        if (ok) {
+            aircraftHandleData.brakeLeftPosition = SkyMath::fromPosition(leadingEdgeFlapsLeftPosition);
+            aircraftHandleData.brakeLeftPosition = SkyMath::fromPosition(leadingEdgeFlapsRightPosition);
+            aircraftHandleData.waterRudderHandlePosition = SkyMath::fromPosition(waterRudderHandlePosition);
+            // Flight recorder does not support all Sky Dolly simulation variables, so we initialise them to
+            // some reasonable values
+            initAircraftHandleDefaultValues(aircraftHandleData);
+            aircraftHandle.upsertLast(aircraftHandleData);
+        } else {
+            break;
+        }
+
+        // Lights
+        LightData lightData;
+        lightData.timestamp = timestamp;
+
+        bool lightTaxi {false};
+        bool lightLanding {false};
+        bool lightStrobe {false};
+        bool lightBeacon {false};
+        bool lightNav {false};
+        bool lightWing {false};
+        bool lightLogo {false};
+        bool lightRecognition {false};
+        bool lightCabin {false};
+        ok = ok && importValue(values, ::LightTaxi, lightTaxiIdx, lightTaxi);
+        ok = ok && importValue(values, ::LightLanding, lightLandingIdx, lightLanding);
+        ok = ok && importValue(values, ::LightStrobe, lightStrobeIdx, lightStrobe);
+        ok = ok && importValue(values, ::LightBeacon, lightBeaconIdx, lightBeacon);
+        ok = ok && importValue(values, ::LightNav, lightNavIdx, lightNav);
+        ok = ok && importValue(values, ::LightWing, lightWingIdx, lightWing);
+        ok = ok && importValue(values, ::LightLogo, lightLogoIdx, lightLogo);
+        ok = ok && importValue(values, ::LightRecognition, lightRecognitionIdx, lightRecognition);
+        ok = ok && importValue(values, ::LightCabin, lightCabinIdx, lightCabin);
+        if (ok) {
+            lightData.lightStates.setFlag(SimType::LightState::Taxi, lightTaxi);
+            lightData.lightStates.setFlag(SimType::LightState::Landing, lightLanding);
+            lightData.lightStates.setFlag(SimType::LightState::Strobe, lightStrobe);
+            lightData.lightStates.setFlag(SimType::LightState::Beacon, lightBeacon);
+            lightData.lightStates.setFlag(SimType::LightState::Navigation, lightNav);
+            lightData.lightStates.setFlag(SimType::LightState::Wing, lightWing);
+            lightData.lightStates.setFlag(SimType::LightState::Logo, lightLogo);
+            lightData.lightStates.setFlag(SimType::LightState::Recognition, lightRecognition);
+            lightData.lightStates.setFlag(SimType::LightState::Cabin, lightCabin);
+            light.upsertLast(lightData);
+        } else {
+            break;
+        }
+
         data = file.readLine();
         firstRow = false;
     }
@@ -349,6 +440,8 @@ inline bool FlightRecorderCSVParser::importValue(const QList<QByteArray> &values
         } else if constexpr (std::is_integral<T>::value) {
             if constexpr (std::is_same<T, long long int>::value) {
                 value = values.at(idx).toLongLong(&ok);
+            } else if constexpr (std::is_same<T, bool>::value) {
+                value = values.at(idx).toInt(&ok) == 1;
             } else {
                 value = values.at(idx).toInt(&ok);
             }
@@ -389,4 +482,13 @@ inline void FlightRecorderCSVParser::initEngineDefaultValues(EngineData &engineD
     engineData.generalEngineCombustion2 = true;
     engineData.generalEngineCombustion3 = true;
     engineData.generalEngineCombustion4 = true;
+}
+
+inline void FlightRecorderCSVParser::initAircraftHandleDefaultValues(AircraftHandleData &aircraftHandleData) noexcept
+{
+    aircraftHandleData.tailhookPosition = 0;
+    aircraftHandleData.canopyOpen = 0;
+    aircraftHandleData.leftWingFolding = 0;
+    aircraftHandleData.rightWingFolding = 0;
+    aircraftHandleData.smokeEnabled = false;
 }

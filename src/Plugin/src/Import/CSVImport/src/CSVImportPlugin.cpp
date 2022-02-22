@@ -157,7 +157,24 @@ QDateTime CSVImportPlugin::getStartDateTimeUtc() noexcept
 
 QString CSVImportPlugin::getTitle() const noexcept
 {
-    return tr("CSV import");
+    QString title;
+    switch (d->importSettings.m_format)
+    {
+    case CSVImportSettings::Format::SkyDolly:
+        title = tr("Sky Dolly CSV import");
+        break;
+    case CSVImportSettings::Format::FlightRadar24:
+        // Do not augment heading and velocity
+        title = tr("Flightradar24 CSV import");
+        break;
+    case CSVImportSettings::Format::FlightRecorder:
+        title = tr("Flight Recorder CSV import");
+        break;
+    default:
+        title = tr("CSV import");
+        break;
+    }
+    return title;
 }
 
 void CSVImportPlugin::updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept

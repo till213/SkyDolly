@@ -37,6 +37,7 @@ class QString;
 #include "CSVParserIntf.h"
 
 struct EngineData;
+struct AircraftHandleData;
 class FlightRecorderCSVParserPrivate;
 
 class FlightRecorderCSVParser : public CSVParserIntf
@@ -56,6 +57,7 @@ private:
     template <typename T>
     inline bool importValue(const QList<QByteArray> &values, const char *name, int &index, T &value) noexcept;
     inline void initEngineDefaultValues(EngineData &engineData) noexcept;
+    inline void initAircraftHandleDefaultValues(AircraftHandleData &aircraftHandle) noexcept;
 };
 
 #endif // FLIGHTRECORDERCSVPARSER_H
