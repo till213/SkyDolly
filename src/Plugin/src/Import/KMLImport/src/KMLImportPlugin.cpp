@@ -55,7 +55,6 @@ public:
     {}
 
     QXmlStreamReader xml;
-    Unit unit;
     KMLImportSettings importSettings;
     QDateTime firstDateTimeUtc;
     QString flightNumber;
