@@ -125,8 +125,12 @@ public:
     {
         firstDateTimeUtc.setTimeZone(QTimeZone::utc());
     }
-
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+    #include "../../../../../Kernel/src/QStringHasher.h"
+    std::unordered_map<QByteArray, int, QStringHasher> columnIndexes;
+#else
     std::unordered_map<QByteArray, int> columnIndexes;
+#endif
     QDateTime firstDateTimeUtc;
 };
 

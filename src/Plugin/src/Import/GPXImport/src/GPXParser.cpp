@@ -22,31 +22,54 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef GENERICKMLPARSER_H
-#define GENERICKMLPARSER_H
-
 #include <memory>
 
-#include <QDateTime>
 #include <QString>
+#include <QXmlStreamReader>
 
-class QXmlStreamReader;
+#include "GPXParser.h"
 
-#include "AbstractKMLTrackParser.h"
-
-class GenericKMLParserPrivate;
-
-class GenericKMLParser : public AbstractKMLTrackParser
+class GPXParserPrivate
 {
 public:
-    GenericKMLParser(QXmlStreamReader &xmlStreamReader) noexcept;
-    virtual ~GenericKMLParser() noexcept;
+    GPXParserPrivate(QXmlStreamReader &xmlStreamReader) noexcept
+        : xml(xmlStreamReader)
+    {}
 
-    virtual void parse() noexcept override;
-    virtual QString getFlightNumber() const noexcept override;
-
-private:
-    std::unique_ptr<GenericKMLParserPrivate> d;
+    QXmlStreamReader &xml;
 };
 
-#endif // GENERICKMLPARSER_H
+// PUBLIC
+
+GPXParser::GPXParser(QXmlStreamReader &xmlStreamReader) noexcept
+    : d(std::make_unique<GPXParserPrivate>(xmlStreamReader))
+{
+#ifdef DEBUG
+    qDebug("GPXParser::~GPXParser: CREATED");
+#endif
+}
+
+GPXParser::~GPXParser() noexcept
+{
+#ifdef DEBUG
+    qDebug("GPXParser::~GPXParser: DELETED");
+#endif
+}
+
+void GPXParser::parse() noexcept
+{
+    while (d->xml.readNextStartElement()) {
+        const QStringRef xmlName = d->xml.name();
+        // @todo IMPLEMENT ME!!!
+//        if (xmlName == KML::Document) {
+//            parseDocument();
+//        }  else if (xmlName == KML::Folder) {
+//            parseFolder();
+//        } else if (xmlName == KML::Placemark) {
+//            parsePlacemark();
+//        } else {
+            d->xml.skipCurrentElement();
+//        }
+    }
+}
+

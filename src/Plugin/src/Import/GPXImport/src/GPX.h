@@ -22,31 +22,22 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef GENERICKMLPARSER_H
-#define GENERICKMLPARSER_H
+#ifndef GPX_H
+#define GPX_H
 
-#include <memory>
-
-#include <QDateTime>
 #include <QString>
+#include <QStringLiteral>
 
-class QXmlStreamReader;
-
-#include "AbstractKMLTrackParser.h"
-
-class GenericKMLParserPrivate;
-
-class GenericKMLParser : public AbstractKMLTrackParser
+/*!
+ * From https://developers.google.com/kml/documentation/kml_element_hierarchy:
+ * "In GPX, simple element names begin with a lowercase letter. Simple elements can contain a value, but they do not contain other elements.
+ * Complex element names being with an uppercase letter. Complex elements can contain other elements (referred to as their children)."
+ *
+ * We adhere to this naming convention for the constants defined in this namespace.
+ */
+namespace GPX
 {
-public:
-    GenericKMLParser(QXmlStreamReader &xmlStreamReader) noexcept;
-    virtual ~GenericKMLParser() noexcept;
+    inline const QString Document = QStringLiteral("Document");
+}
 
-    virtual void parse() noexcept override;
-    virtual QString getFlightNumber() const noexcept override;
-
-private:
-    std::unique_ptr<GenericKMLParserPrivate> d;
-};
-
-#endif // GENERICKMLPARSER_H
+#endif // GPX_H

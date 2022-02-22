@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef GENERICKMLPARSER_H
-#define GENERICKMLPARSER_H
+#ifndef GPXPARSER_H
+#define GPXPARSER_H
 
 #include <memory>
 
@@ -32,21 +32,18 @@
 
 class QXmlStreamReader;
 
-#include "AbstractKMLTrackParser.h"
+class GPXParserPrivate;
 
-class GenericKMLParserPrivate;
-
-class GenericKMLParser : public AbstractKMLTrackParser
+class GPXParser
 {
 public:
-    GenericKMLParser(QXmlStreamReader &xmlStreamReader) noexcept;
-    virtual ~GenericKMLParser() noexcept;
+    GPXParser(QXmlStreamReader &xmlStreamReader) noexcept;
+    virtual ~GPXParser() noexcept;
 
-    virtual void parse() noexcept override;
-    virtual QString getFlightNumber() const noexcept override;
+    virtual void parse() noexcept;
 
 private:
-    std::unique_ptr<GenericKMLParserPrivate> d;
+    std::unique_ptr<GPXParserPrivate> d;
 };
 
-#endif // GENERICKMLPARSER_H
+#endif // GPXPARSER_H
