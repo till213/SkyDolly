@@ -32,6 +32,7 @@
 #include <QXmlStreamReader>
 #include <QDateTime>
 #include <QTimeZone>
+#include <QFlags>
 
 #include "../../../../../Kernel/src/Unit.h"
 #include "../../../../../Model/src/Logbook.h"
@@ -132,7 +133,7 @@ bool KMLImportPlugin::readFile(QFile &file) noexcept
 
 FlightAugmentation::Procedures KMLImportPlugin::getProcedures() const noexcept
 {
-    return FlightAugmentation::Procedures::All;
+    return FlightAugmentation::Procedure::All;
 }
 
 FlightAugmentation::Aspects KMLImportPlugin::getAspects() const noexcept
@@ -141,14 +142,17 @@ FlightAugmentation::Aspects KMLImportPlugin::getAspects() const noexcept
     switch (d->importSettings.m_format)
     {
     case KMLImportSettings::Format::FlightAware:
-        aspects = FlightAugmentation::Aspects::All;
+        aspects = FlightAugmentation::Aspect::All;
         break;
     case KMLImportSettings::Format::FlightRadar24:
         // Do not augment heading and velocity
-        aspects = FlightAugmentation::Aspects::Pitch | FlightAugmentation::Aspects::Bank | FlightAugmentation::Aspects::Engine | FlightAugmentation::Aspects::Light;
+        aspects = FlightAugmentation::Aspect::All;
+        aspects.setFlag(FlightAugmentation::Aspect::Heading, false);
+        aspects.setFlag(FlightAugmentation::Aspect::Velocity, false);
+        return aspects;
         break;
     default:
-        aspects = FlightAugmentation::Aspects::All;
+        aspects = FlightAugmentation::Aspect::All;
         break;
     }
 

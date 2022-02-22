@@ -245,14 +245,16 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
 
 FlightAugmentation::Procedures IGCImportPlugin::getProcedures() const noexcept
 {
-    return FlightAugmentation::Procedures::All;
+    return FlightAugmentation::Procedure::All;
 }
 
 FlightAugmentation::Aspects IGCImportPlugin::getAspects() const noexcept
 {
+    FlightAugmentation::Aspects aspects {FlightAugmentation::Aspect::All};
     // Do not augment the engine data: the engine data is already derived from the
     // environmental noise level (ENL - if available)
-    return FlightAugmentation::Aspects::AttitudeAndVelocity | FlightAugmentation::Aspects::Light;
+    aspects.setFlag(FlightAugmentation::Aspect::Engine, false);
+    return aspects;
 }
 
 QDateTime IGCImportPlugin::getStartDateTimeUtc() noexcept

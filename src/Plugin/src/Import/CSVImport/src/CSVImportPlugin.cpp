@@ -27,6 +27,7 @@
 
 #include <QFile>
 #include <QFileInfo>
+#include <QFlags>
 
 #include "../../../../../Kernel/src/Unit.h"
 #include "../../../../../Model/src/Logbook.h"
@@ -124,7 +125,7 @@ bool CSVImportPlugin::readFile(QFile &file) noexcept
 
 FlightAugmentation::Procedures CSVImportPlugin::getProcedures() const noexcept
 {
-    return FlightAugmentation::Procedures::None;
+    return FlightAugmentation::Procedure::None;
 }
 
 FlightAugmentation::Aspects CSVImportPlugin::getAspects() const noexcept
@@ -133,17 +134,19 @@ FlightAugmentation::Aspects CSVImportPlugin::getAspects() const noexcept
     switch (d->importSettings.m_format)
     {
     case CSVImportSettings::Format::SkyDolly:
-        aspects = FlightAugmentation::Aspects::None;
+        aspects = FlightAugmentation::Aspect::None;
         break;
     case CSVImportSettings::Format::FlightRadar24:
         // Do not augment heading and velocity
-        aspects = FlightAugmentation::Aspects::Pitch | FlightAugmentation::Aspects::Bank | FlightAugmentation::Aspects::Engine | FlightAugmentation::Aspects::Light;
+        aspects = FlightAugmentation::Aspect::All;
+        aspects.setFlag(FlightAugmentation::Aspect::Heading, false);
+        aspects.setFlag(FlightAugmentation::Aspect::Velocity, false);
         break;
     case CSVImportSettings::Format::FlightRecorder:
-        aspects = FlightAugmentation::Aspects::None;
+        aspects = FlightAugmentation::Aspect::None;
         break;
     default:
-        aspects = FlightAugmentation::Aspects::All;
+        aspects = FlightAugmentation::Aspect::All;
         break;
     }
 
