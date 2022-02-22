@@ -48,6 +48,8 @@
 #include "../../../../../Model/src/EngineData.h"
 #include "../../../../../Model/src/PrimaryFlightControl.h"
 #include "../../../../../Model/src/PrimaryFlightControlData.h"
+#include "../../../../../Model/src/SecondaryFlightControl.h"
+#include "../../../../../Model/src/SecondaryFlightControlData.h"
 #include "../../../../../Persistence/src/CSVConst.h"
 #include "FlightRecorderCSVParser.h"
 
@@ -83,7 +85,16 @@ namespace
     constexpr char ElevatorPosition[] = "ElevatorPosition";
     constexpr char AileronPosition[] = "AileronPosition";
 
-    constexpr int InvalidIndex = std::numeric_limits<int>::max();
+    // Secondary flight controls
+
+    constexpr char LeadingEdgeFlapsLeftPercent[] = "LeadingEdgeFlapsLeftPercent";
+    constexpr char LeadingEdgeFlapsRightPercent[] = "LeadingEdgeFlapsRightPercent";
+    constexpr char TrailingEdgeFlapsLeftPercent[] = "TrailingEdgeFlapsLeftPercent";
+    constexpr char TrailingEdgeFlapsRightPercent[] = "TrailingEdgeFlapsRightPercent";
+    constexpr char SpoilerHandlePosition[] = "SpoilerHandlePosition";
+    constexpr char FlapsHandleIndex[] = "FlapsHandleIndex";
+
+    constexpr int InvalidIdx = std::numeric_limits<int>::max();
 }
 
 class FlightRecorderCSVParserPrivate
@@ -152,21 +163,26 @@ bool FlightRecorderCSVParser::parseHeader(QFile &file) noexcept
 bool FlightRecorderCSVParser::parseData(QFile &file) noexcept
 {
     // Position
-    int latitudeIndex {InvalidIndex}, longitudeIndex {InvalidIndex}, altitdueIndex = {InvalidIndex};
-    int pitchIndex {InvalidIndex}, bankIndex {InvalidIndex}, trueHeadingIndex {InvalidIndex};
-    int velocityBodyXIndex {InvalidIndex}, velocityBodyYIndex {InvalidIndex}, velocityBodyZIndex {InvalidIndex};
-    int RotationVelocityBodyXIndex {InvalidIndex}, rotationVelocityBodyYIndex {InvalidIndex}, rotationVelocityBodyZIndex {InvalidIndex};
+    int latitudeIdx {InvalidIdx}, longitudeIdx {InvalidIdx}, altitdueIdx = {InvalidIdx};
+    int pitchIdx {InvalidIdx}, bankIdx {InvalidIdx}, trueHeadingIdx {InvalidIdx};
+    int velocityBodyXIdx {InvalidIdx}, velocityBodyYIdx {InvalidIdx}, velocityBodyZIdx {InvalidIdx};
+    int RotationVelocityBodyXIdx {InvalidIdx}, rotationVelocityBodyYIdx {InvalidIdx}, rotationVelocityBodyZIdx {InvalidIdx};
     // Engine
-    int throttleLeverPosition1Index {InvalidIndex}, throttleLeverPosition2Index {InvalidIndex},
-        throttleLeverPosition3Index {InvalidIndex}, throttleLeverPosition4Index {InvalidIndex};
+    int throttleLeverPosition1Idx {InvalidIdx}, throttleLeverPosition2Idx {InvalidIdx},
+        throttleLeverPosition3Idx {InvalidIdx}, throttleLeverPosition4Idx {InvalidIdx};
     // Primary flight controls
-    int rudderPositionIndex {InvalidIndex}, elevatorPositionIndex {InvalidIndex}, aileronPositionIndex {InvalidIndex};
+    int rudderPositionIdx {InvalidIdx}, elevatorPositionIdx {InvalidIdx}, aileronPositionIdx {InvalidIdx};
+    // Secondary flight controls
+    int leadingEdgeFlapsLeftPercentIdx {InvalidIdx}, leadingEdgeFlapsRightPercentIdx {InvalidIdx},
+        trailingEdgeFlapsLeftPercentIdx {InvalidIdx}, trailingEdgeFlapsRightPercentIdx {InvalidIdx},
+        spoilerHandlePositionIdx {InvalidIdx}, flapsHandleIndexIdx {InvalidIdx};
     bool ok;
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     Aircraft &aircraft = flight.getUserAircraft();
     Position &position = aircraft.getPosition();
     Engine &engine = aircraft.getEngine();
     PrimaryFlightControl &primaryFlightControl = aircraft.getPrimaryFlightControl();
+    SecondaryFlightControl &secondaryFlightControl = aircraft.getSecondaryFlightControl();
 
     QByteArray data = file.readLine();
     // At least one data row expected
@@ -183,18 +199,18 @@ bool FlightRecorderCSVParser::parseData(QFile &file) noexcept
         // Position
         PositionData positionData;
         positionData.timestamp = timestamp;
-        ok = ok && importValue(values, ::Latitude, latitudeIndex, positionData.latitude);
-        ok = ok && importValue(values, ::Longitude, longitudeIndex, positionData.longitude);
-        ok = ok && importValue(values, ::Altitude, altitdueIndex, positionData.altitude);
-        ok = ok && importValue(values, ::Pitch, pitchIndex, positionData.pitch);
-        ok = ok && importValue(values, ::Bank, bankIndex, positionData.bank);
-        ok = ok && importValue(values, ::TrueHeading, trueHeadingIndex, positionData.heading);
-        ok = ok && importValue(values, ::VelocityBodyX, velocityBodyXIndex, positionData.velocityBodyX);
-        ok = ok && importValue(values, ::VelocityBodyY, velocityBodyYIndex, positionData.velocityBodyY);
-        ok = ok && importValue(values, ::VelocityBodyZ, velocityBodyZIndex, positionData.velocityBodyZ);
-        ok = ok && importValue(values, ::RotationVelocityBodyX, RotationVelocityBodyXIndex, positionData.rotationVelocityBodyX);
-        ok = ok && importValue(values, ::RotationVelocityBodyY, rotationVelocityBodyYIndex, positionData.rotationVelocityBodyY);
-        ok = ok && importValue(values, ::RotationVelocityBodyZ, rotationVelocityBodyZIndex, positionData.rotationVelocityBodyZ);
+        ok = ok && importValue(values, ::Latitude, latitudeIdx, positionData.latitude);
+        ok = ok && importValue(values, ::Longitude, longitudeIdx, positionData.longitude);
+        ok = ok && importValue(values, ::Altitude, altitdueIdx, positionData.altitude);
+        ok = ok && importValue(values, ::Pitch, pitchIdx, positionData.pitch);
+        ok = ok && importValue(values, ::Bank, bankIdx, positionData.bank);
+        ok = ok && importValue(values, ::TrueHeading, trueHeadingIdx, positionData.heading);
+        ok = ok && importValue(values, ::VelocityBodyX, velocityBodyXIdx, positionData.velocityBodyX);
+        ok = ok && importValue(values, ::VelocityBodyY, velocityBodyYIdx, positionData.velocityBodyY);
+        ok = ok && importValue(values, ::VelocityBodyZ, velocityBodyZIdx, positionData.velocityBodyZ);
+        ok = ok && importValue(values, ::RotationVelocityBodyX, RotationVelocityBodyXIdx, positionData.rotationVelocityBodyX);
+        ok = ok && importValue(values, ::RotationVelocityBodyY, rotationVelocityBodyYIdx, positionData.rotationVelocityBodyY);
+        ok = ok && importValue(values, ::RotationVelocityBodyZ, rotationVelocityBodyZIdx, positionData.rotationVelocityBodyZ);
 
         if (ok) {
             position.upsertLast(positionData);
@@ -209,10 +225,10 @@ bool FlightRecorderCSVParser::parseData(QFile &file) noexcept
         double throttleLeverPosition2 {0.0f};
         double throttleLeverPosition3 {0.0f};
         double throttleLeverPosition4 {0.0f};
-        ok = ok && importValue(values, ::ThrottleLeverPosition1, throttleLeverPosition1Index, throttleLeverPosition1);
-        ok = ok && importValue(values, ::ThrottleLeverPosition2, throttleLeverPosition2Index, throttleLeverPosition2);
-        ok = ok && importValue(values, ::ThrottleLeverPosition3, throttleLeverPosition3Index, throttleLeverPosition3);
-        ok = ok && importValue(values, ::ThrottleLeverPosition4, throttleLeverPosition4Index, throttleLeverPosition4);
+        ok = ok && importValue(values, ::ThrottleLeverPosition1, throttleLeverPosition1Idx, throttleLeverPosition1);
+        ok = ok && importValue(values, ::ThrottleLeverPosition2, throttleLeverPosition2Idx, throttleLeverPosition2);
+        ok = ok && importValue(values, ::ThrottleLeverPosition3, throttleLeverPosition3Idx, throttleLeverPosition3);
+        ok = ok && importValue(values, ::ThrottleLeverPosition4, throttleLeverPosition4Idx, throttleLeverPosition4);
         if (ok) {
             engineData.throttleLeverPosition1 = SkyMath::fromPosition(throttleLeverPosition1);
             engineData.throttleLeverPosition2 = SkyMath::fromPosition(throttleLeverPosition2);
@@ -232,14 +248,42 @@ bool FlightRecorderCSVParser::parseData(QFile &file) noexcept
         double rudderPosition {0.0f};
         double elevatorPosition {0.0f};
         double aileronPosition {0.0f};
-        ok = ok && importValue(values, ::RudderPosition, rudderPositionIndex, rudderPosition);
-        ok = ok && importValue(values, ::ElevatorPosition, elevatorPositionIndex, elevatorPosition);
-        ok = ok && importValue(values, ::AileronPosition, aileronPositionIndex, aileronPosition);
+        ok = ok && importValue(values, ::RudderPosition, rudderPositionIdx, rudderPosition);
+        ok = ok && importValue(values, ::ElevatorPosition, elevatorPositionIdx, elevatorPosition);
+        ok = ok && importValue(values, ::AileronPosition, aileronPositionIdx, aileronPosition);
         if (ok) {
             primaryFlightControlData.rudderPosition = SkyMath::fromPosition(rudderPosition);
             primaryFlightControlData.elevatorPosition = SkyMath::fromPosition(elevatorPosition);
             primaryFlightControlData.aileronPosition = SkyMath::fromPosition(aileronPosition);
             primaryFlightControl.upsertLast(primaryFlightControlData);
+        } else {
+            break;
+        }
+
+        // Secondary flight controls
+        SecondaryFlightControlData secondaryFlightControlData;
+        secondaryFlightControlData.timestamp = timestamp;
+
+        double leadingEdgeFlapsLeftPosition {0.0f};
+        double leadingEdgeFlapsRightPosition {0.0f};
+        double trailingEdgeFlapsLeftPosition {0.0f};
+        double trailingEdgeFlapsRightPosition {0.0f};
+        double spoilerHandlePositionPercent {0.0f};
+        ok = ok && importValue(values, ::LeadingEdgeFlapsLeftPercent, leadingEdgeFlapsLeftPercentIdx, leadingEdgeFlapsLeftPosition);
+        ok = ok && importValue(values, ::LeadingEdgeFlapsRightPercent, leadingEdgeFlapsRightPercentIdx, leadingEdgeFlapsRightPosition);
+        ok = ok && importValue(values, ::TrailingEdgeFlapsLeftPercent, trailingEdgeFlapsLeftPercentIdx, trailingEdgeFlapsLeftPosition);
+        ok = ok && importValue(values, ::TrailingEdgeFlapsRightPercent, trailingEdgeFlapsRightPercentIdx, trailingEdgeFlapsRightPosition);
+        ok = ok && importValue(values, ::SpoilerHandlePosition, spoilerHandlePositionIdx, spoilerHandlePositionPercent);
+        ok = ok && importValue(values, ::FlapsHandleIndex, flapsHandleIndexIdx, secondaryFlightControlData.flapsHandleIndex);
+        if (ok) {
+            // Flight Recorder actually requests and stores those values as "Position" ([-1.0, 1.0]), so we convert to
+            // percent by multiplying with 100.0
+            secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(leadingEdgeFlapsLeftPosition * 100.0);
+            secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(leadingEdgeFlapsRightPosition * 100.0);
+            secondaryFlightControlData.trailingEdgeFlapsLeftPercent = SkyMath::fromPercent(trailingEdgeFlapsLeftPosition * 100.0);
+            secondaryFlightControlData.trailingEdgeFlapsRightPercent = SkyMath::fromPercent(trailingEdgeFlapsRightPosition * 100.0);
+            secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(spoilerHandlePositionPercent);
+            secondaryFlightControl.upsertLast(secondaryFlightControlData);
         } else {
             break;
         }
@@ -253,19 +297,19 @@ bool FlightRecorderCSVParser::parseData(QFile &file) noexcept
 
 inline bool FlightRecorderCSVParser::importTimestamp(const QList<QByteArray> &values, bool firstRow, std::int64_t &timestamp, std::int64_t &timestampDelta) noexcept
 {
-    static int timestampIndex = ::InvalidIndex;
+    static int timestampIdx = ::InvalidIdx;
     bool ok = true;;
-    if (timestampIndex == ::InvalidIndex) {
+    if (timestampIdx == ::InvalidIdx) {
         auto it = d->columnIndexes.find(::Milliseconds);
         if (it != d->columnIndexes.end()) {
-            timestampIndex = it->second;
+            timestampIdx = it->second;
         } else {
             // No timestamp column
             ok = false;
         }
     }
-    if (ok && timestampIndex < values.count()) {
-        timestamp = values.at(timestampIndex).toLongLong(&ok);
+    if (ok && timestampIdx < values.count()) {
+        timestamp = values.at(timestampIdx).toLongLong(&ok);
         if (ok) {
             if (!firstRow) {
                 timestamp += timestampDelta;
@@ -282,31 +326,31 @@ inline bool FlightRecorderCSVParser::importTimestamp(const QList<QByteArray> &va
 }
 
 template <typename T>
-inline bool FlightRecorderCSVParser::importValue(const QList<QByteArray> &values, const char *name, int &index, T &value) noexcept
+inline bool FlightRecorderCSVParser::importValue(const QList<QByteArray> &values, const char *name, int &idx, T &value) noexcept
 {
     bool ok = true;;
-    if (index == ::InvalidIndex) {
+    if (idx == ::InvalidIdx) {
         auto it = d->columnIndexes.find(name);
         if (it != d->columnIndexes.end()) {
-            index = it->second;
+            idx = it->second;
         } else {
             // No timestamp column
             ok = false;
         }
     }
-    if (ok && index < values.count()) {
+    if (ok && idx < values.count()) {
         // @todo call proper toXYZ method based on type T
         if constexpr (std::is_floating_point<T>::value) {
             if constexpr (std::is_same<T, double>::value) {
-                value = values.at(index).toDouble(&ok);
+                value = values.at(idx).toDouble(&ok);
             } else {
-                value = values.at(index).toFloat(&ok);
+                value = values.at(idx).toFloat(&ok);
             }
         } else if constexpr (std::is_integral<T>::value) {
             if constexpr (std::is_same<T, long long int>::value) {
-                value = values.at(index).toLongLong(&ok);
+                value = values.at(idx).toLongLong(&ok);
             } else {
-                value = values.at(index).toInt(&ok);
+                value = values.at(idx).toInt(&ok);
             }
         } else {
             // Also refer to https://stackoverflow.com/questions/38304847/constexpr-if-and-static-assert
