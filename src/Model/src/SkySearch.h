@@ -35,30 +35,30 @@
 
 namespace SkySearch {
 
-    inline constexpr int InvalidIndex = -1;
-    inline constexpr int LinearIntervalSearch = -2;
-    inline constexpr int BinaryIntervalSearch = -3;
+    constexpr int InvalidIndex = -1;
+    constexpr int LinearIntervalSearch = -2;
+    constexpr int BinaryIntervalSearch = -3;
 
     /*!
      * In case we seek 3 seconds "into the future" we use binary search
      * to find the next position (otherwise linear search, assuming that
      * the next position is "nearby" (within the 3 seconds threshold).
      */
-    inline constexpr std::int64_t BinaryIntervalSearchThreshold = 3000;
+    constexpr std::int64_t BinaryIntervalSearchThreshold = 3000;
 
     /*!
      * The size of the default interpolation window [-DefaultInterpolationWindow, DefaultInterpolationWindow] [milliseconds].
      * Only sampled data within that time window is considered for interpolation. Any other sampled data outside
      * (before or after) this window is considered "inactive".
      */
-    inline constexpr std::int64_t DefaultInterpolationWindow = 2000;
+    constexpr std::int64_t DefaultInterpolationWindow = 2000;
 
-    inline constexpr std::int64_t PositionInterpolationWindow = 1000 * 60 * 30;
+    constexpr std::int64_t PositionInterpolationWindow = 1000 * 60 * 30;
 
     /*!
      * An interpolation window that considers all sample points.
      */
-    inline constexpr std::int64_t InfinitetInterpolationWindow = std::numeric_limits<std::int64_t>::max();
+    constexpr std::int64_t InfinitetInterpolationWindow = std::numeric_limits<std::int64_t>::max();
 
     /*!
      * Returns the lower index i of the interval [i, j] where i.timestamp <= timestamp < j.timestamp.

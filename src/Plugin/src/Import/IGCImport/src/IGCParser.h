@@ -75,8 +75,8 @@ public:
               description(desc)
         {}
 
-        double latitude;
-        double longitude;
+        float latitude;
+        float longitude;
         QString description;
     } TaskItem;
 

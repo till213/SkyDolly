@@ -27,28 +27,30 @@
 
 #include <memory>
 
-class QDateTime;
-class QString;
+#include <QDateTime>
+#include <QString>
+
 class QXmlStreamReader;
 
-#include "KMLParserIntf.h"
+#include "AbstractKMLTrackParser.h"
 
 class FlightAwareKMLParserPrivate;
 
-class FlightAwareKMLParser : public KMLParserIntf
+class FlightAwareKMLParser : public AbstractKMLTrackParser
 {
 public:
     FlightAwareKMLParser(QXmlStreamReader &xmlStreamReader) noexcept;
     virtual ~FlightAwareKMLParser() noexcept;
 
-    virtual void parse(QDateTime &firstDateTimeUtc, QDateTime &lastDateTimeUtc, QString &flightNumber) noexcept override;
+    virtual void parse() noexcept override;
+    virtual QString getFlightNumber() const noexcept override;
 
 private:
     std::unique_ptr<FlightAwareKMLParserPrivate> d;
 
-    void parsePlacemark() noexcept;
+    void parsePlacemark() noexcept override;
     void parseWaypoint(const QString &name) noexcept;
-    void parseTrack() noexcept;
+    void updateWaypoints() noexcept;
 };
 
 #endif // FLIGHTAWAREKMLPARSER_H

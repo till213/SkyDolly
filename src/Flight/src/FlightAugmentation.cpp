@@ -109,11 +109,11 @@ FlightAugmentation::Aspects FlightAugmentation::getAspects() const noexcept
 
 void FlightAugmentation::augmentAircraftData(Aircraft &aircraft) noexcept
 {
-    if (d->aspects != Aspects::None) {
+    if (d->aspects) {
         augmentAttitudeAndVelocity(aircraft);
     }
 
-    if (d->procedures != Procedures::None) {
+    if (d->procedures) {
         augmentProcedures(aircraft);
     }
 }
@@ -139,26 +139,26 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
 
             const auto [distance, velocity] = SkyMath::distanceAndVelocity(startPosition, startTimestamp, endPosition, endTimestamp, averageAltitude);
             // Velocity
-            if ((d->aspects & Aspects::Velocity) == Aspects::Velocity) {
+            if (d->aspects.testFlag(Aspect::Velocity)) {
                 startPositionData.velocityBodyX = 0.0;
                 startPositionData.velocityBodyY = 0.0;
                 startPositionData.velocityBodyZ = Convert::metersPerSecondToFeetPerSecond(velocity);
             }
 
             // Attitude
-            if ((d->aspects & Aspects::Attitude) != Aspects::None) {
+            if ((d->aspects & Aspect::Attitude)) {
                 if (startPositionData.timestamp > firstMovementTimestamp) {
                     const double deltaAltitude = Convert::feetToMeters(endPositionData.altitude - startPositionData.altitude);
                     // SimConnect: positive pitch values "point downwards", negative pitch values "upwards"
                     // -> so switch the sign
-                    if ((d->aspects & Aspects::Pitch) == Aspects::Pitch) {
+                    if (d->aspects.testFlag(Aspect::Pitch)) {
                         startPositionData.pitch = -SkyMath::approximatePitch(distance, deltaAltitude);
                     }
                     const double initialBearing = SkyMath::initialBearing(startPosition, endPosition);
-                    if ((d->aspects & Aspects::Heading) == Aspects::Heading) {
+                    if (d->aspects.testFlag(Aspect::Heading)) {
                         startPositionData.heading = initialBearing;
                     }
-                    if ((d->aspects & Aspects::Bank) == Aspects::Bank) {
+                    if (d->aspects.testFlag(Aspect::Bank)) {
                         if (i > 0) {
                             // [-180, 180]
                             const double headingChange = SkyMath::headingChange(position[i - 1].heading, startPositionData.heading);
@@ -171,13 +171,13 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
                         }
                     }
                 } else {
-                    if ((d->aspects & Aspects::Pitch) == Aspects::Pitch) {
+                    if (d->aspects.testFlag(Aspect::Pitch)) {
                         startPositionData.pitch = 0.0;
                     }
-                    if ((d->aspects & Aspects::Heading) == Aspects::Heading) {
+                    if (d->aspects.testFlag(Aspect::Heading)) {
                         startPositionData.heading = firstMovementHeading;
                     }
-                    if ((d->aspects & Aspects::Bank) == Aspects::Bank) {
+                    if (d->aspects.testFlag(Aspect::Bank)) {
                         startPositionData.bank = 0.0;
                     }
                 }
@@ -189,21 +189,21 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
 
             // Velocity
             PositionData &previousPositionData = position[i -1];
-            if ((d->aspects & Aspects::Velocity) == Aspects::Velocity) {
+            if (d->aspects.testFlag(Aspect::Velocity)) {
                 lastPositionData.velocityBodyX = previousPositionData.velocityBodyX;
                 lastPositionData.velocityBodyY = previousPositionData.velocityBodyY;
                 lastPositionData.velocityBodyZ = Convert::knotsToFeetPerSecond(::LandingVelocity);
             }
 
             // Attitude
-            if ((d->aspects & Aspects::Attitude) != Aspects::None) {
-                if ((d->aspects & Aspects::Pitch) == Aspects::Pitch) {
+            if ((d->aspects & Aspect::Attitude)) {
+                if (d->aspects.testFlag(Aspect::Pitch)) {
                     lastPositionData.pitch = ::LandingPitch;
                 }
-                if ((d->aspects & Aspects::Bank) == Aspects::Bank) {
+                if (d->aspects.testFlag(Aspect::Bank)) {
                     lastPositionData.bank = 0.0;
                 }
-                if ((d->aspects & Aspects::Heading) == Aspects::Heading) {
+                if (d->aspects.testFlag(Aspect::Heading)) {
                     lastPositionData.heading = previousPositionData.heading;
                 }
             }
@@ -212,21 +212,21 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
             PositionData &lastPositionData = position[i];
 
             // Velocity
-            if ((d->aspects & Aspects::Velocity) == Aspects::Velocity) {
+            if (d->aspects.testFlag(Aspect::Velocity)) {
                 lastPositionData.velocityBodyX = 0.0;
                 lastPositionData.velocityBodyY = 0.0;
                 lastPositionData.velocityBodyZ = 0.0;
             }
 
             // Attitude
-            if ((d->aspects & Aspects::Attitude) != Aspects::None) {
-                if ((d->aspects & Aspects::Pitch) == Aspects::Pitch) {
+            if ((d->aspects & Aspect::Attitude)) {
+                if (d->aspects.testFlag(Aspect::Pitch)) {
                     lastPositionData.pitch = 0.0;
                 }
-                if ((d->aspects & Aspects::Bank) == Aspects::Bank) {
+                if (d->aspects.testFlag(Aspect::Bank)) {
                     lastPositionData.bank = 0.0;
                 }
-                if ((d->aspects & Aspects::Heading) == Aspects::Heading) {
+                if (d->aspects.testFlag(Aspect::Heading)) {
                     lastPositionData.heading = 0.0;
                 }
             }
@@ -253,7 +253,7 @@ void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
 {
     const std::int64_t lastTimestamp = aircraft.getPosition().getLast().timestamp;
 
-    if ((d->aspects & Aspects::Engine) == Aspects::Engine) {
+    if (d->aspects.testFlag(Aspect::Engine)) {
 
         // Engine
 
@@ -433,7 +433,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     const std::int64_t lastTimestamp = position.getLast().timestamp;
 
     // Engine
-    if ((d->aspects & Aspects::Engine) == Aspects::Engine) {
+    if (d->aspects.testFlag(Aspect::Engine)) {
         Engine &engine = aircraft.getEngine();
         EngineData engineData;
 
@@ -604,7 +604,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     aircraftHandle.upsert(handleData);
 
     // Lights
-    if ((d->aspects & Aspects::Light) == Aspects::Light) {
+    if (d->aspects.testFlag(Aspect::Light)) {
 
         Light &light = aircraft.getLight();
         LightData lightData;
@@ -648,7 +648,7 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
 
     // Adjust approach pitch for the last 3 minutes
     // https://forum.aerosoft.com/index.php?/topic/123864-a320-pitch-angle-during-landing/
-    if ((d->aspects & Aspects::Pitch) == Aspects::Pitch) {
+    if (d->aspects.testFlag(Aspect::Pitch)) {
         int index = position.count() - 1;
         if (index >= 0) {
             // Last sample: flare with nose up 6 degrees

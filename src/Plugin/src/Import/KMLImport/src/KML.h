@@ -22,43 +22,33 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVIMPORTSETTINGS_H
-#define CSVIMPORTSETTINGS_H
+#ifndef KML_H
+#define KML_H
 
-#include <QObject>
 #include <QString>
+#include <QStringLiteral>
 
-#include "../../../../../Kernel/src/Settings.h"
-
-class CSVImportSettings : public QObject
+/*!
+ * From https://developers.google.com/kml/documentation/kml_element_hierarchy:
+ * "In KML, simple element names begin with a lowercase letter. Simple elements can contain a value, but they do not contain other elements.
+ * Complex element names being with an uppercase letter. Complex elements can contain other elements (referred to as their children)."
+ *
+ * We adhere to this naming convention for the constants defined in this namespace.
+ */
+namespace KML
 {
-    Q_OBJECT
-public:
-    /*!
-     * CSV format (flavour).
-     */
-    enum struct Format {
-        SkyDolly = 0,
-        FlightRadar24 = 1,
-        FlightRecorder = 2
-    };
+    inline const QString Document = QStringLiteral("Document");
+    inline const QString Folder = QStringLiteral("Folder");
+    inline const QString Placemark = QStringLiteral("Placemark");
+    inline const QString Point = QStringLiteral("Point");
+    inline const QString Track = QStringLiteral("Track");
+    inline const QString TimeStamp = QStringLiteral("TimeStamp");
 
-    CSVImportSettings() noexcept;
+    inline const QString name = QStringLiteral("name");
+    inline const QString when = QStringLiteral("when");
+    inline const QString coord = QStringLiteral("coord");
+    inline const QString coordinates = QStringLiteral("coordinates");
+    inline const QString description = QStringLiteral("description");
+}
 
-    Format m_format;
-
-    Settings::PluginSettings getSettings() const noexcept;
-    Settings::KeysWithDefaults getKeysWithDefault() const noexcept;
-    void setSettings(Settings::ValuesByKey) noexcept;
-    void restoreDefaults() noexcept;
-
-signals:
-    void defaultsRestored();
-
-private:
-    void initSettings() noexcept;
-
-    static constexpr Format DefaultFormat = Format::SkyDolly;
-};
-
-#endif // CSVIMPORTSETTINGS_H
+#endif // KML_H

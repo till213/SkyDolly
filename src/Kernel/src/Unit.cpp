@@ -150,14 +150,14 @@ QString Unit::formatVelocityInRadians(double velocity) noexcept
     return d->locale.toString(velocity, 'f', Precision) % " rad/s";
 }
 
-QString Unit::formatPosition(qint16 position) noexcept
+QString Unit::formatPosition(std::int16_t position) noexcept
 {
-    return d->locale.toString(position / static_cast<double>(std::numeric_limits<qint16>::max()) * 100.0, 'f', Precision) % " %";
+    return d->locale.toString(position / static_cast<double>(std::numeric_limits<std::int16_t>::max()) * 100.0, 'f', Precision) % " %";
 }
 
-QString Unit::formatPercent(quint8 percent) noexcept
+QString Unit::formatPercent(std::uint8_t percent) noexcept
 {
-    return d->locale.toString(percent / static_cast<double>(std::numeric_limits<quint8>::max()) * 100.0, 'f', Precision) % " %";
+    return d->locale.toString(percent / static_cast<double>(std::numeric_limits<std::uint8_t>::max()) * 100.0, 'f', Precision) % " %";
 }
 
 QString Unit::formatKnots(double velocity) noexcept

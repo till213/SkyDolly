@@ -36,8 +36,8 @@ namespace SampleRate
      * Setting the recording sample rate to \e auto will enable
      * "event-based sampling" ("as fast as data arrives").
      */
-    inline constexpr int AutoValue = 999.0;
-    inline constexpr double DefaultAutoSampleRate = 60.0;
+    constexpr int AutoValue = 999.0;
+    constexpr double DefaultAutoSampleRate = 60.0;
 
     /*!
      * The SampleRate defines various recording sample rates.
@@ -66,7 +66,7 @@ namespace SampleRate
      *        the sample rate enumeration to convert
      * \return the sample rate in Hz
      */
-    inline constexpr double toValue(SampleRate sampleRate) noexcept {
+    constexpr double toValue(SampleRate sampleRate) noexcept {
         switch (sampleRate) {
         case SampleRate::Auto:
             return AutoValue;
@@ -106,7 +106,7 @@ namespace SampleRate
      *        the sample rate in Hz to convert
      * \return the sample rate enumeration value; default: \c Auto
      */
-    inline constexpr SampleRate fromValue(double sampleRate) noexcept {
+    constexpr SampleRate fromValue(double sampleRate) noexcept {
         if (sampleRate <= 1.0)
             return SampleRate::Hz1;
         else if (sampleRate <= 2.0)

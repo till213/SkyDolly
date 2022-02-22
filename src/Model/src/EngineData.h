@@ -25,6 +25,8 @@
 #ifndef ENGINEDATA_H
 #define ENGINEDATA_H
 
+#include <cstdint>
+
 #include <QtGlobal>
 #include <QFlags>
 
@@ -35,23 +37,23 @@
 struct MODEL_API EngineData : public TimeVariableData
 {
     // Implementation note: the throttle and propeller levers can also yield
-    // negative thrust, hence the type qint16 (position) which also supports negative values
-    qint16 throttleLeverPosition1;
-    qint16 throttleLeverPosition2;
-    qint16 throttleLeverPosition3;
-    qint16 throttleLeverPosition4;
-    qint16 propellerLeverPosition1;
-    qint16 propellerLeverPosition2;
-    qint16 propellerLeverPosition3;
-    qint16 propellerLeverPosition4;
-    quint8 mixtureLeverPosition1;
-    quint8 mixtureLeverPosition2;
-    quint8 mixtureLeverPosition3;
-    quint8 mixtureLeverPosition4;
-    quint8 cowlFlapPosition1;
-    quint8 cowlFlapPosition2;
-    quint8 cowlFlapPosition3;
-    quint8 cowlFlapPosition4;
+    // negative thrust, hence the type std::int16_t (position) which also supports negative values
+    std::int16_t throttleLeverPosition1;
+    std::int16_t throttleLeverPosition2;
+    std::int16_t throttleLeverPosition3;
+    std::int16_t throttleLeverPosition4;
+    std::int16_t propellerLeverPosition1;
+    std::int16_t propellerLeverPosition2;
+    std::int16_t propellerLeverPosition3;
+    std::int16_t propellerLeverPosition4;
+    std::uint8_t mixtureLeverPosition1;
+    std::uint8_t mixtureLeverPosition2;
+    std::uint8_t mixtureLeverPosition3;
+    std::uint8_t mixtureLeverPosition4;
+    std::uint8_t cowlFlapPosition1;
+    std::uint8_t cowlFlapPosition2;
+    std::uint8_t cowlFlapPosition3;
+    std::uint8_t cowlFlapPosition4;
 
     bool electricalMasterBattery1;
     bool electricalMasterBattery2;
@@ -66,7 +68,7 @@ struct MODEL_API EngineData : public TimeVariableData
     bool generalEngineCombustion3;
     bool generalEngineCombustion4;
 
-    EngineData(qint16 throttleLeverPosition1 = 0, qint16 propellerLeverPosition1 = 0, quint8 mixtureLeverPosition1 = 0, quint8 cowlFlapPosition1 = 0) noexcept;
+    EngineData(std::int16_t throttleLeverPosition1 = 0, std::int16_t propellerLeverPosition1 = 0, std::uint8_t mixtureLeverPosition1 = 0, std::uint8_t cowlFlapPosition1 = 0) noexcept;
     EngineData(EngineData &&) = default;
     EngineData(const EngineData &) = default;
     EngineData &operator= (const EngineData &) = default;

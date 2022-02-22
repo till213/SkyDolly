@@ -25,6 +25,8 @@
 #ifndef PRIMARYFLIGHTCONTROLDATA_H
 #define PRIMARYFLIGHTCONTROLDATA_H
 
+#include <cstdint>
+
 #include <QtGlobal>
 #include <QFlags>
 
@@ -34,9 +36,9 @@
 
 struct MODEL_API PrimaryFlightControlData : public TimeVariableData
 {
-    qint16 rudderPosition;
-    qint16 elevatorPosition;
-    qint16 aileronPosition;
+    std::int16_t rudderPosition;
+    std::int16_t elevatorPosition;
+    std::int16_t aileronPosition;
 
     PrimaryFlightControlData() noexcept;
     PrimaryFlightControlData(PrimaryFlightControlData &&) = default;

@@ -50,7 +50,7 @@ struct SimConnectEngineReply : public SimConnectEngineRequest
         EngineData engineData;
 
         // Note: the throttle can also yield negative thrust, hence the Sky Dolly internal type
-        //       position (qint16) which supports negative values as well
+        //       position (std::int16_t) which supports negative values as well
         engineData.throttleLeverPosition1 = SkyMath::fromPosition(throttleLeverPosition1);
         engineData.throttleLeverPosition2 = SkyMath::fromPosition(throttleLeverPosition2);
         engineData.throttleLeverPosition3 = SkyMath::fromPosition(throttleLeverPosition3);

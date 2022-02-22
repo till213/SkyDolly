@@ -24,6 +24,7 @@
  */
 #include <limits>
 #include <utility>
+#include <cstdint>
 
 #include <QtTest/QtTest>
 
@@ -44,8 +45,6 @@ void SkyMathTest::initTestCase()
 
 void SkyMathTest::cleanupTestCase()
 {}
-
-
 
 void SkyMathTest::interpolateHermite180_data()
 {
@@ -316,23 +315,23 @@ void SkyMathTest::interpolateHermite360()
 void SkyMathTest::fromPosition_data()
 {
     QTest::addColumn<double>("p");
-    QTest::addColumn<qint16>("expected");
+    QTest::addColumn<std::int16_t>("expected");
 
-    QTest::newRow("Minimum") << -1.0 << static_cast<qint16>(SkyMath::PositionMin16);
-    QTest::newRow("Maximum") <<  1.0 << static_cast<qint16>(SkyMath::PositionMax16);
-    QTest::newRow("Zero") << 0.0 << static_cast<qint16>(0);
-    QTest::newRow("Negative value") << -0.5 << static_cast<qint16>(-16383);
-    QTest::newRow("Positive value") <<  0.5 << static_cast<qint16>( 16384);
+    QTest::newRow("Minimum") << -1.0 << static_cast<std::int16_t>(SkyMath::PositionMin16);
+    QTest::newRow("Maximum") <<  1.0 << static_cast<std::int16_t>(SkyMath::PositionMax16);
+    QTest::newRow("Zero") << 0.0 << static_cast<std::int16_t>(0);
+    QTest::newRow("Negative value") << -0.5 << static_cast<std::int16_t>(-16383);
+    QTest::newRow("Positive value") <<  0.5 << static_cast<std::int16_t>( 16384);
 }
 
 void SkyMathTest::fromPosition()
 {
     // Setup
     QFETCH(double, p);
-    QFETCH(qint16, expected);
+    QFETCH(std::int16_t, expected);
 
     // Exercise
-    qint16 result = SkyMath::fromPosition(p);
+    std::int16_t result = SkyMath::fromPosition(p);
 
     // Verify
     QCOMPARE(result, expected);
@@ -340,18 +339,18 @@ void SkyMathTest::fromPosition()
 
 void SkyMathTest::toPosition_data()
 {
-    QTest::addColumn<qint16>("p16");
+    QTest::addColumn<std::int16_t>("p16");
     QTest::addColumn<double>("expected");
 
-    QTest::newRow("Minimum") << static_cast<qint16>(SkyMath::PositionMin16) << -1.0;
-    QTest::newRow("Maximum") << static_cast<qint16>(SkyMath::PositionMax16) <<  1.0;
-    QTest::newRow("Zero") << static_cast<qint16>(0) << 0.0;
+    QTest::newRow("Minimum") << static_cast<std::int16_t>(SkyMath::PositionMin16) << -1.0;
+    QTest::newRow("Maximum") << static_cast<std::int16_t>(SkyMath::PositionMax16) <<  1.0;
+    QTest::newRow("Zero") << static_cast<std::int16_t>(0) << 0.0;
 }
 
 void SkyMathTest::toPosition()
 {
     // Setup
-    QFETCH(qint16, p16);
+    QFETCH(std::int16_t, p16);
     QFETCH(double, expected);
 
     // Exercise
@@ -364,21 +363,21 @@ void SkyMathTest::toPosition()
 void SkyMathTest::fromPercent_data()
 {
     QTest::addColumn<double>("p");
-    QTest::addColumn<quint8>("expected");
+    QTest::addColumn<std::uint8_t>("expected");
 
-    QTest::newRow("Minimum") <<   0.0 << static_cast<quint8>(SkyMath::PercentMin8);
-    QTest::newRow("Maximum") << 100.0 << static_cast<quint8>(SkyMath::PercentMax8);
-    QTest::newRow("Half") << 50.0 << static_cast<quint8>(128);
+    QTest::newRow("Minimum") <<   0.0 << static_cast<std::uint8_t>(SkyMath::PercentMin8);
+    QTest::newRow("Maximum") << 100.0 << static_cast<std::uint8_t>(SkyMath::PercentMax8);
+    QTest::newRow("Half") << 50.0 << static_cast<std::uint8_t>(128);
 }
 
 void SkyMathTest::fromPercent()
 {
     // Setup
     QFETCH(double, p);
-    QFETCH(quint8, expected);
+    QFETCH(std::uint8_t, expected);
 
     // Exercise
-    quint8 result = SkyMath::fromPercent(p);
+    std::uint8_t result = SkyMath::fromPercent(p);
 
     // Verify
     QCOMPARE(result, expected);
@@ -386,17 +385,17 @@ void SkyMathTest::fromPercent()
 
 void SkyMathTest::toPercent_data()
 {
-    QTest::addColumn<quint8>("p8");
+    QTest::addColumn<std::uint8_t>("p8");
     QTest::addColumn<double>("expected");
 
-    QTest::newRow("Minimum") << static_cast<quint8>(SkyMath::PercentMin8) << 0.0;
-    QTest::newRow("Maximum") << static_cast<quint8>(SkyMath::PercentMax8) << 100.0;
+    QTest::newRow("Minimum") << static_cast<std::uint8_t>(SkyMath::PercentMin8) << 0.0;
+    QTest::newRow("Maximum") << static_cast<std::uint8_t>(SkyMath::PercentMax8) << 100.0;
 }
 
 void SkyMathTest::toPercent()
 {
     // Setup
-    QFETCH(quint8, p8);
+    QFETCH(std::uint8_t, p8);
     QFETCH(double, expected);
 
     // Exercise

@@ -13,6 +13,12 @@ if (${PLATFORM_IS_MACOS})
     list(APPEND LIBRARY_DEPENDENCIES -lc++)
 endif()
 
+set(DOCUMENTATION
+    doc/README.md
+    doc/2022-01-31-XYY-EXAMPLE-01.IGC
+    doc/2022-01-31-XYY-EXAMPLE-02.IGC
+)
+
 target_sources(${LIBRARY_NAME}
     PRIVATE
         src/IGCImportPlugin.h src/IGCImportPlugin.cpp
@@ -20,6 +26,7 @@ target_sources(${LIBRARY_NAME}
         src/IGCImportSettings.h src/IGCImportSettings.cpp
         src/IGCImportOptionWidget.h src/IGCImportOptionWidget.cpp src/IGCImportOptionWidget.ui
         src/IGCImportPlugin.json
+        ${DOCUMENTATION}
 )
 
 include_directories(${PLUGIN_NAME} PRIVATE ../../../../Widget/src/)

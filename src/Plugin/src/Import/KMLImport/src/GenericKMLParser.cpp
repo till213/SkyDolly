@@ -22,22 +22,50 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLPARSERINTF_H
-#define KMLPARSERINTF_H
+#include <memory>
 
-#include <QDateTime>
+#include <QString>
+#include <QXmlStreamReader>
 
-class QString;
+#include "KML.h"
+#include "AbstractKMLTrackParser.h"
+#include "GenericKMLParser.h"
 
-class KMLParserIntf
+class GenericKMLParserPrivate
 {
 public:
-    virtual ~KMLParserIntf() = default;
+    GenericKMLParserPrivate(QXmlStreamReader &xmlStreamReader) noexcept
+        : xml(xmlStreamReader)
+    {}
 
-    virtual void parse() noexcept = 0;
-    virtual QString getDocumentName() const noexcept = 0;
-    virtual QString getFlightNumber() const noexcept = 0;
-    virtual QDateTime getFirstDateTimeUtc() const noexcept = 0;
+    QXmlStreamReader &xml;
 };
 
-#endif // KMLPARSERINTF_H
+// PUBLIC
+
+GenericKMLParser::GenericKMLParser(QXmlStreamReader &xmlStreamReader) noexcept
+    : AbstractKMLTrackParser(xmlStreamReader),
+      d(std::make_unique<GenericKMLParserPrivate>(xmlStreamReader))
+{
+#ifdef DEBUG
+    qDebug("GenericKMLParser::~GenericKMLParser: CREATED");
+#endif
+}
+
+GenericKMLParser::~GenericKMLParser() noexcept
+{
+#ifdef DEBUG
+    qDebug("GenericKMLParser::~GenericKMLParser: DELETED");
+#endif
+}
+
+// Generic KML files (are expected to) have at least one "gx:Track"
+void GenericKMLParser::parse() noexcept
+{
+    parseKML();
+}
+
+QString GenericKMLParser::getFlightNumber() const noexcept
+{
+    return QString();
+}
