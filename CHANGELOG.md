@@ -23,6 +23,11 @@
 - CSV import plugin now supports the following new CSV flavours
   * CSV from [flightradar24.com](https://www.flightradar24.com/)
   * CSV from [Flight Recorder](https://flightsim.to/file/8163/flight-recorder)
+  
+### Bug Fixes
+
+- The spoiler position value is now properly shown as percent (instead of "raw number") in the simulation variables dialog
+  * For clarity the field is now also labeled "spoiler position" (instead of just "spoiler")
 
 ## 0.8.6
 
