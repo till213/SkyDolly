@@ -81,80 +81,90 @@ QDateTime AbstractKMLTrackParser::getFirstDateTimeUtc() const noexcept
 
 void AbstractKMLTrackParser::parseTrack() noexcept
 {
-    // Timestamp (msec), latitude (degrees), longitude (degrees), altitude (feet)
-    typedef std::tuple<std::int64_t, double, double, double> TrackItem;
-    // The track data - <when> and <gx:coord> - may be interleaved or "parallel" (first
-    // all <when> timestamps, then all <coord>). So we first read all timestamped
-    // coordinates into the trackData vector, and only then update the flight positions,
-    // also taking care of possible duplicate timestamps (-> "upsert")
-    std::vector<TrackItem> trackData;
-    QDateTime currentDateTimeUtc;
-    currentDateTimeUtc.setTimeZone(QTimeZone::utc());
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    Position &position = flight.getUserAircraft().getPosition();
+    if (position.count() == 0) {
 
-    bool ok = true;
-    int currentTrackDataIndex = 0;
-    while (d->xml.readNextStartElement()) {
-        const QStringRef xmlName = d->xml.name();
+        // Timestamp (msec), latitude (degrees), longitude (degrees), altitude (feet)
+        typedef std::tuple<std::int64_t, double, double, double> TrackItem;
+        // The track data - <when> and <gx:coord> - may be interleaved or "parallel" (first
+        // all <when> timestamps, then all <coord>). So we first read all timestamped
+        // coordinates into the trackData vector, and only then update the flight positions,
+        // also taking care of possible duplicate timestamps (-> "upsert")
+        std::vector<TrackItem> trackData;
+        QDateTime currentDateTimeUtc;
+        currentDateTimeUtc.setTimeZone(QTimeZone::utc());
+
+        bool ok = true;
+        int currentTrackDataIndex = 0;
+        while (d->xml.readNextStartElement()) {
+            const QStringRef xmlName = d->xml.name();
 #ifdef DEBUG
         qDebug("AbstractKMLTrackParser::parseTrack: XML start element: %s", qPrintable(xmlName.toString()));
 #endif
-        if (xmlName == KML::when) {
-            const QString dateTimeText = d->xml.readElementText();
-            if (d->firstDateTimeUtc.isNull()) {
-                d->firstDateTimeUtc = QDateTime::fromString(dateTimeText, Qt::ISODate);
-                currentDateTimeUtc = d->firstDateTimeUtc;
-            } else {
-                currentDateTimeUtc = QDateTime::fromString(dateTimeText, Qt::ISODate);
-            }
-            if (currentDateTimeUtc.isValid()) {
-                const std::int64_t timestamp = d->firstDateTimeUtc.msecsTo(currentDateTimeUtc);
-                TrackItem trackItem = std::make_tuple(timestamp, 0.0, 0.0, 0.0);
-                trackData.push_back(std::move(trackItem));
-            } else {
-                d->xml.raiseError("Invalid timestamp.");
-            }
-        } else if (xmlName == KML::coord) {
-            const QString coordinatesText = d->xml.readElementText();
-            const QStringList coordinates = coordinatesText.split(" ");
-            if (coordinates.count() == 3) {
+            if (xmlName == KML::when) {
+                const QString dateTimeText = d->xml.readElementText();
+                if (d->firstDateTimeUtc.isNull()) {
+                    d->firstDateTimeUtc = QDateTime::fromString(dateTimeText, Qt::ISODate);
+                    currentDateTimeUtc = d->firstDateTimeUtc;
+                } else {
+                    currentDateTimeUtc = QDateTime::fromString(dateTimeText, Qt::ISODate);
+                }
+                if (currentDateTimeUtc.isValid()) {
+                    const std::int64_t timestamp = d->firstDateTimeUtc.msecsTo(currentDateTimeUtc);
+                    TrackItem trackItem = std::make_tuple(timestamp, 0.0, 0.0, 0.0);
+                    trackData.push_back(std::move(trackItem));
+                } else {
+                    d->xml.raiseError("Invalid timestamp.");
+                }
+            } else if (xmlName == KML::coord) {
+                const QString coordinatesText = d->xml.readElementText();
+                const QStringList coordinates = coordinatesText.split(" ");
+                if (coordinates.count() == 3) {
 
-                const double longitude = coordinates.at(0).toDouble(&ok);
-                if (!ok) {
-                    d->xml.raiseError("Invalid longitude number.");
-                }
-                const double latitude = coordinates.at(1).toDouble(&ok);
-                if (!ok) {
-                    d->xml.raiseError("Invalid latitude number.");
-                }
-                const double altitude = coordinates.at(2).toDouble(&ok);
-                if (!ok) {
-                    d->xml.raiseError("Invalid altitude number.");
-                }
-                if (ok) {
-                    std::get<1>(trackData[currentTrackDataIndex]) = latitude;
-                    std::get<2>(trackData[currentTrackDataIndex]) = longitude;
-                    std::get<3>(trackData[currentTrackDataIndex]) = Convert::metersToFeet(altitude);
-                    ++currentTrackDataIndex;
-                }
+                    const double longitude = coordinates.at(0).toDouble(&ok);
+                    if (!ok) {
+                        d->xml.raiseError("Invalid longitude number.");
+                    }
+                    const double latitude = coordinates.at(1).toDouble(&ok);
+                    if (!ok) {
+                        d->xml.raiseError("Invalid latitude number.");
+                    }
+                    const double altitude = coordinates.at(2).toDouble(&ok);
+                    if (!ok) {
+                        d->xml.raiseError("Invalid altitude number.");
+                    }
+                    if (ok) {
+                        std::get<1>(trackData[currentTrackDataIndex]) = latitude;
+                        std::get<2>(trackData[currentTrackDataIndex]) = longitude;
+                        std::get<3>(trackData[currentTrackDataIndex]) = Convert::metersToFeet(altitude);
+                        ++currentTrackDataIndex;
+                    }
 
+                } else {
+                    d->xml.raiseError("Invalid GPS coordinate.");
+                }
             } else {
-                d->xml.raiseError("Invalid GPS coordinate.");
+                d->xml.skipCurrentElement();
             }
-        } else {
-            d->xml.skipCurrentElement();
         }
+
+        // Now "upsert" the position data, taking possible duplicate timestamps into account
+        for (const TrackItem &trackItem : trackData) {
+            PositionData positionData;
+            positionData.timestamp = std::get<0>(trackItem);
+            positionData.latitude = std::get<1>(trackItem);
+            positionData.longitude = std::get<2>(trackItem);
+            positionData.altitude = std::get<3>(trackItem);
+
+            position.upsertLast(std::move(positionData));
+        }
+
+    } else {
+        // We have already encountered track data, so skip all subsequent ones
+        // (assuming that the relevant position data is in the first track of
+        // the KML document)
+        d->xml.skipCurrentElement();
     }
 
-    // Now "upsert" the position data, taking possible duplicate timestamps into account
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    Position &position = flight.getUserAircraft().getPosition();
-    for (const TrackItem &trackItem : trackData) {
-        PositionData positionData;
-        positionData.timestamp = std::get<0>(trackItem);
-        positionData.latitude = std::get<1>(trackItem);
-        positionData.longitude = std::get<2>(trackItem);
-        positionData.altitude = std::get<3>(trackItem);
-
-        position.upsertLast(std::move(positionData));
-    }
 }

@@ -88,6 +88,7 @@ void CSVImportOptionWidget::initOptionUi() noexcept
 {
     ui->formatComboBox->addItem(Version::getApplicationName(), Enum::toUnderlyingType(CSVImportSettings::Format::SkyDolly));
     ui->formatComboBox->addItem("FlightRadar24", Enum::toUnderlyingType(CSVImportSettings::Format::FlightRadar24));
+    ui->formatComboBox->addItem("Flight Recorder", Enum::toUnderlyingType(CSVImportSettings::Format::FlightRecorder));
 }
 
 void CSVImportOptionWidget::updateOptionUi() noexcept

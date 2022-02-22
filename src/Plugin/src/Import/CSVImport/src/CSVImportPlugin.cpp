@@ -34,6 +34,7 @@
 #include "CSVParserIntf.h"
 #include "SkyDollyCSVParser.h"
 #include "FlightRadar24CSVParser.h"
+#include "FlightRecorderCSVParser.h"
 #include "CSVImportSettings.h"
 #include "CSVImportOptionWidget.h"
 #include "CSVImportPlugin.h"
@@ -107,6 +108,9 @@ bool CSVImportPlugin::readFile(QFile &file) noexcept
     case CSVImportSettings::Format::FlightRadar24:
         parser = std::make_unique<FlightRadar24CSVParser>();
         break;
+    case CSVImportSettings::Format::FlightRecorder:
+        parser = std::make_unique<FlightRecorderCSVParser>();
+        break;
     default:
         parser = nullptr;
         ok = false;
@@ -134,6 +138,9 @@ FlightAugmentation::Aspects CSVImportPlugin::getAspects() const noexcept
     case CSVImportSettings::Format::FlightRadar24:
         // Do not augment heading and velocity
         aspects = FlightAugmentation::Aspects::Pitch | FlightAugmentation::Aspects::Bank | FlightAugmentation::Aspects::Engine | FlightAugmentation::Aspects::Light;
+        break;
+    case CSVImportSettings::Format::FlightRecorder:
+        aspects = FlightAugmentation::Aspects::None;
         break;
     default:
         aspects = FlightAugmentation::Aspects::All;

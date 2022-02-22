@@ -13,6 +13,11 @@ if (${PLATFORM_IS_MACOS})
     list(APPEND LIBRARY_DEPENDENCIES -lc++)
 endif()
 
+set(DOCUMENTATION
+    doc/FlightRadar24.csv
+    doc/FlightRadar24.md
+)
+
 target_sources(${LIBRARY_NAME}
     PRIVATE
         src/CSVImportPlugin.h src/CSVImportPlugin.cpp
@@ -21,7 +26,9 @@ target_sources(${LIBRARY_NAME}
         src/CSVParserIntf.h
         src/SkyDollyCSVParser.h src/SkyDollyCSVParser.cpp
         src/FlightRadar24CSVParser.h src/FlightRadar24CSVParser.cpp
+        src/FlightRecorderCSVParser.h src/FlightRecorderCSVParser.cpp
         src/CSVImportPlugin.json
+        ${DOCUMENTATION}
 )
 
 include_directories(${PLUGIN_NAME} PRIVATE ../../../../Widget/src/)

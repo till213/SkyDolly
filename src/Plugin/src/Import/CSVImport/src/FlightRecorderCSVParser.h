@@ -22,43 +22,38 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVIMPORTSETTINGS_H
-#define CSVIMPORTSETTINGS_H
+#ifndef FLIGHTRECORDERCSVPARSER_H
+#define FLIGHTRECORDERCSVPARSER_H
 
-#include <QObject>
-#include <QString>
+#include <memory>
 
-#include "../../../../../Kernel/src/Settings.h"
+#include <QByteArray>
+#include <QList>
 
-class CSVImportSettings : public QObject
+class QFile;
+class QDateTime;
+class QString;
+
+#include "CSVParserIntf.h"
+
+class FlightRecorderCSVParserPrivate;
+
+class FlightRecorderCSVParser : public CSVParserIntf
 {
-    Q_OBJECT
 public:
-    /*!
-     * CSV format (flavour).
-     */
-    enum struct Format {
-        SkyDolly = 0,
-        FlightRadar24 = 1,
-        FlightRecorder = 2
-    };
+    FlightRecorderCSVParser() noexcept;
+    virtual ~FlightRecorderCSVParser() noexcept;
 
-    CSVImportSettings() noexcept;
-
-    Format m_format;
-
-    Settings::PluginSettings getSettings() const noexcept;
-    Settings::KeysWithDefaults getKeysWithDefault() const noexcept;
-    void setSettings(Settings::ValuesByKey) noexcept;
-    void restoreDefaults() noexcept;
-
-signals:
-    void defaultsRestored();
+    virtual bool parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept override;
 
 private:
-    void initSettings() noexcept;
+    std::unique_ptr<FlightRecorderCSVParserPrivate> d;
 
-    static constexpr Format DefaultFormat = Format::SkyDolly;
+    bool parseHeader(QFile &file) noexcept;
+    bool parseData(QFile &file) noexcept;
+    inline bool importTimestamp(const QList<QByteArray> &values, bool firstRow, std::int64_t &timestamp, std::int64_t &timestampDelta) noexcept;
+    template <typename T>
+    inline bool importValue(const QList<QByteArray> &values, const char *name, int &index, T &value) noexcept;
 };
 
-#endif // CSVIMPORTSETTINGS_H
+#endif // FLIGHTRECORDERCSVPARSER_H
