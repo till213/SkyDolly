@@ -28,6 +28,7 @@
 
 #include <QWidget>
 #include <QComboBox>
+#include <QCompleter>
 
 #include "../../Model/src/AircraftType.h"
 #include "../../Persistence/src/Service/AircraftTypeService.h"
@@ -68,4 +69,10 @@ void AircraftSelectionComboBox::initialise() noexcept
             this->addItem(aircraftType.type);
         }
     }
+
+    setEditable(true);
+    setInsertPolicy(QComboBox::NoInsert);
+    QCompleter *autoCompleter = completer();
+    autoCompleter->setCompletionMode(QCompleter::PopupCompletion);
+    autoCompleter->setFilterMode(Qt::MatchContains);
 }
