@@ -262,3 +262,4 @@ inline void GPXParser::parseTrackPoint(Position &position, QDateTime &currentDat
         position.upsertLast(positionData);
     }
 }
+
