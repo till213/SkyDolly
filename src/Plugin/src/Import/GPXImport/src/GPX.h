@@ -58,8 +58,6 @@ namespace GPX
     inline const QString time = QStringLiteral("time");
     inline const QString lat = QStringLiteral("lat");
     inline const QString lon = QStringLiteral("lon");
-
-
 }
 
 #endif // GPX_H
