@@ -31,7 +31,7 @@
     <name>Route name</name>
     <desc>Route description</desc>
     <rtept lat="52.0" lon="13.5">
-     <ele>33.0</ele>
+      <ele>33.0</ele>
       <time>2011-12-13T23:59:59Z</time>
       <name>rtept 1</name>
     </rtept>

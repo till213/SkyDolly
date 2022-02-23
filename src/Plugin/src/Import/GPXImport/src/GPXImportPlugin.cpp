@@ -186,23 +186,49 @@ void GPXImportPlugin::updateWaypoints() noexcept
     FlightPlan &flightPlan = aircraft.getFlightPlan();
     if (position.count() > 0) {
         Analytics analytics(aircraft);
+        const PositionData firstPositionData = position.getFirst();
+        const PositionData lastPositionData = position.getLast();
         const QDateTime startDateTimeUtc = d->parser->getFirstDateTimeUtc();
+        const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
 
         // Assign timestamps according to the closest flown position
         std::unordered_set<std::int64_t> timestamps;
         std::int64_t uniqueTimestamp;
-        for (Waypoint &waypoint : aircraft.getFlightPlan()) {
-            if (waypoint.timestamp == TimeVariableData::InvalidTime) {
-                const PositionData &closestPositionData = analytics.closestPosition(waypoint.latitude, waypoint.longitude);
-                const QDateTime dateTimeUtc = startDateTimeUtc.addMSecs(closestPositionData.timestamp);
-                waypoint.localTime = dateTimeUtc.toLocalTime();
-                waypoint.zuluTime = dateTimeUtc;
-                uniqueTimestamp = closestPositionData.timestamp;
+        FlightPlan &flightPlan = aircraft.getFlightPlan();
+        const int count = flightPlan.count();
+        for (int i = 0; i < count; ++i) {
+            Waypoint &waypoint = flightPlan[i];
+            if (i == 0) {
+                // First waypoint
+                waypoint.localTime = startDateTimeUtc.toLocalTime();
+                waypoint.zuluTime = startDateTimeUtc;
+                uniqueTimestamp = firstPositionData.timestamp;
+                waypoint.timestamp = uniqueTimestamp;
+                timestamps.insert(uniqueTimestamp);
+            } else if (i == count - 1) {
+                // Last waypoint
+                waypoint.localTime = endDateTimeUtc.toLocalTime();
+                waypoint.zuluTime = endDateTimeUtc;
+                uniqueTimestamp = lastPositionData.timestamp;
                 while (timestamps.find(uniqueTimestamp) != timestamps.end()) {
                     ++uniqueTimestamp;
                 }
                 waypoint.timestamp = uniqueTimestamp;
                 timestamps.insert(uniqueTimestamp);
+            } else {
+                // In between waypoints
+                if (waypoint.timestamp == TimeVariableData::InvalidTime) {
+                    const PositionData &closestPositionData = analytics.closestPosition(waypoint.latitude, waypoint.longitude);
+                    const QDateTime dateTimeUtc = startDateTimeUtc.addMSecs(closestPositionData.timestamp);
+                    waypoint.localTime = dateTimeUtc.toLocalTime();
+                    waypoint.zuluTime = dateTimeUtc;
+                    uniqueTimestamp = closestPositionData.timestamp;
+                    while (timestamps.find(uniqueTimestamp) != timestamps.end()) {
+                        ++uniqueTimestamp;
+                    }
+                    waypoint.timestamp = uniqueTimestamp;
+                    timestamps.insert(uniqueTimestamp);
+                }
             }
         }
     } else {

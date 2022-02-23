@@ -54,6 +54,9 @@ struct MODEL_API PositionData : public TimeVariableData
     PositionData(PositionData &&) = default;
     PositionData(const PositionData &) = default;
     PositionData &operator= (const PositionData &) = default;
+    bool operator== (const PositionData &rhs) const noexcept {
+        return timestamp == rhs.timestamp;
+    }
 
     static const PositionData NullData;
 };
