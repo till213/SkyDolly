@@ -349,10 +349,10 @@ void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
     // 0 seconds
     secondaryFlightControlData.timestamp = 0;
     // Flaps
-    secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(66.6);
-    secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(66.6);
-    secondaryFlightControlData.trailingEdgeFlapsLeftPercent = SkyMath::fromPercent(28.6);
-    secondaryFlightControlData.trailingEdgeFlapsRightPercent = SkyMath::fromPercent(28.6);
+    secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.666);
+    secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(0.666);
+    secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.286);
+    secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromPosition(0.286);
     secondaryFlightControlData.flapsHandleIndex = 1;
     secondaryFlightControlData.spoilersHandlePosition = 0;
     secondaryFlightControl.upsertLast(secondaryFlightControlData);
@@ -360,10 +360,10 @@ void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
     // 30 seconds
     secondaryFlightControlData.timestamp = qMin(static_cast<std::int64_t>(30 * 1000), lastTimestamp);
     // Retract flaps
-    secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(0);
-    secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(0);
-    secondaryFlightControlData.trailingEdgeFlapsLeftPercent = SkyMath::fromPercent(0);
-    secondaryFlightControlData.trailingEdgeFlapsRightPercent = SkyMath::fromPercent(0);
+    secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.0);
+    secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(0.0);
+    secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.0);
+    secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromPosition(0.0);
     secondaryFlightControlData.flapsHandleIndex = 0;
     secondaryFlightControlData.spoilersHandlePosition = 0;
     secondaryFlightControl.upsertLast(secondaryFlightControlData);
@@ -523,10 +523,10 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     // t minus 10 minutes
     secondaryFlightControlData.timestamp = qMax(lastTimestamp - 10 * 60 * 1000, std::int64_t(0));
     // Flaps 0
-    secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(0);
-    secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(0);
-    secondaryFlightControlData.trailingEdgeFlapsLeftPercent = SkyMath::fromPercent(0);
-    secondaryFlightControlData.trailingEdgeFlapsRightPercent = SkyMath::fromPercent(0);
+    secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.0);
+    secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(0.0);
+    secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.0);
+    secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromPosition(0.0);
     secondaryFlightControlData.flapsHandleIndex = 0;
     // Spoilers 40%
     secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(20.0);
@@ -535,10 +535,10 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     // t minus 8 minutes
     secondaryFlightControlData.timestamp = qMax(lastTimestamp - 8 * 60 * 1000, std::int64_t(0));
     // Flaps 1
-    secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(66.6);
-    secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(66.6);
-    secondaryFlightControlData.trailingEdgeFlapsLeftPercent = SkyMath::fromPercent(28.6);
-    secondaryFlightControlData.trailingEdgeFlapsRightPercent = SkyMath::fromPercent(28.6);
+    secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.666);
+    secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(0.666);
+    secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.286);
+    secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromPosition(0.286);
     secondaryFlightControlData.flapsHandleIndex = 1;
     // Spoilers 60%
     secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(60.0);
@@ -547,10 +547,10 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     // t minus 7 minutes
     secondaryFlightControlData.timestamp = qMax(lastTimestamp - 7 * 60 * 1000, std::int64_t(0));
     // Flaps 2
-    secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(81.57);
-    secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(81.57);
-    secondaryFlightControlData.trailingEdgeFlapsLeftPercent = SkyMath::fromPercent(42.75);
-    secondaryFlightControlData.trailingEdgeFlapsRightPercent = SkyMath::fromPercent(42.75);
+    secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.8157);
+    secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(0.8157);
+    secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.4275);
+    secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromPosition(0.4275);
     secondaryFlightControlData.flapsHandleIndex = 2;
     // Spoilers 60%
     secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(60.0);
@@ -559,10 +559,10 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     // t minus 5 minutes
     secondaryFlightControlData.timestamp = qMax(lastTimestamp - 5 * 60 * 1000, std::int64_t(0));
     // Flaps 3
-    secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(81.57);
-    secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(81.57);
-    secondaryFlightControlData.trailingEdgeFlapsLeftPercent = SkyMath::fromPercent(57.25);
-    secondaryFlightControlData.trailingEdgeFlapsRightPercent = SkyMath::fromPercent(57.25);
+    secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.8157);
+    secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(0.8157);
+    secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromPosition(0.5725);
+    secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromPosition(0.5725);
     secondaryFlightControlData.flapsHandleIndex = 3;
     // Spoilers 20%
     secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(20.0);
@@ -571,10 +571,10 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     // t minus 4 minutes
     secondaryFlightControlData.timestamp = qMax(lastTimestamp - 4 * 60 * 1000, std::int64_t(0));
     // Flaps 4
-    secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(100.0);
-    secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(100.0);
-    secondaryFlightControlData.trailingEdgeFlapsLeftPercent = SkyMath::fromPercent(100.0);
-    secondaryFlightControlData.trailingEdgeFlapsRightPercent = SkyMath::fromPercent(100.0);
+    secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(1.0);
+    secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(1.0);
+    secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromPosition(1.0);
+    secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromPosition(1.0);
     secondaryFlightControlData.flapsHandleIndex = 4;
     // Spoilers 0%
     secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(0.0);
@@ -583,10 +583,10 @@ void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
     // t
     secondaryFlightControlData.timestamp = lastTimestamp;
     // Flaps 4
-    secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(100.0);
-    secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(100.0);
-    secondaryFlightControlData.trailingEdgeFlapsLeftPercent = SkyMath::fromPercent(100.0);
-    secondaryFlightControlData.trailingEdgeFlapsRightPercent = SkyMath::fromPercent(100.0);
+    secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(1.0);
+    secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(1.0);
+    secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromPosition(1.0);
+    secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromPosition(1.0);
     secondaryFlightControlData.flapsHandleIndex = 4;
     // Spoilers 100%
     secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(100.0);

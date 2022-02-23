@@ -12,7 +12,7 @@
 ### Improvements
 
 - Import
-  * The aircraft selection combobox is now editable, with basic autocompletion support
+  * The aircraft selection combobox is now editable, with autocompletion support
 - IGC import plugin
   * The initial heading is now calculated on the "first significant movement", compensating GPS inaccuracies (when the glider is standing still on the ground)
   * Date and time of turn points (waypoints) defined by the task list ("C records") are now updated with the actual flight time, based on the closest flown position
@@ -28,6 +28,8 @@
 
 - The spoiler position value is now properly shown as percent (instead of "raw number") in the simulation variables dialog
   * For clarity the field is now also labeled "spoiler position" (instead of just "spoiler")
+- Switched internal leading/trailing flaps position unit from "percent" to "position"
+  * The greater precision (32767 vs 255 possible values) gets rid of the "flaps sound stutter" (e.g. audible in the cockpit of the A320neo)
 
 ## 0.8.6
 

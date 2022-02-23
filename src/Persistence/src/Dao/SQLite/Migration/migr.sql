@@ -552,6 +552,13 @@ set smoke_enable = 0;
 update metadata
 set app_version = '0.8.0';
 
+@migr(id = "133820ce-d5e0-4563-8458-aed6604c3f64", descn = "Migrate flaps position from percent to position value", step_cnt = 1)
+update secondary_flight_control
+set leading_edge_flaps_left_percent = round((leading_edge_flaps_left_percent / 255.0) * 32767.0),
+    leading_edge_flaps_right_percent = round((leading_edge_flaps_right_percent / 255.0) * 32767.0),
+    trailing_edge_flaps_left_percent = round((trailing_edge_flaps_left_percent / 255.0) * 32767.0),
+    trailing_edge_flaps_right_percent = round((trailing_edge_flaps_right_percent / 255.0) * 32767.0);
+
 @migr(id = "58835694-4d47-42cd-8c9c-1b9e164e21b8", descn = "Update application version to 0.9", step = 1)
 update metadata
 set app_version = '0.9.0';

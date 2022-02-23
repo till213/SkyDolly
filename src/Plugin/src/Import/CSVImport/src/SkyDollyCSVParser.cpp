@@ -497,22 +497,22 @@ inline bool SkyDollyCSVParser::importSecondaryFlightControlData(const QList<QByt
         if (header == SimVar::LeadingEdgeFlapsLeftPercent) {
             intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.leadingEdgeFlapsLeftPercent = intValue;
+                data.leadingEdgeFlapsLeftPosition = intValue;
             }
         } else if (header == SimVar::LeadingEdgeFlapsRightPercent) {
             intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.leadingEdgeFlapsRightPercent = intValue;
+                data.leadingEdgeFlapsRightPosition = intValue;
             }
         } else if (header == SimVar::TrailingEdgeFlapsLeftPercent) {
             intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.trailingEdgeFlapsLeftPercent = intValue;
+                data.trailingEdgeFlapsLeftPosition = intValue;
             }
         } else if (header == SimVar::TrailingEdgeFlapsRightPercent) {
             intValue = values.at(columnIndex).toInt(&ok);
             if (ok) {
-                data.trailingEdgeFlapsRightPercent = intValue;
+                data.trailingEdgeFlapsRightPosition = intValue;
             }
         } else if (header == SimVar::SpoilersHandlePosition) {
             intValue = values.at(columnIndex).toInt(&ok);
