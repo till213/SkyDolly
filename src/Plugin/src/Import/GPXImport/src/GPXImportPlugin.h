@@ -79,6 +79,7 @@ private:
     std::unique_ptr<GPXImportPluginPrivate> d;
 
     void parseGPX() noexcept;
+    void updateWaypoints() noexcept;
 };
 
 #endif // GPXIMPORTPLUGIN_H

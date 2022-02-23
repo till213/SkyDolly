@@ -49,6 +49,8 @@ namespace GPX
 
     // Routes
     inline const QString rte = QStringLiteral("rte");
+    inline const QString rtept = QStringLiteral("rtept");
+
 
     // Tracks
     inline const QString trk = QStringLiteral("trk");

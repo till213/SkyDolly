@@ -36,23 +36,25 @@
 #include "../../../../../Model/src/Aircraft.h"
 #include "../../../../../Model/src/Position.h"
 #include "../../../../../Model/src/PositionData.h"
+#include "../../../../../Model/src/FlightPlan.h"
+#include "../../../../../Model/src/Waypoint.h"
 #include "GPX.h"
+#include "GPXImportSettings.h"
 #include "GPXParser.h"
 
 class GPXParserPrivate
 {
 public:
-    GPXParserPrivate(QXmlStreamReader &xmlStreamReader, int theDefaultAltitude, int theDefaultVelocity) noexcept
+    GPXParserPrivate(QXmlStreamReader &xmlStreamReader, const GPXImportSettings &theImportSettings) noexcept
         : xml(xmlStreamReader),
-          defaultAltitude(theDefaultAltitude),
-          defaultVelocity(theDefaultVelocity)
+          importSettings(theImportSettings)
+
     {
         firstDateTimeUtc.setTimeZone(QTimeZone::utc());
     }
 
     QXmlStreamReader &xml;
-    const int defaultAltitude;
-    const int defaultVelocity;
+    const GPXImportSettings &importSettings;
     QDateTime firstDateTimeUtc;
     QString documentName;
     QString description;
@@ -60,8 +62,8 @@ public:
 
 // PUBLIC
 
-GPXParser::GPXParser(QXmlStreamReader &xmlStreamReader, int defaultAltitude, int defaultVelocity) noexcept
-    : d(std::make_unique<GPXParserPrivate>(xmlStreamReader, defaultAltitude, defaultVelocity))
+GPXParser::GPXParser(QXmlStreamReader &xmlStreamReader, const GPXImportSettings &theImportSettings) noexcept
+    : d(std::make_unique<GPXParserPrivate>(xmlStreamReader, theImportSettings))
 {
 #ifdef DEBUG
     qDebug("GPXParser::~GPXParser: CREATED");
@@ -150,8 +152,68 @@ void GPXParser::parseWaypoint() noexcept
 
 void GPXParser::parseRoute() noexcept
 {
-    // @todo IMPLEMENT ME!!!
-    d->xml.skipCurrentElement();
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    FlightPlan &flightPlan = flight.getUserAircraft().getFlightPlan();
+
+    while (d->xml.readNextStartElement()) {
+#ifdef DEBUG
+        qDebug("GPXParser::parseRoute: XML start element: %s", qPrintable(d->xml.name().toString()));
+#endif
+        if (d->xml.name() == GPX::name) {
+            // The route name takes precedence over the name given in the metadata
+            d->documentName = d->xml.readElementText();
+        } else if (d->xml.name() == GPX::desc) {
+            // The route description takes precedence over the description given in the metadata
+            d->description = d->xml.readElementText();
+        } else if (d->xml.name() == GPX::rtept) {
+            parseRoutePoint(flightPlan);
+        } else {
+            d->xml.skipCurrentElement();
+        }
+    }
+}
+
+void GPXParser::parseRoutePoint(FlightPlan &flightPlan) noexcept
+{
+    bool ok;
+    Waypoint waypoint;
+    bool hasAltitude {false};
+    const QXmlStreamAttributes attributes = d->xml.attributes();
+    waypoint.latitude = attributes.value(GPX::lat).toDouble(&ok);
+    if (ok) {
+        waypoint.longitude = attributes.value(GPX::lon).toDouble(&ok);
+        if (!ok) {
+            d->xml.raiseError("Could not parse route point longitude value.");
+        }
+    } else {
+        d->xml.raiseError("Could not parse route point latitude value.");
+    }
+
+    while (d->xml.readNextStartElement()) {
+#ifdef DEBUG
+        qDebug("GPXParser::parseRoutePoint: XML start element: %s", qPrintable(d->xml.name().toString()));
+#endif
+        if (d->xml.name() == GPX::ele) {
+            const QString elevationText = d->xml.readElementText();
+            const double altitude = elevationText.toDouble(&ok);
+            if (ok) {
+                waypoint.altitude = Convert::metersToFeet(altitude);
+                hasAltitude = true;
+            } else {
+                d->xml.raiseError("Could not parse track altitude value.");
+            }
+        } else if (d->xml.name() == GPX::name) {
+            waypoint.identifier = d->xml.readElementText();
+        } else {
+            d->xml.skipCurrentElement();
+        }
+    }
+
+    if (!hasAltitude) {
+        waypoint.altitude = d->importSettings.m_defaultAltitude;
+    }
+
+    flightPlan.add(waypoint);
 }
 
 void GPXParser::parseTrack() noexcept
@@ -216,7 +278,6 @@ inline void GPXParser::parseTrackPoint(Position &position, QDateTime &currentDat
             } else {
                 d->xml.raiseError("Could not parse track altitude value.");
             }
-
         } else if (d->xml.name() == GPX::time) {
             const QString dateTimeText = d->xml.readElementText();
             if (d->firstDateTimeUtc.isNull()) {
@@ -237,7 +298,7 @@ inline void GPXParser::parseTrackPoint(Position &position, QDateTime &currentDat
     }
     if (ok) {
         if (!hasAltitude) {
-            positionData.altitude = d->defaultAltitude;
+            positionData.altitude = d->importSettings.m_defaultAltitude;
         }
         if (!hasTimestamp) {
             if (position.count() > 0) {
@@ -247,7 +308,7 @@ inline void GPXParser::parseTrackPoint(Position &position, QDateTime &currentDat
                 const double averageAltitude = (previousPositionData.altitude + positionData.altitude) / 2.0;
                 // In meters
                 const double distance = SkyMath::sphericalDistance(start, end, averageAltitude);
-                const double velocityMetersPerSecond = Convert::knotsToMetersPerSecond(d->defaultVelocity);
+                const double velocityMetersPerSecond = Convert::knotsToMetersPerSecond(d->importSettings.m_defaultVelocity);
                 const double seconds = distance / velocityMetersPerSecond;
                 positionData.timestamp = previousPositionData.timestamp + qRound(seconds * 1000.0);
             } else {
@@ -262,4 +323,3 @@ inline void GPXParser::parseTrackPoint(Position &position, QDateTime &currentDat
         position.upsertLast(positionData);
     }
 }
-

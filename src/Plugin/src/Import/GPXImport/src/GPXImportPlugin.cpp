@@ -25,6 +25,7 @@
 #include <memory>
 #include <tuple>
 #include <vector>
+#include <unordered_set>
 
 #include <QFile>
 #include <QFileInfo>
@@ -37,11 +38,17 @@
 #include <QFlags>
 #include <QWidget>
 
+#include "../../../../../Flight/src/Analytics.h"
 #include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
-#include "../../../../../Model/src/Aircraft.h"
 #include "../../../../../Model/src/FlightCondition.h"
-#include "../../../../../Flight/src/FlightAugmentation.h"
+#include "../../../../../Model/src/Aircraft.h"
+#include "../../../../../Model/src/Position.h"
+#include "../../../../../Model/src/PositionData.h"
+#include "../../../../../Model/src/Engine.h"
+#include "../../../../../Model/src/EngineData.h"
+#include "../../../../../Model/src/FlightPlan.h"
+#include "../../../../../Model/src/Waypoint.h"
 #include "GPXImportOptionWidget.h"
 #include "GPXImportSettings.h"
 #include "GPXParser.h"
@@ -165,6 +172,45 @@ void GPXImportPlugin::onRestoreDefaultSettings() noexcept
 
 void GPXImportPlugin::parseGPX() noexcept
 {
-    d->parser = std::make_unique<GPXParser>(d->xml, d->importSettings.m_defaultAltitude, d->importSettings.m_defaultVelocity);
+    d->parser = std::make_unique<GPXParser>(d->xml, d->importSettings);
     d->parser->parse();
+    updateWaypoints();
+}
+
+void GPXImportPlugin::updateWaypoints() noexcept
+{
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const Aircraft &aircraft = flight.getUserAircraft();
+    Position &position = aircraft.getPosition();
+
+    FlightPlan &flightPlan = aircraft.getFlightPlan();
+    if (position.count() > 0) {
+        Analytics analytics(aircraft);
+        const QDateTime startDateTimeUtc = d->parser->getFirstDateTimeUtc();
+
+        // Assign timestamps according to the closest flown position
+        std::unordered_set<std::int64_t> timestamps;
+        std::int64_t uniqueTimestamp;
+        for (Waypoint &waypoint : aircraft.getFlightPlan()) {
+            if (waypoint.timestamp == TimeVariableData::InvalidTime) {
+                const PositionData &closestPositionData = analytics.closestPosition(waypoint.latitude, waypoint.longitude);
+                const QDateTime dateTimeUtc = startDateTimeUtc.addMSecs(closestPositionData.timestamp);
+                waypoint.localTime = dateTimeUtc.toLocalTime();
+                waypoint.zuluTime = dateTimeUtc;
+                uniqueTimestamp = closestPositionData.timestamp;
+                while (timestamps.find(uniqueTimestamp) != timestamps.end()) {
+                    ++uniqueTimestamp;
+                }
+                waypoint.timestamp = uniqueTimestamp;
+                timestamps.insert(uniqueTimestamp);
+            }
+        }
+    } else {
+        // No positions - use timestamps 0, 1, 2, ...
+        std::int64_t currentWaypointTimestamp = 0;
+        for (Waypoint &waypoint : aircraft.getFlightPlan()) {
+            waypoint.timestamp = currentWaypointTimestamp;
+            ++currentWaypointTimestamp;
+        }
+    }
 }
