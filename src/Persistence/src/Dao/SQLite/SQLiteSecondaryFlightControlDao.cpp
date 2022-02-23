@@ -113,10 +113,10 @@ bool SQLiteSecondaryFlightControlDao::add(std::int64_t aircraftId, const Seconda
 
     query.bindValue(":aircraft_id", QVariant::fromValue(aircraftId));
     query.bindValue(":timestamp", QVariant::fromValue(secondaryFlightControlData.timestamp));
-    query.bindValue(":leading_edge_flaps_left_percent", secondaryFlightControlData.leadingEdgeFlapsLeftPercent);
-    query.bindValue(":leading_edge_flaps_right_percent", secondaryFlightControlData.leadingEdgeFlapsRightPercent);
-    query.bindValue(":trailing_edge_flaps_left_percent", secondaryFlightControlData.trailingEdgeFlapsLeftPercent);
-    query.bindValue(":trailing_edge_flaps_right_percent", secondaryFlightControlData.trailingEdgeFlapsRightPercent);
+    query.bindValue(":leading_edge_flaps_left_percent", secondaryFlightControlData.leadingEdgeFlapsLeftPosition);
+    query.bindValue(":leading_edge_flaps_right_percent", secondaryFlightControlData.leadingEdgeFlapsRightPosition);
+    query.bindValue(":trailing_edge_flaps_left_percent", secondaryFlightControlData.trailingEdgeFlapsLeftPosition);
+    query.bindValue(":trailing_edge_flaps_right_percent", secondaryFlightControlData.trailingEdgeFlapsRightPosition);
     query.bindValue(":spoilers_handle_position", secondaryFlightControlData.spoilersHandlePosition);
     query.bindValue(":flaps_handle_index", secondaryFlightControlData.flapsHandleIndex);
 
@@ -156,10 +156,10 @@ bool SQLiteSecondaryFlightControlDao::getByAircraftId(std::int64_t aircraftId, s
             SecondaryFlightControlData data;
 
             data.timestamp = query.value(timestampIdx).toLongLong();
-            data.leadingEdgeFlapsLeftPercent = query.value(leadingEdgeFlapsLeftPercentIdx).toInt();
-            data.leadingEdgeFlapsRightPercent = query.value(leadingEdgeFlapsRightPercentIdx).toInt();
-            data.trailingEdgeFlapsLeftPercent = query.value(trailingEdgeFlapsLeftPercentIdx).toInt();
-            data.trailingEdgeFlapsRightPercent = query.value(trailingEdgeFlapsRightPercentIdx).toInt();
+            data.leadingEdgeFlapsLeftPosition = query.value(leadingEdgeFlapsLeftPercentIdx).toInt();
+            data.leadingEdgeFlapsRightPosition = query.value(leadingEdgeFlapsRightPercentIdx).toInt();
+            data.trailingEdgeFlapsLeftPosition = query.value(trailingEdgeFlapsLeftPercentIdx).toInt();
+            data.trailingEdgeFlapsRightPosition = query.value(trailingEdgeFlapsRightPercentIdx).toInt();
             data.spoilersHandlePosition = query.value(spoilersHandlePositionIdx).toInt();
             data.flapsHandleIndex = query.value(flapsHandleIndexIdx).toInt();
 

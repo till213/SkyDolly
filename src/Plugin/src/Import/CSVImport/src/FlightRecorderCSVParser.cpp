@@ -307,12 +307,10 @@ bool FlightRecorderCSVParser::parseData(QFile &file) noexcept
         ok = ok && importValue(values, ::SpoilerHandlePosition, spoilerHandlePositionIdx, spoilerHandlePositionPercent);
         ok = ok && importValue(values, ::FlapsHandleIndex, flapsHandleIndexIdx, secondaryFlightControlData.flapsHandleIndex);
         if (ok) {
-            // Flight Recorder actually requests and stores those values as "Position" ([-1.0, 1.0]), so we convert to
-            // percent by multiplying with 100.0
-            secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(leadingEdgeFlapsLeftPosition * 100.0);
-            secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(leadingEdgeFlapsRightPosition * 100.0);
-            secondaryFlightControlData.trailingEdgeFlapsLeftPercent = SkyMath::fromPercent(trailingEdgeFlapsLeftPosition * 100.0);
-            secondaryFlightControlData.trailingEdgeFlapsRightPercent = SkyMath::fromPercent(trailingEdgeFlapsRightPosition * 100.0);
+            secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(leadingEdgeFlapsLeftPosition);
+            secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(leadingEdgeFlapsRightPosition);
+            secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromPosition(trailingEdgeFlapsLeftPosition);
+            secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromPosition(trailingEdgeFlapsRightPosition);
             secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(spoilerHandlePositionPercent);
             secondaryFlightControl.upsertLast(secondaryFlightControlData);
         } else {

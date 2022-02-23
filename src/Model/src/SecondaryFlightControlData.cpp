@@ -28,11 +28,11 @@
 
 SecondaryFlightControlData::SecondaryFlightControlData() noexcept
     : TimeVariableData(),
-      leadingEdgeFlapsLeftPercent(0),
-      leadingEdgeFlapsRightPercent(0),
-      trailingEdgeFlapsLeftPercent(0),
-      trailingEdgeFlapsRightPercent(0),
-      spoilersHandlePosition(0.0),
+      leadingEdgeFlapsLeftPosition(0),
+      leadingEdgeFlapsRightPosition(0),
+      trailingEdgeFlapsLeftPosition(0),
+      trailingEdgeFlapsRightPosition(0),
+      spoilersHandlePosition(0),
       flapsHandleIndex(0)
 {}
 

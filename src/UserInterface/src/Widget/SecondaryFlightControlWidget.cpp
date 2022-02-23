@@ -80,10 +80,10 @@ void SecondaryFlightControlWidget::updateUi(std::int64_t timestamp, TimeVariable
 
     if (!secondaryFlightControlData.isNull()) {
         // Flaps & speed brakes
-        ui->leadingEdgeFlapsLeftLineEdit->setText(d->unit.formatPercent(secondaryFlightControlData.leadingEdgeFlapsLeftPercent));
-        ui->leadingEdgeFlapsRightLineEdit->setText(d->unit.formatPercent(secondaryFlightControlData.leadingEdgeFlapsRightPercent));
-        ui->trailingEdgeFlapsLeftLineEdit->setText(d->unit.formatPercent(secondaryFlightControlData.trailingEdgeFlapsLeftPercent));
-        ui->trailingEdgeFlapsRightLineEdit->setText(d->unit.formatPercent(secondaryFlightControlData.trailingEdgeFlapsRightPercent));
+        ui->leadingEdgeFlapsLeftLineEdit->setText(d->unit.formatPosition(secondaryFlightControlData.leadingEdgeFlapsLeftPosition));
+        ui->leadingEdgeFlapsRightLineEdit->setText(d->unit.formatPosition(secondaryFlightControlData.leadingEdgeFlapsRightPosition));
+        ui->trailingEdgeFlapsLeftLineEdit->setText(d->unit.formatPosition(secondaryFlightControlData.trailingEdgeFlapsLeftPosition));
+        ui->trailingEdgeFlapsRightLineEdit->setText(d->unit.formatPosition(secondaryFlightControlData.trailingEdgeFlapsRightPosition));
         ui->spoilerLineEdit->setText(d->unit.formatPercent(secondaryFlightControlData.spoilersHandlePosition));
         ui->flapsPositionLineEdit->setText(QString::number(secondaryFlightControlData.flapsHandleIndex));
 
