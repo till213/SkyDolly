@@ -2,6 +2,6 @@
 
 Simple guidelines are easy to follow.
 
-* Be nice.
-* Be respectful.
-* Have fun.
+- Be nice.
+- Be respectful.
+- Have fun.
