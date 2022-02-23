@@ -54,6 +54,8 @@ public:
     const int defaultAltitude;
     const int defaultVelocity;
     QDateTime firstDateTimeUtc;
+    QString documentName;
+    QString description;
 };
 
 // PUBLIC
@@ -87,6 +89,23 @@ void GPXParser::parse() noexcept
     }
 }
 
+QDateTime GPXParser::getFirstDateTimeUtc() const noexcept
+{
+    return d->firstDateTimeUtc;
+}
+
+QString GPXParser::getDocumentName() const noexcept
+{
+    return d->documentName;
+}
+
+QString GPXParser::getDescription() const noexcept
+{
+    return d->description;
+}
+
+// PRIVATE
+
 void GPXParser::parseGPX() noexcept
 {
     while (d->xml.readNextStartElement()) {
@@ -97,6 +116,8 @@ void GPXParser::parseGPX() noexcept
             parseMetadata();
         } else if (d->xml.name() == GPX::wpt) {
             parseWaypoint();
+        } else if (d->xml.name() == GPX::rte) {
+            parseRoute();
         } else if (d->xml.name() == GPX::trk) {
             parseTrack();
         } else {
@@ -107,11 +128,27 @@ void GPXParser::parseGPX() noexcept
 
 void GPXParser::parseMetadata() noexcept
 {
+    while (d->xml.readNextStartElement()) {
+#ifdef DEBUG
+        qDebug("GPXParser::parseMetadata: XML start element: %s", qPrintable(d->xml.name().toString()));
+#endif
+        if (d->xml.name() == GPX::name) {
+            d->documentName = d->xml.readElementText();
+        } else if (d->xml.name() == GPX::desc) {
+            d->description = d->xml.readElementText();
+        } else {
+            d->xml.skipCurrentElement();
+        }
+    }
+}
+
+void GPXParser::parseWaypoint() noexcept
+{
     // @todo IMPLEMENT ME!!!
     d->xml.skipCurrentElement();
 }
 
-void GPXParser::parseWaypoint() noexcept
+void GPXParser::parseRoute() noexcept
 {
     // @todo IMPLEMENT ME!!!
     d->xml.skipCurrentElement();
@@ -225,5 +262,3 @@ inline void GPXParser::parseTrackPoint(Position &position, QDateTime &currentDat
         position.upsertLast(positionData);
     }
 }
-
-

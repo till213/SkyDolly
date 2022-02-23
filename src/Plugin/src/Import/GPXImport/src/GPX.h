@@ -44,6 +44,12 @@ namespace GPX
     inline const QString desc = QStringLiteral("desc");
     inline const QString author = QStringLiteral("author");
 
+    // Waypoints
+    inline const QString wpt = QStringLiteral("wpt");
+
+    // Routes
+    inline const QString rte = QStringLiteral("rte");
+
     // Tracks
     inline const QString trk = QStringLiteral("trk");
     inline const QString trkseg = QStringLiteral("trkseg");
@@ -53,8 +59,7 @@ namespace GPX
     inline const QString lat = QStringLiteral("lat");
     inline const QString lon = QStringLiteral("lon");
 
-    // Waypoints
-    inline const QString wpt = QStringLiteral("wpt");
+
 }
 
 #endif // GPX_H

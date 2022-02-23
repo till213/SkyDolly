@@ -44,6 +44,9 @@ public:
     virtual ~GPXParser() noexcept;
 
     virtual void parse() noexcept;
+    QDateTime getFirstDateTimeUtc() const noexcept;
+    QString getDocumentName() const noexcept;
+    QString getDescription() const noexcept;
 
 private:
     std::unique_ptr<GPXParserPrivate> d;
@@ -51,6 +54,7 @@ private:
     void parseGPX() noexcept;
     void parseMetadata() noexcept;
     void parseWaypoint() noexcept;
+    void parseRoute() noexcept;
     void parseTrack() noexcept;
     void parseTrackSegment() noexcept;
     inline void parseTrackPoint(Position &position, QDateTime &currentDateTimeUtc) noexcept;

@@ -28,7 +28,9 @@
 
 #include <QFile>
 #include <QFileInfo>
+#include <QString>
 #include <QStringLiteral>
+#include <QStringBuilder>
 #include <QXmlStreamReader>
 #include <QDateTime>
 #include <QTimeZone>
@@ -53,9 +55,7 @@ public:
 
     GPXImportSettings importSettings;
     QXmlStreamReader xml;    
-    QDateTime firstDateTimeUtc;
-    QString flightNumber;
-    QString title;
+    std::unique_ptr<GPXParser> parser;
 
     static inline const QString FileExtension {QStringLiteral("gpx")};
 };
@@ -130,19 +130,26 @@ FlightAugmentation::Aspects GPXImportPlugin::getAspects() const noexcept
 
 QDateTime GPXImportPlugin::getStartDateTimeUtc() noexcept
 {
-    return d->firstDateTimeUtc;
+    return d->parser->getFirstDateTimeUtc();
 }
 
 QString GPXImportPlugin::getTitle() const noexcept
 {
-    return d->title;
+    QString title = d->parser->getDocumentName();
+    if (title.isEmpty()) {
+        title = tr("GPX import");
+    }
+    return title;
 }
 
-void GPXImportPlugin::updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept
+void GPXImportPlugin::updateExtendedAircraftInfo([[maybe_unused]] AircraftInfo &aircraftInfo) noexcept
 {}
 
-void GPXImportPlugin::updateExtendedFlightInfo([[maybe_unused]] Flight &flight) noexcept
-{}
+void GPXImportPlugin::updateExtendedFlightInfo(Flight &flight) noexcept
+{
+    const QString description = flight.getDescription() % "\n\n" % d->parser->getDescription();
+    flight.setDescription(description);
+}
 
 void GPXImportPlugin::updateExtendedFlightCondition([[maybe_unused]] FlightCondition &flightCondition) noexcept
 {}
@@ -158,17 +165,6 @@ void GPXImportPlugin::onRestoreDefaultSettings() noexcept
 
 void GPXImportPlugin::parseGPX() noexcept
 {
-    std::unique_ptr<GPXParser> parser;
-    parser = std::make_unique<GPXParser>(d->xml, d->importSettings.m_defaultAltitude, d->importSettings.m_defaultVelocity);
-
-    // @todo IMPLEMENT ME!!!
-    if (parser != nullptr) {
-        parser->parse();
-//        d->firstDateTimeUtc = parser->getFirstDateTimeUtc();
-//        d->title = parser->getDocumentName();
-        if (d->title.isEmpty()) {
-            d->title = tr("GPX import");
-        }
-//        d->flightNumber = parser->getFlightNumber();
-    }
+    d->parser = std::make_unique<GPXParser>(d->xml, d->importSettings.m_defaultAltitude, d->importSettings.m_defaultVelocity);
+    d->parser->parse();
 }
