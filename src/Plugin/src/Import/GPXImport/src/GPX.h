@@ -29,15 +29,32 @@
 #include <QStringLiteral>
 
 /*!
- * From https://developers.google.com/kml/documentation/kml_element_hierarchy:
- * "In GPX, simple element names begin with a lowercase letter. Simple elements can contain a value, but they do not contain other elements.
- * Complex element names being with an uppercase letter. Complex elements can contain other elements (referred to as their children)."
+ * GPX format element names.
  *
- * We adhere to this naming convention for the constants defined in this namespace.
+ * In analogy to the KML naming conventions we use the same (de-)capitalisation for constant names
+ * as given by the actual GPX element names. For GPX that essentially means all lower-case.
  */
 namespace GPX
 {
-    inline const QString Document = QStringLiteral("Document");
+    inline const QString gpx = QStringLiteral("gpx");
+
+    // Metadata
+    inline const QString metadata = QStringLiteral("metadata");
+    inline const QString name = QStringLiteral("name");
+    inline const QString desc = QStringLiteral("desc");
+    inline const QString author = QStringLiteral("author");
+
+    // Tracks
+    inline const QString trk = QStringLiteral("trk");
+    inline const QString trkseg = QStringLiteral("trkseg");
+    inline const QString trkpt = QStringLiteral("trkpt");
+    inline const QString ele = QStringLiteral("ele");
+    inline const QString time = QStringLiteral("time");
+    inline const QString lat = QStringLiteral("lat");
+    inline const QString lon = QStringLiteral("lon");
+
+    // Waypoints
+    inline const QString wpt = QStringLiteral("wpt");
 }
 
 #endif // GPX_H

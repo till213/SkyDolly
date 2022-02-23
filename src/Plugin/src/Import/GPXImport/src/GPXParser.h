@@ -31,8 +31,11 @@
 #include <QString>
 
 class QXmlStreamReader;
+class QDateTime;
 
 class GPXParserPrivate;
+
+struct Position;
 
 class GPXParser
 {
@@ -44,6 +47,13 @@ public:
 
 private:
     std::unique_ptr<GPXParserPrivate> d;
+
+    void parseGPX() noexcept;
+    void parseMetadata() noexcept;
+    void parseWaypoint() noexcept;
+    void parseTrack() noexcept;
+    void parseTrackSegment() noexcept;
+    inline void parseTrackPoint(Position &position, QDateTime &currentDateTimeUtc) noexcept;
 };
 
 #endif // GPXPARSER_H

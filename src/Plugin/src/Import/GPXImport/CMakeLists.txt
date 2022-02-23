@@ -14,7 +14,9 @@ if (${PLATFORM_IS_MACOS})
 endif()
 
 set(DOCUMENTATION
+    doc/README.md
     doc/Sample.gpx
+    doc/Sample-2.gpx
 )
 
 target_sources(${LIBRARY_NAME}

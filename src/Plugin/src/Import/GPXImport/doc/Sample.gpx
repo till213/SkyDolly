@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="Wikipedia"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <!-- This is a comment -->
+  <metadata>
+    <name>Filename</name>
+    <desc>Validated GPX-example without special characters</desc>
+    <author>
+      <name>Author name</name>
+    </author>
+  </metadata>
+  <wpt lat="52.518611" lon="13.376111">
+    <ele>35.0</ele>
+    <time>2011-12-31T23:59:59Z</time>
+    <name>Reichstag (Berlin)</name>
+    <sym>City</sym>
+  </wpt>
+  <wpt lat="48.208031" lon="16.358128">
+    <ele>179</ele>
+    <time>2011-12-31T23:59:59Z</time>
+    <name>Parliament (Vienna)</name>
+    <sym>City</sym>
+  </wpt>
+  <wpt lat="46.9466" lon="7.44412">
+    <time>2011-12-31T23:59:59Z</time>
+    <name>Federal Palace (Bern)</name>
+    <sym>City</sym>
+  </wpt>
+  <rte>
+    <name>Route name</name>
+    <desc>Route description</desc>
+    <rtept lat="52.0" lon="13.5">
+     <ele>33.0</ele>
+      <time>2011-12-13T23:59:59Z</time>
+      <name>rtept 1</name>
+    </rtept>
+    <rtept lat="49" lon="12">
+      <name>rtept 2</name>
+    </rtept>
+    <rtept lat="47.0" lon="7.5">
+    </rtept>
+  </rte>
+  <trk>
+    <name>Track name 1</name>
+    <desc>Track description</desc>
+    <trkseg>
+      <trkpt lat="52.520000" lon="13.380000">
+        <ele>36.0</ele>
+        <time>2011-01-13T01:01:01Z</time>
+      </trkpt>
+      <trkpt lat="48.200000" lon="16.260000">
+        <ele>180</ele>
+        <time>2011-01-14T01:59:01Z</time>
+      </trkpt>
+      <trkpt lat="46.95" lon="7.4">
+        <ele>987.654</ele>
+        <time>2011-01-15T23:59:01Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+  <trk>
+    <name>Track name 2</name>
+    <trkseg>
+      <trkpt lat="47.2" lon="7.41">
+        <time>2011-01-16T23:59:01Z</time>
+      </trkpt>
+      <trkpt lat="52.53" lon="13.0">
+        <!-- Note that besides lat and lon all other elements are optional, including time -->
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>
