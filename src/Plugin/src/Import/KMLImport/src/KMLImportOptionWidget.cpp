@@ -86,7 +86,7 @@ void KMLImportOptionWidget::initUi() noexcept
 void KMLImportOptionWidget::initOptionUi() noexcept
 {
     ui->formatComboBox->addItem("FlightAware", Enum::toUnderlyingType(KMLImportSettings::Format::FlightAware));
-    ui->formatComboBox->addItem("flightradar24", Enum::toUnderlyingType(KMLImportSettings::Format::FlightRadar24));
+    ui->formatComboBox->addItem("FlightRadar24", Enum::toUnderlyingType(KMLImportSettings::Format::FlightRadar24));
     ui->formatComboBox->addItem(tr("Generic KML with track data"), Enum::toUnderlyingType(KMLImportSettings::Format::Generic));
 }
 
