@@ -50,10 +50,10 @@ struct SimConnectSecondaryFlightControl
     {
         SecondaryFlightControlData secondaryFlightControlData;
 
-        secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(leadingEdgeFlapsLeftPercent);
-        secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(leadingEdgeFlapsRightPercent);
-        secondaryFlightControlData.trailingEdgeFlapsLeftPercent = SkyMath::fromPercent(trailingEdgeFlapsLeftPercent);
-        secondaryFlightControlData.trailingEdgeFlapsRightPercent = SkyMath::fromPercent(trailingEdgeFlapsRightPercent);
+        secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(leadingEdgeFlapsLeftPercent);
+        secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(leadingEdgeFlapsRightPercent);
+        secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromPosition(trailingEdgeFlapsLeftPercent);
+        secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromPosition(trailingEdgeFlapsRightPercent);
         secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(spoilersHandlePosition);
         secondaryFlightControlData.flapsHandleIndex = flapsHandleIndex;
 
@@ -62,10 +62,10 @@ struct SimConnectSecondaryFlightControl
 
     inline void fromSecondaryFlightControlData(const SecondaryFlightControlData &secondaryFlightControlData) noexcept
     {
-        leadingEdgeFlapsLeftPercent = SkyMath::toPercent(secondaryFlightControlData.leadingEdgeFlapsLeftPercent);
-        leadingEdgeFlapsRightPercent = SkyMath::toPercent(secondaryFlightControlData.leadingEdgeFlapsRightPercent);
-        trailingEdgeFlapsLeftPercent = SkyMath::toPercent(secondaryFlightControlData.trailingEdgeFlapsLeftPercent);
-        trailingEdgeFlapsRightPercent = SkyMath::toPercent(secondaryFlightControlData.trailingEdgeFlapsRightPercent);
+        leadingEdgeFlapsLeftPercent = SkyMath::toPosition(secondaryFlightControlData.leadingEdgeFlapsLeftPosition);
+        leadingEdgeFlapsRightPercent = SkyMath::toPosition(secondaryFlightControlData.leadingEdgeFlapsRightPosition);
+        trailingEdgeFlapsLeftPercent = SkyMath::toPosition(secondaryFlightControlData.trailingEdgeFlapsLeftPosition);
+        trailingEdgeFlapsRightPercent = SkyMath::toPosition(secondaryFlightControlData.trailingEdgeFlapsRightPosition);
         spoilersHandlePosition = SkyMath::toPercent(secondaryFlightControlData.spoilersHandlePosition);
         flapsHandleIndex = secondaryFlightControlData.flapsHandleIndex;
     }

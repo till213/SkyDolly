@@ -335,10 +335,10 @@ void PathCreatorPlugin::recordSecondaryControls(std::int64_t timestamp) noexcept
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
     SecondaryFlightControlData secondaryFlightControlData;
-    secondaryFlightControlData.leadingEdgeFlapsLeftPercent = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
-    secondaryFlightControlData.leadingEdgeFlapsRightPercent = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
-    secondaryFlightControlData.trailingEdgeFlapsLeftPercent = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
-    secondaryFlightControlData.trailingEdgeFlapsRightPercent = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
+    secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
+    secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
+    secondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
+    secondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
     secondaryFlightControlData.spoilersHandlePosition = SkyMath::fromPercent(d->randomGenerator->bounded(100.0));
     secondaryFlightControlData.flapsHandleIndex = d->randomGenerator->bounded(5);
 
