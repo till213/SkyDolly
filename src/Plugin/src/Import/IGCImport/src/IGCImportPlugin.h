@@ -53,6 +53,12 @@ public:
     virtual ~IGCImportPlugin() noexcept;
 
 protected:
+    // PluginBase
+    virtual Settings::PluginSettings getSettings() const noexcept override;
+    virtual Settings::KeysWithDefaults getKeyWithDefaults() const noexcept override;
+    virtual void setSettings(Settings::ValuesByKey) noexcept override;
+
+    // ImportPluginBase
     virtual QString getFileFilter() const noexcept override;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
 
