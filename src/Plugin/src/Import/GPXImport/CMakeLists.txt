@@ -18,7 +18,7 @@ set(DOCUMENTATION
     doc/Sample.gpx
     doc/Nile.gpx
     doc/Nile-NoElevation-NoTimestamp.gpx
-    doc/LittleNavMap.gpx
+    doc/LittleNavmap.gpx
 )
 
 target_sources(${LIBRARY_NAME}
