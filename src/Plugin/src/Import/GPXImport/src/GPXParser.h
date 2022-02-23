@@ -40,7 +40,7 @@ struct Position;
 class GPXParser
 {
 public:
-    GPXParser(QXmlStreamReader &xmlStreamReader) noexcept;
+    GPXParser(QXmlStreamReader &xmlStreamReader, int defaultAltitude, int defaultVelocity) noexcept;
     virtual ~GPXParser() noexcept;
 
     virtual void parse() noexcept;

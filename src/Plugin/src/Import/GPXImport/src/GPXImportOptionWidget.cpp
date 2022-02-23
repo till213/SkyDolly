@@ -33,7 +33,7 @@
 
 namespace
 {
-    constexpr int MaximumAltitude = 99000;
+    constexpr int MaximumAltitude = 99999;
     constexpr int MaximumVelocity = 999;
 }
 
@@ -93,19 +93,10 @@ void GPXImportOptionWidget::frenchConnection() noexcept
 
 void GPXImportOptionWidget::initUi() noexcept
 {
-    initOptionUi();
-}
-
-void GPXImportOptionWidget::initOptionUi() noexcept
-{
     ui->defaultAltitudeSpinBox->setRange(0, ::MaximumAltitude);
+    ui->defaultAltitudeSpinBox->setSuffix(tr(" feet"));
     ui->defaultVelocitySpinBox->setRange(0, ::MaximumVelocity);
-}
-
-void GPXImportOptionWidget::updateOptionUi() noexcept
-{
-    ui->defaultAltitudeSpinBox->setValue(d->importSettings.m_defaultAltitude);
-    ui->defaultVelocitySpinBox->setValue(d->importSettings.m_defaultVelocity);
+    ui->defaultVelocitySpinBox->setSuffix(tr(" knots"));
 }
 
 // PRIVATE SLOTS
@@ -122,5 +113,6 @@ void GPXImportOptionWidget::onDefaultVelocitySpinBoxValueChanged(int value) noex
 
 void GPXImportOptionWidget::updateUi() noexcept
 {
-    updateOptionUi();
+    ui->defaultAltitudeSpinBox->setValue(d->importSettings.m_defaultAltitude);
+    ui->defaultVelocitySpinBox->setValue(d->importSettings.m_defaultVelocity);
 }

@@ -87,28 +87,12 @@ void IGCImportOptionWidget::frenchConnection() noexcept
 
 void IGCImportOptionWidget::initUi() noexcept
 {
-    initOptionUi();
-}
-
-void IGCImportOptionWidget::initOptionUi() noexcept
-{
-    ui->altitudeComboBox->addItem(tr("GNSS altitdue"), Enum::toUnderlyingType(IGCImportSettings::Altitude::GnssAltitude));
-    ui->altitudeComboBox->addItem(tr("Pressure altitdue"), Enum::toUnderlyingType(IGCImportSettings::Altitude::PressureAltitude));
+    ui->altitudeComboBox->addItem(tr("GNSS altitude"), Enum::toUnderlyingType(IGCImportSettings::Altitude::GnssAltitude));
+    ui->altitudeComboBox->addItem(tr("Pressure altitude"), Enum::toUnderlyingType(IGCImportSettings::Altitude::PressureAltitude));
 
     // Percent [0, 100]
     ui->enlThresholdSpinBox->setRange(0, 100);
-}
-
-void IGCImportOptionWidget::updateOptionUi() noexcept
-{
-    int currentIndex = 0;
-    while (currentIndex < ui->altitudeComboBox->count() &&
-           static_cast<IGCImportSettings::Altitude>(ui->altitudeComboBox->itemData(currentIndex).toInt()) != d->importSettings.m_altitude) {
-        ++currentIndex;
-    }
-    ui->altitudeComboBox->setCurrentIndex(currentIndex);
-
-    ui->enlThresholdSpinBox->setValue(d->importSettings.m_enlThresholdPercent);
+    ui->enlThresholdSpinBox->setSuffix(" %");
 }
 
 // PRIVATE SLOTS
@@ -125,5 +109,12 @@ void IGCImportOptionWidget::onENLThresholdIntSpinBoxValueChanged(int value) noex
 
 void IGCImportOptionWidget::updateUi() noexcept
 {
-    updateOptionUi();
+    int currentIndex = 0;
+    while (currentIndex < ui->altitudeComboBox->count() &&
+           static_cast<IGCImportSettings::Altitude>(ui->altitudeComboBox->itemData(currentIndex).toInt()) != d->importSettings.m_altitude) {
+        ++currentIndex;
+    }
+    ui->altitudeComboBox->setCurrentIndex(currentIndex);
+
+    ui->enlThresholdSpinBox->setValue(d->importSettings.m_enlThresholdPercent);
 }

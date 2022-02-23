@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" creator="Sky Dolly" version="1.1">
+  <metadata>
+    <name>Nile</name>
+    <desc>Flight over the Nile</desc>
+    <author>
+      <name>till213</name>
+    </author>
+  </metadata>
+  <trk>
+    <name>Nile</name>
+    <trkseg>
+      <trkpt lat="19.70759510828487" lon="30.37051286390336" />
+      <trkpt lat="19.74784062204235" lon="30.37985491764849" />
+      <trkpt lat="19.78559169080252" lon="30.35349896293638" />
+      <trkpt lat="19.82171191236152" lon="30.30155916815313" />
+      <trkpt lat="19.87169720765805" lon="30.30791182000744" />
+      <trkpt lat="19.91905994005961" lon="30.29753184828375" />
+      <trkpt lat="19.94562786677320" lon="30.32202496111694" />
+      <trkpt lat="19.95453060211675" lon="30.37549700336945" />
+      <trkpt lat="19.93917156634419" lon="30.43695615698370" />
+      <trkpt lat="19.94224510587037" lon="30.49337295374659" />
+      <trkpt lat="19.93377170262853" lon="30.52875687957161" />
+      <trkpt lat="20.01755356506872" lon="30.58765495192536" />
+      <trkpt lat="20.10791532358170" lon="30.55800690729281" />
+      <trkpt lat="20.18046050946696" lon="30.54986618556755" />
+      <trkpt lat="20.24628607726898" lon="30.57418154264348" />
+      <trkpt lat="20.32027548555228" lon="30.54395229257911" />
+      <trkpt lat="20.35437117918487" lon="30.48420156464664" />
+      <trkpt lat="20.34658266187571" lon="30.41641389297273" />
+      <trkpt lat="20.39116745581919" lon="30.37809291638134" />
+      <trkpt lat="20.44062698138635" lon="30.34087617853870" />
+    </trkseg>
+  </trk>
+</gpx>

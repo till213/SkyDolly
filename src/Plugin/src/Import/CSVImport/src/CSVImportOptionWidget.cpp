@@ -81,24 +81,9 @@ void CSVImportOptionWidget::frenchConnection() noexcept
 
 void CSVImportOptionWidget::initUi() noexcept
 {
-    initOptionUi();
-}
-
-void CSVImportOptionWidget::initOptionUi() noexcept
-{
     ui->formatComboBox->addItem(Version::getApplicationName(), Enum::toUnderlyingType(CSVImportSettings::Format::SkyDolly));
-    ui->formatComboBox->addItem("flightradar24", Enum::toUnderlyingType(CSVImportSettings::Format::FlightRadar24));
+    ui->formatComboBox->addItem("FlightRadar24", Enum::toUnderlyingType(CSVImportSettings::Format::FlightRadar24));
     ui->formatComboBox->addItem("Flight Recorder", Enum::toUnderlyingType(CSVImportSettings::Format::FlightRecorder));
-}
-
-void CSVImportOptionWidget::updateOptionUi() noexcept
-{
-    int currentIndex = 0;
-    while (currentIndex < ui->formatComboBox->count() &&
-           static_cast<CSVImportSettings::Format>(ui->formatComboBox->itemData(currentIndex).toInt()) != d->importSettings.m_format) {
-        ++currentIndex;
-    }
-    ui->formatComboBox->setCurrentIndex(currentIndex);
 }
 
 // PRIVATE SLOTS
@@ -110,5 +95,10 @@ void CSVImportOptionWidget::onFormatComboBoxCurrentIndexChanged([[maybe_unused]]
 
 void CSVImportOptionWidget::updateUi() noexcept
 {
-    updateOptionUi();
+    int currentIndex = 0;
+    while (currentIndex < ui->formatComboBox->count() &&
+           static_cast<CSVImportSettings::Format>(ui->formatComboBox->itemData(currentIndex).toInt()) != d->importSettings.m_format) {
+        ++currentIndex;
+    }
+    ui->formatComboBox->setCurrentIndex(currentIndex);
 }

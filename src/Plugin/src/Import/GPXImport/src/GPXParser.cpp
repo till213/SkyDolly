@@ -30,6 +30,7 @@
 #include <QTimeZone>
 
 #include "../../../../../Kernel/src/Convert.h"
+#include "../../../../../Kernel/src/SkyMath.h"
 #include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/Aircraft.h"
@@ -41,20 +42,24 @@
 class GPXParserPrivate
 {
 public:
-    GPXParserPrivate(QXmlStreamReader &xmlStreamReader) noexcept
-        : xml(xmlStreamReader)
+    GPXParserPrivate(QXmlStreamReader &xmlStreamReader, int theDefaultAltitude, int theDefaultVelocity) noexcept
+        : xml(xmlStreamReader),
+          defaultAltitude(theDefaultAltitude),
+          defaultVelocity(theDefaultVelocity)
     {
         firstDateTimeUtc.setTimeZone(QTimeZone::utc());
     }
 
     QXmlStreamReader &xml;
+    const int defaultAltitude;
+    const int defaultVelocity;
     QDateTime firstDateTimeUtc;
 };
 
 // PUBLIC
 
-GPXParser::GPXParser(QXmlStreamReader &xmlStreamReader) noexcept
-    : d(std::make_unique<GPXParserPrivate>(xmlStreamReader))
+GPXParser::GPXParser(QXmlStreamReader &xmlStreamReader, int defaultAltitude, int defaultVelocity) noexcept
+    : d(std::make_unique<GPXParserPrivate>(xmlStreamReader, defaultAltitude, defaultVelocity))
 {
 #ifdef DEBUG
     qDebug("GPXParser::~GPXParser: CREATED");
@@ -147,6 +152,8 @@ void GPXParser::parseTrackSegment() noexcept
 inline void GPXParser::parseTrackPoint(Position &position, QDateTime &currentDateTimeUtc) noexcept
 {
     bool ok;
+    bool hasAltitude {false};
+    bool hasTimestamp {false};
     PositionData positionData;
     const QXmlStreamAttributes attributes = d->xml.attributes();
     positionData.latitude = attributes.value(GPX::lat).toDouble(&ok);
@@ -168,6 +175,7 @@ inline void GPXParser::parseTrackPoint(Position &position, QDateTime &currentDat
             const double altitude = elevationText.toDouble(&ok);
             if (ok) {
                 positionData.altitude = Convert::metersToFeet(altitude);
+                hasAltitude = true;
             } else {
                 d->xml.raiseError("Could not parse track altitude value.");
             }
@@ -182,6 +190,7 @@ inline void GPXParser::parseTrackPoint(Position &position, QDateTime &currentDat
             }
             if (currentDateTimeUtc.isValid()) {
                 positionData.timestamp = d->firstDateTimeUtc.msecsTo(currentDateTimeUtc);
+                hasTimestamp = true;
             } else {
                 d->xml.raiseError("Invalid timestamp.");
             }
@@ -190,6 +199,29 @@ inline void GPXParser::parseTrackPoint(Position &position, QDateTime &currentDat
         }
     }
     if (ok) {
+        if (!hasAltitude) {
+            positionData.altitude = d->defaultAltitude;
+        }
+        if (!hasTimestamp) {
+            if (position.count() > 0) {
+                const PositionData &previousPositionData = position.getLast();
+                const SkyMath::Coordinate start = {previousPositionData.latitude, previousPositionData.longitude};
+                const SkyMath::Coordinate end = {positionData.latitude, positionData.longitude};
+                const double averageAltitude = (previousPositionData.altitude + positionData.altitude) / 2.0;
+                // In meters
+                const double distance = SkyMath::sphericalDistance(start, end, averageAltitude);
+                const double velocityMetersPerSecond = Convert::knotsToMetersPerSecond(d->defaultVelocity);
+                const double seconds = distance / velocityMetersPerSecond;
+                positionData.timestamp = previousPositionData.timestamp + qRound(seconds * 1000.0);
+            } else {
+                // First point of current track (but possibly not the first track)
+                if (!d->firstDateTimeUtc.isValid()) {
+                    d->firstDateTimeUtc = QDateTime::currentDateTimeUtc();
+                }
+                // In any case the timestamp is 0
+                positionData.timestamp = 0;
+            }
+        }
         position.upsertLast(positionData);
     }
 }

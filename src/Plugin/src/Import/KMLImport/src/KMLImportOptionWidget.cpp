@@ -80,24 +80,9 @@ void KMLImportOptionWidget::frenchConnection() noexcept
 
 void KMLImportOptionWidget::initUi() noexcept
 {
-    initOptionUi();
-}
-
-void KMLImportOptionWidget::initOptionUi() noexcept
-{
     ui->formatComboBox->addItem("FlightAware", Enum::toUnderlyingType(KMLImportSettings::Format::FlightAware));
     ui->formatComboBox->addItem("FlightRadar24", Enum::toUnderlyingType(KMLImportSettings::Format::FlightRadar24));
     ui->formatComboBox->addItem(tr("Generic KML with track data"), Enum::toUnderlyingType(KMLImportSettings::Format::Generic));
-}
-
-void KMLImportOptionWidget::updateOptionUi() noexcept
-{
-    int currentIndex = 0;
-    while (currentIndex < ui->formatComboBox->count() &&
-           static_cast<KMLImportSettings::Format>(ui->formatComboBox->itemData(currentIndex).toInt()) != d->importSettings.m_format) {
-        ++currentIndex;
-    }
-    ui->formatComboBox->setCurrentIndex(currentIndex);
 }
 
 // PRIVATE SLOTS
@@ -109,5 +94,10 @@ void KMLImportOptionWidget::onFormatComboBoxCurrentIndexChanged([[maybe_unused]]
 
 void KMLImportOptionWidget::updateUi() noexcept
 {
-    updateOptionUi();
+    int currentIndex = 0;
+    while (currentIndex < ui->formatComboBox->count() &&
+           static_cast<KMLImportSettings::Format>(ui->formatComboBox->itemData(currentIndex).toInt()) != d->importSettings.m_format) {
+        ++currentIndex;
+    }
+    ui->formatComboBox->setCurrentIndex(currentIndex);
 }

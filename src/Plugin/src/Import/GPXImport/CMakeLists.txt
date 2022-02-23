@@ -17,6 +17,7 @@ set(DOCUMENTATION
     doc/README.md
     doc/Sample.gpx
     doc/Nile.gpx
+    doc/Nile-NoElevation-NoTimestamp.gpx
 )
 
 target_sources(${LIBRARY_NAME}

@@ -159,7 +159,7 @@ void GPXImportPlugin::onRestoreDefaultSettings() noexcept
 void GPXImportPlugin::parseGPX() noexcept
 {
     std::unique_ptr<GPXParser> parser;
-    parser = std::make_unique<GPXParser>(d->xml);
+    parser = std::make_unique<GPXParser>(d->xml, d->importSettings.m_defaultAltitude, d->importSettings.m_defaultVelocity);
 
     // @todo IMPLEMENT ME!!!
     if (parser != nullptr) {
