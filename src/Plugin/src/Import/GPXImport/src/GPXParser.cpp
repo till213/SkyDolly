@@ -147,46 +147,130 @@ void GPXParser::parseMetadata() noexcept
 void GPXParser::parseWaypoint() noexcept
 {
     bool ok;
-    Waypoint waypoint;
-    bool hasAltitude {false};
-    const QXmlStreamAttributes attributes = d->xml.attributes();
-    waypoint.latitude = attributes.value(GPX::lat).toDouble(&ok);
-    if (ok) {
-        waypoint.longitude = attributes.value(GPX::lon).toDouble(&ok);
-        if (!ok) {
-            d->xml.raiseError("Could not parse route point longitude value.");
-        }
-    } else {
-        d->xml.raiseError("Could not parse route point latitude value.");
-    }
+    if (d->importSettings.m_waypointSelection == GPXImportSettings::GPXElement::Waypoint) {
 
-    while (d->xml.readNextStartElement()) {
+        Waypoint waypoint;
+        bool hasAltitude {false};
+        const QXmlStreamAttributes attributes = d->xml.attributes();
+        waypoint.latitude = attributes.value(GPX::lat).toDouble(&ok);
+        if (ok) {
+            waypoint.longitude = attributes.value(GPX::lon).toDouble(&ok);
+            if (!ok) {
+                d->xml.raiseError("Could not parse waypoint longitude value.");
+            }
+        } else {
+            d->xml.raiseError("Could not parse waypoint latitude value.");
+        }
+
+        while (d->xml.readNextStartElement()) {
 #ifdef DEBUG
         qDebug("GPXParser::parseWaypoint: XML start element: %s", qPrintable(d->xml.name().toString()));
 #endif
-        if (d->xml.name() == GPX::ele) {
-            const QString elevationText = d->xml.readElementText();
-            const double altitude = elevationText.toDouble(&ok);
-            if (ok) {
-                waypoint.altitude = Convert::metersToFeet(altitude);
-                hasAltitude = true;
+            if (d->xml.name() == GPX::ele) {
+                const QString elevationText = d->xml.readElementText();
+                const double altitude = elevationText.toDouble(&ok);
+                if (ok) {
+                    waypoint.altitude = Convert::metersToFeet(altitude);
+                    hasAltitude = true;
+                } else {
+                    d->xml.raiseError("Could not parse waypoint altitude value.");
+                }
+            } else if (d->xml.name() == GPX::name) {
+                waypoint.identifier = d->xml.readElementText();
             } else {
-                d->xml.raiseError("Could not parse track altitude value.");
+                d->xml.skipCurrentElement();
             }
-        } else if (d->xml.name() == GPX::name) {
-            waypoint.identifier = d->xml.readElementText();
-        } else {
-            d->xml.skipCurrentElement();
         }
-    }
 
-    if (!hasAltitude) {
-        waypoint.altitude = d->importSettings.m_defaultAltitude;
-    }
+        if (!hasAltitude) {
+            waypoint.altitude = d->importSettings.m_defaultAltitude;
+        }
 
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    FlightPlan &flightPlan = flight.getUserAircraft().getFlightPlan();
-    flightPlan.add(waypoint);
+        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        FlightPlan &flightPlan = flight.getUserAircraft().getFlightPlan();
+        flightPlan.add(waypoint);
+    }
+    // @todo FIXME We need to parse the point data once and assign it - potentially - to both Waypoint and Position! -> parsePoint()
+    else if (d->importSettings.m_positionSelection == GPXImportSettings::GPXElement::Waypoint) {
+
+        QDateTime currentDateTimeUtc;
+        PositionData positionData;
+        bool hasAltitude {false};
+        bool hasTimestamp {false};
+        const QXmlStreamAttributes attributes = d->xml.attributes();
+        positionData.latitude = attributes.value(GPX::lat).toDouble(&ok);
+        if (ok) {
+            positionData.longitude = attributes.value(GPX::lon).toDouble(&ok);
+            if (!ok) {
+                d->xml.raiseError("Could not parse waypoint longitude value.");
+            }
+        } else {
+            d->xml.raiseError("Could not parse waypoint latitude value.");
+        }
+
+        while (d->xml.readNextStartElement()) {
+#ifdef DEBUG
+        qDebug("GPXParser::parseWaypoint: XML start element: %s", qPrintable(d->xml.name().toString()));
+#endif
+            if (d->xml.name() == GPX::ele) {
+                const QString elevationText = d->xml.readElementText();
+                const double altitude = elevationText.toDouble(&ok);
+                if (ok) {
+                    positionData.altitude = Convert::metersToFeet(altitude);
+                    hasAltitude = true;
+                } else {
+                    d->xml.raiseError("Could not parse waypoint altitude value.");
+                }
+            } else if (d->xml.name() == GPX::time) {
+                const QString dateTimeText = d->xml.readElementText();
+                if (d->firstDateTimeUtc.isNull()) {
+                    d->firstDateTimeUtc = QDateTime::fromString(dateTimeText, Qt::ISODate);
+                    currentDateTimeUtc = d->firstDateTimeUtc;
+                } else {
+                    currentDateTimeUtc = QDateTime::fromString(dateTimeText, Qt::ISODate);
+                }
+                if (currentDateTimeUtc.isValid()) {
+                    positionData.timestamp = d->firstDateTimeUtc.msecsTo(currentDateTimeUtc);
+                    hasTimestamp = true;
+                } else {
+                    d->xml.raiseError("Invalid timestamp.");
+                }
+            } else {
+                d->xml.skipCurrentElement();
+            }
+        }
+
+        if (!hasAltitude) {
+            positionData.altitude = d->importSettings.m_defaultAltitude;
+        }
+
+        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        Position &position = flight.getUserAircraft().getPosition();
+        if (!hasTimestamp) {
+            if (position.count() > 0) {
+                const PositionData &previousPositionData = position.getLast();
+                const SkyMath::Coordinate start = {previousPositionData.latitude, previousPositionData.longitude};
+                const SkyMath::Coordinate end = {positionData.latitude, positionData.longitude};
+                const double averageAltitude = (previousPositionData.altitude + positionData.altitude) / 2.0;
+                // In meters
+                const double distance = SkyMath::sphericalDistance(start, end, averageAltitude);
+                const double velocityMetersPerSecond = Convert::knotsToMetersPerSecond(d->importSettings.m_defaultVelocity);
+                const double seconds = distance / velocityMetersPerSecond;
+                positionData.timestamp = previousPositionData.timestamp + qRound(seconds * 1000.0);
+            } else {
+                // First point of current track (but possibly not the first track)
+                if (!d->firstDateTimeUtc.isValid()) {
+                    d->firstDateTimeUtc = QDateTime::currentDateTimeUtc();
+                }
+                // In any case the timestamp is 0
+                positionData.timestamp = 0;
+            }
+        }
+        position.upsertLast(positionData);
+
+    } else {
+        d->xml.skipCurrentElement();
+    }
 }
 
 void GPXParser::parseRoute() noexcept
@@ -239,7 +323,7 @@ void GPXParser::parseRoutePoint(FlightPlan &flightPlan) noexcept
                 waypoint.altitude = Convert::metersToFeet(altitude);
                 hasAltitude = true;
             } else {
-                d->xml.raiseError("Could not parse track altitude value.");
+                d->xml.raiseError("Could not parse route point altitude value.");
             }
         } else if (d->xml.name() == GPX::name) {
             waypoint.identifier = d->xml.readElementText();
