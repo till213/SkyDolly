@@ -16,14 +16,16 @@ endif()
 set(DOCUMENTATION
     doc/README.md
     doc/Sample.gpx
-    doc/Sample-2.gpx
+    doc/Nile.gpx
 )
 
 target_sources(${LIBRARY_NAME}
     PRIVATE
         src/GPXImportPlugin.h src/GPXImportPlugin.cpp
-        src/GPXParser.h src/GPXParser.cpp
+        src/GPXImportSettings.h src/GPXImportSettings.cpp
+        src/GPXImportOptionWidget.h src/GPXImportOptionWidget.cpp src/GPXImportOptionWidget.ui
         src/GPX.h
+        src/GPXParser.h src/GPXParser.cpp
         src/GPXImportPlugin.json
         ${DOCUMENTATION}
 )

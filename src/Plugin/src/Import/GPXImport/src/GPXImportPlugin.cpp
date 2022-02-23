@@ -40,6 +40,8 @@
 #include "../../../../../Model/src/Aircraft.h"
 #include "../../../../../Model/src/FlightCondition.h"
 #include "../../../../../Flight/src/FlightAugmentation.h"
+#include "GPXImportOptionWidget.h"
+#include "GPXImportSettings.h"
 #include "GPXParser.h"
 #include "GPXImportPlugin.h"
 
@@ -49,7 +51,8 @@ public:
     GPXImportPluginPrivate()
     {}
 
-    QXmlStreamReader xml;
+    GPXImportSettings importSettings;
+    QXmlStreamReader xml;    
     QDateTime firstDateTimeUtc;
     QString flightNumber;
     QString title;
@@ -78,16 +81,18 @@ GPXImportPlugin::~GPXImportPlugin() noexcept
 
 Settings::PluginSettings GPXImportPlugin::getSettings() const noexcept
 {
-    return Settings::PluginSettings();
+    return d->importSettings.getSettings();
 }
 
 Settings::KeysWithDefaults GPXImportPlugin::getKeyWithDefaults() const noexcept
 {
-    return Settings::KeysWithDefaults();
+    return d->importSettings.getKeysWithDefault();
 }
 
 void GPXImportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
-{}
+{
+    d->importSettings.setSettings(valuesByKey);
+}
 
 QString GPXImportPlugin::getFileFilter() const noexcept
 {
@@ -96,7 +101,7 @@ QString GPXImportPlugin::getFileFilter() const noexcept
 
 std::unique_ptr<QWidget> GPXImportPlugin::createOptionWidget() const noexcept
 {
-    return nullptr;
+    return std::make_unique<GPXImportOptionWidget>(d->importSettings);
 }
 
 bool GPXImportPlugin::readFile(QFile &file) noexcept
@@ -145,7 +150,9 @@ void GPXImportPlugin::updateExtendedFlightCondition([[maybe_unused]] FlightCondi
 // PROTECTED SLOTS
 
 void GPXImportPlugin::onRestoreDefaultSettings() noexcept
-{}
+{
+    d->importSettings.restoreDefaults();
+}
 
 // PRIVATE
 
