@@ -71,14 +71,14 @@ void IGCImportOptionWidget::frenchConnection() noexcept
 {
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
     connect(ui->altitudeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &IGCImportOptionWidget::onAltitudeComboBoxCurrentIndexChanged);
+            this, &IGCImportOptionWidget::onAltitudeChanged);
     connect(ui->enlThresholdSpinBox, QOverload<int>::of(&QSpinBox::valueChanged),
-            this, &IGCImportOptionWidget::onENLThresholdIntSpinBoxValueChanged);
+            this, &IGCImportOptionWidget::onENLThresholdChanged);
 #else
     connect(ui->altitudeComboBox, &QComboBox::currentIndexChanged,
-            this, &IGCImportOptionWidget::onAltitudeComboBoxCurrentIndexChanged);
+            this, &IGCImportOptionWidget::onAltitudeChanged);
     connect(ui->enlThresholdSpinBox, &QSpinBox::valueChanged,
-            this, &IGCImportOptionWidget::onENLThresholdIntSpinBoxValueChanged);
+            this, &IGCImportOptionWidget::onENLThresholdChanged);
 #endif
 
     connect(&d->importSettings, &IGCImportSettings::defaultsRestored,
@@ -92,17 +92,18 @@ void IGCImportOptionWidget::initUi() noexcept
 
     // Percent [0, 100]
     ui->enlThresholdSpinBox->setRange(0, 100);
-    ui->enlThresholdSpinBox->setSuffix(" %");
+    ui->enlThresholdSpinBox->setSuffix("%");
+    ui->enlThresholdSpinBox->setSingleStep(5);
 }
 
 // PRIVATE SLOTS
 
-void IGCImportOptionWidget::onAltitudeComboBoxCurrentIndexChanged([[maybe_unused]]int index) noexcept
+void IGCImportOptionWidget::onAltitudeChanged([[maybe_unused]]int index) noexcept
 {
     d->importSettings.m_altitude = static_cast<IGCImportSettings::Altitude>(ui->altitudeComboBox->currentData().toInt());
 }
 
-void IGCImportOptionWidget::onENLThresholdIntSpinBoxValueChanged(int value) noexcept
+void IGCImportOptionWidget::onENLThresholdChanged(int value) noexcept
 {
     d->importSettings.m_enlThresholdPercent = value;
 }

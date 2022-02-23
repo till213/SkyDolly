@@ -35,8 +35,16 @@ class GPXImportSettings : public QObject
     Q_OBJECT
 public:
 
+    enum struct GPXElement {
+        Waypoint = 0,
+        Route = 1,
+        Track = 2,
+    };
+
     GPXImportSettings() noexcept;
 
+    GPXElement m_waypointSelection;
+    GPXElement m_positionSelection;
     int m_defaultAltitude;
     int m_defaultVelocity;
 
@@ -51,6 +59,8 @@ signals:
 private:
     void initSettings() noexcept;
 
+    static constexpr GPXElement DefaultWaypointSelection = GPXElement::Route;
+    static constexpr GPXElement DefaultPositionSelection = GPXElement::Track;
     // In feet
     static constexpr int DefaultAltitude = 1000;
     // In knots

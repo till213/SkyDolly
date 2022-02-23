@@ -69,10 +69,10 @@ void KMLImportOptionWidget::frenchConnection() noexcept
 {
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
     connect(ui->formatComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &KMLImportOptionWidget::onFormatComboBoxCurrentIndexChanged);
+            this, &KMLImportOptionWidget::onFormatChanged);
 #else
     connect(ui->formatComboBox, &QComboBox::currentIndexChanged,
-            this, &KMLImportOptionWidget::onFormatComboBoxCurrentIndexChanged);
+            this, &KMLImportOptionWidget::onFormatChanged);
 #endif
     connect(&d->importSettings, &KMLImportSettings::defaultsRestored,
             this, &KMLImportOptionWidget::updateUi);
@@ -87,7 +87,7 @@ void KMLImportOptionWidget::initUi() noexcept
 
 // PRIVATE SLOTS
 
-void KMLImportOptionWidget::onFormatComboBoxCurrentIndexChanged([[maybe_unused]]int index) noexcept
+void KMLImportOptionWidget::onFormatChanged([[maybe_unused]]int index) noexcept
 {
     d->importSettings.m_format = static_cast<KMLImportSettings::Format>(ui->formatComboBox->currentData().toInt());
 }

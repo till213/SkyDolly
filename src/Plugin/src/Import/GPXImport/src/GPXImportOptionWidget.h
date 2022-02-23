@@ -51,8 +51,10 @@ private:
     void initUi() noexcept;
 
 private slots:
-    void onDefaultAltitudeSpinBoxValueChanged(int index) noexcept;
-    void onDefaultVelocitySpinBoxValueChanged(int value) noexcept;
+    void onWaypointSelelectionChanged(int index) noexcept;
+    void onPositionSelelectionChanged(int index) noexcept;
+    void onDefaultAltitudeChanged(int index) noexcept;
+    void onDefaultVelocityChanged(int value) noexcept;
 
     void updateUi() noexcept;
 };

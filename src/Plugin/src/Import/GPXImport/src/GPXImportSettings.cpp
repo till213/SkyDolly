@@ -22,12 +22,14 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-
+#include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/Settings.h"
 #include "GPXImportSettings.h"
 
 namespace
 {
+    constexpr char WaypointSelectionKey[] = "WaypointSelection";
+    constexpr char PositionSelectionKey[] = "PositionSelection";
     constexpr char AltitudeKey[] = "DefaultAltitude";
     constexpr char DefaultVelocityKey[] = "DefaultVelocity";
 }
@@ -43,6 +45,14 @@ Settings::PluginSettings GPXImportSettings::getSettings() const noexcept
 {
     Settings::PluginSettings settings;
     Settings::KeyValue keyValue;
+
+    keyValue.first = ::WaypointSelectionKey;
+    keyValue.second = Enum::toUnderlyingType(m_waypointSelection);
+    settings.push_back(keyValue);
+
+    keyValue.first = ::PositionSelectionKey;
+    keyValue.second = Enum::toUnderlyingType(m_positionSelection);
+    settings.push_back(keyValue);
 
     keyValue.first = ::AltitudeKey;
     keyValue.second = m_defaultAltitude;
@@ -60,6 +70,14 @@ Settings::KeysWithDefaults GPXImportSettings::getKeysWithDefault() const noexcep
     Settings::KeysWithDefaults keys;
     Settings::KeyValue keyValue;
 
+    keyValue.first = ::WaypointSelectionKey;
+    keyValue.second = Enum::toUnderlyingType(DefaultWaypointSelection);
+    keys.push_back(keyValue);
+
+    keyValue.first = ::PositionSelectionKey;
+    keyValue.second = Enum::toUnderlyingType(DefaultPositionSelection);
+    keys.push_back(keyValue);
+
     keyValue.first = ::AltitudeKey;
     keyValue.second = DefaultAltitude;
     keys.push_back(keyValue);
@@ -74,6 +92,19 @@ Settings::KeysWithDefaults GPXImportSettings::getKeysWithDefault() const noexcep
 void GPXImportSettings::setSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     bool ok;
+    int enumeration = valuesByKey[::WaypointSelectionKey].toInt(&ok);
+    if (ok) {
+        m_waypointSelection = static_cast<GPXElement >(enumeration);
+    } else {
+        m_waypointSelection = DefaultWaypointSelection;
+    }
+
+    enumeration = valuesByKey[::PositionSelectionKey].toInt(&ok);
+    if (ok) {
+        m_positionSelection = static_cast<GPXElement >(enumeration);
+    } else {
+        m_positionSelection = DefaultPositionSelection;
+    }
 
     const int altitude = valuesByKey[::AltitudeKey].toInt(&ok);
     if (ok) {
@@ -100,6 +131,8 @@ void GPXImportSettings::restoreDefaults() noexcept
 
 void GPXImportSettings::initSettings() noexcept
 {
+    m_waypointSelection = DefaultWaypointSelection;
+    m_positionSelection = DefaultPositionSelection;
     m_defaultAltitude = DefaultAltitude;
     m_defaultVelocity = DefaultVelocity;
 }

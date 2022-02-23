@@ -76,15 +76,23 @@ GPXImportOptionWidget::~GPXImportOptionWidget() noexcept
 void GPXImportOptionWidget::frenchConnection() noexcept
 {
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+    connect(ui->waypointSelectionComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &GPXImportOptionWidget::onWaypointSelelectionChanged);
+    connect(ui->positionSelectionComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &GPXImportOptionWidget::onPositionSelelectionChanged);
     connect(ui->defaultAltitudeSpinBox, QOverload<int>::of(&QSpinBox::valueChanged),
-            this, &GPXImportOptionWidget::onDefaultAltitudeSpinBoxValueChanged);
+            this, &GPXImportOptionWidget::onDefaultAltitudeChanged);
     connect(ui->defaultVelocitySpinBox, QOverload<int>::of(&QSpinBox::valueChanged),
-            this, &GPXImportOptionWidget::onDefaultVelocitySpinBoxValueChanged);
+            this, &GPXImportOptionWidget::onDefaultVelocityChanged);
 #else
+    connect(ui->waypointSelectionComboBox, &QComboBox::currentIndexChanged,
+            this, &GPXImportOptionWidget::onWaypointSelelectionChanged);
+    connect(ui->positionSelectionComboBox, &QComboBox::currentIndexChanged,
+            this, &GPXImportOptionWidget::onPositionSelelectionChanged);
     connect(ui->defaultAltitudeSpinBox, &QSpinBox::valueChanged,
-            this, &GPXImportOptionWidget::onDefaultAltitudeSpinBoxValueChanged);
+            this, &GPXImportOptionWidget::onDefaultAltitudeChanged);
     connect(ui->defaultVelocitySpinBox, &QSpinBox::valueChanged,
-            this, &GPXImportOptionWidget::onDefaultVelocitySpinBoxValueChanged);
+            this, &GPXImportOptionWidget::onDefaultVelocityChanged);
 #endif
 
     connect(&d->importSettings, &GPXImportSettings::defaultsRestored,
@@ -93,26 +101,60 @@ void GPXImportOptionWidget::frenchConnection() noexcept
 
 void GPXImportOptionWidget::initUi() noexcept
 {
+    ui->waypointSelectionComboBox->addItem(tr("Waypoint (<wpt>)"), Enum::toUnderlyingType(GPXImportSettings::GPXElement::Waypoint));
+    ui->waypointSelectionComboBox->addItem(tr("Route (<rte>)"), Enum::toUnderlyingType(GPXImportSettings::GPXElement::Route));
+    ui->waypointSelectionComboBox->addItem(tr("Track (<trk>)"), Enum::toUnderlyingType(GPXImportSettings::GPXElement::Track));
+
+    ui->positionSelectionComboBox->addItem(tr("Waypoint (<wpt>)"), Enum::toUnderlyingType(GPXImportSettings::GPXElement::Waypoint));
+    ui->positionSelectionComboBox->addItem(tr("Route (<rte>)"), Enum::toUnderlyingType(GPXImportSettings::GPXElement::Route));
+    ui->positionSelectionComboBox->addItem(tr("Track (<trk>)"), Enum::toUnderlyingType(GPXImportSettings::GPXElement::Track));
+
     ui->defaultAltitudeSpinBox->setRange(0, ::MaximumAltitude);
     ui->defaultAltitudeSpinBox->setSuffix(tr(" feet"));
+    ui->defaultAltitudeSpinBox->setSingleStep(100);
+    ui->defaultAltitudeSpinBox->setGroupSeparatorShown(true);
     ui->defaultVelocitySpinBox->setRange(0, ::MaximumVelocity);
     ui->defaultVelocitySpinBox->setSuffix(tr(" knots"));
+    ui->defaultVelocitySpinBox->setSingleStep(5);
+    ui->defaultVelocitySpinBox->setGroupSeparatorShown(true);
 }
 
 // PRIVATE SLOTS
 
-void GPXImportOptionWidget::onDefaultAltitudeSpinBoxValueChanged(int value) noexcept
+void GPXImportOptionWidget::onWaypointSelelectionChanged(int index) noexcept
+{
+    d->importSettings.m_waypointSelection = static_cast<GPXImportSettings::GPXElement>(ui->waypointSelectionComboBox->currentData().toInt());
+}
+
+void GPXImportOptionWidget::onPositionSelelectionChanged(int index) noexcept
+{
+    d->importSettings.m_positionSelection = static_cast<GPXImportSettings::GPXElement>(ui->positionSelectionComboBox->currentData().toInt());
+}
+
+void GPXImportOptionWidget::onDefaultAltitudeChanged(int value) noexcept
 {
     d->importSettings.m_defaultAltitude = value;
 }
 
-void GPXImportOptionWidget::onDefaultVelocitySpinBoxValueChanged(int value) noexcept
+void GPXImportOptionWidget::onDefaultVelocityChanged(int value) noexcept
 {
     d->importSettings.m_defaultVelocity = value;
 }
 
 void GPXImportOptionWidget::updateUi() noexcept
 {
+    int currentIndex = 0;
+    while (currentIndex < ui->waypointSelectionComboBox->count() &&
+           static_cast<GPXImportSettings::GPXElement>(ui->waypointSelectionComboBox->itemData(currentIndex).toInt()) != d->importSettings.m_waypointSelection) {
+        ++currentIndex;
+    }
+    ui->waypointSelectionComboBox->setCurrentIndex(currentIndex);
+    while (currentIndex < ui->positionSelectionComboBox->count() &&
+           static_cast<GPXImportSettings::GPXElement>(ui->positionSelectionComboBox->itemData(currentIndex).toInt()) != d->importSettings.m_positionSelection) {
+        ++currentIndex;
+    }
+    ui->positionSelectionComboBox->setCurrentIndex(currentIndex);
+
     ui->defaultAltitudeSpinBox->setValue(d->importSettings.m_defaultAltitude);
     ui->defaultVelocitySpinBox->setValue(d->importSettings.m_defaultVelocity);
 }

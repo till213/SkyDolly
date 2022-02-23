@@ -51,7 +51,7 @@ private:
     void initUi() noexcept;
 
 private slots:
-    void onFormatComboBoxCurrentIndexChanged(int index) noexcept;
+    void onFormatChanged(int index) noexcept;
 
     void updateUi() noexcept;
 };

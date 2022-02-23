@@ -70,10 +70,10 @@ void CSVImportOptionWidget::frenchConnection() noexcept
 {
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
     connect(ui->formatComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &CSVImportOptionWidget::onFormatComboBoxCurrentIndexChanged);
+            this, &CSVImportOptionWidget::onFormatChanged);
 #else
     connect(ui->formatComboBox, &QComboBox::currentIndexChanged,
-            this, &CSVImportOptionWidget::onFormatComboBoxCurrentIndexChanged);
+            this, &CSVImportOptionWidget::onFormatChanged);
 #endif
     connect(&d->importSettings, &CSVImportSettings::defaultsRestored,
             this, &CSVImportOptionWidget::updateUi);
@@ -88,7 +88,7 @@ void CSVImportOptionWidget::initUi() noexcept
 
 // PRIVATE SLOTS
 
-void CSVImportOptionWidget::onFormatComboBoxCurrentIndexChanged([[maybe_unused]]int index) noexcept
+void CSVImportOptionWidget::onFormatChanged([[maybe_unused]]int index) noexcept
 {
     d->importSettings.m_format = static_cast<CSVImportSettings::Format>(ui->formatComboBox->currentData().toInt());
 }
