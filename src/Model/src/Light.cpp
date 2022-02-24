@@ -67,7 +67,7 @@ Light::~Light() noexcept
 
 void Light::upsertLast(const LightData &lightData) noexcept
 {
-    if (d->lightData.size() > 0 && d->lightData.back().timestamp == lightData.timestamp)  {
+    if (d->lightData.size() > 0 && d->lightData.back() == lightData)  {
         // Same timestamp -> replace
         d->lightData[d->lightData.size() - 1] = lightData;
     } else {
@@ -79,7 +79,7 @@ void Light::upsertLast(const LightData &lightData) noexcept
 void Light::upsert(const LightData &data) noexcept
 {
     auto result = std::find_if(d->lightData.begin(), d->lightData.end(),
-                              [&data] (TimeVariableData const &d) { return d.timestamp == data.timestamp; });
+                              [&data] (const TimeVariableData &d) { return d.timestamp == data.timestamp; });
     if (result != d->lightData.end()) {
         // Same timestamp -> update
         *result = data;

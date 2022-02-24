@@ -69,7 +69,7 @@ AircraftHandle::~AircraftHandle() noexcept
 
 void AircraftHandle::upsertLast(const AircraftHandleData &aircraftHandleData) noexcept
 {
-    if (d->aircraftHandleData.size() > 0 && d->aircraftHandleData.back().timestamp == aircraftHandleData.timestamp)  {
+    if (d->aircraftHandleData.size() > 0 && d->aircraftHandleData.back() == aircraftHandleData)  {
         // Same timestamp -> replace
         d->aircraftHandleData[d->aircraftHandleData.size() - 1] = aircraftHandleData;
     } else {
@@ -81,7 +81,7 @@ void AircraftHandle::upsertLast(const AircraftHandleData &aircraftHandleData) no
 void AircraftHandle::upsert(const AircraftHandleData &data) noexcept
 {
     auto result = std::find_if(d->aircraftHandleData.begin(), d->aircraftHandleData.end(),
-                              [&data] (TimeVariableData const &d) { return d.timestamp == data.timestamp; });
+                              [&data] (const TimeVariableData &d) { return d.timestamp == data.timestamp; });
     if (result != d->aircraftHandleData.end()) {
         // Same timestamp -> update
         *result = data;
