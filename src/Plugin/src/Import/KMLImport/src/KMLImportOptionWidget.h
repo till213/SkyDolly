@@ -49,11 +49,9 @@ private:
 
     void frenchConnection() noexcept;
     void initUi() noexcept;
-    void initOptionUi() noexcept;
-    void updateOptionUi() noexcept;
 
 private slots:
-    void onFormatComboBoxCurrentIndexChanged(int index) noexcept;
+    void onFormatChanged(int index) noexcept;
 
     void updateUi() noexcept;
 };

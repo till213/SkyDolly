@@ -23,6 +23,8 @@
 - CSV import plugin now supports the following new CSV flavours
   * CSV from [flightradar24.com](https://www.flightradar24.com/)
   * CSV from [Flight Recorder](https://flightsim.to/file/8163/flight-recorder)
+- Logbook
+  * The default "Delete" key now deletes flights
   
 ### Bug Fixes
 
@@ -108,7 +110,7 @@
     - Aircraft can now be _added_ to existing flights ("multiplayer formation flying")
     - Select the aircraft type (used when spawning AI aircraft in formation flights)
     - Aircraft types (name, number of engines, wingspan, ...) are constantly updated upon flight recordings
-      * The default aircraft of FS 2020 are already in the logbook and hence immediatelly selectable when importing a CSV file
+      * The default aircraft of MSFS are already in the logbook and hence immediatelly selectable when importing a CSV file
     - Also refer to new "time offset" feature in the Formation module which is useful to "synchronise multiplayer formation flights", see below
   * Export CSV plugin
   * Export KML plugin ("Google Earth")
@@ -374,7 +376,7 @@
 
 ### Bug Fixes
 
-- Make sure that the first sampled data properly starst with a timestamp of 0, in order to properly interpolate the requested values
+- Make sure that the first sampled data properly starts with a timestamp of 0, in order to properly interpolate the requested values
 - Properly close the connection when the server (flight simulator) quits
 
 ## 0.2.1
@@ -395,7 +397,7 @@
 
 ### Bug Fixes
 
-- Validate the recorded simulation variables, specifically the position (sending invalid values back freezes or even crashes FS 2020)
+- Validate the recorded simulation variables, specifically the position (sending invalid values back freezes or even crashes MSFS)
 - Properly store the already elapsed time when changing the replay speed, for a smooth continuation of the replay
 
 ## 0.1.0

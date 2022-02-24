@@ -1,6 +1,6 @@
 # KML (Keyhole Markup Language) File Format
 
-## Introduction
+## About
 
 The Keyhole Markup Language (KML) is an XML based file format which can e.g. be viewed with Google Earth.
 

@@ -160,6 +160,32 @@ public:
     }
 
     /*!
+     * Converts knots to meters per second.
+     *
+     * \param knots
+     *        the knots to convert
+     * \return the converted meters per second
+     * \sa https://www.convertunits.com/from/knots/to/metre/second/
+     */
+    static inline double knotsToMetersPerSecond(double knots) noexcept
+    {
+        return knots * 0.51444444444444;
+    }
+
+    /*!
+     * Converts meters per second to knots.
+     *
+     * \param metersPerSecond
+     *        the meters per second to convert
+     * \return the converted knots
+     * \sa https://www.convertunits.com/from/knots/to/metre/second/
+     */
+    static inline double metersPerSecondToKnots(double metersPerSecond) noexcept
+    {
+        return metersPerSecond * 1.9438444924406;
+    }
+
+    /*!
      * Converts m/s to feet/s.
      *
      * \param metersPerSecond

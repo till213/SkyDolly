@@ -55,7 +55,6 @@ public:
     {}
 
     QXmlStreamReader xml;
-    Unit unit;
     KMLImportSettings importSettings;
     QDateTime firstDateTimeUtc;
     QString flightNumber;
@@ -113,7 +112,7 @@ bool KMLImportPlugin::readFile(QFile &file) noexcept
     d->xml.setDevice(&file);
     if (d->xml.readNextStartElement()) {
 #ifdef DEBUG
-        qDebug("KMLImportPlugin::import: XML start element: %s", qPrintable(d->xml.name().toString()));
+        qDebug("KMLImportPlugin::readFile: XML start element: %s", qPrintable(d->xml.name().toString()));
 #endif
         if (d->xml.name() == QStringLiteral("kml")) {
             parseKML();
@@ -125,7 +124,7 @@ bool KMLImportPlugin::readFile(QFile &file) noexcept
     bool ok = !d->xml.hasError();
 #ifdef DEBUG
     if (!ok) {
-        qDebug("KMLImportPlugin::import: XML error: %s", qPrintable(d->xml.errorString()));
+        qDebug("KMLImportPlugin::readFile: XML error: %s", qPrintable(d->xml.errorString()));
     }
 #endif
     return ok;

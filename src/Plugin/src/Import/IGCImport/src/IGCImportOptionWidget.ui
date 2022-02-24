@@ -37,7 +37,7 @@
    <item row="2" column="0">
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Environmental noise level (ENL) threshold [%]:</string>
+      <string>Environmental noise level (ENL) threshold:</string>
      </property>
     </widget>
    </item>

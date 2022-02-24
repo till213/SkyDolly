@@ -49,12 +49,10 @@ private:
 
     void frenchConnection() noexcept;
     void initUi() noexcept;
-    void initOptionUi() noexcept;
-    void updateOptionUi() noexcept;
 
 private slots:
-    void onAltitudeComboBoxCurrentIndexChanged(int index) noexcept;
-    void onENLThresholdIntSpinBoxValueChanged(int value) noexcept;
+    void onAltitudeChanged(int index) noexcept;
+    void onENLThresholdChanged(int value) noexcept;
 
     void updateUi() noexcept;
 };

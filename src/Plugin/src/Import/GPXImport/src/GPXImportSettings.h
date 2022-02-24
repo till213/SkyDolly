@@ -22,31 +22,49 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef GENERICKMLPARSER_H
-#define GENERICKMLPARSER_H
+#ifndef GPXIMPORTSETTINGS_H
+#define GPXIMPORTSETTINGS_H
 
-#include <memory>
-
-#include <QDateTime>
+#include <QObject>
 #include <QString>
 
-class QXmlStreamReader;
+#include "../../../../../Kernel/src/Settings.h"
 
-#include "AbstractKMLTrackParser.h"
-
-class GenericKMLParserPrivate;
-
-class GenericKMLParser : public AbstractKMLTrackParser
+class GPXImportSettings : public QObject
 {
+    Q_OBJECT
 public:
-    GenericKMLParser(QXmlStreamReader &xmlStreamReader) noexcept;
-    virtual ~GenericKMLParser() noexcept;
 
-    virtual void parse() noexcept override;
-    virtual QString getFlightNumber() const noexcept override;
+    enum struct GPXElement {
+        Waypoint = 0,
+        Route = 1,
+        Track = 2,
+    };
+
+    GPXImportSettings() noexcept;
+
+    GPXElement m_waypointSelection;
+    GPXElement m_positionSelection;
+    int m_defaultAltitude;
+    int m_defaultVelocity;
+
+    Settings::PluginSettings getSettings() const noexcept;
+    Settings::KeysWithDefaults getKeysWithDefault() const noexcept;
+    void setSettings(Settings::ValuesByKey) noexcept;
+    void restoreDefaults() noexcept;
+
+signals:
+    void defaultsRestored();
 
 private:
-    std::unique_ptr<GenericKMLParserPrivate> d;
+    void initSettings() noexcept;
+
+    static constexpr GPXElement DefaultWaypointSelection = GPXElement::Route;
+    static constexpr GPXElement DefaultPositionSelection = GPXElement::Track;
+    // In feet
+    static constexpr int DefaultAltitude = 1000;
+    // In knots
+    static constexpr int DefaultVelocity = 120;
 };
 
-#endif // GENERICKMLPARSER_H
+#endif // GPXIMPORTSETTINGS_H

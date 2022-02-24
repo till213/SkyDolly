@@ -69,10 +69,10 @@ void KMLImportOptionWidget::frenchConnection() noexcept
 {
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
     connect(ui->formatComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &KMLImportOptionWidget::onFormatComboBoxCurrentIndexChanged);
+            this, &KMLImportOptionWidget::onFormatChanged);
 #else
     connect(ui->formatComboBox, &QComboBox::currentIndexChanged,
-            this, &KMLImportOptionWidget::onFormatComboBoxCurrentIndexChanged);
+            this, &KMLImportOptionWidget::onFormatChanged);
 #endif
     connect(&d->importSettings, &KMLImportSettings::defaultsRestored,
             this, &KMLImportOptionWidget::updateUi);
@@ -80,17 +80,19 @@ void KMLImportOptionWidget::frenchConnection() noexcept
 
 void KMLImportOptionWidget::initUi() noexcept
 {
-    initOptionUi();
-}
-
-void KMLImportOptionWidget::initOptionUi() noexcept
-{
     ui->formatComboBox->addItem("FlightAware", Enum::toUnderlyingType(KMLImportSettings::Format::FlightAware));
-    ui->formatComboBox->addItem("flightradar24", Enum::toUnderlyingType(KMLImportSettings::Format::FlightRadar24));
+    ui->formatComboBox->addItem("FlightRadar24", Enum::toUnderlyingType(KMLImportSettings::Format::FlightRadar24));
     ui->formatComboBox->addItem(tr("Generic KML with track data"), Enum::toUnderlyingType(KMLImportSettings::Format::Generic));
 }
 
-void KMLImportOptionWidget::updateOptionUi() noexcept
+// PRIVATE SLOTS
+
+void KMLImportOptionWidget::onFormatChanged([[maybe_unused]]int index) noexcept
+{
+    d->importSettings.m_format = static_cast<KMLImportSettings::Format>(ui->formatComboBox->currentData().toInt());
+}
+
+void KMLImportOptionWidget::updateUi() noexcept
 {
     int currentIndex = 0;
     while (currentIndex < ui->formatComboBox->count() &&
@@ -98,16 +100,4 @@ void KMLImportOptionWidget::updateOptionUi() noexcept
         ++currentIndex;
     }
     ui->formatComboBox->setCurrentIndex(currentIndex);
-}
-
-// PRIVATE SLOTS
-
-void KMLImportOptionWidget::onFormatComboBoxCurrentIndexChanged([[maybe_unused]]int index) noexcept
-{
-    d->importSettings.m_format = static_cast<KMLImportSettings::Format>(ui->formatComboBox->currentData().toInt());
-}
-
-void KMLImportOptionWidget::updateUi() noexcept
-{
-    updateOptionUi();
 }
