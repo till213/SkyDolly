@@ -42,7 +42,7 @@ struct MODEL_API Waypoint : public TimeVariableData
     QDateTime localTime;
     QDateTime zuluTime;
 
-    Waypoint() noexcept;
+    Waypoint(float latitude = 0.0f, float longitude = 0.0f, float altitude = 0.0f) noexcept;
     Waypoint(Waypoint &&) = default;
     Waypoint(const Waypoint &) = default;
     Waypoint &operator= (const Waypoint &) = default;

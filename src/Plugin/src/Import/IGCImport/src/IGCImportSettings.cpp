@@ -24,7 +24,6 @@
  */
 
 #include "../../../../../Kernel/src/Enum.h"
-#include "../../../../../Kernel/src/System.h"
 #include "../../../../../Kernel/src/Settings.h"
 #include "IGCImportSettings.h"
 
@@ -63,7 +62,7 @@ Settings::KeysWithDefaults IGCImportSettings::getKeysWithDefault() const noexcep
     Settings::KeyValue keyValue;
 
     keyValue.first = ::AltitudeKey;
-    keyValue.second = Enum::toUnderlyingType(IGCImportSettings::DefaultAltitude);
+    keyValue.second = Enum::toUnderlyingType(DefaultAltitude);
     keys.push_back(keyValue);
 
     keyValue.first = ::ENLThresholdKey;
@@ -78,7 +77,7 @@ void IGCImportSettings::setSettings(Settings::ValuesByKey valuesByKey) noexcept
     bool ok;
     const int enumeration = valuesByKey[::AltitudeKey].toInt(&ok);
     if (ok) {
-        m_altitude = static_cast<IGCImportSettings::Altitude >(enumeration);
+        m_altitude = static_cast<Altitude >(enumeration);
     } else {
         m_altitude = DefaultAltitude;
     }

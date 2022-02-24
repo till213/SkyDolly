@@ -34,6 +34,7 @@
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 #include <cstdlib>
 
+#include <QHash>
 #include <QString>
 
 // https://www.kdab.com/qt-datatypes-in-standard-library/

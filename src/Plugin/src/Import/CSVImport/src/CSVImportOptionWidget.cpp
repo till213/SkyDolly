@@ -70,10 +70,10 @@ void CSVImportOptionWidget::frenchConnection() noexcept
 {
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
     connect(ui->formatComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &CSVImportOptionWidget::onFormatComboBoxCurrentIndexChanged);
+            this, &CSVImportOptionWidget::onFormatChanged);
 #else
     connect(ui->formatComboBox, &QComboBox::currentIndexChanged,
-            this, &CSVImportOptionWidget::onFormatComboBoxCurrentIndexChanged);
+            this, &CSVImportOptionWidget::onFormatChanged);
 #endif
     connect(&d->importSettings, &CSVImportSettings::defaultsRestored,
             this, &CSVImportOptionWidget::updateUi);
@@ -81,17 +81,19 @@ void CSVImportOptionWidget::frenchConnection() noexcept
 
 void CSVImportOptionWidget::initUi() noexcept
 {
-    initOptionUi();
-}
-
-void CSVImportOptionWidget::initOptionUi() noexcept
-{
     ui->formatComboBox->addItem(Version::getApplicationName(), Enum::toUnderlyingType(CSVImportSettings::Format::SkyDolly));
-    ui->formatComboBox->addItem("flightradar24", Enum::toUnderlyingType(CSVImportSettings::Format::FlightRadar24));
+    ui->formatComboBox->addItem("FlightRadar24", Enum::toUnderlyingType(CSVImportSettings::Format::FlightRadar24));
     ui->formatComboBox->addItem("Flight Recorder", Enum::toUnderlyingType(CSVImportSettings::Format::FlightRecorder));
 }
 
-void CSVImportOptionWidget::updateOptionUi() noexcept
+// PRIVATE SLOTS
+
+void CSVImportOptionWidget::onFormatChanged([[maybe_unused]]int index) noexcept
+{
+    d->importSettings.m_format = static_cast<CSVImportSettings::Format>(ui->formatComboBox->currentData().toInt());
+}
+
+void CSVImportOptionWidget::updateUi() noexcept
 {
     int currentIndex = 0;
     while (currentIndex < ui->formatComboBox->count() &&
@@ -99,16 +101,4 @@ void CSVImportOptionWidget::updateOptionUi() noexcept
         ++currentIndex;
     }
     ui->formatComboBox->setCurrentIndex(currentIndex);
-}
-
-// PRIVATE SLOTS
-
-void CSVImportOptionWidget::onFormatComboBoxCurrentIndexChanged([[maybe_unused]]int index) noexcept
-{
-    d->importSettings.m_format = static_cast<CSVImportSettings::Format>(ui->formatComboBox->currentData().toInt());
-}
-
-void CSVImportOptionWidget::updateUi() noexcept
-{
-    updateOptionUi();
 }

@@ -1,6 +1,6 @@
 # IGC (International Gliding Commission) File Format
 
-## Introduction
+## About
 
 The IGC format is (mostly) created by flight recorders in gliders.
 

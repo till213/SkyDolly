@@ -29,6 +29,8 @@
 #include <QStringLiteral>
 
 /*!
+ * KML format element names.
+ *
  * From https://developers.google.com/kml/documentation/kml_element_hierarchy:
  * "In KML, simple element names begin with a lowercase letter. Simple elements can contain a value, but they do not contain other elements.
  * Complex element names being with an uppercase letter. Complex elements can contain other elements (referred to as their children)."

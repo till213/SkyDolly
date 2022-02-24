@@ -22,31 +22,41 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef GENERICKMLPARSER_H
-#define GENERICKMLPARSER_H
+#ifndef GPXIMPORTOPTIONWIDGET_H
+#define GPXIMPORTOPTIONWIDGET_H
 
 #include <memory>
 
-#include <QDateTime>
-#include <QString>
+#include <QWidget>
 
-class QXmlStreamReader;
+namespace Ui {
+    class GPXImportOptionWidget;
+}
 
-#include "AbstractKMLTrackParser.h"
+class GPXImportSettings;
+class GPXImportOptionWidgetPrivate;
 
-class GenericKMLParserPrivate;
-
-class GenericKMLParser : public AbstractKMLTrackParser
+class GPXImportOptionWidget : public QWidget
 {
+    Q_OBJECT
 public:
-    GenericKMLParser(QXmlStreamReader &xmlStreamReader) noexcept;
-    virtual ~GenericKMLParser() noexcept;
-
-    virtual void parse() noexcept override;
-    virtual QString getFlightNumber() const noexcept override;
+    explicit GPXImportOptionWidget(GPXImportSettings &importSettings, QWidget *parent = nullptr) noexcept;
+    virtual ~GPXImportOptionWidget() noexcept;
 
 private:
-    std::unique_ptr<GenericKMLParserPrivate> d;
+    Ui::GPXImportOptionWidget *ui;
+    std::unique_ptr<GPXImportOptionWidgetPrivate> d;
+
+    void frenchConnection() noexcept;
+    void initUi() noexcept;
+
+private slots:
+    void onWaypointSelelectionChanged(int index) noexcept;
+    void onPositionSelelectionChanged(int index) noexcept;
+    void onDefaultAltitudeChanged(int index) noexcept;
+    void onDefaultVelocityChanged(int value) noexcept;
+
+    void updateUi() noexcept;
 };
 
-#endif // GENERICKMLPARSER_H
+#endif // GPXIMPORTOPTIONWIDGET_H

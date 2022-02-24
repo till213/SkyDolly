@@ -22,31 +22,44 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef GENERICKMLPARSER_H
-#define GENERICKMLPARSER_H
+#ifndef GPX_H
+#define GPX_H
 
-#include <memory>
-
-#include <QDateTime>
 #include <QString>
+#include <QStringLiteral>
 
-class QXmlStreamReader;
-
-#include "AbstractKMLTrackParser.h"
-
-class GenericKMLParserPrivate;
-
-class GenericKMLParser : public AbstractKMLTrackParser
+/*!
+ * GPX format element names.
+ *
+ * In analogy to the KML naming conventions we use the same (de-)capitalisation for constant names
+ * as given by the actual GPX element names. For GPX that essentially means all lower-case.
+ */
+namespace GPX
 {
-public:
-    GenericKMLParser(QXmlStreamReader &xmlStreamReader) noexcept;
-    virtual ~GenericKMLParser() noexcept;
+    inline const QString gpx = QStringLiteral("gpx");
 
-    virtual void parse() noexcept override;
-    virtual QString getFlightNumber() const noexcept override;
+    // Metadata
+    inline const QString metadata = QStringLiteral("metadata");
+    inline const QString name = QStringLiteral("name");
+    inline const QString desc = QStringLiteral("desc");
+    inline const QString author = QStringLiteral("author");
 
-private:
-    std::unique_ptr<GenericKMLParserPrivate> d;
-};
+    // Waypoints
+    inline const QString wpt = QStringLiteral("wpt");
 
-#endif // GENERICKMLPARSER_H
+    // Routes
+    inline const QString rte = QStringLiteral("rte");
+    inline const QString rtept = QStringLiteral("rtept");
+
+
+    // Tracks
+    inline const QString trk = QStringLiteral("trk");
+    inline const QString trkseg = QStringLiteral("trkseg");
+    inline const QString trkpt = QStringLiteral("trkpt");
+    inline const QString ele = QStringLiteral("ele");
+    inline const QString time = QStringLiteral("time");
+    inline const QString lat = QStringLiteral("lat");
+    inline const QString lon = QStringLiteral("lon");
+}
+
+#endif // GPX_H

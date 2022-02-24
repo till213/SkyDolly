@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef IGCIMPORTPLUGIN_H
-#define IGCIMPORTPLUGIN_H
+#ifndef GPXIMPORTPLUGIN_H
+#define GPXIMPORTPLUGIN_H
 
 #include <memory>
 
@@ -32,7 +32,7 @@
 #include <QString>
 #include <QWidget>
 
-class QRegularExpression;
+class QFile;
 
 #include "../../../../../Flight/src/FlightAugmentation.h"
 #include "../../../ImportIntf.h"
@@ -41,16 +41,16 @@ class QRegularExpression;
 class Flight;
 struct AircraftInfo;
 struct FlightCondition;
-class IGCImportPluginPrivate;
+class GPXImportPluginPrivate;
 
-class IGCImportPlugin : public ImportPluginBase
+class GPXImportPlugin : public ImportPluginBase
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "IGCImportPlugin.json")
+    Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "GPXImportPlugin.json")
     Q_INTERFACES(ImportIntf)
 public:
-    IGCImportPlugin() noexcept;
-    virtual ~IGCImportPlugin() noexcept;
+    GPXImportPlugin() noexcept;
+    virtual ~GPXImportPlugin() noexcept;
 
 protected:
     // PluginBase
@@ -76,13 +76,10 @@ protected slots:
     virtual void onRestoreDefaultSettings() noexcept override;
 
 private:
-    std::unique_ptr<IGCImportPluginPrivate> d;
+    std::unique_ptr<GPXImportPluginPrivate> d;
 
+    void parseGPX() noexcept;
     void updateWaypoints() noexcept;
-
-    // Estimates the propeller (thrust) lever position, based on the
-    // environmentalNoiseLevel and the threshold
-    inline double noiseToPosition(double environmentalNoiseLevel, double threshold) noexcept;
 };
 
-#endif // IGCIMPORTPLUGIN_H
+#endif // GPXIMPORTPLUGIN_H

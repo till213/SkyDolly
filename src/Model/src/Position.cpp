@@ -67,7 +67,7 @@ Position::~Position() noexcept
 
 void Position::upsertLast(const PositionData &positionData) noexcept
 {
-    if (d->positionData.size() > 0 && d->positionData.back().timestamp == positionData.timestamp)  {
+    if (d->positionData.size() > 0 && d->positionData.back() == positionData)  {
         // Same timestamp -> replace
         d->positionData[d->positionData.size() - 1] = positionData;
     } else {
@@ -79,7 +79,7 @@ void Position::upsertLast(const PositionData &positionData) noexcept
 void Position::upsert(const PositionData &data) noexcept
 {
     auto result = std::find_if(d->positionData.begin(), d->positionData.end(),
-                              [&data] (TimeVariableData const &d) { return d.timestamp == data.timestamp; });
+                              [&data] (const TimeVariableData &d) { return d.timestamp == data.timestamp; });
     if (result != d->positionData.end()) {
         // Same timestamp -> update
         *result = data;

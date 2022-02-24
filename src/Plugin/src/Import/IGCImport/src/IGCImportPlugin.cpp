@@ -113,6 +113,21 @@ IGCImportPlugin::~IGCImportPlugin() noexcept
 
 // PROTECTED
 
+Settings::PluginSettings IGCImportPlugin::getSettings() const noexcept
+{
+    return d->importSettings.getSettings();
+}
+
+Settings::KeysWithDefaults IGCImportPlugin::getKeyWithDefaults() const noexcept
+{
+    return d->importSettings.getKeysWithDefault();
+}
+
+void IGCImportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+{
+    d->importSettings.setSettings(valuesByKey);
+}
+
 QString IGCImportPlugin::getFileFilter() const noexcept
 {
     return tr("International Gliding Commission (*.%1)").arg(IGCImportPluginPrivate::FileExtension);

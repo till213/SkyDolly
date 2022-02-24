@@ -71,14 +71,14 @@ void IGCImportOptionWidget::frenchConnection() noexcept
 {
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
     connect(ui->altitudeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &IGCImportOptionWidget::onAltitudeComboBoxCurrentIndexChanged);
+            this, &IGCImportOptionWidget::onAltitudeChanged);
     connect(ui->enlThresholdSpinBox, QOverload<int>::of(&QSpinBox::valueChanged),
-            this, &IGCImportOptionWidget::onENLThresholdIntSpinBoxValueChanged);
+            this, &IGCImportOptionWidget::onENLThresholdChanged);
 #else
     connect(ui->altitudeComboBox, &QComboBox::currentIndexChanged,
-            this, &IGCImportOptionWidget::onAltitudeComboBoxCurrentIndexChanged);
+            this, &IGCImportOptionWidget::onAltitudeChanged);
     connect(ui->enlThresholdSpinBox, &QSpinBox::valueChanged,
-            this, &IGCImportOptionWidget::onENLThresholdIntSpinBoxValueChanged);
+            this, &IGCImportOptionWidget::onENLThresholdChanged);
 #endif
 
     connect(&d->importSettings, &IGCImportSettings::defaultsRestored,
@@ -87,19 +87,28 @@ void IGCImportOptionWidget::frenchConnection() noexcept
 
 void IGCImportOptionWidget::initUi() noexcept
 {
-    initOptionUi();
-}
-
-void IGCImportOptionWidget::initOptionUi() noexcept
-{
-    ui->altitudeComboBox->addItem(tr("GNSS altitdue"), Enum::toUnderlyingType(IGCImportSettings::Altitude::GnssAltitude));
-    ui->altitudeComboBox->addItem(tr("Pressure altitdue"), Enum::toUnderlyingType(IGCImportSettings::Altitude::PressureAltitude));
+    ui->altitudeComboBox->addItem(tr("GNSS altitude"), Enum::toUnderlyingType(IGCImportSettings::Altitude::GnssAltitude));
+    ui->altitudeComboBox->addItem(tr("Pressure altitude"), Enum::toUnderlyingType(IGCImportSettings::Altitude::PressureAltitude));
 
     // Percent [0, 100]
     ui->enlThresholdSpinBox->setRange(0, 100);
+    ui->enlThresholdSpinBox->setSuffix("%");
+    ui->enlThresholdSpinBox->setSingleStep(5);
 }
 
-void IGCImportOptionWidget::updateOptionUi() noexcept
+// PRIVATE SLOTS
+
+void IGCImportOptionWidget::onAltitudeChanged([[maybe_unused]]int index) noexcept
+{
+    d->importSettings.m_altitude = static_cast<IGCImportSettings::Altitude>(ui->altitudeComboBox->currentData().toInt());
+}
+
+void IGCImportOptionWidget::onENLThresholdChanged(int value) noexcept
+{
+    d->importSettings.m_enlThresholdPercent = value;
+}
+
+void IGCImportOptionWidget::updateUi() noexcept
 {
     int currentIndex = 0;
     while (currentIndex < ui->altitudeComboBox->count() &&
@@ -109,21 +118,4 @@ void IGCImportOptionWidget::updateOptionUi() noexcept
     ui->altitudeComboBox->setCurrentIndex(currentIndex);
 
     ui->enlThresholdSpinBox->setValue(d->importSettings.m_enlThresholdPercent);
-}
-
-// PRIVATE SLOTS
-
-void IGCImportOptionWidget::onAltitudeComboBoxCurrentIndexChanged([[maybe_unused]]int index) noexcept
-{
-    d->importSettings.m_altitude = static_cast<IGCImportSettings::Altitude>(ui->altitudeComboBox->currentData().toInt());
-}
-
-void IGCImportOptionWidget::onENLThresholdIntSpinBoxValueChanged(int value) noexcept
-{
-    d->importSettings.m_enlThresholdPercent = value;
-}
-
-void IGCImportOptionWidget::updateUi() noexcept
-{
-    updateOptionUi();
 }

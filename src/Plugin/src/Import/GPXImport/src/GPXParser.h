@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef GENERICKMLPARSER_H
-#define GENERICKMLPARSER_H
+#ifndef GPXPARSER_H
+#define GPXPARSER_H
 
 #include <memory>
 
@@ -31,22 +31,34 @@
 #include <QString>
 
 class QXmlStreamReader;
+class QDateTime;
 
-#include "AbstractKMLTrackParser.h"
+class GPXImportSettings;
+class GPXParserPrivate;
 
-class GenericKMLParserPrivate;
-
-class GenericKMLParser : public AbstractKMLTrackParser
+class GPXParser
 {
 public:
-    GenericKMLParser(QXmlStreamReader &xmlStreamReader) noexcept;
-    virtual ~GenericKMLParser() noexcept;
+    GPXParser(QXmlStreamReader &xmlStreamReader, const GPXImportSettings &importSettings) noexcept;
+    virtual ~GPXParser() noexcept;
 
-    virtual void parse() noexcept override;
-    virtual QString getFlightNumber() const noexcept override;
+    virtual void parse() noexcept;
+    QDateTime getFirstDateTimeUtc() const noexcept;
+    QString getDocumentName() const noexcept;
+    QString getDescription() const noexcept;
 
 private:
-    std::unique_ptr<GenericKMLParserPrivate> d;
+    std::unique_ptr<GPXParserPrivate> d;
+
+    void parseGPX() noexcept;
+    void parseMetadata() noexcept;
+    void parseWaypoint() noexcept;
+    void parseRoute() noexcept;
+    void parseRoutePoint() noexcept;
+    void parseTrack() noexcept;
+    void parseTrackSegment() noexcept;
+    inline void parseTrackPoint() noexcept;
+    inline bool parseWaypointType(double &latitude, double &longitude, double &altitude, QString &identifier, QDateTime &dateTime) noexcept;
 };
 
-#endif // GENERICKMLPARSER_H
+#endif // GPXPARSER_H

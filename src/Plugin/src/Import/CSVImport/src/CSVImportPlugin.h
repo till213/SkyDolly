@@ -30,6 +30,7 @@
 #include <QObject>
 #include <QDateTime>
 #include <QString>
+#include <QWidget>
 
 class QFile;
 

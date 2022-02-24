@@ -67,7 +67,7 @@ PrimaryFlightControl::~PrimaryFlightControl() noexcept
 
 void PrimaryFlightControl::upsertLast(const PrimaryFlightControlData &primaryFlightControlData) noexcept
 {
-    if (d->primaryFlightControlData.size() > 0 && d->primaryFlightControlData.back().timestamp == primaryFlightControlData.timestamp)  {
+    if (d->primaryFlightControlData.size() > 0 && d->primaryFlightControlData.back() == primaryFlightControlData)  {
         // Same timestamp -> replace
         d->primaryFlightControlData[d->primaryFlightControlData.size() - 1] = primaryFlightControlData;
     } else {
@@ -79,7 +79,7 @@ void PrimaryFlightControl::upsertLast(const PrimaryFlightControlData &primaryFli
 void PrimaryFlightControl::upsert(const PrimaryFlightControlData &data) noexcept
 {
     auto result = std::find_if(d->primaryFlightControlData.begin(), d->primaryFlightControlData.end(),
-                              [&data] (TimeVariableData const &d) { return d.timestamp == data.timestamp; });
+                              [&data] (const TimeVariableData &d) { return d.timestamp == data.timestamp; });
     if (result != d->primaryFlightControlData.end()) {
         // Same timestamp -> update
         *result = data;

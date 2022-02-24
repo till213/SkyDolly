@@ -67,7 +67,7 @@ Engine::~Engine() noexcept
 
 void Engine::upsertLast(const EngineData &data) noexcept
 {
-    if (d->engineData.size() > 0 && d->engineData.back().timestamp == data.timestamp)  {
+    if (d->engineData.size() > 0 && d->engineData.back() == data)  {
         // Same timestamp -> update
         d->engineData[d->engineData.size() - 1] = data;
     } else {
@@ -79,7 +79,7 @@ void Engine::upsertLast(const EngineData &data) noexcept
 void Engine::upsert(const EngineData &data) noexcept
 {
     auto result = std::find_if(d->engineData.begin(), d->engineData.end(),
-                              [&data] (TimeVariableData const &d) { return d.timestamp == data.timestamp; });
+                              [&data] (const TimeVariableData &d) { return d.timestamp == data.timestamp; });
     if (result != d->engineData.end()) {
         // Same timestamp -> update
         *result = data;

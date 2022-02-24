@@ -30,6 +30,7 @@
 #include <QObject>
 #include <QDateTime>
 #include <QString>
+#include <QWidget>
 
 class QFile;
 
@@ -78,8 +79,6 @@ private:
     std::unique_ptr<KMLImportPluginPrivate> d;
 
     void parseKML() noexcept;
-    void parseName() noexcept;
-    void parseDocument() noexcept;
 };
 
 #endif // KMLIMPORTPLUGIN_H

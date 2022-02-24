@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="Little Navmap" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  <metadata>
+    <link href="https://www.littlenavmap.org">
+      <text>Erstellt mit Little Navmap Version 2.6.17 (Revision 233aba0e) am 2022 02 23T17:03:24</text>
+    </link>
+  </metadata>
+  <rte>
+    <name>WP1 to HECA Flugplan</name>
+    <desc>WP1 (WP1) to Kairo International (HECA) at 3500 ft, VFR</desc>
+    <rtept lon="31.456673" lat="30.028084">
+      <ele>1066.8</ele>
+      <name>WP1</name>
+      <desc>User</desc>
+    </rtept>
+    <rtept lon="31.529800" lat="30.043242">
+      <ele>1066</ele>
+      <name>WP2</name>
+      <desc>User</desc>
+    </rtept>
+    <rtept lon="31.566879" lat="30.085136">
+      <ele>1066</ele>
+      <name>WP3</name>
+      <desc>User</desc>
+    </rtept>
+    <rtept lon="31.644127" lat="30.021841">
+      <ele>1066</ele>
+      <name>WP4</name>
+      <desc>User</desc>
+    </rtept>
+    <rtept lon="31.517784" lat="29.984379">
+      <ele>1066</ele>
+      <name>WP5</name>
+      <desc>User</desc>
+    </rtept>
+    <rtept lon="31.420967" lat="30.004896">
+      <ele>1066</ele>
+      <name>WP6</name>
+      <desc>User</desc>
+    </rtept>
+    <rtept lon="31.413889" lat="30.111389">
+      <ele>104.546</ele>
+      <name>HECA</name>
+      <desc>Airport</desc>
+    </rtept>
+  </rte>
+  <trk>
+    <name>Little Navmap Pfad</name>
+    <trkseg>
+      <trkpt lon="30.555239" lat="20.197842">
+        <ele>1524</ele>
+        <time>2022-02-23T08:20:29Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>

@@ -54,6 +54,11 @@ struct MODEL_API TimeVariableData
     TimeVariableData(const TimeVariableData &) = default;
     TimeVariableData &operator= (const TimeVariableData &rhs) = default;
 
+    inline bool operator==(const TimeVariableData &rhs) noexcept
+    {
+        return timestamp == rhs.timestamp;
+    }
+
     inline bool operator>=(const TimeVariableData &rhs) noexcept
     {
         return timestamp >= rhs.timestamp;

@@ -22,31 +22,25 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef GENERICKMLPARSER_H
-#define GENERICKMLPARSER_H
+// Do not #ifdef-guard this file against multipe inclusions:
+// Adding an #ifdef statement here fails compilation the second
+// time this header is to be included in a source (*.cpp) file
+// (for whatever reasons). As this header is supposed to be
+// included into source files only anyway (when compiled with
+// Qt 5.12 only) there is no problem with multiple inclusion
 
-#include <memory>
+#include <QtGlobal>
 
-#include <QDateTime>
-#include <QString>
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+#include <cstdlib>
 
-class QXmlStreamReader;
+#include <QHash>
+#include <QByteArray>
 
-#include "AbstractKMLTrackParser.h"
-
-class GenericKMLParserPrivate;
-
-class GenericKMLParser : public AbstractKMLTrackParser
-{
-public:
-    GenericKMLParser(QXmlStreamReader &xmlStreamReader) noexcept;
-    virtual ~GenericKMLParser() noexcept;
-
-    virtual void parse() noexcept override;
-    virtual QString getFlightNumber() const noexcept override;
-
-private:
-    std::unique_ptr<GenericKMLParserPrivate> d;
+// https://www.kdab.com/qt-datatypes-in-standard-library/
+struct QByteArrayHasher {
+    std::size_t operator()(const QByteArray &value) const noexcept {
+        return qHash(value);
+    }
 };
-
-#endif // GENERICKMLPARSER_H
+#endif
