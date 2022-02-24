@@ -42,6 +42,8 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include <QAction>
+#include <QShowEvent>
+#include <QHideEvent>
 
 #include "../../../Kernel/src/Version.h"
 #include "../../../Kernel/src/Const.h"
@@ -240,6 +242,9 @@ void LogbookWidget::initUi() noexcept
     ui->logTableWidget->sortByColumn(FlightIdColumn, Qt::SortOrder::DescendingOrder);
 
     ui->splitter->setStretchFactor(1, 3);
+
+    // Default "Delete" key deletes flights
+    ui->deletePushButton->setShortcut(QKeySequence::Delete);
 
     initFilterUi();
 }

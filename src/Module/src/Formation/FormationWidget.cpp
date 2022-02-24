@@ -37,6 +37,8 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QComboBox>
+#include <QShowEvent>
+#include <QHideEvent>
 
 #include "../../../Kernel/src/Version.h"
 #include "../../../Kernel/src/Const.h"
