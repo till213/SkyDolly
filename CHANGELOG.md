@@ -23,6 +23,8 @@
 - CSV import plugin now supports the following new CSV flavours
   * CSV from [flightradar24.com](https://www.flightradar24.com/)
   * CSV from [Flight Recorder](https://flightsim.to/file/8163/flight-recorder)
+- Logbook
+  * The default "Delete" key now deletes flights
   
 ### Bug Fixes
 
