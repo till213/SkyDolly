@@ -33,8 +33,6 @@
 class QXmlStreamReader;
 class QDateTime;
 
-struct Position;
-struct FlightPlan;
 class GPXImportSettings;
 class GPXParserPrivate;
 
@@ -56,10 +54,11 @@ private:
     void parseMetadata() noexcept;
     void parseWaypoint() noexcept;
     void parseRoute() noexcept;
-    void parseRoutePoint(FlightPlan &flightPlan) noexcept;
+    void parseRoutePoint() noexcept;
     void parseTrack() noexcept;
     void parseTrackSegment() noexcept;
-    inline void parseTrackPoint(Position &position, QDateTime &currentDateTimeUtc) noexcept;
+    inline void parseTrackPoint() noexcept;
+    inline bool parseWaypointType(double &latitude, double &longitude, double &altitude, QString &identifier, QDateTime &dateTime) noexcept;
 };
 
 #endif // GPXPARSER_H

@@ -27,11 +27,11 @@
 
 // PUBLIC
 
-Waypoint::Waypoint() noexcept
+Waypoint::Waypoint(float theLatitude, float theLongitude, float theAltitude) noexcept
     : TimeVariableData(),
-      latitude(0.0f),
-      longitude(0.0f),
-      altitude(0.0f)
+      latitude(theLatitude),
+      longitude(theLongitude),
+      altitude(theAltitude)
 {}
 
 bool Waypoint::isValid() const noexcept
