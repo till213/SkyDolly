@@ -275,7 +275,12 @@
               </size>
              </property>
              <property name="text">
-              <string>&amp;Loop</string>
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../res/SkyDolly.qrc">
+               <normaloff>:/img/icons/loop-play-normal.png</normaloff>
+               <normalon>:/img/icons/loop-play-normal-on.png</normalon>:/img/icons/loop-play-normal.png</iconset>
              </property>
              <property name="checkable">
               <bool>true</bool>
