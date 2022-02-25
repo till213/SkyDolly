@@ -24,10 +24,10 @@
   * CSV from [flightradar24.com](https://www.flightradar24.com/)
   * CSV from [Flight Recorder](https://flightsim.to/file/8163/flight-recorder)
 - Logbook
-  * The default "Delete" key now deletes flights
+  * The "Delete" key now deletes flights
 - Replay
-  * A loop replay button has been added: when enabled the replay restarts at the beginning whenever the replay end is reached
-  * The seek intervals in the settings are now spinboxes
+  * A replay loop button has been added: when enabled the replay restarts at the beginning whenever the recording end is reached
+  * In the settings the seek interval is now settable with a spinbox instead of a text field
   
 ### Bug Fixes
 
