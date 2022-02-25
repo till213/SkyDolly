@@ -139,6 +139,7 @@ private slots:
     void skipBackward() noexcept;
     void skipForward() noexcept;
     void skipToEnd() noexcept;
+    void toggleLoopReplay(bool checked) noexcept;
 
     // Service
     void handleFlightRestored() noexcept;

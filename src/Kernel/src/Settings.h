@@ -311,6 +311,22 @@ public:
     void setSeekIntervalPercent(double percent) noexcept;
 
     /*!
+     * Returns whether repeated replay is enabled or not
+     *
+     * \return \c true if repeated replay is enabled; \c false else
+     */
+    bool isLoopReplayEnabled() const noexcept;
+
+    /*!
+     * Enables repeated replay according to \c enable.
+     *
+     * \param enable
+     *        set to \c true in order to enable repeated replay; \c false else
+     * \sa loopReplayChanged
+     */
+    void setLoopReplayEnabled(bool enable) noexcept;
+
+    /*!
      * Returns the replay speed unit: absolute or percent.
      *
      * \return the replay speed unit
@@ -547,6 +563,13 @@ signals:
      * \sa changed
      */
     void seekIntervalPercentChanged(double percent);
+
+    /*!
+     * Emitted when the repeat replay has changed.
+     *
+     * \sa changed
+     */
+    void loopReplayChanged(bool enable);
 
     /*!
      * Emitted when the replay speed unit has changed.

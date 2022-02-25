@@ -40,6 +40,7 @@
 #include <QSlider>
 #include <QLineEdit>
 #include <QButtonGroup>
+#include <QPushButton>
 #include <QRadioButton>
 #include <QDoubleValidator>
 #include <QIcon>
@@ -299,6 +300,8 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::skipForward);
     connect(ui->skipToEndAction, &QAction::triggered,
             this, &MainWindow::skipToEnd);
+    connect(ui->loopReplayPushButton, &QPushButton::toggled,
+            this, &MainWindow::toggleLoopReplay);
 
     // Dialogs
     connect(d->flightDialog, &FlightDialog::visibilityChanged,
@@ -355,18 +358,15 @@ void MainWindow::initUi() noexcept
     int previewInfoCount = settings.getPreviewInfoDialogCount();
     if (previewInfoCount > 0) {
         --previewInfoCount;
-        constexpr uint DropBearChar = 0x1f428;
-        const QString DropBearString = QString::fromUcs4(&DropBearChar, 1);
+        constexpr uint BirthdayCakeChar = 0x1F382;
+        const QString BirthdayCakeString = QString::fromUcs4(&BirthdayCakeChar, 1);
         QMessageBox::information(this, "Preview",
-            DropBearString + " "  + DropBearString + QString(" SKY DOLLY - DROP BEAR EDITION ") + DropBearString + " " + DropBearString + QString("\n\n"
-            "In appreciation of the MSFS Australia World Update this version gives kuddos to all drop bears out there!\n\n"
-            "As glider support in MSFS will become more and more important %1 %2 provides a new IGC import plugin (File | Import | IGC): this import plugin "
-            "allows to import flight recorder data in a format specified by the International Gliding Commission (IGC), "
-            "a popular flight recorder format used by gliders.\n\n"
-            "Please note that currently only basic position data (so-called B records, or fix records), simple flight plans (C records, or task records) "
-            "and basic header data (H records) are imported. The sampling rate depends on the used flight recorder, but may be as coarse as 10 seconds (only). "
-            "The reconstructed aircraft attitude and gears and flaps up/down events are still very simplistic. But hopefully you enjoy "
-            "this new IGC import plugin and have fun visualising real-world glider flights!\n\n"
+            BirthdayCakeString + " "  + BirthdayCakeString + QString(" SKY DOLLY HAPPY BIRTHDAY EDITION ") + BirthdayCakeString + " " + BirthdayCakeString + QString("\n\n"
+            "%1 %2 stores flights automatically into a database (the logbook). As new features are being added and developed the database format will change.\n\n"
+            "During the preview phase older databases will automatically be migrated to the current data format (as \"proof of concept\").\n\n"
+            "However take note that the first release version 1.0.0 will consolidate all migration steps into the final database format, making logbooks generated with preview "
+            "versions (such as this one) unreadable.\n\n"
+            "(From that point onwards databases (logbooks) will of course be migrated to the format of the next release version.)\n\n"
             "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(previewInfoCount),
             QMessageBox::StandardButton::Ok);
         settings.setPreviewInfoDialogCount(previewInfoCount);
@@ -1039,6 +1039,9 @@ void MainWindow::updateControlUi() noexcept
     default:
         break;
     }
+
+    const bool loopReplayEnabled = Settings::getInstance().isLoopReplayEnabled();
+    ui->loopReplayPushButton->setChecked(loopReplayEnabled);
 }
 
 void MainWindow::updateControlIcons() noexcept
@@ -1341,6 +1344,11 @@ void MainWindow::skipToEnd() noexcept
     if (skyConnect) {
         skyConnect->get().skipToEnd();
     }
+}
+
+void MainWindow::toggleLoopReplay(bool checked) noexcept
+{
+    Settings::getInstance().setLoopReplayEnabled(checked);
 }
 
 // Service

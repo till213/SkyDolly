@@ -684,7 +684,7 @@ void FS2020SimConnectPlugin::replay() noexcept
         }
     } else {
         // At end of replay
-        stopReplay();
+        handleAtEnd();
     }
 }
 
