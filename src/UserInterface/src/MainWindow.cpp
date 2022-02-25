@@ -347,7 +347,6 @@ void MainWindow::initUi() noexcept
     ui->showMinimalAction->setChecked(minimalUi);
     updateMinimalUi(minimalUi);
 
-
     QByteArray windowGeometry = settings.getWindowGeometry();
     QByteArray windowState = settings.getWindowState();
     if (!windowGeometry.isEmpty()) {
@@ -358,17 +357,16 @@ void MainWindow::initUi() noexcept
     int previewInfoCount = settings.getPreviewInfoDialogCount();
     if (previewInfoCount > 0) {
         --previewInfoCount;
-        constexpr uint BirthdayCakeChar = 0x1F382;
-        const QString BirthdayCakeString = QString::fromUcs4(&BirthdayCakeChar, 1);
-        QMessageBox::information(this, "Preview",
-            BirthdayCakeString + " "  + BirthdayCakeString + QString(" SKY DOLLY HAPPY BIRTHDAY EDITION ") + BirthdayCakeString + " " + BirthdayCakeString + QString("\n\n"
-            "%1 %2 stores flights automatically into a database (the logbook). As new features are being added and developed the database format will change.\n\n"
-            "During the preview phase older databases will automatically be migrated to the current data format (as \"proof of concept\").\n\n"
-            "However take note that the first release version 1.0.0 will consolidate all migration steps into the final database format, making logbooks generated with preview "
-            "versions (such as this one) unreadable.\n\n"
-            "(From that point onwards databases (logbooks) will of course be migrated to the format of the next release version.)\n\n"
-            "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(previewInfoCount),
-            QMessageBox::StandardButton::Ok);
+        QTimer::singleShot(0, this, [&]() {
+            constexpr uint BirthdayCakeChar = 0x1F382;
+            const QString BirthdayCakeString = QString::fromUcs4(&BirthdayCakeChar, 1);
+            QMessageBox::information(this, "Preview",
+                BirthdayCakeString + " "  + BirthdayCakeString + QString(" SKY DOLLY HAPPY BIRTHDAY EDITION ") + BirthdayCakeString + " " + BirthdayCakeString + QString("\n\n"
+                "%1 was first released on the 28th February 2021 on flightsim.to - happy birthday!\n\n"
+                "This release v%2 focuses on import and export plugins, among them the possibility to import the IGC format (International Gliding Commision), GPX (GPS exchange format) and extended KML import support.\n\n"
+                "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(previewInfoCount),
+                QMessageBox::StandardButton::Ok);
+        });
         settings.setPreviewInfoDialogCount(previewInfoCount);
     }
 }
@@ -490,6 +488,9 @@ void MainWindow::initControlUi() noexcept
     ui->playButton->setAction(ui->playAction);
     ui->skipForwardButton->setAction(ui->forwardAction);
     ui->skipToEndButton->setAction(ui->skipToEndAction);
+
+    // Completely flat button (no border)
+    ui->loopReplayPushButton->setStyleSheet("QPushButton {border-style: outset; border-width: 0px;}");
 }
 
 void MainWindow::initReplaySpeedUi() noexcept
@@ -1349,6 +1350,12 @@ void MainWindow::skipToEnd() noexcept
 void MainWindow::toggleLoopReplay(bool checked) noexcept
 {
     Settings::getInstance().setLoopReplayEnabled(checked);
+    if (checked) {
+        ui->loopReplayPushButton->setToolTip(tr("Loop replay is enabled."));
+    } else {
+        ui->loopReplayPushButton->setToolTip(tr("Replay stops at end."));
+    }
+
 }
 
 // Service
