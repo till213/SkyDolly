@@ -358,20 +358,22 @@ void MainWindow::initUi() noexcept
         restoreState(windowState);
     }
 
-    int previewInfoCount = settings.getPreviewInfoDialogCount();
+    const int previewInfoCount = settings.getPreviewInfoDialogCount();
     if (previewInfoCount > 0) {
-        --previewInfoCount;
-        QTimer::singleShot(0, this, [&]() {
+        QTimer::singleShot(0, this, [this]() {
+            Settings &settings = Settings::getInstance();
+            int currentPreviewInfoCount = settings.getPreviewInfoDialogCount();
+            --currentPreviewInfoCount;
             constexpr uint BirthdayCakeChar = 0x1F382;
             const QString BirthdayCakeString = QString::fromUcs4(&BirthdayCakeChar, 1);
             QMessageBox::information(this, "Preview",
                 BirthdayCakeString + " "  + BirthdayCakeString + QString(" SKY DOLLY HAPPY BIRTHDAY EDITION ") + BirthdayCakeString + " " + BirthdayCakeString + QString("\n\n"
                 "%1 was first released on the 28th February 2021 on flightsim.to - happy birthday!\n\n"
                 "This release v%2 focuses on import and export plugins, among them the possibility to import the IGC format (International Gliding Commision), GPX (GPS exchange format) and extended KML import support.\n\n"
-                "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(previewInfoCount),
-                QMessageBox::StandardButton::Ok);
+                "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(currentPreviewInfoCount),
+                QMessageBox::StandardButton::Ok);            
+            settings.setPreviewInfoDialogCount(currentPreviewInfoCount);
         });
-        settings.setPreviewInfoDialogCount(previewInfoCount);
     }
 }
 
