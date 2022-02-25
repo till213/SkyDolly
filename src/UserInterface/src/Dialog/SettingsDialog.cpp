@@ -25,10 +25,10 @@
 #include <memory>
 #include <optional>
 
-#include <QDoubleValidator>
 #include <QDialog>
 #include <QWidget>
 #include <QString>
+#include <QDoubleSpinBox>
 
 #include "../../../Kernel/src/SampleRate.h"
 #include "../../../Kernel/src/Enum.h"
@@ -105,15 +105,11 @@ void SettingsDialog::initUi() noexcept
     ui->recordFrequencyComboBox->insertItem(Enum::toUnderlyingType(SampleRate::SampleRate::Hz60), tr("60 Hz"));
 
     // Replay
-    QDoubleValidator *secondsValidator = new QDoubleValidator(ui->seekInSecondsLineEdit);
-    ui->seekInSecondsLineEdit->setValidator(secondsValidator);
-    secondsValidator->setBottom(MinSeekSeconds);
-    secondsValidator->setTop(MaxSeekSeconds);
+    ui->seekInSecondsSpinBox->setMinimum(MinSeekSeconds);
+    ui->seekInSecondsSpinBox->setMaximum(MaxSeekSeconds);
 
-    QDoubleValidator *percentValidator = new QDoubleValidator(ui->seekInPercentLineEdit);
-    ui->seekInPercentLineEdit->setValidator(percentValidator);
-    percentValidator->setBottom(MinSeekPercent);
-    percentValidator->setTop(MaxSeekPercent);
+    ui->seekInPercentSpinBox->setMinimum(MinSeekPercent);
+    ui->seekInPercentSpinBox->setMaximum(MaxSeekPercent);
 
     ui->repeatFlapsCheckBox->setToolTip(SimVar::FlapsHandleIndex);
     ui->repeatCanopyOpenCheckBox->setToolTip(SimVar::CanopyOpen);
@@ -145,8 +141,8 @@ void SettingsDialog::updateUi() noexcept
 
     // Replay
     ui->absoluteSeekEnabledCheckBox->setChecked(settings.isAbsoluteSeekEnabled());
-    ui->seekInSecondsLineEdit->setText(QString::number(settings.getSeekIntervalSeconds()));
-    ui->seekInPercentLineEdit->setText(QString::number(settings.getSeekIntervalPercent()));
+    ui->seekInSecondsSpinBox->setValue(settings.getSeekIntervalSeconds());
+    ui->seekInPercentSpinBox->setValue(settings.getSeekIntervalPercent());
 
     ui->repeatFlapsCheckBox->setChecked(settings.isRepeatFlapsHandleIndexEnabled());
     ui->repeatCanopyOpenCheckBox->setChecked(settings.isRepeatCanopyOpenEnabled());
@@ -170,8 +166,8 @@ void SettingsDialog::handleAccepted() noexcept
 
     // Replay
     settings.setAbsoluteSeekEnabled(ui->absoluteSeekEnabledCheckBox->isChecked());
-    settings.setSeekIntervalSeconds(ui->seekInSecondsLineEdit->text().toDouble());
-    settings.setSeekIntervalPercent(ui->seekInPercentLineEdit->text().toDouble());
+    settings.setSeekIntervalSeconds(ui->seekInSecondsSpinBox->value());
+    settings.setSeekIntervalPercent(ui->seekInPercentSpinBox->value());
 
     settings.setRepeatFlapsHandleIndexEnabled(ui->repeatFlapsCheckBox->isChecked());
     settings.setRepeatCanopyOpenEnabled(ui->repeatCanopyOpenCheckBox->isChecked());

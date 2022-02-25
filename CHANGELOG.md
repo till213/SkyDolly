@@ -25,6 +25,9 @@
   * CSV from [Flight Recorder](https://flightsim.to/file/8163/flight-recorder)
 - Logbook
   * The default "Delete" key now deletes flights
+- Replay
+  * A loop replay button has been added: when enabled the replay restarts at the beginning whenever the replay end is reached
+  * The seek intervals in the settings are now spinboxes
   
 ### Bug Fixes
 
