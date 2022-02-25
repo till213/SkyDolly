@@ -148,5 +148,8 @@ private slots:
     // Import / export
     void handleImport(QAction *action) noexcept;
     void handleExport(QAction *action) noexcept;
+
+    // Settings
+    void handleReplayLoopChanged() noexcept;
 };
 #endif // MAINWINDOW_H

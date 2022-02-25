@@ -277,6 +277,10 @@ void MainWindow::frenchConnection() noexcept
     connect(d->exportQActionGroup, &QActionGroup::triggered,
             this, &MainWindow::handleExport);
 
+    // Settings
+    connect(&Settings::getInstance(), &Settings::replayLoopChanged,
+            this, &MainWindow::handleReplayLoopChanged);
+
     // Ui elements
     connect(d->customSpeedLineEdit, &QLineEdit::editingFinished,
             this, &MainWindow::handleCustomSpeedChanged);
@@ -300,7 +304,7 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::skipForward);
     connect(ui->skipToEndAction, &QAction::triggered,
             this, &MainWindow::skipToEnd);
-    connect(ui->loopReplayPushButton, &QPushButton::toggled,
+    connect(ui->replayLoopPushButton, &QPushButton::toggled,
             this, &MainWindow::toggleLoopReplay);
 
     // Dialogs
@@ -490,7 +494,7 @@ void MainWindow::initControlUi() noexcept
     ui->skipToEndButton->setAction(ui->skipToEndAction);
 
     // Completely flat button (no border)
-    ui->loopReplayPushButton->setStyleSheet("QPushButton {border-style: outset; border-width: 0px;}");
+    ui->replayLoopPushButton->setStyleSheet("QPushButton {border-style: outset; border-width: 0px;}");
 }
 
 void MainWindow::initReplaySpeedUi() noexcept
@@ -1041,8 +1045,13 @@ void MainWindow::updateControlUi() noexcept
         break;
     }
 
-    const bool loopReplayEnabled = Settings::getInstance().isLoopReplayEnabled();
-    ui->loopReplayPushButton->setChecked(loopReplayEnabled);
+    const bool loopReplayEnabled = Settings::getInstance().isReplayLoopEnabled();
+    ui->replayLoopPushButton->setChecked(loopReplayEnabled);
+    if (loopReplayEnabled) {
+        ui->replayLoopPushButton->setToolTip(tr("Replay loop is enabled."));
+    } else {
+        ui->replayLoopPushButton->setToolTip(tr("Replay stops at end."));
+    }
 }
 
 void MainWindow::updateControlIcons() noexcept
@@ -1350,12 +1359,6 @@ void MainWindow::skipToEnd() noexcept
 void MainWindow::toggleLoopReplay(bool checked) noexcept
 {
     Settings::getInstance().setLoopReplayEnabled(checked);
-    if (checked) {
-        ui->loopReplayPushButton->setToolTip(tr("Loop replay is enabled."));
-    } else {
-        ui->loopReplayPushButton->setToolTip(tr("Replay stops at end."));
-    }
-
 }
 
 // Service
@@ -1406,4 +1409,9 @@ void MainWindow::handleExport(QAction *action) noexcept
 {
     const QUuid pluginUuid = action->data().toUuid();
     PluginManager::getInstance().exportData(pluginUuid);
+}
+
+void MainWindow::handleReplayLoopChanged() noexcept
+{
+    updateControlUi();
 }

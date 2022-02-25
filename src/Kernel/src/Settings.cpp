@@ -58,7 +58,7 @@ public:
     bool absoluteSeek;
     double seekIntervalSeconds;
     double seekIntervalPercent;
-    bool loopReplay;
+    bool replayLoop;
     Replay::SpeedUnit replaySpeedUnit;
     bool repeatFlapsHandleIndex;
     bool repeatCanopyOpen;
@@ -80,7 +80,7 @@ public:
     static constexpr bool DefaultAbsoluteSeek = true;
     static constexpr double DefaultSeekIntervalSeconds = 1.0;
     static constexpr double DefaultSeekIntervalPercent = 0.5;
-    static constexpr bool DefaultLoopReplay = false;
+    static constexpr bool DefaultReplayLoop = false;
     static constexpr Replay::SpeedUnit DefaultReplaySpeedUnit = Replay::SpeedUnit::Absolute;
     static constexpr double DefaultRepeatFlapsHandleIndex = false;
     // For now the default value is true, as no known aircraft exists where the canopy values would not
@@ -311,16 +311,16 @@ void Settings::setSeekIntervalPercent(double percent) noexcept
     }
 }
 
-bool Settings::isLoopReplayEnabled() const noexcept
+bool Settings::isReplayLoopEnabled() const noexcept
 {
-    return d->loopReplay;
+    return d->replayLoop;
 }
 
 void Settings::setLoopReplayEnabled(bool enable) noexcept
 {
-    if (d->loopReplay != enable) {
-        d->loopReplay = enable;
-        emit loopReplayChanged(d->loopReplay);
+    if (d->replayLoop != enable) {
+        d->replayLoop = enable;
+        emit replayLoopChanged(d->replayLoop);
     }
 }
 
@@ -466,7 +466,7 @@ void Settings::store() const noexcept
         d->settings.setValue("AbsoluteSeek", d->absoluteSeek);
         d->settings.setValue("SeekIntervalSeconds", d->seekIntervalSeconds);
         d->settings.setValue("SeekIntervalPercent", d->seekIntervalPercent);
-        d->settings.setValue("LoopReplay", d->loopReplay);
+        d->settings.setValue("ReplayLoop", d->replayLoop);
         d->settings.setValue("ReplaySpeedUnit", Enum::toUnderlyingType(d->replaySpeedUnit));
         d->settings.setValue("RepeatFlapsHandleIndex", d->repeatFlapsHandleIndex);
         d->settings.setValue("RepeatCanopyOpen", d->repeatCanopyOpen);
@@ -556,7 +556,7 @@ void Settings::restore() noexcept
             qWarning("The seek interval [percent] in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultSeekIntervalPercent);
             d->seekIntervalPercent = SettingsPrivate::DefaultSeekIntervalPercent;
         }
-        d->loopReplay = d->settings.value("LoopReplay", SettingsPrivate::DefaultLoopReplay).toBool();
+        d->replayLoop = d->settings.value("ReplayLoop", SettingsPrivate::DefaultReplayLoop).toBool();
         int replaySpeedUnitValue = d->settings.value("ReplaySpeedUnit", Enum::toUnderlyingType(SettingsPrivate::DefaultReplaySpeedUnit)).toInt(&ok);
         if (ok) {
             d->replaySpeedUnit = static_cast<Replay::SpeedUnit>(replaySpeedUnitValue);
@@ -660,7 +660,7 @@ void Settings::frenchConnection() noexcept
             this, &Settings::changed);
     connect(this, &Settings::seekIntervalPercentChanged,
             this, &Settings::changed);
-    connect(this, &Settings::loopReplayChanged,
+    connect(this, &Settings::replayLoopChanged,
             this, &Settings::changed);
     connect(this, &Settings::replaySpeedUnitChanged,
             this, &Settings::changed);
