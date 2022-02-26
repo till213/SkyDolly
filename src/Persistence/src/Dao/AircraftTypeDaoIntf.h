@@ -43,6 +43,7 @@ public:
     virtual bool upsert(const AircraftType &aircraftType) noexcept = 0;
     virtual bool getByType(const QString &type, AircraftType &aircraftType) const noexcept = 0;
     virtual bool getAll(std::insert_iterator<std::vector<AircraftType>> insertIterator) const noexcept = 0;
+    virtual bool exists(const QString &type) const noexcept = 0;
 };
 
 #endif // AIRCRAFTTYPEDAOINTF_H

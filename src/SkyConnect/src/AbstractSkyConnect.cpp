@@ -355,6 +355,15 @@ void AbstractSkyConnect::seek(std::int64_t timestamp) noexcept
     }
 }
 
+void AbstractSkyConnect::handleAtEnd() noexcept
+{
+    if (Settings::getInstance().isReplayLoopEnabled()) {
+        skipToBegin();
+    } else {
+        stopReplay();
+    }
+}
+
 Flight &AbstractSkyConnect::getCurrentFlight() const
 {
     return d->currentFlight;

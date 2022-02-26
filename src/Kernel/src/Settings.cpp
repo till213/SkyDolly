@@ -58,6 +58,7 @@ public:
     bool absoluteSeek;
     double seekIntervalSeconds;
     double seekIntervalPercent;
+    bool replayLoop;
     Replay::SpeedUnit replaySpeedUnit;
     bool repeatFlapsHandleIndex;
     bool repeatCanopyOpen;
@@ -65,6 +66,8 @@ public:
     bool deleteFlightConfirmation;
     bool deleteAircraftConfirmation;
     bool resetTimeOffsetConfirmation;
+
+    QString importAircraftType;
 
     int previewInfoDialogCount;
 
@@ -79,6 +82,7 @@ public:
     static constexpr bool DefaultAbsoluteSeek = true;
     static constexpr double DefaultSeekIntervalSeconds = 1.0;
     static constexpr double DefaultSeekIntervalPercent = 0.5;
+    static constexpr bool DefaultReplayLoop = false;
     static constexpr Replay::SpeedUnit DefaultReplaySpeedUnit = Replay::SpeedUnit::Absolute;
     static constexpr double DefaultRepeatFlapsHandleIndex = false;
     // For now the default value is true, as no known aircraft exists where the canopy values would not
@@ -88,8 +92,10 @@ public:
     static constexpr bool DefaultDeleteAircraftConfirmation = true;
     static constexpr bool DefaultResetTimeOffsetConfirmation = true;
 
+    static inline const QString DefaultImportAircraftType = QStringLiteral("");
+
     static constexpr int DefaultPreviewInfoDialogCount = 3;
-    static constexpr int PreviewInfoDialogBase = 60;
+    static constexpr int PreviewInfoDialogBase = 70;
 
     SettingsPrivate() noexcept
         : version(QCoreApplication::instance()->applicationVersion())
@@ -309,6 +315,19 @@ void Settings::setSeekIntervalPercent(double percent) noexcept
     }
 }
 
+bool Settings::isReplayLoopEnabled() const noexcept
+{
+    return d->replayLoop;
+}
+
+void Settings::setLoopReplayEnabled(bool enable) noexcept
+{
+    if (d->replayLoop != enable) {
+        d->replayLoop = enable;
+        emit replayLoopChanged(d->replayLoop);
+    }
+}
+
 Replay::SpeedUnit Settings::getReplaySpeeedUnit() const noexcept
 {
     return d->replaySpeedUnit;
@@ -387,6 +406,19 @@ void Settings::setResetTimeOffsetConfirmationEnabled(bool enable) noexcept
     }
 }
 
+QString Settings::getImportAircraftType() const noexcept
+{
+    return d->importAircraftType;
+}
+
+void Settings::setImportAircraftType(const QString &type) noexcept
+{
+    if (d->importAircraftType != type) {
+        d->importAircraftType = type;
+        emit changed();
+    }
+}
+
 int Settings::getPreviewInfoDialogCount() const noexcept
 {
     return d->previewInfoDialogCount - SettingsPrivate::PreviewInfoDialogBase;
@@ -451,6 +483,7 @@ void Settings::store() const noexcept
         d->settings.setValue("AbsoluteSeek", d->absoluteSeek);
         d->settings.setValue("SeekIntervalSeconds", d->seekIntervalSeconds);
         d->settings.setValue("SeekIntervalPercent", d->seekIntervalPercent);
+        d->settings.setValue("ReplayLoop", d->replayLoop);
         d->settings.setValue("ReplaySpeedUnit", Enum::toUnderlyingType(d->replaySpeedUnit));
         d->settings.setValue("RepeatFlapsHandleIndex", d->repeatFlapsHandleIndex);
         d->settings.setValue("RepeatCanopyOpen", d->repeatCanopyOpen);
@@ -480,6 +513,11 @@ void Settings::store() const noexcept
     d->settings.beginGroup("Paths");
     {
         d->settings.setValue("ExportPath", d->exportPath);
+    }
+    d->settings.endGroup();
+    d->settings.beginGroup("Import");
+    {
+        d->settings.setValue("AircraftType", d->importAircraftType);
     }
     d->settings.endGroup();
     d->settings.beginGroup("_Preview");
@@ -540,6 +578,7 @@ void Settings::restore() noexcept
             qWarning("The seek interval [percent] in the settings could not be parsed, so setting value to default value %f", SettingsPrivate::DefaultSeekIntervalPercent);
             d->seekIntervalPercent = SettingsPrivate::DefaultSeekIntervalPercent;
         }
+        d->replayLoop = d->settings.value("ReplayLoop", SettingsPrivate::DefaultReplayLoop).toBool();
         int replaySpeedUnitValue = d->settings.value("ReplaySpeedUnit", Enum::toUnderlyingType(SettingsPrivate::DefaultReplaySpeedUnit)).toInt(&ok);
         if (ok) {
             d->replaySpeedUnit = static_cast<Replay::SpeedUnit>(replaySpeedUnitValue);
@@ -575,6 +614,11 @@ void Settings::restore() noexcept
     d->settings.beginGroup("Paths");
     {
         d->exportPath = d->settings.value("ExportPath", d->defaultExportPath).toString();
+    }
+    d->settings.endGroup();
+    d->settings.beginGroup("Import");
+    {
+        d->importAircraftType = d->settings.value("AircraftType", SettingsPrivate::DefaultImportAircraftType).toString();
     }
     d->settings.endGroup();
     d->settings.beginGroup("_Preview");
@@ -642,6 +686,8 @@ void Settings::frenchConnection() noexcept
     connect(this, &Settings::seekIntervalSecondsChanged,
             this, &Settings::changed);
     connect(this, &Settings::seekIntervalPercentChanged,
+            this, &Settings::changed);
+    connect(this, &Settings::replayLoopChanged,
             this, &Settings::changed);
     connect(this, &Settings::replaySpeedUnitChanged,
             this, &Settings::changed);

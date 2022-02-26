@@ -41,6 +41,8 @@
 #include <QRegularExpressionMatch>
 #include <QStringView>
 #include <QElapsedTimer>
+#include <QCursor>
+#include <QGuiApplication>
 
 #include "../../Kernel/src/Unit.h"
 #include "../../Kernel/src/Settings.h"
@@ -59,6 +61,7 @@
 #include "../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../Persistence/src/Service/FlightService.h"
 #include "../../Persistence/src/Service/AircraftService.h"
+#include "../../Persistence/src/Service/AircraftTypeService.h"
 #include "../../Widget/src/BasicImportDialog.h"
 #include "ImportPluginBase.h"
 
@@ -67,10 +70,12 @@ class ImportPluginBasePrivate
 public:
     ImportPluginBasePrivate()
         : aircraftService(std::make_unique<AircraftService>()),
+          aircraftTypeService(std::make_unique<AircraftTypeService>()),
           addToCurrentFlight(false)
     {}
 
     std::unique_ptr<AircraftService> aircraftService;
+    std::unique_ptr<AircraftTypeService> aircraftTypeService;
     QFile file;
     Unit unit;
     AircraftType aircraftType;
@@ -98,6 +103,7 @@ ImportPluginBase::~ImportPluginBase() noexcept
 bool ImportPluginBase::import(FlightService &flightService) noexcept
 {
     bool ok;
+    Settings &settings = Settings::getInstance();
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
     std::unique_ptr<BasicImportDialog> importDialog = std::make_unique<BasicImportDialog>(getFileFilter(), getParentWidget());
     connect(importDialog.get(), &BasicImportDialog::restoreDefaultOptions,
@@ -109,7 +115,7 @@ bool ImportPluginBase::import(FlightService &flightService) noexcept
         // Remember import (export) path
         const QString selectedFilePath = importDialog->getSelectedFilePath();
         const QString filePath = QFileInfo(selectedFilePath).absolutePath();
-        Settings::getInstance().setExportPath(filePath);
+        settings.setExportPath(filePath);
         ok = importDialog->getSelectedAircraftType(d->aircraftType);
         if (ok) {
             d->addToCurrentFlight = importDialog->isAddToFlightEnabled();
@@ -117,7 +123,9 @@ bool ImportPluginBase::import(FlightService &flightService) noexcept
             QElapsedTimer timer;
             timer.start();
 #endif
+            QGuiApplication::setOverrideCursor(Qt::WaitCursor);
             ok = importFile(selectedFilePath, flightService);
+            QGuiApplication::restoreOverrideCursor();
 #ifdef DEBUG
             qDebug("%s import %s in %lld ms", qPrintable(QFileInfo(selectedFilePath).fileName()), (ok ? qPrintable("SUCCESS") : qPrintable("FAIL")), timer.elapsed());
 #endif

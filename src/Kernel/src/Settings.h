@@ -311,6 +311,22 @@ public:
     void setSeekIntervalPercent(double percent) noexcept;
 
     /*!
+     * Returns whether the replay loop is enabled or not
+     *
+     * \return \c true if repeated replay is enabled; \c false else
+     */
+    bool isReplayLoopEnabled() const noexcept;
+
+    /*!
+     * Enables the replay loop according to \c enable.
+     *
+     * \param enable
+     *        set to \c true in order to enable repeated replay; \c false else
+     * \sa replayLoopChanged
+     */
+    void setLoopReplayEnabled(bool enable) noexcept;
+
+    /*!
      * Returns the replay speed unit: absolute or percent.
      *
      * \return the replay speed unit
@@ -417,6 +433,22 @@ public:
      * \sa changed
      */
     void setResetTimeOffsetConfirmationEnabled(bool enable) noexcept;
+
+    /*!
+     * Returns the aircraft type (name) for import.
+     *
+     * \return the aircraft type which was last selected for import
+     */
+    QString getImportAircraftType() const noexcept;
+
+    /*!
+     * Sets the aircraft type (name) for import
+     *
+     * \param type
+     *        the (last) selected aircraft type
+     * \sa changed
+     */
+    void setImportAircraftType(const QString &type) noexcept;
 
     /*!
      * Returns the count of how many times the "preview" dialog is still
@@ -547,6 +579,13 @@ signals:
      * \sa changed
      */
     void seekIntervalPercentChanged(double percent);
+
+    /*!
+     * Emitted when the repeat replay has changed.
+     *
+     * \sa changed
+     */
+    void replayLoopChanged(bool enable);
 
     /*!
      * Emitted when the replay speed unit has changed.
