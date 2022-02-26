@@ -19,8 +19,8 @@ target_sources(${LIBRARY_NAME}
         src/FS2020SimConnectPlugin.h
         src/FS2020SimConnectPlugin.json
         src/SimConnectType.h
-        src/SimConnectPosition.cpp
-        src/SimConnectPosition.h
+        src/SimConnectPositionRequest.cpp
+        src/SimConnectPositionRequest.h
         src/SimConnectEngineReply.cpp
         src/SimConnectEngineReply.h
         src/SimConnectEngineRequest.cpp

@@ -59,7 +59,7 @@
 #include "../../../Connect.h"
 #include "SimConnectType.h"
 #include "SimConnectAircraftInfo.h"
-#include "SimConnectPosition.h"
+#include "SimConnectPositionRequest.h"
 #include "SimConnectEngineReply.h"
 #include "SimConnectEngineRequest.h"
 #include "SimConnectPrimaryFlightControl.h"
@@ -154,11 +154,11 @@ FS2020SimConnectPlugin::~FS2020SimConnectPlugin() noexcept
 
 bool FS2020SimConnectPlugin::setUserAircraftPosition(const PositionData &positionData) noexcept
 {
-    SimConnectPosition simConnnectPosition;
-    simConnnectPosition.fromPositionData(positionData);
+    SimConnectPositionRequest simConnnectPositionRequest;
+    simConnnectPositionRequest.fromPositionData(positionData);
     const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionDefinition),
                                                         ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
-                                                        sizeof(SimConnectPosition), &simConnnectPosition);
+                                                        sizeof(SimConnectPositionRequest), &simConnnectPositionRequest);
     return res == S_OK;
 }
 
@@ -173,7 +173,7 @@ bool FS2020SimConnectPlugin::isTimerBasedRecording(SampleRate::SampleRate sample
 bool FS2020SimConnectPlugin::onInitialPositionSetup(const InitialPosition &initialPosition) noexcept
 {
     HRESULT result;
-    SIMCONNECT_DATA_INITPOSITION initialSimConnectPosition = SimConnectPosition::toInitialPosition(initialPosition);
+    SIMCONNECT_DATA_INITPOSITION initialSimConnectPosition = SimConnectPositionRequest::toInitialPosition(initialPosition);
     result = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInitialPosition),
                                              ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0, sizeof(::SIMCONNECT_DATA_INITPOSITION), &initialSimConnectPosition);
     return result == S_OK;
@@ -324,11 +324,11 @@ bool FS2020SimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, Tim
                 ok = true;
                 const PositionData &positionData = aircraft->getPositionConst().interpolate(currentTimestamp, access);
                 if (!positionData.isNull()) {
-                    SimConnectPosition simConnnectPosition;
-                    simConnnectPosition.fromPositionData(positionData);
+                    SimConnectPositionRequest simConnnectPositionRequest;
+                    simConnnectPositionRequest.fromPositionData(positionData);
                     const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionDefinition),
                                                                         objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
-                                                                        sizeof(SimConnectPosition), &simConnnectPosition);
+                                                                        sizeof(SimConnectPositionRequest), &simConnnectPositionRequest);
                     ok = res == S_OK;
                 }
 
@@ -635,7 +635,7 @@ void FS2020SimConnectPlugin::setupRequestData() noexcept
 {
     // Request data
     SimConnectAircraftInfo::addToDataDefinition(d->simConnectHandle);
-    SimConnectPosition::addToDataDefinition(d->simConnectHandle);
+    SimConnectPositionRequest::addToDataDefinition(d->simConnectHandle);
     SimConnectEngineReply::addToDataDefinition(d->simConnectHandle);
     SimConnectEngineRequest::addToDataDefinition(d->simConnectHandle);
     SimConnectPrimaryFlightControl::addToDataDefinition(d->simConnectHandle);
@@ -827,10 +827,10 @@ void CALLBACK FS2020SimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, 
         switch (static_cast<SimConnectType::DataRequest>(objectData->dwRequestID)) {
         case SimConnectType::DataRequest::AircraftPosition:
         {
-            const SimConnectPosition *simConnectPosition;
+            const SimConnectPositionRequest *simConnectPositionReply;
             if (skyConnect->getState() == Connect::State::Recording) {
-                simConnectPosition = reinterpret_cast<const SimConnectPosition *>(&objectData->dwData);
-                PositionData positionData = simConnectPosition->toPositionData();
+                simConnectPositionReply = reinterpret_cast<const SimConnectPositionRequest *>(&objectData->dwData);
+                PositionData positionData = simConnectPositionReply->toPositionData();
                 positionData.timestamp = skyConnect->getCurrentTimestamp();
                 if (storeDataImmediately) {
                     userAircraft.getPosition().upsertLast(std::move(positionData));

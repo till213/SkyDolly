@@ -34,12 +34,13 @@
 #include "../../../../../Model/src/InitialPosition.h"
 
 /*!
- * Simulation variables which represent the aircraft's position, attitude and velocities.
+ * Simulation variables which represent the aircraft's position, attitude and velocities
+ * (request sent to the flight simulator).
  *
  * Implementation note: this struct needs to be packed.
  */
 #pragma pack(push, 1)
-struct SimConnectPosition
+struct SimConnectPositionRequest
 {
     // Aircraft position
     double latitude;

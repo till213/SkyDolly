@@ -29,9 +29,9 @@
 #include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Model/src/SimVar.h"
 #include "SimConnectType.h"
-#include "SimConnectPosition.h"
+#include "SimConnectPositionRequest.h"
 
-void SimConnectPosition::addToDataDefinition(HANDLE simConnectHandle) noexcept
+void SimConnectPositionRequest::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
     // Aircraft position & attitude
     ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionDefinition), SimVar::Latitude, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT64);
