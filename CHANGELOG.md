@@ -8,23 +8,26 @@
   * Export flight path (position and GNSS altitude)
   * Export waypoints as flight tasks ("C records")
   * Export pilot names
+- CSV import plugin
+  * The following CSV formats are now supported:
+    - CSV from [flightradar24.com](https://www.flightradar24.com/)
+    - CSV from [Flight Recorder](https://flightsim.to/file/8163/flight-recorder)
+- KML import plugin
+  * The following KML formats are now supported:
+    - KML from [flightradar24.com](https://www.flightradar24.com/)
+    - Generic KML documents containing at least one &lt;gx:Track&gt; element
   
 ### Improvements
 
 - Import
   * The aircraft selection combobox is now editable, with autocompletion support
+  * The selected aircraft is now stored in the settings
 - IGC import plugin
   * The initial heading is now calculated on the "first significant movement", compensating GPS inaccuracies (when the glider is standing still on the ground)
   * Date and time of turn points (waypoints) defined by the task list ("C records") are now updated with the actual flight time, based on the closest flown position
   * Environmental noise level (ENL) determines the engine state (on/off, propeller lever)
-- The KML import plugin now supports the following new KML flavours
-  * KML from [flightradar24.com](https://www.flightradar24.com/)
-  * Generic KML documents containing at least one &lt;gx:Track&gt; element
-- CSV import plugin now supports the following new CSV flavours
-  * CSV from [flightradar24.com](https://www.flightradar24.com/)
-  * CSV from [Flight Recorder](https://flightsim.to/file/8163/flight-recorder)
 - Logbook
-  * The "Delete" key now deletes flights
+  * The "Delete" key now deletes the selected flight
 - Replay
   * A replay loop button has been added: when enabled the replay restarts at the beginning whenever the recording end is reached
   * In the settings the seek interval is now settable with a spinbox instead of a text field
