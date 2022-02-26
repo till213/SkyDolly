@@ -5,5 +5,5 @@ message(STATUS CMAKE_RUNTIME_OUTPUT_DIRECTORY="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/PathCreator)
 if (${PLATFORM_IS_WINDOWS})
-    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/FS2020SimConnectPlugin)
+    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/MSFSSimConnectPlugin)
 endif()

@@ -38,7 +38,7 @@
 
 class Aircraft;
 struct PositionData;
-class FS2020SimConnectPlugin;
+class MSFSSimConnectPlugin;
 
 class SKYCONNECT_API SkyConnectIntf : public QObject
 {
