@@ -40,6 +40,7 @@
 #include <QSlider>
 #include <QLineEdit>
 #include <QButtonGroup>
+#include <QPushButton>
 #include <QRadioButton>
 #include <QDoubleValidator>
 #include <QIcon>
@@ -276,6 +277,10 @@ void MainWindow::frenchConnection() noexcept
     connect(d->exportQActionGroup, &QActionGroup::triggered,
             this, &MainWindow::handleExport);
 
+    // Settings
+    connect(&Settings::getInstance(), &Settings::replayLoopChanged,
+            this, &MainWindow::handleReplayLoopChanged);
+
     // Ui elements
     connect(d->customSpeedLineEdit, &QLineEdit::editingFinished,
             this, &MainWindow::handleCustomSpeedChanged);
@@ -299,6 +304,8 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::skipForward);
     connect(ui->skipToEndAction, &QAction::triggered,
             this, &MainWindow::skipToEnd);
+    connect(ui->replayLoopPushButton, &QPushButton::toggled,
+            this, &MainWindow::toggleLoopReplay);
 
     // Dialogs
     connect(d->flightDialog, &FlightDialog::visibilityChanged,
@@ -344,7 +351,6 @@ void MainWindow::initUi() noexcept
     ui->showMinimalAction->setChecked(minimalUi);
     updateMinimalUi(minimalUi);
 
-
     QByteArray windowGeometry = settings.getWindowGeometry();
     QByteArray windowState = settings.getWindowState();
     if (!windowGeometry.isEmpty()) {
@@ -352,24 +358,22 @@ void MainWindow::initUi() noexcept
         restoreState(windowState);
     }
 
-    int previewInfoCount = settings.getPreviewInfoDialogCount();
+    const int previewInfoCount = settings.getPreviewInfoDialogCount();
     if (previewInfoCount > 0) {
-        --previewInfoCount;
-        constexpr uint DropBearChar = 0x1f428;
-        const QString DropBearString = QString::fromUcs4(&DropBearChar, 1);
-        QMessageBox::information(this, "Preview",
-            DropBearString + " "  + DropBearString + QString(" SKY DOLLY - DROP BEAR EDITION ") + DropBearString + " " + DropBearString + QString("\n\n"
-            "In appreciation of the MSFS Australia World Update this version gives kuddos to all drop bears out there!\n\n"
-            "As glider support in MSFS will become more and more important %1 %2 provides a new IGC import plugin (File | Import | IGC): this import plugin "
-            "allows to import flight recorder data in a format specified by the International Gliding Commission (IGC), "
-            "a popular flight recorder format used by gliders.\n\n"
-            "Please note that currently only basic position data (so-called B records, or fix records), simple flight plans (C records, or task records) "
-            "and basic header data (H records) are imported. The sampling rate depends on the used flight recorder, but may be as coarse as 10 seconds (only). "
-            "The reconstructed aircraft attitude and gears and flaps up/down events are still very simplistic. But hopefully you enjoy "
-            "this new IGC import plugin and have fun visualising real-world glider flights!\n\n"
-            "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(previewInfoCount),
-            QMessageBox::StandardButton::Ok);
-        settings.setPreviewInfoDialogCount(previewInfoCount);
+        QTimer::singleShot(0, this, [this]() {
+            Settings &settings = Settings::getInstance();
+            int currentPreviewInfoCount = settings.getPreviewInfoDialogCount();
+            --currentPreviewInfoCount;
+            constexpr uint BirthdayCakeChar = 0x1F382;
+            const QString BirthdayCakeString = QString::fromUcs4(&BirthdayCakeChar, 1);
+            QMessageBox::information(this, "Preview",
+                BirthdayCakeString + " "  + BirthdayCakeString + QString(" SKY DOLLY HAPPY BIRTHDAY EDITION ") + BirthdayCakeString + " " + BirthdayCakeString + QString("\n\n"
+                "%1 was first released on the 28th February 2021 on flightsim.to - happy birthday!\n\n"
+                "This release v%2 focuses on import and export plugins, among them the possibility to import the IGC format (International Gliding Commision), GPX (GPS exchange format) and extended KML import support.\n\n"
+                "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(currentPreviewInfoCount),
+                QMessageBox::StandardButton::Ok);            
+            settings.setPreviewInfoDialogCount(currentPreviewInfoCount);
+        });
     }
 }
 
@@ -490,6 +494,9 @@ void MainWindow::initControlUi() noexcept
     ui->playButton->setAction(ui->playAction);
     ui->skipForwardButton->setAction(ui->forwardAction);
     ui->skipToEndButton->setAction(ui->skipToEndAction);
+
+    // Completely flat button (no border)
+    ui->replayLoopPushButton->setStyleSheet("QPushButton {border-style: outset; border-width: 0px;}");
 }
 
 void MainWindow::initReplaySpeedUi() noexcept
@@ -1039,6 +1046,14 @@ void MainWindow::updateControlUi() noexcept
     default:
         break;
     }
+
+    const bool loopReplayEnabled = Settings::getInstance().isReplayLoopEnabled();
+    ui->replayLoopPushButton->setChecked(loopReplayEnabled);
+    if (loopReplayEnabled) {
+        ui->replayLoopPushButton->setToolTip(tr("Replay loop is enabled."));
+    } else {
+        ui->replayLoopPushButton->setToolTip(tr("Replay stops at end."));
+    }
 }
 
 void MainWindow::updateControlIcons() noexcept
@@ -1343,6 +1358,11 @@ void MainWindow::skipToEnd() noexcept
     }
 }
 
+void MainWindow::toggleLoopReplay(bool checked) noexcept
+{
+    Settings::getInstance().setLoopReplayEnabled(checked);
+}
+
 // Service
 
 void MainWindow::handleFlightRestored() noexcept
@@ -1391,4 +1411,9 @@ void MainWindow::handleExport(QAction *action) noexcept
 {
     const QUuid pluginUuid = action->data().toUuid();
     PluginManager::getInstance().exportData(pluginUuid);
+}
+
+void MainWindow::handleReplayLoopChanged() noexcept
+{
+    updateControlUi();
 }

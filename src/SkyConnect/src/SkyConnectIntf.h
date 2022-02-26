@@ -106,6 +106,8 @@ public:
     virtual void skipForward() noexcept = 0;
     virtual void skipToEnd() noexcept = 0;
     virtual void seek(std::int64_t timestamp) noexcept = 0;
+    virtual void handleAtEnd() noexcept = 0;
+
     virtual std::int64_t getCurrentTimestamp() const noexcept = 0;
     virtual bool isAtEnd() const noexcept = 0;
 

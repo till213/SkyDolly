@@ -484,6 +484,6 @@ void PathCreatorPlugin::replay() noexcept
 {
     const std::int64_t timestamp = updateCurrentTimestamp();
     if (!sendAircraftData(timestamp, TimeVariableData::Access::Linear, AircraftSelection::All)) {
-        stopReplay();
+        handleAtEnd();
     }
 }

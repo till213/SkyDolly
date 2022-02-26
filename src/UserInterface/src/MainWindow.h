@@ -139,6 +139,7 @@ private slots:
     void skipBackward() noexcept;
     void skipForward() noexcept;
     void skipToEnd() noexcept;
+    void toggleLoopReplay(bool checked) noexcept;
 
     // Service
     void handleFlightRestored() noexcept;
@@ -147,5 +148,8 @@ private slots:
     // Import / export
     void handleImport(QAction *action) noexcept;
     void handleExport(QAction *action) noexcept;
+
+    // Settings
+    void handleReplayLoopChanged() noexcept;
 };
 #endif // MAINWINDOW_H

@@ -33,6 +33,7 @@
 
 class QFile;
 
+#include "../../Kernel/src/Settings.h"
 #include "../../Flight/src/FlightAugmentation.h"
 #include "ImportIntf.h"
 #include "PluginBase.h"

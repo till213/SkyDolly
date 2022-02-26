@@ -80,6 +80,7 @@ public:
     virtual void skipForward() noexcept override;
     virtual void skipToEnd() noexcept override;
     virtual void seek(std::int64_t timestamp) noexcept override;
+    virtual void handleAtEnd() noexcept override;
 
     virtual std::int64_t getCurrentTimestamp() const noexcept override;
     virtual bool isAtEnd() const noexcept override;
