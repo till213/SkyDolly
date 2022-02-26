@@ -559,6 +559,13 @@ set leading_edge_flaps_left_percent = round((leading_edge_flaps_left_percent / 2
     trailing_edge_flaps_left_percent = round((trailing_edge_flaps_left_percent / 255.0) * 32767.0),
     trailing_edge_flaps_right_percent = round((trailing_edge_flaps_right_percent / 255.0) * 32767.0);
 
+@migr(id = "6713ed1d-22c3-4b8e-95a4-1bf19cf6dacd", descn = "Add indicated altitude column", step_cnt = 2)
+alter table position add column indicated_altitude real;
+
+@migr(id = "6713ed1d-22c3-4b8e-95a4-1bf19cf6dacd", descn = "Initialise indicated altitude", step = 2)
+update position
+set    indicated_altitude = altitude;
+
 @migr(id = "58835694-4d47-42cd-8c9c-1b9e164e21b8", descn = "Update application version to 0.9", step = 1)
 update metadata
 set app_version = '0.9.0';

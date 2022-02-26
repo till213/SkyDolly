@@ -8,9 +8,9 @@
 				<name>Route 1</name>
 				<gx:Track>
 					<altitudeMode>absolute</altitudeMode>
-					<when>2022-01-22T13:16:02Z</when>
+                                        <when>2022-01-22T13:15:30Z</when>
 					<gx:coord>37.35780840999076 -3.064537604650274 10000.0</gx:coord>
-					<when>2022-01-22T13:16:13Z</when>
+                                        <when>2022-01-22T13:20:45Z</when>
 					<gx:coord>38.35780840999076 -2.064537604650274 10000.0</gx:coord>
 				</gx:Track>
 			</Placemark>
@@ -20,9 +20,9 @@
 			<Placemark>
 				<name>Route 2</name>
 				<gx:Track>
-					<when>2022-01-22T13:16:02Z</when>
+                                        <when>2022-01-22T13:15:30Z</when>
 					<gx:coord>37.35780840999076 -3.064537604650274 20000.0</gx:coord>
-					<when>2022-01-22T13:16:13Z</when>
+                                        <when>2022-01-22T13:25:45Z</when>
 					<gx:coord>36.35780840999076 -4.064537604650274 20000.0</gx:coord>
 				</gx:Track>
 			</Placemark>

@@ -36,6 +36,7 @@ namespace SimVar
     constexpr char Latitude[] = "Plane Latitude";
     constexpr char Longitude[] = "Plane Longitude";
     constexpr char Altitude[] = "Plane Altitude";
+    constexpr char IndicatedAltitude[] = "Indicated Altitude";
     constexpr char Pitch[] = "Plane Pitch Degrees";
     constexpr char Bank[] = "Plane Bank Degrees";
     constexpr char Heading[] = "Plane Heading Degrees True";

@@ -29,8 +29,12 @@
 
 // PUBLIC
 
-PositionData::PositionData(double latitude, double longitude, double altitude) noexcept
+PositionData::PositionData(double theLatitude, double theLongitude, double theAltitdue) noexcept
     : TimeVariableData(),
+      latitude(theLatitude),
+      longitude(theLongitude),
+      altitude(theAltitdue),
+      indicatedAltitude(theAltitdue),
       pitch(0.0),
       bank(0.0),
       heading(0.0),
@@ -40,10 +44,6 @@ PositionData::PositionData(double latitude, double longitude, double altitude) n
       rotationVelocityBodyX(0.0),
       rotationVelocityBodyY(0.0),
       rotationVelocityBodyZ(0.0)
-{
-    this->latitude = latitude;
-    this->longitude = longitude;
-    this->altitude = altitude;
-}
+{}
 
 const PositionData PositionData::NullData = PositionData(0.0, 0.0, 0.0);

@@ -248,6 +248,7 @@ bool FlightRecorderCSVParser::parseData(QFile &file) noexcept
         ok = ok && importValue(values, ::RotationVelocityBodyZ, rotationVelocityBodyZIdx, positionData.rotationVelocityBodyZ);
 
         if (ok) {
+            positionData.indicatedAltitude = positionData.altitude;
             position.upsertLast(positionData);
         } else {
             break;

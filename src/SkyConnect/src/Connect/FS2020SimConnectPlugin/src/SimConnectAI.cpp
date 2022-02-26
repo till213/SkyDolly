@@ -37,7 +37,7 @@
 #include "../../../../../Model/src/Position.h"
 #include "../../../../../Model/src/PositionData.h"
 #include "SimConnectType.h"
-#include "SimConnectPosition.h"
+#include "SimConnectPositionRequest.h"
 #include "SimConnectAI.h"
 
 class SimConnectAIPrivate
@@ -87,7 +87,7 @@ bool SimConnectAI::createSimulatedAircraft(Flight &flight, std::int64_t timestam
             const AircraftInfo aircraftInfo = aircraft->getAircraftInfoConst();
             const Position &position = aircraft->getPositionConst();
             const PositionData positioNData = position.interpolate(timestamp, TimeVariableData::Access::Seek);
-            initialPosition = SimConnectPosition::toInitialPosition(positioNData, aircraftInfo.startOnGround, aircraftInfo.initialAirspeed);
+            initialPosition = SimConnectPositionRequest::toInitialPosition(positioNData, aircraftInfo.startOnGround, aircraftInfo.initialAirspeed);
             result = ::SimConnect_AICreateNonATCAircraft(d->simConnectHandle, aircraftInfo.aircraftType.type.toLocal8Bit(), aircraftInfo.tailNumber.toLocal8Bit(), initialPosition, requestId);
             ok = result == S_OK;
             if (ok) {

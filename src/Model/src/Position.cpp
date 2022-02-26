@@ -145,6 +145,9 @@ const PositionData &Position::interpolate(std::int64_t timestamp, TimeVariableDa
             d->currentPositionData.longitude = SkyMath::interpolateHermite180(p0->longitude, p1->longitude, p2->longitude, p3->longitude, tn);
             // Altitude [open range]
             d->currentPositionData.altitude  = SkyMath::interpolateHermite(p0->altitude, p1->altitude, p2->altitude, p3->altitude, tn);
+            // The indicated altitude is not used for replay - only for display and analytical purposes,
+            // so linear interpolation is sufficient
+            d->currentPositionData.indicatedAltitude  = SkyMath::interpolateLinear(p1->indicatedAltitude, p2->indicatedAltitude, tn);
             // Pitch: [-90, 90] - no discontinuity at +/- 90
             d->currentPositionData.pitch = SkyMath::interpolateHermite(p0->pitch, p1->pitch, p2->pitch, p3->pitch, tn, Tension);
             // Bank: [-180, 180] - discontinuity at +/- 180

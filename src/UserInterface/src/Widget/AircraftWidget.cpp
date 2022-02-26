@@ -80,6 +80,7 @@ void AircraftWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access a
         ui->latitudeLineEdit->setText(d->unit.formatLatitude(positionData.latitude));
         ui->longitudeLineEdit->setText(d->unit.formatLongitude(positionData.longitude));
         ui->altitudeLineEdit->setText(d->unit.formatFeet(positionData.altitude));
+        ui->indicatedAltitudeLineEdit->setText(d->unit.formatFeet(positionData.indicatedAltitude));
         ui->pitchLineEdit->setText(d->unit.formatDegrees(positionData.pitch));
         ui->bankLineEdit->setText(d->unit.formatDegrees(positionData.bank));
         ui->headingLineEdit->setText(d->unit.formatDegrees(positionData.heading));
@@ -107,6 +108,7 @@ void AircraftWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access a
     ui->latitudeLineEdit->setStyleSheet(css);
     ui->longitudeLineEdit->setStyleSheet(css);
     ui->altitudeLineEdit->setStyleSheet(css);
+    ui->indicatedAltitudeLineEdit->setStyleSheet(css);
     ui->pitchLineEdit->setStyleSheet(css);
     ui->bankLineEdit->setStyleSheet(css);
     ui->headingLineEdit->setStyleSheet(css);
@@ -127,6 +129,7 @@ void AircraftWidget::initUi() noexcept
     ui->latitudeLineEdit->setToolTip(SimVar::Latitude);
     ui->longitudeLineEdit->setToolTip(SimVar::Longitude);
     ui->altitudeLineEdit->setToolTip(SimVar::Altitude);
+    ui->indicatedAltitudeLineEdit->setToolTip(SimVar::IndicatedAltitude);
     ui->pitchLineEdit->setToolTip(SimVar::Pitch);
     ui->bankLineEdit->setToolTip(SimVar::Bank);
     ui->headingLineEdit->setToolTip(SimVar::Heading);

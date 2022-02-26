@@ -215,6 +215,7 @@ inline QString CSVExportPlugin::getPositionHeader() noexcept
     return QString(SimVar::Latitude) % CSVConst::Sep %
            QString(SimVar::Longitude) % CSVConst::Sep %
            QString(SimVar::Altitude) % CSVConst::Sep %
+           QString(SimVar::IndicatedAltitude) % CSVConst::Sep %
            QString(SimVar::Pitch) % CSVConst::Sep %
            QString(SimVar::Bank) % CSVConst::Sep %
            QString(SimVar::Heading) % CSVConst::Sep %
@@ -233,6 +234,7 @@ inline QString CSVExportPlugin::getPositionData(const PositionData &data) noexce
         csv = QString::number(data.latitude, CSVConst::Format, CSVConst::Precision) % CSVConst::Sep %
               QString::number(data.longitude, CSVConst::Format, CSVConst::Precision) % CSVConst::Sep %
               QString::number(data.altitude, CSVConst::Format, CSVConst::Precision) % CSVConst::Sep %
+              QString::number(data.indicatedAltitude, CSVConst::Format, CSVConst::Precision) % CSVConst::Sep %
               QString::number(data.pitch, CSVConst::Format, CSVConst::Precision) % CSVConst::Sep %
               QString::number(data.bank, CSVConst::Format, CSVConst::Precision) % CSVConst::Sep %
               QString::number(data.heading, CSVConst::Format, CSVConst::Precision) % CSVConst::Sep %
@@ -245,6 +247,7 @@ inline QString CSVExportPlugin::getPositionData(const PositionData &data) noexce
     } else {
         const QString EmptyString;
         csv = EmptyString % CSVConst::Sep %
+              EmptyString % CSVConst::Sep %
               EmptyString % CSVConst::Sep %
               EmptyString % CSVConst::Sep %
               EmptyString % CSVConst::Sep %
