@@ -22,14 +22,12 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTPOSITION_H
-#define SIMCONNECTPOSITION_H
+#ifndef SIMCONNECTPOSITIONREQUEST_H
+#define SIMCONNECTPOSITIONREQUEST_H
 
 #include <windows.h>
 #include <SimConnect.h>
 
-#include "../../../../../Kernel/src/SkyMath.h"
-#include "../../../../../Model/src/SimType.h"
 #include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/InitialPosition.h"
 
@@ -58,26 +56,6 @@ struct SimConnectPositionRequest
     double rotationVelocityBodyY;
     double rotationVelocityBodyZ;
 
-    inline PositionData toPositionData() const noexcept
-    {
-        PositionData positionData;
-        positionData.latitude = latitude;
-        positionData.longitude = longitude;
-        positionData.altitude = altitude;
-        positionData.pitch = pitch;
-        positionData.bank = bank;
-        positionData.heading = heading;
-
-        positionData.velocityBodyX = velocityBodyX;
-        positionData.velocityBodyY = velocityBodyY;
-        positionData.velocityBodyZ = velocityBodyZ;
-        positionData.rotationVelocityBodyX = rotationVelocityBodyX;
-        positionData.rotationVelocityBodyY = rotationVelocityBodyY;
-        positionData.rotationVelocityBodyZ = rotationVelocityBodyZ;
-
-        return positionData;
-    }
-
     inline void fromPositionData(const PositionData &positionData) noexcept
     {
         latitude = positionData.latitude;
@@ -94,8 +72,6 @@ struct SimConnectPositionRequest
         rotationVelocityBodyY = positionData.rotationVelocityBodyY;
         rotationVelocityBodyZ = positionData.rotationVelocityBodyZ;
     }
-
-    static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
 
     static inline SIMCONNECT_DATA_INITPOSITION toInitialPosition(const PositionData &positionData, bool onGround, int initialAirspeed)
     {
@@ -128,7 +104,12 @@ struct SimConnectPositionRequest
 
         return initialSimConnnectPosition;
     }
+
+    static void addToDataDefinition(HANDLE simConnectHandle) noexcept;
+
+protected:
+    static void addToDataDefinition(HANDLE simConnectHandle, ::SIMCONNECT_DATA_DEFINITION_ID dataDefinitionId) noexcept;
 };
 #pragma pack(pop)
 
-#endif // SIMCONNECTPOSITION_H
+#endif // SIMCONNECTPOSITIONREQUEST_H

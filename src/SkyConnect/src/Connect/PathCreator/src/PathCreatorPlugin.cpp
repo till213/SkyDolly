@@ -264,6 +264,7 @@ void PathCreatorPlugin::recordPositionData(std::int64_t timestamp) noexcept
     aircraftData.latitude = -180.0 + d->randomGenerator->bounded(360.0);
     aircraftData.longitude = -90.0 + d->randomGenerator->bounded(180.0);
     aircraftData.altitude = d->randomGenerator->bounded(20000.0);
+    aircraftData.indicatedAltitude = d->randomGenerator->bounded(20000.0);
     aircraftData.pitch = -90.0 + d->randomGenerator->bounded(180.0);
     aircraftData.bank = -180.0 + d->randomGenerator->bounded(360.0);
     aircraftData.heading = -180.0 + d->randomGenerator->bounded(360.0);

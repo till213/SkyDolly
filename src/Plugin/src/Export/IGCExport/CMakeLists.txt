@@ -13,12 +13,17 @@ if (${PLATFORM_IS_MACOS})
     list(APPEND LIBRARY_DEPENDENCIES -lc++)
 endif()
 
+set(DOCUMENTATION
+    doc/README.md
+)
+
 target_sources(${LIBRARY_NAME}
     PRIVATE
         src/IGCExportPlugin.h src/IGCExportPlugin.cpp
         src/IGCExportDialog.h src/IGCExportDialog.cpp src/IGCExportDialog.ui
         src/IGCExportSettings.h src/IGCExportSettings.cpp
         src/IGCExportPlugin.json
+        ${DOCUMENTATION}
 )
 
 target_include_directories(${LIBRARY_NAME} PUBLIC

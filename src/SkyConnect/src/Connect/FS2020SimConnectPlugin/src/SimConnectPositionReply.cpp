@@ -22,46 +22,20 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SIMCONNECTTYPE_H
-#define SIMCONNECTTYPE_H
 #include <windows.h>
 
 #include <SimConnect.h>
 
-namespace SimConnectType
+#include "../../../../../Kernel/src/Enum.h"
+#include "../../../../../Model/src/SimVar.h"
+#include "SimConnectType.h"
+#include "SimConnectPositionReply.h"
+
+// PUBLIC
+
+void SimConnectPositionReply::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
-    enum struct DataDefinition: ::SIMCONNECT_DATA_DEFINITION_ID {
-        FlightInformationDefinition,
-        FlightPlanDefinition,
-        SimulationTimeDefinition,
-        AircraftPositionReplyDefinition,
-        AircraftPositionRequestDefinition,
-        AircraftEngineReplyDefinition,
-        AircraftEngineRequestDefinition,
-        AircraftPrimaryFlightControlDefinition,
-        AircraftSecondaryFlightControlDefinition,
-        AircraftHandleDefinition,
-        AircraftLightDefinition,
-        AircraftInitialPosition
-    };
+    SimConnectPositionRequest::addToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionReplyDefinition));
 
-    enum struct DataRequest: ::SIMCONNECT_DATA_REQUEST_ID {
-        AircraftInfo,
-        FlightPlan,
-        SimulationTime,
-        AircraftPosition,
-        Engine,
-        PrimaryFlightControl,
-        SecondaryFlightControl,
-        AircraftHandle,
-        Light,
-        // AI objects
-        AICreateObject,
-        AIRemoveObject,
-        AIReleaseControl,
-        // Must come last
-        AIObjectBase
-    };
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionReplyDefinition), SimVar::IndicatedAltitude, "Feet", ::SIMCONNECT_DATATYPE_FLOAT64);
 }
-
-#endif // SIMCONNECTTYPE_H

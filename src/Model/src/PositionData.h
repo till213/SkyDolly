@@ -36,7 +36,10 @@ struct MODEL_API PositionData : public TimeVariableData
     // Position
     double latitude;
     double longitude;
+    // GPS altitude
     double altitude;
+    // Indicated pressure altitude (analytical purposes only)
+    double indicatedAltitude;
     double pitch;
     double bank;
     double heading;

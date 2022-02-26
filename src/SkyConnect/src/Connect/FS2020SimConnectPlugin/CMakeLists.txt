@@ -15,34 +15,22 @@ endif()
 
 target_sources(${LIBRARY_NAME}
     PRIVATE
-        src/FS2020SimConnectPlugin.cpp
-        src/FS2020SimConnectPlugin.h
-        src/FS2020SimConnectPlugin.json
+        src/FS2020SimConnectPlugin.h src/FS2020SimConnectPlugin.cpp
         src/SimConnectType.h
-        src/SimConnectPositionRequest.cpp
-        src/SimConnectPositionRequest.h
-        src/SimConnectEngineReply.cpp
-        src/SimConnectEngineReply.h
-        src/SimConnectEngineRequest.cpp
-        src/SimConnectEngineRequest.h
-        src/SimConnectPrimaryFlightControl.cpp
-        src/SimConnectPrimaryFlightControl.h
-        src/SimConnectSecondaryFlightControl.cpp
-        src/SimConnectSecondaryFlightControl.h
-        src/SimConnectAircraftHandle.cpp
-        src/SimConnectAircraftHandle.h
-        src/SimConnectLight.cpp
-        src/SimConnectLight.h
-        src/SimConnectAircraftInfo.cpp
-        src/SimConnectAircraftInfo.h
-        src/SimConnectFlightPlan.cpp
-        src/SimConnectFlightPlan.h
-        src/SimConnectSimulationTime.cpp
-        src/SimConnectSimulationTime.h
-        src/SimConnectAI.cpp
-        src/SimConnectAI.h
-        src/EventWidget.cpp
-        src/EventWidget.h
+        src/SimConnectPositionRequest.h src/SimConnectPositionRequest.cpp
+        src/SimConnectPositionReply.h src/SimConnectPositionReply.cpp
+        src/SimConnectEngineReply.h src/SimConnectEngineReply.cpp
+        src/SimConnectEngineRequest.h src/SimConnectEngineRequest.cpp
+        src/SimConnectPrimaryFlightControl.h src/SimConnectPrimaryFlightControl.cpp
+        src/SimConnectSecondaryFlightControl.h src/SimConnectSecondaryFlightControl.cpp
+        src/SimConnectAircraftHandle.h src/SimConnectAircraftHandle.cpp
+        src/SimConnectLight.h src/SimConnectLight.cpp
+        src/SimConnectAircraftInfo.h src/SimConnectAircraftInfo.cpp
+        src/SimConnectFlightPlan.h src/SimConnectFlightPlan.cpp
+        src/SimConnectSimulationTime.h src/SimConnectSimulationTime.cpp
+        src/SimConnectAI.h src/SimConnectAI.cpp
+        src/EventWidget.h src/EventWidget.cpp
+        src/FS2020SimConnectPlugin.json
 )
 
 target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})

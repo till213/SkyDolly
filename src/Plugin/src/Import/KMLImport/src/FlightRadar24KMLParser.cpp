@@ -121,11 +121,8 @@ void FlightRadar24KMLParser::parse() noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     Position &position = flight.getUserAircraft().getPosition();
     for (const FlightRadar24KMLParserPrivate::TrackItem &trackItem : d->trackData) {
-        PositionData positionData;
+        PositionData positionData {trackItem.latitude, trackItem.longitude, trackItem.altitude};
         positionData.timestamp = trackItem.timestamp;
-        positionData.latitude = trackItem.latitude;
-        positionData.longitude = trackItem.longitude;
-        positionData.altitude = trackItem.altitude;
         positionData.velocityBodyZ = trackItem.speed;
         positionData.heading = trackItem.heading;
 
