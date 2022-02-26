@@ -64,9 +64,9 @@
         <file>img/icons/forward-active.png</file>
         <file>img/icons/forward-active@2x.png</file>
         <file>img/icons/application-icon@2x.png</file>
-        <file>img/icons/loop-play-normal-on@2x.png</file>
-        <file>img/icons/loop-play-normal@2x.png</file>
-        <file>img/icons/loop-play-normal-on.png</file>
-        <file>img/icons/loop-play-normal.png</file>
+        <file>img/icons/play-loop-normal-on.png</file>
+        <file>img/icons/play-loop-normal-on@2x.png</file>
+        <file>img/icons/play-loop-normal.png</file>
+        <file>img/icons/play-loop-normal@2x.png</file>
     </qresource>
 </RCC>

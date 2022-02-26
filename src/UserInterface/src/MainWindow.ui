@@ -143,6 +143,12 @@
              <property name="text">
               <string/>
              </property>
+             <property name="iconSize">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
              <property name="flat">
               <bool>true</bool>
              </property>
@@ -159,6 +165,12 @@
              <property name="text">
               <string/>
              </property>
+             <property name="iconSize">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
              <property name="flat">
               <bool>true</bool>
              </property>
@@ -174,6 +186,12 @@
              </property>
              <property name="text">
               <string/>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>32</width>
+               <height>20</height>
+              </size>
              </property>
              <property name="autoRepeat">
               <bool>true</bool>
@@ -194,6 +212,12 @@
              <property name="text">
               <string/>
              </property>
+             <property name="iconSize">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
              <property name="flat">
               <bool>true</bool>
              </property>
@@ -209,6 +233,12 @@
              </property>
              <property name="text">
               <string/>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
              </property>
              <property name="flat">
               <bool>true</bool>
@@ -226,6 +256,12 @@
              <property name="text">
               <string/>
              </property>
+             <property name="iconSize">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
              <property name="flat">
               <bool>true</bool>
              </property>
@@ -241,6 +277,12 @@
              </property>
              <property name="text">
               <string/>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>32</width>
+               <height>20</height>
+              </size>
              </property>
              <property name="autoRepeat">
               <bool>true</bool>
@@ -261,6 +303,12 @@
              <property name="text">
               <string/>
              </property>
+             <property name="iconSize">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
              <property name="flat">
               <bool>true</bool>
              </property>
@@ -275,12 +323,18 @@
               </size>
              </property>
              <property name="text">
-              <string/>
+              <string>Loop</string>
              </property>
              <property name="icon">
               <iconset resource="../res/SkyDolly.qrc">
-               <normaloff>:/img/icons/loop-play-normal.png</normaloff>
-               <normalon>:/img/icons/loop-play-normal-on.png</normalon>:/img/icons/loop-play-normal.png</iconset>
+               <normaloff>:/img/icons/play-loop-normal.png</normaloff>
+               <normalon>:/img/icons/play-loop-normal-on.png</normalon>:/img/icons/play-loop-normal.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>22</width>
+               <height>20</height>
+              </size>
              </property>
              <property name="checkable">
               <bool>true</bool>
