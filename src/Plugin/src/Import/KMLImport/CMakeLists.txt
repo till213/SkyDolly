@@ -18,6 +18,7 @@ set(DOCUMENTATION
     doc/FlightAware_DLH1534_LSZH_EDDF_20210817.kml
     doc/FlightRadar24_FZ981-922b3bd.kml
     doc/Generic_Track.kml
+    doc/Generic_MultiTrack_Document.kml
 )
 
 target_sources(${LIBRARY_NAME}
