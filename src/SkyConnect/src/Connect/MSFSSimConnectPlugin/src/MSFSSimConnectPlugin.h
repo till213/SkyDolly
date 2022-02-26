@@ -41,14 +41,14 @@ struct PositionData;
 class Aircraft;
 class SkyConnectPrivate;
 
-class FS2020SimConnectPlugin : public AbstractSkyConnect
+class MSFSSimConnectPlugin : public AbstractSkyConnect
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID SKYCONNECT_INTERFACE_IID FILE "FS2020SimConnectPlugin.json")
+    Q_PLUGIN_METADATA(IID SKYCONNECT_INTERFACE_IID FILE "MSFSSimConnectPlugin.json")
     Q_INTERFACES(SkyConnectIntf)
 public:
-    FS2020SimConnectPlugin(QObject *parent = nullptr) noexcept;
-    virtual ~FS2020SimConnectPlugin() noexcept;
+    MSFSSimConnectPlugin(QObject *parent = nullptr) noexcept;
+    virtual ~MSFSSimConnectPlugin() noexcept;
 
     virtual bool setUserAircraftPosition(const PositionData &positionData) noexcept override;
 

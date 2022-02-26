@@ -1,4 +1,4 @@
-set(LIBRARY_NAME "FS2020SimConnect")
+set(LIBRARY_NAME "MSFSSimConnect")
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_library(${LIBRARY_NAME} SHARED "")
@@ -15,7 +15,7 @@ endif()
 
 target_sources(${LIBRARY_NAME}
     PRIVATE
-        src/FS2020SimConnectPlugin.h src/FS2020SimConnectPlugin.cpp
+        src/MSFSSimConnectPlugin.h src/MSFSSimConnectPlugin.cpp
         src/SimConnectType.h
         src/SimConnectPositionRequest.h src/SimConnectPositionRequest.cpp
         src/SimConnectPositionReply.h src/SimConnectPositionReply.cpp
@@ -30,7 +30,7 @@ target_sources(${LIBRARY_NAME}
         src/SimConnectSimulationTime.h src/SimConnectSimulationTime.cpp
         src/SimConnectAI.h src/SimConnectAI.cpp
         src/EventWidget.h src/EventWidget.cpp
-        src/FS2020SimConnectPlugin.json
+        src/MSFSSimConnectPlugin.json
 )
 
 target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})
