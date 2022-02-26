@@ -41,6 +41,8 @@
 #include <QRegularExpressionMatch>
 #include <QStringView>
 #include <QElapsedTimer>
+#include <QCursor>
+#include <QGuiApplication>
 
 #include "../../Kernel/src/Unit.h"
 #include "../../Kernel/src/Settings.h"
@@ -121,7 +123,9 @@ bool ImportPluginBase::import(FlightService &flightService) noexcept
             QElapsedTimer timer;
             timer.start();
 #endif
+            QGuiApplication::setOverrideCursor(Qt::WaitCursor);
             ok = importFile(selectedFilePath, flightService);
+            QGuiApplication::restoreOverrideCursor();
 #ifdef DEBUG
             qDebug("%s import %s in %lld ms", qPrintable(QFileInfo(selectedFilePath).fileName()), (ok ? qPrintable("SUCCESS") : qPrintable("FAIL")), timer.elapsed());
 #endif
