@@ -151,11 +151,8 @@ void AbstractKMLTrackParser::parseTrack() noexcept
 
         // Now "upsert" the position data, taking possible duplicate timestamps into account
         for (const TrackItem &trackItem : trackData) {
-            PositionData positionData;
+            PositionData positionData {std::get<1>(trackItem), std::get<2>(trackItem), std::get<3>(trackItem)};
             positionData.timestamp = std::get<0>(trackItem);
-            positionData.latitude = std::get<1>(trackItem);
-            positionData.longitude = std::get<2>(trackItem);
-            positionData.altitude = std::get<3>(trackItem);
 
             position.upsertLast(std::move(positionData));
         }

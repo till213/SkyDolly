@@ -96,6 +96,7 @@ bool SQLitePositionDao::add(std::int64_t aircraftId, const PositionData &positio
         "  latitude,"
         "  longitude,"
         "  altitude,"
+        "  indicated_altitude,"
         "  pitch,"
         "  bank,"
         "  heading,"
@@ -111,6 +112,7 @@ bool SQLitePositionDao::add(std::int64_t aircraftId, const PositionData &positio
         " :latitude,"
         " :longitude,"
         " :altitude,"
+        " :indicated_altitude,"
         " :pitch,"
         " :bank,"
         " :heading,"
@@ -127,6 +129,7 @@ bool SQLitePositionDao::add(std::int64_t aircraftId, const PositionData &positio
     query.bindValue(":latitude", position.latitude);
     query.bindValue(":longitude", position.longitude);
     query.bindValue(":altitude", position.altitude);
+    query.bindValue(":indicated_altitude", position.indicatedAltitude);
     query.bindValue(":pitch", position.pitch);
     query.bindValue(":bank", position.bank);
     query.bindValue(":heading", position.heading);
@@ -135,7 +138,7 @@ bool SQLitePositionDao::add(std::int64_t aircraftId, const PositionData &positio
     query.bindValue(":velocity_z", position.velocityBodyZ);
     query.bindValue(":rotation_velocity_x", position.rotationVelocityBodyX);
     query.bindValue(":rotation_velocity_y", position.rotationVelocityBodyY);
-    query.bindValue(":rotation_velocity_z", position.rotationVelocityBodyZ);
+    query.bindValue(":rotation_velocity_z", position.rotationVelocityBodyZ);    
 
     bool ok = query.exec();
 
@@ -166,6 +169,7 @@ bool SQLitePositionDao::getByAircraftId(std::int64_t aircraftId, std::insert_ite
         const int latitudeIdx = record.indexOf("latitude");
         const int longitudeIdx = record.indexOf("longitude");
         const int altitudeIdx = record.indexOf("altitude");
+        const int indicatedAltitudeIdx = record.indexOf("indicated_altitude");
         const int pitchIdx = record.indexOf("pitch");
         const int bankIdx = record.indexOf("bank");
         const int headingIdx = record.indexOf("heading");
@@ -183,6 +187,7 @@ bool SQLitePositionDao::getByAircraftId(std::int64_t aircraftId, std::insert_ite
             data.latitude = query.value(latitudeIdx).toDouble();
             data.longitude = query.value(longitudeIdx).toDouble();
             data.altitude = query.value(altitudeIdx).toDouble();
+            data.indicatedAltitude = query.value(indicatedAltitudeIdx).toDouble();
             data.pitch = query.value(pitchIdx).toDouble();
             data.bank = query.value(bankIdx).toDouble();
             data.heading = query.value(headingIdx).toDouble();

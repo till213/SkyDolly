@@ -59,7 +59,8 @@
 #include "../../../Connect.h"
 #include "SimConnectType.h"
 #include "SimConnectAircraftInfo.h"
-#include "SimConnectPosition.h"
+#include "SimConnectPositionReply.h"
+#include "SimConnectPositionRequest.h"
 #include "SimConnectEngineReply.h"
 #include "SimConnectEngineRequest.h"
 #include "SimConnectPrimaryFlightControl.h"
@@ -154,11 +155,11 @@ FS2020SimConnectPlugin::~FS2020SimConnectPlugin() noexcept
 
 bool FS2020SimConnectPlugin::setUserAircraftPosition(const PositionData &positionData) noexcept
 {
-    SimConnectPosition simConnnectPosition;
-    simConnnectPosition.fromPositionData(positionData);
-    const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionDefinition),
+    SimConnectPositionRequest simConnnectPositionRequest;
+    simConnnectPositionRequest.fromPositionData(positionData);
+    const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionRequestDefinition),
                                                         ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
-                                                        sizeof(SimConnectPosition), &simConnnectPosition);
+                                                        sizeof(SimConnectPositionRequest), &simConnnectPositionRequest);
     return res == S_OK;
 }
 
@@ -173,7 +174,7 @@ bool FS2020SimConnectPlugin::isTimerBasedRecording(SampleRate::SampleRate sample
 bool FS2020SimConnectPlugin::onInitialPositionSetup(const InitialPosition &initialPosition) noexcept
 {
     HRESULT result;
-    SIMCONNECT_DATA_INITPOSITION initialSimConnectPosition = SimConnectPosition::toInitialPosition(initialPosition);
+    SIMCONNECT_DATA_INITPOSITION initialSimConnectPosition = SimConnectPositionRequest::toInitialPosition(initialPosition);
     result = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftInitialPosition),
                                              ::SIMCONNECT_OBJECT_ID_USER, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0, sizeof(::SIMCONNECT_DATA_INITPOSITION), &initialSimConnectPosition);
     return result == S_OK;
@@ -324,11 +325,11 @@ bool FS2020SimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, Tim
                 ok = true;
                 const PositionData &positionData = aircraft->getPositionConst().interpolate(currentTimestamp, access);
                 if (!positionData.isNull()) {
-                    SimConnectPosition simConnnectPosition;
-                    simConnnectPosition.fromPositionData(positionData);
-                    const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionDefinition),
+                    SimConnectPositionRequest simConnnectPositionRequest;
+                    simConnnectPositionRequest.fromPositionData(positionData);
+                    const HRESULT res = ::SimConnect_SetDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionRequestDefinition),
                                                                         objectId, ::SIMCONNECT_DATA_SET_FLAG_DEFAULT, 0,
-                                                                        sizeof(SimConnectPosition), &simConnnectPosition);
+                                                                        sizeof(SimConnectPositionRequest), &simConnnectPositionRequest);
                     ok = res == S_OK;
                 }
 
@@ -635,7 +636,8 @@ void FS2020SimConnectPlugin::setupRequestData() noexcept
 {
     // Request data
     SimConnectAircraftInfo::addToDataDefinition(d->simConnectHandle);
-    SimConnectPosition::addToDataDefinition(d->simConnectHandle);
+    SimConnectPositionReply::addToDataDefinition(d->simConnectHandle);
+    SimConnectPositionRequest::addToDataDefinition(d->simConnectHandle);
     SimConnectEngineReply::addToDataDefinition(d->simConnectHandle);
     SimConnectEngineRequest::addToDataDefinition(d->simConnectHandle);
     SimConnectPrimaryFlightControl::addToDataDefinition(d->simConnectHandle);
@@ -721,23 +723,31 @@ void FS2020SimConnectPlugin::updateRecordingFrequency(SampleRate::SampleRate sam
 void FS2020SimConnectPlugin::updateRequestPeriod(::SIMCONNECT_PERIOD period) noexcept
 {
     if (d->currentRequestPeriod != period) {
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::AircraftPosition), Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionDefinition),
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::AircraftPosition),
+                                            Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionReplyDefinition),
                                             ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::Engine), Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftEngineReplyDefinition),
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::Engine),
+                                            Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftEngineReplyDefinition),
                                             ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::PrimaryFlightControl), Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPrimaryFlightControlDefinition),
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::PrimaryFlightControl),
+                                            Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPrimaryFlightControlDefinition),
                                             ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::SecondaryFlightControl), Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftSecondaryFlightControlDefinition),
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::SecondaryFlightControl),
+                                            Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftSecondaryFlightControlDefinition),
                                             ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::AircraftHandle), Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftHandleDefinition),
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::AircraftHandle),
+                                            Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftHandleDefinition),
                                             ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::Light), Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftLightDefinition),
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::Light),
+                                            Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftLightDefinition),
                                             ::SIMCONNECT_OBJECT_ID_USER, period, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
         // Update the flight plan and simulation time only every second
         ::SIMCONNECT_PERIOD oneSecondPeriod = period != ::SIMCONNECT_PERIOD_NEVER ? ::SIMCONNECT_PERIOD_SECOND : ::SIMCONNECT_PERIOD_NEVER;
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::FlightPlan), Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightPlanDefinition),
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::FlightPlan),
+                                            Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightPlanDefinition),
                                             ::SIMCONNECT_OBJECT_ID_USER, oneSecondPeriod, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
-        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::SimulationTime), Enum::toUnderlyingType(SimConnectType::DataDefinition::SimulationTimeDefinition),
+        ::SimConnect_RequestDataOnSimObject(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::SimulationTime),
+                                            Enum::toUnderlyingType(SimConnectType::DataDefinition::SimulationTimeDefinition),
                                             ::SIMCONNECT_OBJECT_ID_USER, oneSecondPeriod, ::SIMCONNECT_DATA_REQUEST_FLAG_CHANGED);
         d->currentRequestPeriod = period;
     }
@@ -827,10 +837,10 @@ void CALLBACK FS2020SimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, 
         switch (static_cast<SimConnectType::DataRequest>(objectData->dwRequestID)) {
         case SimConnectType::DataRequest::AircraftPosition:
         {
-            const SimConnectPosition *simConnectPosition;
+            const SimConnectPositionReply *simConnectPositionReply;
             if (skyConnect->getState() == Connect::State::Recording) {
-                simConnectPosition = reinterpret_cast<const SimConnectPosition *>(&objectData->dwData);
-                PositionData positionData = simConnectPosition->toPositionData();
+                simConnectPositionReply = reinterpret_cast<const SimConnectPositionReply *>(&objectData->dwData);
+                PositionData positionData = simConnectPositionReply->toPositionData();
                 positionData.timestamp = skyConnect->getCurrentTimestamp();
                 if (storeDataImmediately) {
                     userAircraft.getPosition().upsertLast(std::move(positionData));

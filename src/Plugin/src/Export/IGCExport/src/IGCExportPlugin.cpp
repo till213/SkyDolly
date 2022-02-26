@@ -305,14 +305,17 @@ inline bool IGCExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &
             if (!positionData.isNull()) {
                 const int altitude = qRound(Convert::feetToMeters(positionData.altitude));
                 const QByteArray altitudeByteArray = formatNumber(altitude, 5);
+                const int indicatedAltitude = qRound(Convert::feetToMeters(positionData.indicatedAltitude));
+                const QByteArray indicatedAltitudeByteArray = formatNumber(indicatedAltitude, 5);
                 const EngineData &engineData = engine.interpolate(timestamp, TimeVariableData::Access::Linear);
                 const int noise = estimateEnvironmentalNoise(engineData);                
                 const QByteArray record = IGCExportPluginPrivate::BRecord %
                                           formatTime(startTime.addMSecs(timestamp)) %
                                           formatPosition(positionData.latitude, positionData.longitude) %
-                                          ::FixValid %
-                                          // For now we report pressure altitude the same as GNSS altitude
-                                          altitudeByteArray %
+                                          ::FixValid %                                          
+                                          // Pressure altitude
+                                          indicatedAltitudeByteArray %
+                                          // GNSS altitude
                                           altitudeByteArray %
                                           formatNumber(noise, 3) %
                                           ::LineEnd;
@@ -325,14 +328,17 @@ inline bool IGCExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &
         for (const PositionData &positionData : position) {
             const int altitude = qRound(Convert::feetToMeters(positionData.altitude));
             const QByteArray altitudeByteArray = formatNumber(altitude, 5);
+            const int indicatedAltitude = qRound(Convert::feetToMeters(positionData.indicatedAltitude));
+            const QByteArray indicatedAltitudeByteArray = formatNumber(indicatedAltitude, 5);
             const EngineData &engineData = engine.interpolate(positionData.timestamp, TimeVariableData::Access::Linear);
             const int noise = estimateEnvironmentalNoise(engineData);
             const QByteArray record = IGCExportPluginPrivate::BRecord %
                                       formatTime(startTime.addMSecs(positionData.timestamp)) %
                                       formatPosition(positionData.latitude, positionData.longitude) %
                                       ::FixValid %
-                                      // See comment above
-                                      altitudeByteArray %
+                                      // Pressure altitude
+                                      indicatedAltitudeByteArray %
+                                      // GNSS altitude
                                       altitudeByteArray %
                                       formatNumber(noise, 3) %
                                       ::LineEnd;

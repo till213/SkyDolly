@@ -182,6 +182,11 @@ inline bool SkyDollyCSVParser::importPositionData(const QList<QByteArray> &heade
             if (ok) {
                 data.altitude = doubleValue;
             }
+        } else if (header == SimVar::IndicatedAltitude) {
+            doubleValue = values.at(columnIndex).toDouble(&ok);
+            if (ok) {
+                data.indicatedAltitude = doubleValue;
+            }
         } else if (header == SimVar::Pitch) {
             doubleValue = values.at(columnIndex).toDouble(&ok);
             if (ok) {

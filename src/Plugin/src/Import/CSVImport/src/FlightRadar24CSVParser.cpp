@@ -135,6 +135,7 @@ bool FlightRadar24CSVParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QSt
 #else
                 positionData.altitude = match.capturedView(::AltitudeIndex).toDouble(&ok);
 #endif
+                positionData.indicatedAltitude = positionData.altitude;
             }
             if (ok) {
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)

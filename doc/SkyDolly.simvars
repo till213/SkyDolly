@@ -1,6 +1,7 @@
 PLANE LATITUDE,degrees,False,  0.0
 PLANE LONGITUDE,degrees,False,  0.0
-PLANE ALTITUDE,degrees,False,  0.0
+PLANE ALTITUDE,feet,False,  0.0
+INDICATED ALTITUDE,feet,False,  0.0
 PLANE PITCH DEGREES,degrees,False,  0.0
 PLANE BANK DEGREES,degrees,False,  0.0
 PLANE HEADING DEGREES TRUE,degrees,False,  0.0

@@ -154,12 +154,11 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
         const double enlThresholdNorm = static_cast<double>(d->importSettings.m_enlThresholdPercent) / 100.0;
 
         for (const IGCParser::Fix &fix : d->igcParser.getFixes()) {
-            PositionData positionData;
-            positionData.timestamp = fix.timestamp;
-            positionData.latitude = fix.latitude;
-            positionData.longitude = fix.longitude;
             // Import either GNSS or pressure altitude
-            positionData.altitude = d->importSettings.m_altitude == IGCImportSettings::Altitude::GnssAltitude ? fix.gnssAltitude : fix.pressureAltitude;
+            const double altitude = d->importSettings.m_altitude == IGCImportSettings::Altitude::GnssAltitude ? fix.gnssAltitude : fix.pressureAltitude;
+            PositionData positionData {fix.latitude, fix.longitude, altitude};
+            positionData.timestamp = fix.timestamp;
+            positionData.indicatedAltitude = fix.pressureAltitude;
             position.upsertLast(std::move(positionData));
 
             if (d->igcParser.hasEnvironmentalNoiseLevel()) {
