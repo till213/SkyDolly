@@ -31,6 +31,7 @@
 #include <QString>
 
 class QWidget;
+class QAbstractButton;
 
 #include "WidgetLib.h"
 
@@ -71,6 +72,8 @@ private:
 
 private slots:
     void onFileSelectionPushButtonClicked() noexcept;
+    void onDefaultButtonClicked(QAbstractButton *button) noexcept;
+    void onAccepted() noexcept;
     void updateUi() noexcept;
 };
 

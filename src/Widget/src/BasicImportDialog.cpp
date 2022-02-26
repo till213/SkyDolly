@@ -42,6 +42,11 @@
 #include "../../Persistence/src/Service/AircraftTypeService.h"
 #include "../../Kernel/src/Settings.h"
 
+namespace
+{
+    constexpr bool DefaultAddToFlight = false;
+}
+
 class BasicImportDialogPrivate
 {
 public:
@@ -123,6 +128,10 @@ void BasicImportDialog::frenchConnection() noexcept
             this, &BasicImportDialog::onFileSelectionPushButtonClicked);
     connect(ui->aircraftSelectionComboBox, &QComboBox::currentTextChanged,
             this, &BasicImportDialog::updateUi);
+    connect(ui->defaultButtonBox, &QDialogButtonBox::clicked,
+            this, &BasicImportDialog::onDefaultButtonClicked);
+    connect(ui->defaultButtonBox, &QDialogButtonBox::accepted,
+            this, &BasicImportDialog::onAccepted);
 }
 
 void BasicImportDialog::initUi() noexcept
@@ -145,6 +154,7 @@ void BasicImportDialog::initBasicUi() noexcept
     if (!type.isEmpty()) {
         ui->aircraftSelectionComboBox->setCurrentText(type);
     }
+    ui->addToFlightCheckBox->setChecked(::DefaultAddToFlight);
 }
 
 void BasicImportDialog::initOptionUi() noexcept
@@ -158,9 +168,6 @@ void BasicImportDialog::initOptionUi() noexcept
         layout = new QVBoxLayout();
         ui->optionGroupBox->setLayout(layout);
         layout->addWidget(d->optionWidget);
-        QPushButton *restoreDefaultsButton = ui->defaultButtonBox->addButton(QDialogButtonBox::RestoreDefaults);
-        connect(restoreDefaultsButton, &QPushButton::clicked,
-                this, &BasicImportDialog::restoreDefaultOptions);
     } else {
         ui->optionGroupBox->setHidden(true);
     }
@@ -179,19 +186,26 @@ void BasicImportDialog::onFileSelectionPushButtonClicked() noexcept
     }
 }
 
+void BasicImportDialog::onDefaultButtonClicked(QAbstractButton *button) noexcept
+{
+    if (button == ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults)) {
+        initBasicUi();
+        emit restoreDefaultOptions();
+    }
+}
+
+void BasicImportDialog::onAccepted() noexcept
+{
+    const QString type = ui->aircraftSelectionComboBox->currentText();
+    Settings::getInstance().setImportAircraftType(type);
+}
+
 void BasicImportDialog::updateUi() noexcept
 {
     const QString filePath = ui->filePathLineEdit->text();
     QFile file(filePath);
     const QString type = ui->aircraftSelectionComboBox->currentText();
-    bool aircraftTypeExists;
-    if (!type.isEmpty() && d->aircraftTypeService->exists(type)) {
-        aircraftTypeExists = true;
-        Settings::getInstance().setImportAircraftType(type);
-    } else {
-        aircraftTypeExists = false;
-    }
-
+    const bool aircraftTypeExists = !type.isEmpty() && d->aircraftTypeService->exists(type);
     const bool enabled = file.exists() && aircraftTypeExists;
     d->importButton->setEnabled(enabled);
 }
