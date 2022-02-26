@@ -50,8 +50,26 @@ public:
     virtual void restoreSettings(const QUuid &pluginUuid) noexcept override;
 
 protected:
+    /*!
+     * Returns the plugin-specific settings.
+     *
+     * \return the plugin-specific settings: a key/value pair for each setting.
+     */
     virtual Settings::PluginSettings getSettings() const noexcept;
+
+    /*!
+     * Returns the plugin-specific setting keys with corresponding default values.
+     *
+     * \return the plugin-specific setting keys with corresponding default values
+     */
     virtual Settings::KeysWithDefaults getKeyWithDefaults() const noexcept;
+
+    /*!
+     * Sets the plugin-specific settings.
+     *
+     * \param valuesByKey
+     *        the plugin-specific settings associated with their key
+     */
     virtual void setSettings(Settings::ValuesByKey valuesByKey) noexcept;
 
 private:

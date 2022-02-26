@@ -52,8 +52,8 @@ public:
     bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
     bool isAddToFlightEnabled() const noexcept;
 
-    void setFileFilter(const QString &extension) noexcept;
     QString getFileFilter() const noexcept;
+    void setFileFilter(const QString &extension) noexcept;
 
     void setOptionWidget(QWidget *widget) noexcept;
 
@@ -66,6 +66,7 @@ private:
 
     void frenchConnection() noexcept;
     void initUi() noexcept;
+    void initBasicUi() noexcept;
     void initOptionUi() noexcept;
 
 private slots:

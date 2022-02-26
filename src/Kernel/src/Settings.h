@@ -435,6 +435,22 @@ public:
     void setResetTimeOffsetConfirmationEnabled(bool enable) noexcept;
 
     /*!
+     * Returns the aircraft type (name) for import.
+     *
+     * \return the aircraft type which was last selected for import
+     */
+    QString getImportAircraftType() const noexcept;
+
+    /*!
+     * Sets the aircraft type (name) for import
+     *
+     * \param type
+     *        the (last) selected aircraft type
+     * \sa changed
+     */
+    void setImportAircraftType(const QString &type) noexcept;
+
+    /*!
      * Returns the count of how many times the "preview" dialog is still
      * to be shown.
      *

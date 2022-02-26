@@ -67,6 +67,8 @@ public:
     bool deleteAircraftConfirmation;
     bool resetTimeOffsetConfirmation;
 
+    QString importAircraftType;
+
     int previewInfoDialogCount;
 
     static Settings *instance;
@@ -89,6 +91,8 @@ public:
     static constexpr bool DefaultDeleteFlightConfirmation = true;
     static constexpr bool DefaultDeleteAircraftConfirmation = true;
     static constexpr bool DefaultResetTimeOffsetConfirmation = true;
+
+    static inline const QString DefaultImportAircraftType = QStringLiteral("");
 
     static constexpr int DefaultPreviewInfoDialogCount = 3;
     static constexpr int PreviewInfoDialogBase = 70;
@@ -402,6 +406,19 @@ void Settings::setResetTimeOffsetConfirmationEnabled(bool enable) noexcept
     }
 }
 
+QString Settings::getImportAircraftType() const noexcept
+{
+    return d->importAircraftType;
+}
+
+void Settings::setImportAircraftType(const QString &type) noexcept
+{
+    if (d->importAircraftType != type) {
+        d->importAircraftType = type;
+        emit changed();
+    }
+}
+
 int Settings::getPreviewInfoDialogCount() const noexcept
 {
     return d->previewInfoDialogCount - SettingsPrivate::PreviewInfoDialogBase;
@@ -498,6 +515,11 @@ void Settings::store() const noexcept
         d->settings.setValue("ExportPath", d->exportPath);
     }
     d->settings.endGroup();
+    d->settings.beginGroup("Import");
+    {
+        d->settings.setValue("AircraftType", d->importAircraftType);
+    }
+    d->settings.endGroup();
     d->settings.beginGroup("_Preview");
     {
         d->settings.setValue("PreviewInfoDialogCount", d->previewInfoDialogCount);
@@ -592,6 +614,11 @@ void Settings::restore() noexcept
     d->settings.beginGroup("Paths");
     {
         d->exportPath = d->settings.value("ExportPath", d->defaultExportPath).toString();
+    }
+    d->settings.endGroup();
+    d->settings.beginGroup("Import");
+    {
+        d->importAircraftType = d->settings.value("AircraftType", SettingsPrivate::DefaultImportAircraftType).toString();
     }
     d->settings.endGroup();
     d->settings.beginGroup("_Preview");

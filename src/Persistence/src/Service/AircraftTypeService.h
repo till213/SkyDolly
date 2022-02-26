@@ -30,6 +30,8 @@
 
 #include <QtGlobal>
 
+class QString;
+
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/AircraftInfo.h"
 #include "../PersistenceLib.h"
@@ -44,6 +46,7 @@ public:
 
     bool getByType(const QString &type, AircraftType &aircraftType) const noexcept;
     bool getAll(std::insert_iterator<std::vector<AircraftType>> insertIterator) const noexcept;
+    bool exists(const QString &type) const noexcept;
 
 private:
     std::unique_ptr<AircraftTypeServicePrivate> d;

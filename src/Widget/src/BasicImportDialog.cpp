@@ -40,6 +40,7 @@
 #include "../../Model/src/Logbook.h"
 #include "../../Model/src/Flight.h"
 #include "../../Persistence/src/Service/AircraftTypeService.h"
+#include "../../Kernel/src/Settings.h"
 
 class BasicImportDialogPrivate
 {
@@ -96,14 +97,14 @@ bool BasicImportDialog::isAddToFlightEnabled() const noexcept
     return ui->addToFlightCheckBox->isChecked();
 }
 
-void BasicImportDialog::setFileFilter(const QString &extension) noexcept
-{
-    d->fileFilter = extension;
-}
-
 QString BasicImportDialog::getFileFilter() const noexcept
 {
     return d->fileFilter;
+}
+
+void BasicImportDialog::setFileFilter(const QString &extension) noexcept
+{
+    d->fileFilter = extension;
 }
 
 void BasicImportDialog::setOptionWidget(QWidget *widget) noexcept
@@ -129,13 +130,21 @@ void BasicImportDialog::initUi() noexcept
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
     d->importButton = ui->defaultButtonBox->addButton(tr("Import"), QDialogButtonBox::AcceptRole);
+    initBasicUi();
+    initOptionUi();
+}
+
+void BasicImportDialog::initBasicUi() noexcept
+{
+    Settings &settings = Settings::getInstance();
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     QString type = flight.getUserAircraftConst().getAircraftInfoConst().aircraftType.type;
+    if (type.isEmpty()) {
+        type = settings.getImportAircraftType();
+    }
     if (!type.isEmpty()) {
         ui->aircraftSelectionComboBox->setCurrentText(type);
     }
-
-    initOptionUi();
 }
 
 void BasicImportDialog::initOptionUi() noexcept
@@ -174,6 +183,15 @@ void BasicImportDialog::updateUi() noexcept
 {
     const QString filePath = ui->filePathLineEdit->text();
     QFile file(filePath);
-    const bool enabled = file.exists() && !ui->aircraftSelectionComboBox->currentText().isEmpty();
+    const QString type = ui->aircraftSelectionComboBox->currentText();
+    bool aircraftTypeExists;
+    if (!type.isEmpty() && d->aircraftTypeService->exists(type)) {
+        aircraftTypeExists = true;
+        Settings::getInstance().setImportAircraftType(type);
+    } else {
+        aircraftTypeExists = false;
+    }
+
+    const bool enabled = file.exists() && aircraftTypeExists;
     d->importButton->setEnabled(enabled);
 }

@@ -137,9 +137,36 @@ bool SQLiteAircraftTypeDao::getAll(std::insert_iterator<std::vector<AircraftType
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLitePositionDao::getAlld: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug("SQLitePositionDao::getAll: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
 #endif
     }
 
     return ok;
+}
+
+bool SQLiteAircraftTypeDao::exists(const QString &type) const noexcept
+{
+    bool exists;
+    QSqlQuery query;
+    query.setForwardOnly(true);
+    query.prepare(
+        "select count(*) "
+        "from   aircraft_type at "
+        "where  at.type = :type "
+        "limit 1;"
+    );
+
+    query.bindValue(":type", type);
+    bool ok = query.exec();
+    if (ok && query.next()) {
+        const int count = query.value(0).toInt();
+        exists = count > 0;
+    } else {
+        exists = false;
+#ifdef DEBUG
+        qDebug("SQLitePositionDao::exists: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+#endif
+    }
+
+    return ok && exists;
 }

@@ -59,6 +59,7 @@
 #include "../../SkyConnect/src/SkyConnectIntf.h"
 #include "../../Persistence/src/Service/FlightService.h"
 #include "../../Persistence/src/Service/AircraftService.h"
+#include "../../Persistence/src/Service/AircraftTypeService.h"
 #include "../../Widget/src/BasicImportDialog.h"
 #include "ImportPluginBase.h"
 
@@ -67,10 +68,12 @@ class ImportPluginBasePrivate
 public:
     ImportPluginBasePrivate()
         : aircraftService(std::make_unique<AircraftService>()),
+          aircraftTypeService(std::make_unique<AircraftTypeService>()),
           addToCurrentFlight(false)
     {}
 
     std::unique_ptr<AircraftService> aircraftService;
+    std::unique_ptr<AircraftTypeService> aircraftTypeService;
     QFile file;
     Unit unit;
     AircraftType aircraftType;
@@ -98,6 +101,7 @@ ImportPluginBase::~ImportPluginBase() noexcept
 bool ImportPluginBase::import(FlightService &flightService) noexcept
 {
     bool ok;
+    Settings &settings = Settings::getInstance();
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
     std::unique_ptr<BasicImportDialog> importDialog = std::make_unique<BasicImportDialog>(getFileFilter(), getParentWidget());
     connect(importDialog.get(), &BasicImportDialog::restoreDefaultOptions,
@@ -109,7 +113,7 @@ bool ImportPluginBase::import(FlightService &flightService) noexcept
         // Remember import (export) path
         const QString selectedFilePath = importDialog->getSelectedFilePath();
         const QString filePath = QFileInfo(selectedFilePath).absolutePath();
-        Settings::getInstance().setExportPath(filePath);
+        settings.setExportPath(filePath);
         ok = importDialog->getSelectedAircraftType(d->aircraftType);
         if (ok) {
             d->addToCurrentFlight = importDialog->isAddToFlightEnabled();

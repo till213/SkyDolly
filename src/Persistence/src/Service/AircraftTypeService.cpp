@@ -27,6 +27,7 @@
 #include <vector>
 
 #include <QSqlDatabase>
+#include <QStringView>
 
 #include "../../../Model/src/AircraftType.h"
 #include "../Dao/DaoFactory.h"
@@ -72,4 +73,16 @@ bool AircraftTypeService::getAll(std::insert_iterator<std::vector<AircraftType>>
         QSqlDatabase::database().rollback();
     }
     return ok;
+}
+
+bool AircraftTypeService::exists(const QString &type) const noexcept
+{
+    bool exists;
+    if (QSqlDatabase::database().transaction()) {
+        exists = d->aircraftTypeDao->exists(type);
+        QSqlDatabase::database().rollback();
+    } else {
+        exists = false;
+    }
+    return exists;
 }
