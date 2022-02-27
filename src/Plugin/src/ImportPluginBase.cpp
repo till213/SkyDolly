@@ -124,6 +124,7 @@ bool ImportPluginBase::import(FlightService &flightService) noexcept
             timer.start();
 #endif
             QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+            QGuiApplication::processEvents();
             ok = importFile(selectedFilePath, flightService);
             QGuiApplication::restoreOverrideCursor();
 #ifdef DEBUG
