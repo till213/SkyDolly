@@ -125,7 +125,25 @@ bool CSVImportPlugin::readFile(QFile &file) noexcept
 
 FlightAugmentation::Procedures CSVImportPlugin::getProcedures() const noexcept
 {
-    return FlightAugmentation::Procedure::None;
+    FlightAugmentation::Procedures procedures;
+    switch (d->importSettings.m_format)
+    {
+    case CSVImportSettings::Format::SkyDolly:
+        procedures = FlightAugmentation::Procedure::None;
+        break;
+    case CSVImportSettings::Format::FlightRadar24:
+        // Do not augment heading and velocity
+        procedures = FlightAugmentation::Procedure::All;
+        break;
+    case CSVImportSettings::Format::FlightRecorder:
+        procedures = FlightAugmentation::Procedure::None;
+        break;
+    default:
+        procedures = FlightAugmentation::Procedure::All;
+        break;
+    }
+
+    return procedures;
 }
 
 FlightAugmentation::Aspects CSVImportPlugin::getAspects() const noexcept
