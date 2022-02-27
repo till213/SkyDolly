@@ -28,6 +28,7 @@
   * Environmental noise level (ENL) determines the engine state (on/off, propeller lever)
 - Logbook
   * The "Delete" key now deletes the selected flight
+  * Columns will only be resized to content upon first data load; afterwards manual column resizing won't be changed
 - Replay
   * A replay loop button has been added: when enabled the replay restarts at the beginning whenever the end is reached
   * In the settings the seek interval is now settable with a spinbox instead of a text field

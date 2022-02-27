@@ -80,7 +80,7 @@ private:
     void initReplaySpeedUi() noexcept;
     void initSkyConnectPlugin() noexcept;
 
-    void updateMinimalUi(bool enable);    
+    void updateMinimalUi(bool enable);
     double getCustomSpeedFactor() const;
     
 private slots:
