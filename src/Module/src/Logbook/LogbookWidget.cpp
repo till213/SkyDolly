@@ -106,7 +106,8 @@ public:
           selectedRow(InvalidSelection),
           selectedFlightId(Flight::InvalidId),
           moduleAction(nullptr),
-          searchTimer(new QTimer(parent))
+          searchTimer(new QTimer(parent)),
+          columnsAutoResized(false)
     {
         searchTimer->setSingleShot(true);
         searchTimer->setInterval(SearchTimeoutMSec);
@@ -122,6 +123,9 @@ public:
     std::unique_ptr<QAction> moduleAction;
     FlightSelector flightSelector;
     QTimer *searchTimer;
+    // Columns are only auto-resized the first time the table is loaded
+    // After that manual column resizes are kept
+    bool columnsAutoResized;
 };
 
 // PUBLIC
@@ -368,7 +372,10 @@ void LogbookWidget::updateFlightTable() noexcept
         }
 
         ui->logTableWidget->setSortingEnabled(true);
-        ui->logTableWidget->resizeColumnsToContents();
+        if (!d->columnsAutoResized) {
+            ui->logTableWidget->resizeColumnsToContents();
+            d->columnsAutoResized = true;
+        }
         ui->logTableWidget->blockSignals(false);
 
     } else {
