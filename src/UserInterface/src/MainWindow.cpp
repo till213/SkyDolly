@@ -1172,6 +1172,12 @@ void MainWindow::updateMainWindow() noexcept
         ui->forwardAction->setToolTip(tr("Fast forward [%1 %]").arg(seekIntervalPercent));
         ui->backwardAction->setToolTip(tr("Rewind [%1 %]").arg(seekIntervalPercent));
     }
+
+    if (settings.isModuleSelectorVisible()) {
+        ui->showModulesAction->setToolTip(tr("Hide modules."));
+    } else {
+        ui->showModulesAction->setToolTip(tr("Show modules."));
+    }
 }
 
 void MainWindow::handleModuleActivated(const QString title, [[maybe_unused]] Module::Module moduleId) noexcept
