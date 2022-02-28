@@ -8,6 +8,13 @@
   * Export flight path (position and GNSS altitude)
   * Export waypoints as flight tasks ("C records")
   * Export pilot names
+- GPX import plugin
+  * The GPX format contains three elements: waypoints, routes and tracks
+    - Waypoints are typically "places to visit" along the way
+    - Routes describe "how to get there"
+    - Tracks contain the actually travelled path (typically recorded with a GPS device)
+  * The import dialog allows to select which elements to use for flight waypoints and the actual flown path
+  * It also offers a default altitude and velocity, as timestamps and elevation values are optional values in the GPX format
 - CSV import plugin
   * The following CSV formats are now supported:
     - CSV from [flightradar24.com](https://www.flightradar24.com/)
