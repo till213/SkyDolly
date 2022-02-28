@@ -30,7 +30,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="applicationIconLabel">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -43,11 +43,17 @@
          <height>64</height>
         </size>
        </property>
+       <property name="maximumSize">
+        <size>
+         <width>64</width>
+         <height>64</height>
+        </size>
+       </property>
        <property name="text">
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="../../res/SkyDolly.qrc">:/img/icons/application-icon.png</pixmap>
+        <pixmap resource="../../res/SkyDolly.qrc">:/img/icons/application-icon@2x.png</pixmap>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
