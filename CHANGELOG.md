@@ -39,6 +39,10 @@
   * For clarity the field is now also labeled "spoiler position" (instead of just "spoiler")
 - Switched internal leading/trailing flaps position unit from "percent" to "position"
   * The greater precision (32767 vs 255 possible values) gets rid of the "flaps sound stutter" (e.g. audible in the cockpit of the A320neo)
+  
+### Miscellaneous
+
+- Sky Dolly wants and promotes peace
 
 ## 0.8.6
 
