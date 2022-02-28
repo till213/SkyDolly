@@ -39,6 +39,8 @@
 - Replay
   * A replay loop button has been added: when enabled the replay restarts at the beginning whenever the end is reached
   * In the settings the seek interval is now settable with a spinbox instead of a text field
+- Recording
+  * The simulation variable "indicated airspeed" is now also recorded (however only for analytical purposes - e.g. exported as "pressure altitude" in the new IGC export plugin)
   
 ### Bug Fixes
 
