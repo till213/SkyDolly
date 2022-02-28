@@ -569,3 +569,7 @@ set    indicated_altitude = altitude;
 @migr(id = "58835694-4d47-42cd-8c9c-1b9e164e21b8", descn = "Update application version to 0.9", step = 1)
 update metadata
 set app_version = '0.9.0';
+
+@migr(id = "90f34b67-5fb8-4c52-ab61-d704297bd7e2", descn = "Update application version to 0.10", step = 1)
+update metadata
+set app_version = '0.10.0';
