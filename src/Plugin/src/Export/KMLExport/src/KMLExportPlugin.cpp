@@ -41,6 +41,7 @@
 #include "../../../../../Kernel/src/File.h"
 #include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/Unit.h"
+#include "../../../../../Kernel/src/SampleRate.h"
 #include "../../../../../Kernel/src/Settings.h"
 #include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
@@ -51,7 +52,7 @@
 #include "../../../../../Model/src/Position.h"
 #include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/SimType.h"
-#include "KMLExportDialog.h"
+#include "KMLExportOptionWidget.h"
 #include "KMLStyleExport.h"
 #include "KMLExportPlugin.h"
 
@@ -240,7 +241,7 @@ bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
     if (ok) {
         // Position data
         const Position &position = aircraft.getPositionConst();
-        if (d->exportSettings.resamplingPeriod != KMLExportSettings::ResamplingPeriod::Original) {
+        if (d->exportSettings.resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
             const std::int64_t duration = position.getLast().timestamp;
             std::int64_t timestamp = 0;
             while (ok && timestamp <= duration) {

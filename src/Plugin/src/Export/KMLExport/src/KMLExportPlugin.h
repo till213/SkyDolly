@@ -37,7 +37,7 @@ class QString;
 #include "../../../../../Kernel/src/Settings.h"
 #include "../../../../../Model/src/SimType.h"
 #include "../../../ExportIntf.h"
-#include "../../../PluginBase.h"
+#include "../../../BasicExportPlugin.h"
 #include "KMLStyleExport.h"
 
 class Flight;
@@ -46,7 +46,7 @@ struct PositionData;
 struct Waypoint;
 class KMLExportPluginPrivate;
 
-class KMLExportPlugin : public PluginBase, public ExportIntf
+class KMLExportPlugin : public BasicExportPlugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "KMLExportPlugin.json")

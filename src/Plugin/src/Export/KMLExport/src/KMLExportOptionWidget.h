@@ -22,57 +22,38 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLEXPORTDIALOG_H
-#define KMLEXPORTDIALOG_H
+#ifndef KMLEXPORTOPTIONWIDGET_H
+#define KMLEXPORTOPTIONWIDGET_H
 
 #include <memory>
-#include <utility>
-#include <cstdint>
 
-#include <QDialog>
-
-#include "KMLStyleExport.h"
+#include <QWidget>
 
 namespace Ui {
-    class KMLExportDialog;
+    class KMLExportOptionWidget;
 }
 
-struct KMLExportSettings;
-class KMLExportDialogPrivate;
+class KMLExportSettings;
+class KMLExportOptionWidgetPrivate;
 
-class KMLExportDialog : public QDialog
+class KMLExportOptionWidget : public QWidget
 {
     Q_OBJECT
 public:
-    static inline const QString FileSuffix {QStringLiteral("kml")};
-
-    explicit KMLExportDialog(KMLExportSettings &exportSettings, QWidget *parent = nullptr) noexcept;
-    virtual ~KMLExportDialog() noexcept;
-
-    QString getSelectedFilePath() const noexcept;
-    bool doOpenExportedFile() const noexcept;
+    explicit KMLExportOptionWidget(KMLExportSettings &ExportSettings, QWidget *parent = nullptr) noexcept;
+    virtual ~KMLExportOptionWidget() noexcept;
 
 private:
-    Ui::KMLExportDialog *ui;
-    std::unique_ptr<KMLExportDialogPrivate> d;
+    Ui::KMLExportOptionWidget *ui;
+    std::unique_ptr<KMLExportOptionWidgetPrivate> d;
 
-    void initUi() noexcept;
-    void initColorUi() noexcept;
-    void updateInfoUi() noexcept;
-    void updateColorUi() noexcept;
     void frenchConnection() noexcept;
-
-    std::int64_t estimateNofSamplePoints() noexcept;
+    void initUi() noexcept;
 
 private slots:
+    void onFormatChanged(int index) noexcept;
+
     void updateUi() noexcept;
-
-    void selectColor(int id) noexcept;
-    void restoreDefaults() noexcept;
-
-    void on_fileSelectionPushButton_clicked() noexcept;
-    void on_resamplingComboBox_activated(int index) noexcept;
-    void on_colorStyleComboBox_activated(int index) noexcept;
 };
 
-#endif // KMLEXPORTDIALOG_H
+#endif // KMLEXPORTOPTIONWIDGET_H

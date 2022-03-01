@@ -22,39 +22,33 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef BASICIMPORTDIALOG_H
-#define BASICIMPORTDIALOG_H
+#ifndef BASICEXPORTDIALOG_H
+#define BASICEXPORTDIALOG_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QDialog>
-#include <QString>
-
-class QWidget;
-class QAbstractButton;
 
 #include "WidgetLib.h"
 
-struct AircraftType;
-class BasicImportDialogPrivate;
+class BasicExportDialogPrivate;
 
 namespace Ui {
-    class BasicImportDialog;
+    class BasicExportDialog;
 }
 
-class WIDGET_API BasicImportDialog : public QDialog
+class WIDGET_API BasicExportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit BasicImportDialog(const QString &fileExtension, QWidget *parent = nullptr);
-    virtual ~BasicImportDialog();
+
+    explicit BasicExportDialog(const QString &fileExtension, QWidget *parent = nullptr) noexcept;
+    virtual ~BasicExportDialog() noexcept;
 
     QString getSelectedFilePath() const noexcept;
-    bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
-    bool isAddToFlightEnabled() const noexcept;
-
-    QString getFileFilter() const noexcept;
-    void setFileFilter(const QString &extension) noexcept;
+    void setSelectedFilePath(const QString &filePath) noexcept;
+    bool doOpenExportedFile() const noexcept;
 
     void setOptionWidget(QWidget *widget) noexcept;
 
@@ -62,20 +56,23 @@ signals:
     void restoreDefaultOptions();
 
 private:
-    Ui::BasicImportDialog *ui;
-    std::unique_ptr<BasicImportDialogPrivate> d;
+    Ui::BasicExportDialog *ui;
+    std::unique_ptr<BasicExportDialogPrivate> d;
 
     void initUi() noexcept;
     void initBasicUi() noexcept;
     void initOptionUi() noexcept;
     void frenchConnection() noexcept;
 
+    std::int64_t estimateNofSamplePoints() noexcept;
+
 private slots:
     void updateUi() noexcept;
+    void updateInfoUi() noexcept;
 
     void onFileSelectionChanged() noexcept;
-    void onRestoreDefaults(QAbstractButton *button) noexcept;
-    void onAccepted() noexcept;    
+    void onResamplingOptionChanged(int index) noexcept;
+    void onRestoreDefaults() noexcept;
 };
 
-#endif // BASICIMPORTDIALOG_H
+#endif // BASICEXPORTDIALOG_H

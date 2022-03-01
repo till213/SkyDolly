@@ -152,7 +152,7 @@ void KMLExportSettings::setSettings(Settings::ValuesByKey valuesByKey) noexcept
     bool ok;
     int enumeration = valuesByKey["ResamplingPeriod"].toInt(&ok);
     if (ok) {
-        resamplingPeriod = static_cast<KMLExportSettings::ResamplingPeriod >(enumeration);
+        resamplingPeriod = static_cast<SampleRate::ResamplingPeriod >(enumeration);
     } else {
         resamplingPeriod = DefaultResamplingPeriod;
     }

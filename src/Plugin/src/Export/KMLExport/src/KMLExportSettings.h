@@ -25,25 +25,17 @@
 #ifndef KMLEXPORTSETTINGS_H
 #define KMLEXPORTSETTINGS_H
 
+#include <QObject>
 #include <QColor>
 
 #include "../../../../../Kernel/src/Settings.h"
+#include "../../../../../Kernel/src/SampleRate.h"
 #include "../../../../../Model/src/SimType.h"
 
-struct KMLExportSettings
+class KMLExportSettings : public QObject
 {
-    /*!
-     * Resampling period [millisecons]
-     */
-    enum struct ResamplingPeriod {
-        Original = 0,
-        TenHz = 100,
-        FiveHz = 200,
-        TwoHz = 500,
-        OneHz = 1000,
-        AFifthHz = 5000,
-        ATenthHz = 10000
-    };
+    Q_OBJECT
+public:
     enum struct ColorStyle {
         OneColor,
         OneColorPerEngineType,
@@ -53,7 +45,7 @@ struct KMLExportSettings
 
     KMLExportSettings() noexcept;
 
-    ResamplingPeriod resamplingPeriod;
+    SampleRate::ResamplingPeriod resamplingPeriod;
     QColor jetStartColor;
     QColor jetEndColor;
     QColor turbopropStartColor;
@@ -67,11 +59,15 @@ struct KMLExportSettings
     float lineWidth;
 
     Settings::PluginSettings getSettings() const noexcept;
-    Settings::KeysWithDefaults getKeyWithDefaults() const noexcept;
+    Settings::KeysWithDefaults getKeysWithDefault() const noexcept;
     void setSettings(Settings::ValuesByKey) noexcept;
     void restoreDefaults() noexcept;
 
-    static constexpr ResamplingPeriod DefaultResamplingPeriod = ResamplingPeriod::OneHz;
+signals:
+    void defaultsRestored();
+
+private:
+    static constexpr SampleRate::ResamplingPeriod DefaultResamplingPeriod = SampleRate::ResamplingPeriod::OneHz;
     static constexpr ColorStyle DefaultColorStyle = ColorStyle::OneColor;
 
     // in AARRGGBB format
