@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
+ <class>KMLExportOptionWidget</class>
  <widget class="QWidget" name="KMLExportOptionWidget">
   <property name="geometry">
    <rect>
@@ -9,9 +9,6 @@
     <width>332</width>
     <height>159</height>
    </rect>
-  </property>
-  <property name="windowTitle">
-   <string>Form</string>
   </property>
   <layout class="QFormLayout" name="formLayout_2">
    <item row="0" column="1">

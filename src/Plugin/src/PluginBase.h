@@ -62,7 +62,7 @@ protected:
      *
      * \return the plugin-specific setting keys with corresponding default values
      */
-    virtual Settings::KeysWithDefaults getKeyWithDefaults() const noexcept;
+    virtual Settings::KeysWithDefaults getKeysWithDefaults() const noexcept;
 
     /*!
      * Sets the plugin-specific settings.

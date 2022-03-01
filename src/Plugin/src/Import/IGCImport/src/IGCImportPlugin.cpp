@@ -118,7 +118,7 @@ Settings::PluginSettings IGCImportPlugin::getSettings() const noexcept
     return d->importSettings.getSettings();
 }
 
-Settings::KeysWithDefaults IGCImportPlugin::getKeyWithDefaults() const noexcept
+Settings::KeysWithDefaults IGCImportPlugin::getKeysWithDefaults() const noexcept
 {
     return d->importSettings.getKeysWithDefault();
 }

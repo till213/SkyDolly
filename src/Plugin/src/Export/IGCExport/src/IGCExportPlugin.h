@@ -73,7 +73,7 @@ public:
 
 protected:
     virtual Settings::PluginSettings getSettings() const noexcept override;
-    virtual Settings::KeysWithDefaults getKeyWithDefaults() const noexcept override;
+    virtual Settings::KeysWithDefaults getKeysWithDefaults() const noexcept override;
     virtual void setSettings(Settings::ValuesByKey) noexcept override;
 
 private:

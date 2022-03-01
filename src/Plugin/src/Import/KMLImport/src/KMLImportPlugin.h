@@ -55,13 +55,12 @@ public:
 protected:
     // PluginBase
     virtual Settings::PluginSettings getSettings() const noexcept override;
-    virtual Settings::KeysWithDefaults getKeyWithDefaults() const noexcept override;
+    virtual Settings::KeysWithDefaults getKeysWithDefaults() const noexcept override;
     virtual void setSettings(Settings::ValuesByKey) noexcept override;
 
     // ImportPluginBase
     virtual QString getFileFilter() const noexcept override;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-
     virtual bool readFile(QFile &file) noexcept override;
 
     virtual FlightAugmentation::Procedures getProcedures() const noexcept override;

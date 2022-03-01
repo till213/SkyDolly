@@ -184,7 +184,7 @@ Settings::PluginSettings IGCExportPlugin::getSettings() const noexcept
     return d->exportSettings.getSettings();
 }
 
-Settings::KeysWithDefaults IGCExportPlugin::getKeyWithDefaults() const noexcept
+Settings::KeysWithDefaults IGCExportPlugin::getKeysWithDefaults() const noexcept
 {
     return d->exportSettings.getKeysWithDefault();
 }

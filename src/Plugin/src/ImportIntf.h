@@ -34,7 +34,7 @@ class FlightService;
 class ImportIntf : public PluginIntf
 {
 public:
-    virtual bool import(FlightService &flightService) noexcept = 0;
+    virtual bool importData(FlightService &flightService) noexcept = 0;
 };
 
 #define IMPORT_INTERFACE_IID "com.github.till213.SkyDolly.ImportInterface/1.0"

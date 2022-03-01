@@ -87,7 +87,7 @@ Settings::PluginSettings KMLImportPlugin::getSettings() const noexcept
     return d->importSettings.getSettings();
 }
 
-Settings::KeysWithDefaults KMLImportPlugin::getKeyWithDefaults() const noexcept
+Settings::KeysWithDefaults KMLImportPlugin::getKeysWithDefaults() const noexcept
 {
     return d->importSettings.getKeysWithDefault();
 }

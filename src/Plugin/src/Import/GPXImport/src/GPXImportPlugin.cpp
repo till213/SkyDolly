@@ -91,7 +91,7 @@ Settings::PluginSettings GPXImportPlugin::getSettings() const noexcept
     return d->importSettings.getSettings();
 }
 
-Settings::KeysWithDefaults GPXImportPlugin::getKeyWithDefaults() const noexcept
+Settings::KeysWithDefaults GPXImportPlugin::getKeysWithDefaults() const noexcept
 {
     return d->importSettings.getKeysWithDefault();
 }

@@ -52,7 +52,6 @@ private:
 
 private slots:
     void onFormatChanged(int index) noexcept;
-
     void updateUi() noexcept;
 };
 

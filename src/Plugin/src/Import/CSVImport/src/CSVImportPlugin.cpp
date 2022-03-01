@@ -77,7 +77,7 @@ Settings::PluginSettings CSVImportPlugin::getSettings() const noexcept
     return d->importSettings.getSettings();
 }
 
-Settings::KeysWithDefaults CSVImportPlugin::getKeyWithDefaults() const noexcept
+Settings::KeysWithDefaults CSVImportPlugin::getKeysWithDefaults() const noexcept
 {
     return d->importSettings.getKeysWithDefault();
 }

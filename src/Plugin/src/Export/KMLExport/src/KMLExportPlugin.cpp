@@ -104,64 +104,32 @@ KMLExportPlugin::~KMLExportPlugin() noexcept
 #endif
 }
 
-bool KMLExportPlugin::exportData() noexcept
+bool KMLExportPlugin::writeFile(QFile &file) noexcept
 {
     bool ok;
 
     d->aircraftTypeCount.clear();
+    const int nofAircraft = d->flight.count();
+    // Only create as many colors per ramp as there are aircraft (if there are less aircraft
+    // than requested colors per ramp)
+    d->exportSettings.nofColorsPerRamp = qMin(nofAircraft, d->exportSettings.nofColorsPerRamp);
 
-    std::unique_ptr<KMLExportDialog> exportDialog = std::make_unique<KMLExportDialog>(d->exportSettings, getParentWidget());
-    const int choice = exportDialog->exec();
-    if (choice == QDialog::Accepted) {
-        // Remember export path
-        const QString exportDirectoryPath = QFileInfo(exportDialog->getSelectedFilePath()).absolutePath();
-        Settings::getInstance().setExportPath(exportDirectoryPath);
-        const QString filePath = File::ensureSuffix(exportDialog->getSelectedFilePath(), KMLExportDialog::FileSuffix);
-        if (!filePath.isEmpty()) {
-
-            const int nofAircraft = d->flight.count();
-            // Only create as many colors per ramp as there are aircraft (if there are less aircraft
-            // than requested colors per ramp)
-            d->exportSettings.nofColorsPerRamp = qMin(nofAircraft, d->exportSettings.nofColorsPerRamp);
-
-            QFile file(filePath);
-            ok = file.open(QIODevice::WriteOnly);
-            if (ok) {
-                file.setTextModeEnabled(true);
-                ok = exportHeader(file);
-            }
-            if (ok) {
-                ok = d->styleExport->exportStyles(d->exportSettings, file);
-            }
-            if (ok) {
-                ok = exportFlightInfo(file);
-            }
-            if (ok) {
-                ok = exportAircraft(file);
-            }
-            if (ok) {
-                ok = exportWaypoints(file);
-            }
-            if (ok) {
-                ok = exportFooter(file);
-            }
-            file.close();
-
-        } else {
-            ok = true;
-        }
-
-        if (ok) {
-            if (exportDialog->doOpenExportedFile()) {
-                const QString fileUrl = QString("file:///") + filePath;
-                QDesktopServices::openUrl(QUrl(fileUrl));
-            }
-        } else {
-            QMessageBox::critical(getParentWidget(), tr("Export error"), tr("The KML file %1 could not be exported.").arg(filePath));
-        }
-
-    } else {
-        ok = true;
+    file.setTextModeEnabled(true);
+    ok = exportHeader(file);
+    if (ok) {
+        ok = d->styleExport->exportStyles(d->exportSettings, file);
+    }
+    if (ok) {
+        ok = exportFlightInfo(file);
+    }
+    if (ok) {
+        ok = exportAircraft(file);
+    }
+    if (ok) {
+        ok = exportWaypoints(file);
+    }
+    if (ok) {
+        ok = exportFooter(file);
     }
 
     return ok;
@@ -174,14 +142,21 @@ Settings::PluginSettings KMLExportPlugin::getSettings() const noexcept
     return d->exportSettings.getSettings();
 }
 
-Settings::KeysWithDefaults KMLExportPlugin::getKeyWithDefaults() const noexcept
+Settings::KeysWithDefaults KMLExportPlugin::getKeysWithDefaults() const noexcept
 {
-    return d->exportSettings.getKeyWithDefaults();
+    return d->exportSettings.getKeysWithDefaults();
 }
 
 void KMLExportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     d->exportSettings.setSettings(valuesByKey);
+}
+
+// PROTECTED SLOTS
+
+void KMLExportPlugin::onRestoreDefaultSettings() noexcept
+{
+    d->exportSettings.restoreDefaults();
 }
 
 // PRIVATE

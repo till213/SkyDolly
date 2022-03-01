@@ -74,7 +74,7 @@ public:
         PluginBase::restoreSettings(pluginUuid);
     }
 
-    virtual bool import(FlightService &flightService) noexcept override final;
+    virtual bool importData(FlightService &flightService) noexcept override final;
 
 protected:
     AircraftType &getSelectedAircraftType() const noexcept;
@@ -82,7 +82,6 @@ protected:
     // Re-implement
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
-
     virtual bool readFile(QFile &file) noexcept = 0;
 
     virtual FlightAugmentation::Procedures getProcedures() const noexcept = 0;

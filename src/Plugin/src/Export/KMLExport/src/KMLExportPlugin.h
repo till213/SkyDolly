@@ -37,7 +37,7 @@ class QString;
 #include "../../../../../Kernel/src/Settings.h"
 #include "../../../../../Model/src/SimType.h"
 #include "../../../ExportIntf.h"
-#include "../../../BasicExportPlugin.h"
+#include "../../../ExportPluginBase.h"
 #include "KMLStyleExport.h"
 
 class Flight;
@@ -46,7 +46,7 @@ struct PositionData;
 struct Waypoint;
 class KMLExportPluginPrivate;
 
-class KMLExportPlugin : public BasicExportPlugin
+class KMLExportPlugin : public ExportPluginBase
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "KMLExportPlugin.json")
@@ -55,32 +55,19 @@ public:
     KMLExportPlugin() noexcept;
     virtual ~KMLExportPlugin() noexcept;
 
-    virtual QWidget *getParentWidget() const noexcept override
-    {
-        return PluginBase::getParentWidget();
-    }
-
-    virtual void setParentWidget(QWidget *parent) noexcept override
-    {
-        PluginBase::setParentWidget(parent);
-    }
-
-    virtual void storeSettings(const QUuid &pluginUuid) const noexcept override
-    {
-        PluginBase::storeSettings(pluginUuid);
-    }
-
-    virtual void restoreSettings(const QUuid &pluginUuid) noexcept override
-    {
-        PluginBase::restoreSettings(pluginUuid);
-    }
-
-    virtual bool exportData() noexcept override;
-
 protected:
+    // PluginBase
     virtual Settings::PluginSettings getSettings() const noexcept override;
-    virtual Settings::KeysWithDefaults getKeyWithDefaults() const noexcept override;
+    virtual Settings::KeysWithDefaults getKeysWithDefaults() const noexcept override;
     virtual void setSettings(Settings::ValuesByKey) noexcept override;
+
+    // ExportPluginBase
+    virtual QString getFileFilter() const noexcept override;
+    virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
+    virtual bool writeFile(QFile &file) noexcept override;
+
+protected slots:
+    virtual void onRestoreDefaultSettings() noexcept override;
 
 private:
     std::unique_ptr<KMLExportPluginPrivate> d;

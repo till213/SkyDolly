@@ -74,24 +74,17 @@ void KMLExportOptionWidget::frenchConnection() noexcept
 
 void KMLExportOptionWidget::initUi() noexcept
 {
-    ui->formatComboBox->addItem("FlightAware", Enum::toUnderlyingType(KMLExportSettings::Format::FlightAware));
-    ui->formatComboBox->addItem("FlightRadar24", Enum::toUnderlyingType(KMLExportSettings::Format::FlightRadar24));
-    ui->formatComboBox->addItem(tr("Generic KML with track data"), Enum::toUnderlyingType(KMLExportSettings::Format::Generic));
+
 }
 
 // PRIVATE SLOTS
 
 void KMLExportOptionWidget::onFormatChanged([[maybe_unused]]int index) noexcept
 {
-    d->ExportSettings.m_format = static_cast<KMLExportSettings::Format>(ui->formatComboBox->currentData().toInt());
+
 }
 
 void KMLExportOptionWidget::updateUi() noexcept
 {
-    int currentIndex = 0;
-    while (currentIndex < ui->formatComboBox->count() &&
-           static_cast<KMLExportSettings::Format>(ui->formatComboBox->itemData(currentIndex).toInt()) != d->ExportSettings.m_format) {
-        ++currentIndex;
-    }
-    ui->formatComboBox->setCurrentIndex(currentIndex);
+
 }
