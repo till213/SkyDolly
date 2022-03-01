@@ -12,9 +12,9 @@ The connection is made via SimConnect, a standard API introduced with Flight Sim
 - Record / Pause / Play
 - Formation flights (multiple aircraft, replay during recording, "fly with formation", time offset)
 - Settable recording sample rate: fixed or variable ("auto")
-- Adjustable replay speed ("slow motion", "timelapse")
+- Adjustable replay speed ("slow motion", "timelapse"), replay loop
 - Position, velocity and basic flight control simulation variables (ailerons, rudder, flaps, gears, ...) are recorded
-- Plugin architecture with various import/export plugins (KML, CSV)
+- Plugin architecture with various import/export plugins (CSV, GPX, IGC, KML)
 - Database (SQLite) based persistence ("logbook")
 
 Watch the (preview) release trailer on [YouTube](https://www.youtube.com/watch?v=_n4qRtm78_I):
@@ -66,7 +66,7 @@ Why don't you try it with one of the guided ["Tell Tours"](https://github.com/ti
 
 Go to [Releases](https://github.com/till213/SkyDolly/releases) and download the latest release.
 
-Latest (pre-)release: **Sky Dolly 0.8.6**
+Latest (pre-)release: **Sky Dolly 0.9.0**
 
 ## Build
 
