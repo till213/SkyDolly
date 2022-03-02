@@ -44,6 +44,7 @@ public:
     };
 
     KMLExportSettings() noexcept;
+    virtual ~KMLExportSettings() noexcept;
 
     SampleRate::ResamplingPeriod resamplingPeriod;
     QColor jetStartColor;
@@ -63,10 +64,6 @@ public:
     void setSettings(Settings::ValuesByKey) noexcept;
     void restoreDefaults() noexcept;
 
-signals:
-    void defaultsRestored();
-
-private:
     static constexpr SampleRate::ResamplingPeriod DefaultResamplingPeriod = SampleRate::ResamplingPeriod::OneHz;
     static constexpr ColorStyle DefaultColorStyle = ColorStyle::OneColor;
 
@@ -88,6 +85,9 @@ private:
 
     static constexpr int DefaultNofColorsPerRamp = 8;
     static constexpr float DefaultLineWidth = 3.0f;
+
+signals:
+    void defaultsRestored();
 };
 
 #endif // KMLEXPORTSETTINGS_H

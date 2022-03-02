@@ -51,8 +51,9 @@ private:
     void initUi() noexcept;
 
 private slots:
-    void onFormatChanged(int index) noexcept;
     void updateUi() noexcept;
+    void selectColor(int id) noexcept;
+    void onColorStyleChanged(int index) noexcept;
 };
 
 #endif // KMLEXPORTOPTIONWIDGET_H

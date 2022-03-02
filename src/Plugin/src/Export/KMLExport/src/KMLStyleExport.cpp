@@ -55,8 +55,9 @@ namespace
 class KMLStyleExportPrivate
 {
 public:
-    KMLStyleExportPrivate() noexcept
-        : jetColorRampIndex(0),
+    KMLStyleExportPrivate(const KMLExportSettings &theExportSettings) noexcept
+        : exportSettings(theExportSettings),
+          jetColorRampIndex(0),
           turbopropColorRampIndex(0),
           pistonColorRampIndex(0),
           allColorRampIndex(0)
@@ -67,7 +68,7 @@ public:
         allColorRampIndex = 0;
     }
 
-    KMLExportSettings exportSettings;
+    const KMLExportSettings &exportSettings;
     std::vector<QRgb> jetColorRamp;
     std::vector<QRgb> turbopropColorRamp;
     std::vector<QRgb> pistonColorRamp;
@@ -81,16 +82,15 @@ public:
 
 // PUBLIC
 
-KMLStyleExport::KMLStyleExport() noexcept
-    : d(std::make_unique<KMLStyleExportPrivate>())
+KMLStyleExport::KMLStyleExport(const KMLExportSettings &exportSettings) noexcept
+    : d(std::make_unique<KMLStyleExportPrivate>(exportSettings))
 {}
 
 KMLStyleExport::~KMLStyleExport() noexcept
 {}
 
-bool KMLStyleExport::exportStyles(const KMLExportSettings &exportSettings, QIODevice &io) noexcept
+bool KMLStyleExport::exportStyles(QIODevice &io) noexcept
 {
-    d->exportSettings = exportSettings;
     initialiseColorRamps();
     bool ok = exportHighlightLineStyle(io);
     if (ok) {

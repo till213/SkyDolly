@@ -72,7 +72,7 @@ class KMLExportPluginPrivate
 public:
     KMLExportPluginPrivate() noexcept
         : flight(Logbook::getInstance().getCurrentFlight()),
-          styleExport(std::make_unique<KMLStyleExport>())
+          styleExport(std::make_unique<KMLStyleExport>(exportSettings))
     {}
 
     KMLExportSettings exportSettings;
@@ -85,6 +85,8 @@ public:
 #else
     std::unordered_map<QString, int> aircraftTypeCount;
 #endif
+
+    static inline const QString FileExtension {QStringLiteral("kml")};
 };
 
 // PUBLIC
@@ -117,7 +119,7 @@ bool KMLExportPlugin::writeFile(QFile &file) noexcept
     file.setTextModeEnabled(true);
     ok = exportHeader(file);
     if (ok) {
-        ok = d->styleExport->exportStyles(d->exportSettings, file);
+        ok = d->styleExport->exportStyles(file);
     }
     if (ok) {
         ok = exportFlightInfo(file);
@@ -150,6 +152,16 @@ Settings::KeysWithDefaults KMLExportPlugin::getKeysWithDefaults() const noexcept
 void KMLExportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     d->exportSettings.setSettings(valuesByKey);
+}
+
+QString KMLExportPlugin::getFileFilter() const noexcept
+{
+    return tr("Keyhole markup language (*.%1)").arg(KMLExportPluginPrivate::FileExtension);
+}
+
+std::unique_ptr<QWidget> KMLExportPlugin::createOptionWidget() const noexcept
+{
+    return std::make_unique<KMLExportOptionWidget>(d->exportSettings);
 }
 
 // PROTECTED SLOTS

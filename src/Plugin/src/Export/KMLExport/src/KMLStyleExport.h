@@ -44,10 +44,10 @@ public:
         Flag
     };
 
-    KMLStyleExport() noexcept;
+    KMLStyleExport(const KMLExportSettings &exportSettings) noexcept;
     ~KMLStyleExport() noexcept;
 
-    bool exportStyles(const KMLExportSettings &exportSettings, QIODevice &io) noexcept;
+    bool exportStyles(QIODevice &io) noexcept;
     QString getNextStyleMapPerEngineType(SimType::EngineType engineType) noexcept;
 
     static QString getStyleUrl(Icon icon) noexcept;

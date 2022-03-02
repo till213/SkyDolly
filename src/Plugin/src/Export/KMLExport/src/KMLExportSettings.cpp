@@ -35,6 +35,9 @@ KMLExportSettings::KMLExportSettings() noexcept
     restoreDefaults();
 }
 
+KMLExportSettings::~KMLExportSettings() noexcept
+{}
+
 Settings::PluginSettings KMLExportSettings::getSettings() const noexcept
 {
     Settings::PluginSettings settings;
