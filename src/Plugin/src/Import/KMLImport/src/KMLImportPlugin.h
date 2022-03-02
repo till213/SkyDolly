@@ -54,9 +54,9 @@ public:
 
 protected:
     // PluginBase
-    virtual Settings::PluginSettings getSettings() const noexcept override;
-    virtual Settings::KeysWithDefaults getKeysWithDefaults() const noexcept override;
-    virtual void setSettings(Settings::ValuesByKey) noexcept override;
+    virtual void addSettings(Settings::PluginSettings &settings) const noexcept override;
+    virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    virtual void applySettings(Settings::ValuesByKey) noexcept override;
 
     // ImportPluginBase
     virtual QString getFileFilter() const noexcept override;

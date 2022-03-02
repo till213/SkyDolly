@@ -38,7 +38,8 @@
 #include <QDesktopServices>
 
 #include "../../Kernel/src/Settings.h"
-#include "../../Widget/src/BasicExportDialog.h"
+#include "BasicExportDialog.h"
+#include "ExportPluginBaseSettings.h"
 #include "ExportPluginBase.h"
 
 class ExportPluginBasePrivate
@@ -46,6 +47,8 @@ class ExportPluginBasePrivate
 public:
     ExportPluginBasePrivate()
     {}
+
+    ExportPluginBaseSettings exportSettings;
 };
 
 // PUBLIC
@@ -121,4 +124,21 @@ bool ExportPluginBase::exportData() noexcept
     }
 
     return ok;
+}
+
+// PROTECTED
+
+void ExportPluginBase::addSettings(Settings::PluginSettings &settings) const noexcept
+{
+    d->exportSettings.addSettings(settings);
+}
+
+void ExportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{
+    d->exportSettings.addKeysWithDefaults(keysWithDefaults);
+}
+
+void ExportPluginBase::applySettings(Settings::ValuesByKey valuesByKey) noexcept
+{
+    d->exportSettings.applySettings(valuesByKey);
 }

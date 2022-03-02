@@ -39,7 +39,7 @@ public:
 
     virtual Settings::PluginSettings getSettings() const noexcept = 0;
     virtual Settings::KeysWithDefaults getKeysWithDefault() const noexcept = 0;
-    virtual void setSettings(Settings::ValuesByKey) noexcept = 0;
+    virtual void applySettings(Settings::ValuesByKey) noexcept = 0;
     /*!
      * Restores the default settings.
      *

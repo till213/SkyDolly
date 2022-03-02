@@ -31,8 +31,9 @@
 #include "../../../../../Kernel/src/Settings.h"
 #include "../../../../../Kernel/src/SampleRate.h"
 #include "../../../../../Model/src/SimType.h"
+#include "../../Plugin/src/ExportPluginBaseSettings.h"
 
-class KMLExportSettings : public QObject
+class KMLExportSettings : public ExportPluginBaseSettings
 {
     Q_OBJECT
 public:
@@ -59,12 +60,11 @@ public:
     int nofColorsPerRamp;
     float lineWidth;
 
-    Settings::PluginSettings getSettings() const noexcept;
-    Settings::KeysWithDefaults getKeysWithDefaults() const noexcept;
-    void setSettings(Settings::ValuesByKey) noexcept;
+    void addSettings(Settings::PluginSettings &settings) const noexcept;
+    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept;
+    void applySettings(Settings::ValuesByKey valuesByKey) noexcept;
     void restoreDefaults() noexcept;
 
-    static constexpr SampleRate::ResamplingPeriod DefaultResamplingPeriod = SampleRate::ResamplingPeriod::OneHz;
     static constexpr ColorStyle DefaultColorStyle = ColorStyle::OneColor;
 
     // in AARRGGBB format

@@ -36,9 +36,8 @@ IGCExportSettings::IGCExportSettings() noexcept
     restoreDefaults();
 }
 
-Settings::PluginSettings IGCExportSettings::getSettings() const noexcept
+void IGCExportSettings::addSettings(Settings::PluginSettings &settings) const noexcept
 {
-    Settings::PluginSettings settings;
     Settings::KeyValue keyValue;
 
     keyValue.first = "ResamplingPeriod";
@@ -52,31 +51,26 @@ Settings::PluginSettings IGCExportSettings::getSettings() const noexcept
     keyValue.first = "CoPilotName";
     keyValue.second = coPilotName;
     settings.push_back(keyValue);
-
-    return settings;
 }
 
-Settings::KeysWithDefaults IGCExportSettings::getKeysWithDefault() const noexcept
+void IGCExportSettings::addKeysWithDefault(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    Settings::KeysWithDefaults keys;
     Settings::KeyValue keyValue;
 
     keyValue.first = "ResamplingPeriod";
     keyValue.second = Enum::toUnderlyingType(IGCExportSettings::DefaultResamplingPeriod);
-    keys.push_back(keyValue);
+    keysWithDefaults.push_back(keyValue);
 
     keyValue.first = "PilotName";
     keyValue.second = defaultPilotName;
-    keys.push_back(keyValue);
+    keysWithDefaults.push_back(keyValue);
 
     keyValue.first = "CoPilotName";
     keyValue.second = DefaultCoPilotName;
-    keys.push_back(keyValue);
-
-    return keys;
+    keysWithDefaults.push_back(keyValue);
 }
 
-void IGCExportSettings::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+void IGCExportSettings::applySettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     bool ok;
     int enumeration = valuesByKey["ResamplingPeriod"].toInt(&ok);

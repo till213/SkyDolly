@@ -179,19 +179,19 @@ bool IGCExportPlugin::exportData() noexcept
 
 // PROTECTED
 
-Settings::PluginSettings IGCExportPlugin::getSettings() const noexcept
+void IGCExportPlugin::addSettings(Settings::PluginSettings &settings) const noexcept
 {
-    return d->exportSettings.getSettings();
+    d->exportSettings.addSettings(settings);
 }
 
-Settings::KeysWithDefaults IGCExportPlugin::getKeysWithDefaults() const noexcept
+void IGCExportPlugin::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    return d->exportSettings.getKeysWithDefault();
+    d->exportSettings.addKeysWithDefault(keysWithDefaults);
 }
 
-void IGCExportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+void IGCExportPlugin::applySettings(Settings::ValuesByKey valuesByKey) noexcept
 {
-    d->exportSettings.setSettings(valuesByKey);
+    d->exportSettings.applySettings(valuesByKey);
 }
 
 // PRIVATE

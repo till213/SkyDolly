@@ -51,18 +51,20 @@ public:
 
 protected:
     /*!
-     * Returns the plugin-specific settings.
+     * Adds the plugin-specific settings, a key/value pair for each setting, to \c settings.
      *
-     * \return the plugin-specific settings: a key/value pair for each setting.
+     * @param settings
+     *        the plugin-specific key/value pair settings
      */
-    virtual Settings::PluginSettings getSettings() const noexcept;
+    virtual void addSettings(Settings::PluginSettings &settings) const noexcept;
 
     /*!
-     * Returns the plugin-specific setting keys with corresponding default values.
+     * Adds the plugin-specific setting keys with corresponding default values to \c keysWithDefaults.
      *
-     * \return the plugin-specific setting keys with corresponding default values
+     * @param keysWithDefaults
+     *        the plugin-specific keys, with corresponding default values
      */
-    virtual Settings::KeysWithDefaults getKeysWithDefaults() const noexcept;
+    virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept;
 
     /*!
      * Sets the plugin-specific settings.
@@ -70,7 +72,7 @@ protected:
      * \param valuesByKey
      *        the plugin-specific settings associated with their key
      */
-    virtual void setSettings(Settings::ValuesByKey valuesByKey) noexcept;
+    virtual void applySettings(Settings::ValuesByKey valuesByKey) noexcept;
 
 private:
     std::unique_ptr<PluginBasePrivate> d;

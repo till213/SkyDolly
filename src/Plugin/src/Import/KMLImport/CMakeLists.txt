@@ -37,5 +37,4 @@ target_sources(${LIBRARY_NAME}
         ${DOCUMENTATION}
 )
 
-include_directories(${PLUGIN_NAME} PRIVATE ../../../../Widget/src/)
 target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})

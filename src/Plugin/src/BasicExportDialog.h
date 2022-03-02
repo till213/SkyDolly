@@ -30,7 +30,8 @@
 
 #include <QDialog>
 
-#include "WidgetLib.h"
+#include "../../Kernel/src/SampleRate.h"
+#include "PluginLib.h"
 
 class BasicExportDialogPrivate;
 
@@ -38,7 +39,7 @@ namespace Ui {
     class BasicExportDialog;
 }
 
-class WIDGET_API BasicExportDialog : public QDialog
+class PLUGIN_API BasicExportDialog : public QDialog
 {
     Q_OBJECT
 public:
@@ -49,6 +50,8 @@ public:
     QString getSelectedFilePath() const noexcept;
     void setSelectedFilePath(const QString &filePath) noexcept;
     bool doOpenExportedFile() const noexcept;
+    SampleRate::ResamplingPeriod getResamplingPeriod() const noexcept;
+    void setResamplingPeriod(SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
 
     void setOptionWidget(QWidget *widget) noexcept;
 

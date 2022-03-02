@@ -77,6 +77,10 @@ public:
     virtual bool exportData() noexcept override final;
 
 protected:
+    virtual void addSettings(Settings::PluginSettings &settings) const noexcept override;
+    virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    virtual void applySettings(Settings::ValuesByKey valuesByKey) noexcept override;
+
     // Re-implement
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;

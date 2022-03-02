@@ -104,6 +104,17 @@ bool BasicExportDialog::doOpenExportedFile() const noexcept
     return ui->openExportCheckBox->isChecked();
 }
 
+SampleRate::ResamplingPeriod BasicExportDialog::getResamplingPeriod() const noexcept
+{
+    return d->resamplingPeriod;
+}
+
+void BasicExportDialog::setResamplingPeriod(SampleRate::ResamplingPeriod resamplingPeriod) noexcept
+{
+    d->resamplingPeriod = resamplingPeriod;
+    updateUi();
+}
+
 void BasicExportDialog::setOptionWidget(QWidget *widget) noexcept
 {
     d->optionWidget = widget;
@@ -215,7 +226,8 @@ void BasicExportDialog::updateUi() noexcept
 
 void BasicExportDialog::onRestoreDefaults() noexcept
 {
-    initBasicUi();
+    d->resamplingPeriod = SampleRate::DefaultResamplingPeriod;
+    updateUi();
     emit restoreDefaultOptions();
 }
 

@@ -82,19 +82,19 @@ KMLImportPlugin::~KMLImportPlugin() noexcept
 
 // PROTECTED
 
-Settings::PluginSettings KMLImportPlugin::getSettings() const noexcept
+void KMLImportPlugin::addSettings(Settings::PluginSettings &settings) const noexcept
 {
-    return d->importSettings.getSettings();
+    d->importSettings.addSettings(settings);
 }
 
-Settings::KeysWithDefaults KMLImportPlugin::getKeysWithDefaults() const noexcept
+void KMLImportPlugin::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    return d->importSettings.getKeysWithDefault();
+    d->importSettings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void KMLImportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+void KMLImportPlugin::applySettings(Settings::ValuesByKey valuesByKey) noexcept
 {
-    d->importSettings.setSettings(valuesByKey);
+    d->importSettings.applySettings(valuesByKey);
 }
 
 QString KMLImportPlugin::getFileFilter() const noexcept

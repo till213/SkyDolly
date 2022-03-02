@@ -71,6 +71,8 @@ namespace SampleRate
         ATenthHz = 10000
     };
 
+    static constexpr ResamplingPeriod DefaultResamplingPeriod = ResamplingPeriod::OneHz;
+
     /*!
      * Converts the given \c sampleRate enumeration value to the corresponding value in Hz.
      *

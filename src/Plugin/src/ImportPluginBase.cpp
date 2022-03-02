@@ -54,7 +54,7 @@
 #include "../../Persistence/src/Service/FlightService.h"
 #include "../../Persistence/src/Service/AircraftService.h"
 #include "../../Persistence/src/Service/AircraftTypeService.h"
-#include "../../Widget/src/BasicImportDialog.h"
+#include "BasicImportDialog.h"
 #include "ImportPluginBase.h"
 
 class ImportPluginBasePrivate

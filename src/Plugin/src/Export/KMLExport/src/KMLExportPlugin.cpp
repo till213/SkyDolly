@@ -139,19 +139,22 @@ bool KMLExportPlugin::writeFile(QFile &file) noexcept
 
 // PROTECTED
 
-Settings::PluginSettings KMLExportPlugin::getSettings() const noexcept
+void KMLExportPlugin::addSettings(Settings::PluginSettings &settings) const noexcept
 {
-    return d->exportSettings.getSettings();
+    ExportPluginBase::addSettings(settings);
+    d->exportSettings.addSettings(settings);
 }
 
-Settings::KeysWithDefaults KMLExportPlugin::getKeysWithDefaults() const noexcept
+void KMLExportPlugin::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    return d->exportSettings.getKeysWithDefaults();
+    ExportPluginBase::addKeysWithDefaults(keysWithDefaults);
+    d->exportSettings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void KMLExportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+void KMLExportPlugin::applySettings(Settings::ValuesByKey valuesByKey) noexcept
 {
-    d->exportSettings.setSettings(valuesByKey);
+    ExportPluginBase::applySettings(valuesByKey);
+    d->exportSettings.applySettings(valuesByKey);
 }
 
 QString KMLExportPlugin::getFileFilter() const noexcept

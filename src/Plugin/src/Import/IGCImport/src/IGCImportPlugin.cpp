@@ -113,19 +113,19 @@ IGCImportPlugin::~IGCImportPlugin() noexcept
 
 // PROTECTED
 
-Settings::PluginSettings IGCImportPlugin::getSettings() const noexcept
+void IGCImportPlugin::addSettings(Settings::PluginSettings &settings) const noexcept
 {
-    return d->importSettings.getSettings();
+    d->importSettings.addSettings(settings);
 }
 
-Settings::KeysWithDefaults IGCImportPlugin::getKeysWithDefaults() const noexcept
+void IGCImportPlugin::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    return d->importSettings.getKeysWithDefault();
+    d->importSettings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void IGCImportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+void IGCImportPlugin::applySettings(Settings::ValuesByKey valuesByKey) noexcept
 {
-    d->importSettings.setSettings(valuesByKey);
+    d->importSettings.applySettings(valuesByKey);
 }
 
 QString IGCImportPlugin::getFileFilter() const noexcept

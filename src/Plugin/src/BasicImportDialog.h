@@ -22,43 +22,60 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVIMPORTSETTINGS_H
-#define CSVIMPORTSETTINGS_H
+#ifndef BASICIMPORTDIALOG_H
+#define BASICIMPORTDIALOG_H
 
-#include <QObject>
+#include <memory>
+
+#include <QDialog>
 #include <QString>
 
-#include "../../../../../Kernel/src/Settings.h"
+class QWidget;
+class QAbstractButton;
 
-class CSVImportSettings : public QObject
+#include "PluginLib.h"
+
+struct AircraftType;
+class BasicImportDialogPrivate;
+
+namespace Ui {
+    class BasicImportDialog;
+}
+
+class PLUGIN_API BasicImportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    /*!
-     * CSV format (flavour).
-     */
-    enum struct Format {
-        SkyDolly = 0,
-        FlightRadar24 = 1,
-        FlightRecorder = 2
-    };
+    explicit BasicImportDialog(const QString &fileExtension, QWidget *parent = nullptr);
+    virtual ~BasicImportDialog();
 
-    CSVImportSettings() noexcept;
+    QString getSelectedFilePath() const noexcept;
+    bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
+    bool isAddToFlightEnabled() const noexcept;
 
-    Format m_format;
+    QString getFileFilter() const noexcept;
+    void setFileFilter(const QString &extension) noexcept;
 
-    void addSettings(Settings::PluginSettings &settings) const noexcept;
-    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;
-    void applySettings(Settings::ValuesByKey) noexcept;
-    void restoreDefaults() noexcept;
+    void setOptionWidget(QWidget *widget) noexcept;
 
 signals:
-    void defaultsRestored();
+    void restoreDefaultOptions();
 
 private:
-    void initSettings() noexcept;
+    Ui::BasicImportDialog *ui;
+    std::unique_ptr<BasicImportDialogPrivate> d;
 
-    static constexpr Format DefaultFormat = Format::SkyDolly;
+    void initUi() noexcept;
+    void initBasicUi() noexcept;
+    void initOptionUi() noexcept;
+    void frenchConnection() noexcept;
+
+private slots:
+    void updateUi() noexcept;
+
+    void onFileSelectionChanged() noexcept;
+    void onRestoreDefaults(QAbstractButton *button) noexcept;
+    void onAccepted() noexcept;    
 };
 
-#endif // CSVIMPORTSETTINGS_H
+#endif // BASICIMPORTDIALOG_H

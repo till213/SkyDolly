@@ -22,55 +22,56 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-
-#include "../../../../../Kernel/src/Enum.h"
-#include "../../../../../Kernel/src/System.h"
-#include "../../../../../Kernel/src/Settings.h"
-#include "KMLImportSettings.h"
+#include "../../Kernel/src/Enum.h"
+#include "../../Kernel/src/Settings.h"
+#include "../../Kernel/src/SampleRate.h"
+#include "ExportPluginBaseSettings.h"
 
 namespace
 {
-    constexpr char FormatKey[] = "Format";
+    constexpr char ResamplingPeriod[] = "ResamplingPeriod";
 }
 
 // PUBLIC
 
-KMLImportSettings::KMLImportSettings() noexcept
+ExportPluginBaseSettings::ExportPluginBaseSettings() noexcept
 {
     initSettings();
 }
 
-void KMLImportSettings::addSettings(Settings::PluginSettings &settings) const noexcept
+ExportPluginBaseSettings::~ExportPluginBaseSettings() noexcept
+{}
+
+void ExportPluginBaseSettings::addSettings(Settings::PluginSettings &settings) const noexcept
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::FormatKey;
-    keyValue.second = Enum::toUnderlyingType(m_format);
+    keyValue.first = ::ResamplingPeriod;
+    keyValue.second = Enum::toUnderlyingType(resamplingPeriod);
     settings.push_back(keyValue);
 }
 
-void KMLImportSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+void ExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    Settings::KeysWithDefaults keys;
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::FormatKey;
-    keyValue.second = Enum::toUnderlyingType(KMLImportSettings::DefaultFormat);
-    keys.push_back(keyValue);
+    keyValue.first = ::ResamplingPeriod;
+    keyValue.second = Enum::toUnderlyingType(DefaultResamplingPeriod);
+    keysWithDefaults.push_back(keyValue);
 }
 
-void KMLImportSettings::applySettings(Settings::ValuesByKey valuesByKey) noexcept
+void ExportPluginBaseSettings::applySettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     bool ok;
-    const int enumeration = valuesByKey[::FormatKey].toInt(&ok);
+    int enumeration = valuesByKey[::ResamplingPeriod].toInt(&ok);
     if (ok) {
-        m_format = static_cast<KMLImportSettings::Format >(enumeration);
+        resamplingPeriod = static_cast<SampleRate::ResamplingPeriod >(enumeration);
     } else {
-        m_format = DefaultFormat;
+        resamplingPeriod = DefaultResamplingPeriod;
     }
 }
 
-void KMLImportSettings::restoreDefaults() noexcept
+void ExportPluginBaseSettings::restoreDefaults() noexcept
 {
     initSettings();
     emit defaultsRestored();
@@ -78,7 +79,7 @@ void KMLImportSettings::restoreDefaults() noexcept
 
 // PRIVATE
 
-void KMLImportSettings::initSettings() noexcept
+void ExportPluginBaseSettings::initSettings() noexcept
 {
-    m_format = DefaultFormat;
+    resamplingPeriod = DefaultResamplingPeriod;
 }

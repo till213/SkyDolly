@@ -72,19 +72,19 @@ CSVImportPlugin::~CSVImportPlugin() noexcept
 
 // PROTECTED
 
-Settings::PluginSettings CSVImportPlugin::getSettings() const noexcept
+void CSVImportPlugin::addSettings(Settings::PluginSettings &settings) const noexcept
 {
-    return d->importSettings.getSettings();
+    d->importSettings.addSettings(settings);
 }
 
-Settings::KeysWithDefaults CSVImportPlugin::getKeysWithDefaults() const noexcept
+void CSVImportPlugin::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    return d->importSettings.getKeysWithDefault();
+    d->importSettings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void CSVImportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+void CSVImportPlugin::applySettings(Settings::ValuesByKey valuesByKey) noexcept
 {
-    d->importSettings.setSettings(valuesByKey);
+    d->importSettings.applySettings(valuesByKey);
 }
 
 QString CSVImportPlugin::getFileFilter() const noexcept

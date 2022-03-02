@@ -22,60 +22,37 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef BASICIMPORTDIALOG_H
-#define BASICIMPORTDIALOG_H
+#ifndef EXPORTPLUGINBASESETTINGS_H
+#define EXPORTPLUGINBASESETTINGS_H
 
-#include <memory>
-
-#include <QDialog>
+#include <QObject>
 #include <QString>
 
-class QWidget;
-class QAbstractButton;
+#include "../../Kernel/src/Settings.h"
+#include "../../Kernel/src/SampleRate.h"
+#include "PluginLib.h"
 
-#include "WidgetLib.h"
-
-struct AircraftType;
-class BasicImportDialogPrivate;
-
-namespace Ui {
-    class BasicImportDialog;
-}
-
-class WIDGET_API BasicImportDialog : public QDialog
+class PLUGIN_API ExportPluginBaseSettings : public QObject
 {
     Q_OBJECT
 public:
-    explicit BasicImportDialog(const QString &fileExtension, QWidget *parent = nullptr);
-    virtual ~BasicImportDialog();
+    ExportPluginBaseSettings() noexcept;
+    virtual ~ExportPluginBaseSettings() noexcept;
 
-    QString getSelectedFilePath() const noexcept;
-    bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
-    bool isAddToFlightEnabled() const noexcept;
+    SampleRate::ResamplingPeriod resamplingPeriod;
 
-    QString getFileFilter() const noexcept;
-    void setFileFilter(const QString &extension) noexcept;
-
-    void setOptionWidget(QWidget *widget) noexcept;
+    void addSettings(Settings::PluginSettings &settings) const noexcept;
+    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;
+    void applySettings(Settings::ValuesByKey) noexcept;
+    void restoreDefaults() noexcept;
 
 signals:
-    void restoreDefaultOptions();
+    void defaultsRestored();
 
 private:
-    Ui::BasicImportDialog *ui;
-    std::unique_ptr<BasicImportDialogPrivate> d;
+    void initSettings() noexcept;
 
-    void initUi() noexcept;
-    void initBasicUi() noexcept;
-    void initOptionUi() noexcept;
-    void frenchConnection() noexcept;
-
-private slots:
-    void updateUi() noexcept;
-
-    void onFileSelectionChanged() noexcept;
-    void onRestoreDefaults(QAbstractButton *button) noexcept;
-    void onAccepted() noexcept;    
+    static constexpr SampleRate::ResamplingPeriod DefaultResamplingPeriod = SampleRate::ResamplingPeriod::OneHz;
 };
 
-#endif // BASICIMPORTDIALOG_H
+#endif // EXPORTPLUGINBASESETTINGS_H

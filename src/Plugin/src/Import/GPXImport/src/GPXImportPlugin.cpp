@@ -86,19 +86,19 @@ GPXImportPlugin::~GPXImportPlugin() noexcept
 
 // PROTECTED
 
-Settings::PluginSettings GPXImportPlugin::getSettings() const noexcept
+void GPXImportPlugin::addSettings(Settings::PluginSettings &settings) const noexcept
 {
-    return d->importSettings.getSettings();
+    d->importSettings.addSettings(settings);
 }
 
-Settings::KeysWithDefaults GPXImportPlugin::getKeysWithDefaults() const noexcept
+void GPXImportPlugin::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    return d->importSettings.getKeysWithDefault();
+    d->importSettings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void GPXImportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+void GPXImportPlugin::applySettings(Settings::ValuesByKey valuesByKey) noexcept
 {
-    d->importSettings.setSettings(valuesByKey);
+    d->importSettings.applySettings(valuesByKey);
 }
 
 QString GPXImportPlugin::getFileFilter() const noexcept

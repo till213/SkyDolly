@@ -40,31 +40,25 @@ CSVImportSettings::CSVImportSettings() noexcept
     initSettings();
 }
 
-Settings::PluginSettings CSVImportSettings::getSettings() const noexcept
+void CSVImportSettings::addSettings(Settings::PluginSettings &settings) const noexcept
 {
-    Settings::PluginSettings settings;
     Settings::KeyValue keyValue;
 
     keyValue.first = ::FormatKey;
     keyValue.second = Enum::toUnderlyingType(m_format);
     settings.push_back(keyValue);
-
-    return settings;
 }
 
-Settings::KeysWithDefaults CSVImportSettings::getKeysWithDefault() const noexcept
+void CSVImportSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    Settings::KeysWithDefaults keys;
     Settings::KeyValue keyValue;
 
     keyValue.first = ::FormatKey;
     keyValue.second = Enum::toUnderlyingType(CSVImportSettings::DefaultFormat);
-    keys.push_back(keyValue);
-
-    return keys;
+    keysWithDefaults.push_back(keyValue);
 }
 
-void CSVImportSettings::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+void CSVImportSettings::applySettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     bool ok;
     const int enumeration = valuesByKey[::FormatKey].toInt(&ok);

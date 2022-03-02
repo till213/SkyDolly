@@ -26,11 +26,13 @@
 #include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/Settings.h"
 #include "../../../../../Model/src/SimType.h"
+#include "../../Plugin/src/ExportPluginBaseSettings.h"
 #include "KMLExportSettings.h"
 
 // PUBLIC
 
 KMLExportSettings::KMLExportSettings() noexcept
+    : ExportPluginBaseSettings()
 {
     restoreDefaults();
 }
@@ -38,14 +40,9 @@ KMLExportSettings::KMLExportSettings() noexcept
 KMLExportSettings::~KMLExportSettings() noexcept
 {}
 
-Settings::PluginSettings KMLExportSettings::getSettings() const noexcept
+void KMLExportSettings::addSettings(Settings::PluginSettings &settings) const noexcept
 {
-    Settings::PluginSettings settings;
     Settings::KeyValue keyValue;
-
-    keyValue.first = "ResamplingPeriod";
-    keyValue.second = Enum::toUnderlyingType(resamplingPeriod);
-    settings.push_back(keyValue);
 
     keyValue.first = "ColorStyle";
     keyValue.second = Enum::toUnderlyingType(colorStyle);
@@ -90,17 +87,15 @@ Settings::PluginSettings KMLExportSettings::getSettings() const noexcept
     keyValue.first = "AllEndColor";
     keyValue.second = allEndColor;
     settings.push_back(keyValue);
-
-    return settings;
 }
 
-Settings::KeysWithDefaults KMLExportSettings::getKeysWithDefaults() const noexcept
+void KMLExportSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
     Settings::KeysWithDefaults keys;
     Settings::KeyValue keyValue;
 
     keyValue.first = "ResamplingPeriod";
-    keyValue.second = Enum::toUnderlyingType(KMLExportSettings::DefaultResamplingPeriod);
+    keyValue.second = Enum::toUnderlyingType(SampleRate::DefaultResamplingPeriod);
     keys.push_back(keyValue);
 
     keyValue.first = "ColorStyle";
@@ -146,18 +141,16 @@ Settings::KeysWithDefaults KMLExportSettings::getKeysWithDefaults() const noexce
     keyValue.first = "AllEndColor";
     keyValue.second = QColor(DefaultAllEndRgba);
     keys.push_back(keyValue);
-
-    return keys;
 }
 
-void KMLExportSettings::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+void KMLExportSettings::applySettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     bool ok;
     int enumeration = valuesByKey["ResamplingPeriod"].toInt(&ok);
     if (ok) {
         resamplingPeriod = static_cast<SampleRate::ResamplingPeriod >(enumeration);
     } else {
-        resamplingPeriod = DefaultResamplingPeriod;
+        resamplingPeriod = SampleRate::DefaultResamplingPeriod;
     }
 
     enumeration = valuesByKey["ColorStyle"].toInt(&ok);
@@ -189,7 +182,7 @@ void KMLExportSettings::setSettings(Settings::ValuesByKey valuesByKey) noexcept
 
 void KMLExportSettings::restoreDefaults() noexcept
 {
-    resamplingPeriod = DefaultResamplingPeriod;
+    resamplingPeriod = SampleRate::DefaultResamplingPeriod;
     colorStyle = DefaultColorStyle;
     nofColorsPerRamp = DefaultNofColorsPerRamp;
     lineWidth = DefaultLineWidth;
