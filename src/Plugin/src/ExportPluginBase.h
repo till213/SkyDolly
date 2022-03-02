@@ -44,6 +44,7 @@ class Flight;
 struct AircraftType;
 struct AircraftInfo;
 struct FlightCondition;
+class ExportPluginBaseSettings;
 class ExportPluginBasePrivate;
 
 class PLUGIN_API ExportPluginBase : public PluginBase, public ExportIntf
@@ -82,6 +83,7 @@ protected:
     virtual void applySettings(Settings::ValuesByKey valuesByKey) noexcept override;
 
     // Re-implement
+    virtual ExportPluginBaseSettings &getSettings() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
     virtual bool writeFile(QFile &file) noexcept = 0;

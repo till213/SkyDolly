@@ -40,6 +40,7 @@ public:
     virtual ~ExportPluginBaseSettings() noexcept;
 
     SampleRate::ResamplingPeriod resamplingPeriod;
+    bool openExportedFile;
 
     void addSettings(Settings::PluginSettings &settings) const noexcept;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;
@@ -53,6 +54,7 @@ private:
     void initSettings() noexcept;
 
     static constexpr SampleRate::ResamplingPeriod DefaultResamplingPeriod = SampleRate::ResamplingPeriod::OneHz;
+    static constexpr bool DefaultOpenExportedFile = false;
 };
 
 #endif // EXPORTPLUGINBASESETTINGS_H

@@ -42,6 +42,8 @@ KMLExportSettings::~KMLExportSettings() noexcept
 
 void KMLExportSettings::addSettings(Settings::PluginSettings &settings) const noexcept
 {
+    ExportPluginBaseSettings::addKeysWithDefaults(settings);
+
     Settings::KeyValue keyValue;
 
     keyValue.first = "ColorStyle";
@@ -91,6 +93,8 @@ void KMLExportSettings::addSettings(Settings::PluginSettings &settings) const no
 
 void KMLExportSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
+    ExportPluginBaseSettings::addKeysWithDefaults(keysWithDefaults);
+
     Settings::KeysWithDefaults keys;
     Settings::KeyValue keyValue;
 
@@ -145,6 +149,8 @@ void KMLExportSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWith
 
 void KMLExportSettings::applySettings(Settings::ValuesByKey valuesByKey) noexcept
 {
+    ExportPluginBaseSettings::applySettings(valuesByKey);
+
     bool ok;
     int enumeration = valuesByKey["ResamplingPeriod"].toInt(&ok);
     if (ok) {
@@ -182,7 +188,8 @@ void KMLExportSettings::applySettings(Settings::ValuesByKey valuesByKey) noexcep
 
 void KMLExportSettings::restoreDefaults() noexcept
 {
-    resamplingPeriod = SampleRate::DefaultResamplingPeriod;
+    ExportPluginBaseSettings::restoreDefaults();
+
     colorStyle = DefaultColorStyle;
     nofColorsPerRamp = DefaultNofColorsPerRamp;
     lineWidth = DefaultLineWidth;

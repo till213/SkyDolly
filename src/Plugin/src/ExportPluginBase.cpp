@@ -47,8 +47,6 @@ class ExportPluginBasePrivate
 public:
     ExportPluginBasePrivate()
     {}
-
-    ExportPluginBaseSettings exportSettings;
 };
 
 // PUBLIC
@@ -74,7 +72,7 @@ bool ExportPluginBase::exportData() noexcept
 
     Settings &settings = Settings::getInstance();
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
-    std::unique_ptr<BasicExportDialog> exportDialog = std::make_unique<BasicExportDialog>(getFileFilter(), getParentWidget());
+    std::unique_ptr<BasicExportDialog> exportDialog = std::make_unique<BasicExportDialog>(getFileFilter(), getSettings(), getParentWidget());
     connect(exportDialog.get(), &BasicExportDialog::restoreDefaultOptions,
             this, &ExportPluginBase::onRestoreDefaultSettings);
     // Transfer ownership to exportDialog
@@ -130,15 +128,15 @@ bool ExportPluginBase::exportData() noexcept
 
 void ExportPluginBase::addSettings(Settings::PluginSettings &settings) const noexcept
 {
-    d->exportSettings.addSettings(settings);
+    getSettings().addSettings(settings);
 }
 
 void ExportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    d->exportSettings.addKeysWithDefaults(keysWithDefaults);
+    getSettings().addKeysWithDefaults(keysWithDefaults);
 }
 
 void ExportPluginBase::applySettings(Settings::ValuesByKey valuesByKey) noexcept
 {
-    d->exportSettings.applySettings(valuesByKey);
+    getSettings().applySettings(valuesByKey);
 }

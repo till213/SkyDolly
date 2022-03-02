@@ -46,20 +46,22 @@
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/Position.h"
 #include "../../Model/src/SimType.h"
+#include "ExportPluginBaseSettings.h"
 #include "BasicExportDialog.h"
 #include "ui_BasicExportDialog.h"
 
 class BasicExportDialogPrivate
 {
 public:
-    BasicExportDialogPrivate(const QString &theFileFilter) noexcept
+    BasicExportDialogPrivate(const QString &theFileFilter, ExportPluginBaseSettings &theSettings) noexcept
         : fileFilter(theFileFilter),
+          settings(theSettings),
           exportButton(nullptr),
           optionWidget(nullptr)
     {}
 
     QString fileFilter;
-    SampleRate::ResamplingPeriod resamplingPeriod;
+    ExportPluginBaseSettings &settings;
     QPushButton *exportButton;
     QWidget *optionWidget;
     Unit unit;
@@ -67,10 +69,10 @@ public:
 
 // PUBLIC
 
-BasicExportDialog::BasicExportDialog(const QString &fileExtension, QWidget *parent) noexcept
+BasicExportDialog::BasicExportDialog(const QString &fileExtension, ExportPluginBaseSettings &settings, QWidget *parent) noexcept
     : QDialog(parent),
       ui(new Ui::BasicExportDialog),
-      d(std::make_unique<BasicExportDialogPrivate>(fileExtension))
+      d(std::make_unique<BasicExportDialogPrivate>(fileExtension, settings))
 {
     ui->setupUi(this);
     initUi();
@@ -102,17 +104,6 @@ void BasicExportDialog::setSelectedFilePath(const QString &filePath) noexcept
 bool BasicExportDialog::doOpenExportedFile() const noexcept
 {
     return ui->openExportCheckBox->isChecked();
-}
-
-SampleRate::ResamplingPeriod BasicExportDialog::getResamplingPeriod() const noexcept
-{
-    return d->resamplingPeriod;
-}
-
-void BasicExportDialog::setResamplingPeriod(SampleRate::ResamplingPeriod resamplingPeriod) noexcept
-{
-    d->resamplingPeriod = resamplingPeriod;
-    updateUi();
 }
 
 void BasicExportDialog::setOptionWidget(QWidget *widget) noexcept
@@ -214,9 +205,10 @@ void BasicExportDialog::updateUi() noexcept
     QFile file(fileInfo.absolutePath());
     d->exportButton->setEnabled(file.exists());
 
+    const SampleRate::ResamplingPeriod resamplingPeriod = d->settings.resamplingPeriod;
     int currentIndex = 0;
     while (currentIndex < ui->resamplingComboBox->count() &&
-           static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->itemData(currentIndex).toInt()) != d->resamplingPeriod) {
+           static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->itemData(currentIndex).toInt()) != resamplingPeriod) {
         ++currentIndex;
     }
     ui->resamplingComboBox->setCurrentIndex(currentIndex);
@@ -226,7 +218,7 @@ void BasicExportDialog::updateUi() noexcept
 
 void BasicExportDialog::onRestoreDefaults() noexcept
 {
-    d->resamplingPeriod = SampleRate::DefaultResamplingPeriod;
+    d->settings.restoreDefaults();
     updateUi();
     emit restoreDefaultOptions();
 }
@@ -242,6 +234,6 @@ void BasicExportDialog::onFileSelectionChanged() noexcept
 
 void BasicExportDialog::onResamplingOptionChanged([[maybe_unused]] int index) noexcept
 {
-    d->resamplingPeriod = static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt());
+    d->settings.resamplingPeriod = static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt());
     updateInfoUi();
 }

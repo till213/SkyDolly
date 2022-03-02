@@ -72,10 +72,10 @@ class KMLExportPluginPrivate
 public:
     KMLExportPluginPrivate() noexcept
         : flight(Logbook::getInstance().getCurrentFlight()),
-          styleExport(std::make_unique<KMLStyleExport>(exportSettings))
+          styleExport(std::make_unique<KMLStyleExport>(settings))
     {}
 
-    KMLExportSettings exportSettings;
+    KMLExportSettings settings;
     Flight &flight;
     std::unique_ptr<KMLStyleExport> styleExport;
     Unit unit;
@@ -114,7 +114,7 @@ bool KMLExportPlugin::writeFile(QFile &file) noexcept
     const int nofAircraft = d->flight.count();
     // Only create as many colors per ramp as there are aircraft (if there are less aircraft
     // than requested colors per ramp)
-    d->exportSettings.nofColorsPerRamp = qMin(nofAircraft, d->exportSettings.nofColorsPerRamp);
+    d->settings.nofColorsPerRamp = qMin(nofAircraft, d->settings.nofColorsPerRamp);
 
     file.setTextModeEnabled(true);
     ok = exportHeader(file);
@@ -139,22 +139,27 @@ bool KMLExportPlugin::writeFile(QFile &file) noexcept
 
 // PROTECTED
 
+ExportPluginBaseSettings &KMLExportPlugin::getSettings() const noexcept
+{
+    return d->settings;
+}
+
 void KMLExportPlugin::addSettings(Settings::PluginSettings &settings) const noexcept
 {
     ExportPluginBase::addSettings(settings);
-    d->exportSettings.addSettings(settings);
+    d->settings.addSettings(settings);
 }
 
 void KMLExportPlugin::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
     ExportPluginBase::addKeysWithDefaults(keysWithDefaults);
-    d->exportSettings.addKeysWithDefaults(keysWithDefaults);
+    d->settings.addKeysWithDefaults(keysWithDefaults);
 }
 
 void KMLExportPlugin::applySettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     ExportPluginBase::applySettings(valuesByKey);
-    d->exportSettings.applySettings(valuesByKey);
+    d->settings.applySettings(valuesByKey);
 }
 
 QString KMLExportPlugin::getFileFilter() const noexcept
@@ -164,14 +169,14 @@ QString KMLExportPlugin::getFileFilter() const noexcept
 
 std::unique_ptr<QWidget> KMLExportPlugin::createOptionWidget() const noexcept
 {
-    return std::make_unique<KMLExportOptionWidget>(d->exportSettings);
+    return std::make_unique<KMLExportOptionWidget>(d->settings);
 }
 
 // PROTECTED SLOTS
 
 void KMLExportPlugin::onRestoreDefaultSettings() noexcept
 {
-    d->exportSettings.restoreDefaults();
+    d->settings.restoreDefaults();
 }
 
 // PRIVATE
@@ -231,7 +236,7 @@ bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
     if (ok) {
         // Position data
         const Position &position = aircraft.getPositionConst();
-        if (d->exportSettings.resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
+        if (d->settings.resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
             const std::int64_t duration = position.getLast().timestamp;
             std::int64_t timestamp = 0;
             while (ok && timestamp <= duration) {
@@ -241,7 +246,7 @@ bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
                                    formatNumber(positionData.latitude) % "," %
                                    formatNumber(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
                 }
-                timestamp += Enum::toUnderlyingType(d->exportSettings.resamplingPeriod);
+                timestamp += Enum::toUnderlyingType(d->settings.resamplingPeriod);
             }
         } else {
             // Original data requested

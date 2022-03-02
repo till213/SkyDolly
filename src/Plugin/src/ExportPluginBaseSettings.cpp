@@ -30,6 +30,7 @@
 namespace
 {
     constexpr char ResamplingPeriod[] = "ResamplingPeriod";
+    constexpr char OpenExportedFile[] = "OpenExportedFile";
 }
 
 // PUBLIC
@@ -49,6 +50,10 @@ void ExportPluginBaseSettings::addSettings(Settings::PluginSettings &settings) c
     keyValue.first = ::ResamplingPeriod;
     keyValue.second = Enum::toUnderlyingType(resamplingPeriod);
     settings.push_back(keyValue);
+
+    keyValue.first = ::OpenExportedFile;
+    keyValue.second = openExportedFile;
+    settings.push_back(keyValue);
 }
 
 void ExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
@@ -57,6 +62,10 @@ void ExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &k
 
     keyValue.first = ::ResamplingPeriod;
     keyValue.second = Enum::toUnderlyingType(DefaultResamplingPeriod);
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = ::OpenExportedFile;
+    keyValue.second = DefaultOpenExportedFile;
     keysWithDefaults.push_back(keyValue);
 }
 
@@ -69,6 +78,7 @@ void ExportPluginBaseSettings::applySettings(Settings::ValuesByKey valuesByKey) 
     } else {
         resamplingPeriod = DefaultResamplingPeriod;
     }
+    openExportedFile = valuesByKey[::OpenExportedFile].toBool();
 }
 
 void ExportPluginBaseSettings::restoreDefaults() noexcept
@@ -82,4 +92,5 @@ void ExportPluginBaseSettings::restoreDefaults() noexcept
 void ExportPluginBaseSettings::initSettings() noexcept
 {
     resamplingPeriod = DefaultResamplingPeriod;
+    openExportedFile = DefaultOpenExportedFile;
 }
