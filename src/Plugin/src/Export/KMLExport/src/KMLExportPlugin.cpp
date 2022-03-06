@@ -156,10 +156,10 @@ void KMLExportPlugin::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDe
     d->settings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void KMLExportPlugin::applySettings(Settings::ValuesByKey valuesByKey) noexcept
+void KMLExportPlugin::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
-    ExportPluginBase::applySettings(valuesByKey);
-    d->settings.applySettings(valuesByKey);
+    ExportPluginBase::restoreSettings(valuesByKey);
+    d->settings.restoreSettings(valuesByKey);
 }
 
 QString KMLExportPlugin::getFileFilter() const noexcept
@@ -236,7 +236,8 @@ bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
     if (ok) {
         // Position data
         const Position &position = aircraft.getPositionConst();
-        if (d->settings.resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
+        const SampleRate::ResamplingPeriod resamplingPeriod = d->settings.getResamplingPeriod();
+        if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
             const std::int64_t duration = position.getLast().timestamp;
             std::int64_t timestamp = 0;
             while (ok && timestamp <= duration) {
@@ -246,7 +247,7 @@ bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
                                    formatNumber(positionData.latitude) % "," %
                                    formatNumber(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
                 }
-                timestamp += Enum::toUnderlyingType(d->settings.resamplingPeriod);
+                timestamp += Enum::toUnderlyingType(resamplingPeriod);
             }
         } else {
             // Original data requested

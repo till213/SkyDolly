@@ -25,12 +25,16 @@
 #ifndef EXPORTPLUGINBASESETTINGS_H
 #define EXPORTPLUGINBASESETTINGS_H
 
+#include <memory>
+
 #include <QObject>
 #include <QString>
 
 #include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/SampleRate.h"
 #include "PluginLib.h"
+
+class ExportPluginBaseSettingsPrivate;
 
 class PLUGIN_API ExportPluginBaseSettings : public QObject
 {
@@ -39,22 +43,21 @@ public:
     ExportPluginBaseSettings() noexcept;
     virtual ~ExportPluginBaseSettings() noexcept;
 
-    SampleRate::ResamplingPeriod resamplingPeriod;
-    bool openExportedFile;
+    SampleRate::ResamplingPeriod getResamplingPeriod() const noexcept;
+    void setResamplingPeriod(SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
+    bool isOpenExportedFileEnabled() const noexcept;
+    void setOpenExportedFileEnabled(bool openExportedFileEnabled) noexcept;
 
     void addSettings(Settings::PluginSettings &settings) const noexcept;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;
-    void applySettings(Settings::ValuesByKey) noexcept;
+    void restoreSettings(Settings::ValuesByKey) noexcept;
     void restoreDefaults() noexcept;
 
 signals:
-    void defaultsRestored();
+    void changed();
 
 private:
-    void initSettings() noexcept;
-
-    static constexpr SampleRate::ResamplingPeriod DefaultResamplingPeriod = SampleRate::ResamplingPeriod::OneHz;
-    static constexpr bool DefaultOpenExportedFile = false;
+    std::unique_ptr<ExportPluginBaseSettingsPrivate> d;
 };
 
 #endif // EXPORTPLUGINBASESETTINGS_H

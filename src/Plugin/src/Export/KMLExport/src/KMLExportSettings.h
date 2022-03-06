@@ -61,7 +61,7 @@ public:
 
     void addSettings(Settings::PluginSettings &settings) const noexcept;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept;
-    void applySettings(Settings::ValuesByKey valuesByKey) noexcept;
+    void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept;
     void restoreDefaults() noexcept;
 
     static constexpr ColorStyle DefaultColorStyle = ColorStyle::OneColor;

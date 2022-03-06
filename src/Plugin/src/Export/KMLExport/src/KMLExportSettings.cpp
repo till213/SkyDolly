@@ -147,19 +147,13 @@ void KMLExportSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWith
     keys.push_back(keyValue);
 }
 
-void KMLExportSettings::applySettings(Settings::ValuesByKey valuesByKey) noexcept
+void KMLExportSettings::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
-    ExportPluginBaseSettings::applySettings(valuesByKey);
+    ExportPluginBaseSettings::restoreSettings(valuesByKey);
 
     bool ok;
-    int enumeration = valuesByKey["ResamplingPeriod"].toInt(&ok);
-    if (ok) {
-        resamplingPeriod = static_cast<SampleRate::ResamplingPeriod >(enumeration);
-    } else {
-        resamplingPeriod = SampleRate::DefaultResamplingPeriod;
-    }
 
-    enumeration = valuesByKey["ColorStyle"].toInt(&ok);
+    const int enumeration = valuesByKey["ColorStyle"].toInt(&ok);
     if (ok) {
         colorStyle = static_cast<KMLExportSettings::ColorStyle >(enumeration);
     } else {

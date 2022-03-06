@@ -109,7 +109,7 @@ bool ExportPluginBase::exportData() noexcept
         }
 
         if (ok) {
-            if (exportDialog->doOpenExportedFile()) {
+            if (getSettings().isOpenExportedFileEnabled()) {
                 const QString fileUrl = QString("file:///") + filePath;
                 QDesktopServices::openUrl(QUrl(fileUrl));
             }
@@ -136,7 +136,7 @@ void ExportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithD
     getSettings().addKeysWithDefaults(keysWithDefaults);
 }
 
-void ExportPluginBase::applySettings(Settings::ValuesByKey valuesByKey) noexcept
+void ExportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
-    getSettings().applySettings(valuesByKey);
+    getSettings().restoreSettings(valuesByKey);
 }

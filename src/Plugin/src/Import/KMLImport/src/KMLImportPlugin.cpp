@@ -92,7 +92,7 @@ void KMLImportPlugin::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDe
     d->importSettings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void KMLImportPlugin::applySettings(Settings::ValuesByKey valuesByKey) noexcept
+void KMLImportPlugin::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     d->importSettings.applySettings(valuesByKey);
 }

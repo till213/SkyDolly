@@ -80,7 +80,7 @@ public:
 protected:
     virtual void addSettings(Settings::PluginSettings &settings) const noexcept override;
     virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
-    virtual void applySettings(Settings::ValuesByKey valuesByKey) noexcept override;
+    virtual void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept override;
 
     // Re-implement
     virtual ExportPluginBaseSettings &getSettings() const noexcept = 0;

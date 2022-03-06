@@ -89,7 +89,7 @@ KMLExportOptionWidget::~KMLExportOptionWidget() noexcept
 
 void KMLExportOptionWidget::frenchConnection() noexcept
 {
-    connect(&d->exportSettings, &KMLExportSettings::defaultsRestored,
+    connect(&d->exportSettings, &KMLExportSettings::changed,
             this, &KMLExportOptionWidget::updateUi);
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)

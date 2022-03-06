@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+
 #include "../../Kernel/src/Enum.h"
 #include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/SampleRate.h"
@@ -30,29 +32,77 @@
 namespace
 {
     constexpr char ResamplingPeriod[] = "ResamplingPeriod";
-    constexpr char OpenExportedFile[] = "OpenExportedFile";
+    constexpr char OpenExportedFileEnabled[] = "OpenExportedFileEnabled";
+
+    constexpr SampleRate::ResamplingPeriod DefaultResamplingPeriod = SampleRate::ResamplingPeriod::OneHz;
+    constexpr bool DefaultOpenExportedFileEnabled = false;
 }
+
+class ExportPluginBaseSettingsPrivate
+{
+public:
+    ExportPluginBaseSettingsPrivate()
+        : resamplingPeriod(::DefaultResamplingPeriod),
+          openExportedFileEnabled(::DefaultOpenExportedFileEnabled)
+    {}
+
+    SampleRate::ResamplingPeriod resamplingPeriod;
+    bool openExportedFileEnabled;
+};
 
 // PUBLIC
 
 ExportPluginBaseSettings::ExportPluginBaseSettings() noexcept
+    : d(std::make_unique<ExportPluginBaseSettingsPrivate>())
 {
-    initSettings();
+#ifdef DEBUG
+    qDebug("ExportPluginBaseSettings::ExportPluginBaseSettings: CREATED");
+#endif
 }
 
 ExportPluginBaseSettings::~ExportPluginBaseSettings() noexcept
-{}
+{
+#ifdef DEBUG
+    qDebug("ExportPluginBaseSettings::~ExportPluginBaseSettings: DELETED");
+#endif
+}
+
+SampleRate::ResamplingPeriod ExportPluginBaseSettings::getResamplingPeriod() const noexcept
+{
+    return d->resamplingPeriod;
+}
+
+void ExportPluginBaseSettings::setResamplingPeriod(SampleRate::ResamplingPeriod resamplingPeriod) noexcept
+{
+    if (d->resamplingPeriod != resamplingPeriod) {
+        d->resamplingPeriod = resamplingPeriod;
+        emit changed();
+    }
+}
+
+bool ExportPluginBaseSettings::isOpenExportedFileEnabled() const noexcept
+{
+    return d->openExportedFileEnabled;
+}
+
+void ExportPluginBaseSettings::setOpenExportedFileEnabled(bool openExportedFileEnabled) noexcept
+{
+    if (d->openExportedFileEnabled != openExportedFileEnabled) {
+        d->openExportedFileEnabled = openExportedFileEnabled;
+        emit changed();
+    }
+}
 
 void ExportPluginBaseSettings::addSettings(Settings::PluginSettings &settings) const noexcept
 {
     Settings::KeyValue keyValue;
 
     keyValue.first = ::ResamplingPeriod;
-    keyValue.second = Enum::toUnderlyingType(resamplingPeriod);
+    keyValue.second = Enum::toUnderlyingType(d->resamplingPeriod);
     settings.push_back(keyValue);
 
-    keyValue.first = ::OpenExportedFile;
-    keyValue.second = openExportedFile;
+    keyValue.first = ::OpenExportedFileEnabled;
+    keyValue.second = d->openExportedFileEnabled;
     settings.push_back(keyValue);
 }
 
@@ -64,33 +114,27 @@ void ExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &k
     keyValue.second = Enum::toUnderlyingType(DefaultResamplingPeriod);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = ::OpenExportedFile;
-    keyValue.second = DefaultOpenExportedFile;
+    keyValue.first = ::OpenExportedFileEnabled;
+    keyValue.second = DefaultOpenExportedFileEnabled;
     keysWithDefaults.push_back(keyValue);
 }
 
-void ExportPluginBaseSettings::applySettings(Settings::ValuesByKey valuesByKey) noexcept
+void ExportPluginBaseSettings::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     bool ok;
     int enumeration = valuesByKey[::ResamplingPeriod].toInt(&ok);
     if (ok) {
-        resamplingPeriod = static_cast<SampleRate::ResamplingPeriod >(enumeration);
+        d->resamplingPeriod = static_cast<SampleRate::ResamplingPeriod >(enumeration);
     } else {
-        resamplingPeriod = DefaultResamplingPeriod;
+        d->resamplingPeriod = DefaultResamplingPeriod;
     }
-    openExportedFile = valuesByKey[::OpenExportedFile].toBool();
+    d->openExportedFileEnabled = valuesByKey[::OpenExportedFileEnabled].toBool();
+    emit changed();
 }
 
 void ExportPluginBaseSettings::restoreDefaults() noexcept
 {
-    initSettings();
-    emit defaultsRestored();
-}
-
-// PRIVATE
-
-void ExportPluginBaseSettings::initSettings() noexcept
-{
-    resamplingPeriod = DefaultResamplingPeriod;
-    openExportedFile = DefaultOpenExportedFile;
+    d->resamplingPeriod = DefaultResamplingPeriod;
+    d->openExportedFileEnabled = DefaultOpenExportedFileEnabled;
+    emit changed();
 }

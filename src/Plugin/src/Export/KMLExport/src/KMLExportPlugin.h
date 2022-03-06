@@ -59,7 +59,7 @@ protected:
     // PluginBase
     virtual void addSettings(Settings::PluginSettings &settings) const noexcept override;
     virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
-    virtual void applySettings(Settings::ValuesByKey) noexcept override;
+    virtual void restoreSettings(Settings::ValuesByKey) noexcept override;
 
     // ExportPluginBase
     virtual ExportPluginBaseSettings &getSettings() const noexcept override;

@@ -189,7 +189,7 @@ void IGCExportPlugin::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDe
     d->exportSettings.addKeysWithDefault(keysWithDefaults);
 }
 
-void IGCExportPlugin::applySettings(Settings::ValuesByKey valuesByKey) noexcept
+void IGCExportPlugin::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     d->exportSettings.applySettings(valuesByKey);
 }

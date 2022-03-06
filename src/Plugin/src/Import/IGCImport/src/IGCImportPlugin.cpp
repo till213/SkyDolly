@@ -123,7 +123,7 @@ void IGCImportPlugin::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDe
     d->importSettings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void IGCImportPlugin::applySettings(Settings::ValuesByKey valuesByKey) noexcept
+void IGCImportPlugin::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     d->importSettings.applySettings(valuesByKey);
 }

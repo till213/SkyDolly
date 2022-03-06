@@ -82,7 +82,7 @@ void CSVImportPlugin::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDe
     d->importSettings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void CSVImportPlugin::applySettings(Settings::ValuesByKey valuesByKey) noexcept
+void CSVImportPlugin::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     d->importSettings.applySettings(valuesByKey);
 }

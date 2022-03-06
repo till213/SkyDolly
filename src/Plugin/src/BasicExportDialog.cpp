@@ -34,6 +34,7 @@
 #include <QPushButton>
 #include <QFileDialog>
 #include <QComboBox>
+#include <QCheckBox>
 #include <QButtonGroup>
 #include <QColorDialog>
 
@@ -99,11 +100,6 @@ QString BasicExportDialog::getSelectedFilePath() const noexcept
 void BasicExportDialog::setSelectedFilePath(const QString &filePath) noexcept
 {
      ui->filePathLineEdit->setText(QDir::toNativeSeparators(filePath));
-}
-
-bool BasicExportDialog::doOpenExportedFile() const noexcept
-{
-    return ui->openExportCheckBox->isChecked();
 }
 
 void BasicExportDialog::setOptionWidget(QWidget *widget) noexcept
@@ -174,7 +170,19 @@ void BasicExportDialog::frenchConnection() noexcept
 
     QPushButton *resetButton = ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults);
     connect(resetButton, &QPushButton::clicked,
-            this, &BasicExportDialog::onRestoreDefaults);
+            this, &BasicExportDialog::onRestoreSettings);
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+    connect(ui->resamplingComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &BasicExportDialog::onResamplingOptionChanged);
+#else
+    connect(ui->resamplingComboBox, &QComboBox::currentIndexChanged,
+            this, &BasicExportDialog::onResamplingOptionChanged);
+#endif
+    connect(ui->openExportCheckBox, &QCheckBox::toggled,
+            this, &BasicExportDialog::onDoOpenExportedFileChanged);
+    connect(&d->settings, &ExportPluginBaseSettings::changed,
+            this, &BasicExportDialog::updateUi);
 }
 
 std::int64_t BasicExportDialog::estimateNofSamplePoints() noexcept
@@ -205,7 +213,7 @@ void BasicExportDialog::updateUi() noexcept
     QFile file(fileInfo.absolutePath());
     d->exportButton->setEnabled(file.exists());
 
-    const SampleRate::ResamplingPeriod resamplingPeriod = d->settings.resamplingPeriod;
+    const SampleRate::ResamplingPeriod resamplingPeriod = d->settings.getResamplingPeriod();
     int currentIndex = 0;
     while (currentIndex < ui->resamplingComboBox->count() &&
            static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->itemData(currentIndex).toInt()) != resamplingPeriod) {
@@ -214,13 +222,6 @@ void BasicExportDialog::updateUi() noexcept
     ui->resamplingComboBox->setCurrentIndex(currentIndex);
 
     updateInfoUi();
-}
-
-void BasicExportDialog::onRestoreDefaults() noexcept
-{
-    d->settings.restoreDefaults();
-    updateUi();
-    emit restoreDefaultOptions();
 }
 
 void BasicExportDialog::onFileSelectionChanged() noexcept
@@ -234,6 +235,16 @@ void BasicExportDialog::onFileSelectionChanged() noexcept
 
 void BasicExportDialog::onResamplingOptionChanged([[maybe_unused]] int index) noexcept
 {
-    d->settings.resamplingPeriod = static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt());
-    updateInfoUi();
+    d->settings.setResamplingPeriod(static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt()));
+}
+
+void BasicExportDialog::onDoOpenExportedFileChanged(bool enable) noexcept
+{
+    d->settings.setOpenExportedFileEnabled(enable);
+}
+
+void BasicExportDialog::onRestoreSettings() noexcept
+{
+    d->settings.restoreDefaults();
+    emit restoreDefaultOptions();
 }

@@ -72,7 +72,7 @@ protected:
      * \param valuesByKey
      *        the plugin-specific settings associated with their key
      */
-    virtual void applySettings(Settings::ValuesByKey valuesByKey) noexcept;
+    virtual void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept;
 
 private:
     std::unique_ptr<PluginBasePrivate> d;

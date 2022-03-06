@@ -96,7 +96,7 @@ void GPXImportPlugin::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDe
     d->importSettings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void GPXImportPlugin::applySettings(Settings::ValuesByKey valuesByKey) noexcept
+void GPXImportPlugin::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     d->importSettings.applySettings(valuesByKey);
 }
