@@ -220,6 +220,7 @@ void BasicExportDialog::updateUi() noexcept
         ++currentIndex;
     }
     ui->resamplingComboBox->setCurrentIndex(currentIndex);
+    ui->openExportCheckBox->setChecked(d->settings.isOpenExportedFileEnabled());
 
     updateInfoUi();
 }
