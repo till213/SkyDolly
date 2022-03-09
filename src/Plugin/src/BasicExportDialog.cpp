@@ -181,7 +181,7 @@ void BasicExportDialog::frenchConnection() noexcept
 #endif
     connect(ui->openExportCheckBox, &QCheckBox::toggled,
             this, &BasicExportDialog::onDoOpenExportedFileChanged);
-    connect(&d->settings, &ExportPluginBaseSettings::changed,
+    connect(&d->settings, &ExportPluginBaseSettings::baseSettingsChanged,
             this, &BasicExportDialog::updateUi);
 }
 

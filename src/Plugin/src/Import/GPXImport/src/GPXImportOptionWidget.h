@@ -40,7 +40,7 @@ class GPXImportOptionWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit GPXImportOptionWidget(GPXImportSettings &importSettings, QWidget *parent = nullptr) noexcept;
+    explicit GPXImportOptionWidget(GPXImportSettings &settings, QWidget *parent = nullptr) noexcept;
     virtual ~GPXImportOptionWidget() noexcept;
 
 private:

@@ -25,6 +25,8 @@
 #ifndef KMLEXPORTSETTINGS_H
 #define KMLEXPORTSETTINGS_H
 
+#include <memory>
+
 #include <QObject>
 #include <QColor>
 
@@ -32,6 +34,8 @@
 #include "../../../../../Kernel/src/SampleRate.h"
 #include "../../../../../Model/src/SimType.h"
 #include "../../Plugin/src/ExportPluginBaseSettings.h"
+
+class KMLExportSettingsPrivate;
 
 class KMLExportSettings : public ExportPluginBaseSettings
 {
@@ -47,43 +51,42 @@ public:
     KMLExportSettings() noexcept;
     virtual ~KMLExportSettings() noexcept;
 
-    QColor jetStartColor;
-    QColor jetEndColor;
-    QColor turbopropStartColor;
-    QColor turbopropEndColor;
-    QColor pistonStartColor;
-    QColor pistonEndColor;
-    QColor allStartColor;
-    QColor allEndColor;
-    ColorStyle colorStyle;
-    int nofColorsPerRamp;
-    float lineWidth;
+    ColorStyle getColorStyle() const noexcept;
+    void setColorStyle(ColorStyle colorStyle) noexcept;
+
+    int getNofColorsPerRamp() const noexcept;
+    void setNofColorsPerRamp(int nofColors) noexcept;
+
+    float getLineWidth() const noexcept;
+    void setLineWidth(float lineWidth) noexcept;
+
+    QColor getJetStartColor() const noexcept;
+    void setJetStartColor(QColor color) noexcept;
+    QColor getJetEndColor() const noexcept;
+    void setJetEndColor(QColor color) noexcept;
+
+    QColor getTurbopropStartColor() const noexcept;
+    void setTurbopropStartColor(QColor color) noexcept;
+    QColor getTurbopropEndColor() const noexcept;
+    void setTurbopropEndColor(QColor color) noexcept;
+
+    QColor getPistonStartColor() const noexcept;
+    void setPistonStartColor(QColor color) noexcept;
+    QColor getPistonEndColor() const noexcept;
+    void setPistonEndColor(QColor color) noexcept;
+
+    QColor getAllStartColor() const noexcept;
+    void setAllStartColor(QColor color) noexcept;
+    QColor getAllEndColor() const noexcept;
+    void setAllEndColor(QColor color) noexcept;
 
     void addSettings(Settings::PluginSettings &settings) const noexcept;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept;
     void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept;
     void restoreDefaults() noexcept;
 
-    static constexpr ColorStyle DefaultColorStyle = ColorStyle::OneColor;
-
-    // in AARRGGBB format
-    // https://designs.ai/colors/color-wheel
-    // http://khroma.co/generator/
-    // http://colormind.io/
-    static constexpr QRgb Opaque = 0xff000000;
-
-    // "Tetraedic" colors
-    static constexpr QRgb DefaultJetStartRgba = Opaque | 0xde7b51;
-    static constexpr QRgb DefaultJetEndColor = Opaque | 0x6f3d28;
-    static constexpr QRgb DefaultTurbopropStartRgba = Opaque | 0x6ade4b;
-    static constexpr QRgb DefaultTurbopropEndRgba = Opaque | 0x356f25;
-    static constexpr QRgb DefaultPistonStartRgba = Opaque | 0x4bb3de;
-    static constexpr QRgb DefaultPistonEndRgba = Opaque | 0x255a6f;
-    static constexpr QRgb DefaultAllStartRgba = Opaque | 0xc561de;
-    static constexpr QRgb DefaultAllEndRgba = Opaque | 0x63316f;
-
-    static constexpr int DefaultNofColorsPerRamp = 8;
-    static constexpr float DefaultLineWidth = 3.0f;
+private:
+    std::unique_ptr<KMLExportSettingsPrivate> d;
 };
 
 #endif // KMLEXPORTSETTINGS_H

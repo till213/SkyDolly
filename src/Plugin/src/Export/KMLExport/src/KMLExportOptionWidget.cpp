@@ -52,21 +52,21 @@ namespace
 class KMLExportOptionWidgetPrivate
 {
 public:
-    KMLExportOptionWidgetPrivate(KMLExportSettings &theExportSettings) noexcept
-        : exportSettings(theExportSettings),
+    KMLExportOptionWidgetPrivate(KMLExportSettings &theSettings) noexcept
+        : settings(theSettings),
           colorButtonGroup(std::make_unique<QButtonGroup>())
     {}
 
     std::unique_ptr<QButtonGroup> colorButtonGroup;
-    KMLExportSettings &exportSettings;
+    KMLExportSettings &settings;
 };
 
 // PUBLIC
 
-KMLExportOptionWidget::KMLExportOptionWidget(KMLExportSettings &exportSettings, QWidget *parent) noexcept
+KMLExportOptionWidget::KMLExportOptionWidget(KMLExportSettings &settings, QWidget *parent) noexcept
     : QWidget(parent),
       ui(new Ui::KMLExportOptionWidget),
-      d(std::make_unique<KMLExportOptionWidgetPrivate>(exportSettings))
+      d(std::make_unique<KMLExportOptionWidgetPrivate>(settings))
 {
     ui->setupUi(this);
     initUi();
@@ -89,7 +89,7 @@ KMLExportOptionWidget::~KMLExportOptionWidget() noexcept
 
 void KMLExportOptionWidget::frenchConnection() noexcept
 {
-    connect(&d->exportSettings, &KMLExportSettings::changed,
+    connect(&d->settings, &KMLExportSettings::extendedSettingsChanged,
             this, &KMLExportOptionWidget::updateUi);
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
@@ -124,7 +124,7 @@ void KMLExportOptionWidget::updateUi() noexcept
 {
     int currentIndex = 0;
     while (currentIndex < ui->colorStyleComboBox->count() &&
-           static_cast<KMLExportSettings::ColorStyle>(ui->colorStyleComboBox->itemData(currentIndex).toInt()) != d->exportSettings.colorStyle) {
+           static_cast<KMLExportSettings::ColorStyle>(ui->colorStyleComboBox->itemData(currentIndex).toInt()) != d->settings.getColorStyle()) {
         ++currentIndex;
     }
     ui->colorStyleComboBox->setCurrentIndex(currentIndex);
@@ -176,52 +176,52 @@ void KMLExportOptionWidget::updateUi() noexcept
 
     QString css;
     if (ui->allStartColorToolButton->isEnabled()) {
-        css = "background-color: " % d->exportSettings.allStartColor.name() % ";";
+        css = "background-color: " % d->settings.getAllStartColor().name() % ";";
     } else {
         css = QString("background-color: ") % DisabledColor % ";";
     }
     ui->allStartColorToolButton->setStyleSheet(css);
     if (ui->allEndColorToolButton->isEnabled()) {
-        css = "background-color: " % d->exportSettings.allEndColor.name() % ";";
+        css = "background-color: " % d->settings.getAllEndColor().name() % ";";
     } else {
         css = QString("background-color: ") % DisabledColor % ";";
     }
     ui->allEndColorToolButton->setStyleSheet(css);
 
     if (ui->jetStartColorToolButton->isEnabled()) {
-        css = "background-color: " % d->exportSettings.jetStartColor.name() % ";";
+        css = "background-color: " % d->settings.getJetStartColor().name() % ";";
     } else {
         css = QString("background-color: ") % DisabledColor % ";";
     }
     ui->jetStartColorToolButton->setStyleSheet(css);
     if (ui->jetEndColorToolButton->isEnabled()) {
-        css = "background-color: " % d->exportSettings.jetEndColor.name() % ";";
+        css = "background-color: " % d->settings.getJetEndColor().name() % ";";
     } else {
         css = QString("background-color: ") % DisabledColor % ";";
     }
     ui->jetEndColorToolButton->setStyleSheet(css);
 
     if (ui->turbopropStartColorToolButton->isEnabled()) {
-        css = "background-color: " % d->exportSettings.turbopropStartColor.name() % ";";
+        css = "background-color: " % d->settings.getTurbopropStartColor().name() % ";";
     } else {
         css = QString("background-color: ") % DisabledColor % ";";
     }
     ui->turbopropStartColorToolButton->setStyleSheet(css);
     if (ui->turbopropEndColorToolButton->isEnabled()) {
-        css = "background-color: " % d->exportSettings.turbopropEndColor.name() % ";";
+        css = "background-color: " % d->settings.getTurbopropEndColor().name() % ";";
     } else {
         css = QString("background-color: ") % DisabledColor % ";";
     }
     ui->turbopropEndColorToolButton->setStyleSheet(css);
 
     if (ui->pistonStartColorToolButton->isEnabled()) {
-        css = "background-color: " % d->exportSettings.pistonStartColor.name() % ";";
+        css = "background-color: " % d->settings.getPistonStartColor().name() % ";";
     } else {
         css = QString("background-color: ") % DisabledColor % ";";
     }
     ui->pistonStartColorToolButton->setStyleSheet(css);
     if (ui->pistonEndColorToolButton->isEnabled()) {
-        css = "background-color: " % d->exportSettings.pistonEndColor.name() % ";";
+        css = "background-color: " % d->settings.getPistonEndColor().name() % ";";
     } else {
         css = QString("background-color: ") % DisabledColor % ";";
     }
@@ -233,28 +233,28 @@ void KMLExportOptionWidget::selectColor(int id) noexcept
     QColor initialColor;
     switch (static_cast<ColorButton>(id)) {
     case ColorButton::JetStartColor:
-        initialColor = d->exportSettings.jetStartColor;
+        initialColor = d->settings.getJetStartColor();
         break;
     case ColorButton::JetEndColor:
-        initialColor = d->exportSettings.jetEndColor;
+        initialColor = d->settings.getJetEndColor();
         break;
     case ColorButton::TurbopropStartColor:
-        initialColor = d->exportSettings.turbopropStartColor;
+        initialColor = d->settings.getTurbopropStartColor();
         break;
     case ColorButton::TurbopropEndColor:
-        initialColor = d->exportSettings.turbopropEndColor;
+        initialColor = d->settings.getTurbopropEndColor();
         break;
     case ColorButton::PistonStartColor:
-        initialColor = d->exportSettings.pistonStartColor;
+        initialColor = d->settings.getPistonStartColor();
         break;
     case ColorButton::PistonEndColor:
-        initialColor = d->exportSettings.pistonEndColor;
+        initialColor = d->settings.getPistonEndColor();
         break;
     case ColorButton::AllStartColor:
-        initialColor = d->exportSettings.allStartColor;
+        initialColor = d->settings.getAllStartColor();
         break;
     case ColorButton::AllEndColor:
-        initialColor = d->exportSettings.allEndColor;
+        initialColor = d->settings.getAllEndColor();
         break;
     default:
         break;
@@ -264,48 +264,41 @@ void KMLExportOptionWidget::selectColor(int id) noexcept
     if (color.isValid()) {
         switch (static_cast<ColorButton>(id)) {
         case ColorButton::JetStartColor:
-            d->exportSettings.jetStartColor = color;
-            d->exportSettings.jetEndColor = color.darker();
+            d->settings.setJetStartColor(color);
+            d->settings.setJetEndColor(color.darker());
             break;
         case ColorButton::JetEndColor:
-            d->exportSettings.jetEndColor = color;
+            d->settings.setJetEndColor(color);
             break;
         case ColorButton::TurbopropStartColor:
-            d->exportSettings.turbopropStartColor = color;
-            d->exportSettings.turbopropEndColor = color.darker();
+            d->settings.setTurbopropStartColor(color);
+            d->settings.setTurbopropEndColor(color.darker());
             break;
         case ColorButton::TurbopropEndColor:
-            d->exportSettings.turbopropEndColor = color;
+            d->settings.setTurbopropEndColor(color);
             break;
         case ColorButton::PistonStartColor:
-            d->exportSettings.pistonStartColor = color;
-            d->exportSettings.pistonEndColor = color.darker();
+            d->settings.setPistonStartColor(color);
+            d->settings.setPistonEndColor(color.darker());
             break;
         case ColorButton::PistonEndColor:
-            d->exportSettings.pistonEndColor = color;
+            d->settings.setPistonEndColor(color);
             break;
         case ColorButton::AllStartColor:
-            d->exportSettings.allStartColor = color;
-            d->exportSettings.allEndColor = color.darker();
+            d->settings.setAllStartColor(color);
+            d->settings.setAllEndColor(color.darker());
             break;
         case ColorButton::AllEndColor:
-            d->exportSettings.allEndColor = color;
+            d->settings.setAllEndColor(color);
             break;
         default:
             break;
         }
-        updateUi();
     }
 }
 
 void KMLExportOptionWidget::onColorStyleChanged([[maybe_unused]] int index) noexcept
 {
-    d->exportSettings.colorStyle = static_cast<KMLExportSettings::ColorStyle>(ui->colorStyleComboBox->currentData().toInt());
-    if (d->exportSettings.colorStyle == KMLExportSettings::ColorStyle::ColorRamp || d->exportSettings.colorStyle == KMLExportSettings::ColorStyle::ColorRampPerEngineType) {
-        d->exportSettings.nofColorsPerRamp = KMLExportSettings::DefaultNofColorsPerRamp;
-    } else {
-        d->exportSettings.nofColorsPerRamp = 1;
-    }
-
-    updateUi();
+    const KMLExportSettings::ColorStyle colorStyle = static_cast<KMLExportSettings::ColorStyle>(ui->colorStyleComboBox->currentData().toInt());
+    d->settings.setColorStyle(colorStyle);
 }

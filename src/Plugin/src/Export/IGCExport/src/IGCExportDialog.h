@@ -44,7 +44,7 @@ class IGCExportDialog : public QDialog
 public:
     static inline const QString FileExtension {QStringLiteral("igc")};
 
-    explicit IGCExportDialog(IGCExportSettings &exportSettings, QWidget *parent = nullptr) noexcept;
+    explicit IGCExportDialog(IGCExportSettings &settings, QWidget *parent = nullptr) noexcept;
     virtual ~IGCExportDialog() noexcept;
 
     QString getSelectedFilePath() const noexcept;

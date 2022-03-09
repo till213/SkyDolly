@@ -34,18 +34,18 @@ class CSVImportOptionWidgetPrivate
 {
 public:
     CSVImportOptionWidgetPrivate(CSVImportSettings &theImportSettings) noexcept
-        : importSettings(theImportSettings)
+        : settings(theImportSettings)
     {}
 
-     CSVImportSettings &importSettings;
+     CSVImportSettings &settings;
 };
 
 // PUBLIC
 
-CSVImportOptionWidget::CSVImportOptionWidget(CSVImportSettings &importSettings, QWidget *parent) noexcept
+CSVImportOptionWidget::CSVImportOptionWidget(CSVImportSettings &settings, QWidget *parent) noexcept
     : QWidget(parent),
       ui(new Ui::CSVImportOptionWidget),
-      d(std::make_unique<CSVImportOptionWidgetPrivate>(importSettings))
+      d(std::make_unique<CSVImportOptionWidgetPrivate>(settings))
 {
     ui->setupUi(this);
     initUi();
@@ -75,7 +75,7 @@ void CSVImportOptionWidget::frenchConnection() noexcept
     connect(ui->formatComboBox, &QComboBox::currentIndexChanged,
             this, &CSVImportOptionWidget::onFormatChanged);
 #endif
-    connect(&d->importSettings, &CSVImportSettings::defaultsRestored,
+    connect(&d->settings, &CSVImportSettings::defaultsRestored,
             this, &CSVImportOptionWidget::updateUi);
 }
 
@@ -90,14 +90,14 @@ void CSVImportOptionWidget::initUi() noexcept
 
 void CSVImportOptionWidget::onFormatChanged([[maybe_unused]]int index) noexcept
 {
-    d->importSettings.m_format = static_cast<CSVImportSettings::Format>(ui->formatComboBox->currentData().toInt());
+    d->settings.m_format = static_cast<CSVImportSettings::Format>(ui->formatComboBox->currentData().toInt());
 }
 
 void CSVImportOptionWidget::updateUi() noexcept
 {
     int currentIndex = 0;
     while (currentIndex < ui->formatComboBox->count() &&
-           static_cast<CSVImportSettings::Format>(ui->formatComboBox->itemData(currentIndex).toInt()) != d->importSettings.m_format) {
+           static_cast<CSVImportSettings::Format>(ui->formatComboBox->itemData(currentIndex).toInt()) != d->settings.m_format) {
         ++currentIndex;
     }
     ui->formatComboBox->setCurrentIndex(currentIndex);

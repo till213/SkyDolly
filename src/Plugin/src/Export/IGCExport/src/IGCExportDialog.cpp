@@ -53,21 +53,21 @@ class IGCExportDialogPrivate
 {
 public:
     IGCExportDialogPrivate(IGCExportSettings &theExportSettings) noexcept
-        : exportSettings(theExportSettings),
+        : settings(theExportSettings),
           exportButton(nullptr)
     {}
 
-    IGCExportSettings &exportSettings;
+    IGCExportSettings &settings;
     QPushButton *exportButton;
     Unit unit;
 };
 
 // PUBLIC
 
-IGCExportDialog::IGCExportDialog(IGCExportSettings &exportSettings, QWidget *parent) noexcept
+IGCExportDialog::IGCExportDialog(IGCExportSettings &settings, QWidget *parent) noexcept
     : QDialog(parent),
       ui(new Ui::IGCExportDialog),
-      d(std::make_unique<IGCExportDialogPrivate>(exportSettings))
+      d(std::make_unique<IGCExportDialogPrivate>(settings))
 {
     ui->setupUi(this);
     initUi();
@@ -132,8 +132,8 @@ void IGCExportDialog::updateInfoUi() noexcept
 
 void IGCExportDialog::updateFlightUi() noexcept
 {
-    ui->pilotNameLineEdit->setText(d->exportSettings.pilotName);
-    ui->coPilotNameLineEdit->setText(d->exportSettings.coPilotName);
+    ui->pilotNameLineEdit->setText(d->settings.pilotName);
+    ui->coPilotNameLineEdit->setText(d->settings.coPilotName);
 }
 
 void IGCExportDialog::frenchConnection() noexcept
@@ -176,7 +176,7 @@ void IGCExportDialog::updateUi() noexcept
 
     int currentIndex = 0;
     while (currentIndex < ui->resamplingComboBox->count() &&
-           static_cast<IGCExportSettings::ResamplingPeriod>(ui->resamplingComboBox->itemData(currentIndex).toInt()) != d->exportSettings.resamplingPeriod) {
+           static_cast<IGCExportSettings::ResamplingPeriod>(ui->resamplingComboBox->itemData(currentIndex).toInt()) != d->settings.resamplingPeriod) {
         ++currentIndex;
     }
     ui->resamplingComboBox->setCurrentIndex(currentIndex);
@@ -187,7 +187,7 @@ void IGCExportDialog::updateUi() noexcept
 
 void IGCExportDialog::restoreDefaults() noexcept
 {
-    d->exportSettings.restoreDefaults();
+    d->settings.restoreDefaults();
     updateUi();
 }
 
@@ -202,18 +202,18 @@ void IGCExportDialog::on_fileSelectionPushButton_clicked() noexcept
 
 void IGCExportDialog::on_resamplingComboBox_activated([[maybe_unused]] int index) noexcept
 {
-    d->exportSettings.resamplingPeriod = static_cast<IGCExportSettings::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt());
+    d->settings.resamplingPeriod = static_cast<IGCExportSettings::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt());
     updateInfoUi();
 }
 
 void IGCExportDialog::on_pilotNameLineEdit_editingFinished() noexcept
 {
-    d->exportSettings.pilotName = ui->pilotNameLineEdit->text();
+    d->settings.pilotName = ui->pilotNameLineEdit->text();
     updateFlightUi();
 }
 
 void IGCExportDialog::on_coPilotNameLineEdit_editingFinished() noexcept
 {
-    d->exportSettings.coPilotName = ui->coPilotNameLineEdit->text();
+    d->settings.coPilotName = ui->coPilotNameLineEdit->text();
     updateFlightUi();
 }

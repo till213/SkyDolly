@@ -47,7 +47,7 @@ class GPXParserPrivate
 public:
     GPXParserPrivate(QXmlStreamReader &xmlStreamReader, const GPXImportSettings &theImportSettings) noexcept
         : xml(xmlStreamReader),
-          importSettings(theImportSettings),
+          settings(theImportSettings),
           flight(Logbook::getInstance().getCurrentFlight()),
           position(flight.getUserAircraft().getPosition()),
           flightPlan(flight.getUserAircraft().getFlightPlan())
@@ -56,7 +56,7 @@ public:
     }
 
     QXmlStreamReader &xml;
-    const GPXImportSettings &importSettings;
+    const GPXImportSettings &settings;
     QDateTime firstDateTimeUtc;
     QString documentName;
     QString description;
@@ -157,19 +157,19 @@ void GPXParser::parseWaypoint() noexcept
     QString identifier;
     QDateTime currentDateTimeUtc;
 
-    if (d->importSettings.m_waypointSelection == GPXImportSettings::GPXElement::Waypoint ||
-        d->importSettings.m_positionSelection == GPXImportSettings::GPXElement::Waypoint) {
+    if (d->settings.m_waypointSelection == GPXImportSettings::GPXElement::Waypoint ||
+        d->settings.m_positionSelection == GPXImportSettings::GPXElement::Waypoint) {
         ok = parseWaypointType(latitude, longitude, altitude, identifier, currentDateTimeUtc);
     } else {
         d->xml.skipCurrentElement();
     }
 
-    if (ok && d->importSettings.m_waypointSelection == GPXImportSettings::GPXElement::Waypoint) {
+    if (ok && d->settings.m_waypointSelection == GPXImportSettings::GPXElement::Waypoint) {
         Waypoint waypoint {static_cast<float>(latitude), static_cast<float>(longitude), static_cast<float>(altitude)};
         waypoint.identifier = identifier;
         d->flightPlan.add(waypoint);
     }
-    if (ok && d->importSettings.m_positionSelection == GPXImportSettings::GPXElement::Waypoint) {
+    if (ok && d->settings.m_positionSelection == GPXImportSettings::GPXElement::Waypoint) {
         PositionData positionData {latitude, longitude, altitude};
         if (d->firstDateTimeUtc.isNull()) {
             if (currentDateTimeUtc.isValid()) {
@@ -187,7 +187,7 @@ void GPXParser::parseWaypoint() noexcept
             const double averageAltitude = (previousPositionData.altitude + positionData.altitude) / 2.0;
             // In meters
             const double distance = SkyMath::sphericalDistance(start, end, averageAltitude);
-            const double velocityMetersPerSecond = Convert::knotsToMetersPerSecond(d->importSettings.m_defaultVelocity);
+            const double velocityMetersPerSecond = Convert::knotsToMetersPerSecond(d->settings.m_defaultVelocity);
             const double seconds = distance / velocityMetersPerSecond;
             // Milliseconds
             positionData.timestamp = previousPositionData.timestamp + qRound(seconds * 1000.0);
@@ -226,19 +226,19 @@ void GPXParser::parseRoutePoint() noexcept
     QString identifier;
     QDateTime currentDateTimeUtc;
 
-    if (d->importSettings.m_waypointSelection == GPXImportSettings::GPXElement::Route ||
-        d->importSettings.m_positionSelection == GPXImportSettings::GPXElement::Route) {
+    if (d->settings.m_waypointSelection == GPXImportSettings::GPXElement::Route ||
+        d->settings.m_positionSelection == GPXImportSettings::GPXElement::Route) {
         ok = parseWaypointType(latitude, longitude, altitude, identifier, currentDateTimeUtc);
     } else {
         d->xml.skipCurrentElement();
     }
 
-    if (ok && d->importSettings.m_waypointSelection == GPXImportSettings::GPXElement::Route) {
+    if (ok && d->settings.m_waypointSelection == GPXImportSettings::GPXElement::Route) {
         Waypoint waypoint {static_cast<float>(latitude), static_cast<float>(longitude), static_cast<float>(altitude)};
         waypoint.identifier = identifier;
         d->flightPlan.add(waypoint);
     }
-    if (ok && d->importSettings.m_positionSelection == GPXImportSettings::GPXElement::Route) {
+    if (ok && d->settings.m_positionSelection == GPXImportSettings::GPXElement::Route) {
         PositionData positionData {latitude, longitude, altitude};
         if (d->firstDateTimeUtc.isNull()) {
             if (currentDateTimeUtc.isValid()) {
@@ -256,7 +256,7 @@ void GPXParser::parseRoutePoint() noexcept
             const double averageAltitude = (previousPositionData.altitude + positionData.altitude) / 2.0;
             // In meters
             const double distance = SkyMath::sphericalDistance(start, end, averageAltitude);
-            const double velocityMetersPerSecond = Convert::knotsToMetersPerSecond(d->importSettings.m_defaultVelocity);
+            const double velocityMetersPerSecond = Convert::knotsToMetersPerSecond(d->settings.m_defaultVelocity);
             const double seconds = distance / velocityMetersPerSecond;
             // Milliseconds
             positionData.timestamp = previousPositionData.timestamp + qRound(seconds * 1000.0);
@@ -303,19 +303,19 @@ inline void GPXParser::parseTrackPoint() noexcept
     QString identifier;
     QDateTime currentDateTimeUtc;
 
-    if (d->importSettings.m_waypointSelection == GPXImportSettings::GPXElement::Track ||
-        d->importSettings.m_positionSelection == GPXImportSettings::GPXElement::Track) {
+    if (d->settings.m_waypointSelection == GPXImportSettings::GPXElement::Track ||
+        d->settings.m_positionSelection == GPXImportSettings::GPXElement::Track) {
         ok = parseWaypointType(latitude, longitude, altitude, identifier, currentDateTimeUtc);
     } else {
         d->xml.skipCurrentElement();
     }
 
-    if (ok && d->importSettings.m_waypointSelection == GPXImportSettings::GPXElement::Track) {
+    if (ok && d->settings.m_waypointSelection == GPXImportSettings::GPXElement::Track) {
         Waypoint waypoint {static_cast<float>(latitude), static_cast<float>(longitude), static_cast<float>(altitude)};
         waypoint.identifier = identifier;
         d->flightPlan.add(waypoint);
     }
-    if (ok && d->importSettings.m_positionSelection == GPXImportSettings::GPXElement::Track) {
+    if (ok && d->settings.m_positionSelection == GPXImportSettings::GPXElement::Track) {
         PositionData positionData {latitude, longitude, altitude};
         if (d->firstDateTimeUtc.isNull()) {
             if (currentDateTimeUtc.isValid()) {
@@ -336,7 +336,7 @@ inline void GPXParser::parseTrackPoint() noexcept
                 const double averageAltitude = (previousPositionData.altitude + positionData.altitude) / 2.0;
                 // In meters
                 const double distance = SkyMath::sphericalDistance(start, end, averageAltitude);
-                const double velocityMetersPerSecond = Convert::knotsToMetersPerSecond(d->importSettings.m_defaultVelocity);
+                const double velocityMetersPerSecond = Convert::knotsToMetersPerSecond(d->settings.m_defaultVelocity);
                 const double seconds = distance / velocityMetersPerSecond;
                 // Milliseconds
                 positionData.timestamp = previousPositionData.timestamp + qRound(seconds * 1000.0);
@@ -364,7 +364,7 @@ bool GPXParser::parseWaypointType(double &latitude, double &longitude, double &a
         d->xml.raiseError("Could not parse waypoint latitude value.");
     }
 
-    altitude = d->importSettings.m_defaultAltitude;
+    altitude = d->settings.m_defaultAltitude;
     while (ok && d->xml.readNextStartElement()) {
         if (d->xml.name() == GPX::ele) {
             const QString elevationText = d->xml.readElementText();

@@ -109,7 +109,7 @@ public:
     {}
 
     Flight &flight;
-    IGCExportSettings exportSettings;
+    IGCExportSettings settings;
     Unit unit;
 
     static inline const QByteArray ARecord {"A"};
@@ -140,7 +140,7 @@ IGCExportPlugin::~IGCExportPlugin() noexcept
 bool IGCExportPlugin::exportData() noexcept
 {
     bool ok;
-    std::unique_ptr<IGCExportDialog> exportDialog = std::make_unique<IGCExportDialog>(d->exportSettings, getParentWidget());
+    std::unique_ptr<IGCExportDialog> exportDialog = std::make_unique<IGCExportDialog>(d->settings, getParentWidget());
     const int choice = exportDialog->exec();
     if (choice == QDialog::Accepted) {
         // Remember export path
@@ -181,17 +181,17 @@ bool IGCExportPlugin::exportData() noexcept
 
 void IGCExportPlugin::addSettings(Settings::PluginSettings &settings) const noexcept
 {
-    d->exportSettings.addSettings(settings);
+    d->settings.addSettings(settings);
 }
 
 void IGCExportPlugin::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    d->exportSettings.addKeysWithDefault(keysWithDefaults);
+    d->settings.addKeysWithDefault(keysWithDefaults);
 }
 
 void IGCExportPlugin::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
-    d->exportSettings.applySettings(valuesByKey);
+    d->settings.applySettings(valuesByKey);
 }
 
 // PRIVATE
@@ -227,8 +227,8 @@ inline bool IGCExportPlugin::exportHRecord(const Aircraft &aircraft, QIODevice &
 {
     const QByteArray record =
         IGCExportPluginPrivate::HRecord % ::Date % formatDate(d->flight.getFlightConditionConst().startZuluTime) % ::LineEnd %
-        IGCExportPluginPrivate::HRecord % ::Pilot % d->exportSettings.pilotName.toLatin1() % ::LineEnd %
-        IGCExportPluginPrivate::HRecord % ::CoPilot % d->exportSettings.coPilotName.toLatin1() % ::LineEnd %
+        IGCExportPluginPrivate::HRecord % ::Pilot % d->settings.pilotName.toLatin1() % ::LineEnd %
+        IGCExportPluginPrivate::HRecord % ::CoPilot % d->settings.coPilotName.toLatin1() % ::LineEnd %
         IGCExportPluginPrivate::HRecord % ::GliderType % aircraft.getAircraftInfoConst().aircraftType.type.toLatin1() % ::LineEnd %
         IGCExportPluginPrivate::HRecord % ::GliderId % aircraft.getAircraftInfoConst().tailNumber.toLatin1() % ::LineEnd %
         IGCExportPluginPrivate::HRecord % ::GPSDatum % ::LineEnd %
@@ -297,7 +297,7 @@ inline bool IGCExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &
     const Position &position = aircraft.getPositionConst();
     const Engine &engine = aircraft.getEngineConst();
     ok = true;
-    if (d->exportSettings.resamplingPeriod != IGCExportSettings::ResamplingPeriod::Original) {
+    if (d->settings.resamplingPeriod != IGCExportSettings::ResamplingPeriod::Original) {
         const std::int64_t duration = position.getLast().timestamp;
         std::int64_t timestamp = 0;
         while (ok && timestamp <= duration) {
@@ -321,7 +321,7 @@ inline bool IGCExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &
                                           ::LineEnd;
                 ok = io.write(record);
             }
-            timestamp += Enum::toUnderlyingType(d->exportSettings.resamplingPeriod);
+            timestamp += Enum::toUnderlyingType(d->settings.resamplingPeriod);
         }
     } else {
         // Original data requested

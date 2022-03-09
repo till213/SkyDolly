@@ -40,7 +40,7 @@ class CSVImportOptionWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit CSVImportOptionWidget(CSVImportSettings &importSettings, QWidget *parent = nullptr) noexcept;
+    explicit CSVImportOptionWidget(CSVImportSettings &settings, QWidget *parent = nullptr) noexcept;
     virtual ~CSVImportOptionWidget() noexcept;
 
 private:

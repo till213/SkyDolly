@@ -44,7 +44,7 @@ public:
         Flag
     };
 
-    KMLStyleExport(const KMLExportSettings &exportSettings) noexcept;
+    KMLStyleExport(const KMLExportSettings &settings) noexcept;
     ~KMLStyleExport() noexcept;
 
     bool exportStyles(QIODevice &io) noexcept;

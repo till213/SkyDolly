@@ -31,9 +31,11 @@
 
 namespace
 {
-    constexpr char ResamplingPeriod[] = "ResamplingPeriod";
-    constexpr char OpenExportedFileEnabled[] = "OpenExportedFileEnabled";
+    // Keys
+    constexpr char ResamplingPeriodKey[] = "ResamplingPeriod";
+    constexpr char OpenExportedFileEnabledKey[] = "OpenExportedFileEnabled";
 
+    // Defaults
     constexpr SampleRate::ResamplingPeriod DefaultResamplingPeriod = SampleRate::ResamplingPeriod::OneHz;
     constexpr bool DefaultOpenExportedFileEnabled = false;
 }
@@ -76,7 +78,7 @@ void ExportPluginBaseSettings::setResamplingPeriod(SampleRate::ResamplingPeriod 
 {
     if (d->resamplingPeriod != resamplingPeriod) {
         d->resamplingPeriod = resamplingPeriod;
-        emit changed();
+        emit baseSettingsChanged();
     }
 }
 
@@ -89,7 +91,7 @@ void ExportPluginBaseSettings::setOpenExportedFileEnabled(bool openExportedFileE
 {
     if (d->openExportedFileEnabled != openExportedFileEnabled) {
         d->openExportedFileEnabled = openExportedFileEnabled;
-        emit changed();
+        emit baseSettingsChanged();
     }
 }
 
@@ -97,11 +99,11 @@ void ExportPluginBaseSettings::addSettings(Settings::PluginSettings &settings) c
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::ResamplingPeriod;
+    keyValue.first = ::ResamplingPeriodKey;
     keyValue.second = Enum::toUnderlyingType(d->resamplingPeriod);
     settings.push_back(keyValue);
 
-    keyValue.first = ::OpenExportedFileEnabled;
+    keyValue.first = ::OpenExportedFileEnabledKey;
     keyValue.second = d->openExportedFileEnabled;
     settings.push_back(keyValue);
 }
@@ -110,31 +112,31 @@ void ExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &k
 {
     Settings::KeyValue keyValue;
 
-    keyValue.first = ::ResamplingPeriod;
-    keyValue.second = Enum::toUnderlyingType(DefaultResamplingPeriod);
+    keyValue.first = ::ResamplingPeriodKey;
+    keyValue.second = Enum::toUnderlyingType(::DefaultResamplingPeriod);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = ::OpenExportedFileEnabled;
-    keyValue.second = DefaultOpenExportedFileEnabled;
+    keyValue.first = ::OpenExportedFileEnabledKey;
+    keyValue.second = ::DefaultOpenExportedFileEnabled;
     keysWithDefaults.push_back(keyValue);
 }
 
 void ExportPluginBaseSettings::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     bool ok;
-    int enumeration = valuesByKey[::ResamplingPeriod].toInt(&ok);
+    int enumeration = valuesByKey[::ResamplingPeriodKey].toInt(&ok);
     if (ok) {
         d->resamplingPeriod = static_cast<SampleRate::ResamplingPeriod >(enumeration);
     } else {
-        d->resamplingPeriod = DefaultResamplingPeriod;
+        d->resamplingPeriod = ::DefaultResamplingPeriod;
     }
-    d->openExportedFileEnabled = valuesByKey[::OpenExportedFileEnabled].toBool();
-    emit changed();
+    d->openExportedFileEnabled = valuesByKey[::OpenExportedFileEnabledKey].toBool();
+    emit baseSettingsChanged();
 }
 
 void ExportPluginBaseSettings::restoreDefaults() noexcept
 {
-    d->resamplingPeriod = DefaultResamplingPeriod;
-    d->openExportedFileEnabled = DefaultOpenExportedFileEnabled;
-    emit changed();
+    d->resamplingPeriod = ::DefaultResamplingPeriod;
+    d->openExportedFileEnabled = ::DefaultOpenExportedFileEnabled;
+    emit baseSettingsChanged();
 }

@@ -40,7 +40,7 @@ class KMLExportOptionWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit KMLExportOptionWidget(KMLExportSettings &ExportSettings, QWidget *parent = nullptr) noexcept;
+    explicit KMLExportOptionWidget(KMLExportSettings &settings, QWidget *parent = nullptr) noexcept;
     virtual ~KMLExportOptionWidget() noexcept;
 
 private:

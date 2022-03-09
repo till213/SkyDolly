@@ -35,18 +35,18 @@ class IGCImportOptionWidgetPrivate
 {
 public:
     IGCImportOptionWidgetPrivate(IGCImportSettings &theImportSettings) noexcept
-        : importSettings(theImportSettings)
+        : settings(theImportSettings)
     {}
 
-     IGCImportSettings &importSettings;
+     IGCImportSettings &settings;
 };
 
 // PUBLIC
 
-IGCImportOptionWidget::IGCImportOptionWidget(IGCImportSettings &importSettings, QWidget *parent) noexcept
+IGCImportOptionWidget::IGCImportOptionWidget(IGCImportSettings &settings, QWidget *parent) noexcept
     : QWidget(parent),
       ui(new Ui::IGCImportOptionWidget),
-      d(std::make_unique<IGCImportOptionWidgetPrivate>(importSettings))
+      d(std::make_unique<IGCImportOptionWidgetPrivate>(settings))
 {
     ui->setupUi(this);
     initUi();
@@ -81,7 +81,7 @@ void IGCImportOptionWidget::frenchConnection() noexcept
             this, &IGCImportOptionWidget::onENLThresholdChanged);
 #endif
 
-    connect(&d->importSettings, &IGCImportSettings::defaultsRestored,
+    connect(&d->settings, &IGCImportSettings::defaultsRestored,
             this, &IGCImportOptionWidget::updateUi);
 }
 
@@ -100,22 +100,22 @@ void IGCImportOptionWidget::initUi() noexcept
 
 void IGCImportOptionWidget::onAltitudeChanged([[maybe_unused]]int index) noexcept
 {
-    d->importSettings.m_altitude = static_cast<IGCImportSettings::Altitude>(ui->altitudeComboBox->currentData().toInt());
+    d->settings.m_altitude = static_cast<IGCImportSettings::Altitude>(ui->altitudeComboBox->currentData().toInt());
 }
 
 void IGCImportOptionWidget::onENLThresholdChanged(int value) noexcept
 {
-    d->importSettings.m_enlThresholdPercent = value;
+    d->settings.m_enlThresholdPercent = value;
 }
 
 void IGCImportOptionWidget::updateUi() noexcept
 {
     int currentIndex = 0;
     while (currentIndex < ui->altitudeComboBox->count() &&
-           static_cast<IGCImportSettings::Altitude>(ui->altitudeComboBox->itemData(currentIndex).toInt()) != d->importSettings.m_altitude) {
+           static_cast<IGCImportSettings::Altitude>(ui->altitudeComboBox->itemData(currentIndex).toInt()) != d->settings.m_altitude) {
         ++currentIndex;
     }
     ui->altitudeComboBox->setCurrentIndex(currentIndex);
 
-    ui->enlThresholdSpinBox->setValue(d->importSettings.m_enlThresholdPercent);
+    ui->enlThresholdSpinBox->setValue(d->settings.m_enlThresholdPercent);
 }

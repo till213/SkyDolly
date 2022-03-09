@@ -40,7 +40,7 @@ class IGCImportOptionWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit IGCImportOptionWidget(IGCImportSettings &importSettings, QWidget *parent = nullptr) noexcept;
+    explicit IGCImportOptionWidget(IGCImportSettings &settings, QWidget *parent = nullptr) noexcept;
     virtual ~IGCImportOptionWidget() noexcept;
 
 private:

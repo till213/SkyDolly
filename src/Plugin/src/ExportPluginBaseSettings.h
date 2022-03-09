@@ -54,7 +54,16 @@ public:
     void restoreDefaults() noexcept;
 
 signals:
-    void changed();
+    /*!
+     * Emitted whenever the base settings have changed.
+     */
+    void baseSettingsChanged();
+
+    /*!
+     * Emitted whenever the extended settings have changed. This signal is
+     * only emitted by classes extending the ExportPluginBaseSettings.
+     */
+    void extendedSettingsChanged();
 
 private:
     std::unique_ptr<ExportPluginBaseSettingsPrivate> d;

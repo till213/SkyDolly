@@ -114,7 +114,7 @@ bool KMLExportPlugin::writeFile(QFile &file) noexcept
     const int nofAircraft = d->flight.count();
     // Only create as many colors per ramp as there are aircraft (if there are less aircraft
     // than requested colors per ramp)
-    d->settings.nofColorsPerRamp = qMin(nofAircraft, d->settings.nofColorsPerRamp);
+    d->settings.setNofColorsPerRamp(qMin(nofAircraft, d->settings.getNofColorsPerRamp()));
 
     file.setTextModeEnabled(true);
     ok = exportHeader(file);
