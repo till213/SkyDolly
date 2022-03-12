@@ -95,9 +95,13 @@ void KMLExportOptionWidget::frenchConnection() noexcept
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
         connect(d->colorButtonGroup.get(), QOverload<int>::of(&QButtonGroup::buttonClicked),
                 this, &KMLExportOptionWidget::selectColor);
+        connect(ui->colorStyleComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+                this, &KMLExportOptionWidget::onColorStyleChanged);
 #else
         connect(d->colorButtonGroup.get(), &QButtonGroup::idClicked,
                 this, &KMLExportOptionWidget::selectColor);
+        connect(ui->colorStyleComboBox, &QComboBox::currentIndexChanged,
+                this, &KMLExportOptionWidget::onColorStyleChanged);
 #endif
 }
 

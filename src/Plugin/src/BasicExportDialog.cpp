@@ -165,6 +165,8 @@ void BasicExportDialog::updateInfoUi() noexcept
 
 void BasicExportDialog::frenchConnection() noexcept
 {
+    connect(ui->fileSelectionPushButton, &QPushButton::clicked,
+            this, &BasicExportDialog::onFileSelectionButtonClicked);
     connect(ui->filePathLineEdit, &QLineEdit::textChanged,
             this, &BasicExportDialog::updateUi);
 
@@ -225,7 +227,7 @@ void BasicExportDialog::updateUi() noexcept
     updateInfoUi();
 }
 
-void BasicExportDialog::onFileSelectionChanged() noexcept
+void BasicExportDialog::onFileSelectionButtonClicked() noexcept
 {
     const QString filePath = QFileDialog::getSaveFileName(this, tr("Export file..."), ui->filePathLineEdit->text(), d->fileFilter);
     if (!filePath.isEmpty()) {

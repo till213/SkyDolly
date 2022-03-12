@@ -71,7 +71,7 @@ private:
 private slots:
     void updateUi() noexcept;
 
-    void onFileSelectionChanged() noexcept;
+    void onFileSelectionButtonClicked() noexcept;
     void onResamplingOptionChanged(int index) noexcept;
     void onDoOpenExportedFileChanged(bool enable) noexcept;
     void onRestoreSettings() noexcept;

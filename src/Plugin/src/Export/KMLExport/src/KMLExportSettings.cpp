@@ -55,7 +55,7 @@ namespace
 
     // "Tetraedic" colors
     constexpr QRgb DefaultJetStartRgba = Opaque | 0xde7b51;
-    constexpr QRgb DefaultJetEndColor = Opaque | 0x6f3d28;
+    constexpr QRgb DefaultJetEndRgba = Opaque | 0x6f3d28;
     constexpr QRgb DefaultTurbopropStartRgba = Opaque | 0x6ade4b;
     constexpr QRgb DefaultTurbopropEndRgba = Opaque | 0x356f25;
     constexpr QRgb DefaultPistonStartRgba = Opaque | 0x4bb3de;
@@ -72,7 +72,17 @@ class KMLExportSettingsPrivate
 {
 public:
     KMLExportSettingsPrivate()
-        : jetStartColor(::DefaultJetStartRgba)
+        : colorStyle(::DefaultColorStyle),
+          nofColorsPerRamp(::DefaultNofColorsPerRamp),
+          lineWidth(::DefaultLineWidth),
+          jetStartColor(::DefaultJetStartRgba),
+          jetEndColor(::DefaultJetEndRgba),
+          turbopropStartColor(::DefaultTurbopropStartRgba),
+          turbopropEndColor(::DefaultTurbopropEndRgba),
+          pistonStartColor(::DefaultPistonStartRgba),
+          pistonEndColor(::DefaultPistonEndRgba),
+          allStartColor(::DefaultAllStartRgba),
+          allEndColor(::DefaultAllEndRgba)
     {}
 
     KMLExportSettings::ColorStyle colorStyle;
@@ -94,7 +104,6 @@ KMLExportSettings::KMLExportSettings() noexcept
     : ExportPluginBaseSettings(),
       d(std::make_unique<KMLExportSettingsPrivate>())
 {
-    restoreDefaults();
 #ifdef DEBUG
     qDebug("KMLExportSettings::KMLExportSettings: CREATED");
 #endif
@@ -330,7 +339,7 @@ void KMLExportSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWith
     keys.push_back(keyValue);
 
     keyValue.first = ::JetEndColorKey;
-    keyValue.second = QColor(::DefaultJetEndColor);
+    keyValue.second = QColor(::DefaultJetEndRgba);
     keys.push_back(keyValue);
 
     keyValue.first = ::TurbopropStartColorKey;
@@ -401,7 +410,7 @@ void KMLExportSettings::restoreDefaults() noexcept
     d->nofColorsPerRamp = ::DefaultNofColorsPerRamp;
     d->lineWidth = ::DefaultLineWidth;
     d->jetStartColor = ::DefaultJetStartRgba;
-    d->jetEndColor = ::DefaultJetEndColor;
+    d->jetEndColor = ::DefaultJetEndRgba;
     d->turbopropStartColor = ::DefaultTurbopropStartRgba;
     d->turbopropEndColor = ::DefaultTurbopropEndRgba;
     d->pistonStartColor = ::DefaultPistonStartRgba;
