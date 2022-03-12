@@ -266,7 +266,7 @@ void KMLExportSettings::setAllEndColor(QColor color) noexcept
 
 void KMLExportSettings::addSettings(Settings::PluginSettings &settings) const noexcept
 {
-    ExportPluginBaseSettings::addKeysWithDefaults(settings);
+    ExportPluginBaseSettings::addSettings(settings);
 
     Settings::KeyValue keyValue;
 
@@ -319,52 +319,51 @@ void KMLExportSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWith
 {
     ExportPluginBaseSettings::addKeysWithDefaults(keysWithDefaults);
 
-    Settings::KeysWithDefaults keys;
     Settings::KeyValue keyValue;
 
     keyValue.first = ::ColorStyleKey;
     keyValue.second = Enum::toUnderlyingType(::DefaultColorStyle);
-    keys.push_back(keyValue);
+    keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::NofColorsPerRampKey;
     keyValue.second = ::DefaultNofColorsPerRamp;
-    keys.push_back(keyValue);
+    keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::LineWidthKey;
     keyValue.second = ::DefaultLineWidth;
-    keys.push_back(keyValue);
+    keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::JetStartColorKey;
     keyValue.second = QColor(::DefaultJetStartRgba);
-    keys.push_back(keyValue);
+    keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::JetEndColorKey;
     keyValue.second = QColor(::DefaultJetEndRgba);
-    keys.push_back(keyValue);
+    keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::TurbopropStartColorKey;
     keyValue.second = QColor(::DefaultTurbopropStartRgba);
-    keys.push_back(keyValue);
+    keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::TurbopropEndColorKey;
     keyValue.second = QColor(::DefaultTurbopropEndRgba);
-    keys.push_back(keyValue);
+    keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::PistonStartColorKey;
     keyValue.second = QColor(::DefaultPistonStartRgba);
-    keys.push_back(keyValue);
+    keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::PistonEndColorKey;
     keyValue.second = QColor(::DefaultPistonEndRgba);
-    keys.push_back(keyValue);
+    keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::AllStartColorKey;
     keyValue.second = QColor(::DefaultAllStartRgba);
-    keys.push_back(keyValue);
+    keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::AllEndColorKey;
     keyValue.second = QColor(::DefaultAllEndRgba);
-    keys.push_back(keyValue);
+    keysWithDefaults.push_back(keyValue);
 }
 
 void KMLExportSettings::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
