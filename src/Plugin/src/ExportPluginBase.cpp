@@ -72,7 +72,7 @@ bool ExportPluginBase::exportData() noexcept
 
     Settings &settings = Settings::getInstance();
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
-    std::unique_ptr<BasicExportDialog> exportDialog = std::make_unique<BasicExportDialog>(getFileFilter(), getSettings(), getParentWidget());
+    std::unique_ptr<BasicExportDialog> exportDialog = std::make_unique<BasicExportDialog>(getFileExtension(), getFileFilter(), getSettings(), getParentWidget());
     connect(exportDialog.get(), &BasicExportDialog::restoreDefaultOptions,
             this, &ExportPluginBase::onRestoreDefaultSettings);
     // Transfer ownership to exportDialog

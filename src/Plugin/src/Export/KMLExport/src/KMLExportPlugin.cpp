@@ -162,6 +162,11 @@ void KMLExportPlugin::restoreSettings(Settings::ValuesByKey valuesByKey) noexcep
     d->settings.restoreSettings(valuesByKey);
 }
 
+QString KMLExportPlugin::getFileExtension() const noexcept
+{
+    return KMLExportPluginPrivate::FileExtension;
+}
+
 QString KMLExportPlugin::getFileFilter() const noexcept
 {
     return tr("Keyhole markup language (*.%1)").arg(KMLExportPluginPrivate::FileExtension);

@@ -35,8 +35,6 @@
 #include <QFileDialog>
 #include <QComboBox>
 #include <QCheckBox>
-#include <QButtonGroup>
-#include <QColorDialog>
 
 #include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/SampleRate.h"
@@ -47,6 +45,7 @@
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/Position.h"
 #include "../../Model/src/SimType.h"
+#include "Export.h"
 #include "ExportPluginBaseSettings.h"
 #include "BasicExportDialog.h"
 #include "ui_BasicExportDialog.h"
@@ -54,13 +53,15 @@
 class BasicExportDialogPrivate
 {
 public:
-    BasicExportDialogPrivate(const QString &theFileFilter, ExportPluginBaseSettings &theSettings) noexcept
-        : fileFilter(theFileFilter),
+    BasicExportDialogPrivate(const QString &theFileExtension, const QString &theFileFilter, ExportPluginBaseSettings &theSettings) noexcept
+        : fileExtension(theFileExtension),
+          fileFilter(theFileFilter),
           settings(theSettings),
           exportButton(nullptr),
           optionWidget(nullptr)
     {}
 
+    QString fileExtension;
     QString fileFilter;
     ExportPluginBaseSettings &settings;
     QPushButton *exportButton;
@@ -70,10 +71,10 @@ public:
 
 // PUBLIC
 
-BasicExportDialog::BasicExportDialog(const QString &fileExtension, ExportPluginBaseSettings &settings, QWidget *parent) noexcept
+BasicExportDialog::BasicExportDialog(const QString &fileExtension, const QString &fileFilter, ExportPluginBaseSettings &settings, QWidget *parent) noexcept
     : QDialog(parent),
       ui(new Ui::BasicExportDialog),
-      d(std::make_unique<BasicExportDialogPrivate>(fileExtension, settings))
+      d(std::make_unique<BasicExportDialogPrivate>(fileExtension, fileFilter, settings))
 {
     ui->setupUi(this);
     initUi();
@@ -121,6 +122,8 @@ void BasicExportDialog::initUi() noexcept
 
 void BasicExportDialog::initBasicUi() noexcept
 {
+    ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestFilePath(d->fileExtension)));
+
     // Resampling
     ui->resamplingComboBox->addItem(QString("1/10 Hz") % " (" % tr("less data, less accuracy") % ")", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::ATenthHz));
     ui->resamplingComboBox->addItem("1/5 Hz", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::AFifthHz));

@@ -63,6 +63,7 @@ protected:
 
     // ExportPluginBase
     virtual ExportPluginBaseSettings &getSettings() const noexcept override;
+    virtual QString getFileExtension() const noexcept override;
     virtual QString getFileFilter() const noexcept override;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
     virtual bool writeFile(QFile &file) noexcept override;
