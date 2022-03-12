@@ -144,21 +144,18 @@ ExportPluginBaseSettings &KMLExportPlugin::getSettings() const noexcept
     return d->settings;
 }
 
-void KMLExportPlugin::addSettings(Settings::PluginSettings &settings) const noexcept
+void KMLExportPlugin::addSettingsExtn(Settings::PluginSettings &settings) const noexcept
 {
-    ExportPluginBase::addSettings(settings);
     d->settings.addSettings(settings);
 }
 
-void KMLExportPlugin::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+void KMLExportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    ExportPluginBase::addKeysWithDefaults(keysWithDefaults);
     d->settings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void KMLExportPlugin::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
+void KMLExportPlugin::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
 {
-    ExportPluginBase::restoreSettings(valuesByKey);
     d->settings.restoreSettings(valuesByKey);
 }
 
@@ -169,7 +166,7 @@ QString KMLExportPlugin::getFileExtension() const noexcept
 
 QString KMLExportPlugin::getFileFilter() const noexcept
 {
-    return tr("Keyhole markup language (*.%1)").arg(KMLExportPluginPrivate::FileExtension);
+    return tr("Keyhole markup language (*.%1)").arg(getFileExtension());
 }
 
 std::unique_ptr<QWidget> KMLExportPlugin::createOptionWidget() const noexcept

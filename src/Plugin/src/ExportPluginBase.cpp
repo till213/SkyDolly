@@ -129,14 +129,17 @@ bool ExportPluginBase::exportData() noexcept
 void ExportPluginBase::addSettings(Settings::PluginSettings &settings) const noexcept
 {
     getSettings().addSettings(settings);
+    addSettingsExtn(settings);
 }
 
 void ExportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
     getSettings().addKeysWithDefaults(keysWithDefaults);
+    addKeysWithDefaultsExtn(keysWithDefaults);
 }
 
 void ExportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     getSettings().restoreSettings(valuesByKey);
+    restoreSettingsExtn(valuesByKey);
 }

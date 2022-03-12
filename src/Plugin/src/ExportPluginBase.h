@@ -78,11 +78,14 @@ public:
     virtual bool exportData() noexcept override final;
 
 protected:
-    virtual void addSettings(Settings::PluginSettings &settings) const noexcept override;
-    virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
-    virtual void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept override;
+    virtual void addSettings(Settings::PluginSettings &settings) const noexcept override final;
+    virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override final;
+    virtual void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept override final;
 
     // Re-implement
+    virtual void addSettingsExtn(Settings::PluginSettings &settings) const noexcept = 0;
+    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept = 0;
+    virtual void restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept = 0;
     virtual ExportPluginBaseSettings &getSettings() const noexcept = 0;
     virtual QString getFileExtension() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;

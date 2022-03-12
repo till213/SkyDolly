@@ -56,12 +56,10 @@ public:
     virtual ~KMLExportPlugin() noexcept;
 
 protected:
-    // PluginBase
-    virtual void addSettings(Settings::PluginSettings &settings) const noexcept override;
-    virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
-    virtual void restoreSettings(Settings::ValuesByKey) noexcept override;
-
     // ExportPluginBase
+    virtual void addSettingsExtn(Settings::PluginSettings &settings) const noexcept override;
+    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    virtual void restoreSettingsExtn(Settings::ValuesByKey) noexcept override;
     virtual ExportPluginBaseSettings &getSettings() const noexcept override;
     virtual QString getFileExtension() const noexcept override;
     virtual QString getFileFilter() const noexcept override;
