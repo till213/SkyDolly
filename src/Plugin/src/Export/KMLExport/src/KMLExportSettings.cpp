@@ -188,78 +188,78 @@ void KMLExportSettings::setJetEndColor(QColor color) noexcept
 
 QColor KMLExportSettings::getTurbopropStartColor() const noexcept
 {
-    return d->jetStartColor;
+    return d->turbopropStartColor;
 }
 
 void KMLExportSettings::setTurbopropStartColor(QColor color) noexcept
 {
-    if (d->jetStartColor != color) {
-        d->jetStartColor = color;
+    if (d->turbopropStartColor != color) {
+        d->turbopropStartColor = color;
         emit extendedSettingsChanged();
     }
 }
 
 QColor KMLExportSettings::getTurbopropEndColor() const noexcept
 {
-    return d->jetEndColor;
+    return d->turbopropEndColor;
 }
 
 void KMLExportSettings::setTurbopropEndColor(QColor color) noexcept
 {
-    if (d->jetEndColor != color) {
-        d->jetEndColor = color;
+    if (d->turbopropEndColor != color) {
+        d->turbopropEndColor = color;
         emit extendedSettingsChanged();
     }
 }
 
 QColor KMLExportSettings::getPistonStartColor() const noexcept
 {
-    return d->jetStartColor;
+    return d->pistonStartColor;
 }
 
 void KMLExportSettings::setPistonStartColor(QColor color) noexcept
 {
-    if (d->jetStartColor != color) {
-        d->jetStartColor = color;
+    if (d->pistonStartColor != color) {
+        d->pistonStartColor = color;
         emit extendedSettingsChanged();
     }
 }
 
 QColor KMLExportSettings::getPistonEndColor() const noexcept
 {
-    return d->jetEndColor;
+    return d->pistonEndColor;
 }
 
 void KMLExportSettings::setPistonEndColor(QColor color) noexcept
 {
-    if (d->jetEndColor != color) {
-        d->jetEndColor = color;
+    if (d->pistonEndColor != color) {
+        d->pistonEndColor = color;
         emit extendedSettingsChanged();
     }
 }
 
 QColor KMLExportSettings::getAllStartColor() const noexcept
 {
-    return d->jetStartColor;
+    return d->allStartColor;
 }
 
 void KMLExportSettings::setAllStartColor(QColor color) noexcept
 {
-    if (d->jetStartColor != color) {
-        d->jetStartColor = color;
+    if (d->allStartColor != color) {
+        d->allStartColor = color;
         emit extendedSettingsChanged();
     }
 }
 
 QColor KMLExportSettings::getAllEndColor() const noexcept
 {
-    return d->jetEndColor;
+    return d->allEndColor;
 }
 
 void KMLExportSettings::setAllEndColor(QColor color) noexcept
 {
-    if (d->jetEndColor != color) {
-        d->jetEndColor = color;
+    if (d->allEndColor != color) {
+        d->allEndColor = color;
         emit extendedSettingsChanged();
     }
 }
@@ -372,7 +372,6 @@ void KMLExportSettings::restoreSettings(Settings::ValuesByKey valuesByKey) noexc
     ExportPluginBaseSettings::restoreSettings(valuesByKey);
 
     bool ok;
-
     const int enumeration = valuesByKey[::ColorStyleKey].toInt(&ok);
     if (ok) {
         d->colorStyle = static_cast<KMLExportSettings::ColorStyle >(enumeration);
