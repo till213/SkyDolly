@@ -223,6 +223,6 @@ This K Record shows that the true heading (TLC = HDT) is 090 (East).
 - IGC file format homepage: https://xp-soaring.github.io/igc_file_format/index.html
 - An IGC parser TypeScript implementation: https://github.com/Turbo87/igc-parser/
 - Example IGC files: http://www.skypolaris.org/igc-files/
-- More example IGC files: https://www.onlinecontest.org/
+- More example IGC files: https://www.onlinecontest.org/olc-3.0/gliding/finder.html?st=olc&c=C0&aa=&cc=&pi=&ap=&sdt=2022-02-01&edt=2022-03-01&sedts=-1&sedte=-1&mp=0&filter=#
 - IGC analysis: http://igc-analysis.com
 - Flight database and analysis: https://skylinescondor.com/
