@@ -38,6 +38,7 @@
 #include <QDesktopServices>
 
 #include "../../Kernel/src/Settings.h"
+#include "../../Kernel/src/File.h"
 #include "BasicExportDialog.h"
 #include "ExportPluginBaseSettings.h"
 #include "ExportPluginBase.h"
@@ -80,12 +81,11 @@ bool ExportPluginBase::exportData() noexcept
     const int choice = exportDialog->exec();
     if (choice == QDialog::Accepted) {
         // Remember export path
-        const QString exportDirectoryPath = QFileInfo(exportDialog->getSelectedFilePath()).absolutePath();
-        Settings::getInstance().setExportPath(exportDirectoryPath);
-        // @todo Ensure file suffix
-        const QString filePath = exportDialog->getSelectedFilePath();
-        if (!filePath.isEmpty()) {
-
+        const QString selectedFilePath = exportDialog->getSelectedFilePath();
+        if (!selectedFilePath.isEmpty()) {
+            const QString exportDirectoryPath = QFileInfo(selectedFilePath).absolutePath();
+            Settings::getInstance().setExportPath(exportDirectoryPath);
+            const QString filePath = File::ensureSuffix(selectedFilePath, getFileExtension());
             QFile file(filePath);
             ok = file.open(QIODevice::WriteOnly);
             if (ok) {
@@ -98,25 +98,24 @@ bool ExportPluginBase::exportData() noexcept
                 ok = writeFile(file);
                 QGuiApplication::restoreOverrideCursor();
 #ifdef DEBUG
-                qDebug("%s import %s in %lld ms", qPrintable(QFileInfo(filePath).fileName()), (ok ? qPrintable("SUCCESS") : qPrintable("FAIL")), timer.elapsed());
+                qDebug("%s export %s in %lld ms", qPrintable(QFileInfo(filePath).fileName()), (ok ? qPrintable("SUCCESS") : qPrintable("FAIL")), timer.elapsed());
 #endif
             }
 
             file.close();
 
+            if (ok) {
+                if (getSettings().isOpenExportedFileEnabled()) {
+                    const QString fileUrl = QString("file:///") + filePath;
+                    QDesktopServices::openUrl(QUrl(fileUrl));
+                }
+            } else {
+                QMessageBox::critical(getParentWidget(), tr("Export error"), tr("The file %1 could not be exported.").arg(filePath));
+            }
+
         } else {
             ok = true;
         }
-
-        if (ok) {
-            if (getSettings().isOpenExportedFileEnabled()) {
-                const QString fileUrl = QString("file:///") + filePath;
-                QDesktopServices::openUrl(QUrl(fileUrl));
-            }
-        } else {
-            QMessageBox::critical(getParentWidget(), tr("Export error"), tr("The file %1 could not be exported.").arg(filePath));
-        }
-
     } else {
         ok = true;
     }
