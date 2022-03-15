@@ -27,10 +27,8 @@
 
 #include <QString>
 
-#include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/System.h"
 #include "../../../../../Kernel/src/Settings.h"
-#include "../../../../../Model/src/SimType.h"
 #include "../../Plugin/src/ExportPluginBaseSettings.h"
 #include "IGCExportSettings.h"
 

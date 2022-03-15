@@ -7,7 +7,7 @@
  * MIT License
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this
- * software and associated documentation files (the "Software"), to deal in the Software
+ * software and associated documentation ios (the "Software"), to deal in the Software
  * without restriction, including without limitation the rights to use, copy, modify, merge,
  * publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
  * to whom the Software is furnished to do so, subject to the following conditions:
@@ -50,11 +50,26 @@
 #include "../../../../../Model/src/LightData.h"
 #include "../../../../../Persistence/src/CSVConst.h"
 #include "../../../../src/Export.h"
+#include "CSVExportSettings.h"
 #include "CSVExportPlugin.h"
+
+class CSVExportPluginPrivate
+{
+public:
+    CSVExportPluginPrivate() noexcept
+        : flight(Logbook::getInstance().getCurrentFlight())
+    {}
+
+    Flight &flight;
+    CSVExportSettings settings;
+
+    static inline const QString FileExtension {QStringLiteral("csv")};
+};
 
 // PUBLIC
 
 CSVExportPlugin::CSVExportPlugin() noexcept
+    : d(std::make_unique<CSVExportPluginPrivate>())
 {
 #ifdef DEBUG
     qDebug("CSVExportPlugin::CSVExportPlugin: PLUGIN LOADED");
@@ -68,144 +83,173 @@ CSVExportPlugin::~CSVExportPlugin() noexcept
 #endif
 }
 
-bool CSVExportPlugin::exportData() noexcept
+// PROTECTED
+
+ExportPluginBaseSettings &CSVExportPlugin::getSettings() const noexcept
+{
+    return d->settings;
+}
+
+void CSVExportPlugin::addSettingsExtn(Settings::PluginSettings &settings) const noexcept
+{
+    d->settings.addSettings(settings);
+}
+
+void CSVExportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{
+    d->settings.addKeysWithDefaults(keysWithDefaults);
+}
+
+void CSVExportPlugin::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
+{
+    d->settings.restoreSettings(valuesByKey);
+}
+
+QString CSVExportPlugin::getFileExtension() const noexcept
+{
+    return CSVExportPluginPrivate::FileExtension;
+}
+
+QString CSVExportPlugin::getFileFilter() const noexcept
+{
+    return tr("International Gliding Commission (*.%1)").arg(getFileExtension());
+}
+
+std::unique_ptr<QWidget> CSVExportPlugin::createOptionWidget() const noexcept
+{
+    // No plugin-specific settings yet
+    return nullptr;;
+}
+
+bool CSVExportPlugin::writeFile(QIODevice &io) noexcept
 {
     bool ok;
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();
-    QString exportPath = Export::suggestFilePath(FileSuffix);
-    const QString filePath = QFileDialog::getSaveFileName(getParentWidget(), QCoreApplication::translate("CSVExportPlugin", "Export CSV"), exportPath, QString("*.csv"));
-    if (!filePath.isEmpty()) {
-        // Remember export path
-        const QString exportDirectoryPath = QFileInfo(filePath).absolutePath();
-        Settings::getInstance().setExportPath(exportDirectoryPath);
-        QFile file(filePath);
-        ok = file.open(QIODevice::WriteOnly);
-        if (ok) {
-            file.setTextModeEnabled(true);
+    io.setTextModeEnabled(true);
 
-            QString csv = QString(CSVConst::TypeColumnName) % CSVConst::Sep %
-                    getPositionHeader() % CSVConst::Sep %
-                    getEngineHeader() % CSVConst::Sep %
-                    getPrimaryFlightControlHeader()  % CSVConst::Sep %
-                    getSecondaryFlightControlHeader() % CSVConst::Sep %
-                    getAircraftHandleHeader() % CSVConst::Sep %
-                    getLightHeader() % CSVConst::Sep %
-                    QString(SimVar::Timestamp) % CSVConst::Ln;
+    QString csv = QString(CSVConst::TypeColumnName) % CSVConst::Sep %
+                          getPositionHeader() % CSVConst::Sep %
+                          getEngineHeader() % CSVConst::Sep %
+                          getPrimaryFlightControlHeader()  % CSVConst::Sep %
+                          getSecondaryFlightControlHeader() % CSVConst::Sep %
+                          getAircraftHandleHeader() % CSVConst::Sep %
+                          getLightHeader() % CSVConst::Sep %
+                          QString(SimVar::Timestamp) % CSVConst::Ln;
 
-            ok = file.write(csv.toUtf8());
-            if (ok) {
-                const PositionData positionData;
-                const EngineData engineData;
-                const PrimaryFlightControlData primaryFlightControlData;
-                const SecondaryFlightControlData secondaryFlightControlData;
-                const AircraftHandleData aircraftHandleData;
-                const LightData lightData;
+    ok = io.write(csv.toUtf8());
+    if (ok) {
+        const PositionData positionData;
+        const EngineData engineData;
+        const PrimaryFlightControlData primaryFlightControlData;
+        const SecondaryFlightControlData secondaryFlightControlData;
+        const AircraftHandleData aircraftHandleData;
+        const LightData lightData;
 
-                // Position data
-                for (const PositionData &data : aircraft.getPositionConst()) {
-                    csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::Aircraft)) % CSVConst::Sep %
-                            getPositionData(data) % CSVConst::Sep %
-                            getEngineData(engineData) % CSVConst::Sep %
-                            getPrimaryFlightControlData(primaryFlightControlData) % CSVConst::Sep %
-                            getSecondaryFlightControlData(secondaryFlightControlData) % CSVConst::Sep %
-                            getAircraftHandleData(aircraftHandleData) % CSVConst::Sep %
-                            getLightData(lightData) % CSVConst::Sep %
-                            QString::number(data.timestamp) % CSVConst::Ln;
-                    if (!file.write(csv.toUtf8())) {
-                        ok = false;
-                        break;
-                    }
-                }
-
-                // Engine data
-                for (const EngineData &data : aircraft.getEngineConst()) {
-                    csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::Engine)) % CSVConst::Sep %
-                            getPositionData(positionData) % CSVConst::Sep %
-                            getEngineData(data) % CSVConst::Sep %
-                            getPrimaryFlightControlData(primaryFlightControlData) % CSVConst::Sep %
-                            getSecondaryFlightControlData(secondaryFlightControlData) % CSVConst::Sep %
-                            getAircraftHandleData(aircraftHandleData) % CSVConst::Sep %
-                            getLightData(lightData) % CSVConst::Sep %
-                            QString::number(data.timestamp) % CSVConst::Ln;
-                    if (!file.write(csv.toUtf8())) {
-                        ok = false;
-                        break;
-                    }
-                }
-
-                // Primary flight controls
-                for (const PrimaryFlightControlData &data : aircraft.getPrimaryFlightControlConst()) {
-                    csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::PrimaryFlightControl)) % CSVConst::Sep %
-                            getPositionData(positionData) % CSVConst::Sep %
-                            getEngineData(engineData) % CSVConst::Sep %
-                            getPrimaryFlightControlData(data) % CSVConst::Sep %
-                            getSecondaryFlightControlData(secondaryFlightControlData) % CSVConst::Sep %
-                            getAircraftHandleData(aircraftHandleData) % CSVConst::Sep %
-                            getLightData(lightData) % CSVConst::Sep %
-                            QString::number(data.timestamp) % CSVConst::Ln;
-                    if (!file.write(csv.toUtf8())) {
-                        ok = false;
-                        break;
-                    }
-                }
-
-                // Secondary flight controls
-                for (const SecondaryFlightControlData &data : aircraft.getSecondaryFlightControlConst()) {
-                    csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::SecondaryFlightControl)) % CSVConst::Sep %
-                            getPositionData(positionData) % CSVConst::Sep %
-                            getEngineData(engineData) % CSVConst::Sep %
-                            getPrimaryFlightControlData(primaryFlightControlData) % CSVConst::Sep %
-                            getSecondaryFlightControlData(data) % CSVConst::Sep %
-                            getAircraftHandleData(aircraftHandleData) % CSVConst::Sep %
-                            getLightData(lightData) % CSVConst::Sep %
-                            QString::number(data.timestamp) % CSVConst::Ln;
-                    if (!file.write(csv.toUtf8())) {
-                        ok = false;
-                        break;
-                    }
-                }
-
-                // Aircraft handles
-                for (const AircraftHandleData &data : aircraft.getAircraftHandleConst()) {
-                    csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::AircraftHandle)) % CSVConst::Sep %
-                            getPositionData(positionData) % CSVConst::Sep %
-                            getEngineData(engineData) % CSVConst::Sep %
-                            getPrimaryFlightControlData(primaryFlightControlData) % CSVConst::Sep %
-                            getSecondaryFlightControlData(secondaryFlightControlData) % CSVConst::Sep %
-                            getAircraftHandleData(data) % CSVConst::Sep %
-                            getLightData(lightData) % CSVConst::Sep %
-                            QString::number(data.timestamp) % CSVConst::Ln;
-                    if (!file.write(csv.toUtf8())) {
-                        ok = false;
-                        break;
-                    }
-                }
-
-                // Lights
-                for (const LightData &data : aircraft.getLightConst()) {
-                    csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::Light)) % CSVConst::Sep %
-                            getPositionData(positionData) % CSVConst::Sep %
-                            getEngineData(engineData) % CSVConst::Sep %
-                            getPrimaryFlightControlData(primaryFlightControlData) % CSVConst::Sep %
-                            getSecondaryFlightControlData(secondaryFlightControlData) % CSVConst::Sep %
-                            getAircraftHandleData(aircraftHandleData) % CSVConst::Sep %
-                            getLightData(data) % CSVConst::Sep %
-                            QString::number(data.timestamp) % CSVConst::Ln;
-                    if (!file.write(csv.toUtf8())) {
-                        ok = false;
-                        break;
-                    }
-                }
+        // Position data
+        for (const PositionData &data : aircraft.getPositionConst()) {
+            csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::Aircraft)) % CSVConst::Sep %
+                    getPositionData(data) % CSVConst::Sep %
+                    getEngineData(engineData) % CSVConst::Sep %
+                    getPrimaryFlightControlData(primaryFlightControlData) % CSVConst::Sep %
+                    getSecondaryFlightControlData(secondaryFlightControlData) % CSVConst::Sep %
+                    getAircraftHandleData(aircraftHandleData) % CSVConst::Sep %
+                    getLightData(lightData) % CSVConst::Sep %
+                    QString::number(data.timestamp) % CSVConst::Ln;
+            if (!io.write(csv.toUtf8())) {
+                ok = false;
+                break;
             }
-            file.close();
         }
-        if (!ok) {
-            QMessageBox::critical(getParentWidget(), tr("Export error"), tr("The CSV file %1 could not be exported.").arg(filePath));
+
+        // Engine data
+        for (const EngineData &data : aircraft.getEngineConst()) {
+            csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::Engine)) % CSVConst::Sep %
+                    getPositionData(positionData) % CSVConst::Sep %
+                    getEngineData(data) % CSVConst::Sep %
+                    getPrimaryFlightControlData(primaryFlightControlData) % CSVConst::Sep %
+                    getSecondaryFlightControlData(secondaryFlightControlData) % CSVConst::Sep %
+                    getAircraftHandleData(aircraftHandleData) % CSVConst::Sep %
+                    getLightData(lightData) % CSVConst::Sep %
+                    QString::number(data.timestamp) % CSVConst::Ln;
+            if (!io.write(csv.toUtf8())) {
+                ok = false;
+                break;
+            }
         }
-    } else {
-        ok = true;
+
+        // Primary flight controls
+        for (const PrimaryFlightControlData &data : aircraft.getPrimaryFlightControlConst()) {
+            csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::PrimaryFlightControl)) % CSVConst::Sep %
+                    getPositionData(positionData) % CSVConst::Sep %
+                    getEngineData(engineData) % CSVConst::Sep %
+                    getPrimaryFlightControlData(data) % CSVConst::Sep %
+                    getSecondaryFlightControlData(secondaryFlightControlData) % CSVConst::Sep %
+                    getAircraftHandleData(aircraftHandleData) % CSVConst::Sep %
+                    getLightData(lightData) % CSVConst::Sep %
+                    QString::number(data.timestamp) % CSVConst::Ln;
+            if (!io.write(csv.toUtf8())) {
+                ok = false;
+                break;
+            }
+        }
+
+        // Secondary flight controls
+        for (const SecondaryFlightControlData &data : aircraft.getSecondaryFlightControlConst()) {
+            csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::SecondaryFlightControl)) % CSVConst::Sep %
+                    getPositionData(positionData) % CSVConst::Sep %
+                    getEngineData(engineData) % CSVConst::Sep %
+                    getPrimaryFlightControlData(primaryFlightControlData) % CSVConst::Sep %
+                    getSecondaryFlightControlData(data) % CSVConst::Sep %
+                    getAircraftHandleData(aircraftHandleData) % CSVConst::Sep %
+                    getLightData(lightData) % CSVConst::Sep %
+                    QString::number(data.timestamp) % CSVConst::Ln;
+            if (!io.write(csv.toUtf8())) {
+                ok = false;
+                break;
+            }
+        }
+
+        // Aircraft handles
+        for (const AircraftHandleData &data : aircraft.getAircraftHandleConst()) {
+            csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::AircraftHandle)) % CSVConst::Sep %
+                    getPositionData(positionData) % CSVConst::Sep %
+                    getEngineData(engineData) % CSVConst::Sep %
+                    getPrimaryFlightControlData(primaryFlightControlData) % CSVConst::Sep %
+                    getSecondaryFlightControlData(secondaryFlightControlData) % CSVConst::Sep %
+                    getAircraftHandleData(data) % CSVConst::Sep %
+                    getLightData(lightData) % CSVConst::Sep %
+                    QString::number(data.timestamp) % CSVConst::Ln;
+            if (!io.write(csv.toUtf8())) {
+                ok = false;
+                break;
+            }
+        }
+
+        // Lights
+        for (const LightData &data : aircraft.getLightConst()) {
+            csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::Light)) % CSVConst::Sep %
+                    getPositionData(positionData) % CSVConst::Sep %
+                    getEngineData(engineData) % CSVConst::Sep %
+                    getPrimaryFlightControlData(primaryFlightControlData) % CSVConst::Sep %
+                    getSecondaryFlightControlData(secondaryFlightControlData) % CSVConst::Sep %
+                    getAircraftHandleData(aircraftHandleData) % CSVConst::Sep %
+                    getLightData(data) % CSVConst::Sep %
+                    QString::number(data.timestamp) % CSVConst::Ln;
+            if (!io.write(csv.toUtf8())) {
+                ok = false;
+                break;
+            }
+        }
     }
+
     return ok;
+}
+
+// PROTECTED SLOTS
+
+void CSVExportPlugin::onRestoreDefaultSettings() noexcept
+{
+    d->settings.restoreDefaults();
 }
 
 // PRIVATE

@@ -25,13 +25,19 @@
 #ifndef CSVEXPORTPLUGIN_H
 #define CSVEXPORTPLUGIN_H
 
+#include <memory>
+
 #include <QObject>
 #include <QtPlugin>
+#include <QByteArray>
 
+class QIODevice;
 class QString;
+class QDateTime;
 
+#include "../../../../../Kernel/src/Settings.h"
 #include "../../../ExportIntf.h"
-#include "../../../PluginBase.h"
+#include "../../../ExportPluginBase.h"
 
 class Aircraft;
 struct PositionData;
@@ -40,41 +46,34 @@ struct PrimaryFlightControlData;
 struct SecondaryFlightControlData;
 struct AircraftHandleData;
 struct LightData;
+class CSVExportPluginPrivate;
 
-class CSVExportPlugin : public PluginBase, public ExportIntf
+class CSVExportPlugin : public ExportPluginBase
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "CSVExportPlugin.json")
     Q_INTERFACES(ExportIntf)
 public:
-    static inline const QString FileSuffix {QStringLiteral("csv")};
-
     CSVExportPlugin() noexcept;
     virtual ~CSVExportPlugin() noexcept;
 
-    virtual QWidget *getParentWidget() const noexcept override
-    {
-        return PluginBase::getParentWidget();
-    }
+protected:
+    // ExportPluginBase
+    virtual void addSettingsExtn(Settings::PluginSettings &settings) const noexcept override;
+    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    virtual void restoreSettingsExtn(Settings::ValuesByKey) noexcept override;
+    virtual ExportPluginBaseSettings &getSettings() const noexcept override;
+    virtual QString getFileExtension() const noexcept override;
+    virtual QString getFileFilter() const noexcept override;
+    virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
+    virtual bool writeFile(QIODevice &io) noexcept override;
 
-    virtual void setParentWidget(QWidget *parent) noexcept override
-    {
-        PluginBase::setParentWidget(parent);
-    }
-
-    virtual void storeSettings(const QUuid &pluginUuid) const noexcept override
-    {
-        PluginBase::storeSettings(pluginUuid);
-    }
-
-    virtual void restoreSettings(const QUuid &pluginUuid) noexcept override
-    {
-        PluginBase::restoreSettings(pluginUuid);
-    }
-
-    virtual bool exportData() noexcept override;
+protected slots:
+    virtual void onRestoreDefaultSettings() noexcept override;
 
 private:
+    std::unique_ptr<CSVExportPluginPrivate> d;
+
     static QString getPositionHeader() noexcept;
     static QString getPositionData(const PositionData &data) noexcept;
 

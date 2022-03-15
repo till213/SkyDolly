@@ -15,8 +15,8 @@ endif()
 
 target_sources(${LIBRARY_NAME}
     PRIVATE
-        src/CSVExportPlugin.cpp
-        src/CSVExportPlugin.h
+        src/CSVExportPlugin.h src/CSVExportPlugin.cpp
+        src/CSVExportSettings.h src/CSVExportSettings.cpp
         src/CSVExportPlugin.json
 )
 
