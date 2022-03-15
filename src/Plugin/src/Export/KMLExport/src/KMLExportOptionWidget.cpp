@@ -93,15 +93,15 @@ void KMLExportOptionWidget::frenchConnection() noexcept
             this, &KMLExportOptionWidget::updateUi);
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-        connect(d->colorButtonGroup.get(), QOverload<int>::of(&QButtonGroup::buttonClicked),
-                this, &KMLExportOptionWidget::selectColor);
-        connect(ui->colorStyleComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-                this, &KMLExportOptionWidget::onColorStyleChanged);
+    connect(d->colorButtonGroup.get(), QOverload<int>::of(&QButtonGroup::buttonClicked),
+            this, &KMLExportOptionWidget::selectColor);
+    connect(ui->colorStyleComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &KMLExportOptionWidget::onColorStyleChanged);
 #else
-        connect(d->colorButtonGroup.get(), &QButtonGroup::idClicked,
-                this, &KMLExportOptionWidget::selectColor);
-        connect(ui->colorStyleComboBox, &QComboBox::currentIndexChanged,
-                this, &KMLExportOptionWidget::onColorStyleChanged);
+    connect(d->colorButtonGroup.get(), &QButtonGroup::idClicked,
+            this, &KMLExportOptionWidget::selectColor);
+    connect(ui->colorStyleComboBox, &QComboBox::currentIndexChanged,
+            this, &KMLExportOptionWidget::onColorStyleChanged);
 #endif
 }
 
@@ -133,7 +133,7 @@ void KMLExportOptionWidget::updateUi() noexcept
     }
     ui->colorStyleComboBox->setCurrentIndex(currentIndex);
 
-    switch (static_cast<KMLExportSettings::ColorStyle>(ui->colorStyleComboBox->currentIndex())) {
+    switch (d->settings.getColorStyle()) {
     case KMLExportSettings::ColorStyle::OneColor:
         ui->allStartColorToolButton->setEnabled(true);
         ui->allEndColorToolButton->setEnabled(false);

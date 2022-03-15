@@ -29,7 +29,6 @@
 
 #include <QCoreApplication>
 #include <QIODevice>
-#include <QFile>
 #include <QStringBuilder>
 #include <QString>
 #include <QFileDialog>
@@ -106,37 +105,6 @@ KMLExportPlugin::~KMLExportPlugin() noexcept
 #endif
 }
 
-bool KMLExportPlugin::writeFile(QFile &file) noexcept
-{
-    bool ok;
-
-    d->aircraftTypeCount.clear();
-    const int nofAircraft = d->flight.count();
-    // Only create as many colors per ramp as there are aircraft (if there are less aircraft
-    // than requested colors per ramp)
-    d->settings.setNofColorsPerRamp(qMin(nofAircraft, d->settings.getNofColorsPerRamp()));
-
-    file.setTextModeEnabled(true);
-    ok = exportHeader(file);
-    if (ok) {
-        ok = d->styleExport->exportStyles(file);
-    }
-    if (ok) {
-        ok = exportFlightInfo(file);
-    }
-    if (ok) {
-        ok = exportAircraft(file);
-    }
-    if (ok) {
-        ok = exportWaypoints(file);
-    }
-    if (ok) {
-        ok = exportFooter(file);
-    }
-
-    return ok;
-}
-
 // PROTECTED
 
 ExportPluginBaseSettings &KMLExportPlugin::getSettings() const noexcept
@@ -172,6 +140,37 @@ QString KMLExportPlugin::getFileFilter() const noexcept
 std::unique_ptr<QWidget> KMLExportPlugin::createOptionWidget() const noexcept
 {
     return std::make_unique<KMLExportOptionWidget>(d->settings);
+}
+
+bool KMLExportPlugin::writeFile(QIODevice &io) noexcept
+{
+    bool ok;
+
+    d->aircraftTypeCount.clear();
+    const int nofAircraft = d->flight.count();
+    // Only create as many colors per ramp as there are aircraft (if there are less aircraft
+    // than requested colors per ramp)
+    d->settings.setNofColorsPerRamp(qMin(nofAircraft, d->settings.getNofColorsPerRamp()));
+
+    io.setTextModeEnabled(true);
+    ok = exportHeader(io);
+    if (ok) {
+        ok = d->styleExport->exportStyles(io);
+    }
+    if (ok) {
+        ok = exportFlightInfo(io);
+    }
+    if (ok) {
+        ok = exportAircraft(io);
+    }
+    if (ok) {
+        ok = exportWaypoints(io);
+    }
+    if (ok) {
+        ok = exportFooter(io);
+    }
+
+    return ok;
 }
 
 // PROTECTED SLOTS

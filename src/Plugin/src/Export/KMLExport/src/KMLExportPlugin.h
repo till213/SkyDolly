@@ -35,7 +35,6 @@ class QIODevice;
 class QString;
 
 #include "../../../../../Kernel/src/Settings.h"
-#include "../../../../../Model/src/SimType.h"
 #include "../../../ExportIntf.h"
 #include "../../../ExportPluginBase.h"
 #include "KMLStyleExport.h"
@@ -64,7 +63,7 @@ protected:
     virtual QString getFileExtension() const noexcept override;
     virtual QString getFileFilter() const noexcept override;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    virtual bool writeFile(QFile &file) noexcept override;
+    virtual bool writeFile(QIODevice &io) noexcept override;
 
 protected slots:
     virtual void onRestoreDefaultSettings() noexcept override;
@@ -84,9 +83,9 @@ private:
     QString getWaypointDescription(const Waypoint &waypoint) const noexcept;
 
     inline bool exportPlacemark(QIODevice &io, KMLStyleExport::Icon icon, const QString &name, const QString &description,
-                               const PositionData &positionData) const noexcept;
+                                const PositionData &positionData) const noexcept;
     inline bool exportPlacemark(QIODevice &io, KMLStyleExport::Icon icon, const QString &name, const QString &description,
-                               double longitude, double latitude, double altitudeInFeet, double heading) const noexcept;
+                                double longitude, double latitude, double altitudeInFeet, double heading) const noexcept;
 
     static inline QString formatNumber(double number) noexcept;
 };

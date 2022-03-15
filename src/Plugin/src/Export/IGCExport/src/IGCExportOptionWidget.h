@@ -22,54 +22,38 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef IGCEXPORTDIALOG_H
-#define IGCEXPORTDIALOG_H
+#ifndef IGCEXPORTOPTIONWIDGET_H
+#define IGCEXPORTOPTIONWIDGET_H
 
 #include <memory>
-#include <utility>
-#include <cstdint>
 
-#include <QDialog>
+#include <QWidget>
 
 namespace Ui {
-    class IGCExportDialog;
+    class IGCExportOptionWidget;
 }
 
-struct IGCExportSettings;
-class IGCExportDialogPrivate;
+class IGCExportSettings;
+class IGCExportOptionWidgetPrivate;
 
-class IGCExportDialog : public QDialog
+class IGCExportOptionWidget : public QWidget
 {
     Q_OBJECT
 public:
-    static inline const QString FileExtension {QStringLiteral("igc")};
-
-    explicit IGCExportDialog(IGCExportSettings &settings, QWidget *parent = nullptr) noexcept;
-    virtual ~IGCExportDialog() noexcept;
-
-    QString getSelectedFilePath() const noexcept;
-    bool doOpenExportedFile() const noexcept;
+    explicit IGCExportOptionWidget(IGCExportSettings &settings, QWidget *parent = nullptr) noexcept;
+    virtual ~IGCExportOptionWidget() noexcept;
 
 private:
-    Ui::IGCExportDialog *ui;
-    std::unique_ptr<IGCExportDialogPrivate> d;
+    Ui::IGCExportOptionWidget *ui;
+    std::unique_ptr<IGCExportOptionWidgetPrivate> d;
 
-    void initUi() noexcept;
-    void updateInfoUi() noexcept;
-    void updateFlightUi() noexcept;
     void frenchConnection() noexcept;
-
-    std::int64_t estimateNofSamplePoints() noexcept;
+    void initUi() noexcept;
 
 private slots:
     void updateUi() noexcept;
-
-    void restoreDefaults() noexcept;
-
-    void on_fileSelectionPushButton_clicked() noexcept;
-    void on_resamplingComboBox_activated(int index) noexcept;
-    void on_pilotNameLineEdit_editingFinished() noexcept;
-    void on_coPilotNameLineEdit_editingFinished() noexcept;
+    void onPilotNameChanged(const QString &name) noexcept;
+    void onCoPilotNameChanged(const QString &name) noexcept;
 };
 
-#endif // IGCEXPORTDIALOG_H
+#endif // IGCEXPORTOPTIONWIDGET_H

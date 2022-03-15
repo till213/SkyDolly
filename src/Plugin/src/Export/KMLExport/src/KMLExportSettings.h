@@ -31,8 +31,6 @@
 #include <QColor>
 
 #include "../../../../../Kernel/src/Settings.h"
-#include "../../../../../Kernel/src/SampleRate.h"
-#include "../../../../../Model/src/SimType.h"
 #include "../../Plugin/src/ExportPluginBaseSettings.h"
 
 class KMLExportSettingsPrivate;
@@ -80,10 +78,11 @@ public:
     QColor getAllEndColor() const noexcept;
     void setAllEndColor(QColor color) noexcept;
 
-    void addSettings(Settings::PluginSettings &settings) const noexcept;
-    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept;
-    void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept;
-    void restoreDefaults() noexcept;
+protected:
+    virtual void addSettingsExtn(Settings::PluginSettings &settings) const noexcept override;
+    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    virtual void restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept override;
+    virtual void restoreDefaultsExtn() noexcept override;
 
 private:
     std::unique_ptr<KMLExportSettingsPrivate> d;

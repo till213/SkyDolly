@@ -31,7 +31,7 @@
 #include <QtPlugin>
 #include <QStringView>
 
-class QFile;
+class QIODevice;
 
 #include "../../Kernel/src/Settings.h"
 #include "../../Flight/src/FlightAugmentation.h"
@@ -39,11 +39,6 @@ class QFile;
 #include "PluginBase.h"
 #include "PluginLib.h"
 
-class FlightService;
-class Flight;
-struct AircraftType;
-struct AircraftInfo;
-struct FlightCondition;
 class ExportPluginBaseSettings;
 class ExportPluginBasePrivate;
 
@@ -90,7 +85,7 @@ protected:
     virtual QString getFileExtension() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
-    virtual bool writeFile(QFile &file) noexcept = 0;
+    virtual bool writeFile(QIODevice &io) noexcept = 0;
 
 protected slots:
     virtual void onRestoreDefaultSettings() noexcept = 0;

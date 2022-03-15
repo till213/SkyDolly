@@ -23,9 +23,12 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+#include <memory>
+
+#include <QColor>
+
 #include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/Settings.h"
-#include "../../../../../Model/src/SimType.h"
 #include "../../Plugin/src/ExportPluginBaseSettings.h"
 #include "KMLExportSettings.h"
 
@@ -264,10 +267,10 @@ void KMLExportSettings::setAllEndColor(QColor color) noexcept
     }
 }
 
-void KMLExportSettings::addSettings(Settings::PluginSettings &settings) const noexcept
-{
-    ExportPluginBaseSettings::addSettings(settings);
+// PROTECTED
 
+void KMLExportSettings::addSettingsExtn(Settings::PluginSettings &settings) const noexcept
+{
     Settings::KeyValue keyValue;
 
     keyValue.first = ::ColorStyleKey;
@@ -315,10 +318,8 @@ void KMLExportSettings::addSettings(Settings::PluginSettings &settings) const no
     settings.push_back(keyValue);
 }
 
-void KMLExportSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+void KMLExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    ExportPluginBaseSettings::addKeysWithDefaults(keysWithDefaults);
-
     Settings::KeyValue keyValue;
 
     keyValue.first = ::ColorStyleKey;
@@ -366,10 +367,8 @@ void KMLExportSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWith
     keysWithDefaults.push_back(keyValue);
 }
 
-void KMLExportSettings::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
+void KMLExportSettings::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
 {
-    ExportPluginBaseSettings::restoreSettings(valuesByKey);
-
     bool ok;
     const int enumeration = valuesByKey[::ColorStyleKey].toInt(&ok);
     if (ok) {
@@ -400,10 +399,8 @@ void KMLExportSettings::restoreSettings(Settings::ValuesByKey valuesByKey) noexc
     emit extendedSettingsChanged();
 }
 
-void KMLExportSettings::restoreDefaults() noexcept
+void KMLExportSettings::restoreDefaultsExtn() noexcept
 {
-    ExportPluginBaseSettings::restoreDefaults();
-
     d->colorStyle = ::DefaultColorStyle;
     d->nofColorsPerRamp = ::DefaultNofColorsPerRamp;
     d->lineWidth = ::DefaultLineWidth;

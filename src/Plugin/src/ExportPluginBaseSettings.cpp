@@ -106,6 +106,8 @@ void ExportPluginBaseSettings::addSettings(Settings::PluginSettings &settings) c
     keyValue.first = ::OpenExportedFileEnabledKey;
     keyValue.second = d->openExportedFileEnabled;
     settings.push_back(keyValue);
+
+    addSettingsExtn(settings);
 }
 
 void ExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
@@ -119,6 +121,8 @@ void ExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &k
     keyValue.first = ::OpenExportedFileEnabledKey;
     keyValue.second = ::DefaultOpenExportedFileEnabled;
     keysWithDefaults.push_back(keyValue);
+
+    addKeysWithDefaultsExtn(keysWithDefaults);
 }
 
 void ExportPluginBaseSettings::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
@@ -132,6 +136,8 @@ void ExportPluginBaseSettings::restoreSettings(Settings::ValuesByKey valuesByKey
     }
     d->openExportedFileEnabled = valuesByKey[::OpenExportedFileEnabledKey].toBool();
     emit baseSettingsChanged();
+
+    restoreSettingsExtn(valuesByKey);
 }
 
 void ExportPluginBaseSettings::restoreDefaults() noexcept
@@ -139,4 +145,6 @@ void ExportPluginBaseSettings::restoreDefaults() noexcept
     d->resamplingPeriod = ::DefaultResamplingPeriod;
     d->openExportedFileEnabled = ::DefaultOpenExportedFileEnabled;
     emit baseSettingsChanged();
+
+    restoreDefaultsExtn();
 }

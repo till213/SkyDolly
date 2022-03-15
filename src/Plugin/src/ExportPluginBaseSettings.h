@@ -46,7 +46,7 @@ public:
     SampleRate::ResamplingPeriod getResamplingPeriod() const noexcept;
     void setResamplingPeriod(SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
     bool isOpenExportedFileEnabled() const noexcept;
-    void setOpenExportedFileEnabled(bool openExportedFileEnabled) noexcept;
+    void setOpenExportedFileEnabled(bool openExportedFileEnabled) noexcept ;
 
     void addSettings(Settings::PluginSettings &settings) const noexcept;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;
@@ -64,6 +64,12 @@ signals:
      * only emitted by classes extending the ExportPluginBaseSettings.
      */
     void extendedSettingsChanged();
+
+protected:
+    virtual void addSettingsExtn(Settings::PluginSettings &settings) const noexcept = 0;
+    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept = 0;
+    virtual void restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept = 0;
+    virtual void restoreDefaultsExtn() noexcept = 0;
 
 private:
     std::unique_ptr<ExportPluginBaseSettingsPrivate> d;
