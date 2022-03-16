@@ -48,7 +48,7 @@
 #include "../../../../../Model/src/AircraftHandleData.h"
 #include "../../../../../Model/src/Light.h"
 #include "../../../../../Model/src/LightData.h"
-#include "../../../../../Persistence/src/CSVConst.h"
+#include "../../../CSVConst.h"
 #include "SkyDollyCSVParser.h"
 
 // PUBLIC

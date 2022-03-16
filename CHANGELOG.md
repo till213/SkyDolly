@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.10.0
+
+### Improvements
+
+- CSV export plugin
+  * Resampling is now supported (original sample rate, 1 Hz, 2 Hz, 5 Hz, ...)
+
 ## 0.9.0
 
 ### New Features

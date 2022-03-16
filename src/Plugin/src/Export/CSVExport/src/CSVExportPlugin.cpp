@@ -48,8 +48,8 @@
 #include "../../../../../Model/src/AircraftHandleData.h"
 #include "../../../../../Model/src/Light.h"
 #include "../../../../../Model/src/LightData.h"
-#include "../../../../../Persistence/src/CSVConst.h"
-#include "../../../../src/Export.h"
+#include "../../../CSVConst.h"
+#include "../../../Export.h"
 #include "CSVExportSettings.h"
 #include "CSVExportPlugin.h"
 
@@ -138,106 +138,200 @@ bool CSVExportPlugin::writeFile(QIODevice &io) noexcept
 
     ok = io.write(csv.toUtf8());
     if (ok) {
-        const PositionData positionData;
-        const EngineData engineData;
-        const PrimaryFlightControlData primaryFlightControlData;
-        const SecondaryFlightControlData secondaryFlightControlData;
-        const AircraftHandleData aircraftHandleData;
-        const LightData lightData;
+        const PositionData emptyPositionData;
+        const EngineData emptyEngineData;
+        const PrimaryFlightControlData emptyPrimaryFlightControlData;
+        const SecondaryFlightControlData emptySecondaryFlightControlData;
+        const AircraftHandleData emptyAircraftHandleData;
+        const LightData emptyLightData;
+
+        const SampleRate::ResamplingPeriod resamplingPeriod = d->settings.getResamplingPeriod();
+        std::int64_t duration;
+        std::int64_t timestamp;
 
         // Position data
-        for (const PositionData &data : aircraft.getPositionConst()) {
-            csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::Aircraft)) % CSVConst::Sep %
-                    getPositionData(data) % CSVConst::Sep %
-                    getEngineData(engineData) % CSVConst::Sep %
-                    getPrimaryFlightControlData(primaryFlightControlData) % CSVConst::Sep %
-                    getSecondaryFlightControlData(secondaryFlightControlData) % CSVConst::Sep %
-                    getAircraftHandleData(aircraftHandleData) % CSVConst::Sep %
-                    getLightData(lightData) % CSVConst::Sep %
-                    QString::number(data.timestamp) % CSVConst::Ln;
-            if (!io.write(csv.toUtf8())) {
-                ok = false;
-                break;
+        const Position &position = aircraft.getPositionConst();
+        QChar dataType = QChar(Enum::toUnderlyingType(CSVConst::DataType::Aircraft));
+        if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
+            duration = position.getLast().timestamp;
+            timestamp = 0;
+            while (ok && timestamp <= duration) {
+                const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Linear);
+                if (!positionData.isNull()) {
+                    ok = writeLine(dataType, positionData, emptyEngineData,
+                                   emptyPrimaryFlightControlData, emptySecondaryFlightControlData,
+                                   emptyAircraftHandleData, emptyLightData,
+                                   positionData.timestamp, io);
+                    if (!ok) {
+                        break;
+                    }
+                }
+                timestamp += Enum::toUnderlyingType(resamplingPeriod);
+            }
+        } else {
+            for (const PositionData &positionData : position) {
+                ok = writeLine(dataType, positionData, emptyEngineData,
+                               emptyPrimaryFlightControlData, emptySecondaryFlightControlData,
+                               emptyAircraftHandleData, emptyLightData,
+                               positionData.timestamp, io);
+                if (!ok) {
+                    break;
+                }
             }
         }
 
         // Engine data
-        for (const EngineData &data : aircraft.getEngineConst()) {
-            csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::Engine)) % CSVConst::Sep %
-                    getPositionData(positionData) % CSVConst::Sep %
-                    getEngineData(data) % CSVConst::Sep %
-                    getPrimaryFlightControlData(primaryFlightControlData) % CSVConst::Sep %
-                    getSecondaryFlightControlData(secondaryFlightControlData) % CSVConst::Sep %
-                    getAircraftHandleData(aircraftHandleData) % CSVConst::Sep %
-                    getLightData(lightData) % CSVConst::Sep %
-                    QString::number(data.timestamp) % CSVConst::Ln;
-            if (!io.write(csv.toUtf8())) {
-                ok = false;
-                break;
+        const Engine &engine = aircraft.getEngineConst();
+        dataType = QChar(Enum::toUnderlyingType(CSVConst::DataType::Engine));
+        if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
+            duration = engine.getLast().timestamp;
+            timestamp = 0;
+            while (ok && timestamp <= duration) {
+                const EngineData &engineData = engine.interpolate(timestamp, TimeVariableData::Access::Linear);
+                if (!engineData.isNull()) {
+                    ok = writeLine(dataType, emptyPositionData, engineData,
+                                   emptyPrimaryFlightControlData, emptySecondaryFlightControlData,
+                                   emptyAircraftHandleData, emptyLightData,
+                                   engineData.timestamp, io);
+                    if (!ok) {
+                        break;
+                    }
+                }
+                timestamp += Enum::toUnderlyingType(resamplingPeriod);
+            }
+        } else {
+            for (const EngineData &engineData : engine) {
+                ok = writeLine(dataType, emptyPositionData, engineData,
+                               emptyPrimaryFlightControlData, emptySecondaryFlightControlData,
+                               emptyAircraftHandleData, emptyLightData,
+                               engineData.timestamp, io);
+                if (!ok) {
+                    break;
+                }
             }
         }
 
         // Primary flight controls
-        for (const PrimaryFlightControlData &data : aircraft.getPrimaryFlightControlConst()) {
-            csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::PrimaryFlightControl)) % CSVConst::Sep %
-                    getPositionData(positionData) % CSVConst::Sep %
-                    getEngineData(engineData) % CSVConst::Sep %
-                    getPrimaryFlightControlData(data) % CSVConst::Sep %
-                    getSecondaryFlightControlData(secondaryFlightControlData) % CSVConst::Sep %
-                    getAircraftHandleData(aircraftHandleData) % CSVConst::Sep %
-                    getLightData(lightData) % CSVConst::Sep %
-                    QString::number(data.timestamp) % CSVConst::Ln;
-            if (!io.write(csv.toUtf8())) {
-                ok = false;
-                break;
+        const PrimaryFlightControl &primaryFlightControl = aircraft.getPrimaryFlightControlConst();
+        dataType = QChar(Enum::toUnderlyingType(CSVConst::DataType::PrimaryFlightControl));
+        if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
+            duration = primaryFlightControl.getLast().timestamp;
+            timestamp = 0;
+            while (ok && timestamp <= duration) {
+                const PrimaryFlightControlData &primaryFlightControlData = primaryFlightControl.interpolate(timestamp, TimeVariableData::Access::Linear);
+                if (!primaryFlightControlData.isNull()) {
+                    ok = writeLine(dataType, emptyPositionData, emptyEngineData,
+                                   primaryFlightControlData, emptySecondaryFlightControlData,
+                                   emptyAircraftHandleData, emptyLightData,
+                                   primaryFlightControlData.timestamp, io);
+                    if (!ok) {
+                        break;
+                    }
+                }
+                timestamp += Enum::toUnderlyingType(resamplingPeriod);
+            }
+        } else {
+            for (const PrimaryFlightControlData &primaryFlightControlData : primaryFlightControl) {
+                ok = writeLine(dataType, emptyPositionData, emptyEngineData,
+                               primaryFlightControlData, emptySecondaryFlightControlData,
+                               emptyAircraftHandleData, emptyLightData,
+                               primaryFlightControlData.timestamp, io);
+                if (!ok) {
+                    break;
+                }
             }
         }
 
         // Secondary flight controls
-        for (const SecondaryFlightControlData &data : aircraft.getSecondaryFlightControlConst()) {
-            csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::SecondaryFlightControl)) % CSVConst::Sep %
-                    getPositionData(positionData) % CSVConst::Sep %
-                    getEngineData(engineData) % CSVConst::Sep %
-                    getPrimaryFlightControlData(primaryFlightControlData) % CSVConst::Sep %
-                    getSecondaryFlightControlData(data) % CSVConst::Sep %
-                    getAircraftHandleData(aircraftHandleData) % CSVConst::Sep %
-                    getLightData(lightData) % CSVConst::Sep %
-                    QString::number(data.timestamp) % CSVConst::Ln;
-            if (!io.write(csv.toUtf8())) {
-                ok = false;
-                break;
+        const SecondaryFlightControl &secondaryFlightControl = aircraft.getSecondaryFlightControlConst();
+        dataType = QChar(Enum::toUnderlyingType(CSVConst::DataType::SecondaryFlightControl));
+        if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
+            duration = secondaryFlightControl.getLast().timestamp;
+            timestamp = 0;
+            while (ok && timestamp <= duration) {
+                const SecondaryFlightControlData &secondaryFlightControlData = secondaryFlightControl.interpolate(timestamp, TimeVariableData::Access::Linear);
+                if (!secondaryFlightControlData.isNull()) {
+                    ok = writeLine(dataType, emptyPositionData, emptyEngineData,
+                                   emptyPrimaryFlightControlData, secondaryFlightControlData,
+                                   emptyAircraftHandleData, emptyLightData,
+                                   secondaryFlightControlData.timestamp, io);
+                    if (!ok) {
+                        break;
+                    }
+                }
+                timestamp += Enum::toUnderlyingType(resamplingPeriod);
+            }
+        } else {
+            for (const SecondaryFlightControlData &secondaryFlightControlData : secondaryFlightControl) {
+                ok = writeLine(dataType, emptyPositionData, emptyEngineData,
+                               emptyPrimaryFlightControlData, secondaryFlightControlData,
+                               emptyAircraftHandleData, emptyLightData,
+                               secondaryFlightControlData.timestamp, io);
+                if (!ok) {
+                    break;
+                }
             }
         }
 
         // Aircraft handles
-        for (const AircraftHandleData &data : aircraft.getAircraftHandleConst()) {
-            csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::AircraftHandle)) % CSVConst::Sep %
-                    getPositionData(positionData) % CSVConst::Sep %
-                    getEngineData(engineData) % CSVConst::Sep %
-                    getPrimaryFlightControlData(primaryFlightControlData) % CSVConst::Sep %
-                    getSecondaryFlightControlData(secondaryFlightControlData) % CSVConst::Sep %
-                    getAircraftHandleData(data) % CSVConst::Sep %
-                    getLightData(lightData) % CSVConst::Sep %
-                    QString::number(data.timestamp) % CSVConst::Ln;
-            if (!io.write(csv.toUtf8())) {
-                ok = false;
-                break;
+        const AircraftHandle &aircraftHandle = aircraft.getAircraftHandleConst();
+        dataType = QChar(Enum::toUnderlyingType(CSVConst::DataType::AircraftHandle));
+        if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
+            duration = aircraftHandle.getLast().timestamp;
+            timestamp = 0;
+            while (ok && timestamp <= duration) {
+                const AircraftHandleData &aircraftHandleData = aircraftHandle.interpolate(timestamp, TimeVariableData::Access::Linear);
+                if (!aircraftHandleData.isNull()) {
+                    ok = writeLine(dataType, emptyPositionData, emptyEngineData,
+                                   emptyPrimaryFlightControlData, emptySecondaryFlightControlData,
+                                   aircraftHandleData, emptyLightData,
+                                   aircraftHandleData.timestamp, io);
+                    if (!ok) {
+                        break;
+                    }
+                }
+                timestamp += Enum::toUnderlyingType(resamplingPeriod);
+            }
+        } else {
+            for (const AircraftHandleData &aircraftHandleData : aircraftHandle) {
+                ok = writeLine(dataType, emptyPositionData, emptyEngineData,
+                               emptyPrimaryFlightControlData, emptySecondaryFlightControlData,
+                               aircraftHandleData, emptyLightData,
+                               aircraftHandleData.timestamp, io);
+                if (!ok) {
+                    break;
+                }
             }
         }
 
         // Lights
-        for (const LightData &data : aircraft.getLightConst()) {
-            csv = QChar(Enum::toUnderlyingType(CSVConst::DataType::Light)) % CSVConst::Sep %
-                    getPositionData(positionData) % CSVConst::Sep %
-                    getEngineData(engineData) % CSVConst::Sep %
-                    getPrimaryFlightControlData(primaryFlightControlData) % CSVConst::Sep %
-                    getSecondaryFlightControlData(secondaryFlightControlData) % CSVConst::Sep %
-                    getAircraftHandleData(aircraftHandleData) % CSVConst::Sep %
-                    getLightData(data) % CSVConst::Sep %
-                    QString::number(data.timestamp) % CSVConst::Ln;
-            if (!io.write(csv.toUtf8())) {
-                ok = false;
-                break;
+        const Light &light = aircraft.getLightConst();
+        dataType = QChar(Enum::toUnderlyingType(CSVConst::DataType::Light));
+        if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
+            duration = light.getLast().timestamp;
+            timestamp = 0;
+            while (ok && timestamp <= duration) {
+                const LightData &lightData = light.interpolate(timestamp, TimeVariableData::Access::Linear);
+                if (!lightData.isNull()) {
+                    ok = writeLine(dataType, emptyPositionData, emptyEngineData,
+                                   emptyPrimaryFlightControlData, emptySecondaryFlightControlData,
+                                   emptyAircraftHandleData, lightData,
+                                   lightData.timestamp, io);
+                    if (!ok) {
+                        break;
+                    }
+                }
+                timestamp += Enum::toUnderlyingType(resamplingPeriod);
+            }
+        } else {
+            for (const LightData &lightData : light) {
+                ok = writeLine(dataType, emptyPositionData, emptyEngineData,
+                               emptyPrimaryFlightControlData, emptySecondaryFlightControlData,
+                               emptyAircraftHandleData, lightData,
+                               lightData.timestamp, io);
+                if (!ok) {
+                    break;
+                }
             }
         }
     }
@@ -516,4 +610,25 @@ inline QString CSVExportPlugin::getLightData(const LightData &data) noexcept
         csv = QString();
     }
     return csv;
+}
+
+inline bool CSVExportPlugin::writeLine(QChar type,
+                                       const PositionData &positionData,
+                                       const EngineData &engineData,
+                                       const PrimaryFlightControlData &primaryFlightControlData,
+                                       const SecondaryFlightControlData &secondaryFlightControlData,
+                                       const AircraftHandleData &aircraftHandleData,
+                                       const LightData &lightData,
+                                       std::int64_t timestamp,
+                                       QIODevice &io) noexcept
+{
+    const QString csv = type % CSVConst::Sep %
+                        getPositionData(positionData) % CSVConst::Sep %
+                        getEngineData(engineData) % CSVConst::Sep %
+                        getPrimaryFlightControlData(primaryFlightControlData) % CSVConst::Sep %
+                        getSecondaryFlightControlData(secondaryFlightControlData) % CSVConst::Sep %
+                        getAircraftHandleData(aircraftHandleData) % CSVConst::Sep %
+                        getLightData(lightData) % CSVConst::Sep %
+                        QString::number(timestamp) % CSVConst::Ln;
+    return io.write(csv.toUtf8());
 }

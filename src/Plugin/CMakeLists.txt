@@ -15,8 +15,7 @@ target_sources(${LIBRARY_NAME}
         src/PluginIntf.h
         src/ExportIntf.h
         src/ImportIntf.h      
-        src/Export.cpp
-        src/Export.h
+        src/Export.h src/Export.cpp
         src/PluginBase.h src/PluginBase.cpp
         src/ImportPluginBase.h src/ImportPluginBase.cpp
         src/ExportPluginBase.h src/ExportPluginBase.cpp
@@ -24,6 +23,7 @@ target_sources(${LIBRARY_NAME}
         src/BasicImportDialog.h src/BasicImportDialog.cpp src/BasicImportDialog.ui
         src/BasicExportDialog.h src/BasicExportDialog.cpp src/BasicExportDialog.ui
         src/SettingsIntf.h
+        src/CSVConst.h
 )
 
 set(PLUGIN_LIBS

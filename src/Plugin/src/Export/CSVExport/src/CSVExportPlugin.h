@@ -91,6 +91,16 @@ private:
 
     static QString getLightHeader() noexcept;
     static QString getLightData(const LightData &data) noexcept;
+
+    static inline bool writeLine(QChar type,
+                                 const PositionData &positionData,
+                                 const EngineData &engineData,
+                                 const PrimaryFlightControlData &flightControlData,
+                                 const SecondaryFlightControlData &secondaryFlightControlData,
+                                 const AircraftHandleData &aircraftHandleData,
+                                 const LightData &lightData,
+                                 std::int64_t timestamp,
+                                 QIODevice &io) noexcept;
 };
 
 #endif // CSVEXPORTPLUGIN_H
