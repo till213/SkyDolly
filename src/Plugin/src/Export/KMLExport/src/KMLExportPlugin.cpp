@@ -240,6 +240,7 @@ bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
         const SampleRate::ResamplingPeriod resamplingPeriod = d->settings.getResamplingPeriod();
         if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
             const std::int64_t duration = position.getLast().timestamp;
+            const std::int64_t deltaTime = Enum::toUnderlyingType(resamplingPeriod);
             std::int64_t timestamp = 0;
             while (ok && timestamp <= duration) {
                 const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Linear);
@@ -248,7 +249,7 @@ bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
                                    formatNumber(positionData.latitude) % "," %
                                    formatNumber(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
                 }
-                timestamp += Enum::toUnderlyingType(resamplingPeriod);
+                timestamp += deltaTime;
             }
         } else {
             // Original data requested

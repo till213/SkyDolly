@@ -57,7 +57,7 @@ signals:
     void restoreDefaultOptions();
 
 private:
-    Ui::BasicExportDialog *ui;
+    std::unique_ptr<Ui::BasicExportDialog> ui;
     std::unique_ptr<BasicExportDialogPrivate> d;
 
     void initUi() noexcept;

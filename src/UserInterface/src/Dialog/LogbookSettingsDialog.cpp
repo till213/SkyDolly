@@ -58,8 +58,8 @@ public:
 
 LogbookSettingsDialog::LogbookSettingsDialog(QWidget *parent) noexcept :
     QDialog(parent),
-    d(std::make_unique<LogbookSettingsDialogPrivate>()),
-    ui(new Ui::LogbookSettingsDialog)
+    ui(std::make_unique<Ui::LogbookSettingsDialog>()),
+    d(std::make_unique<LogbookSettingsDialogPrivate>())
 {
     ui->setupUi(this);
     initUi();
@@ -72,11 +72,16 @@ LogbookSettingsDialog::LogbookSettingsDialog(QWidget *parent) noexcept :
     } else {
         d->originalBackupPeriodIntlId = Const::BackupNeverIntlId;
     }
+#ifdef DEBUG
+    qDebug("LogbookSettingsDialog::LogbookSettingsDialog: CREATED");
+#endif
 }
 
 LogbookSettingsDialog::~LogbookSettingsDialog() noexcept
 {
-    delete ui;
+#ifdef DEBUG
+    qDebug("LogbookSettingsDialog::~LogbookSettingsDialog: DELETED");
+#endif
 }
 
 // PUBLIC SLOTS

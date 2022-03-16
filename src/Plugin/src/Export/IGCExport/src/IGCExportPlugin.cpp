@@ -290,6 +290,7 @@ inline bool IGCExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &
     if (d->settings.getResamplingPeriod() != SampleRate::ResamplingPeriod::Original) {
         const std::int64_t duration = position.getLast().timestamp;
         std::int64_t timestamp = 0;
+        const std::int64_t deltaTime = Enum::toUnderlyingType(d->settings.getResamplingPeriod());
         while (ok && timestamp <= duration) {
             const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Linear);
             if (!positionData.isNull()) {
@@ -311,7 +312,7 @@ inline bool IGCExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &
                                           ::LineEnd;
                 ok = io.write(record);
             }
-            timestamp += Enum::toUnderlyingType(d->settings.getResamplingPeriod());
+            timestamp += deltaTime;
         }
     } else {
         // Original data requested

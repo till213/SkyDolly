@@ -45,7 +45,7 @@ public:
 
 IGCImportOptionWidget::IGCImportOptionWidget(IGCImportSettings &settings, QWidget *parent) noexcept
     : QWidget(parent),
-      ui(new Ui::IGCImportOptionWidget),
+      ui(std::make_unique<Ui::IGCImportOptionWidget>()),
       d(std::make_unique<IGCImportOptionWidgetPrivate>(settings))
 {
     ui->setupUi(this);
@@ -59,7 +59,6 @@ IGCImportOptionWidget::IGCImportOptionWidget(IGCImportSettings &settings, QWidge
 
 IGCImportOptionWidget::~IGCImportOptionWidget() noexcept
 {
-    delete ui;
 #ifdef DEBUG
     qDebug("IGCImportOptionWidget::~IGCImportOptionWidget: DELETED");
 #endif

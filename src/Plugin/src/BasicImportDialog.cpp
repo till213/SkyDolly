@@ -67,7 +67,7 @@ public:
 
 BasicImportDialog::BasicImportDialog(const QString &fileExtension, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::BasicImportDialog),
+    ui(std::make_unique<Ui::BasicImportDialog>()),
     d(std::make_unique<BasicImportDialogPrivate>(fileExtension))
 {
     ui->setupUi(this);    
@@ -81,7 +81,6 @@ BasicImportDialog::BasicImportDialog(const QString &fileExtension, QWidget *pare
 
 BasicImportDialog::~BasicImportDialog()
 {
-    delete ui;
 #ifdef DEBUG
     qDebug("BasicImportDialog::~BasicImportDialog: DELETED");
 #endif

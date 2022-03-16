@@ -62,7 +62,7 @@ signals:
     void restoreDefaultOptions();
 
 private:
-    Ui::BasicImportDialog *ui;
+    std::unique_ptr<Ui::BasicImportDialog> ui;
     std::unique_ptr<BasicImportDialogPrivate> d;
 
     void initUi() noexcept;

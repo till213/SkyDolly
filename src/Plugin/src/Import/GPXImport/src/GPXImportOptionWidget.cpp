@@ -51,7 +51,7 @@ public:
 
 GPXImportOptionWidget::GPXImportOptionWidget(GPXImportSettings &settings, QWidget *parent) noexcept
     : QWidget(parent),
-      ui(new Ui::GPXImportOptionWidget),
+      ui(std::make_unique<Ui::GPXImportOptionWidget>()),
       d(std::make_unique<GPXImportOptionWidgetPrivate>(settings))
 {
     ui->setupUi(this);
@@ -65,7 +65,6 @@ GPXImportOptionWidget::GPXImportOptionWidget(GPXImportSettings &settings, QWidge
 
 GPXImportOptionWidget::~GPXImportOptionWidget() noexcept
 {
-    delete ui;
 #ifdef DEBUG
     qDebug("GPXImportOptionWidget::~GPXImportOptionWidget: DELETED");
 #endif

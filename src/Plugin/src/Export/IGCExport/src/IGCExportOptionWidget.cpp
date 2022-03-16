@@ -44,7 +44,7 @@ public:
 
 IGCExportOptionWidget::IGCExportOptionWidget(IGCExportSettings &settings, QWidget *parent) noexcept
     : QWidget(parent),
-      ui(new Ui::IGCExportOptionWidget),
+      ui(std::make_unique<Ui::IGCExportOptionWidget>()),
       d(std::make_unique<IGCExportOptionWidgetPrivate>(settings))
 {
     ui->setupUi(this);
@@ -58,7 +58,6 @@ IGCExportOptionWidget::IGCExportOptionWidget(IGCExportSettings &settings, QWidge
 
 IGCExportOptionWidget::~IGCExportOptionWidget() noexcept
 {
-    delete ui;
 #ifdef DEBUG
     qDebug("IGCExportOptionWidget::~IGCExportOptionWidget: DELETED");
 #endif

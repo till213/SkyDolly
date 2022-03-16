@@ -73,7 +73,7 @@ public:
 
 BasicExportDialog::BasicExportDialog(const QString &fileExtension, const QString &fileFilter, ExportPluginBaseSettings &settings, QWidget *parent) noexcept
     : QDialog(parent),
-      ui(new Ui::BasicExportDialog),
+      ui(std::make_unique<Ui::BasicExportDialog>()),
       d(std::make_unique<BasicExportDialogPrivate>(fileExtension, fileFilter, settings))
 {
     ui->setupUi(this);
@@ -87,7 +87,6 @@ BasicExportDialog::BasicExportDialog(const QString &fileExtension, const QString
 
 BasicExportDialog::~BasicExportDialog() noexcept
 {
-    delete ui;
 #ifdef DEBUG
     qDebug("BasicExportDialog::~BasicExportDialog: DELETED");
 #endif

@@ -44,7 +44,7 @@ public:
     virtual ~GPXImportOptionWidget() noexcept;
 
 private:
-    Ui::GPXImportOptionWidget *ui;
+    std::unique_ptr<Ui::GPXImportOptionWidget> ui;
     std::unique_ptr<GPXImportOptionWidgetPrivate> d;
 
     void frenchConnection() noexcept;

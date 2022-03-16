@@ -44,7 +44,7 @@ public:
     virtual ~IGCExportOptionWidget() noexcept;
 
 private:
-    Ui::IGCExportOptionWidget *ui;
+    std::unique_ptr<Ui::IGCExportOptionWidget> ui;
     std::unique_ptr<IGCExportOptionWidgetPrivate> d;
 
     void frenchConnection() noexcept;

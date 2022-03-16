@@ -43,7 +43,7 @@ public:
 
 KMLImportOptionWidget::KMLImportOptionWidget(KMLImportSettings &settings, QWidget *parent) noexcept
     : QWidget(parent),
-      ui(new Ui::KMLImportOptionWidget),
+      ui(std::make_unique<Ui::KMLImportOptionWidget>()),
       d(std::make_unique<KMLImportOptionWidgetPrivate>(settings))
 {
     ui->setupUi(this);
@@ -57,7 +57,6 @@ KMLImportOptionWidget::KMLImportOptionWidget(KMLImportSettings &settings, QWidge
 
 KMLImportOptionWidget::~KMLImportOptionWidget() noexcept
 {
-    delete ui;
 #ifdef DEBUG
     qDebug("KMLImportOptionWidget::~KMLImportOptionWidget: DELETED");
 #endif

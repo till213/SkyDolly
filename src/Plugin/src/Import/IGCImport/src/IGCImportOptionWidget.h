@@ -44,7 +44,7 @@ public:
     virtual ~IGCImportOptionWidget() noexcept;
 
 private:
-    Ui::IGCImportOptionWidget *ui;
+    std::unique_ptr<Ui::IGCImportOptionWidget> ui;
     std::unique_ptr<IGCImportOptionWidgetPrivate> d;
 
     void frenchConnection() noexcept;

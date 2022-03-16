@@ -44,7 +44,7 @@ public:
 
 CSVImportOptionWidget::CSVImportOptionWidget(CSVImportSettings &settings, QWidget *parent) noexcept
     : QWidget(parent),
-      ui(new Ui::CSVImportOptionWidget),
+      ui(std::make_unique<Ui::CSVImportOptionWidget>()),
       d(std::make_unique<CSVImportOptionWidgetPrivate>(settings))
 {
     ui->setupUi(this);
@@ -58,7 +58,6 @@ CSVImportOptionWidget::CSVImportOptionWidget(CSVImportSettings &settings, QWidge
 
 CSVImportOptionWidget::~CSVImportOptionWidget() noexcept
 {
-    delete ui;
 #ifdef DEBUG
     qDebug("CSVImportOptionWidget::~CSVImportOptionWidget: DELETED");
 #endif

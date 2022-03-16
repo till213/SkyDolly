@@ -44,7 +44,7 @@ public:
     virtual ~KMLImportOptionWidget() noexcept;
 
 private:
-    Ui::KMLImportOptionWidget *ui;
+    std::unique_ptr<Ui::KMLImportOptionWidget> ui;
     std::unique_ptr<KMLImportOptionWidgetPrivate> d;
 
     void frenchConnection() noexcept;

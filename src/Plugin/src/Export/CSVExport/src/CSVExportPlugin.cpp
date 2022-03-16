@@ -146,6 +146,7 @@ bool CSVExportPlugin::writeFile(QIODevice &io) noexcept
         const LightData emptyLightData;
 
         const SampleRate::ResamplingPeriod resamplingPeriod = d->settings.getResamplingPeriod();
+        const std::int64_t deltaTime = Enum::toUnderlyingType(resamplingPeriod);
         std::int64_t duration;
         std::int64_t timestamp;
 
@@ -166,7 +167,7 @@ bool CSVExportPlugin::writeFile(QIODevice &io) noexcept
                         break;
                     }
                 }
-                timestamp += Enum::toUnderlyingType(resamplingPeriod);
+                timestamp += deltaTime;
             }
         } else {
             for (const PositionData &positionData : position) {
@@ -197,7 +198,7 @@ bool CSVExportPlugin::writeFile(QIODevice &io) noexcept
                         break;
                     }
                 }
-                timestamp += Enum::toUnderlyingType(resamplingPeriod);
+                timestamp += deltaTime;
             }
         } else {
             for (const EngineData &engineData : engine) {
@@ -228,7 +229,7 @@ bool CSVExportPlugin::writeFile(QIODevice &io) noexcept
                         break;
                     }
                 }
-                timestamp += Enum::toUnderlyingType(resamplingPeriod);
+                timestamp += deltaTime;
             }
         } else {
             for (const PrimaryFlightControlData &primaryFlightControlData : primaryFlightControl) {
@@ -259,7 +260,7 @@ bool CSVExportPlugin::writeFile(QIODevice &io) noexcept
                         break;
                     }
                 }
-                timestamp += Enum::toUnderlyingType(resamplingPeriod);
+                timestamp += deltaTime;
             }
         } else {
             for (const SecondaryFlightControlData &secondaryFlightControlData : secondaryFlightControl) {
@@ -290,7 +291,7 @@ bool CSVExportPlugin::writeFile(QIODevice &io) noexcept
                         break;
                     }
                 }
-                timestamp += Enum::toUnderlyingType(resamplingPeriod);
+                timestamp += deltaTime;
             }
         } else {
             for (const AircraftHandleData &aircraftHandleData : aircraftHandle) {
@@ -321,7 +322,7 @@ bool CSVExportPlugin::writeFile(QIODevice &io) noexcept
                         break;
                     }
                 }
-                timestamp += Enum::toUnderlyingType(resamplingPeriod);
+                timestamp += deltaTime;
             }
         } else {
             for (const LightData &lightData : light) {

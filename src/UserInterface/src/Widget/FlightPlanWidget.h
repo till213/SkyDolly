@@ -39,7 +39,6 @@ namespace Ui {
 class FlightPlanWidget : public QWidget
 {
     Q_OBJECT
-
 public:
     explicit FlightPlanWidget(QWidget *parent = nullptr) noexcept;
     virtual ~FlightPlanWidget() noexcept;
@@ -49,9 +48,9 @@ protected:
     void hideEvent(QHideEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(FlightPlanWidget)
-    std::unique_ptr<FlightPlanWidgetPrivate> d;
+    Q_DISABLE_COPY(FlightPlanWidget)    
     std::unique_ptr<Ui::FlightPlanWidget> ui;
+    std::unique_ptr<FlightPlanWidgetPrivate> d;
 
     void initUi() noexcept;
 

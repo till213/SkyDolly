@@ -44,7 +44,7 @@ public:
     virtual ~CSVImportOptionWidget() noexcept;
 
 private:
-    Ui::CSVImportOptionWidget *ui;
+    std::unique_ptr<Ui::CSVImportOptionWidget> ui;
     std::unique_ptr<CSVImportOptionWidgetPrivate> d;
 
     void frenchConnection() noexcept;

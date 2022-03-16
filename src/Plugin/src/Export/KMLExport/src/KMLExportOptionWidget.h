@@ -44,7 +44,7 @@ public:
     virtual ~KMLExportOptionWidget() noexcept;
 
 private:
-    Ui::KMLExportOptionWidget *ui;
+    std::unique_ptr<Ui::KMLExportOptionWidget> ui;
     std::unique_ptr<KMLExportOptionWidgetPrivate> d;
 
     void frenchConnection() noexcept;
