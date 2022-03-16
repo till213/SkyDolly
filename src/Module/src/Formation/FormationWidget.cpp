@@ -579,7 +579,7 @@ void FormationWidget::updateUi() noexcept
         int columnIndex = 0;
 
         // Sequence
-        QTableWidgetItem *newItem = new QTableWidgetItem();
+        std::unique_ptr<QTableWidgetItem> newItem = std::make_unique<QTableWidgetItem>();
         if (rowIndex == userAircraftIndex) {
             QIcon icon;
             if (recording) {
@@ -593,59 +593,60 @@ void FormationWidget::updateUi() noexcept
         newItem->setData(Qt::DisplayRole, rowIndex + 1);
         newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
         newItem->setToolTip(tooltip);
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        // Transfer ownership of newItem to table widget
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem.release());
         ++columnIndex;
 
         // Aircraft type
-        newItem = new QTableWidgetItem(aircraftInfo.aircraftType.type);
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        newItem = std::make_unique<QTableWidgetItem>(aircraftInfo.aircraftType.type);
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem.release());
         ++columnIndex;
 
         // Engine type
-        newItem = new QTableWidgetItem(SimType::engineTypeToString(aircraftInfo.aircraftType.engineType));
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        newItem = std::make_unique<QTableWidgetItem>(SimType::engineTypeToString(aircraftInfo.aircraftType.engineType));
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem.release());
         ++columnIndex;
 
         // Wing span
-        newItem = new QTableWidgetItem(d->unit.formatFeet(aircraftInfo.aircraftType.wingSpan));
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        newItem = std::make_unique<QTableWidgetItem>(d->unit.formatFeet(aircraftInfo.aircraftType.wingSpan));
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem.release());
         newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
         ++columnIndex;
 
         // Initial airspeed
-        newItem = new QTableWidgetItem(d->unit.formatKnots(aircraftInfo.initialAirspeed));
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        newItem = std::make_unique<QTableWidgetItem>(d->unit.formatKnots(aircraftInfo.initialAirspeed));
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem.release());
         newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
         ++columnIndex;
 
         // Initial altitude above ground
-        newItem = new QTableWidgetItem(d->unit.formatFeet(aircraftInfo.altitudeAboveGround));
+        newItem = std::make_unique<QTableWidgetItem>(d->unit.formatFeet(aircraftInfo.altitudeAboveGround));
         newItem->setToolTip(tr("Altitude above ground"));
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem.release());
         newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
         ++columnIndex;
 
         // Duration
-        newItem = new QTableWidgetItem();
+        newItem = std::make_unique<QTableWidgetItem>();
         newItem->setData(Qt::DisplayRole, Unit::formatHHMMSS(aircraft->getDurationMSec()));
         newItem->setToolTip(tr("Hours:Minutes:Seconds"));
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem.release());
         ++columnIndex;
 
         // Tail number
-        newItem = new QTableWidgetItem(aircraftInfo.tailNumber);
+        newItem = std::make_unique<QTableWidgetItem>(aircraftInfo.tailNumber);
         newItem->setToolTip(tr("Double-click to edit tail number."));
         newItem->setBackground(Platform::getEditableTableCellBGColor());
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem.release());
         d->tailNumberColumnIndex = columnIndex;
         ++columnIndex;
 
         // Time offset
         const double timeOffsetSec = static_cast<double>(aircraftInfo.timeOffset) / 1000.0;
-        newItem = new QTableWidgetItem(d->unit.formatNumber(timeOffsetSec, TimeOffsetDecimalPlaces));
+        newItem = std::make_unique<QTableWidgetItem>(d->unit.formatNumber(timeOffsetSec, TimeOffsetDecimalPlaces));
         newItem->setToolTip(tr("Double-click to edit time offset [seconds]."));
         newItem->setBackground(Platform::getEditableTableCellBGColor());
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem);
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem.release());
         d->timeOffsetColumnIndex = columnIndex;
         ++columnIndex;
 
