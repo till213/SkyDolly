@@ -137,12 +137,11 @@ void BasicExportDialog::initOptionUi() noexcept
 {
     if (d->optionWidget != nullptr) {
         ui->optionGroupBox->setHidden(false);
-        QLayout *layout = ui->optionGroupBox->layout();
-        if (layout == nullptr) {
-            delete layout;
-        }
-        layout = new QVBoxLayout();
-        ui->optionGroupBox->setLayout(layout);
+        std::unique_ptr<QLayout> layout {ui->optionGroupBox->layout()};
+        // Any previously existing layout is deleted first, which is what we want
+        layout = std::make_unique<QVBoxLayout>();
+        // Transfer ownership of the layout back to the optionGroupBox
+        ui->optionGroupBox->setLayout(layout.release());
         layout->addWidget(d->optionWidget);
     } else {
         ui->optionGroupBox->setHidden(true);
