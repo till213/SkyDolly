@@ -24,6 +24,8 @@
  */
 #include <memory>
 #include <vector>
+#include <algorithm>
+#include <iterator>
 #include <unordered_map>
 #include <cstdint>
 
@@ -59,6 +61,10 @@ namespace
 {
     // Precision of exported double values
     constexpr int NumberPrecision = 12;
+
+    // Maximum points in a <LineString>
+// TODO FIXME Set to proper size
+    constexpr int MaxLinePoints = 4; // 1024;
 
     // Placemark "look at" direction
     constexpr char LookAtTilt[] = "50";
@@ -215,29 +221,39 @@ bool KMLExportPlugin::exportAircraft(QIODevice &io) const noexcept
 
 bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
+
+    const QString lineStringBegin = QString(
+"        <LineString>\n"
+"          <extrude>1</extrude>\n"
+"          <tessellate>1</tessellate>\n"
+"          <altitudeMode>absolute</altitudeMode>\n"
+"          <coordinates>\n");
+    const QString lineStringEnd = QString(
+"\n"
+"          </coordinates>\n"
+"        </LineString>\n");
+
     const PositionData positionData;
     const int aircraftTypeCount = d->aircraftTypeCount[aircraft.getAircraftInfoConst().aircraftType.type];
     const bool isFormation = d->flight.count() > 1;
     const QString aircratId = isFormation ? " #" % d->unit.formatNumber(aircraftTypeCount, 0) : QString();
 
     const SimType::EngineType engineType = aircraft.getAircraftInfoConst().aircraftType.engineType;
-    QString styleMapId = d->styleExport->getNextStyleMapPerEngineType(engineType);
-
+    QString styleMapId = d->styleExport->getNextEngineTypeStyleMap(engineType);
     const QString placemarkBegin = QString(
 "    <Placemark>\n"
 "      <name>" % aircraft.getAircraftInfoConst().aircraftType.type % aircratId % "</name>\n"
 "      <description>" % getAircraftDescription(aircraft) % "</description>\n"
 "      <styleUrl>#" % styleMapId % "</styleUrl>\n"
-"      <LineString>\n"
-"        <extrude>1</extrude>\n"
-"        <tessellate>1</tessellate>\n"
-"        <altitudeMode>absolute</altitudeMode>\n"
-"        <coordinates>\n");
+"      <MultiGeometry>\n"
+);
+
     bool ok = io.write(placemarkBegin.toUtf8());
     if (ok) {
         // Position data
         const Position &position = aircraft.getPositionConst();
         const SampleRate::ResamplingPeriod resamplingPeriod = d->settings.getResamplingPeriod();
+        std::vector<PositionData> interpolatedPositionData;
         if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
             const std::int64_t duration = position.getLast().timestamp;
             const std::int64_t deltaTime = Enum::toUnderlyingType(resamplingPeriod);
@@ -245,30 +261,52 @@ bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
             while (ok && timestamp <= duration) {
                 const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Linear);
                 if (!positionData.isNull()) {
-                    ok = io.write((formatNumber(positionData.longitude) % "," %
-                                   formatNumber(positionData.latitude) % "," %
-                                   formatNumber(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
+                    interpolatedPositionData.push_back(positionData);
                 }
                 timestamp += deltaTime;
             }
         } else {
             // Original data requested
-            // (may result in huge KML files: e.g. the KML viewer may not be able to display the data at all)
-            for (const PositionData &positionData : position) {
-                ok = io.write((formatNumber(positionData.longitude) % "," %
-                               formatNumber(positionData.latitude) % "," %
-                               formatNumber(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
+            std::copy(position.begin(), position.end(), std::back_inserter(interpolatedPositionData));
+        }
+
+        const int positionCount = interpolatedPositionData.size();
+        int nextLineSegmentIndex = 0;
+        int currentIndex = nextLineSegmentIndex;
+        for (const PositionData &positionData : interpolatedPositionData) {
+            if (currentIndex == nextLineSegmentIndex) {
+                // End the previous line segment (if any)
+                if (currentIndex > 0) {
+                    ok = io.write(lineStringEnd.toUtf8());
+                }
+                // Start a new line segment
+                if (ok) {
+                    ok = io.write(lineStringBegin.toUtf8());
+                }
                 if (!ok) {
                     break;
                 }
+                // Also re-evaluate the current maximum line points: the last
+                // line segment must have 0 or at least 2 points
+                const int remainingPositions = positionCount - currentIndex;
+                nextLineSegmentIndex += remainingPositions - ::MaxLinePoints != 1 ? ::MaxLinePoints : ::MaxLinePoints - 1;
+            }
+            ok = io.write((formatNumber(positionData.longitude) % "," %
+                           formatNumber(positionData.latitude) % "," %
+                           formatNumber(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
+            currentIndex += 1;
+            if (!ok) {
+                break;
             }
         }
+        if (ok) {
+            ok = io.write(lineStringEnd.toUtf8());
+        }
+
     }
     if (ok) {
         const QString placemarkEnd = QString(
-"\n"
-"        </coordinates>\n"
-"      </LineString>\n"
+"      </MultiGeometry>\n"
 "    </Placemark>\n");
         ok = io.write(placemarkEnd.toUtf8());
     }

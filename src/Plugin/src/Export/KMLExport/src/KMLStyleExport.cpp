@@ -105,7 +105,7 @@ bool KMLStyleExport::exportStyles(QIODevice &io) noexcept
     return ok;
 }
 
-QString KMLStyleExport::getNextStyleMapPerEngineType(SimType::EngineType engineType) noexcept
+QString KMLStyleExport::getNextEngineTypeStyleMap(SimType::EngineType engineType) noexcept
 {
     QString styleMapId;
     std::size_t nofColors;

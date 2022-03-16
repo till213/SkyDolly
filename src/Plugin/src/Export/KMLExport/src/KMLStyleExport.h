@@ -48,7 +48,7 @@ public:
     ~KMLStyleExport() noexcept;
 
     bool exportStyles(QIODevice &io) noexcept;
-    QString getNextStyleMapPerEngineType(SimType::EngineType engineType) noexcept;
+    QString getNextEngineTypeStyleMap(SimType::EngineType engineType) noexcept;
 
     static QString getStyleUrl(Icon icon) noexcept;
 
