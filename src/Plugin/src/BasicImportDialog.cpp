@@ -149,9 +149,9 @@ void BasicImportDialog::initOptionUi() noexcept
         std::unique_ptr<QLayout> layout {ui->optionGroupBox->layout()};
         // Any previously existing layout is deleted first, which is what we want
         layout = std::make_unique<QVBoxLayout>();
-        // Transfer ownership of the layout back to the optionGroupBox
-        ui->optionGroupBox->setLayout(layout.release());
         layout->addWidget(d->optionWidget);
+        // Transfer ownership of the layout back to the optionGroupBox
+        ui->optionGroupBox->setLayout(layout.release());        
     } else {
         ui->optionGroupBox->setHidden(true);
     }
