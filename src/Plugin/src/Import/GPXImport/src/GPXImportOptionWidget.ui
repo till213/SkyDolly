@@ -6,12 +6,9 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>309</width>
-    <height>134</height>
+    <width>337</width>
+    <height>138</height>
    </rect>
-  </property>
-  <property name="windowTitle">
-   <string>Form</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
    <item row="0" column="0">

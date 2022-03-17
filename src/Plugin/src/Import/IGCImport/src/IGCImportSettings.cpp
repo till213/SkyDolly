@@ -40,9 +40,8 @@ IGCImportSettings::IGCImportSettings() noexcept
     initSettings();
 }
 
-Settings::PluginSettings IGCImportSettings::getSettings() const noexcept
+void IGCImportSettings::addSettings(Settings::PluginSettings &settings) const noexcept
 {
-    Settings::PluginSettings settings;
     Settings::KeyValue keyValue;
 
     keyValue.first = ::AltitudeKey;
@@ -52,27 +51,22 @@ Settings::PluginSettings IGCImportSettings::getSettings() const noexcept
     keyValue.first = ::ENLThresholdKey;
     keyValue.second = m_enlThresholdPercent;
     settings.push_back(keyValue);
-
-    return settings;
 }
 
-Settings::KeysWithDefaults IGCImportSettings::getKeysWithDefault() const noexcept
+void IGCImportSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    Settings::KeysWithDefaults keys;
     Settings::KeyValue keyValue;
 
     keyValue.first = ::AltitudeKey;
     keyValue.second = Enum::toUnderlyingType(DefaultAltitude);
-    keys.push_back(keyValue);
+    keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::ENLThresholdKey;
     keyValue.second = IGCImportSettings::DefaultENLThresholdPercent;
-    keys.push_back(keyValue);
-
-    return keys;
+    keysWithDefaults.push_back(keyValue);
 }
 
-void IGCImportSettings::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+void IGCImportSettings::applySettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     bool ok;
     const int enumeration = valuesByKey[::AltitudeKey].toInt(&ok);

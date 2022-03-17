@@ -8,8 +8,7 @@ endif()
 
 target_sources(SkySearchTest
     PRIVATE
-        src/SkySearchTest.cpp
-        src/SkySearchTest.h
+        src/SkySearchTest.h src/SkySearchTest.cpp
 )
 
 set(KERNELTEST_LIBS

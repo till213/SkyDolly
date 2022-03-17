@@ -23,76 +23,121 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#include "../../../../../Kernel/src/Enum.h"
+#include <memory>
+
+#include <QString>
+
 #include "../../../../../Kernel/src/System.h"
 #include "../../../../../Kernel/src/Settings.h"
+#include "../../Plugin/src/ExportPluginBaseSettings.h"
 #include "IGCExportSettings.h"
+
+namespace
+{
+    // Keys
+    constexpr char PilotNameKey[] = "PilotName";
+    constexpr char CoPilotNameKey[] = "CoPilotName";
+}
+
+class IGCExportSettingsPrivate
+{
+public:
+    IGCExportSettingsPrivate()
+        : pilotName(DefaultPilotName),
+          coPilotName(DefaultCoPilotName)
+    {}
+
+    QString pilotName;
+    QString coPilotName;
+
+    static inline const QString DefaultPilotName {System::getUsername()};
+    static inline const QString DefaultCoPilotName {QString()};
+};
 
 // PUBLIC
 
 IGCExportSettings::IGCExportSettings() noexcept
-    : defaultPilotName(System::getUsername())
+    : ExportPluginBaseSettings(),
+      d(std::make_unique<IGCExportSettingsPrivate>())
 {
-    restoreDefaults();
+#ifdef DEBUG
+    qDebug("IGCExportSettings::IGCExportSettings: CREATED");
+#endif
 }
 
-Settings::PluginSettings IGCExportSettings::getSettings() const noexcept
+IGCExportSettings::~IGCExportSettings() noexcept
 {
-    Settings::PluginSettings settings;
-    Settings::KeyValue keyValue;
-
-    keyValue.first = "ResamplingPeriod";
-    keyValue.second = Enum::toUnderlyingType(resamplingPeriod);
-    settings.push_back(keyValue);
-
-    keyValue.first = "PilotName";
-    keyValue.second = pilotName;
-    settings.push_back(keyValue);
-
-    keyValue.first = "CoPilotName";
-    keyValue.second = coPilotName;
-    settings.push_back(keyValue);
-
-    return settings;
+#ifdef DEBUG
+    qDebug("IGCExportSettings::~IGCExportSettings: DELETED");
+#endif
 }
 
-Settings::KeysWithDefaults IGCExportSettings::getKeysWithDefault() const noexcept
+QString IGCExportSettings::getPilotName() const noexcept
 {
-    Settings::KeysWithDefaults keys;
-    Settings::KeyValue keyValue;
-
-    keyValue.first = "ResamplingPeriod";
-    keyValue.second = Enum::toUnderlyingType(IGCExportSettings::DefaultResamplingPeriod);
-    keys.push_back(keyValue);
-
-    keyValue.first = "PilotName";
-    keyValue.second = defaultPilotName;
-    keys.push_back(keyValue);
-
-    keyValue.first = "CoPilotName";
-    keyValue.second = DefaultCoPilotName;
-    keys.push_back(keyValue);
-
-    return keys;
+    return d->pilotName;
 }
 
-void IGCExportSettings::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+void IGCExportSettings::setPilotName(const QString &pilotName) noexcept
 {
-    bool ok;
-    int enumeration = valuesByKey["ResamplingPeriod"].toInt(&ok);
-    if (ok) {
-        resamplingPeriod = static_cast<IGCExportSettings::ResamplingPeriod >(enumeration);
-    } else {
-        resamplingPeriod = DefaultResamplingPeriod;
+    if (d->pilotName != pilotName) {
+        d->pilotName = pilotName;
+        emit extendedSettingsChanged();
     }
-
-    pilotName = valuesByKey["PilotName"].value<QString>();
-    coPilotName = valuesByKey["CoPilotName"].value<QString>();
 }
 
-void IGCExportSettings::restoreDefaults() noexcept
+QString IGCExportSettings::getCoPilotName() const noexcept
 {
-    resamplingPeriod = DefaultResamplingPeriod;
-    pilotName = defaultPilotName;
-    coPilotName = DefaultCoPilotName;
+    return d->coPilotName;
+}
+
+void IGCExportSettings::setCoPilotName(const QString &coPilotName) noexcept
+{
+    if (d->coPilotName != coPilotName) {
+        d->coPilotName = coPilotName;
+        emit extendedSettingsChanged();
+    }
+}
+
+// PROTECTED
+
+void IGCExportSettings::addSettingsExtn(Settings::PluginSettings &settings) const noexcept
+{
+    Settings::KeyValue keyValue;
+
+    keyValue.first = ::PilotNameKey;
+    keyValue.second = d->pilotName;
+    settings.push_back(keyValue);
+
+    keyValue.first = ::CoPilotNameKey;
+    keyValue.second = d->coPilotName;
+    settings.push_back(keyValue);
+}
+
+void IGCExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{
+    Settings::KeyValue keyValue;
+
+    keyValue.first = ::PilotNameKey;
+    keyValue.second = IGCExportSettingsPrivate::DefaultPilotName;
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = ::CoPilotNameKey;
+    keyValue.second = IGCExportSettingsPrivate::DefaultCoPilotName;
+    keysWithDefaults.push_back(keyValue);
+}
+
+void IGCExportSettings::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
+{
+    d->pilotName = valuesByKey[::PilotNameKey].value<QString>();
+    d->coPilotName = valuesByKey[::CoPilotNameKey].value<QString>();
+
+    emit extendedSettingsChanged();
+}
+
+void IGCExportSettings::restoreDefaultsExtn() noexcept
+{
+    d->pilotName = IGCExportSettingsPrivate::DefaultPilotName;
+    d->coPilotName = IGCExportSettingsPrivate::DefaultCoPilotName;
+
+    emit extendedSettingsChanged();
 }

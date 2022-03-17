@@ -59,7 +59,8 @@ void PluginBase::setParentWidget(QWidget *parent) noexcept
 
 void PluginBase::storeSettings(const QUuid &pluginUuid) const noexcept
 {
-    const Settings::PluginSettings settings = getSettings();
+    Settings::PluginSettings settings;
+    addSettings(settings);
     if (settings.size() > 0) {
         Settings::getInstance().storePluginSettings(pluginUuid, settings);
     }
@@ -67,26 +68,21 @@ void PluginBase::storeSettings(const QUuid &pluginUuid) const noexcept
 
 void PluginBase::restoreSettings(const QUuid &pluginUuid) noexcept
 {
-    const Settings::KeysWithDefaults keys = getKeyWithDefaults();
-    if (keys.size() > 0) {
-        Settings::ValuesByKey values = Settings::getInstance().restorePluginSettings(pluginUuid, keys);
-        setSettings(values);
+    Settings::KeysWithDefaults keysWithDefaults;
+    addKeysWithDefaults(keysWithDefaults);
+    if (keysWithDefaults.size() > 0) {
+        Settings::ValuesByKey values = Settings::getInstance().restorePluginSettings(pluginUuid, keysWithDefaults);
+        restoreSettings(values);
     }
 }
 
 // PROTECTED
 
-Settings::PluginSettings PluginBase::getSettings() const noexcept
-{
-    Settings::PluginSettings settings;
-    return settings;
-}
+void PluginBase::addSettings(Settings::PluginSettings &settings) const noexcept
+{}
 
-Settings::KeysWithDefaults PluginBase::getKeyWithDefaults() const noexcept
-{
-    Settings::KeysWithDefaults keys;
-    return keys;
-}
+void PluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{}
 
-void PluginBase::setSettings([[maybe_unused]]Settings::ValuesByKey valuesByKey) noexcept
+void PluginBase::restoreSettings([[maybe_unused]]Settings::ValuesByKey valuesByKey) noexcept
 {}

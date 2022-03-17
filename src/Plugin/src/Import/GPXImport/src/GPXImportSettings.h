@@ -48,9 +48,9 @@ public:
     int m_defaultAltitude;
     int m_defaultVelocity;
 
-    Settings::PluginSettings getSettings() const noexcept;
-    Settings::KeysWithDefaults getKeysWithDefault() const noexcept;
-    void setSettings(Settings::ValuesByKey) noexcept;
+    void addSettings(Settings::PluginSettings &settings) const noexcept;
+    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;
+    void applySettings(Settings::ValuesByKey) noexcept;
     void restoreDefaults() noexcept;
 
 signals:

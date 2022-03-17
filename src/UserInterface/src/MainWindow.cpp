@@ -444,15 +444,16 @@ void MainWindow::initModuleSelectorUi() noexcept
     actionCheckBox->setStyleSheet(css);
     actionCheckBox->setContentsMargins(0, 0, 0, 0);
 
-    QSpacerItem *horizontalSpacerLeft = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    QSpacerItem *horizontalSpacerRight = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    QHBoxLayout *moduleVisibilityLayout = new QHBoxLayout();
+    std::unique_ptr<QSpacerItem> horizontalSpacerLeft = std::make_unique<QSpacerItem>(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    std::unique_ptr<QSpacerItem> horizontalSpacerRight = std::make_unique<QSpacerItem>(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    std::unique_ptr<QHBoxLayout> moduleVisibilityLayout = std::make_unique<QHBoxLayout>();
     moduleVisibilityLayout->setContentsMargins(0, 0, 0, 0);
-    ui->moduleVisibilityWidget->setLayout(moduleVisibilityLayout);
-
-    moduleVisibilityLayout->addSpacerItem(horizontalSpacerLeft);
+    // Transfer ownership to the moduleVisibilityLayout...
+    moduleVisibilityLayout->addSpacerItem(horizontalSpacerLeft.release());
     moduleVisibilityLayout->addWidget(actionCheckBox);
-    moduleVisibilityLayout->addSpacerItem(horizontalSpacerRight);
+    moduleVisibilityLayout->addSpacerItem(horizontalSpacerRight.release());
+    // ... and to the moduleVisibilityWidget
+    ui->moduleVisibilityWidget->setLayout(moduleVisibilityLayout.release());
 
     const ModuleIntf &activeModule = d->moduleManager->getActiveModule();
     ui->moduleGroupBox->setTitle(activeModule.getModuleName());

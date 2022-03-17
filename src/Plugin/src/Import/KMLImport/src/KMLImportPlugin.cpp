@@ -55,7 +55,7 @@ public:
     {}
 
     QXmlStreamReader xml;
-    KMLImportSettings importSettings;
+    KMLImportSettings settings;
     QDateTime firstDateTimeUtc;
     QString flightNumber;
     QString title;
@@ -82,19 +82,19 @@ KMLImportPlugin::~KMLImportPlugin() noexcept
 
 // PROTECTED
 
-Settings::PluginSettings KMLImportPlugin::getSettings() const noexcept
+void KMLImportPlugin::addSettings(Settings::PluginSettings &settings) const noexcept
 {
-    return d->importSettings.getSettings();
+    d->settings.addSettings(settings);
 }
 
-Settings::KeysWithDefaults KMLImportPlugin::getKeyWithDefaults() const noexcept
+void KMLImportPlugin::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    return d->importSettings.getKeysWithDefault();
+    d->settings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void KMLImportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+void KMLImportPlugin::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
-    d->importSettings.setSettings(valuesByKey);
+    d->settings.applySettings(valuesByKey);
 }
 
 QString KMLImportPlugin::getFileFilter() const noexcept
@@ -104,7 +104,7 @@ QString KMLImportPlugin::getFileFilter() const noexcept
 
 std::unique_ptr<QWidget> KMLImportPlugin::createOptionWidget() const noexcept
 {
-    return std::make_unique<KMLImportOptionWidget>(d->importSettings);
+    return std::make_unique<KMLImportOptionWidget>(d->settings);
 }
 
 bool KMLImportPlugin::readFile(QFile &file) noexcept
@@ -138,7 +138,7 @@ FlightAugmentation::Procedures KMLImportPlugin::getProcedures() const noexcept
 FlightAugmentation::Aspects KMLImportPlugin::getAspects() const noexcept
 {
     FlightAugmentation::Aspects aspects;
-    switch (d->importSettings.m_format)
+    switch (d->settings.m_format)
     {
     case KMLImportSettings::Format::FlightAware:
         aspects = FlightAugmentation::Aspect::All;
@@ -183,7 +183,7 @@ void KMLImportPlugin::updateExtendedFlightCondition([[maybe_unused]] FlightCondi
 
 void KMLImportPlugin::onRestoreDefaultSettings() noexcept
 {
-    d->importSettings.restoreDefaults();
+    d->settings.restoreDefaults();
 }
 
 // PRIVATE
@@ -191,7 +191,7 @@ void KMLImportPlugin::onRestoreDefaultSettings() noexcept
 void KMLImportPlugin::parseKML() noexcept
 {
     std::unique_ptr<KMLParserIntf> parser;
-    switch (d->importSettings.m_format) {
+    switch (d->settings.m_format) {
     case KMLImportSettings::Format::FlightAware:
         parser = std::make_unique<FlightAwareKMLParser>(d->xml);
         break;

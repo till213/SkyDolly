@@ -22,40 +22,60 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef IGCIMPORTOPTIONWIDGET_H
-#define IGCIMPORTOPTIONWIDGET_H
+#ifndef BASICIMPORTDIALOG_H
+#define BASICIMPORTDIALOG_H
 
 #include <memory>
 
-#include <QWidget>
+#include <QDialog>
+#include <QString>
+
+class QWidget;
+class QAbstractButton;
+
+#include "PluginLib.h"
+
+struct AircraftType;
+class BasicImportDialogPrivate;
 
 namespace Ui {
-    class IGCImportOptionWidget;
+    class BasicImportDialog;
 }
 
-class IGCImportSettings;
-class IGCImportOptionWidgetPrivate;
-
-class IGCImportOptionWidget : public QWidget
+class PLUGIN_API BasicImportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit IGCImportOptionWidget(IGCImportSettings &settings, QWidget *parent = nullptr) noexcept;
-    virtual ~IGCImportOptionWidget() noexcept;
+    explicit BasicImportDialog(const QString &fileExtension, QWidget *parent = nullptr);
+    virtual ~BasicImportDialog();
+
+    QString getSelectedFilePath() const noexcept;
+    bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
+    bool isAddToFlightEnabled() const noexcept;
+
+    QString getFileFilter() const noexcept;
+    void setFileFilter(const QString &extension) noexcept;
+
+    void setOptionWidget(QWidget *widget) noexcept;
+
+signals:
+    void restoreDefaultOptions();
 
 private:
-    std::unique_ptr<Ui::IGCImportOptionWidget> ui;
-    std::unique_ptr<IGCImportOptionWidgetPrivate> d;
+    std::unique_ptr<Ui::BasicImportDialog> ui;
+    std::unique_ptr<BasicImportDialogPrivate> d;
 
-    void frenchConnection() noexcept;
     void initUi() noexcept;
+    void initBasicUi() noexcept;
+    void initOptionUi() noexcept;
+    void frenchConnection() noexcept;
 
 private slots:
-    void onAltitudeChanged(int index) noexcept;
-    void onENLThresholdChanged(int value) noexcept;
-
     void updateUi() noexcept;
+
+    void onFileSelectionChanged() noexcept;
+    void onRestoreDefaults(QAbstractButton *button) noexcept;
+    void onAccepted() noexcept;    
 };
 
-#endif // IGCIMPORTOPTIONWIDGET_H
-
+#endif // BASICIMPORTDIALOG_H

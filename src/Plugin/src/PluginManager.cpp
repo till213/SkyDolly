@@ -124,7 +124,7 @@ bool PluginManager::importData(const QUuid &pluginUuid, FlightService &flightSer
         if (importPlugin != nullptr) {
             importPlugin->setParentWidget(d->parentWidget);
             importPlugin->restoreSettings(pluginUuid);
-            ok = importPlugin->import(flightService);
+            ok = importPlugin->importData(flightService);
             importPlugin->storeSettings(pluginUuid);
         } else {
             ok = false;

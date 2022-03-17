@@ -20,8 +20,8 @@ set(DOCUMENTATION
 target_sources(${LIBRARY_NAME}
     PRIVATE
         src/IGCExportPlugin.h src/IGCExportPlugin.cpp
-        src/IGCExportDialog.h src/IGCExportDialog.cpp src/IGCExportDialog.ui
         src/IGCExportSettings.h src/IGCExportSettings.cpp
+        src/IGCExportOptionWidget.h src/IGCExportOptionWidget.cpp src/IGCExportOptionWidget.ui
         src/IGCExportPlugin.json
         ${DOCUMENTATION}
 )

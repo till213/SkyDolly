@@ -33,18 +33,18 @@ class KMLImportOptionWidgetPrivate
 {
 public:
     KMLImportOptionWidgetPrivate(KMLImportSettings &theImportSettings) noexcept
-        : importSettings(theImportSettings)
+        : settings(theImportSettings)
     {}
 
-     KMLImportSettings &importSettings;
+     KMLImportSettings &settings;
 };
 
 // PUBLIC
 
-KMLImportOptionWidget::KMLImportOptionWidget(KMLImportSettings &importSettings, QWidget *parent) noexcept
+KMLImportOptionWidget::KMLImportOptionWidget(KMLImportSettings &settings, QWidget *parent) noexcept
     : QWidget(parent),
-      ui(new Ui::KMLImportOptionWidget),
-      d(std::make_unique<KMLImportOptionWidgetPrivate>(importSettings))
+      ui(std::make_unique<Ui::KMLImportOptionWidget>()),
+      d(std::make_unique<KMLImportOptionWidgetPrivate>(settings))
 {
     ui->setupUi(this);
     initUi();
@@ -57,7 +57,6 @@ KMLImportOptionWidget::KMLImportOptionWidget(KMLImportSettings &importSettings, 
 
 KMLImportOptionWidget::~KMLImportOptionWidget() noexcept
 {
-    delete ui;
 #ifdef DEBUG
     qDebug("KMLImportOptionWidget::~KMLImportOptionWidget: DELETED");
 #endif
@@ -74,7 +73,7 @@ void KMLImportOptionWidget::frenchConnection() noexcept
     connect(ui->formatComboBox, &QComboBox::currentIndexChanged,
             this, &KMLImportOptionWidget::onFormatChanged);
 #endif
-    connect(&d->importSettings, &KMLImportSettings::defaultsRestored,
+    connect(&d->settings, &KMLImportSettings::defaultsRestored,
             this, &KMLImportOptionWidget::updateUi);
 }
 
@@ -89,14 +88,14 @@ void KMLImportOptionWidget::initUi() noexcept
 
 void KMLImportOptionWidget::onFormatChanged([[maybe_unused]]int index) noexcept
 {
-    d->importSettings.m_format = static_cast<KMLImportSettings::Format>(ui->formatComboBox->currentData().toInt());
+    d->settings.m_format = static_cast<KMLImportSettings::Format>(ui->formatComboBox->currentData().toInt());
 }
 
 void KMLImportOptionWidget::updateUi() noexcept
 {
     int currentIndex = 0;
     while (currentIndex < ui->formatComboBox->count() &&
-           static_cast<KMLImportSettings::Format>(ui->formatComboBox->itemData(currentIndex).toInt()) != d->importSettings.m_format) {
+           static_cast<KMLImportSettings::Format>(ui->formatComboBox->itemData(currentIndex).toInt()) != d->settings.m_format) {
         ++currentIndex;
     }
     ui->formatComboBox->setCurrentIndex(currentIndex);

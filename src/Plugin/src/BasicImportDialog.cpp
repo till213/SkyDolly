@@ -67,7 +67,7 @@ public:
 
 BasicImportDialog::BasicImportDialog(const QString &fileExtension, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::BasicImportDialog),
+    ui(std::make_unique<Ui::BasicImportDialog>()),
     d(std::make_unique<BasicImportDialogPrivate>(fileExtension))
 {
     ui->setupUi(this);    
@@ -81,7 +81,6 @@ BasicImportDialog::BasicImportDialog(const QString &fileExtension, QWidget *pare
 
 BasicImportDialog::~BasicImportDialog()
 {
-    delete ui;
 #ifdef DEBUG
     qDebug("BasicImportDialog::~BasicImportDialog: DELETED");
 #endif
@@ -120,25 +119,11 @@ void BasicImportDialog::setOptionWidget(QWidget *widget) noexcept
 
 // PRIVATE
 
-void BasicImportDialog::frenchConnection() noexcept
-{
-    connect(ui->filePathLineEdit, &QLineEdit::textChanged,
-            this, &BasicImportDialog::updateUi);
-    connect(ui->fileSelectionPushButton, &QPushButton::clicked,
-            this, &BasicImportDialog::onFileSelectionPushButtonClicked);
-    connect(ui->aircraftSelectionComboBox, &QComboBox::currentTextChanged,
-            this, &BasicImportDialog::updateUi);
-    connect(ui->defaultButtonBox, &QDialogButtonBox::clicked,
-            this, &BasicImportDialog::onDefaultButtonClicked);
-    connect(ui->defaultButtonBox, &QDialogButtonBox::accepted,
-            this, &BasicImportDialog::onAccepted);
-}
-
 void BasicImportDialog::initUi() noexcept
 {
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
-    d->importButton = ui->defaultButtonBox->addButton(tr("Import"), QDialogButtonBox::AcceptRole);
+    d->importButton = ui->defaultButtonBox->addButton(tr("&Import"), QDialogButtonBox::AcceptRole);
     initBasicUi();
     initOptionUi();
 }
@@ -161,21 +146,44 @@ void BasicImportDialog::initOptionUi() noexcept
 {
     if (d->optionWidget != nullptr) {
         ui->optionGroupBox->setHidden(false);
-        QLayout *layout = ui->optionGroupBox->layout();
-        if (layout == nullptr) {
-            delete layout;
-        }
-        layout = new QVBoxLayout();
-        ui->optionGroupBox->setLayout(layout);
+        std::unique_ptr<QLayout> layout {ui->optionGroupBox->layout()};
+        // Any previously existing layout is deleted first, which is what we want
+        layout = std::make_unique<QVBoxLayout>();
         layout->addWidget(d->optionWidget);
+        // Transfer ownership of the layout back to the optionGroupBox
+        ui->optionGroupBox->setLayout(layout.release());        
     } else {
         ui->optionGroupBox->setHidden(true);
     }
 }
 
+void BasicImportDialog::frenchConnection() noexcept
+{
+    connect(ui->filePathLineEdit, &QLineEdit::textChanged,
+            this, &BasicImportDialog::updateUi);
+    connect(ui->fileSelectionPushButton, &QPushButton::clicked,
+            this, &BasicImportDialog::onFileSelectionChanged);
+    connect(ui->aircraftSelectionComboBox, &QComboBox::currentTextChanged,
+            this, &BasicImportDialog::updateUi);
+    connect(ui->defaultButtonBox, &QDialogButtonBox::clicked,
+            this, &BasicImportDialog::onRestoreDefaults);
+    connect(ui->defaultButtonBox, &QDialogButtonBox::accepted,
+            this, &BasicImportDialog::onAccepted);
+}
+
 // PRIVATE SLOTS
 
-void BasicImportDialog::onFileSelectionPushButtonClicked() noexcept
+void BasicImportDialog::updateUi() noexcept
+{
+    const QString filePath = ui->filePathLineEdit->text();
+    QFile file(filePath);
+    const QString type = ui->aircraftSelectionComboBox->currentText();
+    const bool aircraftTypeExists = !type.isEmpty() && d->aircraftTypeService->exists(type);
+    const bool enabled = file.exists() && aircraftTypeExists;
+    d->importButton->setEnabled(enabled);
+}
+
+void BasicImportDialog::onFileSelectionChanged() noexcept
 {
     // Start with the last export path
     QString exportPath = Settings::getInstance().getExportPath();
@@ -186,7 +194,7 @@ void BasicImportDialog::onFileSelectionPushButtonClicked() noexcept
     }
 }
 
-void BasicImportDialog::onDefaultButtonClicked(QAbstractButton *button) noexcept
+void BasicImportDialog::onRestoreDefaults(QAbstractButton *button) noexcept
 {
     if (button == ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults)) {
         initBasicUi();
@@ -198,14 +206,4 @@ void BasicImportDialog::onAccepted() noexcept
 {
     const QString type = ui->aircraftSelectionComboBox->currentText();
     Settings::getInstance().setImportAircraftType(type);
-}
-
-void BasicImportDialog::updateUi() noexcept
-{
-    const QString filePath = ui->filePathLineEdit->text();
-    QFile file(filePath);
-    const QString type = ui->aircraftSelectionComboBox->currentText();
-    const bool aircraftTypeExists = !type.isEmpty() && d->aircraftTypeService->exists(type);
-    const bool enabled = file.exists() && aircraftTypeExists;
-    d->importButton->setEnabled(enabled);
 }

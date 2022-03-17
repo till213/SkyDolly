@@ -40,11 +40,11 @@ class KMLImportOptionWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit KMLImportOptionWidget(KMLImportSettings &importSettings, QWidget *parent = nullptr) noexcept;
+    explicit KMLImportOptionWidget(KMLImportSettings &settings, QWidget *parent = nullptr) noexcept;
     virtual ~KMLImportOptionWidget() noexcept;
 
 private:
-    Ui::KMLImportOptionWidget *ui;
+    std::unique_ptr<Ui::KMLImportOptionWidget> ui;
     std::unique_ptr<KMLImportOptionWidgetPrivate> d;
 
     void frenchConnection() noexcept;

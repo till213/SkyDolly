@@ -56,8 +56,22 @@ namespace SampleRate
         Hz45,
         Hz50,
         Hz60,
-
     };
+
+    /*!
+     * Resampling period [millisecons], useful for resampling during data export.
+     */
+    enum struct ResamplingPeriod {
+        Original = 0,
+        TenHz = 100,
+        FiveHz = 200,
+        TwoHz = 500,
+        OneHz = 1000,
+        AFifthHz = 5000,
+        ATenthHz = 10000
+    };
+
+    static constexpr ResamplingPeriod DefaultResamplingPeriod = ResamplingPeriod::OneHz;
 
     /*!
      * Converts the given \c sampleRate enumeration value to the corresponding value in Hz.

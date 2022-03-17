@@ -22,59 +22,38 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef BASICIMPORTDIALOG_H
-#define BASICIMPORTDIALOG_H
+#ifndef IGCEXPORTOPTIONWIDGET_H
+#define IGCEXPORTOPTIONWIDGET_H
 
 #include <memory>
 
-#include <QDialog>
-#include <QString>
-
-class QWidget;
-class QAbstractButton;
-
-#include "WidgetLib.h"
-
-struct AircraftType;
-class BasicImportDialogPrivate;
+#include <QWidget>
 
 namespace Ui {
-    class BasicImportDialog;
+    class IGCExportOptionWidget;
 }
 
-class WIDGET_API BasicImportDialog : public QDialog
+class IGCExportSettings;
+class IGCExportOptionWidgetPrivate;
+
+class IGCExportOptionWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit BasicImportDialog(const QString &fileExtension, QWidget *parent = nullptr);
-    virtual ~BasicImportDialog();
-
-    QString getSelectedFilePath() const noexcept;
-    bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
-    bool isAddToFlightEnabled() const noexcept;
-
-    QString getFileFilter() const noexcept;
-    void setFileFilter(const QString &extension) noexcept;
-
-    void setOptionWidget(QWidget *widget) noexcept;
-
-signals:
-    void restoreDefaultOptions();
+    explicit IGCExportOptionWidget(IGCExportSettings &settings, QWidget *parent = nullptr) noexcept;
+    virtual ~IGCExportOptionWidget() noexcept;
 
 private:
-    Ui::BasicImportDialog *ui;
-    std::unique_ptr<BasicImportDialogPrivate> d;
+    std::unique_ptr<Ui::IGCExportOptionWidget> ui;
+    std::unique_ptr<IGCExportOptionWidgetPrivate> d;
 
     void frenchConnection() noexcept;
     void initUi() noexcept;
-    void initBasicUi() noexcept;
-    void initOptionUi() noexcept;
 
 private slots:
-    void onFileSelectionPushButtonClicked() noexcept;
-    void onDefaultButtonClicked(QAbstractButton *button) noexcept;
-    void onAccepted() noexcept;
     void updateUi() noexcept;
+    void onPilotNameChanged(const QString &name) noexcept;
+    void onCoPilotNameChanged(const QString &name) noexcept;
 };
 
-#endif // BASICIMPORTDIALOG_H
+#endif // IGCEXPORTOPTIONWIDGET_H

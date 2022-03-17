@@ -296,76 +296,77 @@ void LogbookWidget::updateFlightTable() noexcept
             int columnIndex = 0;
 
             // ID
-            QTableWidgetItem *newItem = new QTableWidgetItem();
+            std::unique_ptr<QTableWidgetItem> newItem = std::make_unique<QTableWidgetItem>();
             if (summary.id == flightInMemoryId) {
                 newItem->setIcon(aircraftIcon);
             }
             newItem->setData(Qt::DisplayRole, QVariant::fromValue(summary.id));
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
             newItem->setToolTip(tr("Double-click to load flight"));
-            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
+            // Transfer ownership of newItem to table widget
+            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
             ++columnIndex;
 
             // Creation date
-            newItem = new TableDateItem(d->unit.formatDate(summary.creationDate), summary.creationDate.date());
+            newItem = std::make_unique<TableDateItem>(d->unit.formatDate(summary.creationDate), summary.creationDate.date());
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
+            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
             ++columnIndex;
 
             // Aircraft type
-            newItem = new QTableWidgetItem(summary.aircraftType);
-            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
+            newItem = std::make_unique<QTableWidgetItem>(summary.aircraftType);
+            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
             ++columnIndex;
 
             // Aircraft count
-            newItem = new QTableWidgetItem();
+            newItem = std::make_unique<QTableWidgetItem>();
             newItem->setData(Qt::DisplayRole, summary.aircraftCount);
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
+            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
             ++columnIndex;
 
             // Start time
-            newItem = new TableTimeItem(d->unit.formatTime(summary.startDate), summary.startDate.time());
+            newItem = std::make_unique<TableTimeItem>(d->unit.formatTime(summary.startDate), summary.startDate.time());
             newItem->setToolTip(tr("Simulation time: %1 (%2Z)").arg(d->unit.formatTime(summary.startSimulationLocalTime), d->unit.formatTime(summary.startSimulationZuluTime)));
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
+            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
             ++columnIndex;
 
             // Start location
-            newItem = new QTableWidgetItem(summary.startLocation);
+            newItem = std::make_unique<QTableWidgetItem>(summary.startLocation);
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
+            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
             ++columnIndex;
 
             // End time
-            newItem = new TableTimeItem(d->unit.formatTime(summary.endDate), summary.endDate.time());
+            newItem = std::make_unique<TableTimeItem>(d->unit.formatTime(summary.endDate), summary.endDate.time());
             newItem->setToolTip(tr("Simulation time: %1 (%2Z)").arg(d->unit.formatTime(summary.endSimulationLocalTime), d->unit.formatTime(summary.endSimulationZuluTime)));
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
+            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
             ++columnIndex;
 
             // End location
-            newItem = new QTableWidgetItem(summary.endLocation);
+            newItem = std::make_unique<QTableWidgetItem>(summary.endLocation);
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
+            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
             ++columnIndex;
 
             // Duration
             std::int64_t durationMSec = summary.startDate.msecsTo(summary.endDate);
             QTime time = QTime(0, 0).addMSecs(durationMSec);
-            newItem = new QTableWidgetItem(d->unit.formatDuration(time));
+            newItem = std::make_unique<QTableWidgetItem>(d->unit.formatDuration(time));
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
             durationMSec = summary.startSimulationLocalTime.msecsTo(summary.endSimulationLocalTime);
             time = QTime(0, 0).addMSecs(durationMSec);
             newItem->setToolTip(tr("Simulation duration: %1").arg(d->unit.formatDuration(time)));
-            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
+            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
             ++columnIndex;
 
             // Title
-            newItem = new QTableWidgetItem(summary.title);
+            newItem = std::make_unique<QTableWidgetItem>(summary.title);
             newItem->setToolTip(tr("Double-click to edit title"));
             newItem->setBackground(Platform::getEditableTableCellBGColor());
-            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem);
+            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
             d->titleColumnIndex = columnIndex;
             ++columnIndex;
             ++rowIndex;
@@ -620,8 +621,8 @@ void LogbookWidget::deleteFlight() noexcept
 
             messageBox.setText(tr("The flight %1 is about to be deleted. Deletion cannot be undone.").arg(d->selectedFlightId));
             messageBox.setInformativeText(tr("Do you want to delete the flight?"));
-            QPushButton *deleteButton = messageBox.addButton(tr("Delete"), QMessageBox::AcceptRole);
-            QPushButton *keepButton = messageBox.addButton(tr("Keep"), QMessageBox::RejectRole);
+            QPushButton *deleteButton = messageBox.addButton(tr("&Delete"), QMessageBox::AcceptRole);
+            QPushButton *keepButton = messageBox.addButton(tr("&Keep"), QMessageBox::RejectRole);
             messageBox.setDefaultButton(keepButton);
             messageBox.setCheckBox(dontAskAgainCheckBox);
             messageBox.setIcon(QMessageBox::Icon::Question);

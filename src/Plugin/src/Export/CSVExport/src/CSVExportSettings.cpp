@@ -22,57 +22,50 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLEXPORTDIALOG_H
-#define KMLEXPORTDIALOG_H
 
 #include <memory>
-#include <utility>
-#include <cstdint>
 
-#include <QDialog>
+#include <QString>
 
-#include "KMLStyleExport.h"
+#include "../../../../../Kernel/src/Settings.h"
+#include "../../Plugin/src/ExportPluginBaseSettings.h"
+#include "CSVExportSettings.h"
 
-namespace Ui {
-    class KMLExportDialog;
-}
-
-struct KMLExportSettings;
-class KMLExportDialogPrivate;
-
-class KMLExportDialog : public QDialog
+class CSVExportSettingsPrivate
 {
-    Q_OBJECT
 public:
-    static inline const QString FileSuffix {QStringLiteral("kml")};
-
-    explicit KMLExportDialog(KMLExportSettings &exportSettings, QWidget *parent = nullptr) noexcept;
-    virtual ~KMLExportDialog() noexcept;
-
-    QString getSelectedFilePath() const noexcept;
-    bool doOpenExportedFile() const noexcept;
-
-private:
-    Ui::KMLExportDialog *ui;
-    std::unique_ptr<KMLExportDialogPrivate> d;
-
-    void initUi() noexcept;
-    void initColorUi() noexcept;
-    void updateInfoUi() noexcept;
-    void updateColorUi() noexcept;
-    void frenchConnection() noexcept;
-
-    std::int64_t estimateNofSamplePoints() noexcept;
-
-private slots:
-    void updateUi() noexcept;
-
-    void selectColor(int id) noexcept;
-    void restoreDefaults() noexcept;
-
-    void on_fileSelectionPushButton_clicked() noexcept;
-    void on_resamplingComboBox_activated(int index) noexcept;
-    void on_colorStyleComboBox_activated(int index) noexcept;
+    CSVExportSettingsPrivate()
+    {}
 };
 
-#endif // KMLEXPORTDIALOG_H
+// PUBLIC
+
+CSVExportSettings::CSVExportSettings() noexcept
+    : ExportPluginBaseSettings(),
+      d(std::make_unique<CSVExportSettingsPrivate>())
+{
+#ifdef DEBUG
+    qDebug("CSVExportSettings::CSVExportSettings: CREATED");
+#endif
+}
+
+CSVExportSettings::~CSVExportSettings() noexcept
+{
+#ifdef DEBUG
+    qDebug("CSVExportSettings::~CSVExportSettings: DELETED");
+#endif
+}
+
+// PROTECTED
+
+void CSVExportSettings::addSettingsExtn(Settings::PluginSettings &settings) const noexcept
+{}
+
+void CSVExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{}
+
+void CSVExportSettings::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
+{}
+
+void CSVExportSettings::restoreDefaultsExtn() noexcept
+{}
