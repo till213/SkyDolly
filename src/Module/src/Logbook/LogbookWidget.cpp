@@ -621,8 +621,8 @@ void LogbookWidget::deleteFlight() noexcept
 
             messageBox.setText(tr("The flight %1 is about to be deleted. Deletion cannot be undone.").arg(d->selectedFlightId));
             messageBox.setInformativeText(tr("Do you want to delete the flight?"));
-            QPushButton *deleteButton = messageBox.addButton(tr("Delete"), QMessageBox::AcceptRole);
-            QPushButton *keepButton = messageBox.addButton(tr("Keep"), QMessageBox::RejectRole);
+            QPushButton *deleteButton = messageBox.addButton(tr("&Delete"), QMessageBox::AcceptRole);
+            QPushButton *keepButton = messageBox.addButton(tr("&Keep"), QMessageBox::RejectRole);
             messageBox.setDefaultButton(keepButton);
             messageBox.setCheckBox(dontAskAgainCheckBox);
             messageBox.setIcon(QMessageBox::Icon::Question);

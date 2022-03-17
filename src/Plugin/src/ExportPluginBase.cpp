@@ -33,6 +33,8 @@
 #include <QIODevice>
 #include <QFile>
 #include <QFileInfo>
+#include <QDir>
+#include <QPushButton>
 #include <QUrl>
 #include <QGuiApplication>
 #include <QDesktopServices>
@@ -82,36 +84,30 @@ bool ExportPluginBase::exportData() noexcept
         // Remember export path
         const QString selectedFilePath = exportDialog->getSelectedFilePath();
         if (!selectedFilePath.isEmpty()) {
-            const QString exportDirectoryPath = QFileInfo(selectedFilePath).absolutePath();
-            Settings::getInstance().setExportPath(exportDirectoryPath);
             const QString filePath = File::ensureSuffix(selectedFilePath, getFileExtension());
-            QFile file(filePath);
-            ok = file.open(QIODevice::WriteOnly);
-            if (ok) {
-#ifdef DEBUG
-                QElapsedTimer timer;
-                timer.start();
-#endif
-                QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-                QGuiApplication::processEvents();
-                ok = writeFile(file);
-                QGuiApplication::restoreOverrideCursor();
-#ifdef DEBUG
-                qDebug("%s export %s in %lld ms", qPrintable(QFileInfo(filePath).fileName()), (ok ? qPrintable("SUCCESS") : qPrintable("FAIL")), timer.elapsed());
-#endif
-            }
+            const QFileInfo fileInfo {filePath};
+            const QString exportDirectoryPath = fileInfo.absolutePath();
+            Settings::getInstance().setExportPath(exportDirectoryPath);
 
-            file.close();
-
-            if (ok) {
-                if (getSettings().isOpenExportedFileEnabled()) {
-                    const QString fileUrl = QString("file:///") + filePath;
-                    QDesktopServices::openUrl(QUrl(fileUrl));
-                }
+            if (!fileInfo.exists()) {
+                ok = exportFile(filePath);
             } else {
-                QMessageBox::critical(getParentWidget(), tr("Export error"), tr("The file %1 could not be exported.").arg(filePath));
-            }
+                QMessageBox messageBox;
+                messageBox.setIcon(QMessageBox::Question);
+                QPushButton *replaceButton = messageBox.addButton(tr("&Replace"), QMessageBox::AcceptRole);
+                messageBox.setText(tr("A file named \"%1\" already exists. Do you want to replace it?").arg(fileInfo.fileName()));
+                messageBox.setInformativeText(tr("The file already exists in \"%1\".  Replacing it will overwrite its contents.").arg(fileInfo.dir().dirName()));
+                messageBox.setStandardButtons(QMessageBox::Cancel);
+                messageBox.setDefaultButton(replaceButton);
 
+                messageBox.exec();
+                const QAbstractButton *clickedButton = messageBox.clickedButton();
+                if (clickedButton == replaceButton) {
+                    ok = exportFile(filePath);
+                } else {
+                    ok = true;
+                }
+            }
         } else {
             ok = true;
         }
@@ -140,4 +136,38 @@ void ExportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexce
 {
     getSettings().restoreSettings(valuesByKey);
     restoreSettingsExtn(valuesByKey);
+}
+
+// PRIVATE SLOTS
+
+bool ExportPluginBase::exportFile(const QString &filePath) noexcept
+{
+    QFile file(filePath);
+    bool ok = file.open(QIODevice::WriteOnly);
+    if (ok) {
+#ifdef DEBUG
+        QElapsedTimer timer;
+        timer.start();
+#endif
+        QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+        QGuiApplication::processEvents();
+        ok = writeFile(file);
+        QGuiApplication::restoreOverrideCursor();
+#ifdef DEBUG
+        qDebug("%s export %s in %lld ms", qPrintable(QFileInfo(filePath).fileName()), (ok ? qPrintable("SUCCESS") : qPrintable("FAIL")), timer.elapsed());
+#endif
+    }
+
+    file.close();
+
+    if (ok) {
+        if (getSettings().isOpenExportedFileEnabled()) {
+            const QString fileUrl = QString("file:///") + filePath;
+            QDesktopServices::openUrl(QUrl(fileUrl));
+        }
+    } else {
+        QMessageBox::critical(getParentWidget(), tr("Export error"), tr("An error occured during export into file %1.").arg(filePath));
+    }
+
+    return ok;
 }

@@ -114,7 +114,7 @@ void BasicExportDialog::initUi() noexcept
 {
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
-    d->exportButton = ui->defaultButtonBox->addButton(tr("Export"), QDialogButtonBox::AcceptRole);
+    d->exportButton = ui->defaultButtonBox->addButton(tr("&Export"), QDialogButtonBox::AcceptRole);
     initBasicUi();
     initOptionUi();
 }
@@ -154,11 +154,12 @@ void BasicExportDialog::updateInfoUi() noexcept
     SampleRate::ResamplingPeriod resamplingPeriod = static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt());
     std::int64_t samplePoints = estimateNofSamplePoints();
     if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
-        infoText = tr("The position data is resampled every %1 milliseconds, resulting in %2 exported positions.")
-                      .arg(d->unit.formatNumber(Enum::toUnderlyingType(resamplingPeriod), 0), d->unit.formatNumber(samplePoints, 0));
+        infoText = tr("The position data will be resampled every %1 milliseconds, resulting in %n exported positions.",
+                      nullptr, samplePoints)
+                      .arg(d->unit.formatNumber(Enum::toUnderlyingType(resamplingPeriod), 0));
     } else {
-        infoText = tr("The original recorded data will be exported, in total %1 exported positions.")
-                      .arg(d->unit.formatNumber(samplePoints, 0));
+        infoText = tr("The original recorded data will be exported, in total %n exported positions.",
+                      nullptr, samplePoints);
     }
     ui->infoLabel->setText(infoText);
 }

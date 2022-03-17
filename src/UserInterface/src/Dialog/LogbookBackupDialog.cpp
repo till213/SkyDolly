@@ -132,13 +132,10 @@ void LogbookBackupDialog::initUi() noexcept
 {
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
-    std::unique_ptr<QPushButton> backupButton = std::make_unique<QPushButton>(tr("&Backup"));
-    std::unique_ptr<QPushButton> skipThisTimeButton = std::make_unique<QPushButton>(tr("&Skip This Time"));
-    backupButton->setDefault(true);
-
     // Transfer ownership to the buttonBox
-    ui->buttonBox->addButton(backupButton.release(), QDialogButtonBox::AcceptRole);
-    ui->buttonBox->addButton(skipThisTimeButton.release(), QDialogButtonBox::RejectRole);
+    QPushButton *backupButton = ui->buttonBox->addButton(tr("&Backup"), QDialogButtonBox::AcceptRole);
+    backupButton->setDefault(true);
+    ui->buttonBox->addButton(tr("&Skip this time"), QDialogButtonBox::RejectRole);
 }
 
 void LogbookBackupDialog::updateUi() noexcept

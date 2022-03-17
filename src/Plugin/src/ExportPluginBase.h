@@ -92,6 +92,8 @@ protected slots:
 
 private:
     std::unique_ptr<ExportPluginBasePrivate> d;
+
+    bool exportFile(const QString &filePath) noexcept;
 };
 
 #endif // EXPORTPLUGINBASE_H

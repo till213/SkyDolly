@@ -868,8 +868,8 @@ void FormationWidget::deleteAircraft() noexcept
         // Sequence numbers start at 1
         messageBox.setText(tr("The aircraft with sequence number %1 is about to be deleted. Deletion cannot be undone.").arg(d->selectedRow + 1));
         messageBox.setInformativeText(tr("Do you want to delete the aircraft?"));
-        QPushButton *deleteButton = messageBox.addButton(tr("Delete"), QMessageBox::AcceptRole);
-        QPushButton *keepButton = messageBox.addButton(tr("Keep"), QMessageBox::RejectRole);
+        QPushButton *deleteButton = messageBox.addButton(tr("&Delete"), QMessageBox::AcceptRole);
+        QPushButton *keepButton = messageBox.addButton(tr("&Keep"), QMessageBox::RejectRole);
         messageBox.setDefaultButton(keepButton);
         messageBox.setCheckBox(dontAskAgainCheckBox);
         messageBox.setIcon(QMessageBox::Icon::Question);
@@ -1007,8 +1007,8 @@ void FormationWidget::on_resetAllTimeOffsetPushButton_clicked() noexcept
 
         messageBox.setText(tr("The time offsets of all aircraft in this formation will be changed."));
         messageBox.setInformativeText(tr("Do you want to reset all time offsets to 0?"));
-        QPushButton *resetButton = messageBox.addButton(tr("Reset Time Offsets"), QMessageBox::AcceptRole);
-        QPushButton *doNotChangeButon = messageBox.addButton(tr("Do Not Change"), QMessageBox::RejectRole);
+        QPushButton *resetButton = messageBox.addButton(tr("&Reset Time Offsets"), QMessageBox::AcceptRole);
+        QPushButton *doNotChangeButon = messageBox.addButton(tr("Do &Not Change"), QMessageBox::RejectRole);
         messageBox.setDefaultButton(doNotChangeButon);
         messageBox.setCheckBox(dontAskAgainCheckBox);
         messageBox.setIcon(QMessageBox::Icon::Question);
