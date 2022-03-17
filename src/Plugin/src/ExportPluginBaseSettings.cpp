@@ -45,11 +45,13 @@ class ExportPluginBaseSettingsPrivate
 public:
     ExportPluginBaseSettingsPrivate()
         : resamplingPeriod(::DefaultResamplingPeriod),
-          openExportedFileEnabled(::DefaultOpenExportedFileEnabled)
+          openExportedFileEnabled(::DefaultOpenExportedFileEnabled),
+          fileDialogSelectedFile(false)
     {}
 
     SampleRate::ResamplingPeriod resamplingPeriod;
     bool openExportedFileEnabled;
+    bool fileDialogSelectedFile;
 };
 
 // PUBLIC
@@ -93,6 +95,16 @@ void ExportPluginBaseSettings::setOpenExportedFileEnabled(bool openExportedFileE
         d->openExportedFileEnabled = openExportedFileEnabled;
         emit baseSettingsChanged();
     }
+}
+
+bool ExportPluginBaseSettings::isFileDialogSelectedFile() const noexcept
+{
+    return d->fileDialogSelectedFile;
+}
+
+void ExportPluginBaseSettings::setFileDialogSelectedFile(bool fileDialogSelected) noexcept
+{
+    d->fileDialogSelectedFile = fileDialogSelected;
 }
 
 void ExportPluginBaseSettings::addSettings(Settings::PluginSettings &settings) const noexcept

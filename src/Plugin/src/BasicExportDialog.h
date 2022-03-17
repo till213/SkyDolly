@@ -72,6 +72,7 @@ private slots:
     void updateUi() noexcept;
 
     void onFileSelectionButtonClicked() noexcept;
+    void onFilePathChanged(const QString &filePath);
     void onResamplingOptionChanged(int index) noexcept;
     void onDoOpenExportedFileChanged(bool enable) noexcept;
     void onRestoreSettings() noexcept;

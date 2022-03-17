@@ -89,7 +89,7 @@ bool ExportPluginBase::exportData() noexcept
             const QString exportDirectoryPath = fileInfo.absolutePath();
             Settings::getInstance().setExportPath(exportDirectoryPath);
 
-            if (!fileInfo.exists()) {
+            if (getSettings().isFileDialogSelectedFile() || !fileInfo.exists()) {
                 ok = exportFile(filePath);
             } else {
                 QMessageBox messageBox;

@@ -43,7 +43,7 @@ public:
     SimType::EngineType engineType;
     int mininumDurationMinutes;
 
-    // The release date of FS2020 ;)
+    // The release date of MSFS ;)
     static inline const QDate MinDate {2020, 8, 18};
     static inline const QDate MaxDate {9999, 12, 31};
 };
