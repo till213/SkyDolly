@@ -118,7 +118,7 @@ QString CSVExportPlugin::getFileFilter() const noexcept
 std::unique_ptr<QWidget> CSVExportPlugin::createOptionWidget() const noexcept
 {
     // No plugin-specific settings yet
-    return nullptr;;
+    return nullptr;
 }
 
 bool CSVExportPlugin::writeFile(QIODevice &io) noexcept

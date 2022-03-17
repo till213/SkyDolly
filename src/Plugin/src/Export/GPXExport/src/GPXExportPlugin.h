@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLEXPORTPLUGIN_H
-#define KMLEXPORTPLUGIN_H
+#ifndef GPXEXPORTPLUGIN_H
+#define GPXEXPORTPLUGIN_H
 
 #include <memory>
 
@@ -37,22 +37,21 @@ class QString;
 #include "../../../../../Kernel/src/Settings.h"
 #include "../../../ExportIntf.h"
 #include "../../../ExportPluginBase.h"
-#include "KMLStyleExport.h"
 
 class Flight;
 class Aircraft;
 struct PositionData;
 struct Waypoint;
-class KMLExportPluginPrivate;
+class GPXExportPluginPrivate;
 
-class KMLExportPlugin : public ExportPluginBase
+class GPXExportPlugin : public ExportPluginBase
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "KMLExportPlugin.json")
+    Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "GPXExportPlugin.json")
     Q_INTERFACES(ExportIntf)
 public:
-    KMLExportPlugin() noexcept;
-    virtual ~KMLExportPlugin() noexcept;
+    GPXExportPlugin() noexcept;
+    virtual ~GPXExportPlugin() noexcept;
 
 protected:
     // ExportPluginBase
@@ -69,7 +68,7 @@ protected slots:
     virtual void onRestoreDefaultSettings() noexcept override;
 
 private:
-    std::unique_ptr<KMLExportPluginPrivate> d;
+    std::unique_ptr<GPXExportPluginPrivate> d;
 
     bool exportHeader(QIODevice &io) const noexcept;
     bool exportFlightInfo(QIODevice &io) const noexcept;
@@ -82,12 +81,8 @@ private:
     QString getAircraftDescription(const Aircraft &aircraft) const noexcept;
     QString getWaypointDescription(const Waypoint &waypoint) const noexcept;
 
-    inline bool exportPlacemark(QIODevice &io, KMLStyleExport::Icon icon, const QString &name, const QString &description,
-                                const PositionData &positionData) const noexcept;
-    inline bool exportPlacemark(QIODevice &io, KMLStyleExport::Icon icon, const QString &name, const QString &description,
-                                double longitude, double latitude, double altitudeInFeet, double heading) const noexcept;
-
+    static inline bool exportTrackPoint(const PositionData &positionData, QIODevice &io) noexcept;
     static inline QString formatNumber(double number) noexcept;
 };
 
-#endif // KMLEXPORTPLUGIN_H
+#endif // GPXEXPORTPLUGIN_H

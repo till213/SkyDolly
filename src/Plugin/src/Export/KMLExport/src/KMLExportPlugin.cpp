@@ -38,6 +38,10 @@
 #include <QCheckBox>
 #include <QDesktopServices>
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+#include "../../../../../Kernel/src/QStringHasher.h"
+#endif
+
 #include "../../../../../Kernel/src/Convert.h"
 #include "../../../../../Kernel/src/File.h"
 #include "../../../../../Kernel/src/Enum.h"
@@ -85,7 +89,6 @@ public:
     std::unique_ptr<KMLStyleExport> styleExport;
     Unit unit;
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    #include "../../../../../Kernel/src/QStringHasher.h"
     std::unordered_map<QString, int, QStringHasher> aircraftTypeCount;
 #else
     std::unordered_map<QString, int> aircraftTypeCount;
@@ -150,7 +153,7 @@ std::unique_ptr<QWidget> KMLExportPlugin::createOptionWidget() const noexcept
 
 bool KMLExportPlugin::writeFile(QIODevice &io) noexcept
 {
-    bool ok;
+    io.setTextModeEnabled(true);
 
     d->aircraftTypeCount.clear();
     const int nofAircraft = d->flight.count();
@@ -158,8 +161,7 @@ bool KMLExportPlugin::writeFile(QIODevice &io) noexcept
     // than requested colors per ramp)
     d->settings.setNofColorsPerRamp(qMin(nofAircraft, d->settings.getNofColorsPerRamp()));
 
-    io.setTextModeEnabled(true);
-    ok = exportHeader(io);
+    bool ok = exportHeader(io);
     if (ok) {
         ok = d->styleExport->exportStyles(io);
     }
@@ -167,7 +169,7 @@ bool KMLExportPlugin::writeFile(QIODevice &io) noexcept
         ok = exportFlightInfo(io);
     }
     if (ok) {
-        ok = exportAircraft(io);
+        ok = exportAllAircraft(io);
     }
     if (ok) {
         ok = exportWaypoints(io);
@@ -206,12 +208,12 @@ bool KMLExportPlugin::exportFlightInfo(QIODevice &io) const noexcept
     return exportPlacemark(io, KMLStyleExport::Icon::Airport, d->flight.getTitle(), getFlightDescription(), positionData);
 }
 
-bool KMLExportPlugin::exportAircraft(QIODevice &io) const noexcept
+bool KMLExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
 {
     bool ok = true;
     for (const auto &aircraft : d->flight) {
         d->aircraftTypeCount[aircraft->getAircraftInfoConst().aircraftType.type] += 1;
-        ok = exportAircraft(*aircraft, io);
+        ok = exportAllAircraft(*aircraft, io);
         if (!ok) {
             break;
         }
@@ -219,7 +221,7 @@ bool KMLExportPlugin::exportAircraft(QIODevice &io) const noexcept
     return ok;
 }
 
-bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
+bool KMLExportPlugin::exportAllAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     const QString lineStringBegin = QString(
 "        <LineString>\n"

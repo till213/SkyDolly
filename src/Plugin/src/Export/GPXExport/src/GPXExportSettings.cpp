@@ -22,23 +22,50 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef QSTRINGHASHER_H
-#define QSTRINGHASHER_H
 
-#include <QtGlobal>
+#include <memory>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-#include <cstdlib>
-
-#include <QHash>
 #include <QString>
 
-// https://www.kdab.com/qt-datatypes-in-standard-library/
-struct QStringHasher {
-    std::size_t operator()(const QString &value) const noexcept {
-        return qHash(value) ;
-    }
-};
-#endif
+#include "../../../../../Kernel/src/Settings.h"
+#include "../../Plugin/src/ExportPluginBaseSettings.h"
+#include "GPXExportSettings.h"
 
-#endif //  QSTRINGHASHER_H
+class GPXExportSettingsPrivate
+{
+public:
+    GPXExportSettingsPrivate()
+    {}
+};
+
+// PUBLIC
+
+GPXExportSettings::GPXExportSettings() noexcept
+    : ExportPluginBaseSettings(),
+      d(std::make_unique<GPXExportSettingsPrivate>())
+{
+#ifdef DEBUG
+    qDebug("GPXExportSettings::GPXExportSettings: CREATED");
+#endif
+}
+
+GPXExportSettings::~GPXExportSettings() noexcept
+{
+#ifdef DEBUG
+    qDebug("GPXExportSettings::~GPXExportSettings: DELETED");
+#endif
+}
+
+// PROTECTED
+
+void GPXExportSettings::addSettingsExtn(Settings::PluginSettings &settings) const noexcept
+{}
+
+void GPXExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{}
+
+void GPXExportSettings::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
+{}
+
+void GPXExportSettings::restoreDefaultsExtn() noexcept
+{}
