@@ -70,7 +70,6 @@ ExportPluginBase::~ExportPluginBase() noexcept
 bool ExportPluginBase::exportData() noexcept
 {
     bool ok;
-
     Settings &settings = Settings::getInstance();
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
     std::unique_ptr<BasicExportDialog> exportDialog = std::make_unique<BasicExportDialog>(getFileExtension(), getFileFilter(), getSettings(), getParentWidget());

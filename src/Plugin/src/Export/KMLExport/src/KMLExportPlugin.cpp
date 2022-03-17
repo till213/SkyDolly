@@ -62,9 +62,9 @@ namespace
     // Precision of exported double values
     constexpr int NumberPrecision = 12;
 
-    // Maximum points in a <LineString>
-// TODO FIXME Set to proper size
-    constexpr int MaxLinePoints = 4; // 1024;
+    // Maximum segments in a <LineString> (resulting in
+    // MaxLineSegments + 1 coordinates per <LineString>)
+    constexpr int MaxLineSegments = 16384;
 
     // Placemark "look at" direction
     constexpr char LookAtTilt[] = "50";
@@ -221,7 +221,6 @@ bool KMLExportPlugin::exportAircraft(QIODevice &io) const noexcept
 
 bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-
     const QString lineStringBegin = QString(
 "        <LineString>\n"
 "          <extrude>1</extrude>\n"
@@ -232,8 +231,6 @@ bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
 "\n"
 "          </coordinates>\n"
 "        </LineString>\n");
-
-    const PositionData positionData;
     const int aircraftTypeCount = d->aircraftTypeCount[aircraft.getAircraftInfoConst().aircraftType.type];
     const bool isFormation = d->flight.count() > 1;
     const QString aircratId = isFormation ? " #" % d->unit.formatNumber(aircraftTypeCount, 0) : QString();
@@ -270,10 +267,10 @@ bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
             std::copy(position.begin(), position.end(), std::back_inserter(interpolatedPositionData));
         }
 
-        const int positionCount = interpolatedPositionData.size();
+        const int interpolatedPositionCount = interpolatedPositionData.size();
         int nextLineSegmentIndex = 0;
         int currentIndex = nextLineSegmentIndex;
-        for (const PositionData &positionData : interpolatedPositionData) {
+        while (currentIndex < interpolatedPositionCount - 1) {
             if (currentIndex == nextLineSegmentIndex) {
                 // End the previous line segment (if any)
                 if (currentIndex > 0) {
@@ -286,15 +283,18 @@ bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
                 if (!ok) {
                     break;
                 }
-                // Also re-evaluate the current maximum line points: the last
-                // line segment must have 0 or at least 2 points
-                const int remainingPositions = positionCount - currentIndex;
-                nextLineSegmentIndex += remainingPositions - ::MaxLinePoints != 1 ? ::MaxLinePoints : ::MaxLinePoints - 1;
+                // Update the index of the next line segment start, but
+                // don't increment the currentIndex just yet: the
+                // last point of the previous line segment is repeated,
+                // in order to connect the segments
+                nextLineSegmentIndex += ::MaxLineSegments;
+            } else {
+                currentIndex += 1;
             }
+            const PositionData positionData = interpolatedPositionData[currentIndex];
             ok = io.write((formatNumber(positionData.longitude) % "," %
                            formatNumber(positionData.latitude) % "," %
                            formatNumber(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
-            currentIndex += 1;
             if (!ok) {
                 break;
             }

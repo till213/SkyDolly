@@ -154,11 +154,10 @@ void BasicExportDialog::updateInfoUi() noexcept
     SampleRate::ResamplingPeriod resamplingPeriod = static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt());
     std::int64_t samplePoints = estimateNofSamplePoints();
     if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
-        infoText = tr("The position data is resampled every %1 milliseconds, resulting in approximately %2 exported positions in total.")
+        infoText = tr("The position data is resampled every %1 milliseconds, resulting in %2 exported positions.")
                       .arg(d->unit.formatNumber(Enum::toUnderlyingType(resamplingPeriod), 0), d->unit.formatNumber(samplePoints, 0));
     } else {
-        infoText = tr("WARNING: exporting the original position data may result in large files. The file viewer performance may "
-                      "drastically slow down, or the exported data may not even be displayed at all.\n\nIn total %1 positions will be exported.")
+        infoText = tr("The original recorded data will be exported, in total %1 exported positions.")
                       .arg(d->unit.formatNumber(samplePoints, 0));
     }
     ui->infoLabel->setText(infoText);
@@ -196,7 +195,7 @@ std::int64_t BasicExportDialog::estimateNofSamplePoints() noexcept
     if (period != 0) {
         for (const auto &aircraft : flight) {
             std::int64_t duration = aircraft->getDurationMSec();
-            nofSamplePoints += qRound(static_cast<double>(duration) / static_cast<double>(period));
+            nofSamplePoints += qRound(static_cast<double>(duration) / static_cast<double>(period)) + 1;
         }
     } else {
         // Count the actual position sample points
