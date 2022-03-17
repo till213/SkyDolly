@@ -8,8 +8,7 @@ endif()
 
 target_sources(SkyMathTest
     PRIVATE
-        src/SkyMathTest.cpp
-        src/SkyMathTest.h
+        src/SkyMathTest.h src/SkyMathTest.cpp
 )
 
 set(KERNELTEST_LIBS

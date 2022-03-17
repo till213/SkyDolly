@@ -27,19 +27,11 @@
 #include <vector>
 
 #include <QWidget>
-#include <QStringBuilder>
 #include <QIODevice>
-#include <QFlags>
-#include <QByteArray>
-#include <QList>
-#include <QFileDialog>
+#include <QFile>
+#include <QFileInfo>
 #include <QMessageBox>
-#include <QDate>
 #include <QDateTime>
-#include <QTimeZone>
-#include <QRegularExpression>
-#include <QRegularExpressionMatch>
-#include <QStringView>
 #include <QElapsedTimer>
 #include <QCursor>
 #include <QGuiApplication>
@@ -62,7 +54,7 @@
 #include "../../Persistence/src/Service/FlightService.h"
 #include "../../Persistence/src/Service/AircraftService.h"
 #include "../../Persistence/src/Service/AircraftTypeService.h"
-#include "../../Widget/src/BasicImportDialog.h"
+#include "BasicImportDialog.h"
 #include "ImportPluginBase.h"
 
 class ImportPluginBasePrivate
@@ -100,7 +92,7 @@ ImportPluginBase::~ImportPluginBase() noexcept
 #endif
 }
 
-bool ImportPluginBase::import(FlightService &flightService) noexcept
+bool ImportPluginBase::importData(FlightService &flightService) noexcept
 {
     bool ok;
     Settings &settings = Settings::getInstance();

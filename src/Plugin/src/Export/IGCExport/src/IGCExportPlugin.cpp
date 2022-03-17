@@ -44,7 +44,6 @@
 #include "../../../../../Kernel/src/Version.h"
 #include "../../../../../Kernel/src/Settings.h"
 #include "../../../../../Kernel/src/SkyMath.h"
-#include "../../../../../Model/src/SimVar.h"
 #include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/FlightCondition.h"
@@ -56,7 +55,7 @@
 #include "../../../../../Model/src/FlightPlan.h"
 #include "../../../../../Model/src/Waypoint.h"
 #include "../../../../src/Export.h"
-#include "IGCExportDialog.h"
+#include "IGCExportOptionWidget.h"
 #include "IGCExportSettings.h"
 #include "IGCExportPlugin.h"
 
@@ -109,7 +108,7 @@ public:
     {}
 
     Flight &flight;
-    IGCExportSettings exportSettings;
+    IGCExportSettings settings;
     Unit unit;
 
     static inline const QByteArray ARecord {"A"};
@@ -118,6 +117,8 @@ public:
     static inline const QByteArray CRecord {"C"};
     static inline const QByteArray BRecord {"B"};
     static inline const QByteArray GRecord {"G"};
+
+    static inline const QString FileExtension {QStringLiteral("igc")};
 };
 
 // PUBLIC
@@ -137,67 +138,46 @@ IGCExportPlugin::~IGCExportPlugin() noexcept
 #endif
 }
 
-bool IGCExportPlugin::exportData() noexcept
-{
-    bool ok;
-    std::unique_ptr<IGCExportDialog> exportDialog = std::make_unique<IGCExportDialog>(d->exportSettings, getParentWidget());
-    const int choice = exportDialog->exec();
-    if (choice == QDialog::Accepted) {
-        // Remember export path
-        const QString exportDirectoryPath = QFileInfo(exportDialog->getSelectedFilePath()).absolutePath();
-        Settings::getInstance().setExportPath(exportDirectoryPath);
-        const QString filePath = File::ensureSuffix(exportDialog->getSelectedFilePath(), IGCExportDialog::FileExtension);
-        if (!filePath.isEmpty()) {
-
-            QFile file(filePath);
-            ok = file.open(QIODevice::WriteOnly);
-            if (ok) {
-                const Aircraft &aircraft = d->flight.getUserAircraftConst();
-                ok = exportIGCFile(aircraft, file);
-                file.close();
-            }
-
-        } else {
-            ok = true;
-        }
-
-        if (ok) {
-            if (exportDialog->doOpenExportedFile()) {
-                const QString fileUrl = QString("file:///") + filePath;
-                QDesktopServices::openUrl(QUrl(fileUrl));
-            }
-        } else {
-            QMessageBox::critical(getParentWidget(), tr("Export error"), tr("The IGC file %1 could not be exported.").arg(filePath));
-        }
-
-    } else {
-        ok = true;
-    }
-
-    return ok;
-}
-
 // PROTECTED
 
-Settings::PluginSettings IGCExportPlugin::getSettings() const noexcept
+ExportPluginBaseSettings &IGCExportPlugin::getSettings() const noexcept
 {
-    return d->exportSettings.getSettings();
+    return d->settings;
 }
 
-Settings::KeysWithDefaults IGCExportPlugin::getKeyWithDefaults() const noexcept
+void IGCExportPlugin::addSettingsExtn(Settings::PluginSettings &settings) const noexcept
 {
-    return d->exportSettings.getKeysWithDefault();
+    d->settings.addSettings(settings);
 }
 
-void IGCExportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+void IGCExportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    d->exportSettings.setSettings(valuesByKey);
+    d->settings.addKeysWithDefaults(keysWithDefaults);
 }
 
-// PRIVATE
-
-bool IGCExportPlugin::exportIGCFile(const Aircraft &aircraft, QIODevice &io) const noexcept
+void IGCExportPlugin::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
 {
+    d->settings.restoreSettings(valuesByKey);
+}
+
+QString IGCExportPlugin::getFileExtension() const noexcept
+{
+    return IGCExportPluginPrivate::FileExtension;
+}
+
+QString IGCExportPlugin::getFileFilter() const noexcept
+{
+    return tr("International Gliding Commission (*.%1)").arg(getFileExtension());
+}
+
+std::unique_ptr<QWidget> IGCExportPlugin::createOptionWidget() const noexcept
+{
+    return std::make_unique<IGCExportOptionWidget>(d->settings);
+}
+
+bool IGCExportPlugin::writeFile(QIODevice &io) noexcept
+{
+    const Aircraft &aircraft = d->flight.getUserAircraftConst();
     bool ok = exportARecord(io);
     if (ok) {
         ok = exportHRecord(aircraft, io);
@@ -215,7 +195,17 @@ bool IGCExportPlugin::exportIGCFile(const Aircraft &aircraft, QIODevice &io) con
         ok = exportGRecord(io);
     }
     return ok;
+
 }
+
+// PROTECTED SLOTS
+
+void IGCExportPlugin::onRestoreDefaultSettings() noexcept
+{
+    d->settings.restoreDefaults();
+}
+
+// PRIVATE
 
 inline bool IGCExportPlugin::exportARecord(QIODevice &io) const noexcept
 {
@@ -227,8 +217,8 @@ inline bool IGCExportPlugin::exportHRecord(const Aircraft &aircraft, QIODevice &
 {
     const QByteArray record =
         IGCExportPluginPrivate::HRecord % ::Date % formatDate(d->flight.getFlightConditionConst().startZuluTime) % ::LineEnd %
-        IGCExportPluginPrivate::HRecord % ::Pilot % d->exportSettings.pilotName.toLatin1() % ::LineEnd %
-        IGCExportPluginPrivate::HRecord % ::CoPilot % d->exportSettings.coPilotName.toLatin1() % ::LineEnd %
+        IGCExportPluginPrivate::HRecord % ::Pilot % d->settings.getPilotName().toLatin1() % ::LineEnd %
+        IGCExportPluginPrivate::HRecord % ::CoPilot % d->settings.getCoPilotName().toLatin1() % ::LineEnd %
         IGCExportPluginPrivate::HRecord % ::GliderType % aircraft.getAircraftInfoConst().aircraftType.type.toLatin1() % ::LineEnd %
         IGCExportPluginPrivate::HRecord % ::GliderId % aircraft.getAircraftInfoConst().tailNumber.toLatin1() % ::LineEnd %
         IGCExportPluginPrivate::HRecord % ::GPSDatum % ::LineEnd %
@@ -297,9 +287,10 @@ inline bool IGCExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &
     const Position &position = aircraft.getPositionConst();
     const Engine &engine = aircraft.getEngineConst();
     ok = true;
-    if (d->exportSettings.resamplingPeriod != IGCExportSettings::ResamplingPeriod::Original) {
+    if (d->settings.getResamplingPeriod() != SampleRate::ResamplingPeriod::Original) {
         const std::int64_t duration = position.getLast().timestamp;
         std::int64_t timestamp = 0;
+        const std::int64_t deltaTime = Enum::toUnderlyingType(d->settings.getResamplingPeriod());
         while (ok && timestamp <= duration) {
             const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Linear);
             if (!positionData.isNull()) {
@@ -321,7 +312,7 @@ inline bool IGCExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &
                                           ::LineEnd;
                 ok = io.write(record);
             }
-            timestamp += Enum::toUnderlyingType(d->exportSettings.resamplingPeriod);
+            timestamp += deltaTime;
         }
     } else {
         // Original data requested

@@ -22,40 +22,38 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef IGCIMPORTOPTIONWIDGET_H
-#define IGCIMPORTOPTIONWIDGET_H
+#ifndef KMLEXPORTOPTIONWIDGET_H
+#define KMLEXPORTOPTIONWIDGET_H
 
 #include <memory>
 
 #include <QWidget>
 
 namespace Ui {
-    class IGCImportOptionWidget;
+    class KMLExportOptionWidget;
 }
 
-class IGCImportSettings;
-class IGCImportOptionWidgetPrivate;
+class KMLExportSettings;
+class KMLExportOptionWidgetPrivate;
 
-class IGCImportOptionWidget : public QWidget
+class KMLExportOptionWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit IGCImportOptionWidget(IGCImportSettings &settings, QWidget *parent = nullptr) noexcept;
-    virtual ~IGCImportOptionWidget() noexcept;
+    explicit KMLExportOptionWidget(KMLExportSettings &settings, QWidget *parent = nullptr) noexcept;
+    virtual ~KMLExportOptionWidget() noexcept;
 
 private:
-    std::unique_ptr<Ui::IGCImportOptionWidget> ui;
-    std::unique_ptr<IGCImportOptionWidgetPrivate> d;
+    std::unique_ptr<Ui::KMLExportOptionWidget> ui;
+    std::unique_ptr<KMLExportOptionWidgetPrivate> d;
 
     void frenchConnection() noexcept;
     void initUi() noexcept;
 
 private slots:
-    void onAltitudeChanged(int index) noexcept;
-    void onENLThresholdChanged(int value) noexcept;
-
     void updateUi() noexcept;
+    void selectColor(int id) noexcept;
+    void onColorStyleChanged(int index) noexcept;
 };
 
-#endif // IGCIMPORTOPTIONWIDGET_H
-
+#endif // KMLEXPORTOPTIONWIDGET_H

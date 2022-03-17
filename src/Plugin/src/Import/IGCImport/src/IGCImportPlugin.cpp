@@ -88,7 +88,7 @@ public:
         Shutdown
     };
 
-    IGCImportSettings importSettings;
+    IGCImportSettings settings;
     QEasingCurve throttleResponseCurve;
 
     static const inline QString FileExtension {QStringLiteral("igc")};
@@ -113,19 +113,19 @@ IGCImportPlugin::~IGCImportPlugin() noexcept
 
 // PROTECTED
 
-Settings::PluginSettings IGCImportPlugin::getSettings() const noexcept
+void IGCImportPlugin::addSettings(Settings::PluginSettings &settings) const noexcept
 {
-    return d->importSettings.getSettings();
+    d->settings.addSettings(settings);
 }
 
-Settings::KeysWithDefaults IGCImportPlugin::getKeyWithDefaults() const noexcept
+void IGCImportPlugin::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    return d->importSettings.getKeysWithDefault();
+    d->settings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void IGCImportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+void IGCImportPlugin::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
-    d->importSettings.setSettings(valuesByKey);
+    d->settings.applySettings(valuesByKey);
 }
 
 QString IGCImportPlugin::getFileFilter() const noexcept
@@ -135,7 +135,7 @@ QString IGCImportPlugin::getFileFilter() const noexcept
 
 std::unique_ptr<QWidget> IGCImportPlugin::createOptionWidget() const noexcept
 {
-    return std::make_unique<IGCImportOptionWidget>(d->importSettings);
+    return std::make_unique<IGCImportOptionWidget>(d->settings);
 }
 
 bool IGCImportPlugin::readFile(QFile &file) noexcept
@@ -151,11 +151,11 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
         Engine &engine = aircraft.getEngine();
         EngineData engineData;
         IGCImportPluginPrivate::EngineState engineState = IGCImportPluginPrivate::EngineState::Unknown;
-        const double enlThresholdNorm = static_cast<double>(d->importSettings.m_enlThresholdPercent) / 100.0;
+        const double enlThresholdNorm = static_cast<double>(d->settings.m_enlThresholdPercent) / 100.0;
 
         for (const IGCParser::Fix &fix : d->igcParser.getFixes()) {
             // Import either GNSS or pressure altitude
-            const double altitude = d->importSettings.m_altitude == IGCImportSettings::Altitude::GnssAltitude ? fix.gnssAltitude : fix.pressureAltitude;
+            const double altitude = d->settings.m_altitude == IGCImportSettings::Altitude::GnssAltitude ? fix.gnssAltitude : fix.pressureAltitude;
             PositionData positionData {fix.latitude, fix.longitude, altitude};
             positionData.timestamp = fix.timestamp;
             positionData.indicatedAltitude = fix.pressureAltitude;
@@ -307,7 +307,7 @@ void IGCImportPlugin::updateExtendedFlightCondition(FlightCondition &flightCondi
 
 void IGCImportPlugin::onRestoreDefaultSettings() noexcept
 {
-    d->importSettings.restoreDefaults();
+    d->settings.restoreDefaults();
 }
 
 // PRIVATE

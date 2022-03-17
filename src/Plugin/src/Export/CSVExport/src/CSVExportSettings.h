@@ -22,40 +22,33 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef IGCIMPORTOPTIONWIDGET_H
-#define IGCIMPORTOPTIONWIDGET_H
+#ifndef CSVEXPORTSETTINGS_H
+#define CSVEXPORTSETTINGS_H
 
 #include <memory>
 
-#include <QWidget>
+#include <QObject>
 
-namespace Ui {
-    class IGCImportOptionWidget;
-}
+#include "../../../../../Kernel/src/Settings.h"
+#include "../../Plugin/src/ExportPluginBaseSettings.h"
 
-class IGCImportSettings;
-class IGCImportOptionWidgetPrivate;
+class CSVExportSettingsPrivate;
 
-class IGCImportOptionWidget : public QWidget
+class CSVExportSettings : public ExportPluginBaseSettings
 {
     Q_OBJECT
 public:
-    explicit IGCImportOptionWidget(IGCImportSettings &settings, QWidget *parent = nullptr) noexcept;
-    virtual ~IGCImportOptionWidget() noexcept;
+    CSVExportSettings() noexcept;
+    virtual ~CSVExportSettings() noexcept;
+
+protected:
+    virtual void addSettingsExtn(Settings::PluginSettings &settings) const noexcept override;
+    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    virtual void restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept override;
+    virtual void restoreDefaultsExtn() noexcept override;
 
 private:
-    std::unique_ptr<Ui::IGCImportOptionWidget> ui;
-    std::unique_ptr<IGCImportOptionWidgetPrivate> d;
-
-    void frenchConnection() noexcept;
-    void initUi() noexcept;
-
-private slots:
-    void onAltitudeChanged(int index) noexcept;
-    void onENLThresholdChanged(int value) noexcept;
-
-    void updateUi() noexcept;
+    std::unique_ptr<CSVExportSettingsPrivate> d;
 };
 
-#endif // IGCIMPORTOPTIONWIDGET_H
-
+#endif // CSVEXPORTSETTINGS_H

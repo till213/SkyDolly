@@ -28,7 +28,6 @@ target_sources(${LIBRARY_NAME}
         src/Platform.h src/Platform.cpp
         src/TableDateItem.h src/TableDateItem.cpp
         src/TableTimeItem.h src/TableTimeItem.cpp
-        src/BasicImportDialog.h src/BasicImportDialog.cpp src/BasicImportDialog.ui
 )
 
 include_directories(${LIBRARY_NAME} PRIVATE src)

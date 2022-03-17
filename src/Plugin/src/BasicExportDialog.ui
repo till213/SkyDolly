@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>IGCExportDialog</class>
- <widget class="QDialog" name="IGCExportDialog">
+ <class>BasicExportDialog</class>
+ <widget class="QDialog" name="BasicExportDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>553</width>
-    <height>370</height>
+    <width>540</width>
+    <height>315</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>IGC Export</string>
+   <string>KML Export</string>
   </property>
-  <layout class="QFormLayout" name="formLayout_2">
-   <item row="0" column="0">
-    <widget class="QLabel" name="fileTypeLabel">
-     <property name="text">
-      <string>IGC file:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="fileTypeLabel">
+       <property name="text">
+        <string>File:</string>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QLineEdit" name="filePathLineEdit">
        <property name="minimumSize">
@@ -42,7 +42,7 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="0" colspan="2">
+   <item>
     <widget class="QGroupBox" name="informationGroupBox">
      <property name="title">
       <string>Resampling</string>
@@ -77,57 +77,14 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0" colspan="2">
-    <widget class="QGroupBox" name="groupBox">
+   <item>
+    <widget class="QGroupBox" name="optionGroupBox">
      <property name="title">
-      <string>Flight</string>
-     </property>
-     <layout class="QFormLayout" name="formLayout">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Pilot name:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="pilotNameLineEdit">
-        <property name="minimumSize">
-         <size>
-          <width>200</width>
-          <height>0</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>Co-pilot name:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="coPilotNameLineEdit">
-        <property name="minimumSize">
-         <size>
-          <width>200</width>
-          <height>0</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="3" column="0" colspan="2">
-    <widget class="QCheckBox" name="openExportCheckBox">
-     <property name="text">
-      <string>Open exported file</string>
+      <string>Options</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2">
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -140,19 +97,21 @@
      </property>
     </spacer>
    </item>
-   <item row="5" column="0" colspan="2">
-    <widget class="QSplitter" name="splitter">
+   <item>
+    <widget class="QCheckBox" name="openExportCheckBox">
+     <property name="text">
+      <string>Open exported file</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="defaultButtonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QDialogButtonBox" name="buttonBox">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="standardButtons">
-       <set>QDialogButtonBox::Cancel|QDialogButtonBox::RestoreDefaults</set>
-      </property>
-     </widget>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::RestoreDefaults</set>
+     </property>
     </widget>
    </item>
   </layout>
@@ -160,9 +119,9 @@
  <resources/>
  <connections>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>defaultButtonBox</sender>
    <signal>accepted()</signal>
-   <receiver>IGCExportDialog</receiver>
+   <receiver>BasicExportDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -176,9 +135,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>defaultButtonBox</sender>
    <signal>rejected()</signal>
-   <receiver>IGCExportDialog</receiver>
+   <receiver>BasicExportDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

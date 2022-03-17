@@ -24,12 +24,13 @@
  */
 #include <memory>
 #include <vector>
+#include <algorithm>
+#include <iterator>
 #include <unordered_map>
 #include <cstdint>
 
 #include <QCoreApplication>
 #include <QIODevice>
-#include <QFile>
 #include <QStringBuilder>
 #include <QString>
 #include <QFileDialog>
@@ -41,6 +42,7 @@
 #include "../../../../../Kernel/src/File.h"
 #include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/Unit.h"
+#include "../../../../../Kernel/src/SampleRate.h"
 #include "../../../../../Kernel/src/Settings.h"
 #include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
@@ -51,7 +53,7 @@
 #include "../../../../../Model/src/Position.h"
 #include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/SimType.h"
-#include "KMLExportDialog.h"
+#include "KMLExportOptionWidget.h"
 #include "KMLStyleExport.h"
 #include "KMLExportPlugin.h"
 
@@ -59,6 +61,10 @@ namespace
 {
     // Precision of exported double values
     constexpr int NumberPrecision = 12;
+
+    // Maximum segments in a <LineString> (resulting in
+    // MaxLineSegments + 1 coordinates per <LineString>)
+    constexpr int MaxLineSegments = 16384;
 
     // Placemark "look at" direction
     constexpr char LookAtTilt[] = "50";
@@ -71,10 +77,10 @@ class KMLExportPluginPrivate
 public:
     KMLExportPluginPrivate() noexcept
         : flight(Logbook::getInstance().getCurrentFlight()),
-          styleExport(std::make_unique<KMLStyleExport>())
+          styleExport(std::make_unique<KMLStyleExport>(settings))
     {}
 
-    KMLExportSettings exportSettings;
+    KMLExportSettings settings;
     Flight &flight;
     std::unique_ptr<KMLStyleExport> styleExport;
     Unit unit;
@@ -84,6 +90,8 @@ public:
 #else
     std::unordered_map<QString, int> aircraftTypeCount;
 #endif
+
+    static inline const QString FileExtension {QStringLiteral("kml")};
 };
 
 // PUBLIC
@@ -103,84 +111,79 @@ KMLExportPlugin::~KMLExportPlugin() noexcept
 #endif
 }
 
-bool KMLExportPlugin::exportData() noexcept
+// PROTECTED
+
+ExportPluginBaseSettings &KMLExportPlugin::getSettings() const noexcept
+{
+    return d->settings;
+}
+
+void KMLExportPlugin::addSettingsExtn(Settings::PluginSettings &settings) const noexcept
+{
+    d->settings.addSettings(settings);
+}
+
+void KMLExportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{
+    d->settings.addKeysWithDefaults(keysWithDefaults);
+}
+
+void KMLExportPlugin::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
+{
+    d->settings.restoreSettings(valuesByKey);
+}
+
+QString KMLExportPlugin::getFileExtension() const noexcept
+{
+    return KMLExportPluginPrivate::FileExtension;
+}
+
+QString KMLExportPlugin::getFileFilter() const noexcept
+{
+    return tr("Keyhole markup language (*.%1)").arg(getFileExtension());
+}
+
+std::unique_ptr<QWidget> KMLExportPlugin::createOptionWidget() const noexcept
+{
+    return std::make_unique<KMLExportOptionWidget>(d->settings);
+}
+
+bool KMLExportPlugin::writeFile(QIODevice &io) noexcept
 {
     bool ok;
 
     d->aircraftTypeCount.clear();
+    const int nofAircraft = d->flight.count();
+    // Only create as many colors per ramp as there are aircraft (if there are less aircraft
+    // than requested colors per ramp)
+    d->settings.setNofColorsPerRamp(qMin(nofAircraft, d->settings.getNofColorsPerRamp()));
 
-    std::unique_ptr<KMLExportDialog> exportDialog = std::make_unique<KMLExportDialog>(d->exportSettings, getParentWidget());
-    const int choice = exportDialog->exec();
-    if (choice == QDialog::Accepted) {
-        // Remember export path
-        const QString exportDirectoryPath = QFileInfo(exportDialog->getSelectedFilePath()).absolutePath();
-        Settings::getInstance().setExportPath(exportDirectoryPath);
-        const QString filePath = File::ensureSuffix(exportDialog->getSelectedFilePath(), KMLExportDialog::FileSuffix);
-        if (!filePath.isEmpty()) {
-
-            const int nofAircraft = d->flight.count();
-            // Only create as many colors per ramp as there are aircraft (if there are less aircraft
-            // than requested colors per ramp)
-            d->exportSettings.nofColorsPerRamp = qMin(nofAircraft, d->exportSettings.nofColorsPerRamp);
-
-            QFile file(filePath);
-            ok = file.open(QIODevice::WriteOnly);
-            if (ok) {
-                file.setTextModeEnabled(true);
-                ok = exportHeader(file);
-            }
-            if (ok) {
-                ok = d->styleExport->exportStyles(d->exportSettings, file);
-            }
-            if (ok) {
-                ok = exportFlightInfo(file);
-            }
-            if (ok) {
-                ok = exportAircraft(file);
-            }
-            if (ok) {
-                ok = exportWaypoints(file);
-            }
-            if (ok) {
-                ok = exportFooter(file);
-            }
-            file.close();
-
-        } else {
-            ok = true;
-        }
-
-        if (ok) {
-            if (exportDialog->doOpenExportedFile()) {
-                const QString fileUrl = QString("file:///") + filePath;
-                QDesktopServices::openUrl(QUrl(fileUrl));
-            }
-        } else {
-            QMessageBox::critical(getParentWidget(), tr("Export error"), tr("The KML file %1 could not be exported.").arg(filePath));
-        }
-
-    } else {
-        ok = true;
+    io.setTextModeEnabled(true);
+    ok = exportHeader(io);
+    if (ok) {
+        ok = d->styleExport->exportStyles(io);
+    }
+    if (ok) {
+        ok = exportFlightInfo(io);
+    }
+    if (ok) {
+        ok = exportAircraft(io);
+    }
+    if (ok) {
+        ok = exportWaypoints(io);
+    }
+    if (ok) {
+        ok = exportFooter(io);
     }
 
     return ok;
 }
 
-// PROTECTED
+// PROTECTED SLOTS
 
-Settings::PluginSettings KMLExportPlugin::getSettings() const noexcept
+void KMLExportPlugin::onRestoreDefaultSettings() noexcept
 {
-    return d->exportSettings.getSettings();
-}
-
-Settings::KeysWithDefaults KMLExportPlugin::getKeyWithDefaults() const noexcept
-{
-    return d->exportSettings.getKeyWithDefaults();
-}
-
-void KMLExportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
-{
-    d->exportSettings.setSettings(valuesByKey);
+    d->settings.restoreDefaults();
 }
 
 // PRIVATE
@@ -218,58 +221,92 @@ bool KMLExportPlugin::exportAircraft(QIODevice &io) const noexcept
 
 bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    const PositionData positionData;
+    const QString lineStringBegin = QString(
+"        <LineString>\n"
+"          <extrude>1</extrude>\n"
+"          <tessellate>1</tessellate>\n"
+"          <altitudeMode>absolute</altitudeMode>\n"
+"          <coordinates>\n");
+    const QString lineStringEnd = QString(
+"\n"
+"          </coordinates>\n"
+"        </LineString>\n");
     const int aircraftTypeCount = d->aircraftTypeCount[aircraft.getAircraftInfoConst().aircraftType.type];
     const bool isFormation = d->flight.count() > 1;
     const QString aircratId = isFormation ? " #" % d->unit.formatNumber(aircraftTypeCount, 0) : QString();
 
     const SimType::EngineType engineType = aircraft.getAircraftInfoConst().aircraftType.engineType;
-    QString styleMapId = d->styleExport->getNextStyleMapPerEngineType(engineType);
-
+    QString styleMapId = d->styleExport->getNextEngineTypeStyleMap(engineType);
     const QString placemarkBegin = QString(
 "    <Placemark>\n"
 "      <name>" % aircraft.getAircraftInfoConst().aircraftType.type % aircratId % "</name>\n"
 "      <description>" % getAircraftDescription(aircraft) % "</description>\n"
 "      <styleUrl>#" % styleMapId % "</styleUrl>\n"
-"      <LineString>\n"
-"        <extrude>1</extrude>\n"
-"        <tessellate>1</tessellate>\n"
-"        <altitudeMode>absolute</altitudeMode>\n"
-"        <coordinates>\n");
+"      <MultiGeometry>\n"
+);
+
     bool ok = io.write(placemarkBegin.toUtf8());
     if (ok) {
         // Position data
         const Position &position = aircraft.getPositionConst();
-        if (d->exportSettings.resamplingPeriod != KMLExportSettings::ResamplingPeriod::Original) {
+        const SampleRate::ResamplingPeriod resamplingPeriod = d->settings.getResamplingPeriod();
+        std::vector<PositionData> interpolatedPositionData;
+        if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
             const std::int64_t duration = position.getLast().timestamp;
+            const std::int64_t deltaTime = Enum::toUnderlyingType(resamplingPeriod);
             std::int64_t timestamp = 0;
             while (ok && timestamp <= duration) {
                 const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Linear);
                 if (!positionData.isNull()) {
-                    ok = io.write((formatNumber(positionData.longitude) % "," %
-                                   formatNumber(positionData.latitude) % "," %
-                                   formatNumber(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
+                    interpolatedPositionData.push_back(positionData);
                 }
-                timestamp += Enum::toUnderlyingType(d->exportSettings.resamplingPeriod);
+                timestamp += deltaTime;
             }
         } else {
             // Original data requested
-            // (may result in huge KML files: e.g. the KML viewer may not be able to display the data at all)
-            for (const PositionData &positionData : position) {
-                ok = io.write((formatNumber(positionData.longitude) % "," %
-                               formatNumber(positionData.latitude) % "," %
-                               formatNumber(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
+            std::copy(position.begin(), position.end(), std::back_inserter(interpolatedPositionData));
+        }
+
+        const int interpolatedPositionCount = interpolatedPositionData.size();
+        int nextLineSegmentIndex = 0;
+        int currentIndex = nextLineSegmentIndex;
+        while (currentIndex < interpolatedPositionCount - 1) {
+            if (currentIndex == nextLineSegmentIndex) {
+                // End the previous line segment (if any)
+                if (currentIndex > 0) {
+                    ok = io.write(lineStringEnd.toUtf8());
+                }
+                // Start a new line segment
+                if (ok) {
+                    ok = io.write(lineStringBegin.toUtf8());
+                }
                 if (!ok) {
                     break;
                 }
+                // Update the index of the next line segment start, but
+                // don't increment the currentIndex just yet: the
+                // last point of the previous line segment is repeated,
+                // in order to connect the segments
+                nextLineSegmentIndex += ::MaxLineSegments;
+            } else {
+                currentIndex += 1;
+            }
+            const PositionData positionData = interpolatedPositionData[currentIndex];
+            ok = io.write((formatNumber(positionData.longitude) % "," %
+                           formatNumber(positionData.latitude) % "," %
+                           formatNumber(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
+            if (!ok) {
+                break;
             }
         }
+        if (ok) {
+            ok = io.write(lineStringEnd.toUtf8());
+        }
+
     }
     if (ok) {
         const QString placemarkEnd = QString(
-"\n"
-"        </coordinates>\n"
-"      </LineString>\n"
+"      </MultiGeometry>\n"
 "    </Placemark>\n");
         ok = io.write(placemarkEnd.toUtf8());
     }

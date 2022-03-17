@@ -35,9 +35,8 @@ class QIODevice;
 class QString;
 
 #include "../../../../../Kernel/src/Settings.h"
-#include "../../../../../Model/src/SimType.h"
 #include "../../../ExportIntf.h"
-#include "../../../PluginBase.h"
+#include "../../../ExportPluginBase.h"
 #include "KMLStyleExport.h"
 
 class Flight;
@@ -46,7 +45,7 @@ struct PositionData;
 struct Waypoint;
 class KMLExportPluginPrivate;
 
-class KMLExportPlugin : public PluginBase, public ExportIntf
+class KMLExportPlugin : public ExportPluginBase
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "KMLExportPlugin.json")
@@ -55,32 +54,19 @@ public:
     KMLExportPlugin() noexcept;
     virtual ~KMLExportPlugin() noexcept;
 
-    virtual QWidget *getParentWidget() const noexcept override
-    {
-        return PluginBase::getParentWidget();
-    }
-
-    virtual void setParentWidget(QWidget *parent) noexcept override
-    {
-        PluginBase::setParentWidget(parent);
-    }
-
-    virtual void storeSettings(const QUuid &pluginUuid) const noexcept override
-    {
-        PluginBase::storeSettings(pluginUuid);
-    }
-
-    virtual void restoreSettings(const QUuid &pluginUuid) noexcept override
-    {
-        PluginBase::restoreSettings(pluginUuid);
-    }
-
-    virtual bool exportData() noexcept override;
-
 protected:
-    virtual Settings::PluginSettings getSettings() const noexcept override;
-    virtual Settings::KeysWithDefaults getKeyWithDefaults() const noexcept override;
-    virtual void setSettings(Settings::ValuesByKey) noexcept override;
+    // ExportPluginBase
+    virtual void addSettingsExtn(Settings::PluginSettings &settings) const noexcept override;
+    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    virtual void restoreSettingsExtn(Settings::ValuesByKey) noexcept override;
+    virtual ExportPluginBaseSettings &getSettings() const noexcept override;
+    virtual QString getFileExtension() const noexcept override;
+    virtual QString getFileFilter() const noexcept override;
+    virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
+    virtual bool writeFile(QIODevice &io) noexcept override;
+
+protected slots:
+    virtual void onRestoreDefaultSettings() noexcept override;
 
 private:
     std::unique_ptr<KMLExportPluginPrivate> d;
@@ -97,9 +83,9 @@ private:
     QString getWaypointDescription(const Waypoint &waypoint) const noexcept;
 
     inline bool exportPlacemark(QIODevice &io, KMLStyleExport::Icon icon, const QString &name, const QString &description,
-                               const PositionData &positionData) const noexcept;
+                                const PositionData &positionData) const noexcept;
     inline bool exportPlacemark(QIODevice &io, KMLStyleExport::Icon icon, const QString &name, const QString &description,
-                               double longitude, double latitude, double altitudeInFeet, double heading) const noexcept;
+                                double longitude, double latitude, double altitudeInFeet, double heading) const noexcept;
 
     static inline QString formatNumber(double number) noexcept;
 };

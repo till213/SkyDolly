@@ -60,7 +60,7 @@ public:
     GPXImportPluginPrivate()
     {}
 
-    GPXImportSettings importSettings;
+    GPXImportSettings settings;
     QXmlStreamReader xml;    
     std::unique_ptr<GPXParser> parser;
 
@@ -86,19 +86,19 @@ GPXImportPlugin::~GPXImportPlugin() noexcept
 
 // PROTECTED
 
-Settings::PluginSettings GPXImportPlugin::getSettings() const noexcept
+void GPXImportPlugin::addSettings(Settings::PluginSettings &settings) const noexcept
 {
-    return d->importSettings.getSettings();
+    d->settings.addSettings(settings);
 }
 
-Settings::KeysWithDefaults GPXImportPlugin::getKeyWithDefaults() const noexcept
+void GPXImportPlugin::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    return d->importSettings.getKeysWithDefault();
+    d->settings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void GPXImportPlugin::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+void GPXImportPlugin::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
-    d->importSettings.setSettings(valuesByKey);
+    d->settings.applySettings(valuesByKey);
 }
 
 QString GPXImportPlugin::getFileFilter() const noexcept
@@ -108,7 +108,7 @@ QString GPXImportPlugin::getFileFilter() const noexcept
 
 std::unique_ptr<QWidget> GPXImportPlugin::createOptionWidget() const noexcept
 {
-    return std::make_unique<GPXImportOptionWidget>(d->importSettings);
+    return std::make_unique<GPXImportOptionWidget>(d->settings);
 }
 
 bool GPXImportPlugin::readFile(QFile &file) noexcept
@@ -165,14 +165,14 @@ void GPXImportPlugin::updateExtendedFlightCondition([[maybe_unused]] FlightCondi
 
 void GPXImportPlugin::onRestoreDefaultSettings() noexcept
 {
-    d->importSettings.restoreDefaults();
+    d->settings.restoreDefaults();
 }
 
 // PRIVATE
 
 void GPXImportPlugin::parseGPX() noexcept
 {
-    d->parser = std::make_unique<GPXParser>(d->xml, d->importSettings);
+    d->parser = std::make_unique<GPXParser>(d->xml, d->settings);
     d->parser->parse();
     updateWaypoints();
 }

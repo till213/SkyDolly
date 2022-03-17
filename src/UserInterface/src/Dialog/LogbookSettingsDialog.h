@@ -53,8 +53,8 @@ protected:
 
 private:
     Q_DISABLE_COPY(LogbookSettingsDialog)
+    std::unique_ptr<Ui::LogbookSettingsDialog> ui;
     std::unique_ptr<LogbookSettingsDialogPrivate> d;
-    Ui::LogbookSettingsDialog *ui;
 
     void initUi() noexcept;
     void updateUi() noexcept;

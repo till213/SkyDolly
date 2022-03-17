@@ -25,41 +25,37 @@
 #ifndef IGCEXPORTSETTINGS_H
 #define IGCEXPORTSETTINGS_H
 
+#include <memory>
+
+#include <QObject>
 #include <QString>
 
 #include "../../../../../Kernel/src/Settings.h"
+#include "../../Plugin/src/ExportPluginBaseSettings.h"
 
-struct IGCExportSettings
+class IGCExportSettingsPrivate;
+
+class IGCExportSettings : public ExportPluginBaseSettings
 {
+    Q_OBJECT
 public:
-    /*!
-     * Resampling period [millisecons]
-     */
-    enum struct ResamplingPeriod {
-        Original = 0,
-        TenHz = 100,
-        FiveHz = 200,
-        TwoHz = 500,
-        OneHz = 1000,
-        AFifthHz = 5000,
-        ATenthHz = 10000
-    };
-
     IGCExportSettings() noexcept;
+    virtual ~IGCExportSettings() noexcept;
 
-    ResamplingPeriod resamplingPeriod;
-    QString pilotName;
-    QString coPilotName;
+    QString getPilotName() const noexcept;
+    void setPilotName(const QString &pilotName) noexcept;
 
-    Settings::PluginSettings getSettings() const noexcept;
-    Settings::KeysWithDefaults getKeysWithDefault() const noexcept;
-    void setSettings(Settings::ValuesByKey) noexcept;
-    void restoreDefaults() noexcept;
+    QString getCoPilotName() const noexcept;
+    void setCoPilotName(const QString &coPilotName) noexcept;
+
+protected:
+    virtual void addSettingsExtn(Settings::PluginSettings &settings) const noexcept override;
+    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    virtual void restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept override;
+    virtual void restoreDefaultsExtn() noexcept override;
 
 private:
-    QString defaultPilotName;
-    static constexpr ResamplingPeriod DefaultResamplingPeriod = ResamplingPeriod::OneHz;
-    static inline const QString DefaultCoPilotName {};
+    std::unique_ptr<IGCExportSettingsPrivate> d;
 };
 
 #endif // IGCEXPORTSETTINGS_H

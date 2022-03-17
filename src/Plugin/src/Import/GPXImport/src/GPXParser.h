@@ -39,7 +39,7 @@ class GPXParserPrivate;
 class GPXParser
 {
 public:
-    GPXParser(QXmlStreamReader &xmlStreamReader, const GPXImportSettings &importSettings) noexcept;
+    GPXParser(QXmlStreamReader &xmlStreamReader, const GPXImportSettings &settings) noexcept;
     virtual ~GPXParser() noexcept;
 
     virtual void parse() noexcept;

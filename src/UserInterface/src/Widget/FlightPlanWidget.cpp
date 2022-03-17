@@ -49,14 +49,20 @@ public:
 
 FlightPlanWidget::FlightPlanWidget(QWidget *parent) noexcept :
     QWidget(parent),
-    d(std::make_unique<FlightPlanWidgetPrivate>()),
-    ui(new Ui::FlightPlanWidget)
+    ui(std::make_unique<Ui::FlightPlanWidget>()),
+    d(std::make_unique<FlightPlanWidgetPrivate>())
 {
     ui->setupUi(this);
+#ifdef DEBUG
+    qDebug("FlightPlanWidget::FlightPlanWidget: CREATED");
+#endif
 }
 
 FlightPlanWidget::~FlightPlanWidget() noexcept
 {
+#ifdef DEBUG
+    qDebug("FlightPlanWidget::~FlightPlanWidget: DELETED");
+#endif
 }
 
 // PROTECTED

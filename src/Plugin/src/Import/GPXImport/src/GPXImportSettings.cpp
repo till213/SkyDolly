@@ -41,9 +41,8 @@ GPXImportSettings::GPXImportSettings() noexcept
     initSettings();
 }
 
-Settings::PluginSettings GPXImportSettings::getSettings() const noexcept
+void GPXImportSettings::addSettings(Settings::PluginSettings &settings) const noexcept
 {
-    Settings::PluginSettings settings;
     Settings::KeyValue keyValue;
 
     keyValue.first = ::WaypointSelectionKey;
@@ -61,35 +60,30 @@ Settings::PluginSettings GPXImportSettings::getSettings() const noexcept
     keyValue.first = ::DefaultVelocityKey;
     keyValue.second = m_defaultVelocity;
     settings.push_back(keyValue);
-
-    return settings;
 }
 
-Settings::KeysWithDefaults GPXImportSettings::getKeysWithDefault() const noexcept
+void GPXImportSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    Settings::KeysWithDefaults keys;
     Settings::KeyValue keyValue;
 
     keyValue.first = ::WaypointSelectionKey;
     keyValue.second = Enum::toUnderlyingType(DefaultWaypointSelection);
-    keys.push_back(keyValue);
+    keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::PositionSelectionKey;
     keyValue.second = Enum::toUnderlyingType(DefaultPositionSelection);
-    keys.push_back(keyValue);
+    keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::AltitudeKey;
     keyValue.second = DefaultAltitude;
-    keys.push_back(keyValue);
+    keysWithDefaults.push_back(keyValue);
 
     keyValue.first = ::DefaultVelocityKey;
     keyValue.second = DefaultVelocity;
-    keys.push_back(keyValue);
-
-    return keys;
+    keysWithDefaults.push_back(keyValue);
 }
 
-void GPXImportSettings::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+void GPXImportSettings::applySettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     bool ok;
     int enumeration = valuesByKey[::WaypointSelectionKey].toInt(&ok);

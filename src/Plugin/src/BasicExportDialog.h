@@ -22,41 +22,48 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef IGCEXPORTDIALOG_H
-#define IGCEXPORTDIALOG_H
+#ifndef BASICEXPORTDIALOG_H
+#define BASICEXPORTDIALOG_H
 
 #include <memory>
-#include <utility>
 #include <cstdint>
 
 #include <QDialog>
 
+#include "../../Kernel/src/SampleRate.h"
+#include "PluginLib.h"
+
+class ExportPluginBaseSettings;
+class BasicExportDialogPrivate;
+
 namespace Ui {
-    class IGCExportDialog;
+    class BasicExportDialog;
 }
 
-struct IGCExportSettings;
-class IGCExportDialogPrivate;
-
-class IGCExportDialog : public QDialog
+class PLUGIN_API BasicExportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    static inline const QString FileExtension {QStringLiteral("igc")};
 
-    explicit IGCExportDialog(IGCExportSettings &exportSettings, QWidget *parent = nullptr) noexcept;
-    virtual ~IGCExportDialog() noexcept;
+    explicit BasicExportDialog(const QString &fileExtension, const QString &fileFilter, ExportPluginBaseSettings &settings, QWidget *parent = nullptr) noexcept;
+    virtual ~BasicExportDialog() noexcept;
 
     QString getSelectedFilePath() const noexcept;
-    bool doOpenExportedFile() const noexcept;
+    void setSelectedFilePath(const QString &filePath) noexcept;
+
+    void setOptionWidget(QWidget *widget) noexcept;
+
+signals:
+    void restoreDefaultOptions();
 
 private:
-    Ui::IGCExportDialog *ui;
-    std::unique_ptr<IGCExportDialogPrivate> d;
+    std::unique_ptr<Ui::BasicExportDialog> ui;
+    std::unique_ptr<BasicExportDialogPrivate> d;
 
     void initUi() noexcept;
+    void initBasicUi() noexcept;
+    void initOptionUi() noexcept;
     void updateInfoUi() noexcept;
-    void updateFlightUi() noexcept;
     void frenchConnection() noexcept;
 
     std::int64_t estimateNofSamplePoints() noexcept;
@@ -64,12 +71,11 @@ private:
 private slots:
     void updateUi() noexcept;
 
-    void restoreDefaults() noexcept;
-
-    void on_fileSelectionPushButton_clicked() noexcept;
-    void on_resamplingComboBox_activated(int index) noexcept;
-    void on_pilotNameLineEdit_editingFinished() noexcept;
-    void on_coPilotNameLineEdit_editingFinished() noexcept;
+    void onFileSelectionButtonClicked() noexcept;
+    void onFilePathChanged(const QString &filePath);
+    void onResamplingOptionChanged(int index) noexcept;
+    void onDoOpenExportedFileChanged(bool enable) noexcept;
+    void onRestoreSettings() noexcept;
 };
 
-#endif // IGCEXPORTDIALOG_H
+#endif // BASICEXPORTDIALOG_H

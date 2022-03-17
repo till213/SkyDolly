@@ -18,58 +18,32 @@ endif()
 target_sources(${LIBRARY_NAME}
     PRIVATE
         src/ModelLib.h
-        src/Logbook.cpp
-        src/Logbook.h
-        src/Flight.cpp
-        src/Flight.h
-        src/FlightSummary.cpp
-        src/FlightSummary.h
-        src/FlightDate.cpp
-        src/FlightDate.h
-        src/FlightCondition.cpp
-        src/FlightCondition.h
-        src/Aircraft.cpp
-        src/Aircraft.h
-        src/TimeVariableData.cpp
-        src/TimeVariableData.h
-        src/Position.cpp
-        src/Position.h
-        src/PositionData.cpp
-        src/PositionData.h
-        src/InitialPosition.cpp
-        src/InitialPosition.h
-        src/Engine.cpp
-        src/Engine.h
-        src/EngineData.cpp
-        src/EngineData.h
-        src/PrimaryFlightControl.cpp
-        src/PrimaryFlightControl.h
-        src/PrimaryFlightControlData.cpp
-        src/PrimaryFlightControlData.h
-        src/SecondaryFlightControl.cpp
-        src/SecondaryFlightControl.h
-        src/SecondaryFlightControlData.cpp
-        src/SecondaryFlightControlData.h
-        src/AircraftHandle.cpp
-        src/AircraftHandle.h
-        src/AircraftHandleData.cpp
-        src/AircraftHandleData.h
-        src/Light.cpp
-        src/Light.h
-        src/LightData.cpp
-        src/LightData.h
-        src/AircraftType.cpp
-        src/AircraftType.h
-        src/AircraftInfo.cpp
-        src/AircraftInfo.h
-        src/Waypoint.cpp
-        src/Waypoint.h
-        src/FlightPlan.cpp
-        src/FlightPlan.h
-        src/SimVar.h
-        src/SimType.h
-        src/SkySearch.cpp
-        src/SkySearch.h
+        src/Logbook.h src/Logbook.cpp
+        src/Flight.h src/Flight.cpp
+        src/FlightSummary.h src/FlightSummary.cpp
+        src/FlightDate.h src/FlightDate.cpp
+        src/FlightCondition.h src/FlightCondition.cpp
+        src/Aircraft.h src/Aircraft.cpp
+        src/TimeVariableData.h src/TimeVariableData.cpp
+        src/Position.h src/Position.cpp
+        src/PositionData.h src/PositionData.cpp
+        src/InitialPosition.h src/InitialPosition.cpp
+        src/Engine.h src/Engine.cpp
+        src/EngineData.h src/EngineData.cpp
+        src/PrimaryFlightControl.h src/PrimaryFlightControl.cpp
+        src/PrimaryFlightControlData.h src/PrimaryFlightControlData.cpp
+        src/SecondaryFlightControl.h src/SecondaryFlightControl.cpp
+        src/SecondaryFlightControlData.h src/SecondaryFlightControlData.cpp
+        src/AircraftHandle.h src/AircraftHandle.cpp
+        src/AircraftHandleData.h src/AircraftHandleData.cpp
+        src/Light.h src/Light.cpp
+        src/LightData.h src/LightData.cpp
+        src/AircraftType.h src/AircraftType.cpp
+        src/AircraftInfo.h src/AircraftInfo.cpp
+        src/Waypoint.h src/Waypoint.cpp
+        src/FlightPlan.h src/FlightPlan.cpp
+        src/SimType.h src/SimVar.h
+        src/SkySearch.h src/SkySearch.cpp
 )
 
 target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})

@@ -45,8 +45,6 @@ public:
     {}
 
     std::unique_ptr<DatabaseService> databaseService;
-    QPushButton *backupButton;
-    QPushButton *skipThisTimeButton;
     QString originalBackupPeriodIntlId;
 };
 
@@ -54,7 +52,7 @@ public:
 
 LogbookBackupDialog::LogbookBackupDialog(QWidget *parent) noexcept
     : QDialog(parent),
-      ui(new Ui::LogbookBackupDialog),
+      ui(std::make_unique<Ui::LogbookBackupDialog>()),
       d(std::make_unique<LogbookBackupDialogPrivate>())
 {
     ui->setupUi(this);
@@ -67,11 +65,16 @@ LogbookBackupDialog::LogbookBackupDialog(QWidget *parent) noexcept
     } else {
         d->originalBackupPeriodIntlId = Const::BackupNeverIntlId;
     }
+#ifdef DEBUG
+    qDebug("LogbookBackupDialog::LogbookBackupDialog: CREATED");
+#endif
 }
 
 LogbookBackupDialog::~LogbookBackupDialog() noexcept
 {
-    delete ui;
+#ifdef DEBUG
+    qDebug("LogbookBackupDialog::~LogbookBackupDialog: DELETED");
+#endif
 }
 
 // PUBLIC SLOTS
@@ -129,13 +132,10 @@ void LogbookBackupDialog::initUi() noexcept
 {
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
-    d->backupButton = new QPushButton(tr("&Backup"));
-    d->backupButton->setDefault(true);
-
-    d->skipThisTimeButton = new QPushButton(tr("&Skip This Time"));
-
-    ui->buttonBox->addButton(d->backupButton, QDialogButtonBox::AcceptRole);
-    ui->buttonBox->addButton(d->skipThisTimeButton, QDialogButtonBox::RejectRole);
+    // Transfer ownership to the buttonBox
+    QPushButton *backupButton = ui->buttonBox->addButton(tr("&Backup"), QDialogButtonBox::AcceptRole);
+    backupButton->setDefault(true);
+    ui->buttonBox->addButton(tr("&Skip this time"), QDialogButtonBox::RejectRole);
 }
 
 void LogbookBackupDialog::updateUi() noexcept

@@ -25,22 +25,27 @@
 #ifndef IGCEXPORTPLUGIN_H
 #define IGCEXPORTPLUGIN_H
 
+#include <memory>
+
 #include <QObject>
 #include <QtPlugin>
+#include <QByteArray>
 
+class QIODevice;
 class QString;
 class QDateTime;
 
 #include "../../../../../Kernel/src/Settings.h"
 #include "../../../ExportIntf.h"
-#include "../../../PluginBase.h"
+#include "../../../ExportPluginBase.h"
 
+class Flight;
 class Aircraft;
 struct EngineData;
-
+struct Waypoint;
 class IGCExportPluginPrivate;
 
-class IGCExportPlugin : public PluginBase, public ExportIntf
+class IGCExportPlugin : public ExportPluginBase
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID EXPORT_INTERFACE_IID FILE "IGCExportPlugin.json")
@@ -49,37 +54,23 @@ public:
     IGCExportPlugin() noexcept;
     virtual ~IGCExportPlugin() noexcept;
 
-    virtual QWidget *getParentWidget() const noexcept override
-    {
-        return PluginBase::getParentWidget();
-    }
-
-    virtual void setParentWidget(QWidget *parent) noexcept override
-    {
-        PluginBase::setParentWidget(parent);
-    }
-
-    virtual void storeSettings(const QUuid &pluginUuid) const noexcept override
-    {
-        PluginBase::storeSettings(pluginUuid);
-    }
-
-    virtual void restoreSettings(const QUuid &pluginUuid) noexcept override
-    {
-        PluginBase::restoreSettings(pluginUuid);
-    }
-
-    virtual bool exportData() noexcept override;
-
 protected:
-    virtual Settings::PluginSettings getSettings() const noexcept override;
-    virtual Settings::KeysWithDefaults getKeyWithDefaults() const noexcept override;
-    virtual void setSettings(Settings::ValuesByKey) noexcept override;
+    // ExportPluginBase
+    virtual void addSettingsExtn(Settings::PluginSettings &settings) const noexcept override;
+    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    virtual void restoreSettingsExtn(Settings::ValuesByKey) noexcept override;
+    virtual ExportPluginBaseSettings &getSettings() const noexcept override;
+    virtual QString getFileExtension() const noexcept override;
+    virtual QString getFileFilter() const noexcept override;
+    virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
+    virtual bool writeFile(QIODevice &io) noexcept override;
+
+protected slots:
+    virtual void onRestoreDefaultSettings() noexcept override;
 
 private:
     std::unique_ptr<IGCExportPluginPrivate> d;
 
-    bool exportIGCFile(const Aircraft &aircraft, QIODevice &io) const noexcept;
     inline bool exportARecord(QIODevice &io) const noexcept;
     inline bool exportHRecord(const Aircraft &aircraft, QIODevice &io) const noexcept;
     inline bool exportIRecord(QIODevice &io) const noexcept;

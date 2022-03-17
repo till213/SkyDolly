@@ -39,7 +39,6 @@
 #include "../../../../../Kernel/src/Convert.h"
 #include "../../../../../Kernel/src/SkyMath.h"
 #include "../../../../../Model/src/SimType.h"
-#include "../../../../../Model/src/SimVar.h"
 #include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/Aircraft.h"
@@ -55,7 +54,6 @@
 #include "../../../../../Model/src/AircraftHandleData.h"
 #include "../../../../../Model/src/Light.h"
 #include "../../../../../Model/src/LightData.h"
-#include "../../../../../Persistence/src/CSVConst.h"
 #include "FlightRecorderCSVParser.h"
 
 namespace

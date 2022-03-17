@@ -25,25 +25,20 @@
 #ifndef KMLEXPORTSETTINGS_H
 #define KMLEXPORTSETTINGS_H
 
+#include <memory>
+
+#include <QObject>
 #include <QColor>
 
 #include "../../../../../Kernel/src/Settings.h"
-#include "../../../../../Model/src/SimType.h"
+#include "../../Plugin/src/ExportPluginBaseSettings.h"
 
-struct KMLExportSettings
+class KMLExportSettingsPrivate;
+
+class KMLExportSettings : public ExportPluginBaseSettings
 {
-    /*!
-     * Resampling period [millisecons]
-     */
-    enum struct ResamplingPeriod {
-        Original = 0,
-        TenHz = 100,
-        FiveHz = 200,
-        TwoHz = 500,
-        OneHz = 1000,
-        AFifthHz = 5000,
-        ATenthHz = 10000
-    };
+    Q_OBJECT
+public:
     enum struct ColorStyle {
         OneColor,
         OneColorPerEngineType,
@@ -52,46 +47,45 @@ struct KMLExportSettings
     };
 
     KMLExportSettings() noexcept;
+    virtual ~KMLExportSettings() noexcept;
 
-    ResamplingPeriod resamplingPeriod;
-    QColor jetStartColor;
-    QColor jetEndColor;
-    QColor turbopropStartColor;
-    QColor turbopropEndColor;
-    QColor pistonStartColor;
-    QColor pistonEndColor;
-    QColor allStartColor;
-    QColor allEndColor;
-    ColorStyle colorStyle;
-    int nofColorsPerRamp;
-    float lineWidth;
+    ColorStyle getColorStyle() const noexcept;
+    void setColorStyle(ColorStyle colorStyle) noexcept;
 
-    Settings::PluginSettings getSettings() const noexcept;
-    Settings::KeysWithDefaults getKeyWithDefaults() const noexcept;
-    void setSettings(Settings::ValuesByKey) noexcept;
-    void restoreDefaults() noexcept;
+    int getNofColorsPerRamp() const noexcept;
+    void setNofColorsPerRamp(int nofColors) noexcept;
 
-    static constexpr ResamplingPeriod DefaultResamplingPeriod = ResamplingPeriod::OneHz;
-    static constexpr ColorStyle DefaultColorStyle = ColorStyle::OneColor;
+    float getLineWidth() const noexcept;
+    void setLineWidth(float lineWidth) noexcept;
 
-    // in AARRGGBB format
-    // https://designs.ai/colors/color-wheel
-    // http://khroma.co/generator/
-    // http://colormind.io/
-    static constexpr QRgb Opaque = 0xff000000;
+    QColor getJetStartColor() const noexcept;
+    void setJetStartColor(QColor color) noexcept;
+    QColor getJetEndColor() const noexcept;
+    void setJetEndColor(QColor color) noexcept;
 
-    // "Tetraedic" colors
-    static constexpr QRgb DefaultJetStartRgba = Opaque | 0xde7b51;
-    static constexpr QRgb DefaultJetEndColor = Opaque | 0x6f3d28;
-    static constexpr QRgb DefaultTurbopropStartRgba = Opaque | 0x6ade4b;
-    static constexpr QRgb DefaultTurbopropEndRgba = Opaque | 0x356f25;
-    static constexpr QRgb DefaultPistonStartRgba = Opaque | 0x4bb3de;
-    static constexpr QRgb DefaultPistonEndRgba = Opaque | 0x255a6f;
-    static constexpr QRgb DefaultAllStartRgba = Opaque | 0xc561de;
-    static constexpr QRgb DefaultAllEndRgba = Opaque | 0x63316f;
+    QColor getTurbopropStartColor() const noexcept;
+    void setTurbopropStartColor(QColor color) noexcept;
+    QColor getTurbopropEndColor() const noexcept;
+    void setTurbopropEndColor(QColor color) noexcept;
 
-    static constexpr int DefaultNofColorsPerRamp = 8;
-    static constexpr float DefaultLineWidth = 3.0f;
+    QColor getPistonStartColor() const noexcept;
+    void setPistonStartColor(QColor color) noexcept;
+    QColor getPistonEndColor() const noexcept;
+    void setPistonEndColor(QColor color) noexcept;
+
+    QColor getAllStartColor() const noexcept;
+    void setAllStartColor(QColor color) noexcept;
+    QColor getAllEndColor() const noexcept;
+    void setAllEndColor(QColor color) noexcept;
+
+protected:
+    virtual void addSettingsExtn(Settings::PluginSettings &settings) const noexcept override;
+    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    virtual void restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept override;
+    virtual void restoreDefaultsExtn() noexcept override;
+
+private:
+    std::unique_ptr<KMLExportSettingsPrivate> d;
 };
 
 #endif // KMLEXPORTSETTINGS_H

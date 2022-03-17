@@ -41,18 +41,18 @@ class GPXImportOptionWidgetPrivate
 {
 public:
     GPXImportOptionWidgetPrivate(GPXImportSettings &theImportSettings) noexcept
-        : importSettings(theImportSettings)
+        : settings(theImportSettings)
     {}
 
-     GPXImportSettings &importSettings;
+     GPXImportSettings &settings;
 };
 
 // PUBLIC
 
-GPXImportOptionWidget::GPXImportOptionWidget(GPXImportSettings &importSettings, QWidget *parent) noexcept
+GPXImportOptionWidget::GPXImportOptionWidget(GPXImportSettings &settings, QWidget *parent) noexcept
     : QWidget(parent),
-      ui(new Ui::GPXImportOptionWidget),
-      d(std::make_unique<GPXImportOptionWidgetPrivate>(importSettings))
+      ui(std::make_unique<Ui::GPXImportOptionWidget>()),
+      d(std::make_unique<GPXImportOptionWidgetPrivate>(settings))
 {
     ui->setupUi(this);
     initUi();
@@ -65,7 +65,6 @@ GPXImportOptionWidget::GPXImportOptionWidget(GPXImportSettings &importSettings, 
 
 GPXImportOptionWidget::~GPXImportOptionWidget() noexcept
 {
-    delete ui;
 #ifdef DEBUG
     qDebug("GPXImportOptionWidget::~GPXImportOptionWidget: DELETED");
 #endif
@@ -95,7 +94,7 @@ void GPXImportOptionWidget::frenchConnection() noexcept
             this, &GPXImportOptionWidget::onDefaultVelocityChanged);
 #endif
 
-    connect(&d->importSettings, &GPXImportSettings::defaultsRestored,
+    connect(&d->settings, &GPXImportSettings::defaultsRestored,
             this, &GPXImportOptionWidget::updateUi);
 }
 
@@ -123,38 +122,38 @@ void GPXImportOptionWidget::initUi() noexcept
 
 void GPXImportOptionWidget::onWaypointSelelectionChanged(int index) noexcept
 {
-    d->importSettings.m_waypointSelection = static_cast<GPXImportSettings::GPXElement>(ui->waypointSelectionComboBox->currentData().toInt());
+    d->settings.m_waypointSelection = static_cast<GPXImportSettings::GPXElement>(ui->waypointSelectionComboBox->currentData().toInt());
 }
 
 void GPXImportOptionWidget::onPositionSelelectionChanged(int index) noexcept
 {
-    d->importSettings.m_positionSelection = static_cast<GPXImportSettings::GPXElement>(ui->positionSelectionComboBox->currentData().toInt());
+    d->settings.m_positionSelection = static_cast<GPXImportSettings::GPXElement>(ui->positionSelectionComboBox->currentData().toInt());
 }
 
 void GPXImportOptionWidget::onDefaultAltitudeChanged(int value) noexcept
 {
-    d->importSettings.m_defaultAltitude = value;
+    d->settings.m_defaultAltitude = value;
 }
 
 void GPXImportOptionWidget::onDefaultVelocityChanged(int value) noexcept
 {
-    d->importSettings.m_defaultVelocity = value;
+    d->settings.m_defaultVelocity = value;
 }
 
 void GPXImportOptionWidget::updateUi() noexcept
 {
     int currentIndex = 0;
     while (currentIndex < ui->waypointSelectionComboBox->count() &&
-           static_cast<GPXImportSettings::GPXElement>(ui->waypointSelectionComboBox->itemData(currentIndex).toInt()) != d->importSettings.m_waypointSelection) {
+           static_cast<GPXImportSettings::GPXElement>(ui->waypointSelectionComboBox->itemData(currentIndex).toInt()) != d->settings.m_waypointSelection) {
         ++currentIndex;
     }
     ui->waypointSelectionComboBox->setCurrentIndex(currentIndex);
     while (currentIndex < ui->positionSelectionComboBox->count() &&
-           static_cast<GPXImportSettings::GPXElement>(ui->positionSelectionComboBox->itemData(currentIndex).toInt()) != d->importSettings.m_positionSelection) {
+           static_cast<GPXImportSettings::GPXElement>(ui->positionSelectionComboBox->itemData(currentIndex).toInt()) != d->settings.m_positionSelection) {
         ++currentIndex;
     }
     ui->positionSelectionComboBox->setCurrentIndex(currentIndex);
 
-    ui->defaultAltitudeSpinBox->setValue(d->importSettings.m_defaultAltitude);
-    ui->defaultVelocitySpinBox->setValue(d->importSettings.m_defaultVelocity);
+    ui->defaultAltitudeSpinBox->setValue(d->settings.m_defaultAltitude);
+    ui->defaultVelocitySpinBox->setValue(d->settings.m_defaultVelocity);
 }

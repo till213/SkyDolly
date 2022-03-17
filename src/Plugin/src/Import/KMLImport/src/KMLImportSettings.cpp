@@ -40,19 +40,16 @@ KMLImportSettings::KMLImportSettings() noexcept
     initSettings();
 }
 
-Settings::PluginSettings KMLImportSettings::getSettings() const noexcept
+void KMLImportSettings::addSettings(Settings::PluginSettings &settings) const noexcept
 {
-    Settings::PluginSettings settings;
     Settings::KeyValue keyValue;
 
     keyValue.first = ::FormatKey;
     keyValue.second = Enum::toUnderlyingType(m_format);
     settings.push_back(keyValue);
-
-    return settings;
 }
 
-Settings::KeysWithDefaults KMLImportSettings::getKeysWithDefault() const noexcept
+void KMLImportSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
     Settings::KeysWithDefaults keys;
     Settings::KeyValue keyValue;
@@ -60,11 +57,9 @@ Settings::KeysWithDefaults KMLImportSettings::getKeysWithDefault() const noexcep
     keyValue.first = ::FormatKey;
     keyValue.second = Enum::toUnderlyingType(KMLImportSettings::DefaultFormat);
     keys.push_back(keyValue);
-
-    return keys;
 }
 
-void KMLImportSettings::setSettings(Settings::ValuesByKey valuesByKey) noexcept
+void KMLImportSettings::applySettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     bool ok;
     const int enumeration = valuesByKey[::FormatKey].toInt(&ok);
