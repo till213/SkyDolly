@@ -6,6 +6,8 @@
 
 - CSV export plugin
   * Resampling is now supported (original sample rate, 1 Hz, 2 Hz, 5 Hz, ...)
+- KML export plugin
+  * The LineStrings are now exported as connected multi-geometry lines (no point limit anymore)
 
 ## 0.9.0
 
