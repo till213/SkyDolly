@@ -37,6 +37,7 @@
 #include <QMessageBox>
 #include <QCheckBox>
 #include <QDesktopServices>
+#include <QDateTime>
 
 #include "../../../../../Kernel/src/Version.h"
 #include "../../../../../Kernel/src/Convert.h"
@@ -195,10 +196,11 @@ bool GPXExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
 
 bool GPXExportPlugin::exportAllAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
+    const AircraftInfo &aircraftInfo = aircraft.getAircraftInfoConst();
     const QString trackBegin =
 "  <trk>\n"
-"    <name>TODO TRACKNAME </name>\n"
-"    <desc>TODO TRACK DESC</desc>\n"
+"    <name>" % aircraftInfo.aircraftType.type % "</name>\n"
+"    <desc>" % getAircraftDescription(aircraft) % "</desc>\n"
 "    <trkseg>\n";
 
     bool ok = io.write(trackBegin.toUtf8());
@@ -305,13 +307,17 @@ QString GPXExportPlugin::getWaypointDescription(const Waypoint &waypoint) const 
 }
 
 
-inline bool GPXExportPlugin::exportTrackPoint(const PositionData &positionData, QIODevice &io) noexcept
+inline bool GPXExportPlugin::exportTrackPoint(const PositionData &positionData, QIODevice &io) const noexcept
 {
-    // TODO IMPLEMENT ME
-    bool ok = io.write((formatNumber(positionData.longitude) % "," %
-                        formatNumber(positionData.latitude) % "," %
-                        formatNumber(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
-    return ok;
+    // TODO TIME
+    QDateTime dateTimeUtc;
+    const QString trackPoint =
+"      <trkpt lat=\"" % formatNumber(positionData.latitude) % "\" lon=\"" % formatNumber(positionData.longitude) % "\">\n"
+"        <ele>" % formatNumber(Convert::feetToMeters(positionData.altitude)).toUtf8() % "</ele>\n"
+"        <time>" % dateTimeUtc.toString() % "</time>\n"
+"      </trkpt>\n";
+
+    return io.write(trackPoint.toUtf8());
 }
 
 inline QString GPXExportPlugin::formatNumber(double number) noexcept

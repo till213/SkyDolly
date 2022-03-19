@@ -81,7 +81,7 @@ private:
     QString getAircraftDescription(const Aircraft &aircraft) const noexcept;
     QString getWaypointDescription(const Waypoint &waypoint) const noexcept;
 
-    static inline bool exportTrackPoint(const PositionData &positionData, QIODevice &io) noexcept;
+    inline bool exportTrackPoint(const PositionData &positionData, QIODevice &io) const noexcept;
     static inline QString formatNumber(double number) noexcept;
 };
 
