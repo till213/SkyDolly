@@ -86,8 +86,6 @@ private:
                                 const PositionData &positionData) const noexcept;
     inline bool exportPlacemark(QIODevice &io, KMLStyleExport::Icon icon, const QString &name, const QString &description,
                                 double longitude, double latitude, double altitudeInFeet, double heading) const noexcept;
-
-    static inline QString formatNumber(double number) noexcept;
 };
 
 #endif // KMLEXPORTPLUGIN_H

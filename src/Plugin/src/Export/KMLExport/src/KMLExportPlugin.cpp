@@ -57,15 +57,13 @@
 #include "../../../../../Model/src/Position.h"
 #include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/SimType.h"
+#include "../../../Export.h"
 #include "KMLExportOptionWidget.h"
 #include "KMLStyleExport.h"
 #include "KMLExportPlugin.h"
 
 namespace
 {
-    // Precision of exported double values
-    constexpr int NumberPrecision = 12;
-
     // Maximum segments in a <LineString> (resulting in
     // MaxLineSegments + 1 coordinates per <LineString>)
     constexpr int MaxLineSegments = 16384;
@@ -294,9 +292,9 @@ bool KMLExportPlugin::exportAllAircraft(const Aircraft &aircraft, QIODevice &io)
                 currentIndex += 1;
             }
             const PositionData positionData = interpolatedPositionData[currentIndex];
-            ok = io.write((formatNumber(positionData.longitude) % "," %
-                           formatNumber(positionData.latitude) % "," %
-                           formatNumber(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
+            ok = io.write((Export::formatCoordinate(positionData.longitude) % "," %
+                           Export::formatCoordinate(positionData.latitude) % "," %
+                           Export::formatCoordinate(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
             if (!ok) {
                 break;
             }
@@ -401,10 +399,10 @@ inline bool KMLExportPlugin::exportPlacemark(QIODevice &io, KMLStyleExport::Icon
 "      <name><![CDATA[" % name % "]]></name>\n"
 "      <description><![CDATA[" % description % "]]></description>\n"
 "      <LookAt>\n"
-"        <longitude>" % formatNumber(longitude) % "</longitude>\n"
-"        <latitude>" % formatNumber(latitude) % "</latitude>\n"
-"        <altitude>" % formatNumber(Convert::feetToMeters(altitudeInFeet)) % "</altitude>\n"
-"        <heading>" % formatNumber(heading) % "</heading>\n"
+"        <longitude>" % Export::formatCoordinate(longitude) % "</longitude>\n"
+"        <latitude>" % Export::formatCoordinate(latitude) % "</latitude>\n"
+"        <altitude>" % Export::formatCoordinate(Convert::feetToMeters(altitudeInFeet)) % "</altitude>\n"
+"        <heading>" % Export::formatCoordinate(heading) % "</heading>\n"
 "        <tilt>" % LookAtTilt % "</tilt>\n"
 "        <range>" % LookAtRange % "</range>\n"
 "        <altitudeMode>absolute</altitudeMode>\n"
@@ -414,13 +412,9 @@ inline bool KMLExportPlugin::exportPlacemark(QIODevice &io, KMLStyleExport::Icon
 "        <extrude>1</extrude>\n"
 "        <altitudeMode>absolute</altitudeMode>\n"
 "        <gx:drawOrder>1</gx:drawOrder>\n"
-"        <coordinates>" % formatNumber(longitude) % "," % formatNumber(latitude) % "," % formatNumber(Convert::feetToMeters(altitudeInFeet)) % "</coordinates>\n"
+"        <coordinates>" % Export::formatCoordinate(longitude) % "," % Export::formatCoordinate(latitude) % "," % Export::formatCoordinate(Convert::feetToMeters(altitudeInFeet)) % "</coordinates>\n"
 "      </Point>\n"
 "    </Placemark>\n";
     return io.write(placemark.toUtf8());
 }
 
-inline QString KMLExportPlugin::formatNumber(double number) noexcept
-{
-    return QString::number(number, 'g', NumberPrecision);
-}

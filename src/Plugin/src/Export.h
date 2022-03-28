@@ -36,7 +36,36 @@
 class PLUGIN_API Export
 {
 public:
-    static QString suggestFilePath(const QStringView suffix)  noexcept;
+
+    /*!
+     * Returns a file path with the suggested file name having the given \c suffix.
+     *
+     * \param suffix
+     *        the desired file suffix (e.g. \em kml or \em csv)
+     * \return the file path having a suggested file name based on the current flight
+     */
+    static QString suggestFilePath(QStringView suffix) noexcept;
+
+    /*!
+     * Formats the GNSS \c coordinate (latitude or longitude) with the appropriate decimal point precision.
+     *
+     * \param coordinate
+     *        the coordinate to be formatted as QString
+     * \return the text representation of \c coordinate
+     */
+    static QString formatCoordinate(double coordinate) noexcept;
+
+    /*!
+     * Formats the general \c number (e.g. altitude or heading) with the appropriate decimal point precision.
+     *
+     * Note that in case the \c number should be displayed as text to a user, according to local settings, then
+     * Unit::formatNumber should be used instead.
+     *
+     * \param number
+     *        the number to be formatted as QString
+     * \return the text representation of \c number
+     */
+    static QString formatNumber(double number) noexcept;
 };
 
 #endif // EXPORT_H

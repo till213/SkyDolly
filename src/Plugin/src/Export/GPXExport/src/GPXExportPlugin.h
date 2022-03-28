@@ -82,7 +82,6 @@ private:
     QString getWaypointDescription(const Waypoint &waypoint) const noexcept;
 
     inline bool exportTrackPoint(const PositionData &positionData, QIODevice &io) const noexcept;
-    static inline QString formatNumber(double number) noexcept;
 };
 
 #endif // GPXEXPORTPLUGIN_H

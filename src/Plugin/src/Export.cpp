@@ -33,16 +33,26 @@
 #include "../../Model/src/Flight.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/AircraftInfo.h"
-
 #include "Export.h"
+
+namespace
+{
+    // Precision of exported double GNSS coordinate values
+    // https://rapidlasso.com/2019/05/06/how-many-decimal-digits-for-storing-longitude-latitude/
+    // https://xkcd.com/2170/
+    constexpr int CoordinatePrecision = 6;
+
+    // Precision of general number (altitude, heading, ...)
+    constexpr int NumberPrecision = 2;
+}
 
 // PUBLIC
 
 QString Export::suggestFilePath(QStringView suffix) noexcept
 {
     QString suggestedFileName;
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    Settings &settings = Settings::getInstance();
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const Settings &settings = Settings::getInstance();
 
     const QString &title = flight.getTitle();
     if (title.isNull()) {
@@ -57,7 +67,18 @@ QString Export::suggestFilePath(QStringView suffix) noexcept
     }
 
     // https://www.codeproject.com/tips/758861/removing-characters-which-are-not-allowed-in-windo
-    QRegularExpression illegalInFileName = QRegularExpression("[\\\\/:*?""<>|]");
+    const QRegularExpression illegalInFileName = QRegularExpression("[\\\\/:*?""<>|]");
     suggestedFileName = suggestedFileName.replace(illegalInFileName, "_");
     return settings.getExportPath() + "/" + File::ensureSuffix(suggestedFileName, suffix);
 }
+
+QString Export::formatCoordinate(double coordinate) noexcept
+{
+    return QString::number(coordinate, 'f', CoordinatePrecision);
+}
+
+QString Export::formatNumber(double number) noexcept
+{
+    return QString::number(number, 'f', NumberPrecision);
+}
+

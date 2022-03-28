@@ -55,14 +55,9 @@
 #include "../../../../../Model/src/Position.h"
 #include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/SimType.h"
+#include "../../../Export.h"
 #include "GPXExportSettings.h"
 #include "GPXExportPlugin.h"
-
-namespace
-{
-    // Precision of exported double values
-    constexpr int NumberPrecision = 12;
-}
 
 class GPXExportPluginPrivate
 {
@@ -306,21 +301,15 @@ QString GPXExportPlugin::getWaypointDescription(const Waypoint &waypoint) const 
     return description;
 }
 
-
 inline bool GPXExportPlugin::exportTrackPoint(const PositionData &positionData, QIODevice &io) const noexcept
 {
     // TODO TIME
     QDateTime dateTimeUtc;
     const QString trackPoint =
-"      <trkpt lat=\"" % formatNumber(positionData.latitude) % "\" lon=\"" % formatNumber(positionData.longitude) % "\">\n"
-"        <ele>" % formatNumber(Convert::feetToMeters(positionData.altitude)).toUtf8() % "</ele>\n"
+"      <trkpt lat=\"" % Export::formatCoordinate(positionData.latitude) % "\" lon=\"" % Export::formatCoordinate(positionData.longitude) % "\">\n"
+"        <ele>" % Export::formatNumber(Convert::feetToMeters(positionData.altitude)).toUtf8() % "</ele>\n"
 "        <time>" % dateTimeUtc.toString() % "</time>\n"
 "      </trkpt>\n";
 
     return io.write(trackPoint.toUtf8());
-}
-
-inline QString GPXExportPlugin::formatNumber(double number) noexcept
-{
-    return QString::number(number, 'g', NumberPrecision);
 }
