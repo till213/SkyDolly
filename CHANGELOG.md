@@ -2,6 +2,10 @@
 
 ## 0.10.0
 
+### New Features
+
+- GPX export plugin
+
 ### Improvements
 
 - All export plugins
