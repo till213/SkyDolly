@@ -63,11 +63,13 @@ class GPXExportPluginPrivate
 {
 public:
     GPXExportPluginPrivate() noexcept
-        : flight(Logbook::getInstance().getCurrentFlight())
+        : flight(Logbook::getInstance().getCurrentFlight()),
+          startDateTimeUtc(flight.getCreationDate().toUTC())
     {}
 
     GPXExportSettings settings;
     Flight &flight;
+    QDateTime startDateTimeUtc;
     Unit unit;
 
     static inline const QString FileExtension {QStringLiteral("gpx")};
@@ -194,8 +196,9 @@ bool GPXExportPlugin::exportAllAircraft(const Aircraft &aircraft, QIODevice &io)
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfoConst();
     const QString trackBegin =
 "  <trk>\n"
-"    <name>" % aircraftInfo.aircraftType.type % "</name>\n"
-"    <desc>" % getAircraftDescription(aircraft) % "</desc>\n"
+"    <name>![CDATA[" % aircraftInfo.aircraftType.type % "]]></name>\n"
+"    <desc>![CDATA[" % getAircraftDescription(aircraft) % "]]>\n"
+"    </desc>\n"
 "    <trkseg>\n";
 
     bool ok = io.write(trackBegin.toUtf8());
@@ -303,12 +306,11 @@ QString GPXExportPlugin::getWaypointDescription(const Waypoint &waypoint) const 
 
 inline bool GPXExportPlugin::exportTrackPoint(const PositionData &positionData, QIODevice &io) const noexcept
 {
-    // TODO TIME
-    QDateTime dateTimeUtc;
+    const QDateTime dateTimeUtc = d->startDateTimeUtc.addMSecs(positionData.timestamp);
     const QString trackPoint =
 "      <trkpt lat=\"" % Export::formatCoordinate(positionData.latitude) % "\" lon=\"" % Export::formatCoordinate(positionData.longitude) % "\">\n"
 "        <ele>" % Export::formatNumber(Convert::feetToMeters(positionData.altitude)).toUtf8() % "</ele>\n"
-"        <time>" % dateTimeUtc.toString() % "</time>\n"
+"        <time>" % dateTimeUtc.toString(Qt::ISODate) % "</time>\n"
 "      </trkpt>\n";
 
     return io.write(trackPoint.toUtf8());
