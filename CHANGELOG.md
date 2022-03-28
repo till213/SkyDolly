@@ -14,6 +14,7 @@
   * Resampling is now supported (original sample rate, 1 Hz, 2 Hz, 5 Hz, ...)
 - KML export plugin
   * The LineStrings are now exported as connected multi-geometry lines (no point limit anymore)
+  * Reduced the number of fractional digits to 6, reducing file size while still providing a practical precision in the range of centimeters (also refer to the mandatory [XKCD](https://xkcd.com/2170/))
 - Miscellaneous
   * Add shortcuts to dialog buttons
   
