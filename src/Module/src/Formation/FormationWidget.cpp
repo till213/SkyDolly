@@ -609,21 +609,21 @@ void FormationWidget::updateUi() noexcept
 
         // Wing span
         newItem = std::make_unique<QTableWidgetItem>(d->unit.formatFeet(aircraftInfo.aircraftType.wingSpan));
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem.release());
         newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem.release());        
         ++columnIndex;
 
         // Initial airspeed
         newItem = std::make_unique<QTableWidgetItem>(d->unit.formatKnots(aircraftInfo.initialAirspeed));
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem.release());
         newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem.release());
         ++columnIndex;
 
         // Initial altitude above ground
         newItem = std::make_unique<QTableWidgetItem>(d->unit.formatFeet(aircraftInfo.altitudeAboveGround));
         newItem->setToolTip(tr("Altitude above ground"));
-        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem.release());
         newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem.release());        
         ++columnIndex;
 
         // Duration

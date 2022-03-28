@@ -38,6 +38,10 @@
 #include <QCheckBox>
 #include <QDesktopServices>
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+#include "../../../../../Kernel/src/QStringHasher.h"
+#endif
+
 #include "../../../../../Kernel/src/Convert.h"
 #include "../../../../../Kernel/src/File.h"
 #include "../../../../../Kernel/src/Enum.h"
@@ -53,15 +57,13 @@
 #include "../../../../../Model/src/Position.h"
 #include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/SimType.h"
+#include "../../../Export.h"
 #include "KMLExportOptionWidget.h"
 #include "KMLStyleExport.h"
 #include "KMLExportPlugin.h"
 
 namespace
 {
-    // Precision of exported double values
-    constexpr int NumberPrecision = 12;
-
     // Maximum segments in a <LineString> (resulting in
     // MaxLineSegments + 1 coordinates per <LineString>)
     constexpr int MaxLineSegments = 16384;
@@ -85,7 +87,6 @@ public:
     std::unique_ptr<KMLStyleExport> styleExport;
     Unit unit;
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    #include "../../../../../Kernel/src/QStringHasher.h"
     std::unordered_map<QString, int, QStringHasher> aircraftTypeCount;
 #else
     std::unordered_map<QString, int> aircraftTypeCount;
@@ -150,7 +151,7 @@ std::unique_ptr<QWidget> KMLExportPlugin::createOptionWidget() const noexcept
 
 bool KMLExportPlugin::writeFile(QIODevice &io) noexcept
 {
-    bool ok;
+    io.setTextModeEnabled(true);
 
     d->aircraftTypeCount.clear();
     const int nofAircraft = d->flight.count();
@@ -158,8 +159,7 @@ bool KMLExportPlugin::writeFile(QIODevice &io) noexcept
     // than requested colors per ramp)
     d->settings.setNofColorsPerRamp(qMin(nofAircraft, d->settings.getNofColorsPerRamp()));
 
-    io.setTextModeEnabled(true);
-    ok = exportHeader(io);
+    bool ok = exportHeader(io);
     if (ok) {
         ok = d->styleExport->exportStyles(io);
     }
@@ -167,7 +167,7 @@ bool KMLExportPlugin::writeFile(QIODevice &io) noexcept
         ok = exportFlightInfo(io);
     }
     if (ok) {
-        ok = exportAircraft(io);
+        ok = exportAllAircraft(io);
     }
     if (ok) {
         ok = exportWaypoints(io);
@@ -206,12 +206,12 @@ bool KMLExportPlugin::exportFlightInfo(QIODevice &io) const noexcept
     return exportPlacemark(io, KMLStyleExport::Icon::Airport, d->flight.getTitle(), getFlightDescription(), positionData);
 }
 
-bool KMLExportPlugin::exportAircraft(QIODevice &io) const noexcept
+bool KMLExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
 {
     bool ok = true;
     for (const auto &aircraft : d->flight) {
         d->aircraftTypeCount[aircraft->getAircraftInfoConst().aircraftType.type] += 1;
-        ok = exportAircraft(*aircraft, io);
+        ok = exportAllAircraft(*aircraft, io);
         if (!ok) {
             break;
         }
@@ -219,7 +219,7 @@ bool KMLExportPlugin::exportAircraft(QIODevice &io) const noexcept
     return ok;
 }
 
-bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
+bool KMLExportPlugin::exportAllAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     const QString lineStringBegin = QString(
 "        <LineString>\n"
@@ -292,9 +292,9 @@ bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
                 currentIndex += 1;
             }
             const PositionData positionData = interpolatedPositionData[currentIndex];
-            ok = io.write((formatNumber(positionData.longitude) % "," %
-                           formatNumber(positionData.latitude) % "," %
-                           formatNumber(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
+            ok = io.write((Export::formatCoordinate(positionData.longitude) % "," %
+                           Export::formatCoordinate(positionData.latitude) % "," %
+                           Export::formatCoordinate(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
             if (!ok) {
                 break;
             }
@@ -399,10 +399,10 @@ inline bool KMLExportPlugin::exportPlacemark(QIODevice &io, KMLStyleExport::Icon
 "      <name><![CDATA[" % name % "]]></name>\n"
 "      <description><![CDATA[" % description % "]]></description>\n"
 "      <LookAt>\n"
-"        <longitude>" % formatNumber(longitude) % "</longitude>\n"
-"        <latitude>" % formatNumber(latitude) % "</latitude>\n"
-"        <altitude>" % formatNumber(Convert::feetToMeters(altitudeInFeet)) % "</altitude>\n"
-"        <heading>" % formatNumber(heading) % "</heading>\n"
+"        <longitude>" % Export::formatCoordinate(longitude) % "</longitude>\n"
+"        <latitude>" % Export::formatCoordinate(latitude) % "</latitude>\n"
+"        <altitude>" % Export::formatCoordinate(Convert::feetToMeters(altitudeInFeet)) % "</altitude>\n"
+"        <heading>" % Export::formatCoordinate(heading) % "</heading>\n"
 "        <tilt>" % LookAtTilt % "</tilt>\n"
 "        <range>" % LookAtRange % "</range>\n"
 "        <altitudeMode>absolute</altitudeMode>\n"
@@ -412,13 +412,9 @@ inline bool KMLExportPlugin::exportPlacemark(QIODevice &io, KMLStyleExport::Icon
 "        <extrude>1</extrude>\n"
 "        <altitudeMode>absolute</altitudeMode>\n"
 "        <gx:drawOrder>1</gx:drawOrder>\n"
-"        <coordinates>" % formatNumber(longitude) % "," % formatNumber(latitude) % "," % formatNumber(Convert::feetToMeters(altitudeInFeet)) % "</coordinates>\n"
+"        <coordinates>" % Export::formatCoordinate(longitude) % "," % Export::formatCoordinate(latitude) % "," % Export::formatCoordinate(Convert::feetToMeters(altitudeInFeet)) % "</coordinates>\n"
 "      </Point>\n"
 "    </Placemark>\n";
     return io.write(placemark.toUtf8());
 }
 
-inline QString KMLExportPlugin::formatNumber(double number) noexcept
-{
-    return QString::number(number, 'g', NumberPrecision);
-}
