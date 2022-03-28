@@ -161,6 +161,7 @@ void GPXExportPlugin::onRestoreDefaultSettings() noexcept
 bool GPXExportPlugin::exportHeader(QIODevice &io) const noexcept
 {
     const QString header =
+"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" version=\"1.1\" creator=\"" % Version::getApplicationName() % "\"\n"
 "     xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
 "     xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\">\n";
@@ -196,8 +197,8 @@ bool GPXExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfoConst();
     const QString trackBegin =
 "  <trk>\n"
-"    <name>![CDATA[" % aircraftInfo.aircraftType.type % "]]></name>\n"
-"    <desc>![CDATA[" % getAircraftDescription(aircraft) % "]]>\n"
+"    <name><![CDATA[" % aircraftInfo.aircraftType.type % "]]></name>\n"
+"    <desc><![CDATA[" % getAircraftDescription(aircraft) % "]]>\n"
 "    </desc>\n"
 "    <trkseg>\n";
 
@@ -315,7 +316,7 @@ inline bool GPXExportPlugin::exportWaypoint(const Waypoint &waypoint, QIODevice 
 "  <wpt lat=\"" % Export::formatCoordinate(waypoint.latitude) % "\" lon=\"" % Export::formatCoordinate(waypoint.longitude) % "\">\n"
 "    <ele>" % Export::formatNumber(Convert::feetToMeters(waypoint.altitude)).toUtf8() % "</ele>\n"
 "    <time>" % waypoint.zuluTime.toString(Qt::ISODate) % "</time>\n"
-"    <name>" % waypoint.identifier % "</time>\n"
+"    <name>" % waypoint.identifier % "</name>\n"
 "  </wpt>\n";
 
     return io.write(waypointString.toUtf8());
