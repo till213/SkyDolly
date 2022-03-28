@@ -54,7 +54,6 @@ public:
     virtual ~GPXExportPlugin() noexcept;
 
 protected:
-    // ExportPluginBase
     virtual void addSettingsExtn(Settings::PluginSettings &settings) const noexcept override;
     virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
     virtual void restoreSettingsExtn(Settings::ValuesByKey) noexcept override;
@@ -73,15 +72,15 @@ private:
     bool exportHeader(QIODevice &io) const noexcept;
     bool exportFlightInfo(QIODevice &io) const noexcept;
     bool exportAllAircraft(QIODevice &io) const noexcept;
-    bool exportAllAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept;
+    bool exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept;
     bool exportWaypoints(QIODevice &io) const noexcept;
     bool exportFooter(QIODevice &io) const noexcept;
 
     QString getFlightDescription() const noexcept;
     QString getAircraftDescription(const Aircraft &aircraft) const noexcept;
-    QString getWaypointDescription(const Waypoint &waypoint) const noexcept;
 
     inline bool exportTrackPoint(const PositionData &positionData, QIODevice &io) const noexcept;
+    inline bool exportWaypoint(const Waypoint &waypoint, QIODevice &io) const noexcept;
 };
 
 #endif // GPXEXPORTPLUGIN_H

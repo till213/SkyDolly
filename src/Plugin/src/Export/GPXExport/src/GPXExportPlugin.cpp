@@ -135,13 +135,13 @@ bool GPXExportPlugin::writeFile(QIODevice &io) noexcept
     bool ok = exportHeader(io);
     if (ok) {
         ok = exportFlightInfo(io);
-    }
-    if (ok) {
-        ok = exportAllAircraft(io);
-    }
+    }    
     if (ok) {
         ok = exportWaypoints(io);
     }
+    if (ok) {
+        ok = exportAllAircraft(io);
+    }    
     if (ok) {
         ok = exportFooter(io);
     }
@@ -173,7 +173,7 @@ bool GPXExportPlugin::exportFlightInfo(QIODevice &io) const noexcept
     const QString header =
 "  <metadata>\n"
 "    <name><![CDATA[" % d->flight.getTitle() % "]]></name>\n"
-"    <desc><![CDATA[" % d->flight.getDescription() % "]]></desc>\n"
+"    <desc><![CDATA[" % getFlightDescription() % "]]></desc>\n"
 "  </metadata>\n";
 
     return io.write(header.toUtf8());
@@ -183,7 +183,7 @@ bool GPXExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
 {
     bool ok = true;
     for (const auto &aircraft : d->flight) {
-        ok = exportAllAircraft(*aircraft, io);
+        ok = exportAircraft(*aircraft, io);
         if (!ok) {
             break;
         }
@@ -191,7 +191,7 @@ bool GPXExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
     return ok;
 }
 
-bool GPXExportPlugin::exportAllAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
+bool GPXExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfoConst();
     const QString trackBegin =
@@ -242,10 +242,12 @@ bool GPXExportPlugin::exportAllAircraft(const Aircraft &aircraft, QIODevice &io)
 bool GPXExportPlugin::exportWaypoints(QIODevice &io) const noexcept
 {
     bool ok = true;
-
     const FlightPlan &flightPlan = d->flight.getUserAircraft().getFlightPlanConst();
     for (const Waypoint &waypoint : flightPlan) {
-        // TODO IMPLEMENT ME
+        ok = exportWaypoint(waypoint, io);
+        if (!ok) {
+            break;
+        }
     }
     return ok;
 }
@@ -261,7 +263,7 @@ QString GPXExportPlugin::getFlightDescription() const noexcept
 {
     const FlightCondition &flightCondition = d->flight.getFlightConditionConst();
     const QString description =
-            tr("Description") % ": " % d->flight.getDescription() % "\n" %
+            d->flight.getDescription() % "\n" %
             "\n" %
             tr("Creation date") % ": " % d->unit.formatDate(d->flight.getCreationDate()) % "\n" %
             tr("Start (local time)") % ": " % d->unit.formatTime(flightCondition.startLocalTime) % "\n" %
@@ -295,15 +297,6 @@ QString GPXExportPlugin::getAircraftDescription(const Aircraft &aircraft) const 
     return description;
 }
 
-QString GPXExportPlugin::getWaypointDescription(const Waypoint &waypoint) const noexcept
-{
-    const QString description =
-            tr("Arrival time (local)") % ": " % d->unit.formatTime(waypoint.localTime) % "\n" %
-            tr("Arrival time (zulu)") % ": " % d->unit.formatTime(waypoint.zuluTime) % "\n" %
-            tr("Altitude") % ": " % d->unit.formatFeet(waypoint.altitude) % "\n";
-    return description;
-}
-
 inline bool GPXExportPlugin::exportTrackPoint(const PositionData &positionData, QIODevice &io) const noexcept
 {
     const QDateTime dateTimeUtc = d->startDateTimeUtc.addMSecs(positionData.timestamp);
@@ -314,4 +307,16 @@ inline bool GPXExportPlugin::exportTrackPoint(const PositionData &positionData, 
 "      </trkpt>\n";
 
     return io.write(trackPoint.toUtf8());
+}
+
+inline bool GPXExportPlugin::exportWaypoint(const Waypoint &waypoint, QIODevice &io) const noexcept
+{
+    const QString waypointString =
+"  <wpt lat=\"" % Export::formatCoordinate(waypoint.latitude) % "\" lon=\"" % Export::formatCoordinate(waypoint.longitude) % "\">\n"
+"    <ele>" % Export::formatNumber(Convert::feetToMeters(waypoint.altitude)).toUtf8() % "</ele>\n"
+"    <time>" % waypoint.zuluTime.toString(Qt::ISODate) % "</time>\n"
+"    <name>" % waypoint.identifier % "</time>\n"
+"  </wpt>\n";
+
+    return io.write(waypointString.toUtf8());
 }
