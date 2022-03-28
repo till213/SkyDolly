@@ -36,6 +36,10 @@
 #include <QFile>
 #include <QFileInfo>
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+#include "../../../../../Kernel/src/QStringHasher.h"
+#endif
+
 #include "../../../../../Kernel/src/Convert.h"
 #include "../../../../../Kernel/src/SkyMath.h"
 #include "../../../../../Model/src/SimType.h"
@@ -124,7 +128,6 @@ public:
         firstDateTimeUtc.setTimeZone(QTimeZone::utc());
     }
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    #include "../../../../../Kernel/src/QStringHasher.h"
     std::unordered_map<QByteArray, int, QStringHasher> columnIndexes;
 #else
     std::unordered_map<QByteArray, int> columnIndexes;
@@ -390,7 +393,7 @@ bool FlightRecorderCSVParser::parseData(QFile &file) noexcept
 inline bool FlightRecorderCSVParser::importTimestamp(const QList<QByteArray> &values, bool firstRow, std::int64_t &timestamp, std::int64_t &timestampDelta) noexcept
 {
     static int timestampIdx = ::InvalidIdx;
-    bool ok = true;;
+    bool ok = true;
     if (timestampIdx == ::InvalidIdx) {
         auto it = d->columnIndexes.find(::Milliseconds);
         if (it != d->columnIndexes.end()) {
@@ -420,7 +423,7 @@ inline bool FlightRecorderCSVParser::importTimestamp(const QList<QByteArray> &va
 template <typename T>
 inline bool FlightRecorderCSVParser::importValue(const QList<QByteArray> &values, const char *name, int &idx, T &value) noexcept
 {
-    bool ok = true;;
+    bool ok = true;
     if (idx == ::InvalidIdx) {
         auto it = d->columnIndexes.find(name);
         if (it != d->columnIndexes.end()) {

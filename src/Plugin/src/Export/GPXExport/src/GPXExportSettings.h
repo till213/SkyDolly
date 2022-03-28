@@ -22,23 +22,33 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef QSTRINGHASHER_H
-#define QSTRINGHASHER_H
+#ifndef GPXEXPORTSETTINGS_H
+#define GPXEXPORTSETTINGS_H
 
-#include <QtGlobal>
+#include <memory>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-#include <cstdlib>
+#include <QObject>
 
-#include <QHash>
-#include <QString>
+#include "../../../../../Kernel/src/Settings.h"
+#include "../../Plugin/src/ExportPluginBaseSettings.h"
 
-// https://www.kdab.com/qt-datatypes-in-standard-library/
-struct QStringHasher {
-    std::size_t operator()(const QString &value) const noexcept {
-        return qHash(value) ;
-    }
+class GPXExportSettingsPrivate;
+
+class GPXExportSettings : public ExportPluginBaseSettings
+{
+    Q_OBJECT
+public:
+    GPXExportSettings() noexcept;
+    virtual ~GPXExportSettings() noexcept;
+
+protected:
+    virtual void addSettingsExtn(Settings::PluginSettings &settings) const noexcept override;
+    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    virtual void restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept override;
+    virtual void restoreDefaultsExtn() noexcept override;
+
+private:
+    std::unique_ptr<GPXExportSettingsPrivate> d;
 };
-#endif
 
-#endif //  QSTRINGHASHER_H
+#endif // GPXEXPORTSETTINGS_H

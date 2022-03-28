@@ -226,7 +226,7 @@ bool FlightRadar24KMLParser::parseDescription() noexcept
 #endif
     QRegularExpressionMatch match = d->speedRegExp.match(description);
     if (match.hasMatch()) {
-        FlightRadar24KMLParserPrivate::TrackItem trackItem;;
+        FlightRadar24KMLParserPrivate::TrackItem trackItem;
         trackItem.speed = match.captured(1).toInt();
         const int pos = match.capturedEnd();
         match = d->headingRegExp.match(description, pos);

@@ -92,7 +92,7 @@ bool ExportPluginBase::exportData() noexcept
             if (getSettings().isFileDialogSelectedFile() || !fileInfo.exists()) {
                 ok = exportFile(filePath);
             } else {
-                QMessageBox messageBox;
+                QMessageBox messageBox(getParentWidget());
                 messageBox.setIcon(QMessageBox::Question);
                 QPushButton *replaceButton = messageBox.addButton(tr("&Replace"), QMessageBox::AcceptRole);
                 messageBox.setText(tr("A file named \"%1\" already exists. Do you want to replace it?").arg(fileInfo.fileName()));
