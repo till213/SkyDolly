@@ -73,12 +73,6 @@ signals:
      */
     void baseSettingsChanged();
 
-    /*!
-     * Emitted whenever the extended settings have changed. This signal is
-     * only emitted by classes extending the ExportPluginBaseSettings.
-     */
-    void extendedSettingsChanged();
-
 protected:
     virtual void addSettingsExtn(Settings::PluginSettings &settings) const noexcept = 0;
     virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept = 0;

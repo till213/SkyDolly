@@ -48,6 +48,13 @@ public:
     QString getCoPilotName() const noexcept;
     void setCoPilotName(const QString &coPilotName) noexcept;
 
+signals:
+    /*!
+     * Emitted whenever the extended settings have changed. This signal is
+     * only emitted by classes extending the ExportPluginBaseSettings.
+     */
+    void extendedSettingsChanged();
+
 protected:
     virtual void addSettingsExtn(Settings::PluginSettings &settings) const noexcept override;
     virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
