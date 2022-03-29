@@ -17,6 +17,7 @@ target_sources(${LIBRARY_NAME}
     PRIVATE
         src/GPXExportPlugin.h src/GPXExportPlugin.cpp
         src/GPXExportSettings.h src/GPXExportSettings.cpp
+        src/GPXExportOptionWidget.h src/GPXExportOptionWidget.cpp src/GPXExportOptionWidget.ui
         src/GPXExportPlugin.json
 )
 

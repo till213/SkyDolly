@@ -138,8 +138,7 @@ FlightAugmentation::Procedures KMLImportPlugin::getProcedures() const noexcept
 FlightAugmentation::Aspects KMLImportPlugin::getAspects() const noexcept
 {
     FlightAugmentation::Aspects aspects;
-    switch (d->settings.m_format)
-    {
+    switch (d->settings.m_format) {
     case KMLImportSettings::Format::FlightAware:
         aspects = FlightAugmentation::Aspect::All;
         break;

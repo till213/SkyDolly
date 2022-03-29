@@ -38,14 +38,29 @@ class GPXExportSettings : public ExportPluginBaseSettings
 {
     Q_OBJECT
 public:
+    enum struct TimestampMode {
+        Simulation,
+        Recording
+    };
+
     GPXExportSettings() noexcept;
     virtual ~GPXExportSettings() noexcept;
+
+    TimestampMode getTimestampMode() const noexcept;
+    void setTimestampMode(TimestampMode timestampMode) noexcept;
 
 protected:
     virtual void addSettingsExtn(Settings::PluginSettings &settings) const noexcept override;
     virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
     virtual void restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept override;
     virtual void restoreDefaultsExtn() noexcept override;
+
+signals:
+    /*!
+     * Emitted whenever the extended settings have changed. This signal is
+     * only emitted by classes extending the ExportPluginBaseSettings.
+     */
+    void extendedSettingsChanged();
 
 private:
     std::unique_ptr<GPXExportSettingsPrivate> d;

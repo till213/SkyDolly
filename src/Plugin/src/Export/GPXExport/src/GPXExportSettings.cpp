@@ -27,15 +27,28 @@
 
 #include <QString>
 
+#include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/Settings.h"
 #include "../../Plugin/src/ExportPluginBaseSettings.h"
 #include "GPXExportSettings.h"
+
+namespace
+{
+    // Keys
+    constexpr char TimestampModeKey[] = "TimestampMode";
+
+    // Defaults
+    constexpr GPXExportSettings::TimestampMode DefaultTimestampMode = GPXExportSettings::TimestampMode::Simulation;
+}
 
 class GPXExportSettingsPrivate
 {
 public:
     GPXExportSettingsPrivate()
+    : timestampMode(::DefaultTimestampMode)
     {}
+
+    GPXExportSettings::TimestampMode timestampMode;
 };
 
 // PUBLIC
@@ -56,16 +69,55 @@ GPXExportSettings::~GPXExportSettings() noexcept
 #endif
 }
 
+GPXExportSettings::TimestampMode GPXExportSettings::getTimestampMode() const noexcept
+{
+    return d->timestampMode;
+}
+
+void GPXExportSettings::setTimestampMode(TimestampMode timestampMode) noexcept
+{
+    if (d->timestampMode != timestampMode) {
+        d->timestampMode = timestampMode;
+        emit extendedSettingsChanged();
+    }
+}
+
 // PROTECTED
 
 void GPXExportSettings::addSettingsExtn(Settings::PluginSettings &settings) const noexcept
-{}
+{
+    Settings::KeyValue keyValue;
+
+    keyValue.first = ::TimestampModeKey;
+    keyValue.second = Enum::toUnderlyingType(d->timestampMode);
+    settings.push_back(keyValue);
+}
 
 void GPXExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
-{}
+{
+    Settings::KeyValue keyValue;
+
+    keyValue.first = ::TimestampModeKey;
+    keyValue.second = Enum::toUnderlyingType(::DefaultTimestampMode);
+    keysWithDefaults.push_back(keyValue);
+}
 
 void GPXExportSettings::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
-{}
+{
+    bool ok;
+    const int enumeration = valuesByKey[::TimestampModeKey].toInt(&ok);
+    if (ok) {
+        d->timestampMode = static_cast<GPXExportSettings::TimestampMode >(enumeration);
+    } else {
+        d->timestampMode = ::DefaultTimestampMode;
+    }
+
+    emit extendedSettingsChanged();
+}
 
 void GPXExportSettings::restoreDefaultsExtn() noexcept
-{}
+{
+    d->timestampMode = ::DefaultTimestampMode;
+
+    emit extendedSettingsChanged();
+}

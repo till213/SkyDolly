@@ -22,38 +22,37 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef KMLEXPORTOPTIONWIDGET_H
-#define KMLEXPORTOPTIONWIDGET_H
+#ifndef GPXEXPORTOPTIONWIDGET_H
+#define GPXEXPORTOPTIONWIDGET_H
 
 #include <memory>
 
 #include <QWidget>
 
 namespace Ui {
-    class KMLExportOptionWidget;
+    class GPXExportOptionWidget;
 }
 
-class KMLExportSettings;
-class KMLExportOptionWidgetPrivate;
+class GPXExportSettings;
+class GPXExportOptionWidgetPrivate;
 
-class KMLExportOptionWidget : public QWidget
+class GPXExportOptionWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit KMLExportOptionWidget(KMLExportSettings &settings, QWidget *parent = nullptr) noexcept;
-    virtual ~KMLExportOptionWidget() noexcept;
+    explicit GPXExportOptionWidget(GPXExportSettings &settings, QWidget *parent = nullptr) noexcept;
+    virtual ~GPXExportOptionWidget() noexcept;
 
 private:
-    std::unique_ptr<Ui::KMLExportOptionWidget> ui;
-    std::unique_ptr<KMLExportOptionWidgetPrivate> d;
+    std::unique_ptr<Ui::GPXExportOptionWidget> ui;
+    std::unique_ptr<GPXExportOptionWidgetPrivate> d;
 
     void frenchConnection() noexcept;
     void initUi() noexcept;
 
 private slots:
     void updateUi() noexcept;
-    void selectColor(int id) noexcept;
-    void onColorStyleChanged() noexcept;
+    void onTimestampModeChanged() noexcept;
 };
 
-#endif // KMLEXPORTOPTIONWIDGET_H
+#endif // GPXEXPORTOPTIONWIDGET_H

@@ -124,13 +124,13 @@ void BasicExportDialog::initBasicUi() noexcept
     ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestFilePath(d->fileExtension)));
 
     // Resampling
-    ui->resamplingComboBox->addItem(QString("1/10 Hz") % " (" % tr("less data, less accuracy") % ")", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::ATenthHz));
+    ui->resamplingComboBox->addItem(QString("1/10 Hz") % " (" % tr("smaller file size, less accuracy") % ")", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::ATenthHz));
     ui->resamplingComboBox->addItem("1/5 Hz", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::AFifthHz));
     ui->resamplingComboBox->addItem(QString("1 Hz") % " (" % tr("good accuracy") % ")", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::OneHz));
     ui->resamplingComboBox->addItem("2 Hz", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::TwoHz));
     ui->resamplingComboBox->addItem("5 Hz", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::FiveHz));
-    ui->resamplingComboBox->addItem("10 Hz", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::TenHz));
-    ui->resamplingComboBox->addItem(tr("Original data"), Enum::toUnderlyingType(SampleRate::ResamplingPeriod::Original));
+    ui->resamplingComboBox->addItem("10 Hz (larger file size, greater accuracy", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::TenHz));
+    ui->resamplingComboBox->addItem(tr("Original data (no resampling)"), Enum::toUnderlyingType(SampleRate::ResamplingPeriod::Original));
 }
 
 void BasicExportDialog::initOptionUi() noexcept

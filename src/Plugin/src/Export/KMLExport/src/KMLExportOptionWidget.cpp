@@ -300,7 +300,7 @@ void KMLExportOptionWidget::selectColor(int id) noexcept
     }
 }
 
-void KMLExportOptionWidget::onColorStyleChanged([[maybe_unused]] int index) noexcept
+void KMLExportOptionWidget::onColorStyleChanged() noexcept
 {
     const KMLExportSettings::ColorStyle colorStyle = static_cast<KMLExportSettings::ColorStyle>(ui->colorStyleComboBox->currentData().toInt());
     d->settings.setColorStyle(colorStyle);

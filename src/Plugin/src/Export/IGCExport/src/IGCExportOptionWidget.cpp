@@ -24,7 +24,6 @@
  */
 #include <QLineEdit>
 #include <QString>
-#include <QStringBuilder>
 
 #include "IGCExportOptionWidget.h"
 #include "IGCExportSettings.h"

@@ -29,6 +29,7 @@
 #include <QPlainTextEdit>
 #include <QTextCursor>
 
+#include "../../../Kernel/src/Unit.h"
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
 #include "../../../Persistence/src/Service/FlightService.h"
@@ -47,6 +48,7 @@ public:
     {}
 
     FlightService &flightService;
+    Unit unit;
 };
 
 // PUBLIC
@@ -95,9 +97,9 @@ void FlightDescriptionWidget::initUi() noexcept
 void FlightDescriptionWidget::frenchConnection() noexcept
 {
     connect(ui->titleLineEdit, &QLineEdit::editingFinished,
-            this, &FlightDescriptionWidget::handleTitleEdited);
+            this, &FlightDescriptionWidget::onTitleEdited);
     connect(ui->focusPlainTextEdit, &FocusPlainTextEdit::focusLost,
-            this, &FlightDescriptionWidget::handleDescriptionEdited);
+            this, &FlightDescriptionWidget::onDescriptionEdited);
 }
 
 // PRIVATE SLOTS
@@ -116,15 +118,17 @@ void FlightDescriptionWidget::updateUi() noexcept
     ui->focusPlainTextEdit->setEnabled(enabled);
     ui->titleLineEdit->blockSignals(false);
     ui->focusPlainTextEdit->blockSignals(false);
+
+    ui->recordingTimeLineEdit->setText(d->unit.formatDateTime(flight.getCreationDate()));
 }
 
-void FlightDescriptionWidget::handleTitleEdited() noexcept
+void FlightDescriptionWidget::onTitleEdited() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     d->flightService.updateTitleAndDescription(flight, ui->titleLineEdit->text(), ui->focusPlainTextEdit->toPlainText());
 }
 
-void FlightDescriptionWidget::handleDescriptionEdited() noexcept
+void FlightDescriptionWidget::onDescriptionEdited() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     d->flightService.updateTitleAndDescription(flight, ui->titleLineEdit->text(), ui->focusPlainTextEdit->toPlainText());

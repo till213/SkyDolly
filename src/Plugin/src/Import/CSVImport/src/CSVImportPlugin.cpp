@@ -126,8 +126,7 @@ bool CSVImportPlugin::readFile(QFile &file) noexcept
 FlightAugmentation::Procedures CSVImportPlugin::getProcedures() const noexcept
 {
     FlightAugmentation::Procedures procedures;
-    switch (d->settings.m_format)
-    {
+    switch (d->settings.m_format) {
     case CSVImportSettings::Format::SkyDolly:
         procedures = FlightAugmentation::Procedure::None;
         break;
@@ -149,8 +148,7 @@ FlightAugmentation::Procedures CSVImportPlugin::getProcedures() const noexcept
 FlightAugmentation::Aspects CSVImportPlugin::getAspects() const noexcept
 {
     FlightAugmentation::Aspects aspects;
-    switch (d->settings.m_format)
-    {
+    switch (d->settings.m_format) {
     case CSVImportSettings::Format::SkyDolly:
         aspects = FlightAugmentation::Aspect::None;
         break;
@@ -179,8 +177,7 @@ QDateTime CSVImportPlugin::getStartDateTimeUtc() noexcept
 QString CSVImportPlugin::getTitle() const noexcept
 {
     QString title;
-    switch (d->settings.m_format)
-    {
+    switch (d->settings.m_format) {
     case CSVImportSettings::Format::SkyDolly:
         title = tr("Sky Dolly CSV import");
         break;

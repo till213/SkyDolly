@@ -56,6 +56,7 @@
 #include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/SimType.h"
 #include "../../../Export.h"
+#include "GPXExportOptionWidget.h"
 #include "GPXExportSettings.h"
 #include "GPXExportPlugin.h"
 
@@ -63,8 +64,7 @@ class GPXExportPluginPrivate
 {
 public:
     GPXExportPluginPrivate() noexcept
-        : flight(Logbook::getInstance().getCurrentFlight()),
-          startDateTimeUtc(flight.getCreationDate().toUTC())
+        : flight(Logbook::getInstance().getCurrentFlight())
     {}
 
     GPXExportSettings settings;
@@ -121,12 +121,12 @@ QString GPXExportPlugin::getFileExtension() const noexcept
 
 QString GPXExportPlugin::getFileFilter() const noexcept
 {
-    return tr("Keyhole markup language (*.%1)").arg(getFileExtension());
+    return tr("GPS Exchange (*.%1)").arg(getFileExtension());
 }
 
 std::unique_ptr<QWidget> GPXExportPlugin::createOptionWidget() const noexcept
 {
-    return nullptr;
+    return std::make_unique<GPXExportOptionWidget>(d->settings);
 }
 
 bool GPXExportPlugin::writeFile(QIODevice &io) noexcept
@@ -194,6 +194,15 @@ bool GPXExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
 
 bool GPXExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
+    switch (d->settings.getTimestampMode()) {
+    case GPXExportSettings::TimestampMode::Recording:
+        d->startDateTimeUtc = d->flight.getCreationDate().toUTC();
+        break;
+    default:
+        d->startDateTimeUtc = aircraft.getAircraftInfoConst().startDate.toUTC();
+        break;
+    }
+
     const AircraftInfo &aircraftInfo = aircraft.getAircraftInfoConst();
     const QString trackBegin =
 "  <trk>\n"
