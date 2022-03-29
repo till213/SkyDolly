@@ -236,8 +236,6 @@ std::int64_t Aircraft::getDurationMSec() const noexcept
         if (d->light.count() > 0) {
             d->duration = qMax(d->light.getLast().timestamp - timeOffset, d->duration);
         }
-        // Update end time
-        d->aircraftInfo.endDate = d->aircraftInfo.startDate.addMSecs(d->duration);
     }
     return d->duration;
 }
@@ -309,5 +307,4 @@ void Aircraft::handleDataChanged()
 void Aircraft::invalidateDuration()
 {
     d->duration = TimeVariableData::InvalidTime;
-    d->aircraftInfo.endDate = QDateTime();
 }

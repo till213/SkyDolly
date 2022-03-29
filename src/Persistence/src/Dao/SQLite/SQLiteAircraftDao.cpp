@@ -106,8 +106,6 @@ bool SQLiteAircraftDao::add(std::int64_t flightId, int sequenceNumber, Aircraft 
         "  flight_id,"
         "  seq_nr,"
         "  type,"
-        "  start_date,"
-        "  end_date,"
         "  time_offset,"
         "  tail_number,"
         "  airline,"
@@ -119,8 +117,6 @@ bool SQLiteAircraftDao::add(std::int64_t flightId, int sequenceNumber, Aircraft 
         " :flight_id,"
         " :seq_nr,"
         " :type,"
-        " :start_date,"
-        " :end_date,"
         " :time_offset,"
         " :tail_number,"
         " :airline,"
@@ -131,23 +127,22 @@ bool SQLiteAircraftDao::add(std::int64_t flightId, int sequenceNumber, Aircraft 
         ");");
 
     const AircraftType &aircraftType = aircraft.getAircraftInfoConst().aircraftType;
-    d->aircraftTypeDao->upsert(aircraftType);
+    bool ok = d->aircraftTypeDao->upsert(aircraftType);
+    if (ok) {
+        const AircraftInfo &info = aircraft.getAircraftInfoConst();
+        query.bindValue(":flight_id", QVariant::fromValue(flightId));
+        query.bindValue(":seq_nr", sequenceNumber);
+        query.bindValue(":type", aircraftType.type);
+        query.bindValue(":time_offset", QVariant::fromValue(info.timeOffset));
+        query.bindValue(":tail_number", info.tailNumber);
+        query.bindValue(":airline", info.airline);
+        query.bindValue(":flight_number", info.flightNumber);
+        query.bindValue(":initial_airspeed", info.initialAirspeed);
+        query.bindValue(":altitude_above_ground", info.altitudeAboveGround);
+        query.bindValue(":start_on_ground", info.startOnGround);
 
-    const AircraftInfo &info = aircraft.getAircraftInfoConst();
-    query.bindValue(":flight_id", QVariant::fromValue(flightId));
-    query.bindValue(":seq_nr", sequenceNumber);
-    query.bindValue(":type", aircraftType.type);
-    query.bindValue(":start_date", info.startDate.toUTC());
-    query.bindValue(":end_date", info.endDate.toUTC());
-    query.bindValue(":time_offset", QVariant::fromValue(info.timeOffset));
-    query.bindValue(":tail_number", info.tailNumber);
-    query.bindValue(":airline", info.airline);
-    query.bindValue(":flight_number", info.flightNumber);
-    query.bindValue(":initial_airspeed", info.initialAirspeed);
-    query.bindValue(":altitude_above_ground", info.altitudeAboveGround);
-    query.bindValue(":start_on_ground", info.startOnGround);
-
-    bool ok = query.exec();
+        ok = query.exec();
+    }
     if (ok) {
         std::int64_t id = query.lastInsertId().toLongLong(&ok);
         aircraft.setId(id);
@@ -370,8 +365,6 @@ bool SQLiteAircraftDao::getAircraftInfosByFlightId(std::int64_t flightId, std::v
         QSqlRecord record = query.record();
         const int idIdx = record.indexOf("id");
         const int typeIdx = record.indexOf("type");
-        const int startDateIdx = record.indexOf("start_date");
-        const int endDateIdx = record.indexOf("end_date");
         const int timeOffsetIdx = record.indexOf("time_offset");
         const int tailNumberIdx = record.indexOf("tail_number");
         const int airlineIdx = record.indexOf("airline");
@@ -382,12 +375,6 @@ bool SQLiteAircraftDao::getAircraftInfosByFlightId(std::int64_t flightId, std::v
         while (ok && query.next()) {
             AircraftInfo info(query.value(idIdx).toLongLong());
             const QString &type = query.value(typeIdx).toString();
-            QDateTime dateTime = query.value(startDateIdx).toDateTime();
-            dateTime.setTimeZone(QTimeZone::utc());
-            info.startDate = dateTime.toLocalTime();
-            dateTime = query.value(endDateIdx).toDateTime();
-            dateTime.setTimeZone(QTimeZone::utc());
-            info.endDate = dateTime.toLocalTime();
             info.timeOffset = query.value(timeOffsetIdx).toULongLong();
             info.tailNumber = query.value(tailNumberIdx).toString();
             info.airline = query.value(airlineIdx).toString();

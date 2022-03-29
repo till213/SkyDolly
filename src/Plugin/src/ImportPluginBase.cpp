@@ -201,8 +201,6 @@ void ImportPluginBase::updateAircraftInfo() noexcept
     const PositionData &lastPositionData = position.getLast();
     const QDateTime startDateTimeUtc = getStartDateTimeUtc();
     const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
-    aircraftInfo.startDate = startDateTimeUtc.toLocalTime();
-    aircraftInfo.endDate = endDateTimeUtc.toLocalTime();
     int positionCount = position.count();
     if (positionCount > 0) {
         const PositionData &firstPositionData = position.getFirst();

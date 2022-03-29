@@ -73,6 +73,8 @@ public:
     void setFlightCondition(FlightCondition flightCondition) noexcept;
 
     std::int64_t getTotalDurationMSec(bool ofUserAircraft = false) const noexcept;
+    QDateTime getAircraftStartLocalTime(const Aircraft &aircraft) const noexcept;
+    QDateTime getAircraftStartZuluTime(const Aircraft &aircraft) const noexcept;
 
     void clear(bool withOneAircraft) noexcept;
 

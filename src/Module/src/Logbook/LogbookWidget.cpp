@@ -302,13 +302,14 @@ void LogbookWidget::updateFlightTable() noexcept
             }
             newItem->setData(Qt::DisplayRole, QVariant::fromValue(summary.id));
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-            newItem->setToolTip(tr("Double-click to load flight"));
+            newItem->setToolTip(tr("Double-click to load flight."));
             // Transfer ownership of newItem to table widget
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
             ++columnIndex;
 
             // Creation date
             newItem = std::make_unique<TableDateItem>(d->unit.formatDate(summary.creationDate), summary.creationDate.date());
+            newItem->setToolTip(tr("Recording time: %1.").arg(d->unit.formatTime(summary.creationDate)));
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
             ++columnIndex;
@@ -326,8 +327,8 @@ void LogbookWidget::updateFlightTable() noexcept
             ++columnIndex;
 
             // Start time
-            newItem = std::make_unique<TableTimeItem>(d->unit.formatTime(summary.startDate), summary.startDate.time());
-            newItem->setToolTip(tr("Simulation time: %1 (%2Z)").arg(d->unit.formatTime(summary.startSimulationLocalTime), d->unit.formatTime(summary.startSimulationZuluTime)));
+            newItem = std::make_unique<TableTimeItem>(d->unit.formatTime(summary.startSimulationLocalTime), summary.startSimulationLocalTime.time());
+            newItem->setToolTip(tr("Simulation time (%1Z).").arg(d->unit.formatTime(summary.startSimulationZuluTime)));
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
             ++columnIndex;
@@ -339,8 +340,8 @@ void LogbookWidget::updateFlightTable() noexcept
             ++columnIndex;
 
             // End time
-            newItem = std::make_unique<TableTimeItem>(d->unit.formatTime(summary.endDate), summary.endDate.time());
-            newItem->setToolTip(tr("Simulation time: %1 (%2Z)").arg(d->unit.formatTime(summary.endSimulationLocalTime), d->unit.formatTime(summary.endSimulationZuluTime)));
+            newItem = std::make_unique<TableTimeItem>(d->unit.formatTime(summary.endSimulationLocalTime), summary.endSimulationLocalTime.time());
+            newItem->setToolTip(tr("Simulation time (%1Z).").arg(d->unit.formatTime(summary.endSimulationZuluTime)));
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
             ++columnIndex;
@@ -352,19 +353,17 @@ void LogbookWidget::updateFlightTable() noexcept
             ++columnIndex;
 
             // Duration
-            std::int64_t durationMSec = summary.startDate.msecsTo(summary.endDate);
-            QTime time = QTime(0, 0).addMSecs(durationMSec);
+            const std::int64_t durationMSec = summary.startSimulationLocalTime.msecsTo(summary.endSimulationLocalTime);
+            const QTime time = QTime(0, 0).addMSecs(durationMSec);
             newItem = std::make_unique<QTableWidgetItem>(d->unit.formatDuration(time));
+            newItem->setToolTip(tr("Simulation duration."));
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-            durationMSec = summary.startSimulationLocalTime.msecsTo(summary.endSimulationLocalTime);
-            time = QTime(0, 0).addMSecs(durationMSec);
-            newItem->setToolTip(tr("Simulation duration: %1").arg(d->unit.formatDuration(time)));
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
             ++columnIndex;
 
             // Title
             newItem = std::make_unique<QTableWidgetItem>(summary.title);
-            newItem->setToolTip(tr("Double-click to edit title"));
+            newItem->setToolTip(tr("Double-click to edit title."));
             newItem->setBackground(Platform::getEditableTableCellBGColor());
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
             d->titleColumnIndex = columnIndex;

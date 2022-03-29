@@ -231,6 +231,16 @@ std::int64_t Flight::getTotalDurationMSec(bool ofUserAircraft) const noexcept
     return totalDuractionMSec;
 }
 
+QDateTime Flight::getAircraftStartLocalTime(const Aircraft &aircraft) const noexcept
+{
+    return d->flightCondition.startLocalTime.addMSecs(aircraft.getTimeOffset());
+}
+
+QDateTime Flight::getAircraftStartZuluTime(const Aircraft &aircraft) const noexcept
+{
+    return d->flightCondition.startZuluTime.addMSecs(aircraft.getTimeOffset());
+}
+
 void Flight::clear(bool withOneAircraft) noexcept
 {
     d->clear(withOneAircraft);

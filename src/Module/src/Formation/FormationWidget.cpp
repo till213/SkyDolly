@@ -572,7 +572,7 @@ void FormationWidget::updateUi() noexcept
     const int userAircraftIndex = flight.getUserAircraftIndex();
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const bool recording = skyConnect && skyConnect->get().isRecording();
-    const QString tooltip = tr("Double-click to change user aircraft");
+    const QString tooltip = tr("Double-click to change user aircraft.");
     for (const auto &aircraft : flight) {
 
         const AircraftInfo &aircraftInfo = aircraft->getAircraftInfoConst();
@@ -621,7 +621,7 @@ void FormationWidget::updateUi() noexcept
 
         // Initial altitude above ground
         newItem = std::make_unique<QTableWidgetItem>(d->unit.formatFeet(aircraftInfo.altitudeAboveGround));
-        newItem->setToolTip(tr("Altitude above ground"));
+        newItem->setToolTip(tr("Altitude above ground."));
         newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
         ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem.release());        
         ++columnIndex;
@@ -629,7 +629,7 @@ void FormationWidget::updateUi() noexcept
         // Duration
         newItem = std::make_unique<QTableWidgetItem>();
         newItem->setData(Qt::DisplayRole, Unit::formatHHMMSS(aircraft->getDurationMSec()));
-        newItem->setToolTip(tr("Hours:Minutes:Seconds"));
+        newItem->setToolTip(tr("Recording duration."));
         ui->aircraftTableWidget->setItem(rowIndex, columnIndex, newItem.release());
         ++columnIndex;
 

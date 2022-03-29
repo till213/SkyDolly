@@ -5,6 +5,7 @@
 ### New Features
 
 - GPX export plugin
+  * Timestamps are based on either simulation or recording time; the later being useful for GPS-tagging screenshots taken during flight recording
 
 ### Improvements
 
@@ -16,6 +17,12 @@
   * The LineStrings are now exported as connected multi-geometry lines (no point limit anymore)
 - Miscellaneous
   * Add shortcuts to dialog buttons
+  * The recording time is now shown in the Flight dialog
+  
+### Bug Fixes
+
+- The logbook now properly shows _simulation_ start- and end times (not local times)
+- The IGC export plugin now properly exports _simulation_ timestamps (not local timestamps)
   
 ## 0.9.0
 

@@ -246,7 +246,7 @@ inline bool IGCExportPlugin::exportCRecord(const Aircraft &aircraft, QIODevice &
     const FlightPlan &flightPlan = aircraft.getFlightPlanConst();
     const Position &position = aircraft.getPositionConst();
     const int nofTurnPoints = flightPlan.count() - 2;
-    QByteArray record = IGCExportPluginPrivate::CRecord % formatDateTime(info.startDate.toUTC()) %
+    QByteArray record = IGCExportPluginPrivate::CRecord % formatDateTime(d->flight.getAircraftStartZuluTime(aircraft)) %
                         ::ObsoleteFlightDate % ::ObsoleteTaskNumber %
                         // Number of turn points, excluding start and end wapoints
                         formatNumber(qMin(nofTurnPoints, 0), 2) %
@@ -281,7 +281,7 @@ inline bool IGCExportPlugin::exportCRecord(const Aircraft &aircraft, QIODevice &
 inline bool IGCExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     bool ok;
-    QDateTime startTime = aircraft.getAircraftInfoConst().startDate.toUTC();
+    QDateTime startTime = d->flight.getAircraftStartZuluTime(aircraft);
 
     // Position data
     const Position &position = aircraft.getPositionConst();

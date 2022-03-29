@@ -194,12 +194,13 @@ bool GPXExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
 
 bool GPXExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
+    // TODO Add aircraft time offset!!!
     switch (d->settings.getTimestampMode()) {
     case GPXExportSettings::TimestampMode::Recording:
         d->startDateTimeUtc = d->flight.getCreationDate().toUTC();
         break;
     default:
-        d->startDateTimeUtc = aircraft.getAircraftInfoConst().startDate.toUTC();
+        d->startDateTimeUtc = d->flight.getAircraftStartZuluTime(aircraft);
         break;
     }
 
@@ -222,6 +223,7 @@ bool GPXExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
             const std::int64_t deltaTime = Enum::toUnderlyingType(resamplingPeriod);
             std::int64_t timestamp = 0;
             while (ok && timestamp <= duration) {
+                // TODO THIS ALREADY TAKES THE TIME OFFSET INTO ACCOUNT!!!
                 const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Linear);
                 if (!positionData.isNull()) {
                     interpolatedPositionData.push_back(positionData);

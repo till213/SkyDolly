@@ -105,8 +105,8 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
     query.prepare(
         "select f.id, f.creation_date, f.title, a.type,"
         "       (select count(*) from aircraft where aircraft.flight_id = f.id) as aircraft_count,"
-        "       a.start_date, f.start_local_sim_time, f.start_zulu_sim_time, fp1.ident as start_waypoint,"
-        "       a.end_date, f.end_local_sim_time, f.end_zulu_sim_time, fp2.ident as end_waypoint "
+        "       f.start_local_sim_time, f.start_zulu_sim_time, fp1.ident as start_waypoint,"
+        "       f.end_local_sim_time, f.end_zulu_sim_time, fp2.ident as end_waypoint "
         "from   flight f "
         "join   aircraft a "
         "on     a.flight_id = f.id "
@@ -146,11 +146,9 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
         const int creationDateIdx = record.indexOf("creation_date");
         const int typeIdx = record.indexOf("type");
         const int aircraftCountIdx = record.indexOf("aircraft_count");
-        const int startDateIdx = record.indexOf("start_date");
         const int startLocalSimulationTimeIdx = record.indexOf("start_local_sim_time");
         const int startZuluSimulationTimeIdx = record.indexOf("start_zulu_sim_time");
         const int startWaypointIdx = record.indexOf("start_waypoint");
-        const int endDateIdx = record.indexOf("end_date");
         const int endLocalSimulationTimeIdx = record.indexOf("end_local_sim_time");
         const int endZuluSimulationTimeIdx = record.indexOf("end_zulu_sim_time");
         const int endWaypointIdx = record.indexOf("end_waypoint");
@@ -160,21 +158,15 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
             FlightSummary summary;
             summary.id = query.value(idIdx).toLongLong();
 
-            QDateTime dateTime = query.value(creationDateIdx).toDateTime();
-            dateTime.setTimeZone(QTimeZone::utc());
-            summary.creationDate = dateTime.toLocalTime();
+            QDateTime creationDate = query.value(creationDateIdx).toDateTime();
+            creationDate.setTimeZone(QTimeZone::utc());
+            summary.creationDate = creationDate.toLocalTime();
             summary.aircraftType = query.value(typeIdx).toString();
             summary.aircraftCount = query.value(aircraftCountIdx).toInt();
-            dateTime = query.value(startDateIdx).toDateTime();
-            dateTime.setTimeZone(QTimeZone::utc());
-            summary.startDate = dateTime.toLocalTime();
             // Persisted times is are already local respectively zulu simulation times
             summary.startSimulationLocalTime = query.value(startLocalSimulationTimeIdx).toDateTime();
             summary.startSimulationZuluTime = query.value(startZuluSimulationTimeIdx).toDateTime();
             summary.startLocation = query.value(startWaypointIdx).toString();
-            dateTime = query.value(endDateIdx).toDateTime();
-            dateTime.setTimeZone(QTimeZone::utc());
-            summary.endDate = dateTime.toLocalTime();
             // Persisted times is are already local respectively zulu simulation times
             summary.endSimulationLocalTime = query.value(endLocalSimulationTimeIdx).toDateTime();
             summary.endSimulationZuluTime = query.value(endZuluSimulationTimeIdx).toDateTime();
