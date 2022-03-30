@@ -6,4 +6,5 @@ message(STATUS CMAKE_RUNTIME_OUTPUT_DIRECTORY="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/CSVExport)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/GPXExport)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/IGCExport)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/JSONExport)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/KMLExport)
