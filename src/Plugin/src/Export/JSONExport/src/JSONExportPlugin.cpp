@@ -126,9 +126,10 @@ bool JSONExportPlugin::writeFile(QIODevice &io) noexcept
 {
     io.setTextModeEnabled(true);
     bool ok = exportHeader(io);
-    if (ok) {
-        ok = exportWaypoints(io);
-    }
+    // @todo IMPLEMENT ME!!!
+//    if (ok) {
+//        ok = exportWaypoints(io);
+//    }
     if (ok) {
         ok = exportAllAircraft(io);
     }
@@ -151,7 +152,9 @@ void JSONExportPlugin::onRestoreDefaultSettings() noexcept
 bool JSONExportPlugin::exportHeader(QIODevice &io) const noexcept
 {
     const QString header =
-"{\n";
+"{\n"
+"  \"type\": \"FeatureCollection\",\n"
+"  \"features\": [\n";
     return io.write(header.toUtf8());
 }
 
@@ -173,7 +176,45 @@ bool JSONExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) c
     resamplePositionDataForExport(aircraft, std::back_inserter(interpolatedPositionData));
     bool ok = true;
     if (interpolatedPositionData.size() > 0) {
-        // @todo IMPLEMEMENT ME!!!
+
+        const QString trackBegin = QString(
+"    {\n"
+"      \"type\": \"Feature\",\n"
+"      \"geometry\": {\n"
+"        \"type\": \"LineString\",\n"
+"        \"coordinates\": [\n");
+
+        ok = io.write(trackBegin.toUtf8());
+        if (ok) {
+            std::size_t i = 0;
+            for (PositionData &positionData : interpolatedPositionData) {
+                ok = exportTrackPoint(positionData, io);
+                if (ok) {
+                    if (i < interpolatedPositionData.size() - 1) {
+                        ok = io.write(", ");
+                    } else {
+                        ok = io.write("\n");
+                    }
+                    ++i;
+                }
+                if (!ok) {
+                    break;
+                }
+            }
+        }
+        if (ok) {
+            const QString placemarkEnd = QString(
+"        ]\n"
+"      },\n"
+"      \"properties\": {\n"
+"        \"prop0\": \"value0\",\n"
+"        \"prop1\": 0.0\n"
+"      }\n"
+"    }\n");
+
+          ok = io.write(placemarkEnd.toUtf8());
+        }
+
     } // size
 
     return ok;
@@ -195,16 +236,17 @@ bool JSONExportPlugin::exportWaypoints(QIODevice &io) const noexcept
 bool JSONExportPlugin::exportFooter(QIODevice &io) const noexcept
 {
     const QString footer =
+"  ]\n"
 "}\n";
     return io.write(footer.toUtf8());
 }
 
 inline bool JSONExportPlugin::exportTrackPoint(const PositionData &positionData, QIODevice &io) const noexcept
 {
-    const QString trackPoint =
-"  { \"todo\" : \"implement line segments\" }\n";
-
-    // @todo IMPLEMENT ME!!!
+    const QString trackPoint = "[" % Export::formatCoordinate(positionData.longitude) % ", " %
+                                     Export::formatCoordinate(positionData.latitude) % ", " %
+                                     Export::formatNumber(Convert::feetToMeters(positionData.altitude)).toUtf8() %
+                               "]";
 
     return io.write(trackPoint.toUtf8());
 }
@@ -212,7 +254,7 @@ inline bool JSONExportPlugin::exportTrackPoint(const PositionData &positionData,
 inline bool JSONExportPlugin::exportWaypoint(const Waypoint &waypoint, QIODevice &io) const noexcept
 {
     const QString waypointString =
-"  { \"todo\" : \"implement waypoints\" }\n";
+"  { \"todo\" : \"implement waypoint\" }\n";
 
     // @todo IMPLEMENT ME!!!
 
