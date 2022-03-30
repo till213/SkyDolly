@@ -211,7 +211,7 @@ bool KMLExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
     bool ok = true;
     for (const auto &aircraft : d->flight) {
         d->aircraftTypeCount[aircraft->getAircraftInfoConst().aircraftType.type] += 1;
-        ok = exportAllAircraft(*aircraft, io);
+        ok = exportAircraft(*aircraft, io);
         if (!ok) {
             break;
         }
@@ -219,7 +219,7 @@ bool KMLExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
     return ok;
 }
 
-bool KMLExportPlugin::exportAllAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
+bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     const QString lineStringBegin = QString(
 "        <LineString>\n"
@@ -231,67 +231,75 @@ bool KMLExportPlugin::exportAllAircraft(const Aircraft &aircraft, QIODevice &io)
 "\n"
 "          </coordinates>\n"
 "        </LineString>\n");
-    const int aircraftTypeCount = d->aircraftTypeCount[aircraft.getAircraftInfoConst().aircraftType.type];
-    const bool isFormation = d->flight.count() > 1;
-    const QString aircratId = isFormation ? " #" % d->unit.formatNumber(aircraftTypeCount, 0) : QString();
 
-    const SimType::EngineType engineType = aircraft.getAircraftInfoConst().aircraftType.engineType;
-    QString styleMapId = d->styleExport->getNextEngineTypeStyleMap(engineType);
-    const QString placemarkBegin = QString(
-"    <Placemark>\n"
-"      <name>" % aircraft.getAircraftInfoConst().aircraftType.type % aircratId % "</name>\n"
-"      <description>" % getAircraftDescription(aircraft) % "</description>\n"
-"      <styleUrl>#" % styleMapId % "</styleUrl>\n"
-"      <MultiGeometry>\n"
-);
+    std::vector<PositionData> interpolatedPositionData;
+    resamplePositionData(aircraft, std::back_inserter(interpolatedPositionData));
+    bool ok = true;
+    if (interpolatedPositionData.size() > 0) {
 
-    bool ok = io.write(placemarkBegin.toUtf8());
-    if (ok) {
-        std::vector<PositionData> interpolatedPositionData;
-        resamplePositionData(aircraft, std::back_inserter(interpolatedPositionData));
-        const int interpolatedPositionCount = interpolatedPositionData.size();
-        int nextLineSegmentIndex = 0;
-        int currentIndex = nextLineSegmentIndex;
-        while (currentIndex < interpolatedPositionCount - 1) {
-            if (currentIndex == nextLineSegmentIndex) {
-                // End the previous line segment (if any)
-                if (currentIndex > 0) {
-                    ok = io.write(lineStringEnd.toUtf8());
+        const int aircraftTypeCount = d->aircraftTypeCount[aircraft.getAircraftInfoConst().aircraftType.type];
+        const bool isFormation = d->flight.count() > 1;
+        const QString aircratId = isFormation ? " #" % d->unit.formatNumber(aircraftTypeCount, 0) : QString();
+
+        const SimType::EngineType engineType = aircraft.getAircraftInfoConst().aircraftType.engineType;
+        QString styleMapId = d->styleExport->getNextEngineTypeStyleMap(engineType);
+        const QString placemarkBegin = QString(
+    "    <Placemark>\n"
+    "      <name>" % aircraft.getAircraftInfoConst().aircraftType.type % aircratId % "</name>\n"
+    "      <description>" % getAircraftDescription(aircraft) % "</description>\n"
+    "      <styleUrl>#" % styleMapId % "</styleUrl>\n"
+    "      <MultiGeometry>\n"
+    );
+
+        ok = io.write(placemarkBegin.toUtf8());
+        if (ok) {
+
+            const int interpolatedPositionCount = interpolatedPositionData.size();
+            int nextLineSegmentIndex = 0;
+            int currentIndex = nextLineSegmentIndex;
+            while (currentIndex < interpolatedPositionCount - 1) {
+                if (currentIndex == nextLineSegmentIndex) {
+                    // End the previous line segment (if any)
+                    if (currentIndex > 0) {
+                        ok = io.write(lineStringEnd.toUtf8());
+                    }
+                    // Start a new line segment
+                    if (ok) {
+                        ok = io.write(lineStringBegin.toUtf8());
+                    }
+                    if (!ok) {
+                        break;
+                    }
+                    // Update the index of the next line segment start, but
+                    // don't increment the currentIndex just yet: the
+                    // last point of the previous line segment is repeated,
+                    // in order to connect the segments
+                    nextLineSegmentIndex += ::MaxLineSegments;
+                } else {
+                    currentIndex += 1;
                 }
-                // Start a new line segment
-                if (ok) {
-                    ok = io.write(lineStringBegin.toUtf8());
-                }
+                const PositionData positionData = interpolatedPositionData[currentIndex];
+                ok = io.write((Export::formatCoordinate(positionData.longitude) % "," %
+                               Export::formatCoordinate(positionData.latitude) % "," %
+                               Export::formatCoordinate(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
                 if (!ok) {
                     break;
                 }
-                // Update the index of the next line segment start, but
-                // don't increment the currentIndex just yet: the
-                // last point of the previous line segment is repeated,
-                // in order to connect the segments
-                nextLineSegmentIndex += ::MaxLineSegments;
-            } else {
-                currentIndex += 1;
             }
-            const PositionData positionData = interpolatedPositionData[currentIndex];
-            ok = io.write((Export::formatCoordinate(positionData.longitude) % "," %
-                           Export::formatCoordinate(positionData.latitude) % "," %
-                           Export::formatCoordinate(Convert::feetToMeters(positionData.altitude))).toUtf8() % " ");
-            if (!ok) {
-                break;
+            if (ok) {
+                ok = io.write(lineStringEnd.toUtf8());
             }
+
         }
         if (ok) {
-            ok = io.write(lineStringEnd.toUtf8());
+            const QString placemarkEnd = QString(
+    "      </MultiGeometry>\n"
+    "    </Placemark>\n");
+            ok = io.write(placemarkEnd.toUtf8());
         }
 
-    }
-    if (ok) {
-        const QString placemarkEnd = QString(
-"      </MultiGeometry>\n"
-"    </Placemark>\n");
-        ok = io.write(placemarkEnd.toUtf8());
-    }
+    } // size
+
     return ok;
 }
 
