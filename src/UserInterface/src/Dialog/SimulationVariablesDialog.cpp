@@ -130,7 +130,7 @@ void SimulationVariablesDialog::initUi() noexcept
     LightWidget *lightWidget = new LightWidget(this);
     ui->simulationVariablesTab->addTab(lightWidget, tr("&Lights"));
 
-    // TODO DRY: "centrally" define the "V" shortcut (currently also assigned to the corresponding QAction)
+    // @todo DRY: "centrally" define the "V" shortcut (currently also assigned to the corresponding QAction)
     d->closeDialogShortcut = new QShortcut(QKeySequence(tr("V", "Window|Simulation Variables...")), this);
 }
 

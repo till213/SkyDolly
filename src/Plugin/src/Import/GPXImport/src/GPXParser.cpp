@@ -62,7 +62,7 @@ public:
     QString description;
 
     Flight &flight;
-    // TODO Store a list of Positions: whenever a new <track> is encountered:
+    // @todo Store a list of Positions: whenever a new <track> is encountered:
     //      - if the timestamp is greater than the last timestamp -> continue the existing track (keep adding to current Positions)
     //      - else start a new track (add a new Position list entry)
     Position &position;
