@@ -40,9 +40,9 @@ class GPXParser
 {
 public:
     GPXParser(QXmlStreamReader &xmlStreamReader, const GPXImportSettings &settings) noexcept;
-    virtual ~GPXParser() noexcept;
+    ~GPXParser() noexcept;
 
-    virtual void parse() noexcept;
+    void parse() noexcept;
     QDateTime getFirstDateTimeUtc() const noexcept;
     QString getDocumentName() const noexcept;
     QString getDescription() const noexcept;
