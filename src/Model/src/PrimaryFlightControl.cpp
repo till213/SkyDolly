@@ -186,9 +186,9 @@ const PrimaryFlightControl::Iterator PrimaryFlightControl::end() const noexcept
     return Iterator(d->primaryFlightControlData.end());
 }
 
-PrimaryFlightControl::InsertIterator PrimaryFlightControl::insertIterator() noexcept
+PrimaryFlightControl::BackInsertIterator PrimaryFlightControl::backInsertIterator() noexcept
 {
-    return std::inserter(d->primaryFlightControlData, d->primaryFlightControlData.begin());
+    return std::back_inserter(d->primaryFlightControlData);
 }
 
 // OPERATORS

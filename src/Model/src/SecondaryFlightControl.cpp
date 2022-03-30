@@ -206,9 +206,9 @@ const SecondaryFlightControl::Iterator SecondaryFlightControl::end() const noexc
     return Iterator(d->secondaryFlightControlData.end());
 }
 
-SecondaryFlightControl::InsertIterator SecondaryFlightControl::insertIterator() noexcept
+SecondaryFlightControl::BackInsertIterator SecondaryFlightControl::backInsertIterator() noexcept
 {
-    return std::inserter(d->secondaryFlightControlData, d->secondaryFlightControlData.begin());
+    return std::back_inserter(d->secondaryFlightControlData);
 }
 
 // OPERATORS

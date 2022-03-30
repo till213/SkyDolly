@@ -23,6 +23,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <cstdint>
+#include <vector>
+#include <iterator>
 
 #include <QtGlobal>
 #include <QCoreApplication>
@@ -280,43 +282,14 @@ inline bool IGCExportPlugin::exportCRecord(const Aircraft &aircraft, QIODevice &
 
 inline bool IGCExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    bool ok;
     QDateTime startTime = d->flight.getAircraftStartZuluTime(aircraft);
 
-    // Position data
-    const Position &position = aircraft.getPositionConst();
     const Engine &engine = aircraft.getEngineConst();
-    ok = true;
-    if (d->settings.getResamplingPeriod() != SampleRate::ResamplingPeriod::Original) {
-        const std::int64_t duration = position.getLast().timestamp;
-        std::int64_t timestamp = 0;
-        const std::int64_t deltaTime = Enum::toUnderlyingType(d->settings.getResamplingPeriod());
-        while (ok && timestamp <= duration) {
-            const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Linear);
-            if (!positionData.isNull()) {
-                const int altitude = qRound(Convert::feetToMeters(positionData.altitude));
-                const QByteArray altitudeByteArray = formatNumber(altitude, 5);
-                const int indicatedAltitude = qRound(Convert::feetToMeters(positionData.indicatedAltitude));
-                const QByteArray indicatedAltitudeByteArray = formatNumber(indicatedAltitude, 5);
-                const EngineData &engineData = engine.interpolate(timestamp, TimeVariableData::Access::Linear);
-                const int noise = estimateEnvironmentalNoise(engineData);                
-                const QByteArray record = IGCExportPluginPrivate::BRecord %
-                                          formatTime(startTime.addMSecs(timestamp)) %
-                                          formatPosition(positionData.latitude, positionData.longitude) %
-                                          ::FixValid %                                          
-                                          // Pressure altitude
-                                          indicatedAltitudeByteArray %
-                                          // GNSS altitude
-                                          altitudeByteArray %
-                                          formatNumber(noise, 3) %
-                                          ::LineEnd;
-                ok = io.write(record);
-            }
-            timestamp += deltaTime;
-        }
-    } else {
-        // Original data requested
-        for (const PositionData &positionData : position) {
+    std::vector<PositionData> interpolatedPositionData;
+    resamplePositionData(aircraft, std::back_inserter(interpolatedPositionData));
+    bool ok = true;
+    for (PositionData &positionData : interpolatedPositionData) {
+        if (!positionData.isNull()) {
             const int altitude = qRound(Convert::feetToMeters(positionData.altitude));
             const QByteArray altitudeByteArray = formatNumber(altitude, 5);
             const int indicatedAltitude = qRound(Convert::feetToMeters(positionData.indicatedAltitude));
@@ -334,11 +307,12 @@ inline bool IGCExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &
                                       formatNumber(noise, 3) %
                                       ::LineEnd;
             ok = io.write(record);
-            if (!ok) {
-                break;
-            }
+        }
+        if (!ok) {
+            break;
         }
     }
+
     return ok;
 }
 

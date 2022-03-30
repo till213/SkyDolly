@@ -24,6 +24,7 @@
  */
 #include <memory>
 #include <cstdint>
+#include <iterator>
 
 #include <QString>
 #include <QSqlQuery>
@@ -205,7 +206,7 @@ bool SQLiteAircraftDao::add(std::int64_t flightId, int sequenceNumber, Aircraft 
     return ok;
 }
 
-bool SQLiteAircraftDao::getByFlightId(std::int64_t flightId, std::insert_iterator<std::vector<std::unique_ptr<Aircraft>>> insertIterator) const noexcept
+bool SQLiteAircraftDao::getByFlightId(std::int64_t flightId, std::back_insert_iterator<std::vector<std::unique_ptr<Aircraft>>> backInsertIterator) const noexcept
 {
     std::vector<AircraftInfo> aircraftInfos;
     bool ok = getAircraftInfosByFlightId(flightId, aircraftInfos);
@@ -214,28 +215,28 @@ bool SQLiteAircraftDao::getByFlightId(std::int64_t flightId, std::insert_iterato
             std::unique_ptr<Aircraft> aircraft = std::make_unique<Aircraft>();
             aircraft->setId(info.aircraftId);
             aircraft->setAircraftInfo(info);
-            ok = d->positionDao->getByAircraftId(aircraft->getId(), aircraft->getPosition().insertIterator());
+            ok = d->positionDao->getByAircraftId(aircraft->getId(), aircraft->getPosition().backInsertIterator());
             if (ok) {
-                ok = d->engineDao->getByAircraftId(aircraft->getId(), aircraft->getEngine().insertIterator());
+                ok = d->engineDao->getByAircraftId(aircraft->getId(), aircraft->getEngine().backInsertIterator());
             }
             if (ok) {
-                ok = d->primaryFlightControlDao->getByAircraftId(aircraft->getId(), aircraft->getPrimaryFlightControl().insertIterator());
+                ok = d->primaryFlightControlDao->getByAircraftId(aircraft->getId(), aircraft->getPrimaryFlightControl().backInsertIterator());
             }
             if (ok) {
-                ok = d->secondaryFlightControlDao->getByAircraftId(aircraft->getId(), aircraft->getSecondaryFlightControl().insertIterator());
+                ok = d->secondaryFlightControlDao->getByAircraftId(aircraft->getId(), aircraft->getSecondaryFlightControl().backInsertIterator());
             }
             if (ok) {
-                ok = d->handleDao->getByAircraftId(aircraft->getId(), aircraft->getAircraftHandle().insertIterator());
+                ok = d->handleDao->getByAircraftId(aircraft->getId(), aircraft->getAircraftHandle().backInsertIterator());
             }
             if (ok) {
-                ok = d->lightDao->getByAircraftId(aircraft->getId(), aircraft->getLight().insertIterator());
+                ok = d->lightDao->getByAircraftId(aircraft->getId(), aircraft->getLight().backInsertIterator());
             }
             if (ok) {
                 ok = d->waypointDao->getByAircraftId(aircraft->getId(), aircraft->getFlightPlan());
             }
             if (ok) {
                 emit aircraft->dataChanged();
-                insertIterator = std::move(aircraft);
+                backInsertIterator = std::move(aircraft);
             }
         }
     }

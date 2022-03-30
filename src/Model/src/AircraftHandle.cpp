@@ -207,9 +207,9 @@ const AircraftHandle::Iterator AircraftHandle::end() const noexcept
     return Iterator(d->aircraftHandleData.end());
 }
 
-AircraftHandle::InsertIterator AircraftHandle::insertIterator() noexcept
+AircraftHandle::BackInsertIterator AircraftHandle::backInsertIterator() noexcept
 {
-    return std::inserter(d->aircraftHandleData, d->aircraftHandleData.begin());
+    return std::back_inserter(d->aircraftHandleData);
 }
 
 // OPERATORS

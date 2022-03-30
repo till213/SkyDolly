@@ -61,9 +61,7 @@ AircraftSelectionComboBox::~AircraftSelectionComboBox() noexcept
 void AircraftSelectionComboBox::initialise() noexcept
 {
     std::vector<AircraftType> aircraftTypes;
-    std::vector<AircraftType>::iterator it = aircraftTypes.begin();
-
-    const bool ok = d->aircraftTypeService->getAll(std::inserter(aircraftTypes, it));
+    const bool ok = d->aircraftTypeService->getAll(std::back_inserter(aircraftTypes));
     if (ok) {
         for (AircraftType &aircraftType : aircraftTypes) {
             this->addItem(aircraftType.type);

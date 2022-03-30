@@ -129,7 +129,7 @@ bool SQLiteSecondaryFlightControlDao::add(std::int64_t aircraftId, const Seconda
     return ok;
 }
 
-bool SQLiteSecondaryFlightControlDao::getByAircraftId(std::int64_t aircraftId, std::insert_iterator<std::vector<SecondaryFlightControlData>> insertIterator) const noexcept
+bool SQLiteSecondaryFlightControlDao::getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<SecondaryFlightControlData>> backInsertIterator) const noexcept
 {
     QSqlQuery query;
     query.setForwardOnly(true);
@@ -163,7 +163,7 @@ bool SQLiteSecondaryFlightControlDao::getByAircraftId(std::int64_t aircraftId, s
             data.spoilersHandlePosition = query.value(spoilersHandlePositionIdx).toInt();
             data.flapsHandleIndex = query.value(flapsHandleIndexIdx).toInt();
 
-            insertIterator = std::move(data);
+            backInsertIterator = std::move(data);
         }
 #ifdef DEBUG
     } else {

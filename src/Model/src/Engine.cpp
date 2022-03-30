@@ -214,9 +214,9 @@ const Engine::Iterator Engine::end() const noexcept
     return Iterator(d->engineData.end());
 }
 
-Engine::InsertIterator Engine::insertIterator() noexcept
+Engine::BackInsertIterator Engine::backInsertIterator() noexcept
 {
-    return std::inserter(d->engineData, d->engineData.begin());
+    return std::back_inserter(d->engineData);
 }
 
 // OPERATORS

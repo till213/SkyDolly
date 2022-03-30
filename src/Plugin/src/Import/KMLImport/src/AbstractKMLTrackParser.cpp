@@ -23,6 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
+#include <tuple>
 #include <cstdint>
 
 #include <QString>

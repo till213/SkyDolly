@@ -247,26 +247,8 @@ bool KMLExportPlugin::exportAllAircraft(const Aircraft &aircraft, QIODevice &io)
 
     bool ok = io.write(placemarkBegin.toUtf8());
     if (ok) {
-        // Position data
-        const Position &position = aircraft.getPositionConst();
-        const SampleRate::ResamplingPeriod resamplingPeriod = d->settings.getResamplingPeriod();
         std::vector<PositionData> interpolatedPositionData;
-        if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
-            const std::int64_t duration = position.getLast().timestamp;
-            const std::int64_t deltaTime = Enum::toUnderlyingType(resamplingPeriod);
-            std::int64_t timestamp = 0;
-            while (ok && timestamp <= duration) {
-                const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Linear);
-                if (!positionData.isNull()) {
-                    interpolatedPositionData.push_back(positionData);
-                }
-                timestamp += deltaTime;
-            }
-        } else {
-            // Original data requested
-            std::copy(position.begin(), position.end(), std::back_inserter(interpolatedPositionData));
-        }
-
+        resamplePositionData(aircraft, std::back_inserter(interpolatedPositionData));
         const int interpolatedPositionCount = interpolatedPositionData.size();
         int nextLineSegmentIndex = 0;
         int currentIndex = nextLineSegmentIndex;

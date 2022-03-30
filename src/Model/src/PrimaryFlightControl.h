@@ -78,13 +78,13 @@ public:
     void clear() noexcept;
 
     typedef std::vector<PrimaryFlightControlData>::iterator Iterator;
-    typedef std::insert_iterator<std::vector<PrimaryFlightControlData>> InsertIterator;
+    typedef std::back_insert_iterator<std::vector<PrimaryFlightControlData>> BackInsertIterator;
 
     Iterator begin() noexcept;
     Iterator end() noexcept;
     const Iterator begin() const noexcept;
     const Iterator end() const noexcept;
-    InsertIterator insertIterator() noexcept;
+    BackInsertIterator backInsertIterator() noexcept;
 
     PrimaryFlightControlData& operator[](std::size_t index) noexcept;
     const PrimaryFlightControlData& operator[](std::size_t index) const noexcept;

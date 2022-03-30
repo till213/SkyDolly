@@ -26,6 +26,8 @@
 #define EXPORTPLUGINBASE_H
 
 #include <memory>
+#include <vector>
+#include <iterator>
 
 #include <QObject>
 #include <QtPlugin>
@@ -39,6 +41,8 @@ class QIODevice;
 #include "PluginBase.h"
 #include "PluginLib.h"
 
+struct PositionData;
+class Aircraft;
 class ExportPluginBaseSettings;
 class ExportPluginBasePrivate;
 
@@ -73,11 +77,9 @@ public:
     virtual bool exportData() noexcept override final;
 
 protected:
-    virtual void addSettings(Settings::PluginSettings &settings) const noexcept override final;
-    virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override final;
-    virtual void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept override final;
+    void resamplePositionData(const Aircraft &aircraft, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) const noexcept;
 
-    // Re-implement
+     // Re-implement
     virtual void addSettingsExtn(Settings::PluginSettings &settings) const noexcept = 0;
     virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept = 0;
     virtual void restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept = 0;
@@ -94,6 +96,9 @@ private:
     std::unique_ptr<ExportPluginBasePrivate> d;
 
     bool exportFile(const QString &filePath) noexcept;
+    virtual void addSettings(Settings::PluginSettings &settings) const noexcept override final;
+    virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override final;
+    virtual void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept override final;
 };
 
 #endif // EXPORTPLUGINBASE_H

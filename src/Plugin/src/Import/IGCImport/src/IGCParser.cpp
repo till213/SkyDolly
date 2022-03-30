@@ -24,6 +24,7 @@
  */
 #include <memory>
 #include <vector>
+#include <tuple>
 #include <cmath>
 #include <cstdint>
 

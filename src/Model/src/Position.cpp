@@ -202,9 +202,9 @@ const Position::Iterator Position::end() const noexcept
     return Iterator(d->positionData.end());
 }
 
-Position::InsertIterator Position::insertIterator() noexcept
+Position::BackInsertIterator Position::backInsertIterator() noexcept
 {
-    return std::inserter(d->positionData, d->positionData.begin());
+    return std::back_inserter(d->positionData);
 }
 
 // OPERATORS

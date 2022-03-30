@@ -40,7 +40,7 @@ public:
     virtual ~SQLiteHandleDao() noexcept;
 
     virtual bool add(std::int64_t aircraftId, const AircraftHandleData &data) noexcept override;
-    virtual bool getByAircraftId(std::int64_t aircraftId, std::insert_iterator<std::vector<AircraftHandleData>> insertIterator) const noexcept override;
+    virtual bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<AircraftHandleData>> backInsertIterator) const noexcept override;
     virtual bool deleteByFlightId(std::int64_t flightId) noexcept override;
     virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
 };

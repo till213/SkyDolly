@@ -181,9 +181,9 @@ const Light::Iterator Light::end() const noexcept
     return Iterator(d->lightData.end());
 }
 
-Light::InsertIterator Light::insertIterator() noexcept
+Light::BackInsertIterator Light::backInsertIterator() noexcept
 {
-    return std::inserter(d->lightData, d->lightData.begin());
+    return std::back_inserter(d->lightData);
 }
 
 // OPERATORS

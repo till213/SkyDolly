@@ -97,7 +97,7 @@ bool SQLiteHandleDao::add(std::int64_t aircraftId, const AircraftHandleData &air
     return ok;
 }
 
-bool SQLiteHandleDao::getByAircraftId(std::int64_t aircraftId, std::insert_iterator<std::vector<AircraftHandleData>> insertIterator) const noexcept
+bool SQLiteHandleDao::getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<AircraftHandleData>> backInsertIterator) const noexcept
 {
     QSqlQuery query;
     query.setForwardOnly(true);
@@ -137,7 +137,7 @@ bool SQLiteHandleDao::getByAircraftId(std::int64_t aircraftId, std::insert_itera
             data.gearHandlePosition = query.value(gearHandlePositionIdx).toBool();
             data.smokeEnabled = query.value(smokeEnablePositionIdx).toBool();
 
-            insertIterator = std::move(data);
+            backInsertIterator = std::move(data);
         }
 #ifdef DEBUG
     } else {

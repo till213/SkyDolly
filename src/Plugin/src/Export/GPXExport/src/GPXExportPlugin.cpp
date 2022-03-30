@@ -214,27 +214,8 @@ bool GPXExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
 
     bool ok = io.write(trackBegin.toUtf8());
     if (ok) {
-        // Position data
-        const Position &position = aircraft.getPositionConst();
-        const SampleRate::ResamplingPeriod resamplingPeriod = d->settings.getResamplingPeriod();
         std::vector<PositionData> interpolatedPositionData;
-        if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
-            const std::int64_t duration = position.getLast().timestamp;
-            const std::int64_t deltaTime = Enum::toUnderlyingType(resamplingPeriod);
-            std::int64_t timestamp = 0;
-            while (ok && timestamp <= duration) {
-                // TODO THIS ALREADY TAKES THE TIME OFFSET INTO ACCOUNT!!!
-                const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Linear);
-                if (!positionData.isNull()) {
-                    interpolatedPositionData.push_back(positionData);
-                }
-                timestamp += deltaTime;
-            }
-        } else {
-            // Original data requested
-            std::copy(position.begin(), position.end(), std::back_inserter(interpolatedPositionData));
-        }
-
+        resamplePositionData(aircraft, std::back_inserter(interpolatedPositionData));
         for (PositionData &positionData : interpolatedPositionData) {
             ok = exportTrackPoint(positionData, io);
             if (!ok) {

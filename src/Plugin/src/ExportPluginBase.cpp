@@ -23,7 +23,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
-#include <tuple>
 #include <vector>
 
 #include <QWidget>
@@ -39,8 +38,12 @@
 #include <QGuiApplication>
 #include <QDesktopServices>
 
+#include "../../Kernel/src/Enum.h"
 #include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/File.h"
+#include "../../Model/src/Aircraft.h"
+#include "../../Model/src/Position.h"
+#include "../../Model/src/PositionData.h"
 #include "BasicExportDialog.h"
 #include "ExportPluginBaseSettings.h"
 #include "ExportPluginBase.h"
@@ -120,25 +123,30 @@ bool ExportPluginBase::exportData() noexcept
 
 // PROTECTED
 
-void ExportPluginBase::addSettings(Settings::PluginSettings &settings) const noexcept
+void ExportPluginBase::resamplePositionData(const Aircraft &aircraft, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) const noexcept
 {
-    getSettings().addSettings(settings);
-    addSettingsExtn(settings);
+    // Position data
+    const Position &position = aircraft.getPositionConst();
+    const SampleRate::ResamplingPeriod resamplingPeriod = getSettings().getResamplingPeriod();
+    if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
+        const std::int64_t duration = position.getLast().timestamp;
+        const std::int64_t deltaTime = Enum::toUnderlyingType(resamplingPeriod);
+        std::int64_t timestamp = 0;
+        while (timestamp <= duration) {
+            // TODO THIS ALREADY TAKES THE TIME OFFSET INTO ACCOUNT!!!
+            const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Linear);
+            if (!positionData.isNull()) {
+                backInsertIterator = positionData;
+            }
+            timestamp += deltaTime;
+        }
+    } else {
+        // Original data requested
+        std::copy(position.begin(), position.end(), backInsertIterator);
+    }
 }
 
-void ExportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
-{
-    getSettings().addKeysWithDefaults(keysWithDefaults);
-    addKeysWithDefaultsExtn(keysWithDefaults);
-}
-
-void ExportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
-{
-    getSettings().restoreSettings(valuesByKey);
-    restoreSettingsExtn(valuesByKey);
-}
-
-// PRIVATE SLOTS
+// PRIVATE
 
 bool ExportPluginBase::exportFile(const QString &filePath) noexcept
 {
@@ -170,4 +178,22 @@ bool ExportPluginBase::exportFile(const QString &filePath) noexcept
     }
 
     return ok;
+}
+
+void ExportPluginBase::addSettings(Settings::PluginSettings &settings) const noexcept
+{
+    getSettings().addSettings(settings);
+    addSettingsExtn(settings);
+}
+
+void ExportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{
+    getSettings().addKeysWithDefaults(keysWithDefaults);
+    addKeysWithDefaultsExtn(keysWithDefaults);
+}
+
+void ExportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
+{
+    getSettings().restoreSettings(valuesByKey);
+    restoreSettingsExtn(valuesByKey);
 }
