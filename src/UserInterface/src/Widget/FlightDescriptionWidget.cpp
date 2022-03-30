@@ -119,7 +119,7 @@ void FlightDescriptionWidget::updateUi() noexcept
     ui->titleLineEdit->blockSignals(false);
     ui->focusPlainTextEdit->blockSignals(false);
 
-    ui->recordingTimeLineEdit->setText(d->unit.formatDateTime(flight.getCreationDate()));
+    ui->recordingTimeLineEdit->setText(d->unit.formatDateTime(flight.getCreationTime()));
 }
 
 void FlightDescriptionWidget::onTitleEdited() noexcept

@@ -29,14 +29,9 @@
 #include <unordered_map>
 #include <cstdint>
 
-#include <QCoreApplication>
 #include <QIODevice>
 #include <QStringBuilder>
 #include <QString>
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QCheckBox>
-#include <QDesktopServices>
 #include <QDateTime>
 
 #include "../../../../../Kernel/src/Version.h"
@@ -194,41 +189,46 @@ bool GPXExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
 
 bool GPXExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    // TODO Add aircraft time offset!!!
     switch (d->settings.getTimestampMode()) {
     case GPXExportSettings::TimestampMode::Recording:
-        d->startDateTimeUtc = d->flight.getCreationDate().toUTC();
+        d->startDateTimeUtc = d->flight.getAircraftCreationTime(aircraft).toUTC();
         break;
     default:
         d->startDateTimeUtc = d->flight.getAircraftStartZuluTime(aircraft);
         break;
     }
 
-    const AircraftInfo &aircraftInfo = aircraft.getAircraftInfoConst();
-    const QString trackBegin =
+    std::vector<PositionData> interpolatedPositionData;
+    resamplePositionDataForExport(aircraft, std::back_inserter(interpolatedPositionData));
+    bool ok = true;
+    if (interpolatedPositionData.size() > 0) {
+
+        const AircraftInfo &aircraftInfo = aircraft.getAircraftInfoConst();
+        const QString trackBegin =
 "  <trk>\n"
 "    <name><![CDATA[" % aircraftInfo.aircraftType.type % "]]></name>\n"
 "    <desc><![CDATA[" % getAircraftDescription(aircraft) % "]]>\n"
 "    </desc>\n"
 "    <trkseg>\n";
 
-    bool ok = io.write(trackBegin.toUtf8());
-    if (ok) {
-        std::vector<PositionData> interpolatedPositionData;
-        resamplePositionData(aircraft, std::back_inserter(interpolatedPositionData));
-        for (PositionData &positionData : interpolatedPositionData) {
-            ok = exportTrackPoint(positionData, io);
-            if (!ok) {
-                break;
+        ok = io.write(trackBegin.toUtf8());
+        if (ok) {
+            for (PositionData &positionData : interpolatedPositionData) {
+                ok = exportTrackPoint(positionData, io);
+                if (!ok) {
+                    break;
+                }
             }
         }
-    }
-    if (ok) {
-        const QString placemarkEnd = QString(
-"    </trkseg>\n"
-"  </trk>\n");
-        ok = io.write(placemarkEnd.toUtf8());
-    }
+        if (ok) {
+            const QString placemarkEnd = QString(
+    "    </trkseg>\n"
+    "  </trk>\n");
+            ok = io.write(placemarkEnd.toUtf8());
+        }
+
+    } // size
+
     return ok;
 }
 
@@ -258,7 +258,7 @@ QString GPXExportPlugin::getFlightDescription() const noexcept
     const QString description =
             d->flight.getDescription() % "\n" %
             "\n" %
-            tr("Creation date") % ": " % d->unit.formatDate(d->flight.getCreationDate()) % "\n" %
+            tr("Creation date") % ": " % d->unit.formatDate(d->flight.getCreationTime()) % "\n" %
             tr("Start (local time)") % ": " % d->unit.formatTime(flightCondition.startLocalTime) % "\n" %
             tr("End (local time)") % ": " % d->unit.formatTime(flightCondition.endLocalTime) % "\n" %
             tr("Ambient temperature") % ": " % d->unit.formatCelcius(flightCondition.ambientTemperature) % "\n" %

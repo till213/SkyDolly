@@ -22,13 +22,11 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QCoreApplication>
+#include <QWidget>
 #include <QFile>
 // Implements the % operator for string concatenation
 #include <QStringBuilder>
 #include <QString>
-#include <QFileDialog>
-#include <QMessageBox>
 
 #include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/Settings.h"

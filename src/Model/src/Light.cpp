@@ -114,12 +114,15 @@ std::size_t Light::count() const noexcept
 const LightData &Light::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const LightData *p1, *p2;
-    const std::int64_t adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timeOffset, std::int64_t(0));
+    const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? d->aircraftInfo.timeOffset : 0;
+    const std::int64_t adjustedTimestamp = qMax(timestamp + timeOffset, std::int64_t(0));
 
     if (d->currentTimestamp != adjustedTimestamp || d->currentAccess != access) {
 
         switch (access) {
         case TimeVariableData::Access::Linear:
+            [[fallthrough]];
+        case TimeVariableData::Access::Export:
             SkySearch::getLinearInterpolationSupportData(d->lightData, adjustedTimestamp, SkySearch::DefaultInterpolationWindow, d->currentIndex, &p1, &p2);
             break;
         case TimeVariableData::Access::Seek:

@@ -604,6 +604,9 @@ create unique index aircraft_idx1 on aircraft (flight_id, seq_nr);
 @migr(id = "8156bd2c-6654-4f37-b4fd-41aacbbaef7e", descn = "Create case-insensitive index on type in aircraft table", step = 6)
 create index aircraft_idx2 on aircraft (type collate nocase);
 
+@migr(id = "50d25b69-7410-4777-9b17-1e16c4ea4867", descn = "Rename column creation_date to creation_time", step_cnt = 1)
+alter table flight rename creation_date to creation_time;
+
 @migr(id = "90f34b67-5fb8-4c52-ab61-d704297bd7e2", descn = "Update application version to 0.10", step = 1)
 update metadata
 set app_version = '0.10.0';

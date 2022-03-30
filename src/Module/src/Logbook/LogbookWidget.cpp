@@ -615,19 +615,19 @@ void LogbookWidget::deleteFlight() noexcept
         Settings &settings = Settings::getInstance();
         bool doDelete;
         if (settings.isDeleteFlightConfirmationEnabled()) {
-            QMessageBox messageBox(this);
-            QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), &messageBox);
+            std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
+            QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), messageBox.get());
 
-            messageBox.setText(tr("The flight %1 is about to be deleted. Deletion cannot be undone.").arg(d->selectedFlightId));
-            messageBox.setInformativeText(tr("Do you want to delete the flight?"));
-            QPushButton *deleteButton = messageBox.addButton(tr("&Delete"), QMessageBox::AcceptRole);
-            QPushButton *keepButton = messageBox.addButton(tr("&Keep"), QMessageBox::RejectRole);
-            messageBox.setDefaultButton(keepButton);
-            messageBox.setCheckBox(dontAskAgainCheckBox);
-            messageBox.setIcon(QMessageBox::Icon::Question);
+            messageBox->setText(tr("The flight %1 is about to be deleted. Deletion cannot be undone.").arg(d->selectedFlightId));
+            messageBox->setInformativeText(tr("Do you want to delete the flight?"));
+            QPushButton *deleteButton = messageBox->addButton(tr("&Delete"), QMessageBox::AcceptRole);
+            QPushButton *keepButton = messageBox->addButton(tr("&Keep"), QMessageBox::RejectRole);
+            messageBox->setDefaultButton(keepButton);
+            messageBox->setCheckBox(dontAskAgainCheckBox);
+            messageBox->setIcon(QMessageBox::Icon::Question);
 
-            messageBox.exec();
-            doDelete = messageBox.clickedButton() == deleteButton;
+            messageBox->exec();
+            doDelete = messageBox->clickedButton() == deleteButton;
             settings.setDeleteFlightConfirmationEnabled(!dontAskAgainCheckBox->isChecked());
         } else {
             doDelete = true;

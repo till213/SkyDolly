@@ -61,8 +61,8 @@ std::forward_list<FlightDate> SQLiteLogbookDao::getFlightDates() const noexcept
     QSqlQuery query;
     query.setForwardOnly(true);
     query.prepare(
-        "select strftime('%Y', creation_date) as year, strftime('%m', creation_date) as month, strftime('%d', creation_date) as day, count(flight.id) as nof_flights "
-        "from  flight "
+        "select strftime('%Y', f.creation_time) as year, strftime('%m', f.creation_time) as month, strftime('%d', f.creation_time) as day, count(f.id) as nof_flights "
+        "from  flight f "
         "group by year, month, day"
     );
 
@@ -103,7 +103,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
     QSqlQuery query;
     query.setForwardOnly(true);
     query.prepare(
-        "select f.id, f.creation_date, f.title, a.type,"
+        "select f.id, f.creation_time, f.title, a.type,"
         "       (select count(*) from aircraft where aircraft.flight_id = f.id) as aircraft_count,"
         "       f.start_local_sim_time, f.start_zulu_sim_time, fp1.ident as start_waypoint,"
         "       f.end_local_sim_time, f.end_zulu_sim_time, fp2.ident as end_waypoint "
@@ -117,7 +117,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
         "on fp1.aircraft_id = a.id "
         "left join (select ident, aircraft_id from waypoint wo2 where wo2.timestamp = (select max(wi2.timestamp) from waypoint wi2 where wi2.aircraft_id = wo2.aircraft_id)) fp2 "
         "on fp2.aircraft_id = a.id "
-        "where f.creation_date between :from_date and :to_date "
+        "where f.creation_time between :from_date and :to_date "
         "  and (  f.title like coalesce(:search_keyword, f.title) "
         "       or a.type like coalesce(:search_keyword, a.type) "
         "       or start_waypoint like coalesce(:search_keyword, start_waypoint) "
@@ -143,7 +143,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
     if (ok) {
         QSqlRecord record = query.record();
         const int idIdx = record.indexOf("id");
-        const int creationDateIdx = record.indexOf("creation_date");
+        const int creationTimeIdx = record.indexOf("creation_time");
         const int typeIdx = record.indexOf("type");
         const int aircraftCountIdx = record.indexOf("aircraft_count");
         const int startLocalSimulationTimeIdx = record.indexOf("start_local_sim_time");
@@ -158,9 +158,9 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
             FlightSummary summary;
             summary.id = query.value(idIdx).toLongLong();
 
-            QDateTime creationDate = query.value(creationDateIdx).toDateTime();
-            creationDate.setTimeZone(QTimeZone::utc());
-            summary.creationDate = creationDate.toLocalTime();
+            QDateTime dateTime = query.value(creationTimeIdx).toDateTime();
+            dateTime.setTimeZone(QTimeZone::utc());
+            summary.creationDate = dateTime.toLocalTime();
             summary.aircraftType = query.value(typeIdx).toString();
             summary.aircraftCount = query.value(aircraftCountIdx).toInt();
             // Persisted times is are already local respectively zulu simulation times

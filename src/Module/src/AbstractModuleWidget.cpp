@@ -23,7 +23,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <QWidget>
-#include <QMessageBox>
 #include <QAction>
 
 #include "../../Model/src/Logbook.h"

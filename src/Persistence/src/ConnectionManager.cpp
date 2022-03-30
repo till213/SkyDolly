@@ -143,18 +143,18 @@ bool ConnectionManager::connectWithLogbook(const QString &logbookPath, QWidget *
                     retry = false;
                 } else {
                     disconnectFromLogbook();
-                    QMessageBox messageBox(parent);
-                    messageBox.setWindowIcon(QIcon(":/img/icons/application-icon.png"));
-                    messageBox.setText(tr("The logbook %1 has been created with a newer version %2.").arg(currentLogbookPath, databaseVersion.toString()));
-                    messageBox.setInformativeText("Do you want to create a new logbook?");
-                    QPushButton *createNewPushButton = messageBox.addButton(tr("Create &new logbook"), QMessageBox::AcceptRole);
-                    QPushButton *openExistingPushButton = messageBox.addButton(tr("&Open another logbook"), QMessageBox::AcceptRole);
-                    messageBox.addButton(tr("&Cancel"), QMessageBox::RejectRole);
-                    messageBox.setDefaultButton(createNewPushButton);
-                    messageBox.setIcon(QMessageBox::Icon::Question);
+                    std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(parent);
+                    messageBox->setWindowIcon(QIcon(":/img/icons/application-icon.png"));
+                    messageBox->setText(tr("The logbook %1 has been created with a newer version %2.").arg(currentLogbookPath, databaseVersion.toString()));
+                    messageBox->setInformativeText("Do you want to create a new logbook?");
+                    QPushButton *createNewPushButton = messageBox->addButton(tr("Create &new logbook"), QMessageBox::AcceptRole);
+                    QPushButton *openExistingPushButton = messageBox->addButton(tr("&Open another logbook"), QMessageBox::AcceptRole);
+                    messageBox->addButton(tr("&Cancel"), QMessageBox::RejectRole);
+                    messageBox->setDefaultButton(createNewPushButton);
+                    messageBox->setIcon(QMessageBox::Icon::Question);
 
-                    messageBox.exec();
-                    const QAbstractButton *clickedButton = messageBox.clickedButton();
+                    messageBox->exec();
+                    const QAbstractButton *clickedButton = messageBox->clickedButton();
                     if (clickedButton == createNewPushButton) {
                         currentLogbookPath = DatabaseService::getNewLogbookPath(parent);
                     } else if (clickedButton == openExistingPushButton) {

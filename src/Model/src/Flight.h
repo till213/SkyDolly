@@ -51,8 +51,8 @@ public:
     std::int64_t getId() const noexcept;
     void setId(std::int64_t id) noexcept;
 
-    const QDateTime &getCreationDate() const noexcept;
-    void setCreationDate(const QDateTime &creationDate) noexcept;
+    const QDateTime &getCreationTime() const noexcept;
+    void setCreationTime(const QDateTime &creationTime) noexcept;
 
     const QString &getTitle() const noexcept;
     void setTitle(const QString &title) noexcept;
@@ -73,6 +73,7 @@ public:
     void setFlightCondition(FlightCondition flightCondition) noexcept;
 
     std::int64_t getTotalDurationMSec(bool ofUserAircraft = false) const noexcept;
+    QDateTime getAircraftCreationTime(const Aircraft &aircraft) const noexcept;
     QDateTime getAircraftStartLocalTime(const Aircraft &aircraft) const noexcept;
     QDateTime getAircraftStartZuluTime(const Aircraft &aircraft) const noexcept;
 

@@ -31,15 +31,8 @@
 #include <QIODevice>
 #include <QFlags>
 #include <QByteArray>
-#include <QList>
-#include <QFileDialog>
-#include <QMessageBox>
 #include <QDate>
 #include <QDateTime>
-#include <QTimeZone>
-#include <QRegularExpression>
-#include <QRegularExpressionMatch>
-#include <QStringView>
 #include <QEasingCurve>
 
 #include "../../../../../Kernel/src/Unit.h"

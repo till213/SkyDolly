@@ -24,6 +24,7 @@
  */
 #include <memory>
 
+#include <QCoreApplication>
 #include <QWidget>
 #include <QDialog>
 #include <QShortcut>

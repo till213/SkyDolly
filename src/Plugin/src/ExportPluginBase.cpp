@@ -95,16 +95,16 @@ bool ExportPluginBase::exportData() noexcept
             if (getSettings().isFileDialogSelectedFile() || !fileInfo.exists()) {
                 ok = exportFile(filePath);
             } else {
-                QMessageBox messageBox(getParentWidget());
-                messageBox.setIcon(QMessageBox::Question);
-                QPushButton *replaceButton = messageBox.addButton(tr("&Replace"), QMessageBox::AcceptRole);
-                messageBox.setText(tr("A file named \"%1\" already exists. Do you want to replace it?").arg(fileInfo.fileName()));
-                messageBox.setInformativeText(tr("The file already exists in \"%1\".  Replacing it will overwrite its contents.").arg(fileInfo.dir().dirName()));
-                messageBox.setStandardButtons(QMessageBox::Cancel);
-                messageBox.setDefaultButton(replaceButton);
+                std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(getParentWidget());
+                messageBox->setIcon(QMessageBox::Question);
+                QPushButton *replaceButton = messageBox->addButton(tr("&Replace"), QMessageBox::AcceptRole);
+                messageBox->setText(tr("A file named \"%1\" already exists. Do you want to replace it?").arg(fileInfo.fileName()));
+                messageBox->setInformativeText(tr("The file already exists in \"%1\".  Replacing it will overwrite its contents.").arg(fileInfo.dir().dirName()));
+                messageBox->setStandardButtons(QMessageBox::Cancel);
+                messageBox->setDefaultButton(replaceButton);
 
-                messageBox.exec();
-                const QAbstractButton *clickedButton = messageBox.clickedButton();
+                messageBox->exec();
+                const QAbstractButton *clickedButton = messageBox->clickedButton();
                 if (clickedButton == replaceButton) {
                     ok = exportFile(filePath);
                 } else {
@@ -123,7 +123,7 @@ bool ExportPluginBase::exportData() noexcept
 
 // PROTECTED
 
-void ExportPluginBase::resamplePositionData(const Aircraft &aircraft, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) const noexcept
+void ExportPluginBase::resamplePositionDataForExport(const Aircraft &aircraft, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) const noexcept
 {
     // Position data
     const Position &position = aircraft.getPositionConst();
@@ -133,8 +133,7 @@ void ExportPluginBase::resamplePositionData(const Aircraft &aircraft, std::back_
         const std::int64_t deltaTime = Enum::toUnderlyingType(resamplingPeriod);
         std::int64_t timestamp = 0;
         while (timestamp <= duration) {
-            // TODO THIS ALREADY TAKES THE TIME OFFSET INTO ACCOUNT!!!
-            const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Linear);
+            const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Export);
             if (!positionData.isNull()) {
                 backInsertIterator = positionData;
             }

@@ -244,7 +244,7 @@ void ImportPluginBase::updateFlightInfo() noexcept
 
     const QString description = tr("Aircraft imported on %1 from file: %2").arg(d->unit.formatDateTime(QDateTime::currentDateTime()), d->file.fileName());
     flight.setDescription(description);
-    flight.setCreationDate(QFileInfo(d->file).birthTime());
+    flight.setCreationTime(QFileInfo(d->file).birthTime());
     updateExtendedFlightInfo(flight);
 }
 

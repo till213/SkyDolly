@@ -29,14 +29,9 @@
 #include <unordered_map>
 #include <cstdint>
 
-#include <QCoreApplication>
 #include <QIODevice>
 #include <QStringBuilder>
 #include <QString>
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QCheckBox>
-#include <QDesktopServices>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
 #include "../../../../../Kernel/src/QStringHasher.h"
@@ -233,7 +228,7 @@ bool KMLExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
 "        </LineString>\n");
 
     std::vector<PositionData> interpolatedPositionData;
-    resamplePositionData(aircraft, std::back_inserter(interpolatedPositionData));
+    resamplePositionDataForExport(aircraft, std::back_inserter(interpolatedPositionData));
     bool ok = true;
     if (interpolatedPositionData.size() > 0) {
 
@@ -329,7 +324,7 @@ QString KMLExportPlugin::getFlightDescription() const noexcept
     const QString description =
             tr("Description") % ": " % d->flight.getDescription() % "\n" %
             "\n" %
-            tr("Creation date") % ": " % d->unit.formatDate(d->flight.getCreationDate()) % "\n" %
+            tr("Creation date") % ": " % d->unit.formatDate(d->flight.getCreationTime()) % "\n" %
             tr("Start (local time)") % ": " % d->unit.formatTime(flightCondition.startLocalTime) % "\n" %
             tr("End (local time)") % ": " % d->unit.formatTime(flightCondition.endLocalTime) % "\n" %
             tr("Ambient temperature") % ": " % d->unit.formatCelcius(flightCondition.ambientTemperature) % "\n" %

@@ -81,4 +81,3 @@ QString Export::formatNumber(double number) noexcept
 {
     return QString::number(number, 'f', NumberPrecision);
 }
-

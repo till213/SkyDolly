@@ -27,15 +27,11 @@
 #include <iterator>
 
 #include <QtGlobal>
-#include <QCoreApplication>
-#include <QFile>
+#include <QIODevice>
 // Implements the % operator for string concatenation
 #include <QStringBuilder>
 #include <QString>
 #include <QByteArray>
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QDateTime>
 #include <QSysInfo>
 #include <QDesktopServices>
 
@@ -286,7 +282,7 @@ inline bool IGCExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &
 
     const Engine &engine = aircraft.getEngineConst();
     std::vector<PositionData> interpolatedPositionData;
-    resamplePositionData(aircraft, std::back_inserter(interpolatedPositionData));
+    resamplePositionDataForExport(aircraft, std::back_inserter(interpolatedPositionData));
     bool ok = true;
     for (PositionData &positionData : interpolatedPositionData) {
         if (!positionData.isNull()) {
