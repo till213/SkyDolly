@@ -29,7 +29,7 @@
 
 #include <QObject>
 #include <QtPlugin>
-#include <QUuid>
+#include <QWidget>
 
 class QIODevice;
 class QString;
