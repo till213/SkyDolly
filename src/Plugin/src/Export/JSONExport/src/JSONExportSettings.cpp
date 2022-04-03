@@ -62,7 +62,7 @@ JSONExportSettings::~JSONExportSettings() noexcept
 
 // PROTECTED
 
-void JSONExportSettings::addSettingsExtn(Settings::PluginSettings &settings) const noexcept
+void JSONExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {}
 
 void JSONExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept

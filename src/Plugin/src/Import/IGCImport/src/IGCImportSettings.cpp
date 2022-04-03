@@ -40,7 +40,7 @@ IGCImportSettings::IGCImportSettings() noexcept
     initSettings();
 }
 
-void IGCImportSettings::addSettings(Settings::PluginSettings &settings) const noexcept
+void IGCImportSettings::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
     Settings::KeyValue keyValue;
 

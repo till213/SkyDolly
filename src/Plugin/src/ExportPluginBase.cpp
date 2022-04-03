@@ -75,9 +75,9 @@ ExportPluginBase::~ExportPluginBase() noexcept
 bool ExportPluginBase::exportData() noexcept
 {
     bool ok;
-    Settings &settings = Settings::getInstance();
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
-    std::unique_ptr<BasicExportDialog> exportDialog = std::make_unique<BasicExportDialog>(getFileExtension(), getFileFilter(), getSettings(), getParentWidget());
+    ExportPluginBaseSettings &baseSettings = getSettings();
+    std::unique_ptr<BasicExportDialog> exportDialog = std::make_unique<BasicExportDialog>(getFileExtension(), getFileFilter(), baseSettings, getParentWidget());
     connect(exportDialog.get(), &BasicExportDialog::restoreDefaultOptions,
             this, &ExportPluginBase::onRestoreDefaultSettings);
     // Transfer ownership to exportDialog
@@ -92,7 +92,7 @@ bool ExportPluginBase::exportData() noexcept
             const QString exportDirectoryPath = fileInfo.absolutePath();
             Settings::getInstance().setExportPath(exportDirectoryPath);
 
-            if (getSettings().isFileDialogSelectedFile() || !fileInfo.exists()) {
+            if (baseSettings.isFileDialogSelectedFile() || !fileInfo.exists()) {
                 ok = exportFile(filePath);
             } else {
                 std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(getParentWidget());
@@ -179,10 +179,10 @@ bool ExportPluginBase::exportFile(const QString &filePath) noexcept
     return ok;
 }
 
-void ExportPluginBase::addSettings(Settings::PluginSettings &settings) const noexcept
+void ExportPluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
-    getSettings().addSettings(settings);
-    addSettingsExtn(settings);
+    getSettings().addSettings(keyValues);
+    addSettingsExtn(keyValues);
 }
 
 void ExportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept

@@ -55,7 +55,7 @@ public:
     virtual ~KMLExportPlugin() noexcept;
 
 protected:
-    virtual void addSettingsExtn(Settings::PluginSettings &settings) const noexcept override;
+    virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
     virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
     virtual void restoreSettingsExtn(Settings::ValuesByKey) noexcept override;
     virtual ExportPluginBaseSettings &getSettings() const noexcept override;

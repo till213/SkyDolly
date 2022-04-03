@@ -114,9 +114,9 @@ ExportPluginBaseSettings &KMLExportPlugin::getSettings() const noexcept
     return d->settings;
 }
 
-void KMLExportPlugin::addSettingsExtn(Settings::PluginSettings &settings) const noexcept
+void KMLExportPlugin::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {
-    d->settings.addSettings(settings);
+    d->settings.addSettings(keyValues);
 }
 
 void KMLExportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept

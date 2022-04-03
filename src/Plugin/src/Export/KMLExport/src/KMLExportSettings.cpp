@@ -269,53 +269,53 @@ void KMLExportSettings::setAllEndColor(QColor color) noexcept
 
 // PROTECTED
 
-void KMLExportSettings::addSettingsExtn(Settings::PluginSettings &settings) const noexcept
+void KMLExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {
     Settings::KeyValue keyValue;
 
     keyValue.first = ::ColorStyleKey;
     keyValue.second = Enum::toUnderlyingType(d->colorStyle);
-    settings.push_back(keyValue);
+    keyValues.push_back(keyValue);
 
     keyValue.first = ::NofColorsPerRampKey;
     keyValue.second = d->nofColorsPerRamp;
-    settings.push_back(keyValue);
+    keyValues.push_back(keyValue);
 
     keyValue.first = ::LineWidthKey;
     keyValue.second = d->lineWidth;
-    settings.push_back(keyValue);
+    keyValues.push_back(keyValue);
 
     keyValue.first = ::JetStartColorKey;
     keyValue.second = d->jetStartColor;
-    settings.push_back(keyValue);
+    keyValues.push_back(keyValue);
 
     keyValue.first = ::JetEndColorKey;
     keyValue.second = d->jetEndColor;
-    settings.push_back(keyValue);
+    keyValues.push_back(keyValue);
 
     keyValue.first = ::TurbopropStartColorKey;
     keyValue.second = d->turbopropStartColor;
-    settings.push_back(keyValue);
+    keyValues.push_back(keyValue);
 
     keyValue.first = ::TurbopropEndColorKey;
     keyValue.second = d->turbopropEndColor;
-    settings.push_back(keyValue);
+    keyValues.push_back(keyValue);
 
     keyValue.first = ::PistonStartColorKey;
     keyValue.second = d->pistonStartColor;
-    settings.push_back(keyValue);
+    keyValues.push_back(keyValue);
 
     keyValue.first = ::PistonEndColorKey;
     keyValue.second = d->pistonEndColor;
-    settings.push_back(keyValue);
+    keyValues.push_back(keyValue);
 
     keyValue.first = ::AllStartColorKey;
     keyValue.second = d->allStartColor;
-    settings.push_back(keyValue);
+    keyValues.push_back(keyValue);
 
     keyValue.first = ::AllEndColorKey;
     keyValue.second = d->allEndColor;
-    settings.push_back(keyValue);
+    keyValues.push_back(keyValue);
 }
 
 void KMLExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept

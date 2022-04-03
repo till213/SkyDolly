@@ -47,7 +47,7 @@ public:
 
     Format m_format;
 
-    void addSettings(Settings::PluginSettings &settings) const noexcept;
+    void addSettings(Settings::KeyValues &keyValues) const noexcept;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;
     void applySettings(Settings::ValuesByKey) noexcept;
     void restoreDefaults() noexcept;

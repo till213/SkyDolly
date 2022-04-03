@@ -41,7 +41,7 @@ GPXImportSettings::GPXImportSettings() noexcept
     initSettings();
 }
 
-void GPXImportSettings::addSettings(Settings::PluginSettings &settings) const noexcept
+void GPXImportSettings::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
     Settings::KeyValue keyValue;
 

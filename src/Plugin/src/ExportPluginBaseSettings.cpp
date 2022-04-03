@@ -89,10 +89,10 @@ bool ExportPluginBaseSettings::isOpenExportedFileEnabled() const noexcept
     return d->openExportedFileEnabled;
 }
 
-void ExportPluginBaseSettings::setOpenExportedFileEnabled(bool openExportedFileEnabled) noexcept
+void ExportPluginBaseSettings::setOpenExportedFileEnabled(bool enabled) noexcept
 {
-    if (d->openExportedFileEnabled != openExportedFileEnabled) {
-        d->openExportedFileEnabled = openExportedFileEnabled;
+    if (d->openExportedFileEnabled != enabled) {
+        d->openExportedFileEnabled = enabled;
         emit baseSettingsChanged();
     }
 }
@@ -107,19 +107,19 @@ void ExportPluginBaseSettings::setFileDialogSelectedFile(bool fileDialogSelected
     d->fileDialogSelectedFile = fileDialogSelected;
 }
 
-void ExportPluginBaseSettings::addSettings(Settings::PluginSettings &settings) const noexcept
+void ExportPluginBaseSettings::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
     Settings::KeyValue keyValue;
 
     keyValue.first = ::ResamplingPeriodKey;
     keyValue.second = Enum::toUnderlyingType(d->resamplingPeriod);
-    settings.push_back(keyValue);
+    keyValues.push_back(keyValue);
 
     keyValue.first = ::OpenExportedFileEnabledKey;
     keyValue.second = d->openExportedFileEnabled;
-    settings.push_back(keyValue);
+    keyValues.push_back(keyValue);
 
-    addSettingsExtn(settings);
+    addSettingsExtn(keyValues);
 }
 
 void ExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept

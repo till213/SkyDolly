@@ -94,9 +94,9 @@ ExportPluginBaseSettings &GPXExportPlugin::getSettings() const noexcept
     return d->settings;
 }
 
-void GPXExportPlugin::addSettingsExtn(Settings::PluginSettings &settings) const noexcept
+void GPXExportPlugin::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {
-    d->settings.addSettings(settings);
+    d->settings.addSettings(keyValues);
 }
 
 void GPXExportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept

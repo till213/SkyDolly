@@ -80,7 +80,7 @@ protected:
     void resamplePositionDataForExport(const Aircraft &aircraft, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) const noexcept;
 
      // Re-implement
-    virtual void addSettingsExtn(Settings::PluginSettings &settings) const noexcept = 0;
+    virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept = 0;
     virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept = 0;
     virtual void restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept = 0;
     virtual ExportPluginBaseSettings &getSettings() const noexcept = 0;
@@ -96,7 +96,7 @@ private:
     std::unique_ptr<ExportPluginBasePrivate> d;
 
     bool exportFile(const QString &filePath) noexcept;
-    virtual void addSettings(Settings::PluginSettings &settings) const noexcept override final;
+    virtual void addSettings(Settings::KeyValues &keyValues) const noexcept override final;
     virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override final;
     virtual void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept override final;
 };

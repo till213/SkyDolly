@@ -432,11 +432,11 @@ void Settings::setPreviewInfoDialogCount(int count) noexcept
     }
 }
 
-void Settings::storePluginSettings(QUuid pluginUuid, const PluginSettings &settings) const noexcept
+void Settings::storePluginSettings(QUuid pluginUuid, const KeyValues &keyValues) const noexcept
 {
     d->settings.beginGroup("Plugins/" + pluginUuid.toByteArray());
     {
-        for (const auto &keyValue : settings) {
+        for (const auto &keyValue : keyValues) {
             d->settings.setValue(keyValue.first, keyValue.second);
         }
     }

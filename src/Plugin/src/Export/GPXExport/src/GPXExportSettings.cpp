@@ -84,13 +84,13 @@ void GPXExportSettings::setTimestampMode(TimestampMode timestampMode) noexcept
 
 // PROTECTED
 
-void GPXExportSettings::addSettingsExtn(Settings::PluginSettings &settings) const noexcept
+void GPXExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {
     Settings::KeyValue keyValue;
 
     keyValue.first = ::TimestampModeKey;
     keyValue.second = Enum::toUnderlyingType(d->timestampMode);
-    settings.push_back(keyValue);
+    keyValues.push_back(keyValue);
 }
 
 void GPXExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept

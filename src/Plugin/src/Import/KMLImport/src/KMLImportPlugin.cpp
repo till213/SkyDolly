@@ -81,7 +81,7 @@ KMLImportPlugin::~KMLImportPlugin() noexcept
 
 // PROTECTED
 
-void KMLImportPlugin::addSettings(Settings::PluginSettings &settings) const noexcept
+void KMLImportPlugin::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
     d->settings.addSettings(settings);
 }

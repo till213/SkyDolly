@@ -91,9 +91,9 @@ ExportPluginBaseSettings &JSONExportPlugin::getSettings() const noexcept
     return d->settings;
 }
 
-void JSONExportPlugin::addSettingsExtn(Settings::PluginSettings &settings) const noexcept
+void JSONExportPlugin::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {
-    d->settings.addSettings(settings);
+    d->settings.addSettings(keyValues);
 }
 
 void JSONExportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept

@@ -143,9 +143,9 @@ ExportPluginBaseSettings &IGCExportPlugin::getSettings() const noexcept
     return d->settings;
 }
 
-void IGCExportPlugin::addSettingsExtn(Settings::PluginSettings &settings) const noexcept
+void IGCExportPlugin::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {
-    d->settings.addSettings(settings);
+    d->settings.addSettings(keyValues);
 }
 
 void IGCExportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
@@ -240,7 +240,6 @@ inline bool IGCExportPlugin::exportIRecord(QIODevice &io) const noexcept
 
 inline bool IGCExportPlugin::exportCRecord(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    const AircraftInfo &info = aircraft.getAircraftInfoConst();
     const FlightPlan &flightPlan = aircraft.getFlightPlanConst();
     const Position &position = aircraft.getPositionConst();
     const int nofTurnPoints = flightPlan.count() - 2;

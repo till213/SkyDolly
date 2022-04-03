@@ -58,7 +58,7 @@ CSVExportSettings::~CSVExportSettings() noexcept
 
 // PROTECTED
 
-void CSVExportSettings::addSettingsExtn(Settings::PluginSettings &settings) const noexcept
+void CSVExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {}
 
 void CSVExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept

@@ -35,6 +35,7 @@ class QAbstractButton;
 
 #include "PluginLib.h"
 
+class ImportPluginBaseSettings;
 struct AircraftType;
 class BasicImportDialogPrivate;
 
@@ -46,12 +47,11 @@ class PLUGIN_API BasicImportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit BasicImportDialog(const QString &fileExtension, QWidget *parent = nullptr);
+    explicit BasicImportDialog(const QString &fileExtension, ImportPluginBaseSettings &settings, QWidget *parent = nullptr);
     virtual ~BasicImportDialog();
 
-    QString getSelectedFilePath() const noexcept;
     bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
-    bool isAddToFlightEnabled() const noexcept;
+    QString getSelectedFilePath() const noexcept;
 
     QString getFileFilter() const noexcept;
     void setFileFilter(const QString &extension) noexcept;

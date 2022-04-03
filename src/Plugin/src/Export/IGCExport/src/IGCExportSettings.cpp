@@ -100,17 +100,17 @@ void IGCExportSettings::setCoPilotName(const QString &coPilotName) noexcept
 
 // PROTECTED
 
-void IGCExportSettings::addSettingsExtn(Settings::PluginSettings &settings) const noexcept
+void IGCExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {
     Settings::KeyValue keyValue;
 
     keyValue.first = ::PilotNameKey;
     keyValue.second = d->pilotName;
-    settings.push_back(keyValue);
+    keyValues.push_back(keyValue);
 
     keyValue.first = ::CoPilotNameKey;
     keyValue.second = d->coPilotName;
-    settings.push_back(keyValue);
+    keyValues.push_back(keyValue);
 }
 
 void IGCExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept

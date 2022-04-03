@@ -72,17 +72,17 @@ CSVImportPlugin::~CSVImportPlugin() noexcept
 
 // PROTECTED
 
-void CSVImportPlugin::addSettings(Settings::PluginSettings &settings) const noexcept
+void CSVImportPlugin::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {
-    d->settings.addSettings(settings);
+    d->settings.addSettings(keyValues);
 }
 
-void CSVImportPlugin::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+void CSVImportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
     d->settings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void CSVImportPlugin::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
+void CSVImportPlugin::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
 {
     d->settings.applySettings(valuesByKey);
 }

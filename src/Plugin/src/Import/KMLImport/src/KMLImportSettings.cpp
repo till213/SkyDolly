@@ -40,7 +40,7 @@ KMLImportSettings::KMLImportSettings() noexcept
     initSettings();
 }
 
-void KMLImportSettings::addSettings(Settings::PluginSettings &settings) const noexcept
+void KMLImportSettings::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
     Settings::KeyValue keyValue;
 

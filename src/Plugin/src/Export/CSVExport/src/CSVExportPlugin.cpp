@@ -88,9 +88,9 @@ ExportPluginBaseSettings &CSVExportPlugin::getSettings() const noexcept
     return d->settings;
 }
 
-void CSVExportPlugin::addSettingsExtn(Settings::PluginSettings &settings) const noexcept
+void CSVExportPlugin::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {
-    d->settings.addSettings(settings);
+    d->settings.addSettings(keyValues);
 }
 
 void CSVExportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept

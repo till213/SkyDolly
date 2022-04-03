@@ -56,7 +56,7 @@ signals:
     void extendedSettingsChanged();
 
 protected:
-    virtual void addSettingsExtn(Settings::PluginSettings &settings) const noexcept override;
+    virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
     virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
     virtual void restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept override;
     virtual void restoreDefaultsExtn() noexcept override;

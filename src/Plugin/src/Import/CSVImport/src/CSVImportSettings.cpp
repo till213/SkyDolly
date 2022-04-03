@@ -40,13 +40,13 @@ CSVImportSettings::CSVImportSettings() noexcept
     initSettings();
 }
 
-void CSVImportSettings::addSettings(Settings::PluginSettings &settings) const noexcept
+void CSVImportSettings::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
     Settings::KeyValue keyValue;
 
     keyValue.first = ::FormatKey;
     keyValue.second = Enum::toUnderlyingType(m_format);
-    settings.push_back(keyValue);
+    keyValues.push_back(keyValue);
 }
 
 void CSVImportSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept

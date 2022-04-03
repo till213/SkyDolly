@@ -238,7 +238,7 @@ void BasicExportDialog::onFileSelectionButtonClicked() noexcept
     updateUi();
 }
 
-void BasicExportDialog::onFilePathChanged(const QString &filePath)
+void BasicExportDialog::onFilePathChanged()
 {
     d->settings.setFileDialogSelectedFile(false);
     updateUi();

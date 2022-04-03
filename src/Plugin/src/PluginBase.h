@@ -56,7 +56,7 @@ protected:
      * @param settings
      *        the plugin-specific key/value pair settings
      */
-    virtual void addSettings(Settings::PluginSettings &settings) const noexcept;
+    virtual void addSettings(Settings::KeyValues &keyValues) const noexcept;
 
     /*!
      * Adds the plugin-specific setting keys with corresponding default values to \c keysWithDefaults.

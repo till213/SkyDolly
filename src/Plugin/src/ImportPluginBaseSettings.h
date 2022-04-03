@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef EXPORTPLUGINBASESETTINGS_H
-#define EXPORTPLUGINBASESETTINGS_H
+#ifndef IMPORTPLUGINBASESETTINGS_H
+#define IMPORTPLUGINBASESETTINGS_H
 
 #include <memory>
 
@@ -34,33 +34,17 @@
 #include "../../Kernel/src/SampleRate.h"
 #include "PluginLib.h"
 
-class ExportPluginBaseSettingsPrivate;
+class ImportPluginBaseSettingsPrivate;
 
-class PLUGIN_API ExportPluginBaseSettings : public QObject
+class PLUGIN_API ImportPluginBaseSettings : public QObject
 {
     Q_OBJECT
 public:
-    ExportPluginBaseSettings() noexcept;
-    virtual ~ExportPluginBaseSettings() noexcept;
+    ImportPluginBaseSettings() noexcept;
+    virtual ~ImportPluginBaseSettings() noexcept;
 
-    SampleRate::ResamplingPeriod getResamplingPeriod() const noexcept;
-    void setResamplingPeriod(SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
-    bool isOpenExportedFileEnabled() const noexcept;
-    void setOpenExportedFileEnabled(bool enabled) noexcept;
-
-    /*!
-     * Returns whether the user has selected the file via the file selection dialog,
-     * which typically already asks the user whether to overwrite existing files.
-     *
-     * Note: the assumption here is that a file selection dialog will check the
-     * existence of a selected file. This is the case on Windows, macOS and Ubuntu
-     * (with MATE).
-     *
-     * \return \c true if the user has selected the file path via the file selection dialog;
-     *         \c false else
-     */
-    bool isFileDialogSelectedFile() const noexcept;
-    void setFileDialogSelectedFile(bool fileDialogSelected) noexcept;
+    bool isAddToFlightEnabled() const noexcept;
+    void setAddToFlightEnabled(bool enabled) noexcept;
 
     void addSettings(Settings::KeyValues &keyValues) const noexcept;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;
@@ -80,7 +64,7 @@ protected:
     virtual void restoreDefaultsExtn() noexcept = 0;
 
 private:
-    std::unique_ptr<ExportPluginBaseSettingsPrivate> d;
+    std::unique_ptr<ImportPluginBaseSettingsPrivate> d;
 };
 
-#endif // EXPORTPLUGINBASESETTINGS_H
+#endif // IMPORTPLUGINBASESETTINGS_H

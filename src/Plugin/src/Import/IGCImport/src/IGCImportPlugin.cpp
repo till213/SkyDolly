@@ -105,7 +105,7 @@ IGCImportPlugin::~IGCImportPlugin() noexcept
 
 // PROTECTED
 
-void IGCImportPlugin::addSettings(Settings::PluginSettings &settings) const noexcept
+void IGCImportPlugin::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
     d->settings.addSettings(settings);
 }
