@@ -30,7 +30,7 @@
 #include <QObject>
 
 #include "../../../../../Kernel/src/Settings.h"
-#include "../../Plugin/src/ExportPluginBaseSettings.h"
+#include "../../../ExportPluginBaseSettings.h"
 
 class CSVExportSettingsPrivate;
 

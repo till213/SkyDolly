@@ -89,11 +89,6 @@ GPXExportPlugin::~GPXExportPlugin() noexcept
 
 // PROTECTED
 
-ExportPluginBaseSettings &GPXExportPlugin::getSettings() const noexcept
-{
-    return d->settings;
-}
-
 void GPXExportPlugin::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {
     d->settings.addSettings(keyValues);
@@ -107,6 +102,11 @@ void GPXExportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWi
 void GPXExportPlugin::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
 {
     d->settings.restoreSettings(valuesByKey);
+}
+
+ExportPluginBaseSettings &GPXExportPlugin::getSettings() const noexcept
+{
+    return d->settings;
 }
 
 QString GPXExportPlugin::getFileExtension() const noexcept

@@ -81,17 +81,17 @@ KMLImportPlugin::~KMLImportPlugin() noexcept
 
 // PROTECTED
 
-void KMLImportPlugin::addSettings(Settings::KeyValues &keyValues) const noexcept
+void KMLImportPlugin::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {
     d->settings.addSettings(settings);
 }
 
-void KMLImportPlugin::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+void KMLImportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
     d->settings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void KMLImportPlugin::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
+void KMLImportPlugin::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
 {
     d->settings.applySettings(valuesByKey);
 }

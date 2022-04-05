@@ -41,6 +41,7 @@ class QRegularExpression;
 class Flight;
 struct AircraftInfo;
 struct FlightCondition;
+class ImportPluginBaseSettings;
 class IGCImportPluginPrivate;
 
 class IGCImportPlugin : public ImportPluginBase
@@ -53,12 +54,10 @@ public:
     virtual ~IGCImportPlugin() noexcept;
 
 protected:
-    // PluginBase
-    virtual void addSettings(Settings::KeyValues &keyValues) const noexcept override;
-    virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
-    virtual void restoreSettings(Settings::ValuesByKey) noexcept override;
-
-    // ImportPluginBase
+    virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
+    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    virtual void restoreSettingsExtn(Settings::ValuesByKey) noexcept override;
+    virtual ImportPluginBaseSettings &getSettings() const noexcept override;
     virtual QString getFileFilter() const noexcept override;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
     virtual bool readFile(QFile &file) noexcept override;

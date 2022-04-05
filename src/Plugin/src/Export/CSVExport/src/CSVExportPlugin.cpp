@@ -83,11 +83,6 @@ CSVExportPlugin::~CSVExportPlugin() noexcept
 
 // PROTECTED
 
-ExportPluginBaseSettings &CSVExportPlugin::getSettings() const noexcept
-{
-    return d->settings;
-}
-
 void CSVExportPlugin::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {
     d->settings.addSettings(keyValues);
@@ -103,6 +98,11 @@ void CSVExportPlugin::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noe
     d->settings.restoreSettings(valuesByKey);
 }
 
+ExportPluginBaseSettings &CSVExportPlugin::getSettings() const noexcept
+{
+    return d->settings;
+}
+
 QString CSVExportPlugin::getFileExtension() const noexcept
 {
     return CSVExportPluginPrivate::FileExtension;
@@ -110,7 +110,7 @@ QString CSVExportPlugin::getFileExtension() const noexcept
 
 QString CSVExportPlugin::getFileFilter() const noexcept
 {
-    return tr("International Gliding Commission (*.%1)").arg(getFileExtension());
+    return tr("Comma-separated values (*.%1)").arg(getFileExtension());
 }
 
 std::unique_ptr<QWidget> CSVExportPlugin::createOptionWidget() const noexcept

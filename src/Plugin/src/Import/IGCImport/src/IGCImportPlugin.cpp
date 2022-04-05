@@ -61,7 +61,7 @@
 namespace
 {
     // Distance threshold beyond which two waypoints are to be considered different [meters]
-    // (taking the average size of a glider airfield into account)
+    // (taking the "average size" of a "glider airfield" into account)
     constexpr double SameWaypointDistanceThreshold = 500;
 }
 
@@ -105,17 +105,17 @@ IGCImportPlugin::~IGCImportPlugin() noexcept
 
 // PROTECTED
 
-void IGCImportPlugin::addSettings(Settings::KeyValues &keyValues) const noexcept
+void IGCImportPlugin::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {
     d->settings.addSettings(settings);
 }
 
-void IGCImportPlugin::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+void IGCImportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
     d->settings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void IGCImportPlugin::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
+void IGCImportPlugin::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
 {
     d->settings.applySettings(valuesByKey);
 }

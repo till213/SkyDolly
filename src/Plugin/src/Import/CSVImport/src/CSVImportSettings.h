@@ -25,12 +25,15 @@
 #ifndef CSVIMPORTSETTINGS_H
 #define CSVIMPORTSETTINGS_H
 
+#include <memory>
+
 #include <QObject>
 #include <QString>
 
 #include "../../../../../Kernel/src/Settings.h"
+#include "../../../ExportPluginBaseSettings.h"
 
-class CSVImportSettings : public QObject
+class CSVImportSettings : public ExportPluginBaseSettings
 {
     Q_OBJECT
 public:
@@ -44,21 +47,25 @@ public:
     };
 
     CSVImportSettings() noexcept;
+    virtual ~CSVImportSettings() noexcept;
 
-    Format m_format;
-
-    void addSettings(Settings::KeyValues &keyValues) const noexcept;
-    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;
-    void applySettings(Settings::ValuesByKey) noexcept;
-    void restoreDefaults() noexcept;
+    Format getFormat() const noexcept;
+    void setFormat(Format format) noexcept;
 
 signals:
-    void defaultsRestored();
+    /*!
+     * Emitted whenever the extended settings have changed.
+     */
+    void extendedSettingsChanged();
+
+protected:
+    virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
+    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    virtual void restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept override;
+    virtual void restoreDefaultsExtn() noexcept override;
 
 private:
-    void initSettings() noexcept;
-
-    static constexpr Format DefaultFormat = Format::SkyDolly;
+    std::unique_ptr<CSVImportSettings> d;
 };
 
 #endif // CSVIMPORTSETTINGS_H

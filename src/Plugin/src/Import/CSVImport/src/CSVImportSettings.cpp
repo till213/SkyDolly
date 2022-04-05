@@ -31,53 +31,93 @@
 namespace
 {
     constexpr char FormatKey[] = "Format";
+
+    constexpr CSVImportSettings::Format DefaultFormat = CSVImportSettings::Format::SkyDolly;
 }
+
+class CSVImportSettingsPrivate
+{
+public:
+    CSVImportSettingsPrivate()
+        : format(::DefaultFormat)
+    {}
+
+    CSVImportSettings::Format format;
+};
 
 // PUBLIC
 
 CSVImportSettings::CSVImportSettings() noexcept
+    : d(std::make_unique<CSVImportSettingsPrivate>())
 {
-    initSettings();
+#ifdef DEBUG
+    qDebug("CSVImportSettings::CSVImportSettings: CREATED");
+#endif
 }
 
-void CSVImportSettings::addSettings(Settings::KeyValues &keyValues) const noexcept
+CSVImportSettings::~CSVImportSettings() noexcept
+{
+#ifdef DEBUG
+    qDebug("CSVImportSettings::~CSVImportSettings: DELETED");
+#endif
+}
+
+CSVImportSettings::Format CSVImportSettings::getFormat() const noexcept
+{
+    return d->format;
+}
+
+void CSVImportSettings::setFormat(Format format) noexcept
+{
+    if (d->format != format) {
+        d->format = format;
+        emit extendedSettingsChanged();
+    }
+}
+
+// PROTECTED
+
+void CSVImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {
     Settings::KeyValue keyValue;
 
     keyValue.first = ::FormatKey;
-    keyValue.second = Enum::toUnderlyingType(m_format);
+    keyValue.second = Enum::toUnderlyingType(d->format);
     keyValues.push_back(keyValue);
 }
 
-void CSVImportSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+void CSVImportSettings::setTimestampMode(TimestampMode timestampMode) noexcept
+{
+    if (d->timestampMode != timestampMode) {
+        d->timestampMode = timestampMode;
+        emit extendedSettingsChanged();
+    }
+}
+
+
+void CSVImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
     Settings::KeyValue keyValue;
 
     keyValue.first = ::FormatKey;
-    keyValue.second = Enum::toUnderlyingType(CSVImportSettings::DefaultFormat);
+    keyValue.second = Enum::toUnderlyingType(::DefaultFormat);
     keysWithDefaults.push_back(keyValue);
 }
 
-void CSVImportSettings::applySettings(Settings::ValuesByKey valuesByKey) noexcept
+void CSVImportSettings::applySettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
 {
     bool ok;
     const int enumeration = valuesByKey[::FormatKey].toInt(&ok);
     if (ok) {
-        m_format = static_cast<CSVImportSettings::Format >(enumeration);
+        d->format = static_cast<CSVImportSettings::Format >(enumeration);
     } else {
-        m_format = DefaultFormat;
+        d->format = ::DefaultFormat;
     }
 }
 
 void CSVImportSettings::restoreDefaults() noexcept
 {
-    initSettings();
-    emit defaultsRestored();
-}
+    d->format = ::DefaultFormat;
 
-// PRIVATE
-
-void CSVImportSettings::initSettings() noexcept
-{
-    m_format = DefaultFormat;
+    emit extendedSettingsChanged();
 }

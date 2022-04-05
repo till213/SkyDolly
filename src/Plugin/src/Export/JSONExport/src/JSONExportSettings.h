@@ -49,8 +49,7 @@ protected:
 
 signals:
     /*!
-     * Emitted whenever the extended settings have changed. This signal is
-     * only emitted by classes extending the ExportPluginBaseSettings.
+     * Emitted whenever the extended settings have changed.
      */
     void extendedSettingsChanged();
 
