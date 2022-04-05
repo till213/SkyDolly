@@ -67,10 +67,15 @@ GPXExportOptionWidget::~GPXExportOptionWidget() noexcept
 
 void GPXExportOptionWidget::frenchConnection() noexcept
 {
-    connect(&d->settings, &GPXExportSettings::extendedSettingsChanged,
-            this, &GPXExportOptionWidget::updateUi);
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+    connect(ui->timestampModeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &GPXExportOptionWidget::onTimestampModeChanged);
+#else
     connect(ui->timestampModeComboBox, &QComboBox::currentIndexChanged,
             this, &GPXExportOptionWidget::onTimestampModeChanged);
+#endif
+    connect(&d->settings, &GPXExportSettings::extendedSettingsChanged,
+            this, &GPXExportOptionWidget::updateUi);
 }
 
 void GPXExportOptionWidget::initUi() noexcept
