@@ -346,7 +346,7 @@ QString KMLExportPlugin::getAircraftDescription(const Aircraft &aircraft) const 
             tr("Category") % ": " % type.category % "\n" %
             tr("Engine type") % ": " % SimType::engineTypeToString(type.engineType) % "\n" %
             tr("Number of engines") % ": " % d->unit.formatNumber(type.numberOfEngines, 0) % "\n" %
-            tr("Wingspan") % ": " % d->unit.formatNumber(type.wingSpan, 0) % "\n"
+            tr("Wingspan") % ": " % d->unit.formatFeet(type.wingSpan) % "\n"
             "\n" %
             tr("Initial altitude above ground") % ": " % d->unit.formatFeet(info.altitudeAboveGround) % "\n" %
             tr("Initial airspeed") % ": " % d->unit.formatKnots(info.initialAirspeed) % "\n" %

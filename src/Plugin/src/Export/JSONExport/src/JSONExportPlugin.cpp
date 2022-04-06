@@ -47,6 +47,8 @@
 #include "../../../../../Model/src/Waypoint.h"
 #include "../../../../../Model/src/FlightCondition.h"
 #include "../../../../../Model/src/Aircraft.h"
+#include "../../../../../Model/src/AircraftInfo.h"
+#include "../../../../../Model/src/AircraftType.h"
 #include "../../../../../Model/src/Position.h"
 #include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/SimType.h"
@@ -63,6 +65,7 @@ public:
 
     JSONExportSettings settings;
     Flight &flight;
+    Unit unit;
 
     static inline const QString FileExtension {QStringLiteral("json")};
 };
@@ -126,10 +129,9 @@ bool JSONExportPlugin::writeFile(QIODevice &io) noexcept
 {
     io.setTextModeEnabled(true);
     bool ok = exportHeader(io);
-    // @todo IMPLEMENT ME!!!
-//    if (ok) {
-//        ok = exportWaypoints(io);
-//    }
+    if (ok) {
+        ok = exportWaypoints(io);
+    }
     if (ok) {
         ok = exportAllAircraft(io);
     }
@@ -161,9 +163,17 @@ bool JSONExportPlugin::exportHeader(QIODevice &io) const noexcept
 bool JSONExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
 {
     bool ok = true;
+    std::size_t i = 0;
     for (const auto &aircraft : d->flight) {
         ok = exportAircraft(*aircraft, io);
-        if (!ok) {
+        if (ok) {
+            if (i < d->flight.count() - 1) {
+                ok = io.write(",\n");
+            } else {
+                ok = io.write("\n");
+            }
+            ++i;
+        } else {
             break;
         }
     }
@@ -175,47 +185,54 @@ bool JSONExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) c
     std::vector<PositionData> interpolatedPositionData;
     resamplePositionDataForExport(aircraft, std::back_inserter(interpolatedPositionData));
     bool ok = true;
-    if (interpolatedPositionData.size() > 0) {
 
-        const QString trackBegin = QString(
+    const AircraftInfo &info = aircraft.getAircraftInfoConst();
+    const AircraftType &type = info.aircraftType;
+    const QString trackBegin = QString(
 "    {\n"
 "      \"type\": \"Feature\",\n"
 "      \"geometry\": {\n"
 "        \"type\": \"LineString\",\n"
 "        \"coordinates\": [\n");
-
-        ok = io.write(trackBegin.toUtf8());
-        if (ok) {
-            std::size_t i = 0;
-            for (PositionData &positionData : interpolatedPositionData) {
-                ok = exportTrackPoint(positionData, io);
-                if (ok) {
-                    if (i < interpolatedPositionData.size() - 1) {
-                        ok = io.write(", ");
-                    } else {
-                        ok = io.write("\n");
-                    }
-                    ++i;
+    ok = io.write(trackBegin.toUtf8());
+    if (ok) {
+        std::size_t i = 0;
+        for (PositionData &positionData : interpolatedPositionData) {
+            ok = exportTrackPoint(positionData, io);
+            if (ok) {
+                if (i < interpolatedPositionData.size() - 1) {
+                    ok = io.write(", ");
+                } else {
+                    ok = io.write("\n");
                 }
-                if (!ok) {
-                    break;
-                }
+                ++i;
+            } else {
+                break;
             }
         }
-        if (ok) {
-            const QString placemarkEnd = QString(
+    }
+    if (ok) {
+        const QString placemarkEnd = QString(
 "        ]\n"
 "      },\n"
 "      \"properties\": {\n"
-"        \"prop0\": \"value0\",\n"
-"        \"prop1\": 0.0\n"
+"        \"type\": \"" % type.type % "\",\n"
+"        \"category\": \"" % type.category % "\",\n"
+"        \"engineType\": \"" % SimType::engineTypeToString(type.engineType) % "\",\n"
+"        \"engineCount\": " % QString::number(type.numberOfEngines) % ",\n"
+"        \"wingspanFeet\": " % QString::number(type.wingSpan) % ",\n"
+"        \"initialAltitudeAboveGroundFeet\": " % QString::number(info.altitudeAboveGround) % ",\n"
+"        \"initialAirspeedKnots\": " % QString::number(info.initialAirspeed) % ",\n"
+"        \"airline\": \"" % info.airline % "\",\n"
+"        \"flightNumber\": \"" % info.flightNumber % "\",\n"
+"        \"tailNumber\": \"" % info.tailNumber % "\",\n"
+"        \"stroke\": \"#ff0000\",\n"
+"        \"stroke-width\": \"4\"\n"
 "      }\n"
-"    }\n");
+"    }");
 
-          ok = io.write(placemarkEnd.toUtf8());
-        }
-
-    } // size
+      ok = io.write(placemarkEnd.toUtf8());
+    }
 
     return ok;
 }
@@ -245,7 +262,7 @@ inline bool JSONExportPlugin::exportTrackPoint(const PositionData &positionData,
 {
     const QString trackPoint = "[" % Export::formatCoordinate(positionData.longitude) % ", " %
                                      Export::formatCoordinate(positionData.latitude) % ", " %
-                                     Export::formatNumber(Convert::feetToMeters(positionData.altitude)).toUtf8() %
+                                     Export::formatNumber(Convert::feetToMeters(positionData.altitude)) %
                                "]";
 
     return io.write(trackPoint.toUtf8());
@@ -253,10 +270,26 @@ inline bool JSONExportPlugin::exportTrackPoint(const PositionData &positionData,
 
 inline bool JSONExportPlugin::exportWaypoint(const Waypoint &waypoint, QIODevice &io) const noexcept
 {
-    const QString waypointString =
-"  { \"todo\" : \"implement waypoint\" }\n";
+    const QString waypointString = QString(
+"    {\n"
+"      \"type\": \"Feature\",\n"
+"      \"geometry\": {\n"
+"        \"type\": \"Point\",\n"
+"        \"coordinates\": [" %
+           Export::formatCoordinate(waypoint.longitude) % ", " %
+           Export::formatCoordinate(waypoint.latitude) % ", " %
+           Export::formatNumber(Convert::feetToMeters(waypoint.altitude)) %
+           "]\n" %
+"      },\n"
+"      \"properties\": {\n"
+"        \"identifier\": \"" % waypoint.identifier % "\",\n"
+"        \"localTime\": \"" % d->unit.formatTime(waypoint.localTime) % "\",\n"
+"        \"zuluTime\": \"" % d->unit.formatTime(waypoint.zuluTime) % "\",\n"
+"        \"marker-color\": \"#008800\",\n"
+"        \"marker-symbol\": \"airport\"\n"
+"      }\n"
+"    },\n");
+    bool ok = io.write(waypointString.toUtf8());
 
-    // @todo IMPLEMENT ME!!!
-
-    return io.write(waypointString.toUtf8());
+    return ok;
 }
