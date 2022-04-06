@@ -74,7 +74,7 @@ void CSVImportOptionWidget::frenchConnection() noexcept
     connect(ui->formatComboBox, &QComboBox::currentIndexChanged,
             this, &CSVImportOptionWidget::onFormatChanged);
 #endif
-    connect(&d->settings, &CSVImportSettings::defaultsRestored,
+    connect(&d->settings, &CSVImportSettings::extendedSettingsChanged,
             this, &CSVImportOptionWidget::updateUi);
 }
 
@@ -89,14 +89,16 @@ void CSVImportOptionWidget::initUi() noexcept
 
 void CSVImportOptionWidget::onFormatChanged([[maybe_unused]]int index) noexcept
 {
-    d->settings.m_format = static_cast<CSVImportSettings::Format>(ui->formatComboBox->currentData().toInt());
+    const CSVImportSettings::Format format = static_cast<CSVImportSettings::Format>(ui->formatComboBox->currentData().toInt());
+    d->settings.setFormat(format);
 }
 
 void CSVImportOptionWidget::updateUi() noexcept
 {
+    const CSVImportSettings::Format format = d->settings.getFormat();
     int currentIndex = 0;
     while (currentIndex < ui->formatComboBox->count() &&
-           static_cast<CSVImportSettings::Format>(ui->formatComboBox->itemData(currentIndex).toInt()) != d->settings.m_format) {
+           static_cast<CSVImportSettings::Format>(ui->formatComboBox->itemData(currentIndex).toInt()) != format) {
         ++currentIndex;
     }
     ui->formatComboBox->setCurrentIndex(currentIndex);

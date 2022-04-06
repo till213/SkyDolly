@@ -83,7 +83,7 @@ KMLImportPlugin::~KMLImportPlugin() noexcept
 
 void KMLImportPlugin::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {
-    d->settings.addSettings(settings);
+    d->settings.addSettings(keyValues);
 }
 
 void KMLImportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
@@ -91,9 +91,14 @@ void KMLImportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWi
     d->settings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void KMLImportPlugin::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
+void KMLImportPlugin::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    d->settings.applySettings(valuesByKey);
+    d->settings.restoreSettings(valuesByKey);
+}
+
+ImportPluginBaseSettings &KMLImportPlugin::getSettings() const noexcept
+{
+    return d->settings;
 }
 
 QString KMLImportPlugin::getFileFilter() const noexcept
@@ -137,7 +142,7 @@ FlightAugmentation::Procedures KMLImportPlugin::getProcedures() const noexcept
 FlightAugmentation::Aspects KMLImportPlugin::getAspects() const noexcept
 {
     FlightAugmentation::Aspects aspects;
-    switch (d->settings.m_format) {
+    switch (d->settings.getFormat()) {
     case KMLImportSettings::Format::FlightAware:
         aspects = FlightAugmentation::Aspect::All;
         break;
@@ -189,7 +194,7 @@ void KMLImportPlugin::onRestoreDefaultSettings() noexcept
 void KMLImportPlugin::parseKML() noexcept
 {
     std::unique_ptr<KMLParserIntf> parser;
-    switch (d->settings.m_format) {
+    switch (d->settings.getFormat()) {
     case KMLImportSettings::Format::FlightAware:
         parser = std::make_unique<FlightAwareKMLParser>(d->xml);
         break;

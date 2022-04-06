@@ -51,7 +51,7 @@ private:
     void initUi() noexcept;
 
 private slots:
-    void onAltitudeChanged(int index) noexcept;
+    void onAltitudeChanged() noexcept;
     void onENLThresholdChanged(int value) noexcept;
 
     void updateUi() noexcept;

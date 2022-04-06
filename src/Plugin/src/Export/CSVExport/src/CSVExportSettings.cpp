@@ -58,13 +58,13 @@ CSVExportSettings::~CSVExportSettings() noexcept
 
 // PROTECTED
 
-void CSVExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
+void CSVExportSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &keyValues) const noexcept
 {}
 
-void CSVExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+void CSVExportSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {}
 
-void CSVExportSettings::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
+void CSVExportSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
 {}
 
 void CSVExportSettings::restoreDefaultsExtn() noexcept

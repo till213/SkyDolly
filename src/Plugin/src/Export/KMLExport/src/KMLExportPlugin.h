@@ -57,7 +57,7 @@ public:
 protected:
     virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
     virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
-    virtual void restoreSettingsExtn(Settings::ValuesByKey) noexcept override;
+    virtual void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
     virtual ExportPluginBaseSettings &getSettings() const noexcept override;
     virtual QString getFileExtension() const noexcept override;
     virtual QString getFileFilter() const noexcept override;

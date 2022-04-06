@@ -31,9 +31,11 @@
 #include <QString>
 
 #include "../../../../../Kernel/src/Settings.h"
-#include "../../../ExportPluginBaseSettings.h"
+#include "../../../ImportPluginBaseSettings.h"
 
-class CSVImportSettings : public ExportPluginBaseSettings
+class CSVImportSettingsPrivate;
+
+class CSVImportSettings : public ImportPluginBaseSettings
 {
     Q_OBJECT
 public:
@@ -61,11 +63,11 @@ signals:
 protected:
     virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
     virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
-    virtual void restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept override;
+    virtual void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
     virtual void restoreDefaultsExtn() noexcept override;
 
 private:
-    std::unique_ptr<CSVImportSettings> d;
+    std::unique_ptr<CSVImportSettingsPrivate> d;
 };
 
 #endif // CSVIMPORTSETTINGS_H

@@ -30,55 +30,87 @@
 
 namespace
 {
+    // Keys
     constexpr char FormatKey[] = "Format";
+
+    // Defaults
+    constexpr KMLImportSettings::Format DefaultFormat = KMLImportSettings::Format::FlightAware;
 }
+
+class KMLImportSettingsPrivate
+{
+public:
+    KMLImportSettingsPrivate()
+        : format(::DefaultFormat)
+    {}
+
+    KMLImportSettings::Format format;
+};
 
 // PUBLIC
 
 KMLImportSettings::KMLImportSettings() noexcept
+    : d(std::make_unique<KMLImportSettingsPrivate>())
 {
-    initSettings();
+#ifdef DEBUG
+    qDebug("KMLImportSettings::KMLImportSettings: CREATED");
+#endif
 }
 
-void KMLImportSettings::addSettings(Settings::KeyValues &keyValues) const noexcept
+KMLImportSettings::~KMLImportSettings() noexcept
 {
-    Settings::KeyValue keyValue;
-
-    keyValue.first = ::FormatKey;
-    keyValue.second = Enum::toUnderlyingType(m_format);
-    settings.push_back(keyValue);
+#ifdef DEBUG
+    qDebug("KMLImportSettings::~KMLImportSettings: DELETED");
+#endif
 }
 
-void KMLImportSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+KMLImportSettings::Format KMLImportSettings::getFormat() const noexcept
 {
-    Settings::KeysWithDefaults keys;
-    Settings::KeyValue keyValue;
-
-    keyValue.first = ::FormatKey;
-    keyValue.second = Enum::toUnderlyingType(KMLImportSettings::DefaultFormat);
-    keys.push_back(keyValue);
+    return d->format;
 }
 
-void KMLImportSettings::applySettings(Settings::ValuesByKey valuesByKey) noexcept
+void KMLImportSettings::setFormat(Format format) noexcept
 {
-    bool ok;
-    const int enumeration = valuesByKey[::FormatKey].toInt(&ok);
-    if (ok) {
-        m_format = static_cast<KMLImportSettings::Format >(enumeration);
-    } else {
-        m_format = DefaultFormat;
+    if (d->format != format) {
+        d->format = format;
+        emit extendedSettingsChanged();
     }
 }
 
-void KMLImportSettings::restoreDefaults() noexcept
+// PROTECTED
+
+void KMLImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {
-    initSettings();
-    emit defaultsRestored();
+    Settings::KeyValue keyValue;
+
+    keyValue.first = ::FormatKey;
+    keyValue.second = Enum::toUnderlyingType(d->format);
+    keyValues.push_back(keyValue);
 }
 
-// PRIVATE
-
-void KMLImportSettings::initSettings() noexcept
+void KMLImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    m_format = DefaultFormat;
+    Settings::KeyValue keyValue;
+
+    keyValue.first = ::FormatKey;
+    keyValue.second = Enum::toUnderlyingType(::DefaultFormat);
+    keysWithDefaults.push_back(keyValue);
+}
+
+void KMLImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
+{
+    bool ok;
+    const int enumeration = valuesByKey.at(::FormatKey).toInt(&ok);
+    if (ok) {
+        d->format = static_cast<Format >(enumeration);
+    } else {
+        d->format = ::DefaultFormat;
+    }
+}
+
+void KMLImportSettings::restoreDefaultsExtn() noexcept
+{
+    d->format = ::DefaultFormat;
+
+    emit extendedSettingsChanged();
 }

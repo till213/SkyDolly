@@ -119,7 +119,7 @@ void KMLExportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWi
     d->settings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void KMLExportPlugin::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
+void KMLExportPlugin::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     d->settings.restoreSettings(valuesByKey);
 }

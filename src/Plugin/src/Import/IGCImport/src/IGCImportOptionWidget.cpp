@@ -80,14 +80,14 @@ void IGCImportOptionWidget::frenchConnection() noexcept
             this, &IGCImportOptionWidget::onENLThresholdChanged);
 #endif
 
-    connect(&d->settings, &IGCImportSettings::defaultsRestored,
+    connect(&d->settings, &IGCImportSettings::extendedSettingsChanged,
             this, &IGCImportOptionWidget::updateUi);
 }
 
 void IGCImportOptionWidget::initUi() noexcept
 {
-    ui->altitudeComboBox->addItem(tr("GNSS altitude"), Enum::toUnderlyingType(IGCImportSettings::Altitude::GnssAltitude));
-    ui->altitudeComboBox->addItem(tr("Pressure altitude"), Enum::toUnderlyingType(IGCImportSettings::Altitude::PressureAltitude));
+    ui->altitudeComboBox->addItem(tr("GNSS altitude"), Enum::toUnderlyingType(IGCImportSettings::AltitudeMode::Gnss));
+    ui->altitudeComboBox->addItem(tr("Pressure altitude"), Enum::toUnderlyingType(IGCImportSettings::AltitudeMode::Pressure));
 
     // Percent [0, 100]
     ui->enlThresholdSpinBox->setRange(0, 100);
@@ -97,24 +97,26 @@ void IGCImportOptionWidget::initUi() noexcept
 
 // PRIVATE SLOTS
 
-void IGCImportOptionWidget::onAltitudeChanged([[maybe_unused]]int index) noexcept
+void IGCImportOptionWidget::onAltitudeChanged() noexcept
 {
-    d->settings.m_altitude = static_cast<IGCImportSettings::Altitude>(ui->altitudeComboBox->currentData().toInt());
+    const IGCImportSettings::AltitudeMode altitudeMode = static_cast<IGCImportSettings::AltitudeMode>(ui->altitudeComboBox->currentData().toInt());
+    d->settings.setAltitudeMode(altitudeMode);
 }
 
 void IGCImportOptionWidget::onENLThresholdChanged(int value) noexcept
 {
-    d->settings.m_enlThresholdPercent = value;
+    d->settings.setEnlThresholdPercent(value);
 }
 
 void IGCImportOptionWidget::updateUi() noexcept
 {
+    const IGCImportSettings::AltitudeMode altitudeMode = d->settings.getAltitudeMode();
     int currentIndex = 0;
     while (currentIndex < ui->altitudeComboBox->count() &&
-           static_cast<IGCImportSettings::Altitude>(ui->altitudeComboBox->itemData(currentIndex).toInt()) != d->settings.m_altitude) {
+           static_cast<IGCImportSettings::AltitudeMode>(ui->altitudeComboBox->itemData(currentIndex).toInt()) != altitudeMode) {
         ++currentIndex;
     }
     ui->altitudeComboBox->setCurrentIndex(currentIndex);
 
-    ui->enlThresholdSpinBox->setValue(d->settings.m_enlThresholdPercent);
+    ui->enlThresholdSpinBox->setValue(d->settings.getEnlThresholdPercent());
 }

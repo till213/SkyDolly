@@ -367,34 +367,34 @@ void KMLExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
     keysWithDefaults.push_back(keyValue);
 }
 
-void KMLExportSettings::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
+void KMLExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok;
-    const int enumeration = valuesByKey[::ColorStyleKey].toInt(&ok);
+    const int enumeration = valuesByKey.at(::ColorStyleKey).toInt(&ok);
     if (ok) {
         d->colorStyle = static_cast<KMLExportSettings::ColorStyle >(enumeration);
     } else {
         d->colorStyle = ::DefaultColorStyle;
     }
 
-    d->nofColorsPerRamp = valuesByKey[::NofColorsPerRampKey].toInt(&ok);
+    d->nofColorsPerRamp = valuesByKey.at(::NofColorsPerRampKey).toInt(&ok);
     if (!ok) {
         d->nofColorsPerRamp = ::DefaultNofColorsPerRamp;
     }
 
-    d->lineWidth = valuesByKey[::LineWidthKey].toFloat(&ok);
+    d->lineWidth = valuesByKey.at(::LineWidthKey).toFloat(&ok);
     if (!ok) {
         d->lineWidth = ::DefaultLineWidth;
     }
 
-    d->jetStartColor = valuesByKey[::JetStartColorKey].value<QColor>();
-    d->jetEndColor = valuesByKey[::JetEndColorKey].value<QColor>();
-    d->turbopropStartColor = valuesByKey[::TurbopropStartColorKey].value<QColor>();
-    d->turbopropEndColor = valuesByKey[::TurbopropEndColorKey].value<QColor>();
-    d->pistonStartColor = valuesByKey[::PistonStartColorKey].value<QColor>();
-    d->pistonEndColor = valuesByKey[::PistonEndColorKey].value<QColor>();
-    d->allStartColor = valuesByKey[::AllStartColorKey].value<QColor>();
-    d->allEndColor = valuesByKey[::AllEndColorKey].value<QColor>();
+    d->jetStartColor = valuesByKey.at(::JetStartColorKey).value<QColor>();
+    d->jetEndColor = valuesByKey.at(::JetEndColorKey).value<QColor>();
+    d->turbopropStartColor = valuesByKey.at(::TurbopropStartColorKey).value<QColor>();
+    d->turbopropEndColor = valuesByKey.at(::TurbopropEndColorKey).value<QColor>();
+    d->pistonStartColor = valuesByKey.at(::PistonStartColorKey).value<QColor>();
+    d->pistonEndColor = valuesByKey.at(::PistonEndColorKey).value<QColor>();
+    d->allStartColor = valuesByKey.at(::AllStartColorKey).value<QColor>();
+    d->allEndColor = valuesByKey.at(::AllEndColorKey).value<QColor>();
 
     emit extendedSettingsChanged();
 }

@@ -99,7 +99,7 @@ void GPXExportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWi
     d->settings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void GPXExportPlugin::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
+void GPXExportPlugin::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     d->settings.restoreSettings(valuesByKey);
 }
@@ -116,7 +116,7 @@ QString GPXExportPlugin::getFileExtension() const noexcept
 
 QString GPXExportPlugin::getFileFilter() const noexcept
 {
-    return tr("GPS Exchange (*.%1)").arg(getFileExtension());
+    return tr("GPS exchange format (*.%1)").arg(getFileExtension());
 }
 
 std::unique_ptr<QWidget> GPXExportPlugin::createOptionWidget() const noexcept

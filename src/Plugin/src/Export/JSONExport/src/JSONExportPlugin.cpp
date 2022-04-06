@@ -96,7 +96,7 @@ void JSONExportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysW
     d->settings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void JSONExportPlugin::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
+void JSONExportPlugin::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     d->settings.restoreSettings(valuesByKey);
 }
@@ -113,7 +113,7 @@ QString JSONExportPlugin::getFileExtension() const noexcept
 
 QString JSONExportPlugin::getFileFilter() const noexcept
 {
-    return tr("JavaScript Object Notation(*.%1)").arg(getFileExtension());
+    return tr("JavaScript object notation(*.%1)").arg(getFileExtension());
 }
 
 std::unique_ptr<QWidget> JSONExportPlugin::createOptionWidget() const noexcept

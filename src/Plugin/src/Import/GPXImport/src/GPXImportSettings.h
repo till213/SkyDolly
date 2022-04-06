@@ -25,16 +25,20 @@
 #ifndef GPXIMPORTSETTINGS_H
 #define GPXIMPORTSETTINGS_H
 
+#include <memory>
+
 #include <QObject>
 #include <QString>
 
 #include "../../../../../Kernel/src/Settings.h"
+#include "../../../ImportPluginBaseSettings.h"
 
-class GPXImportSettings : public QObject
+class GPXImportSettingsPrivate;
+
+class GPXImportSettings : public ImportPluginBaseSettings
 {
     Q_OBJECT
 public:
-
     enum struct GPXElement {
         Waypoint = 0,
         Route = 1,
@@ -42,29 +46,34 @@ public:
     };
 
     GPXImportSettings() noexcept;
+    virtual ~GPXImportSettings() noexcept;
 
-    GPXElement m_waypointSelection;
-    GPXElement m_positionSelection;
-    int m_defaultAltitude;
-    int m_defaultVelocity;
+    GPXElement getWaypointSelection() const noexcept;
+    void setWaypointSelection(GPXElement selection) noexcept;
 
-    void addSettings(Settings::KeyValues &keyValues) const noexcept;
-    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;
-    void applySettings(Settings::ValuesByKey) noexcept;
-    void restoreDefaults() noexcept;
+    GPXElement getPositionSelection() const noexcept;
+    void setPositionSelection(GPXElement selection) noexcept;
+
+    int getDefaultAltitude() const noexcept;
+    void setDefaultAltitude(int altitude) noexcept;
+
+    int getDefaultVelocity() const noexcept;
+    void setDefaultVelocity(int velocity) noexcept;
 
 signals:
-    void defaultsRestored();
+    /*!
+     * Emitted whenever the extended settings have changed.
+     */
+    void extendedSettingsChanged();
+
+protected:
+    virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
+    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    virtual void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
+    virtual void restoreDefaultsExtn() noexcept override;
 
 private:
-    void initSettings() noexcept;
-
-    static constexpr GPXElement DefaultWaypointSelection = GPXElement::Route;
-    static constexpr GPXElement DefaultPositionSelection = GPXElement::Track;
-    // In feet
-    static constexpr int DefaultAltitude = 1000;
-    // In knots
-    static constexpr int DefaultVelocity = 120;
+    std::unique_ptr<GPXImportSettingsPrivate> d;
 };
 
 #endif // GPXIMPORTSETTINGS_H

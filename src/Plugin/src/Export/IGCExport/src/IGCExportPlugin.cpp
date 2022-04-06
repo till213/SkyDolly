@@ -148,7 +148,7 @@ void IGCExportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWi
     d->settings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void IGCExportPlugin::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
+void IGCExportPlugin::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     d->settings.restoreSettings(valuesByKey);
 }
@@ -165,7 +165,7 @@ QString IGCExportPlugin::getFileExtension() const noexcept
 
 QString IGCExportPlugin::getFileFilter() const noexcept
 {
-    return tr("International Gliding Commission (*.%1)").arg(getFileExtension());
+    return tr("International gliding commission (*.%1)").arg(getFileExtension());
 }
 
 std::unique_ptr<QWidget> IGCExportPlugin::createOptionWidget() const noexcept

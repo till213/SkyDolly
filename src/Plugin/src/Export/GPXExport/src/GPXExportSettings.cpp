@@ -102,10 +102,10 @@ void GPXExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
     keysWithDefaults.push_back(keyValue);
 }
 
-void GPXExportSettings::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
+void GPXExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok;
-    const int enumeration = valuesByKey[::TimestampModeKey].toInt(&ok);
+    const int enumeration = valuesByKey.at(::TimestampModeKey).toInt(&ok);
     if (ok) {
         d->timestampMode = static_cast<GPXExportSettings::TimestampMode >(enumeration);
     } else {

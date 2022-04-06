@@ -93,7 +93,7 @@ void CSVExportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWi
     d->settings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void CSVExportPlugin::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
+void CSVExportPlugin::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     d->settings.restoreSettings(valuesByKey);
 }

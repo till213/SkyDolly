@@ -73,7 +73,7 @@ void KMLImportOptionWidget::frenchConnection() noexcept
     connect(ui->formatComboBox, &QComboBox::currentIndexChanged,
             this, &KMLImportOptionWidget::onFormatChanged);
 #endif
-    connect(&d->settings, &KMLImportSettings::defaultsRestored,
+    connect(&d->settings, &KMLImportSettings::extendedSettingsChanged,
             this, &KMLImportOptionWidget::updateUi);
 }
 
@@ -86,16 +86,18 @@ void KMLImportOptionWidget::initUi() noexcept
 
 // PRIVATE SLOTS
 
-void KMLImportOptionWidget::onFormatChanged([[maybe_unused]]int index) noexcept
+void KMLImportOptionWidget::onFormatChanged() noexcept
 {
-    d->settings.m_format = static_cast<KMLImportSettings::Format>(ui->formatComboBox->currentData().toInt());
+    const KMLImportSettings::Format format = static_cast<KMLImportSettings::Format>(ui->formatComboBox->currentData().toInt());
+    d->settings.setFormat(format);
 }
 
 void KMLImportOptionWidget::updateUi() noexcept
 {
+    const KMLImportSettings::Format format = d->settings.getFormat();
     int currentIndex = 0;
     while (currentIndex < ui->formatComboBox->count() &&
-           static_cast<KMLImportSettings::Format>(ui->formatComboBox->itemData(currentIndex).toInt()) != d->settings.m_format) {
+           static_cast<KMLImportSettings::Format>(ui->formatComboBox->itemData(currentIndex).toInt()) != format) {
         ++currentIndex;
     }
     ui->formatComboBox->setCurrentIndex(currentIndex);

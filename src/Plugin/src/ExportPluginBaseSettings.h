@@ -64,7 +64,7 @@ public:
 
     void addSettings(Settings::KeyValues &keyValues) const noexcept;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;
-    void restoreSettings(Settings::ValuesByKey) noexcept;
+    void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept;
     void restoreDefaults() noexcept;
 
 signals:
@@ -76,7 +76,7 @@ signals:
 protected:
     virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept = 0;
     virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept = 0;
-    virtual void restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept = 0;
+    virtual void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept = 0;
     virtual void restoreDefaultsExtn() noexcept = 0;
 
 private:

@@ -107,7 +107,7 @@ IGCImportPlugin::~IGCImportPlugin() noexcept
 
 void IGCImportPlugin::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {
-    d->settings.addSettings(settings);
+    d->settings.addSettings(keyValues);
 }
 
 void IGCImportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
@@ -115,14 +115,19 @@ void IGCImportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWi
     d->settings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void IGCImportPlugin::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
+void IGCImportPlugin::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    d->settings.applySettings(valuesByKey);
+    d->settings.restoreSettings(valuesByKey);
+}
+
+ImportPluginBaseSettings &IGCImportPlugin::getSettings() const noexcept
+{
+    return d->settings;
 }
 
 QString IGCImportPlugin::getFileFilter() const noexcept
 {
-    return tr("International Gliding Commission (*.%1)").arg(IGCImportPluginPrivate::FileExtension);
+    return tr("International gliding commission (*.%1)").arg(IGCImportPluginPrivate::FileExtension);
 }
 
 std::unique_ptr<QWidget> IGCImportPlugin::createOptionWidget() const noexcept
@@ -143,11 +148,11 @@ bool IGCImportPlugin::readFile(QFile &file) noexcept
         Engine &engine = aircraft.getEngine();
         EngineData engineData;
         IGCImportPluginPrivate::EngineState engineState = IGCImportPluginPrivate::EngineState::Unknown;
-        const double enlThresholdNorm = static_cast<double>(d->settings.m_enlThresholdPercent) / 100.0;
+        const double enlThresholdNorm = static_cast<double>(d->settings.getEnlThresholdPercent()) / 100.0;
 
         for (const IGCParser::Fix &fix : d->igcParser.getFixes()) {
             // Import either GNSS or pressure altitude
-            const double altitude = d->settings.m_altitude == IGCImportSettings::Altitude::GnssAltitude ? fix.gnssAltitude : fix.pressureAltitude;
+            const double altitude = d->settings.getAltitudeMode() == IGCImportSettings::AltitudeMode::Gnss ? fix.gnssAltitude : fix.pressureAltitude;
             PositionData positionData {fix.latitude, fix.longitude, altitude};
             positionData.timestamp = fix.timestamp;
             positionData.indicatedAltitude = fix.pressureAltitude;
@@ -292,7 +297,7 @@ void IGCImportPlugin::updateExtendedFlightInfo(Flight &flight) noexcept
     flight.setDescription(description);
 }
 
-void IGCImportPlugin::updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept
+void IGCImportPlugin::updateExtendedFlightCondition([[maybe_unused]]FlightCondition &flightCondition) noexcept
 {}
 
 // PROTECTED SLOTS

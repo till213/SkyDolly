@@ -24,76 +24,126 @@
  */
 
 #include "../../../../../Kernel/src/Enum.h"
+#include "../../../../../Kernel/src/System.h"
 #include "../../../../../Kernel/src/Settings.h"
 #include "IGCImportSettings.h"
 
 namespace
 {
+    // Keys
     constexpr char AltitudeKey[] = "Altitude";
-    constexpr char ENLThresholdKey[] = "ENLThreshold";
+    constexpr char EnlThresholdKey[] = "EnlThreshold";
+
+    // Defaults
+    constexpr IGCImportSettings::AltitudeMode DefaultAltitudeMode = IGCImportSettings::AltitudeMode::Gnss;
+    constexpr int DefaultEnlThresholdPercent = 40;
 }
+
+class IGCImportSettingsPrivate
+{
+public:
+    IGCImportSettingsPrivate()
+        : altitudeMode(::DefaultAltitudeMode),
+          enlThresholdPercent(::DefaultEnlThresholdPercent)
+    {}
+
+    IGCImportSettings::AltitudeMode altitudeMode;
+    int enlThresholdPercent;
+};
 
 // PUBLIC
 
 IGCImportSettings::IGCImportSettings() noexcept
+    : d(std::make_unique<IGCImportSettingsPrivate>())
 {
-    initSettings();
+#ifdef DEBUG
+    qDebug("IGCImportSettings::IGCImportSettings: CREATED");
+#endif
 }
 
-void IGCImportSettings::addSettings(Settings::KeyValues &keyValues) const noexcept
+IGCImportSettings::~IGCImportSettings() noexcept
+{
+#ifdef DEBUG
+    qDebug("IGCImportSettings::~IGCImportSettings: DELETED");
+#endif
+}
+
+IGCImportSettings::AltitudeMode IGCImportSettings::getAltitudeMode() const noexcept
+{
+    return d->altitudeMode;
+}
+
+void IGCImportSettings::setAltitudeMode(AltitudeMode altitudeMode) noexcept
+{
+    if (d->altitudeMode != altitudeMode) {
+        d->altitudeMode = altitudeMode;
+        emit extendedSettingsChanged();
+    }
+}
+
+int IGCImportSettings::getEnlThresholdPercent() const noexcept
+{
+    return d->enlThresholdPercent;
+}
+
+void IGCImportSettings::setEnlThresholdPercent(int enlThresholdPercent) noexcept
+{
+    if (d->enlThresholdPercent != enlThresholdPercent) {
+        d->enlThresholdPercent = enlThresholdPercent;
+        emit extendedSettingsChanged();
+    }
+}
+
+// PROTECTED
+
+void IGCImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {
     Settings::KeyValue keyValue;
 
     keyValue.first = ::AltitudeKey;
-    keyValue.second = Enum::toUnderlyingType(m_altitude);
-    settings.push_back(keyValue);
+    keyValue.second = Enum::toUnderlyingType(d->altitudeMode);
+    keyValues.push_back(keyValue);
 
-    keyValue.first = ::ENLThresholdKey;
-    keyValue.second = m_enlThresholdPercent;
-    settings.push_back(keyValue);
+    keyValue.first = ::EnlThresholdKey;
+    keyValue.second = d->enlThresholdPercent;
+    keyValues.push_back(keyValue);
 }
 
-void IGCImportSettings::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+void IGCImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
     Settings::KeyValue keyValue;
 
     keyValue.first = ::AltitudeKey;
-    keyValue.second = Enum::toUnderlyingType(DefaultAltitude);
+    keyValue.second = Enum::toUnderlyingType(::DefaultAltitudeMode);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = ::ENLThresholdKey;
-    keyValue.second = IGCImportSettings::DefaultENLThresholdPercent;
+    keyValue.first = ::EnlThresholdKey;
+    keyValue.second = ::DefaultEnlThresholdPercent;
     keysWithDefaults.push_back(keyValue);
 }
 
-void IGCImportSettings::applySettings(Settings::ValuesByKey valuesByKey) noexcept
+void IGCImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok;
-    const int enumeration = valuesByKey[::AltitudeKey].toInt(&ok);
+    const int enumeration = valuesByKey.at(::AltitudeKey).toInt(&ok);
     if (ok) {
-        m_altitude = static_cast<Altitude >(enumeration);
+        d->altitudeMode = static_cast<AltitudeMode >(enumeration);
     } else {
-        m_altitude = DefaultAltitude;
+        d->altitudeMode = ::DefaultAltitudeMode;
     }
 
-    const double enlThresholdPercent = valuesByKey[::ENLThresholdKey].toDouble(&ok);
+    const double enlThresholdPercent = valuesByKey.at(::EnlThresholdKey).toDouble(&ok);
     if (ok) {
-        m_enlThresholdPercent = enlThresholdPercent;
+        d->enlThresholdPercent = enlThresholdPercent;
     } else {
-        m_enlThresholdPercent = DefaultENLThresholdPercent;
+        d->enlThresholdPercent = ::DefaultEnlThresholdPercent;
     }
 }
 
-void IGCImportSettings::restoreDefaults() noexcept
+void IGCImportSettings::restoreDefaultsExtn() noexcept
 {
-    initSettings();
-    emit defaultsRestored();
-}
+    d->altitudeMode = ::DefaultAltitudeMode;
+    d->enlThresholdPercent = ::DefaultEnlThresholdPercent;
 
-// PRIVATE
-
-void IGCImportSettings::initSettings() noexcept
-{
-    m_altitude = DefaultAltitude;
-    m_enlThresholdPercent = DefaultENLThresholdPercent;
+    emit extendedSettingsChanged();
 }

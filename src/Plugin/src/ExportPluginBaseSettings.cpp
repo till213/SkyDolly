@@ -137,16 +137,16 @@ void ExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &k
     addKeysWithDefaultsExtn(keysWithDefaults);
 }
 
-void ExportPluginBaseSettings::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
+void ExportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok;
-    int enumeration = valuesByKey[::ResamplingPeriodKey].toInt(&ok);
+    int enumeration = valuesByKey.at(::ResamplingPeriodKey).toInt(&ok);
     if (ok) {
         d->resamplingPeriod = static_cast<SampleRate::ResamplingPeriod >(enumeration);
     } else {
         d->resamplingPeriod = ::DefaultResamplingPeriod;
     }
-    d->openExportedFileEnabled = valuesByKey[::OpenExportedFileEnabledKey].toBool();
+    d->openExportedFileEnabled = valuesByKey.at(::OpenExportedFileEnabledKey).toBool();
     emit baseSettingsChanged();
 
     restoreSettingsExtn(valuesByKey);

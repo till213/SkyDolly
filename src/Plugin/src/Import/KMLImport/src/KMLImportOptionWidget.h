@@ -51,7 +51,7 @@ private:
     void initUi() noexcept;
 
 private slots:
-    void onFormatChanged(int index) noexcept;
+    void onFormatChanged() noexcept;
 
     void updateUi() noexcept;
 };

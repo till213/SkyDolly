@@ -32,8 +32,6 @@
 #include "../../Plugin/src/ExportPluginBaseSettings.h"
 #include "JSONExportSettings.h"
 
-
-
 class JSONExportSettingsPrivate
 {
 public:
@@ -62,13 +60,13 @@ JSONExportSettings::~JSONExportSettings() noexcept
 
 // PROTECTED
 
-void JSONExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
+void JSONExportSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &keyValues) const noexcept
 {}
 
-void JSONExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+void JSONExportSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {}
 
-void JSONExportSettings::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
+void JSONExportSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
 {
     emit extendedSettingsChanged();
 }

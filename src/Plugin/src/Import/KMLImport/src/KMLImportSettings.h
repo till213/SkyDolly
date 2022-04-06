@@ -25,12 +25,17 @@
 #ifndef KMLIMPORTSETTINGS_H
 #define KMLIMPORTSETTINGS_H
 
+#include <memory>
+
 #include <QObject>
 #include <QString>
 
 #include "../../../../../Kernel/src/Settings.h"
+#include "../../../ImportPluginBaseSettings.h"
 
-class KMLImportSettings : public QObject
+class KMLImportSettingsPrivate;
+
+class KMLImportSettings : public ImportPluginBaseSettings
 {
     Q_OBJECT
 public:
@@ -44,21 +49,26 @@ public:
     };
 
     KMLImportSettings() noexcept;
+    virtual ~KMLImportSettings() noexcept;
 
-    Format m_format;
-
-    void addSettings(Settings::KeyValues &keyValues) const noexcept;
-    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;
-    void applySettings(Settings::ValuesByKey) noexcept;
-    void restoreDefaults() noexcept;
+    Format getFormat() const noexcept;
+    void setFormat(Format format) noexcept;
 
 signals:
-    void defaultsRestored();
+    /*!
+     * Emitted whenever the extended settings have changed.
+     */
+    void extendedSettingsChanged();
+
+protected:
+    virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
+    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    virtual void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
+    virtual void restoreDefaultsExtn() noexcept override;
 
 private:
-    void initSettings() noexcept;
-
-    static constexpr Format DefaultFormat = Format::FlightAware;
+    std::unique_ptr<KMLImportSettingsPrivate> d;
 };
 
 #endif // KMLIMPORTSETTINGS_H
+

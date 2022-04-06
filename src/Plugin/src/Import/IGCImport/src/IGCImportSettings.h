@@ -25,38 +25,49 @@
 #ifndef IGCIMPORTSETTINGS_H
 #define IGCIMPORTSETTINGS_H
 
+#include <memory>
+
 #include <QObject>
 #include <QString>
 
 #include "../../../../../Kernel/src/Settings.h"
+#include "../../../ImportPluginBaseSettings.h"
 
-class IGCImportSettings : public QObject
+class IGCImportSettingsPrivate;
+
+class IGCImportSettings : public ImportPluginBaseSettings
 {
     Q_OBJECT
 public:
-    enum struct Altitude {
-        GnssAltitude = 0,
-        PressureAltitude = 1
+    enum struct AltitudeMode {
+        Gnss = 0,
+        Pressure = 1
     };
 
     IGCImportSettings() noexcept;
+    virtual ~IGCImportSettings() noexcept;
 
-    Altitude m_altitude;
-    int m_enlThresholdPercent;
+    AltitudeMode getAltitudeMode() const noexcept;
+    void setAltitudeMode(AltitudeMode altitudeMode) noexcept;
 
-    void addSettings(Settings::KeyValues &keyValues) const noexcept;
-    void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;
-    void applySettings(Settings::ValuesByKey) noexcept;
-    void restoreDefaults() noexcept;
+    int getEnlThresholdPercent() const noexcept;
+    void setEnlThresholdPercent(int enlThresholdPercent) noexcept;
 
 signals:
-    void defaultsRestored();
+    /*!
+     * Emitted whenever the extended settings have changed.
+     */
+    void extendedSettingsChanged();
+
+protected:
+    virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
+    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    virtual void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
+    virtual void restoreDefaultsExtn() noexcept override;
 
 private:
-    void initSettings() noexcept;
-
-    static constexpr Altitude DefaultAltitude = Altitude::GnssAltitude;
-    static constexpr int DefaultENLThresholdPercent = 40;
+    std::unique_ptr<IGCImportSettingsPrivate> d;
 };
 
 #endif // IGCIMPORTSETTINGS_H
+

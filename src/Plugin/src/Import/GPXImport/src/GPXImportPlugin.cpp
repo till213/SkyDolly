@@ -87,7 +87,7 @@ GPXImportPlugin::~GPXImportPlugin() noexcept
 
 void GPXImportPlugin::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {
-    d->settings.addSettings(settings);
+    d->settings.addSettings(keyValues);
 }
 
 void GPXImportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
@@ -95,14 +95,19 @@ void GPXImportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWi
     d->settings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void GPXImportPlugin::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
+void GPXImportPlugin::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    d->settings.applySettings(valuesByKey);
+    d->settings.restoreSettings(valuesByKey);
+}
+
+ImportPluginBaseSettings &GPXImportPlugin::getSettings() const noexcept
+{
+    return d->settings;
 }
 
 QString GPXImportPlugin::getFileFilter() const noexcept
 {
-    return tr("GPX Exchange Format (*.%1)").arg(GPXImportPluginPrivate::FileExtension);
+    return tr("GPX exchange format (*.%1)").arg(GPXImportPluginPrivate::FileExtension);
 }
 
 std::unique_ptr<QWidget> GPXImportPlugin::createOptionWidget() const noexcept

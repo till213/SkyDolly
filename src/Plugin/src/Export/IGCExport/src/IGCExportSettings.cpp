@@ -126,10 +126,10 @@ void IGCExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
     keysWithDefaults.push_back(keyValue);
 }
 
-void IGCExportSettings::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
+void IGCExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    d->pilotName = valuesByKey[::PilotNameKey].value<QString>();
-    d->coPilotName = valuesByKey[::CoPilotNameKey].value<QString>();
+    d->pilotName = valuesByKey.at(::PilotNameKey).value<QString>();
+    d->coPilotName = valuesByKey.at(::CoPilotNameKey).value<QString>();
 
     emit extendedSettingsChanged();
 }

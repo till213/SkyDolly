@@ -82,9 +82,9 @@ void CSVImportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWi
     d->settings.addKeysWithDefaults(keysWithDefaults);
 }
 
-void CSVImportPlugin::restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
+void CSVImportPlugin::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    d->settings.applySettings(valuesByKey);
+    d->settings.restoreSettings(valuesByKey);
 }
 
 ImportPluginBaseSettings &CSVImportPlugin::getSettings() const noexcept
@@ -124,6 +124,8 @@ bool CSVImportPlugin::readFile(QFile &file) noexcept
     }
     if (parser != nullptr) {
         ok = parser->parse(file, d->firstDateTimeUtc, d->flightNumber);
+    } else {
+        ok = false;
     }
     return ok;
 }
@@ -205,10 +207,10 @@ void CSVImportPlugin::updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noe
     aircraftInfo.flightNumber = d->flightNumber;
 }
 
-void CSVImportPlugin::updateExtendedFlightInfo(Flight &flight) noexcept
+void CSVImportPlugin::updateExtendedFlightInfo([[maybe_unused]]Flight &flight) noexcept
 {}
 
-void CSVImportPlugin::updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept
+void CSVImportPlugin::updateExtendedFlightCondition([[maybe_unused]]FlightCondition &flightCondition) noexcept
 {}
 
 // PROTECTED SLOTS

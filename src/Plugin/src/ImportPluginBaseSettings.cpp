@@ -98,9 +98,9 @@ void ImportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &k
     addKeysWithDefaultsExtn(keysWithDefaults);
 }
 
-void ImportPluginBaseSettings::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
+void ImportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
-    d->addToFlightEnabled = valuesByKey[::AddToFlightEnabledKey].toBool();
+    d->addToFlightEnabled = valuesByKey.at(::AddToFlightEnabledKey).toBool();
     emit baseSettingsChanged();
 
     restoreSettingsExtn(valuesByKey);

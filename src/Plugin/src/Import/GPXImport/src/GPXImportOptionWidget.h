@@ -51,8 +51,8 @@ private:
     void initUi() noexcept;
 
 private slots:
-    void onWaypointSelelectionChanged(int index) noexcept;
-    void onPositionSelelectionChanged(int index) noexcept;
+    void onWaypointSelelectionChanged() noexcept;
+    void onPositionSelelectionChanged() noexcept;
     void onDefaultAltitudeChanged(int index) noexcept;
     void onDefaultVelocityChanged(int value) noexcept;
 

@@ -30,8 +30,10 @@
 
 namespace
 {
+    // Keys
     constexpr char FormatKey[] = "Format";
 
+    // Defaults
     constexpr CSVImportSettings::Format DefaultFormat = CSVImportSettings::Format::SkyDolly;
 }
 
@@ -86,15 +88,6 @@ void CSVImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const no
     keyValues.push_back(keyValue);
 }
 
-void CSVImportSettings::setTimestampMode(TimestampMode timestampMode) noexcept
-{
-    if (d->timestampMode != timestampMode) {
-        d->timestampMode = timestampMode;
-        emit extendedSettingsChanged();
-    }
-}
-
-
 void CSVImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
     Settings::KeyValue keyValue;
@@ -104,10 +97,10 @@ void CSVImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
     keysWithDefaults.push_back(keyValue);
 }
 
-void CSVImportSettings::applySettingsExtn(Settings::ValuesByKey valuesByKey) noexcept
+void CSVImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok;
-    const int enumeration = valuesByKey[::FormatKey].toInt(&ok);
+    const int enumeration = valuesByKey.at(::FormatKey).toInt(&ok);
     if (ok) {
         d->format = static_cast<CSVImportSettings::Format >(enumeration);
     } else {
@@ -115,7 +108,7 @@ void CSVImportSettings::applySettingsExtn(Settings::ValuesByKey valuesByKey) noe
     }
 }
 
-void CSVImportSettings::restoreDefaults() noexcept
+void CSVImportSettings::restoreDefaultsExtn() noexcept
 {
     d->format = ::DefaultFormat;
 

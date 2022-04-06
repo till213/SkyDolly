@@ -83,7 +83,7 @@ protected:
     // Re-implement
     virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept = 0;
     virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept = 0;
-    virtual void restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept = 0;
+    virtual void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept = 0;
     virtual ImportPluginBaseSettings &getSettings() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;

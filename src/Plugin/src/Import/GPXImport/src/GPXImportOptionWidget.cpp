@@ -94,7 +94,7 @@ void GPXImportOptionWidget::frenchConnection() noexcept
             this, &GPXImportOptionWidget::onDefaultVelocityChanged);
 #endif
 
-    connect(&d->settings, &GPXImportSettings::defaultsRestored,
+    connect(&d->settings, &GPXImportSettings::extendedSettingsChanged,
             this, &GPXImportOptionWidget::updateUi);
 }
 
@@ -120,40 +120,46 @@ void GPXImportOptionWidget::initUi() noexcept
 
 // PRIVATE SLOTS
 
-void GPXImportOptionWidget::onWaypointSelelectionChanged(int index) noexcept
+void GPXImportOptionWidget::onWaypointSelelectionChanged() noexcept
 {
-    d->settings.m_waypointSelection = static_cast<GPXImportSettings::GPXElement>(ui->waypointSelectionComboBox->currentData().toInt());
+    const GPXImportSettings::GPXElement waypointSelection = static_cast<GPXImportSettings::GPXElement>(ui->waypointSelectionComboBox->currentData().toInt());
+    d->settings.setWaypointSelection(waypointSelection);
 }
 
-void GPXImportOptionWidget::onPositionSelelectionChanged(int index) noexcept
+void GPXImportOptionWidget::onPositionSelelectionChanged() noexcept
 {
-    d->settings.m_positionSelection = static_cast<GPXImportSettings::GPXElement>(ui->positionSelectionComboBox->currentData().toInt());
+    const GPXImportSettings::GPXElement positionSelection = static_cast<GPXImportSettings::GPXElement>(ui->positionSelectionComboBox->currentData().toInt());
+    d->settings.setPositionSelection(positionSelection);
 }
 
 void GPXImportOptionWidget::onDefaultAltitudeChanged(int value) noexcept
 {
-    d->settings.m_defaultAltitude = value;
+    d->settings.setDefaultAltitude(value);
 }
 
 void GPXImportOptionWidget::onDefaultVelocityChanged(int value) noexcept
 {
-    d->settings.m_defaultVelocity = value;
+    d->settings.setDefaultVelocity(value);
 }
 
 void GPXImportOptionWidget::updateUi() noexcept
 {
+    const GPXImportSettings::GPXElement waypointSelection = d->settings.getWaypointSelection();
     int currentIndex = 0;
     while (currentIndex < ui->waypointSelectionComboBox->count() &&
-           static_cast<GPXImportSettings::GPXElement>(ui->waypointSelectionComboBox->itemData(currentIndex).toInt()) != d->settings.m_waypointSelection) {
+           static_cast<GPXImportSettings::GPXElement>(ui->waypointSelectionComboBox->itemData(currentIndex).toInt()) != waypointSelection) {
         ++currentIndex;
     }
     ui->waypointSelectionComboBox->setCurrentIndex(currentIndex);
+
+    const GPXImportSettings::GPXElement positionSelection = d->settings.getPositionSelection();
+    currentIndex = 0;
     while (currentIndex < ui->positionSelectionComboBox->count() &&
-           static_cast<GPXImportSettings::GPXElement>(ui->positionSelectionComboBox->itemData(currentIndex).toInt()) != d->settings.m_positionSelection) {
+           static_cast<GPXImportSettings::GPXElement>(ui->positionSelectionComboBox->itemData(currentIndex).toInt()) != positionSelection) {
         ++currentIndex;
     }
     ui->positionSelectionComboBox->setCurrentIndex(currentIndex);
 
-    ui->defaultAltitudeSpinBox->setValue(d->settings.m_defaultAltitude);
-    ui->defaultVelocitySpinBox->setValue(d->settings.m_defaultVelocity);
+    ui->defaultAltitudeSpinBox->setValue(d->settings.getDefaultAltitude());
+    ui->defaultVelocitySpinBox->setValue(d->settings.getDefaultVelocity());
 }
