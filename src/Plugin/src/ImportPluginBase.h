@@ -44,6 +44,7 @@ class Flight;
 struct AircraftType;
 struct AircraftInfo;
 struct FlightCondition;
+class ImportPluginBaseSettings;
 class ImportPluginBasePrivate;
 
 class PLUGIN_API ImportPluginBase : public PluginBase, public ImportIntf
@@ -80,6 +81,7 @@ protected:
     AircraftType &getSelectedAircraftType() const noexcept;
 
     // Re-implement
+    virtual ImportPluginBaseSettings &getSettings() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
     virtual bool readFile(QFile &file) noexcept = 0;
@@ -97,6 +99,10 @@ protected slots:
 
 private:
     std::unique_ptr<ImportPluginBasePrivate> d;
+
+    virtual void addSettings(Settings::KeyValues &keyValues) const noexcept override final;
+    virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override final;
+    virtual void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept override final;
 
     bool importFile(const QString &filePath, FlightService &flightService) noexcept;
     void updateAircraftInfo() noexcept;

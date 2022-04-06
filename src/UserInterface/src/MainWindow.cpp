@@ -1081,11 +1081,11 @@ void MainWindow::updateReplaySpeedUi() noexcept
 
         switch (Settings::getInstance().getReplaySpeeedUnit()) {
         case Replay::SpeedUnit::Absolute:
-            d->customSpeedLineEdit->setToolTip(tr("Custom replay speed factor in [%L1, %L2]").arg(ReplaySpeedAbsoluteMin).arg(ReplaySpeedAbsoluteMax));
+            d->customSpeedLineEdit->setToolTip(tr("Custom replay speed factor in [%L1, %L2].").arg(ReplaySpeedAbsoluteMin).arg(ReplaySpeedAbsoluteMax));
             d->customSpeedLineEdit->setValidator(d->customReplaySpeedFactorValidator);
             break;
         case Replay::SpeedUnit::Percent:
-            d->customSpeedLineEdit->setToolTip(tr("Custom replay speed % in [%L1%, %L2%]").arg(ReplaySpeedAbsoluteMin * 100.0).arg(ReplaySpeedAbsoluteMax * 100.0));
+            d->customSpeedLineEdit->setToolTip(tr("Custom replay speed % in [%L1%, %L2%].").arg(ReplaySpeedAbsoluteMin * 100.0).arg(ReplaySpeedAbsoluteMax * 100.0));
             d->customSpeedLineEdit->setValidator(d->customReplaySpeedPercentValidator);
             break;
         default:
@@ -1159,19 +1159,19 @@ void MainWindow::updateMainWindow() noexcept
     }
 
     if (settings.getRecordingSampleRate() != SampleRate::SampleRate::Auto) {
-        ui->recordAction->setToolTip(tr("Record [@%1 Hz]").arg(Settings::getInstance().getRecordingSampleRateValue()));
+        ui->recordAction->setToolTip(tr("Record [@%1 Hz].").arg(Settings::getInstance().getRecordingSampleRateValue()));
     } else {
-        ui->recordAction->setToolTip(tr("Record [auto sample rate]"));
+        ui->recordAction->setToolTip(tr("Record [auto sample rate]."));
     }
 
     if (settings.isAbsoluteSeekEnabled()) {
         double seekIntervalSeconds = settings.getSeekIntervalSeconds();
-        ui->forwardAction->setToolTip(tr("Fast forward [%1 sec]").arg(seekIntervalSeconds));
-        ui->backwardAction->setToolTip(tr("Rewind [%1 sec]").arg(seekIntervalSeconds));
+        ui->forwardAction->setToolTip(tr("Fast forward [%1 sec].").arg(seekIntervalSeconds));
+        ui->backwardAction->setToolTip(tr("Rewind [%1 sec].").arg(seekIntervalSeconds));
     } else {
         double seekIntervalPercent = settings.getSeekIntervalPercent();
-        ui->forwardAction->setToolTip(tr("Fast forward [%1 %]").arg(seekIntervalPercent));
-        ui->backwardAction->setToolTip(tr("Rewind [%1 %]").arg(seekIntervalPercent));
+        ui->forwardAction->setToolTip(tr("Fast forward [%1 %].").arg(seekIntervalPercent));
+        ui->backwardAction->setToolTip(tr("Rewind [%1 %].").arg(seekIntervalPercent));
     }
 
     if (settings.isModuleSelectorVisible()) {

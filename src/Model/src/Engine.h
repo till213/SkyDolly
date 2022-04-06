@@ -80,13 +80,13 @@ public:
     void clear() noexcept;
 
     typedef std::vector<EngineData>::iterator Iterator;
-    typedef std::insert_iterator<std::vector<EngineData>> InsertIterator;
+    typedef std::back_insert_iterator<std::vector<EngineData>> BackInsertIterator;
 
     Iterator begin() noexcept;
     Iterator end() noexcept;
     const Iterator begin() const noexcept;
     const Iterator end() const noexcept;
-    InsertIterator insertIterator() noexcept;
+    BackInsertIterator backInsertIterator() noexcept;
 
     EngineData& operator[](std::size_t index) noexcept;
     const EngineData& operator[](std::size_t index) const noexcept;

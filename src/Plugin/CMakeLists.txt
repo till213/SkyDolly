@@ -18,12 +18,13 @@ target_sources(${LIBRARY_NAME}
         src/Export.h src/Export.cpp
         src/PluginBase.h src/PluginBase.cpp
         src/ImportPluginBase.h src/ImportPluginBase.cpp
-        src/ExportPluginBase.h src/ExportPluginBase.cpp
-        src/ExportPluginBaseSettings.h src/ExportPluginBaseSettings.cpp
+        src/ImportPluginBaseSettings.h src/ImportPluginBaseSettings.cpp
         src/BasicImportDialog.h src/BasicImportDialog.cpp src/BasicImportDialog.ui
+        src/ExportPluginBase.h src/ExportPluginBase.cpp
+        src/ExportPluginBaseSettings.h src/ExportPluginBaseSettings.cpp        
         src/BasicExportDialog.h src/BasicExportDialog.cpp src/BasicExportDialog.ui
         src/SettingsIntf.h
-        src/CSVConst.h
+        src/CsvConst.h
 )
 
 set(PLUGIN_LIBS

@@ -59,7 +59,7 @@ void PluginBase::setParentWidget(QWidget *parent) noexcept
 
 void PluginBase::storeSettings(const QUuid &pluginUuid) const noexcept
 {
-    Settings::PluginSettings settings;
+    Settings::KeyValues settings;
     addSettings(settings);
     if (settings.size() > 0) {
         Settings::getInstance().storePluginSettings(pluginUuid, settings);
@@ -78,7 +78,7 @@ void PluginBase::restoreSettings(const QUuid &pluginUuid) noexcept
 
 // PROTECTED
 
-void PluginBase::addSettings(Settings::PluginSettings &settings) const noexcept
+void PluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
 {}
 
 void PluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept

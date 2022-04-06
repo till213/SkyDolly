@@ -46,7 +46,7 @@ public:
     SampleRate::ResamplingPeriod getResamplingPeriod() const noexcept;
     void setResamplingPeriod(SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
     bool isOpenExportedFileEnabled() const noexcept;
-    void setOpenExportedFileEnabled(bool openExportedFileEnabled) noexcept;
+    void setOpenExportedFileEnabled(bool enabled) noexcept;
 
     /*!
      * Returns whether the user has selected the file via the file selection dialog,
@@ -62,9 +62,9 @@ public:
     bool isFileDialogSelectedFile() const noexcept;
     void setFileDialogSelectedFile(bool fileDialogSelected) noexcept;
 
-    void addSettings(Settings::PluginSettings &settings) const noexcept;
+    void addSettings(Settings::KeyValues &keyValues) const noexcept;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;
-    void restoreSettings(Settings::ValuesByKey) noexcept;
+    void restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept;
     void restoreDefaults() noexcept;
 
 signals:
@@ -73,16 +73,10 @@ signals:
      */
     void baseSettingsChanged();
 
-    /*!
-     * Emitted whenever the extended settings have changed. This signal is
-     * only emitted by classes extending the ExportPluginBaseSettings.
-     */
-    void extendedSettingsChanged();
-
 protected:
-    virtual void addSettingsExtn(Settings::PluginSettings &settings) const noexcept = 0;
+    virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept = 0;
     virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept = 0;
-    virtual void restoreSettingsExtn(Settings::ValuesByKey valuesByKey) noexcept = 0;
+    virtual void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept = 0;
     virtual void restoreDefaultsExtn() noexcept = 0;
 
 private:

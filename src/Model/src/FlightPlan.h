@@ -50,13 +50,13 @@ public:
     void clear() noexcept;
 
     typedef std::vector<Waypoint>::iterator Iterator;
-    typedef std::insert_iterator<std::vector<Waypoint>> InsertIterator;
+    typedef std::back_insert_iterator<std::vector<Waypoint>> BackInsertIterator;
 
     Iterator begin() noexcept;
     Iterator end() noexcept;
     const Iterator begin() const noexcept;
     const Iterator end() const noexcept;
-    InsertIterator insertIterator() noexcept;
+    BackInsertIterator backInsertIterator() noexcept;
 
     Waypoint& operator[](std::size_t index) noexcept;
     const Waypoint& operator[](std::size_t index) const noexcept;

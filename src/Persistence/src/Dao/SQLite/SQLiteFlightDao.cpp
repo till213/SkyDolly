@@ -179,7 +179,7 @@ bool SQLiteFlightDao::getFlightById(std::int64_t id, Flight &flight) const noexc
         flight.clear(false);
         QSqlRecord record = query.record();
         const int idIdx = record.indexOf("id");
-        const int creationDateIdx = record.indexOf("creation_date");
+        const int creationTimeIdx = record.indexOf("creation_time");
         const int titleIdx = record.indexOf("title");
         const int descriptionIdx = record.indexOf("description");
         const int surfaceTypeIdx = record.indexOf("surface_type");
@@ -201,9 +201,9 @@ bool SQLiteFlightDao::getFlightById(std::int64_t id, Flight &flight) const noexc
         const int userAircraftSequenceNumberIdx = record.indexOf("user_aircraft_seq_nr");
         if (query.next()) {
             flight.setId(query.value(idIdx).toLongLong());
-            QDateTime date = query.value(creationDateIdx).toDateTime();
-            date.setTimeZone(QTimeZone::utc());
-            flight.setCreationDate(date.toLocalTime());
+            QDateTime dateTime = query.value(creationTimeIdx).toDateTime();
+            dateTime.setTimeZone(QTimeZone::utc());
+            flight.setCreationTime(dateTime.toLocalTime());
             flight.setTitle(query.value(titleIdx).toString());
             flight.setDescription(query.value(descriptionIdx).toString());
 
@@ -229,7 +229,7 @@ bool SQLiteFlightDao::getFlightById(std::int64_t id, Flight &flight) const noexc
             flight.setFlightCondition(flightCondition);
         }
         std::vector<std::unique_ptr<Aircraft>> aircraft;
-        ok = d->aircraftDao->getByFlightId(id, std::inserter(aircraft, aircraft.begin()));
+        ok = d->aircraftDao->getByFlightId(id, std::back_inserter(aircraft));
         flight.setAircraft(std::move(aircraft));
         if (ok) {
             // Index starts at 0

@@ -467,10 +467,6 @@ void PathCreatorPlugin::recordAircraftInfo() noexcept
     info.aircraftType.wingSpan = d->randomGenerator->bounded(200);
     info.aircraftType.engineType = static_cast<SimType::EngineType>(d->randomGenerator->bounded(7));
     info.aircraftType.numberOfEngines = d->randomGenerator->bounded(5);
-
-    if (info.startDate.isNull()) {
-        info.startDate = QDateTime::currentDateTime();
-    }
     info.tailNumber = QString::number(d->randomGenerator->bounded(1000));
     info.airline = QString::number(d->randomGenerator->bounded(1000));
     info.flightNumber = QString::number(d->randomGenerator->bounded(100));

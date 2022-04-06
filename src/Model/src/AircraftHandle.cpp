@@ -116,13 +116,16 @@ std::size_t AircraftHandle::count() const noexcept
 const AircraftHandleData &AircraftHandle::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const AircraftHandleData *p1, *p2;
-    const std::int64_t adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timeOffset, std::int64_t(0));
+    const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? d->aircraftInfo.timeOffset : 0;
+    const std::int64_t adjustedTimestamp = qMax(timestamp + timeOffset, std::int64_t(0));
 
     if (d->currentTimestamp != adjustedTimestamp || d->currentAccess != access) {
 
         double tn;
         switch (access) {
         case TimeVariableData::Access::Linear:
+            [[fallthrough]];
+        case TimeVariableData::Access::Export:
             if (SkySearch::getLinearInterpolationSupportData(d->aircraftHandleData, adjustedTimestamp, SkySearch::DefaultInterpolationWindow, d->currentIndex, &p1, &p2)) {
                 tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
             }
@@ -207,9 +210,9 @@ const AircraftHandle::Iterator AircraftHandle::end() const noexcept
     return Iterator(d->aircraftHandleData.end());
 }
 
-AircraftHandle::InsertIterator AircraftHandle::insertIterator() noexcept
+AircraftHandle::BackInsertIterator AircraftHandle::backInsertIterator() noexcept
 {
-    return std::inserter(d->aircraftHandleData, d->aircraftHandleData.begin());
+    return std::back_inserter(d->aircraftHandleData);
 }
 
 // OPERATORS

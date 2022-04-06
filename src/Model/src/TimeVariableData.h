@@ -35,9 +35,16 @@ struct MODEL_API TimeVariableData
 {
     static constexpr std::int64_t InvalidTime = std::numeric_limits<std::int64_t>::min();
 
+    /*!
+     * Defines the way (use case) the sampled data is accessed.
+     */
     enum struct Access {
+        /*! The sampled data is accessed in a linear way, taking the time-offset of the Aircraft into account, typically for replay. */
         Linear,
-        Seek
+        /*! The sampled data is accessed in a random fashion, taking the time-offset of the Aircraft into account, typically for seeking in the timeline. */
+        Seek,
+        /*! The sampled data is accessed for export (in a linear way), but always starting from the first sample point (not taking the time-offset of the Aircraft into account). */
+        Export
     };
 
     // In milliseconds since the start of recording

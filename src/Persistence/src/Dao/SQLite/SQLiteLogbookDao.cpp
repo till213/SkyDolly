@@ -61,8 +61,8 @@ std::forward_list<FlightDate> SQLiteLogbookDao::getFlightDates() const noexcept
     QSqlQuery query;
     query.setForwardOnly(true);
     query.prepare(
-        "select strftime('%Y', creation_date) as year, strftime('%m', creation_date) as month, strftime('%d', creation_date) as day, count(flight.id) as nof_flights "
-        "from  flight "
+        "select strftime('%Y', f.creation_time) as year, strftime('%m', f.creation_time) as month, strftime('%d', f.creation_time) as day, count(f.id) as nof_flights "
+        "from  flight f "
         "group by year, month, day"
     );
 
@@ -103,10 +103,10 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
     QSqlQuery query;
     query.setForwardOnly(true);
     query.prepare(
-        "select f.id, f.creation_date, f.title, a.type,"
+        "select f.id, f.creation_time, f.title, a.type,"
         "       (select count(*) from aircraft where aircraft.flight_id = f.id) as aircraft_count,"
-        "       a.start_date, f.start_local_sim_time, f.start_zulu_sim_time, fp1.ident as start_waypoint,"
-        "       a.end_date, f.end_local_sim_time, f.end_zulu_sim_time, fp2.ident as end_waypoint "
+        "       f.start_local_sim_time, f.start_zulu_sim_time, fp1.ident as start_waypoint,"
+        "       f.end_local_sim_time, f.end_zulu_sim_time, fp2.ident as end_waypoint "
         "from   flight f "
         "join   aircraft a "
         "on     a.flight_id = f.id "
@@ -117,7 +117,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
         "on fp1.aircraft_id = a.id "
         "left join (select ident, aircraft_id from waypoint wo2 where wo2.timestamp = (select max(wi2.timestamp) from waypoint wi2 where wi2.aircraft_id = wo2.aircraft_id)) fp2 "
         "on fp2.aircraft_id = a.id "
-        "where f.creation_date between :from_date and :to_date "
+        "where f.creation_time between :from_date and :to_date "
         "  and (  f.title like coalesce(:search_keyword, f.title) "
         "       or a.type like coalesce(:search_keyword, a.type) "
         "       or start_waypoint like coalesce(:search_keyword, start_waypoint) "
@@ -143,14 +143,12 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
     if (ok) {
         QSqlRecord record = query.record();
         const int idIdx = record.indexOf("id");
-        const int creationDateIdx = record.indexOf("creation_date");
+        const int creationTimeIdx = record.indexOf("creation_time");
         const int typeIdx = record.indexOf("type");
         const int aircraftCountIdx = record.indexOf("aircraft_count");
-        const int startDateIdx = record.indexOf("start_date");
         const int startLocalSimulationTimeIdx = record.indexOf("start_local_sim_time");
         const int startZuluSimulationTimeIdx = record.indexOf("start_zulu_sim_time");
         const int startWaypointIdx = record.indexOf("start_waypoint");
-        const int endDateIdx = record.indexOf("end_date");
         const int endLocalSimulationTimeIdx = record.indexOf("end_local_sim_time");
         const int endZuluSimulationTimeIdx = record.indexOf("end_zulu_sim_time");
         const int endWaypointIdx = record.indexOf("end_waypoint");
@@ -160,21 +158,15 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
             FlightSummary summary;
             summary.id = query.value(idIdx).toLongLong();
 
-            QDateTime dateTime = query.value(creationDateIdx).toDateTime();
+            QDateTime dateTime = query.value(creationTimeIdx).toDateTime();
             dateTime.setTimeZone(QTimeZone::utc());
             summary.creationDate = dateTime.toLocalTime();
             summary.aircraftType = query.value(typeIdx).toString();
             summary.aircraftCount = query.value(aircraftCountIdx).toInt();
-            dateTime = query.value(startDateIdx).toDateTime();
-            dateTime.setTimeZone(QTimeZone::utc());
-            summary.startDate = dateTime.toLocalTime();
             // Persisted times is are already local respectively zulu simulation times
             summary.startSimulationLocalTime = query.value(startLocalSimulationTimeIdx).toDateTime();
             summary.startSimulationZuluTime = query.value(startZuluSimulationTimeIdx).toDateTime();
             summary.startLocation = query.value(startWaypointIdx).toString();
-            dateTime = query.value(endDateIdx).toDateTime();
-            dateTime.setTimeZone(QTimeZone::utc());
-            summary.endDate = dateTime.toLocalTime();
             // Persisted times is are already local respectively zulu simulation times
             summary.endSimulationLocalTime = query.value(endLocalSimulationTimeIdx).toDateTime();
             summary.endSimulationZuluTime = query.value(endZuluSimulationTimeIdx).toDateTime();

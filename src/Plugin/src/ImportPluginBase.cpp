@@ -23,7 +23,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
-#include <tuple>
 #include <vector>
 
 #include <QWidget>
@@ -55,6 +54,7 @@
 #include "../../Persistence/src/Service/AircraftService.h"
 #include "../../Persistence/src/Service/AircraftTypeService.h"
 #include "BasicImportDialog.h"
+#include "ImportPluginBaseSettings.h"
 #include "ImportPluginBase.h"
 
 class ImportPluginBasePrivate
@@ -62,8 +62,7 @@ class ImportPluginBasePrivate
 public:
     ImportPluginBasePrivate()
         : aircraftService(std::make_unique<AircraftService>()),
-          aircraftTypeService(std::make_unique<AircraftTypeService>()),
-          addToCurrentFlight(false)
+          aircraftTypeService(std::make_unique<AircraftTypeService>())
     {}
 
     std::unique_ptr<AircraftService> aircraftService;
@@ -71,7 +70,6 @@ public:
     QFile file;
     Unit unit;
     AircraftType aircraftType;
-    bool addToCurrentFlight;
     FlightAugmentation flightAugmentation;
 };
 
@@ -95,9 +93,9 @@ ImportPluginBase::~ImportPluginBase() noexcept
 bool ImportPluginBase::importData(FlightService &flightService) noexcept
 {
     bool ok;
-    Settings &settings = Settings::getInstance();
+    ImportPluginBaseSettings &baseSettings = getSettings();
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
-    std::unique_ptr<BasicImportDialog> importDialog = std::make_unique<BasicImportDialog>(getFileFilter(), getParentWidget());
+    std::unique_ptr<BasicImportDialog> importDialog = std::make_unique<BasicImportDialog>(getFileFilter(), baseSettings, getParentWidget());
     connect(importDialog.get(), &BasicImportDialog::restoreDefaultOptions,
             this, &ImportPluginBase::onRestoreDefaultSettings);
     // Transfer ownership to importDialog
@@ -107,10 +105,9 @@ bool ImportPluginBase::importData(FlightService &flightService) noexcept
         // Remember import (export) path
         const QString selectedFilePath = importDialog->getSelectedFilePath();
         const QString filePath = QFileInfo(selectedFilePath).absolutePath();
-        settings.setExportPath(filePath);
+        Settings::getInstance().setExportPath(filePath);
         ok = importDialog->getSelectedAircraftType(d->aircraftType);
         if (ok) {
-            d->addToCurrentFlight = importDialog->isAddToFlightEnabled();
 #ifdef DEBUG
             QElapsedTimer timer;
             timer.start();
@@ -123,7 +120,7 @@ bool ImportPluginBase::importData(FlightService &flightService) noexcept
             qDebug("%s import %s in %lld ms", qPrintable(QFileInfo(selectedFilePath).fileName()), (ok ? qPrintable("SUCCESS") : qPrintable("FAIL")), timer.elapsed());
 #endif
             if (ok) {
-                if (d->addToCurrentFlight) {
+                if (baseSettings.isAddToFlightEnabled()) {
                     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
                     if (skyConnect) {
                         skyConnect->get().updateAIObjects();
@@ -152,18 +149,34 @@ AircraftType &ImportPluginBase::getSelectedAircraftType() const noexcept
 
 // PRIVATE
 
+void ImportPluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
+{
+    getSettings().addSettings(keyValues);
+}
+
+void ImportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{
+    getSettings().addKeysWithDefaults(keysWithDefaults);
+}
+
+void ImportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
+{
+    getSettings().restoreSettings(valuesByKey);
+}
+
 bool ImportPluginBase::importFile(const QString &filePath, FlightService &flightService) noexcept
 {
     d->file.setFileName(filePath);
     bool ok = d->file.open(QIODevice::ReadOnly);
     if (ok) {
         Flight &flight = Logbook::getInstance().getCurrentFlight();
-        if (!d->addToCurrentFlight) {
+        const bool addToCurrentFlight = getSettings().isAddToFlightEnabled();
+        if (!addToCurrentFlight) {
             flight.clear(true);
         }
         // The flight has at least one aircraft, but possibly without recording
         const int aircraftCount = flight.count();
-        const bool addNewAircraft = d->addToCurrentFlight && (aircraftCount > 1 || flight.getUserAircraft().hasRecording());
+        const bool addNewAircraft = addToCurrentFlight && (aircraftCount > 1 || flight.getUserAircraft().hasRecording());
         Aircraft &aircraft = addNewAircraft ? flight.addUserAircraft() : flight.getUserAircraft();
 
         ok = readFile(d->file);
@@ -201,8 +214,6 @@ void ImportPluginBase::updateAircraftInfo() noexcept
     const PositionData &lastPositionData = position.getLast();
     const QDateTime startDateTimeUtc = getStartDateTimeUtc();
     const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
-    aircraftInfo.startDate = startDateTimeUtc.toLocalTime();
-    aircraftInfo.endDate = endDateTimeUtc.toLocalTime();
     int positionCount = position.count();
     if (positionCount > 0) {
         const PositionData &firstPositionData = position.getFirst();
@@ -247,7 +258,7 @@ void ImportPluginBase::updateFlightInfo() noexcept
 
     const QString description = tr("Aircraft imported on %1 from file: %2").arg(d->unit.formatDateTime(QDateTime::currentDateTime()), d->file.fileName());
     flight.setDescription(description);
-    flight.setCreationDate(QFileInfo(d->file).birthTime());
+    flight.setCreationTime(QFileInfo(d->file).birthTime());
     updateExtendedFlightInfo(flight);
 }
 

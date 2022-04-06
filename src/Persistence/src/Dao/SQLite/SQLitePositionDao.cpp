@@ -150,7 +150,7 @@ bool SQLitePositionDao::add(std::int64_t aircraftId, const PositionData &positio
     return ok;
 }
 
-bool SQLitePositionDao::getByAircraftId(std::int64_t aircraftId, std::insert_iterator<std::vector<PositionData>> insertIterator) const noexcept
+bool SQLitePositionDao::getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) const noexcept
 {
     QSqlQuery query;
     query.setForwardOnly(true);
@@ -198,7 +198,7 @@ bool SQLitePositionDao::getByAircraftId(std::int64_t aircraftId, std::insert_ite
             data.rotationVelocityBodyY = query.value(rotationVelocityYIdx).toDouble();
             data.rotationVelocityBodyZ = query.value(rotationVelocityZIdx).toDouble();
 
-            insertIterator = std::move(data);
+            backInsertIterator = std::move(data);
         }
 #ifdef DEBUG
     } else {

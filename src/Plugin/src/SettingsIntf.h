@@ -37,7 +37,7 @@ public:
     virtual ~SettingsIntf()
     {}
 
-    virtual Settings::PluginSettings getSettings() const noexcept = 0;
+    virtual Settings::KeyValues getSettings() const noexcept = 0;
     virtual Settings::KeysWithDefaults getKeysWithDefault() const noexcept = 0;
     virtual void applySettings(Settings::ValuesByKey) noexcept = 0;
     /*!
