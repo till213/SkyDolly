@@ -170,11 +170,6 @@ void BasicExportDialog::frenchConnection() noexcept
             this, &BasicExportDialog::onFileSelectionButtonClicked);
     connect(ui->filePathLineEdit, &QLineEdit::textChanged,
             this, &BasicExportDialog::onFilePathChanged);
-
-    QPushButton *resetButton = ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults);
-    connect(resetButton, &QPushButton::clicked,
-            this, &BasicExportDialog::onRestoreSettings);
-
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
     connect(ui->resamplingComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &BasicExportDialog::onResamplingOptionChanged);
@@ -186,6 +181,9 @@ void BasicExportDialog::frenchConnection() noexcept
             this, &BasicExportDialog::onDoOpenExportedFileChanged);
     connect(&d->settings, &ExportPluginBaseSettings::baseSettingsChanged,
             this, &BasicExportDialog::updateUi);
+    const QPushButton *resetButton = ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults);
+    connect(resetButton, &QPushButton::clicked,
+            this, &BasicExportDialog::onRestoreDefaults);
 }
 
 std::int64_t BasicExportDialog::estimateNofSamplePoints() noexcept
@@ -244,7 +242,7 @@ void BasicExportDialog::onFilePathChanged()
     updateUi();
 }
 
-void BasicExportDialog::onResamplingOptionChanged([[maybe_unused]] int index) noexcept
+void BasicExportDialog::onResamplingOptionChanged() noexcept
 {
     d->settings.setResamplingPeriod(static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt()));
 }
@@ -254,7 +252,7 @@ void BasicExportDialog::onDoOpenExportedFileChanged(bool enable) noexcept
     d->settings.setOpenExportedFileEnabled(enable);
 }
 
-void BasicExportDialog::onRestoreSettings() noexcept
+void BasicExportDialog::onRestoreDefaults() noexcept
 {
     d->settings.restoreDefaults();
     emit restoreDefaultOptions();

@@ -162,8 +162,13 @@ void BasicImportDialog::frenchConnection() noexcept
     connect(ui->fileSelectionPushButton, &QPushButton::clicked,
             this, &BasicImportDialog::onFileSelectionChanged);
     connect(ui->aircraftSelectionComboBox, &QComboBox::currentTextChanged,
+            this, &BasicImportDialog::updateUi);    
+    connect(ui->addToFlightCheckBox, &QCheckBox::toggled,
+            this, &BasicImportDialog::onAddToExistingFlightChanged);
+    connect(&d->settings, &ImportPluginBaseSettings::baseSettingsChanged,
             this, &BasicImportDialog::updateUi);
-    connect(ui->defaultButtonBox, &QDialogButtonBox::clicked,
+    const QPushButton *resetButton = ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults);
+    connect(resetButton, &QPushButton::clicked,
             this, &BasicImportDialog::onRestoreDefaults);
     connect(ui->defaultButtonBox, &QDialogButtonBox::accepted,
             this, &BasicImportDialog::onAccepted);
@@ -179,6 +184,8 @@ void BasicImportDialog::updateUi() noexcept
     const bool aircraftTypeExists = !type.isEmpty() && d->aircraftTypeService->exists(type);
     const bool enabled = file.exists() && aircraftTypeExists;
     d->importButton->setEnabled(enabled);
+
+    ui->addToFlightCheckBox->setChecked(d->settings.isAddToFlightEnabled());
 }
 
 void BasicImportDialog::onFileSelectionChanged() noexcept
@@ -192,12 +199,15 @@ void BasicImportDialog::onFileSelectionChanged() noexcept
     }
 }
 
-void BasicImportDialog::onRestoreDefaults(QAbstractButton *button) noexcept
+void BasicImportDialog::onAddToExistingFlightChanged(bool enable) noexcept
 {
-    if (button == ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults)) {
-        initBasicUi();
-        emit restoreDefaultOptions();
-    }
+    d->settings.setAddToFlightEnabled(enable);
+}
+
+void BasicImportDialog::onRestoreDefaults() noexcept
+{
+    initBasicUi();
+    emit restoreDefaultOptions();
 }
 
 void BasicImportDialog::onAccepted() noexcept

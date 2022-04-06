@@ -72,21 +72,6 @@ CSVImportPlugin::~CSVImportPlugin() noexcept
 
 // PROTECTED
 
-void CSVImportPlugin::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
-{
-    d->settings.addSettings(keyValues);
-}
-
-void CSVImportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
-{
-    d->settings.addKeysWithDefaults(keysWithDefaults);
-}
-
-void CSVImportPlugin::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
-{
-    d->settings.restoreSettings(valuesByKey);
-}
-
 ImportPluginBaseSettings &CSVImportPlugin::getSettings() const noexcept
 {
     return d->settings;

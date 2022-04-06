@@ -31,7 +31,6 @@
 #include <QString>
 
 class QWidget;
-class QAbstractButton;
 
 #include "PluginLib.h"
 
@@ -74,7 +73,8 @@ private slots:
     void updateUi() noexcept;
 
     void onFileSelectionChanged() noexcept;
-    void onRestoreDefaults(QAbstractButton *button) noexcept;
+    void onAddToExistingFlightChanged(bool enable) noexcept;
+    void onRestoreDefaults() noexcept;
     void onAccepted() noexcept;    
 };
 

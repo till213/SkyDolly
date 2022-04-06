@@ -85,21 +85,6 @@ GPXImportPlugin::~GPXImportPlugin() noexcept
 
 // PROTECTED
 
-void GPXImportPlugin::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
-{
-    d->settings.addSettings(keyValues);
-}
-
-void GPXImportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
-{
-    d->settings.addKeysWithDefaults(keysWithDefaults);
-}
-
-void GPXImportPlugin::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
-{
-    d->settings.restoreSettings(valuesByKey);
-}
-
 ImportPluginBaseSettings &GPXImportPlugin::getSettings() const noexcept
 {
     return d->settings;

@@ -152,19 +152,16 @@ AircraftType &ImportPluginBase::getSelectedAircraftType() const noexcept
 void ImportPluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
     getSettings().addSettings(keyValues);
-    addSettingsExtn(keyValues);
 }
 
 void ImportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
     getSettings().addKeysWithDefaults(keysWithDefaults);
-    addKeysWithDefaultsExtn(keysWithDefaults);
 }
 
 void ImportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     getSettings().restoreSettings(valuesByKey);
-    restoreSettingsExtn(valuesByKey);
 }
 
 bool ImportPluginBase::importFile(const QString &filePath, FlightService &flightService) noexcept

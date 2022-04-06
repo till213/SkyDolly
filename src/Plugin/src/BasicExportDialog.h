@@ -73,9 +73,9 @@ private slots:
 
     void onFileSelectionButtonClicked() noexcept;
     void onFilePathChanged();
-    void onResamplingOptionChanged(int index) noexcept;
+    void onResamplingOptionChanged() noexcept;
     void onDoOpenExportedFileChanged(bool enable) noexcept;
-    void onRestoreSettings() noexcept;
+    void onRestoreDefaults() noexcept;
 };
 
 #endif // BASICEXPORTDIALOG_H

@@ -105,21 +105,6 @@ IGCImportPlugin::~IGCImportPlugin() noexcept
 
 // PROTECTED
 
-void IGCImportPlugin::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
-{
-    d->settings.addSettings(keyValues);
-}
-
-void IGCImportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
-{
-    d->settings.addKeysWithDefaults(keysWithDefaults);
-}
-
-void IGCImportPlugin::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
-{
-    d->settings.restoreSettings(valuesByKey);
-}
-
 ImportPluginBaseSettings &IGCImportPlugin::getSettings() const noexcept
 {
     return d->settings;
