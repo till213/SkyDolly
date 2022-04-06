@@ -40,6 +40,7 @@ class QString;
 #include "PluginLib.h"
 
 class SkyConnectIntf;
+class Flight;
 class FlightService;
 class PluginManagerPrivate;
 
@@ -60,7 +61,7 @@ public:
     std::vector<Handle> initialiseImportPlugins() noexcept;
 
     bool importData(const QUuid &pluginUuid, FlightService &flightService) const noexcept;
-    bool exportData(const QUuid &pluginUuid) const noexcept;
+    bool exportFlight(const Flight &flight, const QUuid &pluginUuid) const noexcept;
 
 protected:
     virtual ~PluginManager() noexcept;

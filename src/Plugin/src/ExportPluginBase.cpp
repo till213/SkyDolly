@@ -41,6 +41,7 @@
 #include "../../Kernel/src/Enum.h"
 #include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/File.h"
+#include "../../Model/src/Flight.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/Position.h"
 #include "../../Model/src/PositionData.h"
@@ -72,7 +73,7 @@ ExportPluginBase::~ExportPluginBase() noexcept
 #endif
 }
 
-bool ExportPluginBase::exportData() noexcept
+bool ExportPluginBase::exportFlight(const Flight &flight) noexcept
 {
     bool ok;
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
@@ -93,7 +94,7 @@ bool ExportPluginBase::exportData() noexcept
             Settings::getInstance().setExportPath(exportDirectoryPath);
 
             if (baseSettings.isFileDialogSelectedFile() || !fileInfo.exists()) {
-                ok = exportFile(filePath);
+                ok = exportFlight(flight, filePath);
             } else {
                 std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(getParentWidget());
                 messageBox->setIcon(QMessageBox::Question);
@@ -106,7 +107,7 @@ bool ExportPluginBase::exportData() noexcept
                 messageBox->exec();
                 const QAbstractButton *clickedButton = messageBox->clickedButton();
                 if (clickedButton == replaceButton) {
-                    ok = exportFile(filePath);
+                    ok = exportFlight(flight, filePath);
                 } else {
                     ok = true;
                 }
@@ -147,7 +148,7 @@ void ExportPluginBase::resamplePositionDataForExport(const Aircraft &aircraft, s
 
 // PRIVATE
 
-bool ExportPluginBase::exportFile(const QString &filePath) noexcept
+bool ExportPluginBase::exportFlight(const Flight &flight, const QString &filePath) noexcept
 {
     QFile file(filePath);
     bool ok = file.open(QIODevice::WriteOnly);
@@ -158,7 +159,7 @@ bool ExportPluginBase::exportFile(const QString &filePath) noexcept
 #endif
         QGuiApplication::setOverrideCursor(Qt::WaitCursor);
         QGuiApplication::processEvents();
-        ok = writeFile(file);
+        ok = exportFlight(flight, file);
         QGuiApplication::restoreOverrideCursor();
 #ifdef DEBUG
         qDebug("%s export %s in %lld ms", qPrintable(QFileInfo(filePath).fileName()), (ok ? qPrintable("SUCCESS") : qPrintable("FAIL")), timer.elapsed());

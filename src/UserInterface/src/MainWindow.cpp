@@ -1417,7 +1417,8 @@ void MainWindow::handleImport(QAction *action) noexcept
 void MainWindow::handleExport(QAction *action) noexcept
 {
     const QUuid pluginUuid = action->data().toUuid();
-    PluginManager::getInstance().exportData(pluginUuid);
+    const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
+    PluginManager::getInstance().exportFlight(flight, pluginUuid);
 }
 
 void MainWindow::handleReplayLoopChanged() noexcept

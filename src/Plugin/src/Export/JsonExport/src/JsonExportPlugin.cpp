@@ -110,7 +110,7 @@ std::unique_ptr<QWidget> JsonExportPlugin::createOptionWidget() const noexcept
     return nullptr;
 }
 
-bool JsonExportPlugin::writeFile(QIODevice &io) noexcept
+bool JsonExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
 {
     io.setTextModeEnabled(true);
     bool ok = exportHeader(io);

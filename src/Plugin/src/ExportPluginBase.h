@@ -42,6 +42,7 @@ class QIODevice;
 #include "PluginLib.h"
 
 struct PositionData;
+class FLight;
 class Aircraft;
 class ExportPluginBaseSettings;
 class ExportPluginBasePrivate;
@@ -74,7 +75,7 @@ public:
         PluginBase::restoreSettings(pluginUuid);
     }
 
-    virtual bool exportData() noexcept override final;
+    virtual bool exportFlight(const Flight &flight) noexcept override final;
 
 protected:
     void resamplePositionDataForExport(const Aircraft &aircraft, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) const noexcept;
@@ -84,7 +85,7 @@ protected:
     virtual QString getFileExtension() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
-    virtual bool writeFile(QIODevice &io) noexcept = 0;
+    virtual bool exportFlight(const Flight &flight, QIODevice &io) noexcept = 0;
 
 protected slots:
     virtual void onRestoreDefaultSettings() noexcept = 0;
@@ -92,7 +93,7 @@ protected slots:
 private:
     std::unique_ptr<ExportPluginBasePrivate> d;
 
-    bool exportFile(const QString &filePath) noexcept;
+    bool exportFlight(const Flight &flight, const QString &filePath) noexcept;
     virtual void addSettings(Settings::KeyValues &keyValues) const noexcept override final;
     virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override final;
     virtual void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept override final;

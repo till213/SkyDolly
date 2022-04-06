@@ -129,7 +129,7 @@ std::unique_ptr<QWidget> KmlExportPlugin::createOptionWidget() const noexcept
     return std::make_unique<KmlExportOptionWidget>(d->settings);
 }
 
-bool KmlExportPlugin::writeFile(QIODevice &io) noexcept
+bool KmlExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
 {
     io.setTextModeEnabled(true);
 

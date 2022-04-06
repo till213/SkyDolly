@@ -59,7 +59,7 @@ protected:
     virtual QString getFileExtension() const noexcept override;
     virtual QString getFileFilter() const noexcept override;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    virtual bool writeFile(QIODevice &io) noexcept override;
+    virtual bool exportFlight(const Flight &flight, QIODevice &io) noexcept override;
 
 protected slots:
     virtual void onRestoreDefaultSettings() noexcept override;

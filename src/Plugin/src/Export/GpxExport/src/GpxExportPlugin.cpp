@@ -109,7 +109,7 @@ std::unique_ptr<QWidget> GpxExportPlugin::createOptionWidget() const noexcept
     return std::make_unique<GpxExportOptionWidget>(d->settings);
 }
 
-bool GpxExportPlugin::writeFile(QIODevice &io) noexcept
+bool GpxExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
 {
     io.setTextModeEnabled(true);
     bool ok = exportHeader(io);

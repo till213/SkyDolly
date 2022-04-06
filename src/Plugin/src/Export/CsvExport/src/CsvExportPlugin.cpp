@@ -104,10 +104,10 @@ std::unique_ptr<QWidget> CsvExportPlugin::createOptionWidget() const noexcept
     return nullptr;
 }
 
-bool CsvExportPlugin::writeFile(QIODevice &io) noexcept
+bool CsvExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
 {
     bool ok;
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();
+    const Aircraft &aircraft = flight.getUserAircraftConst();
     io.setTextModeEnabled(true);
 
     QString csv = QString(CsvConst::TypeColumnName) % CsvConst::Sep %
