@@ -32,7 +32,7 @@ class QFile;
 class QDateTime;
 class QString;
 
-#include "CSVParserIntf.h"
+#include "CsvParserIntf.h"
 
 class Aircraft;
 class Engine;
@@ -41,11 +41,11 @@ class SecondaryFlightControl;
 class AircraftHandle;
 class Light;
 
-class SkyDollyCSVParser : public CSVParserIntf
+class SkyDollyCsvParser : public CsvParserIntf
 {
 public:
-    SkyDollyCSVParser() noexcept;
-    virtual ~SkyDollyCSVParser() noexcept;
+    SkyDollyCsvParser() noexcept;
+    virtual ~SkyDollyCsvParser() noexcept;
 
     virtual bool parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept override;
 

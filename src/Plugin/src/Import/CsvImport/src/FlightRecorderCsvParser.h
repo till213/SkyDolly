@@ -22,52 +22,42 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVIMPORTSETTINGS_H
-#define CSVIMPORTSETTINGS_H
+#ifndef FLIGHTRECORDERCSVPARSER_H
+#define FLIGHTRECORDERCSVPARSER_H
 
 #include <memory>
 
-#include <QObject>
-#include <QString>
+#include <QByteArray>
+#include <QList>
 
-#include "../../../../../Kernel/src/Settings.h"
-#include "../../../ImportPluginBaseSettings.h"
+class QFile;
+class QDateTime;
+class QString;
 
-class CSVImportSettingsPrivate;
+#include "CsvParserIntf.h"
 
-class CSVImportSettings : public ImportPluginBaseSettings
+struct EngineData;
+struct AircraftHandleData;
+class FlightRecorderCsvParserPrivate;
+
+class FlightRecorderCsvParser : public CsvParserIntf
 {
-    Q_OBJECT
 public:
-    /*!
-     * CSV format (flavour).
-     */
-    enum struct Format {
-        SkyDolly = 0,
-        FlightRadar24 = 1,
-        FlightRecorder = 2
-    };
+    FlightRecorderCsvParser() noexcept;
+    virtual ~FlightRecorderCsvParser() noexcept;
 
-    CSVImportSettings() noexcept;
-    virtual ~CSVImportSettings() noexcept;
-
-    Format getFormat() const noexcept;
-    void setFormat(Format format) noexcept;
-
-signals:
-    /*!
-     * Emitted whenever the extended settings have changed.
-     */
-    void extendedSettingsChanged();
-
-protected:
-    virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
-    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
-    virtual void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
-    virtual void restoreDefaultsExtn() noexcept override;
+    virtual bool parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept override;
 
 private:
-    std::unique_ptr<CSVImportSettingsPrivate> d;
+    std::unique_ptr<FlightRecorderCsvParserPrivate> d;
+
+    bool parseHeader(QFile &file) noexcept;
+    bool parseData(QFile &file) noexcept;
+    inline bool importTimestamp(const QList<QByteArray> &values, bool firstRow, std::int64_t &timestamp, std::int64_t &timestampDelta) noexcept;
+    template <typename T>
+    inline bool importValue(const QList<QByteArray> &values, const char *name, int &index, T &value) noexcept;
+    inline void initEngineDefaultValues(EngineData &engineData) noexcept;
+    inline void initAircraftHandleDefaultValues(AircraftHandleData &aircraftHandle) noexcept;
 };
 
-#endif // CSVIMPORTSETTINGS_H
+#endif // FLIGHTRECORDERCSVPARSER_H

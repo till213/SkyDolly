@@ -22,22 +22,39 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef FLIGHTRADAR24CSVPARSER_H
-#define FLIGHTRADAR24CSVPARSER_H
+#ifndef CSVIMPORTOPTIONWIDGET_H
+#define CSVIMPORTOPTIONWIDGET_H
 
-class QFile;
-class QDateTime;
-class QString;
+#include <memory>
 
-#include "CSVParserIntf.h"
+#include <QWidget>
 
-class FlightRadar24CSVParser : public CSVParserIntf
+namespace Ui {
+    class CsvImportOptionWidget;
+}
+
+class CsvImportSettings;
+class CsvImportOptionWidgetPrivate;
+
+class CsvImportOptionWidget : public QWidget
 {
+    Q_OBJECT
 public:
-    FlightRadar24CSVParser() noexcept;
-    virtual ~FlightRadar24CSVParser() noexcept;
+    explicit CsvImportOptionWidget(CsvImportSettings &settings, QWidget *parent = nullptr) noexcept;
+    virtual ~CsvImportOptionWidget() noexcept;
 
-    virtual bool parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept override;
+private:
+    std::unique_ptr<Ui::CsvImportOptionWidget> ui;
+    std::unique_ptr<CsvImportOptionWidgetPrivate> d;
+
+    void frenchConnection() noexcept;
+    void initUi() noexcept;
+
+private slots:
+    void onFormatChanged(int index) noexcept;
+
+    void updateUi() noexcept;
 };
 
-#endif // FLIGHTRADAR24CSVPARSER_H
+#endif // CSVIMPORTOPTIONWIDGET_H
+

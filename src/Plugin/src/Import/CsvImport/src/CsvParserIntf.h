@@ -22,30 +22,19 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVCONST_H
-#define CSVCONST_H
+#ifndef CSVPARSERINTF_H
+#define CSVPARSERINTF_H
 
-namespace CSVConst {
+class QFile;
+class QDateTime;
+class QString;
 
-    /*! Separator character for CSV import & export */
-    constexpr char Sep = '\t';
-    /*! Newline character for CSV import & export */
-    constexpr char Ln = '\n';
+class CsvParserIntf
+{
+public:
+    virtual ~CsvParserIntf() = default;
 
-    // Format and precision for double
-    constexpr char Format = 'g';
-    constexpr int Precision = 9;
+    virtual bool parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept = 0;
+};
 
-    enum struct DataType : char {
-        Aircraft = 'a',
-        Engine = 'e',
-        PrimaryFlightControl = 'p',
-        SecondaryFlightControl = 's',
-        AircraftHandle = 'h',
-        Light = 'l'
-    };
-
-    constexpr char TypeColumnName[] = "Type";
-}
-
-#endif // CSVCONST_H
+#endif // CSVPARSERINTF_H

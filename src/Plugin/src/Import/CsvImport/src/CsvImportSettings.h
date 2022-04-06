@@ -22,19 +22,52 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVPARSERINTF_H
-#define CSVPARSERINTF_H
+#ifndef CSVIMPORTSETTINGS_H
+#define CSVIMPORTSETTINGS_H
 
-class QFile;
-class QDateTime;
-class QString;
+#include <memory>
 
-class CSVParserIntf
+#include <QObject>
+#include <QString>
+
+#include "../../../../../Kernel/src/Settings.h"
+#include "../../../ImportPluginBaseSettings.h"
+
+class CsvImportSettingsPrivate;
+
+class CsvImportSettings : public ImportPluginBaseSettings
 {
+    Q_OBJECT
 public:
-    virtual ~CSVParserIntf() = default;
+    /*!
+     * CSV format (flavour).
+     */
+    enum struct Format {
+        SkyDolly = 0,
+        FlightRadar24 = 1,
+        FlightRecorder = 2
+    };
 
-    virtual bool parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept = 0;
+    CsvImportSettings() noexcept;
+    virtual ~CsvImportSettings() noexcept;
+
+    Format getFormat() const noexcept;
+    void setFormat(Format format) noexcept;
+
+signals:
+    /*!
+     * Emitted whenever the extended settings have changed.
+     */
+    void extendedSettingsChanged();
+
+protected:
+    virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
+    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
+    virtual void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
+    virtual void restoreDefaultsExtn() noexcept override;
+
+private:
+    std::unique_ptr<CsvImportSettingsPrivate> d;
 };
 
-#endif // CSVPARSERINTF_H
+#endif // CSVIMPORTSETTINGS_H

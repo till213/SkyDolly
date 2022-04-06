@@ -39,7 +39,7 @@
 #include "../../../../../Model/src/Aircraft.h"
 #include "../../../../../Model/src/Position.h"
 #include "../../../../../Model/src/PositionData.h"
-#include "FlightRadar24CSVParser.h"
+#include "FlightRadar24CsvParser.h"
 
 namespace
 {
@@ -55,21 +55,21 @@ namespace
 
 // PUBLIC
 
-FlightRadar24CSVParser::FlightRadar24CSVParser() noexcept
+FlightRadar24CsvParser::FlightRadar24CsvParser() noexcept
 {
 #ifdef DEBUG
-    qDebug("FlightRadar24CSVParser::~FlightRadar24CSVParser: CREATED");
+    qDebug("FlightRadar24CsvParser::~FlightRadar24CsvParser: CREATED");
 #endif
 }
 
-FlightRadar24CSVParser::~FlightRadar24CSVParser() noexcept
+FlightRadar24CsvParser::~FlightRadar24CsvParser() noexcept
 {
 #ifdef DEBUG
-    qDebug("FlightRadar24CSVParser::~FlightRadar24CSVParser: DELETED");
+    qDebug("FlightRadar24CsvParser::~FlightRadar24CsvParser: DELETED");
 #endif
 }
 
-bool FlightRadar24CSVParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept
+bool FlightRadar24CsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept
 {
     bool ok;
     Flight &flight = Logbook::getInstance().getCurrentFlight();

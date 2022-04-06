@@ -48,26 +48,26 @@
 #include "../../../../../Model/src/AircraftHandleData.h"
 #include "../../../../../Model/src/Light.h"
 #include "../../../../../Model/src/LightData.h"
-#include "../../../CSVConst.h"
-#include "SkyDollyCSVParser.h"
+#include "../../../CsvConst.h"
+#include "SkyDollyCsvParser.h"
 
 // PUBLIC
 
-SkyDollyCSVParser::SkyDollyCSVParser() noexcept
+SkyDollyCsvParser::SkyDollyCsvParser() noexcept
 {
 #ifdef DEBUG
-    qDebug("SkyDollyCSVParser::~SkyDollyCSVParser: CREATED");
+    qDebug("SkyDollyCsvParser::~SkyDollyCsvParser: CREATED");
 #endif
 }
 
-SkyDollyCSVParser::~SkyDollyCSVParser() noexcept
+SkyDollyCsvParser::~SkyDollyCsvParser() noexcept
 {
 #ifdef DEBUG
-    qDebug("SkyDollyCSVParser::~SkyDollyCSVParser: DELETED");
+    qDebug("SkyDollyCsvParser::~SkyDollyCsvParser: DELETED");
 #endif
 }
 
-bool SkyDollyCSVParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept
+bool SkyDollyCsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     Aircraft &aircraft = flight.getUserAircraft();
@@ -81,8 +81,8 @@ bool SkyDollyCSVParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QString 
 
     bool ok = !data.isNull();
     if (ok) {
-        QList<QByteArray> headers = data.split(CSVConst::Sep);
-        if (headers.first() == QString(CSVConst::TypeColumnName)) {
+        QList<QByteArray> headers = data.split(CsvConst::Sep);
+        if (headers.first() == QString(CsvConst::TypeColumnName)) {
             headers.removeFirst();
 
             // CSV data
@@ -96,35 +96,35 @@ bool SkyDollyCSVParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QString 
             while (!data.isNull()) {
 
                 PositionData positionData;
-                QList<QByteArray> values = data.split(CSVConst::Sep);
+                QList<QByteArray> values = data.split(CsvConst::Sep);
 
                 // Type
                 ok = values.at(0).size() > 0;
                 if (ok) {
-                    CSVConst::DataType dataType = static_cast<CSVConst::DataType>(values.at(0).at(0));
+                    CsvConst::DataType dataType = static_cast<CsvConst::DataType>(values.at(0).at(0));
                     values.removeFirst();
                     switch (dataType) {
-                    case CSVConst::DataType::Aircraft:
+                    case CsvConst::DataType::Aircraft:
                         ok = importPositionData(headers, values, firstPositionData, aircraft);
                         firstPositionData = false;
                         break;
-                    case CSVConst::DataType::Engine:
+                    case CsvConst::DataType::Engine:
                         ok = importEngineData(headers, values, firstEngineData, aircraft.getEngine());
                         firstEngineData = false;
                         break;
-                    case CSVConst::DataType::PrimaryFlightControl:
+                    case CsvConst::DataType::PrimaryFlightControl:
                         ok = importPrimaryFlightControlData(headers, values, firstPrimaryFlightControlData, aircraft.getPrimaryFlightControl());
                         firstPrimaryFlightControlData = false;
                         break;
-                    case CSVConst::DataType::SecondaryFlightControl:
+                    case CsvConst::DataType::SecondaryFlightControl:
                         ok = importSecondaryFlightControlData(headers, values, firstSecondaryFlightControlData, aircraft.getSecondaryFlightControl());
                         firstSecondaryFlightControlData = false;
                         break;
-                    case CSVConst::DataType::AircraftHandle:
+                    case CsvConst::DataType::AircraftHandle:
                         ok = importAircraftHandleData(headers, values, firstAircraftHandleData, aircraft.getAircraftHandle());
                         firstAircraftHandleData = false;
                         break;
-                    case CSVConst::DataType::Light:
+                    case CsvConst::DataType::Light:
                         ok = importLightData(headers, values, firstLightData, aircraft.getLight());
                         firstLightData = false;
                         break;
@@ -151,7 +151,7 @@ bool SkyDollyCSVParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QString 
 
 // PRIVATE
 
-inline bool SkyDollyCSVParser::importPositionData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Aircraft &aircraft) noexcept
+inline bool SkyDollyCsvParser::importPositionData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Aircraft &aircraft) noexcept
 {
     PositionData data;
     int columnIndex = 0;
@@ -255,7 +255,7 @@ inline bool SkyDollyCSVParser::importPositionData(const QList<QByteArray> &heade
     return ok;
 }
 
-inline bool SkyDollyCSVParser::importEngineData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Engine &engine) noexcept
+inline bool SkyDollyCsvParser::importEngineData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Engine &engine) noexcept
 {
     EngineData data;
     int columnIndex = 0;
@@ -432,7 +432,7 @@ inline bool SkyDollyCSVParser::importEngineData(const QList<QByteArray> &headers
     return ok;
 }
 
-inline bool SkyDollyCSVParser::importPrimaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, PrimaryFlightControl &primaryFlightControl) noexcept
+inline bool SkyDollyCsvParser::importPrimaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, PrimaryFlightControl &primaryFlightControl) noexcept
 {
     PrimaryFlightControlData data;
     int columnIndex = 0;
@@ -484,7 +484,7 @@ inline bool SkyDollyCSVParser::importPrimaryFlightControlData(const QList<QByteA
     return ok;
 }
 
-inline bool SkyDollyCSVParser::importSecondaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, SecondaryFlightControl &secondaryFlightControl) noexcept
+inline bool SkyDollyCsvParser::importSecondaryFlightControlData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, SecondaryFlightControl &secondaryFlightControl) noexcept
 {
     SecondaryFlightControlData data;
     int columnIndex = 0;
@@ -551,7 +551,7 @@ inline bool SkyDollyCSVParser::importSecondaryFlightControlData(const QList<QByt
     return ok;
 }
 
-inline bool SkyDollyCSVParser::importAircraftHandleData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, AircraftHandle &aircraftHandle) noexcept
+inline bool SkyDollyCsvParser::importAircraftHandleData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, AircraftHandle &aircraftHandle) noexcept
 {
     AircraftHandleData data;
     int columnIndex = 0;
@@ -633,7 +633,7 @@ inline bool SkyDollyCSVParser::importAircraftHandleData(const QList<QByteArray> 
     return ok;
 }
 
-inline bool SkyDollyCSVParser::importLightData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Light &light) noexcept
+inline bool SkyDollyCsvParser::importLightData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Light &light) noexcept
 {
     LightData data;
     int columnIndex = 0;
@@ -675,7 +675,7 @@ inline bool SkyDollyCSVParser::importLightData(const QList<QByteArray> &headers,
     return ok;
 }
 
-inline bool SkyDollyCSVParser::importTimestamp(const QList<QByteArray> &values, int columnIndex, bool firstRow, std::int64_t &timestamp, std::int64_t &timestampDelta) noexcept
+inline bool SkyDollyCsvParser::importTimestamp(const QList<QByteArray> &values, int columnIndex, bool firstRow, std::int64_t &timestamp, std::int64_t &timestampDelta) noexcept
 {
     bool ok;
     timestamp = values.at(columnIndex).toLongLong(&ok);

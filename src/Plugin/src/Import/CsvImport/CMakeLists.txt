@@ -1,4 +1,4 @@
-set(LIBRARY_NAME "CSVImport")
+set(LIBRARY_NAME "CsvImport")
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_library(${LIBRARY_NAME} SHARED "")
@@ -20,14 +20,14 @@ set(DOCUMENTATION
 
 target_sources(${LIBRARY_NAME}
     PRIVATE
-        src/CSVImportPlugin.h src/CSVImportPlugin.cpp
-        src/CSVImportOptionWidget.h src/CSVImportOptionWidget.cpp src/CSVImportOptionWidget.ui
-        src/CSVImportSettings.h src/CSVImportSettings.cpp
-        src/CSVParserIntf.h
-        src/SkyDollyCSVParser.h src/SkyDollyCSVParser.cpp
-        src/FlightRadar24CSVParser.h src/FlightRadar24CSVParser.cpp
-        src/FlightRecorderCSVParser.h src/FlightRecorderCSVParser.cpp
-        src/CSVImportPlugin.json
+        src/CsvImportPlugin.h src/CsvImportPlugin.cpp
+        src/CsvImportOptionWidget.h src/CsvImportOptionWidget.cpp src/CsvImportOptionWidget.ui
+        src/CsvImportSettings.h src/CsvImportSettings.cpp
+        src/CsvParserIntf.h
+        src/SkyDollyCsvParser.h src/SkyDollyCsvParser.cpp
+        src/FlightRadar24CsvParser.h src/FlightRadar24CsvParser.cpp
+        src/FlightRecorderCsvParser.h src/FlightRecorderCsvParser.cpp
+        src/CsvImportPlugin.json
         ${DOCUMENTATION}
 )
 

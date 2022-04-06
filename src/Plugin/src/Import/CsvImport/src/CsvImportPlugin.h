@@ -42,16 +42,16 @@ class Flight;
 struct AircraftInfo;
 struct FlightCondition;
 class ImportPluginBaseSettings;
-class CSVImportPluginPrivate;
+class CsvImportPluginPrivate;
 
-class CSVImportPlugin : public ImportPluginBase
+class CsvImportPlugin : public ImportPluginBase
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "CSVImportPlugin.json")
+    Q_PLUGIN_METADATA(IID IMPORT_INTERFACE_IID FILE "CsvImportPlugin.json")
     Q_INTERFACES(ImportIntf)
 public:
-    CSVImportPlugin() noexcept;
-    virtual ~CSVImportPlugin() noexcept;
+    CsvImportPlugin() noexcept;
+    virtual ~CsvImportPlugin() noexcept;
 
 protected:
     virtual ImportPluginBaseSettings &getSettings() const noexcept override;
@@ -71,7 +71,7 @@ protected slots:
     virtual void onRestoreDefaultSettings() noexcept override;
 
 private:
-    std::unique_ptr<CSVImportPluginPrivate> d;
+    std::unique_ptr<CsvImportPluginPrivate> d;
 };
 
 #endif // CSVIMPORTPLUGIN_H

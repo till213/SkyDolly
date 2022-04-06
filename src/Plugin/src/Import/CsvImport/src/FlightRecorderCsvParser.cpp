@@ -58,7 +58,7 @@
 #include "../../../../../Model/src/AircraftHandleData.h"
 #include "../../../../../Model/src/Light.h"
 #include "../../../../../Model/src/LightData.h"
-#include "FlightRecorderCSVParser.h"
+#include "FlightRecorderCsvParser.h"
 
 namespace
 {
@@ -120,10 +120,10 @@ namespace
     constexpr int InvalidIdx = std::numeric_limits<int>::max();
 }
 
-class FlightRecorderCSVParserPrivate
+class FlightRecorderCsvParserPrivate
 {
 public:
-    FlightRecorderCSVParserPrivate()
+    FlightRecorderCsvParserPrivate()
     {
         firstDateTimeUtc.setTimeZone(QTimeZone::utc());
     }
@@ -137,22 +137,22 @@ public:
 
 // PUBLIC
 
-FlightRecorderCSVParser::FlightRecorderCSVParser() noexcept
-    : d(std::make_unique<FlightRecorderCSVParserPrivate>())
+FlightRecorderCsvParser::FlightRecorderCsvParser() noexcept
+    : d(std::make_unique<FlightRecorderCsvParserPrivate>())
 {
 #ifdef DEBUG
-    qDebug("FlightRecorderCSVParser::~FlightRecorderCSVParser: CREATED");
+    qDebug("FlightRecorderCsvParser::~FlightRecorderCsvParser: CREATED");
 #endif
 }
 
-FlightRecorderCSVParser::~FlightRecorderCSVParser() noexcept
+FlightRecorderCsvParser::~FlightRecorderCsvParser() noexcept
 {
 #ifdef DEBUG
-    qDebug("FlightRecorderCSVParser::~FlightRecorderCSVParser: DELETED");
+    qDebug("FlightRecorderCsvParser::~FlightRecorderCsvParser: DELETED");
 #endif
 }
 
-bool FlightRecorderCSVParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept
+bool FlightRecorderCsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept
 {
     firstDateTimeUtc = QFileInfo(file).birthTime().toUTC();
     bool ok = parseHeader(file);
@@ -165,7 +165,7 @@ bool FlightRecorderCSVParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QS
 
 // PRIVATE
 
-bool FlightRecorderCSVParser::parseHeader(QFile &file) noexcept
+bool FlightRecorderCsvParser::parseHeader(QFile &file) noexcept
 {
     // Headers
     const QByteArray header = file.readLine();
@@ -186,7 +186,7 @@ bool FlightRecorderCSVParser::parseHeader(QFile &file) noexcept
     return ok;
 }
 
-bool FlightRecorderCSVParser::parseData(QFile &file) noexcept
+bool FlightRecorderCsvParser::parseData(QFile &file) noexcept
 {
     // Position
     int latitudeIdx {InvalidIdx}, longitudeIdx {InvalidIdx}, altitdueIdx = {InvalidIdx};
@@ -390,7 +390,7 @@ bool FlightRecorderCSVParser::parseData(QFile &file) noexcept
     return ok;
 }
 
-inline bool FlightRecorderCSVParser::importTimestamp(const QList<QByteArray> &values, bool firstRow, std::int64_t &timestamp, std::int64_t &timestampDelta) noexcept
+inline bool FlightRecorderCsvParser::importTimestamp(const QList<QByteArray> &values, bool firstRow, std::int64_t &timestamp, std::int64_t &timestampDelta) noexcept
 {
     static int timestampIdx = ::InvalidIdx;
     bool ok = true;
@@ -421,7 +421,7 @@ inline bool FlightRecorderCSVParser::importTimestamp(const QList<QByteArray> &va
 }
 
 template <typename T>
-inline bool FlightRecorderCSVParser::importValue(const QList<QByteArray> &values, const char *name, int &idx, T &value) noexcept
+inline bool FlightRecorderCsvParser::importValue(const QList<QByteArray> &values, const char *name, int &idx, T &value) noexcept
 {
     bool ok = true;
     if (idx == ::InvalidIdx) {
@@ -459,7 +459,7 @@ inline bool FlightRecorderCSVParser::importValue(const QList<QByteArray> &values
     return ok;
 }
 
-inline void FlightRecorderCSVParser::initEngineDefaultValues(EngineData &engineData) noexcept
+inline void FlightRecorderCsvParser::initEngineDefaultValues(EngineData &engineData) noexcept
 {
     // Turn "engine on" and "full propeller", no cowl flaps
     engineData.propellerLeverPosition1 = SkyMath::PositionMax16;
@@ -488,7 +488,7 @@ inline void FlightRecorderCSVParser::initEngineDefaultValues(EngineData &engineD
     engineData.generalEngineCombustion4 = true;
 }
 
-inline void FlightRecorderCSVParser::initAircraftHandleDefaultValues(AircraftHandleData &aircraftHandleData) noexcept
+inline void FlightRecorderCsvParser::initAircraftHandleDefaultValues(AircraftHandleData &aircraftHandleData) noexcept
 {
     aircraftHandleData.tailhookPosition = 0;
     aircraftHandleData.canopyOpen = 0;

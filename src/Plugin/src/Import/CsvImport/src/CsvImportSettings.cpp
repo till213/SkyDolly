@@ -26,7 +26,7 @@
 #include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/System.h"
 #include "../../../../../Kernel/src/Settings.h"
-#include "CSVImportSettings.h"
+#include "CsvImportSettings.h"
 
 namespace
 {
@@ -34,42 +34,42 @@ namespace
     constexpr char FormatKey[] = "Format";
 
     // Defaults
-    constexpr CSVImportSettings::Format DefaultFormat = CSVImportSettings::Format::SkyDolly;
+    constexpr CsvImportSettings::Format DefaultFormat = CsvImportSettings::Format::SkyDolly;
 }
 
-class CSVImportSettingsPrivate
+class CsvImportSettingsPrivate
 {
 public:
-    CSVImportSettingsPrivate()
+    CsvImportSettingsPrivate()
         : format(::DefaultFormat)
     {}
 
-    CSVImportSettings::Format format;
+    CsvImportSettings::Format format;
 };
 
 // PUBLIC
 
-CSVImportSettings::CSVImportSettings() noexcept
-    : d(std::make_unique<CSVImportSettingsPrivate>())
+CsvImportSettings::CsvImportSettings() noexcept
+    : d(std::make_unique<CsvImportSettingsPrivate>())
 {
 #ifdef DEBUG
-    qDebug("CSVImportSettings::CSVImportSettings: CREATED");
+    qDebug("CsvImportSettings::CsvImportSettings: CREATED");
 #endif
 }
 
-CSVImportSettings::~CSVImportSettings() noexcept
+CsvImportSettings::~CsvImportSettings() noexcept
 {
 #ifdef DEBUG
-    qDebug("CSVImportSettings::~CSVImportSettings: DELETED");
+    qDebug("CsvImportSettings::~CsvImportSettings: DELETED");
 #endif
 }
 
-CSVImportSettings::Format CSVImportSettings::getFormat() const noexcept
+CsvImportSettings::Format CsvImportSettings::getFormat() const noexcept
 {
     return d->format;
 }
 
-void CSVImportSettings::setFormat(Format format) noexcept
+void CsvImportSettings::setFormat(Format format) noexcept
 {
     if (d->format != format) {
         d->format = format;
@@ -79,7 +79,7 @@ void CSVImportSettings::setFormat(Format format) noexcept
 
 // PROTECTED
 
-void CSVImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
+void CsvImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
 {
     Settings::KeyValue keyValue;
 
@@ -88,7 +88,7 @@ void CSVImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const no
     keyValues.push_back(keyValue);
 }
 
-void CSVImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+void CsvImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
     Settings::KeyValue keyValue;
 
@@ -97,18 +97,18 @@ void CSVImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
     keysWithDefaults.push_back(keyValue);
 }
 
-void CSVImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
+void CsvImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     bool ok;
     const int enumeration = valuesByKey.at(::FormatKey).toInt(&ok);
     if (ok) {
-        d->format = static_cast<CSVImportSettings::Format >(enumeration);
+        d->format = static_cast<CsvImportSettings::Format >(enumeration);
     } else {
         d->format = ::DefaultFormat;
     }
 }
 
-void CSVImportSettings::restoreDefaultsExtn() noexcept
+void CsvImportSettings::restoreDefaultsExtn() noexcept
 {
     d->format = ::DefaultFormat;
 

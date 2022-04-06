@@ -22,39 +22,30 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVIMPORTOPTIONWIDGET_H
-#define CSVIMPORTOPTIONWIDGET_H
+#ifndef CSVCONST_H
+#define CSVCONST_H
 
-#include <memory>
+namespace CsvConst {
 
-#include <QWidget>
+    /*! Separator character for CSV import & export */
+    constexpr char Sep = '\t';
+    /*! Newline character for CSV import & export */
+    constexpr char Ln = '\n';
 
-namespace Ui {
-    class CSVImportOptionWidget;
+    // Format and precision for double
+    constexpr char Format = 'g';
+    constexpr int Precision = 9;
+
+    enum struct DataType : char {
+        Aircraft = 'a',
+        Engine = 'e',
+        PrimaryFlightControl = 'p',
+        SecondaryFlightControl = 's',
+        AircraftHandle = 'h',
+        Light = 'l'
+    };
+
+    constexpr char TypeColumnName[] = "Type";
 }
 
-class CSVImportSettings;
-class CSVImportOptionWidgetPrivate;
-
-class CSVImportOptionWidget : public QWidget
-{
-    Q_OBJECT
-public:
-    explicit CSVImportOptionWidget(CSVImportSettings &settings, QWidget *parent = nullptr) noexcept;
-    virtual ~CSVImportOptionWidget() noexcept;
-
-private:
-    std::unique_ptr<Ui::CSVImportOptionWidget> ui;
-    std::unique_ptr<CSVImportOptionWidgetPrivate> d;
-
-    void frenchConnection() noexcept;
-    void initUi() noexcept;
-
-private slots:
-    void onFormatChanged(int index) noexcept;
-
-    void updateUi() noexcept;
-};
-
-#endif // CSVIMPORTOPTIONWIDGET_H
-
+#endif // CSVCONST_H

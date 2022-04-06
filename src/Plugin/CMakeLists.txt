@@ -24,7 +24,7 @@ target_sources(${LIBRARY_NAME}
         src/ExportPluginBaseSettings.h src/ExportPluginBaseSettings.cpp        
         src/BasicExportDialog.h src/BasicExportDialog.cpp src/BasicExportDialog.ui
         src/SettingsIntf.h
-        src/CSVConst.h
+        src/CsvConst.h
 )
 
 set(PLUGIN_LIBS
