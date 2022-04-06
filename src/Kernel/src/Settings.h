@@ -475,10 +475,10 @@ public:
 #else
     typedef std::unordered_map<QString, QVariant> ValuesByKey;
 #endif
-    typedef std::vector<KeyValue> PluginSettings;
+    typedef std::vector<KeyValue> KeyValues;
     typedef std::vector<KeyValue> KeysWithDefaults;
 
-    void storePluginSettings(QUuid pluginUuid, const PluginSettings &settings) const noexcept;
+    void storePluginSettings(QUuid pluginUuid, const KeyValues &keyValues) const noexcept;
     ValuesByKey restorePluginSettings(QUuid pluginUuid, const KeysWithDefaults &keys) noexcept;
 
 public slots:

@@ -123,9 +123,9 @@ const FlightPlan::Iterator FlightPlan::end() const noexcept
     return Iterator(d->waypoints.end());
 }
 
-FlightPlan::InsertIterator FlightPlan::insertIterator() noexcept
+FlightPlan::BackInsertIterator FlightPlan::backInsertIterator() noexcept
 {
-    return std::inserter(d->waypoints, d->waypoints.begin());
+    return std::back_inserter(d->waypoints);
 }
 
 // OPERATORS

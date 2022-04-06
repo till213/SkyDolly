@@ -124,13 +124,13 @@ void BasicExportDialog::initBasicUi() noexcept
     ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestFilePath(d->fileExtension)));
 
     // Resampling
-    ui->resamplingComboBox->addItem(QString("1/10 Hz") % " (" % tr("less data, less accuracy") % ")", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::ATenthHz));
+    ui->resamplingComboBox->addItem(QString("1/10 Hz") % " (" % tr("smaller file size, less accuracy") % ")", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::ATenthHz));
     ui->resamplingComboBox->addItem("1/5 Hz", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::AFifthHz));
     ui->resamplingComboBox->addItem(QString("1 Hz") % " (" % tr("good accuracy") % ")", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::OneHz));
     ui->resamplingComboBox->addItem("2 Hz", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::TwoHz));
     ui->resamplingComboBox->addItem("5 Hz", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::FiveHz));
-    ui->resamplingComboBox->addItem("10 Hz", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::TenHz));
-    ui->resamplingComboBox->addItem(tr("Original data"), Enum::toUnderlyingType(SampleRate::ResamplingPeriod::Original));
+    ui->resamplingComboBox->addItem("10 Hz (larger file size, greater accuracy", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::TenHz));
+    ui->resamplingComboBox->addItem(tr("Original data (no resampling)"), Enum::toUnderlyingType(SampleRate::ResamplingPeriod::Original));
 }
 
 void BasicExportDialog::initOptionUi() noexcept
@@ -170,11 +170,6 @@ void BasicExportDialog::frenchConnection() noexcept
             this, &BasicExportDialog::onFileSelectionButtonClicked);
     connect(ui->filePathLineEdit, &QLineEdit::textChanged,
             this, &BasicExportDialog::onFilePathChanged);
-
-    QPushButton *resetButton = ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults);
-    connect(resetButton, &QPushButton::clicked,
-            this, &BasicExportDialog::onRestoreSettings);
-
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
     connect(ui->resamplingComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &BasicExportDialog::onResamplingOptionChanged);
@@ -186,6 +181,9 @@ void BasicExportDialog::frenchConnection() noexcept
             this, &BasicExportDialog::onDoOpenExportedFileChanged);
     connect(&d->settings, &ExportPluginBaseSettings::baseSettingsChanged,
             this, &BasicExportDialog::updateUi);
+    const QPushButton *resetButton = ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults);
+    connect(resetButton, &QPushButton::clicked,
+            this, &BasicExportDialog::onRestoreDefaults);
 }
 
 std::int64_t BasicExportDialog::estimateNofSamplePoints() noexcept
@@ -238,13 +236,13 @@ void BasicExportDialog::onFileSelectionButtonClicked() noexcept
     updateUi();
 }
 
-void BasicExportDialog::onFilePathChanged(const QString &filePath)
+void BasicExportDialog::onFilePathChanged()
 {
     d->settings.setFileDialogSelectedFile(false);
     updateUi();
 }
 
-void BasicExportDialog::onResamplingOptionChanged([[maybe_unused]] int index) noexcept
+void BasicExportDialog::onResamplingOptionChanged() noexcept
 {
     d->settings.setResamplingPeriod(static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt()));
 }
@@ -254,7 +252,7 @@ void BasicExportDialog::onDoOpenExportedFileChanged(bool enable) noexcept
     d->settings.setOpenExportedFileEnabled(enable);
 }
 
-void BasicExportDialog::onRestoreSettings() noexcept
+void BasicExportDialog::onRestoreDefaults() noexcept
 {
     d->settings.restoreDefaults();
     emit restoreDefaultOptions();

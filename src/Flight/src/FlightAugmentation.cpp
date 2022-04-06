@@ -424,7 +424,7 @@ void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
     light.upsertLast(lightData);
 }
 
-// TODO: Calculate times based on the following rule of thumb:
+// @todo: Calculate times based on the following rule of thumb:
 // flaps 1 at 10miles, flaps 2 at 8 miles, gear down between 6-7miles,
 // flaps 3 at 5 miles followed by full flaps almost immediately afterwards.
 void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept

@@ -114,13 +114,16 @@ std::size_t Engine::count() const noexcept
 const EngineData &Engine::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const EngineData *p1, *p2;
-    const std::int64_t adjustedTimestamp = qMax(timestamp + d->aircraftInfo.timeOffset, std::int64_t(0));
+    const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? d->aircraftInfo.timeOffset : 0;
+    const std::int64_t adjustedTimestamp = qMax(timestamp + timeOffset, std::int64_t(0));
 
     if (d->currentTimestamp != timestamp || d->currentAccess != access) {
 
         double tn;
         switch (access) {
         case TimeVariableData::Access::Linear:
+            [[fallthrough]];
+        case TimeVariableData::Access::Export:
             if (SkySearch::getLinearInterpolationSupportData(d->engineData, adjustedTimestamp, SkySearch::DefaultInterpolationWindow, d->currentIndex, &p1, &p2)) {
                 tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
             }
@@ -214,9 +217,9 @@ const Engine::Iterator Engine::end() const noexcept
     return Iterator(d->engineData.end());
 }
 
-Engine::InsertIterator Engine::insertIterator() noexcept
+Engine::BackInsertIterator Engine::backInsertIterator() noexcept
 {
-    return std::inserter(d->engineData, d->engineData.begin());
+    return std::back_inserter(d->engineData);
 }
 
 // OPERATORS

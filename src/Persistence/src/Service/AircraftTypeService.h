@@ -45,7 +45,7 @@ public:
     ~AircraftTypeService() noexcept;
 
     bool getByType(const QString &type, AircraftType &aircraftType) const noexcept;
-    bool getAll(std::insert_iterator<std::vector<AircraftType>> insertIterator) const noexcept;
+    bool getAll(std::back_insert_iterator<std::vector<AircraftType>> backInsertIterator) const noexcept;
     bool exists(const QString &type) const noexcept;
 
 private:

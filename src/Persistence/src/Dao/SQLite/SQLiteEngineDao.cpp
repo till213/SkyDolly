@@ -154,7 +154,7 @@ bool SQLiteEngineDao::add(std::int64_t aircraftId, const EngineData &data)  noex
     return ok;
 }
 
-bool SQLiteEngineDao::getByAircraftId(std::int64_t aircraftId, std::insert_iterator<std::vector<EngineData>> insertIterator) const noexcept
+bool SQLiteEngineDao::getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<EngineData>> backInsertIterator) const noexcept
 {
     QSqlQuery query;
     query.setForwardOnly(true);
@@ -233,7 +233,7 @@ bool SQLiteEngineDao::getByAircraftId(std::int64_t aircraftId, std::insert_itera
             data.generalEngineCombustion3 = query.value(generalEngineCombustion3Idx).toBool();
             data.generalEngineCombustion4 = query.value(generalEngineCombustion4Idx).toBool();
 
-            insertIterator = std::move(data);
+            backInsertIterator = std::move(data);
         }
 #ifdef DEBUG
     } else {

@@ -4,7 +4,11 @@
 
 ### New Features
 
+- JSON export plugin
+  * Export in GeoJSON format
+  * Style properties added, interpreted e.g by https://geojson.io
 - GPX export plugin
+  * Timestamps are based on either simulation or recording time; the later being useful for GPS-tagging screenshots taken during flight recording
 
 ### Improvements
 
@@ -17,6 +21,12 @@
   * Reduced the number of fractional digits to 6, reducing file size while still providing a practical precision in the range of centimeters (also refer to the mandatory [XKCD](https://xkcd.com/2170/))
 - Miscellaneous
   * Add shortcuts to dialog buttons
+  * The recording time is now shown in the Flight dialog
+  
+### Bug Fixes
+
+- The logbook now properly shows _simulation_ start- and end times (not local times)
+- The IGC export plugin now properly exports _simulation_ timestamps (not local timestamps)
   
 ## 0.9.0
 

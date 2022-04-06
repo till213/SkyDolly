@@ -60,8 +60,8 @@ private:
 
 private slots:
     void updateUi() noexcept;
-    void handleTitleEdited() noexcept;
-    void handleDescriptionEdited() noexcept;
+    void onTitleEdited() noexcept;
+    void onDescriptionEdited() noexcept;
 };
 
 #endif // FLIGHTDESCRIPTIONWIDGET_H

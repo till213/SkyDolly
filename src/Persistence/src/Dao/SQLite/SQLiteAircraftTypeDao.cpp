@@ -107,7 +107,7 @@ bool SQLiteAircraftTypeDao::getByType(const QString &type, AircraftType &aircraf
     return ok;
 }
 
-bool SQLiteAircraftTypeDao::getAll(std::insert_iterator<std::vector<AircraftType>> insertIterator) const noexcept
+bool SQLiteAircraftTypeDao::getAll(std::back_insert_iterator<std::vector<AircraftType>> backInsertIterator) const noexcept
 {
     QSqlQuery query;
     query.setForwardOnly(true);
@@ -133,7 +133,7 @@ bool SQLiteAircraftTypeDao::getAll(std::insert_iterator<std::vector<AircraftType
             aircraftType.engineType = static_cast<SimType::EngineType>(query.value(engineTypeIdx).toInt());
             aircraftType.numberOfEngines = query.value(nofEnginesIdx).toInt();
 
-            insertIterator = std::move(aircraftType);
+            backInsertIterator = std::move(aircraftType);
         }
 #ifdef DEBUG
     } else {

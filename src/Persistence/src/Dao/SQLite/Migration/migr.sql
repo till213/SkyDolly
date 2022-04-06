@@ -301,7 +301,7 @@ create table aircraft_new (
 
 @migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Copy the original aircraft data into new aircraft_new table", step = 4)
 insert into aircraft_new(id, flight_id, seq_nr, type, start_date, end_date, tail_number, airline, flight_number, initial_airspeed, altitude_above_ground, start_on_ground)
-select id, flight_id, seq_nr, coalesce(type, (select type from aircraft_type limit 1)), start_date, end_date, tail_number, airline, flight_number, initial_airspeed, altitude_above_ground, start_on_ground
+select a.id, a.flight_id, a.seq_nr, coalesce(a.type, (select at.type from aircraft_type at limit 1)), a.start_date, a.end_date, a.tail_number, a.airline, a.flight_number, a.initial_airspeed, a.altitude_above_ground, a.start_on_ground
 from   aircraft a;
 
 @migr(id = "ca308d14-8d70-43d6-b30f-7e23e5cf114c", descn = "Create case-insensitive index on type in aircraft_type table", step = 5)
@@ -569,6 +569,43 @@ set    indicated_altitude = altitude;
 @migr(id = "58835694-4d47-42cd-8c9c-1b9e164e21b8", descn = "Update application version to 0.9", step = 1)
 update metadata
 set app_version = '0.9.0';
+
+@migr(id = "8156bd2c-6654-4f37-b4fd-41aacbbaef7e", descn = "Drop columns start_date, end_date", step_cnt = 6)
+create table aircraft_new (
+    id integer primary key,
+    flight_id integer not null,
+    seq_nr integer not null,
+    type text not null,
+    time_offset integer,
+    tail_number text,
+    airline text,
+    flight_number text,
+    initial_airspeed integer,
+    altitude_above_ground real,
+    start_on_ground integer,
+    foreign key(flight_id) references flight(id)
+    foreign key(type) references aircraft_type(type)
+);
+
+@migr(id = "8156bd2c-6654-4f37-b4fd-41aacbbaef7e", descn = "Drop the old aircraft table", step = 2)
+insert into aircraft_new(id, flight_id, seq_nr, type, time_offset, tail_number, airline, flight_number, initial_airspeed, altitude_above_ground, start_on_ground)
+select a.id, a.flight_id, a.seq_nr, a.type, a.time_offset, a.tail_number, a.airline, a.flight_number, a.initial_airspeed, a.altitude_above_ground, a.start_on_ground
+from   aircraft a;
+
+@migr(id = "8156bd2c-6654-4f37-b4fd-41aacbbaef7e", descn = "Drop the old aircraft table", step = 3)
+drop table aircraft;
+
+@migr(id = "8156bd2c-6654-4f37-b4fd-41aacbbaef7e", descn = "Rename the new aircraft table to original name", step = 4)
+alter table aircraft_new rename to aircraft;
+
+@migr(id = "8156bd2c-6654-4f37-b4fd-41aacbbaef7e", descn = "Re-create indices in aircraft table", step = 5)
+create unique index aircraft_idx1 on aircraft (flight_id, seq_nr);
+
+@migr(id = "8156bd2c-6654-4f37-b4fd-41aacbbaef7e", descn = "Create case-insensitive index on type in aircraft table", step = 6)
+create index aircraft_idx2 on aircraft (type collate nocase);
+
+@migr(id = "50d25b69-7410-4777-9b17-1e16c4ea4867", descn = "Rename column creation_date to creation_time", step_cnt = 1)
+alter table flight rename creation_date to creation_time;
 
 @migr(id = "90f34b67-5fb8-4c52-ab61-d704297bd7e2", descn = "Update application version to 0.10", step = 1)
 update metadata

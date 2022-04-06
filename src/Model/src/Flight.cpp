@@ -45,14 +45,14 @@ class FlightPrivate
 public:
 
     FlightPrivate() noexcept
-        : creationDate(QDateTime::currentDateTime()),
+        : creationTime(QDateTime::currentDateTime()),
           userAircraftIndex(InvalidAircraftIndex)
     {
         clear(true);
     }
 
     std::int64_t id;
-    QDateTime creationDate;
+    QDateTime creationTime;
     QString title;
     QString description;
     FlightCondition flightCondition;
@@ -108,14 +108,14 @@ std::int64_t Flight::getId() const noexcept
     return d->id;
 }
 
-const QDateTime &Flight::getCreationDate() const noexcept
+const QDateTime &Flight::getCreationTime() const noexcept
 {
-    return d->creationDate;
+    return d->creationTime;
 }
 
-void Flight::setCreationDate(const QDateTime &creationDate) noexcept
+void Flight::setCreationTime(const QDateTime &creationTime) noexcept
 {
-    d->creationDate = creationDate;
+    d->creationTime = creationTime;
 }
 
 const QString &Flight::getTitle() const noexcept
@@ -229,6 +229,21 @@ std::int64_t Flight::getTotalDurationMSec(bool ofUserAircraft) const noexcept
         }
     }
     return totalDuractionMSec;
+}
+
+QDateTime Flight::getAircraftCreationTime(const Aircraft &aircraft) const noexcept
+{
+    return d->creationTime.addMSecs(-aircraft.getTimeOffset());
+}
+
+QDateTime Flight::getAircraftStartLocalTime(const Aircraft &aircraft) const noexcept
+{
+    return d->flightCondition.startLocalTime.addMSecs(-aircraft.getTimeOffset());
+}
+
+QDateTime Flight::getAircraftStartZuluTime(const Aircraft &aircraft) const noexcept
+{
+    return d->flightCondition.startZuluTime.addMSecs(-aircraft.getTimeOffset());
 }
 
 void Flight::clear(bool withOneAircraft) noexcept

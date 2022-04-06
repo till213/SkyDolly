@@ -110,7 +110,7 @@ void FlightDialog::initUi() noexcept
 
     ui->flightTab->setCurrentIndex(0);
 
-    // TODO DRY: "centrally" define the "F" shortcut (currently also assigned to the corresponding QAction)
+    // @todo DRY: "centrally" define the "F" shortcut (currently also assigned to the corresponding QAction)
     d->closeDialogShortcut = new QShortcut(QKeySequence(tr("F", "Window|Flight...")), this);
 }
 

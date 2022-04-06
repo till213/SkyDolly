@@ -78,13 +78,13 @@ public:
     void clear() noexcept;
 
     typedef std::vector<PositionData>::iterator Iterator;
-    typedef std::insert_iterator<std::vector<PositionData>> InsertIterator;
+    typedef std::back_insert_iterator<std::vector<PositionData>> BackInsertIterator;
 
     Iterator begin() noexcept;
     Iterator end() noexcept;
     const Iterator begin() const noexcept;
     const Iterator end() const noexcept;
-    InsertIterator insertIterator() noexcept;
+    BackInsertIterator backInsertIterator() noexcept;
 
     PositionData& operator[](std::size_t index) noexcept;
     const PositionData& operator[](std::size_t index) const noexcept;

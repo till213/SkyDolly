@@ -41,10 +41,8 @@ struct MODEL_API FlightSummary
     QDateTime creationDate;
     QString aircraftType;
     int aircraftCount;
-    QDateTime startDate;
     QDateTime startSimulationLocalTime;
     QDateTime startSimulationZuluTime;
-    QDateTime endDate;
     QDateTime endSimulationLocalTime;
     QDateTime endSimulationZuluTime;
     QString startLocation;

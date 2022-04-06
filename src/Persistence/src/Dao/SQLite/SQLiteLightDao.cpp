@@ -72,7 +72,7 @@ bool SQLiteLightDao::add(std::int64_t aircraftId, const LightData &lightData)  n
     return ok;
 }
 
-bool SQLiteLightDao::getByAircraftId(std::int64_t aircraftId, std::insert_iterator<std::vector<LightData>> insertIterator) const noexcept
+bool SQLiteLightDao::getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<LightData>> backInsertIterator) const noexcept
 {
     QSqlQuery query;
     query.setForwardOnly(true);
@@ -95,7 +95,7 @@ bool SQLiteLightDao::getByAircraftId(std::int64_t aircraftId, std::insert_iterat
             data.timestamp = query.value(timestampIdx).toLongLong();
             data.lightStates = static_cast<SimType::LightStates>(query.value(lightStatesIdx).toInt());
 
-            insertIterator = std::move(data);
+            backInsertIterator = std::move(data);
         }
 #ifdef DEBUG
     } else {

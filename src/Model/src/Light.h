@@ -78,13 +78,13 @@ public:
     void clear() noexcept;
 
     typedef std::vector<LightData>::iterator Iterator;
-    typedef std::insert_iterator<std::vector<LightData>> InsertIterator;
+    typedef std::back_insert_iterator<std::vector<LightData>> BackInsertIterator;
 
     Iterator begin() noexcept;
     Iterator end() noexcept;
     const Iterator begin() const noexcept;
     const Iterator end() const noexcept;
-    InsertIterator insertIterator() noexcept;
+    BackInsertIterator backInsertIterator() noexcept;
 
     LightData& operator[](std::size_t index) noexcept;
     const LightData& operator[](std::size_t index) const noexcept;
