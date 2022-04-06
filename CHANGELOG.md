@@ -4,6 +4,9 @@
 
 ### New Features
 
+- JSON export plugin
+  * Export in GeoJSON format
+  * Style properties added, interpreted e.g by https://geojson.io
 - GPX export plugin
   * Timestamps are based on either simulation or recording time; the later being useful for GPS-tagging screenshots taken during flight recording
 
