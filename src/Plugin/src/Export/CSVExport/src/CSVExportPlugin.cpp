@@ -83,21 +83,6 @@ CSVExportPlugin::~CSVExportPlugin() noexcept
 
 // PROTECTED
 
-void CSVExportPlugin::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
-{
-    d->settings.addSettings(keyValues);
-}
-
-void CSVExportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
-{
-    d->settings.addKeysWithDefaults(keysWithDefaults);
-}
-
-void CSVExportPlugin::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
-{
-    d->settings.restoreSettings(valuesByKey);
-}
-
 ExportPluginBaseSettings &CSVExportPlugin::getSettings() const noexcept
 {
     return d->settings;

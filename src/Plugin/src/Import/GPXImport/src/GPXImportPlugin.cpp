@@ -172,7 +172,6 @@ void GPXImportPlugin::updateWaypoints() noexcept
     const Aircraft &aircraft = flight.getUserAircraft();
     Position &position = aircraft.getPosition();
 
-    FlightPlan &flightPlan = aircraft.getFlightPlan();
     if (position.count() > 0) {
         Analytics analytics(aircraft);
         const PositionData firstPositionData = position.getFirst();

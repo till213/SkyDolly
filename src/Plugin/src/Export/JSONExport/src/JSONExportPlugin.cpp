@@ -89,21 +89,6 @@ JSONExportPlugin::~JSONExportPlugin() noexcept
 
 // PROTECTED
 
-void JSONExportPlugin::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
-{
-    d->settings.addSettings(keyValues);
-}
-
-void JSONExportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
-{
-    d->settings.addKeysWithDefaults(keysWithDefaults);
-}
-
-void JSONExportPlugin::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
-{
-    d->settings.restoreSettings(valuesByKey);
-}
-
 ExportPluginBaseSettings &JSONExportPlugin::getSettings() const noexcept
 {
     return d->settings;
@@ -116,7 +101,7 @@ QString JSONExportPlugin::getFileExtension() const noexcept
 
 QString JSONExportPlugin::getFileFilter() const noexcept
 {
-    return tr("JavaScript object notation(*.%1)").arg(getFileExtension());
+    return tr("JavaScript object notation (*.%1)").arg(getFileExtension());
 }
 
 std::unique_ptr<QWidget> JSONExportPlugin::createOptionWidget() const noexcept

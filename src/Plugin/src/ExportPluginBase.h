@@ -79,10 +79,7 @@ public:
 protected:
     void resamplePositionDataForExport(const Aircraft &aircraft, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) const noexcept;
 
-     // Re-implement
-    virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept = 0;
-    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept = 0;
-    virtual void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept = 0;
+    // Re-implement
     virtual ExportPluginBaseSettings &getSettings() const noexcept = 0;
     virtual QString getFileExtension() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;

@@ -109,21 +109,6 @@ KMLExportPlugin::~KMLExportPlugin() noexcept
 
 // PROTECTED
 
-void KMLExportPlugin::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
-{
-    d->settings.addSettings(keyValues);
-}
-
-void KMLExportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
-{
-    d->settings.addKeysWithDefaults(keysWithDefaults);
-}
-
-void KMLExportPlugin::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
-{
-    d->settings.restoreSettings(valuesByKey);
-}
-
 ExportPluginBaseSettings &KMLExportPlugin::getSettings() const noexcept
 {
     return d->settings;

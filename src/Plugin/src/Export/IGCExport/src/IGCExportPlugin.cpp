@@ -138,21 +138,6 @@ IGCExportPlugin::~IGCExportPlugin() noexcept
 
 // PROTECTED
 
-void IGCExportPlugin::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
-{
-    d->settings.addSettings(keyValues);
-}
-
-void IGCExportPlugin::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
-{
-    d->settings.addKeysWithDefaults(keysWithDefaults);
-}
-
-void IGCExportPlugin::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
-{
-    d->settings.restoreSettings(valuesByKey);
-}
-
 ExportPluginBaseSettings &IGCExportPlugin::getSettings() const noexcept
 {
     return d->settings;

@@ -182,17 +182,14 @@ bool ExportPluginBase::exportFile(const QString &filePath) noexcept
 void ExportPluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
     getSettings().addSettings(keyValues);
-    addSettingsExtn(keyValues);
 }
 
 void ExportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
     getSettings().addKeysWithDefaults(keysWithDefaults);
-    addKeysWithDefaultsExtn(keysWithDefaults);
 }
 
 void ExportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
     getSettings().restoreSettings(valuesByKey);
-    restoreSettingsExtn(valuesByKey);
 }
