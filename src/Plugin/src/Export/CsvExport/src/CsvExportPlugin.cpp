@@ -31,7 +31,6 @@
 #include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/Settings.h"
 #include "../../../../../Model/src/SimVar.h"
-#include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/Aircraft.h"
 #include "../../../../../Model/src/Position.h"
@@ -55,10 +54,8 @@ class CsvExportPluginPrivate
 {
 public:
     CsvExportPluginPrivate() noexcept
-        : flight(Logbook::getInstance().getCurrentFlight())
     {}
 
-    Flight &flight;
     CsvExportSettings settings;
 
     static inline const QString FileExtension {QStringLiteral("csv")};

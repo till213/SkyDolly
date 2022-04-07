@@ -33,7 +33,6 @@
 #include <QRegularExpression>
 
 #include "../../../../../Kernel/src/Convert.h"
-#include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/FlightPlan.h"
 #include "../../../../../Model/src/Position.h"
@@ -56,14 +55,16 @@ public:
     // The track data may contain data with identical timestamps
     std::vector<TrackItem> trackData;
 
-    FlightRadar24KmlParserPrivate(QXmlStreamReader &xmlStreamReader) noexcept
-        : xml(xmlStreamReader),
+    FlightRadar24KmlParserPrivate(Flight &theFlight, QXmlStreamReader &xmlStreamReader) noexcept
+        : flight(theFlight),
+          xml(xmlStreamReader),
           speedRegExp(FlightRadar24KmlParserPrivate::SpeedPattern),
           headingRegExp(FlightRadar24KmlParserPrivate::HeadingPattern)
     {
         firstDateTimeUtc.setTimeZone(QTimeZone::utc());
     }
 
+    Flight &flight;
     QXmlStreamReader &xml;
     QString documentName;
     QString flightNumber;
@@ -79,8 +80,8 @@ private:
 
 // PUBLIC
 
-FlightRadar24KmlParser::FlightRadar24KmlParser(QXmlStreamReader &xmlStreamReader) noexcept
-    : d(std::make_unique<FlightRadar24KmlParserPrivate>(xmlStreamReader))
+FlightRadar24KmlParser::FlightRadar24KmlParser(Flight &flight, QXmlStreamReader &xmlStreamReader) noexcept
+    : d(std::make_unique<FlightRadar24KmlParserPrivate>(flight, xmlStreamReader))
 {
 #ifdef DEBUG
     qDebug("FlightRadar24KmlParser::~FlightRadar24KmlParser: CREATED");
@@ -117,8 +118,7 @@ void FlightRadar24KmlParser::parse() noexcept
     }
 
     // Now "upsert" the position data, taking duplicate timestamps into account
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    Position &position = flight.getUserAircraft().getPosition();
+    Position &position = d->flight.getUserAircraft().getPosition();
     for (const FlightRadar24KmlParserPrivate::TrackItem &trackItem : d->trackData) {
         PositionData positionData {trackItem.latitude, trackItem.longitude, trackItem.altitude};
         positionData.timestamp = trackItem.timestamp;

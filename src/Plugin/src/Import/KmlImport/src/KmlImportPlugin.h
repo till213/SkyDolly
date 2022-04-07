@@ -57,7 +57,7 @@ protected:
     virtual ImportPluginBaseSettings &getSettings() const noexcept override;
     virtual QString getFileFilter() const noexcept override;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    virtual bool readFile(QFile &file) noexcept override;
+    virtual bool importFlight(QFile &file, Flight &flight) noexcept override;
 
     virtual FlightAugmentation::Procedures getProcedures() const noexcept override;
     virtual FlightAugmentation::Aspects getAspects() const noexcept override;

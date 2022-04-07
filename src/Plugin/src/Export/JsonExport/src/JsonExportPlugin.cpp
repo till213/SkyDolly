@@ -41,7 +41,6 @@
 #include "../../../../../Kernel/src/Unit.h"
 #include "../../../../../Kernel/src/SampleRate.h"
 #include "../../../../../Kernel/src/Settings.h"
-#include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/FlightPlan.h"
 #include "../../../../../Model/src/Waypoint.h"
@@ -60,11 +59,11 @@ class JsonExportPluginPrivate
 {
 public:
     JsonExportPluginPrivate() noexcept
-        : flight(Logbook::getInstance().getCurrentFlight())
+        : flight(nullptr)
     {}
 
+    const Flight *flight;
     JsonExportSettings settings;
-    Flight &flight;
     Unit unit;
 
     static inline const QString FileExtension {QStringLiteral("json")};
@@ -112,6 +111,7 @@ std::unique_ptr<QWidget> JsonExportPlugin::createOptionWidget() const noexcept
 
 bool JsonExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
 {
+    d->flight = &flight;
     io.setTextModeEnabled(true);
     bool ok = exportHeader(io);
     if (ok) {
@@ -123,7 +123,8 @@ bool JsonExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcep
     if (ok) {
         ok = exportFooter(io);
     }
-
+    // We are done with the export
+    d->flight = nullptr;
     return ok;
 }
 
@@ -149,10 +150,10 @@ bool JsonExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
 {
     bool ok = true;
     std::size_t i = 0;
-    for (const auto &aircraft : d->flight) {
+    for (const auto &aircraft : *d->flight) {
         ok = exportAircraft(*aircraft, io);
         if (ok) {
-            if (i < d->flight.count() - 1) {
+            if (i < d->flight->count() - 1) {
                 ok = io.write(",\n");
             } else {
                 ok = io.write("\n");
@@ -225,7 +226,7 @@ bool JsonExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) c
 bool JsonExportPlugin::exportWaypoints(QIODevice &io) const noexcept
 {
     bool ok = true;
-    const FlightPlan &flightPlan = d->flight.getUserAircraft().getFlightPlanConst();
+    const FlightPlan &flightPlan = d->flight->getUserAircraft().getFlightPlanConst();
     for (const Waypoint &waypoint : flightPlan) {
         ok = exportWaypoint(waypoint, io);
         if (!ok) {

@@ -40,7 +40,6 @@
 #include "../../Kernel/src/SkyMath.h"
 #include "../../Kernel/src/Convert.h"
 #include "../../Flight/src/FlightAugmentation.h"
-#include "../../Model/src/Logbook.h"
 #include "../../Model/src/Flight.h"
 #include "../../Model/src/FlightCondition.h"
 #include "../../Model/src/Aircraft.h"
@@ -61,10 +60,12 @@ class ImportPluginBasePrivate
 {
 public:
     ImportPluginBasePrivate()
-        : aircraftService(std::make_unique<AircraftService>()),
+        : flight(nullptr),
+          aircraftService(std::make_unique<AircraftService>()),
           aircraftTypeService(std::make_unique<AircraftTypeService>())
     {}
 
+    Flight *flight;
     std::unique_ptr<AircraftService> aircraftService;
     std::unique_ptr<AircraftTypeService> aircraftTypeService;
     QFile file;
@@ -90,9 +91,10 @@ ImportPluginBase::~ImportPluginBase() noexcept
 #endif
 }
 
-bool ImportPluginBase::importData(FlightService &flightService) noexcept
+bool ImportPluginBase::importFlight(FlightService &flightService, Flight &flight) noexcept
 {
     bool ok;
+    d->flight = &flight;
     ImportPluginBaseSettings &baseSettings = getSettings();
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
     std::unique_ptr<BasicImportDialog> importDialog = std::make_unique<BasicImportDialog>(getFileFilter(), baseSettings, getParentWidget());
@@ -114,7 +116,7 @@ bool ImportPluginBase::importData(FlightService &flightService) noexcept
 #endif
             QGuiApplication::setOverrideCursor(Qt::WaitCursor);
             QGuiApplication::processEvents();
-            ok = importFile(selectedFilePath, flightService);
+            ok = importFlight(selectedFilePath, flightService, flight);
             QGuiApplication::restoreOverrideCursor();
 #ifdef DEBUG
             qDebug("%s import %s in %lld ms", qPrintable(QFileInfo(selectedFilePath).fileName()), (ok ? qPrintable("SUCCESS") : qPrintable("FAIL")), timer.elapsed());
@@ -137,6 +139,10 @@ bool ImportPluginBase::importData(FlightService &flightService) noexcept
     } else {
         ok = true;
     }
+
+    // We are done with the export
+    d->flight = nullptr;
+
     return ok;
 }
 
@@ -164,12 +170,11 @@ void ImportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexce
     getSettings().restoreSettings(valuesByKey);
 }
 
-bool ImportPluginBase::importFile(const QString &filePath, FlightService &flightService) noexcept
+bool ImportPluginBase::importFlight(const QString &filePath, FlightService &flightService, Flight &flight) noexcept
 {
     d->file.setFileName(filePath);
     bool ok = d->file.open(QIODevice::ReadOnly);
     if (ok) {
-        Flight &flight = Logbook::getInstance().getCurrentFlight();
         const bool addToCurrentFlight = getSettings().isAddToFlightEnabled();
         if (!addToCurrentFlight) {
             flight.clear(true);
@@ -179,7 +184,7 @@ bool ImportPluginBase::importFile(const QString &filePath, FlightService &flight
         const bool addNewAircraft = addToCurrentFlight && (aircraftCount > 1 || flight.getUserAircraft().hasRecording());
         Aircraft &aircraft = addNewAircraft ? flight.addUserAircraft() : flight.getUserAircraft();
 
-        ok = readFile(d->file);
+        ok = importFlight(d->file, flight);
         if (ok && aircraft.getPositionConst().count() > 0) {
             d->flightAugmentation.setProcedures(getProcedures());
             d->flightAugmentation.setAspects(getAspects());
@@ -205,8 +210,7 @@ bool ImportPluginBase::importFile(const QString &filePath, FlightService &flight
 
 void ImportPluginBase::updateAircraftInfo() noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    Aircraft &aircraft = flight.getUserAircraft();
+    Aircraft &aircraft = d->flight->getUserAircraft();
     AircraftInfo aircraftInfo(aircraft.getId());
     aircraftInfo.aircraftType = d->aircraftType;
 
@@ -253,21 +257,19 @@ void ImportPluginBase::updateAircraftInfo() noexcept
 
 void ImportPluginBase::updateFlightInfo() noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    flight.setTitle(getTitle());
+    d->flight->setTitle(getTitle());
 
     const QString description = tr("Aircraft imported on %1 from file: %2").arg(d->unit.formatDateTime(QDateTime::currentDateTime()), d->file.fileName());
-    flight.setDescription(description);
-    flight.setCreationTime(QFileInfo(d->file).birthTime());
-    updateExtendedFlightInfo(flight);
+    d->flight->setDescription(description);
+    d->flight->setCreationTime(QFileInfo(d->file).birthTime());
+    updateExtendedFlightInfo(*d->flight);
 }
 
 void ImportPluginBase::updateFlightCondition() noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
     FlightCondition flightCondition;
 
-    Aircraft &aircraft = flight.getUserAircraft();
+    Aircraft &aircraft = d->flight->getUserAircraft();
 
     const Position &position = aircraft.getPositionConst();
     const PositionData &lastPositionData = position.getLast();
@@ -280,5 +282,5 @@ void ImportPluginBase::updateFlightCondition() noexcept
     flightCondition.endZuluTime = endDateTimeUtc;
     updateExtendedFlightCondition(flightCondition);
 
-    flight.setFlightCondition(flightCondition);
+    d->flight->setFlightCondition(flightCondition);
 }

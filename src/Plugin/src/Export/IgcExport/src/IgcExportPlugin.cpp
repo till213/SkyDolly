@@ -42,7 +42,6 @@
 #include "../../../../../Kernel/src/Version.h"
 #include "../../../../../Kernel/src/Settings.h"
 #include "../../../../../Kernel/src/SkyMath.h"
-#include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/FlightCondition.h"
 #include "../../../../../Model/src/Aircraft.h"
@@ -102,10 +101,10 @@ class IgcExportPluginPrivate
 {
 public:
     IgcExportPluginPrivate() noexcept
-        : flight(Logbook::getInstance().getCurrentFlight())
+        : flight(nullptr)
     {}
 
-    Flight &flight;
+    const Flight *flight;
     IgcExportSettings settings;
     Unit unit;
 
@@ -160,7 +159,8 @@ std::unique_ptr<QWidget> IgcExportPlugin::createOptionWidget() const noexcept
 
 bool IgcExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
 {
-    const Aircraft &aircraft = d->flight.getUserAircraftConst();
+    d->flight = &flight;
+    const Aircraft &aircraft = d->flight->getUserAircraftConst();
     bool ok = exportARecord(io);
     if (ok) {
         ok = exportHRecord(aircraft, io);
@@ -177,6 +177,8 @@ bool IgcExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
     if (ok) {
         ok = exportGRecord(io);
     }
+    // We are done with the export
+    d->flight = nullptr;
     return ok;
 
 }
@@ -199,7 +201,7 @@ inline bool IgcExportPlugin::exportARecord(QIODevice &io) const noexcept
 inline bool IgcExportPlugin::exportHRecord(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     const QByteArray record =
-        IgcExportPluginPrivate::HRecord % ::Date % formatDate(d->flight.getFlightConditionConst().startZuluTime) % ::LineEnd %
+        IgcExportPluginPrivate::HRecord % ::Date % formatDate(d->flight->getFlightConditionConst().startZuluTime) % ::LineEnd %
         IgcExportPluginPrivate::HRecord % ::Pilot % d->settings.getPilotName().toLatin1() % ::LineEnd %
         IgcExportPluginPrivate::HRecord % ::CoPilot % d->settings.getCoPilotName().toLatin1() % ::LineEnd %
         IgcExportPluginPrivate::HRecord % ::GliderType % aircraft.getAircraftInfoConst().aircraftType.type.toLatin1() % ::LineEnd %
@@ -228,11 +230,11 @@ inline bool IgcExportPlugin::exportCRecord(const Aircraft &aircraft, QIODevice &
     const FlightPlan &flightPlan = aircraft.getFlightPlanConst();
     const Position &position = aircraft.getPositionConst();
     const int nofTurnPoints = flightPlan.count() - 2;
-    QByteArray record = IgcExportPluginPrivate::CRecord % formatDateTime(d->flight.getAircraftStartZuluTime(aircraft)) %
+    QByteArray record = IgcExportPluginPrivate::CRecord % formatDateTime(d->flight->getAircraftStartZuluTime(aircraft)) %
                         ::ObsoleteFlightDate % ::ObsoleteTaskNumber %
                         // Number of turn points, excluding start and end wapoints
                         formatNumber(qMin(nofTurnPoints, 0), 2) %
-                        d->flight.getTitle().toLatin1() % ::LineEnd;
+                        d->flight->getTitle().toLatin1() % ::LineEnd;
     bool ok = io.write(record);
     const std::size_t count = flightPlan.count();
     std::size_t i = 0;
@@ -262,7 +264,7 @@ inline bool IgcExportPlugin::exportCRecord(const Aircraft &aircraft, QIODevice &
 
 inline bool IgcExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    QDateTime startTime = d->flight.getAircraftStartZuluTime(aircraft);
+    QDateTime startTime = d->flight->getAircraftStartZuluTime(aircraft);
 
     const Engine &engine = aircraft.getEngineConst();
     std::vector<PositionData> interpolatedPositionData;

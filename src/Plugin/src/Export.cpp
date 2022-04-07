@@ -29,7 +29,6 @@
 #include "../../Kernel/src/Version.h"
 #include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/File.h"
-#include "../../Model/src/Logbook.h"
 #include "../../Model/src/Flight.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/AircraftInfo.h"
@@ -48,10 +47,9 @@ namespace
 
 // PUBLIC
 
-QString Export::suggestFilePath(QStringView suffix) noexcept
+QString Export::suggestFilePath(const Flight &flight, QStringView suffix) noexcept
 {
     QString suggestedFileName;
-    const Flight &flight = Logbook::getInstance().getCurrentFlight();
     const Settings &settings = Settings::getInstance();
 
     const QString &title = flight.getTitle();

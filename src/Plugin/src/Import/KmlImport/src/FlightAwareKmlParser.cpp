@@ -30,7 +30,6 @@
 #include <QXmlStreamReader>
 
 #include "../../../../../Kernel/src/Convert.h"
-#include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/FlightPlan.h"
 #include "../../../../../Model/src/Position.h"
@@ -53,8 +52,8 @@ public:
 
 // PUBLIC
 
-FlightAwareKmlParser::FlightAwareKmlParser(QXmlStreamReader &xmlStreamReader) noexcept
-    : AbstractKmlTrackParser(xmlStreamReader),
+FlightAwareKmlParser::FlightAwareKmlParser(Flight &flight, QXmlStreamReader &xmlStreamReader) noexcept
+    : AbstractKmlTrackParser(flight, xmlStreamReader),
       d(std::make_unique<FlightAwareKmlParserPrivate>(xmlStreamReader))
 {
 #ifdef DEBUG
@@ -143,8 +142,8 @@ void FlightAwareKmlParser::parseWaypoint(const QString &icaoOrName) noexcept
                 // gx:Track data has been parsed
                 waypoint.timestamp = TimeVariableData::InvalidTime;
 
-                Flight &flight = Logbook::getInstance().getCurrentFlight();
-                flight.getUserAircraft().getFlightPlan().add(std::move(waypoint));
+
+                getFlight().getUserAircraft().getFlightPlan().add(std::move(waypoint));
             } else {
                 d->xml.raiseError("Invalid GPS coordinate.");
             }
@@ -156,13 +155,10 @@ void FlightAwareKmlParser::parseWaypoint(const QString &icaoOrName) noexcept
 
 void FlightAwareKmlParser::updateWaypoints() noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    Aircraft &aircraft = flight.getUserAircraft();
+    Aircraft &aircraft = getFlight().getUserAircraft();
 
     int positionCount = aircraft.getPosition().count();
     if (positionCount > 0) {
-        const PositionData &firstPositionData = aircraft.getPosition().getFirst();
-
         int waypointCount = aircraft.getFlightPlan().count();
         if (waypointCount > 0) {
 

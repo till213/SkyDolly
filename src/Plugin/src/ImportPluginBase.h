@@ -75,7 +75,7 @@ public:
         PluginBase::restoreSettings(pluginUuid);
     }
 
-    virtual bool importData(FlightService &flightService) noexcept override final;
+    virtual bool importFlight(FlightService &flightService, Flight &flight) noexcept override final;
 
 protected:
     AircraftType &getSelectedAircraftType() const noexcept;
@@ -84,7 +84,7 @@ protected:
     virtual ImportPluginBaseSettings &getSettings() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
-    virtual bool readFile(QFile &file) noexcept = 0;
+    virtual bool importFlight(QFile &file, Flight &flight) noexcept = 0;
 
     virtual FlightAugmentation::Procedures getProcedures() const noexcept = 0;
     virtual FlightAugmentation::Aspects getAspects() const noexcept = 0;
@@ -104,7 +104,7 @@ private:
     virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override final;
     virtual void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept override final;
 
-    bool importFile(const QString &filePath, FlightService &flightService) noexcept;
+    bool importFlight(const QString &filePath, FlightService &flightService, Flight &flight) noexcept;
     void updateAircraftInfo() noexcept;
     void updateFlightInfo() noexcept;
     void updateFlightCondition() noexcept;

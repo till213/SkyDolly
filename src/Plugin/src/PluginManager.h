@@ -60,7 +60,7 @@ public:
     std::vector<Handle> initialiseExportPlugins() noexcept;
     std::vector<Handle> initialiseImportPlugins() noexcept;
 
-    bool importData(const QUuid &pluginUuid, FlightService &flightService) const noexcept;
+    bool importFlight(const QUuid &pluginUuid, FlightService &flightService, Flight &flight) const noexcept;
     bool exportFlight(const Flight &flight, const QUuid &pluginUuid) const noexcept;
 
 protected:

@@ -31,13 +31,15 @@ class QString;
 
 #include "CsvParserIntf.h"
 
+class Flight;
+
 class FlightRadar24CsvParser : public CsvParserIntf
 {
 public:
     FlightRadar24CsvParser() noexcept;
     virtual ~FlightRadar24CsvParser() noexcept;
 
-    virtual bool parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept override;
+    virtual bool parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept override;
 };
 
 #endif // FLIGHTRADAR24CSVPARSER_H

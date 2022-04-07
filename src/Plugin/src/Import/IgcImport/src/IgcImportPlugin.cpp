@@ -40,7 +40,6 @@
 #include "../../../../../Kernel/src/SkyMath.h"
 #include "../../../../../Kernel/src/Convert.h"
 #include "../../../../../Flight/src/Analytics.h"
-#include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/FlightCondition.h"
 #include "../../../../../Model/src/Aircraft.h"
@@ -69,9 +68,11 @@ class IgcImportPluginPrivate
 {
 public:
     IgcImportPluginPrivate()
-        : throttleResponseCurve(QEasingCurve::OutExpo)
+        : flight(nullptr),
+          throttleResponseCurve(QEasingCurve::OutExpo)
     {}
 
+    Flight *flight;
     IgcParser igcParser;
 
     enum struct EngineState {
@@ -120,12 +121,12 @@ std::unique_ptr<QWidget> IgcImportPlugin::createOptionWidget() const noexcept
     return std::make_unique<IgcImportOptionWidget>(d->settings);
 }
 
-bool IgcImportPlugin::readFile(QFile &file) noexcept
+bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
 {
+    d->flight = &flight;
     bool ok = d->igcParser.parse(file);
     if (ok) {
         // Now "upsert" the position data, taking possible duplicate timestamps into account
-        Flight &flight = Logbook::getInstance().getCurrentFlight();
         const Aircraft &aircraft = flight.getUserAircraft();
         Position &position = aircraft.getPosition();
 
@@ -236,6 +237,8 @@ bool IgcImportPlugin::readFile(QFile &file) noexcept
             updateWaypoints();
         }
     }
+    // We are done with the import
+    d->flight = nullptr;
     return ok;
 }
 
@@ -296,8 +299,7 @@ void IgcImportPlugin::onRestoreDefaultSettings() noexcept
 
 void IgcImportPlugin::updateWaypoints() noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    const Aircraft &aircraft = flight.getUserAircraft();
+    const Aircraft &aircraft = d->flight->getUserAircraft();
     Position &position = aircraft.getPosition();
 
     FlightPlan &flightPlan = aircraft.getFlightPlan();

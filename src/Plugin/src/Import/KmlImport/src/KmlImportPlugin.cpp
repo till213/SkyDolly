@@ -34,7 +34,6 @@
 #include <QFlags>
 
 #include "../../../../../Kernel/src/Unit.h"
-#include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/Aircraft.h"
 #include "../../../../../Model/src/FlightCondition.h"
@@ -51,8 +50,10 @@ class KmlImportPluginPrivate
 {
 public:
     KmlImportPluginPrivate()
+        : flight(nullptr)
     {}
 
+    Flight *flight;
     QXmlStreamReader xml;
     KmlImportSettings settings;
     QDateTime firstDateTimeUtc;
@@ -96,8 +97,9 @@ std::unique_ptr<QWidget> KmlImportPlugin::createOptionWidget() const noexcept
     return std::make_unique<KmlImportOptionWidget>(d->settings);
 }
 
-bool KmlImportPlugin::readFile(QFile &file) noexcept
+bool KmlImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
 {
+    d->flight = &flight;
     d->xml.setDevice(&file);
     if (d->xml.readNextStartElement()) {
 #ifdef DEBUG
@@ -116,6 +118,8 @@ bool KmlImportPlugin::readFile(QFile &file) noexcept
         qDebug("KmlImportPlugin::readFile: XML error: %s", qPrintable(d->xml.errorString()));
     }
 #endif
+    // We are done with the import
+    d->flight = nullptr;
     return ok;
 }
 
@@ -181,13 +185,13 @@ void KmlImportPlugin::parseKML() noexcept
     std::unique_ptr<KmlParserIntf> parser;
     switch (d->settings.getFormat()) {
     case KmlImportSettings::Format::FlightAware:
-        parser = std::make_unique<FlightAwareKmlParser>(d->xml);
+        parser = std::make_unique<FlightAwareKmlParser>(*d->flight, d->xml);
         break;
     case KmlImportSettings::Format::FlightRadar24:
-        parser = std::make_unique<FlightRadar24KmlParser>(d->xml);
+        parser = std::make_unique<FlightRadar24KmlParser>(*d->flight, d->xml);
         break;
     case KmlImportSettings::Format::Generic:
-        parser = std::make_unique<GenericKmlParser>(d->xml);
+        parser = std::make_unique<GenericKmlParser>(*d->flight, d->xml);
         break;
     default:
         parser = nullptr;

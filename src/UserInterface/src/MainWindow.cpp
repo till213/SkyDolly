@@ -1398,8 +1398,9 @@ void MainWindow::handleLogbookConnectionChanged(bool connected) noexcept
 
 void MainWindow::handleImport(QAction *action) noexcept
 {
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
     const QUuid pluginUuid = action->data().toUuid();
-    const bool ok = PluginManager::getInstance().importData(pluginUuid, *d->flightService);
+    const bool ok = PluginManager::getInstance().importFlight(pluginUuid, *d->flightService, flight);
     if (ok) {
         updateUi();
         std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();

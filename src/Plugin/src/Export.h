@@ -30,6 +30,8 @@
 
 #include "PluginLib.h"
 
+class Flight;
+
 /*!
  * Common export functionality.
  */
@@ -38,13 +40,15 @@ class PLUGIN_API Export
 public:
 
     /*!
-     * Returns a file path with the suggested file name having the given \c suffix.
+     * Returns a file path based on the title of the \c flight with the suggested file name having the given \c suffix.
      *
+     * \param flight
+     *        the Flight from which the suggested file path is derived
      * \param suffix
      *        the desired file suffix (e.g. \em kml or \em csv)
-     * \return the file path having a suggested file name based on the current flight
+     * \return the file path having a suggested file name based on the given \c flight
      */
-    static QString suggestFilePath(QStringView suffix) noexcept;
+    static QString suggestFilePath(const Flight &flight, QStringView suffix) noexcept;
 
     /*!
      * Formats the GNSS \c coordinate (latitude or longitude) with the appropriate decimal point precision.

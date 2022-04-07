@@ -41,7 +41,6 @@
 #include "../../../../../Kernel/src/Unit.h"
 #include "../../../../../Kernel/src/SampleRate.h"
 #include "../../../../../Kernel/src/Settings.h"
-#include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/FlightPlan.h"
 #include "../../../../../Model/src/Waypoint.h"
@@ -59,11 +58,11 @@ class GpxExportPluginPrivate
 {
 public:
     GpxExportPluginPrivate() noexcept
-        : flight(Logbook::getInstance().getCurrentFlight())
+        : flight(nullptr)
     {}
 
+    const Flight *flight;
     GpxExportSettings settings;
-    Flight &flight;
     QDateTime startDateTimeUtc;
     Unit unit;
 
@@ -111,6 +110,7 @@ std::unique_ptr<QWidget> GpxExportPlugin::createOptionWidget() const noexcept
 
 bool GpxExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
 {
+    d->flight = &flight;
     io.setTextModeEnabled(true);
     bool ok = exportHeader(io);
     if (ok) {
@@ -153,7 +153,7 @@ bool GpxExportPlugin::exportFlightInfo(QIODevice &io) const noexcept
 {
     const QString header =
 "  <metadata>\n"
-"    <name><![CDATA[" % d->flight.getTitle() % "]]></name>\n"
+"    <name><![CDATA[" % d->flight->getTitle() % "]]></name>\n"
 "    <desc><![CDATA[" % getFlightDescription() % "]]></desc>\n"
 "  </metadata>\n";
 
@@ -163,7 +163,7 @@ bool GpxExportPlugin::exportFlightInfo(QIODevice &io) const noexcept
 bool GpxExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
 {
     bool ok = true;
-    for (const auto &aircraft : d->flight) {
+    for (const auto &aircraft : *d->flight) {
         ok = exportAircraft(*aircraft, io);
         if (!ok) {
             break;
@@ -176,10 +176,10 @@ bool GpxExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
 {
     switch (d->settings.getTimestampMode()) {
     case GpxExportSettings::TimestampMode::Recording:
-        d->startDateTimeUtc = d->flight.getAircraftCreationTime(aircraft).toUTC();
+        d->startDateTimeUtc = d->flight->getAircraftCreationTime(aircraft).toUTC();
         break;
     default:
-        d->startDateTimeUtc = d->flight.getAircraftStartZuluTime(aircraft);
+        d->startDateTimeUtc = d->flight->getAircraftStartZuluTime(aircraft);
         break;
     }
 
@@ -220,7 +220,7 @@ bool GpxExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
 bool GpxExportPlugin::exportWaypoints(QIODevice &io) const noexcept
 {
     bool ok = true;
-    const FlightPlan &flightPlan = d->flight.getUserAircraft().getFlightPlanConst();
+    const FlightPlan &flightPlan = d->flight->getUserAircraft().getFlightPlanConst();
     for (const Waypoint &waypoint : flightPlan) {
         ok = exportWaypoint(waypoint, io);
         if (!ok) {
@@ -239,11 +239,11 @@ bool GpxExportPlugin::exportFooter(QIODevice &io) const noexcept
 
 QString GpxExportPlugin::getFlightDescription() const noexcept
 {
-    const FlightCondition &flightCondition = d->flight.getFlightConditionConst();
+    const FlightCondition &flightCondition = d->flight->getFlightConditionConst();
     const QString description =
-            d->flight.getDescription() % "\n" %
+            d->flight->getDescription() % "\n" %
             "\n" %
-            tr("Creation date") % ": " % d->unit.formatDate(d->flight.getCreationTime()) % "\n" %
+            tr("Creation date") % ": " % d->unit.formatDate(d->flight->getCreationTime()) % "\n" %
             tr("Start (local time)") % ": " % d->unit.formatTime(flightCondition.startLocalTime) % "\n" %
             tr("End (local time)") % ": " % d->unit.formatTime(flightCondition.endLocalTime) % "\n" %
             tr("Ambient temperature") % ": " % d->unit.formatCelcius(flightCondition.ambientTemperature) % "\n" %

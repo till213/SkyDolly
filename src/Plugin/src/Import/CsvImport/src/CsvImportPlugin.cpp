@@ -30,7 +30,7 @@
 #include <QFlags>
 
 #include "../../../../../Kernel/src/Unit.h"
-#include "../../../../../Model/src/Logbook.h"
+#include "../../../../../Model/src/AircraftInfo.h"
 #include "../../../../../Flight/src/FlightAugmentation.h"
 #include "CsvParserIntf.h"
 #include "SkyDollyCsvParser.h"
@@ -87,7 +87,7 @@ std::unique_ptr<QWidget> CsvImportPlugin::createOptionWidget() const noexcept
     return std::make_unique<CsvImportOptionWidget>(d->settings);
 }
 
-bool CsvImportPlugin::readFile(QFile &file) noexcept
+bool CsvImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
 {
     bool ok;
 
@@ -108,7 +108,7 @@ bool CsvImportPlugin::readFile(QFile &file) noexcept
         break;
     }
     if (parser != nullptr) {
-        ok = parser->parse(file, d->firstDateTimeUtc, d->flightNumber);
+        ok = parser->parse(file, d->firstDateTimeUtc, d->flightNumber, flight);
     } else {
         ok = false;
     }

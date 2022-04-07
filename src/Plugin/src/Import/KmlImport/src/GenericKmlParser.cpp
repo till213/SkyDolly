@@ -43,8 +43,8 @@ public:
 
 // PUBLIC
 
-GenericKmlParser::GenericKmlParser(QXmlStreamReader &xmlStreamReader) noexcept
-    : AbstractKmlTrackParser(xmlStreamReader),
+GenericKmlParser::GenericKmlParser(Flight &flight, QXmlStreamReader &xmlStreamReader) noexcept
+    : AbstractKmlTrackParser(flight, xmlStreamReader),
       d(std::make_unique<GenericKmlParserPrivate>(xmlStreamReader))
 {
 #ifdef DEBUG

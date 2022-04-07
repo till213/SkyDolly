@@ -114,7 +114,7 @@ std::vector<PluginManager::Handle> PluginManager::initialiseImportPlugins() noex
     return enumeratePlugins(ImportDirectoryName, d->importPluginRegistry);
 }
 
-bool PluginManager::importData(const QUuid &pluginUuid, FlightService &flightService) const noexcept
+bool PluginManager::importFlight(const QUuid &pluginUuid, FlightService &flightService, Flight &flight) const noexcept
 {
     bool ok;
     if (d->importPluginRegistry.contains(pluginUuid)) {
@@ -125,7 +125,7 @@ bool PluginManager::importData(const QUuid &pluginUuid, FlightService &flightSer
         if (importPlugin != nullptr) {
             importPlugin->setParentWidget(d->parentWidget);
             importPlugin->restoreSettings(pluginUuid);
-            ok = importPlugin->importData(flightService);
+            ok = importPlugin->importFlight(flightService, flight);
             importPlugin->storeSettings(pluginUuid);
         } else {
             ok = false;

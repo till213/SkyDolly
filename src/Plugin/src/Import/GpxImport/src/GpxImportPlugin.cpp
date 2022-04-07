@@ -38,7 +38,6 @@
 #include <QWidget>
 
 #include "../../../../../Flight/src/Analytics.h"
-#include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/FlightCondition.h"
 #include "../../../../../Model/src/Aircraft.h"
@@ -57,8 +56,10 @@ class GpxImportPluginPrivate
 {
 public:
     GpxImportPluginPrivate()
+        : flight(nullptr)
     {}
 
+    Flight *flight;
     GpxImportSettings settings;
     QXmlStreamReader xml;    
     std::unique_ptr<GpxParser> parser;
@@ -100,8 +101,9 @@ std::unique_ptr<QWidget> GpxImportPlugin::createOptionWidget() const noexcept
     return std::make_unique<GpxImportOptionWidget>(d->settings);
 }
 
-bool GpxImportPlugin::readFile(QFile &file) noexcept
+bool GpxImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
 {
+    d->flight = &flight;
     d->xml.setDevice(&file);
     parseGPX();
 
@@ -111,6 +113,8 @@ bool GpxImportPlugin::readFile(QFile &file) noexcept
         qDebug("GpxImportPlugin::import: XML error: %s", qPrintable(d->xml.errorString()));
     }
 #endif
+    // We are done with the import
+    d->flight = nullptr;
     return ok;
 }
 
@@ -161,15 +165,14 @@ void GpxImportPlugin::onRestoreDefaultSettings() noexcept
 
 void GpxImportPlugin::parseGPX() noexcept
 {
-    d->parser = std::make_unique<GpxParser>(d->xml, d->settings);
+    d->parser = std::make_unique<GpxParser>(*d->flight, d->xml, d->settings);
     d->parser->parse();
     updateWaypoints();
 }
 
 void GpxImportPlugin::updateWaypoints() noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    const Aircraft &aircraft = flight.getUserAircraft();
+    const Aircraft &aircraft = d->flight->getUserAircraft();
     Position &position = aircraft.getPosition();
 
     if (position.count() > 0) {

@@ -40,7 +40,6 @@
 #include "../../Kernel/src/SampleRate.h"
 #include "../../Kernel/src/Unit.h"
 #include "../../Kernel/src/Enum.h"
-#include "../../Model/src/Logbook.h"
 #include "../../Model/src/Flight.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/Position.h"
@@ -53,14 +52,16 @@
 class BasicExportDialogPrivate
 {
 public:
-    BasicExportDialogPrivate(const QString &theFileExtension, const QString &theFileFilter, ExportPluginBaseSettings &theSettings) noexcept
-        : fileExtension(theFileExtension),
+    BasicExportDialogPrivate(const Flight &theFlight, const QString &theFileExtension, const QString &theFileFilter, ExportPluginBaseSettings &theSettings) noexcept
+        : flight(theFlight),
+          fileExtension(theFileExtension),
           fileFilter(theFileFilter),
           settings(theSettings),
           exportButton(nullptr),
           optionWidget(nullptr)
     {}
 
+    const Flight &flight;
     QString fileExtension;
     QString fileFilter;
     ExportPluginBaseSettings &settings;
@@ -71,10 +72,10 @@ public:
 
 // PUBLIC
 
-BasicExportDialog::BasicExportDialog(const QString &fileExtension, const QString &fileFilter, ExportPluginBaseSettings &settings, QWidget *parent) noexcept
+BasicExportDialog::BasicExportDialog(const Flight &flight, const QString &fileExtension, const QString &fileFilter, ExportPluginBaseSettings &settings, QWidget *parent) noexcept
     : QDialog(parent),
       ui(std::make_unique<Ui::BasicExportDialog>()),
-      d(std::make_unique<BasicExportDialogPrivate>(fileExtension, fileFilter, settings))
+      d(std::make_unique<BasicExportDialogPrivate>(flight, fileExtension, fileFilter, settings))
 {
     ui->setupUi(this);
     initUi();
@@ -121,7 +122,7 @@ void BasicExportDialog::initUi() noexcept
 
 void BasicExportDialog::initBasicUi() noexcept
 {
-    ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestFilePath(d->fileExtension)));
+    ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestFilePath(d->flight, d->fileExtension)));
 
     // Resampling
     ui->resamplingComboBox->addItem(QString("1/10 Hz") % " (" % tr("smaller file size, less accuracy") % ")", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::ATenthHz));
@@ -188,17 +189,16 @@ void BasicExportDialog::frenchConnection() noexcept
 
 std::int64_t BasicExportDialog::estimateNofSamplePoints() noexcept
 {
-    Flight &flight = Logbook::getInstance().getInstance().getCurrentFlight();
     std::int64_t nofSamplePoints = 0;
     const std::int64_t period = ui->resamplingComboBox->currentData().toInt();
     if (period != 0) {
-        for (const auto &aircraft : flight) {
+        for (const auto &aircraft : d->flight) {
             std::int64_t duration = aircraft->getDurationMSec();
             nofSamplePoints += qRound(static_cast<double>(duration) / static_cast<double>(period)) + 1;
         }
     } else {
         // Count the actual position sample points
-        for (const auto &aircraft : flight) {
+        for (const auto &aircraft : d->flight) {
             nofSamplePoints += aircraft->getPositionConst().count();
         }
     }
