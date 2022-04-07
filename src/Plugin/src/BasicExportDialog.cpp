@@ -124,6 +124,11 @@ void BasicExportDialog::initBasicUi() noexcept
 {
     ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestFilePath(d->flight, d->fileExtension)));
 
+    // Formation export
+    ui->formationExportComboBox->addItem(tr("User aircraft only"), Enum::toUnderlyingType(ExportPluginBaseSettings::FormationExport::UserAircraftOnly));
+    ui->formationExportComboBox->addItem(tr("All aircraft (single file)"), Enum::toUnderlyingType(ExportPluginBaseSettings::FormationExport::AllOneFile));
+    ui->formationExportComboBox->addItem(tr("All aircraft (separate files)"), Enum::toUnderlyingType(ExportPluginBaseSettings::FormationExport::AllSeparateFiles));
+
     // Resampling
     ui->resamplingComboBox->addItem(QString("1/10 Hz") % " (" % tr("smaller file size, less accuracy") % ")", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::ATenthHz));
     ui->resamplingComboBox->addItem("1/5 Hz", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::AFifthHz));
@@ -149,7 +154,7 @@ void BasicExportDialog::initOptionUi() noexcept
     }
 }
 
-void BasicExportDialog::updateInfoUi() noexcept
+void BasicExportDialog::updateDataGroupBox() noexcept
 {
     QString infoText;
     SampleRate::ResamplingPeriod resamplingPeriod = static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt());
@@ -172,9 +177,13 @@ void BasicExportDialog::frenchConnection() noexcept
     connect(ui->filePathLineEdit, &QLineEdit::textChanged,
             this, &BasicExportDialog::onFilePathChanged);
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+    connect(ui->formationExportComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &BasicExportDialog::onFormationExportChanged);
     connect(ui->resamplingComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &BasicExportDialog::onResamplingOptionChanged);
 #else
+    connect(ui->formationExportComboBox, &QComboBox::currentIndexChanged,
+            this, &BasicExportDialog::onFormationExportChanged);
     connect(ui->resamplingComboBox, &QComboBox::currentIndexChanged,
             this, &BasicExportDialog::onResamplingOptionChanged);
 #endif
@@ -221,9 +230,18 @@ void BasicExportDialog::updateUi() noexcept
         ++currentIndex;
     }
     ui->resamplingComboBox->setCurrentIndex(currentIndex);
+
+    const ExportPluginBaseSettings::FormationExport formationExport = d->settings.getFormationExport();
+    currentIndex = 0;
+    while (currentIndex < ui->formationExportComboBox->count() &&
+           static_cast<ExportPluginBaseSettings::FormationExport>(ui->formationExportComboBox->itemData(currentIndex).toInt()) != formationExport) {
+        ++currentIndex;
+    }
+    ui->formationExportComboBox->setCurrentIndex(currentIndex);
+
     ui->openExportCheckBox->setChecked(d->settings.isOpenExportedFileEnabled());
 
-    updateInfoUi();
+    updateDataGroupBox();
 }
 
 void BasicExportDialog::onFileSelectionButtonClicked() noexcept
@@ -240,6 +258,11 @@ void BasicExportDialog::onFilePathChanged()
 {
     d->settings.setFileDialogSelectedFile(false);
     updateUi();
+}
+
+void BasicExportDialog::onFormationExportChanged() noexcept
+{
+    d->settings.setFormationExport(static_cast<ExportPluginBaseSettings::FormationExport>(ui->formationExportComboBox->currentData().toInt()));
 }
 
 void BasicExportDialog::onResamplingOptionChanged() noexcept

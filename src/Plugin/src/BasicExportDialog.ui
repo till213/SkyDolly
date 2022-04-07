@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>540</width>
-    <height>315</height>
+    <width>553</width>
+    <height>369</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,22 +43,29 @@
     </layout>
    </item>
    <item>
-    <widget class="QGroupBox" name="informationGroupBox">
+    <widget class="QGroupBox" name="dataGroupBox">
      <property name="title">
-      <string>Resampling</string>
+      <string>Data</string>
      </property>
      <layout class="QFormLayout" name="formLayout_3">
-      <item row="0" column="0">
+      <item row="1" column="0">
        <widget class="QLabel" name="label">
         <property name="text">
          <string>Sample rate:</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QComboBox" name="resamplingComboBox"/>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="resamplingComboBox">
+        <property name="minimumSize">
+         <size>
+          <width>200</width>
+          <height>0</height>
+         </size>
+        </property>
+       </widget>
       </item>
-      <item row="1" column="0" colspan="2">
+      <item row="2" column="0" colspan="2">
        <widget class="QLabel" name="infoLabel">
         <property name="minimumSize">
          <size>
@@ -71,6 +78,23 @@
         </property>
         <property name="wordWrap">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="formationExportLabel">
+        <property name="text">
+         <string>Formation export:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="formationExportComboBox">
+        <property name="minimumSize">
+         <size>
+          <width>200</width>
+          <height>0</height>
+         </size>
         </property>
        </widget>
       </item>

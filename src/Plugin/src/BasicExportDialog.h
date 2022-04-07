@@ -64,7 +64,7 @@ private:
     void initUi() noexcept;
     void initBasicUi() noexcept;
     void initOptionUi() noexcept;
-    void updateInfoUi() noexcept;
+    void updateDataGroupBox() noexcept;
     void frenchConnection() noexcept;
 
     std::int64_t estimateNofSamplePoints() noexcept;
@@ -74,6 +74,7 @@ private slots:
 
     void onFileSelectionButtonClicked() noexcept;
     void onFilePathChanged();
+    void onFormationExportChanged() noexcept;
     void onResamplingOptionChanged() noexcept;
     void onDoOpenExportedFileChanged(bool enable) noexcept;
     void onRestoreDefaults() noexcept;
