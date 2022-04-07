@@ -197,10 +197,3 @@ void CsvImportPlugin::updateExtendedFlightInfo([[maybe_unused]]Flight &flight) n
 
 void CsvImportPlugin::updateExtendedFlightCondition([[maybe_unused]]FlightCondition &flightCondition) noexcept
 {}
-
-// PROTECTED SLOTS
-
-void CsvImportPlugin::onRestoreDefaultSettings() noexcept
-{
-    d->pluginSettings.restoreDefaults();
-}

@@ -62,9 +62,6 @@ protected:
     virtual bool exportFlight(const Flight &flight, QIODevice &io) noexcept override;
     virtual bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept override;
 
-protected slots:
-    virtual void onRestoreDefaultSettings() noexcept override;
-
 private:
     std::unique_ptr<GpxExportPluginPrivate> d;
 

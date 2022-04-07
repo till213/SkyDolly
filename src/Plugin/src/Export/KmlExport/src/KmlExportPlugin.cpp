@@ -199,13 +199,6 @@ bool KmlExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircr
     return ok;
 }
 
-// PROTECTED SLOTS
-
-void KmlExportPlugin::onRestoreDefaultSettings() noexcept
-{
-    d->pluginSettings.restoreDefaults();
-}
-
 // PRIVATE
 
 bool KmlExportPlugin::exportHeader(QIODevice &io) const noexcept

@@ -154,13 +154,6 @@ void GpxImportPlugin::updateExtendedFlightInfo(Flight &flight) noexcept
 void GpxImportPlugin::updateExtendedFlightCondition([[maybe_unused]] FlightCondition &flightCondition) noexcept
 {}
 
-// PROTECTED SLOTS
-
-void GpxImportPlugin::onRestoreDefaultSettings() noexcept
-{
-    d->pluginSettings.restoreDefaults();
-}
-
 // PRIVATE
 
 void GpxImportPlugin::parseGPX() noexcept

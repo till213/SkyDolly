@@ -329,13 +329,6 @@ bool CsvExportPlugin::exportAircraft([[maybe_unused]] const Flight &flight, cons
     return ok;
 }
 
-// PROTECTED SLOTS
-
-void CsvExportPlugin::onRestoreDefaultSettings() noexcept
-{
-    d->pluginSettings.restoreDefaults();
-}
-
 // PRIVATE
 
 inline QString CsvExportPlugin::getPositionHeader() noexcept

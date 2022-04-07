@@ -94,9 +94,6 @@ protected:
     virtual void updateExtendedFlightInfo(Flight &flight) noexcept = 0;
     virtual void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept = 0;
 
-protected slots:
-    virtual void onRestoreDefaultSettings() noexcept = 0;
-
 private:
     std::unique_ptr<ImportPluginBasePrivate> d;
 

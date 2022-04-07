@@ -67,9 +67,6 @@ protected:
     virtual void updateExtendedFlightInfo(Flight &flight) noexcept override;
     virtual void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept override;
 
-protected slots:
-    virtual void onRestoreDefaultSettings() noexcept override;
-
 private:
     std::unique_ptr<CsvImportPluginPrivate> d;
 };

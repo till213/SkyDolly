@@ -80,8 +80,6 @@ bool ExportPluginBase::exportFlight(const Flight &flight) noexcept
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
     ExportPluginBaseSettings &baseSettings = getPluginSettings();
     std::unique_ptr<BasicExportDialog> exportDialog = std::make_unique<BasicExportDialog>(flight, getFileExtension(), getFileFilter(), baseSettings, getParentWidget());
-    connect(exportDialog.get(), &BasicExportDialog::restoreDefaultOptions,
-            this, &ExportPluginBase::onRestoreDefaultSettings);
     // Transfer ownership to exportDialog
     exportDialog->setOptionWidget(optionWidget.release());
     bool ok {true};

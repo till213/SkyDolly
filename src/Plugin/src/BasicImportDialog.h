@@ -57,9 +57,6 @@ public:
 
     void setOptionWidget(QWidget *widget) noexcept;
 
-signals:
-    void restoreDefaultOptions();
-
 private:
     std::unique_ptr<Ui::BasicImportDialog> ui;
     std::unique_ptr<BasicImportDialogPrivate> d;

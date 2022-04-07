@@ -98,8 +98,6 @@ bool ImportPluginBase::importFlight(FlightService &flightService, Flight &flight
     ImportPluginBaseSettings &baseSettings = getPluginSettings();
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
     std::unique_ptr<BasicImportDialog> importDialog = std::make_unique<BasicImportDialog>(getFileFilter(), baseSettings, getParentWidget());
-    connect(importDialog.get(), &BasicImportDialog::restoreDefaultOptions,
-            this, &ImportPluginBase::onRestoreDefaultSettings);
     // Transfer ownership to importDialog
     importDialog->setOptionWidget(optionWidget.release());
     const int choice = importDialog->exec();

@@ -156,13 +156,6 @@ bool JsonExportPlugin::exportAircraft(const Flight &flight, const Aircraft &airc
     return ok;
 }
 
-// PROTECTED SLOTS
-
-void JsonExportPlugin::onRestoreDefaultSettings() noexcept
-{
-    d->pluginSettings.restoreDefaults();
-}
-
 // PRIVATE
 
 bool JsonExportPlugin::exportHeader(QIODevice &io) const noexcept

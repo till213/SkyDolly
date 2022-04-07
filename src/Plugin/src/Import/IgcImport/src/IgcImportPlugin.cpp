@@ -288,13 +288,6 @@ void IgcImportPlugin::updateExtendedFlightInfo(Flight &flight) noexcept
 void IgcImportPlugin::updateExtendedFlightCondition([[maybe_unused]]FlightCondition &flightCondition) noexcept
 {}
 
-// PROTECTED SLOTS
-
-void IgcImportPlugin::onRestoreDefaultSettings() noexcept
-{
-    d->pluginSettings.restoreDefaults();
-}
-
 // PRIVATE
 
 void IgcImportPlugin::updateWaypoints() noexcept

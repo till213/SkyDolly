@@ -292,5 +292,4 @@ void BasicExportDialog::onDoOpenExportedFilesChanged(bool enable) noexcept
 void BasicExportDialog::onRestoreDefaults() noexcept
 {
     d->pluginSettings.restoreDefaults();
-    emit restoreDefaultOptions();
 }

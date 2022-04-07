@@ -192,13 +192,6 @@ bool IgcExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircr
 
 }
 
-// PROTECTED SLOTS
-
-void IgcExportPlugin::onRestoreDefaultSettings() noexcept
-{
-    d->pluginSettings.restoreDefaults();
-}
-
 // PRIVATE
 
 inline bool IgcExportPlugin::exportARecord(QIODevice &io) const noexcept

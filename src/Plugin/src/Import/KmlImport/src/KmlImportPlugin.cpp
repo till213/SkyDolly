@@ -171,13 +171,6 @@ void KmlImportPlugin::updateExtendedFlightInfo([[maybe_unused]] Flight &flight) 
 void KmlImportPlugin::updateExtendedFlightCondition([[maybe_unused]] FlightCondition &flightCondition) noexcept
 {}
 
-// PROTECTED SLOTS
-
-void KmlImportPlugin::onRestoreDefaultSettings() noexcept
-{
-    d->pluginSettings.restoreDefaults();
-}
-
 // PRIVATE
 
 void KmlImportPlugin::parseKML() noexcept

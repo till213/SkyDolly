@@ -155,13 +155,6 @@ bool GpxExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircr
     return ok;
 }
 
-// PROTECTED SLOTS
-
-void GpxExportPlugin::onRestoreDefaultSettings() noexcept
-{
-    d->pluginSettings.restoreDefaults();
-}
-
 // PRIVATE
 
 bool GpxExportPlugin::exportHeader(QIODevice &io) const noexcept

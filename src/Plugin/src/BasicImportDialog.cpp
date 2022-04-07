@@ -183,6 +183,7 @@ void BasicImportDialog::updateUi() noexcept
     const bool enabled = file.exists() && aircraftTypeExists;
     d->importButton->setEnabled(enabled);
 
+    ui->importDirectoryCheckBox->setChecked(d->pluginSettings.isImportDirectoryEnabled());
     ui->addToFlightCheckBox->setChecked(d->pluginSettings.isAddToFlightEnabled());
 }
 
@@ -209,8 +210,7 @@ void BasicImportDialog::onAddToExistingFlightChanged(bool enable) noexcept
 
 void BasicImportDialog::onRestoreDefaults() noexcept
 {
-    initBasicUi();
-    emit restoreDefaultOptions();
+    d->pluginSettings.restoreDefaults();
 }
 
 void BasicImportDialog::onAccepted() noexcept

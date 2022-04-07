@@ -96,9 +96,6 @@ protected:
     virtual bool exportFlight(const Flight &flight, QIODevice &io) noexcept = 0;
     virtual bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept = 0;
 
-protected slots:
-    virtual void onRestoreDefaultSettings() noexcept = 0;
-
 private:
     std::unique_ptr<ExportPluginBasePrivate> d;
 
