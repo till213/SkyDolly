@@ -52,11 +52,11 @@
 class BasicExportDialogPrivate
 {
 public:
-    BasicExportDialogPrivate(const Flight &theFlight, const QString &theFileExtension, const QString &theFileFilter, ExportPluginBaseSettings &theSettings) noexcept
+    BasicExportDialogPrivate(const Flight &theFlight, const QString &theFileExtension, const QString &theFileFilter, ExportPluginBaseSettings &thePluginSettings) noexcept
         : flight(theFlight),
           fileExtension(theFileExtension),
           fileFilter(theFileFilter),
-          settings(theSettings),
+          pluginSettings(thePluginSettings),
           exportButton(nullptr),
           optionWidget(nullptr)
     {}
@@ -64,7 +64,7 @@ public:
     const Flight &flight;
     QString fileExtension;
     QString fileFilter;
-    ExportPluginBaseSettings &settings;
+    ExportPluginBaseSettings &pluginSettings;
     QPushButton *exportButton;
     QWidget *optionWidget;
     Unit unit;
@@ -72,10 +72,10 @@ public:
 
 // PUBLIC
 
-BasicExportDialog::BasicExportDialog(const Flight &flight, const QString &fileExtension, const QString &fileFilter, ExportPluginBaseSettings &settings, QWidget *parent) noexcept
+BasicExportDialog::BasicExportDialog(const Flight &flight, const QString &fileExtension, const QString &fileFilter, ExportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
     : QDialog(parent),
       ui(std::make_unique<Ui::BasicExportDialog>()),
-      d(std::make_unique<BasicExportDialogPrivate>(flight, fileExtension, fileFilter, settings))
+      d(std::make_unique<BasicExportDialogPrivate>(flight, fileExtension, fileFilter, pluginSettings))
 {
     ui->setupUi(this);
     initUi();
@@ -189,7 +189,7 @@ void BasicExportDialog::frenchConnection() noexcept
 #endif
     connect(ui->openExportCheckBox, &QCheckBox::toggled,
             this, &BasicExportDialog::onDoOpenExportedFilesChanged);
-    connect(&d->settings, &ExportPluginBaseSettings::baseSettingsChanged,
+    connect(&d->pluginSettings, &ExportPluginBaseSettings::baseSettingsChanged,
             this, &BasicExportDialog::updateUi);
     const QPushButton *resetButton = ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults);
     connect(resetButton, &QPushButton::clicked,
@@ -223,7 +223,7 @@ void BasicExportDialog::updateUi() noexcept
     QFile file(fileInfo.absolutePath());
     d->exportButton->setEnabled(file.exists());
 
-    const SampleRate::ResamplingPeriod resamplingPeriod = d->settings.getResamplingPeriod();
+    const SampleRate::ResamplingPeriod resamplingPeriod = d->pluginSettings.getResamplingPeriod();
     int currentIndex = 0;
     while (currentIndex < ui->resamplingComboBox->count() &&
            static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->itemData(currentIndex).toInt()) != resamplingPeriod) {
@@ -231,7 +231,7 @@ void BasicExportDialog::updateUi() noexcept
     }
     ui->resamplingComboBox->setCurrentIndex(currentIndex);
 
-    const ExportPluginBaseSettings::FormationExport formationExport = d->settings.getFormationExport();
+    const ExportPluginBaseSettings::FormationExport formationExport = d->pluginSettings.getFormationExport();
     currentIndex = 0;
     while (currentIndex < ui->formationExportComboBox->count() &&
            static_cast<ExportPluginBaseSettings::FormationExport>(ui->formationExportComboBox->itemData(currentIndex).toInt()) != formationExport) {
@@ -253,7 +253,7 @@ void BasicExportDialog::updateUi() noexcept
         break;
     }
 
-    ui->openExportCheckBox->setChecked(d->settings.isOpenExportedFilesEnabled());
+    ui->openExportCheckBox->setChecked(d->pluginSettings.isOpenExportedFilesEnabled());
 
     updateDataGroupBox();
 }
@@ -263,34 +263,34 @@ void BasicExportDialog::onFileSelectionButtonClicked() noexcept
     const QString filePath = QFileDialog::getSaveFileName(this, tr("Export file..."), ui->filePathLineEdit->text(), d->fileFilter);
     if (!filePath.isEmpty()) {
         ui->filePathLineEdit->setText(QDir::toNativeSeparators(filePath));
-        d->settings.setFileDialogSelectedFile(true);
+        d->pluginSettings.setFileDialogSelectedFile(true);
     }
     updateUi();
 }
 
 void BasicExportDialog::onFilePathChanged()
 {
-    d->settings.setFileDialogSelectedFile(false);
+    d->pluginSettings.setFileDialogSelectedFile(false);
     updateUi();
 }
 
 void BasicExportDialog::onFormationExportChanged() noexcept
 {
-    d->settings.setFormationExport(static_cast<ExportPluginBaseSettings::FormationExport>(ui->formationExportComboBox->currentData().toInt()));
+    d->pluginSettings.setFormationExport(static_cast<ExportPluginBaseSettings::FormationExport>(ui->formationExportComboBox->currentData().toInt()));
 }
 
 void BasicExportDialog::onResamplingOptionChanged() noexcept
 {
-    d->settings.setResamplingPeriod(static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt()));
+    d->pluginSettings.setResamplingPeriod(static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt()));
 }
 
 void BasicExportDialog::onDoOpenExportedFilesChanged(bool enable) noexcept
 {
-    d->settings.setOpenExportedFilesEnabled(enable);
+    d->pluginSettings.setOpenExportedFilesEnabled(enable);
 }
 
 void BasicExportDialog::onRestoreDefaults() noexcept
 {
-    d->settings.restoreDefaults();
+    d->pluginSettings.restoreDefaults();
     emit restoreDefaultOptions();
 }

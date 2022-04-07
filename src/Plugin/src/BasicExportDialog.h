@@ -46,7 +46,7 @@ class PLUGIN_API BasicExportDialog : public QDialog
     Q_OBJECT
 public:
 
-    explicit BasicExportDialog(const Flight &flight, const QString &fileExtension, const QString &fileFilter, ExportPluginBaseSettings &settings, QWidget *parent = nullptr) noexcept;
+    explicit BasicExportDialog(const Flight &flight, const QString &fileExtension, const QString &fileFilter, ExportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
     virtual ~BasicExportDialog() noexcept;
 
     QString getSelectedFilePath() const noexcept;

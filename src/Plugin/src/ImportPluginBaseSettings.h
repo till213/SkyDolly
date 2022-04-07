@@ -43,6 +43,9 @@ public:
     ImportPluginBaseSettings() noexcept;
     virtual ~ImportPluginBaseSettings() noexcept;
 
+    bool isImportDirectoryEnabled() const noexcept;
+    void setImportDirectoryEnabled(bool enabled) noexcept;
+
     bool isAddToFlightEnabled() const noexcept;
     void setAddToFlightEnabled(bool enabled) noexcept;
 

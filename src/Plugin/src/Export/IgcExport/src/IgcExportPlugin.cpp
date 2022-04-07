@@ -105,7 +105,7 @@ public:
     {}
 
     const Flight *flight;
-    IgcExportSettings settings;
+    IgcExportSettings pluginSettings;
     Unit unit;
 
     static inline const QByteArray ARecord {"A"};
@@ -137,9 +137,9 @@ IgcExportPlugin::~IgcExportPlugin() noexcept
 
 // PROTECTED
 
-ExportPluginBaseSettings &IgcExportPlugin::getSettings() const noexcept
+ExportPluginBaseSettings &IgcExportPlugin::getPluginSettings() const noexcept
 {
-    return d->settings;
+    return d->pluginSettings;
 }
 
 QString IgcExportPlugin::getFileExtension() const noexcept
@@ -154,7 +154,7 @@ QString IgcExportPlugin::getFileFilter() const noexcept
 
 std::unique_ptr<QWidget> IgcExportPlugin::createOptionWidget() const noexcept
 {
-    return std::make_unique<IgcExportOptionWidget>(d->settings);
+    return std::make_unique<IgcExportOptionWidget>(d->pluginSettings);
 }
 
 bool IgcExportPlugin::hasMultiAircraftSupport() const noexcept
@@ -196,7 +196,7 @@ bool IgcExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircr
 
 void IgcExportPlugin::onRestoreDefaultSettings() noexcept
 {
-    d->settings.restoreDefaults();
+    d->pluginSettings.restoreDefaults();
 }
 
 // PRIVATE
@@ -211,8 +211,8 @@ inline bool IgcExportPlugin::exportHRecord(const Aircraft &aircraft, QIODevice &
 {
     const QByteArray record =
         IgcExportPluginPrivate::HRecord % ::Date % formatDate(d->flight->getFlightConditionConst().startZuluTime) % ::LineEnd %
-        IgcExportPluginPrivate::HRecord % ::Pilot % d->settings.getPilotName().toLatin1() % ::LineEnd %
-        IgcExportPluginPrivate::HRecord % ::CoPilot % d->settings.getCoPilotName().toLatin1() % ::LineEnd %
+        IgcExportPluginPrivate::HRecord % ::Pilot % d->pluginSettings.getPilotName().toLatin1() % ::LineEnd %
+        IgcExportPluginPrivate::HRecord % ::CoPilot % d->pluginSettings.getCoPilotName().toLatin1() % ::LineEnd %
         IgcExportPluginPrivate::HRecord % ::GliderType % aircraft.getAircraftInfoConst().aircraftType.type.toLatin1() % ::LineEnd %
         IgcExportPluginPrivate::HRecord % ::GliderId % aircraft.getAircraftInfoConst().tailNumber.toLatin1() % ::LineEnd %
         IgcExportPluginPrivate::HRecord % ::GPSDatum % ::LineEnd %

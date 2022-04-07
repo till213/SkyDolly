@@ -81,7 +81,7 @@ public:
         Shutdown
     };
 
-    IgcImportSettings settings;
+    IgcImportSettings pluginSettings;
     QEasingCurve throttleResponseCurve;
 
     static const inline QString FileExtension {QStringLiteral("igc")};
@@ -106,9 +106,9 @@ IgcImportPlugin::~IgcImportPlugin() noexcept
 
 // PROTECTED
 
-ImportPluginBaseSettings &IgcImportPlugin::getSettings() const noexcept
+ImportPluginBaseSettings &IgcImportPlugin::getPluginSettings() const noexcept
 {
-    return d->settings;
+    return d->pluginSettings;
 }
 
 QString IgcImportPlugin::getFileFilter() const noexcept
@@ -118,7 +118,7 @@ QString IgcImportPlugin::getFileFilter() const noexcept
 
 std::unique_ptr<QWidget> IgcImportPlugin::createOptionWidget() const noexcept
 {
-    return std::make_unique<IgcImportOptionWidget>(d->settings);
+    return std::make_unique<IgcImportOptionWidget>(d->pluginSettings);
 }
 
 bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
@@ -134,11 +134,11 @@ bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
         Engine &engine = aircraft.getEngine();
         EngineData engineData;
         IgcImportPluginPrivate::EngineState engineState = IgcImportPluginPrivate::EngineState::Unknown;
-        const double enlThresholdNorm = static_cast<double>(d->settings.getEnlThresholdPercent()) / 100.0;
+        const double enlThresholdNorm = static_cast<double>(d->pluginSettings.getEnlThresholdPercent()) / 100.0;
 
         for (const IgcParser::Fix &fix : d->igcParser.getFixes()) {
             // Import either GNSS or pressure altitude
-            const double altitude = d->settings.getAltitudeMode() == IgcImportSettings::AltitudeMode::Gnss ? fix.gnssAltitude : fix.pressureAltitude;
+            const double altitude = d->pluginSettings.getAltitudeMode() == IgcImportSettings::AltitudeMode::Gnss ? fix.gnssAltitude : fix.pressureAltitude;
             PositionData positionData {fix.latitude, fix.longitude, altitude};
             positionData.timestamp = fix.timestamp;
             positionData.indicatedAltitude = fix.pressureAltitude;
@@ -292,7 +292,7 @@ void IgcImportPlugin::updateExtendedFlightCondition([[maybe_unused]]FlightCondit
 
 void IgcImportPlugin::onRestoreDefaultSettings() noexcept
 {
-    d->settings.restoreDefaults();
+    d->pluginSettings.restoreDefaults();
 }
 
 // PRIVATE

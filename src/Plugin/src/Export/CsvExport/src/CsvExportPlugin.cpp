@@ -56,7 +56,7 @@ public:
     CsvExportPluginPrivate() noexcept
     {}
 
-    CsvExportSettings settings;
+    CsvExportSettings pluginSettings;
 
     static inline const QString FileExtension {QStringLiteral("csv")};
 };
@@ -80,9 +80,9 @@ CsvExportPlugin::~CsvExportPlugin() noexcept
 
 // PROTECTED
 
-ExportPluginBaseSettings &CsvExportPlugin::getSettings() const noexcept
+ExportPluginBaseSettings &CsvExportPlugin::getPluginSettings() const noexcept
 {
-    return d->settings;
+    return d->pluginSettings;
 }
 
 QString CsvExportPlugin::getFileExtension() const noexcept
@@ -134,7 +134,7 @@ bool CsvExportPlugin::exportAircraft([[maybe_unused]] const Flight &flight, cons
         const AircraftHandleData emptyAircraftHandleData;
         const LightData emptyLightData;
 
-        const SampleRate::ResamplingPeriod resamplingPeriod = d->settings.getResamplingPeriod();
+        const SampleRate::ResamplingPeriod resamplingPeriod = d->pluginSettings.getResamplingPeriod();
         const std::int64_t deltaTime = Enum::toUnderlyingType(resamplingPeriod);
         std::int64_t duration;
         std::int64_t timestamp;
@@ -333,7 +333,7 @@ bool CsvExportPlugin::exportAircraft([[maybe_unused]] const Flight &flight, cons
 
 void CsvExportPlugin::onRestoreDefaultSettings() noexcept
 {
-    d->settings.restoreDefaults();
+    d->pluginSettings.restoreDefaults();
 }
 
 // PRIVATE

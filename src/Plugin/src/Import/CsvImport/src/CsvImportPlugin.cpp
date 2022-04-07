@@ -46,7 +46,7 @@ public:
     CsvImportPluginPrivate()
     {}
 
-    CsvImportSettings settings;
+    CsvImportSettings pluginSettings;
     QDateTime firstDateTimeUtc;
     QString flightNumber;
 
@@ -72,9 +72,9 @@ CsvImportPlugin::~CsvImportPlugin() noexcept
 
 // PROTECTED
 
-ImportPluginBaseSettings &CsvImportPlugin::getSettings() const noexcept
+ImportPluginBaseSettings &CsvImportPlugin::getPluginSettings() const noexcept
 {
-    return d->settings;
+    return d->pluginSettings;
 }
 
 QString CsvImportPlugin::getFileFilter() const noexcept
@@ -84,7 +84,7 @@ QString CsvImportPlugin::getFileFilter() const noexcept
 
 std::unique_ptr<QWidget> CsvImportPlugin::createOptionWidget() const noexcept
 {
-    return std::make_unique<CsvImportOptionWidget>(d->settings);
+    return std::make_unique<CsvImportOptionWidget>(d->pluginSettings);
 }
 
 bool CsvImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
@@ -92,7 +92,7 @@ bool CsvImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
     bool ok;
 
     std::unique_ptr<CsvParserIntf> parser;
-    switch (d->settings.getFormat()) {
+    switch (d->pluginSettings.getFormat()) {
     case CsvImportSettings::Format::SkyDolly:
         parser = std::make_unique<SkyDollyCsvParser>();
         break;
@@ -118,7 +118,7 @@ bool CsvImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
 FlightAugmentation::Procedures CsvImportPlugin::getProcedures() const noexcept
 {
     FlightAugmentation::Procedures procedures;
-    switch (d->settings.getFormat()) {
+    switch (d->pluginSettings.getFormat()) {
     case CsvImportSettings::Format::SkyDolly:
         procedures = FlightAugmentation::Procedure::None;
         break;
@@ -140,7 +140,7 @@ FlightAugmentation::Procedures CsvImportPlugin::getProcedures() const noexcept
 FlightAugmentation::Aspects CsvImportPlugin::getAspects() const noexcept
 {
     FlightAugmentation::Aspects aspects;
-    switch (d->settings.getFormat()) {
+    switch (d->pluginSettings.getFormat()) {
     case CsvImportSettings::Format::SkyDolly:
         aspects = FlightAugmentation::Aspect::None;
         break;
@@ -169,7 +169,7 @@ QDateTime CsvImportPlugin::getStartDateTimeUtc() noexcept
 QString CsvImportPlugin::getTitle() const noexcept
 {
     QString title;
-    switch (d->settings.getFormat()) {
+    switch (d->pluginSettings.getFormat()) {
     case CsvImportSettings::Format::SkyDolly:
         title = tr("Sky Dolly CSV import");
         break;
@@ -202,5 +202,5 @@ void CsvImportPlugin::updateExtendedFlightCondition([[maybe_unused]]FlightCondit
 
 void CsvImportPlugin::onRestoreDefaultSettings() noexcept
 {
-    d->settings.restoreDefaults();
+    d->pluginSettings.restoreDefaults();
 }

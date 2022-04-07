@@ -54,7 +54,7 @@ public:
     virtual ~KmlImportPlugin() noexcept;
 
 protected:
-    virtual ImportPluginBaseSettings &getSettings() const noexcept override;
+    virtual ImportPluginBaseSettings &getPluginSettings() const noexcept override;
     virtual QString getFileFilter() const noexcept override;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
     virtual bool importFlight(QFile &file, Flight &flight) noexcept override;

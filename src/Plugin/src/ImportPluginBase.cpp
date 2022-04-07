@@ -95,7 +95,7 @@ bool ImportPluginBase::importFlight(FlightService &flightService, Flight &flight
 {
     bool ok;
     d->flight = &flight;
-    ImportPluginBaseSettings &baseSettings = getSettings();
+    ImportPluginBaseSettings &baseSettings = getPluginSettings();
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
     std::unique_ptr<BasicImportDialog> importDialog = std::make_unique<BasicImportDialog>(getFileFilter(), baseSettings, getParentWidget());
     connect(importDialog.get(), &BasicImportDialog::restoreDefaultOptions,
@@ -157,17 +157,17 @@ AircraftType &ImportPluginBase::getSelectedAircraftType() const noexcept
 
 void ImportPluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
-    getSettings().addSettings(keyValues);
+    getPluginSettings().addSettings(keyValues);
 }
 
 void ImportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    getSettings().addKeysWithDefaults(keysWithDefaults);
+    getPluginSettings().addKeysWithDefaults(keysWithDefaults);
 }
 
 void ImportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
-    getSettings().restoreSettings(valuesByKey);
+    getPluginSettings().restoreSettings(valuesByKey);
 }
 
 bool ImportPluginBase::importFlight(const QString &filePath, FlightService &flightService, Flight &flight) noexcept
@@ -175,7 +175,7 @@ bool ImportPluginBase::importFlight(const QString &filePath, FlightService &flig
     d->file.setFileName(filePath);
     bool ok = d->file.open(QIODevice::ReadOnly);
     if (ok) {
-        const bool addToCurrentFlight = getSettings().isAddToFlightEnabled();
+        const bool addToCurrentFlight = getPluginSettings().isAddToFlightEnabled();
         if (!addToCurrentFlight) {
             flight.clear(true);
         }

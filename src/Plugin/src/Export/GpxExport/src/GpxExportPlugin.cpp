@@ -62,7 +62,7 @@ public:
     {}
 
     const Flight *flight;
-    GpxExportSettings settings;
+    GpxExportSettings pluginSettings;
     QDateTime startDateTimeUtc;
     Unit unit;
 
@@ -88,9 +88,9 @@ GpxExportPlugin::~GpxExportPlugin() noexcept
 
 // PROTECTED
 
-ExportPluginBaseSettings &GpxExportPlugin::getSettings() const noexcept
+ExportPluginBaseSettings &GpxExportPlugin::getPluginSettings() const noexcept
 {
-    return d->settings;
+    return d->pluginSettings;
 }
 
 QString GpxExportPlugin::getFileExtension() const noexcept
@@ -105,7 +105,7 @@ QString GpxExportPlugin::getFileFilter() const noexcept
 
 std::unique_ptr<QWidget> GpxExportPlugin::createOptionWidget() const noexcept
 {
-    return std::make_unique<GpxExportOptionWidget>(d->settings);
+    return std::make_unique<GpxExportOptionWidget>(d->pluginSettings);
 }
 
 bool GpxExportPlugin::hasMultiAircraftSupport() const noexcept
@@ -159,7 +159,7 @@ bool GpxExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircr
 
 void GpxExportPlugin::onRestoreDefaultSettings() noexcept
 {
-    d->settings.restoreDefaults();
+    d->pluginSettings.restoreDefaults();
 }
 
 // PRIVATE
@@ -200,7 +200,7 @@ bool GpxExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
 
 bool GpxExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    switch (d->settings.getTimestampMode()) {
+    switch (d->pluginSettings.getTimestampMode()) {
     case GpxExportSettings::TimestampMode::Recording:
         d->startDateTimeUtc = d->flight->getAircraftCreationTime(aircraft).toUTC();
         break;

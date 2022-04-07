@@ -81,7 +81,7 @@ protected:
     void resamplePositionDataForExport(const Aircraft &aircraft, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) const noexcept;
 
     // Re-implement
-    virtual ExportPluginBaseSettings &getSettings() const noexcept = 0;
+    virtual ExportPluginBaseSettings &getPluginSettings() const noexcept = 0;
     virtual QString getFileExtension() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;

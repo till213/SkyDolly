@@ -81,7 +81,7 @@ protected:
     AircraftType &getSelectedAircraftType() const noexcept;
 
     // Re-implement
-    virtual ImportPluginBaseSettings &getSettings() const noexcept = 0;
+    virtual ImportPluginBaseSettings &getPluginSettings() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
     virtual bool importFlight(QFile &file, Flight &flight) noexcept = 0;

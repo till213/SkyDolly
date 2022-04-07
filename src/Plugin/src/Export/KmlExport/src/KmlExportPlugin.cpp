@@ -73,12 +73,12 @@ class KmlExportPluginPrivate
 public:
     KmlExportPluginPrivate() noexcept
         : flight(nullptr),
-          styleExport(std::make_unique<KmlStyleExport>(settings))
+          styleExport(std::make_unique<KmlStyleExport>(pluginSettings))
     {}
 
     const Flight *flight;
     std::unique_ptr<KmlStyleExport> styleExport;
-    KmlExportSettings settings;
+    KmlExportSettings pluginSettings;
     Unit unit;
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
     std::unordered_map<QString, int, QStringHasher> aircraftTypeCount;
@@ -108,9 +108,9 @@ KmlExportPlugin::~KmlExportPlugin() noexcept
 
 // PROTECTED
 
-ExportPluginBaseSettings &KmlExportPlugin::getSettings() const noexcept
+ExportPluginBaseSettings &KmlExportPlugin::getPluginSettings() const noexcept
 {
-    return d->settings;
+    return d->pluginSettings;
 }
 
 QString KmlExportPlugin::getFileExtension() const noexcept
@@ -125,7 +125,7 @@ QString KmlExportPlugin::getFileFilter() const noexcept
 
 std::unique_ptr<QWidget> KmlExportPlugin::createOptionWidget() const noexcept
 {
-    return std::make_unique<KmlExportOptionWidget>(d->settings);
+    return std::make_unique<KmlExportOptionWidget>(d->pluginSettings);
 }
 
 bool KmlExportPlugin::hasMultiAircraftSupport() const noexcept
@@ -143,7 +143,7 @@ bool KmlExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
     const int nofAircraft = d->flight->count();
     // Only create as many colors per ramp as there are aircraft (if there are less aircraft
     // than requested colors per ramp)
-    d->settings.setNofColorsPerRamp(qMin(nofAircraft, d->settings.getNofColorsPerRamp()));
+    d->pluginSettings.setNofColorsPerRamp(qMin(nofAircraft, d->pluginSettings.getNofColorsPerRamp()));
 
     bool ok = exportHeader(io);
     if (ok) {
@@ -175,7 +175,7 @@ bool KmlExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircr
     d->aircraftTypeCount.clear();
     // Only create as many colors per ramp as there are aircraft (if there are less aircraft
     // than requested colors per ramp)
-    d->settings.setNofColorsPerRamp(1);
+    d->pluginSettings.setNofColorsPerRamp(1);
 
     bool ok = exportHeader(io);
     if (ok) {
@@ -203,7 +203,7 @@ bool KmlExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircr
 
 void KmlExportPlugin::onRestoreDefaultSettings() noexcept
 {
-    d->settings.restoreDefaults();
+    d->pluginSettings.restoreDefaults();
 }
 
 // PRIVATE

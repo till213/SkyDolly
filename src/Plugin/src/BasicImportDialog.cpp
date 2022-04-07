@@ -43,35 +43,30 @@
 #include "../../Kernel/src/Settings.h"
 #include "ImportPluginBaseSettings.h"
 
-namespace
-{
-    constexpr bool DefaultAddToFlight = false;
-}
-
 class BasicImportDialogPrivate
 {
 public:
-    BasicImportDialogPrivate(const QString &theFileFilter, ImportPluginBaseSettings &theSettings) noexcept
+    BasicImportDialogPrivate(const QString &theFileFilter, ImportPluginBaseSettings &pluginSettings) noexcept
         : aircraftTypeService(std::make_unique<AircraftTypeService>()),
           fileFilter(theFileFilter),
-          settings(theSettings),
+          pluginSettings(pluginSettings),
           importButton(nullptr),
           optionWidget(nullptr)
     {}
 
     std::unique_ptr<AircraftTypeService> aircraftTypeService;
     QString fileFilter;
-    ImportPluginBaseSettings &settings;
+    ImportPluginBaseSettings &pluginSettings;
     QPushButton *importButton;
     QWidget *optionWidget;
 };
 
 // PUBLIC
 
-BasicImportDialog::BasicImportDialog(const QString &fileExtension, ImportPluginBaseSettings &settings, QWidget *parent) :
+BasicImportDialog::BasicImportDialog(const QString &fileExtension, ImportPluginBaseSettings &pluginSettings, QWidget *parent) :
     QDialog(parent),
     ui(std::make_unique<Ui::BasicImportDialog>()),
-    d(std::make_unique<BasicImportDialogPrivate>(fileExtension, settings))
+    d(std::make_unique<BasicImportDialogPrivate>(fileExtension, pluginSettings))
 {
     ui->setupUi(this);    
     initUi();
@@ -137,7 +132,8 @@ void BasicImportDialog::initBasicUi() noexcept
     if (!type.isEmpty()) {
         ui->aircraftSelectionComboBox->setCurrentText(type);
     }
-    ui->addToFlightCheckBox->setChecked(::DefaultAddToFlight);
+    ui->importDirectoryCheckBox->setChecked(d->pluginSettings.isImportDirectoryEnabled());
+    ui->addToFlightCheckBox->setChecked(d->pluginSettings.isAddToFlightEnabled());
 }
 
 void BasicImportDialog::initOptionUi() noexcept
@@ -162,10 +158,12 @@ void BasicImportDialog::frenchConnection() noexcept
     connect(ui->fileSelectionPushButton, &QPushButton::clicked,
             this, &BasicImportDialog::onFileSelectionChanged);
     connect(ui->aircraftSelectionComboBox, &QComboBox::currentTextChanged,
-            this, &BasicImportDialog::updateUi);    
+            this, &BasicImportDialog::updateUi);
+    connect(ui->importDirectoryCheckBox, &QCheckBox::toggled,
+            this, &BasicImportDialog::onImportDirectoryChanged);
     connect(ui->addToFlightCheckBox, &QCheckBox::toggled,
             this, &BasicImportDialog::onAddToExistingFlightChanged);
-    connect(&d->settings, &ImportPluginBaseSettings::baseSettingsChanged,
+    connect(&d->pluginSettings, &ImportPluginBaseSettings::baseSettingsChanged,
             this, &BasicImportDialog::updateUi);
     const QPushButton *resetButton = ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults);
     connect(resetButton, &QPushButton::clicked,
@@ -185,7 +183,7 @@ void BasicImportDialog::updateUi() noexcept
     const bool enabled = file.exists() && aircraftTypeExists;
     d->importButton->setEnabled(enabled);
 
-    ui->addToFlightCheckBox->setChecked(d->settings.isAddToFlightEnabled());
+    ui->addToFlightCheckBox->setChecked(d->pluginSettings.isAddToFlightEnabled());
 }
 
 void BasicImportDialog::onFileSelectionChanged() noexcept
@@ -199,9 +197,14 @@ void BasicImportDialog::onFileSelectionChanged() noexcept
     }
 }
 
+void BasicImportDialog::onImportDirectoryChanged(bool enable) noexcept
+{
+    d->pluginSettings.setImportDirectoryEnabled(enable);
+}
+
 void BasicImportDialog::onAddToExistingFlightChanged(bool enable) noexcept
 {
-    d->settings.setAddToFlightEnabled(enable);
+    d->pluginSettings.setAddToFlightEnabled(enable);
 }
 
 void BasicImportDialog::onRestoreDefaults() noexcept

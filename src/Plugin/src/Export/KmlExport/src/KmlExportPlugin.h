@@ -55,7 +55,7 @@ public:
     virtual ~KmlExportPlugin() noexcept;
 
 protected:
-    virtual ExportPluginBaseSettings &getSettings() const noexcept override;
+    virtual ExportPluginBaseSettings &getPluginSettings() const noexcept override;
     virtual QString getFileExtension() const noexcept override;
     virtual QString getFileFilter() const noexcept override;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;

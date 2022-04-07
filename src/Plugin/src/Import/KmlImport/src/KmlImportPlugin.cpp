@@ -55,7 +55,7 @@ public:
 
     Flight *flight;
     QXmlStreamReader xml;
-    KmlImportSettings settings;
+    KmlImportSettings pluginSettings;
     QDateTime firstDateTimeUtc;
     QString flightNumber;
     QString title;
@@ -82,9 +82,9 @@ KmlImportPlugin::~KmlImportPlugin() noexcept
 
 // PROTECTED
 
-ImportPluginBaseSettings &KmlImportPlugin::getSettings() const noexcept
+ImportPluginBaseSettings &KmlImportPlugin::getPluginSettings() const noexcept
 {
-    return d->settings;
+    return d->pluginSettings;
 }
 
 QString KmlImportPlugin::getFileFilter() const noexcept
@@ -94,7 +94,7 @@ QString KmlImportPlugin::getFileFilter() const noexcept
 
 std::unique_ptr<QWidget> KmlImportPlugin::createOptionWidget() const noexcept
 {
-    return std::make_unique<KmlImportOptionWidget>(d->settings);
+    return std::make_unique<KmlImportOptionWidget>(d->pluginSettings);
 }
 
 bool KmlImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
@@ -131,7 +131,7 @@ FlightAugmentation::Procedures KmlImportPlugin::getProcedures() const noexcept
 FlightAugmentation::Aspects KmlImportPlugin::getAspects() const noexcept
 {
     FlightAugmentation::Aspects aspects;
-    switch (d->settings.getFormat()) {
+    switch (d->pluginSettings.getFormat()) {
     case KmlImportSettings::Format::FlightAware:
         aspects = FlightAugmentation::Aspect::All;
         break;
@@ -175,7 +175,7 @@ void KmlImportPlugin::updateExtendedFlightCondition([[maybe_unused]] FlightCondi
 
 void KmlImportPlugin::onRestoreDefaultSettings() noexcept
 {
-    d->settings.restoreDefaults();
+    d->pluginSettings.restoreDefaults();
 }
 
 // PRIVATE
@@ -183,7 +183,7 @@ void KmlImportPlugin::onRestoreDefaultSettings() noexcept
 void KmlImportPlugin::parseKML() noexcept
 {
     std::unique_ptr<KmlParserIntf> parser;
-    switch (d->settings.getFormat()) {
+    switch (d->pluginSettings.getFormat()) {
     case KmlImportSettings::Format::FlightAware:
         parser = std::make_unique<FlightAwareKmlParser>(*d->flight, d->xml);
         break;

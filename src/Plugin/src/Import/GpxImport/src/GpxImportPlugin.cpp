@@ -60,7 +60,7 @@ public:
     {}
 
     Flight *flight;
-    GpxImportSettings settings;
+    GpxImportSettings pluginSettings;
     QXmlStreamReader xml;    
     std::unique_ptr<GpxParser> parser;
 
@@ -86,9 +86,9 @@ GpxImportPlugin::~GpxImportPlugin() noexcept
 
 // PROTECTED
 
-ImportPluginBaseSettings &GpxImportPlugin::getSettings() const noexcept
+ImportPluginBaseSettings &GpxImportPlugin::getPluginSettings() const noexcept
 {
-    return d->settings;
+    return d->pluginSettings;
 }
 
 QString GpxImportPlugin::getFileFilter() const noexcept
@@ -98,7 +98,7 @@ QString GpxImportPlugin::getFileFilter() const noexcept
 
 std::unique_ptr<QWidget> GpxImportPlugin::createOptionWidget() const noexcept
 {
-    return std::make_unique<GpxImportOptionWidget>(d->settings);
+    return std::make_unique<GpxImportOptionWidget>(d->pluginSettings);
 }
 
 bool GpxImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
@@ -158,14 +158,14 @@ void GpxImportPlugin::updateExtendedFlightCondition([[maybe_unused]] FlightCondi
 
 void GpxImportPlugin::onRestoreDefaultSettings() noexcept
 {
-    d->settings.restoreDefaults();
+    d->pluginSettings.restoreDefaults();
 }
 
 // PRIVATE
 
 void GpxImportPlugin::parseGPX() noexcept
 {
-    d->parser = std::make_unique<GpxParser>(*d->flight, d->xml, d->settings);
+    d->parser = std::make_unique<GpxParser>(*d->flight, d->xml, d->pluginSettings);
     d->parser->parse();
     updateWaypoints();
 }

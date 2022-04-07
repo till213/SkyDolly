@@ -63,7 +63,7 @@ public:
     {}
 
     const Flight *flight;
-    JsonExportSettings settings;
+    JsonExportSettings pluginSettings;
     Unit unit;
 
     static inline const QString FileExtension {QStringLiteral("json")};
@@ -88,9 +88,9 @@ JsonExportPlugin::~JsonExportPlugin() noexcept
 
 // PROTECTED
 
-ExportPluginBaseSettings &JsonExportPlugin::getSettings() const noexcept
+ExportPluginBaseSettings &JsonExportPlugin::getPluginSettings() const noexcept
 {
-    return d->settings;
+    return d->pluginSettings;
 }
 
 QString JsonExportPlugin::getFileExtension() const noexcept
@@ -160,7 +160,7 @@ bool JsonExportPlugin::exportAircraft(const Flight &flight, const Aircraft &airc
 
 void JsonExportPlugin::onRestoreDefaultSettings() noexcept
 {
-    d->settings.restoreDefaults();
+    d->pluginSettings.restoreDefaults();
 }
 
 // PRIVATE

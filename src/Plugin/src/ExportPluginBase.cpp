@@ -78,7 +78,7 @@ ExportPluginBase::~ExportPluginBase() noexcept
 bool ExportPluginBase::exportFlight(const Flight &flight) noexcept
 {
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
-    ExportPluginBaseSettings &baseSettings = getSettings();
+    ExportPluginBaseSettings &baseSettings = getPluginSettings();
     std::unique_ptr<BasicExportDialog> exportDialog = std::make_unique<BasicExportDialog>(flight, getFileExtension(), getFileFilter(), baseSettings, getParentWidget());
     connect(exportDialog.get(), &BasicExportDialog::restoreDefaultOptions,
             this, &ExportPluginBase::onRestoreDefaultSettings);
@@ -95,7 +95,7 @@ bool ExportPluginBase::exportFlight(const Flight &flight) noexcept
             const QString exportDirectoryPath = fileInfo.absolutePath();
             Settings::getInstance().setExportPath(exportDirectoryPath);
 
-            const ExportPluginBaseSettings::FormationExport formationExport = getSettings().getFormationExport();
+            const ExportPluginBaseSettings::FormationExport formationExport = getPluginSettings().getFormationExport();
             if (formationExport == ExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles || baseSettings.isFileDialogSelectedFile() || !fileInfo.exists()) {
                 ok = exportFlight(flight, filePath);
             } else {
@@ -129,7 +129,7 @@ void ExportPluginBase::resamplePositionDataForExport(const Aircraft &aircraft, s
 {
     // Position data
     const Position &position = aircraft.getPositionConst();
-    const SampleRate::ResamplingPeriod resamplingPeriod = getSettings().getResamplingPeriod();
+    const SampleRate::ResamplingPeriod resamplingPeriod = getPluginSettings().getResamplingPeriod();
     if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
         const std::int64_t duration = position.getLast().timestamp;
         const std::int64_t deltaTime = Enum::toUnderlyingType(resamplingPeriod);
@@ -160,7 +160,7 @@ bool ExportPluginBase::exportFlight(const Flight &flight, const QString &filePat
 #endif
     QGuiApplication::setOverrideCursor(Qt::WaitCursor);
     QGuiApplication::processEvents();
-    const ExportPluginBaseSettings &settings = getSettings();
+    const ExportPluginBaseSettings &settings = getPluginSettings();
     switch (settings.getFormationExport()) {
     case ExportPluginBaseSettings::FormationExport::UserAircraftOnly:
         ok = file.open(QIODevice::WriteOnly);
@@ -257,15 +257,15 @@ bool ExportPluginBase::exportAllAircraft(const Flight &flight, const QString &fi
 
 void ExportPluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
-    getSettings().addSettings(keyValues);
+    getPluginSettings().addSettings(keyValues);
 }
 
 void ExportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    getSettings().addKeysWithDefaults(keysWithDefaults);
+    getPluginSettings().addKeysWithDefaults(keysWithDefaults);
 }
 
 void ExportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
-    getSettings().restoreSettings(valuesByKey);
+    getPluginSettings().restoreSettings(valuesByKey);
 }
