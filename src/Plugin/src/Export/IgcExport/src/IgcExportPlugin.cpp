@@ -157,10 +157,19 @@ std::unique_ptr<QWidget> IgcExportPlugin::createOptionWidget() const noexcept
     return std::make_unique<IgcExportOptionWidget>(d->settings);
 }
 
-bool IgcExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
+bool IgcExportPlugin::hasMultiAircraftSupport() const noexcept
+{
+    return false;
+}
+
+bool IgcExportPlugin::exportFlight([[maybe_unused]] const Flight &flight, [[maybe_unused]] QIODevice &io) noexcept
+{
+    return false;
+}
+
+bool IgcExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
 {
     d->flight = &flight;
-    const Aircraft &aircraft = d->flight->getUserAircraftConst();
     bool ok = exportARecord(io);
     if (ok) {
         ok = exportHRecord(aircraft, io);

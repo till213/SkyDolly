@@ -128,6 +128,12 @@ std::unique_ptr<QWidget> KmlExportPlugin::createOptionWidget() const noexcept
     return std::make_unique<KmlExportOptionWidget>(d->settings);
 }
 
+bool KmlExportPlugin::hasMultiAircraftSupport() const noexcept
+{
+    // We can store multiple LineStrings in the KML format
+    return true;
+}
+
 bool KmlExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
 {
     io.setTextModeEnabled(true);
@@ -148,6 +154,38 @@ bool KmlExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
     }
     if (ok) {
         ok = exportAllAircraft(io);
+    }
+    if (ok) {
+        ok = exportWaypoints(io);
+    }
+    if (ok) {
+        ok = exportFooter(io);
+    }
+    // We are done with the export
+    d->flight = nullptr;
+
+    return ok;
+}
+
+bool KmlExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
+{
+    io.setTextModeEnabled(true);
+
+    d->flight = &flight;
+    d->aircraftTypeCount.clear();
+    // Only create as many colors per ramp as there are aircraft (if there are less aircraft
+    // than requested colors per ramp)
+    d->settings.setNofColorsPerRamp(1);
+
+    bool ok = exportHeader(io);
+    if (ok) {
+        ok = d->styleExport->exportStyles(io);
+    }
+    if (ok) {
+        ok = exportFlightInfo(io);
+    }
+    if (ok) {
+        ok = exportAircraft(aircraft, io);
     }
     if (ok) {
         ok = exportWaypoints(io);

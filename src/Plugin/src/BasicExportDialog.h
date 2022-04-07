@@ -76,7 +76,7 @@ private slots:
     void onFilePathChanged();
     void onFormationExportChanged() noexcept;
     void onResamplingOptionChanged() noexcept;
-    void onDoOpenExportedFileChanged(bool enable) noexcept;
+    void onDoOpenExportedFilesChanged(bool enable) noexcept;
     void onRestoreDefaults() noexcept;
 };
 

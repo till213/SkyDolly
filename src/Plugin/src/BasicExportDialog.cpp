@@ -126,8 +126,8 @@ void BasicExportDialog::initBasicUi() noexcept
 
     // Formation export
     ui->formationExportComboBox->addItem(tr("User aircraft only"), Enum::toUnderlyingType(ExportPluginBaseSettings::FormationExport::UserAircraftOnly));
-    ui->formationExportComboBox->addItem(tr("All aircraft (single file)"), Enum::toUnderlyingType(ExportPluginBaseSettings::FormationExport::AllOneFile));
-    ui->formationExportComboBox->addItem(tr("All aircraft (separate files)"), Enum::toUnderlyingType(ExportPluginBaseSettings::FormationExport::AllSeparateFiles));
+    ui->formationExportComboBox->addItem(tr("All aircraft (single file)"), Enum::toUnderlyingType(ExportPluginBaseSettings::FormationExport::AllAircraftOneFile));
+    ui->formationExportComboBox->addItem(tr("All aircraft (separate files)"), Enum::toUnderlyingType(ExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles));
 
     // Resampling
     ui->resamplingComboBox->addItem(QString("1/10 Hz") % " (" % tr("smaller file size, less accuracy") % ")", Enum::toUnderlyingType(SampleRate::ResamplingPeriod::ATenthHz));
@@ -188,7 +188,7 @@ void BasicExportDialog::frenchConnection() noexcept
             this, &BasicExportDialog::onResamplingOptionChanged);
 #endif
     connect(ui->openExportCheckBox, &QCheckBox::toggled,
-            this, &BasicExportDialog::onDoOpenExportedFileChanged);
+            this, &BasicExportDialog::onDoOpenExportedFilesChanged);
     connect(&d->settings, &ExportPluginBaseSettings::baseSettingsChanged,
             this, &BasicExportDialog::updateUi);
     const QPushButton *resetButton = ui->defaultButtonBox->button(QDialogButtonBox::RestoreDefaults);
@@ -239,7 +239,21 @@ void BasicExportDialog::updateUi() noexcept
     }
     ui->formationExportComboBox->setCurrentIndex(currentIndex);
 
-    ui->openExportCheckBox->setChecked(d->settings.isOpenExportedFileEnabled());
+    switch (formationExport) {
+    case ExportPluginBaseSettings::FormationExport::UserAircraftOnly:
+        ui->formationExportComboBox->setToolTip(tr("Only the currently selected user aircraft is exported."));
+        break;
+    case ExportPluginBaseSettings::FormationExport::AllAircraftOneFile:
+        ui->formationExportComboBox->setToolTip(tr("All aircraft are exported, into a single file (if supported by the format; otherwise separate files)."));
+        break;
+    case ExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles:
+        ui->formationExportComboBox->setToolTip(tr("All aircraft are exported, into separate files."));
+        break;
+    default:
+        break;
+    }
+
+    ui->openExportCheckBox->setChecked(d->settings.isOpenExportedFilesEnabled());
 
     updateDataGroupBox();
 }
@@ -270,9 +284,9 @@ void BasicExportDialog::onResamplingOptionChanged() noexcept
     d->settings.setResamplingPeriod(static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt()));
 }
 
-void BasicExportDialog::onDoOpenExportedFileChanged(bool enable) noexcept
+void BasicExportDialog::onDoOpenExportedFilesChanged(bool enable) noexcept
 {
-    d->settings.setOpenExportedFileEnabled(enable);
+    d->settings.setOpenExportedFilesEnabled(enable);
 }
 
 void BasicExportDialog::onRestoreDefaults() noexcept

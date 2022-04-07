@@ -34,12 +34,12 @@ namespace
     // Keys
     constexpr char ResamplingPeriodKey[] = "ResamplingPeriod";
     constexpr char FormationExportKey[] = "FormationExport";
-    constexpr char OpenExportedFileEnabledKey[] = "OpenExportedFileEnabled";
+    constexpr char OpenExportedFilesEnabledKey[] = "OpenExportedFilesEnabled";
 
     // Defaults
     constexpr SampleRate::ResamplingPeriod DefaultResamplingPeriod = SampleRate::ResamplingPeriod::OneHz;
-    constexpr ExportPluginBaseSettings::FormationExport DefaultFormationExport = ExportPluginBaseSettings::FormationExport::AllOneFile;
-    constexpr bool DefaultOpenExportedFileEnabled = false;
+    constexpr ExportPluginBaseSettings::FormationExport DefaultFormationExport = ExportPluginBaseSettings::FormationExport::AllAircraftOneFile;
+    constexpr bool DefaultOpenExportedFilesEnabled = false;
 }
 
 class ExportPluginBaseSettingsPrivate
@@ -48,13 +48,13 @@ public:
     ExportPluginBaseSettingsPrivate()
         : resamplingPeriod(::DefaultResamplingPeriod),
           formationExport(::DefaultFormationExport),
-          openExportedFileEnabled(::DefaultOpenExportedFileEnabled),
+          openExportedFilesEnabled(::DefaultOpenExportedFilesEnabled),
           fileDialogSelectedFile(false)
     {}
 
     SampleRate::ResamplingPeriod resamplingPeriod;
     ExportPluginBaseSettings::FormationExport formationExport;
-    bool openExportedFileEnabled;
+    bool openExportedFilesEnabled;
     bool fileDialogSelectedFile;
 };
 
@@ -101,15 +101,15 @@ void ExportPluginBaseSettings::setFormationExport(FormationExport formationExpor
     }
 }
 
-bool ExportPluginBaseSettings::isOpenExportedFileEnabled() const noexcept
+bool ExportPluginBaseSettings::isOpenExportedFilesEnabled() const noexcept
 {
-    return d->openExportedFileEnabled;
+    return d->openExportedFilesEnabled;
 }
 
-void ExportPluginBaseSettings::setOpenExportedFileEnabled(bool enabled) noexcept
+void ExportPluginBaseSettings::setOpenExportedFilesEnabled(bool enabled) noexcept
 {
-    if (d->openExportedFileEnabled != enabled) {
-        d->openExportedFileEnabled = enabled;
+    if (d->openExportedFilesEnabled != enabled) {
+        d->openExportedFilesEnabled = enabled;
         emit baseSettingsChanged();
     }
 }
@@ -136,8 +136,8 @@ void ExportPluginBaseSettings::addSettings(Settings::KeyValues &keyValues) const
     keyValue.second = Enum::toUnderlyingType(d->formationExport);
     keyValues.push_back(keyValue);
 
-    keyValue.first = ::OpenExportedFileEnabledKey;
-    keyValue.second = d->openExportedFileEnabled;
+    keyValue.first = ::OpenExportedFilesEnabledKey;
+    keyValue.second = d->openExportedFilesEnabled;
     keyValues.push_back(keyValue);
 
     addSettingsExtn(keyValues);
@@ -155,8 +155,8 @@ void ExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &k
     keyValue.second = Enum::toUnderlyingType(::DefaultFormationExport);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = ::OpenExportedFileEnabledKey;
-    keyValue.second = ::DefaultOpenExportedFileEnabled;
+    keyValue.first = ::OpenExportedFilesEnabledKey;
+    keyValue.second = ::DefaultOpenExportedFilesEnabled;
     keysWithDefaults.push_back(keyValue);
 
     addKeysWithDefaultsExtn(keysWithDefaults);
@@ -177,7 +177,7 @@ void ExportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valu
     } else {
         d->formationExport = ::DefaultFormationExport;
     }
-    d->openExportedFileEnabled = valuesByKey.at(::OpenExportedFileEnabledKey).toBool();
+    d->openExportedFilesEnabled = valuesByKey.at(::OpenExportedFilesEnabledKey).toBool();
     emit baseSettingsChanged();
 
     restoreSettingsExtn(valuesByKey);
@@ -187,7 +187,7 @@ void ExportPluginBaseSettings::restoreDefaults() noexcept
 {
     d->resamplingPeriod = ::DefaultResamplingPeriod;
     d->formationExport = ::DefaultFormationExport;
-    d->openExportedFileEnabled = ::DefaultOpenExportedFileEnabled;
+    d->openExportedFilesEnabled = ::DefaultOpenExportedFilesEnabled;
     emit baseSettingsChanged();
 
     restoreDefaultsExtn();

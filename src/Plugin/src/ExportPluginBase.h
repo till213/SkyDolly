@@ -85,7 +85,16 @@ protected:
     virtual QString getFileExtension() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
+
+    /*!
+     * Returns whether the plugin (file format) supports export of multiple aircraft into a single file.
+     * Examples are the KML or GPX format which both may have multiple \em tracks.
+     *
+     * \return \c true if the file format supports multiple aircraft tracks; \c false else
+     */
+    virtual bool hasMultiAircraftSupport() const noexcept = 0;
     virtual bool exportFlight(const Flight &flight, QIODevice &io) noexcept = 0;
+    virtual bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept = 0;
 
 protected slots:
     virtual void onRestoreDefaultSettings() noexcept = 0;
@@ -94,6 +103,9 @@ private:
     std::unique_ptr<ExportPluginBasePrivate> d;
 
     bool exportFlight(const Flight &flight, const QString &filePath) noexcept;
+    // Exports all aircraft into separate files, given the 'baseFilePath'
+    bool exportAllAircraft(const Flight &flight, const QString &baseFilePath) noexcept;
+
     virtual void addSettings(Settings::KeyValues &keyValues) const noexcept override final;
     virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override final;
     virtual void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept override final;

@@ -6,7 +6,7 @@
 
 - JSON export plugin
   * Export in GeoJSON format
-  * Style properties added, interpreted e.g by https://geojson.io
+  * Including style properties, interpreted e.g by https://geojson.io
 - GPX export plugin
   * Timestamps are based on either simulation or recording time; the later being useful for GPS-tagging screenshots taken during flight recording
 
@@ -14,6 +14,10 @@
 
 - All export plugins
   * File existence is checked before overwriting existing files
+  * An export option for formation flights allows to
+    - only export the current user aircraft
+    - all aircraft into a single file (if supported by the file format, e.g. KML, GPX and GeoJSON)
+    - all aircraft into separate files
 - CSV export plugin
   * Resampling is now supported (original sample rate, 1 Hz, 2 Hz, 5 Hz, ...)
 - KML export plugin

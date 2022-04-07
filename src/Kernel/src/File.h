@@ -34,7 +34,40 @@ class QString;
 class KERNEL_API File
 {
 public:
+
+    /*!
+     * Ensures that the given \c filePath has the file suffix \c suffix, which is case-insensitive.
+     *
+     * \param filePath
+     *        the file path to be checked for file suffix \c suffix
+     * \param suffix
+     *        the case-insensitive file suffix
+     * \return the \c filePath with guaranteed file suffix \c suffix
+     */
     static QString ensureSuffix(QStringView filePath, QStringView suffix) noexcept;
+
+    /*!
+     * Returns the \c filePath with a sequence number \c n appended to it (before the suffix).
+     * When \c n is equal 1
+     *
+     * Examples:
+     *
+     * filePath               | n | result
+     * -----------------------|---|-------------------------
+     * /some/path/example.csv | 1 | /some/path/example-1.csv
+     * -----------------------|---|-------------------------
+     * /some/path/example.csv | 2 | /some/path/example-2.csv
+     * -----------------------|---|-------------------------
+     * /some/path/example.csv | n | /some/path/example-n.csv
+     *
+     * \param filePath
+     *        the file path including file suffix
+     * \param n
+     *        the sequence number; while also negative values are acceptable meaningful sequence
+     *        numbers should start with 1 and increase
+     * \return the \c filePath with a sequence number
+     */
+    static QString getSequenceFilePath(QString filePath, int n);
 };
 
 #endif // FILE_H

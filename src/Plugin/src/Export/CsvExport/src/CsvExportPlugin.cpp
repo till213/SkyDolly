@@ -101,12 +101,21 @@ std::unique_ptr<QWidget> CsvExportPlugin::createOptionWidget() const noexcept
     return nullptr;
 }
 
-bool CsvExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
+bool CsvExportPlugin::hasMultiAircraftSupport() const noexcept
+{
+    return false;
+}
+
+bool CsvExportPlugin::exportFlight([[maybe_unused]] const Flight &flight, [[maybe_unused]] QIODevice &io) noexcept
+{
+    // No multi aircraft support
+    return false;
+}
+
+bool CsvExportPlugin::exportAircraft([[maybe_unused]] const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
 {
     bool ok;
-    const Aircraft &aircraft = flight.getUserAircraftConst();
     io.setTextModeEnabled(true);
-
     QString csv = QString(CsvConst::TypeColumnName) % CsvConst::Sep %
                           getPositionHeader() % CsvConst::Sep %
                           getEngineHeader() % CsvConst::Sep %

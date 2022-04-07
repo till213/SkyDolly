@@ -109,6 +109,12 @@ std::unique_ptr<QWidget> JsonExportPlugin::createOptionWidget() const noexcept
     return nullptr;
 }
 
+bool JsonExportPlugin::hasMultiAircraftSupport() const noexcept
+{
+    // We can store multiple LineStrings in the JSON format
+    return true;
+}
+
 bool JsonExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
 {
     d->flight = &flight;
@@ -119,6 +125,28 @@ bool JsonExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcep
     }
     if (ok) {
         ok = exportAllAircraft(io);
+    }
+    if (ok) {
+        ok = exportFooter(io);
+    }
+    // We are done with the export
+    d->flight = nullptr;
+    return ok;
+}
+
+bool JsonExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
+{
+    d->flight = &flight;
+    io.setTextModeEnabled(true);
+    bool ok = exportHeader(io);
+    if (ok) {
+        ok = exportWaypoints(io);
+    }
+    if (ok) {
+        ok = exportAircraft(aircraft, io);
+        if (ok) {
+            ok = io.write("\n");
+        }
     }
     if (ok) {
         ok = exportFooter(io);

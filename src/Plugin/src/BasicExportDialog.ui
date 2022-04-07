@@ -124,7 +124,7 @@
    <item>
     <widget class="QCheckBox" name="openExportCheckBox">
      <property name="text">
-      <string>Open exported file</string>
+      <string>Open exported file(s)</string>
      </property>
     </widget>
    </item>

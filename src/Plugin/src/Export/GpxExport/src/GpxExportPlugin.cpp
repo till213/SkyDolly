@@ -108,7 +108,33 @@ std::unique_ptr<QWidget> GpxExportPlugin::createOptionWidget() const noexcept
     return std::make_unique<GpxExportOptionWidget>(d->settings);
 }
 
+bool GpxExportPlugin::hasMultiAircraftSupport() const noexcept
+{
+    // We can store multiple tracks in the GPX format
+    return true;
+}
+
 bool GpxExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
+{
+    d->flight = &flight;
+    io.setTextModeEnabled(true);
+    bool ok = exportHeader(io);
+    if (ok) {
+        ok = exportFlightInfo(io);
+    }
+    if (ok) {
+        ok = exportWaypoints(io);
+    }
+    if (ok) {
+        ok = exportAllAircraft(io);
+    }
+    if (ok) {
+        ok = exportFooter(io);
+    }
+    return ok;
+}
+
+bool GpxExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
 {
     d->flight = &flight;
     io.setTextModeEnabled(true);
@@ -120,7 +146,7 @@ bool GpxExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
         ok = exportWaypoints(io);
     }
     if (ok) {
-        ok = exportAllAircraft(io);
+        ok = exportAircraft(aircraft, io);
     }    
     if (ok) {
         ok = exportFooter(io);
@@ -265,7 +291,7 @@ QString GpxExportPlugin::getAircraftDescription(const Aircraft &aircraft) const 
             tr("Category") % ": " % type.category % "\n" %
             tr("Engine type") % ": " % SimType::engineTypeToString(type.engineType) % "\n" %
             tr("Number of engines") % ": " % d->unit.formatNumber(type.numberOfEngines, 0) % "\n" %
-            tr("Wingspan") % ": " % d->unit.formatNumber(type.wingSpan, 0) % "\n"
+            tr("Wingspan") % ": " % d->unit.formatFeet(type.wingSpan) % "\n"
             "\n" %
             tr("Initial altitude above ground") % ": " % d->unit.formatFeet(info.altitudeAboveGround) % "\n" %
             tr("Initial airspeed") % ": " % d->unit.formatKnots(info.initialAirspeed) % "\n" %

@@ -48,9 +48,9 @@ public:
         UserAircraftOnly,
         /*! All aircraft are to be exported, into one file if possible (depending on the actual file format);
             otherwise into separate files */
-        AllOneFile,
+        AllAircraftOneFile,
         /*! All aircraft are to be exported, into separate files each */
-        AllSeparateFiles
+        AllAircraftSeparateFiles
     };
 
     ExportPluginBaseSettings() noexcept;
@@ -62,8 +62,8 @@ public:
     FormationExport getFormationExport() const noexcept;
     void setFormationExport(FormationExport formationExport) noexcept;
 
-    bool isOpenExportedFileEnabled() const noexcept;
-    void setOpenExportedFileEnabled(bool enabled) noexcept;
+    bool isOpenExportedFilesEnabled() const noexcept;
+    void setOpenExportedFilesEnabled(bool enabled) noexcept;
 
     /*!
      * Returns whether the user has selected the file via the file selection dialog,
