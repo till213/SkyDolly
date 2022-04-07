@@ -22,13 +22,11 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "BasicImportDialog.h"
-#include "ui_BasicImportDialog.h"
-
 #include <memory>
 
 #include <QDialog>
 #include <QString>
+#include <QStringBuilder>
 #include <QFileDialog>
 #include <QWidget>
 #include <QPushButton>
@@ -42,6 +40,8 @@
 #include "../../Persistence/src/Service/AircraftTypeService.h"
 #include "../../Kernel/src/Settings.h"
 #include "ImportPluginBaseSettings.h"
+#include "BasicImportDialog.h"
+#include "ui_BasicImportDialog.h"
 
 class BasicImportDialogPrivate
 {
@@ -177,22 +177,60 @@ void BasicImportDialog::frenchConnection() noexcept
 void BasicImportDialog::updateUi() noexcept
 {
     const QString filePath = ui->filePathLineEdit->text();
-    QFile file(filePath);
+    QFileInfo fileInfo {filePath};
+
+    bool fileExists;
+    if (d->pluginSettings.isImportDirectoryEnabled()) {
+        fileExists = fileInfo.isDir() && fileInfo.exists();
+    } else {
+        fileExists = fileInfo.isFile() && fileInfo.exists();
+    }
+
     const QString type = ui->aircraftSelectionComboBox->currentText();
     const bool aircraftTypeExists = !type.isEmpty() && d->aircraftTypeService->exists(type);
-    const bool enabled = file.exists() && aircraftTypeExists;
+    const bool enabled = fileExists && aircraftTypeExists;
     d->importButton->setEnabled(enabled);
 
-    ui->importDirectoryCheckBox->setChecked(d->pluginSettings.isImportDirectoryEnabled());
+    if (d->pluginSettings.isImportDirectoryEnabled()) {
+        ui->importDirectoryCheckBox->setChecked(true);
+        const QString currentPath = ui->filePathLineEdit->text();
+        if (!currentPath.isEmpty()) {
+            QFileInfo fileInfo {currentPath};
+            if (fileInfo.isFile()) {
+                ui->filePathLineEdit->setText(QDir::toNativeSeparators(fileInfo.absolutePath()));
+            }
+        }
+    } else {
+        ui->importDirectoryCheckBox->setChecked(false);
+    }
     ui->addToFlightCheckBox->setChecked(d->pluginSettings.isAddToFlightEnabled());
 }
 
 void BasicImportDialog::onFileSelectionChanged() noexcept
 {
     // Start with the last export path
-    QString exportPath = Settings::getInstance().getExportPath();
+    QString exportPath;
+    const QString currentFilePath = ui->filePathLineEdit->text();
+    if (currentFilePath.isEmpty()) {
+        exportPath = Settings::getInstance().getExportPath();
+    } else {
+        QFileInfo fileInfo {currentFilePath};
+        if (fileInfo.isDir()) {
+            exportPath = fileInfo.absoluteFilePath();
+        } else {
+            exportPath = QFileInfo(currentFilePath).absolutePath();
+        }
+        if (!QFileInfo::exists(exportPath)) {
+            exportPath = Settings::getInstance().getExportPath();
+        }
+    }
 
-    const QString filePath = QFileDialog::getOpenFileName(this, tr("Import file..."), exportPath, d->fileFilter);
+    QString filePath;
+    if (d->pluginSettings.isImportDirectoryEnabled()) {
+        filePath = QFileDialog::getExistingDirectory(this, tr("Import directory..."), exportPath);
+    } else {
+        filePath = QFileDialog::getOpenFileName(this, tr("Import file..."), exportPath, d->fileFilter);
+    }
     if (!filePath.isEmpty()) {
         ui->filePathLineEdit->setText(QDir::toNativeSeparators(filePath));
     }
