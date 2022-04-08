@@ -270,7 +270,7 @@ inline bool IgcExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &
 
     const Engine &engine = aircraft.getEngineConst();
     std::vector<PositionData> interpolatedPositionData;
-    resamplePositionDataForExport(aircraft, std::back_inserter(interpolatedPositionData));
+    Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod(), std::back_inserter(interpolatedPositionData));
     bool ok = true;
     for (PositionData &positionData : interpolatedPositionData) {
         if (!positionData.isNull()) {

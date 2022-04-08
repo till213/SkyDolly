@@ -246,7 +246,7 @@ bool KmlExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
 "        </LineString>\n");
 
     std::vector<PositionData> interpolatedPositionData;
-    resamplePositionDataForExport(aircraft, std::back_inserter(interpolatedPositionData));
+    Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod(), std::back_inserter(interpolatedPositionData));
     bool ok = true;
     if (interpolatedPositionData.size() > 0) {
 

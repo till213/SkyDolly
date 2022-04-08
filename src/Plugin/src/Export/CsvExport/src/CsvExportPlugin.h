@@ -40,12 +40,7 @@ class QDateTime;
 #include "../../../ExportPluginBase.h"
 
 class Aircraft;
-struct PositionData;
-struct EngineData;
-struct PrimaryFlightControlData;
-struct SecondaryFlightControlData;
-struct AircraftHandleData;
-struct LightData;
+
 class CsvExportPluginPrivate;
 
 class CsvExportPlugin : public ExportPluginBase
@@ -68,34 +63,6 @@ protected:
 
 private:
     std::unique_ptr<CsvExportPluginPrivate> d;
-
-    static QString getPositionHeader() noexcept;
-    static QString getPositionData(const PositionData &data) noexcept;
-
-    static QString getEngineHeader() noexcept;
-    static QString getEngineData(const EngineData &data) noexcept;
-
-    static QString getPrimaryFlightControlHeader() noexcept;
-    static QString getPrimaryFlightControlData(const PrimaryFlightControlData &data) noexcept;
-
-    static QString getSecondaryFlightControlHeader() noexcept;
-    static QString getSecondaryFlightControlData(const SecondaryFlightControlData &data) noexcept;
-
-    static QString getAircraftHandleHeader() noexcept;
-    static QString getAircraftHandleData(const AircraftHandleData &data) noexcept;
-
-    static QString getLightHeader() noexcept;
-    static QString getLightData(const LightData &data) noexcept;
-
-    static inline bool writeLine(QChar type,
-                                 const PositionData &positionData,
-                                 const EngineData &engineData,
-                                 const PrimaryFlightControlData &flightControlData,
-                                 const SecondaryFlightControlData &secondaryFlightControlData,
-                                 const AircraftHandleData &aircraftHandleData,
-                                 const LightData &lightData,
-                                 std::int64_t timestamp,
-                                 QIODevice &io) noexcept;
 };
 
 #endif // CSVEXPORTPLUGIN_H

@@ -49,7 +49,7 @@ namespace
     constexpr int LongitudeIndex = 4;
     constexpr int AltitudeIndex = 5;
     constexpr int SpeedIndex = 6;
-    constexpr int HeadginIndex = 7;
+    constexpr int HeadingIndex = 7;
 }
 
 // PUBLIC
@@ -144,7 +144,7 @@ bool FlightRadar24CsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QSt
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
                 positionData.heading = match.captured(::HeadginIndex).toDouble(&ok);
 #else
-                positionData.heading = match.capturedView(::HeadginIndex).toDouble(&ok);
+                positionData.heading = match.capturedView(::HeadingIndex).toDouble(&ok);
 #endif
             }
             if (ok) {

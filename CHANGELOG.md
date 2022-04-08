@@ -22,13 +22,16 @@
     - Only export the current user aircraft
     - All aircraft are exported into a single file (if supported by the file format, e.g. KML, GPX and GeoJSON)
     - All aircraft are exported into separate files
-  * Resampling ("original sample rate", "1 Hz", "2 Hz", "5 Hz", ...) is now supported for by all export plugins 
+  * Resampling ("original sample rate", "1 Hz", "2 Hz", "5 Hz", ...) is now supported for by all export plugins
+- CSV export plugin
+  * The plugin now also exports [flightradar24.com](https://www.flightradar24.com/) CSV format
 - KML export plugin
   * The LineStrings are now exported as connected multi-geometry lines (no point limit anymore)
   * Reduced the number of fractional digits to 6, reducing file size while still providing a practical precision in the range of centimeters (also refer to the mandatory [XKCD](https://xkcd.com/2170/))
 - Miscellaneous
   * Add shortcuts to dialog buttons
   * The recording time is now shown in the Flight dialog
+  * Use title-case for all [push buttons](https://developer.apple.com/design/human-interface-guidelines/macos/buttons/push-buttons/)
   
 ### Bug Fixes
 

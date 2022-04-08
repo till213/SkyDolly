@@ -59,7 +59,7 @@ AbstractKmlParser::AbstractKmlParser(QXmlStreamReader &xmlStreamReader) noexcept
     : d(std::make_unique<AbstractKmlParserPrivate>(xmlStreamReader))
 {
 #ifdef DEBUG
-    qDebug("AbstractKmlParser::~AbstractKmlParser: CREATED");
+    qDebug("AbstractKmlParser::AbstractKmlParser: CREATED");
 #endif
 }
 

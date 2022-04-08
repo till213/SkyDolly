@@ -22,50 +22,37 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#ifndef CSVEXPORTOPTIONWIDGET_H
+#define CSVEXPORTOPTIONWIDGET_H
+
 #include <memory>
 
-#include <QString>
-#include <QXmlStreamReader>
+#include <QWidget>
 
-#include "Kml.h"
-#include "AbstractKmlTrackParser.h"
-#include "GenericKmlParser.h"
+namespace Ui {
+    class CsvExportOptionWidget;
+}
 
-class GenericKmlParserPrivate
+class CsvExportSettings;
+class CsvExportOptionWidgetPrivate;
+
+class CsvExportOptionWidget : public QWidget
 {
+    Q_OBJECT
 public:
-    GenericKmlParserPrivate(QXmlStreamReader &xmlStreamReader) noexcept
-        : xml(xmlStreamReader)
-    {}
+    explicit CsvExportOptionWidget(CsvExportSettings &settings, QWidget *parent = nullptr) noexcept;
+    virtual ~CsvExportOptionWidget() noexcept;
 
-    QXmlStreamReader &xml;
+private:
+    std::unique_ptr<Ui::CsvExportOptionWidget> ui;
+    std::unique_ptr<CsvExportOptionWidgetPrivate> d;
+
+    void frenchConnection() noexcept;
+    void initUi() noexcept;
+
+private slots:
+    void updateUi() noexcept;
+    void onFormatChanged() noexcept;
 };
 
-// PUBLIC
-
-GenericKmlParser::GenericKmlParser(Flight &flight, QXmlStreamReader &xmlStreamReader) noexcept
-    : AbstractKmlTrackParser(flight, xmlStreamReader),
-      d(std::make_unique<GenericKmlParserPrivate>(xmlStreamReader))
-{
-#ifdef DEBUG
-    qDebug("GenericKmlParser::GenericKmlParser: CREATED");
-#endif
-}
-
-GenericKmlParser::~GenericKmlParser() noexcept
-{
-#ifdef DEBUG
-    qDebug("GenericKmlParser::~GenericKmlParser: DELETED");
-#endif
-}
-
-// Generic KML files (are expected to) have at least one "gx:Track"
-void GenericKmlParser::parse() noexcept
-{
-    parseKML();
-}
-
-QString GenericKmlParser::getFlightNumber() const noexcept
-{
-    return QString();
-}
+#endif // CSVEXPORTOPTIONWIDGET_H
