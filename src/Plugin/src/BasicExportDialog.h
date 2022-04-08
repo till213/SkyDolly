@@ -63,8 +63,8 @@ private:
     void initOptionUi() noexcept;
     void updateDataGroupBox() noexcept;
     void frenchConnection() noexcept;
-
-    std::int64_t estimateNofSamplePoints() noexcept;
+    inline bool isExportUserAircraftOnly() const noexcept;
+    std::int64_t estimateNofSamplePoints() const noexcept;
 
 private slots:
     void updateUi() noexcept;

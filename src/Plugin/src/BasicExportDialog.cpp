@@ -157,15 +157,19 @@ void BasicExportDialog::initOptionUi() noexcept
 void BasicExportDialog::updateDataGroupBox() noexcept
 {
     QString infoText;
+    if (isExportUserAircraftOnly()) {
+        infoText = tr("The current user aircraft will be exported.");
+    } else {
+        infoText = tr("%Ln aircraft will be exported.", nullptr, d->flight.count());
+    }
     SampleRate::ResamplingPeriod resamplingPeriod = static_cast<SampleRate::ResamplingPeriod>(ui->resamplingComboBox->currentData().toInt());
     std::int64_t samplePoints = estimateNofSamplePoints();
     if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
-        infoText = tr("The position data will be resampled every %1 milliseconds, resulting in %n exported positions.",
-                      nullptr, samplePoints)
-                      .arg(d->unit.formatNumber(Enum::toUnderlyingType(resamplingPeriod), 0));
+        infoText.append(" " % tr("The position data will be resampled every %1 milliseconds, resulting in %Ln exported positions.",
+                                 nullptr, samplePoints)
+                                 .arg(d->unit.formatNumber(Enum::toUnderlyingType(resamplingPeriod), 0)));
     } else {
-        infoText = tr("The original recorded data will be exported, in total %n exported positions.",
-                      nullptr, samplePoints);
+        infoText.append(" " % tr("The original recorded data will be exported, in total %Ln exported positions.", nullptr, samplePoints));
     }
     ui->infoLabel->setText(infoText);
 }
@@ -196,19 +200,33 @@ void BasicExportDialog::frenchConnection() noexcept
             this, &BasicExportDialog::onRestoreDefaults);
 }
 
-std::int64_t BasicExportDialog::estimateNofSamplePoints() noexcept
+inline bool BasicExportDialog::isExportUserAircraftOnly() const noexcept
+{
+    return d->pluginSettings.getFormationExport() == ExportPluginBaseSettings::FormationExport::UserAircraftOnly;
+}
+
+std::int64_t BasicExportDialog::estimateNofSamplePoints() const noexcept
 {
     std::int64_t nofSamplePoints = 0;
     const std::int64_t period = ui->resamplingComboBox->currentData().toInt();
     if (period != 0) {
-        for (const auto &aircraft : d->flight) {
-            std::int64_t duration = aircraft->getDurationMSec();
+        if (isExportUserAircraftOnly()) {
+            std::int64_t duration = d->flight.getUserAircraftConst().getDurationMSec();
             nofSamplePoints += qRound(static_cast<double>(duration) / static_cast<double>(period)) + 1;
+        } else {
+            for (const auto &aircraft : d->flight) {
+                std::int64_t duration = aircraft->getDurationMSec();
+                nofSamplePoints += qRound(static_cast<double>(duration) / static_cast<double>(period)) + 1;
+            }
         }
     } else {
         // Count the actual position sample points
-        for (const auto &aircraft : d->flight) {
-            nofSamplePoints += aircraft->getPositionConst().count();
+        if (isExportUserAircraftOnly()) {
+            nofSamplePoints += d->flight.getUserAircraftConst().getPositionConst().count();
+        } else {
+            for (const auto &aircraft : d->flight) {
+                nofSamplePoints += aircraft->getPositionConst().count();
+            }
         }
     }
     return nofSamplePoints;

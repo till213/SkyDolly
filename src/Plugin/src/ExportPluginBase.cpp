@@ -212,7 +212,6 @@ bool ExportPluginBase::exportAllAircraft(const Flight &flight, const QString &fi
     bool replaceAll {false};
     int i = 1;
     for (const auto &aircraft : flight) {
-        // @todo Generate enumerated file names, check existence for each before overwriting!
         const QString sequencedFilePath = File::getSequenceFilePath(filePath, i);
         const QFileInfo fileInfo {sequencedFilePath};
         if (fileInfo.exists() && !replaceAll) {

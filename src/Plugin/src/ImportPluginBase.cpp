@@ -186,7 +186,7 @@ bool ImportPluginBase::importFlights(const QStringList &filePaths, FlightService
 
     bool ok {true};
     bool ignoreFailures {false};
-    int i = 0;
+    bool isFirstFile {true};
     for (const QString &filePath : filePaths) {
         d->file.setFileName(filePath);
         ok = d->file.open(QIODevice::ReadOnly);
@@ -194,12 +194,13 @@ bool ImportPluginBase::importFlights(const QStringList &filePaths, FlightService
             // Clear the current flight IF
             // - We don't want to add the imported aircraft to the current flight OR
             // - We import an entire directory, and this is the first file to be imported
-            if (!addToCurrentFlight || (importDirectory && i == 0)) {
+            if (!addToCurrentFlight || (importDirectory && isFirstFile)) {
                 flight.clear(true);
+                isFirstFile = false;
             }
-            // The flight has at least one aircraft, but possibly without recording
-            const int aircraftCount = flight.count();
-            const bool addNewAircraft = addToCurrentFlight && (aircraftCount > 1 || flight.getUserAircraft().hasRecording());
+            // The flight has always at least one aircraft, but possibly without recording (when the flight has
+            // been cleared / newly created)
+            const bool addNewAircraft = addToCurrentFlight && flight.getUserAircraft().hasRecording();
             Aircraft &aircraft = addNewAircraft ? flight.addUserAircraft() : flight.getUserAircraft();
 
             ok = importFlight(d->file, flight);
@@ -208,9 +209,10 @@ bool ImportPluginBase::importFlights(const QStringList &filePaths, FlightService
                 d->flightAugmentation.setAspects(getAspects());
                 d->flightAugmentation.augmentAircraftData(aircraft);
                 updateAircraftInfo();
-                if (addNewAircraft) {
+                const int nofAircraft = flight.count();
+                if (nofAircraft > 1) {
                     // Sequence starts at 1
-                    const int sequenceNumber = flight.count();
+                    const int sequenceNumber = nofAircraft;
                     ok = d->aircraftService->store(flight.getId(), sequenceNumber, aircraft);
                 } else {
                     // Also update flight info and condition
@@ -223,8 +225,6 @@ bool ImportPluginBase::importFlights(const QStringList &filePaths, FlightService
             }
             d->file.close();
         }
-
-        ++i;
 
         if (!ok && importDirectory && !ignoreFailures) {
             QGuiApplication::restoreOverrideCursor();
