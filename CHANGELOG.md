@@ -29,7 +29,7 @@
 - Miscellaneous
   * Add shortcuts to dialog buttons
   * The recording time is now shown in the Flight dialog
-  * Use title-case for all push buttons
+  * Use title-case for all [push buttons](https://developer.apple.com/design/human-interface-guidelines/macos/buttons/push-buttons/)
   
 ### Bug Fixes
 

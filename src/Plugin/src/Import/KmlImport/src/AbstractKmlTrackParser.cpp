@@ -64,7 +64,7 @@ AbstractKmlTrackParser::AbstractKmlTrackParser(Flight &flight, QXmlStreamReader 
       d(std::make_unique<AbstractKmlTrackParserPrivate>(flight, xmlStreamReader))
 {
 #ifdef DEBUG
-    qDebug("AbstractKmlTrackParser::~AbstractKmlTrackParser: CREATED");
+    qDebug("AbstractKmlTrackParser::AbstractKmlTrackParser: CREATED");
 #endif
 }
 

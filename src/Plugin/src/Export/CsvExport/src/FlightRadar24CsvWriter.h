@@ -22,50 +22,18 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory>
+#ifndef FLIGHTRADAR24CSVWRITER_H
+#define FLIGHTRADAR24CSVWRITER_H
 
-#include <QString>
-#include <QXmlStreamReader>
+#include "CsvWriterIntf.h"
 
-#include "Kml.h"
-#include "AbstractKmlTrackParser.h"
-#include "GenericKmlParser.h"
-
-class GenericKmlParserPrivate
+class FlightRadar24CsvWriter : public CsvWriterIntf
 {
 public:
-    GenericKmlParserPrivate(QXmlStreamReader &xmlStreamReader) noexcept
-        : xml(xmlStreamReader)
-    {}
+    FlightRadar24CsvWriter() noexcept;
+    virtual ~FlightRadar24CsvWriter() noexcept;
 
-    QXmlStreamReader &xml;
+    virtual bool write(const Aircraft &aircraft, QIODevice &ioDevice) noexcept override;
 };
 
-// PUBLIC
-
-GenericKmlParser::GenericKmlParser(Flight &flight, QXmlStreamReader &xmlStreamReader) noexcept
-    : AbstractKmlTrackParser(flight, xmlStreamReader),
-      d(std::make_unique<GenericKmlParserPrivate>(xmlStreamReader))
-{
-#ifdef DEBUG
-    qDebug("GenericKmlParser::GenericKmlParser: CREATED");
-#endif
-}
-
-GenericKmlParser::~GenericKmlParser() noexcept
-{
-#ifdef DEBUG
-    qDebug("GenericKmlParser::~GenericKmlParser: DELETED");
-#endif
-}
-
-// Generic KML files (are expected to) have at least one "gx:Track"
-void GenericKmlParser::parse() noexcept
-{
-    parseKML();
-}
-
-QString GenericKmlParser::getFlightNumber() const noexcept
-{
-    return QString();
-}
+#endif // FLIGHTRADAR24CSVWRITER_H
