@@ -200,8 +200,12 @@ void BasicImportDialog::updateUi() noexcept
                 ui->pathLineEdit->setText(QDir::toNativeSeparators(fileInfo.absolutePath()));
             }
         }
+        ui->addToFlightCheckBox->setText(tr("Add all aircraft to same new flight"));
+        ui->addToFlightCheckBox->setToolTip(tr("When checked then all aircraft are added to the same, newly created flight. Otherwise a new flight is created for each imported file."));
     } else {
         ui->importDirectoryCheckBox->setChecked(false);
+        ui->addToFlightCheckBox->setText(tr("Add aircraft to current flight"));
+        ui->addToFlightCheckBox->setToolTip(tr("When checked then the imported aircraft is added to the currently loaded flight. Otherwise a new flight is created."));
     }
     ui->addToFlightCheckBox->setChecked(d->pluginSettings.isAddToFlightEnabled());
 }
