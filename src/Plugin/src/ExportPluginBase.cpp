@@ -79,7 +79,7 @@ bool ExportPluginBase::exportFlight(const Flight &flight) noexcept
 {
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
     ExportPluginBaseSettings &baseSettings = getPluginSettings();
-    std::unique_ptr<BasicExportDialog> exportDialog = std::make_unique<BasicExportDialog>(flight, getFileExtension(), getFileFilter(), baseSettings, getParentWidget());
+    std::unique_ptr<BasicExportDialog> exportDialog = std::make_unique<BasicExportDialog>(flight, getFileSuffix(), getFileFilter(), baseSettings, getParentWidget());
     // Transfer ownership to exportDialog
     exportDialog->setOptionWidget(optionWidget.release());
     bool ok {true};
@@ -88,10 +88,10 @@ bool ExportPluginBase::exportFlight(const Flight &flight) noexcept
         // Remember export path
         const QString selectedFilePath = exportDialog->getSelectedFilePath();
         if (!selectedFilePath.isEmpty()) {
-            const QString filePath = File::ensureSuffix(selectedFilePath, getFileExtension());
+            const QString filePath = File::ensureSuffix(selectedFilePath, getFileSuffix());
             const QFileInfo fileInfo {filePath};
             const QString exportDirectoryPath = fileInfo.absolutePath();
-            Settings::getInstance().setExportPath(exportDirectoryPath);
+            Settings::getInstance().setExportPath(suffix);
 
             const ExportPluginBaseSettings::FormationExport formationExport = getPluginSettings().getFormationExport();
             if (formationExport == ExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles || baseSettings.isFileDialogSelectedFile() || !fileInfo.exists()) {
@@ -213,7 +213,7 @@ bool ExportPluginBase::exportAllAircraft(const Flight &flight, const QString &fi
     int i = 1;
     for (const auto &aircraft : flight) {
         // @todo Generate enumerated file names, check existence for each before overwriting!
-        const QString sequencedFilePath = File::getSequenceFilePath(filePath, i);
+        const QString sequencedFilePath = File::getSequenceFilePath(suffix, i);
         const QFileInfo fileInfo {sequencedFilePath};
         if (fileInfo.exists() && !replaceAll) {
             QGuiApplication::restoreOverrideCursor();

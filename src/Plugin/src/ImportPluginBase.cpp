@@ -35,6 +35,7 @@
 #include <QCursor>
 #include <QGuiApplication>
 
+#include "../../Kernel/src/File.h"
 #include "../../Kernel/src/Unit.h"
 #include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/SkyMath.h"
@@ -102,10 +103,17 @@ bool ImportPluginBase::importFlight(FlightService &flightService, Flight &flight
     importDialog->setOptionWidget(optionWidget.release());
     const int choice = importDialog->exec();
     if (choice == QDialog::Accepted) {
+        QStringList selectedFilePaths;
         // Remember import (export) path
-        const QString selectedFilePath = importDialog->getSelectedFilePath();
-        const QString filePath = QFileInfo(selectedFilePath).absolutePath();
-        Settings::getInstance().setExportPath(filePath);
+        const QString selectedPath = importDialog->getSelectedPath();
+        if (getPluginSettings().isImportDirectoryEnabled()) {
+            Settings::getInstance().setExportPath(suffix);
+            selectedFilePaths = File::getFilePaths(selectedPath, getFileSuffix());
+        } else {
+            const QString directoryPath = QFileInfo(selectedPath).absolutePath();
+            Settings::getInstance().setExportPath(suffix);
+            selectedFilePaths.append(selectedPath);
+        }
         ok = importDialog->getSelectedAircraftType(d->aircraftType);
         if (ok) {
 #ifdef DEBUG
@@ -114,10 +122,10 @@ bool ImportPluginBase::importFlight(FlightService &flightService, Flight &flight
 #endif
             QGuiApplication::setOverrideCursor(Qt::WaitCursor);
             QGuiApplication::processEvents();
-            ok = importFlight(selectedFilePath, flightService, flight);
+            ok = importFlights(selectedFilePaths, flightService, flight);
             QGuiApplication::restoreOverrideCursor();
 #ifdef DEBUG
-            qDebug("%s import %s in %lld ms", qPrintable(QFileInfo(selectedFilePath).fileName()), (ok ? qPrintable("SUCCESS") : qPrintable("FAIL")), timer.elapsed());
+            qDebug("%s import %s in %lld ms", qPrintable(QFileInfo(selectedPath).fileName()), (ok ? qPrintable("SUCCESS") : qPrintable("FAIL")), timer.elapsed());
 #endif
             if (ok) {
                 if (baseSettings.isAddToFlightEnabled()) {
@@ -127,7 +135,7 @@ bool ImportPluginBase::importFlight(FlightService &flightService, Flight &flight
                     }
                 }
             } else {
-                QMessageBox::critical(getParentWidget(), tr("Import error"), tr("The file %1 could not be imported.").arg(selectedFilePath));
+                QMessageBox::critical(getParentWidget(), tr("Import error"), tr("The file %1 could not be imported.").arg(selectedPath));
             }
         } else {
             QMessageBox::critical(getParentWidget(), tr("Import error"),
@@ -168,41 +176,44 @@ void ImportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexce
     getPluginSettings().restoreSettings(valuesByKey);
 }
 
-bool ImportPluginBase::importFlight(const QString &filePath, FlightService &flightService, Flight &flight) noexcept
+bool ImportPluginBase::importFlights(const QStringList &filePaths, FlightService &flightService, Flight &flight) noexcept
 {
-    d->file.setFileName(filePath);
-    bool ok = d->file.open(QIODevice::ReadOnly);
-    if (ok) {
-        const bool addToCurrentFlight = getPluginSettings().isAddToFlightEnabled();
-        if (!addToCurrentFlight) {
-            flight.clear(true);
-        }
-        // The flight has at least one aircraft, but possibly without recording
-        const int aircraftCount = flight.count();
-        const bool addNewAircraft = addToCurrentFlight && (aircraftCount > 1 || flight.getUserAircraft().hasRecording());
-        Aircraft &aircraft = addNewAircraft ? flight.addUserAircraft() : flight.getUserAircraft();
-
-        ok = importFlight(d->file, flight);
-        if (ok && aircraft.getPositionConst().count() > 0) {
-            d->flightAugmentation.setProcedures(getProcedures());
-            d->flightAugmentation.setAspects(getAspects());
-            d->flightAugmentation.augmentAircraftData(aircraft);
-            updateAircraftInfo();
-            if (addNewAircraft) {
-                // Sequence starts at 1
-                const int sequenceNumber = flight.count();
-                ok = d->aircraftService->store(flight.getId(), sequenceNumber, aircraft);
-            } else {
-                // Also update flight info and condition
-                updateFlightInfo();
-                updateFlightCondition();
-                ok = flightService.store(flight);
+    const bool addToCurrentFlight = getPluginSettings().isAddToFlightEnabled();
+    bool ok {true};
+    for (const QString &filePath : filePaths) {
+        d->file.setFileName(filePath);
+        ok = d->file.open(QIODevice::ReadOnly);
+        if (ok) {
+            if (!addToCurrentFlight) {
+                flight.clear(true);
             }
-        } else {
-            ok = false;
+            // The flight has at least one aircraft, but possibly without recording
+            const int aircraftCount = flight.count();
+            const bool addNewAircraft = addToCurrentFlight && (aircraftCount > 1 || flight.getUserAircraft().hasRecording());
+            Aircraft &aircraft = addNewAircraft ? flight.addUserAircraft() : flight.getUserAircraft();
+
+            ok = importFlight(d->file, flight);
+            if (ok && aircraft.getPositionConst().count() > 0) {
+                d->flightAugmentation.setProcedures(getProcedures());
+                d->flightAugmentation.setAspects(getAspects());
+                d->flightAugmentation.augmentAircraftData(aircraft);
+                updateAircraftInfo();
+                if (addNewAircraft) {
+                    // Sequence starts at 1
+                    const int sequenceNumber = flight.count();
+                    ok = d->aircraftService->store(flight.getId(), sequenceNumber, aircraft);
+                } else {
+                    // Also update flight info and condition
+                    updateFlightInfo();
+                    updateFlightCondition();
+                    ok = flightService.store(flight);
+                }
+            } else {
+                ok = false;
+            }
+            d->file.close();
         }
-        d->file.close();
-    }
+    } // All files
     return ok;
 }
 
@@ -282,3 +293,4 @@ void ImportPluginBase::updateFlightCondition() noexcept
 
     d->flight->setFlightCondition(flightCondition);
 }
+

@@ -32,6 +32,7 @@
 #include <QStringView>
 
 class QFile;
+class QStringList;
 
 #include "../../Kernel/src/Settings.h"
 #include "../../Flight/src/FlightAugmentation.h"
@@ -82,6 +83,7 @@ protected:
 
     // Re-implement
     virtual ImportPluginBaseSettings &getPluginSettings() const noexcept = 0;
+    virtual QString getFileSuffix() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
     virtual bool importFlight(QFile &file, Flight &flight) noexcept = 0;
@@ -101,7 +103,7 @@ private:
     virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override final;
     virtual void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept override final;
 
-    bool importFlight(const QString &filePath, FlightService &flightService, Flight &flight) noexcept;
+    bool importFlights(const QStringList &filePaths, FlightService &flightService, Flight &flight) noexcept;
     void updateAircraftInfo() noexcept;
     void updateFlightInfo() noexcept;
     void updateFlightCondition() noexcept;
