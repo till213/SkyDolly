@@ -124,9 +124,10 @@ private slots:
     void on_showStatisticsAction_triggered(bool enabled) noexcept;
     void on_stayOnTopAction_triggered(bool enabled) noexcept;
     void on_showMinimalAction_triggered(bool enabled) noexcept;
-    // About menu
-    void on_aboutAction_triggered() noexcept;
-    void on_aboutQtAction_triggered() noexcept;
+    // Help menu
+    void onAboutActionTriggered() noexcept;
+    void onAboutQtActionTriggered() noexcept;
+    void onOnlineManualActionTriggered() const noexcept;
 
     // Replay
     void toggleRecord(bool checked) noexcept;

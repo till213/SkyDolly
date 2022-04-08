@@ -32,6 +32,7 @@
 #include <QMessageBox>
 #include <QFile>
 #include <QFileInfo>
+#include <QUrl>
 #include <QString>
 #include <QUuid>
 #include <QTime>
@@ -53,6 +54,7 @@
 #include <QSpacerItem>
 #include <QTimer>
 #include <QStringBuilder>
+#include <QDesktopServices>
 
 #include "../../Kernel/src/Unit.h"
 #include "../../Kernel/src/Const.h"
@@ -277,6 +279,8 @@ void MainWindow::frenchConnection() noexcept
     connect(d->exportQActionGroup, &QActionGroup::triggered,
             this, &MainWindow::handleExport);
 
+
+
     // Settings
     connect(&Settings::getInstance(), &Settings::replayLoopChanged,
             this, &MainWindow::handleReplayLoopChanged);
@@ -306,6 +310,16 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::skipToEnd);
     connect(ui->replayLoopPushButton, &QPushButton::toggled,
             this, &MainWindow::toggleLoopReplay);
+
+    // Menus
+
+    // Help menu
+    connect(ui->aboutAction, &QAction::triggered,
+            this, &MainWindow::onAboutActionTriggered);
+    connect(ui->aboutQtAction, &QAction::triggered,
+            this, &MainWindow::onAboutQtActionTriggered);
+    connect(ui->onlineManualAction, &QAction::triggered,
+            this, &MainWindow::onOnlineManualActionTriggered);
 
     // Dialogs
     connect(d->flightDialog, &FlightDialog::visibilityChanged,
@@ -1288,17 +1302,22 @@ void MainWindow::on_showMinimalAction_triggered(bool enabled) noexcept
     updateMinimalUi(enabled);
 }
 
-// About menu
+// Help menu
 
-void MainWindow::on_aboutAction_triggered() noexcept
+void MainWindow::onAboutActionTriggered() noexcept
 {
     std::unique_ptr<AboutDialog> aboutDialog = std::make_unique<AboutDialog>(this);
     aboutDialog->exec();
 }
 
-void MainWindow::on_aboutQtAction_triggered() noexcept
+void MainWindow::onAboutQtActionTriggered() noexcept
 {
     QMessageBox::aboutQt(this);
+}
+
+void MainWindow::onOnlineManualActionTriggered() const noexcept
+{
+    QDesktopServices::openUrl(QUrl("https://till213.github.io/SkyDolly/manual/en/"));
 }
 
 // Replay
