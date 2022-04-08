@@ -33,6 +33,7 @@
 #include "../../Kernel/src/SampleRate.h"
 #include "PluginLib.h"
 
+class Flight;
 class ExportPluginBaseSettings;
 class BasicExportDialogPrivate;
 
@@ -45,16 +46,13 @@ class PLUGIN_API BasicExportDialog : public QDialog
     Q_OBJECT
 public:
 
-    explicit BasicExportDialog(const QString &fileExtension, const QString &fileFilter, ExportPluginBaseSettings &settings, QWidget *parent = nullptr) noexcept;
+    explicit BasicExportDialog(const Flight &flight, const QString &fileSuffix, const QString &fileFilter, ExportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
     virtual ~BasicExportDialog() noexcept;
 
     QString getSelectedFilePath() const noexcept;
     void setSelectedFilePath(const QString &filePath) noexcept;
 
     void setOptionWidget(QWidget *widget) noexcept;
-
-signals:
-    void restoreDefaultOptions();
 
 private:
     std::unique_ptr<Ui::BasicExportDialog> ui;
@@ -63,18 +61,19 @@ private:
     void initUi() noexcept;
     void initBasicUi() noexcept;
     void initOptionUi() noexcept;
-    void updateInfoUi() noexcept;
+    void updateDataGroupBox() noexcept;
     void frenchConnection() noexcept;
-
-    std::int64_t estimateNofSamplePoints() noexcept;
+    inline bool isExportUserAircraftOnly() const noexcept;
+    std::int64_t estimateNofSamplePoints() const noexcept;
 
 private slots:
     void updateUi() noexcept;
 
     void onFileSelectionButtonClicked() noexcept;
     void onFilePathChanged();
+    void onFormationExportChanged() noexcept;
     void onResamplingOptionChanged() noexcept;
-    void onDoOpenExportedFileChanged(bool enable) noexcept;
+    void onDoOpenExportedFilesChanged(bool enable) noexcept;
     void onRestoreDefaults() noexcept;
 };
 

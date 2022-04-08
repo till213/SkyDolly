@@ -39,7 +39,7 @@ class FlightRadar24KmlParserPrivate;
 class FlightRadar24KmlParser : public KmlParserIntf
 {
 public:
-    FlightRadar24KmlParser(QXmlStreamReader &xmlStreamReader) noexcept;
+    FlightRadar24KmlParser(Flight &flight, QXmlStreamReader &xmlStreamReader) noexcept;
     virtual ~FlightRadar24KmlParser() noexcept;
 
     virtual void parse() noexcept override;

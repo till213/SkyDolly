@@ -34,8 +34,9 @@ class QWidget;
 
 #include "PluginLib.h"
 
-class ImportPluginBaseSettings;
+class Flight;
 struct AircraftType;
+class ImportPluginBaseSettings;
 class BasicImportDialogPrivate;
 
 namespace Ui {
@@ -46,19 +47,16 @@ class PLUGIN_API BasicImportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit BasicImportDialog(const QString &fileExtension, ImportPluginBaseSettings &settings, QWidget *parent = nullptr);
-    virtual ~BasicImportDialog();
+    explicit BasicImportDialog(const Flight &flight, const QString &fileExtension, ImportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
+    virtual ~BasicImportDialog() noexcept;
 
     bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
-    QString getSelectedFilePath() const noexcept;
+    QString getSelectedPath() const noexcept;
 
     QString getFileFilter() const noexcept;
-    void setFileFilter(const QString &extension) noexcept;
+    void setFileFilter(const QString &fileFilter) noexcept;
 
     void setOptionWidget(QWidget *widget) noexcept;
-
-signals:
-    void restoreDefaultOptions();
 
 private:
     std::unique_ptr<Ui::BasicImportDialog> ui;
@@ -73,6 +71,7 @@ private slots:
     void updateUi() noexcept;
 
     void onFileSelectionChanged() noexcept;
+    void onImportDirectoryChanged(bool enable) noexcept;
     void onAddToExistingFlightChanged(bool enable) noexcept;
     void onRestoreDefaults() noexcept;
     void onAccepted() noexcept;    

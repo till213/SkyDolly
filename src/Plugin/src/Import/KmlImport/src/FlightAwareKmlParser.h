@@ -39,7 +39,7 @@ class FlightAwareKmlParserPrivate;
 class FlightAwareKmlParser : public AbstractKmlTrackParser
 {
 public:
-    FlightAwareKmlParser(QXmlStreamReader &xmlStreamReader) noexcept;
+    FlightAwareKmlParser(Flight &flight, QXmlStreamReader &xmlStreamReader) noexcept;
     virtual ~FlightAwareKmlParser() noexcept;
 
     virtual void parse() noexcept override;

@@ -41,7 +41,6 @@
 #include "../../../../../Kernel/src/Unit.h"
 #include "../../../../../Kernel/src/SampleRate.h"
 #include "../../../../../Kernel/src/Settings.h"
-#include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/FlightPlan.h"
 #include "../../../../../Model/src/Waypoint.h"
@@ -60,11 +59,11 @@ class JsonExportPluginPrivate
 {
 public:
     JsonExportPluginPrivate() noexcept
-        : flight(Logbook::getInstance().getCurrentFlight())
+        : flight(nullptr)
     {}
 
-    JsonExportSettings settings;
-    Flight &flight;
+    const Flight *flight;
+    JsonExportSettings pluginSettings;
     Unit unit;
 
     static inline const QString FileExtension {QStringLiteral("json")};
@@ -89,19 +88,19 @@ JsonExportPlugin::~JsonExportPlugin() noexcept
 
 // PROTECTED
 
-ExportPluginBaseSettings &JsonExportPlugin::getSettings() const noexcept
+ExportPluginBaseSettings &JsonExportPlugin::getPluginSettings() const noexcept
 {
-    return d->settings;
+    return d->pluginSettings;
 }
 
-QString JsonExportPlugin::getFileExtension() const noexcept
+QString JsonExportPlugin::getFileSuffix() const noexcept
 {
     return JsonExportPluginPrivate::FileExtension;
 }
 
 QString JsonExportPlugin::getFileFilter() const noexcept
 {
-    return tr("JavaScript object notation (*.%1)").arg(getFileExtension());
+    return tr("JavaScript object notation (*.%1)").arg(getFileSuffix());
 }
 
 std::unique_ptr<QWidget> JsonExportPlugin::createOptionWidget() const noexcept
@@ -110,8 +109,15 @@ std::unique_ptr<QWidget> JsonExportPlugin::createOptionWidget() const noexcept
     return nullptr;
 }
 
-bool JsonExportPlugin::writeFile(QIODevice &io) noexcept
+bool JsonExportPlugin::hasMultiAircraftSupport() const noexcept
 {
+    // We can store multiple LineStrings in the JSON format
+    return true;
+}
+
+bool JsonExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
+{
+    d->flight = &flight;
     io.setTextModeEnabled(true);
     bool ok = exportHeader(io);
     if (ok) {
@@ -123,15 +129,31 @@ bool JsonExportPlugin::writeFile(QIODevice &io) noexcept
     if (ok) {
         ok = exportFooter(io);
     }
-
+    // We are done with the export
+    d->flight = nullptr;
     return ok;
 }
 
-// PROTECTED SLOTS
-
-void JsonExportPlugin::onRestoreDefaultSettings() noexcept
+bool JsonExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
 {
-    d->settings.restoreDefaults();
+    d->flight = &flight;
+    io.setTextModeEnabled(true);
+    bool ok = exportHeader(io);
+    if (ok) {
+        ok = exportWaypoints(io);
+    }
+    if (ok) {
+        ok = exportAircraft(aircraft, io);
+        if (ok) {
+            ok = io.write("\n");
+        }
+    }
+    if (ok) {
+        ok = exportFooter(io);
+    }
+    // We are done with the export
+    d->flight = nullptr;
+    return ok;
 }
 
 // PRIVATE
@@ -149,10 +171,10 @@ bool JsonExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
 {
     bool ok = true;
     std::size_t i = 0;
-    for (const auto &aircraft : d->flight) {
+    for (const auto &aircraft : *d->flight) {
         ok = exportAircraft(*aircraft, io);
         if (ok) {
-            if (i < d->flight.count() - 1) {
+            if (i < d->flight->count() - 1) {
                 ok = io.write(",\n");
             } else {
                 ok = io.write("\n");
@@ -225,7 +247,7 @@ bool JsonExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) c
 bool JsonExportPlugin::exportWaypoints(QIODevice &io) const noexcept
 {
     bool ok = true;
-    const FlightPlan &flightPlan = d->flight.getUserAircraft().getFlightPlanConst();
+    const FlightPlan &flightPlan = d->flight->getUserAircraft().getFlightPlanConst();
     for (const Waypoint &waypoint : flightPlan) {
         ok = exportWaypoint(waypoint, io);
         if (!ok) {

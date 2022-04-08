@@ -38,9 +38,10 @@ class AbstractKmlTrackParserPrivate;
 class AbstractKmlTrackParser : public AbstractKmlParser
 {
 public:
-    AbstractKmlTrackParser(QXmlStreamReader &xmlStreamReader) noexcept;
+    AbstractKmlTrackParser(Flight &flight, QXmlStreamReader &xmlStreamReader) noexcept;
     virtual ~AbstractKmlTrackParser() noexcept;
 
+    Flight &getFlight() const noexcept;
     virtual QDateTime getFirstDateTimeUtc() const noexcept override;
 
 protected:

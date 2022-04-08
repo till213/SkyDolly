@@ -30,9 +30,11 @@
 namespace
 {
     // Keys
+    constexpr char ImportDirectoryEnabledKey[] = "ImportDirectoryEnabled";
     constexpr char AddToFlightEnabledKey[] = "AddToFlightEnabled";
 
     // Defaults
+    constexpr bool DefaultImportDirectoryEnabled = false;
     constexpr bool DefaultAddToFlightEnabled = false;
 }
 
@@ -40,9 +42,11 @@ class ImportPluginBaseSettingsPrivate
 {
 public:
     ImportPluginBaseSettingsPrivate()
-        : addToFlightEnabled(::DefaultAddToFlightEnabled)
+        : importDirectoryEnabled(::DefaultImportDirectoryEnabled),
+          addToFlightEnabled(::DefaultAddToFlightEnabled)
     {}
 
+    bool importDirectoryEnabled;
     bool addToFlightEnabled;
 };
 
@@ -63,6 +67,19 @@ ImportPluginBaseSettings::~ImportPluginBaseSettings() noexcept
 #endif
 }
 
+bool ImportPluginBaseSettings::isImportDirectoryEnabled() const noexcept
+{
+    return d->importDirectoryEnabled;
+}
+
+void ImportPluginBaseSettings::setImportDirectoryEnabled(bool enabled) noexcept
+{
+    if (d->importDirectoryEnabled != enabled) {
+        d->importDirectoryEnabled = enabled;
+        emit baseSettingsChanged();
+    }
+}
+
 bool ImportPluginBaseSettings::isAddToFlightEnabled() const noexcept
 {
     return d->addToFlightEnabled;
@@ -80,6 +97,10 @@ void ImportPluginBaseSettings::addSettings(Settings::KeyValues &keyValues) const
 {
     Settings::KeyValue keyValue;
 
+    keyValue.first = ::ImportDirectoryEnabledKey;
+    keyValue.second = d->importDirectoryEnabled;
+    keyValues.push_back(keyValue);
+
     keyValue.first = ::AddToFlightEnabledKey;
     keyValue.second = d->addToFlightEnabled;
     keyValues.push_back(keyValue);
@@ -91,6 +112,10 @@ void ImportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &k
 {
     Settings::KeyValue keyValue;
 
+    keyValue.first = ::ImportDirectoryEnabledKey;
+    keyValue.second = ::DefaultImportDirectoryEnabled;
+    keysWithDefaults.push_back(keyValue);
+
     keyValue.first = ::AddToFlightEnabledKey;
     keyValue.second = ::DefaultAddToFlightEnabled;
     keysWithDefaults.push_back(keyValue);
@@ -100,6 +125,7 @@ void ImportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &k
 
 void ImportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valuesByKey) noexcept
 {
+    d->importDirectoryEnabled = valuesByKey.at(::ImportDirectoryEnabledKey).toBool();
     d->addToFlightEnabled = valuesByKey.at(::AddToFlightEnabledKey).toBool();
     emit baseSettingsChanged();
 
@@ -108,6 +134,7 @@ void ImportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valu
 
 void ImportPluginBaseSettings::restoreDefaults() noexcept
 {
+    d->importDirectoryEnabled = ::DefaultImportDirectoryEnabled;
     d->addToFlightEnabled = ::DefaultAddToFlightEnabled;
     emit baseSettingsChanged();
 

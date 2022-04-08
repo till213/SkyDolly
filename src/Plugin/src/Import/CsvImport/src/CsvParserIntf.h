@@ -29,12 +29,14 @@ class QFile;
 class QDateTime;
 class QString;
 
+class Flight;
+
 class CsvParserIntf
 {
 public:
     virtual ~CsvParserIntf() = default;
 
-    virtual bool parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept = 0;
+    virtual bool parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept = 0;
 };
 
 #endif // CSVPARSERINTF_H

@@ -33,11 +33,13 @@ namespace
 {
     // Keys
     constexpr char ResamplingPeriodKey[] = "ResamplingPeriod";
-    constexpr char OpenExportedFileEnabledKey[] = "OpenExportedFileEnabled";
+    constexpr char FormationExportKey[] = "FormationExport";
+    constexpr char OpenExportedFilesEnabledKey[] = "OpenExportedFilesEnabled";
 
     // Defaults
     constexpr SampleRate::ResamplingPeriod DefaultResamplingPeriod = SampleRate::ResamplingPeriod::OneHz;
-    constexpr bool DefaultOpenExportedFileEnabled = false;
+    constexpr ExportPluginBaseSettings::FormationExport DefaultFormationExport = ExportPluginBaseSettings::FormationExport::AllAircraftOneFile;
+    constexpr bool DefaultOpenExportedFilesEnabled = false;
 }
 
 class ExportPluginBaseSettingsPrivate
@@ -45,12 +47,14 @@ class ExportPluginBaseSettingsPrivate
 public:
     ExportPluginBaseSettingsPrivate()
         : resamplingPeriod(::DefaultResamplingPeriod),
-          openExportedFileEnabled(::DefaultOpenExportedFileEnabled),
+          formationExport(::DefaultFormationExport),
+          openExportedFilesEnabled(::DefaultOpenExportedFilesEnabled),
           fileDialogSelectedFile(false)
     {}
 
     SampleRate::ResamplingPeriod resamplingPeriod;
-    bool openExportedFileEnabled;
+    ExportPluginBaseSettings::FormationExport formationExport;
+    bool openExportedFilesEnabled;
     bool fileDialogSelectedFile;
 };
 
@@ -84,15 +88,28 @@ void ExportPluginBaseSettings::setResamplingPeriod(SampleRate::ResamplingPeriod 
     }
 }
 
-bool ExportPluginBaseSettings::isOpenExportedFileEnabled() const noexcept
+ExportPluginBaseSettings::FormationExport ExportPluginBaseSettings::getFormationExport() const noexcept
 {
-    return d->openExportedFileEnabled;
+    return d->formationExport;
 }
 
-void ExportPluginBaseSettings::setOpenExportedFileEnabled(bool enabled) noexcept
+void ExportPluginBaseSettings::setFormationExport(FormationExport formationExport) noexcept
 {
-    if (d->openExportedFileEnabled != enabled) {
-        d->openExportedFileEnabled = enabled;
+    if (d->formationExport != formationExport) {
+        d->formationExport = formationExport;
+        emit baseSettingsChanged();
+    }
+}
+
+bool ExportPluginBaseSettings::isOpenExportedFilesEnabled() const noexcept
+{
+    return d->openExportedFilesEnabled;
+}
+
+void ExportPluginBaseSettings::setOpenExportedFilesEnabled(bool enabled) noexcept
+{
+    if (d->openExportedFilesEnabled != enabled) {
+        d->openExportedFilesEnabled = enabled;
         emit baseSettingsChanged();
     }
 }
@@ -115,8 +132,12 @@ void ExportPluginBaseSettings::addSettings(Settings::KeyValues &keyValues) const
     keyValue.second = Enum::toUnderlyingType(d->resamplingPeriod);
     keyValues.push_back(keyValue);
 
-    keyValue.first = ::OpenExportedFileEnabledKey;
-    keyValue.second = d->openExportedFileEnabled;
+    keyValue.first = ::FormationExportKey;
+    keyValue.second = Enum::toUnderlyingType(d->formationExport);
+    keyValues.push_back(keyValue);
+
+    keyValue.first = ::OpenExportedFilesEnabledKey;
+    keyValue.second = d->openExportedFilesEnabled;
     keyValues.push_back(keyValue);
 
     addSettingsExtn(keyValues);
@@ -130,8 +151,12 @@ void ExportPluginBaseSettings::addKeysWithDefaults(Settings::KeysWithDefaults &k
     keyValue.second = Enum::toUnderlyingType(::DefaultResamplingPeriod);
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = ::OpenExportedFileEnabledKey;
-    keyValue.second = ::DefaultOpenExportedFileEnabled;
+    keyValue.first = ::FormationExportKey;
+    keyValue.second = Enum::toUnderlyingType(::DefaultFormationExport);
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = ::OpenExportedFilesEnabledKey;
+    keyValue.second = ::DefaultOpenExportedFilesEnabled;
     keysWithDefaults.push_back(keyValue);
 
     addKeysWithDefaultsExtn(keysWithDefaults);
@@ -146,7 +171,13 @@ void ExportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valu
     } else {
         d->resamplingPeriod = ::DefaultResamplingPeriod;
     }
-    d->openExportedFileEnabled = valuesByKey.at(::OpenExportedFileEnabledKey).toBool();
+    enumeration = valuesByKey.at(::FormationExportKey).toInt(&ok);
+    if (ok) {
+        d->formationExport = static_cast<FormationExport >(enumeration);
+    } else {
+        d->formationExport = ::DefaultFormationExport;
+    }
+    d->openExportedFilesEnabled = valuesByKey.at(::OpenExportedFilesEnabledKey).toBool();
     emit baseSettingsChanged();
 
     restoreSettingsExtn(valuesByKey);
@@ -155,7 +186,8 @@ void ExportPluginBaseSettings::restoreSettings(const Settings::ValuesByKey &valu
 void ExportPluginBaseSettings::restoreDefaults() noexcept
 {
     d->resamplingPeriod = ::DefaultResamplingPeriod;
-    d->openExportedFileEnabled = ::DefaultOpenExportedFileEnabled;
+    d->formationExport = ::DefaultFormationExport;
+    d->openExportedFilesEnabled = ::DefaultOpenExportedFilesEnabled;
     emit baseSettingsChanged();
 
     restoreDefaultsExtn();

@@ -33,13 +33,14 @@
 class QXmlStreamReader;
 class QDateTime;
 
+class Flight;
 class GpxImportSettings;
 class GpxParserPrivate;
 
 class GpxParser
 {
 public:
-    GpxParser(QXmlStreamReader &xmlStreamReader, const GpxImportSettings &settings) noexcept;
+    GpxParser(Flight &flight, QXmlStreamReader &xmlStreamReader, const GpxImportSettings &settings) noexcept;
     ~GpxParser() noexcept;
 
     void parse() noexcept;

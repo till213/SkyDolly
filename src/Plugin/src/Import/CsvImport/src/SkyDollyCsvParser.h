@@ -34,6 +34,7 @@ class QString;
 
 #include "CsvParserIntf.h"
 
+class Flight;
 class Aircraft;
 class Engine;
 class PrimaryFlightControl;
@@ -47,7 +48,7 @@ public:
     SkyDollyCsvParser() noexcept;
     virtual ~SkyDollyCsvParser() noexcept;
 
-    virtual bool parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept override;
+    virtual bool parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept override;
 
 private:
     static inline bool importPositionData(const QList<QByteArray> &headers, const QList<QByteArray> &values, bool firstRow, Aircraft &aircraft) noexcept;

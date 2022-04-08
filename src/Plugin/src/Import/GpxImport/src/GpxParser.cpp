@@ -31,7 +31,6 @@
 
 #include "../../../../../Kernel/src/Convert.h"
 #include "../../../../../Kernel/src/SkyMath.h"
-#include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/Aircraft.h"
 #include "../../../../../Model/src/Position.h"
@@ -45,34 +44,30 @@
 class GpxParserPrivate
 {
 public:
-    GpxParserPrivate(QXmlStreamReader &xmlStreamReader, const GpxImportSettings &theImportSettings) noexcept
-        : xml(xmlStreamReader),
-          settings(theImportSettings),
-          flight(Logbook::getInstance().getCurrentFlight()),
-          position(flight.getUserAircraft().getPosition()),
-          flightPlan(flight.getUserAircraft().getFlightPlan())
+    GpxParserPrivate(Flight &theFlight, QXmlStreamReader &xmlStreamReader, const GpxImportSettings &theImportSettings) noexcept
+        : flight(theFlight),
+          xml(xmlStreamReader),
+          settings(theImportSettings)
     {
         firstDateTimeUtc.setTimeZone(QTimeZone::utc());
     }
 
+    Flight &flight;
     QXmlStreamReader &xml;
     const GpxImportSettings &settings;
     QDateTime firstDateTimeUtc;
     QString documentName;
     QString description;
 
-    Flight &flight;
     // @todo Store a list of Positions: whenever a new <track> is encountered:
     //      - if the timestamp is greater than the last timestamp -> continue the existing track (keep adding to current Positions)
-    //      - else start a new track (add a new Position list entry)
-    Position &position;
-    FlightPlan &flightPlan;
+    //      - else start a new track (add a new Position list entry) -> new aircraft
 };
 
 // PUBLIC
 
-GpxParser::GpxParser(QXmlStreamReader &xmlStreamReader, const GpxImportSettings &theImportSettings) noexcept
-    : d(std::make_unique<GpxParserPrivate>(xmlStreamReader, theImportSettings))
+GpxParser::GpxParser(Flight &flight, QXmlStreamReader &xmlStreamReader, const GpxImportSettings &theImportSettings) noexcept
+    : d(std::make_unique<GpxParserPrivate>(flight, xmlStreamReader, theImportSettings))
 {
 #ifdef DEBUG
     qDebug("GpxParser::~GpxParser: CREATED");
@@ -156,9 +151,11 @@ void GpxParser::parseMetadata() noexcept
 void GpxParser::parseWaypoint() noexcept
 {
     bool ok {true};
-    double latitude, longitude, altitude;
+    double latitude {0.0}, longitude {0.0}, altitude {0.0};
     QString identifier;
     QDateTime currentDateTimeUtc;
+    FlightPlan &flightPlan = d->flight.getUserAircraft().getFlightPlan();
+    Position &position = d->flight.getUserAircraft().getPosition();
 
     if (d->settings.getWaypointSelection() == GpxImportSettings::GPXElement::Waypoint ||
         d->settings.getPositionSelection() == GpxImportSettings::GPXElement::Waypoint) {
@@ -170,7 +167,7 @@ void GpxParser::parseWaypoint() noexcept
     if (ok && d->settings.getWaypointSelection() == GpxImportSettings::GPXElement::Waypoint) {
         Waypoint waypoint {static_cast<float>(latitude), static_cast<float>(longitude), static_cast<float>(altitude)};
         waypoint.identifier = identifier;
-        d->flightPlan.add(waypoint);
+        flightPlan.add(waypoint);
     }
     if (ok && d->settings.getPositionSelection() == GpxImportSettings::GPXElement::Waypoint) {
         PositionData positionData {latitude, longitude, altitude};
@@ -183,8 +180,8 @@ void GpxParser::parseWaypoint() noexcept
         }
 
         // We ignore waypoint timestamps for positions; always calculated based on default velocity and distance
-        if (d->position.count() > 0) {
-            const PositionData &previousPositionData = d->position.getLast();
+        if (position.count() > 0) {
+            const PositionData &previousPositionData = position.getLast();
             const SkyMath::Coordinate start = {previousPositionData.latitude, previousPositionData.longitude};
             const SkyMath::Coordinate end = {positionData.latitude, positionData.longitude};
             const double averageAltitude = (previousPositionData.altitude + positionData.altitude) / 2.0;
@@ -198,7 +195,7 @@ void GpxParser::parseWaypoint() noexcept
             positionData.timestamp = 0;
         }
 
-        d->position.upsertLast(positionData);
+        position.upsertLast(positionData);
     }
 }
 
@@ -225,9 +222,11 @@ void GpxParser::parseRoute() noexcept
 void GpxParser::parseRoutePoint() noexcept
 {
     bool ok {true};
-    double latitude, longitude, altitude;
+    double latitude {0.0}, longitude {0.0}, altitude {0.0};
     QString identifier;
     QDateTime currentDateTimeUtc;
+    FlightPlan &flightPlan = d->flight.getUserAircraft().getFlightPlan();
+    Position &position = d->flight.getUserAircraft().getPosition();
 
     if (d->settings.getWaypointSelection() == GpxImportSettings::GPXElement::Route ||
         d->settings.getPositionSelection() == GpxImportSettings::GPXElement::Route) {
@@ -239,7 +238,7 @@ void GpxParser::parseRoutePoint() noexcept
     if (ok && d->settings.getWaypointSelection() == GpxImportSettings::GPXElement::Route) {
         Waypoint waypoint {static_cast<float>(latitude), static_cast<float>(longitude), static_cast<float>(altitude)};
         waypoint.identifier = identifier;
-        d->flightPlan.add(waypoint);
+        flightPlan.add(waypoint);
     }
     if (ok && d->settings.getPositionSelection() == GpxImportSettings::GPXElement::Route) {
         PositionData positionData {latitude, longitude, altitude};
@@ -252,8 +251,8 @@ void GpxParser::parseRoutePoint() noexcept
         }
 
         // We ignore route point timestamps for positions; always calculated based on default velocity and distance
-        if (d->position.count() > 0) {
-            const PositionData &previousPositionData = d->position.getLast();
+        if (position.count() > 0) {
+            const PositionData &previousPositionData = position.getLast();
             const SkyMath::Coordinate start = {previousPositionData.latitude, previousPositionData.longitude};
             const SkyMath::Coordinate end = {positionData.latitude, positionData.longitude};
             const double averageAltitude = (previousPositionData.altitude + positionData.altitude) / 2.0;
@@ -267,7 +266,7 @@ void GpxParser::parseRoutePoint() noexcept
             positionData.timestamp = 0;
         }
 
-        d->position.upsertLast(positionData);
+        position.upsertLast(positionData);
     }
 }
 
@@ -302,9 +301,11 @@ void GpxParser::parseTrackSegment() noexcept
 inline void GpxParser::parseTrackPoint() noexcept
 {
     bool ok {true};
-    double latitude, longitude, altitude;
+    double latitude {0.0}, longitude {0.0}, altitude {0.0};
     QString identifier;
     QDateTime currentDateTimeUtc;
+    FlightPlan &flightPlan = d->flight.getUserAircraft().getFlightPlan();
+    Position &position = d->flight.getUserAircraft().getPosition();
 
     if (d->settings.getWaypointSelection() == GpxImportSettings::GPXElement::Track ||
         d->settings.getPositionSelection() == GpxImportSettings::GPXElement::Track) {
@@ -316,7 +317,7 @@ inline void GpxParser::parseTrackPoint() noexcept
     if (ok && d->settings.getWaypointSelection() == GpxImportSettings::GPXElement::Track) {
         Waypoint waypoint {static_cast<float>(latitude), static_cast<float>(longitude), static_cast<float>(altitude)};
         waypoint.identifier = identifier;
-        d->flightPlan.add(waypoint);
+        flightPlan.add(waypoint);
     }
     if (ok && d->settings.getPositionSelection() == GpxImportSettings::GPXElement::Track) {
         PositionData positionData {latitude, longitude, altitude};
@@ -332,8 +333,8 @@ inline void GpxParser::parseTrackPoint() noexcept
             positionData.timestamp = d->firstDateTimeUtc.msecsTo(currentDateTimeUtc);
         } else {
             // No timestamp available, so calculate timestamp based on default velocity and distance
-            if (d->position.count() > 0) {
-                const PositionData &previousPositionData = d->position.getLast();
+            if (position.count() > 0) {
+                const PositionData &previousPositionData = position.getLast();
                 const SkyMath::Coordinate start = {previousPositionData.latitude, previousPositionData.longitude};
                 const SkyMath::Coordinate end = {positionData.latitude, positionData.longitude};
                 const double averageAltitude = (previousPositionData.altitude + positionData.altitude) / 2.0;
@@ -348,7 +349,7 @@ inline void GpxParser::parseTrackPoint() noexcept
             }
         }
 
-        d->position.upsertLast(positionData);
+        position.upsertLast(positionData);
     }
 }
 

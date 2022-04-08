@@ -39,7 +39,7 @@ class GenericKmlParserPrivate;
 class GenericKmlParser : public AbstractKmlTrackParser
 {
 public:
-    GenericKmlParser(QXmlStreamReader &xmlStreamReader) noexcept;
+    GenericKmlParser(Flight &flight, QXmlStreamReader &xmlStreamReader) noexcept;
     virtual ~GenericKmlParser() noexcept;
 
     virtual void parse() noexcept override;

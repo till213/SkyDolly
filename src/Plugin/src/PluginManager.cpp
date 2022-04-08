@@ -33,6 +33,7 @@
 #include <QUuid>
 #include <QMap>
 
+#include "../../Model/src/Flight.h"
 #include "../../Persistence/src/Service/FlightService.h"
 #include "ExportIntf.h"
 #include "ImportIntf.h"
@@ -113,7 +114,7 @@ std::vector<PluginManager::Handle> PluginManager::initialiseImportPlugins() noex
     return enumeratePlugins(ImportDirectoryName, d->importPluginRegistry);
 }
 
-bool PluginManager::importData(const QUuid &pluginUuid, FlightService &flightService) const noexcept
+bool PluginManager::importFlight(const QUuid &pluginUuid, FlightService &flightService, Flight &flight) const noexcept
 {
     bool ok;
     if (d->importPluginRegistry.contains(pluginUuid)) {
@@ -124,7 +125,7 @@ bool PluginManager::importData(const QUuid &pluginUuid, FlightService &flightSer
         if (importPlugin != nullptr) {
             importPlugin->setParentWidget(d->parentWidget);
             importPlugin->restoreSettings(pluginUuid);
-            ok = importPlugin->importData(flightService);
+            ok = importPlugin->importFlight(flightService, flight);
             importPlugin->storeSettings(pluginUuid);
         } else {
             ok = false;
@@ -136,7 +137,7 @@ bool PluginManager::importData(const QUuid &pluginUuid, FlightService &flightSer
     return ok;
 }
 
-bool PluginManager::exportData(const QUuid &pluginUuid) const noexcept
+bool PluginManager::exportFlight(const Flight &flight, const QUuid &pluginUuid) const noexcept
 {
     bool ok;
     if (d->exportPluginRegistry.contains(pluginUuid)) {
@@ -147,7 +148,7 @@ bool PluginManager::exportData(const QUuid &pluginUuid) const noexcept
         if (exportPlugin != nullptr) {
             exportPlugin->setParentWidget(d->parentWidget);
             exportPlugin->restoreSettings(pluginUuid);
-            ok = exportPlugin->exportData();
+            ok = exportPlugin->exportFlight(flight);
             exportPlugin->storeSettings(pluginUuid);
         } else {
             ok = false;

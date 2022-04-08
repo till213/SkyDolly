@@ -41,7 +41,6 @@
 #include "../../../../../Kernel/src/Unit.h"
 #include "../../../../../Kernel/src/SampleRate.h"
 #include "../../../../../Kernel/src/Settings.h"
-#include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/FlightPlan.h"
 #include "../../../../../Model/src/Waypoint.h"
@@ -59,11 +58,11 @@ class GpxExportPluginPrivate
 {
 public:
     GpxExportPluginPrivate() noexcept
-        : flight(Logbook::getInstance().getCurrentFlight())
+        : flight(nullptr)
     {}
 
-    GpxExportSettings settings;
-    Flight &flight;
+    const Flight *flight;
+    GpxExportSettings pluginSettings;
     QDateTime startDateTimeUtc;
     Unit unit;
 
@@ -89,28 +88,55 @@ GpxExportPlugin::~GpxExportPlugin() noexcept
 
 // PROTECTED
 
-ExportPluginBaseSettings &GpxExportPlugin::getSettings() const noexcept
+ExportPluginBaseSettings &GpxExportPlugin::getPluginSettings() const noexcept
 {
-    return d->settings;
+    return d->pluginSettings;
 }
 
-QString GpxExportPlugin::getFileExtension() const noexcept
+QString GpxExportPlugin::getFileSuffix() const noexcept
 {
     return GpxExportPluginPrivate::FileExtension;
 }
 
 QString GpxExportPlugin::getFileFilter() const noexcept
 {
-    return tr("GPS exchange format (*.%1)").arg(getFileExtension());
+    return tr("GPS exchange format (*.%1)").arg(getFileSuffix());
 }
 
 std::unique_ptr<QWidget> GpxExportPlugin::createOptionWidget() const noexcept
 {
-    return std::make_unique<GpxExportOptionWidget>(d->settings);
+    return std::make_unique<GpxExportOptionWidget>(d->pluginSettings);
 }
 
-bool GpxExportPlugin::writeFile(QIODevice &io) noexcept
+bool GpxExportPlugin::hasMultiAircraftSupport() const noexcept
 {
+    // We can store multiple tracks in the GPX format
+    return true;
+}
+
+bool GpxExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
+{
+    d->flight = &flight;
+    io.setTextModeEnabled(true);
+    bool ok = exportHeader(io);
+    if (ok) {
+        ok = exportFlightInfo(io);
+    }
+    if (ok) {
+        ok = exportWaypoints(io);
+    }
+    if (ok) {
+        ok = exportAllAircraft(io);
+    }
+    if (ok) {
+        ok = exportFooter(io);
+    }
+    return ok;
+}
+
+bool GpxExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
+{
+    d->flight = &flight;
     io.setTextModeEnabled(true);
     bool ok = exportHeader(io);
     if (ok) {
@@ -120,20 +146,13 @@ bool GpxExportPlugin::writeFile(QIODevice &io) noexcept
         ok = exportWaypoints(io);
     }
     if (ok) {
-        ok = exportAllAircraft(io);
+        ok = exportAircraft(aircraft, io);
     }    
     if (ok) {
         ok = exportFooter(io);
     }
 
     return ok;
-}
-
-// PROTECTED SLOTS
-
-void GpxExportPlugin::onRestoreDefaultSettings() noexcept
-{
-    d->settings.restoreDefaults();
 }
 
 // PRIVATE
@@ -153,7 +172,7 @@ bool GpxExportPlugin::exportFlightInfo(QIODevice &io) const noexcept
 {
     const QString header =
 "  <metadata>\n"
-"    <name><![CDATA[" % d->flight.getTitle() % "]]></name>\n"
+"    <name><![CDATA[" % d->flight->getTitle() % "]]></name>\n"
 "    <desc><![CDATA[" % getFlightDescription() % "]]></desc>\n"
 "  </metadata>\n";
 
@@ -163,7 +182,7 @@ bool GpxExportPlugin::exportFlightInfo(QIODevice &io) const noexcept
 bool GpxExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
 {
     bool ok = true;
-    for (const auto &aircraft : d->flight) {
+    for (const auto &aircraft : *d->flight) {
         ok = exportAircraft(*aircraft, io);
         if (!ok) {
             break;
@@ -174,12 +193,12 @@ bool GpxExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
 
 bool GpxExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    switch (d->settings.getTimestampMode()) {
+    switch (d->pluginSettings.getTimestampMode()) {
     case GpxExportSettings::TimestampMode::Recording:
-        d->startDateTimeUtc = d->flight.getAircraftCreationTime(aircraft).toUTC();
+        d->startDateTimeUtc = d->flight->getAircraftCreationTime(aircraft).toUTC();
         break;
     default:
-        d->startDateTimeUtc = d->flight.getAircraftStartZuluTime(aircraft);
+        d->startDateTimeUtc = d->flight->getAircraftStartZuluTime(aircraft);
         break;
     }
 
@@ -220,7 +239,7 @@ bool GpxExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
 bool GpxExportPlugin::exportWaypoints(QIODevice &io) const noexcept
 {
     bool ok = true;
-    const FlightPlan &flightPlan = d->flight.getUserAircraft().getFlightPlanConst();
+    const FlightPlan &flightPlan = d->flight->getUserAircraft().getFlightPlanConst();
     for (const Waypoint &waypoint : flightPlan) {
         ok = exportWaypoint(waypoint, io);
         if (!ok) {
@@ -239,11 +258,11 @@ bool GpxExportPlugin::exportFooter(QIODevice &io) const noexcept
 
 QString GpxExportPlugin::getFlightDescription() const noexcept
 {
-    const FlightCondition &flightCondition = d->flight.getFlightConditionConst();
+    const FlightCondition &flightCondition = d->flight->getFlightConditionConst();
     const QString description =
-            d->flight.getDescription() % "\n" %
+            d->flight->getDescription() % "\n" %
             "\n" %
-            tr("Creation date") % ": " % d->unit.formatDate(d->flight.getCreationTime()) % "\n" %
+            tr("Creation date") % ": " % d->unit.formatDate(d->flight->getCreationTime()) % "\n" %
             tr("Start (local time)") % ": " % d->unit.formatTime(flightCondition.startLocalTime) % "\n" %
             tr("End (local time)") % ": " % d->unit.formatTime(flightCondition.endLocalTime) % "\n" %
             tr("Ambient temperature") % ": " % d->unit.formatCelcius(flightCondition.ambientTemperature) % "\n" %
@@ -265,7 +284,7 @@ QString GpxExportPlugin::getAircraftDescription(const Aircraft &aircraft) const 
             tr("Category") % ": " % type.category % "\n" %
             tr("Engine type") % ": " % SimType::engineTypeToString(type.engineType) % "\n" %
             tr("Number of engines") % ": " % d->unit.formatNumber(type.numberOfEngines, 0) % "\n" %
-            tr("Wingspan") % ": " % d->unit.formatNumber(type.wingSpan, 0) % "\n"
+            tr("Wingspan") % ": " % d->unit.formatFeet(type.wingSpan) % "\n"
             "\n" %
             tr("Initial altitude above ground") % ": " % d->unit.formatFeet(info.altitudeAboveGround) % "\n" %
             tr("Initial airspeed") % ": " % d->unit.formatKnots(info.initialAirspeed) % "\n" %

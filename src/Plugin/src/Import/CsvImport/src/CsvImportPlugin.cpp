@@ -30,7 +30,7 @@
 #include <QFlags>
 
 #include "../../../../../Kernel/src/Unit.h"
-#include "../../../../../Model/src/Logbook.h"
+#include "../../../../../Model/src/AircraftInfo.h"
 #include "../../../../../Flight/src/FlightAugmentation.h"
 #include "CsvParserIntf.h"
 #include "SkyDollyCsvParser.h"
@@ -46,11 +46,11 @@ public:
     CsvImportPluginPrivate()
     {}
 
-    CsvImportSettings settings;
+    CsvImportSettings pluginSettings;
     QDateTime firstDateTimeUtc;
     QString flightNumber;
 
-    static inline const QString FileExtension {QStringLiteral("csv")};
+    static inline const QString FileSuffix {QStringLiteral("csv")};
 };
 
 // PUBLIC
@@ -72,27 +72,32 @@ CsvImportPlugin::~CsvImportPlugin() noexcept
 
 // PROTECTED
 
-ImportPluginBaseSettings &CsvImportPlugin::getSettings() const noexcept
+ImportPluginBaseSettings &CsvImportPlugin::getPluginSettings() const noexcept
 {
-    return d->settings;
+    return d->pluginSettings;
+}
+
+QString CsvImportPlugin::getFileSuffix() const noexcept
+{
+    return CsvImportPluginPrivate::FileSuffix;
 }
 
 QString CsvImportPlugin::getFileFilter() const noexcept
 {
-    return tr("Comma-separated values (*.%1)").arg(CsvImportPluginPrivate::FileExtension);
+    return tr("Comma-separated values (*.%1)").arg(getFileSuffix());
 }
 
 std::unique_ptr<QWidget> CsvImportPlugin::createOptionWidget() const noexcept
 {
-    return std::make_unique<CsvImportOptionWidget>(d->settings);
+    return std::make_unique<CsvImportOptionWidget>(d->pluginSettings);
 }
 
-bool CsvImportPlugin::readFile(QFile &file) noexcept
+bool CsvImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
 {
     bool ok;
 
     std::unique_ptr<CsvParserIntf> parser;
-    switch (d->settings.getFormat()) {
+    switch (d->pluginSettings.getFormat()) {
     case CsvImportSettings::Format::SkyDolly:
         parser = std::make_unique<SkyDollyCsvParser>();
         break;
@@ -108,7 +113,7 @@ bool CsvImportPlugin::readFile(QFile &file) noexcept
         break;
     }
     if (parser != nullptr) {
-        ok = parser->parse(file, d->firstDateTimeUtc, d->flightNumber);
+        ok = parser->parse(file, d->firstDateTimeUtc, d->flightNumber, flight);
     } else {
         ok = false;
     }
@@ -118,7 +123,7 @@ bool CsvImportPlugin::readFile(QFile &file) noexcept
 FlightAugmentation::Procedures CsvImportPlugin::getProcedures() const noexcept
 {
     FlightAugmentation::Procedures procedures;
-    switch (d->settings.getFormat()) {
+    switch (d->pluginSettings.getFormat()) {
     case CsvImportSettings::Format::SkyDolly:
         procedures = FlightAugmentation::Procedure::None;
         break;
@@ -140,7 +145,7 @@ FlightAugmentation::Procedures CsvImportPlugin::getProcedures() const noexcept
 FlightAugmentation::Aspects CsvImportPlugin::getAspects() const noexcept
 {
     FlightAugmentation::Aspects aspects;
-    switch (d->settings.getFormat()) {
+    switch (d->pluginSettings.getFormat()) {
     case CsvImportSettings::Format::SkyDolly:
         aspects = FlightAugmentation::Aspect::None;
         break;
@@ -169,7 +174,7 @@ QDateTime CsvImportPlugin::getStartDateTimeUtc() noexcept
 QString CsvImportPlugin::getTitle() const noexcept
 {
     QString title;
-    switch (d->settings.getFormat()) {
+    switch (d->pluginSettings.getFormat()) {
     case CsvImportSettings::Format::SkyDolly:
         title = tr("Sky Dolly CSV import");
         break;
@@ -197,10 +202,3 @@ void CsvImportPlugin::updateExtendedFlightInfo([[maybe_unused]]Flight &flight) n
 
 void CsvImportPlugin::updateExtendedFlightCondition([[maybe_unused]]FlightCondition &flightCondition) noexcept
 {}
-
-// PROTECTED SLOTS
-
-void CsvImportPlugin::onRestoreDefaultSettings() noexcept
-{
-    d->settings.restoreDefaults();
-}

@@ -34,7 +34,6 @@
 #include <QFlags>
 
 #include "../../../../../Kernel/src/Unit.h"
-#include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/Aircraft.h"
 #include "../../../../../Model/src/FlightCondition.h"
@@ -51,15 +50,17 @@ class KmlImportPluginPrivate
 {
 public:
     KmlImportPluginPrivate()
+        : flight(nullptr)
     {}
 
+    Flight *flight;
     QXmlStreamReader xml;
-    KmlImportSettings settings;
+    KmlImportSettings pluginSettings;
     QDateTime firstDateTimeUtc;
     QString flightNumber;
     QString title;
 
-    static inline const QString FileExtension {QStringLiteral("kml")};
+    static inline const QString FileSuffix {QStringLiteral("kml")};
 };
 
 // PUBLIC
@@ -81,23 +82,29 @@ KmlImportPlugin::~KmlImportPlugin() noexcept
 
 // PROTECTED
 
-ImportPluginBaseSettings &KmlImportPlugin::getSettings() const noexcept
+ImportPluginBaseSettings &KmlImportPlugin::getPluginSettings() const noexcept
 {
-    return d->settings;
+    return d->pluginSettings;
+}
+
+QString KmlImportPlugin::getFileSuffix() const noexcept
+{
+    return KmlImportPluginPrivate::FileSuffix;
 }
 
 QString KmlImportPlugin::getFileFilter() const noexcept
 {
-    return tr("Keyhole markup language (*.%1)").arg(KmlImportPluginPrivate::FileExtension);
+    return tr("Keyhole markup language (*.%1)").arg(getFileSuffix());
 }
 
 std::unique_ptr<QWidget> KmlImportPlugin::createOptionWidget() const noexcept
 {
-    return std::make_unique<KmlImportOptionWidget>(d->settings);
+    return std::make_unique<KmlImportOptionWidget>(d->pluginSettings);
 }
 
-bool KmlImportPlugin::readFile(QFile &file) noexcept
+bool KmlImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
 {
+    d->flight = &flight;
     d->xml.setDevice(&file);
     if (d->xml.readNextStartElement()) {
 #ifdef DEBUG
@@ -116,6 +123,8 @@ bool KmlImportPlugin::readFile(QFile &file) noexcept
         qDebug("KmlImportPlugin::readFile: XML error: %s", qPrintable(d->xml.errorString()));
     }
 #endif
+    // We are done with the import
+    d->flight = nullptr;
     return ok;
 }
 
@@ -127,7 +136,7 @@ FlightAugmentation::Procedures KmlImportPlugin::getProcedures() const noexcept
 FlightAugmentation::Aspects KmlImportPlugin::getAspects() const noexcept
 {
     FlightAugmentation::Aspects aspects;
-    switch (d->settings.getFormat()) {
+    switch (d->pluginSettings.getFormat()) {
     case KmlImportSettings::Format::FlightAware:
         aspects = FlightAugmentation::Aspect::All;
         break;
@@ -167,27 +176,20 @@ void KmlImportPlugin::updateExtendedFlightInfo([[maybe_unused]] Flight &flight) 
 void KmlImportPlugin::updateExtendedFlightCondition([[maybe_unused]] FlightCondition &flightCondition) noexcept
 {}
 
-// PROTECTED SLOTS
-
-void KmlImportPlugin::onRestoreDefaultSettings() noexcept
-{
-    d->settings.restoreDefaults();
-}
-
 // PRIVATE
 
 void KmlImportPlugin::parseKML() noexcept
 {
     std::unique_ptr<KmlParserIntf> parser;
-    switch (d->settings.getFormat()) {
+    switch (d->pluginSettings.getFormat()) {
     case KmlImportSettings::Format::FlightAware:
-        parser = std::make_unique<FlightAwareKmlParser>(d->xml);
+        parser = std::make_unique<FlightAwareKmlParser>(*d->flight, d->xml);
         break;
     case KmlImportSettings::Format::FlightRadar24:
-        parser = std::make_unique<FlightRadar24KmlParser>(d->xml);
+        parser = std::make_unique<FlightRadar24KmlParser>(*d->flight, d->xml);
         break;
     case KmlImportSettings::Format::Generic:
-        parser = std::make_unique<GenericKmlParser>(d->xml);
+        parser = std::make_unique<GenericKmlParser>(*d->flight, d->xml);
         break;
     default:
         parser = nullptr;

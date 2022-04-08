@@ -58,14 +58,13 @@ public:
     virtual ~CsvExportPlugin() noexcept;
 
 protected:
-    virtual ExportPluginBaseSettings &getSettings() const noexcept override;
-    virtual QString getFileExtension() const noexcept override;
+    virtual ExportPluginBaseSettings &getPluginSettings() const noexcept override;
+    virtual QString getFileSuffix() const noexcept override;
     virtual QString getFileFilter() const noexcept override;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    virtual bool writeFile(QIODevice &io) noexcept override;
-
-protected slots:
-    virtual void onRestoreDefaultSettings() noexcept override;
+    virtual bool hasMultiAircraftSupport() const noexcept override;
+    virtual bool exportFlight(const Flight &flight, QIODevice &io) noexcept override;
+    virtual bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept override;
 
 private:
     std::unique_ptr<CsvExportPluginPrivate> d;

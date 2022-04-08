@@ -33,7 +33,6 @@
 
 #include "../../../../../Kernel/src/Convert.h"
 #include "../../../../../Model/src/SimVar.h"
-#include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/Aircraft.h"
 #include "../../../../../Model/src/Position.h"
@@ -67,9 +66,8 @@ SkyDollyCsvParser::~SkyDollyCsvParser() noexcept
 #endif
 }
 
-bool SkyDollyCsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept
+bool SkyDollyCsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, [[maybe_unused]] QString &flightNumber, Flight &flight) noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
     Aircraft &aircraft = flight.getUserAircraft();
 
     firstDateTimeUtc = QFileInfo(file).birthTime().toUTC();

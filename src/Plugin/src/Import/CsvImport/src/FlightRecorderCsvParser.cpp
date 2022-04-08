@@ -43,7 +43,6 @@
 #include "../../../../../Kernel/src/Convert.h"
 #include "../../../../../Kernel/src/SkyMath.h"
 #include "../../../../../Model/src/SimType.h"
-#include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/Aircraft.h"
 #include "../../../../../Model/src/Position.h"
@@ -124,9 +123,11 @@ class FlightRecorderCsvParserPrivate
 {
 public:
     FlightRecorderCsvParserPrivate()
+        : flight(nullptr)
     {
         firstDateTimeUtc.setTimeZone(QTimeZone::utc());
     }
+    Flight *flight;
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
     std::unordered_map<QByteArray, int, QStringHasher> columnIndexes;
 #else
@@ -152,14 +153,16 @@ FlightRecorderCsvParser::~FlightRecorderCsvParser() noexcept
 #endif
 }
 
-bool FlightRecorderCsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept
+bool FlightRecorderCsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept
 {
+    d->flight = &flight;
     firstDateTimeUtc = QFileInfo(file).birthTime().toUTC();
     bool ok = parseHeader(file);
     if (ok) {
         ok = parseData(file);
     }
-
+    // We are done with the export
+    d->flight = nullptr;
     return ok;
 }
 
@@ -211,8 +214,7 @@ bool FlightRecorderCsvParser::parseData(QFile &file) noexcept
         lightCabinIdx {InvalidIdx};
 
     bool ok;
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    Aircraft &aircraft = flight.getUserAircraft();
+    Aircraft &aircraft = d->flight->getUserAircraft();
     Position &position = aircraft.getPosition();
     Engine &engine = aircraft.getEngine();
     PrimaryFlightControl &primaryFlightControl = aircraft.getPrimaryFlightControl();

@@ -41,6 +41,7 @@
 #include "../../Kernel/src/Enum.h"
 #include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/File.h"
+#include "../../Model/src/Flight.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/Position.h"
 #include "../../Model/src/PositionData.h"
@@ -53,6 +54,8 @@ class ExportPluginBasePrivate
 public:
     ExportPluginBasePrivate()
     {}
+
+    std::vector<QString> exportedFilePaths;
 };
 
 // PUBLIC
@@ -72,28 +75,27 @@ ExportPluginBase::~ExportPluginBase() noexcept
 #endif
 }
 
-bool ExportPluginBase::exportData() noexcept
+bool ExportPluginBase::exportFlight(const Flight &flight) noexcept
 {
-    bool ok;
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
-    ExportPluginBaseSettings &baseSettings = getSettings();
-    std::unique_ptr<BasicExportDialog> exportDialog = std::make_unique<BasicExportDialog>(getFileExtension(), getFileFilter(), baseSettings, getParentWidget());
-    connect(exportDialog.get(), &BasicExportDialog::restoreDefaultOptions,
-            this, &ExportPluginBase::onRestoreDefaultSettings);
+    ExportPluginBaseSettings &baseSettings = getPluginSettings();
+    std::unique_ptr<BasicExportDialog> exportDialog = std::make_unique<BasicExportDialog>(flight, getFileSuffix(), getFileFilter(), baseSettings, getParentWidget());
     // Transfer ownership to exportDialog
     exportDialog->setOptionWidget(optionWidget.release());
+    bool ok {true};
     const int choice = exportDialog->exec();
     if (choice == QDialog::Accepted) {
         // Remember export path
         const QString selectedFilePath = exportDialog->getSelectedFilePath();
         if (!selectedFilePath.isEmpty()) {
-            const QString filePath = File::ensureSuffix(selectedFilePath, getFileExtension());
+            const QString filePath = File::ensureSuffix(selectedFilePath, getFileSuffix());
             const QFileInfo fileInfo {filePath};
             const QString exportDirectoryPath = fileInfo.absolutePath();
             Settings::getInstance().setExportPath(exportDirectoryPath);
 
-            if (baseSettings.isFileDialogSelectedFile() || !fileInfo.exists()) {
-                ok = exportFile(filePath);
+            const ExportPluginBaseSettings::FormationExport formationExport = getPluginSettings().getFormationExport();
+            if (formationExport == ExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles || baseSettings.isFileDialogSelectedFile() || !fileInfo.exists()) {
+                ok = exportFlight(flight, filePath);
             } else {
                 std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(getParentWidget());
                 messageBox->setIcon(QMessageBox::Question);
@@ -106,7 +108,7 @@ bool ExportPluginBase::exportData() noexcept
                 messageBox->exec();
                 const QAbstractButton *clickedButton = messageBox->clickedButton();
                 if (clickedButton == replaceButton) {
-                    ok = exportFile(filePath);
+                    ok = exportFlight(flight, filePath);
                 } else {
                     ok = true;
                 }
@@ -114,8 +116,6 @@ bool ExportPluginBase::exportData() noexcept
         } else {
             ok = true;
         }
-    } else {
-        ok = true;
     }
 
     return ok;
@@ -127,7 +127,7 @@ void ExportPluginBase::resamplePositionDataForExport(const Aircraft &aircraft, s
 {
     // Position data
     const Position &position = aircraft.getPositionConst();
-    const SampleRate::ResamplingPeriod resamplingPeriod = getSettings().getResamplingPeriod();
+    const SampleRate::ResamplingPeriod resamplingPeriod = getPluginSettings().getResamplingPeriod();
     if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
         const std::int64_t duration = position.getLast().timestamp;
         const std::int64_t deltaTime = Enum::toUnderlyingType(resamplingPeriod);
@@ -147,49 +147,122 @@ void ExportPluginBase::resamplePositionDataForExport(const Aircraft &aircraft, s
 
 // PRIVATE
 
-bool ExportPluginBase::exportFile(const QString &filePath) noexcept
+bool ExportPluginBase::exportFlight(const Flight &flight, const QString &filePath) noexcept
 {
+    d->exportedFilePaths.clear();
     QFile file(filePath);
-    bool ok = file.open(QIODevice::WriteOnly);
-    if (ok) {
+    bool ok {true};
 #ifdef DEBUG
-        QElapsedTimer timer;
-        timer.start();
+    QElapsedTimer timer;
+    timer.start();
 #endif
-        QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-        QGuiApplication::processEvents();
-        ok = writeFile(file);
-        QGuiApplication::restoreOverrideCursor();
-#ifdef DEBUG
-        qDebug("%s export %s in %lld ms", qPrintable(QFileInfo(filePath).fileName()), (ok ? qPrintable("SUCCESS") : qPrintable("FAIL")), timer.elapsed());
-#endif
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+    QGuiApplication::processEvents();
+    const ExportPluginBaseSettings &settings = getPluginSettings();
+    switch (settings.getFormationExport()) {
+    case ExportPluginBaseSettings::FormationExport::UserAircraftOnly:
+        ok = file.open(QIODevice::WriteOnly);
+        if (ok) {
+            ok = exportAircraft(flight, flight.getUserAircraftConst(), file);
+            d->exportedFilePaths.push_back(filePath);
+        }
+        file.close();
+        break;
+    case ExportPluginBaseSettings::FormationExport::AllAircraftOneFile:
+        if (hasMultiAircraftSupport()) {
+            ok = file.open(QIODevice::WriteOnly);
+            if (ok) {
+                ok = exportFlight(flight, file);
+                d->exportedFilePaths.push_back(filePath);
+            }
+            file.close();
+        } else {
+            ok = exportAllAircraft(flight, filePath);
+        }
+        break;
+    case ExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles:
+        ok = exportAllAircraft(flight, filePath);
+        break;
+    default:
+        ok = false;
+        break;
     }
-
-    file.close();
+    QGuiApplication::restoreOverrideCursor();
+#ifdef DEBUG
+    qDebug("%s export %s in %lld ms", qPrintable(QFileInfo(filePath).fileName()), (ok ? qPrintable("SUCCESS") : qPrintable("FAIL")), timer.elapsed());
+#endif
 
     if (ok) {
-        if (getSettings().isOpenExportedFileEnabled()) {
-            const QString fileUrl = QString("file:///") + filePath;
-            QDesktopServices::openUrl(QUrl(fileUrl));
+        if (settings.isOpenExportedFilesEnabled()) {
+            for (const QString &exportedFilePath : d->exportedFilePaths) {
+                const QString fileUrl = QString("file:///") + exportedFilePath;
+                QDesktopServices::openUrl(QUrl(fileUrl));
+            }
         }
     } else {
-        QMessageBox::critical(getParentWidget(), tr("Export error"), tr("An error occured during export into file %1.").arg(filePath));
+        QMessageBox::warning(getParentWidget(), tr("Export error"), tr("An error occured during export into file %1.").arg(filePath));
     }
+
+    return ok;
+}
+
+bool ExportPluginBase::exportAllAircraft(const Flight &flight, const QString &filePath) noexcept
+{
+    bool ok {true};
+    bool replaceAll {false};
+    int i = 1;
+    for (const auto &aircraft : flight) {
+        const QString sequencedFilePath = File::getSequenceFilePath(filePath, i);
+        const QFileInfo fileInfo {sequencedFilePath};
+        if (fileInfo.exists() && !replaceAll) {
+            QGuiApplication::restoreOverrideCursor();
+            std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(getParentWidget());
+            messageBox->setIcon(QMessageBox::Question);
+            QPushButton *replaceButton = messageBox->addButton(tr("&Replace"), QMessageBox::AcceptRole);
+            QPushButton *replaceAllButton = messageBox->addButton(tr("Replace &all"), QMessageBox::YesRole);
+            messageBox->setText(tr("A file named \"%1\" already exists. Do you want to replace it?").arg(fileInfo.fileName()));
+            messageBox->setInformativeText(tr("The file already exists in \"%1\".  Replacing it will overwrite its contents.").arg(fileInfo.dir().dirName()));
+            messageBox->setStandardButtons(QMessageBox::Cancel);
+            messageBox->setDefaultButton(replaceButton);
+
+            messageBox->exec();
+            const QAbstractButton *clickedButton = messageBox->clickedButton();
+            if (clickedButton == replaceAllButton) {
+                replaceAll = true;
+            } else if (clickedButton != replaceButton) {
+                break;
+            }
+            QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+            QGuiApplication::processEvents();
+        }
+
+        QFile file(sequencedFilePath);
+        ok = file.open(QIODevice::WriteOnly);
+        if (ok) {
+            ok = exportAircraft(flight, *aircraft, file);
+            d->exportedFilePaths.push_back(sequencedFilePath);
+        }
+        file.close();
+        ++i;
+        if (!ok) {
+            break;
+        }
+    } // All aircraft
 
     return ok;
 }
 
 void ExportPluginBase::addSettings(Settings::KeyValues &keyValues) const noexcept
 {
-    getSettings().addSettings(keyValues);
+    getPluginSettings().addSettings(keyValues);
 }
 
 void ExportPluginBase::addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
 {
-    getSettings().addKeysWithDefaults(keysWithDefaults);
+    getPluginSettings().addKeysWithDefaults(keysWithDefaults);
 }
 
 void ExportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexcept
 {
-    getSettings().restoreSettings(valuesByKey);
+    getPluginSettings().restoreSettings(valuesByKey);
 }
