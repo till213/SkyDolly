@@ -26,6 +26,7 @@
 #include <QStringView>
 #include <QStringBuilder>
 #include <QFileInfo>
+#include <QDir>
 
 #include "File.h"
 
@@ -52,9 +53,16 @@ QString File::getSequenceFilePath(QString filePath, int n) noexcept
     return absolutePath % "/" % baseName % "-" % QString::number(n) % "." % suffix;
 }
 
- QStringList File::getFilePaths(QStringView directoryPath, QStringView suffix) noexcept
+ QStringList File::getFilePaths(const QString &directoryPath, QStringView suffix) noexcept
  {
      QStringList filePaths;
+     const QString nameFilter = "*." % suffix;
+     QDir dir {directoryPath, nameFilter};
+
+     const QStringList fileNames = dir.entryList(QDir::Files, QDir::SortFlag::Time);
+     for (const QString &fileName : fileNames) {
+         filePaths.append(dir.absoluteFilePath(fileName));
+     }
 
      return filePaths;
  }

@@ -84,7 +84,7 @@ public:
     IgcImportSettings pluginSettings;
     QEasingCurve throttleResponseCurve;
 
-    static const inline QString FileExtension {QStringLiteral("igc")};
+    static const inline QString FileSuffix {QStringLiteral("igc")};
 };
 
 // PUBLIC
@@ -111,9 +111,14 @@ ImportPluginBaseSettings &IgcImportPlugin::getPluginSettings() const noexcept
     return d->pluginSettings;
 }
 
+QString IgcImportPlugin::getFileSuffix() const noexcept
+{
+    return IgcImportPluginPrivate::FileSuffix;
+}
+
 QString IgcImportPlugin::getFileFilter() const noexcept
 {
-    return tr("International gliding commission (*.%1)").arg(IgcImportPluginPrivate::FileExtension);
+    return tr("International gliding commission (*.%1)").arg(getFileSuffix());
 }
 
 std::unique_ptr<QWidget> IgcImportPlugin::createOptionWidget() const noexcept

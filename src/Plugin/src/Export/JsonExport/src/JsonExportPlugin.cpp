@@ -93,14 +93,14 @@ ExportPluginBaseSettings &JsonExportPlugin::getPluginSettings() const noexcept
     return d->pluginSettings;
 }
 
-QString JsonExportPlugin::getFileExtension() const noexcept
+QString JsonExportPlugin::getFileSuffix() const noexcept
 {
     return JsonExportPluginPrivate::FileExtension;
 }
 
 QString JsonExportPlugin::getFileFilter() const noexcept
 {
-    return tr("JavaScript object notation (*.%1)").arg(getFileExtension());
+    return tr("JavaScript object notation (*.%1)").arg(getFileSuffix());
 }
 
 std::unique_ptr<QWidget> JsonExportPlugin::createOptionWidget() const noexcept

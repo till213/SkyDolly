@@ -63,10 +63,10 @@ public:
 
 // PUBLIC
 
-BasicImportDialog::BasicImportDialog(const QString &fileExtension, ImportPluginBaseSettings &pluginSettings, QWidget *parent) :
-    QDialog(parent),
-    ui(std::make_unique<Ui::BasicImportDialog>()),
-    d(std::make_unique<BasicImportDialogPrivate>(fileExtension, pluginSettings))
+BasicImportDialog::BasicImportDialog(const QString &fileSuffix, ImportPluginBaseSettings &pluginSettings, QWidget *parent)
+    : QDialog(parent),
+      ui(std::make_unique<Ui::BasicImportDialog>()),
+      d(std::make_unique<BasicImportDialogPrivate>(fileSuffix, pluginSettings))
 {
     ui->setupUi(this);    
     initUi();
@@ -99,9 +99,9 @@ QString BasicImportDialog::getFileFilter() const noexcept
     return d->fileFilter;
 }
 
-void BasicImportDialog::setFileFilter(const QString &extension) noexcept
+void BasicImportDialog::setFileFilter(const QString &fileFilter) noexcept
 {
-    d->fileFilter = extension;
+    d->fileFilter = fileFilter;
 }
 
 void BasicImportDialog::setOptionWidget(QWidget *widget) noexcept

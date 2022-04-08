@@ -93,14 +93,14 @@ ExportPluginBaseSettings &GpxExportPlugin::getPluginSettings() const noexcept
     return d->pluginSettings;
 }
 
-QString GpxExportPlugin::getFileExtension() const noexcept
+QString GpxExportPlugin::getFileSuffix() const noexcept
 {
     return GpxExportPluginPrivate::FileExtension;
 }
 
 QString GpxExportPlugin::getFileFilter() const noexcept
 {
-    return tr("GPS exchange format (*.%1)").arg(getFileExtension());
+    return tr("GPS exchange format (*.%1)").arg(getFileSuffix());
 }
 
 std::unique_ptr<QWidget> GpxExportPlugin::createOptionWidget() const noexcept

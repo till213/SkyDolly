@@ -85,14 +85,14 @@ ExportPluginBaseSettings &CsvExportPlugin::getPluginSettings() const noexcept
     return d->pluginSettings;
 }
 
-QString CsvExportPlugin::getFileExtension() const noexcept
+QString CsvExportPlugin::getFileSuffix() const noexcept
 {
     return CsvExportPluginPrivate::FileExtension;
 }
 
 QString CsvExportPlugin::getFileFilter() const noexcept
 {
-    return tr("Comma-separated values (*.%1)").arg(getFileExtension());
+    return tr("Comma-separated values (*.%1)").arg(getFileSuffix());
 }
 
 std::unique_ptr<QWidget> CsvExportPlugin::createOptionWidget() const noexcept

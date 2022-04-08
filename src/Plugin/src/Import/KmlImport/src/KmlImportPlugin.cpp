@@ -60,7 +60,7 @@ public:
     QString flightNumber;
     QString title;
 
-    static inline const QString FileExtension {QStringLiteral("kml")};
+    static inline const QString FileSuffix {QStringLiteral("kml")};
 };
 
 // PUBLIC
@@ -87,9 +87,14 @@ ImportPluginBaseSettings &KmlImportPlugin::getPluginSettings() const noexcept
     return d->pluginSettings;
 }
 
+QString KmlImportPlugin::getFileSuffix() const noexcept
+{
+    return KmlImportPluginPrivate::FileSuffix;
+}
+
 QString KmlImportPlugin::getFileFilter() const noexcept
 {
-    return tr("Keyhole markup language (*.%1)").arg(KmlImportPluginPrivate::FileExtension);
+    return tr("Keyhole markup language (*.%1)").arg(getFileSuffix());
 }
 
 std::unique_ptr<QWidget> KmlImportPlugin::createOptionWidget() const noexcept

@@ -71,7 +71,7 @@ public:
      */
     static QString getSequenceFilePath(QString filePath, int n) noexcept;
 
-    static QStringList getFilePaths(QStringView directoryPath, QStringView suffix) noexcept;
+    static QStringList getFilePaths(const QString &directoryPath, QStringView suffix) noexcept;
 };
 
 #endif // FILE_H

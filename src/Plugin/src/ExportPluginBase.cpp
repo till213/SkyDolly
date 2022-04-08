@@ -91,7 +91,7 @@ bool ExportPluginBase::exportFlight(const Flight &flight) noexcept
             const QString filePath = File::ensureSuffix(selectedFilePath, getFileSuffix());
             const QFileInfo fileInfo {filePath};
             const QString exportDirectoryPath = fileInfo.absolutePath();
-            Settings::getInstance().setExportPath(suffix);
+            Settings::getInstance().setExportPath(exportDirectoryPath);
 
             const ExportPluginBaseSettings::FormationExport formationExport = getPluginSettings().getFormationExport();
             if (formationExport == ExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles || baseSettings.isFileDialogSelectedFile() || !fileInfo.exists()) {
@@ -213,7 +213,7 @@ bool ExportPluginBase::exportAllAircraft(const Flight &flight, const QString &fi
     int i = 1;
     for (const auto &aircraft : flight) {
         // @todo Generate enumerated file names, check existence for each before overwriting!
-        const QString sequencedFilePath = File::getSequenceFilePath(suffix, i);
+        const QString sequencedFilePath = File::getSequenceFilePath(filePath, i);
         const QFileInfo fileInfo {sequencedFilePath};
         if (fileInfo.exists() && !replaceAll) {
             QGuiApplication::restoreOverrideCursor();

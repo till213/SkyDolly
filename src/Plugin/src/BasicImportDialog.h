@@ -53,7 +53,7 @@ public:
     QString getSelectedPath() const noexcept;
 
     QString getFileFilter() const noexcept;
-    void setFileFilter(const QString &extension) noexcept;
+    void setFileFilter(const QString &fileFilter) noexcept;
 
     void setOptionWidget(QWidget *widget) noexcept;
 

@@ -113,14 +113,14 @@ ExportPluginBaseSettings &KmlExportPlugin::getPluginSettings() const noexcept
     return d->pluginSettings;
 }
 
-QString KmlExportPlugin::getFileExtension() const noexcept
+QString KmlExportPlugin::getFileSuffix() const noexcept
 {
     return KmlExportPluginPrivate::FileExtension;
 }
 
 QString KmlExportPlugin::getFileFilter() const noexcept
 {
-    return tr("Keyhole markup language (*.%1)").arg(getFileExtension());
+    return tr("Keyhole markup language (*.%1)").arg(getFileSuffix());
 }
 
 std::unique_ptr<QWidget> KmlExportPlugin::createOptionWidget() const noexcept

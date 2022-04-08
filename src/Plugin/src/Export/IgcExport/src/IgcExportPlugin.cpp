@@ -115,7 +115,7 @@ public:
     static inline const QByteArray BRecord {"B"};
     static inline const QByteArray GRecord {"G"};
 
-    static inline const QString FileExtension {QStringLiteral("igc")};
+    static inline const QString FileSuffix {QStringLiteral("igc")};
 };
 
 // PUBLIC
@@ -142,14 +142,14 @@ ExportPluginBaseSettings &IgcExportPlugin::getPluginSettings() const noexcept
     return d->pluginSettings;
 }
 
-QString IgcExportPlugin::getFileExtension() const noexcept
+QString IgcExportPlugin::getFileSuffix() const noexcept
 {
-    return IgcExportPluginPrivate::FileExtension;
+    return IgcExportPluginPrivate::FileSuffix;
 }
 
 QString IgcExportPlugin::getFileFilter() const noexcept
 {
-    return tr("International gliding commission (*.%1)").arg(getFileExtension());
+    return tr("International gliding commission (*.%1)").arg(getFileSuffix());
 }
 
 std::unique_ptr<QWidget> IgcExportPlugin::createOptionWidget() const noexcept

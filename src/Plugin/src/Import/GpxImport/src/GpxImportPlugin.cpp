@@ -64,7 +64,7 @@ public:
     QXmlStreamReader xml;    
     std::unique_ptr<GpxParser> parser;
 
-    static inline const QString FileExtension {QStringLiteral("gpx")};
+    static inline const QString FileSuffix {QStringLiteral("gpx")};
 };
 
 // PUBLIC
@@ -91,9 +91,14 @@ ImportPluginBaseSettings &GpxImportPlugin::getPluginSettings() const noexcept
     return d->pluginSettings;
 }
 
+QString GpxImportPlugin::getFileSuffix() const noexcept
+{
+    return GpxImportPluginPrivate::FileSuffix;
+}
+
 QString GpxImportPlugin::getFileFilter() const noexcept
 {
-    return tr("GPX exchange format (*.%1)").arg(GpxImportPluginPrivate::FileExtension);
+    return tr("GPX exchange format (*.%1)").arg(getFileSuffix());
 }
 
 std::unique_ptr<QWidget> GpxImportPlugin::createOptionWidget() const noexcept

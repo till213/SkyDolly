@@ -122,7 +122,7 @@ void BasicExportDialog::initUi() noexcept
 
 void BasicExportDialog::initBasicUi() noexcept
 {
-    ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestFilePath(d->flight, d->suffix)));
+    ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestFilePath(d->flight, d->fileSuffix)));
 
     // Formation export
     ui->formationExportComboBox->addItem(tr("User aircraft only"), Enum::toUnderlyingType(ExportPluginBaseSettings::FormationExport::UserAircraftOnly));

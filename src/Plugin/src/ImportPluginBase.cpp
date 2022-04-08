@@ -107,11 +107,11 @@ bool ImportPluginBase::importFlight(FlightService &flightService, Flight &flight
         // Remember import (export) path
         const QString selectedPath = importDialog->getSelectedPath();
         if (getPluginSettings().isImportDirectoryEnabled()) {
-            Settings::getInstance().setExportPath(suffix);
+            Settings::getInstance().setExportPath(selectedPath);
             selectedFilePaths = File::getFilePaths(selectedPath, getFileSuffix());
         } else {
             const QString directoryPath = QFileInfo(selectedPath).absolutePath();
-            Settings::getInstance().setExportPath(suffix);
+            Settings::getInstance().setExportPath(directoryPath);
             selectedFilePaths.append(selectedPath);
         }
         ok = importDialog->getSelectedAircraftType(d->aircraftType);
