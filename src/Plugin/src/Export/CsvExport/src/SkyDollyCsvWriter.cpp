@@ -22,7 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory.h>
+#include <memory>
 
 #include <QIODevice>
 #include <QChar>
@@ -78,16 +78,16 @@ SkyDollyCsvWriter::~SkyDollyCsvWriter() noexcept
 #endif
 }
 
-bool SkyDollyCsvWriter::write(const Aircraft &aircraft, QIODevice &io) noexcept
+bool SkyDollyCsvWriter::write([[maybe_unused]] const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
 {
     io.setTextModeEnabled(true);
-    QString csv = QString(CsvConst::TypeColumnName) % CsvConst::Sep %
-                          getPositionHeader() % CsvConst::Sep %
-                          getEngineHeader() % CsvConst::Sep %
-                          getPrimaryFlightControlHeader()  % CsvConst::Sep %
-                          getSecondaryFlightControlHeader() % CsvConst::Sep %
-                          getAircraftHandleHeader() % CsvConst::Sep %
-                          getLightHeader() % CsvConst::Sep %
+    QString csv = QString(CsvConst::TypeColumnName) % CsvConst::TabSep %
+                          getPositionHeader() % CsvConst::TabSep %
+                          getEngineHeader() % CsvConst::TabSep %
+                          getPrimaryFlightControlHeader()  % CsvConst::TabSep %
+                          getSecondaryFlightControlHeader() % CsvConst::TabSep %
+                          getAircraftHandleHeader() % CsvConst::TabSep %
+                          getLightHeader() % CsvConst::TabSep %
                           QString(SimVar::Timestamp) % CsvConst::Ln;
 
     bool ok = io.write(csv.toUtf8());
@@ -298,18 +298,18 @@ bool SkyDollyCsvWriter::write(const Aircraft &aircraft, QIODevice &io) noexcept
 
 inline QString SkyDollyCsvWriter::getPositionHeader() noexcept
 {
-    return QString(SimVar::Latitude) % CsvConst::Sep %
-           QString(SimVar::Longitude) % CsvConst::Sep %
-           QString(SimVar::Altitude) % CsvConst::Sep %
-           QString(SimVar::IndicatedAltitude) % CsvConst::Sep %
-           QString(SimVar::Pitch) % CsvConst::Sep %
-           QString(SimVar::Bank) % CsvConst::Sep %
-           QString(SimVar::Heading) % CsvConst::Sep %
-           QString(SimVar::VelocityBodyX) % CsvConst::Sep %
-           QString(SimVar::VelocityBodyY) % CsvConst::Sep %
-           QString(SimVar::VelocityBodyZ) % CsvConst::Sep %
-           QString(SimVar::RotationVelocityBodyX) % CsvConst::Sep %
-           QString(SimVar::RotationVelocityBodyY) % CsvConst::Sep %
+    return QString(SimVar::Latitude) % CsvConst::TabSep %
+           QString(SimVar::Longitude) % CsvConst::TabSep %
+           QString(SimVar::Altitude) % CsvConst::TabSep %
+           QString(SimVar::IndicatedAltitude) % CsvConst::TabSep %
+           QString(SimVar::Pitch) % CsvConst::TabSep %
+           QString(SimVar::Bank) % CsvConst::TabSep %
+           QString(SimVar::Heading) % CsvConst::TabSep %
+           QString(SimVar::VelocityBodyX) % CsvConst::TabSep %
+           QString(SimVar::VelocityBodyY) % CsvConst::TabSep %
+           QString(SimVar::VelocityBodyZ) % CsvConst::TabSep %
+           QString(SimVar::RotationVelocityBodyX) % CsvConst::TabSep %
+           QString(SimVar::RotationVelocityBodyY) % CsvConst::TabSep %
            QString(SimVar::RotationVelocityBodyZ);
 }
 
@@ -317,33 +317,33 @@ inline QString SkyDollyCsvWriter::getPositionData(const PositionData &data) noex
 {
     QString csv;
     if (!data.isNull()) {
-        csv = QString::number(data.latitude, CsvConst::Format, CsvConst::Precision) % CsvConst::Sep %
-              QString::number(data.longitude, CsvConst::Format, CsvConst::Precision) % CsvConst::Sep %
-              QString::number(data.altitude, CsvConst::Format, CsvConst::Precision) % CsvConst::Sep %
-              QString::number(data.indicatedAltitude, CsvConst::Format, CsvConst::Precision) % CsvConst::Sep %
-              QString::number(data.pitch, CsvConst::Format, CsvConst::Precision) % CsvConst::Sep %
-              QString::number(data.bank, CsvConst::Format, CsvConst::Precision) % CsvConst::Sep %
-              QString::number(data.heading, CsvConst::Format, CsvConst::Precision) % CsvConst::Sep %
-              QString::number(data.velocityBodyX, CsvConst::Format, CsvConst::Precision) % CsvConst::Sep %
-              QString::number(data.velocityBodyY, CsvConst::Format, CsvConst::Precision) % CsvConst::Sep %
-              QString::number(data.velocityBodyZ, CsvConst::Format, CsvConst::Precision) % CsvConst::Sep %
-              QString::number(data.rotationVelocityBodyX, CsvConst::Format, CsvConst::Precision) % CsvConst::Sep %
-              QString::number(data.rotationVelocityBodyY, CsvConst::Format, CsvConst::Precision) % CsvConst::Sep %
+        csv = QString::number(data.latitude, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
+              QString::number(data.longitude, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
+              QString::number(data.altitude, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
+              QString::number(data.indicatedAltitude, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
+              QString::number(data.pitch, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
+              QString::number(data.bank, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
+              QString::number(data.heading, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
+              QString::number(data.velocityBodyX, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
+              QString::number(data.velocityBodyY, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
+              QString::number(data.velocityBodyZ, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
+              QString::number(data.rotationVelocityBodyX, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
+              QString::number(data.rotationVelocityBodyY, CsvConst::Format, CsvConst::Precision) % CsvConst::TabSep %
               QString::number(data.rotationVelocityBodyZ, CsvConst::Format, CsvConst::Precision);
     } else {
         const QString EmptyString;
-        csv = EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
+        csv = EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
               EmptyString;
     }
     return csv;
@@ -351,33 +351,33 @@ inline QString SkyDollyCsvWriter::getPositionData(const PositionData &data) noex
 
 inline QString SkyDollyCsvWriter::getEngineHeader() noexcept
 {
-    return QString(SimVar::ThrottleLeverPosition1) % CsvConst::Sep %
-           QString(SimVar::ThrottleLeverPosition2) % CsvConst::Sep %
-           QString(SimVar::ThrottleLeverPosition3) % CsvConst::Sep %
-           QString(SimVar::ThrottleLeverPosition4) % CsvConst::Sep %
-           QString(SimVar::PropellerLeverPosition1) % CsvConst::Sep %
-           QString(SimVar::PropellerLeverPosition2) % CsvConst::Sep %
-           QString(SimVar::PropellerLeverPosition3) % CsvConst::Sep %
-           QString(SimVar::PropellerLeverPosition4) % CsvConst::Sep %
-           QString(SimVar::MixtureLeverPosition1) % CsvConst::Sep %
-           QString(SimVar::MixtureLeverPosition2) % CsvConst::Sep %
-           QString(SimVar::MixtureLeverPosition3) % CsvConst::Sep %
-           QString(SimVar::MixtureLeverPosition4) % CsvConst::Sep %
-           QString(SimVar::RecipEngineCowlFlapPosition1) % CsvConst::Sep %
-           QString(SimVar::RecipEngineCowlFlapPosition2) % CsvConst::Sep %
-           QString(SimVar::RecipEngineCowlFlapPosition3) % CsvConst::Sep %
-           QString(SimVar::RecipEngineCowlFlapPosition4) % CsvConst::Sep %
-           QString(SimVar::ElectricalMasterBattery1) % CsvConst::Sep %
-           QString(SimVar::ElectricalMasterBattery2) % CsvConst::Sep %
-           QString(SimVar::ElectricalMasterBattery3) % CsvConst::Sep %
-           QString(SimVar::ElectricalMasterBattery4) % CsvConst::Sep %
-           QString(SimVar::GeneralEngineStarter1) % CsvConst::Sep %
-           QString(SimVar::GeneralEngineStarter2) % CsvConst::Sep %
-           QString(SimVar::GeneralEngineStarter3) % CsvConst::Sep %
-           QString(SimVar::GeneralEngineStarter4) % CsvConst::Sep %
-           QString(SimVar::GeneralEngineCombustion1) % CsvConst::Sep %
-           QString(SimVar::GeneralEngineCombustion2) % CsvConst::Sep %
-           QString(SimVar::GeneralEngineCombustion3) % CsvConst::Sep %
+    return QString(SimVar::ThrottleLeverPosition1) % CsvConst::TabSep %
+           QString(SimVar::ThrottleLeverPosition2) % CsvConst::TabSep %
+           QString(SimVar::ThrottleLeverPosition3) % CsvConst::TabSep %
+           QString(SimVar::ThrottleLeverPosition4) % CsvConst::TabSep %
+           QString(SimVar::PropellerLeverPosition1) % CsvConst::TabSep %
+           QString(SimVar::PropellerLeverPosition2) % CsvConst::TabSep %
+           QString(SimVar::PropellerLeverPosition3) % CsvConst::TabSep %
+           QString(SimVar::PropellerLeverPosition4) % CsvConst::TabSep %
+           QString(SimVar::MixtureLeverPosition1) % CsvConst::TabSep %
+           QString(SimVar::MixtureLeverPosition2) % CsvConst::TabSep %
+           QString(SimVar::MixtureLeverPosition3) % CsvConst::TabSep %
+           QString(SimVar::MixtureLeverPosition4) % CsvConst::TabSep %
+           QString(SimVar::RecipEngineCowlFlapPosition1) % CsvConst::TabSep %
+           QString(SimVar::RecipEngineCowlFlapPosition2) % CsvConst::TabSep %
+           QString(SimVar::RecipEngineCowlFlapPosition3) % CsvConst::TabSep %
+           QString(SimVar::RecipEngineCowlFlapPosition4) % CsvConst::TabSep %
+           QString(SimVar::ElectricalMasterBattery1) % CsvConst::TabSep %
+           QString(SimVar::ElectricalMasterBattery2) % CsvConst::TabSep %
+           QString(SimVar::ElectricalMasterBattery3) % CsvConst::TabSep %
+           QString(SimVar::ElectricalMasterBattery4) % CsvConst::TabSep %
+           QString(SimVar::GeneralEngineStarter1) % CsvConst::TabSep %
+           QString(SimVar::GeneralEngineStarter2) % CsvConst::TabSep %
+           QString(SimVar::GeneralEngineStarter3) % CsvConst::TabSep %
+           QString(SimVar::GeneralEngineStarter4) % CsvConst::TabSep %
+           QString(SimVar::GeneralEngineCombustion1) % CsvConst::TabSep %
+           QString(SimVar::GeneralEngineCombustion2) % CsvConst::TabSep %
+           QString(SimVar::GeneralEngineCombustion3) % CsvConst::TabSep %
            QString(SimVar::GeneralEngineCombustion4);
 }
 
@@ -385,63 +385,63 @@ inline QString SkyDollyCsvWriter::getEngineData(const EngineData &data) noexcept
 {
     QString csv;
     if (!data.isNull()) {
-        csv = QString::number(data.throttleLeverPosition1) % CsvConst::Sep %
-              QString::number(data.throttleLeverPosition2) % CsvConst::Sep %
-              QString::number(data.throttleLeverPosition3) % CsvConst::Sep %
-              QString::number(data.throttleLeverPosition4) % CsvConst::Sep %
-              QString::number(data.propellerLeverPosition1) % CsvConst::Sep %
-              QString::number(data.propellerLeverPosition2) % CsvConst::Sep %
-              QString::number(data.propellerLeverPosition3) % CsvConst::Sep %
-              QString::number(data.propellerLeverPosition4) % CsvConst::Sep %
-              QString::number(data.mixtureLeverPosition1) % CsvConst::Sep %
-              QString::number(data.mixtureLeverPosition2) % CsvConst::Sep %
-              QString::number(data.mixtureLeverPosition3) % CsvConst::Sep %
-              QString::number(data.mixtureLeverPosition4) % CsvConst::Sep %
-              QString::number(data.cowlFlapPosition1) % CsvConst::Sep %
-              QString::number(data.cowlFlapPosition2) % CsvConst::Sep %
-              QString::number(data.cowlFlapPosition3) % CsvConst::Sep %
-              QString::number(data.cowlFlapPosition4) % CsvConst::Sep %
-              QString::number(data.electricalMasterBattery1) % CsvConst::Sep %
-              QString::number(data.electricalMasterBattery2) % CsvConst::Sep %
-              QString::number(data.electricalMasterBattery3) % CsvConst::Sep %
-              QString::number(data.electricalMasterBattery4) % CsvConst::Sep %
-              QString::number(data.generalEngineStarter1) % CsvConst::Sep %
-              QString::number(data.generalEngineStarter2) % CsvConst::Sep %
-              QString::number(data.generalEngineStarter3) % CsvConst::Sep %
-              QString::number(data.generalEngineStarter4) % CsvConst::Sep %
-              QString::number(data.generalEngineCombustion1) % CsvConst::Sep %
-              QString::number(data.generalEngineCombustion2) % CsvConst::Sep %
-              QString::number(data.generalEngineCombustion3) % CsvConst::Sep %
+        csv = QString::number(data.throttleLeverPosition1) % CsvConst::TabSep %
+              QString::number(data.throttleLeverPosition2) % CsvConst::TabSep %
+              QString::number(data.throttleLeverPosition3) % CsvConst::TabSep %
+              QString::number(data.throttleLeverPosition4) % CsvConst::TabSep %
+              QString::number(data.propellerLeverPosition1) % CsvConst::TabSep %
+              QString::number(data.propellerLeverPosition2) % CsvConst::TabSep %
+              QString::number(data.propellerLeverPosition3) % CsvConst::TabSep %
+              QString::number(data.propellerLeverPosition4) % CsvConst::TabSep %
+              QString::number(data.mixtureLeverPosition1) % CsvConst::TabSep %
+              QString::number(data.mixtureLeverPosition2) % CsvConst::TabSep %
+              QString::number(data.mixtureLeverPosition3) % CsvConst::TabSep %
+              QString::number(data.mixtureLeverPosition4) % CsvConst::TabSep %
+              QString::number(data.cowlFlapPosition1) % CsvConst::TabSep %
+              QString::number(data.cowlFlapPosition2) % CsvConst::TabSep %
+              QString::number(data.cowlFlapPosition3) % CsvConst::TabSep %
+              QString::number(data.cowlFlapPosition4) % CsvConst::TabSep %
+              QString::number(data.electricalMasterBattery1) % CsvConst::TabSep %
+              QString::number(data.electricalMasterBattery2) % CsvConst::TabSep %
+              QString::number(data.electricalMasterBattery3) % CsvConst::TabSep %
+              QString::number(data.electricalMasterBattery4) % CsvConst::TabSep %
+              QString::number(data.generalEngineStarter1) % CsvConst::TabSep %
+              QString::number(data.generalEngineStarter2) % CsvConst::TabSep %
+              QString::number(data.generalEngineStarter3) % CsvConst::TabSep %
+              QString::number(data.generalEngineStarter4) % CsvConst::TabSep %
+              QString::number(data.generalEngineCombustion1) % CsvConst::TabSep %
+              QString::number(data.generalEngineCombustion2) % CsvConst::TabSep %
+              QString::number(data.generalEngineCombustion3) % CsvConst::TabSep %
               QString::number(data.generalEngineCombustion4);
     } else {
         const QString EmptyString;
-        csv = EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
+        csv = EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
               EmptyString;
     }
     return csv;
@@ -449,8 +449,8 @@ inline QString SkyDollyCsvWriter::getEngineData(const EngineData &data) noexcept
 
 inline QString SkyDollyCsvWriter::getPrimaryFlightControlHeader() noexcept
 {
-    return QString(SimVar::RudderPosition) % CsvConst::Sep %
-           QString(SimVar::ElevatorPosition) % CsvConst::Sep %
+    return QString(SimVar::RudderPosition) % CsvConst::TabSep %
+           QString(SimVar::ElevatorPosition) % CsvConst::TabSep %
            QString(SimVar::AileronPosition);
 }
 
@@ -458,13 +458,13 @@ inline QString SkyDollyCsvWriter::getPrimaryFlightControlData(const PrimaryFligh
 {
     QString csv;
     if (!data.isNull()) {
-        csv = QString::number(data.rudderPosition) % CsvConst::Sep %
-                QString::number(data.elevatorPosition) % CsvConst::Sep %
+        csv = QString::number(data.rudderPosition) % CsvConst::TabSep %
+                QString::number(data.elevatorPosition) % CsvConst::TabSep %
                 QString::number(data.aileronPosition);
     } else {
         const QString EmptyString;
-        csv = EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
+        csv = EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
               EmptyString;
     }
     return csv;
@@ -472,11 +472,11 @@ inline QString SkyDollyCsvWriter::getPrimaryFlightControlData(const PrimaryFligh
 
 inline QString SkyDollyCsvWriter::getSecondaryFlightControlHeader() noexcept
 {
-    return QString(SimVar::LeadingEdgeFlapsLeftPercent) % CsvConst::Sep %
-           QString(SimVar::LeadingEdgeFlapsRightPercent) % CsvConst::Sep %
-           QString(SimVar::TrailingEdgeFlapsLeftPercent) % CsvConst::Sep %
-           QString(SimVar::TrailingEdgeFlapsRightPercent) % CsvConst::Sep %
-           QString(SimVar::SpoilersHandlePosition) % CsvConst::Sep %
+    return QString(SimVar::LeadingEdgeFlapsLeftPercent) % CsvConst::TabSep %
+           QString(SimVar::LeadingEdgeFlapsRightPercent) % CsvConst::TabSep %
+           QString(SimVar::TrailingEdgeFlapsLeftPercent) % CsvConst::TabSep %
+           QString(SimVar::TrailingEdgeFlapsRightPercent) % CsvConst::TabSep %
+           QString(SimVar::SpoilersHandlePosition) % CsvConst::TabSep %
            QString(SimVar::FlapsHandleIndex);
 }
 
@@ -484,19 +484,19 @@ inline QString SkyDollyCsvWriter::getSecondaryFlightControlData(const SecondaryF
 {
     QString csv;
     if (!data.isNull()) {
-        csv = QString::number(data.leadingEdgeFlapsLeftPosition) % CsvConst::Sep %
-              QString::number(data.leadingEdgeFlapsRightPosition) % CsvConst::Sep %
-              QString::number(data.trailingEdgeFlapsLeftPosition) % CsvConst::Sep %
-              QString::number(data.trailingEdgeFlapsRightPosition) % CsvConst::Sep %
-              QString::number(data.spoilersHandlePosition) % CsvConst::Sep %
+        csv = QString::number(data.leadingEdgeFlapsLeftPosition) % CsvConst::TabSep %
+              QString::number(data.leadingEdgeFlapsRightPosition) % CsvConst::TabSep %
+              QString::number(data.trailingEdgeFlapsLeftPosition) % CsvConst::TabSep %
+              QString::number(data.trailingEdgeFlapsRightPosition) % CsvConst::TabSep %
+              QString::number(data.spoilersHandlePosition) % CsvConst::TabSep %
               QString::number(data.flapsHandleIndex);
     } else {
         const QString EmptyString;
-        csv = EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
+        csv = EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
               EmptyString;
     }
     return csv;
@@ -504,14 +504,14 @@ inline QString SkyDollyCsvWriter::getSecondaryFlightControlData(const SecondaryF
 
 inline QString SkyDollyCsvWriter::getAircraftHandleHeader() noexcept
 {
-    return QString(SimVar::GearHandlePosition) % CsvConst::Sep %
-           QString(SimVar::BrakeLeftPosition) % CsvConst::Sep %
-           QString(SimVar::BrakeRightPosition) % CsvConst::Sep %
-           QString(SimVar::WaterRudderHandlePosition) % CsvConst::Sep %
-           QString(SimVar::TailhookPosition) % CsvConst::Sep %
-           QString(SimVar::FoldingWingLeftPercent)  % CsvConst::Sep %
-           QString(SimVar::FoldingWingRightPercent)  % CsvConst::Sep %
-           QString(SimVar::CanopyOpen) % CsvConst::Sep %
+    return QString(SimVar::GearHandlePosition) % CsvConst::TabSep %
+           QString(SimVar::BrakeLeftPosition) % CsvConst::TabSep %
+           QString(SimVar::BrakeRightPosition) % CsvConst::TabSep %
+           QString(SimVar::WaterRudderHandlePosition) % CsvConst::TabSep %
+           QString(SimVar::TailhookPosition) % CsvConst::TabSep %
+           QString(SimVar::FoldingWingLeftPercent)  % CsvConst::TabSep %
+           QString(SimVar::FoldingWingRightPercent)  % CsvConst::TabSep %
+           QString(SimVar::CanopyOpen) % CsvConst::TabSep %
            QString(SimVar::SmokeEnable);
 }
 
@@ -519,26 +519,26 @@ inline QString SkyDollyCsvWriter::getAircraftHandleData(const AircraftHandleData
 {
     QString csv;
     if (!data.isNull()) {
-        csv = QString::number(data.gearHandlePosition) % CsvConst::Sep %
-              QString::number(data.brakeLeftPosition) % CsvConst::Sep %
-              QString::number(data.brakeRightPosition) % CsvConst::Sep %
-              QString::number(data.waterRudderHandlePosition) % CsvConst::Sep %
-              QString::number(data.tailhookPosition) % CsvConst::Sep %
-              QString::number(data.leftWingFolding) % CsvConst::Sep %
-              QString::number(data.rightWingFolding) % CsvConst::Sep %
-              QString::number(data.canopyOpen) % CsvConst::Sep %
+        csv = QString::number(data.gearHandlePosition) % CsvConst::TabSep %
+              QString::number(data.brakeLeftPosition) % CsvConst::TabSep %
+              QString::number(data.brakeRightPosition) % CsvConst::TabSep %
+              QString::number(data.waterRudderHandlePosition) % CsvConst::TabSep %
+              QString::number(data.tailhookPosition) % CsvConst::TabSep %
+              QString::number(data.leftWingFolding) % CsvConst::TabSep %
+              QString::number(data.rightWingFolding) % CsvConst::TabSep %
+              QString::number(data.canopyOpen) % CsvConst::TabSep %
               QString::number(data.smokeEnabled);
 
     } else {
         const QString EmptyString;
-        csv = EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
-              EmptyString % CsvConst::Sep %
+        csv = EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
+              EmptyString % CsvConst::TabSep %
               EmptyString;
     }
     return csv;
@@ -570,13 +570,13 @@ inline bool SkyDollyCsvWriter::writeLine(QChar type,
                                        std::int64_t timestamp,
                                        QIODevice &io) noexcept
 {
-    const QString csv = type % CsvConst::Sep %
-                        getPositionData(positionData) % CsvConst::Sep %
-                        getEngineData(engineData) % CsvConst::Sep %
-                        getPrimaryFlightControlData(primaryFlightControlData) % CsvConst::Sep %
-                        getSecondaryFlightControlData(secondaryFlightControlData) % CsvConst::Sep %
-                        getAircraftHandleData(aircraftHandleData) % CsvConst::Sep %
-                        getLightData(lightData) % CsvConst::Sep %
+    const QString csv = type % CsvConst::TabSep %
+                        getPositionData(positionData) % CsvConst::TabSep %
+                        getEngineData(engineData) % CsvConst::TabSep %
+                        getPrimaryFlightControlData(primaryFlightControlData) % CsvConst::TabSep %
+                        getSecondaryFlightControlData(secondaryFlightControlData) % CsvConst::TabSep %
+                        getAircraftHandleData(aircraftHandleData) % CsvConst::TabSep %
+                        getLightData(lightData) % CsvConst::TabSep %
                         QString::number(timestamp) % CsvConst::Ln;
     return io.write(csv.toUtf8());
 }

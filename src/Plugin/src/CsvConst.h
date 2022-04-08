@@ -27,9 +27,13 @@
 
 namespace CsvConst {
 
-    /*! Separator character for CSV import & export */
-    constexpr char Sep = '\t';
-    /*! Newline character for CSV import & export */
+    /*! Separator character for Sky Dolly CSV import & export */
+    constexpr char TabSep = '\t';
+    /*! Comma separator character */
+    constexpr char CommaSep = ',';
+    /*! Double-quote character */
+    constexpr char DoubleQuote = '\"';
+    /*! Newline character */
     constexpr char Ln = '\n';
 
     // Format and precision for double

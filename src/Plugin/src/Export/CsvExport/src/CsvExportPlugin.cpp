@@ -98,7 +98,7 @@ bool CsvExportPlugin::exportFlight([[maybe_unused]] const Flight &flight, [[mayb
     return false;
 }
 
-bool CsvExportPlugin::exportAircraft([[maybe_unused]] const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
+bool CsvExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
 {
     bool ok;
     std::unique_ptr<CsvWriterIntf> writer;
@@ -107,7 +107,7 @@ bool CsvExportPlugin::exportAircraft([[maybe_unused]] const Flight &flight, cons
         writer = std::make_unique<SkyDollyCsvWriter>(d->pluginSettings);
         break;
     case CsvExportSettings::Format::FlightRadar24:
-        writer = std::make_unique<FlightRadar24CsvWriter>();
+        writer = std::make_unique<FlightRadar24CsvWriter>(d->pluginSettings);
         break;
     default:
         writer = nullptr;
@@ -115,7 +115,7 @@ bool CsvExportPlugin::exportAircraft([[maybe_unused]] const Flight &flight, cons
     }
 
     if (writer != nullptr) {
-        ok = writer->write(aircraft, io);
+        ok = writer->write(flight, aircraft, io);
     } else {
         ok = false;
     }

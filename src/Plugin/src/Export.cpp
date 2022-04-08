@@ -26,12 +26,16 @@
 #include <QStringView>
 #include <QRegularExpression>
 
+#include "../../Kernel/src/Enum.h"
 #include "../../Kernel/src/Version.h"
+#include "../../Kernel/src/SampleRate.h"
 #include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/File.h"
 #include "../../Model/src/Flight.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/AircraftInfo.h"
+#include "../../Model/src/Position.h"
+#include "../../Model/src/PositionData.h"
 #include "Export.h"
 
 namespace
@@ -78,4 +82,25 @@ QString Export::formatCoordinate(double coordinate) noexcept
 QString Export::formatNumber(double number) noexcept
 {
     return QString::number(number, 'f', NumberPrecision);
+}
+
+void Export::resamplePositionDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) noexcept
+{
+    // Position data
+    const Position &position = aircraft.getPositionConst();
+    if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
+        const std::int64_t duration = position.getLast().timestamp;
+        const std::int64_t deltaTime = Enum::toUnderlyingType(resamplingPeriod);
+        std::int64_t timestamp = 0;
+        while (timestamp <= duration) {
+            const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Export);
+            if (!positionData.isNull()) {
+                backInsertIterator = positionData;
+            }
+            timestamp += deltaTime;
+        }
+    } else {
+        // Original data requested
+        std::copy(position.begin(), position.end(), backInsertIterator);
+    }
 }

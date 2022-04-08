@@ -203,7 +203,7 @@ bool GpxExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
     }
 
     std::vector<PositionData> interpolatedPositionData;
-    resamplePositionDataForExport(aircraft, std::back_inserter(interpolatedPositionData));
+    Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod(), std::back_inserter(interpolatedPositionData));
     bool ok = true;
     if (interpolatedPositionData.size() > 0) {
 

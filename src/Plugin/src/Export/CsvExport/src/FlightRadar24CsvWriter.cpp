@@ -22,23 +22,108 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+#include <cstdint>
+
+#include <QIODevice>
+#include <QChar>
+#include <QString>
+#include <QStringBuilder>
+
+#include "../../../../../Kernel/src/Enum.h"
+#include "../../../../../Kernel/src/SampleRate.h"
+#include "../../../../../Model/src/Flight.h"
+#include "../../../../../Model/src/Aircraft.h"
+#include "../../../../../Model/src/Position.h"
+#include "../../../../../Model/src/PositionData.h"
+#include "../../../CsvConst.h"
+#include "../../../Export.h"
+#include "CsvExportSettings.h"
 #include "FlightRadar24CsvWriter.h"
+
+namespace
+{
+    inline const QString TimestampColumn = QStringLiteral("Timestamp");
+    inline const QString UtcColumn = QStringLiteral("UTC");
+    inline const QString CallsignColumn = QStringLiteral("Callsign");
+    inline const QString PositionColumn = QStringLiteral("Position");
+    inline const QString AltitudeColumn = QStringLiteral("Altitude");
+    inline const QString SpeedColumn = QStringLiteral("Speed");
+    inline const QString DirectionColumn = QStringLiteral("Direction");
+}
+
+class FlightRadar24CsvWriterPrivate
+{
+public:
+    FlightRadar24CsvWriterPrivate(const CsvExportSettings &thePluginSettings) noexcept
+        : pluginSettings(thePluginSettings)
+    {}
+
+    const CsvExportSettings &pluginSettings;
+
+    static inline const QString FileExtension {QStringLiteral("csv")};
+};
 
 // PUBLIC
 
-FlightRadar24CsvWriter::FlightRadar24CsvWriter() noexcept
+FlightRadar24CsvWriter::FlightRadar24CsvWriter(const CsvExportSettings &pluginSettings) noexcept
+    : d(std::make_unique<FlightRadar24CsvWriterPrivate>(pluginSettings))
 {
-
+#ifdef DEBUG
+    qDebug("FlightRadar24CsvWriter::FlightRadar24CsvWriter: CREATED");
+#endif
 }
 
 FlightRadar24CsvWriter::~FlightRadar24CsvWriter() noexcept
 {
-
+#ifdef DEBUG
+    qDebug("FlightRadar24CsvWriter::~FlightRadar24CsvWriter: DELETED");
+#endif
 }
 
-
-bool FlightRadar24CsvWriter::write(const Aircraft &aircraft, QIODevice &io) noexcept
+bool FlightRadar24CsvWriter::write(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
 {
-    // @todo IMPLEMENT ME!!!
-    return false;
+    io.setTextModeEnabled(true);
+    QString csv = QString(::TimestampColumn % CsvConst::CommaSep %
+                          ::UtcColumn % CsvConst::CommaSep %
+                          ::CallsignColumn % CsvConst::CommaSep %
+                          ::PositionColumn % CsvConst::CommaSep %
+                          ::AltitudeColumn % CsvConst::CommaSep %
+                          ::SpeedColumn % CsvConst::CommaSep %
+                          ::DirectionColumn % CsvConst::Ln
+                          );
+
+    bool ok = io.write(csv.toUtf8());
+    if (ok) {
+        const QDateTime startDateTimeUtc = flight.getAircraftStartZuluTime(aircraft);
+        const QString callSign = aircraft.getAircraftInfoConst().flightNumber;
+        std::vector<PositionData> interpolatedPositionData;
+        Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod(), std::back_inserter(interpolatedPositionData));
+        for (PositionData &positionData : interpolatedPositionData) {
+            if (!positionData.isNull()) {
+                const QDateTime dateTimeUtc = startDateTimeUtc.addMSecs(positionData.timestamp);
+                const std::int64_t secsSinceEpoch = dateTimeUtc.toSecsSinceEpoch();
+                const QString csv = QString::number(secsSinceEpoch) % CsvConst::CommaSep %
+                                    dateTimeUtc.toString(Qt::ISODate) % CsvConst::CommaSep %
+                                    callSign % CsvConst::CommaSep %
+                                    formatPosition(positionData) % CsvConst::CommaSep %
+                                    QString::number(qRound(positionData.altitude)) % CsvConst::CommaSep %
+                                    QString::number(qRound(positionData.velocityBodyX)) % CsvConst::CommaSep %
+                                    QString::number(qRound(positionData.heading)) % CsvConst::Ln;
+                ok = io.write(csv.toUtf8());
+            }
+            if (!ok) {
+                break;
+            }
+        }
+    }
+
+    return ok;
+}
+
+// PRIVATE
+
+inline QString FlightRadar24CsvWriter::formatPosition(const PositionData &positionData) noexcept
+{
+    return CsvConst::DoubleQuote % Export::formatCoordinate(positionData.latitude) % "," % Export::formatCoordinate(positionData.longitude) % CsvConst::DoubleQuote;
 }

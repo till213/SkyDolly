@@ -25,15 +25,28 @@
 #ifndef FLIGHTRADAR24CSVWRITER_H
 #define FLIGHTRADAR24CSVWRITER_H
 
+class QIODevice;
+
 #include "CsvWriterIntf.h"
+
+class Flight;
+class Aircraft;
+class CsvExportSettings;
+class PositionData;
+class FlightRadar24CsvWriterPrivate;
 
 class FlightRadar24CsvWriter : public CsvWriterIntf
 {
 public:
-    FlightRadar24CsvWriter() noexcept;
+    FlightRadar24CsvWriter(const CsvExportSettings &pluginSettings) noexcept;
     virtual ~FlightRadar24CsvWriter() noexcept;
 
-    virtual bool write(const Aircraft &aircraft, QIODevice &ioDevice) noexcept override;
+    virtual bool write(const Flight &flight, const Aircraft &aircraft, QIODevice &ioDevice) noexcept override;
+
+private:
+    std::unique_ptr<FlightRadar24CsvWriterPrivate> d;
+
+    static inline QString formatPosition(const PositionData &positionData) noexcept;
 };
 
 #endif // FLIGHTRADAR24CSVWRITER_H

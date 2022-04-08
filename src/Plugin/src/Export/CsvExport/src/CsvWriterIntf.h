@@ -29,6 +29,7 @@
 
 class QIODevice;
 
+class Flight;
 class Aircraft;
 
 class CsvWriterIntf
@@ -36,7 +37,7 @@ class CsvWriterIntf
 public:
     virtual ~CsvWriterIntf() = default;
 
-    virtual bool write(const Aircraft &aircraft, QIODevice &ioDevice) noexcept = 0;
+    virtual bool write(const Flight &flight, const Aircraft &aircraft, QIODevice &ioDevice) noexcept = 0;
 };
 
 #endif // CSVWRITERINTF_H
