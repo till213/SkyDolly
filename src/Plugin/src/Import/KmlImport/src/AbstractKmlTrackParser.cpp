@@ -34,7 +34,7 @@
 #include <QRegularExpression>
 
 #include "../../../../../Kernel/src/Convert.h"
-#include "../../../../../Model/src/Logbook.h"
+#include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/Position.h"
 #include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/Waypoint.h"
@@ -45,21 +45,23 @@
 class AbstractKmlTrackParserPrivate
 {
 public:
-    AbstractKmlTrackParserPrivate(QXmlStreamReader &xmlStreamReader) noexcept
-        : xml(xmlStreamReader)
+    AbstractKmlTrackParserPrivate(Flight &theFlight, QXmlStreamReader &xmlStreamReader) noexcept
+        : flight(theFlight),
+          xml(xmlStreamReader)
     {
         firstDateTimeUtc.setTimeZone(QTimeZone::utc());
     }
 
+    Flight &flight;
     QXmlStreamReader &xml;
     QDateTime firstDateTimeUtc;
 };
 
 // PUBLIC
 
-AbstractKmlTrackParser::AbstractKmlTrackParser(QXmlStreamReader &xmlStreamReader) noexcept
+AbstractKmlTrackParser::AbstractKmlTrackParser(Flight &flight, QXmlStreamReader &xmlStreamReader) noexcept
     : AbstractKmlParser(xmlStreamReader),
-      d(std::make_unique<AbstractKmlTrackParserPrivate>(xmlStreamReader))
+      d(std::make_unique<AbstractKmlTrackParserPrivate>(flight, xmlStreamReader))
 {
 #ifdef DEBUG
     qDebug("AbstractKmlTrackParser::~AbstractKmlTrackParser: CREATED");
@@ -73,6 +75,11 @@ AbstractKmlTrackParser::~AbstractKmlTrackParser() noexcept
 #endif
 }
 
+Flight &AbstractKmlTrackParser::getFlight() const noexcept
+{
+    return d->flight;
+}
+
 QDateTime AbstractKmlTrackParser::getFirstDateTimeUtc() const noexcept
 {
     return d->firstDateTimeUtc;
@@ -82,8 +89,7 @@ QDateTime AbstractKmlTrackParser::getFirstDateTimeUtc() const noexcept
 
 void AbstractKmlTrackParser::parseTrack() noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    Position &position = flight.getUserAircraft().getPosition();
+    Position &position = d->flight.getUserAircraft().getPosition();
     if (position.count() == 0) {
 
         // Timestamp (msec), latitude (degrees), longitude (degrees), altitude (feet)

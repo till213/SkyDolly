@@ -38,7 +38,6 @@
 #include <QWidget>
 
 #include "../../../../../Flight/src/Analytics.h"
-#include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/FlightCondition.h"
 #include "../../../../../Model/src/Aircraft.h"
@@ -57,13 +56,15 @@ class GpxImportPluginPrivate
 {
 public:
     GpxImportPluginPrivate()
+        : flight(nullptr)
     {}
 
-    GpxImportSettings settings;
+    Flight *flight;
+    GpxImportSettings pluginSettings;
     QXmlStreamReader xml;    
     std::unique_ptr<GpxParser> parser;
 
-    static inline const QString FileExtension {QStringLiteral("gpx")};
+    static inline const QString FileSuffix {QStringLiteral("gpx")};
 };
 
 // PUBLIC
@@ -85,23 +86,29 @@ GpxImportPlugin::~GpxImportPlugin() noexcept
 
 // PROTECTED
 
-ImportPluginBaseSettings &GpxImportPlugin::getSettings() const noexcept
+ImportPluginBaseSettings &GpxImportPlugin::getPluginSettings() const noexcept
 {
-    return d->settings;
+    return d->pluginSettings;
+}
+
+QString GpxImportPlugin::getFileSuffix() const noexcept
+{
+    return GpxImportPluginPrivate::FileSuffix;
 }
 
 QString GpxImportPlugin::getFileFilter() const noexcept
 {
-    return tr("GPX exchange format (*.%1)").arg(GpxImportPluginPrivate::FileExtension);
+    return tr("GPX exchange format (*.%1)").arg(getFileSuffix());
 }
 
 std::unique_ptr<QWidget> GpxImportPlugin::createOptionWidget() const noexcept
 {
-    return std::make_unique<GpxImportOptionWidget>(d->settings);
+    return std::make_unique<GpxImportOptionWidget>(d->pluginSettings);
 }
 
-bool GpxImportPlugin::readFile(QFile &file) noexcept
+bool GpxImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
 {
+    d->flight = &flight;
     d->xml.setDevice(&file);
     parseGPX();
 
@@ -111,6 +118,8 @@ bool GpxImportPlugin::readFile(QFile &file) noexcept
         qDebug("GpxImportPlugin::import: XML error: %s", qPrintable(d->xml.errorString()));
     }
 #endif
+    // We are done with the import
+    d->flight = nullptr;
     return ok;
 }
 
@@ -150,26 +159,18 @@ void GpxImportPlugin::updateExtendedFlightInfo(Flight &flight) noexcept
 void GpxImportPlugin::updateExtendedFlightCondition([[maybe_unused]] FlightCondition &flightCondition) noexcept
 {}
 
-// PROTECTED SLOTS
-
-void GpxImportPlugin::onRestoreDefaultSettings() noexcept
-{
-    d->settings.restoreDefaults();
-}
-
 // PRIVATE
 
 void GpxImportPlugin::parseGPX() noexcept
 {
-    d->parser = std::make_unique<GpxParser>(d->xml, d->settings);
+    d->parser = std::make_unique<GpxParser>(*d->flight, d->xml, d->pluginSettings);
     d->parser->parse();
     updateWaypoints();
 }
 
 void GpxImportPlugin::updateWaypoints() noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    const Aircraft &aircraft = flight.getUserAircraft();
+    const Aircraft &aircraft = d->flight->getUserAircraft();
     Position &position = aircraft.getPosition();
 
     if (position.count() > 0) {

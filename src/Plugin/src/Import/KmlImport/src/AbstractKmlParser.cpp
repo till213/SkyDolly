@@ -33,7 +33,6 @@
 #include <QRegularExpression>
 
 #include "../../../../../Kernel/src/Convert.h"
-#include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Position.h"
 #include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/Waypoint.h"

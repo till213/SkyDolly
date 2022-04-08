@@ -29,10 +29,12 @@
 
 #include "PluginIntf.h"
 
+class Flight;
+
 class ExportIntf : public PluginIntf
 {
 public:
-    virtual bool exportData() noexcept = 0;
+    virtual bool exportFlight(const Flight &flight) noexcept = 0;
 };
 
 #define EXPORT_INTERFACE_IID "com.github.till213.SkyDolly.ExportInterface/1.0"

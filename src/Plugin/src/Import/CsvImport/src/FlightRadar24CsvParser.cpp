@@ -34,7 +34,6 @@
 #include <QRegularExpression>
 
 #include "../../../../../Kernel/src/Convert.h"
-#include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/Aircraft.h"
 #include "../../../../../Model/src/Position.h"
@@ -69,10 +68,9 @@ FlightRadar24CsvParser::~FlightRadar24CsvParser() noexcept
 #endif
 }
 
-bool FlightRadar24CsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber) noexcept
+bool FlightRadar24CsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QString &flightNumber, Flight &flight) noexcept
 {
     bool ok;
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
     Aircraft &aircraft = flight.getUserAircraft();
     QRegularExpression regexp(::FlightRadar24CSVPattern);
 

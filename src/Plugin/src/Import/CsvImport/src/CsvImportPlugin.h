@@ -54,10 +54,11 @@ public:
     virtual ~CsvImportPlugin() noexcept;
 
 protected:
-    virtual ImportPluginBaseSettings &getSettings() const noexcept override;
+    virtual ImportPluginBaseSettings &getPluginSettings() const noexcept override;
+    virtual QString getFileSuffix() const noexcept override;
     virtual QString getFileFilter() const noexcept override;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept override;
-    virtual bool readFile(QFile &file) noexcept override;
+    virtual bool importFlight(QFile &file, Flight &flight) noexcept override;
 
     virtual FlightAugmentation::Procedures getProcedures() const noexcept override;
     virtual FlightAugmentation::Aspects getAspects() const noexcept override;
@@ -66,9 +67,6 @@ protected:
     virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept override;
     virtual void updateExtendedFlightInfo(Flight &flight) noexcept override;
     virtual void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept override;
-
-protected slots:
-    virtual void onRestoreDefaultSettings() noexcept override;
 
 private:
     std::unique_ptr<CsvImportPluginPrivate> d;

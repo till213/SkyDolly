@@ -40,13 +40,30 @@ class PLUGIN_API ExportPluginBaseSettings : public QObject
 {
     Q_OBJECT
 public:
+    /*!
+     * Defines how formation flights should be exported.
+     */
+    enum struct FormationExport {
+        /*! Only the user aircraft is to be exported */
+        UserAircraftOnly,
+        /*! All aircraft are to be exported, into one file if possible (depending on the actual file format);
+            otherwise into separate files */
+        AllAircraftOneFile,
+        /*! All aircraft are to be exported, into separate files each */
+        AllAircraftSeparateFiles
+    };
+
     ExportPluginBaseSettings() noexcept;
     virtual ~ExportPluginBaseSettings() noexcept;
 
     SampleRate::ResamplingPeriod getResamplingPeriod() const noexcept;
     void setResamplingPeriod(SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
-    bool isOpenExportedFileEnabled() const noexcept;
-    void setOpenExportedFileEnabled(bool enabled) noexcept;
+
+    FormationExport getFormationExport() const noexcept;
+    void setFormationExport(FormationExport formationExport) noexcept;
+
+    bool isOpenExportedFilesEnabled() const noexcept;
+    void setOpenExportedFilesEnabled(bool enabled) noexcept;
 
     /*!
      * Returns whether the user has selected the file via the file selection dialog,

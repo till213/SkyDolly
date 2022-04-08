@@ -31,7 +31,6 @@
 #include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/Settings.h"
 #include "../../../../../Model/src/SimVar.h"
-#include "../../../../../Model/src/Logbook.h"
 #include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/Aircraft.h"
 #include "../../../../../Model/src/Position.h"
@@ -55,11 +54,9 @@ class CsvExportPluginPrivate
 {
 public:
     CsvExportPluginPrivate() noexcept
-        : flight(Logbook::getInstance().getCurrentFlight())
     {}
 
-    Flight &flight;
-    CsvExportSettings settings;
+    CsvExportSettings pluginSettings;
 
     static inline const QString FileExtension {QStringLiteral("csv")};
 };
@@ -83,19 +80,19 @@ CsvExportPlugin::~CsvExportPlugin() noexcept
 
 // PROTECTED
 
-ExportPluginBaseSettings &CsvExportPlugin::getSettings() const noexcept
+ExportPluginBaseSettings &CsvExportPlugin::getPluginSettings() const noexcept
 {
-    return d->settings;
+    return d->pluginSettings;
 }
 
-QString CsvExportPlugin::getFileExtension() const noexcept
+QString CsvExportPlugin::getFileSuffix() const noexcept
 {
     return CsvExportPluginPrivate::FileExtension;
 }
 
 QString CsvExportPlugin::getFileFilter() const noexcept
 {
-    return tr("Comma-separated values (*.%1)").arg(getFileExtension());
+    return tr("Comma-separated values (*.%1)").arg(getFileSuffix());
 }
 
 std::unique_ptr<QWidget> CsvExportPlugin::createOptionWidget() const noexcept
@@ -104,12 +101,21 @@ std::unique_ptr<QWidget> CsvExportPlugin::createOptionWidget() const noexcept
     return nullptr;
 }
 
-bool CsvExportPlugin::writeFile(QIODevice &io) noexcept
+bool CsvExportPlugin::hasMultiAircraftSupport() const noexcept
+{
+    return false;
+}
+
+bool CsvExportPlugin::exportFlight([[maybe_unused]] const Flight &flight, [[maybe_unused]] QIODevice &io) noexcept
+{
+    // No multi aircraft support
+    return false;
+}
+
+bool CsvExportPlugin::exportAircraft([[maybe_unused]] const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept
 {
     bool ok;
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();
     io.setTextModeEnabled(true);
-
     QString csv = QString(CsvConst::TypeColumnName) % CsvConst::Sep %
                           getPositionHeader() % CsvConst::Sep %
                           getEngineHeader() % CsvConst::Sep %
@@ -128,7 +134,7 @@ bool CsvExportPlugin::writeFile(QIODevice &io) noexcept
         const AircraftHandleData emptyAircraftHandleData;
         const LightData emptyLightData;
 
-        const SampleRate::ResamplingPeriod resamplingPeriod = d->settings.getResamplingPeriod();
+        const SampleRate::ResamplingPeriod resamplingPeriod = d->pluginSettings.getResamplingPeriod();
         const std::int64_t deltaTime = Enum::toUnderlyingType(resamplingPeriod);
         std::int64_t duration;
         std::int64_t timestamp;
@@ -321,13 +327,6 @@ bool CsvExportPlugin::writeFile(QIODevice &io) noexcept
     }
 
     return ok;
-}
-
-// PROTECTED SLOTS
-
-void CsvExportPlugin::onRestoreDefaultSettings() noexcept
-{
-    d->settings.restoreDefaults();
 }
 
 // PRIVATE

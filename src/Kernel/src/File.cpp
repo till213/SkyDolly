@@ -25,6 +25,8 @@
 #include <QString>
 #include <QStringView>
 #include <QStringBuilder>
+#include <QFileInfo>
+#include <QDir>
 
 #include "File.h"
 
@@ -40,3 +42,27 @@ QString File::ensureSuffix(QStringView filePath, QStringView suffix) noexcept
     }
     return filePathWithSuffix;
 }
+
+QString File::getSequenceFilePath(QString filePath, int n) noexcept
+{
+    const QFileInfo fileInfo {filePath};
+    const QString baseName = fileInfo.baseName();
+    const QString absolutePath = fileInfo.absolutePath();
+    const QString suffix = fileInfo.completeSuffix();
+
+    return absolutePath % "/" % baseName % "-" % QString::number(n) % "." % suffix;
+}
+
+ QStringList File::getFilePaths(const QString &directoryPath, QStringView suffix) noexcept
+ {
+     QStringList filePaths;
+     const QString nameFilter = "*." % suffix;
+     QDir dir {directoryPath, nameFilter};
+
+     const QStringList fileNames = dir.entryList(QDir::Files, QDir::SortFlag::Time);
+     for (const QString &fileName : fileNames) {
+         filePaths.append(dir.absoluteFilePath(fileName));
+     }
+
+     return filePaths;
+ }

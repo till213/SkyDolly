@@ -29,6 +29,8 @@
 
 class QString;
 
+class Flight;
+
 class KmlParserIntf
 {
 public:
