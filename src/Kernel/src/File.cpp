@@ -42,7 +42,7 @@ QString File::ensureSuffix(QStringView filePath, QStringView suffix) noexcept
     return filePathWithSuffix;
 }
 
-QString File::getSequenceFilePath(QString filePath, int n)
+QString File::getSequenceFilePath(QString filePath, int n) noexcept
 {
     const QFileInfo fileInfo {filePath};
     const QString baseName = fileInfo.baseName();
@@ -51,3 +51,10 @@ QString File::getSequenceFilePath(QString filePath, int n)
 
     return absolutePath % "/" % baseName % "-" % QString::number(n) % "." % suffix;
 }
+
+ QStringList File::getFilePaths(QStringView directoryPath, QStringView suffix) noexcept
+ {
+     QStringList filePaths;
+
+     return filePaths;
+ }

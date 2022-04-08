@@ -25,7 +25,9 @@
 #ifndef FILE_H
 #define FILE_H
 
+#include <QString>
 #include <QStringView>
+#include <QStringList>
 
 class QString;
 
@@ -36,13 +38,13 @@ class KERNEL_API File
 public:
 
     /*!
-     * Ensures that the given \c filePath has the file suffix \c suffix, which is case-insensitive.
+     * Ensures that the given \c filePath has the suffix \c suffix, which is case-insensitive.
      *
      * \param filePath
-     *        the file path to be checked for file suffix \c suffix
+     *        the file path to be checked for suffix \c suffix
      * \param suffix
-     *        the case-insensitive file suffix
-     * \return the \c filePath with guaranteed file suffix \c suffix
+     *        the case-insensitive suffix
+     * \return the \c filePath with guaranteed suffix \c suffix
      */
     static QString ensureSuffix(QStringView filePath, QStringView suffix) noexcept;
 
@@ -67,7 +69,9 @@ public:
      *        numbers should start with 1 and increase
      * \return the \c filePath with a sequence number
      */
-    static QString getSequenceFilePath(QString filePath, int n);
+    static QString getSequenceFilePath(QString filePath, int n) noexcept;
+
+    static QStringList getFilePaths(QStringView directoryPath, QStringView suffix) noexcept;
 };
 
 #endif // FILE_H
