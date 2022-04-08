@@ -108,7 +108,7 @@ bool FlightRadar24CsvWriter::write(const Flight &flight, const Aircraft &aircraf
                                     callSign % CsvConst::CommaSep %
                                     formatPosition(positionData) % CsvConst::CommaSep %
                                     QString::number(qRound(positionData.altitude)) % CsvConst::CommaSep %
-                                    QString::number(qRound(positionData.velocityBodyX)) % CsvConst::CommaSep %
+                                    QString::number(qRound(positionData.velocityBodyZ)) % CsvConst::CommaSep %
                                     QString::number(qRound(positionData.heading)) % CsvConst::Ln;
                 ok = io.write(csv.toUtf8());
             }
