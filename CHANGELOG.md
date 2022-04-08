@@ -34,6 +34,7 @@
   * Use title-case for all [push buttons](https://developer.apple.com/design/human-interface-guidelines/macos/buttons/push-buttons/)
   * Add additional aircraft types from sim update 7 for the import aircraft selection
     - Note: third-party aircraft types are automatically made available in the aircraft selection once recorded at least once
+  * The new Help menu contains a link to a "work in progress" [online manual](https://till213.github.io/SkyDolly/manual/en/)
   
 ### Bug Fixes
 

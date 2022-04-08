@@ -408,7 +408,7 @@
      <x>0</x>
      <y>0</y>
      <width>826</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="fileMenu">
@@ -437,14 +437,6 @@
     <addaction name="showLogbookSettingsAction"/>
     <addaction name="separator"/>
     <addaction name="quitAction"/>
-   </widget>
-   <widget class="QMenu" name="infoMenu">
-    <property name="title">
-     <string>&amp;Info</string>
-    </property>
-    <addaction name="separator"/>
-    <addaction name="aboutAction"/>
-    <addaction name="aboutQtAction"/>
    </widget>
    <widget class="QMenu" name="windowMenu">
     <property name="title">
@@ -496,12 +488,21 @@
     <addaction name="showModulesAction"/>
     <addaction name="showReplaySpeedAction"/>
    </widget>
+   <widget class="QMenu" name="helpMenu">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="onlineManualAction"/>
+    <addaction name="separator"/>
+    <addaction name="aboutAction"/>
+    <addaction name="aboutQtAction"/>
+   </widget>
    <addaction name="fileMenu"/>
    <addaction name="replayMenu"/>
    <addaction name="moduleMenu"/>
    <addaction name="viewMenu"/>
    <addaction name="windowMenu"/>
-   <addaction name="infoMenu"/>
+   <addaction name="helpMenu"/>
   </widget>
   <action name="quitAction">
    <property name="text">
@@ -736,6 +737,11 @@
    </property>
    <property name="text">
     <string>&amp;Replay Speed</string>
+   </property>
+  </action>
+  <action name="onlineManualAction">
+   <property name="text">
+    <string>Online &amp;Manual...</string>
    </property>
   </action>
  </widget>
