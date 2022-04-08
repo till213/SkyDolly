@@ -27,15 +27,27 @@
 
 #include <QString>
 
+#include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/Settings.h"
 #include "../../Plugin/src/ExportPluginBaseSettings.h"
 #include "CsvExportSettings.h"
+
+namespace
+{
+    // Keys
+    constexpr char FormatKey[] = "Format";
+
+    // Defaults
+    constexpr CsvExportSettings::Format DefaultFormat = CsvExportSettings::Format::SkyDolly;
+}
 
 class CsvExportSettingsPrivate
 {
 public:
     CsvExportSettingsPrivate()
     {}
+
+    CsvExportSettings::Format format;
 };
 
 // PUBLIC
@@ -56,16 +68,53 @@ CsvExportSettings::~CsvExportSettings() noexcept
 #endif
 }
 
+CsvExportSettings::Format CsvExportSettings::getFormat() const noexcept
+{
+    return d->format;
+}
+
+void CsvExportSettings::setFormat(Format format) noexcept
+{
+    if (d->format != format) {
+        d->format = format;
+        emit extendedSettingsChanged();
+    }
+}
+
 // PROTECTED
 
-void CsvExportSettings::addSettingsExtn([[maybe_unused]] Settings::KeyValues &keyValues) const noexcept
-{}
+void CsvExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
+{
+    Settings::KeyValue keyValue;
 
-void CsvExportSettings::addKeysWithDefaultsExtn([[maybe_unused]] Settings::KeysWithDefaults &keysWithDefaults) const noexcept
-{}
+    keyValue.first = ::FormatKey;
+    keyValue.second = Enum::toUnderlyingType(d->format);
+    keyValues.push_back(keyValue);
+}
 
-void CsvExportSettings::restoreSettingsExtn([[maybe_unused]] const Settings::ValuesByKey &valuesByKey) noexcept
-{}
+void CsvExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
+{
+    Settings::KeyValue keyValue;
+
+    keyValue.first = ::FormatKey;
+    keyValue.second = Enum::toUnderlyingType(::DefaultFormat);
+    keysWithDefaults.push_back(keyValue);
+}
+
+void CsvExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
+{
+    bool ok;
+    const int enumeration = valuesByKey.at(::FormatKey).toInt(&ok);
+    if (ok) {
+        d->format = static_cast<Format >(enumeration);
+    } else {
+        d->format = ::DefaultFormat;
+    }
+}
 
 void CsvExportSettings::restoreDefaultsExtn() noexcept
-{}
+{
+    d->format = ::DefaultFormat;
+
+    emit extendedSettingsChanged();
+}

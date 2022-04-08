@@ -219,7 +219,7 @@ bool ExportPluginBase::exportAllAircraft(const Flight &flight, const QString &fi
             std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(getParentWidget());
             messageBox->setIcon(QMessageBox::Question);
             QPushButton *replaceButton = messageBox->addButton(tr("&Replace"), QMessageBox::AcceptRole);
-            QPushButton *replaceAllButton = messageBox->addButton(tr("Replace &all"), QMessageBox::YesRole);
+            QPushButton *replaceAllButton = messageBox->addButton(tr("Replace &All"), QMessageBox::YesRole);
             messageBox->setText(tr("A file named \"%1\" already exists. Do you want to replace it?").arg(fileInfo.fileName()));
             messageBox->setInformativeText(tr("The file already exists in \"%1\".  Replacing it will overwrite its contents.").arg(fileInfo.dir().dirName()));
             messageBox->setStandardButtons(QMessageBox::Cancel);

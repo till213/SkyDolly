@@ -48,6 +48,7 @@
 #include "../../../CsvConst.h"
 #include "../../../Export.h"
 #include "CsvExportSettings.h"
+#include "CsvExportOptionWidget.h"
 #include "CsvExportPlugin.h"
 
 class CsvExportPluginPrivate
@@ -97,8 +98,7 @@ QString CsvExportPlugin::getFileFilter() const noexcept
 
 std::unique_ptr<QWidget> CsvExportPlugin::createOptionWidget() const noexcept
 {
-    // No plugin-specific settings yet
-    return nullptr;
+    return std::make_unique<CsvExportOptionWidget>(d->pluginSettings);
 }
 
 bool CsvExportPlugin::hasMultiAircraftSupport() const noexcept

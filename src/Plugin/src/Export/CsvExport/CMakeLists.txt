@@ -17,6 +17,7 @@ target_sources(${LIBRARY_NAME}
     PRIVATE
         src/CsvExportPlugin.h src/CsvExportPlugin.cpp
         src/CsvExportSettings.h src/CsvExportSettings.cpp
+        src/CsvExportOptionWidget.h src/CsvExportOptionWidget.cpp src/CsvExportOptionWidget.ui
         src/CsvExportPlugin.json
 )
 

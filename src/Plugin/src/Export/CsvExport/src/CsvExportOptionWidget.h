@@ -22,47 +22,37 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef GPXEXPORTSETTINGS_H
-#define GPXEXPORTSETTINGS_H
+#ifndef CSVEXPORTOPTIONWIDGET_H
+#define CSVEXPORTOPTIONWIDGET_H
 
 #include <memory>
 
-#include <QObject>
+#include <QWidget>
 
-#include "../../../../../Kernel/src/Settings.h"
-#include "../../Plugin/src/ExportPluginBaseSettings.h"
+namespace Ui {
+    class CsvExportOptionWidget;
+}
 
-class GpxExportSettingsPrivate;
+class CsvExportSettings;
+class CsvExportOptionWidgetPrivate;
 
-class GpxExportSettings : public ExportPluginBaseSettings
+class CsvExportOptionWidget : public QWidget
 {
     Q_OBJECT
 public:
-    enum struct TimestampMode {
-        Simulation,
-        Recording
-    };
-
-    GpxExportSettings() noexcept;
-    virtual ~GpxExportSettings() noexcept;
-
-    TimestampMode getTimestampMode() const noexcept;
-    void setTimestampMode(TimestampMode timestampMode) noexcept;
-
-signals:
-    /*!
-     * Emitted whenever the extended settings have changed.
-     */
-    void extendedSettingsChanged();
-
-protected:
-    virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
-    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
-    virtual void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
-    virtual void restoreDefaultsExtn() noexcept override;
+    explicit CsvExportOptionWidget(CsvExportSettings &settings, QWidget *parent = nullptr) noexcept;
+    virtual ~CsvExportOptionWidget() noexcept;
 
 private:
-    std::unique_ptr<GpxExportSettingsPrivate> d;
+    std::unique_ptr<Ui::CsvExportOptionWidget> ui;
+    std::unique_ptr<CsvExportOptionWidgetPrivate> d;
+
+    void frenchConnection() noexcept;
+    void initUi() noexcept;
+
+private slots:
+    void updateUi() noexcept;
+    void onFormatChanged() noexcept;
 };
 
-#endif // GPXEXPORTSETTINGS_H
+#endif // CSVEXPORTOPTIONWIDGET_H

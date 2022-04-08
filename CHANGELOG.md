@@ -29,6 +29,7 @@
 - Miscellaneous
   * Add shortcuts to dialog buttons
   * The recording time is now shown in the Flight dialog
+  * Use title-case for all push buttons
   
 ### Bug Fixes
 
