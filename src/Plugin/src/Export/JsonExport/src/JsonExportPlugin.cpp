@@ -190,7 +190,7 @@ bool JsonExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
 bool JsonExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     std::vector<PositionData> interpolatedPositionData;
-    resamplePositionDataForExport(aircraft, std::back_inserter(interpolatedPositionData));
+    Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod(), std::back_inserter(interpolatedPositionData));
     bool ok = true;
 
     const AircraftInfo &info = aircraft.getAircraftInfoConst();

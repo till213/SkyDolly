@@ -25,12 +25,18 @@
 #ifndef EXPORT_H
 #define EXPORT_H
 
+#include <vector>
+#include <iterator>
+
 #include <QStringView>
 #include <QString>
 
+#include "../../Kernel/src/SampleRate.h"
 #include "PluginLib.h"
 
 class Flight;
+class Aircraft;
+struct PositionData;
 
 /*!
  * Common export functionality.
@@ -70,6 +76,8 @@ public:
      * \return the text representation of \c number
      */
     static QString formatNumber(double number) noexcept;
+
+    static void resamplePositionDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) noexcept;
 };
 
 #endif // EXPORT_H

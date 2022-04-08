@@ -147,8 +147,8 @@ bool ConnectionManager::connectWithLogbook(const QString &logbookPath, QWidget *
                     messageBox->setWindowIcon(QIcon(":/img/icons/application-icon.png"));
                     messageBox->setText(tr("The logbook %1 has been created with a newer version %2.").arg(currentLogbookPath, databaseVersion.toString()));
                     messageBox->setInformativeText("Do you want to create a new logbook?");
-                    QPushButton *createNewPushButton = messageBox->addButton(tr("Create &new logbook"), QMessageBox::AcceptRole);
-                    QPushButton *openExistingPushButton = messageBox->addButton(tr("&Open another logbook"), QMessageBox::AcceptRole);
+                    QPushButton *createNewPushButton = messageBox->addButton(tr("Create &New Logbook"), QMessageBox::AcceptRole);
+                    QPushButton *openExistingPushButton = messageBox->addButton(tr("&Open Another Logbook"), QMessageBox::AcceptRole);
                     messageBox->addButton(tr("&Cancel"), QMessageBox::RejectRole);
                     messageBox->setDefaultButton(createNewPushButton);
                     messageBox->setIcon(QMessageBox::Icon::Question);

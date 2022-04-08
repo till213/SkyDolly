@@ -84,7 +84,7 @@ FlightRadar24KmlParser::FlightRadar24KmlParser(Flight &flight, QXmlStreamReader 
     : d(std::make_unique<FlightRadar24KmlParserPrivate>(flight, xmlStreamReader))
 {
 #ifdef DEBUG
-    qDebug("FlightRadar24KmlParser::~FlightRadar24KmlParser: CREATED");
+    qDebug("FlightRadar24KmlParser::FlightRadar24KmlParser: CREATED");
 #endif
 }
 

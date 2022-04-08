@@ -79,7 +79,7 @@ bool SkyDollyCsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, [[maybe_
 
     bool ok = !data.isNull();
     if (ok) {
-        QList<QByteArray> headers = data.split(CsvConst::Sep);
+        QList<QByteArray> headers = data.split(CsvConst::TabSep);
         if (headers.first() == QString(CsvConst::TypeColumnName)) {
             headers.removeFirst();
 
@@ -94,7 +94,7 @@ bool SkyDollyCsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, [[maybe_
             while (!data.isNull()) {
 
                 PositionData positionData;
-                QList<QByteArray> values = data.split(CsvConst::Sep);
+                QList<QByteArray> values = data.split(CsvConst::TabSep);
 
                 // Type
                 ok = values.at(0).size() > 0;

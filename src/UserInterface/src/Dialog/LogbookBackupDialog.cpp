@@ -135,7 +135,7 @@ void LogbookBackupDialog::initUi() noexcept
     // Transfer ownership to the buttonBox
     QPushButton *backupButton = ui->buttonBox->addButton(tr("&Backup"), QDialogButtonBox::AcceptRole);
     backupButton->setDefault(true);
-    ui->buttonBox->addButton(tr("&Skip this time"), QDialogButtonBox::RejectRole);
+    ui->buttonBox->addButton(tr("&Skip This Time"), QDialogButtonBox::RejectRole);
 }
 
 void LogbookBackupDialog::updateUi() noexcept

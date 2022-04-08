@@ -78,7 +78,6 @@ public:
     virtual bool exportFlight(const Flight &flight) noexcept override final;
 
 protected:
-    void resamplePositionDataForExport(const Aircraft &aircraft, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) const noexcept;
 
     // Re-implement
     virtual ExportPluginBaseSettings &getPluginSettings() const noexcept = 0;

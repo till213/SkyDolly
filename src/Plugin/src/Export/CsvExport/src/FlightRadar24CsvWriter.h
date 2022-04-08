@@ -22,50 +22,31 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory>
+#ifndef FLIGHTRADAR24CSVWRITER_H
+#define FLIGHTRADAR24CSVWRITER_H
 
-#include <QString>
-#include <QXmlStreamReader>
+class QIODevice;
 
-#include "Kml.h"
-#include "AbstractKmlTrackParser.h"
-#include "GenericKmlParser.h"
+#include "CsvWriterIntf.h"
 
-class GenericKmlParserPrivate
+class Flight;
+class Aircraft;
+class CsvExportSettings;
+class PositionData;
+class FlightRadar24CsvWriterPrivate;
+
+class FlightRadar24CsvWriter : public CsvWriterIntf
 {
 public:
-    GenericKmlParserPrivate(QXmlStreamReader &xmlStreamReader) noexcept
-        : xml(xmlStreamReader)
-    {}
+    FlightRadar24CsvWriter(const CsvExportSettings &pluginSettings) noexcept;
+    virtual ~FlightRadar24CsvWriter() noexcept;
 
-    QXmlStreamReader &xml;
+    virtual bool write(const Flight &flight, const Aircraft &aircraft, QIODevice &ioDevice) noexcept override;
+
+private:
+    std::unique_ptr<FlightRadar24CsvWriterPrivate> d;
+
+    static inline QString formatPosition(const PositionData &positionData) noexcept;
 };
 
-// PUBLIC
-
-GenericKmlParser::GenericKmlParser(Flight &flight, QXmlStreamReader &xmlStreamReader) noexcept
-    : AbstractKmlTrackParser(flight, xmlStreamReader),
-      d(std::make_unique<GenericKmlParserPrivate>(xmlStreamReader))
-{
-#ifdef DEBUG
-    qDebug("GenericKmlParser::GenericKmlParser: CREATED");
-#endif
-}
-
-GenericKmlParser::~GenericKmlParser() noexcept
-{
-#ifdef DEBUG
-    qDebug("GenericKmlParser::~GenericKmlParser: DELETED");
-#endif
-}
-
-// Generic KML files (are expected to) have at least one "gx:Track"
-void GenericKmlParser::parse() noexcept
-{
-    parseKML();
-}
-
-QString GenericKmlParser::getFlightNumber() const noexcept
-{
-    return QString();
-}
+#endif // FLIGHTRADAR24CSVWRITER_H

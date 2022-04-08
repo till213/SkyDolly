@@ -57,7 +57,7 @@ FlightAwareKmlParser::FlightAwareKmlParser(Flight &flight, QXmlStreamReader &xml
       d(std::make_unique<FlightAwareKmlParserPrivate>(xmlStreamReader))
 {
 #ifdef DEBUG
-    qDebug("FlightAwareKmlParser::~FlightAwareKmlParser: CREATED");
+    qDebug("FlightAwareKmlParser::FlightAwareKmlParser: CREATED");
 #endif
 }
 

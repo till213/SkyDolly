@@ -38,8 +38,25 @@ class CsvExportSettings : public ExportPluginBaseSettings
 {
     Q_OBJECT
 public:
+    /*!
+     * CSV format (flavour).
+     */
+    enum struct Format {
+        SkyDolly = 0,
+        FlightRadar24 = 1
+    };
+
     CsvExportSettings() noexcept;
     virtual ~CsvExportSettings() noexcept;
+
+    Format getFormat() const noexcept;
+    void setFormat(Format format) noexcept;
+
+signals:
+    /*!
+     * Emitted whenever the extended settings have changed.
+     */
+    void extendedSettingsChanged();
 
 protected:
     virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;

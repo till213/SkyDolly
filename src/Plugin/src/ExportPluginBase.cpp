@@ -38,13 +38,10 @@
 #include <QGuiApplication>
 #include <QDesktopServices>
 
-#include "../../Kernel/src/Enum.h"
 #include "../../Kernel/src/Settings.h"
 #include "../../Kernel/src/File.h"
 #include "../../Model/src/Flight.h"
 #include "../../Model/src/Aircraft.h"
-#include "../../Model/src/Position.h"
-#include "../../Model/src/PositionData.h"
 #include "BasicExportDialog.h"
 #include "ExportPluginBaseSettings.h"
 #include "ExportPluginBase.h"
@@ -121,30 +118,6 @@ bool ExportPluginBase::exportFlight(const Flight &flight) noexcept
     return ok;
 }
 
-// PROTECTED
-
-void ExportPluginBase::resamplePositionDataForExport(const Aircraft &aircraft, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) const noexcept
-{
-    // Position data
-    const Position &position = aircraft.getPositionConst();
-    const SampleRate::ResamplingPeriod resamplingPeriod = getPluginSettings().getResamplingPeriod();
-    if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
-        const std::int64_t duration = position.getLast().timestamp;
-        const std::int64_t deltaTime = Enum::toUnderlyingType(resamplingPeriod);
-        std::int64_t timestamp = 0;
-        while (timestamp <= duration) {
-            const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Export);
-            if (!positionData.isNull()) {
-                backInsertIterator = positionData;
-            }
-            timestamp += deltaTime;
-        }
-    } else {
-        // Original data requested
-        std::copy(position.begin(), position.end(), backInsertIterator);
-    }
-}
-
 // PRIVATE
 
 bool ExportPluginBase::exportFlight(const Flight &flight, const QString &filePath) noexcept
@@ -219,7 +192,7 @@ bool ExportPluginBase::exportAllAircraft(const Flight &flight, const QString &fi
             std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(getParentWidget());
             messageBox->setIcon(QMessageBox::Question);
             QPushButton *replaceButton = messageBox->addButton(tr("&Replace"), QMessageBox::AcceptRole);
-            QPushButton *replaceAllButton = messageBox->addButton(tr("Replace &all"), QMessageBox::YesRole);
+            QPushButton *replaceAllButton = messageBox->addButton(tr("Replace &All"), QMessageBox::YesRole);
             messageBox->setText(tr("A file named \"%1\" already exists. Do you want to replace it?").arg(fileInfo.fileName()));
             messageBox->setInformativeText(tr("The file already exists in \"%1\".  Replacing it will overwrite its contents.").arg(fileInfo.dir().dirName()));
             messageBox->setStandardButtons(QMessageBox::Cancel);
