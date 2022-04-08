@@ -203,7 +203,7 @@ void BasicImportDialog::updateUi() noexcept
             }
         }
         ui->addToFlightCheckBox->setText(tr("Add all aircraft to same new flight"));
-        ui->addToFlightCheckBox->setToolTip(tr("When checked then all aircraft are added to the same, newly created flight. Otherwise a new flight is created for each imported file."));
+        ui->addToFlightCheckBox->setToolTip(tr("When checked then all aircraft are added to the same newly created flight. Otherwise a new flight is created for each imported file."));
     } else {
         ui->importDirectoryCheckBox->setChecked(false);
         ui->addToFlightCheckBox->setText(tr("Add aircraft to current flight"));
