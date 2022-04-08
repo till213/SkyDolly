@@ -12,14 +12,17 @@
 
 ### Improvements
 
+- ALl import plugins
+  * An entire directory can now be imported at once:
+    - All imported files are imported as distinct flights or
+    - All imported aircraft are added to the same newly created flight ("formation flight")
 - All export plugins
   * File existence is checked before overwriting existing files
-  * An export option for formation flights allows to
-    - only export the current user aircraft
-    - all aircraft into a single file (if supported by the file format, e.g. KML, GPX and GeoJSON)
-    - all aircraft into separate files
-- CSV export plugin
-  * Resampling is now supported (original sample rate, 1 Hz, 2 Hz, 5 Hz, ...)
+  * An export option for formation flights:
+    - Only export the current user aircraft
+    - All aircraft are exported into a single file (if supported by the file format, e.g. KML, GPX and GeoJSON)
+    - All aircraft are exported into separate files
+  * Resampling ("original sample rate", "1 Hz", "2 Hz", "5 Hz", ...) is now supported for by all export plugins 
 - KML export plugin
   * The LineStrings are now exported as connected multi-geometry lines (no point limit anymore)
   * Reduced the number of fractional digits to 6, reducing file size while still providing a practical precision in the range of centimeters (also refer to the mandatory [XKCD](https://xkcd.com/2170/))

@@ -200,7 +200,7 @@ bool ExportPluginBase::exportFlight(const Flight &flight, const QString &filePat
             }
         }
     } else {
-        QMessageBox::critical(getParentWidget(), tr("Export error"), tr("An error occured during export into file %1.").arg(filePath));
+        QMessageBox::warning(getParentWidget(), tr("Export error"), tr("An error occured during export into file %1.").arg(filePath));
     }
 
     return ok;

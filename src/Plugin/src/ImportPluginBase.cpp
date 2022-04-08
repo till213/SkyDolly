@@ -29,7 +29,9 @@
 #include <QIODevice>
 #include <QFile>
 #include <QFileInfo>
+#include <QDir>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QDateTime>
 #include <QElapsedTimer>
 #include <QCursor>
@@ -106,7 +108,7 @@ bool ImportPluginBase::importFlight(FlightService &flightService, Flight &flight
         QStringList selectedFilePaths;
         // Remember import (export) path
         const QString selectedPath = importDialog->getSelectedPath();
-        if (getPluginSettings().isImportDirectoryEnabled()) {
+        if (baseSettings.isImportDirectoryEnabled()) {
             Settings::getInstance().setExportPath(selectedPath);
             selectedFilePaths = File::getFilePaths(selectedPath, getFileSuffix());
         } else {
@@ -134,13 +136,13 @@ bool ImportPluginBase::importFlight(FlightService &flightService, Flight &flight
                         skyConnect->get().updateAIObjects();
                     }
                 }
-            } else {
-                QMessageBox::critical(getParentWidget(), tr("Import error"), tr("The file %1 could not be imported.").arg(selectedPath));
+            } else if (!baseSettings.isImportDirectoryEnabled()) {
+                QMessageBox::warning(getParentWidget(), tr("Import error"), tr("The file %1 could not be imported.").arg(selectedPath));
             }
         } else {
-            QMessageBox::critical(getParentWidget(), tr("Import error"),
-                                  tr("The selected aircraft '%1' is not a known aircraft in the logbook. "
-                                     "Check for spelling errors or record a flight with this aircraft first.").arg(d->aircraftType.type));
+            QMessageBox::warning(getParentWidget(), tr("Import error"),
+                                 tr("The selected aircraft '%1' is not a known aircraft in the logbook. "
+                                    "Check for spelling errors or record a flight with this aircraft first.").arg(d->aircraftType.type));
         }
     } else {
         ok = true;
@@ -181,7 +183,9 @@ bool ImportPluginBase::importFlights(const QStringList &filePaths, FlightService
     const ImportPluginBaseSettings &pluginSettings = getPluginSettings();
     const bool importDirectory = pluginSettings.isImportDirectoryEnabled();
     const bool addToCurrentFlight = pluginSettings.isAddToFlightEnabled();
+
     bool ok {true};
+    bool ignoreFailures {false};
     int i = 0;
     for (const QString &filePath : filePaths) {
         d->file.setFileName(filePath);
@@ -219,8 +223,34 @@ bool ImportPluginBase::importFlights(const QStringList &filePaths, FlightService
             }
             d->file.close();
         }
+
         ++i;
+
+        if (!ok && importDirectory && !ignoreFailures) {
+            QGuiApplication::restoreOverrideCursor();
+            QFileInfo fileInfo {filePath};
+            std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(getParentWidget());
+            messageBox->setIcon(QMessageBox::Warning);
+            QPushButton *proceedButton = messageBox->addButton(tr("&Proceed"), QMessageBox::AcceptRole);
+            QPushButton *ignoreAllButton = messageBox->addButton(tr("&Ignore all failures"), QMessageBox::YesRole);
+            messageBox->setText(tr("The file %1 could not be imported. Do you want to proceed with the remaining files in directory %2?").arg(fileInfo.fileName(), fileInfo.dir().dirName()));
+            messageBox->setInformativeText(tr("Aborting will keep the already successfully imported flights and aircraft."));
+            messageBox->setStandardButtons(QMessageBox::Cancel);
+            messageBox->setDefaultButton(proceedButton);
+
+            messageBox->exec();
+            const QAbstractButton *clickedButton = messageBox->clickedButton();
+            if (clickedButton == ignoreAllButton) {
+                ignoreFailures = true;
+            } else if (clickedButton != proceedButton) {
+                break;
+            }
+            QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+            QGuiApplication::processEvents();
+        }
+
     } // All files
+
     return ok;
 }
 
@@ -300,4 +330,3 @@ void ImportPluginBase::updateFlightCondition() noexcept
 
     d->flight->setFlightCondition(flightCondition);
 }
-
