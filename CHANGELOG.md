@@ -12,7 +12,7 @@
 
 ### Improvements
 
-- ALl import plugins
+- All import plugins
   * An entire directory can now be imported at once:
     - All imported files are imported as distinct flights or
     - All imported aircraft are added to the same newly created flight ("formation flight")
