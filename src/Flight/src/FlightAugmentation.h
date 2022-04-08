@@ -87,34 +87,4 @@ private:
     void augmentLandingProcedure(Aircraft &aircraft) noexcept;
 };
 
-//inline FlightAugmentation::Procedures operator|(FlightAugmentation::Procedures a, FlightAugmentation::Procedures b) noexcept
-//{
-//    typedef std::underlying_type<FlightAugmentation::Procedures>::type EnumType;
-//    return static_cast<FlightAugmentation::Procedures>(static_cast<EnumType>(a) | static_cast<EnumType>(b));
-//}
-
-//inline FlightAugmentation::Procedures operator&(FlightAugmentation::Procedures a, FlightAugmentation::Procedures b) noexcept
-//{
-//    typedef std::underlying_type<FlightAugmentation::Procedures>::type EnumType;
-//    return static_cast<FlightAugmentation::Procedures>(static_cast<EnumType>(a) & static_cast<EnumType>(b));
-//}
-
-//inline FlightAugmentation::Aspects operator|(FlightAugmentation::Aspects a, FlightAugmentation::Aspects b) noexcept
-//{
-//    typedef std::underlying_type<FlightAugmentation::Aspects>::type EnumType;
-//    return static_cast<FlightAugmentation::Aspects>(static_cast<EnumType>(a) | static_cast<EnumType>(b));
-//}
-
-//inline FlightAugmentation::Aspects operator&(FlightAugmentation::Aspects a, FlightAugmentation::Aspects b) noexcept
-//{
-//    typedef std::underlying_type<FlightAugmentation::Aspects>::type EnumType;
-//    return static_cast<FlightAugmentation::Aspects>(static_cast<EnumType>(a) & static_cast<EnumType>(b));
-//}
-
-//inline bool operator==(FlightAugmentation::Aspects a, FlightAugmentation::Aspects b) noexcept
-//{
-//    typedef std::underlying_type<FlightAugmentation::Aspects>::type EnumType;
-//    return static_cast<EnumType>(a) == static_cast<EnumType>(b);
-//}
-
 #endif // FLIGHTAUGMENTATION_H
