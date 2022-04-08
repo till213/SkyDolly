@@ -35,7 +35,6 @@
 #include "../../Kernel/src/Settings.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/AircraftType.h"
-#include "../../Model/src/Logbook.h"
 #include "../../Model/src/Flight.h"
 #include "../../Persistence/src/Service/AircraftTypeService.h"
 #include "../../Kernel/src/Settings.h"
@@ -46,14 +45,16 @@
 class BasicImportDialogPrivate
 {
 public:
-    BasicImportDialogPrivate(const QString &theFileFilter, ImportPluginBaseSettings &pluginSettings) noexcept
-        : aircraftTypeService(std::make_unique<AircraftTypeService>()),
+    BasicImportDialogPrivate(const Flight &theFlight, const QString &theFileFilter, ImportPluginBaseSettings &pluginSettings) noexcept
+        : flight(theFlight),
+          aircraftTypeService(std::make_unique<AircraftTypeService>()),
           fileFilter(theFileFilter),
           pluginSettings(pluginSettings),
           importButton(nullptr),
           optionWidget(nullptr)
     {}
 
+    const Flight &flight;
     std::unique_ptr<AircraftTypeService> aircraftTypeService;
     QString fileFilter;
     ImportPluginBaseSettings &pluginSettings;
@@ -63,10 +64,10 @@ public:
 
 // PUBLIC
 
-BasicImportDialog::BasicImportDialog(const QString &fileSuffix, ImportPluginBaseSettings &pluginSettings, QWidget *parent)
+BasicImportDialog::BasicImportDialog(const Flight &flight, const QString &fileSuffix, ImportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
     : QDialog(parent),
       ui(std::make_unique<Ui::BasicImportDialog>()),
-      d(std::make_unique<BasicImportDialogPrivate>(fileSuffix, pluginSettings))
+      d(std::make_unique<BasicImportDialogPrivate>(flight, fileSuffix, pluginSettings))
 {
     ui->setupUi(this);    
     initUi();
@@ -77,7 +78,7 @@ BasicImportDialog::BasicImportDialog(const QString &fileSuffix, ImportPluginBase
 #endif
 }
 
-BasicImportDialog::~BasicImportDialog()
+BasicImportDialog::~BasicImportDialog() noexcept
 {
 #ifdef DEBUG
     qDebug("BasicImportDialog::~BasicImportDialog: DELETED");
@@ -124,8 +125,9 @@ void BasicImportDialog::initUi() noexcept
 void BasicImportDialog::initBasicUi() noexcept
 {
     Settings &settings = Settings::getInstance();
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    QString type = flight.getUserAircraftConst().getAircraftInfoConst().aircraftType.type;
+    ui->pathLineEdit->setText(QDir::toNativeSeparators(settings.getExportPath()));
+
+    QString type = d->flight.getUserAircraftConst().getAircraftInfoConst().aircraftType.type;
     if (type.isEmpty()) {
         type = settings.getImportAircraftType();
     }

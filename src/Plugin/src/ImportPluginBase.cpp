@@ -98,7 +98,7 @@ bool ImportPluginBase::importFlight(FlightService &flightService, Flight &flight
     d->flight = &flight;
     ImportPluginBaseSettings &baseSettings = getPluginSettings();
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
-    std::unique_ptr<BasicImportDialog> importDialog = std::make_unique<BasicImportDialog>(getFileFilter(), baseSettings, getParentWidget());
+    std::unique_ptr<BasicImportDialog> importDialog = std::make_unique<BasicImportDialog>(flight, getFileFilter(), baseSettings, getParentWidget());
     // Transfer ownership to importDialog
     importDialog->setOptionWidget(optionWidget.release());
     const int choice = importDialog->exec();
@@ -178,13 +178,19 @@ void ImportPluginBase::restoreSettings(Settings::ValuesByKey valuesByKey) noexce
 
 bool ImportPluginBase::importFlights(const QStringList &filePaths, FlightService &flightService, Flight &flight) noexcept
 {
-    const bool addToCurrentFlight = getPluginSettings().isAddToFlightEnabled();
+    const ImportPluginBaseSettings &pluginSettings = getPluginSettings();
+    const bool importDirectory = pluginSettings.isImportDirectoryEnabled();
+    const bool addToCurrentFlight = pluginSettings.isAddToFlightEnabled();
     bool ok {true};
+    int i = 0;
     for (const QString &filePath : filePaths) {
         d->file.setFileName(filePath);
         ok = d->file.open(QIODevice::ReadOnly);
         if (ok) {
-            if (!addToCurrentFlight) {
+            // Clear the current flight IF
+            // - We don't want to add the imported aircraft to the current flight OR
+            // - We import an entire directory, and this is the first file to be imported
+            if (!addToCurrentFlight || (importDirectory && i == 0)) {
                 flight.clear(true);
             }
             // The flight has at least one aircraft, but possibly without recording
@@ -213,6 +219,7 @@ bool ImportPluginBase::importFlights(const QStringList &filePaths, FlightService
             }
             d->file.close();
         }
+        ++i;
     } // All files
     return ok;
 }

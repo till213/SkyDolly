@@ -34,8 +34,9 @@ class QWidget;
 
 #include "PluginLib.h"
 
-class ImportPluginBaseSettings;
+class Flight;
 struct AircraftType;
+class ImportPluginBaseSettings;
 class BasicImportDialogPrivate;
 
 namespace Ui {
@@ -46,8 +47,8 @@ class PLUGIN_API BasicImportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit BasicImportDialog(const QString &fileExtension, ImportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr);
-    virtual ~BasicImportDialog();
+    explicit BasicImportDialog(const Flight &flight, const QString &fileExtension, ImportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
+    virtual ~BasicImportDialog() noexcept;
 
     bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
     QString getSelectedPath() const noexcept;
