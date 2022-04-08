@@ -169,7 +169,7 @@ void BasicExportDialog::updateDataGroupBox() noexcept
                                  nullptr, samplePoints)
                                  .arg(d->unit.formatNumber(Enum::toUnderlyingType(resamplingPeriod), 0)));
     } else {
-        infoText.append(" " % tr("The original recorded data will be exported, in total %Ln exported positions.", nullptr, samplePoints));
+        infoText.append(" " % tr("The original recorded data will be exported, resulting in total %Ln exported positions.", nullptr, samplePoints));
     }
     ui->infoLabel->setText(infoText);
 }
