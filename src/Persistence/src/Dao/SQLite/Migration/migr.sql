@@ -607,6 +607,43 @@ create index aircraft_idx2 on aircraft (type collate nocase);
 @migr(id = "50d25b69-7410-4777-9b17-1e16c4ea4867", descn = "Rename column creation_date to creation_time", step_cnt = 1)
 alter table flight rename creation_date to creation_time;
 
+@migr(id = "3813896d-82a4-4ae1-ad10-c349ea0df073", descn = "Add additional aircraft types from sim update 7", step = 1)
+insert into aircraft_type values
+ ('Boeing F/A 18E Super Hornet Asobo','Airplane',44,2,2),
+ ('Boeing F/A 18E Super Hornet Xbox Aviators Club Livery','Airplane',44,2,2),
+ ('Boeing F/A 18E Super Hornet Aviators Club Livery','Airplane',44,2,2),
+ ('Asobo NXCub','Airplane',34,1,1),
+ ('Asobo NXCub Xbox Aviators Club Livery','Airplane',34,1,1),
+ ('Asobo NXCub Aviators Club Livery','Airplane',34,1,1),
+ ('Pitts Special S1 Reno Asobo','Airplane',16,1,1),
+ ('Pitts Special S1 Reno Asobo Livery 01','Airplane',16,1,1),
+ ('Pitts Special S1 Reno Asobo Livery 02','Airplane',16,1,1),
+ ('Pitts Special S1 Reno Asobo Livery 03','Airplane',16,1,1),
+ ('Pitts Special S1 Reno Asobo Livery 04','Airplane',16,1,1),
+ ('Pitts Special S1 Reno Asobo Livery 05','Airplane',16,1,1),
+ ('Pitts Special S1 Reno Asobo Livery 06','Airplane',16,1,1),
+ ('Pitts Special S1 Reno Asobo Livery 07','Airplane',16,1,1),
+ ('Pitts Special S1 Reno Livery Xbox Aviators Club Asobo','Airplane',16,1,1),
+ ('Pitts Special S1 Reno Livery Aviators Club Asobo','Airplane',16,1,1),
+ ('Pilatus PC-6 G950 Floats','Airplane',52,6,1),
+ ('Pilatus PC-6 G950 Wheels','Airplane',52,6,1),
+ ('Pilatus PC-6 G950 Wheels Livery 01','Airplane',52,6,1),
+ ('Pilatus PC-6 G950 Wheels Livery Aviators Club','Airplane',52,6,1),
+ ('Pilatus PC-6 G950 Wheels Livery Xbox Aviators Club','Airplane',52,6,1),
+ ('Pilatus PC-6 Gauge Skis','Airplane',52,6,1),
+ ('Pilatus PC-6 Gauge Wheels','Airplane',52,6,1),
+ ('Pilatus PC-6 Gauge Wheels Livery 01','Airplane',52,6,1),
+ ('Pilatus PC-6 Gauge Wheels Livery 02','Airplane',52,6,1),
+ ('Volocity Microsoft','Airplane',20,1,1),
+ ('Volocity Microsoft Livery Aviators Club','Airplane',20,1,1),
+ ('Volocity Microsoft Livery Xbox Aviators Club','Airplane',20,1,1)
+ on conflict(type)
+ do update
+ set category = excluded.category,
+     wing_span = excluded.wing_span,
+     engine_type = excluded.engine_type,
+     nof_engines = excluded.nof_engines;
+
 @migr(id = "90f34b67-5fb8-4c52-ab61-d704297bd7e2", descn = "Update application version to 0.10", step = 1)
 update metadata
 set app_version = '0.10.0';

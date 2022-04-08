@@ -32,6 +32,8 @@
   * Add shortcuts to dialog buttons
   * The recording time is now shown in the Flight dialog
   * Use title-case for all [push buttons](https://developer.apple.com/design/human-interface-guidelines/macos/buttons/push-buttons/)
+  * Add additional aircraft types from sim update 7 for the import aircraft selection
+    - Note: third-party aircraft types are automatically made available in the aircraft selection once recorded at least once
   
 ### Bug Fixes
 
