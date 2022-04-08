@@ -84,9 +84,9 @@ BasicImportDialog::~BasicImportDialog()
 #endif
 }
 
-QString BasicImportDialog::getSelectedFilePath() const noexcept
+QString BasicImportDialog::getSelectedPath() const noexcept
 {
-    return ui->filePathLineEdit->text();
+    return ui->pathLineEdit->text();
 }
 
 bool BasicImportDialog::getSelectedAircraftType(AircraftType &aircraftType) const noexcept
@@ -153,7 +153,7 @@ void BasicImportDialog::initOptionUi() noexcept
 
 void BasicImportDialog::frenchConnection() noexcept
 {
-    connect(ui->filePathLineEdit, &QLineEdit::textChanged,
+    connect(ui->pathLineEdit, &QLineEdit::textChanged,
             this, &BasicImportDialog::updateUi);
     connect(ui->fileSelectionPushButton, &QPushButton::clicked,
             this, &BasicImportDialog::onFileSelectionChanged);
@@ -176,7 +176,7 @@ void BasicImportDialog::frenchConnection() noexcept
 
 void BasicImportDialog::updateUi() noexcept
 {
-    const QString filePath = ui->filePathLineEdit->text();
+    const QString filePath = ui->pathLineEdit->text();
     QFileInfo fileInfo {filePath};
 
     bool fileExists;
@@ -193,11 +193,11 @@ void BasicImportDialog::updateUi() noexcept
 
     if (d->pluginSettings.isImportDirectoryEnabled()) {
         ui->importDirectoryCheckBox->setChecked(true);
-        const QString currentPath = ui->filePathLineEdit->text();
+        const QString currentPath = ui->pathLineEdit->text();
         if (!currentPath.isEmpty()) {
             QFileInfo fileInfo {currentPath};
             if (fileInfo.isFile()) {
-                ui->filePathLineEdit->setText(QDir::toNativeSeparators(fileInfo.absolutePath()));
+                ui->pathLineEdit->setText(QDir::toNativeSeparators(fileInfo.absolutePath()));
             }
         }
     } else {
@@ -210,7 +210,7 @@ void BasicImportDialog::onFileSelectionChanged() noexcept
 {
     // Start with the last export path
     QString exportPath;
-    const QString currentFilePath = ui->filePathLineEdit->text();
+    const QString currentFilePath = ui->pathLineEdit->text();
     if (currentFilePath.isEmpty()) {
         exportPath = Settings::getInstance().getExportPath();
     } else {
@@ -232,7 +232,7 @@ void BasicImportDialog::onFileSelectionChanged() noexcept
         filePath = QFileDialog::getOpenFileName(this, tr("Import file..."), exportPath, d->fileFilter);
     }
     if (!filePath.isEmpty()) {
-        ui->filePathLineEdit->setText(QDir::toNativeSeparators(filePath));
+        ui->pathLineEdit->setText(QDir::toNativeSeparators(filePath));
     }
 }
 

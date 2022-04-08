@@ -50,7 +50,7 @@ public:
     virtual ~BasicImportDialog();
 
     bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
-    QString getSelectedFilePath() const noexcept;
+    QString getSelectedPath() const noexcept;
 
     QString getFileFilter() const noexcept;
     void setFileFilter(const QString &extension) noexcept;

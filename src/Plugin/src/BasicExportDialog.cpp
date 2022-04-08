@@ -52,9 +52,9 @@
 class BasicExportDialogPrivate
 {
 public:
-    BasicExportDialogPrivate(const Flight &theFlight, const QString &theFileExtension, const QString &theFileFilter, ExportPluginBaseSettings &thePluginSettings) noexcept
+    BasicExportDialogPrivate(const Flight &theFlight, const QString &theFileSuffix, const QString &theFileFilter, ExportPluginBaseSettings &thePluginSettings) noexcept
         : flight(theFlight),
-          fileExtension(theFileExtension),
+          fileSuffix(theFileSuffix),
           fileFilter(theFileFilter),
           pluginSettings(thePluginSettings),
           exportButton(nullptr),
@@ -62,7 +62,7 @@ public:
     {}
 
     const Flight &flight;
-    QString fileExtension;
+    QString fileSuffix;
     QString fileFilter;
     ExportPluginBaseSettings &pluginSettings;
     QPushButton *exportButton;
@@ -72,10 +72,10 @@ public:
 
 // PUBLIC
 
-BasicExportDialog::BasicExportDialog(const Flight &flight, const QString &fileExtension, const QString &fileFilter, ExportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
+BasicExportDialog::BasicExportDialog(const Flight &flight, const QString &fileSuffix, const QString &fileFilter, ExportPluginBaseSettings &pluginSettings, QWidget *parent) noexcept
     : QDialog(parent),
       ui(std::make_unique<Ui::BasicExportDialog>()),
-      d(std::make_unique<BasicExportDialogPrivate>(flight, fileExtension, fileFilter, pluginSettings))
+      d(std::make_unique<BasicExportDialogPrivate>(flight, fileSuffix, fileFilter, pluginSettings))
 {
     ui->setupUi(this);
     initUi();
@@ -122,7 +122,7 @@ void BasicExportDialog::initUi() noexcept
 
 void BasicExportDialog::initBasicUi() noexcept
 {
-    ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestFilePath(d->flight, d->fileExtension)));
+    ui->filePathLineEdit->setText(QDir::toNativeSeparators(Export::suggestFilePath(d->flight, d->suffix)));
 
     // Formation export
     ui->formationExportComboBox->addItem(tr("User aircraft only"), Enum::toUnderlyingType(ExportPluginBaseSettings::FormationExport::UserAircraftOnly));
