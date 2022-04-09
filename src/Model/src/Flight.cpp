@@ -149,14 +149,14 @@ void Flight::setAircraft(std::vector<std::unique_ptr<Aircraft>> aircraft) noexce
     d->aircraft = std::move(aircraft);
     for (auto &aircraft : d->aircraft) {
         emit aircraftAdded(*aircraft.get());
-        connectSignals(*aircraft.get());
+        connectWithAircraftSignals(*aircraft.get());
     }
 }
 
 Aircraft &Flight::addUserAircraft() noexcept
 {
     std::unique_ptr<Aircraft> aircraft = std::make_unique<Aircraft>();
-    connectSignals(*aircraft.get());
+    connectWithAircraftSignals(*aircraft.get());
 
     d->aircraft.push_back(std::move(aircraft));
     setUserAircraftIndex(d->aircraft.size() - 1);
@@ -248,7 +248,9 @@ QDateTime Flight::getAircraftStartZuluTime(const Aircraft &aircraft) const noexc
 
 void Flight::clear(bool withOneAircraft) noexcept
 {
+    d->creationTime = QDateTime::currentDateTime();
     d->clear(withOneAircraft);
+    emit flightChanged();
 }
 
 Flight::Iterator Flight::begin() noexcept
@@ -285,7 +287,7 @@ const Aircraft& Flight::operator[](std::size_t index) const noexcept
 
 // PRIVATE
 
-inline void Flight::connectSignals(Aircraft &aircraft)
+inline void Flight::connectWithAircraftSignals(Aircraft &aircraft)
 {
     connect(&aircraft, &Aircraft::infoChanged,
             this, &Flight::aircraftInfoChanged);

@@ -70,8 +70,10 @@ private:
     inline bool exportARecord(QIODevice &io) const noexcept;
     inline bool exportHRecord(const Aircraft &aircraft, QIODevice &io) const noexcept;
     inline bool exportIRecord(QIODevice &io) const noexcept;
+    inline bool exportJRecord(QIODevice &io) const noexcept;
     inline bool exportCRecord(const Aircraft &aircraft, QIODevice &io) const noexcept;
-    inline bool exportBRecord(const Aircraft &aircraft, QIODevice &io) const noexcept;
+    // Exports B and - less frequently, in intervals of n seconds - also K records
+    inline bool exportFixes(const Aircraft &aircraft, QIODevice &io) const noexcept;
     inline bool exportGRecord(QIODevice &io) const noexcept;
 
     inline QByteArray formatDate(const QDateTime &date) const noexcept;

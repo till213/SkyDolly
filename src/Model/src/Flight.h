@@ -107,7 +107,7 @@ private:
     Q_DISABLE_COPY(Flight)
     std::unique_ptr<FlightPrivate> d;
 
-    inline void connectSignals(Aircraft &aircraft);
+    inline void connectWithAircraftSignals(Aircraft &aircraft);
 };
 
 #endif // FLIGHT_H

@@ -38,12 +38,16 @@ class AbstractKmlParserPrivate;
 class AbstractKmlParser : public KmlParserIntf
 {
 public:
-    AbstractKmlParser(QXmlStreamReader &xmlStreamReader) noexcept;
+    AbstractKmlParser() noexcept;
     virtual ~AbstractKmlParser() noexcept;
 
     virtual QString getDocumentName() const noexcept override;
 
 protected:
+    void initialise(Flight *flight, QXmlStreamReader *xml) noexcept;
+    Flight *getFlight() const noexcept;
+    QXmlStreamReader *getXmlStreamReader() const noexcept;
+
     virtual void parseKML() noexcept;
     virtual void parseDocument() noexcept;
     virtual void parseFolder() noexcept;

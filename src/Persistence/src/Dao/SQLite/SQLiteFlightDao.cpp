@@ -71,6 +71,7 @@ bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
     QSqlQuery query;
     query.prepare(
         "insert into flight ("
+        "  creation_time,"
         "  title,"
         "  description,"
         "  user_aircraft_seq_nr,"
@@ -91,6 +92,7 @@ bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
         "  end_local_sim_time,"
         "  end_zulu_sim_time"
         ") values ("
+        " :creation_time,"
         " :title,"
         " :description,"
         " :user_aircraft_seq_nr,"
@@ -114,6 +116,7 @@ bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
     );
 
     const FlightCondition &flightCondition = flight.getFlightConditionConst();
+    query.bindValue(":creation_time", flight.getCreationTime().toUTC());
     query.bindValue(":title", flight.getTitle());
     query.bindValue(":description", flight.getDescription());
     // Sequence number starts at 1

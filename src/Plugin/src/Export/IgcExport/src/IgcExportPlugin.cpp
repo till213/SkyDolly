@@ -84,6 +84,10 @@ namespace
     // I record
     constexpr char EnvironmentalNoiseLevel[] = "ENL";
 
+    // J record
+    constexpr char TrueHeading[] = "HDT";
+    constexpr char IndicatedAirspeed[] = "IAS";
+
     // C record
     constexpr char ObsoleteFlightDate[] = "000000";
     constexpr char ObsoleteTaskNumber[] = "000000";
@@ -95,6 +99,9 @@ namespace
 
     // B record
     constexpr char FixValid[] = "A";
+
+    // Interval of 20 seconds for K records
+    constexpr int KRecordIntervalSec = 20;
 }
 
 class IgcExportPluginPrivate
@@ -108,11 +115,14 @@ public:
     IgcExportSettings pluginSettings;
     Unit unit;
 
+    // Listed in typical order of the records
     static inline const QByteArray ARecord {"A"};
     static inline const QByteArray HRecord {"H"};
     static inline const QByteArray IRecord {"I"};
+    static inline const QByteArray JRecord {"J"};
     static inline const QByteArray CRecord {"C"};
     static inline const QByteArray BRecord {"B"};
+    static inline const QByteArray KRecord {"K"};
     static inline const QByteArray GRecord {"G"};
 
     static inline const QString FileSuffix {QStringLiteral("igc")};
@@ -178,10 +188,13 @@ bool IgcExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircr
         ok = exportIRecord(io);
     }
     if (ok) {
+        ok = exportJRecord(io);
+    }
+    if (ok) {
         ok = exportCRecord(aircraft, io);
     }
     if (ok) {
-        ok = exportBRecord(aircraft, io);
+        ok = exportFixes(aircraft, io);
     }
     if (ok) {
         ok = exportGRecord(io);
@@ -222,8 +235,15 @@ inline bool IgcExportPlugin::exportHRecord(const Aircraft &aircraft, QIODevice &
 
 inline bool IgcExportPlugin::exportIRecord(QIODevice &io) const noexcept
 {
-    // Write 1 extension: environmental noise levels in bytes 36-38 (of each B record)
+    // Write one extension: environmental noise levels in bytes 36-38 (of each B record)
     const QByteArray record = IgcExportPluginPrivate::IRecord % "01" % "3638" % ::EnvironmentalNoiseLevel % ::LineEnd;
+    return io.write(record);
+}
+
+inline bool IgcExportPlugin::exportJRecord(QIODevice &io) const noexcept
+{
+    // Write two K value: true heading in bytes 08-10 and indicates airspeed in bytes 11-13 (of each K record)
+    const QByteArray record = IgcExportPluginPrivate::JRecord % "0810" % ::TrueHeading % "1113" % ::IndicatedAirspeed % ::LineEnd;
     return io.write(record);
 }
 
@@ -264,9 +284,10 @@ inline bool IgcExportPlugin::exportCRecord(const Aircraft &aircraft, QIODevice &
     return ok;
 }
 
-inline bool IgcExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &io) const noexcept
+inline bool IgcExportPlugin::exportFixes(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     QDateTime startTime = d->flight->getAircraftStartZuluTime(aircraft);
+    QDateTime lastKFixTime;
 
     const Engine &engine = aircraft.getEngineConst();
     std::vector<PositionData> interpolatedPositionData;
@@ -280,17 +301,31 @@ inline bool IgcExportPlugin::exportBRecord(const Aircraft &aircraft, QIODevice &
             const QByteArray indicatedAltitudeByteArray = formatNumber(indicatedAltitude, 5);
             const EngineData &engineData = engine.interpolate(positionData.timestamp, TimeVariableData::Access::Linear);
             const int noise = estimateEnvironmentalNoise(engineData);
-            const QByteArray record = IgcExportPluginPrivate::BRecord %
-                                      formatTime(startTime.addMSecs(positionData.timestamp)) %
-                                      formatPosition(positionData.latitude, positionData.longitude) %
-                                      ::FixValid %
-                                      // Pressure altitude
-                                      indicatedAltitudeByteArray %
-                                      // GNSS altitude
-                                      altitudeByteArray %
-                                      formatNumber(noise, 3) %
-                                      ::LineEnd;
-            ok = io.write(record);
+            const QDateTime currentTime = startTime.addMSecs(positionData.timestamp);
+            const QByteArray bRecord = IgcExportPluginPrivate::BRecord %
+                                       formatTime(currentTime) %
+                                       formatPosition(positionData.latitude, positionData.longitude) %
+                                       ::FixValid %
+                                       // Pressure altitude
+                                       indicatedAltitudeByteArray %
+                                       // GNSS altitude
+                                       altitudeByteArray %
+                                       formatNumber(noise, 3) %
+                                       ::LineEnd;
+            ok = io.write(bRecord);
+
+            if (ok && (lastKFixTime.isNull() || lastKFixTime.secsTo(currentTime) >= ::KRecordIntervalSec)) {
+                const double trueAirspeed = Convert::feetPerSecondToKilometersPerHour(positionData.velocityBodyZ);
+                const double indicatedAirspeed = Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude);
+                const QByteArray kRecord = IgcExportPluginPrivate::KRecord %
+                                           formatTime(currentTime) %
+                                           formatNumber(qRound(positionData.heading), 3) %
+                                           // IAS: km/h
+                                           formatNumber(qRound(indicatedAirspeed), 3) %
+                                           ::LineEnd;
+                ok = io.write(kRecord);
+                lastKFixTime = currentTime;
+            }
         }
         if (!ok) {
             break;
