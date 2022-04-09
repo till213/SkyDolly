@@ -1,22 +1,13 @@
-# SHA-256 Checksums
+# Sky Dolly SHA-256 Checksums
 
-Checksums (hash values, digests) allow to verify the integrity of a given file, such as a ZIP archive. If both the newly computed and published (e.g. in this SHASUM256.md file), well-known and trusted checksums match then we can conclude for instance that:
+Checksums (hash values, digests) allow to verify the integrity of a given file, such as a ZIP archive. If both the newly computed and published, well-known and trusted checksums match then we can conclude that:
 
 - The download succeeded
 - No one changed the content of the file(s)
 
-If on the other hand the checksums differ in only a single digit then we can conclude that:
-
-- A download error occured
-- The downloaded file is not the same as the one we are expecting from the original source (https://github.com/till213/SkyDolly/releases)
-
-There are differnt checksum algorithms. One of the most widely used set of hash functions is the [SHA-2](https://en.wikipedia.org/wiki/SHA-2), of which SHA-256 is part of. The number of bits of the generated checksum (digest) is 256, hence its name.
-
-Note that a succesful comparison of a computed checksum against a published checksum merely states that the files are identical, and that the copy has not been tampered with by someone else. The files themselves are not "encrypted" by the checksum, nor does the checksum itself say anything about the de facto origin (website) of the downloaded copy (it may have been downloaded from another URL than from https://github.com/till213/SkyDolly/releases).
-
 ## How To Compute The SHA-256 Checksum on Windows
 
-There are various methods for computing SHA checksums on Windows 10. One fairly straight-forward method which involves the Windows PowerShell is described in the following steps.
+There are various methods for computing SHA checksums on Windows 10 (and other platforms). One fairly straight-forward method which involves the Windows PowerShell is as follows:
 
 - Open the Windows PowerShell
 - Navigate to the download folder
@@ -28,7 +19,10 @@ Example:
 PS C:\path\to\download\folder> Get-FileHash .\SkyDolly-v0.10.0.zip
 ```
 
-Once the checksum has been calculated compare it with the corresponding checksum published below. If you have a mismatch (e.g. due to a download error) then your copy is not identical to the one originating from here: https://github.com/till213/SkyDolly/releases (note that copies dowloaded from https://flightsim.to/file/9067/sky-dolly are expected to be identical, too). In such a case retry with the download and remove (don't use) the non-matching copy from your computer.
+Once the checksum has been calculated compare it with the corresponding checksum published below. If you have the slightest mismatch:
+
+- Don't panic! It could be because of a simple download error - try again
+- If the mismatch persists: don't use your copy! It is not identical to the one originally released on either [GitHub.com](https://github.com/till213/SkyDolly/releases) or [flightsim.to](https://flightsim.to/file/9067/sky-dolly).
 
 ## Checksums
 
