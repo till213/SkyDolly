@@ -25,6 +25,8 @@
   * Resampling ("original sample rate", "1 Hz", "2 Hz", "5 Hz", ...) is now supported by all export plugins
 - CSV export plugin
   * The plugin now also exports [flightradar24.com](https://www.flightradar24.com/) CSV format
+- IGC export plugin
+  * The true heading (HDT) and indicated airspeed (IAS, in km/h) are now exported (in K records)
 - KML export plugin
   * The LineStrings are now exported as connected multi-geometry lines (no point limit anymore)
   * Reduced the number of fractional digits to 6, reducing file size while still providing a practical precision in the range of centimeters (also refer to the mandatory [XKCD](https://xkcd.com/2170/))
@@ -38,6 +40,7 @@
   
 ### Bug Fixes
 
+- The flight creation date & time is now properly set when a recording (of the first aircraft) _starts_ (not when the flight is persisted only)
 - The logbook now properly shows _simulation_ start- and end times (not local times)
 - The IGC export plugin now properly exports _simulation_ timestamps (not local timestamps)
   
