@@ -68,6 +68,8 @@ Go to [Releases](https://github.com/till213/SkyDolly/releases) and download the 
 
 Latest (pre-)release: **Sky Dolly 0.10.0**
 
+Compute and compare your checksum against the [published SHA-256 checksums](SHASUM256.md), to verify the integrity of your downloaded copy.
+
 ## Build
 
 Refer to the [BUILD](BUILD.md) documentation.
