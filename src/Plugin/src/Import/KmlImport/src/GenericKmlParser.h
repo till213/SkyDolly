@@ -34,15 +34,16 @@ class QXmlStreamReader;
 
 #include "AbstractKmlTrackParser.h"
 
+class Flight;
 class GenericKmlParserPrivate;
 
 class GenericKmlParser : public AbstractKmlTrackParser
 {
 public:
-    GenericKmlParser(Flight &flight, QXmlStreamReader &xmlStreamReader) noexcept;
+    GenericKmlParser() noexcept;
     virtual ~GenericKmlParser() noexcept;
 
-    virtual void parse() noexcept override;
+    virtual void parse(QXmlStreamReader &xmlStreamReader, Flight &flight) noexcept override;
     virtual QString getFlightNumber() const noexcept override;
 
 private:

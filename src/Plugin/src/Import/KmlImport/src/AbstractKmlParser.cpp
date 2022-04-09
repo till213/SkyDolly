@@ -33,6 +33,7 @@
 #include <QRegularExpression>
 
 #include "../../../../../Kernel/src/Convert.h"
+#include "../../../../../Model/src/Flight.h"
 #include "../../../../../Model/src/Position.h"
 #include "../../../../../Model/src/PositionData.h"
 #include "../../../../../Model/src/Waypoint.h"
@@ -42,21 +43,23 @@
 class AbstractKmlParserPrivate
 {
 public:
-    AbstractKmlParserPrivate(QXmlStreamReader &xmlStreamReader) noexcept
-        : xml(xmlStreamReader)
+    AbstractKmlParserPrivate() noexcept
+        : flight(nullptr),
+          xml(nullptr)
     {
         firstDateTimeUtc.setTimeZone(QTimeZone::utc());
     }
 
-    QString documentName;
-    QXmlStreamReader &xml;
+    Flight *flight;
+    QXmlStreamReader *xml;
+    QString documentName;    
     QDateTime firstDateTimeUtc;
 };
 
 // PUBLIC
 
-AbstractKmlParser::AbstractKmlParser(QXmlStreamReader &xmlStreamReader) noexcept
-    : d(std::make_unique<AbstractKmlParserPrivate>(xmlStreamReader))
+AbstractKmlParser::AbstractKmlParser() noexcept
+    : d(std::make_unique<AbstractKmlParserPrivate>())
 {
 #ifdef DEBUG
     qDebug("AbstractKmlParser::AbstractKmlParser: CREATED");
@@ -77,10 +80,26 @@ QString AbstractKmlParser::getDocumentName() const noexcept
 
 // PROTECTED
 
+void AbstractKmlParser::initialise(Flight *flight, QXmlStreamReader *xml) noexcept
+{
+    d->flight = flight;
+    d->xml = xml;
+}
+
+Flight *AbstractKmlParser::getFlight() const noexcept
+{
+    return d->flight;
+}
+
+QXmlStreamReader *AbstractKmlParser::getXmlStreamReader() const noexcept
+{
+    return d->xml;
+}
+
 void AbstractKmlParser::parseKML() noexcept
 {
-    while (d->xml.readNextStartElement()) {
-        const QStringRef xmlName = d->xml.name();
+    while (d->xml->readNextStartElement()) {
+        const QStringRef xmlName = d->xml->name();
         if (xmlName == Kml::Document) {
             parseDocument();
         }  else if (xmlName == Kml::Folder) {
@@ -88,15 +107,15 @@ void AbstractKmlParser::parseKML() noexcept
         } else if (xmlName == Kml::Placemark) {
             parsePlacemark();
         } else {
-            d->xml.skipCurrentElement();
+            d->xml->skipCurrentElement();
         }
     }
 }
 
 void AbstractKmlParser::parseDocument() noexcept
 {
-    while (d->xml.readNextStartElement()) {
-        const QStringRef xmlName = d->xml.name();
+    while (d->xml->readNextStartElement()) {
+        const QStringRef xmlName = d->xml->name();
 #ifdef DEBUG
         qDebug("AbstractKmlParser::parseDocument: XML start element: %s", qPrintable(xmlName.toString()));
 #endif
@@ -107,15 +126,15 @@ void AbstractKmlParser::parseDocument() noexcept
         } else if (xmlName == Kml::Folder) {
             parseFolder();
         } else {
-            d->xml.skipCurrentElement();
+            d->xml->skipCurrentElement();
         }
     }
 }
 
 void AbstractKmlParser::parseFolder() noexcept
 {
-    while (d->xml.readNextStartElement()) {
-        const QStringRef xmlName = d->xml.name();
+    while (d->xml->readNextStartElement()) {
+        const QStringRef xmlName = d->xml->name();
 #ifdef DEBUG
         qDebug("AbstractKmlParser::parseFolder: XML start element: %s", qPrintable(xmlName.toString()));
 #endif
@@ -124,27 +143,27 @@ void AbstractKmlParser::parseFolder() noexcept
         } else if (xmlName == Kml::Folder) {
             parseFolder();
         } else {
-            d->xml.skipCurrentElement();
+            d->xml->skipCurrentElement();
         }
     }
 }
 
 void AbstractKmlParser::parsePlacemark() noexcept
 {
-    while (d->xml.readNextStartElement()) {
-        const QStringRef xmlName = d->xml.name();
+    while (d->xml->readNextStartElement()) {
+        const QStringRef xmlName = d->xml->name();
 #ifdef DEBUG
         qDebug("AbstractKmlParser::parsePlacemark: XML start element: %s", qPrintable(xmlName.toString()));
 #endif
         if (xmlName == Kml::Track) {
             parseTrack();
         } else {
-            d->xml.skipCurrentElement();
+            d->xml->skipCurrentElement();
         }
     }
 }
 
 void AbstractKmlParser::parseDocumentName() noexcept
 {
-    d->documentName = d->xml.readElementText();
+    d->documentName = d->xml->readElementText();
 }

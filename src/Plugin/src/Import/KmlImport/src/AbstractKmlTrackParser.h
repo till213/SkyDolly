@@ -38,14 +38,13 @@ class AbstractKmlTrackParserPrivate;
 class AbstractKmlTrackParser : public AbstractKmlParser
 {
 public:
-    AbstractKmlTrackParser(Flight &flight, QXmlStreamReader &xmlStreamReader) noexcept;
+    AbstractKmlTrackParser() noexcept;
     virtual ~AbstractKmlTrackParser() noexcept;
 
-    Flight &getFlight() const noexcept;
     virtual QDateTime getFirstDateTimeUtc() const noexcept override;
 
 protected:
-    void parseTrack() noexcept override;
+    virtual void parseTrack() noexcept override;
 
 private:
     std::unique_ptr<AbstractKmlTrackParserPrivate> d;

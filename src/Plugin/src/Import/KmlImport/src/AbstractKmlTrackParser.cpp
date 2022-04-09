@@ -45,23 +45,19 @@
 class AbstractKmlTrackParserPrivate
 {
 public:
-    AbstractKmlTrackParserPrivate(Flight &theFlight, QXmlStreamReader &xmlStreamReader) noexcept
-        : flight(theFlight),
-          xml(xmlStreamReader)
+    AbstractKmlTrackParserPrivate() noexcept
     {
         firstDateTimeUtc.setTimeZone(QTimeZone::utc());
     }
 
-    Flight &flight;
-    QXmlStreamReader &xml;
     QDateTime firstDateTimeUtc;
 };
 
 // PUBLIC
 
-AbstractKmlTrackParser::AbstractKmlTrackParser(Flight &flight, QXmlStreamReader &xmlStreamReader) noexcept
-    : AbstractKmlParser(xmlStreamReader),
-      d(std::make_unique<AbstractKmlTrackParserPrivate>(flight, xmlStreamReader))
+AbstractKmlTrackParser::AbstractKmlTrackParser() noexcept
+    : AbstractKmlParser(),
+      d(std::make_unique<AbstractKmlTrackParserPrivate>())
 {
 #ifdef DEBUG
     qDebug("AbstractKmlTrackParser::AbstractKmlTrackParser: CREATED");
@@ -75,11 +71,6 @@ AbstractKmlTrackParser::~AbstractKmlTrackParser() noexcept
 #endif
 }
 
-Flight &AbstractKmlTrackParser::getFlight() const noexcept
-{
-    return d->flight;
-}
-
 QDateTime AbstractKmlTrackParser::getFirstDateTimeUtc() const noexcept
 {
     return d->firstDateTimeUtc;
@@ -89,7 +80,9 @@ QDateTime AbstractKmlTrackParser::getFirstDateTimeUtc() const noexcept
 
 void AbstractKmlTrackParser::parseTrack() noexcept
 {
-    Position &position = d->flight.getUserAircraft().getPosition();
+    const Flight *flight = getFlight();
+    QXmlStreamReader *xml = getXmlStreamReader();
+    Position &position = flight->getUserAircraft().getPosition();
     if (position.count() == 0) {
 
         // Timestamp (msec), latitude (degrees), longitude (degrees), altitude (feet)
@@ -104,13 +97,13 @@ void AbstractKmlTrackParser::parseTrack() noexcept
 
         bool ok = true;
         int currentTrackDataIndex = 0;
-        while (d->xml.readNextStartElement()) {
-            const QStringRef xmlName = d->xml.name();
+        while (xml->readNextStartElement()) {
+            const QStringRef xmlName = xml->name();
 #ifdef DEBUG
         qDebug("AbstractKmlTrackParser::parseTrack: XML start element: %s", qPrintable(xmlName.toString()));
 #endif
             if (xmlName == Kml::when) {
-                const QString dateTimeText = d->xml.readElementText();
+                const QString dateTimeText = xml->readElementText();
                 if (d->firstDateTimeUtc.isNull()) {
                     d->firstDateTimeUtc = QDateTime::fromString(dateTimeText, Qt::ISODate);
                     currentDateTimeUtc = d->firstDateTimeUtc;
@@ -122,24 +115,24 @@ void AbstractKmlTrackParser::parseTrack() noexcept
                     TrackItem trackItem = std::make_tuple(timestamp, 0.0, 0.0, 0.0);
                     trackData.push_back(std::move(trackItem));
                 } else {
-                    d->xml.raiseError("Invalid timestamp.");
+                    xml->raiseError("Invalid timestamp.");
                 }
             } else if (xmlName == Kml::coord) {
-                const QString coordinatesText = d->xml.readElementText();
+                const QString coordinatesText = xml->readElementText();
                 const QStringList coordinates = coordinatesText.split(" ");
                 if (coordinates.count() == 3) {
 
                     const double longitude = coordinates.at(0).toDouble(&ok);
                     if (!ok) {
-                        d->xml.raiseError("Invalid longitude number.");
+                        xml->raiseError("Invalid longitude number.");
                     }
                     const double latitude = coordinates.at(1).toDouble(&ok);
                     if (!ok) {
-                        d->xml.raiseError("Invalid latitude number.");
+                        xml->raiseError("Invalid latitude number.");
                     }
                     const double altitude = coordinates.at(2).toDouble(&ok);
                     if (!ok) {
-                        d->xml.raiseError("Invalid altitude number.");
+                        xml->raiseError("Invalid altitude number.");
                     }
                     if (ok) {
                         std::get<1>(trackData[currentTrackDataIndex]) = latitude;
@@ -149,10 +142,10 @@ void AbstractKmlTrackParser::parseTrack() noexcept
                     }
 
                 } else {
-                    d->xml.raiseError("Invalid GPS coordinate.");
+                    xml->raiseError("Invalid GPS coordinate.");
                 }
             } else {
-                d->xml.skipCurrentElement();
+                xml->skipCurrentElement();
             }
         }
 
@@ -168,7 +161,7 @@ void AbstractKmlTrackParser::parseTrack() noexcept
         // We have already encountered track data, so skip all subsequent ones
         // (assuming that the relevant position data is in the first track of
         // the KML document)
-        d->xml.skipCurrentElement();
+        xml->skipCurrentElement();
     }
 
 }

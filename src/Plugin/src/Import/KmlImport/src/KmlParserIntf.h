@@ -28,6 +28,7 @@
 #include <QDateTime>
 
 class QString;
+class QXmlStreamReader;
 
 class Flight;
 
@@ -36,7 +37,7 @@ class KmlParserIntf
 public:
     virtual ~KmlParserIntf() = default;
 
-    virtual void parse() noexcept = 0;
+    virtual void parse(QXmlStreamReader &xmlStreamReader, Flight &flight) noexcept = 0;
     virtual QString getDocumentName() const noexcept = 0;
     virtual QString getFlightNumber() const noexcept = 0;
     virtual QDateTime getFirstDateTimeUtc() const noexcept = 0;

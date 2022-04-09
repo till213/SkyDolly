@@ -183,20 +183,20 @@ void KmlImportPlugin::parseKML() noexcept
     std::unique_ptr<KmlParserIntf> parser;
     switch (d->pluginSettings.getFormat()) {
     case KmlImportSettings::Format::FlightAware:
-        parser = std::make_unique<FlightAwareKmlParser>(*d->flight, d->xml);
+        parser = std::make_unique<FlightAwareKmlParser>();
         break;
     case KmlImportSettings::Format::FlightRadar24:
-        parser = std::make_unique<FlightRadar24KmlParser>(*d->flight, d->xml);
+        parser = std::make_unique<FlightRadar24KmlParser>();
         break;
     case KmlImportSettings::Format::Generic:
-        parser = std::make_unique<GenericKmlParser>(*d->flight, d->xml);
+        parser = std::make_unique<GenericKmlParser>();
         break;
     default:
         parser = nullptr;
         break;
     }
     if (parser != nullptr) {
-        parser->parse();
+        parser->parse(d->xml, *d->flight);
         d->firstDateTimeUtc = parser->getFirstDateTimeUtc();
         d->title = parser->getDocumentName();
         if (d->title.isEmpty()) {
