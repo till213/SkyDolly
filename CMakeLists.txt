@@ -69,6 +69,7 @@ set(OTHER_SOURCES
     BUILD.md
     CODE_OF_CONDUCT.md
     THIRD_PARTY.md
+    SHASUM256.md
     doc/SkyDolly.simvars
     res/Info.plist.in
     res/SkyDolly.rc.in
