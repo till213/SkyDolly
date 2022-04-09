@@ -34,7 +34,7 @@
   * Add shortcuts to dialog buttons
   * The recording time is now shown in the Flight dialog
   * Use title-case for all [push buttons](https://developer.apple.com/design/human-interface-guidelines/macos/buttons/push-buttons/)
-  * Add additional aircraft types from sim update 7 for the import aircraft selection
+  * Add additional aircraft types (F/A 18, PC-6, Pitts Special, NX Cub, Volocity) from sim update 7 for the import aircraft selection
     - Note: third-party aircraft types are automatically made available in the aircraft selection once recorded at least once
   * The new Help menu contains a link to a "work in progress" [online manual](https://till213.github.io/SkyDolly/manual/en/)
   
