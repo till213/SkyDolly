@@ -142,7 +142,7 @@ bool FlightRadar24CsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QSt
             }
             if (ok) {
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-                positionData.heading = match.captured(::HeadginIndex).toDouble(&ok);
+                positionData.heading = match.captured(::HeadingIndex).toDouble(&ok);
 #else
                 positionData.heading = match.capturedView(::HeadingIndex).toDouble(&ok);
 #endif

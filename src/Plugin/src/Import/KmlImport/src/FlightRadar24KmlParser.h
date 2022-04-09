@@ -34,15 +34,16 @@ class QXmlStreamReader;
 
 #include "KmlParserIntf.h"
 
+class Flight;
 class FlightRadar24KmlParserPrivate;
 
 class FlightRadar24KmlParser : public KmlParserIntf
 {
 public:
-    FlightRadar24KmlParser(Flight &flight, QXmlStreamReader &xmlStreamReader) noexcept;
+    FlightRadar24KmlParser() noexcept;
     virtual ~FlightRadar24KmlParser() noexcept;
 
-    virtual void parse() noexcept override;
+    virtual void parse(QXmlStreamReader &xmlStreamReader, Flight &flight) noexcept override;
     virtual QString getDocumentName() const noexcept override;
     virtual QString getFlightNumber() const noexcept override;
     virtual QDateTime getFirstDateTimeUtc() const noexcept override;

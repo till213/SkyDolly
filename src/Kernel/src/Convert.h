@@ -134,7 +134,7 @@ public:
     }
 
     /*!
-     * Converts feet per secon to knots.
+     * Converts the \c feetPerSecond to knots.
      *
      * \param feetPerSecond
      *        the feet per second to convert
@@ -147,7 +147,7 @@ public:
     }
 
     /*!
-     * Converts knots to feet per second.
+     * Converts \c knots to feet per second.
      *
      * \param knots
      *        the knots to convert
@@ -160,7 +160,7 @@ public:
     }
 
     /*!
-     * Converts knots to meters per second.
+     * Converts the \c knots to meters per second.
      *
      * \param knots
      *        the knots to convert
@@ -173,7 +173,7 @@ public:
     }
 
     /*!
-     * Converts meters per second to knots.
+     * Converts the \c metersPerSecond to knots.
      *
      * \param metersPerSecond
      *        the meters per second to convert
@@ -186,11 +186,24 @@ public:
     }
 
     /*!
-     * Converts m/s to feet/s.
+     * Converts the \c feetPerSecond to km/h.
+     *
+     * \param feetPerSecond
+     *        the feet per second to convert
+     * \return the converted kilometers per hour
+     * \sa https://www.convertunits.com/from/knots/to/kilometre/hour/
+     */
+    static inline double feetPerSecondToKilometersPerHour(double feetPerSecond) noexcept
+    {
+        return feetPerSecond * 1.09728;
+    }
+
+    /*!
+     * Converts the \c metersPerSecond to feet/s.
      *
      * \param metersPerSecond
      *        the meters per second to convert
-     * \return the converted feet/s
+     * \return the converted feet per second
      * \sa https://www.convertunits.com/from/meter/second/to/foot/second
      */
     static inline double metersPerSecondToFeetPerSecond(double metersPerSecond) noexcept
@@ -206,10 +219,10 @@ public:
      * https://www.pilotmall.com/blogs/news/how-to-calculate-true-airspeed-and-what-it-is-guide
      *
      * \param trueAirspeed
-     *        the true airspeed [knots] to be converted to indicated airspeed [knots]
+     *        the true airspeed [knots or km/h] to be converted to indicated airspeed [knots or km/h]
      * \param altitudeAboveSealevel
      *        the altitude above sea level [feet]
-     * \return the estimated indicated airspeed [knots]
+     * \return the estimated indicated airspeed [knots or km/h]
      */
     static inline double trueToIndicatedAirspeed(double trueAirspeed, double altitudeAboveSealevel) noexcept
     {

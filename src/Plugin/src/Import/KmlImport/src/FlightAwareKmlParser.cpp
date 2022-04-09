@@ -42,19 +42,17 @@
 class FlightAwareKmlParserPrivate
 {
 public:
-    FlightAwareKmlParserPrivate(QXmlStreamReader &xmlStreamReader) noexcept
-        : xml(xmlStreamReader)
+    FlightAwareKmlParserPrivate() noexcept
     {}
 
-    QXmlStreamReader &xml;
     QString flightNumber;
 };
 
 // PUBLIC
 
-FlightAwareKmlParser::FlightAwareKmlParser(Flight &flight, QXmlStreamReader &xmlStreamReader) noexcept
-    : AbstractKmlTrackParser(flight, xmlStreamReader),
-      d(std::make_unique<FlightAwareKmlParserPrivate>(xmlStreamReader))
+FlightAwareKmlParser::FlightAwareKmlParser() noexcept
+    : AbstractKmlTrackParser(),
+      d(std::make_unique<FlightAwareKmlParserPrivate>())
 {
 #ifdef DEBUG
     qDebug("FlightAwareKmlParser::FlightAwareKmlParser: CREATED");
@@ -72,8 +70,9 @@ FlightAwareKmlParser::~FlightAwareKmlParser() noexcept
 // - <Point> Takeoff airpart
 // - <Point> Destination airport
 // - <gx:Track> timestamps (<when>) and positions (<gx:coord>)
-void FlightAwareKmlParser::parse() noexcept
+void FlightAwareKmlParser::parse(QXmlStreamReader &xmlStreamReader, Flight &flight) noexcept
 {
+    initialise(&flight, &xmlStreamReader);
     parseKML();
     updateWaypoints();
 }
@@ -87,14 +86,15 @@ QString FlightAwareKmlParser::getFlightNumber() const noexcept
 
 void FlightAwareKmlParser::parsePlacemark() noexcept
 {
+    QXmlStreamReader *xml = getXmlStreamReader();
     QString placemarkName;
-    while (d->xml.readNextStartElement()) {
-        const QStringRef xmlName = d->xml.name();
+    while (xml->readNextStartElement()) {
+        const QStringRef xmlName = xml->name();
 #ifdef DEBUG
         qDebug("FlightAwareKmlParser::parsePlacemark: XML start element: %s", qPrintable(xmlName.toString()));
 #endif
         if (xmlName == Kml::name) {
-            placemarkName = d->xml.readElementText();
+            placemarkName = xml->readElementText();
             if (placemarkName.endsWith(QStringLiteral(" Airport"))) {
                 // Extract the 4 letter ICAO code
                 placemarkName = placemarkName.left(4);
@@ -106,35 +106,37 @@ void FlightAwareKmlParser::parsePlacemark() noexcept
             d->flightNumber = placemarkName;
             parseTrack();
         } else {
-            d->xml.skipCurrentElement();
+            xml->skipCurrentElement();
         }
     }
 }
 
 void FlightAwareKmlParser::parseWaypoint(const QString &icaoOrName) noexcept
 {
+    Flight *flight = getFlight();
+    QXmlStreamReader *xml = getXmlStreamReader();
     bool ok;
-    while (d->xml.readNextStartElement()) {
-        const QStringRef xmlName = d->xml.name();
+    while (xml->readNextStartElement()) {
+        const QStringRef xmlName = xml->name();
 #ifdef DEBUG
         qDebug("FlightAwareKmlParser::parseWaypoint: XML start element: %s", qPrintable(xmlName.toString()));
 #endif
         if (xmlName == QStringLiteral("coordinates")) {
-            const QString coordinatesText = d->xml.readElementText();
+            const QString coordinatesText = xml->readElementText();
             const QStringList coordinates = coordinatesText.split(",");
             if (coordinates.count() == 3) {
                 Waypoint waypoint;
                 waypoint.longitude = coordinates.at(0).toFloat(&ok);
                 if (!ok) {
-                    d->xml.raiseError("Invalid longitude number.");
+                    xml->raiseError("Invalid longitude number.");
                 }
                 waypoint.latitude = coordinates.at(1).toFloat(&ok);
                 if (!ok) {
-                    d->xml.raiseError("Invalid latitude number.");
+                    xml->raiseError("Invalid latitude number.");
                 }
                 waypoint.altitude = coordinates.at(2).toFloat(&ok);
                 if (!ok) {
-                    d->xml.raiseError("Invalid altitude number.");
+                    xml->raiseError("Invalid altitude number.");
                 }
                 waypoint.identifier = icaoOrName;
                 // The actual timestamps of the waypoints are later updated
@@ -142,20 +144,19 @@ void FlightAwareKmlParser::parseWaypoint(const QString &icaoOrName) noexcept
                 // gx:Track data has been parsed
                 waypoint.timestamp = TimeVariableData::InvalidTime;
 
-
-                getFlight().getUserAircraft().getFlightPlan().add(std::move(waypoint));
+                flight->getUserAircraft().getFlightPlan().add(std::move(waypoint));
             } else {
-                d->xml.raiseError("Invalid GPS coordinate.");
+                xml->raiseError("Invalid GPS coordinate.");
             }
         } else {
-            d->xml.skipCurrentElement();
+            xml->skipCurrentElement();
         }
     }
 }
 
 void FlightAwareKmlParser::updateWaypoints() noexcept
 {
-    Aircraft &aircraft = getFlight().getUserAircraft();
+    Aircraft &aircraft = getFlight()->getUserAircraft();
 
     int positionCount = aircraft.getPosition().count();
     if (positionCount > 0) {
@@ -193,4 +194,3 @@ void FlightAwareKmlParser::updateWaypoints() noexcept
         }
     }
 }
-

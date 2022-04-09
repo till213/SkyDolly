@@ -34,18 +34,16 @@
 class GenericKmlParserPrivate
 {
 public:
-    GenericKmlParserPrivate(QXmlStreamReader &xmlStreamReader) noexcept
-        : xml(xmlStreamReader)
+    GenericKmlParserPrivate() noexcept
     {}
 
-    QXmlStreamReader &xml;
 };
 
 // PUBLIC
 
-GenericKmlParser::GenericKmlParser(Flight &flight, QXmlStreamReader &xmlStreamReader) noexcept
-    : AbstractKmlTrackParser(flight, xmlStreamReader),
-      d(std::make_unique<GenericKmlParserPrivate>(xmlStreamReader))
+GenericKmlParser::GenericKmlParser() noexcept
+    : AbstractKmlTrackParser(),
+      d(std::make_unique<GenericKmlParserPrivate>())
 {
 #ifdef DEBUG
     qDebug("GenericKmlParser::GenericKmlParser: CREATED");
@@ -60,8 +58,9 @@ GenericKmlParser::~GenericKmlParser() noexcept
 }
 
 // Generic KML files (are expected to) have at least one "gx:Track"
-void GenericKmlParser::parse() noexcept
+void GenericKmlParser::parse(QXmlStreamReader &xmlStreamReader, Flight &flight) noexcept
 {
+    initialise(&flight, &xmlStreamReader);
     parseKML();
 }
 
