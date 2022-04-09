@@ -7,7 +7,7 @@ Checksums (hash values, digests) allow to verify the integrity of a given file, 
 
 ## How To Compute The SHA-256 Checksum on Windows
 
-There are various methods for computing SHA checksums on Windows 10 (and other platforms). One fairly straight-forward method which involves the Windows PowerShell is as follows:
+There are various methods for computing [SHA-2](https://en.wikipedia.org/wiki/SHA-2) checksums on Windows 10 (and other platforms). One fairly straight-forward method which involves the Windows PowerShell is as follows:
 
 - Open the Windows PowerShell
 - Navigate to the download folder
