@@ -1,5 +1,7 @@
 # Introduction
 
+[Index](index.md) | [Introduction](intro.md)
+
 ## Sky Dolly
 Sky Dolly is a flight recorder application which stores the _simulation variables_ of flights recorded for instance in Microsoft Flight Simulator, henceforward simply referred to as the *flight simulator*.
 
@@ -58,3 +60,5 @@ Various file formats are supported to exchange data with other applications. Cur
 - IGC (import and export)
 - JSON (export in GeoJSON format)
 - KML (import and export, various flavours including KML files from flightaware.com and flightradar24.com)
+
+[Index](index.md) | [Introduction](intro.md)
