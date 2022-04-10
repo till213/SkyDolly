@@ -1,5 +1,5 @@
 theme: jekyll-theme-minimal
 title: Sky Dolly
 description: The Black Sheep for your Flight Recordings
-show_downloads: true
+show_downloads: false
 logo: assets/img/logo.png
