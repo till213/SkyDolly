@@ -59,6 +59,9 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
 # ordered-map (Tessil)
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/ordered-map)
 
+# GeographicLib (https://github.com/geographiclib/geographiclib)
+add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geographiclib)
+
 # Documentation
 add_subdirectory(${CMAKE_SOURCE_DIR}/doc)
 
