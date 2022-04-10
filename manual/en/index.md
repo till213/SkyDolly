@@ -8,4 +8,5 @@ This manual is work in progress.
 
 ### Content
 
-[Introduction](intro.md)
+- [Introduction](intro.md)
+- [Basic Usage](basic.md)
