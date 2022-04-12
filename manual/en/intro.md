@@ -5,7 +5,7 @@
 ## Sky Dolly
 Sky Dolly is a flight recorder application which stores the *simulation variables* of flights recorded for instance in Microsoft Flight Simulator, henceforward simply referred to as the *flight simulator*.
 
-![main window](../img/mainwindow-mod-logbook.png "Sky Dolly applicationo window")
+![main window](../img/mainwindow-mod-logbook.png "Sky Dolly application window")
 
 ## Recording & Replay
 The Sky Dolly application runs next to the *flight simulator* and communicates via the SimConnect API, a standard API to retrieve and set the internal simulation state. The state is retrieved and set via *simulation varibles*, for instance:
