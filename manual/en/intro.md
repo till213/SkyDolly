@@ -35,16 +35,15 @@ Sky Dolly automatically stores each recorded *flight* in its *logbook*. No need 
 - Start of flight (simulation time, both local and zulu times)
 
 The following chart illustrates the flow of simulation variables:
-```mermaid
-graph LR
-  FS([Flight Simulator])
-  SD([Sky Dolly])
-  LB([Logbook])
-  FS --> |Record| SD
-  SD --> |Replay| FS
-  SD --> |Store| LB
-  LB --> |Restore| SD
-```
+
+graph LR;
+  FS([Flight Simulator]);
+  SD([Sky Dolly]);
+  LB([Logbook]);
+  FS --> |Record| SD;
+  SD --> |Replay| FS;
+  SD --> |Store| LB;
+  LB --> |Restore| SD;
 
 ## Formation Flights
 Each *flight* has at least one recorded *aircraft*. However a flight may have *multiple* recorded aircraft which are then replayed all together - a *formation* flight.
