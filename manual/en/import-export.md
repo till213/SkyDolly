@@ -25,7 +25,7 @@ KML    | Sky Dolly     | Sky Dolly KML                            | -      | yes
 In order to export a flight:
 
 - In the *logbook* (key **F1**), load the desired *flight*
-- Choose the desired export format via menu entry *File | Export*
+- Choose the desired export format via menu entry *File \| Export*
 
 An export dialog will appear, with common and plugin specific export options.
 
