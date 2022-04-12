@@ -24,6 +24,14 @@ The Sky Dolly application runs next to the *flight simulator* and communicates v
 
 To name a few. Upon replay those simulation variables are then sent back to the *flight simulator* which on its turn the recreates the previously recorded flight.
 
+```mermaid
+graph LR;
+  FS([Flight Simulator]])
+  SD([Sky Dolly])
+  FS --> SD;
+  FS <-- SD;
+```
+
 ## Logbook
 Sky Dolly automatically stores each recorded flight in its logbook. No need to save and load separate files. In fact, the logbook is based on a database (an SQLite file-based database, to be specific) which allows to easily search and filter the recorded flights, by criteria such as the engine type (for instance jet, piston or turboprop), recording date, flight duration or destination (or even a combination thereof).
 
