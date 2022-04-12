@@ -56,21 +56,10 @@ To replay the *flight*:
 - To stop the replay press the *Stop* button (or press the **ESC** key)
 - You can also change the replay position by selecting the desired position on the timeline slider, both when then replay is started or stopped
 
-> Make sure that crash detection is disabled in the flight simulator. Also refer to chapter [Tips](tips.md).
+> Make sure that crash detection is disabled in the flight simulator. Also refer to chapter [Tips and Tricks](tips-and-tricks.md).
 
 ## Monitoring Recording and Replay
 There are two dialogs which provide information about what and how much is being recorded and replayed.
-
-### Statistics
-The *Statistics* dialog can be opened via the *Window | Statistics...* menu entry or by pressing the **S** key. The dialog shows basic statistis:
-
-- The selected *recording* sample rate (in Hertz)
-- The actual *recording* sample rate (in Hertz)
-- The number of sampled data points
-- The total duration of the *flight* (in hours, minutes, seconds)
-- The size of the sampled data (in MiB, KiB, Bytes)
-
-> You can also close the dialog by pressing the same key **S** again.
 
 ### Simulation Variables
 The *Simulation Variables* dialog can be opened via the *Window | Simulation Variables...* menu entry or by pressing the **V** key. The dialog shows the *simulation variables* being recorded respectively replayed. The *simulation variables* are logically grouped, which is represented by the various tabs in this dialog (*Aircraft*, E*ngine, *Primary Controls*, ...).
@@ -82,5 +71,16 @@ Some value fields are rendered as *disabled* user interface elements. This indic
 All values are read-only and hence for information purposes only.
 
 > You can also close the dialog by pressing the same key **V** again.
+
+### Statistics
+The *Statistics* dialog can be opened via the *Window | Statistics...* menu entry or by pressing the **S** key. The dialog shows basic statistis:
+
+- The selected *recording* sample rate (in Hertz)
+- The actual *recording* sample rate (in Hertz)
+- The number of sampled data points
+- The total duration of the *flight* (in hours, minutes, seconds)
+- The size of the sampled data (in MiB, KiB, Bytes)
+
+> You can also close the dialog by pressing the same key **S** again.
 
 [Index](index.md) \| [Basic Usage](basic.md)
