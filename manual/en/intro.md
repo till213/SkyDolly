@@ -3,7 +3,7 @@
 [Index](index.md) \| [Introduction](intro.md)
 
 ## Sky Dolly
-Sky Dolly is a flight recorder application which stores the _simulation variables_ of flights recorded for instance in Microsoft Flight Simulator, henceforward simply referred to as the *flight simulator*.
+Sky Dolly is a flight recorder application which stores the *simulation variables* of flights recorded for instance in Microsoft Flight Simulator, henceforward simply referred to as the *flight simulator*.
 
 ![main window](../img/mainwindow-mod-logbook.png "Sky Dolly applicationo window")
 
@@ -24,6 +24,17 @@ The Sky Dolly application runs next to the *flight simulator* and communicates v
 
 To name a few. Upon replay those simulation variables are then sent back to the *flight simulator* which on its turn the recreates the previously recorded flight.
 
+## Logbook
+Sky Dolly automatically stores each recorded *flight* in its *logbook*. No need to save and load separate files. In fact, the *logbook* is based on a database (an SQLite file-based database, to be specific) which allows to easily search and filter the recorded *flights*, by criteria such as the engine type (for instance jet, piston or turboprop), recording date, flight duration or destination (or even a combination thereof).
+
+*Logbook* entries are called a *flight*. Each *flight* stores:
+
+- Initial flight conditions such as visibility, pitot icing and temperature (for information purposes)
+- Optional title and description
+- Start of recording timestamp (real-world time)
+- Start of flight (simulation time, both local and zulu times)
+
+The following chart illustrates the flow of simulation variables:
 ```mermaid
 graph LR
   FS([Flight Simulator])
@@ -34,16 +45,6 @@ graph LR
   SD --> |Store| LB
   LB --> |Restore| SD
 ```
-
-## Logbook
-Sky Dolly automatically stores each recorded flight in its logbook. No need to save and load separate files. In fact, the logbook is based on a database (an SQLite file-based database, to be specific) which allows to easily search and filter the recorded flights, by criteria such as the engine type (for instance jet, piston or turboprop), recording date, flight duration or destination (or even a combination thereof).
-
-Logbook entries are called a *flight*. Each *flight* stores:
-
-- Initial flight conditions such as visibility, pitot icing and temperature (for information purposes)
-- Optional title and description
-- Start of recording timestamp (real-world time)
-- Start of flight (simulation time, both local and zulu times)
 
 ## Formation Flights
 Each *flight* has at least one recorded *aircraft*. However a flight may have *multiple* recorded aircraft which are then replayed all together - a *formation* flight.
