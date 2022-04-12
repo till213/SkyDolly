@@ -28,8 +28,11 @@ To name a few. Upon replay those simulation variables are then sent back to the 
 graph LR
   FS([Flight Simulator])
   SD([Sky Dolly])
+  LB([Logbook])
   FS --> |Record| SD
-  FS <-- |Replay| SD
+  SD --> |Replay| FS
+  SD --> |Store| LB
+  LB --> |Restore| SD
 ```
 
 ## Logbook
