@@ -26,7 +26,7 @@ To name a few. Upon replay those simulation variables are then sent back to the 
 
 ```mermaid
 graph LR;
-  FS([Flight Simulator]])
+  FS([Flight Simulator])
   SD([Sky Dolly])
   FS --> |Record| SD;
   FS <-- |Replay| SD;
