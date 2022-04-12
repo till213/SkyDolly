@@ -85,3 +85,14 @@ Refer to the [BUILD](BUILD.md) documentation.
 
 - https://obsproject.com/ - Screen capture / broadcast application
 - https://sqlitebrowser.org/ - Browse the Sky Dolly logbook (*.sdlog) database files, execute your own SQL queries
+
+```mermaid
+graph LR;
+  FS([Flight Simulator]);
+  SD([Sky Dolly]);
+  LB([Logbook]);
+  FS --> |Record| SD;
+  SD --> |Replay| FS;
+  SD --> |Store| LB;
+  LB --> |Restore| SD;
+```
