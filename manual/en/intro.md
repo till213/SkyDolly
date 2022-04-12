@@ -1,3 +1,11 @@
+---
+layout: post
+key: intro
+title: "Introduction"
+tags: [Mermaid]
+mermaid: true
+---
+
 # Introduction
 
 [Index](index.md) \| [Introduction](intro.md)
@@ -36,7 +44,7 @@ Sky Dolly automatically stores each recorded *flight* in its *logbook*. No need 
 
 The following chart illustrates the flow of simulation variables:
 
-```mermaid
+<div class="mermaid">
 graph LR;
   FS([Flight Simulator]);
   SD([Sky Dolly]);
@@ -45,7 +53,7 @@ graph LR;
   SD --> |Replay| FS;
   SD --> |Store| LB;
   LB --> |Restore| SD;
-```
+</div>
 
 ## Formation Flights
 Each *flight* has at least one recorded *aircraft*. However a flight may have *multiple* recorded aircraft which are then replayed all together - a *formation* flight.
