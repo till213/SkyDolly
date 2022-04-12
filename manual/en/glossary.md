@@ -5,7 +5,7 @@
 This chapter explains terms which occur in the context of Sky Dolly and this manual.
 
 Term             | Description
----------------- | -----------
+-----------------|------------
 AI Aircraft      | The → *flight simulator* typically populates the sky and runways with various aircraft, also called *AI aircraft* (AI stands for artificial intelligence). An AI aircraft may have a predefined flight plan ("fly from A to B by going over C"), is following some real-world flight or - in the context of a → *formation flight* - is created and controlled by Sky Dolly.
 Aircraft         | In Sky Dolly the *aircraft* represents the recorded data, including position data and static data such as aircraft type, tail number and category. Each aircraft is associated with a → *flight*.
 API              | API stands for application programming interface and is mostly relevant for developers (only). However this term frequently appears in forum discussions in combination with → *SimConnect*. It represents the "public interface" - the contract between the function provider and caller, broadly put - that a caller can use to access the funtionality and data.
