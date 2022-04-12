@@ -25,7 +25,7 @@ The Sky Dolly application runs next to the *flight simulator* and communicates v
 To name a few. Upon replay those simulation variables are then sent back to the *flight simulator* which on its turn the recreates the previously recorded flight.
 
 ```mermaid
-graph LR;
+graph LR
   FS([Flight Simulator])
   SD([Sky Dolly])
   FS --> |Record| SD;
