@@ -47,5 +47,5 @@ From now on you should be able to open *logbooks* by double-clicking on them.
 [Index](index.md) \| [Introduction](install.md)
 
 ## Support
-- Raise a bug, feature or qeustion issue on [github.com/till213/skydolly/issues](https://github.com/till213/SkyDolly/issues) (free github.com account required)
+- Raise a bug, feature or question issue on [github.com/till213/skydolly/issues](https://github.com/till213/SkyDolly/issues) (free github.com account required)
 - Ask a question or write a comment in the forum on [flightsim.com/skydolly](https://flightsim.to/file/9067/sky-dolly)
