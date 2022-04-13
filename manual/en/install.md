@@ -12,7 +12,7 @@ For the time being Sky Dolly is distributed in a self-containing ZIP archive, wh
 ). On [flightsim.to](https://flightsim.to/file/9067/sky-dolly))you can also get notified about updates and engage in the discussion forum.
 
 ## Checksums
-The content of both locations is identical and the integrity of the ZIP archive can be verified via the [published SHA-256 checksums](https://github.com/till213/SkyDolly/SHASUM256).
+The content of both locations is identical and the integrity of the ZIP archive can be verified via the [published SHA-256 checksums](https://github.com/till213/SkyDolly/blob/main/SHASUM256.md).
 
 ## Compile From Source
 Sky Dolly is open source ([source acode vailable here]((https://github.com/till213/SkyDolly))) and can be built as described in the [build instructions](https://github.com/till213/SkyDolly/BUILD.md).
