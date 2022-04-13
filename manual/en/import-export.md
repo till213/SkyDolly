@@ -33,6 +33,26 @@ The GPX format is an XML-based format for exchanging global positioning system (
 - The \<rte> element contains the planned route to get from one waypoint to another
 - The \<trk> element contains the actual recorded GNSS data (e.g. GPS data), the actual track that has been taken and recorded
 
+### IGC - International Gliding Commission
+The IGC format has been specified by the International Gliding Commission. It is mostly popular for flight recorders used in gliders. The format is a text-based format and consists of various "records", such as:
+
+- Header (H records): flight date, pilot name(s), used flight recorder hardware, and other flight data
+- Tasks (C records): the (planned) waypoints, including take-off and landing
+- Fixes (B records): the timestamp, location, pressure and GNSS altitude (plus optional extended data such as environmental noise level)
+
+### JSON - JavaScript Object Notation
+The JavaScript Object Notation (JSON) is a text-based format designed for data exchange between applications while still being "human-readable" (to some degree). Like XML it merely specifies the syntax of a document, without specifying the semantics.
+
+The semantic is injected by defining the proper keywords, objects and their hierarchies.
+
+A notable example is the GeoJSON format, which specifies geographic features using the JSON syntax.
+
+#### GeoJSON
+The GeoJSON format represents geographical data such as points, lines and polygons, by using the JSON format. The format is maintained by the Internet Engineering Taskforce (IETF) and specified by the RFC 7946.
+
+### KML - Keyhole Markup Language
+The Keyhole Markup Language (KML) format is used to specify and display geographic data with "earth browsers". It has become well-known with the advent of Google Earth. The format is maintained by the Open Geospatial Consortium (ogc.org). 
+
 ## Import
 
 ### GPX - GPS Exchange Format
@@ -113,5 +133,13 @@ The *Timestamps* option let's you choose the base time of the exported timestamp
 #### Options
 - The *Pilot name* specifies the name of the first pilot. The name is exported in the header (H record: "pilot in charge").
 - The "Co-pilot name* specifies the name of the second pilot. The name is exported in the header (H record: "crew 2")
+
+### JSON - JavaScript Object Notation
+
+#### Options
+
+### KML - Keyhole Markup Language
+
+#### Options
 
 [Index](index.md) \| [Import and Export](import-export.md)
