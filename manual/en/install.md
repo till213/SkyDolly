@@ -15,7 +15,7 @@ For the time being Sky Dolly is distributed in a self-containing ZIP archive, wh
 The content of both locations is identical and the integrity of the ZIP archive can be verified via the [published SHA-256 checksums](https://github.com/till213/SkyDolly/blob/main/SHASUM256.md).
 
 ## Compile From Source
-Sky Dolly is open source ([source acode vailable here]((https://github.com/till213/SkyDolly))) and can be built as described in the [build instructions](https://github.com/till213/SkyDolly/BUILD.md).
+Sky Dolly is open source ([source code available here](https://github.com/till213/SkyDolly)) and can be built as described in the [build instructions](https://github.com/till213/SkyDolly/blob/main/BUILD.md).
 
 ## Installation
 Currently there exists no "installer". So installation is a simple matter of unzipping the ZIP archive. Optional steps such as associating the Sky Dolly logbook files (*.sdlog) are described below.
