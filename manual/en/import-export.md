@@ -27,7 +27,7 @@ The CSV format (comma-seprated values) is a simple text format organising the da
 ### GPX - GPS Exchange Format
 The GPX format is an XML-based format for exchanging global positioning system (GPS) data (or generally speaking, position data recorded with any global navigation satellite system (GNSS)). Besides tracks containing the actual recored data the format also supports waypoints and routes, including some metadata.
 
-The GPX format is an XML-based format for exchanging global positioning system (GPS) data (or generally speaking, position data recorded with any global navigation satellite system (GNSS)). Besides tracks containing the actual recored data the format also supports waypoints and routes, including some metadata.
+The GPX format is an XML-based format for global positioning system (GPS) data exchange (or generally speaking, position data recorded with any global navigation satellite system (GNSS)). Besides tracks containing the actual recored data the format also supports waypoints and routes, including some metadata.
 
 - The \<wpt> elements specify individual points of interest (e.g. start and end point, including waypoints along the planned route to visit)
 - The \<rte> element contains the planned route to get from one waypoint to another
@@ -54,6 +54,23 @@ The GeoJSON format represents geographical data such as points, lines and polygo
 The Keyhole Markup Language (KML) format is used to specify and display geographic data with "earth browsers". It has become well-known with the advent of Google Earth. The format is maintained by the Open Geospatial Consortium (ogc.org). 
 
 ## Import
+In order to import a flight:
+
+- Choose the desired import format via the *File \| Import* menu entry
+
+An import dialog will appear, with common and plugin specific import options.
+
+### Common Import Options
+
+## CSV - Comma-Separated Values
+The *Format* ooption specifies the column layout of the data.
+
+- **FlightRadar24** - the data is in flightradar24.com column layout, essentially position, heading and velocity
+- **Sky Dolly** - the data is in Sky Dolly column layout, that is the entire data for the given *aircraft*
+
+Note that while the Sky Dolly format contains almost all recorded *aircraft* data (position, engine, primary flight controls, ....) it does neither contain information about the actual aircraft type nor about the initial flight conditions (simulation time, temperature, pressure, ...). But for the time being it is the format of choice to exchange *aircraft* for formation flights, recorded on different computers (e.g. in a multiplayer session).
+
+### IGC - International Gliding Commission
 
 ### GPX - GPS Exchange Format
 
@@ -73,6 +90,13 @@ The *Position* option specifies which GPX element (\<wpt>, \<rte>  or \<trk>) to
 So while the default settings interpret the GPX elements as specified ("as intended by the specification") it is possible to import GPX data containing only a (planned) route (\<rte>). So while those points are likely to be few, with a great distance between each, Sky Dolly will do its best to reconstruct the (planned) flight.
 
 > The popular Little Navmap application is able to export flight plans as GPX. The option to specify the *Positions* may be useful in such a use case.
+
+#### KML - Keyhole Markup Language
+The *Format* option specifies the KML format (flavour) respectively the source which created the KML file in the first place.
+
+- **flightaware** - the KML file as exported from flightaware.com
+- **flightradar24** - the KML file as exported from flightradar24.com
+- **Generic track** - the KML file with a &gt;gx:track&lt; element
 
 ## Export
 In order to export a flight:
