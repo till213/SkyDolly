@@ -27,9 +27,9 @@
 // PUBLIC
 
 FlightSelector::FlightSelector()
-    : hasFormation(false),
-      fromDate(MinDate),
+    : fromDate(MinDate),
       toDate(MaxDate),
+      hasFormation(false),
       engineType(SimType::EngineType::All),
       mininumDurationMinutes(0)
 {}
