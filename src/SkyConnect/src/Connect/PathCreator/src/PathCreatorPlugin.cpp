@@ -261,8 +261,8 @@ void PathCreatorPlugin::recordPositionData(std::int64_t timestamp) noexcept
     Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
 
     PositionData aircraftData;
-    aircraftData.latitude = -180.0 + d->randomGenerator->bounded(360.0);
-    aircraftData.longitude = -90.0 + d->randomGenerator->bounded(180.0);
+    aircraftData.latitude = -90.0 + d->randomGenerator->bounded(180);
+    aircraftData.longitude = -180.0 + d->randomGenerator->bounded(360.0);
     aircraftData.altitude = d->randomGenerator->bounded(20000.0);
     aircraftData.indicatedAltitude = d->randomGenerator->bounded(20000.0);
     aircraftData.pitch = -90.0 + d->randomGenerator->bounded(180.0);
@@ -387,8 +387,8 @@ void PathCreatorPlugin::recordWaypoint() noexcept
     if (d->randomGenerator->bounded(100.0) < 0.5) {
         int i = d->randomGenerator->bounded(PathCreatorPluginPrivate::IcaoList.size());
         waypoint.identifier = PathCreatorPluginPrivate::IcaoList.at(i);
-        waypoint.latitude = -180.0f + static_cast<float>(d->randomGenerator->bounded(360.0));
-        waypoint.longitude = -90.0f + static_cast<float>(d->randomGenerator->bounded(180.0));
+        waypoint.latitude = -90.0f + static_cast<float>(d->randomGenerator->bounded(180.0));
+        waypoint.longitude = -180.0f + static_cast<float>(d->randomGenerator->bounded(90.0));
         waypoint.altitude = static_cast<float>(d->randomGenerator->bounded(3000.0));
         waypoint.localTime = QDateTime::currentDateTime();
         waypoint.zuluTime = QDateTime::currentDateTimeUtc();

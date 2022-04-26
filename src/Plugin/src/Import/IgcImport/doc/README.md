@@ -223,7 +223,6 @@ GNSS altitude coordinates are in relation to the WGS84 reference ellipsoid.
 
 Quote [1]: "The height of the geoid is often reported relative to the internationally recognized WGS84 reference ellipsoid. The GPS in our phones, for example, records elevations relative to this ellipsoid."
 
-
 ## Resources
 
 - Official IGC specification (file format in appendix A): https://www.fai.org/sites/default/files/igc_fr_specification_2020-11-25_with_al6.pdf
