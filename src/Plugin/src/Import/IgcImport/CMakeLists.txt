@@ -7,7 +7,7 @@ else()
 endif()
 
 set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Widgets GeographicLib Kernel Model Flight Plugin
+    Qt${QT_VERSION_MAJOR}::Widgets GeographicLib::GeographicLib Kernel Model Flight Plugin
 )
 if (${PLATFORM_IS_MACOS})
     list(APPEND LIBRARY_DEPENDENCIES -lc++)

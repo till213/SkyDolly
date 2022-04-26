@@ -54,7 +54,7 @@ public:
         firstDateTimeUtc.setTimeZone(QTimeZone::utc());
     }
 
-    GeographicLib::Geoid egm96 {"egm2008-2_5", QCoreApplication::applicationDirPath().append("/geoids").toStdString()};
+    GeographicLib::Geoid egm96 {"egm2008-5", QCoreApplication::applicationDirPath().append("/geoids").toStdString()};
     QDateTime firstDateTimeUtc;
 };
 

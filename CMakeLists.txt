@@ -60,7 +60,14 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/ordered-map)
 
 # GeographicLib (https://github.com/geographiclib/geographiclib)
-add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geographiclib)
+add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geographiclib EXCLUDE_FROM_ALL)
+set_target_properties(GeographicLib_SHARED
+    PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
+
+# Data files
+add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geoids)
 
 # Documentation
 add_subdirectory(${CMAKE_SOURCE_DIR}/doc)
@@ -126,7 +133,10 @@ target_include_directories(SkyDolly
     PRIVATE
         "${PROJECT_SOURCE_DIR}/src/SkyConnect/src"
 )
-target_link_libraries(SkyDolly PRIVATE ${SKYDOLLY_LIBS})
+target_link_libraries(SkyDolly
+    PRIVATE
+        ${SKYDOLLY_LIBS}
+)
 message(STATUS OUTPUT_NAME=${PROJECT_NAME})
 
 # macOS: copy plugins into app bundle

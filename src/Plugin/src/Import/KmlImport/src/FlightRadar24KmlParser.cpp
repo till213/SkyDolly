@@ -76,7 +76,7 @@ public:
     QRegularExpression speedRegExp;
     QRegularExpression headingRegExp;
 
-    GeographicLib::Geoid egm96 {"egm2008-2_5", QCoreApplication::applicationDirPath().append("/geoids").toStdString()};
+    GeographicLib::Geoid egm96 {"egm2008-5", QCoreApplication::applicationDirPath().append("/geoids").toStdString()};
 
 private:
     static inline const QString SpeedPattern {QStringLiteral("<b>Speed:<\\/b><\\/span> <span>(\\d+) kt<\\/span>")};
