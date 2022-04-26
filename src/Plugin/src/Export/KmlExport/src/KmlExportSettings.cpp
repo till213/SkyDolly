@@ -29,7 +29,7 @@
 
 #include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/Settings.h"
-#include "../../Plugin/src/ExportPluginBaseSettings.h"
+#include "../../../ExportPluginBaseSettings.h"
 #include "KmlExportSettings.h"
 
 namespace

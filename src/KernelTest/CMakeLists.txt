@@ -18,6 +18,8 @@ if (${PLATFORM_IS_MACOS})
     list(APPEND KERNELTEST_LIBS -lc++)
 endif()
 
-target_link_libraries(SkyMathTest PRIVATE ${KERNELTEST_LIBS})
-
+target_link_libraries(SkyMathTest
+    PRIVATE
+        ${KERNELTEST_LIBS}
+)
 add_test(NAME SkyMathTest COMMAND SkyMathTest)

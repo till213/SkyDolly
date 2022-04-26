@@ -26,9 +26,15 @@ target_sources(${LIBRARY_NAME}
         src/AbstractSkyConnect.h
 )
 
-target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})
-set_target_properties(${LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
-set_target_properties(${LIBRARY_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
+target_link_libraries(${LIBRARY_NAME}
+    PRIVATE
+        ${LIBRARY_DEPENDENCIES}
+)
+set_target_properties(${LIBRARY_NAME}
+    PROPERTIES
+        VERSION ${PROJECT_VERSION}
+        SOVERSION ${PROJECT_VERSION_MAJOR}
+)
 
 # Plugins
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins)

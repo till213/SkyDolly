@@ -27,17 +27,26 @@ target_sources(${LIBRARY_NAME}
         src/CsvConst.h
 )
 
-set(PLUGIN_LIBS
+set(LIBRARY_DEPENDENCIES
     Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Flight Persistence SkyConnect Widget
 )
 if (${PLATFORM_IS_MACOS})
     list(APPEND PLUGIN_LIBS -lc++)
 endif()
 
-include_directories(${LIBRARY_NAME} PRIVATE ../Widget/src/)
-target_link_libraries(${LIBRARY_NAME} PRIVATE ${PLUGIN_LIBS})
-set_target_properties(${LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
-set_target_properties(${LIBRARY_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
+target_include_directories(${LIBRARY_NAME}
+    PRIVATE
+        ../Widget/src/
+)
+target_link_libraries(${LIBRARY_NAME}
+    PRIVATE
+        ${LIBRARY_DEPENDENCIES}
+)
+set_target_properties(${LIBRARY_NAME}
+    PROPERTIES
+        VERSION ${PROJECT_VERSION}
+        SOVERSION ${PROJECT_VERSION_MAJOR}
+)
 
 # Plugins
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins)

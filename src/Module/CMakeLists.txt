@@ -32,7 +32,16 @@ target_sources(${LIBRARY_NAME}
         src/Formation/FormationWidget.ui
 )
 
-include_directories(Module PRIVATE ../Widget/src/)
-target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})
-set_target_properties(${LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
-set_target_properties(${LIBRARY_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
+target_include_directories(${LIBRARY_NAME}
+    PRIVATE
+        ../Widget/src/
+)
+target_link_libraries(${LIBRARY_NAME}
+    PRIVATE
+        ${LIBRARY_DEPENDENCIES}
+)
+set_target_properties(${LIBRARY_NAME}
+    PROPERTIES
+        VERSION ${PROJECT_VERSION}
+        SOVERSION ${PROJECT_VERSION_MAJOR}
+)

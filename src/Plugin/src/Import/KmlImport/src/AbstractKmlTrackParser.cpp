@@ -25,6 +25,7 @@
 #include <memory>
 #include <tuple>
 #include <cstdint>
+#include <exception>
 
 #include <QString>
 #include <QStringLiteral>
@@ -32,6 +33,9 @@
 #include <QDateTime>
 #include <QXmlStreamReader>
 #include <QRegularExpression>
+#include <QCoreApplication>
+
+#include <GeographicLib/Geoid.hpp>
 
 #include "../../../../../Kernel/src/Convert.h"
 #include "../../../../../Model/src/Flight.h"
@@ -50,6 +54,7 @@ public:
         firstDateTimeUtc.setTimeZone(QTimeZone::utc());
     }
 
+    GeographicLib::Geoid egm96 {"egm2008-2_5", QCoreApplication::applicationDirPath().append("/geoids").toStdString()};
     QDateTime firstDateTimeUtc;
 };
 
@@ -137,6 +142,22 @@ void AbstractKmlTrackParser::parseTrack() noexcept
                     if (ok) {
                         std::get<1>(trackData[currentTrackDataIndex]) = latitude;
                         std::get<2>(trackData[currentTrackDataIndex]) = longitude;
+
+                        try {
+
+                          // Convert height above egm96 to height above the ellipsoid
+
+                          double
+                            geoid_height = d->egm96(latitude, longitude),
+                            height_above_geoid = (altitude +
+                                                      GeographicLib::Geoid::ELLIPSOIDTOGEOID * geoid_height);
+                          qDebug("height_above_geoid: %f", height_above_geoid);
+                        }
+                        catch (const std::exception& e) {
+                          qDebug("Caught exception: %s", e.what());
+
+                        }
+
                         std::get<3>(trackData[currentTrackDataIndex]) = Convert::metersToFeet(altitude);
                         ++currentTrackDataIndex;
                     }

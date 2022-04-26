@@ -21,5 +21,7 @@ target_sources(${LIBRARY_NAME}
         src/KmlStyleExport.h src/KmlStyleExport.cpp
         src/KmlExportPlugin.json
 )
-
-target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})
+target_link_libraries(${LIBRARY_NAME}
+    PRIVATE
+        ${LIBRARY_DEPENDENCIES}
+)

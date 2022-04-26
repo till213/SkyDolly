@@ -33,7 +33,10 @@ target_sources(${LIBRARY_NAME}
         src/MSFSSimConnectPlugin.json
 )
 
-target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})
+target_link_libraries(${LIBRARY_NAME}
+    PRIVATE
+        ${LIBRARY_DEPENDENCIES}
+)
 
 # SimConnect
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/3rdParty/cmake")

@@ -31,5 +31,7 @@ target_sources(${LIBRARY_NAME}
         src/GpxImportPlugin.json
         ${DOCUMENTATION}
 )
-
-target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})
+target_link_libraries(${LIBRARY_NAME}
+    PRIVATE
+        ${LIBRARY_DEPENDENCIES}
+)

@@ -25,8 +25,7 @@ target_sources(${LIBRARY_NAME}
         src/JsonExportPlugin.json
         ${DOCUMENTATION}
 )
-
-target_include_directories(${LIBRARY_NAME} PUBLIC
-    "${CMAKE_CURRENT_BINARY_DIR}"
+target_link_libraries(${LIBRARY_NAME}
+    PRIVATE
+        ${LIBRARY_DEPENDENCIES}
 )
-target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})

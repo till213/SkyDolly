@@ -7,7 +7,7 @@ else()
 endif()
 
 set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Flight Plugin
+    Qt${QT_VERSION_MAJOR}::Widgets GeographicLib Kernel Model Flight Plugin
 )
 if (${PLATFORM_IS_MACOS})
     list(APPEND LIBRARY_DEPENDENCIES -lc++)
@@ -28,5 +28,7 @@ target_sources(${LIBRARY_NAME}
         src/IgcImportPlugin.json
         ${DOCUMENTATION}
 )
-
-target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})
+target_link_libraries(${LIBRARY_NAME}
+    PRIVATE
+        ${LIBRARY_DEPENDENCIES}
+)

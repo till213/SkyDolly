@@ -161,6 +161,7 @@ public:
 
     IgcParser::Header header;
     IgcParser::Task task;
+    // Altitude in meters
     std::vector<IgcParser::Fix> fixes;
 
     bool enlAddition;
@@ -501,17 +502,17 @@ bool IgcParser::parseFix(const QByteArray &line) noexcept
             // Pressure altitude
             const QStringView pressureAltitudeText = match.capturedView(::BRecordPressureAltitudeIndex);
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-            const double pressureAltitude = Convert::metersToFeet(pressureAltitudeText.toString().toDouble());
+            const double pressureAltitude = pressureAltitudeText.toString().toDouble();
 #else
-            const double pressureAltitude = Convert::metersToFeet(pressureAltitudeText.toDouble());
+            const double pressureAltitude = pressureAltitudeText.toDouble();
 #endif
 
             // GNSS altitude
-            const QStringView&gnssAltitudeText = match.capturedView(::BRecordGNSSAltitudeIndex);
+            const QStringView gnssAltitudeText = match.capturedView(::BRecordGNSSAltitudeIndex);
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-            const double gnssAltitude = Convert::metersToFeet(gnssAltitudeText.toString().toDouble());
+            const double gnssAltitude = gnssAltitudeText.toString().toDouble();
 #else
-            const double gnssAltitude = Convert::metersToFeet(gnssAltitudeText.toDouble());
+            const double gnssAltitude = gnssAltitudeText.toDouble();
 #endif
             // Optional environmental noise level (ENL) addition
             double enlNorm;

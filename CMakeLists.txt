@@ -122,9 +122,10 @@ target_sources(SkyDolly
         ${OTHER_SOURCES}
 )
 
-target_include_directories(SkyDolly PUBLIC
-                          "${PROJECT_SOURCE_DIR}/src/SkyConnect/src"
-                          )
+target_include_directories(SkyDolly
+    PRIVATE
+        "${PROJECT_SOURCE_DIR}/src/SkyConnect/src"
+)
 target_link_libraries(SkyDolly PRIVATE ${SKYDOLLY_LIBS})
 message(STATUS OUTPUT_NAME=${PROJECT_NAME})
 
@@ -134,7 +135,7 @@ if (${PLATFORM_IS_MACOS})
     # Connect plugins
     file(GLOB BUNDLE_IMPORT_PLUGINS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Connect/*")
     message(STATUS IMPORT_PLUGIN_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Connect/")
-    target_sources(SkyDolly PUBLIC ${BUNDLE_IMPORT_PLUGINS})
+    target_sources(SkyDolly PRIVATE ${BUNDLE_IMPORT_PLUGINS})
     set_property(
         SOURCE ${BUNDLE_IMPORT_PLUGINS}
         PROPERTY MACOSX_PACKAGE_LOCATION "PlugIns/Connect"
@@ -143,7 +144,7 @@ if (${PLATFORM_IS_MACOS})
     # Import plugins
     file(GLOB BUNDLE_IMPORT_PLUGINS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Import/*")
     message(STATUS IMPORT_PLUGIN_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Import/")
-    target_sources(SkyDolly PUBLIC ${BUNDLE_IMPORT_PLUGINS})
+    target_sources(SkyDolly PRIVATE ${BUNDLE_IMPORT_PLUGINS})
     set_property(
         SOURCE ${BUNDLE_IMPORT_PLUGINS}
         PROPERTY MACOSX_PACKAGE_LOCATION "PlugIns/Import"
@@ -152,7 +153,7 @@ if (${PLATFORM_IS_MACOS})
     # Export
     file(GLOB BUNDLE_EXPORT_PLUGINS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Export/*")
     message(STATUS EXPORT_PLUGIN_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Export/")
-    target_sources(SkyDolly PUBLIC ${BUNDLE_EXPORT_PLUGINS})
+    target_sources(SkyDolly PRIVATE ${BUNDLE_EXPORT_PLUGINS})
     set_property(
         SOURCE ${BUNDLE_EXPORT_PLUGINS}
         PROPERTY MACOSX_PACKAGE_LOCATION "PlugIns/Export"

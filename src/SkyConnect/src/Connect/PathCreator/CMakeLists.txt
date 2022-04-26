@@ -19,5 +19,7 @@ target_sources(${LIBRARY_NAME}
         src/PathCreatorPlugin.h
         src/PathCreatorPlugin.json
 )
-
-target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})
+target_link_libraries(${LIBRARY_NAME}
+    PRIVATE
+        ${LIBRARY_DEPENDENCIES}
+)

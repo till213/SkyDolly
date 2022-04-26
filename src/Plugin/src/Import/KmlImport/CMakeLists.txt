@@ -7,7 +7,7 @@ else()
 endif()
 
 set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Flight Persistence Plugin Widget
+    Qt${QT_VERSION_MAJOR}::Widgets GeographicLib Kernel Model Flight Persistence Plugin Widget
 )
 if (${PLATFORM_IS_MACOS})
     list(APPEND LIBRARY_DEPENDENCIES -lc++)
@@ -36,5 +36,7 @@ target_sources(${LIBRARY_NAME}
         src/KmlImportPlugin.json
         ${DOCUMENTATION}
 )
-
-target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})
+target_link_libraries(${LIBRARY_NAME}
+    PRIVATE
+        ${LIBRARY_DEPENDENCIES}
+)

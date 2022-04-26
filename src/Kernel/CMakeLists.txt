@@ -61,9 +61,16 @@ elseif (${PLATFORM_IS_LINUX})
 endif()
 
 # For generated VersionConfig.h
-target_include_directories(Kernel PUBLIC
-    "${CMAKE_CURRENT_BINARY_DIR}"
+target_include_directories(${LIBRARY_NAME}
+    PRIVATE
+        "${CMAKE_CURRENT_BINARY_DIR}"
 )
-target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})
-set_target_properties(${LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
-set_target_properties(${LIBRARY_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
+target_link_libraries(${LIBRARY_NAME}
+    PRIVATE
+        ${LIBRARY_DEPENDENCIES}
+)
+set_target_properties(${LIBRARY_NAME}
+    PROPERTIES
+        VERSION ${PROJECT_VERSION}
+        SOVERSION ${PROJECT_VERSION_MAJOR}
+)
