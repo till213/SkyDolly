@@ -120,28 +120,6 @@ void GpxImportOptionWidget::initUi() noexcept
 
 // PRIVATE SLOTS
 
-void GpxImportOptionWidget::onWaypointSelelectionChanged() noexcept
-{
-    const GpxImportSettings::GPXElement waypointSelection = static_cast<GpxImportSettings::GPXElement>(ui->waypointSelectionComboBox->currentData().toInt());
-    d->settings.setWaypointSelection(waypointSelection);
-}
-
-void GpxImportOptionWidget::onPositionSelelectionChanged() noexcept
-{
-    const GpxImportSettings::GPXElement positionSelection = static_cast<GpxImportSettings::GPXElement>(ui->positionSelectionComboBox->currentData().toInt());
-    d->settings.setPositionSelection(positionSelection);
-}
-
-void GpxImportOptionWidget::onDefaultAltitudeChanged(int value) noexcept
-{
-    d->settings.setDefaultAltitude(value);
-}
-
-void GpxImportOptionWidget::onDefaultVelocityChanged(int value) noexcept
-{
-    d->settings.setDefaultVelocity(value);
-}
-
 void GpxImportOptionWidget::updateUi() noexcept
 {
     const GpxImportSettings::GPXElement waypointSelection = d->settings.getWaypointSelection();
@@ -162,4 +140,26 @@ void GpxImportOptionWidget::updateUi() noexcept
 
     ui->defaultAltitudeSpinBox->setValue(d->settings.getDefaultAltitude());
     ui->defaultVelocitySpinBox->setValue(d->settings.getDefaultVelocity());
+}
+
+void GpxImportOptionWidget::onWaypointSelelectionChanged() noexcept
+{
+    const GpxImportSettings::GPXElement waypointSelection = static_cast<GpxImportSettings::GPXElement>(ui->waypointSelectionComboBox->currentData().toInt());
+    d->settings.setWaypointSelection(waypointSelection);
+}
+
+void GpxImportOptionWidget::onPositionSelelectionChanged() noexcept
+{
+    const GpxImportSettings::GPXElement positionSelection = static_cast<GpxImportSettings::GPXElement>(ui->positionSelectionComboBox->currentData().toInt());
+    d->settings.setPositionSelection(positionSelection);
+}
+
+void GpxImportOptionWidget::onDefaultAltitudeChanged(int value) noexcept
+{
+    d->settings.setDefaultAltitude(value);
+}
+
+void GpxImportOptionWidget::onDefaultVelocityChanged(int value) noexcept
+{
+    d->settings.setDefaultVelocity(value);
 }

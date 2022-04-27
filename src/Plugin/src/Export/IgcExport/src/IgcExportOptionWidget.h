@@ -54,6 +54,7 @@ private slots:
     void updateUi() noexcept;
     void onPilotNameChanged(const QString &name) noexcept;
     void onCoPilotNameChanged(const QString &name) noexcept;
+    void onConvertAltitudeChanged(int state) noexcept;
 };
 
 #endif // IGCEXPORTOPTIONWIDGET_H

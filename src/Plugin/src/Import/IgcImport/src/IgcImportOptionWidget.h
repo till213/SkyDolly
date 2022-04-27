@@ -51,11 +51,10 @@ private:
     void initUi() noexcept;
 
 private slots:
+    void updateUi() noexcept;
     void onAltitudeChanged() noexcept;
     void onENLThresholdChanged(int value) noexcept;
     void onConvertAltitudeChanged(int state) noexcept;
-
-    void updateUi() noexcept;
 };
 
 #endif // IGCIMPORTOPTIONWIDGET_H

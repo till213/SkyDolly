@@ -37,6 +37,10 @@ namespace
     // Keys
     constexpr char PilotNameKey[] = "PilotName";
     constexpr char CoPilotNameKey[] = "CoPilotName";
+    constexpr char ConvertAltitudeKey[] = "ConvertAltitude";
+
+    // Defaults
+    constexpr bool DefaultConvertAltitude {true};
 }
 
 class IgcExportSettingsPrivate
@@ -44,11 +48,13 @@ class IgcExportSettingsPrivate
 public:
     IgcExportSettingsPrivate()
         : pilotName(DefaultPilotName),
-          coPilotName(DefaultCoPilotName)
+          coPilotName(DefaultCoPilotName),
+          convertAltitude(::DefaultConvertAltitude)
     {}
 
     QString pilotName;
     QString coPilotName;
+    bool convertAltitude;
 
     static inline const QString DefaultPilotName {System::getUsername()};
     static inline const QString DefaultCoPilotName {QString()};
@@ -98,6 +104,19 @@ void IgcExportSettings::setCoPilotName(const QString &coPilotName) noexcept
     }
 }
 
+bool IgcExportSettings::isConvertAltitudeEnabled() const noexcept
+{
+    return d->convertAltitude;
+}
+
+void IgcExportSettings::setConvertAltitudeEnabled(bool enable) noexcept
+{
+    if (d->convertAltitude != enable) {
+        d->convertAltitude = enable;
+        emit extendedSettingsChanged();
+    }
+}
+
 // PROTECTED
 
 void IgcExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
@@ -110,6 +129,10 @@ void IgcExportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const no
 
     keyValue.first = ::CoPilotNameKey;
     keyValue.second = d->coPilotName;
+    keyValues.push_back(keyValue);
+
+    keyValue.first = ::ConvertAltitudeKey;
+    keyValue.second = d->convertAltitude;
     keyValues.push_back(keyValue);
 }
 
@@ -124,12 +147,17 @@ void IgcExportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
     keyValue.first = ::CoPilotNameKey;
     keyValue.second = IgcExportSettingsPrivate::DefaultCoPilotName;
     keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = ::ConvertAltitudeKey;
+    keyValue.second = ::DefaultConvertAltitude;
+    keysWithDefaults.push_back(keyValue);
 }
 
 void IgcExportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept
 {
     d->pilotName = valuesByKey.at(::PilotNameKey).value<QString>();
     d->coPilotName = valuesByKey.at(::CoPilotNameKey).value<QString>();
+    d->convertAltitude = valuesByKey.at(::ConvertAltitudeKey).toBool();
 
     emit extendedSettingsChanged();
 }
@@ -138,6 +166,7 @@ void IgcExportSettings::restoreDefaultsExtn() noexcept
 {
     d->pilotName = IgcExportSettingsPrivate::DefaultPilotName;
     d->coPilotName = IgcExportSettingsPrivate::DefaultCoPilotName;
+    d->convertAltitude = ::DefaultConvertAltitude;
 
     emit extendedSettingsChanged();
 }

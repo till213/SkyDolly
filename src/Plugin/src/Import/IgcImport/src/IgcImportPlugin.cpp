@@ -26,6 +26,7 @@
 #include <vector>
 #include <unordered_set>
 #include <cstdint>
+#include <exception>
 
 #include <QStringBuilder>
 #include <QIODevice>
@@ -147,8 +148,8 @@ bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
         std::unique_ptr<GeographicLib::Geoid> egm {nullptr};
         if (d->pluginSettings.isConvertAltitudeEnabled()) {
             try {
-                 egm = std::make_unique<GeographicLib::Geoid>("egm2008-5", QCoreApplication::applicationDirPath().append("/geoids").toStdString());
-                 convertAltitude = true;
+                egm = std::make_unique<GeographicLib::Geoid>("egm2008-5", QCoreApplication::applicationDirPath().append("/geoids").toStdString());
+                convertAltitude = true;
             } catch (const std::exception& e) {
                 convertAltitude = false;
 #ifdef DEBUG
@@ -165,13 +166,13 @@ bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
             double altitudeAboveGeoid;
             if (convertAltitude) {
                 try {
-                    // Convert height above egm96 to height above the ellipsoid
+                    // Convert height above EGM geoid to height above the ellipsoid
                     altitudeAboveGeoid = egm->ConvertHeight(fix.latitude, fix.longitude, altitude, GeographicLib::Geoid::ELLIPSOIDTOGEOID);
                 }
                 catch (const std::exception& e) {
                     altitudeAboveGeoid = altitude;
 #ifdef DEBUG
-                qDebug("IgcImportPlugin::importFlight: caught exception: %s", e.what());
+                    qDebug("IgcImportPlugin::importFlight: caught exception: %s", e.what());
 #endif
                 }
             } else {

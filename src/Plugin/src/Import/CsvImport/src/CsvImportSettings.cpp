@@ -106,6 +106,8 @@ void CsvImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
     } else {
         d->format = ::DefaultFormat;
     }
+
+    emit extendedSettingsChanged();
 }
 
 void CsvImportSettings::restoreDefaultsExtn() noexcept

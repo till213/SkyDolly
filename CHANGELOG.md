@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.11.0
+
+### Improvements
+
+- IGC import/export
+  * An option to convert between WGS84 reference ellipsoid and earth gravity model (EGM) geoid altitude has been added
+  * Note: the IGC specification explicitly requires the GNSS altitude to be referring to the WGS84 reference ellipsoid, but not every IGC file necessarily conforms to the specification
+
 ## 0.10.0
 
 ### New Features

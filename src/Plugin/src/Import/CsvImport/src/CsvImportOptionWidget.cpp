@@ -87,12 +87,6 @@ void CsvImportOptionWidget::initUi() noexcept
 
 // PRIVATE SLOTS
 
-void CsvImportOptionWidget::onFormatChanged([[maybe_unused]]int index) noexcept
-{
-    const CsvImportSettings::Format format = static_cast<CsvImportSettings::Format>(ui->formatComboBox->currentData().toInt());
-    d->settings.setFormat(format);
-}
-
 void CsvImportOptionWidget::updateUi() noexcept
 {
     const CsvImportSettings::Format format = d->settings.getFormat();
@@ -102,4 +96,10 @@ void CsvImportOptionWidget::updateUi() noexcept
         ++currentIndex;
     }
     ui->formatComboBox->setCurrentIndex(currentIndex);
+}
+
+void CsvImportOptionWidget::onFormatChanged([[maybe_unused]]int index) noexcept
+{
+    const CsvImportSettings::Format format = static_cast<CsvImportSettings::Format>(ui->formatComboBox->currentData().toInt());
+    d->settings.setFormat(format);
 }

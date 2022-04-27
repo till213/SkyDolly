@@ -51,12 +51,11 @@ private:
     void initUi() noexcept;
 
 private slots:
+     void updateUi() noexcept;
     void onWaypointSelelectionChanged() noexcept;
     void onPositionSelelectionChanged() noexcept;
     void onDefaultAltitudeChanged(int index) noexcept;
     void onDefaultVelocityChanged(int value) noexcept;
-
-    void updateUi() noexcept;
 };
 
 #endif // GPXIMPORTOPTIONWIDGET_H

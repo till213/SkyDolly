@@ -98,22 +98,6 @@ void IgcImportOptionWidget::initUi() noexcept
 
 // PRIVATE SLOTS
 
-void IgcImportOptionWidget::onAltitudeChanged() noexcept
-{
-    const IgcImportSettings::AltitudeMode altitudeMode = static_cast<IgcImportSettings::AltitudeMode>(ui->altitudeComboBox->currentData().toInt());
-    d->settings.setAltitudeMode(altitudeMode);
-}
-
-void IgcImportOptionWidget::onENLThresholdChanged(int value) noexcept
-{
-    d->settings.setEnlThresholdPercent(value);
-}
-
-void IgcImportOptionWidget::onConvertAltitudeChanged(int state) noexcept
-{
-    d->settings.setConvertAltitudeEnabled(state == Qt::Checked);
-}
-
 void IgcImportOptionWidget::updateUi() noexcept
 {
     const IgcImportSettings::AltitudeMode altitudeMode = d->settings.getAltitudeMode();
@@ -133,4 +117,20 @@ void IgcImportOptionWidget::updateUi() noexcept
         ui->convertAltitudeCheckbox->setEnabled(false);
         ui->convertAltitudeCheckbox->setChecked(false);
     }
+}
+
+void IgcImportOptionWidget::onAltitudeChanged() noexcept
+{
+    const IgcImportSettings::AltitudeMode altitudeMode = static_cast<IgcImportSettings::AltitudeMode>(ui->altitudeComboBox->currentData().toInt());
+    d->settings.setAltitudeMode(altitudeMode);
+}
+
+void IgcImportOptionWidget::onENLThresholdChanged(int value) noexcept
+{
+    d->settings.setEnlThresholdPercent(value);
+}
+
+void IgcImportOptionWidget::onConvertAltitudeChanged(int state) noexcept
+{
+    d->settings.setConvertAltitudeEnabled(state == Qt::Checked);
 }

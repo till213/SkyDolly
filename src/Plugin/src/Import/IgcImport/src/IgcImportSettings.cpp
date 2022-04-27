@@ -33,7 +33,7 @@ namespace
     // Keys
     constexpr char AltitudeKey[] = "Altitude";
     constexpr char EnlThresholdKey[] = "EnlThreshold";
-    constexpr char ConvertAltitdueKey[] = "ConvertAltitude";
+    constexpr char ConvertAltitudeKey[] = "ConvertAltitude";
 
     // Defaults
     constexpr IgcImportSettings::AltitudeMode DefaultAltitudeMode {IgcImportSettings::AltitudeMode::Gnss};
@@ -125,7 +125,7 @@ void IgcImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const no
     keyValue.second = d->enlThresholdPercent;
     keyValues.push_back(keyValue);
 
-    keyValue.first = ::ConvertAltitdueKey;
+    keyValue.first = ::ConvertAltitudeKey;
     keyValue.second = d->convertAltitude;
     keyValues.push_back(keyValue);
 }
@@ -142,7 +142,7 @@ void IgcImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
     keyValue.second = ::DefaultEnlThresholdPercent;
     keysWithDefaults.push_back(keyValue);
 
-    keyValue.first = ::ConvertAltitdueKey;
+    keyValue.first = ::ConvertAltitudeKey;
     keyValue.second = ::DefaultConvertAltitude;
     keysWithDefaults.push_back(keyValue);
 }
@@ -164,7 +164,9 @@ void IgcImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
         d->enlThresholdPercent = ::DefaultEnlThresholdPercent;
     }
 
-    d->convertAltitude = valuesByKey.at(::ConvertAltitdueKey).toBool();
+    d->convertAltitude = valuesByKey.at(::ConvertAltitudeKey).toBool();
+
+    emit extendedSettingsChanged();
 }
 
 void IgcImportSettings::restoreDefaultsExtn() noexcept

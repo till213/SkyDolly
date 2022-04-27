@@ -204,6 +204,8 @@ void GpxImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
     } else {
         d->defaultVelocity = DefaultVelocity;
     }
+
+    emit extendedSettingsChanged();
 }
 
 void GpxImportSettings::restoreDefaultsExtn() noexcept

@@ -25,6 +25,7 @@
 #include <cstdint>
 #include <vector>
 #include <iterator>
+#include <exception>
 
 #include <QtGlobal>
 #include <QIODevice>
@@ -34,6 +35,8 @@
 #include <QByteArray>
 #include <QSysInfo>
 #include <QDesktopServices>
+
+#include <GeographicLib/Geoid.hpp>
 
 #include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/File.h"
@@ -289,16 +292,49 @@ inline bool IgcExportPlugin::exportFixes(const Aircraft &aircraft, QIODevice &io
     QDateTime startTime = d->flight->getAircraftStartZuluTime(aircraft);
     QDateTime lastKFixTime;
 
+    bool convertAltitude;
+    std::unique_ptr<GeographicLib::Geoid> egm {nullptr};
+    if (d->pluginSettings.isConvertAltitudeEnabled()) {
+        try {
+            egm = std::make_unique<GeographicLib::Geoid>("egm2008-5", QCoreApplication::applicationDirPath().append("/geoids").toStdString());
+            convertAltitude = true;
+        } catch (const std::exception& e) {
+            convertAltitude = false;
+#ifdef DEBUG
+            qDebug("IgcExportPlugin::exportFixes: caught exception: %s", e.what());
+#endif
+        }
+    } else {
+        convertAltitude = false;
+    }
+
     const Engine &engine = aircraft.getEngineConst();
     std::vector<PositionData> interpolatedPositionData;
     Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod(), std::back_inserter(interpolatedPositionData));
     bool ok = true;
     for (PositionData &positionData : interpolatedPositionData) {
         if (!positionData.isNull()) {
-            const int altitude = qRound(Convert::feetToMeters(positionData.altitude));
-            const QByteArray altitudeByteArray = formatNumber(altitude, 5);
-            const int indicatedAltitude = qRound(Convert::feetToMeters(positionData.indicatedAltitude));
-            const QByteArray indicatedAltitudeByteArray = formatNumber(indicatedAltitude, 5);
+
+            double altitudeAboveGeoid;
+            if (convertAltitude) {
+                try {
+                    // Convert height above EGM geoid to height above the ellipsoid
+                    altitudeAboveGeoid = egm->ConvertHeight(positionData.latitude, positionData.longitude, positionData.altitude, GeographicLib::Geoid::GEOIDTOELLIPSOID);
+                }
+                catch (const std::exception& e) {
+                    altitudeAboveGeoid = positionData.altitude;
+#ifdef DEBUG
+                    qDebug("IgcExportPlugin::exportFixes: caught exception: %s", e.what());
+#endif
+                }
+            } else {
+                altitudeAboveGeoid = positionData.altitude;
+            }
+
+            const int gnssAltitude = qRound(Convert::feetToMeters(altitudeAboveGeoid));
+            const QByteArray gnssAltitudeByteArray = formatNumber(gnssAltitude, 5);
+            const int pressureAltitude = qRound(Convert::feetToMeters(positionData.indicatedAltitude));
+            const QByteArray pressureAltitudeByteArray = formatNumber(pressureAltitude, 5);
             const EngineData &engineData = engine.interpolate(positionData.timestamp, TimeVariableData::Access::Linear);
             const int noise = estimateEnvironmentalNoise(engineData);
             const QDateTime currentTime = startTime.addMSecs(positionData.timestamp);
@@ -307,9 +343,9 @@ inline bool IgcExportPlugin::exportFixes(const Aircraft &aircraft, QIODevice &io
                                        formatPosition(positionData.latitude, positionData.longitude) %
                                        ::FixValid %
                                        // Pressure altitude
-                                       indicatedAltitudeByteArray %
+                                       pressureAltitudeByteArray %
                                        // GNSS altitude
-                                       altitudeByteArray %
+                                       gnssAltitudeByteArray %
                                        formatNumber(noise, 3) %
                                        ::LineEnd;
             ok = io.write(bRecord);
