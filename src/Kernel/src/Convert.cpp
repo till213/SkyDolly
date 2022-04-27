@@ -22,11 +22,28 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QString>
+#include <memory>
+#include <exception>
 
-#include "FlightSimulator.h"
+#include <QCoreApplication>
+
+#include <GeographicLib/Geoid.hpp>
+
+#include "Convert.h"
 
 // PUBLIC
 
-FlightSimulator::FlightSimulator() noexcept
+Convert::Convert() noexcept
+{
+    try {
+        m_egm = std::make_unique<GeographicLib::Geoid>("egm2008-5", QCoreApplication::applicationDirPath().append("/geoids").toStdString());
+    } catch (const std::exception& e) {
+        m_egm = nullptr;
+#ifdef DEBUG
+        qDebug("IgcExportPlugin::exportFixes: caught exception: %s", e.what());
+#endif
+    }
+}
+
+Convert::~Convert() noexcept
 {}

@@ -93,7 +93,8 @@ void GpxImportOptionWidget::frenchConnection() noexcept
     connect(ui->defaultVelocitySpinBox, &QSpinBox::valueChanged,
             this, &GpxImportOptionWidget::onDefaultVelocityChanged);
 #endif
-
+    connect(ui->convertAltitudeCheckBox, &QCheckBox::stateChanged,
+            this, &GpxImportOptionWidget::onConvertAltitudeChanged);
     connect(&d->settings, &GpxImportSettings::extendedSettingsChanged,
             this, &GpxImportOptionWidget::updateUi);
 }
@@ -140,6 +141,8 @@ void GpxImportOptionWidget::updateUi() noexcept
 
     ui->defaultAltitudeSpinBox->setValue(d->settings.getDefaultAltitude());
     ui->defaultVelocitySpinBox->setValue(d->settings.getDefaultVelocity());
+
+    ui->convertAltitudeCheckBox->setChecked(d->settings.isConvertAltitudeEnabled());
 }
 
 void GpxImportOptionWidget::onWaypointSelelectionChanged() noexcept
@@ -162,4 +165,9 @@ void GpxImportOptionWidget::onDefaultAltitudeChanged(int value) noexcept
 void GpxImportOptionWidget::onDefaultVelocityChanged(int value) noexcept
 {
     d->settings.setDefaultVelocity(value);
+}
+
+void GpxImportOptionWidget::onConvertAltitudeChanged(int state) noexcept
+{
+    d->settings.setConvertAltitudeEnabled(state == Qt::Checked);
 }

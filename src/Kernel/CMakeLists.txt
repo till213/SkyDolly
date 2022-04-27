@@ -32,7 +32,7 @@ target_sources(${LIBRARY_NAME}
         src/Version.h src/Version.cpp
         src/Settings.h src/Settings.cpp
         src/Replay.h
-        src/Convert.h
+        src/Convert.h src/Convert.cpp
         src/FlightSimulator.h src/FlightSimulator.cpp
         src/Color.h src/Color.cpp
         src/File.h src/File.cpp
@@ -68,6 +68,8 @@ target_include_directories(${LIBRARY_NAME}
 target_link_libraries(${LIBRARY_NAME}
     PRIVATE
         ${LIBRARY_DEPENDENCIES}
+    PUBLIC
+        GeographicLib::GeographicLib
 )
 set_target_properties(${LIBRARY_NAME}
     PROPERTIES

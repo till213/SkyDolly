@@ -70,7 +70,7 @@ QString Unit::formatLatitude(double latitude) noexcept
     int minutes;
     double seconds;
 
-    Convert::dd2dms(latitude, degrees, minutes, seconds);
+    Convert::ddTodms(latitude, degrees, minutes, seconds);
 
     QString hemisphere = latitude >= 0.0 ? QCoreApplication::translate("Unit", "N") : QCoreApplication::translate("Unit", "S");
     return QString::number(degrees) % "° " % QString::number(minutes) % "' " % QString::number(seconds, 'f', Precision) % "'' " % " " % hemisphere;
@@ -82,7 +82,7 @@ QString Unit::formatLongitude(double longitude) noexcept
     int minutes = 0;
     double seconds = 0.0;
 
-    Convert::dd2dms(longitude, degrees, minutes, seconds);
+    Convert::ddTodms(longitude, degrees, minutes, seconds);
     QString hemisphere = longitude >= 0.0 ? QCoreApplication::translate("Unit", "E") : QCoreApplication::translate("Unit", "W");
     return QString::number(degrees) % "° " % QString::number(minutes) % "' " % QString::number(seconds, 'f', Precision) % "'' " % " " % hemisphere;
 }

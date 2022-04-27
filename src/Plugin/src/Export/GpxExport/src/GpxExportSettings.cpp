@@ -35,10 +35,10 @@
 namespace
 {
     // Keys
-    constexpr char TimestampModeKey[] = "TimestampMode";
+    constexpr char TimestampModeKey[] {"TimestampMode"};
 
     // Defaults
-    constexpr GpxExportSettings::TimestampMode DefaultTimestampMode = GpxExportSettings::TimestampMode::Simulation;
+    constexpr GpxExportSettings::TimestampMode DefaultTimestampMode {GpxExportSettings::TimestampMode::Simulation};
 }
 
 class GpxExportSettingsPrivate

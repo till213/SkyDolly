@@ -31,10 +31,10 @@
 namespace
 {
     // Keys
-    constexpr char FormatKey[] = "Format";
+    constexpr char FormatKey[] {"Format"};
 
     // Defaults
-    constexpr CsvImportSettings::Format DefaultFormat = CsvImportSettings::Format::SkyDolly;
+    constexpr CsvImportSettings::Format DefaultFormat {CsvImportSettings::Format::SkyDolly};
 }
 
 class CsvImportSettingsPrivate

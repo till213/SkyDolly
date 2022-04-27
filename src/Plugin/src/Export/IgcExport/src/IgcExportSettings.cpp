@@ -35,8 +35,8 @@
 namespace
 {
     // Keys
-    constexpr char PilotNameKey[] = "PilotName";
-    constexpr char CoPilotNameKey[] = "CoPilotName";
+    constexpr char PilotNameKey[] {"PilotName"};
+    constexpr char CoPilotNameKey[] {"CoPilotName"};
 }
 
 class IgcExportSettingsPrivate

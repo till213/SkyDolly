@@ -31,10 +31,10 @@
 namespace
 {
     // Keys
-    constexpr char FormatKey[] = "Format";
+    constexpr char FormatKey[] {"Format"};
 
     // Defaults
-    constexpr KmlImportSettings::Format DefaultFormat = KmlImportSettings::Format::FlightAware;
+    constexpr KmlImportSettings::Format DefaultFormat {KmlImportSettings::Format::FlightAware};
 }
 
 class KmlImportSettingsPrivate

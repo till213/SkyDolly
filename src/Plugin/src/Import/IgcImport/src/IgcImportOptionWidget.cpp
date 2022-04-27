@@ -24,6 +24,7 @@
  */
 #include <QComboBox>
 #include <QSpinBox>
+#include <QCheckBox>
 
 #include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/Version.h"
@@ -79,7 +80,7 @@ void IgcImportOptionWidget::frenchConnection() noexcept
     connect(ui->enlThresholdSpinBox, &QSpinBox::valueChanged,
             this, &IgcImportOptionWidget::onENLThresholdChanged);
 #endif
-    connect(ui->convertAltitudeCheckbox, &QCheckBox::stateChanged,
+    connect(ui->convertAltitudeCheckBox, &QCheckBox::stateChanged,
             this, &IgcImportOptionWidget::onConvertAltitudeChanged);
     connect(&d->settings, &IgcImportSettings::extendedSettingsChanged,
             this, &IgcImportOptionWidget::updateUi);
@@ -110,12 +111,12 @@ void IgcImportOptionWidget::updateUi() noexcept
     ui->enlThresholdSpinBox->setValue(d->settings.getEnlThresholdPercent());
     switch (altitudeMode) {
     case IgcImportSettings::AltitudeMode::Gnss:
-        ui->convertAltitudeCheckbox->setEnabled(true);
-        ui->convertAltitudeCheckbox->setChecked(d->settings.isConvertAltitudeEnabled());
+        ui->convertAltitudeCheckBox->setEnabled(true);
+        ui->convertAltitudeCheckBox->setChecked(d->settings.isConvertAltitudeEnabled());
         break;
     default:
-        ui->convertAltitudeCheckbox->setEnabled(false);
-        ui->convertAltitudeCheckbox->setChecked(false);
+        ui->convertAltitudeCheckBox->setEnabled(false);
+        ui->convertAltitudeCheckBox->setChecked(false);
     }
 }
 

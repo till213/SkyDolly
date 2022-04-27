@@ -35,39 +35,39 @@
 namespace
 {
     // Keys
-    constexpr char ColorStyleKey[] = "ColorStyle";
-    constexpr char NofColorsPerRampKey[] = "NofColorsPerRamp";
-    constexpr char LineWidthKey[] = "LineWidth";
-    constexpr char JetStartColorKey[] = "JetStartColor";
-    constexpr char JetEndColorKey[] = "JetEndColor";
-    constexpr char TurbopropStartColorKey[] = "TurbopropStartColor";
-    constexpr char TurbopropEndColorKey[] = "TurbopropEndColor";
-    constexpr char PistonStartColorKey[] = "PistonStartColor";
-    constexpr char PistonEndColorKey[] = "PistonEndColor";
-    constexpr char AllStartColorKey[] = "AllStartColor";
-    constexpr char AllEndColorKey[] = "AllEndColor";
+    constexpr char ColorStyleKey[] {"ColorStyle"};
+    constexpr char NofColorsPerRampKey[] {"NofColorsPerRamp"};
+    constexpr char LineWidthKey[] {"LineWidth"};
+    constexpr char JetStartColorKey[] {"JetStartColor"};
+    constexpr char JetEndColorKey[] {"JetEndColor"};
+    constexpr char TurbopropStartColorKey[] {"TurbopropStartColor"};
+    constexpr char TurbopropEndColorKey[] {"TurbopropEndColor"};
+    constexpr char PistonStartColorKey[] {"PistonStartColor"};
+    constexpr char PistonEndColorKey[] {"PistonEndColor"};
+    constexpr char AllStartColorKey[] {"AllStartColor"};
+    constexpr char AllEndColorKey[] {"AllEndColor"};
 
     // Defaults
-    constexpr KmlExportSettings::ColorStyle DefaultColorStyle = KmlExportSettings::ColorStyle::OneColor;
+    constexpr KmlExportSettings::ColorStyle DefaultColorStyle {KmlExportSettings::ColorStyle::OneColor};
 
     // in AARRGGBB format
     // https://designs.ai/colors/color-wheel
     // http://khroma.co/generator/
     // http://colormind.io/
-    constexpr QRgb Opaque = 0xff000000;
+    constexpr QRgb Opaque {0xff000000};
 
     // "Tetraedic" colors
-    constexpr QRgb DefaultJetStartRgba = Opaque | 0xde7b51;
-    constexpr QRgb DefaultJetEndRgba = Opaque | 0x6f3d28;
-    constexpr QRgb DefaultTurbopropStartRgba = Opaque | 0x6ade4b;
-    constexpr QRgb DefaultTurbopropEndRgba = Opaque | 0x356f25;
-    constexpr QRgb DefaultPistonStartRgba = Opaque | 0x4bb3de;
-    constexpr QRgb DefaultPistonEndRgba = Opaque | 0x255a6f;
-    constexpr QRgb DefaultAllStartRgba = Opaque | 0xc561de;
-    constexpr QRgb DefaultAllEndRgba = Opaque | 0x63316f;
+    constexpr QRgb DefaultJetStartRgba {Opaque | 0xde7b51};
+    constexpr QRgb DefaultJetEndRgba {Opaque | 0x6f3d28};
+    constexpr QRgb DefaultTurbopropStartRgba {Opaque | 0x6ade4b};
+    constexpr QRgb DefaultTurbopropEndRgba {Opaque | 0x356f25};
+    constexpr QRgb DefaultPistonStartRgba {Opaque | 0x4bb3de};
+    constexpr QRgb DefaultPistonEndRgba {Opaque | 0x255a6f};
+    constexpr QRgb DefaultAllStartRgba {Opaque | 0xc561de};
+    constexpr QRgb DefaultAllEndRgba {Opaque | 0x63316f};
 
-    constexpr int DefaultNofColorsPerRamp = 8;
-    constexpr float DefaultLineWidth = 3.0f;
+    constexpr int DefaultNofColorsPerRamp {8};
+    constexpr float DefaultLineWidth {3.0f};
 
 }
 

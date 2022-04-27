@@ -28,14 +28,11 @@
 #include <iterator>
 #include <unordered_map>
 #include <cstdint>
-#include <exception>
 
 #include <QIODevice>
 #include <QStringBuilder>
 #include <QString>
 #include <QDateTime>
-
-#include <GeographicLib/Geoid.hpp>
 
 #include "../../../../../Kernel/src/Version.h"
 #include "../../../../../Kernel/src/Convert.h"
@@ -62,21 +59,13 @@ class GpxExportPluginPrivate
 public:
     GpxExportPluginPrivate() noexcept
         : flight(nullptr)
-    {
-        try {
-            egm = std::make_unique<GeographicLib::Geoid>("egm2008-5", QCoreApplication::applicationDirPath().append("/geoids").toStdString());
-        } catch (const std::exception& e) {
-#ifdef DEBUG
-            qDebug("GpxExportPluginPrivate::GpxExportPluginPrivate: caught exception: %s", e.what());
-#endif
-        }
-    }
+    {}
 
     const Flight *flight;
     GpxExportSettings pluginSettings;
     QDateTime startDateTimeUtc;
     Unit unit;
-    std::unique_ptr<GeographicLib::Geoid> egm {nullptr};
+    Convert convert;
 
     static inline const QString FileExtension {QStringLiteral("gpx")};
 };
@@ -309,22 +298,9 @@ QString GpxExportPlugin::getAircraftDescription(const Aircraft &aircraft) const 
 inline bool GpxExportPlugin::exportTrackPoint(const PositionData &positionData, QIODevice &io) const noexcept
 {
     const QDateTime dateTimeUtc = d->startDateTimeUtc.addMSecs(positionData.timestamp);
-    // In meters
-    double heightAboveEllipsoid;
-    if (d->egm != nullptr) {
-        try {
-            // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE)
-            heightAboveEllipsoid = d->egm->ConvertHeight(positionData.latitude, positionData.longitude, Convert::feetToMeters(positionData.altitude), GeographicLib::Geoid::GEOIDTOELLIPSOID);
-        }
-        catch (const std::exception& e) {
-            heightAboveEllipsoid = Convert::feetToMeters(positionData.altitude);
-#ifdef DEBUG
-            qDebug("GpxExportPlugin::exportTrackPoint: caught exception: %s", e.what());
-#endif
-        }
-    } else {
-        heightAboveEllipsoid = Convert::feetToMeters(positionData.altitude);
-    }
+    // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]
+    const double heightAboveEllipsoid = d->convert.egmToWgs84Ellipsoid(positionData.latitude, positionData.longitude, Convert::feetToMeters(positionData.altitude));
+
     const QString trackPoint =
 "      <trkpt lat=\"" % Export::formatCoordinate(positionData.latitude) % "\" lon=\"" % Export::formatCoordinate(positionData.longitude) % "\">\n"
 "        <ele>" % Export::formatNumber(heightAboveEllipsoid).toUtf8() % "</ele>\n"
@@ -336,22 +312,8 @@ inline bool GpxExportPlugin::exportTrackPoint(const PositionData &positionData, 
 
 inline bool GpxExportPlugin::exportWaypoint(const Waypoint &waypoint, QIODevice &io) const noexcept
 {
-    // In meters
-    double heightAboveEllipsoid;
-    if (d->egm != nullptr) {
-        try {
-            // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE)
-            heightAboveEllipsoid = d->egm->ConvertHeight(waypoint.latitude, waypoint.longitude, Convert::feetToMeters(waypoint.altitude), GeographicLib::Geoid::GEOIDTOELLIPSOID);
-        }
-        catch (const std::exception& e) {
-            heightAboveEllipsoid = Convert::feetToMeters(waypoint.altitude);
-#ifdef DEBUG
-            qDebug("GpxExportPlugin::exportTrackPoint: caught exception: %s", e.what());
-#endif
-        }
-    } else {
-        heightAboveEllipsoid = Convert::feetToMeters(waypoint.altitude);
-    }
+    // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]
+    const double heightAboveEllipsoid = d->convert.egmToWgs84Ellipsoid(waypoint.latitude, waypoint.longitude, Convert::feetToMeters(waypoint.altitude));
     const QString waypointString =
 "  <wpt lat=\"" % Export::formatCoordinate(waypoint.latitude) % "\" lon=\"" % Export::formatCoordinate(waypoint.longitude) % "\">\n"
 "    <ele>" % Export::formatNumber(heightAboveEllipsoid).toUtf8() % "</ele>\n"

@@ -25,7 +25,6 @@
 #include <cstdint>
 #include <vector>
 #include <iterator>
-#include <exception>
 
 #include <QtGlobal>
 #include <QIODevice>
@@ -35,8 +34,6 @@
 #include <QByteArray>
 #include <QSysInfo>
 #include <QDesktopServices>
-
-#include <GeographicLib/Geoid.hpp>
 
 #include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/File.h"
@@ -62,49 +59,49 @@
 namespace
 {
     // General
-    constexpr char LineEnd[] = "\r\n";
-    constexpr char DateFormat[] = "ddMMyy";
-    constexpr char TimeFormat[] = "hhmmss";
+    constexpr char LineEnd[] {"\r\n"};
+    constexpr char DateFormat[] {"ddMMyy"};
+    constexpr char TimeFormat[] {"hhmmss"};
 
     // A record
-    constexpr char ManufacturerCode[] = "XXY";
-    constexpr char SerialId[] = "001";
+    constexpr char ManufacturerCode[] {"XXY"};
+    constexpr char SerialId[] {"001"};
 
     // H record
-    constexpr char Date[] = "FDTEDATE:";
-    constexpr char Pilot[] = "FPLTPILOTINCHARGE:";
-    constexpr char CoPilot[] = "FCM2CREW2:";
-    constexpr char GliderType[] = "FGTYGLIDERTYPE:";
-    constexpr char GliderId[] = "FGIDGLIDERID:";
-    constexpr char GPSDatum[] = "FDTMGPSDATUM:WGS84";
-    constexpr char FirmwareVersion[] = "FRFWFIRMWAREVERSION:";
-    constexpr char HardwareVersion[] = "FRHWHARDWAREVERSION:";
-    constexpr char FlightRecorderType[] = "FFTYFRTYPE:";
-    constexpr char GpsReceiver[] = "FGPSRECEIVER:";
-    constexpr char PressureAltitudeSensor[] = "FPRSPRESSALTSENSOR:";
-    constexpr char Security[] = "FFRSSECURITYOK";
+    constexpr char Date[] {"FDTEDATE:"};
+    constexpr char Pilot[] {"FPLTPILOTINCHARGE:"};
+    constexpr char CoPilot[] {"FCM2CREW2:"};
+    constexpr char GliderType[] {"FGTYGLIDERTYPE:"};
+    constexpr char GliderId[] {"FGIDGLIDERID:"};
+    constexpr char GPSDatum[] {"FDTMGPSDATUM:WGS84"};
+    constexpr char FirmwareVersion[] {"FRFWFIRMWAREVERSION:"};
+    constexpr char HardwareVersion[] {"FRHWHARDWAREVERSION:"};
+    constexpr char FlightRecorderType[] {"FFTYFRTYPE:"};
+    constexpr char GpsReceiver[] {"FGPSRECEIVER:"};
+    constexpr char PressureAltitudeSensor[] {"FPRSPRESSALTSENSOR:"};
+    constexpr char Security[] {"FFRSSECURITYOK"};
 
     // I record
-    constexpr char EnvironmentalNoiseLevel[] = "ENL";
+    constexpr char EnvironmentalNoiseLevel[] {"ENL"};
 
     // J record
-    constexpr char TrueHeading[] = "HDT";
-    constexpr char IndicatedAirspeed[] = "IAS";
+    constexpr char TrueHeading[] {"HDT"};
+    constexpr char IndicatedAirspeed[] {"IAS"};
 
     // C record
-    constexpr char ObsoleteFlightDate[] = "000000";
-    constexpr char ObsoleteTaskNumber[] = "000000";
-    constexpr char TakeoffPoint[] = "TAKEOFF";
-    constexpr char StartPoint[] = "START";
-    constexpr char TurnPoint[] = "TURN";
-    constexpr char FinishPoint[] = "FINISH";
-    constexpr char LandingPoint[] = "LANDING";
+    constexpr char ObsoleteFlightDate[] {"000000"};
+    constexpr char ObsoleteTaskNumber[] {"000000"};
+    constexpr char TakeoffPoint[] {"TAKEOFF"};
+    constexpr char StartPoint[] {"START"};
+    constexpr char TurnPoint[] {"TURN"};
+    constexpr char FinishPoint[] {"FINISH"};
+    constexpr char LandingPoint[] {"LANDING"};
 
     // B record
-    constexpr char FixValid[] = "A";
+    constexpr char FixValid[] {"A"};
 
     // Interval of 20 seconds for K records
-    constexpr int KRecordIntervalSec = 20;
+    constexpr int KRecordIntervalSec {20};
 }
 
 class IgcExportPluginPrivate
@@ -292,16 +289,7 @@ inline bool IgcExportPlugin::exportFixes(const Aircraft &aircraft, QIODevice &io
     QDateTime startTime = d->flight->getAircraftStartZuluTime(aircraft);
     QDateTime lastKFixTime;
 
-    std::unique_ptr<GeographicLib::Geoid> egm {nullptr};
-    try {
-        egm = std::make_unique<GeographicLib::Geoid>("egm2008-5", QCoreApplication::applicationDirPath().append("/geoids").toStdString());
-    } catch (const std::exception& e) {
-        egm = nullptr;
-#ifdef DEBUG
-        qDebug("IgcExportPlugin::exportFixes: caught exception: %s", e.what());
-#endif
-    }
-
+    Convert convert;
     const Engine &engine = aircraft.getEngineConst();
     std::vector<PositionData> interpolatedPositionData;
     Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod(), std::back_inserter(interpolatedPositionData));
@@ -309,22 +297,8 @@ inline bool IgcExportPlugin::exportFixes(const Aircraft &aircraft, QIODevice &io
     for (PositionData &positionData : interpolatedPositionData) {
         if (!positionData.isNull()) {
 
-            // In meters
-            double heightAboveEllipsoid;
-            if (egm != nullptr) {
-                try {
-                    // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE)
-                    heightAboveEllipsoid = egm->ConvertHeight(positionData.latitude, positionData.longitude, Convert::feetToMeters(positionData.altitude), GeographicLib::Geoid::GEOIDTOELLIPSOID);
-                }
-                catch (const std::exception& e) {
-                    heightAboveEllipsoid = Convert::feetToMeters(positionData.altitude);
-#ifdef DEBUG
-                    qDebug("IgcExportPlugin::exportFixes: caught exception: %s", e.what());
-#endif
-                }
-            } else {
-                heightAboveEllipsoid = Convert::feetToMeters(positionData.altitude);
-            }
+            // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]
+            const double heightAboveEllipsoid = convert.egmToWgs84Ellipsoid(positionData.latitude, positionData.longitude, Convert::feetToMeters(positionData.altitude));
 
             const int gnssAltitude = qRound(heightAboveEllipsoid);
             const QByteArray gnssAltitudeByteArray = formatNumber(gnssAltitude, 5);
@@ -398,7 +372,7 @@ inline QByteArray IgcExportPlugin::IgcExportPlugin::formatLatitude(double latitu
 {
     int degrees;
     double minutes;
-    Convert::dd2dm(latitude, degrees, minutes);
+    Convert::ddTodm(latitude, degrees, minutes);
     const int decimals = static_cast<int>((minutes - static_cast<int>(minutes)) * 1000);
     const QByteArray latitudeString = QString("%1%2%3%4")
             .arg(degrees, 2, 10, QLatin1Char('0'))
@@ -413,7 +387,7 @@ inline QByteArray IgcExportPlugin::IgcExportPlugin::formatLongitude(double longi
 {
     int degrees;
     double minutes;
-    Convert::dd2dm(longitude, degrees, minutes);
+    Convert::ddTodm(longitude, degrees, minutes);
     const int decimals = static_cast<int>((minutes - static_cast<int>(minutes)) * 1000);
     const QByteArray latitudeString = QString("%1%2%3%4")
             .arg(degrees, 3, 10, QLatin1Char('0'))

@@ -550,5 +550,5 @@ inline double IgcParser::parseCoordinate(QStringView degreesText, QStringView mi
     int degrees = degreesText.toInt();
     double minutes = minutesBy1000Text.toDouble() / 1000.0;
 #endif
-    return Convert::dm2dd(degrees, minutes);
+    return Convert::dmTodd(degrees, minutes);
 }

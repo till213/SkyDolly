@@ -60,6 +60,9 @@ public:
     int getDefaultVelocity() const noexcept;
     void setDefaultVelocity(int velocity) noexcept;
 
+    bool isConvertAltitudeEnabled() const noexcept;
+    void setConvertAltitudeEnabled(bool enable) noexcept;
+
 signals:
     /*!
      * Emitted whenever the extended settings have changed.

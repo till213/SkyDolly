@@ -31,9 +31,9 @@
 namespace
 {
     // Keys
-    constexpr char AltitudeKey[] = "Altitude";
-    constexpr char EnlThresholdKey[] = "EnlThreshold";
-    constexpr char ConvertAltitudeKey[] = "ConvertAltitude";
+    constexpr char AltitudeKey[] {"Altitude"};
+    constexpr char EnlThresholdKey[] {"EnlThreshold"};
+    constexpr char ConvertAltitudeKey[] {"ConvertAltitude"};
 
     // Defaults
     constexpr IgcImportSettings::AltitudeMode DefaultAltitudeMode {IgcImportSettings::AltitudeMode::Gnss};
