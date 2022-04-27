@@ -9,9 +9,6 @@ endif()
 set(LIBRARY_DEPENDENCIES
     Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence Widget SkyConnect Plugin
 )
-if (${PLATFORM_IS_MACOS})
-    list(APPEND LIBRARY_DEPENDENCIES -lc++)
-endif()
 
 set(DOCUMENTATION
     doc/FlightRadar24.csv

@@ -14,8 +14,6 @@ set(LIBRARY_DEPENDENCIES
 if (${PLATFORM_IS_WINDOWS})
     find_library (PSAPI psapi)
     list(APPEND LIBRARY_DEPENDENCIES -lpsapi)
-elseif (${PLATFORM_IS_MACOS})
-    list(APPEND LIBRARY_DEPENDENCIES -lc++)
 endif()
 
 configure_file(src/VersionConfig.h.in VersionConfig.h)

@@ -30,9 +30,6 @@ target_sources(${LIBRARY_NAME}
 set(LIBRARY_DEPENDENCIES
     Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Flight Persistence SkyConnect Widget
 )
-if (${PLATFORM_IS_MACOS})
-    list(APPEND PLUGIN_LIBS -lc++)
-endif()
 
 target_include_directories(${LIBRARY_NAME}
     PRIVATE

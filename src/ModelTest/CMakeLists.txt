@@ -14,9 +14,6 @@ target_sources(SkySearchTest
 set(KERNELTEST_LIBS
     Qt${QT_VERSION_MAJOR}::Test Model
 )
-if (${PLATFORM_IS_MACOS})
-    list(APPEND KERNELTEST_LIBS -lc++)
-endif()
 
 target_link_libraries(SkySearchTest
     PRIVATE

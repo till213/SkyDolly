@@ -11,9 +11,6 @@ endif()
 set(LIBRARY_DEPENDENCIES
     Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Sql Kernel
 )
-if (${PLATFORM_IS_MACOS})
-    list(APPEND LIBRARY_DEPENDENCIES -lc++)
-endif()
 
 target_sources(${LIBRARY_NAME}
     PRIVATE
