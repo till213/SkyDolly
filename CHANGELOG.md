@@ -4,9 +4,14 @@
 
 ### Improvements
 
-- IGC import/export
-  * An option to convert between WGS84 reference ellipsoid and earth gravity model (EGM) geoid altitude has been added
+- All export plugins
+  * No sequence numbers added anymore to export filename in case the flight has only one aircraft and "All aircraft" is selected
+- IGC import
+  * An option to convert between the WGS84 reference ellipsoid and earth gravity model (EGM) geoid altitude has been added
   * Note: the IGC specification explicitly requires the GNSS altitude to be referring to the WGS84 reference ellipsoid, but not every IGC file necessarily conforms to the specification
+
+### Bug Fixes
+- The GPX export plugin now properly converts elevation data to height above the WGS84 ellipsoid
 
 ## 0.10.0
 

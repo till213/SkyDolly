@@ -144,42 +144,38 @@ bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
         IgcImportPluginPrivate::EngineState engineState = IgcImportPluginPrivate::EngineState::Unknown;
         const double enlThresholdNorm = static_cast<double>(d->pluginSettings.getEnlThresholdPercent()) / 100.0;
 
-        bool convertAltitude;
         std::unique_ptr<GeographicLib::Geoid> egm {nullptr};
         if (d->pluginSettings.isConvertAltitudeEnabled()) {
             try {
                 egm = std::make_unique<GeographicLib::Geoid>("egm2008-5", QCoreApplication::applicationDirPath().append("/geoids").toStdString());
-                convertAltitude = true;
             } catch (const std::exception& e) {
-                convertAltitude = false;
+                egm = nullptr;
 #ifdef DEBUG
                 qDebug("IgcImportPlugin::importFlight: caught exception: %s", e.what());
 #endif
             }
-        } else {
-            convertAltitude = false;
         }
 
         for (const IgcParser::Fix &fix : d->igcParser.getFixes()) {
             // Import either GNSS or pressure altitude
             const double altitude = d->pluginSettings.getAltitudeMode() == IgcImportSettings::AltitudeMode::Gnss ? fix.gnssAltitude : fix.pressureAltitude;
-            double altitudeAboveGeoid;
-            if (convertAltitude) {
+            double heightAboveGeoid;
+            if (egm != nullptr) {
                 try {
-                    // Convert height above EGM geoid to height above the ellipsoid
-                    altitudeAboveGeoid = egm->ConvertHeight(fix.latitude, fix.longitude, altitude, GeographicLib::Geoid::ELLIPSOIDTOGEOID);
+                    // Convert height above WGS84 ellipsoid (HAE) to height above EGM geoid
+                    heightAboveGeoid = egm->ConvertHeight(fix.latitude, fix.longitude, altitude, GeographicLib::Geoid::ELLIPSOIDTOGEOID);
                 }
                 catch (const std::exception& e) {
-                    altitudeAboveGeoid = altitude;
+                    heightAboveGeoid = altitude;
 #ifdef DEBUG
                     qDebug("IgcImportPlugin::importFlight: caught exception: %s", e.what());
 #endif
                 }
             } else {
-                altitudeAboveGeoid = altitude;
+                heightAboveGeoid = altitude;
             }
 
-            PositionData positionData {fix.latitude, fix.longitude, Convert::metersToFeet(altitudeAboveGeoid)};
+            PositionData positionData {fix.latitude, fix.longitude, Convert::metersToFeet(heightAboveGeoid)};
             positionData.timestamp = fix.timestamp;
             positionData.indicatedAltitude = Convert::metersToFeet(fix.pressureAltitude);
             position.upsertLast(std::move(positionData));

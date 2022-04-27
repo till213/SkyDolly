@@ -72,8 +72,6 @@ void IgcExportOptionWidget::frenchConnection() noexcept
             this, &IgcExportOptionWidget::onPilotNameChanged);
     connect(ui->coPilotNameLineEdit, &QLineEdit::textChanged,
             this, &IgcExportOptionWidget::onCoPilotNameChanged);
-    connect(ui->convertAltitudeCheckbox, &QCheckBox::stateChanged,
-            this, &IgcExportOptionWidget::onConvertAltitudeChanged);
 }
 
 void IgcExportOptionWidget::initUi() noexcept
@@ -85,7 +83,6 @@ void IgcExportOptionWidget::updateUi() noexcept
 {
     ui->pilotNameLineEdit->setText(d->settings.getPilotName());
     ui->coPilotNameLineEdit->setText(d->settings.getCoPilotName());
-    ui->convertAltitudeCheckbox->setChecked(d->settings.isConvertAltitudeEnabled());
 }
 
 void IgcExportOptionWidget::onPilotNameChanged(const QString &name) noexcept
@@ -96,9 +93,4 @@ void IgcExportOptionWidget::onPilotNameChanged(const QString &name) noexcept
 void IgcExportOptionWidget::onCoPilotNameChanged(const QString &name) noexcept
 {
     d->settings.setCoPilotName(name);
-}
-
-void IgcExportOptionWidget::onConvertAltitudeChanged(int state) noexcept
-{
-    d->settings.setConvertAltitudeEnabled(state == Qt::Checked);
 }
