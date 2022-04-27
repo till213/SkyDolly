@@ -24,7 +24,6 @@
  */
 #include <memory>
 #include <cstdint>
-#include <exception>
 
 #include <QString>
 #include <QStringLiteral>
@@ -32,8 +31,6 @@
 #include <QDateTime>
 #include <QXmlStreamReader>
 #include <QRegularExpression>
-
-#include <GeographicLib/Geoid.hpp>
 
 #include "../../../../../Kernel/src/Convert.h"
 #include "../../../../../Model/src/Flight.h"
@@ -75,8 +72,6 @@ public:
 
     QRegularExpression speedRegExp;
     QRegularExpression headingRegExp;
-
-    GeographicLib::Geoid egm96 {"egm2008-5", QCoreApplication::applicationDirPath().append("/geoids").toStdString()};
 
 private:
     static inline const QString SpeedPattern {QStringLiteral("<b>Speed:<\\/b><\\/span> <span>(\\d+) kt<\\/span>")};
@@ -308,26 +303,7 @@ void FlightRadar24KmlParser::parsePoint() noexcept
                     auto &trackItem = d->trackData.back();
                     trackItem.latitude = latitude;
                     trackItem.longitude = longitude;
-
-                    // @todo FIX ME It is rather pointless to adjust the reported heights with "undulated values": the reported
-                    //              altitude is pressure altitude (not GNSS altitude). Also, altitude while on ground is throughouly reported as 0.
-                    try {
-
-                      // Convert height above egm96 to height above the ellipsoid
-
-                      double geoid_height = d->egm96(latitude, longitude);
-                      double height_above_geoid = (altitude + GeographicLib::Geoid::ELLIPSOIDTOGEOID * geoid_height);
-                      qDebug("height_above_geoid: %f", height_above_geoid);
-                      trackItem.altitude = Convert::metersToFeet(height_above_geoid);
-                    }
-                    catch (const std::exception& e) {
-                      qDebug("Caught exception: %s", e.what());
-
-                    }
-
-
-
-
+                    trackItem.altitude = Convert::metersToFeet(altitude);
                 }
 
             } else {

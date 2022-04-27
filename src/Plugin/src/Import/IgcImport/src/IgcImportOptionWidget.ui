@@ -6,9 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>513</width>
-    <height>81</height>
+    <width>551</width>
+    <height>107</height>
    </rect>
+  </property>
+  <property name="toolTip">
+   <string>Converts the GNSS altitude referring to the WGS84 reference ellipsoid to the geoid altitude by applying undulation values according to the earth gravity model (EGM).</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
    <item row="0" column="0">
@@ -48,6 +51,16 @@
      </property>
      <property name="statusTip">
       <string>Environmental noise level threshold [in percent] above which the engine is started</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QCheckBox" name="convertAltitudeCheckbox">
+     <property name="toolTip">
+      <string>Converts imported altitude values by applying undulation values according to the earth gravity model (EGM).</string>
+     </property>
+     <property name="text">
+      <string>Convert altitude from WGS84 ellipsoid to EGM geoid</string>
      </property>
     </widget>
    </item>

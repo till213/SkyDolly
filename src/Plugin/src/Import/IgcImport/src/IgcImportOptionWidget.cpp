@@ -79,7 +79,8 @@ void IgcImportOptionWidget::frenchConnection() noexcept
     connect(ui->enlThresholdSpinBox, &QSpinBox::valueChanged,
             this, &IgcImportOptionWidget::onENLThresholdChanged);
 #endif
-
+    connect(ui->convertAltitudeCheckbox, &QCheckBox::stateChanged,
+            this, &IgcImportOptionWidget::onConvertAltitudeChanged);
     connect(&d->settings, &IgcImportSettings::extendedSettingsChanged,
             this, &IgcImportOptionWidget::updateUi);
 }
@@ -108,6 +109,11 @@ void IgcImportOptionWidget::onENLThresholdChanged(int value) noexcept
     d->settings.setEnlThresholdPercent(value);
 }
 
+void IgcImportOptionWidget::onConvertAltitudeChanged(int state) noexcept
+{
+    d->settings.setConvertAltitudeEnabled(state == Qt::Checked);
+}
+
 void IgcImportOptionWidget::updateUi() noexcept
 {
     const IgcImportSettings::AltitudeMode altitudeMode = d->settings.getAltitudeMode();
@@ -117,6 +123,14 @@ void IgcImportOptionWidget::updateUi() noexcept
         ++currentIndex;
     }
     ui->altitudeComboBox->setCurrentIndex(currentIndex);
-
     ui->enlThresholdSpinBox->setValue(d->settings.getEnlThresholdPercent());
+    switch (altitudeMode) {
+    case IgcImportSettings::AltitudeMode::Gnss:
+        ui->convertAltitudeCheckbox->setEnabled(true);
+        ui->convertAltitudeCheckbox->setChecked(d->settings.isConvertAltitudeEnabled());
+        break;
+    default:
+        ui->convertAltitudeCheckbox->setEnabled(false);
+        ui->convertAltitudeCheckbox->setChecked(false);
+    }
 }

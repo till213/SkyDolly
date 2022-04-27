@@ -53,6 +53,7 @@ private:
 private slots:
     void onAltitudeChanged() noexcept;
     void onENLThresholdChanged(int value) noexcept;
+    void onConvertAltitudeChanged(int state) noexcept;
 
     void updateUi() noexcept;
 };

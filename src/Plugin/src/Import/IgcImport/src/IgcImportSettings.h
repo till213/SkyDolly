@@ -53,6 +53,9 @@ public:
     int getEnlThresholdPercent() const noexcept;
     void setEnlThresholdPercent(int enlThresholdPercent) noexcept;
 
+    bool isConvertAltitudeEnabled() const noexcept;
+    void setConvertAltitudeEnabled(bool enable) noexcept;
+
 signals:
     /*!
      * Emitted whenever the extended settings have changed.

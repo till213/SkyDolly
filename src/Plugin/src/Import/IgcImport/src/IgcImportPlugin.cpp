@@ -63,7 +63,7 @@ namespace
 {
     // Distance threshold beyond which two waypoints are to be considered different [meters]
     // (taking the "average size" of a "glider airfield" into account)
-    constexpr double SameWaypointDistanceThreshold = 500;
+    constexpr double SameWaypointDistanceThreshold {500};
 }
 
 class IgcImportPluginPrivate
@@ -85,8 +85,6 @@ public:
 
     IgcImportSettings pluginSettings;
     QEasingCurve throttleResponseCurve;
-
-    GeographicLib::Geoid egm96 {"egm2008-5", QCoreApplication::applicationDirPath().append("/geoids").toStdString()};
 
     static const inline QString FileSuffix {QStringLiteral("igc")};
 };
@@ -145,29 +143,45 @@ bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
         IgcImportPluginPrivate::EngineState engineState = IgcImportPluginPrivate::EngineState::Unknown;
         const double enlThresholdNorm = static_cast<double>(d->pluginSettings.getEnlThresholdPercent()) / 100.0;
 
+        bool convertAltitude;
+        std::unique_ptr<GeographicLib::Geoid> egm {nullptr};
+        if (d->pluginSettings.isConvertAltitudeEnabled()) {
+            try {
+                 egm = std::make_unique<GeographicLib::Geoid>("egm2008-5", QCoreApplication::applicationDirPath().append("/geoids").toStdString());
+                 convertAltitude = true;
+            } catch (const std::exception& e) {
+                convertAltitude = false;
+#ifdef DEBUG
+                qDebug("IgcImportPlugin::importFlight: caught exception: %s", e.what());
+#endif
+            }
+        } else {
+            convertAltitude = false;
+        }
+
         for (const IgcParser::Fix &fix : d->igcParser.getFixes()) {
             // Import either GNSS or pressure altitude
             const double altitude = d->pluginSettings.getAltitudeMode() == IgcImportSettings::AltitudeMode::Gnss ? fix.gnssAltitude : fix.pressureAltitude;
-
-            // @todo FIX ME It is rather pointless to adjust the reported heights with "undulated values": the reported
-            //              altitude is pressure altitude (not GNSS altitude). Also, altitude while on ground is throughouly reported as 0.
-            try {
-
-              // Convert height above egm96 to height above the ellipsoid
-
-              double geoid_height = d->egm96(fix.latitude, fix.longitude);
-              double height_above_geoid = (altitude + GeographicLib::Geoid::ELLIPSOIDTOGEOID * geoid_height);
-              qDebug("height_above_geoid: %f", height_above_geoid);
-
-              PositionData positionData {fix.latitude, fix.longitude, Convert::metersToFeet(height_above_geoid)};
-              positionData.timestamp = fix.timestamp;
-              positionData.indicatedAltitude = Convert::metersToFeet(fix.pressureAltitude);
-              position.upsertLast(std::move(positionData));
+            double altitudeAboveGeoid;
+            if (convertAltitude) {
+                try {
+                    // Convert height above egm96 to height above the ellipsoid
+                    altitudeAboveGeoid = egm->ConvertHeight(fix.latitude, fix.longitude, altitude, GeographicLib::Geoid::ELLIPSOIDTOGEOID);
+                }
+                catch (const std::exception& e) {
+                    altitudeAboveGeoid = altitude;
+#ifdef DEBUG
+                qDebug("IgcImportPlugin::importFlight: caught exception: %s", e.what());
+#endif
+                }
+            } else {
+                altitudeAboveGeoid = altitude;
             }
-            catch (const std::exception& e) {
-              qDebug("Caught exception: %s", e.what());
 
-            }
+            PositionData positionData {fix.latitude, fix.longitude, Convert::metersToFeet(altitudeAboveGeoid)};
+            positionData.timestamp = fix.timestamp;
+            positionData.indicatedAltitude = Convert::metersToFeet(fix.pressureAltitude);
+            position.upsertLast(std::move(positionData));
 
             if (d->igcParser.hasEnvironmentalNoiseLevel()) {
                 const double enl = fix.environmentalNoiseLevel;
