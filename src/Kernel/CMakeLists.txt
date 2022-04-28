@@ -3,9 +3,9 @@ set(LIBRARY_NAME "Kernel")
 add_definitions(-DKERNEL_EXPORT)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(${LIBRARY_NAME} SHARED "")
+    qt_add_library(${LIBRARY_NAME} SHARED)
 else()
-    add_library(${LIBRARY_NAME} SHARED "")
+    add_library(${LIBRARY_NAME} SHARED)
 endif()
 
 set(LIBRARY_DEPENDENCIES

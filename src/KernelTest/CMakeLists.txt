@@ -1,9 +1,9 @@
 find_package(Qt5Test REQUIRED)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(SkyMathTest "")
+    qt_add_executable(SkyMathTest)
 else()
-    add_executable(SkyMathTest "")
+    add_executable(SkyMathTest)
 endif()
 
 target_sources(SkyMathTest

@@ -1,9 +1,20 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.16...3.23)
 
-set(SKYDOLLY_DESCRIPTION "Sky Dolly - The Black Sheep for your Flight Recordings")
-project(SkyDolly LANGUAGES CXX VERSION 0.11.0 DESCRIPTION ${SKYDOLLY_DESCRIPTION})
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+include(CMakePrintHelpers)
+
+project(
+    SkyDolly
+    VERSION 0.11.0
+    LANGUAGES CXX
+    DESCRIPTION "Sky Dolly - The Black Sheep for your Flight Recordings"
+)
+# Used to populate the Info.plist.in and SkyDolly.rc.in
 set(PROJECT_APPLICATION_NAME "Sky Dolly")
 set(PROJECT_ORGANISATION_NAME till213)
+
+include(InitSubmodules)
 
 # Enables testing: 'ctest' needs to be run in the "build" directory
 include(CTest)
@@ -27,7 +38,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 string(COMPARE EQUAL "Windows" ${CMAKE_SYSTEM_NAME} PLATFORM_IS_WINDOWS)
 string(COMPARE EQUAL "Darwin" ${CMAKE_SYSTEM_NAME} PLATFORM_IS_MACOS)
 string(COMPARE EQUAL "Linux" ${CMAKE_SYSTEM_NAME} PLATFORM_IS_LINUX)
-message(STATUS PLATFORM="${CMAKE_SYSTEM_NAME}")
+cmake_print_variables(CMAKE_SYSTEM_NAME)
 
 # Definitions
 
@@ -137,7 +148,6 @@ target_link_libraries(SkyDolly
     PRIVATE
         ${SKYDOLLY_LIBS}
 )
-message(STATUS OUTPUT_NAME=${PROJECT_NAME})
 
 # macOS: copy plugins into app bundle
 if (${PLATFORM_IS_MACOS})

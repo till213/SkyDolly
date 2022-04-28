@@ -3,9 +3,9 @@ set(LIBRARY_NAME "Plugin")
 add_definitions(-DPLUGIN_EXPORT)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(Plugin SHARED "")
+    qt_add_library(Plugin SHARED)
 else()
-    add_library(Plugin SHARED "")
+    add_library(Plugin SHARED)
 endif()
 
 target_sources(${LIBRARY_NAME}

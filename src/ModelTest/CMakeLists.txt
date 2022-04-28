@@ -1,9 +1,9 @@
 find_package(Qt5Test REQUIRED)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(SkySearchTest "")
+    qt_add_executable(SkySearchTest)
 else()
-    add_executable(SkySearchTest "")
+    add_executable(SkySearchTest)
 endif()
 
 target_sources(SkySearchTest
