@@ -13,7 +13,6 @@
   * The altitude is converted from the geoid (EGM 2008) to height above the WGS84 reference ellipsoid
 
 ### Bug Fixes
-- The IGC and GPX export plugins now properly convert GNSS altitude (elevation) data to height above the WGS84 ellipsoid
 - In the logbook module the date selection column width is now properly calculated (no month name is truncated)
 
 ## 0.10.0
