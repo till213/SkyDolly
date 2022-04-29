@@ -3,9 +3,9 @@ set(LIBRARY_NAME "Kernel")
 add_definitions(-DKERNEL_EXPORT)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(${LIBRARY_NAME} SHARED "")
+    qt_add_library(${LIBRARY_NAME} SHARED)
 else()
-    add_library(${LIBRARY_NAME} SHARED "")
+    add_library(${LIBRARY_NAME} SHARED)
 endif()
 
 set(LIBRARY_DEPENDENCIES
@@ -14,8 +14,6 @@ set(LIBRARY_DEPENDENCIES
 if (${PLATFORM_IS_WINDOWS})
     find_library (PSAPI psapi)
     list(APPEND LIBRARY_DEPENDENCIES -lpsapi)
-elseif (${PLATFORM_IS_MACOS})
-    list(APPEND LIBRARY_DEPENDENCIES -lc++)
 endif()
 
 configure_file(src/VersionConfig.h.in VersionConfig.h)
@@ -32,7 +30,7 @@ target_sources(${LIBRARY_NAME}
         src/Version.h src/Version.cpp
         src/Settings.h src/Settings.cpp
         src/Replay.h
-        src/Convert.h
+        src/Convert.h src/Convert.cpp
         src/FlightSimulator.h src/FlightSimulator.cpp
         src/Color.h src/Color.cpp
         src/File.h src/File.cpp
@@ -61,9 +59,18 @@ elseif (${PLATFORM_IS_LINUX})
 endif()
 
 # For generated VersionConfig.h
-target_include_directories(Kernel PUBLIC
-    "${CMAKE_CURRENT_BINARY_DIR}"
+target_include_directories(${LIBRARY_NAME}
+    PRIVATE
+        "${CMAKE_CURRENT_BINARY_DIR}"
 )
-target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})
-set_target_properties(${LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
-set_target_properties(${LIBRARY_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
+target_link_libraries(${LIBRARY_NAME}
+    PRIVATE
+        ${LIBRARY_DEPENDENCIES}
+    PUBLIC
+        GeographicLib::GeographicLib
+)
+set_target_properties(${LIBRARY_NAME}
+    PROPERTIES
+        VERSION ${PROJECT_VERSION}
+        SOVERSION ${PROJECT_VERSION_MAJOR}
+)

@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.11.0
+
+### Improvements
+
+- All export plugins
+  * No sequence numbers added anymore to export filename in case the flight has only one aircraft and "All aircraft" is selected
+- IGC & GXP import
+  * An option to convert from the WGS84 reference ellipsoid to the earth gravity model (EGM) geoid altitude has been added (enabled by default)
+  * Note: both the IGC and GPX specifications state that the GNSS altitude (elevation) refer to the WGS84 reference ellipsoid, but not every IGC/GPX file necessarily conforms to the specification and may contain earth gravity model (EGM) geoid altitudes ("above sea level") instead
+
+### Bug Fixes
+- The IGC and GPX export plugins now properly convert GNSS altitude (elevation) data to height above the WGS84 ellipsoid
+- In the logbook module the date selection column width is now properly calculated (no month name is truncated)
+
 ## 0.10.0
 
 ### New Features

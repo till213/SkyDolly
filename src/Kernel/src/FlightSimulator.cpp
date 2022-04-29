@@ -26,5 +26,7 @@
 
 #include "FlightSimulator.h"
 
-FlightSimulator::FlightSimulator()
+// PUBLIC
+
+FlightSimulator::FlightSimulator() noexcept
 {}

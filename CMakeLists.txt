@@ -1,9 +1,20 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.16...3.23)
 
-set(SKYDOLLY_DESCRIPTION "Sky Dolly - The Black Sheep for your Flight Recordings")
-project(SkyDolly LANGUAGES CXX VERSION 0.11.0 DESCRIPTION ${SKYDOLLY_DESCRIPTION})
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+include(CMakePrintHelpers)
+
+project(
+    SkyDolly
+    VERSION 0.11.0
+    LANGUAGES CXX
+    DESCRIPTION "Sky Dolly - The Black Sheep for your Flight Recordings"
+)
+# Used to populate the Info.plist.in and SkyDolly.rc.in
 set(PROJECT_APPLICATION_NAME "Sky Dolly")
 set(PROJECT_ORGANISATION_NAME till213)
+
+include(InitSubmodules)
 
 # Enables testing: 'ctest' needs to be run in the "build" directory
 include(CTest)
@@ -27,7 +38,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 string(COMPARE EQUAL "Windows" ${CMAKE_SYSTEM_NAME} PLATFORM_IS_WINDOWS)
 string(COMPARE EQUAL "Darwin" ${CMAKE_SYSTEM_NAME} PLATFORM_IS_MACOS)
 string(COMPARE EQUAL "Linux" ${CMAKE_SYSTEM_NAME} PLATFORM_IS_LINUX)
-message(STATUS PLATFORM="${CMAKE_SYSTEM_NAME}")
+cmake_print_variables(CMAKE_SYSTEM_NAME)
 
 # Definitions
 
@@ -58,6 +69,13 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
 # 3rd Party
 # ordered-map (Tessil)
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/ordered-map)
+
+# GeographicLib (https://github.com/geographiclib/geographiclib)
+add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geographiclib EXCLUDE_FROM_ALL)
+set_target_properties(GeographicLib_SHARED
+    PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
 
 # Documentation
 add_subdirectory(${CMAKE_SOURCE_DIR}/doc)
@@ -104,13 +122,19 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR}/src ${TS_FILES})
 endif()
 
+# Data files
+add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geoids)
+
 set(SKYDOLLY_LIBS
     Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence SkyConnect Plugin UserInterface
 )
 if (${PLATFORM_IS_MACOS})
-    list(APPEND SKYDOLLY_LIBS -lc++)
     set_target_properties(SkyDolly PROPERTIES
                           MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/res/Info.plist.in")
+      target_link_libraries(SkyDolly
+          PRIVATE
+              Geoids
+      )
 endif()
 
 target_sources(SkyDolly
@@ -119,11 +143,14 @@ target_sources(SkyDolly
         ${OTHER_SOURCES}
 )
 
-target_include_directories(SkyDolly PUBLIC
-                          "${PROJECT_SOURCE_DIR}/src/SkyConnect/src"
-                          )
-target_link_libraries(SkyDolly PRIVATE ${SKYDOLLY_LIBS})
-message(STATUS OUTPUT_NAME=${PROJECT_NAME})
+target_include_directories(SkyDolly
+    PRIVATE
+        "${PROJECT_SOURCE_DIR}/src/SkyConnect/src"
+)
+target_link_libraries(SkyDolly
+    PRIVATE
+        ${SKYDOLLY_LIBS}
+)
 
 # macOS: copy plugins into app bundle
 if (${PLATFORM_IS_MACOS})
@@ -131,7 +158,7 @@ if (${PLATFORM_IS_MACOS})
     # Connect plugins
     file(GLOB BUNDLE_IMPORT_PLUGINS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Connect/*")
     message(STATUS IMPORT_PLUGIN_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Connect/")
-    target_sources(SkyDolly PUBLIC ${BUNDLE_IMPORT_PLUGINS})
+    target_sources(SkyDolly PRIVATE ${BUNDLE_IMPORT_PLUGINS})
     set_property(
         SOURCE ${BUNDLE_IMPORT_PLUGINS}
         PROPERTY MACOSX_PACKAGE_LOCATION "PlugIns/Connect"
@@ -140,7 +167,7 @@ if (${PLATFORM_IS_MACOS})
     # Import plugins
     file(GLOB BUNDLE_IMPORT_PLUGINS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Import/*")
     message(STATUS IMPORT_PLUGIN_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Import/")
-    target_sources(SkyDolly PUBLIC ${BUNDLE_IMPORT_PLUGINS})
+    target_sources(SkyDolly PRIVATE ${BUNDLE_IMPORT_PLUGINS})
     set_property(
         SOURCE ${BUNDLE_IMPORT_PLUGINS}
         PROPERTY MACOSX_PACKAGE_LOCATION "PlugIns/Import"
@@ -149,7 +176,7 @@ if (${PLATFORM_IS_MACOS})
     # Export
     file(GLOB BUNDLE_EXPORT_PLUGINS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Export/*")
     message(STATUS EXPORT_PLUGIN_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Export/")
-    target_sources(SkyDolly PUBLIC ${BUNDLE_EXPORT_PLUGINS})
+    target_sources(SkyDolly PRIVATE ${BUNDLE_EXPORT_PLUGINS})
     set_property(
         SOURCE ${BUNDLE_EXPORT_PLUGINS}
         PROPERTY MACOSX_PACKAGE_LOCATION "PlugIns/Export"

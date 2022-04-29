@@ -26,6 +26,7 @@
 #include <vector>
 #include <unordered_set>
 #include <cstdint>
+#include <exception>
 
 #include <QStringBuilder>
 #include <QIODevice>
@@ -34,6 +35,8 @@
 #include <QDate>
 #include <QDateTime>
 #include <QEasingCurve>
+
+#include <GeographicLib/Geoid.hpp>
 
 #include "../../../../../Kernel/src/Unit.h"
 #include "../../../../../Kernel/src/Settings.h"
@@ -61,7 +64,7 @@ namespace
 {
     // Distance threshold beyond which two waypoints are to be considered different [meters]
     // (taking the "average size" of a "glider airfield" into account)
-    constexpr double SameWaypointDistanceThreshold = 500;
+    constexpr double SameWaypointDistanceThreshold {500};
 }
 
 class IgcImportPluginPrivate
@@ -141,12 +144,21 @@ bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
         IgcImportPluginPrivate::EngineState engineState = IgcImportPluginPrivate::EngineState::Unknown;
         const double enlThresholdNorm = static_cast<double>(d->pluginSettings.getEnlThresholdPercent()) / 100.0;
 
+        Convert convert;
         for (const IgcParser::Fix &fix : d->igcParser.getFixes()) {
             // Import either GNSS or pressure altitude
             const double altitude = d->pluginSettings.getAltitudeMode() == IgcImportSettings::AltitudeMode::Gnss ? fix.gnssAltitude : fix.pressureAltitude;
-            PositionData positionData {fix.latitude, fix.longitude, altitude};
+            double heightAboveGeoid;
+            if (d->pluginSettings.isConvertAltitudeEnabled()) {
+                // Convert height above WGS84 ellipsoid (HAE) to height above EGM geoid [meters]
+                heightAboveGeoid = convert.wgs84ToEgmGeoid(fix.latitude, fix.longitude, altitude);
+            } else {
+                heightAboveGeoid = altitude;
+            }
+
+            PositionData positionData {fix.latitude, fix.longitude, Convert::metersToFeet(heightAboveGeoid)};
             positionData.timestamp = fix.timestamp;
-            positionData.indicatedAltitude = fix.pressureAltitude;
+            positionData.indicatedAltitude = Convert::metersToFeet(fix.pressureAltitude);
             position.upsertLast(std::move(positionData));
 
             if (d->igcParser.hasEnvironmentalNoiseLevel()) {

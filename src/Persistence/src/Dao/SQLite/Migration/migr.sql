@@ -647,3 +647,7 @@ insert into aircraft_type values
 @migr(id = "90f34b67-5fb8-4c52-ab61-d704297bd7e2", descn = "Update application version to 0.10", step = 1)
 update metadata
 set app_version = '0.10.0';
+
+@migr(id = "d794cc76-3bae-41d6-8219-64f405379c45", descn = "Update application version to 0.11", step = 1)
+update metadata
+set app_version = '0.11.0';

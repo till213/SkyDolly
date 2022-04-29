@@ -22,14 +22,37 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include "FlightSelector.h"
+#include <memory>
+#include <exception>
+
+#include <QCoreApplication>
+#include <QFileInfo>
+
+#include <GeographicLib/Geoid.hpp>
+
+#include "Settings.h"
+#include "Convert.h"
 
 // PUBLIC
 
-FlightSelector::FlightSelector()
-    : fromDate(MinDate),
-      toDate(MaxDate),
-      hasFormation(false),
-      engineType(SimType::EngineType::All),
-      mininumDurationMinutes(0)
+Convert::Convert() noexcept
+{
+    const QFileInfo earthGravityModelFileInfo = Settings::getInstance().getEarthGravityModelFileInfo();
+    if (earthGravityModelFileInfo.exists()) {
+        try {
+            const std::string egmName = earthGravityModelFileInfo.baseName().toStdString();
+            const std::string egmDirectory = earthGravityModelFileInfo.absolutePath().toStdString();
+            m_egm = std::make_unique<GeographicLib::Geoid>(egmName, egmDirectory);
+        } catch (const std::exception &ex) {
+            m_egm = nullptr;
+    #ifdef DEBUG
+            qDebug("Convert::Convert: caught exception: %s", ex.what());
+    #endif
+        }
+    } else {
+        m_egm = nullptr;
+    }
+}
+
+Convert::~Convert() noexcept
 {}

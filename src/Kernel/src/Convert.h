@@ -25,6 +25,11 @@
 #ifndef CONVERT_H
 #define CONVERT_H
 
+#include <memory>
+#include <exception>
+
+#include <GeographicLib/Geoid.hpp>
+
 #include "KernelLib.h"
 
 /*!
@@ -39,6 +44,91 @@ class KERNEL_API Convert
 {
 public:
 
+    Convert() noexcept;
+    ~Convert() noexcept;
+
+    /*!
+     * Converts the \c height height above WGS84 reference ellipsoid to height above the earth
+     * gravity model (EGM) geoid according to the installed EGM data file. The conversion is
+     * essentially evaluating the so-called undulation at position \c latitude, \c longitude
+     * and adjusting the given \c height accordingly.
+     *
+     * If no EGM data file is available (not installed, not readable) then simply
+     * \c meters is returned.
+     *
+     * Also refer to https://gisgeography.com/geoid-mean-sea-level/
+     *
+     * \param height
+     *        the altitude to convert [meters]
+     * \param latitude
+     *        the latitude of the position
+     * \param longitude
+     *        the longitude of the position
+     * \return the converted altitude in meters above the EGM geoid; or \c height if no EGM data
+     *         file could be read
+     */
+    inline double wgs84ToEgmGeoid(double height, double latitude, double longitude) noexcept
+    {
+        // In meters
+        double heightAboveGeoid;
+        if (m_egm != nullptr) {
+            try {
+                // Convert height above WGS84 ellipsoid (HAE) tp height above EGM geoid [meters]
+                heightAboveGeoid = m_egm->ConvertHeight(latitude, longitude, height, GeographicLib::Geoid::ELLIPSOIDTOGEOID);
+            }
+            catch (const std::exception &ex) {
+                heightAboveGeoid = height;
+#ifdef DEBUG
+                qDebug("Convert::wgs84ToEgmGeoid: caught exception: %s", ex.what());
+#endif
+            }
+        } else {
+            heightAboveGeoid = height;
+        }
+        return heightAboveGeoid;
+    }
+
+    /*!
+     * Converts the \c height height above the EGM geoid to height above the WGS84 reference
+     * ellipsoid according to the installed EGM data file. The conversion is
+     * essentially evaluating the so-called undulation at position \c latitude, \c longitude
+     * and adjusting the given \c height accordingly.
+     *
+     * If no EGM data file is available (not installed, not readable) then simply
+     * \c meters is returned.
+     *
+     * Also refer to https://gisgeography.com/wgs84-world-geodetic-system/
+     *
+     * \param height
+     *        the altitude to convert [meters]
+     * \param latitude
+     *        the latitude of the position
+     * \param longitude
+     *        the longitude of the position
+     * \return the converted altitude in meters above the WGS84 reference ellipsoid; or \c height
+     *         if no EGM data file could be read
+     */
+    inline double egmToWgs84Ellipsoid(double height, double latitude, double longitude) noexcept
+    {
+        // In meters
+        double heightAboveEllipsoid;
+        if (m_egm != nullptr) {
+            try {
+                // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]
+                heightAboveEllipsoid = m_egm->ConvertHeight(latitude, longitude, height, GeographicLib::Geoid::GEOIDTOELLIPSOID);
+            }
+            catch (const std::exception &ex) {
+                heightAboveEllipsoid = height;
+#ifdef DEBUG
+                qDebug("Convert::egmToWgs84Ellipsoid: caught exception: %s", ex.what());
+#endif
+            }
+        } else {
+            heightAboveEllipsoid = height;
+        }
+        return heightAboveEllipsoid;
+    }
+
     /*!
      * Converts a latitude or longitude coordinate given in degrees, minutes and seconds (e.g.
      * as string: 43° 30' 12.34'') to a single decimal value (double).
@@ -51,7 +141,7 @@ public:
      *        the seconds [0.0, 59.99]
      * \return the coordinate as a single fractional value
      */
-    static inline double dms2dd(int degrees, int minutes, double seconds) noexcept
+    static inline double dmsTodd(int degrees, int minutes, double seconds) noexcept
     {
         return degrees + static_cast<double>(minutes) / 60.0 + seconds / 3600.0;
     }
@@ -66,7 +156,7 @@ public:
      *        the decimal minutes [0.0, 59.99]
      * \return the coordinate as a single fractional value
      */
-    static inline double dm2dd(int degrees, double minutes) noexcept
+    static inline double dmTodd(int degrees, double minutes) noexcept
     {
         return degrees + minutes / 60.0;
     }
@@ -84,7 +174,7 @@ public:
      * \param seconds
      *        the resulting seconds [0.0, 59.99]
      */
-    static inline void dd2dms(double dd, int &degrees, int &minutes, double &seconds) noexcept
+    static inline void ddTodms(double dd, int &degrees, int &minutes, double &seconds) noexcept
     {
         double absDegrees = std::abs(dd);
         degrees = static_cast<int>(absDegrees);
@@ -104,7 +194,7 @@ public:
      * \param minutes
      *        the resulting minutes [0, 59.99]
      */
-    static inline void dd2dm(double dd, int &degrees, double &minutes) noexcept
+    static inline void ddTodm(double dd, int &degrees, double &minutes) noexcept
     {
         double absDegrees = std::abs(dd);
         degrees = static_cast<int>(absDegrees);
@@ -229,6 +319,9 @@ public:
         const double altitudeFactor = altitudeAboveSealevel / 1000.0;
         return trueAirspeed / (1 + altitudeFactor * 0.02);
     }
+
+private:
+    std::unique_ptr<GeographicLib::Geoid> m_egm;
 };
 
 #endif // CONVERT_H

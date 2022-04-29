@@ -35,6 +35,7 @@
 #include <QUuid>
 #include <QString>
 #include <QVariant>
+#include <QFileInfo>
 
 class QByteArray;
 
@@ -451,6 +452,25 @@ public:
     void setImportAircraftType(const QString &type) noexcept;
 
     /*!
+     * Returns the file info of the best available earth gravity model (EGM) data file.
+     *
+     * Also refer to #hasEarthGravityModel.
+     *
+     * \return the file info of the earth gravity model data file; check for its existence
+     *         (QFile::exists) before using
+     */
+    QFileInfo getEarthGravityModelFileInfo() const noexcept;
+
+    /*!
+     * Returns whether any earth gravity model (EGM) is available.
+     *
+     * Also refer to #getEarthGravityModelFileInfo.
+     *
+     * \return \c true if an earth gravity model is available; \c false else
+     */
+    bool hasEarthGravityModel() const noexcept;
+
+    /*!
      * Returns the count of how many times the "preview" dialog is still
      * to be shown.
      *
@@ -624,6 +644,9 @@ private:
     Settings() noexcept;
 
     void frenchConnection() noexcept;
+
+private slots:
+    void updateEgmFilePath() noexcept;
 };
 
 #endif // SETTINGS_H

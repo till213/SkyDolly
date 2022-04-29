@@ -86,12 +86,6 @@ void KmlImportOptionWidget::initUi() noexcept
 
 // PRIVATE SLOTS
 
-void KmlImportOptionWidget::onFormatChanged() noexcept
-{
-    const KmlImportSettings::Format format = static_cast<KmlImportSettings::Format>(ui->formatComboBox->currentData().toInt());
-    d->settings.setFormat(format);
-}
-
 void KmlImportOptionWidget::updateUi() noexcept
 {
     const KmlImportSettings::Format format = d->settings.getFormat();
@@ -101,4 +95,10 @@ void KmlImportOptionWidget::updateUi() noexcept
         ++currentIndex;
     }
     ui->formatComboBox->setCurrentIndex(currentIndex);
+}
+
+void KmlImportOptionWidget::onFormatChanged() noexcept
+{
+    const KmlImportSettings::Format format = static_cast<KmlImportSettings::Format>(ui->formatComboBox->currentData().toInt());
+    d->settings.setFormat(format);
 }

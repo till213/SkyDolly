@@ -31,7 +31,7 @@
 #include <QString>
 
 #include "../../../../../Kernel/src/Settings.h"
-#include "../../Plugin/src/ExportPluginBaseSettings.h"
+#include "../../../ExportPluginBaseSettings.h"
 
 class IgcExportSettingsPrivate;
 
@@ -47,6 +47,9 @@ public:
 
     QString getCoPilotName() const noexcept;
     void setCoPilotName(const QString &coPilotName) noexcept;
+
+    bool isConvertAltitudeEnabled() const noexcept;
+    void setConvertAltitudeEnabled(bool enable) noexcept;
 
 signals:
     /*!

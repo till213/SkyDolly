@@ -31,18 +31,20 @@
 namespace
 {
     // Keys
-    constexpr char WaypointSelectionKey[] = "WaypointSelection";
-    constexpr char PositionSelectionKey[] = "PositionSelection";
-    constexpr char DefaultAltitudeKey[] = "DefaultAltitude";
-    constexpr char DefaultVelocityKey[] = "DefaultVelocity";
+    constexpr char WaypointSelectionKey[] {"WaypointSelection"};
+    constexpr char PositionSelectionKey[] {"PositionSelection"};
+    constexpr char DefaultAltitudeKey[] {"DefaultAltitude"};
+    constexpr char DefaultVelocityKey[] {"DefaultVelocity"};
+    constexpr char ConvertAltitudeKey[] {"ConvertAltitude"};
 
     // Defaults
-    constexpr GpxImportSettings::GPXElement DefaultWaypointSelection = GpxImportSettings::GPXElement::Route;
-    constexpr GpxImportSettings::GPXElement DefaultPositionSelection = GpxImportSettings::GPXElement::Track;
+    constexpr GpxImportSettings::GPXElement DefaultWaypointSelection {GpxImportSettings::GPXElement::Route};
+    constexpr GpxImportSettings::GPXElement DefaultPositionSelection {GpxImportSettings::GPXElement::Track};
     // In feet
-    constexpr int DefaultAltitude = 1000;
+    constexpr int DefaultAltitude {1000};
     // In knots
-    constexpr int DefaultVelocity = 120;
+    constexpr int DefaultVelocity {120};
+    constexpr bool DefaultConvertAltitude {true};
 }
 
 class GpxImportSettingsPrivate
@@ -52,13 +54,15 @@ public:
         : waypointSelection(::DefaultWaypointSelection),
           positionSelection(::DefaultPositionSelection),
           defaultAltitude(::DefaultAltitude),
-          defaultVelocity(::DefaultVelocity)
+          defaultVelocity(::DefaultVelocity),
+          convertAltitude(::DefaultConvertAltitude)
     {}
 
     GpxImportSettings::GPXElement waypointSelection;
     GpxImportSettings::GPXElement positionSelection;
     int defaultAltitude;
     int defaultVelocity;
+    bool convertAltitude;
 };
 
 // PUBLIC
@@ -130,6 +134,19 @@ void GpxImportSettings::setDefaultVelocity(int velocity) noexcept
     }
 }
 
+bool GpxImportSettings::isConvertAltitudeEnabled() const noexcept
+{
+    return d->convertAltitude;
+}
+
+void GpxImportSettings::setConvertAltitudeEnabled(bool enable) noexcept
+{
+    if (d->convertAltitude != enable) {
+        d->convertAltitude = enable;
+        emit extendedSettingsChanged();
+    }
+}
+
 // PROTECTED
 
 void GpxImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
@@ -151,6 +168,10 @@ void GpxImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const no
     keyValue.first = ::DefaultVelocityKey;
     keyValue.second = d->defaultVelocity;
     keyValues.push_back(keyValue);
+
+    keyValue.first = ::ConvertAltitudeKey;
+    keyValue.second = d->convertAltitude;
+    keyValues.push_back(keyValue);
 }
 
 void GpxImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
@@ -171,6 +192,10 @@ void GpxImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 
     keyValue.first = ::DefaultVelocityKey;
     keyValue.second = ::DefaultVelocity;
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = ::ConvertAltitudeKey;
+    keyValue.second = ::DefaultConvertAltitude;
     keysWithDefaults.push_back(keyValue);
 }
 
@@ -204,6 +229,10 @@ void GpxImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
     } else {
         d->defaultVelocity = DefaultVelocity;
     }
+
+    d->convertAltitude = valuesByKey.at(::ConvertAltitudeKey).toBool();
+
+    emit extendedSettingsChanged();
 }
 
 void GpxImportSettings::restoreDefaultsExtn() noexcept
@@ -212,6 +241,7 @@ void GpxImportSettings::restoreDefaultsExtn() noexcept
     d->positionSelection = ::DefaultPositionSelection;
     d->defaultAltitude = ::DefaultAltitude;
     d->defaultVelocity = ::DefaultVelocity;
+    d->convertAltitude = ::DefaultConvertAltitude;
 
     emit extendedSettingsChanged();
 }

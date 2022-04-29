@@ -17,6 +17,11 @@ Sky Dolly uses (or is "inspired by") the following third-party libraries and fun
 * Website: https://sqlite.org/
 * License: Public Domain
 
+## GeographicLib
+* Author: Charles Karney
+* Website: https://geographiclib.sourceforge.io/
+* License: MIT License
+
 ## Ordered-Map
 * Author: Thibaut Goetghebuer-Planchon (Tessil)
 * Source: https://github.com/Tessil/ordered-map

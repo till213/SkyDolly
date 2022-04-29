@@ -8,6 +8,9 @@
 - There are 6 columns only in the [original documenation](https://www.flightradar24.com/blog/using-the-new-flightradar24-kml-and-csv-export-tools/): without UTC timestamp
 - Altitude is in feet, speed in knots
 
+### Altitude
+Altitude data reported by ADS-B is the pressure altitude at standard pressure (1013 hPa) and not the altitude above ground level. All altitude data when the aircraft is ‘on ground’ is reported as 0.
+
 ### Example
 
 ```
@@ -20,3 +23,4 @@ Timestamp,UTC,Callsign,Position,Altitude,Speed,Direction
 
 ## References
 - https://cgarethc.medium.com/building-a-flight-plan-creator-with-google-cloud-functions-and-sheets-bf9d65412f0
+- https://www.flightradar24.com/blog/flightradar24-data-regarding-the-crash-of-ethiopian-airlines-flight-302/

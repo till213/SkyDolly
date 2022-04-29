@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <memory>
+
 #include <QCoreApplication>
 #include <QApplication>
 #include <QStringList>
@@ -36,12 +38,6 @@
 
 static void destroySingletons() noexcept
 {
-    // Block all signals (avoids main window flickering)
-    Settings::getInstance().blockSignals(true);
-    ConnectionManager::getInstance().blockSignals(true);
-    PluginManager::getInstance().blockSignals(true);
-    SkyConnectManager::getInstance().blockSignals(true);
-
     // Destroying the settings singleton also persists the settings
     Settings::destroyInstance();
     Logbook::destroyInstance();
@@ -67,9 +63,14 @@ int main(int argc, char *argv[])
     if (args.count() > 1) {
        filePath = args.at(1);
     }
-    MainWindow mainWindow(filePath);
-    mainWindow.show();
-    const int res = application.exec();
+    int res;
+    // Main window scope
+    {
+        std::unique_ptr<MainWindow> mainWindow = std::make_unique<MainWindow>(filePath);
+        mainWindow->show();
+        res = application.exec();
+    }
+    // Destroy singletons after main window has been deleted
     destroySingletons();
     return res;
 }

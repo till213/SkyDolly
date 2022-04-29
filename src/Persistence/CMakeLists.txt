@@ -3,9 +3,9 @@ set(LIBRARY_NAME "Persistence")
 add_definitions(-DPERSISTENCE_EXPORT)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(${LIBRARY_NAME} SHARED "")
+    qt_add_library(${LIBRARY_NAME} SHARED)
 else()
-    add_library(${LIBRARY_NAME} SHARED "")
+    add_library(${LIBRARY_NAME} SHARED)
 endif()
 
 target_sources(${LIBRARY_NAME}
@@ -53,10 +53,13 @@ target_sources(${LIBRARY_NAME}
 set(LIBRARY_DEPENDENCIES
     Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Sql Kernel Model SkyConnect
 )
-if (${PLATFORM_IS_MACOS})
-    list(APPEND LIBRARY_DEPENDENCIES -lc++)
-endif()
 
-target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})
-set_target_properties(${LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
-set_target_properties(${LIBRARY_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
+target_link_libraries(${LIBRARY_NAME}
+    PRIVATE
+        ${LIBRARY_DEPENDENCIES}
+)
+set_target_properties(${LIBRARY_NAME}
+    PROPERTIES
+        VERSION ${PROJECT_VERSION}
+        SOVERSION ${PROJECT_VERSION_MAJOR}
+)

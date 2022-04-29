@@ -29,16 +29,16 @@
 
 #include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/Settings.h"
-#include "../../Plugin/src/ExportPluginBaseSettings.h"
+#include "../../../ExportPluginBaseSettings.h"
 #include "GpxExportSettings.h"
 
 namespace
 {
     // Keys
-    constexpr char TimestampModeKey[] = "TimestampMode";
+    constexpr char TimestampModeKey[] {"TimestampMode"};
 
     // Defaults
-    constexpr GpxExportSettings::TimestampMode DefaultTimestampMode = GpxExportSettings::TimestampMode::Simulation;
+    constexpr GpxExportSettings::TimestampMode DefaultTimestampMode {GpxExportSettings::TimestampMode::Simulation};
 }
 
 class GpxExportSettingsPrivate

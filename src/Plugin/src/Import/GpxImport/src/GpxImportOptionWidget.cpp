@@ -26,6 +26,7 @@
 #include <QSpinBox>
 
 #include "../../../../../Kernel/src/Enum.h"
+#include "../../../../../Kernel/src/Settings.h"
 #include "../../../../../Kernel/src/Version.h"
 #include "GpxImportOptionWidget.h"
 #include "GpxImportSettings.h"
@@ -93,7 +94,8 @@ void GpxImportOptionWidget::frenchConnection() noexcept
     connect(ui->defaultVelocitySpinBox, &QSpinBox::valueChanged,
             this, &GpxImportOptionWidget::onDefaultVelocityChanged);
 #endif
-
+    connect(ui->convertAltitudeCheckBox, &QCheckBox::stateChanged,
+            this, &GpxImportOptionWidget::onConvertAltitudeChanged);
     connect(&d->settings, &GpxImportSettings::extendedSettingsChanged,
             this, &GpxImportOptionWidget::updateUi);
 }
@@ -120,6 +122,38 @@ void GpxImportOptionWidget::initUi() noexcept
 
 // PRIVATE SLOTS
 
+void GpxImportOptionWidget::updateUi() noexcept
+{
+    const GpxImportSettings::GPXElement waypointSelection = d->settings.getWaypointSelection();
+    int currentIndex = 0;
+    while (currentIndex < ui->waypointSelectionComboBox->count() &&
+           static_cast<GpxImportSettings::GPXElement>(ui->waypointSelectionComboBox->itemData(currentIndex).toInt()) != waypointSelection) {
+        ++currentIndex;
+    }
+    ui->waypointSelectionComboBox->setCurrentIndex(currentIndex);
+
+    const GpxImportSettings::GPXElement positionSelection = d->settings.getPositionSelection();
+    currentIndex = 0;
+    while (currentIndex < ui->positionSelectionComboBox->count() &&
+           static_cast<GpxImportSettings::GPXElement>(ui->positionSelectionComboBox->itemData(currentIndex).toInt()) != positionSelection) {
+        ++currentIndex;
+    }
+    ui->positionSelectionComboBox->setCurrentIndex(currentIndex);
+
+    ui->defaultAltitudeSpinBox->setValue(d->settings.getDefaultAltitude());
+    ui->defaultVelocitySpinBox->setValue(d->settings.getDefaultVelocity());
+
+    if (Settings::getInstance().hasEarthGravityModel()) {
+        ui->convertAltitudeCheckBox->setEnabled(true);
+        ui->convertAltitudeCheckBox->setChecked(d->settings.isConvertAltitudeEnabled());
+        ui->convertAltitudeCheckBox->setToolTip(tr("Converts imported height above WGS84 ellipsoid to height above the EGM 2008 geoid."));
+    } else {
+        ui->convertAltitudeCheckBox->setEnabled(false);
+        ui->convertAltitudeCheckBox->setChecked(false);
+        ui->convertAltitudeCheckBox->setToolTip(tr("No earth gravity model (EGM) is available."));
+    }
+}
+
 void GpxImportOptionWidget::onWaypointSelelectionChanged() noexcept
 {
     const GpxImportSettings::GPXElement waypointSelection = static_cast<GpxImportSettings::GPXElement>(ui->waypointSelectionComboBox->currentData().toInt());
@@ -142,24 +176,7 @@ void GpxImportOptionWidget::onDefaultVelocityChanged(int value) noexcept
     d->settings.setDefaultVelocity(value);
 }
 
-void GpxImportOptionWidget::updateUi() noexcept
+void GpxImportOptionWidget::onConvertAltitudeChanged(int state) noexcept
 {
-    const GpxImportSettings::GPXElement waypointSelection = d->settings.getWaypointSelection();
-    int currentIndex = 0;
-    while (currentIndex < ui->waypointSelectionComboBox->count() &&
-           static_cast<GpxImportSettings::GPXElement>(ui->waypointSelectionComboBox->itemData(currentIndex).toInt()) != waypointSelection) {
-        ++currentIndex;
-    }
-    ui->waypointSelectionComboBox->setCurrentIndex(currentIndex);
-
-    const GpxImportSettings::GPXElement positionSelection = d->settings.getPositionSelection();
-    currentIndex = 0;
-    while (currentIndex < ui->positionSelectionComboBox->count() &&
-           static_cast<GpxImportSettings::GPXElement>(ui->positionSelectionComboBox->itemData(currentIndex).toInt()) != positionSelection) {
-        ++currentIndex;
-    }
-    ui->positionSelectionComboBox->setCurrentIndex(currentIndex);
-
-    ui->defaultAltitudeSpinBox->setValue(d->settings.getDefaultAltitude());
-    ui->defaultVelocitySpinBox->setValue(d->settings.getDefaultVelocity());
+    d->settings.setConvertAltitudeEnabled(state == Qt::Checked);
 }
