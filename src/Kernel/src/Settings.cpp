@@ -26,15 +26,29 @@
 #include <QStandardPaths>
 #include <QSettings>
 #include <QString>
+#include <QLatin1String>
 #include <QUuid>
 #include <QByteArray>
 #include <QVariant>
+#include <QDir>
+#include <QFileInfo>
 
 #include "Enum.h"
 #include "Const.h"
 #include "SampleRate.h"
 #include "Version.h"
 #include "Settings.h"
+
+namespace
+{
+    constexpr bool DefaultBackupBeforeMigration {true};
+
+    constexpr char ResourceDirectoryName[] = "Resources";
+    // This happens to be the same directory name as when unzipping the downloaded EGM data
+    // from https://geographiclib.sourceforge.io/html/geoid.html#geoidinst
+    constexpr char EgmDirectoryName[] = "geoids";
+    constexpr char DefaultEgmFileName[] = "egm2008-5.pgm";
+}
 
 class SettingsPrivate
 {
@@ -69,10 +83,12 @@ public:
 
     QString importAircraftType;
 
+    QFileInfo earthGravityModelFileInfo;
+
     int previewInfoDialogCount;
 
     static Settings *instance;
-    static constexpr bool DefaultBackupBeforeMigration = true;
+
     static constexpr QUuid DefaultSkyConnectPluginUuid = QUuid();
     static constexpr double DefaultRecordingSampleRate = SampleRate::toValue(SampleRate::SampleRate::Auto);
     static constexpr bool DefaultWindowStayOnTop = false;
@@ -92,7 +108,7 @@ public:
     static constexpr bool DefaultDeleteAircraftConfirmation = true;
     static constexpr bool DefaultResetTimeOffsetConfirmation = true;
 
-    static inline const QString DefaultImportAircraftType = QStringLiteral("");
+    static inline const QString DefaultImportAircraftType = QLatin1String("");
 
     static constexpr int DefaultPreviewInfoDialogCount = 3;
     static constexpr int PreviewInfoDialogBase = 80;
@@ -419,6 +435,16 @@ void Settings::setImportAircraftType(const QString &type) noexcept
     }
 }
 
+QFileInfo Settings::getEarthGravityModelFileInfo() const noexcept
+{
+    return d->earthGravityModelFileInfo;
+}
+
+bool Settings::hasEarthGravityModel() const noexcept
+{
+    return d->earthGravityModelFileInfo.exists();
+}
+
 int Settings::getPreviewInfoDialogCount() const noexcept
 {
     return d->previewInfoDialogCount - SettingsPrivate::PreviewInfoDialogBase;
@@ -548,7 +574,7 @@ void Settings::restore() noexcept
     d->settings.beginGroup("Logbook");
     {
         d->logbookPath = d->settings.value("Path", d->defaultLogbookPath).toString();
-        d->backupBeforeMigration = d->settings.value("BackupBeforeMigration", SettingsPrivate::DefaultBackupBeforeMigration).toBool();
+        d->backupBeforeMigration = d->settings.value("BackupBeforeMigration", ::DefaultBackupBeforeMigration).toBool();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Plugins");
@@ -659,6 +685,7 @@ Settings::Settings() noexcept
 #endif
     restore();
     frenchConnection();
+    updateEgmFilePath();
 }
 
 void Settings::frenchConnection() noexcept
@@ -695,4 +722,26 @@ void Settings::frenchConnection() noexcept
             this, &Settings::changed);
     connect(this, &Settings::repeatCanopyChanged,
             this, &Settings::changed);
+}
+
+// PRIVATE SLOTS
+
+void Settings::updateEgmFilePath() noexcept
+{
+    d->earthGravityModelFileInfo = QFileInfo();
+    QDir egmDirectory = QDir(QCoreApplication::applicationDirPath());
+#if defined(Q_OS_MAC)
+        if (egmDirectory.dirName() == "MacOS") {
+            // Navigate up the app bundle structure, into the Contents folder
+            egmDirectory.cdUp();
+        }
+#endif
+    if (egmDirectory.cd(::ResourceDirectoryName)) {
+        if (egmDirectory.cd(::EgmDirectoryName)) {
+            if (egmDirectory.exists(::DefaultEgmFileName)) {
+                d->earthGravityModelFileInfo = QFileInfo(egmDirectory.absoluteFilePath(::DefaultEgmFileName));
+            }
+        }
+    }
+
 }

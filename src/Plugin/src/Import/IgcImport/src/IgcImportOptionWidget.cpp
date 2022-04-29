@@ -24,6 +24,7 @@
  */
 #include <QComboBox>
 #include <QSpinBox>
+#include <QCheckBox>
 
 #include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/Version.h"
@@ -79,7 +80,8 @@ void IgcImportOptionWidget::frenchConnection() noexcept
     connect(ui->enlThresholdSpinBox, &QSpinBox::valueChanged,
             this, &IgcImportOptionWidget::onENLThresholdChanged);
 #endif
-
+    connect(ui->convertAltitudeCheckBox, &QCheckBox::stateChanged,
+            this, &IgcImportOptionWidget::onConvertAltitudeChanged);
     connect(&d->settings, &IgcImportSettings::extendedSettingsChanged,
             this, &IgcImportOptionWidget::updateUi);
 }
@@ -97,6 +99,34 @@ void IgcImportOptionWidget::initUi() noexcept
 
 // PRIVATE SLOTS
 
+void IgcImportOptionWidget::updateUi() noexcept
+{
+    const IgcImportSettings::AltitudeMode altitudeMode = d->settings.getAltitudeMode();
+    int currentIndex = 0;
+    while (currentIndex < ui->altitudeComboBox->count() &&
+           static_cast<IgcImportSettings::AltitudeMode>(ui->altitudeComboBox->itemData(currentIndex).toInt()) != altitudeMode) {
+        ++currentIndex;
+    }
+    ui->altitudeComboBox->setCurrentIndex(currentIndex);
+    ui->enlThresholdSpinBox->setValue(d->settings.getEnlThresholdPercent());
+    switch (altitudeMode) {
+    case IgcImportSettings::AltitudeMode::Gnss:
+        if (Settings::getInstance().hasEarthGravityModel()) {
+            ui->convertAltitudeCheckBox->setEnabled(true);
+            ui->convertAltitudeCheckBox->setChecked(d->settings.isConvertAltitudeEnabled());
+            ui->convertAltitudeCheckBox->setToolTip(tr("Converts imported height above WGS84 ellipsoid to height above the EGM 2008 geoid."));
+        } else {
+            ui->convertAltitudeCheckBox->setEnabled(false);
+            ui->convertAltitudeCheckBox->setChecked(false);
+            ui->convertAltitudeCheckBox->setToolTip(tr("No earth gravity model (EGM) is available."));
+        }
+        break;
+    default:
+        ui->convertAltitudeCheckBox->setEnabled(false);
+        ui->convertAltitudeCheckBox->setChecked(false);
+    }
+}
+
 void IgcImportOptionWidget::onAltitudeChanged() noexcept
 {
     const IgcImportSettings::AltitudeMode altitudeMode = static_cast<IgcImportSettings::AltitudeMode>(ui->altitudeComboBox->currentData().toInt());
@@ -108,15 +138,7 @@ void IgcImportOptionWidget::onENLThresholdChanged(int value) noexcept
     d->settings.setEnlThresholdPercent(value);
 }
 
-void IgcImportOptionWidget::updateUi() noexcept
+void IgcImportOptionWidget::onConvertAltitudeChanged(int state) noexcept
 {
-    const IgcImportSettings::AltitudeMode altitudeMode = d->settings.getAltitudeMode();
-    int currentIndex = 0;
-    while (currentIndex < ui->altitudeComboBox->count() &&
-           static_cast<IgcImportSettings::AltitudeMode>(ui->altitudeComboBox->itemData(currentIndex).toInt()) != altitudeMode) {
-        ++currentIndex;
-    }
-    ui->altitudeComboBox->setCurrentIndex(currentIndex);
-
-    ui->enlThresholdSpinBox->setValue(d->settings.getEnlThresholdPercent());
+    d->settings.setConvertAltitudeEnabled(state == Qt::Checked);
 }

@@ -40,7 +40,7 @@ class GpxParserPrivate;
 class GpxParser
 {
 public:
-    GpxParser(Flight &flight, QXmlStreamReader &xmlStreamReader, const GpxImportSettings &settings) noexcept;
+    GpxParser(Flight &flight, QXmlStreamReader &xmlStreamReader, const GpxImportSettings &pluginSettings) noexcept;
     ~GpxParser() noexcept;
 
     void parse() noexcept;

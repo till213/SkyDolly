@@ -1,9 +1,9 @@
 set(LIBRARY_NAME "MSFSSimConnect")
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(${LIBRARY_NAME} SHARED "")
+    qt_add_library(${LIBRARY_NAME} MODULE "")
 else()
-    add_library(${LIBRARY_NAME} SHARED "")
+    add_library(${LIBRARY_NAME} MODULE "")
 endif()
 
 set(LIBRARY_DEPENDENCIES
@@ -33,10 +33,12 @@ target_sources(${LIBRARY_NAME}
         src/MSFSSimConnectPlugin.json
 )
 
-target_link_libraries(${LIBRARY_NAME} PRIVATE ${LIBRARY_DEPENDENCIES})
+target_link_libraries(${LIBRARY_NAME}
+    PRIVATE
+        ${LIBRARY_DEPENDENCIES}
+)
 
 # SimConnect
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/3rdParty/cmake")
 find_package(SimConnect REQUIRED)
 
 # Copy SimConnect.dll to bin directory (for development)

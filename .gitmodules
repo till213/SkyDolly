@@ -1,3 +1,6 @@
 [submodule "3rdParty/ordered-map"]
 	path = 3rdParty/ordered-map
 	url = https://github.com/Tessil/ordered-map
+[submodule "3rdParty/geographiclib"]
+	path = 3rdParty/geographiclib
+	url = https://github.com/geographiclib/geographiclib.git

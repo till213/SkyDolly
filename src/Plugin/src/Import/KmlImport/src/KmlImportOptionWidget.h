@@ -51,9 +51,8 @@ private:
     void initUi() noexcept;
 
 private slots:
-    void onFormatChanged() noexcept;
-
     void updateUi() noexcept;
+    void onFormatChanged() noexcept;
 };
 
 #endif // KMLIMPORTOPTIONWIDGET_H

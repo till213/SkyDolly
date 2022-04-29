@@ -185,7 +185,8 @@ bool ExportPluginBase::exportAllAircraft(const Flight &flight, const QString &fi
     bool replaceAll {false};
     int i = 1;
     for (const auto &aircraft : flight) {
-        const QString sequencedFilePath = File::getSequenceFilePath(filePath, i);
+        // Don't append sequence numbers if flight has only one aircraft
+        const QString sequencedFilePath = flight.count() > 1 ? File::getSequenceFilePath(filePath, i) : filePath;
         const QFileInfo fileInfo {sequencedFilePath};
         if (fileInfo.exists() && !replaceAll) {
             QGuiApplication::restoreOverrideCursor();

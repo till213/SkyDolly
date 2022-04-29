@@ -51,9 +51,8 @@ private:
     void initUi() noexcept;
 
 private slots:
-    void onFormatChanged(int index) noexcept;
-
     void updateUi() noexcept;
+    void onFormatChanged(int index) noexcept;    
 };
 
 #endif // CSVIMPORTOPTIONWIDGET_H

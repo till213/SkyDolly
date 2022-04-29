@@ -31,10 +31,10 @@
 namespace
 {
     // Keys
-    constexpr char FormatKey[] = "Format";
+    constexpr char FormatKey[] {"Format"};
 
     // Defaults
-    constexpr CsvImportSettings::Format DefaultFormat = CsvImportSettings::Format::SkyDolly;
+    constexpr CsvImportSettings::Format DefaultFormat {CsvImportSettings::Format::SkyDolly};
 }
 
 class CsvImportSettingsPrivate
@@ -106,6 +106,8 @@ void CsvImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
     } else {
         d->format = ::DefaultFormat;
     }
+
+    emit extendedSettingsChanged();
 }
 
 void CsvImportSettings::restoreDefaultsExtn() noexcept

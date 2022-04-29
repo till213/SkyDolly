@@ -29,14 +29,14 @@
 
 #include "../../../../../Kernel/src/System.h"
 #include "../../../../../Kernel/src/Settings.h"
-#include "../../Plugin/src/ExportPluginBaseSettings.h"
+#include "../../../ExportPluginBaseSettings.h"
 #include "IgcExportSettings.h"
 
 namespace
 {
     // Keys
-    constexpr char PilotNameKey[] = "PilotName";
-    constexpr char CoPilotNameKey[] = "CoPilotName";
+    constexpr char PilotNameKey[] {"PilotName"};
+    constexpr char CoPilotNameKey[] {"CoPilotName"};
 }
 
 class IgcExportSettingsPrivate

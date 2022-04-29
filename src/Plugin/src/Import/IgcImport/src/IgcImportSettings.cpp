@@ -31,12 +31,14 @@
 namespace
 {
     // Keys
-    constexpr char AltitudeKey[] = "Altitude";
-    constexpr char EnlThresholdKey[] = "EnlThreshold";
+    constexpr char AltitudeKey[] {"Altitude"};
+    constexpr char EnlThresholdKey[] {"EnlThreshold"};
+    constexpr char ConvertAltitudeKey[] {"ConvertAltitude"};
 
     // Defaults
-    constexpr IgcImportSettings::AltitudeMode DefaultAltitudeMode = IgcImportSettings::AltitudeMode::Gnss;
-    constexpr int DefaultEnlThresholdPercent = 40;
+    constexpr IgcImportSettings::AltitudeMode DefaultAltitudeMode {IgcImportSettings::AltitudeMode::Gnss};
+    constexpr int DefaultEnlThresholdPercent {40};
+    constexpr bool DefaultConvertAltitude {true};
 }
 
 class IgcImportSettingsPrivate
@@ -44,11 +46,13 @@ class IgcImportSettingsPrivate
 public:
     IgcImportSettingsPrivate()
         : altitudeMode(::DefaultAltitudeMode),
-          enlThresholdPercent(::DefaultEnlThresholdPercent)
+          enlThresholdPercent(::DefaultEnlThresholdPercent),
+          convertAltitude(::DefaultConvertAltitude)
     {}
 
     IgcImportSettings::AltitudeMode altitudeMode;
     int enlThresholdPercent;
+    bool convertAltitude;
 };
 
 // PUBLIC
@@ -94,6 +98,19 @@ void IgcImportSettings::setEnlThresholdPercent(int enlThresholdPercent) noexcept
     }
 }
 
+bool IgcImportSettings::isConvertAltitudeEnabled() const noexcept
+{
+    return d->convertAltitude;
+}
+
+void IgcImportSettings::setConvertAltitudeEnabled(bool enable) noexcept
+{
+    if (d->convertAltitude != enable) {
+        d->convertAltitude = enable;
+        emit extendedSettingsChanged();
+    }
+}
+
 // PROTECTED
 
 void IgcImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const noexcept
@@ -107,6 +124,10 @@ void IgcImportSettings::addSettingsExtn(Settings::KeyValues &keyValues) const no
     keyValue.first = ::EnlThresholdKey;
     keyValue.second = d->enlThresholdPercent;
     keyValues.push_back(keyValue);
+
+    keyValue.first = ::ConvertAltitudeKey;
+    keyValue.second = d->convertAltitude;
+    keyValues.push_back(keyValue);
 }
 
 void IgcImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept
@@ -119,6 +140,10 @@ void IgcImportSettings::addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keys
 
     keyValue.first = ::EnlThresholdKey;
     keyValue.second = ::DefaultEnlThresholdPercent;
+    keysWithDefaults.push_back(keyValue);
+
+    keyValue.first = ::ConvertAltitudeKey;
+    keyValue.second = ::DefaultConvertAltitude;
     keysWithDefaults.push_back(keyValue);
 }
 
@@ -138,12 +163,17 @@ void IgcImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
     } else {
         d->enlThresholdPercent = ::DefaultEnlThresholdPercent;
     }
+
+    d->convertAltitude = valuesByKey.at(::ConvertAltitudeKey).toBool();
+
+    emit extendedSettingsChanged();
 }
 
 void IgcImportSettings::restoreDefaultsExtn() noexcept
 {
     d->altitudeMode = ::DefaultAltitudeMode;
     d->enlThresholdPercent = ::DefaultEnlThresholdPercent;
+    d->convertAltitude = ::DefaultConvertAltitude;
 
     emit extendedSettingsChanged();
 }

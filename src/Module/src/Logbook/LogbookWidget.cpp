@@ -568,14 +568,18 @@ void LogbookWidget::updateDateSelectorUi() noexcept
             totalFlights += nofFlightsPerYear;
         }
 
-        // Expand all "first" children
+        // Adjust column size when all items are expanded
+        ui->logTreeWidget->expandAll();
+        ui->logTreeWidget->resizeColumnToContents(DateColumn);
+        ui->logTreeWidget->collapseAll();
+
+        // Expand all "first" children (only)
         QTreeWidgetItem *item = logbookItem;
         while (item->childCount() > 0) {
             item->setExpanded(true);
             item = item->child(0);
         }
 
-        ui->logTreeWidget->resizeColumnToContents(DateColumn);
         logbookItem->setData(NofFlightsColumn, Qt::DisplayRole, totalFlights);
 
         ui->logTreeWidget->blockSignals(false);

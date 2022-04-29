@@ -65,6 +65,7 @@ public:
     GpxExportSettings pluginSettings;
     QDateTime startDateTimeUtc;
     Unit unit;
+    Convert convert;
 
     static inline const QString FileExtension {QStringLiteral("gpx")};
 };
@@ -297,9 +298,12 @@ QString GpxExportPlugin::getAircraftDescription(const Aircraft &aircraft) const 
 inline bool GpxExportPlugin::exportTrackPoint(const PositionData &positionData, QIODevice &io) const noexcept
 {
     const QDateTime dateTimeUtc = d->startDateTimeUtc.addMSecs(positionData.timestamp);
+    // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]
+    const double heightAboveEllipsoid = d->convert.egmToWgs84Ellipsoid(positionData.latitude, positionData.longitude, Convert::feetToMeters(positionData.altitude));
+
     const QString trackPoint =
 "      <trkpt lat=\"" % Export::formatCoordinate(positionData.latitude) % "\" lon=\"" % Export::formatCoordinate(positionData.longitude) % "\">\n"
-"        <ele>" % Export::formatNumber(Convert::feetToMeters(positionData.altitude)).toUtf8() % "</ele>\n"
+"        <ele>" % Export::formatNumber(heightAboveEllipsoid).toUtf8() % "</ele>\n"
 "        <time>" % dateTimeUtc.toString(Qt::ISODate) % "</time>\n"
 "      </trkpt>\n";
 
@@ -308,9 +312,11 @@ inline bool GpxExportPlugin::exportTrackPoint(const PositionData &positionData, 
 
 inline bool GpxExportPlugin::exportWaypoint(const Waypoint &waypoint, QIODevice &io) const noexcept
 {
+    // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]
+    const double heightAboveEllipsoid = d->convert.egmToWgs84Ellipsoid(waypoint.latitude, waypoint.longitude, Convert::feetToMeters(waypoint.altitude));
     const QString waypointString =
 "  <wpt lat=\"" % Export::formatCoordinate(waypoint.latitude) % "\" lon=\"" % Export::formatCoordinate(waypoint.longitude) % "\">\n"
-"    <ele>" % Export::formatNumber(Convert::feetToMeters(waypoint.altitude)).toUtf8() % "</ele>\n"
+"    <ele>" % Export::formatNumber(heightAboveEllipsoid).toUtf8() % "</ele>\n"
 "    <time>" % waypoint.zuluTime.toString(Qt::ISODate) % "</time>\n"
 "    <name>" % waypoint.identifier % "</name>\n"
 "  </wpt>\n";

@@ -81,9 +81,8 @@ void IgcExportOptionWidget::initUi() noexcept
 
 void IgcExportOptionWidget::updateUi() noexcept
 {
-   ui->pilotNameLineEdit->setText(d->settings.getPilotName());
-   ui->coPilotNameLineEdit->setText(d->settings.getCoPilotName());
-
+    ui->pilotNameLineEdit->setText(d->settings.getPilotName());
+    ui->coPilotNameLineEdit->setText(d->settings.getCoPilotName());
 }
 
 void IgcExportOptionWidget::onPilotNameChanged(const QString &name) noexcept

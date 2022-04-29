@@ -183,7 +183,7 @@ I 04 3638 FXA 3940 SIU 4143 ENL 4446 MOP CR LF
 Not counting the last CRLF, a B record line includes 35 bytes for its basic data, plus those for extra
 characters that are defined in the I Record such as Fix Accuracy (FXA).
 
-The required basic data is: UTC, WGS84latitude, WGS84 longitude, fix validity, pressure altitude , GNSS altitude 
+The required basic data is: UTC, WGS84 latitude, WGS84 longitude, fix validity, pressure altitude , GNSS altitude 
 with respect to the WGS84 Ellipsoid.
 
 The format of the basic data, with extra spaces for clarity, is:
@@ -217,6 +217,12 @@ This K Record shows that the true heading (TLC = HDT) is 090 (East).
 - [2022-01-31-XYY-EXAMPLE-01.IGC](2022-01-31-XYY-EXAMPLE-01.IGC) - Example taken from the offical [IGC specification](https://www.fai.org/sites/default/files/igc_fr_specification_2020-11-25_with_al6.pdf)
 - [2022-01-31-XYY-EXAMPLE-02.IGC](2022-01-31-XYY-EXAMPLE-02.IGC) - A real-world example from [xp-soaring.github.io](https://xp-soaring.github.io/igc_file_format/index.html) 
 
+## Altitude
+
+GNSS altitude coordinates are in relation to the WGS84 reference ellipsoid.
+
+Quote [1]: "The height of the geoid is often reported relative to the internationally recognized WGS84 reference ellipsoid. The GPS in our phones, for example, records elevations relative to this ellipsoid."
+
 ## Resources
 
 - Official IGC specification (file format in appendix A): https://www.fai.org/sites/default/files/igc_fr_specification_2020-11-25_with_al6.pdf
@@ -226,3 +232,6 @@ This K Record shows that the true heading (TLC = HDT) is 090 (East).
 - More example IGC files: https://www.onlinecontest.org/olc-3.0/gliding/finder.html?st=olc&c=C0&aa=&cc=&pi=&ap=&sdt=2022-02-01&edt=2022-03-01&sedts=-1&sedte=-1&mp=0&filter=#
 - IGC analysis: http://igc-analysis.com
 - Flight database and analysis: https://skylinescondor.com/
+- Flight database: https://www.onlinecontest.org/
+- [1] Explanation and online geoid height calculator: https://www.unavco.org/software/geodetic-utilities/geoid-height-calculator/geoid-height-calculator.html
+- Another online geoid height calculator: https://geographiclib.sourceforge.io/cgi-bin/GeoidEval

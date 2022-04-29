@@ -33,7 +33,7 @@
 class KERNEL_API FlightSimulator
 {
 public:
-    FlightSimulator();
+    FlightSimulator() noexcept;
 
     enum struct Id {
         None,
