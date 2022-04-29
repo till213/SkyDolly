@@ -26,23 +26,29 @@
 #include <exception>
 
 #include <QCoreApplication>
+#include <QFileInfo>
 
 #include <GeographicLib/Geoid.hpp>
 
+#include "Settings.h"
 #include "Convert.h"
 
 // PUBLIC
 
 Convert::Convert() noexcept
 {
-    try {
-        const QString geoidDirectoryPath = QCoreApplication::applicationDirPath().append("/Resources/geoids");
-        m_egm = std::make_unique<GeographicLib::Geoid>("egm2008-5", geoidDirectoryPath.toStdString());
-    } catch (const std::exception &ex) {
+    const QFileInfo egmFileInfo = Settings::getInstance().getEgmFileInfo();
+    if (egmFileInfo.exists()) {
+        try {
+            m_egm = std::make_unique<GeographicLib::Geoid>(egmFileInfo.baseName().toStdString(), egmFileInfo.absolutePath().toStdString());
+        } catch (const std::exception &ex) {
+            m_egm = nullptr;
+    #ifdef DEBUG
+            qDebug("Convert::Convert: caught exception: %s", ex.what());
+    #endif
+        }
+    } else {
         m_egm = nullptr;
-#ifdef DEBUG
-        qDebug("Convert::Convert: caught exception: %s", ex.what());
-#endif
     }
 }
 
