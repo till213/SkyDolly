@@ -36,11 +36,12 @@
 Convert::Convert() noexcept
 {
     try {
-        m_egm = std::make_unique<GeographicLib::Geoid>("egm2008-5", QCoreApplication::applicationDirPath().append("/geoids").toStdString());
-    } catch (const std::exception& e) {
+        const QString geoidDirectoryPath = QCoreApplication::applicationDirPath().append("/Resources/geoids");
+        m_egm = std::make_unique<GeographicLib::Geoid>("egm2008-5", geoidDirectoryPath.toStdString());
+    } catch (const std::exception &ex) {
         m_egm = nullptr;
 #ifdef DEBUG
-        qDebug("IgcExportPlugin::exportFixes: caught exception: %s", e.what());
+        qDebug("Convert::Convert: caught exception: %s", ex.what());
 #endif
     }
 }

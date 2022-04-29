@@ -76,10 +76,10 @@ public:
                 // Convert height above WGS84 ellipsoid (HAE) tp height above EGM geoid [meters]
                 heightAboveGeoid = m_egm->ConvertHeight(latitude, longitude, height, GeographicLib::Geoid::ELLIPSOIDTOGEOID);
             }
-            catch (const std::exception& e) {
+            catch (const std::exception &ex) {
                 heightAboveGeoid = height;
 #ifdef DEBUG
-                qDebug("Convert::wgs84ToEgmGeoid: caught exception: %s", e.what());
+                qDebug("Convert::wgs84ToEgmGeoid: caught exception: %s", ex.what());
 #endif
             }
         } else {
@@ -117,10 +117,10 @@ public:
                 // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]
                 heightAboveEllipsoid = m_egm->ConvertHeight(latitude, longitude, height, GeographicLib::Geoid::GEOIDTOELLIPSOID);
             }
-            catch (const std::exception& e) {
+            catch (const std::exception &ex) {
                 heightAboveEllipsoid = height;
 #ifdef DEBUG
-                qDebug("Convert::egmToWgs84Ellipsoid: caught exception: %s", e.what());
+                qDebug("Convert::egmToWgs84Ellipsoid: caught exception: %s", ex.what());
 #endif
             }
         } else {

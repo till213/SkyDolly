@@ -77,9 +77,6 @@ set_target_properties(GeographicLib_SHARED
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
 
-# Data files
-add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geoids)
-
 # Documentation
 add_subdirectory(${CMAKE_SOURCE_DIR}/doc)
 
@@ -125,13 +122,19 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR}/src ${TS_FILES})
 endif()
 
+# Data files
+add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geoids)
+
 set(SKYDOLLY_LIBS
     Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence SkyConnect Plugin UserInterface
 )
 if (${PLATFORM_IS_MACOS})
-    list(APPEND SKYDOLLY_LIBS -lc++)
     set_target_properties(SkyDolly PROPERTIES
                           MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/res/Info.plist.in")
+      target_link_libraries(SkyDolly
+          PRIVATE
+              Geoids
+      )
 endif()
 
 target_sources(SkyDolly
