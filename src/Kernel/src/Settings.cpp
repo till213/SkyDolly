@@ -83,7 +83,7 @@ public:
 
     QString importAircraftType;
 
-    QFileInfo egmFileInfo;
+    QFileInfo earthGravityModelFileInfo;
 
     int previewInfoDialogCount;
 
@@ -435,9 +435,14 @@ void Settings::setImportAircraftType(const QString &type) noexcept
     }
 }
 
-QFileInfo Settings::getEgmFileInfo() const noexcept
+QFileInfo Settings::getEarthGravityModelFileInfo() const noexcept
 {
-    return d->egmFileInfo;
+    return d->earthGravityModelFileInfo;
+}
+
+bool Settings::hasEarthGravityModel() const noexcept
+{
+    return d->earthGravityModelFileInfo.exists();
 }
 
 int Settings::getPreviewInfoDialogCount() const noexcept
@@ -723,7 +728,7 @@ void Settings::frenchConnection() noexcept
 
 void Settings::updateEgmFilePath() noexcept
 {
-    d->egmFileInfo = QFileInfo();
+    d->earthGravityModelFileInfo = QFileInfo();
     QDir egmDirectory = QDir(QCoreApplication::applicationDirPath());
 #if defined(Q_OS_MAC)
         if (egmDirectory.dirName() == "MacOS") {
@@ -734,7 +739,7 @@ void Settings::updateEgmFilePath() noexcept
     if (egmDirectory.cd(::ResourceDirectoryName)) {
         if (egmDirectory.cd(::EgmDirectoryName)) {
             if (egmDirectory.exists(::DefaultEgmFileName)) {
-                d->egmFileInfo = QFileInfo(egmDirectory.absoluteFilePath(::DefaultEgmFileName));
+                d->earthGravityModelFileInfo = QFileInfo(egmDirectory.absoluteFilePath(::DefaultEgmFileName));
             }
         }
     }

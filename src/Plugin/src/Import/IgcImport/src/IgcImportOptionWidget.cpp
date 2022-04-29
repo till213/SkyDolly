@@ -111,8 +111,15 @@ void IgcImportOptionWidget::updateUi() noexcept
     ui->enlThresholdSpinBox->setValue(d->settings.getEnlThresholdPercent());
     switch (altitudeMode) {
     case IgcImportSettings::AltitudeMode::Gnss:
-        ui->convertAltitudeCheckBox->setEnabled(true);
-        ui->convertAltitudeCheckBox->setChecked(d->settings.isConvertAltitudeEnabled());
+        if (Settings::getInstance().hasEarthGravityModel()) {
+            ui->convertAltitudeCheckBox->setEnabled(true);
+            ui->convertAltitudeCheckBox->setChecked(d->settings.isConvertAltitudeEnabled());
+            ui->convertAltitudeCheckBox->setToolTip(tr("Converts imported height above WGS84 ellipsoid to height above the EGM 2008 geoid."));
+        } else {
+            ui->convertAltitudeCheckBox->setEnabled(false);
+            ui->convertAltitudeCheckBox->setChecked(false);
+            ui->convertAltitudeCheckBox->setToolTip(tr("No earth gravity model (EGM) is available."));
+        }
         break;
     default:
         ui->convertAltitudeCheckBox->setEnabled(false);

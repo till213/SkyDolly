@@ -26,6 +26,7 @@
 #include <QSpinBox>
 
 #include "../../../../../Kernel/src/Enum.h"
+#include "../../../../../Kernel/src/Settings.h"
 #include "../../../../../Kernel/src/Version.h"
 #include "GpxImportOptionWidget.h"
 #include "GpxImportSettings.h"
@@ -142,7 +143,15 @@ void GpxImportOptionWidget::updateUi() noexcept
     ui->defaultAltitudeSpinBox->setValue(d->settings.getDefaultAltitude());
     ui->defaultVelocitySpinBox->setValue(d->settings.getDefaultVelocity());
 
-    ui->convertAltitudeCheckBox->setChecked(d->settings.isConvertAltitudeEnabled());
+    if (Settings::getInstance().hasEarthGravityModel()) {
+        ui->convertAltitudeCheckBox->setEnabled(true);
+        ui->convertAltitudeCheckBox->setChecked(d->settings.isConvertAltitudeEnabled());
+        ui->convertAltitudeCheckBox->setToolTip(tr("Converts imported height above WGS84 ellipsoid to height above the EGM 2008 geoid."));
+    } else {
+        ui->convertAltitudeCheckBox->setEnabled(false);
+        ui->convertAltitudeCheckBox->setChecked(false);
+        ui->convertAltitudeCheckBox->setToolTip(tr("No earth gravity model (EGM) is available."));
+    }
 }
 
 void GpxImportOptionWidget::onWaypointSelelectionChanged() noexcept

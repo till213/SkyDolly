@@ -37,10 +37,12 @@
 
 Convert::Convert() noexcept
 {
-    const QFileInfo egmFileInfo = Settings::getInstance().getEgmFileInfo();
-    if (egmFileInfo.exists()) {
+    const QFileInfo earthGravityModelFileInfo = Settings::getInstance().getEarthGravityModelFileInfo();
+    if (earthGravityModelFileInfo.exists()) {
         try {
-            m_egm = std::make_unique<GeographicLib::Geoid>(egmFileInfo.baseName().toStdString(), egmFileInfo.absolutePath().toStdString());
+            const std::string egmName = earthGravityModelFileInfo.baseName().toStdString();
+            const std::string egmDirectory = earthGravityModelFileInfo.absolutePath().toStdString();
+            m_egm = std::make_unique<GeographicLib::Geoid>(egmName, egmDirectory);
         } catch (const std::exception &ex) {
             m_egm = nullptr;
     #ifdef DEBUG
