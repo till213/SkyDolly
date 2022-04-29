@@ -2,7 +2,7 @@ set(TARGET_NAME "Geoids")
 
 include(FetchEarthGravityModel)
 
-add_library(${TARGET_NAME} INTERFACE)
+add_custom_target(${TARGET_NAME} ALL)
 
 # Option: SD_FETCH_EGM (default: OFF)
 if (egm_POPULATED)
