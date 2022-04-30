@@ -158,6 +158,10 @@ target_link_libraries(SkyDolly
         ${SKYDOLLY_LIBS}
 )
 
+# Plugins
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/Plugins)
+
+
 # macOS: copy plugins into app bundle
 if (${PLATFORM_IS_MACOS})
 
