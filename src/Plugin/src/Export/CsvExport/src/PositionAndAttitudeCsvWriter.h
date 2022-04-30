@@ -22,51 +22,31 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CSVEXPORTSETTINGS_H
-#define CSVEXPORTSETTINGS_H
+#ifndef POSITIONANDATTITUDECSVWRITER_H
+#define POSITIONANDATTITUDECSVWRITER_H
 
-#include <memory>
+class QIODevice;
 
-#include <QObject>
+#include "CsvWriterIntf.h"
 
-#include "../../../../../Kernel/src/Settings.h"
-#include "../../../ExportPluginBaseSettings.h"
+class Flight;
+class Aircraft;
+class CsvExportSettings;
+class PositionData;
+class PositionAndVelocityCsvWriterPrivate;
 
-class CsvExportSettingsPrivate;
-
-class CsvExportSettings : public ExportPluginBaseSettings
+class PositionAndAttitudeCsvWriter : public CsvWriterIntf
 {
-    Q_OBJECT
 public:
-    /*!
-     * CSV format (flavour).
-     */
-    enum struct Format {
-        SkyDolly = 0,
-        FlightRadar24 = 1,
-        PositionAndVelocity = 2
-    };
+    PositionAndAttitudeCsvWriter(const CsvExportSettings &pluginSettings) noexcept;
+    virtual ~PositionAndAttitudeCsvWriter() noexcept;
 
-    CsvExportSettings() noexcept;
-    virtual ~CsvExportSettings() noexcept;
-
-    Format getFormat() const noexcept;
-    void setFormat(Format format) noexcept;
-
-signals:
-    /*!
-     * Emitted whenever the extended settings have changed.
-     */
-    void extendedSettingsChanged();
-
-protected:
-    virtual void addSettingsExtn(Settings::KeyValues &keyValues) const noexcept override;
-    virtual void addKeysWithDefaultsExtn(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override;
-    virtual void restoreSettingsExtn(const Settings::ValuesByKey &valuesByKey) noexcept override;
-    virtual void restoreDefaultsExtn() noexcept override;
+    virtual bool write(const Flight &flight, const Aircraft &aircraft, QIODevice &ioDevice) noexcept override;
 
 private:
-    std::unique_ptr<CsvExportSettingsPrivate> d;
+    std::unique_ptr<PositionAndVelocityCsvWriterPrivate> d;
+
+    static inline QString formatPosition(const PositionData &positionData) noexcept;
 };
 
-#endif // CSVEXPORTSETTINGS_H
+#endif // POSITIONANDATTITUDECSVWRITER_H

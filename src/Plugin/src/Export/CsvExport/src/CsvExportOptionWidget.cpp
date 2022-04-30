@@ -82,6 +82,7 @@ void CsvExportOptionWidget::initUi() noexcept
 {
     ui->formatComboBox->addItem("Sky Dolly", Enum::toUnderlyingType(CsvExportSettings::Format::SkyDolly));
     ui->formatComboBox->addItem("FlightRadar24", Enum::toUnderlyingType(CsvExportSettings::Format::FlightRadar24));
+    ui->formatComboBox->addItem("Position and attitude", Enum::toUnderlyingType(CsvExportSettings::Format::PositionAndVelocity));
 }
 
 // PRIVATE SLOTS

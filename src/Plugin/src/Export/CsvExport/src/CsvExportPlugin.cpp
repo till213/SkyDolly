@@ -35,6 +35,7 @@
 #include "CsvWriterIntf.h"
 #include "SkyDollyCsvWriter.h"
 #include "FlightRadar24CsvWriter.h"
+#include "PositionAndAttitudeCsvWriter.h"
 #include "CsvExportPlugin.h"
 
 class CsvExportPluginPrivate
@@ -108,6 +109,9 @@ bool CsvExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircr
         break;
     case CsvExportSettings::Format::FlightRadar24:
         writer = std::make_unique<FlightRadar24CsvWriter>(d->pluginSettings);
+        break;
+    case CsvExportSettings::Format::PositionAndVelocity:
+        writer = std::make_unique<PositionAndAttitudeCsvWriter>(d->pluginSettings);
         break;
     default:
         writer = nullptr;

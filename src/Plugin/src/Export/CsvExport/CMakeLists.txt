@@ -19,6 +19,7 @@ target_sources(${LIBRARY_NAME}
         src/CsvWriterIntf.h
         src/SkyDollyCsvWriter.h src/SkyDollyCsvWriter.cpp
         src/FlightRadar24CsvWriter.h src/FlightRadar24CsvWriter.cpp
+        src/PositionAndAttitudeCsvWriter.h src/PositionAndAttitudeCsvWriter.cpp
         src/CsvExportPlugin.json
 )
 target_link_libraries(${LIBRARY_NAME}
