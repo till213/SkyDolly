@@ -125,10 +125,3 @@ bool PositionAndAttitudeCsvWriter::write(const Flight &flight, const Aircraft &a
 
     return ok;
 }
-
-// PRIVATE
-
-inline QString PositionAndAttitudeCsvWriter::formatPosition(const PositionData &positionData) noexcept
-{
-    return CsvConst::DoubleQuote % Export::formatCoordinate(positionData.latitude) % "," % Export::formatCoordinate(positionData.longitude) % CsvConst::DoubleQuote;
-}

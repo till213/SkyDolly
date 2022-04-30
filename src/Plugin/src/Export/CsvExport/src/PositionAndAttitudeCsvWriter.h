@@ -45,8 +45,6 @@ public:
 
 private:
     std::unique_ptr<PositionAndVelocityCsvWriterPrivate> d;
-
-    static inline QString formatPosition(const PositionData &positionData) noexcept;
 };
 
 #endif // POSITIONANDATTITUDECSVWRITER_H
