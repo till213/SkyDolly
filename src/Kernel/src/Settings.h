@@ -36,8 +36,7 @@
 #include <QString>
 #include <QVariant>
 #include <QFileInfo>
-
-class QByteArray;
+#include <QByteArray>
 
 #include "Replay.h"
 #include "SampleRate.h"
@@ -245,6 +244,21 @@ public:
      *        the window state encoded in the QByteAarray
      */
     void setWindowState(const QByteArray &state) noexcept;
+
+    /*!
+     * Returns the saved logbook table state.
+     *
+     * \return the logbook table state; a \e null QByteArray if not saved before
+     */
+    QByteArray getLogbookState() const;
+
+    /*!
+     * Stores the logbook table state.
+     *
+     * \param state
+     *        the logbook table state encoded in the QByteAarray
+     */
+    void setLogbookState(const QByteArray &layout) noexcept;
 
     /*!
      * Returns the path of the directory which was last accessed during export or import.
