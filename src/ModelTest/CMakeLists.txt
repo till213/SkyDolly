@@ -12,7 +12,8 @@ target_sources(SkySearchTest
 )
 
 set(KERNELTEST_LIBS
-    Qt${QT_VERSION_MAJOR}::Test Model
+    Qt${QT_VERSION_MAJOR}::Test
+    SD::Model
 )
 
 target_link_libraries(SkySearchTest

@@ -7,9 +7,12 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 else()
     add_library(${LIBRARY_NAME} SHARED)
 endif()
+add_library(SD::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
 set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Sql Kernel
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Sql
+    SD::Kernel
 )
 
 target_sources(${LIBRARY_NAME}

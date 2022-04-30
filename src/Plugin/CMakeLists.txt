@@ -7,6 +7,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 else()
     add_library(Plugin SHARED)
 endif()
+add_library(SD::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
 target_sources(${LIBRARY_NAME}
     PRIVATE
@@ -28,7 +29,13 @@ target_sources(${LIBRARY_NAME}
 )
 
 set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Flight Persistence SkyConnect Widget
+    Qt${QT_VERSION_MAJOR}::Widgets
+    SD::Kernel
+    SD::Model
+    SD::Flight
+    SD::Persistence
+    SD::SkyConnect
+    SD::Widget
 )
 
 target_include_directories(${LIBRARY_NAME}

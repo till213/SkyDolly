@@ -126,7 +126,13 @@ endif()
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geoids)
 
 set(SKYDOLLY_LIBS
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence SkyConnect Plugin UserInterface
+    Qt${QT_VERSION_MAJOR}::Widgets
+    SD::Kernel
+    SD::Model
+    SD::Persistence
+    SD::SkyConnect
+    SD::Plugin
+    SD::UserInterface
 )
 if (${PLATFORM_IS_MACOS})
     set_target_properties(SkyDolly PROPERTIES
