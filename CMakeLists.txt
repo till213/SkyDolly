@@ -21,7 +21,8 @@ include(InitSubmodules)
 # Enables testing: 'ctest' needs to be run in the "build" directory
 include(CTest)
 
-set(CMAKE_SHARED_LIBRARY_PREFIX )
+set(CMAKE_SHARED_LIBRARY_PREFIX "")
+set(CMAKE_SHARED_MODULE_PREFIX "")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
