@@ -22,38 +22,39 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef EXPORTPLUGINBASE_H
-#define EXPORTPLUGINBASE_H
+#ifndef IMPORTPLUGINBASE_H
+#define IMPORTPLUGINBASE_H
 
 #include <memory>
-#include <vector>
-#include <iterator>
 
 #include <QObject>
 #include <QtPlugin>
 #include <QStringView>
 
-class QIODevice;
+class QFile;
+class QStringList;
 
 #include "../../Kernel/src/Settings.h"
 #include "../../Flight/src/FlightAugmentation.h"
-#include "ExportIntf.h"
+#include "ImportIntf.h"
 #include "PluginBase.h"
 #include "PluginLib.h"
 
-struct PositionData;
-class FLight;
-class Aircraft;
-class ExportPluginBaseSettings;
-class ExportPluginBasePrivate;
+class FlightService;
+class Flight;
+struct AircraftType;
+struct AircraftInfo;
+struct FlightCondition;
+class ImportPluginBaseSettings;
+class ImportPluginBasePrivate;
 
-class PLUGIN_API ExportPluginBase : public PluginBase, public ExportIntf
+class PLUGINMANAGER_API ImportPluginBase : public PluginBase, public ImportIntf
 {
     Q_OBJECT
-    Q_INTERFACES(ExportIntf)
+    Q_INTERFACES(ImportIntf)
 public:
-    ExportPluginBase() noexcept;
-    virtual ~ExportPluginBase() noexcept;
+    ImportPluginBase() noexcept;
+    virtual ~ImportPluginBase() noexcept;
 
     virtual QWidget *getParentWidget() const noexcept override final
     {
@@ -75,36 +76,37 @@ public:
         PluginBase::restoreSettings(pluginUuid);
     }
 
-    virtual bool exportFlight(const Flight &flight) noexcept override final;
+    virtual bool importFlight(FlightService &flightService, Flight &flight) noexcept override final;
 
 protected:
+    AircraftType &getSelectedAircraftType() const noexcept;
 
     // Re-implement
-    virtual ExportPluginBaseSettings &getPluginSettings() const noexcept = 0;
+    virtual ImportPluginBaseSettings &getPluginSettings() const noexcept = 0;
     virtual QString getFileSuffix() const noexcept = 0;
     virtual QString getFileFilter() const noexcept = 0;
     virtual std::unique_ptr<QWidget> createOptionWidget() const noexcept = 0;
+    virtual bool importFlight(QFile &file, Flight &flight) noexcept = 0;
 
-    /*!
-     * Returns whether the plugin (file format) supports export of multiple aircraft into a single file.
-     * Examples are the KML or GPX format which both may have multiple \em tracks.
-     *
-     * \return \c true if the file format supports multiple aircraft tracks; \c false else
-     */
-    virtual bool hasMultiAircraftSupport() const noexcept = 0;
-    virtual bool exportFlight(const Flight &flight, QIODevice &io) noexcept = 0;
-    virtual bool exportAircraft(const Flight &flight, const Aircraft &aircraft, QIODevice &io) noexcept = 0;
+    virtual FlightAugmentation::Procedures getProcedures() const noexcept = 0;
+    virtual FlightAugmentation::Aspects getAspects() const noexcept = 0;
+    virtual QDateTime getStartDateTimeUtc() noexcept = 0;
+    virtual QString getTitle() const noexcept = 0;
+    virtual void updateExtendedAircraftInfo(AircraftInfo &aircraftInfo) noexcept = 0;
+    virtual void updateExtendedFlightInfo(Flight &flight) noexcept = 0;
+    virtual void updateExtendedFlightCondition(FlightCondition &flightCondition) noexcept = 0;
 
 private:
-    std::unique_ptr<ExportPluginBasePrivate> d;
-
-    bool exportFlight(const Flight &flight, const QString &filePath) noexcept;
-    // Exports all aircraft into separate files, given the 'baseFilePath'
-    bool exportAllAircraft(const Flight &flight, const QString &baseFilePath) noexcept;
+    std::unique_ptr<ImportPluginBasePrivate> d;
 
     virtual void addSettings(Settings::KeyValues &keyValues) const noexcept override final;
     virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override final;
     virtual void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept override final;
+
+    bool importFlights(const QStringList &filePaths, FlightService &flightService, Flight &flight) noexcept;
+    void updateAircraftInfo() noexcept;
+    void updateFlightInfo() noexcept;
+    void updateFlightCondition() noexcept;
 };
 
-#endif // EXPORTPLUGINBASE_H
+#endif // IMPORTPLUGINBASE_H

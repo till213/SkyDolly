@@ -5,10 +5,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 else()
     add_library(${LIBRARY_NAME} MODULE)
 endif()
-add_library(SD::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
+add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
 set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Flight Persistence Plugin Widget
+    Qt${QT_VERSION_MAJOR}::Widgets Sky::Kernel Sky::Model Sky::Flight Sky::Persistence Sky::PluginManager Sky::Widget
 )
 
 set(DOCUMENTATION

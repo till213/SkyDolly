@@ -51,7 +51,7 @@
 #include "../../../../Model/src/EngineData.h"
 #include "../../../../Model/src/FlightPlan.h"
 #include "../../../../Model/src/Waypoint.h"
-#include "../../../../Plugin/src/Export.h"
+#include "../../../../PluginManager/src/Export.h"
 #include "IgcExportOptionWidget.h"
 #include "IgcExportSettings.h"
 #include "IgcExportPlugin.h"

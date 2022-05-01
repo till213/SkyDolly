@@ -33,7 +33,7 @@
 #include "../../Model/src/Logbook.h"
 #include "../../SkyConnect/src/SkyConnectManager.h"
 #include "../../Persistence/src/ConnectionManager.h"
-#include "../../Plugin/src/PluginManager.h"
+#include "../../PluginManager/src/PluginManager.h"
 #include "../../UserInterface/src/MainWindow.h"
 
 static void destroySingletons() noexcept

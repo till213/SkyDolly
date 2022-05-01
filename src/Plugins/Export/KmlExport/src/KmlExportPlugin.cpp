@@ -51,7 +51,7 @@
 #include "../../../../Model/src/Position.h"
 #include "../../../../Model/src/PositionData.h"
 #include "../../../../Model/src/SimType.h"
-#include "../../../../Plugin/src/Export.h"
+#include "../../../../PluginManager/src/Export.h"
 #include "KmlExportOptionWidget.h"
 #include "KmlStyleExport.h"
 #include "KmlExportPlugin.h"

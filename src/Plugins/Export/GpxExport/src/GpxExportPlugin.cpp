@@ -49,7 +49,7 @@
 #include "../../../../Model/src/Position.h"
 #include "../../../../Model/src/PositionData.h"
 #include "../../../../Model/src/SimType.h"
-#include "../../../../Plugin/src/Export.h"
+#include "../../../../PluginManager/src/Export.h"
 #include "GpxExportOptionWidget.h"
 #include "GpxExportSettings.h"
 #include "GpxExportPlugin.h"

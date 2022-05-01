@@ -36,7 +36,7 @@
 
 class PluginBasePrivate;
 
-class PLUGIN_API PluginBase : public QObject, public PluginIntf
+class PLUGINMANAGER_API PluginBase : public QObject, public PluginIntf
 {
     Q_OBJECT
 public:

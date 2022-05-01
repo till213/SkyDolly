@@ -22,59 +22,57 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef BASICIMPORTDIALOG_H
-#define BASICIMPORTDIALOG_H
+#ifndef PLUGINMANAGER_H
+#define PLUGINMANAGER_H
 
 #include <memory>
+#include <utility>
+#include <vector>
 
-#include <QDialog>
-#include <QString>
+#include <QObject>
+#include <QMap>
 
+class QUuid;
 class QWidget;
+class QString;
 
+#include "ExportIntf.h"
 #include "PluginLib.h"
 
+class SkyConnectIntf;
 class Flight;
-struct AircraftType;
-class ImportPluginBaseSettings;
-class BasicImportDialogPrivate;
+class FlightService;
+class PluginManagerPrivate;
 
-namespace Ui {
-    class BasicImportDialog;
-}
-
-class PLUGIN_API BasicImportDialog : public QDialog
+class PLUGINMANAGER_API PluginManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit BasicImportDialog(const Flight &flight, const QString &fileExtension, ImportPluginBaseSettings &pluginSettings, QWidget *parent = nullptr) noexcept;
-    virtual ~BasicImportDialog() noexcept;
+    static PluginManager &getInstance() noexcept;
+    static void destroyInstance() noexcept;
 
-    bool getSelectedAircraftType(AircraftType &aircraftType) const noexcept;
-    QString getSelectedPath() const noexcept;
+    void initialise(QWidget *parentWidget);
 
-    QString getFileFilter() const noexcept;
-    void setFileFilter(const QString &fileFilter) noexcept;
+    /*!
+     * The plugin UUID and (non-translated) name of the plugin.
+     */
+    typedef std::pair<QUuid, QString> Handle;
+    std::vector<Handle> initialiseExportPlugins() noexcept;
+    std::vector<Handle> initialiseImportPlugins() noexcept;
 
-    void setOptionWidget(QWidget *widget) noexcept;
+    bool importFlight(const QUuid &pluginUuid, FlightService &flightService, Flight &flight) const noexcept;
+    bool exportFlight(const Flight &flight, const QUuid &pluginUuid) const noexcept;
+
+protected:
+    virtual ~PluginManager() noexcept;
 
 private:
-    std::unique_ptr<Ui::BasicImportDialog> ui;
-    std::unique_ptr<BasicImportDialogPrivate> d;
+    Q_DISABLE_COPY(PluginManager)
+    std::unique_ptr<PluginManagerPrivate> d;
 
-    void initUi() noexcept;
-    void initBasicUi() noexcept;
-    void initOptionUi() noexcept;
-    void frenchConnection() noexcept;
+    PluginManager() noexcept;
 
-private slots:
-    void updateUi() noexcept;
-
-    void onFileSelectionChanged() noexcept;
-    void onImportDirectoryChanged(bool enable) noexcept;
-    void onAddToExistingFlightChanged(bool enable) noexcept;
-    void onRestoreDefaults() noexcept;
-    void onAccepted() noexcept;    
+    std::vector<PluginManager::Handle> enumeratePlugins(const QString &pluginDirectoryName, QMap<QUuid, QString> &plugins) noexcept;
 };
 
-#endif // BASICIMPORTDIALOG_H
+#endif // PLUGINMANAGER_H

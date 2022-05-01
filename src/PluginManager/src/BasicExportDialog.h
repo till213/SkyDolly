@@ -41,7 +41,7 @@ namespace Ui {
     class BasicExportDialog;
 }
 
-class PLUGIN_API BasicExportDialog : public QDialog
+class PLUGINMANAGER_API BasicExportDialog : public QDialog
 {
     Q_OBJECT
 public:

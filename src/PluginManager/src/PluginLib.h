@@ -22,33 +22,15 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SETTINGSINTF_H
-#define SETTINGSINTF_H
+#ifndef PLUGINLIB_H
+#define PLUGINLIB_H
 
-#include <QObject>
+#include <QtGlobal>
 
-#include "../../Kernel/src/Settings.h"
-#include "PluginLib.h"
+#ifdef PLUGINMANAGER_EXPORT
+# define PLUGINMANAGER_API Q_DECL_EXPORT
+#else
+# define PLUGINMANAGER_API Q_DECL_IMPORT
+#endif
 
-class PLUGIN_API SettingsIntf : public QObject
-{
-    Q_OBJECT
-public:
-    virtual ~SettingsIntf()
-    {}
-
-    virtual Settings::KeyValues getSettings() const noexcept = 0;
-    virtual Settings::KeysWithDefaults getKeysWithDefault() const noexcept = 0;
-    virtual void applySettings(Settings::ValuesByKey) noexcept = 0;
-    /*!
-     * Restores the default settings.
-     *
-     * Emits \c defaultsRestored.
-     */
-    virtual void restoreDefaults() noexcept = 0;
-
-signals:
-    void defaultsRestored();
-};
-
-#endif // SETTINGSINTF_H
+#endif // PLUGINLIB_H

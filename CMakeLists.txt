@@ -4,8 +4,10 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 include(CMakePrintHelpers)
 
+set(APP_NAME "SkyDolly")
+
 project(
-    SkyDolly
+    ${APP_NAME}
     VERSION 0.11.0
     LANGUAGES CXX
     DESCRIPTION "Sky Dolly - The Black Sheep for your Flight Recordings"
@@ -28,10 +30,6 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
 # Platform identifiers
 
 # https://gitlab.kitware.com/cmake/community/-/wikis/doc/tutorials/How-To-Write-Platform-Checks
@@ -39,6 +37,15 @@ string(COMPARE EQUAL "Windows" ${CMAKE_SYSTEM_NAME} PLATFORM_IS_WINDOWS)
 string(COMPARE EQUAL "Darwin" ${CMAKE_SYSTEM_NAME} PLATFORM_IS_MACOS)
 string(COMPARE EQUAL "Linux" ${CMAKE_SYSTEM_NAME} PLATFORM_IS_LINUX)
 cmake_print_variables(CMAKE_SYSTEM_NAME)
+
+# Binary output locations
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+if (${PLATFORM_IS_MACOS})
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_NAME}.app/Contents/Frameworks)
+else()
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+endif()
 
 # Definitions
 
@@ -62,7 +69,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/Persistence)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Flight)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Widget)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/SkyConnect)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/Plugin)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/PluginManager)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Module)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
 
@@ -80,7 +87,7 @@ set_target_properties(GeographicLib_SHARED
 # Documentation
 add_subdirectory(${CMAKE_SOURCE_DIR}/doc)
 
-set(TS_FILES i18n/SkyDolly_de_DE.ts)
+set(TS_FILES i18n/${APP_NAME}_de_DE.ts)
 set(OTHER_SOURCES
     README.md
     CHANGELOG.md
@@ -109,13 +116,13 @@ elseif (${PLATFORM_IS_MACOS})
 endif()
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(SkyDolly
+    qt_add_executable(${APP_NAME}
         ${SKYDOLLY_PLATFORM}
         ${RESOURCES}
     )
     qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR}/src ${TS_FILES})
 else()
-    add_executable(SkyDolly
+    add_executable(${APP_NAME}
         ${SKYDOLLY_PLATFORM}
         ${RESOURCES}
     )
@@ -125,70 +132,42 @@ endif()
 # Data files
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geoids)
 
-set(SKYDOLLY_LIBS
+set(LIBRARY_DEPENDENCIES
     Qt${QT_VERSION_MAJOR}::Widgets
-    SD::Kernel
-    SD::Model
-    SD::Persistence
-    SD::SkyConnect
-    SD::Plugin
-    SD::UserInterface
+    Sky::Kernel
+    Sky::Model
+    Sky::Persistence
+    Sky::SkyConnect
+    Sky::PluginManager
+    Sky::UserInterface
 )
 if (${PLATFORM_IS_MACOS})
-    set_target_properties(SkyDolly PROPERTIES
-                          MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/res/Info.plist.in")
-      target_link_libraries(SkyDolly
-          PRIVATE
-              Geoids
-      )
+    set_target_properties(
+        ${APP_NAME}
+        PROPERTIES
+            MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/res/Info.plist.in"
+    )
+    target_link_libraries(
+        ${APP_NAME}
+        PRIVATE
+            Geoids
+    )
 endif()
 
-target_sources(SkyDolly
+target_sources(${APP_NAME}
     PRIVATE
         src/main.cpp
         ${OTHER_SOURCES}
 )
 
-target_include_directories(SkyDolly
+target_include_directories(${APP_NAME}
     PRIVATE
         "${PROJECT_SOURCE_DIR}/src/SkyConnect/src"
 )
-target_link_libraries(SkyDolly
+target_link_libraries(${APP_NAME}
     PRIVATE
-        ${SKYDOLLY_LIBS}
+        ${LIBRARY_DEPENDENCIES}
 )
 
 # Plugins
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Plugins)
-
-
-# macOS: copy plugins into app bundle
-if (${PLATFORM_IS_MACOS})
-
-    # Connect plugins
-    file(GLOB BUNDLE_IMPORT_PLUGINS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Connect/*")
-    message(STATUS IMPORT_PLUGIN_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Connect/")
-    target_sources(SkyDolly PRIVATE ${BUNDLE_IMPORT_PLUGINS})
-    set_property(
-        SOURCE ${BUNDLE_IMPORT_PLUGINS}
-        PROPERTY MACOSX_PACKAGE_LOCATION "PlugIns/Connect"
-    )
-
-    # Import plugins
-    file(GLOB BUNDLE_IMPORT_PLUGINS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Import/*")
-    message(STATUS IMPORT_PLUGIN_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Import/")
-    target_sources(SkyDolly PRIVATE ${BUNDLE_IMPORT_PLUGINS})
-    set_property(
-        SOURCE ${BUNDLE_IMPORT_PLUGINS}
-        PROPERTY MACOSX_PACKAGE_LOCATION "PlugIns/Import"
-    )
-
-    # Export
-    file(GLOB BUNDLE_EXPORT_PLUGINS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Export/*")
-    message(STATUS EXPORT_PLUGIN_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins/Export/")
-    target_sources(SkyDolly PRIVATE ${BUNDLE_EXPORT_PLUGINS})
-    set_property(
-        SOURCE ${BUNDLE_EXPORT_PLUGINS}
-        PROPERTY MACOSX_PACKAGE_LOCATION "PlugIns/Export"
-    )
-endif()

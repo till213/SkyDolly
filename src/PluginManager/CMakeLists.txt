@@ -1,13 +1,13 @@
-set(LIBRARY_NAME "Plugin")
+set(LIBRARY_NAME "PluginManager")
 
-add_definitions(-DPLUGIN_EXPORT)
+add_definitions(-DPLUGINMANAGER_EXPORT)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(Plugin SHARED)
+    qt_add_library(${LIBRARY_NAME} SHARED)
 else()
-    add_library(Plugin SHARED)
+    add_library(${LIBRARY_NAME} SHARED)
 endif()
-add_library(SD::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
+add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
 target_sources(${LIBRARY_NAME}
     PRIVATE
@@ -30,12 +30,12 @@ target_sources(${LIBRARY_NAME}
 
 set(LIBRARY_DEPENDENCIES
     Qt${QT_VERSION_MAJOR}::Widgets
-    SD::Kernel
-    SD::Model
-    SD::Flight
-    SD::Persistence
-    SD::SkyConnect
-    SD::Widget
+    Sky::Kernel
+    Sky::Model
+    Sky::Flight
+    Sky::Persistence
+    Sky::SkyConnect
+    Sky::Widget
 )
 
 target_include_directories(${LIBRARY_NAME}
@@ -51,4 +51,3 @@ set_target_properties(${LIBRARY_NAME}
         VERSION ${PROJECT_VERSION}
         SOVERSION ${PROJECT_VERSION_MAJOR}
 )
-

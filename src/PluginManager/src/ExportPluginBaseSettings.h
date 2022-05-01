@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef IMPORTPLUGINBASESETTINGS_H
-#define IMPORTPLUGINBASESETTINGS_H
+#ifndef EXPORTPLUGINBASESETTINGS_H
+#define EXPORTPLUGINBASESETTINGS_H
 
 #include <memory>
 
@@ -34,20 +34,50 @@
 #include "../../Kernel/src/SampleRate.h"
 #include "PluginLib.h"
 
-class ImportPluginBaseSettingsPrivate;
+class ExportPluginBaseSettingsPrivate;
 
-class PLUGIN_API ImportPluginBaseSettings : public QObject
+class PLUGINMANAGER_API ExportPluginBaseSettings : public QObject
 {
     Q_OBJECT
 public:
-    ImportPluginBaseSettings() noexcept;
-    virtual ~ImportPluginBaseSettings() noexcept;
+    /*!
+     * Defines how formation flights should be exported.
+     */
+    enum struct FormationExport {
+        /*! Only the user aircraft is to be exported */
+        UserAircraftOnly,
+        /*! All aircraft are to be exported, into one file if possible (depending on the actual file format);
+            otherwise into separate files */
+        AllAircraftOneFile,
+        /*! All aircraft are to be exported, into separate files each */
+        AllAircraftSeparateFiles
+    };
 
-    bool isImportDirectoryEnabled() const noexcept;
-    void setImportDirectoryEnabled(bool enabled) noexcept;
+    ExportPluginBaseSettings() noexcept;
+    virtual ~ExportPluginBaseSettings() noexcept;
 
-    bool isAddToFlightEnabled() const noexcept;
-    void setAddToFlightEnabled(bool enabled) noexcept;
+    SampleRate::ResamplingPeriod getResamplingPeriod() const noexcept;
+    void setResamplingPeriod(SampleRate::ResamplingPeriod resamplingPeriod) noexcept;
+
+    FormationExport getFormationExport() const noexcept;
+    void setFormationExport(FormationExport formationExport) noexcept;
+
+    bool isOpenExportedFilesEnabled() const noexcept;
+    void setOpenExportedFilesEnabled(bool enabled) noexcept;
+
+    /*!
+     * Returns whether the user has selected the file via the file selection dialog,
+     * which typically already asks the user whether to overwrite existing files.
+     *
+     * Note: the assumption here is that a file selection dialog will check the
+     * existence of a selected file. This is the case on Windows, macOS and Ubuntu
+     * (with MATE).
+     *
+     * \return \c true if the user has selected the file path via the file selection dialog;
+     *         \c false else
+     */
+    bool isFileDialogSelectedFile() const noexcept;
+    void setFileDialogSelectedFile(bool fileDialogSelected) noexcept;
 
     void addSettings(Settings::KeyValues &keyValues) const noexcept;
     void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefault) const noexcept;
@@ -67,7 +97,7 @@ protected:
     virtual void restoreDefaultsExtn() noexcept = 0;
 
 private:
-    std::unique_ptr<ImportPluginBaseSettingsPrivate> d;
+    std::unique_ptr<ExportPluginBaseSettingsPrivate> d;
 };
 
-#endif // IMPORTPLUGINBASESETTINGS_H
+#endif // EXPORTPLUGINBASESETTINGS_H

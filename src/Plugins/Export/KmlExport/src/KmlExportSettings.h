@@ -31,7 +31,7 @@
 #include <QColor>
 
 #include "../../../../Kernel/src/Settings.h"
-#include "../../../../Plugin/src/ExportPluginBaseSettings.h"
+#include "../../../../PluginManager/src/ExportPluginBaseSettings.h"
 
 class KmlExportSettingsPrivate;
 

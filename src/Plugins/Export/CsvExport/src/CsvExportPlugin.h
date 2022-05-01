@@ -36,8 +36,8 @@ class QString;
 class QDateTime;
 
 #include "../../../../Kernel/src/Settings.h"
-#include "../../../../Plugin/src/ExportIntf.h"
-#include "../../../../Plugin/src/ExportPluginBase.h"
+#include "../../../../PluginManager/src/ExportIntf.h"
+#include "../../../../PluginManager/src/ExportPluginBase.h"
 
 class Aircraft;
 

@@ -7,7 +7,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 else()
     add_library(${LIBRARY_NAME} SHARED)
 endif()
-add_library(SD::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
+add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
 target_sources(${LIBRARY_NAME}
     PRIVATE
@@ -54,9 +54,9 @@ target_sources(${LIBRARY_NAME}
 set(LIBRARY_DEPENDENCIES
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Sql
-    SD::Kernel
-    SD::Model
-    SD::SkyConnect
+    Sky::Kernel
+    Sky::Model
+    Sky::SkyConnect
 )
 
 target_link_libraries(${LIBRARY_NAME}

@@ -7,16 +7,16 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 else()
     add_library(${LIBRARY_NAME} SHARED)
 endif()
-add_library(SD::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
+add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
 set(LIBRARY_DEPENDENCIES
     Qt${QT_VERSION_MAJOR}::Widgets
-    SD::Kernel
-    SD::Model
-    SD::Persistence
-    SD::SkyConnect
-    SD::Plugin
-    SD::Widget
+    Sky::Kernel
+    Sky::Model
+    Sky::Persistence
+    Sky::SkyConnect
+    Sky::PluginManager
+    Sky::Widget
     tsl::ordered_map
 )
 

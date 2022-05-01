@@ -31,7 +31,7 @@
 #include <QString>
 
 #include "../../../../Kernel/src/Settings.h"
-#include "../../../../Plugin/src/ImportPluginBaseSettings.h"
+#include "../../../../PluginManager/src/ImportPluginBaseSettings.h"
 
 class IgcImportSettingsPrivate;
 

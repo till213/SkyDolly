@@ -1,7 +1,6 @@
 # Directory name must match with constant values defined in the PluginManager.cpp
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/Export)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Export)
-cmake_print_variables(CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+message(STATUS "Output export plugin directory=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/CsvExport)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/GpxExport)

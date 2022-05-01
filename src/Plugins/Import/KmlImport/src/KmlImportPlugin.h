@@ -35,8 +35,8 @@
 class QFile;
 
 #include "../../../../Flight/src/FlightAugmentation.h"
-#include "../../../../Plugin/src/ImportIntf.h"
-#include "../../../../Plugin/src/ImportPluginBase.h"
+#include "../../../../PluginManager/src/ImportIntf.h"
+#include "../../../../PluginManager/src/ImportPluginBase.h"
 
 class Flight;
 struct AircraftInfo;

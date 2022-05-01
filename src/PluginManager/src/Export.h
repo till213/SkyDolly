@@ -41,7 +41,7 @@ struct PositionData;
 /*!
  * Common export functionality.
  */
-class PLUGIN_API Export
+class PLUGINMANAGER_API Export
 {
 public:
 
