@@ -31,7 +31,7 @@
 #include "../../Kernel/src/Version.h"
 #include "../../Kernel/src/Settings.h"
 #include "../../Model/src/Logbook.h"
-#include "../../SkyConnect/src/SkyConnectManager.h"
+#include "../../PluginManager/src/SkyConnectManager.h"
 #include "../../Persistence/src/ConnectionManager.h"
 #include "../../PluginManager/src/PluginManager.h"
 #include "../../UserInterface/src/MainWindow.h"

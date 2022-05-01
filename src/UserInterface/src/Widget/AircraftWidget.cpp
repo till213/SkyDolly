@@ -35,9 +35,9 @@
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/Position.h"
 #include "../../../Model/src/PositionData.h"
-#include "../../../SkyConnect/src/SkyConnectManager.h"
-#include "../../../SkyConnect/src/SkyConnectIntf.h"
-#include "../../../SkyConnect/src/Connect.h"
+#include "../../../PluginManager/src/SkyConnectManager.h"
+#include "../../../PluginManager/src/SkyConnectIntf.h"
+#include "../../../PluginManager/src/Connect.h"
 #include "AircraftWidget.h"
 #include "ui_AircraftWidget.h"
 

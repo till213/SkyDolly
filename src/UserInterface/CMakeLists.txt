@@ -15,7 +15,6 @@ set(LIBRARY_DEPENDENCIES
     Sky::Model
     Sky::Persistence
     Sky::Widget
-    Sky::SkyConnect
     Sky::PluginManager
     Sky::Module
 )

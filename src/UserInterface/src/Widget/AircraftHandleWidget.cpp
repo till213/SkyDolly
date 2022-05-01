@@ -38,9 +38,9 @@
 #include "../../../Model/src/AircraftHandle.h"
 #include "../../../Model/src/AircraftHandleData.h"
 #include "../../../Model/src/TimeVariableData.h"
-#include "../../../SkyConnect/src/SkyConnectManager.h"
-#include "../../../SkyConnect/src/SkyConnectIntf.h"
-#include "../../../SkyConnect/src/Connect.h"
+#include "../../../PluginManager/src/SkyConnectManager.h"
+#include "../../../PluginManager/src/SkyConnectIntf.h"
+#include "../../../PluginManager/src/Connect.h"
 #include "AircraftHandleWidget.h"
 #include "ui_AircraftHandleWidget.h"
 

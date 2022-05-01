@@ -42,7 +42,7 @@ namespace  {
     constexpr double DefaultHeading = 0.0;
     constexpr std::int64_t DefaultTimestamp = 0.0;
 
-    auto distanceLambda = [](const PositionData &start, const PositionData &end) -> bool {
+    const auto distanceLambda = [](const PositionData &start, const PositionData &end) -> bool {
         const SkyMath::Coordinate startPos(start.latitude, start.longitude);
         const SkyMath::Coordinate endPos(end.latitude, end.longitude);
         const double distance = SkyMath::sphericalDistance(startPos, endPos, Convert::feetToMeters((start.altitude + end.altitude) / 2.0));

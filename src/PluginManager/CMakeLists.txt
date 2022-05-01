@@ -12,6 +12,12 @@ add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 target_sources(${LIBRARY_NAME}
     PRIVATE
         src/PluginLib.h
+        src/SkyConnectManager.cpp
+        src/SkyConnectManager.h
+        src/SkyConnectIntf.h
+        src/Connect.h
+        src/AbstractSkyConnect.cpp
+        src/AbstractSkyConnect.h
         src/PluginManager.h src/PluginManager.cpp
         src/PluginIntf.h
         src/ExportIntf.h
@@ -34,7 +40,6 @@ set(LIBRARY_DEPENDENCIES
     Sky::Model
     Sky::Flight
     Sky::Persistence
-    Sky::SkyConnect
     Sky::Widget
 )
 

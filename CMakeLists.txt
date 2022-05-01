@@ -68,7 +68,6 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/ModelTest)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Persistence)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Flight)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Widget)
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/SkyConnect)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/PluginManager)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Module)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
@@ -137,7 +136,6 @@ set(LIBRARY_DEPENDENCIES
     Sky::Kernel
     Sky::Model
     Sky::Persistence
-    Sky::SkyConnect
     Sky::PluginManager
     Sky::UserInterface
 )
@@ -162,7 +160,7 @@ target_sources(${APP_NAME}
 
 target_include_directories(${APP_NAME}
     PRIVATE
-        "${PROJECT_SOURCE_DIR}/src/SkyConnect/src"
+        "${PROJECT_SOURCE_DIR}/src/PluginManager/src"
 )
 target_link_libraries(${APP_NAME}
     PRIVATE

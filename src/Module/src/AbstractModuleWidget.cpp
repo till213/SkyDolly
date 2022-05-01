@@ -26,8 +26,8 @@
 #include <QAction>
 
 #include "../../Model/src/Logbook.h"
-#include "../../SkyConnect/src/SkyConnectManager.h"
-#include "../../SkyConnect/src/SkyConnectIntf.h"
+#include "../../PluginManager/src/SkyConnectManager.h"
+#include "../../PluginManager/src/SkyConnectIntf.h"
 #include "../../Persistence/src/Service/FlightService.h"
 #include "Module.h"
 #include "AbstractModuleWidget.h"

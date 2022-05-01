@@ -34,7 +34,7 @@
 #include "../../../Kernel/src/Enum.h"
 #include "../../../Kernel/src/Settings.h"
 #include "../../../Model/src/SimVar.h"
-#include "../../../SkyConnect/src/SkyConnectManager.h"
+#include "../../../PluginManager/src/SkyConnectManager.h"
 #include "SettingsDialog.h"
 #include "ui_SettingsDialog.h"
 

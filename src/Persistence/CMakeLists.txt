@@ -56,7 +56,6 @@ set(LIBRARY_DEPENDENCIES
     Qt${QT_VERSION_MAJOR}::Sql
     Sky::Kernel
     Sky::Model
-    Sky::SkyConnect
 )
 
 target_link_libraries(${LIBRARY_NAME}

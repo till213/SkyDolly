@@ -32,8 +32,8 @@
 
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"
-#include "../../../SkyConnect/src/SkyConnectManager.h"
-#include "../../../SkyConnect/src/SkyConnectIntf.h"
+#include "../../../PluginManager/src/SkyConnectManager.h"
+#include "../../../PluginManager/src/SkyConnectIntf.h"
 #include "../Dao/DaoFactory.h"
 #include "../Dao/FlightDaoIntf.h"
 #include "../Dao/AircraftDaoIntf.h"

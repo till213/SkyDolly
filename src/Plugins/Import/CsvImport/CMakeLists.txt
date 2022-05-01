@@ -8,7 +8,12 @@ endif()
 add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
 set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Widgets Sky::Kernel Sky::Model Sky::Persistence Sky::Widget Sky::SkyConnect Sky::PluginManager
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Sky::Kernel
+    Sky::Model
+    Sky::Persistence
+    Sky::Widget
+    Sky::PluginManager
 )
 
 set(DOCUMENTATION

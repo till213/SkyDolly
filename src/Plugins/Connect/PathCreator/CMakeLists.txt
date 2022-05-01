@@ -8,7 +8,10 @@ endif()
 add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
 set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model SkyConnect
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Sky::Kernel
+    Sky::Model
+    Sky::PluginManager
 )
 
 target_sources(${LIBRARY_NAME}

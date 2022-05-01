@@ -14,7 +14,6 @@ set(LIBRARY_DEPENDENCIES
     Sky::Kernel
     Sky::Model
     Sky::Persistence
-    Sky::SkyConnect
     Sky::PluginManager
     Sky::Widget
     tsl::ordered_map
