@@ -46,7 +46,7 @@ static void destroySingletons() noexcept
     SkyConnectManager::destroyInstance();
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv[]) noexcept
 {
     QCoreApplication::setOrganizationName(Version::getOrganisationName());
     QCoreApplication::setApplicationName(Version::getApplicationName());
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     if (args.count() > 1) {
        filePath = args.at(1);
     }
-    int res;
+    int res {0};
     // Main window scope
     {
         std::unique_ptr<MainWindow> mainWindow = std::make_unique<MainWindow>(filePath);
