@@ -40,12 +40,12 @@ class QUuid;
 #include "../../Model/src/TimeVariableData.h"
 #include "../../Kernel/src/FlightSimulator.h"
 #include "Connect.h"
-#include "SkyConnectLib.h"
+#include "PluginManagerLib.h"
 
 class SkyConnectIntf;
 class skyConnectManagerPrivate;
 
-class SKYCONNECT_API SkyConnectManager : public QObject
+class PLUGINMANAGER_API SkyConnectManager : public QObject
 {
     Q_OBJECT
 public:

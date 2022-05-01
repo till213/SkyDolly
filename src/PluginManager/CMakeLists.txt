@@ -11,7 +11,7 @@ add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
 target_sources(${LIBRARY_NAME}
     PRIVATE
-        src/PluginLib.h
+        src/PluginManagerLib.h
         src/SkyConnectManager.cpp
         src/SkyConnectManager.h
         src/SkyConnectIntf.h

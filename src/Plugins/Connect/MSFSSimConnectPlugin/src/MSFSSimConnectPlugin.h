@@ -35,7 +35,7 @@
 #include "../../../../Kernel/src/SampleRate.h"
 #include "../../../../Model/src/TimeVariableData.h"
 #include "../../../../Model/src/InitialPosition.h"
-#include "../../../../SkyConnect/src/AbstractSkyConnect.h"
+#include "../../../../PluginManager/src/AbstractSkyConnect.h"
 
 struct PositionData;
 class Aircraft;

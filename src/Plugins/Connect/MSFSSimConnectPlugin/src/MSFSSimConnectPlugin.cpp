@@ -56,7 +56,7 @@
 #include "../../../../Model/src/LightData.h"
 #include "../../../../Model/src/FlightPlan.h"
 #include "../../../../Model/src/Waypoint.h"
-#include "../../../../SkyConnect/src/Connect.h"
+#include "../../../../PluginManager/src/Connect.h"
 #include "SimConnectType.h"
 #include "SimConnectAircraftInfo.h"
 #include "SimConnectPositionReply.h"

@@ -279,8 +279,6 @@ void MainWindow::frenchConnection() noexcept
     connect(d->exportQActionGroup, &QActionGroup::triggered,
             this, &MainWindow::handleExport);
 
-
-
     // Settings
     connect(&Settings::getInstance(), &Settings::replayLoopChanged,
             this, &MainWindow::handleReplayLoopChanged);
@@ -337,8 +335,8 @@ void MainWindow::frenchConnection() noexcept
     connect(&Settings::getInstance(), &Settings::changed,
             this, &MainWindow::updateMainWindow);
 
-    // Service
-    connect(d->flightService.get(), &FlightService::flightRestored,
+    // Logbook
+    connect(&Logbook::getInstance(), &Logbook::flightRestored,
             this, &MainWindow::handleFlightRestored);
     connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
             this, &MainWindow::handleLogbookConnectionChanged);

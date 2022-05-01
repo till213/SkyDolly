@@ -193,9 +193,10 @@ std::int64_t Flight::deleteAircraftByIndex(int index) noexcept
     // A flight has at least one aircraft
     if (d->aircraft.size() > 1) {
         setUserAircraftIndex(qMax(d->userAircraftIndex - 1, 0));
-        aircraftId = d->aircraft.at(index)->getId();
+        aircraftId  = d->aircraft.at(index)->getId();
+        std::int64_t simulationObjectId = d->aircraft.at(index)->getSimulationObjectId();
         d->aircraft.erase(d->aircraft.begin() + index);
-        emit aircraftDeleted(aircraftId);
+        emit aircraftDeleted(aircraftId, simulationObjectId);
     } else {
         aircraftId = Aircraft::InvalidId;
     }

@@ -39,7 +39,7 @@ class QIODevice;
 #include "../../Flight/src/FlightAugmentation.h"
 #include "ExportIntf.h"
 #include "PluginBase.h"
-#include "PluginLib.h"
+#include "PluginManagerLib.h"
 
 struct PositionData;
 class FLight;

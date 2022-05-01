@@ -31,8 +31,6 @@
 
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/Logbook.h"
-#include "../../../PluginManager/src/SkyConnectManager.h"
-#include "../../../PluginManager/src/SkyConnectIntf.h"
 #include "../Dao/FlightDaoIntf.h"
 #include "../Dao/DaoFactory.h"
 #include "../Dao/AircraftDaoIntf.h"
@@ -82,21 +80,11 @@ bool AircraftService::store(std::int64_t flightId, int sequenceNumber, Aircraft 
 
 bool AircraftService::deleteByIndex(int index) noexcept
 {
-    // Remove AI object
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-
-    const bool removeUserAircraft = flight.getUserAircraftIndex() == index;
     Aircraft &aircraft = flight[index];
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        skyConnect->get().destroyAIObject(aircraft);
-    }
     const std::int64_t aircraftId = flight.deleteAircraftByIndex(index);
     bool ok;
     if (aircraftId != Aircraft::InvalidId) {
-        if (skyConnect && removeUserAircraft) {
-            skyConnect->get().updateUserAircraft();
-        }
         ok = QSqlDatabase::database().transaction();
         if (ok) {
             ok = d->aircraftDao->deleteById(aircraftId);
@@ -136,11 +124,6 @@ bool AircraftService::changeTimeOffset(Aircraft &aircraft, std::int64_t newOffse
         ok = d->aircraftDao->updateTimeOffset(aircraft.getId(), newOffset);
         if (ok) {
             aircraft.setTimeOffset(newOffset);
-            std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-            if (skyConnect && !skyConnect->get().isReplaying()) {
-                // Update the aircraft position in the flight simulator
-                skyConnect->get().seek(skyConnect->get().getCurrentTimestamp());
-            }
             ok = QSqlDatabase::database().commit();
         } else {
             QSqlDatabase::database().rollback();
@@ -156,10 +139,6 @@ bool AircraftService::changeTailNumber(Aircraft &aircraft, const QString &tailNu
         ok = d->aircraftDao->updateTailNumber(aircraft.getId(), tailNumber);
         if (ok) {
             aircraft.setTailNumber(tailNumber);
-            std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-            if (skyConnect) {
-                skyConnect->get().updateAIObjects();
-            }
             ok = QSqlDatabase::database().commit();
         } else {
             QSqlDatabase::database().rollback();

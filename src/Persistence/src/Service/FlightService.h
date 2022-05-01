@@ -56,11 +56,6 @@ public:
     bool updateTitleAndDescription(std::int64_t id, const QString &title, const QString &description) noexcept;
     bool updateUserAircraftIndex(Flight &flight, int index) noexcept;
 
-signals:
-    void flightStored(std::int64_t id);
-    void flightRestored(std::int64_t id);
-    void flightUpdated(std::int64_t id);
-
 private:
     std::unique_ptr<FlightServicePrivate> d;
 };

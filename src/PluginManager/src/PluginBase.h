@@ -32,7 +32,7 @@
 
 #include "../../Kernel/src/Settings.h"
 #include "PluginIntf.h"
-#include "PluginLib.h"
+#include "PluginManagerLib.h"
 
 class PluginBasePrivate;
 

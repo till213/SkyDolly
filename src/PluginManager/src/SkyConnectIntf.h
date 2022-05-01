@@ -34,13 +34,13 @@
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/InitialPosition.h"
 #include "Connect.h"
-#include "SkyConnectLib.h"
+#include "PluginManagerLib.h"
 
 class Aircraft;
 struct PositionData;
 class MSFSSimConnectPlugin;
 
-class SKYCONNECT_API SkyConnectIntf : public QObject
+class PLUGINMANAGER_API SkyConnectIntf : public QObject
 {
     Q_OBJECT
 public:

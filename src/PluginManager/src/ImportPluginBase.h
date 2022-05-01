@@ -38,7 +38,7 @@ class QStringList;
 #include "../../Flight/src/FlightAugmentation.h"
 #include "ImportIntf.h"
 #include "PluginBase.h"
-#include "PluginLib.h"
+#include "PluginManagerLib.h"
 
 class FlightService;
 class Flight;

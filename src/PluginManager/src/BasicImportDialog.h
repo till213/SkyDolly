@@ -32,7 +32,7 @@
 
 class QWidget;
 
-#include "PluginLib.h"
+#include "PluginManagerLib.h"
 
 class Flight;
 struct AircraftType;

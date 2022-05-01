@@ -37,7 +37,7 @@ class QWidget;
 class QString;
 
 #include "ExportIntf.h"
-#include "PluginLib.h"
+#include "PluginManagerLib.h"
 
 class SkyConnectIntf;
 class Flight;

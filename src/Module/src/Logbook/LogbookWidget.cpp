@@ -186,15 +186,18 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
     connect(&flight, &Flight::aircraftStored,
             this, &LogbookWidget::updateUi);
 
-    // Service
+    // Logbook
+    Logbook &logbook = Logbook::getInstance();
     connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
             this, &LogbookWidget::updateUi);
-    connect(&d->flightService, &FlightService::flightStored,
+    connect(&logbook, &Logbook::flightStored,
             this, &LogbookWidget::updateUi);
-    connect(&d->flightService, &FlightService::flightRestored,
+    connect(&logbook, &Logbook::flightRestored,
             this, &LogbookWidget::updateAircraftIcon);
-    connect(&d->flightService, &FlightService::flightUpdated,
+    connect(&logbook, &Logbook::flightUpdated,
             this, &LogbookWidget::updateUi);
+
+    // Connection
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::stateChanged,
             this, &LogbookWidget::updateEditUi);
@@ -212,15 +215,18 @@ void LogbookWidget::hideEvent(QHideEvent *event) noexcept
     disconnect(&flight, &Flight::aircraftStored,
                this, &LogbookWidget::updateUi);
 
-    // Service
+    // Logbook
+    Logbook &logbook = Logbook::getInstance();
     disconnect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
                this, &LogbookWidget::updateUi);
-    disconnect(&d->flightService, &FlightService::flightStored,
+    disconnect(&logbook, &Logbook::flightStored,
                this, &LogbookWidget::updateUi);
-    disconnect(&d->flightService, &FlightService::flightRestored,
+    disconnect(&logbook, &Logbook::flightRestored,
                this, &LogbookWidget::updateAircraftIcon);
-    disconnect(&d->flightService, &FlightService::flightUpdated,
+    disconnect(&logbook, &Logbook::flightUpdated,
                this, &LogbookWidget::updateUi);
+
+    // Connection
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     disconnect(&skyConnectManager, &SkyConnectManager::stateChanged,
                this, &LogbookWidget::updateEditUi);

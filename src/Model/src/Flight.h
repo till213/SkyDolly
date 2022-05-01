@@ -95,7 +95,7 @@ signals:
     void flightChanged();
     void flightConditionChanged();
     void aircraftAdded(Aircraft &aircraft);
-    void aircraftDeleted(std::int64_t removedAircraftId);
+    void aircraftDeleted(std::int64_t removedAircraftId, std::int64_t removedSimulationObjectId);
     void aircraftInfoChanged(Aircraft &aircraft);
     void tailNumberChanged(Aircraft &aircraft);
     void timeOffsetChanged(Aircraft &aircraft);

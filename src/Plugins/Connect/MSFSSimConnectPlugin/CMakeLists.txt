@@ -8,7 +8,12 @@ endif()
 add_library(SD::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
 set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model SkyConnect tsl::ordered_map SimConnect
+    Qt${QT_VERSION_MAJOR}::Widgets
+    SimConnect
+    tsl::ordered_map
+    Sky::Kernel
+    Sky::Model
+    Sky::PluginManager
 )
 if (${PLATFORM_IS_MACOS})
     list(APPEND LIBRARY_DEPENDENCIES -lc++)

@@ -32,7 +32,7 @@
 #include <QString>
 
 #include "../../Kernel/src/SampleRate.h"
-#include "PluginLib.h"
+#include "PluginManagerLib.h"
 
 class Flight;
 class Aircraft;
