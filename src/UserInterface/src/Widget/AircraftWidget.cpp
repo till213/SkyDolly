@@ -29,12 +29,12 @@
 #include <QStringBuilder>
 
 #include <Kernel/Unit.h>
-#include "../../../Model/src/SimVar.h"
-#include "../../../Model/src/Logbook.h"
-#include "../../../Model/src/Flight.h"
-#include "../../../Model/src/Aircraft.h"
-#include "../../../Model/src/Position.h"
-#include "../../../Model/src/PositionData.h"
+#include <Model/SimVar.h>
+#include <Model/Logbook.h>
+#include <Model/Flight.h>
+#include <Model/Aircraft.h>
+#include <Model/Position.h>
+#include <Model/PositionData.h>
 #include "../../../PluginManager/src/SkyConnectManager.h"
 #include "../../../PluginManager/src/SkyConnectIntf.h"
 #include "../../../PluginManager/src/Connect.h"

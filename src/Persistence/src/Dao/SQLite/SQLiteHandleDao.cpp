@@ -33,7 +33,7 @@
 #include <QSqlError>
 #include <QSqlRecord>
 
-#include "../../../../Model/src/AircraftHandleData.h"
+#include <Model/AircraftHandleData.h>
 #include "../../ConnectionManager.h"
 #include "SQLiteHandleDao.h"
 

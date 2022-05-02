@@ -30,9 +30,9 @@
 #include <QObject>
 #include <QSqlDatabase>
 
-#include "../../../Model/src/Logbook.h"
-#include "../../../Model/src/Flight.h"
-#include "../../../Model/src/Aircraft.h"
+#include <Model/Logbook.h>
+#include <Model/Flight.h>
+#include <Model/Aircraft.h>
 #include "../Dao/DaoFactory.h"
 #include "../Dao/FlightDaoIntf.h"
 #include "../Dao/AircraftDaoIntf.h"

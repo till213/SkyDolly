@@ -37,7 +37,7 @@
 
 #include <Kernel/Settings.h>
 #include <Kernel/Const.h>
-#include "../../../Model/src/Logbook.h"
+#include <Model/Logbook.h>
 #include "../ConnectionManager.h"
 #include "../Dao/DaoFactory.h"
 #include "../Dao/DatabaseDaoIntf.h"

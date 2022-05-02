@@ -31,13 +31,13 @@
 #include <QShowEvent>
 #include <QHideEvent>
 
-#include "../../../Model/src/SimVar.h"
-#include "../../../Model/src/Logbook.h"
-#include "../../../Model/src/Flight.h"
-#include "../../../Model/src/Aircraft.h"
-#include "../../../Model/src/Aircraft.h"
-#include "../../../Model/src/PrimaryFlightControl.h"
-#include "../../../Model/src/AircraftInfo.h"
+#include <Model/SimVar.h>
+#include <Model/Logbook.h>
+#include <Model/Flight.h>
+#include <Model/Aircraft.h>
+#include <Model/Aircraft.h>
+#include <Model/PrimaryFlightControl.h>
+#include <Model/AircraftInfo.h>
 #include "../../../PluginManager/src/SkyConnectManager.h"
 #include "../../../PluginManager/src/SkyConnectIntf.h"
 #include "../../../PluginManager/src/Connect.h"

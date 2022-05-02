@@ -63,10 +63,10 @@
 #include <Kernel/Settings.h>
 #include <Kernel/Enum.h>
 #include <Kernel/SampleRate.h>
-#include "../../Model/src/Aircraft.h"
-#include "../../Model/src/PositionData.h"
-#include "../../Model/src/AircraftInfo.h"
-#include "../../Model/src/Logbook.h"
+#include <Model/Aircraft.h>
+#include <Model/PositionData.h>
+#include <Model/AircraftInfo.h>
+#include <Model/Logbook.h>
 #include "../../Persistence/src/Dao/DaoFactory.h"
 #include "../../Persistence/src/Service/FlightService.h"
 #include "../../Persistence/src/Service/DatabaseService.h"

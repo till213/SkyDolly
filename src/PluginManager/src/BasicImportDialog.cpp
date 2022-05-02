@@ -33,9 +33,9 @@
 #include <QCompleter>
 
 #include <Kernel/Settings.h>
-#include "../../Model/src/Aircraft.h"
-#include "../../Model/src/AircraftType.h"
-#include "../../Model/src/Flight.h"
+#include <Model/Aircraft.h>
+#include <Model/AircraftType.h>
+#include <Model/Flight.h>
 #include "../../Persistence/src/Service/AircraftTypeService.h"
 #include <Kernel/Settings.h>
 #include "ImportPluginBaseSettings.h"

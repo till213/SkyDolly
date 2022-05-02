@@ -29,7 +29,7 @@
 #include <QSqlDatabase>
 #include <QStringView>
 
-#include "../../../Model/src/AircraftType.h"
+#include <Model/AircraftType.h>
 #include "../Dao/DaoFactory.h"
 #include "../Dao/AircraftTypeDaoIntf.h"
 #include "AircraftTypeService.h"

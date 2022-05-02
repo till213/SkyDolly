@@ -30,9 +30,9 @@
 
 #include <Kernel/SkyMath.h>
 #include <Kernel/Convert.h>
-#include "../../Model/src/Aircraft.h"
-#include "../../Model/src/Position.h"
-#include "../../Model/src/PositionData.h"
+#include <Model/Aircraft.h>
+#include <Model/Position.h>
+#include <Model/PositionData.h>
 #include "Analytics.h"
 
 namespace  {

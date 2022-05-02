@@ -30,12 +30,12 @@
 
 #include <Kernel/SampleRate.h>
 #include <Kernel/Settings.h>
-#include "../../Model/src/Logbook.h"
-#include "../../Model/src/Flight.h"
-#include "../../Model/src/Aircraft.h"
-#include "../../Model/src/Position.h"
-#include "../../Model/src/PositionData.h"
-#include "../../Model/src/InitialPosition.h"
+#include <Model/Logbook.h>
+#include <Model/Flight.h>
+#include <Model/Aircraft.h>
+#include <Model/Position.h>
+#include <Model/PositionData.h>
+#include <Model/InitialPosition.h>
 #include "Connect.h"
 #include "SkyConnectIntf.h"
 #include "AbstractSkyConnect.h"

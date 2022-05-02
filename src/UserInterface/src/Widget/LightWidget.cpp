@@ -30,12 +30,12 @@
 #include <QColor>
 #include <QPalette>
 
-#include "../../../Model/src/SimVar.h"
-#include "../../../Model/src/Logbook.h"
-#include "../../../Model/src/Flight.h"
-#include "../../../Model/src/Light.h"
-#include "../../../Model/src/LightData.h"
-#include "../../../Model/src/TimeVariableData.h"
+#include <Model/SimVar.h>
+#include <Model/Logbook.h>
+#include <Model/Flight.h>
+#include <Model/Light.h>
+#include <Model/LightData.h>
+#include <Model/TimeVariableData.h>
 #include "../../../PluginManager/src/SkyConnectManager.h"
 #include "../../../PluginManager/src/SkyConnectIntf.h"
 #include "../../../PluginManager/src/Connect.h"

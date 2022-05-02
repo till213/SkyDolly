@@ -31,7 +31,7 @@
 #include <QObject>
 
 #include <Kernel/SampleRate.h>
-#include "../../Model/src/InitialPosition.h"
+#include <Model/InitialPosition.h>
 #include "SkyConnectIntf.h"
 #include "Connect.h"
 #include "PluginManagerLib.h"

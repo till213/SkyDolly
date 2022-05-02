@@ -28,8 +28,8 @@
 #include <QStringBuilder>
 #include <QString>
 
-#include "../../../../Model/src/Flight.h"
-#include "../../../../Model/src/Aircraft.h"
+#include <Model/Flight.h>
+#include <Model/Aircraft.h>
 #include "CsvExportSettings.h"
 #include "CsvExportOptionWidget.h"
 #include "CsvWriterIntf.h"

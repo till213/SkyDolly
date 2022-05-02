@@ -30,7 +30,7 @@
 
 #include <Kernel/Version.h>
 #include <Kernel/Settings.h>
-#include "../../Model/src/Logbook.h"
+#include <Model/Logbook.h>
 #include "../../PluginManager/src/SkyConnectManager.h"
 #include "../../Persistence/src/ConnectionManager.h"
 #include "../../PluginManager/src/PluginManager.h"

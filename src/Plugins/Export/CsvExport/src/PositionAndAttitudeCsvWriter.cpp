@@ -33,10 +33,10 @@
 #include <Kernel/Convert.h>
 #include <Kernel/Enum.h>
 #include <Kernel/SampleRate.h>
-#include "../../../../Model/src/Flight.h"
-#include "../../../../Model/src/Aircraft.h"
-#include "../../../../Model/src/Position.h"
-#include "../../../../Model/src/PositionData.h"
+#include <Model/Flight.h>
+#include <Model/Aircraft.h>
+#include <Model/Position.h>
+#include <Model/PositionData.h>
 #include "../../../../PluginManager/src/CsvConst.h"
 #include "../../../../PluginManager/src/Export.h"
 #include "CsvExportSettings.h"

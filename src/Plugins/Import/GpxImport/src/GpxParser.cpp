@@ -31,12 +31,12 @@
 
 #include <Kernel/Convert.h>
 #include <Kernel/SkyMath.h>
-#include "../../../../Model/src/Flight.h"
-#include "../../../../Model/src/Aircraft.h"
-#include "../../../../Model/src/Position.h"
-#include "../../../../Model/src/PositionData.h"
-#include "../../../../Model/src/FlightPlan.h"
-#include "../../../../Model/src/Waypoint.h"
+#include <Model/Flight.h>
+#include <Model/Aircraft.h>
+#include <Model/Position.h>
+#include <Model/PositionData.h>
+#include <Model/FlightPlan.h>
+#include <Model/Waypoint.h>
 #include "Gpx.h"
 #include "GpxImportSettings.h"
 #include "GpxParser.h"

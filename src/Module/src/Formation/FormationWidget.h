@@ -32,7 +32,7 @@ class QShowEvent;
 class QHideEvent;
 class QAction;
 
-#include "../../../src/Model/src/InitialPosition.h"
+#include <Model/InitialPosition.h>
 #include "../ModuleIntf.h"
 #include "../AbstractModuleWidget.h"
 #include "../ModuleLib.h"

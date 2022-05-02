@@ -33,7 +33,7 @@
 #include <Kernel/SampleRate.h>
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
-#include "../../../Model/src/SimVar.h"
+#include <Model/SimVar.h>
 #include "../../../PluginManager/src/SkyConnectManager.h"
 #include "SettingsDialog.h"
 #include "ui_SettingsDialog.h"

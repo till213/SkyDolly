@@ -30,9 +30,9 @@
 #include <QtPlugin>
 
 #include <Kernel/SampleRate.h>
-#include "../../Model/src/TimeVariableData.h"
-#include "../../Model/src/Aircraft.h"
-#include "../../Model/src/InitialPosition.h"
+#include <Model/TimeVariableData.h>
+#include <Model/Aircraft.h>
+#include <Model/InitialPosition.h>
 #include "Connect.h"
 #include "PluginManagerLib.h"
 

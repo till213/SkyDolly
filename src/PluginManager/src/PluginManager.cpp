@@ -33,7 +33,7 @@
 #include <QUuid>
 #include <QMap>
 
-#include "../../Model/src/Flight.h"
+#include <Model/Flight.h>
 #include "../../Persistence/src/Service/FlightService.h"
 #include "ExportIntf.h"
 #include "ImportIntf.h"

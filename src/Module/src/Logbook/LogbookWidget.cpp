@@ -53,10 +53,10 @@
 #include <Kernel/Enum.h>
 #include <Kernel/Unit.h>
 #include <Kernel/Settings.h>
-#include "../../../Model/src/Flight.h"
-#include "../../../Model/src/FlightSummary.h"
-#include "../../../Model/src/Logbook.h"
-#include "../../../Model/src/SimType.h"
+#include <Model/Flight.h>
+#include <Model/FlightSummary.h>
+#include <Model/Logbook.h>
+#include <Model/SimType.h>
 #include "../../../Persistence/src/Dao/FlightSelector.h"
 #include "../../../Persistence/src/Service/DatabaseService.h"
 #include "../../../Persistence/src/Service/LogbookService.h"

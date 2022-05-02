@@ -29,8 +29,8 @@
 #include <vector>
 #include <cstdint>
 
-#include "../../../Model/src/Aircraft.h"
-#include "../../../Model/src/AircraftInfo.h"
+#include <Model/Aircraft.h>
+#include <Model/AircraftInfo.h>
 #include "../PersistenceLib.h"
 
 class AircraftServicePrivate;

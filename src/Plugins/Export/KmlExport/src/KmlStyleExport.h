@@ -31,7 +31,7 @@
 
 class QIODevice;
 
-#include "../../../../Model/src/SimType.h"
+#include <Model/SimType.h>
 #include "KmlExportSettings.h"
 
 class KmlStyleExportPrivate;

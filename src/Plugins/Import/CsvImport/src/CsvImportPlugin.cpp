@@ -30,7 +30,7 @@
 #include <QFlags>
 
 #include <Kernel/Unit.h>
-#include "../../../../Model/src/AircraftInfo.h"
+#include <Model/AircraftInfo.h>
 #include <Flight/FlightAugmentation.h>
 #include "CsvParserIntf.h"
 #include "SkyDollyCsvParser.h"

@@ -31,13 +31,13 @@
 #include <QPalette>
 
 #include <Kernel/Unit.h>
-#include "../../../Model/src/SimVar.h"
-#include "../../../Model/src/Logbook.h"
-#include "../../../Model/src/Flight.h"
-#include "../../../Model/src/Aircraft.h"
-#include "../../../Model/src/SecondaryFlightControl.h"
-#include "../../../Model/src/SecondaryFlightControlData.h"
-#include "../../../Model/src/TimeVariableData.h"
+#include <Model/SimVar.h>
+#include <Model/Logbook.h>
+#include <Model/Flight.h>
+#include <Model/Aircraft.h>
+#include <Model/SecondaryFlightControl.h>
+#include <Model/SecondaryFlightControlData.h>
+#include <Model/TimeVariableData.h>
 #include "../../../PluginManager/src/SkyConnectManager.h"
 #include "../../../PluginManager/src/SkyConnectIntf.h"
 #include "../../../PluginManager/src/Connect.h"

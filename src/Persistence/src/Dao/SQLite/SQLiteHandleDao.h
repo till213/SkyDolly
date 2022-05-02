@@ -30,7 +30,7 @@
 #include <iterator>
 #include <cstdint>
 
-#include "../../../../Model/src/AircraftHandleData.h"
+#include <Model/AircraftHandleData.h>
 #include "../HandleDaoIntf.h"
 
 class SQLiteHandleDao : public HandleDaoIntf

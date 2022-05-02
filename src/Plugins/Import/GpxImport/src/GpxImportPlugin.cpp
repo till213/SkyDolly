@@ -38,15 +38,15 @@
 #include <QWidget>
 
 #include <Flight/Analytics.h>
-#include "../../../../Model/src/Flight.h"
-#include "../../../../Model/src/FlightCondition.h"
-#include "../../../../Model/src/Aircraft.h"
-#include "../../../../Model/src/Position.h"
-#include "../../../../Model/src/PositionData.h"
-#include "../../../../Model/src/Engine.h"
-#include "../../../../Model/src/EngineData.h"
-#include "../../../../Model/src/FlightPlan.h"
-#include "../../../../Model/src/Waypoint.h"
+#include <Model/Flight.h>
+#include <Model/FlightCondition.h>
+#include <Model/Aircraft.h>
+#include <Model/Position.h>
+#include <Model/PositionData.h>
+#include <Model/Engine.h>
+#include <Model/EngineData.h>
+#include <Model/FlightPlan.h>
+#include <Model/Waypoint.h>
 #include "GpxImportOptionWidget.h"
 #include "GpxImportSettings.h"
 #include "GpxParser.h"

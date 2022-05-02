@@ -32,7 +32,7 @@
 
 #include <QtGlobal>
 
-#include "../../../../Model/src/Aircraft.h"
+#include <Model/Aircraft.h>
 #include "../AircraftDaoIntf.h"
 
 class SQLiteAircraftDaoPrivate;

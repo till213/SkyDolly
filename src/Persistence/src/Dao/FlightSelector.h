@@ -28,7 +28,7 @@
 #include <QDate>
 #include <QString>
 
-#include "../../../Model/src/SimType.h"
+#include <Model/SimType.h>
 #include "../PersistenceLib.h"
 
 struct PERSISTENCE_API FlightSelector

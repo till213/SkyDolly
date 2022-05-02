@@ -29,8 +29,8 @@
 
 #include <QSqlDatabase>
 
-#include "../../../Model/src/Aircraft.h"
-#include "../../../Model/src/Logbook.h"
+#include <Model/Aircraft.h>
+#include <Model/Logbook.h>
 #include "../Dao/FlightDaoIntf.h"
 #include "../Dao/DaoFactory.h"
 #include "../Dao/AircraftDaoIntf.h"

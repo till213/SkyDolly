@@ -26,8 +26,8 @@
 
 #include <QWidget>
 
-#include "../../../Model/src/Logbook.h"
-#include "../../../Model/src/Flight.h"
+#include <Model/Logbook.h>
+#include <Model/Flight.h>
 #include "../../../PluginManager/src/SkyConnectManager.h"
 #include "../../../PluginManager/src/SkyConnectIntf.h"
 #include "../../../PluginManager/src/Connect.h"

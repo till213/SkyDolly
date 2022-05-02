@@ -30,7 +30,7 @@
 #include <iterator>
 #include <cstdint>
 
-#include "../../../../Model/src/EngineData.h"
+#include <Model/EngineData.h>
 #include "../EngineDaoIntf.h"
 
 class SQLiteEngineDao : public EngineDaoIntf

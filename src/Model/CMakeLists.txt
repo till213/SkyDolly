@@ -1,7 +1,5 @@
 set(LIBRARY_NAME "Model")
 
-add_definitions(-DMODEL_EXPORT)
-
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_library(${LIBRARY_NAME} SHARED)
 else()
@@ -9,46 +7,53 @@ else()
 endif()
 add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
-set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Core
-    Qt${QT_VERSION_MAJOR}::Sql
-    Sky::Kernel
+target_compile_definitions(${LIBRARY_NAME}
+    PRIVATE
+        MODEL_EXPORT
 )
-
 target_sources(${LIBRARY_NAME}
     PRIVATE
-        src/ModelLib.h
-        src/Logbook.h src/Logbook.cpp
-        src/Flight.h src/Flight.cpp
-        src/FlightSummary.h src/FlightSummary.cpp
-        src/FlightDate.h src/FlightDate.cpp
-        src/FlightCondition.h src/FlightCondition.cpp
-        src/Aircraft.h src/Aircraft.cpp
-        src/TimeVariableData.h src/TimeVariableData.cpp
-        src/Position.h src/Position.cpp
-        src/PositionData.h src/PositionData.cpp
-        src/InitialPosition.h src/InitialPosition.cpp
-        src/Engine.h src/Engine.cpp
-        src/EngineData.h src/EngineData.cpp
-        src/PrimaryFlightControl.h src/PrimaryFlightControl.cpp
-        src/PrimaryFlightControlData.h src/PrimaryFlightControlData.cpp
-        src/SecondaryFlightControl.h src/SecondaryFlightControl.cpp
-        src/SecondaryFlightControlData.h src/SecondaryFlightControlData.cpp
-        src/AircraftHandle.h src/AircraftHandle.cpp
-        src/AircraftHandleData.h src/AircraftHandleData.cpp
-        src/Light.h src/Light.cpp
-        src/LightData.h src/LightData.cpp
-        src/AircraftType.h src/AircraftType.cpp
-        src/AircraftInfo.h src/AircraftInfo.cpp
-        src/Waypoint.h src/Waypoint.cpp
-        src/FlightPlan.h src/FlightPlan.cpp
-        src/SimType.h src/SimVar.h
-        src/SkySearch.h src/SkySearch.cpp
+        include/Model/ModelLib.h
+        include/Model/Logbook.h src/Logbook.cpp
+        include/Model/Flight.h src/Flight.cpp
+        include/Model/FlightSummary.h src/FlightSummary.cpp
+        include/Model/FlightDate.h src/FlightDate.cpp
+        include/Model/FlightCondition.h src/FlightCondition.cpp
+        include/Model/Aircraft.h src/Aircraft.cpp
+        include/Model/TimeVariableData.h src/TimeVariableData.cpp
+        include/Model/Position.h src/Position.cpp
+        include/Model/PositionData.h src/PositionData.cpp
+        include/Model/InitialPosition.h src/InitialPosition.cpp
+        include/Model/Engine.h src/Engine.cpp
+        include/Model/EngineData.h src/EngineData.cpp
+        include/Model/PrimaryFlightControl.h src/PrimaryFlightControl.cpp
+        include/Model/PrimaryFlightControlData.h src/PrimaryFlightControlData.cpp
+        include/Model/SecondaryFlightControl.h src/SecondaryFlightControl.cpp
+        include/Model/SecondaryFlightControlData.h src/SecondaryFlightControlData.cpp
+        include/Model/AircraftHandle.h src/AircraftHandle.cpp
+        include/Model/AircraftHandleData.h src/AircraftHandleData.cpp
+        include/Model/Light.h src/Light.cpp
+        include/Model/LightData.h src/LightData.cpp
+        include/Model/AircraftType.h src/AircraftType.cpp
+        include/Model/AircraftInfo.h src/AircraftInfo.cpp
+        include/Model/Waypoint.h src/Waypoint.cpp
+        include/Model/FlightPlan.h src/FlightPlan.cpp
+        include/Model/SimType.h
+        include/Model/SimVar.h
+        include/Model/SkySearch.h src/SkySearch.cpp
 )
-
-target_link_libraries(${LIBRARY_NAME}
+target_include_directories(${LIBRARY_NAME}
+    INTERFACE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
     PRIVATE
-        ${LIBRARY_DEPENDENCIES}
+        include/Model
+)
+target_link_libraries(${LIBRARY_NAME}
+    PUBLIC
+        Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Sql
+    PRIVATE
+        Sky::Kernel
 )
 set_target_properties(${LIBRARY_NAME}
     PROPERTIES

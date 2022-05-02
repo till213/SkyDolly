@@ -40,8 +40,8 @@
 
 #include <Kernel/Settings.h>
 #include <Kernel/File.h>
-#include "../../Model/src/Flight.h"
-#include "../../Model/src/Aircraft.h"
+#include <Model/Flight.h>
+#include <Model/Aircraft.h>
 #include "BasicExportDialog.h"
 #include "ExportPluginBaseSettings.h"
 #include "ExportPluginBase.h"

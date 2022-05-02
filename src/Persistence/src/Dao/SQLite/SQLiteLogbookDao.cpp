@@ -37,10 +37,10 @@
 #include <QTimeZone>
 
 #include <Kernel/Enum.h>
-#include "../../../../Model/src/Logbook.h"
-#include "../../../../Model/src/FlightDate.h"
-#include "../../../../Model/src/FlightSummary.h"
-#include "../../../../Model/src/FlightCondition.h"
+#include <Model/Logbook.h>
+#include <Model/FlightDate.h>
+#include <Model/FlightSummary.h>
+#include <Model/FlightCondition.h>
 #include "../../Dao/FlightSelector.h"
 #include "../../ConnectionManager.h"
 #include "SQLiteLogbookDao.h"

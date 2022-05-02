@@ -30,11 +30,11 @@
 #include <QXmlStreamReader>
 
 #include <Kernel/Convert.h>
-#include "../../../../Model/src/Flight.h"
-#include "../../../../Model/src/FlightPlan.h"
-#include "../../../../Model/src/Position.h"
-#include "../../../../Model/src/PositionData.h"
-#include "../../../../Model/src/Waypoint.h"
+#include <Model/Flight.h>
+#include <Model/FlightPlan.h>
+#include <Model/Position.h>
+#include <Model/PositionData.h>
+#include <Model/Waypoint.h>
 #include "Kml.h"
 #include "AbstractKmlTrackParser.h"
 #include "FlightAwareKmlParser.h"

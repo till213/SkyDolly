@@ -29,7 +29,7 @@
 
 #include <QObject>
 
-#include "../../Model/src/PositionData.h"
+#include <Model/PositionData.h>
 
 /*!
  * Test cases for the SkySearch module.

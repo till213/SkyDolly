@@ -31,7 +31,7 @@
 #include <QColor>
 
 #include <Kernel/Color.h>
-#include "../../../../Model/src/SimType.h"
+#include <Model/SimType.h>
 #include "KmlExportSettings.h"
 #include "KmlStyleExport.h"
 

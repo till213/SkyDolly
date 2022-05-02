@@ -31,11 +31,11 @@
 #include <Kernel/SampleRate.h>
 #include <Kernel/Settings.h>
 #include <Kernel/File.h>
-#include "../../Model/src/Flight.h"
-#include "../../Model/src/Aircraft.h"
-#include "../../Model/src/AircraftInfo.h"
-#include "../../Model/src/Position.h"
-#include "../../Model/src/PositionData.h"
+#include <Model/Flight.h>
+#include <Model/Aircraft.h>
+#include <Model/AircraftInfo.h>
+#include <Model/Position.h>
+#include <Model/PositionData.h>
 #include "Export.h"
 
 namespace

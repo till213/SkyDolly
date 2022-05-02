@@ -34,7 +34,7 @@
 #include <QSqlRecord>
 
 #include <Kernel/Enum.h>
-#include "../../../../Model/src/PositionData.h"
+#include <Model/PositionData.h>
 #include "../../ConnectionManager.h"
 #include "SQLitePositionDao.h"
 

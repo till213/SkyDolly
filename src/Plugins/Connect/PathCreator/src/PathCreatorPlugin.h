@@ -30,7 +30,7 @@
 
 #include <QObject>
 
-#include "../../../../Model/src/TimeVariableData.h"
+#include <Model/TimeVariableData.h>
 #include "../../../../PluginManager/src/AbstractSkyConnect.h"
 #include "../../../../PluginManager/src/SkyConnectIntf.h"
 

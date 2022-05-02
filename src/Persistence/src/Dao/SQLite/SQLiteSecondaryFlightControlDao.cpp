@@ -34,7 +34,7 @@
 #include <QSqlRecord>
 
 #include <Kernel/Enum.h>
-#include "../../../../Model/src/SecondaryFlightControlData.h"
+#include <Model/SecondaryFlightControlData.h>
 #include "../../ConnectionManager.h"
 #include "SQLiteSecondaryFlightControlDao.h"
 

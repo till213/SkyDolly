@@ -40,10 +40,10 @@
 #include <Kernel/SampleRate.h>
 #include <Kernel/Unit.h>
 #include <Kernel/Enum.h>
-#include "../../Model/src/Flight.h"
-#include "../../Model/src/Aircraft.h"
-#include "../../Model/src/Position.h"
-#include "../../Model/src/SimType.h"
+#include <Model/Flight.h>
+#include <Model/Aircraft.h>
+#include <Model/Position.h>
+#include <Model/SimType.h>
 #include "Export.h"
 #include "ExportPluginBaseSettings.h"
 #include "BasicExportDialog.h"

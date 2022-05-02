@@ -38,7 +38,7 @@ class QString;
 class QUuid;
 
 #include <Kernel/FlightSimulator.h>
-#include "../../Model/src/TimeVariableData.h"
+#include <Model/TimeVariableData.h>
 #include "Connect.h"
 #include "PluginManagerLib.h"
 

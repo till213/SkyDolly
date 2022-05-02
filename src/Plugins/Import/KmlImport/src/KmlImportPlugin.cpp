@@ -34,9 +34,9 @@
 #include <QFlags>
 
 #include <Kernel/Unit.h>
-#include "../../../../Model/src/Flight.h"
-#include "../../../../Model/src/Aircraft.h"
-#include "../../../../Model/src/FlightCondition.h"
+#include <Model/Flight.h>
+#include <Model/Aircraft.h>
+#include <Model/FlightCondition.h>
 #include <Flight/FlightAugmentation.h>
 #include "KmlImportSettings.h"
 #include "KmlParserIntf.h"

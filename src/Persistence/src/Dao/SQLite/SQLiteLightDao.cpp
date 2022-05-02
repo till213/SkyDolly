@@ -33,7 +33,7 @@
 #include <QSqlError>
 #include <QSqlRecord>
 
-#include "../../../../Model/src/LightData.h"
+#include <Model/LightData.h>
 #include "../../ConnectionManager.h"
 #include "SQLiteLightDao.h"
 

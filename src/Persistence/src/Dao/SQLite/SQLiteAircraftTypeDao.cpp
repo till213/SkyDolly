@@ -32,7 +32,7 @@
 #include <QSqlRecord>
 
 #include <Kernel/Enum.h>
-#include "../../../../Model/src/AircraftType.h"
+#include <Model/AircraftType.h>
 #include "SQLiteAircraftTypeDao.h"
 
 // PUBLIC

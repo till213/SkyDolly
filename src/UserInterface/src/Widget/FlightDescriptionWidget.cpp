@@ -30,8 +30,8 @@
 #include <QTextCursor>
 
 #include <Kernel/Unit.h>
-#include "../../../Model/src/Logbook.h"
-#include "../../../Model/src/Flight.h"
+#include <Model/Logbook.h>
+#include <Model/Flight.h>
 #include "../../../Persistence/src/Service/FlightService.h"
 #include "../../../Widget/src/FocusPlainTextEdit.h"
 #include "FlightDescriptionWidget.h"

@@ -30,7 +30,7 @@
 #include <QComboBox>
 #include <QCompleter>
 
-#include "../../Model/src/AircraftType.h"
+#include <Model/AircraftType.h>
 #include "../../Persistence/src/Service/AircraftTypeService.h"
 #include "AircraftSelectionComboBox.h"
 

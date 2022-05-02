@@ -32,8 +32,8 @@
 #include <QObject>
 #include <QVector>
 
-#include "../../../Model/src/FlightDate.h"
-#include "../../../Model/src/FlightSummary.h"
+#include <Model/FlightDate.h>
+#include <Model/FlightSummary.h>
 #include "../PersistenceLib.h"
 
 class FlightSelector;
