@@ -27,8 +27,8 @@
 
 #include <QColor>
 
-#include "../../../../Kernel/src/Enum.h"
-#include "../../../../Kernel/src/Settings.h"
+#include <Kernel/Enum.h>
+#include <Kernel/Settings.h>
 #include "../../../../PluginManager/src/ExportPluginBaseSettings.h"
 #include "KmlExportSettings.h"
 

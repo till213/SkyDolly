@@ -25,9 +25,9 @@
 #include <QComboBox>
 #include <QSpinBox>
 
-#include "../../../../Kernel/src/Enum.h"
-#include "../../../../Kernel/src/Settings.h"
-#include "../../../../Kernel/src/Version.h"
+#include <Kernel/Enum.h>
+#include <Kernel/Settings.h>
+#include <Kernel/Version.h>
 #include "GpxImportOptionWidget.h"
 #include "GpxImportSettings.h"
 #include "ui_GpxImportOptionWidget.h"

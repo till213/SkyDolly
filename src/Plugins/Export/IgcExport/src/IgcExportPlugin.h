@@ -36,7 +36,7 @@ class QIODevice;
 class QString;
 class QDateTime;
 
-#include "../../../../Kernel/src/Settings.h"
+#include <Kernel/Settings.h>
 #include "../../../../PluginManager/src/ExportIntf.h"
 #include "../../../../PluginManager/src/ExportPluginBase.h"
 

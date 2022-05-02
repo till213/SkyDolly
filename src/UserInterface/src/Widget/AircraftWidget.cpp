@@ -28,7 +28,7 @@
 #include <QDialog>
 #include <QStringBuilder>
 
-#include "../../../Kernel/src/Unit.h"
+#include <Kernel/Unit.h>
 #include "../../../Model/src/SimVar.h"
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"

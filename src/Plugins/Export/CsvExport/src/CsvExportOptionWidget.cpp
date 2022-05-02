@@ -25,7 +25,7 @@
 #include <QComboBox>
 #include <QString>
 
-#include "../../../../Kernel/src/Enum.h"
+#include <Kernel/Enum.h>
 #include "CsvExportOptionWidget.h"
 #include "CsvExportSettings.h"
 #include "ui_CsvExportOptionWidget.h"

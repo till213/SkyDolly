@@ -24,9 +24,9 @@
  */
 #include <memory>
 
-#include "../../Kernel/src/Enum.h"
-#include "../../Kernel/src/Settings.h"
-#include "../../Kernel/src/SampleRate.h"
+#include <Kernel/Enum.h>
+#include <Kernel/Settings.h>
+#include <Kernel/SampleRate.h>
 #include "ExportPluginBaseSettings.h"
 
 namespace

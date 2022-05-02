@@ -37,12 +37,12 @@
 #include "../../../../Kernel/src/QStringHasher.h"
 #endif
 
-#include "../../../../Kernel/src/Convert.h"
-#include "../../../../Kernel/src/File.h"
-#include "../../../../Kernel/src/Enum.h"
-#include "../../../../Kernel/src/Unit.h"
-#include "../../../../Kernel/src/SampleRate.h"
-#include "../../../../Kernel/src/Settings.h"
+#include <Kernel/Convert.h>
+#include <Kernel/File.h>
+#include <Kernel/Enum.h>
+#include <Kernel/Unit.h>
+#include <Kernel/SampleRate.h>
+#include <Kernel/Settings.h>
 #include "../../../../Model/src/Flight.h"
 #include "../../../../Model/src/FlightPlan.h"
 #include "../../../../Model/src/Waypoint.h"

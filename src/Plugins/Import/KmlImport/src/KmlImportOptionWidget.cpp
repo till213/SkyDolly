@@ -24,7 +24,7 @@
  */
 #include <QComboBox>
 
-#include "../../../../Kernel/src/Enum.h"
+#include <Kernel/Enum.h>
 #include "KmlImportOptionWidget.h"
 #include "KmlImportSettings.h"
 #include "ui_KmlImportOptionWidget.h"

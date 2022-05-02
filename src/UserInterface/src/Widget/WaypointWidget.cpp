@@ -24,7 +24,7 @@
  */
 #include <memory>
 
-#include "../../../Kernel/src/Unit.h"
+#include <Kernel/Unit.h>
 #include "../../../Model/src/Waypoint.h"
 #include "../../../Model/src/SimVar.h"
 #include "WaypointWidget.h"

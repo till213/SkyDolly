@@ -30,8 +30,8 @@
 #include <QString>
 #include <QStringBuilder>
 
-#include "../../../../Kernel/src/Enum.h"
-#include "../../../../Kernel/src/SampleRate.h"
+#include <Kernel/Enum.h>
+#include <Kernel/SampleRate.h>
 #include "../../../../Model/src/Flight.h"
 #include "../../../../Model/src/Aircraft.h"
 #include "../../../../Model/src/Position.h"

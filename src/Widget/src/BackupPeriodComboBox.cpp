@@ -25,8 +25,8 @@
 #include <QWidget>
 #include <QComboBox>
 
-#include "../../Kernel/src/Const.h"
-#include "../../Kernel/src/Enum.h"
+#include <Kernel/Const.h>
+#include <Kernel/Enum.h>
 #include "BackupPeriodComboBox.h"
 
 class BackupPeriodComboBoxPrivate

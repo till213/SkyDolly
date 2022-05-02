@@ -22,38 +22,4 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <QDate>
-
-#include <Kernel/Unit.h>
-#include "TableDateItem.h"
-
-class TableDateItemPrivate
-{
-public:
-    TableDateItemPrivate(const QDate &theDate) noexcept
-        : date(theDate)
-    {}
-
-    QDate date;
-    Unit unit;
-};
-
-// PUBLIC
-
-TableDateItem::TableDateItem(const QString &dateString, const QDate &date) noexcept
-    : QTableWidgetItem(dateString),
-      d(std::make_unique<TableDateItemPrivate>(date))
-{}
-
-TableDateItem::~TableDateItem() noexcept
-{}
-
-bool TableDateItem::operator<(const QTableWidgetItem &rhs) const noexcept
-{
-    TableDateItem const *r = dynamic_cast<const TableDateItem *>(&rhs);
-    if (r != nullptr) {
-        return d->date < r->d->date;
-    } else {
-        return false;
-    }
-}
+#include "QStringHasher.h"

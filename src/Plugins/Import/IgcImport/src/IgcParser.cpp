@@ -35,7 +35,7 @@
 #include <QRegularExpressionMatch>
 #include <QTimeZone>
 
-#include "../../../../Kernel/src/Convert.h"
+#include <Kernel/Convert.h>
 #include "IgcParser.h"
 
 // Useful resources:

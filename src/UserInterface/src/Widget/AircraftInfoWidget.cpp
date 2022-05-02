@@ -26,7 +26,7 @@
 
 #include <QWidget>
 
-#include "../../../Kernel/src/Unit.h"
+#include <Kernel/Unit.h>
 #include "../../../Model/src/SimVar.h"
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
@@ -34,7 +34,7 @@
 #include "../../../Model/src/AircraftInfo.h"
 #include "../../../Model/src/AircraftType.h"
 #include "../../../Model/src/FlightCondition.h"
-#include "../../../Kernel/src/SkyMath.h"
+#include <Kernel/SkyMath.h>
 #include "AircraftInfoWidget.h"
 #include "ui_AircraftInfoWidget.h"
 

@@ -24,7 +24,7 @@
  */
 #include <memory>
 
-#include "../../Kernel/src/Settings.h"
+#include <Kernel/Settings.h>
 #include "ImportPluginBaseSettings.h"
 
 namespace

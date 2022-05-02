@@ -33,7 +33,7 @@
 #include <QSqlError>
 #include <QSqlRecord>
 
-#include "../../../../Kernel/src/Enum.h"
+#include <Kernel/Enum.h>
 #include "../../../../Model/src/SecondaryFlightControlData.h"
 #include "../../ConnectionManager.h"
 #include "SQLiteSecondaryFlightControlDao.h"

@@ -30,8 +30,8 @@
 #include <QObject>
 #include <QString>
 
-#include "../../Kernel/src/Settings.h"
-#include "../../Kernel/src/SampleRate.h"
+#include <Kernel/Settings.h>
+#include <Kernel/SampleRate.h>
 #include "PluginManagerLib.h"
 
 class ExportPluginBaseSettingsPrivate;

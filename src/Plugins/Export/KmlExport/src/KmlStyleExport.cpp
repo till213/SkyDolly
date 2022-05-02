@@ -30,7 +30,7 @@
 #include <QStringBuilder>
 #include <QColor>
 
-#include "../../../../Kernel/src/Color.h"
+#include <Kernel/Color.h>
 #include "../../../../Model/src/SimType.h"
 #include "KmlExportSettings.h"
 #include "KmlStyleExport.h"

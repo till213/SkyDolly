@@ -31,8 +31,8 @@
 #include <QShowEvent>
 #include <QHideEvent>
 
-#include "../../../Kernel/src/Settings.h"
-#include "../../../Kernel/src/Unit.h"
+#include <Kernel/Settings.h>
+#include <Kernel/Unit.h>
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"

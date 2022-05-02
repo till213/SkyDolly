@@ -26,13 +26,13 @@
 
 #include <QWidget>
 
-#include "../../../Kernel/src/Unit.h"
+#include <Kernel/Unit.h>
 #include "../../../Model/src/SimVar.h"
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/Aircraft.h"
 #include "../../../Model/src/FlightCondition.h"
-#include "../../../Kernel/src/SkyMath.h"
+#include <Kernel/SkyMath.h>
 #include "FlightConditionWidget.h"
 #include "ui_FlightConditionWidget.h"
 

@@ -31,7 +31,7 @@
 #include <QActionGroup>
 #include <QStackedWidget>
 
-#include "../../Kernel/src/Enum.h"
+#include <Kernel/Enum.h>
 #include "../../Persistence/src/Service/DatabaseService.h"
 #include "../../Persistence/src/Service/FlightService.h"
 #include "Logbook/LogbookWidget.h"

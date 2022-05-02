@@ -31,7 +31,7 @@
 #include <QFile>
 #include <QFileInfo>
 
-#include "../../../../Kernel/src/Convert.h"
+#include <Kernel/Convert.h>
 #include "../../../../Model/src/SimVar.h"
 #include "../../../../Model/src/Flight.h"
 #include "../../../../Model/src/Aircraft.h"

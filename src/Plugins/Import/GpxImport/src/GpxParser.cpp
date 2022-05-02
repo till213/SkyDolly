@@ -29,8 +29,8 @@
 #include <QDateTime>
 #include <QTimeZone>
 
-#include "../../../../Kernel/src/Convert.h"
-#include "../../../../Kernel/src/SkyMath.h"
+#include <Kernel/Convert.h>
+#include <Kernel/SkyMath.h>
 #include "../../../../Model/src/Flight.h"
 #include "../../../../Model/src/Aircraft.h"
 #include "../../../../Model/src/Position.h"

@@ -33,7 +33,7 @@
 #include <QUuid>
 #include <QMap>
 
-#include "../../Kernel/src/Settings.h"
+#include <Kernel/Settings.h>
 #include "SkyConnectIntf.h"
 #include "SkyConnectManager.h"
 

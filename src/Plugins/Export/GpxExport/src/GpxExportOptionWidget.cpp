@@ -25,7 +25,7 @@
 #include <QComboBox>
 #include <QString>
 
-#include "../../../../Kernel/src/Enum.h"
+#include <Kernel/Enum.h>
 #include "GpxExportOptionWidget.h"
 #include "GpxExportSettings.h"
 #include "ui_GpxExportOptionWidget.h"

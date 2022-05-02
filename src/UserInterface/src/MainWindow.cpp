@@ -56,13 +56,13 @@
 #include <QStringBuilder>
 #include <QDesktopServices>
 
-#include "../../Kernel/src/Unit.h"
-#include "../../Kernel/src/Const.h"
-#include "../../Kernel/src/Replay.h"
-#include "../../Kernel/src/Version.h"
-#include "../../Kernel/src/Settings.h"
-#include "../../Kernel/src/Enum.h"
-#include "../../Kernel/src/SampleRate.h"
+#include <Kernel/Unit.h>
+#include <Kernel/Const.h>
+#include <Kernel/Replay.h>
+#include <Kernel/Version.h>
+#include <Kernel/Settings.h>
+#include <Kernel/Enum.h>
+#include <Kernel/SampleRate.h>
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/PositionData.h"
 #include "../../Model/src/AircraftInfo.h"

@@ -37,7 +37,7 @@
 #include <QFlags>
 #include <QWidget>
 
-#include "../../../../Flight/src/Analytics.h"
+#include <Flight/Analytics.h>
 #include "../../../../Model/src/Flight.h"
 #include "../../../../Model/src/FlightCondition.h"
 #include "../../../../Model/src/Aircraft.h"

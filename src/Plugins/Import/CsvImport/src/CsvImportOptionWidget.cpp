@@ -24,8 +24,8 @@
  */
 #include <QComboBox>
 
-#include "../../../../Kernel/src/Enum.h"
-#include "../../../../Kernel/src/Version.h"
+#include <Kernel/Enum.h>
+#include <Kernel/Version.h>
 #include "CsvImportOptionWidget.h"
 #include "CsvImportSettings.h"
 #include "ui_CsvImportOptionWidget.h"

@@ -35,13 +35,13 @@
 #include <QSysInfo>
 #include <QDesktopServices>
 
-#include "../../../../Kernel/src/Enum.h"
-#include "../../../../Kernel/src/File.h"
-#include "../../../../Kernel/src/Unit.h"
-#include "../../../../Kernel/src/Convert.h"
-#include "../../../../Kernel/src/Version.h"
-#include "../../../../Kernel/src/Settings.h"
-#include "../../../../Kernel/src/SkyMath.h"
+#include <Kernel/Enum.h>
+#include <Kernel/File.h>
+#include <Kernel/Unit.h>
+#include <Kernel/Convert.h>
+#include <Kernel/Version.h>
+#include <Kernel/Settings.h>
+#include <Kernel/SkyMath.h>
 #include "../../../../Model/src/Flight.h"
 #include "../../../../Model/src/FlightCondition.h"
 #include "../../../../Model/src/Aircraft.h"

@@ -28,8 +28,8 @@
 #include <QElapsedTimer>
 #include <QDateTime>
 
-#include "../../Kernel/src/SampleRate.h"
-#include "../../Kernel/src/Settings.h"
+#include <Kernel/SampleRate.h>
+#include <Kernel/Settings.h>
 #include "../../Model/src/Logbook.h"
 #include "../../Model/src/Flight.h"
 #include "../../Model/src/Aircraft.h"

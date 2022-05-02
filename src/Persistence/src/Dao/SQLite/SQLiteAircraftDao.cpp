@@ -33,7 +33,7 @@
 #include <QSqlRecord>
 #include <QTimeZone>
 
-#include "../../../../Kernel/src/Enum.h"
+#include <Kernel/Enum.h>
 #include "../../../../Model/src/Aircraft.h"
 #include "../../../../Model/src/AircraftInfo.h"
 #include "../../../../Model/src/Position.h"

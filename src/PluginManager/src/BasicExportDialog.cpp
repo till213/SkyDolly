@@ -36,10 +36,10 @@
 #include <QComboBox>
 #include <QCheckBox>
 
-#include "../../Kernel/src/Settings.h"
-#include "../../Kernel/src/SampleRate.h"
-#include "../../Kernel/src/Unit.h"
-#include "../../Kernel/src/Enum.h"
+#include <Kernel/Settings.h>
+#include <Kernel/SampleRate.h>
+#include <Kernel/Unit.h>
+#include <Kernel/Enum.h>
 #include "../../Model/src/Flight.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/Position.h"

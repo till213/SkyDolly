@@ -25,7 +25,7 @@
 #include <QWidget>
 #include <QUuid>
 
-#include "../../Kernel/src/Settings.h"
+#include <Kernel/Settings.h>
 #include "PluginBase.h"
 
 class PluginBasePrivate

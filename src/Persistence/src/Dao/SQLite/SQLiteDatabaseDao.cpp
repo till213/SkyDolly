@@ -32,8 +32,8 @@
 #include <QTimeZone>
 #include <QDateTime>
 
-#include "../../../../Kernel/src/Settings.h"
-#include "../../../../Kernel/src/Version.h"
+#include <Kernel/Settings.h>
+#include <Kernel/Version.h>
 #include "../../Metadata.h"
 #include "SqlMigration.h"
 #include "SQLiteDatabaseDao.h"

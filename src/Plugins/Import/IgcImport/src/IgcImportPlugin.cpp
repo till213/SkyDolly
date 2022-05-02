@@ -38,11 +38,11 @@
 
 #include <GeographicLib/Geoid.hpp>
 
-#include "../../../../Kernel/src/Unit.h"
-#include "../../../../Kernel/src/Settings.h"
-#include "../../../../Kernel/src/SkyMath.h"
-#include "../../../../Kernel/src/Convert.h"
-#include "../../../../Flight/src/Analytics.h"
+#include <Kernel/Unit.h>
+#include <Kernel/Settings.h>
+#include <Kernel/SkyMath.h>
+#include <Kernel/Convert.h>
+
 #include "../../../../Model/src/Flight.h"
 #include "../../../../Model/src/FlightCondition.h"
 #include "../../../../Model/src/Aircraft.h"
@@ -52,7 +52,8 @@
 #include "../../../../Model/src/EngineData.h"
 #include "../../../../Model/src/FlightPlan.h"
 #include "../../../../Model/src/Waypoint.h"
-#include "../../../../Flight/src/FlightAugmentation.h"
+#include <Flight/Analytics.h>
+#include <Flight/FlightAugmentation.h>
 #include "IgcImportOptionWidget.h"
 #include "IgcImportSettings.h"
 #include "IgcParser.h"

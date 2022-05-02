@@ -30,7 +30,7 @@
 
 #include <QObject>
 
-#include "../../Kernel/src/SampleRate.h"
+#include <Kernel/SampleRate.h>
 #include "../../Model/src/InitialPosition.h"
 #include "SkyConnectIntf.h"
 #include "Connect.h"

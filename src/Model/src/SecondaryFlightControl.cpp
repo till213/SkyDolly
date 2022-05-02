@@ -30,8 +30,8 @@
 
 #include <QObject>
 
-#include "../../Kernel/src/Settings.h"
-#include "../../Kernel/src/SkyMath.h"
+#include <Kernel/Settings.h>
+#include <Kernel/SkyMath.h>
 #include "TimeVariableData.h"
 #include "SkySearch.h"
 #include "AircraftInfo.h"

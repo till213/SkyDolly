@@ -30,7 +30,7 @@
 
 #include <QtGlobal>
 
-#include "../../Kernel/src/Convert.h"
+#include <Kernel/Convert.h>
 #include "PositionData.h"
 #include "ModelLib.h"
 

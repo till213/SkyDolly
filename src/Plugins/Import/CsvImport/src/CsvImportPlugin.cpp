@@ -29,9 +29,9 @@
 #include <QFileInfo>
 #include <QFlags>
 
-#include "../../../../Kernel/src/Unit.h"
+#include <Kernel/Unit.h>
 #include "../../../../Model/src/AircraftInfo.h"
-#include "../../../../Flight/src/FlightAugmentation.h"
+#include <Flight/FlightAugmentation.h>
 #include "CsvParserIntf.h"
 #include "SkyDollyCsvParser.h"
 #include "FlightRadar24CsvParser.h"

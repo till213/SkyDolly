@@ -35,8 +35,8 @@
 
 class QIODevice;
 
-#include "../../Kernel/src/Settings.h"
-#include "../../Flight/src/FlightAugmentation.h"
+#include <Flight/FlightAugmentation.h>
+#include <Kernel/Settings.h>
 #include "ExportIntf.h"
 #include "PluginBase.h"
 #include "PluginManagerLib.h"

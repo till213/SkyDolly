@@ -26,8 +26,8 @@
 #include <QSpinBox>
 #include <QCheckBox>
 
-#include "../../../../Kernel/src/Enum.h"
-#include "../../../../Kernel/src/Version.h"
+#include <Kernel/Enum.h>
+#include <Kernel/Version.h>
 #include "IgcImportOptionWidget.h"
 #include "IgcImportSettings.h"
 #include "ui_IgcImportOptionWidget.h"

@@ -28,7 +28,7 @@
 #include <QStringBuilder>
 #include <QColorDialog>
 
-#include "../../../../Kernel/src/Enum.h"
+#include <Kernel/Enum.h>
 #include "KmlExportOptionWidget.h"
 #include "KmlExportSettings.h"
 #include "ui_KmlExportOptionWidget.h"

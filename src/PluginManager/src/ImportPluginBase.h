@@ -34,8 +34,8 @@
 class QFile;
 class QStringList;
 
-#include "../../Kernel/src/Settings.h"
-#include "../../Flight/src/FlightAugmentation.h"
+#include <Kernel/Settings.h>
+#include <Flight/FlightAugmentation.h>
 #include "ImportIntf.h"
 #include "PluginBase.h"
 #include "PluginManagerLib.h"

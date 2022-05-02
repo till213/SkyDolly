@@ -30,7 +30,7 @@
 #include <QObject>
 #include <QString>
 
-#include "../../../../Kernel/src/Settings.h"
+#include <Kernel/Settings.h>
 #include "../../../../PluginManager/src/ImportPluginBaseSettings.h"
 
 class KmlImportSettingsPrivate;

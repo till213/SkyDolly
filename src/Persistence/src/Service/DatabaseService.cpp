@@ -35,8 +35,8 @@
 #include <QSqlDatabase>
 #include <QDateTime>
 
-#include "../../../Kernel/src/Settings.h"
-#include "../../../Kernel/src/Const.h"
+#include <Kernel/Settings.h>
+#include <Kernel/Const.h>
 #include "../../../Model/src/Logbook.h"
 #include "../ConnectionManager.h"
 #include "../Dao/DaoFactory.h"

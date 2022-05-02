@@ -27,7 +27,7 @@
 
 #include <QDateTime>
 
-#include "../../Kernel/src/Version.h"
+#include <Kernel/Version.h>
 
 struct Metadata
 {

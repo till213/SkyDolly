@@ -27,7 +27,7 @@
 
 #include <QObject>
 
-#include "../../Kernel/src/Settings.h"
+#include <Kernel/Settings.h>
 #include "PluginManagerLib.h"
 
 class PLUGINMANAGER_API SettingsIntf : public QObject

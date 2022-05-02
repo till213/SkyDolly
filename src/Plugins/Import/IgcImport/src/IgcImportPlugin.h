@@ -34,7 +34,7 @@
 
 class QRegularExpression;
 
-#include "../../../../Flight/src/FlightAugmentation.h"
+#include <Flight/FlightAugmentation.h>
 #include "../../../../PluginManager/src/ImportIntf.h"
 #include "../../../../PluginManager/src/ImportPluginBase.h"
 

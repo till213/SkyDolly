@@ -34,22 +34,20 @@ target_sources(${LIBRARY_NAME}
         src/CsvConst.h
 )
 
-set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Widgets
-    Sky::Kernel
-    Sky::Model
-    Sky::Flight
-    Sky::Persistence
-    Sky::Widget
-)
-
 target_include_directories(${LIBRARY_NAME}
     PRIVATE
         ../Widget/src/
 )
 target_link_libraries(${LIBRARY_NAME}
+    PUBLIC
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Sky::Flight
     PRIVATE
-        ${LIBRARY_DEPENDENCIES}
+        Sky::Kernel
+        Sky::Model
+
+        Sky::Persistence
+        Sky::Widget
 )
 set_target_properties(${LIBRARY_NAME}
     PROPERTIES

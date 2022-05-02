@@ -30,7 +30,7 @@
 #include <QObject>
 #include <QUuid>
 
-#include "../../Kernel/src/Settings.h"
+#include <Kernel/Settings.h>
 #include "PluginIntf.h"
 #include "PluginManagerLib.h"
 

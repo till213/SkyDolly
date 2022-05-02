@@ -32,12 +32,12 @@
 #include <QPushButton>
 #include <QCompleter>
 
-#include "../../Kernel/src/Settings.h"
+#include <Kernel/Settings.h>
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/AircraftType.h"
 #include "../../Model/src/Flight.h"
 #include "../../Persistence/src/Service/AircraftTypeService.h"
-#include "../../Kernel/src/Settings.h"
+#include <Kernel/Settings.h>
 #include "ImportPluginBaseSettings.h"
 #include "BasicImportDialog.h"
 #include "ui_BasicImportDialog.h"

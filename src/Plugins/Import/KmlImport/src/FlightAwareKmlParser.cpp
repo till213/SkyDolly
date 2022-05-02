@@ -29,7 +29,7 @@
 #include <QStringLiteral>
 #include <QXmlStreamReader>
 
-#include "../../../../Kernel/src/Convert.h"
+#include <Kernel/Convert.h>
 #include "../../../../Model/src/Flight.h"
 #include "../../../../Model/src/FlightPlan.h"
 #include "../../../../Model/src/Position.h"

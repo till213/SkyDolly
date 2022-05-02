@@ -36,7 +36,7 @@
 #include <QDateTime>
 #include <QTimeZone>
 
-#include "../../../../Kernel/src/Enum.h"
+#include <Kernel/Enum.h>
 #include "../../../../Model/src/Logbook.h"
 #include "../../../../Model/src/FlightDate.h"
 #include "../../../../Model/src/FlightSummary.h"

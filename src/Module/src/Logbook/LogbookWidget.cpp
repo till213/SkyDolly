@@ -48,11 +48,11 @@
 #include <QShowEvent>
 #include <QHideEvent>
 
-#include "../../../Kernel/src/Version.h"
-#include "../../../Kernel/src/Const.h"
-#include "../../../Kernel/src/Enum.h"
-#include "../../../Kernel/src/Unit.h"
-#include "../../../Kernel/src/Settings.h"
+#include <Kernel/Version.h>
+#include <Kernel/Const.h>
+#include <Kernel/Enum.h>
+#include <Kernel/Unit.h>
+#include <Kernel/Settings.h>
 #include "../../../Model/src/Flight.h"
 #include "../../../Model/src/FlightSummary.h"
 #include "../../../Model/src/Logbook.h"

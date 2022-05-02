@@ -31,8 +31,8 @@
 #include <QRandomGenerator>
 #include <QStringList>
 
-#include "../../../../Kernel/src/Settings.h"
-#include "../../../../Kernel/src/SkyMath.h"
+#include <Kernel/Settings.h>
+#include <Kernel/SkyMath.h>
 #include "../../../../Model/src/TimeVariableData.h"
 #include "../../../../Model/src/Logbook.h"
 #include "../../../../Model/src/Flight.h"

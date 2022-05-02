@@ -29,8 +29,8 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
-#include "../../../Kernel/src/Const.h"
-#include "../../../Kernel/src/Enum.h"
+#include <Kernel/Const.h>
+#include <Kernel/Enum.h>
 #include "../../../Persistence/src/Service/DatabaseService.h"
 #include "../../../Persistence/src/ConnectionManager.h"
 #include "../../../Persistence/src/Metadata.h"

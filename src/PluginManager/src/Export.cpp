@@ -26,11 +26,11 @@
 #include <QStringView>
 #include <QRegularExpression>
 
-#include "../../Kernel/src/Enum.h"
-#include "../../Kernel/src/Version.h"
-#include "../../Kernel/src/SampleRate.h"
-#include "../../Kernel/src/Settings.h"
-#include "../../Kernel/src/File.h"
+#include <Kernel/Enum.h>
+#include <Kernel/Version.h>
+#include <Kernel/SampleRate.h>
+#include <Kernel/Settings.h>
+#include <Kernel/File.h>
 #include "../../Model/src/Flight.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/AircraftInfo.h"

@@ -23,9 +23,9 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#include "../../../../Kernel/src/Enum.h"
-#include "../../../../Kernel/src/System.h"
-#include "../../../../Kernel/src/Settings.h"
+#include <Kernel/Enum.h>
+#include <Kernel/System.h>
+#include <Kernel/Settings.h>
 #include "IgcImportSettings.h"
 
 namespace

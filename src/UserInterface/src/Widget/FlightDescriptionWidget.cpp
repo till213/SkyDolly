@@ -29,7 +29,7 @@
 #include <QPlainTextEdit>
 #include <QTextCursor>
 
-#include "../../../Kernel/src/Unit.h"
+#include <Kernel/Unit.h>
 #include "../../../Model/src/Logbook.h"
 #include "../../../Model/src/Flight.h"
 #include "../../../Persistence/src/Service/FlightService.h"

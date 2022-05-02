@@ -38,8 +38,8 @@
 #include <QGuiApplication>
 #include <QDesktopServices>
 
-#include "../../Kernel/src/Settings.h"
-#include "../../Kernel/src/File.h"
+#include <Kernel/Settings.h>
+#include <Kernel/File.h>
 #include "../../Model/src/Flight.h"
 #include "../../Model/src/Aircraft.h"
 #include "BasicExportDialog.h"

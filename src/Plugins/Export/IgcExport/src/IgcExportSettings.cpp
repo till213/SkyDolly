@@ -27,8 +27,8 @@
 
 #include <QString>
 
-#include "../../../../Kernel/src/System.h"
-#include "../../../../Kernel/src/Settings.h"
+#include <Kernel/System.h>
+#include <Kernel/Settings.h>
 #include "../../../../PluginManager/src/ExportPluginBaseSettings.h"
 #include "IgcExportSettings.h"
 

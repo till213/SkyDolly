@@ -29,7 +29,7 @@
 
 #include <QtPlugin>
 
-#include "../../Kernel/src/SampleRate.h"
+#include <Kernel/SampleRate.h>
 #include "../../Model/src/TimeVariableData.h"
 #include "../../Model/src/Aircraft.h"
 #include "../../Model/src/InitialPosition.h"

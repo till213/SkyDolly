@@ -33,7 +33,7 @@
 #include <QFileInfo>
 #include <QRegularExpression>
 
-#include "../../../../Kernel/src/Convert.h"
+#include <Kernel/Convert.h>
 #include "../../../../Model/src/Flight.h"
 #include "../../../../Model/src/Aircraft.h"
 #include "../../../../Model/src/Position.h"
