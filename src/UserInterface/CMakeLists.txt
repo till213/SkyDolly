@@ -9,16 +9,6 @@ else()
 endif()
 add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
-set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Widgets
-    Sky::Kernel
-    Sky::Model
-    Sky::Persistence
-    Sky::Widget
-    Sky::PluginManager
-    Sky::Module
-)
-
 target_sources(${LIBRARY_NAME}
     PRIVATE
         res/SkyDolly.qrc
@@ -47,8 +37,15 @@ target_sources(${LIBRARY_NAME}
 
 target_include_directories(${LIBRARY_NAME} PRIVATE ../Widget/src/)
 target_link_libraries(${LIBRARY_NAME}
+    PUBLIC
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Sky::Module
     PRIVATE
-        ${LIBRARY_DEPENDENCIES}
+        Sky::Kernel
+        Sky::Model
+        Sky::Persistence
+        Sky::Widget
+        Sky::PluginManager
 )
 set_target_properties(${LIBRARY_NAME}
     PROPERTIES

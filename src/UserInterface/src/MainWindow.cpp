@@ -77,8 +77,8 @@
 #include "../../PluginManager/src/SkyConnectManager.h"
 #include "../../PluginManager/src/SkyConnectIntf.h"
 #include "../../PluginManager/src/Connect.h"
-#include "../../Module/src/ModuleIntf.h"
-#include "../../Module/src/ModuleManager.h"
+#include <Module/ModuleIntf.h>
+#include <Module/ModuleManager.h>
 #include "../../PluginManager/src/PluginManager.h"
 #include "Dialog/AboutDialog.h"
 #include "Dialog/LogbookSettingsDialog.h"

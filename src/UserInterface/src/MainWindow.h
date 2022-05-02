@@ -34,7 +34,7 @@ class QEvent;
 class QResizeEvent;
 
 #include "../../PluginManager/src/SkyConnectIntf.h"
-#include "../../Module/src/Module.h"
+#include <Module/Module.h>
 #include "../../PluginManager/src/Connect.h"
 #include "UserInterfaceLib.h"
 

@@ -59,7 +59,7 @@
 #include "../../../PluginManager/src/SkyConnectManager.h"
 #include "../../../PluginManager/src/SkyConnectIntf.h"
 #include "../../../Widget/src/Platform.h"
-#include "../AbstractModuleWidget.h"
+#include <AbstractModuleWidget.h>
 #include "FormationWidget.h"
 #include "ui_FormationWidget.h"
 

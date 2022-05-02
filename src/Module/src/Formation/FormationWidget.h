@@ -33,9 +33,9 @@ class QHideEvent;
 class QAction;
 
 #include <Model/InitialPosition.h>
-#include "../ModuleIntf.h"
-#include "../AbstractModuleWidget.h"
-#include "../ModuleLib.h"
+#include <ModuleIntf.h>
+#include <AbstractModuleWidget.h>
+#include <ModuleLib.h>
 
 class Aircraft;
 struct PositionData;

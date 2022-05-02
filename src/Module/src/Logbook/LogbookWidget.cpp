@@ -67,8 +67,8 @@
 #include "../../../Widget/src/Platform.h"
 #include "../../../Widget/src/TableDateItem.h"
 #include "../../../Widget/src/TableTimeItem.h"
-#include "../AbstractModuleWidget.h"
-#include "../Module.h"
+#include <AbstractModuleWidget.h>
+#include <Module.h>
 #include "LogbookWidget.h"
 #include "ui_LogbookWidget.h"
 
