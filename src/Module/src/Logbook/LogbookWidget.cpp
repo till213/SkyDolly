@@ -64,9 +64,9 @@
 #include "../../../Persistence/src/ConnectionManager.h"
 #include "../../../PluginManager/src/SkyConnectManager.h"
 #include "../../../PluginManager/src/SkyConnectIntf.h"
-#include "../../../Widget/src/Platform.h"
-#include "../../../Widget/src/TableDateItem.h"
-#include "../../../Widget/src/TableTimeItem.h"
+#include <Widget/Platform.h>
+#include <Widget/TableDateItem.h>
+#include <Widget/TableTimeItem.h>
 #include <AbstractModuleWidget.h>
 #include <Module.h>
 #include "LogbookWidget.h"

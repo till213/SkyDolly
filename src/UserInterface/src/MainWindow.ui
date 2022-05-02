@@ -408,7 +408,7 @@
      <x>0</x>
      <y>0</y>
      <width>826</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="fileMenu">
@@ -749,7 +749,7 @@
   <customwidget>
    <class>ActionButton</class>
    <extends>QPushButton</extends>
-   <header location="global">ActionButton.h</header>
+   <header location="global">Widget/ActionButton.h</header>
   </customwidget>
  </customwidgets>
  <resources>

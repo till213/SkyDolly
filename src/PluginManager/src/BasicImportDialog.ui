@@ -109,7 +109,7 @@
   <customwidget>
    <class>AircraftSelectionComboBox</class>
    <extends>QComboBox</extends>
-   <header location="global">AircraftSelectionComboBox.h</header>
+   <header location="global">Widget/AircraftSelectionComboBox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

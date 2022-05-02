@@ -67,7 +67,7 @@
   <customwidget>
    <class>FocusPlainTextEdit</class>
    <extends>QPlainTextEdit</extends>
-   <header location="global">FocusPlainTextEdit.h</header>
+   <header location="global">Widget/FocusPlainTextEdit.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

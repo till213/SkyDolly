@@ -40,7 +40,6 @@ class QString;
 #include <ModuleIntf.h>
 #include <Module.h>
 #include <AbstractModuleWidget.h>
-#include <ModuleLib.h>
 
 class DatabaseService;
 class FlightService;
@@ -51,7 +50,7 @@ namespace Ui {
     class LogbookWidget;
 }
 
-class MODULE_API LogbookWidget : public AbstractModuleWidget
+class LogbookWidget : public AbstractModuleWidget
 {
     Q_OBJECT
 public:

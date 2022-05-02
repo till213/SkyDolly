@@ -39,7 +39,7 @@
 #include "../../../Persistence/src/Service/DatabaseService.h"
 #include "../../../Persistence/src/ConnectionManager.h"
 #include "../../../Persistence/src/Metadata.h"
-#include "../../../Widget/src/BackupPeriodComboBox.h"
+#include <Widget/BackupPeriodComboBox.h>
 #include "LogbookSettingsDialog.h"
 #include "ui_LogbookSettingsDialog.h"
 

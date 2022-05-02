@@ -58,7 +58,7 @@
 #include "../../../Persistence/src/Service/AircraftService.h"
 #include "../../../PluginManager/src/SkyConnectManager.h"
 #include "../../../PluginManager/src/SkyConnectIntf.h"
-#include "../../../Widget/src/Platform.h"
+#include <Widget/Platform.h>
 #include <AbstractModuleWidget.h>
 #include "FormationWidget.h"
 #include "ui_FormationWidget.h"

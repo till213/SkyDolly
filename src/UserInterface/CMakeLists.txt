@@ -35,7 +35,6 @@ target_sources(${LIBRARY_NAME}
         src/Widget/WaypointWidget.h src/Widget/WaypointWidget.cpp src/Widget/WaypointWidget.ui
 )
 
-target_include_directories(${LIBRARY_NAME} PRIVATE ../Widget/src/)
 target_link_libraries(${LIBRARY_NAME}
     PUBLIC
         Qt${QT_VERSION_MAJOR}::Widgets
