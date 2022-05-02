@@ -54,8 +54,8 @@
 #include <Model/Position.h>
 #include <Model/PositionData.h>
 #include <Model/InitialPosition.h>
-#include "../../../Persistence/src/Service/FlightService.h"
-#include "../../../Persistence/src/Service/AircraftService.h"
+#include <Persistence/Service/FlightService.h>
+#include <Persistence/Service/AircraftService.h>
 #include "../../../PluginManager/src/SkyConnectManager.h"
 #include "../../../PluginManager/src/SkyConnectIntf.h"
 #include <Widget/Platform.h>

@@ -34,7 +34,7 @@
 #include <QMap>
 
 #include <Model/Flight.h>
-#include "../../Persistence/src/Service/FlightService.h"
+#include <Persistence/Service/FlightService.h>
 #include "ExportIntf.h"
 #include "ImportIntf.h"
 #include "PluginManager.h"
@@ -192,9 +192,9 @@ std::vector<PluginManager::Handle> PluginManager::enumeratePlugins(const QString
 
             const QJsonObject metaData = loader.metaData();
             if (!metaData.isEmpty()) {
-                const QJsonObject pluginMetaData = metaData.value("MetaData").toObject();
-                const QUuid uuid = pluginMetaData.value(PluginUuidKey).toString();
-                const QString pluginName = pluginMetaData.value(PluginNameKey).toString();
+                const QJsonObject pluginMetadata = metaData.value("Metadata").toObject();
+                const QUuid uuid = pluginMetadata.value(PluginUuidKey).toString();
+                const QString pluginName = pluginMetadata.value(PluginNameKey).toString();
                 const Handle handle = {uuid, pluginName};
                 pluginHandles.push_back(handle);
                 pluginRegistry.insert(uuid, pluginPath);

@@ -40,7 +40,7 @@
 #include <Model/Aircraft.h>
 #include <Model/PrimaryFlightControl.h>
 #include <Model/AircraftInfo.h>
-#include "../../../Persistence/src/Service/FlightService.h"
+#include <Persistence/Service/FlightService.h>
 #include "../Widget/FlightDescriptionWidget.h"
 #include "../Widget/AircraftInfoWidget.h"
 #include "../Widget/FlightConditionWidget.h"

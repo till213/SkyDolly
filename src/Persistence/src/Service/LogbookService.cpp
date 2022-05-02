@@ -28,10 +28,11 @@
 
 #include <QSqlDatabase>
 
-#include "../Dao/FlightSelector.h"
+
 #include "../Dao/DaoFactory.h"
 #include "../Dao/LogbookDaoIntf.h"
-#include "LogbookService.h"
+#include <FlightSelector.h>
+#include <Service/LogbookService.h>
 
 class LogbookServicePrivate
 {

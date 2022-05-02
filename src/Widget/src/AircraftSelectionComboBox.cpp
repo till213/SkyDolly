@@ -31,7 +31,7 @@
 #include <QCompleter>
 
 #include <Model/AircraftType.h>
-#include "../../Persistence/src/Service/AircraftTypeService.h"
+#include <Persistence/Service/AircraftTypeService.h>
 #include "AircraftSelectionComboBox.h"
 
 class AircraftSelectionComboBoxPrivate

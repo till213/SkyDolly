@@ -57,11 +57,11 @@
 #include <Model/FlightSummary.h>
 #include <Model/Logbook.h>
 #include <Model/SimType.h>
-#include "../../../Persistence/src/Dao/FlightSelector.h"
-#include "../../../Persistence/src/Service/DatabaseService.h"
-#include "../../../Persistence/src/Service/LogbookService.h"
-#include "../../../Persistence/src/Service/FlightService.h"
-#include "../../../Persistence/src/ConnectionManager.h"
+#include <Persistence/FlightSelector.h>
+#include <Persistence/Service/DatabaseService.h>
+#include <Persistence/Service/LogbookService.h>
+#include <Persistence/Service/FlightService.h>
+#include <Persistence/ConnectionManager.h>
 #include "../../../PluginManager/src/SkyConnectManager.h"
 #include "../../../PluginManager/src/SkyConnectIntf.h"
 #include <Widget/Platform.h>

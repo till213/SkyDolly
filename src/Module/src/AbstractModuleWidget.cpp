@@ -28,7 +28,7 @@
 #include <Model/Logbook.h>
 #include "../../PluginManager/src/SkyConnectManager.h"
 #include "../../PluginManager/src/SkyConnectIntf.h"
-#include "../../Persistence/src/Service/FlightService.h"
+#include <Persistence/Service/FlightService.h>
 #include "Module.h"
 #include "AbstractModuleWidget.h"
 

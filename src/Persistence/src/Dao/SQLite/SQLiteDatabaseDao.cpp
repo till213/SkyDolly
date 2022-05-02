@@ -34,7 +34,7 @@
 
 #include <Kernel/Settings.h>
 #include <Kernel/Version.h>
-#include "../../Metadata.h"
+#include <Metadata.h>
 #include "SqlMigration.h"
 #include "SQLiteDatabaseDao.h"
 

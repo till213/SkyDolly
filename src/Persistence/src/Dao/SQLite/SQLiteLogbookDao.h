@@ -30,7 +30,7 @@
 
 #include <QtGlobal>
 
-#include "../FlightSelector.h"
+#include <FlightSelector.h>
 #include "../LogbookDaoIntf.h"
 
 class FlightDate;

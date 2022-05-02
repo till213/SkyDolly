@@ -38,10 +38,10 @@
 #include <Kernel/Settings.h>
 #include <Kernel/Const.h>
 #include <Model/Logbook.h>
-#include "../ConnectionManager.h"
+#include <ConnectionManager.h>
 #include "../Dao/DaoFactory.h"
 #include "../Dao/DatabaseDaoIntf.h"
-#include "DatabaseService.h"
+#include <Service/DatabaseService.h>
 
 namespace
 {

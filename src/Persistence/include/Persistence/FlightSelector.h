@@ -29,7 +29,7 @@
 #include <QString>
 
 #include <Model/SimType.h>
-#include "../PersistenceLib.h"
+#include "PersistenceLib.h"
 
 struct PERSISTENCE_API FlightSelector
 {

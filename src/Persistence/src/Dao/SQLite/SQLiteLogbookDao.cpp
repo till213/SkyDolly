@@ -41,9 +41,8 @@
 #include <Model/FlightDate.h>
 #include <Model/FlightSummary.h>
 #include <Model/FlightCondition.h>
-#include "../../Dao/FlightSelector.h"
-#include "../../ConnectionManager.h"
-#include "SQLiteLogbookDao.h"
+#include <FlightSelector.h>
+#include <ConnectionManager.h>
 #include "SQLiteLogbookDao.h"
 
 // PUBLIC

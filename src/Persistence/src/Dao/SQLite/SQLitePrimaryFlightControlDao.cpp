@@ -35,7 +35,7 @@
 
 #include <Kernel/Enum.h>
 #include <Model/PrimaryFlightControlData.h>
-#include "../../ConnectionManager.h"
+#include <ConnectionManager.h>
 #include "SQLitePrimaryFlightControlDao.h"
 
 class SQLitePrimaryFlightControlDaoPrivate

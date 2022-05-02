@@ -36,7 +36,7 @@
 #include <Model/Aircraft.h>
 #include <Model/AircraftType.h>
 #include <Model/Flight.h>
-#include "../../Persistence/src/Service/AircraftTypeService.h"
+#include <Persistence/Service/AircraftTypeService.h>
 #include <Kernel/Settings.h>
 #include "ImportPluginBaseSettings.h"
 #include "BasicImportDialog.h"

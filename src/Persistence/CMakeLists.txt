@@ -1,7 +1,5 @@
 set(LIBRARY_NAME "Persistence")
 
-add_definitions(-DPERSISTENCE_EXPORT)
-
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_library(${LIBRARY_NAME} SHARED)
 else()
@@ -9,15 +7,19 @@ else()
 endif()
 add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
+target_compile_definitions(${LIBRARY_NAME}
+    PRIVATE
+        PERSISTENCE_EXPORT
+)
 target_sources(${LIBRARY_NAME}
     PRIVATE
-        src/PersistenceLib.h
-        src/ConnectionManager.h src/ConnectionManager.cpp
-        src/Metadata.h
+        include/Persistence/PersistenceLib.h
+        include/Persistence/ConnectionManager.h src/ConnectionManager.cpp
+        include/Persistence/FlightSelector.h src/FlightSelector.cpp
+        include/Persistence/Metadata.h
         src/Dao/DatabaseDaoIntf.h
         src/Dao/LogbookDaoIntf.h
         src/Dao/FlightDaoIntf.h
-        src/Dao/FlightSelector.h src/Dao/FlightSelector.cpp
         src/Dao/AircraftDaoIntf.h
         src/Dao/AircraftTypeDaoIntf.h
         src/Dao/PositionDaoIntf.h
@@ -44,23 +46,25 @@ target_sources(${LIBRARY_NAME}
         src/Dao/SQLite/SqlMigrationStep.h src/Dao/SQLite/SqlMigrationStep.cpp
         src/Dao/SQLite/Migration/migr.sql
         src/Dao/SQLite/Migration/Migration.qrc
-        src/Service/LogbookService.h src/Service/LogbookService.cpp
-        src/Service/FlightService.h src/Service/FlightService.cpp
-        src/Service/AircraftService.h src/Service/AircraftService.cpp
-        src/Service/AircraftTypeService.h src/Service/AircraftTypeService.cpp
-        src/Service/DatabaseService.h src/Service/DatabaseService.cpp
+        include/Persistence/Service/LogbookService.h src/Service/LogbookService.cpp
+        include/Persistence/Service/FlightService.h src/Service/FlightService.cpp
+        include/Persistence/Service/AircraftService.h src/Service/AircraftService.cpp
+        include/Persistence/Service/AircraftTypeService.h src/Service/AircraftTypeService.cpp
+        include/Persistence/Service/DatabaseService.h src/Service/DatabaseService.cpp
 )
-
-set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Widgets
-    Qt${QT_VERSION_MAJOR}::Sql
-    Sky::Kernel
-    Sky::Model
-)
-
-target_link_libraries(${LIBRARY_NAME}
+target_include_directories(${LIBRARY_NAME}
+    INTERFACE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
     PRIVATE
-        ${LIBRARY_DEPENDENCIES}
+        include/Persistence
+)
+target_link_libraries(${LIBRARY_NAME}
+    PUBLIC
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::Sql
+    PRIVATE
+        Sky::Kernel
+        Sky::Model
 )
 set_target_properties(${LIBRARY_NAME}
     PROPERTIES

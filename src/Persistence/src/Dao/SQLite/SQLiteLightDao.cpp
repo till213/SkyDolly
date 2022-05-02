@@ -34,7 +34,7 @@
 #include <QSqlRecord>
 
 #include <Model/LightData.h>
-#include "../../ConnectionManager.h"
+#include <ConnectionManager.h>
 #include "SQLiteLightDao.h"
 
 // PUBLIC

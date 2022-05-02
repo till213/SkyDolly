@@ -209,10 +209,10 @@ void SkyConnectManager::initialisePlugins(const QString &pluginDirectoryName) no
 
             const QJsonObject metaData = loader.metaData();
             if (!metaData.isEmpty()) {
-                const QJsonObject pluginMetaData = metaData.value("MetaData").toObject();
-                const QUuid uuid = pluginMetaData.value(PluginUuidKey).toString();
-                const QString pluginName = pluginMetaData.value(PluginNameKey).toString();
-                const QString flightSimulatorName = pluginMetaData.value(PluginFlightSimulatorNameKey).toString();
+                const QJsonObject pluginMetadata = metaData.value("Metadata").toObject();
+                const QUuid uuid = pluginMetadata.value(PluginUuidKey).toString();
+                const QString pluginName = pluginMetadata.value(PluginNameKey).toString();
+                const QString flightSimulatorName = pluginMetadata.value(PluginFlightSimulatorNameKey).toString();
                 const FlightSimulator::Id flightSimulatorId = FlightSimulator::nameToId(flightSimulatorName);
                 SkyConnectPlugin plugin = {pluginName, flightSimulatorId};
                 const Handle handle = {uuid, plugin};

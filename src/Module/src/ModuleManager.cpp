@@ -32,8 +32,8 @@
 #include <QStackedWidget>
 
 #include <Kernel/Enum.h>
-#include "../../Persistence/src/Service/DatabaseService.h"
-#include "../../Persistence/src/Service/FlightService.h"
+#include <Persistence/Service/DatabaseService.h>
+#include <Persistence/Service/FlightService.h>
 #include "Logbook/LogbookWidget.h"
 #include "Formation/FormationWidget.h"
 #include "Module.h"

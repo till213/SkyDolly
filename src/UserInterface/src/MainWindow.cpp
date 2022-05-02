@@ -68,9 +68,9 @@
 #include <Model/AircraftInfo.h>
 #include <Model/Logbook.h>
 #include "../../Persistence/src/Dao/DaoFactory.h"
-#include "../../Persistence/src/Service/FlightService.h"
-#include "../../Persistence/src/Service/DatabaseService.h"
-#include "../../Persistence/src/ConnectionManager.h"
+#include <Persistence/Service/FlightService.h>
+#include <Persistence/Service/DatabaseService.h>
+#include <Persistence/ConnectionManager.h>
 #include <Widget/ActionButton.h>
 #include <Widget/ActionRadioButton.h>
 #include <Widget/ActionCheckBox.h>

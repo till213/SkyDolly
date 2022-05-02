@@ -32,7 +32,7 @@
 #include <Kernel/Settings.h>
 #include <Model/Logbook.h>
 #include "../../PluginManager/src/SkyConnectManager.h"
-#include "../../Persistence/src/ConnectionManager.h"
+#include <Persistence/ConnectionManager.h>
 #include "../../PluginManager/src/PluginManager.h"
 #include "../../UserInterface/src/MainWindow.h"
 
