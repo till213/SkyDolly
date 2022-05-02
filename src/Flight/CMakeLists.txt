@@ -13,15 +13,15 @@ target_compile_definitions(${LIBRARY_NAME}
 )
 target_sources(${LIBRARY_NAME}
     PRIVATE
-        src/include/Flight/FlightLib.h
-        src/include/Flight/FlightAugmentation.h src/FlightAugmentation.cpp
-        src/include/Flight/Analytics.h src/Analytics.cpp
+        include/Flight/FlightLib.h
+        include/Flight/FlightAugmentation.h src/FlightAugmentation.cpp
+        include/Flight/Analytics.h src/Analytics.cpp
 )
 target_include_directories(${LIBRARY_NAME}
     INTERFACE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/include/Flight
+        include/Flight
 )
 target_link_libraries(${LIBRARY_NAME}
     PUBLIC

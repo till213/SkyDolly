@@ -14,29 +14,29 @@ target_compile_definitions(${LIBRARY_NAME}
 configure_file(src/VersionConfig.h.in VersionConfig.h)
 target_sources(${LIBRARY_NAME}
     PRIVATE
-        src/include/Kernel/KernelLib.h
-        src/include/Kernel/Color.h src/Color.cpp
-        src/include/Kernel/Const.h
-        src/include/Kernel/Convert.h src/Convert.cpp
-        src/include/Kernel/Enum.h
-        src/include/Kernel/File.h src/File.cpp
-        src/include/Kernel/FlightSimulator.h src/FlightSimulator.cpp
-        src/include/Kernel/QByteArrayHasher.h
-        src/include/Kernel/QStringHasher.h
-        src/include/Kernel/Replay.h
-        src/include/Kernel/SampleRate.h
-        src/include/Kernel/Settings.h src/Settings.cpp
-        src/include/Kernel/SkyMath.h
-        src/include/Kernel/System.h src/System.cpp
-        src/include/Kernel/Unit.h src/Unit.cpp
-        src/include/Kernel/Version.h src/Version.cpp
+        include/Kernel/KernelLib.h
+        include/Kernel/Color.h src/Color.cpp
+        include/Kernel/Const.h
+        include/Kernel/Convert.h src/Convert.cpp
+        include/Kernel/Enum.h
+        include/Kernel/File.h src/File.cpp
+        include/Kernel/FlightSimulator.h src/FlightSimulator.cpp
+        include/Kernel/QByteArrayHasher.h
+        include/Kernel/QStringHasher.h
+        include/Kernel/Replay.h
+        include/Kernel/SampleRate.h
+        include/Kernel/Settings.h src/Settings.cpp
+        include/Kernel/SkyMath.h
+        include/Kernel/System.h src/System.cpp
+        include/Kernel/Unit.h src/Unit.cpp
+        include/Kernel/Version.h src/Version.cpp
         src/VersionConfig.h.in
 )
 target_include_directories(${LIBRARY_NAME}
     INTERFACE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/include/Kernel
+        include/Kernel
         # For generated VersionConfig.h
         "${CMAKE_CURRENT_BINARY_DIR}"
 )
@@ -53,7 +53,10 @@ if (${PLATFORM_IS_WINDOWS})
             psapi
     )
     # https://docs.microsoft.com/en-us/windows/win32/psapi/enumerating-all-processes
-    add_definitions(-DPSAPI_VERSION=1)
+    target_compile_definitions(${LIBRARY_NAME}
+        PRIVATE
+            PSAPI_VERSION=1
+    )
     target_sources(${LIBRARY_NAME}
         PRIVATE
             src/FlightSimulator_Windows.cpp
