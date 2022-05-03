@@ -1,7 +1,5 @@
 set(LIBRARY_NAME "UserInterface")
 
-add_definitions(-DUSERINTERFACE_EXPORT)
-
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_library(${LIBRARY_NAME} SHARED)
 else()
@@ -9,11 +7,15 @@ else()
 endif()
 add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
+target_compile_definitions(${LIBRARY_NAME}
+    PRIVATE
+        USERINTERFACE_EXPORT
+)
 target_sources(${LIBRARY_NAME}
     PRIVATE
         res/SkyDolly.qrc
-        src/UserInterfaceLib.h
-        src/MainWindow.h src/MainWindow.cpp src/MainWindow.ui
+        include/UserInterface/UserInterfaceLib.h
+        include/UserInterface/MainWindow.h src/MainWindow.cpp src/MainWindow.ui
         src/Dialog/AboutDialog.h src/Dialog/AboutDialog.cpp src/Dialog/AboutDialog.ui
         src/Dialog/LogbookSettingsDialog.h src/Dialog/LogbookSettingsDialog.cpp src/Dialog/LogbookSettingsDialog.ui
         src/Dialog/SimulationVariablesDialog.h src/Dialog/SimulationVariablesDialog.cpp src/Dialog/SimulationVariablesDialog.ui
@@ -34,7 +36,12 @@ target_sources(${LIBRARY_NAME}
         src/Widget/FlightPlanWidget.h src/Widget/FlightPlanWidget.cpp src/Widget/FlightPlanWidget.ui
         src/Widget/WaypointWidget.h src/Widget/WaypointWidget.cpp src/Widget/WaypointWidget.ui
 )
-
+target_include_directories(${LIBRARY_NAME}
+    INTERFACE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+    PRIVATE
+        include/UserInterface
+)
 target_link_libraries(${LIBRARY_NAME}
     PUBLIC
         Qt${QT_VERSION_MAJOR}::Widgets
@@ -43,8 +50,8 @@ target_link_libraries(${LIBRARY_NAME}
         Sky::Kernel
         Sky::Model
         Sky::Persistence
-        Sky::Widget
         Sky::PluginManager
+        Sky::Widget
 )
 set_target_properties(${LIBRARY_NAME}
     PROPERTIES

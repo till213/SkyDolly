@@ -34,7 +34,7 @@
 #include <PluginManager/SkyConnectManager.h>
 #include <Persistence/ConnectionManager.h>
 #include <PluginManager/PluginManager.h>
-#include "../../UserInterface/src/MainWindow.h"
+#include <UserInterface/MainWindow.h>
 
 static void destroySingletons() noexcept
 {
