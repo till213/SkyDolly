@@ -84,22 +84,6 @@ set_target_properties(GeographicLib_SHARED
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
 
-# Documentation
-add_subdirectory(${CMAKE_SOURCE_DIR}/doc)
-
-set(TS_FILES i18n/${APP_NAME}_de_DE.ts)
-set(OTHER_SOURCES
-    README.md
-    CHANGELOG.md
-    BUILD.md
-    CODE_OF_CONDUCT.md
-    THIRD_PARTY.md
-    SHASUM256.md
-    doc/SkyDolly.simvars
-    res/Info.plist.in
-    res/SkyDolly.rc.in
-)
-
 # Resource file (*.rc)
 if (${PLATFORM_IS_WINDOWS})
     configure_file(${PROJECT_SOURCE_DIR}/res/SkyDolly.rc.in
@@ -109,45 +93,31 @@ if (${PLATFORM_IS_WINDOWS})
     set(RESOURCES $<TARGET_OBJECTS:resources>)
 endif()
 
-if (${PLATFORM_IS_WINDOWS})
-    set(SKYDOLLY_PLATFORM WIN32)
-elseif (${PLATFORM_IS_MACOS})
-    set(SKYDOLLY_PLATFORM MACOSX_BUNDLE)
-endif()
-
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(${APP_NAME}
-        ${SKYDOLLY_PLATFORM}
-        ${RESOURCES}
+    qt_add_executable(${APP_NAME})
+    qt_create_translation(QM_FILES
+        ${CMAKE_SOURCE_DIR}/src
+        i18n/${APP_NAME}_de_DE.ts
     )
-    qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR}/src ${TS_FILES})
 else()
-    add_executable(${APP_NAME}
-        ${SKYDOLLY_PLATFORM}
-        ${RESOURCES}
+    add_executable(${APP_NAME})
+    qt5_create_translation(QM_FILES
+        ${CMAKE_SOURCE_DIR}/src
+        i18n/${APP_NAME}_de_DE.ts
     )
-    qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR}/src ${TS_FILES})
 endif()
 
-# Data files
-add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geoids)
-
-set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Widgets
-    Sky::Kernel
-    Sky::Model
-    Sky::Persistence
-    Sky::PluginManager
-    Sky::UserInterface
+set_target_properties(${APP_NAME}
+    PROPERTIES
+        WIN32_EXECUTABLE ON
+        MACOSX_BUNDLE ON
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/res/Info.plist.in"
 )
+
+# Resource (data) files
+add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geoids)
 if (${PLATFORM_IS_MACOS})
-    set_target_properties(
-        ${APP_NAME}
-        PROPERTIES
-            MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/res/Info.plist.in"
-    )
-    target_link_libraries(
-        ${APP_NAME}
+    target_link_libraries(${APP_NAME}
         PRIVATE
             Geoids
     )
@@ -156,17 +126,29 @@ endif()
 target_sources(${APP_NAME}
     PRIVATE
         src/main.cpp
-        ${OTHER_SOURCES}
-)
-
-target_include_directories(${APP_NAME}
-    PRIVATE
-        "${PROJECT_SOURCE_DIR}/src/PluginManager/src"
+        ${RESOURCES}
+        README.md
+        CHANGELOG.md
+        BUILD.md
+        CODE_OF_CONDUCT.md
+        THIRD_PARTY.md
+        SHASUM256.md
+        doc/SkyDolly.simvars
+        res/Info.plist.in
+        res/SkyDolly.rc.in
 )
 target_link_libraries(${APP_NAME}
     PRIVATE
-        ${LIBRARY_DEPENDENCIES}
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Sky::Kernel
+        Sky::Model
+        Sky::Persistence
+        Sky::PluginManager
+        Sky::UserInterface
 )
 
 # Plugins
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Plugins)
+
+# Documentation
+add_subdirectory(${CMAKE_SOURCE_DIR}/doc)

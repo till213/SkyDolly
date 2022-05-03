@@ -1,25 +1,13 @@
-set(LIBRARY_NAME "MSFSSimConnect")
+set(MODULE_NAME "MSFSSimConnect")
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(${LIBRARY_NAME} MODULE "")
+    qt_add_library(${MODULE_NAME} MODULE)
 else()
-    add_library(${LIBRARY_NAME} MODULE "")
+    add_library(${MODULE_NAME} MODULE)
 endif()
-add_library(SD::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
+add_library(Sky::${MODULE_NAME} ALIAS ${MODULE_NAME})
 
-set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Widgets
-    SimConnect
-    tsl::ordered_map
-    Sky::Kernel
-    Sky::Model
-    Sky::PluginManager
-)
-if (${PLATFORM_IS_MACOS})
-    list(APPEND LIBRARY_DEPENDENCIES -lc++)
-endif()
-
-target_sources(${LIBRARY_NAME}
+target_sources(${MODULE_NAME}
     PRIVATE
         src/MSFSSimConnectPlugin.h src/MSFSSimConnectPlugin.cpp
         src/SimConnectType.h
@@ -38,17 +26,21 @@ target_sources(${LIBRARY_NAME}
         src/EventWidget.h src/EventWidget.cpp
         src/MSFSSimConnectPlugin.json
 )
-
-target_link_libraries(${LIBRARY_NAME}
-    PRIVATE
-        ${LIBRARY_DEPENDENCIES}
-)
-
 # SimConnect
 find_package(SimConnect REQUIRED)
+target_link_libraries(${MODULE_NAME}
+    PRIVATE
+        Qt${QT_VERSION_MAJOR}::Widgets
+        SimConnect
+        tsl::ordered_map
+        Sky::Kernel
+        Sky::Model
+        Sky::PluginManager
+)
 
-# Copy SimConnect.dll to bin directory (for development)
+# Copy SimConnect.dll to bin directory
 add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:SimConnect>
-        $<TARGET_FILE_DIR:${LIBRARY_NAME}>/../../)
+        $<TARGET_FILE_DIR:${LIBRARY_NAME}>/../../
+)

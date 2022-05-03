@@ -1,17 +1,13 @@
-set(LIBRARY_NAME "CSVExport")
+set(MODULE_NAME "CSVExport")
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(${LIBRARY_NAME} MODULE)
+    qt_add_library(${MODULE_NAME} MODULE)
 else()
-    add_library(${LIBRARY_NAME} MODULE)
+    add_library(${MODULE_NAME} MODULE)
 endif()
-add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
+add_library(Sky::${MODULE_NAME} ALIAS ${MODULE_NAME})
 
-set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Widgets Sky::Kernel Sky::Model Sky::PluginManager
-)
-
-target_sources(${LIBRARY_NAME}
+target_sources(${MODULE_NAME}
     PRIVATE
         src/CsvExportPlugin.h src/CsvExportPlugin.cpp
         src/CsvExportSettings.h src/CsvExportSettings.cpp
@@ -22,15 +18,10 @@ target_sources(${LIBRARY_NAME}
         src/PositionAndAttitudeCsvWriter.h src/PositionAndAttitudeCsvWriter.cpp
         src/CsvExportPlugin.json
 )
-target_link_libraries(${LIBRARY_NAME}
+target_link_libraries(${MODULE_NAME}
     PRIVATE
-        ${LIBRARY_DEPENDENCIES}
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Sky::Kernel
+        Sky::Model
+        Sky::PluginManager
 )
-
-if (${PLATFORM_IS_MACOS})
-    set_target_properties(
-        ${LIBRARY_NAME}
-        PROPERTIES
-            MACOSX_PACKAGE_LOCATION PlugIns/Export
-    )
-endif()

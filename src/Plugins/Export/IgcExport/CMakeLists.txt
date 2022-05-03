@@ -1,29 +1,24 @@
-set(LIBRARY_NAME "IGCExport")
+set(MODULE_NAME "IGCExport")
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_library(${LIBRARY_NAME} MODULE)
+    qt_add_library(${MODULE_NAME} MODULE)
 else()
-    add_library(${LIBRARY_NAME} MODULE)
+    add_library(${MODULE_NAME} MODULE)
 endif()
-add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
+add_library(Sky::${MODULE_NAME} ALIAS ${MODULE_NAME})
 
-set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Widgets Sky::Kernel Sky::Model Sky::PluginManager
-)
-
-set(DOCUMENTATION
-    doc/README.md
-)
-
-target_sources(${LIBRARY_NAME}
+target_sources(${MODULE_NAME}
     PRIVATE
         src/IgcExportPlugin.h src/IgcExportPlugin.cpp
         src/IgcExportSettings.h src/IgcExportSettings.cpp
         src/IgcExportOptionWidget.h src/IgcExportOptionWidget.cpp src/IgcExportOptionWidget.ui
         src/IgcExportPlugin.json
-        ${DOCUMENTATION}
+        doc/README.md
 )
-target_link_libraries(${LIBRARY_NAME}
+target_link_libraries(${MODULE_NAME}
     PRIVATE
-        ${LIBRARY_DEPENDENCIES}
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Sky::Kernel
+        Sky::Model
+        Sky::PluginManager
 )
