@@ -45,7 +45,7 @@
 #include <Model/AircraftHandleData.h>
 #include <Model/Light.h>
 #include <Model/LightData.h>
-#include "../../../../PluginManager/src/CsvConst.h"
+#include <PluginManager/CsvConst.h>
 #include "CsvExportSettings.h"
 #include "SkyDollyCsvWriter.h"
 

@@ -36,8 +36,8 @@
 #include <Model/Aircraft.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
-#include "../../../../PluginManager/src/CsvConst.h"
-#include "../../../../PluginManager/src/Export.h"
+#include <PluginManager/CsvConst.h>
+#include <PluginManager/Export.h>
 #include "CsvExportSettings.h"
 #include "FlightRadar24CsvWriter.h"
 

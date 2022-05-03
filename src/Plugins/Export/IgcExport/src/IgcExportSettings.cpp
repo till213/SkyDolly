@@ -29,7 +29,7 @@
 
 #include <Kernel/System.h>
 #include <Kernel/Settings.h>
-#include "../../../../PluginManager/src/ExportPluginBaseSettings.h"
+#include <PluginManager/ExportPluginBaseSettings.h>
 #include "IgcExportSettings.h"
 
 namespace

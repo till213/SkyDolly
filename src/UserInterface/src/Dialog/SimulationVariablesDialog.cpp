@@ -38,9 +38,9 @@
 #include <Model/Aircraft.h>
 #include <Model/PrimaryFlightControl.h>
 #include <Model/AircraftInfo.h>
-#include "../../../PluginManager/src/SkyConnectManager.h"
-#include "../../../PluginManager/src/SkyConnectIntf.h"
-#include "../../../PluginManager/src/Connect.h"
+#include <PluginManager/SkyConnectManager.h>
+#include <PluginManager/SkyConnectIntf.h>
+#include <PluginManager/Connect.h>
 #include "../Widget/AircraftWidget.h"
 #include "../Widget/EngineWidget.h"
 #include "../Widget/PrimaryFlightControlWidget.h"

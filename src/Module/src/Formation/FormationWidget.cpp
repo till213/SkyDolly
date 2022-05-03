@@ -56,8 +56,8 @@
 #include <Model/InitialPosition.h>
 #include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/AircraftService.h>
-#include "../../../PluginManager/src/SkyConnectManager.h"
-#include "../../../PluginManager/src/SkyConnectIntf.h"
+#include <PluginManager/SkyConnectManager.h>
+#include <PluginManager/SkyConnectIntf.h>
 #include <Widget/Platform.h>
 #include <AbstractModuleWidget.h>
 #include "FormationWidget.h"

@@ -31,7 +31,7 @@
 #include <QString>
 
 #include <Kernel/Settings.h>
-#include "../../../../PluginManager/src/ImportPluginBaseSettings.h"
+#include <PluginManager/ImportPluginBaseSettings.h>
 
 class KmlImportSettingsPrivate;
 

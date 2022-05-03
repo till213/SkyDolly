@@ -31,8 +31,8 @@
 #include <QObject>
 
 #include <Model/TimeVariableData.h>
-#include "../../../../PluginManager/src/AbstractSkyConnect.h"
-#include "../../../../PluginManager/src/SkyConnectIntf.h"
+#include <PluginManager/AbstractSkyConnect.h>
+#include <PluginManager/SkyConnectIntf.h>
 
 struct PositionData;
 class InitialPosition;

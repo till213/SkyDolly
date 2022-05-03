@@ -38,9 +38,9 @@
 #include <Model/SecondaryFlightControl.h>
 #include <Model/SecondaryFlightControlData.h>
 #include <Model/TimeVariableData.h>
-#include "../../../PluginManager/src/SkyConnectManager.h"
-#include "../../../PluginManager/src/SkyConnectIntf.h"
-#include "../../../PluginManager/src/Connect.h"
+#include <PluginManager/SkyConnectManager.h>
+#include <PluginManager/SkyConnectIntf.h>
+#include <PluginManager/Connect.h>
 #include "SecondaryFlightControlWidget.h"
 #include "ui_SecondaryFlightControlWidget.h"
 

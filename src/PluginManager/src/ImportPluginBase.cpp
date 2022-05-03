@@ -50,11 +50,11 @@
 #include <Model/PositionData.h>
 #include <Model/FlightPlan.h>
 #include <Model/Waypoint.h>
-#include "../../PluginManager/src/SkyConnectManager.h"
-#include "../../PluginManager/src/SkyConnectIntf.h"
 #include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/AircraftService.h>
 #include <Persistence/Service/AircraftTypeService.h>
+#include "SkyConnectManager.h"
+#include "SkyConnectIntf.h"
 #include "BasicImportDialog.h"
 #include "ImportPluginBaseSettings.h"
 #include "ImportPluginBase.h"

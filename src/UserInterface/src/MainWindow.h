@@ -33,9 +33,9 @@
 class QEvent;
 class QResizeEvent;
 
-#include "../../PluginManager/src/SkyConnectIntf.h"
+#include <PluginManager/SkyConnectIntf.h>
 #include <Module/Module.h>
-#include "../../PluginManager/src/Connect.h"
+#include <PluginManager/Connect.h>
 #include "UserInterfaceLib.h"
 
 QT_BEGIN_NAMESPACE

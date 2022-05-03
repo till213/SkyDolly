@@ -31,9 +31,9 @@
 #include <Kernel/Version.h>
 #include <Kernel/Settings.h>
 #include <Model/Logbook.h>
-#include "../../PluginManager/src/SkyConnectManager.h"
+#include <PluginManager/SkyConnectManager.h>
 #include <Persistence/ConnectionManager.h>
-#include "../../PluginManager/src/PluginManager.h"
+#include <PluginManager/PluginManager.h>
 #include "../../UserInterface/src/MainWindow.h"
 
 static void destroySingletons() noexcept

@@ -36,9 +36,9 @@
 #include <Model/Light.h>
 #include <Model/LightData.h>
 #include <Model/TimeVariableData.h>
-#include "../../../PluginManager/src/SkyConnectManager.h"
-#include "../../../PluginManager/src/SkyConnectIntf.h"
-#include "../../../PluginManager/src/Connect.h"
+#include <PluginManager/SkyConnectManager.h>
+#include <PluginManager/SkyConnectIntf.h>
+#include <PluginManager/Connect.h>
 #include "LightWidget.h"
 #include "ui_LightWidget.h"
 
