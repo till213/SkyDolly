@@ -94,14 +94,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/PluginManager)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Module)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
 
-# Resource file (*.rc)
-if (${PLATFORM_IS_WINDOWS})
-    configure_file(${PROJECT_SOURCE_DIR}/res/SkyDolly.rc.in
-                   ${PROJECT_SOURCE_DIR}/res/SkyDolly.rc @ONLY)
-    add_library(resources OBJECT ${PROJECT_SOURCE_DIR}/res/SkyDolly.rc)
-    target_include_directories(resources PRIVATE ${PROJECT_SOURCE_DIR}/res/)
-    set(RESOURCES $<TARGET_OBJECTS:resources>)
-endif()
+
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${APP_NAME})
@@ -131,15 +124,25 @@ if (${PLATFORM_IS_MACOS})
         PRIVATE
             Geoids
     )
-    include(CreateIconsOnMacOS)
-    make_icns(INPUT "res/SkyDolly.png" "res/SkyDolly.icns")
-    add_custom_target(my-icns ALL DEPENDS "res/SkyDolly.icns")
-    set_source_files_properties(
-        "res/SkyDolly.icns"
-        TARGET_DIRECTORY
-            SkyDolly
+    include(CreateAppIconOnMacOS)
+    create_app_icon_on_macos(INPUT "res/SkyDolly.png" OUTPUT APP_ICON_PATH)
+
+    add_library(APP_ICON_TARGET OBJECT ${APP_ICON_PATH})
+    set_source_files_properties(${APP_ICON_PATH}
         PROPERTIES
-            MACOSX_PACKAGE_LOCATION Resources)
+            MACOSX_PACKAGE_LOCATION "Resources"
+    )
+    target_sources(${APP_NAME}
+        PRIVATE
+            ${APP_ICON_PATH}
+    )
+elseif(${PLATFORM_IS_WINDOWS})
+    # Resource file (*.rc)
+    configure_file(${PROJECT_SOURCE_DIR}/res/SkyDolly.rc.in
+                   ${PROJECT_SOURCE_DIR}/res/SkyDolly.rc @ONLY)
+    add_library(resources OBJECT ${PROJECT_SOURCE_DIR}/res/SkyDolly.rc)
+    target_include_directories(resources PRIVATE ${PROJECT_SOURCE_DIR}/res/)
+    set(RESOURCES $<TARGET_OBJECTS:resources>)
 endif()
 
 target_sources(${APP_NAME}
