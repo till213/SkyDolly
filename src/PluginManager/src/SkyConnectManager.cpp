@@ -34,6 +34,8 @@
 #include <QMap>
 
 #include <Kernel/Settings.h>
+#include <Model/Logbook.h>
+#include <Model/Flight.h>
 #include "SkyConnectIntf.h"
 #include "SkyConnectManager.h"
 
@@ -158,6 +160,11 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
                     this, &SkyConnectManager::stateChanged);
             connect(skyPlugin, &SkyConnectIntf::recordingStopped,
                     this, &SkyConnectManager::recordingStopped);
+            const Flight &flight = Logbook::getInstance().getCurrentFlight();
+            connect(&flight, &Flight::aircraftDeleted,
+                    skyPlugin, &SkyConnectIntf::destroyAIObject);
+            connect(&flight, &Flight::userAircraftChanged,
+                    skyPlugin, &SkyConnectIntf::updateAIObjects);
             d->currentPluginUuid = uuid;
             ok = true;
         } else {

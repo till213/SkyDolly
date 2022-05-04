@@ -440,15 +440,13 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
     return samplesPerSecond;
 }
 
-bool AbstractSkyConnect::createAIObjects() noexcept
+// PUBLIC SLOTS
+
+void AbstractSkyConnect::createAIObjects() noexcept
 {
-    bool ok;
     if (isConnectedWithSim()) {
-        ok = onCreateAIObjects();
-    } else {
-        ok = true;
+        onCreateAIObjects();
     }
-    return ok;
 }
 
 void AbstractSkyConnect::destroyAIObjects() noexcept
@@ -458,27 +456,23 @@ void AbstractSkyConnect::destroyAIObjects() noexcept
     }
 }
 
-void AbstractSkyConnect::destroyAIObject(Aircraft &aircraft) noexcept
+void AbstractSkyConnect::destroyAIObject(std::int64_t simulatedObjectId) noexcept
 {
     if (isConnected()) {
-        onDestroyAIObject(aircraft);
+        onDestroyAIObject(simulatedObjectId);
     }
 }
 
-bool AbstractSkyConnect::updateAIObjects() noexcept
+void AbstractSkyConnect::updateAIObjects() noexcept
 {
     destroyAIObjects();
-    bool ok = createAIObjects();
-    return ok;
+    createAIObjects();
 }
 
-bool AbstractSkyConnect::updateUserAircraft() noexcept
+void AbstractSkyConnect::updateUserAircraft() noexcept
 {
-    bool ok = updateAIObjects();
-    if (ok) {
-        ok = sendAircraftData(d->currentTimestamp, TimeVariableData::Access::Seek, AircraftSelection::UserAircraft);
-    }
-    return ok;
+    updateAIObjects();
+    sendAircraftData(d->currentTimestamp, TimeVariableData::Access::Seek, AircraftSelection::UserAircraft);
 }
 
 // PROTECTED

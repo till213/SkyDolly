@@ -205,12 +205,11 @@ bool PathCreatorPlugin::connectWithSim() noexcept
     return true;
 }
 
-bool PathCreatorPlugin::onCreateAIObjects() noexcept
+void PathCreatorPlugin::onCreateAIObjects() noexcept
 {
 #ifdef DEBUG
     qDebug("PathCreatorPlugin::onCreateAIObjects: CALLED");
 #endif
-    return true;
 }
 
 void PathCreatorPlugin::onDestroyAIObjects() noexcept
@@ -220,10 +219,10 @@ void PathCreatorPlugin::onDestroyAIObjects() noexcept
 #endif
 }
 
-void PathCreatorPlugin::onDestroyAIObject(Aircraft &aircraft) noexcept
+void PathCreatorPlugin::onDestroyAIObject(std::int64_t simulatedObjectId) noexcept
 {
 #ifdef DEBUG
-    qDebug("PathCreatorPlugin::onDestroyAIObject: aircraft ID: %" PRId64, aircraft.getId());
+    qDebug("PathCreatorPlugin::onDestroyAIObject: simulated object ID: %" PRId64, simulatedObjectId);
 #endif
 }
 

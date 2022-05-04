@@ -94,11 +94,12 @@ public:
 
     virtual double calculateRecordedSamplesPerSecond() const noexcept override;
 
-    virtual bool createAIObjects() noexcept override;
+public slots:
+    virtual void createAIObjects() noexcept override;
     virtual void destroyAIObjects() noexcept override;
-    virtual void destroyAIObject(Aircraft &aircraft) noexcept override;
-    virtual bool updateAIObjects() noexcept override;
-    virtual bool updateUserAircraft() noexcept override;
+    virtual void destroyAIObject(std::int64_t simulatedObjectId) noexcept override;
+    virtual void updateAIObjects() noexcept override;
+    virtual void updateUserAircraft() noexcept override;
 
 protected:
     void setState(Connect::State state) noexcept;
@@ -130,9 +131,9 @@ protected:
     virtual bool isConnectedWithSim() const noexcept = 0;
     virtual bool connectWithSim() noexcept = 0;
 
-    virtual bool onCreateAIObjects() noexcept = 0;
+    virtual void onCreateAIObjects() noexcept = 0;
     virtual void onDestroyAIObjects() noexcept = 0;
-    virtual void onDestroyAIObject(Aircraft &aircraft) noexcept = 0;
+    virtual void onDestroyAIObject(std::int64_t simulationObjectId) noexcept = 0;
 
 protected slots:
     virtual void recordData() noexcept = 0;

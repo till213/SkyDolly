@@ -518,12 +518,12 @@ bool MSFSSimConnectPlugin::connectWithSim() noexcept
     return ok;
 }
 
-bool MSFSSimConnectPlugin::onCreateAIObjects() noexcept
+void MSFSSimConnectPlugin::onCreateAIObjects() noexcept
 {
     // When "fly with formation" is enabled we also create an AI aircraft for the user aircraft
     // (the user aircraft of the recorded aircraft in the formation, that is)
     const bool includingUserAircraft = getReplayMode() == ReplayMode::FlyWithFormation;
-    return d->simConnectAI->createSimulatedAircraft(getCurrentFlight(), getCurrentTimestamp(), includingUserAircraft, d->pendingAIAircraftCreationRequests);
+    d->simConnectAI->createSimulatedAircraft(getCurrentFlight(), getCurrentTimestamp(), includingUserAircraft, d->pendingAIAircraftCreationRequests);
 }
 
 void MSFSSimConnectPlugin::onDestroyAIObjects() noexcept
@@ -532,10 +532,10 @@ void MSFSSimConnectPlugin::onDestroyAIObjects() noexcept
     d->simConnectAI->destroySimulatedAircraft(getCurrentFlight());
 }
 
-void MSFSSimConnectPlugin::onDestroyAIObject(Aircraft &aircraft) noexcept
+void MSFSSimConnectPlugin::onDestroyAIObject(std::int64_t simulationObjectId) noexcept
 {
-    if (aircraft.getSimulationObjectId() != ::SIMCONNECT_OBJECT_ID_USER) {
-        d->simConnectAI->destroySimulatedAircraft(aircraft);
+    if (simulationObjectId != ::SIMCONNECT_OBJECT_ID_USER) {
+        d->simConnectAI->destroySimulatedObject(simulationObjectId);
     }
 }
 
