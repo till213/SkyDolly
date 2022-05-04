@@ -33,12 +33,12 @@
 #include <QDate>
 #include <QTime>
 
-#include "../../../../Kernel/src/SkyMath.h"
-#include "../../../../Model/src/SimType.h"
-#include "../../../../Model/src/Aircraft.h"
-#include "../../../../Model/src/AircraftInfo.h"
-#include "../../../../Model/src/AircraftType.h"
-#include "../../../../Model/src/FlightCondition.h"
+#include <Kernel/SkyMath.h>
+#include <Model/SimType.h>
+#include <Model/Aircraft.h>
+#include <Model/AircraftInfo.h>
+#include <Model/AircraftType.h>
+#include <Model/FlightCondition.h>
 
 /*!
  * Information simulation variables about the aircraft and environment at start.

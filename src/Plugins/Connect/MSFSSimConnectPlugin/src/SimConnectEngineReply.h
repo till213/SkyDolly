@@ -27,9 +27,9 @@
 
 #include <windows.h>
 
-#include "../../../../Kernel/src/SkyMath.h"
-#include "../../../../Model/src/SimType.h"
-#include "../../../../Model/src/EngineData.h"
+#include <Kernel/SkyMath.h>
+#include <Model/SimType.h>
+#include <Model/EngineData.h>
 #include "SimConnectEngineRequest.h"
 
 /*!

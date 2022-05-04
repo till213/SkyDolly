@@ -27,9 +27,9 @@
 
 #include <windows.h>
 
-#include "../../../../Kernel/src/SkyMath.h"
-#include "../../../../Model/src/SimType.h"
-#include "../../../../Model/src/AircraftHandleData.h"
+#include <Kernel/SkyMath.h>
+#include <Model/SimType.h>
+#include <Model/AircraftHandleData.h>
 
 /*!
  * Simulation variables which represent aircraft handles and brakes.

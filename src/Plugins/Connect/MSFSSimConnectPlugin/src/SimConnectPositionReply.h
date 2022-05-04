@@ -28,7 +28,7 @@
 #include <windows.h>
 #include <SimConnect.h>
 
-#include "../../../../Model/src/PositionData.h"
+#include <Model/PositionData.h>
 #include "SimConnectPositionRequest.h"
 
 /*!

@@ -30,7 +30,7 @@
 
 #include <SimConnect.h>
 
-#include "../../../../Model/src/Waypoint.h"
+#include <Model/Waypoint.h>
 
 /*!
  * Simulation variables which represent aircraft lights, e.g. navigation light

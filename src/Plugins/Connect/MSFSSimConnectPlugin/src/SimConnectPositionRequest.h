@@ -28,8 +28,8 @@
 #include <windows.h>
 #include <SimConnect.h>
 
-#include "../../../../Model/src/PositionData.h"
-#include "../../../../Model/src/InitialPosition.h"
+#include <Model/PositionData.h>
+#include <Model/InitialPosition.h>
 
 /*!
  * Simulation variables which represent the aircraft's position, attitude and velocities

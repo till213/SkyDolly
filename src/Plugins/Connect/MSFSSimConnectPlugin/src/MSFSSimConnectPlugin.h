@@ -32,10 +32,10 @@
 
 #include <QObject>
 
-#include "../../../../Kernel/src/SampleRate.h"
-#include "../../../../Model/src/TimeVariableData.h"
-#include "../../../../Model/src/InitialPosition.h"
-#include "../../../../PluginManager/src/AbstractSkyConnect.h"
+#include <Kernel/SampleRate.h>
+#include <Model/TimeVariableData.h>
+#include <Model/InitialPosition.h>
+#include <PluginManager/AbstractSkyConnect.h>
 
 struct PositionData;
 class Aircraft;

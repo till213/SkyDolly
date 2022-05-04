@@ -49,7 +49,7 @@ target_link_libraries(${LIBRARY_NAME}
 if (${PLATFORM_IS_WINDOWS})
     find_library (PSAPI psapi)
     target_link_libraries(${LIBRARY_NAME}
-        PRIVATE_HEADER
+        PRIVATE
             psapi
     )
     # https://docs.microsoft.com/en-us/windows/win32/psapi/enumerating-all-processes

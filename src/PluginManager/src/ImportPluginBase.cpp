@@ -96,11 +96,11 @@ ImportPluginBase::~ImportPluginBase() noexcept
 
 bool ImportPluginBase::importFlight(FlightService &flightService, Flight &flight) noexcept
 {
-    bool ok;
+    bool ok {false};
     d->flight = &flight;
     ImportPluginBaseSettings &baseSettings = getPluginSettings();
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
-    std::unique_ptr<BasicImportDialog> importDialog = std::make_unique<BasicImportDialog>(flight, getFileFilter(), baseSettings, getParentWidget());
+    std::unique_ptr<BasicImportDialog> importDialog = std::make_unique<BasicImportDialog>(flight, getFileFilter(), baseSettings, PluginBase::getParentWidget());
     // Transfer ownership to importDialog
     importDialog->setOptionWidget(optionWidget.release());
     const int choice = importDialog->exec();
@@ -137,10 +137,10 @@ bool ImportPluginBase::importFlight(FlightService &flightService, Flight &flight
                     }
                 }
             } else if (!baseSettings.isImportDirectoryEnabled()) {
-                QMessageBox::warning(getParentWidget(), tr("Import error"), tr("The file %1 could not be imported.").arg(selectedPath));
+                QMessageBox::warning(PluginBase::getParentWidget(), tr("Import error"), tr("The file %1 could not be imported.").arg(selectedPath));
             }
         } else {
-            QMessageBox::warning(getParentWidget(), tr("Import error"),
+            QMessageBox::warning(PluginBase::getParentWidget(), tr("Import error"),
                                  tr("The selected aircraft '%1' is not a known aircraft in the logbook. "
                                     "Check for spelling errors or record a flight with this aircraft first.").arg(d->aircraftType.type));
         }
@@ -229,7 +229,7 @@ bool ImportPluginBase::importFlights(const QStringList &filePaths, FlightService
         if (!ok && importDirectory && !ignoreFailures) {
             QGuiApplication::restoreOverrideCursor();
             QFileInfo fileInfo {filePath};
-            std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(getParentWidget());
+            std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(PluginBase::getParentWidget());
             messageBox->setIcon(QMessageBox::Warning);
             QPushButton *proceedButton = messageBox->addButton(tr("&Proceed"), QMessageBox::AcceptRole);
             QPushButton *ignoreAllButton = messageBox->addButton(tr("&Ignore All Failures"), QMessageBox::YesRole);

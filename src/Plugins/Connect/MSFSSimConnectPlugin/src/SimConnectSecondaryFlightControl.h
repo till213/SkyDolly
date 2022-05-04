@@ -27,9 +27,9 @@
 
 #include <windows.h>
 
-#include "../../../../Kernel/src/SkyMath.h"
-#include "../../../../Model/src/SimType.h"
-#include "../../../../Model/src/SecondaryFlightControlData.h"
+#include <Kernel/SkyMath.h>
+#include <Model/SimType.h>
+#include <Model/SecondaryFlightControlData.h>
 
 /*!
  * Simulation variables which represent the secondary flight controls: flaps and spoilers.

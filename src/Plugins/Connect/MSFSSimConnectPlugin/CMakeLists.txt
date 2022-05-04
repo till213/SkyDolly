@@ -31,7 +31,7 @@ find_package(SimConnect REQUIRED)
 target_link_libraries(${MODULE_NAME}
     PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets
-        SimConnect
+        MSFS::SimConnect
         tsl::ordered_map
         Sky::Kernel
         Sky::Model
@@ -39,8 +39,7 @@ target_link_libraries(${MODULE_NAME}
 )
 
 # Copy SimConnect.dll to bin directory
-add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD
+add_custom_command(TARGET ${MODULE_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_FILE:SimConnect>
-        $<TARGET_FILE_DIR:${LIBRARY_NAME}>/../../
-)
+        $<TARGET_FILE:MSFS::SimConnect>
+        $<TARGET_FILE_DIR:${MODULE_NAME}>/../../)

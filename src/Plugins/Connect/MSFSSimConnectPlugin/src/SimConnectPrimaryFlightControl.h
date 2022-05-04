@@ -27,9 +27,9 @@
 
 #include <windows.h>
 
-#include "../../../../Kernel/src/SkyMath.h"
-#include "../../../../Model/src/SimType.h"
-#include "../../../../Model/src/PrimaryFlightControlData.h"
+#include <Kernel/SkyMath.h>
+#include <Model/SimType.h>
+#include <Model/PrimaryFlightControlData.h>
 
 /*!
  * Simulation variables which represent the primary flight controls: rudder, elevators and ailerons.

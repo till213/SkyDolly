@@ -76,7 +76,7 @@ bool ExportPluginBase::exportFlight(const Flight &flight) noexcept
 {
     std::unique_ptr<QWidget> optionWidget = createOptionWidget();
     ExportPluginBaseSettings &baseSettings = getPluginSettings();
-    std::unique_ptr<BasicExportDialog> exportDialog = std::make_unique<BasicExportDialog>(flight, getFileSuffix(), getFileFilter(), baseSettings, getParentWidget());
+    std::unique_ptr<BasicExportDialog> exportDialog = std::make_unique<BasicExportDialog>(flight, getFileSuffix(), getFileFilter(), baseSettings, PluginBase::getParentWidget());
     // Transfer ownership to exportDialog
     exportDialog->setOptionWidget(optionWidget.release());
     bool ok {true};
@@ -94,7 +94,7 @@ bool ExportPluginBase::exportFlight(const Flight &flight) noexcept
             if (formationExport == ExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles || baseSettings.isFileDialogSelectedFile() || !fileInfo.exists()) {
                 ok = exportFlight(flight, filePath);
             } else {
-                std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(getParentWidget());
+                std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(PluginBase::getParentWidget());
                 messageBox->setIcon(QMessageBox::Question);
                 QPushButton *replaceButton = messageBox->addButton(tr("&Replace"), QMessageBox::AcceptRole);
                 messageBox->setText(tr("A file named \"%1\" already exists. Do you want to replace it?").arg(fileInfo.fileName()));
@@ -173,7 +173,7 @@ bool ExportPluginBase::exportFlight(const Flight &flight, const QString &filePat
             }
         }
     } else {
-        QMessageBox::warning(getParentWidget(), tr("Export error"), tr("An error occured during export into file %1.").arg(filePath));
+        QMessageBox::warning(PluginBase::getParentWidget(), tr("Export error"), tr("An error occured during export into file %1.").arg(filePath));
     }
 
     return ok;
@@ -190,7 +190,7 @@ bool ExportPluginBase::exportAllAircraft(const Flight &flight, const QString &fi
         const QFileInfo fileInfo {sequencedFilePath};
         if (fileInfo.exists() && !replaceAll) {
             QGuiApplication::restoreOverrideCursor();
-            std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(getParentWidget());
+            std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(PluginBase::getParentWidget());
             messageBox->setIcon(QMessageBox::Question);
             QPushButton *replaceButton = messageBox->addButton(tr("&Replace"), QMessageBox::AcceptRole);
             QPushButton *replaceAllButton = messageBox->addButton(tr("Replace &All"), QMessageBox::YesRole);

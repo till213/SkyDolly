@@ -29,13 +29,13 @@
 #include <windows.h>
 #include <SimConnect.h>
 
-#include "../../../../Kernel/src/Enum.h"
-#include "../../../../Model/src/Flight.h"
-#include "../../../../Model/src/Aircraft.h"
-#include "../../../../Model/src/AircraftInfo.h"
-#include "../../../../Model/src/AircraftType.h"
-#include "../../../../Model/src/Position.h"
-#include "../../../../Model/src/PositionData.h"
+#include <Kernel/Enum.h>
+#include <Model/Flight.h>
+#include <Model/Aircraft.h>
+#include <Model/AircraftInfo.h>
+#include <Model/AircraftType.h>
+#include <Model/Position.h>
+#include <Model/PositionData.h>
 #include "SimConnectType.h"
 #include "SimConnectPositionRequest.h"
 #include "SimConnectAI.h"

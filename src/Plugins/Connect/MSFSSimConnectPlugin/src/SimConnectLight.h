@@ -27,8 +27,8 @@
 
 #include <windows.h>
 
-#include "../../../../Model/src/SimType.h"
-#include "../../../../Model/src/LightData.h"
+#include <Model/SimType.h>
+#include <Model/LightData.h>
 
 /*!
  * Simulation variables which represent aircraft lights, e.g. navigation light

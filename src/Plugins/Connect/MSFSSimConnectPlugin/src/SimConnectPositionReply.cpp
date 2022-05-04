@@ -26,8 +26,8 @@
 
 #include <SimConnect.h>
 
-#include "../../../../Kernel/src/Enum.h"
-#include "../../../../Model/src/SimVar.h"
+#include <Kernel/Enum.h>
+#include <Model/SimVar.h>
 #include "SimConnectType.h"
 #include "SimConnectPositionReply.h"
 

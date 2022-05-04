@@ -94,8 +94,6 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/PluginManager)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Module)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
 
-
-
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${APP_NAME})
     qt_create_translation(QM_FILES
