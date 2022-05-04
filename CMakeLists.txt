@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.16...3.23)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 include(CMakePrintHelpers)
+include(CheckIPOSupported)
 
 set(APP_NAME "SkyDolly")
 
@@ -61,6 +62,26 @@ add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x051500)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools Sql REQUIRED)
 
+# 3rd Party
+# ordered-map (Tessil)
+add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/ordered-map)
+
+# GeographicLib (https://github.com/geographiclib/geographiclib)
+add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geographiclib EXCLUDE_FROM_ALL)
+set_target_properties(GeographicLib_SHARED
+    PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
+
+# Enabled link time optimisation (LTO), if available
+check_ipo_supported(RESULT ipo_support OUTPUT output LANGUAGES CXX)
+if(ipo_support)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+    message(STATUS "IPO SUPPORT enabled")
+else()
+    message(WARNING "IPO is not supported: ${output}")
+endif()
+
 # Application libraries
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Kernel)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/KernelTest)
@@ -72,17 +93,6 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/Widget)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/PluginManager)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Module)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
-
-# 3rd Party
-# ordered-map (Tessil)
-add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/ordered-map)
-
-# GeographicLib (https://github.com/geographiclib/geographiclib)
-add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geographiclib EXCLUDE_FROM_ALL)
-set_target_properties(GeographicLib_SHARED
-    PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-)
 
 # Resource file (*.rc)
 if (${PLATFORM_IS_WINDOWS})
@@ -121,6 +131,15 @@ if (${PLATFORM_IS_MACOS})
         PRIVATE
             Geoids
     )
+    include(CreateIconsOnMacOS)
+    make_icns(INPUT "res/SkyDolly.png" "res/SkyDolly.icns")
+    add_custom_target(my-icns ALL DEPENDS "res/SkyDolly.icns")
+    set_source_files_properties(
+        "res/SkyDolly.icns"
+        TARGET_DIRECTORY
+            SkyDolly
+        PROPERTIES
+            MACOSX_PACKAGE_LOCATION Resources)
 endif()
 
 target_sources(${APP_NAME}
