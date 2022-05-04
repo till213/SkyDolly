@@ -127,7 +127,7 @@ if (${PLATFORM_IS_MACOS})
     include(CreateAppIconOnMacOS)
     create_app_icon_on_macos(INPUT "res/SkyDolly.png" OUTPUT APP_ICON_PATH)
 
-    add_library(APP_ICON_TARGET OBJECT ${APP_ICON_PATH})
+#    add_library(AppIcon OBJECT ${APP_ICON_PATH})
     set_source_files_properties(${APP_ICON_PATH}
         PROPERTIES
             MACOSX_PACKAGE_LOCATION "Resources"
