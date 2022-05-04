@@ -99,7 +99,7 @@ signals:
     void aircraftInfoChanged(Aircraft &aircraft);
     void tailNumberChanged(Aircraft &aircraft);
     void timeOffsetChanged(Aircraft &aircraft);
-    void userAircraftChanged(Aircraft &aircraft);
+    void userAircraftChanged();
     void flightStored(std::int64_t id);
     void aircraftStored(Aircraft &aircraft);
 

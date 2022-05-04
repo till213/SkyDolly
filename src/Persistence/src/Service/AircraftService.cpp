@@ -54,10 +54,18 @@ public:
 
 AircraftService::AircraftService() noexcept
     : d(std::make_unique<AircraftServicePrivate>())
-{}
+{
+#ifdef DEBUG
+    qDebug("AircraftService::AircraftService: CREATED.");
+#endif
+}
 
 AircraftService::~AircraftService() noexcept
-{}
+{
+#ifdef DEBUG
+    qDebug("AircraftService::~AircraftService: DELETED.");
+#endif
+}
 
 bool AircraftService::store(std::int64_t flightId, int sequenceNumber, Aircraft &aircraft) noexcept
 {

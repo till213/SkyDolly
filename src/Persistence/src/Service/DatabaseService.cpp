@@ -67,10 +67,18 @@ public:
 
 DatabaseService::DatabaseService() noexcept
     : d(std::make_unique<DatabaseServicePrivate>())
-{}
+{
+#ifdef DEBUG
+    qDebug("DatabaseService::DatabaseService: CREATED.");
+#endif
+}
 
 DatabaseService::~DatabaseService() noexcept
-{}
+{
+#ifdef DEBUG
+    qDebug("DatabaseService::~DatabaseService: DELETED.");
+#endif
+}
 
 bool DatabaseService::backup() noexcept
 {

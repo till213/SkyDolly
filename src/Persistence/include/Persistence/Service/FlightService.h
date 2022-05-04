@@ -29,9 +29,6 @@
 #include <forward_list>
 #include <cstdint>
 
-#include <QObject>
-#include <QVector>
-
 #include <Model/Flight.h>
 #include <Model/FlightDate.h>
 #include <Model/FlightSummary.h>
@@ -40,11 +37,10 @@
 class SkyConnectIntf;
 class FlightServicePrivate;
 
-class PERSISTENCE_API FlightService : public QObject
+class PERSISTENCE_API FlightService
 {
-    Q_OBJECT
 public:
-    FlightService(QObject *parent = nullptr) noexcept;
+    FlightService() noexcept;
     virtual ~FlightService() noexcept;
 
     bool store(Flight &flight) noexcept;

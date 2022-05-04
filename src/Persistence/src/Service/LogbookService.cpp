@@ -48,10 +48,13 @@ public:
 
 // PUBLIC
 
-LogbookService::LogbookService(QObject *parent) noexcept
-    : QObject(parent),
-      d(std::make_unique<LogbookServicePrivate>())
-{}
+LogbookService::LogbookService() noexcept
+    : d(std::make_unique<LogbookServicePrivate>())
+{
+#ifdef DEBUG
+    qDebug("LogbookService::LogbookService: CREATED.");
+#endif
+}
 
 LogbookService::~LogbookService() noexcept
 {

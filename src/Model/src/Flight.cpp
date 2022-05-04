@@ -183,7 +183,7 @@ void Flight::setUserAircraftIndex(int index) noexcept
 {
     if (d->userAircraftIndex != index) {
         d->userAircraftIndex = index;
-        emit userAircraftChanged(*d->aircraft.at(index));
+        emit userAircraftChanged();
     }
 }
 

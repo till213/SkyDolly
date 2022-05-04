@@ -29,9 +29,6 @@
 #include <forward_list>
 #include <vector>
 
-#include <QObject>
-#include <QVector>
-
 #include <Model/FlightDate.h>
 #include <Model/FlightSummary.h>
 #include "../PersistenceLib.h"
@@ -39,11 +36,10 @@
 class FlightSelector;
 class LogbookServicePrivate;
 
-class PERSISTENCE_API LogbookService : public QObject
+class PERSISTENCE_API LogbookService
 {
-    Q_OBJECT
 public:
-    LogbookService(QObject *parent = nullptr) noexcept;
+    LogbookService() noexcept;
     virtual ~LogbookService() noexcept;
 
     std::forward_list<FlightDate> getFlightDates() const noexcept;

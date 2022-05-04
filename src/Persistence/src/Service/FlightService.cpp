@@ -27,7 +27,6 @@
 #include <forward_list>
 #include <cstdint>
 
-#include <QObject>
 #include <QSqlDatabase>
 
 #include <Model/Logbook.h>
@@ -52,9 +51,8 @@ public:
 
 // PUBLIC
 
-FlightService::FlightService(QObject *parent) noexcept
-    : QObject(parent),
-      d(std::make_unique<FlightServicePrivate>())
+FlightService::FlightService() noexcept
+    : d(std::make_unique<FlightServicePrivate>())
 {
 #ifdef DEBUG
     qDebug("FlightService::FlightService: CREATED.");
@@ -165,7 +163,7 @@ bool FlightService::updateUserAircraftIndex(Flight &flight, int index) noexcept
         ok = d->flightDao->updateUserAircraftIndex(flight.getId(), index);
         if (ok) {
             ok = QSqlDatabase::database().commit();
-            emit Logbook::getInstance().flightUpdated(flight.getId());
+            emit flight.userAircraftChanged();
         } else {
             QSqlDatabase::database().rollback();
         }
