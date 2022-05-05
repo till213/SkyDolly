@@ -16,6 +16,7 @@
 
 #### User Interface
 - The order of the logbook table columns can now be changed
+- In the formation module the "Delete" key now deletes the selected aircraft
 
 ### Bug Fixes
 - In the logbook module the date selection column width is now properly calculated (no month name is truncated)

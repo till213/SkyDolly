@@ -335,6 +335,9 @@ void FormationWidget::initUi() noexcept
     ui->replayModeComboBox->insertItem(ReplayMode::FlyWithFormationIndex, tr("Fly with formation"), Enum::toUnderlyingType(SkyConnectIntf::ReplayMode::FlyWithFormation));
 
     initTimeOffsetUi();
+
+    // Default "Delete" key deletes aircraft
+    ui->deletePushButton->setShortcut(QKeySequence::Delete);
 }
 
 void FormationWidget::initTimeOffsetUi() noexcept
