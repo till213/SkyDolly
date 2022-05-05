@@ -442,13 +442,6 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
 
 // PUBLIC SLOTS
 
-void AbstractSkyConnect::createAIObjects() noexcept
-{
-    if (isConnectedWithSim()) {
-        onCreateAIObjects();
-    }
-}
-
 void AbstractSkyConnect::destroyAIObjects() noexcept
 {
     if (isConnected()) {
@@ -527,6 +520,13 @@ std::int64_t AbstractSkyConnect::updateCurrentTimestamp() noexcept
         }        
     }
     return d->currentTimestamp;
+}
+
+void AbstractSkyConnect::createAIObjects() noexcept
+{
+    if (isConnectedWithSim()) {
+        onCreateAIObjects();
+    }
 }
 
 // PRIVATE

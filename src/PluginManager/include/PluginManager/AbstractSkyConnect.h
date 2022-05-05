@@ -51,54 +51,54 @@ public:
     };
 
     AbstractSkyConnect(QObject *parent = nullptr) noexcept;
-    virtual ~AbstractSkyConnect() noexcept;
+    ~AbstractSkyConnect() noexcept override;
 
-    virtual bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept override;
-    virtual bool freezeUserAircraft(bool enable) noexcept override;
+    bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept override;
+    bool freezeUserAircraft(bool enable) noexcept override;
 
-    virtual ReplayMode getReplayMode() const noexcept override;
-    virtual void setReplayMode(ReplayMode replayMode) noexcept override;
+    ReplayMode getReplayMode() const noexcept override;
+    void setReplayMode(ReplayMode replayMode) noexcept override;
 
-    virtual void startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition()) noexcept override;
-    virtual void stopRecording() noexcept override;
-    virtual bool isRecording() const noexcept override;
+    void startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition()) noexcept override;
+    void stopRecording() noexcept override;
+    bool isRecording() const noexcept override;
 
-    virtual void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition()) noexcept override;
-    virtual void stopReplay() noexcept override;
-    virtual bool isReplaying() const noexcept override;
-    virtual void stop() noexcept override;
+    void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition()) noexcept override;
+    void stopReplay() noexcept override;
+    bool isReplaying() const noexcept override;
+    void stop() noexcept override;
 
-    virtual bool inRecordingMode() const noexcept override;
-    virtual bool inReplayMode() const noexcept override;
-    virtual bool isActive() const noexcept override;
+    bool inRecordingMode() const noexcept override;
+    bool inReplayMode() const noexcept override;
+    bool isActive() const noexcept override;
 
-    virtual void setPaused(bool enabled) noexcept override;
-    virtual bool isPaused() const noexcept override;
+    void setPaused(bool enabled) noexcept override;
+    bool isPaused() const noexcept override;
 
-    virtual void skipToBegin() noexcept override;
-    virtual void skipBackward() noexcept override;
-    virtual void skipForward() noexcept override;
-    virtual void skipToEnd() noexcept override;
-    virtual void seek(std::int64_t timestamp) noexcept override;
-    virtual void handleAtEnd() noexcept override;
+    void skipToBegin() noexcept override;
+    void skipBackward() noexcept override;
+    void skipForward() noexcept override;
+    void skipToEnd() noexcept override;
+    void seek(std::int64_t timestamp) noexcept override;
+    void handleAtEnd() noexcept override;
 
-    virtual std::int64_t getCurrentTimestamp() const noexcept override;
-    virtual bool isAtEnd() const noexcept override;
+    std::int64_t getCurrentTimestamp() const noexcept override;
+    bool isAtEnd() const noexcept override;
 
-    virtual double getReplaySpeedFactor() const noexcept override;
-    virtual void setReplaySpeedFactor(double timeScale) noexcept override;
+    double getReplaySpeedFactor() const noexcept override;
+    void setReplaySpeedFactor(double timeScale) noexcept override;
 
-    virtual Connect::State getState() const noexcept override;
-    virtual bool isConnected() const noexcept override;
-    virtual bool isIdle() const noexcept override;
+    Connect::State getState() const noexcept override;
+    bool isConnected() const noexcept override;
+    bool isIdle() const noexcept override;
 
-    virtual double calculateRecordedSamplesPerSecond() const noexcept override;
+    double calculateRecordedSamplesPerSecond() const noexcept override;
 
 public slots:
-    virtual void destroyAIObjects() noexcept override;
-    virtual void destroyAIObject(std::int64_t simulatedObjectId) noexcept override;
-    virtual void updateAIObjects() noexcept override;
-    virtual void updateUserAircraft() noexcept override;
+    void destroyAIObjects() noexcept override;
+    void destroyAIObject(std::int64_t simulatedObjectId) noexcept override;
+    void updateAIObjects() noexcept override;
+    void updateUserAircraft() noexcept override;
 
 protected:
     void setState(Connect::State state) noexcept;
@@ -109,6 +109,8 @@ protected:
     void startElapsedTimer() const noexcept;
     void resetElapsedTime(bool restart) noexcept;
     std::int64_t updateCurrentTimestamp() noexcept;
+
+    void createAIObjects() noexcept;
 
     virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept = 0;
 
