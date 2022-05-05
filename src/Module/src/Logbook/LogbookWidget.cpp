@@ -249,7 +249,7 @@ void LogbookWidget::initUi() noexcept
     // Make sure that shortcuts are initially accepted
     ui->searchLineEdit->clearFocus();
 
-    const QStringList headers {tr("Flight"), tr("Date"), tr("Title"), tr("User Aircraft"), tr("Number of Aircraft"), tr("Departure Time"), tr("Departure"), tr("Arrival Time"), tr("Arrival"), tr("Total Time of Flight")};
+    const QStringList headers {tr("Flight"), tr("Title"), tr("Date"), tr("User Aircraft"), tr("Number of Aircraft"), tr("Departure Time"), tr("Departure"), tr("Arrival Time"), tr("Arrival"), tr("Total Time of Flight")};
     ui->logTableWidget->setColumnCount(headers.count());
     ui->logTableWidget->setHorizontalHeaderLabels(headers);
     ui->logTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -325,19 +325,19 @@ void LogbookWidget::updateFlightTable() noexcept
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
             ++columnIndex;
 
-            // Creation date
-            newItem = std::make_unique<TableDateItem>(d->unit.formatDate(summary.creationDate), summary.creationDate.date());
-            newItem->setToolTip(tr("Recording time: %1.").arg(d->unit.formatTime(summary.creationDate)));
-            newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
-            ++columnIndex;
-
             // Title
             newItem = std::make_unique<QTableWidgetItem>(summary.title);
             newItem->setToolTip(tr("Double-click to edit title."));
             newItem->setBackground(Platform::getEditableTableCellBGColor());
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
             d->titleColumnIndex = columnIndex;
+            ++columnIndex;
+
+            // Creation date
+            newItem = std::make_unique<TableDateItem>(d->unit.formatDate(summary.creationDate), summary.creationDate.date());
+            newItem->setToolTip(tr("Recording time: %1.").arg(d->unit.formatTime(summary.creationDate)));
+            newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+            ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
             ++columnIndex;
 
             // Aircraft type
