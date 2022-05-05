@@ -92,7 +92,8 @@ public:
     static constexpr int InvalidId = -1;
 
 signals:
-    void flightChanged();
+    void flightCleared();
+    void descriptionOrTitleChanged();
     void flightConditionChanged();
     void aircraftAdded(Aircraft &aircraft);
     void aircraftDeleted(std::int64_t removedSimulationObjectId);

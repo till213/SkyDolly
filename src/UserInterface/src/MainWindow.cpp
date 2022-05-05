@@ -271,6 +271,8 @@ void MainWindow::frenchConnection() noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::timeOffsetChanged,
             this, &MainWindow::updateTimestamp);
+    connect(&flight, &Flight::flightCleared,
+            this, &MainWindow::updateUi);
 
     // Menu actions
     connect(d->importQActionGroup, &QActionGroup::triggered,
@@ -986,6 +988,7 @@ void MainWindow::updateControlUi() noexcept
     case Connect::State::Disconnected:
         // Fall-thru intened: each time a control element is triggered a connection
         // attempt is made, so we enable the same elements as in connected state
+        [[fallthrough]];
     case Connect::State::Connected:
         // Actions
         ui->recordAction->setEnabled(d->connectedWithLogbook && hasSkyConnectPlugins);

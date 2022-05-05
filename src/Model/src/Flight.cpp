@@ -127,7 +127,7 @@ void Flight::setTitle(const QString &title) noexcept
 {
     if (d->title != title) {
         d->title = title;
-        emit flightChanged();
+        emit descriptionOrTitleChanged();
     }
 }
 
@@ -140,7 +140,7 @@ void Flight::setDescription(const QString &description) noexcept
 {
     if (d->description != description) {
         d->description = description;
-        emit flightChanged();
+        emit descriptionOrTitleChanged();
     }
 }
 
@@ -251,7 +251,12 @@ void Flight::clear(bool withOneAircraft) noexcept
 {
     d->creationTime = QDateTime::currentDateTime();
     d->clear(withOneAircraft);
-    emit flightChanged();
+    if (withOneAircraft) {
+        // Only emit the signals if the flight has at least one aircraft
+        // (but e.g. not shortly before loading a new flight from the logbook)
+        emit flightCleared();
+        emit descriptionOrTitleChanged();
+    }
 }
 
 Flight::Iterator Flight::begin() noexcept

@@ -96,6 +96,10 @@ bool FlightService::deleteById(std::int64_t id)  noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
+        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        if (flight.getId() == id) {
+            flight.clear(true);
+        }
         ok = d->flightDao->deleteById(id);
         if (ok) {
             ok = QSqlDatabase::database().commit();
@@ -163,7 +167,6 @@ bool FlightService::updateUserAircraftIndex(Flight &flight, int index) noexcept
         ok = d->flightDao->updateUserAircraftIndex(flight.getId(), index);
         if (ok) {
             ok = QSqlDatabase::database().commit();
-            emit flight.userAircraftChanged();
         } else {
             QSqlDatabase::database().rollback();
         }
