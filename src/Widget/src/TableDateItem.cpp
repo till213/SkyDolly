@@ -24,7 +24,7 @@
  */
 #include <QDate>
 
-#include "../../Kernel/src/Unit.h"
+#include <Kernel/Unit.h>
 #include "TableDateItem.h"
 
 class TableDateItemPrivate

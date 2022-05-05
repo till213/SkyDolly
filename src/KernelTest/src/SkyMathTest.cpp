@@ -28,7 +28,7 @@
 
 #include <QtTest/QtTest>
 
-#include "../../Kernel/src/SkyMath.h"
+#include <Kernel/SkyMath.h>
 #include "SkyMathTest.h"
 
 namespace

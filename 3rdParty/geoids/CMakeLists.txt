@@ -20,7 +20,7 @@ if (egm_POPULATED)
         set_source_files_properties(
             ${EGM_FILE_PATHS}
             TARGET_DIRECTORY
-                SkyDolly
+                ${APP_NAME}
             PROPERTIES
                 MACOSX_PACKAGE_LOCATION Resources/geoids)
         set_target_properties(

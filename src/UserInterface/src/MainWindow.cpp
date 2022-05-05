@@ -56,30 +56,29 @@
 #include <QStringBuilder>
 #include <QDesktopServices>
 
-#include "../../Kernel/src/Unit.h"
-#include "../../Kernel/src/Const.h"
-#include "../../Kernel/src/Replay.h"
-#include "../../Kernel/src/Version.h"
-#include "../../Kernel/src/Settings.h"
-#include "../../Kernel/src/Enum.h"
-#include "../../Kernel/src/SampleRate.h"
-#include "../../Model/src/Aircraft.h"
-#include "../../Model/src/PositionData.h"
-#include "../../Model/src/AircraftInfo.h"
-#include "../../Model/src/Logbook.h"
-#include "../../Persistence/src/Dao/DaoFactory.h"
-#include "../../Persistence/src/Service/FlightService.h"
-#include "../../Persistence/src/Service/DatabaseService.h"
-#include "../../Persistence/src/ConnectionManager.h"
-#include "../../Widget/src/ActionButton.h"
-#include "../../Widget/src/ActionRadioButton.h"
-#include "../../Widget/src/ActionCheckBox.h"
-#include "../../SkyConnect/src/SkyConnectManager.h"
-#include "../../SkyConnect/src/SkyConnectIntf.h"
-#include "../../SkyConnect/src/Connect.h"
-#include "../../Module/src/ModuleIntf.h"
-#include "../../Module/src/ModuleManager.h"
-#include "../../Plugin/src/PluginManager.h"
+#include <Kernel/Unit.h>
+#include <Kernel/Const.h>
+#include <Kernel/Replay.h>
+#include <Kernel/Version.h>
+#include <Kernel/Settings.h>
+#include <Kernel/Enum.h>
+#include <Kernel/SampleRate.h>
+#include <Model/Aircraft.h>
+#include <Model/PositionData.h>
+#include <Model/AircraftInfo.h>
+#include <Model/Logbook.h>
+#include <Persistence/Service/FlightService.h>
+#include <Persistence/Service/DatabaseService.h>
+#include <Persistence/ConnectionManager.h>
+#include <Widget/ActionButton.h>
+#include <Widget/ActionRadioButton.h>
+#include <Widget/ActionCheckBox.h>
+#include <PluginManager/SkyConnectManager.h>
+#include <PluginManager/SkyConnectIntf.h>
+#include <PluginManager/Connect.h>
+#include <PluginManager/PluginManager.h>
+#include <Module/ModuleIntf.h>
+#include <Module/ModuleManager.h>
 #include "Dialog/AboutDialog.h"
 #include "Dialog/LogbookSettingsDialog.h"
 #include "Dialog/SettingsDialog.h"
@@ -272,14 +271,14 @@ void MainWindow::frenchConnection() noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::timeOffsetChanged,
             this, &MainWindow::updateTimestamp);
+    connect(&flight, &Flight::flightCleared,
+            this, &MainWindow::updateUi);
 
     // Menu actions
     connect(d->importQActionGroup, &QActionGroup::triggered,
             this, &MainWindow::handleImport);
     connect(d->exportQActionGroup, &QActionGroup::triggered,
             this, &MainWindow::handleExport);
-
-
 
     // Settings
     connect(&Settings::getInstance(), &Settings::replayLoopChanged,
@@ -337,8 +336,8 @@ void MainWindow::frenchConnection() noexcept
     connect(&Settings::getInstance(), &Settings::changed,
             this, &MainWindow::updateMainWindow);
 
-    // Service
-    connect(d->flightService.get(), &FlightService::flightRestored,
+    // Logbook
+    connect(&Logbook::getInstance(), &Logbook::flightRestored,
             this, &MainWindow::handleFlightRestored);
     connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
             this, &MainWindow::handleLogbookConnectionChanged);
@@ -987,8 +986,9 @@ void MainWindow::updateControlUi() noexcept
     const Connect::State state = skyConnect ? skyConnect->get().getState() : Connect::State::Disconnected;
     switch (state) {
     case Connect::State::Disconnected:
-        // Fall-thru intened: each time a control element is triggered a connection
+        // Fall-thru intended: each time a control element is triggered a connection
         // attempt is made, so we enable the same elements as in connected state
+        [[fallthrough]];
     case Connect::State::Connected:
         // Actions
         ui->recordAction->setEnabled(d->connectedWithLogbook && hasSkyConnectPlugins);

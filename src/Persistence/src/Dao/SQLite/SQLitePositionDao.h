@@ -30,7 +30,7 @@
 #include <iterator>
 #include <cstdint>
 
-#include "../../../../Model/src/PositionData.h"
+#include <Model/PositionData.h>
 #include "../PositionDaoIntf.h"
 
 class SQLitePositionDao : public PositionDaoIntf

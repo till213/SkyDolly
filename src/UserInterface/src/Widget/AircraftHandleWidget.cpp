@@ -30,17 +30,17 @@
 #include <QColor>
 #include <QPalette>
 
-#include "../../../Kernel/src/Unit.h"
-#include "../../../Model/src/SimVar.h"
-#include "../../../Model/src/Logbook.h"
-#include "../../../Model/src/Flight.h"
-#include "../../../Model/src/Aircraft.h"
-#include "../../../Model/src/AircraftHandle.h"
-#include "../../../Model/src/AircraftHandleData.h"
-#include "../../../Model/src/TimeVariableData.h"
-#include "../../../SkyConnect/src/SkyConnectManager.h"
-#include "../../../SkyConnect/src/SkyConnectIntf.h"
-#include "../../../SkyConnect/src/Connect.h"
+#include <Kernel/Unit.h>
+#include <Model/SimVar.h>
+#include <Model/Logbook.h>
+#include <Model/Flight.h>
+#include <Model/Aircraft.h>
+#include <Model/AircraftHandle.h>
+#include <Model/AircraftHandleData.h>
+#include <Model/TimeVariableData.h>
+#include <PluginManager/SkyConnectManager.h>
+#include <PluginManager/SkyConnectIntf.h>
+#include <PluginManager/Connect.h>
 #include "AircraftHandleWidget.h"
 #include "ui_AircraftHandleWidget.h"
 

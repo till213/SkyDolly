@@ -40,26 +40,26 @@
 #include <QShowEvent>
 #include <QHideEvent>
 
-#include "../../../Kernel/src/Version.h"
-#include "../../../Kernel/src/Const.h"
-#include "../../../Kernel/src/Convert.h"
-#include "../../../Kernel/src/Unit.h"
-#include "../../../Kernel/src/SkyMath.h"
-#include "../../../Kernel/src/Enum.h"
-#include "../../../Kernel/src/Settings.h"
-#include "../../../Model/src/Logbook.h"
-#include "../../../Model/src/Flight.h"
-#include "../../../Model/src/AircraftType.h"
-#include "../../../Model/src/AircraftInfo.h"
-#include "../../../Model/src/Position.h"
-#include "../../../Model/src/PositionData.h"
-#include "../../../Model/src/InitialPosition.h"
-#include "../../../Persistence/src/Service/FlightService.h"
-#include "../../../Persistence/src/Service/AircraftService.h"
-#include "../../../SkyConnect/src/SkyConnectManager.h"
-#include "../../../SkyConnect/src/SkyConnectIntf.h"
-#include "../../../Widget/src/Platform.h"
-#include "../AbstractModuleWidget.h"
+#include <Kernel/Version.h>
+#include <Kernel/Const.h>
+#include <Kernel/Convert.h>
+#include <Kernel/Unit.h>
+#include <Kernel/SkyMath.h>
+#include <Kernel/Enum.h>
+#include <Kernel/Settings.h>
+#include <Model/Logbook.h>
+#include <Model/Flight.h>
+#include <Model/AircraftType.h>
+#include <Model/AircraftInfo.h>
+#include <Model/Position.h>
+#include <Model/PositionData.h>
+#include <Model/InitialPosition.h>
+#include <Persistence/Service/FlightService.h>
+#include <Persistence/Service/AircraftService.h>
+#include <PluginManager/SkyConnectManager.h>
+#include <PluginManager/SkyConnectIntf.h>
+#include <Widget/Platform.h>
+#include <AbstractModuleWidget.h>
 #include "FormationWidget.h"
 #include "ui_FormationWidget.h"
 
@@ -195,7 +195,7 @@ void FormationWidget::showEvent(QShowEvent *event) noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::userAircraftChanged,
             this, &FormationWidget::handleUserAircraftChanged);
-    connect(&flight, &Flight::aircraftDeleted,
+    connect(&flight, &Flight::singleAircraftDeleted,
             this, &FormationWidget::updateUi);
     connect(&flight, &Flight::flightStored,
             this, &FormationWidget::updateUi);
@@ -206,7 +206,7 @@ void FormationWidget::showEvent(QShowEvent *event) noexcept
             this, &FormationWidget::updateUi);
 
     // Also updates the UI
-    handleUserAircraftChanged(flight.getUserAircraft());
+    handleUserAircraftChanged();
     handleSelectionChanged();    
 }
 
@@ -217,7 +217,7 @@ void FormationWidget::hideEvent(QHideEvent *event) noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     disconnect(&flight, &Flight::userAircraftChanged,
                this, &FormationWidget::handleUserAircraftChanged);
-    disconnect(&flight, &Flight::aircraftDeleted,
+    disconnect(&flight, &Flight::singleAircraftDeleted,
                this, &FormationWidget::updateUi);
     disconnect(&flight, &Flight::flightStored,
                this, &FormationWidget::updateUi);
@@ -335,6 +335,9 @@ void FormationWidget::initUi() noexcept
     ui->replayModeComboBox->insertItem(ReplayMode::FlyWithFormationIndex, tr("Fly with formation"), Enum::toUnderlyingType(SkyConnectIntf::ReplayMode::FlyWithFormation));
 
     initTimeOffsetUi();
+
+    // Default "Delete" key deletes aircraft
+    ui->deletePushButton->setShortcut(QKeySequence::Delete);
 }
 
 void FormationWidget::initTimeOffsetUi() noexcept
@@ -779,7 +782,7 @@ void FormationWidget::updateToolTips() noexcept
     }
 }
 
-void FormationWidget::handleUserAircraftChanged([[maybe_unused]] Aircraft &aircraft) noexcept
+void FormationWidget::handleUserAircraftChanged() noexcept
 {
     updateRelativePosition();
     updateUi();

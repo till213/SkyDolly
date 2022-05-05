@@ -27,19 +27,19 @@
 #include <cstdint>
 #include <utility>
 
-#include "../../Kernel/src/Convert.h"
-#include "../../Kernel/src/SkyMath.h"
-#include "../../Model/src/Aircraft.h"
-#include "../../Model/src/Position.h"
-#include "../../Model/src/PositionData.h"
-#include "../../Model/src/AircraftHandle.h"
-#include "../../Model/src/AircraftHandleData.h"
-#include "../../Model/src/Engine.h"
-#include "../../Model/src/EngineData.h"
-#include "../../Model/src/SecondaryFlightControl.h"
-#include "../../Model/src/SecondaryFlightControlData.h"
-#include "../../Model/src/Light.h"
-#include "../../Model/src/LightData.h"
+#include <Kernel/Convert.h>
+#include <Kernel/SkyMath.h>
+#include <Model/Aircraft.h>
+#include <Model/Position.h>
+#include <Model/PositionData.h>
+#include <Model/AircraftHandle.h>
+#include <Model/AircraftHandleData.h>
+#include <Model/Engine.h>
+#include <Model/EngineData.h>
+#include <Model/SecondaryFlightControl.h>
+#include <Model/SecondaryFlightControlData.h>
+#include <Model/Light.h>
+#include <Model/LightData.h>
 #include "Analytics.h"
 #include "FlightAugmentation.h"
 

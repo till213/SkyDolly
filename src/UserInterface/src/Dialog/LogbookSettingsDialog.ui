@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>824</width>
-    <height>318</height>
+    <width>848</width>
+    <height>370</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -216,7 +216,7 @@
   <customwidget>
    <class>BackupPeriodComboBox</class>
    <extends>QComboBox</extends>
-   <header location="global">BackupPeriodComboBox.h</header>
+   <header location="global">Widget/BackupPeriodComboBox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

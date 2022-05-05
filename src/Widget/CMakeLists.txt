@@ -1,39 +1,43 @@
 set(LIBRARY_NAME "Widget")
 
-add_definitions(-DWIDGET_EXPORT)
-
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_library(${LIBRARY_NAME} SHARED)
 else()
     add_library(${LIBRARY_NAME} SHARED)
 endif()
+add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
-set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence
+target_compile_definitions(${LIBRARY_NAME}
+    PRIVATE
+        WIDGET_EXPORT
 )
-
 target_sources(${LIBRARY_NAME}
     PRIVATE
-        src/WidgetLib.h        
-        src/ActiveButton.h src/ActiveButton.cpp
-        src/ActionButton.h src/ActionButton.cpp
-        src/ActionRadioButton.h src/ActionRadioButton.cpp
-        src/ActionCheckBox.h src/ActionCheckBox.cpp
-        src/FocusPlainTextEdit.h src/FocusPlainTextEdit.cpp
-        src/AircraftSelectionComboBox.h src/AircraftSelectionComboBox.cpp
-        src/BackupPeriodComboBox.h src/BackupPeriodComboBox.cpp
-        src/Platform.h src/Platform.cpp
-        src/TableDateItem.h src/TableDateItem.cpp
-        src/TableTimeItem.h src/TableTimeItem.cpp
+        include/Widget/WidgetLib.h
+        include/Widget/ActiveButton.h src/ActiveButton.cpp
+        include/Widget/ActionButton.h src/ActionButton.cpp
+        include/Widget/ActionRadioButton.h src/ActionRadioButton.cpp
+        include/Widget/ActionCheckBox.h src/ActionCheckBox.cpp
+        include/Widget/FocusPlainTextEdit.h src/FocusPlainTextEdit.cpp
+        include/Widget/AircraftSelectionComboBox.h src/AircraftSelectionComboBox.cpp
+        include/Widget/BackupPeriodComboBox.h src/BackupPeriodComboBox.cpp
+        include/Widget/Platform.h src/Platform.cpp
+        include/Widget/TableDateItem.h src/TableDateItem.cpp
+        include/Widget/TableTimeItem.h src/TableTimeItem.cpp
 )
-
 target_include_directories(${LIBRARY_NAME}
+    INTERFACE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
     PRIVATE
-        src
+        include/Widget
 )
 target_link_libraries(${LIBRARY_NAME}
+    PUBLIC
+        Qt${QT_VERSION_MAJOR}::Widgets
     PRIVATE
-        ${LIBRARY_DEPENDENCIES}
+        Sky::Kernel
+        Sky::Model
+        Sky::Persistence
 )
 set_target_properties(${LIBRARY_NAME}
     PROPERTIES

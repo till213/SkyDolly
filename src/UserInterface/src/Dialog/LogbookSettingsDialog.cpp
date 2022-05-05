@@ -32,14 +32,14 @@
 #include <QDir>
 #include <QUrl>
 
-#include "../../../Kernel/src/Unit.h"
-#include "../../../Kernel/src/Const.h"
-#include "../../../Kernel/src/Enum.h"
-#include "../../../Kernel/src/Settings.h"
-#include "../../../Persistence/src/Service/DatabaseService.h"
-#include "../../../Persistence/src/ConnectionManager.h"
-#include "../../../Persistence/src/Metadata.h"
-#include "../../../Widget/src/BackupPeriodComboBox.h"
+#include <Kernel/Unit.h>
+#include <Kernel/Const.h>
+#include <Kernel/Enum.h>
+#include <Kernel/Settings.h>
+#include <Persistence/Service/DatabaseService.h>
+#include <Persistence/ConnectionManager.h>
+#include <Persistence/Metadata.h>
+#include <Widget/BackupPeriodComboBox.h>
 #include "LogbookSettingsDialog.h"
 #include "ui_LogbookSettingsDialog.h"
 

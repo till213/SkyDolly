@@ -1,41 +1,42 @@
 set(LIBRARY_NAME "Module")
 
-add_definitions(-DMODULE_EXPORT)
-
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_library(${LIBRARY_NAME} SHARED)
 else()
     add_library(${LIBRARY_NAME} SHARED)
 endif()
+add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
-set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Widgets Kernel Model Persistence SkyConnect Plugin Widget tsl::ordered_map
+target_compile_definitions(${LIBRARY_NAME}
+    PRIVATE
+        MODULE_EXPORT
 )
-
 target_sources(${LIBRARY_NAME}
     PRIVATE
-        src/ModuleLib.h
-        src/Module.h
-        src/ModuleIntf.h
-        src/AbstractModuleWidget.cpp
-        src/AbstractModuleWidget.h
-        src/ModuleManager.cpp
-        src/ModuleManager.h
-        src/Logbook/LogbookWidget.cpp
-        src/Logbook/LogbookWidget.h
-        src/Logbook/LogbookWidget.ui
-        src/Formation/FormationWidget.cpp
-        src/Formation/FormationWidget.h
-        src/Formation/FormationWidget.ui
+        include/Module/ModuleLib.h
+        include/Module/Module.h
+        include/Module/ModuleIntf.h
+        include/Module/AbstractModuleWidget.h src/AbstractModuleWidget.cpp
+        include/Module/ModuleManager.h src/ModuleManager.cpp
+        src/Logbook/LogbookWidget.h src/Logbook/LogbookWidget.cpp src/Logbook/LogbookWidget.ui
+        src/Formation/FormationWidget.h src/Formation/FormationWidget.cpp src/Formation/FormationWidget.ui
 )
-
 target_include_directories(${LIBRARY_NAME}
+    INTERFACE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
     PRIVATE
-        ../Widget/src/
+        include/Module
 )
 target_link_libraries(${LIBRARY_NAME}
+    PUBLIC
+        Qt${QT_VERSION_MAJOR}::Widgets
     PRIVATE
-        ${LIBRARY_DEPENDENCIES}
+        Sky::Kernel
+        Sky::Model
+        Sky::Persistence
+        Sky::PluginManager
+        Sky::Widget
+        tsl::ordered_map
 )
 set_target_properties(${LIBRARY_NAME}
     PROPERTIES

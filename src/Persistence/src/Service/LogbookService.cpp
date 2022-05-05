@@ -28,10 +28,11 @@
 
 #include <QSqlDatabase>
 
-#include "../Dao/FlightSelector.h"
+
 #include "../Dao/DaoFactory.h"
 #include "../Dao/LogbookDaoIntf.h"
-#include "LogbookService.h"
+#include <FlightSelector.h>
+#include <Service/LogbookService.h>
 
 class LogbookServicePrivate
 {
@@ -47,10 +48,13 @@ public:
 
 // PUBLIC
 
-LogbookService::LogbookService(QObject *parent) noexcept
-    : QObject(parent),
-      d(std::make_unique<LogbookServicePrivate>())
-{}
+LogbookService::LogbookService() noexcept
+    : d(std::make_unique<LogbookServicePrivate>())
+{
+#ifdef DEBUG
+    qDebug("LogbookService::LogbookService: CREATED.");
+#endif
+}
 
 LogbookService::~LogbookService() noexcept
 {

@@ -30,7 +30,7 @@
 #include <iterator>
 #include <cstdint>
 
-#include "../../../../Model/src/LightData.h"
+#include <Model/LightData.h>
 #include "../LightDaoIntf.h"
 
 class SQLiteLightDao : public LightDaoIntf

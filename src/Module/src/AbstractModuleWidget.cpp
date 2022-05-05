@@ -25,10 +25,10 @@
 #include <QWidget>
 #include <QAction>
 
-#include "../../Model/src/Logbook.h"
-#include "../../SkyConnect/src/SkyConnectManager.h"
-#include "../../SkyConnect/src/SkyConnectIntf.h"
-#include "../../Persistence/src/Service/FlightService.h"
+#include <Model/Logbook.h>
+#include <PluginManager/SkyConnectManager.h>
+#include <PluginManager/SkyConnectIntf.h>
+#include <Persistence/Service/FlightService.h>
 #include "Module.h"
 #include "AbstractModuleWidget.h"
 
@@ -36,11 +36,10 @@ class AbstractModuleWidgetPrivate
 {
 public:
     AbstractModuleWidgetPrivate(FlightService &theFlightService) noexcept
-        : active(false),
-          flightService(theFlightService)
+        : flightService(theFlightService)
     {}
 
-    bool active;
+    bool active{false};
     FlightService &flightService;
 };
 

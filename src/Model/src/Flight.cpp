@@ -127,7 +127,7 @@ void Flight::setTitle(const QString &title) noexcept
 {
     if (d->title != title) {
         d->title = title;
-        emit flightChanged();
+        emit descriptionOrTitleChanged();
     }
 }
 
@@ -140,7 +140,7 @@ void Flight::setDescription(const QString &description) noexcept
 {
     if (d->description != description) {
         d->description = description;
-        emit flightChanged();
+        emit descriptionOrTitleChanged();
     }
 }
 
@@ -183,7 +183,7 @@ void Flight::setUserAircraftIndex(int index) noexcept
 {
     if (d->userAircraftIndex != index) {
         d->userAircraftIndex = index;
-        emit userAircraftChanged(*d->aircraft.at(index));
+        emit userAircraftChanged();
     }
 }
 
@@ -193,9 +193,10 @@ std::int64_t Flight::deleteAircraftByIndex(int index) noexcept
     // A flight has at least one aircraft
     if (d->aircraft.size() > 1) {
         setUserAircraftIndex(qMax(d->userAircraftIndex - 1, 0));
-        aircraftId = d->aircraft.at(index)->getId();
+        aircraftId  = d->aircraft.at(index)->getId();
+        std::int64_t simulationObjectId = d->aircraft.at(index)->getSimulationObjectId();
         d->aircraft.erase(d->aircraft.begin() + index);
-        emit aircraftDeleted(aircraftId);
+        emit singleAircraftDeleted(simulationObjectId);
     } else {
         aircraftId = Aircraft::InvalidId;
     }
@@ -250,7 +251,12 @@ void Flight::clear(bool withOneAircraft) noexcept
 {
     d->creationTime = QDateTime::currentDateTime();
     d->clear(withOneAircraft);
-    emit flightChanged();
+    if (withOneAircraft) {
+        // Only emit the signals if the flight has at least one aircraft
+        // (but e.g. not shortly before loading a new flight from the logbook)
+        emit flightCleared();
+        emit descriptionOrTitleChanged();
+    }
 }
 
 Flight::Iterator Flight::begin() noexcept

@@ -81,7 +81,7 @@
   <customwidget>
    <class>BackupPeriodComboBox</class>
    <extends>QComboBox</extends>
-   <header location="global">BackupPeriodComboBox.h</header>
+   <header location="global">Widget/BackupPeriodComboBox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

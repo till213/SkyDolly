@@ -29,10 +29,10 @@
 #include <QSqlDatabase>
 #include <QStringView>
 
-#include "../../../Model/src/AircraftType.h"
+#include <Model/AircraftType.h>
 #include "../Dao/DaoFactory.h"
 #include "../Dao/AircraftTypeDaoIntf.h"
-#include "AircraftTypeService.h"
+#include <Service/AircraftTypeService.h>
 
 class AircraftTypeServicePrivate
 {
@@ -50,10 +50,18 @@ public:
 
 AircraftTypeService::AircraftTypeService() noexcept
     : d(std::make_unique<AircraftTypeServicePrivate>())
-{}
+{
+#ifdef DEBUG
+    qDebug("AircraftTypeService::AircraftTypeService: CREATED.");
+#endif
+}
 
 AircraftTypeService::~AircraftTypeService() noexcept
-{}
+{
+#ifdef DEBUG
+    qDebug("AircraftTypeService::~AircraftTypeService: DELETED.");
+#endif
+}
 
 bool AircraftTypeService::getByType(const QString &type, AircraftType &aircraftType) const noexcept
 {

@@ -28,11 +28,11 @@
 
 #include <QtGlobal>
 
-#include "../../Kernel/src/SkyMath.h"
-#include "../../Kernel/src/Convert.h"
-#include "../../Model/src/Aircraft.h"
-#include "../../Model/src/Position.h"
-#include "../../Model/src/PositionData.h"
+#include <Kernel/SkyMath.h>
+#include <Kernel/Convert.h>
+#include <Model/Aircraft.h>
+#include <Model/Position.h>
+#include <Model/PositionData.h>
 #include "Analytics.h"
 
 namespace  {
@@ -42,7 +42,7 @@ namespace  {
     constexpr double DefaultHeading = 0.0;
     constexpr std::int64_t DefaultTimestamp = 0.0;
 
-    auto distanceLambda = [](const PositionData &start, const PositionData &end) -> bool {
+    const auto distanceLambda = [](const PositionData &start, const PositionData &end) -> bool {
         const SkyMath::Coordinate startPos(start.latitude, start.longitude);
         const SkyMath::Coordinate endPos(end.latitude, end.longitude);
         const double distance = SkyMath::sphericalDistance(startPos, endPos, Convert::feetToMeters((start.altitude + end.altitude) / 2.0));
@@ -64,10 +64,18 @@ public:
 
 Analytics::Analytics(const Aircraft &aircraft)
     : d(std::make_unique<AnalyticsPrivate>(aircraft))
-{}
+{
+#ifdef DEBUG
+    qDebug("Analytics::~Analytics: CREATED");
+#endif
+}
 
 Analytics::~Analytics()
-{}
+{
+#ifdef DEBUG
+    qDebug("Analytics::~Analytics: DELETED");
+#endif
+}
 
 const std::pair<std::int64_t, double> Analytics::firstMovementHeading() const noexcept
 {

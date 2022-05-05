@@ -33,9 +33,9 @@
 #include <QDateTime>
 #include <QTimeZone>
 
-#include "../../../../Model/src/FlightPlan.h"
-#include "../../../../Model/src/Waypoint.h"
-#include "../../ConnectionManager.h"
+#include <Model/FlightPlan.h>
+#include <Model/Waypoint.h>
+#include <ConnectionManager.h>
 #include "SQLiteWaypointDao.h"
 
 class SQLiteWaypointDaoPrivate

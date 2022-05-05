@@ -28,7 +28,7 @@
 class QString;
 class QDateTime;
 
-#include "../Metadata.h"
+#include <Metadata.h>
 
 class DatabaseDaoIntf
 {
