@@ -33,8 +33,8 @@
 #include <QSqlError>
 #include <QSqlRecord>
 
-#include "../../../../Model/src/EngineData.h"
-#include "../../ConnectionManager.h"
+#include <Model/EngineData.h>
+#include <ConnectionManager.h>
 #include "SQLiteEngineDao.h"
 
 // PUBLIC

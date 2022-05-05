@@ -32,7 +32,7 @@
 class QString;
 class QDateTime;
 
-#include "../../Metadata.h"
+#include <Metadata.h>
 #include "../DatabaseDaoIntf.h"
 
 class DatabaseDaoPrivate;

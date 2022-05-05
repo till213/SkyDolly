@@ -32,11 +32,11 @@
 #include <QFileDialog>
 #include <QSqlDatabase>
 
-#include "../../Kernel/src/Const.h"
-#include "../../Kernel/src/Settings.h"
-#include "../../Model/src/Logbook.h"
-#include "../../Model/src/Flight.h"
-#include "../../Kernel/src/Version.h"
+#include <Kernel/Const.h>
+#include <Kernel/Settings.h>
+#include <Kernel/Version.h>
+#include <Model/Logbook.h>
+#include <Model/Flight.h>
 #include "Metadata.h"
 #include "Dao/DaoFactory.h"
 #include "Dao/DatabaseDaoIntf.h"

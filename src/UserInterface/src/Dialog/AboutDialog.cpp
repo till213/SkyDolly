@@ -26,7 +26,7 @@
 
 #include <QDialog>
 
-#include "../../../Kernel/src/Version.h"
+#include <Kernel/Version.h>
 #include "AboutDialog.h"
 #include "ui_AboutDialog.h"
 

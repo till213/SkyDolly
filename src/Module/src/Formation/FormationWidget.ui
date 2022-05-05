@@ -1131,11 +1131,10 @@
   <customwidget>
    <class>ActiveButton</class>
    <extends>QPushButton</extends>
-   <header location="global">ActiveButton.h</header>
+   <header location="global">Widget/ActiveButton.h</header>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../UserInterface/res/SkyDolly.qrc"/>
   <include location="../../../UserInterface/res/SkyDolly.qrc"/>
  </resources>
  <connections/>

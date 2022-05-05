@@ -29,7 +29,7 @@
 
 #include <QWidget>
 
-#include "../../../Model/src/TimeVariableData.h"
+#include <Model/TimeVariableData.h>
 
 class QShowEvent;
 class QHideEvent;

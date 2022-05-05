@@ -12,7 +12,8 @@ target_sources(SkyMathTest
 )
 
 set(KERNELTEST_LIBS
-    Qt${QT_VERSION_MAJOR}::Test Kernel
+    Qt${QT_VERSION_MAJOR}::Test
+    Sky::Kernel
 )
 
 target_link_libraries(SkyMathTest

@@ -30,7 +30,7 @@
 #include <iterator>
 #include <cstdint>
 
-#include "../../../../Model/src/SecondaryFlightControlData.h"
+#include <Model/SecondaryFlightControlData.h>
 #include "../SecondaryFlightControlDaoIntf.h"
 
 class SQLiteSecondaryFlightControlDao : public SecondaryFlightControlDaoIntf

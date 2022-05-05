@@ -33,9 +33,9 @@
 #include <QSqlError>
 #include <QSqlRecord>
 
-#include "../../../../Kernel/src/Enum.h"
-#include "../../../../Model/src/PrimaryFlightControlData.h"
-#include "../../ConnectionManager.h"
+#include <Kernel/Enum.h>
+#include <Model/PrimaryFlightControlData.h>
+#include <ConnectionManager.h>
 #include "SQLitePrimaryFlightControlDao.h"
 
 class SQLitePrimaryFlightControlDaoPrivate

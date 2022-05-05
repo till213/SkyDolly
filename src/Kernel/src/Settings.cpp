@@ -66,6 +66,7 @@ public:
     bool replaySpeedVisible;
     QByteArray windowGeometry;
     QByteArray windowState;
+    QByteArray logbookState;
     QString exportPath;
     QString defaultExportPath;
     QString defaultLogbookPath;
@@ -290,6 +291,16 @@ QByteArray Settings::getWindowState() const noexcept
 void Settings::setWindowState(const QByteArray &state) noexcept
 {
     d->windowState = state;
+}
+
+QByteArray Settings::getLogbookState() const
+{
+    return d->logbookState;
+}
+
+void Settings::setLogbookState(const QByteArray &state) noexcept
+{
+    d->logbookState = state;
 }
 
 bool Settings::isAbsoluteSeekEnabled() const noexcept
@@ -534,6 +545,7 @@ void Settings::store() const noexcept
         d->settings.setValue("MinimalUi", d->minimalUi);
         d->settings.setValue("Geometry", d->windowGeometry);
         d->settings.setValue("State", d->windowState);
+        d->settings.setValue("LogbookState", d->logbookState);
     }
     d->settings.endGroup();
     d->settings.beginGroup("Paths");
@@ -635,6 +647,7 @@ void Settings::restore() noexcept
         d->minimalUi = d->settings.value("MinimalUi", SettingsPrivate::DefaultMinimalUi).toBool();
         d->windowGeometry = d->settings.value("Geometry").toByteArray();
         d->windowState = d->settings.value("State").toByteArray();
+        d->logbookState = d->settings.value("LogbookState").toByteArray();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Paths");

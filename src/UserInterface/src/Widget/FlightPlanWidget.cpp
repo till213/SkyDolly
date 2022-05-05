@@ -26,12 +26,12 @@
 
 #include <QDialog>
 
-#include "../../../Model/src/SimVar.h"
-#include "../../../Model/src/Logbook.h"
-#include "../../../Model/src/Aircraft.h"
-#include "../../../Model/src/Flight.h"
-#include "../../../Model/src/FlightPlan.h"
-#include "../../../Model/src/Waypoint.h"
+#include <Model/SimVar.h>
+#include <Model/Logbook.h>
+#include <Model/Aircraft.h>
+#include <Model/Flight.h>
+#include <Model/FlightPlan.h>
+#include <Model/Waypoint.h>
 #include "WaypointWidget.h"
 
 #include "FlightPlanWidget.h"

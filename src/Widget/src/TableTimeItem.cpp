@@ -24,7 +24,7 @@
  */
 #include <QTime>
 
-#include "../../Kernel/src/Unit.h"
+#include <Kernel/Unit.h>
 #include "TableTimeItem.h"
 
 class TableTimeItemPrivate

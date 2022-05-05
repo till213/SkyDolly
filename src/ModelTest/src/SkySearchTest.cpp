@@ -26,8 +26,8 @@
 
 #include <QtTest/QtTest>
 
-#include "../../Model/src/PositionData.h"
-#include "../../Model/src/SkySearch.h"
+#include <Model/PositionData.h>
+#include <Model/SkySearch.h>
 #include "SkySearchTest.h"
 
 namespace

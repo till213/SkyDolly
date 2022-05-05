@@ -1,0 +1,10 @@
+if (${PLATFORM_IS_MACOS})
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_NAME}.app/Contents/PlugIns)
+else()
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Plugins)
+endif()
+message(STATUS "Output plugin directory=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Export)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Import)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Connect)

@@ -35,13 +35,13 @@
 #include <QDateTime>
 #include <QTimeZone>
 
-#include "../../../../Kernel/src/Enum.h"
-#include "../../../../Model/src/Flight.h"
-#include "../../../../Model/src/FlightSummary.h"
-#include "../../../../Model/src/FlightCondition.h"
+#include <Kernel/Enum.h>
+#include <Model/Flight.h>
+#include <Model/FlightSummary.h>
+#include <Model/FlightCondition.h>
 #include "../../Dao/AircraftDaoIntf.h"
 #include "../../Dao/DaoFactory.h"
-#include "../../ConnectionManager.h"
+#include <ConnectionManager.h>
 #include "SQLiteFlightDao.h"
 #include "SQLiteFlightDao.h"
 

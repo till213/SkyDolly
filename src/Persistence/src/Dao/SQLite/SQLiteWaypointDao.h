@@ -28,7 +28,7 @@
 #include <memory>
 #include <cstdint>
 
-#include "../../../../Model/src/Waypoint.h"
+#include <Model/Waypoint.h>
 #include "../WaypointDaoIntf.h"
 
 class FlightPlan;

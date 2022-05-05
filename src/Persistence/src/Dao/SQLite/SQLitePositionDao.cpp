@@ -33,9 +33,9 @@
 #include <QSqlError>
 #include <QSqlRecord>
 
-#include "../../../../Kernel/src/Enum.h"
-#include "../../../../Model/src/PositionData.h"
-#include "../../ConnectionManager.h"
+#include <Kernel/Enum.h>
+#include <Model/PositionData.h>
+#include <ConnectionManager.h>
 #include "SQLitePositionDao.h"
 
 class SQLitePositionDaoPrivate

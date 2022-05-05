@@ -30,7 +30,7 @@
 class QShowEvent;
 class QHideEvent;
 
-#include "../../../Model/src/TimeVariableData.h"
+#include <Model/TimeVariableData.h>
 #include "AbstractSimulationVariableWidget.h"
 
 class SkyConnectIntf;

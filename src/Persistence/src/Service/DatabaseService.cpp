@@ -35,13 +35,13 @@
 #include <QSqlDatabase>
 #include <QDateTime>
 
-#include "../../../Kernel/src/Settings.h"
-#include "../../../Kernel/src/Const.h"
-#include "../../../Model/src/Logbook.h"
-#include "../ConnectionManager.h"
+#include <Kernel/Settings.h>
+#include <Kernel/Const.h>
+#include <Model/Logbook.h>
+#include <ConnectionManager.h>
 #include "../Dao/DaoFactory.h"
 #include "../Dao/DatabaseDaoIntf.h"
-#include "DatabaseService.h"
+#include <Service/DatabaseService.h>
 
 namespace
 {
@@ -67,10 +67,18 @@ public:
 
 DatabaseService::DatabaseService() noexcept
     : d(std::make_unique<DatabaseServicePrivate>())
-{}
+{
+#ifdef DEBUG
+    qDebug("DatabaseService::DatabaseService: CREATED.");
+#endif
+}
 
 DatabaseService::~DatabaseService() noexcept
-{}
+{
+#ifdef DEBUG
+    qDebug("DatabaseService::~DatabaseService: DELETED.");
+#endif
+}
 
 bool DatabaseService::backup() noexcept
 {

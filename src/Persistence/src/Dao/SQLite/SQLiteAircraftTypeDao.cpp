@@ -31,8 +31,8 @@
 #include <QSqlError>
 #include <QSqlRecord>
 
-#include "../../../../Kernel/src/Enum.h"
-#include "../../../../Model/src/AircraftType.h"
+#include <Kernel/Enum.h>
+#include <Model/AircraftType.h>
 #include "SQLiteAircraftTypeDao.h"
 
 // PUBLIC

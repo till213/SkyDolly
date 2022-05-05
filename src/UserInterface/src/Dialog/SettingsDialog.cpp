@@ -30,11 +30,11 @@
 #include <QString>
 #include <QDoubleSpinBox>
 
-#include "../../../Kernel/src/SampleRate.h"
-#include "../../../Kernel/src/Enum.h"
-#include "../../../Kernel/src/Settings.h"
-#include "../../../Model/src/SimVar.h"
-#include "../../../SkyConnect/src/SkyConnectManager.h"
+#include <Kernel/SampleRate.h>
+#include <Kernel/Enum.h>
+#include <Kernel/Settings.h>
+#include <Model/SimVar.h>
+#include <PluginManager/SkyConnectManager.h>
 #include "SettingsDialog.h"
 #include "ui_SettingsDialog.h"
 

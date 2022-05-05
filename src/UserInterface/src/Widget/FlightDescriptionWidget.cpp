@@ -29,11 +29,11 @@
 #include <QPlainTextEdit>
 #include <QTextCursor>
 
-#include "../../../Kernel/src/Unit.h"
-#include "../../../Model/src/Logbook.h"
-#include "../../../Model/src/Flight.h"
-#include "../../../Persistence/src/Service/FlightService.h"
-#include "../../../Widget/src/FocusPlainTextEdit.h"
+#include <Kernel/Unit.h>
+#include <Model/Logbook.h>
+#include <Model/Flight.h>
+#include <Persistence/Service/FlightService.h>
+#include <Widget/FocusPlainTextEdit.h>
 #include "FlightDescriptionWidget.h"
 #include "ui_FlightDescriptionWidget.h"
 
@@ -73,19 +73,21 @@ void FlightDescriptionWidget::showEvent(QShowEvent *event) noexcept
     QWidget::showEvent(event);
     updateUi();
 
-    // Service
-    connect(&Logbook::getInstance().getCurrentFlight(), &Flight::flightChanged,
+    Logbook &logbook = Logbook::getInstance();
+    connect(&logbook.getCurrentFlight(), &Flight::descriptionOrTitleChanged,
             this, &FlightDescriptionWidget::updateUi);
-    connect(&d->flightService, &FlightService::flightStored,
+    connect(&logbook, &Logbook::flightStored,
             this, &FlightDescriptionWidget::updateUi);
 }
 
 void FlightDescriptionWidget::hideEvent(QHideEvent *event) noexcept
 {
     QWidget::hideEvent(event);
-    disconnect(&Logbook::getInstance().getCurrentFlight(), &Flight::flightChanged,
+
+    Logbook &logbook = Logbook::getInstance();
+    disconnect(&logbook.getCurrentFlight(), &Flight::descriptionOrTitleChanged,
                this, &FlightDescriptionWidget::updateUi);
-    disconnect(&d->flightService, &FlightService::flightStored,
+    disconnect(&logbook, &Logbook::flightStored,
                this, &FlightDescriptionWidget::updateUi);
 }
 

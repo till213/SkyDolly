@@ -28,13 +28,13 @@
 #include <QApplication>
 #include <QStringList>
 
-#include "../../Kernel/src/Version.h"
-#include "../../Kernel/src/Settings.h"
-#include "../../Model/src/Logbook.h"
-#include "../../SkyConnect/src/SkyConnectManager.h"
-#include "../../Persistence/src/ConnectionManager.h"
-#include "../../Plugin/src/PluginManager.h"
-#include "../../UserInterface/src/MainWindow.h"
+#include <Kernel/Version.h>
+#include <Kernel/Settings.h>
+#include <Model/Logbook.h>
+#include <PluginManager/SkyConnectManager.h>
+#include <Persistence/ConnectionManager.h>
+#include <PluginManager/PluginManager.h>
+#include <UserInterface/MainWindow.h>
 
 static void destroySingletons() noexcept
 {
@@ -46,7 +46,7 @@ static void destroySingletons() noexcept
     SkyConnectManager::destroyInstance();
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv[]) noexcept
 {
     QCoreApplication::setOrganizationName(Version::getOrganisationName());
     QCoreApplication::setApplicationName(Version::getApplicationName());
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     if (args.count() > 1) {
        filePath = args.at(1);
     }
-    int res;
+    int res {0};
     // Main window scope
     {
         std::unique_ptr<MainWindow> mainWindow = std::make_unique<MainWindow>(filePath);

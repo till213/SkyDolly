@@ -29,11 +29,11 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
-#include "../../../Kernel/src/Const.h"
-#include "../../../Kernel/src/Enum.h"
-#include "../../../Persistence/src/Service/DatabaseService.h"
-#include "../../../Persistence/src/ConnectionManager.h"
-#include "../../../Persistence/src/Metadata.h"
+#include <Kernel/Const.h>
+#include <Kernel/Enum.h>
+#include <Persistence/Service/DatabaseService.h>
+#include <Persistence/ConnectionManager.h>
+#include <Persistence/Metadata.h>
 #include "LogbookBackupDialog.h"
 #include "ui_LogbookBackupDialog.h"
 

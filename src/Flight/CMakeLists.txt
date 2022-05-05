@@ -1,27 +1,34 @@
 set(LIBRARY_NAME "Flight")
 
-add_definitions(-DFLIGHT_EXPORT)
-
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_library(${LIBRARY_NAME} SHARED)
 else()
     add_library(${LIBRARY_NAME} SHARED)
 endif()
+add_library(Sky::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
 
-set(LIBRARY_DEPENDENCIES
-    Qt${QT_VERSION_MAJOR}::Core Kernel Model
+target_compile_definitions(${LIBRARY_NAME}
+    PRIVATE
+        FLIGHT_EXPORT
 )
-
 target_sources(${LIBRARY_NAME}
     PRIVATE
-        src/FlightLib.h
-        src/FlightAugmentation.h src/FlightAugmentation.cpp
-        src/Analytics.h src/Analytics.cpp
+        include/Flight/FlightLib.h
+        include/Flight/FlightAugmentation.h src/FlightAugmentation.cpp
+        include/Flight/Analytics.h src/Analytics.cpp
 )
-
-target_link_libraries(${LIBRARY_NAME}
+target_include_directories(${LIBRARY_NAME}
+    INTERFACE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
     PRIVATE
-        ${LIBRARY_DEPENDENCIES}
+        include/Flight
+)
+target_link_libraries(${LIBRARY_NAME}
+    PUBLIC
+        Qt${QT_VERSION_MAJOR}::Core
+    PRIVATE
+        Sky::Kernel
+        Sky::Model
 )
 set_target_properties(${LIBRARY_NAME}
     PROPERTIES

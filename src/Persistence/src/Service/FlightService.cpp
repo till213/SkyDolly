@@ -27,17 +27,15 @@
 #include <forward_list>
 #include <cstdint>
 
-#include <QObject>
 #include <QSqlDatabase>
 
-#include "../../../Model/src/Flight.h"
-#include "../../../Model/src/Aircraft.h"
-#include "../../../SkyConnect/src/SkyConnectManager.h"
-#include "../../../SkyConnect/src/SkyConnectIntf.h"
+#include <Model/Logbook.h>
+#include <Model/Flight.h>
+#include <Model/Aircraft.h>
 #include "../Dao/DaoFactory.h"
 #include "../Dao/FlightDaoIntf.h"
 #include "../Dao/AircraftDaoIntf.h"
-#include "FlightService.h"
+#include <Service/FlightService.h>
 
 class FlightServicePrivate
 {
@@ -53,17 +51,16 @@ public:
 
 // PUBLIC
 
-FlightService::FlightService(QObject *parent) noexcept
-    : QObject(parent),
-      d(std::make_unique<FlightServicePrivate>())
-{}
+FlightService::FlightService() noexcept
+    : d(std::make_unique<FlightServicePrivate>())
+{
+#ifdef DEBUG
+    qDebug("FlightService::FlightService: CREATED.");
+#endif
+}
 
 FlightService::~FlightService() noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect && skyConnect->get().isConnected()) {
-        skyConnect->get().destroyAIObjects();
-    }
 #ifdef DEBUG
     qDebug("FlightService::~FlightService: DELETED.");
 #endif
@@ -76,9 +73,7 @@ bool FlightService::store(Flight &flight) noexcept
         ok = d->flightDao->addFlight(flight);
         if (ok) {
             ok = QSqlDatabase::database().commit();
-            // @todo Refactor: remove all signals from services, move them to Flight
-            emit flightStored(flight.getId());
-            emit flight.flightStored(flight.getId());
+            emit Logbook::getInstance().flightStored(flight.getId());
         } else {
             QSqlDatabase::database().rollback();
         }
@@ -90,17 +85,12 @@ bool FlightService::restore(std::int64_t id, Flight &flight) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
-        std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-        if (skyConnect) {
-            skyConnect->get().destroyAIObjects();
-            ok = d->flightDao->getFlightById(id, flight);
-            emit flightRestored(flight.getId());
-            if (ok) {
-                ok = skyConnect->get().createAIObjects();
-            }
-        }
-        QSqlDatabase::database().rollback();
+        flight.blockSignals(true);
+        ok = d->flightDao->getFlightById(id, flight);
+        flight.blockSignals(false);
+        emit Logbook::getInstance().flightRestored(flight.getId());
     }
+    QSqlDatabase::database().rollback();
     return ok;
 }
 
@@ -108,6 +98,10 @@ bool FlightService::deleteById(std::int64_t id)  noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
+        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        if (flight.getId() == id) {
+            flight.clear(true);
+        }
         ok = d->flightDao->deleteById(id);
         if (ok) {
             ok = QSqlDatabase::database().commit();
@@ -134,7 +128,7 @@ bool FlightService::updateTitle(std::int64_t id, const QString &title) noexcept
         ok = d->flightDao->updateTitle(id, title);
         if (ok) {
             ok = QSqlDatabase::database().commit();
-            emit flightUpdated(id);
+            emit Logbook::getInstance().flightUpdated(id);
         } else {
             QSqlDatabase::database().rollback();
         }
@@ -159,7 +153,7 @@ bool FlightService::updateTitleAndDescription(std::int64_t id, const QString &ti
         ok = d->flightDao->updateTitleAndDescription(id, title, description);
         if (ok) {
             ok = QSqlDatabase::database().commit();
-            emit flightUpdated(id);
+            emit Logbook::getInstance().flightUpdated(id);
         } else {
             QSqlDatabase::database().rollback();
         }
@@ -172,14 +166,9 @@ bool FlightService::updateUserAircraftIndex(Flight &flight, int index) noexcept
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
         flight.setUserAircraftIndex(index);
-        std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-        if (skyConnect) {
-            skyConnect->get().updateUserAircraft();
-        }
         ok = d->flightDao->updateUserAircraftIndex(flight.getId(), index);
         if (ok) {
             ok = QSqlDatabase::database().commit();
-            emit flightUpdated(flight.getId());
         } else {
             QSqlDatabase::database().rollback();
         }
