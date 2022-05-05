@@ -73,13 +73,17 @@ set_target_properties(GeographicLib_SHARED
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
 
-# Enabled link time optimisation (LTO), if available
-check_ipo_supported(RESULT ipo_support OUTPUT output LANGUAGES CXX)
-if(ipo_support)
-    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-    message(STATUS "IPO SUPPORT enabled")
+# Enabled link time optimisation (LTO) for release build, if available
+if(NOT ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug"))
+    check_ipo_supported(RESULT ipo_support OUTPUT output LANGUAGES CXX)
+    if(ipo_support)
+        set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+        message(STATUS "IPO SUPPORT enabled")
+    else()
+        message(WARNING "IPO is not supported: ${output}")
+    endif()
 else()
-    message(WARNING "IPO is not supported: ${output}")
+    message(STATUS "IPO SUPPORT disabled for debug builds")
 endif()
 
 # Application libraries
