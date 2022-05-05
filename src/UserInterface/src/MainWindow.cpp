@@ -986,7 +986,7 @@ void MainWindow::updateControlUi() noexcept
     const Connect::State state = skyConnect ? skyConnect->get().getState() : Connect::State::Disconnected;
     switch (state) {
     case Connect::State::Disconnected:
-        // Fall-thru intened: each time a control element is triggered a connection
+        // Fall-thru intended: each time a control element is triggered a connection
         // attempt is made, so we enable the same elements as in connected state
         [[fallthrough]];
     case Connect::State::Connected:
