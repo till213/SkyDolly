@@ -206,7 +206,7 @@ void FormationWidget::showEvent(QShowEvent *event) noexcept
             this, &FormationWidget::updateUi);
 
     // Also updates the UI
-    handleUserAircraftChanged(flight.getUserAircraft());
+    handleUserAircraftChanged();
     handleSelectionChanged();    
 }
 
@@ -779,7 +779,7 @@ void FormationWidget::updateToolTips() noexcept
     }
 }
 
-void FormationWidget::handleUserAircraftChanged([[maybe_unused]] Aircraft &aircraft) noexcept
+void FormationWidget::handleUserAircraftChanged() noexcept
 {
     updateRelativePosition();
     updateUi();

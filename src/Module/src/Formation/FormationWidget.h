@@ -91,7 +91,7 @@ private slots:
     void updateReplayUi() noexcept;
     void updateToolTips() noexcept;
 
-    void handleUserAircraftChanged(Aircraft &aircraft) noexcept;
+    void handleUserAircraftChanged() noexcept;
     void handleAircraftInfoChanged() noexcept;
     void handleCellSelected(int row, int column) noexcept;
     void handleCellChanged(int row, int column) noexcept;
