@@ -85,7 +85,9 @@ bool FlightService::restore(std::int64_t id, Flight &flight) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
+        flight.blockSignals(true);
         ok = d->flightDao->getFlightById(id, flight);
+        flight.blockSignals(false);
         emit Logbook::getInstance().flightRestored(flight.getId());
     }
     QSqlDatabase::database().rollback();

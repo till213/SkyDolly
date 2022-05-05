@@ -95,7 +95,6 @@ public:
     virtual double calculateRecordedSamplesPerSecond() const noexcept override;
 
 public slots:
-    virtual void createAIObjects() noexcept override;
     virtual void destroyAIObjects() noexcept override;
     virtual void destroyAIObject(std::int64_t simulatedObjectId) noexcept override;
     virtual void updateAIObjects() noexcept override;

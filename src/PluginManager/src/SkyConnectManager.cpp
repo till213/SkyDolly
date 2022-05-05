@@ -162,15 +162,14 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
                     this, &SkyConnectManager::recordingStopped);
             // Logbook
             const Logbook &logbook = Logbook::getInstance();
-            // @todo We need to delete the previous AI objects
-            //       -> The SkyConnect implemenation needs to store a current
-            //          list of simulation object IDs!
             connect(&logbook, &Logbook::flightRestored,
-                    skyPlugin, &SkyConnectIntf::createAIObjects);
+                    skyPlugin, &SkyConnectIntf::updateAIObjects);
 
             // Flight
             const Flight &flight = logbook.getCurrentFlight();
-            connect(&flight, &Flight::aircraftDeleted,
+            connect(&flight, &Flight::aircraftAdded,
+                    skyPlugin, &SkyConnectIntf::updateAIObjects);
+            connect(&flight, &Flight::singleAircraftDeleted,
                     skyPlugin, &SkyConnectIntf::destroyAIObject);
             connect(&flight, &Flight::userAircraftChanged,
                     skyPlugin, &SkyConnectIntf::updateAIObjects);

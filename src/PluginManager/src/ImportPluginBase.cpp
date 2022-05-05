@@ -42,7 +42,6 @@
 #include <Kernel/Settings.h>
 #include <Kernel/SkyMath.h>
 #include <Kernel/Convert.h>
-#include <Flight/FlightAugmentation.h>
 #include <Model/Flight.h>
 #include <Model/FlightCondition.h>
 #include <Model/Aircraft.h>
@@ -50,11 +49,10 @@
 #include <Model/PositionData.h>
 #include <Model/FlightPlan.h>
 #include <Model/Waypoint.h>
+#include <Flight/FlightAugmentation.h>
 #include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/AircraftService.h>
 #include <Persistence/Service/AircraftTypeService.h>
-#include "SkyConnectManager.h"
-#include "SkyConnectIntf.h"
 #include "BasicImportDialog.h"
 #include "ImportPluginBaseSettings.h"
 #include "ImportPluginBase.h"
@@ -129,14 +127,7 @@ bool ImportPluginBase::importFlight(FlightService &flightService, Flight &flight
 #ifdef DEBUG
             qDebug("%s import %s in %lld ms", qPrintable(QFileInfo(selectedPath).fileName()), (ok ? qPrintable("SUCCESS") : qPrintable("FAIL")), timer.elapsed());
 #endif
-            if (ok) {
-                if (baseSettings.isAddToFlightEnabled()) {
-                    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-                    if (skyConnect) {
-                        skyConnect->get().updateAIObjects();
-                    }
-                }
-            } else if (!baseSettings.isImportDirectoryEnabled()) {
+            if (!ok && !baseSettings.isImportDirectoryEnabled()) {
                 QMessageBox::warning(PluginBase::getParentWidget(), tr("Import error"), tr("The file %1 could not be imported.").arg(selectedPath));
             }
         } else {

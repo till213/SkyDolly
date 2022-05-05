@@ -196,7 +196,7 @@ std::int64_t Flight::deleteAircraftByIndex(int index) noexcept
         aircraftId  = d->aircraft.at(index)->getId();
         std::int64_t simulationObjectId = d->aircraft.at(index)->getSimulationObjectId();
         d->aircraft.erase(d->aircraft.begin() + index);
-        emit aircraftDeleted(simulationObjectId);
+        emit singleAircraftDeleted(simulationObjectId);
     } else {
         aircraftId = Aircraft::InvalidId;
     }
