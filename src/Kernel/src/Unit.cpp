@@ -27,6 +27,9 @@
 #include <limits>
 #include <chrono>
 #include <cstdint>
+#include <string>
+
+#include <GeographicLib/DMS.hpp>
 
 #include <QCoreApplication>
 #include <QString>
@@ -71,9 +74,8 @@ QString Unit::formatLatitude(double latitude) noexcept
     double seconds;
 
     Convert::ddTodms(latitude, degrees, minutes, seconds);
-
-    QString hemisphere = latitude >= 0.0 ? QCoreApplication::translate("Unit", "N") : QCoreApplication::translate("Unit", "S");
-    return QString::number(degrees) % "° " % QString::number(minutes) % "' " % QString::number(seconds, 'f', Precision) % "'' " % " " % hemisphere;
+    const std::string latitudeString = GeographicLib::DMS::Encode(latitude, 5, GeographicLib::DMS::LATITUDE, ' ');
+    return QString::fromStdString(latitudeString);
 }
 
 QString Unit::formatLongitude(double longitude) noexcept

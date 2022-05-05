@@ -141,10 +141,10 @@ public:
      *        the seconds [0.0, 59.99]
      * \return the coordinate as a single fractional value
      */
-    static inline double dmsTodd(int degrees, int minutes, double seconds) noexcept
-    {
-        return degrees + static_cast<double>(minutes) / 60.0 + seconds / 3600.0;
-    }
+//    static inline double dmsTodd(int degrees, int minutes, double seconds) noexcept
+//    {
+//        return degrees + static_cast<double>(minutes) / 60.0 + seconds / 3600.0;
+//    }
 
     /*!
      * Converts a latitude or longitude coordinate given in degrees and decimal minutes (e.g.
@@ -156,10 +156,10 @@ public:
      *        the decimal minutes [0.0, 59.99]
      * \return the coordinate as a single fractional value
      */
-    static inline double dmTodd(int degrees, double minutes) noexcept
-    {
-        return degrees + minutes / 60.0;
-    }
+//    static inline double dmTodd(int degrees, double minutes) noexcept
+//    {
+//        return degrees + minutes / 60.0;
+//    }
 
     /*!
      * Converts a latitude or longitude coordinate given as single decimal value (double)
