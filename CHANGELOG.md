@@ -18,11 +18,12 @@
 - The order of the logbook table columns can now be changed
 - In the formation module the "Delete" key now deletes the selected aircraft
 - Latitude and longitude values are now formatted with leading zeroes
+- Latitude and longitude values are now formatted with leading zeroes
 
 ### Bug Fixes
 - In the logbook module the date selection column width is now properly calculated (no month name is truncated)
 
-#### Under The Hood
+### Under The Hood
 - Introduction of the GeographicLib
   * Calculating undulation values
   * Geodesic calculations (distance, azimuth, relative position)
