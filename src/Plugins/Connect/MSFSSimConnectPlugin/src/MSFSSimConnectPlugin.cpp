@@ -69,13 +69,13 @@
 #include "SimConnectLight.h"
 #include "SimConnectFlightPlan.h"
 #include "SimConnectSimulationTime.h"
-#include "SimConnectAI.h"
+#include "SimConnectAi.h"
 #include "EventWidget.h"
 #include "MSFSSimConnectPlugin.h"
 
 namespace
 {
-    const char *ConnectionName = "SkyConnect";
+    const char *ConnectionName= "SkyConnect";
     constexpr DWORD UserAirplaneRadiusMeters = 0;
 
     enum struct Event: ::SIMCONNECT_CLIENT_EVENT_ID {
@@ -108,7 +108,7 @@ public:
           simConnectHandle(nullptr),
           eventWidget(std::make_unique<EventWidget>()),
           currentRequestPeriod(::SIMCONNECT_PERIOD_NEVER),
-          simConnectAI(nullptr)
+          simConnectAi(nullptr)
     {}
 
     bool storeDataImmediately;
@@ -127,9 +127,7 @@ public:
     ::SIMCONNECT_PERIOD currentRequestPeriod;
     // Insert order is order of flight plan
     tsl::ordered_map<QString, Waypoint> flightPlan;
-    std::unique_ptr<SimConnectAI> simConnectAI;
-    // Ordered key: request ID - value: AI object ID
-    std::unordered_map<::SIMCONNECT_DATA_REQUEST_ID, Aircraft *> pendingAIAircraftCreationRequests;
+    std::unique_ptr<SimConnectAi> simConnectAi;
 };
 
 // PUBLIC
@@ -319,8 +317,8 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
 
         if (getState() != Connect::State::Recording || !isUserAircraft) {
 
-            const std::int64_t objectId = aircraft->getSimulationObjectId();
-            if (objectId != Aircraft::InvalidSimulationId && objectId != Aircraft::PendingSimulationId) {
+            const std::int64_t objectId = d->simConnectAi->getSimulatedObjectByAircraftId(aircraft->getId());
+            if (isUserAircraft || objectId != SimConnectAi::InvalidObjectId) {
 
                 ok = true;
                 const PositionData &positionData = aircraft->getPositionConst().interpolate(currentTimestamp, access);
@@ -401,7 +399,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
                     }
                 }
 
-            } // Valid simulation object ID
+            } // User aircraft or valid simulation object ID
 
         } // User aircraft not sent during recording
 
@@ -505,7 +503,7 @@ bool MSFSSimConnectPlugin::connectWithSim() noexcept
     DWORD userEvent = EventWidget::SimConnnectUserMessage;
     HRESULT result = ::SimConnect_Open(&(d->simConnectHandle), ::ConnectionName, hWnd, userEvent, nullptr, ::SIMCONNECT_OPEN_CONFIGINDEX_LOCAL);
     if (result == S_OK) {
-        d->simConnectAI = std::make_unique<SimConnectAI>(d->simConnectHandle);
+        d->simConnectAi = std::make_unique<SimConnectAi>(d->simConnectHandle);
         setupRequestData();
     }
 #ifdef DEBUG
@@ -518,29 +516,14 @@ bool MSFSSimConnectPlugin::connectWithSim() noexcept
     return ok;
 }
 
-void MSFSSimConnectPlugin::onCreateAiObjects(const Flight &flight) noexcept
-{
-    // When "fly with formation" is enabled we also create an AI aircraft for the user aircraft
-    // (the user aircraft of the recorded aircraft in the formation, that is)
-    const bool includingUserAircraft = getReplayMode() == ReplayMode::FlyWithFormation;
-    d->simConnectAI->addSimulatedAircraft(getCurrentFlight(), getCurrentTimestamp(), includingUserAircraft, d->pendingAIAircraftCreationRequests);
-}
-
-void MSFSSimConnectPlugin::onDestroyAiObjects() noexcept
-{
-    d->pendingAIAircraftCreationRequests.clear();
-    d->simConnectAI->removeSimulatedAircraft(getCurrentFlight());
-}
-
 void MSFSSimConnectPlugin::onAddAiObject(const Aircraft &aircraft) noexcept
 {
-    // @todo IMPLEMENT ME!!!
-    // d->simConnectAI->removeSimulatedObject(aircraftId);
+    d->simConnectAi->addObject(aircraft, getCurrentTimestamp());
 }
 
-void MSFSSimConnectPlugin::onDestroyAiObject(std::int64_t aircraftId) noexcept
+void MSFSSimConnectPlugin::onRemoveAiObject(std::int64_t aircraftId) noexcept
 {
-    d->simConnectAI->removeSimulatedObject(aircraftId);
+    d->simConnectAi->removeByAircraftId(aircraftId);
 }
 
 // PROTECTED SLOTS
@@ -1002,20 +985,18 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
     case ::SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID:
     {
         SIMCONNECT_RECV_ASSIGNED_OBJECT_ID *objectData = (SIMCONNECT_RECV_ASSIGNED_OBJECT_ID*)receivedData;
-        auto it = skyConnect->d->pendingAIAircraftCreationRequests.extract(objectData->dwRequestID);
-        if (!it.empty()) {
-            Aircraft *aircraft = it.mapped();
-            aircraft->setSimulationObjectId(objectData->dwObjectID);
+        std::int64_t simulationObjectId = objectData->dwObjectID;
+        if (skyConnect->d->simConnectAi->registerObjectId(objectData->dwRequestID, simulationObjectId)) {
 #ifdef DEBUG
-            qDebug("SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID: Request ID: %lu, asssigned object ID: %lu, aircraft ID: %lld, remaining pending requests: %lld",
-                   objectData->dwRequestID, objectData->dwObjectID, aircraft->getId(), skyConnect->d->pendingAIAircraftCreationRequests.size());
+            qDebug("SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID: Request ID: %lu, asssigned object ID: %lu",
+                   objectData->dwRequestID, objectData->dwObjectID);
 #endif
-            ::SimConnect_AIReleaseControl(skyConnect->d->simConnectHandle, aircraft->getSimulationObjectId(), Enum::toUnderlyingType(SimConnectType::DataRequest::AiReleaseControl));
+            ::SimConnect_AIReleaseControl(skyConnect->d->simConnectHandle, simulationObjectId, Enum::toUnderlyingType(SimConnectType::DataRequest::AiReleaseControl));
             skyConnect->setAircraftFrozen(objectData->dwObjectID, true);
         } else {
             // No pending request (request has already been removed), so destroy the
             // just generated AI object again
-            skyConnect->d->simConnectAI->removeSimulatedObject(objectData->dwObjectID);
+            skyConnect->d->simConnectAi->removeByObjectId(objectData->dwObjectID);
 #ifdef DEBUG
             qDebug("SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID: orphaned AI object response for original request %lu, DESTROYING AI Object again: %lu", objectData->dwRequestID, objectData->dwObjectID);
 #endif

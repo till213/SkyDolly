@@ -133,10 +133,8 @@ protected:
     virtual bool isConnectedWithSim() const noexcept = 0;
     virtual bool connectWithSim() noexcept = 0;
 
-    virtual void onCreateAiObjects(const Flight &flight) noexcept = 0;
-    virtual void onDestroyAiObjects() noexcept = 0;
     virtual void onAddAiObject(const Aircraft &aircraft) noexcept = 0;
-    virtual void onDestroyAiObject(std::int64_t aircraftId) noexcept = 0;
+    virtual void onRemoveAiObject(std::int64_t aircraftId) noexcept = 0;
 
 protected slots:
     virtual void recordData() noexcept = 0;

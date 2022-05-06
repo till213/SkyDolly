@@ -72,10 +72,8 @@ protected:
     bool isConnectedWithSim() const noexcept override;
     bool connectWithSim() noexcept override;
 
-    void onCreateAiObjects(const Flight &flight) noexcept override;
-    void onDestroyAiObjects() noexcept override;
     void onAddAiObject(const Aircraft &aircraft) noexcept override;
-    void onDestroyAiObject(std::int64_t aircraftId) noexcept override;
+    void onRemoveAiObject(std::int64_t aircraftId) noexcept override;
 
 protected slots:
     void recordData() noexcept override;

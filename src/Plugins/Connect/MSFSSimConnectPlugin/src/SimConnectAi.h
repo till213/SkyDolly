@@ -26,8 +26,6 @@
 #define SIMCONNECTAI_H
 
 #include <memory>
-#include <vector>
-#include <unordered_map>
 #include <cstdint>
 
 #include <windows.h>
@@ -37,22 +35,36 @@ class Flight;
 class Aircraft;
 class SimConnectAIPrivate;
 
-class SimConnectAI
+class SimConnectAi
 {
 public:
-    SimConnectAI(::HANDLE simConnectHandle);
-    ~SimConnectAI();
+    SimConnectAi(::HANDLE simConnectHandle);
+    ~SimConnectAi();
 
-    // @todo Replace Aircraft pointer with aircraft index! Pointer might become invalid when aircraft is removed from Flight
-    bool addSimulatedAircraft(const Flight &flight, std::int64_t timestamp, bool includingUserAircraft, std::unordered_map<::SIMCONNECT_DATA_REQUEST_ID, Aircraft *> &pendingAIAircraftCreationRequests) noexcept;
-    void removeSimulatedAircraft(Flight &flight) noexcept;
-    void removeSimulatedAircraft(Aircraft &aircraft) noexcept;
-    void removeSimulatedObject(std::int64_t objectId) noexcept;
+    void addObject(const Aircraft &aircraft, std::int64_t timestamp) noexcept;
+    void removeByAircraftId(std::int64_t aircraftId) noexcept;
+    void removeByObjectId(::SIMCONNECT_OBJECT_ID objectId) noexcept;
+
+    /*!
+     * Registers the \c objectId, as returned by the server via SimConnect, with the given \c requestId
+     * as key. The registration succeeds if the request to create the given simulated object is still active.
+     *
+     * \param requestId
+     *        the SimConnect request ID with which the simulated object creation has been originally requested
+     * \param objectId
+     *        the ID of the newly created simulation object
+     * \return \c true if the registration succeeded; \c false if the original simulated object creation
+     *         request has already been removed
+     */
+    bool registerObjectId(::SIMCONNECT_DATA_REQUEST_ID requestId, ::SIMCONNECT_OBJECT_ID objectId) noexcept;
+    ::SIMCONNECT_OBJECT_ID getSimulatedObjectByAircraftId(std::int64_t aircraftId) const noexcept;
+
+    static constexpr ::SIMCONNECT_OBJECT_ID InvalidObjectId = -1;
 
 private:
     std::unique_ptr<SimConnectAIPrivate> d;
 
-    inline bool isValidAiObjectId(std::int64_t objectId) const noexcept;
+    bool hasRequest(::SIMCONNECT_DATA_REQUEST_ID requestId) const noexcept;
 };
 
 #endif // SIMCONNECTAI_H
