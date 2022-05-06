@@ -45,9 +45,9 @@ Convert::Convert() noexcept
             m_egm = std::make_unique<GeographicLib::Geoid>(egmName, egmDirectory);
         } catch (const std::exception &ex) {
             m_egm = nullptr;
-    #ifdef DEBUG
+#ifdef DEBUG
             qDebug("Convert::Convert: caught exception: %s", ex.what());
-    #endif
+#endif
         }
     } else {
         m_egm = nullptr;

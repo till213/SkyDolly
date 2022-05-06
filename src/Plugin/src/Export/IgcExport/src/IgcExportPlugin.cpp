@@ -35,6 +35,8 @@
 #include <QSysInfo>
 #include <QDesktopServices>
 
+#include <GeographicLib/DMS.hpp>
+
 #include "../../../../../Kernel/src/Enum.h"
 #include "../../../../../Kernel/src/File.h"
 #include "../../../../../Kernel/src/Unit.h"
@@ -370,12 +372,13 @@ inline QByteArray IgcExportPlugin::IgcExportPlugin::formatNumber(int value, int 
 
 inline QByteArray IgcExportPlugin::IgcExportPlugin::formatLatitude(double latitude) const noexcept
 {
-    int degrees;
+    double degrees;
     double minutes;
-    Convert::ddTodm(latitude, degrees, minutes);
+
+    GeographicLib::DMS::Encode(latitude, degrees, minutes);
     const int decimals = static_cast<int>((minutes - static_cast<int>(minutes)) * 1000);
     const QByteArray latitudeString = QString("%1%2%3%4")
-            .arg(degrees, 2, 10, QLatin1Char('0'))
+            .arg(static_cast<int>(degrees), 2, 10, QLatin1Char('0'))
             .arg(static_cast<int>(minutes), 2, 10, QLatin1Char('0'))
             .arg(decimals, 3, 10, QLatin1Char('0'))
             .arg(latitude >= 0.0 ? QLatin1Char('N') : QLatin1Char('S'))
@@ -385,12 +388,13 @@ inline QByteArray IgcExportPlugin::IgcExportPlugin::formatLatitude(double latitu
 
 inline QByteArray IgcExportPlugin::IgcExportPlugin::formatLongitude(double longitude) const noexcept
 {
-    int degrees;
+    double degrees;
     double minutes;
-    Convert::ddTodm(longitude, degrees, minutes);
+
+    GeographicLib::DMS::Encode(longitude, degrees, minutes);
     const int decimals = static_cast<int>((minutes - static_cast<int>(minutes)) * 1000);
     const QByteArray latitudeString = QString("%1%2%3%4")
-            .arg(degrees, 3, 10, QLatin1Char('0'))
+            .arg(static_cast<int>(degrees), 3, 10, QLatin1Char('0'))
             .arg(static_cast<int>(minutes), 2, 10, QLatin1Char('0'))
             .arg(decimals, 3, 10, QLatin1Char('0'))
             .arg(longitude >= 0.0 ? QLatin1Char('E') : QLatin1Char('W'))

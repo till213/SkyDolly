@@ -11,6 +11,8 @@
   * Note: both the IGC and GPX specifications state that the GNSS altitude (elevation) refer to the WGS84 reference ellipsoid, but not every IGC/GPX file necessarily conforms to the specification and may contain earth gravity model (EGM) geoid altitudes ("above sea level") instead
 - IGC & GPX export
   * The altitude is converted from the geoid (EGM 2008) to height above the WGS84 reference ellipsoid
+- User interface
+  * Latitude and longitude values are now formatted with leading zeroes
 
 ### Bug Fixes
 - In the logbook module the date selection column width is now properly calculated (no month name is truncated)
