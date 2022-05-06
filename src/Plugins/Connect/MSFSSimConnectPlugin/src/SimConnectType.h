@@ -56,11 +56,10 @@ namespace SimConnectType
         AircraftHandle,
         Light,
         // AI objects
-        AICreateObject,
-        AIRemoveObject,
-        AIReleaseControl,
+        AiRemoveObject,
+        AiReleaseControl,
         // Must come last
-        AIObjectBase
+        AiObjectBase
     };
 }
 

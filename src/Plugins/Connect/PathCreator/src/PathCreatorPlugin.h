@@ -34,9 +34,10 @@
 #include <PluginManager/AbstractSkyConnect.h>
 #include <PluginManager/SkyConnectIntf.h>
 
+class Flight;
+class Aircraft;
 struct PositionData;
 class InitialPosition;
-class Aircraft;
 class PathCreatorPluginPrivate;
 
 class PathCreatorPlugin : public AbstractSkyConnect
@@ -46,37 +47,36 @@ class PathCreatorPlugin : public AbstractSkyConnect
     Q_INTERFACES(SkyConnectIntf)
 public:
     PathCreatorPlugin(QObject *parent = nullptr) noexcept;
-    virtual ~PathCreatorPlugin() noexcept;
+    ~PathCreatorPlugin() noexcept override;
 
-    virtual bool setUserAircraftPosition(const PositionData &positionData) noexcept override;
+    bool setUserAircraftPosition(const PositionData &positionData) noexcept override;
 
 protected:
-    virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
+    bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept override;
 
-    virtual bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept override;
-    virtual bool onFreezeUserAircraft(bool enable) noexcept override;
+    bool onInitialPositionSetup(const InitialPosition &initialPosition) noexcept override;
+    bool onFreezeUserAircraft(bool enable) noexcept override;
 
-    virtual bool onStartRecording() noexcept override;
-    virtual void onRecordingPaused(bool paused) noexcept override;
-    virtual void onStopRecording() noexcept override;
+    bool onStartRecording() noexcept override;
+    void onRecordingPaused(bool paused) noexcept override;
+    void onStopRecording() noexcept override;
 
-    virtual bool onStartReplay(std::int64_t currentTimestamp) noexcept override;
-    virtual void onReplayPaused(bool paused) noexcept override;
-    virtual void onStopReplay() noexcept override;
+    bool onStartReplay(std::int64_t currentTimestamp) noexcept override;
+    void onReplayPaused(bool paused) noexcept override;
+    void onStopReplay() noexcept override;
 
-    virtual void onSeek(std::int64_t currentTimestamp) noexcept override;
-    virtual void onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
+    void onSeek(std::int64_t currentTimestamp) noexcept override;
+    void onRecordingSampleRateChanged(SampleRate::SampleRate sampleRate) noexcept override;
 
-    virtual bool sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept override;
-    virtual bool isConnectedWithSim() const noexcept override;
-    virtual bool connectWithSim() noexcept override;
+    bool sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept override;
+    bool isConnectedWithSim() const noexcept override;
+    bool connectWithSim() noexcept override;
 
-    virtual void onCreateAIObjects() noexcept override;
-    virtual void onDestroyAIObjects() noexcept override;
-    virtual void onDestroyAIObject(std::int64_t simulatedObjectId) noexcept override;
+    void onAddAiObject(const Aircraft &aircraft) noexcept override;
+    void onRemoveAiObject(std::int64_t aircraftId) noexcept override;
 
 protected slots:
-    virtual void recordData() noexcept override;
+    void recordData() noexcept override;
 
 private:
     std::unique_ptr<PathCreatorPluginPrivate> d;

@@ -73,7 +73,7 @@ bool FlightService::store(Flight &flight) noexcept
         ok = d->flightDao->addFlight(flight);
         if (ok) {
             ok = QSqlDatabase::database().commit();
-            emit Logbook::getInstance().flightStored(flight.getId());
+            emit flight.flightStored(flight.getId());
         } else {
             QSqlDatabase::database().rollback();
         }
@@ -88,7 +88,7 @@ bool FlightService::restore(std::int64_t id, Flight &flight) noexcept
         flight.blockSignals(true);
         ok = d->flightDao->getFlightById(id, flight);
         flight.blockSignals(false);
-        emit Logbook::getInstance().flightRestored(flight.getId());
+        emit flight.flightRestored(flight.getId());
     }
     QSqlDatabase::database().rollback();
     return ok;
@@ -128,7 +128,7 @@ bool FlightService::updateTitle(std::int64_t id, const QString &title) noexcept
         ok = d->flightDao->updateTitle(id, title);
         if (ok) {
             ok = QSqlDatabase::database().commit();
-            emit Logbook::getInstance().flightUpdated(id);
+            emit Logbook::getInstance().flightTitleOrDescriptionChanged(id);
         } else {
             QSqlDatabase::database().rollback();
         }
@@ -153,7 +153,7 @@ bool FlightService::updateTitleAndDescription(std::int64_t id, const QString &ti
         ok = d->flightDao->updateTitleAndDescription(id, title, description);
         if (ok) {
             ok = QSqlDatabase::database().commit();
-            emit Logbook::getInstance().flightUpdated(id);
+            emit Logbook::getInstance().flightTitleOrDescriptionChanged(id);
         } else {
             QSqlDatabase::database().rollback();
         }

@@ -48,19 +48,11 @@ class MODEL_API Aircraft : public QObject
 {
     Q_OBJECT
 public:
-
-    static constexpr std::int64_t InvalidId = -1;
-    static constexpr std::int64_t InvalidSimulationId = -1;
-    static constexpr std::int64_t PendingSimulationId = -2;
-
     Aircraft(QObject *parent = nullptr) noexcept;
     virtual ~Aircraft() noexcept;
 
     std::int64_t getId() const noexcept;
     void setId(std::int64_t id) noexcept;
-
-    std::int64_t getSimulationObjectId() const noexcept;
-    void setSimulationObjectId(std::int64_t id) noexcept;
 
     const Position &getPositionConst() const noexcept;
     Position &getPosition() const noexcept;
@@ -98,6 +90,8 @@ public:
 
     bool operator == (const Aircraft &rhs) const noexcept;
     bool operator != (const Aircraft &rhs) const noexcept;
+
+    static constexpr std::int64_t InvalidId = -1;
 
 signals:
     void infoChanged(Aircraft &aircraft);

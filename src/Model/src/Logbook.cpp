@@ -23,8 +23,9 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <memory>
-#include <iostream>
 #include <vector>
+
+#include <QObject>
 
 #include "Logbook.h"
 
@@ -84,7 +85,8 @@ Logbook::~Logbook()
 // PRIVATE
 
 Logbook::Logbook() noexcept
-    : d(std::make_unique<LogbookPrivate>())
+    : QObject(),
+      d(std::make_unique<LogbookPrivate>())
 {
 #ifdef DEBUG
     qDebug("Logbook::Logbook: CREATED");

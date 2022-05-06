@@ -34,7 +34,7 @@
 #include <QString>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-#include "../../../../Kernel/src/QStringHasher.h"
+#include <Kernel/QStringHasher.h>
 #endif
 
 #include <Kernel/Convert.h>
