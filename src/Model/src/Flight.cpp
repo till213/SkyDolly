@@ -194,9 +194,9 @@ std::int64_t Flight::deleteAircraftByIndex(int index) noexcept
     if (d->aircraft.size() > 1) {
         setUserAircraftIndex(qMax(d->userAircraftIndex - 1, 0));
         aircraftId  = d->aircraft.at(index)->getId();
-        std::int64_t simulationObjectId = d->aircraft.at(index)->getSimulationObjectId();
+        std::int64_t aircraftId = d->aircraft.at(index)->getId();
         d->aircraft.erase(d->aircraft.begin() + index);
-        emit aircraftDeleted(simulationObjectId);
+        emit aircraftDeleted(aircraftId);
     } else {
         aircraftId = Aircraft::InvalidId;
     }

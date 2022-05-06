@@ -100,7 +100,7 @@ signals:
     void flightConditionChanged();
 
     void aircraftAdded(Aircraft &newAircraft);
-    void aircraftDeleted(std::int64_t removedSimulationObjectId);
+    void aircraftDeleted(std::int64_t removedAircraftId);
     void userAircraftChanged(Aircraft &newUserAircraft);
 
     void aircraftInfoChanged(Aircraft &aircraft);

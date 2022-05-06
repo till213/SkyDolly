@@ -51,13 +51,11 @@ class AircraftPrivate
 public:
     AircraftPrivate() noexcept
         : id(Aircraft::InvalidId),
-          simulationObjectId(Aircraft::InvalidSimulationId),
           aircraftInfo(id),
           duration(TimeVariableData::InvalidTime)
     {}
 
     std::int64_t id;
-    std::int64_t simulationObjectId;
     AircraftInfo aircraftInfo;
     Position position{aircraftInfo};
     Engine engine{aircraftInfo};
@@ -96,16 +94,6 @@ void Aircraft::setId(std::int64_t id) noexcept
 {
     d->id = id;
     d->aircraftInfo.aircraftId = id;
-}
-
-std::int64_t Aircraft::getSimulationObjectId() const noexcept
-{
-    return d->simulationObjectId;
-}
-
-void Aircraft::setSimulationObjectId(std::int64_t id) noexcept
-{
-    d->simulationObjectId = id;
 }
 
 const Position &Aircraft::getPositionConst() const noexcept
