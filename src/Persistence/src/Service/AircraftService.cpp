@@ -78,7 +78,9 @@ bool AircraftService::store(std::int64_t flightId, int sequenceNumber, Aircraft 
         }
         if (ok) {
             ok = QSqlDatabase::database().commit();
-            emit flight.aircraftStored(aircraft);
+            if (ok) {
+                emit flight.aircraftStored(aircraft);
+            }
         } else {
             QSqlDatabase::database().rollback();
         }
@@ -89,7 +91,6 @@ bool AircraftService::store(std::int64_t flightId, int sequenceNumber, Aircraft 
 bool AircraftService::deleteByIndex(int index) noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    Aircraft &aircraft = flight[index];
     const std::int64_t aircraftId = flight.deleteAircraftByIndex(index);
     bool ok;
     if (aircraftId != Aircraft::InvalidId) {

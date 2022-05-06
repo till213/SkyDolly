@@ -66,7 +66,7 @@ SimConnectAI::~SimConnectAI()
 #endif
 }
 
-bool SimConnectAI::createSimulatedAircraft(Flight &flight, std::int64_t timestamp, bool includingUserAircraft, std::unordered_map<::SIMCONNECT_DATA_REQUEST_ID, Aircraft *> &pendingAIAircraftCreationRequests) noexcept
+bool SimConnectAI::addSimulatedAircraft(const Flight &flight, std::int64_t timestamp, bool includingUserAircraft, std::unordered_map<::SIMCONNECT_DATA_REQUEST_ID, Aircraft *> &pendingAIAircraftCreationRequests) noexcept
 {
     HRESULT result;
     bool ok;
@@ -75,7 +75,7 @@ bool SimConnectAI::createSimulatedAircraft(Flight &flight, std::int64_t timestam
     int i = 0;
     ok = true;
     for (auto &aircraft : flight) {
-        const ::SIMCONNECT_DATA_REQUEST_ID requestId = Enum::toUnderlyingType(SimConnectType::DataRequest::AIObjectBase) + i;
+        const ::SIMCONNECT_DATA_REQUEST_ID requestId = Enum::toUnderlyingType(SimConnectType::DataRequest::AiObjectBase) + i;
         if (!includingUserAircraft && *aircraft == userAircraft) {
             aircraft->setSimulationObjectId(::SIMCONNECT_OBJECT_ID_USER);
 #ifdef DEBUG
@@ -114,34 +114,34 @@ bool SimConnectAI::createSimulatedAircraft(Flight &flight, std::int64_t timestam
     return ok;
 }
 
-void SimConnectAI::destroySimulatedAircraft(Flight &flight) noexcept
+void SimConnectAI::removeSimulatedAircraft(Flight &flight) noexcept
 {
     for (auto &aircraft : flight) {
-        destroySimulatedAircraft(*aircraft);
+        removeSimulatedAircraft(*aircraft);
     }
 }
 
-void SimConnectAI::destroySimulatedAircraft(Aircraft &aircraft) noexcept
+void SimConnectAI::removeSimulatedAircraft(Aircraft &aircraft) noexcept
 {
     const ::SIMCONNECT_OBJECT_ID objectId = aircraft.getSimulationObjectId();
-    if (isValidAIObjectId(objectId)) {
+    if (isValidAiObjectId(objectId)) {
 #ifdef DEBUG
     qDebug("SimConnectAI::destroySimulatedAircraft: destroying AI aircraft: simulation object ID: %lld aircraft ID: %lld",
            aircraft.getSimulationObjectId(), aircraft.getId());
 #endif
-        destroySimulatedObject(objectId);
+        removeSimulatedObject(objectId);
     }
     aircraft.setSimulationObjectId(Aircraft::InvalidSimulationId);
 }
 
-void SimConnectAI::destroySimulatedObject(std::int64_t objectId) noexcept
+void SimConnectAI::removeSimulatedObject(std::int64_t objectId) noexcept
 {
-    ::SimConnect_AIRemoveObject(d->simConnectHandle, objectId, Enum::toUnderlyingType(SimConnectType::DataRequest::AIRemoveObject));
+    ::SimConnect_AIRemoveObject(d->simConnectHandle, objectId, Enum::toUnderlyingType(SimConnectType::DataRequest::AiRemoveObject));
 }
 
 // PRIVATE
 
-bool SimConnectAI::isValidAIObjectId(std::int64_t objectId) const noexcept
+bool SimConnectAI::isValidAiObjectId(std::int64_t objectId) const noexcept
 {
     return objectId != ::SIMCONNECT_OBJECT_ID_USER && objectId != Aircraft::InvalidSimulationId && objectId != Aircraft::PendingSimulationId;
 }

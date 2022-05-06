@@ -95,10 +95,11 @@ public:
     double calculateRecordedSamplesPerSecond() const noexcept override;
 
 public slots:
-    void destroyAIObjects() noexcept override;
-    void destroyAIObject(std::int64_t simulatedObjectId) noexcept override;
-    void updateAIObjects() noexcept override;
-    void updateUserAircraft() noexcept override;
+    void addAiObject(Aircraft &aircraft) noexcept override;
+    void removeAiObjects() noexcept override;
+    void removeAiObject(std::int64_t simulatedObjectId) noexcept override;
+    void syncAiObjectsWithFlight() noexcept override;
+    void updateUserAircraft(Aircraft &userAircraft) noexcept override;
 
 protected:
     void setState(Connect::State state) noexcept;
@@ -110,7 +111,7 @@ protected:
     void resetElapsedTime(bool restart) noexcept;
     std::int64_t updateCurrentTimestamp() noexcept;
 
-    void createAIObjects() noexcept;
+    void createAiObjects() noexcept;
 
     virtual bool isTimerBasedRecording(SampleRate::SampleRate sampleRate) const noexcept = 0;
 
@@ -132,9 +133,10 @@ protected:
     virtual bool isConnectedWithSim() const noexcept = 0;
     virtual bool connectWithSim() noexcept = 0;
 
-    virtual void onCreateAIObjects() noexcept = 0;
-    virtual void onDestroyAIObjects() noexcept = 0;
-    virtual void onDestroyAIObject(std::int64_t simulationObjectId) noexcept = 0;
+    virtual void onCreateAiObjects(const Flight &flight) noexcept = 0;
+    virtual void onDestroyAiObjects() noexcept = 0;
+    virtual void onAddAiObject(const Aircraft &aircraft) noexcept = 0;
+    virtual void onDestroyAiObject(std::int64_t aircraftId) noexcept = 0;
 
 protected slots:
     virtual void recordData() noexcept = 0;

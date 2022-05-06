@@ -183,7 +183,7 @@ void Flight::setUserAircraftIndex(int index) noexcept
 {
     if (d->userAircraftIndex != index) {
         d->userAircraftIndex = index;
-        emit userAircraftChanged();
+        emit userAircraftChanged(*d->aircraft.at(index));
     }
 }
 
@@ -196,7 +196,7 @@ std::int64_t Flight::deleteAircraftByIndex(int index) noexcept
         aircraftId  = d->aircraft.at(index)->getId();
         std::int64_t simulationObjectId = d->aircraft.at(index)->getSimulationObjectId();
         d->aircraft.erase(d->aircraft.begin() + index);
-        emit singleAircraftDeleted(simulationObjectId);
+        emit aircraftDeleted(simulationObjectId);
     } else {
         aircraftId = Aircraft::InvalidId;
     }
@@ -254,7 +254,7 @@ void Flight::clear(bool withOneAircraft) noexcept
     if (withOneAircraft) {
         // Only emit the signals if the flight has at least one aircraft
         // (but e.g. not shortly before loading a new flight from the logbook)
-        emit flightCleared();
+        emit cleared();
         emit descriptionOrTitleChanged();
     }
 }

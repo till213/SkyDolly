@@ -268,11 +268,22 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::handleReplaySpeedSelected);
 
     // Flight
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const Logbook &logbook = Logbook::getInstance();
+    const Flight &flight = logbook.getCurrentFlight();
+    connect(&flight, &Flight::flightRestored,
+            this, &MainWindow::handleFlightRestored);
     connect(&flight, &Flight::timeOffsetChanged,
             this, &MainWindow::updateTimestamp);
-    connect(&flight, &Flight::flightCleared,
+    connect(&flight, &Flight::cleared,
             this, &MainWindow::updateUi);
+
+    // Settings
+    connect(&Settings::getInstance(), &Settings::changed,
+            this, &MainWindow::updateMainWindow);
+
+    // Logbook connection
+    connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
+            this, &MainWindow::handleLogbookConnectionChanged);
 
     // Menu actions
     connect(d->importQActionGroup, &QActionGroup::triggered,
@@ -331,16 +342,6 @@ void MainWindow::frenchConnection() noexcept
     // Modules
     connect(d->moduleManager.get(), &ModuleManager::activated,
             this, &MainWindow::handleModuleActivated);
-
-    // Settings
-    connect(&Settings::getInstance(), &Settings::changed,
-            this, &MainWindow::updateMainWindow);
-
-    // Logbook
-    connect(&Logbook::getInstance(), &Logbook::flightRestored,
-            this, &MainWindow::handleFlightRestored);
-    connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
-            this, &MainWindow::handleLogbookConnectionChanged);
 }
 
 void MainWindow::initUi() noexcept
