@@ -513,30 +513,34 @@ bool MSFSSimConnectPlugin::connectWithSim() noexcept
 #endif
     const bool ok = result == S_OK;
     if (ok) {
-        createAIObjects();
+        createAiObjects();
     }
     return ok;
 }
 
-void MSFSSimConnectPlugin::onCreateAIObjects() noexcept
+void MSFSSimConnectPlugin::onCreateAiObjects(const Flight &flight) noexcept
 {
     // When "fly with formation" is enabled we also create an AI aircraft for the user aircraft
     // (the user aircraft of the recorded aircraft in the formation, that is)
     const bool includingUserAircraft = getReplayMode() == ReplayMode::FlyWithFormation;
-    d->simConnectAI->createSimulatedAircraft(getCurrentFlight(), getCurrentTimestamp(), includingUserAircraft, d->pendingAIAircraftCreationRequests);
+    d->simConnectAI->addSimulatedAircraft(getCurrentFlight(), getCurrentTimestamp(), includingUserAircraft, d->pendingAIAircraftCreationRequests);
 }
 
-void MSFSSimConnectPlugin::onDestroyAIObjects() noexcept
+void MSFSSimConnectPlugin::onDestroyAiObjects() noexcept
 {
     d->pendingAIAircraftCreationRequests.clear();
-    d->simConnectAI->destroySimulatedAircraft(getCurrentFlight());
+    d->simConnectAI->removeSimulatedAircraft(getCurrentFlight());
 }
 
-void MSFSSimConnectPlugin::onDestroyAIObject(std::int64_t simulationObjectId) noexcept
+void MSFSSimConnectPlugin::onAddAiObject(const Aircraft &aircraft) noexcept
 {
-    if (simulationObjectId != ::SIMCONNECT_OBJECT_ID_USER) {
-        d->simConnectAI->destroySimulatedObject(simulationObjectId);
-    }
+    // @todo IMPLEMENT ME!!!
+    // d->simConnectAI->removeSimulatedObject(aircraftId);
+}
+
+void MSFSSimConnectPlugin::onDestroyAiObject(std::int64_t aircraftId) noexcept
+{
+    d->simConnectAI->removeSimulatedObject(aircraftId);
 }
 
 // PROTECTED SLOTS
@@ -1006,12 +1010,12 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
             qDebug("SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID: Request ID: %lu, asssigned object ID: %lu, aircraft ID: %lld, remaining pending requests: %lld",
                    objectData->dwRequestID, objectData->dwObjectID, aircraft->getId(), skyConnect->d->pendingAIAircraftCreationRequests.size());
 #endif
-            ::SimConnect_AIReleaseControl(skyConnect->d->simConnectHandle, aircraft->getSimulationObjectId(), Enum::toUnderlyingType(SimConnectType::DataRequest::AIReleaseControl));
+            ::SimConnect_AIReleaseControl(skyConnect->d->simConnectHandle, aircraft->getSimulationObjectId(), Enum::toUnderlyingType(SimConnectType::DataRequest::AiReleaseControl));
             skyConnect->setAircraftFrozen(objectData->dwObjectID, true);
         } else {
             // No pending request (request has already been removed), so destroy the
             // just generated AI object again
-            skyConnect->d->simConnectAI->destroySimulatedObject(objectData->dwObjectID);
+            skyConnect->d->simConnectAI->removeSimulatedObject(objectData->dwObjectID);
 #ifdef DEBUG
             qDebug("SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID: orphaned AI object response for original request %lu, DESTROYING AI Object again: %lu", objectData->dwRequestID, objectData->dwObjectID);
 #endif

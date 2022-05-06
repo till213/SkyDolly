@@ -43,15 +43,16 @@ public:
     SimConnectAI(::HANDLE simConnectHandle);
     ~SimConnectAI();
 
-    bool createSimulatedAircraft(Flight &flight, std::int64_t timestamp, bool includingUserAircraft, std::unordered_map<::SIMCONNECT_DATA_REQUEST_ID, Aircraft *> &pendingAIAircraftCreationRequests) noexcept;
-    void destroySimulatedAircraft(Flight &flight) noexcept;
-    void destroySimulatedAircraft(Aircraft &aircraft) noexcept;
-    void destroySimulatedObject(std::int64_t objectId) noexcept;
+    // @todo Replace Aircraft pointer with aircraft index! Pointer might become invalid when aircraft is removed from Flight
+    bool addSimulatedAircraft(const Flight &flight, std::int64_t timestamp, bool includingUserAircraft, std::unordered_map<::SIMCONNECT_DATA_REQUEST_ID, Aircraft *> &pendingAIAircraftCreationRequests) noexcept;
+    void removeSimulatedAircraft(Flight &flight) noexcept;
+    void removeSimulatedAircraft(Aircraft &aircraft) noexcept;
+    void removeSimulatedObject(std::int64_t objectId) noexcept;
 
 private:
     std::unique_ptr<SimConnectAIPrivate> d;
 
-    inline bool isValidAIObjectId(std::int64_t objectId) const noexcept;
+    inline bool isValidAiObjectId(std::int64_t objectId) const noexcept;
 };
 
 #endif // SIMCONNECTAI_H

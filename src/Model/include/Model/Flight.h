@@ -92,16 +92,21 @@ public:
     static constexpr int InvalidId = -1;
 
 signals:
-    void flightCleared();
+    void flightStored(std::int64_t id);
+    void flightRestored(std::int64_t id);
+
+    void cleared();
     void descriptionOrTitleChanged();
     void flightConditionChanged();
-    void aircraftAdded(Aircraft &aircraft);
-    void singleAircraftDeleted(std::int64_t removedSimulationObjectId);
+
+    void aircraftAdded(Aircraft &newAircraft);
+    void aircraftDeleted(std::int64_t removedSimulationObjectId);
+    void userAircraftChanged(Aircraft &newUserAircraft);
+
     void aircraftInfoChanged(Aircraft &aircraft);
     void tailNumberChanged(Aircraft &aircraft);
     void timeOffsetChanged(Aircraft &aircraft);
-    void userAircraftChanged();
-    void flightStored(std::int64_t id);
+
     void aircraftStored(Aircraft &aircraft);
 
 private:
