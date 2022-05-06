@@ -27,12 +27,12 @@
 #include <limits>
 #include <chrono>
 #include <cstdint>
-#include <string>
 
 #include <GeographicLib/DMS.hpp>
 
 #include <QCoreApplication>
 #include <QString>
+#include <QStringLiteral>
 #include <QStringBuilder>
 #include <QLocale>
 #include <QDateTime>
@@ -56,7 +56,11 @@ public:
     {}
 
     QLocale locale;
+
+    static QLatin1Char NumberPadding;
 };
+
+QLatin1Char UnitPrivate::NumberPadding {QLatin1Char('0')};
 
 // PUBLIC
 
@@ -69,24 +73,33 @@ Unit::~Unit()
 
 QString Unit::formatLatitude(double latitude) noexcept
 {
-    int degrees;
-    int minutes;
+    double degrees;
+    double minutes;
     double seconds;
 
-    Convert::ddTodms(latitude, degrees, minutes, seconds);
-    const std::string latitudeString = GeographicLib::DMS::Encode(latitude, 5, GeographicLib::DMS::LATITUDE, ' ');
-    return QString::fromStdString(latitudeString);
+    const QString hemisphere = latitude >= 0.0 ? QCoreApplication::translate("Unit", "N") : QCoreApplication::translate("Unit", "S");
+    GeographicLib::DMS::Encode(std::abs(latitude), degrees, minutes, seconds);
+
+    return QStringLiteral("%1° %2' %3\" %4")
+            .arg(static_cast<int>(degrees), 2, 10, UnitPrivate::NumberPadding)
+            .arg(static_cast<int>(minutes), 2, 10, UnitPrivate::NumberPadding)
+            .arg(seconds, 5, 'f', Precision, UnitPrivate::NumberPadding)
+            .arg(hemisphere);
 }
 
 QString Unit::formatLongitude(double longitude) noexcept
 {
-    int degrees;
-    int minutes = 0;
-    double seconds = 0.0;
+    double degrees;
+    double minutes;
+    double seconds;
 
-    Convert::ddTodms(longitude, degrees, minutes, seconds);
-    QString hemisphere = longitude >= 0.0 ? QCoreApplication::translate("Unit", "E") : QCoreApplication::translate("Unit", "W");
-    return QString::number(degrees) % "° " % QString::number(minutes) % "' " % QString::number(seconds, 'f', Precision) % "'' " % " " % hemisphere;
+    const QString hemisphere = longitude >= 0.0 ? QCoreApplication::translate("Unit", "E") : QCoreApplication::translate("Unit", "W");
+    GeographicLib::DMS::Encode(std::abs(longitude), degrees, minutes, seconds);
+    return QStringLiteral("%1° %2' %3\" %4")
+            .arg(static_cast<int>(degrees), 3, 10, UnitPrivate::NumberPadding)
+            .arg(static_cast<int>(minutes), 2, 10, UnitPrivate::NumberPadding)
+            .arg(seconds, 5, 'f', Precision, UnitPrivate::NumberPadding)
+            .arg(hemisphere);
 }
 
 QString Unit::formatLatLongPosition(double latitude, double longitude) noexcept
