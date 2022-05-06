@@ -185,9 +185,8 @@ void GpxParser::parseWaypoint() noexcept
             const PositionData &previousPositionData = position.getLast();
             const SkyMath::Coordinate start = {previousPositionData.latitude, previousPositionData.longitude};
             const SkyMath::Coordinate end = {positionData.latitude, positionData.longitude};
-            const double averageAltitude = (previousPositionData.altitude + positionData.altitude) / 2.0;
             // In meters
-            const double distance = SkyMath::sphericalDistance(start, end, averageAltitude);
+            const double distance = SkyMath::geodesicDistance(start, end);
             const double velocityMetersPerSecond = Convert::knotsToMetersPerSecond(d->pluginSettings.getDefaultVelocity());
             const double seconds = distance / velocityMetersPerSecond;
             // Milliseconds
@@ -256,9 +255,8 @@ void GpxParser::parseRoutePoint() noexcept
             const PositionData &previousPositionData = position.getLast();
             const SkyMath::Coordinate start = {previousPositionData.latitude, previousPositionData.longitude};
             const SkyMath::Coordinate end = {positionData.latitude, positionData.longitude};
-            const double averageAltitude = (previousPositionData.altitude + positionData.altitude) / 2.0;
             // In meters
-            const double distance = SkyMath::sphericalDistance(start, end, averageAltitude);
+            const double distance = SkyMath::geodesicDistance(start, end);
             const double velocityMetersPerSecond = Convert::knotsToMetersPerSecond(d->pluginSettings.getDefaultVelocity());
             const double seconds = distance / velocityMetersPerSecond;
             // Milliseconds
@@ -336,11 +334,10 @@ inline void GpxParser::parseTrackPoint() noexcept
             // No timestamp available, so calculate timestamp based on default velocity and distance
             if (position.count() > 0) {
                 const PositionData &previousPositionData = position.getLast();
-                const SkyMath::Coordinate start = {previousPositionData.latitude, previousPositionData.longitude};
-                const SkyMath::Coordinate end = {positionData.latitude, positionData.longitude};
-                const double averageAltitude = (previousPositionData.altitude + positionData.altitude) / 2.0;
+                const SkyMath::Coordinate start {previousPositionData.latitude, previousPositionData.longitude};
+                const SkyMath::Coordinate end {positionData.latitude, positionData.longitude};
                 // In meters
-                const double distance = SkyMath::sphericalDistance(start, end, averageAltitude);
+                const double distance = SkyMath::geodesicDistance(start, end);
                 const double velocityMetersPerSecond = Convert::knotsToMetersPerSecond(d->pluginSettings.getDefaultVelocity());
                 const double seconds = distance / velocityMetersPerSecond;
                 // Milliseconds

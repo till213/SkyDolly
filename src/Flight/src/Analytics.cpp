@@ -45,7 +45,7 @@ namespace  {
     auto distanceLambda = [](const PositionData &start, const PositionData &end) -> bool {
         const SkyMath::Coordinate startPos(start.latitude, start.longitude);
         const SkyMath::Coordinate endPos(end.latitude, end.longitude);
-        const double distance = SkyMath::sphericalDistance(startPos, endPos, Convert::feetToMeters((start.altitude + end.altitude) / 2.0));
+        const double distance = SkyMath::geodesicDistance(startPos, endPos);
         return std::abs(distance) > DistanceThreshold;
     };
 }
@@ -100,9 +100,8 @@ const PositionData &Analytics::closestPosition(double latitude, double longitude
 
     Position &position = d->aircraft.getPosition();
     for (const PositionData &pos : position) {
-        const double distance = SkyMath::sphericalDistance(SkyMath::Coordinate(latitude, longitude),
-                                                           SkyMath::Coordinate(pos.latitude, pos.longitude),
-                                                           Convert::feetToMeters(pos.altitude));
+        const double distance = SkyMath::geodesicDistance(SkyMath::Coordinate(latitude, longitude),
+                                                          SkyMath::Coordinate(pos.latitude, pos.longitude));
         if (minimumDistance > distance) {
             closestPositionData = &pos;
             minimumDistance = distance;

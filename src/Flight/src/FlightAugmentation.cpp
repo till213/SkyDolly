@@ -134,9 +134,8 @@ void FlightAugmentation::augmentAttitudeAndVelocity(Aircraft &aircraft) noexcept
             const std::int64_t startTimestamp = startPositionData.timestamp;
             const SkyMath::Coordinate endPosition(endPositionData.latitude, endPositionData.longitude);
             const std::int64_t endTimestamp = endPositionData.timestamp;
-            const double averageAltitude = Convert::feetToMeters((startPositionData.altitude + endPositionData.altitude) / 2.0);
 
-            const auto [distance, velocity] = SkyMath::distanceAndVelocity(startPosition, startTimestamp, endPosition, endTimestamp, averageAltitude);
+            const auto [distance, velocity] = SkyMath::distanceAndVelocity(startPosition, startTimestamp, endPosition, endTimestamp);
             // Velocity
             if (d->aspects.testFlag(Aspect::Velocity)) {
                 startPositionData.velocityBodyX = 0.0;
