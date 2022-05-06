@@ -181,20 +181,20 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
 {
     AbstractModuleWidget::showEvent(event);
 
-    // Flight
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    connect(&flight, &Flight::aircraftStored,
-            this, &LogbookWidget::updateUi);
-
     // Logbook
-    Logbook &logbook = Logbook::getInstance();
+    const Logbook &logbook = Logbook::getInstance();
     connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
             this, &LogbookWidget::updateUi);
-    connect(&logbook, &Logbook::flightStored,
+    connect(&logbook, &Logbook::flightTitleOrDescriptionChanged,
             this, &LogbookWidget::updateUi);
-    connect(&logbook, &Logbook::flightRestored,
+
+    // Flight
+    const Flight &flight = logbook.getCurrentFlight();
+    connect(&flight, &Flight::flightStored,
+            this, &LogbookWidget::updateUi);
+    connect(&flight, &Flight::flightRestored,
             this, &LogbookWidget::updateAircraftIcon);
-    connect(&logbook, &Logbook::flightUpdated,
+    connect(&flight, &Flight::aircraftStored,
             this, &LogbookWidget::updateUi);
 
     // Connection
@@ -210,20 +210,20 @@ void LogbookWidget::hideEvent(QHideEvent *event) noexcept
 {
     AbstractModuleWidget::hideEvent(event);
 
-    // Flight
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    disconnect(&flight, &Flight::aircraftStored,
-               this, &LogbookWidget::updateUi);
-
     // Logbook
-    Logbook &logbook = Logbook::getInstance();
+    const Logbook &logbook = Logbook::getInstance();
     disconnect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
                this, &LogbookWidget::updateUi);
-    disconnect(&logbook, &Logbook::flightStored,
+    disconnect(&logbook, &Logbook::flightTitleOrDescriptionChanged,
                this, &LogbookWidget::updateUi);
-    disconnect(&logbook, &Logbook::flightRestored,
+
+    // Flight
+    const Flight &flight = logbook.getCurrentFlight();
+    disconnect(&flight, &Flight::flightStored,
+               this, &LogbookWidget::updateUi);
+    disconnect(&flight, &Flight::flightRestored,
                this, &LogbookWidget::updateAircraftIcon);
-    disconnect(&logbook, &Logbook::flightUpdated,
+    disconnect(&flight, &Flight::aircraftStored,
                this, &LogbookWidget::updateUi);
 
     // Connection

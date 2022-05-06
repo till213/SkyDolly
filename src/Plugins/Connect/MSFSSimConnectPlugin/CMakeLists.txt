@@ -22,7 +22,7 @@ target_sources(${MODULE_NAME}
         src/SimConnectAircraftInfo.h src/SimConnectAircraftInfo.cpp
         src/SimConnectFlightPlan.h src/SimConnectFlightPlan.cpp
         src/SimConnectSimulationTime.h src/SimConnectSimulationTime.cpp
-        src/SimConnectAI.h src/SimConnectAI.cpp
+        src/SimConnectAi.h src/SimConnectAi.cpp
         src/EventWidget.h src/EventWidget.cpp
         src/MSFSSimConnectPlugin.json
 )

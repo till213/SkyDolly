@@ -110,7 +110,7 @@ void AbstractSkyConnect::setReplayMode(ReplayMode replayMode) noexcept
 {
     if (d->replayMode != replayMode) {
         d->replayMode = replayMode;
-        updateAIObjects();
+        syncAiObjectsWithFlight();
         updateUserAircraftFreeze();
     }
 }
@@ -126,11 +126,11 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
         switch (recordingMode) {
         case RecordingMode::SingleAircraft:
             // Single flight - destroy any previous AI aircraft
-            onDestroyAIObjects();
+            removeAiObjects();
             // Start a new flight
             d->currentFlight.clear(true);
             // Assign user aircraft ID
-            onCreateAIObjects();
+            syncAiObjectsWithFlight();
             break;
         case RecordingMode::AddToFormation:
             // Check if the current user aircraft already has a recording
@@ -139,7 +139,7 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
                 d->currentFlight.addUserAircraft();
             }
             // Update AI objects
-            updateAIObjects();
+            syncAiObjectsWithFlight();
             break;
         }
         d->lastSamplesPerSecondIndex = 0;
@@ -442,29 +442,38 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
 
 // PUBLIC SLOTS
 
-void AbstractSkyConnect::destroyAIObjects() noexcept
+void AbstractSkyConnect::addAiObject(Aircraft &aircraft) noexcept
 {
     if (isConnected()) {
-        onDestroyAIObjects();
+        onAddAiObject(aircraft);
     }
 }
 
-void AbstractSkyConnect::destroyAIObject(std::int64_t simulatedObjectId) noexcept
+void AbstractSkyConnect::removeAiObjects() noexcept
 {
     if (isConnected()) {
-        onDestroyAIObject(simulatedObjectId);
+        for (const auto &aircraft : d->currentFlight) {
+            onRemoveAiObject(aircraft->getId());
+        }
     }
 }
 
-void AbstractSkyConnect::updateAIObjects() noexcept
+void AbstractSkyConnect::removeAiObject(std::int64_t simulatedObjectId) noexcept
 {
-    destroyAIObjects();
-    createAIObjects();
+    if (isConnected()) {
+        onRemoveAiObject(simulatedObjectId);
+    }
 }
 
-void AbstractSkyConnect::updateUserAircraft() noexcept
+void AbstractSkyConnect::syncAiObjectsWithFlight() noexcept
 {
-    updateAIObjects();
+    removeAiObjects();
+    createAiObjects();
+}
+
+void AbstractSkyConnect::updateUserAircraft(Aircraft &userAircraft) noexcept
+{
+    syncAiObjectsWithFlight();
     sendAircraftData(d->currentTimestamp, TimeVariableData::Access::Seek, AircraftSelection::UserAircraft);
 }
 
@@ -522,10 +531,18 @@ std::int64_t AbstractSkyConnect::updateCurrentTimestamp() noexcept
     return d->currentTimestamp;
 }
 
-void AbstractSkyConnect::createAIObjects() noexcept
+void AbstractSkyConnect::createAiObjects() noexcept
 {
     if (isConnectedWithSim()) {
-        onCreateAIObjects();
+        // When "fly with formation" is enabled we also create an AI aircraft for the user aircraft
+        // (the user aircraft of the recorded aircraft in the formation, that is)
+        const bool includingUserAircraft = getReplayMode() == ReplayMode::FlyWithFormation;
+        const std::int64_t userAircraftId = d->currentFlight.getUserAircraft().getId();
+        for (const auto &aircraft : d->currentFlight) {
+            if (aircraft->getId() != userAircraftId || includingUserAircraft) {
+                onAddAiObject(*aircraft);
+            }
+        }
     }
 }
 

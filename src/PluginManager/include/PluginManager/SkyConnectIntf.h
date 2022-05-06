@@ -31,11 +31,11 @@
 
 #include <Kernel/SampleRate.h>
 #include <Model/TimeVariableData.h>
-#include <Model/Aircraft.h>
 #include <Model/InitialPosition.h>
 #include "Connect.h"
 #include "PluginManagerLib.h"
 
+class Flight;
 class Aircraft;
 struct PositionData;
 class MSFSSimConnectPlugin;
@@ -121,10 +121,11 @@ public:
     virtual double calculateRecordedSamplesPerSecond() const noexcept = 0;
 
 public slots:
-    virtual void destroyAIObjects() noexcept = 0;
-    virtual void destroyAIObject(std::int64_t simulatedObjectId) noexcept = 0;
-    virtual void updateAIObjects() noexcept = 0;
-    virtual void updateUserAircraft() noexcept = 0;
+    virtual void addAiObject(Aircraft &aircraft) noexcept = 0;
+    virtual void removeAiObjects() noexcept = 0;
+    virtual void removeAiObject(std::int64_t simulatedObjectId) noexcept = 0;
+    virtual void syncAiObjectsWithFlight() noexcept = 0;
+    virtual void updateUserAircraft(Aircraft &userAircraft) noexcept = 0;
 
 protected:
     SkyConnectIntf(QObject *parent = nullptr) noexcept

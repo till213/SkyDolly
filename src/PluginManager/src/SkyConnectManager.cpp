@@ -144,7 +144,7 @@ std::optional<QString> SkyConnectManager::getCurrentSkyConnectPluginName() const
 
 bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
 {
-    bool ok;
+    bool ok {false};
     d->currentPluginUuid = QUuid();
     if (d->pluginRegistry.contains(uuid)) {
         // Unload the previous plugin (if any)
@@ -160,19 +160,20 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
                     this, &SkyConnectManager::stateChanged);
             connect(skyPlugin, &SkyConnectIntf::recordingStopped,
                     this, &SkyConnectManager::recordingStopped);
-            // Logbook
-            const Logbook &logbook = Logbook::getInstance();
-            connect(&logbook, &Logbook::flightRestored,
-                    skyPlugin, &SkyConnectIntf::updateAIObjects);
 
             // Flight
+            const Logbook &logbook = Logbook::getInstance();
             const Flight &flight = logbook.getCurrentFlight();
+            connect(&flight, &Flight::flightRestored,
+                    skyPlugin, &SkyConnectIntf::syncAiObjectsWithFlight);
+            connect(&flight, &Flight::cleared,
+                    skyPlugin, &SkyConnectIntf::removeAiObjects);
             connect(&flight, &Flight::aircraftAdded,
-                    skyPlugin, &SkyConnectIntf::updateAIObjects);
-            connect(&flight, &Flight::singleAircraftDeleted,
-                    skyPlugin, &SkyConnectIntf::destroyAIObject);
+                    skyPlugin, &SkyConnectIntf::addAiObject);
+            connect(&flight, &Flight::aircraftDeleted,
+                    skyPlugin, &SkyConnectIntf::removeAiObject);
             connect(&flight, &Flight::userAircraftChanged,
-                    skyPlugin, &SkyConnectIntf::updateAIObjects);
+                    skyPlugin, &SkyConnectIntf::updateUserAircraft);
             d->currentPluginUuid = uuid;
             ok = true;
         } else {
@@ -180,8 +181,6 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
             d->pluginLoader->unload();
             ok = false;
         }
-    } else {
-        ok = false;
     }
     return ok;
 }
