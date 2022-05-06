@@ -27,6 +27,7 @@
 
 #include <QCoreApplication>
 #include <QFileInfo>
+#include <QDebug>
 
 #include <GeographicLib/Geoid.hpp>
 
@@ -45,9 +46,9 @@ Convert::Convert() noexcept
             m_egm = std::make_unique<GeographicLib::Geoid>(egmName, egmDirectory);
         } catch (const std::exception &ex) {
             m_egm = nullptr;
-    #ifdef DEBUG
-            qDebug("Convert::Convert: caught exception: %s", ex.what());
-    #endif
+#ifdef DEBUG
+            qDebug() << "Convert::Convert: caught exception: " << ex.what();
+#endif
         }
     } else {
         m_egm = nullptr;

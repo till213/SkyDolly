@@ -29,12 +29,15 @@
 #include <utility>
 #include <cmath>
 #include <cstdint>
-#include <cstdint>
+#include <exception>
+
+#include <GeographicLib/Geodesic.hpp>
 
 #include <QtGlobal>
+#include <QDebug>
 
 /*!
- * Mathematical functions for interpolation.
+ * Mathematical functions for interpolation and geodesic math.
  *
  * Useful links:
  * - https://tools.timodenk.com/cubic-spline-interpolation
@@ -199,10 +202,6 @@ namespace SkyMath
         a2 = -0.5 * y0 + 0.5 * y2;
         a3 = y1;
 
-#ifdef DEBUG
-        qDebug("interpolateCatmullRom: mu: %f", mu);
-#endif
-
         return (a0 * mu * mu2 + a1 * mu2 + a2 * mu + a3);
     }
 
@@ -321,45 +320,35 @@ namespace SkyMath
     }
 
     /*!
-     * Calculates the spherical distance [meters] of two points by using the ‘haversine’ formula to calculate
-     * the great-circle distance between these two points.
-     *
-     * a = sin²(Δφ/2) + cos φ1 ⋅ cos φ2 ⋅ sin²(Δλ/2)
-     * c = 2 ⋅ atan2(√a, √(1−a))
-     * d = R ⋅ c
+     * Calculates the geodesic distance [meters] of two points.
      *
      * \param startPosition
      *        the Coordinate of the start position [degrees]
      * \param endPosition
      *        the Coordinate of the end position [degrees]
-     * \param averageAltitude
-     *        the average altitude of the two points [meters]
      * \return the spherical distance between the points [meters]
-     * \sa https://www.movable-type.co.uk/scripts/latlong.html
      */
-    inline double sphericalDistance(Coordinate startPosition, Coordinate endPosition, double averageAltitude) noexcept
+    inline double geodesicDistance(Coordinate startPosition, Coordinate endPosition) noexcept
     {
-        const double radius = EarthRadius + averageAltitude;
-        // phi,  lambda in radians
-        const double phi1 = startPosition.first * M_PI / 180.0;
-        const double phi2 = endPosition.first * M_PI / 180.0;
-        const double deltaPhi = (endPosition.first - startPosition.first) * M_PI / 180.0;
-        const double deltaLambda = (endPosition.second - startPosition.second) * M_PI / 180.0;
-
-        const double sinDeltaPhi = std::sin(deltaPhi / 2.0);
-        const double sinDeltaLambda = std::sin(deltaLambda / 2.0);
-        const double a = sinDeltaPhi * sinDeltaPhi +
-                         std::cos(phi1) * std::cos(phi2) *
-                         sinDeltaLambda * sinDeltaLambda;
-        const double c = 2.0 * std::atan2(std::sqrt(a), std::sqrt(1 - a));
-
-        return radius * c;
+        double distance {0.0};
+        try {
+            const GeographicLib::Geodesic &geodesic = GeographicLib::Geodesic::WGS84();
+            geodesic.Inverse(startPosition.first, startPosition.second, endPosition.first, endPosition.second, distance);
+        } catch (const std::exception &ex) {
+#ifdef DEBUG
+            qDebug() << "SkyMath::sphericalDistance: caught exception: " << ex.what();
+#endif
+            distance = std::numeric_limits<double>::max();
+        }
+        return distance;
     }
 
     /*!
-     * Calculates the spherical distance between the \c startPoint and the \c endPoint and the
+     * Calculates the geodesic distance between the \c startPoint and the \c endPoint and the
      * velocity [meters per second] it takes to travel that distance, taking the timestamps \c startTimestamp
      * and \c endTimestamp into account.
+     *
+     * Also refer to #sphericalDistance.
      *
      * \param startPosition
      *        the Coordinate of the start position [degrees]
@@ -369,16 +358,12 @@ namespace SkyMath
      *        the Coordinate of the end position [degrees]
      * \param endTimestamp
      *        the timestamp of the end point [milliseconds]
-     * \param averageAltitude
-     *        the average altitude of the two points [meters]
      * \return the distance (first value) and required speed [m/s] (second value)
-     * \sa https://www.movable-type.co.uk/scripts/latlong.html
      */
     inline std::pair<double, double> distanceAndVelocity(Coordinate startPosition, std::int64_t startTimestamp,
-                                                         Coordinate endPosition, std::int64_t endTimestamp,
-                                                         double averageAltitude) noexcept
+                                                         Coordinate endPosition, std::int64_t endTimestamp) noexcept
     {
-        const double distance = sphericalDistance(startPosition, endPosition, averageAltitude);
+        const double distance = geodesicDistance(startPosition, endPosition);
         const double deltaT = (endTimestamp - startTimestamp) / 1000.0;
 
         return std::pair(distance, distance / deltaT);
@@ -388,28 +373,28 @@ namespace SkyMath
      * Calculates the initial bearing required to get from \c startPosition
      * to \c endPosition.
      *
-     * θ = atan2(sin Δλ ⋅ cos φ2 , cos φ1 ⋅ sin φ2 − sin φ1 ⋅ cos φ2 ⋅ cos Δλ)
-     *
      * \param startPosition
      *        the Coordinate of the start position [degrees]
      * \param endPosition
      *        the Coordinate of the end position [degrees]
-     * \return the initial bearing [degrees]
-     * \sa https://www.movable-type.co.uk/scripts/latlong.html
+     * \return the initial bearing [degrees] [0, 360[
      */
     inline double initialBearing(Coordinate startPosition, Coordinate endPosition) noexcept
     {
-        const double phi1 = startPosition.first * M_PI / 180.0;
-        const double lambda1 = startPosition.second * M_PI / 180.0;
-        const double phi2 = endPosition.first * M_PI / 180.0;
-        const double lambda2 = endPosition.second * M_PI / 180.0;
+        double azimuth1 {0.0};
+        double azimuth2 {0.0};
+        try {
+            const GeographicLib::Geodesic &geodesic = GeographicLib::Geodesic::WGS84();
+            geodesic.Inverse(startPosition.first, startPosition.second, endPosition.first, endPosition.second, azimuth1, azimuth2);
+        } catch (const std::exception &ex) {
+#ifdef DEBUG
+            qDebug() << "SkyMath::initialBearing: caught exception: " << ex.what();
+#endif
+            azimuth1 = 0.0;
+        }
 
-        const double y = std::sin(lambda2 - lambda1) * std::cos(phi2);
-        const double x = std::cos(phi1) * std::sin(phi2) -
-                         std::sin(phi1) * std::cos(phi2) * std::cos(lambda2 - lambda1);
-        const double theta = std::atan2(y, x);
         // In degrees, converted to [0.0, 360.0[
-        return std::fmod(theta * 180.0 / M_PI + 360.0, 360.0);
+        return std::fmod(azimuth1 + 360.0, 360.0);
     }
 
     /*!
@@ -522,7 +507,7 @@ namespace SkyMath
 
     /*!
      * Returns the relative position from the starting \c position at altitude \c altitude,
-     * given the \c bearing and \c distance.
+     * given the \c bearing and geodesic \c distance.
      *
      * sinphi2    = sinphi1⋅cosδ + cosphi1⋅sinδ⋅costheta
      * tanΔlambda = sintheta⋅sinδ⋅cosphi1 / cosδ−sinphi1⋅sinphi2
@@ -534,39 +519,28 @@ namespace SkyMath
      * \param bearing
      *        the bearing of the destination point [degrees]
      * \param distance
-     *        the distance to the destination point [meters]
+     *        the geodesic distance to the destination point [meters]
      * \return the Coordinate of the relative position [degrees]
-     * \sa mathforum.org/library/drmath/view/52049.html for derivation
-     * \sa https://www.movable-type.co.uk/scripts/latlong.html
      */
     inline Coordinate relativePosition(Coordinate position, double altitude, double bearing, double distance) noexcept
     {
         Coordinate destination;
-
-        const double radius = EarthRadius + altitude;
-
-        // Angular distance [Radians]
-        const double delta = distance / radius;
-        const double theta = degreesToRadians(bearing);
-
-        const double phi1 = degreesToRadians(position.first);
-        const double lambda1 = degreesToRadians(position.second);
-
-        const double sinphi2 = std::sin(phi1) * std::cos(delta) + std::cos(phi1) * std::sin(delta) * std::cos(theta);
-        const double phi2 = std::asin(sinphi2);
-        const double y = std::sin(theta) * std::sin(delta) * std::cos(phi1);
-        const double x = std::cos(delta) - std::sin(phi1) * sinphi2;
-        const double lambda2 = lambda1 + std::atan2(y, x);
-
-        destination.first = radiansToDegrees(phi2);
-        destination.second = radiansToDegrees(lambda2);
-
+        try {
+            const GeographicLib::Geodesic &geodesic = GeographicLib::Geodesic::WGS84();
+            geodesic.Direct(position.first, position.second, bearing, distance, destination.first, destination.second);
+        } catch (const std::exception &ex) {
+#ifdef DEBUG
+            qDebug() << "SkyMath::relativePosition: caught exception: " << ex.what();
+#endif
+            destination.first = 0.0;
+            destination.second = 0.0;
+        }
         return destination;
     }
 
     inline bool isSameWaypoint(Coordinate wp1, Coordinate wp2, double threshold = DefaultDistanceThreshold) noexcept
     {
-        const double distance = sphericalDistance(wp1, wp2, 0.0);
+        const double distance = geodesicDistance(wp1, wp2);
         return distance < threshold;
     }
 
