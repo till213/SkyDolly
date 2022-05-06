@@ -28,6 +28,8 @@
 #include <cmath>
 #include <cstdint>
 
+#include <GeographicLib/DMS.hpp>
+
 #include <QFile>
 #include <QByteArray>
 #include <QStringView>
@@ -550,5 +552,5 @@ inline double IgcParser::parseCoordinate(QStringView degreesText, QStringView mi
     int degrees = degreesText.toInt();
     double minutes = minutesBy1000Text.toDouble() / 1000.0;
 #endif
-    return Convert::dmTodd(degrees, minutes);
+    return GeographicLib::DMS::Decode(degrees, minutes);
 }
