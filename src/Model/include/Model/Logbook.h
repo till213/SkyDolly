@@ -47,7 +47,7 @@ signals:
     void flightTitleOrDescriptionChanged(std::int64_t id);
 
 protected:
-    ~Logbook();
+    ~Logbook() override;
 
 private:
     Q_DISABLE_COPY(Logbook)

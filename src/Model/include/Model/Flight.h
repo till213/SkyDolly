@@ -90,6 +90,7 @@ public:
     const Aircraft& operator[](std::size_t index) const noexcept;
 
     static constexpr int InvalidId = -1;
+    static constexpr int InvalidAircraftIndex = -1;
 
 signals:
     void flightStored(std::int64_t id);
@@ -101,7 +102,17 @@ signals:
 
     void aircraftAdded(Aircraft &newAircraft);
     void aircraftDeleted(std::int64_t removedAircraftId);
-    void userAircraftChanged(Aircraft &newUserAircraft);
+
+    /*!
+     * Emitted whenever the user aircraft index is changed to \c newUserAircraftIndex. In case a previous user aircraft
+     * existed the \c previousUserAircraftIndex is set accordingly, otherwise it is set to InvalidAircraftIndex.
+     *
+     * \param newUserAircraftIndex
+     *        the index of the new user aircraft
+     * \param previousUserAircraftIndex
+     *        the index of the previous user aircraft; InvalidAircraftIndex if no previous user aircraft was set
+     */
+    void userAircraftChanged(int newUserAircraftIndex, int previousUserAircraftIndex);
 
     void aircraftInfoChanged(Aircraft &aircraft);
     void tailNumberChanged(Aircraft &aircraft);

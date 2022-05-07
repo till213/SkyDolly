@@ -95,11 +95,11 @@ public:
     double calculateRecordedSamplesPerSecond() const noexcept override;
 
 public slots:
-    void addAiObject(Aircraft &aircraft) noexcept override;
+    void addAiObject(const Aircraft &aircraft) noexcept override;
     void removeAiObjects() noexcept override;
-    void removeAiObject(std::int64_t simulatedObjectId) noexcept override;
+    void removeAiObject(std::int64_t removedAircraftId) noexcept override;
     void syncAiObjectsWithFlight() noexcept override;
-    void updateUserAircraft(Aircraft &userAircraft) noexcept override;
+    void updateUserAircraft(int newUserAircraftIndex, int previousUserAircraftIndex) noexcept override;
 
 protected:
     void setState(Connect::State state) noexcept;

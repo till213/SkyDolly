@@ -57,6 +57,7 @@ public:
     RequestByAircraftId requestByAircraftId;
     // Key: SimConnect request ID - value: SimConnect object ID
     SimulatedObjectByRequestId simulatedObjectByRequestId;
+    ::SIMCONNECT_DATA_REQUEST_ID lastAiCreateRequestId {0};
 };
 
 // PUBLIC
@@ -83,11 +84,11 @@ void SimConnectAi::addObject(const Aircraft &aircraft, std::int64_t timestamp) n
     const PositionData positioNData = position.interpolate(timestamp, TimeVariableData::Access::Seek);
     const ::SIMCONNECT_DATA_INITPOSITION initialPosition = SimConnectPositionRequest::toInitialPosition(positioNData, aircraftInfo.startOnGround, aircraftInfo.initialAirspeed);
 
-    std::size_t n = d->requestByAircraftId.size();
-    const ::SIMCONNECT_DATA_REQUEST_ID requestId = Enum::toUnderlyingType(SimConnectType::DataRequest::AiObjectBase) + n;
+    const ::SIMCONNECT_DATA_REQUEST_ID requestId = Enum::toUnderlyingType(SimConnectType::DataRequest::AiObjectBase) + d->lastAiCreateRequestId;
     HRESULT result = ::SimConnect_AICreateNonATCAircraft(d->simConnectHandle, aircraftInfo.aircraftType.type.toLocal8Bit(), aircraftInfo.tailNumber.toLocal8Bit(), initialPosition, requestId);
     if (result == S_OK) {
         d->requestByAircraftId[aircraft.getId()] = requestId;
+        ++d->lastAiCreateRequestId;
 #ifdef DEBUG
         qDebug() << "SimConnectAi::addObject: pending CreateNonATCAircraft request:" << requestId << "for aircraft ID: " << aircraft.getId();
 #endif
