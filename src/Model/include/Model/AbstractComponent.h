@@ -32,6 +32,7 @@
 #include <type_traits>
 
 #include "TimeVariableData.h"
+#include "SkySearch.h"
 #include "AircraftInfo.h"
 #include "ModelLib.h"
 
@@ -40,7 +41,13 @@ class MODEL_API AbstractComponent
 {
     static_assert(std::is_base_of<TimeVariableData, T>::value, "T must inherit from TimeVariableData");
 public:
-    AbstractComponent(const AircraftInfo &aircraftInfo) noexcept;
+    using Data = typename std::vector<T>;
+    using Iterator = typename Data::iterator;
+    using BackInsertIterator = typename std::back_insert_iterator<Data>;
+
+    AbstractComponent(const AircraftInfo &aircraftInfo) noexcept
+        : m_aircraftInfo(aircraftInfo)
+    {}
 
     /*!
      * Inserts \c data at the end, or updates the \em last element (only) if
@@ -57,9 +64,9 @@ public:
     {
         if (m_data.size() > 0 && m_data.back() == data)  {
             // Same timestamp -> replace
-            m_data[m_data.size() - 1] = data;
+            m_data[m_data.size() - 1] = std::move(data);
         } else {
-            m_data.push_back(data);
+            m_data.push_back(std::move(data));
         }
     }
 
@@ -82,35 +89,84 @@ public:
             // Same timestamp -> update
             *result = data;
         } else {
-            m_data.push_back(data);
+            m_data.push_back(std::move(data));
         }
     }
 
-    const T getFirst() const noexcept;
-    const T getLast() const noexcept;
+    const T getFirst() const noexcept
+    {
+        if (m_data.empty()) {
+            return m_data.front();
+        } else {
+            return T::NullData;
+        }
+    }
+
+    const T getLast() const noexcept
+    {
+        if (m_data.empty()) {
+            return m_data.back();
+        } else {
+            return T::NullData;
+        }
+    }
+
     [[nodiscard]]
-    std::size_t count() const noexcept;
-    void clear() noexcept;
+    std::size_t count() const noexcept
+    {
+        return m_data.size();
+    }
 
-    using Data = typename std::vector<T>;
-    using Iterator = typename Data::iterator;
-    using BackInsertIterator = typename std::back_insert_iterator<Data>;
+    void clear() noexcept
+    {
+        m_data.clear();
+        m_currentTimestamp = TimeVariableData::InvalidTime;
+        m_currentIndex = SkySearch::InvalidIndex;
+    }
 
-    Iterator begin() noexcept;
-    Iterator end() noexcept;
-    const Iterator begin() const noexcept;
-    const Iterator end() const noexcept;
-    BackInsertIterator backInsertIterator() noexcept;
+    Iterator begin() const noexcept
+    {
+        return m_data.begin();
+    }
 
-    T operator[](std::size_t index) noexcept;
-    const T operator[](std::size_t index) const noexcept;
+    Iterator end() const noexcept
+    {
+        return m_data.end();
+    }
+
+    BackInsertIterator backInsertIterator() const noexcept
+    {
+        return std::back_inserter(m_data);
+    }
+
+    T operator[](std::size_t index) const noexcept
+    {
+        return m_data[index];
+    }
 
     virtual const T interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept = 0;
 
-
 protected:
-    AircraftInfo m_aircraftInfo;
+    [[nodiscard]]
+    inline const AircraftInfo &getAircraftInfo() const noexcept
+    {
+        return m_aircraftInfo;
+    }
+
+    [[nodiscard]]
+    inline const Data &getData() const noexcept
+    {
+        return m_data;
+    }
+
+private:
+    const AircraftInfo &m_aircraftInfo;
     Data m_data;
+    std::int64_t m_currentTimestamp {TimeVariableData::InvalidTime};
+    mutable int m_currentIndex {SkySearch::InvalidIndex};
+    TimeVariableData::Access m_currentAccess {TimeVariableData::Access::Linear};
+    T m_previousData;
+    T m_currentData;
 };
 
 #endif // ABSTRACTCOMPONENT_H
