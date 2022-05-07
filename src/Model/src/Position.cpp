@@ -176,6 +176,7 @@ const PositionData &Position::interpolate(std::int64_t timestamp, TimeVariableDa
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
             d->currentPositionData = PositionData::NullData;
         }
+        d->currentAccess = access;
         d->currentTimestamp = adjustedTimestamp;
     }
     return d->currentPositionData;

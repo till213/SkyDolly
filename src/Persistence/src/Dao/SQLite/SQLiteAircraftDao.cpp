@@ -185,7 +185,7 @@ bool SQLiteAircraftDao::add(std::int64_t flightId, int sequenceNumber, Aircraft 
         }
     }
     if (ok) {
-        for (const AircraftHandleData &data : aircraft.getAircraftHandleConst()) {
+        for (const AircraftHandleData &data : aircraft.getAircraftHandle()) {
             ok = d->handleDao->add(aircraft.getId(), data);
             if (!ok) {
                 break;

@@ -229,7 +229,7 @@ bool SkyDollyCsvWriter::write([[maybe_unused]] const Flight &flight, const Aircr
         }
 
         // Aircraft handles
-        const AircraftHandle &aircraftHandle = aircraft.getAircraftHandleConst();
+        AircraftHandle &aircraftHandle = aircraft.getAircraftHandle();
         dataType = QChar(Enum::toUnderlyingType(CsvConst::DataType::AircraftHandle));
         if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
             duration = aircraftHandle.getLast().timestamp;

@@ -96,9 +96,9 @@ const AircraftHandleData &AircraftHandleWidget::getCurrentAircraftHandleData(std
             return aircraft.getAircraftHandleConst().getLast();
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
-                return aircraft.getAircraftHandleConst().interpolate(timestamp, access);
+                return aircraft.getAircraftHandle().interpolate(timestamp, access);
             } else {
-                return aircraft.getAircraftHandleConst().interpolate(skyConnect->get().getCurrentTimestamp(), access);
+                return aircraft.getAircraftHandle().interpolate(skyConnect->get().getCurrentTimestamp(), access);
             }
         };
     } else {
