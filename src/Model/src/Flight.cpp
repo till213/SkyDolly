@@ -190,7 +190,7 @@ std::int64_t Flight::deleteAircraftByIndex(int index) noexcept
         if (index <= d->userAircraftIndex) {
             // An aircraft with a lower index or the user aircraft index itself
             // has been removed -> shift down the user aircraft index accordingly
-            setUserAircraftIndex(std::max(d->userAircraftIndex - 1, 0));
+            setUserAircraftIndex(qMax(d->userAircraftIndex - 1, 0));
         }
         aircraftId = d->aircraft.at(index)->getId();
         d->aircraft.erase(d->aircraft.begin() + index);
