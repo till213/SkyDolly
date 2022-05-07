@@ -26,6 +26,8 @@
 #include <cstdint>
 #include <unordered_map>
 
+#include <QDebug>
+
 #include <windows.h>
 #include <SimConnect.h>
 
@@ -63,14 +65,14 @@ SimConnectAi::SimConnectAi(::HANDLE simConnectHandle)
     : d(std::make_unique<SimConnectAIPrivate>(simConnectHandle))
 {
 #ifdef DEBUG
-    qDebug("SimConnectAI::SimConnectAI: CREATED");
+    qDebug() << "SimConnectAI::SimConnectAI: CREATED";
 #endif
 }
 
 SimConnectAi::~SimConnectAi()
 {
 #ifdef DEBUG
-    qDebug("SimConnectAI::~SimConnectAI: DELETED");
+    qDebug() << "SimConnectAI::~SimConnectAI: DELETED";
 #endif
 }
 
@@ -86,6 +88,9 @@ void SimConnectAi::addObject(const Aircraft &aircraft, std::int64_t timestamp) n
     HRESULT result = ::SimConnect_AICreateNonATCAircraft(d->simConnectHandle, aircraftInfo.aircraftType.type.toLocal8Bit(), aircraftInfo.tailNumber.toLocal8Bit(), initialPosition, requestId);
     if (result == S_OK) {
         d->requestByAircraftId[aircraft.getId()] = requestId;
+#ifdef DEBUG
+        qDebug() << "SimConnectAi::addObject: pending CreateNonATCAircraft request:" << requestId << "for aircraft ID: " << aircraft.getId();
+#endif
     }
 }
 
@@ -98,6 +103,9 @@ void SimConnectAi::removeByAircraftId(std::int64_t aircraftId) noexcept
         if (it2 != d->simulatedObjectByRequestId.end()) {
             const ::SIMCONNECT_OBJECT_ID objectId = it2->second;
             removeByObjectId(objectId);
+#ifdef DEBUG
+        qDebug() << "SimConnectAi::removeByAircraftId: removing simulation object request:" << objectId << "for aircraft ID: " << aircraftId;
+#endif
             d->simulatedObjectByRequestId.erase(it2);
             d->requestByAircraftId.erase(it);
         }
@@ -114,8 +122,16 @@ bool SimConnectAi::registerObjectId(::SIMCONNECT_DATA_REQUEST_ID requestId, ::SI
     bool ok {false};
     if (hasRequest(requestId)) {
         d->simulatedObjectByRequestId[requestId] = objectId;
+#ifdef DEBUG
+        qDebug() << "SimConnectAi::registerObjectId: registering simulation object ID:" << objectId << "for original request ID: " << requestId;
+#endif
         ok = true;
     }
+#ifdef DEBUG
+    else {
+        qDebug() << "SimConnectAi::registerObjectId: original request ID:" << requestId << "has already been discarded -> remove simulated object again, ID: " << objectId;
+    }
+#endif
     return ok;
 }
 

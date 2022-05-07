@@ -299,12 +299,12 @@ void MSFSSimConnectPlugin::onRecordingSampleRateChanged(SampleRate::SampleRate s
 bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept
 {
     const Flight &flight = getCurrentFlight();
-    const Aircraft &userAircraft = flight.getUserAircraftConst();
+    const std::int64_t userAircraftId = flight.getUserAircraftConst().getId();
     bool ok = true;
     for (auto &aircraft : flight) {
 
         // Replay AI aircraft - if any - during recording (if all aircraft are selected for replay)
-        const bool isUserAircraft = *aircraft == userAircraft;
+        const bool isUserAircraft = aircraft->getId() == userAircraftId;
         if (isUserAircraft && getReplayMode() == ReplayMode::UserAircraftManualControl) {
             // The user aircraft is manually flown
             continue;
@@ -315,10 +315,11 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
             continue;
         }
 
+        // When recording (a formation flight) we send the already recorded aircraft, except the
+        // user aircraft (which is currently being recorded)
         if (getState() != Connect::State::Recording || !isUserAircraft) {
-
-            const std::int64_t objectId = d->simConnectAi->getSimulatedObjectByAircraftId(aircraft->getId());
-            if (isUserAircraft || objectId != SimConnectAi::InvalidObjectId) {
+            const std::int64_t objectId = isUserAircraft ? ::SIMCONNECT_OBJECT_ID_USER : d->simConnectAi->getSimulatedObjectByAircraftId(aircraft->getId());
+            if (objectId != SimConnectAi::InvalidObjectId) {
 
                 ok = true;
                 const PositionData &positionData = aircraft->getPositionConst().interpolate(currentTimestamp, access);
