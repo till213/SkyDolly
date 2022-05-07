@@ -31,6 +31,7 @@
   * Calculating undulation values
   * Geodesic calculations (distance, azimuth, relative position)
 - Refactored the build system ("modern CMake")
+- Refactor plugin management
 
 ## 0.10.0
 
