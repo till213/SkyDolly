@@ -389,13 +389,6 @@ inline void LogbookWidget::addFlightSummary(FlightSummary summary, int rowIndex)
     d->titleColumnIndex = columnIndex;
     ++columnIndex;
 
-    // Creation date
-    newItem = std::make_unique<TableDateItem>(d->unit.formatDate(summary.creationDate), summary.creationDate.date());
-    newItem->setToolTip(tr("Recording time: %1.").arg(d->unit.formatTime(summary.creationDate)));
-    newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
-    ++columnIndex;
-
     // Aircraft type
     newItem = std::make_unique<QTableWidgetItem>(summary.aircraftType);
     ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
@@ -404,6 +397,13 @@ inline void LogbookWidget::addFlightSummary(FlightSummary summary, int rowIndex)
     // Aircraft count
     newItem = std::make_unique<QTableWidgetItem>();
     newItem->setData(Qt::DisplayRole, summary.aircraftCount);
+    newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
+    ++columnIndex;
+
+    // Creation date
+    newItem = std::make_unique<TableDateItem>(d->unit.formatDate(summary.creationDate), summary.creationDate.date());
+    newItem->setToolTip(tr("Recording time: %1.").arg(d->unit.formatTime(summary.creationDate)));
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
