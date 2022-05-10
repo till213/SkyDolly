@@ -52,7 +52,10 @@ public:
 
     AbstractComponent(AbstractComponent &aircraftHandle) = default;
     AbstractComponent(AbstractComponent &&aircraftHandle) = default;
-    AbstractComponent &operator=(const AbstractComponent &rhs) = default;
+    AbstractComponent &operator=(const AbstractComponent &rhs)
+    {
+        this = rhs;
+    };
     AbstractComponent &operator=(AbstractComponent&& rhs) = default;
     virtual ~AbstractComponent() = default;
 

@@ -57,6 +57,7 @@ AircraftHandle::~AircraftHandle() noexcept
 
 const AircraftHandleData AircraftHandle::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {
+    AircraftHandleData aircraftHandleData;
     const AircraftHandleData *p1, *p2;
     const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;
     const std::int64_t adjustedTimestamp = qMax(timestamp + timeOffset, std::int64_t(0));
@@ -91,37 +92,37 @@ const AircraftHandleData AircraftHandle::interpolate(std::int64_t timestamp, Tim
         }
 
         if (p1 != nullptr) {
-            m_currentAircraftHandleData.brakeLeftPosition = SkyMath::interpolateLinear(p1->brakeLeftPosition, p2->brakeLeftPosition, tn);
-            m_currentAircraftHandleData.brakeRightPosition = SkyMath::interpolateLinear(p1->brakeRightPosition, p2->brakeRightPosition, tn);
-            m_currentAircraftHandleData.waterRudderHandlePosition = SkyMath::interpolateLinear(p1->waterRudderHandlePosition, p2->waterRudderHandlePosition, tn);
-            m_currentAircraftHandleData.tailhookPosition = SkyMath::interpolateLinear(p1->tailhookPosition, p2->tailhookPosition, tn);
-            m_currentAircraftHandleData.canopyOpen = SkyMath::interpolateLinear(p1->canopyOpen, p2->canopyOpen, tn);
-            m_currentAircraftHandleData.leftWingFolding = SkyMath::interpolateLinear(p1->leftWingFolding, p2->leftWingFolding, tn);
-            m_currentAircraftHandleData.rightWingFolding = SkyMath::interpolateLinear(p1->rightWingFolding, p2->rightWingFolding, tn);
-            m_currentAircraftHandleData.gearHandlePosition = p1->gearHandlePosition;
-            m_currentAircraftHandleData.smokeEnabled = p1->smokeEnabled;
-            m_currentAircraftHandleData.timestamp = adjustedTimestamp;
+            aircraftHandleData.brakeLeftPosition = SkyMath::interpolateLinear(p1->brakeLeftPosition, p2->brakeLeftPosition, tn);
+            aircraftHandleData.brakeRightPosition = SkyMath::interpolateLinear(p1->brakeRightPosition, p2->brakeRightPosition, tn);
+            aircraftHandleData.waterRudderHandlePosition = SkyMath::interpolateLinear(p1->waterRudderHandlePosition, p2->waterRudderHandlePosition, tn);
+            aircraftHandleData.tailhookPosition = SkyMath::interpolateLinear(p1->tailhookPosition, p2->tailhookPosition, tn);
+            aircraftHandleData.canopyOpen = SkyMath::interpolateLinear(p1->canopyOpen, p2->canopyOpen, tn);
+            aircraftHandleData.leftWingFolding = SkyMath::interpolateLinear(p1->leftWingFolding, p2->leftWingFolding, tn);
+            aircraftHandleData.rightWingFolding = SkyMath::interpolateLinear(p1->rightWingFolding, p2->rightWingFolding, tn);
+            aircraftHandleData.gearHandlePosition = p1->gearHandlePosition;
+            aircraftHandleData.smokeEnabled = p1->smokeEnabled;
+            aircraftHandleData.timestamp = adjustedTimestamp;
 
             // Certain aircraft override the CANOPY OPEN, so values need to be repeatedly set
             if (Settings::getInstance().isRepeatCanopyOpenEnabled()) {
                 // We do that my storing the previous values (when the canopy is "open")...
-                m_previousAircraftHandleData = m_currentAircraftHandleData;
+                m_previousAircraftHandleData = aircraftHandleData;
             } else {
                 // "Repeat values" setting disabled
                 m_previousAircraftHandleData = AircraftHandleData::NullData;
             }
         } else if (!m_previousAircraftHandleData.isNull()) {
             // ... and send the previous values again
-            m_currentAircraftHandleData = m_previousAircraftHandleData;
-            m_currentAircraftHandleData.timestamp = adjustedTimestamp;
+            aircraftHandleData = m_previousAircraftHandleData;
+            aircraftHandleData.timestamp = adjustedTimestamp;
         } else {
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
-            m_currentAircraftHandleData = AircraftHandleData::NullData;
+            aircraftHandleData = AircraftHandleData::NullData;
         }
 
         setCurrentIndex(currentIndex);
         setCurrentTimestamp(adjustedTimestamp);
         setCurrentAccess(access);
     }
-    return m_currentAircraftHandleData;
+    return aircraftHandleData;
 }
