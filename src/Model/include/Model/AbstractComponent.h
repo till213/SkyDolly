@@ -46,18 +46,34 @@ public:
     using ConstIterator = typename Data::const_iterator;
     using BackInsertIterator = typename std::back_insert_iterator<Data>;
 
-    AbstractComponent(const AircraftInfo &aircraftInfo) noexcept
+    explicit AbstractComponent(const AircraftInfo &aircraftInfo) noexcept
         : m_aircraftInfo(aircraftInfo)
     {}
-
-    AbstractComponent(AbstractComponent &aircraftHandle) = default;
-    AbstractComponent(AbstractComponent &&aircraftHandle) = default;
+    virtual ~AbstractComponent() = default;
+    AbstractComponent(const AbstractComponent &) = default;
+    AbstractComponent(AbstractComponent &&) = default;
     AbstractComponent &operator=(const AbstractComponent &rhs)
     {
-        this = rhs;
-    };
-    AbstractComponent &operator=(AbstractComponent&& rhs) = default;
-    virtual ~AbstractComponent() = default;
+        if (this != &rhs) {
+            m_data = rhs.m_data;
+            m_aircraftInfo = rhs.m_aircraftInfo;
+            m_currentTimestamp = rhs.m_currentTimestamp;
+            m_currentIndex = rhs.m_currentIndex;
+            m_currentAccess = rhs.m_currentAccess;
+        }
+        return *this;
+    }
+    AbstractComponent &operator=(AbstractComponent&& rhs)
+    {
+        if (this != &rhs) {
+            m_data = std::move(rhs.m_data);
+            m_aircraftInfo = std::move(rhs.m_aircraftInfo);
+            m_currentTimestamp = rhs.m_currentTimestamp;
+            m_currentIndex = rhs.m_currentIndex;
+            m_currentAccess = rhs.m_currentAccess;
+        }
+        return *this;
+    }
 
     /*!
      * Inserts \c data at the end, or updates the \em last element (only) if
@@ -213,7 +229,7 @@ private:
     Data m_data;
     const AircraftInfo &m_aircraftInfo;
     std::int64_t m_currentTimestamp {TimeVariableData::InvalidTime};
-    mutable int m_currentIndex {SkySearch::InvalidIndex};
+    int m_currentIndex {SkySearch::InvalidIndex};
     TimeVariableData::Access m_currentAccess {TimeVariableData::Access::Linear};
 };
 
