@@ -213,7 +213,7 @@ const EngineData &EngineWidget::getCurrentEngineData(std::int64_t timestamp, Tim
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().getState() == Connect::State::Recording) {
-            return aircraft.getEngineConst().getLast();
+            return aircraft.getEngine().getLast();
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
                 return aircraft.getEngine().interpolate(timestamp, access);

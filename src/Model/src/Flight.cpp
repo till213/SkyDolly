@@ -165,11 +165,6 @@ Aircraft &Flight::addUserAircraft() noexcept
     return *d->aircraft.back().get();
 }
 
-const Aircraft &Flight::getUserAircraftConst() const noexcept
-{
-    return *d->aircraft.at(d->userAircraftIndex);
-}
-
 Aircraft &Flight::getUserAircraft() const noexcept
 {
     return *d->aircraft.at(d->userAircraftIndex);
@@ -209,7 +204,7 @@ std::size_t Flight::count() const noexcept
     return d->aircraft.size();
 }
 
-const FlightCondition &Flight::getFlightConditionConst() const noexcept
+const FlightCondition &Flight::getFlightCondition() const noexcept
 {
     return d->flightCondition;
 }
@@ -224,7 +219,7 @@ std::int64_t Flight::getTotalDurationMSec(bool ofUserAircraft) const noexcept
 {
     std::int64_t totalDuractionMSec = 0;
     if (ofUserAircraft) {
-        totalDuractionMSec = getUserAircraftConst().getDurationMSec();
+        totalDuractionMSec = getUserAircraft().getDurationMSec();
     } else {
         for (const auto &aircraft : d->aircraft) {
             totalDuractionMSec = qMax(aircraft->getDurationMSec(), totalDuractionMSec);

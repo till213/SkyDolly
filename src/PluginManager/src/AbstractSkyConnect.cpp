@@ -416,7 +416,7 @@ bool AbstractSkyConnect::isIdle() const noexcept
 double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
 {
     double samplesPerSecond;
-    const Position &position = d->currentFlight.getUserAircraftConst().getPosition();
+    const Position &position = d->currentFlight.getUserAircraft().getPosition();
     if (position.count() > 0) {
         const std::int64_t startTimestamp = qMin(qMax(d->currentTimestamp - SamplesPerSecondPeriodMSec, std::int64_t(0)), position.getLast().timestamp);
         int index = d->lastSamplesPerSecondIndex;
@@ -558,7 +558,7 @@ void AbstractSkyConnect::frenchConnection() noexcept
 
 bool AbstractSkyConnect::hasRecordingStarted() const noexcept
 {
-    return d->currentFlight.getUserAircraftConst().getPosition().count() > 0;
+    return d->currentFlight.getUserAircraft().getPosition().count() > 0;
 }
 
 std::int64_t AbstractSkyConnect::getSkipInterval() const noexcept
@@ -620,12 +620,12 @@ bool AbstractSkyConnect::setupInitialReplayPosition(const InitialPosition &flyWi
         [[fallthrough]];
     case ReplayMode::Normal:
         if (d->currentTimestamp == 0) {
-            const Aircraft &userAircraft = getCurrentFlight().getUserAircraftConst();
-            const PositionData &positionData = userAircraft.getPositionConst().getFirst();
+            const Aircraft &userAircraft = getCurrentFlight().getUserAircraft();
+            const PositionData &positionData = userAircraft.getPosition().getFirst();
             // Make sure recorded position data exists
             ok = !positionData.isNull();
             if (ok) {
-                const AircraftInfo aircraftInfo = userAircraft.getAircraftInfoConst();
+                const AircraftInfo aircraftInfo = userAircraft.getAircraftInfo();
                 const InitialPosition initialPosition = InitialPosition(positionData, aircraftInfo);
                 ok = onInitialPositionSetup(initialPosition);
             }

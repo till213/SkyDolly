@@ -110,12 +110,12 @@ const PrimaryFlightControlData &PrimaryFlightControlWidget::getCurrentPrimaryFli
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().getState() == Connect::State::Recording) {
-            return aircraft.getPrimaryFlightControlConst().getLast();
+            return aircraft.getPrimaryFlightControl().getLast();
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
-                return aircraft.getPrimaryFlightControlConst().interpolate(timestamp, access);
+                return aircraft.getPrimaryFlightControl().interpolate(timestamp, access);
             } else {
-                return aircraft.getPrimaryFlightControlConst().interpolate(skyConnect->get().getCurrentTimestamp(), access);
+                return aircraft.getPrimaryFlightControl().interpolate(skyConnect->get().getCurrentTimestamp(), access);
             }
         };
     } else {

@@ -136,12 +136,12 @@ void PathCreatorPlugin::onRecordingPaused([[maybe_unused]] bool paused) noexcept
 void PathCreatorPlugin::onStopRecording() noexcept
 {
     Flight &flight = getCurrentFlight();
-    FlightCondition flightCondition = flight.getFlightConditionConst();
+    FlightCondition flightCondition = flight.getFlightCondition();
     flightCondition.endLocalTime = QDateTime::currentDateTime();
     flightCondition.endZuluTime = QDateTime::currentDateTimeUtc();
     flight.setFlightCondition(flightCondition);
 
-    FlightPlan &flightPlan = flight.getUserAircraftConst().getFlightPlan();
+    FlightPlan &flightPlan = flight.getUserAircraft().getFlightPlan();
     int waypointCount = flightPlan.count();
     if (waypointCount > 1) {
         Waypoint waypoint = flightPlan[waypointCount - 1];
@@ -181,7 +181,7 @@ bool PathCreatorPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeVari
     bool dataAvailable;
     if (currentTimestamp <= getCurrentFlight().getTotalDurationMSec()) {
         dataAvailable = true;
-        const PositionData &currentPositionData = getCurrentFlight().getUserAircraftConst().getPosition().interpolate(getCurrentTimestamp(), access);
+        const PositionData &currentPositionData = getCurrentFlight().getUserAircraft().getPosition().interpolate(getCurrentTimestamp(), access);
         if (!currentPositionData.isNull()) {
             // Start the elapsed timer after sending the first sample data
             if (!isElapsedTimerRunning()) {

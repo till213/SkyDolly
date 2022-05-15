@@ -136,7 +136,7 @@ bool ExportPluginBase::exportFlight(const Flight &flight, const QString &filePat
     case ExportPluginBaseSettings::FormationExport::UserAircraftOnly:
         ok = file.open(QIODevice::WriteOnly);
         if (ok) {
-            ok = exportAircraft(flight, flight.getUserAircraftConst(), file);
+            ok = exportAircraft(flight, flight.getUserAircraft(), file);
             d->exportedFilePaths.push_back(filePath);
         }
         file.close();

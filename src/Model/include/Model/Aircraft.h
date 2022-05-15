@@ -54,33 +54,20 @@ public:
     std::int64_t getId() const noexcept;
     void setId(std::int64_t id) noexcept;
 
-    const Position &getPositionConst() const noexcept;
     Position &getPosition() const noexcept;
-
-    const Engine &getEngineConst() const noexcept;
     Engine &getEngine() const noexcept;
-
-    const PrimaryFlightControl &getPrimaryFlightControlConst() const noexcept;
     PrimaryFlightControl &getPrimaryFlightControl() const noexcept;
-
-    const SecondaryFlightControl &getSecondaryFlightControlConst() const noexcept;
     SecondaryFlightControl &getSecondaryFlightControl() const noexcept;
-
-    const AircraftHandle &getAircraftHandleConst() const noexcept;
     AircraftHandle &getAircraftHandle() const noexcept;
-
-    const Light &getLightConst() const noexcept;
     Light &getLight() const noexcept;
 
-    const AircraftInfo &getAircraftInfoConst() const noexcept;
+    const AircraftInfo &getAircraftInfo() const noexcept;
     void setAircraftInfo(const AircraftInfo &aircraftInfo) noexcept;
-
     void setTailNumber(const QString &tailNumber) noexcept;
 
     std::int64_t getTimeOffset() const noexcept;
     void setTimeOffset(std::int64_t timeOffset) noexcept;
 
-    const FlightPlan &getFlightPlanConst() const noexcept;
     FlightPlan &getFlightPlan() const noexcept;
 
     std::int64_t getDurationMSec() const noexcept;

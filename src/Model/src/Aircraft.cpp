@@ -96,19 +96,9 @@ void Aircraft::setId(std::int64_t id) noexcept
     d->aircraftInfo.aircraftId = id;
 }
 
-const Position &Aircraft::getPositionConst() const noexcept
-{
-    return d->position;
-}
-
 Position &Aircraft::getPosition() const noexcept
 {
     return d->position;
-}
-
-const Engine &Aircraft::getEngineConst() const noexcept
-{
-    return d->engine;
 }
 
 Engine &Aircraft::getEngine() const noexcept
@@ -116,19 +106,9 @@ Engine &Aircraft::getEngine() const noexcept
     return d->engine;
 }
 
-const PrimaryFlightControl &Aircraft::getPrimaryFlightControlConst() const noexcept
-{
-    return d->primaryFlightControl;
-}
-
 PrimaryFlightControl &Aircraft::getPrimaryFlightControl() const noexcept
 {
     return d->primaryFlightControl;
-}
-
-const SecondaryFlightControl &Aircraft::getSecondaryFlightControlConst() const noexcept
-{
-    return d->secondaryFlightControl;
 }
 
 SecondaryFlightControl &Aircraft::getSecondaryFlightControl() const noexcept
@@ -136,19 +116,9 @@ SecondaryFlightControl &Aircraft::getSecondaryFlightControl() const noexcept
     return d->secondaryFlightControl;
 }
 
-const AircraftHandle &Aircraft::getAircraftHandleConst() const noexcept
-{
-    return d->aircraftHandle;
-}
-
 AircraftHandle &Aircraft::getAircraftHandle() const noexcept
 {
     return d->aircraftHandle;
-}
-
-const Light &Aircraft::getLightConst() const noexcept
-{
-    return d->light;
 }
 
 Light &Aircraft::getLight() const noexcept
@@ -156,7 +126,7 @@ Light &Aircraft::getLight() const noexcept
     return d->light;
 }
 
-const AircraftInfo &Aircraft::getAircraftInfoConst() const noexcept
+const AircraftInfo &Aircraft::getAircraftInfo() const noexcept
 {
     return d->aircraftInfo;
 }
@@ -186,11 +156,6 @@ void Aircraft::setTimeOffset(std::int64_t timeOffset) noexcept {
         d->aircraftInfo.timeOffset = timeOffset;
         emit timeOffsetChanged(*this);
     }
-}
-
-const FlightPlan &Aircraft::getFlightPlanConst() const noexcept
-{
-    return d->flightPlan;
 }
 
 FlightPlan &Aircraft::getFlightPlan() const noexcept

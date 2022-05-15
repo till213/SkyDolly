@@ -149,7 +149,7 @@ const PositionData &AircraftWidget::getCurrentPositionData(std::int64_t timestam
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().getState() == Connect::State::Recording) {
-            return aircraft.getPositionConst().getLast();
+            return aircraft.getPosition().getLast();
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
                 return aircraft.getPosition().interpolate(timestamp, access);

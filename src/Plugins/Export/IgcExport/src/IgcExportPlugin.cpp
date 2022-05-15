@@ -218,11 +218,11 @@ inline bool IgcExportPlugin::exportARecord(QIODevice &io) const noexcept
 inline bool IgcExportPlugin::exportHRecord(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     const QByteArray record =
-        IgcExportPluginPrivate::HRecord % ::Date % formatDate(d->flight->getFlightConditionConst().startZuluTime) % ::LineEnd %
+        IgcExportPluginPrivate::HRecord % ::Date % formatDate(d->flight->getFlightCondition().startZuluTime) % ::LineEnd %
         IgcExportPluginPrivate::HRecord % ::Pilot % d->pluginSettings.getPilotName().toLatin1() % ::LineEnd %
         IgcExportPluginPrivate::HRecord % ::CoPilot % d->pluginSettings.getCoPilotName().toLatin1() % ::LineEnd %
-        IgcExportPluginPrivate::HRecord % ::GliderType % aircraft.getAircraftInfoConst().aircraftType.type.toLatin1() % ::LineEnd %
-        IgcExportPluginPrivate::HRecord % ::GliderId % aircraft.getAircraftInfoConst().tailNumber.toLatin1() % ::LineEnd %
+        IgcExportPluginPrivate::HRecord % ::GliderType % aircraft.getAircraftInfo().aircraftType.type.toLatin1() % ::LineEnd %
+        IgcExportPluginPrivate::HRecord % ::GliderId % aircraft.getAircraftInfo().tailNumber.toLatin1() % ::LineEnd %
         IgcExportPluginPrivate::HRecord % ::GPSDatum % ::LineEnd %
         IgcExportPluginPrivate::HRecord % ::FirmwareVersion % Version::getApplicationVersion().toLatin1() % " with WGS84 Ellipsoid GPS altitude datum" % ::LineEnd %
         // Reporting the kernel version is somewhat arbitrary here - but we have a cool version number value :)
@@ -251,8 +251,8 @@ inline bool IgcExportPlugin::exportJRecord(QIODevice &io) const noexcept
 
 inline bool IgcExportPlugin::exportCRecord(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    const FlightPlan &flightPlan = aircraft.getFlightPlanConst();
-    const Position &position = aircraft.getPositionConst();
+    const FlightPlan &flightPlan = aircraft.getFlightPlan();
+    const Position &position = aircraft.getPosition();
     const int nofTurnPoints = flightPlan.count() - 2;
     QByteArray record = IgcExportPluginPrivate::CRecord % formatDateTime(d->flight->getAircraftStartZuluTime(aircraft)) %
                         ::ObsoleteFlightDate % ::ObsoleteTaskNumber %

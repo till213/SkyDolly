@@ -96,7 +96,7 @@ bool FlightRadar24CsvWriter::write(const Flight &flight, const Aircraft &aircraf
     bool ok = io.write(csv.toUtf8());
     if (ok) {
         const QDateTime startDateTimeUtc = flight.getAircraftStartZuluTime(aircraft);
-        const QString callSign = aircraft.getAircraftInfoConst().flightNumber;
+        const QString callSign = aircraft.getAircraftInfo().flightNumber;
         std::vector<PositionData> interpolatedPositionData;
         Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod(), std::back_inserter(interpolatedPositionData));
         for (PositionData &positionData : interpolatedPositionData) {

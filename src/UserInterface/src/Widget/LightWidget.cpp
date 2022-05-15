@@ -116,7 +116,7 @@ const LightData &LightWidget::getCurrentLightData(std::int64_t timestamp, TimeVa
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().getState() == Connect::State::Recording) {
-            return aircraft.getLightConst().getLast();
+            return aircraft.getLight().getLast();
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
                 return aircraft.getLight().interpolate(timestamp, access);

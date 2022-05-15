@@ -415,9 +415,9 @@ InitialPosition FormationWidget::calculateRelativeInitialPositionToUserAircraft(
     if (!relativePositionData.isNull()) {
         initialPosition.fromPositionData(relativePositionData);
         if (timestamp == 0) {
-            const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
-            const Aircraft &userAircraft = flight.getUserAircraftConst();
-            const AircraftInfo &aircraftInfo = userAircraft.getAircraftInfoConst();
+            const Flight &flight = Logbook::getInstance().getCurrentFlight();
+            const Aircraft &userAircraft = flight.getUserAircraft();
+            const AircraftInfo &aircraftInfo = userAircraft.getAircraftInfo();
             initialPosition.onGround =  aircraftInfo.startOnGround;
         } else {
             initialPosition.onGround = false;
@@ -430,13 +430,13 @@ PositionData FormationWidget::calculateRelativePositionToUserAircraft(std::int64
 {
     PositionData initialPosition;
 
-    const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
-    const Aircraft &userAircraft = flight.getUserAircraftConst();
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const Aircraft &userAircraft = flight.getUserAircraft();
     Position &position = userAircraft.getPosition();
     const PositionData &positionData = timestamp == 0 ? position.getFirst() : position.interpolate(timestamp, TimeVariableData::Access::Seek);
     if (!positionData.isNull()) {
 
-        const AircraftInfo &aircraftInfo = userAircraft.getAircraftInfoConst();
+        const AircraftInfo &aircraftInfo = userAircraft.getAircraftInfo();
         const AircraftType &aircraftType = aircraftInfo.aircraftType;
 
         // Copy pitch, bank, heading and velocity
@@ -575,7 +575,7 @@ void FormationWidget::updateUi() noexcept
     const QString tooltip = tr("Double-click to change user aircraft.");
     for (const auto &aircraft : flight) {
 
-        const AircraftInfo &aircraftInfo = aircraft->getAircraftInfoConst();
+        const AircraftInfo &aircraftInfo = aircraft->getAircraftInfo();
         int columnIndex = 0;
 
         // Sequence
@@ -672,7 +672,7 @@ void FormationWidget::updateEditUi() noexcept
 {
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const bool inRecordingMode = skyConnect && skyConnect->get().inRecordingMode();
-    const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
     bool userAircraftIndex = d->selectedAircraftIndex == flight.getUserAircraftIndex();
     ui->userAircraftPushButton->setEnabled(d->selectedAircraftIndex != Flight::InvalidId && !userAircraftIndex);
     const bool formation = flight.count() > 1;
@@ -712,9 +712,9 @@ void FormationWidget::updateTimeOffsetUi() noexcept
     ui->fastBackwardOffsetPushButton->setEnabled(enabled);
 
     if (enabled) {
-        const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
+        const Flight &flight = Logbook::getInstance().getCurrentFlight();
         const Aircraft &aircraft = flight[d->selectedAircraftIndex];
-        const std::int64_t timeOffset = aircraft.getAircraftInfoConst().timeOffset;
+        const std::int64_t timeOffset = aircraft.getAircraftInfo().timeOffset;
         const double timeOffsetSec = static_cast<double>(timeOffset) / 1000.0;
         QString offsetString = d->unit.formatNumber(timeOffsetSec, TimeOffsetDecimalPlaces);
         ui->timeOffsetLineEdit->setText(offsetString);

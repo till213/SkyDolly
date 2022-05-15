@@ -60,7 +60,7 @@ QString Export::suggestFilePath(const Flight &flight, QStringView suffix) noexce
     if (title.isNull()) {
         if (flight.count() > 0) {
             const Aircraft &aircraft = flight.getUserAircraft();
-            suggestedFileName = aircraft.getAircraftInfoConst().aircraftType.type;
+            suggestedFileName = aircraft.getAircraftInfo().aircraftType.type;
         } else {
             suggestedFileName = Version::getApplicationName();
         }

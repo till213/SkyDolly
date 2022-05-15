@@ -41,7 +41,6 @@ public:
     static Logbook &getInstance() noexcept;
     static void destroyInstance() noexcept;
     Flight &getCurrentFlight() const;
-    const Flight &getCurrentFlightConst() const;
 
 signals:
     void flightTitleOrDescriptionChanged(std::int64_t id);

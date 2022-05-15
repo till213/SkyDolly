@@ -300,7 +300,7 @@ void LogbookWidget::updateFlightTable() noexcept
     d->selectedFlightId = Flight::InvalidId;
     if (ConnectionManager::getInstance().isConnected()) {
 
-        const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
+        const Flight &flight = Logbook::getInstance().getCurrentFlight();
         const std::int64_t flightInMemoryId = flight.getId();
         std::vector<FlightSummary> summaries = d->logbookService->getFlightSummaries(d->flightSelector);
         ui->logTableWidget->blockSignals(true);
@@ -543,7 +543,7 @@ void LogbookWidget::updateEditUi() noexcept
 
 void LogbookWidget::updateAircraftIcon() noexcept
 {
-    const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
     const std::int64_t flightInMemoryId = flight.getId();
     const QIcon aircraftIcon(":/img/icons/aircraft-normal.png");
     const QIcon emptyIcon;

@@ -92,7 +92,7 @@ const AircraftHandleData &AircraftHandleWidget::getCurrentAircraftHandleData(std
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().getState() == Connect::State::Recording) {
-            return aircraft.getAircraftHandleConst().getLast();
+            return aircraft.getAircraftHandle().getLast();
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
                 return aircraft.getAircraftHandle().interpolate(timestamp, access);

@@ -965,7 +965,7 @@ void MainWindow::updateUi() noexcept
 
 void MainWindow::updateControlUi() noexcept
 {
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();
+    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
     const bool hasRecording = aircraft.hasRecording();
 
     const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
@@ -1115,7 +1115,7 @@ void MainWindow::updateTimestamp() noexcept
 
 void MainWindow::updateFileMenu() noexcept
 {
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();
+    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
     const bool hasRecording = aircraft.hasRecording();
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const Connect::State state = skyConnect ? skyConnect->get().getState() : Connect::State::Disconnected;
@@ -1420,7 +1420,7 @@ void MainWindow::handleImport(QAction *action) noexcept
 void MainWindow::handleExport(QAction *action) noexcept
 {
     const QUuid pluginUuid = action->data().toUuid();
-    const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
     PluginManager::getInstance().exportFlight(flight, pluginUuid);
 }
 

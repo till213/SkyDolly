@@ -120,12 +120,12 @@ const SecondaryFlightControlData &SecondaryFlightControlWidget::getCurrentSecond
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().getState() == Connect::State::Recording) {
-            return aircraft.getSecondaryFlightControlConst().getLast();
+            return aircraft.getSecondaryFlightControl().getLast();
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
-                return aircraft.getSecondaryFlightControlConst().interpolate(timestamp, access);
+                return aircraft.getSecondaryFlightControl().interpolate(timestamp, access);
             } else {
-                return aircraft.getSecondaryFlightControlConst().interpolate(skyConnect->get().getCurrentTimestamp(), access);
+                return aircraft.getSecondaryFlightControl().interpolate(skyConnect->get().getCurrentTimestamp(), access);
             }
         };
     } else {

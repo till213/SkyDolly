@@ -193,7 +193,7 @@ bool JsonExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) c
     Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod(), std::back_inserter(interpolatedPositionData));
     bool ok = true;
 
-    const AircraftInfo &info = aircraft.getAircraftInfoConst();
+    const AircraftInfo &info = aircraft.getAircraftInfo();
     const AircraftType &type = info.aircraftType;
     const QString trackBegin = QString(
 "    {\n"
@@ -247,7 +247,7 @@ bool JsonExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) c
 bool JsonExportPlugin::exportWaypoints(QIODevice &io) const noexcept
 {
     bool ok = true;
-    const FlightPlan &flightPlan = d->flight->getUserAircraft().getFlightPlanConst();
+    const FlightPlan &flightPlan = d->flight->getUserAircraft().getFlightPlan();
     for (const Waypoint &waypoint : flightPlan) {
         ok = exportWaypoint(waypoint, io);
         if (!ok) {
