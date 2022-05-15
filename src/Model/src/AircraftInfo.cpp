@@ -69,12 +69,5 @@ AircraftInfo &AircraftInfo::operator = (AircraftInfo &&rhs) noexcept
 
 void AircraftInfo::clear() noexcept
 {
-    aircraftType.clear();
-    timeOffset = 0;
-    tailNumber.clear();
-    airline.clear();
-    flightNumber.clear();
-    startOnGround = false;
-    altitudeAboveGround = 0.0f;
-    initialAirspeed = 0;
+    *this = AircraftInfo(aircraftId);
 }

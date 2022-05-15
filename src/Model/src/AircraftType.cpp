@@ -42,23 +42,19 @@ AircraftType::AircraftType(AircraftType &&other) noexcept
       numberOfEngines(other.numberOfEngines)
 {}
 
-AircraftType &AircraftType::operator = (AircraftType &&other) noexcept
+AircraftType &AircraftType::operator = (AircraftType &&rhs) noexcept
 {
-    if (this != &other) {
-        type = std::move(other.type);
-        category = std::move(other.category);
-        wingSpan = other.wingSpan;
-        engineType = other.engineType;
-        numberOfEngines = other.numberOfEngines;
+    if (this != &rhs) {
+        type = std::move(rhs.type);
+        category = std::move(rhs.category);
+        wingSpan = rhs.wingSpan;
+        engineType = rhs.engineType;
+        numberOfEngines = rhs.numberOfEngines;
     }
     return *this;
 }
 
 void AircraftType::clear() noexcept
 {
-    type.clear();
-    category.clear();
-    wingSpan = 0;
-    engineType = SimType::EngineType::Unknown;
-    numberOfEngines = 0;
+    *this = AircraftType();
 }

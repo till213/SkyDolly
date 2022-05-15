@@ -85,9 +85,6 @@ const EngineData &Engine::interpolate(std::int64_t timestamp, TimeVariableData::
                 p1 = p2 = nullptr;
             }
             break;
-        default:
-            p1 = p2 = nullptr;
-            break;
         }
 
         if (p1 != nullptr) {
