@@ -45,8 +45,8 @@ class MODEL_API Flight : public QObject
 {
     Q_OBJECT
 public:
-    Flight(QObject *parent = nullptr) noexcept;
-    virtual ~Flight() noexcept;
+    explicit Flight(QObject *parent = nullptr) noexcept;
+    ~Flight() noexcept override;
 
     std::int64_t getId() const noexcept;
     void setId(std::int64_t id) noexcept;

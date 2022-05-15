@@ -36,9 +36,9 @@ public:
     explicit PrimaryFlightControl(const AircraftInfo &aircraftInfo) noexcept;
     PrimaryFlightControl(PrimaryFlightControl &aircraftHandle) = default;
     PrimaryFlightControl(PrimaryFlightControl &&aircraftHandle) = default;
+    ~PrimaryFlightControl() noexcept override;
     PrimaryFlightControl &operator = (const PrimaryFlightControl &rhs) = default;
     PrimaryFlightControl &operator = (PrimaryFlightControl &&rhs) = default;
-    ~PrimaryFlightControl() noexcept override;
 
     const PrimaryFlightControlData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 

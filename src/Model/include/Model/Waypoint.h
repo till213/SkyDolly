@@ -42,10 +42,12 @@ struct MODEL_API Waypoint : public TimeVariableData
     QDateTime localTime;
     QDateTime zuluTime;
 
-    Waypoint(float latitude = 0.0f, float longitude = 0.0f, float altitude = 0.0f) noexcept;
-    Waypoint(Waypoint &&) = default;
+    explicit Waypoint(float latitude = 0.0f, float longitude = 0.0f, float altitude = 0.0f) noexcept;
     Waypoint(const Waypoint &) = default;
-    Waypoint &operator = (const Waypoint &) = default;
+    Waypoint(Waypoint &&other) noexcept;
+    ~Waypoint() override = default;
+    Waypoint &operator = (const Waypoint &rhs) = default;
+    Waypoint &operator = (Waypoint &&rhs) noexcept;
 
     /*!
      * Returns whether this waypoint is valid or not.

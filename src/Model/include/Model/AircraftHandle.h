@@ -40,9 +40,9 @@ public:
     explicit AircraftHandle(const AircraftInfo &aircraftInfo) noexcept;
     AircraftHandle(AircraftHandle &aircraftHandle) = default;
     AircraftHandle(AircraftHandle &&aircraftHandle) = default;
+    ~AircraftHandle() noexcept override;
     AircraftHandle &operator = (const AircraftHandle &rhs) = default;
     AircraftHandle &operator = (AircraftHandle &&rhs) = default;
-    ~AircraftHandle() noexcept override;
 
     const AircraftHandleData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 

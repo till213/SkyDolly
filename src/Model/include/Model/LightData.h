@@ -36,7 +36,7 @@ struct MODEL_API LightData : public TimeVariableData
 {
     SimType::LightStates lightStates;
 
-    LightData(SimType::LightStates lightStates = SimType::LightState::None) noexcept;
+    explicit LightData(SimType::LightStates lightStates = SimType::LightState::None) noexcept;
     LightData(const LightData &other) = default;
     LightData(LightData &&) = default;
     ~LightData() override = default;

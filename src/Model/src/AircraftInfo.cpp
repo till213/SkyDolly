@@ -36,6 +36,7 @@ AircraftInfo::AircraftInfo(std::int64_t theAircraftId) noexcept
     : aircraftId(theAircraftId),
       timeOffset(0),
       altitudeAboveGround(0.0f),
+      startOnGround(false),
       initialAirspeed(0)
 {}
 

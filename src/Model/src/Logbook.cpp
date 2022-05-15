@@ -63,14 +63,14 @@ void Logbook::destroyInstance() noexcept
     }
 }
 
-Flight &Logbook::getCurrentFlight() const
+Flight &Logbook::getCurrentFlight() const noexcept
 {
     return *(*d->flights.cbegin());
 }
 
 // PROTECTED
 
-Logbook::~Logbook()
+Logbook::~Logbook() noexcept
 {
 #ifdef DEBUG
     qDebug("Logbook::~Logbook: DELETED");

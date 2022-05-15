@@ -51,15 +51,17 @@ struct MODEL_API TimeVariableData
     std::int64_t timestamp;
 
     TimeVariableData() noexcept;
+    TimeVariableData(const TimeVariableData &other) = default;
+    TimeVariableData(TimeVariableData &&other) = default;
     virtual ~TimeVariableData() noexcept;
+    TimeVariableData &operator = (const TimeVariableData &rhs) = default;
+    TimeVariableData &operator = (TimeVariableData &&rhs) = default;
 
     inline bool isNull() const noexcept {
         return (timestamp == InvalidTime);
     }
 
-    TimeVariableData(TimeVariableData &&) = default;
-    TimeVariableData(const TimeVariableData &) = default;
-    TimeVariableData &operator = (const TimeVariableData &rhs) = default;
+
 
     inline bool operator == (const TimeVariableData &rhs) noexcept
     {
