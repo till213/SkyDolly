@@ -47,9 +47,11 @@ struct MODEL_API AircraftHandleData : public TimeVariableData
     bool smokeEnabled;
 
     AircraftHandleData() noexcept;
-    AircraftHandleData(AircraftHandleData &&) = default;
-    AircraftHandleData(const AircraftHandleData &) = default;
-    AircraftHandleData &operator= (const AircraftHandleData &) = default;
+    ~AircraftHandleData() override = default;
+    AircraftHandleData(const AircraftHandleData &other) = default;
+    AircraftHandleData(AircraftHandleData &&other) = default;
+    AircraftHandleData &operator = (const AircraftHandleData &rhs) = default;
+    AircraftHandleData &operator = (AircraftHandleData &&rhs) = default;
 
     static const AircraftHandleData NullData;
 };

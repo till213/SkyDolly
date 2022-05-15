@@ -28,9 +28,7 @@
 #include <cstdint>
 
 #include <QString>
-#include <QDateTime>
 
-#include "SimType.h"
 #include "AircraftType.h"
 #include "ModelLib.h"
 
@@ -51,14 +49,15 @@ struct MODEL_API AircraftInfo
     int initialAirspeed;
 
     AircraftInfo(std::int64_t aircraftId) noexcept;
-    AircraftInfo(AircraftInfo &&) = default;
-    AircraftInfo(const AircraftInfo &) = default;
-    AircraftInfo &operator= (const AircraftInfo &) = default;
+    AircraftInfo(const AircraftInfo &other) = default;
+    AircraftInfo(AircraftInfo &&other) noexcept;
+    AircraftInfo &operator = (const AircraftInfo &rhs) = default;
+    AircraftInfo &operator = (AircraftInfo &&rhs) noexcept;
 
     void clear() noexcept;
 };
 
-inline bool operator==(const AircraftInfo& lhs, const AircraftInfo& rhs) {
+inline bool operator == (const AircraftInfo &lhs, const AircraftInfo &rhs) {
     return lhs.aircraftId == rhs.aircraftId &&
            lhs.aircraftType == rhs.aircraftType &&
            lhs.timeOffset == rhs.timeOffset &&
@@ -70,7 +69,7 @@ inline bool operator==(const AircraftInfo& lhs, const AircraftInfo& rhs) {
            lhs.initialAirspeed == rhs.initialAirspeed;
 }
 
-inline bool operator!=(const AircraftInfo& lhs, const AircraftInfo& rhs) {
+inline bool operator != (const AircraftInfo &lhs, const AircraftInfo &rhs) {
     return !(lhs == rhs);
 }
 

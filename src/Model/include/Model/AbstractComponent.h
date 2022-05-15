@@ -51,8 +51,14 @@ public:
     {}
     virtual ~AbstractComponent() = default;
     AbstractComponent(const AbstractComponent &) = default;
-    AbstractComponent(AbstractComponent &&) = default;
-    AbstractComponent &operator=(const AbstractComponent &rhs)
+    AbstractComponent(AbstractComponent &&other)
+        : m_data (std::move(other.m_data)),
+          m_aircraftInfo(std::move(other.m_aircraftInfo)),
+          m_currentTimestamp(other.m_currentTimestamp),
+          m_currentIndex(other.m_currentIndex),
+          m_currentAccess(other.m_currentAccess)
+    {}
+    AbstractComponent &operator = (const AbstractComponent &rhs)
     {
         if (this != &rhs) {
             m_data = rhs.m_data;
@@ -63,7 +69,7 @@ public:
         }
         return *this;
     }
-    AbstractComponent &operator=(AbstractComponent&& rhs)
+    AbstractComponent &operator = (AbstractComponent &&rhs)
     {
         if (this != &rhs) {
             m_data = std::move(rhs.m_data);

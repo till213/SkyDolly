@@ -29,8 +29,29 @@
 // PUBLIC
 
 AircraftType::AircraftType() noexcept
+    : wingSpan(0),
+      engineType(SimType::EngineType::Unknown),
+      numberOfEngines(0)
+{}
+
+AircraftType::AircraftType(AircraftType &&other) noexcept
+    : type(std::move(other.type)),
+      category(std::move(other.category)),
+      wingSpan(other.wingSpan),
+      engineType(other.engineType),
+      numberOfEngines(other.numberOfEngines)
+{}
+
+AircraftType &AircraftType::operator = (AircraftType &&other) noexcept
 {
-    clear();
+    if (this != &other) {
+        type = std::move(other.type);
+        category = std::move(other.category);
+        wingSpan = other.wingSpan;
+        engineType = other.engineType;
+        numberOfEngines = other.numberOfEngines;
+    }
+    return *this;
 }
 
 void AircraftType::clear() noexcept
