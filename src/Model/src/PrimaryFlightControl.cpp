@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <algorithm>
 #include <cstdint>
 
 #include <QDebug>
@@ -59,7 +60,7 @@ const PrimaryFlightControlData &PrimaryFlightControl::interpolate(std::int64_t t
 {
     const PrimaryFlightControlData *p1 {nullptr}, *p2 {nullptr};
     const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;
-    const std::int64_t adjustedTimestamp = qMax(timestamp + timeOffset, std::int64_t(0));
+    const std::int64_t adjustedTimestamp = std::max(timestamp + timeOffset, std::int64_t(0));
 
     if (getCurrentTimestamp() != adjustedTimestamp || getCurrentAccess() != access) {
 

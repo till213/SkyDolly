@@ -22,9 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <algorithm>
 #include <memory>
 #include <vector>
-#include <algorithm>
 #include <iterator>
 #include <unordered_map>
 #include <cstdint>
@@ -143,7 +143,7 @@ bool KmlExportPlugin::exportFlight(const Flight &flight, QIODevice &io) noexcept
     const int nofAircraft = d->flight->count();
     // Only create as many colors per ramp as there are aircraft (if there are less aircraft
     // than requested colors per ramp)
-    d->pluginSettings.setNofColorsPerRamp(qMin(nofAircraft, d->pluginSettings.getNofColorsPerRamp()));
+    d->pluginSettings.setNofColorsPerRamp(std::min(nofAircraft, d->pluginSettings.getNofColorsPerRamp()));
 
     bool ok = exportHeader(io);
     if (ok) {

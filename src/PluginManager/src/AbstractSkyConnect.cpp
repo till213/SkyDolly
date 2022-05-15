@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <algorithm>
 #include <cstdint>
 
 #include <QTimer>
@@ -308,7 +309,7 @@ void AbstractSkyConnect::skipToBegin() noexcept
 void AbstractSkyConnect::skipBackward() noexcept
 {
     std::int64_t skipMSec = getSkipInterval();
-    const std::int64_t newTimeStamp = qMax(getCurrentTimestamp() - skipMSec, std::int64_t(0));
+    const std::int64_t newTimeStamp = std::max(getCurrentTimestamp() - skipMSec, std::int64_t(0));
     seek(newTimeStamp);
 }
 
@@ -316,7 +317,7 @@ void AbstractSkyConnect::skipForward() noexcept
 {
     std::int64_t skipMSec = getSkipInterval();
     const std::int64_t totalDuration = d->currentFlight.getTotalDurationMSec();
-    const std::int64_t newTimeStamp = qMin(getCurrentTimestamp() + skipMSec, totalDuration);
+    const std::int64_t newTimeStamp = std::min(getCurrentTimestamp() + skipMSec, totalDuration);
     seek(newTimeStamp);
 }
 
@@ -418,7 +419,7 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
     double samplesPerSecond;
     const Position &position = d->currentFlight.getUserAircraft().getPosition();
     if (position.count() > 0) {
-        const std::int64_t startTimestamp = qMin(qMax(d->currentTimestamp - SamplesPerSecondPeriodMSec, std::int64_t(0)), position.getLast().timestamp);
+        const std::int64_t startTimestamp = std::min(std::max(d->currentTimestamp - SamplesPerSecondPeriodMSec, std::int64_t(0)), position.getLast().timestamp);
         int index = d->lastSamplesPerSecondIndex;
 
         while (position[index].timestamp < startTimestamp) {

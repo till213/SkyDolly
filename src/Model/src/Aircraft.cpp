@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <algorithm>
 #include <memory>
 #include <cstdint>
 #include <cinttypes>
@@ -172,22 +173,22 @@ std::int64_t Aircraft::getDurationMSec() const noexcept
         // is "ahead" of its "schedule" (sampled data). The more ahead the aircraft
         // is, the less the duration -> subtract the offset
         if (d->position.count() > 0) {
-            d->duration = qMax(d->position.getLast().timestamp - timeOffset, std::int64_t(0));
+            d->duration = std::max(d->position.getLast().timestamp - timeOffset, std::int64_t(0));
         }
         if (d->engine.count() > 0) {
-            d->duration = qMax(d->engine.getLast().timestamp - timeOffset, d->duration);
+            d->duration = std::max(d->engine.getLast().timestamp - timeOffset, d->duration);
         }
         if (d->primaryFlightControl.count() > 0) {
-            d->duration = qMax(d->primaryFlightControl.getLast().timestamp - timeOffset, d->duration);
+            d->duration = std::max(d->primaryFlightControl.getLast().timestamp - timeOffset, d->duration);
         }
         if (d->secondaryFlightControl.count() > 0) {
-            d->duration = qMax(d->secondaryFlightControl.getLast().timestamp - timeOffset, d->duration);
+            d->duration = std::max(d->secondaryFlightControl.getLast().timestamp - timeOffset, d->duration);
         }
         if (d->aircraftHandle.count() > 0) {
-            d->duration = qMax(d->aircraftHandle.getLast().timestamp - timeOffset, d->duration);
+            d->duration = std::max(d->aircraftHandle.getLast().timestamp - timeOffset, d->duration);
         }
         if (d->light.count() > 0) {
-            d->duration = qMax(d->light.getLast().timestamp - timeOffset, d->duration);
+            d->duration = std::max(d->light.getLast().timestamp - timeOffset, d->duration);
         }
     }
     return d->duration;

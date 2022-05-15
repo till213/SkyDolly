@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <algorithm>
 #include <memory>
 #include <vector>
 #include <cstdint>
@@ -848,7 +849,7 @@ void MainWindow::handleTimestampChanged(std::int64_t timestamp) noexcept
             updateTimestamp();
         } else {
             const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
-            const std::int64_t ts = qMin(timestamp, totalDuration);
+            const std::int64_t ts = std::min(timestamp, totalDuration);
 
             int sliderPosition;
             if (totalDuration > 0) {

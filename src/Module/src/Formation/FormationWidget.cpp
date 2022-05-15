@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <algorithm>
 #include <memory>
 #include <cstdint>
 
@@ -658,7 +659,7 @@ void FormationWidget::updateUi() noexcept
     ui->aircraftTableWidget->blockSignals(false);
 
     if (d->selectedRow != InvalidSelection) {
-        d->selectedRow = qMin(d->selectedRow, ui->aircraftTableWidget->rowCount() - 1);
+        d->selectedRow = std::min(d->selectedRow, ui->aircraftTableWidget->rowCount() - 1);
         ui->aircraftTableWidget->selectRow(d->selectedRow);
     }
 

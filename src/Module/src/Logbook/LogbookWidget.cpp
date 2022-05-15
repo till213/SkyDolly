@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <algorithm>
 #include <memory>
 #include <forward_list>
 #include <vector>
@@ -658,7 +659,7 @@ void LogbookWidget::deleteFlight() noexcept
             d->flightService.deleteById(d->selectedFlightId);
             int lastSelectedRow = d->selectedRow;
             updateUi();
-            int selectedRow = qMin(lastSelectedRow, ui->logTableWidget->rowCount() - 1);
+            int selectedRow = std::min(lastSelectedRow, ui->logTableWidget->rowCount() - 1);
             ui->logTableWidget->selectRow(selectedRow);
         }
     }

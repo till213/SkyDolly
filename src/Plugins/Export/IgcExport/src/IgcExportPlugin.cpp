@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <algorithm>
 #include <cstdint>
 #include <vector>
 #include <iterator>
@@ -257,7 +258,7 @@ inline bool IgcExportPlugin::exportCRecord(const Aircraft &aircraft, QIODevice &
     QByteArray record = IgcExportPluginPrivate::CRecord % formatDateTime(d->flight->getAircraftStartZuluTime(aircraft)) %
                         ::ObsoleteFlightDate % ::ObsoleteTaskNumber %
                         // Number of turn points, excluding start and end wapoints
-                        formatNumber(qMin(nofTurnPoints, 0), 2) %
+                        formatNumber(std::min(nofTurnPoints, 0), 2) %
                         d->flight->getTitle().toLatin1() % ::LineEnd;
     bool ok = io.write(record);
     const std::size_t count = flightPlan.count();
@@ -412,7 +413,7 @@ inline int IgcExportPlugin::estimateEnvironmentalNoise(const EngineData &engineD
     int noise;
     if (engineData.hasCombustion()) {
         noise = static_cast<int>(static_cast<double>(qAbs(engineData.propellerLeverPosition1)) / SkyMath::PositionMax16 * 999.0);
-        noise = qMin(noise, 999);
+        noise = std::min(noise, 999);
     } else {
         noise = 0;
     }

@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <algorithm>
 #include <memory>
 #include <vector>
 #include <unordered_set>
@@ -437,6 +438,6 @@ void IgcImportPlugin::updateWaypoints() noexcept
 
 inline double IgcImportPlugin::noiseToPosition(double environmentalNoiseLevel, double threhsold) noexcept
 {
-    const double linear = qMax(environmentalNoiseLevel - threhsold, 0.0) / (1.0 - threhsold);
+    const double linear = std::max(environmentalNoiseLevel - threhsold, 0.0) / (1.0 - threhsold);
     return d->throttleResponseCurve.valueForProgress(linear);
 }

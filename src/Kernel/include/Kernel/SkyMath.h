@@ -25,6 +25,7 @@
 #ifndef SKYMATH_H
 #define SKYMATH_H
 
+#include <algorithm>
 #include <limits>
 #include <utility>
 #include <cmath>
@@ -502,7 +503,7 @@ namespace SkyMath
      */
     inline double bankAngle(double headingChange, double maxBankAngleForHeadingChange, double maxBankAngle) noexcept
     {
-        return qMin((std::abs(headingChange) / maxBankAngleForHeadingChange) * maxBankAngle, maxBankAngle) * SkyMath::sgn(headingChange);
+        return std::min((std::abs(headingChange) / maxBankAngleForHeadingChange) * maxBankAngle, maxBankAngle) * SkyMath::sgn(headingChange);
     }
 
     /*!

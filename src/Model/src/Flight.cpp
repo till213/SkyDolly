@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <algorithm>
 #include <memory>
 #include <vector>
 #include <iterator>
@@ -188,7 +189,7 @@ std::int64_t Flight::deleteAircraftByIndex(int index) noexcept
     std::int64_t aircraftId;
     // A flight has at least one aircraft
     if (d->aircraft.size() > 1) {
-        setUserAircraftIndex(qMax(d->userAircraftIndex - 1, 0));
+        setUserAircraftIndex(std::max(d->userAircraftIndex - 1, 0));
         aircraftId  = d->aircraft.at(index)->getId();
         std::int64_t aircraftId = d->aircraft.at(index)->getId();
         d->aircraft.erase(d->aircraft.begin() + index);
@@ -222,7 +223,7 @@ std::int64_t Flight::getTotalDurationMSec(bool ofUserAircraft) const noexcept
         totalDuractionMSec = getUserAircraft().getDurationMSec();
     } else {
         for (const auto &aircraft : d->aircraft) {
-            totalDuractionMSec = qMax(aircraft->getDurationMSec(), totalDuractionMSec);
+            totalDuractionMSec = std::max(aircraft->getDurationMSec(), totalDuractionMSec);
         }
     }
     return totalDuractionMSec;

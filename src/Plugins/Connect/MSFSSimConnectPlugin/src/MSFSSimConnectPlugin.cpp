@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <algorithm>
 #include <memory>
 #include <unordered_map>
 #include <cstdint>
@@ -252,7 +253,7 @@ void MSFSSimConnectPlugin::onStopRecording() noexcept
         arrivalWaypoint.altitude = static_cast<float>(position.altitude);
         arrivalWaypoint.localTime = d->currentLocalDateTime;
         arrivalWaypoint.zuluTime = d->currentZuluDateTime;
-        arrivalWaypoint.timestamp = qMax(getCurrentTimestamp(), departureWaypoint.timestamp + 1);
+        arrivalWaypoint.timestamp = std::max(getCurrentTimestamp(), departureWaypoint.timestamp + 1);
         flightPlan.add(arrivalWaypoint);
     }
 
