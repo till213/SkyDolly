@@ -61,7 +61,7 @@ const EngineData &Engine::interpolate(std::int64_t timestamp, TimeVariableData::
     const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;
     const std::int64_t adjustedTimestamp = qMax(timestamp + timeOffset, std::int64_t(0));
 
-    if (getCurrentTimestamp() != timestamp || getCurrentAccess() != access) {
+    if (getCurrentTimestamp() != adjustedTimestamp || getCurrentAccess() != access) {
 
         int currentIndex = getCurrentIndex();
         double tn {0.0};

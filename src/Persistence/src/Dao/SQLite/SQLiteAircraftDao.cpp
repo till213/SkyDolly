@@ -193,7 +193,7 @@ bool SQLiteAircraftDao::add(std::int64_t flightId, int sequenceNumber, Aircraft 
         }
     }
     if (ok) {
-        for (const LightData &data : aircraft.getLightConst()) {
+        for (const LightData &data : aircraft.getLight()) {
             ok = d->lightDao->add(aircraft.getId(), data);
             if (!ok) {
                 break;

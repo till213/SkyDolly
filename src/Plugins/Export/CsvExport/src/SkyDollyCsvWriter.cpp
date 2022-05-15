@@ -260,7 +260,7 @@ bool SkyDollyCsvWriter::write([[maybe_unused]] const Flight &flight, const Aircr
         }
 
         // Lights
-        const Light &light = aircraft.getLightConst();
+        Light &light = aircraft.getLight();
         dataType = QChar(Enum::toUnderlyingType(CsvConst::DataType::Light));
         if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
             duration = light.getLast().timestamp;

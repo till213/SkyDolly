@@ -267,8 +267,6 @@ void Aircraft::frenchConnection()
             this, &Aircraft::handleDataChanged);
     connect(&d->secondaryFlightControl, &SecondaryFlightControl::dataChanged,
             this, &Aircraft::handleDataChanged);
-    connect(&d->light, &Light::dataChanged,
-            this, &Aircraft::handleDataChanged);
     connect(this, &Aircraft::dataChanged,
             this, &Aircraft::invalidateDuration);
     // Tail number

@@ -58,7 +58,7 @@ private:
     std::unique_ptr<Ui::LightWidget> ui;
 
     void initUi() noexcept;    
-    const LightData &getCurrentLightData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
+    const LightData getCurrentLightData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
 };
 
 #endif // LIGHTWIDGET_H
