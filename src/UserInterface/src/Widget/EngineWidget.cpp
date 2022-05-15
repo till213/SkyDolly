@@ -207,21 +207,21 @@ void EngineWidget::initUi() noexcept
     ui->generalEngineCombustion4CheckBox->setToolTip(SimVar::GeneralEngineCombustion4);
 }
 
-const EngineData &EngineWidget::getCurrentEngineData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
+const EngineData EngineWidget::getCurrentEngineData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+    EngineData engineData;
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().getState() == Connect::State::Recording) {
-            return aircraft.getEngineConst().getLast();
+            engineData = aircraft.getEngineConst().getLast();
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
-                return aircraft.getEngineConst().interpolate(timestamp, access);
+                engineData = aircraft.getEngine().interpolate(timestamp, access);
             } else {
-                return aircraft.getEngineConst().interpolate(skyConnect->get().getCurrentTimestamp(), access);
+                engineData = aircraft.getEngine().interpolate(skyConnect->get().getCurrentTimestamp(), access);
             }
         };
-    } else {
-        return EngineData::NullData;
     }
+    return engineData;
 }

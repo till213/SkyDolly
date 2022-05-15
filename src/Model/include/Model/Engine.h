@@ -25,78 +25,24 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include <memory>
-#include <vector>
-#include <iterator>
-#include <cstdint>
-
-#include <QObject>
-#include <QByteArray>
-#include <QVector>
-
-#include "TimeVariableData.h"
+#include "EngineData.h"
 #include "AircraftInfo.h"
+#include "AbstractComponent.h"
 #include "ModelLib.h"
 
-struct EngineData;
-class EnginePrivate;
-
-class MODEL_API Engine : public QObject
+class MODEL_API Engine : public AbstractComponent<EngineData>
 {
-    Q_OBJECT
 public:
-    Engine(const AircraftInfo &aircraftInfo, QObject *parent = nullptr) noexcept;
-    virtual ~Engine() noexcept;
+    explicit Engine(const AircraftInfo &aircraftInfo) noexcept;
+    Engine(Engine &aircraftHandle) = default;
+    Engine(Engine &&aircraftHandle) = default;
+    Engine &operator = (const Engine &rhs) = default;
+    Engine &operator = (Engine &&rhs) = default;
+    ~Engine() noexcept override;
 
-    /*!
-     * Inserts \c data at the end, or updates the \em last element (only) if
-     * the data items have the same timestamp.
-     *
-     * Use case: recorded data items are inserted chronologically, but some recorded items
-     * may have the same timestamp: the last recorded data item "wins".
-     *
-     * \param data
-     *        the data to be upserted
-     * \sa upsert
-     */
-    void upsertLast(const EngineData &data) noexcept;
-
-    /*!
-     * Inserts \c data at the end, or updates the element having the same
-     * timestamp. That is, the entire collection is being searched first.
-     *
-     * Use case: data items are inserted in random order ("flight augmentation");
-     * use \c upsertLast in case items are to be inserted sequentially in order
-     *
-     * \param data
-     *        the data to be upserted
-     * \sa upsertLast
-     */
-    void upsert(const EngineData &data) noexcept;
-    const EngineData &getFirst() const noexcept;
-    const EngineData &getLast() const noexcept;
-    std::size_t count() const noexcept;
-    const EngineData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
-    void clear() noexcept;
-
-    typedef std::vector<EngineData>::iterator Iterator;
-    typedef std::back_insert_iterator<std::vector<EngineData>> BackInsertIterator;
-
-    Iterator begin() noexcept;
-    Iterator end() noexcept;
-    const Iterator begin() const noexcept;
-    const Iterator end() const noexcept;
-    BackInsertIterator backInsertIterator() noexcept;
-
-    EngineData& operator[](std::size_t index) noexcept;
-    const EngineData& operator[](std::size_t index) const noexcept;
-
-signals:
-    void dataChanged();
-
+    const EngineData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 private:
-    Q_DISABLE_COPY(Engine)
-    std::unique_ptr<EnginePrivate> d;
+    EngineData m_currentEngineData;
 };
 
 #endif // ENGINE_H

@@ -292,7 +292,7 @@ inline bool IgcExportPlugin::exportFixes(const Aircraft &aircraft, QIODevice &io
     QDateTime lastKFixTime;
 
     Convert convert;
-    const Engine &engine = aircraft.getEngineConst();
+    Engine &engine = aircraft.getEngine();
     std::vector<PositionData> interpolatedPositionData;
     Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod(), std::back_inserter(interpolatedPositionData));
     bool ok = true;

@@ -136,7 +136,7 @@ bool SkyDollyCsvWriter::write([[maybe_unused]] const Flight &flight, const Aircr
         }
 
         // Engine data
-        const Engine &engine = aircraft.getEngineConst();
+        Engine &engine = aircraft.getEngine();
         dataType = QChar(Enum::toUnderlyingType(CsvConst::DataType::Engine));
         if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
             duration = engine.getLast().timestamp;

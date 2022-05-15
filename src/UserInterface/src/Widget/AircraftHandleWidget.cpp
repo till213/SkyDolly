@@ -101,8 +101,6 @@ const AircraftHandleData AircraftHandleWidget::getCurrentAircraftHandleData(std:
                 aircraftHandleData = aircraft.getAircraftHandle().interpolate(skyConnect->get().getCurrentTimestamp(), access);
             }
         };
-    } else {
-        aircraftHandleData = AircraftHandleData::NullData;
     }
     return aircraftHandleData;
 }

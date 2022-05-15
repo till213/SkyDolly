@@ -263,8 +263,6 @@ void Aircraft::frenchConnection()
     // Aircraft sample data
     connect(&d->position, &Position::dataChanged,
             this, &Aircraft::handleDataChanged);
-    connect(&d->engine, &Engine::dataChanged,
-            this, &Aircraft::handleDataChanged);
     connect(&d->primaryFlightControl, &PrimaryFlightControl::dataChanged,
             this, &Aircraft::handleDataChanged);
     connect(&d->secondaryFlightControl, &SecondaryFlightControl::dataChanged,

@@ -127,7 +127,7 @@ public:
 
     const T getFirst() const noexcept
     {
-        if (m_data.empty()) {
+        if (!m_data.empty()) {
             return m_data.front();
         } else {
             return T::NullData;
@@ -136,7 +136,7 @@ public:
 
     const T getLast() const noexcept
     {
-        if (m_data.empty()) {
+        if (!m_data.empty()) {
             return m_data.back();
         } else {
             return T::NullData;
@@ -186,7 +186,7 @@ public:
         return m_data[index];
     }
 
-    virtual const T interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept = 0;
+    virtual const T &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept = 0;
 
 protected:
     [[nodiscard]]
