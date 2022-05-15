@@ -73,9 +73,6 @@ std::unique_ptr<DatabaseDaoIntf> DaoFactory::createDatabaseDao() noexcept
     case DbType::SQLite:
         return std::make_unique<SQLiteDatabaseDao>();
         break;
-    default:
-        return nullptr;
-        break;
     }
 }
 
@@ -84,9 +81,6 @@ std::unique_ptr<LogbookDaoIntf> DaoFactory::createLogbookDao() noexcept
     switch (d->dbType) {
     case DbType::SQLite:
         return std::make_unique<SQLiteLogbookDao>();
-        break;
-    default:
-        return nullptr;
         break;
     }
 }
@@ -97,9 +91,6 @@ std::unique_ptr<FlightDaoIntf> DaoFactory::createFlightDao() noexcept
     case DbType::SQLite:
         return std::make_unique<SQLiteFlightDao>();
         break;
-    default:
-        return nullptr;
-        break;
     }
 }
 
@@ -108,9 +99,6 @@ std::unique_ptr<AircraftDaoIntf> DaoFactory::createAircraftDao() noexcept
     switch (d->dbType) {
     case DbType::SQLite:
         return std::make_unique<SQLiteAircraftDao>();
-        break;
-    default:
-        return nullptr;
         break;
     }
 }
@@ -121,9 +109,6 @@ std::unique_ptr<AircraftTypeDaoIntf> DaoFactory::createAircraftTypeDao() noexcep
     case DbType::SQLite:
         return std::make_unique<SQLiteAircraftTypeDao>();
         break;
-    default:
-        return nullptr;
-        break;
     }
 }
 
@@ -132,9 +117,6 @@ std::unique_ptr<PositionDaoIntf> DaoFactory::createPositionDao() noexcept
     switch (d->dbType) {
     case DbType::SQLite:
         return std::make_unique<SQLitePositionDao>();
-        break;
-    default:
-        return nullptr;
         break;
     }
 }
@@ -145,9 +127,6 @@ std::unique_ptr<EngineDaoIntf> DaoFactory::createEngineDao() noexcept
     case DbType::SQLite:
         return std::make_unique<SQLiteEngineDao>();
         break;
-    default:
-        return nullptr;
-        break;
     }
 }
 
@@ -156,9 +135,6 @@ std::unique_ptr<PrimaryFlightControlDaoIntf> DaoFactory::createPrimaryFlightCont
     switch (d->dbType) {
     case DbType::SQLite:
         return std::make_unique<SQLitePrimaryFlightControlDao>();
-        break;
-    default:
-        return nullptr;
         break;
     }
 };
@@ -169,9 +145,6 @@ std::unique_ptr<SecondaryFlightControlDaoIntf> DaoFactory::createSecondaryFlight
     case DbType::SQLite:
         return std::make_unique<SQLiteSecondaryFlightControlDao>();
         break;
-    default:
-        return nullptr;
-        break;
     }
 }
 
@@ -180,9 +153,6 @@ std::unique_ptr<HandleDaoIntf> DaoFactory::createHandleDao() noexcept
     switch (d->dbType) {
     case DbType::SQLite:
         return std::make_unique<SQLiteHandleDao>();
-        break;
-    default:
-        return nullptr;
         break;
     }
 }
@@ -193,9 +163,6 @@ std::unique_ptr<LightDaoIntf> DaoFactory::createLightDao() noexcept
     case DbType::SQLite:
         return std::make_unique<SQLiteLightDao>();
         break;
-    default:
-        return nullptr;
-        break;
     }
 }
 
@@ -204,9 +171,6 @@ std::unique_ptr<WaypointDaoIntf> DaoFactory::createFlightPlanDao() noexcept
     switch (d->dbType) {
     case DbType::SQLite:
         return std::make_unique<SQLiteWaypointDao>();
-        break;
-    default:
-        return nullptr;
         break;
     }
 }

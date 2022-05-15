@@ -118,7 +118,7 @@ std::size_t Position::count() const noexcept
 
 const PositionData &Position::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
-    const PositionData *p0, *p1, *p2, *p3;
+    const PositionData *p0 {nullptr}, *p1 {nullptr}, *p2 {nullptr}, *p3 {nullptr};
     const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? d->aircraftInfo.timeOffset : 0;
     const std::int64_t adjustedTimestamp = qMax(timestamp + timeOffset, std::int64_t(0));
 
@@ -137,9 +137,6 @@ const PositionData &Position::interpolate(std::int64_t timestamp, TimeVariableDa
             if (SkySearch::getCubicInterpolationSupportData(d->positionData, adjustedTimestamp, SkySearch::InfinitetInterpolationWindow, d->currentIndex, &p0, &p1, &p2, &p3)) {
                 tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
             }
-            break;
-        default:
-            p0 = p1 = p2 = p3 = nullptr;
             break;
         }
 

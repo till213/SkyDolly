@@ -115,7 +115,7 @@ std::size_t SecondaryFlightControl::count() const noexcept
 
 const SecondaryFlightControlData &SecondaryFlightControl::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
-    const SecondaryFlightControlData *p1, *p2;
+    const SecondaryFlightControlData *p1 {nullptr}, *p2 {nullptr};
     const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? d->aircraftInfo.timeOffset : 0;
     const std::int64_t adjustedTimestamp = qMax(timestamp + timeOffset, std::int64_t(0));
 
@@ -141,9 +141,6 @@ const SecondaryFlightControlData &SecondaryFlightControl::interpolate(std::int64
             } else {
                 p1 = p2 = nullptr;
             }
-            break;
-        default:
-            p1 = p2 = nullptr;
             break;
         }
 

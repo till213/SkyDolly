@@ -173,8 +173,6 @@ void KmlExportOptionWidget::updateUi() noexcept
         ui->pistonStartColorToolButton->setEnabled(true);
         ui->pistonEndColorToolButton->setEnabled(true);
         break;
-    default:
-        break;
     }
 
     QString css;
@@ -259,8 +257,6 @@ void KmlExportOptionWidget::selectColor(int id) noexcept
     case ColorButton::AllEndColor:
         initialColor = d->settings.getAllEndColor();
         break;
-    default:
-        break;
     }
 
     QColor color = QColorDialog::getColor(initialColor, this);
@@ -293,8 +289,6 @@ void KmlExportOptionWidget::selectColor(int id) noexcept
             break;
         case ColorButton::AllEndColor:
             d->settings.setAllEndColor(color);
-            break;
-        default:
             break;
         }
     }

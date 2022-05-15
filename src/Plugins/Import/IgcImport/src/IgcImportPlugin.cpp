@@ -197,6 +197,7 @@ bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
     qDebug("IgcImportPlugin::readFile: engine INITIALISED, current ENL: %f threshold %f, engine RUNNING: %d", enl, enlThresholdNorm, loudNoise);
 #endif
                     break;
+
                 case IgcImportPluginPrivate::EngineState::Running:
                     if (!loudNoise) {
                         engineData.timestamp = fix.timestamp;
@@ -241,8 +242,6 @@ bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
     qDebug("IgcImportPlugin::readFile: engine now RUNNING, current ENL: %f > %f", enl, enlThresholdNorm);
 #endif
                     }
-                    break;
-                default:
                     break;
                 }
             }

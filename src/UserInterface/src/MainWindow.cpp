@@ -654,9 +654,6 @@ void MainWindow::initReplaySpeedUi() noexcept
     case Replay::SpeedUnit::Percent:
         d->replaySpeedUnitComboBox->setCurrentIndex(1);
         break;
-    default:
-        d->replaySpeedUnitComboBox->setCurrentIndex(0);
-        break;
     }
 
     replaySpeedLayout->addWidget(d->replaySpeedUnitComboBox);
@@ -771,9 +768,6 @@ double MainWindow::getCustomSpeedFactor() const
             break;
         case Replay::SpeedUnit::Percent:
             customSpeedFactor = d->unit.toNumber(text) / 100.0;
-            break;
-        default:
-            customSpeedFactor = 1.0;
             break;
         }
     } else {
@@ -911,9 +905,6 @@ void MainWindow::handleReplaySpeedSelected(QAction *action) noexcept
     case ReplaySpeed::Custom:
         replaySpeedFactor = getCustomSpeedFactor();
         break;
-    default:
-        replaySpeedFactor = 1.0;
-        break;
     }
 
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
@@ -936,8 +927,6 @@ void MainWindow::handleCustomSpeedChanged() noexcept
     case Replay::SpeedUnit::Percent:
         d->lastCustomReplaySpeed = customReplaySpeedFactor * 100.0;
         break;
-    default:
-        break;
     }
 }
 
@@ -957,8 +946,6 @@ void MainWindow::handleReplaySpeedUnitSelected(int index) noexcept
             // Absolute factor to percent
             d->lastCustomReplaySpeed *= 100.0;
         }
-        break;
-    default:
         break;
     }
     settings.setReplaySpeedUnit(replaySpeedUnit);
@@ -1056,8 +1043,6 @@ void MainWindow::updateControlUi() noexcept
         ui->playAction->setChecked(false);
         ui->timestampTimeEdit->setEnabled(true);
         break;
-    default:
-        break;
     }
 
     const bool loopReplayEnabled = Settings::getInstance().isReplayLoopEnabled();
@@ -1073,14 +1058,17 @@ void MainWindow::updateControlIcons() noexcept
 {
     QIcon recordIcon;
     switch (d->moduleManager->getActiveModule().getModuleId()) {
+    case Module::Module::None:
+        [[fallthrough]];
+    case Module::Module::Logbook:
+        recordIcon.addFile(":/img/icons/record-normal.png", QSize(), QIcon::Normal, QIcon::Off);
+        recordIcon.addFile(":/img/icons/record-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
+        break;
     case Module::Module::Formation:
         recordIcon.addFile(":/img/icons/record-add-normal.png", QSize(), QIcon::Normal, QIcon::Off);
         recordIcon.addFile(":/img/icons/record-add-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
         break;
-    default:
-        recordIcon.addFile(":/img/icons/record-normal.png", QSize(), QIcon::Normal, QIcon::Off);
-        recordIcon.addFile(":/img/icons/record-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
-        break;
+
     }
     ui->recordAction->setIcon(recordIcon);
 }
@@ -1099,9 +1087,6 @@ void MainWindow::updateReplaySpeedUi() noexcept
         case Replay::SpeedUnit::Percent:
             d->customSpeedLineEdit->setToolTip(tr("Custom replay speed % in [%L1%, %L2%].").arg(ReplaySpeedAbsoluteMin * 100.0).arg(ReplaySpeedAbsoluteMax * 100.0));
             d->customSpeedLineEdit->setValidator(d->customReplaySpeedPercentValidator);
-            break;
-        default:
-            d->customSpeedLineEdit->setToolTip("");
             break;
         }
 

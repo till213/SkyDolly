@@ -756,9 +756,6 @@ void LogbookWidget::on_durationComboBox_activated([[maybe_unused]] int index) no
     case Duration::FourHours:
         minimumDurationMinutes = 240;
         break;
-    default:
-        minimumDurationMinutes = 0;
-        break;
     }
 
     d->flightSelector.mininumDurationMinutes = minimumDurationMinutes;

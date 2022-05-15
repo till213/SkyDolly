@@ -103,8 +103,6 @@ void GpxExportOptionWidget::updateUi() noexcept
     case GpxExportSettings::TimestampMode::Recording:
         ui->timestampModeComboBox->setToolTip(tr("Timestamps are based on the (real world) recording time. This may be useful for GPS-tagging screenshots taken during flight recording."));
         break;
-    default:
-        break;
     }
 }
 

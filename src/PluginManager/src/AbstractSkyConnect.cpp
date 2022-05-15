@@ -616,7 +616,9 @@ bool AbstractSkyConnect::setupInitialReplayPosition(const InitialPosition &flyWi
             ok = true;
         }
         break;
-    default:
+    case ReplayMode::UserAircraftManualControl:
+        [[fallthrough]];
+    case ReplayMode::Normal:
         if (d->currentTimestamp == 0) {
             const Aircraft &userAircraft = getCurrentFlight().getUserAircraftConst();
             const PositionData &positionData = userAircraft.getPositionConst().getFirst();
@@ -648,9 +650,6 @@ bool AbstractSkyConnect::updateUserAircraftFreeze() noexcept
         break;
     case ReplayMode::FlyWithFormation:
         freeze = d->state == Connect::State::ReplayPaused;
-        break;
-    default:
-        freeze = false;
         break;
     }
     return onFreezeUserAircraft(freeze);

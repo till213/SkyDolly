@@ -267,8 +267,6 @@ void BasicExportDialog::updateUi() noexcept
     case ExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles:
         ui->formationExportComboBox->setToolTip(tr("All aircraft are exported, into separate files."));
         break;
-    default:
-        break;
     }
 
     ui->openExportCheckBox->setChecked(d->pluginSettings.isOpenExportedFilesEnabled());

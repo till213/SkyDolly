@@ -383,7 +383,7 @@ void FormationWidget::updateInitialPositionUi() noexcept
     case HorizontalDistance::Far:
         ui->horizontalDistanceTextLabel->setText(tr("Far"));
         break;
-    default:
+    case HorizontalDistance::VeryFar:
         ui->horizontalDistanceTextLabel->setText(tr("Very far"));
         break;
     }
@@ -401,7 +401,7 @@ void FormationWidget::updateInitialPositionUi() noexcept
     case VerticalDistance::JustAbove:
         ui->verticalDistanceTextLabel->setText(tr("Just above"));
         break;
-    default:
+    case VerticalDistance::Above:
         ui->verticalDistanceTextLabel->setText(tr("Above"));
         break;
     }
@@ -461,7 +461,7 @@ PositionData FormationWidget::calculateRelativePositionToUserAircraft(std::int64
             // Aircraft three wingspans apart
             distance = 4.0 * aircraftType.wingSpan;
             break;
-        default:
+        case HorizontalDistance::VeryFar:
             // Aircraft four wingspans apart
             distance = 5.0 * aircraftType.wingSpan;
             break;
@@ -477,14 +477,14 @@ PositionData FormationWidget::calculateRelativePositionToUserAircraft(std::int64
         case VerticalDistance::JustBelow:
             deltaAltitude = -distance / 2.0;
             break;
+        case VerticalDistance::Level:
+            deltaAltitude = 0.0;
+            break;
         case VerticalDistance::JustAbove:
             deltaAltitude = +distance / 2.0;
             break;
         case VerticalDistance::Above:
             deltaAltitude = +distance;
-            break;
-        default:
-            deltaAltitude = 0.0;
             break;
         }
         const double altitude = positionData.altitude + deltaAltitude;
@@ -539,9 +539,6 @@ PositionData FormationWidget::calculateRelativePositionToUserAircraft(std::int64
             break;
         case RelativePosition::NorthNorthWest:
             bearing = 337.5;
-            break;
-        default:
-            bearing = 0.0;
             break;
         }
         bearing += positionData.heading;
@@ -740,9 +737,6 @@ void FormationWidget::updateReplayUi() noexcept
         case SkyConnectIntf::ReplayMode::FlyWithFormation:
             ui->replayModeComboBox->setCurrentIndex(ReplayMode::FlyWithFormationIndex);
             break;
-        default:
-            ui->replayModeComboBox->setCurrentIndex(ReplayMode::NormalIndex);
-            break;
         }
     } else {
         ui->replayModeComboBox->setCurrentIndex(ReplayMode::NormalIndex);
@@ -776,8 +770,6 @@ void FormationWidget::updateToolTips() noexcept
         break;
     case ReplayMode::FlyWithFormationIndex:
         ui->replayModeComboBox->setToolTip(tr("Fly with the currently loaded aircraft along with the formation. Pause the replay to reposition your aircraft again in relation to the recorded user aircraft of the formation."));
-        break;
-    default:
         break;
     }
 }
@@ -928,9 +920,6 @@ void FormationWidget::on_replayModeComboBox_currentIndexChanged(int index) noexc
             skyConnect.setUserAircraftPosition(positionData);
             break;
         }
-        default:
-            skyConnect.setReplayMode(SkyConnectIntf::ReplayMode::Normal);
-            break;
         }
     }
     updateToolTips();

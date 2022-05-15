@@ -195,11 +195,11 @@ bool GpxExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
 bool GpxExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     switch (d->pluginSettings.getTimestampMode()) {
+    case GpxExportSettings::TimestampMode::Simulation:
+        d->startDateTimeUtc = d->flight->getAircraftStartZuluTime(aircraft);
+        break;
     case GpxExportSettings::TimestampMode::Recording:
         d->startDateTimeUtc = d->flight->getAircraftCreationTime(aircraft).toUTC();
-        break;
-    default:
-        d->startDateTimeUtc = d->flight->getAircraftStartZuluTime(aircraft);
         break;
     }
 

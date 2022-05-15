@@ -156,9 +156,6 @@ bool ExportPluginBase::exportFlight(const Flight &flight, const QString &filePat
     case ExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles:
         ok = exportAllAircraft(flight, filePath);
         break;
-    default:
-        ok = false;
-        break;
     }
     QGuiApplication::restoreOverrideCursor();
 #ifdef DEBUG

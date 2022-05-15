@@ -153,6 +153,12 @@ void SimulationVariablesDialog::updateTitle() noexcept
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const Connect::State state = skyConnect ? skyConnect->get().getState() : Connect::State::Disconnected;
     switch (state) {
+    case Connect::State::Disconnected:
+        windowTitle.append(" - " + tr("DISCONNECTED"));
+        break;
+    case Connect::State::Connected:
+        windowTitle.append(" - " + tr("CONNECTED"));
+        break;
     case Connect::State::Recording:
         windowTitle.append(" - " + tr("RECORDING"));
         break;
@@ -164,8 +170,6 @@ void SimulationVariablesDialog::updateTitle() noexcept
         break;
     case Connect::State::ReplayPaused:
         windowTitle.append(" - " + tr("PLAYPACK PAUSED"));
-        break;
-    default:
         break;
     }
     setWindowTitle(windowTitle);

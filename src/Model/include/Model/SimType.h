@@ -197,9 +197,6 @@ namespace SimType {
         case SurfaceType::WrightFlyerTrack:
             return QCoreApplication::translate("SimType", "Wright flyer track");
             break;
-        default:
-            return unknown;
-            break;
         }
     }
 
@@ -230,9 +227,6 @@ namespace SimType {
         case EngineType::All:
             return QCoreApplication::translate("SimType", "All");
             break;
-        default:
-            return unknown;
-            break;
         }
     }
 
@@ -250,9 +244,6 @@ namespace SimType {
             break;
         case PrecipitationState::Snow:
             return QCoreApplication::translate("SimType", "Snow");
-            break;
-        default:
-            return unknown;
             break;
         }
     }
