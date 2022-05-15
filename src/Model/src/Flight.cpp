@@ -45,7 +45,8 @@ class FlightPrivate
 public:
 
     FlightPrivate() noexcept
-        : creationTime(QDateTime::currentDateTime()),
+        : id(Flight::InvalidId),
+          creationTime(QDateTime::currentDateTime()),
           userAircraftIndex(InvalidAircraftIndex)
     {
         clear(true);
@@ -87,14 +88,14 @@ Flight::Flight(QObject *parent) noexcept
     // A flight always has at least one (user) aircraft
     addUserAircraft();
 #ifdef DEBUG
-    qDebug("Flight::Flight:  CREATED, ID: %" PRId64, d->id);
+    qDebug("Flight::Flight: CREATED, ID: %" PRId64, d->id);
 #endif
 }
 
 Flight::~Flight() noexcept
 {
 #ifdef DEBUG
-    qDebug("Flight::~Flight:  DELETED, ID: %" PRId64, d->id);
+    qDebug("Flight::~Flight: DELETED, ID: %" PRId64, d->id);
 #endif
 }
 

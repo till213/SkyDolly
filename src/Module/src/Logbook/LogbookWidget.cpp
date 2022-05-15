@@ -315,10 +315,10 @@ void LogbookWidget::updateFlightTable() noexcept
 
             // ID
             std::unique_ptr<QTableWidgetItem> newItem = std::make_unique<QTableWidgetItem>();
-            if (summary.id == flightInMemoryId) {
+            if (summary.flightId == flightInMemoryId) {
                 newItem->setIcon(aircraftIcon);
             }
-            newItem->setData(Qt::DisplayRole, QVariant::fromValue(summary.id));
+            newItem->setData(Qt::DisplayRole, QVariant::fromValue(summary.flightId));
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
             newItem->setToolTip(tr("Double-click to load flight."));
             // Transfer ownership of newItem to table widget

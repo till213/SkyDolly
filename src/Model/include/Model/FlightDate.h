@@ -11,6 +11,8 @@ struct MODEL_API FlightDate
 {
     FlightDate(int year, int month, int dayOfMonth, int nofFlights) noexcept;
     ~FlightDate() = default;
+    FlightDate(const FlightDate &other) = default;
+    FlightDate(FlightDate &&other) = default;
 
     /*!
      * The year of the flight: [1 - 9999]
