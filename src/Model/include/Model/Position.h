@@ -1,5 +1,5 @@
 /**
- * Sky Dolly - The black sheep for your fposition recordings
+ * Sky Dolly - The Black Sheep for your Flight Recordings
  *
  * Copyright (c) Oliver Knoll
  * All rights reserved.
@@ -25,76 +25,25 @@
 #ifndef POSITION_H
 #define POSITION_H
 
-#include <memory>
-#include <vector>
-#include <iterator>
-#include <cstdint>
-
-#include <QObject>
-
-#include "TimeVariableData.h"
+#include "PositionData.h"
 #include "AircraftInfo.h"
+#include "AbstractComponent.h"
 #include "ModelLib.h"
 
-struct PositionData;
-class PositionPrivate;
-
-class MODEL_API Position : public QObject
+class MODEL_API Position : public AbstractComponent<PositionData>
 {
-    Q_OBJECT
 public:
-    Position(const AircraftInfo &aircraftInfo, QObject *parent = nullptr) noexcept;
-    virtual ~Position() noexcept;
+    explicit Position(const AircraftInfo &aircraftInfo) noexcept;
+    Position(Position &aircraftHandle) = default;
+    Position(Position &&aircraftHandle) = default;
+    Position &operator = (const Position &rhs) = default;
+    Position &operator = (Position &&rhs) = default;
+    ~Position() noexcept override;
 
-    /*!
-     * Inserts \c data at the end, or updates the \em last element (only) if
-     * the data items have the same timestamp.
-     *
-     * Use case: recorded data items are inserted chronologically, but some recorded items
-     * may have the same timestamp: the last recorded data item "wins".
-     *
-     * \param data
-     *        the data to be upserted
-     * \sa upsert
-     */
-    void upsertLast(const PositionData &data) noexcept;
-
-    /*!
-     * Inserts \c data at the end, or updates the element having the same
-     * timestamp. That is, the entire collection is being searched first.
-     *
-     * Use case: data items are inserted in random order ("flight augmentation");
-     * use \c upsertLast in case items are to be inserted sequentially in order
-     *
-     * \param data
-     *        the data to be upserted
-     * \sa upsertLast
-     */
-    void upsert(const PositionData &data) noexcept;
-    const PositionData &getFirst() const noexcept;
-    const PositionData &getLast() const noexcept;
-    std::size_t count() const noexcept;
-    const PositionData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
-    void clear() noexcept;
-
-    typedef std::vector<PositionData>::iterator Iterator;
-    typedef std::back_insert_iterator<std::vector<PositionData>> BackInsertIterator;
-
-    Iterator begin() noexcept;
-    Iterator end() noexcept;
-    const Iterator begin() const noexcept;
-    const Iterator end() const noexcept;
-    BackInsertIterator backInsertIterator() noexcept;
-
-    PositionData& operator[](std::size_t index) noexcept;
-    const PositionData& operator[](std::size_t index) const noexcept;
-
-signals:
-    void dataChanged();
-
+    const PositionData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 private:
-    Q_DISABLE_COPY(Position)
-    std::unique_ptr<PositionPrivate> d;
+    PositionData m_currentPositionData;
 };
 
 #endif // POSITION_H
+

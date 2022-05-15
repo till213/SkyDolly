@@ -432,7 +432,7 @@ PositionData FormationWidget::calculateRelativePositionToUserAircraft(std::int64
 
     const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
     const Aircraft &userAircraft = flight.getUserAircraftConst();
-    const Position &position = userAircraft.getPositionConst();
+    Position &position = userAircraft.getPosition();
     const PositionData &positionData = timestamp == 0 ? position.getFirst() : position.interpolate(timestamp, TimeVariableData::Access::Seek);
     if (!positionData.isNull()) {
 
@@ -844,7 +844,7 @@ void FormationWidget::updateUserAircraftIndex() noexcept
             // Also update the manually flown user aircraft's position
             if (skyConnect.getReplayMode() == SkyConnectIntf::ReplayMode::UserAircraftManualControl) {
                 const Aircraft &aircraft = flight.getUserAircraft();
-                const Position &position = aircraft.getPosition();
+                Position &position = aircraft.getPosition();
                 const PositionData positionData = position.interpolate(skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
                 skyConnect.setUserAircraftPosition(positionData);
             }
@@ -907,7 +907,7 @@ void FormationWidget::on_replayModeComboBox_currentIndexChanged(int index) noexc
 
             Flight &flight = Logbook::getInstance().getCurrentFlight();
             const Aircraft &aircraft = flight.getUserAircraft();
-            const Position &position = aircraft.getPosition();   
+            Position &position = aircraft.getPosition();
             const PositionData positionData = position.interpolate(skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
             skyConnect.setUserAircraftPosition(positionData);
             break;

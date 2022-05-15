@@ -153,7 +153,7 @@ bool SQLiteAircraftDao::add(std::int64_t flightId, int sequenceNumber, Aircraft 
 #endif
     }
     if (ok) {
-        for (const PositionData &data : aircraft.getPositionConst()) {
+        for (const PositionData &data : aircraft.getPosition()) {
             ok = d->positionDao->add(aircraft.getId(), data);
             if (!ok) {
                 break;

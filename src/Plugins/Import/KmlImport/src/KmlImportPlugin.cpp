@@ -146,6 +146,9 @@ FlightAugmentation::Aspects KmlImportPlugin::getAspects() const noexcept
         aspects.setFlag(FlightAugmentation::Aspect::Heading, false);
         aspects.setFlag(FlightAugmentation::Aspect::Velocity, false);
         break;
+    case KmlImportSettings::Format::Generic:
+        aspects = FlightAugmentation::Aspect::All;
+        break;
     }
 
     return aspects;

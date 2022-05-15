@@ -152,9 +152,9 @@ const PositionData &AircraftWidget::getCurrentPositionData(std::int64_t timestam
             return aircraft.getPositionConst().getLast();
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
-                return aircraft.getPositionConst().interpolate(timestamp, access);
+                return aircraft.getPosition().interpolate(timestamp, access);
             } else {
-                return aircraft.getPositionConst().interpolate(skyConnect->get().getCurrentTimestamp(), access);
+                return aircraft.getPosition().interpolate(skyConnect->get().getCurrentTimestamp(), access);
             }
         };
     } else {

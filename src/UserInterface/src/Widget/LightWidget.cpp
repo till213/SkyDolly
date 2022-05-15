@@ -109,25 +109,24 @@ void LightWidget::initUi() noexcept
     ui->cabinCheckBox->setFocusPolicy(Qt::NoFocus);
 }
 
-const LightData LightWidget::getCurrentLightData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
+const LightData &LightWidget::getCurrentLightData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
     LightData lightData;
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().getState() == Connect::State::Recording) {
-            lightData = aircraft.getLightConst().getLast();
+            return aircraft.getLightConst().getLast();
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
-                lightData = aircraft.getLight().interpolate(timestamp, access);
+                return aircraft.getLight().interpolate(timestamp, access);
             } else {
-                lightData = aircraft.getLight().interpolate(skyConnect->get().getCurrentTimestamp(), access);
+                return aircraft.getLight().interpolate(skyConnect->get().getCurrentTimestamp(), access);
             }
         };
     } else {
         return LightData::NullData;
     }
-    return lightData;
 }
 
 // PRIVATE SLOTS

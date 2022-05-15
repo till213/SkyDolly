@@ -119,7 +119,7 @@ const PrimaryFlightControlData &PrimaryFlightControl::interpolate(std::int64_t t
 
     if (d->currentTimestamp != adjustedTimestamp || d->currentAccess != access) {
 
-        double tn;
+        double tn {0.0};
         switch (access) {
         case TimeVariableData::Access::Linear:
             [[fallthrough]];

@@ -125,7 +125,7 @@ public:
         }
     }
 
-    const T getFirst() const noexcept
+    const T &getFirst() const noexcept
     {
         if (!m_data.empty()) {
             return m_data.front();
@@ -134,7 +134,7 @@ public:
         }
     }
 
-    const T getLast() const noexcept
+    const T &getLast() const noexcept
     {
         if (!m_data.empty()) {
             return m_data.back();
@@ -181,7 +181,12 @@ public:
         return std::back_inserter(m_data);
     }
 
-    T operator[](std::size_t index) const noexcept
+    T &operator[](std::size_t index) noexcept
+    {
+        return m_data[index];
+    }
+
+    const T &operator[](std::size_t index) const noexcept
     {
         return m_data[index];
     }

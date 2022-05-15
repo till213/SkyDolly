@@ -59,7 +59,7 @@ private:
     std::unique_ptr<Ui::AircraftHandleWidget> ui;
 
     void initUi() noexcept;
-    const AircraftHandleData getCurrentAircraftHandleData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
+    const AircraftHandleData &getCurrentAircraftHandleData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
 };
 
 #endif // AIRCRAFTHANDLEWIDGET_H
