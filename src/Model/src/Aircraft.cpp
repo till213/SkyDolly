@@ -226,8 +226,6 @@ bool Aircraft::operator != (const Aircraft &rhs) const noexcept
 void Aircraft::frenchConnection()
 {
     // Aircraft sample data
-    connect(&d->secondaryFlightControl, &SecondaryFlightControl::dataChanged,
-            this, &Aircraft::handleDataChanged);
     connect(this, &Aircraft::dataChanged,
             this, &Aircraft::invalidateDuration);
     // Tail number

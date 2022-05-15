@@ -26,7 +26,6 @@
 
 #include <QDebug>
 
-#include <Kernel/Settings.h>
 #include <Kernel/SkyMath.h>
 #include "TimeVariableData.h"
 #include "SkySearch.h"

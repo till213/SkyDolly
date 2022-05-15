@@ -22,13 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory>
-#include <vector>
-#include <iterator>
-#include <algorithm>
 #include <cstdint>
 
-#include <QObject>
+#include <QDebug>
 
 #include <Kernel/Settings.h>
 #include <Kernel/SkyMath.h>
@@ -38,104 +34,52 @@
 #include "SecondaryFlightControlData.h"
 #include "SecondaryFlightControl.h"
 
-class SecondaryFlightControlPrivate
+namespace
 {
-public:
-    SecondaryFlightControlPrivate(const AircraftInfo &aircraftInfo) noexcept
-        : aircraftInfo(aircraftInfo),
-          currentTimestamp(TimeVariableData::InvalidTime),
-          currentAccess(TimeVariableData::Access::Linear),
-          currentIndex(SkySearch::InvalidIndex)
-    {}
-
-    const AircraftInfo &aircraftInfo;
-    std::vector<SecondaryFlightControlData> secondaryFlightControlData;
-    std::int64_t currentTimestamp;
-    TimeVariableData::Access currentAccess;
-    SecondaryFlightControlData previousSecondaryFlightControlData;
-    SecondaryFlightControlData currentSecondaryFlightControlData;
-    mutable int currentIndex;
-};
+    constexpr double Tension = 0.0;
+}
 
 // PUBLIC
 
-SecondaryFlightControl::SecondaryFlightControl(const AircraftInfo &aircraftInfo, QObject *parent) noexcept
-    : QObject(parent),
-      d(std::make_unique<SecondaryFlightControlPrivate>(aircraftInfo))
-{}
+SecondaryFlightControl::SecondaryFlightControl(const AircraftInfo &aircraftInfo) noexcept
+    : AbstractComponent(aircraftInfo)
+{
+#ifdef DEBUG
+    qDebug() << "SecondaryFlightControl::SecondaryFlightControl: CREATED";
+#endif
+}
 
 SecondaryFlightControl::~SecondaryFlightControl() noexcept
-{}
-
-void SecondaryFlightControl::upsertLast(const SecondaryFlightControlData &secondaryFlightControlData) noexcept
 {
-    if (d->secondaryFlightControlData.size() > 0 && d->secondaryFlightControlData.back() == secondaryFlightControlData)  {
-        // Same timestamp -> replace
-        d->secondaryFlightControlData[d->secondaryFlightControlData.size() - 1] = secondaryFlightControlData;
-    } else {
-        d->secondaryFlightControlData.push_back(secondaryFlightControlData);
-    }
-    emit dataChanged();
+#ifdef DEBUG
+    qDebug() << "SecondaryFlightControl::SecondaryFlightControl: DELETED";
+#endif
 }
 
-void SecondaryFlightControl::upsert(const SecondaryFlightControlData &data) noexcept
-{
-    auto result = std::find_if(d->secondaryFlightControlData.begin(), d->secondaryFlightControlData.end(),
-                              [&data] (const TimeVariableData &d) { return d.timestamp == data.timestamp; });
-    if (result != d->secondaryFlightControlData.end()) {
-        // Same timestamp -> update
-        *result = data;
-    } else {
-        d->secondaryFlightControlData.push_back(data);
-    }
-}
-
-const SecondaryFlightControlData &SecondaryFlightControl::getFirst() const noexcept
-{
-    if (!d->secondaryFlightControlData.empty()) {
-        return d->secondaryFlightControlData.front();
-    } else {
-        return SecondaryFlightControlData::NullData;
-    }
-}
-
-const SecondaryFlightControlData &SecondaryFlightControl::getLast() const noexcept
-{
-    if (!d->secondaryFlightControlData.empty()) {
-        return d->secondaryFlightControlData.back();
-    } else {
-        return SecondaryFlightControlData::NullData;
-    }
-}
-
-std::size_t SecondaryFlightControl::count() const noexcept
-{
-    return d->secondaryFlightControlData.size();
-}
-
-const SecondaryFlightControlData &SecondaryFlightControl::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
+const SecondaryFlightControlData &SecondaryFlightControl::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {
     const SecondaryFlightControlData *p1 {nullptr}, *p2 {nullptr};
-    const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? d->aircraftInfo.timeOffset : 0;
+    const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;
     const std::int64_t adjustedTimestamp = qMax(timestamp + timeOffset, std::int64_t(0));
 
-    if (d->currentTimestamp != adjustedTimestamp || d->currentAccess != access) {
+    if (getCurrentTimestamp() != adjustedTimestamp || getCurrentAccess() != access) {
 
-        double tn;
+        int currentIndex = getCurrentIndex();
+        double tn {0.0};
         switch (access) {
         case TimeVariableData::Access::Linear:
             [[fallthrough]];
         case TimeVariableData::Access::Export:
-            if (SkySearch::getLinearInterpolationSupportData(d->secondaryFlightControlData, adjustedTimestamp, SkySearch::DefaultInterpolationWindow, d->currentIndex, &p1, &p2)) {
+            if (SkySearch::getLinearInterpolationSupportData(getData(), adjustedTimestamp, SkySearch::DefaultInterpolationWindow, currentIndex, &p1, &p2)) {
                 tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
             }
             break;
         case TimeVariableData::Access::Seek:
             // Get the last sample data just before the seeked position
             // (that sample point may lie far outside of the "sample window")
-            d->currentIndex = SkySearch::updateStartIndex(d->secondaryFlightControlData, d->currentIndex, adjustedTimestamp);
-            if (d->currentIndex != SkySearch::InvalidIndex) {
-                p1 = &d->secondaryFlightControlData.at(d->currentIndex);
+            currentIndex = SkySearch::updateStartIndex(getData(), currentIndex, adjustedTimestamp);
+            if (currentIndex != SkySearch::InvalidIndex) {
+                p1 = &getData().at(currentIndex);
                 p2 = p1;
                 tn = 0.0;
             } else {
@@ -145,80 +89,36 @@ const SecondaryFlightControlData &SecondaryFlightControl::interpolate(std::int64
         }
 
         if (p1 != nullptr) {
-            d->currentSecondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::interpolateLinear(p1->leadingEdgeFlapsLeftPosition, p2->leadingEdgeFlapsLeftPosition, tn);
-            d->currentSecondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::interpolateLinear(p1->leadingEdgeFlapsRightPosition, p2->leadingEdgeFlapsRightPosition, tn);
-            d->currentSecondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::interpolateLinear(p1->trailingEdgeFlapsLeftPosition, p2->trailingEdgeFlapsLeftPosition, tn);
-            d->currentSecondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::interpolateLinear(p1->trailingEdgeFlapsRightPosition, p2->trailingEdgeFlapsRightPosition, tn);
-            d->currentSecondaryFlightControlData.spoilersHandlePosition = SkyMath::interpolateLinear(p1->spoilersHandlePosition, p2->spoilersHandlePosition, tn);
+            m_currentSecondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::interpolateLinear(p1->leadingEdgeFlapsLeftPosition, p2->leadingEdgeFlapsLeftPosition, tn);
+            m_currentSecondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::interpolateLinear(p1->leadingEdgeFlapsRightPosition, p2->leadingEdgeFlapsRightPosition, tn);
+            m_currentSecondaryFlightControlData.trailingEdgeFlapsLeftPosition = SkyMath::interpolateLinear(p1->trailingEdgeFlapsLeftPosition, p2->trailingEdgeFlapsLeftPosition, tn);
+            m_currentSecondaryFlightControlData.trailingEdgeFlapsRightPosition = SkyMath::interpolateLinear(p1->trailingEdgeFlapsRightPosition, p2->trailingEdgeFlapsRightPosition, tn);
+            m_currentSecondaryFlightControlData.spoilersHandlePosition = SkyMath::interpolateLinear(p1->spoilersHandlePosition, p2->spoilersHandlePosition, tn);
 
             // No interpolation for flaps handle position
-            d->currentSecondaryFlightControlData.flapsHandleIndex = p1->flapsHandleIndex;
+            m_currentSecondaryFlightControlData.flapsHandleIndex = p1->flapsHandleIndex;
             // Certain aircraft automatically override the FLAPS HANDLE INDEX, so values need to be repeatedly set
             if (Settings::getInstance().isRepeatFlapsHandleIndexEnabled()) {
                 // We do that my storing the previous values (when the flaps are set)...
-                d->previousSecondaryFlightControlData = d->currentSecondaryFlightControlData;
+                m_previousSecondaryFlightControlData = m_currentSecondaryFlightControlData;
             } else {
                 // "Repeat values" setting disabled
-                d->previousSecondaryFlightControlData = SecondaryFlightControlData::NullData;
+                m_previousSecondaryFlightControlData = SecondaryFlightControlData::NullData;
             }
 
-            d->currentSecondaryFlightControlData.timestamp = adjustedTimestamp;
-        } else if (!d->previousSecondaryFlightControlData.isNull()) {
+            m_currentSecondaryFlightControlData.timestamp = adjustedTimestamp;
+        } else if (!m_previousSecondaryFlightControlData.isNull()) {
             // ... and send the previous values again (for as long as the flaps are extracted)
-            d->currentSecondaryFlightControlData = d->previousSecondaryFlightControlData;
-            d->currentSecondaryFlightControlData.timestamp = adjustedTimestamp;
+            m_currentSecondaryFlightControlData = m_previousSecondaryFlightControlData;
+            m_currentSecondaryFlightControlData.timestamp = adjustedTimestamp;
         } else {
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
-            d->currentSecondaryFlightControlData = SecondaryFlightControlData::NullData;
+            m_currentSecondaryFlightControlData = SecondaryFlightControlData::NullData;
         }
 
-        d->currentTimestamp = adjustedTimestamp;
-        d->currentAccess = access;
+        setCurrentIndex(currentIndex);
+        setCurrentTimestamp(adjustedTimestamp);
+        setCurrentAccess(access);
     }
-    return d->currentSecondaryFlightControlData;
-}
-
-void SecondaryFlightControl::clear() noexcept
-{
-    d->secondaryFlightControlData.clear();
-    d->currentTimestamp = TimeVariableData::InvalidTime;
-    d->currentIndex = SkySearch::InvalidIndex;
-    emit dataChanged();
-}
-
-SecondaryFlightControl::Iterator SecondaryFlightControl::begin() noexcept
-{
-    return d->secondaryFlightControlData.begin();
-}
-
-SecondaryFlightControl::Iterator SecondaryFlightControl::end() noexcept
-{
-    return Iterator(d->secondaryFlightControlData.end());
-}
-
-const SecondaryFlightControl::Iterator SecondaryFlightControl::begin() const noexcept
-{
-    return Iterator(d->secondaryFlightControlData.begin());
-}
-
-const SecondaryFlightControl::Iterator SecondaryFlightControl::end() const noexcept
-{
-    return Iterator(d->secondaryFlightControlData.end());
-}
-
-SecondaryFlightControl::BackInsertIterator SecondaryFlightControl::backInsertIterator() noexcept
-{
-    return std::back_inserter(d->secondaryFlightControlData);
-}
-
-// OPERATORS
-
-SecondaryFlightControlData& SecondaryFlightControl::operator[](std::size_t index) noexcept
-{
-    return d->secondaryFlightControlData[index];
-}
-
-const SecondaryFlightControlData& SecondaryFlightControl::operator[](std::size_t index) const noexcept
-{
-    return d->secondaryFlightControlData[index];
+    return m_currentSecondaryFlightControlData;
 }

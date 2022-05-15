@@ -196,7 +196,7 @@ bool SkyDollyCsvWriter::write([[maybe_unused]] const Flight &flight, const Aircr
         }
 
         // Secondary flight controls
-        const SecondaryFlightControl &secondaryFlightControl = aircraft.getSecondaryFlightControl();
+        SecondaryFlightControl &secondaryFlightControl = aircraft.getSecondaryFlightControl();
         dataType = QChar(Enum::toUnderlyingType(CsvConst::DataType::SecondaryFlightControl));
         if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
             std::int64_t duration = secondaryFlightControl.getLast().timestamp;
