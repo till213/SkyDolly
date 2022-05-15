@@ -56,7 +56,7 @@ public:
 
     InitialPosition(InitialPosition &&) = default;
     InitialPosition(const InitialPosition &) = default;
-    InitialPosition &operator= (const InitialPosition &) = default;
+    InitialPosition &operator = (const InitialPosition &) = default;
 
     inline bool isNull() const noexcept {
         return (indicatedAirspeed == InvalidAirspeed);

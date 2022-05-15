@@ -69,9 +69,10 @@ struct MODEL_API EngineData : public TimeVariableData
     bool generalEngineCombustion4;
 
     EngineData(std::int16_t throttleLeverPosition1 = 0, std::int16_t propellerLeverPosition1 = 0, std::uint8_t mixtureLeverPosition1 = 0, std::uint8_t cowlFlapPosition1 = 0) noexcept;
-    EngineData(EngineData &&) = default;
-    EngineData(const EngineData &) = default;
-    EngineData &operator= (const EngineData &) = default;
+    EngineData(const EngineData &other) = default;
+    EngineData(EngineData &&other) = default;
+    EngineData &operator = (const EngineData &rhs) = default;
+    EngineData &operator = (EngineData &&rhs) = default;
 
     inline bool hasEngineStarterEnabled() const noexcept
     {

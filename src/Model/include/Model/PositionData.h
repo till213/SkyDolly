@@ -56,7 +56,7 @@ struct MODEL_API PositionData : public TimeVariableData
 
     PositionData(PositionData &&) = default;
     PositionData(const PositionData &) = default;
-    PositionData &operator= (const PositionData &) = default;
+    PositionData &operator = (const PositionData &) = default;
 
     static const PositionData NullData;
 };
