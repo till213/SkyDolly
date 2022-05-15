@@ -53,10 +53,11 @@ struct MODEL_API PositionData : public TimeVariableData
     double rotationVelocityBodyZ;
 
     PositionData(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
-
-    PositionData(PositionData &&) = default;
-    PositionData(const PositionData &) = default;
-    PositionData &operator = (const PositionData &) = default;
+    PositionData(const PositionData &other) = default;
+    PositionData(PositionData &&other) = default;
+    ~PositionData() override = default;
+    PositionData &operator = (const PositionData &rhs) = default;
+    PositionData &operator = (PositionData &&rhs) = default;
 
     static const PositionData NullData;
 };

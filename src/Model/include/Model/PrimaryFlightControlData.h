@@ -41,9 +41,11 @@ struct MODEL_API PrimaryFlightControlData : public TimeVariableData
     std::int16_t aileronPosition;
 
     PrimaryFlightControlData() noexcept;
-    PrimaryFlightControlData(PrimaryFlightControlData &&) = default;
-    PrimaryFlightControlData(const PrimaryFlightControlData &) = default;
+    PrimaryFlightControlData(const PrimaryFlightControlData &other) = default;
+    PrimaryFlightControlData(PrimaryFlightControlData &&other) = default;
+    ~PrimaryFlightControlData() override = default;
     PrimaryFlightControlData &operator = (const PrimaryFlightControlData &) = default;
+    PrimaryFlightControlData &operator = (PrimaryFlightControlData &&) = default;
 
     static const PrimaryFlightControlData NullData;
 };

@@ -25,76 +25,25 @@
 #ifndef PRIMARYFLIGHTCONTROL_H
 #define PRIMARYFLIGHTCONTROL_H
 
-#include <memory>
-#include <vector>
-#include <iterator>
-#include <cstdint>
-
-#include <QObject>
-
-#include "TimeVariableData.h"
+#include "PrimaryFlightControlData.h"
 #include "AircraftInfo.h"
+#include "AbstractComponent.h"
 #include "ModelLib.h"
 
-struct PrimaryFlightControlData;
-class PrimaryFlightControlPrivate;
-
-class MODEL_API PrimaryFlightControl : public QObject
+class MODEL_API PrimaryFlightControl : public AbstractComponent<PrimaryFlightControlData>
 {
-    Q_OBJECT
 public:
-    PrimaryFlightControl(const AircraftInfo &aircraftInfo, QObject *parent = nullptr) noexcept;
-    virtual ~PrimaryFlightControl() noexcept;
+    explicit PrimaryFlightControl(const AircraftInfo &aircraftInfo) noexcept;
+    PrimaryFlightControl(PrimaryFlightControl &aircraftHandle) = default;
+    PrimaryFlightControl(PrimaryFlightControl &&aircraftHandle) = default;
+    PrimaryFlightControl &operator = (const PrimaryFlightControl &rhs) = default;
+    PrimaryFlightControl &operator = (PrimaryFlightControl &&rhs) = default;
+    ~PrimaryFlightControl() noexcept override;
 
-    /*!
-     * Inserts \c data at the end, or updates the \em last element (only) if
-     * the data items have the same timestamp.
-     *
-     * Use case: recorded data items are inserted chronologically, but some recorded items
-     * may have the same timestamp: the last recorded data item "wins".
-     *
-     * \param data
-     *        the data to be upserted
-     * \sa upsert
-     */
-    void upsertLast(const PrimaryFlightControlData &data) noexcept;
-
-    /*!
-     * Inserts \c data at the end, or updates the element having the same
-     * timestamp. That is, the entire collection is being searched first.
-     *
-     * Use case: data items are inserted in random order ("flight augmentation");
-     * use \c upsertLast in case items are to be inserted sequentially in order
-     *
-     * \param data
-     *        the data to be upserted
-     * \sa upsertLast
-     */
-    void upsert(const PrimaryFlightControlData &data) noexcept;
-    const PrimaryFlightControlData &getFirst() const noexcept;
-    const PrimaryFlightControlData &getLast() const noexcept;
-    std::size_t count() const noexcept;
-    const PrimaryFlightControlData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
-    void clear() noexcept;
-
-    typedef std::vector<PrimaryFlightControlData>::iterator Iterator;
-    typedef std::back_insert_iterator<std::vector<PrimaryFlightControlData>> BackInsertIterator;
-
-    Iterator begin() noexcept;
-    Iterator end() noexcept;
-    const Iterator begin() const noexcept;
-    const Iterator end() const noexcept;
-    BackInsertIterator backInsertIterator() noexcept;
-
-    PrimaryFlightControlData& operator[](std::size_t index) noexcept;
-    const PrimaryFlightControlData& operator[](std::size_t index) const noexcept;
-
-signals:
-    void dataChanged();
+    const PrimaryFlightControlData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 
 private:
-    Q_DISABLE_COPY(PrimaryFlightControl)
-    std::unique_ptr<PrimaryFlightControlPrivate> d;
+    PrimaryFlightControlData m_currentPrimaryFlightControlData;
 };
 
 #endif // PRIMARYFLIGHTCONTROL_H

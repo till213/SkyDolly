@@ -22,10 +22,6 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory>
-#include <vector>
-#include <iterator>
-#include <algorithm>
 #include <cstdint>
 
 #include <QDebug>
@@ -59,8 +55,6 @@ Position::~Position() noexcept
     qDebug() << "Position::Position: DELETED";
 #endif
 }
-
-
 
 const PositionData &Position::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {

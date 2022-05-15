@@ -34,13 +34,14 @@ class MODEL_API Position : public AbstractComponent<PositionData>
 {
 public:
     explicit Position(const AircraftInfo &aircraftInfo) noexcept;
+    ~Position() noexcept override;
     Position(Position &aircraftHandle) = default;
     Position(Position &&aircraftHandle) = default;
     Position &operator = (const Position &rhs) = default;
     Position &operator = (Position &&rhs) = default;
-    ~Position() noexcept override;
 
     const PositionData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
+
 private:
     PositionData m_currentPositionData;
 };

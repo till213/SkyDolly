@@ -22,9 +22,6 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory>
-#include <vector>
-#include <iterator>
 #include <algorithm>
 #include <cstdint>
 
@@ -59,7 +56,7 @@ const AircraftHandleData &AircraftHandle::interpolate(std::int64_t timestamp, Ti
 {
     const AircraftHandleData *p1 {nullptr}, *p2 {nullptr};
     const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;
-    const std::int64_t adjustedTimestamp = qMax(timestamp + timeOffset, std::int64_t(0));
+    const std::int64_t adjustedTimestamp = std::max(timestamp + timeOffset, std::int64_t(0));
 
     if (getCurrentTimestamp() != adjustedTimestamp || getCurrentAccess() != access) {
 
