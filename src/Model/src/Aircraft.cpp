@@ -241,11 +241,6 @@ void Aircraft::frenchConnection()
 
 // PRIVATE SLOTS
 
-void Aircraft::handleDataChanged()
-{
-    emit dataChanged();
-}
-
 void Aircraft::invalidateDuration()
 {
     d->duration = TimeVariableData::InvalidTime;

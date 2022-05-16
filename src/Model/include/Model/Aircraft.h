@@ -48,8 +48,8 @@ class MODEL_API Aircraft : public QObject
 {
     Q_OBJECT
 public:
-    Aircraft(QObject *parent = nullptr) noexcept;
-    virtual ~Aircraft() noexcept;
+    explicit Aircraft(QObject *parent = nullptr) noexcept;
+    ~Aircraft() noexcept override;
 
     std::int64_t getId() const noexcept;
     void setId(std::int64_t id) noexcept;
@@ -78,11 +78,11 @@ public:
     bool operator == (const Aircraft &rhs) const noexcept;
     bool operator != (const Aircraft &rhs) const noexcept;
 
-    static constexpr std::int64_t InvalidId = -1;
+    static constexpr std::int64_t InvalidId {-1};
 
 signals:
-    void infoChanged(Aircraft &aircraft);
     void dataChanged();
+    void infoChanged(Aircraft &aircraft);
     void tailNumberChanged(Aircraft &aircraft);
     void timeOffsetChanged(Aircraft &aircraft);
 
@@ -93,7 +93,6 @@ private:
     void frenchConnection();
 
 private slots:
-    void handleDataChanged();
     void invalidateDuration();
 };
 
