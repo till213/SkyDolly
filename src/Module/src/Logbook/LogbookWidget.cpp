@@ -145,6 +145,9 @@ LogbookWidget::LogbookWidget(DatabaseService &databaseService, FlightService &fl
     ui->setupUi(this);
     initUi();
     frenchConnection();
+#ifdef DEBUG
+    qDebug("LogbookWidget::LogbookWidget: CREATED.");
+#endif
 }
 
 LogbookWidget::~LogbookWidget() noexcept

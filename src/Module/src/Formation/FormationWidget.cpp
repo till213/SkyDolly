@@ -27,6 +27,7 @@
 #include <cstdint>
 
 #include <QCoreApplication>
+#include <QByteArray>
 #include <QDoubleValidator>
 #include <QWidget>
 #include <QAction>
@@ -159,10 +160,15 @@ FormationWidget::FormationWidget(FlightService &flightService, QWidget *parent) 
     ui->setupUi(this);
     initUi();
     frenchConnection();
+#ifdef DEBUG
+    qDebug("FormationWidget::FormationWidget: CREATED.");
+#endif
 }
 
 FormationWidget::~FormationWidget() noexcept
 {
+    const QByteArray tableState = ui->aircraftTableWidget->horizontalHeader()->saveState();
+    Settings::getInstance().setFormationAircraftTableState(tableState);
 #ifdef DEBUG
     qDebug("FormationWidget::~FormationWidget: DELETED.");
 #endif
@@ -284,6 +290,10 @@ void FormationWidget::initUi() noexcept
     ui->aircraftTableWidget->setMinimumWidth(MinimumTableWidth);
     ui->aircraftTableWidget->horizontalHeader()->setStretchLastSection(true);
     ui->aircraftTableWidget->sortByColumn(SequenceNumberColumn, Qt::SortOrder::AscendingOrder);
+    ui->aircraftTableWidget->horizontalHeader()->setSectionsMovable(true);
+
+    QByteArray tableState = Settings::getInstance().getFormationAircraftTableState();
+    ui->aircraftTableWidget->horizontalHeader()->restoreState(tableState);
 
     // Default position is south-east
     ui->sePositionRadioButton->setChecked(true);

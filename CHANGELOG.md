@@ -16,6 +16,7 @@
 
 #### User Interface
 - The order of the logbook table columns can now be changed
+- The order of the formation aircraft table columns can now be changed
 - In the formation module the "Delete" key now deletes the selected aircraft
 - Latitude and longitude values are now formatted with leading zeroes
 
