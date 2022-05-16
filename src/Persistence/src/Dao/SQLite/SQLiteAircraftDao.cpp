@@ -235,7 +235,6 @@ bool SQLiteAircraftDao::getByFlightId(std::int64_t flightId, std::back_insert_it
                 ok = d->waypointDao->getByAircraftId(aircraft->getId(), aircraft->getFlightPlan());
             }
             if (ok) {
-                emit aircraft->dataChanged();
                 backInsertIterator = std::move(aircraft);
             }
         }

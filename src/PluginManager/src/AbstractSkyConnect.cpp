@@ -24,6 +24,7 @@
  */
 #include <algorithm>
 #include <cstdint>
+#include <cmath>
 
 #include <QTimer>
 #include <QElapsedTimer>
@@ -73,7 +74,7 @@ public:
     QTimer recordingTimer;
     std::int64_t currentTimestamp;
     double recordingSampleRate;
-    int    recordingIntervalMSec;
+    int recordingIntervalMSec;
     QElapsedTimer elapsedTimer;
     double replaySpeedFactor;
     std::int64_t elapsedTime;
@@ -164,7 +165,10 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
 void AbstractSkyConnect::stopRecording() noexcept
 {
     onStopRecording();
+    Aircraft &aircraft = d->currentFlight.getUserAircraft();
+    aircraft.invalidateDuration();
     d->recordingTimer.stop();
+
     setState(Connect::State::Connected);
 }
 
@@ -522,7 +526,7 @@ std::int64_t AbstractSkyConnect::updateCurrentTimestamp() noexcept
         // Ignore spontaneous SimConnect events: do not update
         // the current timestamp unless we are replaying or recording
         if (d->state == Connect::State::Replay) {
-            d->currentTimestamp = d->elapsedTime + static_cast<std::int64_t>(d->elapsedTimer.elapsed() * d->replaySpeedFactor);
+            d->currentTimestamp = d->elapsedTime + static_cast<std::int64_t>(std::round(d->elapsedTimer.elapsed() * d->replaySpeedFactor));
             emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Linear);
         } else if (d->state == Connect::State::Recording) {
             d->currentTimestamp = d->elapsedTime + d->elapsedTimer.elapsed();

@@ -61,16 +61,20 @@ public:
     AircraftHandle &getAircraftHandle() const noexcept;
     Light &getLight() const noexcept;
 
+    FlightPlan &getFlightPlan() const noexcept;
     const AircraftInfo &getAircraftInfo() const noexcept;
     void setAircraftInfo(const AircraftInfo &aircraftInfo) noexcept;
     void setTailNumber(const QString &tailNumber) noexcept;
 
     std::int64_t getTimeOffset() const noexcept;
     void setTimeOffset(std::int64_t timeOffset) noexcept;
-
-    FlightPlan &getFlightPlan() const noexcept;
-
     std::int64_t getDurationMSec() const noexcept;
+
+    /*!
+     * Returns whether this aircraft has at least one sampled Position.
+     *
+     * \return \c true if any sampled Position data is available; \c false else
+     */
     bool hasRecording() const noexcept;
 
     void clear() noexcept;
@@ -80,20 +84,45 @@ public:
 
     static constexpr std::int64_t InvalidId {-1};
 
+public slots:
+    /*!
+     * Invalidates the duration, such that it gets updated the next time
+     * #getDurationMSec is called.
+     *
+     * Explicitly call this method after an aircraft has been recorded or
+     * the sampled data has been changed (added or removed).
+     *
+     * Also refer to #getDurationMSec.
+     */
+    void invalidateDuration() noexcept;
+
 signals:
-    void dataChanged();
+    /*!
+     * Emitted whenever the aircraft info has changed.
+     */
     void infoChanged(Aircraft &aircraft);
+
+    /*!
+     * Emitted whenever the tail number has changed.
+     *
+     * \param aircraft
+     *        the aircraft whose tail number has changed
+     */
     void tailNumberChanged(Aircraft &aircraft);
+
+    /*!
+     * Emitted whenever the aircraft's time offset has changed.
+     *
+     * \param aircraft
+     *        the aircraft whose time offset has changed
+     */
     void timeOffsetChanged(Aircraft &aircraft);
 
 private:
     Q_DISABLE_COPY(Aircraft)
     std::unique_ptr<AircraftPrivate> d;
 
-    void frenchConnection();
-
-private slots:
-    void invalidateDuration();
+    void frenchConnection(); 
 };
 
 #endif // AIRCRAFT_H

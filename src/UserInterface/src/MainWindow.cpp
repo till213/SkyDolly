@@ -26,6 +26,7 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
+#include <cmath>
 
 #include <QApplication>
 #include <QByteArray>
@@ -806,7 +807,7 @@ void MainWindow::on_positionSlider_valueChanged(int value) noexcept
     if (skyConnect) {
         const double scale = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
         const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
-        const std::int64_t timestamp = static_cast<std::int64_t>(qRound(scale * static_cast<double>(totalDuration)));
+        const std::int64_t timestamp = static_cast<std::int64_t>(std::round(scale * static_cast<double>(totalDuration)));
         ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatNumber(timestamp, 0), d->unit.formatElapsedTime(timestamp)));
 
         // Prevent the timestampTimeEdit field to set the replay position as well
@@ -860,12 +861,10 @@ void MainWindow::handleTimestampChanged(std::int64_t timestamp) noexcept
             const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
             const std::int64_t ts = std::min(timestamp, totalDuration);
 
-            int sliderPosition;
-            if (totalDuration > 0) {
-                sliderPosition = qRound(PositionSliderMax * (static_cast<double>(ts) / static_cast<double>(totalDuration)));
-            } else {
-                sliderPosition = 0;
-            }
+            const int sliderPosition = totalDuration > 0 ?
+                                       std::round(PositionSliderMax * (static_cast<double>(ts) / static_cast<double>(totalDuration))) :
+                                       0;
+
             ui->positionSlider->blockSignals(true);
             ui->positionSlider->setValue(sliderPosition);
             ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatNumber(timestamp, 0), d->unit.formatElapsedTime(timestamp)));

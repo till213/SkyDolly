@@ -25,7 +25,9 @@
 #include <algorithm>
 #include <cstdint>
 
+#ifdef DEBUG
 #include <QDebug>
+#endif
 
 #include <Kernel/Settings.h>
 #include <Kernel/SkyMath.h>

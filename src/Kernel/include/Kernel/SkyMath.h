@@ -35,7 +35,9 @@
 #include <GeographicLib/Geodesic.hpp>
 
 #include <QtGlobal>
+#ifdef DEBUG
 #include <QDebug>
+#endif
 
 /*!
  * Mathematical functions for interpolation and geodesic math.

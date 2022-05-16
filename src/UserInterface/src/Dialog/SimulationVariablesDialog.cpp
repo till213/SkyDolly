@@ -30,6 +30,9 @@
 #include <QShortcut>
 #include <QShowEvent>
 #include <QHideEvent>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Model/SimVar.h>
 #include <Model/Logbook.h>
@@ -74,12 +77,15 @@ SimulationVariablesDialog::SimulationVariablesDialog(QWidget *parent) noexcept :
     ui->setupUi(this);
     initUi();
     frenchConnection();
+#ifdef DEBUG
+    qDebug() << "SimulationVariablesDialog::SimulationVariablesDialog: CREATED";
+#endif
 }
 
 SimulationVariablesDialog::~SimulationVariablesDialog() noexcept
 {
 #ifdef DEBUG
-    qDebug("SimulationVariablesDialog::~SimulationVariablesDialog: DELETED");
+    qDebug() << "SimulationVariablesDialog::~SimulationVariablesDialog: DELETED";
 #endif
 }
 

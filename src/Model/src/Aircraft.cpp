@@ -127,6 +127,11 @@ Light &Aircraft::getLight() const noexcept
     return d->light;
 }
 
+FlightPlan &Aircraft::getFlightPlan() const noexcept
+{
+    return d->flightPlan;
+}
+
 const AircraftInfo &Aircraft::getAircraftInfo() const noexcept
 {
     return d->aircraftInfo;
@@ -157,11 +162,6 @@ void Aircraft::setTimeOffset(std::int64_t timeOffset) noexcept {
         d->aircraftInfo.timeOffset = timeOffset;
         emit timeOffsetChanged(*this);
     }
-}
-
-FlightPlan &Aircraft::getFlightPlan() const noexcept
-{
-    return d->flightPlan;
 }
 
 std::int64_t Aircraft::getDurationMSec() const noexcept
@@ -209,7 +209,6 @@ void Aircraft::clear() noexcept
     d->light.clear();
     d->flightPlan.clear();
     d->aircraftInfo.clear();
-    emit dataChanged();
 }
 
 bool Aircraft::operator == (const Aircraft &rhs) const noexcept
@@ -222,13 +221,17 @@ bool Aircraft::operator != (const Aircraft &rhs) const noexcept
     return this->d->id != rhs.d->id;
 }
 
+// PUBLIC SLOTS
+
+void Aircraft::invalidateDuration() noexcept
+{
+    d->duration = TimeVariableData::InvalidTime;
+}
+
 // PRIVATE
 
 void Aircraft::frenchConnection()
 {
-    // Aircraft sample data
-    connect(this, &Aircraft::dataChanged,
-            this, &Aircraft::invalidateDuration);
     // Tail number
     connect(this, &Aircraft::tailNumberChanged,
             this, &Aircraft::infoChanged);
@@ -237,11 +240,4 @@ void Aircraft::frenchConnection()
             this, &Aircraft::invalidateDuration);
     connect(this, &Aircraft::timeOffsetChanged,
             this, &Aircraft::infoChanged);
-}
-
-// PRIVATE SLOTS
-
-void Aircraft::invalidateDuration()
-{
-    d->duration = TimeVariableData::InvalidTime;
 }
