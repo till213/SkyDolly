@@ -274,7 +274,7 @@ void MainWindow::frenchConnection() noexcept
     connect(&flight, &Flight::flightRestored,
             this, &MainWindow::handleFlightRestored);
     connect(&flight, &Flight::timeOffsetChanged,
-            this, &MainWindow::updateTimestamp);
+            this, &MainWindow::updateReplayDuration);
     connect(&flight, &Flight::cleared,
             this, &MainWindow::updateUi);
 
@@ -758,6 +758,15 @@ void MainWindow::updateMinimalUi(bool enabled)
     QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
 }
 
+void MainWindow::updateRecordingDuration(std::int64_t timestamp) noexcept
+{
+    ui->timestampTimeEdit->blockSignals(true);
+    QTime time = QTime::fromMSecsSinceStartOfDay(timestamp);
+    ui->timestampTimeEdit->setMaximumTime(time);
+    ui->timestampTimeEdit->setTime(time);
+    ui->timestampTimeEdit->blockSignals(false);
+}
+
 double MainWindow::getCustomSpeedFactor() const
 {
     double customSpeedFactor;
@@ -800,7 +809,7 @@ void MainWindow::on_positionSlider_valueChanged(int value) noexcept
         const std::int64_t timestamp = static_cast<std::int64_t>(qRound(scale * static_cast<double>(totalDuration)));
         ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatNumber(timestamp, 0), d->unit.formatElapsedTime(timestamp)));
 
-        // Prevent the timestampTimeEdit field to set the play position as well
+        // Prevent the timestampTimeEdit field to set the replay position as well
         ui->timestampTimeEdit->blockSignals(true);
         skyConnect->get().seek(timestamp);
         ui->timestampTimeEdit->blockSignals(false);
@@ -846,7 +855,7 @@ void MainWindow::handleTimestampChanged(std::int64_t timestamp) noexcept
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().isRecording()) {
-            updateTimestamp();
+            updateRecordingDuration(timestamp);
         } else {
             const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
             const std::int64_t ts = std::min(timestamp, totalDuration);
@@ -862,8 +871,7 @@ void MainWindow::handleTimestampChanged(std::int64_t timestamp) noexcept
             ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatNumber(timestamp, 0), d->unit.formatElapsedTime(timestamp)));
             ui->positionSlider->blockSignals(false);
 
-            QTime time(0, 0, 0, 0);
-            time = time.addMSecs(timestamp);
+            const QTime time = QTime::fromMSecsSinceStartOfDay(timestamp);
             ui->timestampTimeEdit->blockSignals(true);
             ui->timestampTimeEdit->setTime(time);
             ui->timestampTimeEdit->blockSignals(false);
@@ -958,7 +966,7 @@ void MainWindow::updateUi() noexcept
     updateControlUi();
     updateControlIcons();
     updateReplaySpeedUi();
-    updateTimestamp();
+    updateReplayDuration();
     updateFileMenu();
     updateWindowMenu();
     updateMainWindow();
@@ -1098,18 +1106,11 @@ void MainWindow::updateReplaySpeedUi() noexcept
     }    
 }
 
-void MainWindow::updateTimestamp() noexcept
+void MainWindow::updateReplayDuration() noexcept
 {
-    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    const bool isRecording = skyConnect && skyConnect->get().isRecording();
-    const bool ofUserAircraft = isRecording;
-    const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec(ofUserAircraft);
+    const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
     ui->timestampTimeEdit->blockSignals(true);
-    QTime time(0, 0, 0, 0);
-    time = time.addMSecs(totalDuration);
-    if (isRecording) {
-        ui->timestampTimeEdit->setTime(time);
-    }
+    const QTime time = QTime::fromMSecsSinceStartOfDay(totalDuration);
     ui->timestampTimeEdit->setMaximumTime(time);
     ui->timestampTimeEdit->blockSignals(false);
 }

@@ -53,9 +53,9 @@ struct SimConnectSimulationTime
     inline QDateTime toLocalDateTime() const noexcept
     {
         QDateTime dateTime;
-        QTime time = QTime(0, 0).addSecs(localTime);
+        const QTime time = QTime::fromMSecsSinceStartOfDay(localTime * 1000);
         dateTime.setTime(time);
-        QDate date = QDate(localYear, localMonth, localDay);
+        const QDate date = QDate(localYear, localMonth, localDay);
         dateTime.setDate(date);
 
         return dateTime;
@@ -64,9 +64,9 @@ struct SimConnectSimulationTime
     inline QDateTime toZuluDateTime() const noexcept
     {
         QDateTime dateTime;
-        QTime time = QTime(0, 0).addSecs(zuluTime);
+        const QTime time = QTime::fromMSecsSinceStartOfDay(zuluTime * 1000);
         dateTime.setTime(time);
-        QDate date = QDate(zuluYear, zuluMonth, zuluDay);
+        const QDate date = QDate(zuluYear, zuluMonth, zuluDay);
         dateTime.setDate(date);
 
         return dateTime;

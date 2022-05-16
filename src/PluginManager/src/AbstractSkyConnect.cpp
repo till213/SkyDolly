@@ -166,7 +166,6 @@ void AbstractSkyConnect::stopRecording() noexcept
     onStopRecording();
     d->recordingTimer.stop();
     setState(Connect::State::Connected);
-    emit recordingStopped();
 }
 
 bool AbstractSkyConnect::isRecording() const noexcept
@@ -483,8 +482,12 @@ void AbstractSkyConnect::updateUserAircraft(Aircraft &userAircraft) noexcept
 void AbstractSkyConnect::setState(Connect::State state) noexcept
 {
     if (d->state != state) {
+        const bool recording = isRecording();
         d->state = state;
         emit stateChanged(state);
+        if (recording) {
+            emit recordingStopped();
+        }
     }
 }
 

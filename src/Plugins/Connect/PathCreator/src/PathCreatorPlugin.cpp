@@ -223,8 +223,13 @@ void PathCreatorPlugin::onRemoveAiObject(std::int64_t aircraftId) noexcept
 
 void PathCreatorPlugin::recordData() noexcept
 {
-    const std::int64_t timestamp = updateCurrentTimestamp();
+    if (!isElapsedTimerRunning()) {
+        // Start the elapsed timer with the arrival of the first sample data
+        setCurrentTimestamp(0);
+        resetElapsedTime(true);
+    }
 
+    const std::int64_t timestamp = updateCurrentTimestamp();
     recordPositionData(timestamp);
     recordEngineData(timestamp);
     recordPrimaryControls(timestamp);
@@ -232,12 +237,6 @@ void PathCreatorPlugin::recordData() noexcept
     recordAircraftHandle(timestamp);
     recordLights(timestamp);
     recordWaypoint();
-
-    if (!isElapsedTimerRunning()) {
-        // Start the elapsed timer with the arrival of the first sample data
-        setCurrentTimestamp(0);
-        resetElapsedTime(true);
-    }
 }
 
 // PRIVATE

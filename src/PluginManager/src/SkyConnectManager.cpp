@@ -207,8 +207,10 @@ SkyConnectManager::SkyConnectManager() noexcept
 
 void SkyConnectManager::frenchConnection() noexcept
 {
-    connect(&Settings::getInstance(), &Settings::skyConnectPluginUuidChanged,
-            this, &SkyConnectManager::tryAndSetCurrentSkyConnect);
+    // Settings
+    Settings &settings = Settings::getInstance();
+    connect(&settings, &Settings::skyConnectPluginUuidChanged,
+            this, &SkyConnectManager::tryAndSetCurrentSkyConnect);  
 }
 
 void SkyConnectManager::initialisePlugins(const QString &pluginDirectoryName) noexcept

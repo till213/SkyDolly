@@ -264,8 +264,7 @@ QString Unit::formatHHMMSS(std::int64_t msec) noexcept
     std::chrono::hours hours = std::chrono::duration_cast<std::chrono::hours>(minutes);
     minutes -= hours;
 
-    QTime time;
-    time.setHMS(hours.count(), minutes.count(), seconds.count());
+    QTime time(hours.count(), minutes.count(), seconds.count());
     return time.toString("hh:mm:ss");
 }
 

@@ -63,7 +63,7 @@ public:
         FlyWithFormation
     };
 
-    virtual ~SkyConnectIntf() = default;
+    ~SkyConnectIntf() override = default;
 
     virtual bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept = 0;
     virtual bool setUserAircraftPosition(const PositionData &positionData) noexcept = 0;
@@ -132,9 +132,38 @@ protected:
         : QObject(parent)
     {}
 
+    /*!
+     * Sets the new connection \c state. This method will also emit the
+     * signal #recordingStopped when the state changes from \em Recording
+     * to any other state.
+     *
+     * Also refer to #stateChanged and #recordingStopped
+     *
+     * \param state
+     *        the new state to be set
+     */
+    virtual void setState(Connect::State state) noexcept = 0;
+
 signals:
     void timestampChanged(std::int64_t timestamp, TimeVariableData::Access access);
+
+    /*!
+     * Emitted whenver the connection state has changed.
+     *
+     * Also refer to #recordingStopped.
+     *
+     * \param state
+     *        the current connection state
+     */
     void stateChanged(Connect::State state);
+
+    /*!
+     * Emitted whenever recording has been stopped, that is when the
+     * state changes from \em Recording to any other state (\em Connected
+     * or \em Disconnected).
+     *
+     * Note that the #stateChanged signal is emitted as well.
+     */
     void recordingStopped();
 
 private:

@@ -60,6 +60,7 @@
 #include <Persistence/Service/AircraftService.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
+#include <PluginManager/Connect.h>
 #include <Widget/Platform.h>
 #include <AbstractModuleWidget.h>
 #include "FormationWidget.h"
@@ -262,10 +263,10 @@ void FormationWidget::onStartReplay() noexcept
 void FormationWidget::handleRecordingStopped() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    const int count = flight.count();
-    if (count > 1) {
+    const int sequenceNumber = flight.count();
+    if (sequenceNumber > 1) {
         // Sequence starts at 1
-        d->aircraftService->store(flight.getId(), count, flight[count - 1]);
+        d->aircraftService->store(flight.getId(), sequenceNumber, flight[sequenceNumber - 1]);
     } else {
         AbstractModuleWidget::handleRecordingStopped();
     }
@@ -454,7 +455,7 @@ PositionData FormationWidget::calculateRelativePositionToUserAircraft(std::int64
         initialPosition = positionData;
 
         // Horizontal distance [feet]
-        double distance;
+        double distance {0.0};
         switch (ui->horizontalDistanceSlider->value()) {
         case HorizontalDistance::VeryClose:
             // Aircraft one wing apart
@@ -480,7 +481,7 @@ PositionData FormationWidget::calculateRelativePositionToUserAircraft(std::int64
 
         // Vertical distance [feet]
         const SkyMath::Coordinate sourcePosition(positionData.latitude, positionData.longitude);
-        double deltaAltitude;
+        double deltaAltitude {0.0};
         switch (ui->verticalDistanceSlider->value()) {
         case VerticalDistance::Below:
             deltaAltitude = -distance;
@@ -817,7 +818,7 @@ void FormationWidget::handleCellChanged(int row, int column) noexcept
         d->aircraftService->changeTailNumber(aircraft, tailNumber);
     } else if (column == d->timeOffsetColumnIndex) {
         QTableWidgetItem *item = ui->aircraftTableWidget->item(row, column);
-        bool ok;
+        bool ok {false};
         const double timeOffsetSec = item->data(Qt::EditRole).toDouble(&ok);
         if (ok) {
             const std::int64_t timeOffset = static_cast<std::int64_t>(qRound(timeOffsetSec * 1000.0));
@@ -990,7 +991,7 @@ void FormationWidget::on_timeOffsetLineEdit_editingFinished() noexcept
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
-        bool ok;
+        bool ok {false};
         const double timeOffsetSec = ui->timeOffsetLineEdit->text().toDouble(&ok);
         if (ok) {
             const std::int64_t timeOffset = static_cast<std::int64_t>(qRound(timeOffsetSec * 1000.0));

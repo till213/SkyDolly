@@ -79,6 +79,18 @@ private:
     void initSkyConnectPlugin() noexcept;
 
     void updateMinimalUi(bool enable);
+
+    /*!
+     * Updates the timestamp by setting the maximum time according
+     * to the currently recorded time given by \c timestamp.
+     *
+     * Also refer to #updateReplayDuration.
+     *
+     * \param timestamp
+     *        the current timestamp (recorded time) of the current recording
+     */
+    void updateRecordingDuration(std::int64_t timestamp) noexcept;
+
     double getCustomSpeedFactor() const;
     
 private slots:
@@ -98,7 +110,15 @@ private slots:
     void updateControlUi() noexcept;
     void updateControlIcons() noexcept;
     void updateReplaySpeedUi() noexcept;
-    void updateTimestamp() noexcept;
+
+    /*!
+     * Updates the timestamp by setting the maximum replay time according
+     * to the total duration of the current flight.
+     *
+     * Also refer to #updateRecordingDuration.
+     */
+    void updateReplayDuration() noexcept;
+
     void updateFileMenu() noexcept;
     void updateWindowMenu() noexcept;
     void updateMainWindow() noexcept;

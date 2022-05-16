@@ -32,6 +32,7 @@
 class QShowEvent;
 class QHideEvent;
 
+#include <PluginManager/Connect.h>
 #include "Module.h"
 #include "ModuleIntf.h"
 

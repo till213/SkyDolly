@@ -102,7 +102,7 @@ public slots:
     void updateUserAircraft(Aircraft &userAircraft) noexcept override;
 
 protected:
-    void setState(Connect::State state) noexcept;
+    void setState(Connect::State state) noexcept override;
     Flight &getCurrentFlight() const;
     void setCurrentTimestamp(std::int64_t timestamp) noexcept;
 

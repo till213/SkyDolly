@@ -384,7 +384,7 @@ void LogbookWidget::updateFlightTable() noexcept
 
             // Duration
             const std::int64_t durationMSec = summary.startSimulationLocalTime.msecsTo(summary.endSimulationLocalTime);
-            const QTime time = QTime(0, 0).addMSecs(durationMSec);
+            const QTime time = QTime::fromMSecsSinceStartOfDay(durationMSec * 1000);
             newItem = std::make_unique<QTableWidgetItem>(d->unit.formatDuration(time));
             newItem->setToolTip(tr("Simulation duration."));
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
