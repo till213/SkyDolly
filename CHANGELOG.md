@@ -27,7 +27,7 @@
 - Introduction of the GeographicLib
   * Calculating undulation values
   * Geodesic calculations (distance, azimuth, relative position)
-- "Modern CMake" (build system)
+- Refactored the build system ("modern CMake")
 
 ## 0.10.0
 
