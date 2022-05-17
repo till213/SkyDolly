@@ -31,6 +31,9 @@
 #include <QtGlobal>
 #include <QRandomGenerator>
 #include <QStringList>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Settings.h>
 #include <Kernel/SkyMath.h>
@@ -91,14 +94,14 @@ PathCreatorPlugin::PathCreatorPlugin(QObject *parent) noexcept
 {
     frenchConnection();
 #ifdef DEBUG
-    qDebug("PathCreatorPlugin::PathCreatorPlugin: CREATED");
+    qDebug() << "PathCreatorPlugin::PathCreatorPlugin: CREATED";
 #endif
 }
 
 PathCreatorPlugin::~PathCreatorPlugin() noexcept
 {
 #ifdef DEBUG
-    qDebug("PathCreatorPlugin::~PathCreatorPlugin: DELETED");
+    qDebug() << "PathCreatorPlugin::~PathCreatorPlugin: DELETED";
 #endif
 }
 

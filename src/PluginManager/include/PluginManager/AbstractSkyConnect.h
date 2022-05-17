@@ -109,7 +109,6 @@ protected:
     bool isElapsedTimerRunning() const noexcept;   
     void startElapsedTimer() const noexcept;
     void resetElapsedTime(bool restart) noexcept;
-    std::int64_t updateCurrentTimestamp() noexcept;
 
     void createAiObjects() noexcept;
 
@@ -137,6 +136,7 @@ protected:
     virtual void onRemoveAiObject(std::int64_t aircraftId) noexcept = 0;
 
 protected slots:
+    std::int64_t updateCurrentTimestamp() noexcept;
     virtual void recordData() noexcept = 0;
 
 private:
