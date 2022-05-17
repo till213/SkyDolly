@@ -199,9 +199,9 @@ void AbstractSkyConnect::startReplay(bool fromStart, const InitialPosition &flyW
         setState(Connect::State::Replay);
         if (fromStart) {
             d->elapsedTime = 0;
-            d->currentTimestamp = 0;
-            d->lastNotificationTimestamp = d->currentTimestamp;
+            d->currentTimestamp = 0;   
         }
+        d->lastNotificationTimestamp = d->currentTimestamp;
 
         d->elapsedTimer.invalidate();
         bool ok = retryWithReconnect([this]() -> bool { return onStartReplay(d->currentTimestamp); });

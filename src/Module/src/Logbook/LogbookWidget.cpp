@@ -263,6 +263,7 @@ void LogbookWidget::initUi() noexcept
     ui->logTableWidget->horizontalHeader()->setStretchLastSection(true);
     ui->logTableWidget->sortByColumn(FlightIdColumn, Qt::SortOrder::DescendingOrder);
     ui->logTableWidget->horizontalHeader()->setSectionsMovable(true);
+    ui->logTableWidget->setAlternatingRowColors(true);
 
     QByteArray logbookState = Settings::getInstance().getLogbookState();
     ui->logTableWidget->horizontalHeader()->restoreState(logbookState);

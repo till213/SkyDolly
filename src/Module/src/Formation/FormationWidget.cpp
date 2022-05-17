@@ -293,6 +293,7 @@ void FormationWidget::initUi() noexcept
     ui->aircraftTableWidget->horizontalHeader()->setStretchLastSection(true);
     ui->aircraftTableWidget->sortByColumn(SequenceNumberColumn, Qt::SortOrder::AscendingOrder);
     ui->aircraftTableWidget->horizontalHeader()->setSectionsMovable(true);
+    ui->aircraftTableWidget->setAlternatingRowColors(true);
 
     QByteArray tableState = Settings::getInstance().getFormationAircraftTableState();
     ui->aircraftTableWidget->horizontalHeader()->restoreState(tableState);

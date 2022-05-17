@@ -499,7 +499,6 @@ void MainWindow::initViewUi() noexcept
 void MainWindow::initControlUi() noexcept
 {
     ui->positionSlider->setRange(PositionSliderMin, PositionSliderMax);
-    ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatTimestamp(0), d->unit.formatHHMMSS(0)));
     ui->timestampTimeEdit->setDisplayFormat(TimestampFormat);
 
     // Record/replay control buttons
@@ -773,16 +772,26 @@ void MainWindow::updateRecordingDuration(std::int64_t timestamp) noexcept
 
 void MainWindow::updatePositionSlider(std::int64_t timestamp) noexcept
 {
-    const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
-    const std::int64_t ts = std::min(timestamp, totalDuration);
-
-    const int sliderPosition = totalDuration > 0 ?
-                               static_cast<int>(std::round(PositionSliderMax * (static_cast<double>(ts) / static_cast<double>(totalDuration)))) :
-                               0;
+    bool recording {false};
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
+        recording = skyConnect->get().isRecording();
+    }
+    int sliderPosition {0};
+    if (recording) {
+        sliderPosition = ::PositionSliderMax;
+        ui->positionSlider->setToolTip(tr("Recording"));
+    } else {
+        const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
+        const std::int64_t ts = std::min(timestamp, totalDuration);
+        if (ts > 0) {
+            sliderPosition = static_cast<int>(std::round(::PositionSliderMax * (static_cast<double>(ts) / static_cast<double>(totalDuration))));
+        }
+        ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatTimestamp(timestamp), d->unit.formatHHMMSS(timestamp)));
+    }
 
     ui->positionSlider->blockSignals(true);
     ui->positionSlider->setValue(sliderPosition);
-    ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatTimestamp(timestamp), d->unit.formatHHMMSS(timestamp)));
     ui->positionSlider->blockSignals(false);
 
     const QTime time = QTime::fromMSecsSinceStartOfDay(timestamp);
@@ -828,10 +837,9 @@ void MainWindow::on_positionSlider_valueChanged(int value) noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
-        const double scale = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
+        const double factor = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
         const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
-        const std::int64_t timestamp = static_cast<std::int64_t>(std::round(scale * static_cast<double>(totalDuration)));
-        ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatTimestamp(timestamp), d->unit.formatHHMMSS(timestamp)));
+        const std::int64_t timestamp = static_cast<std::int64_t>(std::round(factor * static_cast<double>(totalDuration)));
 
         // Prevent the timestampTimeEdit field to set the replay position as well
         ui->timestampTimeEdit->blockSignals(true);
@@ -1117,10 +1125,8 @@ void MainWindow::updateReplayDuration() noexcept
 {
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     const std::int64_t totalDuration = flight.getTotalDurationMSec();
-    ui->timestampTimeEdit->blockSignals(true);
     const QTime time = QTime::fromMSecsSinceStartOfDay(totalDuration);
     ui->timestampTimeEdit->setMaximumTime(time);
-    ui->timestampTimeEdit->blockSignals(false);
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const std::int64_t timestamp = skyConnect ? skyConnect->get().getCurrentTimestamp() : 0;
     updatePositionSlider(timestamp);
