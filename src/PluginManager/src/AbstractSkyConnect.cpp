@@ -49,6 +49,12 @@ namespace
 {
     // Period [ms] over which we count the recorded samples per second
     constexpr std::int64_t SamplesPerSecondPeriod = 10000;
+
+    // The frequency [Hertz] in which timestampChanged signals are emitted
+    constexpr std::int64_t NotificationFrequency = 10;
+
+    // The interval [milliseconds] in which timestampChanged signals are emitted
+    constexpr std::int64_t NotificationInterval = 1000 / NotificationFrequency;
 }
 
 class AbstractSkyConnectPrivate
@@ -59,6 +65,7 @@ public:
           state(Connect::State::Disconnected),
           currentFlight(Logbook::getInstance().getCurrentFlight()),
           currentTimestamp(0),
+          lastNotificationTimestamp(0),
           recordingSampleRate(Settings::getInstance().getRecordingSampleRateValue()),
           recordingIntervalMSec(SampleRate::toIntervalMSec(recordingSampleRate)),
           replaySpeedFactor(1.0),
@@ -77,6 +84,7 @@ public:
     // Triggers the recording of sample data (if not event-based recording)
     QTimer recordingTimer;
     std::int64_t currentTimestamp;
+    std::int64_t lastNotificationTimestamp;
     double recordingSampleRate;
     int recordingIntervalMSec;
     QElapsedTimer elapsedTimer;
@@ -150,6 +158,7 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
         }
         d->lastSamplesPerSecondIndex = 0;
         d->currentTimestamp = 0;
+        d->lastNotificationTimestamp = d->currentTimestamp;
         d->elapsedTimer.invalidate();
         if (isTimerBasedRecording(Settings::getInstance().getRecordingSampleRate())) {
             d->recordingTimer.start(d->recordingIntervalMSec);
@@ -191,6 +200,7 @@ void AbstractSkyConnect::startReplay(bool fromStart, const InitialPosition &flyW
         if (fromStart) {
             d->elapsedTime = 0;
             d->currentTimestamp = 0;
+            d->lastNotificationTimestamp = d->currentTimestamp;
         }
 
         d->elapsedTimer.invalidate();
@@ -318,7 +328,7 @@ void AbstractSkyConnect::skipToBegin() noexcept
 void AbstractSkyConnect::skipBackward() noexcept
 {
     std::int64_t skipMSec = getSkipInterval();
-    const std::int64_t newTimeStamp = std::max(getCurrentTimestamp() - skipMSec, std::int64_t(0));
+    const std::int64_t newTimeStamp = std::max(d->currentTimestamp - skipMSec, std::int64_t(0));
     seek(newTimeStamp);
 }
 
@@ -326,7 +336,7 @@ void AbstractSkyConnect::skipForward() noexcept
 {
     std::int64_t skipMSec = getSkipInterval();
     const std::int64_t totalDuration = d->currentFlight.getTotalDurationMSec();
-    const std::int64_t newTimeStamp = std::min(getCurrentTimestamp() + skipMSec, totalDuration);
+    const std::int64_t newTimeStamp = std::min(d->currentTimestamp + skipMSec, totalDuration);
     seek(newTimeStamp);
 }
 
@@ -546,13 +556,19 @@ std::int64_t AbstractSkyConnect::updateCurrentTimestamp() noexcept
         // the current timestamp unless we are replaying or recording
         if (d->state == Connect::State::Replay) {
             d->currentTimestamp = d->elapsedTime + static_cast<std::int64_t>(std::round(static_cast<double>(d->elapsedTimer.elapsed()) * d->replaySpeedFactor));
-            emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Linear);
+            if (d->currentTimestamp == 0 || d->currentTimestamp - d->lastNotificationTimestamp > ::NotificationInterval) {
+                d->lastNotificationTimestamp = d->currentTimestamp;
+                emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Linear);
+            }
         } else if (d->state == Connect::State::Recording) {
             d->currentTimestamp = d->elapsedTime + d->elapsedTimer.elapsed();
-            // The signal is delayed until after the latest data has been recorded,
-            // by using a singleshot timer with 0 ms delay (but which is only
-            // executed once execution returns to the Qt event queue)
-            QTimer::singleShot(0, this, [this]() {emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Linear);});
+            if (d->currentTimestamp == 0 || d->currentTimestamp - d->lastNotificationTimestamp > ::NotificationInterval) {
+                d->lastNotificationTimestamp = d->currentTimestamp;
+                // The signal is delayed until after the latest data has been recorded,
+                // by using a singleshot timer with 0 ms delay (but which is only
+                // executed once execution returns to the Qt event queue)
+                QTimer::singleShot(0, this, [this]() {emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Linear);});
+            }
         }
     }
     return d->currentTimestamp;
