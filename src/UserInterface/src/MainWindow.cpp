@@ -499,7 +499,7 @@ void MainWindow::initViewUi() noexcept
 void MainWindow::initControlUi() noexcept
 {
     ui->positionSlider->setRange(PositionSliderMin, PositionSliderMax);
-    ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatTimestamp(0), d->unit.formatElapsedTime(0)));
+    ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatTimestamp(0), d->unit.formatHHMMSS(0)));
     ui->timestampTimeEdit->setDisplayFormat(TimestampFormat);
 
     // Record/replay control buttons
@@ -782,7 +782,7 @@ void MainWindow::updatePositionSlider(std::int64_t timestamp) noexcept
 
     ui->positionSlider->blockSignals(true);
     ui->positionSlider->setValue(sliderPosition);
-    ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatTimestamp(timestamp), d->unit.formatElapsedTime(timestamp)));
+    ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatTimestamp(timestamp), d->unit.formatHHMMSS(timestamp)));
     ui->positionSlider->blockSignals(false);
 
     const QTime time = QTime::fromMSecsSinceStartOfDay(timestamp);
@@ -831,7 +831,7 @@ void MainWindow::on_positionSlider_valueChanged(int value) noexcept
         const double scale = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
         const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
         const std::int64_t timestamp = static_cast<std::int64_t>(std::round(scale * static_cast<double>(totalDuration)));
-        ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatTimestamp(timestamp), d->unit.formatElapsedTime(timestamp)));
+        ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatTimestamp(timestamp), d->unit.formatHHMMSS(timestamp)));
 
         // Prevent the timestampTimeEdit field to set the replay position as well
         ui->timestampTimeEdit->blockSignals(true);
