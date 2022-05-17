@@ -30,6 +30,7 @@
 #include <QPushButton>
 
 class QMouseEvent;
+class QIcon;
 
 #include "WidgetLib.h"
 
@@ -48,7 +49,9 @@ class WIDGET_API ActiveButton : public QPushButton
     Q_OBJECT
 public:
     ActiveButton(QWidget *parent) noexcept;
-    virtual ~ActiveButton() noexcept;
+    ~ActiveButton() noexcept override;
+
+    void updateIcon(const QIcon &icon) noexcept;
 
 protected:
     virtual void mousePressEvent(QMouseEvent *e) noexcept override;

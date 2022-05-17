@@ -1126,7 +1126,9 @@ void MainWindow::updateReplayDuration() noexcept
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     const std::int64_t totalDuration = flight.getTotalDurationMSec();
     const QTime time = QTime::fromMSecsSinceStartOfDay(totalDuration);
+    ui->timestampTimeEdit->blockSignals(true);
     ui->timestampTimeEdit->setMaximumTime(time);
+    ui->timestampTimeEdit->blockSignals(false);
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const std::int64_t timestamp = skyConnect ? skyConnect->get().getCurrentTimestamp() : 0;
     updatePositionSlider(timestamp);

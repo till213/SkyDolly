@@ -50,21 +50,27 @@ ActiveButton::ActiveButton(QWidget *parent) noexcept
 ActiveButton::~ActiveButton() noexcept
 {}
 
+void ActiveButton::updateIcon(const QIcon &icon) noexcept
+{
+    // @todo FIXME This always resets the pixmaps, upon each enabled/disabled state change, too
+    QPushButton::setIcon(icon);
+    d->normalPixmap = QPixmap();
+    d->activePixmap = QPixmap();
+}
+
 // PROTECTED
 
 void ActiveButton::mousePressEvent(QMouseEvent *e) noexcept
 {
     QPushButton::mousePressEvent(e);
 
-    if (d->normalPixmap.isNull()) {
-        d->normalPixmap = icon().pixmap(iconSize(), QIcon::Normal);
-        d->activePixmap = icon().pixmap(iconSize(), QIcon::Active);
-    }
-    setIcon(d->activePixmap);
+    d->normalPixmap = icon().pixmap(iconSize(), QIcon::Normal);
+    d->activePixmap = icon().pixmap(iconSize(), QIcon::Active);
+    QPushButton::setIcon(d->activePixmap);
 }
 
 void ActiveButton::mouseReleaseEvent(QMouseEvent *e) noexcept
 {
-    setIcon(d->normalPixmap);
+    QPushButton::setIcon(d->normalPixmap);
     QPushButton::mouseReleaseEvent(e);
 }
