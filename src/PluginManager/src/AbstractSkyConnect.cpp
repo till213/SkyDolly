@@ -49,10 +49,6 @@ namespace
 {
     // Period [ms] over which we count the recorded samples per second
     constexpr std::int64_t SamplesPerSecondPeriod = 10000;
-
-    // The recording timestamp is advanced every second (1000 ms) for sure
-    // (in case of event-based recording)
-    constexpr int RecordingTimestampPeriod = 1000;
 }
 
 class AbstractSkyConnectPrivate
@@ -70,7 +66,6 @@ public:
           lastSamplesPerSecondIndex(0)
     {
         recordingTimer.setTimerType(Qt::TimerType::PreciseTimer);
-        recordingTimestampTimer.setSingleShot(true);
 #ifdef DEBUG
         qDebug() << "AbstractSkyConnectPrivate: AbstractSkyConnectPrivate: elapsed timer clock type:" << elapsedTimer.clockType();
 #endif
@@ -81,12 +76,6 @@ public:
     Flight &currentFlight;
     // Triggers the recording of sample data (if not event-based recording)
     QTimer recordingTimer;
-    // In case of event-based recording ("auto sample rate") this timer makes
-    // sure that the timestamp advances at least every second, even (especially)
-    // when no data is received ("cold and dark" aircraft); this is a single-shot
-    // timer which is "defused" and "reset" each time updateCurrentTimestamp is
-    // called
-    QTimer recordingTimestampTimer;
     std::int64_t currentTimestamp;
     double recordingSampleRate;
     int recordingIntervalMSec;
@@ -164,8 +153,6 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
         d->elapsedTimer.invalidate();
         if (isTimerBasedRecording(Settings::getInstance().getRecordingSampleRate())) {
             d->recordingTimer.start(d->recordingIntervalMSec);
-        } else {
-            d->recordingTimestampTimer.start(::RecordingTimestampPeriod);
         }
         const bool ok = retryWithReconnect([this, initialPosition]() -> bool { return setupInitialRecordingPosition(initialPosition); });
         if (ok) {
@@ -185,7 +172,6 @@ void AbstractSkyConnect::stopRecording() noexcept
     Aircraft &aircraft = d->currentFlight.getUserAircraft();
     aircraft.invalidateDuration();
     d->recordingTimer.stop();
-    d->recordingTimestampTimer.stop();
 
     setState(Connect::State::Connected);
 }
@@ -276,7 +262,6 @@ void AbstractSkyConnect::setPaused(bool enabled) noexcept
             d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed();
             d->elapsedTimer.invalidate();
             d->recordingTimer.stop();
-            d->recordingTimestampTimer.stop();
             onRecordingPaused(true);
             break;
         case Connect::State::Replay:
@@ -305,8 +290,6 @@ void AbstractSkyConnect::setPaused(bool enabled) noexcept
             }
             if (isTimerBasedRecording(Settings::getInstance().getRecordingSampleRate())) {
                 d->recordingTimer.start(d->recordingIntervalMSec);
-            } else {
-                d->recordingTimestampTimer.start(::RecordingTimestampPeriod);
             }
             onRecordingPaused(false);
             break;
@@ -566,10 +549,6 @@ std::int64_t AbstractSkyConnect::updateCurrentTimestamp() noexcept
             emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Linear);
         } else if (d->state == Connect::State::Recording) {
             d->currentTimestamp = d->elapsedTime + d->elapsedTimer.elapsed();
-            // Restart the timestamp timer (if event-based recording)
-            if (d->recordingTimestampTimer.isActive()) {
-                d->recordingTimestampTimer.start(::RecordingTimestampPeriod);
-            }
             // The signal is delayed until after the latest data has been recorded,
             // by using a singleshot timer with 0 ms delay (but which is only
             // executed once execution returns to the Qt event queue)
@@ -585,8 +564,6 @@ void AbstractSkyConnect::frenchConnection() noexcept
 {
     connect(&(d->recordingTimer), &QTimer::timeout,
             this, &AbstractSkyConnect::recordData);
-    connect(&(d->recordingTimestampTimer), &QTimer::timeout,
-            this, &AbstractSkyConnect::updateCurrentTimestamp);
     connect(&Settings::getInstance(), &Settings::recordingSampleRateChanged,
             this, &AbstractSkyConnect::handleRecordingSampleRateChanged);
 }
