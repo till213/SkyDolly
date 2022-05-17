@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <memory>
 #include <cstdint>
+#include <cmath>
 
 #include <QCoreApplication>
 #include <QByteArray>
@@ -821,7 +822,7 @@ void FormationWidget::handleCellChanged(int row, int column) noexcept
         bool ok {false};
         const double timeOffsetSec = item->data(Qt::EditRole).toDouble(&ok);
         if (ok) {
-            const std::int64_t timeOffset = static_cast<std::int64_t>(qRound(timeOffsetSec * 1000.0));
+            const std::int64_t timeOffset = static_cast<std::int64_t>(std::round(timeOffsetSec * 1000.0));
             d->aircraftService->changeTimeOffset(aircraft, timeOffset);
         }
     }
@@ -994,7 +995,7 @@ void FormationWidget::on_timeOffsetLineEdit_editingFinished() noexcept
         bool ok {false};
         const double timeOffsetSec = ui->timeOffsetLineEdit->text().toDouble(&ok);
         if (ok) {
-            const std::int64_t timeOffset = static_cast<std::int64_t>(qRound(timeOffsetSec * 1000.0));
+            const std::int64_t timeOffset = static_cast<std::int64_t>(std::round(timeOffsetSec * 1000.0));
             d->aircraftService->changeTimeOffset(aircraft, timeOffset);
             updateToolTips();
         }

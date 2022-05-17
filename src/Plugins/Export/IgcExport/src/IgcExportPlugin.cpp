@@ -24,6 +24,7 @@
  */
 #include <algorithm>
 #include <cstdint>
+#include <cmath>
 #include <vector>
 #include <iterator>
 
@@ -303,9 +304,9 @@ inline bool IgcExportPlugin::exportFixes(const Aircraft &aircraft, QIODevice &io
             // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]
             const double heightAboveEllipsoid = convert.egmToWgs84Ellipsoid(positionData.latitude, positionData.longitude, Convert::feetToMeters(positionData.altitude));
 
-            const int gnssAltitude = qRound(heightAboveEllipsoid);
+            const int gnssAltitude = std::round(heightAboveEllipsoid);
             const QByteArray gnssAltitudeByteArray = formatNumber(gnssAltitude, 5);
-            const int pressureAltitude = qRound(Convert::feetToMeters(positionData.indicatedAltitude));
+            const int pressureAltitude = std::round(Convert::feetToMeters(positionData.indicatedAltitude));
             const QByteArray pressureAltitudeByteArray = formatNumber(pressureAltitude, 5);
             const EngineData &engineData = engine.interpolate(positionData.timestamp, TimeVariableData::Access::Linear);
             const int noise = estimateEnvironmentalNoise(engineData);
@@ -327,9 +328,9 @@ inline bool IgcExportPlugin::exportFixes(const Aircraft &aircraft, QIODevice &io
                 const double indicatedAirspeed = Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude);
                 const QByteArray kRecord = IgcExportPluginPrivate::KRecord %
                                            formatTime(currentTime) %
-                                           formatNumber(qRound(positionData.heading), 3) %
+                                           formatNumber(std::round(positionData.heading), 3) %
                                            // IAS: km/h
-                                           formatNumber(qRound(indicatedAirspeed), 3) %
+                                           formatNumber(std::round(indicatedAirspeed), 3) %
                                            ::LineEnd;
                 ok = io.write(kRecord);
                 lastKFixTime = currentTime;

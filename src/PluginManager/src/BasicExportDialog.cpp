@@ -26,6 +26,7 @@
 #include <utility>
 #include <limits>
 #include <cstdint>
+#include <cmath>
 
 #include <QString>
 #include <QStringBuilder>
@@ -212,11 +213,11 @@ std::int64_t BasicExportDialog::estimateNofSamplePoints() const noexcept
     if (period != 0) {
         if (isExportUserAircraftOnly()) {
             std::int64_t duration = d->flight.getUserAircraft().getDurationMSec();
-            nofSamplePoints += qRound(static_cast<double>(duration) / static_cast<double>(period)) + 1;
+            nofSamplePoints += std::round(static_cast<double>(duration) / static_cast<double>(period)) + 1;
         } else {
             for (const auto &aircraft : d->flight) {
                 std::int64_t duration = aircraft->getDurationMSec();
-                nofSamplePoints += qRound(static_cast<double>(duration) / static_cast<double>(period)) + 1;
+                nofSamplePoints += std::round(static_cast<double>(duration) / static_cast<double>(period)) + 1;
             }
         }
     } else {

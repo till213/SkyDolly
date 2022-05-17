@@ -27,6 +27,7 @@
 
 #include <limits>
 #include <cstdint>
+#include <cmath>
 
 #include <QtGlobal>
 
@@ -71,7 +72,7 @@ public:
         bank = positionData.bank;
         heading = positionData.heading;
         const double trueAirspeed = Convert::feetPerSecondToKnots(positionData.velocityBodyZ);
-        indicatedAirspeed = qRound(Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude));
+        indicatedAirspeed = std::round(Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude));
     }
 
     static const InitialPosition NullData;

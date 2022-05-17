@@ -25,6 +25,7 @@
 #include <memory>
 #include <cstdint>
 #include <cinttypes>
+#include <cmath>
 
 #include <QTimer>
 #include <QtGlobal>
@@ -61,7 +62,8 @@
 namespace {
     // Hz
     constexpr int ReplayRate = 60;
-    constexpr int ReplayPeriod = qRound(1000.0 / ReplayRate);
+    // Implementation note: std:round will become constexpr with C++23
+    const int ReplayPeriod = std::round(1000.0 / ReplayRate);
 }
 
 class PathCreatorPluginPrivate
@@ -177,7 +179,7 @@ void PathCreatorPlugin::onRecordingSampleRateChanged([[maybe_unused]] SampleRate
 
 bool PathCreatorPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, [[maybe_unused]] AircraftSelection aircraftSelection) noexcept
 {
-    bool dataAvailable;
+    bool dataAvailable {false};
     if (currentTimestamp <= getCurrentFlight().getTotalDurationMSec()) {
         dataAvailable = true;
         const PositionData &currentPositionData = getCurrentFlight().getUserAircraft().getPosition().interpolate(getCurrentTimestamp(), access);
@@ -187,9 +189,6 @@ bool PathCreatorPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeVari
                 startElapsedTimer();
             }
         }
-    } else {
-        // At end of recording
-        dataAvailable = false;
     }
     return dataAvailable;
 }

@@ -24,6 +24,7 @@
  */
 #include <memory>
 #include <cstdint>
+#include <cmath>
 
 #include <QIODevice>
 #include <QChar>
@@ -107,9 +108,9 @@ bool FlightRadar24CsvWriter::write(const Flight &flight, const Aircraft &aircraf
                                     dateTimeUtc.toString(Qt::ISODate) % CsvConst::CommaSep %
                                     callSign % CsvConst::CommaSep %
                                     formatPosition(positionData) % CsvConst::CommaSep %
-                                    QString::number(qRound(positionData.altitude)) % CsvConst::CommaSep %
-                                    QString::number(qRound(positionData.velocityBodyZ)) % CsvConst::CommaSep %
-                                    QString::number(qRound(positionData.heading)) % CsvConst::Ln;
+                                    QString::number(std::round(positionData.altitude)) % CsvConst::CommaSep %
+                                    QString::number(std::round(positionData.velocityBodyZ)) % CsvConst::CommaSep %
+                                    QString::number(std::round(positionData.heading)) % CsvConst::Ln;
                 ok = io.write(csv.toUtf8());
             }
             if (!ok) {

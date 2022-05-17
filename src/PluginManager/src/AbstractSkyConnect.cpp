@@ -572,7 +572,7 @@ bool AbstractSkyConnect::hasRecordingStarted() const noexcept
 std::int64_t AbstractSkyConnect::getSkipInterval() const noexcept
 {
     Settings &settings = Settings::getInstance();
-    return static_cast<std::int64_t>(qRound(settings.isAbsoluteSeekEnabled() ?
+    return static_cast<std::int64_t>(std::round(settings.isAbsoluteSeekEnabled() ?
                                       settings.getSeekIntervalSeconds() * 1000.0 :
                                       settings.getSeekIntervalPercent() * d->currentFlight.getTotalDurationMSec() / 100.0));
 }

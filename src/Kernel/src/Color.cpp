@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <cmath>
 #include <vector>
 
 #include <QColor>
@@ -51,7 +52,7 @@ std::vector<QRgb> Color::createColorRamp(QRgb startColor, QRgb endColor, int nof
         const double endGreen = qGreen(endColor);
         const double endBlue = qBlue(endColor);
 
-        // Distance values may be negative
+        // Delta values may be negative
         const double nofIntervals = nofTotalColors - 1;
         const double deltaAlpha = (endAlpha - startAlpha) / static_cast<double>(nofIntervals);
         const double deltaRed = (endRed - startRed) / static_cast<double>(nofIntervals);
@@ -67,7 +68,10 @@ std::vector<QRgb> Color::createColorRamp(QRgb startColor, QRgb endColor, int nof
             const double newGreen = startGreen + static_cast<double>(i) * deltaGreen;
             const double newBlue = startBlue + static_cast<double>(i) * deltaBlue;
 
-            const QRgb newRgb = qRound(newAlpha) << 24 | qRound(newRed) << 16 | qRound(newGreen) << 8 | qRound(newBlue);
+            const QRgb newRgb = static_cast<int>(std::round(newAlpha)) << 24 |
+                                static_cast<int>(std::round(newRed))   << 16 |
+                                static_cast<int>(std::round(newGreen)) << 8  |
+                                static_cast<int>(std::round(newBlue));
             colorRamp.push_back(newRgb);
         }
         // Last color

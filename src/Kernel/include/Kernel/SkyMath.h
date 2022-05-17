@@ -268,7 +268,7 @@ namespace SkyMath
     T interpolateLinear(T p1, T p2, U mu) noexcept
     {
         if (std::is_integral<T>::value) {
-            return p1 + qRound(mu * (U(p2) - U(p1)));
+            return p1 + std::round(mu * (U(p2) - U(p1)));
         } else {
             return p1 + mu * (U(p2) - U(p1));
         }
@@ -283,7 +283,7 @@ namespace SkyMath
      */
     inline std::int16_t fromPosition(double position) noexcept
     {
-        return static_cast<std::int16_t>(qRound(PositionMin16 + ((position + 1.0) * PositionRange16) / 2.0));
+        return static_cast<std::int16_t>(std::round(PositionMin16 + ((position + 1.0) * PositionRange16) / 2.0));
     }
 
     /*!
@@ -307,7 +307,7 @@ namespace SkyMath
      */
     inline std::uint8_t fromPercent(double percent) noexcept
     {
-        return static_cast<std::uint8_t>(qRound(percent * PercentRange8 / 100.0));
+        return static_cast<std::uint8_t>(std::round(percent * PercentRange8 / 100.0));
     }
 
     /*!
