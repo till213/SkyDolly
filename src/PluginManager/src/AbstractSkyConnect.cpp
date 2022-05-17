@@ -573,8 +573,8 @@ std::int64_t AbstractSkyConnect::getSkipInterval() const noexcept
 {
     Settings &settings = Settings::getInstance();
     return static_cast<std::int64_t>(std::round(settings.isAbsoluteSeekEnabled() ?
-                                      settings.getSeekIntervalSeconds() * 1000.0 :
-                                      settings.getSeekIntervalPercent() * d->currentFlight.getTotalDurationMSec() / 100.0));
+                                     settings.getSeekIntervalSeconds() * 1000.0 :
+                                     settings.getSeekIntervalPercent() * d->currentFlight.getTotalDurationMSec() / 100.0));
 }
 
 bool AbstractSkyConnect::retryWithReconnect(std::function<bool()> func)

@@ -72,7 +72,7 @@ public:
         bank = positionData.bank;
         heading = positionData.heading;
         const double trueAirspeed = Convert::feetPerSecondToKnots(positionData.velocityBodyZ);
-        indicatedAirspeed = std::round(Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude));
+        indicatedAirspeed = static_cast<int>(std::round(Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude)));
     }
 
     static const InitialPosition NullData;

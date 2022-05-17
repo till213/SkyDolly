@@ -111,11 +111,11 @@ bool PositionAndAttitudeCsvWriter::write(const Flight &flight, const Aircraft &a
                                     dateTimeUtc.toString(Qt::ISODate) % CsvConst::CommaSep %
                                     Export::formatCoordinate(positionData.latitude) % CsvConst::CommaSep %
                                     Export::formatCoordinate(positionData.longitude) % CsvConst::CommaSep %
-                                    QString::number(std::round(positionData.altitude)) % CsvConst::CommaSep %
-                                    QString::number(std::round(positionData.velocityBodyZ)) % CsvConst::CommaSep %
-                                    QString::number(std::round(positionData.pitch)) % CsvConst::CommaSep %
-                                    QString::number(std::round(positionData.bank)) % CsvConst::CommaSep %
-                                    QString::number(std::round(positionData.heading)) % CsvConst::Ln;
+                                    QString::number(static_cast<int>(std::round(positionData.altitude))) % CsvConst::CommaSep %
+                                    QString::number(static_cast<int>(std::round(positionData.velocityBodyZ))) % CsvConst::CommaSep %
+                                    QString::number(static_cast<int>(std::round(positionData.pitch))) % CsvConst::CommaSep %
+                                    QString::number(static_cast<int>(std::round(positionData.bank))) % CsvConst::CommaSep %
+                                    QString::number(static_cast<int>(std::round(positionData.heading))) % CsvConst::Ln;
                 ok = io.write(csv.toUtf8());
             }
             if (!ok) {

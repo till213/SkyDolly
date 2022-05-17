@@ -63,7 +63,7 @@ namespace {
     // Hz
     constexpr int ReplayRate = 60;
     // Implementation note: std:round will become constexpr with C++23
-    const int ReplayPeriod = std::round(1000.0 / ReplayRate);
+    const int ReplayPeriod = static_cast<int>(std::round(1000.0 / ReplayRate));
 }
 
 class PathCreatorPluginPrivate

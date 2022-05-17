@@ -304,9 +304,9 @@ inline bool IgcExportPlugin::exportFixes(const Aircraft &aircraft, QIODevice &io
             // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]
             const double heightAboveEllipsoid = convert.egmToWgs84Ellipsoid(positionData.latitude, positionData.longitude, Convert::feetToMeters(positionData.altitude));
 
-            const int gnssAltitude = std::round(heightAboveEllipsoid);
+            const int gnssAltitude = static_cast<int>(std::round(heightAboveEllipsoid));
             const QByteArray gnssAltitudeByteArray = formatNumber(gnssAltitude, 5);
-            const int pressureAltitude = std::round(Convert::feetToMeters(positionData.indicatedAltitude));
+            const int pressureAltitude = static_cast<int>(std::round(Convert::feetToMeters(positionData.indicatedAltitude)));
             const QByteArray pressureAltitudeByteArray = formatNumber(pressureAltitude, 5);
             const EngineData &engineData = engine.interpolate(positionData.timestamp, TimeVariableData::Access::Linear);
             const int noise = estimateEnvironmentalNoise(engineData);
