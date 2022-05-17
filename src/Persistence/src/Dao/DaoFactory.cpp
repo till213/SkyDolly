@@ -69,108 +69,132 @@ DaoFactory::~DaoFactory()
 
 std::unique_ptr<DatabaseDaoIntf> DaoFactory::createDatabaseDao() noexcept
 {
+    std::unique_ptr<DatabaseDaoIntf> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        return std::make_unique<SQLiteDatabaseDao>();
+        dao = std::make_unique<SQLiteDatabaseDao>();
         break;
     }
+    return dao;
 }
 
 std::unique_ptr<LogbookDaoIntf> DaoFactory::createLogbookDao() noexcept
 {
+    std::unique_ptr<SQLiteLogbookDao> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        return std::make_unique<SQLiteLogbookDao>();
+        dao = std::make_unique<SQLiteLogbookDao>();
         break;
     }
+    return dao;
 }
 
 std::unique_ptr<FlightDaoIntf> DaoFactory::createFlightDao() noexcept
 {
+    std::unique_ptr<SQLiteFlightDao> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        return std::make_unique<SQLiteFlightDao>();
+        dao = std::make_unique<SQLiteFlightDao>();
         break;
     }
+    return dao;
 }
 
 std::unique_ptr<AircraftDaoIntf> DaoFactory::createAircraftDao() noexcept
 {
+    std::unique_ptr<SQLiteAircraftDao> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        return std::make_unique<SQLiteAircraftDao>();
+        dao = std::make_unique<SQLiteAircraftDao>();
         break;
     }
+    return dao;
 }
 
 std::unique_ptr<AircraftTypeDaoIntf> DaoFactory::createAircraftTypeDao() noexcept
 {
+    std::unique_ptr<SQLiteAircraftTypeDao> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        return std::make_unique<SQLiteAircraftTypeDao>();
+        dao = std::make_unique<SQLiteAircraftTypeDao>();
         break;
     }
+    return dao;
 }
 
 std::unique_ptr<PositionDaoIntf> DaoFactory::createPositionDao() noexcept
 {
+    std::unique_ptr<PositionDaoIntf> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        return std::make_unique<SQLitePositionDao>();
+        dao = std::make_unique<SQLitePositionDao>();
         break;
     }
+    return dao;
 }
 
 std::unique_ptr<EngineDaoIntf> DaoFactory::createEngineDao() noexcept
 {
+    std::unique_ptr<EngineDaoIntf> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        return std::make_unique<SQLiteEngineDao>();
+        dao = std::make_unique<SQLiteEngineDao>();
         break;
     }
+    return dao;
 }
 
 std::unique_ptr<PrimaryFlightControlDaoIntf> DaoFactory::createPrimaryFlightControlDao() noexcept
 {
+    std::unique_ptr<PrimaryFlightControlDaoIntf> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        return std::make_unique<SQLitePrimaryFlightControlDao>();
+        dao = std::make_unique<SQLitePrimaryFlightControlDao>();
         break;
     }
+    return dao;
 };
 
 std::unique_ptr<SecondaryFlightControlDaoIntf> DaoFactory::createSecondaryFlightControlDao() noexcept
 {
+    std::unique_ptr<SecondaryFlightControlDaoIntf> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        return std::make_unique<SQLiteSecondaryFlightControlDao>();
+        dao = std::make_unique<SQLiteSecondaryFlightControlDao>();
         break;
     }
+    return dao;
 }
 
 std::unique_ptr<HandleDaoIntf> DaoFactory::createHandleDao() noexcept
 {
+    std::unique_ptr<HandleDaoIntf> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        return std::make_unique<SQLiteHandleDao>();
+        dao = std::make_unique<SQLiteHandleDao>();
         break;
     }
+    return dao;
 }
 
 std::unique_ptr<LightDaoIntf> DaoFactory::createLightDao() noexcept
 {
+    std::unique_ptr<LightDaoIntf> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        return std::make_unique<SQLiteLightDao>();
+        dao = std::make_unique<SQLiteLightDao>();
         break;
     }
+    return dao;
 }
 
 std::unique_ptr<WaypointDaoIntf> DaoFactory::createFlightPlanDao() noexcept
 {
+    std::unique_ptr<WaypointDaoIntf> dao {nullptr};
     switch (d->dbType) {
     case DbType::SQLite:
-        return std::make_unique<SQLiteWaypointDao>();
+        dao = std::make_unique<SQLiteWaypointDao>();
         break;
     }
+    return dao;
 }
