@@ -89,16 +89,15 @@ void AircraftHandleWidget::initUi() noexcept
 const AircraftHandleData &AircraftHandleWidget::getCurrentAircraftHandleData(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
 {
     const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().getState() == Connect::State::Recording) {
-            return aircraft.getAircraftHandleConst().getLast();
+            return aircraft.getAircraftHandle().getLast();
         } else {
             if (timestamp != TimeVariableData::InvalidTime) {
-                return aircraft.getAircraftHandleConst().interpolate(timestamp, access);
+                return aircraft.getAircraftHandle().interpolate(timestamp, access);
             } else {
-                return aircraft.getAircraftHandleConst().interpolate(skyConnect->get().getCurrentTimestamp(), access);
+                return aircraft.getAircraftHandle().interpolate(skyConnect->get().getCurrentTimestamp(), access);
             }
         };
     } else {

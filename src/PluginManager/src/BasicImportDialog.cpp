@@ -127,7 +127,7 @@ void BasicImportDialog::initBasicUi() noexcept
     Settings &settings = Settings::getInstance();
     ui->pathLineEdit->setText(QDir::toNativeSeparators(settings.getExportPath()));
 
-    QString type = d->flight.getUserAircraftConst().getAircraftInfoConst().aircraftType.type;
+    QString type = d->flight.getUserAircraft().getAircraftInfo().aircraftType.type;
     if (type.isEmpty()) {
         type = settings.getImportAircraftType();
     }

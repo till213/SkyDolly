@@ -197,10 +197,8 @@ namespace SimType {
         case SurfaceType::WrightFlyerTrack:
             return QCoreApplication::translate("SimType", "Wright flyer track");
             break;
-        default:
-            return unknown;
-            break;
         }
+        return unknown;
     }
 
     inline QString engineTypeToString(EngineType engineType) noexcept {
@@ -230,10 +228,8 @@ namespace SimType {
         case EngineType::All:
             return QCoreApplication::translate("SimType", "All");
             break;
-        default:
-            return unknown;
-            break;
         }
+        return unknown;
     }
 
     inline QString precipitationStateToString(PrecipitationState precipitationState) noexcept {
@@ -251,10 +247,8 @@ namespace SimType {
         case PrecipitationState::Snow:
             return QCoreApplication::translate("SimType", "Snow");
             break;
-        default:
-            return unknown;
-            break;
         }
+        return unknown;
     }
 }
 

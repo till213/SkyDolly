@@ -22,13 +22,12 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory>
-#include <vector>
-#include <iterator>
 #include <algorithm>
 #include <cstdint>
 
-#include <QObject>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/SkyMath.h>
 #include "TimeVariableData.h"
@@ -37,199 +36,96 @@
 #include "EngineData.h"
 #include "Engine.h"
 
-class EnginePrivate
-{
-public:
-    EnginePrivate(const AircraftInfo &aircraftInfo) noexcept
-        : aircraftInfo(aircraftInfo),
-          currentTimestamp(TimeVariableData::InvalidTime),
-          currentAccess(TimeVariableData::Access::Linear),
-          currentIndex(SkySearch::InvalidIndex)
-    {}
-
-    const AircraftInfo &aircraftInfo;
-    std::vector<EngineData> engineData;
-    std::int64_t currentTimestamp;
-    TimeVariableData::Access currentAccess;
-    EngineData currentEngineData;
-    mutable int currentIndex;
-};
-
 // PUBLIC
 
-Engine::Engine(const AircraftInfo &aircraftInfo, QObject *parent) noexcept
-    : QObject(parent),
-      d(std::make_unique<EnginePrivate>(aircraftInfo))
-{}
+Engine::Engine(const AircraftInfo &aircraftInfo) noexcept
+    : AbstractComponent(aircraftInfo)
+{
+#ifdef DEBUG
+    qDebug() << "Engine::Engine: CREATED";
+#endif
+}
 
 Engine::~Engine() noexcept
-{}
-
-void Engine::upsertLast(const EngineData &data) noexcept
 {
-    if (d->engineData.size() > 0 && d->engineData.back() == data)  {
-        // Same timestamp -> update
-        d->engineData[d->engineData.size() - 1] = data;
-    } else {
-        d->engineData.push_back(data);
-    }
-    emit dataChanged();
+#ifdef DEBUG
+    qDebug() << "Engine::Engine: DELETED";
+#endif
 }
 
-void Engine::upsert(const EngineData &data) noexcept
+const EngineData &Engine::interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept
 {
-    auto result = std::find_if(d->engineData.begin(), d->engineData.end(),
-                              [&data] (const TimeVariableData &d) { return d.timestamp == data.timestamp; });
-    if (result != d->engineData.end()) {
-        // Same timestamp -> update
-        *result = data;
-    } else {
-        d->engineData.push_back(data);
-    }
-}
+    const EngineData *p1 {nullptr}, *p2 {nullptr};
+    const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? getAircraftInfo().timeOffset : 0;
+    const std::int64_t adjustedTimestamp = std::max(timestamp + timeOffset, std::int64_t(0));
 
-const EngineData &Engine::getFirst() const noexcept
-{
-    if (!d->engineData.empty()) {
-        return d->engineData.front();
-    } else {
-        return EngineData::NullData;
-    }
-}
+    if (getCurrentTimestamp() != adjustedTimestamp || getCurrentAccess() != access) {
 
-const EngineData &Engine::getLast() const noexcept
-{
-    if (!d->engineData.empty()) {
-        return d->engineData.back();
-    } else {
-        return EngineData::NullData;
-    }
-}
-
-std::size_t Engine::count() const noexcept
-{
-    return d->engineData.size();
-}
-
-const EngineData &Engine::interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept
-{
-    const EngineData *p1, *p2;
-    const std::int64_t timeOffset = access != TimeVariableData::Access::Export ? d->aircraftInfo.timeOffset : 0;
-    const std::int64_t adjustedTimestamp = qMax(timestamp + timeOffset, std::int64_t(0));
-
-    if (d->currentTimestamp != timestamp || d->currentAccess != access) {
-
-        double tn;
+        int currentIndex = getCurrentIndex();
+        double tn {0.0};
         switch (access) {
         case TimeVariableData::Access::Linear:
             [[fallthrough]];
         case TimeVariableData::Access::Export:
-            if (SkySearch::getLinearInterpolationSupportData(d->engineData, adjustedTimestamp, SkySearch::DefaultInterpolationWindow, d->currentIndex, &p1, &p2)) {
+            if (SkySearch::getLinearInterpolationSupportData(getData(), adjustedTimestamp, SkySearch::DefaultInterpolationWindow, currentIndex, &p1, &p2)) {
                 tn = SkySearch::normaliseTimestamp(*p1, *p2, adjustedTimestamp);
             }
             break;
         case TimeVariableData::Access::Seek:
             // Get the last sample data just before the seeked position
             // (that sample point may lie far outside of the "sample window")
-            d->currentIndex = SkySearch::updateStartIndex(d->engineData, d->currentIndex, adjustedTimestamp);
-            if (d->currentIndex != SkySearch::InvalidIndex) {
-                p1 = &d->engineData.at(d->currentIndex);
+            currentIndex = SkySearch::updateStartIndex(getData(), currentIndex, adjustedTimestamp);
+            if (currentIndex != SkySearch::InvalidIndex) {
+                p1 = &getData().at(currentIndex);
                 p2 = p1;
                 tn = 0.0;
             } else {
                 p1 = p2 = nullptr;
             }
             break;
-        default:
-            p1 = p2 = nullptr;
-            break;
         }
 
         if (p1 != nullptr) {
-            d->currentEngineData.throttleLeverPosition1 = SkyMath::interpolateLinear(p1->throttleLeverPosition1, p2->throttleLeverPosition1, tn);
-            d->currentEngineData.throttleLeverPosition2 = SkyMath::interpolateLinear(p1->throttleLeverPosition2, p2->throttleLeverPosition2, tn);
-            d->currentEngineData.throttleLeverPosition3 = SkyMath::interpolateLinear(p1->throttleLeverPosition3, p2->throttleLeverPosition3, tn);
-            d->currentEngineData.throttleLeverPosition4 = SkyMath::interpolateLinear(p1->throttleLeverPosition4, p2->throttleLeverPosition4, tn);
-            d->currentEngineData.propellerLeverPosition1 = SkyMath::interpolateLinear(p1->propellerLeverPosition1, p2->propellerLeverPosition1, tn);
-            d->currentEngineData.propellerLeverPosition2 = SkyMath::interpolateLinear(p1->propellerLeverPosition2, p2->propellerLeverPosition2, tn);
-            d->currentEngineData.propellerLeverPosition3 = SkyMath::interpolateLinear(p1->propellerLeverPosition3, p2->propellerLeverPosition3, tn);
-            d->currentEngineData.propellerLeverPosition4 = SkyMath::interpolateLinear(p1->propellerLeverPosition4, p2->propellerLeverPosition4, tn);
-            d->currentEngineData.mixtureLeverPosition1 = SkyMath::interpolateLinear(p1->mixtureLeverPosition1, p2->mixtureLeverPosition1, tn);
-            d->currentEngineData.mixtureLeverPosition2 = SkyMath::interpolateLinear(p1->mixtureLeverPosition2, p2->mixtureLeverPosition2, tn);
-            d->currentEngineData.mixtureLeverPosition3 = SkyMath::interpolateLinear(p1->mixtureLeverPosition3, p2->mixtureLeverPosition3, tn);
-            d->currentEngineData.mixtureLeverPosition4 = SkyMath::interpolateLinear(p1->mixtureLeverPosition4, p2->mixtureLeverPosition4, tn);
-            d->currentEngineData.cowlFlapPosition1 = SkyMath::interpolateLinear(p1->cowlFlapPosition1, p2->cowlFlapPosition1, tn);
-            d->currentEngineData.cowlFlapPosition2 = SkyMath::interpolateLinear(p1->cowlFlapPosition2, p2->cowlFlapPosition2, tn);
-            d->currentEngineData.cowlFlapPosition3 = SkyMath::interpolateLinear(p1->cowlFlapPosition3, p2->cowlFlapPosition3, tn);
-            d->currentEngineData.cowlFlapPosition4 = SkyMath::interpolateLinear(p1->cowlFlapPosition4, p2->cowlFlapPosition4, tn);
+            m_currentEngineData.throttleLeverPosition1 = SkyMath::interpolateLinear(p1->throttleLeverPosition1, p2->throttleLeverPosition1, tn);
+            m_currentEngineData.throttleLeverPosition2 = SkyMath::interpolateLinear(p1->throttleLeverPosition2, p2->throttleLeverPosition2, tn);
+            m_currentEngineData.throttleLeverPosition3 = SkyMath::interpolateLinear(p1->throttleLeverPosition3, p2->throttleLeverPosition3, tn);
+            m_currentEngineData.throttleLeverPosition4 = SkyMath::interpolateLinear(p1->throttleLeverPosition4, p2->throttleLeverPosition4, tn);
+            m_currentEngineData.propellerLeverPosition1 = SkyMath::interpolateLinear(p1->propellerLeverPosition1, p2->propellerLeverPosition1, tn);
+            m_currentEngineData.propellerLeverPosition2 = SkyMath::interpolateLinear(p1->propellerLeverPosition2, p2->propellerLeverPosition2, tn);
+            m_currentEngineData.propellerLeverPosition3 = SkyMath::interpolateLinear(p1->propellerLeverPosition3, p2->propellerLeverPosition3, tn);
+            m_currentEngineData.propellerLeverPosition4 = SkyMath::interpolateLinear(p1->propellerLeverPosition4, p2->propellerLeverPosition4, tn);
+            m_currentEngineData.mixtureLeverPosition1 = SkyMath::interpolateLinear(p1->mixtureLeverPosition1, p2->mixtureLeverPosition1, tn);
+            m_currentEngineData.mixtureLeverPosition2 = SkyMath::interpolateLinear(p1->mixtureLeverPosition2, p2->mixtureLeverPosition2, tn);
+            m_currentEngineData.mixtureLeverPosition3 = SkyMath::interpolateLinear(p1->mixtureLeverPosition3, p2->mixtureLeverPosition3, tn);
+            m_currentEngineData.mixtureLeverPosition4 = SkyMath::interpolateLinear(p1->mixtureLeverPosition4, p2->mixtureLeverPosition4, tn);
+            m_currentEngineData.cowlFlapPosition1 = SkyMath::interpolateLinear(p1->cowlFlapPosition1, p2->cowlFlapPosition1, tn);
+            m_currentEngineData.cowlFlapPosition2 = SkyMath::interpolateLinear(p1->cowlFlapPosition2, p2->cowlFlapPosition2, tn);
+            m_currentEngineData.cowlFlapPosition3 = SkyMath::interpolateLinear(p1->cowlFlapPosition3, p2->cowlFlapPosition3, tn);
+            m_currentEngineData.cowlFlapPosition4 = SkyMath::interpolateLinear(p1->cowlFlapPosition4, p2->cowlFlapPosition4, tn);
 
             // No interpolation for battery and starter/combustion states (boolean)
-            d->currentEngineData.electricalMasterBattery1 = p1->electricalMasterBattery1;
-            d->currentEngineData.electricalMasterBattery2 = p1->electricalMasterBattery2;
-            d->currentEngineData.electricalMasterBattery3 = p1->electricalMasterBattery3;
-            d->currentEngineData.electricalMasterBattery4 = p1->electricalMasterBattery4;
-            d->currentEngineData.generalEngineStarter1 = p1->generalEngineStarter1;
-            d->currentEngineData.generalEngineStarter2 = p1->generalEngineStarter2;
-            d->currentEngineData.generalEngineStarter3 = p1->generalEngineStarter3;
-            d->currentEngineData.generalEngineStarter4 = p1->generalEngineStarter4;
-            d->currentEngineData.generalEngineCombustion1 = p1->generalEngineCombustion1;
-            d->currentEngineData.generalEngineCombustion2 = p1->generalEngineCombustion2;
-            d->currentEngineData.generalEngineCombustion3 = p1->generalEngineCombustion3;
-            d->currentEngineData.generalEngineCombustion4 = p1->generalEngineCombustion4;
+            m_currentEngineData.electricalMasterBattery1 = p1->electricalMasterBattery1;
+            m_currentEngineData.electricalMasterBattery2 = p1->electricalMasterBattery2;
+            m_currentEngineData.electricalMasterBattery3 = p1->electricalMasterBattery3;
+            m_currentEngineData.electricalMasterBattery4 = p1->electricalMasterBattery4;
+            m_currentEngineData.generalEngineStarter1 = p1->generalEngineStarter1;
+            m_currentEngineData.generalEngineStarter2 = p1->generalEngineStarter2;
+            m_currentEngineData.generalEngineStarter3 = p1->generalEngineStarter3;
+            m_currentEngineData.generalEngineStarter4 = p1->generalEngineStarter4;
+            m_currentEngineData.generalEngineCombustion1 = p1->generalEngineCombustion1;
+            m_currentEngineData.generalEngineCombustion2 = p1->generalEngineCombustion2;
+            m_currentEngineData.generalEngineCombustion3 = p1->generalEngineCombustion3;
+            m_currentEngineData.generalEngineCombustion4 = p1->generalEngineCombustion4;
 
-            d->currentEngineData.timestamp = adjustedTimestamp;
+            m_currentEngineData.timestamp = adjustedTimestamp;
         } else {
             // No recorded data, or the timestamp exceeds the timestamp of the last recorded position
-            d->currentEngineData = EngineData::NullData;
+            m_currentEngineData = EngineData::NullData;
         }
 
-        d->currentTimestamp = adjustedTimestamp;
-        d->currentAccess = access;
+        setCurrentIndex(currentIndex);
+        setCurrentTimestamp(adjustedTimestamp);
+        setCurrentAccess(access);
     }
-    return d->currentEngineData;
-}
-
-void Engine::clear() noexcept
-{
-    d->engineData.clear();
-    d->currentTimestamp = TimeVariableData::InvalidTime;
-    d->currentIndex = SkySearch::InvalidIndex;
-    emit dataChanged();
-}
-
-Engine::Iterator Engine::begin() noexcept
-{
-    return d->engineData.begin();
-}
-
-Engine::Iterator Engine::end() noexcept
-{
-    return Iterator(d->engineData.end());
-}
-
-const Engine::Iterator Engine::begin() const noexcept
-{
-    return Iterator(d->engineData.begin());
-}
-
-const Engine::Iterator Engine::end() const noexcept
-{
-    return Iterator(d->engineData.end());
-}
-
-Engine::BackInsertIterator Engine::backInsertIterator() noexcept
-{
-    return std::back_inserter(d->engineData);
-}
-
-// OPERATORS
-
-EngineData& Engine::operator[](std::size_t index) noexcept
-{
-    return d->engineData[index];
-}
-
-const EngineData& Engine::operator[](std::size_t index) const noexcept
-{
-    return d->engineData[index];
+    return m_currentEngineData;
 }

@@ -27,6 +27,7 @@
 
 #include <limits>
 #include <cstdint>
+#include <cmath>
 
 #include <QtGlobal>
 
@@ -51,12 +52,13 @@ public:
     // Indicated airspeed [knots]
     int indicatedAirspeed;
 
-    InitialPosition(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
+    explicit InitialPosition(double latitude = 0.0, double longitude = 0.0, double altitude = 0.0) noexcept;
     InitialPosition(const PositionData &positionData, const AircraftInfo &aircraftInfo) noexcept;
-
-    InitialPosition(InitialPosition &&) = default;
-    InitialPosition(const InitialPosition &) = default;
-    InitialPosition &operator= (const InitialPosition &) = default;
+    InitialPosition(const InitialPosition &other) = default;
+    InitialPosition(InitialPosition &&other) = default;
+    ~InitialPosition() = default;
+    InitialPosition &operator = (const InitialPosition &rhs) = default;
+    InitialPosition &operator = (InitialPosition &&rhs) = default;
 
     inline bool isNull() const noexcept {
         return (indicatedAirspeed == InvalidAirspeed);
@@ -70,7 +72,7 @@ public:
         bank = positionData.bank;
         heading = positionData.heading;
         const double trueAirspeed = Convert::feetPerSecondToKnots(positionData.velocityBodyZ);
-        indicatedAirspeed = qRound(Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude));
+        indicatedAirspeed = static_cast<int>(std::round(Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude)));
     }
 
     static const InitialPosition NullData;

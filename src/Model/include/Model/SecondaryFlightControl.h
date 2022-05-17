@@ -25,77 +25,26 @@
 #ifndef SECONDARYFLIGHTCONTROL_H
 #define SECONDARYFLIGHTCONTROL_H
 
-#include <memory>
-#include <vector>
-#include <iterator>
-#include <cstdint>
-
-#include <QObject>
-
-#include "TimeVariableData.h"
+#include "SecondaryFlightControlData.h"
 #include "AircraftInfo.h"
+#include "AbstractComponent.h"
 #include "ModelLib.h"
 
-struct SecondaryFlightControlData;
-class SecondaryFlightControlPrivate;
-
-class MODEL_API SecondaryFlightControl : public QObject
+class MODEL_API SecondaryFlightControl : public AbstractComponent<SecondaryFlightControlData>
 {
-    Q_OBJECT
 public:
-    SecondaryFlightControl(const AircraftInfo &aircraftInfo, QObject *parent = nullptr) noexcept;
-    virtual ~SecondaryFlightControl() noexcept;
+    explicit SecondaryFlightControl(const AircraftInfo &aircraftInfo) noexcept;
+    SecondaryFlightControl(SecondaryFlightControl &aircraftHandle) = default;
+    SecondaryFlightControl(SecondaryFlightControl &&aircraftHandle) = default;
+    ~SecondaryFlightControl() noexcept override;
+    SecondaryFlightControl &operator = (const SecondaryFlightControl &rhs) = default;
+    SecondaryFlightControl &operator = (SecondaryFlightControl &&rhs) = default;
 
-    /*!
-     * Inserts \c data at the end, or updates the \em last element (only) if
-     * the data items have the same timestamp.
-     *
-     * Use case: recorded data items are inserted chronologically, but some recorded items
-     * may have the same timestamp: the last recorded data item "wins".
-     *
-     * \param data
-     *        the data to be upserted
-     * \sa upsert
-     */
-    void upsertLast(const SecondaryFlightControlData &data) noexcept;
-
-    /*!
-     * Inserts \c data at the end, or updates the element having the same
-     * timestamp. That is, the entire collection is being searched first.
-     *
-     * Use case: data items are inserted in random order ("flight augmentation");
-     * use \c upsertLast in case items are to be inserted sequentially in order
-     *
-     * \param data
-     *        the data to be upserted
-     * \sa upsertLast
-     */
-    void upsert(const SecondaryFlightControlData &data) noexcept;
-    const SecondaryFlightControlData &getFirst() const noexcept;
-    const SecondaryFlightControlData &getLast() const noexcept;
-    std::size_t count() const noexcept;
-    const SecondaryFlightControlData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
-    void clear() noexcept;
-
-    typedef std::vector<SecondaryFlightControlData>::iterator Iterator;
-    typedef std::back_insert_iterator<std::vector<SecondaryFlightControlData>> BackInsertIterator;
-
-    Iterator begin() noexcept;
-    Iterator end() noexcept;
-    const Iterator begin() const noexcept;
-    const Iterator end() const noexcept;
-    BackInsertIterator backInsertIterator() noexcept;
-
-    SecondaryFlightControlData& operator[](std::size_t index) noexcept;
-    const SecondaryFlightControlData& operator[](std::size_t index) const noexcept;
-
-signals:
-    void dataChanged();
+    const SecondaryFlightControlData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 
 private:
-    Q_DISABLE_COPY(SecondaryFlightControl)
-    std::unique_ptr<SecondaryFlightControlPrivate> d;
+    SecondaryFlightControlData m_currentSecondaryFlightControlData;
+    SecondaryFlightControlData m_previousSecondaryFlightControlData;
 };
-
 
 #endif // SECONDARYFLIGHTCONTROL_H

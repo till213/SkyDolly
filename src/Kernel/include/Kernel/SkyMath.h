@@ -25,6 +25,7 @@
 #ifndef SKYMATH_H
 #define SKYMATH_H
 
+#include <algorithm>
 #include <limits>
 #include <utility>
 #include <cmath>
@@ -34,7 +35,9 @@
 #include <GeographicLib/Geodesic.hpp>
 
 #include <QtGlobal>
+#ifdef DEBUG
 #include <QDebug>
+#endif
 
 /*!
  * Mathematical functions for interpolation and geodesic math.
@@ -265,7 +268,7 @@ namespace SkyMath
     T interpolateLinear(T p1, T p2, U mu) noexcept
     {
         if (std::is_integral<T>::value) {
-            return p1 + qRound(mu * (U(p2) - U(p1)));
+            return p1 + std::round(mu * (U(p2) - U(p1)));
         } else {
             return p1 + mu * (U(p2) - U(p1));
         }
@@ -280,7 +283,7 @@ namespace SkyMath
      */
     inline std::int16_t fromPosition(double position) noexcept
     {
-        return static_cast<std::int16_t>(qRound(PositionMin16 + ((position + 1.0) * PositionRange16) / 2.0));
+        return static_cast<std::int16_t>(std::round(PositionMin16 + ((position + 1.0) * PositionRange16) / 2.0));
     }
 
     /*!
@@ -304,7 +307,7 @@ namespace SkyMath
      */
     inline std::uint8_t fromPercent(double percent) noexcept
     {
-        return static_cast<std::uint8_t>(qRound(percent * PercentRange8 / 100.0));
+        return static_cast<std::uint8_t>(std::round(percent * PercentRange8 / 100.0));
     }
 
     /*!
@@ -502,7 +505,7 @@ namespace SkyMath
      */
     inline double bankAngle(double headingChange, double maxBankAngleForHeadingChange, double maxBankAngle) noexcept
     {
-        return qMin((std::abs(headingChange) / maxBankAngleForHeadingChange) * maxBankAngle, maxBankAngle) * SkyMath::sgn(headingChange);
+        return std::min((std::abs(headingChange) / maxBankAngleForHeadingChange) * maxBankAngle, maxBankAngle) * SkyMath::sgn(headingChange);
     }
 
     /*!

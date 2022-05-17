@@ -30,6 +30,9 @@
 #include <QShortcut>
 #include <QShowEvent>
 #include <QHideEvent>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Settings.h>
 #include <Kernel/Unit.h>
@@ -75,24 +78,30 @@ StatisticsDialog::StatisticsDialog(QWidget *parent) noexcept :
     ui->setupUi(this);
     initUi();
     frenchConnection();
+#ifdef DEBUG
+    qDebug() << "StatisticsDialog::StatisticsDialog: CREATED";
+#endif
 }
 
 StatisticsDialog::~StatisticsDialog() noexcept
-{}
+{
+#ifdef DEBUG
+    qDebug() << "StatisticsDialog::~StatisticsDialog: DELETED";
+#endif
+}
 
 // PROTECTED
 
 void StatisticsDialog::showEvent(QShowEvent *event) noexcept
 {
     QDialog::showEvent(event);
-    updateRecordUi();
+    updateUi();
 
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-    // Signal sent while recording
-    connect(&aircraft, &Aircraft::dataChanged,
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    connect(&skyConnectManager, &SkyConnectManager::timestampChanged,
             this, &StatisticsDialog::updateRecordUi);
     connect(&Settings::getInstance(), &Settings::recordingSampleRateChanged,
-            this, &StatisticsDialog::updateRecordUi);
+            this, &StatisticsDialog::updateRecordingSampleRate);
 
     emit visibilityChanged(true);
 }
@@ -100,9 +109,11 @@ void StatisticsDialog::showEvent(QShowEvent *event) noexcept
 void StatisticsDialog::hideEvent(QHideEvent *event) noexcept
 {
     QDialog::hideEvent(event);
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-    disconnect(&aircraft, &Aircraft::dataChanged,
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    disconnect(&skyConnectManager, &SkyConnectManager::timestampChanged,
                this, &StatisticsDialog::updateRecordUi);
+    disconnect(&Settings::getInstance(), &Settings::recordingSampleRateChanged,
+               this, &StatisticsDialog::updateRecordingSampleRate);
 
     emit visibilityChanged(false);
 }
@@ -117,6 +128,18 @@ void StatisticsDialog::initUi() noexcept
     d->closeDialogShortcut = new QShortcut(QKeySequence(tr("S", "Window|Statistics...")), this);
 }
 
+void StatisticsDialog::updateUi() noexcept
+{
+    updateRecordingSampleRate();
+
+    std::int64_t timestamp {0};
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
+        timestamp = skyConnect->get().getCurrentTimestamp();
+    }
+    updateRecordUi(timestamp);
+}
+
 void StatisticsDialog::frenchConnection() noexcept
 {
     connect(d->closeDialogShortcut, &QShortcut::activated,
@@ -125,7 +148,7 @@ void StatisticsDialog::frenchConnection() noexcept
 
 // PRIVATE SLOTS
 
-void StatisticsDialog::updateRecordUi() noexcept
+void StatisticsDialog::updateRecordingSampleRate() noexcept
 {
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     if (Settings::getInstance().getRecordingSampleRate() != SampleRate::SampleRate::Auto) {
@@ -133,14 +156,21 @@ void StatisticsDialog::updateRecordUi() noexcept
     } else {
         ui->recordingSampleRateLineEdit->setText(tr("Auto"));
     }
+}
+
+void StatisticsDialog::updateRecordUi(std::int64_t timestamp) noexcept
+{
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
 
     // Samples per second
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().getState() == Connect::State::Recording) {
             ui->samplesPerSecondLineEdit->setText(d->unit.formatHz(skyConnect->get().calculateRecordedSamplesPerSecond()));
+            ui->durationLineEdit->setText(d->unit.formatElapsedTime(timestamp));
         } else {
             ui->samplesPerSecondLineEdit->clear();
+            ui->durationLineEdit->setText(d->unit.formatElapsedTime(flight.getTotalDurationMSec()));
         }
     } else {
         ui->samplesPerSecondLineEdit->clear();
@@ -149,12 +179,12 @@ void StatisticsDialog::updateRecordUi() noexcept
     std::int64_t totalCount = 0;
     std::int64_t totalSize = 0;
     for (const auto &aircraft : flight) {
-        const int positionDataCount = aircraft->getPositionConst().count();
-        const int engineDataCount = aircraft->getEngineConst().count();
-        const int primaryFlightControlDataCount = aircraft->getPrimaryFlightControlConst().count();
-        const int secondaryFlightControlDataCount = aircraft->getSecondaryFlightControlConst().count();
-        const int aircraftHandleDataCount = aircraft->getAircraftHandleConst().count();
-        const int lightDataCount = aircraft->getLightConst().count();
+        const int positionDataCount = aircraft->getPosition().count();
+        const int engineDataCount = aircraft->getEngine().count();
+        const int primaryFlightControlDataCount = aircraft->getPrimaryFlightControl().count();
+        const int secondaryFlightControlDataCount = aircraft->getSecondaryFlightControl().count();
+        const int aircraftHandleDataCount = aircraft->getAircraftHandle().count();
+        const int lightDataCount = aircraft->getLight().count();
         totalCount = totalCount + positionDataCount + engineDataCount + primaryFlightControlDataCount + secondaryFlightControlDataCount + aircraftHandleDataCount + lightDataCount;
 
         const std::int64_t positionDataSize = positionDataCount * sizeof(PositionData);
@@ -167,6 +197,5 @@ void StatisticsDialog::updateRecordUi() noexcept
     }
 
     ui->sampleCountLineEdit->setText(QString::number(totalCount));
-    ui->durationLineEdit->setText(d->unit.formatElapsedTime(flight.getTotalDurationMSec()));
     ui->sampleSizeLineEdit->setText(d->unit.formatMemory(totalSize));
 }

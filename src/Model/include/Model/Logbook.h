@@ -40,14 +40,13 @@ class MODEL_API Logbook : public QObject
 public:
     static Logbook &getInstance() noexcept;
     static void destroyInstance() noexcept;
-    Flight &getCurrentFlight() const;
-    const Flight &getCurrentFlightConst() const;
+    Flight &getCurrentFlight() const noexcept;
 
 signals:
     void flightTitleOrDescriptionChanged(std::int64_t id);
 
 protected:
-    ~Logbook();
+    ~Logbook() noexcept override;
 
 private:
     Q_DISABLE_COPY(Logbook)

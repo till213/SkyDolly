@@ -60,7 +60,7 @@ QString Export::suggestFilePath(const Flight &flight, QStringView suffix) noexce
     if (title.isNull()) {
         if (flight.count() > 0) {
             const Aircraft &aircraft = flight.getUserAircraft();
-            suggestedFileName = aircraft.getAircraftInfoConst().aircraftType.type;
+            suggestedFileName = aircraft.getAircraftInfo().aircraftType.type;
         } else {
             suggestedFileName = Version::getApplicationName();
         }
@@ -87,7 +87,7 @@ QString Export::formatNumber(double number) noexcept
 void Export::resamplePositionDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) noexcept
 {
     // Position data
-    const Position &position = aircraft.getPositionConst();
+    Position &position = aircraft.getPosition();
     if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
         const std::int64_t duration = position.getLast().timestamp;
         const std::int64_t deltaTime = Enum::toUnderlyingType(resamplingPeriod);

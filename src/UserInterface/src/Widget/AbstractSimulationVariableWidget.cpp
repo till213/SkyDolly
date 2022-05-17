@@ -80,4 +80,3 @@ void AbstractSimulationVariableWidget::updateUiWithCurrentTime() noexcept
         updateUi(skyConnect->get().getCurrentTimestamp(), TimeVariableData::Access::Seek);
     }
 }
-

@@ -115,7 +115,7 @@ bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
         ");"
     );
 
-    const FlightCondition &flightCondition = flight.getFlightConditionConst();
+    const FlightCondition &flightCondition = flight.getFlightCondition();
     query.bindValue(":creation_time", flight.getCreationTime().toUTC());
     query.bindValue(":title", flight.getTitle());
     query.bindValue(":description", flight.getDescription());

@@ -70,7 +70,6 @@ public:
 
     QString formatKnots(double velocity) noexcept;
 
-    QString formatElapsedTime(std::int64_t milliseconds) noexcept;
     QString formatMemory(std::int64_t memory) noexcept;
 
     QString formatDate(const QDate &date) noexcept;
@@ -91,7 +90,40 @@ public:
     QString formatNumber(double number, int precision) noexcept;
     double toNumber(const QString &value, bool *ok = nullptr) noexcept;
 
-    static QString formatHHMMSS(std::int64_t msec) noexcept;
+    /*!
+     * Formats the \c milliseconds as number, with local thousands separators.
+     *
+     * Example: 5'432
+     *
+     * \param milliseconds
+     *        the timestamp [milliseconds]
+     * \return the number formatted \c milliseconds timestamp
+     */
+    QString formatTimestamp(std::int64_t milliseconds) noexcept;
+
+    /*!
+     * Formats the elapsed \c milliseconds (timestamp) as either (fractional) milliseconds, seconds,
+     * minutes or hours.
+     *
+     * Example: 5.43 minutes
+     *
+     * \param milliseconds
+     *        the ellapsed time [milliseconds]
+     * \return the elapsed time formatted \c milliseconds
+     */
+    QString formatElapsedTime(std::int64_t milliseconds) noexcept;
+
+    /*!
+     * Formats the \c milliseconds as hh:mm:ss timestamp.
+     *
+     * Example: 05:43:21
+     *
+     * \param milliseconds
+     *        the timestamp [milliseconds]
+     * \return the hh:mm:ss formatted \c milliseconds timestamp
+     */
+    static QString formatHHMMSS(std::int64_t milliseconds) noexcept;
+
     static QString formatBoolean(bool value) noexcept;
 
 private:

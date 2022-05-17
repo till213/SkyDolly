@@ -155,7 +155,7 @@ std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSele
         while (query.next()) {
 
             FlightSummary summary;
-            summary.id = query.value(idIdx).toLongLong();
+            summary.flightId = query.value(idIdx).toLongLong();
 
             QDateTime dateTime = query.value(creationTimeIdx).toDateTime();
             dateTime.setTimeZone(QTimeZone::utc());

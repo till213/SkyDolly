@@ -145,9 +145,8 @@ FlightAugmentation::Aspects KmlImportPlugin::getAspects() const noexcept
         aspects = FlightAugmentation::Aspect::All;
         aspects.setFlag(FlightAugmentation::Aspect::Heading, false);
         aspects.setFlag(FlightAugmentation::Aspect::Velocity, false);
-        return aspects;
         break;
-    default:
+    case KmlImportSettings::Format::Generic:
         aspects = FlightAugmentation::Aspect::All;
         break;
     }
@@ -190,9 +189,6 @@ void KmlImportPlugin::parseKML() noexcept
         break;
     case KmlImportSettings::Format::Generic:
         parser = std::make_unique<GenericKmlParser>();
-        break;
-    default:
-        parser = nullptr;
         break;
     }
     if (parser != nullptr) {

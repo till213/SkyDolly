@@ -26,6 +26,7 @@
 #define STATISTICSDIALOG_H
 
 #include <memory>
+#include <cstdint>
 
 #include <QDialog>
 
@@ -43,14 +44,14 @@ class StatisticsDialog : public QDialog
     Q_OBJECT
 public:
     explicit StatisticsDialog(QWidget *parent = nullptr) noexcept;
-    virtual ~StatisticsDialog() noexcept;
+    ~StatisticsDialog() noexcept override;
 
 signals:
     void visibilityChanged(bool visible);
 
 protected:
-    virtual void showEvent(QShowEvent *event) noexcept override;
-    virtual void hideEvent(QHideEvent *event) noexcept override;
+    void showEvent(QShowEvent *event) noexcept override;
+    void hideEvent(QHideEvent *event) noexcept override;
 
 private:
     Q_DISABLE_COPY(StatisticsDialog)
@@ -58,10 +59,12 @@ private:
     std::unique_ptr<Ui::StatisticsDialog> ui;
 
     void initUi() noexcept;
+    void updateUi() noexcept;
     void frenchConnection() noexcept;
 
 private slots:
-    void updateRecordUi() noexcept;
+    void updateRecordingSampleRate() noexcept;
+    void updateRecordUi(std::int64_t timestamp) noexcept;
 };
 
 #endif // STATISTICSDIALOG_H

@@ -22,11 +22,16 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <algorithm>
 #include <cstdint>
+#include <cmath>
 
 #include <QTimer>
 #include <QElapsedTimer>
 #include <QDateTime>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/SampleRate.h>
 #include <Kernel/Settings.h>
@@ -43,7 +48,13 @@
 namespace
 {
     // Period [ms] over which we count the recorded samples per second
-    constexpr std::int64_t SamplesPerSecondPeriodMSec = 10000;
+    constexpr std::int64_t SamplesPerSecondPeriod = 10000;
+
+    // The frequency [Hertz] in which timestampChanged signals are emitted
+    constexpr std::int64_t NotificationFrequency = 10;
+
+    // The interval [milliseconds] in which timestampChanged signals are emitted
+    constexpr std::int64_t NotificationInterval = 1000 / NotificationFrequency;
 }
 
 class AbstractSkyConnectPrivate
@@ -54,6 +65,7 @@ public:
           state(Connect::State::Disconnected),
           currentFlight(Logbook::getInstance().getCurrentFlight()),
           currentTimestamp(0),
+          lastNotificationTimestamp(0),
           recordingSampleRate(Settings::getInstance().getRecordingSampleRateValue()),
           recordingIntervalMSec(SampleRate::toIntervalMSec(recordingSampleRate)),
           replaySpeedFactor(1.0),
@@ -62,17 +74,19 @@ public:
     {
         recordingTimer.setTimerType(Qt::TimerType::PreciseTimer);
 #ifdef DEBUG
-        qDebug("AbstractSkyConnectPrivate: AbstractSkyConnectPrivate: elapsed timer clock type: %d", elapsedTimer.clockType());
+        qDebug() << "AbstractSkyConnectPrivate: AbstractSkyConnectPrivate: elapsed timer clock type:" << elapsedTimer.clockType();
 #endif
     }
 
     SkyConnectIntf::ReplayMode replayMode;
     Connect::State state;
     Flight &currentFlight;
+    // Triggers the recording of sample data (if not event-based recording)
     QTimer recordingTimer;
     std::int64_t currentTimestamp;
+    std::int64_t lastNotificationTimestamp;
     double recordingSampleRate;
-    int    recordingIntervalMSec;
+    int recordingIntervalMSec;
     QElapsedTimer elapsedTimer;
     double replaySpeedFactor;
     std::int64_t elapsedTime;
@@ -144,6 +158,7 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
         }
         d->lastSamplesPerSecondIndex = 0;
         d->currentTimestamp = 0;
+        d->lastNotificationTimestamp = d->currentTimestamp;
         d->elapsedTimer.invalidate();
         if (isTimerBasedRecording(Settings::getInstance().getRecordingSampleRate())) {
             d->recordingTimer.start(d->recordingIntervalMSec);
@@ -163,9 +178,11 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
 void AbstractSkyConnect::stopRecording() noexcept
 {
     onStopRecording();
+    Aircraft &aircraft = d->currentFlight.getUserAircraft();
+    aircraft.invalidateDuration();
     d->recordingTimer.stop();
+
     setState(Connect::State::Connected);
-    emit recordingStopped();
 }
 
 bool AbstractSkyConnect::isRecording() const noexcept
@@ -183,6 +200,7 @@ void AbstractSkyConnect::startReplay(bool fromStart, const InitialPosition &flyW
         if (fromStart) {
             d->elapsedTime = 0;
             d->currentTimestamp = 0;
+            d->lastNotificationTimestamp = d->currentTimestamp;
         }
 
         d->elapsedTimer.invalidate();
@@ -261,7 +279,7 @@ void AbstractSkyConnect::setPaused(bool enabled) noexcept
             // In case the elapsed time has started (is valid)...
             if (d->elapsedTimer.isValid()) {
                 // ... store the elapsed replay time measured with the current time scale...
-                d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed() * d->replaySpeedFactor;
+                d->elapsedTime = d->elapsedTime + static_cast<std::int64_t>(std::round(static_cast<double>(d->elapsedTimer.elapsed()) * d->replaySpeedFactor));;
                 // ... and stop the elapsed timer
                 d->elapsedTimer.invalidate();
             }
@@ -280,7 +298,9 @@ void AbstractSkyConnect::setPaused(bool enabled) noexcept
                 // Resume recording (but only if it has already recorded samples before)
                 startElapsedTimer();
             }
-            d->recordingTimer.start();
+            if (isTimerBasedRecording(Settings::getInstance().getRecordingSampleRate())) {
+                d->recordingTimer.start(d->recordingIntervalMSec);
+            }
             onRecordingPaused(false);
             break;
         case Connect::State::ReplayPaused:
@@ -308,7 +328,7 @@ void AbstractSkyConnect::skipToBegin() noexcept
 void AbstractSkyConnect::skipBackward() noexcept
 {
     std::int64_t skipMSec = getSkipInterval();
-    const std::int64_t newTimeStamp = qMax(getCurrentTimestamp() - skipMSec, std::int64_t(0));
+    const std::int64_t newTimeStamp = std::max(d->currentTimestamp - skipMSec, std::int64_t(0));
     seek(newTimeStamp);
 }
 
@@ -316,7 +336,7 @@ void AbstractSkyConnect::skipForward() noexcept
 {
     std::int64_t skipMSec = getSkipInterval();
     const std::int64_t totalDuration = d->currentFlight.getTotalDurationMSec();
-    const std::int64_t newTimeStamp = qMin(getCurrentTimestamp() + skipMSec, totalDuration);
+    const std::int64_t newTimeStamp = std::min(d->currentTimestamp + skipMSec, totalDuration);
     seek(newTimeStamp);
 }
 
@@ -390,7 +410,7 @@ void AbstractSkyConnect::setReplaySpeedFactor(double replaySpeedFactor) noexcept
         // If the elapsed timer is running...
         if (d->elapsedTimer.isValid()) {
             // ... then store the elapsed time measured with the previous scale...
-            d->elapsedTime = d->elapsedTime + d->elapsedTimer.elapsed() * d->replaySpeedFactor;
+            d->elapsedTime = d->elapsedTime + static_cast<std::int64_t>(std::round(static_cast<double>(d->elapsedTimer.elapsed()) * d->replaySpeedFactor));
             // ... and restart timer
             startElapsedTimer();
         }
@@ -415,10 +435,10 @@ bool AbstractSkyConnect::isIdle() const noexcept
 
 double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
 {
-    double samplesPerSecond;
-    const Position &position = d->currentFlight.getUserAircraftConst().getPosition();
+    double samplesPerSecond {0.0};
+    const Position &position = d->currentFlight.getUserAircraft().getPosition();
     if (position.count() > 0) {
-        const std::int64_t startTimestamp = qMin(qMax(d->currentTimestamp - SamplesPerSecondPeriodMSec, std::int64_t(0)), position.getLast().timestamp);
+        const std::int64_t startTimestamp = std::min(std::max(d->currentTimestamp - SamplesPerSecondPeriod, std::int64_t(0)), position.getLast().timestamp);
         int index = d->lastSamplesPerSecondIndex;
 
         while (position[index].timestamp < startTimestamp) {
@@ -431,11 +451,7 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
         const std::int64_t period = position[lastIndex].timestamp - position[index].timestamp;
         if (period > 0) {
             samplesPerSecond = static_cast<double>(nofSamples) * 1000.0 / (static_cast<double>(period));
-        } else {
-            samplesPerSecond = 0.0;
         }
-    } else {
-        samplesPerSecond = 0.0;
     }
     return samplesPerSecond;
 }
@@ -482,8 +498,12 @@ void AbstractSkyConnect::updateUserAircraft(Aircraft &userAircraft) noexcept
 void AbstractSkyConnect::setState(Connect::State state) noexcept
 {
     if (d->state != state) {
+        const bool recording = isRecording();
         d->state = state;
         emit stateChanged(state);
+        if (recording) {
+            emit recordingStopped();
+        }
     }
 }
 
@@ -512,25 +532,6 @@ void AbstractSkyConnect::resetElapsedTime(bool restart) noexcept
     }
 }
 
-std::int64_t AbstractSkyConnect::updateCurrentTimestamp() noexcept
-{
-    if (d->elapsedTimer.isValid()) {
-        // Ignore spontaneous SimConnect events: do not update
-        // the current timestamp unless we are replaying or recording
-        if (d->state == Connect::State::Replay) {
-            d->currentTimestamp = d->elapsedTime + static_cast<std::int64_t>(d->elapsedTimer.elapsed() * d->replaySpeedFactor);
-            emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Linear);
-        } else if (d->state == Connect::State::Recording) {
-            d->currentTimestamp = d->elapsedTime + d->elapsedTimer.elapsed();
-            // The signal is delayed until after the latest data has been recorded,
-            // by using a singleshot timer with 0 ms delay (but which is only
-            // executed once execution returns to the Qt event queue)
-            QTimer::singleShot(0, this, [this]() {emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Linear);});
-        }        
-    }
-    return d->currentTimestamp;
-}
-
 void AbstractSkyConnect::createAiObjects() noexcept
 {
     if (isConnectedWithSim()) {
@@ -546,6 +547,33 @@ void AbstractSkyConnect::createAiObjects() noexcept
     }
 }
 
+// PROTECTED SLOTS
+
+std::int64_t AbstractSkyConnect::updateCurrentTimestamp() noexcept
+{
+    if (d->elapsedTimer.isValid()) {
+        // Ignore spontaneous SimConnect events: do not update
+        // the current timestamp unless we are replaying or recording
+        if (d->state == Connect::State::Replay) {
+            d->currentTimestamp = d->elapsedTime + static_cast<std::int64_t>(std::round(static_cast<double>(d->elapsedTimer.elapsed()) * d->replaySpeedFactor));
+            if (d->currentTimestamp == 0 || d->currentTimestamp - d->lastNotificationTimestamp > ::NotificationInterval) {
+                d->lastNotificationTimestamp = d->currentTimestamp;
+                emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Linear);
+            }
+        } else if (d->state == Connect::State::Recording) {
+            d->currentTimestamp = d->elapsedTime + d->elapsedTimer.elapsed();
+            if (d->currentTimestamp == 0 || d->currentTimestamp - d->lastNotificationTimestamp > ::NotificationInterval) {
+                d->lastNotificationTimestamp = d->currentTimestamp;
+                // The signal is delayed until after the latest data has been recorded,
+                // by using a singleshot timer with 0 ms delay (but which is only
+                // executed once execution returns to the Qt event queue)
+                QTimer::singleShot(0, this, [this]() {emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Linear);});
+            }
+        }
+    }
+    return d->currentTimestamp;
+}
+
 // PRIVATE
 
 void AbstractSkyConnect::frenchConnection() noexcept
@@ -558,15 +586,15 @@ void AbstractSkyConnect::frenchConnection() noexcept
 
 bool AbstractSkyConnect::hasRecordingStarted() const noexcept
 {
-    return d->currentFlight.getUserAircraftConst().getPosition().count() > 0;
+    return d->currentFlight.getUserAircraft().getPosition().count() > 0;
 }
 
 std::int64_t AbstractSkyConnect::getSkipInterval() const noexcept
 {
     Settings &settings = Settings::getInstance();
-    return static_cast<std::int64_t>(qRound(settings.isAbsoluteSeekEnabled() ?
-                                      settings.getSeekIntervalSeconds() * 1000.0 :
-                                      settings.getSeekIntervalPercent() * d->currentFlight.getTotalDurationMSec() / 100.0));
+    return static_cast<std::int64_t>(std::round(settings.isAbsoluteSeekEnabled() ?
+                                     settings.getSeekIntervalSeconds() * 1000.0 :
+                                     settings.getSeekIntervalPercent() * d->currentFlight.getTotalDurationMSec() / 100.0));
 }
 
 bool AbstractSkyConnect::retryWithReconnect(std::function<bool()> func)
@@ -594,42 +622,36 @@ bool AbstractSkyConnect::retryWithReconnect(std::function<bool()> func)
 
 bool AbstractSkyConnect::setupInitialRecordingPosition(const InitialPosition &initialPosition) noexcept
 {
-    bool ok;
+    bool ok {true};
     if (!initialPosition.isNull()) {
         // Set initial recording position
         ok = onInitialPositionSetup(initialPosition);
-    } else {
-        ok = true;
     }
     return ok;
 }
 
 bool AbstractSkyConnect::setupInitialReplayPosition(const InitialPosition &flyWithFormationPosition) noexcept
 {
-    bool ok;
+    bool ok {true};
     switch (d->replayMode) {
     case ReplayMode::FlyWithFormation:
         if (!flyWithFormationPosition.isNull()) {
             ok = onInitialPositionSetup(flyWithFormationPosition);
-        } else {
-            // No initial position given
-            ok = true;
         }
         break;
-    default:
+    case ReplayMode::UserAircraftManualControl:
+        [[fallthrough]];
+    case ReplayMode::Normal:
         if (d->currentTimestamp == 0) {
-            const Aircraft &userAircraft = getCurrentFlight().getUserAircraftConst();
-            const PositionData &positionData = userAircraft.getPositionConst().getFirst();
+            const Aircraft &userAircraft = getCurrentFlight().getUserAircraft();
+            const PositionData &positionData = userAircraft.getPosition().getFirst();
             // Make sure recorded position data exists
             ok = !positionData.isNull();
             if (ok) {
-                const AircraftInfo aircraftInfo = userAircraft.getAircraftInfoConst();
+                const AircraftInfo aircraftInfo = userAircraft.getAircraftInfo();
                 const InitialPosition initialPosition = InitialPosition(positionData, aircraftInfo);
                 ok = onInitialPositionSetup(initialPosition);
             }
-        } else {
-            // Not at beginning of replay
-            ok = true;
         }
         break;
     }
@@ -638,7 +660,7 @@ bool AbstractSkyConnect::setupInitialReplayPosition(const InitialPosition &flyWi
 
 bool AbstractSkyConnect::updateUserAircraftFreeze() noexcept
 {
-    bool freeze;
+    bool freeze {false};
     switch (d->replayMode) {
     case ReplayMode::Normal:
         freeze = d->state == Connect::State::Replay || d->state == Connect::State::ReplayPaused;
@@ -648,9 +670,6 @@ bool AbstractSkyConnect::updateUserAircraftFreeze() noexcept
         break;
     case ReplayMode::FlyWithFormation:
         freeze = d->state == Connect::State::ReplayPaused;
-        break;
-    default:
-        freeze = false;
         break;
     }
     return onFreezeUserAircraft(freeze);

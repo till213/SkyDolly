@@ -101,15 +101,13 @@ bool SkyDollyCsvWriter::write([[maybe_unused]] const Flight &flight, const Aircr
 
         const SampleRate::ResamplingPeriod resamplingPeriod = d->pluginSettings.getResamplingPeriod();
         const std::int64_t deltaTime = Enum::toUnderlyingType(resamplingPeriod);
-        std::int64_t duration;
-        std::int64_t timestamp;
 
         // Position data
-        const Position &position = aircraft.getPositionConst();
+        Position &position = aircraft.getPosition();
         QChar dataType = QChar(Enum::toUnderlyingType(CsvConst::DataType::Aircraft));
         if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
-            duration = position.getLast().timestamp;
-            timestamp = 0;
+            std::int64_t duration = position.getLast().timestamp;
+            std::int64_t timestamp = 0;
             while (ok && timestamp <= duration) {
                 const PositionData &positionData = position.interpolate(timestamp, TimeVariableData::Access::Linear);
                 if (!positionData.isNull()) {
@@ -136,11 +134,11 @@ bool SkyDollyCsvWriter::write([[maybe_unused]] const Flight &flight, const Aircr
         }
 
         // Engine data
-        const Engine &engine = aircraft.getEngineConst();
+        Engine &engine = aircraft.getEngine();
         dataType = QChar(Enum::toUnderlyingType(CsvConst::DataType::Engine));
         if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
-            duration = engine.getLast().timestamp;
-            timestamp = 0;
+            std::int64_t duration = engine.getLast().timestamp;
+            std::int64_t timestamp = 0;
             while (ok && timestamp <= duration) {
                 const EngineData &engineData = engine.interpolate(timestamp, TimeVariableData::Access::Linear);
                 if (!engineData.isNull()) {
@@ -167,11 +165,11 @@ bool SkyDollyCsvWriter::write([[maybe_unused]] const Flight &flight, const Aircr
         }
 
         // Primary flight controls
-        const PrimaryFlightControl &primaryFlightControl = aircraft.getPrimaryFlightControlConst();
+        PrimaryFlightControl &primaryFlightControl = aircraft.getPrimaryFlightControl();
         dataType = QChar(Enum::toUnderlyingType(CsvConst::DataType::PrimaryFlightControl));
         if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
-            duration = primaryFlightControl.getLast().timestamp;
-            timestamp = 0;
+            std::int64_t duration = primaryFlightControl.getLast().timestamp;
+            std::int64_t timestamp = 0;
             while (ok && timestamp <= duration) {
                 const PrimaryFlightControlData &primaryFlightControlData = primaryFlightControl.interpolate(timestamp, TimeVariableData::Access::Linear);
                 if (!primaryFlightControlData.isNull()) {
@@ -198,11 +196,11 @@ bool SkyDollyCsvWriter::write([[maybe_unused]] const Flight &flight, const Aircr
         }
 
         // Secondary flight controls
-        const SecondaryFlightControl &secondaryFlightControl = aircraft.getSecondaryFlightControlConst();
+        SecondaryFlightControl &secondaryFlightControl = aircraft.getSecondaryFlightControl();
         dataType = QChar(Enum::toUnderlyingType(CsvConst::DataType::SecondaryFlightControl));
         if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
-            duration = secondaryFlightControl.getLast().timestamp;
-            timestamp = 0;
+            std::int64_t duration = secondaryFlightControl.getLast().timestamp;
+            std::int64_t timestamp = 0;
             while (ok && timestamp <= duration) {
                 const SecondaryFlightControlData &secondaryFlightControlData = secondaryFlightControl.interpolate(timestamp, TimeVariableData::Access::Linear);
                 if (!secondaryFlightControlData.isNull()) {
@@ -229,11 +227,11 @@ bool SkyDollyCsvWriter::write([[maybe_unused]] const Flight &flight, const Aircr
         }
 
         // Aircraft handles
-        const AircraftHandle &aircraftHandle = aircraft.getAircraftHandleConst();
+        AircraftHandle &aircraftHandle = aircraft.getAircraftHandle();
         dataType = QChar(Enum::toUnderlyingType(CsvConst::DataType::AircraftHandle));
         if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
-            duration = aircraftHandle.getLast().timestamp;
-            timestamp = 0;
+            std::int64_t duration = aircraftHandle.getLast().timestamp;
+            std::int64_t timestamp = 0;
             while (ok && timestamp <= duration) {
                 const AircraftHandleData &aircraftHandleData = aircraftHandle.interpolate(timestamp, TimeVariableData::Access::Linear);
                 if (!aircraftHandleData.isNull()) {
@@ -260,11 +258,11 @@ bool SkyDollyCsvWriter::write([[maybe_unused]] const Flight &flight, const Aircr
         }
 
         // Lights
-        const Light &light = aircraft.getLightConst();
+        Light &light = aircraft.getLight();
         dataType = QChar(Enum::toUnderlyingType(CsvConst::DataType::Light));
         if (resamplingPeriod != SampleRate::ResamplingPeriod::Original) {
-            duration = light.getLast().timestamp;
-            timestamp = 0;
+            std::int64_t duration = light.getLast().timestamp;
+            std::int64_t timestamp = 0;
             while (ok && timestamp <= duration) {
                 const LightData &lightData = light.interpolate(timestamp, TimeVariableData::Access::Linear);
                 if (!lightData.isNull()) {

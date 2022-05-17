@@ -170,7 +170,7 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
                     skyPlugin, &SkyConnectIntf::removeAiObjects);
             connect(&flight, &Flight::aircraftAdded,
                     skyPlugin, &SkyConnectIntf::addAiObject);
-            connect(&flight, &Flight::aircraftDeleted,
+            connect(&flight, &Flight::aircraftRemoved,
                     skyPlugin, &SkyConnectIntf::removeAiObject);
             connect(&flight, &Flight::userAircraftChanged,
                     skyPlugin, &SkyConnectIntf::updateUserAircraft);
@@ -207,8 +207,10 @@ SkyConnectManager::SkyConnectManager() noexcept
 
 void SkyConnectManager::frenchConnection() noexcept
 {
-    connect(&Settings::getInstance(), &Settings::skyConnectPluginUuidChanged,
-            this, &SkyConnectManager::tryAndSetCurrentSkyConnect);
+    // Settings
+    Settings &settings = Settings::getInstance();
+    connect(&settings, &Settings::skyConnectPluginUuidChanged,
+            this, &SkyConnectManager::tryAndSetCurrentSkyConnect);  
 }
 
 void SkyConnectManager::initialisePlugins(const QString &pluginDirectoryName) noexcept

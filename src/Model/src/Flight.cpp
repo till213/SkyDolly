@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <algorithm>
 #include <memory>
 #include <vector>
 #include <iterator>
@@ -45,7 +46,8 @@ class FlightPrivate
 public:
 
     FlightPrivate() noexcept
-        : creationTime(QDateTime::currentDateTime()),
+        : id(Flight::InvalidId),
+          creationTime(QDateTime::currentDateTime()),
           userAircraftIndex(InvalidAircraftIndex)
     {
         clear(true);
@@ -87,14 +89,14 @@ Flight::Flight(QObject *parent) noexcept
     // A flight always has at least one (user) aircraft
     addUserAircraft();
 #ifdef DEBUG
-    qDebug("Flight::Flight:  CREATED, ID: %" PRId64, d->id);
+    qDebug("Flight::Flight: CREATED, ID: %" PRId64, d->id);
 #endif
 }
 
 Flight::~Flight() noexcept
 {
 #ifdef DEBUG
-    qDebug("Flight::~Flight:  DELETED, ID: %" PRId64, d->id);
+    qDebug("Flight::~Flight: DELETED, ID: %" PRId64, d->id);
 #endif
 }
 
@@ -164,11 +166,6 @@ Aircraft &Flight::addUserAircraft() noexcept
     return *d->aircraft.back().get();
 }
 
-const Aircraft &Flight::getUserAircraftConst() const noexcept
-{
-    return *d->aircraft.at(d->userAircraftIndex);
-}
-
 Aircraft &Flight::getUserAircraft() const noexcept
 {
     return *d->aircraft.at(d->userAircraftIndex);
@@ -192,11 +189,11 @@ std::int64_t Flight::deleteAircraftByIndex(int index) noexcept
     std::int64_t aircraftId;
     // A flight has at least one aircraft
     if (d->aircraft.size() > 1) {
-        setUserAircraftIndex(qMax(d->userAircraftIndex - 1, 0));
+        setUserAircraftIndex(std::max(d->userAircraftIndex - 1, 0));
         aircraftId  = d->aircraft.at(index)->getId();
         std::int64_t aircraftId = d->aircraft.at(index)->getId();
         d->aircraft.erase(d->aircraft.begin() + index);
-        emit aircraftDeleted(aircraftId);
+        emit aircraftRemoved(aircraftId);
     } else {
         aircraftId = Aircraft::InvalidId;
     }
@@ -208,7 +205,7 @@ std::size_t Flight::count() const noexcept
     return d->aircraft.size();
 }
 
-const FlightCondition &Flight::getFlightConditionConst() const noexcept
+const FlightCondition &Flight::getFlightCondition() const noexcept
 {
     return d->flightCondition;
 }
@@ -223,10 +220,10 @@ std::int64_t Flight::getTotalDurationMSec(bool ofUserAircraft) const noexcept
 {
     std::int64_t totalDuractionMSec = 0;
     if (ofUserAircraft) {
-        totalDuractionMSec = getUserAircraftConst().getDurationMSec();
+        totalDuractionMSec = getUserAircraft().getDurationMSec();
     } else {
         for (const auto &aircraft : d->aircraft) {
-            totalDuractionMSec = qMax(aircraft->getDurationMSec(), totalDuractionMSec);
+            totalDuractionMSec = std::max(aircraft->getDurationMSec(), totalDuractionMSec);
         }
     }
     return totalDuractionMSec;

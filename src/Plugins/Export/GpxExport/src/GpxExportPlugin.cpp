@@ -195,11 +195,11 @@ bool GpxExportPlugin::exportAllAircraft(QIODevice &io) const noexcept
 bool GpxExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     switch (d->pluginSettings.getTimestampMode()) {
+    case GpxExportSettings::TimestampMode::Simulation:
+        d->startDateTimeUtc = d->flight->getAircraftStartZuluTime(aircraft);
+        break;
     case GpxExportSettings::TimestampMode::Recording:
         d->startDateTimeUtc = d->flight->getAircraftCreationTime(aircraft).toUTC();
-        break;
-    default:
-        d->startDateTimeUtc = d->flight->getAircraftStartZuluTime(aircraft);
         break;
     }
 
@@ -208,7 +208,7 @@ bool GpxExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
     bool ok = true;
     if (interpolatedPositionData.size() > 0) {
 
-        const AircraftInfo &aircraftInfo = aircraft.getAircraftInfoConst();
+        const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
         const QString trackBegin =
 "  <trk>\n"
 "    <name><![CDATA[" % aircraftInfo.aircraftType.type % "]]></name>\n"
@@ -240,7 +240,7 @@ bool GpxExportPlugin::exportAircraft(const Aircraft &aircraft, QIODevice &io) co
 bool GpxExportPlugin::exportWaypoints(QIODevice &io) const noexcept
 {
     bool ok = true;
-    const FlightPlan &flightPlan = d->flight->getUserAircraft().getFlightPlanConst();
+    const FlightPlan &flightPlan = d->flight->getUserAircraft().getFlightPlan();
     for (const Waypoint &waypoint : flightPlan) {
         ok = exportWaypoint(waypoint, io);
         if (!ok) {
@@ -259,7 +259,7 @@ bool GpxExportPlugin::exportFooter(QIODevice &io) const noexcept
 
 QString GpxExportPlugin::getFlightDescription() const noexcept
 {
-    const FlightCondition &flightCondition = d->flight->getFlightConditionConst();
+    const FlightCondition &flightCondition = d->flight->getFlightCondition();
     const QString description =
             d->flight->getDescription() % "\n" %
             "\n" %
@@ -279,7 +279,7 @@ QString GpxExportPlugin::getFlightDescription() const noexcept
 
 QString GpxExportPlugin::getAircraftDescription(const Aircraft &aircraft) const noexcept
 {
-    const AircraftInfo &info = aircraft.getAircraftInfoConst();
+    const AircraftInfo &info = aircraft.getAircraftInfo();
     const AircraftType &type = info.aircraftType;
     const QString description =
             tr("Category") % ": " % type.category % "\n" %

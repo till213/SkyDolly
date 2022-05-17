@@ -25,76 +25,30 @@
 #ifndef AIRCRAFTHANDLE_H
 #define AIRCRAFTHANDLE_H
 
-#include <memory>
 #include <vector>
 #include <iterator>
 #include <cstdint>
 
-#include <QObject>
-
-#include "TimeVariableData.h"
+#include "AircraftHandleData.h"
 #include "AircraftInfo.h"
+#include "AbstractComponent.h"
 #include "ModelLib.h"
 
-struct AircraftHandleData;
-class AircraftHandlePrivate;
-
-class MODEL_API AircraftHandle : public QObject
+class MODEL_API AircraftHandle : public AbstractComponent<AircraftHandleData>
 {
-    Q_OBJECT
 public:
-    AircraftHandle(const AircraftInfo &aircraftInfo, QObject *parent = nullptr) noexcept;
-    virtual ~AircraftHandle() noexcept;
+    explicit AircraftHandle(const AircraftInfo &aircraftInfo) noexcept;
+    AircraftHandle(AircraftHandle &aircraftHandle) = default;
+    AircraftHandle(AircraftHandle &&aircraftHandle) = default;
+    ~AircraftHandle() noexcept override;
+    AircraftHandle &operator = (const AircraftHandle &rhs) = default;
+    AircraftHandle &operator = (AircraftHandle &&rhs) = default;
 
-    /*!
-     * Inserts \c data at the end, or updates the \em last element (only) if
-     * the data items have the same timestamp.
-     *
-     * Use case: recorded data items are inserted chronologically, but some recorded items
-     * may have the same timestamp: the last recorded data item "wins".
-     *
-     * \param data
-     *        the data to be upserted
-     * \sa upsert
-     */
-    void upsertLast(const AircraftHandleData &data) noexcept;
-
-    /*!
-     * Inserts \c data at the end, or updates the element having the same
-     * timestamp. That is, the entire collection is being searched first.
-     *
-     * Use case: data items are inserted in random order ("flight augmentation");
-     * use \c upsertLast in case items are to be inserted sequentially in order
-     *
-     * \param data
-     *        the data to be upserted
-     * \sa upsertLast
-     */
-    void upsert(const AircraftHandleData &data) noexcept;
-    const AircraftHandleData &getFirst() const noexcept;
-    const AircraftHandleData &getLast() const noexcept;
-    std::size_t count() const noexcept;
-    const AircraftHandleData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) const noexcept;
-    void clear() noexcept;
-
-    typedef std::vector<AircraftHandleData>::iterator Iterator;
-    typedef std::back_insert_iterator<std::vector<AircraftHandleData>> BackInsertIterator;
-
-    Iterator begin() noexcept;
-    Iterator end() noexcept;
-    const Iterator begin() const noexcept;
-    const Iterator end() const noexcept;
-    BackInsertIterator backInsertIterator() noexcept;
-
-    AircraftHandleData& operator[](std::size_t index) noexcept;
-    const AircraftHandleData& operator[](std::size_t index) const noexcept;
-
-signals:
-    void dataChanged();
+    const AircraftHandleData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 
 private:
-    Q_DISABLE_COPY(AircraftHandle)
-    std::unique_ptr<AircraftHandlePrivate> d;
+    AircraftHandleData m_currentAircraftHandleData;
+    AircraftHandleData m_previousAircraftHandleData;
 };
 
 #endif // AIRCRAFTHANDLE_H

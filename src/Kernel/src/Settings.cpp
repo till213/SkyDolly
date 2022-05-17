@@ -67,6 +67,7 @@ public:
     QByteArray windowGeometry;
     QByteArray windowState;
     QByteArray logbookState;
+    QByteArray formationAircraftTableState;
     QString exportPath;
     QString defaultExportPath;
     QString defaultLogbookPath;
@@ -301,6 +302,16 @@ QByteArray Settings::getLogbookState() const
 void Settings::setLogbookState(const QByteArray &state) noexcept
 {
     d->logbookState = state;
+}
+
+QByteArray Settings::getFormationAircraftTableState() const
+{
+    return d->formationAircraftTableState;
+}
+
+void Settings::setFormationAircraftTableState(const QByteArray &state) noexcept
+{
+    d->formationAircraftTableState = state;
 }
 
 bool Settings::isAbsoluteSeekEnabled() const noexcept
@@ -546,6 +557,7 @@ void Settings::store() const noexcept
         d->settings.setValue("Geometry", d->windowGeometry);
         d->settings.setValue("State", d->windowState);
         d->settings.setValue("LogbookState", d->logbookState);
+        d->settings.setValue("FormationAircraftTableState", d->formationAircraftTableState);
     }
     d->settings.endGroup();
     d->settings.beginGroup("Paths");
@@ -648,6 +660,7 @@ void Settings::restore() noexcept
         d->windowGeometry = d->settings.value("Geometry").toByteArray();
         d->windowState = d->settings.value("State").toByteArray();
         d->logbookState = d->settings.value("LogbookState").toByteArray();
+        d->formationAircraftTableState = d->settings.value("FormationAircraftTableState").toByteArray();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Paths");

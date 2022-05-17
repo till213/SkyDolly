@@ -22,7 +22,9 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <algorithm>
 #include <cstdint>
+#include <cmath>
 #include <vector>
 #include <iterator>
 
@@ -218,11 +220,11 @@ inline bool IgcExportPlugin::exportARecord(QIODevice &io) const noexcept
 inline bool IgcExportPlugin::exportHRecord(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
     const QByteArray record =
-        IgcExportPluginPrivate::HRecord % ::Date % formatDate(d->flight->getFlightConditionConst().startZuluTime) % ::LineEnd %
+        IgcExportPluginPrivate::HRecord % ::Date % formatDate(d->flight->getFlightCondition().startZuluTime) % ::LineEnd %
         IgcExportPluginPrivate::HRecord % ::Pilot % d->pluginSettings.getPilotName().toLatin1() % ::LineEnd %
         IgcExportPluginPrivate::HRecord % ::CoPilot % d->pluginSettings.getCoPilotName().toLatin1() % ::LineEnd %
-        IgcExportPluginPrivate::HRecord % ::GliderType % aircraft.getAircraftInfoConst().aircraftType.type.toLatin1() % ::LineEnd %
-        IgcExportPluginPrivate::HRecord % ::GliderId % aircraft.getAircraftInfoConst().tailNumber.toLatin1() % ::LineEnd %
+        IgcExportPluginPrivate::HRecord % ::GliderType % aircraft.getAircraftInfo().aircraftType.type.toLatin1() % ::LineEnd %
+        IgcExportPluginPrivate::HRecord % ::GliderId % aircraft.getAircraftInfo().tailNumber.toLatin1() % ::LineEnd %
         IgcExportPluginPrivate::HRecord % ::GPSDatum % ::LineEnd %
         IgcExportPluginPrivate::HRecord % ::FirmwareVersion % Version::getApplicationVersion().toLatin1() % " with WGS84 Ellipsoid GPS altitude datum" % ::LineEnd %
         // Reporting the kernel version is somewhat arbitrary here - but we have a cool version number value :)
@@ -251,13 +253,13 @@ inline bool IgcExportPlugin::exportJRecord(QIODevice &io) const noexcept
 
 inline bool IgcExportPlugin::exportCRecord(const Aircraft &aircraft, QIODevice &io) const noexcept
 {
-    const FlightPlan &flightPlan = aircraft.getFlightPlanConst();
-    const Position &position = aircraft.getPositionConst();
+    const FlightPlan &flightPlan = aircraft.getFlightPlan();
+    const Position &position = aircraft.getPosition();
     const int nofTurnPoints = flightPlan.count() - 2;
     QByteArray record = IgcExportPluginPrivate::CRecord % formatDateTime(d->flight->getAircraftStartZuluTime(aircraft)) %
                         ::ObsoleteFlightDate % ::ObsoleteTaskNumber %
                         // Number of turn points, excluding start and end wapoints
-                        formatNumber(qMin(nofTurnPoints, 0), 2) %
+                        formatNumber(std::min(nofTurnPoints, 0), 2) %
                         d->flight->getTitle().toLatin1() % ::LineEnd;
     bool ok = io.write(record);
     const std::size_t count = flightPlan.count();
@@ -292,7 +294,7 @@ inline bool IgcExportPlugin::exportFixes(const Aircraft &aircraft, QIODevice &io
     QDateTime lastKFixTime;
 
     Convert convert;
-    const Engine &engine = aircraft.getEngineConst();
+    Engine &engine = aircraft.getEngine();
     std::vector<PositionData> interpolatedPositionData;
     Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod(), std::back_inserter(interpolatedPositionData));
     bool ok = true;
@@ -302,9 +304,9 @@ inline bool IgcExportPlugin::exportFixes(const Aircraft &aircraft, QIODevice &io
             // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]
             const double heightAboveEllipsoid = convert.egmToWgs84Ellipsoid(positionData.latitude, positionData.longitude, Convert::feetToMeters(positionData.altitude));
 
-            const int gnssAltitude = qRound(heightAboveEllipsoid);
+            const int gnssAltitude = static_cast<int>(std::round(heightAboveEllipsoid));
             const QByteArray gnssAltitudeByteArray = formatNumber(gnssAltitude, 5);
-            const int pressureAltitude = qRound(Convert::feetToMeters(positionData.indicatedAltitude));
+            const int pressureAltitude = static_cast<int>(std::round(Convert::feetToMeters(positionData.indicatedAltitude)));
             const QByteArray pressureAltitudeByteArray = formatNumber(pressureAltitude, 5);
             const EngineData &engineData = engine.interpolate(positionData.timestamp, TimeVariableData::Access::Linear);
             const int noise = estimateEnvironmentalNoise(engineData);
@@ -326,9 +328,9 @@ inline bool IgcExportPlugin::exportFixes(const Aircraft &aircraft, QIODevice &io
                 const double indicatedAirspeed = Convert::trueToIndicatedAirspeed(trueAirspeed, positionData.altitude);
                 const QByteArray kRecord = IgcExportPluginPrivate::KRecord %
                                            formatTime(currentTime) %
-                                           formatNumber(qRound(positionData.heading), 3) %
+                                           formatNumber(std::round(positionData.heading), 3) %
                                            // IAS: km/h
-                                           formatNumber(qRound(indicatedAirspeed), 3) %
+                                           formatNumber(std::round(indicatedAirspeed), 3) %
                                            ::LineEnd;
                 ok = io.write(kRecord);
                 lastKFixTime = currentTime;
@@ -412,7 +414,7 @@ inline int IgcExportPlugin::estimateEnvironmentalNoise(const EngineData &engineD
     int noise;
     if (engineData.hasCombustion()) {
         noise = static_cast<int>(static_cast<double>(qAbs(engineData.propellerLeverPosition1)) / SkyMath::PositionMax16 * 999.0);
-        noise = qMin(noise, 999);
+        noise = std::min(noise, 999);
     } else {
         noise = 0;
     }

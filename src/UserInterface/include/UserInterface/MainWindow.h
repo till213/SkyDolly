@@ -53,16 +53,15 @@ class MainWindowPrivate;
 class USERINTERFACE_API MainWindow : public QMainWindow
 {
     Q_OBJECT
-
 public:
     explicit MainWindow(const QString &filePath = QString(), QWidget *parent = nullptr) noexcept;
-    virtual ~MainWindow() noexcept;
+    ~MainWindow() noexcept override;
 
     bool connectWithLogbook(const QString &filePath) noexcept;
 
 protected:
-    virtual void resizeEvent(QResizeEvent *event) noexcept override;
-    virtual void closeEvent(QCloseEvent *event) noexcept override;
+    void resizeEvent(QResizeEvent *event) noexcept override;
+    void closeEvent(QCloseEvent *event) noexcept override;
 
 private:
     Q_DISABLE_COPY(MainWindow)
@@ -79,6 +78,21 @@ private:
     void initSkyConnectPlugin() noexcept;
 
     void updateMinimalUi(bool enable);
+
+    /*
+     * Updates the timestamp time edit widget by setting the maximum time according
+     * to the currently recorded time given by 'timestamp'.
+     *
+     * Also refer to #updateReplayDuration.
+     */
+    void updateRecordingDuration(std::int64_t timestamp) noexcept;
+
+    /*
+     * Updates the position slider widget by setting the position according to
+     * 'timestamp'.
+     */
+    void updatePositionSlider(std::int64_t timestamp) noexcept;
+
     double getCustomSpeedFactor() const;
     
 private slots:
@@ -98,7 +112,15 @@ private slots:
     void updateControlUi() noexcept;
     void updateControlIcons() noexcept;
     void updateReplaySpeedUi() noexcept;
-    void updateTimestamp() noexcept;
+
+    /*
+     * Updates the timestamp by setting the maximum replay time according
+     * to the total duration of the current flight.
+     *
+     * Also refer to #updateRecordingDuration.
+     */
+    void updateReplayDuration() noexcept;
+
     void updateFileMenu() noexcept;
     void updateWindowMenu() noexcept;
     void updateMainWindow() noexcept;
@@ -145,8 +167,8 @@ private slots:
     void handleLogbookConnectionChanged(bool connected) noexcept;
 
     // Import / export
-    void handleImport(QAction *action) noexcept;
-    void handleExport(QAction *action) noexcept;
+    void onImport(QAction *action) noexcept;
+    void onExport(QAction *action) noexcept;
 
     // Settings
     void handleReplayLoopChanged() noexcept;

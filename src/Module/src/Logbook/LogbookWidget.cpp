@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <algorithm>
 #include <memory>
 #include <forward_list>
 #include <vector>
@@ -144,6 +145,9 @@ LogbookWidget::LogbookWidget(DatabaseService &databaseService, FlightService &fl
     ui->setupUi(this);
     initUi();
     frenchConnection();
+#ifdef DEBUG
+    qDebug("LogbookWidget::LogbookWidget: CREATED.");
+#endif
 }
 
 LogbookWidget::~LogbookWidget() noexcept
@@ -300,7 +304,7 @@ void LogbookWidget::updateFlightTable() noexcept
     d->selectedFlightId = Flight::InvalidId;
     if (ConnectionManager::getInstance().isConnected()) {
 
-        const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
+        const Flight &flight = Logbook::getInstance().getCurrentFlight();
         const std::int64_t flightInMemoryId = flight.getId();
         std::vector<FlightSummary> summaries = d->logbookService->getFlightSummaries(d->flightSelector);
         ui->logTableWidget->blockSignals(true);
@@ -315,10 +319,10 @@ void LogbookWidget::updateFlightTable() noexcept
 
             // ID
             std::unique_ptr<QTableWidgetItem> newItem = std::make_unique<QTableWidgetItem>();
-            if (summary.id == flightInMemoryId) {
+            if (summary.flightId == flightInMemoryId) {
                 newItem->setIcon(aircraftIcon);
             }
-            newItem->setData(Qt::DisplayRole, QVariant::fromValue(summary.id));
+            newItem->setData(Qt::DisplayRole, QVariant::fromValue(summary.flightId));
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
             newItem->setToolTip(tr("Double-click to load flight."));
             // Transfer ownership of newItem to table widget
@@ -380,7 +384,7 @@ void LogbookWidget::updateFlightTable() noexcept
 
             // Duration
             const std::int64_t durationMSec = summary.startSimulationLocalTime.msecsTo(summary.endSimulationLocalTime);
-            const QTime time = QTime(0, 0).addMSecs(durationMSec);
+            const QTime time = QTime::fromMSecsSinceStartOfDay(durationMSec * 1000);
             newItem = std::make_unique<QTableWidgetItem>(d->unit.formatDuration(time));
             newItem->setToolTip(tr("Simulation duration."));
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -543,7 +547,7 @@ void LogbookWidget::updateEditUi() noexcept
 
 void LogbookWidget::updateAircraftIcon() noexcept
 {
-    const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
     const std::int64_t flightInMemoryId = flight.getId();
     const QIcon aircraftIcon(":/img/icons/aircraft-normal.png");
     const QIcon emptyIcon;
@@ -658,7 +662,7 @@ void LogbookWidget::deleteFlight() noexcept
             d->flightService.deleteById(d->selectedFlightId);
             int lastSelectedRow = d->selectedRow;
             updateUi();
-            int selectedRow = qMin(lastSelectedRow, ui->logTableWidget->rowCount() - 1);
+            int selectedRow = std::min(lastSelectedRow, ui->logTableWidget->rowCount() - 1);
             ui->logTableWidget->selectRow(selectedRow);
         }
     }
@@ -755,9 +759,6 @@ void LogbookWidget::on_durationComboBox_activated([[maybe_unused]] int index) no
         break;
     case Duration::FourHours:
         minimumDurationMinutes = 240;
-        break;
-    default:
-        minimumDurationMinutes = 0;
         break;
     }
 

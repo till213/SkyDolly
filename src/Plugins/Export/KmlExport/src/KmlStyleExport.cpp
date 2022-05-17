@@ -133,7 +133,15 @@ QString KmlStyleExport::getNextEngineTypeStyleMap(SimType::EngineType engineType
                 ++d->pistonColorRampIndex;
             }
             break;
-        default:
+        case SimType::EngineType::Unknown:
+            [[fallthrough]];
+        case SimType::EngineType::None:
+            [[fallthrough]];
+        case SimType::EngineType::HeloBellTurbine:
+            [[fallthrough]];
+        case SimType::EngineType::Unsupported:
+            [[fallthrough]];
+        case SimType::EngineType::All:
             nofColors = d->allColorRamp.size();
             if (nofColors > 0) {
                 styleMapId = QString(AllStyleMapId) % "_" % QString::number(d->allColorRampIndex % d->allColorRamp.size());
@@ -141,6 +149,7 @@ QString KmlStyleExport::getNextEngineTypeStyleMap(SimType::EngineType engineType
             }
             break;
         }
+
     } else {
         nofColors = d->allColorRamp.size();
         if (nofColors > 0) {
@@ -161,9 +170,6 @@ QString KmlStyleExport::getStyleUrl(Icon icon) noexcept
         break;
     case Icon::Flag:
         styleUrl = "#sm_flag";
-        break;
-    default:
-        styleUrl = "#sm_airports";
         break;
     }
     return styleUrl;
@@ -378,7 +384,15 @@ bool KmlStyleExport::exportNormalLineStylesPerEngineType(SimType::EngineType eng
     case SimType::EngineType::Piston:
         styleId = PistonStyleId;
         break;
-    default:
+    case SimType::EngineType::Unknown:
+        [[fallthrough]];
+    case SimType::EngineType::None:
+        [[fallthrough]];
+    case SimType::EngineType::HeloBellTurbine:
+        [[fallthrough]];
+    case SimType::EngineType::Unsupported:
+        [[fallthrough]];
+    case SimType::EngineType::All:
         styleId = AllStyleId;
         break;
     }

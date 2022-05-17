@@ -195,7 +195,7 @@ bool ImportPluginBase::importFlights(const QStringList &filePaths, FlightService
             Aircraft &aircraft = addNewAircraft ? flight.addUserAircraft() : flight.getUserAircraft();
 
             ok = importFlight(d->file, flight);
-            if (ok && aircraft.getPositionConst().count() > 0) {
+            if (ok && aircraft.getPosition().count() > 0) {
                 d->flightAugmentation.setProcedures(getProcedures());
                 d->flightAugmentation.setAspects(getAspects());
                 d->flightAugmentation.augmentAircraftData(aircraft);
@@ -251,7 +251,7 @@ void ImportPluginBase::updateAircraftInfo() noexcept
     AircraftInfo aircraftInfo(aircraft.getId());
     aircraftInfo.aircraftType = d->aircraftType;
 
-    const Position &position = aircraft.getPositionConst();
+    const Position &position = aircraft.getPosition();
     const PositionData &lastPositionData = position.getLast();
     const QDateTime startDateTimeUtc = getStartDateTimeUtc();
     const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);
@@ -308,7 +308,7 @@ void ImportPluginBase::updateFlightCondition() noexcept
 
     Aircraft &aircraft = d->flight->getUserAircraft();
 
-    const Position &position = aircraft.getPositionConst();
+    const Position &position = aircraft.getPosition();
     const PositionData &lastPositionData = position.getLast();
     const QDateTime startDateTimeUtc = getStartDateTimeUtc();
     const QDateTime endDateTimeUtc = startDateTimeUtc.addMSecs(lastPositionData.timestamp);

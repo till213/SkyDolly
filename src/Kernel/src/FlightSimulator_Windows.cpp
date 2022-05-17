@@ -79,7 +79,9 @@ bool FlightSimulator::isRunning(Id id) noexcept
     case Id::Prepar3Dv5:
         processName = "Prepar3D.exe";
         break;
-    default:
+    case Id::All:
+        [[fallthrough]];
+    case Id::None:
         processName = "";
         break;
     }
