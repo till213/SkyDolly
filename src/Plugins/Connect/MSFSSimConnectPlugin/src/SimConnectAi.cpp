@@ -78,8 +78,8 @@ SimConnectAi::~SimConnectAi()
 
 void SimConnectAi::addObject(const Aircraft &aircraft, std::int64_t timestamp) noexcept
 {
-    const AircraftInfo aircraftInfo = aircraft.getAircraftInfoConst();
-    const Position &position = aircraft.getPositionConst();
+    const AircraftInfo aircraftInfo = aircraft.getAircraftInfo();
+    Position &position = aircraft.getPosition();
     const PositionData positioNData = position.interpolate(timestamp, TimeVariableData::Access::Seek);
     const ::SIMCONNECT_DATA_INITPOSITION initialPosition = SimConnectPositionRequest::toInitialPosition(positioNData, aircraftInfo.startOnGround, aircraftInfo.initialAirspeed);
 

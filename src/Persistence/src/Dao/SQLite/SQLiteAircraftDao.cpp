@@ -127,10 +127,10 @@ bool SQLiteAircraftDao::add(std::int64_t flightId, int sequenceNumber, Aircraft 
         " :start_on_ground"
         ");");
 
-    const AircraftType &aircraftType = aircraft.getAircraftInfoConst().aircraftType;
+    const AircraftType &aircraftType = aircraft.getAircraftInfo().aircraftType;
     bool ok = d->aircraftTypeDao->upsert(aircraftType);
     if (ok) {
-        const AircraftInfo &info = aircraft.getAircraftInfoConst();
+        const AircraftInfo &info = aircraft.getAircraftInfo();
         query.bindValue(":flight_id", QVariant::fromValue(flightId));
         query.bindValue(":seq_nr", sequenceNumber);
         query.bindValue(":type", aircraftType.type);
@@ -153,7 +153,7 @@ bool SQLiteAircraftDao::add(std::int64_t flightId, int sequenceNumber, Aircraft 
 #endif
     }
     if (ok) {
-        for (const PositionData &data : aircraft.getPositionConst()) {
+        for (const PositionData &data : aircraft.getPosition()) {
             ok = d->positionDao->add(aircraft.getId(), data);
             if (!ok) {
                 break;
@@ -161,7 +161,7 @@ bool SQLiteAircraftDao::add(std::int64_t flightId, int sequenceNumber, Aircraft 
         }
     }
     if (ok) {
-        for (const EngineData &data : aircraft.getEngineConst()) {
+        for (const EngineData &data : aircraft.getEngine()) {
             ok = d->engineDao->add(aircraft.getId(), data);
             if (!ok) {
                 break;
@@ -169,7 +169,7 @@ bool SQLiteAircraftDao::add(std::int64_t flightId, int sequenceNumber, Aircraft 
         }
     }
     if (ok) {
-        for (const PrimaryFlightControlData &data : aircraft.getPrimaryFlightControlConst()) {
+        for (const PrimaryFlightControlData &data : aircraft.getPrimaryFlightControl()) {
             ok = d->primaryFlightControlDao->add(aircraft.getId(), data);
             if (!ok) {
                 break;
@@ -177,7 +177,7 @@ bool SQLiteAircraftDao::add(std::int64_t flightId, int sequenceNumber, Aircraft 
         }
     }
     if (ok) {
-        for (const SecondaryFlightControlData &data : aircraft.getSecondaryFlightControlConst()) {
+        for (const SecondaryFlightControlData &data : aircraft.getSecondaryFlightControl()) {
             ok = d->secondaryFlightControlDao->add(aircraft.getId(), data);
             if (!ok) {
                 break;
@@ -185,7 +185,7 @@ bool SQLiteAircraftDao::add(std::int64_t flightId, int sequenceNumber, Aircraft 
         }
     }
     if (ok) {
-        for (const AircraftHandleData &data : aircraft.getAircraftHandleConst()) {
+        for (const AircraftHandleData &data : aircraft.getAircraftHandle()) {
             ok = d->handleDao->add(aircraft.getId(), data);
             if (!ok) {
                 break;
@@ -193,7 +193,7 @@ bool SQLiteAircraftDao::add(std::int64_t flightId, int sequenceNumber, Aircraft 
         }
     }
     if (ok) {
-        for (const LightData &data : aircraft.getLightConst()) {
+        for (const LightData &data : aircraft.getLight()) {
             ok = d->lightDao->add(aircraft.getId(), data);
             if (!ok) {
                 break;
@@ -235,7 +235,6 @@ bool SQLiteAircraftDao::getByFlightId(std::int64_t flightId, std::back_insert_it
                 ok = d->waypointDao->getByAircraftId(aircraft->getId(), aircraft->getFlightPlan());
             }
             if (ok) {
-                emit aircraft->dataChanged();
                 backInsertIterator = std::move(aircraft);
             }
         }

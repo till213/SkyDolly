@@ -16,17 +16,21 @@
 
 #### User Interface
 - The order of the logbook table columns can now be changed
+- The order of the formation aircraft table columns can now be changed
 - In the formation module the "Delete" key now deletes the selected aircraft
 - Latitude and longitude values are now formatted with leading zeroes
+- The recording timer is now updated based on the current timestamp (and not the already recorded data), even (especially) when no sample data is available ("cold and dark" aircraft)
 
 ### Bug Fixes
 - In the logbook module the date selection column width is now properly calculated (no month name is truncated)
+- The position slider is now properly updated whenever an aircraft is removed or its time offset has been changed
+- When pausing a recording (yes, that's actually possible ;)) the "recording timer" is only restarted in case no event-based recording is done (but a "timer-based recording" instead)
 
 ### Under The Hood
 - Introduction of the GeographicLib
   * Calculating undulation values
   * Geodesic calculations (distance, azimuth, relative position)
-- "Modern CMake" (build system)
+- Refactored the build system ("modern CMake")
 
 ## 0.10.0
 

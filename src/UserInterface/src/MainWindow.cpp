@@ -22,9 +22,11 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <algorithm>
 #include <memory>
 #include <vector>
 #include <cstdint>
+#include <cmath>
 
 #include <QApplication>
 #include <QByteArray>
@@ -134,6 +136,7 @@ public:
           databaseService(std::make_unique<DatabaseService>()),
           replaySpeedActionGroup(nullptr),
           customSpeedRadioButton(nullptr),
+          lastCustomReplaySpeed(1.0),
           customSpeedLineEdit(nullptr),
           replaySpeedUnitComboBox(nullptr),
           customReplaySpeedFactorValidator(nullptr),
@@ -273,7 +276,9 @@ void MainWindow::frenchConnection() noexcept
     connect(&flight, &Flight::flightRestored,
             this, &MainWindow::handleFlightRestored);
     connect(&flight, &Flight::timeOffsetChanged,
-            this, &MainWindow::updateTimestamp);
+            this, &MainWindow::updateReplayDuration);
+    connect(&flight, &Flight::aircraftRemoved,
+            this, &MainWindow::updateReplayDuration);
     connect(&flight, &Flight::cleared,
             this, &MainWindow::updateUi);
 
@@ -287,9 +292,9 @@ void MainWindow::frenchConnection() noexcept
 
     // Menu actions
     connect(d->importQActionGroup, &QActionGroup::triggered,
-            this, &MainWindow::handleImport);
+            this, &MainWindow::onImport);
     connect(d->exportQActionGroup, &QActionGroup::triggered,
-            this, &MainWindow::handleExport);
+            this, &MainWindow::onExport);
 
     // Settings
     connect(&Settings::getInstance(), &Settings::replayLoopChanged,
@@ -494,17 +499,17 @@ void MainWindow::initViewUi() noexcept
 void MainWindow::initControlUi() noexcept
 {
     ui->positionSlider->setRange(PositionSliderMin, PositionSliderMax);
-    ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatNumber(0, 0), d->unit.formatElapsedTime(0)));
+    ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatTimestamp(0), d->unit.formatHHMMSS(0)));
     ui->timestampTimeEdit->setDisplayFormat(TimestampFormat);
 
     // Record/replay control buttons
     ui->recordButton->setAction(ui->recordAction);
-    ui->skipToStartButton->setAction(ui->skipToBeginAction);
-    ui->skipBackwardButton->setAction(ui->backwardAction);
+    ui->skipToBeginButton->setAction(ui->skipToBeginAction);
+    ui->backwardButton->setAction(ui->backwardAction);
     ui->stopButton->setAction(ui->stopAction);
     ui->pauseButton->setAction(ui->pauseAction);
     ui->playButton->setAction(ui->playAction);
-    ui->skipForwardButton->setAction(ui->forwardAction);
+    ui->forwardButton->setAction(ui->forwardAction);
     ui->skipToEndButton->setAction(ui->skipToEndAction);
 
     // Completely flat button (no border)
@@ -654,9 +659,6 @@ void MainWindow::initReplaySpeedUi() noexcept
     case Replay::SpeedUnit::Percent:
         d->replaySpeedUnitComboBox->setCurrentIndex(1);
         break;
-    default:
-        d->replaySpeedUnitComboBox->setCurrentIndex(0);
-        break;
     }
 
     replaySpeedLayout->addWidget(d->replaySpeedUnitComboBox);
@@ -760,6 +762,35 @@ void MainWindow::updateMinimalUi(bool enabled)
     QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
 }
 
+void MainWindow::updateRecordingDuration(std::int64_t timestamp) noexcept
+{
+    ui->timestampTimeEdit->blockSignals(true);
+    QTime time = QTime::fromMSecsSinceStartOfDay(timestamp);
+    ui->timestampTimeEdit->setMaximumTime(time);
+    ui->timestampTimeEdit->setTime(time);
+    ui->timestampTimeEdit->blockSignals(false);
+}
+
+void MainWindow::updatePositionSlider(std::int64_t timestamp) noexcept
+{
+    const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
+    const std::int64_t ts = std::min(timestamp, totalDuration);
+
+    const int sliderPosition = totalDuration > 0 ?
+                               static_cast<int>(std::round(PositionSliderMax * (static_cast<double>(ts) / static_cast<double>(totalDuration)))) :
+                               0;
+
+    ui->positionSlider->blockSignals(true);
+    ui->positionSlider->setValue(sliderPosition);
+    ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatTimestamp(timestamp), d->unit.formatHHMMSS(timestamp)));
+    ui->positionSlider->blockSignals(false);
+
+    const QTime time = QTime::fromMSecsSinceStartOfDay(timestamp);
+    ui->timestampTimeEdit->blockSignals(true);
+    ui->timestampTimeEdit->setTime(time);
+    ui->timestampTimeEdit->blockSignals(false);
+}
+
 double MainWindow::getCustomSpeedFactor() const
 {
     double customSpeedFactor;
@@ -771,9 +802,6 @@ double MainWindow::getCustomSpeedFactor() const
             break;
         case Replay::SpeedUnit::Percent:
             customSpeedFactor = d->unit.toNumber(text) / 100.0;
-            break;
-        default:
-            customSpeedFactor = 1.0;
             break;
         }
     } else {
@@ -802,10 +830,10 @@ void MainWindow::on_positionSlider_valueChanged(int value) noexcept
     if (skyConnect) {
         const double scale = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
         const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
-        const std::int64_t timestamp = static_cast<std::int64_t>(qRound(scale * static_cast<double>(totalDuration)));
-        ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatNumber(timestamp, 0), d->unit.formatElapsedTime(timestamp)));
+        const std::int64_t timestamp = static_cast<std::int64_t>(std::round(scale * static_cast<double>(totalDuration)));
+        ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatTimestamp(timestamp), d->unit.formatHHMMSS(timestamp)));
 
-        // Prevent the timestampTimeEdit field to set the play position as well
+        // Prevent the timestampTimeEdit field to set the replay position as well
         ui->timestampTimeEdit->blockSignals(true);
         skyConnect->get().seek(timestamp);
         ui->timestampTimeEdit->blockSignals(false);
@@ -851,27 +879,9 @@ void MainWindow::handleTimestampChanged(std::int64_t timestamp) noexcept
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
         if (skyConnect->get().isRecording()) {
-            updateTimestamp();
+            updateRecordingDuration(timestamp);
         } else {
-            const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
-            const std::int64_t ts = qMin(timestamp, totalDuration);
-
-            int sliderPosition;
-            if (totalDuration > 0) {
-                sliderPosition = qRound(PositionSliderMax * (static_cast<double>(ts) / static_cast<double>(totalDuration)));
-            } else {
-                sliderPosition = 0;
-            }
-            ui->positionSlider->blockSignals(true);
-            ui->positionSlider->setValue(sliderPosition);
-            ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatNumber(timestamp, 0), d->unit.formatElapsedTime(timestamp)));
-            ui->positionSlider->blockSignals(false);
-
-            QTime time(0, 0, 0, 0);
-            time = time.addMSecs(timestamp);
-            ui->timestampTimeEdit->blockSignals(true);
-            ui->timestampTimeEdit->setTime(time);
-            ui->timestampTimeEdit->blockSignals(false);
+            updatePositionSlider(timestamp);
         };
     }
 }
@@ -911,9 +921,6 @@ void MainWindow::handleReplaySpeedSelected(QAction *action) noexcept
     case ReplaySpeed::Custom:
         replaySpeedFactor = getCustomSpeedFactor();
         break;
-    default:
-        replaySpeedFactor = 1.0;
-        break;
     }
 
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
@@ -936,8 +943,6 @@ void MainWindow::handleCustomSpeedChanged() noexcept
     case Replay::SpeedUnit::Percent:
         d->lastCustomReplaySpeed = customReplaySpeedFactor * 100.0;
         break;
-    default:
-        break;
     }
 }
 
@@ -958,8 +963,6 @@ void MainWindow::handleReplaySpeedUnitSelected(int index) noexcept
             d->lastCustomReplaySpeed *= 100.0;
         }
         break;
-    default:
-        break;
     }
     settings.setReplaySpeedUnit(replaySpeedUnit);
     updateReplaySpeedUi();
@@ -970,7 +973,7 @@ void MainWindow::updateUi() noexcept
     updateControlUi();
     updateControlIcons();
     updateReplaySpeedUi();
-    updateTimestamp();
+    updateReplayDuration();
     updateFileMenu();
     updateWindowMenu();
     updateMainWindow();
@@ -978,7 +981,7 @@ void MainWindow::updateUi() noexcept
 
 void MainWindow::updateControlUi() noexcept
 {
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();
+    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
     const bool hasRecording = aircraft.hasRecording();
 
     const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
@@ -1056,8 +1059,6 @@ void MainWindow::updateControlUi() noexcept
         ui->playAction->setChecked(false);
         ui->timestampTimeEdit->setEnabled(true);
         break;
-    default:
-        break;
     }
 
     const bool loopReplayEnabled = Settings::getInstance().isReplayLoopEnabled();
@@ -1073,14 +1074,17 @@ void MainWindow::updateControlIcons() noexcept
 {
     QIcon recordIcon;
     switch (d->moduleManager->getActiveModule().getModuleId()) {
+    case Module::Module::None:
+        [[fallthrough]];
+    case Module::Module::Logbook:
+        recordIcon.addFile(":/img/icons/record-normal.png", QSize(), QIcon::Normal, QIcon::Off);
+        recordIcon.addFile(":/img/icons/record-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
+        break;
     case Module::Module::Formation:
         recordIcon.addFile(":/img/icons/record-add-normal.png", QSize(), QIcon::Normal, QIcon::Off);
         recordIcon.addFile(":/img/icons/record-add-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
         break;
-    default:
-        recordIcon.addFile(":/img/icons/record-normal.png", QSize(), QIcon::Normal, QIcon::Off);
-        recordIcon.addFile(":/img/icons/record-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
-        break;
+
     }
     ui->recordAction->setIcon(recordIcon);
 }
@@ -1100,9 +1104,6 @@ void MainWindow::updateReplaySpeedUi() noexcept
             d->customSpeedLineEdit->setToolTip(tr("Custom replay speed % in [%L1%, %L2%].").arg(ReplaySpeedAbsoluteMin * 100.0).arg(ReplaySpeedAbsoluteMax * 100.0));
             d->customSpeedLineEdit->setValidator(d->customReplaySpeedPercentValidator);
             break;
-        default:
-            d->customSpeedLineEdit->setToolTip("");
-            break;
         }
 
     } else {
@@ -1112,25 +1113,22 @@ void MainWindow::updateReplaySpeedUi() noexcept
     }    
 }
 
-void MainWindow::updateTimestamp() noexcept
+void MainWindow::updateReplayDuration() noexcept
 {
-    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    const bool isRecording = skyConnect && skyConnect->get().isRecording();
-    const bool ofUserAircraft = isRecording;
-    const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec(ofUserAircraft);
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const std::int64_t totalDuration = flight.getTotalDurationMSec();
     ui->timestampTimeEdit->blockSignals(true);
-    QTime time(0, 0, 0, 0);
-    time = time.addMSecs(totalDuration);
-    if (isRecording) {
-        ui->timestampTimeEdit->setTime(time);
-    }
+    const QTime time = QTime::fromMSecsSinceStartOfDay(totalDuration);
     ui->timestampTimeEdit->setMaximumTime(time);
     ui->timestampTimeEdit->blockSignals(false);
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const std::int64_t timestamp = skyConnect ? skyConnect->get().getCurrentTimestamp() : 0;
+    updatePositionSlider(timestamp);
 }
 
 void MainWindow::updateFileMenu() noexcept
 {
-    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraftConst();
+    const Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
     const bool hasRecording = aircraft.hasRecording();
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const Connect::State state = skyConnect ? skyConnect->get().getState() : Connect::State::Disconnected;
@@ -1413,7 +1411,7 @@ void MainWindow::handleLogbookConnectionChanged(bool connected) noexcept
     updateUi();
 }
 
-void MainWindow::handleImport(QAction *action) noexcept
+void MainWindow::onImport(QAction *action) noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     const QUuid pluginUuid = action->data().toUuid();
@@ -1432,10 +1430,10 @@ void MainWindow::handleImport(QAction *action) noexcept
     }
 }
 
-void MainWindow::handleExport(QAction *action) noexcept
+void MainWindow::onExport(QAction *action) noexcept
 {
     const QUuid pluginUuid = action->data().toUuid();
-    const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
     PluginManager::getInstance().exportFlight(flight, pluginUuid);
 }
 

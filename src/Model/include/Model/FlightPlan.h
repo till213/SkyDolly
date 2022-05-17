@@ -41,8 +41,8 @@ class MODEL_API FlightPlan : public QObject
 {
     Q_OBJECT
 public:
-    FlightPlan(QObject *parent = nullptr) noexcept;
-    virtual ~FlightPlan() noexcept;
+    explicit FlightPlan(QObject *parent = nullptr) noexcept;
+    ~FlightPlan() noexcept override;
 
     void add(const Waypoint &waypoint) noexcept;
     void update(int index, const Waypoint &waypoint) noexcept;

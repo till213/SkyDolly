@@ -107,10 +107,6 @@ bool CsvImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
     case CsvImportSettings::Format::FlightRecorder:
         parser = std::make_unique<FlightRecorderCsvParser>();
         break;
-    default:
-        parser = nullptr;
-        ok = false;
-        break;
     }
     if (parser != nullptr) {
         ok = parser->parse(file, d->firstDateTimeUtc, d->flightNumber, flight);
@@ -134,9 +130,6 @@ FlightAugmentation::Procedures CsvImportPlugin::getProcedures() const noexcept
     case CsvImportSettings::Format::FlightRecorder:
         procedures = FlightAugmentation::Procedure::None;
         break;
-    default:
-        procedures = FlightAugmentation::Procedure::All;
-        break;
     }
 
     return procedures;
@@ -157,9 +150,6 @@ FlightAugmentation::Aspects CsvImportPlugin::getAspects() const noexcept
         break;
     case CsvImportSettings::Format::FlightRecorder:
         aspects = FlightAugmentation::Aspect::None;
-        break;
-    default:
-        aspects = FlightAugmentation::Aspect::All;
         break;
     }
 
@@ -184,9 +174,6 @@ QString CsvImportPlugin::getTitle() const noexcept
         break;
     case CsvImportSettings::Format::FlightRecorder:
         title = tr("Flight Recorder CSV import");
-        break;
-    default:
-        title = tr("CSV import");
         break;
     }
     return title;

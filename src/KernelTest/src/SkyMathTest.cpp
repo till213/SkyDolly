@@ -25,6 +25,7 @@
 #include <limits>
 #include <utility>
 #include <cstdint>
+#include <cmath>
 
 #include <QtTest/QtTest>
 

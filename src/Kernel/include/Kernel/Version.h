@@ -119,7 +119,7 @@ public:
      * \param rhs
      *        the other Version to assign from
      */
-    void operator=(const Version &rhs) noexcept;
+    void operator = (const Version &rhs) noexcept;
 
     /*!
      * Compares this Version against \c rhs for equality.
@@ -129,7 +129,7 @@ public:
      * \return \c true if this Version is equal with the \c rhs version;
      *         \c false else
      */
-    bool operator==(const Version &rhs) noexcept;
+    bool operator == (const Version &rhs) noexcept;
 
     /*!
      * Compares this Version against \c rhs for greater or equal.

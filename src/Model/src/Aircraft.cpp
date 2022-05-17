@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <algorithm>
 #include <memory>
 #include <cstdint>
 #include <cinttypes>
@@ -96,19 +97,9 @@ void Aircraft::setId(std::int64_t id) noexcept
     d->aircraftInfo.aircraftId = id;
 }
 
-const Position &Aircraft::getPositionConst() const noexcept
-{
-    return d->position;
-}
-
 Position &Aircraft::getPosition() const noexcept
 {
     return d->position;
-}
-
-const Engine &Aircraft::getEngineConst() const noexcept
-{
-    return d->engine;
 }
 
 Engine &Aircraft::getEngine() const noexcept
@@ -116,19 +107,9 @@ Engine &Aircraft::getEngine() const noexcept
     return d->engine;
 }
 
-const PrimaryFlightControl &Aircraft::getPrimaryFlightControlConst() const noexcept
-{
-    return d->primaryFlightControl;
-}
-
 PrimaryFlightControl &Aircraft::getPrimaryFlightControl() const noexcept
 {
     return d->primaryFlightControl;
-}
-
-const SecondaryFlightControl &Aircraft::getSecondaryFlightControlConst() const noexcept
-{
-    return d->secondaryFlightControl;
 }
 
 SecondaryFlightControl &Aircraft::getSecondaryFlightControl() const noexcept
@@ -136,19 +117,9 @@ SecondaryFlightControl &Aircraft::getSecondaryFlightControl() const noexcept
     return d->secondaryFlightControl;
 }
 
-const AircraftHandle &Aircraft::getAircraftHandleConst() const noexcept
-{
-    return d->aircraftHandle;
-}
-
 AircraftHandle &Aircraft::getAircraftHandle() const noexcept
 {
     return d->aircraftHandle;
-}
-
-const Light &Aircraft::getLightConst() const noexcept
-{
-    return d->light;
 }
 
 Light &Aircraft::getLight() const noexcept
@@ -156,7 +127,12 @@ Light &Aircraft::getLight() const noexcept
     return d->light;
 }
 
-const AircraftInfo &Aircraft::getAircraftInfoConst() const noexcept
+FlightPlan &Aircraft::getFlightPlan() const noexcept
+{
+    return d->flightPlan;
+}
+
+const AircraftInfo &Aircraft::getAircraftInfo() const noexcept
 {
     return d->aircraftInfo;
 }
@@ -188,16 +164,6 @@ void Aircraft::setTimeOffset(std::int64_t timeOffset) noexcept {
     }
 }
 
-const FlightPlan &Aircraft::getFlightPlanConst() const noexcept
-{
-    return d->flightPlan;
-}
-
-FlightPlan &Aircraft::getFlightPlan() const noexcept
-{
-    return d->flightPlan;
-}
-
 std::int64_t Aircraft::getDurationMSec() const noexcept
 {
     const std::int64_t timeOffset = d->aircraftInfo.timeOffset;
@@ -207,22 +173,22 @@ std::int64_t Aircraft::getDurationMSec() const noexcept
         // is "ahead" of its "schedule" (sampled data). The more ahead the aircraft
         // is, the less the duration -> subtract the offset
         if (d->position.count() > 0) {
-            d->duration = qMax(d->position.getLast().timestamp - timeOffset, std::int64_t(0));
+            d->duration = std::max(d->position.getLast().timestamp - timeOffset, std::int64_t(0));
         }
         if (d->engine.count() > 0) {
-            d->duration = qMax(d->engine.getLast().timestamp - timeOffset, d->duration);
+            d->duration = std::max(d->engine.getLast().timestamp - timeOffset, d->duration);
         }
         if (d->primaryFlightControl.count() > 0) {
-            d->duration = qMax(d->primaryFlightControl.getLast().timestamp - timeOffset, d->duration);
+            d->duration = std::max(d->primaryFlightControl.getLast().timestamp - timeOffset, d->duration);
         }
         if (d->secondaryFlightControl.count() > 0) {
-            d->duration = qMax(d->secondaryFlightControl.getLast().timestamp - timeOffset, d->duration);
+            d->duration = std::max(d->secondaryFlightControl.getLast().timestamp - timeOffset, d->duration);
         }
         if (d->aircraftHandle.count() > 0) {
-            d->duration = qMax(d->aircraftHandle.getLast().timestamp - timeOffset, d->duration);
+            d->duration = std::max(d->aircraftHandle.getLast().timestamp - timeOffset, d->duration);
         }
         if (d->light.count() > 0) {
-            d->duration = qMax(d->light.getLast().timestamp - timeOffset, d->duration);
+            d->duration = std::max(d->light.getLast().timestamp - timeOffset, d->duration);
         }
     }
     return d->duration;
@@ -243,7 +209,6 @@ void Aircraft::clear() noexcept
     d->light.clear();
     d->flightPlan.clear();
     d->aircraftInfo.clear();
-    emit dataChanged();
 }
 
 bool Aircraft::operator == (const Aircraft &rhs) const noexcept
@@ -256,25 +221,17 @@ bool Aircraft::operator != (const Aircraft &rhs) const noexcept
     return this->d->id != rhs.d->id;
 }
 
+// PUBLIC SLOTS
+
+void Aircraft::invalidateDuration() noexcept
+{
+    d->duration = TimeVariableData::InvalidTime;
+}
+
 // PRIVATE
 
 void Aircraft::frenchConnection()
 {
-    // Aircraft sample data
-    connect(&d->position, &Position::dataChanged,
-            this, &Aircraft::handleDataChanged);
-    connect(&d->engine, &Engine::dataChanged,
-            this, &Aircraft::handleDataChanged);
-    connect(&d->primaryFlightControl, &PrimaryFlightControl::dataChanged,
-            this, &Aircraft::handleDataChanged);
-    connect(&d->secondaryFlightControl, &SecondaryFlightControl::dataChanged,
-            this, &Aircraft::handleDataChanged);
-    connect(&d->aircraftHandle, &AircraftHandle::dataChanged,
-            this, &Aircraft::handleDataChanged);
-    connect(&d->light, &Light::dataChanged,
-            this, &Aircraft::handleDataChanged);
-    connect(this, &Aircraft::dataChanged,
-            this, &Aircraft::invalidateDuration);
     // Tail number
     connect(this, &Aircraft::tailNumberChanged,
             this, &Aircraft::infoChanged);
@@ -283,16 +240,4 @@ void Aircraft::frenchConnection()
             this, &Aircraft::invalidateDuration);
     connect(this, &Aircraft::timeOffsetChanged,
             this, &Aircraft::infoChanged);
-}
-
-// PRIVATE SLOTS
-
-void Aircraft::handleDataChanged()
-{
-    emit dataChanged();
-}
-
-void Aircraft::invalidateDuration()
-{
-    d->duration = TimeVariableData::InvalidTime;
 }

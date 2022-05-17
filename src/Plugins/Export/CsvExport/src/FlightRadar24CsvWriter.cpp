@@ -24,6 +24,7 @@
  */
 #include <memory>
 #include <cstdint>
+#include <cmath>
 
 #include <QIODevice>
 #include <QChar>
@@ -96,7 +97,7 @@ bool FlightRadar24CsvWriter::write(const Flight &flight, const Aircraft &aircraf
     bool ok = io.write(csv.toUtf8());
     if (ok) {
         const QDateTime startDateTimeUtc = flight.getAircraftStartZuluTime(aircraft);
-        const QString callSign = aircraft.getAircraftInfoConst().flightNumber;
+        const QString callSign = aircraft.getAircraftInfo().flightNumber;
         std::vector<PositionData> interpolatedPositionData;
         Export::resamplePositionDataForExport(aircraft, d->pluginSettings.getResamplingPeriod(), std::back_inserter(interpolatedPositionData));
         for (PositionData &positionData : interpolatedPositionData) {
@@ -107,9 +108,9 @@ bool FlightRadar24CsvWriter::write(const Flight &flight, const Aircraft &aircraf
                                     dateTimeUtc.toString(Qt::ISODate) % CsvConst::CommaSep %
                                     callSign % CsvConst::CommaSep %
                                     formatPosition(positionData) % CsvConst::CommaSep %
-                                    QString::number(qRound(positionData.altitude)) % CsvConst::CommaSep %
-                                    QString::number(qRound(positionData.velocityBodyZ)) % CsvConst::CommaSep %
-                                    QString::number(qRound(positionData.heading)) % CsvConst::Ln;
+                                    QString::number(static_cast<int>(std::round(positionData.altitude))) % CsvConst::CommaSep %
+                                    QString::number(static_cast<int>(std::round(positionData.velocityBodyZ))) % CsvConst::CommaSep %
+                                    QString::number(static_cast<int>(std::round(positionData.heading))) % CsvConst::Ln;
                 ok = io.write(csv.toUtf8());
             }
             if (!ok) {

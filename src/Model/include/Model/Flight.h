@@ -45,8 +45,8 @@ class MODEL_API Flight : public QObject
 {
     Q_OBJECT
 public:
-    Flight(QObject *parent = nullptr) noexcept;
-    virtual ~Flight() noexcept;
+    explicit Flight(QObject *parent = nullptr) noexcept;
+    ~Flight() noexcept override;
 
     std::int64_t getId() const noexcept;
     void setId(std::int64_t id) noexcept;
@@ -62,16 +62,32 @@ public:
 
     void setAircraft(std::vector<std::unique_ptr<Aircraft>> aircraft) noexcept;
     Aircraft &addUserAircraft() noexcept;
-    const Aircraft &getUserAircraftConst() const noexcept;
     Aircraft &getUserAircraft() const noexcept;
     int getUserAircraftIndex() const noexcept;
     void setUserAircraftIndex(int index) noexcept;
     std::int64_t deleteAircraftByIndex(int index) noexcept;
     std::size_t count() const noexcept;
 
-    const FlightCondition &getFlightConditionConst() const noexcept;
+    const FlightCondition &getFlightCondition() const noexcept;
     void setFlightCondition(FlightCondition flightCondition) noexcept;
 
+    /*!
+     * Returns the total duration of the flight [in milliseconds], that is it returns
+     * the longest replay time of all aircraft, taking their time offsets into account.
+     * Unless \c ofUserAircraft is set to \c true, in which case the replay time of the
+     * \em user aircraft is returned.
+     *
+     * Note that the total duration is cached and not updated during recording. Use
+     * the SkyConnectIntf#getCurrentTimestamp in this case, which - during recording - indicates
+     * the current recorded duration (for the user aircraft).
+     *
+     * \param ofUserAircraft
+     *        set to \c true in case to specifically query the replay duration
+     *        of the user aircraft; \c false in order to query the total duration
+     *        for the flight; default: \c false
+     * \return the total replay duration of the flight, or the replay duration of
+     *         the user aircraft
+     */
     std::int64_t getTotalDurationMSec(bool ofUserAircraft = false) const noexcept;
     QDateTime getAircraftCreationTime(const Aircraft &aircraft) const noexcept;
     QDateTime getAircraftStartLocalTime(const Aircraft &aircraft) const noexcept;
@@ -100,7 +116,7 @@ signals:
     void flightConditionChanged();
 
     void aircraftAdded(Aircraft &newAircraft);
-    void aircraftDeleted(std::int64_t removedAircraftId);
+    void aircraftRemoved(std::int64_t removedAircraftId);
     void userAircraftChanged(Aircraft &newUserAircraft);
 
     void aircraftInfoChanged(Aircraft &aircraft);

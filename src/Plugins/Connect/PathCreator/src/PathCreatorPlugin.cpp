@@ -25,16 +25,19 @@
 #include <memory>
 #include <cstdint>
 #include <cinttypes>
+#include <cmath>
 
 #include <QTimer>
 #include <QtGlobal>
 #include <QRandomGenerator>
 #include <QStringList>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Settings.h>
 #include <Kernel/SkyMath.h>
 #include <Model/TimeVariableData.h>
-#include <Model/Logbook.h>
 #include <Model/Flight.h>
 #include <Model/Aircraft.h>
 #include <Model/AircraftInfo.h>
@@ -62,7 +65,8 @@
 namespace {
     // Hz
     constexpr int ReplayRate = 60;
-    constexpr int ReplayPeriod = qRound(1000.0 / ReplayRate);
+    // Implementation note: std:round will become constexpr with C++23
+    const int ReplayPeriod = static_cast<int>(std::round(1000.0 / ReplayRate));
 }
 
 class PathCreatorPluginPrivate
@@ -90,14 +94,14 @@ PathCreatorPlugin::PathCreatorPlugin(QObject *parent) noexcept
 {
     frenchConnection();
 #ifdef DEBUG
-    qDebug("PathCreatorPlugin::PathCreatorPlugin: CREATED");
+    qDebug() << "PathCreatorPlugin::PathCreatorPlugin: CREATED";
 #endif
 }
 
 PathCreatorPlugin::~PathCreatorPlugin() noexcept
 {
 #ifdef DEBUG
-    qDebug("PathCreatorPlugin::~PathCreatorPlugin: DELETED");
+    qDebug() << "PathCreatorPlugin::~PathCreatorPlugin: DELETED";
 #endif
 }
 
@@ -136,12 +140,12 @@ void PathCreatorPlugin::onRecordingPaused([[maybe_unused]] bool paused) noexcept
 void PathCreatorPlugin::onStopRecording() noexcept
 {
     Flight &flight = getCurrentFlight();
-    FlightCondition flightCondition = flight.getFlightConditionConst();
+    FlightCondition flightCondition = flight.getFlightCondition();
     flightCondition.endLocalTime = QDateTime::currentDateTime();
     flightCondition.endZuluTime = QDateTime::currentDateTimeUtc();
     flight.setFlightCondition(flightCondition);
 
-    FlightPlan &flightPlan = flight.getUserAircraftConst().getFlightPlan();
+    FlightPlan &flightPlan = flight.getUserAircraft().getFlightPlan();
     int waypointCount = flightPlan.count();
     if (waypointCount > 1) {
         Waypoint waypoint = flightPlan[waypointCount - 1];
@@ -178,19 +182,16 @@ void PathCreatorPlugin::onRecordingSampleRateChanged([[maybe_unused]] SampleRate
 
 bool PathCreatorPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, [[maybe_unused]] AircraftSelection aircraftSelection) noexcept
 {
-    bool dataAvailable;
+    bool dataAvailable {false};
     if (currentTimestamp <= getCurrentFlight().getTotalDurationMSec()) {
         dataAvailable = true;
-        const PositionData &currentPositionData = getCurrentFlight().getUserAircraftConst().getPosition().interpolate(getCurrentTimestamp(), access);
+        const PositionData &currentPositionData = getCurrentFlight().getUserAircraft().getPosition().interpolate(getCurrentTimestamp(), access);
         if (!currentPositionData.isNull()) {
             // Start the elapsed timer after sending the first sample data
             if (!isElapsedTimerRunning()) {
                 startElapsedTimer();
             }
         }
-    } else {
-        // At end of recording
-        dataAvailable = false;
     }
     return dataAvailable;
 }
@@ -223,8 +224,13 @@ void PathCreatorPlugin::onRemoveAiObject(std::int64_t aircraftId) noexcept
 
 void PathCreatorPlugin::recordData() noexcept
 {
-    const std::int64_t timestamp = updateCurrentTimestamp();
+    if (!isElapsedTimerRunning()) {
+        // Start the elapsed timer with the arrival of the first sample data
+        setCurrentTimestamp(0);
+        resetElapsedTime(true);
+    }
 
+    const std::int64_t timestamp = updateCurrentTimestamp();
     recordPositionData(timestamp);
     recordEngineData(timestamp);
     recordPrimaryControls(timestamp);
@@ -232,12 +238,6 @@ void PathCreatorPlugin::recordData() noexcept
     recordAircraftHandle(timestamp);
     recordLights(timestamp);
     recordWaypoint();
-
-    if (!isElapsedTimerRunning()) {
-        // Start the elapsed timer with the arrival of the first sample data
-        setCurrentTimestamp(0);
-        resetElapsedTime(true);
-    }
 }
 
 // PRIVATE
@@ -250,8 +250,6 @@ void PathCreatorPlugin::frenchConnection() noexcept
 
 void PathCreatorPlugin::recordPositionData(std::int64_t timestamp) noexcept
 {
-    Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-
     PositionData aircraftData;
     aircraftData.latitude = -90.0 + d->randomGenerator->bounded(180);
     aircraftData.longitude = -180.0 + d->randomGenerator->bounded(360.0);
@@ -269,13 +267,12 @@ void PathCreatorPlugin::recordPositionData(std::int64_t timestamp) noexcept
     aircraftData.velocityBodyZ = d->randomGenerator->bounded(1.0);
 
     aircraftData.timestamp = timestamp;
+    Aircraft &aircraft = getCurrentFlight().getUserAircraft();
     aircraft.getPosition().upsertLast(aircraftData);
 }
 
 void PathCreatorPlugin::recordEngineData(std::int64_t timestamp) noexcept
 {
-    Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-
     EngineData engineData;
     engineData.throttleLeverPosition1 = SkyMath::fromPosition(-1.0 + d->randomGenerator->bounded(2.0));
     engineData.throttleLeverPosition2 = SkyMath::fromPosition(-1.0 + d->randomGenerator->bounded(2.0));
@@ -307,26 +304,24 @@ void PathCreatorPlugin::recordEngineData(std::int64_t timestamp) noexcept
     engineData.generalEngineCombustion4 = d->randomGenerator->bounded(2) < 1 ? false : true;
 
     engineData.timestamp = timestamp;
+    Aircraft &aircraft = getCurrentFlight().getUserAircraft();
     aircraft.getEngine().upsertLast(std::move(engineData));
 }
 
 void PathCreatorPlugin::recordPrimaryControls(std::int64_t timestamp) noexcept
 {
-    Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-
     PrimaryFlightControlData primaryFlightControlData;
     primaryFlightControlData.rudderPosition = SkyMath::fromPosition(-1.0 + d->randomGenerator->bounded(2.0));
     primaryFlightControlData.elevatorPosition = SkyMath::fromPosition(-1.0 + d->randomGenerator->bounded(2.0));
     primaryFlightControlData.aileronPosition = SkyMath::fromPosition(-1.0 + d->randomGenerator->bounded(2.0));
 
     primaryFlightControlData.timestamp = timestamp;
+    Aircraft &aircraft = getCurrentFlight().getUserAircraft();
     aircraft.getPrimaryFlightControl().upsertLast(std::move(primaryFlightControlData));
 }
 
 void PathCreatorPlugin::recordSecondaryControls(std::int64_t timestamp) noexcept
 {
-    Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-
     SecondaryFlightControlData secondaryFlightControlData;
     secondaryFlightControlData.leadingEdgeFlapsLeftPosition = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
     secondaryFlightControlData.leadingEdgeFlapsRightPosition = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
@@ -336,13 +331,12 @@ void PathCreatorPlugin::recordSecondaryControls(std::int64_t timestamp) noexcept
     secondaryFlightControlData.flapsHandleIndex = d->randomGenerator->bounded(5);
 
     secondaryFlightControlData.timestamp = timestamp;
+    Aircraft &aircraft = getCurrentFlight().getUserAircraft();
     aircraft.getSecondaryFlightControl().upsertLast(std::move(secondaryFlightControlData));
 }
 
 void PathCreatorPlugin::recordAircraftHandle(std::int64_t timestamp) noexcept
 {
-    Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-
     AircraftHandleData aircraftHandleData;
     aircraftHandleData.brakeLeftPosition = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
     aircraftHandleData.brakeRightPosition = SkyMath::fromPosition(d->randomGenerator->bounded(1.0));
@@ -355,26 +349,24 @@ void PathCreatorPlugin::recordAircraftHandle(std::int64_t timestamp) noexcept
     aircraftHandleData.smokeEnabled = d->randomGenerator->bounded(2) < 1 ? false : true;
 
     aircraftHandleData.timestamp = timestamp;
+    Aircraft &aircraft = getCurrentFlight().getUserAircraft();
     aircraft.getAircraftHandle().upsertLast(std::move(aircraftHandleData));
 }
 
 void PathCreatorPlugin::recordLights(std::int64_t timestamp) noexcept
 {
     static int lights = 0;
-    Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-
     LightData lightData;
     lightData.lightStates = static_cast<SimType::LightStates>(lights);
     lights = ++lights % 0b1111111111;
 
     lightData.timestamp = timestamp;
+    Aircraft &aircraft = getCurrentFlight().getUserAircraft();
     aircraft.getLight().upsertLast(std::move(lightData));
 }
 
 void PathCreatorPlugin::recordWaypoint() noexcept
 {
-    Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
-
     Waypoint waypoint;
     if (d->randomGenerator->bounded(100.0) < 0.5) {
         int i = d->randomGenerator->bounded(PathCreatorPluginPrivate::IcaoList.size());
@@ -386,13 +378,13 @@ void PathCreatorPlugin::recordWaypoint() noexcept
         waypoint.zuluTime = QDateTime::currentDateTimeUtc();
         waypoint.timestamp = getCurrentTimestamp();
 
+        Aircraft &aircraft = getCurrentFlight().getUserAircraft();
         aircraft.getFlightPlan().add(waypoint);
     }
 }
 
 void PathCreatorPlugin::recordFlightCondition() noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
     FlightCondition flightCondition;
 
     flightCondition.groundAltitude = d->randomGenerator->bounded(4000);
@@ -410,12 +402,12 @@ void PathCreatorPlugin::recordFlightCondition() noexcept
     flightCondition.startLocalTime = QDateTime::currentDateTime();
     flightCondition.startZuluTime = QDateTime::currentDateTimeUtc();
 
-    flight.setFlightCondition(flightCondition);
+    getCurrentFlight().setFlightCondition(flightCondition);
 }
 
 void PathCreatorPlugin::recordAircraftInfo() noexcept
 {
-    Aircraft &aircraft = Logbook::getInstance().getCurrentFlight().getUserAircraft();
+    Aircraft &aircraft = getCurrentFlight().getUserAircraft();
     AircraftInfo info(aircraft.getId());
 
     switch (d->randomGenerator->bounded(5)) {

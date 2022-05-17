@@ -26,6 +26,7 @@
 #include <utility>
 #include <limits>
 #include <cstdint>
+#include <cmath>
 
 #include <QString>
 #include <QStringBuilder>
@@ -211,21 +212,21 @@ std::int64_t BasicExportDialog::estimateNofSamplePoints() const noexcept
     const std::int64_t period = ui->resamplingComboBox->currentData().toInt();
     if (period != 0) {
         if (isExportUserAircraftOnly()) {
-            std::int64_t duration = d->flight.getUserAircraftConst().getDurationMSec();
-            nofSamplePoints += qRound(static_cast<double>(duration) / static_cast<double>(period)) + 1;
+            std::int64_t duration = d->flight.getUserAircraft().getDurationMSec();
+            nofSamplePoints += static_cast<int>(std::round(static_cast<double>(duration) / static_cast<double>(period))) + 1;
         } else {
             for (const auto &aircraft : d->flight) {
                 std::int64_t duration = aircraft->getDurationMSec();
-                nofSamplePoints += qRound(static_cast<double>(duration) / static_cast<double>(period)) + 1;
+                nofSamplePoints += static_cast<int>(std::round(static_cast<double>(duration) / static_cast<double>(period))) + 1;
             }
         }
     } else {
         // Count the actual position sample points
         if (isExportUserAircraftOnly()) {
-            nofSamplePoints += d->flight.getUserAircraftConst().getPositionConst().count();
+            nofSamplePoints += d->flight.getUserAircraft().getPosition().count();
         } else {
             for (const auto &aircraft : d->flight) {
-                nofSamplePoints += aircraft->getPositionConst().count();
+                nofSamplePoints += aircraft->getPosition().count();
             }
         }
     }
@@ -266,8 +267,6 @@ void BasicExportDialog::updateUi() noexcept
         break;
     case ExportPluginBaseSettings::FormationExport::AllAircraftSeparateFiles:
         ui->formationExportComboBox->setToolTip(tr("All aircraft are exported, into separate files."));
-        break;
-    default:
         break;
     }
 

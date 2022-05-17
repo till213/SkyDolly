@@ -261,6 +261,21 @@ public:
     void setLogbookState(const QByteArray &layout) noexcept;
 
     /*!
+     * Returns the saved formation aircraft table state.
+     *
+     * \return the formation aircraft table state; a \e null QByteArray if not saved before
+     */
+    QByteArray getFormationAircraftTableState() const;
+
+    /*!
+     * Stores the formation aircraft table state.
+     *
+     * \param state
+     *        the formation aircraft table state encoded in the QByteAarray
+     */
+    void setFormationAircraftTableState(const QByteArray &layout) noexcept;
+
+    /*!
      * Returns the path of the directory which was last accessed during export or import.
      *
      * \return the path of the last export / import directory

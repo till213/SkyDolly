@@ -27,7 +27,9 @@
 
 #include <QCoreApplication>
 #include <QFileInfo>
+#ifdef DEBUG
 #include <QDebug>
+#endif
 
 #include <GeographicLib/Geoid.hpp>
 

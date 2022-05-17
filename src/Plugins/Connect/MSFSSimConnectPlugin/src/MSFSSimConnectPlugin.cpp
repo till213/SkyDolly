@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <algorithm>
 #include <memory>
 #include <unordered_map>
 #include <cstdint>
@@ -218,7 +219,7 @@ void MSFSSimConnectPlugin::onStopRecording() noexcept
 
     // Update flight plan
     Flight &flight = getCurrentFlight();
-    const Aircraft &userAircraft = flight.getUserAircraftConst();
+    const Aircraft &userAircraft = flight.getUserAircraft();
     FlightPlan &flightPlan = userAircraft.getFlightPlan();
     for (const auto &it : d->flightPlan) {
         flightPlan.add(it.second);
@@ -232,32 +233,32 @@ void MSFSSimConnectPlugin::onStopRecording() noexcept
         waypoint.zuluTime = d->currentZuluDateTime;
         waypoint.timestamp = getCurrentTimestamp();
         flightPlan.update(waypointCount - 1, waypoint);
-    } else if (waypointCount == 0 && userAircraft.getPositionConst().count() > 0) {
+    } else if (waypointCount == 0 && userAircraft.getPosition().count() > 0) {
         Waypoint departureWaypoint;
-        PositionData position = userAircraft.getPositionConst().getFirst();
+        PositionData position = userAircraft.getPosition().getFirst();
         departureWaypoint.identifier = Waypoint::CustomDepartureIdentifier;
         departureWaypoint.latitude = static_cast<float>(position.latitude);
         departureWaypoint.longitude = static_cast<float>(position.longitude);
         departureWaypoint.altitude = static_cast<float>(position.altitude);
-        departureWaypoint.localTime = flight.getFlightConditionConst().startLocalTime;
-        departureWaypoint.zuluTime = flight.getFlightConditionConst().startZuluTime;
+        departureWaypoint.localTime = flight.getFlightCondition().startLocalTime;
+        departureWaypoint.zuluTime = flight.getFlightCondition().startZuluTime;
         departureWaypoint.timestamp = 0;
         flightPlan.add(departureWaypoint);
 
         Waypoint arrivalWaypoint;
-        position = userAircraft.getPositionConst().getLast();
+        position = userAircraft.getPosition().getLast();
         arrivalWaypoint.identifier = Waypoint::CustomArrivalIdentifier;
         arrivalWaypoint.latitude = static_cast<float>(position.latitude);
         arrivalWaypoint.longitude = static_cast<float>(position.longitude);
         arrivalWaypoint.altitude = static_cast<float>(position.altitude);
         arrivalWaypoint.localTime = d->currentLocalDateTime;
         arrivalWaypoint.zuluTime = d->currentZuluDateTime;
-        arrivalWaypoint.timestamp = qMax(getCurrentTimestamp(), departureWaypoint.timestamp + 1);
+        arrivalWaypoint.timestamp = std::max(getCurrentTimestamp(), departureWaypoint.timestamp + 1);
         flightPlan.add(arrivalWaypoint);
     }
 
     // Update end simulation time of flight conditions
-    FlightCondition condition = flight.getFlightConditionConst();
+    FlightCondition condition = flight.getFlightCondition();
     condition.endLocalTime = d->currentLocalDateTime;
     condition.endZuluTime = d->currentZuluDateTime;
     flight.setFlightCondition(condition);
@@ -299,7 +300,7 @@ void MSFSSimConnectPlugin::onRecordingSampleRateChanged(SampleRate::SampleRate s
 bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept
 {
     const Flight &flight = getCurrentFlight();
-    const std::int64_t userAircraftId = flight.getUserAircraftConst().getId();
+    const std::int64_t userAircraftId = flight.getUserAircraft().getId();
     bool ok = true;
     for (auto &aircraft : flight) {
 
@@ -322,7 +323,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
             if (objectId != SimConnectAi::InvalidObjectId) {
 
                 ok = true;
-                const PositionData &positionData = aircraft->getPositionConst().interpolate(currentTimestamp, access);
+                const PositionData &positionData = aircraft->getPosition().interpolate(currentTimestamp, access);
                 if (!positionData.isNull()) {
                     SimConnectPositionRequest simConnnectPositionRequest;
                     simConnnectPositionRequest.fromPositionData(positionData);
@@ -334,7 +335,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
 
                 // Engine
                 if (ok) {
-                    const EngineData &engineData = aircraft->getEngineConst().interpolate(currentTimestamp, access);
+                    const EngineData &engineData = aircraft->getEngine().interpolate(currentTimestamp, access);
                     if (!engineData.isNull()) {
                         SimConnectEngineRequest simConnectEngineRequest;
                         simConnectEngineRequest.fromEngineData(engineData);
@@ -350,7 +351,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
 
                 // Primary flight controls
                 if (ok) {
-                    const PrimaryFlightControlData &primaryFlightControlData = aircraft->getPrimaryFlightControlConst().interpolate(currentTimestamp, access);
+                    const PrimaryFlightControlData &primaryFlightControlData = aircraft->getPrimaryFlightControl().interpolate(currentTimestamp, access);
                     if (!primaryFlightControlData.isNull()) {
                         SimConnectPrimaryFlightControl simConnectPrimaryFlightControl;
                         simConnectPrimaryFlightControl.fromPrimaryFlightControlData(primaryFlightControlData);
@@ -363,7 +364,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
 
                 // Secondary flight controls
                 if (ok) {
-                    const SecondaryFlightControlData &secondaryFlightControlData = aircraft->getSecondaryFlightControlConst().interpolate(currentTimestamp, access);
+                    const SecondaryFlightControlData &secondaryFlightControlData = aircraft->getSecondaryFlightControl().interpolate(currentTimestamp, access);
                     if (!secondaryFlightControlData.isNull()) {
                         SimConnectSecondaryFlightControl simConnectSecondaryFlightControl;
                         simConnectSecondaryFlightControl.fromSecondaryFlightControlData(secondaryFlightControlData);
@@ -376,7 +377,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
 
                 // Aircraft handles & brakes
                 if (ok) {
-                    const AircraftHandleData &aircraftHandleData = aircraft->getAircraftHandleConst().interpolate(currentTimestamp, access);
+                    const AircraftHandleData aircraftHandleData = aircraft->getAircraftHandle().interpolate(currentTimestamp, access);
                     if (!aircraftHandleData.isNull()) {
                         SimConnectAircraftHandle simConnectAircraftHandle;
                         simConnectAircraftHandle.fromAircraftHandleData(aircraftHandleData);
@@ -389,7 +390,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
 
                 // Lights
                 if (ok) {
-                    const LightData &lightData = aircraft->getLightConst().interpolate(currentTimestamp, access);
+                    const LightData &lightData = aircraft->getLight().interpolate(currentTimestamp, access);
                     if (!lightData.isNull()) {
                         SimConnectLight simConnectLight;
                         simConnectLight.fromLightData(lightData);

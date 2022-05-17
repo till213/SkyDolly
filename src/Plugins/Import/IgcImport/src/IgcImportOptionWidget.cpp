@@ -121,9 +121,10 @@ void IgcImportOptionWidget::updateUi() noexcept
             ui->convertAltitudeCheckBox->setToolTip(tr("No earth gravity model (EGM) is available."));
         }
         break;
-    default:
+    case IgcImportSettings::AltitudeMode::Pressure:
         ui->convertAltitudeCheckBox->setEnabled(false);
         ui->convertAltitudeCheckBox->setChecked(false);
+        break;
     }
 }
 

@@ -113,9 +113,6 @@ bool CsvExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircr
     case CsvExportSettings::Format::PositionAndVelocity:
         writer = std::make_unique<PositionAndAttitudeCsvWriter>(d->pluginSettings);
         break;
-    default:
-        writer = nullptr;
-        break;
     }
 
     if (writer != nullptr) {

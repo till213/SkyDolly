@@ -126,9 +126,6 @@ bool SkyDollyCsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, [[maybe_
                         ok = importLightData(headers, values, firstLightData, aircraft.getLight());
                         firstLightData = false;
                         break;
-                    default:
-                        // Ignore unknown data types
-                        break;
                     }
                 }
 

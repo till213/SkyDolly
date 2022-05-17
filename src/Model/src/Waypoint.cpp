@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <utility>
+
 #include "LightData.h"
 #include "Waypoint.h"
 
@@ -33,6 +35,30 @@ Waypoint::Waypoint(float theLatitude, float theLongitude, float theAltitude) noe
       longitude(theLongitude),
       altitude(theAltitude)
 {}
+
+Waypoint::Waypoint(Waypoint &&other) noexcept
+    : TimeVariableData(std::move(other)),
+      identifier(std::move(other.identifier)),
+      latitude(other.latitude),
+      longitude(other.longitude),
+      altitude(other.altitude),
+      localTime(std::move(other.localTime)),
+      zuluTime(std::move(other.zuluTime))
+{}
+
+Waypoint &Waypoint::operator = (Waypoint &&rhs) noexcept
+{
+    if (this != &rhs) {
+        TimeVariableData::operator=(rhs);
+        identifier = std::move(rhs.identifier);
+        latitude = rhs.latitude;
+        longitude = rhs.longitude;
+        altitude = rhs.altitude;
+        localTime = std::move(rhs.localTime);
+        zuluTime = std::move(rhs.zuluTime);
+    }
+    return *this;
+}
 
 bool Waypoint::isValid() const noexcept
 {

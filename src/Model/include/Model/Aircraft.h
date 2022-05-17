@@ -48,42 +48,33 @@ class MODEL_API Aircraft : public QObject
 {
     Q_OBJECT
 public:
-    Aircraft(QObject *parent = nullptr) noexcept;
-    virtual ~Aircraft() noexcept;
+    explicit Aircraft(QObject *parent = nullptr) noexcept;
+    ~Aircraft() noexcept override;
 
     std::int64_t getId() const noexcept;
     void setId(std::int64_t id) noexcept;
 
-    const Position &getPositionConst() const noexcept;
     Position &getPosition() const noexcept;
-
-    const Engine &getEngineConst() const noexcept;
     Engine &getEngine() const noexcept;
-
-    const PrimaryFlightControl &getPrimaryFlightControlConst() const noexcept;
     PrimaryFlightControl &getPrimaryFlightControl() const noexcept;
-
-    const SecondaryFlightControl &getSecondaryFlightControlConst() const noexcept;
     SecondaryFlightControl &getSecondaryFlightControl() const noexcept;
-
-    const AircraftHandle &getAircraftHandleConst() const noexcept;
     AircraftHandle &getAircraftHandle() const noexcept;
-
-    const Light &getLightConst() const noexcept;
     Light &getLight() const noexcept;
 
-    const AircraftInfo &getAircraftInfoConst() const noexcept;
+    FlightPlan &getFlightPlan() const noexcept;
+    const AircraftInfo &getAircraftInfo() const noexcept;
     void setAircraftInfo(const AircraftInfo &aircraftInfo) noexcept;
-
     void setTailNumber(const QString &tailNumber) noexcept;
 
     std::int64_t getTimeOffset() const noexcept;
     void setTimeOffset(std::int64_t timeOffset) noexcept;
-
-    const FlightPlan &getFlightPlanConst() const noexcept;
-    FlightPlan &getFlightPlan() const noexcept;
-
     std::int64_t getDurationMSec() const noexcept;
+
+    /*!
+     * Returns whether this aircraft has at least one sampled Position.
+     *
+     * \return \c true if any sampled Position data is available; \c false else
+     */
     bool hasRecording() const noexcept;
 
     void clear() noexcept;
@@ -91,23 +82,47 @@ public:
     bool operator == (const Aircraft &rhs) const noexcept;
     bool operator != (const Aircraft &rhs) const noexcept;
 
-    static constexpr std::int64_t InvalidId = -1;
+    static constexpr std::int64_t InvalidId {-1};
+
+public slots:
+    /*!
+     * Invalidates the duration, such that it gets updated the next time
+     * #getDurationMSec is called.
+     *
+     * Explicitly call this method after an aircraft has been recorded or
+     * the sampled data has been changed (added or removed).
+     *
+     * Also refer to #getDurationMSec.
+     */
+    void invalidateDuration() noexcept;
 
 signals:
+    /*!
+     * Emitted whenever the aircraft info has changed.
+     */
     void infoChanged(Aircraft &aircraft);
-    void dataChanged();
+
+    /*!
+     * Emitted whenever the tail number has changed.
+     *
+     * \param aircraft
+     *        the aircraft whose tail number has changed
+     */
     void tailNumberChanged(Aircraft &aircraft);
+
+    /*!
+     * Emitted whenever the aircraft's time offset has changed.
+     *
+     * \param aircraft
+     *        the aircraft whose time offset has changed
+     */
     void timeOffsetChanged(Aircraft &aircraft);
 
 private:
     Q_DISABLE_COPY(Aircraft)
     std::unique_ptr<AircraftPrivate> d;
 
-    void frenchConnection();
-
-private slots:
-    void handleDataChanged();
-    void invalidateDuration();
+    void frenchConnection(); 
 };
 
 #endif // AIRCRAFT_H

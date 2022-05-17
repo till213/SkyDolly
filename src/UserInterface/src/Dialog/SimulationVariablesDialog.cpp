@@ -30,6 +30,9 @@
 #include <QShortcut>
 #include <QShowEvent>
 #include <QHideEvent>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Model/SimVar.h>
 #include <Model/Logbook.h>
@@ -74,12 +77,15 @@ SimulationVariablesDialog::SimulationVariablesDialog(QWidget *parent) noexcept :
     ui->setupUi(this);
     initUi();
     frenchConnection();
+#ifdef DEBUG
+    qDebug() << "SimulationVariablesDialog::SimulationVariablesDialog: CREATED";
+#endif
 }
 
 SimulationVariablesDialog::~SimulationVariablesDialog() noexcept
 {
 #ifdef DEBUG
-    qDebug("SimulationVariablesDialog::~SimulationVariablesDialog: DELETED");
+    qDebug() << "SimulationVariablesDialog::~SimulationVariablesDialog: DELETED";
 #endif
 }
 
@@ -153,6 +159,12 @@ void SimulationVariablesDialog::updateTitle() noexcept
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const Connect::State state = skyConnect ? skyConnect->get().getState() : Connect::State::Disconnected;
     switch (state) {
+    case Connect::State::Disconnected:
+        windowTitle.append(" - " + tr("DISCONNECTED"));
+        break;
+    case Connect::State::Connected:
+        windowTitle.append(" - " + tr("CONNECTED"));
+        break;
     case Connect::State::Recording:
         windowTitle.append(" - " + tr("RECORDING"));
         break;
@@ -164,8 +176,6 @@ void SimulationVariablesDialog::updateTitle() noexcept
         break;
     case Connect::State::ReplayPaused:
         windowTitle.append(" - " + tr("PLAYPACK PAUSED"));
-        break;
-    default:
         break;
     }
     setWindowTitle(windowTitle);

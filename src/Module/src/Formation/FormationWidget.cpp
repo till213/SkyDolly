@@ -22,10 +22,13 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <algorithm>
 #include <memory>
 #include <cstdint>
+#include <cmath>
 
 #include <QCoreApplication>
+#include <QByteArray>
 #include <QDoubleValidator>
 #include <QWidget>
 #include <QAction>
@@ -58,6 +61,7 @@
 #include <Persistence/Service/AircraftService.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
+#include <PluginManager/Connect.h>
 #include <Widget/Platform.h>
 #include <AbstractModuleWidget.h>
 #include "FormationWidget.h"
@@ -158,10 +162,15 @@ FormationWidget::FormationWidget(FlightService &flightService, QWidget *parent) 
     ui->setupUi(this);
     initUi();
     frenchConnection();
+#ifdef DEBUG
+    qDebug("FormationWidget::FormationWidget: CREATED.");
+#endif
 }
 
 FormationWidget::~FormationWidget() noexcept
 {
+    const QByteArray tableState = ui->aircraftTableWidget->horizontalHeader()->saveState();
+    Settings::getInstance().setFormationAircraftTableState(tableState);
 #ifdef DEBUG
     qDebug("FormationWidget::~FormationWidget: DELETED.");
 #endif
@@ -195,7 +204,7 @@ void FormationWidget::showEvent(QShowEvent *event) noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::userAircraftChanged,
             this, &FormationWidget::handleUserAircraftChanged);
-    connect(&flight, &Flight::aircraftDeleted,
+    connect(&flight, &Flight::aircraftRemoved,
             this, &FormationWidget::updateUi);
     connect(&flight, &Flight::flightStored,
             this, &FormationWidget::updateUi);
@@ -217,7 +226,7 @@ void FormationWidget::hideEvent(QHideEvent *event) noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     disconnect(&flight, &Flight::userAircraftChanged,
                this, &FormationWidget::handleUserAircraftChanged);
-    disconnect(&flight, &Flight::aircraftDeleted,
+    disconnect(&flight, &Flight::aircraftRemoved,
                this, &FormationWidget::updateUi);
     disconnect(&flight, &Flight::flightStored,
                this, &FormationWidget::updateUi);
@@ -255,10 +264,10 @@ void FormationWidget::onStartReplay() noexcept
 void FormationWidget::handleRecordingStopped() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    const int count = flight.count();
-    if (count > 1) {
+    const int sequenceNumber = flight.count();
+    if (sequenceNumber > 1) {
         // Sequence starts at 1
-        d->aircraftService->store(flight.getId(), count, flight[count - 1]);
+        d->aircraftService->store(flight.getId(), sequenceNumber, flight[sequenceNumber - 1]);
     } else {
         AbstractModuleWidget::handleRecordingStopped();
     }
@@ -283,6 +292,10 @@ void FormationWidget::initUi() noexcept
     ui->aircraftTableWidget->setMinimumWidth(MinimumTableWidth);
     ui->aircraftTableWidget->horizontalHeader()->setStretchLastSection(true);
     ui->aircraftTableWidget->sortByColumn(SequenceNumberColumn, Qt::SortOrder::AscendingOrder);
+    ui->aircraftTableWidget->horizontalHeader()->setSectionsMovable(true);
+
+    QByteArray tableState = Settings::getInstance().getFormationAircraftTableState();
+    ui->aircraftTableWidget->horizontalHeader()->restoreState(tableState);
 
     // Default position is south-east
     ui->sePositionRadioButton->setChecked(true);
@@ -383,7 +396,7 @@ void FormationWidget::updateInitialPositionUi() noexcept
     case HorizontalDistance::Far:
         ui->horizontalDistanceTextLabel->setText(tr("Far"));
         break;
-    default:
+    case HorizontalDistance::VeryFar:
         ui->horizontalDistanceTextLabel->setText(tr("Very far"));
         break;
     }
@@ -401,7 +414,7 @@ void FormationWidget::updateInitialPositionUi() noexcept
     case VerticalDistance::JustAbove:
         ui->verticalDistanceTextLabel->setText(tr("Just above"));
         break;
-    default:
+    case VerticalDistance::Above:
         ui->verticalDistanceTextLabel->setText(tr("Above"));
         break;
     }
@@ -415,9 +428,9 @@ InitialPosition FormationWidget::calculateRelativeInitialPositionToUserAircraft(
     if (!relativePositionData.isNull()) {
         initialPosition.fromPositionData(relativePositionData);
         if (timestamp == 0) {
-            const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
-            const Aircraft &userAircraft = flight.getUserAircraftConst();
-            const AircraftInfo &aircraftInfo = userAircraft.getAircraftInfoConst();
+            const Flight &flight = Logbook::getInstance().getCurrentFlight();
+            const Aircraft &userAircraft = flight.getUserAircraft();
+            const AircraftInfo &aircraftInfo = userAircraft.getAircraftInfo();
             initialPosition.onGround =  aircraftInfo.startOnGround;
         } else {
             initialPosition.onGround = false;
@@ -430,20 +443,20 @@ PositionData FormationWidget::calculateRelativePositionToUserAircraft(std::int64
 {
     PositionData initialPosition;
 
-    const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
-    const Aircraft &userAircraft = flight.getUserAircraftConst();
-    const Position &position = userAircraft.getPositionConst();
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const Aircraft &userAircraft = flight.getUserAircraft();
+    Position &position = userAircraft.getPosition();
     const PositionData &positionData = timestamp == 0 ? position.getFirst() : position.interpolate(timestamp, TimeVariableData::Access::Seek);
     if (!positionData.isNull()) {
 
-        const AircraftInfo &aircraftInfo = userAircraft.getAircraftInfoConst();
+        const AircraftInfo &aircraftInfo = userAircraft.getAircraftInfo();
         const AircraftType &aircraftType = aircraftInfo.aircraftType;
 
         // Copy pitch, bank, heading and velocity
         initialPosition = positionData;
 
         // Horizontal distance [feet]
-        double distance;
+        double distance {0.0};
         switch (ui->horizontalDistanceSlider->value()) {
         case HorizontalDistance::VeryClose:
             // Aircraft one wing apart
@@ -461,7 +474,7 @@ PositionData FormationWidget::calculateRelativePositionToUserAircraft(std::int64
             // Aircraft three wingspans apart
             distance = 4.0 * aircraftType.wingSpan;
             break;
-        default:
+        case HorizontalDistance::VeryFar:
             // Aircraft four wingspans apart
             distance = 5.0 * aircraftType.wingSpan;
             break;
@@ -469,7 +482,7 @@ PositionData FormationWidget::calculateRelativePositionToUserAircraft(std::int64
 
         // Vertical distance [feet]
         const SkyMath::Coordinate sourcePosition(positionData.latitude, positionData.longitude);
-        double deltaAltitude;
+        double deltaAltitude {0.0};
         switch (ui->verticalDistanceSlider->value()) {
         case VerticalDistance::Below:
             deltaAltitude = -distance;
@@ -477,14 +490,14 @@ PositionData FormationWidget::calculateRelativePositionToUserAircraft(std::int64
         case VerticalDistance::JustBelow:
             deltaAltitude = -distance / 2.0;
             break;
+        case VerticalDistance::Level:
+            deltaAltitude = 0.0;
+            break;
         case VerticalDistance::JustAbove:
             deltaAltitude = +distance / 2.0;
             break;
         case VerticalDistance::Above:
             deltaAltitude = +distance;
-            break;
-        default:
-            deltaAltitude = 0.0;
             break;
         }
         const double altitude = positionData.altitude + deltaAltitude;
@@ -540,9 +553,6 @@ PositionData FormationWidget::calculateRelativePositionToUserAircraft(std::int64
         case RelativePosition::NorthNorthWest:
             bearing = 337.5;
             break;
-        default:
-            bearing = 0.0;
-            break;
         }
         bearing += positionData.heading;
         SkyMath::Coordinate initial = SkyMath::relativePosition(sourcePosition, SkyMath::feetToMeters(altitude), bearing, SkyMath::feetToMeters(distance));
@@ -578,7 +588,7 @@ void FormationWidget::updateUi() noexcept
     const QString tooltip = tr("Double-click to change user aircraft.");
     for (const auto &aircraft : flight) {
 
-        const AircraftInfo &aircraftInfo = aircraft->getAircraftInfoConst();
+        const AircraftInfo &aircraftInfo = aircraft->getAircraftInfo();
         int columnIndex = 0;
 
         // Sequence
@@ -661,7 +671,7 @@ void FormationWidget::updateUi() noexcept
     ui->aircraftTableWidget->blockSignals(false);
 
     if (d->selectedRow != InvalidSelection) {
-        d->selectedRow = qMin(d->selectedRow, ui->aircraftTableWidget->rowCount() - 1);
+        d->selectedRow = std::min(d->selectedRow, ui->aircraftTableWidget->rowCount() - 1);
         ui->aircraftTableWidget->selectRow(d->selectedRow);
     }
 
@@ -675,7 +685,7 @@ void FormationWidget::updateEditUi() noexcept
 {
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     const bool inRecordingMode = skyConnect && skyConnect->get().inRecordingMode();
-    const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
     bool userAircraftIndex = d->selectedAircraftIndex == flight.getUserAircraftIndex();
     ui->userAircraftPushButton->setEnabled(d->selectedAircraftIndex != Flight::InvalidId && !userAircraftIndex);
     const bool formation = flight.count() > 1;
@@ -715,9 +725,9 @@ void FormationWidget::updateTimeOffsetUi() noexcept
     ui->fastBackwardOffsetPushButton->setEnabled(enabled);
 
     if (enabled) {
-        const Flight &flight = Logbook::getInstance().getCurrentFlightConst();
+        const Flight &flight = Logbook::getInstance().getCurrentFlight();
         const Aircraft &aircraft = flight[d->selectedAircraftIndex];
-        const std::int64_t timeOffset = aircraft.getAircraftInfoConst().timeOffset;
+        const std::int64_t timeOffset = aircraft.getAircraftInfo().timeOffset;
         const double timeOffsetSec = static_cast<double>(timeOffset) / 1000.0;
         QString offsetString = d->unit.formatNumber(timeOffsetSec, TimeOffsetDecimalPlaces);
         ui->timeOffsetLineEdit->setText(offsetString);
@@ -739,9 +749,6 @@ void FormationWidget::updateReplayUi() noexcept
             break;
         case SkyConnectIntf::ReplayMode::FlyWithFormation:
             ui->replayModeComboBox->setCurrentIndex(ReplayMode::FlyWithFormationIndex);
-            break;
-        default:
-            ui->replayModeComboBox->setCurrentIndex(ReplayMode::NormalIndex);
             break;
         }
     } else {
@@ -776,8 +783,6 @@ void FormationWidget::updateToolTips() noexcept
         break;
     case ReplayMode::FlyWithFormationIndex:
         ui->replayModeComboBox->setToolTip(tr("Fly with the currently loaded aircraft along with the formation. Pause the replay to reposition your aircraft again in relation to the recorded user aircraft of the formation."));
-        break;
-    default:
         break;
     }
 }
@@ -814,10 +819,10 @@ void FormationWidget::handleCellChanged(int row, int column) noexcept
         d->aircraftService->changeTailNumber(aircraft, tailNumber);
     } else if (column == d->timeOffsetColumnIndex) {
         QTableWidgetItem *item = ui->aircraftTableWidget->item(row, column);
-        bool ok;
+        bool ok {false};
         const double timeOffsetSec = item->data(Qt::EditRole).toDouble(&ok);
         if (ok) {
-            const std::int64_t timeOffset = static_cast<std::int64_t>(qRound(timeOffsetSec * 1000.0));
+            const std::int64_t timeOffset = static_cast<std::int64_t>(std::round(timeOffsetSec * 1000.0));
             d->aircraftService->changeTimeOffset(aircraft, timeOffset);
         }
     }
@@ -852,7 +857,7 @@ void FormationWidget::updateUserAircraftIndex() noexcept
             // Also update the manually flown user aircraft's position
             if (skyConnect.getReplayMode() == SkyConnectIntf::ReplayMode::UserAircraftManualControl) {
                 const Aircraft &aircraft = flight.getUserAircraft();
-                const Position &position = aircraft.getPosition();
+                Position &position = aircraft.getPosition();
                 const PositionData positionData = position.interpolate(skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
                 skyConnect.setUserAircraftPosition(positionData);
             }
@@ -915,7 +920,7 @@ void FormationWidget::on_replayModeComboBox_currentIndexChanged(int index) noexc
 
             Flight &flight = Logbook::getInstance().getCurrentFlight();
             const Aircraft &aircraft = flight.getUserAircraft();
-            const Position &position = aircraft.getPosition();   
+            Position &position = aircraft.getPosition();
             const PositionData positionData = position.interpolate(skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
             skyConnect.setUserAircraftPosition(positionData);
             break;
@@ -928,9 +933,6 @@ void FormationWidget::on_replayModeComboBox_currentIndexChanged(int index) noexc
             skyConnect.setUserAircraftPosition(positionData);
             break;
         }
-        default:
-            skyConnect.setReplayMode(SkyConnectIntf::ReplayMode::Normal);
-            break;
         }
     }
     updateToolTips();
@@ -990,10 +992,10 @@ void FormationWidget::on_timeOffsetLineEdit_editingFinished() noexcept
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
-        bool ok;
+        bool ok {false};
         const double timeOffsetSec = ui->timeOffsetLineEdit->text().toDouble(&ok);
         if (ok) {
-            const std::int64_t timeOffset = static_cast<std::int64_t>(qRound(timeOffsetSec * 1000.0));
+            const std::int64_t timeOffset = static_cast<std::int64_t>(std::round(timeOffsetSec * 1000.0));
             d->aircraftService->changeTimeOffset(aircraft, timeOffset);
             updateToolTips();
         }

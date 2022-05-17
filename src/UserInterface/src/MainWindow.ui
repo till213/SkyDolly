@@ -155,7 +155,7 @@
             </widget>
            </item>
            <item>
-            <widget class="ActionButton" name="skipToStartButton">
+            <widget class="ActionButton" name="skipToBeginButton">
              <property name="minimumSize">
               <size>
                <width>0</width>
@@ -177,7 +177,7 @@
             </widget>
            </item>
            <item>
-            <widget class="ActionButton" name="skipBackwardButton">
+            <widget class="ActionButton" name="backwardButton">
              <property name="minimumSize">
               <size>
                <width>0</width>
@@ -268,7 +268,7 @@
             </widget>
            </item>
            <item>
-            <widget class="ActionButton" name="skipForwardButton">
+            <widget class="ActionButton" name="forwardButton">
              <property name="minimumSize">
               <size>
                <width>0</width>

@@ -163,7 +163,7 @@ void FlightAwareKmlParser::updateWaypoints() noexcept
         int waypointCount = aircraft.getFlightPlan().count();
         if (waypointCount > 0) {
 
-            const Position &position = aircraft.getPositionConst();
+            const Position &position = aircraft.getPosition();
             const PositionData firstPositionData = position.getFirst();
             const PositionData lastPositionData = position.getLast();
             const QDateTime startDateTimeUtc = getFirstDateTimeUtc();
