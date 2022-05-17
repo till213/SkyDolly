@@ -240,7 +240,11 @@ double Unit::toNumber(const QString &value, bool *ok) noexcept
 
 QString Unit::formatTimestamp(std::int64_t milliseconds) noexcept
 {
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+    return d->locale.toString(static_cast<int>(milliseconds));
+#else
     return d->locale.toString(milliseconds);
+#endif
 }
 
 QString Unit::formatElapsedTime(std::int64_t milliSeconds) noexcept
