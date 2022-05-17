@@ -109,6 +109,7 @@ namespace SampleRate
         case SampleRate::Hz60:
             return 60.0;
         }
+        return AutoValue;
     }
 
     /*!
