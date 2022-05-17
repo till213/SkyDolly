@@ -22,6 +22,7 @@
 
 ### Bug Fixes
 - In the logbook module the date selection column width is now properly calculated (no month name is truncated)
+- The position slider is now properly updated whenever an aircraft is removed or its time offset has been changed
 
 ### Under The Hood
 - Introduction of the GeographicLib

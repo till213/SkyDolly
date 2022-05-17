@@ -193,7 +193,7 @@ std::int64_t Flight::deleteAircraftByIndex(int index) noexcept
         aircraftId  = d->aircraft.at(index)->getId();
         std::int64_t aircraftId = d->aircraft.at(index)->getId();
         d->aircraft.erase(d->aircraft.begin() + index);
-        emit aircraftDeleted(aircraftId);
+        emit aircraftRemoved(aircraftId);
     } else {
         aircraftId = Aircraft::InvalidId;
     }

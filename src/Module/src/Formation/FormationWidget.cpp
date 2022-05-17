@@ -204,7 +204,7 @@ void FormationWidget::showEvent(QShowEvent *event) noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     connect(&flight, &Flight::userAircraftChanged,
             this, &FormationWidget::handleUserAircraftChanged);
-    connect(&flight, &Flight::aircraftDeleted,
+    connect(&flight, &Flight::aircraftRemoved,
             this, &FormationWidget::updateUi);
     connect(&flight, &Flight::flightStored,
             this, &FormationWidget::updateUi);
@@ -226,7 +226,7 @@ void FormationWidget::hideEvent(QHideEvent *event) noexcept
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     disconnect(&flight, &Flight::userAircraftChanged,
                this, &FormationWidget::handleUserAircraftChanged);
-    disconnect(&flight, &Flight::aircraftDeleted,
+    disconnect(&flight, &Flight::aircraftRemoved,
                this, &FormationWidget::updateUi);
     disconnect(&flight, &Flight::flightStored,
                this, &FormationWidget::updateUi);

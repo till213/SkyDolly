@@ -170,7 +170,7 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
                     skyPlugin, &SkyConnectIntf::removeAiObjects);
             connect(&flight, &Flight::aircraftAdded,
                     skyPlugin, &SkyConnectIntf::addAiObject);
-            connect(&flight, &Flight::aircraftDeleted,
+            connect(&flight, &Flight::aircraftRemoved,
                     skyPlugin, &SkyConnectIntf::removeAiObject);
             connect(&flight, &Flight::userAircraftChanged,
                     skyPlugin, &SkyConnectIntf::updateUserAircraft);

@@ -136,6 +136,7 @@ public:
           databaseService(std::make_unique<DatabaseService>()),
           replaySpeedActionGroup(nullptr),
           customSpeedRadioButton(nullptr),
+          lastCustomReplaySpeed(1.0),
           customSpeedLineEdit(nullptr),
           replaySpeedUnitComboBox(nullptr),
           customReplaySpeedFactorValidator(nullptr),
@@ -276,6 +277,8 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::handleFlightRestored);
     connect(&flight, &Flight::timeOffsetChanged,
             this, &MainWindow::updateReplayDuration);
+    connect(&flight, &Flight::aircraftRemoved,
+            this, &MainWindow::updateReplayDuration);
     connect(&flight, &Flight::cleared,
             this, &MainWindow::updateUi);
 
@@ -289,9 +292,9 @@ void MainWindow::frenchConnection() noexcept
 
     // Menu actions
     connect(d->importQActionGroup, &QActionGroup::triggered,
-            this, &MainWindow::handleImport);
+            this, &MainWindow::onImport);
     connect(d->exportQActionGroup, &QActionGroup::triggered,
-            this, &MainWindow::handleExport);
+            this, &MainWindow::onExport);
 
     // Settings
     connect(&Settings::getInstance(), &Settings::replayLoopChanged,
@@ -496,17 +499,17 @@ void MainWindow::initViewUi() noexcept
 void MainWindow::initControlUi() noexcept
 {
     ui->positionSlider->setRange(PositionSliderMin, PositionSliderMax);
-    ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatNumber(0, 0), d->unit.formatElapsedTime(0)));
+    ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatTimestamp(0), d->unit.formatElapsedTime(0)));
     ui->timestampTimeEdit->setDisplayFormat(TimestampFormat);
 
     // Record/replay control buttons
     ui->recordButton->setAction(ui->recordAction);
-    ui->skipToStartButton->setAction(ui->skipToBeginAction);
-    ui->skipBackwardButton->setAction(ui->backwardAction);
+    ui->skipToBeginButton->setAction(ui->skipToBeginAction);
+    ui->backwardButton->setAction(ui->backwardAction);
     ui->stopButton->setAction(ui->stopAction);
     ui->pauseButton->setAction(ui->pauseAction);
     ui->playButton->setAction(ui->playAction);
-    ui->skipForwardButton->setAction(ui->forwardAction);
+    ui->forwardButton->setAction(ui->forwardAction);
     ui->skipToEndButton->setAction(ui->skipToEndAction);
 
     // Completely flat button (no border)
@@ -768,6 +771,26 @@ void MainWindow::updateRecordingDuration(std::int64_t timestamp) noexcept
     ui->timestampTimeEdit->blockSignals(false);
 }
 
+void MainWindow::updatePositionSlider(std::int64_t timestamp) noexcept
+{
+    const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
+    const std::int64_t ts = std::min(timestamp, totalDuration);
+
+    const int sliderPosition = totalDuration > 0 ?
+                               static_cast<int>(std::round(PositionSliderMax * (static_cast<double>(ts) / static_cast<double>(totalDuration)))) :
+                               0;
+
+    ui->positionSlider->blockSignals(true);
+    ui->positionSlider->setValue(sliderPosition);
+    ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatTimestamp(timestamp), d->unit.formatElapsedTime(timestamp)));
+    ui->positionSlider->blockSignals(false);
+
+    const QTime time = QTime::fromMSecsSinceStartOfDay(timestamp);
+    ui->timestampTimeEdit->blockSignals(true);
+    ui->timestampTimeEdit->setTime(time);
+    ui->timestampTimeEdit->blockSignals(false);
+}
+
 double MainWindow::getCustomSpeedFactor() const
 {
     double customSpeedFactor;
@@ -808,7 +831,7 @@ void MainWindow::on_positionSlider_valueChanged(int value) noexcept
         const double scale = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
         const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
         const std::int64_t timestamp = static_cast<std::int64_t>(std::round(scale * static_cast<double>(totalDuration)));
-        ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatNumber(timestamp, 0), d->unit.formatElapsedTime(timestamp)));
+        ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatTimestamp(timestamp), d->unit.formatElapsedTime(timestamp)));
 
         // Prevent the timestampTimeEdit field to set the replay position as well
         ui->timestampTimeEdit->blockSignals(true);
@@ -858,22 +881,7 @@ void MainWindow::handleTimestampChanged(std::int64_t timestamp) noexcept
         if (skyConnect->get().isRecording()) {
             updateRecordingDuration(timestamp);
         } else {
-            const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
-            const std::int64_t ts = std::min(timestamp, totalDuration);
-
-            const int sliderPosition = totalDuration > 0 ?
-                                       std::round(PositionSliderMax * (static_cast<double>(ts) / static_cast<double>(totalDuration))) :
-                                       0;
-
-            ui->positionSlider->blockSignals(true);
-            ui->positionSlider->setValue(sliderPosition);
-            ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatNumber(timestamp, 0), d->unit.formatElapsedTime(timestamp)));
-            ui->positionSlider->blockSignals(false);
-
-            const QTime time = QTime::fromMSecsSinceStartOfDay(timestamp);
-            ui->timestampTimeEdit->blockSignals(true);
-            ui->timestampTimeEdit->setTime(time);
-            ui->timestampTimeEdit->blockSignals(false);
+            updatePositionSlider(timestamp);
         };
     }
 }
@@ -1107,11 +1115,15 @@ void MainWindow::updateReplaySpeedUi() noexcept
 
 void MainWindow::updateReplayDuration() noexcept
 {
-    const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
+    const Flight &flight = Logbook::getInstance().getCurrentFlight();
+    const std::int64_t totalDuration = flight.getTotalDurationMSec();
     ui->timestampTimeEdit->blockSignals(true);
     const QTime time = QTime::fromMSecsSinceStartOfDay(totalDuration);
     ui->timestampTimeEdit->setMaximumTime(time);
     ui->timestampTimeEdit->blockSignals(false);
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const std::int64_t timestamp = skyConnect ? skyConnect->get().getCurrentTimestamp() : 0;
+    updatePositionSlider(timestamp);
 }
 
 void MainWindow::updateFileMenu() noexcept
@@ -1399,7 +1411,7 @@ void MainWindow::handleLogbookConnectionChanged(bool connected) noexcept
     updateUi();
 }
 
-void MainWindow::handleImport(QAction *action) noexcept
+void MainWindow::onImport(QAction *action) noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     const QUuid pluginUuid = action->data().toUuid();
@@ -1418,7 +1430,7 @@ void MainWindow::handleImport(QAction *action) noexcept
     }
 }
 
-void MainWindow::handleExport(QAction *action) noexcept
+void MainWindow::onExport(QAction *action) noexcept
 {
     const QUuid pluginUuid = action->data().toUuid();
     const Flight &flight = Logbook::getInstance().getCurrentFlight();

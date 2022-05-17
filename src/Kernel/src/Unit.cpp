@@ -180,22 +180,6 @@ QString Unit::formatKnots(double velocity) noexcept
     return d->locale.toString(velocity, 'f', Precision) % " knots";
 }
 
-QString Unit::formatElapsedTime(std::int64_t milliSeconds) noexcept
-{
-    QString elapsedTime;
-    if (qAbs(milliSeconds) < 1000) {
-        elapsedTime = QString("%1 ms").arg(milliSeconds);
-    } else if (qAbs(milliSeconds) < 1000 * 60) {
-        elapsedTime = QString("%1 s").arg(QString::number(static_cast<double>(milliSeconds) / 1000.0, 'f', 1));
-    } else if (qAbs(milliSeconds) < 1000 * 60 * 60) {
-        elapsedTime = QString("%1 min").arg(QString::number(static_cast<double>(milliSeconds) / (1000.0 * 60.0), 'f', 1));
-    } else {
-        elapsedTime = QString("%1 hours").arg(QString::number(static_cast<double>(milliSeconds) / (1000.0 * 60.0 * 60), 'f', 1));
-    }
-
-    return elapsedTime;
-}
-
 QString Unit::formatMemory(std::int64_t memory) noexcept
 {
     QString size;
@@ -254,11 +238,32 @@ double Unit::toNumber(const QString &value, bool *ok) noexcept
     return d->locale.toDouble(value, ok);
 }
 
-QString Unit::formatHHMMSS(std::int64_t msec) noexcept
+QString Unit::formatTimestamp(std::int64_t milliseconds) noexcept
 {
-    std::chrono::milliseconds milliseconds {msec};
-    std::chrono::seconds seconds = std::chrono::duration_cast<std::chrono::seconds>(milliseconds);
-    milliseconds -= seconds;
+    return d->locale.toString(milliseconds);
+}
+
+QString Unit::formatElapsedTime(std::int64_t milliSeconds) noexcept
+{
+    QString elapsedTime;
+    if (qAbs(milliSeconds) < 1000) {
+        elapsedTime = QString("%1 ms").arg(milliSeconds);
+    } else if (qAbs(milliSeconds) < 1000 * 60) {
+        elapsedTime = QString("%1 s").arg(QString::number(static_cast<double>(milliSeconds) / 1000.0, 'f', 1));
+    } else if (qAbs(milliSeconds) < 1000 * 60 * 60) {
+        elapsedTime = QString("%1 min").arg(QString::number(static_cast<double>(milliSeconds) / (1000.0 * 60.0), 'f', 1));
+    } else {
+        elapsedTime = QString("%1 hours").arg(QString::number(static_cast<double>(milliSeconds) / (1000.0 * 60.0 * 60), 'f', 1));
+    }
+
+    return elapsedTime;
+}
+
+QString Unit::formatHHMMSS(std::int64_t milliSeconds) noexcept
+{
+    std::chrono::milliseconds msecs {milliSeconds};
+    std::chrono::seconds seconds = std::chrono::duration_cast<std::chrono::seconds>(msecs);
+    msecs -= seconds;
     std::chrono::minutes minutes = std::chrono::duration_cast<std::chrono::minutes>(seconds);
     seconds -= minutes;
     std::chrono::hours hours = std::chrono::duration_cast<std::chrono::hours>(minutes);

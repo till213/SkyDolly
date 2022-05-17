@@ -70,7 +70,6 @@ public:
 
     QString formatKnots(double velocity) noexcept;
 
-    QString formatElapsedTime(std::int64_t milliseconds) noexcept;
     QString formatMemory(std::int64_t memory) noexcept;
 
     QString formatDate(const QDate &date) noexcept;
@@ -91,7 +90,10 @@ public:
     QString formatNumber(double number, int precision) noexcept;
     double toNumber(const QString &value, bool *ok = nullptr) noexcept;
 
-    static QString formatHHMMSS(std::int64_t msec) noexcept;
+    QString formatTimestamp(std::int64_t milliseconds) noexcept;
+    QString formatElapsedTime(std::int64_t milliseconds) noexcept;
+    static QString formatHHMMSS(std::int64_t milliseconds) noexcept;
+
     static QString formatBoolean(bool value) noexcept;
 
 private:
