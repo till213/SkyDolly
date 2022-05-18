@@ -1202,10 +1202,8 @@ void MainWindow::updateMainWindow() noexcept
 void MainWindow::handleModuleActivated(const QString title, [[maybe_unused]] Module::Module moduleId) noexcept
 {
     ui->moduleGroupBox->setTitle(title);
-    const bool minimalUi = Settings::getInstance().isMinimalUiEnabled();
-    if (minimalUi) {
-        updateMinimalUi(false);
-    }
+    // Disable the minimal UI (if activated)
+    ui->showMinimalAction->setChecked(false);
     updateControlIcons();
 }
 
@@ -1304,7 +1302,7 @@ void MainWindow::on_stayOnTopAction_triggered(bool enabled) noexcept
     Settings::getInstance().setWindowStaysOnTopEnabled(enabled);
 }
 
-void MainWindow::on_showMinimalAction_triggered(bool enabled) noexcept
+void MainWindow::on_showMinimalAction_toggled(bool enabled) noexcept
 {
     updateMinimalUi(enabled);
 }

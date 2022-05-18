@@ -143,7 +143,7 @@ private slots:
     void on_showSimulationVariablesAction_triggered(bool enabled) noexcept;
     void on_showStatisticsAction_triggered(bool enabled) noexcept;
     void on_stayOnTopAction_triggered(bool enabled) noexcept;
-    void on_showMinimalAction_triggered(bool enabled) noexcept;
+    void on_showMinimalAction_toggled(bool enabled) noexcept;
     // Help menu
     void onAboutActionTriggered() noexcept;
     void onAboutQtActionTriggered() noexcept;

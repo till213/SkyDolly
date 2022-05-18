@@ -51,11 +51,9 @@ public:
     ActiveButton(QWidget *parent) noexcept;
     ~ActiveButton() noexcept override;
 
-    void updateIcon(const QIcon &icon) noexcept;
-
 protected:
-    virtual void mousePressEvent(QMouseEvent *e) noexcept override;
-    virtual void mouseReleaseEvent(QMouseEvent *e) noexcept override;
+    void mousePressEvent(QMouseEvent *e) noexcept override;
+    void mouseReleaseEvent(QMouseEvent *e) noexcept override;
 
 private:
     std::unique_ptr<ActiveButtonPrivate> d;

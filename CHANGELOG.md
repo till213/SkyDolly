@@ -25,6 +25,7 @@
 - In the logbook module the date selection column width is now properly calculated (no month name is truncated)
 - The position slider is now properly updated whenever an aircraft is removed or its time offset has been changed
 - When pausing a recording (yes, that's actually possible ;)) the "recording timer" is only restarted in case no event-based recording is done (but a "timer-based recording" instead)
+- The Window | Minimal menu entry is now properly synchronised (unchecked) when the module is changed while in "minimal UI" mode (e.g. by pressing F1 or F2, or via the Module menu)
 
 ### Under The Hood
 - Introduction of the GeographicLib
