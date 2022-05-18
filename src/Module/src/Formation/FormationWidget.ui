@@ -852,6 +852,12 @@
     <layout class="QHBoxLayout" name="horizontalLayout_13">
      <item>
       <widget class="QGroupBox" name="groupBox_4">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="title">
         <string>Aircraft</string>
        </property>
@@ -901,6 +907,12 @@
      </item>
      <item>
       <widget class="QGroupBox" name="timeOffsetGroupBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="title">
         <string>Time Offset</string>
        </property>
@@ -1065,7 +1077,7 @@
      <item>
       <widget class="QGroupBox" name="groupBox_3">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
