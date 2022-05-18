@@ -55,7 +55,7 @@ class WIDGET_API ActionButton : public ActiveButton
     Q_OBJECT
 public:
     explicit ActionButton(QWidget *parent = nullptr) noexcept;
-    virtual ~ActionButton() noexcept;
+    ~ActionButton() noexcept override;
 
     /*!
      * Sets the action to be associated with this button. This button is
@@ -68,22 +68,25 @@ public:
      */
     void setAction(const QAction *action) noexcept;
 
+    bool isShowText() const noexcept;
+    void setShowText(bool enable) noexcept;
+
 private:
     Q_DISABLE_COPY(ActionButton)
     std::unique_ptr<ActionButtonPrivate> d;
 
 private slots:
 
-   /*!
+   /*
     * Update the button status depending on a change
     * on the action status. This slot is invoked each time the action
     * "changed" signal is emitted.
     */
    void updateButtonStatusFromAction() noexcept;
-
+   inline void updateText() noexcept;
    void connectToAction() noexcept;
 
-   /*!
+   /*
     * Disassociates this button from the action, typically when the
     * action is deleted.
     */

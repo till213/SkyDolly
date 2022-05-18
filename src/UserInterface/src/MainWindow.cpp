@@ -747,12 +747,33 @@ void MainWindow::updateMinimalUi(bool enabled)
         ui->showModulesAction->setChecked(false);
         ui->showModulesAction->setEnabled(false);
         ui->showReplaySpeedAction->setEnabled(false);
+
+        ui->recordButton->setShowText(false);
+        ui->skipToBeginButton->setShowText(false);
+        ui->backwardButton->setShowText(false);
+        ui->stopButton->setShowText(false);
+        ui->pauseButton->setShowText(false);
+        ui->playButton->setShowText(false);
+        ui->forwardButton->setShowText(false);
+        ui->skipToEndButton->setShowText(false);
+        ui->replayLoopPushButton->setText(QString());
     } else {
         ui->moduleVisibilityWidget->setVisible(true);
         ui->moduleSelectorWidget->setVisible(settings.isModuleSelectorVisible());
         ui->showModulesAction->setChecked(settings.isModuleSelectorVisible());
         ui->showModulesAction->setEnabled(true);
         ui->showReplaySpeedAction->setEnabled(true);
+        ui->recordButton->setShowText(true);
+
+        ui->recordButton->setShowText(true);
+        ui->skipToBeginButton->setShowText(true);
+        ui->backwardButton->setShowText(true);
+        ui->stopButton->setShowText(true);
+        ui->pauseButton->setShowText(true);
+        ui->playButton->setShowText(true);
+        ui->forwardButton->setShowText(true);
+        ui->skipToEndButton->setShowText(true);
+        ui->replayLoopPushButton->setText(tr("Loop"));
     }
     ui->moduleGroupBox->setHidden(enabled);
     settings.setMinimalUiEnabled(enabled);
