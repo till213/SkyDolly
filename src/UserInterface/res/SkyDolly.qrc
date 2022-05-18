@@ -68,5 +68,11 @@
         <file>img/icons/play-loop-normal@2x.png</file>
         <file>img/icons/application-icon.png</file>
         <file>img/icons/application-icon@2x.png</file>
+        <file>img/icons/play-active.png</file>
+        <file>img/icons/play-active@2x.png</file>
+        <file>img/icons/record-active.png</file>
+        <file>img/icons/record-active@2x.png</file>
+        <file>img/icons/record-add-active.png</file>
+        <file>img/icons/record-add-active@2x.png</file>
     </qresource>
 </RCC>

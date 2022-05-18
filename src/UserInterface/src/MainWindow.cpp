@@ -1160,10 +1160,12 @@ void MainWindow::updateControlIcons() noexcept
     case Module::Module::Logbook:
         recordIcon.addFile(":/img/icons/record-normal.png", QSize(), QIcon::Normal, QIcon::Off);
         recordIcon.addFile(":/img/icons/record-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
+        recordIcon.addFile(":/img/icons/record-active.png", QSize(), QIcon::Active);
         break;
     case Module::Module::Formation:
         recordIcon.addFile(":/img/icons/record-add-normal.png", QSize(), QIcon::Normal, QIcon::Off);
         recordIcon.addFile(":/img/icons/record-add-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
+        recordIcon.addFile(":/img/icons/record-add-active.png", QSize(), QIcon::Active);
         break;
 
     }
