@@ -35,6 +35,7 @@ public:
     {}
 
     QPixmap normalPixmap;
+    QPixmap activePixmap;
 };
 
 // PUBLIC
@@ -56,11 +57,16 @@ void ActiveButton::mousePressEvent(QMouseEvent *e) noexcept
     QPushButton::mousePressEvent(e);
 
     d->normalPixmap = icon().pixmap(iconSize(), QIcon::Normal);
-    QPushButton::setIcon(icon().pixmap(iconSize(), QIcon::Active));
+    d->activePixmap = icon().pixmap(iconSize(), QIcon::Active);
+    QPushButton::setIcon(d->activePixmap);
 }
 
 void ActiveButton::mouseReleaseEvent(QMouseEvent *e) noexcept
 {
-    QPushButton::setIcon(d->normalPixmap);
+    QIcon icon;
+    icon.addPixmap(d->normalPixmap, QIcon::Mode::Normal);
+    icon.addPixmap(d->activePixmap, QIcon::Mode::Active);
+
+    QPushButton::setIcon(icon);
     QPushButton::mouseReleaseEvent(e);
 }
