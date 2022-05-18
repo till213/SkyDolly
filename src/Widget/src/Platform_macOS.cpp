@@ -32,31 +32,10 @@
 #include "QtCore/qstringliteral.h"
 
 namespace  {
-    constexpr int DarkModeValueThreshold {80};
+    const QString FlatButtonCss {QStringLiteral("QPushButton {border-style: outset; border-width: 0px; padding: 0px 12px 0px 12px;})")};
 }
 
-namespace Dark {
-    constexpr QRgb EditableTableCellBGColor = 0xff3aa8ff;
-}
-
-namespace Bright {
-    constexpr QRgb EditableTableCellBGColor = 0xfff6fdff;
-}
-
-// PUBLIC
-
-inline bool Platform::isDarkModeEnabled() noexcept
+QString Platform::getFlatButtonCss() noexcept
 {
-    const QPalette palette = QApplication::palette();
-    const QColor windowColor = palette.color(QPalette::Window);
-    return windowColor.value() < DarkModeValueThreshold;
-}
-
-QColor Platform::getEditableTableCellBGColor() noexcept
-{
-    if (isDarkModeEnabled()) {
-        return QColor(Dark::EditableTableCellBGColor);
-    } else {
-        return QColor(Bright::EditableTableCellBGColor);
-    }
+    return FlatButtonCss;
 }
