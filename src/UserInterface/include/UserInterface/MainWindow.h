@@ -83,7 +83,7 @@ private:
      * Updates the timestamp time edit widget by setting the maximum time according
      * to the currently recorded time given by 'timestamp'.
      *
-     * Also refer to #updateReplayDuration.
+     * Also refer to updateReplayDuration.
      */
     void updateRecordingDuration(std::int64_t timestamp) noexcept;
 
@@ -112,12 +112,14 @@ private slots:
     void updateControlUi() noexcept;
     void updateControlIcons() noexcept;
     void updateReplaySpeedUi() noexcept;
+    void updateMinimalUiButtonTextVisibility(bool hidden) noexcept;
+    void updateMinimalUiNonEssentialButtonVisibility(bool hidden) noexcept;
 
     /*
      * Updates the timestamp by setting the maximum replay time according
      * to the total duration of the current flight.
      *
-     * Also refer to #updateRecordingDuration.
+     * Also refer to updateRecordingDuration.
      */
     void updateReplayDuration() noexcept;
 

@@ -82,17 +82,16 @@ signals:
     /*!
      * Relay of the SkyConnectIntf#stateChanged signal.
      *
-     * Also refer to SkyConnectIntf#stateChanged.
-     *
      * \param state
      *        the current connection state
+     * \sa SkyConnectIntf#stateChanged
      */
     void stateChanged(Connect::State state);
 
     /*!
      * Relay of the SkyConnectIntf#recordingStopped signal.
      *
-     * Also refer to SkyConnectIntf#recordingStopped.
+     * \sa SkyConnectIntf#recordingStopped
      */
     void recordingStopped();
 

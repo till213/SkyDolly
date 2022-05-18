@@ -137,10 +137,10 @@ protected:
      * signal #recordingStopped when the state changes from \em Recording
      * to any other state.
      *
-     * Also refer to #stateChanged and #recordingStopped
-     *
      * \param state
      *        the new state to be set
+     * \sa stateChanged
+     * \sa recordingStopped
      */
     virtual void setState(Connect::State state) noexcept = 0;
 

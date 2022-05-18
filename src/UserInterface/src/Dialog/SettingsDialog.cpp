@@ -151,6 +151,9 @@ void SettingsDialog::updateUi() noexcept
     ui->confirmDeleteFlightCheckBox->setChecked(settings.isDeleteFlightConfirmationEnabled());
     ui->confirmDeleteAircraftCheckBox->setChecked(settings.isDeleteAircraftConfirmationEnabled());
     ui->confirmResetAllTimeOffsetCheckBox->setChecked(settings.isResetTimeOffsetConfirmationEnabled());
+
+    ui->hideButtonTextCheckBox->setChecked(settings.isButtonTextHidden());
+    ui->hideNonEssentialButtonsCheckBox->setChecked(settings.isNonEssentialButtonHidden());
 }
 
 void SettingsDialog::handleAccepted() noexcept
@@ -176,4 +179,7 @@ void SettingsDialog::handleAccepted() noexcept
     settings.setDeleteFlightConfirmationEnabled(ui->confirmDeleteFlightCheckBox->isChecked());
     settings.setDeleteAircraftConfirmationEnabled(ui->confirmDeleteAircraftCheckBox->isChecked());
     settings.setResetTimeOffsetConfirmationEnabled(ui->confirmResetAllTimeOffsetCheckBox->isChecked());
+
+    settings.setButtonTextHidden(ui->hideButtonTextCheckBox->isChecked());
+    settings.setNonEssentialButtonHidden(ui->hideNonEssentialButtonsCheckBox->isChecked());
 }

@@ -285,6 +285,10 @@ void MainWindow::frenchConnection() noexcept
     // Settings
     connect(&Settings::getInstance(), &Settings::changed,
             this, &MainWindow::updateMainWindow);
+    connect(&Settings::getInstance(), &Settings::buttonTextVisibilityChanged,
+            this, &MainWindow::updateMinimalUiButtonTextVisibility);
+    connect(&Settings::getInstance(), &Settings::nonEssentialButtonVisibilityChanged,
+            this, &MainWindow::updateMinimalUiNonEssentialButtonVisibility);
 
     // Logbook connection
     connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
@@ -741,22 +745,13 @@ void MainWindow::initSkyConnectPlugin() noexcept
 void MainWindow::updateMinimalUi(bool enabled)
 {
     Settings &settings = Settings::getInstance();
+    settings.setMinimalUiEnabled(enabled);
     if (enabled) {
         ui->moduleVisibilityWidget->setHidden(true);
         ui->moduleSelectorWidget->setHidden(true);
         ui->showModulesAction->setChecked(false);
         ui->showModulesAction->setEnabled(false);
         ui->showReplaySpeedAction->setEnabled(false);
-
-        ui->recordButton->setShowText(false);
-        ui->skipToBeginButton->setShowText(false);
-        ui->backwardButton->setShowText(false);
-        ui->stopButton->setShowText(false);
-        ui->pauseButton->setShowText(false);
-        ui->playButton->setShowText(false);
-        ui->forwardButton->setShowText(false);
-        ui->skipToEndButton->setShowText(false);
-        ui->replayLoopPushButton->setText(QString());
     } else {
         ui->moduleVisibilityWidget->setVisible(true);
         ui->moduleSelectorWidget->setVisible(settings.isModuleSelectorVisible());
@@ -764,19 +759,10 @@ void MainWindow::updateMinimalUi(bool enabled)
         ui->showModulesAction->setEnabled(true);
         ui->showReplaySpeedAction->setEnabled(true);
         ui->recordButton->setShowText(true);
-
-        ui->recordButton->setShowText(true);
-        ui->skipToBeginButton->setShowText(true);
-        ui->backwardButton->setShowText(true);
-        ui->stopButton->setShowText(true);
-        ui->pauseButton->setShowText(true);
-        ui->playButton->setShowText(true);
-        ui->forwardButton->setShowText(true);
-        ui->skipToEndButton->setShowText(true);
-        ui->replayLoopPushButton->setText(tr("Loop"));
     }
+    updateMinimalUiButtonTextVisibility(settings.isButtonTextHidden());
+    updateMinimalUiNonEssentialButtonVisibility(settings.isNonEssentialButtonHidden());
     ui->moduleGroupBox->setHidden(enabled);
-    settings.setMinimalUiEnabled(enabled);
     // When hiding a widget it takes some time for the layout manager to
     // get notified, so we return to the Qt event queue first
     QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
@@ -1140,6 +1126,60 @@ void MainWindow::updateReplaySpeedUi() noexcept
         d->customSpeedLineEdit->clear();
         d->customSpeedLineEdit->setToolTip("");
     }    
+}
+
+void MainWindow::updateMinimalUiButtonTextVisibility(bool hidden) noexcept
+{
+    Settings &settings = Settings::getInstance();
+    if (settings.isMinimalUiEnabled()) {
+        ui->recordButton->setShowText(!hidden);
+        ui->skipToBeginButton->setShowText(!hidden);
+        ui->backwardButton->setShowText(!hidden);
+        ui->stopButton->setShowText(!hidden);
+        ui->pauseButton->setShowText(!hidden);
+        ui->playButton->setShowText(!hidden);
+        ui->forwardButton->setShowText(!hidden);
+        ui->skipToEndButton->setShowText(!hidden);
+        if (hidden) {
+            ui->replayLoopPushButton->setText(QString());
+            // Shrink to minimal size
+            QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
+        } else {
+            ui->replayLoopPushButton->setText(tr("Loop"));
+        }
+    } else {
+        ui->recordButton->setShowText(true);
+        ui->skipToBeginButton->setShowText(true);
+        ui->backwardButton->setShowText(true);
+        ui->stopButton->setShowText(true);
+        ui->pauseButton->setShowText(true);
+        ui->playButton->setShowText(true);
+        ui->forwardButton->setShowText(true);
+        ui->skipToEndButton->setShowText(true);
+        ui->replayLoopPushButton->setText(tr("Loop"));
+    }
+}
+
+void MainWindow::updateMinimalUiNonEssentialButtonVisibility(bool hidden) noexcept
+{
+    Settings &settings = Settings::getInstance();
+    if (settings.isMinimalUiEnabled()) {
+        ui->skipToBeginButton->setVisible(!hidden);
+        ui->backwardButton->setVisible(!hidden);
+        ui->skipToEndButton->setVisible(!hidden);
+        ui->forwardButton->setVisible(!hidden);
+        ui->skipToEndButton->setVisible(!hidden);
+        if (hidden) {
+            // Shrink to minimal size
+            QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
+        }
+    } else {
+        ui->skipToBeginButton->setVisible(true);
+        ui->backwardButton->setVisible(true);
+        ui->skipToEndButton->setVisible(true);
+        ui->forwardButton->setVisible(true);
+        ui->skipToEndButton->setVisible(true);
+    }
 }
 
 void MainWindow::updateReplayDuration() noexcept

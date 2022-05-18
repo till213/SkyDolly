@@ -351,8 +351,6 @@ namespace SkyMath
      * velocity [meters per second] it takes to travel that distance, taking the timestamps \c startTimestamp
      * and \c endTimestamp into account.
      *
-     * Also refer to #sphericalDistance.
-     *
      * \param startPosition
      *        the Coordinate of the start position [degrees]
      * \param startTimestamp
@@ -362,6 +360,7 @@ namespace SkyMath
      * \param endTimestamp
      *        the timestamp of the end point [milliseconds]
      * \return the distance (first value) and required speed [m/s] (second value)
+     * \sa sphericalDistance
      */
     inline std::pair<double, double> distanceAndVelocity(Coordinate startPosition, std::int64_t startTimestamp,
                                                          Coordinate endPosition, std::int64_t endTimestamp) noexcept

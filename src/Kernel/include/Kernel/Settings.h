@@ -465,6 +465,40 @@ public:
     void setResetTimeOffsetConfirmationEnabled(bool enable) noexcept;
 
     /*!
+     * Returns whether the button text is hidden or not.
+     *
+     * \return \c true if the button text is hidden; \c false else
+     */
+    bool isButtonTextHidden() const noexcept;
+
+    /*!
+     * Hides the button text.
+     *
+     * \param enable
+     *        set to \c true in order to hide button texts;
+     *        \c false else
+     * \sa buttonTextVisibilityChanged
+     */
+    void setButtonTextHidden(bool enable) noexcept;
+
+    /*!
+     * Returns whether non-essential buttons are hidden or not.
+     *
+     * \return \c true if non-essential buttons are hidden; \c false else
+     */
+    bool isNonEssentialButtonHidden() const noexcept;
+
+    /*!
+     * Hides non-essential buttons.
+     *
+     * \param enable
+     *        set to \c true in order to hide non-essential buttons;
+     *        \c false else
+     * \sa nonEssentialButtonVisibilityChanged
+     */
+    void setNonEssentialButtonHidden(bool enable) noexcept;
+
+    /*!
      * Returns the aircraft type (name) for import.
      *
      * \return the aircraft type which was last selected for import
@@ -483,19 +517,17 @@ public:
     /*!
      * Returns the file info of the best available earth gravity model (EGM) data file.
      *
-     * Also refer to #hasEarthGravityModel.
-     *
      * \return the file info of the earth gravity model data file; check for its existence
      *         (QFile::exists) before using
+     * \sa hasEarthGravityModel
      */
     QFileInfo getEarthGravityModelFileInfo() const noexcept;
 
     /*!
      * Returns whether any earth gravity model (EGM) is available.
      *
-     * Also refer to #getEarthGravityModelFileInfo.
-     *
      * \return \c true if an earth gravity model is available; \c false else
+     * \sa getEarthGravityModelFileInfo
      */
     bool hasEarthGravityModel() const noexcept;
 
@@ -656,6 +688,20 @@ signals:
      * \sa changed
      */
     void repeatCanopyChanged(bool enable);
+
+    /*!
+     * Emitted when the button text visibility has changed.
+     *
+     * \sa changed
+     */
+    void buttonTextVisibilityChanged(bool hidden);
+
+    /*!
+     * Emitted when the non-essential button visibility has changed.
+     *
+     * \sa changed
+     */
+    void nonEssentialButtonVisibilityChanged(bool hidden);
 
     /*!
      * Emitted when any setting has changed.

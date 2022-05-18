@@ -92,7 +92,7 @@ public slots:
      * Explicitly call this method after an aircraft has been recorded or
      * the sampled data has been changed (added or removed).
      *
-     * Also refer to #getDurationMSec.
+     * \sa getDurationMSec
      */
     void invalidateDuration() noexcept;
 

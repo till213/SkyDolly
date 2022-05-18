@@ -83,6 +83,9 @@ public:
     bool deleteAircraftConfirmation;
     bool resetTimeOffsetConfirmation;
 
+    bool buttonTextHidden;
+    bool nonEssentialButtonHidden;
+
     QString importAircraftType;
 
     QFileInfo earthGravityModelFileInfo;
@@ -109,6 +112,9 @@ public:
     static constexpr bool DefaultDeleteFlightConfirmation = true;
     static constexpr bool DefaultDeleteAircraftConfirmation = true;
     static constexpr bool DefaultResetTimeOffsetConfirmation = true;
+
+    static constexpr bool DefaultButtonTextHidden = true;
+    static constexpr bool DefaultNonEssentialButtonHidden = true;
 
     static inline const QString DefaultImportAircraftType = QLatin1String("");
 
@@ -444,6 +450,32 @@ void Settings::setResetTimeOffsetConfirmationEnabled(bool enable) noexcept
     }
 }
 
+bool Settings::isButtonTextHidden() const noexcept
+{
+    return d->buttonTextHidden;
+}
+
+void Settings::setButtonTextHidden(bool enable) noexcept
+{
+    if (d->buttonTextHidden != enable) {
+        d->buttonTextHidden = enable;
+        emit buttonTextVisibilityChanged(enable);
+    }
+}
+
+bool Settings::isNonEssentialButtonHidden() const noexcept
+{
+    return d->nonEssentialButtonHidden;
+}
+
+void Settings::setNonEssentialButtonHidden(bool enable) noexcept
+{
+    if (d->nonEssentialButtonHidden != enable) {
+        d->nonEssentialButtonHidden = enable;
+        emit nonEssentialButtonVisibilityChanged(enable);
+    }
+}
+
 QString Settings::getImportAircraftType() const noexcept
 {
     return d->importAircraftType;
@@ -539,9 +571,14 @@ void Settings::store() const noexcept
     d->settings.endGroup();
     d->settings.beginGroup("UI");
     {
+        // Confirmations
         d->settings.setValue("DeleteFlightConfirmation", d->deleteFlightConfirmation);
         d->settings.setValue("DeleteAircraftConfirmation", d->deleteAircraftConfirmation);
         d->settings.setValue("ResetTimeOffsetConfirmation", d->resetTimeOffsetConfirmation);
+
+        // Minimal UI
+        d->settings.setValue("ButtonTextHidden", d->buttonTextHidden);
+        d->settings.setValue("NonEssentialButtonHidden", d->nonEssentialButtonHidden);
     }
     d->settings.endGroup();
     d->settings.beginGroup("View");
@@ -642,9 +679,13 @@ void Settings::restore() noexcept
     d->settings.endGroup();
     d->settings.beginGroup("UI");
     {
+        // Confirmations
         d->deleteFlightConfirmation = d->settings.value("DeleteFlightConfirmation", SettingsPrivate::DefaultDeleteFlightConfirmation).toBool();
         d->deleteAircraftConfirmation = d->settings.value("DeleteAircraftConfirmation", SettingsPrivate::DefaultDeleteAircraftConfirmation).toBool();
         d->resetTimeOffsetConfirmation = d->settings.value("ResetTimeOffsetConfirmation", SettingsPrivate::DefaultResetTimeOffsetConfirmation).toBool();
+
+        d->buttonTextHidden = d->settings.value("ButtonTextHidden", SettingsPrivate::DefaultButtonTextHidden).toBool();
+        d->nonEssentialButtonHidden = d->settings.value("NonEssentialButtonHidden", SettingsPrivate::DefaultNonEssentialButtonHidden).toBool();
     }
     d->settings.endGroup();
     d->settings.beginGroup("View");
@@ -747,6 +788,10 @@ void Settings::frenchConnection() noexcept
     connect(this, &Settings::repeatFlapsPositionChanged,
             this, &Settings::changed);
     connect(this, &Settings::repeatCanopyChanged,
+            this, &Settings::changed);
+    connect(this, &Settings::buttonTextVisibilityChanged,
+            this, &Settings::changed);
+    connect(this, &Settings::nonEssentialButtonVisibilityChanged,
             this, &Settings::changed);
 }
 
