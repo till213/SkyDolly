@@ -136,12 +136,6 @@ public:
     // Columns are only auto-resized the first time the table is loaded
     // After that manual column resizes are kept
     bool columnsAutoResized;
-
-    // @todo Those icon resources should be moved from resource UserInterface into a Module specific resource file
-    // -> we can then declare them static (as they should be)
-    const QIcon normalAircraftIcon {":/img/icons/aircraft-normal.png"};
-    const QIcon recordingAircraftIcon {":/img/icons/aircraft-record-normal.png"};
-    const QIcon emptyIcon {};
 };
 
 // PUBLIC
@@ -340,9 +334,9 @@ void LogbookWidget::updateFlightTable() noexcept
             // ID
             std::unique_ptr<QTableWidgetItem> newItem = std::make_unique<QTableWidgetItem>();
             if (summary.flightId == flightInMemoryId) {
-                newItem->setIcon(d->normalAircraftIcon);
+                newItem->setIcon(QIcon(":/img/icons/aircraft-normal.png"));
             } else if (summary.flightId == ::RecordingInProgressId) {
-                newItem->setIcon(d->recordingAircraftIcon);
+                newItem->setIcon(QIcon(":/img/icons/aircraft-record-normal.png"));
             }
             newItem->setData(Qt::DisplayRole, QVariant::fromValue(summary.flightId));
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -586,9 +580,9 @@ void LogbookWidget::updateAircraftIcon() noexcept
     for (int row = 0; row < ui->logTableWidget->rowCount(); ++row) {
         QTableWidgetItem *item = ui->logTableWidget->item(row, FlightIdColumn);
         if (item->data(Qt::DisplayRole).toLongLong() == flightInMemoryId) {
-            item->setIcon(d->normalAircraftIcon);
+            item->setIcon(QIcon(":/img/icons/aircraft-normal.png"));
         } else {
-            item->setIcon(d->emptyIcon);
+            item->setIcon(QIcon());
         }
     }
 }

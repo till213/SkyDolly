@@ -150,7 +150,14 @@ public:
     std::int64_t selectedAircraftIndex;
     QDoubleValidator *timeOffsetValidator;
     Unit unit;
+
+    static QIcon normalAircraftIcon;
+    static QIcon recordingAircraftIcon;
 };
+
+// Only initialise once the Module.qrc resources are available
+QIcon FormationWidgetPrivate::normalAircraftIcon {};
+QIcon FormationWidgetPrivate::recordingAircraftIcon {};
 
 // PUBLIC
 
@@ -597,13 +604,11 @@ void FormationWidget::updateUi() noexcept
         // Sequence
         std::unique_ptr<QTableWidgetItem> newItem = std::make_unique<QTableWidgetItem>();
         if (rowIndex == userAircraftIndex) {
-            QIcon icon;
             if (recording) {
-                icon = QIcon(":/img/icons/aircraft-record-normal.png");
+                newItem->setIcon(QIcon(":/img/icons/aircraft-record-normal.png"));
             } else {
-                icon = QIcon(":/img/icons/aircraft-normal.png");
+                newItem->setIcon(QIcon(":/img/icons/aircraft-normal.png"));
             }
-            newItem->setIcon(icon);
         }
         // Sequence numbers start at 1
         newItem->setData(Qt::DisplayRole, rowIndex + 1);

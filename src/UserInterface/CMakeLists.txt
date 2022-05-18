@@ -13,7 +13,7 @@ target_compile_definitions(${LIBRARY_NAME}
 )
 target_sources(${LIBRARY_NAME}
     PRIVATE
-        res/SkyDolly.qrc
+        res/UserInterface.qrc
         include/UserInterface/UserInterfaceLib.h
         include/UserInterface/MainWindow.h src/MainWindow.cpp src/MainWindow.ui
         src/Dialog/AboutDialog.h src/Dialog/AboutDialog.cpp src/Dialog/AboutDialog.ui

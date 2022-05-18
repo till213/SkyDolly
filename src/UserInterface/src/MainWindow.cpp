@@ -191,7 +191,7 @@ MainWindow::MainWindow(const QString &filePath, QWidget *parent) noexcept
       ui(std::make_unique<Ui::MainWindow>()),
       d(std::make_unique<MainWindowPrivate>())
 {
-    Q_INIT_RESOURCE(SkyDolly);
+    Q_INIT_RESOURCE(UserInterface);
 
     ui->setupUi(this);
 
@@ -860,6 +860,7 @@ void MainWindow::updateMininalUiEssentialButtonVisibility() noexcept
 
 void MainWindow::updatePositionSliderTickInterval() noexcept
 {
+    // @todo FIXME Take visibility of replay speed into account!!!
     Settings &settings = Settings::getInstance();
     int tickInterval {10};
     if (settings.isMinimalUiEnabled()) {
