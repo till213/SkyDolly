@@ -34,6 +34,7 @@
 
 #include "FlightCondition.h"
 #include "Aircraft.h"
+#include "FlightSummary.h"
 #include "Flight.h"
 
 namespace
@@ -186,7 +187,7 @@ void Flight::setUserAircraftIndex(int index) noexcept
 
 std::int64_t Flight::deleteAircraftByIndex(int index) noexcept
 {
-    std::int64_t aircraftId;
+    std::int64_t aircraftId {Aircraft::InvalidId};
     // A flight has at least one aircraft
     if (d->aircraft.size() > 1) {
         setUserAircraftIndex(std::max(d->userAircraftIndex - 1, 0));
@@ -194,8 +195,6 @@ std::int64_t Flight::deleteAircraftByIndex(int index) noexcept
         std::int64_t aircraftId = d->aircraft.at(index)->getId();
         d->aircraft.erase(d->aircraft.begin() + index);
         emit aircraftRemoved(aircraftId);
-    } else {
-        aircraftId = Aircraft::InvalidId;
     }
     return aircraftId;
 }
@@ -214,6 +213,19 @@ void Flight::setFlightCondition(FlightCondition flightCondition) noexcept
 {
     d->flightCondition = flightCondition;
     emit flightConditionChanged();
+}
+
+FlightSummary Flight::getFlightSummary() const noexcept
+{
+    FlightSummary summary;
+    summary.flightId = d->id;
+    summary.aircraftCount = count();
+    const AircraftInfo &aircraftInfo = getUserAircraft().getAircraftInfo();
+    summary.aircraftType = aircraftInfo.aircraftType.type;
+    summary.creationDate = d->creationTime;
+    // @todo IMPLEMENT ME!!!
+
+    return summary;
 }
 
 std::int64_t Flight::getTotalDurationMSec(bool ofUserAircraft) const noexcept

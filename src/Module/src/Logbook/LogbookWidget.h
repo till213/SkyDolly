@@ -75,6 +75,7 @@ private:
     void initUi() noexcept;
     void initFilterUi() noexcept;
     void updateFlightTable() noexcept;
+    void updateEditUi() noexcept;
     void frenchConnection() noexcept;
     inline void insertYear(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByYear, int nofFlightsPerYear) noexcept;
     inline void insertMonth(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByMonth, int nofFlightsPerMonth) noexcept;
@@ -84,8 +85,8 @@ private:
     static const QString getName() noexcept;
 
 private slots:
+    void onConnectionStateChange() noexcept;
     void updateUi() noexcept;
-    void updateEditUi() noexcept;
     void updateAircraftIcon() noexcept;
     void updateDateSelectorUi() noexcept;
     void handleSelectionChanged() noexcept;

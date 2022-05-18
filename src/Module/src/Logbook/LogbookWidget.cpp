@@ -27,6 +27,7 @@
 #include <forward_list>
 #include <vector>
 #include <cstdint>
+#include <limits>
 
 #include <QCoreApplication>
 #include <QByteArray>
@@ -100,6 +101,8 @@ namespace
         ThreeHours = 180,
         FourHours = 240
     };
+
+    constexpr int RecordingInProgressId = std::numeric_limits<int>::max();
 }
 
 class LogbookWidgetPrivate
@@ -133,6 +136,12 @@ public:
     // Columns are only auto-resized the first time the table is loaded
     // After that manual column resizes are kept
     bool columnsAutoResized;
+
+    // @todo Those icon resources should be moved from resource UserInterface into a Module specific resource file
+    // -> we can then declare them static (as they should be)
+    const QIcon normalAircraftIcon {":/img/icons/aircraft-normal.png"};
+    const QIcon recordingAircraftIcon {":/img/icons/aircraft-record-normal.png"};
+    const QIcon emptyIcon {};
 };
 
 // PUBLIC
@@ -204,7 +213,7 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
     // Connection
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::stateChanged,
-            this, &LogbookWidget::updateEditUi);
+            this, &LogbookWidget::onConnectionStateChange);
 
     updateUi();
     handleSelectionChanged();
@@ -233,7 +242,7 @@ void LogbookWidget::hideEvent(QHideEvent *event) noexcept
     // Connection
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     disconnect(&skyConnectManager, &SkyConnectManager::stateChanged,
-               this, &LogbookWidget::updateEditUi);
+               this, &LogbookWidget::onConnectionStateChange);
 }
 
 // PRIVATE
@@ -308,11 +317,21 @@ void LogbookWidget::updateFlightTable() noexcept
         const Flight &flight = Logbook::getInstance().getCurrentFlight();
         const std::int64_t flightInMemoryId = flight.getId();
         std::vector<FlightSummary> summaries = d->logbookService->getFlightSummaries(d->flightSelector);
+
+        const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+        std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = skyConnectManager.getCurrentSkyConnect();
+        const bool recording = skyConnect ? skyConnect->get().isInRecordingMode() : false;
+        if (recording) {
+            FlightSummary summary = flight.getFlightSummary();
+            summary.flightId = ::RecordingInProgressId;
+            summaries.push_back(std::move(summary));
+        }
+
         ui->logTableWidget->blockSignals(true);
         ui->logTableWidget->setSortingEnabled(false);
         ui->logTableWidget->clearContents();
         ui->logTableWidget->setRowCount(summaries.size());
-        const QIcon aircraftIcon(":/img/icons/aircraft-normal.png");
+
         int rowIndex = 0;
         for (const FlightSummary &summary : summaries) {
 
@@ -321,7 +340,9 @@ void LogbookWidget::updateFlightTable() noexcept
             // ID
             std::unique_ptr<QTableWidgetItem> newItem = std::make_unique<QTableWidgetItem>();
             if (summary.flightId == flightInMemoryId) {
-                newItem->setIcon(aircraftIcon);
+                newItem->setIcon(d->normalAircraftIcon);
+            } else if (summary.flightId == ::RecordingInProgressId) {
+                newItem->setIcon(d->recordingAircraftIcon);
             }
             newItem->setData(Qt::DisplayRole, QVariant::fromValue(summary.flightId));
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -410,6 +431,15 @@ void LogbookWidget::updateFlightTable() noexcept
     ui->flightCountLabel->setText(tr("%1 flights", "Number of flights selected in the logbook", flightCount).arg(flightCount));
 
     updateEditUi();
+}
+
+
+void LogbookWidget::updateEditUi() noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const bool active = skyConnect && skyConnect->get().isActive();
+    ui->loadPushButton->setEnabled(!active && d->selectedFlightId != Flight::InvalidId);
+    ui->deletePushButton->setEnabled(!active && d->selectedFlightId != Flight::InvalidId);
 }
 
 void LogbookWidget::frenchConnection() noexcept
@@ -532,32 +562,33 @@ const QString LogbookWidget::getName() noexcept
 
 // PRIVATE SLOTS
 
+void LogbookWidget::onConnectionStateChange() noexcept
+{
+    updateEditUi();
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const bool inRecordingMode = skyConnect && skyConnect->get().isInRecordingMode();
+    if (inRecordingMode) {
+        updateFlightTable();
+    }
+}
+
 void LogbookWidget::updateUi() noexcept
 {
     updateFlightTable();
     updateDateSelectorUi();
 }
 
-void LogbookWidget::updateEditUi() noexcept
-{
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    const bool active = skyConnect && skyConnect->get().isActive();
-    ui->loadPushButton->setEnabled(!active && d->selectedFlightId != Flight::InvalidId);
-    ui->deletePushButton->setEnabled(!active && d->selectedFlightId != Flight::InvalidId);
-}
-
 void LogbookWidget::updateAircraftIcon() noexcept
 {
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     const std::int64_t flightInMemoryId = flight.getId();
-    const QIcon aircraftIcon(":/img/icons/aircraft-normal.png");
-    const QIcon emptyIcon;
+
     for (int row = 0; row < ui->logTableWidget->rowCount(); ++row) {
         QTableWidgetItem *item = ui->logTableWidget->item(row, FlightIdColumn);
         if (item->data(Qt::DisplayRole).toLongLong() == flightInMemoryId) {
-            item->setIcon(aircraftIcon);
+            item->setIcon(d->normalAircraftIcon);
         } else {
-            item->setIcon(emptyIcon);
+            item->setIcon(d->emptyIcon);
         }
     }
 }
@@ -626,11 +657,15 @@ void LogbookWidget::handleSelectionChanged() noexcept
 
 void LogbookWidget::loadFlight() noexcept
 {
-    std::int64_t selectedFlightId = d->selectedFlightId;
-    if (selectedFlightId != Flight::InvalidId) {
-        const bool ok = d->flightService.restore(selectedFlightId, Logbook::getInstance().getCurrentFlight());
-        if (!ok) {
-            QMessageBox::critical(this, tr("Logbook error"), tr("The flight %1 could not be read from the logbook.").arg(selectedFlightId));
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const bool inRecordingMode = skyConnect && skyConnect->get().isInRecordingMode();
+    if (!inRecordingMode) {
+        std::int64_t selectedFlightId = d->selectedFlightId;
+        if (selectedFlightId != Flight::InvalidId) {
+            const bool ok = d->flightService.restore(selectedFlightId, Logbook::getInstance().getCurrentFlight());
+            if (!ok) {
+                QMessageBox::critical(this, tr("Logbook error"), tr("The flight %1 could not be read from the logbook.").arg(selectedFlightId));
+            }
         }
     }
 }
@@ -676,9 +711,6 @@ void LogbookWidget::handleSearchTextChanged() noexcept
 
 void LogbookWidget::searchText() noexcept
 {
-#ifdef DEBUG
-    qDebug("LogbookWidget::searchText: initiating search for: %s", qPrintable(ui->searchLineEdit->text()));
-#endif
     d->flightSelector.searchKeyword = ui->searchLineEdit->text();
     updateFlightTable();
 }

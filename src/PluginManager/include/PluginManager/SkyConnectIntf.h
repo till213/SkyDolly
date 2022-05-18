@@ -81,8 +81,29 @@ public:
     virtual bool isReplaying() const noexcept = 0;
     virtual void stop() noexcept = 0;
 
-    virtual bool inRecordingMode() const noexcept = 0;
-    virtual bool inReplayMode() const noexcept = 0;
+    /*!
+     * Returns whether SkyConnect is in recording mode or not. \em Recording mode means any of the following states:
+     *
+     * - Connect::State::Recording
+     * - Connect::State::RecordingPaused
+     *
+     * \return \c true if SkyConnect is in recording mode; \c false else
+     * \sa isInReplayMode
+     * \sa isActive
+     */
+    virtual bool isInRecordingMode() const noexcept = 0;
+
+    /*!
+     * Returns whether SkyConnect is in replay mode or not. \em Replay mode means any of the following states:
+     *
+     * - Connect::State::Replay
+     * - Connect::State::ReplayPaused
+     *
+     * \return \c true if SkyConnect is in replay mode; \c false else
+     * \sa isInRecordingMode
+     * \sa isActive
+     */
+    virtual bool isInReplayMode() const noexcept = 0;
 
     /*!
      * Returns whether SkyConnect is active or not. \em Active means any of the following states:
@@ -95,6 +116,8 @@ public:
      * Or in other words: any state except Connected and Disconnected.
      *
      * \return \c true if SkyConnect is active; \c false else
+     * \sa isInRecordingMode
+     * \sa isInReplayMode
      */
     virtual bool isActive() const noexcept = 0;
 
