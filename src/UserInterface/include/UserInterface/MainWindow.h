@@ -93,6 +93,9 @@ private:
      */
     void updatePositionSlider(std::int64_t timestamp) noexcept;
 
+    void updateMinimalUiButtonTextVisibility() noexcept;
+    void updateMininalUiEssentialButtonVisibility() noexcept;
+
     double getCustomSpeedFactor() const;
     
 private slots:
@@ -112,8 +115,8 @@ private slots:
     void updateControlUi() noexcept;
     void updateControlIcons() noexcept;
     void updateReplaySpeedUi() noexcept;
-    void updateMinimalUiButtonTextVisibility(bool hidden) noexcept;
-    void updateMinimalUiNonEssentialButtonVisibility(bool hidden) noexcept;
+    void onButtonTextVisibilityChanged(bool hidden) noexcept;
+    void onEssentialButtonVisibilityChanged(bool hidden) noexcept;
 
     /*
      * Updates the timestamp by setting the maximum replay time according
@@ -165,8 +168,8 @@ private slots:
     void toggleLoopReplay(bool checked) noexcept;
 
     // Service
-    void handleFlightRestored() noexcept;
-    void handleLogbookConnectionChanged(bool connected) noexcept;
+    void onFlightRestored() noexcept;
+    void onLogbookConnectionChanged(bool connected) noexcept;
 
     // Import / export
     void onImport(QAction *action) noexcept;

@@ -276,7 +276,7 @@ void MainWindow::frenchConnection() noexcept
     const Logbook &logbook = Logbook::getInstance();
     const Flight &flight = logbook.getCurrentFlight();
     connect(&flight, &Flight::flightRestored,
-            this, &MainWindow::handleFlightRestored);
+            this, &MainWindow::onFlightRestored);
     connect(&flight, &Flight::timeOffsetChanged,
             this, &MainWindow::updateReplayDuration);
     connect(&flight, &Flight::aircraftRemoved,
@@ -288,13 +288,13 @@ void MainWindow::frenchConnection() noexcept
     connect(&Settings::getInstance(), &Settings::changed,
             this, &MainWindow::updateMainWindow);
     connect(&Settings::getInstance(), &Settings::buttonTextVisibilityChanged,
-            this, &MainWindow::updateMinimalUiButtonTextVisibility);
+            this, &MainWindow::onButtonTextVisibilityChanged);
     connect(&Settings::getInstance(), &Settings::nonEssentialButtonVisibilityChanged,
-            this, &MainWindow::updateMinimalUiNonEssentialButtonVisibility);
+            this, &MainWindow::onEssentialButtonVisibilityChanged);
 
     // Logbook connection
     connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
-            this, &MainWindow::handleLogbookConnectionChanged);
+            this, &MainWindow::onLogbookConnectionChanged);
 
     // Menu actions
     connect(d->importQActionGroup, &QActionGroup::triggered,
@@ -518,8 +518,11 @@ void MainWindow::initControlUi() noexcept
     ui->skipToEndButton->setAction(ui->skipToEndAction);
     ui->loopReplayButton->setAction(ui->loopReplayAction);
 
-    // Completely flat buttons (no border)
+    // Completely flat buttons (no border) - platform dependent
     ui->replayGroupBox->setStyleSheet(Platform::getFlatButtonCss());
+
+    // Completely flat button (no border) - on all platforms
+    ui->loopReplayButton->setStyleSheet("QPushButton {border-style: outset; border-width: 0px; padding: 0px 12px 0px 12px;}");
 }
 
 void MainWindow::initReplaySpeedUi() noexcept
@@ -759,9 +762,10 @@ void MainWindow::updateMinimalUi(bool enabled)
         ui->showReplaySpeedAction->setEnabled(true);
         ui->recordButton->setShowText(true);
     }
-    updateMinimalUiButtonTextVisibility(settings.isButtonTextHidden());
-    updateMinimalUiNonEssentialButtonVisibility(settings.isNonEssentialButtonHidden());
+    updateMinimalUiButtonTextVisibility();
+    updateMininalUiEssentialButtonVisibility();
     ui->moduleGroupBox->setHidden(enabled);
+
     // When hiding a widget it takes some time for the layout manager to
     // get notified, so we return to the Qt event queue first
     QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
@@ -806,9 +810,55 @@ void MainWindow::updatePositionSlider(std::int64_t timestamp) noexcept
     ui->timestampTimeEdit->blockSignals(false);
 }
 
+void MainWindow::updateMinimalUiButtonTextVisibility() noexcept
+{
+    Settings &settings = Settings::getInstance();
+    if (settings.isMinimalUiEnabled()) {
+        const bool showText = !settings.isButtonTextHidden();
+        ui->recordButton->setShowText(showText);
+        ui->skipToBeginButton->setShowText(showText);
+        ui->backwardButton->setShowText(showText);
+        ui->stopButton->setShowText(showText);
+        ui->pauseButton->setShowText(showText);
+        ui->playButton->setShowText(showText);
+        ui->forwardButton->setShowText(showText);
+        ui->skipToEndButton->setShowText(showText);
+        ui->loopReplayButton->setShowText(showText);
+    } else {
+        ui->recordButton->setShowText(true);
+        ui->skipToBeginButton->setShowText(true);
+        ui->backwardButton->setShowText(true);
+        ui->stopButton->setShowText(true);
+        ui->pauseButton->setShowText(true);
+        ui->playButton->setShowText(true);
+        ui->forwardButton->setShowText(true);
+        ui->skipToEndButton->setShowText(true);
+        ui->loopReplayButton->setShowText(true);
+    }
+}
+
+void MainWindow::updateMininalUiEssentialButtonVisibility() noexcept
+{
+    Settings &settings = Settings::getInstance();
+    if (settings.isMinimalUiEnabled()) {
+        const bool showNonEssentialButtons = !settings.isNonEssentialButtonHidden();
+        ui->skipToBeginButton->setVisible(showNonEssentialButtons);
+        ui->backwardButton->setVisible(showNonEssentialButtons);
+        ui->skipToEndButton->setVisible(showNonEssentialButtons);
+        ui->forwardButton->setVisible(showNonEssentialButtons);
+        ui->skipToEndButton->setVisible(showNonEssentialButtons);
+    } else {
+        ui->skipToBeginButton->setVisible(true);
+        ui->backwardButton->setVisible(true);
+        ui->skipToEndButton->setVisible(true);
+        ui->forwardButton->setVisible(true);
+        ui->skipToEndButton->setVisible(true);
+    }
+}
+
 double MainWindow::getCustomSpeedFactor() const
 {
-    double customSpeedFactor;
+    double customSpeedFactor {1.0};
     const QString text = d->customSpeedLineEdit->text();
     if (!text.isEmpty()) {
         switch (Settings::getInstance().getReplaySpeeedUnit()) {
@@ -819,8 +869,6 @@ double MainWindow::getCustomSpeedFactor() const
             customSpeedFactor = d->unit.toNumber(text) / 100.0;
             break;
         }
-    } else {
-        customSpeedFactor = 1.0;
     }
     return customSpeedFactor;
 }
@@ -1122,55 +1170,23 @@ void MainWindow::updateReplaySpeedUi() noexcept
     }    
 }
 
-void MainWindow::updateMinimalUiButtonTextVisibility(bool hidden) noexcept
+void MainWindow::onButtonTextVisibilityChanged(bool hidden) noexcept
 {
+    updateMinimalUiButtonTextVisibility();
     Settings &settings = Settings::getInstance();
-    if (settings.isMinimalUiEnabled()) {
-        ui->recordButton->setShowText(!hidden);
-        ui->skipToBeginButton->setShowText(!hidden);
-        ui->backwardButton->setShowText(!hidden);
-        ui->stopButton->setShowText(!hidden);
-        ui->pauseButton->setShowText(!hidden);
-        ui->playButton->setShowText(!hidden);
-        ui->forwardButton->setShowText(!hidden);
-        ui->skipToEndButton->setShowText(!hidden);
-        ui->loopReplayButton->setShowText(!hidden);
-        if (hidden) {
-            // Shrink to minimal size
-            QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
-        }
-    } else {
-        ui->recordButton->setShowText(true);
-        ui->skipToBeginButton->setShowText(true);
-        ui->backwardButton->setShowText(true);
-        ui->stopButton->setShowText(true);
-        ui->pauseButton->setShowText(true);
-        ui->playButton->setShowText(true);
-        ui->forwardButton->setShowText(true);
-        ui->skipToEndButton->setShowText(true);
-        ui->loopReplayButton->setShowText(true);
+    if (hidden && settings.isMinimalUiEnabled()) {
+        // Shrink to minimal size
+        QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
     }
 }
 
-void MainWindow::updateMinimalUiNonEssentialButtonVisibility(bool hidden) noexcept
+void MainWindow::onEssentialButtonVisibilityChanged(bool hidden) noexcept
 {
+    updateMininalUiEssentialButtonVisibility();
     Settings &settings = Settings::getInstance();
-    if (settings.isMinimalUiEnabled()) {
-        ui->skipToBeginButton->setVisible(!hidden);
-        ui->backwardButton->setVisible(!hidden);
-        ui->skipToEndButton->setVisible(!hidden);
-        ui->forwardButton->setVisible(!hidden);
-        ui->skipToEndButton->setVisible(!hidden);
-        if (hidden) {
-            // Shrink to minimal size
-            QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
-        }
-    } else {
-        ui->skipToBeginButton->setVisible(true);
-        ui->backwardButton->setVisible(true);
-        ui->skipToEndButton->setVisible(true);
-        ui->forwardButton->setVisible(true);
-        ui->skipToEndButton->setVisible(true);
+    if (hidden && settings.isMinimalUiEnabled()) {
+        // Shrink to minimal size
+        QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
     }
 }
 
@@ -1473,7 +1489,7 @@ void MainWindow::toggleLoopReplay(bool checked) noexcept
 
 // Service
 
-void MainWindow::handleFlightRestored() noexcept
+void MainWindow::onFlightRestored() noexcept
 {
     updateUi();
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
@@ -1491,7 +1507,7 @@ void MainWindow::handleFlightRestored() noexcept
     }
 }
 
-void MainWindow::handleLogbookConnectionChanged(bool connected) noexcept
+void MainWindow::onLogbookConnectionChanged(bool connected) noexcept
 {
     d->connectedWithLogbook = connected;
     updateUi();
