@@ -630,7 +630,7 @@ void LogbookWidget::loadFlight() noexcept
     if (selectedFlightId != Flight::InvalidId) {
         const bool ok = d->flightService.restore(selectedFlightId, Logbook::getInstance().getCurrentFlight());
         if (!ok) {
-            QMessageBox::critical(this, tr("Database error"), tr("The flight %1 could not be read from the logbook.").arg(selectedFlightId));
+            QMessageBox::critical(this, tr("Logbook error"), tr("The flight %1 could not be read from the logbook.").arg(selectedFlightId));
         }
     }
 }
@@ -640,11 +640,12 @@ void LogbookWidget::deleteFlight() noexcept
     if (d->selectedFlightId != Flight::InvalidId) {
 
         Settings &settings = Settings::getInstance();
-        bool doDelete;
+        bool doDelete {true};
         if (settings.isDeleteFlightConfirmationEnabled()) {
             std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
             QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), messageBox.get());
 
+            messageBox->setWindowTitle(tr("Delete flight"));
             messageBox->setText(tr("The flight %1 is about to be deleted. Deletion cannot be undone.").arg(d->selectedFlightId));
             messageBox->setInformativeText(tr("Do you want to delete the flight?"));
             QPushButton *deleteButton = messageBox->addButton(tr("&Delete"), QMessageBox::AcceptRole);
@@ -656,9 +657,8 @@ void LogbookWidget::deleteFlight() noexcept
             messageBox->exec();
             doDelete = messageBox->clickedButton() == deleteButton;
             settings.setDeleteFlightConfirmationEnabled(!dontAskAgainCheckBox->isChecked());
-        } else {
-            doDelete = true;
         }
+
         if (doDelete) {
             d->flightService.deleteById(d->selectedFlightId);
             int lastSelectedRow = d->selectedRow;

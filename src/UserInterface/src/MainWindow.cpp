@@ -35,6 +35,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QUrl>
+#include <QDir>
 #include <QString>
 #include <QUuid>
 #include <QTime>
@@ -224,7 +225,7 @@ bool MainWindow::connectWithLogbook(const QString &filePath) noexcept
 {
     bool ok = ConnectionManager::getInstance().connectWithLogbook(filePath, this);
     if (!ok) {
-        QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be opened.").arg(filePath));
+        QMessageBox::critical(this, tr("Logbook error"), tr("The logbook %1 could not be opened.").arg(QDir::toNativeSeparators(filePath)));
     }
     return ok;
 }
@@ -1267,7 +1268,7 @@ void MainWindow::on_newLogbookAction_triggered() noexcept
     if (!logbookPath.isNull()) {
         const bool ok = ConnectionManager::getInstance().connectWithLogbook(logbookPath, this);
         if (!ok) {
-            QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be created.").arg(logbookPath));
+            QMessageBox::critical(this, tr("Logbook error"), tr("The logbook %1 could not be created.").arg(QDir::toNativeSeparators(logbookPath)));
         }
     }
 }
@@ -1282,9 +1283,36 @@ void MainWindow::on_openLogbookAction_triggered() noexcept
 
 void MainWindow::on_optimiseLogbookAction_triggered() noexcept
 {
-    bool ok = ConnectionManager::getInstance().optimise();
-    if (!ok) {
-        QMessageBox::critical(this, tr("Database error"), tr("The logbook could not be optimised."));
+    ConnectionManager &connectionManager = ConnectionManager::getInstance();
+    QString logbookPath = connectionManager.getLogbookPath();
+    QFileInfo fileInfo = QFileInfo(logbookPath);
+
+    std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
+    messageBox->setIcon(QMessageBox::Question);
+    const std::int64_t oldSize = fileInfo.size();
+    QPushButton *optimiseButton = messageBox->addButton(tr("&Optimise"), QMessageBox::AcceptRole);
+    messageBox->setWindowTitle(tr("Optimise logbook"));
+    messageBox->setText(tr("Logbook optimisation will regain unused space. The current %1 size is %2. Do you want to optimise the logbook?").arg(fileInfo.fileName(), d->unit.formatMemory(oldSize)));
+    messageBox->setInformativeText(tr("The optimisation operation may take a while, depending on the logbook file size."));
+    messageBox->setStandardButtons(QMessageBox::Cancel);
+    messageBox->setDefaultButton(optimiseButton);
+
+    messageBox->exec();
+    const QAbstractButton *clickedButton = messageBox->clickedButton();
+    if (clickedButton == optimiseButton) {
+        const bool ok = ConnectionManager::getInstance().optimise();
+        if (ok) {
+            fileInfo.refresh();
+            messageBox = std::make_unique<QMessageBox>(this);
+            messageBox->setIcon(QMessageBox::Information);
+            messageBox->setWindowTitle(tr("Success"));
+            messageBox->setText(tr("The logbook %1 optimisation was successful.").arg(fileInfo.fileName()));
+            messageBox->setInformativeText(tr("The new file size is: %1 (old size: %2).")
+                                           .arg(d->unit.formatMemory(fileInfo.size()), d->unit.formatMemory(oldSize)));
+            messageBox->exec();
+        } else {
+            QMessageBox::critical(this, tr("Logbook error"), tr("The logbook could not be optimised."));
+        }
     }
 }
 

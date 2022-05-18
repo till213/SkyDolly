@@ -20,12 +20,21 @@
 - In the formation module the "Delete" key now deletes the selected aircraft
 - Latitude and longitude values are now formatted with leading zeroes
 - The recording timer is now updated based on the current timestamp (and not the already recorded data), even (especially) when no sample data is available ("cold and dark" aircraft)
+- Button texts and non-essential buttons are now hidden in the "Minimal UI" mode
+  * Two options have been added to the user interface settings section which control this new behaviour
+- Additional tooltips in the settings dialog
+- All question and information dialogs now have an explanatory title
+- Tweaked layout
+  * Tables have now alternating colours per row
+  * Minor user interface adjustments
+- A question and confirmation dialog is now shown before and after logbook optimisation, also showing the before and after file sizes (after the optimisation)
 
 ### Bug Fixes
 - In the logbook module the date selection column width is now properly calculated (no month name is truncated)
 - The position slider is now properly updated whenever an aircraft is removed or its time offset has been changed
 - When pausing a recording (yes, that's actually possible ;)) the "recording timer" is only restarted in case no event-based recording is done (but a "timer-based recording" instead)
 - The Window | Minimal menu entry is now properly synchronised (unchecked) when the module is changed while in "minimal UI" mode (e.g. by pressing F1 or F2, or via the Module menu)
+- File paths are converted to native separators when shown in dialog boxes to the user
 
 ### Under The Hood
 - Introduction of the GeographicLib

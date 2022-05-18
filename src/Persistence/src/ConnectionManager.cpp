@@ -145,8 +145,9 @@ bool ConnectionManager::connectWithLogbook(const QString &logbookPath, QWidget *
                     disconnectFromLogbook();
                     std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(parent);
                     messageBox->setWindowIcon(QIcon(":/img/icons/application-icon.png"));
-                    messageBox->setText(tr("The logbook %1 has been created with a newer version %2.").arg(currentLogbookPath, databaseVersion.toString()));
-                    messageBox->setInformativeText("Do you want to create a new logbook?");
+                    messageBox->setWindowTitle(tr("Newer version"));
+                    messageBox->setText(tr("The logbook %1 has been created with a newer version %2. Do you want to create a new logbook?").arg(QDir::toNativeSeparators(currentLogbookPath), databaseVersion.toString()));
+                    messageBox->setInformativeText(tr("Logbooks created with newer %1 versions cannot be opened.").arg(Version::getApplicationName()));
                     QPushButton *createNewPushButton = messageBox->addButton(tr("Create &New Logbook"), QMessageBox::AcceptRole);
                     QPushButton *openExistingPushButton = messageBox->addButton(tr("&Open Another Logbook"), QMessageBox::AcceptRole);
                     messageBox->addButton(tr("&Cancel"), QMessageBox::RejectRole);

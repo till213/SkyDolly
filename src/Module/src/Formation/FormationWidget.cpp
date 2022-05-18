@@ -871,14 +871,15 @@ void FormationWidget::updateUserAircraftIndex() noexcept
 void FormationWidget::deleteAircraft() noexcept
 {
     Settings &settings = Settings::getInstance();
-    bool doDelete;
+    bool doDelete {true};
     if (settings.isDeleteAircraftConfirmationEnabled()) {
         std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
         QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), messageBox.get());
 
         // Sequence numbers start at 1
-        messageBox->setText(tr("The aircraft with sequence number %1 is about to be deleted. Deletion cannot be undone.").arg(d->selectedRow + 1));
-        messageBox->setInformativeText(tr("Do you want to delete the aircraft?"));
+        messageBox->setWindowTitle(tr("Delete aircraft"));
+        messageBox->setText(tr("The aircraft with sequence number %1 is about to be deleted. Do you want to delete the aircraft?").arg(d->selectedRow + 1));
+        messageBox->setInformativeText(tr("Deletion cannot be undone."));
         QPushButton *deleteButton = messageBox->addButton(tr("&Delete"), QMessageBox::AcceptRole);
         QPushButton *keepButton = messageBox->addButton(tr("&Keep"), QMessageBox::RejectRole);
         messageBox->setDefaultButton(keepButton);
@@ -888,9 +889,8 @@ void FormationWidget::deleteAircraft() noexcept
         messageBox->exec();
         doDelete = messageBox->clickedButton() == deleteButton;
         settings.setDeleteAircraftConfirmationEnabled(!dontAskAgainCheckBox->isChecked());
-    } else {
-        doDelete = true;
     }
+
     if (doDelete) {
         d->aircraftService->deleteByIndex(d->selectedRow);
     }
@@ -1013,8 +1013,9 @@ void FormationWidget::on_resetAllTimeOffsetPushButton_clicked() noexcept
         std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
         QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), messageBox.get());
 
-        messageBox->setText(tr("The time offsets of all aircraft in this formation will be changed."));
-        messageBox->setInformativeText(tr("Do you want to reset all time offsets to 0?"));
+        messageBox->setWindowTitle(tr("Reset time offsets"));
+        messageBox->setText(tr("Do you want to reset all time offsets to 0?"));
+        messageBox->setInformativeText(tr("The time offsets of all aircraft in this formation will be changed."));
         QPushButton *resetButton = messageBox->addButton(tr("&Reset Time Offsets"), QMessageBox::AcceptRole);
         QPushButton *doNotChangeButon = messageBox->addButton(tr("Do &Not Change"), QMessageBox::RejectRole);
         messageBox->setDefaultButton(doNotChangeButon);
