@@ -83,7 +83,7 @@ private slots:
     * "changed" signal is emitted.
     */
    void updateButtonStatusFromAction() noexcept;
-   inline void updateText() noexcept;
+   void updateText() noexcept;
    void connectToAction() noexcept;
 
    /*

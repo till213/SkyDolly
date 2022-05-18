@@ -25,11 +25,15 @@
 #include <QApplication>
 #include <QPalette>
 #include <QColor>
+#include <QString>
+#include <QStringLiteral>
 
 #include "Platform.h"
+#include "QtCore/qstringliteral.h"
 
 namespace  {
-    constexpr int DarkModeValueThreshold = 80;
+    constexpr int DarkModeValueThreshold {80};
+    const QString FlatButtonCss {QStringLiteral("QPushButton {border-style: outset; border-width: 0px; padding: 0px 12px 0px 12px;})")};
 }
 
 namespace Dark {
@@ -56,4 +60,9 @@ QColor Platform::getEditableTableCellBGColor() noexcept
     } else {
         return QColor(Bright::EditableTableCellBGColor);
     }
+}
+
+QString Platform::getFlatButtonCss() noexcept
+{
+    return FlatButtonCss;
 }

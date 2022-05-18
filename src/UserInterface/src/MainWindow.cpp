@@ -75,6 +75,7 @@
 #include <Widget/ActionButton.h>
 #include <Widget/ActionRadioButton.h>
 #include <Widget/ActionCheckBox.h>
+#include <Widget/Platform.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/Connect.h>
@@ -311,13 +312,13 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::handleReplaySpeedUnitSelected);
 
     // Actions
-    connect(ui->recordAction, &QAction::triggered,
+    connect(ui->recordAction, &QAction::toggled,
             this, &MainWindow::toggleRecord);
     connect(ui->stopAction, &QAction::triggered,
             this, &MainWindow::stop);
-    connect(ui->playAction, &QAction::triggered,
+    connect(ui->playAction, &QAction::toggled,
             this, &MainWindow::togglePlay);
-    connect(ui->pauseAction, &QAction::triggered,
+    connect(ui->pauseAction, &QAction::toggled,
             this, &MainWindow::togglePause);
     connect(ui->skipToBeginAction, &QAction::triggered,
             this, &MainWindow::skipToBegin);
@@ -327,7 +328,7 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::skipForward);
     connect(ui->skipToEndAction, &QAction::triggered,
             this, &MainWindow::skipToEnd);
-    connect(ui->replayLoopPushButton, &QPushButton::toggled,
+    connect(ui->loopReplayAction, &QAction::toggled,
             this, &MainWindow::toggleLoopReplay);
 
     // Menus
@@ -514,9 +515,10 @@ void MainWindow::initControlUi() noexcept
     ui->playButton->setAction(ui->playAction);
     ui->forwardButton->setAction(ui->forwardAction);
     ui->skipToEndButton->setAction(ui->skipToEndAction);
+    ui->loopReplayButton->setAction(ui->loopReplayAction);
 
-    // Completely flat button (no border)
-    ui->replayLoopPushButton->setStyleSheet("QPushButton {border-style: outset; border-width: 0px;}");
+    // Completely flat buttons (no border)
+    ui->replayGroupBox->setStyleSheet(Platform::getFlatButtonCss());
 }
 
 void MainWindow::initReplaySpeedUi() noexcept
@@ -537,10 +539,9 @@ void MainWindow::initReplaySpeedUi() noexcept
     slowActions.at(3)->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_4));
     slowActions.at(3)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Slow75));
 
-    QAction *normalSpeedAction = new QAction(tr("Normal"), this);
-    normalSpeedAction->setCheckable(true);
-    normalSpeedAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_1));
-    normalSpeedAction->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Normal));
+    ui->normalSpeedAction->setCheckable(true);
+    ui->normalSpeedAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_1));
+    ui->normalSpeedAction->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Normal));
 
     QList<QAction *> fastActions {
         new QAction("2x", this),
@@ -557,10 +558,9 @@ void MainWindow::initReplaySpeedUi() noexcept
     fastActions.at(3)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_5));
     fastActions.at(3)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Fast16x));
 
-    QAction *customSpeedAction = new QAction(tr("Custom"), this);
-    customSpeedAction->setCheckable(true);
-    customSpeedAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_6));
-    customSpeedAction->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Custom));
+    ui->customSpeedAction->setCheckable(true);
+    ui->customSpeedAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_6));
+    ui->customSpeedAction->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Custom));
 
     // Action group
     d->replaySpeedActionGroup = new QActionGroup(this);
@@ -568,18 +568,16 @@ void MainWindow::initReplaySpeedUi() noexcept
         action->setCheckable(true);
         d->replaySpeedActionGroup->addAction(action);
     }
-    d->replaySpeedActionGroup->addAction(normalSpeedAction);
+    d->replaySpeedActionGroup->addAction(ui->normalSpeedAction);
     for (QAction *action : fastActions) {
         action->setCheckable(true);
         d->replaySpeedActionGroup->addAction(action);
     }
-    d->replaySpeedActionGroup->addAction(customSpeedAction);
+    d->replaySpeedActionGroup->addAction(ui->customSpeedAction);
 
     // Menus
     ui->slowMenu->addActions(slowActions);
     ui->fastMenu->addActions(fastActions);
-    ui->replayMenu->addAction(normalSpeedAction);
-    ui->replayMenu->addAction(customSpeedAction);
 
     QLayout *replaySpeedLayout = ui->replaySpeedGroupBox->layout();
 
@@ -601,7 +599,7 @@ void MainWindow::initReplaySpeedUi() noexcept
     replaySpeedLayout->addWidget(slow75RadioButton);
 
     ActionRadioButton *normalSpeedRadioButton = new ActionRadioButton(this);
-    normalSpeedRadioButton->setAction(normalSpeedAction);
+    normalSpeedRadioButton->setAction(ui->normalSpeedAction);
     replaySpeedLayout->addWidget(normalSpeedRadioButton);
 
     ActionRadioButton *fast2xRadioButton = new ActionRadioButton(this);
@@ -622,7 +620,7 @@ void MainWindow::initReplaySpeedUi() noexcept
 
     // Custom speed
     d->customSpeedRadioButton = new ActionRadioButton(this);
-    d->customSpeedRadioButton->setAction(customSpeedAction);
+    d->customSpeedRadioButton->setAction(ui->customSpeedAction);
     replaySpeedLayout->addWidget(d->customSpeedRadioButton);
 
     d->customSpeedLineEdit = new QLineEdit(this);
@@ -1077,12 +1075,7 @@ void MainWindow::updateControlUi() noexcept
     }
 
     const bool loopReplayEnabled = Settings::getInstance().isReplayLoopEnabled();
-    ui->replayLoopPushButton->setChecked(loopReplayEnabled);
-    if (loopReplayEnabled) {
-        ui->replayLoopPushButton->setToolTip(tr("Replay loop is enabled."));
-    } else {
-        ui->replayLoopPushButton->setToolTip(tr("Replay stops at end."));
-    }
+    ui->loopReplayAction->setChecked(loopReplayEnabled);
 }
 
 void MainWindow::updateControlIcons() noexcept
@@ -1140,12 +1133,10 @@ void MainWindow::updateMinimalUiButtonTextVisibility(bool hidden) noexcept
         ui->playButton->setShowText(!hidden);
         ui->forwardButton->setShowText(!hidden);
         ui->skipToEndButton->setShowText(!hidden);
+        ui->loopReplayButton->setShowText(!hidden);
         if (hidden) {
-            ui->replayLoopPushButton->setText(QString());
             // Shrink to minimal size
             QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
-        } else {
-            ui->replayLoopPushButton->setText(tr("Loop"));
         }
     } else {
         ui->recordButton->setShowText(true);
@@ -1156,7 +1147,7 @@ void MainWindow::updateMinimalUiButtonTextVisibility(bool hidden) noexcept
         ui->playButton->setShowText(true);
         ui->forwardButton->setShowText(true);
         ui->skipToEndButton->setShowText(true);
-        ui->replayLoopPushButton->setText(tr("Loop"));
+        ui->loopReplayButton->setShowText(true);
     }
 }
 

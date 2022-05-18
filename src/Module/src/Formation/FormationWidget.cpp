@@ -320,13 +320,13 @@ void FormationWidget::initUi() noexcept
     d->positionButtonGroup->addButton(ui->nwPositionRadioButton, RelativePosition::NorthWest);
     d->positionButtonGroup->addButton(ui->nnwPositionRadioButton, RelativePosition::NorthNorthWest);
 
-    const QString css =
+    const QString css = QStringLiteral(
 "QRadioButton::indicator:unchecked {"
 "    image: url(:/img/icons/aircraft-normal-off.png);"
 "}"
 "QRadioButton::indicator:checked {"
 "    image: url(:/img/icons/aircraft-record-normal.png);"
-"}";
+"}");
     ui->nPositionRadioButton->setStyleSheet(css);
     ui->nnePositionRadioButton->setStyleSheet(css);
     ui->nePositionRadioButton->setStyleSheet(css);
@@ -352,6 +352,8 @@ void FormationWidget::initUi() noexcept
 
     // Default "Delete" key deletes aircraft
     ui->deletePushButton->setShortcut(QKeySequence::Delete);
+
+    ui->timeOffsetGroupBox->setStyleSheet(Platform::getFlatButtonCss());
 }
 
 void FormationWidget::initTimeOffsetUi() noexcept

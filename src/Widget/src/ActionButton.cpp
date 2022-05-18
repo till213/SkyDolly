@@ -92,7 +92,7 @@ void ActionButton::updateButtonStatusFromAction() noexcept
     }
 }
 
-inline void ActionButton::updateText() noexcept
+void ActionButton::updateText() noexcept
 {
     if (d->showText) {
         setText(d->action->text());

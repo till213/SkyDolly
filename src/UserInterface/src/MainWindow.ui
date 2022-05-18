@@ -315,7 +315,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="replayLoopPushButton">
+            <widget class="ActionButton" name="loopReplayButton">
              <property name="minimumSize">
               <size>
                <width>0</width>
@@ -475,6 +475,10 @@
     <addaction name="separator"/>
     <addaction name="slowMenu"/>
     <addaction name="fastMenu"/>
+    <addaction name="normalSpeedAction"/>
+    <addaction name="customSpeedAction"/>
+    <addaction name="separator"/>
+    <addaction name="loopReplayAction"/>
    </widget>
    <widget class="QMenu" name="moduleMenu">
     <property name="title">
@@ -742,6 +746,32 @@
   <action name="onlineManualAction">
    <property name="text">
     <string>Online &amp;Manual...</string>
+   </property>
+  </action>
+  <action name="loopReplayAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/SkyDolly.qrc">
+     <normaloff>:/img/icons/play-loop-normal.png</normaloff>
+     <normalon>:/img/icons/play-loop-normal-on.png</normalon>:/img/icons/play-loop-normal.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Loop</string>
+   </property>
+   <property name="toolTip">
+    <string>Loop the replay.</string>
+   </property>
+  </action>
+  <action name="normalSpeedAction">
+   <property name="text">
+    <string>Normal</string>
+   </property>
+  </action>
+  <action name="customSpeedAction">
+   <property name="text">
+    <string>Custom</string>
    </property>
   </action>
  </widget>
