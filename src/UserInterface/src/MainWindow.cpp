@@ -764,6 +764,8 @@ void MainWindow::updateMinimalUi(bool enabled)
     }
     updateMinimalUiButtonTextVisibility();
     updateMininalUiEssentialButtonVisibility();
+    updatePositionSliderTickInterval();
+
     ui->moduleGroupBox->setHidden(enabled);
 
     // When hiding a widget it takes some time for the layout manager to
@@ -854,6 +856,28 @@ void MainWindow::updateMininalUiEssentialButtonVisibility() noexcept
         ui->forwardButton->setVisible(true);
         ui->skipToEndButton->setVisible(true);
     }
+}
+
+void MainWindow::updatePositionSliderTickInterval() noexcept
+{
+    Settings &settings = Settings::getInstance();
+    int tickInterval {10};
+    if (settings.isMinimalUiEnabled()) {
+        if (settings.isNonEssentialButtonHidden()) {
+            if (settings.isButtonTextHidden()) {
+                tickInterval = 40;
+            } else {
+                tickInterval = 20;
+            }
+        } else {
+            if (settings.isButtonTextHidden()) {
+                tickInterval = 20;
+            } else {
+                tickInterval = 10;
+            }
+        }
+    }
+    ui->positionSlider->setTickInterval(tickInterval);
 }
 
 double MainWindow::getCustomSpeedFactor() const
@@ -1173,6 +1197,7 @@ void MainWindow::updateReplaySpeedUi() noexcept
 void MainWindow::onButtonTextVisibilityChanged(bool hidden) noexcept
 {
     updateMinimalUiButtonTextVisibility();
+    updatePositionSliderTickInterval();
     Settings &settings = Settings::getInstance();
     if (hidden && settings.isMinimalUiEnabled()) {
         // Shrink to minimal size
@@ -1183,6 +1208,7 @@ void MainWindow::onButtonTextVisibilityChanged(bool hidden) noexcept
 void MainWindow::onEssentialButtonVisibilityChanged(bool hidden) noexcept
 {
     updateMininalUiEssentialButtonVisibility();
+    updatePositionSliderTickInterval();
     Settings &settings = Settings::getInstance();
     if (hidden && settings.isMinimalUiEnabled()) {
         // Shrink to minimal size

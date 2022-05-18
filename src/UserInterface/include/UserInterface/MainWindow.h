@@ -95,6 +95,7 @@ private:
 
     void updateMinimalUiButtonTextVisibility() noexcept;
     void updateMininalUiEssentialButtonVisibility() noexcept;
+    void updatePositionSliderTickInterval() noexcept;
 
     double getCustomSpeedFactor() const;
     
