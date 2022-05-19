@@ -357,6 +357,7 @@ void AbstractSkyConnect::seek(std::int64_t timestamp) noexcept
     if (isConnectedWithSim()) {
         if (d->state != Connect::State::Recording) {
             d->currentTimestamp = timestamp;
+            d->lastNotificationTimestamp = d->currentTimestamp;
             d->elapsedTime = timestamp;
             emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Seek);
             bool ok = retryWithReconnect([this, timestamp]() -> bool { return sendAircraftData(timestamp, TimeVariableData::Access::Seek, AircraftSelection::All); });
@@ -514,6 +515,7 @@ void AbstractSkyConnect::setState(Connect::State state) noexcept
 void AbstractSkyConnect::setCurrentTimestamp(std::int64_t timestamp) noexcept
 {
     d->currentTimestamp = timestamp;
+    d->lastNotificationTimestamp = d->currentTimestamp;
 }
 
 bool AbstractSkyConnect::isElapsedTimerRunning() const noexcept
