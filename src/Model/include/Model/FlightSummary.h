@@ -38,8 +38,8 @@ struct MODEL_API FlightSummary
     FlightSummary(const FlightSummary &other) = default;
     FlightSummary(FlightSummary &&other) noexcept;
     ~FlightSummary() noexcept;
-    FlightSummary &operator = (const FlightSummary &rhs) = default;
-    FlightSummary &operator = (FlightSummary &&rhs) noexcept;
+    FlightSummary &operator=(const FlightSummary &rhs) = default;
+    FlightSummary &operator=(FlightSummary &&rhs) noexcept;
 
     std::int64_t flightId;
     QDateTime creationDate;

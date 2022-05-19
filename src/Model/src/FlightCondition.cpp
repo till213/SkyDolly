@@ -63,7 +63,7 @@ FlightCondition::FlightCondition(FlightCondition &&other) noexcept
       endZuluTime(std::move(other.endZuluTime))
 {}
 
-FlightCondition &FlightCondition::operator = (FlightCondition &&rhs) noexcept
+FlightCondition &FlightCondition::operator=(FlightCondition &&rhs) noexcept
 {
     if (this != &rhs) {
         groundAltitude = rhs.groundAltitude;

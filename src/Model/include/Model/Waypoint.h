@@ -46,8 +46,8 @@ struct MODEL_API Waypoint : public TimeVariableData
     Waypoint(const Waypoint &) = default;
     Waypoint(Waypoint &&other) noexcept;
     ~Waypoint() override = default;
-    Waypoint &operator = (const Waypoint &rhs) = default;
-    Waypoint &operator = (Waypoint &&rhs) noexcept;
+    Waypoint &operator=(const Waypoint &rhs) = default;
+    Waypoint &operator=(Waypoint &&rhs) noexcept;
 
     /*!
      * Returns whether this waypoint is valid or not.

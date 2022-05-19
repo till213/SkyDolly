@@ -212,12 +212,12 @@ void Aircraft::clear() noexcept
     invalidateDuration();
 }
 
-bool Aircraft::operator == (const Aircraft &rhs) const noexcept
+bool Aircraft::operator==(const Aircraft &rhs) const noexcept
 {
     return this->d->id == rhs.d->id;
 }
 
-bool Aircraft::operator != (const Aircraft &rhs) const noexcept
+bool Aircraft::operator!=(const Aircraft &rhs) const noexcept
 {
     return this->d->id != rhs.d->id;
 }

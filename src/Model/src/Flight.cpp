@@ -34,6 +34,8 @@
 
 #include "FlightCondition.h"
 #include "Aircraft.h"
+#include "FlightPlan.h"
+#include "Waypoint.h"
 #include "FlightSummary.h"
 #include "Flight.h"
 
@@ -217,13 +219,27 @@ void Flight::setFlightCondition(FlightCondition flightCondition) noexcept
 
 FlightSummary Flight::getFlightSummary() const noexcept
 {
+    const Aircraft &aircraft = getUserAircraft();
+    const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
+
     FlightSummary summary;
     summary.flightId = d->id;
-    summary.aircraftCount = count();
-    const AircraftInfo &aircraftInfo = getUserAircraft().getAircraftInfo();
-    summary.aircraftType = aircraftInfo.aircraftType.type;
     summary.creationDate = d->creationTime;
-    // @todo IMPLEMENT ME!!!
+    summary.aircraftType = aircraftInfo.aircraftType.type;
+    summary.aircraftCount = count();
+    summary.startSimulationLocalTime = d->flightCondition.startLocalTime;
+    summary.startSimulationZuluTime = d->flightCondition.startZuluTime;
+    summary.endSimulationLocalTime = d->flightCondition.endLocalTime;
+    summary.endSimulationZuluTime = d->flightCondition.endZuluTime;
+
+    const FlightPlan &flightPlan = aircraft.getFlightPlan();
+    if (flightPlan.count() > 0) {
+        summary.startLocation = flightPlan[0].identifier;
+    }
+    if (flightPlan.count() > 1) {
+        summary.endLocation = flightPlan[flightPlan.count() - 1].identifier;
+    }
+    summary.title = d->title;
 
     return summary;
 }

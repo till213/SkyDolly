@@ -79,8 +79,8 @@ public:
 
     void clear() noexcept;
 
-    bool operator == (const Aircraft &rhs) const noexcept;
-    bool operator != (const Aircraft &rhs) const noexcept;
+    bool operator==(const Aircraft &rhs) const noexcept;
+    bool operator!=(const Aircraft &rhs) const noexcept;
 
     static constexpr std::int64_t InvalidId {-1};
 

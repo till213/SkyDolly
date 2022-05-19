@@ -58,7 +58,7 @@ public:
           m_currentIndex(other.m_currentIndex),
           m_currentAccess(other.m_currentAccess)
     {}
-    AbstractComponent &operator = (const AbstractComponent &rhs)
+    AbstractComponent &operator=(const AbstractComponent &rhs)
     {
         if (this != &rhs) {
             m_data = rhs.m_data;
@@ -69,7 +69,7 @@ public:
         }
         return *this;
     }
-    AbstractComponent &operator = (AbstractComponent &&rhs)
+    AbstractComponent &operator=(AbstractComponent &&rhs)
     {
         if (this != &rhs) {
             m_data = std::move(rhs.m_data);

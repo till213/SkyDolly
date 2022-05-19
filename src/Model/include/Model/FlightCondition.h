@@ -56,8 +56,8 @@ struct MODEL_API FlightCondition
     FlightCondition(const FlightCondition &other) = default;
     FlightCondition(FlightCondition &&other) noexcept;
     ~FlightCondition() = default;
-    FlightCondition &operator = (const FlightCondition &rhs) = default;
-    FlightCondition &operator = (FlightCondition &&rhs) noexcept;
+    FlightCondition &operator=(const FlightCondition &rhs) = default;
+    FlightCondition &operator=(FlightCondition &&rhs) noexcept;
 
     void clear() noexcept;
 };

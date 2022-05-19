@@ -416,7 +416,7 @@ void LogbookWidget::updateFlightTable() noexcept
         if (!d->columnsAutoResized) {
             ui->logTableWidget->resizeColumnsToContents();
             // Reserve some space for the aircraft icon
-            const int idColumnWidth = static_cast<int>(std::round(1.5 * ui->logTableWidget->columnWidth(d->idColumnIndex)));
+            const int idColumnWidth = static_cast<int>(std::round(1.25 * ui->logTableWidget->columnWidth(d->idColumnIndex)));
             ui->logTableWidget->setColumnWidth(d->idColumnIndex, idColumnWidth);
             d->columnsAutoResized = true;
         }

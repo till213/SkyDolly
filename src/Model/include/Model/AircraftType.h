@@ -57,13 +57,13 @@ struct MODEL_API AircraftType
     ~AircraftType() = default;
     AircraftType(const AircraftType &other) = default;
     AircraftType(AircraftType &&other) noexcept;
-    AircraftType &operator = (const AircraftType &rhs) = default;
-    AircraftType &operator = (AircraftType &&rhs) noexcept;
+    AircraftType &operator=(const AircraftType &rhs) = default;
+    AircraftType &operator=(AircraftType &&rhs) noexcept;
 
     void clear() noexcept;
 };
 
-inline bool operator == (const AircraftType &lhs, const AircraftType &rhs) {
+inline bool operator==(const AircraftType &lhs, const AircraftType &rhs) {
     return lhs.type == rhs.type &&
            lhs.category == rhs.category &&
            lhs.wingSpan == rhs.wingSpan &&
@@ -71,7 +71,7 @@ inline bool operator == (const AircraftType &lhs, const AircraftType &rhs) {
            lhs.numberOfEngines == rhs.numberOfEngines;
 }
 
-inline bool operator != (const AircraftType&lhs, const AircraftType &rhs) {
+inline bool operator!=(const AircraftType&lhs, const AircraftType &rhs) {
     return !(lhs == rhs);
 }
 

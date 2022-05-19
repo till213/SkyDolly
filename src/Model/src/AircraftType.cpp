@@ -42,7 +42,7 @@ AircraftType::AircraftType(AircraftType &&other) noexcept
       numberOfEngines(other.numberOfEngines)
 {}
 
-AircraftType &AircraftType::operator = (AircraftType &&rhs) noexcept
+AircraftType &AircraftType::operator=(AircraftType &&rhs) noexcept
 {
     if (this != &rhs) {
         type = std::move(rhs.type);

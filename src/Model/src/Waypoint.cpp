@@ -46,7 +46,7 @@ Waypoint::Waypoint(Waypoint &&other) noexcept
       zuluTime(std::move(other.zuluTime))
 {}
 
-Waypoint &Waypoint::operator = (Waypoint &&rhs) noexcept
+Waypoint &Waypoint::operator=(Waypoint &&rhs) noexcept
 {
     if (this != &rhs) {
         TimeVariableData::operator=(rhs);

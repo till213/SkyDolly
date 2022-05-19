@@ -37,8 +37,8 @@ public:
     Position(Position &aircraftHandle) = default;
     Position(Position &&aircraftHandle) = default;
     ~Position() noexcept override;
-    Position &operator = (const Position &rhs) = default;
-    Position &operator = (Position &&rhs) = default;
+    Position &operator=(const Position &rhs) = default;
+    Position &operator=(Position &&rhs) = default;
 
     const PositionData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 
