@@ -86,7 +86,7 @@ signals:
     void connectionChanged(bool connected);
 
 protected:
-    virtual ~LogbookManager() noexcept;
+    ~LogbookManager() noexcept override;
 
 private:
     Q_DISABLE_COPY(LogbookManager)

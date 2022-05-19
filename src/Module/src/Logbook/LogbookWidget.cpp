@@ -335,12 +335,16 @@ void LogbookWidget::updateFlightTable() noexcept
 
             // ID
             std::unique_ptr<QTableWidgetItem> newItem = std::make_unique<QTableWidgetItem>();
+            QVariant flightId = QVariant::fromValue(summary.flightId);
             if (summary.flightId == flightInMemoryId) {
                 newItem->setIcon(QIcon(":/img/icons/aircraft-normal.png"));
             } else if (summary.flightId == ::RecordingInProgressId) {
                 newItem->setIcon(QIcon(":/img/icons/aircraft-record-normal.png"));
+                // Note: alphabetical characters (a-zA-Z) will be > numerical characters (0-9),
+                //       so the flight being recorded will be properly sorted in the table
+                flightId = QVariant::fromValue(tr("REC"));
             }
-            newItem->setData(Qt::DisplayRole, QVariant::fromValue(summary.flightId));
+            newItem->setData(Qt::DisplayRole, flightId);
             newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
             newItem->setToolTip(tr("Double-click to load flight."));
             // Transfer ownership of newItem to table widget
