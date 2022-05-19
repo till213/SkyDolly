@@ -14,23 +14,52 @@
 - CSV export
   - A new "position and attitude" format has been added, exporting the position, pitch, bank, heading and speed, including UTC timestamps
 
-#### User Interface
+#### Logbook Module
 - The order of the logbook table columns can now be changed
+- The flight being recorded is now also shown in the logbook: the "red airplane" indicates this (in analogy to the Formation module)
+
+#### Formation Module
 - The order of the formation aircraft table columns can now be changed
-- In the formation module the "Delete" key now deletes the selected aircraft
+- The "Delete" key now deletes the selected aircraft
+- Minor layout adjustments
+
+#### Minimal UI Mode
+- Button texts, non-essential buttons and the replay speed are now automatically hidden when switching into minimal UI mode
+- This behaviour (the default visibility while in the minimal UI mode) can be defined with new options in the Settings | User Interface section
+- The replay speed visibility can now also be toggled while in minimal UI mode
+
+#### User Interface
 - Latitude and longitude values are now formatted with leading zeroes
-- The recording timer is now updated based on the current timestamp (and not the already recorded data), even (especially) when no sample data is available ("cold and dark" aircraft)
+- The recording timer is now always incremented, even (especially) when no sample data is currently being recorded (no value changes, e.g. typically for a "cold and dark" aircraft)
+- Additional tooltips in the settings dialog
+- All question and information dialogs now have an explanatory title
+- Tables now have alternating colours per row
+- A question and confirmation dialog is now shown before and after logbook optimisation, also showing the before and after file sizes (after the optimisation)
 
 ### Bug Fixes
 - In the logbook module the date selection column width is now properly calculated (no month name is truncated)
 - The position slider is now properly updated whenever an aircraft is removed or its time offset has been changed
 - When pausing a recording (yes, that's actually possible ;)) the "recording timer" is only restarted in case no event-based recording is done (but a "timer-based recording" instead)
+- The Window | Minimal menu entry is now properly synchronised (unchecked) when the module is changed while in "minimal UI" mode (e.g. by pressing F1 or F2, or via the Module menu)
+- File paths are converted to native separators when shown in dialog boxes to the user
+- The settings dialog is now created on demand. This also fixes an issue with dialog z-ordering when the main application window is switched to "Stay on Top"
 
 ### Under The Hood
 - Introduction of the GeographicLib
   * Calculating undulation values
   * Geodesic calculations (distance, azimuth, relative position)
 - Refactored the build system ("modern CMake")
+  * Resources like the undulation file can be auomatically (optionally) downloaded at build configuration time (refer to the [BUILD.d](BUILD.md) instructions for details
+  * Third-party libraries (git submodules) like the GeographicLib are automatically checked out
+- Model classes refactoring
+  * Template based, in order to reduce repetitive code
+  * Qt Signas and slots re-wiring
+- Plugin management refactoring
+  * Plugin managers are now in a common PLuginManager library
+  * Plugins are now built after the main application
+    - Especially on macOS this allows to place the plugins inside the previously built application bundle
+- Dialogs (flight, simulation variables, statistics) are now (only) created on demand, resulting in a smaller memory footprint after application start
+- And finally... on macOS the application icon set is now automatically generated at build time
 
 ## 0.10.0
 

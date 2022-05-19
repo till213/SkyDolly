@@ -29,6 +29,9 @@
 #include <QWidget>
 #include <QString>
 #include <QDoubleSpinBox>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/SampleRate.h>
 #include <Kernel/Enum.h>
@@ -54,10 +57,17 @@ SettingsDialog::SettingsDialog(QWidget *parent) noexcept :
     ui->setupUi(this);
     initUi();
     frenchConnection();
+#ifdef DEBUG
+    qDebug() << "SettingsDialog::SettingsDialog: CREATED";
+#endif
 }
 
 SettingsDialog::~SettingsDialog() noexcept
-{}
+{
+#ifdef DEBUG
+    qDebug() << "SettingsDialog::~SettingsDialog: DELETED";
+#endif
+}
 
 // PROTECTED
 
@@ -151,6 +161,13 @@ void SettingsDialog::updateUi() noexcept
     ui->confirmDeleteFlightCheckBox->setChecked(settings.isDeleteFlightConfirmationEnabled());
     ui->confirmDeleteAircraftCheckBox->setChecked(settings.isDeleteAircraftConfirmationEnabled());
     ui->confirmResetAllTimeOffsetCheckBox->setChecked(settings.isResetTimeOffsetConfirmationEnabled());
+
+    // Note: from a user's perspective the "hiding aspect" is more important ("which UI elements to I want
+    //       to hide in minimal UI mode" - hence the "hide" in the checkbox names), but from a logic perspective
+    //       it makes more sense to talk about "visibility" (true = visible, false = hidden)
+    ui->hideButtonTextCheckBox->setChecked(!settings.getDefaultMinimalUiButtonTextVisibility());
+    ui->hideNonEssentialButtonsCheckBox->setChecked(!settings.getDefaultMinimalUiNonEssentialButtonVisibility());
+    ui->hideReplaySpeedCheckBox->setChecked(!settings.getDefaultMinimalUiReplaySpeedVisibility());
 }
 
 void SettingsDialog::handleAccepted() noexcept
@@ -176,4 +193,9 @@ void SettingsDialog::handleAccepted() noexcept
     settings.setDeleteFlightConfirmationEnabled(ui->confirmDeleteFlightCheckBox->isChecked());
     settings.setDeleteAircraftConfirmationEnabled(ui->confirmDeleteAircraftCheckBox->isChecked());
     settings.setResetTimeOffsetConfirmationEnabled(ui->confirmResetAllTimeOffsetCheckBox->isChecked());
+
+    // See note above about the boolean inversion
+    settings.setDefaultMinimalUiButtonTextVisibility(!ui->hideButtonTextCheckBox->isChecked());
+    settings.setDefaultMinimalUiNonEssentialButtonVisibility(!ui->hideNonEssentialButtonsCheckBox->isChecked());
+    settings.setDefaultMinimalUiReplaySpeedVisibility(!ui->hideReplaySpeedCheckBox->isChecked());
 }

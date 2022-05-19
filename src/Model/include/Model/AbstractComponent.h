@@ -58,7 +58,7 @@ public:
           m_currentIndex(other.m_currentIndex),
           m_currentAccess(other.m_currentAccess)
     {}
-    AbstractComponent &operator = (const AbstractComponent &rhs)
+    AbstractComponent &operator=(const AbstractComponent &rhs)
     {
         if (this != &rhs) {
             m_data = rhs.m_data;
@@ -69,7 +69,7 @@ public:
         }
         return *this;
     }
-    AbstractComponent &operator = (AbstractComponent &&rhs)
+    AbstractComponent &operator=(AbstractComponent &&rhs)
     {
         if (this != &rhs) {
             m_data = std::move(rhs.m_data);
@@ -82,7 +82,7 @@ public:
     }
 
     /*!
-     * Inserts \c data at the end, or updates the \em last element (only) if
+     * Inserts \c data at the end, or updates the \e last element (only) if
      * the data items have the same timestamp.
      *
      * Use case: recorded data items are inserted chronologically, but some recorded items

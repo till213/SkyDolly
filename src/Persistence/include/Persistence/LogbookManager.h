@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef CONNECTIONMANAGER_H
-#define CONNECTIONMANAGER_H
+#ifndef LOGBOOKMANAGER_H
+#define LOGBOOKMANAGER_H
 
 #include <memory>
 
@@ -39,13 +39,13 @@ class Version;
 
 class Metadata;
 class Version;
-class ConnectionManagerPrivate;
+class LogbookManagerPrivate;
 
-class PERSISTENCE_API ConnectionManager : public QObject
+class PERSISTENCE_API LogbookManager : public QObject
 {
     Q_OBJECT
 public:
-    static ConnectionManager &getInstance() noexcept;
+    static LogbookManager &getInstance() noexcept;
     static void destroyInstance() noexcept;
 
     /*!
@@ -86,16 +86,16 @@ signals:
     void connectionChanged(bool connected);
 
 protected:
-    virtual ~ConnectionManager() noexcept;
+    ~LogbookManager() noexcept override;
 
 private:
-    Q_DISABLE_COPY(ConnectionManager)
-    std::unique_ptr<ConnectionManagerPrivate> d;
+    Q_DISABLE_COPY(LogbookManager)
+    std::unique_ptr<LogbookManagerPrivate> d;
 
-    ConnectionManager() noexcept;
+    LogbookManager() noexcept;
 
     bool connectDb(const QString &logbookPath) noexcept;
     bool checkDatabaseVersion(Version &databaseVersion) const noexcept;
 };
 
-#endif // CONNECTIONMANAGER_H
+#endif // LOGBOOKMANAGER_H

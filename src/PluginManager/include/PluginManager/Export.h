@@ -51,7 +51,7 @@ public:
      * \param flight
      *        the Flight from which the suggested file path is derived
      * \param suffix
-     *        the desired file suffix (e.g. \em kml or \em csv)
+     *        the desired file suffix (e.g. \e kml or \e csv)
      * \return the file path having a suggested file name based on the given \c flight
      */
     static QString suggestFilePath(const Flight &flight, QStringView suffix) noexcept;

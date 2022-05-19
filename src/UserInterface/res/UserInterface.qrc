@@ -26,16 +26,10 @@
         <file>img/icons/checkbox-collapse-normal@2x.png</file>
         <file>img/icons/checkbox-expand-normal.png</file>
         <file>img/icons/checkbox-expand-normal@2x.png</file>
-        <file>img/icons/aircraft-normal.png</file>
-        <file>img/icons/aircraft-normal@2x.png</file>
         <file>img/icons/record-add-normal-on.png</file>
         <file>img/icons/record-add-normal-on@2x.png</file>
         <file>img/icons/record-add-normal.png</file>
         <file>img/icons/record-add-normal@2x.png</file>
-        <file>img/icons/aircraft-record-normal.png</file>
-        <file>img/icons/aircraft-record-normal@2x.png</file>
-        <file>img/icons/aircraft-normal-off.png</file>
-        <file>img/icons/aircraft-normal-off@2x.png</file>
         <file>img/icons/forward-offset-normal.png</file>
         <file>img/icons/forward-offset-normal@2x.png</file>
         <file>img/icons/forward-offset-active@2x.png</file>
@@ -68,5 +62,11 @@
         <file>img/icons/play-loop-normal@2x.png</file>
         <file>img/icons/application-icon.png</file>
         <file>img/icons/application-icon@2x.png</file>
+        <file>img/icons/play-active.png</file>
+        <file>img/icons/play-active@2x.png</file>
+        <file>img/icons/record-active.png</file>
+        <file>img/icons/record-active@2x.png</file>
+        <file>img/icons/record-add-active.png</file>
+        <file>img/icons/record-add-active@2x.png</file>
     </qresource>
 </RCC>

@@ -52,7 +52,7 @@ AircraftInfo::AircraftInfo(AircraftInfo &&other) noexcept
       initialAirspeed(other.initialAirspeed)
 {}
 
-AircraftInfo &AircraftInfo::operator = (AircraftInfo &&rhs) noexcept
+AircraftInfo &AircraftInfo::operator=(AircraftInfo &&rhs) noexcept
 {
     if (this != &rhs) {
         aircraftId = rhs.aircraftId;

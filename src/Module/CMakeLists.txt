@@ -13,6 +13,7 @@ target_compile_definitions(${LIBRARY_NAME}
 )
 target_sources(${LIBRARY_NAME}
     PRIVATE
+        res/Module.qrc
         include/Module/ModuleLib.h
         include/Module/Module.h
         include/Module/ModuleIntf.h

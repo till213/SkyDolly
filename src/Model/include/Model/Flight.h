@@ -36,6 +36,7 @@ class QDateTime;
 class QString;
 
 #include "Aircraft.h"
+#include "FlightSummary.h"
 #include "ModelLib.h"
 
 class FlightCondition;
@@ -71,11 +72,13 @@ public:
     const FlightCondition &getFlightCondition() const noexcept;
     void setFlightCondition(FlightCondition flightCondition) noexcept;
 
+    FlightSummary getFlightSummary() const noexcept;
+
     /*!
      * Returns the total duration of the flight [in milliseconds], that is it returns
      * the longest replay time of all aircraft, taking their time offsets into account.
      * Unless \c ofUserAircraft is set to \c true, in which case the replay time of the
-     * \em user aircraft is returned.
+     * \e user aircraft is returned.
      *
      * Note that the total duration is cached and not updated during recording. Use
      * the SkyConnectIntf#getCurrentTimestamp in this case, which - during recording - indicates
@@ -105,6 +108,10 @@ public:
     Aircraft& operator[](std::size_t index) noexcept;
     const Aircraft& operator[](std::size_t index) const noexcept;
 
+    /*!
+     * The initial ID for every newly created flight. An invalid ID indicates that this
+     * flight has not yet been (successfully) persisted.
+     */
     static constexpr int InvalidId = -1;
 
 signals:

@@ -50,8 +50,8 @@ struct MODEL_API AircraftHandleData : public TimeVariableData
     AircraftHandleData(const AircraftHandleData &other) = default;
     AircraftHandleData(AircraftHandleData &&other) = default;
     ~AircraftHandleData() override = default;
-    AircraftHandleData &operator = (const AircraftHandleData &rhs) = default;
-    AircraftHandleData &operator = (AircraftHandleData &&rhs) = default;
+    AircraftHandleData &operator=(const AircraftHandleData &rhs) = default;
+    AircraftHandleData &operator=(AircraftHandleData &&rhs) = default;
 
     static const AircraftHandleData NullData;
 };

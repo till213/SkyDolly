@@ -26,6 +26,7 @@
 #define PLATFORM_H
 
 #include <QColor>
+#include <QString>
 
 #include "WidgetLib.h"
 
@@ -34,6 +35,7 @@ class WIDGET_API Platform
 public:
     static bool isDarkModeEnabled() noexcept;
     static QColor getEditableTableCellBGColor() noexcept;
+    static QString getFlatButtonCss() noexcept;
 };
 
 #endif // PLATFORM_H

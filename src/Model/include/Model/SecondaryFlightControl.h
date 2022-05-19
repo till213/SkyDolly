@@ -37,8 +37,8 @@ public:
     SecondaryFlightControl(SecondaryFlightControl &aircraftHandle) = default;
     SecondaryFlightControl(SecondaryFlightControl &&aircraftHandle) = default;
     ~SecondaryFlightControl() noexcept override;
-    SecondaryFlightControl &operator = (const SecondaryFlightControl &rhs) = default;
-    SecondaryFlightControl &operator = (SecondaryFlightControl &&rhs) = default;
+    SecondaryFlightControl &operator=(const SecondaryFlightControl &rhs) = default;
+    SecondaryFlightControl &operator=(SecondaryFlightControl &&rhs) = default;
 
     const SecondaryFlightControlData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 

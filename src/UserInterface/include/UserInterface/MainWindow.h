@@ -47,7 +47,9 @@ class QCloseEvent;
 
 class AboutDialog;
 class SettingsDialog;
+class FlightDialog;
 class SimulationVariablesDialog;
+class StatisticsDialog;
 class MainWindowPrivate;
 
 class USERINTERFACE_API MainWindow : public QMainWindow
@@ -77,13 +79,40 @@ private:
     void initReplaySpeedUi() noexcept;
     void initSkyConnectPlugin() noexcept;
 
+    /*
+     * Use this method in order to access the FlightDialog instance: creates on demand
+     * FlightDialog instance, connects to its signals and returns the instance.
+     */
+    FlightDialog &getFlightDialog() noexcept;
+
+    /* Returns true if a flight dialog has ever been created. */
+    inline bool hasFlightDialog() const noexcept;
+
+    /*
+     * Use this method in order to access the SimulationVariablesDialog instance: creates on demand
+     * SimulationVariablesDialog instance, connects to its signals and returns the instance.
+     */
+    SimulationVariablesDialog &getSimulationVariablesDialog() noexcept;
+
+    /* Returns true if a simulation variables dialog has ever been created. */
+    inline bool hasSimulationVariablesDialog() const noexcept;
+
+    /*
+     * Use this method in order to access the StatisticsDialog instance: creates on demand
+     * StatisticsDialog instance, connects to its signals and returns the instance.
+     */
+    StatisticsDialog &getStatisticsDialog() noexcept;
+
+    /* Returns true if a statistics dialog has ever been created. */
+    inline bool hasStatisticsDialog() const noexcept;
+
     void updateMinimalUi(bool enable);
 
     /*
      * Updates the timestamp time edit widget by setting the maximum time according
      * to the currently recorded time given by 'timestamp'.
      *
-     * Also refer to #updateReplayDuration.
+     * Also refer to updateReplayDuration.
      */
     void updateRecordingDuration(std::int64_t timestamp) noexcept;
 
@@ -92,6 +121,15 @@ private:
      * 'timestamp'.
      */
     void updatePositionSlider(std::int64_t timestamp) noexcept;
+
+    void updateMinimalUiButtonTextVisibility() noexcept;
+    void updateMinimalUiEssentialButtonVisibility() noexcept;
+
+    /* Updates the replay speed group visibility. Set 'enterMinimalUi' to true
+     * when switching into the minimal UI mode
+     */
+    void updateReplaySpeedVisibility(bool enterMinimalUi) noexcept;
+    void updatePositionSliderTickInterval() noexcept;
 
     double getCustomSpeedFactor() const;
     
@@ -112,12 +150,14 @@ private slots:
     void updateControlUi() noexcept;
     void updateControlIcons() noexcept;
     void updateReplaySpeedUi() noexcept;
+    void onDefaultMinimalUiButtonTextVisibilityChanged(bool visible) noexcept;
+    void onDefaultMinimalUiEssentialButtonVisibilityChanged(bool visible) noexcept;
 
     /*
      * Updates the timestamp by setting the maximum replay time according
      * to the total duration of the current flight.
      *
-     * Also refer to #updateRecordingDuration.
+     * Also refer to updateRecordingDuration.
      */
     void updateReplayDuration() noexcept;
 
@@ -136,14 +176,14 @@ private slots:
     void on_showLogbookSettingsAction_triggered() noexcept;
     void on_quitAction_triggered() noexcept;
     // View menu
-    void on_showModulesAction_triggered(bool enabled) noexcept;
-    void on_showReplaySpeedAction_triggered(bool enabled) noexcept;
+    void onShowModulesChanged(bool enable) noexcept;
+    void onShowReplaySpeedChanged(bool enable) noexcept;
     // Window menu
-    void on_showFlightAction_triggered(bool enabled) noexcept;
-    void on_showSimulationVariablesAction_triggered(bool enabled) noexcept;
-    void on_showStatisticsAction_triggered(bool enabled) noexcept;
-    void on_stayOnTopAction_triggered(bool enabled) noexcept;
-    void on_showMinimalAction_triggered(bool enabled) noexcept;
+    void on_showFlightAction_triggered(bool enable) noexcept;
+    void on_showSimulationVariablesAction_triggered(bool enable) noexcept;
+    void on_showStatisticsAction_triggered(bool enable) noexcept;
+    void on_stayOnTopAction_triggered(bool enable) noexcept;
+    void on_showMinimalAction_toggled(bool enable) noexcept;
     // Help menu
     void onAboutActionTriggered() noexcept;
     void onAboutQtActionTriggered() noexcept;
@@ -163,8 +203,8 @@ private slots:
     void toggleLoopReplay(bool checked) noexcept;
 
     // Service
-    void handleFlightRestored() noexcept;
-    void handleLogbookConnectionChanged(bool connected) noexcept;
+    void onFlightRestored() noexcept;
+    void onLogbookConnectionChanged(bool connected) noexcept;
 
     // Import / export
     void onImport(QAction *action) noexcept;

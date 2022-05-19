@@ -136,7 +136,6 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
     }
 
     if (isConnectedWithSim()) {
-        setState(Connect::State::Recording);
         switch (recordingMode) {
         case RecordingMode::SingleAircraft:
             // Single flight - destroy any previous AI aircraft
@@ -163,11 +162,13 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
         if (isTimerBasedRecording(Settings::getInstance().getRecordingSampleRate())) {
             d->recordingTimer.start(d->recordingIntervalMSec);
         }
-        const bool ok = retryWithReconnect([this, initialPosition]() -> bool { return setupInitialRecordingPosition(initialPosition); });
+        bool ok = retryWithReconnect([this, initialPosition]() -> bool { return setupInitialRecordingPosition(initialPosition); });
         if (ok) {
-            onStartRecording();
+            ok = onStartRecording();
         }
-        if (!ok) {
+        if (ok) {
+            setState(Connect::State::Recording);
+        } else {
             setState(Connect::State::Disconnected);
         }
     } else {
@@ -199,9 +200,9 @@ void AbstractSkyConnect::startReplay(bool fromStart, const InitialPosition &flyW
         setState(Connect::State::Replay);
         if (fromStart) {
             d->elapsedTime = 0;
-            d->currentTimestamp = 0;
-            d->lastNotificationTimestamp = d->currentTimestamp;
+            d->currentTimestamp = 0;   
         }
+        d->lastNotificationTimestamp = d->currentTimestamp;
 
         d->elapsedTimer.invalidate();
         bool ok = retryWithReconnect([this]() -> bool { return onStartReplay(d->currentTimestamp); });
@@ -247,12 +248,12 @@ void AbstractSkyConnect::stop() noexcept
     }
 }
 
-bool AbstractSkyConnect::inRecordingMode() const noexcept
+bool AbstractSkyConnect::isInRecordingState() const noexcept
 {
     return isRecording() || d->state == Connect::State::RecordingPaused;
 }
 
-bool AbstractSkyConnect::inReplayMode() const noexcept
+bool AbstractSkyConnect::isInReplayState() const noexcept
 {
     return isReplaying() || d->state == Connect::State::ReplayPaused;
 }
@@ -356,6 +357,7 @@ void AbstractSkyConnect::seek(std::int64_t timestamp) noexcept
     if (isConnectedWithSim()) {
         if (d->state != Connect::State::Recording) {
             d->currentTimestamp = timestamp;
+            d->lastNotificationTimestamp = d->currentTimestamp;
             d->elapsedTime = timestamp;
             emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Seek);
             bool ok = retryWithReconnect([this, timestamp]() -> bool { return sendAircraftData(timestamp, TimeVariableData::Access::Seek, AircraftSelection::All); });
@@ -498,10 +500,13 @@ void AbstractSkyConnect::updateUserAircraft(Aircraft &userAircraft) noexcept
 void AbstractSkyConnect::setState(Connect::State state) noexcept
 {
     if (d->state != state) {
-        const bool recording = isRecording();
+        const bool previousRecordingState = isInRecordingState();
         d->state = state;
         emit stateChanged(state);
-        if (recording) {
+        // Recording started or stopped?
+        if (!previousRecordingState && isInRecordingState()) {
+            emit recordingStarted();
+        } else if (previousRecordingState && !isInRecordingState()) {
             emit recordingStopped();
         }
     }
@@ -510,6 +515,7 @@ void AbstractSkyConnect::setState(Connect::State state) noexcept
 void AbstractSkyConnect::setCurrentTimestamp(std::int64_t timestamp) noexcept
 {
     d->currentTimestamp = timestamp;
+    d->lastNotificationTimestamp = d->currentTimestamp;
 }
 
 bool AbstractSkyConnect::isElapsedTimerRunning() const noexcept

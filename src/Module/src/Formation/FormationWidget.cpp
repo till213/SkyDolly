@@ -150,7 +150,14 @@ public:
     std::int64_t selectedAircraftIndex;
     QDoubleValidator *timeOffsetValidator;
     Unit unit;
+
+    static QIcon normalAircraftIcon;
+    static QIcon recordingAircraftIcon;
 };
+
+// Only initialise once the Module.qrc resources are available
+QIcon FormationWidgetPrivate::normalAircraftIcon {};
+QIcon FormationWidgetPrivate::recordingAircraftIcon {};
 
 // PUBLIC
 
@@ -293,6 +300,7 @@ void FormationWidget::initUi() noexcept
     ui->aircraftTableWidget->horizontalHeader()->setStretchLastSection(true);
     ui->aircraftTableWidget->sortByColumn(SequenceNumberColumn, Qt::SortOrder::AscendingOrder);
     ui->aircraftTableWidget->horizontalHeader()->setSectionsMovable(true);
+    ui->aircraftTableWidget->setAlternatingRowColors(true);
 
     QByteArray tableState = Settings::getInstance().getFormationAircraftTableState();
     ui->aircraftTableWidget->horizontalHeader()->restoreState(tableState);
@@ -319,13 +327,13 @@ void FormationWidget::initUi() noexcept
     d->positionButtonGroup->addButton(ui->nwPositionRadioButton, RelativePosition::NorthWest);
     d->positionButtonGroup->addButton(ui->nnwPositionRadioButton, RelativePosition::NorthNorthWest);
 
-    const QString css =
+    const QString css = QStringLiteral(
 "QRadioButton::indicator:unchecked {"
 "    image: url(:/img/icons/aircraft-normal-off.png);"
 "}"
 "QRadioButton::indicator:checked {"
 "    image: url(:/img/icons/aircraft-record-normal.png);"
-"}";
+"}");
     ui->nPositionRadioButton->setStyleSheet(css);
     ui->nnePositionRadioButton->setStyleSheet(css);
     ui->nePositionRadioButton->setStyleSheet(css);
@@ -351,6 +359,8 @@ void FormationWidget::initUi() noexcept
 
     // Default "Delete" key deletes aircraft
     ui->deletePushButton->setShortcut(QKeySequence::Delete);
+
+    ui->timeOffsetGroupBox->setStyleSheet(Platform::getFlatButtonCss());
 }
 
 void FormationWidget::initTimeOffsetUi() noexcept
@@ -594,13 +604,11 @@ void FormationWidget::updateUi() noexcept
         // Sequence
         std::unique_ptr<QTableWidgetItem> newItem = std::make_unique<QTableWidgetItem>();
         if (rowIndex == userAircraftIndex) {
-            QIcon icon;
             if (recording) {
-                icon = QIcon(":/img/icons/aircraft-record-normal.png");
+                newItem->setIcon(QIcon(":/img/icons/aircraft-record-normal.png"));
             } else {
-                icon = QIcon(":/img/icons/aircraft-normal.png");
+                newItem->setIcon(QIcon(":/img/icons/aircraft-normal.png"));
             }
-            newItem->setIcon(icon);
         }
         // Sequence numbers start at 1
         newItem->setData(Qt::DisplayRole, rowIndex + 1);
@@ -684,12 +692,12 @@ void FormationWidget::updateUi() noexcept
 void FormationWidget::updateEditUi() noexcept
 {
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    const bool inRecordingMode = skyConnect && skyConnect->get().inRecordingMode();
+    const bool inRecordingState = skyConnect && skyConnect->get().isInRecordingState();
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     bool userAircraftIndex = d->selectedAircraftIndex == flight.getUserAircraftIndex();
     ui->userAircraftPushButton->setEnabled(d->selectedAircraftIndex != Flight::InvalidId && !userAircraftIndex);
     const bool formation = flight.count() > 1;
-    ui->deletePushButton->setEnabled(formation && !inRecordingMode && d->selectedAircraftIndex != Flight::InvalidId);
+    ui->deletePushButton->setEnabled(formation && !inRecordingState && d->selectedAircraftIndex != Flight::InvalidId);
 }
 
 void FormationWidget::updateRelativePosition() noexcept
@@ -868,14 +876,15 @@ void FormationWidget::updateUserAircraftIndex() noexcept
 void FormationWidget::deleteAircraft() noexcept
 {
     Settings &settings = Settings::getInstance();
-    bool doDelete;
+    bool doDelete {true};
     if (settings.isDeleteAircraftConfirmationEnabled()) {
         std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
         QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), messageBox.get());
 
         // Sequence numbers start at 1
-        messageBox->setText(tr("The aircraft with sequence number %1 is about to be deleted. Deletion cannot be undone.").arg(d->selectedRow + 1));
-        messageBox->setInformativeText(tr("Do you want to delete the aircraft?"));
+        messageBox->setWindowTitle(tr("Delete aircraft"));
+        messageBox->setText(tr("The aircraft with sequence number %1 is about to be deleted. Do you want to delete the aircraft?").arg(d->selectedRow + 1));
+        messageBox->setInformativeText(tr("Deletion cannot be undone."));
         QPushButton *deleteButton = messageBox->addButton(tr("&Delete"), QMessageBox::AcceptRole);
         QPushButton *keepButton = messageBox->addButton(tr("&Keep"), QMessageBox::RejectRole);
         messageBox->setDefaultButton(keepButton);
@@ -885,9 +894,8 @@ void FormationWidget::deleteAircraft() noexcept
         messageBox->exec();
         doDelete = messageBox->clickedButton() == deleteButton;
         settings.setDeleteAircraftConfirmationEnabled(!dontAskAgainCheckBox->isChecked());
-    } else {
-        doDelete = true;
     }
+
     if (doDelete) {
         d->aircraftService->deleteByIndex(d->selectedRow);
     }
@@ -1010,8 +1018,9 @@ void FormationWidget::on_resetAllTimeOffsetPushButton_clicked() noexcept
         std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
         QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), messageBox.get());
 
-        messageBox->setText(tr("The time offsets of all aircraft in this formation will be changed."));
-        messageBox->setInformativeText(tr("Do you want to reset all time offsets to 0?"));
+        messageBox->setWindowTitle(tr("Reset time offsets"));
+        messageBox->setText(tr("Do you want to reset all time offsets to 0?"));
+        messageBox->setInformativeText(tr("The time offsets of all aircraft in this formation will be changed."));
         QPushButton *resetButton = messageBox->addButton(tr("&Reset Time Offsets"), QMessageBox::AcceptRole);
         QPushButton *doNotChangeButon = messageBox->addButton(tr("Do &Not Change"), QMessageBox::RejectRole);
         messageBox->setDefaultButton(doNotChangeButon);

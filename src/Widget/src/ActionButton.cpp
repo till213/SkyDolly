@@ -31,10 +31,12 @@ class ActionButtonPrivate
 {
 public:
     ActionButtonPrivate()  noexcept
-        : action(nullptr)
+        : action(nullptr),
+          showText(true)
     {}
 
     const QAction *action;
+    bool showText;
 };
 
 // PUBLIC
@@ -42,7 +44,9 @@ public:
 ActionButton::ActionButton(QWidget *parent) noexcept
     : ActiveButton(parent),
       d(std::make_unique<ActionButtonPrivate>())
-{}
+{
+    setFocusPolicy(Qt::FocusPolicy::NoFocus);
+}
 
 ActionButton::~ActionButton() noexcept
 {}
@@ -62,19 +66,41 @@ void ActionButton::setAction(const QAction *action) noexcept
    }
 }
 
+bool ActionButton::isShowText() const noexcept
+{
+    return d->showText;
+}
+
+void ActionButton::setShowText(bool enable) noexcept
+{
+    if (d->showText != enable) {
+        d->showText = enable;
+        updateText();
+    }
+}
+
 // PRIVATE SLOTS
 
 void ActionButton::updateButtonStatusFromAction() noexcept
 {
-   if (d->action != nullptr) {
-       setText(d->action->text());
-       setStatusTip(d->action->statusTip());
-       setToolTip(d->action->toolTip());
-       setIcon(d->action->icon());
-       setEnabled(d->action->isEnabled());
-       setCheckable(d->action->isCheckable());
-       setChecked(d->action->isChecked());
-   }
+    if (d->action != nullptr) {
+        updateText();
+        setStatusTip(d->action->statusTip());
+        setToolTip(d->action->toolTip());
+        setIcon(d->action->icon());
+        setEnabled(d->action->isEnabled());
+        setCheckable(d->action->isCheckable());
+        setChecked(d->action->isChecked());
+    }
+}
+
+void ActionButton::updateText() noexcept
+{
+    if (d->showText) {
+        setText(d->action->text());
+    } else {
+        setText(QString());
+    }
 }
 
 void ActionButton::connectToAction() noexcept

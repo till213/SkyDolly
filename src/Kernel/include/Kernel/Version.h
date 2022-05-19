@@ -36,9 +36,9 @@
 class VersionPrivate;
 
 /*!
- * The default constructor creates an instance which represents the current \em application version.
- * Other constructors exist to construct \em document versions, for example, which can be compared against
- * the \em application version.
+ * The default constructor creates an instance which represents the current \e application version.
+ * Other constructors exist to construct \e document versions, for example, which can be compared against
+ * the \e application version.
  *
  * The version string has the form "[major].[minor].[patch]", for example "1.2.3".
  */
@@ -119,7 +119,7 @@ public:
      * \param rhs
      *        the other Version to assign from
      */
-    void operator = (const Version &rhs) noexcept;
+    void operator=(const Version &rhs) noexcept;
 
     /*!
      * Compares this Version against \c rhs for equality.
@@ -129,7 +129,7 @@ public:
      * \return \c true if this Version is equal with the \c rhs version;
      *         \c false else
      */
-    bool operator == (const Version &rhs) noexcept;
+    bool operator==(const Version &rhs) noexcept;
 
     /*!
      * Compares this Version against \c rhs for greater or equal.

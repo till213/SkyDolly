@@ -72,8 +72,8 @@ struct MODEL_API EngineData : public TimeVariableData
     EngineData(const EngineData &other) = default;
     EngineData(EngineData &&other) = default;
     ~EngineData() override = default;
-    EngineData &operator = (const EngineData &rhs) = default;
-    EngineData &operator = (EngineData &&rhs) = default;
+    EngineData &operator=(const EngineData &rhs) = default;
+    EngineData &operator=(EngineData &&rhs) = default;
 
     inline bool hasEngineStarterEnabled() const noexcept
     {

@@ -40,8 +40,8 @@ struct MODEL_API LightData : public TimeVariableData
     LightData(const LightData &other) = default;
     LightData(LightData &&) = default;
     ~LightData() override = default;
-    LightData &operator = (const LightData &rhs) = default;
-    LightData &operator = (LightData &&rhs) = default;
+    LightData &operator=(const LightData &rhs) = default;
+    LightData &operator=(LightData &&rhs) = default;
 
     static const LightData NullData;
 };

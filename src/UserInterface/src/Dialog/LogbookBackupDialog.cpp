@@ -28,11 +28,14 @@
 #include <QPushButton>
 #include <QFileDialog>
 #include <QMessageBox>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Const.h>
 #include <Kernel/Enum.h>
 #include <Persistence/Service/DatabaseService.h>
-#include <Persistence/ConnectionManager.h>
+#include <Persistence/LogbookManager.h>
 #include <Persistence/Metadata.h>
 #include "LogbookBackupDialog.h"
 #include "ui_LogbookBackupDialog.h"
@@ -58,22 +61,22 @@ LogbookBackupDialog::LogbookBackupDialog(QWidget *parent) noexcept
     ui->setupUi(this);
     initUi();
 
-    ConnectionManager &connectionManager = ConnectionManager::getInstance();
+    LogbookManager &logbookManager = LogbookManager::getInstance();
     Metadata metadata;
-    if (connectionManager.getMetadata(metadata)) {
+    if (logbookManager.getMetadata(metadata)) {
         d->originalBackupPeriodIntlId = metadata.backupPeriodIntlId;
     } else {
         d->originalBackupPeriodIntlId = Const::BackupNeverIntlId;
     }
 #ifdef DEBUG
-    qDebug("LogbookBackupDialog::LogbookBackupDialog: CREATED");
+    qDebug() << "LogbookBackupDialog::LogbookBackupDialog: CREATED";
 #endif
 }
 
 LogbookBackupDialog::~LogbookBackupDialog() noexcept
 {
 #ifdef DEBUG
-    qDebug("LogbookBackupDialog::~LogbookBackupDialog: DELETED");
+    qDebug() << "LogbookBackupDialog::~LogbookBackupDialog: DELETED";
 #endif
 }
 
@@ -98,7 +101,7 @@ void LogbookBackupDialog::accept() noexcept
     }
 
     if (!ok) {
-        QMessageBox::critical(this, tr("Database error"), tr("The logbook backup could not be created."));
+        QMessageBox::critical(this, tr("Logbook error"), tr("The logbook backup could not be created."));
     }
 }
 
@@ -140,12 +143,12 @@ void LogbookBackupDialog::initUi() noexcept
 
 void LogbookBackupDialog::updateUi() noexcept
 {
-    ConnectionManager &connectionManager = ConnectionManager::getInstance();
+    LogbookManager &logbookManager = LogbookManager::getInstance();
     Metadata metadata;
-    const bool ok = connectionManager.getMetadata(metadata);
+    const bool ok = logbookManager.getMetadata(metadata);
     if (ok) {
         // Backup folder
-        const QString backupDirectoryPath = ConnectionManager::createBackupPathIfNotExists(metadata.backupDirectoryPath);
+        const QString backupDirectoryPath = LogbookManager::createBackupPathIfNotExists(metadata.backupDirectoryPath);
         ui->backupDirectoryLineEdit->setText(QDir::toNativeSeparators(backupDirectoryPath));
 
         // Backup period
@@ -172,7 +175,7 @@ void LogbookBackupDialog::on_chooseBackupFolderPushButton_clicked() noexcept
     QString path = ui->backupDirectoryLineEdit->text();
     const QDir dir(path);
     if (!dir.exists()) {
-        path = QFileInfo(ConnectionManager::getInstance().getLogbookPath()).absolutePath();
+        path = QFileInfo(LogbookManager::getInstance().getLogbookPath()).absolutePath();
     }
     const QString backupDirectoryPath = QFileDialog::getExistingDirectory(this, tr("Select Backup Folder"), path);
     if (!backupDirectoryPath.isNull()) {

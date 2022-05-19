@@ -25,11 +25,14 @@
 #include <QApplication>
 #include <QPalette>
 #include <QColor>
+#include <QString>
+#include <QStringLiteral>
 
 #include "Platform.h"
+#include "QtCore/qstringliteral.h"
 
 namespace  {
-    constexpr int DarkModeValueThreshold = 80;
+    constexpr int DarkModeValueThreshold {80};
 }
 
 namespace Dark {

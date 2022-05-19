@@ -32,9 +32,11 @@
 #include <QByteArray>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QCursor>
 #include <QFile>
 #include <QFileInfo>
 #include <QUrl>
+#include <QDir>
 #include <QString>
 #include <QUuid>
 #include <QTime>
@@ -71,10 +73,11 @@
 #include <Model/Logbook.h>
 #include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/DatabaseService.h>
-#include <Persistence/ConnectionManager.h>
+#include <Persistence/LogbookManager.h>
 #include <Widget/ActionButton.h>
 #include <Widget/ActionRadioButton.h>
 #include <Widget/ActionCheckBox.h>
+#include <Widget/Platform.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/Connect.h>
@@ -128,7 +131,6 @@ public:
     MainWindowPrivate() noexcept
         : previousState(Connect::State::Connected),
           connectedWithLogbook(false),
-          settingsDialog(nullptr),
           flightDialog(nullptr),
           simulationVariablesDialog(nullptr),
           statisticsDialog(nullptr),
@@ -151,7 +153,6 @@ public:
     Connect::State previousState;
     bool connectedWithLogbook;
 
-    SettingsDialog *settingsDialog;
     FlightDialog *flightDialog;
     SimulationVariablesDialog *simulationVariablesDialog;
     StatisticsDialog *statisticsDialog;    
@@ -189,7 +190,7 @@ MainWindow::MainWindow(const QString &filePath, QWidget *parent) noexcept
       ui(std::make_unique<Ui::MainWindow>()),
       d(std::make_unique<MainWindowPrivate>())
 {
-    Q_INIT_RESOURCE(SkyDolly);
+    Q_INIT_RESOURCE(UserInterface);
 
     ui->setupUi(this);
 
@@ -221,9 +222,9 @@ MainWindow::~MainWindow() noexcept
 
 bool MainWindow::connectWithLogbook(const QString &filePath) noexcept
 {
-    bool ok = ConnectionManager::getInstance().connectWithLogbook(filePath, this);
+    bool ok = LogbookManager::getInstance().connectWithLogbook(filePath, this);
     if (!ok) {
-        QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be opened.").arg(filePath));
+        QMessageBox::critical(this, tr("Logbook error"), tr("The logbook %1 could not be opened.").arg(QDir::toNativeSeparators(filePath)));
     }
     return ok;
 }
@@ -242,7 +243,7 @@ void MainWindow::closeEvent(QCloseEvent *event) noexcept
     QMainWindow::closeEvent(event);
 
     Metadata metaData;
-    if (ConnectionManager::getInstance().getMetadata(metaData)) {
+    if (LogbookManager::getInstance().getMetadata(metaData)) {
         if (QDateTime::currentDateTime() > metaData.nextBackupDate) {
             std::unique_ptr<LogbookBackupDialog> backupDialog = std::make_unique<LogbookBackupDialog>(this);
             backupDialog->exec();
@@ -274,7 +275,7 @@ void MainWindow::frenchConnection() noexcept
     const Logbook &logbook = Logbook::getInstance();
     const Flight &flight = logbook.getCurrentFlight();
     connect(&flight, &Flight::flightRestored,
-            this, &MainWindow::handleFlightRestored);
+            this, &MainWindow::onFlightRestored);
     connect(&flight, &Flight::timeOffsetChanged,
             this, &MainWindow::updateReplayDuration);
     connect(&flight, &Flight::aircraftRemoved,
@@ -285,16 +286,32 @@ void MainWindow::frenchConnection() noexcept
     // Settings
     connect(&Settings::getInstance(), &Settings::changed,
             this, &MainWindow::updateMainWindow);
+    connect(&Settings::getInstance(), &Settings::defaultMinimalUiButtonTextVisibilityChanged,
+            this, &MainWindow::onDefaultMinimalUiButtonTextVisibilityChanged);
+    connect(&Settings::getInstance(), &Settings::defaultMinimalUiNonEssentialButtonVisibilityChanged,
+            this, &MainWindow::onDefaultMinimalUiEssentialButtonVisibilityChanged);
 
     // Logbook connection
-    connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
-            this, &MainWindow::handleLogbookConnectionChanged);
+    connect(&LogbookManager::getInstance(), &LogbookManager::connectionChanged,
+            this, &MainWindow::onLogbookConnectionChanged);
 
     // Menu actions
     connect(d->importQActionGroup, &QActionGroup::triggered,
             this, &MainWindow::onImport);
     connect(d->exportQActionGroup, &QActionGroup::triggered,
             this, &MainWindow::onExport);
+
+    // View menu
+    // Note: we explicitly connect to signal triggered - and not toggled - also in
+    //       case of checkable QActions. Because we programmatically change the
+    //       checked state of QActions based on connection state changes),
+    //       which emit the toggled signal. This would then result in a cascade of toggled signals
+    //       (e.g. going into minimal UI mode may uncheck the "Show Replay Speed" option) which
+    //       is hard to control -> so we simply only react to the general triggered signals
+    connect(ui->showModulesAction, &QAction::triggered,
+            this, &MainWindow::onShowModulesChanged);
+    connect(ui->showReplaySpeedAction, &QAction::triggered,
+            this, &MainWindow::onShowReplaySpeedChanged);
 
     // Settings
     connect(&Settings::getInstance(), &Settings::replayLoopChanged,
@@ -307,6 +324,14 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::handleReplaySpeedUnitSelected);
 
     // Actions
+
+    // Control actions
+    // Note: we explicitly connect to signal triggered - and not toggled - also in
+    //       case of checkable QActions. Because we programmatically change the
+    //       checked state of QActions based on connection state changes (in updateControlUi),
+    //       which emit the toggled signal. This would then result in a cascade of toggled signals
+    //       (e.g. clicking the Pause button also unchecks the Record/Play button) which
+    //       is hard to control -> so we simply only react to the general triggered signals
     connect(ui->recordAction, &QAction::triggered,
             this, &MainWindow::toggleRecord);
     connect(ui->stopAction, &QAction::triggered,
@@ -323,7 +348,7 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::skipForward);
     connect(ui->skipToEndAction, &QAction::triggered,
             this, &MainWindow::skipToEnd);
-    connect(ui->replayLoopPushButton, &QPushButton::toggled,
+    connect(ui->loopReplayAction, &QAction::triggered,
             this, &MainWindow::toggleLoopReplay);
 
     // Menus
@@ -336,14 +361,6 @@ void MainWindow::frenchConnection() noexcept
     connect(ui->onlineManualAction, &QAction::triggered,
             this, &MainWindow::onOnlineManualActionTriggered);
 
-    // Dialogs
-    connect(d->flightDialog, &FlightDialog::visibilityChanged,
-            this, &MainWindow::updateWindowMenu);
-    connect(d->simulationVariablesDialog, &SimulationVariablesDialog::visibilityChanged,
-            this, &MainWindow::updateWindowMenu);
-    connect(d->statisticsDialog, &StatisticsDialog::visibilityChanged,
-            this, &MainWindow::updateWindowMenu);
-
     // Modules
     connect(d->moduleManager.get(), &ModuleManager::activated,
             this, &MainWindow::handleModuleActivated);
@@ -354,11 +371,7 @@ void MainWindow::initUi() noexcept
     Settings &settings = Settings::getInstance();
     setWindowIcon(QIcon(":/img/icons/application-icon.png"));
 
-    // Dialogs
-    d->flightDialog = new FlightDialog(*d->flightService, this);
-    d->simulationVariablesDialog = new SimulationVariablesDialog(this);
-    d->statisticsDialog = new StatisticsDialog(this);
-    d->settingsDialog = new SettingsDialog(this);
+    // Window menu
     ui->stayOnTopAction->setChecked(settings.isWindowStaysOnTopEnabled());
 
     initModuleSelectorUi();
@@ -450,13 +463,13 @@ void MainWindow::initModuleSelectorUi() noexcept
     ActionCheckBox *actionCheckBox = new ActionCheckBox(false, this);
     actionCheckBox->setAction(ui->showModulesAction);
     actionCheckBox->setFocusPolicy(Qt::NoFocus);
-    const QString css =
+    const QString css = QStringLiteral(
 "QCheckBox::indicator:unchecked {"
 "    image: url(:/img/icons/checkbox-expand-normal.png);"
 "}"
 "QCheckBox::indicator:checked {"
 "    image: url(:/img/icons/checkbox-collapse-normal.png);"
-"}";
+"}");
     actionCheckBox->setStyleSheet(css);
     actionCheckBox->setContentsMargins(0, 0, 0, 0);
 
@@ -499,7 +512,6 @@ void MainWindow::initViewUi() noexcept
 void MainWindow::initControlUi() noexcept
 {
     ui->positionSlider->setRange(PositionSliderMin, PositionSliderMax);
-    ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatTimestamp(0), d->unit.formatHHMMSS(0)));
     ui->timestampTimeEdit->setDisplayFormat(TimestampFormat);
 
     // Record/replay control buttons
@@ -511,9 +523,13 @@ void MainWindow::initControlUi() noexcept
     ui->playButton->setAction(ui->playAction);
     ui->forwardButton->setAction(ui->forwardAction);
     ui->skipToEndButton->setAction(ui->skipToEndAction);
+    ui->loopReplayButton->setAction(ui->loopReplayAction);
 
-    // Completely flat button (no border)
-    ui->replayLoopPushButton->setStyleSheet("QPushButton {border-style: outset; border-width: 0px;}");
+    // Common CSS: Completely flat buttons (no border) - platform dependent
+    ui->replayGroupBox->setStyleSheet(Platform::getFlatButtonCss());
+
+    // Specific CSS: completely flat button (no border) - on all platforms
+    ui->loopReplayButton->setStyleSheet("QPushButton {border-style: outset; border-width: 0px; padding: 6px 12px;}");
 }
 
 void MainWindow::initReplaySpeedUi() noexcept
@@ -534,10 +550,9 @@ void MainWindow::initReplaySpeedUi() noexcept
     slowActions.at(3)->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_4));
     slowActions.at(3)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Slow75));
 
-    QAction *normalSpeedAction = new QAction(tr("Normal"), this);
-    normalSpeedAction->setCheckable(true);
-    normalSpeedAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_1));
-    normalSpeedAction->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Normal));
+    ui->normalSpeedAction->setCheckable(true);
+    ui->normalSpeedAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_1));
+    ui->normalSpeedAction->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Normal));
 
     QList<QAction *> fastActions {
         new QAction("2x", this),
@@ -554,10 +569,9 @@ void MainWindow::initReplaySpeedUi() noexcept
     fastActions.at(3)->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_5));
     fastActions.at(3)->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Fast16x));
 
-    QAction *customSpeedAction = new QAction(tr("Custom"), this);
-    customSpeedAction->setCheckable(true);
-    customSpeedAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_6));
-    customSpeedAction->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Custom));
+    ui->customSpeedAction->setCheckable(true);
+    ui->customSpeedAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::Key_6));
+    ui->customSpeedAction->setProperty(ReplaySpeedProperty, Enum::toUnderlyingType(ReplaySpeed::Custom));
 
     // Action group
     d->replaySpeedActionGroup = new QActionGroup(this);
@@ -565,18 +579,16 @@ void MainWindow::initReplaySpeedUi() noexcept
         action->setCheckable(true);
         d->replaySpeedActionGroup->addAction(action);
     }
-    d->replaySpeedActionGroup->addAction(normalSpeedAction);
+    d->replaySpeedActionGroup->addAction(ui->normalSpeedAction);
     for (QAction *action : fastActions) {
         action->setCheckable(true);
         d->replaySpeedActionGroup->addAction(action);
     }
-    d->replaySpeedActionGroup->addAction(customSpeedAction);
+    d->replaySpeedActionGroup->addAction(ui->customSpeedAction);
 
     // Menus
     ui->slowMenu->addActions(slowActions);
     ui->fastMenu->addActions(fastActions);
-    ui->replayMenu->addAction(normalSpeedAction);
-    ui->replayMenu->addAction(customSpeedAction);
 
     QLayout *replaySpeedLayout = ui->replaySpeedGroupBox->layout();
 
@@ -598,7 +610,7 @@ void MainWindow::initReplaySpeedUi() noexcept
     replaySpeedLayout->addWidget(slow75RadioButton);
 
     ActionRadioButton *normalSpeedRadioButton = new ActionRadioButton(this);
-    normalSpeedRadioButton->setAction(normalSpeedAction);
+    normalSpeedRadioButton->setAction(ui->normalSpeedAction);
     replaySpeedLayout->addWidget(normalSpeedRadioButton);
 
     ActionRadioButton *fast2xRadioButton = new ActionRadioButton(this);
@@ -619,7 +631,7 @@ void MainWindow::initReplaySpeedUi() noexcept
 
     // Custom speed
     d->customSpeedRadioButton = new ActionRadioButton(this);
-    d->customSpeedRadioButton->setAction(customSpeedAction);
+    d->customSpeedRadioButton->setAction(ui->customSpeedAction);
     replaySpeedLayout->addWidget(d->customSpeedRadioButton);
 
     d->customSpeedLineEdit = new QLineEdit(this);
@@ -739,24 +751,74 @@ void MainWindow::initSkyConnectPlugin() noexcept
     }
 }
 
-void MainWindow::updateMinimalUi(bool enabled)
+FlightDialog &MainWindow::getFlightDialog() noexcept
+{
+    if (d->flightDialog == nullptr) {
+        d->flightDialog = new FlightDialog(*d->flightService, this);
+        connect(d->flightDialog, &FlightDialog::visibilityChanged,
+                this, &MainWindow::updateWindowMenu);
+    }
+    return *d->flightDialog;
+}
+
+inline bool MainWindow::hasFlightDialog() const noexcept
+{
+    return d->flightDialog != nullptr;
+}
+
+SimulationVariablesDialog &MainWindow::getSimulationVariablesDialog() noexcept
+{
+    if (d->simulationVariablesDialog == nullptr) {
+        d->simulationVariablesDialog = new SimulationVariablesDialog(this);
+        connect(d->simulationVariablesDialog, &SimulationVariablesDialog::visibilityChanged,
+                this, &MainWindow::updateWindowMenu);
+    }
+    return *d->simulationVariablesDialog;
+}
+
+inline bool MainWindow::hasSimulationVariablesDialog() const noexcept
+{
+    return d->simulationVariablesDialog != nullptr;
+}
+
+StatisticsDialog &MainWindow::getStatisticsDialog() noexcept
+{
+    if (d->statisticsDialog == nullptr) {
+        d->statisticsDialog = new StatisticsDialog(this);
+        connect(d->statisticsDialog, &StatisticsDialog::visibilityChanged,
+                this, &MainWindow::updateWindowMenu);
+    }
+    return *d->statisticsDialog;
+}
+
+inline bool MainWindow::hasStatisticsDialog() const noexcept
+{
+    return d->statisticsDialog != nullptr;
+}
+
+void MainWindow::updateMinimalUi(bool enable)
 {
     Settings &settings = Settings::getInstance();
-    if (enabled) {
+    settings.setMinimalUiEnabled(enable);
+    if (enable) {
         ui->moduleVisibilityWidget->setHidden(true);
         ui->moduleSelectorWidget->setHidden(true);
         ui->showModulesAction->setChecked(false);
         ui->showModulesAction->setEnabled(false);
-        ui->showReplaySpeedAction->setEnabled(false);
     } else {
+        const bool moduleSelectorVisible = settings.isModuleSelectorVisible();
         ui->moduleVisibilityWidget->setVisible(true);
-        ui->moduleSelectorWidget->setVisible(settings.isModuleSelectorVisible());
-        ui->showModulesAction->setChecked(settings.isModuleSelectorVisible());
+        ui->moduleSelectorWidget->setVisible(moduleSelectorVisible);
+        ui->showModulesAction->setChecked(moduleSelectorVisible);
         ui->showModulesAction->setEnabled(true);
-        ui->showReplaySpeedAction->setEnabled(true);
     }
-    ui->moduleGroupBox->setHidden(enabled);
-    settings.setMinimalUiEnabled(enabled);
+    updateMinimalUiButtonTextVisibility();
+    updateMinimalUiEssentialButtonVisibility();
+    updateReplaySpeedVisibility(enable);
+    updatePositionSliderTickInterval();
+
+    ui->moduleGroupBox->setHidden(enable);
+
     // When hiding a widget it takes some time for the layout manager to
     // get notified, so we return to the Qt event queue first
     QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
@@ -773,16 +835,26 @@ void MainWindow::updateRecordingDuration(std::int64_t timestamp) noexcept
 
 void MainWindow::updatePositionSlider(std::int64_t timestamp) noexcept
 {
-    const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
-    const std::int64_t ts = std::min(timestamp, totalDuration);
-
-    const int sliderPosition = totalDuration > 0 ?
-                               static_cast<int>(std::round(PositionSliderMax * (static_cast<double>(ts) / static_cast<double>(totalDuration)))) :
-                               0;
+    bool recording {false};
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
+        recording = skyConnect->get().isRecording();
+    }
+    int sliderPosition {0};
+    if (recording) {
+        sliderPosition = ::PositionSliderMax;
+        ui->positionSlider->setToolTip(tr("Recording"));
+    } else {
+        const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
+        const std::int64_t ts = std::min(timestamp, totalDuration);
+        if (ts > 0) {
+            sliderPosition = static_cast<int>(std::round(::PositionSliderMax * (static_cast<double>(ts) / static_cast<double>(totalDuration))));
+        }
+        ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatTimestamp(timestamp), d->unit.formatHHMMSS(timestamp)));
+    }
 
     ui->positionSlider->blockSignals(true);
     ui->positionSlider->setValue(sliderPosition);
-    ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatTimestamp(timestamp), d->unit.formatHHMMSS(timestamp)));
     ui->positionSlider->blockSignals(false);
 
     const QTime time = QTime::fromMSecsSinceStartOfDay(timestamp);
@@ -791,9 +863,96 @@ void MainWindow::updatePositionSlider(std::int64_t timestamp) noexcept
     ui->timestampTimeEdit->blockSignals(false);
 }
 
+void MainWindow::updateMinimalUiButtonTextVisibility() noexcept
+{
+    Settings &settings = Settings::getInstance();
+    if (settings.isMinimalUiEnabled()) {
+        const bool buttonTextVisible = settings.getDefaultMinimalUiButtonTextVisibility();
+        ui->recordButton->setShowText(buttonTextVisible);
+        ui->skipToBeginButton->setShowText(buttonTextVisible);
+        ui->backwardButton->setShowText(buttonTextVisible);
+        ui->stopButton->setShowText(buttonTextVisible);
+        ui->pauseButton->setShowText(buttonTextVisible);
+        ui->playButton->setShowText(buttonTextVisible);
+        ui->forwardButton->setShowText(buttonTextVisible);
+        ui->skipToEndButton->setShowText(buttonTextVisible);
+        ui->loopReplayButton->setShowText(buttonTextVisible);
+    } else {
+        ui->recordButton->setShowText(true);
+        ui->skipToBeginButton->setShowText(true);
+        ui->backwardButton->setShowText(true);
+        ui->stopButton->setShowText(true);
+        ui->pauseButton->setShowText(true);
+        ui->playButton->setShowText(true);
+        ui->forwardButton->setShowText(true);
+        ui->skipToEndButton->setShowText(true);
+        ui->loopReplayButton->setShowText(true);
+    }
+}
+
+void MainWindow::updateMinimalUiEssentialButtonVisibility() noexcept
+{
+    Settings &settings = Settings::getInstance();
+    if (settings.isMinimalUiEnabled()) {
+        const bool nonEssentialButtonVisible = settings.getDefaultMinimalUiNonEssentialButtonVisibility();
+        ui->skipToBeginButton->setVisible(nonEssentialButtonVisible);
+        ui->backwardButton->setVisible(nonEssentialButtonVisible);
+        ui->skipToEndButton->setVisible(nonEssentialButtonVisible);
+        ui->forwardButton->setVisible(nonEssentialButtonVisible);
+        ui->skipToEndButton->setVisible(nonEssentialButtonVisible);
+    } else {
+        ui->skipToBeginButton->setVisible(true);
+        ui->backwardButton->setVisible(true);
+        ui->skipToEndButton->setVisible(true);
+        ui->forwardButton->setVisible(true);
+        ui->skipToEndButton->setVisible(true);
+    }
+}
+
+void MainWindow::updateReplaySpeedVisibility(bool enterMinimalUi) noexcept
+{
+    Settings &settings = Settings::getInstance();
+    bool replaySpeedVisible;
+    if (enterMinimalUi) {
+        // When switching to minimal UI mode the default replay speed visibility takes precedence
+        replaySpeedVisible = settings.getDefaultMinimalUiReplaySpeedVisibility() && settings.isReplaySpeedVisible();
+    } else {
+        // The current replay speed visibility setting decides (only)
+        replaySpeedVisible = settings.isReplaySpeedVisible();
+    }
+    ui->showReplaySpeedAction->setChecked(replaySpeedVisible);
+    ui->replaySpeedGroupBox->setVisible(replaySpeedVisible);
+}
+
+void MainWindow::updatePositionSliderTickInterval() noexcept
+{
+    Settings &settings = Settings::getInstance();
+    int tickInterval {10};
+    if (settings.isMinimalUiEnabled()) {
+        if (!ui->showReplaySpeedAction->isChecked()) {
+            if (settings.getDefaultMinimalUiButtonTextVisibility()) {
+                if (settings.getDefaultMinimalUiButtonTextVisibility()) {
+                    tickInterval = 10;
+                } else {
+                    tickInterval = 20;
+                }
+            } else {
+                if (settings.getDefaultMinimalUiButtonTextVisibility()) {
+                    tickInterval = 20;
+                } else {
+                    tickInterval = 40;
+                }
+            }
+        } else {
+            tickInterval = 10;
+        }
+    }
+    ui->positionSlider->setTickInterval(tickInterval);
+}
+
 double MainWindow::getCustomSpeedFactor() const
 {
-    double customSpeedFactor;
+    double customSpeedFactor {1.0};
     const QString text = d->customSpeedLineEdit->text();
     if (!text.isEmpty()) {
         switch (Settings::getInstance().getReplaySpeeedUnit()) {
@@ -804,8 +963,6 @@ double MainWindow::getCustomSpeedFactor() const
             customSpeedFactor = d->unit.toNumber(text) / 100.0;
             break;
         }
-    } else {
-        customSpeedFactor = 1.0;
     }
     return customSpeedFactor;
 }
@@ -828,10 +985,9 @@ void MainWindow::on_positionSlider_valueChanged(int value) noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
-        const double scale = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
+        const double factor = static_cast<double>(value) / static_cast<double>(PositionSliderMax);
         const std::int64_t totalDuration = Logbook::getInstance().getCurrentFlight().getTotalDurationMSec();
-        const std::int64_t timestamp = static_cast<std::int64_t>(std::round(scale * static_cast<double>(totalDuration)));
-        ui->positionSlider->setToolTip(tr("%1 ms (%2)").arg(d->unit.formatTimestamp(timestamp), d->unit.formatHHMMSS(timestamp)));
+        const std::int64_t timestamp = static_cast<std::int64_t>(std::round(factor * static_cast<double>(totalDuration)));
 
         // Prevent the timestampTimeEdit field to set the replay position as well
         ui->timestampTimeEdit->blockSignals(true);
@@ -1062,12 +1218,7 @@ void MainWindow::updateControlUi() noexcept
     }
 
     const bool loopReplayEnabled = Settings::getInstance().isReplayLoopEnabled();
-    ui->replayLoopPushButton->setChecked(loopReplayEnabled);
-    if (loopReplayEnabled) {
-        ui->replayLoopPushButton->setToolTip(tr("Replay loop is enabled."));
-    } else {
-        ui->replayLoopPushButton->setToolTip(tr("Replay stops at end."));
-    }
+    ui->loopReplayAction->setChecked(loopReplayEnabled);
 }
 
 void MainWindow::updateControlIcons() noexcept
@@ -1079,10 +1230,12 @@ void MainWindow::updateControlIcons() noexcept
     case Module::Module::Logbook:
         recordIcon.addFile(":/img/icons/record-normal.png", QSize(), QIcon::Normal, QIcon::Off);
         recordIcon.addFile(":/img/icons/record-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
+        recordIcon.addFile(":/img/icons/record-active.png", QSize(), QIcon::Active);
         break;
     case Module::Module::Formation:
         recordIcon.addFile(":/img/icons/record-add-normal.png", QSize(), QIcon::Normal, QIcon::Off);
         recordIcon.addFile(":/img/icons/record-add-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
+        recordIcon.addFile(":/img/icons/record-add-active.png", QSize(), QIcon::Active);
         break;
 
     }
@@ -1113,12 +1266,34 @@ void MainWindow::updateReplaySpeedUi() noexcept
     }    
 }
 
+void MainWindow::onDefaultMinimalUiButtonTextVisibilityChanged(bool visible) noexcept
+{
+    updateMinimalUiButtonTextVisibility();
+    updatePositionSliderTickInterval();
+    Settings &settings = Settings::getInstance();
+    if (!visible && settings.isMinimalUiEnabled()) {
+        // Shrink to minimal size
+        QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
+    }
+}
+
+void MainWindow::onDefaultMinimalUiEssentialButtonVisibilityChanged(bool visible) noexcept
+{
+    updateMinimalUiEssentialButtonVisibility();
+    updatePositionSliderTickInterval();
+    Settings &settings = Settings::getInstance();
+    if (visible && settings.isMinimalUiEnabled()) {
+        // Shrink to minimal size
+        QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
+    }
+}
+
 void MainWindow::updateReplayDuration() noexcept
 {
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     const std::int64_t totalDuration = flight.getTotalDurationMSec();
-    ui->timestampTimeEdit->blockSignals(true);
     const QTime time = QTime::fromMSecsSinceStartOfDay(totalDuration);
+    ui->timestampTimeEdit->blockSignals(true);
     ui->timestampTimeEdit->setMaximumTime(time);
     ui->timestampTimeEdit->blockSignals(false);
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
@@ -1149,9 +1324,14 @@ void MainWindow::updateFileMenu() noexcept
 
 void MainWindow::updateWindowMenu() noexcept
 {
-    ui->showFlightAction->setChecked(d->flightDialog->isVisible());
-    ui->showSimulationVariablesAction->setChecked(d->simulationVariablesDialog->isVisible());
-    ui->showStatisticsAction->setChecked(d->statisticsDialog->isVisible());
+    bool visible = hasFlightDialog() ?  getFlightDialog().isVisible() : false;
+    ui->showFlightAction->setChecked(visible);
+
+    visible = hasSimulationVariablesDialog() ?  getSimulationVariablesDialog().isVisible() : false;
+    ui->showSimulationVariablesAction->setChecked(visible);
+
+    visible = hasStatisticsDialog() ?  getStatisticsDialog().isVisible() : false;
+    ui->showStatisticsAction->setChecked(visible);
 }
 
 void MainWindow::updateMainWindow() noexcept
@@ -1194,10 +1374,8 @@ void MainWindow::updateMainWindow() noexcept
 void MainWindow::handleModuleActivated(const QString title, [[maybe_unused]] Module::Module moduleId) noexcept
 {
     ui->moduleGroupBox->setTitle(title);
-    const bool minimalUi = Settings::getInstance().isMinimalUiEnabled();
-    if (minimalUi) {
-        updateMinimalUi(false);
-    }
+    // Disable the minimal UI (if activated)
+    ui->showMinimalAction->setChecked(false);
     updateControlIcons();
 }
 
@@ -1207,9 +1385,9 @@ void MainWindow::on_newLogbookAction_triggered() noexcept
 {
     const QString logbookPath = DatabaseService::getNewLogbookPath(this);
     if (!logbookPath.isNull()) {
-        const bool ok = ConnectionManager::getInstance().connectWithLogbook(logbookPath, this);
+        const bool ok = LogbookManager::getInstance().connectWithLogbook(logbookPath, this);
         if (!ok) {
-            QMessageBox::critical(this, tr("Database error"), tr("The logbook %1 could not be created.").arg(logbookPath));
+            QMessageBox::critical(this, tr("Logbook error"), tr("The logbook %1 could not be created.").arg(QDir::toNativeSeparators(logbookPath)));
         }
     }
 }
@@ -1224,15 +1402,45 @@ void MainWindow::on_openLogbookAction_triggered() noexcept
 
 void MainWindow::on_optimiseLogbookAction_triggered() noexcept
 {
-    bool ok = ConnectionManager::getInstance().optimise();
-    if (!ok) {
-        QMessageBox::critical(this, tr("Database error"), tr("The logbook could not be optimised."));
+    LogbookManager &logbookManager = LogbookManager::getInstance();
+    QString logbookPath = logbookManager.getLogbookPath();
+    QFileInfo fileInfo = QFileInfo(logbookPath);
+
+    std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
+    messageBox->setIcon(QMessageBox::Question);
+    const std::int64_t oldSize = fileInfo.size();
+    QPushButton *optimiseButton = messageBox->addButton(tr("&Optimise"), QMessageBox::AcceptRole);
+    messageBox->setWindowTitle(tr("Optimise logbook"));
+    messageBox->setText(tr("Logbook optimisation will regain unused space. The current %1 size is %2. Do you want to optimise the logbook?").arg(fileInfo.fileName(), d->unit.formatMemory(oldSize)));
+    messageBox->setInformativeText(tr("The optimisation operation may take a while, depending on the logbook file size."));
+    messageBox->setStandardButtons(QMessageBox::Cancel);
+    messageBox->setDefaultButton(optimiseButton);
+
+    messageBox->exec();
+    const QAbstractButton *clickedButton = messageBox->clickedButton();
+    if (clickedButton == optimiseButton) {
+        QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+        const bool ok = LogbookManager::getInstance().optimise();
+        QGuiApplication::restoreOverrideCursor();
+        if (ok) {
+            fileInfo.refresh();
+            messageBox = std::make_unique<QMessageBox>(this);
+            messageBox->setIcon(QMessageBox::Information);
+            messageBox->setWindowTitle(tr("Success"));
+            messageBox->setText(tr("The logbook %1 optimisation was successful.").arg(fileInfo.fileName()));
+            messageBox->setInformativeText(tr("The new file size is: %1 (old size: %2).")
+                                           .arg(d->unit.formatMemory(fileInfo.size()), d->unit.formatMemory(oldSize)));
+            messageBox->exec();
+        } else {
+            QMessageBox::critical(this, tr("Logbook error"), tr("The logbook could not be optimised."));
+        }
     }
 }
 
 void MainWindow::on_showSettingsAction_triggered() noexcept
 {
-    d->settingsDialog->exec();
+    std::unique_ptr<SettingsDialog> settingsDialog = std::make_unique<SettingsDialog>(this);
+    settingsDialog->exec();
 }
 
 void MainWindow::on_showLogbookSettingsAction_triggered() noexcept
@@ -1248,57 +1456,52 @@ void MainWindow::on_quitAction_triggered() noexcept
 
 // View menu
 
-void MainWindow::on_showModulesAction_triggered(bool enabled) noexcept
+void MainWindow::onShowModulesChanged(bool enable) noexcept
 {
     Settings &settings = Settings::getInstance();
-    settings.setModuleSelectorVisible(enabled);
-    ui->moduleSelectorWidget->setVisible(enabled);
+    settings.setModuleSelectorVisible(enable);
+    ui->moduleSelectorWidget->setVisible(enable);
 }
 
-void MainWindow::on_showReplaySpeedAction_triggered(bool enabled) noexcept
+void MainWindow::onShowReplaySpeedChanged(bool enable) noexcept
 {
     Settings &settings = Settings::getInstance();
-    settings.setReplaySpeedVisible(enabled);
-    ui->replaySpeedGroupBox->setVisible(enabled);
+    settings.setReplaySpeedVisible(enable);
+    updateReplaySpeedVisibility(false);
+    updatePositionSliderTickInterval();
+
+    // Readjust size (minimum size when in minimal UI mode)
+    QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
 }
 
 // Window menu
 
-void MainWindow::on_showFlightAction_triggered(bool enabled) noexcept
+void MainWindow::on_showFlightAction_triggered(bool enable) noexcept
 {
-    if (enabled) {
-        d->flightDialog->show();
-    } else {
-        d->flightDialog->close();
-    }
+    FlightDialog &dialog = getFlightDialog();
+    dialog.setVisible(enable);
 }
 
-void MainWindow::on_showSimulationVariablesAction_triggered(bool enabled) noexcept
+void MainWindow::on_showSimulationVariablesAction_triggered(bool enable) noexcept
 {
-    if (enabled) {
-        d->simulationVariablesDialog->show();
-    } else {
-        d->simulationVariablesDialog->close();
-    }
+    SimulationVariablesDialog &dialog = getSimulationVariablesDialog();
+    dialog.setVisible(enable);
 }
 
-void MainWindow::on_showStatisticsAction_triggered(bool enabled) noexcept
+void MainWindow::on_showStatisticsAction_triggered(bool enable) noexcept
 {
-    if (enabled) {
-        d->statisticsDialog->show();
-    } else {
-        d->statisticsDialog->close();
-    }
+    StatisticsDialog &dialog = getStatisticsDialog();
+    dialog.setVisible(enable);
 }
 
-void MainWindow::on_stayOnTopAction_triggered(bool enabled) noexcept
+void MainWindow::on_stayOnTopAction_triggered(bool enable) noexcept
 {
-    Settings::getInstance().setWindowStaysOnTopEnabled(enabled);
+    Settings::getInstance().setWindowStaysOnTopEnabled(enable);
 }
 
-void MainWindow::on_showMinimalAction_triggered(bool enabled) noexcept
+void MainWindow::on_showMinimalAction_toggled(bool enable) noexcept
 {
-    updateMinimalUi(enabled);
+    updateMinimalUi(enable);
 }
 
 // Help menu
@@ -1387,7 +1590,7 @@ void MainWindow::toggleLoopReplay(bool checked) noexcept
 
 // Service
 
-void MainWindow::handleFlightRestored() noexcept
+void MainWindow::onFlightRestored() noexcept
 {
     updateUi();
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
@@ -1405,7 +1608,7 @@ void MainWindow::handleFlightRestored() noexcept
     }
 }
 
-void MainWindow::handleLogbookConnectionChanged(bool connected) noexcept
+void MainWindow::onLogbookConnectionChanged(bool connected) noexcept
 {
     d->connectedWithLogbook = connected;
     updateUi();

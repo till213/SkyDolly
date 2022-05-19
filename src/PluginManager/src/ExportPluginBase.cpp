@@ -97,6 +97,7 @@ bool ExportPluginBase::exportFlight(const Flight &flight) noexcept
                 std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(PluginBase::getParentWidget());
                 messageBox->setIcon(QMessageBox::Question);
                 QPushButton *replaceButton = messageBox->addButton(tr("&Replace"), QMessageBox::AcceptRole);
+                messageBox->setWindowTitle(tr("Replace"));
                 messageBox->setText(tr("A file named \"%1\" already exists. Do you want to replace it?").arg(fileInfo.fileName()));
                 messageBox->setInformativeText(tr("The file already exists in \"%1\".  Replacing it will overwrite its contents.").arg(fileInfo.dir().dirName()));
                 messageBox->setStandardButtons(QMessageBox::Cancel);
@@ -170,7 +171,7 @@ bool ExportPluginBase::exportFlight(const Flight &flight, const QString &filePat
             }
         }
     } else {
-        QMessageBox::warning(PluginBase::getParentWidget(), tr("Export error"), tr("An error occured during export into file %1.").arg(filePath));
+        QMessageBox::warning(PluginBase::getParentWidget(), tr("Export error"), tr("An error occured during export into file %1.").arg(QDir::toNativeSeparators(filePath)));
     }
 
     return ok;
@@ -191,6 +192,7 @@ bool ExportPluginBase::exportAllAircraft(const Flight &flight, const QString &fi
             messageBox->setIcon(QMessageBox::Question);
             QPushButton *replaceButton = messageBox->addButton(tr("&Replace"), QMessageBox::AcceptRole);
             QPushButton *replaceAllButton = messageBox->addButton(tr("Replace &All"), QMessageBox::YesRole);
+            messageBox->setWindowTitle(tr("Replace"));
             messageBox->setText(tr("A file named \"%1\" already exists. Do you want to replace it?").arg(fileInfo.fileName()));
             messageBox->setInformativeText(tr("The file already exists in \"%1\".  Replacing it will overwrite its contents.").arg(fileInfo.dir().dirName()));
             messageBox->setStandardButtons(QMessageBox::Cancel);
