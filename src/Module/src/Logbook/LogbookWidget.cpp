@@ -63,7 +63,7 @@
 #include <Persistence/Service/DatabaseService.h>
 #include <Persistence/Service/LogbookService.h>
 #include <Persistence/Service/FlightService.h>
-#include <Persistence/ConnectionManager.h>
+#include <Persistence/LogbookManager.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
 #include <Widget/Platform.h>
@@ -196,7 +196,7 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
 
     // Logbook
     const Logbook &logbook = Logbook::getInstance();
-    connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
+    connect(&LogbookManager::getInstance(), &LogbookManager::connectionChanged,
             this, &LogbookWidget::updateUi);
     connect(&logbook, &Logbook::flightTitleOrDescriptionChanged,
             this, &LogbookWidget::updateUi);
@@ -225,7 +225,7 @@ void LogbookWidget::hideEvent(QHideEvent *event) noexcept
 
     // Logbook
     const Logbook &logbook = Logbook::getInstance();
-    disconnect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
+    disconnect(&LogbookManager::getInstance(), &LogbookManager::connectionChanged,
                this, &LogbookWidget::updateUi);
     disconnect(&logbook, &Logbook::flightTitleOrDescriptionChanged,
                this, &LogbookWidget::updateUi);
@@ -312,7 +312,7 @@ void LogbookWidget::initFilterUi() noexcept
 void LogbookWidget::updateFlightTable() noexcept
 {
     d->selectedFlightId = Flight::InvalidId;
-    if (ConnectionManager::getInstance().isConnected()) {
+    if (LogbookManager::getInstance().isConnected()) {
 
         const Flight &flight = Logbook::getInstance().getCurrentFlight();
         const std::int64_t flightInMemoryId = flight.getId();
@@ -596,7 +596,7 @@ void LogbookWidget::updateAircraftIcon() noexcept
 
 void LogbookWidget::updateDateSelectorUi() noexcept
 {
-    if (ConnectionManager::getInstance().isConnected()) {
+    if (LogbookManager::getInstance().isConnected()) {
         // Sorted by year, month, day
         std::forward_list<FlightDate> flightDates = d->logbookService->getFlightDates();
         ui->logTreeWidget->blockSignals(true);

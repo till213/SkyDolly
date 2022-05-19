@@ -73,7 +73,7 @@
 #include <Model/Logbook.h>
 #include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/DatabaseService.h>
-#include <Persistence/ConnectionManager.h>
+#include <Persistence/LogbookManager.h>
 #include <Widget/ActionButton.h>
 #include <Widget/ActionRadioButton.h>
 #include <Widget/ActionCheckBox.h>
@@ -224,7 +224,7 @@ MainWindow::~MainWindow() noexcept
 
 bool MainWindow::connectWithLogbook(const QString &filePath) noexcept
 {
-    bool ok = ConnectionManager::getInstance().connectWithLogbook(filePath, this);
+    bool ok = LogbookManager::getInstance().connectWithLogbook(filePath, this);
     if (!ok) {
         QMessageBox::critical(this, tr("Logbook error"), tr("The logbook %1 could not be opened.").arg(QDir::toNativeSeparators(filePath)));
     }
@@ -245,7 +245,7 @@ void MainWindow::closeEvent(QCloseEvent *event) noexcept
     QMainWindow::closeEvent(event);
 
     Metadata metaData;
-    if (ConnectionManager::getInstance().getMetadata(metaData)) {
+    if (LogbookManager::getInstance().getMetadata(metaData)) {
         if (QDateTime::currentDateTime() > metaData.nextBackupDate) {
             std::unique_ptr<LogbookBackupDialog> backupDialog = std::make_unique<LogbookBackupDialog>(this);
             backupDialog->exec();
@@ -294,7 +294,7 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::onEssentialButtonVisibilityChanged);
 
     // Logbook connection
-    connect(&ConnectionManager::getInstance(), &ConnectionManager::connectionChanged,
+    connect(&LogbookManager::getInstance(), &LogbookManager::connectionChanged,
             this, &MainWindow::onLogbookConnectionChanged);
 
     // Menu actions
@@ -1319,7 +1319,7 @@ void MainWindow::on_newLogbookAction_triggered() noexcept
 {
     const QString logbookPath = DatabaseService::getNewLogbookPath(this);
     if (!logbookPath.isNull()) {
-        const bool ok = ConnectionManager::getInstance().connectWithLogbook(logbookPath, this);
+        const bool ok = LogbookManager::getInstance().connectWithLogbook(logbookPath, this);
         if (!ok) {
             QMessageBox::critical(this, tr("Logbook error"), tr("The logbook %1 could not be created.").arg(QDir::toNativeSeparators(logbookPath)));
         }
@@ -1336,8 +1336,8 @@ void MainWindow::on_openLogbookAction_triggered() noexcept
 
 void MainWindow::on_optimiseLogbookAction_triggered() noexcept
 {
-    ConnectionManager &connectionManager = ConnectionManager::getInstance();
-    QString logbookPath = connectionManager.getLogbookPath();
+    LogbookManager &logbookManager = LogbookManager::getInstance();
+    QString logbookPath = logbookManager.getLogbookPath();
     QFileInfo fileInfo = QFileInfo(logbookPath);
 
     std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
@@ -1354,7 +1354,7 @@ void MainWindow::on_optimiseLogbookAction_triggered() noexcept
     const QAbstractButton *clickedButton = messageBox->clickedButton();
     if (clickedButton == optimiseButton) {
         QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-        const bool ok = ConnectionManager::getInstance().optimise();
+        const bool ok = LogbookManager::getInstance().optimise();
         QGuiApplication::restoreOverrideCursor();
         if (ok) {
             fileInfo.refresh();

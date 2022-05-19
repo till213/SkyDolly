@@ -41,16 +41,16 @@
 #include "Dao/DaoFactory.h"
 #include "Dao/DatabaseDaoIntf.h"
 #include "Service/DatabaseService.h"
-#include "ConnectionManager.h"
+#include "LogbookManager.h"
 
 namespace {
     constexpr int MaxBackupIndex = 1024;
 }
 
-class ConnectionManagerPrivate
+class LogbookManagerPrivate
 {
 public:
-    ConnectionManagerPrivate() noexcept
+    LogbookManagerPrivate() noexcept
         : daoFactory(std::make_unique<DaoFactory>(DaoFactory::DbType::SQLite)),
           databaseDao(daoFactory->createDatabaseDao()),
           connected(false)
@@ -61,30 +61,30 @@ public:
     QString logbookPath;
     bool connected;
 
-    static ConnectionManager *instance; 
+    static LogbookManager *instance;
 };
 
-ConnectionManager *ConnectionManagerPrivate::instance = nullptr;
+LogbookManager *LogbookManagerPrivate::instance = nullptr;
 
 // PUBLIC
 
-ConnectionManager &ConnectionManager::getInstance() noexcept
+LogbookManager &LogbookManager::getInstance() noexcept
 {
-    if (ConnectionManagerPrivate::instance == nullptr) {
-        ConnectionManagerPrivate::instance = new ConnectionManager();
+    if (LogbookManagerPrivate::instance == nullptr) {
+        LogbookManagerPrivate::instance = new LogbookManager();
     }
-    return *ConnectionManagerPrivate::instance;
+    return *LogbookManagerPrivate::instance;
 }
 
-void ConnectionManager::destroyInstance() noexcept
+void LogbookManager::destroyInstance() noexcept
 {
-    if (ConnectionManagerPrivate::instance != nullptr) {
-        delete ConnectionManagerPrivate::instance;
-        ConnectionManagerPrivate::instance = nullptr;
+    if (LogbookManagerPrivate::instance != nullptr) {
+        delete LogbookManagerPrivate::instance;
+        LogbookManagerPrivate::instance = nullptr;
     }
 }
 
-bool ConnectionManager::connectWithLogbook(const QString &logbookPath, QWidget *parent) noexcept
+bool LogbookManager::connectWithLogbook(const QString &logbookPath, QWidget *parent) noexcept
 {
     QString currentLogbookPath = logbookPath;
     bool ok = true;
@@ -184,7 +184,7 @@ bool ConnectionManager::connectWithLogbook(const QString &logbookPath, QWidget *
     return ok;
 }
 
-void ConnectionManager::disconnectFromLogbook() noexcept
+void LogbookManager::disconnectFromLogbook() noexcept
 {
     d->databaseDao->disconnectDb();
     d->logbookPath.clear();
@@ -192,32 +192,32 @@ void ConnectionManager::disconnectFromLogbook() noexcept
     emit connectionChanged(d->connected);
 }
 
-bool ConnectionManager::isConnected() const noexcept
+bool LogbookManager::isConnected() const noexcept
 {
     return d->connected;
 }
 
-const QString &ConnectionManager::getLogbookPath() const noexcept
+const QString &LogbookManager::getLogbookPath() const noexcept
 {
     return d->logbookPath;
 }
 
-bool ConnectionManager::migrate() noexcept
+bool LogbookManager::migrate() noexcept
 {
     return d->databaseDao->migrate();
 }
 
-bool ConnectionManager::optimise() noexcept
+bool LogbookManager::optimise() noexcept
 {
     return d->databaseDao->optimise();
 }
 
-bool ConnectionManager::backup(const QString &backupLogbookPath) noexcept
+bool LogbookManager::backup(const QString &backupLogbookPath) noexcept
 {
     return d->databaseDao->backup(backupLogbookPath);
 }
 
-bool ConnectionManager::getMetadata(Metadata &metadata) const noexcept
+bool LogbookManager::getMetadata(Metadata &metadata) const noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
@@ -227,17 +227,17 @@ bool ConnectionManager::getMetadata(Metadata &metadata) const noexcept
     return ok;
 }
 
-bool ConnectionManager::getDatabaseVersion(Version &databaseVersion) const noexcept
+bool LogbookManager::getDatabaseVersion(Version &databaseVersion) const noexcept
 {
     return d->databaseDao->getDatabaseVersion(databaseVersion);
 }
 
-bool ConnectionManager::getBackupDirectoryPath(QString &backupDirectoryPath) const noexcept
+bool LogbookManager::getBackupDirectoryPath(QString &backupDirectoryPath) const noexcept
 {
     return d->databaseDao->getBackupDirectoryPath(backupDirectoryPath);
 }
 
-QString ConnectionManager::getBackupFileName(const QString &backupDirectoryPath) const noexcept
+QString LogbookManager::getBackupFileName(const QString &backupDirectoryPath) const noexcept
 {
     QDir backupDir(backupDirectoryPath);
     const QString &logbookPath = getLogbookPath();
@@ -257,12 +257,12 @@ QString ConnectionManager::getBackupFileName(const QString &backupDirectoryPath)
     }
 }
 
-QString ConnectionManager::createBackupPathIfNotExists(const QString &relativeOrAbsoluteBackupDirectoryPath) noexcept
+QString LogbookManager::createBackupPathIfNotExists(const QString &relativeOrAbsoluteBackupDirectoryPath) noexcept
 {
     QString existingBackupPath;
     if (QDir::isRelativePath(relativeOrAbsoluteBackupDirectoryPath)) {
-        const ConnectionManager &connectionManager = ConnectionManager::getInstance();
-        const QString &logbookDirectoryPath = QFileInfo(connectionManager.getLogbookPath()).absolutePath();
+        const LogbookManager &LogbookManager = LogbookManager::getInstance();
+        const QString &logbookDirectoryPath = QFileInfo(LogbookManager.getLogbookPath()).absolutePath();
         existingBackupPath = logbookDirectoryPath + "/" + QFileInfo(relativeOrAbsoluteBackupDirectoryPath).fileName();
     } else {
         existingBackupPath = relativeOrAbsoluteBackupDirectoryPath;
@@ -280,26 +280,26 @@ QString ConnectionManager::createBackupPathIfNotExists(const QString &relativeOr
 
 // PROTECTED
 
-ConnectionManager::~ConnectionManager() noexcept
+LogbookManager::~LogbookManager() noexcept
 {
     disconnectFromLogbook();
 #ifdef DEBUG
-    qDebug("ConnectionManager::ConnectionManager: DELETED");
+    qDebug("LogbookManager::LogbookManager: DELETED");
 #endif
 }
 
 // PRIVATE
 
-ConnectionManager::ConnectionManager() noexcept
+LogbookManager::LogbookManager() noexcept
     : QObject(),
-      d(std::make_unique<ConnectionManagerPrivate>())
+      d(std::make_unique<LogbookManagerPrivate>())
 {
 #ifdef DEBUG
-    qDebug("ConnectionManager::ConnectionManager: CREATED");
+    qDebug("LogbookManager::LogbookManager: CREATED");
 #endif
 }
 
-bool ConnectionManager::connectDb(const QString &logbookPath) noexcept
+bool LogbookManager::connectDb(const QString &logbookPath) noexcept
 {
     bool ok;
     if (d->logbookPath != logbookPath) {
@@ -311,7 +311,7 @@ bool ConnectionManager::connectDb(const QString &logbookPath) noexcept
     return ok;
 }
 
-bool ConnectionManager::checkDatabaseVersion(Version &databaseVersion) const noexcept
+bool LogbookManager::checkDatabaseVersion(Version &databaseVersion) const noexcept
 {
     Version currentAppVersion;
     bool ok = getDatabaseVersion(databaseVersion);
