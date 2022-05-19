@@ -109,7 +109,8 @@ class LogbookWidgetPrivate
 {
 public:
     LogbookWidgetPrivate(QObject *parent, DatabaseService &theDatabaseService, FlightService &theFlightService) noexcept
-        : titleColumnIndex(::InvalidColumn),
+        : idColumnIndex(::InvalidColumn),
+          titleColumnIndex(::InvalidColumn),
           databaseService(theDatabaseService),
           flightService(theFlightService),
           logbookService(std::make_unique<LogbookService>()),
@@ -123,6 +124,7 @@ public:
         searchTimer->setInterval(::SearchTimeoutMSec);
     }
 
+    int idColumnIndex;
     int titleColumnIndex;
     DatabaseService &databaseService;
     FlightService &flightService;
@@ -349,6 +351,7 @@ void LogbookWidget::updateFlightTable() noexcept
             newItem->setToolTip(tr("Double-click to load flight."));
             // Transfer ownership of newItem to table widget
             ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
+            d->idColumnIndex = columnIndex;
             ++columnIndex;
 
             // Title
@@ -418,6 +421,9 @@ void LogbookWidget::updateFlightTable() noexcept
         ui->logTableWidget->setSortingEnabled(true);
         if (!d->columnsAutoResized) {
             ui->logTableWidget->resizeColumnsToContents();
+            // Reserve some space for the aircraft icon
+            const int idColumnWidth = static_cast<int>(std::round(1.5 * ui->logTableWidget->columnWidth(d->idColumnIndex)));
+            ui->logTableWidget->setColumnWidth(d->idColumnIndex, idColumnWidth);
             d->columnsAutoResized = true;
         }
         ui->logTableWidget->blockSignals(false);
