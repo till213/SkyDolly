@@ -36,9 +36,9 @@
 class VersionPrivate;
 
 /*!
- * The default constructor creates an instance which represents the current \em application version.
- * Other constructors exist to construct \em document versions, for example, which can be compared against
- * the \em application version.
+ * The default constructor creates an instance which represents the current \e application version.
+ * Other constructors exist to construct \e document versions, for example, which can be compared against
+ * the \e application version.
  *
  * The version string has the form "[major].[minor].[patch]", for example "1.2.3".
  */

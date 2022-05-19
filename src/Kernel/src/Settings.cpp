@@ -83,8 +83,9 @@ public:
     bool deleteAircraftConfirmation;
     bool resetTimeOffsetConfirmation;
 
-    bool buttonTextHidden;
-    bool nonEssentialButtonHidden;
+    bool defaultMinimalUiButtonTextVisible;
+    bool defaultMinimalUiNonEssentialButtonVisible;
+    bool defaultMinimalUiReplaySpeedVisible;
 
     QString importAircraftType;
 
@@ -113,8 +114,9 @@ public:
     static constexpr bool DefaultDeleteAircraftConfirmation = true;
     static constexpr bool DefaultResetTimeOffsetConfirmation = true;
 
-    static constexpr bool DefaultButtonTextHidden = true;
-    static constexpr bool DefaultNonEssentialButtonHidden = true;
+    static constexpr bool DefaultMinimalUiButtonTextVisible = false;
+    static constexpr bool DefaultMinimalUiNonEssentialButtonVisible = false;
+    static constexpr bool DefaultMinimalUiReplaySpeedVisible = false;
 
     static inline const QString DefaultImportAircraftType = QLatin1String("");
 
@@ -259,11 +261,11 @@ bool Settings::isModuleSelectorVisible() const noexcept
     return d->moduleSelectorVisible;
 }
 
-void Settings::setModuleSelectorVisible(bool enable) noexcept
+void Settings::setModuleSelectorVisible(bool visible) noexcept
 {
-    if (d->moduleSelectorVisible != enable) {
-        d->moduleSelectorVisible = enable;
-        emit moduleSelectorVisibilityChanged(enable);
+    if (d->moduleSelectorVisible != visible) {
+        d->moduleSelectorVisible = visible;
+        emit moduleSelectorVisibilityChanged(visible);
     }
 }
 
@@ -272,11 +274,11 @@ bool Settings::isReplaySpeedVisible() const noexcept
     return d->replaySpeedVisible;
 }
 
-void Settings::setReplaySpeedVisible(bool enable) noexcept
+void Settings::setReplaySpeedVisible(bool visible) noexcept
 {
-    if (d->replaySpeedVisible != enable) {
-        d->replaySpeedVisible = enable;
-        emit replaySpeedVisibilityChanged(enable);
+    if (d->replaySpeedVisible != visible) {
+        d->replaySpeedVisible = visible;
+        emit replaySpeedVisibilityChanged(visible);
     }
 }
 
@@ -450,29 +452,42 @@ void Settings::setResetTimeOffsetConfirmationEnabled(bool enable) noexcept
     }
 }
 
-bool Settings::isButtonTextHidden() const noexcept
+bool Settings::getDefaultMinimalUiButtonTextVisibility() const noexcept
 {
-    return d->buttonTextHidden;
+    return d->defaultMinimalUiButtonTextVisible;
 }
 
-void Settings::setButtonTextHidden(bool enable) noexcept
+void Settings::setDefaultMinimalUiButtonTextVisibility(bool visible) noexcept
 {
-    if (d->buttonTextHidden != enable) {
-        d->buttonTextHidden = enable;
-        emit buttonTextVisibilityChanged(enable);
+    if (d->defaultMinimalUiButtonTextVisible != visible) {
+        d->defaultMinimalUiButtonTextVisible = visible;
+        emit defaultMinimalUiButtonTextVisibilityChanged(visible);
     }
 }
 
-bool Settings::isNonEssentialButtonHidden() const noexcept
+bool Settings::getDefaultMinimalUiNonEssentialButtonVisibility() const noexcept
 {
-    return d->nonEssentialButtonHidden;
+    return d->defaultMinimalUiNonEssentialButtonVisible;
 }
 
-void Settings::setNonEssentialButtonHidden(bool enable) noexcept
+void Settings::setDefaultMinimalUiNonEssentialButtonVisibility(bool visible) noexcept
 {
-    if (d->nonEssentialButtonHidden != enable) {
-        d->nonEssentialButtonHidden = enable;
-        emit nonEssentialButtonVisibilityChanged(enable);
+    if (d->defaultMinimalUiNonEssentialButtonVisible != visible) {
+        d->defaultMinimalUiNonEssentialButtonVisible = visible;
+        emit defaultMinimalUiNonEssentialButtonVisibilityChanged(visible);
+    }
+}
+
+bool Settings::getDefaultMinimalUiReplaySpeedVisibility() const noexcept
+{
+    return d->defaultMinimalUiReplaySpeedVisible;
+}
+
+void Settings::setDefaultMinimalUiReplaySpeedVisibility(bool visible) noexcept
+{
+    if (d->defaultMinimalUiReplaySpeedVisible != visible) {
+        d->defaultMinimalUiReplaySpeedVisible = visible;
+        emit defaultMinimalUiReplaySpeedVisibilityChanged(visible);
     }
 }
 
@@ -577,8 +592,9 @@ void Settings::store() const noexcept
         d->settings.setValue("ResetTimeOffsetConfirmation", d->resetTimeOffsetConfirmation);
 
         // Minimal UI
-        d->settings.setValue("ButtonTextHidden", d->buttonTextHidden);
-        d->settings.setValue("NonEssentialButtonHidden", d->nonEssentialButtonHidden);
+        d->settings.setValue("DefaultMinimalUiButtonTextVisible", d->defaultMinimalUiButtonTextVisible);
+        d->settings.setValue("DefaultMinimalUiNonEssentialButtonVisible", d->defaultMinimalUiNonEssentialButtonVisible);
+        d->settings.setValue("DefaultMinimalUiReplaySpeedVisible", d->defaultMinimalUiReplaySpeedVisible);
     }
     d->settings.endGroup();
     d->settings.beginGroup("View");
@@ -684,8 +700,9 @@ void Settings::restore() noexcept
         d->deleteAircraftConfirmation = d->settings.value("DeleteAircraftConfirmation", SettingsPrivate::DefaultDeleteAircraftConfirmation).toBool();
         d->resetTimeOffsetConfirmation = d->settings.value("ResetTimeOffsetConfirmation", SettingsPrivate::DefaultResetTimeOffsetConfirmation).toBool();
 
-        d->buttonTextHidden = d->settings.value("ButtonTextHidden", SettingsPrivate::DefaultButtonTextHidden).toBool();
-        d->nonEssentialButtonHidden = d->settings.value("NonEssentialButtonHidden", SettingsPrivate::DefaultNonEssentialButtonHidden).toBool();
+        d->defaultMinimalUiButtonTextVisible = d->settings.value("DefaultMinimalUiButtonTextVisible", SettingsPrivate::DefaultMinimalUiButtonTextVisible).toBool();
+        d->defaultMinimalUiNonEssentialButtonVisible = d->settings.value("DefaultMinimalUiNonEssentialButtonVisible", SettingsPrivate::DefaultMinimalUiNonEssentialButtonVisible).toBool();
+        d->defaultMinimalUiReplaySpeedVisible = d->settings.value("DefaultMinimalUiNonEssentialButtonVisible", SettingsPrivate::DefaultMinimalUiReplaySpeedVisible).toBool();
     }
     d->settings.endGroup();
     d->settings.beginGroup("View");
@@ -789,9 +806,11 @@ void Settings::frenchConnection() noexcept
             this, &Settings::changed);
     connect(this, &Settings::repeatCanopyChanged,
             this, &Settings::changed);
-    connect(this, &Settings::buttonTextVisibilityChanged,
+    connect(this, &Settings::defaultMinimalUiButtonTextVisibilityChanged,
             this, &Settings::changed);
-    connect(this, &Settings::nonEssentialButtonVisibilityChanged,
+    connect(this, &Settings::defaultMinimalUiNonEssentialButtonVisibilityChanged,
+            this, &Settings::changed);
+    connect(this, &Settings::defaultMinimalUiReplaySpeedVisibilityChanged,
             this, &Settings::changed);
 }
 
@@ -814,5 +833,4 @@ void Settings::updateEgmFilePath() noexcept
             }
         }
     }
-
 }

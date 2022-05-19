@@ -94,7 +94,12 @@ private:
     void updatePositionSlider(std::int64_t timestamp) noexcept;
 
     void updateMinimalUiButtonTextVisibility() noexcept;
-    void updateMininalUiEssentialButtonVisibility() noexcept;
+    void updateMinimalUiEssentialButtonVisibility() noexcept;
+
+    /* Updates the replay speed group visibility. Set 'enterMinimalUi' to true
+     * when switching into the minimal UI mode
+     */
+    void updateReplaySpeedVisibility(bool enterMinimalUi) noexcept;
     void updatePositionSliderTickInterval() noexcept;
 
     double getCustomSpeedFactor() const;
@@ -116,8 +121,8 @@ private slots:
     void updateControlUi() noexcept;
     void updateControlIcons() noexcept;
     void updateReplaySpeedUi() noexcept;
-    void onButtonTextVisibilityChanged(bool hidden) noexcept;
-    void onEssentialButtonVisibilityChanged(bool hidden) noexcept;
+    void onDefaultMinimalUiButtonTextVisibilityChanged(bool visible) noexcept;
+    void onDefaultMinimalUiEssentialButtonVisibilityChanged(bool visible) noexcept;
 
     /*
      * Updates the timestamp by setting the maximum replay time according
@@ -142,8 +147,8 @@ private slots:
     void on_showLogbookSettingsAction_triggered() noexcept;
     void on_quitAction_triggered() noexcept;
     // View menu
-    void onShowModulesToggled(bool enabled) noexcept;
-    void onShowReplaySpeedToggled(bool enabled) noexcept;
+    void onShowModulesChanged(bool enabled) noexcept;
+    void onShowReplaySpeedChanged(bool enabled) noexcept;
     // Window menu
     void on_showFlightAction_triggered(bool enabled) noexcept;
     void on_showSimulationVariablesAction_triggered(bool enabled) noexcept;

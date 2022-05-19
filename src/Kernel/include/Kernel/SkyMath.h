@@ -101,7 +101,7 @@ namespace SkyMath
 
     /*!
      * Normalises the value \c y1 by comparing its sign with
-     * the \em previous value \c y0, which come from a
+     * the \e previous value \c y0, which come from a
      * "+/- modulo 180" domain (value in [-180, 180[).
      *
      * - if \c y0 and \c y1 have the same sign then the normalised

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
-    <height>377</height>
+    <width>664</width>
+    <height>376</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -292,7 +292,7 @@
           <item row="0" column="0">
            <widget class="QCheckBox" name="hideButtonTextCheckBox">
             <property name="toolTip">
-             <string>Only show the button icons.</string>
+             <string>Defines the default visibility of button texts minimal user interface mode.</string>
             </property>
             <property name="text">
              <string>Hide button text</string>
@@ -302,7 +302,7 @@
           <item row="1" column="0">
            <widget class="QCheckBox" name="hideNonEssentialButtonsCheckBox">
             <property name="toolTip">
-             <string>Only show essential buttons: record, play, pause, stop, loop.</string>
+             <string>Defines the default visibility of non-essential buttons in minimal user interface mode.</string>
             </property>
             <property name="text">
              <string>Hide non-essential buttons</string>
@@ -310,6 +310,16 @@
            </widget>
           </item>
           <item row="2" column="0">
+           <widget class="QCheckBox" name="hideReplaySpeedCheckBox">
+            <property name="toolTip">
+             <string>Defines the default visibility of the replay speed in minimal user interface mode.</string>
+            </property>
+            <property name="text">
+             <string>Hide replay speed</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
            <spacer name="verticalSpacer_4">
             <property name="orientation">
              <enum>Qt::Vertical</enum>

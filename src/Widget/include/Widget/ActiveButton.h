@@ -35,7 +35,7 @@ class QIcon;
 #include "WidgetLib.h"
 
 /*!
- * Displays the \em active icon when the button is pressed.
+ * Displays the \e active icon when the button is pressed.
  *
  * Implementation note: the default QPushButton does not seem
  * to honour the "active" pixmap in the given QIcon. Also refer

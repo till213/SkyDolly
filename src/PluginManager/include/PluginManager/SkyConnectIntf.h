@@ -76,11 +76,11 @@ public:
     virtual void stopRecording() noexcept = 0;
 
     /*!
-     * Returns whether SkyConnect is in \em Recording state, specifically:
+     * Returns whether SkyConnect is in \e Recording state, specifically:
      *
      * - Connect::State::Recording
      *
-     * \return \c true if SkyConnect is in \em Recording state; \c false else
+     * \return \c true if SkyConnect is in \e Recording state; \c false else
      * \sa isInRecordingState
      */
     virtual bool isRecording() const noexcept = 0;
@@ -89,11 +89,11 @@ public:
     virtual void stopReplay() noexcept = 0;
 
     /*!
-     * Returns whether SkyConnect is in \em Replay state, specifically:
+     * Returns whether SkyConnect is in \e Replay state, specifically:
      *
      * - Connect::State::Replay
      *
-     * \return \c true if SkyConnect is in \em Replay state; \c false else
+     * \return \c true if SkyConnect is in \e Replay state; \c false else
      * \sa isInReplayState
      */
     virtual bool isReplaying() const noexcept = 0;
@@ -133,7 +133,7 @@ public:
      * - Connect::State::Replay
      * - Connect::State::ReplayPaused
      *
-     * Or in other words: any state except \em Connected and \em Disconnected.
+     * Or in other words: any state except \e Connected and \e Disconnected.
      *
      * \return \c true if SkyConnect is active; \c false else
      * \sa isInRecordingState
@@ -177,7 +177,7 @@ protected:
 
     /*!
      * Sets the new connection \c state. This method will also emit the
-     * signal #recordingStopped when the state changes from \em Recording
+     * signal #recordingStopped when the state changes from \e Recording
      * to any other state.
      *
      * \param state
@@ -202,8 +202,8 @@ signals:
 
     /*!
      * Emitted whenever recording has been started, that is when the
-     * state changes from \em Connected or \em Disconnected to a recording
-     * state (typically \em Recording, possibly also \em RecordingPaused).
+     * state changes from \e Connected or \e Disconnected to a recording
+     * state (typically \e Recording, possibly also \e RecordingPaused).
      *
      * Note that the #stateChanged signal is emitted as well.
      *
@@ -214,8 +214,8 @@ signals:
 
     /*!
      * Emitted whenever recording has been stopped, that is when the
-     * state changes from \em Recording or \em RecordingPaused to any other
-     * state (\em Connected or \em Disconnected).
+     * state changes from \e Recording or \e RecordingPaused to any other
+     * state (\e Connected or \e Disconnected).
      *
      * Note that the #stateChanged signal is emitted as well.
      *

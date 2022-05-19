@@ -45,7 +45,7 @@ class ActionButtonPrivate;
  * is triggered.
  *
  * This ActionButton also inherits the "active icons" functionality
- * from its direct base class ActiveButton: the \em active pixmap
+ * from its direct base class ActiveButton: the \e active pixmap
  * is displayed while this button is being pressed.
  *
  * Source: https://wiki.qt.io/PushButton_Based_On_Action

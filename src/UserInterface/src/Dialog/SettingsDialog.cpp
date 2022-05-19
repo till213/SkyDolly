@@ -152,8 +152,12 @@ void SettingsDialog::updateUi() noexcept
     ui->confirmDeleteAircraftCheckBox->setChecked(settings.isDeleteAircraftConfirmationEnabled());
     ui->confirmResetAllTimeOffsetCheckBox->setChecked(settings.isResetTimeOffsetConfirmationEnabled());
 
-    ui->hideButtonTextCheckBox->setChecked(settings.isButtonTextHidden());
-    ui->hideNonEssentialButtonsCheckBox->setChecked(settings.isNonEssentialButtonHidden());
+    // Note: from a user's perspective the "hiding aspect" is more important ("which UI elements to I want
+    //       to hide in minimal UI mode" - hence the "hide" in the checkbox names), but from a logic perspective
+    //       it makes more sense to talk about "visibility" (true = visible, false = hidden)
+    ui->hideButtonTextCheckBox->setChecked(!settings.getDefaultMinimalUiButtonTextVisibility());
+    ui->hideNonEssentialButtonsCheckBox->setChecked(!settings.getDefaultMinimalUiNonEssentialButtonVisibility());
+    ui->hideReplaySpeedCheckBox->setChecked(!settings.getDefaultMinimalUiReplaySpeedVisibility());
 }
 
 void SettingsDialog::handleAccepted() noexcept
@@ -180,6 +184,8 @@ void SettingsDialog::handleAccepted() noexcept
     settings.setDeleteAircraftConfirmationEnabled(ui->confirmDeleteAircraftCheckBox->isChecked());
     settings.setResetTimeOffsetConfirmationEnabled(ui->confirmResetAllTimeOffsetCheckBox->isChecked());
 
-    settings.setButtonTextHidden(ui->hideButtonTextCheckBox->isChecked());
-    settings.setNonEssentialButtonHidden(ui->hideNonEssentialButtonsCheckBox->isChecked());
+    // See note above about the boolean inversion
+    settings.setDefaultMinimalUiButtonTextVisibility(!ui->hideButtonTextCheckBox->isChecked());
+    settings.setDefaultMinimalUiNonEssentialButtonVisibility(!ui->hideNonEssentialButtonsCheckBox->isChecked());
+    settings.setDefaultMinimalUiReplaySpeedVisibility(!ui->hideReplaySpeedCheckBox->isChecked());
 }

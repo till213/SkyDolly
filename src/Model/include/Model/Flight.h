@@ -78,7 +78,7 @@ public:
      * Returns the total duration of the flight [in milliseconds], that is it returns
      * the longest replay time of all aircraft, taking their time offsets into account.
      * Unless \c ofUserAircraft is set to \c true, in which case the replay time of the
-     * \em user aircraft is returned.
+     * \e user aircraft is returned.
      *
      * Note that the total duration is cached and not updated during recording. Use
      * the SkyConnectIntf#getCurrentTimestamp in this case, which - during recording - indicates

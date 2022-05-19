@@ -82,7 +82,7 @@ public:
     }
 
     /*!
-     * Inserts \c data at the end, or updates the \em last element (only) if
+     * Inserts \c data at the end, or updates the \e last element (only) if
      * the data items have the same timestamp.
      *
      * Use case: recorded data items are inserted chronologically, but some recorded items

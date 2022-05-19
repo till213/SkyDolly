@@ -87,7 +87,7 @@ protected:
 
     /*!
      * Returns whether the plugin (file format) supports export of multiple aircraft into a single file.
-     * Examples are the KML or GPX format which both may have multiple \em tracks.
+     * Examples are the KML or GPX format which both may have multiple \e tracks.
      *
      * \return \c true if the file format supports multiple aircraft tracks; \c false else
      */

@@ -288,10 +288,10 @@ void MainWindow::frenchConnection() noexcept
     // Settings
     connect(&Settings::getInstance(), &Settings::changed,
             this, &MainWindow::updateMainWindow);
-    connect(&Settings::getInstance(), &Settings::buttonTextVisibilityChanged,
-            this, &MainWindow::onButtonTextVisibilityChanged);
-    connect(&Settings::getInstance(), &Settings::nonEssentialButtonVisibilityChanged,
-            this, &MainWindow::onEssentialButtonVisibilityChanged);
+    connect(&Settings::getInstance(), &Settings::defaultMinimalUiButtonTextVisibilityChanged,
+            this, &MainWindow::onDefaultMinimalUiButtonTextVisibilityChanged);
+    connect(&Settings::getInstance(), &Settings::defaultMinimalUiNonEssentialButtonVisibilityChanged,
+            this, &MainWindow::onDefaultMinimalUiEssentialButtonVisibilityChanged);
 
     // Logbook connection
     connect(&LogbookManager::getInstance(), &LogbookManager::connectionChanged,
@@ -304,10 +304,16 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::onExport);
 
     // View menu
-    connect(ui->showModulesAction, &QAction::toggled,
-            this, &MainWindow::onShowModulesToggled);
-    connect(ui->showReplaySpeedAction, &QAction::toggled,
-            this, &MainWindow::onShowReplaySpeedToggled);
+    // Note: we explicitly connect to signal triggered - and not toggled - also in
+    //       case of checkable QActions. Because we programmatically change the
+    //       checked state of QActions based on connection state changes),
+    //       which emit the toggled signal. This would then result in a cascade of toggled signals
+    //       (e.g. going into minimal UI mode may uncheck the "Show Replay Speed" option) which
+    //       is hard to control -> so we simply only react to the general triggered signals
+    connect(ui->showModulesAction, &QAction::triggered,
+            this, &MainWindow::onShowModulesChanged);
+    connect(ui->showReplaySpeedAction, &QAction::triggered,
+            this, &MainWindow::onShowReplaySpeedChanged);
 
     // Settings
     connect(&Settings::getInstance(), &Settings::replayLoopChanged,
@@ -759,26 +765,28 @@ void MainWindow::initSkyConnectPlugin() noexcept
     }
 }
 
-void MainWindow::updateMinimalUi(bool enabled)
+void MainWindow::updateMinimalUi(bool enable)
 {
     Settings &settings = Settings::getInstance();
-    settings.setMinimalUiEnabled(enabled);
-    if (enabled) {
+    settings.setMinimalUiEnabled(enable);
+    if (enable) {
         ui->moduleVisibilityWidget->setHidden(true);
         ui->moduleSelectorWidget->setHidden(true);
         ui->showModulesAction->setChecked(false);
         ui->showModulesAction->setEnabled(false);
     } else {
+        const bool moduleSelectorVisible = settings.isModuleSelectorVisible();
         ui->moduleVisibilityWidget->setVisible(true);
-        ui->moduleSelectorWidget->setVisible(settings.isModuleSelectorVisible());
-        ui->showModulesAction->setChecked(settings.isModuleSelectorVisible());
+        ui->moduleSelectorWidget->setVisible(moduleSelectorVisible);
+        ui->showModulesAction->setChecked(moduleSelectorVisible);
         ui->showModulesAction->setEnabled(true);
     }
     updateMinimalUiButtonTextVisibility();
-    updateMininalUiEssentialButtonVisibility();
+    updateMinimalUiEssentialButtonVisibility();
+    updateReplaySpeedVisibility(enable);
     updatePositionSliderTickInterval();
 
-    ui->moduleGroupBox->setHidden(enabled);
+    ui->moduleGroupBox->setHidden(enable);
 
     // When hiding a widget it takes some time for the layout manager to
     // get notified, so we return to the Qt event queue first
@@ -828,16 +836,16 @@ void MainWindow::updateMinimalUiButtonTextVisibility() noexcept
 {
     Settings &settings = Settings::getInstance();
     if (settings.isMinimalUiEnabled()) {
-        const bool showText = !settings.isButtonTextHidden();
-        ui->recordButton->setShowText(showText);
-        ui->skipToBeginButton->setShowText(showText);
-        ui->backwardButton->setShowText(showText);
-        ui->stopButton->setShowText(showText);
-        ui->pauseButton->setShowText(showText);
-        ui->playButton->setShowText(showText);
-        ui->forwardButton->setShowText(showText);
-        ui->skipToEndButton->setShowText(showText);
-        ui->loopReplayButton->setShowText(showText);
+        const bool buttonTextVisible = settings.getDefaultMinimalUiButtonTextVisibility();
+        ui->recordButton->setShowText(buttonTextVisible);
+        ui->skipToBeginButton->setShowText(buttonTextVisible);
+        ui->backwardButton->setShowText(buttonTextVisible);
+        ui->stopButton->setShowText(buttonTextVisible);
+        ui->pauseButton->setShowText(buttonTextVisible);
+        ui->playButton->setShowText(buttonTextVisible);
+        ui->forwardButton->setShowText(buttonTextVisible);
+        ui->skipToEndButton->setShowText(buttonTextVisible);
+        ui->loopReplayButton->setShowText(buttonTextVisible);
     } else {
         ui->recordButton->setShowText(true);
         ui->skipToBeginButton->setShowText(true);
@@ -851,16 +859,16 @@ void MainWindow::updateMinimalUiButtonTextVisibility() noexcept
     }
 }
 
-void MainWindow::updateMininalUiEssentialButtonVisibility() noexcept
+void MainWindow::updateMinimalUiEssentialButtonVisibility() noexcept
 {
     Settings &settings = Settings::getInstance();
     if (settings.isMinimalUiEnabled()) {
-        const bool showNonEssentialButtons = !settings.isNonEssentialButtonHidden();
-        ui->skipToBeginButton->setVisible(showNonEssentialButtons);
-        ui->backwardButton->setVisible(showNonEssentialButtons);
-        ui->skipToEndButton->setVisible(showNonEssentialButtons);
-        ui->forwardButton->setVisible(showNonEssentialButtons);
-        ui->skipToEndButton->setVisible(showNonEssentialButtons);
+        const bool nonEssentialButtonVisible = settings.getDefaultMinimalUiNonEssentialButtonVisibility();
+        ui->skipToBeginButton->setVisible(nonEssentialButtonVisible);
+        ui->backwardButton->setVisible(nonEssentialButtonVisible);
+        ui->skipToEndButton->setVisible(nonEssentialButtonVisible);
+        ui->forwardButton->setVisible(nonEssentialButtonVisible);
+        ui->skipToEndButton->setVisible(nonEssentialButtonVisible);
     } else {
         ui->skipToBeginButton->setVisible(true);
         ui->backwardButton->setVisible(true);
@@ -870,21 +878,35 @@ void MainWindow::updateMininalUiEssentialButtonVisibility() noexcept
     }
 }
 
+void MainWindow::updateReplaySpeedVisibility(bool enterMinimalUi) noexcept
+{
+    Settings &settings = Settings::getInstance();
+    bool replaySpeedVisible;
+    if (enterMinimalUi) {
+        // When switching to minimal UI mode the default replay speed visibility takes precedence
+        replaySpeedVisible = settings.getDefaultMinimalUiReplaySpeedVisibility() && settings.isReplaySpeedVisible();
+    } else {
+        // The current replay speed visibility setting decides (only)
+        replaySpeedVisible = settings.isReplaySpeedVisible();
+    }
+    ui->showReplaySpeedAction->setChecked(replaySpeedVisible);
+    ui->replaySpeedGroupBox->setVisible(replaySpeedVisible);
+}
+
 void MainWindow::updatePositionSliderTickInterval() noexcept
 {
-    // @todo FIXME Take visibility of replay speed into account!!!
     Settings &settings = Settings::getInstance();
     int tickInterval {10};
     if (settings.isMinimalUiEnabled()) {
         if (!settings.isReplaySpeedVisible()) {
-            if (settings.isNonEssentialButtonHidden()) {
-                if (settings.isButtonTextHidden()) {
+            if (settings.getDefaultMinimalUiButtonTextVisibility()) {
+                if (settings.getDefaultMinimalUiButtonTextVisibility()) {
                     tickInterval = 40;
                 } else {
                     tickInterval = 20;
                 }
             } else {
-                if (settings.isButtonTextHidden()) {
+                if (settings.getDefaultMinimalUiButtonTextVisibility()) {
                     tickInterval = 20;
                 } else {
                     tickInterval = 10;
@@ -1213,23 +1235,23 @@ void MainWindow::updateReplaySpeedUi() noexcept
     }    
 }
 
-void MainWindow::onButtonTextVisibilityChanged(bool hidden) noexcept
+void MainWindow::onDefaultMinimalUiButtonTextVisibilityChanged(bool visible) noexcept
 {
     updateMinimalUiButtonTextVisibility();
     updatePositionSliderTickInterval();
     Settings &settings = Settings::getInstance();
-    if (hidden && settings.isMinimalUiEnabled()) {
+    if (!visible && settings.isMinimalUiEnabled()) {
         // Shrink to minimal size
         QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
     }
 }
 
-void MainWindow::onEssentialButtonVisibilityChanged(bool hidden) noexcept
+void MainWindow::onDefaultMinimalUiEssentialButtonVisibilityChanged(bool visible) noexcept
 {
-    updateMininalUiEssentialButtonVisibility();
+    updateMinimalUiEssentialButtonVisibility();
     updatePositionSliderTickInterval();
     Settings &settings = Settings::getInstance();
-    if (hidden && settings.isMinimalUiEnabled()) {
+    if (visible && settings.isMinimalUiEnabled()) {
         // Shrink to minimal size
         QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
     }
@@ -1397,18 +1419,18 @@ void MainWindow::on_quitAction_triggered() noexcept
 
 // View menu
 
-void MainWindow::onShowModulesToggled(bool enabled) noexcept
+void MainWindow::onShowModulesChanged(bool enabled) noexcept
 {
     Settings &settings = Settings::getInstance();
     settings.setModuleSelectorVisible(enabled);
     ui->moduleSelectorWidget->setVisible(enabled);
 }
 
-void MainWindow::onShowReplaySpeedToggled(bool enabled) noexcept
+void MainWindow::onShowReplaySpeedChanged(bool enabled) noexcept
 {
     Settings &settings = Settings::getInstance();
     settings.setReplaySpeedVisible(enabled);
-    ui->replaySpeedGroupBox->setVisible(enabled);
+    updateReplaySpeedVisibility(false);
     updatePositionSliderTickInterval();
 
     // Readjust size (minimum size when in minimal UI mode)
