@@ -261,7 +261,7 @@ void LogbookWidget::initUi() noexcept
     ui->searchLineEdit->clearFocus();
     ui->searchLineEdit->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
 
-    const QStringList headers {tr("Flight"), tr("Title"), tr("Date"), tr("User Aircraft"), tr("Number of Aircraft"), tr("Departure Time"), tr("Departure"), tr("Arrival Time"), tr("Arrival"), tr("Total Time of Flight")};
+    const QStringList headers {tr("Flight"), tr("Title"), tr("User Aircraft"), tr("Number of Aircraft"), tr("Date"), tr("Departure Time"), tr("Departure"), tr("Arrival Time"), tr("Arrival"), tr("Total Time of Flight")};
     ui->logTableWidget->setColumnCount(headers.count());
     ui->logTableWidget->setHorizontalHeaderLabels(headers);
     ui->logTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -389,13 +389,6 @@ inline void LogbookWidget::addFlightSummary(FlightSummary summary, int rowIndex)
     d->titleColumnIndex = columnIndex;
     ++columnIndex;
 
-    // Creation date
-    newItem = std::make_unique<TableDateItem>(d->unit.formatDate(summary.creationDate), summary.creationDate.date());
-    newItem->setToolTip(tr("Recording time: %1.").arg(d->unit.formatTime(summary.creationDate)));
-    newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
-    ++columnIndex;
-
     // Aircraft type
     newItem = std::make_unique<QTableWidgetItem>(summary.aircraftType);
     ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
@@ -404,6 +397,13 @@ inline void LogbookWidget::addFlightSummary(FlightSummary summary, int rowIndex)
     // Aircraft count
     newItem = std::make_unique<QTableWidgetItem>();
     newItem->setData(Qt::DisplayRole, summary.aircraftCount);
+    newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
+    ++columnIndex;
+
+    // Creation date
+    newItem = std::make_unique<TableDateItem>(d->unit.formatDate(summary.creationDate), summary.creationDate.date());
+    newItem->setToolTip(tr("Recording time: %1.").arg(d->unit.formatTime(summary.creationDate)));
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     ui->logTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;

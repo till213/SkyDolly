@@ -39,19 +39,13 @@
 #include "FlightSummary.h"
 #include "Flight.h"
 
-namespace
-{
-    constexpr int InvalidAircraftIndex = -1;
-}
-
 class FlightPrivate
 {
 public:
 
     FlightPrivate() noexcept
-        : id(Flight::InvalidId),
-          creationTime(QDateTime::currentDateTime()),
-          userAircraftIndex(InvalidAircraftIndex)
+        : creationTime(QDateTime::currentDateTime()),
+          userAircraftIndex(Flight::InvalidAircraftIndex)
     {
         clear(true);
     }
@@ -72,7 +66,7 @@ public:
         if (aircraft.size() > 0) {
             const int aircraftCount = withOneAircraft ? 1 : 0;
             aircraft.resize(aircraftCount);
-            userAircraftIndex = withOneAircraft ? 0 : InvalidAircraftIndex;
+            userAircraftIndex = withOneAircraft ? 0 : Flight::InvalidAircraftIndex;
         }
         // A flight always has at least one aircraft; unless
         // it is newly allocated (the aircraft is only added in the constructor body)
@@ -182,8 +176,9 @@ int Flight::getUserAircraftIndex() const noexcept
 void Flight::setUserAircraftIndex(int index) noexcept
 {
     if (d->userAircraftIndex != index) {
+        const int previousUserAircraftIndex = d->userAircraftIndex;
         d->userAircraftIndex = index;
-        emit userAircraftChanged(*d->aircraft.at(index));
+        emit userAircraftChanged(index, previousUserAircraftIndex);
     }
 }
 
@@ -192,9 +187,12 @@ std::int64_t Flight::deleteAircraftByIndex(int index) noexcept
     std::int64_t aircraftId {Aircraft::InvalidId};
     // A flight has at least one aircraft
     if (d->aircraft.size() > 1) {
-        setUserAircraftIndex(std::max(d->userAircraftIndex - 1, 0));
-        aircraftId  = d->aircraft.at(index)->getId();
-        std::int64_t aircraftId = d->aircraft.at(index)->getId();
+        if (index <= d->userAircraftIndex) {
+            // An aircraft with a lower index or the user aircraft index itself
+            // has been removed -> shift down the user aircraft index accordingly
+            setUserAircraftIndex(std::max(d->userAircraftIndex - 1, 0));
+        }
+        aircraftId = d->aircraft.at(index)->getId();
         d->aircraft.erase(d->aircraft.begin() + index);
         emit aircraftRemoved(aircraftId);
     }

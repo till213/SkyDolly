@@ -135,7 +135,8 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
         connectWithSim();
     }
 
-    if (isConnectedWithSim()) {
+    bool ok = isConnectedWithSim();
+    if (ok) {
         switch (recordingMode) {
         case RecordingMode::SingleAircraft:
             // Single flight - destroy any previous AI aircraft
@@ -162,16 +163,14 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
         if (isTimerBasedRecording(Settings::getInstance().getRecordingSampleRate())) {
             d->recordingTimer.start(d->recordingIntervalMSec);
         }
-        bool ok = retryWithReconnect([this, initialPosition]() -> bool { return setupInitialRecordingPosition(initialPosition); });
-        if (ok) {
-            ok = onStartRecording();
-        }
+        ok = retryWithReconnect([this, initialPosition]() -> bool { return setupInitialRecordingPosition(initialPosition); });
         if (ok) {
             setState(Connect::State::Recording);
-        } else {
-            setState(Connect::State::Disconnected);
-        }
-    } else {
+            ok = onStartRecording();
+        } 
+    }
+
+    if (!ok) {
         setState(Connect::State::Disconnected);
     }
 }
@@ -448,8 +447,8 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
         }
         d->lastSamplesPerSecondIndex = index;
 
-        const int lastIndex = position.count() - 1;
-        const int nofSamples = lastIndex - index + 1;
+        const std::size_t lastIndex = position.count() - 1;
+        const std::size_t nofSamples = lastIndex - index + 1;
         const std::int64_t period = position[lastIndex].timestamp - position[index].timestamp;
         if (period > 0) {
             samplesPerSecond = static_cast<double>(nofSamples) * 1000.0 / (static_cast<double>(period));
@@ -460,7 +459,7 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
 
 // PUBLIC SLOTS
 
-void AbstractSkyConnect::addAiObject(Aircraft &aircraft) noexcept
+void AbstractSkyConnect::addAiObject(const Aircraft &aircraft) noexcept
 {
     if (isConnected()) {
         onAddAiObject(aircraft);
@@ -470,16 +469,19 @@ void AbstractSkyConnect::addAiObject(Aircraft &aircraft) noexcept
 void AbstractSkyConnect::removeAiObjects() noexcept
 {
     if (isConnected()) {
+        const std::int64_t userAircraftId = d->currentFlight.getUserAircraft().getId();
         for (const auto &aircraft : d->currentFlight) {
-            onRemoveAiObject(aircraft->getId());
+            if (aircraft->getId() != userAircraftId) {
+                onRemoveAiObject(aircraft->getId());
+            }
         }
     }
 }
 
-void AbstractSkyConnect::removeAiObject(std::int64_t simulatedObjectId) noexcept
+void AbstractSkyConnect::removeAiObject(std::int64_t removedAircraftId) noexcept
 {
     if (isConnected()) {
-        onRemoveAiObject(simulatedObjectId);
+        onRemoveAiObject(removedAircraftId);
     }
 }
 
@@ -489,9 +491,14 @@ void AbstractSkyConnect::syncAiObjectsWithFlight() noexcept
     createAiObjects();
 }
 
-void AbstractSkyConnect::updateUserAircraft(Aircraft &userAircraft) noexcept
+void AbstractSkyConnect::updateUserAircraft(int newUserAircraftIndex, int previousUserAircraftIndex) noexcept
 {
-    syncAiObjectsWithFlight();
+    const Aircraft &userAircraft = d->currentFlight[newUserAircraftIndex];
+    removeAiObject(userAircraft.getId());
+    if (previousUserAircraftIndex != Flight::InvalidAircraftIndex) {
+        const Aircraft &aircraft = d->currentFlight[previousUserAircraftIndex];
+        addAiObject(aircraft);
+    }    
     sendAircraftData(d->currentTimestamp, TimeVariableData::Access::Seek, AircraftSelection::UserAircraft);
 }
 
