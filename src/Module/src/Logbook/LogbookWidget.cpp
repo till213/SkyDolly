@@ -212,8 +212,8 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
 
     // Connection
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    connect(&skyConnectManager, &SkyConnectManager::stateChanged,
-            this, &LogbookWidget::onConnectionStateChange);
+    connect(&skyConnectManager, &SkyConnectManager::recordingStarted,
+            this, &LogbookWidget::onRecordingStarted);
 
     updateUi();
     handleSelectionChanged();
@@ -242,7 +242,7 @@ void LogbookWidget::hideEvent(QHideEvent *event) noexcept
     // Connection
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     disconnect(&skyConnectManager, &SkyConnectManager::stateChanged,
-               this, &LogbookWidget::onConnectionStateChange);
+               this, &LogbookWidget::onRecordingStarted);
 }
 
 // PRIVATE
@@ -320,7 +320,7 @@ void LogbookWidget::updateFlightTable() noexcept
 
         const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
         std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = skyConnectManager.getCurrentSkyConnect();
-        const bool recording = skyConnect ? skyConnect->get().isInRecordingMode() : false;
+        const bool recording = skyConnect ? skyConnect->get().isInRecordingState() : false;
         if (recording) {
             FlightSummary summary = flight.getFlightSummary();
             summary.flightId = ::RecordingInProgressId;
@@ -562,12 +562,13 @@ const QString LogbookWidget::getName() noexcept
 
 // PRIVATE SLOTS
 
-void LogbookWidget::onConnectionStateChange() noexcept
+void LogbookWidget::onRecordingStarted() noexcept
 {
     updateEditUi();
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    const bool inRecordingMode = skyConnect && skyConnect->get().isInRecordingMode();
-    if (inRecordingMode) {
+    const bool inRecordingState = skyConnect && skyConnect->get().isInRecordingState();
+    if (inRecordingState) {
+        // @todo FIXME PERFORMANCE: only incrementally add the current flight in memory, don't refresh the entire table
         updateFlightTable();
     }
 }
@@ -658,8 +659,8 @@ void LogbookWidget::handleSelectionChanged() noexcept
 void LogbookWidget::loadFlight() noexcept
 {
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    const bool inRecordingMode = skyConnect && skyConnect->get().isInRecordingMode();
-    if (!inRecordingMode) {
+    const bool inRecordingState = skyConnect && skyConnect->get().isInRecordingState();
+    if (!inRecordingState) {
         std::int64_t selectedFlightId = d->selectedFlightId;
         if (selectedFlightId != Flight::InvalidId) {
             const bool ok = d->flightService.restore(selectedFlightId, Logbook::getInstance().getCurrentFlight());

@@ -85,7 +85,7 @@ private:
     static const QString getName() noexcept;
 
 private slots:
-    void onConnectionStateChange() noexcept;
+    void onRecordingStarted() noexcept;
     void updateUi() noexcept;
     void updateAircraftIcon() noexcept;
     void updateDateSelectorUi() noexcept;

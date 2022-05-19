@@ -687,12 +687,12 @@ void FormationWidget::updateUi() noexcept
 void FormationWidget::updateEditUi() noexcept
 {
     const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    const bool inRecordingMode = skyConnect && skyConnect->get().isInRecordingMode();
+    const bool inRecordingState = skyConnect && skyConnect->get().isInRecordingState();
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     bool userAircraftIndex = d->selectedAircraftIndex == flight.getUserAircraftIndex();
     ui->userAircraftPushButton->setEnabled(d->selectedAircraftIndex != Flight::InvalidId && !userAircraftIndex);
     const bool formation = flight.count() > 1;
-    ui->deletePushButton->setEnabled(formation && !inRecordingMode && d->selectedAircraftIndex != Flight::InvalidId);
+    ui->deletePushButton->setEnabled(formation && !inRecordingState && d->selectedAircraftIndex != Flight::InvalidId);
 }
 
 void FormationWidget::updateRelativePosition() noexcept

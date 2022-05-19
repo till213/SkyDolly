@@ -68,8 +68,8 @@ public:
     bool isReplaying() const noexcept override;
     void stop() noexcept override;
 
-    bool isInRecordingMode() const noexcept override;
-    bool isInReplayMode() const noexcept override;
+    bool isInRecordingState() const noexcept override;
+    bool isInReplayState() const noexcept override;
     bool isActive() const noexcept override;
 
     void setPaused(bool enabled) noexcept override;

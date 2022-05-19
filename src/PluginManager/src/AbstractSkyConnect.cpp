@@ -248,12 +248,12 @@ void AbstractSkyConnect::stop() noexcept
     }
 }
 
-bool AbstractSkyConnect::isInRecordingMode() const noexcept
+bool AbstractSkyConnect::isInRecordingState() const noexcept
 {
     return isRecording() || d->state == Connect::State::RecordingPaused;
 }
 
-bool AbstractSkyConnect::isInReplayMode() const noexcept
+bool AbstractSkyConnect::isInReplayState() const noexcept
 {
     return isReplaying() || d->state == Connect::State::ReplayPaused;
 }
@@ -499,10 +499,13 @@ void AbstractSkyConnect::updateUserAircraft(Aircraft &userAircraft) noexcept
 void AbstractSkyConnect::setState(Connect::State state) noexcept
 {
     if (d->state != state) {
-        const bool recording = isRecording();
+        const bool previousRecordingState = isInRecordingState();
         d->state = state;
         emit stateChanged(state);
-        if (recording) {
+        // Recording started or stopped?
+        if (!previousRecordingState && isInRecordingState()) {
+            emit recordingStarted();
+        } else if (previousRecordingState && !isInRecordingState()) {
             emit recordingStopped();
         }
     }

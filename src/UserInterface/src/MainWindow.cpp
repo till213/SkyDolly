@@ -32,6 +32,7 @@
 #include <QByteArray>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QCursor>
 #include <QFile>
 #include <QFileInfo>
 #include <QUrl>
@@ -313,13 +314,21 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::handleReplaySpeedUnitSelected);
 
     // Actions
-    connect(ui->recordAction, &QAction::toggled,
+
+    // Control actions
+    // Note: we explicitly connect to signal triggered - and not toggled - also in
+    //       case of checkable QActions. Because we programmatically change the
+    //       checked state of QActions based on connection state changes (in updateControlUi),
+    //       which emit the toggled signal. This would then result in a cascade of toggled signals
+    //       (e.g. clicking the Pause button also unchecks the Record/Play button) which
+    //       is hard to control -> so we simply only react to the general triggered signals
+    connect(ui->recordAction, &QAction::triggered,
             this, &MainWindow::toggleRecord);
     connect(ui->stopAction, &QAction::triggered,
             this, &MainWindow::stop);
-    connect(ui->playAction, &QAction::toggled,
+    connect(ui->playAction, &QAction::triggered,
             this, &MainWindow::togglePlay);
-    connect(ui->pauseAction, &QAction::toggled,
+    connect(ui->pauseAction, &QAction::triggered,
             this, &MainWindow::togglePause);
     connect(ui->skipToBeginAction, &QAction::triggered,
             this, &MainWindow::skipToBegin);
@@ -329,7 +338,7 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::skipForward);
     connect(ui->skipToEndAction, &QAction::triggered,
             this, &MainWindow::skipToEnd);
-    connect(ui->loopReplayAction, &QAction::toggled,
+    connect(ui->loopReplayAction, &QAction::triggered,
             this, &MainWindow::toggleLoopReplay);
 
     // Menus
@@ -456,13 +465,13 @@ void MainWindow::initModuleSelectorUi() noexcept
     ActionCheckBox *actionCheckBox = new ActionCheckBox(false, this);
     actionCheckBox->setAction(ui->showModulesAction);
     actionCheckBox->setFocusPolicy(Qt::NoFocus);
-    const QString css =
+    const QString css = QStringLiteral(
 "QCheckBox::indicator:unchecked {"
 "    image: url(:/img/icons/checkbox-expand-normal.png);"
 "}"
 "QCheckBox::indicator:checked {"
 "    image: url(:/img/icons/checkbox-collapse-normal.png);"
-"}";
+"}");
     actionCheckBox->setStyleSheet(css);
     actionCheckBox->setContentsMargins(0, 0, 0, 0);
 
@@ -518,11 +527,11 @@ void MainWindow::initControlUi() noexcept
     ui->skipToEndButton->setAction(ui->skipToEndAction);
     ui->loopReplayButton->setAction(ui->loopReplayAction);
 
-    // Completely flat buttons (no border) - platform dependent
+    // Common CSS: Completely flat buttons (no border) - platform dependent
     ui->replayGroupBox->setStyleSheet(Platform::getFlatButtonCss());
 
-    // Completely flat button (no border) - on all platforms
-    ui->loopReplayButton->setStyleSheet("QPushButton {border-style: outset; border-width: 0px; padding: 0px 12px 0px 12px;}");
+    // Specific CSS: completely flat button (no border) - on all platforms
+    ui->loopReplayButton->setStyleSheet("QPushButton {border-style: outset; border-width: 0px; padding: 6px 12px;}");
 }
 
 void MainWindow::initReplaySpeedUi() noexcept
@@ -1344,7 +1353,9 @@ void MainWindow::on_optimiseLogbookAction_triggered() noexcept
     messageBox->exec();
     const QAbstractButton *clickedButton = messageBox->clickedButton();
     if (clickedButton == optimiseButton) {
+        QGuiApplication::setOverrideCursor(Qt::WaitCursor);
         const bool ok = ConnectionManager::getInstance().optimise();
+        QGuiApplication::restoreOverrideCursor();
         if (ok) {
             fileInfo.refresh();
             messageBox = std::make_unique<QMessageBox>(this);
