@@ -898,10 +898,10 @@ void MainWindow::updatePositionSliderTickInterval() noexcept
     Settings &settings = Settings::getInstance();
     int tickInterval {10};
     if (settings.isMinimalUiEnabled()) {
-        if (!settings.isReplaySpeedVisible()) {
+        if (!ui->showReplaySpeedAction->isChecked()) {
             if (settings.getDefaultMinimalUiButtonTextVisibility()) {
                 if (settings.getDefaultMinimalUiButtonTextVisibility()) {
-                    tickInterval = 40;
+                    tickInterval = 10;
                 } else {
                     tickInterval = 20;
                 }
@@ -909,7 +909,7 @@ void MainWindow::updatePositionSliderTickInterval() noexcept
                 if (settings.getDefaultMinimalUiButtonTextVisibility()) {
                     tickInterval = 20;
                 } else {
-                    tickInterval = 10;
+                    tickInterval = 40;
                 }
             }
         } else {
