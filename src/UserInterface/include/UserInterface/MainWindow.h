@@ -142,8 +142,8 @@ private slots:
     void on_showLogbookSettingsAction_triggered() noexcept;
     void on_quitAction_triggered() noexcept;
     // View menu
-    void on_showModulesAction_triggered(bool enabled) noexcept;
-    void on_showReplaySpeedAction_triggered(bool enabled) noexcept;
+    void onShowModulesToggled(bool enabled) noexcept;
+    void onShowReplaySpeedToggled(bool enabled) noexcept;
     // Window menu
     void on_showFlightAction_triggered(bool enabled) noexcept;
     void on_showSimulationVariablesAction_triggered(bool enabled) noexcept;

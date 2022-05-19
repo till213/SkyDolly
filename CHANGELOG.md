@@ -26,6 +26,7 @@
 #### Minimal UI Mode
 - Button texts and non-essential buttons are now automatically hidden when switching into minimal UI mode
 - This behaviour can be defined with new options in the Settings | User Interface section
+- The replay speed group visibility can now also be toggled while in minimal UI mode
 
 #### User Interface
 - Latitude and longitude values are now formatted with leading zeroes

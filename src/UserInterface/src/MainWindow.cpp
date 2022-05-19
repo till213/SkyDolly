@@ -303,6 +303,12 @@ void MainWindow::frenchConnection() noexcept
     connect(d->exportQActionGroup, &QActionGroup::triggered,
             this, &MainWindow::onExport);
 
+    // View menu
+    connect(ui->showModulesAction, &QAction::toggled,
+            this, &MainWindow::onShowModulesToggled);
+    connect(ui->showReplaySpeedAction, &QAction::toggled,
+            this, &MainWindow::onShowReplaySpeedToggled);
+
     // Settings
     connect(&Settings::getInstance(), &Settings::replayLoopChanged,
             this, &MainWindow::handleReplayLoopChanged);
@@ -762,14 +768,11 @@ void MainWindow::updateMinimalUi(bool enabled)
         ui->moduleSelectorWidget->setHidden(true);
         ui->showModulesAction->setChecked(false);
         ui->showModulesAction->setEnabled(false);
-        ui->showReplaySpeedAction->setEnabled(false);
     } else {
         ui->moduleVisibilityWidget->setVisible(true);
         ui->moduleSelectorWidget->setVisible(settings.isModuleSelectorVisible());
         ui->showModulesAction->setChecked(settings.isModuleSelectorVisible());
         ui->showModulesAction->setEnabled(true);
-        ui->showReplaySpeedAction->setEnabled(true);
-        ui->recordButton->setShowText(true);
     }
     updateMinimalUiButtonTextVisibility();
     updateMininalUiEssentialButtonVisibility();
@@ -873,18 +876,22 @@ void MainWindow::updatePositionSliderTickInterval() noexcept
     Settings &settings = Settings::getInstance();
     int tickInterval {10};
     if (settings.isMinimalUiEnabled()) {
-        if (settings.isNonEssentialButtonHidden()) {
-            if (settings.isButtonTextHidden()) {
-                tickInterval = 40;
+        if (!settings.isReplaySpeedVisible()) {
+            if (settings.isNonEssentialButtonHidden()) {
+                if (settings.isButtonTextHidden()) {
+                    tickInterval = 40;
+                } else {
+                    tickInterval = 20;
+                }
             } else {
-                tickInterval = 20;
+                if (settings.isButtonTextHidden()) {
+                    tickInterval = 20;
+                } else {
+                    tickInterval = 10;
+                }
             }
         } else {
-            if (settings.isButtonTextHidden()) {
-                tickInterval = 20;
-            } else {
-                tickInterval = 10;
-            }
+            tickInterval = 10;
         }
     }
     ui->positionSlider->setTickInterval(tickInterval);
@@ -1390,18 +1397,22 @@ void MainWindow::on_quitAction_triggered() noexcept
 
 // View menu
 
-void MainWindow::on_showModulesAction_triggered(bool enabled) noexcept
+void MainWindow::onShowModulesToggled(bool enabled) noexcept
 {
     Settings &settings = Settings::getInstance();
     settings.setModuleSelectorVisible(enabled);
     ui->moduleSelectorWidget->setVisible(enabled);
 }
 
-void MainWindow::on_showReplaySpeedAction_triggered(bool enabled) noexcept
+void MainWindow::onShowReplaySpeedToggled(bool enabled) noexcept
 {
     Settings &settings = Settings::getInstance();
     settings.setReplaySpeedVisible(enabled);
     ui->replaySpeedGroupBox->setVisible(enabled);
+    updatePositionSliderTickInterval();
+
+    // Readjust size (minimum size when in minimal UI mode)
+    QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
 }
 
 // Window menu
