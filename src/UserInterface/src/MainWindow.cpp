@@ -131,7 +131,6 @@ public:
     MainWindowPrivate() noexcept
         : previousState(Connect::State::Connected),
           connectedWithLogbook(false),
-          settingsDialog(nullptr),
           flightDialog(nullptr),
           simulationVariablesDialog(nullptr),
           statisticsDialog(nullptr),
@@ -154,7 +153,6 @@ public:
     Connect::State previousState;
     bool connectedWithLogbook;
 
-    SettingsDialog *settingsDialog;
     FlightDialog *flightDialog;
     SimulationVariablesDialog *simulationVariablesDialog;
     StatisticsDialog *statisticsDialog;    
@@ -363,14 +361,6 @@ void MainWindow::frenchConnection() noexcept
     connect(ui->onlineManualAction, &QAction::triggered,
             this, &MainWindow::onOnlineManualActionTriggered);
 
-    // Dialogs
-    connect(d->flightDialog, &FlightDialog::visibilityChanged,
-            this, &MainWindow::updateWindowMenu);
-    connect(d->simulationVariablesDialog, &SimulationVariablesDialog::visibilityChanged,
-            this, &MainWindow::updateWindowMenu);
-    connect(d->statisticsDialog, &StatisticsDialog::visibilityChanged,
-            this, &MainWindow::updateWindowMenu);
-
     // Modules
     connect(d->moduleManager.get(), &ModuleManager::activated,
             this, &MainWindow::handleModuleActivated);
@@ -381,11 +371,7 @@ void MainWindow::initUi() noexcept
     Settings &settings = Settings::getInstance();
     setWindowIcon(QIcon(":/img/icons/application-icon.png"));
 
-    // Dialogs
-    d->flightDialog = new FlightDialog(*d->flightService, this);
-    d->simulationVariablesDialog = new SimulationVariablesDialog(this);
-    d->statisticsDialog = new StatisticsDialog(this);
-    d->settingsDialog = new SettingsDialog(this);
+    // Window menu
     ui->stayOnTopAction->setChecked(settings.isWindowStaysOnTopEnabled());
 
     initModuleSelectorUi();
@@ -763,6 +749,51 @@ void MainWindow::initSkyConnectPlugin() noexcept
     } else {
         QMessageBox::warning(this, tr("No valid connection plugin found"), tr("No valid connection plugin has been found in the plugin directory! Sky Dolly will launch with reduced functionality."));
     }
+}
+
+FlightDialog &MainWindow::getFlightDialog() noexcept
+{
+    if (d->flightDialog == nullptr) {
+        d->flightDialog = new FlightDialog(*d->flightService, this);
+        connect(d->flightDialog, &FlightDialog::visibilityChanged,
+                this, &MainWindow::updateWindowMenu);
+    }
+    return *d->flightDialog;
+}
+
+inline bool MainWindow::hasFlightDialog() const noexcept
+{
+    return d->flightDialog != nullptr;
+}
+
+SimulationVariablesDialog &MainWindow::getSimulationVariablesDialog() noexcept
+{
+    if (d->simulationVariablesDialog == nullptr) {
+        d->simulationVariablesDialog = new SimulationVariablesDialog(this);
+        connect(d->simulationVariablesDialog, &SimulationVariablesDialog::visibilityChanged,
+                this, &MainWindow::updateWindowMenu);
+    }
+    return *d->simulationVariablesDialog;
+}
+
+inline bool MainWindow::hasSimulationVariablesDialog() const noexcept
+{
+    return d->simulationVariablesDialog != nullptr;
+}
+
+StatisticsDialog &MainWindow::getStatisticsDialog() noexcept
+{
+    if (d->statisticsDialog == nullptr) {
+        d->statisticsDialog = new StatisticsDialog(this);
+        connect(d->statisticsDialog, &StatisticsDialog::visibilityChanged,
+                this, &MainWindow::updateWindowMenu);
+    }
+    return *d->statisticsDialog;
+}
+
+inline bool MainWindow::hasStatisticsDialog() const noexcept
+{
+    return d->statisticsDialog != nullptr;
 }
 
 void MainWindow::updateMinimalUi(bool enable)
@@ -1293,9 +1324,14 @@ void MainWindow::updateFileMenu() noexcept
 
 void MainWindow::updateWindowMenu() noexcept
 {
-    ui->showFlightAction->setChecked(d->flightDialog->isVisible());
-    ui->showSimulationVariablesAction->setChecked(d->simulationVariablesDialog->isVisible());
-    ui->showStatisticsAction->setChecked(d->statisticsDialog->isVisible());
+    bool visible = hasFlightDialog() ?  getFlightDialog().isVisible() : false;
+    ui->showFlightAction->setChecked(visible);
+
+    visible = hasSimulationVariablesDialog() ?  getSimulationVariablesDialog().isVisible() : false;
+    ui->showSimulationVariablesAction->setChecked(visible);
+
+    visible = hasStatisticsDialog() ?  getStatisticsDialog().isVisible() : false;
+    ui->showStatisticsAction->setChecked(visible);
 }
 
 void MainWindow::updateMainWindow() noexcept
@@ -1403,7 +1439,8 @@ void MainWindow::on_optimiseLogbookAction_triggered() noexcept
 
 void MainWindow::on_showSettingsAction_triggered() noexcept
 {
-    d->settingsDialog->exec();
+    std::unique_ptr<SettingsDialog> settingsDialog = std::make_unique<SettingsDialog>(this);
+    settingsDialog->exec();
 }
 
 void MainWindow::on_showLogbookSettingsAction_triggered() noexcept
@@ -1419,17 +1456,17 @@ void MainWindow::on_quitAction_triggered() noexcept
 
 // View menu
 
-void MainWindow::onShowModulesChanged(bool enabled) noexcept
+void MainWindow::onShowModulesChanged(bool enable) noexcept
 {
     Settings &settings = Settings::getInstance();
-    settings.setModuleSelectorVisible(enabled);
-    ui->moduleSelectorWidget->setVisible(enabled);
+    settings.setModuleSelectorVisible(enable);
+    ui->moduleSelectorWidget->setVisible(enable);
 }
 
-void MainWindow::onShowReplaySpeedChanged(bool enabled) noexcept
+void MainWindow::onShowReplaySpeedChanged(bool enable) noexcept
 {
     Settings &settings = Settings::getInstance();
-    settings.setReplaySpeedVisible(enabled);
+    settings.setReplaySpeedVisible(enable);
     updateReplaySpeedVisibility(false);
     updatePositionSliderTickInterval();
 
@@ -1439,41 +1476,32 @@ void MainWindow::onShowReplaySpeedChanged(bool enabled) noexcept
 
 // Window menu
 
-void MainWindow::on_showFlightAction_triggered(bool enabled) noexcept
+void MainWindow::on_showFlightAction_triggered(bool enable) noexcept
 {
-    if (enabled) {
-        d->flightDialog->show();
-    } else {
-        d->flightDialog->close();
-    }
+    FlightDialog &dialog = getFlightDialog();
+    dialog.setVisible(enable);
 }
 
-void MainWindow::on_showSimulationVariablesAction_triggered(bool enabled) noexcept
+void MainWindow::on_showSimulationVariablesAction_triggered(bool enable) noexcept
 {
-    if (enabled) {
-        d->simulationVariablesDialog->show();
-    } else {
-        d->simulationVariablesDialog->close();
-    }
+    SimulationVariablesDialog &dialog = getSimulationVariablesDialog();
+    dialog.setVisible(enable);
 }
 
-void MainWindow::on_showStatisticsAction_triggered(bool enabled) noexcept
+void MainWindow::on_showStatisticsAction_triggered(bool enable) noexcept
 {
-    if (enabled) {
-        d->statisticsDialog->show();
-    } else {
-        d->statisticsDialog->close();
-    }
+    StatisticsDialog &dialog = getStatisticsDialog();
+    dialog.setVisible(enable);
 }
 
-void MainWindow::on_stayOnTopAction_triggered(bool enabled) noexcept
+void MainWindow::on_stayOnTopAction_triggered(bool enable) noexcept
 {
-    Settings::getInstance().setWindowStaysOnTopEnabled(enabled);
+    Settings::getInstance().setWindowStaysOnTopEnabled(enable);
 }
 
-void MainWindow::on_showMinimalAction_toggled(bool enabled) noexcept
+void MainWindow::on_showMinimalAction_toggled(bool enable) noexcept
 {
-    updateMinimalUi(enabled);
+    updateMinimalUi(enable);
 }
 
 // Help menu

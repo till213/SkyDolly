@@ -31,6 +31,9 @@
 #include <QDesktopServices>
 #include <QDir>
 #include <QUrl>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Unit.h>
 #include <Kernel/Const.h>
@@ -73,14 +76,14 @@ LogbookSettingsDialog::LogbookSettingsDialog(QWidget *parent) noexcept :
         d->originalBackupPeriodIntlId = Const::BackupNeverIntlId;
     }
 #ifdef DEBUG
-    qDebug("LogbookSettingsDialog::LogbookSettingsDialog: CREATED");
+    qDebug() << "LogbookSettingsDialog::LogbookSettingsDialog: CREATED";
 #endif
 }
 
 LogbookSettingsDialog::~LogbookSettingsDialog() noexcept
 {
 #ifdef DEBUG
-    qDebug("LogbookSettingsDialog::~LogbookSettingsDialog: DELETED");
+    qDebug() << "LogbookSettingsDialog::~LogbookSettingsDialog: DELETED";
 #endif
 }
 

@@ -28,6 +28,9 @@
 #include <QPushButton>
 #include <QFileDialog>
 #include <QMessageBox>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Const.h>
 #include <Kernel/Enum.h>
@@ -66,14 +69,14 @@ LogbookBackupDialog::LogbookBackupDialog(QWidget *parent) noexcept
         d->originalBackupPeriodIntlId = Const::BackupNeverIntlId;
     }
 #ifdef DEBUG
-    qDebug("LogbookBackupDialog::LogbookBackupDialog: CREATED");
+    qDebug() << "LogbookBackupDialog::LogbookBackupDialog: CREATED";
 #endif
 }
 
 LogbookBackupDialog::~LogbookBackupDialog() noexcept
 {
 #ifdef DEBUG
-    qDebug("LogbookBackupDialog::~LogbookBackupDialog: DELETED");
+    qDebug() << "LogbookBackupDialog::~LogbookBackupDialog: DELETED";
 #endif
 }
 

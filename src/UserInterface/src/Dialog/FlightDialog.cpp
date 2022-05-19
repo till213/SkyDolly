@@ -32,6 +32,9 @@
 #include <QShortcut>
 #include <QShowEvent>
 #include <QHideEvent>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Model/SimVar.h>
 #include <Model/Logbook.h>
@@ -70,10 +73,17 @@ FlightDialog::FlightDialog(FlightService &flightService, QWidget *parent) noexce
     ui->setupUi(this);
     initUi();
     frenchConnection();
+#ifdef DEBUG
+    qDebug() << "FlightDialog::FlightDialog: CREATED";
+#endif
 }
 
 FlightDialog::~FlightDialog() noexcept
-{}
+{
+#ifdef DEBUG
+    qDebug() << "FlightDialog::~FlightDialog: DELETED";
+#endif
+}
 
 // PROTECTED
 

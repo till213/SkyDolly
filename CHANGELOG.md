@@ -42,6 +42,7 @@
 - When pausing a recording (yes, that's actually possible ;)) the "recording timer" is only restarted in case no event-based recording is done (but a "timer-based recording" instead)
 - The Window | Minimal menu entry is now properly synchronised (unchecked) when the module is changed while in "minimal UI" mode (e.g. by pressing F1 or F2, or via the Module menu)
 - File paths are converted to native separators when shown in dialog boxes to the user
+- The settings dialog is now created on demand. This also fixes an issue with dialog z-ordering when the main application window is switched to "Stay on Top"
 
 ### Under The Hood
 - Introduction of the GeographicLib
@@ -57,6 +58,7 @@
   * Plugin managers are now in a common PLuginManager library
   * Plugins are now built after the main application
     - Especially on macOS this allows to place the plugins inside the previously built application bundle
+- Dialogs (flight, simulation variables, statistics) are now (only) created on demand, resulting in a smaller memory footprint after application start
 - And finally... on macOS the application icon set is now automatically generated at build time
 
 ## 0.10.0

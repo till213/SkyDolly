@@ -25,6 +25,9 @@
 #include <memory>
 
 #include <QDialog>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Version.h>
 #include "AboutDialog.h"
@@ -38,10 +41,17 @@ AboutDialog::AboutDialog(QWidget *parent) noexcept :
 {
     ui->setupUi(this);
     initUi();
+#ifdef DEBUG
+    qDebug() << "AboutDialog::AboutDialog: CREATED";
+#endif
 }
 
 AboutDialog::~AboutDialog() noexcept
-{}
+{
+#ifdef DEBUG
+    qDebug() << "AboutDialog::~AboutDialog: DELETED";
+#endif
+}
 
 // PRIVATE
 

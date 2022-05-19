@@ -47,7 +47,9 @@ class QCloseEvent;
 
 class AboutDialog;
 class SettingsDialog;
+class FlightDialog;
 class SimulationVariablesDialog;
+class StatisticsDialog;
 class MainWindowPrivate;
 
 class USERINTERFACE_API MainWindow : public QMainWindow
@@ -76,6 +78,33 @@ private:
     void initControlUi() noexcept;
     void initReplaySpeedUi() noexcept;
     void initSkyConnectPlugin() noexcept;
+
+    /*
+     * Use this method in order to access the FlightDialog instance: creates on demand
+     * FlightDialog instance, connects to its signals and returns the instance.
+     */
+    FlightDialog &getFlightDialog() noexcept;
+
+    /* Returns true if a flight dialog has ever been created. */
+    inline bool hasFlightDialog() const noexcept;
+
+    /*
+     * Use this method in order to access the SimulationVariablesDialog instance: creates on demand
+     * SimulationVariablesDialog instance, connects to its signals and returns the instance.
+     */
+    SimulationVariablesDialog &getSimulationVariablesDialog() noexcept;
+
+    /* Returns true if a simulation variables dialog has ever been created. */
+    inline bool hasSimulationVariablesDialog() const noexcept;
+
+    /*
+     * Use this method in order to access the StatisticsDialog instance: creates on demand
+     * StatisticsDialog instance, connects to its signals and returns the instance.
+     */
+    StatisticsDialog &getStatisticsDialog() noexcept;
+
+    /* Returns true if a statistics dialog has ever been created. */
+    inline bool hasStatisticsDialog() const noexcept;
 
     void updateMinimalUi(bool enable);
 
@@ -147,14 +176,14 @@ private slots:
     void on_showLogbookSettingsAction_triggered() noexcept;
     void on_quitAction_triggered() noexcept;
     // View menu
-    void onShowModulesChanged(bool enabled) noexcept;
-    void onShowReplaySpeedChanged(bool enabled) noexcept;
+    void onShowModulesChanged(bool enable) noexcept;
+    void onShowReplaySpeedChanged(bool enable) noexcept;
     // Window menu
-    void on_showFlightAction_triggered(bool enabled) noexcept;
-    void on_showSimulationVariablesAction_triggered(bool enabled) noexcept;
-    void on_showStatisticsAction_triggered(bool enabled) noexcept;
-    void on_stayOnTopAction_triggered(bool enabled) noexcept;
-    void on_showMinimalAction_toggled(bool enabled) noexcept;
+    void on_showFlightAction_triggered(bool enable) noexcept;
+    void on_showSimulationVariablesAction_triggered(bool enable) noexcept;
+    void on_showStatisticsAction_triggered(bool enable) noexcept;
+    void on_stayOnTopAction_triggered(bool enable) noexcept;
+    void on_showMinimalAction_toggled(bool enable) noexcept;
     // Help menu
     void onAboutActionTriggered() noexcept;
     void onAboutQtActionTriggered() noexcept;

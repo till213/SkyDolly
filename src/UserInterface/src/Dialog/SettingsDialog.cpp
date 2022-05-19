@@ -29,6 +29,9 @@
 #include <QWidget>
 #include <QString>
 #include <QDoubleSpinBox>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/SampleRate.h>
 #include <Kernel/Enum.h>
@@ -54,10 +57,17 @@ SettingsDialog::SettingsDialog(QWidget *parent) noexcept :
     ui->setupUi(this);
     initUi();
     frenchConnection();
+#ifdef DEBUG
+    qDebug() << "SettingsDialog::SettingsDialog: CREATED";
+#endif
 }
 
 SettingsDialog::~SettingsDialog() noexcept
-{}
+{
+#ifdef DEBUG
+    qDebug() << "SettingsDialog::~SettingsDialog: DELETED";
+#endif
+}
 
 // PROTECTED
 
