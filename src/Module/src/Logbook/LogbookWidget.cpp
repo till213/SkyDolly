@@ -276,7 +276,8 @@ void LogbookWidget::initUi() noexcept
     QByteArray logbookState = Settings::getInstance().getLogbookState();
     ui->logTableWidget->horizontalHeader()->restoreState(logbookState);
 
-    ui->splitter->setStretchFactor(1, 3);
+    const int logTreeWidth = ui->logTreeWidget->minimumWidth();
+    ui->splitter->setSizes({logTreeWidth, width() - logTreeWidth});
 
     // Default "Delete" key deletes flights
     ui->deletePushButton->setShortcut(QKeySequence::Delete);
