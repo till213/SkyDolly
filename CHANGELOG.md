@@ -19,6 +19,8 @@
 - The flight being recorded is now also shown in the logbook: the "red airplane" indicates this (in analogy to the Formation module)
 
 #### Formation Module
+- Improved AI aircraft management
+  * Minimised create / delete AI aircraft requests when switching the user aircraft or removing an aircraft
 - The order of the formation aircraft table columns can now be changed
 - The "Delete" key now deletes the selected aircraft
 - Minor layout adjustments

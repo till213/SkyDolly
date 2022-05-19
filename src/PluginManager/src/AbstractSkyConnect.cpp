@@ -135,7 +135,8 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
         connectWithSim();
     }
 
-    if (isConnectedWithSim()) {
+    bool ok = isConnectedWithSim();
+    if (ok) {
         switch (recordingMode) {
         case RecordingMode::SingleAircraft:
             // Single flight - destroy any previous AI aircraft
@@ -162,16 +163,14 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
         if (isTimerBasedRecording(Settings::getInstance().getRecordingSampleRate())) {
             d->recordingTimer.start(d->recordingIntervalMSec);
         }
-        bool ok = retryWithReconnect([this, initialPosition]() -> bool { return setupInitialRecordingPosition(initialPosition); });
-        if (ok) {
-            ok = onStartRecording();
-        }
+        ok = retryWithReconnect([this, initialPosition]() -> bool { return setupInitialRecordingPosition(initialPosition); });
         if (ok) {
             setState(Connect::State::Recording);
-        } else {
-            setState(Connect::State::Disconnected);
-        }
-    } else {
+            ok = onStartRecording();
+        } 
+    }
+
+    if (!ok) {
         setState(Connect::State::Disconnected);
     }
 }
