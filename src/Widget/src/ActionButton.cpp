@@ -44,7 +44,9 @@ public:
 ActionButton::ActionButton(QWidget *parent) noexcept
     : ActiveButton(parent),
       d(std::make_unique<ActionButtonPrivate>())
-{}
+{
+    setFocusPolicy(Qt::FocusPolicy::NoFocus);
+}
 
 ActionButton::~ActionButton() noexcept
 {}
