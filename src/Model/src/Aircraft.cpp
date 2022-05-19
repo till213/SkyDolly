@@ -201,6 +201,7 @@ bool Aircraft::hasRecording() const noexcept
 
 void Aircraft::clear() noexcept
 {
+    d->aircraftInfo.clear();
     d->position.clear();
     d->engine.clear();
     d->primaryFlightControl.clear();
@@ -208,15 +209,15 @@ void Aircraft::clear() noexcept
     d->aircraftHandle.clear();
     d->light.clear();
     d->flightPlan.clear();
-    d->aircraftInfo.clear();
+    invalidateDuration();
 }
 
-bool Aircraft::operator == (const Aircraft &rhs) const noexcept
+bool Aircraft::operator==(const Aircraft &rhs) const noexcept
 {
     return this->d->id == rhs.d->id;
 }
 
-bool Aircraft::operator != (const Aircraft &rhs) const noexcept
+bool Aircraft::operator!=(const Aircraft &rhs) const noexcept
 {
     return this->d->id != rhs.d->id;
 }

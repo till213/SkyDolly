@@ -61,7 +61,6 @@
 #include "../../Dao/LightDaoIntf.h"
 #include "../../Dao/WaypointDaoIntf.h"
 #include "../../Dao/DaoFactory.h"
-#include <ConnectionManager.h>
 #include "SQLiteAircraftDao.h"
 
 class SQLiteAircraftDaoPrivate

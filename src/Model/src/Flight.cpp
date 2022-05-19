@@ -34,6 +34,9 @@
 
 #include "FlightCondition.h"
 #include "Aircraft.h"
+#include "FlightPlan.h"
+#include "Waypoint.h"
+#include "FlightSummary.h"
 #include "Flight.h"
 
 namespace
@@ -186,7 +189,7 @@ void Flight::setUserAircraftIndex(int index) noexcept
 
 std::int64_t Flight::deleteAircraftByIndex(int index) noexcept
 {
-    std::int64_t aircraftId;
+    std::int64_t aircraftId {Aircraft::InvalidId};
     // A flight has at least one aircraft
     if (d->aircraft.size() > 1) {
         setUserAircraftIndex(std::max(d->userAircraftIndex - 1, 0));
@@ -194,8 +197,6 @@ std::int64_t Flight::deleteAircraftByIndex(int index) noexcept
         std::int64_t aircraftId = d->aircraft.at(index)->getId();
         d->aircraft.erase(d->aircraft.begin() + index);
         emit aircraftRemoved(aircraftId);
-    } else {
-        aircraftId = Aircraft::InvalidId;
     }
     return aircraftId;
 }
@@ -214,6 +215,33 @@ void Flight::setFlightCondition(FlightCondition flightCondition) noexcept
 {
     d->flightCondition = flightCondition;
     emit flightConditionChanged();
+}
+
+FlightSummary Flight::getFlightSummary() const noexcept
+{
+    const Aircraft &aircraft = getUserAircraft();
+    const AircraftInfo &aircraftInfo = aircraft.getAircraftInfo();
+
+    FlightSummary summary;
+    summary.flightId = d->id;
+    summary.creationDate = d->creationTime;
+    summary.aircraftType = aircraftInfo.aircraftType.type;
+    summary.aircraftCount = count();
+    summary.startSimulationLocalTime = d->flightCondition.startLocalTime;
+    summary.startSimulationZuluTime = d->flightCondition.startZuluTime;
+    summary.endSimulationLocalTime = d->flightCondition.endLocalTime;
+    summary.endSimulationZuluTime = d->flightCondition.endZuluTime;
+
+    const FlightPlan &flightPlan = aircraft.getFlightPlan();
+    if (flightPlan.count() > 0) {
+        summary.startLocation = flightPlan[0].identifier;
+    }
+    if (flightPlan.count() > 1) {
+        summary.endLocation = flightPlan[flightPlan.count() - 1].identifier;
+    }
+    summary.title = d->title;
+
+    return summary;
 }
 
 std::int64_t Flight::getTotalDurationMSec(bool ofUserAircraft) const noexcept

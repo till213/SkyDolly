@@ -79,8 +79,8 @@ public:
 
     void clear() noexcept;
 
-    bool operator == (const Aircraft &rhs) const noexcept;
-    bool operator != (const Aircraft &rhs) const noexcept;
+    bool operator==(const Aircraft &rhs) const noexcept;
+    bool operator!=(const Aircraft &rhs) const noexcept;
 
     static constexpr std::int64_t InvalidId {-1};
 
@@ -92,7 +92,7 @@ public slots:
      * Explicitly call this method after an aircraft has been recorded or
      * the sampled data has been changed (added or removed).
      *
-     * Also refer to #getDurationMSec.
+     * \sa getDurationMSec
      */
     void invalidateDuration() noexcept;
 

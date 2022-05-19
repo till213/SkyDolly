@@ -37,8 +37,8 @@ public:
     Light(Light &aircraftHandle) = default;
     Light(Light &&aircraftHandle) = default;
     ~Light() noexcept override;
-    Light &operator = (const Light &rhs) = default;
-    Light &operator = (Light &&rhs) = default;
+    Light &operator=(const Light &rhs) = default;
+    Light &operator=(Light &&rhs) = default;
 
     const LightData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 

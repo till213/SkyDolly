@@ -101,7 +101,7 @@ namespace SkyMath
 
     /*!
      * Normalises the value \c y1 by comparing its sign with
-     * the \em previous value \c y0, which come from a
+     * the \e previous value \c y0, which come from a
      * "+/- modulo 180" domain (value in [-180, 180[).
      *
      * - if \c y0 and \c y1 have the same sign then the normalised
@@ -351,8 +351,6 @@ namespace SkyMath
      * velocity [meters per second] it takes to travel that distance, taking the timestamps \c startTimestamp
      * and \c endTimestamp into account.
      *
-     * Also refer to #sphericalDistance.
-     *
      * \param startPosition
      *        the Coordinate of the start position [degrees]
      * \param startTimestamp
@@ -362,6 +360,7 @@ namespace SkyMath
      * \param endTimestamp
      *        the timestamp of the end point [milliseconds]
      * \return the distance (first value) and required speed [m/s] (second value)
+     * \sa sphericalDistance
      */
     inline std::pair<double, double> distanceAndVelocity(Coordinate startPosition, std::int64_t startTimestamp,
                                                          Coordinate endPosition, std::int64_t endTimestamp) noexcept

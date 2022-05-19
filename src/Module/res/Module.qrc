@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>img/icons/aircraft-normal-off.png</file>
+        <file>img/icons/aircraft-normal-off@2x.png</file>
+        <file>img/icons/aircraft-normal.png</file>
+        <file>img/icons/aircraft-normal@2x.png</file>
+        <file>img/icons/aircraft-record-normal.png</file>
+        <file>img/icons/aircraft-record-normal@2x.png</file>
+    </qresource>
+</RCC>

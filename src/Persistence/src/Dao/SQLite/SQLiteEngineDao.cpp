@@ -34,7 +34,6 @@
 #include <QSqlRecord>
 
 #include <Model/EngineData.h>
-#include <ConnectionManager.h>
 #include "SQLiteEngineDao.h"
 
 // PUBLIC

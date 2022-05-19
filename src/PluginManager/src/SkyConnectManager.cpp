@@ -158,6 +158,8 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
                     this, &SkyConnectManager::timestampChanged);
             connect(skyPlugin, &SkyConnectIntf::stateChanged,
                     this, &SkyConnectManager::stateChanged);
+            connect(skyPlugin, &SkyConnectIntf::recordingStarted,
+                    this, &SkyConnectManager::recordingStarted);
             connect(skyPlugin, &SkyConnectIntf::recordingStopped,
                     this, &SkyConnectManager::recordingStopped);
 

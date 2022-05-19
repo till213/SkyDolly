@@ -37,8 +37,8 @@ public:
     Engine(Engine &aircraftHandle) = default;
     Engine(Engine &&aircraftHandle) = default;
     ~Engine() noexcept override;
-    Engine &operator = (const Engine &rhs) = default;
-    Engine &operator = (Engine &&rhs) = default;
+    Engine &operator=(const Engine &rhs) = default;
+    Engine &operator=(Engine &&rhs) = default;
 
     const EngineData &interpolate(std::int64_t timestamp, TimeVariableData::Access access) noexcept override;
 

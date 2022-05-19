@@ -144,7 +144,7 @@ public:
     void setRecordingSampleRate(SampleRate::SampleRate sampleRate) noexcept;
 
     /*!
-     * Returns whether the \e stay \e on \e top option is enabled.
+     * Returns whether the  stay on top option is enabled.
      *
      * \return \c true if the application window is kept in the foreground;
      *         \c false else
@@ -152,7 +152,7 @@ public:
     bool isWindowStaysOnTopEnabled() const noexcept;
 
     /*!
-     * Sets the \e stay \e on \e top option.
+     * Sets the  stay on top option.
      *
      * \param enable
      *        \c true in order to keep the application windoww in the foreground;
@@ -162,7 +162,7 @@ public:
     void setWindowStaysOnTopEnabled(bool enable) noexcept;
 
     /*!
-     * Returns whether the \e minimal user interface option is enabled.
+     * Returns whether the minimal user interface option is enabled.
      *
      * \return \c true if the minimal UI is shown;
      *         \c false else
@@ -170,7 +170,7 @@ public:
     bool isMinimalUiEnabled() const noexcept;
 
     /*!
-     * Sets the \e minimal user interface option.
+     * Sets the minimal user interface option.
      *
      * \param enable
      *        \c true in order to show the minimal UI;
@@ -188,14 +188,14 @@ public:
     bool isModuleSelectorVisible() const noexcept;
 
     /*!
-     * Sets the \e module selector visible
+     * Sets the \e module selector visible according to \c visible.
      *
-     * \param enable
+     * \param visible
      *        \c true in order to show the module selector
      *        \c false in order to hide the module selector
      * \sa moduleSelectorVisibilityChanged
      */
-    void setModuleSelectorVisible(bool enable) noexcept;
+    void setModuleSelectorVisible(bool visible) noexcept;
 
     /*!
      * Returns whether the \e replay speed group box is visible.
@@ -206,14 +206,14 @@ public:
     bool isReplaySpeedVisible() const noexcept;
 
     /*!
-     * Sets the \e replay speed group box visible
+     * Sets the \e replay speed group box visible according to \c visible.
      *
-     * \param enable
+     * \param visible
      *        \c true in order to show the replay speed
      *        \c false in order to hide the replay speed
      * \sa replaySpeedVisibilityChanged
      */
-    void setReplaySpeedVisible(bool enable) noexcept;
+    void setReplaySpeedVisible(bool visible) noexcept;
 
     /*!
      * Returns the saved window geometry.
@@ -465,6 +465,64 @@ public:
     void setResetTimeOffsetConfirmationEnabled(bool enable) noexcept;
 
     /*!
+     * Returns the default visibility of button text in minimal UI mode.
+     *
+     * \return \c true if the button text should be visible by default
+     *         in minimal UI mode; \c false else
+     */
+    bool getDefaultMinimalUiButtonTextVisibility() const noexcept;
+
+    /*!
+     * Sets the default visibility of button text in minimal UI mode to \c visible.
+     *
+     * \param visible
+     *        set to \c true in order to show button texts by default
+     *        in minimal UI mode; \c false else
+     * \sa defaultMinimalUiButtonTextVisibilityChanged
+     */
+    void setDefaultMinimalUiButtonTextVisibility(bool visible) noexcept;
+
+    /*!
+     * Returns the default visibility of non-essential buttons in minimal UI mode.
+     *
+     * \return \c true if non-essential buttons should be visible by default
+     *         in minimal UI mode; \c false else
+     */
+    bool getDefaultMinimalUiNonEssentialButtonVisibility() const noexcept;
+
+    /*!
+     * Sets the default visibility of non-essential buttons in minimal UI mode to \c visible.
+     *
+     * \param visible
+     *        set to \c true in order to show non-essential buttons by default
+     *        in minimal UI mode \c false else
+     * \sa defaultMinimalUiNonEssentialButtonVisibilityChanged
+     */
+    void setDefaultMinimalUiNonEssentialButtonVisibility(bool visible) noexcept;
+
+    /*!
+     * Returns the default visibility of the replay speed group in minimal UI mode.
+     *
+     * \return \c true if the replay speed group should be visible by default
+     *         in minimal UI mode; \c false else
+     */
+    bool getDefaultMinimalUiReplaySpeedVisibility() const noexcept;
+
+    /*!
+     * Sets the default visibility of the replay speed group in minimal UI mode to \c visible.
+     *
+     * Note that the replay speed group visibility can be separately toggled by the user
+     * via the View menu.
+     *
+     * \param visible
+     *        set to \c true in order to show the replay speed group by default
+     *        in minimal UI mode \c false else
+     * \sa defaultMinimalUiReplaySpeedVisibilityChanged
+     * \sa setReplaySpeedVisible
+     */
+    void setDefaultMinimalUiReplaySpeedVisibility(bool visible) noexcept;
+
+    /*!
      * Returns the aircraft type (name) for import.
      *
      * \return the aircraft type which was last selected for import
@@ -483,19 +541,17 @@ public:
     /*!
      * Returns the file info of the best available earth gravity model (EGM) data file.
      *
-     * Also refer to #hasEarthGravityModel.
-     *
      * \return the file info of the earth gravity model data file; check for its existence
      *         (QFile::exists) before using
+     * \sa hasEarthGravityModel
      */
     QFileInfo getEarthGravityModelFileInfo() const noexcept;
 
     /*!
      * Returns whether any earth gravity model (EGM) is available.
      *
-     * Also refer to #getEarthGravityModelFileInfo.
-     *
      * \return \c true if an earth gravity model is available; \c false else
+     * \sa getEarthGravityModelFileInfo
      */
     bool hasEarthGravityModel() const noexcept;
 
@@ -658,12 +714,34 @@ signals:
     void repeatCanopyChanged(bool enable);
 
     /*!
+     * Emitted when the default button text visibility for the minimal UI has changed.
+     *
+     * \sa changed
+     */
+    void defaultMinimalUiButtonTextVisibilityChanged(bool hidden);
+
+    /*!
+     * Emitted when the default non-essential button visibility for the minimal UI has changed.
+     *
+     * \sa changed
+     */
+    void defaultMinimalUiNonEssentialButtonVisibilityChanged(bool hidden);
+
+    /*!
+     * Emitted when the default replay speed visibility for the minimal UI has changed.
+     *
+     * \sa replaySpeedVisibilityChanged
+     * \sa changed
+     */
+    void defaultMinimalUiReplaySpeedVisibilityChanged(bool hidden);
+
+    /*!
      * Emitted when any setting has changed.
      */
     void changed();
 
 protected:
-    virtual ~Settings();
+    ~Settings() override;
     const Version &getVersion() const;
 
 private:

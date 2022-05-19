@@ -73,6 +73,8 @@ ModuleManager::ModuleManager(QStackedWidget &moduleStackWidget, DatabaseService 
     : QObject(parent),
       d(std::make_unique<ModuleManagerPrivate>(moduleStackWidget, databaseService, flightService))
 {
+    Q_INIT_RESOURCE(Module);
+
     initModules();
     activateModule(DefaultModule);
     frenchConnection();

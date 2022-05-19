@@ -49,57 +49,56 @@ ActionRadioButton::~ActionRadioButton() noexcept
 
 void ActionRadioButton::setAction(const QAction *action) noexcept
 {
-   // If an action is already associated with the button then
-   // disconnect all previous connections
-   if (d->action != nullptr && d->action != action) {
-       disconnectFromAction();
-   }
+    // If an action is already associated with the button then
+    // disconnect all previous connections
+    if (d->action != nullptr && d->action != action) {
+        disconnectFromAction();
+    }
 
-   if (d->action != action) {
-       d->action = action;
-       updateButtonStatusFromAction();
-       connectToAction();
-   }
+    if (d->action != action) {
+        d->action = action;
+        updateButtonStatusFromAction();
+        connectToAction();
+    }
 }
 
 // PRIVATE SLOTS
 
 void ActionRadioButton::updateButtonStatusFromAction() noexcept
 {
-   if (d->action != nullptr) {
-       setText(d->action->text());
-       setStatusTip(d->action->statusTip());
-       setToolTip(d->action->toolTip());
-       setIcon(d->action->icon());
-       setEnabled(d->action->isEnabled());
-       setCheckable(d->action->isCheckable());
-       setChecked(d->action->isChecked());
-   }
+    if (d->action != nullptr) {
+        setText(d->action->text());
+        setStatusTip(d->action->statusTip());
+        setToolTip(d->action->toolTip());
+        setIcon(d->action->icon());
+        setEnabled(d->action->isEnabled());
+        setCheckable(d->action->isCheckable());
+        setChecked(d->action->isChecked());
+    }
 }
 
 void ActionRadioButton::connectToAction() noexcept
 {
-   if (d->action != nullptr) {
-       // React to the action state changes
-       connect(d->action, &QAction::changed,
-               this, &ActionRadioButton::updateButtonStatusFromAction);
-       connect(d->action, &QAction::destroyed,
-               this, &ActionRadioButton::disconnectFromAction);
-       connect(this, &ActionRadioButton::clicked,
-               d->action, &QAction::trigger);
-   }
+    if (d->action != nullptr) {
+        // React to the action state changes
+        connect(d->action, &QAction::changed,
+                this, &ActionRadioButton::updateButtonStatusFromAction);
+        connect(d->action, &QAction::destroyed,
+                this, &ActionRadioButton::disconnectFromAction);
+        connect(this, &ActionRadioButton::clicked,
+                d->action, &QAction::trigger);
+    }
 }
 
 void ActionRadioButton::disconnectFromAction() noexcept
 {
-   if (d->action != nullptr) {
-       disconnect(d->action, &QAction::changed,
-                  this, &ActionRadioButton::updateButtonStatusFromAction);
-       disconnect(d->action, &QAction::destroyed,
-                  this, &ActionRadioButton::disconnectFromAction);
-       disconnect(this, &ActionRadioButton::clicked,
-                  d->action, &QAction::trigger);
-       d->action = nullptr;
-   }
+    if (d->action != nullptr) {
+        disconnect(d->action, &QAction::changed,
+                   this, &ActionRadioButton::updateButtonStatusFromAction);
+        disconnect(d->action, &QAction::destroyed,
+                   this, &ActionRadioButton::disconnectFromAction);
+        disconnect(this, &ActionRadioButton::clicked,
+                   d->action, &QAction::trigger);
+        d->action = nullptr;
+    }
 }
-

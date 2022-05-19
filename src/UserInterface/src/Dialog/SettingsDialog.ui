@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>666</width>
-    <height>404</height>
+    <width>664</width>
+    <height>376</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="settingsTabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
@@ -32,6 +32,9 @@
          <layout class="QFormLayout" name="formLayout_5">
           <item row="0" column="1">
            <widget class="QCheckBox" name="absoluteSeekEnabledCheckBox">
+            <property name="toolTip">
+             <string>Seek in absolute or relative time steps.</string>
+            </property>
             <property name="text">
              <string>Absolute [seconds]</string>
             </property>
@@ -176,6 +179,9 @@
            <height>0</height>
           </size>
          </property>
+         <property name="toolTip">
+          <string>Select the frequency with which data is being sampled. Lower frequencies result in smaller recordings. &quot;Auto&quot; records whenever data becomes available.</string>
+         </property>
         </widget>
        </item>
        <item row="1" column="1">
@@ -213,6 +219,9 @@
            <height>0</height>
           </size>
          </property>
+         <property name="toolTip">
+          <string>Select the flight simulator to connect with.</string>
+         </property>
         </widget>
        </item>
        <item row="1" column="0">
@@ -243,6 +252,9 @@
          <layout class="QFormLayout" name="formLayout_3">
           <item row="0" column="0">
            <widget class="QCheckBox" name="confirmDeleteFlightCheckBox">
+            <property name="toolTip">
+             <string>Asks for confirmation whenever a flight is to be deleted from the logbook.</string>
+            </property>
             <property name="text">
              <string>Delete flight</string>
             </property>
@@ -250,6 +262,9 @@
           </item>
           <item row="1" column="0">
            <widget class="QCheckBox" name="confirmDeleteAircraftCheckBox">
+            <property name="toolTip">
+             <string>Asks for confirmation whenever an aircraft is to be deleted from the formation.</string>
+            </property>
             <property name="text">
              <string>Delete aircraft</string>
             </property>
@@ -257,8 +272,50 @@
           </item>
           <item row="2" column="0">
            <widget class="QCheckBox" name="confirmResetAllTimeOffsetCheckBox">
+            <property name="toolTip">
+             <string>Asks for confirmation whenever all aircraft time offsets are to be reset.</string>
+            </property>
             <property name="text">
              <string>Reset all time offsets</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Minimal UI</string>
+         </property>
+         <layout class="QFormLayout" name="formLayout_6">
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="hideButtonTextCheckBox">
+            <property name="toolTip">
+             <string>Defines the default visibility of button texts minimal user interface mode.</string>
+            </property>
+            <property name="text">
+             <string>Hide button text</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="hideNonEssentialButtonsCheckBox">
+            <property name="toolTip">
+             <string>Defines the default visibility of non-essential buttons in minimal user interface mode.</string>
+            </property>
+            <property name="text">
+             <string>Hide non-essential buttons</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="hideReplaySpeedCheckBox">
+            <property name="toolTip">
+             <string>Defines the default visibility of the replay speed in minimal user interface mode.</string>
+            </property>
+            <property name="text">
+             <string>Hide replay speed</string>
             </property>
            </widget>
           </item>

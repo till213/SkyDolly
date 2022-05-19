@@ -49,7 +49,7 @@ FlightSummary::FlightSummary(FlightSummary &&other) noexcept
       title(std::move(other.title))
 {}
 
-FlightSummary &FlightSummary::operator = (FlightSummary &&rhs) noexcept
+FlightSummary &FlightSummary::operator=(FlightSummary &&rhs) noexcept
 {
     if (this != &rhs) {
         flightId = rhs.flightId;

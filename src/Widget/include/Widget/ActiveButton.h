@@ -30,11 +30,12 @@
 #include <QPushButton>
 
 class QMouseEvent;
+class QIcon;
 
 #include "WidgetLib.h"
 
 /*!
- * Displays the \em active icon when the button is pressed.
+ * Displays the \e active icon when the button is pressed.
  *
  * Implementation note: the default QPushButton does not seem
  * to honour the "active" pixmap in the given QIcon. Also refer
@@ -48,11 +49,11 @@ class WIDGET_API ActiveButton : public QPushButton
     Q_OBJECT
 public:
     ActiveButton(QWidget *parent) noexcept;
-    virtual ~ActiveButton() noexcept;
+    ~ActiveButton() noexcept override;
 
 protected:
-    virtual void mousePressEvent(QMouseEvent *e) noexcept override;
-    virtual void mouseReleaseEvent(QMouseEvent *e) noexcept override;
+    void mousePressEvent(QMouseEvent *e) noexcept override;
+    void mouseReleaseEvent(QMouseEvent *e) noexcept override;
 
 private:
     std::unique_ptr<ActiveButtonPrivate> d;

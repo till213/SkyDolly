@@ -42,7 +42,6 @@
 #include <Model/FlightSummary.h>
 #include <Model/FlightCondition.h>
 #include <FlightSelector.h>
-#include <ConnectionManager.h>
 #include "SQLiteLogbookDao.h"
 
 // PUBLIC

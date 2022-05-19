@@ -25,6 +25,22 @@ target_sources(${LIBRARY_NAME}
         include/Widget/TableDateItem.h src/TableDateItem.cpp
         include/Widget/TableTimeItem.h src/TableTimeItem.cpp
 )
+if(${PLATFORM_IS_WINDOWS})
+    target_sources(${LIBRARY_NAME}
+        PRIVATE
+            src/Platform_Windows.cpp
+    )
+elseif(${PLATFORM_IS_MACOS})
+    target_sources(${LIBRARY_NAME}
+        PRIVATE
+            src/Platform_macOS.cpp
+    )
+else()
+    target_sources(${LIBRARY_NAME}
+        PRIVATE
+            src/Platform_Linux.cpp
+    )
+endif()
 target_include_directories(${LIBRARY_NAME}
     INTERFACE
         ${CMAKE_CURRENT_SOURCE_DIR}/include

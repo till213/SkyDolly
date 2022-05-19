@@ -13,8 +13,8 @@ struct MODEL_API FlightDate
     FlightDate(const FlightDate &other) = default;
     FlightDate(FlightDate &&other) = default;
     ~FlightDate() = default;
-    FlightDate &operator = (const FlightDate &rhs) = default;
-    FlightDate &operator = (FlightDate &&rhs) = default;
+    FlightDate &operator=(const FlightDate &rhs) = default;
+    FlightDate &operator=(FlightDate &&rhs) = default;
 
     /*!
      * The year of the flight: [1 - 9999]

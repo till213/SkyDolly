@@ -43,7 +43,7 @@ cmake_print_variables(CMAKE_SYSTEM_NAME)
 # Binary output locations
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-if (${PLATFORM_IS_MACOS})
+if(${PLATFORM_IS_MACOS})
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_NAME}.app/Contents/Frameworks)
 else()
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -52,7 +52,7 @@ endif()
 # Definitions
 
 # Debug output
-if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     add_definitions(-DDEBUG)
 endif()
 # No use of deprecated Qt functionality before Qt 5.15
