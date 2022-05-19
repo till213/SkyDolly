@@ -44,6 +44,7 @@ class QString;
 class DatabaseService;
 class FlightService;
 class FlightDate;
+class FlightSummary;
 class LogbookWidgetPrivate;
 
 namespace Ui {
@@ -75,6 +76,7 @@ private:
     void initUi() noexcept;
     void initFilterUi() noexcept;
     void updateFlightTable() noexcept;
+    inline void addFlightSummary(FlightSummary summary, int rowIndex) noexcept;
     void updateEditUi() noexcept;
     void frenchConnection() noexcept;
     inline void insertYear(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByYear, int nofFlightsPerYear) noexcept;
