@@ -196,8 +196,8 @@ bool MSFSSimConnectPlugin::onStartRecording() noexcept
     HRESULT result = ::SimConnect_RequestDataOnSimObjectType(d->simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataRequest::AircraftInfo), Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightInformationDefinition), ::UserAirplaneRadiusMeters, SIMCONNECT_SIMOBJECT_TYPE_USER);
     bool ok = result == S_OK;
 
-    // Send AI aircraft positions every visual frame
-    if (ok) {
+    // For formation flights (count > 1) send AI aircraft positions every visual frame
+    if (ok && getCurrentFlight().count() > 1) {
         result = ::SimConnect_SubscribeToSystemEvent(d->simConnectHandle, Enum::toUnderlyingType(Event::Frame), "Frame");
         ok = result == S_OK;
     }

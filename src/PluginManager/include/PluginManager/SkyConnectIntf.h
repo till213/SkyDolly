@@ -164,11 +164,11 @@ public:
     virtual double calculateRecordedSamplesPerSecond() const noexcept = 0;
 
 public slots:
-    virtual void addAiObject(Aircraft &aircraft) noexcept = 0;
+    virtual void addAiObject(const Aircraft &aircraft) noexcept = 0;
     virtual void removeAiObjects() noexcept = 0;
-    virtual void removeAiObject(std::int64_t simulatedObjectId) noexcept = 0;
+    virtual void removeAiObject(std::int64_t removedAircraftId) noexcept = 0;
     virtual void syncAiObjectsWithFlight() noexcept = 0;
-    virtual void updateUserAircraft(Aircraft &userAircraft) noexcept = 0;
+    virtual void updateUserAircraft(int newUserAircraftIndex, int previousUserAircraftIndex) noexcept = 0;
 
 protected:
     SkyConnectIntf(QObject *parent = nullptr) noexcept
