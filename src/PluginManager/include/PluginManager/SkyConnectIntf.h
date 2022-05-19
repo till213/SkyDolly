@@ -74,50 +74,70 @@ public:
 
     virtual void startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition()) noexcept = 0;
     virtual void stopRecording() noexcept = 0;
+
+    /*!
+     * Returns whether SkyConnect is in \em Recording state, specifically:
+     *
+     * - Connect::State::Recording
+     *
+     * \return \c true if SkyConnect is in \em Recording state; \c false else
+     * \sa isInRecordingState
+     */
     virtual bool isRecording() const noexcept = 0;
 
     virtual void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition()) noexcept = 0;
     virtual void stopReplay() noexcept = 0;
+
+    /*!
+     * Returns whether SkyConnect is in \em Replay state, specifically:
+     *
+     * - Connect::State::Replay
+     *
+     * \return \c true if SkyConnect is in \em Replay state; \c false else
+     * \sa isInReplayState
+     */
     virtual bool isReplaying() const noexcept = 0;
     virtual void stop() noexcept = 0;
 
     /*!
-     * Returns whether SkyConnect is in recording mode or not. \em Recording mode means any of the following states:
+     * Returns whether SkyConnect is in a recording state or not. A recording state means any of the following states:
      *
      * - Connect::State::Recording
      * - Connect::State::RecordingPaused
      *
-     * \return \c true if SkyConnect is in recording mode; \c false else
-     * \sa isInReplayMode
+     * \return \c true if SkyConnect is in a recording state; \c false else
+     * \sa isRecording
+     * \sa isInReplayState
      * \sa isActive
      */
-    virtual bool isInRecordingMode() const noexcept = 0;
+    virtual bool isInRecordingState() const noexcept = 0;
 
     /*!
-     * Returns whether SkyConnect is in replay mode or not. \em Replay mode means any of the following states:
+     * Returns whether SkyConnect is in a replay state or not. A replay state means any of the following states:
      *
      * - Connect::State::Replay
      * - Connect::State::ReplayPaused
      *
-     * \return \c true if SkyConnect is in replay mode; \c false else
-     * \sa isInRecordingMode
+     * \return \c true if SkyConnect is in replay state; \c false else
+     * \sa isReplaying
+     * \sa isInRecordingState
      * \sa isActive
      */
-    virtual bool isInReplayMode() const noexcept = 0;
+    virtual bool isInReplayState() const noexcept = 0;
 
     /*!
-     * Returns whether SkyConnect is active or not. \em Active means any of the following states:
+     * Returns whether SkyConnect is active or not. Active means any of the following states:
      *
      * - Connect::State::Recording
      * - Connect::State::RecordingPaused
      * - Connect::State::Replay
      * - Connect::State::ReplayPaused
      *
-     * Or in other words: any state except Connected and Disconnected.
+     * Or in other words: any state except \em Connected and \em Disconnected.
      *
      * \return \c true if SkyConnect is active; \c false else
-     * \sa isInRecordingMode
-     * \sa isInReplayMode
+     * \sa isInRecordingState
+     * \sa isInReplayState
      */
     virtual bool isActive() const noexcept = 0;
 
@@ -181,11 +201,26 @@ signals:
     void stateChanged(Connect::State state);
 
     /*!
-     * Emitted whenever recording has been stopped, that is when the
-     * state changes from \em Recording to any other state (\em Connected
-     * or \em Disconnected).
+     * Emitted whenever recording has been started, that is when the
+     * state changes from \em Connected or \em Disconnected to a recording
+     * state (typically \em Recording, possibly also \em RecordingPaused).
      *
      * Note that the #stateChanged signal is emitted as well.
+     *
+     * \sa isInRecordingState
+     * \sa stateChanged
+     */
+    void recordingStarted();
+
+    /*!
+     * Emitted whenever recording has been stopped, that is when the
+     * state changes from \em Recording or \em RecordingPaused to any other
+     * state (\em Connected or \em Disconnected).
+     *
+     * Note that the #stateChanged signal is emitted as well.
+     *
+     * \sa isInRecordingState
+     * \sa stateChanged
      */
     void recordingStopped();
 

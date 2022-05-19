@@ -248,12 +248,12 @@ void AbstractSkyConnect::stop() noexcept
     }
 }
 
-bool AbstractSkyConnect::isInRecordingMode() const noexcept
+bool AbstractSkyConnect::isInRecordingState() const noexcept
 {
     return isRecording() || d->state == Connect::State::RecordingPaused;
 }
 
-bool AbstractSkyConnect::isInReplayMode() const noexcept
+bool AbstractSkyConnect::isInReplayState() const noexcept
 {
     return isReplaying() || d->state == Connect::State::ReplayPaused;
 }
@@ -357,6 +357,7 @@ void AbstractSkyConnect::seek(std::int64_t timestamp) noexcept
     if (isConnectedWithSim()) {
         if (d->state != Connect::State::Recording) {
             d->currentTimestamp = timestamp;
+            d->lastNotificationTimestamp = d->currentTimestamp;
             d->elapsedTime = timestamp;
             emit timestampChanged(d->currentTimestamp, TimeVariableData::Access::Seek);
             bool ok = retryWithReconnect([this, timestamp]() -> bool { return sendAircraftData(timestamp, TimeVariableData::Access::Seek, AircraftSelection::All); });
@@ -499,10 +500,13 @@ void AbstractSkyConnect::updateUserAircraft(Aircraft &userAircraft) noexcept
 void AbstractSkyConnect::setState(Connect::State state) noexcept
 {
     if (d->state != state) {
-        const bool recording = isRecording();
+        const bool previousRecordingState = isInRecordingState();
         d->state = state;
         emit stateChanged(state);
-        if (recording) {
+        // Recording started or stopped?
+        if (!previousRecordingState && isInRecordingState()) {
+            emit recordingStarted();
+        } else if (previousRecordingState && !isInRecordingState()) {
             emit recordingStopped();
         }
     }
@@ -511,6 +515,7 @@ void AbstractSkyConnect::setState(Connect::State state) noexcept
 void AbstractSkyConnect::setCurrentTimestamp(std::int64_t timestamp) noexcept
 {
     d->currentTimestamp = timestamp;
+    d->lastNotificationTimestamp = d->currentTimestamp;
 }
 
 bool AbstractSkyConnect::isElapsedTimerRunning() const noexcept

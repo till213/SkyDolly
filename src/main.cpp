@@ -32,7 +32,7 @@
 #include <Kernel/Settings.h>
 #include <Model/Logbook.h>
 #include <PluginManager/SkyConnectManager.h>
-#include <Persistence/ConnectionManager.h>
+#include <Persistence/LogbookManager.h>
 #include <PluginManager/PluginManager.h>
 #include <UserInterface/MainWindow.h>
 
@@ -41,7 +41,7 @@ static void destroySingletons() noexcept
     // Destroying the settings singleton also persists the settings
     Settings::destroyInstance();
     Logbook::destroyInstance();
-    ConnectionManager::destroyInstance();
+    LogbookManager::destroyInstance();
     PluginManager::destroyInstance();
     SkyConnectManager::destroyInstance();
 }

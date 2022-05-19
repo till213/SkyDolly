@@ -34,7 +34,6 @@
 #include <QSqlRecord>
 
 #include <Model/AircraftHandleData.h>
-#include <ConnectionManager.h>
 #include "SQLiteHandleDao.h"
 
 // PUBLIC

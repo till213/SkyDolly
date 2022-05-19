@@ -89,6 +89,13 @@ signals:
     void stateChanged(Connect::State state);
 
     /*!
+     * Relay of the SkyConnectIntf#recordingStarted signal.
+     *
+     * \sa SkyConnectIntf#recordingStarted
+     */
+    void recordingStarted();
+
+    /*!
      * Relay of the SkyConnectIntf#recordingStopped signal.
      *
      * \sa SkyConnectIntf#recordingStopped

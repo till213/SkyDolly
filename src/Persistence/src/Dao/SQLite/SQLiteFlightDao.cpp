@@ -41,7 +41,6 @@
 #include <Model/FlightCondition.h>
 #include "../../Dao/AircraftDaoIntf.h"
 #include "../../Dao/DaoFactory.h"
-#include <ConnectionManager.h>
 #include "SQLiteFlightDao.h"
 #include "SQLiteFlightDao.h"
 

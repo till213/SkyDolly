@@ -14,7 +14,7 @@ target_compile_definitions(${LIBRARY_NAME}
 target_sources(${LIBRARY_NAME}
     PRIVATE
         include/Persistence/PersistenceLib.h
-        include/Persistence/ConnectionManager.h src/ConnectionManager.cpp
+        include/Persistence/LogbookManager.h src/LogbookManager.cpp
         include/Persistence/FlightSelector.h src/FlightSelector.cpp
         include/Persistence/Metadata.h
         src/Dao/DatabaseDaoIntf.h

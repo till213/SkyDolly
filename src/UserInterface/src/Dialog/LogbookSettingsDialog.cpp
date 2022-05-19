@@ -37,7 +37,7 @@
 #include <Kernel/Enum.h>
 #include <Kernel/Settings.h>
 #include <Persistence/Service/DatabaseService.h>
-#include <Persistence/ConnectionManager.h>
+#include <Persistence/LogbookManager.h>
 #include <Persistence/Metadata.h>
 #include <Widget/BackupPeriodComboBox.h>
 #include "LogbookSettingsDialog.h"
@@ -65,9 +65,9 @@ LogbookSettingsDialog::LogbookSettingsDialog(QWidget *parent) noexcept :
     initUi();
     frenchConnection();
 
-    ConnectionManager &connectionManager = ConnectionManager::getInstance();
+    LogbookManager &logbookManager = LogbookManager::getInstance();
     Metadata metadata;
-    if (connectionManager.getMetadata(metadata)) {
+    if (logbookManager.getMetadata(metadata)) {
         d->originalBackupPeriodIntlId = metadata.backupPeriodIntlId;
     } else {
         d->originalBackupPeriodIntlId = Const::BackupNeverIntlId;
@@ -121,11 +121,11 @@ void LogbookSettingsDialog::initUi() noexcept
 
 void LogbookSettingsDialog::updateUi() noexcept
 {
-    ConnectionManager &connectionManager = ConnectionManager::getInstance();
+    LogbookManager &logbookManager = LogbookManager::getInstance();
     Metadata metadata;
-    const bool ok = connectionManager.getMetadata(metadata);
+    const bool ok = logbookManager.getMetadata(metadata);
     if (ok) {
-        QString logbookPath = connectionManager.getLogbookPath();
+        QString logbookPath = logbookManager.getLogbookPath();
         QFileInfo fileInfo = QFileInfo(logbookPath);
 
         QString logbookDirectoryPath = QDir::toNativeSeparators(fileInfo.absolutePath());
@@ -169,7 +169,7 @@ void LogbookSettingsDialog::frenchConnection() noexcept
 
 void LogbookSettingsDialog::on_showLogbookPathPushButton_clicked() noexcept
 {
-    QString logbookPath = ConnectionManager::getInstance().getLogbookPath();
+    QString logbookPath = LogbookManager::getInstance().getLogbookPath();
     QFileInfo fileInfo = QFileInfo(logbookPath);
     QUrl url = QUrl::fromLocalFile(fileInfo.absolutePath());
     QDesktopServices::openUrl(url);
