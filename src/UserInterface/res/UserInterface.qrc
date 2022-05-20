@@ -52,5 +52,6 @@
         <file>img/icons/record-active@2x.png</file>
         <file>img/icons/record-add-active.png</file>
         <file>img/icons/record-add-active@2x.png</file>
+        <file>text/ThirdParty.md</file>
     </qresource>
 </RCC>

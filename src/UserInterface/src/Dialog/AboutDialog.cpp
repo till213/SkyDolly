@@ -25,6 +25,9 @@
 #include <memory>
 
 #include <QDialog>
+#include <QFile>
+#include <QByteArray>
+#include <QTextEdit>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -59,4 +62,12 @@ void AboutDialog::initUi() noexcept
 {
     setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
     ui->aboutLabel->setText(tr("%1\nThe Black Sheep for Your Flight Recordings\n\nVersion %2\n\nMIT License").arg(Version::getApplicationName(), Version::getApplicationVersion()));
+
+    QFile file(":text/ThirdParty.md");
+    if (file.open(QFile::ReadOnly)) {
+        QByteArray data = file.readAll();
+
+        ui->creditsTextEdit->setMarkdown(data);
+        file.close();
+    }
 }
