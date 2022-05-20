@@ -128,8 +128,6 @@ if (${PLATFORM_IS_MACOS})
     )
     include(CreateAppIconOnMacOS)
     create_app_icon_on_macos(INPUT "res/SkyDolly.png" OUTPUT APP_ICON_PATH)
-
-#    add_library(AppIcon OBJECT ${APP_ICON_PATH})
     set_source_files_properties(${APP_ICON_PATH}
         PROPERTIES
             MACOSX_PACKAGE_LOCATION "Resources"
@@ -139,18 +137,23 @@ if (${PLATFORM_IS_MACOS})
             ${APP_ICON_PATH}
     )
 elseif(${PLATFORM_IS_WINDOWS})
+    # KNOWN ISSUE: windres.exe (MinGW on Windows) does not properly handle include paths with spaces
+    #              Also refer e.g. to https://bugreports.qt.io/browse/QTBUG-62918
+    # WORKAROUND: Place the Sky Dolly sources into a path without spaces
     # Resource file (*.rc)
-    configure_file(${PROJECT_SOURCE_DIR}/res/SkyDolly.rc.in
-                   ${PROJECT_SOURCE_DIR}/res/SkyDolly.rc @ONLY)
-    add_library(resources OBJECT ${PROJECT_SOURCE_DIR}/res/SkyDolly.rc)
-    target_include_directories(resources PRIVATE ${PROJECT_SOURCE_DIR}/res/)
-    set(RESOURCES $<TARGET_OBJECTS:resources>)
+    configure_file("${PROJECT_SOURCE_DIR}/res/SkyDolly.rc.in"
+                   "${PROJECT_SOURCE_DIR}/res/SkyDolly.rc" @ONLY)
+    add_library(resources OBJECT "${PROJECT_SOURCE_DIR}/res/SkyDolly.rc")
+    target_include_directories(resources PRIVATE "${PROJECT_SOURCE_DIR}/res/")
+    target_sources(${APP_NAME}
+        PRIVATE
+            $<TARGET_OBJECTS:resources>
+    )
 endif()
 
 target_sources(${APP_NAME}
     PRIVATE
         src/main.cpp
-        ${RESOURCES}
         README.md
         CHANGELOG.md
         BUILD.md

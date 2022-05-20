@@ -2,8 +2,8 @@ include(FetchContent)
 
 set(CMAKE_TLS_VERIFY true)
 
-option(SD_FETCH_EGM "Fetch earth gravity model EGM2008-5"  OFF)
-if(SD_FETCH_EGM)
+option(SKY_FETCH_EGM "Fetch earth gravity model EGM2008-5"  OFF)
+if(SKY_FETCH_EGM)
     FetchContent_Declare(
         egm
         URL https://downloads.sourceforge.net/project/geographiclib/geoids-distrib/egm2008-5.tar.bz2?use_mirror=autoselect
