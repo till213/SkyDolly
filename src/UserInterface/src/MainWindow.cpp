@@ -1149,6 +1149,7 @@ void MainWindow::updateUi() noexcept
     updateReplaySpeedUi();
     updateReplayDuration();
     updateFileMenu();
+    updateModuleActions();
     updateWindowMenu();
     updateMainWindow();
 }
@@ -1327,7 +1328,7 @@ void MainWindow::updateFileMenu() noexcept
     const Connect::State state = skyConnect ? skyConnect->get().getState() : Connect::State::Disconnected;
     switch (state) {
     case Connect::State::Recording:
-        // Fall-thru intentional
+        [[fallthrough]];
     case Connect::State::RecordingPaused:
         ui->importMenu->setEnabled(false);
         ui->exportMenu->setEnabled(false);
@@ -1337,6 +1338,25 @@ void MainWindow::updateFileMenu() noexcept
         ui->importMenu->setEnabled(d->hasImportPlugins && d->connectedWithLogbook);
         ui->exportMenu->setEnabled(d->hasExportPlugins && hasRecording);
         ui->optimiseLogbookAction->setEnabled(d->connectedWithLogbook);
+    }
+}
+
+void MainWindow::updateModuleActions() noexcept
+{
+    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    const Connect::State state = skyConnect ? skyConnect->get().getState() : Connect::State::Disconnected;
+    switch (state) {
+    case Connect::State::Recording:
+        [[fallthrough]];
+    case Connect::State::RecordingPaused:
+        for (auto &module : d->moduleManager->getModules()) {
+            module->getAction().setEnabled(false);
+        }
+        break;
+    default:
+        for (auto &module : d->moduleManager->getModules()) {
+            module->getAction().setEnabled(true);
+        }
     }
 }
 

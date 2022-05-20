@@ -160,6 +160,7 @@ private slots:
     void updateReplayDuration() noexcept;
 
     void updateFileMenu() noexcept;
+    void updateModuleActions() noexcept;
     void updateWindowMenu() noexcept;
     void updateMainWindow() noexcept;
 
