@@ -39,7 +39,7 @@
       <widget class="QLineEdit" name="searchLineEdit">
        <property name="minimumSize">
         <size>
-         <width>200</width>
+         <width>120</width>
          <height>0</height>
         </size>
        </property>
@@ -54,12 +54,6 @@
      </item>
      <item>
       <widget class="QComboBox" name="durationComboBox">
-       <property name="minimumSize">
-        <size>
-         <width>120</width>
-         <height>0</height>
-        </size>
-       </property>
        <property name="toolTip">
         <string>Filter by minimum flight duration.</string>
        </property>
@@ -74,12 +68,6 @@
      </item>
      <item>
       <widget class="QComboBox" name="engineTypeComboBox">
-       <property name="minimumSize">
-        <size>
-         <width>120</width>
-         <height>0</height>
-        </size>
-       </property>
        <property name="toolTip">
         <string>Filter by engine type.</string>
        </property>

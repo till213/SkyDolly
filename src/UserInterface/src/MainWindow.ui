@@ -326,7 +326,7 @@
               <string>Loop</string>
              </property>
              <property name="icon">
-              <iconset resource="../res/SkyDolly.qrc">
+              <iconset resource="../res/UserInterface.qrc">
                <normaloff>:/img/icons/play-loop-normal.png</normaloff>
                <normalon>:/img/icons/play-loop-normal-on.png</normalon>:/img/icons/play-loop-normal.png</iconset>
              </property>
@@ -381,12 +381,6 @@
     </item>
     <item>
      <widget class="QGroupBox" name="moduleGroupBox">
-      <property name="minimumSize">
-       <size>
-        <width>800</width>
-        <height>0</height>
-       </size>
-      </property>
       <property name="title">
        <string>Module</string>
       </property>
@@ -408,7 +402,7 @@
      <x>0</x>
      <y>0</y>
      <width>826</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="fileMenu">
@@ -553,7 +547,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../res/SkyDolly.qrc">
+    <iconset resource="../res/UserInterface.qrc">
      <normaloff>:/img/icons/play-normal.png</normaloff>
      <normalon>:/img/icons/play-normal-on.png</normalon>
      <activeoff>:/img/icons/play-active.png</activeoff>
@@ -571,7 +565,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../res/SkyDolly.qrc">
+    <iconset resource="../res/UserInterface.qrc">
      <normaloff>:/img/icons/pause-normal.png</normaloff>
      <normalon>:/img/icons/pause-normal-on.png</normalon>
      <activeoff>:/img/icons/pause-normal-active.png</activeoff>:/img/icons/pause-normal.png</iconset>
@@ -590,7 +584,7 @@
   </action>
   <action name="skipToBeginAction">
    <property name="icon">
-    <iconset resource="../res/SkyDolly.qrc">
+    <iconset resource="../res/UserInterface.qrc">
      <normaloff>:/img/icons/begin-normal.png</normaloff>
      <activeoff>:/img/icons/begin-active.png</activeoff>:/img/icons/begin-normal.png</iconset>
    </property>
@@ -603,7 +597,7 @@
   </action>
   <action name="backwardAction">
    <property name="icon">
-    <iconset resource="../res/SkyDolly.qrc">
+    <iconset resource="../res/UserInterface.qrc">
      <normaloff>:/img/icons/backward-normal.png</normaloff>
      <activeoff>:/img/icons/backward-active.png</activeoff>:/img/icons/backward-normal.png</iconset>
    </property>
@@ -616,7 +610,7 @@
   </action>
   <action name="forwardAction">
    <property name="icon">
-    <iconset resource="../res/SkyDolly.qrc">
+    <iconset resource="../res/UserInterface.qrc">
      <normaloff>:/img/icons/forward-normal.png</normaloff>
      <activeoff>:/img/icons/forward-active.png</activeoff>:/img/icons/forward-normal.png</iconset>
    </property>
@@ -629,7 +623,7 @@
   </action>
   <action name="skipToEndAction">
    <property name="icon">
-    <iconset resource="../res/SkyDolly.qrc">
+    <iconset resource="../res/UserInterface.qrc">
      <normaloff>:/img/icons/end-normal.png</normaloff>
      <activeoff>:/img/icons/end-active.png</activeoff>:/img/icons/end-normal.png</iconset>
    </property>
@@ -650,7 +644,7 @@
   </action>
   <action name="stopAction">
    <property name="icon">
-    <iconset resource="../res/SkyDolly.qrc">
+    <iconset resource="../res/UserInterface.qrc">
      <normaloff>:/img/icons/stop-normal.png</normaloff>
      <activeoff>:/img/icons/stop-active.png</activeoff>:/img/icons/stop-normal.png</iconset>
    </property>
@@ -755,7 +749,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../res/SkyDolly.qrc">
+    <iconset resource="../res/UserInterface.qrc">
      <normaloff>:/img/icons/play-loop-normal.png</normaloff>
      <normalon>:/img/icons/play-loop-normal-on.png</normalon>:/img/icons/play-loop-normal.png</iconset>
    </property>
@@ -785,7 +779,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../res/SkyDolly.qrc"/>
+  <include location="../res/UserInterface.qrc"/>
  </resources>
  <connections/>
 </ui>
