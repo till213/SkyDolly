@@ -133,10 +133,10 @@ private:
     
 private slots:
     // Ui elements
-    void on_positionSlider_sliderPressed() noexcept;
-    void on_positionSlider_valueChanged(int value) noexcept;
-    void on_positionSlider_sliderReleased() noexcept;
-    void on_timestampTimeEdit_timeChanged(const QTime &time) noexcept;
+    void onPositionSliderPressed() noexcept;
+    void onPositionSliderValueChanged(int value) noexcept;
+    void onPositionSliderReleased() noexcept;
+    void onTimeStampTimeEditChanged(const QTime &time) noexcept;
 
     void updateWindowSize() noexcept;
     void handleTimestampChanged(std::int64_t timestamp) noexcept;
@@ -168,12 +168,12 @@ private slots:
     void handleModuleActivated(const QString title, Module::Module moduleId) noexcept;
 
     // File menu
-    void on_newLogbookAction_triggered() noexcept;
-    void on_openLogbookAction_triggered() noexcept;
-    void on_optimiseLogbookAction_triggered() noexcept;
-    void on_showSettingsAction_triggered() noexcept;
-    void on_showLogbookSettingsAction_triggered() noexcept;
-    void on_quitAction_triggered() noexcept;
+    void createNewLogbook() noexcept;
+    void openLogbook() noexcept;
+    void optimiseLogbook() noexcept;
+    void showSettings() noexcept;
+    void showLogbookSettings() noexcept;
+    void quit() noexcept;
 
     // View menu
     void onShowModulesChanged(bool enable) noexcept;
@@ -187,8 +187,8 @@ private slots:
     void toggleStatisticsDialog(bool enable) noexcept;
     void onStatisticsDialogDeleted() noexcept;
 
-    void on_stayOnTopAction_triggered(bool enable) noexcept;
-    void on_showMinimalAction_toggled(bool enable) noexcept;
+    void toggleStayOnTop(bool enable) noexcept;
+    void toggleMinimalUi(bool enable) noexcept;
 
     // Help menu
     void onAboutActionTriggered() noexcept;

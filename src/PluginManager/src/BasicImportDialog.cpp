@@ -233,9 +233,9 @@ void BasicImportDialog::onFileSelectionChanged() noexcept
 
     QString filePath;
     if (d->pluginSettings.isImportDirectoryEnabled()) {
-        filePath = QFileDialog::getExistingDirectory(this, tr("Import directory..."), exportPath);
+        filePath = QFileDialog::getExistingDirectory(this, tr("Import Directory"), exportPath);
     } else {
-        filePath = QFileDialog::getOpenFileName(this, tr("Import file..."), exportPath, d->fileFilter);
+        filePath = QFileDialog::getOpenFileName(this, tr("Import File"), exportPath, d->fileFilter);
     }
     if (!filePath.isEmpty()) {
         ui->pathLineEdit->setText(QDir::toNativeSeparators(filePath));

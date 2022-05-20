@@ -310,6 +310,14 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::handleCustomSpeedChanged);
     connect(d->replaySpeedUnitComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &MainWindow::handleReplaySpeedUnitSelected);
+    connect(ui->positionSlider, &QSlider::sliderPressed,
+            this, &MainWindow::onPositionSliderPressed);
+    connect(ui->positionSlider, &QSlider::valueChanged,
+            this, &MainWindow::onPositionSliderValueChanged);
+    connect(ui->positionSlider, &QSlider::sliderReleased,
+            this, &MainWindow::onPositionSliderReleased);
+    connect(ui->timestampTimeEdit, &QTimeEdit::timeChanged,
+            this, &MainWindow::onTimeStampTimeEditChanged);
 
     // Actions
 
@@ -345,6 +353,20 @@ void MainWindow::frenchConnection() noexcept
 
     // Menus
 
+    // File menu
+    connect(ui->newLogbookAction, &QAction::triggered,
+            this, &MainWindow::createNewLogbook);
+    connect(ui->openLogbookAction, &QAction::triggered,
+            this, &MainWindow::openLogbook);
+    connect(ui->optimiseLogbookAction, &QAction::triggered,
+            this, &MainWindow::optimiseLogbook);
+    connect(ui->showSettingsAction, &QAction::triggered,
+            this, &MainWindow::showSettings);
+    connect(ui->showLogbookSettingsAction, &QAction::triggered,
+            this, &MainWindow::showLogbookSettings);
+    connect(ui->quitAction, &QAction::triggered,
+            this, &MainWindow::quit);
+
     // View menu
     // Note: we explicitly connect to signal triggered - and not toggled - also in
     //       case of checkable QActions. Because we programmatically change the
@@ -358,12 +380,17 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::onShowReplaySpeedChanged);
 
     // Windows
-    connect(ui->showFlightAction, &QAction::toggled,
+    connect(ui->showFlightAction, &QAction::triggered,
             this, &MainWindow::toggleFlightDialog);
-    connect(ui->showSimulationVariablesAction, &QAction::toggled,
+    connect(ui->showSimulationVariablesAction, &QAction::triggered,
             this, &MainWindow::toggleSimulationVariablesDialog);
-    connect(ui->showStatisticsAction, &QAction::toggled,
+    connect(ui->showStatisticsAction, &QAction::triggered,
             this, &MainWindow::toggleStatisticsDialog);
+
+    connect(ui->stayOnTopAction, &QAction::triggered,
+            this, &MainWindow::toggleStayOnTop);
+    connect(ui->showMinimalAction, &QAction::triggered,
+            this, &MainWindow::toggleMinimalUi);
 
     // Help menu
     connect(ui->aboutAction, &QAction::triggered,
@@ -987,7 +1014,7 @@ double MainWindow::getCustomSpeedFactor() const
 
 // PRIVATE SLOTS
 
-void MainWindow::on_positionSlider_sliderPressed() noexcept
+void MainWindow::onPositionSliderPressed() noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
@@ -999,7 +1026,7 @@ void MainWindow::on_positionSlider_sliderPressed() noexcept
     }
 }
 
-void MainWindow::on_positionSlider_valueChanged(int value) noexcept
+void MainWindow::onPositionSliderValueChanged(int value) noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
@@ -1014,7 +1041,7 @@ void MainWindow::on_positionSlider_valueChanged(int value) noexcept
     }
 }
 
-void MainWindow::on_positionSlider_sliderReleased() noexcept
+void MainWindow::onPositionSliderReleased() noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect) {
@@ -1024,7 +1051,7 @@ void MainWindow::on_positionSlider_sliderReleased() noexcept
     }
 }
 
-void MainWindow::on_timestampTimeEdit_timeChanged(const QTime &time) noexcept
+void MainWindow::onTimeStampTimeEditChanged(const QTime &time) noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnect && (skyConnect->get().isIdle() || skyConnect->get().getState() == Connect::State::ReplayPaused)) {
@@ -1419,7 +1446,7 @@ void MainWindow::handleModuleActivated(const QString title, [[maybe_unused]] Mod
 
 // File menu
 
-void MainWindow::on_newLogbookAction_triggered() noexcept
+void MainWindow::createNewLogbook() noexcept
 {
     const QString logbookPath = DatabaseService::getNewLogbookPath(this);
     if (!logbookPath.isNull()) {
@@ -1430,7 +1457,7 @@ void MainWindow::on_newLogbookAction_triggered() noexcept
     }
 }
 
-void MainWindow::on_openLogbookAction_triggered() noexcept
+void MainWindow::openLogbook() noexcept
 {
     QString filePath = DatabaseService::getExistingLogbookPath(this);
     if (!filePath.isEmpty()) {
@@ -1438,7 +1465,7 @@ void MainWindow::on_openLogbookAction_triggered() noexcept
     }
 }
 
-void MainWindow::on_optimiseLogbookAction_triggered() noexcept
+void MainWindow::optimiseLogbook() noexcept
 {
     LogbookManager &logbookManager = LogbookManager::getInstance();
     QString logbookPath = logbookManager.getLogbookPath();
@@ -1448,7 +1475,7 @@ void MainWindow::on_optimiseLogbookAction_triggered() noexcept
     messageBox->setIcon(QMessageBox::Question);
     const std::int64_t oldSize = fileInfo.size();
     QPushButton *optimiseButton = messageBox->addButton(tr("&Optimise"), QMessageBox::AcceptRole);
-    messageBox->setWindowTitle(tr("Optimise logbook"));
+    messageBox->setWindowTitle(tr("Optimise Logbook"));
     messageBox->setText(tr("Logbook optimisation will regain unused space. The current %1 size is %2. Do you want to optimise the logbook?").arg(fileInfo.fileName(), d->unit.formatMemory(oldSize)));
     messageBox->setInformativeText(tr("The optimisation operation may take a while, depending on the logbook file size."));
     messageBox->setStandardButtons(QMessageBox::Cancel);
@@ -1475,19 +1502,19 @@ void MainWindow::on_optimiseLogbookAction_triggered() noexcept
     }
 }
 
-void MainWindow::on_showSettingsAction_triggered() noexcept
+void MainWindow::showSettings() noexcept
 {
     std::unique_ptr<SettingsDialog> settingsDialog = std::make_unique<SettingsDialog>(this);
     settingsDialog->exec();
 }
 
-void MainWindow::on_showLogbookSettingsAction_triggered() noexcept
+void MainWindow::showLogbookSettings() noexcept
 {
     std::unique_ptr<LogbookSettingsDialog> logbookSettingsDialog = std::make_unique<LogbookSettingsDialog>(this);
     logbookSettingsDialog->exec();
 }
 
-void MainWindow::on_quitAction_triggered() noexcept
+void MainWindow::quit() noexcept
 {
     close();
 }
@@ -1547,12 +1574,12 @@ void MainWindow::onStatisticsDialogDeleted() noexcept
     d->statisticsDialog = nullptr;
 }
 
-void MainWindow::on_stayOnTopAction_triggered(bool enable) noexcept
+void MainWindow::toggleStayOnTop(bool enable) noexcept
 {
     Settings::getInstance().setWindowStaysOnTopEnabled(enable);
 }
 
-void MainWindow::on_showMinimalAction_toggled(bool enable) noexcept
+void MainWindow::toggleMinimalUi(bool enable) noexcept
 {
     updateMinimalUi(enable);
 }

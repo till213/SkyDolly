@@ -224,7 +224,7 @@ bool ImportPluginBase::importFlights(const QStringList &filePaths, FlightService
             messageBox->setIcon(QMessageBox::Warning);
             QPushButton *proceedButton = messageBox->addButton(tr("&Proceed"), QMessageBox::AcceptRole);
             QPushButton *ignoreAllButton = messageBox->addButton(tr("&Ignore All Failures"), QMessageBox::YesRole);
-            messageBox->setWindowTitle(tr("Import failure"));
+            messageBox->setWindowTitle(tr("Import Failure"));
             messageBox->setText(tr("The file %1 could not be imported. Do you want to proceed with the remaining files in directory %2?").arg(fileInfo.fileName(), fileInfo.dir().dirName()));
             messageBox->setInformativeText(tr("Aborting will keep the already successfully imported flights and aircraft."));
             messageBox->setStandardButtons(QMessageBox::Cancel);

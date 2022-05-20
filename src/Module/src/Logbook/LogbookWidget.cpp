@@ -698,7 +698,7 @@ void LogbookWidget::deleteFlight() noexcept
             std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
             QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), messageBox.get());
 
-            messageBox->setWindowTitle(tr("Delete flight"));
+            messageBox->setWindowTitle(tr("Delete Flight"));
             messageBox->setText(tr("The flight %1 is about to be deleted. Deletion cannot be undone.").arg(d->selectedFlightId));
             messageBox->setInformativeText(tr("Do you want to delete the flight?"));
             QPushButton *deleteButton = messageBox->addButton(tr("&Delete"), QMessageBox::AcceptRole);

@@ -882,7 +882,7 @@ void FormationWidget::deleteAircraft() noexcept
         QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), messageBox.get());
 
         // Sequence numbers start at 1
-        messageBox->setWindowTitle(tr("Delete aircraft"));
+        messageBox->setWindowTitle(tr("Delete Aircraft"));
         messageBox->setText(tr("The aircraft with sequence number %1 is about to be deleted. Do you want to delete the aircraft?").arg(d->selectedRow + 1));
         messageBox->setInformativeText(tr("Deletion cannot be undone."));
         QPushButton *deleteButton = messageBox->addButton(tr("&Delete"), QMessageBox::AcceptRole);
@@ -1018,7 +1018,7 @@ void FormationWidget::on_resetAllTimeOffsetPushButton_clicked() noexcept
         std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
         QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), messageBox.get());
 
-        messageBox->setWindowTitle(tr("Reset time offsets"));
+        messageBox->setWindowTitle(tr("Reset Time Offsets"));
         messageBox->setText(tr("Do you want to reset all time offsets to 0?"));
         messageBox->setInformativeText(tr("The time offsets of all aircraft in this formation will be changed."));
         QPushButton *resetButton = messageBox->addButton(tr("&Reset Time Offsets"), QMessageBox::AcceptRole);
