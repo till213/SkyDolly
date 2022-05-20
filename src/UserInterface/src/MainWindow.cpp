@@ -301,18 +301,6 @@ void MainWindow::frenchConnection() noexcept
     connect(d->exportQActionGroup, &QActionGroup::triggered,
             this, &MainWindow::onExport);
 
-    // View menu
-    // Note: we explicitly connect to signal triggered - and not toggled - also in
-    //       case of checkable QActions. Because we programmatically change the
-    //       checked state of QActions based on connection state changes),
-    //       which emit the toggled signal. This would then result in a cascade of toggled signals
-    //       (e.g. going into minimal UI mode may uncheck the "Show Replay Speed" option) which
-    //       is hard to control -> so we simply only react to the general triggered signals
-    connect(ui->showModulesAction, &QAction::triggered,
-            this, &MainWindow::onShowModulesChanged);
-    connect(ui->showReplaySpeedAction, &QAction::triggered,
-            this, &MainWindow::onShowReplaySpeedChanged);
-
     // Settings
     connect(&Settings::getInstance(), &Settings::replayLoopChanged,
             this, &MainWindow::handleReplayLoopChanged);
@@ -351,7 +339,31 @@ void MainWindow::frenchConnection() noexcept
     connect(ui->loopReplayAction, &QAction::triggered,
             this, &MainWindow::toggleLoopReplay);
 
+    // Modules
+    connect(d->moduleManager.get(), &ModuleManager::activated,
+            this, &MainWindow::handleModuleActivated);
+
     // Menus
+
+    // View menu
+    // Note: we explicitly connect to signal triggered - and not toggled - also in
+    //       case of checkable QActions. Because we programmatically change the
+    //       checked state of QActions based on connection state changes),
+    //       which emit the toggled signal. This would then result in a cascade of toggled signals
+    //       (e.g. going into minimal UI mode may uncheck the "Show Replay Speed" option) which
+    //       is hard to control -> so we simply only react to the general triggered signals
+    connect(ui->showModulesAction, &QAction::triggered,
+            this, &MainWindow::onShowModulesChanged);
+    connect(ui->showReplaySpeedAction, &QAction::triggered,
+            this, &MainWindow::onShowReplaySpeedChanged);
+
+    // Windows
+    connect(ui->showFlightAction, &QAction::toggled,
+            this, &MainWindow::toggleFlightDialog);
+    connect(ui->showSimulationVariablesAction, &QAction::toggled,
+            this, &MainWindow::toggleSimulationVariablesDialog);
+    connect(ui->showStatisticsAction, &QAction::toggled,
+            this, &MainWindow::toggleStatisticsDialog);
 
     // Help menu
     connect(ui->aboutAction, &QAction::triggered,
@@ -361,9 +373,6 @@ void MainWindow::frenchConnection() noexcept
     connect(ui->onlineManualAction, &QAction::triggered,
             this, &MainWindow::onOnlineManualActionTriggered);
 
-    // Modules
-    connect(d->moduleManager.get(), &ModuleManager::activated,
-            this, &MainWindow::handleModuleActivated);
 }
 
 void MainWindow::initUi() noexcept
@@ -755,8 +764,11 @@ FlightDialog &MainWindow::getFlightDialog() noexcept
 {
     if (d->flightDialog == nullptr) {
         d->flightDialog = new FlightDialog(*d->flightService, this);
+        d->flightDialog->setAttribute(Qt::WA_DeleteOnClose);
         connect(d->flightDialog, &FlightDialog::visibilityChanged,
                 this, &MainWindow::updateWindowMenu);
+        connect(d->flightDialog, &QWidget::destroyed,
+                this, &MainWindow::onFlightDialogDeleted);
     }
     return *d->flightDialog;
 }
@@ -770,8 +782,11 @@ SimulationVariablesDialog &MainWindow::getSimulationVariablesDialog() noexcept
 {
     if (d->simulationVariablesDialog == nullptr) {
         d->simulationVariablesDialog = new SimulationVariablesDialog(this);
+        d->simulationVariablesDialog->setAttribute(Qt::WA_DeleteOnClose);
         connect(d->simulationVariablesDialog, &SimulationVariablesDialog::visibilityChanged,
                 this, &MainWindow::updateWindowMenu);
+        connect(d->simulationVariablesDialog, &QWidget::destroyed,
+                this, &MainWindow::onSimulationVariablesDialogDeleted);
     }
     return *d->simulationVariablesDialog;
 }
@@ -785,8 +800,11 @@ StatisticsDialog &MainWindow::getStatisticsDialog() noexcept
 {
     if (d->statisticsDialog == nullptr) {
         d->statisticsDialog = new StatisticsDialog(this);
+        d->statisticsDialog->setAttribute(Qt::WA_DeleteOnClose);
         connect(d->statisticsDialog, &StatisticsDialog::visibilityChanged,
                 this, &MainWindow::updateWindowMenu);
+        connect(d->statisticsDialog, &QWidget::destroyed,
+                this, &MainWindow::onStatisticsDialogDeleted);
     }
     return *d->statisticsDialog;
 }
@@ -1476,22 +1494,37 @@ void MainWindow::onShowReplaySpeedChanged(bool enable) noexcept
 
 // Window menu
 
-void MainWindow::on_showFlightAction_triggered(bool enable) noexcept
+void MainWindow::toggleFlightDialog(bool enable) noexcept
 {
     FlightDialog &dialog = getFlightDialog();
     dialog.setVisible(enable);
 }
 
-void MainWindow::on_showSimulationVariablesAction_triggered(bool enable) noexcept
+void MainWindow::onFlightDialogDeleted() noexcept
+{
+    d->flightDialog = nullptr;
+}
+
+void MainWindow::toggleSimulationVariablesDialog(bool enable) noexcept
 {
     SimulationVariablesDialog &dialog = getSimulationVariablesDialog();
     dialog.setVisible(enable);
 }
 
-void MainWindow::on_showStatisticsAction_triggered(bool enable) noexcept
+void MainWindow::onSimulationVariablesDialogDeleted() noexcept
+{
+    d->simulationVariablesDialog = nullptr;
+}
+
+void MainWindow::toggleStatisticsDialog(bool enable) noexcept
 {
     StatisticsDialog &dialog = getStatisticsDialog();
     dialog.setVisible(enable);
+}
+
+void MainWindow::onStatisticsDialogDeleted() noexcept
+{
+    d->statisticsDialog = nullptr;
 }
 
 void MainWindow::on_stayOnTopAction_triggered(bool enable) noexcept

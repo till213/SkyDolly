@@ -37,6 +37,7 @@
 - All question and information dialogs now have an explanatory title
 - Tables now have alternating colours per row
 - A question and confirmation dialog is now shown before and after logbook optimisation, also showing the before and after file sizes (after the optimisation)
+- Dialogs (flight, simulation variables, statistics) are now (only) created on demand and immediatelly released after use, resulting in a smaller memory footprint
 
 ### Bug Fixes
 - In the logbook module the date selection column width is now properly calculated (no month name is truncated)
@@ -60,7 +61,6 @@
   * Plugin managers are now in a common PLuginManager library
   * Plugins are now built after the main application
     - Especially on macOS this allows to place the plugins inside the previously built application bundle
-- Dialogs (flight, simulation variables, statistics) are now (only) created on demand, resulting in a smaller memory footprint after application start
 - And finally... on macOS the application icon set is now automatically generated at build time
 
 ## 0.10.0

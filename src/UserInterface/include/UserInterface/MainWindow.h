@@ -30,8 +30,11 @@
 
 #include <QMainWindow>
 
+class QButtonGroup;
+class QTime;
 class QEvent;
 class QResizeEvent;
+class QCloseEvent;
 
 #include <Module/Module.h>
 #include "UserInterfaceLib.h"
@@ -39,11 +42,6 @@ class QResizeEvent;
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
-
-class QButtonGroup;
-class QTime;
-class QResizeEvent;
-class QCloseEvent;
 
 class AboutDialog;
 class SettingsDialog;
@@ -175,15 +173,22 @@ private slots:
     void on_showSettingsAction_triggered() noexcept;
     void on_showLogbookSettingsAction_triggered() noexcept;
     void on_quitAction_triggered() noexcept;
+
     // View menu
     void onShowModulesChanged(bool enable) noexcept;
     void onShowReplaySpeedChanged(bool enable) noexcept;
+
     // Window menu
-    void on_showFlightAction_triggered(bool enable) noexcept;
-    void on_showSimulationVariablesAction_triggered(bool enable) noexcept;
-    void on_showStatisticsAction_triggered(bool enable) noexcept;
+    void toggleFlightDialog(bool enable) noexcept;
+    void onFlightDialogDeleted() noexcept;
+    void toggleSimulationVariablesDialog(bool enable) noexcept;
+    void onSimulationVariablesDialogDeleted() noexcept;
+    void toggleStatisticsDialog(bool enable) noexcept;
+    void onStatisticsDialogDeleted() noexcept;
+
     void on_stayOnTopAction_triggered(bool enable) noexcept;
     void on_showMinimalAction_toggled(bool enable) noexcept;
+
     // Help menu
     void onAboutActionTriggered() noexcept;
     void onAboutQtActionTriggered() noexcept;
