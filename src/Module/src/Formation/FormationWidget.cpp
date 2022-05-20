@@ -26,6 +26,7 @@
 #include <memory>
 #include <cstdint>
 #include <cmath>
+#include <optional>
 
 #include <QCoreApplication>
 #include <QByteArray>
@@ -246,24 +247,19 @@ void FormationWidget::hideEvent(QHideEvent *event) noexcept
 
 void FormationWidget::onStartRecording() noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        // The initial recording position is calculated for timestamp = 0 ("at the beginning")
-        const InitialPosition initialPosition = calculateRelativeInitialPositionToUserAircraft(0);
-        skyConnect->get().startRecording(SkyConnectIntf::RecordingMode::AddToFormation, initialPosition);
-    }
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    // The initial recording position is calculated for timestamp = 0 ("at the beginning")
+    const InitialPosition initialPosition = calculateRelativeInitialPositionToUserAircraft(0);
+    skyConnectManager.startRecording(SkyConnectIntf::RecordingMode::AddToFormation, initialPosition);
 }
 
 void FormationWidget::onStartReplay() noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnectOptional = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnectOptional) {
-        SkyConnectIntf &skyConnect = skyConnectOptional->get();
-        const bool fromStart = skyConnect.isAtEnd();
-        const std::int64_t timestamp = fromStart ? 0 : skyConnect.getCurrentTimestamp();
-        const InitialPosition initialPosition = calculateRelativeInitialPositionToUserAircraft(timestamp);
-        skyConnect.startReplay(fromStart, initialPosition);
-    }
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    const bool fromStart = skyConnectManager.isAtEnd();
+    const std::int64_t timestamp = fromStart ? 0 : skyConnectManager.getCurrentTimestamp();
+    const InitialPosition initialPosition = calculateRelativeInitialPositionToUserAircraft(timestamp);
+    skyConnectManager.startReplay(fromStart, initialPosition);
 }
 
 // PROTECTED SLOTS
@@ -593,8 +589,9 @@ void FormationWidget::updateUi() noexcept
     ui->aircraftTableWidget->setRowCount(flight.count());
     int rowIndex = 0;
     const int userAircraftIndex = flight.getUserAircraftIndex();
-    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    const bool recording = skyConnect && skyConnect->get().isRecording();
+
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    const bool recording = skyConnectManager.isInRecordingState();
     const QString tooltip = tr("Double-click to change user aircraft.");
     for (const auto &aircraft : flight) {
 
@@ -691,11 +688,10 @@ void FormationWidget::updateUi() noexcept
 
 void FormationWidget::updateEditUi() noexcept
 {
-    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    const bool inRecordingState = skyConnect && skyConnect->get().isInRecordingState();
+    const bool inRecordingState = SkyConnectManager::getInstance().isInRecordingState();
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
     bool userAircraftIndex = d->selectedAircraftIndex == flight.getUserAircraftIndex();
-    ui->userAircraftPushButton->setEnabled(d->selectedAircraftIndex != Flight::InvalidId && !userAircraftIndex);
+    ui->userAircraftPushButton->setEnabled(d->selectedAircraftIndex != Flight::InvalidId && !inRecordingState && !userAircraftIndex);
     const bool formation = flight.count() > 1;
     ui->deletePushButton->setEnabled(formation && !inRecordingState && d->selectedAircraftIndex != Flight::InvalidId);
 }
@@ -856,18 +852,20 @@ void FormationWidget::handleSelectionChanged() noexcept
 
 void FormationWidget::updateUserAircraftIndex() noexcept
 {
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    if (d->selectedRow != flight.getUserAircraftIndex()) {
-        getFlightService().updateUserAircraftIndex(flight, d->selectedRow);
-        std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnectOptional = SkyConnectManager::getInstance().getCurrentSkyConnect();
-        if (skyConnectOptional) {
-            SkyConnectIntf &skyConnect = skyConnectOptional->get();
-            // Also update the manually flown user aircraft's position
-            if (skyConnect.getReplayMode() == SkyConnectIntf::ReplayMode::UserAircraftManualControl) {
-                const Aircraft &aircraft = flight.getUserAircraft();
-                Position &position = aircraft.getPosition();
-                const PositionData positionData = position.interpolate(skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
-                skyConnect.setUserAircraftPosition(positionData);
+    if (!SkyConnectManager::getInstance().isInRecordingState()) {
+        Flight &flight = Logbook::getInstance().getCurrentFlight();
+        if (d->selectedRow != flight.getUserAircraftIndex()) {
+            getFlightService().updateUserAircraftIndex(flight, d->selectedRow);
+            std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnectOptional = SkyConnectManager::getInstance().getCurrentSkyConnect();
+            if (skyConnectOptional) {
+                SkyConnectIntf &skyConnect = skyConnectOptional->get();
+                // Also update the manually flown user aircraft's position
+                if (skyConnect.getReplayMode() == SkyConnectIntf::ReplayMode::UserAircraftManualControl) {
+                    const Aircraft &aircraft = flight.getUserAircraft();
+                    Position &position = aircraft.getPosition();
+                    const PositionData positionData = position.interpolate(skyConnect.getCurrentTimestamp(), TimeVariableData::Access::Seek);
+                    skyConnect.setUserAircraftPosition(positionData);
+                }
             }
         }
     }

@@ -62,14 +62,14 @@ public:
     void startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition()) noexcept override;
     void stopRecording() noexcept override;
     bool isRecording() const noexcept override;
+    bool isInRecordingState() const noexcept override;
 
     void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition()) noexcept override;
     void stopReplay() noexcept override;
     bool isReplaying() const noexcept override;
-    void stop() noexcept override;
-
-    bool isInRecordingState() const noexcept override;
     bool isInReplayState() const noexcept override;
+
+    void stop() noexcept override;
     bool isActive() const noexcept override;
 
     void setPaused(bool enabled) noexcept override;
@@ -82,15 +82,15 @@ public:
     void seek(std::int64_t timestamp) noexcept override;
     void handleAtEnd() noexcept override;
 
+    Connect::State getState() const noexcept override;
+    bool isConnected() const noexcept override;
+    bool isIdle() const noexcept override;
+
     std::int64_t getCurrentTimestamp() const noexcept override;
     bool isAtEnd() const noexcept override;
 
     double getReplaySpeedFactor() const noexcept override;
-    void setReplaySpeedFactor(double timeScale) noexcept override;
-
-    Connect::State getState() const noexcept override;
-    bool isConnected() const noexcept override;
-    bool isIdle() const noexcept override;
+    void setReplaySpeedFactor(double factor) noexcept override;
 
     double calculateRecordedSamplesPerSecond() const noexcept override;
 

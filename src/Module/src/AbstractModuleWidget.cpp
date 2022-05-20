@@ -79,29 +79,27 @@ QWidget &AbstractModuleWidget::getWidget() noexcept
 
 void AbstractModuleWidget::setRecording(bool enable) noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        blockSignals(true);
-        switch (skyConnect->get().getState()) {
-        case Connect::State::Recording:
-            if (!enable) {
-                skyConnect->get().stopRecording();
-            }
-            break;
-        case Connect::State::RecordingPaused:
-            if (enable) {
-                // The record button also unpauses a paused recording
-                setPaused(false);
-            }
-            break;
-        default:
-            if (enable) {
-                onStartRecording();
-            }
-            break;
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    blockSignals(true);
+    switch (skyConnectManager.getState()) {
+    case Connect::State::Recording:
+        if (!enable) {
+            skyConnectManager.stopRecording();
         }
-        blockSignals(false);
+        break;
+    case Connect::State::RecordingPaused:
+        if (enable) {
+            // The record button also unpauses a paused recording
+            setPaused(false);
+        }
+        break;
+    default:
+        if (enable) {
+            onStartRecording();
+        }
+        break;
     }
+    blockSignals(false);
 }
 
 void AbstractModuleWidget::setPaused(bool enable) noexcept
@@ -111,16 +109,14 @@ void AbstractModuleWidget::setPaused(bool enable) noexcept
 
 void AbstractModuleWidget::setPlaying(bool enable) noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        if (skyConnect->get().isPaused() && enable) {
-            // The play button also unpauses a paused replay
-            setPaused(false);
-        } else if (enable) {
-            onStartReplay();
-        } else {
-            skyConnect->get().stopReplay();
-        }
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    if (skyConnectManager.isPaused() && enable) {
+        // The play button also unpauses a paused replay
+        setPaused(false);
+    } else if (enable) {
+        onStartReplay();
+    } else {
+        skyConnectManager.stopReplay();
     }
 }
 
@@ -133,26 +129,18 @@ FlightService &AbstractModuleWidget::getFlightService() const noexcept
 
 void AbstractModuleWidget::onStartRecording() noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        skyConnect->get().startRecording(SkyConnectIntf::RecordingMode::SingleAircraft);
-    }
+    SkyConnectManager::getInstance().startRecording(SkyConnectIntf::RecordingMode::SingleAircraft);
 }
 
 void AbstractModuleWidget::onPaused(bool enable) noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        skyConnect->get().setPaused(enable);
-    }
+    SkyConnectManager::getInstance().setPaused(enable);
 }
 
 void AbstractModuleWidget::onStartReplay() noexcept
 {
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        skyConnect->get().startReplay(skyConnect->get().isAtEnd());
-    }
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    skyConnectManager.startReplay(skyConnectManager.isAtEnd());
 }
 
 // PROTECTED SLOTS

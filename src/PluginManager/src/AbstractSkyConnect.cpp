@@ -190,6 +190,11 @@ bool AbstractSkyConnect::isRecording() const noexcept
     return d->state == Connect::State::Recording;
 }
 
+bool AbstractSkyConnect::isInRecordingState() const noexcept
+{
+    return isRecording() || d->state == Connect::State::RecordingPaused;
+}
+
 void AbstractSkyConnect::startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition) noexcept
 {
     if (!isConnectedWithSim()) {
@@ -238,23 +243,18 @@ bool AbstractSkyConnect::isReplaying() const noexcept
     return d->state == Connect::State::Replay;
 }
 
+bool AbstractSkyConnect::isInReplayState() const noexcept
+{
+    return isReplaying() || d->state == Connect::State::ReplayPaused;
+}
+
 void AbstractSkyConnect::stop() noexcept
 {
-    if (d->state == Connect::State::Recording || d->state == Connect::State::RecordingPaused) {
+    if (isInRecordingState()) {
         stopRecording();
     } else {
         stopReplay();
     }
-}
-
-bool AbstractSkyConnect::isInRecordingState() const noexcept
-{
-    return isRecording() || d->state == Connect::State::RecordingPaused;
-}
-
-bool AbstractSkyConnect::isInReplayState() const noexcept
-{
-    return isReplaying() || d->state == Connect::State::ReplayPaused;
 }
 
 bool AbstractSkyConnect::isActive() const noexcept
@@ -390,6 +390,21 @@ Flight &AbstractSkyConnect::getCurrentFlight() const
     return d->currentFlight;
 }
 
+Connect::State AbstractSkyConnect::getState() const noexcept
+{
+    return d->state;
+}
+
+bool AbstractSkyConnect::isConnected() const noexcept
+{
+    return d->state != Connect::State::Disconnected;
+}
+
+bool AbstractSkyConnect::isIdle() const noexcept
+{
+    return d->state == Connect::State::Connected || d->state == Connect::State::Disconnected;
+}
+
 std::int64_t AbstractSkyConnect::getCurrentTimestamp() const noexcept
 {
     return d->currentTimestamp;
@@ -405,9 +420,9 @@ double AbstractSkyConnect::getReplaySpeedFactor() const noexcept
     return d->replaySpeedFactor;
 }
 
-void AbstractSkyConnect::setReplaySpeedFactor(double replaySpeedFactor) noexcept
+void AbstractSkyConnect::setReplaySpeedFactor(double factor) noexcept
 {
-    if (!qFuzzyCompare(d->replaySpeedFactor, replaySpeedFactor)) {
+    if (!qFuzzyCompare(d->replaySpeedFactor, factor)) {
         // If the elapsed timer is running...
         if (d->elapsedTimer.isValid()) {
             // ... then store the elapsed time measured with the previous scale...
@@ -415,23 +430,8 @@ void AbstractSkyConnect::setReplaySpeedFactor(double replaySpeedFactor) noexcept
             // ... and restart timer
             startElapsedTimer();
         }
-        d->replaySpeedFactor = replaySpeedFactor;
+        d->replaySpeedFactor = factor;
     }
-}
-
-Connect::State AbstractSkyConnect::getState() const noexcept
-{
-    return d->state;
-}
-
-bool AbstractSkyConnect::isConnected() const noexcept
-{
-    return d->state != Connect::State::Disconnected;
-}
-
-bool AbstractSkyConnect::isIdle() const noexcept
-{
-    return d->state == Connect::State::Connected || d->state == Connect::State::Disconnected;
 }
 
 double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept

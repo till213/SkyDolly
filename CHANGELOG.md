@@ -47,6 +47,10 @@
 - File paths are converted to native separators when shown in dialog boxes to the user
 - The settings dialog is now created on demand. This also fixes an issue with dialog z-ordering when the main application window is switched to "Stay on Top"
 - Depending on the selected module the persistence of a flight is different (single aircraft vs formation flight). In order not to mess up the persistence logic switching modules is now disabled while recording 
+- In order to prevent data loss when recording a flight the following functionality is now properly disabled during recording:
+  * No existing flight can be loaded (including by double-clicking onto a logbook row)
+  * No user aircraft can be switched in the formation (including by double-cicking onto an aircraft in the formation table)
+  * Creating a new logbook or opening an existing one is disabled
 
 ### Under The Hood
 - Introduction of the GeographicLib

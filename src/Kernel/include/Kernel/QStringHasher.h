@@ -36,7 +36,7 @@
 // https://www.kdab.com/qt-datatypes-in-standard-library/
 struct QStringHasher {
     std::size_t operator()(const QString &value) const noexcept {
-        return qHash(value) ;
+        return qHash(value);
     }
 };
 #endif

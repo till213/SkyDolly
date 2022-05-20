@@ -66,7 +66,7 @@ public:
     ~SkyConnectIntf() override = default;
 
     virtual bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept = 0;
-    virtual bool setUserAircraftPosition(const PositionData &positionData) noexcept = 0;
+    virtual bool setUserAircraftPosition(const PositionData & positionData) noexcept = 0;
     virtual bool freezeUserAircraft(bool enable) noexcept = 0;
 
     virtual ReplayMode getReplayMode() const noexcept = 0;
@@ -85,20 +85,6 @@ public:
      */
     virtual bool isRecording() const noexcept = 0;
 
-    virtual void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition()) noexcept = 0;
-    virtual void stopReplay() noexcept = 0;
-
-    /*!
-     * Returns whether SkyConnect is in \e Replay state, specifically:
-     *
-     * - Connect::State::Replay
-     *
-     * \return \c true if SkyConnect is in \e Replay state; \c false else
-     * \sa isInReplayState
-     */
-    virtual bool isReplaying() const noexcept = 0;
-    virtual void stop() noexcept = 0;
-
     /*!
      * Returns whether SkyConnect is in a recording state or not. A recording state means any of the following states:
      *
@@ -112,6 +98,20 @@ public:
      */
     virtual bool isInRecordingState() const noexcept = 0;
 
+
+    virtual void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition()) noexcept = 0;
+    virtual void stopReplay() noexcept = 0;
+
+    /*!
+     * Returns whether SkyConnect is in \e Replay state, specifically:
+     *
+     * - Connect::State::Replay
+     *
+     * \return \c true if SkyConnect is in \e Replay state; \c false else
+     * \sa isInReplayState
+     */
+    virtual bool isReplaying() const noexcept = 0;
+
     /*!
      * Returns whether SkyConnect is in a replay state or not. A replay state means any of the following states:
      *
@@ -124,6 +124,8 @@ public:
      * \sa isActive
      */
     virtual bool isInReplayState() const noexcept = 0;
+
+    virtual void stop() noexcept = 0;
 
     /*!
      * Returns whether SkyConnect is active or not. Active means any of the following states:
@@ -151,15 +153,15 @@ public:
     virtual void seek(std::int64_t timestamp) noexcept = 0;
     virtual void handleAtEnd() noexcept = 0;
 
+    virtual Connect::State getState() const noexcept = 0;
+    virtual bool isConnected() const noexcept = 0;
+    virtual bool isIdle() const noexcept = 0;
+
     virtual std::int64_t getCurrentTimestamp() const noexcept = 0;
     virtual bool isAtEnd() const noexcept = 0;
 
     virtual double getReplaySpeedFactor() const noexcept = 0;
-    virtual void setReplaySpeedFactor(double replaySpeed) noexcept = 0;
-
-    virtual Connect::State getState() const noexcept = 0;
-    virtual bool isConnected() const noexcept = 0;
-    virtual bool isIdle() const noexcept = 0;
+    virtual void setReplaySpeedFactor(double factor) noexcept = 0;
 
     virtual double calculateRecordedSamplesPerSecond() const noexcept = 0;
 
@@ -177,12 +179,13 @@ protected:
 
     /*!
      * Sets the new connection \c state. This method will also emit the
-     * signal #recordingStopped when the state changes from \e Recording
-     * to any other state.
+     * signal #recordingStarted and #recordingStopped when the state changes
+     * to/from \e Recording.
      *
      * \param state
      *        the new state to be set
      * \sa stateChanged
+     * \sa recordingStarted
      * \sa recordingStopped
      */
     virtual void setState(Connect::State state) noexcept = 0;

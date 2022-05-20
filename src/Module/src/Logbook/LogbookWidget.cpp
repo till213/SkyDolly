@@ -322,9 +322,7 @@ void LogbookWidget::updateFlightTable() noexcept
         d->flightInMemoryId = flight.getId();
         std::vector<FlightSummary> summaries = d->logbookService->getFlightSummaries(d->flightSelector);
 
-        const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-        std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = skyConnectManager.getCurrentSkyConnect();
-        const bool recording = skyConnect ? skyConnect->get().isInRecordingState() : false;
+        const bool recording = SkyConnectManager::getInstance().isInRecordingState();
         if (recording) {
             FlightSummary summary = flight.getFlightSummary();
             summary.flightId = ::RecordingInProgressId;
@@ -580,9 +578,7 @@ const QString LogbookWidget::getName() noexcept
 void LogbookWidget::onRecordingStarted() noexcept
 {
     updateEditUi();
-    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    const bool inRecordingState = skyConnect && skyConnect->get().isInRecordingState();
-    if (inRecordingState) {
+    if (SkyConnectManager::getInstance().isInRecordingState()) {
         const Flight &flight = Logbook::getInstance().getCurrentFlight();
         FlightSummary summary = flight.getFlightSummary();
         summary.flightId = ::RecordingInProgressId;
@@ -675,9 +671,7 @@ void LogbookWidget::handleSelectionChanged() noexcept
 
 void LogbookWidget::loadFlight() noexcept
 {
-    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    const bool inRecordingState = skyConnect && skyConnect->get().isInRecordingState();
-    if (!inRecordingState) {
+    if (!SkyConnectManager::getInstance().isInRecordingState()) {
         std::int64_t selectedFlightId = d->selectedFlightId;
         if (selectedFlightId != Flight::InvalidId) {
             const bool ok = d->flightService.restore(selectedFlightId, Logbook::getInstance().getCurrentFlight());
