@@ -32,6 +32,12 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
+# https://jonathanhamberg.com/post/cmake-embedding-git-hash/
+# Also: git show --no-patch --no-notes --pretty='%cd'[hash value]
+include(cmake/CheckGit.cmake)
+CheckGitSetup()
+configure_file(cmake/git_version.cpp.in cmake/git_version.cpp @ONLY)
+
 # Platform identifiers
 
 # https://gitlab.kitware.com/cmake/community/-/wikis/doc/tutorials/How-To-Write-Platform-Checks
@@ -164,6 +170,11 @@ target_sources(${APP_NAME}
         res/Info.plist.in
         res/SkyDolly.rc.in
 )
+
+target_include_directories(${APP_NAME}
+    PRIVATE
+        ${CMAKE_BINARY_DIR}/generated
+)
 target_link_libraries(${APP_NAME}
     PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets
@@ -172,6 +183,7 @@ target_link_libraries(${APP_NAME}
         Sky::Persistence
         Sky::PluginManager
         Sky::UserInterface
+        git_version
 )
 
 # Plugins

@@ -22,53 +22,30 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory>
+#ifndef HYPERLINKTEXTEDIT_H
+#define HYPERLINKTEXTEDIT_H
 
-#include <QDialog>
-#include <QFile>
-#include <QByteArray>
 #include <QTextEdit>
-#ifdef DEBUG
-#include <QDebug>
-#endif
+#include <QString>
 
-#include <Kernel/Version.h>
-#include "AboutDialog.h"
-#include "ui_AboutDialog.h"
+class QWidget;
+class QMouseEvent;
 
-// PUBLIC
+#include "WidgetLib.h"
 
-AboutDialog::AboutDialog(QWidget *parent) noexcept :
-    QDialog(parent),
-    ui(std::make_unique<Ui::AboutDialog>())
+class WIDGET_API HyperlinkTextEdit : public QTextEdit
 {
-    ui->setupUi(this);
-    initUi();
-#ifdef DEBUG
-    qDebug() << "AboutDialog::AboutDialog: CREATED";
-#endif
-}
+public:
+    explicit HyperlinkTextEdit(QWidget *parent = nullptr);
+    ~HyperlinkTextEdit() override = default;
 
-AboutDialog::~AboutDialog() noexcept
-{
-#ifdef DEBUG
-    qDebug() << "AboutDialog::~AboutDialog: DELETED";
-#endif
-}
+protected:
+    void mouseMoveEvent(QMouseEvent *event) noexcept override;
+    void mousePressEvent(QMouseEvent *event) noexcept override;
+    void mouseReleaseEvent(QMouseEvent *event) noexcept override;
 
-// PRIVATE
+private:
+    QString m_anchor;
+};
 
-void AboutDialog::initUi() noexcept
-{
-    setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
-    ui->aboutLabel->setText(tr("%1\nThe Black Sheep for Your Flight Recordings\n\nVersion %2\n\nMIT License").arg(Version::getApplicationName(), Version::getApplicationVersion()));
-
-    QFile file(":text/ThirdParty.md");
-    if (file.open(QFile::ReadOnly)) {
-        file.setTextModeEnabled(true);
-        ui->creditsTextEdit->setMarkdown(file.readAll());
-        ui->creditsTextEdit->setTextInteractionFlags(Qt::TextInteractionFlag::LinksAccessibleByMouse);
-        file.close();
-    }
-}
-
+#endif // HYPERLINKTEXTEDIT_H

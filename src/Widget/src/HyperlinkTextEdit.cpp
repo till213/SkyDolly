@@ -22,53 +22,46 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#include <memory>
-
-#include <QDialog>
-#include <QFile>
-#include <QByteArray>
+#include <QWidget>
 #include <QTextEdit>
-#ifdef DEBUG
-#include <QDebug>
-#endif
+#include <QApplication>
+#include <QMouseEvent>
+#include <QDesktopServices>
 
-#include <Kernel/Version.h>
-#include "AboutDialog.h"
-#include "ui_AboutDialog.h"
+#include "HyperlinkTextEdit.h"
 
 // PUBLIC
 
-AboutDialog::AboutDialog(QWidget *parent) noexcept :
-    QDialog(parent),
-    ui(std::make_unique<Ui::AboutDialog>())
+HyperlinkTextEdit::HyperlinkTextEdit(QWidget *parent)
+    : QTextEdit(parent)
 {
-    ui->setupUi(this);
-    initUi();
-#ifdef DEBUG
-    qDebug() << "AboutDialog::AboutDialog: CREATED";
-#endif
+    setMouseTracking(true);
 }
 
-AboutDialog::~AboutDialog() noexcept
+// PROTECTED
+
+void HyperlinkTextEdit::mouseMoveEvent(QMouseEvent *event) noexcept
 {
-#ifdef DEBUG
-    qDebug() << "AboutDialog::~AboutDialog: DELETED";
-#endif
-}
-
-// PRIVATE
-
-void AboutDialog::initUi() noexcept
-{
-    setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
-    ui->aboutLabel->setText(tr("%1\nThe Black Sheep for Your Flight Recordings\n\nVersion %2\n\nMIT License").arg(Version::getApplicationName(), Version::getApplicationVersion()));
-
-    QFile file(":text/ThirdParty.md");
-    if (file.open(QFile::ReadOnly)) {
-        file.setTextModeEnabled(true);
-        ui->creditsTextEdit->setMarkdown(file.readAll());
-        ui->creditsTextEdit->setTextInteractionFlags(Qt::TextInteractionFlag::LinksAccessibleByMouse);
-        file.close();
+    if (!anchorAt(event->pos()).isNull()) {
+        QApplication::setOverrideCursor(Qt::PointingHandCursor);
+    } else {
+        QApplication::restoreOverrideCursor();
     }
 }
 
+void HyperlinkTextEdit::mousePressEvent(QMouseEvent *event) noexcept
+{
+    m_anchor = anchorAt(event->pos());
+    if (!m_anchor.isNull()) {
+        QApplication::setOverrideCursor(Qt::PointingHandCursor);
+    }
+}
+
+void HyperlinkTextEdit::mouseReleaseEvent(QMouseEvent *event) noexcept
+{
+    if (!m_anchor.isNull()) {
+        QDesktopServices::openUrl(QUrl(m_anchor));
+        QApplication::restoreOverrideCursor();
+        m_anchor = QString();
+    }
+}

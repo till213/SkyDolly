@@ -29,6 +29,8 @@
 
 #include <QDialog>
 
+class QMousePressEvent;
+
 namespace Ui {
     class AboutDialog;
 }
