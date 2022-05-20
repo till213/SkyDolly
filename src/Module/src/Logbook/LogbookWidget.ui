@@ -111,9 +111,12 @@
       </property>
       <property name="minimumSize">
        <size>
-        <width>150</width>
+        <width>180</width>
         <height>0</height>
        </size>
+      </property>
+      <property name="toolTip">
+       <string>Select flights by date.</string>
       </property>
       <attribute name="headerVisible">
        <bool>false</bool>

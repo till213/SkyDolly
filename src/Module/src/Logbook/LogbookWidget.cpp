@@ -276,6 +276,10 @@ void LogbookWidget::initUi() noexcept
     QByteArray logbookState = Settings::getInstance().getLogbookState();
     ui->logTableWidget->horizontalHeader()->restoreState(logbookState);
 
+    QHeaderView *header = ui->logTreeWidget->header();
+    header->setSectionResizeMode(QHeaderView::Fixed);
+    header->resizeSection(1, 40);
+
     const int logTreeWidth = ui->logTreeWidget->minimumWidth();
     ui->splitter->setSizes({logTreeWidth, width() - logTreeWidth});
 
@@ -637,6 +641,7 @@ void LogbookWidget::updateDateSelectorUi() noexcept
 
             totalFlights += nofFlightsPerYear;
         }
+        logbookItem->setData(::NofFlightsColumn, Qt::DisplayRole, totalFlights);
 
         // Adjust column size when all items are expanded
         ui->logTreeWidget->expandAll();
@@ -649,9 +654,6 @@ void LogbookWidget::updateDateSelectorUi() noexcept
             item->setExpanded(true);
             item = item->child(0);
         }
-
-        logbookItem->setData(::NofFlightsColumn, Qt::DisplayRole, totalFlights);
-
         ui->logTreeWidget->blockSignals(false);
     }
 }
