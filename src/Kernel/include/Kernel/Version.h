@@ -81,21 +81,21 @@ public:
      *
      * \return the major version number
      */
-    int getMajor() noexcept;
+    int getMajor() const noexcept;
 
     /*!
      * Returns the minor version number.
      *
      * \return the minor version number
      */
-    int getMinor() noexcept;
+    int getMinor() const noexcept;
 
     /*!
      * Returns the patch version number.
      *
      * \return the patch version number
      */
-    int getPatch() noexcept;
+    int getPatch() const noexcept;
 
     /*!
      * Returns a string representation of the form "[major].[minor].[patch]" of this Version
@@ -189,6 +189,8 @@ public:
      * \return a QString containing the application name
      */
     static const QString getApplicationName() noexcept;
+
+    static QLatin1String getGitHash() noexcept;
 
 private:
     std::unique_ptr<VersionPrivate> d;

@@ -32,12 +32,6 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-# https://jonathanhamberg.com/post/cmake-embedding-git-hash/
-# Also: git show --no-patch --no-notes --pretty='%cd'[hash value]
-include(cmake/CheckGit.cmake)
-CheckGitSetup()
-configure_file(cmake/git_version.cpp.in cmake/git_version.cpp @ONLY)
-
 # Platform identifiers
 
 # https://gitlab.kitware.com/cmake/community/-/wikis/doc/tutorials/How-To-Write-Platform-Checks

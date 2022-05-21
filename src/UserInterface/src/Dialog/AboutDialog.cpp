@@ -61,7 +61,12 @@ AboutDialog::~AboutDialog() noexcept
 void AboutDialog::initUi() noexcept
 {
     setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
-    ui->aboutLabel->setText(tr("%1\nThe Black Sheep for Your Flight Recordings\n\nVersion %2\n\nMIT License").arg(Version::getApplicationName(), Version::getApplicationVersion()));
+    ui->aboutLabel->setText(tr(
+"%1\nThe Black Sheep for Your Flight Recordings\n\n"
+"Version %2\n"
+"Git hash: %\n\n"
+"MIT License").arg(Version::getApplicationName(), Version::getApplicationVersion())
+                            .arg(Version::getGitHash()));
 
     QFile file(":text/ThirdParty.md");
     if (file.open(QFile::ReadOnly)) {

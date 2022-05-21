@@ -83,9 +83,10 @@ namespace
     constexpr int InvalidColumn {-1};
     constexpr int FlightIdColumn {0};
 
-    // Date selection table
+    // Date selection tree view
     constexpr int DateColumn {0};
     constexpr int NofFlightsColumn {1};
+    constexpr int NofFlightsColumnWidth {40};
 
     constexpr int SearchTimeoutMSec {200};
 
@@ -278,7 +279,7 @@ void LogbookWidget::initUi() noexcept
 
     QHeaderView *header = ui->logTreeWidget->header();
     header->setSectionResizeMode(QHeaderView::Fixed);
-    header->resizeSection(1, 40);
+    header->resizeSection(::NofFlightsColumn, ::NofFlightsColumnWidth);
 
     const int logTreeWidth = ui->logTreeWidget->minimumWidth();
     ui->splitter->setSizes({logTreeWidth, width() - logTreeWidth});

@@ -29,6 +29,7 @@
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
 
+#include <git_version.h>
 #include <VersionConfig.h>
 #include "Version.h"
 
@@ -85,17 +86,17 @@ void Version::fromString(QStringView version) noexcept
 Version::~Version() noexcept
 {}
 
-int Version::getMajor() noexcept
+int Version::getMajor() const noexcept
 {
     return d->major;
 }
 
-int Version::getMinor() noexcept
+int Version::getMinor() const noexcept
 {
     return d->minor;
 }
 
-int Version::getPatch() noexcept
+int Version::getPatch() const noexcept
 {
     return d->patch;
 }
@@ -174,4 +175,9 @@ const QString Version::getOrganisationName() noexcept
 const QString Version::getApplicationName() noexcept
 {
     return VersionConfig::ApplicationName;
+}
+
+QLatin1String Version::getGitHash() noexcept
+{
+    return QLatin1String(::kGitHash);
 }
