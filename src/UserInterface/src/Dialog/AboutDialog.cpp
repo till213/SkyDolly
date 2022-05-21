@@ -76,7 +76,7 @@ void AboutDialog::initUi() noexcept
     if (file.open(QFile::ReadOnly)) {
         file.setTextModeEnabled(true);
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-        ui->creditsTextEdit->setText(file.readAll());
+        ui->creditsTextEdit->setText(file.readAll().replace("\\", ""));
 #else
         ui->creditsTextEdit->setMarkdown(file.readAll());
 #endif
