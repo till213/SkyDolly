@@ -4,7 +4,8 @@ Sky Dolly is developed against Qt 5.15, but also compiles fine with Qt 5.12 (whi
 ## Windows
 - Install the Microsoft Flight Simulator SDK
   * the SDK download is available with activated developer mode in MSFS
-  * default installation location: c:\MSFS SDK
+  * default installation location: c:\MSFS SDK\
+  * The build system evaluates the environment variable `MSFS_SDK` in order to detect the SDK installation path
 - Install Qt 5.15 for Windows, including Qt Creator
   * [https://www.qt.io/download](https://www.qt.io/download)
 

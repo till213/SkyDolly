@@ -59,6 +59,7 @@
 - Refactored the build system ("modern CMake")
   * Resources like the undulation file can be auomatically (optionally) downloaded at build configuration time (refer to the [BUILD.d](BUILD.md) instructions for details
   * Third-party libraries (git submodules) like the GeographicLib are automatically checked out
+  * The environment variable MSFS_SDK is now queried in order to detect the MSFS SDK install path
 - Model classes refactoring
   * Template based, in order to reduce repetitive code
   * Qt Signas and slots re-wiring
