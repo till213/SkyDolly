@@ -171,6 +171,7 @@ public slots:
     virtual void removeAiObject(std::int64_t removedAircraftId) noexcept = 0;
     virtual void syncAiObjectsWithFlight() noexcept = 0;
     virtual void updateUserAircraft(int newUserAircraftIndex, int previousUserAircraftIndex) noexcept = 0;
+    virtual void onTimeOffsetChanged() noexcept = 0;
 
 protected:
     SkyConnectIntf(QObject *parent = nullptr) noexcept

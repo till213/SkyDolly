@@ -344,6 +344,8 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
                     skyPlugin, &SkyConnectIntf::removeAiObject);
             connect(&flight, &Flight::userAircraftChanged,
                     skyPlugin, &SkyConnectIntf::updateUserAircraft);
+            connect(&flight, &Flight::timeOffsetChanged,
+                    skyPlugin, &SkyConnectIntf::onTimeOffsetChanged);
             d->currentPluginUuid = uuid;
             ok = true;
         } else {

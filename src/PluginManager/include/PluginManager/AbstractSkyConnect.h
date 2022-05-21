@@ -100,6 +100,7 @@ public slots:
     void removeAiObject(std::int64_t removedAircraftId) noexcept override;
     void syncAiObjectsWithFlight() noexcept override;
     void updateUserAircraft(int newUserAircraftIndex, int previousUserAircraftIndex) noexcept override;
+    void onTimeOffsetChanged() noexcept override;
 
 protected:
     void setState(Connect::State state) noexcept override;

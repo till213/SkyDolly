@@ -502,6 +502,14 @@ void AbstractSkyConnect::updateUserAircraft(int newUserAircraftIndex, int previo
     sendAircraftData(d->currentTimestamp, TimeVariableData::Access::Seek, AircraftSelection::UserAircraft);
 }
 
+void AbstractSkyConnect::onTimeOffsetChanged() noexcept
+{
+    // Only send the updated positions (due to a timeo ffset change) when replay is paused
+    if (getState() == Connect::State::ReplayPaused) {
+        seek(getCurrentTimestamp());
+    }
+}
+
 // PROTECTED
 
 void AbstractSkyConnect::setState(Connect::State state) noexcept

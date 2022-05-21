@@ -139,6 +139,13 @@ signals:
 
     void aircraftInfoChanged(Aircraft &aircraft);
     void tailNumberChanged(Aircraft &aircraft);
+
+    /*!
+     * Emitted whenever the time offset of the \c aircraft has changed.
+     *
+     * \param aircraft
+     *        the aircraft whose time offset has changed
+     */
     void timeOffsetChanged(Aircraft &aircraft);
 
     void aircraftStored(Aircraft &aircraft);
