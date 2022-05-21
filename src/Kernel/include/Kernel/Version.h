@@ -29,7 +29,7 @@
 
 #include <QString>
 #include <QStringView>
-#include <QDate>
+#include <QDateTime>
 
 #include "KernelLib.h"
 
@@ -191,6 +191,8 @@ public:
     static const QString getApplicationName() noexcept;
 
     static QLatin1String getGitHash() noexcept;
+
+    static QDateTime getGitDate() noexcept;
 
 private:
     std::unique_ptr<VersionPrivate> d;

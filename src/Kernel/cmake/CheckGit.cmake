@@ -1,14 +1,14 @@
 set(CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_DIR})
-if (NOT DEFINED pre_configure_dir)
-    set(pre_configure_dir ${CMAKE_CURRENT_LIST_DIR})
+if (NOT DEFINED PRE_CONFIGURE_DIR)
+    set(PRE_CONFIGURE_DIR ${CMAKE_CURRENT_LIST_DIR})
 endif ()
 
-if (NOT DEFINED post_configure_dir)
-    set(post_configure_dir ${CMAKE_BINARY_DIR}/generated)
+if (NOT DEFINED POST_CONFIGURE_DIR)
+    set(POST_CONFIGURE_DIR ${CMAKE_BINARY_DIR}/generated)
 endif ()
 
-set(pre_configure_file ${pre_configure_dir}/GitInfo.cpp.in)
-set(post_configure_file ${post_configure_dir}/GitInfo.cpp)
+set(PRE_CONFIGURE_FILE ${PRE_CONFIGURE_DIR}/GitInfo.cpp.in)
+set(POST_CONFIGURE_FILE ${POST_CONFIGURE_DIR}/GitInfo.cpp)
 
 function(CheckGitWrite git_hash)
     file(WRITE ${CMAKE_BINARY_DIR}/git-state.txt ${git_hash})
@@ -33,12 +33,12 @@ function(CheckGitVersion)
         )
 
     CheckGitRead(GIT_HASH_CACHE)
-    if (NOT EXISTS ${post_configure_dir})
-        file(MAKE_DIRECTORY ${post_configure_dir})
+    if (NOT EXISTS ${POST_CONFIGURE_DIR})
+        file(MAKE_DIRECTORY ${POST_CONFIGURE_DIR})
     endif ()
 
-    if (NOT EXISTS ${post_configure_dir}/GitInfo.h)
-        file(COPY ${pre_configure_dir}/GitInfo.h DESTINATION ${post_configure_dir})
+    if (NOT EXISTS ${POST_CONFIGURE_DIR}/GitInfo.h)
+        file(COPY ${PRE_CONFIGURE_DIR}/GitInfo.h DESTINATION ${POST_CONFIGURE_DIR})
     endif()
 
     if (NOT DEFINED GIT_HASH_CACHE)
@@ -47,12 +47,20 @@ function(CheckGitVersion)
 
     # Only update the GitInfo.cpp if the hash has changed. This will
     # prevent us from rebuilding the project more than we need to.
-    if (NOT ${GIT_HASH} STREQUAL "${GIT_HASH_CACHE}" OR NOT EXISTS ${post_configure_file})
+    if (NOT ${GIT_HASH} STREQUAL "${GIT_HASH_CACHE}" OR NOT EXISTS ${POST_CONFIGURE_FILE})
         # Set che GIT_HASH_CACHE variable the next build won't have
         # to regenerate the source file.
         CheckGitWrite(${GIT_HASH})
 
-        configure_file(${pre_configure_file} ${post_configure_file} @ONLY)
+        # Also get the date of the latest commit hash of the working branch
+        execute_process(
+            COMMAND git show --no-patch --no-notes --pretty=%cd --date=iso ${GIT_HASH}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+            OUTPUT_VARIABLE GIT_ISO_DATE
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            )
+
+        configure_file(${PRE_CONFIGURE_FILE} ${POST_CONFIGURE_FILE} @ONLY)
     endif ()
 
 endfunction()
@@ -61,11 +69,11 @@ function(CheckGitSetup)
 
     add_custom_target(AlwaysCheckGit COMMAND ${CMAKE_COMMAND}
         -DRUN_CHECK_GIT_VERSION=1
-        -Dpre_configure_dir=${pre_configure_dir}
-        -Dpost_configure_file=${post_configure_dir}
+        -DPRE_CONFIGURE_DIR=${PRE_CONFIGURE_DIR}
+        -DPOST_CONFIGURE_FILE=${POST_CONFIGURE_DIR}
         -DGIT_HASH_CACHE=${GIT_HASH_CACHE}
         -P ${CURRENT_LIST_DIR}/CheckGit.cmake
-        BYPRODUCTS ${post_configure_file}
+        BYPRODUCTS ${POST_CONFIGURE_FILE}
         )
 
     add_library(GitInfo ${CMAKE_BINARY_DIR}/generated/GitInfo.cpp)

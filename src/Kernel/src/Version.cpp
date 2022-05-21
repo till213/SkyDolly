@@ -28,8 +28,9 @@
 #include <QStringLiteral>
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
+#include <QDateTime>
 
-#include <git_version.h>
+#include <GitInfo.h>
 #include <VersionConfig.h>
 #include "Version.h"
 
@@ -49,7 +50,7 @@ public:
     int patch;
 
     static inline const QString CodeName {QStringLiteral("Beasty Boeing")};
-    static inline const QString UserVersion {QStringLiteral("22.02")};
+    static inline const QString UserVersion {QStringLiteral("22.05")};
 };
 
 // PUBLIC
@@ -179,5 +180,10 @@ const QString Version::getApplicationName() noexcept
 
 QLatin1String Version::getGitHash() noexcept
 {
-    return QLatin1String(::kGitHash);
+    return QLatin1String(GitInfo::GitHash);
+}
+
+QDateTime Version::getGitDate() noexcept
+{
+    return QDateTime::fromString(GitInfo::GitIsoDate, Qt::ISODate);
 }

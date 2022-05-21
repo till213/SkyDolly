@@ -1,6 +1,9 @@
-#ifndef GIT_VERSION_H
-#define GIT_VERSION_H
+#ifndef GIT_INFO_H
+#define GIT_INFO_H
 
-extern const char *kGitHash;
+namespace GitInfo {
+    extern const char *GitHash;
+    extern const char *GitIsoDate;
+}
 
-#endif // GIT_VERSION_H
+#endif // GIT_INFO_H

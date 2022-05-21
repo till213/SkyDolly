@@ -14,7 +14,7 @@ target_compile_definitions(${LIBRARY_NAME}
 
 # https://jonathanhamberg.com/post/cmake-embedding-git-hash/
 # Also: git show --no-patch --no-notes --pretty='%cd'[hash value]
-set(pre_configure_dir ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(PRE_CONFIGURE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 include(cmake/CheckGit.cmake)
 CheckGitSetup()
 configure_file(src/VersionConfig.h.in generated/VersionConfig.h @ONLY)

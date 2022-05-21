@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>520</width>
-    <height>270</height>
+    <height>310</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>&amp;About</string>
+       <string>&amp;Sky Dolly</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
@@ -90,7 +90,7 @@
          <property name="minimumSize">
           <size>
            <width>480</width>
-           <height>100</height>
+           <height>140</height>
           </size>
          </property>
          <property name="text">

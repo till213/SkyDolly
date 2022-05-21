@@ -15,24 +15,21 @@
 - Charles Karney
 - https://geographiclib.sourceforge.io/
 
-The MIT License (MIT).
-
+The MIT License (MIT).\
 Copyright (c) 2008-2022, Charles Karney
 
 ## Ordered-Map
 - Thibaut Goetghebuer-Planchon (Tessil)
 - https://github.com/Tessil/ordered-map
 
-MIT License
-
+MIT License\
 Copyright (c) 2017 Thibaut Goetghebuer-Planchon
 
 ## IGC Parser
 - Tobias Bieniek
 - https://github.com/Turbo87/igc-parser
 
-The MIT License (MIT)
-
+The MIT License (MIT)\
 Copyright (c) 2017 Tobias Bieniek
 
 ## icns.cmake
@@ -40,12 +37,13 @@ Copyright (c) 2017 Tobias Bieniek
 - https://gist.github.com/Qix-/f4090181e55ea365633da8c3d0ab5249
 - License: CC0
 
+
 ## CheckGit.cmake
 - Jonathan Hamberg
 - https://jonathanhamberg.com/post/cmake-embedding-git-hash/
 
 \
-The MIT License (MIT).
+The MIT License (MIT).\
 \
 Permission is hereby granted, free of charge, to any person\
 obtaining a copy of this software and associated documentation\
