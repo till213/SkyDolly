@@ -300,14 +300,17 @@ void MSFSSimConnectPlugin::onRecordingSampleRateChanged(SampleRate::SampleRate s
 bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeVariableData::Access access, AircraftSelection aircraftSelection) noexcept
 {
     const Flight &flight = getCurrentFlight();
-    const std::int64_t userAircraftId = flight.getUserAircraft().getId();
+    // In case of "fly with formation" always send all formation aircraft (as AI aircraft): we simply do this
+    // by setting the userAircraftId to an invalid ID, so no aircraft in the Flight is considered the "user aircraft"
+    // (which is really being controlled by the user as an "additional aircraft", next to the formation)
+    const std::int64_t userAircraftId = getReplayMode() != ReplayMode::FlyWithFormation ?  flight.getUserAircraft().getId() : Aircraft::InvalidId;
     bool ok = true;
     for (auto &aircraft : flight) {
 
         // Replay AI aircraft - if any - during recording (if all aircraft are selected for replay)
         const bool isUserAircraft = aircraft->getId() == userAircraftId;
         if (isUserAircraft && getReplayMode() == ReplayMode::UserAircraftManualControl) {
-            // The user aircraft is manually flown
+            // The user aircraft (of the formation) is manually flown
             continue;
         }
 

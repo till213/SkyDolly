@@ -124,6 +124,7 @@ void AbstractSkyConnect::setReplayMode(ReplayMode replayMode) noexcept
 {
     if (d->replayMode != replayMode) {
         d->replayMode = replayMode;
+        // @todo improve me: add/remove single (user) aircraft (instead of re-creating the entire formation)
         syncAiObjectsWithFlight();
         updateUserAircraftFreeze();
     }
