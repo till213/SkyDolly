@@ -427,16 +427,10 @@ inline bool MSFSSimConnectPlugin::updateAndSendEngineStartEvent(std::int64_t obj
     case EngineState::Starting:
         if (engineData.hasCombustion()) {
             d->engineState = EngineState::Started;
-#ifdef DEBUG
-            qDebug("SkyConnectImpl::updateAndSendEngineState: aircraft ID: %lld: STARTING -> ENGINE STARTED", objectId);
-#endif
         } else if (!engineData.hasEngineStarterEnabled()) {
              // STARTING: Engine started disabled, no combustion -> STOPPED
             res = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::toUnderlyingType(Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
             d->engineState = EngineState::Stopped;
-#ifdef DEBUG
-            qDebug("SkyConnectImpl::updateAndSendEngineState: aircraft ID: %lld STARTING -> ENGINE STOPPED", objectId);
-#endif
         }
         break;
     case EngineState::Started:
@@ -444,9 +438,6 @@ inline bool MSFSSimConnectPlugin::updateAndSendEngineStartEvent(std::int64_t obj
             // STARTED: No combustion -> STOPPED
             res = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::toUnderlyingType(Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
             d->engineState = EngineState::Stopped;
-#ifdef DEBUG
-            qDebug("SkyConnectImpl::updateAndSendEngineState: aircraft ID: %lld STARTED -> ENGINE STOPPED", objectId);
-#endif
         }
         break;
     case EngineState::Stopped:
@@ -456,9 +447,6 @@ inline bool MSFSSimConnectPlugin::updateAndSendEngineStartEvent(std::int64_t obj
         if (engineData.hasEngineStarterEnabled() || engineData.hasCombustion()) {
             res = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::toUnderlyingType(Event::EngineAutoStart), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
             d->engineState = EngineState::Starting;
-#ifdef DEBUG
-            qDebug("SkyConnectImpl::updateAndSendEngineState: aircraft ID: %lld STOPPED -> ENGINE STARTING", objectId);
-#endif
         }
         break;
     default:
@@ -470,24 +458,6 @@ inline bool MSFSSimConnectPlugin::updateAndSendEngineStartEvent(std::int64_t obj
             res = ::SimConnect_TransmitClientEvent(d->simConnectHandle, objectId, Enum::toUnderlyingType(Event::EngineAutoShutdown), 0, ::SIMCONNECT_GROUP_PRIORITY_HIGHEST, ::SIMCONNECT_EVENT_FLAG_GROUPID_IS_PRIORITY);
             d->engineState = EngineState::Stopped;
         }
-#ifdef DEBUG
-        QString newEngineStateName;
-        switch (d->engineState) {
-        case EngineState::Starting:
-            newEngineStateName = "Starting";
-            break;
-        case EngineState::Started:
-            newEngineStateName = "Started";
-            break;
-        case EngineState::Stopped:
-            newEngineStateName = "Stopped";
-            break;
-        default:
-            newEngineStateName = "Unknown";
-            break;
-        }
-        qDebug("SkyConnectImpl::updateAndSendEngineState: aircraft ID: %lld STATE UNKNOWN -> NEW ENGINE STATE: %s", objectId, qPrintable(newEngineStateName));
-#endif
         break;
     }
 
@@ -509,7 +479,7 @@ bool MSFSSimConnectPlugin::connectWithSim() noexcept
         setupRequestData();
     }
 #ifdef DEBUG
-    qDebug("SkyConnectImpl::connectWithSim: CONNECT with SIM, handle: %p success: %d", d->simConnectHandle, result == S_OK);
+    qDebug("MSFSSimConnectPlugin::connectWithSim: CONNECT with SIM, handle: %p success: %d", d->simConnectHandle, result == S_OK);
 #endif
     const bool ok = result == S_OK;
     if (ok) {
@@ -757,13 +727,13 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         switch (static_cast<Event>(evt->uEventID)) {
         case Event::SimStart:
 #ifdef DEBUG
-            qDebug("SIMCONNECT_RECV_ID_EVENT: SIMSTART event");
+            qDebug("MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: SIMSTART event");
 #endif
             break;
 
         case Event::Pause:
 #ifdef DEBUG
-            qDebug("SIMCONNECT_RECV_ID_EVENT: PAUSE event: %lu", evt->dwData);
+            qDebug("MSFSSimConnectPlugin::dispatchSIMCONNECT_RECV_ID_EVENT: PAUSE event: %lu", evt->dwData);
 #endif
             // It seems that the pause event is currently only triggered by selecting "Pause Simulation"
             // in the developer mode (FS 2020), but neither when "active pause" is selected nor when ESC
@@ -778,7 +748,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
 
         case Event::Crashed:
 #ifdef DEBUG
-            qDebug("SIMCONNECT_RECV_ID_EVENT: CRASHED event");
+            qDebug("MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CRASHED event");
 #endif
             switch (skyConnect->getState()) {
             case Connect::State::Recording:
@@ -990,7 +960,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         std::int64_t simulationObjectId = objectData->dwObjectID;
         if (skyConnect->d->simConnectAi->registerObjectId(objectData->dwRequestID, simulationObjectId)) {
 #ifdef DEBUG
-            qDebug("SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID: Request ID: %lu, asssigned object ID: %lu",
+            qDebug("MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID: Request ID: %lu, asssigned object ID: %lu",
                    objectData->dwRequestID, objectData->dwObjectID);
 #endif
             ::SimConnect_AIReleaseControl(skyConnect->d->simConnectHandle, simulationObjectId, Enum::toUnderlyingType(SimConnectType::DataRequest::AiReleaseControl));
@@ -1000,7 +970,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
             // just generated AI object again
             skyConnect->d->simConnectAi->removeByObjectId(objectData->dwObjectID);
 #ifdef DEBUG
-            qDebug("SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID: orphaned AI object response for original request %lu, DESTROYING AI Object again: %lu", objectData->dwRequestID, objectData->dwObjectID);
+            qDebug("MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID: orphaned AI object response for original request %lu, DESTROYING AI Object again: %lu", objectData->dwRequestID, objectData->dwObjectID);
 #endif
         }
         break;
@@ -1008,14 +978,14 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
 
     case ::SIMCONNECT_RECV_ID_QUIT:
 #ifdef DEBUG
-        qDebug("SIMCONNECT_RECV_ID_QUIT");
+        qDebug("MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_QUIT");
 #endif
         skyConnect->close();
         break;
 
     case ::SIMCONNECT_RECV_ID_OPEN:
 #ifdef DEBUG
-        qDebug("SIMCONNECT_RECV_ID_OPEN");
+        qDebug("MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_OPEN");
 #endif
         break;
 
@@ -1023,14 +993,14 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
 #ifdef DEBUG
     {
         SIMCONNECT_RECV_EXCEPTION *exception = static_cast<SIMCONNECT_RECV_EXCEPTION *>(receivedData);
-        qDebug("SIMCONNECT_RECV_ID_EXCEPTION: A server exception %lu happened: sender ID: %lu index: %lu data: %lu",
+        qDebug("MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EXCEPTION: A server exception %lu happened: sender ID: %lu index: %lu data: %lu",
                exception->dwException, exception->dwSendID, exception->dwIndex, cbData);
     }
 #endif
         break;
     case ::SIMCONNECT_RECV_ID_NULL:
 #ifdef DEBUG
-        qDebug("SIMCONNECT_RECV_ID_NULL");
+        qDebug("MSFSSimConnectPlugin::dispatch: IMCONNECT_RECV_ID_NULL");
 #endif
         break;
 

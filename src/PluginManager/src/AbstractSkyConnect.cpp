@@ -510,6 +510,16 @@ void AbstractSkyConnect::onTimeOffsetChanged() noexcept
     }
 }
 
+void AbstractSkyConnect::onTailNumberChanged(Aircraft &aircraft) noexcept
+{
+    onRemoveAiObject(aircraft.getId());
+    onAddAiObject(aircraft);
+    // Only send the updated positions (due to a timeo ffset change) when replay is paused
+    if (getState() == Connect::State::ReplayPaused) {
+        seek(getCurrentTimestamp());
+    }
+}
+
 // PROTECTED
 
 void AbstractSkyConnect::setState(Connect::State state) noexcept
