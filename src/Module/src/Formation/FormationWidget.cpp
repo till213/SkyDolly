@@ -26,7 +26,6 @@
 #include <memory>
 #include <cstdint>
 #include <cmath>
-#include <optional>
 
 #include <QCoreApplication>
 #include <QByteArray>
@@ -728,14 +727,11 @@ void FormationWidget::updateRelativePosition() noexcept
         }
     }
 
-    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnectOptional = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnectOptional) {
-        SkyConnectIntf &skyConnect = skyConnectOptional->get();
-        // When "Fly with formation" is selected also update the manually flown user aircraft position ("at the current timestamp")
-        if (skyConnect.getReplayMode() == SkyConnectIntf::ReplayMode::FlyWithFormation) {
-            const InitialPosition initialPosition = calculateRelativeInitialPositionToUserAircraft(skyConnect.getCurrentTimestamp());
-            skyConnect.setUserAircraftInitialPosition(initialPosition);
-        }
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    // When "Fly with formation" is selected also update the manually flown user aircraft position ("at the current timestamp")
+    if (skyConnectManager.getReplayMode() == SkyConnectIntf::ReplayMode::FlyWithFormation) {
+        const InitialPosition initialPosition = calculateRelativeInitialPositionToUserAircraft(skyConnectManager.getCurrentTimestamp());
+        skyConnectManager.setUserAircraftInitialPosition(initialPosition);
     }
 }
 
@@ -763,21 +759,16 @@ void FormationWidget::updateTimeOffsetUi() noexcept
 
 void FormationWidget::updateReplayUi() noexcept
 {
-    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        switch (skyConnect->get().getReplayMode()) {
-        case SkyConnectIntf::ReplayMode::Normal:
-            ui->replayModeComboBox->setCurrentIndex(ReplayMode::NormalIndex);
-            break;
-        case SkyConnectIntf::ReplayMode::UserAircraftManualControl:
-            ui->replayModeComboBox->setCurrentIndex(ReplayMode::ManualControlUserAircraftIndex);
-            break;
-        case SkyConnectIntf::ReplayMode::FlyWithFormation:
-            ui->replayModeComboBox->setCurrentIndex(ReplayMode::FlyWithFormationIndex);
-            break;
-        }
-    } else {
+    switch (SkyConnectManager::getInstance().getReplayMode()) {
+    case SkyConnectIntf::ReplayMode::Normal:
         ui->replayModeComboBox->setCurrentIndex(ReplayMode::NormalIndex);
+        break;
+    case SkyConnectIntf::ReplayMode::UserAircraftManualControl:
+        ui->replayModeComboBox->setCurrentIndex(ReplayMode::ManualControlUserAircraftIndex);
+        break;
+    case SkyConnectIntf::ReplayMode::FlyWithFormation:
+        ui->replayModeComboBox->setCurrentIndex(ReplayMode::FlyWithFormationIndex);
+        break;
     }
     updateToolTips();
 }
