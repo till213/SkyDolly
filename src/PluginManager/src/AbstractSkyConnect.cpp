@@ -123,10 +123,25 @@ SkyConnectIntf::ReplayMode AbstractSkyConnect::getReplayMode() const noexcept
 void AbstractSkyConnect::setReplayMode(ReplayMode replayMode) noexcept
 {
     if (d->replayMode != replayMode) {
-        removeAiObjects();
+        switch (d->replayMode) {
+        case ReplayMode::Normal:
+            break;
+        case ReplayMode::UserAircraftManualControl:
+            break;
+        case ReplayMode::FlyWithFormation:
+            onRemoveAiObject(d->currentFlight.getUserAircraft().getId());
+            break;
+        }
         d->replayMode = replayMode;
-        // @todo improve me: add/remove single (user) aircraft (instead of re-creating the entire formation)
-        createAiObjects();
+        switch (d->replayMode) {
+        case ReplayMode::Normal:
+            break;
+        case ReplayMode::UserAircraftManualControl:
+            break;
+        case ReplayMode::FlyWithFormation:
+            onAddAiObject(d->currentFlight.getUserAircraft());
+            break;
+        }
         updateUserAircraftFreeze();
     }
     sendAircraftData(d->currentTimestamp, TimeVariableData::Access::Seek, AircraftSelection::All);
@@ -472,13 +487,7 @@ void AbstractSkyConnect::addAiObject(const Aircraft &aircraft) noexcept
 void AbstractSkyConnect::removeAiObjects() noexcept
 {
     if (isConnected()) {
-        // In case "fly with formation" is selected also remove the "formation user aircraft"
-        const std::int64_t userAircraftId = getReplayMode() != ReplayMode::FlyWithFormation ?  d->currentFlight.getUserAircraft().getId() : Aircraft::InvalidId;
-        for (const auto &aircraft : d->currentFlight) {
-            if (aircraft->getId() != userAircraftId) {
-                onRemoveAiObject(aircraft->getId());
-            }
-        }
+        onRemoveAllAiObjects();
     }
 }
 
