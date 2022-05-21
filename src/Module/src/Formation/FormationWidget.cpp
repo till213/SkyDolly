@@ -381,8 +381,13 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::updateRelativeDistance);
     connect(ui->verticalDistanceSlider, &QSlider::valueChanged,
             this, &FormationWidget::updateRelativeDistance);
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+    connect(ui->replayModeComboBox, QOverload<int>::of(&QComboBox::activated),
+            this, &FormationWidget::updateReplayMode);
+#else
     connect(ui->replayModeComboBox, &QComboBox::activated,
             this, &FormationWidget::updateReplayMode);
+#endif
 
     connect(ui->fastBackwardOffsetPushButton, &QPushButton::clicked,
             [&] { changeTimeOffset(- ::LargeTimeOffset);});
