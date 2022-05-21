@@ -213,6 +213,8 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::recordingStarted,
             this, &LogbookWidget::onRecordingStarted);
+    connect(&skyConnectManager, &SkyConnectManager::stateChanged,
+            this, &LogbookWidget::updateEditUi);
 
     updateUi();
     handleSelectionChanged();
@@ -242,6 +244,8 @@ void LogbookWidget::hideEvent(QHideEvent *event) noexcept
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     disconnect(&skyConnectManager, &SkyConnectManager::stateChanged,
                this, &LogbookWidget::onRecordingStarted);
+    disconnect(&skyConnectManager, &SkyConnectManager::stateChanged,
+               this, &LogbookWidget::updateEditUi);
 }
 
 // PRIVATE
@@ -578,7 +582,6 @@ const QString LogbookWidget::getName() noexcept
 
 void LogbookWidget::onRecordingStarted() noexcept
 {
-    updateEditUi();
     if (SkyConnectManager::getInstance().isInRecordingState()) {
         const Flight &flight = Logbook::getInstance().getCurrentFlight();
         FlightSummary summary = flight.getFlightSummary();
