@@ -7,8 +7,8 @@ if (NOT DEFINED post_configure_dir)
     set(post_configure_dir ${CMAKE_BINARY_DIR}/generated)
 endif ()
 
-set(pre_configure_file ${pre_configure_dir}/git_version.cpp.in)
-set(post_configure_file ${post_configure_dir}/git_version.cpp)
+set(pre_configure_file ${pre_configure_dir}/GitInfo.cpp.in)
+set(post_configure_file ${post_configure_dir}/GitInfo.cpp)
 
 function(CheckGitWrite git_hash)
     file(WRITE ${CMAKE_BINARY_DIR}/git-state.txt ${git_hash})
@@ -37,15 +37,15 @@ function(CheckGitVersion)
         file(MAKE_DIRECTORY ${post_configure_dir})
     endif ()
 
-    if (NOT EXISTS ${post_configure_dir}/git_version.h)
-        file(COPY ${pre_configure_dir}/git_version.h DESTINATION ${post_configure_dir})
+    if (NOT EXISTS ${post_configure_dir}/GitInfo.h)
+        file(COPY ${pre_configure_dir}/GitInfo.h DESTINATION ${post_configure_dir})
     endif()
 
     if (NOT DEFINED GIT_HASH_CACHE)
         set(GIT_HASH_CACHE "INVALID")
     endif ()
 
-    # Only update the git_version.cpp if the hash has changed. This will
+    # Only update the GitInfo.cpp if the hash has changed. This will
     # prevent us from rebuilding the project more than we need to.
     if (NOT ${GIT_HASH} STREQUAL "${GIT_HASH_CACHE}" OR NOT EXISTS ${post_configure_file})
         # Set che GIT_HASH_CACHE variable the next build won't have
@@ -68,9 +68,9 @@ function(CheckGitSetup)
         BYPRODUCTS ${post_configure_file}
         )
 
-    add_library(git_version ${CMAKE_BINARY_DIR}/generated/git_version.cpp)
-    target_include_directories(git_version PUBLIC ${CMAKE_BINARY_DIR}/generated)
-    add_dependencies(git_version AlwaysCheckGit)
+    add_library(GitInfo ${CMAKE_BINARY_DIR}/generated/GitInfo.cpp)
+    target_include_directories(GitInfo PUBLIC ${CMAKE_BINARY_DIR}/generated)
+    add_dependencies(GitInfo AlwaysCheckGit)
 
     CheckGitVersion()
 endfunction()

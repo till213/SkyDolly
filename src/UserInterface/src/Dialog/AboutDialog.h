@@ -47,6 +47,10 @@ private:
     std::unique_ptr<Ui::AboutDialog> ui;
 
     void initUi() noexcept;
+    void frenchConnection() noexcept;
+
+private slots:
+    void showAboutQtDialog() noexcept;
 };
 
 #endif // ABOUTDIALOG_H

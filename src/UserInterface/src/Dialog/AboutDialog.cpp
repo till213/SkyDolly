@@ -28,6 +28,8 @@
 #include <QFile>
 #include <QByteArray>
 #include <QTextEdit>
+#include <QPushButton>
+#include <QMessageBox>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -44,6 +46,7 @@ AboutDialog::AboutDialog(QWidget *parent) noexcept :
 {
     ui->setupUi(this);
     initUi();
+    frenchConnection();
 #ifdef DEBUG
     qDebug() << "AboutDialog::AboutDialog: CREATED";
 #endif
@@ -64,7 +67,7 @@ void AboutDialog::initUi() noexcept
     ui->aboutLabel->setText(tr(
 "%1\nThe Black Sheep for Your Flight Recordings\n\n"
 "Version %2\n"
-"Git hash: %\n\n"
+"Git hash: %3\n\n"
 "MIT License").arg(Version::getApplicationName(), Version::getApplicationVersion())
                             .arg(Version::getGitHash()));
 
@@ -75,5 +78,18 @@ void AboutDialog::initUi() noexcept
         ui->creditsTextEdit->setTextInteractionFlags(Qt::TextInteractionFlag::LinksAccessibleByMouse);
         file.close();
     }
+}
+
+void AboutDialog::frenchConnection() noexcept
+{
+    connect(ui->aboutQtPushButton, &QPushButton::clicked,
+            this, &AboutDialog::showAboutQtDialog);
+}
+
+// PRIVATE SLOTS
+
+void AboutDialog::showAboutQtDialog() noexcept
+{
+    QMessageBox::aboutQt(this);
 }
 

@@ -14,7 +14,8 @@ target_compile_definitions(${LIBRARY_NAME}
 
 # https://jonathanhamberg.com/post/cmake-embedding-git-hash/
 # Also: git show --no-patch --no-notes --pretty='%cd'[hash value]
-include(../../cmake/CheckGit.cmake)
+set(pre_configure_dir ${CMAKE_CURRENT_SOURCE_DIR}/src)
+include(cmake/CheckGit.cmake)
 CheckGitSetup()
 configure_file(src/VersionConfig.h.in generated/VersionConfig.h @ONLY)
 
@@ -43,7 +44,7 @@ target_include_directories(${LIBRARY_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/include
     PRIVATE
         include/Kernel
-        # For generated files: VersionConfig.h, git_version.h
+        # For generated files: VersionConfig.h, GitInfo.h
         "${CMAKE_CURRENT_BINARY_DIR}/generated"
 )
 target_link_libraries(${LIBRARY_NAME}
@@ -51,7 +52,7 @@ target_link_libraries(${LIBRARY_NAME}
         Qt${QT_VERSION_MAJOR}::Widgets
         GeographicLib::GeographicLib
     PRIVATE
-        git_version
+        GitInfo
 )
 
 if (${PLATFORM_IS_WINDOWS})

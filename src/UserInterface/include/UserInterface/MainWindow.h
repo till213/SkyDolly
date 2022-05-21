@@ -191,9 +191,8 @@ private slots:
     void toggleMinimalUi(bool enable) noexcept;
 
     // Help menu
-    void onAboutActionTriggered() noexcept;
-    void onAboutQtActionTriggered() noexcept;
-    void onOnlineManualActionTriggered() const noexcept;
+    void showAboutDialog() noexcept;
+    void showOnlineManual() const noexcept;
 
     // Replay
     void toggleRecord(bool checked) noexcept;

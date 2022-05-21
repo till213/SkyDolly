@@ -394,12 +394,9 @@ void MainWindow::frenchConnection() noexcept
 
     // Help menu
     connect(ui->aboutAction, &QAction::triggered,
-            this, &MainWindow::onAboutActionTriggered);
-    connect(ui->aboutQtAction, &QAction::triggered,
-            this, &MainWindow::onAboutQtActionTriggered);
+            this, &MainWindow::showAboutDialog);
     connect(ui->onlineManualAction, &QAction::triggered,
-            this, &MainWindow::onOnlineManualActionTriggered);
-
+            this, &MainWindow::showOnlineManual);
 }
 
 void MainWindow::initUi() noexcept
@@ -1552,18 +1549,13 @@ void MainWindow::toggleMinimalUi(bool enable) noexcept
 
 // Help menu
 
-void MainWindow::onAboutActionTriggered() noexcept
+void MainWindow::showAboutDialog() noexcept
 {
     std::unique_ptr<AboutDialog> aboutDialog = std::make_unique<AboutDialog>(this);
     aboutDialog->exec();
 }
 
-void MainWindow::onAboutQtActionTriggered() noexcept
-{
-    QMessageBox::aboutQt(this);
-}
-
-void MainWindow::onOnlineManualActionTriggered() const noexcept
+void MainWindow::showOnlineManual() const noexcept
 {
     QDesktopServices::openUrl(QUrl("https://till213.github.io/SkyDolly/manual/en/"));
 }
