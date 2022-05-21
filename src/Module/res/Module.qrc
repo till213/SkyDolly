@@ -22,5 +22,7 @@
         <file>img/icons/forward-offset-active@2x.png</file>
         <file>img/icons/forward-offset-normal.png</file>
         <file>img/icons/forward-offset-normal@2x.png</file>
+        <file>img/icons/aircraft-reference-normal.png</file>
+        <file>img/icons/aircraft-reference-normal@2x.png</file>
     </qresource>
 </RCC>

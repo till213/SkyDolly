@@ -34,6 +34,7 @@
 #include <QAction>
 #include <QTableWidget>
 #include <QIcon>
+#include <QLabel>
 #include <QButtonGroup>
 #include <QMessageBox>
 #include <QCheckBox>
@@ -619,12 +620,18 @@ void FormationWidget::updateUi() noexcept
         // Sequence
         std::unique_ptr<QTableWidgetItem> newItem = std::make_unique<QTableWidgetItem>();
         if (rowIndex == userAircraftIndex) {
+            const SkyConnectIntf::ReplayMode replayMode = skyConnectManager.getReplayMode();
             if (recording) {
                 newItem->setIcon(QIcon(":/img/icons/aircraft-record-normal.png"));
-            } else if (skyConnectManager.getReplayMode() == SkyConnectIntf::ReplayMode::FlyWithFormation) {
-                newItem->setIcon(QIcon(":/img/icons/aircraft-normal-off.png"));
+            } else if (replayMode == SkyConnectIntf::ReplayMode::FlyWithFormation) {
+                newItem->setIcon(QIcon(":/img/icons/aircraft-reference-normal.png"));
             } else {
                 newItem->setIcon(QIcon(":/img/icons/aircraft-normal.png"));
+            }
+            if (replayMode == SkyConnectIntf::ReplayMode::FlyWithFormation) {
+                ui->referenceAircraftLabel->setPixmap(QPixmap((":/img/icons/aircraft-reference-normal.png")));
+            } else {
+                ui->referenceAircraftLabel->setPixmap(QPixmap((":/img/icons/aircraft-normal.png")));
             }
         }
         // Sequence numbers start at 1
