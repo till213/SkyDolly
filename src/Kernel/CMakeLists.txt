@@ -11,12 +11,6 @@ target_compile_definitions(${LIBRARY_NAME}
     PRIVATE
         KERNEL_EXPORT
 )
-
-# https://jonathanhamberg.com/post/cmake-embedding-git-hash/
-# Also: git show --no-patch --no-notes --pretty='%cd'[hash value]
-set(PRE_CONFIGURE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
-include(cmake/CheckGit.cmake)
-CheckGitSetup()
 configure_file(src/VersionConfig.h.in generated/VersionConfig.h @ONLY)
 
 target_sources(${LIBRARY_NAME}

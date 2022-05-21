@@ -86,6 +86,12 @@ else()
     message(STATUS "IPO SUPPORT disabled for debug builds")
 endif()
 
+# https://jonathanhamberg.com/post/cmake-embedding-git-hash/
+set(PRE_CONFIGURE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+include(cmake/CheckGit.cmake)
+CheckGitSetup()
+
+
 # Application libraries
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Kernel)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/KernelTest)
