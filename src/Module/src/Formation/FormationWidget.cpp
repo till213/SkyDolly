@@ -731,8 +731,8 @@ void FormationWidget::updateRelativePosition() noexcept
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnectOptional = SkyConnectManager::getInstance().getCurrentSkyConnect();
     if (skyConnectOptional) {
         SkyConnectIntf &skyConnect = skyConnectOptional->get();
-        // When "Fly with formation" is paused also update the manually flown user aircraft position ("at the current timestamp")
-        if (skyConnect.getReplayMode() == SkyConnectIntf::ReplayMode::FlyWithFormation && skyConnect.getState() == Connect::State::ReplayPaused) {
+        // When "Fly with formation" is selected also update the manually flown user aircraft position ("at the current timestamp")
+        if (skyConnect.getReplayMode() == SkyConnectIntf::ReplayMode::FlyWithFormation) {
             const InitialPosition initialPosition = calculateRelativeInitialPositionToUserAircraft(skyConnect.getCurrentTimestamp());
             skyConnect.setUserAircraftInitialPosition(initialPosition);
         }
