@@ -493,17 +493,24 @@ bool MSFSSimConnectPlugin::connectWithSim() noexcept
 
 void MSFSSimConnectPlugin::onAddAiObject(const Aircraft &aircraft) noexcept
 {
-    d->simConnectAi->addObject(aircraft, getCurrentTimestamp());
+    // Check if initialised (only when connected with MSFS)
+    if (d->simConnectAi != nullptr) {
+        d->simConnectAi->addObject(aircraft, getCurrentTimestamp());
+    }
 }
 
 void MSFSSimConnectPlugin::onRemoveAiObject(std::int64_t aircraftId) noexcept
 {
-    d->simConnectAi->removeByAircraftId(aircraftId);
+    if (d->simConnectAi != nullptr) {
+        d->simConnectAi->removeByAircraftId(aircraftId);
+    }
 }
 
 void MSFSSimConnectPlugin::onRemoveAllAiObjects() noexcept
 {
-    d->simConnectAi->removeAllObjects();
+    if (d->simConnectAi != nullptr) {
+        d->simConnectAi->removeAllObjects();
+    }
 }
 
 // PROTECTED SLOTS
