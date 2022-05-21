@@ -51,7 +51,7 @@ function(CheckGitVersion)
         # Set che GIT_HASH_CACHE variable the next build won't have
         # to regenerate the source file.
         CheckGitWrite(${GIT_HASH})
-        message(STATUS "GitInfo: Git hash is different: ${GIT_HASH}")
+        message(STATUS "GitInfo: Git hash is different: ${GIT_HASH} - rebuilding GitInfo")
 
         # Also get the date of the latest commit hash of the working branch
         execute_process(
@@ -63,7 +63,7 @@ function(CheckGitVersion)
 
         configure_file(${PRE_CONFIGURE_FILE} ${POST_CONFIGURE_FILE} @ONLY)
     else()
-        message(STATUS "GitInfo: Git hash is equal, no rebuild of GitInfo: ${GIT_HASH}")
+        message(STATUS "GitInfo: Git hash is equal: ${GIT_HASH} - no rebuild of GitInfo")
     endif()
 
 endfunction()
