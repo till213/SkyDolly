@@ -629,9 +629,13 @@ void FormationWidget::updateUi() noexcept
                 newItem->setIcon(QIcon(":/img/icons/aircraft-normal.png"));
             }
             if (replayMode == SkyConnectIntf::ReplayMode::FlyWithFormation) {
-                ui->referenceAircraftLabel->setPixmap(QPixmap((":/img/icons/aircraft-reference-normal.png")));
+                QPixmap pixmap {":/img/icons/aircraft-reference-normal@2x.png"};
+                pixmap.setDevicePixelRatio(2);
+                ui->referenceAircraftLabel->setPixmap(pixmap);
             } else {
-                ui->referenceAircraftLabel->setPixmap(QPixmap((":/img/icons/aircraft-normal.png")));
+                QPixmap pixmap {":/img/icons/aircraft-normal@2x.png"};
+                pixmap.setDevicePixelRatio(2);
+                ui->referenceAircraftLabel->setPixmap(pixmap);
             }
         }
         // Sequence numbers start at 1
