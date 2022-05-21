@@ -24,7 +24,6 @@
  */
 #include <memory>
 #include <cstdint>
-#include <cinttypes>
 #include <cmath>
 
 #include <QTimer>
@@ -209,14 +208,21 @@ bool PathCreatorPlugin::connectWithSim() noexcept
 void PathCreatorPlugin::onAddAiObject(const Aircraft &aircraft) noexcept
 {
 #ifdef DEBUG
-    qDebug("PathCreatorPlugin::onAddAiObject: CALLED");
+    qDebug() << "PathCreatorPlugin::onAddAiObject: CALLED";
 #endif
 }
 
 void PathCreatorPlugin::onRemoveAiObject(std::int64_t aircraftId) noexcept
 {
 #ifdef DEBUG
-    qDebug("PathCreatorPlugin::onRemoveAiObject: simulated object ID: %" PRId64, aircraftId);
+    qDebug() << "PathCreatorPlugin::onRemoveAiObject: aircraft ID:" << aircraftId;
+#endif
+}
+
+void PathCreatorPlugin::onRemoveAllAiObjects() noexcept
+{
+#ifdef DEBUG
+    qDebug() << "PathCreatorPlugin::onRemoveAllAiObjects: CALLED.";
 #endif
 }
 

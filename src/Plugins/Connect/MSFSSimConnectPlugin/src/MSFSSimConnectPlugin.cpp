@@ -501,6 +501,11 @@ void MSFSSimConnectPlugin::onRemoveAiObject(std::int64_t aircraftId) noexcept
     d->simConnectAi->removeByAircraftId(aircraftId);
 }
 
+void MSFSSimConnectPlugin::onRemoveAllAiObjects() noexcept
+{
+    d->simConnectAi->removeAllObjects();
+}
+
 // PROTECTED SLOTS
 
 void MSFSSimConnectPlugin::recordData() noexcept

@@ -136,6 +136,7 @@ protected:
 
     virtual void onAddAiObject(const Aircraft &aircraft) noexcept = 0;
     virtual void onRemoveAiObject(std::int64_t aircraftId) noexcept = 0;
+    virtual void onRemoveAllAiObjects() noexcept = 0;
 
 protected slots:
     std::int64_t updateCurrentTimestamp() noexcept;

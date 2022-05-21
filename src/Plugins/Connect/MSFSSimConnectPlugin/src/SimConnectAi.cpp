@@ -98,7 +98,7 @@ void SimConnectAi::addObject(const Aircraft &aircraft, std::int64_t timestamp) n
 
 void SimConnectAi::removeByAircraftId(std::int64_t aircraftId) noexcept
 {
-    const auto it =  d->requestByAircraftId.find(aircraftId);
+    const auto it = d->requestByAircraftId.find(aircraftId);
     if (it != d->requestByAircraftId.end()) {
         const ::SIMCONNECT_DATA_REQUEST_ID requestId = it->second;
         const auto it2 = d->simulatedObjectByRequestId.find(requestId);
@@ -106,12 +106,24 @@ void SimConnectAi::removeByAircraftId(std::int64_t aircraftId) noexcept
             const ::SIMCONNECT_OBJECT_ID objectId = it2->second;
             removeByObjectId(objectId);
 #ifdef DEBUG
-        qDebug() << "SimConnectAi::removeByAircraftId: removing simulation object request:" << objectId << "for aircraft ID: " << aircraftId;
+        qDebug() << "SimConnectAi::removeByAircraftId: removing simulation object:" << objectId << "for aircraft ID: " << aircraftId;
 #endif
             d->simulatedObjectByRequestId.erase(it2);
             d->requestByAircraftId.erase(it);
         }
     }
+}
+
+void SimConnectAi::removeAllObjects() noexcept {
+    for (const auto it : d->simulatedObjectByRequestId) {
+        const ::SIMCONNECT_OBJECT_ID objectId = it.second;
+        removeByObjectId(objectId);
+#ifdef DEBUG
+        qDebug() << "SimConnectAi::removeAllObjects: removing simulation object:" << objectId << "(all objects)";
+#endif
+    }
+    d->simulatedObjectByRequestId.clear();
+    d->requestByAircraftId.clear();
 }
 
 void SimConnectAi::removeByObjectId(::SIMCONNECT_OBJECT_ID objectId) noexcept
