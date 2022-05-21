@@ -146,6 +146,38 @@ std::optional<QString> SkyConnectManager::getCurrentSkyConnectPluginName() const
     return {};
 }
 
+bool SkyConnectManager::setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    return skyConnect ? skyConnect->get().setUserAircraftInitialPosition(initialPosition) : false;
+}
+
+bool SkyConnectManager::setUserAircraftPosition(const PositionData & positionData) noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    return skyConnect ? skyConnect->get().setUserAircraftPosition(positionData) : false;
+}
+
+bool SkyConnectManager::freezeUserAircraft(bool enable) noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    return skyConnect ? skyConnect->get().freezeUserAircraft(enable) : false;
+}
+
+SkyConnectIntf::ReplayMode SkyConnectManager::getReplayMode() const noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
+    return skyConnect ? skyConnect->get().getReplayMode() : SkyConnectIntf::ReplayMode::Normal;
+}
+
+void SkyConnectManager::setReplayMode(SkyConnectIntf::ReplayMode replayMode) noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    if (skyConnect) {
+        skyConnect->get().setReplayMode(replayMode);
+    }
+}
+
 void SkyConnectManager::startRecording(SkyConnectIntf::RecordingMode recordingMode, const InitialPosition &initialPosition) noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();

@@ -95,21 +95,15 @@ private slots:
     void handleAircraftInfoChanged() noexcept;
     void handleCellSelected(int row, int column) noexcept;
     void handleCellChanged(int row, int column) noexcept;
-    void handleSelectionChanged() noexcept;
+    void onSelectionChanged() noexcept;
     void updateUserAircraftIndex() noexcept;
     void deleteAircraft() noexcept;
 
-    void on_horizontalDistanceSlider_valueChanged(int value) noexcept;
-    void on_verticalDistanceSlider_valueChanged(int value) noexcept;
-
-    void on_replayModeComboBox_currentIndexChanged(int index) noexcept;
-
-    void on_fastForwardOffsetPushButton_clicked() noexcept;
-    void on_forwardOffsetPushButton_clicked() noexcept;
-    void on_backwardOffsetPushButton_clicked() noexcept;
-    void on_fastBackwardOffsetPushButton_clicked() noexcept;
-    void on_timeOffsetLineEdit_editingFinished() noexcept;
-    void on_resetAllTimeOffsetPushButton_clicked() noexcept;
+    void updateRelativeDistance() noexcept;
+    void updateReplayMode(int index) noexcept;
+    void changeTimeOffset(const std::int64_t timeOffset) noexcept;
+    void onTimeOffsetEditingFinished() noexcept;
+    void resetAllTimeOffsets() noexcept;
 };
 
 #endif // FORMATIONWIDGET_H

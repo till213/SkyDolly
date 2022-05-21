@@ -25,6 +25,7 @@
 #include <memory>
 #include <cstdint>
 #include <unordered_map>
+#include <algorithm>
 
 #include <QDebug>
 
@@ -154,10 +155,10 @@ bool SimConnectAi::registerObjectId(::SIMCONNECT_DATA_REQUEST_ID requestId, ::SI
 
 bool SimConnectAi::hasRequest(::SIMCONNECT_DATA_REQUEST_ID requestId) const noexcept
 {
-    return find_if(d->requestByAircraftId.begin(),
-                   d->requestByAircraftId.end(),
-                   [&requestId](RequestByAircraftValueType &valueType)
-                   {
-                       return valueType.second == requestId;
-                   }) != d->requestByAircraftId.end();
+    return std::find_if(d->requestByAircraftId.begin(),
+                        d->requestByAircraftId.end(),
+                        [&requestId](RequestByAircraftValueType &valueType)
+    {
+        return valueType.second == requestId;
+    }) != d->requestByAircraftId.end();
 }

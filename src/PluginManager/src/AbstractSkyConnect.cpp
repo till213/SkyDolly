@@ -123,11 +123,13 @@ SkyConnectIntf::ReplayMode AbstractSkyConnect::getReplayMode() const noexcept
 void AbstractSkyConnect::setReplayMode(ReplayMode replayMode) noexcept
 {
     if (d->replayMode != replayMode) {
+        removeAiObjects();
         d->replayMode = replayMode;
         // @todo improve me: add/remove single (user) aircraft (instead of re-creating the entire formation)
-        syncAiObjectsWithFlight();
+        createAiObjects();
         updateUserAircraftFreeze();
     }
+    sendAircraftData(d->currentTimestamp, TimeVariableData::Access::Seek, AircraftSelection::All);
 }
 
 void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition) noexcept
@@ -470,7 +472,8 @@ void AbstractSkyConnect::addAiObject(const Aircraft &aircraft) noexcept
 void AbstractSkyConnect::removeAiObjects() noexcept
 {
     if (isConnected()) {
-        const std::int64_t userAircraftId = d->currentFlight.getUserAircraft().getId();
+        // In case "fly with formation" is selected also remove the "formation user aircraft"
+        const std::int64_t userAircraftId = getReplayMode() != ReplayMode::FlyWithFormation ?  d->currentFlight.getUserAircraft().getId() : Aircraft::InvalidId;
         for (const auto &aircraft : d->currentFlight) {
             if (aircraft->getId() != userAircraftId) {
                 onRemoveAiObject(aircraft->getId());
@@ -494,12 +497,14 @@ void AbstractSkyConnect::syncAiObjectsWithFlight() noexcept
 
 void AbstractSkyConnect::updateUserAircraft(int newUserAircraftIndex, int previousUserAircraftIndex) noexcept
 {
-    const Aircraft &userAircraft = d->currentFlight[newUserAircraftIndex];
-    removeAiObject(userAircraft.getId());
-    if (previousUserAircraftIndex != Flight::InvalidAircraftIndex) {
-        const Aircraft &aircraft = d->currentFlight[previousUserAircraftIndex];
-        addAiObject(aircraft);
-    }    
+    if (d->replayMode != ReplayMode::FlyWithFormation) {
+        const Aircraft &userAircraft = d->currentFlight[newUserAircraftIndex];
+        removeAiObject(userAircraft.getId());
+        if (previousUserAircraftIndex != Flight::InvalidAircraftIndex) {
+            const Aircraft &aircraft = d->currentFlight[previousUserAircraftIndex];
+            addAiObject(aircraft);
+        }
+    }
     sendAircraftData(d->currentTimestamp, TimeVariableData::Access::Seek, AircraftSelection::UserAircraft);
 }
 

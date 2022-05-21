@@ -72,6 +72,13 @@ public:
     std::optional<std::reference_wrapper<SkyConnectIntf>> getCurrentSkyConnect() const noexcept;
     std::optional<QString> getCurrentSkyConnectPluginName() const noexcept;
 
+    bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept;
+    bool setUserAircraftPosition(const PositionData & positionData) noexcept;
+    bool freezeUserAircraft(bool enable) noexcept;
+
+    SkyConnectIntf::ReplayMode getReplayMode() const noexcept;
+    void setReplayMode(SkyConnectIntf::ReplayMode replayMode) noexcept;
+
     void startRecording(SkyConnectIntf::RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition()) noexcept;
     void stopRecording() noexcept;
     bool isRecording() const noexcept;
