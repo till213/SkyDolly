@@ -437,7 +437,8 @@ void MainWindow::initUi() noexcept
                 "development of this release as well.\n\n"
                 "So please report any new bugs and especially regressions that may still be present. Feedback is very welcome!\n\n"
                 "The release focuses mostly on usability and performance topics. The formation module creates way less \"AI object\" creation and deletion "
-                "requests and a truly \"minimal UI\" mode has been introduced. The application also uses considerably less memory resources, especially in \"minimal UI\" mode.\n\n"
+                "requests and a truly \"minimal UI\" mode has been introduced. The original behaviour can be set in the application settings. The application "
+                "also uses considerably less memory resources, especially in \"minimal UI\" mode.\n\n"
                 "This release also properly calculates altitude differences (so-called undulation) between the reference WGS84 ellipsoid and the EGM2008 (earth gravitiy model) geoid, "
                 "with the help of the GeographicLib. Certain import/export plugins make (optionally) use of this, specifically the GPX and IGC plugins.\n\n"
                 "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(currentPreviewInfoCount),
