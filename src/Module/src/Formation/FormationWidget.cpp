@@ -129,10 +129,10 @@ namespace
 class FormationWidgetPrivate
 {
 public:
-    FormationWidgetPrivate(QWidget *parent) noexcept
+    FormationWidgetPrivate(QWidget &parent) noexcept
         : tailNumberColumnIndex(InvalidColumn),
           timeOffsetColumnIndex(InvalidColumn),
-          positionButtonGroup(new QButtonGroup(parent)),
+          positionButtonGroup(new QButtonGroup(&parent)),
           moduleAction(nullptr),
           aircraftService(std::make_unique<AircraftService>()),
           selectedRow(InvalidSelection),
@@ -146,7 +146,7 @@ public:
             recordingAircraftIcon = QIcon(":/img/icons/aircraft-record-normal.png");
             referenceAircraftIcon = QIcon(":/img/icons/aircraft-reference-normal.png");
         }
-        if (parent->devicePixelRatioF() > 1.5) {
+        if (parent.devicePixelRatioF() >= 1.5) {
             userAircraftPixmap.load(":/img/icons/aircraft-normal@2x.png");
             userAircraftPixmap.setDevicePixelRatio(2.0);
             referenceAircraftPixmap.load(":/img/icons/aircraft-reference-normal@2x.png");
@@ -188,7 +188,7 @@ QIcon FormationWidgetPrivate::referenceAircraftIcon {};
 FormationWidget::FormationWidget(FlightService &flightService, QWidget *parent) noexcept
     : AbstractModuleWidget(flightService, parent),
       ui(std::make_unique<Ui::FormationWidget>()),
-      d(std::make_unique<FormationWidgetPrivate>(this))
+      d(std::make_unique<FormationWidgetPrivate>(*this))
 {
     ui->setupUi(this);
     initUi();

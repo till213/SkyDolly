@@ -31,6 +31,8 @@
 
 class QMousePressEvent;
 
+class AboutDialogPrivate;
+
 namespace Ui {
     class AboutDialog;
 }
@@ -40,10 +42,11 @@ class AboutDialog : public QDialog
     Q_OBJECT
 public:
     explicit AboutDialog(QWidget *parent = nullptr) noexcept;
-    virtual ~AboutDialog() noexcept;
+    ~AboutDialog() noexcept override;
 
 private:
     Q_DISABLE_COPY(AboutDialog)
+    std::unique_ptr<AboutDialogPrivate> d;
     std::unique_ptr<Ui::AboutDialog> ui;
 
     void initUi() noexcept;

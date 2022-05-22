@@ -30,6 +30,7 @@
 #include <QTextEdit>
 #include <QPushButton>
 #include <QMessageBox>
+#include <QPixmap>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -38,10 +39,28 @@
 #include "AboutDialog.h"
 #include "ui_AboutDialog.h"
 
+class AboutDialogPrivate
+{
+public:
+    AboutDialogPrivate(QWidget &parent) noexcept
+    {
+        if (parent.devicePixelRatioF() >= 1.5) {
+            applicationPixmap.load(":/img/icons/application-icon@2x.png");
+            applicationPixmap.setDevicePixelRatio(2.0);
+        } else {
+            applicationPixmap.load(":/img/icons/application-icon.png");
+            applicationPixmap.setDevicePixelRatio(1.0);
+        }
+    }
+
+    QPixmap applicationPixmap;
+};
+
 // PUBLIC
 
 AboutDialog::AboutDialog(QWidget *parent) noexcept :
     QDialog(parent),
+    d(std::make_unique<AboutDialogPrivate>(*this)),
     ui(std::make_unique<Ui::AboutDialog>())
 {
     ui->setupUi(this);
@@ -64,13 +83,15 @@ AboutDialog::~AboutDialog() noexcept
 void AboutDialog::initUi() noexcept
 {
     setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
+
+    ui->applicationIconLabel->setPixmap(d->applicationPixmap);
     ui->aboutLabel->setText(tr("%1\nThe Black Sheep for Your Flight Recordings\n\n"
                                "Version %2\n"
                                "Git hash: %3\n"
                                "%4\n\n"
                                "MIT License")
-                            .arg(Version::getApplicationName(), Version::getApplicationVersion())
-                            .arg(Version::getGitHash(), Version::getGitDate().toLocalTime().toString()));
+                            .arg(Version::getApplicationName(), Version::getApplicationVersion(),
+                                 Version::getGitHash(), Version::getGitDate().toLocalTime().toString()));
 
     QFile file(":text/ThirdParty.md");
     if (file.open(QFile::ReadOnly)) {

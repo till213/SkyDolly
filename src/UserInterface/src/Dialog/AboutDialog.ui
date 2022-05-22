@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
-    <height>312</height>
+    <width>670</width>
+    <height>331</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -61,9 +61,6 @@
            </property>
            <property name="text">
             <string/>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="../../res/UserInterface.qrc">:/img/icons/application-icon@2x.png</pixmap>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -171,9 +168,7 @@
    <header location="global">Widget/HyperlinkTextEdit.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../../res/UserInterface.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>
