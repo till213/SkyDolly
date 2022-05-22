@@ -23,6 +23,7 @@
   * Minimised create / delete AI aircraft requests when switching the user aircraft or removing an aircraft
 - The order of the formation aircraft table columns can now be changed
 - The "Delete" key now deletes the selected aircraft
+- The reference aircraft in the formation table changes colour to "green" when setting the replay mode to "fly with formation", indicating that the user controls an "extra" user aircraft (which is initially placed relative to the green reference aircraft)
 - Minor layout adjustments
 
 #### Minimal UI Mode
@@ -37,6 +38,8 @@
 - All question and information dialogs now have an explanatory title
 - Tables now have alternating colours per row
 - A question and confirmation dialog is now shown before and after logbook optimisation, also showing the before and after file sizes (after the optimisation)
+- Dialogs (flight, simulation variables, statistics) are now (only) created on demand and immediatelly released after use, resulting in a smaller memory footprint
+- Small layout improvements
 
 ### Bug Fixes
 - In the logbook module the date selection column width is now properly calculated (no month name is truncated)
@@ -45,14 +48,21 @@
 - The Window | Minimal menu entry is now properly synchronised (unchecked) when the module is changed while in "minimal UI" mode (e.g. by pressing F1 or F2, or via the Module menu)
 - File paths are converted to native separators when shown in dialog boxes to the user
 - The settings dialog is now created on demand. This also fixes an issue with dialog z-ordering when the main application window is switched to "Stay on Top"
+- Depending on the selected module the persistence of a flight is different (single aircraft vs formation flight). In order not to mess up the persistence logic switching modules is now disabled while recording 
+- In order to prevent data loss when recording a flight the following functionality is now properly disabled during recording:
+  * No existing flight can be loaded (including by double-clicking onto a logbook row)
+  * No user aircraft can be switched in the formation (including by double-cicking onto an aircraft in the formation table)
+  * Creating a new logbook or opening an existing one is disabled
+  * Quitting the application (with CTRL + Q or File | Quit) will properly stop and persist an ongoing recording
 
 ### Under The Hood
-- Introduction of the GeographicLib
-  * Calculating undulation values
+- Introduction of the GeographicLib (https://geographiclib.sourceforge.io/)
+  * Calculating undulation values (conversion between geoid and WGS84 reference ellipsoid altitudes)
   * Geodesic calculations (distance, azimuth, relative position)
 - Refactored the build system ("modern CMake")
   * Resources like the undulation file can be auomatically (optionally) downloaded at build configuration time (refer to the [BUILD.d](BUILD.md) instructions for details
   * Third-party libraries (git submodules) like the GeographicLib are automatically checked out
+  * The environment variable MSFS_SDK is now queried in order to detect the MSFS SDK install path
 - Model classes refactoring
   * Template based, in order to reduce repetitive code
   * Qt Signas and slots re-wiring
@@ -60,7 +70,6 @@
   * Plugin managers are now in a common PLuginManager library
   * Plugins are now built after the main application
     - Especially on macOS this allows to place the plugins inside the previously built application bundle
-- Dialogs (flight, simulation variables, statistics) are now (only) created on demand, resulting in a smaller memory footprint after application start
 - And finally... on macOS the application icon set is now automatically generated at build time
 
 ## 0.10.0

@@ -22,38 +22,46 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef ABOUTDIALOG_H
-#define ABOUTDIALOG_H
+#include <QWidget>
+#include <QTextEdit>
+#include <QApplication>
+#include <QMouseEvent>
+#include <QDesktopServices>
 
-#include <memory>
+#include "HyperlinkTextEdit.h"
 
-#include <QDialog>
+// PUBLIC
 
-class QMousePressEvent;
-
-class AboutDialogPrivate;
-
-namespace Ui {
-    class AboutDialog;
+HyperlinkTextEdit::HyperlinkTextEdit(QWidget *parent)
+    : QTextEdit(parent)
+{
+    setMouseTracking(true);
 }
 
-class AboutDialog : public QDialog
+// PROTECTED
+
+void HyperlinkTextEdit::mouseMoveEvent(QMouseEvent *event) noexcept
 {
-    Q_OBJECT
-public:
-    explicit AboutDialog(QWidget *parent = nullptr) noexcept;
-    ~AboutDialog() noexcept override;
+    if (!anchorAt(event->pos()).isNull()) {
+        QApplication::setOverrideCursor(Qt::PointingHandCursor);
+    } else {
+        QApplication::restoreOverrideCursor();
+    }
+}
 
-private:
-    Q_DISABLE_COPY(AboutDialog)
-    std::unique_ptr<AboutDialogPrivate> d;
-    std::unique_ptr<Ui::AboutDialog> ui;
+void HyperlinkTextEdit::mousePressEvent(QMouseEvent *event) noexcept
+{
+    m_anchor = anchorAt(event->pos());
+    if (!m_anchor.isNull()) {
+        QApplication::setOverrideCursor(Qt::PointingHandCursor);
+    }
+}
 
-    void initUi() noexcept;
-    void frenchConnection() noexcept;
-
-private slots:
-    void showAboutQtDialog() noexcept;
-};
-
-#endif // ABOUTDIALOG_H
+void HyperlinkTextEdit::mouseReleaseEvent(QMouseEvent *event) noexcept
+{
+    if (!m_anchor.isNull()) {
+        QDesktopServices::openUrl(QUrl(m_anchor));
+        QApplication::restoreOverrideCursor();
+        m_anchor = QString();
+    }
+}

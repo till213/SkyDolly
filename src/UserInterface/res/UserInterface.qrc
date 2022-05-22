@@ -30,22 +30,6 @@
         <file>img/icons/record-add-normal-on@2x.png</file>
         <file>img/icons/record-add-normal.png</file>
         <file>img/icons/record-add-normal@2x.png</file>
-        <file>img/icons/forward-offset-normal.png</file>
-        <file>img/icons/forward-offset-normal@2x.png</file>
-        <file>img/icons/forward-offset-active@2x.png</file>
-        <file>img/icons/forward-offset-active.png</file>
-        <file>img/icons/fast-backward-offset-active.png</file>
-        <file>img/icons/fast-backward-offset-active@2x.png</file>
-        <file>img/icons/fast-backward-offset-normal.png</file>
-        <file>img/icons/fast-backward-offset-normal@2x.png</file>
-        <file>img/icons/fast-forward-offset-active.png</file>
-        <file>img/icons/fast-forward-offset-active@2x.png</file>
-        <file>img/icons/fast-forward-offset-normal.png</file>
-        <file>img/icons/fast-forward-offset-normal@2x.png</file>
-        <file>img/icons/backward-offset-active.png</file>
-        <file>img/icons/backward-offset-active@2x.png</file>
-        <file>img/icons/backward-offset-normal.png</file>
-        <file>img/icons/backward-offset-normal@2x.png</file>
         <file>img/icons/begin-active.png</file>
         <file>img/icons/begin-active@2x.png</file>
         <file>img/icons/end-active.png</file>
@@ -68,5 +52,6 @@
         <file>img/icons/record-active@2x.png</file>
         <file>img/icons/record-add-active.png</file>
         <file>img/icons/record-add-active@2x.png</file>
+        <file>text/ThirdParty.md</file>
     </qresource>
 </RCC>

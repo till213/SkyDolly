@@ -29,7 +29,6 @@
 #include <vector>
 #include <utility>
 #include <optional>
-#include <functional>
 #include <cstdint>
 
 #include <QObject>
@@ -39,12 +38,14 @@ class QUuid;
 
 #include <Kernel/FlightSimulator.h>
 #include <Model/TimeVariableData.h>
+#include <Model/InitialPosition.h>
 #include "Connect.h"
+#include "SkyConnectIntf.h"
 #include "PluginManagerLib.h"
 
-class SkyConnectIntf;
 class skyConnectManagerPrivate;
 
+// @todo Gradually implement all methods from the SkyConnectIntf and then finally inherit from it
 class PLUGINMANAGER_API SkyConnectManager : public QObject
 {
     Q_OBJECT
@@ -70,6 +71,43 @@ public:
 
     std::optional<std::reference_wrapper<SkyConnectIntf>> getCurrentSkyConnect() const noexcept;
     std::optional<QString> getCurrentSkyConnectPluginName() const noexcept;
+
+    bool setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept;
+    bool setUserAircraftPosition(const PositionData & positionData) noexcept;
+    bool freezeUserAircraft(bool enable) noexcept;
+
+    SkyConnectIntf::ReplayMode getReplayMode() const noexcept;
+    void setReplayMode(SkyConnectIntf::ReplayMode replayMode) noexcept;
+
+    void startRecording(SkyConnectIntf::RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition()) noexcept;
+    void stopRecording() noexcept;
+    bool isRecording() const noexcept;
+    bool isInRecordingState() const noexcept;
+
+    void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition()) noexcept;
+    void stopReplay() noexcept;
+    bool isReplaying() const noexcept;
+    bool isInReplayState() const noexcept;
+
+    void stop() noexcept;
+
+    void setPaused(bool enabled) noexcept;
+    bool isPaused() const noexcept;
+
+    void skipToBegin() noexcept;
+    void skipBackward() noexcept;
+    void skipForward() noexcept;
+    void skipToEnd() noexcept;
+    void seek(std::int64_t timestamp) noexcept;
+
+    Connect::State getState() const noexcept;
+    virtual bool isConnected() const noexcept;
+    virtual bool isIdle() const noexcept;
+
+    double getReplaySpeedFactor() const noexcept;
+    void setReplaySpeedFactor(double factor) noexcept;
+    std::int64_t getCurrentTimestamp() const noexcept;
+    bool isAtEnd() const noexcept;
 
 public slots:
     bool tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept;

@@ -25,6 +25,12 @@
 #include <memory>
 
 #include <QDialog>
+#include <QFile>
+#include <QByteArray>
+#include <QTextEdit>
+#include <QPushButton>
+#include <QMessageBox>
+#include <QPixmap>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -33,14 +39,33 @@
 #include "AboutDialog.h"
 #include "ui_AboutDialog.h"
 
+class AboutDialogPrivate
+{
+public:
+    AboutDialogPrivate(QWidget &parent) noexcept
+    {
+        if (parent.devicePixelRatioF() >= 1.5) {
+            applicationPixmap.load(":/img/icons/application-icon@2x.png");
+            applicationPixmap.setDevicePixelRatio(2.0);
+        } else {
+            applicationPixmap.load(":/img/icons/application-icon.png");
+            applicationPixmap.setDevicePixelRatio(1.0);
+        }
+    }
+
+    QPixmap applicationPixmap;
+};
+
 // PUBLIC
 
 AboutDialog::AboutDialog(QWidget *parent) noexcept :
     QDialog(parent),
+    d(std::make_unique<AboutDialogPrivate>(*this)),
     ui(std::make_unique<Ui::AboutDialog>())
 {
     ui->setupUi(this);
     initUi();
+    frenchConnection();
 #ifdef DEBUG
     qDebug() << "AboutDialog::AboutDialog: CREATED";
 #endif
@@ -58,5 +83,40 @@ AboutDialog::~AboutDialog() noexcept
 void AboutDialog::initUi() noexcept
 {
     setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
-    ui->aboutLabel->setText(tr("%1\nThe Black Sheep for Your Flight Recordings\n\nVersion %2\n\nMIT License").arg(Version::getApplicationName(), Version::getApplicationVersion()));
+
+    ui->applicationIconLabel->setPixmap(d->applicationPixmap);
+    ui->aboutLabel->setText(tr("%1\nThe Black Sheep for Your Flight Recordings\n\n"
+                               "\"%2\" (%3)\n"
+                               "Version %4 (%5)\n"
+                               "%6\n\n"
+                               "MIT License")
+                            .arg(Version::getApplicationName(), Version::getCodeName(),
+                                 Version::getUserVersion(), Version::getApplicationVersion(),
+                                 Version::getGitHash(), Version::getGitDate().toLocalTime().toString()));
+
+    QFile file(":text/ThirdParty.md");
+    if (file.open(QFile::ReadOnly)) {
+        file.setTextModeEnabled(true);
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+        ui->creditsTextEdit->setText(file.readAll().replace("\\", ""));
+#else
+        ui->creditsTextEdit->setMarkdown(file.readAll());
+#endif
+        ui->creditsTextEdit->setTextInteractionFlags(Qt::TextInteractionFlag::LinksAccessibleByMouse);
+        file.close();
+    }
 }
+
+void AboutDialog::frenchConnection() noexcept
+{
+    connect(ui->aboutQtPushButton, &QPushButton::clicked,
+            this, &AboutDialog::showAboutQtDialog);
+}
+
+// PRIVATE SLOTS
+
+void AboutDialog::showAboutQtDialog() noexcept
+{
+    QMessageBox::aboutQt(this);
+}
+

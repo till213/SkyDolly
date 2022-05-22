@@ -22,38 +22,30 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef ABOUTDIALOG_H
-#define ABOUTDIALOG_H
+#ifndef HYPERLINKTEXTEDIT_H
+#define HYPERLINKTEXTEDIT_H
 
-#include <memory>
+#include <QTextEdit>
+#include <QString>
 
-#include <QDialog>
+class QWidget;
+class QMouseEvent;
 
-class QMousePressEvent;
+#include "WidgetLib.h"
 
-class AboutDialogPrivate;
-
-namespace Ui {
-    class AboutDialog;
-}
-
-class AboutDialog : public QDialog
+class WIDGET_API HyperlinkTextEdit : public QTextEdit
 {
-    Q_OBJECT
 public:
-    explicit AboutDialog(QWidget *parent = nullptr) noexcept;
-    ~AboutDialog() noexcept override;
+    explicit HyperlinkTextEdit(QWidget *parent = nullptr);
+    ~HyperlinkTextEdit() override = default;
+
+protected:
+    void mouseMoveEvent(QMouseEvent *event) noexcept override;
+    void mousePressEvent(QMouseEvent *event) noexcept override;
+    void mouseReleaseEvent(QMouseEvent *event) noexcept override;
 
 private:
-    Q_DISABLE_COPY(AboutDialog)
-    std::unique_ptr<AboutDialogPrivate> d;
-    std::unique_ptr<Ui::AboutDialog> ui;
-
-    void initUi() noexcept;
-    void frenchConnection() noexcept;
-
-private slots:
-    void showAboutQtDialog() noexcept;
+    QString m_anchor;
 };
 
-#endif // ABOUTDIALOG_H
+#endif // HYPERLINKTEXTEDIT_H

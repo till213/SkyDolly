@@ -277,7 +277,7 @@ void BasicExportDialog::updateUi() noexcept
 
 void BasicExportDialog::onFileSelectionButtonClicked() noexcept
 {
-    const QString filePath = QFileDialog::getSaveFileName(this, tr("Export file..."), ui->filePathLineEdit->text(), d->fileFilter);
+    const QString filePath = QFileDialog::getSaveFileName(this, tr("Export File"), ui->filePathLineEdit->text(), d->fileFilter);
     if (!filePath.isEmpty()) {
         ui->filePathLineEdit->setText(QDir::toNativeSeparators(filePath));
         d->pluginSettings.setFileDialogSelectedFile(true);

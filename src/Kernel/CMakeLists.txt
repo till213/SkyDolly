@@ -11,7 +11,8 @@ target_compile_definitions(${LIBRARY_NAME}
     PRIVATE
         KERNEL_EXPORT
 )
-configure_file(src/VersionConfig.h.in VersionConfig.h)
+configure_file(src/VersionConfig.h.in generated/VersionConfig.h @ONLY)
+
 target_sources(${LIBRARY_NAME}
     PRIVATE
         include/Kernel/KernelLib.h
@@ -37,13 +38,15 @@ target_include_directories(${LIBRARY_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/include
     PRIVATE
         include/Kernel
-        # For generated VersionConfig.h
-        "${CMAKE_CURRENT_BINARY_DIR}"
+        # For generated files: VersionConfig.h, GitInfo.h
+        "${CMAKE_CURRENT_BINARY_DIR}/generated"
 )
 target_link_libraries(${LIBRARY_NAME}
     PUBLIC
         Qt${QT_VERSION_MAJOR}::Widgets
         GeographicLib::GeographicLib
+    PRIVATE
+        GitInfo
 )
 
 if (${PLATFORM_IS_WINDOWS})
