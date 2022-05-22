@@ -76,7 +76,7 @@
 
 namespace
 {
-    constexpr int MinimumTableWidth {600};
+    constexpr int MinimumTableWidth {120};
     constexpr int InvalidSelection {-1};
 
     // Logbook table
@@ -272,9 +272,9 @@ void LogbookWidget::initUi() noexcept
     ui->logTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->logTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->logTableWidget->verticalHeader()->hide();
-    ui->logTableWidget->setMinimumWidth(MinimumTableWidth);
+    ui->logTableWidget->setMinimumWidth(::MinimumTableWidth);
     ui->logTableWidget->horizontalHeader()->setStretchLastSection(true);
-    ui->logTableWidget->sortByColumn(FlightIdColumn, Qt::SortOrder::DescendingOrder);
+    ui->logTableWidget->sortByColumn(::FlightIdColumn, Qt::SortOrder::DescendingOrder);
     ui->logTableWidget->horizontalHeader()->setSectionsMovable(true);
     ui->logTableWidget->setAlternatingRowColors(true);
 
@@ -287,6 +287,8 @@ void LogbookWidget::initUi() noexcept
 
     const int logTreeWidth = ui->logTreeWidget->minimumWidth();
     ui->splitter->setSizes({logTreeWidth, width() - logTreeWidth});
+    ui->splitter->setStretchFactor(0, 0);
+    ui->splitter->setStretchFactor(1, 1);
 
     // Default "Delete" key deletes flights
     ui->deletePushButton->setShortcut(QKeySequence::Delete);

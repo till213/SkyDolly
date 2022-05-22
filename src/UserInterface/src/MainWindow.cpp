@@ -97,19 +97,21 @@
 
 namespace
 {
-    constexpr int PositionSliderMin = 0;
-    constexpr int PositionSliderMax = 1000;
-    constexpr double ReplaySpeedAbsoluteMin = 0.01;
+    constexpr int PositionSliderMin {0};
+    constexpr int PositionSliderMax {1000};
+    constexpr double ReplaySpeedAbsoluteMin {0.01};
     // A replay speed with factor 200 should be fast enough
-    constexpr double ReplaySpeedAbsoluteMax = 200.0;
-    constexpr double ReplaySpeedDecimalPlaces = 2;
+    constexpr double ReplaySpeedAbsoluteMax {200.0};
+    constexpr double ReplaySpeedDecimalPlaces {2};
 
-    constexpr char TimestampFormat[] = "hh:mm:ss";
-    constexpr std::int64_t MilliSecondsPerSecond = 1000;
-    constexpr std::int64_t MilliSecondsPerMinute = 60 * MilliSecondsPerSecond;
-    constexpr std::int64_t MilliSecondsPerHour = 60 * MilliSecondsPerMinute;
+    constexpr int CustomSpeedLineEditMinimumWidth {40};
 
-    constexpr char ReplaySpeedProperty[] = "ReplaySpeed";
+    constexpr char TimestampFormat[] {"hh:mm:ss"};
+    constexpr std::int64_t MilliSecondsPerSecond {1000};
+    constexpr std::int64_t MilliSecondsPerMinute {60 * MilliSecondsPerSecond};
+    constexpr std::int64_t MilliSecondsPerHour {60 * MilliSecondsPerMinute};
+
+    constexpr char ReplaySpeedProperty[] {"ReplaySpeed"};
 
     enum struct ReplaySpeed {
         Slow10,
@@ -674,13 +676,13 @@ void MainWindow::initReplaySpeedUi() noexcept
     replaySpeedLayout->addWidget(d->customSpeedRadioButton);
 
     d->customSpeedLineEdit = new QLineEdit(this);
-    d->customSpeedLineEdit->setMinimumWidth(160);
+    d->customSpeedLineEdit->setMinimumWidth(::CustomSpeedLineEditMinimumWidth);
     replaySpeedLayout->addWidget(d->customSpeedLineEdit);
 
     d->customReplaySpeedFactorValidator = new QDoubleValidator(d->customSpeedLineEdit);
-    d->customReplaySpeedFactorValidator->setRange(ReplaySpeedAbsoluteMin, ReplaySpeedAbsoluteMax, ReplaySpeedDecimalPlaces);
+    d->customReplaySpeedFactorValidator->setRange(::ReplaySpeedAbsoluteMin, ::ReplaySpeedAbsoluteMax, ::ReplaySpeedDecimalPlaces);
     d->customReplaySpeedPercentValidator = new QDoubleValidator(d->customSpeedLineEdit);
-    d->customReplaySpeedPercentValidator->setRange(ReplaySpeedAbsoluteMin * 100.0, ReplaySpeedAbsoluteMax * 100.0, ReplaySpeedDecimalPlaces);
+    d->customReplaySpeedPercentValidator->setRange(::ReplaySpeedAbsoluteMin * 100.0, ::ReplaySpeedAbsoluteMax * 100.0, ::ReplaySpeedDecimalPlaces);
 
     // The replay speed factor in SkyConnect is always an absolute factor
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();

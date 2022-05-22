@@ -70,10 +70,10 @@
 
 namespace
 {
-    constexpr int MinimumTableWidth = 600;
-    constexpr int InvalidSelection = -1;
-    constexpr int InvalidColumn = -1;
-    constexpr int SequenceNumberColumn = 0;
+    constexpr int MinimumTableWidth {120};
+    constexpr int InvalidSelection {-1};
+    constexpr int InvalidColumn {-1};
+    constexpr int SequenceNumberColumn {0};
 
     enum HorizontalDistance {
         VeryClose = 0,
