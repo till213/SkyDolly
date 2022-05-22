@@ -268,7 +268,7 @@ void FormationWidget::onStartRecording() noexcept
 {
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     // The initial recording position is calculated for timestamp = 0 ("at the beginning")
-    const InitialPosition initialPosition = calculateRelativeInitialPositionToUserAircraft(0);
+    const InitialPosition initialPosition = Settings::getInstance().isPlaceAtInitialPositionEnabled() ? calculateRelativeInitialPositionToUserAircraft(0) : InitialPosition::NullData;
     skyConnectManager.startRecording(SkyConnectIntf::RecordingMode::AddToFormation, initialPosition);
 }
 
@@ -324,6 +324,7 @@ void FormationWidget::initUi() noexcept
     ui->sePositionRadioButton->setChecked(true);
     ui->horizontalDistanceSlider->setValue(HorizontalDistance::Nearby);
     ui->verticalDistanceSlider->setValue(VerticalDistance::Level);
+    ui->initialPositionCheckBox->setChecked(Settings::getInstance().isPlaceAtInitialPositionEnabled());
 
     d->positionButtonGroup->addButton(ui->nPositionRadioButton, RelativePosition::North);
     d->positionButtonGroup->addButton(ui->nnePositionRadioButton, RelativePosition::NorthNorthEast);
@@ -397,6 +398,8 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::updateUserAircraftIndex);
     connect(ui->deletePushButton, &QPushButton::clicked,
             this, &FormationWidget::deleteAircraft);
+    connect(ui->initialPositionCheckBox, &QCheckBox::stateChanged,
+            this, &FormationWidget::onInitialPositionChanged);
 
     connect(ui->horizontalDistanceSlider, &QSlider::valueChanged,
             this, &FormationWidget::updateRelativeDistance);
@@ -828,10 +831,13 @@ void FormationWidget::updateToolTips() noexcept
         ui->replayModeComboBox->setToolTip(tr("%1 controls all recorded aircraft.").arg(Version::getApplicationName()));
         break;
     case ReplayMode::ManualControlUserAircraftIndex:
-        ui->replayModeComboBox->setToolTip(tr("Take control of the recorded user aircraft of the formation. The user aircraft can be changed during replay."));
+        ui->replayModeComboBox->setToolTip(tr("Take control of the recorded user aircraft of the formation.\n"
+                                              "The user aircraft (marked in blue) can be changed during replay."));
         break;
     case ReplayMode::FlyWithFormationIndex:
-        ui->replayModeComboBox->setToolTip(tr("Fly with the currently loaded aircraft along with the formation. Pause the replay to reposition your aircraft again in relation to the recorded user aircraft of the formation."));
+        ui->replayModeComboBox->setToolTip(tr("Fly with the currently loaded aircraft along with the entire formation.\n"
+                                              "Reposition your user aircraft at any time, by either changing its relative position\n"
+                                              "or choose another reference aircraft (marked in green) in the formation."));
         break;
     }
 }
@@ -893,6 +899,11 @@ void FormationWidget::onSelectionChanged() noexcept
     updateEditUi();
     updateTimeOffsetUi();
     updateToolTips();
+}
+
+void FormationWidget::onInitialPositionChanged(bool enable) noexcept
+{
+    Settings::getInstance().setPlaceAtInitialPositionEnabled(enable);
 }
 
 void FormationWidget::updateUserAircraftIndex() noexcept

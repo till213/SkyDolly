@@ -96,6 +96,7 @@ private slots:
     void handleCellSelected(int row, int column) noexcept;
     void handleCellChanged(int row, int column) noexcept;
     void onSelectionChanged() noexcept;
+    void onInitialPositionChanged(bool enable) noexcept;
     void updateUserAircraftIndex() noexcept;
     void deleteAircraft() noexcept;
 
