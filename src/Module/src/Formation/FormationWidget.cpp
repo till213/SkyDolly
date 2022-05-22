@@ -129,7 +129,7 @@ namespace
 class FormationWidgetPrivate
 {
 public:
-    FormationWidgetPrivate(QObject *parent) noexcept
+    FormationWidgetPrivate(QWidget *parent) noexcept
         : tailNumberColumnIndex(InvalidColumn),
           timeOffsetColumnIndex(InvalidColumn),
           positionButtonGroup(new QButtonGroup(parent)),
@@ -138,7 +138,26 @@ public:
           selectedRow(InvalidSelection),
           selectedAircraftIndex(Flight::InvalidId),
           timeOffsetValidator(nullptr)
-    {}
+    {
+        // We always initialise all icons at once, so checking only for
+        // normalAircraftIcon is sufficient
+        if (normalAircraftIcon.isNull()) {
+            normalAircraftIcon = QIcon(":/img/icons/aircraft-normal.png");
+            recordingAircraftIcon = QIcon(":/img/icons/aircraft-record-normal.png");
+            referenceAircraftIcon = QIcon(":/img/icons/aircraft-reference-normal.png");
+        }
+        if (parent->devicePixelRatioF() > 1.5) {
+            userAircraftPixmap.load(":/img/icons/aircraft-normal@2x.png");
+            userAircraftPixmap.setDevicePixelRatio(2.0);
+            referenceAircraftPixmap.load(":/img/icons/aircraft-reference-normal@2x.png");
+            referenceAircraftPixmap.setDevicePixelRatio(2.0);
+        } else {
+            userAircraftPixmap.load(":/img/icons/aircraft-normal.png");
+            userAircraftPixmap.setDevicePixelRatio(1.0);
+            referenceAircraftPixmap.load(":/img/icons/aircraft-reference-normal.png");
+            referenceAircraftPixmap.setDevicePixelRatio(1.0);
+        }
+    }
 
     int tailNumberColumnIndex;
     int timeOffsetColumnIndex;
@@ -152,11 +171,17 @@ public:
 
     static QIcon normalAircraftIcon;
     static QIcon recordingAircraftIcon;
+    static QIcon referenceAircraftIcon;
+
+    // QPixmaps can only be created after QApplication (cannot be static)
+    QPixmap userAircraftPixmap;
+    QPixmap referenceAircraftPixmap;
 };
 
 // Only initialise once the Module.qrc resources are available
 QIcon FormationWidgetPrivate::normalAircraftIcon {};
 QIcon FormationWidgetPrivate::recordingAircraftIcon {};
+QIcon FormationWidgetPrivate::referenceAircraftIcon {};
 
 // PUBLIC
 
@@ -627,20 +652,16 @@ void FormationWidget::updateUi() noexcept
         if (rowIndex == userAircraftIndex) {
             const SkyConnectIntf::ReplayMode replayMode = skyConnectManager.getReplayMode();
             if (recording) {
-                newItem->setIcon(QIcon(":/img/icons/aircraft-record-normal.png"));
+                newItem->setIcon(FormationWidgetPrivate::recordingAircraftIcon);
             } else if (replayMode == SkyConnectIntf::ReplayMode::FlyWithFormation) {
-                newItem->setIcon(QIcon(":/img/icons/aircraft-reference-normal.png"));
+                newItem->setIcon(FormationWidgetPrivate::referenceAircraftIcon);
             } else {
-                newItem->setIcon(QIcon(":/img/icons/aircraft-normal.png"));
+                newItem->setIcon(FormationWidgetPrivate::normalAircraftIcon);
             }
             if (replayMode == SkyConnectIntf::ReplayMode::FlyWithFormation) {
-                QPixmap pixmap {":/img/icons/aircraft-reference-normal@2x.png"};
-                pixmap.setDevicePixelRatio(2);
-                ui->referenceAircraftLabel->setPixmap(pixmap);
+                ui->referenceAircraftLabel->setPixmap(d->referenceAircraftPixmap);
             } else {
-                QPixmap pixmap {":/img/icons/aircraft-normal@2x.png"};
-                pixmap.setDevicePixelRatio(2);
-                ui->referenceAircraftLabel->setPixmap(pixmap);
+                ui->referenceAircraftLabel->setPixmap(d->userAircraftPixmap);
             }
         }
         // Sequence numbers start at 1

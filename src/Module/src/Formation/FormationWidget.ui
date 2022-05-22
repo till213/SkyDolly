@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>663</width>
-    <height>430</height>
+    <width>814</width>
+    <height>453</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -385,8 +385,8 @@
                  </property>
                  <property name="minimumSize">
                   <size>
-                   <width>24</width>
-                   <height>24</height>
+                   <width>16</width>
+                   <height>16</height>
                   </size>
                  </property>
                  <property name="toolTip">
@@ -394,9 +394,6 @@
                  </property>
                  <property name="text">
                   <string/>
-                 </property>
-                 <property name="pixmap">
-                  <pixmap resource="../../res/Module.qrc">:/img/icons/aircraft-normal.png</pixmap>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
