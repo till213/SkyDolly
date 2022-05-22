@@ -36,7 +36,7 @@
 #### User Interface
 - Latitude and longitude values are now formatted with leading zeroes
 - The recording timer is now always incremented, even (especially) when no sample data is currently being recorded (no value changes, e.g. typically for a "cold and dark" aircraft)
-- Additional tooltips in the settings dialog
+- Added and improved tooltips
 - All question and information dialogs now have an explanatory title
 - Tables now have alternating colours per row
 - A question and confirmation dialog is now shown before and after logbook optimisation, also showing the before and after file sizes (after the optimisation)
