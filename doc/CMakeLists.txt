@@ -1,6 +1,5 @@
-if (CMAKE_BUILD_TYPE MATCHES "^[Rr]elease")
-
-    option(BUILD_DOC "Build documentation" ON)
+option(SKY_DOXY_DOC "Build Doxygen documentation" OFF)
+if(SKY_DOXY_DOC)
 
     # check if Doxygen is installed
     find_package(Doxygen)
@@ -20,7 +19,7 @@ if (CMAKE_BUILD_TYPE MATCHES "^[Rr]elease")
             COMMENT "Generating API documentation with Doxygen"
             VERBATIM )
     else (DOXYGEN_FOUND)
-      message("Doxygen need to be installed to generate the doxygen documentation")
+        message("Doxygen need to be installed to generate the doxygen documentation")
     endif (DOXYGEN_FOUND)
 
 endif()

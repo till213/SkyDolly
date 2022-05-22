@@ -24,6 +24,7 @@
  */
 #include <memory>
 #include <cstdint>
+#include <optional>
 
 #include <QWidget>
 #include <QDialog>
@@ -131,13 +132,7 @@ void StatisticsDialog::initUi() noexcept
 void StatisticsDialog::updateUi() noexcept
 {
     updateRecordingSampleRate();
-
-    std::int64_t timestamp {0};
-    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        timestamp = skyConnect->get().getCurrentTimestamp();
-    }
-    updateRecordUi(timestamp);
+    updateRecordUi(SkyConnectManager::getInstance().getCurrentTimestamp());
 }
 
 void StatisticsDialog::frenchConnection() noexcept
@@ -163,17 +158,18 @@ void StatisticsDialog::updateRecordUi(std::int64_t timestamp) noexcept
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
 
     // Samples per second
-    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    if (skyConnect) {
-        if (skyConnect->get().getState() == Connect::State::Recording) {
+    const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    if (skyConnectManager.getState() == Connect::State::Recording) {
+        const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = skyConnectManager.getCurrentSkyConnect();
+        if (skyConnect) {
             ui->samplesPerSecondLineEdit->setText(d->unit.formatHz(skyConnect->get().calculateRecordedSamplesPerSecond()));
             ui->durationLineEdit->setText(d->unit.formatElapsedTime(timestamp));
         } else {
             ui->samplesPerSecondLineEdit->clear();
-            ui->durationLineEdit->setText(d->unit.formatElapsedTime(flight.getTotalDurationMSec()));
         }
     } else {
         ui->samplesPerSecondLineEdit->clear();
+        ui->durationLineEdit->setText(d->unit.formatElapsedTime(flight.getTotalDurationMSec()));
     }
 
     std::int64_t totalCount = 0;

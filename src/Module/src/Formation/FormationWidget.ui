@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>808</width>
-    <height>448</height>
+    <width>814</width>
+    <height>453</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -376,7 +376,7 @@
                 </spacer>
                </item>
                <item row="2" column="2">
-                <widget class="QLabel" name="label">
+                <widget class="QLabel" name="referenceAircraftLabel">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -385,18 +385,15 @@
                  </property>
                  <property name="minimumSize">
                   <size>
-                   <width>24</width>
-                   <height>24</height>
+                   <width>16</width>
+                   <height>16</height>
                   </size>
                  </property>
                  <property name="toolTip">
-                  <string>Reference aircraft (current user aircraft)</string>
+                  <string>Reference aircraft (current user aircraft).</string>
                  </property>
                  <property name="text">
                   <string/>
-                 </property>
-                 <property name="pixmap">
-                  <pixmap resource="../../../UserInterface/res/SkyDolly.qrc">:/img/icons/aircraft-normal.png</pixmap>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -937,7 +934,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../../../UserInterface/res/SkyDolly.qrc">
+             <iconset resource="../../res/Module.qrc">
               <normaloff>:/img/icons/fast-backward-offset-normal.png</normaloff>
               <activeoff>:/img/icons/fast-backward-offset-active.png</activeoff>:/img/icons/fast-backward-offset-normal.png</iconset>
             </property>
@@ -964,7 +961,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../../../UserInterface/res/SkyDolly.qrc">
+             <iconset resource="../../res/Module.qrc">
               <normaloff>:/img/icons/backward-offset-normal.png</normaloff>
               <activeoff>:/img/icons/backward-offset-active.png</activeoff>:/img/icons/backward-offset-normal.png</iconset>
             </property>
@@ -1020,7 +1017,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../../../UserInterface/res/SkyDolly.qrc">
+             <iconset resource="../../res/Module.qrc">
               <normaloff>:/img/icons/forward-offset-normal.png</normaloff>
               <activeoff>:/img/icons/forward-offset-active.png</activeoff>:/img/icons/forward-offset-normal.png</iconset>
             </property>
@@ -1047,7 +1044,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../../../UserInterface/res/SkyDolly.qrc">
+             <iconset resource="../../res/Module.qrc">
               <normaloff>:/img/icons/fast-forward-offset-normal.png</normaloff>
               <activeoff>:/img/icons/fast-forward-offset-active.png</activeoff>:/img/icons/fast-forward-offset-normal.png</iconset>
             </property>
@@ -1124,7 +1121,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../UserInterface/res/SkyDolly.qrc"/>
+  <include location="../../res/Module.qrc"/>
  </resources>
  <connections/>
 </ui>

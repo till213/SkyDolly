@@ -24,6 +24,7 @@ target_sources(${LIBRARY_NAME}
         include/Widget/Platform.h src/Platform.cpp
         include/Widget/TableDateItem.h src/TableDateItem.cpp
         include/Widget/TableTimeItem.h src/TableTimeItem.cpp
+        include/Widget/HyperlinkTextEdit.h src/HyperlinkTextEdit.cpp
 )
 if(${PLATFORM_IS_WINDOWS})
     target_sources(${LIBRARY_NAME}

@@ -6,10 +6,10 @@ if (${PLATFORM_IS_MACOS})
     add_library(${TARGET_NAME} INTERFACE)
 endif()
 
-# Option: SD_FETCH_EGM (default: OFF)
+# Option: SKY_FETCH_EGM (default: OFF)
 if (egm_POPULATED)
 
-    message(STATUS "[SD_FETCH_EGM=ON] Using earth gravity model egm2008-5.pgm.")
+    message(STATUS "[SKY_FETCH_EGM=ON] Using earth gravity model egm2008-5.pgm.")
 
     if (${PLATFORM_IS_MACOS})
         set(EGM_FILE_PATHS
@@ -48,5 +48,5 @@ if (egm_POPULATED)
     endif()
 
 else()
-    message(STATUS "[SD_FETCH_EGM=OFF] No earth gravity model downloaded: enable option SD_FETCH_EGM and/or check internet connection.")
+    message(STATUS "[SKY_FETCH_EGM=OFF] No earth gravity model downloaded: enable option SKY_FETCH_EGM and/or check internet connection.")
 endif()

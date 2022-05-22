@@ -43,6 +43,8 @@ public:
 
     void addObject(const Aircraft &aircraft, std::int64_t timestamp) noexcept;
     void removeByAircraftId(std::int64_t aircraftId) noexcept;
+    void removeAllObjects() noexcept;
+
     void removeByObjectId(::SIMCONNECT_OBJECT_ID objectId) noexcept;
 
     /*!

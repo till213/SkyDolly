@@ -83,9 +83,10 @@ namespace
     constexpr int InvalidColumn {-1};
     constexpr int FlightIdColumn {0};
 
-    // Date selection table
+    // Date selection tree view
     constexpr int DateColumn {0};
     constexpr int NofFlightsColumn {1};
+    constexpr int NofFlightsColumnWidth {40};
 
     constexpr int SearchTimeoutMSec {200};
 
@@ -212,6 +213,8 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::recordingStarted,
             this, &LogbookWidget::onRecordingStarted);
+    connect(&skyConnectManager, &SkyConnectManager::stateChanged,
+            this, &LogbookWidget::updateEditUi);
 
     updateUi();
     handleSelectionChanged();
@@ -241,6 +244,8 @@ void LogbookWidget::hideEvent(QHideEvent *event) noexcept
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     disconnect(&skyConnectManager, &SkyConnectManager::stateChanged,
                this, &LogbookWidget::onRecordingStarted);
+    disconnect(&skyConnectManager, &SkyConnectManager::stateChanged,
+               this, &LogbookWidget::updateEditUi);
 }
 
 // PRIVATE
@@ -276,7 +281,12 @@ void LogbookWidget::initUi() noexcept
     QByteArray logbookState = Settings::getInstance().getLogbookState();
     ui->logTableWidget->horizontalHeader()->restoreState(logbookState);
 
-    ui->splitter->setStretchFactor(1, 3);
+    QHeaderView *header = ui->logTreeWidget->header();
+    header->setSectionResizeMode(QHeaderView::Fixed);
+    header->resizeSection(::NofFlightsColumn, ::NofFlightsColumnWidth);
+
+    const int logTreeWidth = ui->logTreeWidget->minimumWidth();
+    ui->splitter->setSizes({logTreeWidth, width() - logTreeWidth});
 
     // Default "Delete" key deletes flights
     ui->deletePushButton->setShortcut(QKeySequence::Delete);
@@ -317,9 +327,7 @@ void LogbookWidget::updateFlightTable() noexcept
         d->flightInMemoryId = flight.getId();
         std::vector<FlightSummary> summaries = d->logbookService->getFlightSummaries(d->flightSelector);
 
-        const SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-        std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = skyConnectManager.getCurrentSkyConnect();
-        const bool recording = skyConnect ? skyConnect->get().isInRecordingState() : false;
+        const bool recording = SkyConnectManager::getInstance().isInRecordingState();
         if (recording) {
             FlightSummary summary = flight.getFlightSummary();
             summary.flightId = ::RecordingInProgressId;
@@ -574,10 +582,7 @@ const QString LogbookWidget::getName() noexcept
 
 void LogbookWidget::onRecordingStarted() noexcept
 {
-    updateEditUi();
-    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    const bool inRecordingState = skyConnect && skyConnect->get().isInRecordingState();
-    if (inRecordingState) {
+    if (SkyConnectManager::getInstance().isInRecordingState()) {
         const Flight &flight = Logbook::getInstance().getCurrentFlight();
         FlightSummary summary = flight.getFlightSummary();
         summary.flightId = ::RecordingInProgressId;
@@ -636,6 +641,7 @@ void LogbookWidget::updateDateSelectorUi() noexcept
 
             totalFlights += nofFlightsPerYear;
         }
+        logbookItem->setData(::NofFlightsColumn, Qt::DisplayRole, totalFlights);
 
         // Adjust column size when all items are expanded
         ui->logTreeWidget->expandAll();
@@ -648,9 +654,6 @@ void LogbookWidget::updateDateSelectorUi() noexcept
             item->setExpanded(true);
             item = item->child(0);
         }
-
-        logbookItem->setData(::NofFlightsColumn, Qt::DisplayRole, totalFlights);
-
         ui->logTreeWidget->blockSignals(false);
     }
 }
@@ -672,9 +675,7 @@ void LogbookWidget::handleSelectionChanged() noexcept
 
 void LogbookWidget::loadFlight() noexcept
 {
-    const std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
-    const bool inRecordingState = skyConnect && skyConnect->get().isInRecordingState();
-    if (!inRecordingState) {
+    if (!SkyConnectManager::getInstance().isInRecordingState()) {
         std::int64_t selectedFlightId = d->selectedFlightId;
         if (selectedFlightId != Flight::InvalidId) {
             const bool ok = d->flightService.restore(selectedFlightId, Logbook::getInstance().getCurrentFlight());
@@ -695,7 +696,7 @@ void LogbookWidget::deleteFlight() noexcept
             std::unique_ptr<QMessageBox> messageBox = std::make_unique<QMessageBox>(this);
             QCheckBox *dontAskAgainCheckBox = new QCheckBox(tr("Do not ask again."), messageBox.get());
 
-            messageBox->setWindowTitle(tr("Delete flight"));
+            messageBox->setWindowTitle(tr("Delete Flight"));
             messageBox->setText(tr("The flight %1 is about to be deleted. Deletion cannot be undone.").arg(d->selectedFlightId));
             messageBox->setInformativeText(tr("Do you want to delete the flight?"));
             QPushButton *deleteButton = messageBox->addButton(tr("&Delete"), QMessageBox::AcceptRole);

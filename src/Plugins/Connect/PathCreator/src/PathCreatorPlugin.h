@@ -74,6 +74,7 @@ protected:
 
     void onAddAiObject(const Aircraft &aircraft) noexcept override;
     void onRemoveAiObject(std::int64_t aircraftId) noexcept override;
+    void onRemoveAllAiObjects() noexcept override;
 
 protected slots:
     void recordData() noexcept override;

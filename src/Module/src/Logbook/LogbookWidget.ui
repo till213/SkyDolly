@@ -39,7 +39,7 @@
       <widget class="QLineEdit" name="searchLineEdit">
        <property name="minimumSize">
         <size>
-         <width>200</width>
+         <width>120</width>
          <height>0</height>
         </size>
        </property>
@@ -54,12 +54,6 @@
      </item>
      <item>
       <widget class="QComboBox" name="durationComboBox">
-       <property name="minimumSize">
-        <size>
-         <width>120</width>
-         <height>0</height>
-        </size>
-       </property>
        <property name="toolTip">
         <string>Filter by minimum flight duration.</string>
        </property>
@@ -74,12 +68,6 @@
      </item>
      <item>
       <widget class="QComboBox" name="engineTypeComboBox">
-       <property name="minimumSize">
-        <size>
-         <width>120</width>
-         <height>0</height>
-        </size>
-       </property>
        <property name="toolTip">
         <string>Filter by engine type.</string>
        </property>
@@ -104,16 +92,19 @@
      </property>
      <widget class="QTreeWidget" name="logTreeWidget">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
       <property name="minimumSize">
        <size>
-        <width>0</width>
+        <width>180</width>
         <height>0</height>
        </size>
+      </property>
+      <property name="toolTip">
+       <string>Select flights by date.</string>
       </property>
       <attribute name="headerVisible">
        <bool>false</bool>
@@ -146,19 +137,6 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="flightCountLabel">
-           <property name="minimumSize">
-            <size>
-             <width>40</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item>
           <spacer name="horizontalSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -170,6 +148,19 @@
             </size>
            </property>
           </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="flightCountLabel">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>

@@ -123,10 +123,28 @@ SkyConnectIntf::ReplayMode AbstractSkyConnect::getReplayMode() const noexcept
 void AbstractSkyConnect::setReplayMode(ReplayMode replayMode) noexcept
 {
     if (d->replayMode != replayMode) {
+        switch (d->replayMode) {
+        case ReplayMode::Normal:
+            break;
+        case ReplayMode::UserAircraftManualControl:
+            break;
+        case ReplayMode::FlyWithFormation:
+            onRemoveAiObject(d->currentFlight.getUserAircraft().getId());
+            break;
+        }
         d->replayMode = replayMode;
-        syncAiObjectsWithFlight();
+        switch (d->replayMode) {
+        case ReplayMode::Normal:
+            break;
+        case ReplayMode::UserAircraftManualControl:
+            break;
+        case ReplayMode::FlyWithFormation:
+            onAddAiObject(d->currentFlight.getUserAircraft());
+            break;
+        }
         updateUserAircraftFreeze();
     }
+    sendAircraftData(d->currentTimestamp, TimeVariableData::Access::Seek, AircraftSelection::All);
 }
 
 void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition) noexcept
@@ -190,6 +208,11 @@ bool AbstractSkyConnect::isRecording() const noexcept
     return d->state == Connect::State::Recording;
 }
 
+bool AbstractSkyConnect::isInRecordingState() const noexcept
+{
+    return isRecording() || d->state == Connect::State::RecordingPaused;
+}
+
 void AbstractSkyConnect::startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition) noexcept
 {
     if (!isConnectedWithSim()) {
@@ -238,23 +261,18 @@ bool AbstractSkyConnect::isReplaying() const noexcept
     return d->state == Connect::State::Replay;
 }
 
+bool AbstractSkyConnect::isInReplayState() const noexcept
+{
+    return isReplaying() || d->state == Connect::State::ReplayPaused;
+}
+
 void AbstractSkyConnect::stop() noexcept
 {
-    if (d->state == Connect::State::Recording || d->state == Connect::State::RecordingPaused) {
+    if (isInRecordingState()) {
         stopRecording();
     } else {
         stopReplay();
     }
-}
-
-bool AbstractSkyConnect::isInRecordingState() const noexcept
-{
-    return isRecording() || d->state == Connect::State::RecordingPaused;
-}
-
-bool AbstractSkyConnect::isInReplayState() const noexcept
-{
-    return isReplaying() || d->state == Connect::State::ReplayPaused;
 }
 
 bool AbstractSkyConnect::isActive() const noexcept
@@ -390,6 +408,21 @@ Flight &AbstractSkyConnect::getCurrentFlight() const
     return d->currentFlight;
 }
 
+Connect::State AbstractSkyConnect::getState() const noexcept
+{
+    return d->state;
+}
+
+bool AbstractSkyConnect::isConnected() const noexcept
+{
+    return d->state != Connect::State::Disconnected;
+}
+
+bool AbstractSkyConnect::isIdle() const noexcept
+{
+    return d->state == Connect::State::Connected || d->state == Connect::State::Disconnected;
+}
+
 std::int64_t AbstractSkyConnect::getCurrentTimestamp() const noexcept
 {
     return d->currentTimestamp;
@@ -405,9 +438,9 @@ double AbstractSkyConnect::getReplaySpeedFactor() const noexcept
     return d->replaySpeedFactor;
 }
 
-void AbstractSkyConnect::setReplaySpeedFactor(double replaySpeedFactor) noexcept
+void AbstractSkyConnect::setReplaySpeedFactor(double factor) noexcept
 {
-    if (!qFuzzyCompare(d->replaySpeedFactor, replaySpeedFactor)) {
+    if (!qFuzzyCompare(d->replaySpeedFactor, factor)) {
         // If the elapsed timer is running...
         if (d->elapsedTimer.isValid()) {
             // ... then store the elapsed time measured with the previous scale...
@@ -415,23 +448,8 @@ void AbstractSkyConnect::setReplaySpeedFactor(double replaySpeedFactor) noexcept
             // ... and restart timer
             startElapsedTimer();
         }
-        d->replaySpeedFactor = replaySpeedFactor;
+        d->replaySpeedFactor = factor;
     }
-}
-
-Connect::State AbstractSkyConnect::getState() const noexcept
-{
-    return d->state;
-}
-
-bool AbstractSkyConnect::isConnected() const noexcept
-{
-    return d->state != Connect::State::Disconnected;
-}
-
-bool AbstractSkyConnect::isIdle() const noexcept
-{
-    return d->state == Connect::State::Connected || d->state == Connect::State::Disconnected;
 }
 
 double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
@@ -469,12 +487,7 @@ void AbstractSkyConnect::addAiObject(const Aircraft &aircraft) noexcept
 void AbstractSkyConnect::removeAiObjects() noexcept
 {
     if (isConnected()) {
-        const std::int64_t userAircraftId = d->currentFlight.getUserAircraft().getId();
-        for (const auto &aircraft : d->currentFlight) {
-            if (aircraft->getId() != userAircraftId) {
-                onRemoveAiObject(aircraft->getId());
-            }
-        }
+        onRemoveAllAiObjects();
     }
 }
 
@@ -493,13 +506,33 @@ void AbstractSkyConnect::syncAiObjectsWithFlight() noexcept
 
 void AbstractSkyConnect::updateUserAircraft(int newUserAircraftIndex, int previousUserAircraftIndex) noexcept
 {
-    const Aircraft &userAircraft = d->currentFlight[newUserAircraftIndex];
-    removeAiObject(userAircraft.getId());
-    if (previousUserAircraftIndex != Flight::InvalidAircraftIndex) {
-        const Aircraft &aircraft = d->currentFlight[previousUserAircraftIndex];
-        addAiObject(aircraft);
-    }    
+    if (d->replayMode != ReplayMode::FlyWithFormation) {
+        const Aircraft &userAircraft = d->currentFlight[newUserAircraftIndex];
+        removeAiObject(userAircraft.getId());
+        if (previousUserAircraftIndex != Flight::InvalidAircraftIndex) {
+            const Aircraft &aircraft = d->currentFlight[previousUserAircraftIndex];
+            addAiObject(aircraft);
+        }
+    }
     sendAircraftData(d->currentTimestamp, TimeVariableData::Access::Seek, AircraftSelection::UserAircraft);
+}
+
+void AbstractSkyConnect::onTimeOffsetChanged() noexcept
+{
+    // Only send the updated positions (due to a timeo ffset change) when replay is paused
+    if (getState() == Connect::State::ReplayPaused) {
+        seek(getCurrentTimestamp());
+    }
+}
+
+void AbstractSkyConnect::onTailNumberChanged(Aircraft &aircraft) noexcept
+{
+    onRemoveAiObject(aircraft.getId());
+    onAddAiObject(aircraft);
+    // Only send the updated positions (due to a timeo ffset change) when replay is paused
+    if (getState() == Connect::State::ReplayPaused) {
+        seek(getCurrentTimestamp());
+    }
 }
 
 // PROTECTED

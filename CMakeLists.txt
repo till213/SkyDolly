@@ -28,10 +28,6 @@ set(CMAKE_SHARED_MODULE_PREFIX "")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-
 # Platform identifiers
 
 # https://gitlab.kitware.com/cmake/community/-/wikis/doc/tutorials/How-To-Write-Platform-Checks
@@ -86,6 +82,17 @@ else()
     message(STATUS "IPO SUPPORT disabled for debug builds")
 endif()
 
+# https://jonathanhamberg.com/post/cmake-embedding-git-hash/
+set(PRE_CONFIGURE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+include(cmake/CheckGit.cmake)
+CheckGitSetup()
+
+# Only enable auto-moccing for our own libraries and executables
+# (not for the third-party libraries above)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
 # Application libraries
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Kernel)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/KernelTest)
@@ -128,8 +135,6 @@ if (${PLATFORM_IS_MACOS})
     )
     include(CreateAppIconOnMacOS)
     create_app_icon_on_macos(INPUT "res/SkyDolly.png" OUTPUT APP_ICON_PATH)
-
-#    add_library(AppIcon OBJECT ${APP_ICON_PATH})
     set_source_files_properties(${APP_ICON_PATH}
         PROPERTIES
             MACOSX_PACKAGE_LOCATION "Resources"
@@ -139,27 +144,38 @@ if (${PLATFORM_IS_MACOS})
             ${APP_ICON_PATH}
     )
 elseif(${PLATFORM_IS_WINDOWS})
+    # KNOWN ISSUE: windres.exe (MinGW on Windows) does not properly handle include paths with spaces
+    #              Also refer e.g. to https://bugreports.qt.io/browse/QTBUG-62918
+    # WORKAROUND: Place the Sky Dolly sources into a path without spaces
     # Resource file (*.rc)
-    configure_file(${PROJECT_SOURCE_DIR}/res/SkyDolly.rc.in
-                   ${PROJECT_SOURCE_DIR}/res/SkyDolly.rc @ONLY)
-    add_library(resources OBJECT ${PROJECT_SOURCE_DIR}/res/SkyDolly.rc)
-    target_include_directories(resources PRIVATE ${PROJECT_SOURCE_DIR}/res/)
-    set(RESOURCES $<TARGET_OBJECTS:resources>)
+    configure_file("${PROJECT_SOURCE_DIR}/res/SkyDolly.rc.in"
+                   "${PROJECT_SOURCE_DIR}/res/SkyDolly.rc" @ONLY)
+    add_library(resources OBJECT "${PROJECT_SOURCE_DIR}/res/SkyDolly.rc")
+    target_include_directories(resources PRIVATE "${PROJECT_SOURCE_DIR}/res/")
+    target_sources(${APP_NAME}
+        PRIVATE
+            $<TARGET_OBJECTS:resources>
+    )
 endif()
 
 target_sources(${APP_NAME}
     PRIVATE
         src/main.cpp
-        ${RESOURCES}
-        README.md
-        CHANGELOG.md
         BUILD.md
+        CHANGELOG.md
         CODE_OF_CONDUCT.md
-        THIRD_PARTY.md
+        README.md
+        RELEASE.md
         SHASUM256.md
+        THIRD_PARTY.md
         doc/SkyDolly.simvars
         res/Info.plist.in
         res/SkyDolly.rc.in
+)
+
+target_include_directories(${APP_NAME}
+    PRIVATE
+        ${CMAKE_BINARY_DIR}/generated
 )
 target_link_libraries(${APP_NAME}
     PRIVATE

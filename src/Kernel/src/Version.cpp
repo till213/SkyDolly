@@ -26,9 +26,13 @@
 
 #include <QString>
 #include <QStringLiteral>
+#include <QStringBuilder>
+#include <QLatin1Char>
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
+#include <QDateTime>
 
+#include <GitInfo.h>
 #include <VersionConfig.h>
 #include "Version.h"
 
@@ -47,8 +51,7 @@ public:
     int minor;
     int patch;
 
-    static inline const QString CodeName {QStringLiteral("Beasty Boeing")};
-    static inline const QString UserVersion {QStringLiteral("22.02")};
+    static inline const QString CodeName {QStringLiteral("Analytical Airbus")};
 };
 
 // PUBLIC
@@ -85,17 +88,17 @@ void Version::fromString(QStringView version) noexcept
 Version::~Version() noexcept
 {}
 
-int Version::getMajor() noexcept
+int Version::getMajor() const noexcept
 {
     return d->major;
 }
 
-int Version::getMinor() noexcept
+int Version::getMinor() const noexcept
 {
     return d->minor;
 }
 
-int Version::getPatch() noexcept
+int Version::getPatch() const noexcept
 {
     return d->patch;
 }
@@ -157,7 +160,12 @@ const QString Version::getCodeName() noexcept
 
 const QString Version::getUserVersion() noexcept
 {
-    return VersionPrivate::UserVersion;
+    QString userVersion;
+    const QDate gitDate = getGitDate().date();
+    const int year = gitDate.year();
+    const int month = gitDate.month();
+    userVersion = QString("%1").arg(year) % "." % QString("%1").arg(month, 2, 10, QLatin1Char('0'));
+    return userVersion;
 }
 
 const QString Version::getApplicationVersion() noexcept
@@ -174,4 +182,14 @@ const QString Version::getOrganisationName() noexcept
 const QString Version::getApplicationName() noexcept
 {
     return VersionConfig::ApplicationName;
+}
+
+QLatin1String Version::getGitHash() noexcept
+{
+    return QLatin1String(GitInfo::GitHash);
+}
+
+QDateTime Version::getGitDate() noexcept
+{
+    return QDateTime::fromString(GitInfo::GitIsoDate, Qt::ISODate);
 }
