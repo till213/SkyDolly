@@ -825,7 +825,7 @@
              <item row="2" column="1">
               <widget class="QCheckBox" name="initialPositionCheckBox">
                <property name="toolTip">
-                <string>Initially place the aicraft relative to the current user aircraft before recording.</string>
+                <string>Initially place the aicraft relative to the current user aircraft before recording or replay (&quot;fly with formation&quot;).</string>
                </property>
                <property name="text">
                 <string>Set initial position</string>

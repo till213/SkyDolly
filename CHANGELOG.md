@@ -21,7 +21,8 @@
 #### Formation Module
 - Improved AI aircraft management
   * Minimised create / delete AI aircraft requests when switching the user aircraft or removing an aircraft
-- A new "set initial position" option allows to keep the user aircraft at its current position when recording, instead of placing it relative to the current formation user (reference) aircraft (default and previous behaviour)
+- A new "set initial position" option allows to keep the user aircraft at its current position, instead of placing it relative to the current formation user (reference) aircraft upon recording or replay
+  * Both for recording and replay ("fly with formation") the initial position of the user aircraft remains unchanged when this new "set initial position" option is unchecked
   * So if you ever wanted to record two aircraft playing "chicken" by starting from opposite ends of some runway... this is your opportunity ;)
 - The order of the formation aircraft table columns can now be changed
 - The "Delete" key now deletes the selected aircraft

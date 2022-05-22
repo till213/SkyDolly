@@ -277,7 +277,7 @@ void FormationWidget::onStartReplay() noexcept
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     const bool fromStart = skyConnectManager.isAtEnd();
     const std::int64_t timestamp = fromStart ? 0 : skyConnectManager.getCurrentTimestamp();
-    const InitialPosition initialPosition = calculateRelativeInitialPositionToUserAircraft(timestamp);
+    const InitialPosition initialPosition = Settings::getInstance().isPlaceAtInitialPositionEnabled() ? calculateRelativeInitialPositionToUserAircraft(timestamp) : InitialPosition::NullData;
     skyConnectManager.startReplay(fromStart, initialPosition);
 }
 
