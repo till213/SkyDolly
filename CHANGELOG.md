@@ -23,6 +23,7 @@
   * Minimised create / delete AI aircraft requests when switching the user aircraft or removing an aircraft
 - The order of the formation aircraft table columns can now be changed
 - The "Delete" key now deletes the selected aircraft
+- The reference aircraft in the formation table changes colour to "green" when setting the replay mode to "fly with formation", indicating that the user controls an "extra" user aircraft (which is initially placed relative to the green reference aircraft)
 - Minor layout adjustments
 
 #### Minimal UI Mode
@@ -55,8 +56,8 @@
   * Quitting the application (with CTRL + Q or File | Quit) will properly stop and persist an ongoing recording
 
 ### Under The Hood
-- Introduction of the GeographicLib
-  * Calculating undulation values
+- Introduction of the GeographicLib (https://geographiclib.sourceforge.io/)
+  * Calculating undulation values (conversion between geoid and WGS84 reference ellipsoid altitudes)
   * Geodesic calculations (distance, azimuth, relative position)
 - Refactored the build system ("modern CMake")
   * Resources like the undulation file can be auomatically (optionally) downloaded at build configuration time (refer to the [BUILD.d](BUILD.md) instructions for details
