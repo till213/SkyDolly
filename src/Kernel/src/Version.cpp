@@ -26,6 +26,8 @@
 
 #include <QString>
 #include <QStringLiteral>
+#include <QStringBuilder>
+#include <QLatin1Char>
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
 #include <QDateTime>
@@ -49,8 +51,7 @@ public:
     int minor;
     int patch;
 
-    static inline const QString CodeName {QStringLiteral("Beasty Boeing")};
-    static inline const QString UserVersion {QStringLiteral("22.05")};
+    static inline const QString CodeName {QStringLiteral("Analytical Airbus")};
 };
 
 // PUBLIC
@@ -159,7 +160,12 @@ const QString Version::getCodeName() noexcept
 
 const QString Version::getUserVersion() noexcept
 {
-    return VersionPrivate::UserVersion;
+    QString userVersion;
+    const QDate gitDate = getGitDate().date();
+    const int year = gitDate.year();
+    const int month = gitDate.month();
+    userVersion = QString("%1").arg(year) % "." % QString("%1").arg(month, 2, 10, QLatin1Char('0'));
+    return userVersion;
 }
 
 const QString Version::getApplicationVersion() noexcept

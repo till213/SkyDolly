@@ -86,11 +86,12 @@ void AboutDialog::initUi() noexcept
 
     ui->applicationIconLabel->setPixmap(d->applicationPixmap);
     ui->aboutLabel->setText(tr("%1\nThe Black Sheep for Your Flight Recordings\n\n"
-                               "Version %2\n"
-                               "Git hash: %3\n"
-                               "%4\n\n"
+                               "\"%2\" (%3)\n"
+                               "Version %4 (%5)\n"
+                               "%6\n\n"
                                "MIT License")
-                            .arg(Version::getApplicationName(), Version::getApplicationVersion(),
+                            .arg(Version::getApplicationName(), Version::getCodeName(),
+                                 Version::getUserVersion(), Version::getApplicationVersion(),
                                  Version::getGitHash(), Version::getGitDate().toLocalTime().toString()));
 
     QFile file(":text/ThirdParty.md");

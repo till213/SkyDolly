@@ -161,12 +161,13 @@ endif()
 target_sources(${APP_NAME}
     PRIVATE
         src/main.cpp
-        README.md
-        CHANGELOG.md
         BUILD.md
+        CHANGELOG.md
         CODE_OF_CONDUCT.md
-        THIRD_PARTY.md
+        README.md
+        RELEASE.md
         SHASUM256.md
+        THIRD_PARTY.md
         doc/SkyDolly.simvars
         res/Info.plist.in
         res/SkyDolly.rc.in

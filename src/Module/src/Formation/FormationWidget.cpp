@@ -169,19 +169,15 @@ public:
     QDoubleValidator *timeOffsetValidator;
     Unit unit;
 
-    static QIcon normalAircraftIcon;
-    static QIcon recordingAircraftIcon;
-    static QIcon referenceAircraftIcon;
+    // Only initialise once the Module.qrc resources are available
+    static inline QIcon normalAircraftIcon;
+    static inline QIcon recordingAircraftIcon;
+    static inline QIcon referenceAircraftIcon;
 
     // QPixmaps can only be created after QApplication (cannot be static)
     QPixmap userAircraftPixmap;
     QPixmap referenceAircraftPixmap;
 };
-
-// Only initialise once the Module.qrc resources are available
-QIcon FormationWidgetPrivate::normalAircraftIcon {};
-QIcon FormationWidgetPrivate::recordingAircraftIcon {};
-QIcon FormationWidgetPrivate::referenceAircraftIcon {};
 
 // PUBLIC
 
