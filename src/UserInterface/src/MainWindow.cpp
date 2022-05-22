@@ -430,8 +430,14 @@ void MainWindow::initUi() noexcept
             int currentPreviewInfoCount = settings.getPreviewInfoDialogCount();
             --currentPreviewInfoCount;
             QMessageBox::information(this, "Preview",
-                QString("%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete. Feedback (bug reports, feature ideas, general feedback) is very welcome.\n\n"
-                "The release v%2 focuses again on import and export plugins. Besides new import and export formats it is now possible to export an entire formation flight and import all files in a given directory.\n\n"
+                QString("%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete. A lot of \"refactoring\" work "
+                "has happened under the hood for this release v%2, and while many existing bugs have been fixed quite a bunch of regressions have been detected during "
+                "development of this release as well.\n\n"
+                "So please report any new bugs and especially regressions that may still be present. Feedback is very welcome!\n\n"
+                "The release focuses mostly on usability and performance topics. The formation module creates way less \"AI object\" creation and deletion "
+                "requests and a truly \"minimal UI\" mode has been introduced. The application also uses considerably less memory resources, especially in \"minimal UI\" mode.\n\n"
+                "This release also properly calculates altitude differences (so-called undulation) between the reference WGS84 ellipsoid and the EGM2008 (earth gravitiy model) geoid, "
+                "with the help of the GeographicLib. Certain import/export plugins make (optionally) use of this, specifically the GPX and IGC plugins.\n\n"
                 "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(currentPreviewInfoCount),
                 QMessageBox::StandardButton::Ok);            
             settings.setPreviewInfoDialogCount(currentPreviewInfoCount);
