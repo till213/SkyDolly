@@ -62,7 +62,7 @@ protected:
     virtual void onStartReplay() noexcept;
 
 protected slots:
-    virtual void handleRecordingStopped() noexcept override;
+    virtual void onRecordingStopped() noexcept override;
 
 private:
     std::unique_ptr<AbstractModuleWidgetPrivate> d;

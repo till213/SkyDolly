@@ -1479,6 +1479,7 @@ void MainWindow::showLogbookSettings() noexcept
 
 void MainWindow::quit() noexcept
 {
+    SkyConnectManager::getInstance().stop();
     close();
 }
 

@@ -50,7 +50,7 @@ public:
     virtual void setPlaying(bool enable) noexcept = 0;
 
 protected:
-    virtual void handleRecordingStopped() noexcept = 0;
+    virtual void onRecordingStopped() noexcept = 0;
 };
 
 #endif // MODULEINTF_H

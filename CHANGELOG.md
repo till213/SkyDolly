@@ -52,6 +52,7 @@
   * No existing flight can be loaded (including by double-clicking onto a logbook row)
   * No user aircraft can be switched in the formation (including by double-cicking onto an aircraft in the formation table)
   * Creating a new logbook or opening an existing one is disabled
+  * Quitting the application (with CTRL + Q or File | Quit) will properly stop and persist an ongoing recording
 
 ### Under The Hood
 - Introduction of the GeographicLib

@@ -287,7 +287,7 @@ void FormationWidget::onStartReplay() noexcept
 
 // PROTECTED SLOTS
 
-void FormationWidget::handleRecordingStopped() noexcept
+void FormationWidget::onRecordingStopped() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     const int sequenceNumber = flight.count();
@@ -295,7 +295,7 @@ void FormationWidget::handleRecordingStopped() noexcept
         // Sequence starts at 1
         d->aircraftService->store(flight.getId(), sequenceNumber, flight[sequenceNumber - 1]);
     } else {
-        AbstractModuleWidget::handleRecordingStopped();
+        AbstractModuleWidget::onRecordingStopped();
     }
     updateRelativePosition();
 }

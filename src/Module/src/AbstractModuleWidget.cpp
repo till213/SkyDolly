@@ -63,10 +63,10 @@ void AbstractModuleWidget::setActive(bool enable) noexcept
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     if (enable) {
         connect(&skyConnectManager, &SkyConnectManager::recordingStopped,
-                this, &AbstractModuleWidget::handleRecordingStopped);
+                this, &AbstractModuleWidget::onRecordingStopped);
     } else {
         disconnect(&skyConnectManager, &SkyConnectManager::recordingStopped,
-                   this, &AbstractModuleWidget::handleRecordingStopped);
+                   this, &AbstractModuleWidget::onRecordingStopped);
     }
     getAction().setChecked(enable);
     d->active = enable;
@@ -145,7 +145,7 @@ void AbstractModuleWidget::onStartReplay() noexcept
 
 // PROTECTED SLOTS
 
-void AbstractModuleWidget::handleRecordingStopped() noexcept
+void AbstractModuleWidget::onRecordingStopped() noexcept
 {
     d->flightService.store(Logbook::getInstance().getCurrentFlight());
 }
