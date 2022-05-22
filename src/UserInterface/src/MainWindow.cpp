@@ -1465,7 +1465,7 @@ void MainWindow::optimiseLogbook() noexcept
             messageBox->setIcon(QMessageBox::Information);
             messageBox->setWindowTitle(tr("Success"));
             messageBox->setText(tr("The logbook %1 optimisation was successful.").arg(fileInfo.fileName()));
-            messageBox->setInformativeText(tr("The new file size is: %1 (old size: %2).")
+            messageBox->setInformativeText(tr("The new file size is: %1 (previous size: %2).")
                                            .arg(d->unit.formatMemory(fileInfo.size()), d->unit.formatMemory(oldSize)));
             messageBox->exec();
         } else {
