@@ -444,7 +444,7 @@ inline void LogbookWidget::addFlightSummary(FlightSummary summary, int rowIndex)
 
     // Duration
     const std::int64_t durationMSec = summary.startSimulationLocalTime.msecsTo(summary.endSimulationLocalTime);
-    const QTime time = QTime::fromMSecsSinceStartOfDay(durationMSec * 1000);
+    const QTime time = QTime::fromMSecsSinceStartOfDay(durationMSec);
     newItem = std::make_unique<QTableWidgetItem>(d->unit.formatDuration(time));
     newItem->setToolTip(tr("Simulation duration."));
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -482,7 +482,7 @@ void LogbookWidget::frenchConnection() noexcept
 
     // Date selection
     connect(ui->logTreeWidget, &QTreeWidget::itemClicked,
-            this, &LogbookWidget::handleDateItemClicked);
+            this, &LogbookWidget::onDateItemClicked);
 }
 
 inline void LogbookWidget::insertYear(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByYear, int nofFlightsPerYear) noexcept
@@ -716,6 +716,7 @@ void LogbookWidget::deleteFlight() noexcept
             updateUi();
             int selectedRow = std::min(lastSelectedRow, ui->logTableWidget->rowCount() - 1);
             ui->logTableWidget->selectRow(selectedRow);
+            ui->logTableWidget->setFocus(Qt::NoFocusReason);
         }
     }
 }
@@ -757,7 +758,7 @@ void LogbookWidget::handleCellChanged(int row, int column) noexcept
     }
 }
 
-void LogbookWidget::handleDateItemClicked(QTreeWidgetItem *item) noexcept
+void LogbookWidget::onDateItemClicked(QTreeWidgetItem *item) noexcept
 {
     updateSelectionDateRange(item);
     updateFlightTable();
