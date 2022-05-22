@@ -28,10 +28,6 @@ set(CMAKE_SHARED_MODULE_PREFIX "")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-
 # Platform identifiers
 
 # https://gitlab.kitware.com/cmake/community/-/wikis/doc/tutorials/How-To-Write-Platform-Checks
@@ -91,6 +87,11 @@ set(PRE_CONFIGURE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 include(cmake/CheckGit.cmake)
 CheckGitSetup()
 
+# Only enable auto-moccing for our own libraries and executables
+# (not for the third-party libraries above)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
 # Application libraries
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/Kernel)
