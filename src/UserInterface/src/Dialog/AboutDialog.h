@@ -44,16 +44,23 @@ public:
     explicit AboutDialog(QWidget *parent = nullptr) noexcept;
     ~AboutDialog() noexcept override;
 
+protected:
+    void mousePressEvent(QMouseEvent *event) noexcept override;
+    void mouseReleaseEvent(QMouseEvent *event) noexcept override;
+
 private:
     Q_DISABLE_COPY(AboutDialog)
     std::unique_ptr<AboutDialogPrivate> d;
     std::unique_ptr<Ui::AboutDialog> ui;
 
     void initUi() noexcept;
+    void updateUi() noexcept;
     void frenchConnection() noexcept;
+    QString getVersionInfo() const noexcept;
 
 private slots:
     void showAboutQtDialog() noexcept;
+    void restoreVersionInfo() noexcept;
 };
 
 #endif // ABOUTDIALOG_H

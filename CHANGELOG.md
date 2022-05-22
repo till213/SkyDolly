@@ -40,7 +40,10 @@
 - All question and information dialogs now have an explanatory title
 - Tables now have alternating colours per row
 - A question and confirmation dialog is now shown before and after logbook optimisation, also showing the before and after file sizes (after the optimisation)
-- Dialogs (flight, simulation variables, statistics) are now (only) created on demand and immediatelly released after use, resulting in a smaller memory footprint
+- Dialogs (Flight, Simulation Variables, Statistics) are now (only) created on demand and immediatelly released after use, resulting in a smaller memory footprint
+- The About dialog
+  * Now contains references to used third party libraries and tools
+  * Allows to copy the (extended) version information into the clipboard by clicking onto it
 - Small layout improvements
 
 ### Bug Fixes
@@ -49,7 +52,7 @@
 - When pausing a recording (yes, that's actually possible ;)) the "recording timer" is only restarted in case no event-based recording is done (but a "timer-based recording" instead)
 - The Window | Minimal menu entry is now properly synchronised (unchecked) when the module is changed while in "minimal UI" mode (e.g. by pressing F1 or F2, or via the Module menu)
 - File paths are converted to native separators when shown in dialog boxes to the user
-- The settings dialog is now created on demand. This also fixes an issue with dialog z-ordering when the main application window is switched to "Stay on Top"
+- The Settings dialog is now created on demand. This also fixes an issue with dialog z-ordering when the main application window is switched to "Stay on Top"
 - Depending on the selected module the persistence of a flight is different (single aircraft vs formation flight). In order not to mess up the persistence logic switching modules is now disabled while recording 
 - In order to prevent data loss when recording a flight the following functionality is now properly disabled during recording:
   * No existing flight can be loaded (including by double-clicking onto a logbook row)
@@ -162,7 +165,7 @@
   
 ### Bug Fixes
 
-- The spoiler position value is now properly shown as percent (instead of "raw number") in the simulation variables dialog
+- The spoiler position value is now properly shown as percent (instead of "raw number") in the Simulation Variables dialog
   * For clarity the field is now also labeled "spoiler position" (instead of just "spoiler")
 - Switched internal leading/trailing flaps position unit from "percent" to "position"
   * The greater precision (32767 vs 255 possible values) gets rid of the "flaps sound stutter" (e.g. audible in the cockpit of the A320neo)
@@ -257,7 +260,7 @@
   * SkyConnect plugin architecture
     - SimConnect plugin (currently FS2020 only)
     - Auto-detection of installed flight simulator (automatic plugin selection)
-    - Plugin changeable at runtime via settings dialog
+    - Plugin changeable at runtime via Settings dialog
   
 #### Modules
 
@@ -413,7 +416,7 @@
 
 ### Bug Fixes
 
-- Fixes a crash which would occur when quitting the application and when the simulation variables dialog was still open
+- Fixes a crash which would occur when quitting the application and when the Simulation Variables dialog was still open
 - Altitude and other simulation variables measured in feet are now properly displayed with their unit ('ft')
 - Replaced the non-writeable FOLDING WING HANDLE POSITION simulation variable with FOLDING WING LEFT|RIGHT PERCENT
 
@@ -529,8 +532,8 @@
 
 - Recording & replay of basic flight controls (rudder, ailerons, flaps, gear, ...)
 - Updated user interface
-- Separate simulation variables dialog
-- Simulation variables are now also shown during replay (in the new simulation variables dialog)
+- Separate Simulation Variables dialog
+- Simulation variables are now also shown during replay (in the new Simulation Variables dialog)
 - Add record/play/pause actions, with keyboard shortcuts (r = record, space = play, p = pause)
 
 ### Bug Fixes
