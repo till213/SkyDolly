@@ -103,9 +103,10 @@ private slots:
     // Flight date tree
     void onDateItemClicked(QTreeWidgetItem *item) noexcept;
 
-    void on_formationCheckBox_toggled(bool checked) noexcept;
-    void on_engineTypeComboBox_activated(int index) noexcept;
-    void on_durationComboBox_activated(int index) noexcept;
+    // Filter options
+    void filterByFormationFlights(bool checked) noexcept;
+    void filterByEngineType(int index) noexcept;
+    void filterByDuration(int index) noexcept;
 };
 
 #endif // LOGBOOKWIDGET_H

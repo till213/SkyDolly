@@ -43,13 +43,13 @@ class LogbookSettingsDialog : public QDialog
     Q_OBJECT
 public:
     explicit LogbookSettingsDialog(QWidget *parent = nullptr) noexcept;
-    virtual ~LogbookSettingsDialog() noexcept;
+    ~LogbookSettingsDialog() noexcept override;
 
 public slots:
-    virtual void accept() noexcept override;
+    void accept() noexcept override;
 
 protected:
-    virtual void showEvent(QShowEvent *event) noexcept override;
+    void showEvent(QShowEvent *event) noexcept override;
 
 private:
     Q_DISABLE_COPY(LogbookSettingsDialog)
@@ -61,7 +61,7 @@ private:
     void frenchConnection() noexcept;
 
 private slots:
-    void on_showLogbookPathPushButton_clicked() noexcept;
+    void openLogbookDirectory() noexcept;
 };
 
 #endif // LOGBOOKSETTINGSDIALOG_H

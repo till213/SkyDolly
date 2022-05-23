@@ -482,6 +482,14 @@ void LogbookWidget::frenchConnection() noexcept
     connect(ui->logTableWidget, &QTableWidget::cellChanged,
             this, &LogbookWidget::handleCellChanged);
 
+    // Filter options
+    connect(ui->formationCheckBox, &QCheckBox::toggled,
+            this, &LogbookWidget::filterByFormationFlights);
+    connect(ui->engineTypeComboBox, &QComboBox::activated,
+            this, &LogbookWidget::filterByEngineType);
+    connect(ui->durationComboBox, &QComboBox::activated,
+            this, &LogbookWidget::filterByDuration);
+
     // Date selection
     connect(ui->logTreeWidget, &QTreeWidget::itemClicked,
             this, &LogbookWidget::onDateItemClicked);
@@ -766,21 +774,21 @@ void LogbookWidget::onDateItemClicked(QTreeWidgetItem *item) noexcept
     updateFlightTable();
 }
 
-void LogbookWidget::on_formationCheckBox_toggled(bool checked) noexcept
+void LogbookWidget::filterByFormationFlights(bool checked) noexcept
 {
     d->flightSelector.hasFormation = checked;
     updateFlightTable();
 }
 
-void LogbookWidget::on_engineTypeComboBox_activated([[maybe_unused]] int index) noexcept
+void LogbookWidget::filterByEngineType([[maybe_unused]] int index) noexcept
 {
     d->flightSelector.engineType = static_cast<SimType::EngineType>(ui->engineTypeComboBox->currentData().toInt());
     updateFlightTable();
 }
 
-void LogbookWidget::on_durationComboBox_activated([[maybe_unused]] int index) noexcept
+void LogbookWidget::filterByDuration([[maybe_unused]] int index) noexcept
 {
-    int minimumDurationMinutes;
+    int minimumDurationMinutes {0};
     switch (static_cast<Duration>(ui->durationComboBox->currentData().toUInt())) {
     case Duration::All:
         minimumDurationMinutes = 0;
