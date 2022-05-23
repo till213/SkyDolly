@@ -80,20 +80,29 @@ SimConnectAi::~SimConnectAi()
 
 void SimConnectAi::addObject(const Aircraft &aircraft, std::int64_t timestamp) noexcept
 {
-    const AircraftInfo aircraftInfo = aircraft.getAircraftInfo();
-    Position &position = aircraft.getPosition();
-    const PositionData positioNData = position.interpolate(timestamp, TimeVariableData::Access::Seek);
-    const ::SIMCONNECT_DATA_INITPOSITION initialPosition = SimConnectPositionRequest::toInitialPosition(positioNData, aircraftInfo.startOnGround, aircraftInfo.initialAirspeed);
+    // Check if the newly added aircraft has any recording yet
+    // (otherwise it is the new user aircraft being added for a new recording)
+    if (aircraft.getId() != Aircraft::InvalidId) {
+        const AircraftInfo aircraftInfo = aircraft.getAircraftInfo();
+        Position &position = aircraft.getPosition();
+        const PositionData positioNData = position.interpolate(timestamp, TimeVariableData::Access::Seek);
+        const ::SIMCONNECT_DATA_INITPOSITION initialPosition = SimConnectPositionRequest::toInitialPosition(positioNData, aircraftInfo.startOnGround, aircraftInfo.initialAirspeed);
 
-    const ::SIMCONNECT_DATA_REQUEST_ID requestId = Enum::toUnderlyingType(SimConnectType::DataRequest::AiObjectBase) + d->lastAiCreateRequestId;
-    HRESULT result = ::SimConnect_AICreateNonATCAircraft(d->simConnectHandle, aircraftInfo.aircraftType.type.toLocal8Bit(), aircraftInfo.tailNumber.toLocal8Bit(), initialPosition, requestId);
-    if (result == S_OK) {
-        d->requestByAircraftId[aircraft.getId()] = requestId;
-        ++d->lastAiCreateRequestId;
+        const ::SIMCONNECT_DATA_REQUEST_ID requestId = Enum::toUnderlyingType(SimConnectType::DataRequest::AiObjectBase) + d->lastAiCreateRequestId;
+        HRESULT result = ::SimConnect_AICreateNonATCAircraft(d->simConnectHandle, aircraftInfo.aircraftType.type.toLocal8Bit(), aircraftInfo.tailNumber.toLocal8Bit(), initialPosition, requestId);
+        if (result == S_OK) {
+            d->requestByAircraftId[aircraft.getId()] = requestId;
+            ++d->lastAiCreateRequestId;
 #ifdef DEBUG
         qDebug() << "SimConnectAi::addObject: pending CreateNonATCAircraft request:" << requestId << "for aircraft ID: " << aircraft.getId();
 #endif
+        }
     }
+#ifdef DEBUG
+    else {
+        qDebug() << "SimConnectAi::addObject: ignoring user aircraft, ID:" << aircraft.getId();
+    }
+#endif
 }
 
 void SimConnectAi::removeByAircraftId(std::int64_t aircraftId) noexcept

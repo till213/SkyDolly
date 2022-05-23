@@ -157,12 +157,8 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
     if (ok) {
         switch (recordingMode) {
         case RecordingMode::SingleAircraft:
-            // Single flight - destroy any previous AI aircraft
-            removeAiObjects();
             // Start a new flight
             d->currentFlight.clear(true);
-            // Assign user aircraft ID
-            syncAiObjectsWithFlight();
             break;
         case RecordingMode::AddToFormation:
             // Check if the current user aircraft already has a recording
@@ -170,8 +166,6 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
                 // If yes, add a new aircraft to the current flight (formation)
                 d->currentFlight.addUserAircraft();
             }
-            // Update AI objects
-            syncAiObjectsWithFlight();
             break;
         }
         d->lastSamplesPerSecondIndex = 0;
@@ -508,7 +502,9 @@ void AbstractSkyConnect::updateUserAircraft(int newUserAircraftIndex, int previo
 {
     if (d->replayMode != ReplayMode::FlyWithFormation) {
         const Aircraft &userAircraft = d->currentFlight[newUserAircraftIndex];
-        removeAiObject(userAircraft.getId());
+        if (userAircraft.getId() != Aircraft::InvalidId) {
+            removeAiObject(userAircraft.getId());
+        }
         if (previousUserAircraftIndex != Flight::InvalidAircraftIndex) {
             const Aircraft &aircraft = d->currentFlight[previousUserAircraftIndex];
             addAiObject(aircraft);
