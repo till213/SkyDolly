@@ -268,7 +268,7 @@ void MainWindow::frenchConnection() noexcept
     connect(&skyConnectManager, &SkyConnectManager::stateChanged,
             this, &MainWindow::updateUi);
     connect(&skyConnectManager, &SkyConnectManager::recordingStopped,
-            this, &MainWindow::onRecordingStopped);
+            this, &MainWindow::onRecordingDurationChanged);
 
     // Replay speed
     connect(d->replaySpeedActionGroup, &QActionGroup::triggered,
@@ -280,9 +280,9 @@ void MainWindow::frenchConnection() noexcept
     connect(&flight, &Flight::flightRestored,
             this, &MainWindow::onFlightRestored);
     connect(&flight, &Flight::timeOffsetChanged,
-            this, &MainWindow::updateReplayDuration);
+            this, &MainWindow::onRecordingDurationChanged);
     connect(&flight, &Flight::aircraftRemoved,
-            this, &MainWindow::updateReplayDuration);
+            this, &MainWindow::onRecordingDurationChanged);
     connect(&flight, &Flight::cleared,
             this, &MainWindow::updateUi);
 
@@ -1319,7 +1319,7 @@ void MainWindow::onDefaultMinimalUiEssentialButtonVisibilityChanged(bool visible
     }
 }
 
-void MainWindow::onRecordingStopped() noexcept
+void MainWindow::onRecordingDurationChanged() noexcept
 {
     updateReplayDuration();
     updatePositionSlider(SkyConnectManager::getInstance().getCurrentTimestamp());

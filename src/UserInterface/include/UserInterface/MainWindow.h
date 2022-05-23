@@ -154,7 +154,7 @@ private slots:
     /*
      * Updates the replay duration (maximum time) and then position slider position.
      */
-    void onRecordingStopped() noexcept;
+    void onRecordingDurationChanged() noexcept;
 
     /*
      * Updates the timestamp by setting the maximum replay time according
