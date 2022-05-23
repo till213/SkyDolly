@@ -76,6 +76,7 @@ private:
     void initUi() noexcept;
     void initFilterUi() noexcept;
     void updateFlightTable() noexcept;
+    void updateDateSelectorUi() noexcept;
     inline void addFlightSummary(FlightSummary summary, int rowIndex) noexcept;
     void updateEditUi() noexcept;
     void frenchConnection() noexcept;
@@ -89,17 +90,18 @@ private:
 private slots:
     void onRecordingStarted() noexcept;
     void updateUi() noexcept;
-    void updateAircraftIcon() noexcept;
-    void updateDateSelectorUi() noexcept;
-    void handleSelectionChanged() noexcept;
+    void updateAircraftIcons() noexcept;
+
     void loadFlight() noexcept;
     void deleteFlight() noexcept;
     // Search
-    void handleSearchTextChanged() noexcept;
+    void onSearchTextChanged() noexcept;
     void searchText() noexcept;
+
     // Flight log table
-    void handleCellSelected(int row, int column) noexcept;
-    void handleCellChanged(int row, int column) noexcept;
+    void onSelectionChanged() noexcept;
+    void onCellSelected(int row, int column) noexcept;
+    void onCellChanged(int row, int column) noexcept;
     // Flight date tree
     void onDateItemClicked(QTreeWidgetItem *item) noexcept;
 
