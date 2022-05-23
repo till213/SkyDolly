@@ -65,7 +65,41 @@ public:
     Aircraft &addUserAircraft() noexcept;
     Aircraft &getUserAircraft() const noexcept;
     int getUserAircraftIndex() const noexcept;
+
+    /*!
+     * Sets the user aircraft index to \c index and emits the signal #userAircraftChanged, but the
+     * second signal parameter (\c previousUserAircraftIndex) is set to \c InvalidIndex.
+     *
+     * This implies that while the previous AI object for the new user aircraft (identified by the
+     * new \c index) is deleted no new AI object for the previous user aircraft is created. This
+     * is useful when deleting the current user aircraft itself.
+     *
+     * In effect, one AI object is deleted and none created.
+     *
+     * \param index
+     *        the index of the new user aircraft
+     * \sa switchUserAircraftIndex
+     * \sa reassignUserAircraftIndex
+     */
     void setUserAircraftIndex(int index) noexcept;
+
+    /*!
+     * Sets the user aircraft index to \c index and emits the signal #userAircraftChanged. In contrast
+     * to #setUserAircraftIndex however the second signal parameter (\c previousUserAircraftIndex) is set
+     * to the previous user aircraft index.
+     *
+     * This implies that the previous AI object for the new user aircraft (identified by the
+     * new \c index) is deleted and a new AI object for the previous user aircraft is created. Or in
+     * other words, the user aircraft is switched to the position of another AI object.
+     *
+     * * In effect, one AI object is deleted and another one is created.
+     *
+     * \param index
+     * \sa setUserAircraftIndex
+     * \sa reassignUserAircraftIndex
+     */
+    void switchUserAircraftIndex(int index) noexcept;
+
     std::int64_t deleteAircraftByIndex(int index) noexcept;
     std::size_t count() const noexcept;
 
@@ -155,6 +189,14 @@ private:
     std::unique_ptr<FlightPrivate> d;
 
     inline void connectWithAircraftSignals(Aircraft &aircraft);
+
+    /*
+     * Re-assigns the user aircraft \c index, but without emitting the \c userAircraftChanged signal.
+     * This is useful in case an aircraft with an index lower (<) than the current user aircraft
+     * is deleted and hence the user aircraft index must be re-assigned, but without actually
+     * switching the user aircraft to a previous AI object.
+     */
+    void reassignUserAircraftIndex(int index) noexcept;
 };
 
 #endif // FLIGHT_H

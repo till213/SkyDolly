@@ -291,7 +291,6 @@ void FormationWidget::onRecordingStopped() noexcept
     } else {
         AbstractModuleWidget::onRecordingStopped();
     }
-    onRelativePositionChanged();
 }
 
 // PRIVATE
@@ -456,6 +455,8 @@ void FormationWidget::updateAircraftTable() noexcept
         d->selectedRow = std::min(d->selectedRow, ui->aircraftTableWidget->rowCount() - 1);
         ui->aircraftTableWidget->selectRow(d->selectedRow);
     }
+
+    updateAircraftIcons();
 }
 
 void FormationWidget::updateAircraftIcons() noexcept
@@ -849,24 +850,26 @@ void FormationWidget::addAircraft(const Aircraft &aircraft, int rowIndex) noexce
 void FormationWidget::updateAndSendUserAircraftPosition() const noexcept
 {
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    switch (skyConnectManager.getReplayMode())
-    {
-    case SkyConnectIntf::ReplayMode::Normal:
-        break;
-    case SkyConnectIntf::ReplayMode::UserAircraftManualControl:
-    {
-        Flight &flight = Logbook::getInstance().getCurrentFlight();
-        // Also update the manually flown user aircraft's position
-        const Aircraft &aircraft = flight.getUserAircraft();
-        Position &position = aircraft.getPosition();
-        const PositionData positionData = position.interpolate(skyConnectManager.getCurrentTimestamp(), TimeVariableData::Access::Seek);
-        skyConnectManager.setUserAircraftPosition(positionData);
-        break;
-    }
-    case SkyConnectIntf::ReplayMode::FlyWithFormation:
-        const PositionData positionData = calculateRelativePositionToUserAircraft(skyConnectManager.getCurrentTimestamp());
-        skyConnectManager.setUserAircraftPosition(positionData);
-        break;
+    if (!skyConnectManager.isInRecordingState()) {
+        switch (skyConnectManager.getReplayMode())
+        {
+        case SkyConnectIntf::ReplayMode::Normal:
+            break;
+        case SkyConnectIntf::ReplayMode::UserAircraftManualControl:
+        {
+            Flight &flight = Logbook::getInstance().getCurrentFlight();
+            // Also update the manually flown user aircraft's position
+            const Aircraft &aircraft = flight.getUserAircraft();
+            Position &position = aircraft.getPosition();
+            const PositionData positionData = position.interpolate(skyConnectManager.getCurrentTimestamp(), TimeVariableData::Access::Seek);
+            skyConnectManager.setUserAircraftPosition(positionData);
+            break;
+        }
+        case SkyConnectIntf::ReplayMode::FlyWithFormation:
+            const PositionData positionData = calculateRelativePositionToUserAircraft(skyConnectManager.getCurrentTimestamp());
+            skyConnectManager.setUserAircraftPosition(positionData);
+            break;
+        }
     }
 }
 
@@ -875,7 +878,6 @@ void FormationWidget::updateAndSendUserAircraftPosition() const noexcept
 void FormationWidget::updateUi() noexcept
 {
     updateAircraftTable();
-    updateAircraftIcons();
     updateRelativePositionUi();
     updateEditUi();    
     updateTimeOffsetUi();
@@ -899,7 +901,6 @@ void FormationWidget::onUserAircraftChanged() noexcept
 void FormationWidget::onAircraftInfoChanged() noexcept
 {
     updateAircraftTable();
-    updateAndSendUserAircraftPosition();
 }
 
 void FormationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexcept
@@ -989,6 +990,7 @@ void FormationWidget::deleteAircraft() noexcept
 
     if (doDelete) {
         d->aircraftService->deleteByIndex(d->selectedRow);
+        ui->aircraftTableWidget->setFocus(Qt::NoFocusReason);
     }
 }
 

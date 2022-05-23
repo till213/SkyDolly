@@ -158,7 +158,7 @@ Aircraft &Flight::addUserAircraft() noexcept
     connectWithAircraftSignals(*aircraft.get());
 
     d->aircraft.push_back(std::move(aircraft));
-    setUserAircraftIndex(d->aircraft.size() - 1);
+    switchUserAircraftIndex(d->aircraft.size() - 1);
     emit aircraftAdded(*d->aircraft.back().get());
     return *d->aircraft.back().get();
 }
@@ -176,6 +176,14 @@ int Flight::getUserAircraftIndex() const noexcept
 void Flight::setUserAircraftIndex(int index) noexcept
 {
     if (d->userAircraftIndex != index) {
+        d->userAircraftIndex = index;
+        emit userAircraftChanged(index, SkySearch::InvalidIndex);
+    }
+}
+
+void Flight::switchUserAircraftIndex(int index) noexcept
+{
+    if (d->userAircraftIndex != index) {
         const int previousUserAircraftIndex = d->userAircraftIndex;
         d->userAircraftIndex = index;
         emit userAircraftChanged(index, previousUserAircraftIndex);
@@ -187,12 +195,16 @@ std::int64_t Flight::deleteAircraftByIndex(int index) noexcept
     std::int64_t aircraftId {Aircraft::InvalidId};
     // A flight has at least one aircraft
     if (d->aircraft.size() > 1) {
-        if (index <= d->userAircraftIndex) {
+        aircraftId = d->aircraft.at(index)->getId();
+        if (index < d->userAircraftIndex) {
             // An aircraft with a lower index or the user aircraft index itself
-            // has been removed -> shift down the user aircraft index accordingly
+            // is to be removed -> re-assign the user aircraft index accordingly
+            // (but don't notify anyone about it just yet)
+            reassignUserAircraftIndex(std::max(d->userAircraftIndex - 1, 0));
+        } else if (index == d->userAircraftIndex) {
+            // The actual user aircraft is to be removed
             setUserAircraftIndex(std::max(d->userAircraftIndex - 1, 0));
         }
-        aircraftId = d->aircraft.at(index)->getId();
         d->aircraft.erase(d->aircraft.begin() + index);
         emit aircraftRemoved(aircraftId);
     }
@@ -324,4 +336,9 @@ inline void Flight::connectWithAircraftSignals(Aircraft &aircraft)
             this, &Flight::tailNumberChanged);
     connect(&aircraft, &Aircraft::timeOffsetChanged,
             this, &Flight::timeOffsetChanged);
+}
+
+void Flight::reassignUserAircraftIndex(int index) noexcept
+{
+    d->userAircraftIndex = index;
 }

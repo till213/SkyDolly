@@ -105,6 +105,7 @@ private:
     inline bool hasStatisticsDialog() const noexcept;
 
     void updateMinimalUi(bool enable);
+    void updateReplaySpeedUi() noexcept;
 
     /*
      * Updates the timestamp time edit widget by setting the maximum time according
@@ -139,17 +140,21 @@ private slots:
     void onTimeStampTimeEditChanged(const QTime &time) noexcept;
 
     void updateWindowSize() noexcept;
-    void handleTimestampChanged(std::int64_t timestamp) noexcept;
-    void handleReplaySpeedSelected(QAction *action) noexcept;
-    void handleCustomSpeedChanged() noexcept;
-    void handleReplaySpeedUnitSelected(int index) noexcept;
+    void onTimestampChanged(std::int64_t timestamp) noexcept;
+    void onReplaySpeedSelected(QAction *action) noexcept;
+    void onCustomSpeedChanged() noexcept;
+    void onReplaySpeedUnitSelected(int index) noexcept;
 
     void updateUi() noexcept;
     void updateControlUi() noexcept;
     void updateControlIcons() noexcept;
-    void updateReplaySpeedUi() noexcept;
     void onDefaultMinimalUiButtonTextVisibilityChanged(bool visible) noexcept;
     void onDefaultMinimalUiEssentialButtonVisibilityChanged(bool visible) noexcept;
+
+    /*
+     * Updates the replay duration (maximum time) and then position slider position.
+     */
+    void onRecordingStopped() noexcept;
 
     /*
      * Updates the timestamp by setting the maximum replay time according
@@ -165,7 +170,7 @@ private slots:
     void updateMainWindow() noexcept;
 
     // Modules
-    void handleModuleActivated(const QString title, Module::Module moduleId) noexcept;
+    void onModuleActivated(const QString title, Module::Module moduleId) noexcept;
 
     // File menu
     void createNewLogbook() noexcept;
@@ -216,6 +221,6 @@ private slots:
     void onExport(QAction *action) noexcept;
 
     // Settings
-    void handleReplayLoopChanged() noexcept;
+    void onReplayLoopChanged() noexcept;
 };
 #endif // MAINWINDOW_H
