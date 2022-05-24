@@ -321,7 +321,7 @@ bool MSFSSimConnectPlugin::sendAircraftData(std::int64_t currentTimestamp, TimeV
 
         // When recording (a formation flight) we send the already recorded aircraft, except the
         // user aircraft (which is currently being recorded)
-        if (getState() != Connect::State::Recording || !isUserAircraft) {
+        if (isConnectedWithSim() &&  getState() != Connect::State::Recording || !isUserAircraft) {
             const std::int64_t objectId = isUserAircraft ? ::SIMCONNECT_OBJECT_ID_USER : d->simConnectAi->getSimulatedObjectByAircraftId(aircraft->getId());
             if (objectId != SimConnectAi::InvalidObjectId) {
 
