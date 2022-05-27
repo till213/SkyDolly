@@ -196,11 +196,13 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
 
 void AbstractSkyConnect::stopRecording() noexcept
 {
-    setState(Connect::State::Connected);
     onStopRecording();
     Aircraft &aircraft = d->currentFlight.getUserAircraft();
     aircraft.invalidateDuration();
     d->recordingTimer.stop();
+    // Only go into "recording stopped" state once the aircraft duration has been invalidated, in
+    // order to properly update the total flight duration
+    setState(Connect::State::Connected);
 
     // Create a new AI object for the newly recorded aircraft in case "fly with formation" is enabled
     if (d->replayMode == ReplayMode::FlyWithFormation) {
