@@ -33,6 +33,7 @@ class QHideEvent;
 class QAction;
 
 #include <Model/InitialPosition.h>
+#include <PluginManager/SkyConnectIntf.h>
 #include <ModuleIntf.h>
 #include <AbstractModuleWidget.h>
 
@@ -92,6 +93,7 @@ private:
 
     void addAircraft(const Aircraft &aircraft, int rowIndex) noexcept;
     void updateAndSendUserAircraftPosition() const noexcept;
+    void updateUserAircraftPosition(SkyConnectIntf::ReplayMode replayMode) const noexcept;
 
 private slots:
     void updateUi() noexcept;
@@ -110,6 +112,7 @@ private slots:
 
     void onRelativeDistanceChanged() noexcept;
     void updateReplayMode(int index) noexcept;
+    void onReplayModeChanged(SkyConnectIntf::ReplayMode replayMode);
 
     void changeTimeOffset(const std::int64_t timeOffset) noexcept;
     void onTimeOffsetEditingFinished() noexcept;

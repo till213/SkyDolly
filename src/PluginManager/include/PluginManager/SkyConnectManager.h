@@ -127,6 +127,15 @@ signals:
     void stateChanged(Connect::State state);
 
     /*!
+     * Relay of the SkyConnectIntf#replayModeChanged signal.
+     *
+     * \param replayMode
+     *        the current replay mode
+     * \sa SkyConnectIntf#replayModeChanged
+     */
+    void replayModeChanged(SkyConnectIntf::ReplayMode replayMode);
+
+    /*!
      * Relay of the SkyConnectIntf#recordingStarted signal.
      *
      * \sa SkyConnectIntf#recordingStarted

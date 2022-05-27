@@ -70,7 +70,20 @@ public:
     virtual bool setUserAircraftPosition(const PositionData & positionData) noexcept = 0;
     virtual bool freezeUserAircraft(bool enable) noexcept = 0;
 
+    /*!
+     * Returns the replay mode.
+     *
+     * \return the ReplayMode
+     */
     virtual ReplayMode getReplayMode() const noexcept = 0;
+
+    /*!
+     * Sets the replay mode.
+     *
+     * \param replayMode
+     *         the replay mode to set
+     * \sa replayModeChanged
+     */
     virtual void setReplayMode(ReplayMode replayMode) noexcept = 0;
 
     /*!
@@ -216,6 +229,14 @@ signals:
      *        the current connection state
      */
     void stateChanged(Connect::State state);
+
+    /*!
+     * Emitted whenever the replay mode has changed.
+     *
+     * \param replayMode
+     *        the current replay mode
+     */
+    void replayModeChanged(ReplayMode replayMode);
 
     /*!
      * Emitted whenever recording has been started, that is when the
