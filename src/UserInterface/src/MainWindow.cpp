@@ -432,15 +432,13 @@ void MainWindow::initUi() noexcept
             int currentPreviewInfoCount = settings.getPreviewInfoDialogCount();
             --currentPreviewInfoCount;
             QMessageBox::information(this, "Preview",
-                QString("%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete. A lot of \"refactoring\" work "
-                "has happened under the hood for this release v%2, and while many existing bugs have been fixed quite a bunch of regressions have been detected during "
-                "development of this release as well.\n\n"
-                "So please report any new bugs and especially regressions that may still be present. Feedback is very welcome!\n\n"
-                "The release focuses mostly on usability and performance topics. The formation module creates way less \"AI object\" creation and deletion "
-                "requests and a truly \"minimal UI\" mode has been introduced. The original behaviour can be set in the application settings. The application "
-                "also uses considerably less memory resources, especially in \"minimal UI\" mode.\n\n"
-                "This release also properly calculates altitude differences (so-called undulation) between the reference WGS84 ellipsoid and the EGM2008 (earth gravitiy model) geoid, "
-                "with the help of the GeographicLib. Certain import/export plugins make (optionally) use of this, specifically the GPX and IGC plugins.\n\n"
+                QString("%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete.\n\n"
+                "This release v%2 focuses on \"quality of life\" issues, including reducing memory (RAM) usage, code refactoring and on improving existing functionality "
+                "such as a truly minimal user interface mode (configurable in the settings).\n\n"
+                "It also provides an improved \"AI object management\" in the formation module, resulting in less aircraft flickering when e.g. changing the user aircraft. "
+                "The formation module now also provides a new \"set initial position\" option which (when unchecked) allows to record the user aircraft starting from its current position.\n\n"
+                "The newly introduced GeographicLib (third-party, open source) provides functionality to properly calculate the altitude differences (\"undulation\") between the WGS84 reference "
+                "ellipsoid and the EGM2008 geoid, specifically in the IGN and GPX import/export plugins.\n\n"
                 "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(currentPreviewInfoCount),
                 QMessageBox::StandardButton::Ok);            
             settings.setPreviewInfoDialogCount(currentPreviewInfoCount);
