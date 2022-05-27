@@ -157,7 +157,6 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
 
     bool ok = isConnectedWithSim();
     if (ok) {
-        setState(Connect::State::Recording);
         switch (recordingMode) {
         case RecordingMode::SingleAircraft:
             // Start a new flight
@@ -171,6 +170,9 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
             }
             break;
         }
+        // Set the recording state only after the flight has been cleared or an aircraft has been
+        // added (formation flight)
+        setState(Connect::State::Recording);
         d->lastSamplesPerSecondIndex = 0;
         d->currentTimestamp = 0;
         d->lastNotificationTimestamp = d->currentTimestamp;
