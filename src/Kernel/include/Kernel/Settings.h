@@ -756,8 +756,6 @@ signals:
 
     /*!
      * Emitted when the relative position placement option has changed.
-     *
-     * \sa changed
      */
     void relativePositionPlacementChanged(bool enable);
 
