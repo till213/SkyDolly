@@ -5,28 +5,32 @@
 ### Improvements
 
 #### Import & Export
-- No sequence numbers added anymore to export filename in case the flight has only one aircraft and "All aircraft" is selected
+- No sequence numbers added anymore to export filename in case the flight has only one aircraft and _All aircraft_ is selected
 - IGC & GXP import
   * An option to convert from the WGS84 reference ellipsoid to the earth gravity model (EGM2008) geoid altitude has been added (enabled by default)
-  * Note: both the IGC and GPX specifications state that the GNSS altitude (elevation) refer to the WGS84 reference ellipsoid, but not every IGC/GPX file necessarily conforms to the specification and may contain earth gravity model (EGM) geoid altitudes ("above sea level") instead
+  * Note: both the IGC and GPX specifications state that the GNSS altitude (elevation) refer to the WGS84 reference ellipsoid, but not every IGC/GPX file necessarily conforms to the specification and may contain earth gravity model (EGM) geoid altitudes (_above sea level_) instead
 - IGC & GPX export
   * The altitude is converted from the geoid (EGM2008) to height above the WGS84 reference ellipsoid
 - CSV export
-  - A new "position and attitude" format has been added, exporting the position, pitch, bank, heading and speed, including UTC timestamps
+  - A new _position and attitude_ format has been added, exporting the position, pitch, bank, heading and speed, including UTC timestamps
 
 #### Logbook Module
 - The order of the logbook table columns can now be changed
-- The flight being recorded is now also shown in the logbook: the "red airplane" indicates this (in analogy to the Formation module)
+- The flight being recorded is now also shown in the logbook: the _red airplane_ indicates this (in analogy to the Formation module)
 
 #### Formation Module
 - Improved AI aircraft management
   * Minimised create / delete AI aircraft requests when switching the user aircraft or removing an aircraft
-- A new "set initial position" option allows to keep the user aircraft at its current position, instead of placing it relative to the current formation user (reference) aircraft upon recording or replay
-  * Both for recording and replay ("fly with formation") the initial position of the user aircraft remains unchanged when this new "set initial position" option is unchecked
+- A new _set relative position_ option allows to keep the user aircraft at its current position, instead of placing it relative to the current formation user (reference) aircraft upon recording or replay
+  * When the _set relative position_ option is unchecked then the current user aircraft position remains unchanged when
+    - Recording starts
+    - The reference aircraft in the formation is changed
+    - The relative bearing or distance is changed
+  * Otherwise the current user aircraft is positioned in relation to the reference aircraft
   * So if you ever wanted to record two aircraft playing "chicken" by starting from opposite ends of some runway... this is your opportunity ;)
 - The order of the formation aircraft table columns can now be changed
-- The "Delete" key now deletes the selected aircraft
-- The reference aircraft in the formation table changes colour to "green" when setting the replay mode to "fly with formation", indicating that the user controls an "extra" user aircraft (which is initially placed relative to the green reference aircraft)
+- The _Delete_ key now deletes the selected aircraft
+- The reference aircraft in the formation table changes colour to _green_ when setting the replay mode to _fly with formation_, indicating that the user controls an "extra" user aircraft (which is initially placed relative to the green reference aircraft)
 - Minor layout adjustments
 
 #### Minimal UI Mode
@@ -152,24 +156,24 @@
   * The aircraft selection combobox is now editable, with autocompletion support
   * The selected aircraft is now stored in the settings
 - IGC import plugin
-  * The initial heading is now calculated on the "first significant movement", compensating GPS inaccuracies (when the glider is standing still on the ground)
-  * Date and time of turn points (waypoints) defined by the task list ("C records") are now updated with the actual flight time, based on the closest flown position
+  * The initial heading is now calculated on the _first significant movement_, compensating GPS inaccuracies (when the glider is standing still on the ground)
+  * Date and time of turn points (waypoints) defined by the task list (_C records_) are now updated with the actual flight time, based on the closest flown position
   * Environmental noise level (ENL) determines the engine state (on/off, propeller lever)
 - Logbook
-  * The "Delete" key now deletes the selected flight
+  * The _Delete_ key now deletes the selected flight
   * Columns will only be resized to content upon first data load; afterwards manual column resizing won't be changed
 - Replay
   * A replay loop button has been added: when enabled the replay restarts at the beginning whenever the end is reached
   * In the settings the seek interval is now settable with a spinbox instead of a text field
 - Recording
-  * The simulation variable "indicated airspeed" is now also recorded (however only for analytical purposes - e.g. exported as "pressure altitude" in the new IGC export plugin)
+  * The simulation variable _indicated airspeed_ is now also recorded (however only for analytical purposes - e.g. exported as _pressure altitude_ in the new IGC export plugin)
   
 ### Bug Fixes
 
-- The spoiler position value is now properly shown as percent (instead of "raw number") in the Simulation Variables dialog
-  * For clarity the field is now also labeled "spoiler position" (instead of just "spoiler")
-- Switched internal leading/trailing flaps position unit from "percent" to "position"
-  * The greater precision (32767 vs 255 possible values) gets rid of the "flaps sound stutter" (e.g. audible in the cockpit of the A320neo)
+- The spoiler position value is now properly shown as percent (instead of _raw number_) in the Simulation Variables dialog
+  * For clarity the field is now also labeled _spoiler position_ (instead of just _spoiler_)
+- Switched internal leading/trailing flaps position unit from _percent_ to _position_
+  * The greater precision (32767 vs 255 possible values) gets rid of the _flaps sound stutter_ (e.g. audible in the cockpit of the A320neo)
   
 ### Miscellaneous
 
@@ -181,15 +185,15 @@
 
 - IGC import plugin
   * The International Gliding Commission (IGC) approved flight recorder format for gliders
-  * Basic header data ("H records") import (pilot names, glider type and ID)
-  * Basic position ("B records (fix)") import
-  * Basic task ("C records") import (waypoints)
+  * Basic header data (_H records_) import (pilot names, glider type and ID)
+  * Basic position (_B records (fix)_) import
+  * Basic task (_C records_) import (waypoints)
 
 ### Bug Fixes
 
 - Typo: plural of aircraft is aircraft (credits: Stefano Caporelli, Youtube comment [Sky Dolly - Formation Flying](https://www.youtube.com/watch?v=Op_zTfM3-HQ&lc=UgyZXpfBxZ5iLpqnd5F4AaABAg))
 - KML import plugin
-  * "Flight augmentation" (adding flight procedures, aircraft attitude etc.) does properly terminate when imported flight duration is less than 3 minutes
+  * _Flight augmentation_ (adding flight procedures, aircraft attitude etc.) does properly terminate when imported flight duration is less than 3 minutes
   * Validate the number of imported positions
   * Show a simple error message in case of import failure
 
@@ -203,15 +207,15 @@
 
 - Dates and times are now properly displayed using the system locale (e.g. "8/5/2021" or "5.8.2021" for dates like "August 5 2021",
   "5:35 PM" or "17:35" for times)
-  * Date and time table items are now also properly sorted, regardless of their "locale representation"
-- Logbook: the date column of the "date chooser widget" is now properly resized according to its content (month names)
+  * Date and time table items are now also properly sorted, regardless of their _locale representation_
+- Logbook: the date column of the _date chooser widget_ is now properly resized according to its content (month names)
 
 ## 0.8.4
 
 ### Bug Fixes
 
 - The initial velocity when recording a new formation aircraft is now properly set (indicated airspeed, as opposed to true airspeed)
-  * Note that the conversion from true to indicated airspeed is currently done with a "rule of thumb" only
+  * Note that the conversion from true to indicated airspeed is currently done with a _rule of thumb_ only
   * https://www.pilotmall.com/blogs/news/how-to-calculate-true-airspeed-and-what-it-is-guide
   * Depending on the altitude and especially pressure there might still be a substantial difference to the actual indicated airspeed
 - Export
@@ -223,9 +227,9 @@
 
 ### Bug Fixes
 
-- The main window is now made a "parent" of the KML export dialog, making sure that the export dialog is always centered and on top of the main window
-  * Especially when the "Stay on Top" option is enabled for the main window
-- The initial velocity in "fly with formation" replay mode is now properly set
+- The main window is now made a _parent_ of the KML export dialog, making sure that the export dialog is always centered and on top of the main window
+  * Especially when the _Stay on Top_ option is enabled for the main window
+- The initial velocity in _fly with formation_ replay mode is now properly set
   * Properly converted from feet/s to knots
   * Properly converted from true to indicated airspeed (the SIMCONNECT_DATA_INITPOSITION structure really seems to expected indicated airspeed)
 
@@ -233,8 +237,8 @@
 
 ### Bug Fixes
 
-- Starting the recording of the first aircraft directly in the Formation module would "teleport" the aircraft to be recorded right to the North Pole (0/0 longitude/latitude)
-  * The "relative initial recording position" calculation now properly checks the returned "null position" value
+- Starting the recording of the first aircraft directly in the Formation module would _teleport_ the aircraft to be recorded right to the North Pole (0/0 longitude/latitude)
+  * The _relative initial recording position_ calculation now properly checks the returned _null position_ value
 
 ## 0.8.1
 
@@ -249,11 +253,11 @@
 
 - Plugin architecture
   * Import CSV plugin
-    - Aircraft can now be _added_ to existing flights ("multiplayer formation flying")
+    - Aircraft can now be _added_ to existing flights (_multiplayer formation flying_)
     - Select the aircraft type (used when spawning AI aircraft in formation flights)
     - Aircraft types (name, number of engines, wingspan, ...) are constantly updated upon flight recordings
       * The default aircraft of MSFS are already in the logbook and hence immediatelly selectable when importing a CSV file
-    - Also refer to new "time offset" feature in the Formation module which is useful to "synchronise multiplayer formation flights", see below
+    - Also refer to new _time offset_ feature in the Formation module which is useful to _synchronise multiplayer formation flights_, see below
   * Export CSV plugin
   * Export KML plugin ("Google Earth")
     - Basic line style settings
@@ -273,16 +277,16 @@
     - Formation flights (flights having more than one aircraft)
   * The selected _user aircraft_ is now shown in the flight log table (previously: simply the first recorded aircraft of the formation was shown)
 - Formation
-  * A time offset can be added to the selected aircraft, effectively "shifting" it back or forth on the timeline
-    - This is useful for "multiplayer formation flights" in order to synchronise the imported aircraft (also see CSV import plugin above)
-  * A new "Fly with Formation" replay mode has been added:
+  * A time offset can be added to the selected aircraft, effectively _shifting_ it back or forth on the timeline
+    - This is useful for _multiplayer formation flights_ in order to synchronise the imported aircraft (also see CSV import plugin above)
+  * A new _fly with formation_ replay mode has been added:
     - All previously recorded aircraft are replayed
-    - You fly with your currently loaded user aircraft with the formation ("in addition" to the recorded aircraft)
-  * "Take control of recorded user aircraft" still exists
-    - You can now switch control between user aircraft (also during replay), by double-clicking on the aircraft in the "Formation" table (or push the "Set User Aircraft" button)
-  * Pause will now also "freeze" the user aircraft
-    - For both "Fly with formation" and "Take control" replay modes
-    - Additionally in "Fly with formation" replay mode user aircraft can be re-positioned relative to the _recorded_ user aircraft in the formation while paused, by clicking on one of the "relative positions"
+    - You fly with your currently loaded user aircraft with the formation (_in addition_ to the recorded aircraft)
+  * _Take control of recorded user aircraft_ still exists
+    - You can now switch control between user aircraft (also during replay), by double-clicking on the aircraft in the _Formation_ table (or push the _Set User Aircraft_ button)
+  * Pause will now also _freeze_ the user aircraft
+    - For both _fly with formation_ and _Take control_ replay modes
+    - Additionally in _fly with formation_ replay mode user aircraft can be re-positioned relative to the _recorded_ user aircraft in the formation while paused, by clicking on one of the _relative positions_
   * Aircraft can now also be deleted from a formation flight during (paused) replay
 
 ### Improvements
@@ -292,10 +296,10 @@
   - Combustion
   - Smoke enabled/disabled (at the time of this writing not yet supported by FS2020)
 - Database performance improvements:
-  * "forward queries"
-  * "Normalisation" of "aircraft type" data (new table - less storage space required)
-- A new "View" menu has been added, providing options to show/hide various UI elements such as the module selector
-- Logbook backup can now be scheduled, the logbook settings are now in the "File" menu
+  * _Forward queries_
+  * _Normalisation_ of _aircraft type_ data (new table - less storage space required)
+- A new _View_ menu has been added, providing options to show/hide various UI elements such as the module selector
+- Logbook backup can now be scheduled, the logbook settings are now in the _File_ menu
   * Once a month
   * Once a week
   * Daily
@@ -303,22 +307,22 @@
 - Older logbooks are not backed up before migration
   * This can be disabled in the new Logbook Settings (File/Logbook Settings...)
 - User interface and usability refinments
-  * "Active" icons
+  * _Active_ icons
   * Small layout optimisations
   * Creating a new logbook now changes into parent directory of the actual logbook directory, when logbook file name (without extension) corresponds with the parent directory name
-    - E.g. when creating a new logbook, when the existing one is "c:\Users\The User\Documents\Sky Dolly\Sky Dolly.sdlog", the file dialog will now start with "c:\Users\The User\Documents\"
-    - (Previously: "c:\Users\The User\Documents\Sky Dolly\")
+    - E.g. when creating a new logbook, when the existing one is _c:\Users\The User\Documents\Sky Dolly\Sky Dolly.sdlog_, the file dialog will now start with _c:\Users\The User\Documents\_
+    - (Previously: _c:\Users\The User\Documents\Sky Dolly\_)
   * The replay speed group can now be hidden has well, just like the module selector
     - Both view options are now in the new View menu
-    - Hiding the replay speed group and then switching into "minimal UI" mode (key M) allows for a truly minimalistic UI now
-    - Note that the module selector and replay speed group view visibiliites cannot be toggled while in "minimal UI": switch to normal UI (key M) first
+    - Hiding the replay speed group and then switching into _minimal UI_ mode (key M) allows for a truly minimalistic UI now
+    - Note that the module selector and replay speed group view visibiliites cannot be toggled while in _minimal UI_: switch to normal UI (key M) first
 - Sky Dolly logbooks (*.sdlog) can now be associated with the Sky Dolly application: they will be opened upon double-click on the logbook (file)
-  * Associating *.sdlog files with SkyDolly.exe needs to be manually done for now (right-click on file, "Open with...", choose SkyDolly.exe)
+  * Associating *.sdlog files with SkyDolly.exe needs to be manually done for now (right-click on file, _Open with..._, choose SkyDolly.exe)
 - Pressing the same shortcut for the Show Flight|Simulation Variables|Statistics (keys F, V and S respectively) now closes the corresonding dialog again
 
 ### Bug Fixes
 
-- Proper "HiDPI support" on Windows
+- Proper _HiDPI support_ on Windows
 
 ## 0.7.1
 
@@ -332,7 +336,7 @@
 ### New Features
 
 - New module: Formation - record an unlimited number of aircraft and replay them altogher, with one single user interface
-  * Simply add new aircraft to the formation by clicking the "record" button while in the Formation module (the plus (+) sign inidcates that aircraft are being added)
+  * Simply add new aircraft to the formation by clicking the _record_ button while in the Formation module (the plus (+) sign inidcates that aircraft are being added)
   * Previously recorded aircraft are replayed during recording of the new aircraft
   * Change the user aircraft (the one which is being followed by the camera) at any time during replay
   * Take control over the user aircraft any time during replay: manually fly it at any time (and give control back to replay at any time)
@@ -347,7 +351,7 @@
 
 ### Bug Fixes
 
-- Make sure that the "delete flight" confirmation dialog is on top of the main window (specifically when the "stay on top" option is enabled)
+- Make sure that the _delete flight_ confirmation dialog is on top of the main window (specifically when the _stay on top_ option is enabled)
 
 ## 0.6.3
 
@@ -367,20 +371,20 @@
 ### Bug Fixes
 
 - The logbook table (in the user interface) is cleared upon logbook (database) disconnection
-- Decimal points in logbook file names are not "swallowed" anymore (e.g. "My Logbook v0.6.sdlog" is a perfectly fine filename)
+- Decimal points in logbook file names are not _swallowed_ anymore (e.g. _My Logbook v0.6.sdlog_ is a perfectly fine filename)
 - UI elements such as Record and CSV Import/Export are now properly enabled or disabled based on the logbook (database) connection status
 
 ## 0.6.1
 
 ### Bug Fixes
 
-- Fix "logboog" typo in  message
+- Fix "logboog" typo in message
 - Improve minimal UI switching
 - Don't reset the elapsed time to 0 when unpausing a recording
 - Keep displayed time when pausing a replay (don't set to total replay time)
 - Automatically connect with simulator when seeking position
 - Also pause the initially loaded flight
-- When "repeat values" is enabled then also repeat values with "zero value" (e.g. "canopy closed")
+- When _repeat values_ is enabled then also repeat values with _zero value_ (e.g. _canopy closed_)
 - Automatically reconnect in case the SimConnect server (flight simulator) has crashed
 - Also store the flight into the logbook if a paused recording is stopped
 - Don't request SIMCONNECT_PERIOD_NEVER twice (e.g. when stopping a paused recording): prevent SIMCONNECT_EXCEPTION_UNRECOGNIZED_ID server exception
@@ -390,30 +394,30 @@
 
 ### New Features
 
-- Add SQLite database support ("logbook") for persistence
+- Add SQLite database support (_logbook_) for persistence
   * Each flight is automatically persisted
   * Simple load / delete functionality
   * DB backup and optimisation functionality
 - Simple logbook table which lists the recorded flights
 - Each flight has an editable title and description
-- The previous "Scenario" is now called a "Flight" ("Flight" dialog, shortcut key: F)
+- The previous _Scenario_ is now called a _Flight_ (_Flight_ dialog, shortcut key: F)
 - Additional simulation variables support
   * Waypoints (ICAO, latitude/longitude/altitude) are shown in the order of approach; each waypoint is only counted once
   * Local and zulu simulation time
 - Replay speed now also available in replay menu, including shortcuts: CTRL + [1 - 4] for slow motion, SHIFT + [1 - 5] for timelapse
 - The custom replay speed factor can now be entered either as an absolute factor (1.0 = normal speed) or as percent (100% = normal speed)
-- Remove "Yoke X|Y Position" simulation variables (not needed: yokes are still properly animated)
-- Option to enable a "minimal UI" (shortcut key: M)
+- Remove _Yoke X|Y Position_ simulation variables (not needed: yokes are still properly animated)
+- Option to enable a _minimal UI_ (shortcut key: M)
 - The window geometry and state are persisted and restored upon application start
 
 ## 0.5.2
 
 ### New Features
 
-- New "repeat values" settings for selected simulation variables have been introduced: canopy and flaps  
+- New _repeat values_ settings for selected simulation variables have been introduced: canopy and flaps  
   * Certain aircraft counteract the requested simulation variables, e.g. the canopy closes or the flaps retract automatically
-  * So with the "repeat" option enabled and if the given simulation variable has a value greater zero (e.g. "canopy open") then its value is repeatedly sent to Flight Simulator
-  * The optimal settings are to disable the "repeat" options (in which case simulation variables are only sent when the value actually changes)
+  * So with the _repeat_ option enabled and if the given simulation variable has a value greater zero (e.g. _canopy open_) then its value is repeatedly sent to Flight Simulator
+  * The optimal settings are to disable the _repeat_ options (in which case simulation variables are only sent when the value actually changes)
 
 ### Bug Fixes
 
@@ -428,7 +432,7 @@
 - Properly parse the custom speed factor according to the current system locale (decimal delimiter may be , or .)
 - The initial custom replay speed factor is now displayed with decimal places (e.g. 1.00 or 1,00 - to illustrate the expected decimal delimiter according to the system locale)
 - Custom speed factor tooltip shows the valid value range
-- Properly name simulation variable "Yoke X Position" (instead of Y)
+- Properly name simulation variable _Yoke X Position_ (instead of Y)
 - Simulation variables are now formatted according to the system locale
 
 ## 0.5.0
@@ -442,7 +446,7 @@
   * General engine starter
   * Folding wing handle
 - Simulation variables now shown with units (feet, hPa, ...)
-- Added a new "Flight" dialog, showing information about the aircraft and initial flight conditions
+- Added a new _Flight_ dialog, showing information about the aircraft and initial flight conditions
 - The last CSV export/import directory is stored
 - A basic error dialog shows when an import/export error occurs
 - The seek interval can now be defined in the settings (either absolute in seconds, or in percent of the record duration)
@@ -451,7 +455,7 @@
 
 ### Bug Fixes
 
-- Do not start the elapsed timer when seeking a play position and not in replay mode (replay does not "skip ahead" when started)
+- Do not start the elapsed timer when seeking a play position and not in replay mode (replay does not _skip ahead_ when started)
 
 ## 0.4.1
 
@@ -479,10 +483,10 @@
 - A high precision timer is used to increase the sample accuracy
 - A new recording statistics dialog has been added, also showing a recorded samples per second counter
 - New icons for record/play control actions
-- When recording sample rate is set to 1 Hz ("one sample per second") then the SimConnect request period is now also set to 1 Hz
-- A new "auto" recording sample rate has been added 
+- When recording sample rate is set to 1 Hz (one sample per second) then the SimConnect request period is now also set to 1 Hz
+- A new _auto_ recording sample rate has been added 
   * Recording: samples are collected in an event-based manner ("as they arrive")
-  * Replay: samples are always sent "per visual frame"
+  * Replay: samples are always sent _per visual frame_
 - Reorganise simulation variables in tabbed widget
 - Add additional flight information variables, captured once at start of recording
   * Airline (Callsign)
@@ -495,9 +499,9 @@
 
 - Properly reset play position to begin after importing CSV data
 - Validate the CSV data upon import: specifically the first timestamp must be 0 (timestamps are shifted accordingly)
-- "Show simulation variables" action is now deselected when the dialog is closed (via close button)
-- Set the initial start position ("on ground") when replay from (or seek to) start
-- Prevent aircraft from "dropping out of the sky" after replay, by recording body velocities
+- _Show simulation variables_ action is now deselected when the dialog is closed (via close button)
+- Set the initial start position (_on ground_) when replay from (or seek to) start
+- Prevent aircraft from _dropping out of the sky_ after replay, by recording body velocities
 
 ## 0.3.1
 

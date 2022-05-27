@@ -534,24 +534,28 @@ public:
     void setImportAircraftType(const QString &type) noexcept;
 
     /*!
-     * Returns whether the the aircraft should be placed at the calculated initial position
-     * before recording.
+     * Returns whether the the new user aircraft should be placed at the calculated position
+     * relative to the current reference aircraft (user aircraft) in the formation, e.g.
+     * when starting recording, changing the reference (user) aircraft in the formation or
+     * changing the bearing or distance.
      *
-     * \return \c true if the aircraft should be initially placed at its calculated position;
-     *         \c false if the aircraft should remain at its current position when recording
+     * \return \c true if the aircraft should be placed at its calculated position;
+     *         \c false if the aircraft should remain at its current position
      */
-    bool isPlaceAtInitialPositionEnabled() const noexcept;
+    bool isRelativePositionPlacementEnabled() const noexcept;
 
     /*!
-     * Sets whether the the aircraft should be placed at the calculated initial position
-     * before recording.
+     * Sets whether the the aircraft should be placed at the calculated relative position
+     * relative to the current reference aircraft (user aircraft) in the formation, e.g.
+     * when starting recording, changing the reference (user) aircraft in the formation or
+     * changing the bearing or distance.
      *
      * \param enable
-     *        \c true if the aircraft should be initially placed at its calculated position;
-     *        \c false if the aircraft should remain at its current position when recording
-     * \sa placeAtInitialPositionChanged
+     *        \c true if the aircraft should be placed at its calculated relative position;
+     *        \c false if the aircraft should remain at its current position
+     * \sa relativePositionPlacementChanged
      */
-    void setPlaceAtInitialPositionEnabled(bool enable) noexcept;
+    void setRelativePositionPlacementEnabled(bool enable) noexcept;
 
     /*!
      * Returns the file info of the best available earth gravity model (EGM) data file.
@@ -751,9 +755,9 @@ signals:
     void defaultMinimalUiReplaySpeedVisibilityChanged(bool hidden);
 
     /*!
-     * Emitted when the initial position placement option has changed.
+     * Emitted when the relative position placement option has changed.
      */
-    void placeAtInitialPositionChanged(bool enable);
+    void relativePositionPlacementChanged(bool enable);
 
     /*!
      * Emitted when any setting has changed.
