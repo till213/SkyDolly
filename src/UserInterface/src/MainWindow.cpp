@@ -436,7 +436,7 @@ void MainWindow::initUi() noexcept
                 "This release v%2 focuses on \"quality of life\" issues, including reducing memory (RAM) usage, code refactoring and on improving existing functionality "
                 "such as a truly minimal user interface mode (configurable in the settings).\n\n"
                 "It also provides an improved \"AI object management\" in the formation module, resulting in less aircraft flickering when e.g. changing the user aircraft. "
-                "The formation module now also provides a new \"set initial position\" option which (when unchecked) allows to record the user aircraft starting from its current position.\n\n"
+                "The formation module now also provides a new \"set relative position\" option which (when unchecked) allows to record the user aircraft starting from its current position.\n\n"
                 "The newly introduced GeographicLib (third-party, open source) provides functionality to properly calculate the altitude differences (\"undulation\") between the WGS84 reference "
                 "ellipsoid and the EGM2008 geoid, specifically in the IGN and GPX import/export plugins.\n\n"
                 "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(currentPreviewInfoCount),

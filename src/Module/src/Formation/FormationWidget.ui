@@ -823,12 +823,12 @@
               </layout>
              </item>
              <item row="2" column="1">
-              <widget class="QCheckBox" name="initialPositionCheckBox">
+              <widget class="QCheckBox" name="relativePositionCheckBox">
                <property name="toolTip">
-                <string>Initially place the aicraft relative to the current user aircraft before recording or replay (&quot;fly with formation&quot;).</string>
+                <string>When enabled then the user aircraft is placed in relation to the current reference aircraft in the formation.</string>
                </property>
                <property name="text">
-                <string>Set initial position</string>
+                <string>Set relative position</string>
                </property>
               </widget>
              </item>

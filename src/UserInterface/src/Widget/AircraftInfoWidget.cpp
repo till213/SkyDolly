@@ -83,6 +83,8 @@ void AircraftInfoWidget::hideEvent(QHideEvent *event) noexcept
     const Aircraft &aircraft = flight.getUserAircraft();
     disconnect(&aircraft, &Aircraft::infoChanged,
             this, &AircraftInfoWidget::updateUi);
+    disconnect(&flight, &Flight::userAircraftChanged,
+               this, &AircraftInfoWidget::updateUi);
 }
 
 // PRIVATE

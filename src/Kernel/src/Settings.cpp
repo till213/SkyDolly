@@ -79,7 +79,7 @@ public:
     bool repeatFlapsHandleIndex;
     bool repeatCanopyOpen;
 
-    bool placeAtInitialPosition;
+    bool relativePositionPlacement;
 
     bool deleteFlightConfirmation;
     bool deleteAircraftConfirmation;
@@ -112,7 +112,7 @@ public:
     // For now the default value is true, as no known aircraft exists where the canopy values would not
     // have to be repeated
     static constexpr bool DefaultRepeatCanopyOpen  {true};
-    static constexpr bool DefaultPlaceAtInitialPosition {true};
+    static constexpr bool DefaultRelativePositionPlacement {true};
     static constexpr bool DefaultDeleteFlightConfirmation  {true};
     static constexpr bool DefaultDeleteAircraftConfirmation  {true};
     static constexpr bool DefaultResetTimeOffsetConfirmation  {true};
@@ -507,25 +507,16 @@ void Settings::setImportAircraftType(const QString &type) noexcept
     }
 }
 
-bool Settings::isPlaceAtInitialPositionEnabled() const noexcept
+bool Settings::isRelativePositionPlacementEnabled() const noexcept
 {
-    return d->placeAtInitialPosition;
+    return d->relativePositionPlacement;
 }
 
-/*!
- * Sets whether the the aircraft should be placed at the calculated initial position
- * before recording.
- *
- * \param enable
- *        \c true if the aircraft should be initially placed at its calculated position;
- *        \c false if the aircraft should remain at its current position when recording
- * \sa placeAtInitialPositionChanged
- */
-void Settings::setPlaceAtInitialPositionEnabled(bool enable) noexcept
+void Settings::setRelativePositionPlacementEnabled(bool enable) noexcept
 {
-    if (d->placeAtInitialPosition != enable) {
-        d->placeAtInitialPosition = enable;
-        emit placeAtInitialPositionChanged(enable);
+    if (d->relativePositionPlacement != enable) {
+        d->relativePositionPlacement = enable;
+        emit relativePositionPlacementChanged(enable);
     }
 }
 
@@ -595,7 +586,7 @@ void Settings::store() const noexcept
         {
             d->settings.beginGroup("Formation");
             {
-                d->settings.setValue("PlaceAtInitialPosition", d->placeAtInitialPosition);
+                d->settings.setValue("RelativePositionPlacement", d->relativePositionPlacement);
             }
             d->settings.endGroup();
         }
@@ -695,7 +686,7 @@ void Settings::restore() noexcept
         {
             d->settings.beginGroup("Formation");
             {
-                d->placeAtInitialPosition = d->settings.value("PlaceAtInitialPosition", d->DefaultPlaceAtInitialPosition).toBool();
+                d->relativePositionPlacement = d->settings.value("RelativePositionPlacement", d->DefaultRelativePositionPlacement).toBool();
             }
             d->settings.endGroup();
         }
