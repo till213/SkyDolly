@@ -161,8 +161,13 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
         case RecordingMode::SingleAircraft:
             // Start a new flight
             d->currentFlight.clear(true);
+            // Set the recording state only *after* the flight has been cleared
+            setState(Connect::State::Recording);
             break;
         case RecordingMode::AddToFormation:
+            // Set the recording state *before* the new user aircraft has been added, otherwise
+            // it gets re-positioned relative to itself, having an invalid position
+            setState(Connect::State::Recording);
             // Check if the current user aircraft already has a recording
             if (d->currentFlight.getUserAircraft().hasRecording()) {
                 // If yes, add a new aircraft to the current flight (formation)
@@ -170,9 +175,7 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
             }
             break;
         }
-        // Set the recording state only after the flight has been cleared or an aircraft has been
-        // added (formation flight)
-        setState(Connect::State::Recording);
+
         d->lastSamplesPerSecondIndex = 0;
         d->currentTimestamp = 0;
         d->lastNotificationTimestamp = d->currentTimestamp;
@@ -522,8 +525,8 @@ void AbstractSkyConnect::updateUserAircraft(int newUserAircraftIndex, int previo
             const Aircraft &aircraft = d->currentFlight[previousUserAircraftIndex];
             addAiObject(aircraft);
         }
+        sendAircraftData(d->currentTimestamp, TimeVariableData::Access::Seek, AircraftSelection::UserAircraft);
     }
-    sendAircraftData(d->currentTimestamp, TimeVariableData::Access::Seek, AircraftSelection::UserAircraft);
 }
 
 void AbstractSkyConnect::onTimeOffsetChanged() noexcept
