@@ -44,7 +44,7 @@ class FlightDescriptionWidget : public QWidget
     Q_OBJECT
 public:
     explicit FlightDescriptionWidget(FlightService &flightService, QWidget *parent = nullptr);
-    virtual ~FlightDescriptionWidget();
+    ~FlightDescriptionWidget() override;
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;

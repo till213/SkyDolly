@@ -59,12 +59,12 @@ public:
     ReplayMode getReplayMode() const noexcept override;
     void setReplayMode(ReplayMode replayMode) noexcept override;
 
-    void startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition()) noexcept override;
+    void startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition::NullData) noexcept override;
     void stopRecording() noexcept override;
     bool isRecording() const noexcept override;
     bool isInRecordingState() const noexcept override;
 
-    void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition()) noexcept override;
+    void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition::NullData) noexcept override;
     void stopReplay() noexcept override;
     bool isReplaying() const noexcept override;
     bool isInReplayState() const noexcept override;

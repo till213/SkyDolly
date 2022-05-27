@@ -7,10 +7,10 @@
 #### Import & Export
 - No sequence numbers added anymore to export filename in case the flight has only one aircraft and "All aircraft" is selected
 - IGC & GXP import
-  * An option to convert from the WGS84 reference ellipsoid to the earth gravity model (EGM 2008) geoid altitude has been added (enabled by default)
+  * An option to convert from the WGS84 reference ellipsoid to the earth gravity model (EGM2008) geoid altitude has been added (enabled by default)
   * Note: both the IGC and GPX specifications state that the GNSS altitude (elevation) refer to the WGS84 reference ellipsoid, but not every IGC/GPX file necessarily conforms to the specification and may contain earth gravity model (EGM) geoid altitudes ("above sea level") instead
 - IGC & GPX export
-  * The altitude is converted from the geoid (EGM 2008) to height above the WGS84 reference ellipsoid
+  * The altitude is converted from the geoid (EGM2008) to height above the WGS84 reference ellipsoid
 - CSV export
   - A new "position and attitude" format has been added, exporting the position, pitch, bank, heading and speed, including UTC timestamps
 
@@ -21,6 +21,9 @@
 #### Formation Module
 - Improved AI aircraft management
   * Minimised create / delete AI aircraft requests when switching the user aircraft or removing an aircraft
+- A new "set initial position" option allows to keep the user aircraft at its current position, instead of placing it relative to the current formation user (reference) aircraft upon recording or replay
+  * Both for recording and replay ("fly with formation") the initial position of the user aircraft remains unchanged when this new "set initial position" option is unchecked
+  * So if you ever wanted to record two aircraft playing "chicken" by starting from opposite ends of some runway... this is your opportunity ;)
 - The order of the formation aircraft table columns can now be changed
 - The "Delete" key now deletes the selected aircraft
 - The reference aircraft in the formation table changes colour to "green" when setting the replay mode to "fly with formation", indicating that the user controls an "extra" user aircraft (which is initially placed relative to the green reference aircraft)
@@ -34,11 +37,14 @@
 #### User Interface
 - Latitude and longitude values are now formatted with leading zeroes
 - The recording timer is now always incremented, even (especially) when no sample data is currently being recorded (no value changes, e.g. typically for a "cold and dark" aircraft)
-- Additional tooltips in the settings dialog
+- Added and improved tooltips
 - All question and information dialogs now have an explanatory title
 - Tables now have alternating colours per row
 - A question and confirmation dialog is now shown before and after logbook optimisation, also showing the before and after file sizes (after the optimisation)
-- Dialogs (flight, simulation variables, statistics) are now (only) created on demand and immediatelly released after use, resulting in a smaller memory footprint
+- Dialogs (Flight, Simulation Variables, Statistics) are now (only) created on demand and immediatelly released after use, resulting in a smaller memory footprint
+- The About dialog
+  * Now contains references to used third party libraries and tools
+  * Allows to copy the (extended) version information into the clipboard by clicking onto it
 - Small layout improvements
 
 ### Bug Fixes
@@ -47,7 +53,7 @@
 - When pausing a recording (yes, that's actually possible ;)) the "recording timer" is only restarted in case no event-based recording is done (but a "timer-based recording" instead)
 - The Window | Minimal menu entry is now properly synchronised (unchecked) when the module is changed while in "minimal UI" mode (e.g. by pressing F1 or F2, or via the Module menu)
 - File paths are converted to native separators when shown in dialog boxes to the user
-- The settings dialog is now created on demand. This also fixes an issue with dialog z-ordering when the main application window is switched to "Stay on Top"
+- The Settings dialog is now created on demand. This also fixes an issue with dialog z-ordering when the main application window is switched to "Stay on Top"
 - Depending on the selected module the persistence of a flight is different (single aircraft vs formation flight). In order not to mess up the persistence logic switching modules is now disabled while recording 
 - In order to prevent data loss when recording a flight the following functionality is now properly disabled during recording:
   * No existing flight can be loaded (including by double-clicking onto a logbook row)
@@ -160,7 +166,7 @@
   
 ### Bug Fixes
 
-- The spoiler position value is now properly shown as percent (instead of "raw number") in the simulation variables dialog
+- The spoiler position value is now properly shown as percent (instead of "raw number") in the Simulation Variables dialog
   * For clarity the field is now also labeled "spoiler position" (instead of just "spoiler")
 - Switched internal leading/trailing flaps position unit from "percent" to "position"
   * The greater precision (32767 vs 255 possible values) gets rid of the "flaps sound stutter" (e.g. audible in the cockpit of the A320neo)
@@ -255,7 +261,7 @@
   * SkyConnect plugin architecture
     - SimConnect plugin (currently FS2020 only)
     - Auto-detection of installed flight simulator (automatic plugin selection)
-    - Plugin changeable at runtime via settings dialog
+    - Plugin changeable at runtime via Settings dialog
   
 #### Modules
 
@@ -368,7 +374,7 @@
 
 ### Bug Fixes
 
-- Fix "logboog" typo in preview message
+- Fix "logboog" typo in  message
 - Improve minimal UI switching
 - Don't reset the elapsed time to 0 when unpausing a recording
 - Keep displayed time when pausing a replay (don't set to total replay time)
@@ -411,7 +417,7 @@
 
 ### Bug Fixes
 
-- Fixes a crash which would occur when quitting the application and when the simulation variables dialog was still open
+- Fixes a crash which would occur when quitting the application and when the Simulation Variables dialog was still open
 - Altitude and other simulation variables measured in feet are now properly displayed with their unit ('ft')
 - Replaced the non-writeable FOLDING WING HANDLE POSITION simulation variable with FOLDING WING LEFT|RIGHT PERCENT
 
@@ -527,8 +533,8 @@
 
 - Recording & replay of basic flight controls (rudder, ailerons, flaps, gear, ...)
 - Updated user interface
-- Separate simulation variables dialog
-- Simulation variables are now also shown during replay (in the new simulation variables dialog)
+- Separate Simulation Variables dialog
+- Simulation variables are now also shown during replay (in the new Simulation Variables dialog)
 - Add record/play/pause actions, with keyboard shortcuts (r = record, space = play, p = pause)
 
 ### Bug Fixes

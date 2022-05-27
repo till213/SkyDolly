@@ -59,9 +59,10 @@ private:
 
     void initUi() noexcept;
     void updateUi() noexcept;
+    void frenchConnection() noexcept;
 
 private slots:
-    void on_chooseBackupFolderPushButton_clicked() noexcept;
+    void chooseBackupFolder() noexcept;
 };
 
 #endif // LOGBOOKBACKUPDIALOG_H

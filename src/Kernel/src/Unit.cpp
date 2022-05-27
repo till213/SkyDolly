@@ -220,7 +220,7 @@ QString Unit::formatDateTime(const QDateTime &dateTime) noexcept
 
 QString Unit::formatDuration(const QTime &time) noexcept
 {
-    return d->locale.toString(time, "hh:mm:s");
+    return d->locale.toString(time, "HH:mm:ss");
 }
 
 QString Unit::formatMonth(int month) noexcept

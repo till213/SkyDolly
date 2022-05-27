@@ -299,7 +299,7 @@ inline bool GpxExportPlugin::exportTrackPoint(const PositionData &positionData, 
 {
     const QDateTime dateTimeUtc = d->startDateTimeUtc.addMSecs(positionData.timestamp);
     // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]
-    const double heightAboveEllipsoid = d->convert.egmToWgs84Ellipsoid(positionData.latitude, positionData.longitude, Convert::feetToMeters(positionData.altitude));
+    const double heightAboveEllipsoid = d->convert.egmToWgs84Ellipsoid(Convert::feetToMeters(positionData.altitude), positionData.latitude, positionData.longitude);
 
     const QString trackPoint =
 "      <trkpt lat=\"" % Export::formatCoordinate(positionData.latitude) % "\" lon=\"" % Export::formatCoordinate(positionData.longitude) % "\">\n"
@@ -313,7 +313,7 @@ inline bool GpxExportPlugin::exportTrackPoint(const PositionData &positionData, 
 inline bool GpxExportPlugin::exportWaypoint(const Waypoint &waypoint, QIODevice &io) const noexcept
 {
     // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]
-    const double heightAboveEllipsoid = d->convert.egmToWgs84Ellipsoid(waypoint.latitude, waypoint.longitude, Convert::feetToMeters(waypoint.altitude));
+    const double heightAboveEllipsoid = d->convert.egmToWgs84Ellipsoid(Convert::feetToMeters(waypoint.altitude), waypoint.latitude, waypoint.longitude);
     const QString waypointString =
 "  <wpt lat=\"" % Export::formatCoordinate(waypoint.latitude) % "\" lon=\"" % Export::formatCoordinate(waypoint.longitude) % "\">\n"
 "    <ele>" % Export::formatNumber(heightAboveEllipsoid).toUtf8() % "</ele>\n"

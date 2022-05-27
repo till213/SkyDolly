@@ -48,8 +48,9 @@ public:
     enum struct RecordingMode {
         /*! A (new) flight with a single aircrat is to be recorded. */
         SingleAircraft,
-        /*! The aircraft is to be added to the current flight; existing aircraft
-         *  are replayed during recording.
+        /*!
+         * The aircraft is to be added to the current flight; existing aircraft
+         * are replayed during recording.
          */
         AddToFormation
     };
@@ -69,10 +70,35 @@ public:
     virtual bool setUserAircraftPosition(const PositionData & positionData) noexcept = 0;
     virtual bool freezeUserAircraft(bool enable) noexcept = 0;
 
+    /*!
+     * Returns the replay mode.
+     *
+     * \return the ReplayMode
+     */
     virtual ReplayMode getReplayMode() const noexcept = 0;
+
+    /*!
+     * Sets the replay mode.
+     *
+     * \param replayMode
+     *         the replay mode to set
+     * \sa replayModeChanged
+     */
     virtual void setReplayMode(ReplayMode replayMode) noexcept = 0;
 
-    virtual void startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition()) noexcept = 0;
+    /*!
+     * Starts recording the flight. Depending on the \C recordingMode already recorded formation aircraft
+     * are replayed during recording. If the \c initialPosition is given (\c isNull() returns false) then
+     * the user aircraft is placed at the given \c initialPosition before recording. This position is
+     * typically calculated to be relative of the previous user aircraft in the formation.
+     *
+     * \param recordingMode
+     *        the RecordingMode which controls whether existing formation aircraft are to be replayed
+     * \param initialPosition
+     *        the optional initial position where the current user aircraft is placed before recording;
+     *        set to a \e null position if the user aircraft should keep its current initial position
+     */
+    virtual void startRecording(RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition::NullData) noexcept = 0;
     virtual void stopRecording() noexcept = 0;
 
     /*!
@@ -98,8 +124,7 @@ public:
      */
     virtual bool isInRecordingState() const noexcept = 0;
 
-
-    virtual void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition()) noexcept = 0;
+    virtual void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition::NullData) noexcept = 0;
     virtual void stopReplay() noexcept = 0;
 
     /*!
@@ -204,6 +229,14 @@ signals:
      *        the current connection state
      */
     void stateChanged(Connect::State state);
+
+    /*!
+     * Emitted whenever the replay mode has changed.
+     *
+     * \param replayMode
+     *        the current replay mode
+     */
+    void replayModeChanged(ReplayMode replayMode);
 
     /*!
      * Emitted whenever recording has been started, that is when the

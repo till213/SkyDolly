@@ -147,13 +147,16 @@ bool IgcImportPlugin::importFlight(QFile &file, Flight &flight) noexcept
         Convert convert;
         for (const IgcParser::Fix &fix : d->igcParser.getFixes()) {
             // Import either GNSS or pressure altitude
-            const double altitude = d->pluginSettings.getAltitudeMode() == IgcImportSettings::AltitudeMode::Gnss ? fix.gnssAltitude : fix.pressureAltitude;
-            double heightAboveGeoid;
-            if (d->pluginSettings.isConvertAltitudeEnabled()) {
-                // Convert height above WGS84 ellipsoid (HAE) to height above EGM geoid [meters]
-                heightAboveGeoid = convert.wgs84ToEgmGeoid(fix.latitude, fix.longitude, altitude);
+            double heightAboveGeoid {0.0};
+            if (d->pluginSettings.getAltitudeMode() == IgcImportSettings::AltitudeMode::Gnss) {
+                if (d->pluginSettings.isConvertAltitudeEnabled()) {
+                    // Convert height above WGS84 ellipsoid (HAE) to height above EGM geoid [meters]
+                    heightAboveGeoid = convert.wgs84ToEgmGeoid(fix.gnssAltitude, fix.latitude, fix.longitude);
+                } else {
+                    heightAboveGeoid = fix.gnssAltitude;
+                }
             } else {
-                heightAboveGeoid = altitude;
+                heightAboveGeoid = fix.pressureAltitude;
             }
 
             PositionData positionData {fix.latitude, fix.longitude, Convert::metersToFeet(heightAboveGeoid)};

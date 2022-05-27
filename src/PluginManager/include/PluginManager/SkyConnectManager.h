@@ -79,12 +79,12 @@ public:
     SkyConnectIntf::ReplayMode getReplayMode() const noexcept;
     void setReplayMode(SkyConnectIntf::ReplayMode replayMode) noexcept;
 
-    void startRecording(SkyConnectIntf::RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition()) noexcept;
+    void startRecording(SkyConnectIntf::RecordingMode recordingMode, const InitialPosition &initialPosition = InitialPosition::NullData) noexcept;
     void stopRecording() noexcept;
     bool isRecording() const noexcept;
     bool isInRecordingState() const noexcept;
 
-    void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition()) noexcept;
+    void startReplay(bool fromStart, const InitialPosition &flyWithFormationPosition = InitialPosition::NullData) noexcept;
     void stopReplay() noexcept;
     bool isReplaying() const noexcept;
     bool isInReplayState() const noexcept;
@@ -125,6 +125,15 @@ signals:
      * \sa SkyConnectIntf#stateChanged
      */
     void stateChanged(Connect::State state);
+
+    /*!
+     * Relay of the SkyConnectIntf#replayModeChanged signal.
+     *
+     * \param replayMode
+     *        the current replay mode
+     * \sa SkyConnectIntf#replayModeChanged
+     */
+    void replayModeChanged(SkyConnectIntf::ReplayMode replayMode);
 
     /*!
      * Relay of the SkyConnectIntf#recordingStarted signal.

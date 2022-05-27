@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>915</width>
-    <height>258</height>
+    <width>494</width>
+    <height>136</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,7 +39,7 @@
       <widget class="QLineEdit" name="searchLineEdit">
        <property name="minimumSize">
         <size>
-         <width>120</width>
+         <width>80</width>
          <height>0</height>
         </size>
        </property>

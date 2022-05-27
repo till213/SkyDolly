@@ -302,7 +302,7 @@ inline bool IgcExportPlugin::exportFixes(const Aircraft &aircraft, QIODevice &io
         if (!positionData.isNull()) {
 
             // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]
-            const double heightAboveEllipsoid = convert.egmToWgs84Ellipsoid(positionData.latitude, positionData.longitude, Convert::feetToMeters(positionData.altitude));
+            const double heightAboveEllipsoid = convert.egmToWgs84Ellipsoid(Convert::feetToMeters(positionData.altitude), positionData.latitude, positionData.longitude);
 
             const int gnssAltitude = static_cast<int>(std::round(heightAboveEllipsoid));
             const QByteArray gnssAltitudeByteArray = formatNumber(gnssAltitude, 5);

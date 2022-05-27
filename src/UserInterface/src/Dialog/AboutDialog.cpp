@@ -25,12 +25,18 @@
 #include <memory>
 
 #include <QDialog>
+#include <QString>
+#include <QStringBuilder>
 #include <QFile>
 #include <QByteArray>
 #include <QTextEdit>
 #include <QPushButton>
 #include <QMessageBox>
 #include <QPixmap>
+#include <QMouseEvent>
+#include <QApplication>
+#include <QClipboard>
+#include <QTimer>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -51,8 +57,11 @@ public:
             applicationPixmap.load(":/img/icons/application-icon.png");
             applicationPixmap.setDevicePixelRatio(1.0);
         }
+        versionInfoTimer.setSingleShot(true);
     }
 
+    QString versionInfo;
+    QTimer versionInfoTimer;
     QPixmap applicationPixmap;
 };
 
@@ -65,6 +74,7 @@ AboutDialog::AboutDialog(QWidget *parent) noexcept :
 {
     ui->setupUi(this);
     initUi();
+    updateUi();
     frenchConnection();
 #ifdef DEBUG
     qDebug() << "AboutDialog::AboutDialog: CREATED";
@@ -78,6 +88,32 @@ AboutDialog::~AboutDialog() noexcept
 #endif
 }
 
+// PROTECTED
+
+void AboutDialog::mousePressEvent(QMouseEvent *event) noexcept
+{
+    QDialog::mousePressEvent(event);
+    if (event->button() == Qt::LeftButton && !d->versionInfoTimer.isActive()) {
+        QApplication::setOverrideCursor(Qt::PointingHandCursor);
+    }
+}
+
+void AboutDialog::mouseReleaseEvent(QMouseEvent *event) noexcept
+{
+    QDialog::mouseReleaseEvent(event);
+    if (event->button() == Qt::LeftButton && !d->versionInfoTimer.isActive()) {
+        QClipboard* clipboard = QApplication::clipboard();
+        clipboard->setText(d->versionInfo, QClipboard::Clipboard);
+        if (clipboard->supportsSelection()) {
+            clipboard->setText(d->versionInfo, QClipboard::Selection);
+        }
+        d->versionInfo = QStringLiteral("\n") % tr("Copied to clipboard") % QStringLiteral("\n");
+        updateUi();
+        d->versionInfoTimer.start(1000);
+        QApplication::restoreOverrideCursor();
+    }
+}
+
 // PRIVATE
 
 void AboutDialog::initUi() noexcept
@@ -85,14 +121,7 @@ void AboutDialog::initUi() noexcept
     setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
     ui->applicationIconLabel->setPixmap(d->applicationPixmap);
-    ui->aboutLabel->setText(tr("%1\nThe Black Sheep for Your Flight Recordings\n\n"
-                               "\"%2\" (%3)\n"
-                               "Version %4 (%5)\n"
-                               "%6\n\n"
-                               "MIT License")
-                            .arg(Version::getApplicationName(), Version::getCodeName(),
-                                 Version::getUserVersion(), Version::getApplicationVersion(),
-                                 Version::getGitHash(), Version::getGitDate().toLocalTime().toString()));
+    d->versionInfo = getVersionInfo();
 
     QFile file(":text/ThirdParty.md");
     if (file.open(QFile::ReadOnly)) {
@@ -107,10 +136,30 @@ void AboutDialog::initUi() noexcept
     }
 }
 
+void AboutDialog::updateUi() noexcept
+{
+    ui->aboutLabel->setText(tr("%1\nThe Black Sheep for Your Flight Recordings\n\n"
+                               "%2\n\n"
+                               "MIT License")
+                            .arg(Version::getApplicationName(), d->versionInfo));
+}
+
 void AboutDialog::frenchConnection() noexcept
 {
     connect(ui->aboutQtPushButton, &QPushButton::clicked,
             this, &AboutDialog::showAboutQtDialog);
+    connect(&d->versionInfoTimer, &QTimer::timeout,
+            this, &AboutDialog::restoreVersionInfo);
+}
+
+QString AboutDialog::getVersionInfo() const noexcept
+{
+    return QString("\"%1\" (%2)\n"
+                   "Version %3 (%4)\n"
+                   "%5")
+          .arg(Version::getCodeName(),Version::getUserVersion(),
+               Version::getApplicationVersion(), Version::getGitHash(),
+               Version::getGitDate().toLocalTime().toString());
 }
 
 // PRIVATE SLOTS
@@ -120,3 +169,8 @@ void AboutDialog::showAboutQtDialog() noexcept
     QMessageBox::aboutQt(this);
 }
 
+void AboutDialog::restoreVersionInfo() noexcept
+{
+    d->versionInfo = getVersionInfo();
+    updateUi();
+}

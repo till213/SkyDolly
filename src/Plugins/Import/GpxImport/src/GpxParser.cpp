@@ -391,7 +391,7 @@ bool GpxParser::parseWaypointType(double &latitude, double &longitude, double &a
 
     if (d->pluginSettings.isConvertAltitudeEnabled()) {
         // Convert height above WGS84 ellipsoid (HAE) to height above EGM geoid [meters]
-        altitude = d->convert.wgs84ToEgmGeoid(latitude, longitude, altitude);
+        altitude = d->convert.wgs84ToEgmGeoid(altitude, latitude, longitude);
     }
     altitude = Convert::metersToFeet(altitude);
 

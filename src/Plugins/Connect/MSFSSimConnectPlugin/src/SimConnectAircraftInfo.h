@@ -80,10 +80,12 @@ struct SimConnectAircraftInfo
     qint32 ambientInCloud;
 
     // Simulation time
+    // [seconds]
     qint32 localTime;
     qint32 localYear;
     qint32 localMonth;
     qint32 localDay;
+    // [seconds]
     qint32 zuluTime;
     qint32 zuluYear;
     qint32 zuluMonth;

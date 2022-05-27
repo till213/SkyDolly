@@ -41,7 +41,7 @@ class IgcImportOptionWidget : public QWidget
     Q_OBJECT
 public:
     explicit IgcImportOptionWidget(IgcImportSettings &settings, QWidget *parent = nullptr) noexcept;
-    virtual ~IgcImportOptionWidget() noexcept;
+    ~IgcImportOptionWidget() noexcept override;
 
 private:
     std::unique_ptr<Ui::IgcImportOptionWidget> ui;
@@ -53,8 +53,8 @@ private:
 private slots:
     void updateUi() noexcept;
     void onAltitudeChanged() noexcept;
-    void onENLThresholdChanged(int value) noexcept;
-    void onConvertAltitudeChanged(int state) noexcept;
+    void onEnlThresholdChanged(int value) noexcept;
+    void onConvertAltitudeChanged(bool enabled) noexcept;
 };
 
 #endif // IGCIMPORTOPTIONWIDGET_H

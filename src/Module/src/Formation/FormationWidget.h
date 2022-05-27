@@ -33,6 +33,7 @@ class QHideEvent;
 class QAction;
 
 #include <Model/InitialPosition.h>
+#include <PluginManager/SkyConnectIntf.h>
 #include <ModuleIntf.h>
 #include <AbstractModuleWidget.h>
 
@@ -52,21 +53,21 @@ class FormationWidget : public AbstractModuleWidget
     Q_OBJECT
 public:
     explicit FormationWidget(FlightService &flightService, QWidget *parent = nullptr) noexcept;
-    virtual ~FormationWidget() noexcept;
+    ~FormationWidget() noexcept override;
 
-    virtual Module::Module getModuleId() const noexcept override;
-    virtual const QString getModuleName() const noexcept override;
-    virtual QAction &getAction() noexcept override;
+    Module::Module getModuleId() const noexcept override;
+    const QString getModuleName() const noexcept override;
+    QAction &getAction() noexcept override;
 
 protected:
-    virtual void showEvent(QShowEvent *event) noexcept override;
-    virtual void hideEvent(QHideEvent *event) noexcept override;
+    void showEvent(QShowEvent *event) noexcept override;
+    void hideEvent(QHideEvent *event) noexcept override;
 
-    virtual void onStartRecording() noexcept override;
-    virtual void onStartReplay() noexcept override;
+    void onStartRecording() noexcept override;
+    void onStartReplay() noexcept override;
 
 protected slots:
-    virtual void onRecordingStopped() noexcept override;
+    void onRecordingStopped() noexcept override;
 
 private:
     Q_DISABLE_COPY(FormationWidget)
@@ -76,31 +77,43 @@ private:
     void initUi() noexcept;
     void initTimeOffsetUi() noexcept;
     void frenchConnection() noexcept;
-    void updateInitialPositionUi() noexcept;
+
+    void updateAircraftTable() noexcept;
+    void updateAircraftIcons() noexcept;
+    void updateRelativePositionUi() noexcept;
+    void updateEditUi() noexcept;
+    void updateTimeOffsetUi() noexcept;
+    void updateReplayUi() noexcept;
+    void updateToolTips() noexcept;
 
     InitialPosition calculateRelativeInitialPositionToUserAircraft(std::int64_t timestamp) const noexcept;
     PositionData calculateRelativePositionToUserAircraft(std::int64_t timestamp) const noexcept;
 
     static const QString getName();
 
+    void addAircraft(const Aircraft &aircraft, int rowIndex) noexcept;
+    void updateAndSendUserAircraftPosition() const noexcept;
+    void updateUserAircraftPosition(SkyConnectIntf::ReplayMode replayMode) const noexcept;
+
 private slots:
     void updateUi() noexcept;
-    void updateEditUi() noexcept;
-    void updateRelativePosition() noexcept;
-    void updateTimeOffsetUi() noexcept;
-    void updateReplayUi() noexcept;
-    void updateToolTips() noexcept;
 
-    void handleUserAircraftChanged() noexcept;
-    void handleAircraftInfoChanged() noexcept;
-    void handleCellSelected(int row, int column) noexcept;
-    void handleCellChanged(int row, int column) noexcept;
+    void onRelativePositionChanged() noexcept;
+    void onUserAircraftChanged() noexcept;
+    void onAircraftInfoChanged() noexcept;
+
+    void onCellSelected(int row, int column) noexcept;
+    void onCellChanged(int row, int column) noexcept;
     void onSelectionChanged() noexcept;
+
+    void onInitialPositionPlacementChanged(bool enable) noexcept;
     void updateUserAircraftIndex() noexcept;
     void deleteAircraft() noexcept;
 
-    void updateRelativeDistance() noexcept;
+    void onRelativeDistanceChanged() noexcept;
     void updateReplayMode(int index) noexcept;
+    void onReplayModeChanged(SkyConnectIntf::ReplayMode replayMode);
+
     void changeTimeOffset(const std::int64_t timeOffset) noexcept;
     void onTimeOffsetEditingFinished() noexcept;
     void resetAllTimeOffsets() noexcept;

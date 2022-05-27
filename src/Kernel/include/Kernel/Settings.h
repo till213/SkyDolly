@@ -146,8 +146,7 @@ public:
     /*!
      * Returns whether the  stay on top option is enabled.
      *
-     * \return \c true if the application window is kept in the foreground;
-     *         \c false else
+     * \return \c true if the application window is kept in the foreground; \c false else
      */
     bool isWindowStaysOnTopEnabled() const noexcept;
 
@@ -155,8 +154,8 @@ public:
      * Sets the  stay on top option.
      *
      * \param enable
-     *        \c true in order to keep the application windoww in the foreground;
-     *        \c false to enable default window behaviour
+     *        \c true in order to keep the application windoww in the foreground; \c false to
+     *        enable default window behaviour
      * \sa stayOnTopChanged
      */
     void setWindowStaysOnTopEnabled(bool enable) noexcept;
@@ -164,8 +163,7 @@ public:
     /*!
      * Returns whether the minimal user interface option is enabled.
      *
-     * \return \c true if the minimal UI is shown;
-     *         \c false else
+     * \return \c true if the minimal UI is shown; \c false else
      */
     bool isMinimalUiEnabled() const noexcept;
 
@@ -173,8 +171,7 @@ public:
      * Sets the minimal user interface option.
      *
      * \param enable
-     *        \c true in order to show the minimal UI;
-     *        \c false in order to show the normal UI;
+     *        \c true in order to show the minimal UI; \c false in order to show the normal UI;
      * \sa minimalUiChanged
      */
     void setMinimalUiEnabled(bool enable) noexcept;
@@ -182,8 +179,7 @@ public:
     /*!
      * Returns whether the \e module selector is visible.
      *
-     * \return \c true if the module selector is shown
-     *         \c false else
+     * \return \c true if the module selector is shown; \c false else
      */
     bool isModuleSelectorVisible() const noexcept;
 
@@ -191,8 +187,7 @@ public:
      * Sets the \e module selector visible according to \c visible.
      *
      * \param visible
-     *        \c true in order to show the module selector
-     *        \c false in order to hide the module selector
+     *        \c true in order to show the module selector; \c false in order to hide the module selector
      * \sa moduleSelectorVisibilityChanged
      */
     void setModuleSelectorVisible(bool visible) noexcept;
@@ -539,6 +534,26 @@ public:
     void setImportAircraftType(const QString &type) noexcept;
 
     /*!
+     * Returns whether the the aircraft should be placed at the calculated initial position
+     * before recording.
+     *
+     * \return \c true if the aircraft should be initially placed at its calculated position;
+     *         \c false if the aircraft should remain at its current position when recording
+     */
+    bool isPlaceAtInitialPositionEnabled() const noexcept;
+
+    /*!
+     * Sets whether the the aircraft should be placed at the calculated initial position
+     * before recording.
+     *
+     * \param enable
+     *        \c true if the aircraft should be initially placed at its calculated position;
+     *        \c false if the aircraft should remain at its current position when recording
+     * \sa placeAtInitialPositionChanged
+     */
+    void setPlaceAtInitialPositionEnabled(bool enable) noexcept;
+
+    /*!
      * Returns the file info of the best available earth gravity model (EGM) data file.
      *
      * \return the file info of the earth gravity model data file; check for its existence
@@ -734,6 +749,11 @@ signals:
      * \sa changed
      */
     void defaultMinimalUiReplaySpeedVisibilityChanged(bool hidden);
+
+    /*!
+     * Emitted when the initial position placement option has changed.
+     */
+    void placeAtInitialPositionChanged(bool enable);
 
     /*!
      * Emitted when any setting has changed.
