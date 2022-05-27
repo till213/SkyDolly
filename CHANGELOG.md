@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.11.1
+
+### Bug Fixes
+- The maximum time of the replay timer is properly set after recording
+
 ## 0.11.0
 
 ### Improvements
