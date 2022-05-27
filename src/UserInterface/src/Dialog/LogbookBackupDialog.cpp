@@ -60,6 +60,7 @@ LogbookBackupDialog::LogbookBackupDialog(QWidget *parent) noexcept
 {
     ui->setupUi(this);
     initUi();
+    frenchConnection();
 
     LogbookManager &logbookManager = LogbookManager::getInstance();
     Metadata metadata;
@@ -168,9 +169,15 @@ void LogbookBackupDialog::updateUi() noexcept
     }
 }
 
+void LogbookBackupDialog::frenchConnection() noexcept
+{
+    connect(ui->chooseBackupFolderPushButton, &QPushButton::clicked,
+            this, &LogbookBackupDialog::chooseBackupFolder);
+}
+
 // PRIVATE SLOTS
 
-void LogbookBackupDialog::on_chooseBackupFolderPushButton_clicked() noexcept
+void LogbookBackupDialog::chooseBackupFolder() noexcept
 {
     QString path = ui->backupDirectoryLineEdit->text();
     const QDir dir(path);

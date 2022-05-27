@@ -56,17 +56,17 @@ class LogbookWidget : public AbstractModuleWidget
     Q_OBJECT
 public:
     explicit LogbookWidget(DatabaseService &databaseService, FlightService &flightService, QWidget *parent = nullptr) noexcept;
-    virtual ~LogbookWidget() noexcept;
+    ~LogbookWidget() noexcept override;
 
     std::int64_t getSelectedFlightId() const noexcept;
 
-    virtual Module::Module getModuleId() const noexcept override;
-    virtual const QString getModuleName() const noexcept override;
-    virtual QAction &getAction() noexcept override;
+    Module::Module getModuleId() const noexcept override;
+    const QString getModuleName() const noexcept override;
+    QAction &getAction() noexcept override;
 
 protected:
-    virtual void showEvent(QShowEvent *event) noexcept override;
-    virtual void hideEvent(QHideEvent *event) noexcept override;
+    void showEvent(QShowEvent *event) noexcept override;
+    void hideEvent(QHideEvent *event) noexcept override;
 
 private:
     Q_DISABLE_COPY(LogbookWidget)
@@ -76,6 +76,7 @@ private:
     void initUi() noexcept;
     void initFilterUi() noexcept;
     void updateFlightTable() noexcept;
+    void updateDateSelectorUi() noexcept;
     inline void addFlightSummary(FlightSummary summary, int rowIndex) noexcept;
     void updateEditUi() noexcept;
     void frenchConnection() noexcept;
@@ -89,23 +90,25 @@ private:
 private slots:
     void onRecordingStarted() noexcept;
     void updateUi() noexcept;
-    void updateAircraftIcon() noexcept;
-    void updateDateSelectorUi() noexcept;
-    void handleSelectionChanged() noexcept;
+    void updateAircraftIcons() noexcept;
+
     void loadFlight() noexcept;
     void deleteFlight() noexcept;
     // Search
-    void handleSearchTextChanged() noexcept;
+    void onSearchTextChanged() noexcept;
     void searchText() noexcept;
-    // Flight log table
-    void handleCellSelected(int row, int column) noexcept;
-    void handleCellChanged(int row, int column) noexcept;
-    // Flight date tree
-    void handleDateItemClicked(QTreeWidgetItem *item) noexcept;
 
-    void on_formationCheckBox_toggled(bool checked) noexcept;
-    void on_engineTypeComboBox_activated(int index) noexcept;
-    void on_durationComboBox_activated(int index) noexcept;
+    // Flight log table
+    void onSelectionChanged() noexcept;
+    void onCellSelected(int row, int column) noexcept;
+    void onCellChanged(int row, int column) noexcept;
+    // Flight date tree
+    void onDateItemClicked(QTreeWidgetItem *item) noexcept;
+
+    // Filter options
+    void filterByFormationFlights(bool checked) noexcept;
+    void filterByEngineType(int index) noexcept;
+    void filterByDuration(int index) noexcept;
 };
 
 #endif // LOGBOOKWIDGET_H

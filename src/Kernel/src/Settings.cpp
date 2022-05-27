@@ -79,6 +79,8 @@ public:
     bool repeatFlapsHandleIndex;
     bool repeatCanopyOpen;
 
+    bool placeAtInitialPosition;
+
     bool deleteFlightConfirmation;
     bool deleteAircraftConfirmation;
     bool resetTimeOffsetConfirmation;
@@ -95,33 +97,34 @@ public:
 
     static Settings *instance;
 
-    static constexpr QUuid DefaultSkyConnectPluginUuid = QUuid();
-    static constexpr double DefaultRecordingSampleRate = SampleRate::toValue(SampleRate::SampleRate::Auto);
-    static constexpr bool DefaultWindowStayOnTop = false;
-    static constexpr bool DefaultMinimalUi = false;
-    static constexpr bool DefaultModuleSelectorVisible = true;
-    static constexpr bool DefaultReplaySpeedVisible = true;
-    static constexpr bool DefaultAbsoluteSeek = true;
-    static constexpr double DefaultSeekIntervalSeconds = 1.0;
-    static constexpr double DefaultSeekIntervalPercent = 0.5;
-    static constexpr bool DefaultReplayLoop = false;
-    static constexpr Replay::SpeedUnit DefaultReplaySpeedUnit = Replay::SpeedUnit::Absolute;
-    static constexpr double DefaultRepeatFlapsHandleIndex = false;
+    static constexpr QUuid DefaultSkyConnectPluginUuid {};
+    static constexpr double DefaultRecordingSampleRate {SampleRate::toValue(SampleRate::SampleRate::Auto)};
+    static constexpr bool DefaultWindowStayOnTop {false};
+    static constexpr bool DefaultMinimalUi {false};
+    static constexpr bool DefaultModuleSelectorVisible  {true};
+    static constexpr bool DefaultReplaySpeedVisible  {true};
+    static constexpr bool DefaultAbsoluteSeek  {true};
+    static constexpr double DefaultSeekIntervalSeconds {1.0};
+    static constexpr double DefaultSeekIntervalPercent {0.5};
+    static constexpr bool DefaultReplayLoop {false};
+    static constexpr Replay::SpeedUnit DefaultReplaySpeedUnit {Replay::SpeedUnit::Absolute};
+    static constexpr double DefaultRepeatFlapsHandleIndex {false};
     // For now the default value is true, as no known aircraft exists where the canopy values would not
     // have to be repeated
-    static constexpr double DefaultRepeatCanopyOpen = true;
-    static constexpr bool DefaultDeleteFlightConfirmation = true;
-    static constexpr bool DefaultDeleteAircraftConfirmation = true;
-    static constexpr bool DefaultResetTimeOffsetConfirmation = true;
+    static constexpr bool DefaultRepeatCanopyOpen  {true};
+    static constexpr bool DefaultPlaceAtInitialPosition {true};
+    static constexpr bool DefaultDeleteFlightConfirmation  {true};
+    static constexpr bool DefaultDeleteAircraftConfirmation  {true};
+    static constexpr bool DefaultResetTimeOffsetConfirmation  {true};
 
-    static constexpr bool DefaultMinimalUiButtonTextVisible = false;
-    static constexpr bool DefaultMinimalUiNonEssentialButtonVisible = false;
-    static constexpr bool DefaultMinimalUiReplaySpeedVisible = false;
+    static constexpr bool DefaultMinimalUiButtonTextVisible {false};
+    static constexpr bool DefaultMinimalUiNonEssentialButtonVisible {false};
+    static constexpr bool DefaultMinimalUiReplaySpeedVisible {false};
 
-    static inline const QString DefaultImportAircraftType = QLatin1String("");
+    static inline const QString DefaultImportAircraftType {QLatin1String("")};
 
-    static constexpr int DefaultPreviewInfoDialogCount = 3;
-    static constexpr int PreviewInfoDialogBase = 80;
+    static constexpr int DefaultPreviewInfoDialogCount {3};
+    static constexpr int PreviewInfoDialogBase {90};
 
     SettingsPrivate() noexcept
         : version(QCoreApplication::instance()->applicationVersion())
@@ -504,6 +507,28 @@ void Settings::setImportAircraftType(const QString &type) noexcept
     }
 }
 
+bool Settings::isPlaceAtInitialPositionEnabled() const noexcept
+{
+    return d->placeAtInitialPosition;
+}
+
+/*!
+ * Sets whether the the aircraft should be placed at the calculated initial position
+ * before recording.
+ *
+ * \param enable
+ *        \c true if the aircraft should be initially placed at its calculated position;
+ *        \c false if the aircraft should remain at its current position when recording
+ * \sa placeAtInitialPositionChanged
+ */
+void Settings::setPlaceAtInitialPositionEnabled(bool enable) noexcept
+{
+    if (d->placeAtInitialPosition != enable) {
+        d->placeAtInitialPosition = enable;
+        emit placeAtInitialPositionChanged(enable);
+    }
+}
+
 QFileInfo Settings::getEarthGravityModelFileInfo() const noexcept
 {
     return d->earthGravityModelFileInfo;
@@ -566,6 +591,15 @@ void Settings::store() const noexcept
     d->settings.beginGroup("Plugins");
     {
         d->settings.setValue("SkyConnectPluginUuid", d->skyConnectPluginUuid);
+        d->settings.beginGroup("Modules");
+        {
+            d->settings.beginGroup("Formation");
+            {
+                d->settings.setValue("PlaceAtInitialPosition", d->placeAtInitialPosition);
+            }
+            d->settings.endGroup();
+        }
+        d->settings.endGroup();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Recording");
@@ -657,6 +691,15 @@ void Settings::restore() noexcept
     d->settings.beginGroup("Plugins");
     {
         d->skyConnectPluginUuid = d->settings.value("SkyConnectPluginUuid", d->DefaultSkyConnectPluginUuid).toUuid();
+        d->settings.beginGroup("Modules");
+        {
+            d->settings.beginGroup("Formation");
+            {
+                d->placeAtInitialPosition = d->settings.value("PlaceAtInitialPosition", d->DefaultPlaceAtInitialPosition).toBool();
+            }
+            d->settings.endGroup();
+        }
+        d->settings.endGroup();
     }
     d->settings.endGroup();
     d->settings.beginGroup("Recording");

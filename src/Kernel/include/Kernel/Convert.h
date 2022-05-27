@@ -70,7 +70,7 @@ public:
     inline double wgs84ToEgmGeoid(double height, double latitude, double longitude) noexcept
     {
         // In meters
-        double heightAboveGeoid;
+        double heightAboveGeoid {0.0};
         if (m_egm != nullptr) {
             try {
                 // Convert height above WGS84 ellipsoid (HAE) tp height above EGM geoid [meters]

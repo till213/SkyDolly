@@ -42,6 +42,7 @@ HyperlinkTextEdit::HyperlinkTextEdit(QWidget *parent)
 
 void HyperlinkTextEdit::mouseMoveEvent(QMouseEvent *event) noexcept
 {
+    QTextEdit::mouseMoveEvent(event);
     if (!anchorAt(event->pos()).isNull()) {
         QApplication::setOverrideCursor(Qt::PointingHandCursor);
     } else {
@@ -51,6 +52,7 @@ void HyperlinkTextEdit::mouseMoveEvent(QMouseEvent *event) noexcept
 
 void HyperlinkTextEdit::mousePressEvent(QMouseEvent *event) noexcept
 {
+    QTextEdit::mousePressEvent(event);
     m_anchor = anchorAt(event->pos());
     if (!m_anchor.isNull()) {
         QApplication::setOverrideCursor(Qt::PointingHandCursor);
@@ -59,6 +61,7 @@ void HyperlinkTextEdit::mousePressEvent(QMouseEvent *event) noexcept
 
 void HyperlinkTextEdit::mouseReleaseEvent(QMouseEvent *event) noexcept
 {
+    QTextEdit::mouseReleaseEvent(event);
     if (!m_anchor.isNull()) {
         QDesktopServices::openUrl(QUrl(m_anchor));
         QApplication::restoreOverrideCursor();

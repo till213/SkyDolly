@@ -165,7 +165,7 @@ bool FlightService::updateUserAircraftIndex(Flight &flight, int index) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
-        flight.setUserAircraftIndex(index);
+        flight.switchUserAircraftIndex(index);
         ok = d->flightDao->updateUserAircraftIndex(flight.getId(), index);
         if (ok) {
             ok = QSqlDatabase::database().commit();

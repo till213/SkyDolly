@@ -166,14 +166,17 @@ void LogbookSettingsDialog::updateUi() noexcept
 }
 
 void LogbookSettingsDialog::frenchConnection() noexcept
-{}
+{
+    connect(ui->showLogbookPathPushButton, &QPushButton::clicked,
+            this, &LogbookSettingsDialog::openLogbookDirectory);
+}
 
 // PRIVATE SLOTS
 
-void LogbookSettingsDialog::on_showLogbookPathPushButton_clicked() noexcept
+void LogbookSettingsDialog::openLogbookDirectory() noexcept
 {
-    QString logbookPath = LogbookManager::getInstance().getLogbookPath();
-    QFileInfo fileInfo = QFileInfo(logbookPath);
-    QUrl url = QUrl::fromLocalFile(fileInfo.absolutePath());
+    const QString logbookPath = LogbookManager::getInstance().getLogbookPath();
+    const QFileInfo fileInfo = QFileInfo(logbookPath);
+    const QUrl url = QUrl::fromLocalFile(fileInfo.absolutePath());
     QDesktopServices::openUrl(url);
 }

@@ -97,19 +97,21 @@
 
 namespace
 {
-    constexpr int PositionSliderMin = 0;
-    constexpr int PositionSliderMax = 1000;
-    constexpr double ReplaySpeedAbsoluteMin = 0.01;
+    constexpr int PositionSliderMin {0};
+    constexpr int PositionSliderMax {1000};
+    constexpr double ReplaySpeedAbsoluteMin {0.01};
     // A replay speed with factor 200 should be fast enough
-    constexpr double ReplaySpeedAbsoluteMax = 200.0;
-    constexpr double ReplaySpeedDecimalPlaces = 2;
+    constexpr double ReplaySpeedAbsoluteMax {200.0};
+    constexpr double ReplaySpeedDecimalPlaces {2};
 
-    constexpr char TimestampFormat[] = "hh:mm:ss";
-    constexpr std::int64_t MilliSecondsPerSecond = 1000;
-    constexpr std::int64_t MilliSecondsPerMinute = 60 * MilliSecondsPerSecond;
-    constexpr std::int64_t MilliSecondsPerHour = 60 * MilliSecondsPerMinute;
+    constexpr int CustomSpeedLineEditMinimumWidth {40};
 
-    constexpr char ReplaySpeedProperty[] = "ReplaySpeed";
+    constexpr char TimestampFormat[] {"hh:mm:ss"};
+    constexpr std::int64_t MilliSecondsPerSecond {1000};
+    constexpr std::int64_t MilliSecondsPerMinute {60 * MilliSecondsPerSecond};
+    constexpr std::int64_t MilliSecondsPerHour {60 * MilliSecondsPerMinute};
+
+    constexpr char ReplaySpeedProperty[] {"ReplaySpeed"};
 
     enum struct ReplaySpeed {
         Slow10,
@@ -262,14 +264,15 @@ void MainWindow::frenchConnection() noexcept
     // Sky Connect
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::timestampChanged,
-            this, &MainWindow::handleTimestampChanged);
+            this, &MainWindow::onTimestampChanged);
     connect(&skyConnectManager, &SkyConnectManager::stateChanged,
             this, &MainWindow::updateUi);
+    connect(&skyConnectManager, &SkyConnectManager::recordingStopped,
+            this, &MainWindow::onRecordingDurationChanged);
 
+    // Replay speed
     connect(d->replaySpeedActionGroup, &QActionGroup::triggered,
-            this, &MainWindow::updateReplaySpeedUi);
-    connect(d->replaySpeedActionGroup, &QActionGroup::triggered,
-            this, &MainWindow::handleReplaySpeedSelected);
+            this, &MainWindow::onReplaySpeedSelected);
 
     // Flight
     const Logbook &logbook = Logbook::getInstance();
@@ -277,39 +280,32 @@ void MainWindow::frenchConnection() noexcept
     connect(&flight, &Flight::flightRestored,
             this, &MainWindow::onFlightRestored);
     connect(&flight, &Flight::timeOffsetChanged,
-            this, &MainWindow::updateReplayDuration);
+            this, &MainWindow::onRecordingDurationChanged);
     connect(&flight, &Flight::aircraftRemoved,
-            this, &MainWindow::updateReplayDuration);
+            this, &MainWindow::onRecordingDurationChanged);
     connect(&flight, &Flight::cleared,
             this, &MainWindow::updateUi);
 
     // Settings
-    connect(&Settings::getInstance(), &Settings::changed,
+    Settings &settings = Settings::getInstance();
+    connect(&settings, &Settings::changed,
             this, &MainWindow::updateMainWindow);
-    connect(&Settings::getInstance(), &Settings::defaultMinimalUiButtonTextVisibilityChanged,
+    connect(&settings, &Settings::defaultMinimalUiButtonTextVisibilityChanged,
             this, &MainWindow::onDefaultMinimalUiButtonTextVisibilityChanged);
-    connect(&Settings::getInstance(), &Settings::defaultMinimalUiNonEssentialButtonVisibilityChanged,
+    connect(&settings, &Settings::defaultMinimalUiNonEssentialButtonVisibilityChanged,
             this, &MainWindow::onDefaultMinimalUiEssentialButtonVisibilityChanged);
+    connect(&settings, &Settings::replayLoopChanged,
+            this, &MainWindow::onReplayLoopChanged);
 
     // Logbook connection
     connect(&LogbookManager::getInstance(), &LogbookManager::connectionChanged,
             this, &MainWindow::onLogbookConnectionChanged);
 
-    // Menu actions
-    connect(d->importQActionGroup, &QActionGroup::triggered,
-            this, &MainWindow::onImport);
-    connect(d->exportQActionGroup, &QActionGroup::triggered,
-            this, &MainWindow::onExport);
-
-    // Settings
-    connect(&Settings::getInstance(), &Settings::replayLoopChanged,
-            this, &MainWindow::handleReplayLoopChanged);
-
     // Ui elements
     connect(d->customSpeedLineEdit, &QLineEdit::editingFinished,
-            this, &MainWindow::handleCustomSpeedChanged);
+            this, &MainWindow::onCustomSpeedChanged);
     connect(d->replaySpeedUnitComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &MainWindow::handleReplaySpeedUnitSelected);
+            this, &MainWindow::onReplaySpeedUnitSelected);
     connect(ui->positionSlider, &QSlider::sliderPressed,
             this, &MainWindow::onPositionSliderPressed);
     connect(ui->positionSlider, &QSlider::valueChanged,
@@ -349,7 +345,7 @@ void MainWindow::frenchConnection() noexcept
 
     // Modules
     connect(d->moduleManager.get(), &ModuleManager::activated,
-            this, &MainWindow::handleModuleActivated);
+            this, &MainWindow::onModuleActivated);
 
     // Menus
 
@@ -366,6 +362,12 @@ void MainWindow::frenchConnection() noexcept
             this, &MainWindow::showLogbookSettings);
     connect(ui->quitAction, &QAction::triggered,
             this, &MainWindow::quit);
+
+    // Menu actions
+    connect(d->importQActionGroup, &QActionGroup::triggered,
+            this, &MainWindow::onImport);
+    connect(d->exportQActionGroup, &QActionGroup::triggered,
+            this, &MainWindow::onExport);
 
     // View menu
     // Note: we explicitly connect to signal triggered - and not toggled - also in
@@ -430,8 +432,13 @@ void MainWindow::initUi() noexcept
             int currentPreviewInfoCount = settings.getPreviewInfoDialogCount();
             --currentPreviewInfoCount;
             QMessageBox::information(this, "Preview",
-                QString("%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete. Feedback (bug reports, feature ideas, general feedback) is very welcome.\n\n"
-                "The release v%2 focuses again on import and export plugins. Besides new import and export formats it is now possible to export an entire formation flight and import all files in a given directory.\n\n"
+                QString("%1 is in a preview release phase: while it should be stable to use it is not considered feature-complete.\n\n"
+                "This release v%2 focuses on \"quality of life\" issues, including reducing memory (RAM) usage, code refactoring and on improving existing functionality "
+                "such as a truly minimal user interface mode (configurable in the settings).\n\n"
+                "It also provides an improved \"AI object management\" in the formation module, resulting in less aircraft flickering when e.g. changing the user aircraft. "
+                "The formation module now also provides a new \"set initial position\" option which (when unchecked) allows to record the user aircraft starting from its current position.\n\n"
+                "The newly introduced GeographicLib (third-party, open source) provides functionality to properly calculate the altitude differences (\"undulation\") between the WGS84 reference "
+                "ellipsoid and the EGM2008 geoid, specifically in the IGN and GPX import/export plugins.\n\n"
                 "This dialog will be shown %3 more times.").arg(Version::getApplicationName(), Version::getApplicationVersion()).arg(currentPreviewInfoCount),
                 QMessageBox::StandardButton::Ok);            
             settings.setPreviewInfoDialogCount(currentPreviewInfoCount);
@@ -668,13 +675,13 @@ void MainWindow::initReplaySpeedUi() noexcept
     replaySpeedLayout->addWidget(d->customSpeedRadioButton);
 
     d->customSpeedLineEdit = new QLineEdit(this);
-    d->customSpeedLineEdit->setMinimumWidth(160);
+    d->customSpeedLineEdit->setMinimumWidth(::CustomSpeedLineEditMinimumWidth);
     replaySpeedLayout->addWidget(d->customSpeedLineEdit);
 
     d->customReplaySpeedFactorValidator = new QDoubleValidator(d->customSpeedLineEdit);
-    d->customReplaySpeedFactorValidator->setRange(ReplaySpeedAbsoluteMin, ReplaySpeedAbsoluteMax, ReplaySpeedDecimalPlaces);
+    d->customReplaySpeedFactorValidator->setRange(::ReplaySpeedAbsoluteMin, ::ReplaySpeedAbsoluteMax, ::ReplaySpeedDecimalPlaces);
     d->customReplaySpeedPercentValidator = new QDoubleValidator(d->customSpeedLineEdit);
-    d->customReplaySpeedPercentValidator->setRange(ReplaySpeedAbsoluteMin * 100.0, ReplaySpeedAbsoluteMax * 100.0, ReplaySpeedDecimalPlaces);
+    d->customReplaySpeedPercentValidator->setRange(::ReplaySpeedAbsoluteMin * 100.0, ::ReplaySpeedAbsoluteMax * 100.0, ::ReplaySpeedDecimalPlaces);
 
     // The replay speed factor in SkyConnect is always an absolute factor
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
@@ -862,6 +869,30 @@ void MainWindow::updateMinimalUi(bool enable)
     // When hiding a widget it takes some time for the layout manager to
     // get notified, so we return to the Qt event queue first
     QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
+}
+
+void MainWindow::updateReplaySpeedUi() noexcept
+{
+    if (d->customSpeedRadioButton->isChecked()) {
+        d->customSpeedLineEdit->setEnabled(true);
+        d->customSpeedLineEdit->setText(d->unit.formatNumber(d->lastCustomReplaySpeedFactor, ReplaySpeedDecimalPlaces));
+
+        switch (Settings::getInstance().getReplaySpeeedUnit()) {
+        case Replay::SpeedUnit::Absolute:
+            d->customSpeedLineEdit->setToolTip(tr("Custom replay speed factor in [%L1, %L2].").arg(ReplaySpeedAbsoluteMin).arg(ReplaySpeedAbsoluteMax));
+            d->customSpeedLineEdit->setValidator(d->customReplaySpeedFactorValidator);
+            break;
+        case Replay::SpeedUnit::Percent:
+            d->customSpeedLineEdit->setToolTip(tr("Custom replay speed % in [%L1%, %L2%].").arg(ReplaySpeedAbsoluteMin * 100.0).arg(ReplaySpeedAbsoluteMax * 100.0));
+            d->customSpeedLineEdit->setValidator(d->customReplaySpeedPercentValidator);
+            break;
+        }
+
+    } else {
+        d->customSpeedLineEdit->setEnabled(false);
+        d->customSpeedLineEdit->clear();
+        d->customSpeedLineEdit->setToolTip("");
+    }
 }
 
 void MainWindow::updateRecordingDuration(std::int64_t timestamp) noexcept
@@ -1059,7 +1090,7 @@ void MainWindow::updateWindowSize() noexcept
     }
 }
 
-void MainWindow::handleTimestampChanged(std::int64_t timestamp) noexcept
+void MainWindow::onTimestampChanged(std::int64_t timestamp) noexcept
 {
     if (SkyConnectManager::getInstance().isInRecordingState()) {
         updateRecordingDuration(timestamp);
@@ -1068,7 +1099,7 @@ void MainWindow::handleTimestampChanged(std::int64_t timestamp) noexcept
     };
 }
 
-void MainWindow::handleReplaySpeedSelected(QAction *action) noexcept
+void MainWindow::onReplaySpeedSelected(QAction *action) noexcept
 {
     ReplaySpeed replaySpeed = static_cast<ReplaySpeed>(action->property(ReplaySpeedProperty).toInt());
     double replaySpeedFactor;
@@ -1107,9 +1138,11 @@ void MainWindow::handleReplaySpeedSelected(QAction *action) noexcept
 
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     skyConnectManager.setReplaySpeedFactor(replaySpeedFactor);
+
+    updateReplaySpeedUi();
 }
 
-void MainWindow::handleCustomSpeedChanged() noexcept
+void MainWindow::onCustomSpeedChanged() noexcept
 {
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     const double customReplaySpeedFactor = getCustomSpeedFactor();
@@ -1124,7 +1157,7 @@ void MainWindow::handleCustomSpeedChanged() noexcept
     }
 }
 
-void MainWindow::handleReplaySpeedUnitSelected(int index) noexcept
+void MainWindow::onReplaySpeedUnitSelected(int index) noexcept
 {
     Settings &settings = Settings::getInstance();
     Replay::SpeedUnit replaySpeedUnit = static_cast<Replay::SpeedUnit>(d->replaySpeedUnitComboBox->itemData(index).toInt());
@@ -1151,9 +1184,6 @@ void MainWindow::updateUi() noexcept
     updateControlUi();
     updateControlIcons();
     updateReplaySpeedUi();
-    if (SkyConnectManager::getInstance().isInReplayState()) {
-        updateReplayDuration();
-    }
     updateFileMenu();
     updateModuleActions();
     updateWindowMenu();
@@ -1265,30 +1295,6 @@ void MainWindow::updateControlIcons() noexcept
     ui->recordAction->setIcon(recordIcon);
 }
 
-void MainWindow::updateReplaySpeedUi() noexcept
-{
-    if (d->customSpeedRadioButton->isChecked()) {
-        d->customSpeedLineEdit->setEnabled(true);
-        d->customSpeedLineEdit->setText(d->unit.formatNumber(d->lastCustomReplaySpeedFactor, ReplaySpeedDecimalPlaces));
-
-        switch (Settings::getInstance().getReplaySpeeedUnit()) {
-        case Replay::SpeedUnit::Absolute:
-            d->customSpeedLineEdit->setToolTip(tr("Custom replay speed factor in [%L1, %L2].").arg(ReplaySpeedAbsoluteMin).arg(ReplaySpeedAbsoluteMax));
-            d->customSpeedLineEdit->setValidator(d->customReplaySpeedFactorValidator);
-            break;
-        case Replay::SpeedUnit::Percent:
-            d->customSpeedLineEdit->setToolTip(tr("Custom replay speed % in [%L1%, %L2%].").arg(ReplaySpeedAbsoluteMin * 100.0).arg(ReplaySpeedAbsoluteMax * 100.0));
-            d->customSpeedLineEdit->setValidator(d->customReplaySpeedPercentValidator);
-            break;
-        }
-
-    } else {
-        d->customSpeedLineEdit->setEnabled(false);
-        d->customSpeedLineEdit->clear();
-        d->customSpeedLineEdit->setToolTip("");
-    }    
-}
-
 void MainWindow::onDefaultMinimalUiButtonTextVisibilityChanged(bool visible) noexcept
 {
     updateMinimalUiButtonTextVisibility();
@@ -1311,6 +1317,12 @@ void MainWindow::onDefaultMinimalUiEssentialButtonVisibilityChanged(bool visible
     }
 }
 
+void MainWindow::onRecordingDurationChanged() noexcept
+{
+    updateReplayDuration();
+    updatePositionSlider(SkyConnectManager::getInstance().getCurrentTimestamp());
+}
+
 void MainWindow::updateReplayDuration() noexcept
 {
     const Flight &flight = Logbook::getInstance().getCurrentFlight();
@@ -1319,8 +1331,6 @@ void MainWindow::updateReplayDuration() noexcept
     ui->timestampTimeEdit->blockSignals(true);
     ui->timestampTimeEdit->setMaximumTime(time);
     ui->timestampTimeEdit->blockSignals(false);
-    const std::int64_t timestamp = SkyConnectManager::getInstance().getCurrentTimestamp();
-    updatePositionSlider(timestamp);
 }
 
 void MainWindow::updateFileMenu() noexcept
@@ -1399,7 +1409,7 @@ void MainWindow::updateMainWindow() noexcept
     }
 }
 
-void MainWindow::handleModuleActivated(const QString title, [[maybe_unused]] Module::Module moduleId) noexcept
+void MainWindow::onModuleActivated(const QString title, [[maybe_unused]] Module::Module moduleId) noexcept
 {
     ui->moduleGroupBox->setTitle(title);
     // Disable the minimal UI (if activated)
@@ -1456,7 +1466,7 @@ void MainWindow::optimiseLogbook() noexcept
             messageBox->setIcon(QMessageBox::Information);
             messageBox->setWindowTitle(tr("Success"));
             messageBox->setText(tr("The logbook %1 optimisation was successful.").arg(fileInfo.fileName()));
-            messageBox->setInformativeText(tr("The new file size is: %1 (old size: %2).")
+            messageBox->setInformativeText(tr("The new file size is: %1 (previous size: %2).")
                                            .arg(d->unit.formatMemory(fileInfo.size()), d->unit.formatMemory(oldSize)));
             messageBox->exec();
         } else {
@@ -1660,7 +1670,7 @@ void MainWindow::onExport(QAction *action) noexcept
     PluginManager::getInstance().exportFlight(flight, pluginUuid);
 }
 
-void MainWindow::handleReplayLoopChanged() noexcept
+void MainWindow::onReplayLoopChanged() noexcept
 {
     updateControlUi();
 }

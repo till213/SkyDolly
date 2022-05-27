@@ -10,8 +10,9 @@ set(APP_NAME "SkyDolly")
 project(
     ${APP_NAME}
     VERSION 0.11.0
-    LANGUAGES CXX
     DESCRIPTION "Sky Dolly - The Black Sheep for your Flight Recordings"
+    HOMEPAGE_URL "https://github.com/till213/SkyDolly"
+    LANGUAGES CXX    
 )
 # Used to populate the Info.plist.in and SkyDolly.rc.in
 set(PROJECT_APPLICATION_NAME "Sky Dolly")

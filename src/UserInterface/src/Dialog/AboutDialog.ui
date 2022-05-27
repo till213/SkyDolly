@@ -90,6 +90,9 @@
            <height>140</height>
           </size>
          </property>
+         <property name="toolTip">
+          <string>Click to copy version info into the clipboard.</string>
+         </property>
          <property name="text">
           <string/>
          </property>
