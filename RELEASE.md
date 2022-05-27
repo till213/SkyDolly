@@ -98,5 +98,15 @@ Description template:
 - Commit, e.g. `git commit -m "Bump version to 0.11.1"`
 - Update the shasum in (SHASUM256.md)[SHASUM256.md]
 
-## Postflight
+## Cruise
 
+### Flightsim.to
+- Publish the release on: https://flightsim.to/file/9067/sky-dolly
+- Update screenshots
+
+## Landing
+
+### NOTAM
+- Announcement on [flightsim.to Sky Dolly group](https://flightsim.to/group/9067/sky-dolly)
+- Announcement on [MSFS Product Announcements](https://forums.flightsimulator.com/t/update-0-10-sky-dolly-flight-recorder-with-formation-replay-logbook-import-export-till213/497107/)
+- Announcement on [AVSIM general freeware](https://www.avsim.com/forums/topic/600337-sky-dolly-free-flight-recorder-replay-app-fs2020/)
