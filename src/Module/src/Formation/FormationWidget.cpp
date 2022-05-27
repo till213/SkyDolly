@@ -273,7 +273,7 @@ void FormationWidget::onStartRecording() noexcept
     d->anticipatedState = Connect::State::Recording;
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     // The initial recording position is calculated for timestamp = 0 ("at the beginning")
-    const InitialPosition initialPosition = Settings::getInstance().isPlaceAtInitialPositionEnabled() ? calculateRelativeInitialPositionToUserAircraft(0) : InitialPosition::NullData;
+    const InitialPosition initialPosition = Settings::getInstance().isRelativePositionPlacementEnabled() ? calculateRelativeInitialPositionToUserAircraft(0) : InitialPosition::NullData;
     skyConnectManager.startRecording(SkyConnectIntf::RecordingMode::AddToFormation, initialPosition);
 }
 
@@ -282,7 +282,7 @@ void FormationWidget::onStartReplay() noexcept
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     const bool fromStart = skyConnectManager.isAtEnd();
     const std::int64_t timestamp = fromStart ? 0 : skyConnectManager.getCurrentTimestamp();
-    const InitialPosition initialPosition = Settings::getInstance().isPlaceAtInitialPositionEnabled() ? calculateRelativeInitialPositionToUserAircraft(timestamp) : InitialPosition::NullData;
+    const InitialPosition initialPosition = Settings::getInstance().isRelativePositionPlacementEnabled() ? calculateRelativeInitialPositionToUserAircraft(timestamp) : InitialPosition::NullData;
     skyConnectManager.startReplay(fromStart, initialPosition);
 }
 
@@ -329,7 +329,7 @@ void FormationWidget::initUi() noexcept
     ui->sePositionRadioButton->setChecked(true);
     ui->horizontalDistanceSlider->setValue(HorizontalDistance::Nearby);
     ui->verticalDistanceSlider->setValue(VerticalDistance::Level);
-    ui->initialPositionCheckBox->setChecked(Settings::getInstance().isPlaceAtInitialPositionEnabled());
+    ui->relativePositionCheckBox->setChecked(Settings::getInstance().isRelativePositionPlacementEnabled());
 
     d->positionButtonGroup->addButton(ui->nPositionRadioButton, RelativePosition::North);
     d->positionButtonGroup->addButton(ui->nnePositionRadioButton, RelativePosition::NorthNorthEast);
@@ -403,7 +403,7 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::updateUserAircraftIndex);
     connect(ui->deletePushButton, &QPushButton::clicked,
             this, &FormationWidget::deleteAircraft);
-    connect(ui->initialPositionCheckBox, &QCheckBox::stateChanged,
+    connect(ui->relativePositionCheckBox, &QCheckBox::stateChanged,
             this, &FormationWidget::onInitialPositionPlacementChanged);
 
     connect(ui->horizontalDistanceSlider, &QSlider::valueChanged,
@@ -860,32 +860,35 @@ void FormationWidget::addAircraft(const Aircraft &aircraft, int rowIndex) noexce
 void FormationWidget::updateAndSendUserAircraftPosition() const noexcept
 {
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    if (!skyConnectManager.isInRecordingState()) {
-        switch (skyConnectManager.getReplayMode())
-        {
-        case SkyConnectIntf::ReplayMode::Normal:
-            break;
-        case SkyConnectIntf::ReplayMode::UserAircraftManualControl:
-        {
+
+    switch (skyConnectManager.getReplayMode())
+    {
+    case SkyConnectIntf::ReplayMode::Normal:
+        break;
+    case SkyConnectIntf::ReplayMode::UserAircraftManualControl:
+    {
+        if (!skyConnectManager.isInRecordingState()) {
             Flight &flight = Logbook::getInstance().getCurrentFlight();
-            // Also update the manually flown user aircraft's position
+            // Also update the manually flown user aircraft position
             const Aircraft &aircraft = flight.getUserAircraft();
             Position &position = aircraft.getPosition();
             const PositionData positionData = position.interpolate(skyConnectManager.getCurrentTimestamp(), TimeVariableData::Access::Seek);
             skyConnectManager.setUserAircraftPosition(positionData);
-            break;
         }
-        case SkyConnectIntf::ReplayMode::FlyWithFormation:
+        break;
+    }
+    case SkyConnectIntf::ReplayMode::FlyWithFormation:
+        if (!skyConnectManager.isInRecordingState() && Settings::getInstance().isRelativePositionPlacementEnabled()) {
             const PositionData positionData = calculateRelativePositionToUserAircraft(skyConnectManager.getCurrentTimestamp());
             skyConnectManager.setUserAircraftPosition(positionData);
-            break;
         }
+        break;
     }
 }
 
 void FormationWidget::updateUserAircraftPosition(SkyConnectIntf::ReplayMode replayMode) const noexcept
 {
-    if (d->anticipatedState != Connect::State::Recording || ui->initialPositionCheckBox->isChecked()) {
+    if (d->anticipatedState != Connect::State::Recording && Settings::getInstance().isRelativePositionPlacementEnabled()) {
         SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
         switch(replayMode) {
         case SkyConnectIntf::ReplayMode::Normal:
@@ -986,7 +989,7 @@ void FormationWidget::onSelectionChanged() noexcept
 
 void FormationWidget::onInitialPositionPlacementChanged(bool enable) noexcept
 {
-    Settings::getInstance().setPlaceAtInitialPositionEnabled(enable);
+    Settings::getInstance().setRelativePositionPlacementEnabled(enable);
 }
 
 void FormationWidget::updateUserAircraftIndex() noexcept
