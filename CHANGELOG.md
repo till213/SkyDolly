@@ -7,10 +7,10 @@
 #### Import & Export
 - No sequence numbers added anymore to export filename in case the flight has only one aircraft and "All aircraft" is selected
 - IGC & GXP import
-  * An option to convert from the WGS84 reference ellipsoid to the earth gravity model (EGM 2008) geoid altitude has been added (enabled by default)
+  * An option to convert from the WGS84 reference ellipsoid to the earth gravity model (EGM2008) geoid altitude has been added (enabled by default)
   * Note: both the IGC and GPX specifications state that the GNSS altitude (elevation) refer to the WGS84 reference ellipsoid, but not every IGC/GPX file necessarily conforms to the specification and may contain earth gravity model (EGM) geoid altitudes ("above sea level") instead
 - IGC & GPX export
-  * The altitude is converted from the geoid (EGM 2008) to height above the WGS84 reference ellipsoid
+  * The altitude is converted from the geoid (EGM2008) to height above the WGS84 reference ellipsoid
 - CSV export
   - A new "position and attitude" format has been added, exporting the position, pitch, bank, heading and speed, including UTC timestamps
 
@@ -374,7 +374,7 @@
 
 ### Bug Fixes
 
-- Fix "logboog" typo in preview message
+- Fix "logboog" typo in  message
 - Improve minimal UI switching
 - Don't reset the elapsed time to 0 when unpausing a recording
 - Keep displayed time when pausing a replay (don't set to total replay time)

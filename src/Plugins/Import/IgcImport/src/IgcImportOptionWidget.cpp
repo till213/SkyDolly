@@ -114,7 +114,7 @@ void IgcImportOptionWidget::updateUi() noexcept
         if (Settings::getInstance().hasEarthGravityModel()) {
             ui->convertAltitudeCheckBox->setEnabled(true);
             ui->convertAltitudeCheckBox->setChecked(d->settings.isConvertAltitudeEnabled());
-            ui->convertAltitudeCheckBox->setToolTip(tr("Converts imported height above WGS84 ellipsoid to height above the EGM 2008 geoid."));
+            ui->convertAltitudeCheckBox->setToolTip(tr("Converts imported height above WGS84 ellipsoid to height above the EGM2008 geoid."));
         } else {
             ui->convertAltitudeCheckBox->setEnabled(false);
             ui->convertAltitudeCheckBox->setChecked(false);

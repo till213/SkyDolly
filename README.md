@@ -81,6 +81,7 @@ Refer to the [BUILD](BUILD.md) documentation.
 - https://github.com/SAHorowitz/MSFS2020-PilotPathRecorder - Records the flight and generates Google Earth (KML format) "replays"
 - https://github.com/Elephant42/FS_Tool - A simple tool that allows to set the aircraft location and simulation rate
 - https://github.com/pyviator/msfs-geoshot - Takes screenshots and automatically "geotags" them
+- https://github.com/ijl20/msfs_logger_replay - IGC logger and replay (for FSX)
 
 ## Other Useful Resources
 
