@@ -648,6 +648,17 @@ insert into aircraft_type values
 update metadata
 set app_version = '0.10.0';
 
+@migr(id = "53b3542b-0fc6-4dae-9500-6167a306f250", descn = "Add additional aircraft types from the Top Gun DLC", step = 1)
+insert into aircraft_type values
+ ('Boeing F/A 18E Super Hornet Mrk Asobo','Airplane',44,2,2),
+ ('Experimental Darkstar Asobo','Airplane',35,2,4)
+ on conflict(type)
+ do update
+ set category = excluded.category,
+     wing_span = excluded.wing_span,
+     engine_type = excluded.engine_type,
+     nof_engines = excluded.nof_engines;
+
 @migr(id = "d794cc76-3bae-41d6-8219-64f405379c45", descn = "Update application version to 0.11", step = 1)
 update metadata
 set app_version = '0.11.0';
