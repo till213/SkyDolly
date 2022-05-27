@@ -884,7 +884,7 @@ void FormationWidget::updateAndSendUserAircraftPosition() const noexcept
 void FormationWidget::updateUserAircraftPosition(SkyConnectIntf::ReplayMode replayMode) const noexcept
 {
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    if (skyConnectManager.isInRecordingState() && Settings::getInstance().isRelativePositionPlacementEnabled()) {
+    if (Settings::getInstance().isRelativePositionPlacementEnabled()) {
         switch(replayMode) {
         case SkyConnectIntf::ReplayMode::Normal:
             break;

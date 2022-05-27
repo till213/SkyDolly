@@ -4,6 +4,7 @@
 
 ### Bug Fixes
 - The maximum time of the replay timer is properly set after recording
+- Apply relative position when _Set relative position_ is enabled and _Fly with formation_ is selected
 
 ## 0.11.0
 
