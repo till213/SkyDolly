@@ -755,7 +755,7 @@ signals:
     void defaultMinimalUiReplaySpeedVisibilityChanged(bool hidden);
 
     /*!
-     * Emitted when the initial position placement option has changed.
+     * Emitted when the relative position placement option has changed.
      *
      * \sa changed
      */

@@ -512,15 +512,6 @@ bool Settings::isRelativePositionPlacementEnabled() const noexcept
     return d->relativePositionPlacement;
 }
 
-/*!
- * Sets whether the the aircraft should be placed at the calculated initial position
- * before recording.
- *
- * \param enable
- *        \c true if the aircraft should be initially placed at its calculated position;
- *        \c false if the aircraft should remain at its current position when recording
- * \sa placeAtInitialPositionChanged
- */
 void Settings::setRelativePositionPlacementEnabled(bool enable) noexcept
 {
     if (d->relativePositionPlacement != enable) {

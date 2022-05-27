@@ -158,9 +158,6 @@ struct FormationWidgetPrivate
         }
     }
 
-    // Only place the user aircraft upon recording start when the option
-    // "set initial position" is enabled
-    Connect::State anticipatedState;
     int tailNumberColumnIndex;
     int timeOffsetColumnIndex;
     QButtonGroup *positionButtonGroup;
@@ -270,7 +267,6 @@ void FormationWidget::hideEvent(QHideEvent *event) noexcept
 
 void FormationWidget::onStartRecording() noexcept
 {
-    d->anticipatedState = Connect::State::Recording;
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     // The initial recording position is calculated for timestamp = 0 ("at the beginning")
     const InitialPosition initialPosition = Settings::getInstance().isRelativePositionPlacementEnabled() ? calculateRelativeInitialPositionToUserAircraft(0) : InitialPosition::NullData;
@@ -290,7 +286,6 @@ void FormationWidget::onStartReplay() noexcept
 
 void FormationWidget::onRecordingStopped() noexcept
 {
-    d->anticipatedState = Connect::State::Connected;
     Flight &flight = Logbook::getInstance().getCurrentFlight();
     const int sequenceNumber = flight.count();
     if (sequenceNumber > 1) {
@@ -888,8 +883,8 @@ void FormationWidget::updateAndSendUserAircraftPosition() const noexcept
 
 void FormationWidget::updateUserAircraftPosition(SkyConnectIntf::ReplayMode replayMode) const noexcept
 {
-    if (d->anticipatedState != Connect::State::Recording && Settings::getInstance().isRelativePositionPlacementEnabled()) {
-        SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    if (skyConnectManager.isInRecordingState() && Settings::getInstance().isRelativePositionPlacementEnabled()) {
         switch(replayMode) {
         case SkyConnectIntf::ReplayMode::Normal:
             break;
