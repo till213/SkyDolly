@@ -23,7 +23,7 @@ BEGIN
             VALUE "ProductVersion", VER_PRODUCTVERSION_STR
             VALUE "OriginalFilename", "@PROJECT_NAME@.exe"
             VALUE "InternalName", "@PROJECT_APPLICATION_NAME@"
-            VALUE "FileDescription", "@SKYDOLLY_DESCRIPTION@"
+            VALUE "FileDescription", "@PROJECT_DESCRIPTION@"
             VALUE "CompanyName", "@PROJECT_ORGANISATION_NAME@"
             VALUE "LegalCopyright", "(c) 2022"
             VALUE "ProductName", "@PROJECT_APPLICATION_NAME@"
