@@ -23,7 +23,7 @@ Sky Dolly uses (or is "inspired by") the following third-party libraries and fun
 - License: MIT License
 
 ## Ordered-Map
-- Author: Thibaut Goetghebuer-Planchon (Tessil)
+- Author: Thibaut Goetghebuer-Planchon (Tessil) et al.
 - Source: https://github.com/Tessil/ordered-map
 - License: MIT License
 
