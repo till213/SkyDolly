@@ -73,7 +73,7 @@ void IgcImportOptionWidget::frenchConnection() noexcept
     connect(ui->altitudeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &IgcImportOptionWidget::onAltitudeChanged);
     connect(ui->enlThresholdSpinBox, QOverload<int>::of(&QSpinBox::valueChanged),
-            this, &IgcImportOptionWidget::onENLThresholdChanged);
+            this, &IgcImportOptionWidget::onEnlThresholdChanged);
 #else
     connect(ui->altitudeComboBox, &QComboBox::currentIndexChanged,
             this, &IgcImportOptionWidget::onAltitudeChanged);
