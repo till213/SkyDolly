@@ -110,3 +110,4 @@ Description template:
 - Announcement on [flightsim.to Sky Dolly group](https://flightsim.to/group/9067/sky-dolly)
 - Announcement on [MSFS Product Announcements](https://forums.flightsimulator.com/t/update-0-10-sky-dolly-flight-recorder-with-formation-replay-logbook-import-export-till213/497107/)
 - Announcement on [AVSIM general freeware](https://www.avsim.com/forums/topic/600337-sky-dolly-free-flight-recorder-replay-app-fs2020/)
+- Announcement on [Buy me a coffee](https://www.buymeacoffee.com/)
