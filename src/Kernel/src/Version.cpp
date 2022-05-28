@@ -51,7 +51,7 @@ public:
     int minor;
     int patch;
 
-    static inline const QString CodeName {QStringLiteral("Analytical Airbus")};
+    static inline const QString CodeName {QStringLiteral("Blissful Boeing")};
 };
 
 // PUBLIC
