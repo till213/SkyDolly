@@ -19,7 +19,7 @@ The MIT License (MIT).\
 Copyright (c) 2008-2022, Charles Karney
 
 ## Ordered-Map
-- Thibaut Goetghebuer-Planchon (Tessil)
+- Thibaut Goetghebuer-Planchon (Tessil) et al.
 - https://github.com/Tessil/ordered-map
 
 MIT License\
