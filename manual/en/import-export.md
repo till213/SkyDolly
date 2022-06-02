@@ -2,7 +2,7 @@
 
 [Index](index.md) \| [Import and Export](import-export.md)
 
-Sky Dolly supports a range of file formats for import and export of *flight* or *aircraft* data into (from) Sky Dolly. The import and export modules are implemented as *plugins*, that is they are loaded on demand into memory and unloaded after use.
+Sky Dolly supports a range of file formats for import and export of *flight* or *aircraft* data into (from) Sky Dolly.
 
 ## Supported Formats
 The following file formats are supported:
@@ -11,6 +11,7 @@ Format | Flavour       | Description                              | Import | Exp
 -------|---------------|------------------------------------------|--------|-------
 CSV    | Sky Dolly     | Sky Dolly comma-separated values         | yes    | yes
 CSV    | flightradar24 | flightradar24.com comma-separated values | yes    | yes
+CSV    | Position      | Position and attitude data               | -      | -
 GPX    | -             | GPS exchange format                      | yes    | yes
 IGC    | -             | International gliding commission format  | yes    | yes
 JSON   | GeoJSON       | GeoJSON                                  | -      | yes
@@ -22,7 +23,7 @@ KML    | Sky Dolly     | Sky Dolly KML                            | -      | yes
 ## Formats
 
 ### CSV - Comma-Separated Values
-The CSV format (comma-seprated values) is a simple text format organising the data into columns, containing an optional header with column names followed by values which are typically separated by a comma. There are however variants which use other *delimiter characters*, such as tab stops or semicolons.
+The CSV format (comma-separated values) is a simple text format organising the data into columns, containing an optional header with column names followed by values which are typically separated by a comma. There are however variants which use other *delimiter characters*, such as tab stops or semicolons.
 
 ### GPX - GPS Exchange Format
 The GPX format is an XML-based format for exchanging global positioning system (GPS) data (or generally speaking, position data recorded with any global navigation satellite system (GNSS)). Besides tracks containing the actual recored data the format also supports waypoints and routes, including some metadata.
