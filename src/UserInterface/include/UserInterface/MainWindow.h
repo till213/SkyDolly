@@ -36,7 +36,7 @@ class QEvent;
 class QResizeEvent;
 class QCloseEvent;
 
-#include <Module/Module.h>
+#include <PluginManager/Module.h>
 #include "UserInterfaceLib.h"
 
 QT_BEGIN_NAMESPACE

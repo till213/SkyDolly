@@ -13,6 +13,7 @@ target_compile_definitions(${LIBRARY_NAME}
 )
 target_sources(${LIBRARY_NAME}
     PRIVATE
+        res/PluginManager.qrc
         include/PluginManager/PluginManagerLib.h
         include/PluginManager/Connect.h
         include/PluginManager/CsvConst.h
@@ -32,6 +33,10 @@ target_sources(${LIBRARY_NAME}
         include/PluginManager/ExportPluginBase.h src/ExportPluginBase.cpp
         include/PluginManager/ExportPluginBaseSettings.h src/ExportPluginBaseSettings.cpp
         include/PluginManager/BasicExportDialog.h src/BasicExportDialog.cpp src/BasicExportDialog.ui
+        include/PluginManager/Module.h
+        include/PluginManager/ModuleIntf.h
+        include/PluginManager/AbstractModuleWidget.h src/AbstractModuleWidget.cpp
+        include/PluginManager/ModuleManager.h src/ModuleManager.cpp
 )
 target_include_directories(${LIBRARY_NAME}
     INTERFACE
@@ -48,6 +53,7 @@ target_link_libraries(${LIBRARY_NAME}
     PRIVATE
         Sky::Persistence
         Sky::Widget
+        tsl::ordered_map
 )
 set_target_properties(${LIBRARY_NAME}
     PROPERTIES

@@ -34,8 +34,8 @@ class QAction;
 
 #include <Model/InitialPosition.h>
 #include <PluginManager/SkyConnectIntf.h>
-#include <ModuleIntf.h>
-#include <AbstractModuleWidget.h>
+#include <PluginManager/ModuleIntf.h>
+#include <PluginManager/AbstractModuleWidget.h>
 
 class Aircraft;
 struct PositionData;

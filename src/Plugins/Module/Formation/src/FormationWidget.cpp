@@ -63,8 +63,8 @@
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/Connect.h>
+#include <PluginManager/AbstractModuleWidget.h>
 #include <Widget/Platform.h>
-#include <AbstractModuleWidget.h>
 #include "FormationWidget.h"
 #include "ui_FormationWidget.h"
 

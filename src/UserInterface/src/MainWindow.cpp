@@ -82,8 +82,8 @@
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/Connect.h>
 #include <PluginManager/PluginManager.h>
-#include <Module/ModuleIntf.h>
-#include <Module/ModuleManager.h>
+#include <PluginManager/ModuleIntf.h>
+#include <PluginManager/ModuleManager.h>
 #include "Dialog/AboutDialog.h"
 #include "Dialog/LogbookSettingsDialog.h"
 #include "Dialog/SettingsDialog.h"

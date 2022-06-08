@@ -34,14 +34,14 @@ class QStackedWidget;
 class QAction;
 
 #include "Module.h"
-#include "ModuleLib.h"
+#include "PluginManagerLib.h"
 
 class DatabaseService;
 class FlightService;
 class ModuleIntf;
 class ModuleManagerPrivate;
 
-class MODULE_API ModuleManager : public QObject
+class PLUGINMANAGER_API ModuleManager : public QObject
 {
     Q_OBJECT
 public:

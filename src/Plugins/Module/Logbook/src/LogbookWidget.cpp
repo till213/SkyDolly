@@ -66,11 +66,11 @@
 #include <Persistence/LogbookManager.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
+#include <PluginManager/AbstractModuleWidget.h>
+#include <PluginManager/Module.h>
 #include <Widget/Platform.h>
 #include <Widget/TableDateItem.h>
 #include <Widget/TableTimeItem.h>
-#include <AbstractModuleWidget.h>
-#include <Module.h>
 #include "LogbookWidget.h"
 #include "ui_LogbookWidget.h"
 

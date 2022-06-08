@@ -34,8 +34,6 @@
 #include <Kernel/Enum.h>
 #include <Persistence/Service/DatabaseService.h>
 #include <Persistence/Service/FlightService.h>
-#include "Logbook/LogbookWidget.h"
-#include "Formation/FormationWidget.h"
 #include "Module.h"
 #include "ModuleIntf.h"
 #include "ModuleManager.h"
@@ -73,7 +71,7 @@ ModuleManager::ModuleManager(QStackedWidget &moduleStackWidget, DatabaseService 
     : QObject(parent),
       d(std::make_unique<ModuleManagerPrivate>(moduleStackWidget, databaseService, flightService))
 {
-    Q_INIT_RESOURCE(Module);
+    Q_INIT_RESOURCE(PluginManager);
 
     initModules();
     activateModule(DefaultModule);
@@ -128,23 +126,24 @@ void ModuleManager::initModules() noexcept
 {
     d->moduleActionGroup = new QActionGroup(this);
 
-    LogbookWidget *logbookWidget = new LogbookWidget(d->databaseService, d->flightService, &d->moduleStackWidget);
-    d->moduleMap[logbookWidget->getModuleId()] = logbookWidget;
-    d->moduleStackWidget.addWidget(logbookWidget);
-    QAction &logbookAction = logbookWidget->getAction();
-    logbookAction.setData(Enum::toUnderlyingType(logbookWidget->getModuleId()));
-    logbookAction.setShortcut(tr("F1"));
-    logbookAction.setToolTip("Record single aircraft, load and manage existing flights.");
-    d->moduleActionGroup->addAction(&logbookAction);
+    // @todo IMPLEMENT ME dynamically load as plugins
+//    LogbookWidget *logbookWidget = new LogbookWidget(d->databaseService, d->flightService, &d->moduleStackWidget);
+//    d->moduleMap[logbookWidget->getModuleId()] = logbookWidget;
+//    d->moduleStackWidget.addWidget(logbookWidget);
+//    QAction &logbookAction = logbookWidget->getAction();
+//    logbookAction.setData(Enum::toUnderlyingType(logbookWidget->getModuleId()));
+//    logbookAction.setShortcut(tr("F1"));
+//    logbookAction.setToolTip("Record single aircraft, load and manage existing flights.");
+//    d->moduleActionGroup->addAction(&logbookAction);
 
-    FormationWidget *formationWidget = new FormationWidget(d->flightService, &d->moduleStackWidget);
-    d->moduleMap[formationWidget->getModuleId()] = formationWidget;
-    d->moduleStackWidget.addWidget(formationWidget);
-    QAction &formationAction = formationWidget->getAction();
-    formationAction.setData(Enum::toUnderlyingType(formationWidget->getModuleId()));
-    formationAction.setShortcut(tr("F2"));
-    formationAction.setToolTip("Record and manage formation flights.");
-    d->moduleActionGroup->addAction(&formationAction);
+//    FormationWidget *formationWidget = new FormationWidget(d->flightService, &d->moduleStackWidget);
+//    d->moduleMap[formationWidget->getModuleId()] = formationWidget;
+//    d->moduleStackWidget.addWidget(formationWidget);
+//    QAction &formationAction = formationWidget->getAction();
+//    formationAction.setData(Enum::toUnderlyingType(formationWidget->getModuleId()));
+//    formationAction.setShortcut(tr("F2"));
+//    formationAction.setToolTip("Record and manage formation flights.");
+//    d->moduleActionGroup->addAction(&formationAction);
 }
 
 void ModuleManager::frenchConnection() noexcept
