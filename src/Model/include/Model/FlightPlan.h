@@ -58,8 +58,8 @@ public:
     const Iterator end() const noexcept;
     BackInsertIterator backInsertIterator() noexcept;
 
-    Waypoint& operator[](std::size_t index) noexcept;
-    const Waypoint& operator[](std::size_t index) const noexcept;
+    Waypoint &operator[](std::size_t index) noexcept;
+    const Waypoint &operator[](std::size_t index) const noexcept;
 
 signals:
     void waypointAdded(const Waypoint &waypoint);

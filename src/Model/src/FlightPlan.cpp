@@ -130,12 +130,12 @@ FlightPlan::BackInsertIterator FlightPlan::backInsertIterator() noexcept
 
 // OPERATORS
 
-Waypoint& FlightPlan::operator[](std::size_t index) noexcept
+Waypoint &FlightPlan::operator[](std::size_t index) noexcept
 {
     return d->waypoints[index];
 }
 
-const Waypoint& FlightPlan::operator[](std::size_t index) const noexcept
+const Waypoint &FlightPlan::operator[](std::size_t index) const noexcept
 {
     return d->waypoints[index];
 }
