@@ -30,7 +30,6 @@
 #include <utility>
 #include <cstdint>
 #include <exception>
-#define _USE_MATH_DEFINES
 #include <cmath>
 
 #include <GeographicLib/Geodesic.hpp>
@@ -49,6 +48,7 @@
  */
 namespace SkyMath
 {
+    constexpr double PI = 3.141592653589793238463;
     // Latitude, longitude [degrees]
     typedef std::pair<double, double> Coordinate;
 
@@ -73,11 +73,11 @@ namespace SkyMath
     constexpr double DefaultDistanceThreshold = 50.0;
 
     inline double degreesToRadians(double degree) {
-        return degree * M_PI / 180.0;
+        return degree * PI / 180.0;
     };
 
     inline double radiansToDegrees(double radians) {
-        return radians * 180.0 / M_PI;
+        return radians * 180.0 / PI;
     };
 
     inline double feetToMeters(double feet) {
@@ -438,7 +438,7 @@ namespace SkyMath
             // Level flight
             pitch = 0.0;
         }
-        return pitch * 180.0 / M_PI;
+        return pitch * 180.0 / PI;
     }
 
     /*!
