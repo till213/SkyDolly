@@ -46,10 +46,9 @@ namespace
 class ModuleManagerPrivate
 {
 public:
-    ModuleManagerPrivate(QStackedWidget &theModuleStackWidget, DatabaseService &theDatabaseService, FlightService &theFlightService) noexcept
+    ModuleManagerPrivate(QStackedWidget &theModuleStackWidget, DatabaseService &theDatabaseService) noexcept
         : moduleStackWidget(theModuleStackWidget),
           databaseService(theDatabaseService),
-          flightService(theFlightService),
           activeModuleId(Module::Module::None),
           moduleActionGroup(nullptr)
     {}
@@ -59,7 +58,6 @@ public:
 
     QStackedWidget &moduleStackWidget;
     DatabaseService &databaseService;
-    FlightService &flightService;
     Module::Module activeModuleId;
     tsl::ordered_map<Module::Module, ModuleIntf *> moduleMap;
     QActionGroup *moduleActionGroup;
@@ -67,9 +65,9 @@ public:
 
 // PUBLIC
 
-ModuleManager::ModuleManager(QStackedWidget &moduleStackWidget, DatabaseService &databaseService, FlightService &flightService, QObject *parent) noexcept
+ModuleManager::ModuleManager(QStackedWidget &moduleStackWidget, DatabaseService &databaseService, QObject *parent) noexcept
     : QObject(parent),
-      d(std::make_unique<ModuleManagerPrivate>(moduleStackWidget, databaseService, flightService))
+      d(std::make_unique<ModuleManagerPrivate>(moduleStackWidget, databaseService))
 {
     initModules();
     activateModule(DefaultModule);

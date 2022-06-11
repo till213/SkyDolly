@@ -33,23 +33,24 @@ class QWidget;
 
 #include "Module.h"
 #include "ModuleIntf.h"
+#include "PluginManagerLib.h"
 
 class FlightService;
 struct ModulePluginBasePrivate;
 
-class ModulePluginBase : public QObject, public ModuleIntf
+class PLUGINMANAGER_API ModulePluginBase : public QObject, public ModuleIntf
 {
     Q_OBJECT
 public:
     explicit ModulePluginBase(QObject *parent = nullptr) noexcept;
-    virtual ~ModulePluginBase() noexcept;
+    ~ModulePluginBase() noexcept override;
 
-    virtual bool isActive() const noexcept override;
-    virtual void setActive(bool enable) noexcept override;
+    bool isActive() const noexcept override;
+    void setActive(bool enable) noexcept override;
 
-    virtual void setRecording(bool enable) noexcept override;
-    virtual void setPaused(bool enable) noexcept override;
-    virtual void setPlaying(bool enable) noexcept override;
+    void setRecording(bool enable) noexcept override;
+    void setPaused(bool enable) noexcept override;
+    void setPlaying(bool enable) noexcept override;
 
 protected:
     virtual void onStartRecording() noexcept;
@@ -57,7 +58,7 @@ protected:
     virtual void onStartReplay() noexcept;
 
 protected slots:
-    virtual void onRecordingStopped() noexcept override;
+    void onRecordingStopped() noexcept override;
 
 private:
     std::unique_ptr<ModulePluginBasePrivate> d;

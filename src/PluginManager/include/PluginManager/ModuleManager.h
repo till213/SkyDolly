@@ -45,8 +45,8 @@ class PLUGINMANAGER_API ModuleManager : public QObject
 {
     Q_OBJECT
 public:
-    ModuleManager(QStackedWidget &moduleStackWidget, DatabaseService &theDatabaseService, FlightService &theFlightService, QObject *parent = nullptr) noexcept;
-    virtual ~ModuleManager() noexcept;
+    ModuleManager(QStackedWidget &moduleStackWidget, DatabaseService &theDatabaseService, QObject *parent = nullptr) noexcept;
+    ~ModuleManager() noexcept override;
 
     std::vector<ModuleIntf *> getModules() const;
     ModuleIntf &getModule(Module::Module moduleId) const noexcept;
@@ -54,7 +54,7 @@ public:
     void activateModule(Module::Module moduleId) noexcept;
 
 signals:
-    void activated(const QString title, Module::Module moduleId);
+    void activated(QString title, Module::Module moduleId);
 
 private:
     std::unique_ptr<ModuleManagerPrivate> d;

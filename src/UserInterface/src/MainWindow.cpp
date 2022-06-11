@@ -499,7 +499,7 @@ void MainWindow::initPlugins() noexcept
 void MainWindow::initModuleSelectorUi() noexcept
 {
     // Modules
-    d->moduleManager = std::make_unique<ModuleManager>(*ui->moduleStackWidget, *d->databaseService, *d->flightService);
+    d->moduleManager = std::make_unique<ModuleManager>(*ui->moduleStackWidget, *d->databaseService);
     ActionCheckBox *actionCheckBox = new ActionCheckBox(false, this);
     actionCheckBox->setAction(ui->showModulesAction);
     actionCheckBox->setFocusPolicy(Qt::NoFocus);

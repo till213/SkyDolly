@@ -16,4 +16,3 @@ target_include_directories(SimConnect
     INTERFACE
         "${SDK_PREFIX}/SimConnect SDK/include"
 )
-
