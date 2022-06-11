@@ -130,7 +130,7 @@ set_target_properties(${APP_NAME}
 
 # Resource (data) files
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geoids)
-if (${PLATFORM_IS_MACOS})
+if(${PLATFORM_IS_MACOS})
     target_link_libraries(${APP_NAME}
         PRIVATE
             Geoids

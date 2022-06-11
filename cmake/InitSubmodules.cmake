@@ -1,6 +1,6 @@
 find_package(Git QUIET)
 if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
-# Update submodules as needed
+    # Update submodules as needed
     option(SKY_GIT_INIT_SUBMODULES "Check submodules during build" ON)
     if(SKY_GIT_INIT_SUBMODULES)
         message(STATUS "Submodule update")

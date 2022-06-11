@@ -26,8 +26,6 @@ target_sources(${MODULE_NAME}
         src/EventWidget.h src/EventWidget.cpp
         src/MSFSSimConnectPlugin.json
 )
-# SimConnect
-find_package(SimConnect REQUIRED)
 target_link_libraries(${MODULE_NAME}
     PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets
