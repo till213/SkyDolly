@@ -49,7 +49,7 @@ target_link_libraries(${LIBRARY_NAME}
         GitInfo
 )
 
-if (${PLATFORM_IS_WINDOWS})
+if(${PLATFORM_IS_WINDOWS})
     find_library (PSAPI psapi)
     target_link_libraries(${LIBRARY_NAME}
         PRIVATE
@@ -64,12 +64,12 @@ if (${PLATFORM_IS_WINDOWS})
         PRIVATE
             src/FlightSimulator_Windows.cpp
     )
-elseif (${PLATFORM_IS_MACOS})
+elseif(${PLATFORM_IS_MACOS})
     target_sources(${LIBRARY_NAME}
         PRIVATE
             src/FlightSimulator_macOS.cpp
     )
-elseif (${PLATFORM_IS_LINUX})
+elseif(${PLATFORM_IS_LINUX})
     target_sources(${LIBRARY_NAME}
         PRIVATE
             src/FlightSimulator_Linux.cpp
