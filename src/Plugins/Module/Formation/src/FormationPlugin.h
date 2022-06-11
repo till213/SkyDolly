@@ -22,42 +22,45 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef MODULEINTF_H
-#define MODULEINTF_H
+#ifndef FORMATIONPLUGIN_H
+#define FORMATIONPLUGIN_H
 
-#include <QtPlugin>
+#include <QObject>
 #include <QString>
 
 class QWidget;
 class QAction;
 
-#include "Module.h"
+#include "PluginManager/ModulePluginBase.h"
 
-class FlightService;
+struct FormationPluginPrivate;
 
-class ModuleIntf
+class FormationPlugin : public ModulePluginBase
 {
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID MODULE_INTERFACE_IID FILE "FormationPlugin.json")
+    Q_INTERFACES(ModuleIntf)
 public:
-    virtual ~ModuleIntf() = default;
+    FormationPlugin(QObject *parent = nullptr) noexcept;
+    ~FormationPlugin() noexcept override;
 
-    virtual Module::Module getModuleId() const noexcept = 0;
-    virtual QString getModuleName() const noexcept = 0;
+    Module::Module getModuleId() const noexcept override;
+    QString getModuleName() const noexcept override;
 
-    virtual bool isActive() const noexcept = 0;
-    virtual void setActive(bool enable) noexcept = 0;
-
-    virtual QWidget &getWidget() noexcept = 0;
-    virtual QAction &getAction() noexcept = 0;
-
-    virtual void setRecording(bool enable) noexcept = 0;
-    virtual void setPaused(bool enable) noexcept = 0;
-    virtual void setPlaying(bool enable) noexcept = 0;
+    QWidget &getWidget() noexcept override;
+    QAction &getAction() noexcept override;
 
 protected:
-    virtual void onRecordingStopped() noexcept = 0;
+    void onStartRecording() noexcept override;
+    void onStartReplay() noexcept override;
+
+protected slots:
+    void onRecordingStopped() noexcept override;
+
+private:
+    std::unique_ptr<FormationPluginPrivate> d;
+
+    static QString getName();
 };
 
-#define MODULE_INTERFACE_IID "com.github.till213.SkyDolly.ModuleInterface/1.0"
-Q_DECLARE_INTERFACE(ModuleIntf, MODULE_INTERFACE_IID)
-
-#endif // MODULEINTF_H
+#endif // FORMATIONPLUGIN_H

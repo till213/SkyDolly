@@ -28,14 +28,16 @@
 #include <memory>
 #include <cstdint>
 
+#include <QWidget>
+
 class QShowEvent;
 class QHideEvent;
 class QAction;
 
-#include <Model/InitialPosition.h>
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/ModuleIntf.h>
-#include <PluginManager/AbstractModuleWidget.h>
+#include <PluginManager/ModulePluginBase.h>
+#include "Formation.h"
 
 class Aircraft;
 struct PositionData;
@@ -46,28 +48,22 @@ namespace Ui {
 
 class FlightService;
 class AircraftService;
-class FormationWidgetPrivate;
+struct FormationWidgetPrivate;
 
-class FormationWidget : public AbstractModuleWidget
+class FormationWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit FormationWidget(FlightService &flightService, QWidget *parent = nullptr) noexcept;
+    explicit FormationWidget(QWidget *parent = nullptr) noexcept;
     ~FormationWidget() noexcept override;
 
-    Module::Module getModuleId() const noexcept override;
-    const QString getModuleName() const noexcept override;
-    QAction &getAction() noexcept override;
+    Formation::HorizontalDistance getHorizontalDistance() const noexcept;
+    Formation::VerticalDistance getVerticalDistance() const noexcept;
+    Formation::RelativePosition getRelativePosition() const noexcept;
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;
     void hideEvent(QHideEvent *event) noexcept override;
-
-    void onStartRecording() noexcept override;
-    void onStartReplay() noexcept override;
-
-protected slots:
-    void onRecordingStopped() noexcept override;
 
 private:
     Q_DISABLE_COPY(FormationWidget)
@@ -85,11 +81,6 @@ private:
     void updateTimeOffsetUi() noexcept;
     void updateReplayUi() noexcept;
     void updateToolTips() noexcept;
-
-    InitialPosition calculateRelativeInitialPositionToUserAircraft(std::int64_t timestamp) const noexcept;
-    PositionData calculateRelativePositionToUserAircraft(std::int64_t timestamp) const noexcept;
-
-    static const QString getName();
 
     void addAircraft(const Aircraft &aircraft, int rowIndex) noexcept;
     void updateAndSendUserAircraftPosition() const noexcept;

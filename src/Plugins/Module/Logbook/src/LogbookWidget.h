@@ -39,7 +39,7 @@ class QString;
 
 #include <PluginManager/ModuleIntf.h>
 #include <PluginManager/Module.h>
-#include <PluginManager/AbstractModuleWidget.h>
+#include <PluginManager/ModulePluginBase.h>
 
 class DatabaseService;
 class FlightService;
@@ -51,7 +51,7 @@ namespace Ui {
     class LogbookWidget;
 }
 
-class LogbookWidget : public AbstractModuleWidget
+class LogbookWidget : public QWidget
 {
     Q_OBJECT
 public:
@@ -59,10 +59,6 @@ public:
     ~LogbookWidget() noexcept override;
 
     std::int64_t getSelectedFlightId() const noexcept;
-
-    Module::Module getModuleId() const noexcept override;
-    const QString getModuleName() const noexcept override;
-    QAction &getAction() noexcept override;
 
 protected:
     void showEvent(QShowEvent *event) noexcept override;

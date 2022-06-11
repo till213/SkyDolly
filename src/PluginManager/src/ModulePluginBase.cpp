@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <cassert>
+
 #include <QWidget>
 #include <QAction>
 
@@ -30,57 +32,49 @@
 #include "SkyConnectIntf.h"
 #include <Persistence/Service/FlightService.h>
 #include "Module.h"
-#include "AbstractModuleWidget.h"
+#include "ModulePluginBase.h"
 
-class AbstractModuleWidgetPrivate
+struct ModulePluginBasePrivate
 {
-public:
-    AbstractModuleWidgetPrivate(FlightService &theFlightService) noexcept
-        : flightService(theFlightService)
+    ModulePluginBasePrivate() noexcept
     {}
 
-    bool active{false};
-    FlightService &flightService;
+    bool active {false};
+    std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>()};
 };
 
 // PUBLIC
 
-AbstractModuleWidget::AbstractModuleWidget(FlightService &flightService, QWidget *parent) noexcept
-    : QWidget(parent),
-      d(std::make_unique<AbstractModuleWidgetPrivate>(flightService))
+ModulePluginBase::ModulePluginBase(QObject *parent) noexcept
+    : QObject(parent),
+      d(std::make_unique<ModulePluginBasePrivate>())
 {}
 
-AbstractModuleWidget::~AbstractModuleWidget() noexcept
+ModulePluginBase::~ModulePluginBase() noexcept
 {}
 
-bool AbstractModuleWidget::isActive() const noexcept
+bool ModulePluginBase::isActive() const noexcept
 {
     return d->active;
 }
 
-void AbstractModuleWidget::setActive(bool enable) noexcept
+void ModulePluginBase::setActive(bool enable) noexcept
 {
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     if (enable) {
         connect(&skyConnectManager, &SkyConnectManager::recordingStopped,
-                this, &AbstractModuleWidget::onRecordingStopped);
+                this, &ModulePluginBase::onRecordingStopped);
     } else {
         disconnect(&skyConnectManager, &SkyConnectManager::recordingStopped,
-                   this, &AbstractModuleWidget::onRecordingStopped);
+                   this, &ModulePluginBase::onRecordingStopped);
     }
     getAction().setChecked(enable);
     d->active = enable;
 }
 
-QWidget &AbstractModuleWidget::getWidget() noexcept
-{
-    return *this;
-}
-
-void AbstractModuleWidget::setRecording(bool enable) noexcept
+void ModulePluginBase::setRecording(bool enable) noexcept
 {
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    blockSignals(true);
     switch (skyConnectManager.getState()) {
     case Connect::State::Recording:
         if (!enable) {
@@ -99,15 +93,14 @@ void AbstractModuleWidget::setRecording(bool enable) noexcept
         }
         break;
     }
-    blockSignals(false);
 }
 
-void AbstractModuleWidget::setPaused(bool enable) noexcept
+void ModulePluginBase::setPaused(bool enable) noexcept
 {
     onPaused(enable);
 }
 
-void AbstractModuleWidget::setPlaying(bool enable) noexcept
+void ModulePluginBase::setPlaying(bool enable) noexcept
 {
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     if (skyConnectManager.isPaused() && enable) {
@@ -122,22 +115,17 @@ void AbstractModuleWidget::setPlaying(bool enable) noexcept
 
 // PROTECTED
 
-FlightService &AbstractModuleWidget::getFlightService() const noexcept
-{
-    return d->flightService;
-}
-
-void AbstractModuleWidget::onStartRecording() noexcept
+void ModulePluginBase::onStartRecording() noexcept
 {
     SkyConnectManager::getInstance().startRecording(SkyConnectIntf::RecordingMode::SingleAircraft);
 }
 
-void AbstractModuleWidget::onPaused(bool enable) noexcept
+void ModulePluginBase::onPaused(bool enable) noexcept
 {
     SkyConnectManager::getInstance().setPaused(enable);
 }
 
-void AbstractModuleWidget::onStartReplay() noexcept
+void ModulePluginBase::onStartReplay() noexcept
 {
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     skyConnectManager.startReplay(skyConnectManager.isAtEnd());
@@ -145,7 +133,7 @@ void AbstractModuleWidget::onStartReplay() noexcept
 
 // PROTECTED SLOTS
 
-void AbstractModuleWidget::onRecordingStopped() noexcept
+void ModulePluginBase::onRecordingStopped() noexcept
 {
-    d->flightService.store(Logbook::getInstance().getCurrentFlight());
+    d->flightService->store(Logbook::getInstance().getCurrentFlight());
 }

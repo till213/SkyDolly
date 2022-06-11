@@ -22,41 +22,36 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef ABSTRACTMODULEWIDGET_H
-#define ABSTRACTMODULEWIDGET_H
+#ifndef MODULEPLUGINBASE_H
+#define MODULEPLUGINBASE_H
 
 #include <memory>
 
-#include <QWidget>
+#include <QObject>
 
-class QShowEvent;
-class QHideEvent;
+class QWidget;
 
-#include "Connect.h"
 #include "Module.h"
 #include "ModuleIntf.h"
 
 class FlightService;
-class AbstractModuleWidgetPrivate;
+struct ModulePluginBasePrivate;
 
-class AbstractModuleWidget : public QWidget, public ModuleIntf
+class ModulePluginBase : public QObject, public ModuleIntf
 {
     Q_OBJECT
 public:
-    explicit AbstractModuleWidget(FlightService &flightService, QWidget *parent = nullptr) noexcept;
-    virtual ~AbstractModuleWidget() noexcept;
+    explicit ModulePluginBase(QObject *parent = nullptr) noexcept;
+    virtual ~ModulePluginBase() noexcept;
 
     virtual bool isActive() const noexcept override;
     virtual void setActive(bool enable) noexcept override;
-
-    virtual QWidget &getWidget() noexcept override;
 
     virtual void setRecording(bool enable) noexcept override;
     virtual void setPaused(bool enable) noexcept override;
     virtual void setPlaying(bool enable) noexcept override;
 
 protected:
-    FlightService &getFlightService() const noexcept;
     virtual void onStartRecording() noexcept;
     virtual void onPaused(bool enable) noexcept;
     virtual void onStartReplay() noexcept;
@@ -65,7 +60,7 @@ protected slots:
     virtual void onRecordingStopped() noexcept override;
 
 private:
-    std::unique_ptr<AbstractModuleWidgetPrivate> d;
+    std::unique_ptr<ModulePluginBasePrivate> d;
 };
 
-#endif // ABSTRACTMODULEWIDGET_H
+#endif // MODULEPLUGINBASE_H

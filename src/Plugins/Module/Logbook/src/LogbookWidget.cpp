@@ -66,7 +66,7 @@
 #include <Persistence/LogbookManager.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
-#include <PluginManager/AbstractModuleWidget.h>
+#include <PluginManager/ModulePluginBase.h>
 #include <PluginManager/Module.h>
 #include <Widget/Platform.h>
 #include <Widget/TableDateItem.h>
@@ -146,7 +146,7 @@ public:
 // PUBLIC
 
 LogbookWidget::LogbookWidget(DatabaseService &databaseService, FlightService &flightService, QWidget *parent) noexcept
-    : AbstractModuleWidget(flightService, parent),
+    : QWidget(parent),
       ui(std::make_unique<Ui::LogbookWidget>()),
       d(std::make_unique<LogbookWidgetPrivate>(this, databaseService, flightService))
 {
@@ -172,26 +172,11 @@ std::int64_t LogbookWidget::getSelectedFlightId() const noexcept
     return d->selectedFlightId;
 }
 
-Module::Module LogbookWidget::getModuleId() const noexcept
-{
-    return Module::Module::Logbook;
-}
-
-const QString LogbookWidget::getModuleName() const noexcept
-{
-    return getName();
-}
-
-QAction &LogbookWidget::getAction() noexcept
-{
-    return *d->moduleAction;
-}
-
 // PROTECTED
 
 void LogbookWidget::showEvent(QShowEvent *event) noexcept
 {
-    AbstractModuleWidget::showEvent(event);
+    QWidget::showEvent(event);
 
     // Logbook
     const Logbook &logbook = Logbook::getInstance();
@@ -222,7 +207,7 @@ void LogbookWidget::showEvent(QShowEvent *event) noexcept
 
 void LogbookWidget::hideEvent(QHideEvent *event) noexcept
 {
-    AbstractModuleWidget::hideEvent(event);
+    QWidget::hideEvent(event);
 
     // Logbook
     const Logbook &logbook = Logbook::getInstance();

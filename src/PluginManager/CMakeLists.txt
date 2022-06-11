@@ -13,7 +13,6 @@ target_compile_definitions(${LIBRARY_NAME}
 )
 target_sources(${LIBRARY_NAME}
     PRIVATE
-        res/PluginManager.qrc
         include/PluginManager/PluginManagerLib.h
         include/PluginManager/Connect.h
         include/PluginManager/CsvConst.h
@@ -35,7 +34,7 @@ target_sources(${LIBRARY_NAME}
         include/PluginManager/BasicExportDialog.h src/BasicExportDialog.cpp src/BasicExportDialog.ui
         include/PluginManager/Module.h
         include/PluginManager/ModuleIntf.h
-        include/PluginManager/AbstractModuleWidget.h src/AbstractModuleWidget.cpp
+        include/PluginManager/ModulePluginBase.h src/ModulePluginBase.cpp
         include/PluginManager/ModuleManager.h src/ModuleManager.cpp
 )
 target_include_directories(${LIBRARY_NAME}

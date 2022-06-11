@@ -22,42 +22,53 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef MODULEINTF_H
-#define MODULEINTF_H
+#ifndef FORMATION_H
+#define FORMATION_H
 
-#include <QtPlugin>
-#include <QString>
+#include <cstdint>
 
-class QWidget;
-class QAction;
+#include <Model/InitialPosition.h>
+#include <Model/PositionData.h>
 
-#include "Module.h"
-
-class FlightService;
-
-class ModuleIntf
+namespace Formation
 {
-public:
-    virtual ~ModuleIntf() = default;
+    enum HorizontalDistance {
+        VeryClose = 0,
+        Close,
+        Nearby,
+        Far,
+        VeryFar
+    };
 
-    virtual Module::Module getModuleId() const noexcept = 0;
-    virtual QString getModuleName() const noexcept = 0;
+    enum VerticalDistance {
+        Below = 0,
+        JustBelow,
+        Level,
+        JustAbove,
+        Above
+    };
 
-    virtual bool isActive() const noexcept = 0;
-    virtual void setActive(bool enable) noexcept = 0;
+    enum RelativePosition {
+        North = 0,
+        NorthNorthEast,
+        NorthEast,
+        EastNorthEast,
+        East,
+        EastSouthEast,
+        SouthEast,
+        SouthSouthEast,
+        South,
+        SouthSouthWest,
+        SouthWest,
+        WestSouthWest,
+        West,
+        WestNorthWest,
+        NorthWest,
+        NorthNorthWest
+    };
 
-    virtual QWidget &getWidget() noexcept = 0;
-    virtual QAction &getAction() noexcept = 0;
-
-    virtual void setRecording(bool enable) noexcept = 0;
-    virtual void setPaused(bool enable) noexcept = 0;
-    virtual void setPlaying(bool enable) noexcept = 0;
-
-protected:
-    virtual void onRecordingStopped() noexcept = 0;
+    InitialPosition calculateInitialRelativePositionToUserAircraft(HorizontalDistance horizontalDistance, VerticalDistance verticalDistance, RelativePosition relativePosition, std::int64_t timestamp) noexcept;
+    PositionData calculateRelativePositionToUserAircraft(HorizontalDistance horizontalDistance, VerticalDistance verticalDistance, RelativePosition relativePosition, std::int64_t timestamp) noexcept;
 };
 
-#define MODULE_INTERFACE_IID "com.github.till213.SkyDolly.ModuleInterface/1.0"
-Q_DECLARE_INTERFACE(ModuleIntf, MODULE_INTERFACE_IID)
-
-#endif // MODULEINTF_H
+#endif // FORMATION_H

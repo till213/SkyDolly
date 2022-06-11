@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>663</width>
-    <height>450</height>
+    <width>814</width>
+    <height>470</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -944,7 +944,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../../res/Module.qrc">
+             <iconset resource="../res/FormationPlugin.qrc">
               <normaloff>:/img/icons/fast-backward-offset-normal.png</normaloff>
               <activeoff>:/img/icons/fast-backward-offset-active.png</activeoff>:/img/icons/fast-backward-offset-normal.png</iconset>
             </property>
@@ -971,7 +971,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../../res/Module.qrc">
+             <iconset resource="../res/FormationPlugin.qrc">
               <normaloff>:/img/icons/backward-offset-normal.png</normaloff>
               <activeoff>:/img/icons/backward-offset-active.png</activeoff>:/img/icons/backward-offset-normal.png</iconset>
             </property>
@@ -1027,7 +1027,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../../res/Module.qrc">
+             <iconset resource="../res/FormationPlugin.qrc">
               <normaloff>:/img/icons/forward-offset-normal.png</normaloff>
               <activeoff>:/img/icons/forward-offset-active.png</activeoff>:/img/icons/forward-offset-normal.png</iconset>
             </property>
@@ -1054,7 +1054,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../../res/Module.qrc">
+             <iconset resource="../res/FormationPlugin.qrc">
               <normaloff>:/img/icons/fast-forward-offset-normal.png</normaloff>
               <activeoff>:/img/icons/fast-forward-offset-active.png</activeoff>:/img/icons/fast-forward-offset-normal.png</iconset>
             </property>
@@ -1131,7 +1131,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../res/Module.qrc"/>
+  <include location="../res/FormationPlugin.qrc"/>
  </resources>
  <connections/>
 </ui>
