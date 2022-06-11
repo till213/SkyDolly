@@ -73,7 +73,7 @@ public:
     {
         if (this != &rhs) {
             m_data = std::move(rhs.m_data);
-            m_aircraftInfo = std::move(rhs.m_aircraftInfo);
+            m_aircraftInfo = rhs.m_aircraftInfo;
             m_currentTimestamp = rhs.m_currentTimestamp;
             m_currentIndex = rhs.m_currentIndex;
             m_currentAccess = rhs.m_currentAccess;
