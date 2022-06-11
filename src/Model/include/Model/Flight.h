@@ -139,8 +139,8 @@ public:
     const Iterator begin() const noexcept;
     const Iterator end() const noexcept;
 
-    Aircraft& operator[](std::size_t index) noexcept;
-    const Aircraft& operator[](std::size_t index) const noexcept;
+    Aircraft &operator[](std::size_t index) noexcept;
+    const Aircraft &operator[](std::size_t index) const noexcept;
 
     /*!
      * The initial ID for every newly created flight. An invalid ID indicates that this
