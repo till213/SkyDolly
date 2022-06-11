@@ -58,22 +58,24 @@ public:
           m_currentIndex(other.m_currentIndex),
           m_currentAccess(other.m_currentAccess)
     {}
+
     AbstractComponent &operator=(const AbstractComponent &rhs)
     {
         if (this != &rhs) {
+            // Don't copy the reference member
             m_data = rhs.m_data;
-            m_aircraftInfo = rhs.m_aircraftInfo;
             m_currentTimestamp = rhs.m_currentTimestamp;
             m_currentIndex = rhs.m_currentIndex;
             m_currentAccess = rhs.m_currentAccess;
         }
         return *this;
     }
+
     AbstractComponent &operator=(AbstractComponent &&rhs)
     {
         if (this != &rhs) {
+            // Don't copy the reference member
             m_data = std::move(rhs.m_data);
-            m_aircraftInfo = rhs.m_aircraftInfo;
             m_currentTimestamp = rhs.m_currentTimestamp;
             m_currentIndex = rhs.m_currentIndex;
             m_currentAccess = rhs.m_currentAccess;

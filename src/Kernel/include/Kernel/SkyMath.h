@@ -30,7 +30,7 @@
 #include <utility>
 #include <cstdint>
 #include <exception>
-#ifdef _MSC_VER
+#if defined _MSC_VER
 #define _USE_MATH_DEFINES
 #endif
 #include <cmath>
