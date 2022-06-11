@@ -30,9 +30,7 @@
 #include <utility>
 #include <cstdint>
 #include <exception>
-#if defined _MSC_VER
 #define _USE_MATH_DEFINES
-#endif
 #include <cmath>
 
 #include <GeographicLib/Geodesic.hpp>
