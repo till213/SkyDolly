@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.12.0
+
+### Under The Hood
+- Sky Dolly now also compiles and links with the Microsoft Visual Studio 2022 C++ compiler (MSVC)
+- The code is now also [analysed](https://github.com/till213/SkyDolly/actions) for programming / security flaws with the [Microsoft C++ Code Analysis Action](https://github.com/marketplace/actions/microsoft-c-code-analysis-action)
+
 ## 0.11.1
 
 ### Bug Fixes
