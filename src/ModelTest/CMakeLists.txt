@@ -13,6 +13,7 @@ target_sources(SkySearchTest
 
 set(KERNELTEST_LIBS
     Qt${QT_VERSION_MAJOR}::Test
+    Sky::Kernel
     Sky::Model
 )
 
