@@ -516,17 +516,11 @@ void LogbookWidget::frenchConnection() noexcept
     // Filter options
     connect(ui->formationCheckBox, &QCheckBox::toggled,
             this, &LogbookWidget::filterByFormationFlights);
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    connect(ui->engineTypeComboBox, QOverload<int>::of(&QComboBox::activated),
-            this, &LogbookWidget::filterByEngineType);
-    connect(ui->durationComboBox, QOverload<int>::of(&QComboBox::activated),
-            this, &LogbookWidget::filterByDuration);
-#else
     connect(ui->engineTypeComboBox, &QComboBox::activated,
             this, &LogbookWidget::filterByEngineType);
     connect(ui->durationComboBox, &QComboBox::activated,
             this, &LogbookWidget::filterByDuration);
-#endif
+
     // Date selection
     connect(ui->logTreeWidget, &QTreeWidget::itemClicked,
             this, &LogbookWidget::onDateItemClicked);

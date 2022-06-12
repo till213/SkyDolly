@@ -67,13 +67,8 @@ CsvExportOptionWidget::~CsvExportOptionWidget() noexcept
 
 void CsvExportOptionWidget::frenchConnection() noexcept
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    connect(ui->formatComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &CsvExportOptionWidget::onFormatChanged);
-#else
     connect(ui->formatComboBox, &QComboBox::currentIndexChanged,
             this, &CsvExportOptionWidget::onFormatChanged);
-#endif
     connect(&d->settings, &CsvExportSettings::extendedSettingsChanged,
             this, &CsvExportOptionWidget::updateUi);
 }

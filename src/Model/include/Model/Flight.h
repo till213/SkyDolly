@@ -132,7 +132,7 @@ public:
 
     void clear(bool withOneAircraft) noexcept;
 
-    typedef std::vector<std::unique_ptr<Aircraft>>::iterator Iterator;
+    using Iterator = std::vector<std::unique_ptr<Aircraft>>::iterator;
 
     Iterator begin() noexcept;
     Iterator end() noexcept;

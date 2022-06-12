@@ -86,7 +86,7 @@ void AbstractKmlTrackParser::parseTrack() noexcept
     if (position.count() == 0) {
 
         // Timestamp (msec), latitude (degrees), longitude (degrees), altitude (feet)
-        typedef std::tuple<std::int64_t, double, double, double> TrackItem;
+        using TrackItem = std::tuple<std::int64_t, double, double, double>;
         // The track data - <when> and <gx:coord> - may be interleaved or "parallel" (first
         // all <when> timestamps, then all <coord>). So we first read all timestamped
         // coordinates into the trackData vector, and only then update the flight positions,

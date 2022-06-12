@@ -27,8 +27,11 @@
 
 #include <memory>
 #include <vector>
+#include <utility>
 
 #include <QObject>
+#include <QUuid>
+#include <QString>
 
 class QStackedWidget;
 class QAction;
@@ -39,7 +42,7 @@ class QAction;
 class DatabaseService;
 class FlightService;
 class ModuleIntf;
-class ModuleManagerPrivate;
+struct ModuleManagerPrivate;
 
 class PLUGINMANAGER_API ModuleManager : public QObject
 {
@@ -47,6 +50,8 @@ class PLUGINMANAGER_API ModuleManager : public QObject
 public:
     ModuleManager(QStackedWidget &moduleStackWidget, DatabaseService &theDatabaseService, QObject *parent = nullptr) noexcept;
     ~ModuleManager() noexcept override;
+
+    using Handle = std::pair<QUuid, QString>;
 
     std::vector<ModuleIntf *> getModules() const;
     ModuleIntf &getModule(Module::Module moduleId) const noexcept;

@@ -36,10 +36,6 @@
 #include <QFile>
 #include <QFileInfo>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-#include <Kernel/QStringHasher.h>
-#endif
-
 #include <Kernel/Convert.h>
 #include <Kernel/SkyMath.h>
 #include <Model/SimType.h>
@@ -128,11 +124,7 @@ public:
         firstDateTimeUtc.setTimeZone(QTimeZone::utc());
     }
     Flight *flight;
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    std::unordered_map<QByteArray, int, QStringHasher> columnIndexes;
-#else
     std::unordered_map<QByteArray, int> columnIndexes;
-#endif
     QDateTime firstDateTimeUtc;
 };
 

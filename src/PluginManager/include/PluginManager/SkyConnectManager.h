@@ -56,15 +56,15 @@ public:
     /*!
      * The plugin name and the flight simulator it supports.
      */
-    typedef struct {
+    using SkyConnectPlugin = struct {
         QString name;
         FlightSimulator::Id flightSimulatorId;
-    } SkyConnectPlugin;
+    };
 
     /*!
      * The plugin UUID and the plugin name and capabilities (flight simulator).
      */
-    typedef std::pair<QUuid, SkyConnectPlugin> Handle;
+    using Handle = std::pair<QUuid, SkyConnectPlugin>;
     const std::vector<Handle> &initialisePlugins() noexcept;
     const std::vector<Handle> &availablePlugins() const noexcept;
     bool hasPlugins() const noexcept;

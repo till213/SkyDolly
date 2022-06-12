@@ -33,10 +33,6 @@
 #include <QStringBuilder>
 #include <QString>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-#include <Kernel/QStringHasher.h>
-#endif
-
 #include <Kernel/Convert.h>
 #include <Kernel/File.h>
 #include <Kernel/Enum.h>
@@ -80,11 +76,7 @@ public:
     std::unique_ptr<KmlStyleExport> styleExport;
     KmlExportSettings pluginSettings;
     Unit unit;
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    std::unordered_map<QString, int, QStringHasher> aircraftTypeCount;
-#else
     std::unordered_map<QString, int> aircraftTypeCount;
-#endif
 
     static inline const QString FileExtension {QStringLiteral("kml")};
 };

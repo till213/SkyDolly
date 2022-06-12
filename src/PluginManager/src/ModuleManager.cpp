@@ -30,6 +30,9 @@
 #include <QAction>
 #include <QActionGroup>
 #include <QStackedWidget>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Enum.h>
 #include <Persistence/Service/DatabaseService.h>
@@ -43,9 +46,8 @@ namespace
     constexpr Module::Module DefaultModule = Module::Module::Logbook;
 }
 
-class ModuleManagerPrivate
+struct ModuleManagerPrivate
 {
-public:
     ModuleManagerPrivate(QStackedWidget &theModuleStackWidget, DatabaseService &theDatabaseService) noexcept
         : moduleStackWidget(theModuleStackWidget),
           databaseService(theDatabaseService),
@@ -53,13 +55,11 @@ public:
           moduleActionGroup(nullptr)
     {}
 
-    ~ModuleManagerPrivate() noexcept
-    {}
-
     QStackedWidget &moduleStackWidget;
     DatabaseService &databaseService;
     Module::Module activeModuleId;
     tsl::ordered_map<Module::Module, ModuleIntf *> moduleMap;
+    QMap<QUuid, QString> moduleRegistry;
     QActionGroup *moduleActionGroup;
 };
 
@@ -72,12 +72,15 @@ ModuleManager::ModuleManager(QStackedWidget &moduleStackWidget, DatabaseService 
     initModules();
     activateModule(DefaultModule);
     frenchConnection();
+#ifdef DEBUG
+    qDebug() << "ModuleManager::ModuleManager: CREATED.";
+#endif
 }
 
 ModuleManager::~ModuleManager() noexcept
 {
 #ifdef DEBUG
-    qDebug("ModuleManager::~ModuleManager: DELETED.");
+    qDebug() << "ModuleManager::~ModuleManager: DELETED.";
 #endif
 }
 
@@ -121,6 +124,36 @@ void ModuleManager::activateModule(Module::Module moduleId) noexcept
 void ModuleManager::initModules() noexcept
 {
     d->moduleActionGroup = new QActionGroup(this);
+
+
+    std::vector<ModuleManager::Handle> pluginHandles;
+    d->moduleRegistry.clear();
+//    if (d->pluginsDirectoryPath.exists(pluginDirectoryName)) {
+//        d->pluginsDirectoryPath.cd(pluginDirectoryName);
+//        const QStringList entryList = d->pluginsDirectoryPath.entryList(QDir::Files);
+//        for (const QString &fileName : entryList) {
+//            const QString pluginPath = d->pluginsDirectoryPath.absoluteFilePath(fileName);
+//            QPluginLoader loader(pluginPath);
+
+//            const QJsonObject metaData = loader.metaData();
+//            if (!metaData.isEmpty()) {
+//                const QJsonObject pluginMetadata = metaData.value("MetaData").toObject();
+//                const QUuid uuid = pluginMetadata.value(PluginUuidKey).toString();
+//                const QString pluginName = pluginMetadata.value(PluginNameKey).toString();
+//                const Handle handle = {uuid, pluginName};
+//                pluginHandles.push_back(handle);
+//                pluginRegistry.insert(uuid, pluginPath);
+//            }
+//        }
+//        d->pluginsDirectoryPath.cdUp();
+//    }
+
+
+
+
+
+
+
 
     // @todo IMPLEMENT ME dynamically load as plugins
 //    LogbookWidget *logbookWidget = new LogbookWidget(d->databaseService, d->flightService, &d->moduleStackWidget);

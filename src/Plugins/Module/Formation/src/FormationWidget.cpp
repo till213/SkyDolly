@@ -332,13 +332,8 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::onRelativeDistanceChanged);
     connect(ui->verticalDistanceSlider, &QSlider::valueChanged,
             this, &FormationWidget::onRelativeDistanceChanged);
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    connect(ui->replayModeComboBox, QOverload<int>::of(&QComboBox::activated),
-            this, &FormationWidget::updateReplayMode);
-#else
     connect(ui->replayModeComboBox, &QComboBox::activated,
             this, &FormationWidget::updateReplayMode);
-#endif
 
     connect(ui->fastBackwardOffsetPushButton, &QPushButton::clicked,
             this, [&] { changeTimeOffset(- ::LargeTimeOffset);});
@@ -352,14 +347,8 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::onTimeOffsetEditingFinished);
     connect(ui->resetAllTimeOffsetPushButton, &QPushButton::clicked,
             this, &FormationWidget::resetAllTimeOffsets);
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    connect(d->positionButtonGroup, QOverload<int>::of(&QButtonGroup::buttonClicked),
-            this, &FormationWidget::onRelativePositionChanged);
-#else
     connect(d->positionButtonGroup, &QButtonGroup::idClicked,
             this, &FormationWidget::onRelativePositionChanged);
-#endif
 }
 
 void FormationWidget::updateAircraftTable() noexcept
