@@ -139,7 +139,7 @@ QString Unit::formatVisibility(double meters) noexcept
 
 QString Unit::formatDegrees(double velocity) noexcept
 {
-    return d->locale.toString(velocity, 'f', Precision) % " °";
+    return d->locale.toString(velocity, 'f', Precision) % "°";
 }
 
 QString Unit::formatHz(double hz) noexcept
