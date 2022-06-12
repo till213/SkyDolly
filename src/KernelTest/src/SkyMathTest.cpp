@@ -321,7 +321,7 @@ void SkyMathTest::fromPosition_data()
     QTest::newRow("Minimum") << -1.0 << static_cast<std::int16_t>(SkyMath::PositionMin16);
     QTest::newRow("Maximum") <<  1.0 << static_cast<std::int16_t>(SkyMath::PositionMax16);
     QTest::newRow("Zero") << 0.0 << static_cast<std::int16_t>(0);
-    QTest::newRow("Negative value") << -0.5 << static_cast<std::int16_t>(-16383);
+    QTest::newRow("Negative value") << -0.5 << static_cast<std::int16_t>(-16384);
     QTest::newRow("Positive value") <<  0.5 << static_cast<std::int16_t>( 16384);
 }
 
@@ -418,10 +418,10 @@ void SkyMathTest::relativePosition_data()
 
     // DMS to degrees: https://boulter.com/gps/
     // https://www.movable-type.co.uk/scripts/latlong.html
-    QTest::newRow("Northern Hemisphere") << 47.0 << 8.0 << 0.0 << 90.0 << 100000.0 << 46.9924 << 9.3171;
-    QTest::newRow("Southern Hemisphere") << -47.0 << -8.0 << 0.0 << -90.0 << 100000.0 << -46.9924 << -9.3171;
-    QTest::newRow("Northpole") << 90.0 << 0.0 << 0.0 << 0.0 << 100000.0 << 89.1017 << 0.0;
-    QTest::newRow("Southpole") << -90.0 << 0.0 << 0.0 << 0.0 << 100000.0 << -89.1017 << 0.0;
+    QTest::newRow("Northern Hemisphere") << 47.0 << 8.0 << 0.0 << 90.0 << 100000.0 << 46.9925 << 9.3147;
+    QTest::newRow("Southern Hemisphere") << -47.0 << -8.0 << 0.0 << -90.0 << 100000.0 << -46.9925 << -9.3147;
+    QTest::newRow("Northpole") << 90.0 << 0.0 << 0.0 << 0.0 << 100000.0 << 89.1047 << 180.0;
+    QTest::newRow("Southpole") << -90.0 << 0.0 << 0.0 << 0.0 << 100000.0 << -89.1047 << 0.0;
     QTest::newRow("Same point") << -47.0 << -8.0 << 0.0 << -90.0 << 0.0 << -47.0 << -8.0;
 }
 
