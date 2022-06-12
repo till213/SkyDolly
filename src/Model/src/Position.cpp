@@ -123,3 +123,5 @@ const PositionData &Position::interpolate(std::int64_t timestamp, TimeVariableDa
     }
     return m_currentPositionData;
 }
+
+template class AbstractComponent<PositionData>;

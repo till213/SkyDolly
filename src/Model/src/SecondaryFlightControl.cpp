@@ -125,3 +125,5 @@ const SecondaryFlightControlData &SecondaryFlightControl::interpolate(std::int64
     }
     return m_currentSecondaryFlightControlData;
 }
+
+template class AbstractComponent<SecondaryFlightControlData>;

@@ -22,6 +22,7 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <cstddef>
 #include <memory>
 #include <vector>
 #include <iterator>
@@ -130,12 +131,12 @@ FlightPlan::BackInsertIterator FlightPlan::backInsertIterator() noexcept
 
 // OPERATORS
 
-Waypoint& FlightPlan::operator[](std::size_t index) noexcept
+Waypoint &FlightPlan::operator[](std::size_t index) noexcept
 {
     return d->waypoints[index];
 }
 
-const Waypoint& FlightPlan::operator[](std::size_t index) const noexcept
+const Waypoint &FlightPlan::operator[](std::size_t index) const noexcept
 {
     return d->waypoints[index];
 }

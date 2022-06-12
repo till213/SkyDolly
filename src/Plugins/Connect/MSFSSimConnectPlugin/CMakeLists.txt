@@ -6,6 +6,8 @@ else()
     add_library(${MODULE_NAME} MODULE)
 endif()
 add_library(Sky::${MODULE_NAME} ALIAS ${MODULE_NAME})
+# Don't define MIN, MAX macros (in windows.h)
+add_definitions(-DNOMINMAX)
 
 target_sources(${MODULE_NAME}
     PRIVATE
@@ -26,8 +28,6 @@ target_sources(${MODULE_NAME}
         src/EventWidget.h src/EventWidget.cpp
         src/MSFSSimConnectPlugin.json
 )
-# SimConnect
-find_package(SimConnect REQUIRED)
 target_link_libraries(${MODULE_NAME}
     PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets

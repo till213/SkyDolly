@@ -121,3 +121,5 @@ const AircraftHandleData &AircraftHandle::interpolate(std::int64_t timestamp, Ti
     }
     return m_currentAircraftHandleData;
 }
+
+template class AbstractComponent<AircraftHandleData>;

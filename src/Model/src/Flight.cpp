@@ -316,12 +316,12 @@ const Flight::Iterator Flight::end() const noexcept
 
 // OPERATORS
 
-Aircraft& Flight::operator[](std::size_t index) noexcept
+Aircraft &Flight::operator[](std::size_t index) noexcept
 {
     return *d->aircraft[index];
 }
 
-const Aircraft& Flight::operator[](std::size_t index) const noexcept
+const Aircraft &Flight::operator[](std::size_t index) const noexcept
 {
     return *d->aircraft[index];
 }

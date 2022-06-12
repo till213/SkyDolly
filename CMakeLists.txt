@@ -129,7 +129,7 @@ set_target_properties(${APP_NAME}
 
 # Resource (data) files
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geoids)
-if (${PLATFORM_IS_MACOS})
+if(${PLATFORM_IS_MACOS})
     target_link_libraries(${APP_NAME}
         PRIVATE
             Geoids
@@ -167,6 +167,7 @@ target_sources(${APP_NAME}
         CODE_OF_CONDUCT.md
         README.md
         RELEASE.md
+        SECURITY.md
         SHASUM256.md
         THIRD_PARTY.md
         doc/SkyDolly.simvars

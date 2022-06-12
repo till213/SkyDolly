@@ -1376,7 +1376,7 @@ void MainWindow::updateMainWindow() noexcept
 {
     const Settings &settings = Settings::getInstance();
     const Qt::WindowFlags flags = windowFlags();
-    if (settings.isWindowStaysOnTopEnabled() != (flags & Qt::WindowStaysOnTopHint)) {
+    if (settings.isWindowStaysOnTopEnabled() != flags.testFlag(Qt::WindowStaysOnTopHint)) {
         if (Settings::getInstance().isWindowStaysOnTopEnabled()) {
             this->setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
             this->show();

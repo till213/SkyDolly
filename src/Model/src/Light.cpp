@@ -97,3 +97,5 @@ const LightData &Light::interpolate(std::int64_t timestamp, TimeVariableData::Ac
     }
     return m_currentLightData;
 }
+
+template class AbstractComponent<LightData>;
