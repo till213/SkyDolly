@@ -30,6 +30,8 @@
 #include <QAction>
 #include <QActionGroup>
 #include <QStackedWidget>
+#include <QDir>
+#include <QPluginLoader>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -44,6 +46,15 @@
 namespace
 {
     constexpr Module::Module DefaultModule = Module::Module::Logbook;
+
+    constexpr char ModuleDirectoryName[] = "Module";
+#if defined(Q_OS_MAC)
+    constexpr char PluginDirectoryName[] = "PlugIns";
+#else
+    constexpr char PluginDirectoryName[] = "Plugins";
+#endif
+    constexpr char PluginUuidKey[] = "uuid";
+    constexpr char PluginNameKey[] = "name";
 }
 
 struct ModuleManagerPrivate
@@ -53,8 +64,18 @@ struct ModuleManagerPrivate
           databaseService(theDatabaseService),
           activeModuleId(Module::Module::None),
           moduleActionGroup(nullptr)
-    {}
+    {
+        pluginsDirectoryPath = QDir(QCoreApplication::applicationDirPath());
+#if defined(Q_OS_MAC)
+        if (pluginsDirectoryPath.dirName() == "MacOS") {
+            // Navigate up the app bundle structure, into the Contents folder
+            pluginsDirectoryPath.cdUp();
+        }
+#endif
+        pluginsDirectoryPath.cd(PluginDirectoryName);
+    }
 
+    QDir pluginsDirectoryPath;
     QStackedWidget &moduleStackWidget;
     DatabaseService &databaseService;
     Module::Module activeModuleId;
@@ -112,10 +133,10 @@ void ModuleManager::activateModule(Module::Module moduleId) noexcept
         }
         d->activeModuleId = moduleId;
         ModuleIntf *module = d->moduleMap[d->activeModuleId];
-        d->moduleStackWidget.setCurrentWidget(&module->getWidget());
-        module->setActive(true);
+      //  d->moduleStackWidget.setCurrentWidget(&module->getWidget());
+      //  module->setActive(true);
 
-        emit activated(module->getModuleName(), moduleId);
+       // emit activated(module->getModuleName(), moduleId);
     }
 }
 
@@ -125,28 +146,27 @@ void ModuleManager::initModules() noexcept
 {
     d->moduleActionGroup = new QActionGroup(this);
 
-
     std::vector<ModuleManager::Handle> pluginHandles;
     d->moduleRegistry.clear();
-//    if (d->pluginsDirectoryPath.exists(pluginDirectoryName)) {
-//        d->pluginsDirectoryPath.cd(pluginDirectoryName);
-//        const QStringList entryList = d->pluginsDirectoryPath.entryList(QDir::Files);
-//        for (const QString &fileName : entryList) {
-//            const QString pluginPath = d->pluginsDirectoryPath.absoluteFilePath(fileName);
-//            QPluginLoader loader(pluginPath);
+    if (d->pluginsDirectoryPath.exists(::ModuleDirectoryName)) {
+        d->pluginsDirectoryPath.cd(::ModuleDirectoryName);
+        const QStringList entryList = d->pluginsDirectoryPath.entryList(QDir::Files);
+        for (const QString &fileName : entryList) {
+            const QString pluginPath = d->pluginsDirectoryPath.absoluteFilePath(fileName);
+            QPluginLoader loader(pluginPath);
 
-//            const QJsonObject metaData = loader.metaData();
-//            if (!metaData.isEmpty()) {
-//                const QJsonObject pluginMetadata = metaData.value("MetaData").toObject();
-//                const QUuid uuid = pluginMetadata.value(PluginUuidKey).toString();
-//                const QString pluginName = pluginMetadata.value(PluginNameKey).toString();
-//                const Handle handle = {uuid, pluginName};
-//                pluginHandles.push_back(handle);
-//                pluginRegistry.insert(uuid, pluginPath);
-//            }
-//        }
-//        d->pluginsDirectoryPath.cdUp();
-//    }
+            const QJsonObject metaData = loader.metaData();
+            if (!metaData.isEmpty()) {
+                const QJsonObject pluginMetadata = metaData.value("MetaData").toObject();
+                const QUuid uuid = pluginMetadata.value(::PluginUuidKey).toString();
+                const QString pluginName = pluginMetadata.value(::PluginNameKey).toString();
+                const Handle handle = {uuid, pluginName};
+                pluginHandles.push_back(handle);
+                d->moduleRegistry.insert(uuid, pluginPath);
+            }
+        }
+        d->pluginsDirectoryPath.cdUp();
+    }
 
 
 
