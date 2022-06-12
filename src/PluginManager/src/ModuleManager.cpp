@@ -24,8 +24,8 @@
  */
 #include <memory>
 #include <vector>
-
-#include <tsl/ordered_map.h>
+#include <optional>
+#include <functional>
 
 #include <QAction>
 #include <QActionGroup>
@@ -61,9 +61,7 @@ struct ModuleManagerPrivate
 {
     ModuleManagerPrivate(QStackedWidget &theModuleStackWidget, DatabaseService &theDatabaseService) noexcept
         : moduleStackWidget(theModuleStackWidget),
-          databaseService(theDatabaseService),
-          activeModuleId(Module::Module::None),
-          moduleActionGroup(nullptr)
+          databaseService(theDatabaseService)
     {
         pluginsDirectoryPath = QDir(QCoreApplication::applicationDirPath());
 #if defined(Q_OS_MAC)
@@ -75,13 +73,16 @@ struct ModuleManagerPrivate
         pluginsDirectoryPath.cd(PluginDirectoryName);
     }
 
+    std::unique_ptr<QPluginLoader> pluginLoader {std::make_unique<QPluginLoader>()};
     QDir pluginsDirectoryPath;
     QStackedWidget &moduleStackWidget;
     DatabaseService &databaseService;
-    Module::Module activeModuleId;
-    tsl::ordered_map<Module::Module, ModuleIntf *> moduleMap;
+    ModuleIntf *activeModule;
+    QUuid activeModuleUuid;
+    // Key: uuid - value: plugin path
     QMap<QUuid, QString> moduleRegistry;
-    QActionGroup *moduleActionGroup;
+    std::vector<ModuleManager::Handle> moduleActions;
+    QActionGroup *moduleActionGroup {nullptr};
 };
 
 // PUBLIC
@@ -90,8 +91,10 @@ ModuleManager::ModuleManager(QStackedWidget &moduleStackWidget, DatabaseService 
     : QObject(parent),
       d(std::make_unique<ModuleManagerPrivate>(moduleStackWidget, databaseService))
 {
-    initModules();
-    activateModule(DefaultModule);
+    enumerateModules();
+    if (d->moduleRegistry.count() > 0) {
+        activateModule(d->moduleRegistry.firstKey());
+    }
     frenchConnection();
 #ifdef DEBUG
     qDebug() << "ModuleManager::ModuleManager: CREATED.";
@@ -100,79 +103,103 @@ ModuleManager::ModuleManager(QStackedWidget &moduleStackWidget, DatabaseService 
 
 ModuleManager::~ModuleManager() noexcept
 {
+    d->pluginLoader->unload();
 #ifdef DEBUG
     qDebug() << "ModuleManager::~ModuleManager: DELETED.";
 #endif
 }
 
-std::vector<ModuleIntf *> ModuleManager::getModules() const
+const std::vector<ModuleManager::Handle> &ModuleManager::getModules() const noexcept
 {
-    std::vector<ModuleIntf *> modules;
-    for (const auto &module : d->moduleMap) {
-        modules.push_back(module.second);
+    return d->moduleActions;
+}
+
+std::optional<std::reference_wrapper<ModuleIntf>> ModuleManager::getActiveModule() const noexcept
+{
+    QObject *plugin = d->pluginLoader->instance();
+    if (plugin != nullptr) {
+        return std::optional<std::reference_wrapper<ModuleIntf>>{*(dynamic_cast<ModuleIntf *>(plugin))};
+    } else {
+        return {};
     }
-    return modules;
 }
 
-ModuleIntf &ModuleManager::getModule(Module::Module moduleId) const noexcept
-{
-    return *d->moduleMap[moduleId];
-}
-
-ModuleIntf &ModuleManager::getActiveModule() const
-{
-    return *d->moduleMap[d->activeModuleId];
-}
-
-void ModuleManager::activateModule(Module::Module moduleId) noexcept
-{
-    if (d->activeModuleId != moduleId) {
-        if (d->activeModuleId != Module::Module::None) {
-            ModuleIntf *previousModule = d->moduleMap[d->activeModuleId];
-            previousModule->setActive(false);
+void ModuleManager::activateModule(QUuid uuid) noexcept
+{   
+    if (d->activeModuleUuid != uuid) {
+        if (!d->activeModuleUuid.isNull()) {
+            QString previousModulePath = d->moduleRegistry[d->activeModuleUuid];
+            d->pluginLoader->setFileName(previousModulePath);
+            d->pluginLoader->unload();
+            d->activeModule = nullptr;
+            d->activeModuleUuid = QUuid();
         }
-        d->activeModuleId = moduleId;
-        ModuleIntf *module = d->moduleMap[d->activeModuleId];
-      //  d->moduleStackWidget.setCurrentWidget(&module->getWidget());
-      //  module->setActive(true);
+        QString modulePath = d->moduleRegistry[uuid];
+        d->pluginLoader->setFileName(modulePath);
+
+        const QObject *plugin = d->pluginLoader->instance();
+        d->activeModule = qobject_cast<ModuleIntf *>(plugin);
+        if (d->activeModule != nullptr) {
+            d->activeModuleUuid = uuid;
+            d->moduleStackWidget.addWidget(&d->activeModule->getWidget());
+
+            // @todo IMPLEMENT ME Exchange/update widgets
+          //  d->moduleStackWidget.setCurrentWidget(&module->getWidget());
+          //  module->setActive(true);
+        }
 
        // emit activated(module->getModuleName(), moduleId);
     }
 }
 
+void ModuleManager::setRecording(bool enable) noexcept
+{
+    if (d->activeModule != nullptr) {
+        d->activeModule->setRecording(enable);
+    }
+}
+
+void ModuleManager::setPlaying(bool enable) noexcept
+{
+    if (d->activeModule != nullptr) {
+        d->activeModule->setPlaying(enable);
+    }
+}
+
+void ModuleManager::setPaused(bool enable) noexcept
+{
+    if (d->activeModule != nullptr) {
+        d->activeModule->setPaused(enable);
+    }
+}
+
 // PRIVATE
 
-void ModuleManager::initModules() noexcept
+void ModuleManager::enumerateModules() noexcept
 {
     d->moduleActionGroup = new QActionGroup(this);
 
-    std::vector<ModuleManager::Handle> pluginHandles;
     d->moduleRegistry.clear();
     if (d->pluginsDirectoryPath.exists(::ModuleDirectoryName)) {
         d->pluginsDirectoryPath.cd(::ModuleDirectoryName);
         const QStringList entryList = d->pluginsDirectoryPath.entryList(QDir::Files);
         for (const QString &fileName : entryList) {
             const QString pluginPath = d->pluginsDirectoryPath.absoluteFilePath(fileName);
-            QPluginLoader loader(pluginPath);
-
-            const QJsonObject metaData = loader.metaData();
+            d->pluginLoader->setFileName(pluginPath);
+            const QJsonObject metaData = d->pluginLoader->metaData();
             if (!metaData.isEmpty()) {
                 const QJsonObject pluginMetadata = metaData.value("MetaData").toObject();
                 const QUuid uuid = pluginMetadata.value(::PluginUuidKey).toString();
                 const QString pluginName = pluginMetadata.value(::PluginNameKey).toString();
-                const Handle handle = {uuid, pluginName};
-                pluginHandles.push_back(handle);
+                QAction *action = d->moduleActionGroup->addAction(pluginName);
+                action->setData(uuid);
+                const Handle handle {uuid, action};
+                d->moduleActions.push_back(handle);
                 d->moduleRegistry.insert(uuid, pluginPath);
             }
         }
         d->pluginsDirectoryPath.cdUp();
     }
-
-
-
-
-
-
 
 
     // @todo IMPLEMENT ME dynamically load as plugins
@@ -205,6 +232,6 @@ void ModuleManager::frenchConnection() noexcept
 
 void ModuleManager::handleModuleSelected(QAction *action) noexcept
 {
-    Module::Module moduleId = static_cast<Module::Module>(action->data().toInt());
-    activateModule(moduleId);
+    QUuid uuid = action->data().toUuid();
+    activateModule(uuid);
 }

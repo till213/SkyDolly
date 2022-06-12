@@ -102,19 +102,19 @@ void PluginManager::destroyInstance() noexcept
     }
 }
 
-void PluginManager::initialise(QWidget *parentWidget)
+void PluginManager::initialise(QWidget *parentWidget) noexcept
 {
     d->parentWidget = parentWidget;
 }
 
 std::vector<PluginManager::Handle> PluginManager::initialiseExportPlugins() noexcept
 {
-    return enumeratePlugins(ExportDirectoryName, d->exportPluginRegistry);
+    return enumeratePlugins(::ExportDirectoryName, d->exportPluginRegistry);
 }
 
 std::vector<PluginManager::Handle> PluginManager::initialiseImportPlugins() noexcept
 {
-    return enumeratePlugins(ImportDirectoryName, d->importPluginRegistry);
+    return enumeratePlugins(::ImportDirectoryName, d->importPluginRegistry);
 }
 
 bool PluginManager::importFlight(const QUuid &pluginUuid, FlightService &flightService, Flight &flight) const noexcept

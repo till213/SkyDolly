@@ -212,11 +212,6 @@ MainWindow::MainWindow(const QString &filePath, QWidget *parent) noexcept
 
 MainWindow::~MainWindow() noexcept
 {
-    // Make sure that all widgets having a reference to the flight service
-    // are deleted before this MainWindow instance (which owns the flight
-    // service); we make sure by simply deleting their parent moduleStackWidget
-    delete ui->moduleStackWidget;
-
 #ifdef DEBUG
     qDebug("MainWindow::~MainWindow: DELETED");
 #endif
@@ -524,16 +519,18 @@ void MainWindow::initModuleSelectorUi() noexcept
     // ... and to the moduleVisibilityWidget
     ui->moduleVisibilityWidget->setLayout(moduleVisibilityLayout.release());
 
-    const ModuleIntf &activeModule = d->moduleManager->getActiveModule();
-    ui->moduleGroupBox->setTitle(activeModule.getModuleName());
+    const std::optional<std::reference_wrapper<ModuleIntf>> activeModule = d->moduleManager->getActiveModule();
+    if (activeModule) {
+        ui->moduleGroupBox->setTitle(activeModule->get().getModuleName());
+    }
 
     for (const auto &item : d->moduleManager->getModules()) {
-        QAction &moduleAction = item->getAction();
-        ui->moduleMenu->addAction(&moduleAction);
+        QAction *moduleAction = item.second;
+        ui->moduleMenu->addAction(moduleAction);
         ActionButton *actionButton = new ActionButton(this);
-        actionButton->setAction(&moduleAction);
+        actionButton->setAction(moduleAction);
         actionButton->setFlat(true);
-        actionButton->setText(moduleAction.text().toUpper());
+        actionButton->setText(moduleAction->text().toUpper());
         ui->moduleSelectorLayout->addWidget(actionButton);
     }
 }
@@ -1277,22 +1274,30 @@ void MainWindow::updateControlUi() noexcept
 void MainWindow::updateControlIcons() noexcept
 {
     QIcon recordIcon;
-    switch (d->moduleManager->getActiveModule().getModuleId()) {
-    case Module::Module::None:
-        [[fallthrough]];
-    case Module::Module::Logbook:
+    const std::optional<std::reference_wrapper<ModuleIntf>> activeModule = d->moduleManager->getActiveModule();
+    if (activeModule) {
         recordIcon.addFile(":/img/icons/record-normal.png", QSize(), QIcon::Normal, QIcon::Off);
         recordIcon.addFile(":/img/icons/record-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
         recordIcon.addFile(":/img/icons/record-active.png", QSize(), QIcon::Active);
-        break;
-    case Module::Module::Formation:
-        recordIcon.addFile(":/img/icons/record-add-normal.png", QSize(), QIcon::Normal, QIcon::Off);
-        recordIcon.addFile(":/img/icons/record-add-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
-        recordIcon.addFile(":/img/icons/record-add-active.png", QSize(), QIcon::Active);
-        break;
 
+        // @todo IMPLEMENT ME Get icon from plugin
+//        switch (.getModuleId()) {
+//        case Module::Module::None:
+//            [[fallthrough]];
+//        case Module::Module::Logbook:
+//            recordIcon.addFile(":/img/icons/record-normal.png", QSize(), QIcon::Normal, QIcon::Off);
+//            recordIcon.addFile(":/img/icons/record-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
+//            recordIcon.addFile(":/img/icons/record-active.png", QSize(), QIcon::Active);
+//            break;
+//        case Module::Module::Formation:
+//            recordIcon.addFile(":/img/icons/record-add-normal.png", QSize(), QIcon::Normal, QIcon::Off);
+//            recordIcon.addFile(":/img/icons/record-add-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
+//            recordIcon.addFile(":/img/icons/record-add-active.png", QSize(), QIcon::Active);
+//            break;
+
+//        }
+        ui->recordAction->setIcon(recordIcon);
     }
-    ui->recordAction->setIcon(recordIcon);
 }
 
 void MainWindow::onDefaultMinimalUiButtonTextVisibilityChanged(bool visible) noexcept
@@ -1356,7 +1361,7 @@ void MainWindow::updateModuleActions() noexcept
 {
     const bool recording = SkyConnectManager::getInstance().isInRecordingState();
     for (auto &module : d->moduleManager->getModules()) {
-        module->getAction().setEnabled(!recording);
+        module.second->setEnabled(!recording);
     }
 }
 
@@ -1575,19 +1580,17 @@ void MainWindow::showOnlineManual() const noexcept
 
 void MainWindow::toggleRecord(bool enable) noexcept
 {
-    blockSignals(true);
-    d->moduleManager->getActiveModule().setRecording(enable);
-    blockSignals(false);
+    d->moduleManager->setRecording(enable);
 }
 
 void MainWindow::togglePause(bool enable) noexcept
 {
-    d->moduleManager->getActiveModule().setPaused(enable);
+    d->moduleManager->setPaused(enable);
 }
 
 void MainWindow::togglePlay(bool enable) noexcept
 {
-     d->moduleManager->getActiveModule().setPlaying(enable);
+     d->moduleManager->setPlaying(enable);
 }
 
 void MainWindow::stop() noexcept
@@ -1629,14 +1632,13 @@ void MainWindow::onFlightRestored() noexcept
     updateUi();
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     skyConnectManager.skipToBegin();
-    ModuleIntf &module = d->moduleManager->getActiveModule();
     if (skyConnectManager.isConnected()) {
         // Make sure we are unpaused...
-        module.setPaused(false);
+        d->moduleManager->setPaused(false);
         // ... play the first frame (which will "move" to the new location)...
-        module.setPlaying(true);
+        d->moduleManager->setPlaying(true);
         // ... and pause again (such that the new scenery can be loaded)
-        module.setPaused(true);
+        d->moduleManager->setPaused(true);
     }
 }
 
@@ -1655,10 +1657,9 @@ void MainWindow::onImport(QAction *action) noexcept
         updateUi();
         SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
         skyConnectManager.skipToBegin();
-        ModuleIntf &module = d->moduleManager->getActiveModule();
         if (skyConnectManager.isConnected()) {
-            module.setPlaying(true);
-            module.setPaused(true);
+            d->moduleManager->setPlaying(true);
+            d->moduleManager->setPaused(true);
         }
     }
 }

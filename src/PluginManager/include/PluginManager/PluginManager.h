@@ -51,7 +51,7 @@ public:
     static PluginManager &getInstance() noexcept;
     static void destroyInstance() noexcept;
 
-    void initialise(QWidget *parentWidget);
+    void initialise(QWidget *parentWidget) noexcept;
 
     /*!
      * The plugin UUID and (non-translated) name of the plugin.

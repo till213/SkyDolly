@@ -28,13 +28,15 @@
 #include <memory>
 #include <vector>
 #include <utility>
+#include <optional>
+#include <functional>
 
 #include <QObject>
 #include <QUuid>
 #include <QString>
+#include <QAction>
 
 class QStackedWidget;
-class QAction;
 
 #include "Module.h"
 #include "PluginManagerLib.h"
@@ -51,12 +53,21 @@ public:
     ModuleManager(QStackedWidget &moduleStackWidget, DatabaseService &theDatabaseService, QObject *parent = nullptr) noexcept;
     ~ModuleManager() noexcept override;
 
-    using Handle = std::pair<QUuid, QString>;
+    using Handle = std::pair<QUuid, QAction *>;
 
-    std::vector<ModuleIntf *> getModules() const;
-    ModuleIntf &getModule(Module::Module moduleId) const noexcept;
-    ModuleIntf &getActiveModule() const;
-    void activateModule(Module::Module moduleId) noexcept;
+    const std::vector<Handle> &getModules() const noexcept;
+
+    /*!
+     * Returns the active module, or \c nullptr in case no module exists.
+     *
+     * \return the active module; may be \c nullptr (no module plugin loaded)
+     */
+    std::optional<std::reference_wrapper<ModuleIntf>> getActiveModule() const noexcept;
+    void activateModule(QUuid uuid) noexcept;
+
+    void setRecording(bool enable) noexcept;
+    void setPlaying(bool enable) noexcept;
+    void setPaused(bool enable) noexcept;
 
 signals:
     void activated(QString title, Module::Module moduleId);
@@ -64,7 +75,7 @@ signals:
 private:
     std::unique_ptr<ModuleManagerPrivate> d;
 
-    void initModules() noexcept;
+    void enumerateModules() noexcept;
     void frenchConnection() noexcept;
 
 private slots:
