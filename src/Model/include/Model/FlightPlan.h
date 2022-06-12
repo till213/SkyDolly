@@ -25,6 +25,7 @@
 #ifndef FLIGHTPLAN_H
 #define FLIGHTPLAN_H
 
+#include <cstddef>
 #include <memory>
 #include <vector>
 #include <iterator>
@@ -32,6 +33,7 @@
 #include <QObject>
 #include <QVector>
 
+#include "Waypoint.h"
 #include "ModelLib.h"
 
 class Waypoint;

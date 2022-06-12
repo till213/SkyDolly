@@ -107,4 +107,4 @@ const PrimaryFlightControlData &PrimaryFlightControl::interpolate(std::int64_t t
     return m_currentPrimaryFlightControlData;
 }
 
-
+template class AbstractComponent<PrimaryFlightControlData>;

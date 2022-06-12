@@ -37,9 +37,9 @@ class QString;
 
 #include "Aircraft.h"
 #include "FlightSummary.h"
+#include "FlightCondition.h"
 #include "ModelLib.h"
 
-class FlightCondition;
 class FlightPrivate;
 
 class MODEL_API Flight : public QObject

@@ -28,7 +28,8 @@
 
 #include <QSqlDatabase>
 
-
+#include <Model/FlightDate.h>
+#include <Model/FlightSummary.h>
 #include "../Dao/DaoFactory.h"
 #include "../Dao/LogbookDaoIntf.h"
 #include <FlightSelector.h>

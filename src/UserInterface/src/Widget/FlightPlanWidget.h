@@ -29,7 +29,8 @@
 
 #include <QWidget>
 
-class Waypoint;
+#include <Model/Waypoint.h>
+
 class FlightPlanWidgetPrivate;
 
 namespace Ui {

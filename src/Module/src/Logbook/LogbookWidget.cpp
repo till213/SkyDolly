@@ -59,6 +59,7 @@
 #include <Model/FlightSummary.h>
 #include <Model/Logbook.h>
 #include <Model/SimType.h>
+#include <Model/FlightDate.h>
 #include <Persistence/FlightSelector.h>
 #include <Persistence/Service/DatabaseService.h>
 #include <Persistence/Service/LogbookService.h>

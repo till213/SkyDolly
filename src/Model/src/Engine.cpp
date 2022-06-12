@@ -129,3 +129,5 @@ const EngineData &Engine::interpolate(std::int64_t timestamp, TimeVariableData::
     }
     return m_currentEngineData;
 }
+
+template class AbstractComponent<EngineData>;
