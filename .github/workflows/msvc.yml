@@ -37,6 +37,8 @@ jobs:
         
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
+        with:
+          setup-python: 'false'
 
       - name: Configure CMake
         run: cmake -B ${{ env.build }}
