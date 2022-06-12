@@ -55,6 +55,9 @@ compile_commands.json
 # Cmake build directory
 build
 
+# Visual Studio
+*.vs
+
 # Generated files
 res/SkyDolly.rc
 
