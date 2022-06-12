@@ -6,6 +6,8 @@ else()
     add_library(${MODULE_NAME} MODULE)
 endif()
 add_library(Sky::${MODULE_NAME} ALIAS ${MODULE_NAME})
+# Don't define MIN, MAX macros (in windows.h)
+add_definitions(-DNOMINMAX)
 
 target_sources(${MODULE_NAME}
     PRIVATE
