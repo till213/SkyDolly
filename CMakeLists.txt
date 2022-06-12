@@ -168,6 +168,7 @@ target_sources(${APP_NAME}
         CODE_OF_CONDUCT.md
         README.md
         RELEASE.md
+        SECURITY.md
         SHASUM256.md
         THIRD_PARTY.md
         doc/SkyDolly.simvars
