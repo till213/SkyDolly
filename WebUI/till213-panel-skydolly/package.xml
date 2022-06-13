@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Version="2" Name="till213-panel-skydolly" FolderName="Packages" MetadataFolderName="PackagesMetadata">
+	<OutputDirectory>.</OutputDirectory>
+	<TemporaryOutputDirectory>_Temp</TemporaryOutputDirectory>
+	<Packages>
+		<Package>PackageDefinitions\till213-panel-skydolly.xml</Package>
+	</Packages>
+</Project>

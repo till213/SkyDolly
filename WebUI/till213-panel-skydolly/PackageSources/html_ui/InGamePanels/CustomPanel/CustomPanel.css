@@ -1,0 +1,145 @@
+﻿/** This mixin makes a single line element fit exactly on the Roboto font for easier integration. */
+/**
+ * Forces z-index above other siblings during a focused parent.
+*/
+replay-toolbar-panel #OverlayHeaderState {
+  --headerLeftTitle: calc(var(--screenHeight) * (150px / 1080) );
+  position: absolute;
+  z-index: 1000;
+  top: calc(var(--screenHeight) * (9px / 1080) );
+  pointer-events: none;
+  height: calc(var(--screenHeight) * (30px / 1080) );
+  left: var(--headerLeftTitle);
+  right: calc(var(--screenHeight) * (150px / 1080) );
+  display: flex;
+  align-items: center;
+}
+replay-toolbar-panel #OverlayHeaderState icon-element {
+  width: calc(var(--screenHeight) * (30px / 1080) );
+  height: calc(var(--screenHeight) * (30px / 1080) );
+  flex: 0 0 auto;
+}
+replay-toolbar-panel #OverlayHeaderState span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+replay-toolbar-panel #MainDisplay {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+replay-toolbar-panel #MainDisplay > * {
+  flex: 0 0;
+}
+replay-toolbar-panel #MainDisplay > .wrapper {
+  padding: var(--halfMargin);
+  background-color: var(--backgroundColorPanel);
+}
+replay-toolbar-panel #MainDisplay > .wrapper:not(:first-child) {
+  margin-top: var(--quartMargin);
+}
+replay-toolbar-panel #MainDisplay icon-button .title,
+replay-toolbar-panel #MainDisplay image-button .title {
+  font-weight: bold;
+}
+replay-toolbar-panel #MainDisplay .top-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: calc(var(--screenHeight) * (12px / 2160) );
+  height: calc(var(--screenHeight) * (31px / 1080) );
+}
+replay-toolbar-panel #MainDisplay .top-controls > * {
+  flex: 0 1 calc(var(--screenHeight) * (526px / 2160) );
+}
+replay-toolbar-panel #MainDisplay .top-controls > *:not(:last-of-type) {
+  margin-right: calc(var(--screenHeight) * (24px / 2160) );
+}
+replay-toolbar-panel #MainDisplay .keyframe-edit-line {
+  display: flex;
+}
+replay-toolbar-panel #MainDisplay .keyframe-edit-line > *:not(:last-child) {
+  margin-right: var(--halfMargin);
+}
+replay-toolbar-panel #MainDisplay .keyframe-edit-line icon-button {
+  flex-shrink: 0;
+}
+replay-toolbar-panel #MainDisplay .keyframeEditionWrapper {
+  height: calc(var(--screenHeight) * (80px / 1080) );
+}
+replay-toolbar-panel #MainDisplay h3 {
+  padding-bottom: var(--halfMargin);
+  border-bottom: var(--minimalBorderWidth) solid var(--color-white);
+  line-height: calc(calc(var(--screenHeight) * (1px / 1080) ) * var(--sizeDefault));
+  font-weight: bold;
+  text-transform: uppercase;
+  width: 100%;
+  margin-bottom: var(--halfMargin);
+}
+replay-toolbar-panel #MainDisplay .loadSaveWrapper, replay-toolbar-panel #MainDisplay .loadSaveNewWrapper {
+  height: calc(var(--screenHeight) * (80px / 1080) );
+}
+replay-toolbar-panel #MainDisplay .loadSaveWrapper .load-line.saveName, replay-toolbar-panel #MainDisplay .loadSaveNewWrapper .load-line.saveName {
+  flex: 1 1 auto;
+}
+replay-toolbar-panel #MainDisplay .loadSaveWrapper icon-button,
+replay-toolbar-panel #MainDisplay .loadSaveWrapper image-button,
+replay-toolbar-panel #MainDisplay .loadSaveWrapper new-push-button, replay-toolbar-panel #MainDisplay .loadSaveNewWrapper icon-button,
+replay-toolbar-panel #MainDisplay .loadSaveNewWrapper image-button,
+replay-toolbar-panel #MainDisplay .loadSaveNewWrapper new-push-button {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+replay-toolbar-panel #MainDisplay replay-player {
+  margin-bottom: calc(var(--screenHeight) * (12px / 2160) );
+}
+replay-toolbar-panel #MainDisplay .bottom-controls {
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
+replay-toolbar-panel #MainDisplay .bottom-controls icon-button, replay-toolbar-panel #MainDisplay .bottom-controls > *:not(:last-of-type) {
+  margin-right: calc(var(--screenHeight) * (12px / 2160) );
+}
+replay-toolbar-panel #MainDisplay .bottom-controls icon-button,
+replay-toolbar-panel #MainDisplay .bottom-controls image-button,
+replay-toolbar-panel #MainDisplay .bottom-controls new-push-button {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+replay-toolbar-panel #MainDisplay .bottom-controls .stopButton {
+  text-align: center;
+  font-weight: bold;
+  font-size: large;
+  vertical-align: top;
+}
+replay-toolbar-panel #MainDisplay .leftrightwrapper {
+  overflow: hidden;
+}
+replay-toolbar-panel #MainDisplay .replaySelectionWrapper {
+  float: left;
+  width: calc(100% - 4em);
+}
+replay-toolbar-panel #MainDisplay .changeCurrentCamera {
+  float: left;
+  width: calc(100% - 2em);
+}
+replay-toolbar-panel #MainDisplay .replayPlayerWrapper {
+  float: left;
+  width: calc(100% - 6em);
+}
+replay-toolbar-panel #MainDisplay .replaySelectionButtonsWrapper {
+  float: right;
+}
+replay-toolbar-panel #MainDisplay .cameraDeleteWrapper {
+  float: right;
+  height: 100%;
+}
+replay-toolbar-panel #MainDisplay .replayLineJump {
+  margin: 0.3em auto 0.3em;
+}
+replay-toolbar-panel #MainDisplay .firstTravellingPosition, replay-toolbar-panel #MainDisplay secondTravellingPosition {
+  text-align: center;
+}
+
+/*# sourceMappingURL=ReplayToolbarPanel.css.map */
