@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="/SCSS/common.css" />
+    <link rel="stylesheet" href="./CustomPanel.css" />
+
+    <script type="text/javascript" src="/JS/coherent.js"></script>
+    <script type="text/javascript" src="/JS/common.js"></script>
+    <script type="text/javascript" src="/JS/dataStorage.js"></script>
+    <script type="text/javascript" src="/JS/buttons.js"></script>
+    <script type="text/javascript" src="/JS/simvar.js"></script>
+    <script type="text/javascript" src="/JS/Services/ToolBarPanels.js"></script>
+
+    <link rel="import" href="/templates/IconStack/IconStack.html" />
+    <link rel="import" href="/templates/ingameUi/ingameUi.html" />
+    <link rel="import" href="/templates/ingameUiHeader/ingameUiHeader.html" />
+    <link rel="import" href="/templates/altitudeGraph/altitudeGraph.html" />
+    <link rel="import" href="/templates/NewPushButton/NewPushButton.html" />
+    <link rel="import" href="/templates/NewListButton/NewListButton.html" />
+    <link rel="import" href="/templates/DropDown/DropDown.html" />
+    <link rel="import" href="/templates/ReplayToolbarComponents/ReplayToolbarComponents.html" />
+    <link rel="import" href="/templates/uiInput/uiInput.html" />
+
+    <script type="text/javascript" src="CustomPanel.js"></script>
+</head>
+
+<body id="ReplayToolbarPanel" class="border-box">
+    <replay-toolbar-panel>
+        <ingame-ui id="ReplayToolbarPanel_Frame" panel-id="PANEL_REPLAY"
+            class="ingameUiFrame panelInvisible condensedPanel" title="TT:MENU.INGAMEPANEL.REPLAY" content-fit="true"
+            min-width="50" resize="x">
+            <div id="OverlayHeaderState">
+                <!--<icon-element class="original-color" data-url="/icons/replay/ICON_RECORD.svg"></icon-element>-->
+                <span class="overlayState"></span>
+            </div>
+            <section id="MainDisplay">
+                <div class="replayLineJump"></div>
+                <div class="wrapper aircraftRecordWrapper">
+                    <h3></h3>
+                    <div class="bottom-controls">
+                        <icon-button class="small single-line aircraftRecord" data-url="/icons/replay/ICON_RECORD.svg"
+                            force-original-color></icon-button>
+                        <icon-button class="small single-line aircraftStop" data-url="/icons/replay/ICON_STOP.svg">
+                        </icon-button>
+                        <icon-button class="small single-line timelinePlayPause" data-url="/icons/replay/ICON_PLAY.svg">
+                        </icon-button>
+                    </div>
+                </div>
+            </section>
+        </ingame-ui>
+    </replay-toolbar-panel>
+</body>
+
+</html>
