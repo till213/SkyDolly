@@ -32,13 +32,15 @@
 #include <QStackedWidget>
 #include <QDir>
 #include <QPluginLoader>
+#include <QCoreApplication>
 #ifdef DEBUG
 #include <QDebug>
 #endif
 
+#include <tsl/ordered_map.h>
+
 #include <Kernel/Enum.h>
-#include <Persistence/Service/DatabaseService.h>
-#include <Persistence/Service/FlightService.h>
+#include <Kernel/QUuidHasher.h>
 #include "ModuleIntf.h"
 #include "ModuleManager.h"
 
@@ -56,9 +58,8 @@ namespace
 
 struct ModuleManagerPrivate
 {
-    ModuleManagerPrivate(QStackedWidget &theModuleStackWidget, DatabaseService &theDatabaseService) noexcept
-        : moduleStackWidget(theModuleStackWidget),
-          databaseService(theDatabaseService)
+    ModuleManagerPrivate(QStackedWidget &theModuleStackWidget) noexcept
+        : moduleStackWidget(theModuleStackWidget)
     {
         pluginsDirectoryPath = QDir(QCoreApplication::applicationDirPath());
 #if defined(Q_OS_MAC)
@@ -73,20 +74,19 @@ struct ModuleManagerPrivate
     std::unique_ptr<QPluginLoader> pluginLoader {std::make_unique<QPluginLoader>()};
     QDir pluginsDirectoryPath;
     QStackedWidget &moduleStackWidget;
-    DatabaseService &databaseService;
     ModuleIntf *activeModule;
     QUuid activeModuleUuid;
     // Key: uuid - value: plugin path
     QMap<QUuid, QString> moduleRegistry;
-    std::vector<ModuleManager::Handle> moduleActions;
+    ModuleManager::Actions actionRegistry;
     QActionGroup *moduleActionGroup {nullptr};
 };
 
 // PUBLIC
 
-ModuleManager::ModuleManager(QStackedWidget &moduleStackWidget, DatabaseService &databaseService, QObject *parent) noexcept
+ModuleManager::ModuleManager(QStackedWidget &moduleStackWidget, QObject *parent) noexcept
     : QObject(parent),
-      d(std::make_unique<ModuleManagerPrivate>(moduleStackWidget, databaseService))
+      d(std::make_unique<ModuleManagerPrivate>(moduleStackWidget))
 {
     enumerateModules();
     if (d->moduleRegistry.count() > 0) {
@@ -106,9 +106,9 @@ ModuleManager::~ModuleManager() noexcept
 #endif
 }
 
-const std::vector<ModuleManager::Handle> &ModuleManager::getModules() const noexcept
+const ModuleManager::Actions &ModuleManager::getModules() const noexcept
 {
-    return d->moduleActions;
+    return d->actionRegistry;
 }
 
 std::optional<std::reference_wrapper<ModuleIntf>> ModuleManager::getActiveModule() const noexcept
@@ -124,16 +124,14 @@ std::optional<std::reference_wrapper<ModuleIntf>> ModuleManager::getActiveModule
 void ModuleManager::activateModule(QUuid uuid) noexcept
 {   
     if (d->activeModuleUuid != uuid) {
-        if (!d->activeModuleUuid.isNull()) {
-            QString previousModulePath = d->moduleRegistry[d->activeModuleUuid];
-            d->pluginLoader->setFileName(previousModulePath);
+        if (d->pluginLoader->isLoaded()) {
+            // Unload the previous module
             d->pluginLoader->unload();
             d->activeModule = nullptr;
             d->activeModuleUuid = QUuid();
         }
         QString modulePath = d->moduleRegistry[uuid];
         d->pluginLoader->setFileName(modulePath);
-
         const QObject *plugin = d->pluginLoader->instance();
         d->activeModule = qobject_cast<ModuleIntf *>(plugin);
         if (d->activeModule != nullptr) {
@@ -191,8 +189,7 @@ void ModuleManager::enumerateModules() noexcept
                 const QString pluginName = pluginMetadata.value(::PluginNameKey).toString();
                 QAction *action = d->moduleActionGroup->addAction(pluginName);
                 action->setData(uuid);
-                const Handle handle {uuid, action};
-                d->moduleActions.push_back(handle);
+                d->actionRegistry[uuid] = action;
                 d->moduleRegistry.insert(uuid, pluginPath);
             }
         }

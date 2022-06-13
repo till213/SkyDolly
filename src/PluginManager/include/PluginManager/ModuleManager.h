@@ -38,10 +38,11 @@
 
 class QStackedWidget;
 
+#include <tsl/ordered_map.h>
+
+#include <Kernel/QUuidHasher.h>
 #include "PluginManagerLib.h"
 
-class DatabaseService;
-class FlightService;
 class ModuleIntf;
 struct ModuleManagerPrivate;
 
@@ -49,12 +50,12 @@ class PLUGINMANAGER_API ModuleManager : public QObject
 {
     Q_OBJECT
 public:
-    ModuleManager(QStackedWidget &moduleStackWidget, DatabaseService &theDatabaseService, QObject *parent = nullptr) noexcept;
+    explicit ModuleManager(QStackedWidget &moduleStackWidget, QObject *parent = nullptr) noexcept;
     ~ModuleManager() noexcept override;
 
-    using Handle = std::pair<QUuid, QAction *>;
+    using Actions = tsl::ordered_map<QUuid, QAction *, QUuidHasher>;
 
-    const std::vector<Handle> &getModules() const noexcept;
+    const Actions &getModules() const noexcept;
 
     /*!
      * Returns the active module, or \c nullptr in case no module exists.

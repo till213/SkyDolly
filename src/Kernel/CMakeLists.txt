@@ -29,6 +29,7 @@ target_sources(${LIBRARY_NAME}
         include/Kernel/System.h src/System.cpp
         include/Kernel/Unit.h src/Unit.cpp
         include/Kernel/Version.h src/Version.cpp
+        include/Kernel/QUuidHasher.h
         src/VersionConfig.h.in
 )
 target_include_directories(${LIBRARY_NAME}

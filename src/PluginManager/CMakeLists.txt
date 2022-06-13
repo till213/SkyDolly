@@ -48,10 +48,10 @@ target_link_libraries(${LIBRARY_NAME}
         Sky::Flight
         Sky::Kernel
         Sky::Model
+        tsl::ordered_map
     PRIVATE
         Sky::Persistence
         Sky::Widget
-        tsl::ordered_map
 )
 set_target_properties(${LIBRARY_NAME}
     PROPERTIES
