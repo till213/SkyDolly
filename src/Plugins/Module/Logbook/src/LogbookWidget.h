@@ -38,7 +38,6 @@ class QTreeWidgetItem;
 class QString;
 
 #include <PluginManager/ModuleIntf.h>
-#include <PluginManager/Module.h>
 #include <PluginManager/ModulePluginBase.h>
 
 class DatabaseService;
@@ -55,7 +54,7 @@ class LogbookWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit LogbookWidget(DatabaseService &databaseService, FlightService &flightService, QWidget *parent = nullptr) noexcept;
+    explicit LogbookWidget(FlightService &flightService, QWidget *parent = nullptr) noexcept;
     ~LogbookWidget() noexcept override;
 
     std::int64_t getSelectedFlightId() const noexcept;

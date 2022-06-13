@@ -39,14 +39,11 @@
 #include <Kernel/Enum.h>
 #include <Persistence/Service/DatabaseService.h>
 #include <Persistence/Service/FlightService.h>
-#include "Module.h"
 #include "ModuleIntf.h"
 #include "ModuleManager.h"
 
 namespace
 {
-    constexpr Module::Module DefaultModule = Module::Module::Logbook;
-
     constexpr char ModuleDirectoryName[] = "Module";
 #if defined(Q_OS_MAC)
     constexpr char PluginDirectoryName[] = "PlugIns";
@@ -146,9 +143,10 @@ void ModuleManager::activateModule(QUuid uuid) noexcept
             // @todo IMPLEMENT ME Exchange/update widgets
           //  d->moduleStackWidget.setCurrentWidget(&module->getWidget());
           //  module->setActive(true);
+            emit activated(d->activeModule->getModuleName(), uuid);
         }
 
-       // emit activated(module->getModuleName(), moduleId);
+
     }
 }
 

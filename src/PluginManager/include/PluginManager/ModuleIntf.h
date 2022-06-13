@@ -29,25 +29,14 @@
 #include <QString>
 
 class QWidget;
-class QAction;
-
-#include "Module.h"
-
-class FlightService;
 
 class ModuleIntf
 {
 public:
     virtual ~ModuleIntf() = default;
 
-    virtual Module::Module getModuleId() const noexcept = 0;
     virtual QString getModuleName() const noexcept = 0;
-
-    virtual bool isActive() const noexcept = 0;
-    virtual void setActive(bool enable) noexcept = 0;
-
     virtual QWidget &getWidget() noexcept = 0;
-    virtual QAction &getAction() noexcept = 0;
 
     virtual void setRecording(bool enable) noexcept = 0;
     virtual void setPaused(bool enable) noexcept = 0;

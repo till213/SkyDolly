@@ -29,6 +29,7 @@
 #include <cstdint>
 
 #include <QMainWindow>
+#include <QUuid>
 
 class QButtonGroup;
 class QTime;
@@ -36,7 +37,6 @@ class QEvent;
 class QResizeEvent;
 class QCloseEvent;
 
-#include <PluginManager/Module.h>
 #include "UserInterfaceLib.h"
 
 QT_BEGIN_NAMESPACE
@@ -170,7 +170,7 @@ private slots:
     void updateMainWindow() noexcept;
 
     // Modules
-    void onModuleActivated(const QString title, Module::Module moduleId) noexcept;
+    void onModuleActivated(const QString title, QUuid uuid) noexcept;
 
     // File menu
     void createNewLogbook() noexcept;

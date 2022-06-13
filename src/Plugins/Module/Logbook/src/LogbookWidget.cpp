@@ -49,6 +49,9 @@
 #include <QAction>
 #include <QShowEvent>
 #include <QHideEvent>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Version.h>
 #include <Kernel/Const.h>
@@ -68,7 +71,6 @@
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/ModulePluginBase.h>
-#include <PluginManager/Module.h>
 #include <Widget/Platform.h>
 #include <Widget/TableDateItem.h>
 #include <Widget/TableTimeItem.h>
@@ -110,52 +112,42 @@ namespace
 class LogbookWidgetPrivate
 {
 public:
-    LogbookWidgetPrivate(QObject *parent, DatabaseService &theDatabaseService, FlightService &theFlightService) noexcept
-        : idColumnIndex(::InvalidColumn),
-          titleColumnIndex(::InvalidColumn),
-          databaseService(theDatabaseService),
-          flightService(theFlightService),
-          logbookService(std::make_unique<LogbookService>()),
-          selectedRow(::InvalidSelection),
-          selectedFlightId(Flight::InvalidId),
-          flightInMemoryId(Flight::InvalidId),
-          moduleAction(nullptr),
-          searchTimer(new QTimer(parent)),
-          columnsAutoResized(false)
+    LogbookWidgetPrivate(FlightService &theFlightService) noexcept
+        : flightService(theFlightService)
     {
         searchTimer->setSingleShot(true);
         searchTimer->setInterval(::SearchTimeoutMSec);
     }
 
-    int idColumnIndex;
-    int titleColumnIndex;
-    DatabaseService &databaseService;
+    std::unique_ptr<DatabaseService> databaseService {std::make_unique<DatabaseService>()};
+    std::unique_ptr<LogbookService> logbookService {std::make_unique<LogbookService>()};
     FlightService &flightService;
-    std::unique_ptr<LogbookService> logbookService;
-    int selectedRow;
-    std::int64_t selectedFlightId;
-    std::int64_t flightInMemoryId;
+
+    int idColumnIndex {::InvalidColumn};
+    int titleColumnIndex {::InvalidColumn};
+    int selectedRow {::InvalidSelection};
+    std::int64_t selectedFlightId {Flight::InvalidId};
+    std::int64_t flightInMemoryId {Flight::InvalidId};
     Unit unit;
-    std::unique_ptr<QAction> moduleAction;
     FlightSelector flightSelector;
-    QTimer *searchTimer;
+    std::unique_ptr<QTimer> searchTimer {std::make_unique<QTimer>()};
     // Columns are only auto-resized the first time the table is loaded
     // After that manual column resizes are kept
-    bool columnsAutoResized;
+    bool columnsAutoResized {false};
 };
 
 // PUBLIC
 
-LogbookWidget::LogbookWidget(DatabaseService &databaseService, FlightService &flightService, QWidget *parent) noexcept
+LogbookWidget::LogbookWidget(FlightService &flightService, QWidget *parent) noexcept
     : QWidget(parent),
       ui(std::make_unique<Ui::LogbookWidget>()),
-      d(std::make_unique<LogbookWidgetPrivate>(this, databaseService, flightService))
+      d(std::make_unique<LogbookWidgetPrivate>(flightService))
 {
     ui->setupUi(this);
     initUi();
     frenchConnection();
 #ifdef DEBUG
-    qDebug("LogbookWidget::LogbookWidget: CREATED.");
+    qDebug() << "LogbookWidget::LogbookWidget: CREATED.";
 #endif
 }
 
@@ -164,7 +156,7 @@ LogbookWidget::~LogbookWidget() noexcept
     const QByteArray logbookState = ui->logTableWidget->horizontalHeader()->saveState();
     Settings::getInstance().setLogbookState(logbookState);
 #ifdef DEBUG
-    qDebug("LogbookWidget::~LogbookWidget: DELETED.");
+    qDebug() << "LogbookWidget::~LogbookWidget: DELETED.";
 #endif
 }
 
@@ -238,9 +230,6 @@ void LogbookWidget::hideEvent(QHideEvent *event) noexcept
 
 void LogbookWidget::initUi() noexcept
 {
-    d->moduleAction = std::make_unique<QAction>(getName());
-    d->moduleAction->setCheckable(true);
-
     // Date selection
     ui->logTreeWidget->setHeaderLabels({tr("Creation Date"), tr("Flights")});
 
@@ -498,7 +487,7 @@ void LogbookWidget::frenchConnection() noexcept
     // Search
     connect(ui->searchLineEdit, &QLineEdit::textChanged,
             this, &LogbookWidget::onSearchTextChanged);
-    connect(d->searchTimer, &QTimer::timeout,
+    connect(d->searchTimer.get(), &QTimer::timeout,
             this, &LogbookWidget::searchText);    
 
     // Logbook table

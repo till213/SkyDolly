@@ -30,7 +30,6 @@
 #include <utility>
 #include <cstdint>
 #include <exception>
-#include <cmath>
 
 #include <GeographicLib/Geodesic.hpp>
 
@@ -49,6 +48,7 @@
 namespace SkyMath
 {
     constexpr double PI = 3.141592653589793238463;
+
     // Latitude, longitude [degrees]
     using Coordinate = std::pair<double, double>;
 

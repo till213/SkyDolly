@@ -38,7 +38,6 @@
 
 class QStackedWidget;
 
-#include "Module.h"
 #include "PluginManagerLib.h"
 
 class DatabaseService;
@@ -70,7 +69,7 @@ public:
     void setPaused(bool enable) noexcept;
 
 signals:
-    void activated(QString title, Module::Module moduleId);
+    void activated(QString title, QUuid moduleUuid);
 
 private:
     std::unique_ptr<ModuleManagerPrivate> d;

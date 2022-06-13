@@ -24,7 +24,6 @@
  */
 #include <memory>
 
-#include <QAction>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -43,22 +42,19 @@
 
 struct FormationPluginPrivate
 {
-    FormationPluginPrivate(const QString &name)
-        : moduleAction(std::make_unique<QAction>(name))
-    {
-         moduleAction->setCheckable(true);
-    }
+    FormationPluginPrivate(FlightService &flightService)
+        : formationWidget(std::make_unique<FormationWidget>(flightService, *aircraftService))
+    {}
 
     std::unique_ptr<AircraftService> aircraftService {std::make_unique<AircraftService>()};
-    std::unique_ptr<FormationWidget> formationWidget {std::make_unique<FormationWidget>()};
-    std::unique_ptr<QAction> moduleAction;
+    std::unique_ptr<FormationWidget> formationWidget;
 };
 
 // PUBLIC
 
 FormationPlugin::FormationPlugin(QObject *parent) noexcept
     : ModulePluginBase(parent),
-      d(std::make_unique<FormationPluginPrivate>(getName()))
+      d(std::make_unique<FormationPluginPrivate>(getFlightService()))
 {
      Q_INIT_RESOURCE(FormationPlugin);
 #ifdef DEBUG
@@ -73,24 +69,14 @@ FormationPlugin::~FormationPlugin() noexcept
 #endif
 }
 
-Module::Module FormationPlugin::getModuleId() const noexcept
-{
-    return Module::Module::Formation;
-}
-
 QString FormationPlugin::getModuleName() const noexcept
 {
-    return getName();
+    return QCoreApplication::translate("FormationPlugin", "Formation");
 }
 
 QWidget &FormationPlugin::getWidget() noexcept
 {
     return *d->formationWidget;
-}
-
-QAction &FormationPlugin::getAction() noexcept
-{
-    return *d->moduleAction;
 }
 
 // PROTECTED
@@ -127,18 +113,11 @@ void FormationPlugin::onStartReplay() noexcept
 void FormationPlugin::onRecordingStopped() noexcept
 {
     Flight &flight = Logbook::getInstance().getCurrentFlight();
-    const int sequenceNumber = flight.count();
+    const std::size_t sequenceNumber = flight.count();
     if (sequenceNumber > 1) {
         // Sequence starts at 1
         d->aircraftService->store(flight.getId(), sequenceNumber, flight[sequenceNumber - 1]);
     } else {
         ModulePluginBase::onRecordingStopped();
     }
-}
-
-// PRIVATE
-
-QString FormationPlugin::getName()
-{
-    return QCoreApplication::translate("FormationPlugin", "Formation");
 }

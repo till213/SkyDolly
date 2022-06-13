@@ -22,16 +22,35 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef MODULE_H
-#define MODULE_H
+#ifndef LOGBOOKPLUGIN_H
+#define LOGBOOKPLUGIN_H
 
-namespace Module
+#include <QObject>
+#include <QString>
+
+class QWidget;
+
+#include "PluginManager/ModulePluginBase.h"
+
+struct LogbookPluginPrivate;
+
+class LogbookPlugin : public ModulePluginBase
 {
-    enum struct Module {
-        None,
-        Logbook,
-        Formation
-    };
-}
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID MODULE_INTERFACE_IID FILE "LogbookPlugin.json")
+    Q_INTERFACES(ModuleIntf)
+public:
+    explicit LogbookPlugin(QObject *parent = nullptr) noexcept;
+    ~LogbookPlugin() noexcept override;
 
-#endif // MODULE_H
+    QString getModuleName() const noexcept override;
+    QWidget &getWidget() noexcept override;
+
+protected slots:
+    void onRecordingStopped() noexcept override;
+
+private:
+    std::unique_ptr<LogbookPluginPrivate> d;
+};
+
+#endif // LOGBOOKPLUGIN_H

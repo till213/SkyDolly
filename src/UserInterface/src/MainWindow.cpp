@@ -37,6 +37,7 @@
 #include <QFileInfo>
 #include <QUrl>
 #include <QDir>
+#include <QUuid>
 #include <QString>
 #include <QUuid>
 #include <QTime>
@@ -1414,7 +1415,7 @@ void MainWindow::updateMainWindow() noexcept
     }
 }
 
-void MainWindow::onModuleActivated(const QString title, [[maybe_unused]] Module::Module moduleId) noexcept
+void MainWindow::onModuleActivated(const QString title, [[maybe_unused]] QUuid uuid) noexcept
 {
     ui->moduleGroupBox->setTitle(title);
     // Disable the minimal UI (if activated)

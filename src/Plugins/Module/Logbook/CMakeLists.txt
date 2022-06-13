@@ -9,7 +9,9 @@ add_library(Sky::${MODULE_NAME} ALIAS ${MODULE_NAME})
 
 target_sources(${MODULE_NAME}
     PRIVATE
+        src/LogbookPlugin.h src/LogbookPlugin.cpp
         src/LogbookWidget.h src/LogbookWidget.cpp src/LogbookWidget.ui
+        src/LogbookPlugin.json
 )
 target_link_libraries(${MODULE_NAME}
     PRIVATE

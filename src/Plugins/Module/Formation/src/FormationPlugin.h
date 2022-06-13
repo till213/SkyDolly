@@ -29,7 +29,6 @@
 #include <QString>
 
 class QWidget;
-class QAction;
 
 #include "PluginManager/ModulePluginBase.h"
 
@@ -41,14 +40,11 @@ class FormationPlugin : public ModulePluginBase
     Q_PLUGIN_METADATA(IID MODULE_INTERFACE_IID FILE "FormationPlugin.json")
     Q_INTERFACES(ModuleIntf)
 public:
-    FormationPlugin(QObject *parent = nullptr) noexcept;
+    explicit FormationPlugin(QObject *parent = nullptr) noexcept;
     ~FormationPlugin() noexcept override;
 
-    Module::Module getModuleId() const noexcept override;
     QString getModuleName() const noexcept override;
-
     QWidget &getWidget() noexcept override;
-    QAction &getAction() noexcept override;
 
 protected:
     void onStartRecording() noexcept override;
@@ -59,8 +55,6 @@ protected slots:
 
 private:
     std::unique_ptr<FormationPluginPrivate> d;
-
-    static QString getName();
 };
 
 #endif // FORMATIONPLUGIN_H

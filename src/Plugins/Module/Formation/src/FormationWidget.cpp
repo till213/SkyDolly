@@ -95,8 +95,10 @@ namespace
 
 struct FormationWidgetPrivate
 {
-    FormationWidgetPrivate(QWidget &parent) noexcept
-        : positionButtonGroup(new QButtonGroup(&parent))
+    FormationWidgetPrivate(FlightService &theFlightService, AircraftService &theAircraftService, QWidget &parent) noexcept
+        : flightService(theFlightService),
+          aircraftService(theAircraftService),
+          positionButtonGroup(new QButtonGroup(&parent))
     {
         // We always initialise all icons at once, so checking only for
         // normalAircraftIcon is sufficient
@@ -118,8 +120,8 @@ struct FormationWidgetPrivate
         }
     }
 
-    std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>()};
-    std::unique_ptr<AircraftService> aircraftService {std::make_unique<AircraftService>()};
+    FlightService &flightService;
+    AircraftService &aircraftService;
 
     int tailNumberColumnIndex {InvalidColumn};
     int timeOffsetColumnIndex {InvalidColumn};
@@ -141,10 +143,10 @@ struct FormationWidgetPrivate
 
 // PUBLIC
 
-FormationWidget::FormationWidget(QWidget *parent) noexcept
+FormationWidget::FormationWidget(FlightService &flightService, AircraftService &aircraftService, QWidget *parent) noexcept
     : QWidget(parent),
       ui(std::make_unique<Ui::FormationWidget>()),
-      d(std::make_unique<FormationWidgetPrivate>(*this))
+      d(std::make_unique<FormationWidgetPrivate>(flightService, aircraftService, *this))
 {
     ui->setupUi(this);
     initUi();
@@ -728,14 +730,14 @@ void FormationWidget::onCellChanged(int row, int column) noexcept
     if (column == d->tailNumberColumnIndex) {
         QTableWidgetItem *item = ui->aircraftTableWidget->item(row, column);
         const QString tailNumber = item->data(Qt::EditRole).toString();
-        d->aircraftService->changeTailNumber(aircraft, tailNumber);
+        d->aircraftService.changeTailNumber(aircraft, tailNumber);
     } else if (column == d->timeOffsetColumnIndex) {
         QTableWidgetItem *item = ui->aircraftTableWidget->item(row, column);
         bool ok {false};
         const double timeOffsetSec = item->data(Qt::EditRole).toDouble(&ok);
         if (ok) {
             const std::int64_t timeOffset = static_cast<std::int64_t>(std::round(timeOffsetSec * 1000.0));
-            d->aircraftService->changeTimeOffset(aircraft, timeOffset);
+            d->aircraftService.changeTimeOffset(aircraft, timeOffset);
         }
     }
 }
@@ -768,7 +770,7 @@ void FormationWidget::updateUserAircraftIndex() noexcept
     if (!SkyConnectManager::getInstance().isInRecordingState()) {
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         if (d->selectedRow != flight.getUserAircraftIndex()) {
-            d->flightService->updateUserAircraftIndex(flight, d->selectedRow);
+            d->flightService.updateUserAircraftIndex(flight, d->selectedRow);
         }
     }
 }
@@ -797,7 +799,7 @@ void FormationWidget::deleteAircraft() noexcept
     }
 
     if (doDelete) {
-        d->aircraftService->deleteByIndex(d->selectedRow);
+        d->aircraftService.deleteByIndex(d->selectedRow);
         ui->aircraftTableWidget->setFocus(Qt::NoFocusReason);
     }
 }
@@ -852,7 +854,7 @@ void FormationWidget::changeTimeOffset(const std::int64_t timeOffset) noexcept
         Aircraft &aircraft = flight[d->selectedAircraftIndex];
 
         const std::int64_t newTimeOffset = aircraft.getTimeOffset() + timeOffset;
-        d->aircraftService->changeTimeOffset(aircraft, newTimeOffset);
+        d->aircraftService.changeTimeOffset(aircraft, newTimeOffset);
         updateToolTips();
     }
 }
@@ -867,7 +869,7 @@ void FormationWidget::onTimeOffsetEditingFinished() noexcept
         const double timeOffsetSec = ui->timeOffsetLineEdit->text().toDouble(&ok);
         if (ok) {
             const std::int64_t timeOffset = static_cast<std::int64_t>(std::round(timeOffsetSec * 1000.0));
-            d->aircraftService->changeTimeOffset(aircraft, timeOffset);
+            d->aircraftService.changeTimeOffset(aircraft, timeOffset);
             updateToolTips();
         }
     }
@@ -898,7 +900,7 @@ void FormationWidget::resetAllTimeOffsets() noexcept
         Flight &flight = Logbook::getInstance().getCurrentFlight();
         bool ok = true;
         for (auto &aircraft : flight) {
-            ok = d->aircraftService->changeTimeOffset(*aircraft.get(), 0);
+            ok = d->aircraftService.changeTimeOffset(*aircraft.get(), 0);
             if (!ok) {
                 break;
             }

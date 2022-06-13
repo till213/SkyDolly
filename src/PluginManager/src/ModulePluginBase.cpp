@@ -31,7 +31,6 @@
 #include "SkyConnectManager.h"
 #include "SkyConnectIntf.h"
 #include <Persistence/Service/FlightService.h>
-#include "Module.h"
 #include "ModulePluginBase.h"
 
 struct ModulePluginBasePrivate
@@ -39,7 +38,6 @@ struct ModulePluginBasePrivate
     ModulePluginBasePrivate() noexcept
     {}
 
-    bool active {false};
     std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>()};
 };
 
@@ -48,29 +46,12 @@ struct ModulePluginBasePrivate
 ModulePluginBase::ModulePluginBase(QObject *parent) noexcept
     : QObject(parent),
       d(std::make_unique<ModulePluginBasePrivate>())
-{}
+{
+    frenchConnection();
+}
 
 ModulePluginBase::~ModulePluginBase() noexcept
 {}
-
-bool ModulePluginBase::isActive() const noexcept
-{
-    return d->active;
-}
-
-void ModulePluginBase::setActive(bool enable) noexcept
-{
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    if (enable) {
-        connect(&skyConnectManager, &SkyConnectManager::recordingStopped,
-                this, &ModulePluginBase::onRecordingStopped);
-    } else {
-        disconnect(&skyConnectManager, &SkyConnectManager::recordingStopped,
-                   this, &ModulePluginBase::onRecordingStopped);
-    }
-    getAction().setChecked(enable);
-    d->active = enable;
-}
 
 void ModulePluginBase::setRecording(bool enable) noexcept
 {
@@ -131,9 +112,23 @@ void ModulePluginBase::onStartReplay() noexcept
     skyConnectManager.startReplay(skyConnectManager.isAtEnd());
 }
 
+FlightService &ModulePluginBase::getFlightService() const noexcept
+{
+    return *d->flightService;
+}
+
 // PROTECTED SLOTS
 
 void ModulePluginBase::onRecordingStopped() noexcept
 {
     d->flightService->store(Logbook::getInstance().getCurrentFlight());
+}
+
+// PRIVATE
+
+void ModulePluginBase::frenchConnection() noexcept
+{
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    connect(&skyConnectManager, &SkyConnectManager::recordingStopped,
+            this, &ModulePluginBase::onRecordingStopped);
 }
