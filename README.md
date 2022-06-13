@@ -82,6 +82,7 @@ Refer to the [BUILD](BUILD.md) documentation.
 - https://github.com/Elephant42/FS_Tool - A simple tool that allows to set the aircraft location and simulation rate
 - https://github.com/pyviator/msfs-geoshot - Takes screenshots and automatically "geotags" them
 - https://github.com/ijl20/msfs_logger_replay - IGC logger and replay (for FSX)
+- https://github.com/diagonalization-lab/msfs-panel-notepad - Minimal MSFS toolbar / panel example
 
 ## Other Useful Resources
 
