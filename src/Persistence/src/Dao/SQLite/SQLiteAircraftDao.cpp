@@ -131,7 +131,7 @@ bool SQLiteAircraftDao::add(std::int64_t flightId, std::size_t sequenceNumber, A
     if (ok) {
         const AircraftInfo &info = aircraft.getAircraftInfo();
         query.bindValue(":flight_id", QVariant::fromValue(flightId));
-        query.bindValue(":seq_nr", sequenceNumber);
+        query.bindValue(":seq_nr", QVariant::fromValue(sequenceNumber));
         query.bindValue(":type", aircraftType.type);
         query.bindValue(":time_offset", QVariant::fromValue(info.timeOffset));
         query.bindValue(":tail_number", info.tailNumber);
@@ -253,7 +253,7 @@ bool SQLiteAircraftDao::adjustAircraftSequenceNumbersByFlightId(std::int64_t fli
     );
 
     query.bindValue(":flight_id", QVariant::fromValue(flightId));
-    query.bindValue(":seq_nr", sequenceNumber);
+    query.bindValue(":seq_nr", QVariant::fromValue(sequenceNumber));
     bool ok = query.exec();
 #ifdef DEBUG
     if (!ok) {
