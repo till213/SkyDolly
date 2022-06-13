@@ -528,10 +528,9 @@ void MainWindow::initModuleSelectorUi() noexcept
     for (const auto &item : d->moduleManager->getActionRegistry()) {
         QAction *moduleAction = item.second;
         ui->moduleMenu->addAction(moduleAction);
-        ActionButton *actionButton = new ActionButton(this);
+        ActionButton *actionButton = new ActionButton(this, ActionButton::Capitalisation::AllCaps);
         actionButton->setAction(moduleAction);
         actionButton->setFlat(true);
-        actionButton->setText(moduleAction->text().toUpper());
         ui->moduleSelectorLayout->addWidget(actionButton);
     }
 }
