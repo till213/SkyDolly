@@ -61,10 +61,6 @@ public:
     Formation::VerticalDistance getVerticalDistance() const noexcept;
     Formation::RelativePosition getRelativePosition() const noexcept;
 
-protected:
-    void showEvent(QShowEvent *event) noexcept override;
-    void hideEvent(QHideEvent *event) noexcept override;
-
 private:
     Q_DISABLE_COPY(FormationWidget)
     std::unique_ptr<Ui::FormationWidget> ui;

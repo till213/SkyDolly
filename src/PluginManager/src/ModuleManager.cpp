@@ -26,9 +26,11 @@
 #include <vector>
 #include <optional>
 #include <functional>
+#include <unordered_map>
 
 #include <QAction>
 #include <QActionGroup>
+#include <QKeySequence>
 #include <QLayout>
 #include <QDir>
 #include <QPluginLoader>
@@ -59,7 +61,8 @@ namespace
 struct ModuleManagerPrivate
 {
     ModuleManagerPrivate(QLayout &theLayout) noexcept
-        : layout(theLayout)
+        : layout(theLayout),
+          moduleActionGroup(new QActionGroup(&layout))
     {
         pluginsDirectoryPath = QDir(QCoreApplication::applicationDirPath());
 #if defined(Q_OS_MAC)
@@ -74,12 +77,15 @@ struct ModuleManagerPrivate
     std::unique_ptr<QPluginLoader> pluginLoader {std::make_unique<QPluginLoader>()};
     QDir pluginsDirectoryPath;
     QLayout &layout;
-    ModuleIntf *activeModule;
+    QActionGroup * moduleActionGroup;
+    ModuleIntf *activeModule {nullptr};
     QUuid activeModuleUuid;
     // Key: uuid - value: plugin path
-    QMap<QUuid, QString> moduleRegistry;
+    std::unordered_map<QUuid, QString, QUuidHasher> moduleRegistry;
     ModuleManager::ActionRegistry actionRegistry;
-    QActionGroup *moduleActionGroup {nullptr};
+    std::vector<QKeySequence> actionShortcuts {Qt::Key_F1, Qt::Key_F2, Qt::Key_F3, Qt::Key_F4, Qt::Key_F5, Qt::Key_F6, Qt::Key_F7, Qt::Key_F8, Qt::Key_F9,
+                                               Qt::Key_F10, Qt::Key_F11, Qt::Key_F12, Qt::Key_F13, Qt::Key_F14, Qt::Key_F15, Qt::Key_F16, Qt::Key_F17,
+                                               Qt::Key_F18, Qt::Key_F19, Qt::Key_F20};
 };
 
 // PUBLIC
@@ -89,8 +95,8 @@ ModuleManager::ModuleManager(QLayout &layout, QObject *parent) noexcept
       d(std::make_unique<ModuleManagerPrivate>(layout))
 {
     enumerateModules();
-    if (d->moduleRegistry.count() > 0) {
-        activateModule(d->moduleRegistry.firstKey());
+    if (d->moduleRegistry.size() > 0) {
+        activateModule(d->moduleRegistry.begin()->first);
     }
     frenchConnection();
 #ifdef DEBUG
@@ -137,14 +143,9 @@ void ModuleManager::activateModule(QUuid uuid) noexcept
         if (d->activeModule != nullptr) {
             d->activeModuleUuid = uuid;
             d->layout.addWidget(&d->activeModule->getWidget());
-
-            // @todo IMPLEMENT ME Exchange/update widgets
-          //  d->moduleStackWidget.setCurrentWidget(&module->getWidget());
-          //  module->setActive(true);
+            d->actionRegistry[uuid]->setChecked(true);
             emit activated(d->activeModule->getModuleName(), uuid);
         }
-
-
     }
 }
 
@@ -173,12 +174,11 @@ void ModuleManager::setPaused(bool enable) noexcept
 
 void ModuleManager::enumerateModules() noexcept
 {
-    d->moduleActionGroup = new QActionGroup(this);
-
     d->moduleRegistry.clear();
     if (d->pluginsDirectoryPath.exists(::ModuleDirectoryName)) {
         d->pluginsDirectoryPath.cd(::ModuleDirectoryName);
         const QStringList entryList = d->pluginsDirectoryPath.entryList(QDir::Files);
+        int count {0};
         for (const QString &fileName : entryList) {
             const QString pluginPath = d->pluginsDirectoryPath.absoluteFilePath(fileName);
             d->pluginLoader->setFileName(pluginPath);
@@ -188,33 +188,18 @@ void ModuleManager::enumerateModules() noexcept
                 const QUuid uuid = pluginMetadata.value(::PluginUuidKey).toString();
                 const QString pluginName = pluginMetadata.value(::PluginNameKey).toString();
                 QAction *action = d->moduleActionGroup->addAction(pluginName);
+                if (count < d->actionShortcuts.size()) {
+                    action->setShortcut(d->actionShortcuts[count]);
+                }
                 action->setData(uuid);
+                action->setCheckable(true);
                 d->actionRegistry[uuid] = action;
-                d->moduleRegistry.insert(uuid, pluginPath);
+                d->moduleRegistry[uuid] = pluginPath;
+                ++count;
             }
         }
         d->pluginsDirectoryPath.cdUp();
     }
-
-
-    // @todo IMPLEMENT ME dynamically load as plugins
-//    LogbookWidget *logbookWidget = new LogbookWidget(d->databaseService, d->flightService, &d->moduleStackWidget);
-//    d->moduleMap[logbookWidget->getModuleId()] = logbookWidget;
-//    d->moduleStackWidget.addWidget(logbookWidget);
-//    QAction &logbookAction = logbookWidget->getAction();
-//    logbookAction.setData(Enum::toUnderlyingType(logbookWidget->getModuleId()));
-//    logbookAction.setShortcut(tr("F1"));
-//    logbookAction.setToolTip("Record single aircraft, load and manage existing flights.");
-//    d->moduleActionGroup->addAction(&logbookAction);
-
-//    FormationWidget *formationWidget = new FormationWidget(d->flightService, &d->moduleStackWidget);
-//    d->moduleMap[formationWidget->getModuleId()] = formationWidget;
-//    d->moduleStackWidget.addWidget(formationWidget);
-//    QAction &formationAction = formationWidget->getAction();
-//    formationAction.setData(Enum::toUnderlyingType(formationWidget->getModuleId()));
-//    formationAction.setShortcut(tr("F2"));
-//    formationAction.setToolTip("Record and manage formation flights.");
-//    d->moduleActionGroup->addAction(&formationAction);
 }
 
 void ModuleManager::frenchConnection() noexcept

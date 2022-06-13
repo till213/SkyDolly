@@ -59,10 +59,6 @@ public:
 
     std::int64_t getSelectedFlightId() const noexcept;
 
-protected:
-    void showEvent(QShowEvent *event) noexcept override;
-    void hideEvent(QHideEvent *event) noexcept override;
-
 private:
     Q_DISABLE_COPY(LogbookWidget)
     std::unique_ptr<Ui::LogbookWidget> ui;

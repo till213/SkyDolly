@@ -150,6 +150,7 @@ FormationWidget::FormationWidget(FlightService &flightService, AircraftService &
 {
     ui->setupUi(this);
     initUi();
+    updateUi();
     frenchConnection();
 #ifdef DEBUG
     qDebug() << "FormationWidget::FormationWidget: CREATED.";
@@ -178,54 +179,6 @@ Formation::VerticalDistance FormationWidget::getVerticalDistance() const noexcep
 Formation::RelativePosition FormationWidget::getRelativePosition() const noexcept
 {
     return static_cast<Formation::RelativePosition>(d->positionButtonGroup->checkedId());
-}
-
-// PROTECTED
-
-void FormationWidget::showEvent(QShowEvent *event) noexcept
-{
-    QWidget::showEvent(event);
-
-    // Deselect when showing module
-    d->selectedRow = InvalidSelection;
-    d->selectedAircraftIndex = Flight::InvalidId;
-
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    connect(&flight, &Flight::userAircraftChanged,
-            this, &FormationWidget::onUserAircraftChanged);
-    connect(&flight, &Flight::aircraftRemoved,
-            this, &FormationWidget::updateUi);
-    connect(&flight, &Flight::flightStored,
-            this, &FormationWidget::updateUi);
-    connect(&flight, &Flight::aircraftInfoChanged,
-            this, &FormationWidget::onAircraftInfoChanged);
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    connect(&skyConnectManager, &SkyConnectManager::stateChanged,
-            this, &FormationWidget::updateUi);
-    connect(&skyConnectManager, &SkyConnectManager::replayModeChanged,
-            this, &FormationWidget::onReplayModeChanged);
-
-    updateUi();
-}
-
-void FormationWidget::hideEvent(QHideEvent *event) noexcept
-{
-    QWidget::hideEvent(event);
-
-    Flight &flight = Logbook::getInstance().getCurrentFlight();
-    disconnect(&flight, &Flight::userAircraftChanged,
-               this, &FormationWidget::onUserAircraftChanged);
-    disconnect(&flight, &Flight::aircraftRemoved,
-               this, &FormationWidget::updateUi);
-    disconnect(&flight, &Flight::flightStored,
-               this, &FormationWidget::updateUi);
-    disconnect(&flight, &Flight::aircraftInfoChanged,
-               this, &FormationWidget::updateUi);
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    disconnect(&skyConnectManager, &SkyConnectManager::stateChanged,
-               this, &FormationWidget::updateUi);
-    disconnect(&skyConnectManager, &SkyConnectManager::replayModeChanged,
-               this, &FormationWidget::onReplayModeChanged);
 }
 
 // PRIVATE
@@ -317,6 +270,25 @@ void FormationWidget::initTimeOffsetUi() noexcept
 
 void FormationWidget::frenchConnection() noexcept
 {
+    // Flight
+    Flight &flight = Logbook::getInstance().getCurrentFlight();
+    connect(&flight, &Flight::userAircraftChanged,
+            this, &FormationWidget::onUserAircraftChanged);
+    connect(&flight, &Flight::aircraftRemoved,
+            this, &FormationWidget::updateUi);
+    connect(&flight, &Flight::flightStored,
+            this, &FormationWidget::updateUi);
+    connect(&flight, &Flight::aircraftInfoChanged,
+            this, &FormationWidget::onAircraftInfoChanged);
+
+    // Connection
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    connect(&skyConnectManager, &SkyConnectManager::stateChanged,
+            this, &FormationWidget::updateUi);
+    connect(&skyConnectManager, &SkyConnectManager::replayModeChanged,
+            this, &FormationWidget::onReplayModeChanged);
+
+    // Aircraft table
     connect(ui->aircraftTableWidget, &QTableWidget::itemSelectionChanged,
             this, &FormationWidget::onSelectionChanged);
     connect(ui->aircraftTableWidget, &QTableWidget::cellDoubleClicked,
@@ -330,13 +302,17 @@ void FormationWidget::frenchConnection() noexcept
     connect(ui->relativePositionCheckBox, &QCheckBox::stateChanged,
             this, &FormationWidget::onInitialPositionPlacementChanged);
 
+    // Relative position, replay mode
     connect(ui->horizontalDistanceSlider, &QSlider::valueChanged,
             this, &FormationWidget::onRelativeDistanceChanged);
     connect(ui->verticalDistanceSlider, &QSlider::valueChanged,
             this, &FormationWidget::onRelativeDistanceChanged);
+    connect(d->positionButtonGroup, &QButtonGroup::idClicked,
+            this, &FormationWidget::onRelativePositionChanged);
     connect(ui->replayModeComboBox, &QComboBox::activated,
             this, &FormationWidget::updateReplayMode);
 
+    // Time offset
     connect(ui->fastBackwardOffsetPushButton, &QPushButton::clicked,
             this, [&] { changeTimeOffset(- ::LargeTimeOffset);});
     connect(ui->backwardOffsetPushButton, &QPushButton::clicked,
@@ -349,8 +325,6 @@ void FormationWidget::frenchConnection() noexcept
             this, &FormationWidget::onTimeOffsetEditingFinished);
     connect(ui->resetAllTimeOffsetPushButton, &QPushButton::clicked,
             this, &FormationWidget::resetAllTimeOffsets);
-    connect(d->positionButtonGroup, &QButtonGroup::idClicked,
-            this, &FormationWidget::onRelativePositionChanged);
 }
 
 void FormationWidget::updateAircraftTable() noexcept

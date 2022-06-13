@@ -145,6 +145,8 @@ LogbookWidget::LogbookWidget(FlightService &flightService, QWidget *parent) noex
 {
     ui->setupUi(this);
     initUi();
+    updateUi();
+    onSelectionChanged();
     frenchConnection();
 #ifdef DEBUG
     qDebug() << "LogbookWidget::LogbookWidget: CREATED.";
@@ -163,67 +165,6 @@ LogbookWidget::~LogbookWidget() noexcept
 std::int64_t LogbookWidget::getSelectedFlightId() const noexcept
 {
     return d->selectedFlightId;
-}
-
-// PROTECTED
-
-void LogbookWidget::showEvent(QShowEvent *event) noexcept
-{
-    QWidget::showEvent(event);
-
-    // Logbook
-    const Logbook &logbook = Logbook::getInstance();
-    connect(&LogbookManager::getInstance(), &LogbookManager::connectionChanged,
-            this, &LogbookWidget::updateUi);
-    connect(&logbook, &Logbook::flightTitleOrDescriptionChanged,
-            this, &LogbookWidget::updateUi);
-
-    // Flight
-    const Flight &flight = logbook.getCurrentFlight();
-    connect(&flight, &Flight::flightStored,
-            this, &LogbookWidget::updateUi);
-    connect(&flight, &Flight::flightRestored,
-            this, &LogbookWidget::updateAircraftIcons);
-    connect(&flight, &Flight::aircraftStored,
-            this, &LogbookWidget::updateUi);
-
-    // Connection
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    connect(&skyConnectManager, &SkyConnectManager::recordingStarted,
-            this, &LogbookWidget::onRecordingStarted);
-    connect(&skyConnectManager, &SkyConnectManager::stateChanged,
-            this, &LogbookWidget::updateEditUi);
-
-    updateUi();
-    onSelectionChanged();
-}
-
-void LogbookWidget::hideEvent(QHideEvent *event) noexcept
-{
-    QWidget::hideEvent(event);
-
-    // Logbook
-    const Logbook &logbook = Logbook::getInstance();
-    disconnect(&LogbookManager::getInstance(), &LogbookManager::connectionChanged,
-               this, &LogbookWidget::updateUi);
-    disconnect(&logbook, &Logbook::flightTitleOrDescriptionChanged,
-               this, &LogbookWidget::updateUi);
-
-    // Flight
-    const Flight &flight = logbook.getCurrentFlight();
-    disconnect(&flight, &Flight::flightStored,
-               this, &LogbookWidget::updateUi);
-    disconnect(&flight, &Flight::flightRestored,
-               this, &LogbookWidget::updateAircraftIcons);
-    disconnect(&flight, &Flight::aircraftStored,
-               this, &LogbookWidget::updateUi);
-
-    // Connection
-    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
-    disconnect(&skyConnectManager, &SkyConnectManager::stateChanged,
-               this, &LogbookWidget::onRecordingStarted);
-    disconnect(&skyConnectManager, &SkyConnectManager::stateChanged,
-               this, &LogbookWidget::updateEditUi);
 }
 
 // PRIVATE
@@ -484,6 +425,29 @@ void LogbookWidget::updateEditUi() noexcept
 
 void LogbookWidget::frenchConnection() noexcept
 {
+    // Logbook
+    const Logbook &logbook = Logbook::getInstance();
+    connect(&LogbookManager::getInstance(), &LogbookManager::connectionChanged,
+            this, &LogbookWidget::updateUi);
+    connect(&logbook, &Logbook::flightTitleOrDescriptionChanged,
+            this, &LogbookWidget::updateUi);
+
+    // Flight
+    const Flight &flight = logbook.getCurrentFlight();
+    connect(&flight, &Flight::flightStored,
+            this, &LogbookWidget::updateUi);
+    connect(&flight, &Flight::flightRestored,
+            this, &LogbookWidget::updateAircraftIcons);
+    connect(&flight, &Flight::aircraftStored,
+            this, &LogbookWidget::updateUi);
+
+    // Connection
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    connect(&skyConnectManager, &SkyConnectManager::recordingStarted,
+            this, &LogbookWidget::onRecordingStarted);
+    connect(&skyConnectManager, &SkyConnectManager::stateChanged,
+            this, &LogbookWidget::updateEditUi);
+
     // Search
     connect(ui->searchLineEdit, &QLineEdit::textChanged,
             this, &LogbookWidget::onSearchTextChanged);
