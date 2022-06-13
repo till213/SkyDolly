@@ -36,7 +36,7 @@
 #include <QString>
 #include <QAction>
 
-class QStackedWidget;
+class QLayout;
 
 #include <tsl/ordered_map.h>
 
@@ -50,12 +50,12 @@ class PLUGINMANAGER_API ModuleManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit ModuleManager(QStackedWidget &moduleStackWidget, QObject *parent = nullptr) noexcept;
+    explicit ModuleManager(QLayout &layout, QObject *parent = nullptr) noexcept;
     ~ModuleManager() noexcept override;
 
-    using Actions = tsl::ordered_map<QUuid, QAction *, QUuidHasher>;
+    using ActionRegistry = tsl::ordered_map<QUuid, QAction *, QUuidHasher>;
 
-    const Actions &getModules() const noexcept;
+    const ActionRegistry &getActionRegistry() const noexcept;
 
     /*!
      * Returns the active module, or \c nullptr in case no module exists.

@@ -495,7 +495,7 @@ void MainWindow::initPlugins() noexcept
 void MainWindow::initModuleSelectorUi() noexcept
 {
     // Modules
-    d->moduleManager = std::make_unique<ModuleManager>(*ui->moduleStackWidget);
+    d->moduleManager = std::make_unique<ModuleManager>(*ui->moduleGroupBox->layout());
     ActionCheckBox *actionCheckBox = new ActionCheckBox(false, this);
     actionCheckBox->setAction(ui->showModulesAction);
     actionCheckBox->setFocusPolicy(Qt::NoFocus);
@@ -525,7 +525,7 @@ void MainWindow::initModuleSelectorUi() noexcept
         ui->moduleGroupBox->setTitle(activeModule->get().getModuleName());
     }
 
-    for (const auto &item : d->moduleManager->getModules()) {
+    for (const auto &item : d->moduleManager->getActionRegistry()) {
         QAction *moduleAction = item.second;
         ui->moduleMenu->addAction(moduleAction);
         ActionButton *actionButton = new ActionButton(this);
@@ -1361,8 +1361,8 @@ void MainWindow::updateFileMenu() noexcept
 void MainWindow::updateModuleActions() noexcept
 {
     const bool recording = SkyConnectManager::getInstance().isInRecordingState();
-    for (auto &module : d->moduleManager->getModules()) {
-        module.second->setEnabled(!recording);
+    for (auto &item : d->moduleManager->getActionRegistry()) {
+        item.second->setEnabled(!recording);
     }
 }
 

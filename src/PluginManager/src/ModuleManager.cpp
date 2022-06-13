@@ -29,7 +29,7 @@
 
 #include <QAction>
 #include <QActionGroup>
-#include <QStackedWidget>
+#include <QLayout>
 #include <QDir>
 #include <QPluginLoader>
 #include <QCoreApplication>
@@ -58,8 +58,8 @@ namespace
 
 struct ModuleManagerPrivate
 {
-    ModuleManagerPrivate(QStackedWidget &theModuleStackWidget) noexcept
-        : moduleStackWidget(theModuleStackWidget)
+    ModuleManagerPrivate(QLayout &theLayout) noexcept
+        : layout(theLayout)
     {
         pluginsDirectoryPath = QDir(QCoreApplication::applicationDirPath());
 #if defined(Q_OS_MAC)
@@ -73,20 +73,20 @@ struct ModuleManagerPrivate
 
     std::unique_ptr<QPluginLoader> pluginLoader {std::make_unique<QPluginLoader>()};
     QDir pluginsDirectoryPath;
-    QStackedWidget &moduleStackWidget;
+    QLayout &layout;
     ModuleIntf *activeModule;
     QUuid activeModuleUuid;
     // Key: uuid - value: plugin path
     QMap<QUuid, QString> moduleRegistry;
-    ModuleManager::Actions actionRegistry;
+    ModuleManager::ActionRegistry actionRegistry;
     QActionGroup *moduleActionGroup {nullptr};
 };
 
 // PUBLIC
 
-ModuleManager::ModuleManager(QStackedWidget &moduleStackWidget, QObject *parent) noexcept
+ModuleManager::ModuleManager(QLayout &layout, QObject *parent) noexcept
     : QObject(parent),
-      d(std::make_unique<ModuleManagerPrivate>(moduleStackWidget))
+      d(std::make_unique<ModuleManagerPrivate>(layout))
 {
     enumerateModules();
     if (d->moduleRegistry.count() > 0) {
@@ -106,7 +106,7 @@ ModuleManager::~ModuleManager() noexcept
 #endif
 }
 
-const ModuleManager::Actions &ModuleManager::getModules() const noexcept
+const ModuleManager::ActionRegistry &ModuleManager::getActionRegistry() const noexcept
 {
     return d->actionRegistry;
 }
@@ -136,7 +136,7 @@ void ModuleManager::activateModule(QUuid uuid) noexcept
         d->activeModule = qobject_cast<ModuleIntf *>(plugin);
         if (d->activeModule != nullptr) {
             d->activeModuleUuid = uuid;
-            d->moduleStackWidget.addWidget(&d->activeModule->getWidget());
+            d->layout.addWidget(&d->activeModule->getWidget());
 
             // @todo IMPLEMENT ME Exchange/update widgets
           //  d->moduleStackWidget.setCurrentWidget(&module->getWidget());
