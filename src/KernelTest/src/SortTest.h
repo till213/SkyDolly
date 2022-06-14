@@ -22,47 +22,23 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SKYMATHTEST_H
-#define SKYMATHTEST_H
+#ifndef SORTTEST_H
+#define SORTTEST_H
 
 #include <QObject>
 
 /*!
- * Test cases for the SkyMath module.
+ * Test cases for the Sort module.
  */
-class SkyMathTest : public QObject
+class SortTest : public QObject
 {
     Q_OBJECT
 private slots:
     void initTestCase();
     void cleanupTestCase();
 
-    void interpolateHermite180_data();
-    void interpolateHermite180();
-
-    void interpolateHermite360_data();
-    void interpolateHermite360();
-
-    void fromPosition_data();
-    void fromPosition();
-
-    void toPosition_data();
-    void toPosition();
-
-    void fromPercent_data();
-    void fromPercent();
-
-    void toPercent_data();
-    void toPercent();
-
-    void relativePosition_data();
-    void relativePosition();
-
-    void headingChange_data();
-    void headingChange();
-
-    void bankAngle_data();
-    void bankAngle();
+    void topologicalSort_data();
+    void topologicalSort();
 };
 
-#endif // SKYMATHTEST_H
+#endif // SORTTEST_H
