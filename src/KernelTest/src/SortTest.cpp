@@ -40,44 +40,54 @@ void SortTest::cleanupTestCase()
 
 void SortTest::topologicalSort_data()
 {
-//    QTest::addColumn<double>("p0");
-//    QTest::addColumn<double>("p1");
-//    QTest::addColumn<double>("p2");
+    QTest::addColumn<std::vector<int>>("nodes");
+    QTest::addColumn<std::vector<std::vector<int>>>("vertices");
+    QTest::addColumn<std::vector<int>>("expected");
 //    QTest::addColumn<double>("p3");
 //    QTest::addColumn<double>("mu");
 //    QTest::addColumn<double>("expected");
+
+    QTest::newRow("Case 1") << 1 << std::vector<int> {2, 3};
 
 }
 
 void SortTest::topologicalSort()
 {
     // Setup
-//    QFETCH(double, p0);
-//    QFETCH(double, p1);
+    QFETCH(std::vector<int>, nodes);
+    QFETCH(std::vector<std::vector<int>>, vertices);
 //    QFETCH(double, p2);
 //    QFETCH(double, p3);
 //    QFETCH(double, mu);
 //    QFETCH(double, expected);
 
+    // @todo IMPLEMENT ME
     Sort<int>::Graph graph;
-    Sort<int>::Node n1;
-    n1.id = 1;
-    graph[n1.id] = &n1;
-    Sort<int>::Node n2;
-    n2.id = 2;
-    graph[n2.id] = &n2;
-    Sort<int>::Node n3;
-    n3.id = 3;
-    graph[n3.id] = &n3;
+    for (const auto id : nodes) {
+        Sort<int>::Node node {id};
+        for (const auto v : vertices) {
+            node.vertices
+        graph[id] = node;
+    }
 
-    n1.vertices.push_back(&n2);
-    n1.vertices.push_back(&n3);
-    n2.vertices.push_back(&n3);
+
+//    Sort<int>::Node n1;
+//    n1.id = 1;
+//    graph[n1.id] = &n1;
+//    Sort<int>::Node n2;
+//    n2.id = 2;
+//    graph[n2.id] = &n2;
+//    Sort<int>::Node n3;
+//    n3.id = 3;
+//    graph[n3.id] = &n3;
+
+//    n1.vertices.push_back(&n2);
+//    n1.vertices.push_back(&n3);
+//    n2.vertices.push_back(&n3);
 
     // Exercise
     std::stack<Sort<int>::Node *> sorted = Sort<int>::topolocicalSort(graph);
 
-    qDebug("List");
     // Verify
     QCOMPARE(sorted.top()->id, 1);
     sorted.pop();

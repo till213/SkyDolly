@@ -42,12 +42,20 @@ public:
 
     struct Node
     {
+        explicit Node()
+            : id(T())
+        {};
+
+        explicit Node(T theId)
+            : id(theId)
+        {};
+
         T id;
         std::vector<Node *> vertices;
         State state {State::NotVisited};
     };
 
-    using Graph = std::unordered_map<T, Node *, H>;
+    using Graph = std::unordered_map<T, Node, H>;
 
     /*!
      * Sorts the nodes in the \c graph in topological order. A topological sort or topological
@@ -63,10 +71,10 @@ public:
     {
         std::stack<Node *> sortedStack;
         for (auto &it : graph) {
-            it.second->state = State::NotVisited;
+            it.second.state = State::NotVisited;
         }
         for (auto &it : graph) {
-            if (it.second->state != State::Done) {
+            if (it.second.state != State::Done) {
                 visit(it.second, sortedStack);
             }
         }
@@ -74,22 +82,22 @@ public:
     }
 
 private:
-    static void visit(Node *node, std::stack<Node *> &sorted) noexcept
+    static void visit(Node &node, std::stack<Node *> &sorted) noexcept
     {
-        if (node->state == State::Done) {
+        if (node.state == State::Done) {
             return;
-        } else if (node->state == State::Visiting) {
-            // Not a DAG
+        } else if (node.state == State::Visiting) {
+            // Not a DAG -> reset the stack
             sorted = std::stack<Node *>();
             return;
         }
 
-        node->state = State::Visiting;
-        for (Node *n : node->vertices) {
-            visit(n, sorted);
+        node.state = State::Visiting;
+        for (Node *n : node.vertices) {
+            visit(*n, sorted);
         }
-        node->state = State::Done;
-        sorted.push(node);
+        node.state = State::Done;
+        sorted.push(&node);
     }
 };
 
