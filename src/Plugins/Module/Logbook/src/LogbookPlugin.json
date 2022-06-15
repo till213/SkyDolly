@@ -1,4 +1,5 @@
 {
     "uuid": "441c2289-1aab-4724-9651-c74d4961270f",
-    "name": "Logbook"
+    "name": "Logbook",
+    "after": [ ]
 }

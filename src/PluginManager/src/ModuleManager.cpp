@@ -35,6 +35,7 @@
 #include <QDir>
 #include <QPluginLoader>
 #include <QCoreApplication>
+#include <QJsonArray>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -43,6 +44,7 @@
 
 #include <Kernel/Enum.h>
 #include <Kernel/QUuidHasher.h>
+#include <Kernel/Sort.h>
 #include "ModuleIntf.h"
 #include "ModuleManager.h"
 
@@ -56,6 +58,7 @@ namespace
 #endif
     constexpr char PluginUuidKey[] = "uuid";
     constexpr char PluginNameKey[] = "name";
+    constexpr char PluginAfter[] = "after";
 }
 
 struct ModuleManagerPrivate
@@ -81,7 +84,7 @@ struct ModuleManagerPrivate
     ModuleIntf *activeModule {nullptr};
     QUuid activeModuleUuid;
     // Key: uuid - value: plugin path
-    std::unordered_map<QUuid, QString, QUuidHasher> moduleRegistry;
+    tsl::ordered_map<QUuid, QString, QUuidHasher> moduleRegistry;
     ModuleManager::ActionRegistry actionRegistry;
     std::vector<QKeySequence> actionShortcuts {Qt::Key_F1, Qt::Key_F2, Qt::Key_F3, Qt::Key_F4, Qt::Key_F5, Qt::Key_F6, Qt::Key_F7, Qt::Key_F8, Qt::Key_F9,
                                                Qt::Key_F10, Qt::Key_F11, Qt::Key_F12, Qt::Key_F13, Qt::Key_F14, Qt::Key_F15, Qt::Key_F16, Qt::Key_F17,
@@ -174,11 +177,19 @@ void ModuleManager::setPaused(bool enable) noexcept
 
 void ModuleManager::enumerateModules() noexcept
 {
+    using Sort = Sort<QUuid, QUuidHasher>;
+    using Graph = Sort::Graph;
+    using Vertex = Sort::Vertex;
+    // First: module name - second: path
+    using Module = std::pair<QString, QString>;
+
+    Graph graph;
+    std::deque<std::shared_ptr<Vertex>> sortedModules;
+    std::unordered_map<QUuid, Module, QUuidHasher> modules;
     d->moduleRegistry.clear();
     if (d->pluginsDirectoryPath.exists(::ModuleDirectoryName)) {
         d->pluginsDirectoryPath.cd(::ModuleDirectoryName);
         const QStringList entryList = d->pluginsDirectoryPath.entryList(QDir::Files);
-        int count {0};
         for (const QString &fileName : entryList) {
             const QString pluginPath = d->pluginsDirectoryPath.absoluteFilePath(fileName);
             d->pluginLoader->setFileName(pluginPath);
@@ -186,18 +197,55 @@ void ModuleManager::enumerateModules() noexcept
             if (!metaData.isEmpty()) {
                 const QJsonObject pluginMetadata = metaData.value("MetaData").toObject();
                 const QUuid uuid = pluginMetadata.value(::PluginUuidKey).toString();
-                const QString pluginName = pluginMetadata.value(::PluginNameKey).toString();
-                QAction *action = d->moduleActionGroup->addAction(pluginName);
-                if (count < d->actionShortcuts.size()) {
-                    action->setShortcut(d->actionShortcuts[count]);
+                const QString name = pluginMetadata.value(::PluginNameKey).toString();
+                modules[uuid] = std::make_pair(name, pluginPath);
+                const QJsonArray afterArray = pluginMetadata.value(::PluginAfter).toArray();
+
+                std::shared_ptr<Vertex> vertex ;
+                const auto it = graph.find(uuid);
+                // Vertex already in graph?
+                if (it == graph.end()) {
+                    vertex = std::make_shared<Vertex>(uuid);
+                    graph[uuid] = vertex;
+                } else {
+                    vertex = it->second;
                 }
-                action->setData(uuid);
-                action->setCheckable(true);
-                d->actionRegistry[uuid] = action;
-                d->moduleRegistry[uuid] = pluginPath;
-                ++count;
+                for (const auto &j : afterArray) {
+                    const QString uuidString = j.toString();
+                    const QUuid uuid {uuidString};
+                    // This 'vertex' (module) comes after the 'afterVertex'
+                    std::shared_ptr<Vertex> afterVertex {nullptr};
+                    const auto it = graph.find(uuid);
+                    // Neighbouring vertex already in graph?
+                    if (it == graph.end()) {
+                        afterVertex = std::make_shared<Vertex>(uuid);
+                        graph[uuid] = afterVertex;
+                    } else {
+                        afterVertex = it->second;
+                    }
+                    vertex->edges.push_back(afterVertex);
+                }
             }
         }
+
+        // Reverse sorting, because the "after" edge (directed from A to B: A --- after ---> B) really means that
+        // "first B, then A" (= reversed topological sorting)
+        sortedModules = Sort::topologicalSort(graph, Sort::Sorting::Reverse);
+        int count {0};
+        for (const auto &sortedModule : sortedModules) {
+            const QUuid uuid {sortedModule->id};
+            Module module = modules.at(uuid);
+            QAction *action = d->moduleActionGroup->addAction(module.first);
+            if (count < d->actionShortcuts.size()) {
+                action->setShortcut(d->actionShortcuts[count]);
+            }
+            action->setData(sortedModule->id);
+            action->setCheckable(true);
+            d->actionRegistry[uuid] = action;
+            d->moduleRegistry[uuid] = module.second;
+            ++count;
+        }
+
         d->pluginsDirectoryPath.cdUp();
     }
 }
