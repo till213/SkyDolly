@@ -23,6 +23,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 #include <stack>
+#include <vector>
+#include <unordered_map>
+#include <memory>
+#include <utility>
 
 #include <QtTest/QtTest>
 
@@ -32,6 +36,13 @@
 
 // PRIVATE SLOTS
 
+using ID = int;
+// The edges to the vertices, identified by their ID
+using EdgeList = std::vector<ID>;
+// Defines an edge from 'first' to all other vertices in 'second', identified by their ID
+using PerVertexEdgeList = std::pair<ID, EdgeList>;
+using Vertex = Sort<ID>::Vertex;
+
 void SortTest::initTestCase()
 {}
 
@@ -40,61 +51,51 @@ void SortTest::cleanupTestCase()
 
 void SortTest::topologicalSort_data()
 {
-    QTest::addColumn<std::vector<int>>("nodes");
-    QTest::addColumn<std::vector<std::vector<int>>>("vertices");
-    QTest::addColumn<std::vector<int>>("expected");
-//    QTest::addColumn<double>("p3");
-//    QTest::addColumn<double>("mu");
-//    QTest::addColumn<double>("expected");
+    QTest::addColumn<std::vector<ID>>("vertices");
+    // Key: node ID - value: list of node IDs ("edges")
+    QTest::addColumn<std::vector<PerVertexEdgeList>>("edgeLists");
+    QTest::addColumn<std::vector<ID>>("expectedIDs");
 
-    QTest::newRow("Case 1") << 1 << std::vector<int> {2, 3};
+
+    QTest::newRow("Case 1") << std::vector<ID> {1, 2, 3}
+                            << std::vector<PerVertexEdgeList> { std::make_pair(1, std::vector<int> {2, 3}),
+                                                                std::make_pair(2, std::vector<int> {3})
+                                                              }
+                            << std::vector<ID> {1, 2, 3};
 
 }
 
 void SortTest::topologicalSort()
 {
-    // Setup
-    QFETCH(std::vector<int>, nodes);
-    QFETCH(std::vector<std::vector<int>>, vertices);
-//    QFETCH(double, p2);
-//    QFETCH(double, p3);
-//    QFETCH(double, mu);
-//    QFETCH(double, expected);
 
-    // @todo IMPLEMENT ME
+    // Setup
+    QFETCH(std::vector<ID>, vertices);
+    QFETCH(std::vector<PerVertexEdgeList>, edgeLists);
+    QFETCH(std::vector<ID>, expectedIDs);
+
     Sort<int>::Graph graph;
-    for (const auto id : nodes) {
-        Sort<int>::Node node {id};
-        for (const auto v : vertices) {
-            node.vertices
-        graph[id] = node;
+    for (ID id : vertices) {
+        std::shared_ptr<Vertex> vertex = std::make_shared<Vertex>(id);
+        graph[id] = vertex;
     }
 
-
-//    Sort<int>::Node n1;
-//    n1.id = 1;
-//    graph[n1.id] = &n1;
-//    Sort<int>::Node n2;
-//    n2.id = 2;
-//    graph[n2.id] = &n2;
-//    Sort<int>::Node n3;
-//    n3.id = 3;
-//    graph[n3.id] = &n3;
-
-//    n1.vertices.push_back(&n2);
-//    n1.vertices.push_back(&n3);
-//    n2.vertices.push_back(&n3);
+    for (const auto &l : edgeLists) {
+        int nodeId = l.first;
+        std::vector<ID> edgeList = l.second;
+        std::shared_ptr<Vertex> sourceVertex = graph.at(nodeId);
+        for (const int id : edgeList) {
+            sourceVertex->edges.push_back(graph.at(id));
+        }
+    }
 
     // Exercise
-    std::stack<Sort<int>::Node *> sorted = Sort<int>::topolocicalSort(graph);
+    std::stack<std::shared_ptr<Vertex>> sorted = Sort<ID>::topolocicalSort(graph);
 
     // Verify
-    QCOMPARE(sorted.top()->id, 1);
-    sorted.pop();
-    QCOMPARE(sorted.top()->id, 2);
-    sorted.pop();
-    QCOMPARE(sorted.top()->id, 3);
-    sorted.pop();
+    for (int id : expectedIDs) {
+        QCOMPARE(sorted.top()->id, id);
+        sorted.pop();
+    }
 }
 
 QTEST_MAIN(SortTest)

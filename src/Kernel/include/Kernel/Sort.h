@@ -29,6 +29,7 @@
 #include <unordered_map>
 #include <stack>
 #include <functional>
+#include <memory>
 
 template <typename T, typename H = std::hash<T>> class Sort
 {
@@ -40,25 +41,28 @@ public:
         Done
     };
 
-    struct Node
+    struct Vertex
     {
-        explicit Node()
+        explicit Vertex()
             : id(T())
         {};
 
-        explicit Node(T theId)
+        explicit Vertex(T theId)
             : id(theId)
         {};
 
         T id;
-        std::vector<Node *> vertices;
+        /*!
+         * The edges are defined by this and their end vertices given in the \c edges list.
+         */
+        std::vector<std::shared_ptr<Vertex>> edges;
         State state {State::NotVisited};
     };
 
-    using Graph = std::unordered_map<T, Node, H>;
+    using Graph = std::unordered_map<T, std::shared_ptr<Vertex>, H>;
 
     /*!
-     * Sorts the nodes in the \c graph in topological order. A topological sort or topological
+     * Sorts the vertices in the \c graph in topological order. A topological sort or topological
      * ordering of a directed graph is a linear ordering of its vertices such that for every
      * directed edge uv from vertex u to vertex v, u comes before v in the ordering.
      *
@@ -67,14 +71,14 @@ public:
      * \return the nodes sorted in topological order, with the first node on top of the stack;
      *         an empty stack if the \c graph is empty as well or not a directed acyclic graph (DAG)
      */
-    static std::stack<Node *> topolocicalSort(Graph &graph) noexcept
+    static std::stack<std::shared_ptr<Vertex>> topolocicalSort(Graph &graph) noexcept
     {
-        std::stack<Node *> sortedStack;
+        std::stack<std::shared_ptr<Vertex>> sortedStack;
         for (auto &it : graph) {
-            it.second.state = State::NotVisited;
+            it.second->state = State::NotVisited;
         }
         for (auto &it : graph) {
-            if (it.second.state != State::Done) {
+            if (it.second->state != State::Done) {
                 visit(it.second, sortedStack);
             }
         }
@@ -82,22 +86,22 @@ public:
     }
 
 private:
-    static void visit(Node &node, std::stack<Node *> &sorted) noexcept
+    static void visit(std::shared_ptr<Vertex> vertex, std::stack<std::shared_ptr<Vertex>> &sorted) noexcept
     {
-        if (node.state == State::Done) {
+        if (vertex->state == State::Done) {
             return;
-        } else if (node.state == State::Visiting) {
+        } else if (vertex->state == State::Visiting) {
             // Not a DAG -> reset the stack
-            sorted = std::stack<Node *>();
+            sorted = std::stack<std::shared_ptr<Vertex>>();
             return;
         }
 
-        node.state = State::Visiting;
-        for (Node *n : node.vertices) {
-            visit(*n, sorted);
+        vertex->state = State::Visiting;
+        for (std::shared_ptr<Vertex> n : vertex->edges) {
+            visit(n, sorted);
         }
-        node.state = State::Done;
-        sorted.push(&node);
+        vertex->state = State::Done;
+        sorted.push(vertex);
     }
 };
 
