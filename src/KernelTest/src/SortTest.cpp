@@ -42,6 +42,7 @@ using EdgeList = std::vector<ID>;
 // Defines an edge from 'first' to all other vertices in 'second', identified by their ID
 using PerVertexEdgeList = std::pair<ID, EdgeList>;
 using Vertex = Sort<ID>::Vertex;
+using Sorting = Sort<ID>::Sorting;
 
 void SortTest::initTestCase()
 {}
@@ -49,20 +50,55 @@ void SortTest::initTestCase()
 void SortTest::cleanupTestCase()
 {}
 
+Q_DECLARE_METATYPE(Sorting);
+
 void SortTest::topologicalSort_data()
 {
     QTest::addColumn<std::vector<ID>>("vertices");
     // Key: node ID - value: list of node IDs ("edges")
     QTest::addColumn<std::vector<PerVertexEdgeList>>("edgeLists");
+    QTest::addColumn<Sort<ID>::Sorting>("sorting");
     QTest::addColumn<std::vector<ID>>("expectedIDs");
 
-
-    QTest::newRow("Case 1") << std::vector<ID> {1, 2, 3}
-                            << std::vector<PerVertexEdgeList> { std::make_pair(1, std::vector<int> {2, 3}),
-                                                                std::make_pair(2, std::vector<int> {3})
-                                                              }
-                            << std::vector<ID> {1, 2, 3};
-
+    QTest::newRow("Normal order") << std::vector<ID> {1, 2, 3}
+                                  << std::vector<PerVertexEdgeList> { std::make_pair(1, std::vector<int> {2, 3}),
+                                                                      std::make_pair(2, std::vector<int> {3})
+                                                                    }
+                                  << Sorting::Normal
+                                  << std::vector<ID> {1, 2, 3};
+    QTest::newRow("Reverse order") << std::vector<ID> {1, 2, 3}
+                                   << std::vector<PerVertexEdgeList> { std::make_pair(1, std::vector<int> {2, 3}),
+                                                                       std::make_pair(2, std::vector<int> {3})
+                                                                     }
+                                   << Sorting::Reverse
+                                   << std::vector<ID> {3, 2, 1};
+    QTest::newRow("No edges 1") << std::vector<ID> {1, 2, 3}
+                                << std::vector<PerVertexEdgeList> {}
+                                << Sorting::Normal
+                                << std::vector<ID> {3, 2, 1};
+    QTest::newRow("No edges 2") << std::vector<ID> {1, 2, 3}
+                                << std::vector<PerVertexEdgeList> {}
+                                << Sorting::Reverse
+                                << std::vector<ID> {1, 2, 3};
+    QTest::newRow("No edges 3") << std::vector<ID> {3, 2, 1}
+                                << std::vector<PerVertexEdgeList> {}
+                                << Sorting::Normal
+                                << std::vector<ID> {1, 2, 3};
+    QTest::newRow("No edges 4") << std::vector<ID> {3, 2, 1}
+                                << std::vector<PerVertexEdgeList> {}
+                                << Sorting::Reverse
+                                << std::vector<ID> {3, 2, 1};
+    QTest::newRow("Not a DAG") << std::vector<ID> {1, 2, 3}
+                               << std::vector<PerVertexEdgeList> { std::make_pair(1, std::vector<int> {2, 3}),
+                                                                   std::make_pair(2, std::vector<int> {3}),
+                                                                   std::make_pair(3, std::vector<int> {1})
+                                                                 }
+                               << Sorting::Normal
+                               << std::vector<ID> {};
+    QTest::newRow("Empty DAG") << std::vector<ID> {}
+                               << std::vector<PerVertexEdgeList> {}
+                               << Sorting::Normal
+                               << std::vector<ID> {};
 }
 
 void SortTest::topologicalSort()
@@ -71,6 +107,7 @@ void SortTest::topologicalSort()
     // Setup
     QFETCH(std::vector<ID>, vertices);
     QFETCH(std::vector<PerVertexEdgeList>, edgeLists);
+    QFETCH(Sorting, sorting);
     QFETCH(std::vector<ID>, expectedIDs);
 
     Sort<int>::Graph graph;
@@ -89,12 +126,17 @@ void SortTest::topologicalSort()
     }
 
     // Exercise
-    std::stack<std::shared_ptr<Vertex>> sorted = Sort<ID>::topolocicalSort(graph);
+    std::deque<std::shared_ptr<Vertex>> sorted = Sort<ID>::topologicalSort(graph, sorting);
 
     // Verify
-    for (int id : expectedIDs) {
-        QCOMPARE(sorted.top()->id, id);
-        sorted.pop();
+    int i {0};
+    if (expectedIDs.size() > 0) {
+        for (int id : expectedIDs) {
+            QCOMPARE(sorted.at(i)->id, id);
+            ++i;
+        }
+    } else {
+        QCOMPARE(sorted.size(), 0);
     }
 }
 

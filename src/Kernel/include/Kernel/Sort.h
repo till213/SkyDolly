@@ -26,11 +26,18 @@
 #define SORT_H
 
 #include <vector>
-#include <unordered_map>
-#include <stack>
+#include <deque>
 #include <functional>
 #include <memory>
 
+#include <tsl/ordered_map.h>
+
+/*!
+ * Sorts elements (vertices) in topological order, depending on their \c edges which define the
+ * dependencies. In case no edges exist the order is the reverse order in which the elements (vertices)
+ * have been added to the Graph with Sorting = Normal (due to the depth first visit pattern) respectively
+ * the same order of insertion with Sorting = Reverse.
+ */
 template <typename T, typename H = std::hash<T>> class Sort
 {
 public:
@@ -39,6 +46,11 @@ public:
         NotVisited,
         Visiting,
         Done
+    };
+    enum struct Sorting
+    {
+        Normal,
+        Reverse,
     };
 
     struct Vertex
@@ -59,49 +71,71 @@ public:
         State state {State::NotVisited};
     };
 
-    using Graph = std::unordered_map<T, std::shared_ptr<Vertex>, H>;
+    using Graph = tsl::ordered_map<T, std::shared_ptr<Vertex>, H>;
 
     /*!
      * Sorts the vertices in the \c graph in topological order. A topological sort or topological
      * ordering of a directed graph is a linear ordering of its vertices such that for every
-     * directed edge uv from vertex u to vertex v, u comes before v in the ordering.
+     * directed edge uv from vertex u to vertex v, u comes before v in the ordering, unless
+     * \c reverse is set to \c true in which case a directed edge from vertex u to v means "u depends
+     * on v" (or "u comes after v").
      *
      * \param graph
      *        the graph to be sorted
-     * \return the nodes sorted in topological order, with the first node on top of the stack;
-     *         an empty stack if the \c graph is empty as well or not a directed acyclic graph (DAG)
+     * \return the nodes sorted in topological order, with the first node at beginning of the deque;
+     *         an empty deque if the \c graph is either empty or not a directed acyclic graph (DAG)
      */
-    static std::stack<std::shared_ptr<Vertex>> topolocicalSort(Graph &graph) noexcept
+    static std::deque<std::shared_ptr<Vertex>> topologicalSort(Graph &graph, Sorting sorting = Sorting::Normal) noexcept
     {
-        std::stack<std::shared_ptr<Vertex>> sortedStack;
+        std::deque<std::shared_ptr<Vertex>> sorted;
         for (auto &it : graph) {
             it.second->state = State::NotVisited;
         }
+        bool ok {true};
         for (auto &it : graph) {
             if (it.second->state != State::Done) {
-                visit(it.second, sortedStack);
+                ok = visit(it.second, sorting, sorted);
+                if (!ok) {
+                    // Not a DAG -> clear sorted vertices
+                    sorted.clear();
+                    break;
+                }
             }
         }
-        return sortedStack;
+        return sorted;
     }
 
 private:
-    static void visit(std::shared_ptr<Vertex> vertex, std::stack<std::shared_ptr<Vertex>> &sorted) noexcept
+    // Traverses the vertices (starting from the given 'vertex') in depth-first order, adding the 'vertex' to
+    // the 'sorted' deque (at the front when sorted = Normal, at the end when Reverse) once all its neighbouring
+    // vertices have completely been recursively visited.
+    // Returns true if the visit was successful or false in case a cycle was detected (in which case the 'sorted' result
+    // is left as is, without cycle)
+    static bool visit(std::shared_ptr<Vertex> vertex, Sorting sorting, std::deque<std::shared_ptr<Vertex>> &sorted) noexcept
     {
         if (vertex->state == State::Done) {
-            return;
+            // Already visited
+            return true;
         } else if (vertex->state == State::Visiting) {
-            // Not a DAG -> reset the stack
-            sorted = std::stack<std::shared_ptr<Vertex>>();
-            return;
+            // Not a DAG (cycle detected)
+            return false;
         }
 
         vertex->state = State::Visiting;
+        bool ok {true};
         for (std::shared_ptr<Vertex> n : vertex->edges) {
-            visit(n, sorted);
+            ok = visit(n, sorting, sorted);
+            if (!ok) {
+                break;
+            }
         }
         vertex->state = State::Done;
-        sorted.push(vertex);
+        if (sorting == Sorting::Normal) {
+            sorted.push_front(vertex);
+        } else {
+            sorted.push_back(vertex);
+        }
+        return ok;
     }
 };
 

@@ -45,6 +45,7 @@ target_link_libraries(${LIBRARY_NAME}
     PUBLIC
         Qt${QT_VERSION_MAJOR}::Widgets
         GeographicLib::GeographicLib
+        tsl::ordered_map
     PRIVATE
         GitInfo
 )
