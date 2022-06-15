@@ -11,6 +11,9 @@ name: Microsoft C++ Code Analysis
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - src/**
+      - 3rdParty/**
   pull_request:
     branches: [ "main" ]
   schedule:
