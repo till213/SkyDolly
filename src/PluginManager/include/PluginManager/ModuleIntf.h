@@ -33,10 +33,17 @@ class QWidget;
 class ModuleIntf
 {
 public:
+    enum struct RecordIconId
+    {
+        Normal,
+        Add
+    };
+
     virtual ~ModuleIntf() = default;
 
     virtual QString getModuleName() const noexcept = 0;
     virtual QWidget &getWidget() noexcept = 0;
+    virtual RecordIconId getRecordIconId() const noexcept = 0;
 
     virtual void setRecording(bool enable) noexcept = 0;
     virtual void setPaused(bool enable) noexcept = 0;

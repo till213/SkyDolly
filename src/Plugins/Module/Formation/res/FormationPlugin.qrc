@@ -1,11 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>img/icons/aircraft-normal-off.png</file>
-        <file>img/icons/aircraft-normal-off@2x.png</file>
-        <file>img/icons/aircraft-normal.png</file>
-        <file>img/icons/aircraft-normal@2x.png</file>
-        <file>img/icons/aircraft-record-normal.png</file>
-        <file>img/icons/aircraft-record-normal@2x.png</file>
         <file>img/icons/fast-backward-offset-active.png</file>
         <file>img/icons/fast-backward-offset-active@2x.png</file>
         <file>img/icons/fast-backward-offset-normal.png</file>
@@ -22,7 +16,5 @@
         <file>img/icons/forward-offset-active@2x.png</file>
         <file>img/icons/forward-offset-normal.png</file>
         <file>img/icons/forward-offset-normal@2x.png</file>
-        <file>img/icons/aircraft-reference-normal.png</file>
-        <file>img/icons/aircraft-reference-normal@2x.png</file>
     </qresource>
 </RCC>

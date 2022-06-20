@@ -29,6 +29,7 @@
 #include <unordered_map>
 
 #include <QAction>
+#include <QIcon>
 #include <QActionGroup>
 #include <QKeySequence>
 #include <QLayout>
@@ -76,6 +77,15 @@ struct ModuleManagerPrivate
         }
 #endif
         pluginsDirectoryPath.cd(PluginDirectoryName);
+        if (recordIcon.isNull()) {
+            recordIcon.addFile(":/img/icons/record-normal.png", QSize(), QIcon::Normal, QIcon::Off);
+            recordIcon.addFile(":/img/icons/record-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
+            recordIcon.addFile(":/img/icons/record-active.png", QSize(), QIcon::Active);
+
+            recordAddIcon.addFile(":/img/icons/record-add-normal.png", QSize(), QIcon::Normal, QIcon::Off);
+            recordAddIcon.addFile(":/img/icons/record-add-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
+            recordAddIcon.addFile(":/img/icons/record-add-active.png", QSize(), QIcon::Active);
+        }
     }
 
     std::unique_ptr<QPluginLoader> pluginLoader {std::make_unique<QPluginLoader>()};
@@ -87,10 +97,19 @@ struct ModuleManagerPrivate
     // Key: uuid - value: plugin path
     tsl::ordered_map<QUuid, QString, QUuidHasher> moduleRegistry;
     ModuleManager::ActionRegistry actionRegistry;
-    std::vector<QKeySequence> actionShortcuts {Qt::Key_F1, Qt::Key_F2, Qt::Key_F3, Qt::Key_F4, Qt::Key_F5, Qt::Key_F6, Qt::Key_F7, Qt::Key_F8, Qt::Key_F9,
-                                               Qt::Key_F10, Qt::Key_F11, Qt::Key_F12, Qt::Key_F13, Qt::Key_F14, Qt::Key_F15, Qt::Key_F16, Qt::Key_F17,
-                                               Qt::Key_F18, Qt::Key_F19, Qt::Key_F20};
+    static const std::vector<QKeySequence> actionShortcuts;
+    static QIcon recordIcon;
+    static QIcon recordAddIcon;
 };
+
+const std::vector<QKeySequence> ModuleManagerPrivate::actionShortcuts {
+    Qt::Key_F1, Qt::Key_F2, Qt::Key_F3, Qt::Key_F4, Qt::Key_F5, Qt::Key_F6, Qt::Key_F7, Qt::Key_F8, Qt::Key_F9,
+    Qt::Key_F10, Qt::Key_F11, Qt::Key_F12, Qt::Key_F13, Qt::Key_F14, Qt::Key_F15, Qt::Key_F16, Qt::Key_F17,
+    Qt::Key_F18, Qt::Key_F19, Qt::Key_F20
+};
+
+QIcon ModuleManagerPrivate::recordIcon;
+QIcon ModuleManagerPrivate::recordAddIcon;
 
 // PUBLIC
 
@@ -98,6 +117,7 @@ ModuleManager::ModuleManager(QLayout &layout, QObject *parent) noexcept
     : QObject(parent),
       d(std::make_unique<ModuleManagerPrivate>(layout))
 {
+    Q_INIT_RESOURCE(PluginManager);
     initModules();
     if (d->moduleRegistry.size() > 0) {
         activateModule(d->moduleRegistry.begin()->first);
@@ -151,6 +171,23 @@ void ModuleManager::activateModule(QUuid uuid) noexcept
             emit activated(d->activeModule->getModuleName(), uuid);
         }
     }
+}
+
+const QIcon &ModuleManager::getRecordIcon() const noexcept
+{
+    ModuleIntf::RecordIconId recordIconId {ModuleIntf::RecordIconId::Normal};
+    if (d->activeModule != nullptr) {
+        recordIconId = d->activeModule->getRecordIconId();
+    }
+    switch (recordIconId) {
+    case ModuleIntf::RecordIconId::Normal:
+        return d->recordIcon;
+        break;
+    case ModuleIntf::RecordIconId::Add:
+        return d->recordAddIcon;
+        break;
+    }
+    return d->recordIcon;
 }
 
 void ModuleManager::setRecording(bool enable) noexcept

@@ -45,6 +45,7 @@ public:
 
     QString getModuleName() const noexcept override;
     QWidget &getWidget() noexcept override;
+    RecordIconId getRecordIconId() const noexcept override;
 
 protected:
     void onStartRecording() noexcept override;

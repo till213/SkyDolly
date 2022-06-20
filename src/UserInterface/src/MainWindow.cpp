@@ -50,7 +50,6 @@
 #include <QRadioButton>
 #include <QDoubleValidator>
 #include <QIcon>
-#include <QStackedWidget>
 #include <QEvent>
 #include <QResizeEvent>
 #include <QCloseEvent>
@@ -1273,31 +1272,8 @@ void MainWindow::updateControlUi() noexcept
 
 void MainWindow::updateControlIcons() noexcept
 {
-    QIcon recordIcon;
-    const std::optional<std::reference_wrapper<ModuleIntf>> activeModule = d->moduleManager->getActiveModule();
-    if (activeModule) {
-        recordIcon.addFile(":/img/icons/record-normal.png", QSize(), QIcon::Normal, QIcon::Off);
-        recordIcon.addFile(":/img/icons/record-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
-        recordIcon.addFile(":/img/icons/record-active.png", QSize(), QIcon::Active);
-
-        // @todo IMPLEMENT ME Get icon from plugin
-//        switch (.getModuleId()) {
-//        case Module::Module::None:
-//            [[fallthrough]];
-//        case Module::Module::Logbook:
-//            recordIcon.addFile(":/img/icons/record-normal.png", QSize(), QIcon::Normal, QIcon::Off);
-//            recordIcon.addFile(":/img/icons/record-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
-//            recordIcon.addFile(":/img/icons/record-active.png", QSize(), QIcon::Active);
-//            break;
-//        case Module::Module::Formation:
-//            recordIcon.addFile(":/img/icons/record-add-normal.png", QSize(), QIcon::Normal, QIcon::Off);
-//            recordIcon.addFile(":/img/icons/record-add-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
-//            recordIcon.addFile(":/img/icons/record-add-active.png", QSize(), QIcon::Active);
-//            break;
-
-//        }
-        ui->recordAction->setIcon(recordIcon);
-    }
+    const QIcon &recordIcon = d->moduleManager->getRecordIcon();
+    ui->recordAction->setIcon(recordIcon);
 }
 
 void MainWindow::onDefaultMinimalUiButtonTextVisibilityChanged(bool visible) noexcept

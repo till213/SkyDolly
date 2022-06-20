@@ -35,6 +35,7 @@ target_sources(${LIBRARY_NAME}
         include/PluginManager/ModuleIntf.h
         include/PluginManager/ModulePluginBase.h src/ModulePluginBase.cpp
         include/PluginManager/ModuleManager.h src/ModuleManager.cpp
+        res/PluginManager.qrc
 )
 target_include_directories(${LIBRARY_NAME}
     INTERFACE

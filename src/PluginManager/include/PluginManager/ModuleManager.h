@@ -56,7 +56,6 @@ public:
     ~ModuleManager() noexcept override;
 
     using ActionRegistry = tsl::ordered_map<QUuid, QAction *, QUuidHasher>;
-
     const ActionRegistry &getActionRegistry() const noexcept;
 
     /*!
@@ -66,6 +65,13 @@ public:
      */
     std::optional<std::reference_wrapper<ModuleIntf>> getActiveModule() const noexcept;
     void activateModule(QUuid uuid) noexcept;
+
+    /*!
+     * Returns the \e record icon of the active module.
+     *
+     * \return the \e record icon of the active module
+     */
+    const QIcon &getRecordIcon() const noexcept;
 
     void setRecording(bool enable) noexcept;
     void setPlaying(bool enable) noexcept;

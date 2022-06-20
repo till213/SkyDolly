@@ -79,6 +79,11 @@ QWidget &FormationPlugin::getWidget() noexcept
     return *d->formationWidget;
 }
 
+ModuleIntf::RecordIconId FormationPlugin::getRecordIconId() const noexcept
+{
+    return ModuleIntf::RecordIconId::Add;
+}
+
 // PROTECTED
 
 void FormationPlugin::onStartRecording() noexcept
