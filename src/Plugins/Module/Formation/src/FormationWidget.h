@@ -36,7 +36,7 @@ class QAction;
 
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/ModuleIntf.h>
-#include <PluginManager/ModulePluginBase.h>
+#include <PluginManager/AbstractModule.h>
 #include "Formation.h"
 
 class Aircraft;

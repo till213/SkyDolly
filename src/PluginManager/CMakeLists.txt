@@ -33,7 +33,7 @@ target_sources(${LIBRARY_NAME}
         include/PluginManager/ExportPluginBaseSettings.h src/ExportPluginBaseSettings.cpp
         include/PluginManager/BasicExportDialog.h src/BasicExportDialog.cpp src/BasicExportDialog.ui
         include/PluginManager/ModuleIntf.h
-        include/PluginManager/ModulePluginBase.h src/ModulePluginBase.cpp
+        include/PluginManager/AbstractModule.h src/AbstractModule.cpp
         include/PluginManager/ModuleManager.h src/ModuleManager.cpp
         res/PluginManager.qrc
 )

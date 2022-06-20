@@ -22,8 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef MODULEPLUGINBASE_H
-#define MODULEPLUGINBASE_H
+#ifndef ABSTRACTMODULE_H
+#define ABSTRACTMODULE_H
 
 #include <memory>
 
@@ -35,15 +35,15 @@ class QWidget;
 #include "PluginManagerLib.h"
 
 class FlightService;
-struct ModulePluginBasePrivate;
+struct AbstractModulePrivate;
 
-class PLUGINMANAGER_API ModulePluginBase : public QObject, public ModuleIntf
+class PLUGINMANAGER_API AbstractModule : public QObject, public ModuleIntf
 {
     Q_OBJECT
     Q_INTERFACES(ModuleIntf)
 public:
-    explicit ModulePluginBase(QObject *parent = nullptr) noexcept;
-    ~ModulePluginBase() noexcept override;
+    explicit AbstractModule(QObject *parent = nullptr) noexcept;
+    ~AbstractModule() noexcept override;
 
     void setRecording(bool enable) noexcept override;
     void setPaused(bool enable) noexcept override;
@@ -60,9 +60,9 @@ protected slots:
     void onRecordingStopped() noexcept override;
 
 private:
-    std::unique_ptr<ModulePluginBasePrivate> d;
+    std::unique_ptr<AbstractModulePrivate> d;
 
     void frenchConnection() noexcept;
 };
 
-#endif // MODULEPLUGINBASE_H
+#endif // ABSTRACTMODULE_H

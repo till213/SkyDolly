@@ -30,11 +30,11 @@
 
 class QWidget;
 
-#include "PluginManager/ModulePluginBase.h"
+#include "PluginManager/AbstractModule.h"
 
 struct LogbookPluginPrivate;
 
-class LogbookPlugin : public ModulePluginBase
+class LogbookPlugin : public AbstractModule
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID MODULE_INTERFACE_IID FILE "LogbookPlugin.json")

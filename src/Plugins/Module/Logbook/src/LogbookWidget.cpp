@@ -70,7 +70,7 @@
 #include <Persistence/LogbookManager.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
-#include <PluginManager/ModulePluginBase.h>
+#include <PluginManager/AbstractModule.h>
 #include <Widget/Platform.h>
 #include <Widget/TableDateItem.h>
 #include <Widget/TableTimeItem.h>

@@ -38,7 +38,7 @@ class QTreeWidgetItem;
 class QString;
 
 #include <PluginManager/ModuleIntf.h>
-#include <PluginManager/ModulePluginBase.h>
+#include <PluginManager/AbstractModule.h>
 
 class DatabaseService;
 class FlightService;

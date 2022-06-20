@@ -54,29 +54,29 @@ class PLUGINMANAGER_API ImportPluginBase : public PluginBase, public ImportIntf
     Q_INTERFACES(ImportIntf)
 public:
     ImportPluginBase() noexcept;
-    virtual ~ImportPluginBase() noexcept;
+    ~ImportPluginBase() noexcept override;
 
-    virtual QWidget *getParentWidget() const noexcept override final
+    QWidget *getParentWidget() const noexcept final
     {
         return PluginBase::getParentWidget();
     }
 
-    virtual void setParentWidget(QWidget *parent) noexcept override final
+    void setParentWidget(QWidget *parent) noexcept final
     {
         PluginBase::setParentWidget(parent);
     }
 
-    virtual void storeSettings(const QUuid &pluginUuid) const noexcept override final
+    void storeSettings(const QUuid &pluginUuid) const noexcept final
     {
         PluginBase::storeSettings(pluginUuid);
     }
 
-    virtual void restoreSettings(const QUuid &pluginUuid) noexcept override final
+    void restoreSettings(const QUuid &pluginUuid) noexcept final
     {
         PluginBase::restoreSettings(pluginUuid);
     }
 
-    virtual bool importFlight(FlightService &flightService, Flight &flight) noexcept override final;
+    bool importFlight(FlightService &flightService, Flight &flight) noexcept final;
 
 protected:
     AircraftType &getSelectedAircraftType() const noexcept;
@@ -99,9 +99,9 @@ protected:
 private:
     std::unique_ptr<ImportPluginBasePrivate> d;
 
-    virtual void addSettings(Settings::KeyValues &keyValues) const noexcept override final;
-    virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept override final;
-    virtual void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept override final;
+    virtual void addSettings(Settings::KeyValues &keyValues) const noexcept final;
+    virtual void addKeysWithDefaults(Settings::KeysWithDefaults &keysWithDefaults) const noexcept final;
+    virtual void restoreSettings(Settings::ValuesByKey valuesByKey) noexcept final;
 
     bool importFlights(const QStringList &filePaths, FlightService &flightService, Flight &flight) noexcept;
     void updateAircraftInfo() noexcept;

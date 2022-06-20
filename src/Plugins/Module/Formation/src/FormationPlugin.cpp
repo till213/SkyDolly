@@ -53,7 +53,7 @@ struct FormationPluginPrivate
 // PUBLIC
 
 FormationPlugin::FormationPlugin(QObject *parent) noexcept
-    : ModulePluginBase(parent),
+    : AbstractModule(parent),
       d(std::make_unique<FormationPluginPrivate>(getFlightService()))
 {
      Q_INIT_RESOURCE(FormationPlugin);
@@ -123,6 +123,6 @@ void FormationPlugin::onRecordingStopped() noexcept
         // Sequence starts at 1
         d->aircraftService->store(flight.getId(), sequenceNumber, flight[sequenceNumber - 1]);
     } else {
-        ModulePluginBase::onRecordingStopped();
+        AbstractModule::onRecordingStopped();
     }
 }

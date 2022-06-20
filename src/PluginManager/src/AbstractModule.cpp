@@ -31,11 +31,11 @@
 #include "SkyConnectManager.h"
 #include "SkyConnectIntf.h"
 #include <Persistence/Service/FlightService.h>
-#include "ModulePluginBase.h"
+#include "AbstractModule.h"
 
-struct ModulePluginBasePrivate
+struct AbstractModulePrivate
 {
-    ModulePluginBasePrivate() noexcept
+    AbstractModulePrivate() noexcept
     {}
 
     std::unique_ptr<FlightService> flightService {std::make_unique<FlightService>()};
@@ -43,17 +43,17 @@ struct ModulePluginBasePrivate
 
 // PUBLIC
 
-ModulePluginBase::ModulePluginBase(QObject *parent) noexcept
+AbstractModule::AbstractModule(QObject *parent) noexcept
     : QObject(parent),
-      d(std::make_unique<ModulePluginBasePrivate>())
+      d(std::make_unique<AbstractModulePrivate>())
 {
     frenchConnection();
 }
 
-ModulePluginBase::~ModulePluginBase() noexcept
+AbstractModule::~AbstractModule() noexcept
 {}
 
-void ModulePluginBase::setRecording(bool enable) noexcept
+void AbstractModule::setRecording(bool enable) noexcept
 {
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     switch (skyConnectManager.getState()) {
@@ -76,12 +76,12 @@ void ModulePluginBase::setRecording(bool enable) noexcept
     }
 }
 
-void ModulePluginBase::setPaused(bool enable) noexcept
+void AbstractModule::setPaused(bool enable) noexcept
 {
     onPaused(enable);
 }
 
-void ModulePluginBase::setPlaying(bool enable) noexcept
+void AbstractModule::setPlaying(bool enable) noexcept
 {
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     if (skyConnectManager.isPaused() && enable) {
@@ -96,39 +96,39 @@ void ModulePluginBase::setPlaying(bool enable) noexcept
 
 // PROTECTED
 
-void ModulePluginBase::onStartRecording() noexcept
+void AbstractModule::onStartRecording() noexcept
 {
     SkyConnectManager::getInstance().startRecording(SkyConnectIntf::RecordingMode::SingleAircraft);
 }
 
-void ModulePluginBase::onPaused(bool enable) noexcept
+void AbstractModule::onPaused(bool enable) noexcept
 {
     SkyConnectManager::getInstance().setPaused(enable);
 }
 
-void ModulePluginBase::onStartReplay() noexcept
+void AbstractModule::onStartReplay() noexcept
 {
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     skyConnectManager.startReplay(skyConnectManager.isAtEnd());
 }
 
-FlightService &ModulePluginBase::getFlightService() const noexcept
+FlightService &AbstractModule::getFlightService() const noexcept
 {
     return *d->flightService;
 }
 
 // PROTECTED SLOTS
 
-void ModulePluginBase::onRecordingStopped() noexcept
+void AbstractModule::onRecordingStopped() noexcept
 {
     d->flightService->store(Logbook::getInstance().getCurrentFlight());
 }
 
 // PRIVATE
 
-void ModulePluginBase::frenchConnection() noexcept
+void AbstractModule::frenchConnection() noexcept
 {
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     connect(&skyConnectManager, &SkyConnectManager::recordingStopped,
-            this, &ModulePluginBase::onRecordingStopped);
+            this, &AbstractModule::onRecordingStopped);
 }

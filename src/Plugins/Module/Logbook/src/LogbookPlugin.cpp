@@ -52,7 +52,7 @@ struct LogbookPluginPrivate
 // PUBLIC
 
 LogbookPlugin::LogbookPlugin(QObject *parent) noexcept
-    : ModulePluginBase(parent),
+    : AbstractModule(parent),
       d(std::make_unique<LogbookPluginPrivate>(getFlightService()))
 {
 #ifdef DEBUG
@@ -92,6 +92,6 @@ void LogbookPlugin::onRecordingStopped() noexcept
         // Sequence starts at 1
         d->aircraftService->store(flight.getId(), sequenceNumber, flight[sequenceNumber - 1]);
     } else {
-        ModulePluginBase::onRecordingStopped();
+        AbstractModule::onRecordingStopped();
     }
 }
