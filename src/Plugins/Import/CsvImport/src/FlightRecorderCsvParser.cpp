@@ -428,7 +428,6 @@ inline bool FlightRecorderCsvParser::importValue(const QList<QByteArray> &values
         }
     }
     if (ok && idx < values.count()) {
-        // @todo call proper toXYZ method based on type T
         if constexpr (std::is_floating_point<T>::value) {
             if constexpr (std::is_same<T, double>::value) {
                 value = values.at(idx).toDouble(&ok);

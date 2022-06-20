@@ -843,11 +843,14 @@ void MainWindow::updateMinimalUi(bool enable)
 {
     Settings &settings = Settings::getInstance();
     settings.setMinimalUiEnabled(enable);
-    if (enable) {
+    const bool hasModules = d->moduleManager->getActiveModule().has_value();
+    ui->showMinimalAction->setEnabled(hasModules);
+    // Also enable minimal UI mode if no module plugins are available
+    if (enable || !hasModules) {
         ui->moduleVisibilityWidget->setHidden(true);
         ui->moduleSelectorWidget->setHidden(true);
         ui->showModulesAction->setChecked(false);
-        ui->showModulesAction->setEnabled(false);
+        ui->showModulesAction->setEnabled(false);  
     } else {
         const bool moduleSelectorVisible = settings.isModuleSelectorVisible();
         ui->moduleVisibilityWidget->setVisible(true);
