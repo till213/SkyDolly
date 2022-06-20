@@ -45,7 +45,7 @@ class QUuid;
 
 class skyConnectManagerPrivate;
 
-// @todo Gradually implement all methods from the SkyConnectIntf and then finally inherit from it
+/// \todo Gradually implement all methods from the SkyConnectIntf and then finally inherit from it
 class PLUGINMANAGER_API SkyConnectManager : public QObject
 {
     Q_OBJECT

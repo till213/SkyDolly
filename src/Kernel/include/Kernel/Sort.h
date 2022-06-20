@@ -82,6 +82,8 @@ public:
      *
      * \param graph
      *        the graph to be sorted
+     * \param sorting
+     *        the Sorting to be applied
      * \return the nodes sorted in topological order, with the first node at beginning of the deque;
      *         an empty deque if the \c graph is either empty or not a directed acyclic graph (DAG)
      */
