@@ -22,48 +22,51 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef ABSTRACTMODULE_H
-#define ABSTRACTMODULE_H
+#ifndef LOCATIONWIDGET_H
+#define LOCATIONWIDGET_H
 
 #include <memory>
+#include <forward_list>
+#include <cstdint>
 
-#include <QObject>
+#include <QWidget>
 
-class QWidget;
+class QShowEvent;
+class QHideEvent;
+class QAction;
+class QTreeWidgetItem;
+class QString;
 
-#include "ModuleIntf.h"
-#include "PluginManagerLib.h"
+#include <PluginManager/ModuleIntf.h>
+#include <PluginManager/AbstractModule.h>
 
+class DatabaseService;
 class FlightService;
-struct AbstractModulePrivate;
+class FlightDate;
+class FlightSummary;
+class TemplateWidgetPrivate;
 
-class PLUGINMANAGER_API AbstractModule : public QObject, public ModuleIntf
+namespace Ui {
+    class TemplateWidget;
+}
+
+class TemplateWidget : public QWidget
 {
     Q_OBJECT
-    Q_INTERFACES(ModuleIntf)
 public:
-    explicit AbstractModule(QObject *parent = nullptr) noexcept;
-    ~AbstractModule() noexcept override;
-
-    ModuleIntf::RecordIconId getRecordIconId() const noexcept override;
-    void setRecording(bool enable) noexcept override;
-    void setPaused(bool enable) noexcept override;
-    void setPlaying(bool enable) noexcept override;
-
-protected:
-    virtual void onStartRecording() noexcept;
-    virtual void onPaused(bool enable) noexcept;
-    virtual void onStartReplay() noexcept;
-
-    FlightService &getFlightService() const noexcept;
-
-protected slots:
-    void onRecordingStopped() noexcept override;
+    explicit TemplateWidget(QWidget *parent = nullptr) noexcept;
+    ~TemplateWidget() noexcept override;
 
 private:
-    std::unique_ptr<AbstractModulePrivate> d;
+    Q_DISABLE_COPY(TemplateWidget)
+    std::unique_ptr<Ui::TemplateWidget> ui;
+    std::unique_ptr<TemplateWidgetPrivate> d;
 
+    void initUi() noexcept;
     void frenchConnection() noexcept;
+
+private slots:
+    void updateUi() noexcept;
 };
 
-#endif // ABSTRACTMODULE_H
+#endif // LOCATIONWIDGET_H

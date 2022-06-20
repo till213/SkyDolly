@@ -22,48 +22,73 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef ABSTRACTMODULE_H
-#define ABSTRACTMODULE_H
 
 #include <memory>
 
-#include <QObject>
 
-class QWidget;
+#include <QCoreApplication>
+#include <QHideEvent>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
-#include "ModuleIntf.h"
-#include "PluginManagerLib.h"
+#include <PluginManager/SkyConnectManager.h>
+#include <PluginManager/SkyConnectIntf.h>
+#include <PluginManager/AbstractModule.h>
+#include "TemplateWidget.h"
+#include "ui_TemplateWidget.h"
 
-class FlightService;
-struct AbstractModulePrivate;
-
-class PLUGINMANAGER_API AbstractModule : public QObject, public ModuleIntf
+namespace
 {
-    Q_OBJECT
-    Q_INTERFACES(ModuleIntf)
+
+}
+
+class TemplateWidgetPrivate
+{
 public:
-    explicit AbstractModule(QObject *parent = nullptr) noexcept;
-    ~AbstractModule() noexcept override;
-
-    ModuleIntf::RecordIconId getRecordIconId() const noexcept override;
-    void setRecording(bool enable) noexcept override;
-    void setPaused(bool enable) noexcept override;
-    void setPlaying(bool enable) noexcept override;
-
-protected:
-    virtual void onStartRecording() noexcept;
-    virtual void onPaused(bool enable) noexcept;
-    virtual void onStartReplay() noexcept;
-
-    FlightService &getFlightService() const noexcept;
-
-protected slots:
-    void onRecordingStopped() noexcept override;
-
-private:
-    std::unique_ptr<AbstractModulePrivate> d;
-
-    void frenchConnection() noexcept;
+    TemplateWidgetPrivate() noexcept
+    {}
 };
 
-#endif // ABSTRACTMODULE_H
+// PUBLIC
+
+TemplateWidget::TemplateWidget(QWidget *parent) noexcept
+    : QWidget(parent),
+      ui(std::make_unique<Ui::TemplateWidget>()),
+      d(std::make_unique<TemplateWidgetPrivate>())
+{
+    ui->setupUi(this);
+    initUi();
+    updateUi();
+    frenchConnection();
+#ifdef DEBUG
+    qDebug() << "TemplateWidget::TemplateWidget: CREATED.";
+#endif
+}
+
+TemplateWidget::~TemplateWidget() noexcept
+{
+#ifdef DEBUG
+    qDebug() << "TemplateWidget::~TemplateWidget: DELETED.";
+#endif
+}
+
+
+// PRIVATE
+
+void TemplateWidget::initUi() noexcept
+{
+
+}
+
+void TemplateWidget::frenchConnection() noexcept
+{
+
+}
+
+// PRIVATE SLOTS
+
+void TemplateWidget::updateUi() noexcept
+{
+
+}

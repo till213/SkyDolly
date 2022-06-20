@@ -22,48 +22,50 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef ABSTRACTMODULE_H
-#define ABSTRACTMODULE_H
-
 #include <memory>
 
 #include <QObject>
+#include <QCoreApplication>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
-class QWidget;
+#include "TemplateWidget.h"
+#include "TemplatePlugin.h"
 
-#include "ModuleIntf.h"
-#include "PluginManagerLib.h"
-
-class FlightService;
-struct AbstractModulePrivate;
-
-class PLUGINMANAGER_API AbstractModule : public QObject, public ModuleIntf
+struct TemplatePluginPrivate
 {
-    Q_OBJECT
-    Q_INTERFACES(ModuleIntf)
-public:
-    explicit AbstractModule(QObject *parent = nullptr) noexcept;
-    ~AbstractModule() noexcept override;
+    TemplatePluginPrivate()
+        : locationWidget(std::make_unique<TemplateWidget>())
+    {}
 
-    ModuleIntf::RecordIconId getRecordIconId() const noexcept override;
-    void setRecording(bool enable) noexcept override;
-    void setPaused(bool enable) noexcept override;
-    void setPlaying(bool enable) noexcept override;
-
-protected:
-    virtual void onStartRecording() noexcept;
-    virtual void onPaused(bool enable) noexcept;
-    virtual void onStartReplay() noexcept;
-
-    FlightService &getFlightService() const noexcept;
-
-protected slots:
-    void onRecordingStopped() noexcept override;
-
-private:
-    std::unique_ptr<AbstractModulePrivate> d;
-
-    void frenchConnection() noexcept;
+    std::unique_ptr<TemplateWidget> locationWidget;
 };
 
-#endif // ABSTRACTMODULE_H
+// PUBLIC
+
+TemplatePlugin::TemplatePlugin(QObject *parent) noexcept
+    : AbstractModule(parent),
+      d(std::make_unique<TemplatePluginPrivate>())
+{
+#ifdef DEBUG
+    qDebug() << "TemplatePlugin::TemplatePlugin: CREATED.";
+#endif
+}
+
+TemplatePlugin::~TemplatePlugin() noexcept
+{
+#ifdef DEBUG
+    qDebug() << "TemplatePlugin::~TemplatePlugin: DELETED.";
+#endif
+}
+
+QString TemplatePlugin::getModuleName() const noexcept
+{
+    return QCoreApplication::translate("TemplatePlugin", "Template");
+}
+
+QWidget *TemplatePlugin::getWidget() const noexcept
+{
+    return d->locationWidget.get();
+}

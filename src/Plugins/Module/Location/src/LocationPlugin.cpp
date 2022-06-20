@@ -69,8 +69,3 @@ QWidget *LocationPlugin::getWidget() const noexcept
 {
     return d->locationWidget.get();
 }
-
-ModuleIntf::RecordIconId LocationPlugin::getRecordIconId() const noexcept
-{
-    return ModuleIntf::RecordIconId::Normal;
-}
