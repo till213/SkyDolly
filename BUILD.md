@@ -17,7 +17,7 @@ Sky Dolly is developed against Qt 5.15, which is now the minimum required Qt ver
 
 - Install the Qt development tools
 
-### Ubuntu 20.04
+### Ubuntu 22.04
 Install cmake and the Qt 5 default package which should also install the basic Qt development tools and headers:
 
 - `sudo apt-get install cmake`
