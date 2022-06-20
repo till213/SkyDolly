@@ -1301,7 +1301,7 @@ void MainWindow::onDefaultMinimalUiEssentialButtonVisibilityChanged(bool visible
 {
     updateMinimalUiEssentialButtonVisibility();
     updatePositionSliderTickInterval();
-    if (visible && isMinimalUiEnabled()) {
+    if (!visible && isMinimalUiEnabled()) {
         // Shrink to minimal size
         QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
     }
