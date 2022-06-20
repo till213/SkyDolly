@@ -22,38 +22,21 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef MODULEINTF_H
-#define MODULEINTF_H
+#ifndef DEFAULTMODULEIMPL_H
+#define DEFAULTMODULEIMPL_H
 
-#include <QtPlugin>
 #include <QString>
 
 class QWidget;
 
-class ModuleIntf
+#include "AbstractModule.h"
+
+class DefaultModuleImpl : public AbstractModule
 {
 public:
-    enum struct RecordIconId
-    {
-        Normal,
-        Add
-    };
-
-    virtual ~ModuleIntf() = default;
-
-    virtual QString getModuleName() const noexcept = 0;
-    virtual QWidget *getWidget() const noexcept = 0;
-    virtual RecordIconId getRecordIconId() const noexcept = 0;
-
-    virtual void setRecording(bool enable) noexcept = 0;
-    virtual void setPaused(bool enable) noexcept = 0;
-    virtual void setPlaying(bool enable) noexcept = 0;
-
-protected:
-    virtual void onRecordingStopped() noexcept = 0;
+    QString getModuleName() const noexcept final;
+    QWidget *getWidget() const noexcept final;
+    RecordIconId getRecordIconId() const noexcept final;
 };
 
-#define MODULE_INTERFACE_IID "com.github.till213.SkyDolly.ModuleInterface/1.0"
-Q_DECLARE_INTERFACE(ModuleIntf, MODULE_INTERFACE_IID)
-
-#endif // MODULEINTF_H
+#endif // DEFAULTMODULEIMPL_H

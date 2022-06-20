@@ -230,7 +230,7 @@ bool MainWindow::connectWithLogbook(const QString &filePath) noexcept
 
 void MainWindow::resizeEvent(QResizeEvent *event) noexcept
 {
-    if (!Settings::getInstance().isMinimalUiEnabled()) {
+    if (!isMinimalUiEnabled()) {
         d->lastNormalUiSize = event->size();
     }
 }
@@ -409,7 +409,7 @@ void MainWindow::initUi() noexcept
     initControlUi();
     initReplaySpeedUi();
 
-    const bool minimalUi = Settings::getInstance().isMinimalUiEnabled();
+    const bool minimalUi = isMinimalUiEnabled();
     ui->showMinimalAction->setChecked(minimalUi);
     updateMinimalUi(minimalUi);
 
@@ -845,8 +845,9 @@ void MainWindow::updateMinimalUi(bool enable)
     settings.setMinimalUiEnabled(enable);
     const bool hasModules = d->moduleManager->getActiveModule().has_value();
     ui->showMinimalAction->setEnabled(hasModules);
-    // Also enable minimal UI mode if no module plugins are available
-    if (enable || !hasModules) {
+
+    const bool minimalUi = isMinimalUiEnabled();
+    if (minimalUi) {
         ui->moduleVisibilityWidget->setHidden(true);
         ui->moduleSelectorWidget->setHidden(true);
         ui->showModulesAction->setChecked(false);
@@ -860,14 +861,22 @@ void MainWindow::updateMinimalUi(bool enable)
     }
     updateMinimalUiButtonTextVisibility();
     updateMinimalUiEssentialButtonVisibility();
-    updateReplaySpeedVisibility(enable);
+    updateReplaySpeedVisibility(minimalUi);
     updatePositionSliderTickInterval();
-
-    ui->moduleGroupBox->setHidden(enable);
+    ui->moduleGroupBox->setHidden(minimalUi);
 
     // When hiding a widget it takes some time for the layout manager to
     // get notified, so we return to the Qt event queue first
     QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
+}
+
+bool MainWindow::isMinimalUiEnabled() const noexcept
+{
+    Settings &settings = Settings::getInstance();
+    const bool minimalUi = settings.isMinimalUiEnabled();
+    const bool hasModules = d->moduleManager->getActiveModule().has_value();
+    // Also enable minimal UI mode if no module plugins are available
+    return minimalUi || !hasModules;
 }
 
 void MainWindow::updateReplaySpeedUi() noexcept
@@ -930,9 +939,8 @@ void MainWindow::updatePositionSlider(std::int64_t timestamp) noexcept
 
 void MainWindow::updateMinimalUiButtonTextVisibility() noexcept
 {
-    Settings &settings = Settings::getInstance();
-    if (settings.isMinimalUiEnabled()) {
-        const bool buttonTextVisible = settings.getDefaultMinimalUiButtonTextVisibility();
+    if (isMinimalUiEnabled()) {
+        const bool buttonTextVisible = Settings::getInstance().getDefaultMinimalUiButtonTextVisibility();
         ui->recordButton->setShowText(buttonTextVisible);
         ui->skipToBeginButton->setShowText(buttonTextVisible);
         ui->backwardButton->setShowText(buttonTextVisible);
@@ -957,9 +965,8 @@ void MainWindow::updateMinimalUiButtonTextVisibility() noexcept
 
 void MainWindow::updateMinimalUiEssentialButtonVisibility() noexcept
 {
-    Settings &settings = Settings::getInstance();
-    if (settings.isMinimalUiEnabled()) {
-        const bool nonEssentialButtonVisible = settings.getDefaultMinimalUiNonEssentialButtonVisibility();
+    if (isMinimalUiEnabled()) {
+        const bool nonEssentialButtonVisible = Settings::getInstance().getDefaultMinimalUiNonEssentialButtonVisibility();
         ui->skipToBeginButton->setVisible(nonEssentialButtonVisible);
         ui->backwardButton->setVisible(nonEssentialButtonVisible);
         ui->skipToEndButton->setVisible(nonEssentialButtonVisible);
@@ -991,10 +998,10 @@ void MainWindow::updateReplaySpeedVisibility(bool enterMinimalUi) noexcept
 
 void MainWindow::updatePositionSliderTickInterval() noexcept
 {
-    Settings &settings = Settings::getInstance();
     int tickInterval {10};
-    if (settings.isMinimalUiEnabled()) {
+    if (isMinimalUiEnabled()) {
         if (!ui->showReplaySpeedAction->isChecked()) {
+            Settings &settings = Settings::getInstance();
             if (settings.getDefaultMinimalUiButtonTextVisibility()) {
                 if (settings.getDefaultMinimalUiButtonTextVisibility()) {
                     tickInterval = 10;
@@ -1076,7 +1083,8 @@ void MainWindow::onTimeStampTimeEditChanged(const QTime &time) noexcept
 
 void MainWindow::updateWindowSize() noexcept
 {
-    if (Settings::getInstance().isMinimalUiEnabled()) {
+    const bool minimalUi = isMinimalUiEnabled();
+    if (minimalUi) {
         setMinimumSize(0, 0);
         // Let the layout manager realise that a widget has been hidden, which is an
         // asynchronous process
@@ -1283,8 +1291,7 @@ void MainWindow::onDefaultMinimalUiButtonTextVisibilityChanged(bool visible) noe
 {
     updateMinimalUiButtonTextVisibility();
     updatePositionSliderTickInterval();
-    Settings &settings = Settings::getInstance();
-    if (!visible && settings.isMinimalUiEnabled()) {
+    if (!visible && isMinimalUiEnabled()) {
         // Shrink to minimal size
         QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
     }
@@ -1294,8 +1301,7 @@ void MainWindow::onDefaultMinimalUiEssentialButtonVisibilityChanged(bool visible
 {
     updateMinimalUiEssentialButtonVisibility();
     updatePositionSliderTickInterval();
-    Settings &settings = Settings::getInstance();
-    if (visible && settings.isMinimalUiEnabled()) {
+    if (visible && isMinimalUiEnabled()) {
         // Shrink to minimal size
         QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
     }

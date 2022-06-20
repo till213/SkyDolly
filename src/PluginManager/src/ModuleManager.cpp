@@ -48,6 +48,7 @@
 #include <Kernel/QUuidHasher.h>
 #include <Kernel/Sort.h>
 #include "ModuleIntf.h"
+#include "DefaultModuleImpl.h"
 #include "ModuleManager.h"
 
 namespace
@@ -88,6 +89,7 @@ struct ModuleManagerPrivate
         }
     }
 
+    std::unique_ptr<DefaultModuleImpl> defaultModuleImpl {nullptr};
     std::unique_ptr<QPluginLoader> pluginLoader {std::make_unique<QPluginLoader>()};
     QDir pluginsDirectoryPath;
     QLayout &layout;
@@ -166,7 +168,7 @@ void ModuleManager::activateModule(QUuid uuid) noexcept
         d->activeModule = qobject_cast<ModuleIntf *>(plugin);
         if (d->activeModule != nullptr) {
             d->activeModuleUuid = uuid;
-            d->layout.addWidget(&d->activeModule->getWidget());
+            d->layout.addWidget(d->activeModule->getWidget());
             d->actionRegistry[uuid]->setChecked(true);
             emit activated(d->activeModule->getModuleName(), uuid);
         }
@@ -194,6 +196,8 @@ void ModuleManager::setRecording(bool enable) noexcept
 {
     if (d->activeModule != nullptr) {
         d->activeModule->setRecording(enable);
+    } else {
+        d->defaultModuleImpl->setRecording(enable);
     }
 }
 
@@ -201,6 +205,8 @@ void ModuleManager::setPlaying(bool enable) noexcept
 {
     if (d->activeModule != nullptr) {
         d->activeModule->setPlaying(enable);
+    } else {
+        d->defaultModuleImpl->setPlaying(enable);
     }
 }
 
@@ -208,6 +214,8 @@ void ModuleManager::setPaused(bool enable) noexcept
 {
     if (d->activeModule != nullptr) {
         d->activeModule->setPaused(enable);
+    } else {
+        d->defaultModuleImpl->setPaused(enable);
     }
 }
 
@@ -226,6 +234,10 @@ void ModuleManager::initModules() noexcept
         }
         initModuleActions(moduleInfos, graph);
         d->pluginsDirectoryPath.cdUp();
+    }
+    if (d->moduleRegistry.size() == 0) {
+        // No module plugins found, use the default implementation
+        d->defaultModuleImpl = std::make_unique<DefaultModuleImpl>();
     }
 }
 

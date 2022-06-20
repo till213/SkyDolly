@@ -72,9 +72,9 @@ QString LogbookPlugin::getModuleName() const noexcept
     return QCoreApplication::translate("LogbookPlugin", "Logbook");
 }
 
-QWidget &LogbookPlugin::getWidget() noexcept
+QWidget *LogbookPlugin::getWidget() const noexcept
 {
-    return *d->logbookWidget;
+    return d->logbookWidget.get();
 }
 
 ModuleIntf::RecordIconId LogbookPlugin::getRecordIconId() const noexcept

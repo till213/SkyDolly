@@ -105,6 +105,7 @@ private:
     inline bool hasStatisticsDialog() const noexcept;
 
     void updateMinimalUi(bool enable);
+    bool isMinimalUiEnabled() const noexcept;
     void updateReplaySpeedUi() noexcept;
 
     /*

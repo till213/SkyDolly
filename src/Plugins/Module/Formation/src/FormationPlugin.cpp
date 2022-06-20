@@ -74,9 +74,9 @@ QString FormationPlugin::getModuleName() const noexcept
     return QCoreApplication::translate("FormationPlugin", "Formation");
 }
 
-QWidget &FormationPlugin::getWidget() noexcept
+QWidget *FormationPlugin::getWidget() const noexcept
 {
-    return *d->formationWidget;
+    return d->formationWidget.get();
 }
 
 ModuleIntf::RecordIconId FormationPlugin::getRecordIconId() const noexcept
