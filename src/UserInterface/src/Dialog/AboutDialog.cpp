@@ -126,11 +126,7 @@ void AboutDialog::initUi() noexcept
     QFile file(":text/ThirdParty.md");
     if (file.open(QFile::ReadOnly)) {
         file.setTextModeEnabled(true);
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-        ui->creditsTextEdit->setText(file.readAll().replace("\\", ""));
-#else
         ui->creditsTextEdit->setMarkdown(file.readAll());
-#endif
         ui->creditsTextEdit->setTextInteractionFlags(Qt::TextInteractionFlag::LinksAccessibleByMouse);
         file.close();
     }

@@ -151,7 +151,7 @@ bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
     }
     if (ok) {
         // Starts at 1
-        int sequenceNumber = 1;
+        std::size_t sequenceNumber = 1;
         for (auto &it : flight) {
             ok = d->aircraftDao->add(flight.getId(), sequenceNumber, *it.get());
             if (ok) {

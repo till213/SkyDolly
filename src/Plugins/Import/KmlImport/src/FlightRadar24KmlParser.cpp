@@ -44,14 +44,14 @@
 class FlightRadar24KmlParserPrivate
 {
 public:
-    typedef struct {
+    using TrackItem = struct {
         std::int64_t timestamp;
         double latitude;
         double longitude;
         double altitude;
         int speed;
         int heading;
-    } TrackItem;
+    };
     // The track data may contain data with identical timestamps
     std::vector<TrackItem> trackData;
 

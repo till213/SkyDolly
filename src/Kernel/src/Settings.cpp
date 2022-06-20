@@ -655,6 +655,7 @@ void Settings::store() const noexcept
     d->settings.endGroup();
 }
 
+/*! \todo Settings conversion as necessary */
 void Settings::restore() noexcept
 {
     QString version;
@@ -664,7 +665,6 @@ void Settings::restore() noexcept
 #ifdef DEBUG
         qDebug("Settings::restore: app version: %s, settings version: %s, conversion might be necessary!",
                qPrintable(getVersion().toString()), qPrintable(settingsVersion.toString()));
-        /*!\todo Settings conversion as necessary */
 #endif
     }
 

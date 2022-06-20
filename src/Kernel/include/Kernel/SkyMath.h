@@ -30,7 +30,6 @@
 #include <utility>
 #include <cstdint>
 #include <exception>
-#include <cmath>
 
 #include <GeographicLib/Geodesic.hpp>
 
@@ -49,8 +48,9 @@
 namespace SkyMath
 {
     constexpr double PI = 3.141592653589793238463;
+
     // Latitude, longitude [degrees]
-    typedef std::pair<double, double> Coordinate;
+    using Coordinate = std::pair<double, double>;
 
     /*! The minimal position value, such that value 0 is exaclty in the middle of the entire range. */
     constexpr double PositionMin16 = static_cast<double>(-std::numeric_limits<std::int16_t>::max());

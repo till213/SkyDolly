@@ -66,13 +66,8 @@ KmlImportOptionWidget::~KmlImportOptionWidget() noexcept
 
 void KmlImportOptionWidget::frenchConnection() noexcept
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    connect(ui->formatComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &KmlImportOptionWidget::onFormatChanged);
-#else
     connect(ui->formatComboBox, &QComboBox::currentIndexChanged,
             this, &KmlImportOptionWidget::onFormatChanged);
-#endif
     connect(&d->settings, &KmlImportSettings::extendedSettingsChanged,
             this, &KmlImportOptionWidget::updateUi);
 }

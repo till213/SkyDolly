@@ -69,17 +69,10 @@ IgcImportOptionWidget::~IgcImportOptionWidget() noexcept
 
 void IgcImportOptionWidget::frenchConnection() noexcept
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    connect(ui->altitudeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &IgcImportOptionWidget::onAltitudeChanged);
-    connect(ui->enlThresholdSpinBox, QOverload<int>::of(&QSpinBox::valueChanged),
-            this, &IgcImportOptionWidget::onEnlThresholdChanged);
-#else
     connect(ui->altitudeComboBox, &QComboBox::currentIndexChanged,
             this, &IgcImportOptionWidget::onAltitudeChanged);
     connect(ui->enlThresholdSpinBox, &QSpinBox::valueChanged,
             this, &IgcImportOptionWidget::onEnlThresholdChanged);
-#endif
     connect(ui->convertAltitudeCheckBox, &QCheckBox::clicked,
             this, &IgcImportOptionWidget::onConvertAltitudeChanged);
     connect(&d->settings, &IgcImportSettings::extendedSettingsChanged,

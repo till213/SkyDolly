@@ -200,10 +200,10 @@ bool ImportPluginBase::importFlights(const QStringList &filePaths, FlightService
                 d->flightAugmentation.setAspects(getAspects());
                 d->flightAugmentation.augmentAircraftData(aircraft);
                 updateAircraftInfo();
-                const int nofAircraft = flight.count();
+                const std::size_t nofAircraft = flight.count();
                 if (nofAircraft > 1) {
                     // Sequence starts at 1
-                    const int sequenceNumber = nofAircraft;
+                    const std::size_t sequenceNumber = nofAircraft;
                     ok = d->aircraftService->store(flight.getId(), sequenceNumber, aircraft);
                 } else {
                     // Also update flight info and condition

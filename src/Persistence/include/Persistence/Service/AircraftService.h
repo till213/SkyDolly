@@ -28,6 +28,7 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
+#include <cstddef>
 
 #include <Model/Aircraft.h>
 #include <Model/AircraftInfo.h>
@@ -41,7 +42,7 @@ public:
     AircraftService() noexcept;
     ~AircraftService() noexcept;
 
-    bool store(std::int64_t flightId, int sequenceNumber, Aircraft &aircraft) noexcept;
+    bool store(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept;
     bool deleteByIndex(int index) noexcept;
     bool getAircraftInfos(std::int64_t flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept;
 

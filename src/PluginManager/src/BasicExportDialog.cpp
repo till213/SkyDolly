@@ -181,17 +181,10 @@ void BasicExportDialog::frenchConnection() noexcept
             this, &BasicExportDialog::onFileSelectionButtonClicked);
     connect(ui->filePathLineEdit, &QLineEdit::textChanged,
             this, &BasicExportDialog::onFilePathChanged);
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    connect(ui->formationExportComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &BasicExportDialog::onFormationExportChanged);
-    connect(ui->resamplingComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &BasicExportDialog::onResamplingOptionChanged);
-#else
     connect(ui->formationExportComboBox, &QComboBox::currentIndexChanged,
             this, &BasicExportDialog::onFormationExportChanged);
     connect(ui->resamplingComboBox, &QComboBox::currentIndexChanged,
             this, &BasicExportDialog::onResamplingOptionChanged);
-#endif
     connect(ui->openExportCheckBox, &QCheckBox::toggled,
             this, &BasicExportDialog::onDoOpenExportedFilesChanged);
     connect(&d->pluginSettings, &ExportPluginBaseSettings::baseSettingsChanged,

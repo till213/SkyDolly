@@ -75,16 +75,6 @@ GpxImportOptionWidget::~GpxImportOptionWidget() noexcept
 
 void GpxImportOptionWidget::frenchConnection() noexcept
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    connect(ui->waypointSelectionComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &GpxImportOptionWidget::onWaypointSelelectionChanged);
-    connect(ui->positionSelectionComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &GpxImportOptionWidget::onPositionSelelectionChanged);
-    connect(ui->defaultAltitudeSpinBox, QOverload<int>::of(&QSpinBox::valueChanged),
-            this, &GpxImportOptionWidget::onDefaultAltitudeChanged);
-    connect(ui->defaultVelocitySpinBox, QOverload<int>::of(&QSpinBox::valueChanged),
-            this, &GpxImportOptionWidget::onDefaultVelocityChanged);
-#else
     connect(ui->waypointSelectionComboBox, &QComboBox::currentIndexChanged,
             this, &GpxImportOptionWidget::onWaypointSelelectionChanged);
     connect(ui->positionSelectionComboBox, &QComboBox::currentIndexChanged,
@@ -93,7 +83,6 @@ void GpxImportOptionWidget::frenchConnection() noexcept
             this, &GpxImportOptionWidget::onDefaultAltitudeChanged);
     connect(ui->defaultVelocitySpinBox, &QSpinBox::valueChanged,
             this, &GpxImportOptionWidget::onDefaultVelocityChanged);
-#endif
     connect(ui->convertAltitudeCheckBox, &QCheckBox::stateChanged,
             this, &GpxImportOptionWidget::onConvertAltitudeChanged);
     connect(&d->settings, &GpxImportSettings::extendedSettingsChanged,

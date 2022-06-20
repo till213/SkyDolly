@@ -102,6 +102,7 @@ void FlightDialog::hideEvent(QHideEvent *event) noexcept
 
 // PRIVATE
 
+/// \todo DRY: "centrally" define the "F" shortcut (currently also assigned to the corresponding QAction)
 void FlightDialog::initUi() noexcept
 {
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
@@ -120,7 +121,6 @@ void FlightDialog::initUi() noexcept
 
     ui->flightTab->setCurrentIndex(0);
 
-    // @todo DRY: "centrally" define the "F" shortcut (currently also assigned to the corresponding QAction)
     d->closeDialogShortcut = new QShortcut(QKeySequence(tr("F", "Window|Flight...")), this);
 }
 

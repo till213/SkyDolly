@@ -32,6 +32,9 @@
 #include <QStringList>
 #include <QUuid>
 #include <QMap>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Model/Flight.h>
 #include <Persistence/Service/FlightService.h>
@@ -99,19 +102,19 @@ void PluginManager::destroyInstance() noexcept
     }
 }
 
-void PluginManager::initialise(QWidget *parentWidget)
+void PluginManager::initialise(QWidget *parentWidget) noexcept
 {
     d->parentWidget = parentWidget;
 }
 
 std::vector<PluginManager::Handle> PluginManager::initialiseExportPlugins() noexcept
 {
-    return enumeratePlugins(ExportDirectoryName, d->exportPluginRegistry);
+    return enumeratePlugins(::ExportDirectoryName, d->exportPluginRegistry);
 }
 
 std::vector<PluginManager::Handle> PluginManager::initialiseImportPlugins() noexcept
 {
-    return enumeratePlugins(ImportDirectoryName, d->importPluginRegistry);
+    return enumeratePlugins(::ImportDirectoryName, d->importPluginRegistry);
 }
 
 bool PluginManager::importFlight(const QUuid &pluginUuid, FlightService &flightService, Flight &flight) const noexcept
@@ -165,7 +168,7 @@ bool PluginManager::exportFlight(const Flight &flight, const QUuid &pluginUuid) 
 PluginManager::~PluginManager() noexcept
 {
 #ifdef DEBUG
-    qDebug("PluginManager::~PluginManager: DELETED");
+    qDebug() << "PluginManager::~PluginManager: DELETED";
 #endif
 }
 
@@ -175,7 +178,7 @@ PluginManager::PluginManager() noexcept
     : d(std::make_unique<PluginManagerPrivate>())
 {
 #ifdef DEBUG
-    qDebug("PluginManager::PluginManager: CREATED");
+    qDebug() << "PluginManager::PluginManager: CREATED";
 #endif
 }
 
@@ -193,8 +196,8 @@ std::vector<PluginManager::Handle> PluginManager::enumeratePlugins(const QString
             const QJsonObject metaData = loader.metaData();
             if (!metaData.isEmpty()) {
                 const QJsonObject pluginMetadata = metaData.value("MetaData").toObject();
-                const QUuid uuid = pluginMetadata.value(PluginUuidKey).toString();
-                const QString pluginName = pluginMetadata.value(PluginNameKey).toString();
+                const QUuid uuid = pluginMetadata.value(::PluginUuidKey).toString();
+                const QString pluginName = pluginMetadata.value(::PluginNameKey).toString();
                 const Handle handle = {uuid, pluginName};
                 pluginHandles.push_back(handle);
                 pluginRegistry.insert(uuid, pluginPath);

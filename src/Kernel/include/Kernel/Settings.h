@@ -592,15 +592,10 @@ public:
     [[deprecated("Do not use once version 1.0 has been reached.")]]
     void setPreviewInfoDialogCount(int count) noexcept;
 
-    typedef std::pair<QString, QVariant> KeyValue;
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-#include "QStringHasher.h"
-    typedef std::unordered_map<QString, QVariant, QStringHasher> ValuesByKey;
-#else
-    typedef std::unordered_map<QString, QVariant> ValuesByKey;
-#endif
-    typedef std::vector<KeyValue> KeyValues;
-    typedef std::vector<KeyValue> KeysWithDefaults;
+    using KeyValue = std::pair<QString, QVariant>;
+    using ValuesByKey = std::unordered_map<QString, QVariant>;
+    using KeyValues = std::vector<KeyValue>;
+    using KeysWithDefaults = std::vector<KeyValue>;
 
     void storePluginSettings(QUuid pluginUuid, const KeyValues &keyValues) const noexcept;
     ValuesByKey restorePluginSettings(QUuid pluginUuid, const KeysWithDefaults &keys) noexcept;

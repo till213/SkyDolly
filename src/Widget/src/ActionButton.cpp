@@ -27,23 +27,22 @@
 
 #include "ActionButton.h"
 
-class ActionButtonPrivate
+struct ActionButtonPrivate
 {
-public:
-    ActionButtonPrivate()  noexcept
-        : action(nullptr),
-          showText(true)
+    ActionButtonPrivate(ActionButton::Capitalisation theCapitalisation)  noexcept
+        : capitalisation(theCapitalisation)
     {}
 
-    const QAction *action;
-    bool showText;
+    const QAction *action {nullptr};
+    bool showText {true};
+    ActionButton::Capitalisation capitalisation;
 };
 
 // PUBLIC
 
-ActionButton::ActionButton(QWidget *parent) noexcept
+ActionButton::ActionButton(QWidget *parent, Capitalisation capitalisation) noexcept
     : ActiveButton(parent),
-      d(std::make_unique<ActionButtonPrivate>())
+      d(std::make_unique<ActionButtonPrivate>(capitalisation))
 {
     setFocusPolicy(Qt::FocusPolicy::NoFocus);
 }
@@ -97,7 +96,14 @@ void ActionButton::updateButtonStatusFromAction() noexcept
 void ActionButton::updateText() noexcept
 {
     if (d->showText) {
-        setText(d->action->text());
+        switch (d->capitalisation) {
+        case Capitalisation::Normal:
+            setText(d->action->text());
+            break;
+        case Capitalisation::AllCaps:
+            setText(d->action->text().toUpper());
+            break;
+        }
     } else {
         setText(QString());
     }

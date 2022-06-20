@@ -67,13 +67,8 @@ GpxExportOptionWidget::~GpxExportOptionWidget() noexcept
 
 void GpxExportOptionWidget::frenchConnection() noexcept
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    connect(ui->timestampModeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &GpxExportOptionWidget::onTimestampModeChanged);
-#else
     connect(ui->timestampModeComboBox, &QComboBox::currentIndexChanged,
             this, &GpxExportOptionWidget::onTimestampModeChanged);
-#endif
     connect(&d->settings, &GpxExportSettings::extendedSettingsChanged,
             this, &GpxExportOptionWidget::updateUi);
 }
