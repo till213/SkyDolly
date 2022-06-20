@@ -42,6 +42,10 @@
 #include "GpxImportSettings.h"
 #include "GpxParser.h"
 
+/*! \todo Store a list of Positions: whenever a new <track> is encountered:
+ *      - if the timestamp is greater than the last timestamp -> continue the existing track (keep adding to current Positions)
+ *      - else start a new track (add a new Position list entry) -> new aircraft
+ */
 class GpxParserPrivate
 {
 public:
@@ -60,10 +64,6 @@ public:
     QString documentName;
     QString description;
     Convert convert;
-
-    // @todo Store a list of Positions: whenever a new <track> is encountered:
-    //      - if the timestamp is greater than the last timestamp -> continue the existing track (keep adding to current Positions)
-    //      - else start a new track (add a new Position list entry) -> new aircraft
 };
 
 // PUBLIC

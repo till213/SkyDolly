@@ -37,6 +37,7 @@
 #include <QFileInfo>
 #include <QUrl>
 #include <QDir>
+#include <QUuid>
 #include <QString>
 #include <QUuid>
 #include <QTime>
@@ -49,7 +50,6 @@
 #include <QRadioButton>
 #include <QDoubleValidator>
 #include <QIcon>
-#include <QStackedWidget>
 #include <QEvent>
 #include <QResizeEvent>
 #include <QCloseEvent>
@@ -82,8 +82,8 @@
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/Connect.h>
 #include <PluginManager/PluginManager.h>
-#include <Module/ModuleIntf.h>
-#include <Module/ModuleManager.h>
+#include <PluginManager/ModuleIntf.h>
+#include <PluginManager/ModuleManager.h>
 #include "Dialog/AboutDialog.h"
 #include "Dialog/LogbookSettingsDialog.h"
 #include "Dialog/SettingsDialog.h"
@@ -212,11 +212,6 @@ MainWindow::MainWindow(const QString &filePath, QWidget *parent) noexcept
 
 MainWindow::~MainWindow() noexcept
 {
-    // Make sure that all widgets having a reference to the flight service
-    // are deleted before this MainWindow instance (which owns the flight
-    // service); we make sure by simply deleting their parent moduleStackWidget
-    delete ui->moduleStackWidget;
-
 #ifdef DEBUG
     qDebug("MainWindow::~MainWindow: DELETED");
 #endif
@@ -235,7 +230,7 @@ bool MainWindow::connectWithLogbook(const QString &filePath) noexcept
 
 void MainWindow::resizeEvent(QResizeEvent *event) noexcept
 {
-    if (!Settings::getInstance().isMinimalUiEnabled()) {
+    if (!isMinimalUiEnabled()) {
         d->lastNormalUiSize = event->size();
     }
 }
@@ -414,7 +409,7 @@ void MainWindow::initUi() noexcept
     initControlUi();
     initReplaySpeedUi();
 
-    const bool minimalUi = Settings::getInstance().isMinimalUiEnabled();
+    const bool minimalUi = isMinimalUiEnabled();
     ui->showMinimalAction->setChecked(minimalUi);
     updateMinimalUi(minimalUi);
 
@@ -499,7 +494,7 @@ void MainWindow::initPlugins() noexcept
 void MainWindow::initModuleSelectorUi() noexcept
 {
     // Modules
-    d->moduleManager = std::make_unique<ModuleManager>(*ui->moduleStackWidget, *d->databaseService, *d->flightService);
+    d->moduleManager = std::make_unique<ModuleManager>(*ui->moduleGroupBox->layout());
     ActionCheckBox *actionCheckBox = new ActionCheckBox(false, this);
     actionCheckBox->setAction(ui->showModulesAction);
     actionCheckBox->setFocusPolicy(Qt::NoFocus);
@@ -524,16 +519,17 @@ void MainWindow::initModuleSelectorUi() noexcept
     // ... and to the moduleVisibilityWidget
     ui->moduleVisibilityWidget->setLayout(moduleVisibilityLayout.release());
 
-    const ModuleIntf &activeModule = d->moduleManager->getActiveModule();
-    ui->moduleGroupBox->setTitle(activeModule.getModuleName());
+    const std::optional<std::reference_wrapper<ModuleIntf>> activeModule = d->moduleManager->getActiveModule();
+    if (activeModule) {
+        ui->moduleGroupBox->setTitle(activeModule->get().getModuleName());
+    }
 
-    for (const auto &item : d->moduleManager->getModules()) {
-        QAction &moduleAction = item->getAction();
-        ui->moduleMenu->addAction(&moduleAction);
-        ActionButton *actionButton = new ActionButton(this);
-        actionButton->setAction(&moduleAction);
+    for (const auto &item : d->moduleManager->getActionRegistry()) {
+        QAction *moduleAction = item.second;
+        ui->moduleMenu->addAction(moduleAction);
+        ActionButton *actionButton = new ActionButton(this, ActionButton::Capitalisation::AllCaps);
+        actionButton->setAction(moduleAction);
         actionButton->setFlat(true);
-        actionButton->setText(moduleAction.text().toUpper());
         ui->moduleSelectorLayout->addWidget(actionButton);
     }
 }
@@ -847,11 +843,15 @@ void MainWindow::updateMinimalUi(bool enable)
 {
     Settings &settings = Settings::getInstance();
     settings.setMinimalUiEnabled(enable);
-    if (enable) {
+    const bool hasModules = d->moduleManager->getActiveModule().has_value();
+    ui->showMinimalAction->setEnabled(hasModules);
+
+    const bool minimalUi = isMinimalUiEnabled();
+    if (minimalUi) {
         ui->moduleVisibilityWidget->setHidden(true);
         ui->moduleSelectorWidget->setHidden(true);
         ui->showModulesAction->setChecked(false);
-        ui->showModulesAction->setEnabled(false);
+        ui->showModulesAction->setEnabled(false);  
     } else {
         const bool moduleSelectorVisible = settings.isModuleSelectorVisible();
         ui->moduleVisibilityWidget->setVisible(true);
@@ -861,14 +861,22 @@ void MainWindow::updateMinimalUi(bool enable)
     }
     updateMinimalUiButtonTextVisibility();
     updateMinimalUiEssentialButtonVisibility();
-    updateReplaySpeedVisibility(enable);
+    updateReplaySpeedVisibility(minimalUi);
     updatePositionSliderTickInterval();
-
-    ui->moduleGroupBox->setHidden(enable);
+    ui->moduleGroupBox->setHidden(minimalUi);
 
     // When hiding a widget it takes some time for the layout manager to
     // get notified, so we return to the Qt event queue first
     QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
+}
+
+bool MainWindow::isMinimalUiEnabled() const noexcept
+{
+    Settings &settings = Settings::getInstance();
+    const bool minimalUi = settings.isMinimalUiEnabled();
+    const bool hasModules = d->moduleManager->getActiveModule().has_value();
+    // Also enable minimal UI mode if no module plugins are available
+    return minimalUi || !hasModules;
 }
 
 void MainWindow::updateReplaySpeedUi() noexcept
@@ -931,9 +939,8 @@ void MainWindow::updatePositionSlider(std::int64_t timestamp) noexcept
 
 void MainWindow::updateMinimalUiButtonTextVisibility() noexcept
 {
-    Settings &settings = Settings::getInstance();
-    if (settings.isMinimalUiEnabled()) {
-        const bool buttonTextVisible = settings.getDefaultMinimalUiButtonTextVisibility();
+    if (isMinimalUiEnabled()) {
+        const bool buttonTextVisible = Settings::getInstance().getDefaultMinimalUiButtonTextVisibility();
         ui->recordButton->setShowText(buttonTextVisible);
         ui->skipToBeginButton->setShowText(buttonTextVisible);
         ui->backwardButton->setShowText(buttonTextVisible);
@@ -958,9 +965,8 @@ void MainWindow::updateMinimalUiButtonTextVisibility() noexcept
 
 void MainWindow::updateMinimalUiEssentialButtonVisibility() noexcept
 {
-    Settings &settings = Settings::getInstance();
-    if (settings.isMinimalUiEnabled()) {
-        const bool nonEssentialButtonVisible = settings.getDefaultMinimalUiNonEssentialButtonVisibility();
+    if (isMinimalUiEnabled()) {
+        const bool nonEssentialButtonVisible = Settings::getInstance().getDefaultMinimalUiNonEssentialButtonVisibility();
         ui->skipToBeginButton->setVisible(nonEssentialButtonVisible);
         ui->backwardButton->setVisible(nonEssentialButtonVisible);
         ui->skipToEndButton->setVisible(nonEssentialButtonVisible);
@@ -992,10 +998,10 @@ void MainWindow::updateReplaySpeedVisibility(bool enterMinimalUi) noexcept
 
 void MainWindow::updatePositionSliderTickInterval() noexcept
 {
-    Settings &settings = Settings::getInstance();
     int tickInterval {10};
-    if (settings.isMinimalUiEnabled()) {
+    if (isMinimalUiEnabled()) {
         if (!ui->showReplaySpeedAction->isChecked()) {
+            Settings &settings = Settings::getInstance();
             if (settings.getDefaultMinimalUiButtonTextVisibility()) {
                 if (settings.getDefaultMinimalUiButtonTextVisibility()) {
                     tickInterval = 10;
@@ -1077,7 +1083,8 @@ void MainWindow::onTimeStampTimeEditChanged(const QTime &time) noexcept
 
 void MainWindow::updateWindowSize() noexcept
 {
-    if (Settings::getInstance().isMinimalUiEnabled()) {
+    const bool minimalUi = isMinimalUiEnabled();
+    if (minimalUi) {
         setMinimumSize(0, 0);
         // Let the layout manager realise that a widget has been hidden, which is an
         // asynchronous process
@@ -1276,22 +1283,7 @@ void MainWindow::updateControlUi() noexcept
 
 void MainWindow::updateControlIcons() noexcept
 {
-    QIcon recordIcon;
-    switch (d->moduleManager->getActiveModule().getModuleId()) {
-    case Module::Module::None:
-        [[fallthrough]];
-    case Module::Module::Logbook:
-        recordIcon.addFile(":/img/icons/record-normal.png", QSize(), QIcon::Normal, QIcon::Off);
-        recordIcon.addFile(":/img/icons/record-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
-        recordIcon.addFile(":/img/icons/record-active.png", QSize(), QIcon::Active);
-        break;
-    case Module::Module::Formation:
-        recordIcon.addFile(":/img/icons/record-add-normal.png", QSize(), QIcon::Normal, QIcon::Off);
-        recordIcon.addFile(":/img/icons/record-add-normal-on.png", QSize(), QIcon::Normal, QIcon::On);
-        recordIcon.addFile(":/img/icons/record-add-active.png", QSize(), QIcon::Active);
-        break;
-
-    }
+    const QIcon &recordIcon = d->moduleManager->getRecordIcon();
     ui->recordAction->setIcon(recordIcon);
 }
 
@@ -1299,8 +1291,7 @@ void MainWindow::onDefaultMinimalUiButtonTextVisibilityChanged(bool visible) noe
 {
     updateMinimalUiButtonTextVisibility();
     updatePositionSliderTickInterval();
-    Settings &settings = Settings::getInstance();
-    if (!visible && settings.isMinimalUiEnabled()) {
+    if (!visible && isMinimalUiEnabled()) {
         // Shrink to minimal size
         QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
     }
@@ -1310,8 +1301,7 @@ void MainWindow::onDefaultMinimalUiEssentialButtonVisibilityChanged(bool visible
 {
     updateMinimalUiEssentialButtonVisibility();
     updatePositionSliderTickInterval();
-    Settings &settings = Settings::getInstance();
-    if (visible && settings.isMinimalUiEnabled()) {
+    if (!visible && isMinimalUiEnabled()) {
         // Shrink to minimal size
         QTimer::singleShot(0, this, &MainWindow::updateWindowSize);
     }
@@ -1355,8 +1345,8 @@ void MainWindow::updateFileMenu() noexcept
 void MainWindow::updateModuleActions() noexcept
 {
     const bool recording = SkyConnectManager::getInstance().isInRecordingState();
-    for (auto &module : d->moduleManager->getModules()) {
-        module->getAction().setEnabled(!recording);
+    for (auto &item : d->moduleManager->getActionRegistry()) {
+        item.second->setEnabled(!recording);
     }
 }
 
@@ -1409,7 +1399,7 @@ void MainWindow::updateMainWindow() noexcept
     }
 }
 
-void MainWindow::onModuleActivated(const QString title, [[maybe_unused]] Module::Module moduleId) noexcept
+void MainWindow::onModuleActivated(const QString title, [[maybe_unused]] QUuid uuid) noexcept
 {
     ui->moduleGroupBox->setTitle(title);
     // Disable the minimal UI (if activated)
@@ -1575,19 +1565,17 @@ void MainWindow::showOnlineManual() const noexcept
 
 void MainWindow::toggleRecord(bool enable) noexcept
 {
-    blockSignals(true);
-    d->moduleManager->getActiveModule().setRecording(enable);
-    blockSignals(false);
+    d->moduleManager->setRecording(enable);
 }
 
 void MainWindow::togglePause(bool enable) noexcept
 {
-    d->moduleManager->getActiveModule().setPaused(enable);
+    d->moduleManager->setPaused(enable);
 }
 
 void MainWindow::togglePlay(bool enable) noexcept
 {
-     d->moduleManager->getActiveModule().setPlaying(enable);
+     d->moduleManager->setPlaying(enable);
 }
 
 void MainWindow::stop() noexcept
@@ -1629,14 +1617,13 @@ void MainWindow::onFlightRestored() noexcept
     updateUi();
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     skyConnectManager.skipToBegin();
-    ModuleIntf &module = d->moduleManager->getActiveModule();
     if (skyConnectManager.isConnected()) {
         // Make sure we are unpaused...
-        module.setPaused(false);
+        d->moduleManager->setPaused(false);
         // ... play the first frame (which will "move" to the new location)...
-        module.setPlaying(true);
+        d->moduleManager->setPlaying(true);
         // ... and pause again (such that the new scenery can be loaded)
-        module.setPaused(true);
+        d->moduleManager->setPaused(true);
     }
 }
 
@@ -1655,10 +1642,9 @@ void MainWindow::onImport(QAction *action) noexcept
         updateUi();
         SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
         skyConnectManager.skipToBegin();
-        ModuleIntf &module = d->moduleManager->getActiveModule();
         if (skyConnectManager.isConnected()) {
-            module.setPlaying(true);
-            module.setPaused(true);
+            d->moduleManager->setPlaying(true);
+            d->moduleManager->setPaused(true);
         }
     }
 }

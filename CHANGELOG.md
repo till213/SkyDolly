@@ -2,7 +2,11 @@
 
 ## 0.12.0
 
+### Bug Fixes
+- The window is properly resized when in minimal mode and the default non-essential button visibility is changed in the settings
+
 ### Under The Hood
+- The modules (Logbook, Formation) are now implemented as plugins
 - Sky Dolly now also compiles and links with the Microsoft Visual Studio 2022 C++ compiler (MSVC)
 - The code is now also [analysed](https://github.com/till213/SkyDolly/actions) for programming / security flaws with the [Microsoft C++ Code Analysis Action](https://github.com/marketplace/actions/microsoft-c-code-analysis-action)
 

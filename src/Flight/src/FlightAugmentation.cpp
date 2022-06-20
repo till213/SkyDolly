@@ -43,9 +43,10 @@
 #include "Analytics.h"
 #include "FlightAugmentation.h"
 
-namespace  {
-// @todo IMPLEMENT ME: Those are the typical/max values for A320-like aircraft
-//       -> define "per aircraft group"-specific limits (jet, propeller/GA, turboprop, glider, ...)
+/*! \todo IMPLEMENT ME: Those are the typical/max values for A320-like aircraft
+ *        -> define "per aircraft group"-specific limits (jet, propeller/GA, turboprop, glider, ...)
+ */
+namespace {
 
     // Estimated landing speed [knots]
     constexpr double LandingVelocity = 140.0;
@@ -422,9 +423,10 @@ void FlightAugmentation::augmentStartProcedure(Aircraft &aircraft) noexcept
     light.upsertLast(lightData);
 }
 
-// @todo: Calculate times based on the following rule of thumb:
-// flaps 1 at 10miles, flaps 2 at 8 miles, gear down between 6-7miles,
-// flaps 3 at 5 miles followed by full flaps almost immediately afterwards.
+/*! \todo: Calculate times based on the following rule of thumb:
+ * flaps 1 at 10miles, flaps 2 at 8 miles, gear down between 6-7miles,
+ * flaps 3 at 5 miles followed by full flaps almost immediately afterwards.
+ */
 void FlightAugmentation::augmentLandingProcedure(Aircraft &aircraft) noexcept
 {
     Position &position = aircraft.getPosition();

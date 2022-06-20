@@ -87,7 +87,7 @@ public:
     virtual void setReplayMode(ReplayMode replayMode) noexcept = 0;
 
     /*!
-     * Starts recording the flight. Depending on the \C recordingMode already recorded formation aircraft
+     * Starts recording the flight. Depending on the \c recordingMode already recorded formation aircraft
      * are replayed during recording. If the \c initialPosition is given (\c isNull() returns false) then
      * the user aircraft is placed at the given \c initialPosition before recording. This position is
      * typically calculated to be relative of the previous user aircraft in the formation.

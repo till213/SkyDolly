@@ -90,18 +90,10 @@ void KmlExportOptionWidget::frenchConnection() noexcept
 {
     connect(&d->settings, &KmlExportSettings::extendedSettingsChanged,
             this, &KmlExportOptionWidget::updateUi);
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    connect(d->colorButtonGroup.get(), QOverload<int>::of(&QButtonGroup::buttonClicked),
-            this, &KmlExportOptionWidget::selectColor);
-    connect(ui->colorStyleComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &KmlExportOptionWidget::onColorStyleChanged);
-#else
     connect(d->colorButtonGroup.get(), &QButtonGroup::idClicked,
             this, &KmlExportOptionWidget::selectColor);
     connect(ui->colorStyleComboBox, &QComboBox::currentIndexChanged,
             this, &KmlExportOptionWidget::onColorStyleChanged);
-#endif
 }
 
 void KmlExportOptionWidget::initUi() noexcept

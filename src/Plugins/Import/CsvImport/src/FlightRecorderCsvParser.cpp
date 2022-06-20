@@ -36,10 +36,6 @@
 #include <QFile>
 #include <QFileInfo>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-#include <Kernel/QStringHasher.h>
-#endif
-
 #include <Kernel/Convert.h>
 #include <Kernel/SkyMath.h>
 #include <Model/SimType.h>
@@ -128,11 +124,7 @@ public:
         firstDateTimeUtc.setTimeZone(QTimeZone::utc());
     }
     Flight *flight;
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    std::unordered_map<QByteArray, int, QStringHasher> columnIndexes;
-#else
     std::unordered_map<QByteArray, int> columnIndexes;
-#endif
     QDateTime firstDateTimeUtc;
 };
 
@@ -436,7 +428,6 @@ inline bool FlightRecorderCsvParser::importValue(const QList<QByteArray> &values
         }
     }
     if (ok && idx < values.count()) {
-        // @todo call proper toXYZ method based on type T
         if constexpr (std::is_floating_point<T>::value) {
             if constexpr (std::is_same<T, double>::value) {
                 value = values.at(idx).toDouble(&ok);

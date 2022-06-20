@@ -1,5 +1,5 @@
 # Build Instructions
-Sky Dolly is developed against Qt 5.15, but also compiles fine with Qt 5.12 (which comes with Ubuntu 20.04).
+Sky Dolly is developed against Qt 5.15, which is now the minimum required Qt version (comes with Ubuntu 22.04).
 
 ## Windows
 - Install the Microsoft Flight Simulator SDK
@@ -17,7 +17,7 @@ Sky Dolly is developed against Qt 5.15, but also compiles fine with Qt 5.12 (whi
 
 - Install the Qt development tools
 
-### Ubuntu 20.04
+### Ubuntu 22.04
 Install cmake and the Qt 5 default package which should also install the basic Qt development tools and headers:
 
 - `sudo apt-get install cmake`

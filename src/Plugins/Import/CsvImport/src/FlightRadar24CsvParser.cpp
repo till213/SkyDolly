@@ -94,11 +94,7 @@ bool FlightRadar24CsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QSt
             PositionData positionData;
 
             // In seconds after 1970-01-01 UTC
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-            const std::int64_t unixTimestamp = match.captured(::UnixTimestampIndex).toLongLong(&ok);
-#else
             const std::int64_t unixTimestamp = match.capturedView(::UnixTimestampIndex).toLongLong(&ok);
-#endif
             if (ok) {
                 if (firstDateTimeUtc.isNull()) {
                     firstDateTimeUtc.setSecsSinceEpoch(unixTimestamp);
@@ -112,40 +108,20 @@ bool FlightRadar24CsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QSt
             }
             if (ok) {
                 positionData.timestamp = timestamp;
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-                positionData.latitude = match.captured(::LatitudeIndex).toDouble(&ok);
-#else
                 positionData.latitude = match.capturedView(::LatitudeIndex).toDouble(&ok);
-#endif
             }
             if (ok) {
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-                positionData.longitude = match.captured(::LongitudeIndex).toDouble(&ok);
-#else
                 positionData.longitude = match.capturedView(::LongitudeIndex).toDouble(&ok);
-#endif
             }
             if (ok) {
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-                positionData.altitude = match.captured(::AltitudeIndex).toDouble(&ok);
-#else
                 positionData.altitude = match.capturedView(::AltitudeIndex).toDouble(&ok);
-#endif
                 positionData.indicatedAltitude = positionData.altitude;
             }
             if (ok) {
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-                positionData.velocityBodyZ = match.captured(::SpeedIndex).toDouble(&ok);
-#else
                 positionData.velocityBodyZ = match.capturedView(::SpeedIndex).toDouble(&ok);
-#endif
             }
             if (ok) {
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-                positionData.heading = match.captured(::HeadingIndex).toDouble(&ok);
-#else
                 positionData.heading = match.capturedView(::HeadingIndex).toDouble(&ok);
-#endif
             }
             if (ok) {
                 position.upsertLast(positionData);

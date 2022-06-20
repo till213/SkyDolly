@@ -29,6 +29,7 @@
 #include <vector>
 #include <cstdint>
 #include <iterator>
+#include <cstddef>
 
 #include <QtGlobal>
 
@@ -43,9 +44,9 @@ public:
     explicit SQLiteAircraftDao() noexcept;
     virtual ~SQLiteAircraftDao() noexcept;
 
-    virtual bool add(std::int64_t flightId, int sequenceNumber, Aircraft &aircraft) noexcept override;
+    virtual bool add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept override;
     virtual bool getByFlightId(std::int64_t flightId, std::back_insert_iterator<std::vector<std::unique_ptr<Aircraft>>> backInsertIterator) const noexcept override;
-    virtual bool adjustAircraftSequenceNumbersByFlightId(std::int64_t flightId, int sequenceNumber) noexcept override;
+    virtual bool adjustAircraftSequenceNumbersByFlightId(std::int64_t flightId, std::size_t sequenceNumber) noexcept override;
     virtual bool deleteAllByFlightId(std::int64_t flightId) noexcept override;
     virtual bool deleteById(std::int64_t id) noexcept override;
     virtual bool getAircraftInfosByFlightId(std::int64_t flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept override;

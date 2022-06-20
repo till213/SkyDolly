@@ -32,6 +32,11 @@ target_sources(${LIBRARY_NAME}
         include/PluginManager/ExportPluginBase.h src/ExportPluginBase.cpp
         include/PluginManager/ExportPluginBaseSettings.h src/ExportPluginBaseSettings.cpp
         include/PluginManager/BasicExportDialog.h src/BasicExportDialog.cpp src/BasicExportDialog.ui
+        include/PluginManager/ModuleIntf.h
+        include/PluginManager/AbstractModule.h src/AbstractModule.cpp
+        include/PluginManager/ModuleManager.h src/ModuleManager.cpp
+        src/DefaultModuleImpl.h src/DefaultModuleImpl.cpp
+        res/PluginManager.qrc
 )
 target_include_directories(${LIBRARY_NAME}
     INTERFACE
@@ -45,6 +50,7 @@ target_link_libraries(${LIBRARY_NAME}
         Sky::Flight
         Sky::Kernel
         Sky::Model
+        tsl::ordered_map
     PRIVATE
         Sky::Persistence
         Sky::Widget

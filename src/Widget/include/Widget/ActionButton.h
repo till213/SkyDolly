@@ -33,7 +33,7 @@
 #include "ActiveButton.h"
 #include "WidgetLib.h"
 
-class ActionButtonPrivate;
+struct ActionButtonPrivate;
 
 /*!
  * An extension of an ActiveButton (QPushButton) that supports QAction.
@@ -54,7 +54,12 @@ class WIDGET_API ActionButton : public ActiveButton
 {
     Q_OBJECT
 public:
-    explicit ActionButton(QWidget *parent = nullptr) noexcept;
+    enum struct Capitalisation{
+        Normal,
+        AllCaps
+    };
+
+    explicit ActionButton(QWidget *parent = nullptr, Capitalisation capitalisation = Capitalisation::Normal) noexcept;
     ~ActionButton() noexcept override;
 
     /*!

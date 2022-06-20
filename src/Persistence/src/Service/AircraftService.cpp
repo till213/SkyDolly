@@ -67,7 +67,7 @@ AircraftService::~AircraftService() noexcept
 #endif
 }
 
-bool AircraftService::store(std::int64_t flightId, int sequenceNumber, Aircraft &aircraft) noexcept
+bool AircraftService::store(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {

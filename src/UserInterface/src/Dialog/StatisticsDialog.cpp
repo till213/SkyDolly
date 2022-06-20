@@ -121,11 +121,11 @@ void StatisticsDialog::hideEvent(QHideEvent *event) noexcept
 
 // PRIVATE
 
+/// \todo DRY: "centrally" define the "S" shortcut (currently also assigned to the corresponding QAction)
 void StatisticsDialog::initUi() noexcept
 {
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
-    // @todo DRY: "centrally" define the "S" shortcut (currently also assigned to the corresponding QAction)
     d->closeDialogShortcut = new QShortcut(QKeySequence(tr("S", "Window|Statistics...")), this);
 }
 

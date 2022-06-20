@@ -51,8 +51,8 @@ public:
     std::size_t count() const noexcept;
     void clear() noexcept;
 
-    typedef std::vector<Waypoint>::iterator Iterator;
-    typedef std::back_insert_iterator<std::vector<Waypoint>> BackInsertIterator;
+    using Iterator = std::vector<Waypoint>::iterator;
+    using BackInsertIterator = std::back_insert_iterator<std::vector<Waypoint>>;
 
     Iterator begin() noexcept;
     Iterator end() noexcept;

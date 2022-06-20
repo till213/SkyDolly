@@ -51,12 +51,12 @@ public:
     static PluginManager &getInstance() noexcept;
     static void destroyInstance() noexcept;
 
-    void initialise(QWidget *parentWidget);
+    void initialise(QWidget *parentWidget) noexcept;
 
     /*!
      * The plugin UUID and (non-translated) name of the plugin.
      */
-    typedef std::pair<QUuid, QString> Handle;
+    using Handle = std::pair<QUuid, QString>;
     std::vector<Handle> initialiseExportPlugins() noexcept;
     std::vector<Handle> initialiseImportPlugins() noexcept;
 

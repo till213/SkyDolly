@@ -51,7 +51,7 @@ public:
     ~IgcParser() noexcept;
 
     // "H" record
-    typedef struct
+    using Header = struct
     {
         // Note: we also store the UTC time in this field; the time
         // coming from the first B record ("fix")
@@ -64,10 +64,10 @@ public:
         QString gliderType;
         // Aircraft registration
         QString gliderId;
-    } Header;
+    };
 
     // "C" record
-    typedef struct Task_
+    using TaskItem = struct Task_
     {
         Task_(double lat, double lon, QString desc)
             : latitude(lat),
@@ -78,20 +78,20 @@ public:
         float latitude;
         float longitude;
         QString description;
-    } TaskItem;
+    };
 
-    typedef struct
+    using Task = struct
     {
         QDate declarationDate;
         std::vector<TaskItem> tasks;
-    } Task;
+    };
 
     /*!
      * The "B record" contains the position and altitude values ("fixes").
      * Note that the environmental noise level ("ENL") is an option addition.
      * If not present then the value is set to 0.0.
      */
-    typedef struct Fix_
+    using Fix = struct Fix_
     {
         Fix_(std::int64_t theTimestamp, double lat, double lon, double pressureAlt, double gnssAlt, double enl)
             : timestamp(theTimestamp),
@@ -112,7 +112,7 @@ public:
         double gnssAltitude;
         /*! Normalised environmental noise level [0.0, 1.0]; 0.0 if not present */
         double environmentalNoiseLevel;
-    } Fix;
+    };
 
     bool parse(QFile &file) noexcept;
     const Header &getHeader() const noexcept;
