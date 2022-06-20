@@ -30,6 +30,7 @@
 #include <utility>
 #include <optional>
 #include <functional>
+#include <unordered_map>
 
 #include <QObject>
 #include <QUuid>
@@ -40,6 +41,7 @@ class QLayout;
 
 #include <tsl/ordered_map.h>
 
+#include <Kernel/Sort.h>
 #include <Kernel/QUuidHasher.h>
 #include "PluginManagerLib.h"
 
@@ -73,10 +75,18 @@ signals:
     void activated(QString title, QUuid moduleUuid);
 
 private:
+    using Sort = Sort<QUuid, QUuidHasher>;
+    using Graph = Sort::Graph;
+    using Vertex = Sort::Vertex;
+    // First: module name - second: path
+    using ModuleInfo = std::pair<QString, QString>;
+
     std::unique_ptr<ModuleManagerPrivate> d;
 
-    void enumerateModules() noexcept;
+    void initModules() noexcept;
     void frenchConnection() noexcept;
+    void initModule(const QString fileName, std::unordered_map<QUuid, ModuleInfo, QUuidHasher> &moduleInfos, Graph &graph) noexcept;
+    void initModuleActions(const std::unordered_map<QUuid, ModuleInfo, QUuidHasher> &moduleInfos, Graph &graph) noexcept;
 
 private slots:
     void handleModuleSelected(QAction *action) noexcept;
