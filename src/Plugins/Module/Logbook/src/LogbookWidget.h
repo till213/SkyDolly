@@ -76,8 +76,6 @@ private:
     inline void insertDay(QTreeWidgetItem *parent, std::forward_list<FlightDate> &flightDatesByDayOfMonth) noexcept;
     inline void updateSelectionDateRange(QTreeWidgetItem *item) const noexcept;
 
-    static const QString getName() noexcept;
-
 private slots:
     void onRecordingStarted() noexcept;
     void updateUi() noexcept;

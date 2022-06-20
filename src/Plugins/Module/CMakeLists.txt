@@ -4,3 +4,4 @@ message(STATUS "Output module plugin directory=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Logbook)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Formation)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Location)

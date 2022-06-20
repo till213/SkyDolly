@@ -567,11 +567,6 @@ inline void LogbookWidget::updateSelectionDateRange(QTreeWidgetItem *item) const
     }
 }
 
-const QString LogbookWidget::getName() noexcept
-{
-    return QCoreApplication::translate("LogbookWidget", "Logbook");
-}
-
 // PRIVATE SLOTS
 
 void LogbookWidget::onRecordingStarted() noexcept
