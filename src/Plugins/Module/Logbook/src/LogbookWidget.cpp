@@ -29,7 +29,6 @@
 #include <cstdint>
 #include <limits>
 
-#include <QCoreApplication>
 #include <QByteArray>
 #include <QVariant>
 #include <QTableWidget>
@@ -47,8 +46,6 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include <QAction>
-#include <QShowEvent>
-#include <QHideEvent>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -70,7 +67,6 @@
 #include <Persistence/LogbookManager.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
-#include <PluginManager/AbstractModule.h>
 #include <Widget/Platform.h>
 #include <Widget/TableDateItem.h>
 #include <Widget/TableTimeItem.h>

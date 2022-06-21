@@ -27,7 +27,6 @@
 #include <cstdint>
 #include <cmath>
 
-#include <QCoreApplication>
 #include <QByteArray>
 #include <QDoubleValidator>
 #include <QWidget>
@@ -40,8 +39,6 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QComboBox>
-#include <QShowEvent>
-#include <QHideEvent>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -59,7 +56,6 @@
 #include <Model/AircraftInfo.h>
 #include <Model/Position.h>
 #include <Model/PositionData.h>
-#include <Model/InitialPosition.h>
 #include <Persistence/Service/FlightService.h>
 #include <Persistence/Service/AircraftService.h>
 #include <PluginManager/SkyConnectManager.h>
