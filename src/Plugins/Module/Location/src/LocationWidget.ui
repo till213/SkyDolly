@@ -6,20 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>122</width>
-    <height>40</height>
+    <width>488</width>
+    <height>315</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Location Widget</string>
-     </property>
-    </widget>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTableWidget" name="locationTableWidget"/>
    </item>
   </layout>
  </widget>

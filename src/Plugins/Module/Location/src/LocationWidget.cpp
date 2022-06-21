@@ -25,9 +25,7 @@
 
 #include <memory>
 
-
-#include <QCoreApplication>
-#include <QHideEvent>
+#include <QStringList>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -73,12 +71,20 @@ LocationWidget::~LocationWidget() noexcept
 #endif
 }
 
-
 // PRIVATE
 
 void LocationWidget::initUi() noexcept
 {
-
+    const QStringList headers {tr("Position"), tr("Description")};
+    ui->locationTableWidget->setColumnCount(headers.count());
+    ui->locationTableWidget->setHorizontalHeaderLabels(headers);
+    ui->locationTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->locationTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->locationTableWidget->verticalHeader()->hide();
+    ui->locationTableWidget->horizontalHeader()->setStretchLastSection(true);
+    // ui->locationTableWidget->sortByColumn(::FlightIdColumn, Qt::SortOrder::DescendingOrder);
+    ui->locationTableWidget->horizontalHeader()->setSectionsMovable(true);
+    ui->locationTableWidget->setAlternatingRowColors(true);
 }
 
 void LocationWidget::frenchConnection() noexcept
