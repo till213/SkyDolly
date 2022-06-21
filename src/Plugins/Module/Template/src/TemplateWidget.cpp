@@ -25,23 +25,12 @@
 
 #include <memory>
 
-
-#include <QCoreApplication>
-#include <QHideEvent>
 #ifdef DEBUG
 #include <QDebug>
 #endif
 
-#include <PluginManager/SkyConnectManager.h>
-#include <PluginManager/SkyConnectIntf.h>
-#include <PluginManager/AbstractModule.h>
 #include "TemplateWidget.h"
 #include "ui_TemplateWidget.h"
-
-namespace
-{
-
-}
 
 class TemplateWidgetPrivate
 {
@@ -72,7 +61,6 @@ TemplateWidget::~TemplateWidget() noexcept
     qDebug() << "TemplateWidget::~TemplateWidget: DELETED.";
 #endif
 }
-
 
 // PRIVATE
 
