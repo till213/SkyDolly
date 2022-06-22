@@ -51,7 +51,11 @@ SqlMigration::~SqlMigration()
 
 bool SqlMigration::migrate() noexcept
 {
-    return migrate(":/dao/sqlite/migr/migr.sql");
+    bool ok = migrate(":/dao/sqlite/migr/LogbookMigration.sql");
+    if (ok) {
+        ok = migrate(":/dao/sqlite/migr/LocationMigration.sql");
+    }
+    return ok;
 }
 
 // PRIVATE

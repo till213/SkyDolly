@@ -129,10 +129,12 @@ set_target_properties(${APP_NAME}
 
 # Resource (data) files
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/geoids)
+include(cmake/Locations.cmake)
 if(${PLATFORM_IS_MACOS})
     target_link_libraries(${APP_NAME}
         PRIVATE
             Geoids
+            Locations
     )
     include(CreateAppIconOnMacOS)
     create_app_icon_on_macos(INPUT "res/SkyDolly.png" OUTPUT APP_ICON_PATH)
@@ -173,6 +175,7 @@ target_sources(${APP_NAME}
         doc/SkyDolly.simvars
         res/Info.plist.in
         res/SkyDolly.rc.in
+        res/migr/Locations.json
 )
 
 target_include_directories(${APP_NAME}

@@ -42,11 +42,11 @@ create table flight (
     title text,
     description text,
     surface_type integer,
-    ground_altitude real,    
+    ground_altitude real,
     ambient_temperature real,
     total_air_temperature real,
     wind_velocity real,
-    wind_direction real,   
+    wind_direction real,
     visibility real,
     sea_level_pressure real,
     pitot_icing real,
@@ -169,7 +169,7 @@ create table handle (
     canopy_open integer,
     left_wing_folding integer,
     right_wing_folding integer,
-    gear_handle_position integer,    
+    gear_handle_position integer,
     primary key(aircraft_id, timestamp),
     foreign key(aircraft_id) references aircraft(id)
 );

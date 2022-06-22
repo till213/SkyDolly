@@ -44,13 +44,14 @@ target_sources(${LIBRARY_NAME}
         src/Dao/SQLite/SQLiteWaypointDao.h src/Dao/SQLite/SQLiteWaypointDao.cpp
         src/Dao/SQLite/SqlMigration.h src/Dao/SQLite/SqlMigration.cpp
         src/Dao/SQLite/SqlMigrationStep.h src/Dao/SQLite/SqlMigrationStep.cpp
-        src/Dao/SQLite/Migration/migr.sql
-        src/Dao/SQLite/Migration/Migration.qrc
         include/Persistence/Service/LogbookService.h src/Service/LogbookService.cpp
         include/Persistence/Service/FlightService.h src/Service/FlightService.cpp
         include/Persistence/Service/AircraftService.h src/Service/AircraftService.cpp
         include/Persistence/Service/AircraftTypeService.h src/Service/AircraftTypeService.cpp
         include/Persistence/Service/DatabaseService.h src/Service/DatabaseService.cpp
+        src/Dao/SQLite/migr/LogbookMigration.sql
+        src/Dao/SQLite/migr/LocationMigration.sql
+        src/Dao/SQLite/migr/Migration.qrc
 )
 target_include_directories(${LIBRARY_NAME}
     INTERFACE
