@@ -29,6 +29,7 @@ target_sources(${LIBRARY_NAME}
         src/Dao/HandleDaoIntf.h
         src/Dao/LightDaoIntf.h
         src/Dao/WaypointDaoIntf.h
+        src/Dao/LocationDaoIntf.h
         src/Dao/DaoFactory.h src/Dao/DaoFactory.cpp
         src/Dao/SQLite/SQLiteDatabaseDao.h src/Dao/SQLite/SQLiteDatabaseDao.cpp
         src/Dao/SQLite/SQLiteLogbookDao.h src/Dao/SQLite/SQLiteLogbookDao.cpp
@@ -42,6 +43,7 @@ target_sources(${LIBRARY_NAME}
         src/Dao/SQLite/SQLiteHandleDao.h src/Dao/SQLite/SQLiteHandleDao.cpp
         src/Dao/SQLite/SQLiteLightDao.h src/Dao/SQLite/SQLiteLightDao.cpp
         src/Dao/SQLite/SQLiteWaypointDao.h src/Dao/SQLite/SQLiteWaypointDao.cpp
+        src/Dao/SQLite/SQLiteLocationDao.h src/Dao/SQLite/SQLiteLocationDao.cpp
         src/Dao/SQLite/SqlMigration.h src/Dao/SQLite/SqlMigration.cpp
         src/Dao/SQLite/SqlMigrationStep.h src/Dao/SQLite/SqlMigrationStep.cpp
         include/Persistence/Service/LogbookService.h src/Service/LogbookService.cpp

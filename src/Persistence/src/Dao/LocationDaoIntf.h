@@ -22,34 +22,23 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SECONDARYFLIGHTCONTROLDATA_H
-#define SECONDARYFLIGHTCONTROLDATA_H
+#ifndef LOCATIONDAOINTF_H
+#define LOCATIONDAOINTF_H
 
+#include <vector>
+#include <iterator>
 #include <cstdint>
 
-#include <QtGlobal>
-#include <QFlags>
+struct Location;
 
-#include "SimType.h"
-#include "TimeVariableData.h"
-#include "ModelLib.h"
-
-struct MODEL_API SecondaryFlightControlData : public TimeVariableData
+class LocationDaoIntf
 {
-    // Flaps & speed brakes
-    std::int16_t leadingEdgeFlapsLeftPosition;
-    std::int16_t leadingEdgeFlapsRightPosition;
-    std::int16_t trailingEdgeFlapsLeftPosition;
-    std::int16_t trailingEdgeFlapsRightPosition;
-    std::int16_t spoilersHandlePosition;
-    std::int8_t flapsHandleIndex;
+public:
+    virtual ~LocationDaoIntf() = default;
 
-    SecondaryFlightControlData() noexcept;
-    SecondaryFlightControlData(const SecondaryFlightControlData &other) = default;
-    SecondaryFlightControlData(SecondaryFlightControlData &&other) = default;
-    SecondaryFlightControlData &operator=(const SecondaryFlightControlData &) = default;
-
-    static const SecondaryFlightControlData NullData;
+    virtual bool add(const Location &location) noexcept = 0;
+    virtual bool get(std::int64_t id, Location &location) const noexcept = 0;
+    virtual bool deleteById(std::int64_t id) noexcept = 0;
 };
 
-#endif // SECONDARYFLIGHTCONTROLDATA_H
+#endif // LOCATIONDAOINTF_H

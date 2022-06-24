@@ -37,9 +37,8 @@
 
 struct AircraftInfo;
 
-class MODEL_API InitialPosition
+struct MODEL_API InitialPosition
 {
-public:
     static constexpr int InvalidAirspeed = std::numeric_limits<int>::min();
 
     double latitude;

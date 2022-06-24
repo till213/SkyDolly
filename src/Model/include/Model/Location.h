@@ -22,34 +22,33 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SECONDARYFLIGHTCONTROLDATA_H
-#define SECONDARYFLIGHTCONTROLDATA_H
+#ifndef LOCATION_H
+#define LOCATION_H
 
-#include <cstdint>
+#include <QString>
 
-#include <QtGlobal>
-#include <QFlags>
-
-#include "SimType.h"
-#include "TimeVariableData.h"
 #include "ModelLib.h"
 
-struct MODEL_API SecondaryFlightControlData : public TimeVariableData
+struct MODEL_API Location
 {
-    // Flaps & speed brakes
-    std::int16_t leadingEdgeFlapsLeftPosition;
-    std::int16_t leadingEdgeFlapsRightPosition;
-    std::int16_t trailingEdgeFlapsLeftPosition;
-    std::int16_t trailingEdgeFlapsRightPosition;
-    std::int16_t spoilersHandlePosition;
-    std::int8_t flapsHandleIndex;
+    std::int64_t id;
 
-    SecondaryFlightControlData() noexcept;
-    SecondaryFlightControlData(const SecondaryFlightControlData &other) = default;
-    SecondaryFlightControlData(SecondaryFlightControlData &&other) = default;
-    SecondaryFlightControlData &operator=(const SecondaryFlightControlData &) = default;
+    float latitude;
+    float longitude;
+    float altitude;
+    float pitch;
+    float bank;
+    float heading;
+    bool onGround;
+    QString description;
 
-    static const SecondaryFlightControlData NullData;
+    explicit Location() noexcept;
+    Location(Location &other) = default;
+    Location(Location &&other) = default;
+    ~Location() noexcept;
+    Location &operator=(const Location &rhs) = default;
+    Location &operator=(Location &&rhs) = default;
 };
 
-#endif // SECONDARYFLIGHTCONTROLDATA_H
+#endif // LOCATION_H
+

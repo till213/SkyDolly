@@ -38,8 +38,8 @@ class MODEL_API AircraftHandle : public AbstractComponent<AircraftHandleData>
 {
 public:
     explicit AircraftHandle(const AircraftInfo &aircraftInfo) noexcept;
-    AircraftHandle(AircraftHandle &aircraftHandle) = default;
-    AircraftHandle(AircraftHandle &&aircraftHandle) = default;
+    AircraftHandle(AircraftHandle &other) = default;
+    AircraftHandle(AircraftHandle &&other) = default;
     ~AircraftHandle() noexcept override;
     AircraftHandle &operator=(const AircraftHandle &rhs) = default;
     AircraftHandle &operator=(AircraftHandle &&rhs) = default;

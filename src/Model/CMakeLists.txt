@@ -42,6 +42,7 @@ target_sources(${LIBRARY_NAME}
         include/Model/SimType.h
         include/Model/SimVar.h
         include/Model/SkySearch.h src/SkySearch.cpp
+        include/Model/Location.h src/Location.cpp
 )
 target_include_directories(${LIBRARY_NAME}
     INTERFACE

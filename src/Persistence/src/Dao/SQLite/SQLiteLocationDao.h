@@ -22,34 +22,14 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef SECONDARYFLIGHTCONTROLDATA_H
-#define SECONDARYFLIGHTCONTROLDATA_H
+#ifndef SQLITELOCATIONDAO_H
+#define SQLITELOCATIONDAO_H
 
-#include <cstdint>
 
-#include <QtGlobal>
-#include <QFlags>
-
-#include "SimType.h"
-#include "TimeVariableData.h"
-#include "ModelLib.h"
-
-struct MODEL_API SecondaryFlightControlData : public TimeVariableData
+class SQLiteLocationDao
 {
-    // Flaps & speed brakes
-    std::int16_t leadingEdgeFlapsLeftPosition;
-    std::int16_t leadingEdgeFlapsRightPosition;
-    std::int16_t trailingEdgeFlapsLeftPosition;
-    std::int16_t trailingEdgeFlapsRightPosition;
-    std::int16_t spoilersHandlePosition;
-    std::int8_t flapsHandleIndex;
-
-    SecondaryFlightControlData() noexcept;
-    SecondaryFlightControlData(const SecondaryFlightControlData &other) = default;
-    SecondaryFlightControlData(SecondaryFlightControlData &&other) = default;
-    SecondaryFlightControlData &operator=(const SecondaryFlightControlData &) = default;
-
-    static const SecondaryFlightControlData NullData;
+public:
+    SQLiteLocationDao();
 };
 
-#endif // SECONDARYFLIGHTCONTROLDATA_H
+#endif // SQLITELOCATIONDAO_H

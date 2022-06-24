@@ -34,8 +34,8 @@ class MODEL_API SecondaryFlightControl : public AbstractComponent<SecondaryFligh
 {
 public:
     explicit SecondaryFlightControl(const AircraftInfo &aircraftInfo) noexcept;
-    SecondaryFlightControl(SecondaryFlightControl &aircraftHandle) = default;
-    SecondaryFlightControl(SecondaryFlightControl &&aircraftHandle) = default;
+    SecondaryFlightControl(SecondaryFlightControl &other) = default;
+    SecondaryFlightControl(SecondaryFlightControl &&other) = default;
     ~SecondaryFlightControl() noexcept override;
     SecondaryFlightControl &operator=(const SecondaryFlightControl &rhs) = default;
     SecondaryFlightControl &operator=(SecondaryFlightControl &&rhs) = default;
