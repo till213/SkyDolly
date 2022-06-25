@@ -16,6 +16,7 @@ target_sources(${LIBRARY_NAME}
         include/Persistence/PersistenceLib.h
         include/Persistence/LogbookManager.h src/LogbookManager.cpp
         include/Persistence/FlightSelector.h src/FlightSelector.cpp
+        include/Persistence/LocationSelector.h src/LocationSelector.cpp
         include/Persistence/Metadata.h
         src/Dao/DatabaseDaoIntf.h
         src/Dao/LogbookDaoIntf.h
@@ -51,6 +52,7 @@ target_sources(${LIBRARY_NAME}
         include/Persistence/Service/AircraftService.h src/Service/AircraftService.cpp
         include/Persistence/Service/AircraftTypeService.h src/Service/AircraftTypeService.cpp
         include/Persistence/Service/DatabaseService.h src/Service/DatabaseService.cpp
+        include/Persistence/Service/LocationService.h src/Service/LocationService.cpp
         src/Dao/SQLite/migr/LogbookMigration.sql
         src/Dao/SQLite/migr/LocationMigration.sql
         src/Dao/SQLite/migr/Migration.qrc
