@@ -81,8 +81,8 @@ void GpxImportOptionWidget::frenchConnection() noexcept
             this, &GpxImportOptionWidget::onPositionSelelectionChanged);
     connect(ui->defaultAltitudeSpinBox, &QSpinBox::valueChanged,
             this, &GpxImportOptionWidget::onDefaultAltitudeChanged);
-    connect(ui->defaultVelocitySpinBox, &QSpinBox::valueChanged,
-            this, &GpxImportOptionWidget::onDefaultVelocityChanged);
+    connect(ui->defaultSpeedSpinBox, &QSpinBox::valueChanged,
+            this, &GpxImportOptionWidget::onDefaultSpeedChanged);
     connect(ui->convertAltitudeCheckBox, &QCheckBox::stateChanged,
             this, &GpxImportOptionWidget::onConvertAltitudeChanged);
     connect(&d->settings, &GpxImportSettings::extendedSettingsChanged,
@@ -103,10 +103,10 @@ void GpxImportOptionWidget::initUi() noexcept
     ui->defaultAltitudeSpinBox->setSuffix(tr(" feet"));
     ui->defaultAltitudeSpinBox->setSingleStep(100);
     ui->defaultAltitudeSpinBox->setGroupSeparatorShown(true);
-    ui->defaultVelocitySpinBox->setRange(0, ::MaximumVelocity);
-    ui->defaultVelocitySpinBox->setSuffix(tr(" knots"));
-    ui->defaultVelocitySpinBox->setSingleStep(5);
-    ui->defaultVelocitySpinBox->setGroupSeparatorShown(true);
+    ui->defaultSpeedSpinBox->setRange(0, ::MaximumVelocity);
+    ui->defaultSpeedSpinBox->setSuffix(tr(" knots"));
+    ui->defaultSpeedSpinBox->setSingleStep(5);
+    ui->defaultSpeedSpinBox->setGroupSeparatorShown(true);
 }
 
 // PRIVATE SLOTS
@@ -130,7 +130,7 @@ void GpxImportOptionWidget::updateUi() noexcept
     ui->positionSelectionComboBox->setCurrentIndex(currentIndex);
 
     ui->defaultAltitudeSpinBox->setValue(d->settings.getDefaultAltitude());
-    ui->defaultVelocitySpinBox->setValue(d->settings.getDefaultVelocity());
+    ui->defaultSpeedSpinBox->setValue(d->settings.getDefaultSpeed());
 
     if (Settings::getInstance().hasEarthGravityModel()) {
         ui->convertAltitudeCheckBox->setEnabled(true);
@@ -160,9 +160,9 @@ void GpxImportOptionWidget::onDefaultAltitudeChanged(int value) noexcept
     d->settings.setDefaultAltitude(value);
 }
 
-void GpxImportOptionWidget::onDefaultVelocityChanged(int value) noexcept
+void GpxImportOptionWidget::onDefaultSpeedChanged(int value) noexcept
 {
-    d->settings.setDefaultVelocity(value);
+    d->settings.setDefaultSpeed(value);
 }
 
 void GpxImportOptionWidget::onConvertAltitudeChanged(int state) noexcept

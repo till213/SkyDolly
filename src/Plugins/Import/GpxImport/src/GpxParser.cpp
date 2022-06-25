@@ -188,7 +188,7 @@ void GpxParser::parseWaypoint() noexcept
             const SkyMath::Coordinate end = {positionData.latitude, positionData.longitude};
             // In meters
             const double distance = SkyMath::geodesicDistance(start, end);
-            const double velocityMetersPerSecond = Convert::knotsToMetersPerSecond(d->pluginSettings.getDefaultVelocity());
+            const double velocityMetersPerSecond = Convert::knotsToMetersPerSecond(d->pluginSettings.getDefaultSpeed());
             const double seconds = distance / velocityMetersPerSecond;
             // Milliseconds
             positionData.timestamp = previousPositionData.timestamp + static_cast<std::int64_t>(std::round(seconds * 1000.0));
@@ -258,7 +258,7 @@ void GpxParser::parseRoutePoint() noexcept
             const SkyMath::Coordinate end = {positionData.latitude, positionData.longitude};
             // In meters
             const double distance = SkyMath::geodesicDistance(start, end);
-            const double velocityMetersPerSecond = Convert::knotsToMetersPerSecond(d->pluginSettings.getDefaultVelocity());
+            const double velocityMetersPerSecond = Convert::knotsToMetersPerSecond(d->pluginSettings.getDefaultSpeed());
             const double seconds = distance / velocityMetersPerSecond;
             // Milliseconds
             positionData.timestamp = previousPositionData.timestamp + static_cast<std::int64_t>(std::round(seconds * 1000.0));
@@ -339,7 +339,7 @@ inline void GpxParser::parseTrackPoint() noexcept
                 const SkyMath::Coordinate end {positionData.latitude, positionData.longitude};
                 // In meters
                 const double distance = SkyMath::geodesicDistance(start, end);
-                const double velocityMetersPerSecond = Convert::knotsToMetersPerSecond(d->pluginSettings.getDefaultVelocity());
+                const double velocityMetersPerSecond = Convert::knotsToMetersPerSecond(d->pluginSettings.getDefaultSpeed());
                 const double seconds = distance / velocityMetersPerSecond;
                 // Milliseconds
                 positionData.timestamp = previousPositionData.timestamp + static_cast<std::int64_t>(std::round(seconds * 1000.0));

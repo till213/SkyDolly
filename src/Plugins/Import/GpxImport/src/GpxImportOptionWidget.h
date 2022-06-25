@@ -55,7 +55,7 @@ private slots:
     void onWaypointSelelectionChanged() noexcept;
     void onPositionSelelectionChanged() noexcept;
     void onDefaultAltitudeChanged(int index) noexcept;
-    void onDefaultVelocityChanged(int value) noexcept;
+    void onDefaultSpeedChanged(int value) noexcept;
     void onConvertAltitudeChanged(int state) noexcept;
 };
 
