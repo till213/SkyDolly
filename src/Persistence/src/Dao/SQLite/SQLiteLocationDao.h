@@ -25,11 +25,20 @@
 #ifndef SQLITELOCATIONDAO_H
 #define SQLITELOCATIONDAO_H
 
+#include <cstdint>
 
-class SQLiteLocationDao
+#include "../LocationDaoIntf.h"
+
+struct Location;
+
+class SQLiteLocationDao : public LocationDaoIntf
 {
 public:
     SQLiteLocationDao();
+
+    bool add(Location &location) noexcept override;
+    bool get(std::int64_t id, Location &location) const noexcept override;
+    bool deleteById(std::int64_t id) noexcept override;
 };
 
 #endif // SQLITELOCATIONDAO_H

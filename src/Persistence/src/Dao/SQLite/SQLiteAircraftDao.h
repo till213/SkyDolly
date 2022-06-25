@@ -42,16 +42,16 @@ class SQLiteAircraftDao : public AircraftDaoIntf
 {
 public:
     explicit SQLiteAircraftDao() noexcept;
-    virtual ~SQLiteAircraftDao() noexcept;
+    ~SQLiteAircraftDao() noexcept override;
 
-    virtual bool add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept override;
-    virtual bool getByFlightId(std::int64_t flightId, std::back_insert_iterator<std::vector<std::unique_ptr<Aircraft>>> backInsertIterator) const noexcept override;
-    virtual bool adjustAircraftSequenceNumbersByFlightId(std::int64_t flightId, std::size_t sequenceNumber) noexcept override;
-    virtual bool deleteAllByFlightId(std::int64_t flightId) noexcept override;
-    virtual bool deleteById(std::int64_t id) noexcept override;
-    virtual bool getAircraftInfosByFlightId(std::int64_t flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept override;
-    virtual bool updateTimeOffset(std::int64_t id, std::int64_t timeOffset) noexcept override;
-    virtual bool updateTailNumber(std::int64_t id, const QString &tailNumber) noexcept override;
+    bool add(std::int64_t flightId, std::size_t sequenceNumber, Aircraft &aircraft) noexcept override;
+    bool getByFlightId(std::int64_t flightId, std::back_insert_iterator<std::vector<std::unique_ptr<Aircraft>>> backInsertIterator) const noexcept override;
+    bool adjustAircraftSequenceNumbersByFlightId(std::int64_t flightId, std::size_t sequenceNumber) noexcept override;
+    bool deleteAllByFlightId(std::int64_t flightId) noexcept override;
+    bool deleteById(std::int64_t id) noexcept override;
+    bool getAircraftInfosByFlightId(std::int64_t flightId, std::vector<AircraftInfo> &aircraftInfos) const noexcept override;
+    bool updateTimeOffset(std::int64_t id, std::int64_t timeOffset) noexcept override;
+    bool updateTailNumber(std::int64_t id, const QString &tailNumber) noexcept override;
 
 private:
     std::unique_ptr<SQLiteAircraftDaoPrivate> d;

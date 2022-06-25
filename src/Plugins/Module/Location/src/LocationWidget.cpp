@@ -30,6 +30,7 @@
 #include <QDebug>
 #endif
 
+#include <Persistence/Service/LocationService.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/AbstractModule.h>
@@ -46,6 +47,8 @@ class LocationWidgetPrivate
 public:
     LocationWidgetPrivate() noexcept
     {}
+
+    std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
 };
 
 // PUBLIC

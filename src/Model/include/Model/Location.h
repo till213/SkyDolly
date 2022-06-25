@@ -31,23 +31,25 @@
 
 struct MODEL_API Location
 {
-    std::int64_t id;
+    std::int64_t id {InvalidId};
 
-    float latitude;
-    float longitude;
-    float altitude;
-    float pitch;
-    float bank;
-    float heading;
-    bool onGround;
+    float latitude {0.0f};
+    float longitude {0.0f};
+    float altitude {0.0f};
+    float pitch {0.0f};
+    float bank {0.0f};
+    float heading {0.0f};
+    bool onGround {false};
     QString description;
 
-    explicit Location() noexcept;
+    Location() noexcept = default;
     Location(Location &other) = default;
     Location(Location &&other) = default;
-    ~Location() noexcept;
+    ~Location() noexcept = default;
     Location &operator=(const Location &rhs) = default;
     Location &operator=(Location &&rhs) = default;
+
+    static constexpr std::int64_t InvalidId {-1};
 };
 
 #endif // LOCATION_H

@@ -42,8 +42,9 @@ public:
     LocationService() noexcept;
     ~LocationService() noexcept;
 
-    bool store(std::int64_t flightId, std::size_t sequenceNumber, Location &aircraft) noexcept;
-    bool deleteByIndex(int index) noexcept;
+    bool store(Location &location) noexcept;
+    bool restore(std::int64_t id, Location &location) noexcept;
+    bool deleteById(std::int64_t id) noexcept;
     std::vector<Location> getLocations(const LocationSelector &locationSelector) const noexcept;
 
 private:

@@ -37,12 +37,12 @@ class SQLitePrimaryFlightControlDao : public PrimaryFlightControlDaoIntf
 {
 public:
     explicit SQLitePrimaryFlightControlDao() noexcept;
-    virtual ~SQLitePrimaryFlightControlDao() noexcept;
+    ~SQLitePrimaryFlightControlDao() noexcept override;
 
-    virtual bool add(std::int64_t aircraftId, const PrimaryFlightControlData &data) noexcept override;
-    virtual bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<PrimaryFlightControlData>> backInsertIterator) const noexcept override;
-    virtual bool deleteByFlightId(std::int64_t flightId) noexcept override;
-    virtual bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
+    bool add(std::int64_t aircraftId, const PrimaryFlightControlData &data) noexcept override;
+    bool getByAircraftId(std::int64_t aircraftId, std::back_insert_iterator<std::vector<PrimaryFlightControlData>> backInsertIterator) const noexcept override;
+    bool deleteByFlightId(std::int64_t flightId) noexcept override;
+    bool deleteByAircraftId(std::int64_t aircraftId) noexcept override;
 };
 
 #endif // SQLITEPRIMARYFLIGHTCONTROLDAO_H

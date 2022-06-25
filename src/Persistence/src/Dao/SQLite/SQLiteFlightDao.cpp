@@ -65,7 +65,7 @@ SQLiteFlightDao::SQLiteFlightDao() noexcept
 SQLiteFlightDao::~SQLiteFlightDao() noexcept
 {}
 
-bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
+bool SQLiteFlightDao::add(Flight &flight) noexcept
 {
     QSqlQuery query;
     query.prepare(
@@ -146,7 +146,7 @@ bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
         flight.setId(id);
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteFlightDao::addFlight: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug("SQLiteFlightDao::add: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
 #endif
     }
     if (ok) {
@@ -165,7 +165,7 @@ bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
     return ok;
 }
 
-bool SQLiteFlightDao::getFlightById(std::int64_t id, Flight &flight) const noexcept
+bool SQLiteFlightDao::get(std::int64_t id, Flight &flight) const noexcept
 {
     QSqlQuery query;
     query.setForwardOnly(true);
@@ -240,7 +240,7 @@ bool SQLiteFlightDao::getFlightById(std::int64_t id, Flight &flight) const noexc
         }
 #ifdef DEBUG
     } else {
-        qDebug("SQLiteFlightDao::getFlightById: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+        qDebug("SQLiteFlightDao::get: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
 #endif
     }
     return ok;
