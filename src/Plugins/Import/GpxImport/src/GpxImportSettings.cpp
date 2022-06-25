@@ -223,9 +223,9 @@ void GpxImportSettings::restoreSettingsExtn(const Settings::ValuesByKey &valuesB
         d->defaultAltitude = DefaultAltitude;
     }
 
-    const int velocity = valuesByKey.at(::DefaultSpeedKey).toInt(&ok);
+    const int speed = valuesByKey.at(::DefaultSpeedKey).toInt(&ok);
     if (ok) {
-        d->defaultSpeed = velocity;
+        d->defaultSpeed = speed;
     } else {
         d->defaultSpeed = DefaultSpeed;
     }

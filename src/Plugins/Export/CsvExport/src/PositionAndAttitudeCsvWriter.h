@@ -33,18 +33,18 @@ class Flight;
 class Aircraft;
 class CsvExportSettings;
 class PositionData;
-class PositionAndVelocityCsvWriterPrivate;
+class PositionAndAttitudeCsvWriterPrivate;
 
 class PositionAndAttitudeCsvWriter : public CsvWriterIntf
 {
 public:
     PositionAndAttitudeCsvWriter(const CsvExportSettings &pluginSettings) noexcept;
-    virtual ~PositionAndAttitudeCsvWriter() noexcept;
+    ~PositionAndAttitudeCsvWriter() noexcept override;
 
     virtual bool write(const Flight &flight, const Aircraft &aircraft, QIODevice &ioDevice) noexcept override;
 
 private:
-    std::unique_ptr<PositionAndVelocityCsvWriterPrivate> d;
+    std::unique_ptr<PositionAndAttitudeCsvWriterPrivate> d;
 };
 
 #endif // POSITIONANDATTITUDECSVWRITER_H

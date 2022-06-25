@@ -397,7 +397,7 @@ void PathCreatorPlugin::recordFlightCondition() noexcept
     flightCondition.surfaceType = static_cast<SimType::SurfaceType>(d->randomGenerator->bounded(26));
     flightCondition.ambientTemperature = d->randomGenerator->bounded(80.0) - 40.0;
     flightCondition.totalAirTemperature = d->randomGenerator->bounded(80.0) - 40.0;
-    flightCondition.windVelocity = d->randomGenerator->bounded(30.0);
+    flightCondition.windSpeed = d->randomGenerator->bounded(30.0);
     flightCondition.windDirection = d->randomGenerator->bounded(360);
     flightCondition.precipitationState = static_cast<SimType::PrecipitationState>(d->randomGenerator->bounded(4));
     flightCondition.visibility = d->randomGenerator->bounded(10000.0);

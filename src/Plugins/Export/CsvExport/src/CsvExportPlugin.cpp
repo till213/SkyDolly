@@ -110,7 +110,7 @@ bool CsvExportPlugin::exportAircraft(const Flight &flight, const Aircraft &aircr
     case CsvExportSettings::Format::FlightRadar24:
         writer = std::make_unique<FlightRadar24CsvWriter>(d->pluginSettings);
         break;
-    case CsvExportSettings::Format::PositionAndVelocity:
+    case CsvExportSettings::Format::PositionAndAttitude:
         writer = std::make_unique<PositionAndAttitudeCsvWriter>(d->pluginSettings);
         break;
     }

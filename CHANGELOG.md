@@ -2,6 +2,9 @@
 
 ## 0.12.0
 
+### Improvements
+- Renamed 'velocity' (= a vector) to 'speed' (= a value) where appropriate
+
 ### Bug Fixes
 - The window is properly resized when in minimal mode and the default non-essential button visibility is changed in the settings
 
@@ -156,7 +159,7 @@
     - Routes describe "how to get there"
     - Tracks contain the actually travelled path (typically recorded with a GPS device)
   * The import dialog allows to select which elements to use for flight waypoints and the actual flown path
-  * It also offers a default altitude and velocity, as timestamps and elevation values are optional values in the GPX format
+  * It also offers a default altitude and speed, as timestamps and elevation values are optional values in the GPX format
 - CSV import plugin
   * The following CSV formats are now supported:
     - CSV from [flightradar24.com](https://www.flightradar24.com/)
@@ -230,7 +233,7 @@
 
 ### Bug Fixes
 
-- The initial velocity when recording a new formation aircraft is now properly set (indicated airspeed, as opposed to true airspeed)
+- The initial speed when recording a new formation aircraft is now properly set (indicated airspeed, as opposed to true airspeed)
   * Note that the conversion from true to indicated airspeed is currently done with a _rule of thumb_ only
   * https://www.pilotmall.com/blogs/news/how-to-calculate-true-airspeed-and-what-it-is-guide
   * Depending on the altitude and especially pressure there might still be a substantial difference to the actual indicated airspeed
@@ -245,7 +248,7 @@
 
 - The main window is now made a _parent_ of the KML export dialog, making sure that the export dialog is always centered and on top of the main window
   * Especially when the _Stay on Top_ option is enabled for the main window
-- The initial velocity in _fly with formation_ replay mode is now properly set
+- The initial speed in _fly with formation_ replay mode is now properly set
   * Properly converted from feet/s to knots
   * Properly converted from true to indicated airspeed (the SIMCONNECT_DATA_INITPOSITION structure really seems to expected indicated airspeed)
 

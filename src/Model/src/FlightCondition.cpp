@@ -34,7 +34,7 @@ FlightCondition::FlightCondition() noexcept
       surfaceType{SimType::SurfaceType::Unknown},
       ambientTemperature{0.0f},
       totalAirTemperature{0.0f},
-      windVelocity{0.0f},
+      windSpeed{0.0f},
       windDirection{0.0f},
       precipitationState{SimType::PrecipitationState::None},
       visibility{0.0f},
@@ -49,7 +49,7 @@ FlightCondition::FlightCondition(FlightCondition &&other) noexcept
       surfaceType(other.surfaceType),
       ambientTemperature(other.ambientTemperature),
       totalAirTemperature(other.totalAirTemperature),
-      windVelocity(other.windVelocity),
+      windSpeed(other.windSpeed),
       windDirection(other.windDirection),
       precipitationState(other.precipitationState),
       visibility(other.visibility),
@@ -70,7 +70,7 @@ FlightCondition &FlightCondition::operator=(FlightCondition &&rhs) noexcept
         surfaceType = rhs.surfaceType;
         ambientTemperature = rhs.ambientTemperature;
         totalAirTemperature = rhs.totalAirTemperature;
-        windVelocity = rhs.windVelocity;
+        windSpeed = rhs.windSpeed;
         windDirection = rhs.windDirection;
         precipitationState = rhs.precipitationState;
         visibility = rhs.visibility;

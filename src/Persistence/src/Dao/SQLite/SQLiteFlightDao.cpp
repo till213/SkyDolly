@@ -78,7 +78,7 @@ bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
         "  ground_altitude,"
         "  ambient_temperature,"
         "  total_air_temperature,"
-        "  wind_velocity,"
+        "  wind_speed,"
         "  wind_direction,"
         "  visibility,"
         "  sea_level_pressure,"
@@ -99,7 +99,7 @@ bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
         " :ground_altitude,"
         " :ambient_temperature,"
         " :total_air_temperature,"
-        " :wind_velocity,"
+        " :wind_speed,"
         " :wind_direction,"
         " :visibility,"
         " :sea_level_pressure,"
@@ -124,7 +124,7 @@ bool SQLiteFlightDao::addFlight(Flight &flight) noexcept
     query.bindValue(":ground_altitude", flightCondition.groundAltitude);
     query.bindValue(":ambient_temperature", flightCondition.ambientTemperature);
     query.bindValue(":total_air_temperature", flightCondition.totalAirTemperature);
-    query.bindValue(":wind_velocity", flightCondition.windVelocity);
+    query.bindValue(":wind_speed", flightCondition.windSpeed);
     query.bindValue(":wind_direction", flightCondition.windDirection);
     query.bindValue(":visibility", flightCondition.visibility);
     query.bindValue(":sea_level_pressure", flightCondition.seaLevelPressure);
@@ -188,7 +188,7 @@ bool SQLiteFlightDao::getFlightById(std::int64_t id, Flight &flight) const noexc
         const int groundAltitudeIdx = record.indexOf("ground_altitude");
         const int ambientTemperatureIdx = record.indexOf("ambient_temperature");
         const int totalAirTemperatureIdx = record.indexOf("total_air_temperature");
-        const int windVelocityIdx = record.indexOf("wind_velocity");
+        const int windSpeedIdx = record.indexOf("wind_speed");
         const int windDirectionIdx = record.indexOf("wind_direction");
         const int visibilityIdx = record.indexOf("visibility");
         const int seaLevelPressureIdx = record.indexOf("sea_level_pressure");
@@ -214,7 +214,7 @@ bool SQLiteFlightDao::getFlightById(std::int64_t id, Flight &flight) const noexc
             flightCondition.groundAltitude = query.value(groundAltitudeIdx).toFloat();
             flightCondition.ambientTemperature = query.value(ambientTemperatureIdx).toFloat();
             flightCondition.totalAirTemperature = query.value(totalAirTemperatureIdx).toFloat();
-            flightCondition.windVelocity = query.value(windVelocityIdx).toFloat();
+            flightCondition.windSpeed = query.value(windSpeedIdx).toFloat();
             flightCondition.windDirection = query.value(windDirectionIdx).toFloat();
             flightCondition.visibility = query.value(visibilityIdx).toFloat();
             flightCondition.seaLevelPressure = query.value(seaLevelPressureIdx).toFloat();

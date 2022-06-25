@@ -137,9 +137,9 @@ QString Unit::formatVisibility(double meters) noexcept
     return visibility;
 }
 
-QString Unit::formatDegrees(double velocity) noexcept
+QString Unit::formatDegrees(double degrees) noexcept
 {
-    return d->locale.toString(velocity, 'f', Precision) % "°";
+    return d->locale.toString(degrees, 'f', Precision) % "°";
 }
 
 QString Unit::formatHz(double hz) noexcept
@@ -155,14 +155,14 @@ QString Unit::formatHz(double hz) noexcept
     return hzString;
 }
 
-QString Unit::formatVelocityInFeetPerSecond(double velocity) noexcept
+QString Unit::formatSpeedInFeetPerSecond(double speed) noexcept
 {
-    return d->locale.toString(velocity, 'f', Precision) % " ft/s";
+    return d->locale.toString(speed, 'f', Precision) % " ft/s";
 }
 
-QString Unit::formatVelocityInRadians(double velocity) noexcept
+QString Unit::formatSpeedInRadians(double speed) noexcept
 {
-    return d->locale.toString(velocity, 'f', Precision) % " rad/s";
+    return d->locale.toString(speed, 'f', Precision) % " rad/s";
 }
 
 QString Unit::formatPosition(std::int16_t position) noexcept
@@ -175,9 +175,9 @@ QString Unit::formatPercent(std::uint8_t percent) noexcept
     return d->locale.toString(percent / static_cast<double>(std::numeric_limits<std::uint8_t>::max()) * 100.0, 'f', Precision) % " %";
 }
 
-QString Unit::formatKnots(double velocity) noexcept
+QString Unit::formatKnots(double speed) noexcept
 {
-    return d->locale.toString(velocity, 'f', Precision) % " knots";
+    return d->locale.toString(speed, 'f', Precision) % " knots";
 }
 
 QString Unit::formatMemory(std::int64_t memory) noexcept

@@ -62,13 +62,13 @@ public:
     QString formatDegrees(double degrees) noexcept;
     QString formatHz(double hz) noexcept;
 
-    QString formatVelocityInFeetPerSecond(double velocity) noexcept;
-    QString formatVelocityInRadians(double velocity) noexcept;
+    QString formatSpeedInFeetPerSecond(double speed) noexcept;
+    QString formatSpeedInRadians(double speed) noexcept;
 
     QString formatPosition(std::int16_t position) noexcept;
     QString formatPercent(std::uint8_t percent) noexcept;
 
-    QString formatKnots(double velocity) noexcept;
+    QString formatKnots(double speed) noexcept;
 
     QString formatMemory(std::int64_t memory) noexcept;
 

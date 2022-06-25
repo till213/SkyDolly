@@ -662,3 +662,10 @@ insert into aircraft_type values
 @migr(id = "d794cc76-3bae-41d6-8219-64f405379c45", descn = "Update application version to 0.11", step = 1)
 update metadata
 set app_version = '0.11.0';
+
+@migr(id = "00c67a6f-b124-4147-8c97-6f99d814e3cc", descn = "Flight rename wind_velocity to wind_speed", step_cnt = 1)
+alter table flight rename column wind_velocity to wind_speed;
+
+@migr(id = "c94c121e-3d93-44e4-a747-6db2b5e3b45b", descn = "Update application version to 0.12", step = 1)
+update metadata
+set app_version = '0.12.0';

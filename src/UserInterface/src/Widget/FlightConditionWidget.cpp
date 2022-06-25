@@ -87,7 +87,7 @@ void FlightConditionWidget::initUi() noexcept
     ui->surfaceTypeLineEdit->setToolTip(SimVar::SurfaceType);
     ui->temperatureLineEdit->setToolTip(SimVar::AmbientTemperature);
     ui->totalAirTemperatureLineEdit->setToolTip(SimVar::TotalAirTemperature);
-    ui->windVelocityLineEdit->setToolTip(SimVar::AmbientWindVelocity);
+    ui->windSpeedLineEdit->setToolTip(SimVar::AmbientWindVelocity);
     ui->windDirectionLineEdit->setToolTip(SimVar::AmbientWindDirection);
     ui->precipitationStateLineEdit->setToolTip(SimVar::AmbientPrecipState);
 
@@ -113,7 +113,7 @@ void FlightConditionWidget::updateUi() noexcept
     ui->surfaceTypeLineEdit->setText(SimType::surfaceTypeToString(flightCondition.surfaceType));
     ui->temperatureLineEdit->setText(d->unit.formatCelcius(flightCondition.ambientTemperature));
     ui->totalAirTemperatureLineEdit->setText(d->unit.formatCelcius(flightCondition.totalAirTemperature));
-    ui->windVelocityLineEdit->setText(d->unit.formatKnots(flightCondition.windVelocity));
+    ui->windSpeedLineEdit->setText(d->unit.formatKnots(flightCondition.windSpeed));
     ui->windDirectionLineEdit->setText(d->unit.formatDegrees(flightCondition.windDirection));
     ui->precipitationStateLineEdit->setText(SimType::precipitationStateToString(flightCondition.precipitationState));
 

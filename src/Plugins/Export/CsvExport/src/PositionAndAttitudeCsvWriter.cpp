@@ -30,6 +30,9 @@
 #include <QChar>
 #include <QString>
 #include <QStringBuilder>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <Kernel/Convert.h>
 #include <Kernel/Enum.h>
@@ -56,10 +59,10 @@ namespace
     inline const QString HeadingColumn = QStringLiteral("Heading");
 }
 
-class PositionAndVelocityCsvWriterPrivate
+class PositionAndAttitudeCsvWriterPrivate
 {
 public:
-    PositionAndVelocityCsvWriterPrivate(const CsvExportSettings &thePluginSettings) noexcept
+    PositionAndAttitudeCsvWriterPrivate(const CsvExportSettings &thePluginSettings) noexcept
         : pluginSettings(thePluginSettings)
     {}
 
@@ -71,17 +74,17 @@ public:
 // PUBLIC
 
 PositionAndAttitudeCsvWriter::PositionAndAttitudeCsvWriter(const CsvExportSettings &pluginSettings) noexcept
-    : d(std::make_unique<PositionAndVelocityCsvWriterPrivate>(pluginSettings))
+    : d(std::make_unique<PositionAndAttitudeCsvWriterPrivate>(pluginSettings))
 {
 #ifdef DEBUG
-    qDebug("PositionAndVelocityCsvWriter::PositionAndVelocityCsvWriter: CREATED");
+    qDebug() << "PositionAndAttitudeCsvWriter::PositionAndAttitudeCsvWriter: CREATED";
 #endif
 }
 
 PositionAndAttitudeCsvWriter::~PositionAndAttitudeCsvWriter() noexcept
 {
 #ifdef DEBUG
-    qDebug("PositionAndVelocityCsvWriter::~PositionAndVelocityCsvWriter: DELETED");
+    qDebug() << "PositionAndAttitudeCsvWriter::~PositionAndAttitudeCsvWriter: DELETED";
 #endif
 }
 

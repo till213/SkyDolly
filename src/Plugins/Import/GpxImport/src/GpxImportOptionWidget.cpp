@@ -35,7 +35,7 @@
 namespace
 {
     constexpr int MaximumAltitude = 99999;
-    constexpr int MaximumVelocity = 999;
+    constexpr int MaximumSpeed = 999;
 }
 
 class GpxImportOptionWidgetPrivate
@@ -103,7 +103,7 @@ void GpxImportOptionWidget::initUi() noexcept
     ui->defaultAltitudeSpinBox->setSuffix(tr(" feet"));
     ui->defaultAltitudeSpinBox->setSingleStep(100);
     ui->defaultAltitudeSpinBox->setGroupSeparatorShown(true);
-    ui->defaultSpeedSpinBox->setRange(0, ::MaximumVelocity);
+    ui->defaultSpeedSpinBox->setRange(0, ::MaximumSpeed);
     ui->defaultSpeedSpinBox->setSuffix(tr(" knots"));
     ui->defaultSpeedSpinBox->setSingleStep(5);
     ui->defaultSpeedSpinBox->setGroupSeparatorShown(true);

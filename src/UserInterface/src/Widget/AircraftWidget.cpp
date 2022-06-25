@@ -86,18 +86,18 @@ void AircraftWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access a
         ui->headingLineEdit->setText(d->unit.formatDegrees(positionData.heading));
 
         // Velocity
-        double velocityFeetPerSec = positionData.velocityBodyX;
-        double velocityKnots = Convert::feetPerSecondToKnots(velocityFeetPerSec);
-        ui->velocityXLineEdit->setText(d->unit.formatKnots(velocityKnots) % " (" % d->unit.formatVelocityInFeetPerSecond(velocityFeetPerSec) % ")");
-        velocityFeetPerSec = positionData.velocityBodyY;
-        velocityKnots = Convert::feetPerSecondToKnots(velocityFeetPerSec);
-        ui->velocityYLineEdit->setText(d->unit.formatKnots(velocityKnots) % " (" % d->unit.formatVelocityInFeetPerSecond(velocityFeetPerSec) % ")");
-        velocityFeetPerSec = positionData.velocityBodyZ;
-        velocityKnots = Convert::feetPerSecondToKnots(velocityFeetPerSec);
-        ui->velocityZLineEdit->setText(d->unit.formatKnots(velocityKnots) % " (" % d->unit.formatVelocityInFeetPerSecond(velocityFeetPerSec) % ")");
-        ui->rotationVelocityXLineEdit->setText(d->unit.formatVelocityInRadians(positionData.rotationVelocityBodyX));
-        ui->rotationVelocityYLineEdit->setText(d->unit.formatVelocityInRadians(positionData.rotationVelocityBodyY));
-        ui->rotationVelocityZLineEdit->setText(d->unit.formatVelocityInRadians(positionData.rotationVelocityBodyZ));
+        double speedFeetPerSec = positionData.velocityBodyX;
+        double speedKnots = Convert::feetPerSecondToKnots(speedFeetPerSec);
+        ui->velocityXLineEdit->setText(d->unit.formatKnots(speedKnots) % " (" % d->unit.formatSpeedInFeetPerSecond(speedFeetPerSec) % ")");
+        speedFeetPerSec = positionData.velocityBodyY;
+        speedKnots = Convert::feetPerSecondToKnots(speedFeetPerSec);
+        ui->velocityYLineEdit->setText(d->unit.formatKnots(speedKnots) % " (" % d->unit.formatSpeedInFeetPerSecond(speedFeetPerSec) % ")");
+        speedFeetPerSec = positionData.velocityBodyZ;
+        speedKnots = Convert::feetPerSecondToKnots(speedFeetPerSec);
+        ui->velocityZLineEdit->setText(d->unit.formatKnots(speedKnots) % " (" % d->unit.formatSpeedInFeetPerSecond(speedFeetPerSec) % ")");
+        ui->rotationVelocityXLineEdit->setText(d->unit.formatSpeedInRadians(positionData.rotationVelocityBodyX));
+        ui->rotationVelocityYLineEdit->setText(d->unit.formatSpeedInRadians(positionData.rotationVelocityBodyY));
+        ui->rotationVelocityZLineEdit->setText(d->unit.formatSpeedInRadians(positionData.rotationVelocityBodyZ));
 
         colorName = d->ActiveTextColor.name();
     } else {

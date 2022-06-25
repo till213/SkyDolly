@@ -341,7 +341,7 @@ QString KmlExportPlugin::getFlightDescription() const noexcept
             tr("Total air temperature") % ": " % d->unit.formatCelcius(flightCondition.totalAirTemperature) % "\n" %
             tr("Precipitation") % ": " % SimType::precipitationStateToString(flightCondition.precipitationState) % "\n" %
             tr("Wind direction") % ": " % d->unit.formatDegrees(flightCondition.windDirection) % "\n" %
-            tr("Wind velocity") % ": " % d->unit.formatKnots(flightCondition.windVelocity) % "\n" %
+            tr("Wind speed") % ": " % d->unit.formatKnots(flightCondition.windSpeed) % "\n" %
             tr("Visibility") % ": " % d->unit.formatVisibility(flightCondition.visibility) % "\n" %
             tr("In clouds") % ": " % d->unit.formatBoolean(flightCondition.inClouds) % "\n";
 
