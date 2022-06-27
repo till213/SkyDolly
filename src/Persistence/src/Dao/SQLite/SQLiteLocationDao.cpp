@@ -22,6 +22,8 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include <iterator>
+
 #include <QString>
 #include <QSqlQuery>
 #include <QVariant>
@@ -32,14 +34,13 @@
 #endif
 
 #include <Model/Location.h>
+#include <LocationSelector.h>
 #include "SQLiteLocationDao.h"
 
 // PUBIC
 
 SQLiteLocationDao::SQLiteLocationDao()
-{
-
-}
+{}
 
 bool SQLiteLocationDao::add(Location &location) noexcept
 {
@@ -98,3 +99,16 @@ bool SQLiteLocationDao::deleteById(std::int64_t id) noexcept
     // TODO IMPLEMENT ME
     return true;
 }
+
+bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept
+{
+    // TODO IMPLEMENT ME
+    return true;
+}
+
+bool SQLiteLocationDao::getSelectedLocations(const LocationSelector &selector, std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept
+{
+    // TODO IMPLEMENT ME
+    return true;
+}
+

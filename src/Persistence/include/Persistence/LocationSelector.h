@@ -36,6 +36,7 @@ struct PERSISTENCE_API LocationSelector
 public:
     LocationSelector();
 
+    // TODO IMPLEMENT ME
 };
 
 #endif // LOCATIONSELECTOR_H

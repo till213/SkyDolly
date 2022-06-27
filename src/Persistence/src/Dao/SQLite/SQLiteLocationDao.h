@@ -39,6 +39,8 @@ public:
     bool add(Location &location) noexcept override;
     bool get(std::int64_t id, Location &location) const noexcept override;
     bool deleteById(std::int64_t id) noexcept override;
+    bool getAll(std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept override;
+    bool getSelectedLocations(const LocationSelector &selector, std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept override;
 };
 
 #endif // SQLITELOCATIONDAO_H

@@ -25,11 +25,14 @@
 
 #include <memory>
 
+#include <QTableWidget>
 #include <QStringList>
 #ifdef DEBUG
 #include <QDebug>
 #endif
 
+#include <Kernel/Unit.h>
+#include <Persistence/LogbookManager.h>
 #include <Persistence/Service/LocationService.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
@@ -39,7 +42,7 @@
 
 namespace
 {
-
+    constexpr int InvalidColumnIndex {-1};
 }
 
 class LocationWidgetPrivate
@@ -49,6 +52,9 @@ public:
     {}
 
     std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
+    bool columnsAutoResized {false};
+    int idColumnIndex {::InvalidColumnIndex};
+    Unit unit;
 };
 
 // PUBLIC
@@ -78,7 +84,7 @@ LocationWidget::~LocationWidget() noexcept
 
 void LocationWidget::initUi() noexcept
 {
-    const QStringList headers {tr("Position"), tr("Description")};
+    const QStringList headers {tr("ID"), tr("Position"), tr("Description")};
     ui->locationTableWidget->setColumnCount(headers.count());
     ui->locationTableWidget->setHorizontalHeaderLabels(headers);
     ui->locationTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -95,9 +101,68 @@ void LocationWidget::frenchConnection() noexcept
 
 }
 
+void LocationWidget::updateLocationTable() noexcept
+{
+    if (LogbookManager::getInstance().isConnected()) {
+
+        std::vector<Location> locations;
+        d->locationService->getAll(std::back_inserter(locations));
+
+        ui->locationTableWidget->blockSignals(true);
+        ui->locationTableWidget->setSortingEnabled(false);
+        ui->locationTableWidget->clearContents();
+        ui->locationTableWidget->setRowCount(static_cast<int>(locations.size()));
+
+        int rowIndex {0};
+        for (const Location &location : locations) {
+            addLocation(location, rowIndex);
+            ++rowIndex;
+        }
+
+        ui->locationTableWidget->setSortingEnabled(true);
+        if (!d->columnsAutoResized) {
+            ui->locationTableWidget->resizeColumnsToContents();
+            d->columnsAutoResized = true;
+        }
+        ui->locationTableWidget->blockSignals(false);
+
+    } else {
+        // Clear existing entries
+        ui->locationTableWidget->setRowCount(0);
+    }
+}
+
+inline void LocationWidget::addLocation(const Location &location, int rowIndex) noexcept
+{
+    int columnIndex {0};
+
+    // ID
+    std::unique_ptr<QTableWidgetItem> newItem = std::make_unique<QTableWidgetItem>();
+    QVariant locationId = QVariant::fromValue(location.id);
+    newItem->setData(Qt::DisplayRole, locationId);
+    newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    newItem->setToolTip(tr("Double-click to load location."));
+    // Transfer ownership of newItem to table widget
+    ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
+    d->idColumnIndex = columnIndex;
+    ++columnIndex;
+
+    // Location
+    newItem = std::make_unique<QTableWidgetItem>(d->unit.formatLatLongPosition(location.latitude, location.longitude));
+    newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
+    ++columnIndex;
+
+    // Description
+    newItem = std::make_unique<QTableWidgetItem>(location.description);
+    newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
+    ++columnIndex;
+}
+
 // PRIVATE SLOTS
 
 void LocationWidget::updateUi() noexcept
 {
-
+    updateLocationTable();
 }

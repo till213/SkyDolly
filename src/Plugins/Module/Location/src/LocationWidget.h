@@ -31,19 +31,10 @@
 
 #include <QWidget>
 
-class QShowEvent;
-class QHideEvent;
-class QAction;
-class QTreeWidgetItem;
-class QString;
-
 #include <PluginManager/ModuleIntf.h>
 #include <PluginManager/AbstractModule.h>
 
-class DatabaseService;
-class FlightService;
-class FlightDate;
-class FlightSummary;
+struct Location;
 class LocationWidgetPrivate;
 
 namespace Ui {
@@ -58,12 +49,14 @@ public:
     ~LocationWidget() noexcept override;
 
 private:
-    Q_DISABLE_COPY(LocationWidget)
     std::unique_ptr<Ui::LocationWidget> ui;
     std::unique_ptr<LocationWidgetPrivate> d;
 
     void initUi() noexcept;
     void frenchConnection() noexcept;
+
+    void updateLocationTable() noexcept;
+    inline void addLocation(const Location &location, int rowIndex) noexcept;
 
 private slots:
     void updateUi() noexcept;

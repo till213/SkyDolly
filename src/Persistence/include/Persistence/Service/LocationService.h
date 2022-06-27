@@ -26,7 +26,7 @@
 #define LOCATIONSERVICE_H
 
 #include <memory>
-#include <vector>
+#include <iterator>
 #include <cstdint>
 #include <cstddef>
 
@@ -45,7 +45,8 @@ public:
     bool store(Location &location) noexcept;
     bool restore(std::int64_t id, Location &location) noexcept;
     bool deleteById(std::int64_t id) noexcept;
-    std::vector<Location> getLocations(const LocationSelector &locationSelector) const noexcept;
+    bool getAll(std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept;
+    bool getSelectedLocations(const LocationSelector &locationSelector, std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept;
 
 private:
     std::unique_ptr<LocationServicePrivate> d;

@@ -24,6 +24,7 @@
  */
 #include <memory>
 #include <cstdint>
+#include <iterator>
 
 #include <QSqlDatabase>
 #ifdef DEBUG
@@ -91,13 +92,34 @@ bool LocationService::restore(std::int64_t id, Location &location) noexcept
 
 bool LocationService::deleteById(std::int64_t id) noexcept
 {
-    // TODO IMPLEMENT ME
-    return true;
+    bool ok = QSqlDatabase::database().transaction();
+    if (ok) {
+        ok = d->locationDao->deleteById(id);
+        if (ok) {
+            ok = QSqlDatabase::database().commit();
+        } else {
+            QSqlDatabase::database().rollback();
+        }
+    }
+    return ok;
 }
 
-std::vector<Location> LocationService::getLocations(const LocationSelector &locationSelector) const noexcept
+bool LocationService::getAll(std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept
 {
-    // TODO IMPLEMENT ME
-    std::vector<Location> locations;
-    return locations;
+    bool ok = QSqlDatabase::database().transaction();
+    if (ok) {
+        ok = d->locationDao->getAll(backInsertIterator);
+        QSqlDatabase::database().rollback();
+    }
+    return ok;
+}
+
+bool LocationService::getSelectedLocations(const LocationSelector &locationSelector, std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept
+{
+    bool ok = QSqlDatabase::database().transaction();
+    if (ok) {
+        ok = d->locationDao->getSelectedLocations(locationSelector, backInsertIterator);
+        QSqlDatabase::database().rollback();
+    }
+    return ok;
 }
