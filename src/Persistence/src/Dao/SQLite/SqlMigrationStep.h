@@ -29,6 +29,7 @@
 
 #include <QStringList>
 #include <QString>
+#include <QStringView>
 
 class QRegularExpressionMatch;
 class QStringRef;
@@ -45,12 +46,17 @@ public:
     bool parseTag(const QRegularExpressionMatch &tagMatch) noexcept;
 
     bool checkApplied() noexcept;
-    bool execute(const QString &sql) noexcept;
+    bool execute(QStringView sql) noexcept;
+    void registerMigration(bool success, QString errorMessage = QString()) noexcept;
 
     const QString &getMigrationId() const noexcept;
+    void setMigrationId(QString migrationId) noexcept;
     const QString &getDescription() const noexcept;
+    void setDescription(QString description) noexcept;
     int getStep() const noexcept;
+    void setStep(int step) noexcept;
     int getStepCount() const noexcept;
+    void setStepCount(int count) noexcept;
 
 private:
     std::unique_ptr<SqlMigrationStepPrivate> d;

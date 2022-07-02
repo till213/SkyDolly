@@ -25,17 +25,31 @@
 #include <QFile>
 #include <QTextStream>
 #include <QRegularExpression>
-#include <QStringRef>
+#include <QString>
 #include <QSqlQuery>
+#include <QDir>
+#include <QCoreApplication>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
+#include <Model/Location.h>
+#include "SQLiteLocationDao.h"
 #include "SqlMigrationStep.h"
 #include "SqlMigration.h"
+
+namespace
+{
+    constexpr char MigrationDirectory[] = "Resources/migr";
+}
 
 class SqlMigrationPrivate
 {
 public:
     SqlMigrationPrivate()
     {}
+
+    SQLiteLocationDao locationDao;
 };
 
 // PUBLIC
@@ -44,37 +58,56 @@ SqlMigration::SqlMigration()
     : d(std::make_unique<SqlMigrationPrivate>())
 {
      Q_INIT_RESOURCE(Migration);
+#ifdef DEBUG
+    qDebug() << "SqlMigration::SqlMigration: CREATED";
+#endif
 }
 
 SqlMigration::~SqlMigration()
-{}
+{
+#ifdef DEBUG
+    qDebug() << "SqlMigration::~SqlMigration: DELETED";
+#endif
+}
 
 bool SqlMigration::migrate() noexcept
 {
-    bool ok = migrate(":/dao/sqlite/migr/LogbookMigration.sql");
+    bool ok = migrateSql(":/dao/sqlite/migr/LogbookMigration.sql");
     if (ok) {
-        ok = migrate(":/dao/sqlite/migr/LocationMigration.sql");
+        ok = migrateSql(":/dao/sqlite/migr/LocationMigration.sql");
+    }
+    if (ok) {
+        QDir migrationDirectory = QDir(QCoreApplication::applicationDirPath());
+#if defined(Q_OS_MAC)
+        if (migrationDirectory.dirName() == "MacOS") {
+            // Navigate up the app bundle structure, into the Contents folder
+            migrationDirectory.cdUp();
+        }
+#endif
+        const QString locationsFilePath = migrationDirectory.absolutePath().append("/Resources/migr/Locations.csv");
+        ok = migrateCsv(locationsFilePath);
     }
     return ok;
 }
 
 // PRIVATE
 
-bool SqlMigration::migrate(const QString &migrationFilePath) noexcept
+bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
 {
+    // https://regex101.com/
+    // @migr(...)
+    static const QRegularExpression migrRegExp("@migr\\(([\\w=\"\\-,.\\s]+)\\)");
     QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;");
     bool ok = query.exec();
     if (ok) {
-        QFile migr(migrationFilePath);
-        ok = migr.open(QFile::OpenModeFlag::ReadOnly | QFile::OpenModeFlag::Text);
+        QFile migrationFile(migrationFilePath);
+        ok = migrationFile.open(QFile::OpenModeFlag::ReadOnly | QFile::OpenModeFlag::Text);
 
         if (ok) {
-            QTextStream textStream(&migr);
+            QTextStream textStream(&migrationFile);
             const QString migration = textStream.readAll();
 
-            // https://regex101.com/
-            // @migr(...)
-            const QRegularExpression migrRegExp("@migr\\(([\\w=\"\\-,.\\s]+)\\)");
+
 
             QStringList sqlStatements = migration.split(migrRegExp);
             QRegularExpressionMatchIterator it = migrRegExp.globalMatch(migration);
@@ -96,9 +129,123 @@ bool SqlMigration::migrate(const QString &migrationFilePath) noexcept
                 ++i;
             }
 
-            migr.close();
+            migrationFile.close();
         }
     }
     query.prepare("PRAGMA foreign_keys=1;");
     return query.exec() && ok;
+}
+
+bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
+{
+    // https://regex101.com/
+    static const QRegularExpression uuidRegExp {"([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})"};
+    static const QRegularExpression csvRegExp {
+        "([+-]?[0-9]*[.]?[0-9]+),"
+        "([+-]?[0-9]*[.]?[0-9]+),"
+        "([+-]?[0-9]*[.]?[0-9]+),"
+        "([+-]?[0-9]*[.]?[0-9]+),"
+        "([+-]?[0-9]*[.]?[0-9]+),"
+        "([+-]?[0-9]*[.]?[0-9]+),"
+        "(false|true),"
+        "[\"]?([^\"]+)[\"]?$"
+    };
+    QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;");
+    QSqlQuery locationQuery;
+    locationQuery.prepare(
+        "insert into location ("
+        "  latitude,"
+        "  longitude,"
+        "  altitude,"
+        "  pitch,"
+        "  bank,"
+        "  heading,"
+        "  on_ground,"
+        "  description"
+        ") values ("
+        " :latitude,"
+        " :longitude,"
+        " :altitude,"
+        " :pitch,"
+        " :bank,"
+        " :heading,"
+        " :on_ground,"
+        " :description"
+        ");"
+    );
+    bool ok = query.exec();
+    if (ok) {
+        QFile migrationFile(migrationFilePath);
+        ok = migrationFile.open(QFile::OpenModeFlag::ReadOnly | QFile::OpenModeFlag::Text);
+
+        if (ok) {
+            QTextStream textStream(&migrationFile);
+            QString csv = textStream.readLine();
+            if (csv.startsWith("MigrationId")) {
+                // Skip column names
+                csv = textStream.readLine();
+            }
+
+            while (!csv.isNull()) {
+                QRegularExpressionMatch match = uuidRegExp.match(csv);
+                const bool hasMatch = match.hasMatch();
+                if (hasMatch) {
+                    const QString uuid = match.captured(1);
+
+                    SqlMigrationStep step;
+                    step.setMigrationId(uuid);
+                    step.setStep(1);
+                    step.setStepCount(1);
+                    if (!step.checkApplied()) {
+
+                        const int offset = match.capturedLength();
+                        match = csvRegExp.match(csv, offset);
+                        if (match.hasMatch()) {
+                            ok = migrateLocation(match);
+                            const QString errorMessage = !ok ? QString("The location import %1 failed.").arg(uuid) : QString();
+                            step.registerMigration(ok, errorMessage);
+                        }
+                    }
+                }
+                csv = textStream.readLine();
+            }
+
+            migrationFile.close();
+        }
+    }
+    query.prepare("PRAGMA foreign_keys=1;");
+    return query.exec() && ok;
+}
+
+bool SqlMigration::migrateLocation(const QRegularExpressionMatch &locationMatch) noexcept
+{
+    bool ok {true};
+    Location location;
+    location.latitude = locationMatch.captured(1).toFloat(&ok);
+    if (ok) {
+        location.longitude = locationMatch.captured(2).toFloat(&ok);
+    }
+    if (ok) {
+        location.altitude = locationMatch.captured(3).toFloat(&ok);
+    }
+    if (ok) {
+        location.pitch = locationMatch.captured(4).toFloat(&ok);
+    }
+    if (ok) {
+        location.bank = locationMatch.captured(5).toFloat(&ok);
+    }
+    if (ok) {
+        location.heading = locationMatch.captured(6).toFloat(&ok);
+    }
+    if (ok) {
+        location.onGround = locationMatch.captured(7).toLower() == "true" ? true : false;
+    }
+    if (ok) {
+        location.description = locationMatch.captured(8);
+    }
+    if (ok) {
+        ok = d->locationDao.add(location);
+    }
+
+    return ok;
 }

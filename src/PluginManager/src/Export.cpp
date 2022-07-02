@@ -53,6 +53,8 @@ namespace
 
 QString Export::suggestFilePath(const Flight &flight, QStringView suffix) noexcept
 {
+    // https://www.codeproject.com/tips/758861/removing-characters-which-are-not-allowed-in-windo
+    static const QRegularExpression illegalInFileName = QRegularExpression("[\\\\/:*?""<>|]");
     QString suggestedFileName;
     const Settings &settings = Settings::getInstance();
 
@@ -68,8 +70,6 @@ QString Export::suggestFilePath(const Flight &flight, QStringView suffix) noexce
         suggestedFileName = title;
     }
 
-    // https://www.codeproject.com/tips/758861/removing-characters-which-are-not-allowed-in-windo
-    const QRegularExpression illegalInFileName = QRegularExpression("[\\\\/:*?""<>|]");
     suggestedFileName = suggestedFileName.replace(illegalInFileName, "_");
     return settings.getExportPath() + "/" + File::ensureSuffix(suggestedFileName, suffix);
 }

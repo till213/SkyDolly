@@ -143,16 +143,7 @@ public:
         : file(nullptr),
           enlAddition(false),
           enlStartOffset(::InvalidOffset),
-          enlLength(0),
-          hRecordDateRegExp(QString(::HRecordDatePattern)),
-          hRecordPilotRegExp(QString(::HRecordPilotPattern)),
-          hRecordCoPilotRegExp(QString(::HRecordCoPilotPattern)),
-          hRecordGliderTypeRegExp(QString(::HRecordGliderTypePattern)),
-          hRecordGliderIdRegExp(QString(::HRecordGliderIdPattern)),
-          iRecordRegExp(QString(::IRecordPattern)),
-          cRecordTaskDefinitionRegExp(QString(::CRecordTaskDefinitionPattern)),
-          cRecordTaskRegExp(QString(::CRecordTaskPattern)),          
-          bRecordRegExp(QString(::BRecordPattern))
+          enlLength(0)
     {}
 
     QFile *file;
@@ -171,16 +162,26 @@ public:
     int enlLength;
     double maxEnlValue;
 
-    QRegularExpression hRecordDateRegExp;
-    QRegularExpression hRecordPilotRegExp;
-    QRegularExpression hRecordCoPilotRegExp;
-    QRegularExpression hRecordGliderTypeRegExp;
-    QRegularExpression hRecordGliderIdRegExp;
-    QRegularExpression iRecordRegExp;
-    QRegularExpression cRecordTaskDefinitionRegExp;
-    QRegularExpression cRecordTaskRegExp;    
-    QRegularExpression bRecordRegExp;
+    static const QRegularExpression hRecordDateRegExp;
+    static const QRegularExpression hRecordPilotRegExp;
+    static const QRegularExpression hRecordCoPilotRegExp;
+    static const QRegularExpression hRecordGliderTypeRegExp;
+    static const QRegularExpression hRecordGliderIdRegExp;
+    static const QRegularExpression iRecordRegExp;
+    static const QRegularExpression cRecordTaskDefinitionRegExp;
+    static const QRegularExpression cRecordTaskRegExp;
+    static const QRegularExpression bRecordRegExp;
 };
+
+const QRegularExpression IgcParserPrivate::hRecordDateRegExp {::HRecordDatePattern};
+const QRegularExpression IgcParserPrivate::hRecordPilotRegExp {::HRecordPilotPattern};
+const QRegularExpression IgcParserPrivate::hRecordCoPilotRegExp {::HRecordCoPilotPattern};
+const QRegularExpression IgcParserPrivate::hRecordGliderTypeRegExp {::HRecordGliderTypePattern};
+const QRegularExpression IgcParserPrivate::hRecordGliderIdRegExp {::HRecordGliderIdPattern};
+const QRegularExpression IgcParserPrivate::iRecordRegExp {::IRecordPattern};
+const QRegularExpression IgcParserPrivate::cRecordTaskDefinitionRegExp {::CRecordTaskDefinitionPattern};
+const QRegularExpression IgcParserPrivate::cRecordTaskRegExp {::CRecordTaskPattern};
+const QRegularExpression IgcParserPrivate::bRecordRegExp {::BRecordPattern};
 
 // PUBLIC
 
@@ -380,7 +381,6 @@ bool IgcParser::parseFixAdditions(const QByteArray &line) noexcept
         // Validate the number of bytes: each definition is expected to be
         // of the form SS FF CCC (7 bytes in total)
         if (definitions.length() >= nofAdditions * ::IRecordAdditionDefinitionLength) {
-            int index = 0;
             for (int i = 0; i < nofAdditions; ++i) {
                 const QStringView def = definitions.mid(i * ::IRecordAdditionDefinitionLength, ::IRecordAdditionDefinitionLength);
                 // We are only interested in the ENL addition for now

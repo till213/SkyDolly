@@ -72,7 +72,7 @@ bool FlightRadar24CsvParser::parse(QFile &file, QDateTime &firstDateTimeUtc, QSt
 {
     bool ok;
     Aircraft &aircraft = flight.getUserAircraft();
-    QRegularExpression regexp(::FlightRadar24CSVPattern);
+    static const QRegularExpression regexp(::FlightRadar24CSVPattern);
 
     // Headers
     const QByteArray header = file.readLine();

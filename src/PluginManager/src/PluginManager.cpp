@@ -61,21 +61,21 @@ public:
     PluginManagerPrivate() noexcept
         : parentWidget(nullptr)
     {
-        pluginsDirectoryPath = QDir(QCoreApplication::applicationDirPath());
+        pluginsDirectory = QDir(QCoreApplication::applicationDirPath());
 #if defined(Q_OS_MAC)
-        if (pluginsDirectoryPath.dirName() == "MacOS") {
+        if (pluginsDirectory.dirName() == "MacOS") {
             // Navigate up the app bundle structure, into the Contents folder
-            pluginsDirectoryPath.cdUp();
+            pluginsDirectory.cdUp();
         }
 #endif
-        pluginsDirectoryPath.cd(PluginDirectoryName);
+        pluginsDirectory.cd(PluginDirectoryName);
     }
 
     ~PluginManagerPrivate() noexcept
     {}
 
     QWidget *parentWidget;
-    QDir pluginsDirectoryPath;
+    QDir pluginsDirectory;
     // Plugin UUID / plugin path
     QMap<QUuid, QString> exportPluginRegistry;
     QMap<QUuid, QString> importPluginRegistry;
@@ -186,11 +186,11 @@ std::vector<PluginManager::Handle> PluginManager::enumeratePlugins(const QString
 {
     std::vector<PluginManager::Handle> pluginHandles;
     pluginRegistry.clear();
-    if (d->pluginsDirectoryPath.exists(pluginDirectoryName)) {
-        d->pluginsDirectoryPath.cd(pluginDirectoryName);
-        const QStringList entryList = d->pluginsDirectoryPath.entryList(QDir::Files);
+    if (d->pluginsDirectory.exists(pluginDirectoryName)) {
+        d->pluginsDirectory.cd(pluginDirectoryName);
+        const QStringList entryList = d->pluginsDirectory.entryList(QDir::Files);
         for (const QString &fileName : entryList) {
-            const QString pluginPath = d->pluginsDirectoryPath.absoluteFilePath(fileName);
+            const QString pluginPath = d->pluginsDirectory.absoluteFilePath(fileName);
             QPluginLoader loader(pluginPath);
 
             const QJsonObject metaData = loader.metaData();
@@ -203,7 +203,7 @@ std::vector<PluginManager::Handle> PluginManager::enumeratePlugins(const QString
                 pluginRegistry.insert(uuid, pluginPath);
             }
         }
-        d->pluginsDirectoryPath.cdUp();
+        d->pluginsDirectory.cdUp();
     }
 
     return pluginHandles;
