@@ -102,8 +102,47 @@ bool SQLiteLocationDao::deleteById(std::int64_t id) noexcept
 
 bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept
 {
-    // TODO IMPLEMENT ME
-    return true;
+    QSqlQuery query;
+    query.setForwardOnly(true);
+    query.prepare(
+        "select * "
+        "from   location l "
+        "order by l.id;"
+    );
+
+    bool ok = query.exec();
+    if (ok) {
+        QSqlRecord record = query.record();
+        const int idIdx = record.indexOf("id");
+        const int latitudeIdx = record.indexOf("latitude");
+        const int longitudeIdx = record.indexOf("longitude");
+        const int altitudeIdx = record.indexOf("altitude");
+        const int pitchIdx = record.indexOf("pitch");
+        const int bankIdx = record.indexOf("bank");
+        const int headingIdx = record.indexOf("heading");
+        const int onGroundIdx = record.indexOf("on_ground");
+        const int descriptionIdx = record.indexOf("description");
+
+        while (ok && query.next()) {
+            Location location;
+            location.id = query.value(idIdx).toLongLong();
+            location.latitude = query.value(latitudeIdx).toFloat();
+            location.longitude = query.value(longitudeIdx).toFloat();
+            location.altitude = query.value(altitudeIdx).toFloat();
+            location.pitch = query.value(pitchIdx).toFloat();
+            location.bank = query.value(bankIdx).toFloat();
+            location.heading = query.value(headingIdx).toFloat();
+            location.onGround = query.value(onGroundIdx).toBool();
+            location.description = query.value(descriptionIdx).toString();
+            backInsertIterator = std::move(location);
+        }
+    }
+#ifdef DEBUG
+    else {
+        qDebug("SQLiteAircraftDao::getAircraftInfosByFlightId: SQL error: %s", qPrintable(query.lastError().databaseText() + " - error code: " + query.lastError().nativeErrorCode()));
+    }
+#endif
+    return ok;
 }
 
 bool SQLiteLocationDao::getSelectedLocations(const LocationSelector &selector, std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept
