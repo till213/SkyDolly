@@ -88,6 +88,8 @@ LocationWidget::LocationWidget(QWidget *parent) noexcept
 
 LocationWidget::~LocationWidget() noexcept
 {
+    const QByteArray tableState = ui->locationTableWidget->horizontalHeader()->saveState();
+    Settings::getInstance().setLocationTableState(tableState);
 #ifdef DEBUG
     qDebug() << "LocationWidget::~LocationWidget: DELETED.";
 #endif
@@ -222,25 +224,29 @@ inline void LocationWidget::updateLocation(const Location &location, int rowInde
     ++columnIndex;
 
     // Pitch
-    newItem = std::make_unique<QTableWidgetItem>(d->unit.formatNumber(location.pitch, 2));
+    newItem = std::make_unique<QTableWidgetItem>();
+    newItem->setData(Qt::EditRole, location.pitch);
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
     // Bank
-    newItem = std::make_unique<QTableWidgetItem>(d->unit.formatNumber(location.bank,2));
+    newItem = std::make_unique<QTableWidgetItem>();
+    newItem->setData(Qt::EditRole, location.bank);
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
     // Heading
-    newItem = std::make_unique<QTableWidgetItem>(d->unit.formatNumber(location.heading, 2));
+    newItem = std::make_unique<QTableWidgetItem>();
+    newItem->setData(Qt::EditRole, location.heading);
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
     // Indicated airspeed
-    newItem = std::make_unique<QTableWidgetItem>(d->unit.formatNumber(location.indicatedAirspeed, 2));
+    newItem = std::make_unique<QTableWidgetItem>();
+    newItem->setData(Qt::EditRole, location.indicatedAirspeed);
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
