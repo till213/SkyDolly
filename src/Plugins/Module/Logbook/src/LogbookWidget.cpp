@@ -76,9 +76,9 @@
 namespace
 {
     constexpr int MinimumTableWidth {120};
-    constexpr int InvalidSelectionIndex {-1};
 
     // Logbook table
+    constexpr int InvalidRowIndex {-1};
     constexpr int InvalidColumnIndex {-1};
     constexpr int FlightIdColumnIndex {0};
 
@@ -121,7 +121,7 @@ public:
 
     int idColumnIndex {::InvalidColumnIndex};
     int titleColumnIndex {::InvalidColumnIndex};
-    int selectedRow {::InvalidSelectionIndex};
+    int selectedRow {::InvalidRowIndex};
     std::int64_t selectedFlightId {Flight::InvalidId};
     std::int64_t flightInMemoryId {Flight::InvalidId};
     Unit unit;
@@ -666,7 +666,7 @@ void LogbookWidget::onSelectionChanged() noexcept
         d->selectedRow = modelIndex.row();
         d->selectedFlightId = ui->logTableWidget->model()->data(modelIndex).toLongLong();
     } else {
-        d->selectedRow = ::InvalidSelectionIndex;
+        d->selectedRow = ::InvalidRowIndex;
         d->selectedFlightId = Flight::InvalidId;
     }
     updateEditUi();

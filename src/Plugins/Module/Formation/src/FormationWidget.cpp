@@ -69,7 +69,7 @@
 namespace
 {
     constexpr int MinimumTableWidth {120};
-    constexpr int InvalidSelectionIndex {-1};
+    constexpr int InvalidRowIndex {-1};
     constexpr int InvalidColumnIndex {-1};
     constexpr int SequenceNumberColumnIndex {0};
 
@@ -119,10 +119,10 @@ struct FormationWidgetPrivate
     FlightService &flightService;
     AircraftService &aircraftService;
 
-    int tailNumberColumnIndex {InvalidColumnIndex};
-    int timeOffsetColumnIndex {InvalidColumnIndex};
+    int tailNumberColumnIndex {::InvalidColumnIndex};
+    int timeOffsetColumnIndex {::InvalidColumnIndex};
     QButtonGroup *positionButtonGroup;
-    int selectedRowIndex {InvalidSelectionIndex};
+    int selectedRowIndex {::InvalidRowIndex};
     std::int64_t selectedAircraftIndex {Flight::InvalidId};
     QDoubleValidator *timeOffsetValidator {nullptr};
     Unit unit;
@@ -342,7 +342,7 @@ void FormationWidget::updateAircraftTable() noexcept
     ui->aircraftTableWidget->resizeColumnsToContents();
     ui->aircraftTableWidget->blockSignals(false);
 
-    if (d->selectedRowIndex != InvalidSelectionIndex) {
+    if (d->selectedRowIndex != ::InvalidRowIndex) {
         d->selectedRowIndex = std::min(d->selectedRowIndex, ui->aircraftTableWidget->rowCount() - 1);
         ui->aircraftTableWidget->selectRow(d->selectedRowIndex);
     }
@@ -722,7 +722,7 @@ void FormationWidget::onSelectionChanged() noexcept
         // Index starts at 0
         d->selectedAircraftIndex = ui->aircraftTableWidget->model()->data(modelIndex).toInt() - 1;
     } else {
-        d->selectedRowIndex = InvalidSelectionIndex;
+        d->selectedRowIndex = ::InvalidRowIndex;
         d->selectedAircraftIndex = Flight::InvalidId;
     }
     updateEditUi();

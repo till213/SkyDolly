@@ -34,7 +34,6 @@
 #endif
 
 #include <Kernel/Settings.h>
-#include <Kernel/Unit.h>
 #include <Persistence/LogbookManager.h>
 #include <Persistence/Service/LocationService.h>
 #include <PluginManager/SkyConnectManager.h>
@@ -46,6 +45,7 @@
 
 namespace
 {
+    constexpr int InvalidRowIndex {-1};
     constexpr int InvalidColumnIndex {-1};
 }
 
@@ -57,7 +57,8 @@ public:
 
     std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
     bool columnsAutoResized {false};
-    Unit unit;
+    int selectedRow {::InvalidRowIndex};
+    std::int64_t selectedLocationId {Location::InvalidId};
 
     int idColumnIndex {InvalidColumnIndex};
     int positionColumnIndex {InvalidColumnIndex};
@@ -337,6 +338,16 @@ void LocationWidget::onCellChanged(int row, int column) noexcept
 
 void LocationWidget::onSelectionChanged() noexcept
 {
+    QItemSelectionModel *select = ui->locationTableWidget->selectionModel();
+    QModelIndexList modelIndices = select->selectedRows(d->idColumnIndex);
+    if (modelIndices.count() > 0) {
+        QModelIndex modelIndex = modelIndices.at(0);
+        d->selectedRow = modelIndex.row();
+        d->selectedLocationId = ui->locationTableWidget->model()->data(modelIndex).toLongLong();
+    } else {
+        d->selectedRow = ::InvalidRowIndex;
+        d->selectedLocationId = Location::InvalidId;
+    }
     updateEditUi();
 }
 
@@ -362,5 +373,12 @@ void LocationWidget::onTeleportToSelectedLocation() noexcept
 void LocationWidget::onDeleteLocation() noexcept
 {
     // TODO IMPLEMENT ME
+    if (d->selectedLocationId != ::Location::InvalidId) {
+        d->locationService->deleteById(d->selectedLocationId);
+        int lastSelectedRow = d->selectedRow;
+        updateUi();
+        int selectedRow = std::min(lastSelectedRow, ui->locationTableWidget->rowCount() - 1);
+        ui->locationTableWidget->selectRow(selectedRow);
+        ui->locationTableWidget->setFocus(Qt::NoFocusReason);
+    }
 }
-
