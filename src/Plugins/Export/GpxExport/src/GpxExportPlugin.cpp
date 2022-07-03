@@ -101,7 +101,7 @@ QString GpxExportPlugin::getFileSuffix() const noexcept
 
 QString GpxExportPlugin::getFileFilter() const noexcept
 {
-    return tr("GPS exchange format (*.%1)").arg(getFileSuffix());
+    return QObject::tr("GPS exchange format (*.%1)").arg(getFileSuffix());
 }
 
 std::unique_ptr<QWidget> GpxExportPlugin::createOptionWidget() const noexcept
@@ -263,16 +263,16 @@ QString GpxExportPlugin::getFlightDescription() const noexcept
     const QString description =
             d->flight->getDescription() % "\n" %
             "\n" %
-            tr("Creation date") % ": " % d->unit.formatDate(d->flight->getCreationTime()) % "\n" %
-            tr("Start (local time)") % ": " % d->unit.formatTime(flightCondition.startLocalTime) % "\n" %
-            tr("End (local time)") % ": " % d->unit.formatTime(flightCondition.endLocalTime) % "\n" %
-            tr("Ambient temperature") % ": " % d->unit.formatCelcius(flightCondition.ambientTemperature) % "\n" %
-            tr("Total air temperature") % ": " % d->unit.formatCelcius(flightCondition.totalAirTemperature) % "\n" %
-            tr("Precipitation") % ": " % SimType::precipitationStateToString(flightCondition.precipitationState) % "\n" %
-            tr("Wind direction") % ": " % d->unit.formatDegrees(flightCondition.windDirection) % "\n" %
-            tr("Wind speed") % ": " % d->unit.formatKnots(flightCondition.windSpeed) % "\n" %
-            tr("Visibility") % ": " % d->unit.formatVisibility(flightCondition.visibility) % "\n" %
-            tr("In clouds") % ": " % d->unit.formatBoolean(flightCondition.inClouds) % "\n";
+            QObject::tr("Creation date") % ": " % d->unit.formatDate(d->flight->getCreationTime()) % "\n" %
+            QObject::tr("Start (local time)") % ": " % d->unit.formatTime(flightCondition.startLocalTime) % "\n" %
+            QObject::tr("End (local time)") % ": " % d->unit.formatTime(flightCondition.endLocalTime) % "\n" %
+            QObject::tr("Ambient temperature") % ": " % d->unit.formatCelcius(flightCondition.ambientTemperature) % "\n" %
+            QObject::tr("Total air temperature") % ": " % d->unit.formatCelcius(flightCondition.totalAirTemperature) % "\n" %
+            QObject::tr("Precipitation") % ": " % SimType::precipitationStateToString(flightCondition.precipitationState) % "\n" %
+            QObject::tr("Wind direction") % ": " % d->unit.formatDegrees(flightCondition.windDirection) % "\n" %
+            QObject::tr("Wind speed") % ": " % d->unit.formatKnots(flightCondition.windSpeed) % "\n" %
+            QObject::tr("Visibility") % ": " % d->unit.formatVisibility(flightCondition.visibility) % "\n" %
+            QObject::tr("In clouds") % ": " % d->unit.formatBoolean(flightCondition.inClouds) % "\n";
 
     return description;
 }
@@ -282,16 +282,16 @@ QString GpxExportPlugin::getAircraftDescription(const Aircraft &aircraft) const 
     const AircraftInfo &info = aircraft.getAircraftInfo();
     const AircraftType &type = info.aircraftType;
     const QString description =
-            tr("Category") % ": " % type.category % "\n" %
-            tr("Engine type") % ": " % SimType::engineTypeToString(type.engineType) % "\n" %
-            tr("Number of engines") % ": " % d->unit.formatNumber(type.numberOfEngines, 0) % "\n" %
-            tr("Wingspan") % ": " % d->unit.formatFeet(type.wingSpan) % "\n"
+            QObject::tr("Category") % ": " % type.category % "\n" %
+            QObject::tr("Engine type") % ": " % SimType::engineTypeToString(type.engineType) % "\n" %
+            QObject::tr("Number of engines") % ": " % d->unit.formatNumber(type.numberOfEngines, 0) % "\n" %
+            QObject::tr("Wingspan") % ": " % d->unit.formatFeet(type.wingSpan) % "\n"
             "\n" %
-            tr("Initial altitude above ground") % ": " % d->unit.formatFeet(info.altitudeAboveGround) % "\n" %
-            tr("Initial airspeed") % ": " % d->unit.formatKnots(info.initialAirspeed) % "\n" %
-            tr("Airline") % ": " % info.airline % "\n" %
-            tr("Flight number") % ": " % info.flightNumber % "\n" %
-            tr("Tail number") % ": " % info.tailNumber % "\n";
+            QObject::tr("Initial altitude above ground") % ": " % d->unit.formatFeet(info.altitudeAboveGround) % "\n" %
+            QObject::tr("Initial airspeed") % ": " % d->unit.formatKnots(info.initialAirspeed) % "\n" %
+            QObject::tr("Airline") % ": " % info.airline % "\n" %
+            QObject::tr("Flight number") % ": " % info.flightNumber % "\n" %
+            QObject::tr("Tail number") % ": " % info.tailNumber % "\n";
     return description;
 }
 
@@ -302,7 +302,7 @@ inline bool GpxExportPlugin::exportTrackPoint(const PositionData &positionData, 
     const double heightAboveEllipsoid = d->convert.egmToWgs84Ellipsoid(Convert::feetToMeters(positionData.altitude), positionData.latitude, positionData.longitude);
 
     const QString trackPoint =
-"      <trkpt lat=\"" % Export::formatCoordinate(positionData.latitude) % "\" lon=\"" % Export::formatCoordinate(positionData.longitude) % "\">\n"
+"      <trkpt lat=\"" % Unit::formatCoordinate(positionData.latitude) % "\" lon=\"" % Unit::formatCoordinate(positionData.longitude) % "\">\n"
 "        <ele>" % Export::formatNumber(heightAboveEllipsoid).toUtf8() % "</ele>\n"
 "        <time>" % dateTimeUtc.toString(Qt::ISODate) % "</time>\n"
 "      </trkpt>\n";
@@ -315,7 +315,7 @@ inline bool GpxExportPlugin::exportWaypoint(const Waypoint &waypoint, QIODevice 
     // Convert height above EGM geoid to height above WGS84 ellipsoid (HAE) [meters]
     const double heightAboveEllipsoid = d->convert.egmToWgs84Ellipsoid(Convert::feetToMeters(waypoint.altitude), waypoint.latitude, waypoint.longitude);
     const QString waypointString =
-"  <wpt lat=\"" % Export::formatCoordinate(waypoint.latitude) % "\" lon=\"" % Export::formatCoordinate(waypoint.longitude) % "\">\n"
+"  <wpt lat=\"" % Unit::formatCoordinate(waypoint.latitude) % "\" lon=\"" % Unit::formatCoordinate(waypoint.longitude) % "\">\n"
 "    <ele>" % Export::formatNumber(heightAboveEllipsoid).toUtf8() % "</ele>\n"
 "    <time>" % waypoint.zuluTime.toString(Qt::ISODate) % "</time>\n"
 "    <name>" % waypoint.identifier % "</name>\n"

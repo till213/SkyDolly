@@ -80,7 +80,7 @@ QString CsvExportPlugin::getFileSuffix() const noexcept
 
 QString CsvExportPlugin::getFileFilter() const noexcept
 {
-    return tr("Comma-separated values (*.%1)").arg(getFileSuffix());
+    return QObject::tr("Comma-separated values (*.%1)").arg(getFileSuffix());
 }
 
 std::unique_ptr<QWidget> CsvExportPlugin::createOptionWidget() const noexcept

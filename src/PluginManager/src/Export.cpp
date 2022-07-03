@@ -40,11 +40,6 @@
 
 namespace
 {
-    // Precision of exported double GNSS coordinate values
-    // https://rapidlasso.com/2019/05/06/how-many-decimal-digits-for-storing-longitude-latitude/
-    // https://xkcd.com/2170/
-    constexpr int CoordinatePrecision = 6;
-
     // Precision of general number (altitude, heading, ...)
     constexpr int NumberPrecision = 2;
 }
@@ -74,14 +69,9 @@ QString Export::suggestFilePath(const Flight &flight, QStringView suffix) noexce
     return settings.getExportPath() + "/" + File::ensureSuffix(suggestedFileName, suffix);
 }
 
-QString Export::formatCoordinate(double coordinate) noexcept
-{
-    return QString::number(coordinate, 'f', CoordinatePrecision);
-}
-
 QString Export::formatNumber(double number) noexcept
 {
-    return QString::number(number, 'f', NumberPrecision);
+    return QString::number(number, 'f', ::NumberPrecision);
 }
 
 void Export::resamplePositionDataForExport(const Aircraft &aircraft, const SampleRate::ResamplingPeriod resamplingPeriod, std::back_insert_iterator<std::vector<PositionData>> backInsertIterator) noexcept

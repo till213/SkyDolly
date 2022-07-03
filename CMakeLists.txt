@@ -109,13 +109,13 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/src/UserInterface)
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${APP_NAME})
     qt_create_translation(QM_FILES
-        ${CMAKE_SOURCE_DIR}/src
+        src
         i18n/${APP_NAME}_de_DE.ts
     )
 else()
     add_executable(${APP_NAME})
     qt5_create_translation(QM_FILES
-        ${CMAKE_SOURCE_DIR}/src
+        src
         i18n/${APP_NAME}_de_DE.ts
     )
 endif()
@@ -175,6 +175,7 @@ target_sources(${APP_NAME}
         doc/SkyDolly.simvars
         res/Info.plist.in
         res/SkyDolly.rc.in
+        ${QM_FILES}
 )
 
 target_include_directories(${APP_NAME}

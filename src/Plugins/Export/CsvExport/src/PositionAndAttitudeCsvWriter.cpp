@@ -35,6 +35,7 @@
 #endif
 
 #include <Kernel/Convert.h>
+#include <Kernel/Unit.h>
 #include <Kernel/Enum.h>
 #include <Kernel/SampleRate.h>
 #include <Model/Flight.h>
@@ -112,8 +113,8 @@ bool PositionAndAttitudeCsvWriter::write(const Flight &flight, const Aircraft &a
                 const QDateTime dateTimeUtc = startDateTimeUtc.addMSecs(positionData.timestamp);
                 const QString csv = QString::number(positionData.timestamp) % CsvConst::CommaSep %
                                     dateTimeUtc.toString(Qt::ISODate) % CsvConst::CommaSep %
-                                    Export::formatCoordinate(positionData.latitude) % CsvConst::CommaSep %
-                                    Export::formatCoordinate(positionData.longitude) % CsvConst::CommaSep %
+                                    Unit::formatCoordinate(positionData.latitude) % CsvConst::CommaSep %
+                                    Unit::formatCoordinate(positionData.longitude) % CsvConst::CommaSep %
                                     QString::number(static_cast<int>(std::round(positionData.altitude))) % CsvConst::CommaSep %
                                     QString::number(static_cast<int>(std::round(positionData.velocityBodyZ))) % CsvConst::CommaSep %
                                     QString::number(static_cast<int>(std::round(positionData.pitch))) % CsvConst::CommaSep %

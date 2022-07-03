@@ -45,38 +45,66 @@ public:
     Unit();
     ~Unit();
 
-    QString formatLatitude(double latitude) noexcept;
-    QString formatLongitude(double longitude) noexcept;
-    QString formatLatLongPosition(double latitude, double longitude) noexcept;
+    /*!
+     * Formats the \c latitude into degrees, minutes and seconds (DMS).
+     *
+     * \param latitude
+     *        the latitude to be converted
+     * \return the \c latitude in DMS format
+     * \sa formatCoordinate
+     */
+    QString formatLatitudeDMS(double latitude) const noexcept;
 
-    QString formatFeet(double feet) noexcept;
-    QString formatCelcius(double temperature) noexcept;
-    QString formatPressureInHPa(double pressure) noexcept;
-    QString formatVisibility(double meters) noexcept;
+    /*!
+     * Formats the \c longitude into degrees, minutes and seconds (DMS).
+     *
+     * \param longitude
+     *        the longitude to be converted
+     * \return the \c longitude in DMS format
+     * \sa formatCoordinate
+     */
+    QString formatLongitudeDMS(double longitude) const noexcept;
+
+    /*!
+     * Formats the \c latitude and \c longitude into degrees, minutes and seconds (DMS).
+     *
+     * \param latitude
+     *        the latitude to be converted
+     * \param longitude
+     *        the longitude to be converted
+     * \return the \c latitude and \c longitude in DMS format
+     * \sa formatCoordinates
+     */
+    QString formatLatLongPositionDMS(double latitude, double longitude) const noexcept;
+
+    QString formatFeet(double feet) const noexcept;
+    QString formatCelcius(double temperature) const noexcept;
+    QString formatPressureInHPa(double pressure) const noexcept;
+    QString formatVisibility(double meters) const noexcept;
 
     /*!
      * Returns a formatted string for \c degrees [0, 360].
      *
-     * @return a formatted string for \c degrees, including unit (°)
+     * \return a formatted string for \c degrees, including unit (°)
      */
-    QString formatDegrees(double degrees) noexcept;
-    QString formatHz(double hz) noexcept;
+    QString formatDegrees(double degrees) const noexcept;
+    QString formatHz(double hz) const noexcept;
 
-    QString formatSpeedInFeetPerSecond(double speed) noexcept;
-    QString formatSpeedInRadians(double speed) noexcept;
+    QString formatSpeedInFeetPerSecond(double speed) const noexcept;
+    QString formatSpeedInRadians(double speed) const noexcept;
 
-    QString formatPosition(std::int16_t position) noexcept;
-    QString formatPercent(std::uint8_t percent) noexcept;
+    QString formatPosition(std::int16_t position) const noexcept;
+    QString formatPercent(std::uint8_t percent) const noexcept;
 
-    QString formatKnots(double speed) noexcept;
+    QString formatKnots(double speed) const noexcept;
 
-    QString formatMemory(std::int64_t memory) noexcept;
+    QString formatMemory(std::int64_t memory) const noexcept;
 
-    QString formatDate(const QDate &date) noexcept;
-    QString formatDate(const QDateTime &dateTime) noexcept;
-    QString formatTime(const QDateTime &dateTime) noexcept;
-    QString formatDateTime(const QDateTime &dateTime) noexcept;
-    QString formatDuration(const QTime &time) noexcept;
+    QString formatDate(const QDate &date) const noexcept;
+    QString formatDate(const QDateTime &dateTime) const noexcept;
+    QString formatTime(const QDateTime &dateTime) const noexcept;
+    QString formatDateTime(const QDateTime &dateTime) const noexcept;
+    QString formatDuration(const QTime &time) const noexcept;
 
     /*!
      * Returns the name of the month.
@@ -85,10 +113,10 @@ public:
      *        the month of year [1, 12]
      * \return then name of the months
      */
-    QString formatMonth(int month) noexcept;
+    QString formatMonth(int month) const noexcept;
 
-    QString formatNumber(double number, int precision) noexcept;
-    double toNumber(const QString &value, bool *ok = nullptr) noexcept;
+    QString formatNumber(double number, int precision) const noexcept;
+    double toNumber(const QString &value, bool *ok = nullptr) const noexcept;
 
     /*!
      * Formats the \c milliseconds as number, with local thousands separators.
@@ -99,7 +127,7 @@ public:
      *        the timestamp [milliseconds]
      * \return the number formatted \c milliseconds timestamp
      */
-    QString formatTimestamp(std::int64_t milliseconds) noexcept;
+    QString formatTimestamp(std::int64_t milliseconds) const noexcept;
 
     /*!
      * Formats the elapsed \c milliseconds (timestamp) as either (fractional) milliseconds, seconds,
@@ -111,7 +139,7 @@ public:
      *        the ellapsed time [milliseconds]
      * \return the elapsed time formatted \c milliseconds
      */
-    QString formatElapsedTime(std::int64_t milliseconds) noexcept;
+    QString formatElapsedTime(std::int64_t milliseconds) const noexcept;
 
     /*!
      * Formats the \c milliseconds as hh:mm:ss timestamp.
@@ -125,6 +153,29 @@ public:
     static QString formatHHMMSS(std::int64_t milliseconds) noexcept;
 
     static QString formatBoolean(bool value) noexcept;
+
+    /*!
+     * Formats the GNSS \c coordinate (latitude or longitude) with the appropriate decimal point precision.
+     *
+     * \param coordinate
+     *        the coordinate to be formatted
+     * \return the text representation of \c coordinate
+     * \sa formatLatitude
+     * \sa formatLongitude
+     */
+    static QString formatCoordinate(double coordinate) noexcept;
+
+    /*!
+     * Formats the GNSS \c latitude and \c longitude with the appropriate decimal point precision.
+     *
+     * \param latitude
+     *        the latitude to be formatted
+     * \param longitude
+     *        the longitude to be formatted
+     * \return the text representation of the coordinate, separated with a comma (,)
+     * \sa formatLatLongPositionDMS
+     */
+    static QString formatCoordinates(double latitude, double longitude) noexcept;
 
 private:
     std::unique_ptr<UnitPrivate> d;
