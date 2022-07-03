@@ -31,17 +31,17 @@
 namespace SimConnectType
 {
     enum struct DataDefinition: ::SIMCONNECT_DATA_DEFINITION_ID {
-        FlightInformationDefinition,
-        FlightPlanDefinition,
-        SimulationTimeDefinition,
-        AircraftPositionReplyDefinition,
-        AircraftPositionRequestDefinition,
-        AircraftEngineReplyDefinition,
-        AircraftEngineRequestDefinition,
-        AircraftPrimaryFlightControlDefinition,
-        AircraftSecondaryFlightControlDefinition,
-        AircraftHandleDefinition,
-        AircraftLightDefinition,
+        FlightInformation,
+        FlightPlan,
+        SimulationTime,
+        AircraftPositionReply,
+        AircraftPositionRequest,
+        AircraftEngineReply,
+        AircraftEngineRequest,
+        AircraftPrimaryFlightControl,
+        AircraftSecondaryFlightControl,
+        AircraftHandle,
+        AircraftLight,
         AircraftInitialPosition
     };
 

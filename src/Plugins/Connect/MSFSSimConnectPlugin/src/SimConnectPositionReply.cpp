@@ -35,7 +35,7 @@
 
 void SimConnectPositionReply::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
-    SimConnectPositionRequest::addToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionReplyDefinition));
+    SimConnectPositionRequest::addToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionReply));
 
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionReplyDefinition), SimVar::IndicatedAltitude, "Feet", ::SIMCONNECT_DATATYPE_FLOAT64);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::AircraftPositionReply), SimVar::IndicatedAltitude, "Feet", ::SIMCONNECT_DATATYPE_FLOAT64);
 }

@@ -35,12 +35,12 @@
 
 void SimConnectFlightPlan::addToDataDefinition(HANDLE simConnectHandle) noexcept
 {
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightPlanDefinition), SimVar::GpsWPNextId, nullptr, ::SIMCONNECT_DATATYPE_STRING8);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightPlanDefinition), SimVar::GpsWPPrevId, nullptr, ::SIMCONNECT_DATATYPE_STRING8);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightPlanDefinition), SimVar::GpsWPNextLat, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightPlanDefinition), SimVar::GpsWPNextLon, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightPlanDefinition), SimVar::GpsWPNextAlt, "Feet", ::SIMCONNECT_DATATYPE_FLOAT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightPlanDefinition), SimVar::GpsWPPrevLat, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightPlanDefinition), SimVar::GpsWPPrevLon, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT32);
-    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightPlanDefinition), SimVar::GpsWPPrevAlt, "Feet", ::SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightPlan), SimVar::GpsWPNextId, nullptr, ::SIMCONNECT_DATATYPE_STRING8);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightPlan), SimVar::GpsWPPrevId, nullptr, ::SIMCONNECT_DATATYPE_STRING8);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightPlan), SimVar::GpsWPNextLat, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightPlan), SimVar::GpsWPNextLon, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightPlan), SimVar::GpsWPNextAlt, "Feet", ::SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightPlan), SimVar::GpsWPPrevLat, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightPlan), SimVar::GpsWPPrevLon, "Degrees", ::SIMCONNECT_DATATYPE_FLOAT32);
+    ::SimConnect_AddToDataDefinition(simConnectHandle, Enum::toUnderlyingType(SimConnectType::DataDefinition::FlightPlan), SimVar::GpsWPPrevAlt, "Feet", ::SIMCONNECT_DATATYPE_FLOAT32);
 }
