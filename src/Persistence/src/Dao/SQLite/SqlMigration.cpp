@@ -139,49 +139,26 @@ bool SqlMigration::migrateSql(const QString &migrationFilePath) noexcept
 bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
 {
     // https://regex101.com/
-    static const QRegularExpression uuidRegExp {"([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})"};
+    static const QRegularExpression uuidRegExp {"[\"]?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})[\"]?"};
     static const QRegularExpression csvRegExp {
-        "([+-]?[0-9]*[.]?[0-9]+),"
-        "([+-]?[0-9]*[.]?[0-9]+),"
-        "([+-]?[0-9]*[.]?[0-9]+),"
-        "([+-]?[0-9]*[.]?[0-9]+),"
-        "([+-]?[0-9]*[.]?[0-9]+),"
-        "([+-]?[0-9]*[.]?[0-9]+),"
-        "(false|true),"
-        "[\"]?([^\"]+)[\"]?$"
+        "([+-]?[0-9]*[.]?[0-9]+)," // Latitude
+        "([+-]?[0-9]*[.]?[0-9]+)," // Longitude
+        "([+-]?[0-9]*[.]?[0-9]+)," // Altitude
+        "([+-]?[0-9]*[.]?[0-9]+)," // Pitch
+        "([+-]?[0-9]*[.]?[0-9]+)," // Bank
+        "([+-]?[0-9]*[.]?[0-9]+)," // Heading
+        "[\"]?(false|true)[\"]?,"  // On Ground
+        "[\"]?([^\"]+)[\"]?$"      // Description
     };
     QSqlQuery query = QSqlQuery("PRAGMA foreign_keys=0;");
-    QSqlQuery locationQuery;
-    locationQuery.prepare(
-        "insert into location ("
-        "  latitude,"
-        "  longitude,"
-        "  altitude,"
-        "  pitch,"
-        "  bank,"
-        "  heading,"
-        "  on_ground,"
-        "  description"
-        ") values ("
-        " :latitude,"
-        " :longitude,"
-        " :altitude,"
-        " :pitch,"
-        " :bank,"
-        " :heading,"
-        " :on_ground,"
-        " :description"
-        ");"
-    );
     bool ok = query.exec();
     if (ok) {
         QFile migrationFile(migrationFilePath);
         ok = migrationFile.open(QFile::OpenModeFlag::ReadOnly | QFile::OpenModeFlag::Text);
-
         if (ok) {
             QTextStream textStream(&migrationFile);
             QString csv = textStream.readLine();
-            if (csv.startsWith("MigrationId")) {
+            if (csv.startsWith("\"MigrationId\"")) {
                 // Skip column names
                 csv = textStream.readLine();
             }
@@ -191,13 +168,11 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
                 const bool hasMatch = match.hasMatch();
                 if (hasMatch) {
                     const QString uuid = match.captured(1);
-
                     SqlMigrationStep step;
                     step.setMigrationId(uuid);
                     step.setStep(1);
                     step.setStepCount(1);
                     if (!step.checkApplied()) {
-
                         const int offset = match.capturedLength();
                         match = csvRegExp.match(csv, offset);
                         if (match.hasMatch()) {
@@ -209,7 +184,6 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
                 }
                 csv = textStream.readLine();
             }
-
             migrationFile.close();
         }
     }
