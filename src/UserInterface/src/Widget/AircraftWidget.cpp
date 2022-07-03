@@ -77,8 +77,8 @@ void AircraftWidget::updateUi(std::int64_t timestamp, TimeVariableData::Access a
 
     if (!positionData.isNull()) {
         // Position
-        ui->latitudeLineEdit->setText(d->unit.formatLatitude(positionData.latitude));
-        ui->longitudeLineEdit->setText(d->unit.formatLongitude(positionData.longitude));
+        ui->latitudeLineEdit->setText(d->unit.formatLatitudeDMS(positionData.latitude));
+        ui->longitudeLineEdit->setText(d->unit.formatLongitudeDMS(positionData.longitude));
         ui->altitudeLineEdit->setText(d->unit.formatFeet(positionData.altitude));
         ui->indicatedAltitudeLineEdit->setText(d->unit.formatFeet(positionData.indicatedAltitude));
         ui->pitchLineEdit->setText(d->unit.formatDegrees(positionData.pitch));

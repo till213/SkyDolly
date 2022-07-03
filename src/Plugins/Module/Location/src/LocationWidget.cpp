@@ -22,15 +22,17 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-
 #include <memory>
+#include <cstdint>
 
 #include <QTableWidget>
 #include <QStringList>
+#include <QByteArray>
 #ifdef DEBUG
 #include <QDebug>
 #endif
 
+#include <Kernel/Settings.h>
 #include <Kernel/Unit.h>
 #include <Persistence/LogbookManager.h>
 #include <Persistence/Service/LocationService.h>
@@ -38,6 +40,7 @@
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/AbstractModule.h>
 #include "LocationWidget.h"
+#include "PositionWidgetItem.h"
 #include "ui_LocationWidget.h"
 
 namespace
@@ -53,8 +56,16 @@ public:
 
     std::unique_ptr<LocationService> locationService {std::make_unique<LocationService>()};
     bool columnsAutoResized {false};
-    int idColumnIndex {::InvalidColumnIndex};
     Unit unit;
+
+    int idColumnIndex {InvalidColumnIndex};
+    int positionColumnIndex {InvalidColumnIndex};
+    int altitudeColumnIndex {InvalidColumnIndex};
+    int pitchColumnIndex {InvalidColumnIndex};
+    int bankColumnIndex {InvalidColumnIndex};
+    int headingColumnIndex {InvalidColumnIndex};
+    int onGroundColumnIndex {InvalidColumnIndex};
+    int descriptionColumnIndex {InvalidColumnIndex};
 };
 
 // PUBLIC
@@ -84,21 +95,42 @@ LocationWidget::~LocationWidget() noexcept
 
 void LocationWidget::initUi() noexcept
 {
-    const QStringList headers {tr("ID"), tr("Position"), tr("Description")};
+    const QStringList headers {tr("ID"), tr("Position"), tr("Altitude"), tr("Pitch"), tr("Bank"), tr("Heading"), tr("On Ground"), tr("Description")};
+    d->idColumnIndex = headers.indexOf(tr("ID"));
+    d->positionColumnIndex = headers.indexOf(tr("Position"));
+    d->altitudeColumnIndex = headers.indexOf(tr("Altitude"));
+    d->pitchColumnIndex = headers.indexOf(tr("Pitch"));
+    d->bankColumnIndex = headers.indexOf(tr("Bank"));
+    d->headingColumnIndex = headers.indexOf(tr("Heading"));
+    d->onGroundColumnIndex = headers.indexOf(tr("On Ground"));
+    d->descriptionColumnIndex = headers.indexOf(tr("Description"));
+
     ui->locationTableWidget->setColumnCount(headers.count());
     ui->locationTableWidget->setHorizontalHeaderLabels(headers);
     ui->locationTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->locationTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->locationTableWidget->verticalHeader()->hide();
     ui->locationTableWidget->horizontalHeader()->setStretchLastSection(true);
-    // ui->locationTableWidget->sortByColumn(::FlightIdColumn, Qt::SortOrder::DescendingOrder);
+    ui->locationTableWidget->sortByColumn(d->idColumnIndex, Qt::SortOrder::DescendingOrder);
     ui->locationTableWidget->horizontalHeader()->setSectionsMovable(true);
     ui->locationTableWidget->setAlternatingRowColors(true);
+
+    QByteArray tableState = Settings::getInstance().getLocationTableState();
+    ui->locationTableWidget->horizontalHeader()->restoreState(tableState);
+
+    // Default "Delete" key deletes aircraft
+    ui->deletePushButton->setShortcut(QKeySequence::Delete);
 }
 
 void LocationWidget::frenchConnection() noexcept
 {
-
+    // Location table
+    connect(ui->locationTableWidget, &QTableWidget::cellDoubleClicked,
+            this, &LocationWidget::onCellSelected);
+    connect(ui->locationTableWidget, &QTableWidget::cellChanged,
+            this, &LocationWidget::onCellChanged);
+    connect(ui->deletePushButton, &QPushButton::clicked,
+            this, &LocationWidget::deleteLocation);
 }
 
 void LocationWidget::updateLocationTable() noexcept
@@ -141,15 +173,47 @@ inline void LocationWidget::addLocation(const Location &location, int rowIndex) 
     QVariant locationId = QVariant::fromValue(location.id);
     newItem->setData(Qt::DisplayRole, locationId);
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    newItem->setToolTip(tr("Double-click to load location."));
+    newItem->setFlags(Qt::ItemFlag::ItemIsSelectable | Qt::ItemFlag::ItemIsEnabled);
+    newItem->setToolTip(tr("Double-click to teleport to location."));
     // Transfer ownership of newItem to table widget
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
-    d->idColumnIndex = columnIndex;
     ++columnIndex;
 
-    // Location
-    newItem = std::make_unique<QTableWidgetItem>(d->unit.formatLatLongPosition(location.latitude, location.longitude));
+    // Position
+    newItem = std::make_unique<PositionWidgetItem>();
     newItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    newItem->setData(Qt::ItemDataRole::EditRole, Unit::formatCoordinates(location.latitude, location.longitude));
+    ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
+    ++columnIndex;
+
+    // Altitude
+    newItem = std::make_unique<QTableWidgetItem>();
+    newItem->setData(Qt::EditRole, location.altitude);
+    newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
+    ++columnIndex;
+
+    // Pitch
+    newItem = std::make_unique<QTableWidgetItem>(d->unit.formatNumber(location.pitch, 2));
+    newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
+    ++columnIndex;
+
+    // Bank
+    newItem = std::make_unique<QTableWidgetItem>(d->unit.formatNumber(location.bank,2));
+    newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
+    ++columnIndex;
+
+    // Heading
+    newItem = std::make_unique<QTableWidgetItem>(d->unit.formatNumber(location.heading, 2));
+    newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
+    ++columnIndex;
+
+    // On Ground
+    newItem = std::make_unique<QTableWidgetItem>();
+    newItem->setCheckState(location.onGround ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
@@ -160,9 +224,66 @@ inline void LocationWidget::addLocation(const Location &location, int rowIndex) 
     ++columnIndex;
 }
 
+void LocationWidget::teleportToLocation(int row) noexcept
+{
+    Location location = rowToLocation(row);
+    emit teleport(location);
+}
+
+Location LocationWidget::rowToLocation(int row) const noexcept
+{
+    Location location;
+
+    QTableWidgetItem *item = ui->locationTableWidget->item(row, d->idColumnIndex);
+    location.id = item->data(Qt::EditRole).toLongLong();
+
+    item = ui->locationTableWidget->item(row, d->positionColumnIndex);
+    const QStringList coordinates = item->data(Qt::EditRole).toString().split(',');
+    location.latitude = coordinates.first().toFloat();
+    location.longitude = coordinates.last().toFloat();
+
+    item = ui->locationTableWidget->item(row, d->altitudeColumnIndex);
+    location.altitude = item->data(Qt::EditRole).toFloat();
+
+    item = ui->locationTableWidget->item(row, d->pitchColumnIndex);
+    location.pitch = item->data(Qt::EditRole).toFloat();
+
+    item = ui->locationTableWidget->item(row, d->bankColumnIndex);
+    location.bank = item->data(Qt::EditRole).toFloat();
+
+    item = ui->locationTableWidget->item(row, d->headingColumnIndex);
+    location.heading = item->data(Qt::EditRole).toFloat();
+
+    item = ui->locationTableWidget->item(row, d->onGroundColumnIndex);
+    location.onGround = item->checkState() == Qt::CheckState::Checked;
+
+    return location;
+}
+
 // PRIVATE SLOTS
 
 void LocationWidget::updateUi() noexcept
 {
     updateLocationTable();
 }
+
+void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexcept
+{
+    QTableWidgetItem *item = ui->locationTableWidget->item(row, column);
+    if (column != d->idColumnIndex) {
+        ui->locationTableWidget->editItem(item);
+    } else {
+        teleportToLocation(row);
+    }
+}
+
+void LocationWidget::onCellChanged(int row, int column) noexcept
+{
+    // TODO IMPLEMENT ME
+}
+
+void LocationWidget::deleteLocation() noexcept
+{
+    // TODO IMPLEMENT ME
+}
+

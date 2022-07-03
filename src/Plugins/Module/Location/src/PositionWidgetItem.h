@@ -22,54 +22,27 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-#ifndef LOCATIONWIDGET_H
-#define LOCATIONWIDGET_H
+#ifndef QPOSITIONWIDGETITEM_H
+#define QPOSITIONWIDGETITEM_H
 
-#include <memory>
-#include <forward_list>
-#include <cstdint>
+#include <QTableWidgetItem>
+#include <QVariant>
 
-#include <QWidget>
+#include <Kernel/Unit.h>
 
-#include <PluginManager/ModuleIntf.h>
-#include <PluginManager/AbstractModule.h>
-
-#include <Model/Location.h>
-class LocationWidgetPrivate;
-
-namespace Ui {
-    class LocationWidget;
-}
-
-class LocationWidget : public QWidget
+class PositionWidgetItem : public QTableWidgetItem
 {
-    Q_OBJECT
 public:
-    explicit LocationWidget(QWidget *parent = nullptr) noexcept;
-    ~LocationWidget() noexcept override;
+    PositionWidgetItem();
+
+    QVariant data(int role) const override;
+    void setData(int role, const QVariant &value) override;
 
 private:
-    std::unique_ptr<Ui::LocationWidget> ui;
-    std::unique_ptr<LocationWidgetPrivate> d;
-
-    void initUi() noexcept;
-    void frenchConnection() noexcept;
-
-    void updateLocationTable() noexcept;
-    inline void addLocation(const Location &location, int rowIndex) noexcept;
-
-    void teleportToLocation(int row) noexcept;
-    Location rowToLocation(int row) const noexcept;
-
-signals:
-    void teleport(Location location);
-
-private slots:
-    void updateUi() noexcept;
-
-    void onCellSelected(int row, int column) noexcept;
-    void onCellChanged(int row, int column) noexcept;
-    void deleteLocation() noexcept;
+    Unit m_unit;
+    float m_latitude {0.0f};
+    float m_longitude {0.0f};
+    QString m_position;
 };
 
-#endif // LOCATIONWIDGET_H
+#endif // QPOSITIONWIDGETITEM_H

@@ -41,6 +41,15 @@
 namespace
 {
     constexpr char MigrationDirectory[] = "Resources/migr";
+
+    constexpr int LatitudeIndex = 1;
+    constexpr int LongitudeIndex = 2;
+    constexpr int AltitudeIndex = 3;
+    constexpr int PitchIndex = 4;
+    constexpr int BankIndex = 5;
+    constexpr int HeadingIndex = 6;
+    constexpr int OnGroundIndex = 7;
+    constexpr int DescriptionIndex = 8;
 }
 
 class SqlMigrationPrivate
@@ -195,27 +204,27 @@ bool SqlMigration::migrateLocation(const QRegularExpressionMatch &locationMatch)
 {
     bool ok {true};
     Location location;
-    location.latitude = locationMatch.captured(1).toFloat(&ok);
+    location.latitude = locationMatch.captured(::LatitudeIndex).toFloat(&ok);
     if (ok) {
-        location.longitude = locationMatch.captured(2).toFloat(&ok);
+        location.longitude = locationMatch.captured(::LongitudeIndex).toFloat(&ok);
     }
     if (ok) {
-        location.altitude = locationMatch.captured(3).toFloat(&ok);
+        location.altitude = locationMatch.captured(::AltitudeIndex).toFloat(&ok);
     }
     if (ok) {
-        location.pitch = locationMatch.captured(4).toFloat(&ok);
+        location.pitch = locationMatch.captured(::PitchIndex).toFloat(&ok);
     }
     if (ok) {
-        location.bank = locationMatch.captured(5).toFloat(&ok);
+        location.bank = locationMatch.captured(::BankIndex).toFloat(&ok);
     }
     if (ok) {
-        location.heading = locationMatch.captured(6).toFloat(&ok);
+        location.heading = locationMatch.captured(::HeadingIndex).toFloat(&ok);
     }
     if (ok) {
-        location.onGround = locationMatch.captured(7).toLower() == "true" ? true : false;
+        location.onGround = locationMatch.captured(::OnGroundIndex).toLower() == "true" ? true : false;
     }
     if (ok) {
-        location.description = locationMatch.captured(8);
+        location.description = locationMatch.captured(::DescriptionIndex);
     }
     if (ok) {
         ok = d->locationDao.add(location);
