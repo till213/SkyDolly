@@ -32,8 +32,8 @@ InitialPosition::InitialPosition(double latitude, double longitude, double altit
     : pitch(0.0),
       bank(0.0),
       heading(0.0),
-      onGround(false),
-      indicatedAirspeed(InvalidAirspeed)
+      indicatedAirspeed(InvalidIndicatedAirspeed),
+      onGround(false)
 {
     this->latitude = latitude;
     this->longitude = longitude;

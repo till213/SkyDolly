@@ -57,6 +57,7 @@
 #include <Model/LightData.h>
 #include <Model/FlightPlan.h>
 #include <Model/Waypoint.h>
+#include <Model/InitialPosition.h>
 #include <PluginManager/Connect.h>
 #include "SimConnectType.h"
 #include "SimConnectAircraftInfo.h"

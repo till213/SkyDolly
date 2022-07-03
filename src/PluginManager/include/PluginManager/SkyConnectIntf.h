@@ -32,6 +32,7 @@
 #include <Kernel/SampleRate.h>
 #include <Model/TimeVariableData.h>
 #include <Model/InitialPosition.h>
+#include <Model/Location.h>
 #include "Connect.h"
 #include "PluginManagerLib.h"
 

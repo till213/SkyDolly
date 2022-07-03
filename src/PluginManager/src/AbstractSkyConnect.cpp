@@ -106,7 +106,15 @@ AbstractSkyConnect::~AbstractSkyConnect() noexcept
 
 bool AbstractSkyConnect::setUserAircraftInitialPosition(const InitialPosition &initialPosition) noexcept
 {
-    return onInitialPositionSetup(initialPosition);
+    if (!isConnectedWithSim()) {
+        connectWithSim();
+    }
+
+    bool ok = isConnectedWithSim();
+    if (ok) {
+        ok = retryWithReconnect([this, initialPosition]() -> bool { return onInitialPositionSetup(initialPosition); });
+    }
+    return ok;
 }
 
 bool AbstractSkyConnect::freezeUserAircraft(bool enable) noexcept
@@ -185,7 +193,7 @@ void AbstractSkyConnect::startRecording(RecordingMode recordingMode, const Initi
         }
         ok = retryWithReconnect([this, initialPosition]() -> bool { return setupInitialRecordingPosition(initialPosition); });
         if (ok) {
-            ok = onStartRecording();
+            ok = retryWithReconnect([this]() -> bool { return onStartRecording(); });
         }
     }
 
@@ -659,8 +667,8 @@ std::int64_t AbstractSkyConnect::getSkipInterval() const noexcept
 
 bool AbstractSkyConnect::retryWithReconnect(std::function<bool()> func)
 {
-    int nofAttempts = 2;
-    bool ok = true;
+    int nofAttempts {2};
+    bool ok {true};
     while (nofAttempts > 0) {
         ok = func();
         --nofAttempts;

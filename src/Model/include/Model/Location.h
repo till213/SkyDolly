@@ -27,6 +27,7 @@
 
 #include <QString>
 
+#include "InitialPosition.h"
 #include "ModelLib.h"
 
 struct MODEL_API Location
@@ -39,7 +40,9 @@ struct MODEL_API Location
     float pitch {0.0f};
     float bank {0.0f};
     float heading {0.0f};
+    int indicatedAirspeed {0};
     bool onGround {false};
+
     QString description;
 
     Location() noexcept = default;
@@ -50,6 +53,17 @@ struct MODEL_API Location
     Location &operator=(Location &&rhs) = default;
 
     static constexpr std::int64_t InvalidId {-1};
+
+    inline InitialPosition toInitialPosition() const noexcept {
+        InitialPosition initialPosition {latitude, longitude, altitude};
+        initialPosition.pitch = pitch;
+        initialPosition.bank = bank;
+        initialPosition.heading = heading;
+        initialPosition.indicatedAirspeed = indicatedAirspeed;
+        initialPosition.onGround = onGround;
+
+        return initialPosition;
+    }
 };
 
 #endif // LOCATION_H

@@ -30,6 +30,7 @@
 
 class QWidget;
 
+#include <Model/Location.h>
 #include "PluginManager/AbstractModule.h"
 
 struct LocationPluginPrivate;
@@ -48,6 +49,11 @@ public:
 
 private:
     std::unique_ptr<LocationPluginPrivate> d;
+
+    void frenchConnection() noexcept;
+
+private slots:
+    void teleportTo(const Location &location) noexcept;
 };
 
 #endif // LOCATIONPLUGIN_H

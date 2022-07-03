@@ -30,6 +30,7 @@
 #include <QDebug>
 #endif
 
+#include <PluginManager/SkyConnectManager.h>
 #include "LocationWidget.h"
 #include "LocationPlugin.h"
 
@@ -48,6 +49,7 @@ LocationPlugin::LocationPlugin(QObject *parent) noexcept
     : AbstractModule(parent),
       d(std::make_unique<LocationPluginPrivate>())
 {
+    frenchConnection();
 #ifdef DEBUG
     qDebug() << "LocationPlugin::LocationPlugin: CREATED.";
 #endif
@@ -68,4 +70,20 @@ QString LocationPlugin::getModuleName() const noexcept
 QWidget *LocationPlugin::getWidget() const noexcept
 {
     return d->locationWidget.get();
+}
+
+// PRIVATE
+
+void LocationPlugin::frenchConnection() noexcept
+{
+    connect(d->locationWidget.get(), &LocationWidget::teleport,
+            this, &LocationPlugin::teleportTo);
+}
+
+// PRIVATE SLOTS
+
+void LocationPlugin::teleportTo(const Location &location) noexcept
+{
+    const InitialPosition initialPosition = location.toInitialPosition();
+    SkyConnectManager::getInstance().setUserAircraftInitialPosition(initialPosition);
 }
