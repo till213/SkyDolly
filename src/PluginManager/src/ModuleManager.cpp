@@ -291,7 +291,7 @@ void ModuleManager::initModuleActions(const std::unordered_map<QUuid, ModuleInfo
     std::deque<std::shared_ptr<Vertex>> sortedModules;
     // Reverse sorting, because the "after" edge (directed from A to B: A --- after ---> B) really means that
     // "first B, then A" (= reversed topological sorting)
-    sortedModules = Sort::topologicalSort(graph, Sort::Sorting::Reverse);
+    sortedModules = UuidSort::topologicalSort(graph, UuidSort::Sorting::Reverse);
     int count {0};
     for (const auto &sortedModule : sortedModules) {
         const QUuid uuid {sortedModule->id};
