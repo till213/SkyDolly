@@ -76,14 +76,33 @@ QWidget *LocationPlugin::getWidget() const noexcept
 
 void LocationPlugin::frenchConnection() noexcept
 {
-    connect(d->locationWidget.get(), &LocationWidget::teleport,
+    // Connection
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    connect(&skyConnectManager, &SkyConnectManager::initialPositionReceived,
+            this, &LocationPlugin::initialPositionReceived);
+
+    // Location widget
+    connect(d->locationWidget.get(), &LocationWidget::captureLocation,
+            this, &LocationPlugin::captureLocation);
+    connect(d->locationWidget.get(), &LocationWidget::teleportTo,
             this, &LocationPlugin::teleportTo);
 }
 
 // PRIVATE SLOTS
 
+void LocationPlugin::captureLocation() noexcept
+{
+    SkyConnectManager::getInstance().requestInitialPosition();
+}
+
 void LocationPlugin::teleportTo(const Location &location) noexcept
 {
     const InitialPosition initialPosition = location.toInitialPosition();
     SkyConnectManager::getInstance().setUserAircraftInitialPosition(initialPosition);
+}
+
+void LocationPlugin::initialPositionReceived(const InitialPosition &initialPosition) noexcept
+{
+    Location location {initialPosition};
+    d->locationWidget->addLocation(std::move(location));
 }

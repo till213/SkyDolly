@@ -89,6 +89,16 @@ public:
     bool isReplaying() const noexcept;
     bool isInReplayState() const noexcept;
 
+    /*!
+     * Returns \c true in case the SkyConnect connection is \em active, that is either
+     * a replay or recording (including paused states) is taking place.
+     *
+     * \return \c true if the SkyConnect connection is \em active; \c false else
+     * \sa isInRecordingState
+     * \sa isInReplayState
+     */
+    bool isActive() const noexcept;
+
     void stop() noexcept;
 
     void setPaused(bool enabled) noexcept;
@@ -108,6 +118,8 @@ public:
     void setReplaySpeedFactor(double factor) noexcept;
     std::int64_t getCurrentTimestamp() const noexcept;
     bool isAtEnd() const noexcept;
+
+    bool requestInitialPosition() const noexcept;
 
 public slots:
     bool tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept;
@@ -148,6 +160,13 @@ signals:
      * \sa SkyConnectIntf#recordingStopped
      */
     void recordingStopped();
+
+    /*!
+     * Relay of the SkyConnectIntf#initialPositionReceived signal.
+     *
+     * \sa SkyConnectIntf#initialPositionReceived
+     */
+    void initialPositionReceived(InitialPosition initialPosition);
 
 protected:
     ~SkyConnectManager() noexcept override;

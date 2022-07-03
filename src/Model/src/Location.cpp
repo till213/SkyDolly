@@ -22,3 +22,17 @@
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+#include "Location.h"
+
+// PUBLIC
+
+Location::Location(const InitialPosition &initialPosition) noexcept
+    : latitude(initialPosition.latitude),
+      longitude(initialPosition.longitude),
+      altitude(initialPosition.altitude),
+      pitch(initialPosition.pitch),
+      bank(initialPosition.bank),
+      heading(initialPosition.heading),
+      indicatedAirspeed(initialPosition.indicatedAirspeed),
+      onGround(initialPosition.onGround)
+{}

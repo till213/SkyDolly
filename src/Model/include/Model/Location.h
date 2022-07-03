@@ -34,17 +34,18 @@ struct MODEL_API Location
 {
     std::int64_t id {InvalidId};
 
-    float latitude {0.0f};
-    float longitude {0.0f};
-    float altitude {0.0f};
-    float pitch {0.0f};
-    float bank {0.0f};
-    float heading {0.0f};
+    double latitude {0.0};
+    double longitude {0.0};
+    double altitude {0.0};
+    double pitch {0.0};
+    double bank {0.0};
+    double heading {0.0};
     int indicatedAirspeed {0};
     bool onGround {false};
 
     QString description;
 
+    explicit Location(const InitialPosition &initialPosition) noexcept;
     Location() noexcept = default;
     Location(Location &other) = default;
     Location(Location &&other) = default;

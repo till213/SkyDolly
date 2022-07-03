@@ -53,6 +53,7 @@ bool SQLiteLocationDao::add(Location &location) noexcept
         "  pitch,"
         "  bank,"
         "  heading,"
+        "  indicated_airspeed,"
         "  on_ground,"
         "  description"
         ") values ("
@@ -62,6 +63,7 @@ bool SQLiteLocationDao::add(Location &location) noexcept
         "  :pitch,"
         "  :bank,"
         "  :heading,"
+        "  :indicated_airspeed,"
         "  :on_ground,"
         "  :description"
         ");"
@@ -73,6 +75,7 @@ bool SQLiteLocationDao::add(Location &location) noexcept
     query.bindValue(":pitch", location.pitch);
     query.bindValue(":bank", location.bank);
     query.bindValue(":heading", location.heading);
+    query.bindValue(":indicated_airspeed", location.indicatedAirspeed);
     query.bindValue(":on_ground", location.onGround);
     query.bindValue(":description", location.description);
     bool ok = query.exec();
@@ -96,8 +99,22 @@ bool SQLiteLocationDao::get(std::int64_t id, Location &location) const noexcept
 
 bool SQLiteLocationDao::deleteById(std::int64_t id) noexcept
 {
-    // TODO IMPLEMENT ME
-    return true;
+    QSqlQuery query;
+    query.prepare(
+        "delete "
+        "from   location "
+        "where  id = :id;"
+    );
+    query.bindValue(":id", QVariant::fromValue(id));
+
+    bool ok = query.exec();
+#ifdef DEBUG
+    if (!ok) {
+        qDebug() << "SQLiteLocationDao::deleteById: SQL error: " << qPrintable(query.lastError().databaseText())  << " - error code: " << query.lastError().nativeErrorCode();
+#endif
+    }
+
+    return ok;
 }
 
 bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept
@@ -120,18 +137,20 @@ bool SQLiteLocationDao::getAll(std::back_insert_iterator<std::vector<Location>> 
         const int pitchIdx = record.indexOf("pitch");
         const int bankIdx = record.indexOf("bank");
         const int headingIdx = record.indexOf("heading");
+        const int indicatedAirspeedIdx = record.indexOf("indicated_airspeed");
         const int onGroundIdx = record.indexOf("on_ground");
         const int descriptionIdx = record.indexOf("description");
 
         while (ok && query.next()) {
             Location location;
             location.id = query.value(idIdx).toLongLong();
-            location.latitude = query.value(latitudeIdx).toFloat();
-            location.longitude = query.value(longitudeIdx).toFloat();
-            location.altitude = query.value(altitudeIdx).toFloat();
-            location.pitch = query.value(pitchIdx).toFloat();
-            location.bank = query.value(bankIdx).toFloat();
-            location.heading = query.value(headingIdx).toFloat();
+            location.latitude = query.value(latitudeIdx).toDouble();
+            location.longitude = query.value(longitudeIdx).toDouble();
+            location.altitude = query.value(altitudeIdx).toDouble();
+            location.pitch = query.value(pitchIdx).toDouble();
+            location.bank = query.value(bankIdx).toDouble();
+            location.heading = query.value(headingIdx).toDouble();
+            location.indicatedAirspeed = query.value(indicatedAirspeedIdx).toInt();
             location.onGround = query.value(onGroundIdx).toBool();
             location.description = query.value(descriptionIdx).toString();
             backInsertIterator = std::move(location);
@@ -150,4 +169,3 @@ bool SQLiteLocationDao::getSelectedLocations(const LocationSelector &selector, s
     // TODO IMPLEMENT ME
     return true;
 }
-

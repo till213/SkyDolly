@@ -255,7 +255,7 @@ void LogbookWidget::updateFlightTable() noexcept
 
         int rowIndex {0};
         for (const FlightSummary &summary : summaries) {
-            addFlightSummary(summary, rowIndex);
+            updateFlightSummary(summary, rowIndex);
             ++rowIndex;
         }
 
@@ -325,7 +325,7 @@ void LogbookWidget::updateDateSelectorUi() noexcept
     }
 }
 
-inline void LogbookWidget::addFlightSummary(const FlightSummary &summary, int rowIndex) noexcept
+inline void LogbookWidget::updateFlightSummary(const FlightSummary &summary, int rowIndex) noexcept
 {
     int columnIndex {0};
 
@@ -573,7 +573,7 @@ void LogbookWidget::onRecordingStarted() noexcept
         summary.flightId = ::RecordingInProgressId;
         const int rowIndex = ui->logTableWidget->rowCount();
         ui->logTableWidget->insertRow(rowIndex);
-        addFlightSummary(summary, rowIndex);
+        updateFlightSummary(summary, rowIndex);
     }
 }
 

@@ -70,7 +70,6 @@ public:
     bool isInReplayState() const noexcept override;
 
     void stop() noexcept override;
-    bool isActive() const noexcept override;
 
     void setPaused(bool enabled) noexcept override;
     bool isPaused() const noexcept override;
@@ -85,6 +84,7 @@ public:
     Connect::State getState() const noexcept override;
     bool isConnected() const noexcept override;
     bool isIdle() const noexcept override;
+    bool isActive() const noexcept override;
 
     std::int64_t getCurrentTimestamp() const noexcept override;
     bool isAtEnd() const noexcept override;
@@ -93,6 +93,7 @@ public:
     void setReplaySpeedFactor(double factor) noexcept override;
 
     double calculateRecordedSamplesPerSecond() const noexcept override;
+    bool requestInitialPosition() noexcept override;
 
 public slots:
     void addAiObject(const Aircraft &aircraft) noexcept override;
@@ -137,6 +138,8 @@ protected:
     virtual void onAddAiObject(const Aircraft &aircraft) noexcept = 0;
     virtual void onRemoveAiObject(std::int64_t aircraftId) noexcept = 0;
     virtual void onRemoveAllAiObjects() noexcept = 0;
+
+    virtual bool onRequestInitialPosition() noexcept = 0;
 
 protected slots:
     std::int64_t updateCurrentTimestamp() noexcept;

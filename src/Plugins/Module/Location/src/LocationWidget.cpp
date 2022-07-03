@@ -28,6 +28,7 @@
 #include <QTableWidget>
 #include <QStringList>
 #include <QByteArray>
+#include <QItemSelectionModel>
 #ifdef DEBUG
 #include <QDebug>
 #endif
@@ -64,6 +65,7 @@ public:
     int pitchColumnIndex {InvalidColumnIndex};
     int bankColumnIndex {InvalidColumnIndex};
     int headingColumnIndex {InvalidColumnIndex};
+    int indicatedAirspeedColumnIndex {InvalidColumnIndex};
     int onGroundColumnIndex {InvalidColumnIndex};
     int descriptionColumnIndex {InvalidColumnIndex};
 };
@@ -91,17 +93,30 @@ LocationWidget::~LocationWidget() noexcept
 #endif
 }
 
+void LocationWidget::addLocation(Location newLocation)
+{
+    Location location {newLocation};
+    if (d->locationService->store(location)) {
+        const int rowCount = ui->locationTableWidget->rowCount();
+        ui->locationTableWidget->setSortingEnabled(false);
+        ui->locationTableWidget->insertRow(rowCount);
+        updateLocation(location, rowCount);
+        ui->locationTableWidget->setSortingEnabled(true);
+    }
+}
+
 // PRIVATE
 
 void LocationWidget::initUi() noexcept
 {
-    const QStringList headers {tr("ID"), tr("Position"), tr("Altitude"), tr("Pitch"), tr("Bank"), tr("Heading"), tr("On Ground"), tr("Description")};
+    const QStringList headers {tr("ID"), tr("Position"), tr("Altitude"), tr("Pitch"), tr("Bank"), tr("Heading"), tr("Indicated Airspeed"), tr("On Ground"), tr("Description")};
     d->idColumnIndex = headers.indexOf(tr("ID"));
     d->positionColumnIndex = headers.indexOf(tr("Position"));
     d->altitudeColumnIndex = headers.indexOf(tr("Altitude"));
     d->pitchColumnIndex = headers.indexOf(tr("Pitch"));
     d->bankColumnIndex = headers.indexOf(tr("Bank"));
     d->headingColumnIndex = headers.indexOf(tr("Heading"));
+    d->indicatedAirspeedColumnIndex = headers.indexOf(tr("Indicated Airspeed"));
     d->onGroundColumnIndex = headers.indexOf(tr("On Ground"));
     d->descriptionColumnIndex = headers.indexOf(tr("Description"));
 
@@ -124,13 +139,26 @@ void LocationWidget::initUi() noexcept
 
 void LocationWidget::frenchConnection() noexcept
 {
+    // Connection
+    SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
+    connect(&skyConnectManager, &SkyConnectManager::stateChanged,
+            this, &LocationWidget::updateEditUi);
+
     // Location table
     connect(ui->locationTableWidget, &QTableWidget::cellDoubleClicked,
             this, &LocationWidget::onCellSelected);
     connect(ui->locationTableWidget, &QTableWidget::cellChanged,
             this, &LocationWidget::onCellChanged);
+    connect(ui->locationTableWidget, &QTableWidget::itemSelectionChanged,
+            this, &LocationWidget::onSelectionChanged);
+    connect(ui->addPushButton, &QPushButton::clicked,
+            this, &LocationWidget::onAddLocation);
+    connect(ui->capturePushButton, &QPushButton::clicked,
+            this, &LocationWidget::onCaptureLocation);
+    connect(ui->teleportPushButton, &QPushButton::clicked,
+            this, &LocationWidget::onTeleportToSelectedLocation);
     connect(ui->deletePushButton, &QPushButton::clicked,
-            this, &LocationWidget::deleteLocation);
+            this, &LocationWidget::onDeleteLocation);
 }
 
 void LocationWidget::updateLocationTable() noexcept
@@ -147,7 +175,7 @@ void LocationWidget::updateLocationTable() noexcept
 
         int rowIndex {0};
         for (const Location &location : locations) {
-            addLocation(location, rowIndex);
+            updateLocation(location, rowIndex);
             ++rowIndex;
         }
 
@@ -164,7 +192,7 @@ void LocationWidget::updateLocationTable() noexcept
     }
 }
 
-inline void LocationWidget::addLocation(const Location &location, int rowIndex) noexcept
+inline void LocationWidget::updateLocation(const Location &location, int rowIndex) noexcept
 {
     int columnIndex {0};
 
@@ -211,6 +239,12 @@ inline void LocationWidget::addLocation(const Location &location, int rowIndex) 
     ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
     ++columnIndex;
 
+    // Indicated airspeed
+    newItem = std::make_unique<QTableWidgetItem>(d->unit.formatNumber(location.indicatedAirspeed, 2));
+    newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    ui->locationTableWidget->setItem(rowIndex, columnIndex, newItem.release());
+    ++columnIndex;
+
     // On Ground
     newItem = std::make_unique<QTableWidgetItem>();
     newItem->setCheckState(location.onGround ? Qt::CheckState::Checked : Qt::CheckState::Unchecked);
@@ -227,7 +261,7 @@ inline void LocationWidget::addLocation(const Location &location, int rowIndex) 
 void LocationWidget::teleportToLocation(int row) noexcept
 {
     Location location = rowToLocation(row);
-    emit teleport(location);
+    emit teleportTo(location);
 }
 
 Location LocationWidget::rowToLocation(int row) const noexcept
@@ -239,20 +273,23 @@ Location LocationWidget::rowToLocation(int row) const noexcept
 
     item = ui->locationTableWidget->item(row, d->positionColumnIndex);
     const QStringList coordinates = item->data(Qt::EditRole).toString().split(',');
-    location.latitude = coordinates.first().toFloat();
-    location.longitude = coordinates.last().toFloat();
+    location.latitude = coordinates.first().toDouble();
+    location.longitude = coordinates.last().toDouble();
 
     item = ui->locationTableWidget->item(row, d->altitudeColumnIndex);
-    location.altitude = item->data(Qt::EditRole).toFloat();
+    location.altitude = item->data(Qt::EditRole).toDouble();
 
     item = ui->locationTableWidget->item(row, d->pitchColumnIndex);
-    location.pitch = item->data(Qt::EditRole).toFloat();
+    location.pitch = item->data(Qt::EditRole).toDouble();
 
     item = ui->locationTableWidget->item(row, d->bankColumnIndex);
-    location.bank = item->data(Qt::EditRole).toFloat();
+    location.bank = item->data(Qt::EditRole).toDouble();
 
     item = ui->locationTableWidget->item(row, d->headingColumnIndex);
-    location.heading = item->data(Qt::EditRole).toFloat();
+    location.heading = item->data(Qt::EditRole).toDouble();
+
+    item = ui->locationTableWidget->item(row, d->indicatedAirspeedColumnIndex);
+    location.indicatedAirspeed = item->data(Qt::EditRole).toInt();
 
     item = ui->locationTableWidget->item(row, d->onGroundColumnIndex);
     location.onGround = item->checkState() == Qt::CheckState::Checked;
@@ -265,6 +302,16 @@ Location LocationWidget::rowToLocation(int row) const noexcept
 void LocationWidget::updateUi() noexcept
 {
     updateLocationTable();
+    updateEditUi();
+}
+
+void LocationWidget::updateEditUi() noexcept
+{
+    const bool isActive = SkyConnectManager::getInstance().isActive();
+    const bool hasSelection = ui->locationTableWidget->selectionModel()->hasSelection();
+
+    ui->teleportPushButton->setEnabled(!isActive);
+    ui->deletePushButton->setEnabled(hasSelection);
 }
 
 void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexcept
@@ -282,7 +329,31 @@ void LocationWidget::onCellChanged(int row, int column) noexcept
     // TODO IMPLEMENT ME
 }
 
-void LocationWidget::deleteLocation() noexcept
+void LocationWidget::onSelectionChanged() noexcept
+{
+    updateEditUi();
+}
+
+void LocationWidget::onAddLocation() noexcept
+{
+    // TODO IMPLEMENT ME
+}
+
+void LocationWidget::onCaptureLocation() noexcept
+{
+    emit captureLocation();
+}
+
+void LocationWidget::onTeleportToSelectedLocation() noexcept
+{
+    QList<QTableWidgetItem *> selectedItems = ui->locationTableWidget->selectedItems();
+    if (selectedItems.count() > 0) {
+        const int row = selectedItems.last()->row();
+        teleportToLocation(row);
+    }
+}
+
+void LocationWidget::onDeleteLocation() noexcept
 {
     // TODO IMPLEMENT ME
 }

@@ -290,11 +290,6 @@ void AbstractSkyConnect::stop() noexcept
     }
 }
 
-bool AbstractSkyConnect::isActive() const noexcept
-{
-    return d->state != Connect::State::Disconnected && d->state != Connect::State::Connected;
-}
-
 void AbstractSkyConnect::setPaused(bool enabled) noexcept
 {
     if (enabled) {
@@ -438,6 +433,11 @@ bool AbstractSkyConnect::isIdle() const noexcept
     return d->state == Connect::State::Connected || d->state == Connect::State::Disconnected;
 }
 
+bool AbstractSkyConnect::isActive() const noexcept
+{
+    return !isIdle();
+}
+
 std::int64_t AbstractSkyConnect::getCurrentTimestamp() const noexcept
 {
     return d->currentTimestamp;
@@ -488,6 +488,19 @@ double AbstractSkyConnect::calculateRecordedSamplesPerSecond() const noexcept
         }
     }
     return samplesPerSecond;
+}
+
+bool AbstractSkyConnect::requestInitialPosition() noexcept
+{
+    if (!isConnectedWithSim()) {
+        connectWithSim();
+    }
+
+    bool ok = isConnectedWithSim();
+    if (ok) {
+        ok = retryWithReconnect([this]() -> bool { return onRequestInitialPosition(); });
+    }
+    return ok;
 }
 
 // PUBLIC SLOTS

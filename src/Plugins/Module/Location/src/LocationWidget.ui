@@ -20,9 +20,32 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="deletePushButton">
+      <widget class="QPushButton" name="addPushButton">
+       <property name="toolTip">
+        <string>Add a new location entry.</string>
+       </property>
        <property name="text">
-        <string>&amp;Delete</string>
+        <string>&amp;Add</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="capturePushButton">
+       <property name="toolTip">
+        <string>Capture the current location from the flight simulator.</string>
+       </property>
+       <property name="text">
+        <string>&amp;Capture</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="teleportPushButton">
+       <property name="toolTip">
+        <string>Teleport the aircraft to the selected location.</string>
+       </property>
+       <property name="text">
+        <string>&amp;Teleport</string>
        </property>
       </widget>
      </item>
@@ -38,6 +61,16 @@
         </size>
        </property>
       </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="deletePushButton">
+       <property name="toolTip">
+        <string>Delete the selected location.</string>
+       </property>
+       <property name="text">
+        <string>&amp;Delete</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

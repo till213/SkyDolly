@@ -33,6 +33,7 @@ class QWidget;
 #include <Model/Location.h>
 #include "PluginManager/AbstractModule.h"
 
+struct InitialPosition;
 struct LocationPluginPrivate;
 
 class LocationPlugin : public AbstractModule
@@ -53,7 +54,9 @@ private:
     void frenchConnection() noexcept;
 
 private slots:
+    void captureLocation() noexcept;
     void teleportTo(const Location &location) noexcept;
+    void initialPositionReceived(const InitialPosition &initialPosition) noexcept;
 };
 
 #endif // LOCATIONPLUGIN_H

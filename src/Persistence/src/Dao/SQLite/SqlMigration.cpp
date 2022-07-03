@@ -48,8 +48,9 @@ namespace
     constexpr int PitchIndex = 4;
     constexpr int BankIndex = 5;
     constexpr int HeadingIndex = 6;
-    constexpr int OnGroundIndex = 7;
-    constexpr int DescriptionIndex = 8;
+    constexpr int IndicatedAirspeedIndex = 7;
+    constexpr int OnGroundIndex = 8;
+    constexpr int DescriptionIndex = 9;
 }
 
 class SqlMigrationPrivate
@@ -156,6 +157,7 @@ bool SqlMigration::migrateCsv(const QString &migrationFilePath) noexcept
         "([+-]?[0-9]*[.]?[0-9]+)," // Pitch
         "([+-]?[0-9]*[.]?[0-9]+)," // Bank
         "([+-]?[0-9]*[.]?[0-9]+)," // Heading
+        "([+-]?[\\d]+),"           // Indicated airspeed
         "[\"]?(false|true)[\"]?,"  // On Ground
         "[\"]?([^\"]+)[\"]?$"      // Description
     };
@@ -204,21 +206,24 @@ bool SqlMigration::migrateLocation(const QRegularExpressionMatch &locationMatch)
 {
     bool ok {true};
     Location location;
-    location.latitude = locationMatch.captured(::LatitudeIndex).toFloat(&ok);
+    location.latitude = locationMatch.captured(::LatitudeIndex).toDouble(&ok);
     if (ok) {
-        location.longitude = locationMatch.captured(::LongitudeIndex).toFloat(&ok);
+        location.longitude = locationMatch.captured(::LongitudeIndex).toDouble(&ok);
     }
     if (ok) {
-        location.altitude = locationMatch.captured(::AltitudeIndex).toFloat(&ok);
+        location.altitude = locationMatch.captured(::AltitudeIndex).toDouble(&ok);
     }
     if (ok) {
-        location.pitch = locationMatch.captured(::PitchIndex).toFloat(&ok);
+        location.pitch = locationMatch.captured(::PitchIndex).toDouble(&ok);
     }
     if (ok) {
-        location.bank = locationMatch.captured(::BankIndex).toFloat(&ok);
+        location.bank = locationMatch.captured(::BankIndex).toDouble(&ok);
     }
     if (ok) {
-        location.heading = locationMatch.captured(::HeadingIndex).toFloat(&ok);
+        location.heading = locationMatch.captured(::HeadingIndex).toDouble(&ok);
+    }
+    if (ok) {
+        location.indicatedAirspeed = locationMatch.captured(::IndicatedAirspeedIndex).toInt(&ok);
     }
     if (ok) {
         location.onGround = locationMatch.captured(::OnGroundIndex).toLower() == "true" ? true : false;

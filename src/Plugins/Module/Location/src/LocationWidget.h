@@ -48,6 +48,8 @@ public:
     explicit LocationWidget(QWidget *parent = nullptr) noexcept;
     ~LocationWidget() noexcept override;
 
+    void addLocation(Location location);
+
 private:
     std::unique_ptr<Ui::LocationWidget> ui;
     std::unique_ptr<LocationWidgetPrivate> d;
@@ -56,20 +58,27 @@ private:
     void frenchConnection() noexcept;
 
     void updateLocationTable() noexcept;
-    inline void addLocation(const Location &location, int rowIndex) noexcept;
+    inline void updateLocation(const Location &location, int rowIndex) noexcept;
 
     void teleportToLocation(int row) noexcept;
     Location rowToLocation(int row) const noexcept;
 
 signals:
-    void teleport(Location location);
+    void captureLocation();
+    void teleportTo(Location location);
 
 private slots:
     void updateUi() noexcept;
+    void updateEditUi() noexcept;
 
     void onCellSelected(int row, int column) noexcept;
     void onCellChanged(int row, int column) noexcept;
-    void deleteLocation() noexcept;
+    void onSelectionChanged() noexcept;
+
+    void onAddLocation() noexcept;
+    void onCaptureLocation() noexcept;
+    void onTeleportToSelectedLocation() noexcept;
+    void onDeleteLocation() noexcept;
 };
 
 #endif // LOCATIONWIDGET_H

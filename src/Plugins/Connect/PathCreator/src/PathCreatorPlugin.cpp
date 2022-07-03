@@ -226,6 +226,23 @@ void PathCreatorPlugin::onRemoveAllAiObjects() noexcept
 #endif
 }
 
+bool PathCreatorPlugin::onRequestInitialPosition() noexcept
+{
+    InitialPosition initialPosition {
+        -90.0 + d->randomGenerator->bounded(180),
+        -180.0 + d->randomGenerator->bounded(360.0),
+        d->randomGenerator->bounded(60000.0)
+    };
+    initialPosition.pitch = -90.0 + d->randomGenerator->bounded(180.0);
+    initialPosition.bank = -180.0 + d->randomGenerator->bounded(360.0);
+    initialPosition.heading = -180.0 + d->randomGenerator->bounded(360.0);
+    initialPosition.indicatedAirspeed = d->randomGenerator->bounded(400);
+    initialPosition.onGround = false;
+    emit initialPositionReceived(initialPosition);
+
+    return true;
+}
+
 // PROTECTED SLOTS
 
 void PathCreatorPlugin::recordData() noexcept
@@ -259,7 +276,7 @@ void PathCreatorPlugin::recordPositionData(std::int64_t timestamp) noexcept
     PositionData aircraftData;
     aircraftData.latitude = -90.0 + d->randomGenerator->bounded(180);
     aircraftData.longitude = -180.0 + d->randomGenerator->bounded(360.0);
-    aircraftData.altitude = d->randomGenerator->bounded(20000.0);
+    aircraftData.altitude = d->randomGenerator->bounded(60000.0);
     aircraftData.indicatedAltitude = d->randomGenerator->bounded(20000.0);
     aircraftData.pitch = -90.0 + d->randomGenerator->bounded(180.0);
     aircraftData.bank = -180.0 + d->randomGenerator->bounded(360.0);

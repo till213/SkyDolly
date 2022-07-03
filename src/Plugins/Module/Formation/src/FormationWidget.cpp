@@ -334,7 +334,7 @@ void FormationWidget::updateAircraftTable() noexcept
 
     int rowIndex {0};
     for (const auto &aircraft : flight) {
-        addAircraft(*aircraft, rowIndex);
+        updateAircraft(*aircraft, rowIndex);
         rowIndex++;
     }
 
@@ -513,7 +513,7 @@ void FormationWidget::updateToolTips() noexcept
 
 // PRIVATE SLOTS
 
-void FormationWidget::addAircraft(const Aircraft &aircraft, int rowIndex) noexcept
+void FormationWidget::updateAircraft(const Aircraft &aircraft, int rowIndex) noexcept
 {
     SkyConnectManager &skyConnectManager = SkyConnectManager::getInstance();
     const bool recording = skyConnectManager.isInRecordingState();

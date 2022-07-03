@@ -232,6 +232,12 @@ bool SkyConnectManager::isInReplayState() const noexcept
     return skyConnect ? skyConnect->get().isInReplayState() : false;
 }
 
+bool SkyConnectManager::isActive() const noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
+    return skyConnect ? skyConnect->get().isInRecordingState() || skyConnect->get().isInReplayState(): false;
+}
+
 void SkyConnectManager::stop() noexcept
 {
     std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = SkyConnectManager::getInstance().getCurrentSkyConnect();
@@ -338,6 +344,12 @@ bool SkyConnectManager::isAtEnd() const noexcept
     return skyConnect ? skyConnect->get().isAtEnd() : false;
 }
 
+bool SkyConnectManager::requestInitialPosition() const noexcept
+{
+    std::optional<std::reference_wrapper<SkyConnectIntf>> skyConnect = getCurrentSkyConnect();
+    return skyConnect ? skyConnect->get().requestInitialPosition() : false;
+}
+
 // PUBLIC SLOTS
 
 bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
@@ -362,6 +374,8 @@ bool SkyConnectManager::tryAndSetCurrentSkyConnect(const QUuid &uuid) noexcept
                     this, &SkyConnectManager::recordingStarted);
             connect(skyPlugin, &SkyConnectIntf::recordingStopped,
                     this, &SkyConnectManager::recordingStopped);
+            connect(skyPlugin, &SkyConnectIntf::initialPositionReceived,
+                    this, &SkyConnectManager::initialPositionReceived);
 
             // Flight
             const Logbook &logbook = Logbook::getInstance();
