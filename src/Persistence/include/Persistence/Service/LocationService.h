@@ -43,7 +43,7 @@ public:
     ~LocationService() noexcept;
 
     bool store(Location &location) noexcept;
-    bool restore(std::int64_t id, Location &location) noexcept;
+    bool update(const Location &location) noexcept;
     bool deleteById(std::int64_t id) noexcept;
     bool getAll(std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept;
     bool getSelectedLocations(const LocationSelector &locationSelector, std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept;

@@ -65,7 +65,6 @@ struct MODEL_API Location
     }
 
     static constexpr std::int64_t InvalidId {-1};
-    static constexpr int InvalidIndicatedAirspeed = std::numeric_limits<int>::min();
 };
 
 #endif // LOCATION_H

@@ -26,6 +26,7 @@
 #include <memory>
 #include <forward_list>
 #include <vector>
+#include <iterator>
 #include <cstdint>
 #include <limits>
 
@@ -364,7 +365,7 @@ inline void LogbookWidget::updateFlightSummary(const FlightSummary &summary, int
 
     // Duration
     const std::int64_t durationMSec = summary.startSimulationLocalTime.msecsTo(summary.endSimulationLocalTime);
-    const QTime time = QTime::fromMSecsSinceStartOfDay(durationMSec);
+    const QTime time = QTime::fromMSecsSinceStartOfDay(static_cast<int>(durationMSec));
     newItem = std::make_unique<QTableWidgetItem>(d->unit.formatDuration(time));
     newItem->setToolTip(tr("Simulation duration."));
     newItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -376,7 +377,8 @@ void LogbookWidget::updateDateSelectorUi() noexcept
 {
     if (LogbookManager::getInstance().isConnected()) {
         // Sorted by year, month, day
-        std::forward_list<FlightDate> flightDates = d->logbookService->getFlightDates();
+        std::forward_list<FlightDate> flightDates;
+        d->logbookService->getFlightDates(std::front_insert_iterator(flightDates));
         ui->logTreeWidget->blockSignals(true);
         ui->logTreeWidget->clear();
 
@@ -579,9 +581,9 @@ void LogbookWidget::onRecordingStarted() noexcept
         const Flight &flight = Logbook::getInstance().getCurrentFlight();
         FlightSummary summary = flight.getFlightSummary();
         summary.flightId = ::RecordingInProgressId;
-        const int rowIndex = ui->logTableWidget->rowCount();
         ui->logTableWidget->blockSignals(true);
         ui->logTableWidget->setSortingEnabled(false);
+        const int rowIndex = ui->logTableWidget->rowCount();
         ui->logTableWidget->insertRow(rowIndex);
         updateFlightSummary(summary, rowIndex);
         updateAircraftIcons();

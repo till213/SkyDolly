@@ -80,13 +80,17 @@ bool LocationService::store(Location &location) noexcept
     return ok;
 }
 
-bool LocationService::restore(std::int64_t id, Location &location) noexcept
+bool LocationService::update(const Location &location) noexcept
 {
     bool ok = QSqlDatabase::database().transaction();
     if (ok) {
-        ok = d->locationDao->get(id, location);
+        ok = d->locationDao->update(location);
+        if (ok) {
+            ok = QSqlDatabase::database().commit();
+        } else {
+            QSqlDatabase::database().rollback();
+        }
     }
-    QSqlDatabase::database().rollback();
     return ok;
 }
 

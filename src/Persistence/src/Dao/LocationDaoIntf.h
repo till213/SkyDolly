@@ -38,7 +38,7 @@ public:
     virtual ~LocationDaoIntf() = default;
 
     virtual bool add(Location &location) noexcept = 0;
-    virtual bool get(std::int64_t id, Location &location) const noexcept = 0;
+    virtual bool update(const Location &location) noexcept = 0;
     virtual bool deleteById(std::int64_t id) noexcept = 0;
     virtual bool getAll(std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept = 0;
     virtual bool getSelectedLocations(const LocationSelector &selector, std::back_insert_iterator<std::vector<Location>> backInsertIterator) const noexcept = 0;

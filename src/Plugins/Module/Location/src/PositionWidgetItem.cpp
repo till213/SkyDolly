@@ -28,13 +28,19 @@
 #include <Kernel/Unit.h>
 #include "PositionWidgetItem.h"
 
+namespace
+{
+    constexpr double MinLatitude = -90.0;
+    constexpr double MaxLatitude = 90.0;
+    constexpr double MinLongitude = -180.0;
+    constexpr double MaxLongitude = 180.0;
+}
+
 // PUBLIC
 
 PositionWidgetItem::PositionWidgetItem()
     : QTableWidgetItem(QTableWidgetItem::UserType)
-{
-
-}
+{}
 
 QVariant PositionWidgetItem::data(int role) const
 {
@@ -66,13 +72,22 @@ void PositionWidgetItem::setData(int role, const QVariant &value)
     case Qt::EditRole:
     {
         QStringList values = value.toString().split(',');
-        m_latitude = values.first().toFloat();
-        m_longitude = values.last().toFloat();
+        bool ok {true};
+        double value = values.first().toDouble(&ok);
+        if (ok) {
+            m_latitude = std::min(value, ::MaxLatitude);
+            m_latitude = std::max(value, ::MinLatitude);
+        }
+        value = values.last().toDouble(&ok);
+        if (ok) {
+            m_longitude = std::min(value, ::MaxLongitude);
+            m_longitude = std::max(value, ::MinLongitude);
+        }
         m_position = m_unit.formatLatLongPositionDMS(m_latitude, m_longitude);
         break;
     }
     default:
-        QTableWidgetItem::setData(role, value);
         break;
     }
+    QTableWidgetItem::setData(role, value);
 }

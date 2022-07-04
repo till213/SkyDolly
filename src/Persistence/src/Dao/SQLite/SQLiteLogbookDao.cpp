@@ -52,10 +52,8 @@ SQLiteLogbookDao::SQLiteLogbookDao() noexcept
 SQLiteLogbookDao::~SQLiteLogbookDao() noexcept
 {}
 
-std::forward_list<FlightDate> SQLiteLogbookDao::getFlightDates() const noexcept
+bool SQLiteLogbookDao::getFlightDates(std::front_insert_iterator<std::forward_list<FlightDate>> frontInsertIterator) const noexcept
 {
-    std::forward_list<FlightDate> flightDates;
-
     QSqlQuery query;
     query.setForwardOnly(true);
     query.prepare(
@@ -76,7 +74,7 @@ std::forward_list<FlightDate> SQLiteLogbookDao::getFlightDates() const noexcept
             const int month = query.value(monthIdx).toInt();
             const int day = query.value(dayIdx).toInt();
             const int nofFlights = query.value(nofFlightIdx).toInt();
-            flightDates.emplace_front(year, month, day, nofFlights);
+            frontInsertIterator = std::move(FlightDate(year, month, day, nofFlights));
         }
 #ifdef DEBUG
     } else {
@@ -84,7 +82,7 @@ std::forward_list<FlightDate> SQLiteLogbookDao::getFlightDates() const noexcept
 #endif
     }
 
-    return flightDates;
+    return ok;
 }
 
 std::vector<FlightSummary> SQLiteLogbookDao::getFlightSummaries(const FlightSelector &flightSelector) const noexcept

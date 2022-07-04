@@ -91,10 +91,41 @@ bool SQLiteLocationDao::add(Location &location) noexcept
     return ok;
 }
 
-bool SQLiteLocationDao::get(std::int64_t id, Location &location) const noexcept
+bool SQLiteLocationDao::update(const Location &location) noexcept
 {
-    // TODO IMPLEMENT ME
-    return true;
+    QSqlQuery query;
+    query.prepare(
+        "update location "
+        "set    latitude           = :latitude,"
+        "       longitude          = :longitude,"
+        "       altitude           = :altitude,"
+        "       pitch              = :pitch,"
+        "       bank               = :bank,"
+        "       heading            = :heading,"
+        "       indicated_airspeed = :indicated_airspeed,"
+        "       on_ground          = :on_ground,"
+        "       description        = :description "
+        "where id = :id;"
+    );
+
+    query.bindValue(":latitude", location.latitude);
+    query.bindValue(":longitude", location.longitude);
+    query.bindValue(":altitude", location.altitude);
+    query.bindValue(":pitch", location.pitch);
+    query.bindValue(":bank", location.bank);
+    query.bindValue(":heading", location.heading);
+    query.bindValue(":indicated_airspeed", location.indicatedAirspeed);
+    query.bindValue(":on_ground", location.onGround);
+    query.bindValue(":description", location.description);
+    query.bindValue(":id", location.id);
+    bool ok = query.exec();
+#ifdef DEBUG
+    if (!ok) {
+        qDebug() << "SQLiteLocationDao::add: SQL error:" << qPrintable(query.lastError().databaseText()) << "- error code:" << query.lastError().nativeErrorCode();
+    }
+#endif
+
+    return ok;
 }
 
 bool SQLiteLocationDao::deleteById(std::int64_t id) noexcept

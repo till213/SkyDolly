@@ -28,6 +28,7 @@
 #include <memory>
 #include <forward_list>
 #include <vector>
+#include <iterator>
 
 #include <Model/FlightDate.h>
 #include <Model/FlightSummary.h>
@@ -42,7 +43,7 @@ public:
     LogbookService() noexcept;
     virtual ~LogbookService() noexcept;
 
-    std::forward_list<FlightDate> getFlightDates() const noexcept;
+    bool getFlightDates(std::front_insert_iterator<std::forward_list<FlightDate>> frontInsertIterator) const noexcept;
     std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector) const noexcept;
 
 private:

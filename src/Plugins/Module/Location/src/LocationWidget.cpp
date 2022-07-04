@@ -333,7 +333,8 @@ void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexce
 
 void LocationWidget::onCellChanged(int row, int column) noexcept
 {
-    // TODO IMPLEMENT ME
+    Location location = rowToLocation(row);
+    d->locationService->update(location);
 }
 
 void LocationWidget::onSelectionChanged() noexcept
@@ -353,7 +354,16 @@ void LocationWidget::onSelectionChanged() noexcept
 
 void LocationWidget::onAddLocation() noexcept
 {
-    // TODO IMPLEMENT ME
+    Location location;
+    if (d->locationService->store(location)) {
+        ui->locationTableWidget->blockSignals(true);
+        ui->locationTableWidget->setSortingEnabled(false);
+        const int rowIndex = ui->locationTableWidget->rowCount();
+        ui->locationTableWidget->insertRow(rowIndex);
+        updateLocation(location, rowIndex);
+        ui->locationTableWidget->setSortingEnabled(true);
+        ui->locationTableWidget->blockSignals(false);
+    }
 }
 
 void LocationWidget::onCaptureLocation() noexcept

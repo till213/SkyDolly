@@ -40,8 +40,8 @@ public:
 
 private:
     Unit m_unit;
-    float m_latitude {0.0f};
-    float m_longitude {0.0f};
+    double m_latitude {0.0};
+    double m_longitude {0.0};
     QString m_position;
 };
 

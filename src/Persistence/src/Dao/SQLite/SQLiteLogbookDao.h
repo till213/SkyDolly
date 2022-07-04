@@ -28,6 +28,7 @@
 #include <memory>
 #include <forward_list>
 #include <vector>
+#include <iterator>
 
 #include <QtGlobal>
 
@@ -43,7 +44,7 @@ public:
     explicit SQLiteLogbookDao() noexcept;
     ~SQLiteLogbookDao() noexcept override;
 
-    std::forward_list<FlightDate> getFlightDates() const noexcept override;
+    bool getFlightDates(std::front_insert_iterator<std::forward_list<FlightDate>> frontInsertIterator) const noexcept override;
     std::vector<FlightSummary> getFlightSummaries(const FlightSelector &flightSelector) const noexcept override;
 };
 
