@@ -34,6 +34,9 @@
 #include <QApplication>
 #include <QWidget>
 #include <QDateTime>
+#ifdef DEBUG
+#include <QDebug>
+#endif
 
 #include <tsl/ordered_map.h>
 
@@ -141,7 +144,7 @@ MSFSSimConnectPlugin::MSFSSimConnectPlugin(QObject *parent) noexcept
 {
     frenchConnection();
 #ifdef DEBUG
-    qDebug("MSFSSimConnectPlugin::MSFSSimConnectPlugin: CREATED");
+    qDebug() << "MSFSSimConnectPlugin::MSFSSimConnectPlugin: CREATED";
 #endif
 }
 
@@ -150,7 +153,7 @@ MSFSSimConnectPlugin::~MSFSSimConnectPlugin() noexcept
     setAircraftFrozen(::SIMCONNECT_OBJECT_ID_USER, false);
     close();
 #ifdef DEBUG
-    qDebug("MSFSSimConnectPlugin::~MSFSSimConnectPlugin: DELETED");
+    qDebug() << "MSFSSimConnectPlugin::~MSFSSimConnectPlugin: DELETED";
 #endif
 }
 
@@ -484,7 +487,7 @@ bool MSFSSimConnectPlugin::connectWithSim() noexcept
         setupRequestData();
     }
 #ifdef DEBUG
-    qDebug("MSFSSimConnectPlugin::connectWithSim: CONNECT with SIM, handle: %p success: %d", d->simConnectHandle, result == S_OK);
+    qDebug() << "MSFSSimConnectPlugin::connectWithSim: CONNECT with SIM, handle: " << d->simConnectHandle << " success: " << (result == S_OK);
 #endif
     const bool ok = result == S_OK;
     if (ok) {
@@ -738,7 +741,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
     MSFSSimConnectPlugin *skyConnect = static_cast<MSFSSimConnectPlugin *>(context);
     Flight &flight = skyConnect->getCurrentFlight();
     Aircraft &userAircraft = flight.getUserAircraft();
-    ::SIMCONNECT_RECV_SIMOBJECT_DATA *objectData;
+    ::SIMCONNECT_RECV_SIMOBJECT_DATA *objectData {nullptr};
 
     bool dataStored = false;
     switch (receivedData->dwID) {
@@ -748,13 +751,13 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
         switch (static_cast<Event>(evt->uEventID)) {
         case Event::SimStart:
 #ifdef DEBUG
-            qDebug("MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: SIMSTART event");
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: SIMSTART event";
 #endif
             break;
 
         case Event::Pause:
 #ifdef DEBUG
-            qDebug("MSFSSimConnectPlugin::dispatchSIMCONNECT_RECV_ID_EVENT: PAUSE event: %lu", evt->dwData);
+            qDebug() << "MSFSSimConnectPlugin::dispatchSIMCONNECT_RECV_ID_EVENT: PAUSE event: " << evt->dwData;
 #endif
             // It seems that the pause event is currently only triggered by selecting "Pause Simulation"
             // in the developer mode (FS 2020), but neither when "active pause" is selected nor when ESC
@@ -769,7 +772,7 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
 
         case Event::Crashed:
 #ifdef DEBUG
-            qDebug("MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CRASHED event");
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EVENT: CRASHED event";
 #endif
             switch (skyConnect->getState()) {
             case Connect::State::Recording:
@@ -986,7 +989,8 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
             // just generated AI object again
             skyConnect->d->simConnectAi->removeByObjectId(objectData->dwObjectID);
 #ifdef DEBUG
-            qDebug("MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID: orphaned AI object response for original request %lu, DESTROYING AI Object again: %lu", objectData->dwRequestID, objectData->dwObjectID);
+            qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_ASSIGNED_OBJECT_ID: orphaned AI object response for original request: " <<  objectData->dwRequestID
+                     << " DESTROYING AI Object again: " << objectData->dwObjectID;
 #endif
         }
         break;
@@ -994,14 +998,14 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
 
     case ::SIMCONNECT_RECV_ID_QUIT:
 #ifdef DEBUG
-        qDebug("MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_QUIT");
+        qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_QUIT";
 #endif
         skyConnect->close();
         break;
 
     case ::SIMCONNECT_RECV_ID_OPEN:
 #ifdef DEBUG
-        qDebug("MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_OPEN");
+        qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_OPEN";
 #endif
         break;
 
@@ -1009,14 +1013,16 @@ void CALLBACK MSFSSimConnectPlugin::dispatch(::SIMCONNECT_RECV *receivedData, [[
 #ifdef DEBUG
     {
         SIMCONNECT_RECV_EXCEPTION *exception = static_cast<SIMCONNECT_RECV_EXCEPTION *>(receivedData);
-        qDebug("MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EXCEPTION: A server exception %lu happened: sender ID: %lu index: %lu data: %lu",
-               exception->dwException, exception->dwSendID, exception->dwIndex, cbData);
+        qDebug() << "MSFSSimConnectPlugin::dispatch: SIMCONNECT_RECV_ID_EXCEPTION: A server exception "
+                 << " happened: sender ID: " << exception->dwSendID
+                 << " index: " << exception->dwIndex
+                 << " data: " << cbData;
     }
 #endif
         break;
     case ::SIMCONNECT_RECV_ID_NULL:
 #ifdef DEBUG
-        qDebug("MSFSSimConnectPlugin::dispatch: IMCONNECT_RECV_ID_NULL");
+        qDebug() << "MSFSSimConnectPlugin::dispatch: IMCONNECT_RECV_ID_NULL";
 #endif
         break;
 
