@@ -56,12 +56,13 @@ private:
 
     void initUi() noexcept;
     void frenchConnection() noexcept;
+    void updateInfoUi() noexcept;
 
     void updateLocationTable() noexcept;
     inline void updateLocation(const Location &location, int rowIndex) noexcept;
 
     void teleportToLocation(int row) noexcept;
-    Location rowToLocation(int row) const noexcept;
+    Location getLocationByRow(int row) const noexcept;
 
 signals:
     void captureLocation();
@@ -79,6 +80,8 @@ private slots:
     void onCaptureLocation() noexcept;
     void onTeleportToSelectedLocation() noexcept;
     void onDeleteLocation() noexcept;
+
+    void onDescriptionChanged() noexcept;
 };
 
 #endif // LOCATIONWIDGET_H

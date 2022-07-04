@@ -26,8 +26,10 @@
 #include <cstdint>
 
 #include <QTableWidget>
+#include <QTableWidgetItem>
 #include <QStringList>
 #include <QByteArray>
+#include <QTextEdit>
 #include <QItemSelectionModel>
 #include <QMessageBox>
 #ifdef DEBUG
@@ -37,6 +39,7 @@
 #include <Kernel/Settings.h>
 #include <Persistence/LogbookManager.h>
 #include <Persistence/Service/LocationService.h>
+#include <Widget/FocusPlainTextEdit.h>
 #include <PluginManager/SkyConnectManager.h>
 #include <PluginManager/SkyConnectIntf.h>
 #include <PluginManager/AbstractModule.h>
@@ -146,6 +149,7 @@ void LocationWidget::initUi() noexcept
     ui->locationTableWidget->sortByColumn(d->idColumnIndex, Qt::SortOrder::DescendingOrder);
     ui->locationTableWidget->horizontalHeader()->setSectionsMovable(true);
     ui->locationTableWidget->setAlternatingRowColors(true);
+    ui->locationTableWidget->setColumnHidden(d->descriptionColumnIndex, true);
 
     QByteArray tableState = Settings::getInstance().getLocationTableState();
     ui->locationTableWidget->horizontalHeader()->restoreState(tableState);
@@ -160,6 +164,11 @@ void LocationWidget::initUi() noexcept
     ui->indicatedAirspeedSpinBox->setMaximum(::MaximumIndicatedAirspeed);
     ui->indicatedAirspeedSpinBox->setValue(::DefaultIndicatedAirspeed);
     ui->onGroundCheckBox->setChecked(::DefaultOnGround);
+
+    const int infoGroupBoxHeight = ui->informationGroupBox->minimumHeight();
+    ui->splitter->setSizes({height() - infoGroupBoxHeight, infoGroupBoxHeight});
+    ui->splitter->setStretchFactor(0, 1);
+    ui->splitter->setStretchFactor(1, 0);
 }
 
 void LocationWidget::frenchConnection() noexcept
@@ -184,6 +193,20 @@ void LocationWidget::frenchConnection() noexcept
             this, &LocationWidget::onTeleportToSelectedLocation);
     connect(ui->deletePushButton, &QPushButton::clicked,
             this, &LocationWidget::onDeleteLocation);
+
+    // Information group
+    connect(ui->descriptionPlainTextEdit, &FocusPlainTextEdit::focusLost,
+            this, &LocationWidget::onDescriptionChanged);
+}
+
+void LocationWidget::updateInfoUi() noexcept
+{
+    if (d->selectedRow != ::InvalidRowIndex) {
+        QTableWidgetItem *item = ui->locationTableWidget->item(d->selectedRow, d->descriptionColumnIndex);
+        ui->descriptionPlainTextEdit->setPlainText(item->text());
+    } else {
+        ui->descriptionPlainTextEdit->clear();
+    }
 }
 
 void LocationWidget::updateLocationTable() noexcept
@@ -289,11 +312,11 @@ inline void LocationWidget::updateLocation(const Location &location, int rowInde
 
 void LocationWidget::teleportToLocation(int row) noexcept
 {
-    Location location = rowToLocation(row);
+    Location location = getLocationByRow(row);
     emit teleportTo(location);
 }
 
-Location LocationWidget::rowToLocation(int row) const noexcept
+Location LocationWidget::getLocationByRow(int row) const noexcept
 {
     Location location;
 
@@ -355,7 +378,7 @@ void LocationWidget::onCellSelected(int row, [[maybe_unused]] int column) noexce
 
 void LocationWidget::onCellChanged(int row, int column) noexcept
 {
-    Location location = rowToLocation(row);
+    Location location = getLocationByRow(row);
     d->locationService->update(location);
 }
 
@@ -372,6 +395,7 @@ void LocationWidget::onSelectionChanged() noexcept
         d->selectedLocationId = Location::InvalidId;
     }
     updateEditUi();
+    updateInfoUi();
 }
 
 void LocationWidget::onAddLocation() noexcept
@@ -436,6 +460,20 @@ void LocationWidget::onDeleteLocation() noexcept
             int selectedRow = std::min(lastSelectedRow, ui->locationTableWidget->rowCount() - 1);
             ui->locationTableWidget->selectRow(selectedRow);
             ui->locationTableWidget->setFocus(Qt::NoFocusReason);
+        }
+    }
+}
+
+void LocationWidget::onDescriptionChanged() noexcept
+{
+    if (d->selectedRow != ::InvalidRowIndex) {
+        Location location = getLocationByRow(d->selectedRow);
+        location.description = ui->descriptionPlainTextEdit->toPlainText();
+        if (d->locationService->update(location)) {
+            ui->locationTableWidget->blockSignals(true);
+            QTableWidgetItem *item = ui->locationTableWidget->item(d->selectedRow, d->descriptionColumnIndex);
+            item->setData(Qt::EditRole, location.description);
+            ui->locationTableWidget->blockSignals(false);
         }
     }
 }

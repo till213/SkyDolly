@@ -2,6 +2,12 @@
 
 ## 0.12.0
 
+### New Features
+
+- Location module
+  * Capture and teleport to locations in the flight simulator
+  * Manually and and edit locations
+
 ### Improvements
 - Renamed 'velocity' (= a vector) to 'speed' (= a value) where appropriate
 - When starting a new recording the user aircraft is now updated in the logbook as soon as it becomes available
@@ -10,7 +16,7 @@
 - The window is properly resized when in minimal mode and the default non-essential button visibility is changed in the settings
 
 ### Under The Hood
-- The modules (Logbook, Formation) are now implemented as plugins
+- The modules (Logbook, Formation, Location) are now implemented as plugins
 - Sky Dolly now also compiles and links with the Microsoft Visual Studio 2022 C++ compiler (MSVC)
 - The code is now also [analysed](https://github.com/till213/SkyDolly/actions) for programming / security flaws with the [Microsoft C++ Code Analysis Action](https://github.com/marketplace/actions/microsoft-c-code-analysis-action)
 
